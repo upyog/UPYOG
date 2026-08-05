@@ -18,7 +18,10 @@ import {
   sortByOrder,
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-import { resolvePaymentHistoryConfig } from "../../utils/estMdmsUtils";
+import {
+  getAllotmentNo,
+  resolvePaymentHistoryConfig,
+} from "../../utils/estMdmsUtils";
 import {
   formatReceiptDate,
   toBillingCycleLabel,
@@ -77,12 +80,12 @@ export const ESTPaymentHistory = () => {
   );
 
   const [draftFilters, setDraftFilters] = useState({
-    assetNo: "",
+    allotmentNo: "",
     fromDate: "",
     toDate: "",
   });
   const [appliedFilters, setAppliedFilters] = useState({
-    assetNo: "",
+    allotmentNo: "",
     fromDate: "",
     toDate: "",
   });
@@ -121,9 +124,7 @@ export const ESTPaymentHistory = () => {
     () =>
       [
         ...new Set(
-          allotments
-            .map((item) => String(item?.allotmentNo || "").trim())
-            .filter(Boolean)
+          allotments.map((item) => getAllotmentNo(item)).filter(Boolean)
         ),
       ].join(","),
     [allotments]
@@ -132,7 +133,7 @@ export const ESTPaymentHistory = () => {
   const allotmentByConsumerCode = useMemo(
     () =>
       allotments.reduce((acc, item) => {
-        const key = String(item?.allotmentNo || "").trim();
+        const key = getAllotmentNo(item);
         if (key && !acc[key]) acc[key] = item;
         return acc;
       }, {}),
@@ -193,7 +194,7 @@ export const ESTPaymentHistory = () => {
         receiptDate: detail?.receiptDate,
         receiptDateLabel: formatReceiptDate(detail?.receiptDate),
         assetNo: allotment?.assetNo || consumerCode || "N/A",
-        allotmentNo: allotment?.allotmentNo || consumerCode || "N/A",
+        allotmentNo: getAllotmentNo(allotment) || consumerCode || "N/A",
         buildingName:
           asset?.buildingName ||
           asset?.assetName ||
@@ -214,20 +215,16 @@ export const ESTPaymentHistory = () => {
   ]);
 
   const filteredData = useMemo(() => {
-    const normalizedSearch = String(appliedFilters.assetNo || "")
+    const normalizedSearch = String(appliedFilters.allotmentNo || "")
       .trim()
       .toLowerCase();
     const from = toStartOfDay(appliedFilters.fromDate);
     const to = toEndOfDay(appliedFilters.toDate);
 
     return paymentData.filter((item) => {
-      const matchesAssetNo =
+      const matchesAllotmentNo =
         !normalizedSearch ||
-        String(item.assetNo || "").toLowerCase().includes(normalizedSearch) ||
         String(item.allotmentNo || "")
-          .toLowerCase()
-          .includes(normalizedSearch) ||
-        String(item.buildingName || "")
           .toLowerCase()
           .includes(normalizedSearch);
 
@@ -235,7 +232,7 @@ export const ESTPaymentHistory = () => {
       const matchesFrom = !from || (receiptDate && receiptDate >= from);
       const matchesTo = !to || (receiptDate && receiptDate <= to);
 
-      return matchesAssetNo && matchesFrom && matchesTo;
+      return matchesAllotmentNo && matchesFrom && matchesTo;
     });
   }, [paymentData, appliedFilters]);
 
@@ -248,7 +245,7 @@ export const ESTPaymentHistory = () => {
   }, [draftFilters]);
 
   const handleClear = useCallback(() => {
-    const blank = { assetNo: "", fromDate: "", toDate: "" };
+    const blank = { allotmentNo: "", fromDate: "", toDate: "" };
     setDraftFilters(blank);
     setAppliedFilters(blank);
   }, []);

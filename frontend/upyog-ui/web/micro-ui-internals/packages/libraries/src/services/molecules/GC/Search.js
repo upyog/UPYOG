@@ -79,6 +79,9 @@ export const GCSearch = {
           { title: "GC_CATEGORY", value: collectionUnit?.category ? t(collectionUnit.category) : t("CS_NA") },
           { title: "GC_SUB_CATEGORY", value: collectionUnit?.subCategory ? t(collectionUnit.subCategory) : t("CS_NA") },
           { title: "GC_SUB_CATEGORY_TYPE", value: collectionUnit?.subCategoryType ? t(collectionUnit.subCategoryType) : t("CS_NA") },
+          ...["HOUSEHOLD_MULTI_COLLECTION", "COMMERCIAL_MULTI_COLLECTION", "MIX_PROPERTY"].includes(collectionUnit?.unitType)
+            ? [{ title: "GC_NO_OF_UNITS", value: collectionUnit?.no_of_units || t("CS_NA") }]
+            : [],
           { title: "GC_SPECIAL_CATEGORY", value: collectionUnit?.specialCategory ? t(collectionUnit.specialCategory) : t("CS_NA") },
           { title: "GC_IS_INHERITANCE", value: collectionUnit?.isInheritance ? t("YES") : t("NO") },
         ],

@@ -14,7 +14,7 @@ import {
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
-import { checkForNA } from "../../../utils";
+import { checkForNA, multiUnits } from "../../../utils";
 
 const ActionButton = ({ jumpTo }) => {
   const navigate = Digit.Hooks.useCustomNavigate();
@@ -227,6 +227,13 @@ const GCCheckPage = ({ onSubmit, value = {}, renewApplication }) => {
           label={t("GC_SUB_CATEGORY_TYPE")}
           text={specifications?.subCategoryType ? t(specifications?.subCategoryType?.i18nKey) : t("CS_NA")}
         />
+
+        {multiUnits.includes(specifications?.typeOfCollection?.code) && (
+          <Row
+            label={t("GC_NO_OF_UNITS")}
+            text={specifications?.no_of_units || t("CS_NA")}
+          />
+        )}
 
         <Row
           label={t("GC_IS_INHERITANCE")}

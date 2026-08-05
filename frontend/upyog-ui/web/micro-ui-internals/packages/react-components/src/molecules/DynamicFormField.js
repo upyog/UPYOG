@@ -135,6 +135,7 @@ const FieldError = ({ show, message }) =>
  * Decorative magnifying-glass SVG for the lookup / search-card button.
  * @returns {JSX.Element}
  */
+// Todo: icon will move in assets folder
 const SearchIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
@@ -160,6 +161,12 @@ const applyTextInputChange = (e, { name, sanitizeRegex, validation, onChange }) 
   let val = e.target.value;
   if (sanitizeRegex) val = val.replace(sanitizeRegex, "");
   if (validation.maxLength) val = val.slice(0, validation.maxLength);
+  if (validation.maxAmount != null && val !== "") {
+    const num = Number(String(val).replace(/,/g, "").trim());
+    if (Number.isFinite(num) && num > Number(validation.maxAmount)) {
+      val = String(validation.maxAmount);
+    }
+  }
   onChange(name, val);
 };
 
@@ -287,6 +294,8 @@ const DynamicFormField = ({
   const textUnit = showDurationAsYears ? undefined : unit;
   /** Lookup UI when MDMS marks the field with searchCard or searchButton. */
   const useSearchCard = Boolean(field.searchCard || field.searchButton);
+  /** Text Search button instead of magnifying-glass icon when searchButton is set. */
+  const showSearchTextButton = Boolean(field.searchButton);
 
   // ── dropdown ─────────────────────────────────────────────────────────
   if (type === "dropdown") {
@@ -385,8 +394,7 @@ const DynamicFormField = ({
         : value?.filestoreId || value?.fileStoreId || value?.documentuuid;
     const hasUploaded = Boolean(fileRef);
     const uploadedLabel =
-      (typeof value === "object" && value?.fileName) ||
-      fileRef ||
+      (typeof value === "object" && (value?.fileName || value?.name)) ||
       t("CS_ACTION_FILEUPLOADED");
 
     return (
@@ -414,7 +422,11 @@ const DynamicFormField = ({
       <>
         <FieldLabel text={t(labelKey)} required={validation.required} hasError={hasError} unit={textUnit} />
         <div className="field" data-field-error={hasError ? "true" : undefined}>
-          <div className="dynamic-form-field__lookup">
+          <div
+            className={`dynamic-form-field__lookup${
+              showSearchTextButton ? " dynamic-form-field__lookup--with-button" : ""
+            }`}
+          >
             <TextInput
               placeholder={t(placeholder || "")}
               value={value || ""}
@@ -433,12 +445,23 @@ const DynamicFormField = ({
             />
             <button
               type="button"
-              className="dynamic-form-field__lookup-icon"
-              disabled={isDisabled || validation.disabled || isFieldSearching || !String(value || "").trim()}
+              className={
+                showSearchTextButton
+                  ? "dynamic-form-field__lookup-btn"
+                  : "dynamic-form-field__lookup-icon"
+              }
+              disabled={
+                isDisabled ||
+                validation.disabled ||
+                isFieldSearching ||
+                !String(value || "").trim()
+              }
               onClick={() => onFieldSearch?.(name)}
-              aria-label={t("ES_COMMON_SEARCH")}
+              aria-label={t(field.searchButtonLabel || "ES_COMMON_SEARCH")}
             >
-              <SearchIcon />
+              {showSearchTextButton
+                ? t(field.searchButtonLabel || "ES_COMMON_SEARCH")
+                : <SearchIcon />}
             </button>
           </div>
           <FieldError show={hasError} message={errorMsg} />

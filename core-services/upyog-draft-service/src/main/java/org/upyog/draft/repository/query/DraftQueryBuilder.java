@@ -11,7 +11,7 @@ public class DraftQueryBuilder {
 
     private static final String BASE_SELECT = "SELECT draft_id, tenant_id, user_uuid, business_service, "
             + "module_entity_id, draft_data, completion_pct, status, createdby, lastmodifiedby, "
-            + "createdtime, lastmodifiedtime FROM eg_draft_detail WHERE 1=1";
+            + "createdtime, lastmodifiedtime FROM ug_draft_detail WHERE 1=1";
 
     public String getSearchQuery(DraftSearchCriteria criteria, List<Object> params) {
         StringBuilder query = new StringBuilder(BASE_SELECT);
@@ -22,7 +22,7 @@ public class DraftQueryBuilder {
     }
 
     public String getCountQuery(DraftSearchCriteria criteria, List<Object> params) {
-        StringBuilder query = new StringBuilder("SELECT COUNT(*) FROM eg_draft_detail WHERE 1=1");
+        StringBuilder query = new StringBuilder("SELECT COUNT(*) FROM ug_draft_detail WHERE 1=1");
         appendCriteria(query, criteria, params);
         return query.toString();
     }

@@ -71,40 +71,44 @@ func main() {
 
 	// Registry + providers.
 	reg := registry.NewRegistry()
-	defaultClient := clients.NewClient(clients.ClientConfig{
-		ServiceName: "upyog-backend",
-		BaseURL:     "",
-		Timeout:     cfg.Providers.DefaultTimeout,
-	}, log, m)
 
-	draftEndpoint := cfg.Backend.Services["draft"]
-	draftClient := clients.NewClient(clients.ClientConfig{
-		ServiceName:      "upyog-draft-service",
-		BaseURL:          draftEndpoint.BaseURL,
-		Timeout:          draftEndpoint.Timeout,
-		MaxConns:         draftEndpoint.MaxConns,
-		CircuitThreshold: draftEndpoint.CircuitThreshold,
-		CircuitTimeout:   draftEndpoint.CircuitTimeout,
-	}, log, m)
+	// newServiceClient is a helper that builds a Client from a named entry in
+	// backend.services. If the entry is missing from config it logs a warning
+	// and returns a client with an empty BaseURL (requests will fail fast).
+	newServiceClient := func(key, serviceName string) *clients.Client {
+		ep, ok := cfg.Backend.Services[key]
+		if !ok {
+			log.Warn("backend service not configured, provider calls will fail",
+				zap.String("key", key))
+		}
+		return clients.NewClient(clients.ClientConfig{
+			ServiceName:      serviceName,
+			BaseURL:          ep.BaseURL,
+			Timeout:          ep.Timeout,
+			MaxConns:         ep.MaxConns,
+			CircuitThreshold: ep.CircuitThreshold,
+			CircuitTimeout:   ep.CircuitTimeout,
+		}, log, m)
+	}
 
-	workflowEndpoint := cfg.Backend.Services["workflow"]
-	workflowClient := clients.NewClient(clients.ClientConfig{
-		ServiceName:      "egov-workflow-v2",
-		BaseURL:          workflowEndpoint.BaseURL,
-		Timeout:          workflowEndpoint.Timeout,
-		MaxConns:         workflowEndpoint.MaxConns,
-		CircuitThreshold: workflowEndpoint.CircuitThreshold,
-		CircuitTimeout:   workflowEndpoint.CircuitTimeout,
-	}, log, m)
+	// One client per backend service, matching the entries in
+	// backend.services in the application config.
+	inboxClient       := newServiceClient("inbox", "inbox")
+	billingClient     := newServiceClient("billing", "billing")
+	userEventClient   := newServiceClient("user-event", "egov-user-event")
+	tlServicesClient  := newServiceClient("tl-services", "tl-services")
+	advertisementClient := newServiceClient("advertisement", "advertisement-service")
+	draftClient       := newServiceClient("draft", "upyog-draft-service")
+	workflowClient    := newServiceClient("workflow", "egov-workflow-v2")
 
 	cacheTTL := cfg.Providers.CacheTTL
-	reg.Register(providers.NewQuickSummaryProvider(defaultClient, draftClient, c, log, m, cacheTTL))
-	reg.Register(providers.NewRecentApplicationsProvider(defaultClient, c, log, m, cacheTTL))
-	reg.Register(providers.NewNotificationsProvider(defaultClient, c, log, m, cacheTTL))
+	reg.Register(providers.NewQuickSummaryProvider(inboxClient, billingClient, draftClient, c, log, m, cacheTTL))
+	reg.Register(providers.NewRecentApplicationsProvider(inboxClient, c, log, m, cacheTTL))
+	reg.Register(providers.NewNotificationsProvider(userEventClient, c, log, m, cacheTTL))
 	reg.Register(providers.NewDraftApplicationsProvider(draftClient, c, log, m, cacheTTL))
-	reg.Register(providers.NewDueRenewalsProvider(defaultClient, c, log, m, cacheTTL))
-	reg.Register(providers.NewUpcomingEventsProvider(defaultClient, c, log, m, cacheTTL))
-	reg.Register(providers.NewAdvertisementBannersProvider(defaultClient, c, log, m, cacheTTL))
+	reg.Register(providers.NewDueRenewalsProvider(tlServicesClient, c, log, m, cacheTTL))
+	reg.Register(providers.NewUpcomingEventsProvider(userEventClient, c, log, m, cacheTTL))
+	reg.Register(providers.NewAdvertisementBannersProvider(advertisementClient, c, log, m, cacheTTL))
 	reg.Register(providers.NewNewApplicationsProvider(workflowClient, c, log, m, cacheTTL))
 
 	// Build per-provider timeout map.

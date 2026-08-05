@@ -43,12 +43,18 @@ type QuickSummaryData struct {
 // services concurrently and returns a single merged response.
 type QuickSummaryProvider struct {
 	BaseProvider
-	draftClient *clients.Client
+	billingClient *clients.Client
+	draftClient   *clients.Client
 }
 
 // NewQuickSummaryProvider creates a new QuickSummaryProvider.
+//
+// client is the inbox service client (application counts).
+// billingClient is the billing service client (pending payments count).
+// draftClient is the draft service client (draft count).
 func NewQuickSummaryProvider(
 	client *clients.Client,
+	billingClient *clients.Client,
 	draftClient *clients.Client,
 	c *cache.Cache,
 	log *logger.Logger,
@@ -56,8 +62,9 @@ func NewQuickSummaryProvider(
 	ttl time.Duration,
 ) *QuickSummaryProvider {
 	return &QuickSummaryProvider{
-		BaseProvider: NewBaseProvider(quickSummaryProviderName, client, c, log, m, ttl),
-		draftClient:  draftClient,
+		BaseProvider:  NewBaseProvider(quickSummaryProviderName, client, c, log, m, ttl),
+		billingClient: billingClient,
+		draftClient:   draftClient,
 	}
 }
 
@@ -106,12 +113,22 @@ func (p *QuickSummaryProvider) Execute(
 	})
 
 	g.Go(func() error {
-		count, fetchErr := p.fetchCount(gCtx, "/billing-service/bill/v2/_count?status=ACTIVE", headers)
+		count, fetchErr := p.billingClient.Get(gCtx, "/billing-service/bill/v2/_count?status=ACTIVE", headers)
 		if fetchErr != nil {
 			p.Log.WithContext(gCtx).Warn("failed to fetch pending payments count", zap.Error(fetchErr))
 			return nil
 		}
-		data.PendingPaymentsCount = count
+		if count.StatusCode != http.StatusOK {
+			p.Log.WithContext(gCtx).Warn("pending payments count returned non-200",
+				zap.Int("status", count.StatusCode))
+			return nil
+		}
+		var cr countResponse
+		if err := json.Unmarshal(count.Body, &cr); err != nil {
+			p.Log.WithContext(gCtx).Warn("failed to unmarshal pending payments count", zap.Error(err))
+			return nil
+		}
+		data.PendingPaymentsCount = cr.Count
 		return nil
 	})
 
@@ -173,12 +190,8 @@ func (p *QuickSummaryProvider) fetchCount(ctx context.Context, path string, head
 }
 
 type draftCountBody struct {
-	RequestInfo struct {
-		UserInfo struct {
-			UUID string `json:"uuid"`
-		} `json:"userInfo"`
-	} `json:"RequestInfo"`
-	Criteria struct {
+	RequestInfo common.RequestInfo `json:"RequestInfo"`
+	Criteria    struct {
 		TenantID string `json:"tenantId"`
 		UserUUID string `json:"userUuid"`
 		Status   string `json:"status"`
@@ -196,7 +209,7 @@ func (p *QuickSummaryProvider) fetchDraftCount(
 	}
 
 	body := draftCountBody{}
-	body.RequestInfo.UserInfo.UUID = userUUID
+	body.RequestInfo = common.NewRequestInfo(ctx, "")
 	body.Criteria.TenantID = tenantID
 	body.Criteria.UserUUID = userUUID
 	body.Criteria.Status = "ACTIVE"

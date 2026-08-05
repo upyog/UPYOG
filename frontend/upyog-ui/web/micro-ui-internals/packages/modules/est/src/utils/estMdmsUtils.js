@@ -137,10 +137,10 @@ const LOCAL_PAYMENT_HISTORY_CONFIG = {
   filters: [
     {
       order: 1,
-      key: "EST_ASSET_NUMBER",
-      name: "assetNo",
+      key: "EST_ALLOTMENT_NUMBER",
+      name: "allotmentNo",
       type: "text",
-      placeholder: "EST_ENTER_ASSET_NUMBER",
+      placeholder: "EST_ENTER_ALLOTMENT_NUMBER",
     },
     {
       order: 2,
@@ -158,10 +158,8 @@ const LOCAL_PAYMENT_HISTORY_CONFIG = {
   resultFields: [
     {
       order: 1,
-      key: "CS_PAYMENT_AMOUNT_PAID_WITHOUT_SYMBOL",
-      accessor: "amountPaid",
-      format: "currency",
-      emphasize: true,
+      key: "EST_ALLOTMENT_NUMBER",
+      accessor: "allotmentNo",
     },
     {
       order: 2,
@@ -180,16 +178,23 @@ const LOCAL_PAYMENT_HISTORY_CONFIG = {
     },
     {
       order: 5,
+      key: "CS_PAYMENT_AMOUNT_PAID_WITHOUT_SYMBOL",
+      accessor: "amountPaid",
+      format: "currency",
+      emphasize: true,
+    },
+    {
+      order: 6,
       key: "PT_RECEIPT_DATE_LABEL",
       accessor: "receiptDateLabel",
     },
     {
-      order: 6,
+      order: 7,
       key: "PT_RECEIPT_NO_LABEL",
       accessor: "receiptNumber",
     },
     {
-      order: 7,
+      order: 8,
       key: "CS_COMMON_PAYMENT_MODE",
       accessor: "paymentMode",
     },
@@ -271,6 +276,8 @@ export const resolveCitizenMyApplicationsConfig = (mdmsData) => {
 /**
  * Build payment-history config from MDMS Estate.PaymentHistoryConfig,
  * falling back to local defaults when MDMS is empty.
+ * filters / resultFields always use local definitions until remote MDMS
+ * is refreshed with allotment-number search and field order.
  */
 export const resolvePaymentHistoryConfig = (mdmsData) => {
   const entry = pickFirstMdmsEntry(mdmsData);
@@ -282,14 +289,8 @@ export const resolvePaymentHistoryConfig = (mdmsData) => {
       ...LOCAL_PAYMENT_HISTORY_CONFIG.emptyState,
       ...(entry.emptyState || {}),
     },
-    filters:
-      Array.isArray(entry.filters) && entry.filters.length > 0
-        ? entry.filters
-        : LOCAL_PAYMENT_HISTORY_CONFIG.filters,
-    resultFields:
-      Array.isArray(entry.resultFields) && entry.resultFields.length > 0
-        ? entry.resultFields
-        : LOCAL_PAYMENT_HISTORY_CONFIG.resultFields,
+    filters: LOCAL_PAYMENT_HISTORY_CONFIG.filters,
+    resultFields: LOCAL_PAYMENT_HISTORY_CONFIG.resultFields,
     actionButton: {
       ...LOCAL_PAYMENT_HISTORY_CONFIG.actionButton,
       ...(entry.actionButton || {}),

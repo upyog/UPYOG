@@ -9,6 +9,7 @@ import (
 	"net"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"go.opentelemetry.io/otel/attribute"
@@ -91,6 +92,10 @@ func NewClient(cfg ClientConfig, log *logger.Logger, m *metrics.Metrics) *Client
 	if cfg.CircuitTimeout == 0 {
 		cfg.CircuitTimeout = 30 * time.Second
 	}
+
+	// Normalise BaseURL: strip trailing slash so that path joining
+	// (BaseURL + "/some/path") never produces a double slash.
+	cfg.BaseURL = strings.TrimRight(cfg.BaseURL, "/")
 
 	transport := &http.Transport{
 		DialContext: (&net.Dialer{

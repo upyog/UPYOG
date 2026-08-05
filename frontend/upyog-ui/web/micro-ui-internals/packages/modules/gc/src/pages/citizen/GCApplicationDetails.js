@@ -1,10 +1,10 @@
 import { Card, CardSubHeader, CardSectionHeader, Header, Loader, Row, StatusTable, SubmitBar, ActionBar, Modal, Toast, TextArea, CardText, CloseSvg, MultiLink } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import GCWFApplicationTimeline from "../../pageComponents/GCWFApplicationTimeline";
-import { pdfDownloadLink, downloadGCReceipt, downloadGCAcknowledgement } from "../../utils";
+import { downloadGCReceipt, downloadGCAcknowledgement, multiUnits } from "../../utils";
 
 // GC Application Details Component
 // This component displays detailed information about a specific GC application,
@@ -27,7 +27,7 @@ const GCApplicationDetails = () => {
   const { t } = useTranslation();
   const navigate = Digit.Hooks.useCustomNavigate();
   const params = useParams();
-  
+
   // Reconstruct application number from URL params
   let reconstructedAppNo = params.applicationNo;
   if (params["*"]) {
@@ -37,11 +37,6 @@ const GCApplicationDetails = () => {
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
 
   const [showOptions, setShowOptions] = useState(false);
-  const [userType, setUserType] = useState("citizen");
-  const [billData, setBillData] = useState(null);
-  const [paymentStatus, setPaymentStatus] = useState("CHECKING");
-  const isMountedRef = useRef(true);
-
   const [selectedAction, setSelectedAction] = useState(null);
   const [comments, setComments] = useState("");
   const [showToast, setShowToast] = useState(null);
@@ -52,18 +47,6 @@ const GCApplicationDetails = () => {
       return () => clearTimeout(timer);
     }
   }, [showToast]);
-
-  useEffect(() => {
-    const currentPath = navigate.location?.pathname || window.location.pathname;
-    if (currentPath.includes("/employee/")) {
-      setUserType("employee");
-    } else {
-      setUserType("citizen");
-    }
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, [navigate.location?.pathname]);
 
   const searchCriteria = {
     searchCriteriaGarbageAccount: {
@@ -168,36 +151,6 @@ const GCApplicationDetails = () => {
 
   const dueDate = appData?.dueDate || null;
 
-  useEffect(() => {
-    const fetchBillData = async () => {
-      if (!isMountedRef.current) return;
-      try {
-        const result = await Digit.PaymentService.fetchBill(tenantId, {
-          businessService: "gc-services",
-          consumerCode: applicationNo,
-        });
-        if (isMountedRef.current) {
-          setBillData(result);
-          if (result?.Bill?.[0]?.totalAmount > 0) {
-            setPaymentStatus("PENDING");
-          } else {
-            setPaymentStatus("PAID");
-          }
-        }
-      } catch (error) {
-        if (isMountedRef.current) {
-          setPaymentStatus("UNKNOWN");
-        }
-      }
-    };
-
-    if (application && appStatus === "PENDINGPAYMENT") {
-      fetchBillData();
-    } else if (application) {
-      setPaymentStatus(appStatus === "APPROVED" ? "PAID" : "NA");
-    }
-  }, [application, appStatus, tenantId]);
-
   const downloadOptions = [];
   downloadOptions.push({
     label: t("GC_DOWNLOAD_ACKNOWLEDGEMENT"),
@@ -213,9 +166,7 @@ const GCApplicationDetails = () => {
   const docs = appData?.documents || [];
 
   const handleMakePayment = () => {
-    navigate({
-      pathname: `/upyog-ui/citizen/payment/collect/gc-services/${encodeURIComponent(appNo)}/${tenantId}?tenantId=${tenantId}`,
-    });
+    navigate(`/upyog-ui/citizen/payment/my-bills/garbage-service/${appNo}`);
   };
 
   if (isLoading || isWorkflowLoading) {
@@ -303,6 +254,7 @@ const GCApplicationDetails = () => {
   const category = specs?.category || garbageSpec?.category;
   const subCategory = specs?.subCategory || garbageSpec?.subCategory;
   const subCategoryType = specs?.subCategoryType || garbageSpec?.subCategoryType;
+  const no_of_units = specs?.no_of_units || garbageSpec?.no_of_units;
   const specialCategory = specs?.specialCategory || garbageSpec?.specialCategory;
   const isInheritance = specs?.isInheritance || garbageSpec?.isInheritance;
   const specName = garbageSpec?.name || appData?.name;
@@ -375,6 +327,9 @@ const GCApplicationDetails = () => {
             <Row className="border-none" label={t("GC_CATEGORY")} text={category ? t(category) : t("CS_NA")} />
             <Row className="border-none" label={t("GC_SUB_CATEGORY")} text={subCategory ? t(subCategory) : t("CS_NA")} />
             <Row className="border-none" label={t("GC_SUB_CATEGORY_TYPE")} text={subCategoryType ? t(subCategoryType) : t("CS_NA")} />
+            {multiUnits.includes(typeOfCollection) && (
+              <Row className="border-none" label={t("GC_NO_OF_UNITS")} text={no_of_units || t("CS_NA")} />
+            )}
             <Row className="border-none" label={t("GC_SPECIAL_CATEGORY")} text={specialCategory ? t(specialCategory) : t("CS_NA")} />
             <Row className="border-none" label={t("GC_IS_INHERITANCE")} text={isInheritance ? t("YES") : t("NO")} />
           </StatusTable>
@@ -400,32 +355,10 @@ const GCApplicationDetails = () => {
 
           <GCWFApplicationTimeline application={appData} />
 
-          {/* Payment Details — only shown when pending */}
-          {appStatus === "PENDINGPAYMENT" && (
-            <>
-              <CardSubHeader style={{ fontSize: "24px" }}>{t("GC_PAYMENT_DETAILS")}</CardSubHeader>
-              <StatusTable>
-                <Row
-                  className="border-none"
-                  label={t("GC_TOTAL_AMOUNT")}
-                  text={
-                    paymentStatus === "PENDING" ? (
-                      <span>
-                        ₹ {billData?.Bill?.[0]?.totalAmount || t("CS_NA")}{" "}
-                        <strong style={{ color: "#a82227" }}>({t("PENDING_PAYMENT")})</strong>
-                      </span>
-                    ) : (
-                      t("CS_NA")
-                    )
-                  }
-                />
-              </StatusTable>
-            </>
-          )}
+
         </Card>
 
-        {/* Edit Application action bar — citizen only, when status is EDIT_APPLICATION */}
-        {appStatus === "EDIT_APPLICATION" && userType === "citizen" && (
+        {appStatus === "EDIT_APPLICATION" && (
           <ActionBar>
             <SubmitBar
               label={t("GC_EDIT_APPLICATION")}
@@ -436,19 +369,9 @@ const GCApplicationDetails = () => {
           </ActionBar>
         )}
 
-        {/* Make Payment action bar — citizen only */}
-        {appStatus === "PENDINGPAYMENT" && userType === "citizen" && (
+        {appStatus === "PENDING_FOR_PAYMENT" && (
           <ActionBar>
             <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment} />
-          </ActionBar>
-        )}
-
-        {/* Workflow Action Bar — employee only */}
-        {userType === "employee" && workflowDetails?.actionState?.nextActions?.length > 0 && (
-          <ActionBar>
-            {workflowDetails.actionState.nextActions.map((action, index) => (
-              <SubmitBar key={index} label={t(`WF_EMPLOYEE_GC_${action.action}`)} onSubmit={() => setSelectedAction(action)} />
-            ))}
           </ActionBar>
         )}
 

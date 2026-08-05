@@ -80,12 +80,18 @@ func (p *UpcomingEventsProvider) Execute(
 		common.HeaderTenantID: aggReq.TenantID,
 	}
 
-	resp, err := p.Client.Get(ctx, path, headers)
+	body := struct {
+		RequestInfo common.RequestInfo `json:"RequestInfo"`
+	}{
+		RequestInfo: common.NewRequestInfo(ctx, aggReq.RequestID),
+	}
+
+	resp, err := p.Client.Post(ctx, path, body, headers)
 	if err != nil {
-		return nil, fmt.Errorf("GET %s: %w", path, err)
+		return nil, fmt.Errorf("POST %s: %w", path, err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("GET %s returned status %d", path, resp.StatusCode)
+		return nil, fmt.Errorf("POST %s returned status %d", path, resp.StatusCode)
 	}
 
 	var result eventSearchResponse

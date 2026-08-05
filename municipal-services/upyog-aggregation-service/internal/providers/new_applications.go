@@ -126,13 +126,7 @@ func (p *NewApplicationsProvider) Execute(
 
 	// egov-workflow-v2 expects a DIGIT RequestInfo envelope in the POST body.
 	body := workflowSearchBody{
-		RequestInfo: workflowRequestInfo{
-			APIID:     "upyog-aggregation-service",
-			Ver:       "1.0",
-			Ts:        time.Now().UnixMilli(),
-			MsgID:     aggReq.RequestID,
-			AuthToken: common.AuthToken(ctx),
-		},
+		RequestInfo: common.NewRequestInfo(ctx, aggReq.RequestID),
 	}
 
 	resp, err := p.Client.Post(ctx, path, body, headers)
@@ -216,19 +210,9 @@ func (p *NewApplicationsProvider) buildSearchQuery(
 	return params.Encode()
 }
 
-// workflowRequestInfo mirrors the DIGIT RequestInfo envelope required by
-// egov-workflow-v2 POST endpoints.
-type workflowRequestInfo struct {
-	APIID     string `json:"apiId"`
-	Ver       string `json:"ver"`
-	Ts        int64  `json:"ts"`
-	MsgID     string `json:"msgId"`
-	AuthToken string `json:"authToken,omitempty"`
-}
-
 // workflowSearchBody is the JSON body sent to the process search endpoint.
 type workflowSearchBody struct {
-	RequestInfo workflowRequestInfo `json:"RequestInfo"`
+	RequestInfo common.RequestInfo `json:"RequestInfo"`
 }
 
 // processInstanceSearchResponse mirrors the shape of the egov-workflow-v2

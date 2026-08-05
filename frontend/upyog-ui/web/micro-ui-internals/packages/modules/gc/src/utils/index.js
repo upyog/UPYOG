@@ -271,20 +271,20 @@ export const GCAPIToFormData = (application, params) => {
   // Basic Details
   updatedApplication.name = params?.gcspecifications?.name;
   updatedApplication.mobileNumber = params?.gcspecifications?.phoneNumber;
-  updatedApplication.gender = params?.gcspecifications?.gender?.value || "";
+  updatedApplication.gender = params?.gcspecifications?.gender?.code || "";
   updatedApplication.emailId = params?.gcspecifications?.email;
 
   // Address
   updatedApplication.addresses = [
     {
       ...application?.addresses?.[0],
-      city: params?.gcpropertylocdetails?.city?.value,
+      city: params?.gcpropertylocdetails?.city?.code,
       pincode: params?.gcpropertylocdetails?.pincode,
       address1: params?.gcpropertylocdetails?.addressline1,
       address2: params?.gcpropertylocdetails?.addressline2,
       additionalDetail: {
         ...application?.addresses?.[0]?.additionalDetail,
-        locality: params?.gcpropertylocdetails?.locality?.value,
+        locality: params?.gcpropertylocdetails?.locality?.code,
         houseNo: params?.gcpropertylocdetails?.houseNo,
         houseName: params?.gcpropertylocdetails?.houseName,
         streetName: params?.gcpropertylocdetails?.streetName,
@@ -297,16 +297,14 @@ export const GCAPIToFormData = (application, params) => {
   updatedApplication.grbgCollectionUnits = [
     {
       ...application?.grbgCollectionUnits?.[0],
-      ownerType: params?.gcspecifications?.propertyOwnerType?.value,
-      unitType: params?.gcspecifications?.typeOfCollection?.value,
-      category: params?.gcspecifications?.category?.value,
-      subCategory: params?.gcspecifications?.subCategory?.value,
-      subCategoryType: params?.gcspecifications?.subCategoryType?.value,
-      specialCategory:
-        params?.gcspecialcategory?.specialCategory?.value || "",
+      ownerType: params?.gcspecifications?.propertyOwnerType?.code,
+      unitType: params?.gcspecifications?.typeOfCollection?.code,
+      category: params?.gcspecifications?.category?.code,
+      subCategory: params?.gcspecifications?.subCategory?.code,
+      subCategoryType: params?.gcspecifications?.subCategoryType?.code,
+      specialCategory: params?.gcspecialcategory?.specialCategory?.code || "",
       oldGarbageId: params?.gcspecifications?.oldGarbageId,
-      isVariableCalculation:
-        params?.gcspecifications?.isVariableCalculation,
+      isVariableCalculation: params?.gcspecifications?.isVariableCalculation,
       isbulkgeneration: params?.gcspecifications?.isbulkgeneration,
       no_of_units: Number(params?.gcspecifications?.no_of_units || 0),
       isInheritance: params?.gcspecifications?.isInheritance,
@@ -329,3 +327,5 @@ export const GCAPIToFormData = (application, params) => {
 
   return updatedApplication;
 };
+
+export const multiUnits = ["HOUSEHOLD_MULTI_COLLECTION", "COMMERCIAL_MULTI_COLLECTION", "MIX_PROPERTY"];

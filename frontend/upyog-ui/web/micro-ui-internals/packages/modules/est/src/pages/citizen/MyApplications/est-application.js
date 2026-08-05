@@ -133,7 +133,7 @@ const EstateApplication = ({ application, allotment = null, tenantId }) => {
         />
         <Row
           className="border-none"
-          label={t("EST_ASSET_STATUS")}
+          label={t("PT_COMMON_TABLE_COL_STATUS_LABEL")}
           text={translateOrCode(t, "EST_PAYMENT_STATUS", paymentStatusCode)}
         />
         <Row

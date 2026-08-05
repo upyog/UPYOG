@@ -65,6 +65,7 @@ func (p *DraftApplicationsProvider) Execute(
 	aggReq dto.AggregateRequest,
 ) (*dto.ProviderResponse, error) {
 	body := p.buildSearchBody(request, aggReq.TenantID, common.UserID(ctx))
+	body.RequestInfo = common.NewRequestInfo(ctx, aggReq.RequestID)
 
 	headers := map[string]string{
 		common.HeaderTenantID: aggReq.TenantID,
@@ -104,11 +105,7 @@ type draftSearchResponse struct {
 }
 
 type draftSearchBody struct {
-	RequestInfo struct {
-		UserInfo struct {
-			UUID string `json:"uuid"`
-		} `json:"userInfo"`
-	} `json:"RequestInfo"`
+	RequestInfo common.RequestInfo `json:"RequestInfo"`
 	Criteria draftSearchCriteria `json:"DraftSearchCriteria"`
 }
 
@@ -146,6 +143,5 @@ func (p *DraftApplicationsProvider) buildSearchBody(
 	}
 
 	body := draftSearchBody{Criteria: criteria}
-	body.RequestInfo.UserInfo.UUID = userUUID
 	return body
 }

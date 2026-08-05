@@ -10,8 +10,10 @@ import org.egov.filestore.persistence.repository.ArtifactRepository;
 import org.egov.filestore.persistence.repository.FileStoreJpaRepository;
 import org.egov.filestore.repository.impl.minio.MinioConfig;
 import org.egov.filestore.validator.StorageValidator;
+import org.egov.filestore.web.contract.ExternalMediaUploadResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -314,6 +316,87 @@ class StorageServiceTest {
         assertSame(fileInfoList, actualRetrieveByTagResult);
         assertTrue(actualRetrieveByTagResult.isEmpty());
         verify(artifactRepository).findByTag((String) any(), (String) any());
+    }
+
+    // -------------------------------------------------------------------------
+    // Tests for saveMediaFile
+    // -------------------------------------------------------------------------
+
+    @Test
+    void testSaveMediaFile_ValidVideo_ReturnsResponse() {
+        ArtifactRepository artifactRepository = mock(ArtifactRepository.class);
+        StorageValidator storageValidator = mock(StorageValidator.class);
+        MockMultipartFile file = new MockMultipartFile("file", "video.mp4", "video/mp4", new byte[] {1, 2, 3});
+
+        when(artifactRepository.save(anyList(), any(RequestInfo.class)))
+                .thenReturn(List.of("generated-id"));
+
+        StorageService storageService = createStorageService(artifactRepository, storageValidator);
+
+        ExternalMediaUploadResponse response = storageService.saveMediaFile(
+                file, "PGR", "complaint-video", "pb.amritsar", new RequestInfo());
+
+        assertNotNull(response);
+        assertEquals("generated-id", response.getFileStoreId());
+        assertEquals("pb.amritsar", response.getTenantId());
+        assertEquals("video/mp4", response.getContentType());
+        assertEquals("3", response.getFileSize());
+        assertEquals("PGR", response.getModule());
+        assertEquals("complaint-video", response.getTag());
+
+        verify(storageValidator).validateMediaFile(any());
+        verify(artifactRepository).save(anyList(), any(RequestInfo.class));
+    }
+
+    @Test
+    void testSaveMediaFile_ValidationFails_ThrowsCustomException() {
+        ArtifactRepository artifactRepository = mock(ArtifactRepository.class);
+        StorageValidator storageValidator = mock(StorageValidator.class);
+        MockMultipartFile file = new MockMultipartFile("file", "video.mp4", "video/mp4", new byte[] {1});
+
+        doThrow(new org.egov.tracer.model.CustomException("EG_FILESTORE_INVALID_MEDIA_TYPE", "Invalid"))
+                .when(storageValidator).validateMediaFile(any());
+
+        StorageService storageService = createStorageService(artifactRepository, storageValidator);
+
+        assertThrows(org.egov.tracer.model.CustomException.class,
+                () -> storageService.saveMediaFile(file, "PGR", null, "pb.amritsar", new RequestInfo()));
+
+        verify(artifactRepository, never()).save(anyList(), any());
+    }
+
+    @Test
+    void testSaveMediaFile_AudioNoTag_ReturnsResponseWithNullTag() {
+        ArtifactRepository artifactRepository = mock(ArtifactRepository.class);
+        StorageValidator storageValidator = mock(StorageValidator.class);
+        MockMultipartFile file = new MockMultipartFile("file", "audio.mp3", "audio/mpeg", new byte[] {9, 8, 7});
+
+        when(artifactRepository.save(anyList(), any(RequestInfo.class)))
+                .thenReturn(List.of("audio-id"));
+
+        StorageService storageService = createStorageService(artifactRepository, storageValidator);
+
+        ExternalMediaUploadResponse response = storageService.saveMediaFile(
+                file, "HRMS", null, "pb.ludhiana", new RequestInfo());
+
+        assertEquals("audio-id", response.getFileStoreId());
+        assertEquals("audio/mpeg", response.getContentType());
+        assertNull(response.getTag());
+    }
+
+    private StorageService createStorageService(ArtifactRepository artifactRepository,
+            StorageValidator storageValidator) {
+        IdGeneratorService idGeneratorService = new IdGeneratorService();
+        FileStoreConfig fileStoreConfig = new FileStoreConfig();
+        FileStoreConfig configs = new FileStoreConfig();
+        MinioConfig minioConfig = new MinioConfig();
+        org.springframework.test.util.ReflectionTestUtils.setField(minioConfig, "bucketName", "test-bucket");
+        StorageService storageService = new StorageService(artifactRepository, idGeneratorService, fileStoreConfig,
+                storageValidator, configs, minioConfig);
+        org.springframework.test.util.ReflectionTestUtils.setField(storageService, "filenameLength", 10);
+        org.springframework.test.util.ReflectionTestUtils.setField(storageService, "useLetters", true);
+        org.springframework.test.util.ReflectionTestUtils.setField(storageService, "useNumbers", false);
+        return storageService;
     }
 }
 
