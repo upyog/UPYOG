@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import GCWFApplicationTimeline from "../../pageComponents/GCWFApplicationTimeline";
-import { downloadGCReceipt, downloadGCAcknowledgement } from "../../utils";
+import { downloadGCReceipt, downloadGCAcknowledgement, multiUnits } from "../../utils";
 
 // GC Application Details Component
 // This component displays detailed information about a specific GC application,
@@ -254,6 +254,7 @@ const GCApplicationDetails = () => {
   const category = specs?.category || garbageSpec?.category;
   const subCategory = specs?.subCategory || garbageSpec?.subCategory;
   const subCategoryType = specs?.subCategoryType || garbageSpec?.subCategoryType;
+  const no_of_units = specs?.no_of_units || garbageSpec?.no_of_units;
   const specialCategory = specs?.specialCategory || garbageSpec?.specialCategory;
   const isInheritance = specs?.isInheritance || garbageSpec?.isInheritance;
   const specName = garbageSpec?.name || appData?.name;
@@ -326,6 +327,9 @@ const GCApplicationDetails = () => {
             <Row className="border-none" label={t("GC_CATEGORY")} text={category ? t(category) : t("CS_NA")} />
             <Row className="border-none" label={t("GC_SUB_CATEGORY")} text={subCategory ? t(subCategory) : t("CS_NA")} />
             <Row className="border-none" label={t("GC_SUB_CATEGORY_TYPE")} text={subCategoryType ? t(subCategoryType) : t("CS_NA")} />
+            {multiUnits.includes(typeOfCollection) && (
+              <Row className="border-none" label={t("GC_NO_OF_UNITS")} text={no_of_units || t("CS_NA")} />
+            )}
             <Row className="border-none" label={t("GC_SPECIAL_CATEGORY")} text={specialCategory ? t(specialCategory) : t("CS_NA")} />
             <Row className="border-none" label={t("GC_IS_INHERITANCE")} text={isInheritance ? t("YES") : t("NO")} />
           </StatusTable>
