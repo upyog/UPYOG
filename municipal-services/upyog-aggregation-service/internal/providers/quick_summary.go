@@ -190,17 +190,8 @@ func (p *QuickSummaryProvider) fetchCount(ctx context.Context, path string, head
 }
 
 type draftCountBody struct {
-	RequestInfo struct {
-		APIID     string `json:"apiId"`
-		Ver       string `json:"ver"`
-		Ts        int64  `json:"ts"`
-		MsgID     string `json:"msgId"`
-		AuthToken string `json:"authToken"`
-		UserInfo struct {
-			UUID string `json:"uuid"`
-		} `json:"userInfo"`
-	} `json:"RequestInfo"`
-	Criteria struct {
+	RequestInfo common.RequestInfo `json:"RequestInfo"`
+	Criteria    struct {
 		TenantID string `json:"tenantId"`
 		UserUUID string `json:"userUuid"`
 		Status   string `json:"status"`
@@ -218,12 +209,7 @@ func (p *QuickSummaryProvider) fetchDraftCount(
 	}
 
 	body := draftCountBody{}
-	body.RequestInfo.APIID = "upyog-aggregation-service"
-	body.RequestInfo.Ver = "1.0"
-	body.RequestInfo.Ts = time.Now().UnixMilli()
-	body.RequestInfo.MsgID = logger.RequestID(ctx)
-	body.RequestInfo.AuthToken = common.AuthToken(ctx)
-	body.RequestInfo.UserInfo.UUID = userUUID
+	body.RequestInfo = common.NewRequestInfo(ctx, "")
 	body.Criteria.TenantID = tenantID
 	body.Criteria.UserUUID = userUUID
 	body.Criteria.Status = "ACTIVE"

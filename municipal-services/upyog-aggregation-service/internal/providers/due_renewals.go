@@ -82,19 +82,10 @@ func (p *DueRenewalsProvider) Execute(
 	}
 
 	body := struct {
-		RequestInfo struct {
-			APIID     string `json:"apiId"`
-			Ver       string `json:"ver"`
-			Ts        int64  `json:"ts"`
-			MsgID     string `json:"msgId"`
-			AuthToken string `json:"authToken"`
-		} `json:"RequestInfo"`
-	}{}
-	body.RequestInfo.APIID = "upyog-aggregation-service"
-	body.RequestInfo.Ver = "1.0"
-	body.RequestInfo.Ts = time.Now().UnixMilli()
-	body.RequestInfo.MsgID = aggReq.RequestID
-	body.RequestInfo.AuthToken = common.AuthToken(ctx)
+		RequestInfo common.RequestInfo `json:"RequestInfo"`
+	}{
+		RequestInfo: common.NewRequestInfo(ctx, aggReq.RequestID),
+	}
 
 	resp, err := p.Client.Post(ctx, path, body, headers)
 	if err != nil {

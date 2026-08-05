@@ -65,11 +65,7 @@ func (p *DraftApplicationsProvider) Execute(
 	aggReq dto.AggregateRequest,
 ) (*dto.ProviderResponse, error) {
 	body := p.buildSearchBody(request, aggReq.TenantID, common.UserID(ctx))
-	body.RequestInfo.APIID = "upyog-aggregation-service"
-	body.RequestInfo.Ver = "1.0"
-	body.RequestInfo.Ts = time.Now().UnixMilli()
-	body.RequestInfo.MsgID = aggReq.RequestID
-	body.RequestInfo.AuthToken = common.AuthToken(ctx)
+	body.RequestInfo = common.NewRequestInfo(ctx, aggReq.RequestID)
 
 	headers := map[string]string{
 		common.HeaderTenantID: aggReq.TenantID,
@@ -109,16 +105,7 @@ type draftSearchResponse struct {
 }
 
 type draftSearchBody struct {
-	RequestInfo struct {
-		APIID     string `json:"apiId"`
-		Ver       string `json:"ver"`
-		Ts        int64  `json:"ts"`
-		MsgID     string `json:"msgId"`
-		AuthToken string `json:"authToken"`
-		UserInfo struct {
-			UUID string `json:"uuid"`
-		} `json:"userInfo"`
-	} `json:"RequestInfo"`
+	RequestInfo common.RequestInfo `json:"RequestInfo"`
 	Criteria draftSearchCriteria `json:"DraftSearchCriteria"`
 }
 
@@ -156,6 +143,5 @@ func (p *DraftApplicationsProvider) buildSearchBody(
 	}
 
 	body := draftSearchBody{Criteria: criteria}
-	body.RequestInfo.UserInfo.UUID = userUUID
 	return body
 }
