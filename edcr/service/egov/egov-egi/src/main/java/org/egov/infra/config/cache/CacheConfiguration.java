@@ -3,7 +3,7 @@ package org.egov.infra.config.cache;
 import org.egov.infra.config.cache.resolver.MultiTenantCacheResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CachingConfigurerSupport;
+import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.CacheResolver;
 import org.springframework.cache.interceptor.KeyGenerator;
@@ -24,7 +24,7 @@ import java.util.List;
 @Configuration
 @EnableCaching(proxyTargetClass = true)
 @DependsOn("applicationConfiguration")
-public class CacheConfiguration extends CachingConfigurerSupport {
+public class CacheConfiguration implements CachingConfigurer {
 
     @Autowired
     private RedisTemplate redisTemplate;
