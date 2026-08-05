@@ -271,7 +271,7 @@ export const GCAPIToFormData = (application, params) => {
   // Basic Details
   updatedApplication.name = params?.gcspecifications?.name;
   updatedApplication.mobileNumber = params?.gcspecifications?.phoneNumber;
-  updatedApplication.gender = params?.gcspecifications?.gender?.value || "";
+  updatedApplication.gender = params?.gcspecifications?.gender?.code || "";
   updatedApplication.emailId = params?.gcspecifications?.email;
 
   // Address
@@ -327,3 +327,5 @@ export const GCAPIToFormData = (application, params) => {
 
   return updatedApplication;
 };
+
+export const multiUnits = ["HOUSEHOLD_MULTI_COLLECTION", "COMMERCIAL_MULTI_COLLECTION", "MIX_PROPERTY"];

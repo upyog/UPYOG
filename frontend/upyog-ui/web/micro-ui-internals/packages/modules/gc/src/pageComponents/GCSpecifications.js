@@ -8,6 +8,7 @@ import {
     CloseSvg,
 } from "@nudmcdgnpm/digit-ui-react-components";
 import i18next from "i18next";
+import {multiUnits} from "../utils";
 
 
 /**
@@ -27,6 +28,7 @@ import i18next from "i18next";
  * - `renewApplication`: Existing application for pre-filling during edit
  */
 const GCSpecifications = ({ t, config, onSelect, formData, renewApplication }) => {
+    console.log("renewApplication", renewApplication);
 
     const convertToObject = (params) => ({ i18nKey: params, code: params, value: params });
 
@@ -97,7 +99,7 @@ const GCSpecifications = ({ t, config, onSelect, formData, renewApplication }) =
     const [subCategoryType, setSubCategoryType] = useState(specsData.subCategoryType ||convertToObject(renewApplication?.grbgCollectionUnits?.[0]?.subCategoryType) || "");
     const [isVariableCalculation, setIsvariablecalculation] = useState(specsData.isVariableCalculation || renewApplication?.isVariableCalculation || false);
     const [isbulkgeneration, setIsbulkgeneration] = useState(specsData.isbulkgeneration || renewApplication?.isbulkgeneration || false);
-    const [no_of_units, setNoOfUnits] = useState(specsData.no_of_units || renewApplication?.no_of_units || "");
+    const [no_of_units, setNoOfUnits] = useState(specsData.no_of_units || renewApplication?.grbgCollectionUnits?.[0]?.no_of_units || "");
     const [isAdditional, setIsAdditional] = useState(specsData.isAdditional || renewApplication?.isAdditional || false);
     const [isInheritance, setIsInheritance] = useState(specsData.isInheritance || renewApplication?.grbgCollectionUnits?.[0]?.isInheritance || false);
 
@@ -189,7 +191,8 @@ const GCSpecifications = ({ t, config, onSelect, formData, renewApplication }) =
                     !gender ||
                     !category ||
                     !subCategory ||
-                    !subCategoryType
+                    !subCategoryType ||
+                    (multiUnits.includes(typeOfCollection?.code) && !no_of_units)
                 }
             >
                 <div>
@@ -211,7 +214,10 @@ const GCSpecifications = ({ t, config, onSelect, formData, renewApplication }) =
                         option={CollectionTypes}
                         optionKey="i18nKey"
                         selected={typeOfCollection}
-                        select={setTypeOfCollection}
+                        select={(val) => {
+                                setTypeOfCollection(val);
+                                if (!multiUnits.includes(val?.code)) setNoOfUnits("");
+                            }}
                         placeholder={t("GC_SELECT_TYPE")}
                         style={inputStyles}
                         t={t}
@@ -228,6 +234,19 @@ const GCSpecifications = ({ t, config, onSelect, formData, renewApplication }) =
                         style={inputStyles}
                         t={t}
                     />
+
+                    {multiUnits.includes(typeOfCollection?.code) && (
+                        <>
+                            <CardLabel>
+                                {t("GC_NO_OF_UNITS")} <span className="astericColor">*</span>
+                            </CardLabel>
+                            <TextInput
+                                value={no_of_units}
+                                style={inputStyles}
+                                onChange={(e) => setNoOfUnits(e.target.value.replace(/\D/g, ""))}
+                            />
+                        </>
+                    )}
 
                     <CardLabel>
                         {t("GC_NAME")} <span className="astericColor">*</span>
