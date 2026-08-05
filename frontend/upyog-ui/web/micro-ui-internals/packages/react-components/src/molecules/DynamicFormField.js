@@ -135,6 +135,7 @@ const FieldError = ({ show, message }) =>
  * Decorative magnifying-glass SVG for the lookup / search-card button.
  * @returns {JSX.Element}
  */
+// Todo: icon will move in assets folder
 const SearchIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
@@ -160,6 +161,12 @@ const applyTextInputChange = (e, { name, sanitizeRegex, validation, onChange }) 
   let val = e.target.value;
   if (sanitizeRegex) val = val.replace(sanitizeRegex, "");
   if (validation.maxLength) val = val.slice(0, validation.maxLength);
+  if (validation.maxAmount != null && val !== "") {
+    const num = Number(String(val).replace(/,/g, "").trim());
+    if (Number.isFinite(num) && num > Number(validation.maxAmount)) {
+      val = String(validation.maxAmount);
+    }
+  }
   onChange(name, val);
 };
 
@@ -387,8 +394,7 @@ const DynamicFormField = ({
         : value?.filestoreId || value?.fileStoreId || value?.documentuuid;
     const hasUploaded = Boolean(fileRef);
     const uploadedLabel =
-      (typeof value === "object" &&
-        (value?.fileName || value?.name || value?.filename)) ||
+      (typeof value === "object" && (value?.fileName || value?.name)) ||
       t("CS_ACTION_FILEUPLOADED");
 
     return (
