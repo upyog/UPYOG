@@ -190,12 +190,8 @@ func (p *QuickSummaryProvider) fetchCount(ctx context.Context, path string, head
 }
 
 type draftCountBody struct {
-	RequestInfo struct {
-		UserInfo struct {
-			UUID string `json:"uuid"`
-		} `json:"userInfo"`
-	} `json:"RequestInfo"`
-	Criteria struct {
+	RequestInfo common.RequestInfo `json:"RequestInfo"`
+	Criteria    struct {
 		TenantID string `json:"tenantId"`
 		UserUUID string `json:"userUuid"`
 		Status   string `json:"status"`
@@ -213,7 +209,7 @@ func (p *QuickSummaryProvider) fetchDraftCount(
 	}
 
 	body := draftCountBody{}
-	body.RequestInfo.UserInfo.UUID = userUUID
+	body.RequestInfo = common.NewRequestInfo(ctx, "")
 	body.Criteria.TenantID = tenantID
 	body.Criteria.UserUUID = userUUID
 	body.Criteria.Status = "ACTIVE"
