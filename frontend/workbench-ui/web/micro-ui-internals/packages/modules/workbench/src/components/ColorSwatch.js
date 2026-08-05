@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { CopyIcon, CheckIcon } from "@upyog/workbench-ui-react-components";
 
 /**
  * Helper utility to validate if a string is a standard 3-digit or 6-digit Hex color code.
@@ -65,12 +66,12 @@ const ColorSwatch = ({ label, value, onChange }) => {
       <span className="configuration__color-swatch__label">
         {label.replace(/([A-Z])/g, " $1").trim()} Color
       </span>
-      
+
       <div className="configuration__color-swatch__box">
         {/* Color Preview Block: Clicking this opens the hidden native color picker */}
         <div
           className="configuration__color-swatch__preview"
-          style={{ background: value }}
+          style={{ "--swatch-color": value }}
           onClick={() => colorInputRef.current.click()}
         >
           <input
@@ -81,7 +82,7 @@ const ColorSwatch = ({ label, value, onChange }) => {
             className="configuration__color-swatch__input"
           />
         </div>
-        
+
         {/* Manual Hex Input Field */}
         <input
           className="configuration__color-swatch__hex-input"
@@ -91,10 +92,10 @@ const ColorSwatch = ({ label, value, onChange }) => {
           maxLength={7}
           spellCheck={false}
         />
-        
+
         {/* Clipboard Copy Trigger Icon */}
         <span className={`configuration__color-swatch__copy-icon${copied ? " configuration__color-swatch__copy-icon--copied" : ""}`} onClick={handleCopy}>
-          {copied ? "✓" : "⧉"}
+          {copied ? <CheckIcon /> : <CopyIcon />}
         </span>
       </div>
     </div>

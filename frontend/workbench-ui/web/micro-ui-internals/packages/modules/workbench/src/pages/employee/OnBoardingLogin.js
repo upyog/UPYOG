@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { AddIcon } from "@upyog/workbench-ui-react-components";
 import {
   Card,
   CardTitle,
@@ -107,113 +108,205 @@ function OnBoardingLogin() {
           description={t("Configure input fields, labels, placeholders, and validation rules for language, city, and mobile inputs")}
         />
 
-        {/* Language Selector Sub-Section */}
-        {fields[0] && (
-          <FieldSubsection title="Language Selector">
-            <FieldsRow>
-              <TextField
-                label={t("LABEL")}
-                value={fields[0].label || ""}
-                onChange={(v) => set("pages.onboarding.steps.login.fields.0.label", v)}
-              />
-              <TextField
-                label={t("DEFAULT VALUE")}
-                value={fields[0].defaultValue || ""}
-                onChange={(v) => set("pages.onboarding.steps.login.fields.0.defaultValue", v)}
-              />
-              <TextField
-                label={t("REQUIRED ERROR MESSAGE")}
-                value={fields[0].validation?.messages?.required || ""}
-                onChange={(v) => set("pages.onboarding.steps.login.fields.0.validation.messages.required", v)}
-              />
-            </FieldsRow>
-          </FieldSubsection>
-        )}
+        {fields.map((field, idx) => {
+          const basePath = `pages.onboarding.steps.login.fields.${idx}`;
+          const getSubsectionTitle = (f) => {
+            if (f.name === "language") return "Language Selector";
+            if (f.name === "city") return "City Selector";
+            if (f.name === "mobileNumber") return "Mobile Number Field";
+            return `${f.label || f.name || `Field ${idx + 1}`}`;
+          };
 
-        {/* City Selector Sub-Section */}
-        {fields[1] && (
-          <FieldSubsection title="City Selector">
-            <div className="full-width-col">
-              <FieldsRow>
-                <TextField
-                  label={t("LABEL")}
-                  value={fields[1].label || ""}
-                  onChange={(v) => set("pages.onboarding.steps.login.fields.1.label", v)}
-                />
-                <TextField
-                  label={t("PLACEHOLDER")}
-                  value={fields[1].placeholder || ""}
-                  onChange={(v) => set("pages.onboarding.steps.login.fields.1.placeholder", v)}
-                />
-              </FieldsRow>
-              <FieldsRow>
-                <TextField
-                  label={t("START ICON URL")}
-                  value={fields[1].startIcon || ""}
-                  onChange={(v) => set("pages.onboarding.steps.login.fields.1.startIcon", v)}
-                />
-                <TextField
-                  label={t("REQUIRED ERROR MESSAGE")}
-                  value={fields[1].validation?.messages?.required || ""}
-                  onChange={(v) => set("pages.onboarding.steps.login.fields.1.validation.messages.required", v)}
-                />
-              </FieldsRow>
-            </div>
-          </FieldSubsection>
-        )}
+          return (
+            <FieldSubsection
+              key={field.name || idx}
+              title={t(getSubsectionTitle(field))}
+              hasBorder={idx !== fields.length - 1}
+            >
+              <div className="full-width-col">
+                <FieldsRow>
+                  <TextField
+                    label={t("FIELD NAME (READ ONLY)")}
+                    value={field.name || ""}
+                    disabled={true}
+                  />
+                  <TextField
+                    label={t("FIELD TYPE (READ ONLY)")}
+                    value={field.type || ""}
+                    disabled={true}
+                  />
+                  <TextField
+                    label={t("LABEL")}
+                    value={field.label || ""}
+                    onChange={(v) => set(`${basePath}.label`, v)}
+                  />
+                </FieldsRow>
 
-        {/* Mobile Number Sub-Section */}
-        {fields[2] && (
-          <FieldSubsection title="Mobile Number" hasBorder={false}>
-            <div className="full-width-col">
-              <FieldsRow>
-                <TextField
-                  label={t("LABEL")}
-                  value={fields[2].label || ""}
-                  onChange={(v) => set("pages.onboarding.steps.login.fields.2.label", v)}
-                />
-                <TextField
-                  label={t("PLACEHOLDER")}
-                  value={fields[2].placeholder || ""}
-                  onChange={(v) => set("pages.onboarding.steps.login.fields.2.placeholder", v)}
-                />
-                <TextField
-                  label={t("PREFIX")}
-                  value={fields[2].prefix || ""}
-                  onChange={(v) => set("pages.onboarding.steps.login.fields.2.prefix", v)}
-                />
-              </FieldsRow>
-              <FieldsRow>
-                <TextField
-                  label={t("HELPER TEXT")}
-                  value={fields[2].helperText || ""}
-                  onChange={(v) => set("pages.onboarding.steps.login.fields.2.helperText", v)}
-                />
-                <TextField
-                  label={t("HELPER ICON URL")}
-                  value={fields[2].helperIcon || ""}
-                  onChange={(v) => set("pages.onboarding.steps.login.fields.2.helperIcon", v)}
-                />
-              </FieldsRow>
+                <FieldsRow>
+                  {field.placeholder !== undefined && (
+                    <TextField
+                      label={t("PLACEHOLDER")}
+                      value={field.placeholder || ""}
+                      onChange={(v) => set(`${basePath}.placeholder`, v)}
+                    />
+                  )}
+                  {field.defaultValue !== undefined && (
+                    <TextField
+                      label={t("DEFAULT VALUE")}
+                      value={field.defaultValue || ""}
+                      onChange={(v) => set(`${basePath}.defaultValue`, v)}
+                    />
+                  )}
+                  {field.prefix !== undefined && (
+                    <TextField
+                      label={t("PREFIX")}
+                      value={field.prefix || ""}
+                      onChange={(v) => set(`${basePath}.prefix`, v)}
+                    />
+                  )}
+                </FieldsRow>
 
-              <div className="section-sub-title">
-                {t("Validation Rules")}
+                {(field.startIcon !== undefined || field.helperIcon !== undefined || field.helperText !== undefined) && (
+                  <FieldsRow>
+                    {field.startIcon !== undefined && (
+                      <TextField
+                        label={t("START ICON URL")}
+                        value={field.startIcon || ""}
+                        onChange={(v) => set(`${basePath}.startIcon`, v)}
+                      />
+                    )}
+                    {field.helperIcon !== undefined && (
+                      <TextField
+                        label={t("HELPER ICON URL")}
+                        value={field.helperIcon || ""}
+                        onChange={(v) => set(`${basePath}.helperIcon`, v)}
+                      />
+                    )}
+                    {field.helperText !== undefined && (
+                      <TextField
+                        label={t("HELPER TEXT")}
+                        value={field.helperText || ""}
+                        onChange={(v) => set(`${basePath}.helperText`, v)}
+                      />
+                    )}
+                  </FieldsRow>
+                )}
+
+                {field.validation && (
+                  <>
+                    <div className="section-sub-title">
+                      {t("Validation Rules")}
+                    </div>
+                    <FieldsRow>
+                      {field.validation.required !== undefined && (
+                        <CheckboxField
+                          label={t("Required")}
+                          checked={!!field.validation.required}
+                          onChange={(v) => set(`${basePath}.validation.required`, v)}
+                        />
+                      )}
+                      {field.validation.minLength !== undefined && (
+                        <TextField
+                          label={t("MIN LENGTH")}
+                          type="number"
+                          value={field.validation.minLength}
+                          onChange={(v) => set(`${basePath}.validation.minLength`, parseInt(v) || "")}
+                        />
+                      )}
+                      {field.validation.maxLength !== undefined && (
+                        <TextField
+                          label={t("MAX LENGTH")}
+                          type="number"
+                          value={field.validation.maxLength}
+                          onChange={(v) => set(`${basePath}.validation.maxLength`, parseInt(v) || "")}
+                        />
+                      )}
+                    </FieldsRow>
+
+                    {(field.validation.pattern !== undefined || field.validation.format !== undefined || field.validation.minimumAge !== undefined) && (
+                      <FieldsRow>
+                        {field.validation.pattern !== undefined && (
+                          <TextField
+                            label={t("PATTERN (REGEX)")}
+                            value={field.validation.pattern || ""}
+                            onChange={(v) => set(`${basePath}.validation.pattern`, v)}
+                          />
+                        )}
+                        {field.validation.format !== undefined && (
+                          <TextField
+                            label={t("DATE FORMAT")}
+                            value={field.validation.format || ""}
+                            onChange={(v) => set(`${basePath}.validation.format`, v)}
+                          />
+                        )}
+                        {field.validation.minimumAge !== undefined && (
+                          <TextField
+                            label={t("MINIMUM AGE")}
+                            type="number"
+                            value={field.validation.minimumAge}
+                            onChange={(v) => set(`${basePath}.validation.minimumAge`, parseInt(v) || "")}
+                          />
+                        )}
+                      </FieldsRow>
+                    )}
+
+                    {field.validation.messages && (
+                      <>
+                        <div className="section-sub-title">
+                          {t("Validation Error Messages")}
+                        </div>
+                        <FieldsRow>
+                          {field.validation.messages.required !== undefined && (
+                            <TextField
+                              label={t("REQUIRED ERROR MESSAGE")}
+                              value={field.validation.messages.required || ""}
+                              onChange={(v) => set(`${basePath}.validation.messages.required`, v)}
+                            />
+                          )}
+                          {field.validation.messages.minLength !== undefined && (
+                            <TextField
+                              label={t("MIN LENGTH ERROR MESSAGE")}
+                              value={field.validation.messages.minLength || ""}
+                              onChange={(v) => set(`${basePath}.validation.messages.minLength`, v)}
+                            />
+                          )}
+                          {field.validation.messages.maxLength !== undefined && (
+                            <TextField
+                              label={t("MAX LENGTH ERROR MESSAGE")}
+                              value={field.validation.messages.maxLength || ""}
+                              onChange={(v) => set(`${basePath}.validation.messages.maxLength`, v)}
+                            />
+                          )}
+                          {field.validation.messages.pattern !== undefined && (
+                            <TextField
+                              label={t("PATTERN ERROR MESSAGE")}
+                              value={field.validation.messages.pattern || ""}
+                              onChange={(v) => set(`${basePath}.validation.messages.pattern`, v)}
+                            />
+                          )}
+                          {field.validation.messages.invalid !== undefined && (
+                            <TextField
+                              label={t("INVALID DATE ERROR MESSAGE")}
+                              value={field.validation.messages.invalid || ""}
+                              onChange={(v) => set(`${basePath}.validation.messages.invalid`, v)}
+                            />
+                          )}
+                          {field.validation.messages.minimumAge !== undefined && (
+                            <TextField
+                              label={t("MIN AGE ERROR MESSAGE")}
+                              value={field.validation.messages.minimumAge || ""}
+                              onChange={(v) => set(`${basePath}.validation.messages.minimumAge`, v)}
+                            />
+                          )}
+                        </FieldsRow>
+                      </>
+                    )}
+                  </>
+                )}
               </div>
-              <FieldsRow>
-                <TextField
-                  label={t("PATTERN (REGEX)")}
-                  value={fields[2].validation?.pattern || ""}
-                  onChange={(v) => set("pages.onboarding.steps.login.fields.2.validation.pattern", v)}
-                />
-                <TextField
-                  label={t("PATTERN ERROR MESSAGE")}
-                  value={fields[2].validation?.messages?.pattern || ""}
-                  onChange={(v) => set("pages.onboarding.steps.login.fields.2.validation.messages.pattern", v)}
-                />
-              </FieldsRow>
-            </div>
-          </FieldSubsection>
-        )}
+            </FieldSubsection>
+          );
+        })}
       </Card>
 
       {/* ── 3. Footer Settings ── */}
@@ -227,7 +320,7 @@ function OnBoardingLogin() {
               onClick={handleAddSecondaryAction}
               className="add-feature-btn"
             >
-              <span>⊕</span> {t("Add Action")}
+              <AddIcon fill="#3D2364" /> {t("Add Action")}
             </button>
           }
         />

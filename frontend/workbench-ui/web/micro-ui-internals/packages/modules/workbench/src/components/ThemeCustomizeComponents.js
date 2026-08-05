@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
-import { Modal, ThemePreviewIcon, Toast, DeleteIconv2 } from "@upyog/workbench-ui-react-components";
+import { Modal, ThemePreviewIcon, Toast, DeleteIconv2, CopyIcon, CheckIcon, AddIcon } from "@upyog/workbench-ui-react-components";
+import { getCardIcon } from "../utils";
 
 /**
  * SectionHeader Component
@@ -240,7 +241,7 @@ export function ColorField({ label, value, onChange }) {
           title="Copy"
           className={`color-copy-btn ${copied ? "copied" : ""}`}
         >
-          {copied ? "✓" : "⧉"}
+          {copied ? <CheckIcon /> : <CopyIcon />}
         </button>
       </div>
     </div>
@@ -925,7 +926,7 @@ export function GradientField({ label, value, onChange }) {
             onClick={handleAddStop}
             className="gradient-stop-add-btn"
           >
-            <span>⊕</span> Add Stop
+            <AddIcon fill="#3D2364" /> Add Stop
           </button>
         </div>
 
@@ -1213,7 +1214,7 @@ export function FeatureListEditor({ features, onAdd, onRemove, onChange, basePat
         description={t("Dynamic list of key features")}
         rightElement={
           <button onClick={onAdd} className="add-feature-btn">
-            <span>⊕</span> {t("Add Feature")}
+            <AddIcon fill="#3D2364" /> {t("Add Feature")}
           </button>
         }
       />

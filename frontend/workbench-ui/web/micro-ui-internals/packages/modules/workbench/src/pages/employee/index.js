@@ -36,64 +36,61 @@ const WorkbenchBreadCrumb = ({ location, defaultPath }) => {
     {
       path: `/${window?.contextPath}/employee/workbench/manage-master-data`,
       content: t(`WBH_MANAGE_MASTER_DATA`),
-      show: pathVar.includes("mdms-") ? true : false,
-      // query:`moduleName=${moduleName}&masterName=${masterName}`
+      show: pathVar.includes("mdms-")
     },
     {
       path: `/${window?.contextPath}/employee/workbench/localisation-search`,
       content: t(`LOCALISATION_SEARCH`),
-      show: pathVar.includes("localisation-") ? true : false,
-      isBack: pathVar.includes("localisation-search") ? true : false
-      // query:`moduleName=${moduleName}&masterName=${masterName}`
+      show: pathVar.includes("localisation-"),
+      isBack: pathVar.includes("localisation-search")
     },
 
     {
       path: `/${window?.contextPath}/employee/workbench/mdms-search-v2`,
       query: `moduleName=${moduleName}&masterName=${masterName}`,
       content: t(`${Digit.Utils.workbench.getMDMSLabel(pathVar, masterName, moduleName)}`),
-      show: (masterName && moduleName) ? true : false,
-      isBack: pathVar.includes("mdms-search-v2") ? true : false
+      show: !!(masterName && moduleName),
+      isBack: pathVar.includes("mdms-search-v2")
     },
     {
       path: `/${window?.contextPath}/employee/workbench/mdms-view`,
       content: t(`MDMS_VIEW`),
-      show: pathVar.includes("mdms-edit") ? true : false,
+      show: pathVar.includes("mdms-edit"),
       query: `moduleName=${moduleName}&masterName=${masterName}&uniqueIdentifier=${uniqueIdentifier}`
     },
     {
       path: `/${window?.contextPath}/employee/masters/response`,
       content: t(`${Digit.Utils.workbench.getMDMSLabel(pathVar, "", "")}`),
-      show: Digit.Utils.workbench.getMDMSLabel(pathVar, "", "", ["mdms-search-v2", "localisation-search"]) ? true : false,
+      show: !!Digit.Utils.workbench.getMDMSLabel(pathVar, "", "", ["mdms-search-v2", "localisation-search"]),
     },
     {
       path: `/${window?.contextPath}/employee/workbench/configuration`,
       content: t(`WBH_MANAGE_MASTER_DATA`),
-      show: pathVar.includes("mdms-") ? true : false,
-      // query:`moduleName=${moduleName}&masterName=${masterName}`
+      show: pathVar.includes("mdms-")
     },
     {
       // theme configuration breadcrumb
       path: `/${window?.contextPath}/employee/workbench/theme-configuration`,
       content: t(`WBH_THEME_CONFIGURATION`),
-      show: pathVar.includes("theme-configuration") ? true : false,
+      show: pathVar.includes("theme-configuration")
     },
     {
       // Onboarding Content Configuration
       path: `/${window?.contextPath}/employee/workbench/onboarding-common-content`,
       content: t(`WBH_ONBOARDING_CONTENT_CONFIG`),
-      show: pathVar.includes("onboarding-common-content") ? true : false,
+      show: pathVar.includes("onboarding-common-content")
     },
     {
       // Onboarding Login Configuration
       path: `/${window?.contextPath}/employee/workbench/onboarding-login-configuration`,
       content: t(`WBH_ONBOARDING_LOGIN_CONFIG`),
-      show: pathVar.includes("onboarding-login-configuration") ? true : false,
+      show: pathVar.includes("onboarding-login-configuration")
     },
     {
       // Onboarding Register Configuration
       path: `/${window?.contextPath}/employee/workbench/onboarding-register-configuration`,
       content: t(`WBH_ONBOARDING_REGISTER_CONFIG`),
-      show: pathVar.includes("onboarding-register-configuration") ? true : false,
+      show: pathVar.includes("onboarding-register-configuration")
     }
 
   ];

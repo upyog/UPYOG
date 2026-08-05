@@ -222,7 +222,9 @@ import {
   ThemeGradientsIcon,
   ThemeTypographyIcon,
   ThemeLogoIcon,
-  ThemePreviewIcon
+  ThemePreviewIcon,
+  CopyIcon,
+  CheckIcon
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -576,6 +578,8 @@ export {
   ThemeTypographyIcon,
   ThemeLogoIcon,
   ThemePreviewIcon,
+  CopyIcon,
+  CheckIcon,
 
   /* Works Management  */
 
