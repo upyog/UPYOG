@@ -13,7 +13,7 @@ Citizens need to **save in-progress municipal applications** (TL, Street Vending
 
 Today, drafts are stored inconsistently across modules and are **not visible on the login dashboard**. The aggregation BFF was querying Inbox V2 with `status=DRAFT`, but per-service draft rows are **never indexed in Elasticsearch/Inbox V2** — so the dashboard always returned empty or zero.
 
-**Recommendation:** Introduce **`upyog-draft-service`** — a standalone Java service with one Postgres table (`eg_draft_detail`) that:
+**Recommendation:** Introduce **`upyog-draft-service`** — a standalone Java service with one Postgres table (`ug_draft_detail`) that:
 
 - Stores opaque JSONB form payloads for any module (`businessService`: TL, SV, ADV, PT, …)
 - Exposes a single `_search` + `_count` API for the login dashboard
@@ -107,7 +107,7 @@ flowchart TB
 
     subgraph draftLayer [Shared Draft Layer]
         DraftSvc[upyog-draft-service]
-        DraftDB[(eg_draft_detail)]
+        DraftDB[(ug_draft_detail)]
         Persister[egov-persister]
         Kafka[(Kafka)]
     end
@@ -164,7 +164,7 @@ flowchart LR
         UI1[Citizen UI] -->|POST _save| DS[upyog-draft-service]
         DS -->|Kafka| K[save-upyog-draft / update-upyog-draft]
         K --> P[egov-persister]
-        P --> DB[(eg_draft_detail)]
+        P --> DB[(ug_draft_detail)]
     end
 
     subgraph readPath [Read Path - Sync JDBC]
@@ -203,7 +203,7 @@ sequenceDiagram
     participant Draft as upyog-draft-service
     participant Kafka
     participant Persister as egov-persister
-    participant DB as Postgres eg_draft_detail
+    participant DB as Postgres ug_draft_detail
 
     Citizen->>UI: Fills form (partial)
     UI->>UI: Debounce 30s
@@ -231,7 +231,7 @@ sequenceDiagram
     participant WF as egov-workflow-v2
     participant Kafka as Kafka persister
     participant Draft as upyog-draft-service
-    participant DB as eg_draft_detail
+    participant DB as ug_draft_detail
 
     Citizen->>UI: Click Submit
     UI->>TL: POST /v1/_create<br/>{Licenses, draftId}
@@ -259,7 +259,7 @@ sequenceDiagram
     participant BFF as upyog-aggregation-service
     participant Draft as upyog-draft-service
     participant Inbox as Inbox V2
-    participant DB as eg_draft_detail
+    participant DB as ug_draft_detail
 
     Citizen->>UI: Opens home after login
     UI->>BFF: POST /api/v1/aggregate<br/>{draft-applications, quick-summary}
@@ -307,7 +307,7 @@ sequenceDiagram
     participant Draft as upyog-draft-service
     participant Kafka
     participant Persister as egov-persister
-    participant DB as eg_draft_detail
+    participant DB as ug_draft_detail
 
     Note over Scheduler: Nightly 2 AM (ShedLock)
 
@@ -338,7 +338,7 @@ C4Context
         Container(draft, "upyog-draft-service", "Java 17 / Spring Boot 3.2.2", "Draft CRUD + lifecycle")
         Container(tl, "tl-services", "Java", "Trade license domain logic")
         Container(persister, "egov-persister", "Java", "Async DB writes from Kafka")
-        ContainerDb(draftdb, "eg_draft_detail", "PostgreSQL", "JSONB draft payloads")
+        ContainerDb(draftdb, "ug_draft_detail", "PostgreSQL", "JSONB draft payloads")
         ContainerQueue(kafka, "Kafka", "Event bus")
     }
 
@@ -366,10 +366,10 @@ C4Context
 
 ## 8. Data Model
 
-### Table: `eg_draft_detail`
+### Table: `ug_draft_detail`
 
 ```sql
-CREATE TABLE eg_draft_detail (
+CREATE TABLE ug_draft_detail (
     draft_id           VARCHAR(64)  PRIMARY KEY,
     tenant_id          VARCHAR(64)  NOT NULL,
     user_uuid          VARCHAR(64)  NOT NULL,
@@ -565,7 +565,7 @@ A: Aggregation is a read-optimized Go BFF (Redis cache, circuit breakers). Citiz
 A: PT's approach works for PT alone. The login dashboard needs **one query across all modules**. N per-module endpoints means N network calls, N failure modes, and N response mappers in the BFF.
 
 **Q: Does TL need its own draft table?**  
-A: **No.** TL form JSON lives in `eg_draft_detail.draft_data`. TL only calls `_markSubmitted` after real create.
+A: **No.** TL form JSON lives in `ug_draft_detail.draft_data`. TL only calls `_markSubmitted` after real create.
 
 **Q: What happens to existing SV/ADV/PT draft tables?**  
 A: Dual-write during migration, then deprecate after historical data is migrated and two release cycles pass.
@@ -584,7 +584,7 @@ A: The API returns immediately after Kafka publish. Persister writes async (stan
 | What happens to draft on submit? | Domain service calls `_markSubmitted`; draft service marks SUBMITTED then purges |
 | What about existing SV schema? | Migrate via dual-write; deprecate `eg_sv_street_vending_draft_detail` |
 | Does TL need its own draft table? | **No** |
-| Where do writes go? | Kafka → `egov-persister` → `eg_draft_detail` |
+| Where do writes go? | Kafka → `egov-persister` → `ug_draft_detail` |
 | Where do reads go? | Direct JDBC in draft service (sync, low latency) |
 
 ---
