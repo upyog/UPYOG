@@ -88,6 +88,10 @@ public class SearchCriteriaGarbageAccount {
     @CustomSafeHtml
     private String userType;
 
+    private Long fromDate;
+
+    private Long toDate;
+
     /**
      * Creates a deep copy of the current search criteria instance.
      *
@@ -107,7 +111,7 @@ public class SearchCriteriaGarbageAccount {
                 .oldGarbageIds(copyList(this.oldGarbageIds)).unitTypes(copyList(this.unitTypes))
                 .unitCategories(copyList(this.unitCategories)).isPayNow(this.isPayNow)
                 .isMonthlyBilling(this.isMonthlyBilling).userType(this.userType)
-                .isUserUuidNull(this.isUserUuidNull).build();
+                .isUserUuidNull(this.isUserUuidNull).fromDate(this.fromDate).toDate(this.toDate).build();
     }
 
     /**

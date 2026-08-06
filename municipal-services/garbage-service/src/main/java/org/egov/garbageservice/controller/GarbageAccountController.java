@@ -90,10 +90,8 @@ public class GarbageAccountController {
      * Searches for garbage accounts based on various criteria.
      *
      * <p>Supports searching by mobile number, property ID, application number, or old garbage IDs.
-     * Results can optionally be fetched from an index if {@code IsIndex} is true.
      *
      * @param searchCriteriaGarbageAccountRequest the request containing search parameters
-     * @param IsIndex                             boolean flag indicating if the search should use the indexed data
      * @return a {@link ResponseEntity} containing a list of matched garbage accounts
      */
 
@@ -101,8 +99,7 @@ public class GarbageAccountController {
     @PostMapping("/_search")
     public ResponseEntity<GarbageAccountResponse> search(
             @RequestBody SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest,
-            @ModelAttribute SearchCriteriaGarbageAccount searchCriteriaGarbageAccount,
-            @RequestParam(name = "IsIndex", required = false, defaultValue = "false") Boolean IsIndex) {
+            @ModelAttribute SearchCriteriaGarbageAccount searchCriteriaGarbageAccount) {
 
         if (searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount() == null) {
             searchCriteriaGarbageAccountRequest.setSearchCriteriaGarbageAccount(searchCriteriaGarbageAccount);
@@ -111,7 +108,7 @@ public class GarbageAccountController {
             searchCriteriaGarbageAccountRequest.setSearchCriteriaGarbageAccount(searchCriteriaGarbageAccount);
         }
 
-        return ResponseEntity.ok(service.searchGarbageAccounts(searchCriteriaGarbageAccountRequest, IsIndex));
+        return ResponseEntity.ok(service.searchGarbageAccounts(searchCriteriaGarbageAccountRequest));
     }
 
     /**

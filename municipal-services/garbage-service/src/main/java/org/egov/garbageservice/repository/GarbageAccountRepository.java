@@ -96,17 +96,6 @@ public class GarbageAccountRepository {
             + ", user_uuid = :userUuid, declaration_uuid = :declarationUuid, status = :status"
             + ", gender = :gender, email_id = :emailId, additional_detail = :additionalDetail :: JSONB, last_modified_by = :lastModifiedBy, last_modified_date = :lastModifiedDate,"
             + " tenant_id = :tenantId, business_service = :businessService, approval_date = :approvalDate , channel= :channel, due_date = :dueDate WHERE id = :id";
-    private static final String COUNT_STATUS_BASED_QUERY = "SELECT COUNT(distinct grbg.id) as count, " +
-            "COUNT(distinct case when grbg.status = 'INITIATED' then grbg.id end) as applicationInitiated, " +
-            "COUNT(distinct case when grbg.status = 'PENDING_FOR_VERIFICATION' then grbg.id end) as applicationPendingForVerification, " +
-            "COUNT(distinct case when grbg.status = 'EDIT_APPLICATION' then grbg.id end) as applicationPendingForModification, " +
-            "COUNT(distinct case when grbg.status = 'PENDING_FOR_APPROVAL' then grbg.id end) as applicationPendingForApproval, " +
-            "COUNT(distinct case when grbg.status = 'APPROVED' then grbg.id end) as applicationApproved, " +
-            "COUNT(distinct case when grbg.status = 'REJECTED' then grbg.id end) as applicationRejected, " +
-            "0 as applicationPendingPayment, " +
-            "0 as applicationClosed, " +
-            "0 as applicationTemporaryClosed " +
-            "from ug_grbg_account as grbg";
     private static final String INSERT_ACCOUNT_AUDIT = "INSERT INTO ug_grbg_account_audit (auditid, grbg_application_no, status, type"
             + ", grbg_account_details, auditcreatedtime) VALUES ((select nextval('seq_ug_grbg_account_audit')), :grbgApplicationNo, :status"
             + ", :type, :grbgAccountDetails, (SELECT extract(epoch from now())))";
@@ -472,16 +461,19 @@ public class GarbageAccountRepository {
 
         searchQuery.append(whereClause);
 
+        // Apply pagination and sorting inside the CTE subquery to limit unique parent accounts
+        searchQuery = addOrderByClause(searchQuery, searchCriteriaGarbageAccount);
+        if (!searchCriteriaGarbageAccount.getIsSchedulerCall()) {
+            searchQuery = addPaginationWrapper(searchQuery, preparedStatementValues, searchCriteriaGarbageAccount);
+        }
+
         String withClauseQuery = WITH_SUB_QUERY.replace(REPLACE_STRING, searchQuery);
 
         StringBuilder sb = new StringBuilder(withClauseQuery);
 
-        searchQuery = addOrderByClause(sb, searchCriteriaGarbageAccount);
+        sb = addOrderByClause(sb, searchCriteriaGarbageAccount);
 
-        if (!searchCriteriaGarbageAccount.getIsSchedulerCall()) {
-            searchQuery = addPaginationWrapper(sb, preparedStatementValues, searchCriteriaGarbageAccount);
-        }
-        return searchQuery;
+        return sb;
     }
 
     /**
@@ -531,16 +523,20 @@ public class GarbageAccountRepository {
 
         searchQuery.append(whereClause);
 
+        // Apply pagination and sorting inside the CTE subquery to limit unique parent accounts
+        searchQuery = addOrderByClause(searchQuery, searchCriteriaGarbageAccount);
+        if (!searchCriteriaGarbageAccount.getIsSchedulerCall()) {
+            searchQuery = addPaginationWrapper(searchQuery, preparedStatementValues, searchCriteriaGarbageAccount);
+        }
+
         String withClauseQuery = WITH_SUB_QUERY_INDEX.replace(REPLACE_STRING, searchQuery);
 
         StringBuilder sb = new StringBuilder(withClauseQuery);
 
-        searchQuery = addOrderByClause(sb, searchCriteriaGarbageAccount);
+        // Apply sorting to the outer query as well to ensure consistent output order
+        sb = addOrderByClause(sb, searchCriteriaGarbageAccount);
 
-        if (!searchCriteriaGarbageAccount.getIsSchedulerCall()) {
-            searchQuery = addPaginationWrapper(sb, preparedStatementValues, searchCriteriaGarbageAccount);
-        }
-        return searchQuery;
+        return sb;
     }
 
     /**
@@ -651,16 +647,29 @@ public class GarbageAccountRepository {
                             preparedStatementValues)).append(" )");
                 }
             } else {
-                if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getCreatedBy())) {
-                    isAppendAndClause = addORClauseIfRequired(isAppendAndClause, whereClause);
-                    whereClause.append(" acc.created_by IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getCreatedBy(),
-                            preparedStatementValues)).append(" )");
-                }
+                boolean hasCreatedBy = !CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getCreatedBy());
+                boolean hasUserUuid = !CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUser_uuid());
 
-                if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUser_uuid())) {
-                    isAppendAndClause = addORClauseIfRequired(isAppendAndClause, whereClause);
-                    whereClause.append(" acc.user_uuid IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getUser_uuid(),
-                            preparedStatementValues)).append(" )");
+                if (hasCreatedBy || hasUserUuid) {
+                    isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+                    whereClause.append(" ( ");
+
+                    boolean nestedOr = false;
+                    if (hasCreatedBy) {
+                        whereClause.append(" acc.created_by IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getCreatedBy(),
+                                preparedStatementValues)).append(" )");
+                        nestedOr = true;
+                    }
+
+                    if (hasUserUuid) {
+                        if (nestedOr) {
+                            whereClause.append(" OR ");
+                        }
+                        whereClause.append(" acc.user_uuid IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getUser_uuid(),
+                                preparedStatementValues)).append(" )");
+                    }
+
+                    whereClause.append(" ) ");
                 }
             }
         }
@@ -684,12 +693,6 @@ public class GarbageAccountRepository {
         if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUuid())) {
             isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
             whereClause.append(" acc.uuid IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getUuid(),
-                    preparedStatementValues)).append(" )");
-        }
-
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUser_uuid())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-            whereClause.append(" acc.user_uuid IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getUser_uuid(),
                     preparedStatementValues)).append(" )");
         }
 
@@ -803,6 +806,17 @@ public class GarbageAccountRepository {
             }
         }
 
+        if (searchCriteriaGarbageAccount.getFromDate() != null) {
+            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+            whereClause.append(" acc.created_date >= ?");
+            preparedStatementValues.add(searchCriteriaGarbageAccount.getFromDate());
+        }
+
+        if (searchCriteriaGarbageAccount.getToDate() != null) {
+            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+            whereClause.append(" acc.created_date <= ?");
+            preparedStatementValues.add(searchCriteriaGarbageAccount.getToDate());
+        }
 
         return whereClause.toString();
     }
@@ -875,30 +889,6 @@ public class GarbageAccountRepository {
     public void delete(GarbageAccount garbageAccount) {
         jdbcTemplate.update(DELETE_QUERY, garbageAccount.getGarbageId());
     }
-
-    /**
-     * Queries database for records matching the provided criteria.
-     *
-     * <p>The operation performs the following steps:
-     * <ol>
-     *   <li>Constructs a dynamic SQL query based on active search criteria parameters.</li>
-     *   <li>Appends pagination boundaries (limit and offset) and sorting clauses.</li>
-     *   <li>Executes the SQL query via JdbcTemplate using custom row mapping.</li>
-     *   <li>Assembles and returns the resulting entity list.</li>
-     * </ol>
-     *
-     * @param tenantId the tenant ID associated with the request
-     * @return the output result of type {@link String}
-     */
-
-    public String getApproverUserNameForTenant(String tenantId) {
-        StringBuilder searchQuery = new StringBuilder(GET_APPROVER_FOR_TENANT);
-        List<Object> preparedStmtList = new ArrayList<>();
-        preparedStmtList.add(tenantId);
-        List<String> userNames = jdbcTemplate.query(searchQuery.toString(), preparedStmtList.toArray(), (rs, rowNum) -> rs.getString("code"));
-        return userNames.get(0);
-    }
-
     /**
      * Builds a dynamic SQL query string based on supplied criteria.
      *

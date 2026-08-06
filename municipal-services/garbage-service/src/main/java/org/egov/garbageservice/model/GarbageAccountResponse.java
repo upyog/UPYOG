@@ -28,19 +28,4 @@ public class GarbageAccountResponse {
 
     @JsonProperty("applicationCount")
     private Integer applicationCount;
-
-    @JsonProperty("applicationInitiated")
-    private Integer applicationInitiated;
-
-    @JsonProperty("applicationApplied")
-    private Integer applicationApplied;
-
-    @JsonProperty("applicationPendingForPayment")
-    private Integer applicationPendingForPayment;
-
-    @JsonProperty("applicationRejected")
-    private Integer applicationRejected;
-
-    @JsonProperty("applicationApproved")
-    private Integer applicationApproved;
 }
