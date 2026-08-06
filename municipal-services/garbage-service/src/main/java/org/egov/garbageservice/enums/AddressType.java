@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
  * - PERMANENT and CORRESPONDENCE are primary types; additional constants (USUALADDRESS, EVENTADDRESS, etc.)
  * map to the CORRESPONDENCE string value for backward compatibility.
  * - Parsed from JSON via {@link #fromValue(String)} (exact match on stored value string).
- * - Used on {@link org.egov.garbageservice.model.Address}.
+ * - Used on {@link org.egov.garbageservice.web.models.Address}.
  * <p>
  * Notes:
  * - Constant declaration order must not change — see in-file comment (legacy ordinal usage).

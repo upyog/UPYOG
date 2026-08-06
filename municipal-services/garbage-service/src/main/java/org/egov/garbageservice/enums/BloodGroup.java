@@ -13,7 +13,7 @@ import lombok.Getter;
  * - Exposed through Lombok {@code @Getter} on the value field.
  * <p>
  * Notes:
- * - Used on {@link org.egov.garbageservice.model.UserV2} when syncing with user service.
+ * - Used on {@link org.egov.garbageservice.web.models.UserV2} when syncing with user service.
  * - Unknown API values deserialize to null from fromValue.
  */
 @Getter

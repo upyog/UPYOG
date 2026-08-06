@@ -5,7 +5,7 @@ package org.egov.garbageservice.enums;
  * <p>
  * Behavior:
  * - Values: FEMALE, MALE, OTHERS, TRANSGENDER (declaration order must not change — see in-file comment).
- * - Used on {@link org.egov.garbageservice.model.UserV2} and user search models.
+ * - Used on {@link org.egov.garbageservice.web.models.UserV2} and user search models.
  * <p>
  * Notes:
  * - Order is significant for legacy DB or API ordinal mapping — do not reorder constants.

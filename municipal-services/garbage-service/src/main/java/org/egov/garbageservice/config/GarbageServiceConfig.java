@@ -2,12 +2,9 @@ package org.egov.garbageservice.config;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 
 /**
  * Spring configuration properties bean holding application settings, external endpoints, Kafka topics, and MDMS configs.

@@ -5,7 +5,7 @@ import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.garbageservice.config.GarbageServiceConfig;
-import org.egov.garbageservice.model.GarbageAccount;
+import org.egov.garbageservice.web.models.GarbageAccount;
 import org.egov.garbageservice.util.GrbgConstants;
 import org.egov.garbageservice.util.RestCallRepository;
 import org.egov.mdms.model.MasterDetail;

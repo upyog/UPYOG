@@ -2,7 +2,7 @@ package org.egov.garbageservice.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.egov.garbageservice.model.GrbgAddress;
+import org.egov.garbageservice.web.models.GrbgAddress;
 import org.egov.garbageservice.repository.builder.GrbgAddressQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
