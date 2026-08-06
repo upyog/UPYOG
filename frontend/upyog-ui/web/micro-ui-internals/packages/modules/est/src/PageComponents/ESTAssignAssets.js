@@ -32,6 +32,7 @@ const ESTAssignAssets = ({ onSelect, onDraftSave, onDraftClear, config, formData
 
   // Cancel → blank editable allotment fields; keep read-only asset summary only.
   // Do not merge rentRate/assetRate or other editable defaults back in.
+  // Explicitly clear file fields so UploadFile receives null (not leftover draft values).
   const resetBaseline = useMemo(
     () => ({
       estateNo: assetDisplay.estateNo || "",
@@ -49,6 +50,9 @@ const ESTAssignAssets = ({ onSelect, onDraftSave, onDraftClear, config, formData
       billingCycle: null,
       advancePaymentDate: "",
       rentRate: "",
+      citizenLetter: null,
+      allotmentLetter: null,
+      signedDeed: null,
     }),
     [assetDisplay]
   );
