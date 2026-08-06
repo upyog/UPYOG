@@ -1,43 +1,26 @@
 package org.egov.garbageservice.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
-import org.egov.common.contract.request.User;
-import org.egov.common.contract.response.ResponseInfo;
 import org.egov.garbageservice.config.GarbageServiceConfig;
-import org.egov.garbageservice.contract.bill.*;
-import org.egov.garbageservice.contract.bill.Bill.StatusEnum;
-import org.egov.garbageservice.contract.workflow.*;
-import org.egov.garbageservice.model.*;
-import org.egov.garbageservice.model.contract.OwnerInfo;
-import org.egov.garbageservice.producer.GarbageProducer;
+import org.egov.garbageservice.web.models.bill.*;
+import org.egov.garbageservice.web.models.workflow.*;
+import org.egov.garbageservice.web.models.*;
+import org.egov.garbageservice.kafka.GarbageProducer;
 import org.egov.garbageservice.repository.*;
-import org.egov.garbageservice.repository.DemandRepository;
 import org.egov.garbageservice.util.GrbgConstants;
-import org.egov.garbageservice.util.GrbgUtils;
-import org.egov.garbageservice.util.RequestInfoWrapper;
 import org.egov.garbageservice.util.ResponseInfoFactory;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -125,6 +108,8 @@ public class GarbageAccountService {
      */
 
     public GarbageAccountResponse create(GarbageAccountRequest createGarbageRequest) {
+        log.info("Starting create flow for garbage accounts. Total accounts: {}",
+                createGarbageRequest.getGarbageAccounts() != null ? createGarbageRequest.getGarbageAccounts().size() : 0);
 
         RequestInfo info = createGarbageRequest.getRequestInfo();
         List<GarbageAccount> garbageAccounts = new ArrayList<>();
@@ -158,7 +143,7 @@ public class GarbageAccountService {
                 if (!CollectionUtils.isEmpty(garbageAccount.getChildGarbageAccounts())) {
                     garbageAccount.getChildGarbageAccounts().stream().forEach(subAccount -> {
                         subAccount.setBusinessService(garbageAccount.getBusinessService());
-                        org.egov.garbageservice.model.contract.Role role = org.egov.garbageservice.model.contract.Role.builder()
+                        org.egov.garbageservice.web.models.contract.Role role = org.egov.garbageservice.web.models.contract.Role.builder()
                                 .code("CITIZEN").name("Citizen").build();
                         // map user uuid
                         userService.processGarbageAccount(info, role, subAccount);
@@ -169,6 +154,8 @@ public class GarbageAccountService {
             final GarbageAccountRequest request = createGarbageRequest;
             if (!createGarbageRequest.getCreateChildAccountOnly()) {
                 createGarbageRequest.getGarbageAccounts().forEach(garbageAccount -> {
+                    log.info("Creating garbage account with mobile number: {} and garbage ID: {}",
+                            garbageAccount.getMobileNumber(), garbageAccount.getGarbageId());
                     // create garbage account
                     garbageAccounts.add(garbageAccountRepository.create(garbageAccount));
                     createGarbageAccountObjects(garbageAccount);
@@ -185,6 +172,7 @@ public class GarbageAccountService {
                     responseInfoFactory.createResponseInfoFromRequestInfo(createGarbageRequest.getRequestInfo(), true));
         }
 
+        log.info("Create flow completed successfully. Total created accounts: {}", garbageAccounts.size());
         return garbageAccountResponse;
     }
 
@@ -802,6 +790,8 @@ public class GarbageAccountService {
      */
 
     public GarbageAccountResponse update(GarbageAccountRequest updateGarbageRequest) {
+        log.info("Starting update flow for garbage accounts. Total accounts: {}",
+                updateGarbageRequest.getGarbageAccounts() != null ? updateGarbageRequest.getGarbageAccounts().size() : 0);
 
         // remove child garbage account if not in request
         removeChildGarbageAccount(updateGarbageRequest);
@@ -868,6 +858,11 @@ public class GarbageAccountService {
                 updateGarbageRequest.setGarbageAccounts(
                         Collections.singletonList(newGarbageAccount));
 
+                log.info("Pushing update request to Kafka. GarbageId: {}, ApplicationNo: {}, Topic: {}",
+                        newGarbageAccount.getGarbageId(),
+                        newGarbageAccount.getGrbgApplication() != null ? newGarbageAccount.getGrbgApplication().getApplicationNo() : null,
+                        config.getUpdateGarbageAccountTopic());
+
                 producer.push(
                         config.getUpdateGarbageAccountTopic(),
                         updateGarbageRequest
@@ -897,6 +892,7 @@ public class GarbageAccountService {
                     .createResponseInfoFromRequestInfo(garbageAccountRequest.getRequestInfo(), true));
         }
 
+        log.info("Update flow completed successfully. Total updated accounts: {}", garbageAccounts.size());
         return garbageAccountResponse;
     }
 
@@ -1048,7 +1044,7 @@ public class GarbageAccountService {
         updateGarbageRequest.getGarbageAccounts().stream().forEach(account -> {
 
             if (!BooleanUtils.isTrue(account.getIsOnlyWorkflowCall())) {
-                org.egov.garbageservice.model.contract.Role role = org.egov.garbageservice.model.contract.Role.builder()
+                org.egov.garbageservice.web.models.contract.Role role = org.egov.garbageservice.web.models.contract.Role.builder()
                         .code("CITIZEN").name("Citizen").build();
                 userService.processGarbageAccount(updateGarbageRequest.getRequestInfo(), role, account);
                 if (null != account.getChildGarbageAccounts()) {
@@ -1458,6 +1454,8 @@ public class GarbageAccountService {
 
     public GarbageAccountResponse searchGarbageAccounts(
             SearchCriteriaGarbageAccountRequest searchCriteriaGarbageAccountRequest) {
+        log.info("Starting service layer search for garbage accounts with criteria: {}",
+                searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount());
 
         if (searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount() == null) {
             searchCriteriaGarbageAccountRequest.setSearchCriteriaGarbageAccount(new SearchCriteriaGarbageAccount());
@@ -1470,6 +1468,8 @@ public class GarbageAccountService {
         // search garbage account
         grbgAccs = garbageAccountRepository.searchGarbageAccount(
                 searchCriteriaGarbageAccountRequest.getSearchCriteriaGarbageAccount(), null);
+
+        log.info("Service layer search returned {} accounts.", grbgAccs != null ? grbgAccs.size() : 0);
 
         GarbageAccountResponse garbageAccountResponse = getSearchResponseFromAccounts(grbgAccs);
 

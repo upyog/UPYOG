@@ -13,9 +13,9 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * - Parsed from API text with {@link #fromValue(String)} (case-insensitive).
  * <p>
  * Notes:
- * - Used on {@link org.egov.garbageservice.model.contract.OwnerInfo} and
- * {@link org.egov.garbageservice.model.contract.Document}.
- * - Distinct from garbage account application status (workflow) and {@link org.egov.garbageservice.contract.bill.Bill.StatusEnum}.
+ * - Used on {@link org.egov.garbageservice.web.models.contract.OwnerInfo} and
+ * {@link org.egov.garbageservice.web.models.contract.Document}.
+ * - Distinct from garbage account application status (workflow) and {@link org.egov.garbageservice.web.models.bill.Bill.StatusEnum}.
  */
 public enum Status {
 

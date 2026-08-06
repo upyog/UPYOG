@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
  * - Deserialized from API text via {@link #fromValue(String)} (case-insensitive enum name match).
  * <p>
  * Notes:
- * - Used on {@link org.egov.garbageservice.model.UserV2}, {@link org.egov.garbageservice.model.UserSearchCriteria},
+ * - Used on {@link org.egov.garbageservice.web.models.UserV2}, {@link org.egov.garbageservice.web.models.UserSearchCriteria},
  * and related user contract models.
  * - Aligns with eGov common user types; not garbage-account workflow status (see {@link Status}).
  */

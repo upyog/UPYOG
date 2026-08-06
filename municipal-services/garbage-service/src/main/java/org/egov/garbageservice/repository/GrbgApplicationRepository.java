@@ -1,6 +1,6 @@
 package org.egov.garbageservice.repository;
 
-import org.egov.garbageservice.model.GrbgApplication;
+import org.egov.garbageservice.web.models.GrbgApplication;
 import org.egov.garbageservice.repository.builder.GrbgApplicationQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;

@@ -4,13 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.garbageservice.config.GarbageServiceConfig;
-import org.egov.garbageservice.contract.bill.Demand;
-import org.egov.garbageservice.contract.bill.DemandDetail;
-import org.egov.garbageservice.model.AmountCalculationResult;
-import org.egov.garbageservice.model.GarbageAccount;
-import org.egov.garbageservice.model.GarbageAccountRequest;
-import org.egov.garbageservice.model.SchedulerLog;
-import org.egov.garbageservice.producer.Producer;
+import org.egov.garbageservice.web.models.bill.Demand;
+import org.egov.garbageservice.web.models.bill.DemandDetail;
+import org.egov.garbageservice.web.models.AmountCalculationResult;
+import org.egov.garbageservice.web.models.GarbageAccount;
+import org.egov.garbageservice.web.models.GarbageAccountRequest;
+import org.egov.garbageservice.web.models.SchedulerLog;
+import org.egov.garbageservice.kafka.Producer;
 import org.egov.garbageservice.repository.DemandRepository;
 import org.egov.garbageservice.repository.GarbageAccountRepository;
 import org.egov.garbageservice.util.GrbgUtils;
@@ -35,7 +35,7 @@ public class DemandService {
 
     @Autowired
     @Qualifier("billDemandRepository")
-    private org.egov.garbageservice.contract.bill.DemandRepository billDemandRepository;
+    private org.egov.garbageservice.web.models.bill.DemandRepository billDemandRepository;
 
     @Autowired
     private DemandRepository demandRepository;
