@@ -151,14 +151,50 @@ const TLApplicationDetails = () => {
     }
   };
   const downloadTLcertificate = async () => {
-    const TLcertificatefile = await Digit.PaymentService.generatePdf(tenantId, {
-      Licenses: application
-    }, "tlcertificate");
-    const receiptFile = await Digit.PaymentService.printReciept(tenantId, {
-      fileStoreIds: TLcertificatefile.filestoreIds[0]
-    });
-    window.open(receiptFile[TLcertificatefile.filestoreIds[0]], "_blank");
-    setShowOptions(false);
+    try {
+      const licenseNumber = application?.[0]?.licenseNumber;
+      let digiLockerSuccess = false;
+
+      if (licenseNumber) {
+        try {
+          const tokenReq = {
+            module: "TL",
+            consumerCode: licenseNumber
+          };
+          const digiRes = await Digit.DigiLockerService.fileStoreSearch({
+            TokenReq: tokenReq
+          });
+          if (digiRes?.Transaction?.length && digiRes.Transaction[0]?.signedFilestoreId) {
+            const fileRes = await Digit.UploadServices.Filefetch([digiRes.Transaction[0].signedFilestoreId], stateId);
+            const url = fileRes?.data?.fileStoreIds?.[0]?.url;
+            if (url) {
+              window.open(url, "_blank");
+              setShowOptions(false);
+              digiLockerSuccess = true;
+              return;
+            }
+          }
+        } catch (e) {
+          console.warn("DigiLocker lookup failed – falling back to local PDF", e);
+        }
+      }
+
+      if (!digiLockerSuccess) {
+        const TLcertificatefile = await Digit.PaymentService.generatePdf(tenantId, {
+          Licenses: application
+        }, "tlcertificate");
+        const receiptFile = await Digit.PaymentService.printReciept(tenantId, {
+          fileStoreIds: TLcertificatefile.filestoreIds[0]
+        });
+        if (receiptFile?.[TLcertificatefile.filestoreIds[0]]) {
+          window.open(receiptFile[TLcertificatefile.filestoreIds[0]], "_blank");
+        }
+        setShowOptions(false);
+      }
+    } catch (err) {
+      console.error("Certificate download failed completely", err);
+      alert("Unable to download certificate. Please try again.");
+    }
   };
   let propertyAddress = "";
   if (PTData && PTData?.Properties?.length) {
