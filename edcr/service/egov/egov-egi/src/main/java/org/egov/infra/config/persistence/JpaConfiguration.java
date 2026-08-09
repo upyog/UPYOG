@@ -69,34 +69,15 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.SharedCacheMode;
-import javax.persistence.ValidationMode;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.SharedCacheMode;
+import jakarta.persistence.ValidationMode;
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hibernate.cfg.AvailableSettings.*;
-
-/**
- * Spring JPA and Hibernate configuration for the EDCR persistence layer.
- *
- * <p>Key Hibernate settings:</p>
- * <ul>
- *   <li>{@code hibernate.connection.handling_mode} set to
- *       {@code DELAYED_ACQUISITION_AND_RELEASE_AFTER_TRANSACTION} for JTA-safe
- *       connection lifecycle.</li>
- *   <li>{@code hibernate.transaction.auto_close_session} hard-coded to {@code false}
- *       so the Open EntityManager In View filter is not broken by premature session closure.</li>
- *   <li>{@code hibernate.connection.release_mode} set to {@code after_transaction}
- *       to align with container-managed JTA transactions.</li>
- *   <li>Cache region factory and JTA platform are read from
- *       {@code persistence-config.properties} (EhCache + JBossAppServerJtaPlatform).</li>
- * </ul>
- *
- * @see org.egov.infra.config.persistence.multitenancy.MultiTenantSchemaConnectionProvider
- * @see org.egov.infra.config.persistence.RepositoryConfiguration
- */
+//import static org.hibernate.cfg.AvailableSettings.*;
+import org.hibernate.cfg.AvailableSettings;
 @Configuration
 @EnableTransactionManagement(proxyTargetClass = true)
 @PropertySource("classpath:config/persistence-config.properties")
@@ -163,32 +144,30 @@ public class JpaConfiguration {
         properties.put("hibernate.validator.apply_to_ddl", false);
         properties.put("hibernate.validator.autoregister_listeners", false);
         properties.put("hibernate.temp.use_jdbc_metadata_defaults", false);
-        properties.put(DIALECT, env.getProperty(DIALECT));
-        properties.put(GENERATE_STATISTICS, generateStatistics);
-        properties.put(CACHE_REGION_FACTORY, env.getProperty(CACHE_REGION_FACTORY));
+        properties.put(AvailableSettings.DIALECT, env.getProperty(AvailableSettings.DIALECT));
+        properties.put(AvailableSettings.GENERATE_STATISTICS, generateStatistics);
+        properties.put(AvailableSettings.CACHE_REGION_FACTORY, env.getProperty(AvailableSettings.CACHE_REGION_FACTORY));
         properties.put("hibernate.connection.handling_mode", "DELAYED_ACQUISITION_AND_RELEASE_AFTER_TRANSACTION");
-        properties.put(USE_SECOND_LEVEL_CACHE, enableSecondLevelCache);
-        properties.put(USE_QUERY_CACHE, enableQueryCache);
-        properties.put(USE_MINIMAL_PUTS, env.getProperty(USE_MINIMAL_PUTS));
+        properties.put(AvailableSettings.USE_SECOND_LEVEL_CACHE, enableSecondLevelCache);
+        properties.put(AvailableSettings.USE_QUERY_CACHE, enableQueryCache);
+        properties.put(AvailableSettings.USE_MINIMAL_PUTS, env.getProperty(AvailableSettings.USE_MINIMAL_PUTS));
         properties.put("hibernate.cache.infinispan.cachemanager", env.getProperty("hibernate.cache.infinispan.cachemanager"));
-        properties.put(JTA_PLATFORM, env.getProperty(JTA_PLATFORM));
-        properties.put(AUTO_CLOSE_SESSION, env.getProperty(AUTO_CLOSE_SESSION));
-        properties.put(USE_STREAMS_FOR_BINARY, env.getProperty(USE_STREAMS_FOR_BINARY));
-        properties.put(DEFAULT_BATCH_FETCH_SIZE, batchUpdateSize);
-        properties.put(BATCH_VERSIONED_DATA, true);
-        properties.put(ORDER_INSERTS, true);
-        properties.put(ORDER_UPDATES, true);
-        properties.put(AUTOCOMMIT, false);
-        properties.put(RELEASE_CONNECTIONS, "after_transaction");
+        properties.put(AvailableSettings.JTA_PLATFORM, env.getProperty(AvailableSettings.JTA_PLATFORM));
+        properties.put(AvailableSettings.AUTO_CLOSE_SESSION, env.getProperty(AvailableSettings.AUTO_CLOSE_SESSION));
+        properties.put(AvailableSettings.DEFAULT_BATCH_FETCH_SIZE, batchUpdateSize);
+        properties.put(AvailableSettings.BATCH_VERSIONED_DATA, true);
+        properties.put(AvailableSettings.ORDER_INSERTS, true);
+        properties.put(AvailableSettings.ORDER_UPDATES, true);
+        properties.put(AvailableSettings.AUTOCOMMIT, false);
         properties.put("jadira.usertype.autoRegisterUserTypes", true);
         properties.put("jadira.usertype.databaseZone", "jvm");
 
-        // Multitenancy Configuration
+        // Multitenancy Configuration (Updated for Hibernate 6.x)
         if (multiTenancyEnabled) {
-            properties.put(MULTI_TENANT, env.getProperty(MULTI_TENANT));
+            properties.put("hibernate.multiTenancy", env.getProperty("hibernate.multiTenancy"));
             properties.put("hibernate.database.type", env.getProperty("jpa.database"));
-            properties.put(MULTI_TENANT_CONNECTION_PROVIDER, multiTenantSchemaConnectionProvider());
-            properties.put(MULTI_TENANT_IDENTIFIER_RESOLVER, domainBasedSchemaTenantIdentifierResolver());
+            properties.put("hibernate.multi_tenancy_connection_provider", multiTenantSchemaConnectionProvider());
+            properties.put("hibernate.tenant_identifier_resolver", domainBasedSchemaTenantIdentifierResolver());
         }
         return properties;
     }

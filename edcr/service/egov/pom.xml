@@ -1263,6 +1263,11 @@
 		     Add spring-security-oauth2-resource-server / spring-security-oauth2-client
 		     or spring-authorization-server based on your use case. -->
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-authorization-server</artifactId>
+			<version>3.2.2</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
 			<version>${spring-data-jpa-version}</version>

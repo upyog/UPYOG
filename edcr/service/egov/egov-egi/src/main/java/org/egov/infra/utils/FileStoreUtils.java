@@ -67,7 +67,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -77,7 +77,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.validation.SanitizeHtml;
-import org.owasp.esapi.ESAPI;
+//import org.owasp.esapi.ESAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,9 +150,11 @@ public class FileStoreUtils {
             FileStoreMapper fileStoreMapper = this.fileStoreMapperRepository.findByFileStoreId(fileStoreId);
             if (fileStoreMapper != null) {
                 File file = this.fileStoreService.fetch(fileStoreMapper, moduleName);
-                ESAPI.httpUtilities().addHeader(response, CONTENT_DISPOSITION, StringUtils.sanitize(format(CONTENT_DISPOSITION_INLINE, fileStoreMapper.getFileName())));
-                ESAPI.httpUtilities().addHeader(response, "content-type", StringUtils.sanitize(fileStoreMapper.getContentType()));
-                ESAPI.httpUtilities().setContentType(response);
+
+                // Standard Jakarta Servlet methods replacing OWASP ESAPI
+                response.setHeader(CONTENT_DISPOSITION, StringUtils.sanitize(format(CONTENT_DISPOSITION_INLINE, fileStoreMapper.getFileName())));
+                response.setContentType(StringUtils.sanitize(fileStoreMapper.getContentType()));
+
                 OutputStream out = response.getOutputStream();
                 IOUtils.write(FileUtils.readFileToByteArray(file), out);
             }
@@ -160,7 +162,6 @@ public class FileStoreUtils {
             LOGGER.error("Error occurred while writing file to response stream", e);
         }
     }
-
     public Set<FileStoreMapper> addToFileStore(MultipartFile[] files, String moduleName) {
         return this.addToFileStore(files, moduleName, false);
     }
