@@ -65,7 +65,7 @@ const GCApplicationDetails = () => {
   const { tenants } = storeData || {};
 
   const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
-    { tenantId, businessService: "garbage-service", consumerCodes: applicationNo, isEmployee: false },
+    { tenantId, businessService: "garbage-service", consumerCodes: applicationNo},
     { enabled: !!applicationNo }
   );
 

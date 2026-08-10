@@ -14,6 +14,7 @@ import {
 } from "@nudmcdgnpm/digit-ui-react-components";
 
 import { useTranslation } from "react-i18next";
+import "../../css/search.css";
 
 const fieldComponents = {
   mobileNumber: MobileNumber,
@@ -77,6 +78,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
     });
 
     if (searchFields?.find((e) => e.name === "locality") && !form?.locality?.code) isEmpty = true;
+    if (form?.mobileNumber && !/^[6-9][0-9]{9}$/.test(form.mobileNumber)) isEmpty = true;
     return isEmpty;
   };
 
@@ -84,6 +86,10 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
 
 
   const onSubmitInput = (data) => {
+    if (data.mobileNumber && !/^[6-9][0-9]{9}$/.test(data.mobileNumber)) {
+      setError("mobileNumber", { type: "manual", message: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") });
+      return;
+    }
     if (!data.mobileNumber) {
       delete data.mobileNumber;
     }
@@ -116,10 +122,9 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   }
 
   const clearAll = (mobileView) => {
-    const mobileViewStyles = mobileView ? { margin: 0 } : {};
     return (
-      <LinkLabel style={{ display: "inline", ...mobileViewStyles }} onClick={clearSearch}>
-        {t("ES_COMMON_CLEAR_SEARCH")}
+      <LinkLabel className={`gc-clear-search-link ${mobileView ? "mobile-view" : ""}`} onClick={clearSearch}>
+        {t("ES_COMMON_CLEAR_ALL")}
       </LinkLabel>
     );
   };
@@ -127,7 +132,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
       <React.Fragment>
-        <div className="search-container" style={{ width: "auto", marginLeft: isInboxPage ? "24px" : "revert" }}>
+        <div className={`search-container gc-search-container ${isInboxPage ? "is-inbox" : ""}`}>
           <div className="search-complaint-container">
             {(type === "mobile" || mobileView) && (
               <div className="complaint-header">
@@ -137,7 +142,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                 </span>
               </div>
             )}
-            <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%", display:"grid" }}>
+            <div className={`complaint-input-container for-pt gc-inbox-input-container ${!isInboxPage ? "for-search" : "is-inbox"}`}>
               {searchFields
                 ?.filter((e) => true)
                 ?.map((input, index) => (
@@ -152,6 +157,18 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                           }}
                           name={input.name}
                           control={control}
+                          rules={{
+                            ...(input.pattern
+                              ? {
+                                  pattern: {
+                                    value: new RegExp(input.pattern),
+                                    message: t(input.errorMessages?.pattern || "CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID"),
+                                  },
+                                }
+                              : {}),
+                            ...(input.minLength ? { minLength: { value: input.minLength, message: t(input.errorMessages?.minLength || "CORE_COMMON_INVALID_MIN_LENGTH") } } : {}),
+                            ...(input.maxLength ? { maxLength: { value: input.maxLength, message: t(input.errorMessages?.maxLength || "CORE_COMMON_INVALID_MAX_LENGTH") } } : {}),
+                          }}
                           defaultValue={""}
                         />
                       ) : (
@@ -162,37 +179,48 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                           }}
                           name={input.name}
                           control={control}
+                          rules={{
+                            ...(input.pattern
+                              ? {
+                                  pattern: {
+                                    value: new RegExp(input.pattern),
+                                    message: t(input.errorMessages?.pattern || "CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID"),
+                                  },
+                                }
+                              : input.type === "mobileNumber"
+                              ? {
+                                  pattern: {
+                                    value: /^[6-9][0-9]{9}$/,
+                                    message: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID"),
+                                  },
+                                }
+                              : {}),
+                            ...(input.minLength ? { minLength: { value: input.minLength, message: t(input.errorMessages?.minLength || "CORE_COMMON_INVALID_MIN_LENGTH") } } : {}),
+                            ...(input.maxLength ? { maxLength: { value: input.maxLength, message: t(input.errorMessages?.maxLength || "CORE_COMMON_INVALID_MAX_LENGTH") } } : {}),
+                          }}
                           defaultValue={""}
                         />
                       )}
                     </span>
                     {formState?.dirtyFields?.[input.name] ? (
-                      <span
-                        style={{ fontWeight: "700", color: "rgba(212, 53, 28)", paddingLeft: "8px", marginTop: "-20px", fontSize: "12px" }}
-                        className="inbox-search-form-error"
-                      >
+                      <span className="inbox-search-form-error gc-inbox-search-form-error">
                         {formState?.errors?.[input.name]?.message}
                       </span>
                     ) : null}
                   </div>
                 ))}
 
-              {isInboxPage && (
-                <div style={{ gridColumn: "2/3", textAlign: "right", paddingTop: "10px" }} className="input-fields">
-                  <div>{clearAll()}</div>
-                </div>
-              )}
-
               {type === "desktop" && !mobileView && (
-                <div style={{ maxWidth: "unset", marginLeft: "unset" }} className="search-submit-wrapper">
+                <div className={`search-submit-wrapper gc-search-submit-wrapper ${isInboxPage ? "is-inbox" : ""}`}>
                   <SubmitBar
                     className="submit-bar-search"
                     label={t("ES_COMMON_SEARCH")}
                     disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
                     submit
                   />
-                  {/* style={{ paddingTop: "16px", textAlign: "center" }} className="clear-search" */}
-                  {!isInboxPage && <div>{clearAll()}</div>}
+                  <div className="clear-search">
+                    {clearAll()}
+                  </div>
                 </div>
               )}
             </div>
