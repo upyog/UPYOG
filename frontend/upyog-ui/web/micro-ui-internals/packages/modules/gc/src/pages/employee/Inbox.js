@@ -112,21 +112,8 @@ const Inbox = ({
     ? Array.isArray(data)
       ? data.filter((entry) => {
           const application = entry?.searchData || {};
-          const applicants = [
-            ...(Array.isArray(application?.applicantDetails) ? application.applicantDetails : []),
-            ...(Array.isArray(application?.additionalDetail?.applicantDetails) ? application.additionalDetail.applicantDetails : []),
-            ...(Array.isArray(application?.additionalDetails?.applicantDetails) ? application.additionalDetails.applicantDetails : []),
-          ];
-          const mobileNumbers = [
-            application?.mobileNumber,
-            application?.garbageSpecification?.phoneNumber,
-            application?.grbgCollectionUnits?.[0]?.phoneNumber,
-            ...applicants.map((applicant) => applicant?.mobileNumber),
-          ]
-            .filter(Boolean)
-            .map((mobileNumber) => String(mobileNumber).replace(/\D/g, ""));
-
-          return mobileNumbers.some((mobileNumber) => mobileNumber.includes(searchedMobileNumber));
+          const mobileNumber = String(application?.mobileNumber || "").replace(/\D/g, "");
+          return mobileNumber.includes(searchedMobileNumber);
         })
       : []
     : data;
