@@ -47,6 +47,8 @@
             </div>
         </div>
 
+
+
         <div class="input-area" id="input-area-container">
             <input type="text" id="text-input" placeholder="Ask anything about UPYOG services..." autocomplete="off">
             <div class="input-actions">
@@ -150,17 +152,100 @@
         // niautt requires a unique msgId on every API request (format: timestamp|locale).
         const getRequestInfo = () => ({ ...NIAUTT_REQUEST_INFO, msgId: `${Date.now()}|en_IN` });
 
+        // ============== SESSION INACTIVITY TIMER (5 SECONDS) ==============
+        let sessionInactivityTimer = null;
+
+        function startSessionInactivityTimer() {
+            clearSessionInactivityTimer();
+            if (sessionActive && currentState === States.LISTENING) {
+                sessionInactivityTimer = setTimeout(() => {
+                    if (sessionActive && currentState === States.LISTENING) {
+                        endSessionAuto();
+                    }
+                }, 5000);
+            }
+        }
+
+        function clearSessionInactivityTimer() {
+            if (sessionInactivityTimer) {
+                clearTimeout(sessionInactivityTimer);
+                sessionInactivityTimer = null;
+            }
+        }
+
+        function endSessionAuto() {
+            if (!sessionActive) return;
+            sessionActive = false;
+            clearTimeout(silenceTimer);
+            clearTimeout(forceTimer);
+            clearSessionInactivityTimer();
+
+            destroyRecognition();
+
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.src = '';
+                currentAudio = null;
+            }
+
+            if (micStream) {
+                micStream.getTracks().forEach(t => t.stop());
+                micStream = null;
+            }
+
+            updateSessionBtnIcon(false);
+            setState(States.IDLE);
+        }
+
         // ============== STATE MACHINE ==============
         function setState(newState) {
             currentState = newState;
 
+            const sendBtn = document.getElementById('send-text-btn');
+
             if (newState === States.SPEAKING) {
-                // Use wave animation for speaking
+                // Bot is speaking voice response
                 statusDot.className = 'status-dot speaking';
                 statusDot.innerHTML = ICONS.speakingWave;
+                if (sendBtn) {
+                    sendBtn.disabled = false;
+                    sendBtn.innerHTML = ICONS.stop;
+                    sendBtn.title = 'Stop Voice & End Session';
+                    sendBtn.classList.add('stop-mode');
+                }
+                if (sessionBtn) {
+                    sessionBtn.innerHTML = ICONS.pause;
+                    sessionBtn.title = 'Interrupt & Ask';
+                    sessionBtn.className = 'icon-button voice-button end speaking';
+                }
+            } else if (newState === States.PROCESSING) {
+                statusDot.className = 'status-dot processing';
+                statusDot.innerHTML = '';
+                if (sendBtn) {
+                    sendBtn.disabled = false;
+                    sendBtn.innerHTML = ICONS.stop;
+                    sendBtn.title = 'Stop Voice & End Session';
+                    sendBtn.classList.add('stop-mode');
+                }
+                if (sessionBtn) {
+                    sessionBtn.className = 'icon-button voice-button end';
+                }
             } else {
                 statusDot.className = 'status-dot ' + newState.toLowerCase();
                 statusDot.innerHTML = '';
+                if (sendBtn) {
+                    sendBtn.disabled = false;
+                    sendBtn.innerHTML = ICONS.send;
+                    sendBtn.title = 'Send message';
+                    sendBtn.classList.remove('stop-mode');
+                }
+                updateSessionBtnIcon(sessionActive);
+            }
+
+            if (newState === States.LISTENING) {
+                startSessionInactivityTimer();
+            } else {
+                clearSessionInactivityTimer();
             }
 
             statusText.innerText = STATE_LABELS[newState];
@@ -415,7 +500,7 @@
                 if (e.error === 'no-speech' || e.error === 'aborted') return;
 
                 setTimeout(() => {
-                    if (sessionActive) {
+                    if (sessionActive && currentState === States.LISTENING) {
                         createRecognition(lastDetectedLang);
                         try { recognition.start(); } catch(e) {}
                     }
@@ -463,6 +548,7 @@
             // Show interim in UI so user sees what's being captured
             const displayText = finalTranscript + interim;
             if (displayText) {
+                clearSessionInactivityTimer();
                 interimText.innerText = displayText;
                 interimDisplay.classList.add('show');
             }
@@ -500,8 +586,9 @@
                 return;
             }
 
-            // Pause recognition while processing
-            try { recognition.stop(); } catch(e) {}
+            // Fully destroy recognition so the async onend handler can never
+            // restart the mic while we are in PROCESSING or SPEAKING state.
+            destroyRecognition();
 
             finalTranscript = '';
             currentTranscript = '';
@@ -509,7 +596,8 @@
             sendQuery(text.trim());
         }
 
-        // FIX B & C: On turn complete - recreate recognition every 5 turns + cleanup
+        // On turn complete — always recreate recognition from scratch
+        // (playAudio destroys it, so we must recreate unconditionally)
         function onTurnComplete() {
             turnCount++;
             finalTranscript = '';
@@ -521,136 +609,28 @@
 
             if (!sessionActive) return;
 
-            // Recreate every 5 turns to prevent browser engine degradation
-            if (turnCount % 5 === 0) {
-                destroyRecognition();
-                createRecognition(lastDetectedLang);
-            }
+            // Always recreate to get a clean instance
+            destroyRecognition();
+            createRecognition(lastDetectedLang);
 
             // Resume listening
-            if (recognition) {
-                try {
-                    recognition.start();
-                    setState(States.LISTENING);
-                } catch (e) {
-                    if (e.name === 'InvalidStateError') {
-                        // Already running — that's fine
-                        setState(States.LISTENING);
-                    } else {
-                        // Real error — recreate
-                        setTimeout(() => {
-                            if (sessionActive) {
-                                destroyRecognition();
-                                createRecognition(lastDetectedLang);
-                                recognition.start();
-                                setState(States.LISTENING);
-                            }
-                        }, 300);
-                    }
-                }
-            }
-        }
-
-        // ============== BARGE-IN MONITORING ==============
-        async function startBargeInMonitor() {
             try {
-                micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                const audioCtx = new AudioContext();
-                const source = audioCtx.createMediaStreamSource(micStream);
-                analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 512;
-                source.connect(analyser);
-
-                const buffer = new Float32Array(analyser.fftSize);
-
-                function checkVolume() {
-                    if (!sessionActive) return;
-
-                    analyser.getFloatTimeDomainData(buffer);
-                    const rms = Math.sqrt(buffer.reduce((s, v) => s + v * v, 0) / buffer.length);
-
-                    // ONLY check for barge-in during SPEAKING state
-                    // Do NOT trigger during LISTENING or PROCESSING
-                    if (currentState === States.SPEAKING) {
-                        if (rms > bargeInThreshold) {
-                            voiceFrames++;
-                            if (voiceFrames > 4) {  // ~150ms of user speech
-                                triggerBargeIn();
-                                voiceFrames = 0;
-                                requestAnimationFrame(checkVolume);
-                                return;
-                            }
-                        } else {
-                            voiceFrames = 0;
+                recognition.start();
+                setState(States.LISTENING);
+            } catch (e) {
+                if (e.name === 'InvalidStateError') {
+                    setState(States.LISTENING);
+                } else {
+                    setTimeout(() => {
+                        if (sessionActive) {
+                            destroyRecognition();
+                            createRecognition(lastDetectedLang);
+                            recognition.start();
+                            setState(States.LISTENING);
                         }
-                    } else {
-                        // Reset frame counter when not in SPEAKING state
-                        voiceFrames = 0;
-                    }
-
-                    requestAnimationFrame(checkVolume);
+                    }, 300);
                 }
-                checkVolume();
-            } catch(e) {
             }
-        }
-
-        function triggerBargeIn() {
-
-            // Step 1: Stop current audio immediately
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio.currentTime = 0;
-                currentAudio.src = '';
-                currentAudio = null;
-            }
-
-            // Step 2: Abort any pending backend fetch
-            if (currentFetch) {
-                currentFetch.abort();
-                currentFetch = null;
-            }
-
-            // Step 3: Signal backend to stop TTS generation
-            fetch(`${API_URL}/stop`, { method: 'POST' }).catch(() => {});
-
-            // Step 4: Clear all transcript buffers
-            finalTranscript = '';
-            currentTranscript = '';
-
-            // Step 5: Clear all pending timers
-            clearTimeout(silenceTimer);
-            clearTimeout(forceTimer);
-            silenceTimer = null;
-            forceTimer = null;
-
-            // Step 6: Kill the current recognition instance completely
-            // (it is in a broken/zombie state after barge-in)
-            destroyRecognition();
-
-            // Step 7: Update state to LISTENING
-            setState('LISTENING');
-            clearInterimDisplay();
-
-            // Step 8: Recreate fresh recognition and start listening
-            // Small delay (300ms) lets the browser audio context settle
-            // after the abrupt audio stop — prevents echo/feedback capture
-            setTimeout(() => {
-                if (sessionActive) {
-                    createRecognition(lastDetectedLang);
-                    try {
-                        recognition.start();
-                    } catch(e) {
-                        // Try once more after another short delay
-                        setTimeout(() => {
-                            if (sessionActive) {
-                                createRecognition(lastDetectedLang);
-                                recognition.start();
-                            }
-                        }, 300);
-                    }
-                }
-            }, 300);
         }
 
         function clearInterimDisplay() {
@@ -663,6 +643,9 @@
         // ============== SEND QUERY (FIX C: Memory management) ==============
         async function sendQuery(transcript) {
             if (!transcript.trim()) return;
+
+            // Turn off microphone completely while processing query
+            destroyRecognition();
 
             setState(States.PROCESSING);
             clearInterimDisplay();
@@ -747,14 +730,122 @@
             }
         }
 
+        // ============== INTERRUPT & STOP VOICE BUTTONS ==============
+        const interruptWrapper = document.getElementById('interrupt-wrapper');
+        const interruptMicBtn = document.getElementById('interrupt-mic-btn');
+        const stopVoiceBtn = document.getElementById('stop-voice-btn');
+
+        function showInterruptBtn() {
+            if (interruptWrapper) interruptWrapper.classList.add('visible');
+        }
+
+        function hideInterruptBtn() {
+            if (interruptWrapper) interruptWrapper.classList.remove('visible');
+        }
+
+        function handleStopVoiceClick() {
+            // 1. Stop current audio playback
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.src = '';
+                currentAudio = null;
+            }
+
+            // 2. Abort any in-flight fetch
+            if (currentFetch) {
+                currentFetch.abort();
+                currentFetch = null;
+            }
+
+            // 3. Tell backend to stop TTS
+            fetch(`${API_URL}/stop`, { method: 'POST' }).catch(() => {});
+
+            // 4. Clear audio pool
+            audioPool.forEach(u => { try { URL.revokeObjectURL(u); } catch(e) {} });
+            audioPool.length = 0;
+
+            // 5. Clear timers & destroy speech recognition
+            clearTimeout(silenceTimer);
+            clearTimeout(forceTimer);
+            silenceTimer = null;
+            forceTimer = null;
+            destroyRecognition();
+
+            if (micStream) {
+                micStream.getTracks().forEach(t => t.stop());
+                micStream = null;
+            }
+
+            // 6. End session completely
+            sessionActive = false;
+            updateSessionBtnIcon(false);
+
+            // 7. Hide action bar & set state to IDLE
+            hideInterruptBtn();
+            setState(States.IDLE);
+        }
+
+        function handleInterruptClick() {
+            // 1. Stop bot audio immediately
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.src = '';
+                currentAudio = null;
+            }
+
+            // 2. Abort any in-flight fetch
+            if (currentFetch) {
+                currentFetch.abort();
+                currentFetch = null;
+            }
+
+            // 3. Tell backend to stop TTS
+            fetch(`${API_URL}/stop`, { method: 'POST' }).catch(() => {});
+
+            // 4. Clear audio pool
+            audioPool.forEach(u => { try { URL.revokeObjectURL(u); } catch(e) {} });
+            audioPool.length = 0;
+
+            // 5. Clear transcript buffers & timers
+            finalTranscript = '';
+            currentTranscript = '';
+            clearTimeout(silenceTimer);
+            clearTimeout(forceTimer);
+            silenceTimer = null;
+            forceTimer = null;
+
+            // 6. Hide interrupt button
+            hideInterruptBtn();
+
+            // 7. Resume listening immediately for user's next question
+            if (sessionActive) {
+                // Always create a fresh recognition to avoid zombie state
+                destroyRecognition();
+                createRecognition(lastDetectedLang);
+                setState(States.LISTENING);
+                clearInterimDisplay();
+                setTimeout(() => {
+                    if (sessionActive && recognition) {
+                        try { recognition.start(); } catch(e) {}
+                    }
+                }, 150);
+            }
+        }
+
+        if (stopVoiceBtn) stopVoiceBtn.addEventListener('click', handleStopVoiceClick);
+        if (interruptMicBtn) interruptMicBtn.addEventListener('click', handleInterruptClick);
+
         // ============== AUDIO PLAYBACK (FIX C: Blob URL cleanup) ==============
         async function playAudio(base64) {
             setState(States.SPEAKING);
 
-            // Mute speech recognition while bot speaks to prevent speaker echo capturing
-            if (recognition) {
-                try { recognition.stop(); } catch (e) { }
-            }
+            // Fully destroy recognition while bot speaks — prevents the browser
+            // from picking up audio from speakers through the microphone.
+            // We recreate it fresh in onTurnComplete() once playback finishes.
+            destroyRecognition();
+
+            // Show interrupt button so user can stop the bot mid-speech
+            showInterruptBtn();
 
             try {
                 // FIX C: Stop and destroy previous audio completely
@@ -790,39 +881,55 @@
                 // for the same element. Only the first event should trigger cleanup.
                 let audioHandled = false;
 
-                audio.onended = function onAudioEnded() {
+                function afterAudioDone() {
                     if (audioHandled) return;
                     audioHandled = true;
                     URL.revokeObjectURL(url);
                     currentAudio = null;
+                    // Hide the interrupt button now that audio is done
+                    hideInterruptBtn();
                     setState(States.LISTENING);
                     onTurnComplete();
-                };
+                }
 
-                audio.onerror = function onAudioError() {
-                    if (audioHandled) return;
-                    audioHandled = true;
-                    URL.revokeObjectURL(url);
-                    currentAudio = null;
-                    setState(States.LISTENING);
-                    onTurnComplete();
-                };
+                audio.onended = afterAudioDone;
+                audio.onerror = afterAudioDone;
 
                 await currentAudio.play();
             } catch (e) {
+                hideInterruptBtn();
                 setState(States.LISTENING);
                 onTurnComplete();
             }
         }
 
+        function updateSessionBtnIcon(active) {
+            if (!sessionBtn) return;
+            if (active) {
+                sessionBtn.classList.remove('start');
+                sessionBtn.classList.add('end');
+                sessionBtn.innerHTML = ICONS.mic;
+                sessionBtn.title = 'End Session';
+            } else {
+                sessionBtn.classList.remove('end');
+                sessionBtn.classList.add('start');
+                sessionBtn.innerHTML = ICONS.mic;
+                sessionBtn.title = 'Start Session';
+            }
+        }
+
         // ============== SESSION MANAGEMENT ==============
         async function handleSessionToggle() {
+            if (currentState === States.SPEAKING) {
+                // If bot is giving voice response, clicking mic button interrupts response and starts listening
+                handleInterruptClick();
+                return;
+            }
+
             if (sessionActive) {
                 // End session
                 sessionActive = false;
-                sessionBtn.innerText = 'Start Session';
-                sessionBtn.classList.remove('end');
-                sessionBtn.classList.add('start');
+                updateSessionBtnIcon(false);
 
                 clearTimeout(silenceTimer);
                 clearTimeout(forceTimer);
@@ -845,9 +952,7 @@
             } else {
                 // Start session
                 sessionActive = true;
-                sessionBtn.innerText = 'End Session';
-                sessionBtn.classList.remove('start');
-                sessionBtn.classList.add('end');
+                updateSessionBtnIcon(true);
 
                 // Reset state
                 turnCount = 0;
@@ -857,23 +962,21 @@
                 try {
                     // Start continuous listening
                     createAndStartRecognition();
-                    startBargeInMonitor();
                     setState(States.LISTENING);
                 } catch(e) {
                     sessionActive = false;
-                    sessionBtn.innerText = 'Start Session';
-                    sessionBtn.classList.remove('end');
-                    sessionBtn.classList.add('start');
+                    updateSessionBtnIcon(false);
                     alert('Could not start voice session. Please check microphone permissions.');
                 }
             }
         }
         sessionBtn.addEventListener('click', handleSessionToggle);
 
-        // Keyboard shortcut
+        // Keyboard shortcut: Ctrl+D (or Cmd+D on Mac) to enable/disable mic session
         function handleKeydown(e) {
-            if (e.code === 'Space' && sessionActive) {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'd') {
                 e.preventDefault();
+                handleSessionToggle();
             }
         }
         document.addEventListener('keydown', handleKeydown);
@@ -883,6 +986,8 @@
         const sendTextBtn = document.getElementById('send-text-btn');
 
         function handleTextSubmit() {
+            if (currentState === States.SPEAKING || currentState === States.PROCESSING) return;
+
             const text = textInput.value.trim();
             if (!text) return;
 
@@ -891,8 +996,16 @@
             textInput.value = '';
         }
 
-        // Send on button click
-        sendTextBtn.addEventListener('click', handleTextSubmit);
+        function handleSendBtnClick() {
+            if (currentState === States.SPEAKING || currentState === States.PROCESSING) {
+                handleStopVoiceClick();
+            } else {
+                handleTextSubmit();
+            }
+        }
+
+        // Send on button click (or stop voice if speaking)
+        sendTextBtn.addEventListener('click', handleSendBtnClick);
 
         // Send on Enter key
         function handleTextInputKeypress(e) {
