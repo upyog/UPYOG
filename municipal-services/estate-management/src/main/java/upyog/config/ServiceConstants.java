@@ -60,6 +60,12 @@ public class ServiceConstants {
     public static final String MDMS_MASTER_PENALTY     = "Penalty";
     public static final String MDMS_PENALTY_RATE_KEY   = "rate";
 
+    // Notification action codes (MDMS Notification.notificationConfig)
+    public static final String NOTIFICATION_MODULE = "EstateManagement";
+    public static final String NOTIFICATION_LOCALIZATION_MODULE = "rainmaker-est";
+    public static final String NOTIFICATION_ACTION_ALLOTMENT_CREATED = "ALLOTMENT_CREATED";
+    public static final String NOTIFICATION_ACTION_PAYMENT_SUCCESS = "PAYMENT_SUCCESS";
+
     // Error codes
     public static final String PARSING_ERROR_CODE = "PARSING ERROR";
 

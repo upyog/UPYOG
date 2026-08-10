@@ -18,7 +18,7 @@ import javax.sql.DataSource;
 
 @Import({ TracerConfiguration.class })
 @SpringBootApplication
-@ComponentScan(basePackages = { "upyog", "upyog.web.controllers" , "upyog.config"})
+@ComponentScan(basePackages = { "upyog", "upyog.web.controllers" , "upyog.config", "upyog.notification"})
 @EnableFeignClients(basePackages = "upyog.*")
 @EnableScheduling
 @EnableSchedulerLock(defaultLockAtMostFor = "PT30M")

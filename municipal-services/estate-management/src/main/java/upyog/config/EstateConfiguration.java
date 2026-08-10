@@ -82,6 +82,18 @@ public class EstateConfiguration {
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
 
+    @Value("${kafka.topics.notification.email:egov.core.notification.email}")
+    private String emailNotificationTopic;
+
+    @Value("${kafka.topics.notification.event:persist-user-events-async}")
+    private String eventNotificationTopic;
+
+    @Value("${upyog.notification.enabled:true}")
+    private Boolean notificationEnabled;
+
+    @Value("${upyog.notification.localization.module:rainmaker-est}")
+    private String notificationLocalizationModule;
+
 
     @Value("${idgen.estate.management.asset.id.name}")
     private String estateAssetIdName;
