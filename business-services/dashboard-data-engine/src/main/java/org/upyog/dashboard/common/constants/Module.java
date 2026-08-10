@@ -56,5 +56,11 @@ public enum Module {
      *   <li>Validator:   {@link org.upyog.dashboard.pgr.validation.impl.PGRValidator}</li>
      * </ul>
      */
-    PGR
+    PGR,
+    
+    CHB,
+    
+    ADV,
+    
+    FINANCE
 }
