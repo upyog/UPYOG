@@ -3,6 +3,14 @@ import { Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import GCSearchApplication from "../../components/SearchApplication";
 
+/**
+ * SearchApp Component
+ * 
+ * Employee-facing search page for GC applications.
+ * Wraps `GCSearchApplication` with search state management, date normalization,
+ * and client-side pagination. Validates that at least one search field is provided
+ * and that both fromDate and toDate are supplied together.
+ */
 const SearchApp = () => {
     const { t } = useTranslation();
     const tenantId = Digit.ULBService.getCurrentTenantId();

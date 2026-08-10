@@ -50,7 +50,7 @@ export const GCMyApplications = () => {
   const handleSearch = () => {
     const trimmedSearchTerm = searchTerm.trim();
     setFilters({
-      ...initialFilters,
+      mobileNumber: user?.mobileNumber,
       ...(trimmedSearchTerm && { applicationNumber: trimmedSearchTerm }),
       ...(status?.code && { status: status.code }),
     });

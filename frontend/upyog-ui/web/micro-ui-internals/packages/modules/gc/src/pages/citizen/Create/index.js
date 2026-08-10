@@ -32,6 +32,8 @@ const GCCreate = () => {
       lastchar = currentPath.charAt(currentPath.length - 1),
       isMultiple = false,
       nextPage;
+    // Repeated form sections use a numeric route suffix; remove it before
+    // looking up the base route in the wizard configuration.
     if (Number(parseInt(currentPath)) || currentPath == "0" || currentPath == "-1") {
       if (currentPath == "-1" || currentPath == "-2") {
         currentPath = pathname.slice(0, -3);
