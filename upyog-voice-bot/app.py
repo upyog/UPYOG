@@ -326,14 +326,14 @@ COMMON_ENGLISH_WORDS = {
 
 # English words commonly transliterated into Devanagari
 ENGLISH_IN_DEVANAGARI = [
-    'व्हाट', 'हाउ', 'व्हेन', 'व्हेयर', 'व्हाई', 'हू', 'विच',
+    'व्हाट', 'वॉट', 'हाउ', 'व्हेन', 'व्हेयर', 'वेयर', 'व्हाई', 'हू', 'विच',
     'इज', 'आर', 'वॉज', 'वेयर', 'हैव', 'हैज', 'डू', 'डज',
     'कैन', 'कुड', 'विल', 'वुड', 'शुड', 'मस्ट',
-    'द', 'ए', 'एन', 'इन', 'ऑन', 'एट', 'बाय', 'फॉर',
-    'ऑफ', 'टू', 'फ्रॉम', 'विद', 'अबाउट',
-    'नंबर', 'टोटल', 'लिस्ट', 'प्रोसेस', 'स्टेटस',
+    'द', 'थे', 'ए', 'एन', 'इन', 'ऑन', 'एट', 'बाय', 'फॉर',
+    'ऑफ', 'टू', 'फ्रॉम', 'विद', 'अबाउट', 'ई', 'पे', 'पेमेंट', 'फी', 'फीस',
+    'नंबर', 'टोटल', 'लिस्ट', 'प्रोसेस', 'स्टेटस', 'ट्रेड', 'लाइसेंस', 'प्रॉपर्टी', 'टैक्स',
     'एमओयू', 'एनयूएलएम', 'यूएलबी', 'एनयूडीएम',
-    'यूज़र', 'सर्च', 'सबमिट', 'अप्लाई', 'पेमेंट'
+    'यूज़र', 'सर्च', 'सबमिट', 'अप्लाई', 'सर्विस', 'स्टेट', 'पोर्टल', 'अकाउंट'
 ]
 
 def detect_language(text: str) -> dict:
@@ -356,15 +356,21 @@ def detect_language(text: str) -> dict:
     devanagari_ratio = devanagari_chars / total_alpha
 
     if devanagari_ratio > 0.5:
-        # Mostly Devanagari — check if transliterated English
-        english_word_count = sum(1 for w in words if any(eng in w for eng in ENGLISH_IN_DEVANAGARI))
-        english_ratio = english_word_count / len(words) if words else 0
-
-        if english_ratio > 0.4:
-            # Transliterated English
+        # Check for transliterated English question words first
+        if any(w in text for w in ['व्हाट', 'वॉट', 'हाउ', 'व्हेन', 'वेयर', 'व्हाई', 'हू', 'विच']):
             return {'lang': 'en', 'script': 'transliterated_english', 'search_lang': 'en'}
 
-        # True Hindi
+        # Check for pure Hindi words in Devanagari script
+        hindi_dev_words = ['है', 'हैं', 'था', 'थी', 'करोगे', 'करो', 'नहीं', 'दो', 'काम', 'खराब', 'चाहिए', 'बताओ', 'बताएं', 'करना', 'करते', 'सकते', 'सकता', 'सकती', 'कृपया', 'भरें', 'भरने', 'करें', 'किसे']
+        if any(w in words for w in hindi_dev_words):
+            return {'lang': 'hi', 'script': 'devanagari', 'search_lang': 'hi'}
+
+        english_word_count = sum(1 for w in words if any(eng == w for eng in ENGLISH_IN_DEVANAGARI))
+        english_ratio = english_word_count / len(words) if words else 0
+
+        if english_ratio >= 0.3:
+            return {'lang': 'en', 'script': 'transliterated_english', 'search_lang': 'en'}
+
         return {'lang': 'hi', 'script': 'devanagari', 'search_lang': 'hi'}
 
     # Roman script — check for Hindi phonetics
@@ -383,7 +389,7 @@ def detect_language(text: str) -> dict:
 
     hindi_word_count = sum(1 for w in words_lower if w in hindi_phonetic)
 
-    if hindi_word_count >= 2:
+    if hindi_word_count >= 1:
         return {'lang': 'hi', 'script': 'roman_hindi', 'search_lang': 'hi'}
 
     return {'lang': 'en', 'script': 'english', 'search_lang': 'en'}
@@ -569,9 +575,9 @@ def get_rag_response(query: str, history: list, lang: str, search_lang: str = No
 
     # Step 2: Build language instruction
     if lang == 'hi':
-        lang_rule = "LANGUAGE: Respond in Hindi using Devanagari script only. Exception: keep UPYOG, NUDM, NOC, GIS, ULB, MoU as-is."
+        lang_rule = "CRITICAL LANGUAGE INSTRUCTION: The user is asking in Hindi. You MUST respond in pure Hindi language using Devanagari script ONLY (हिंदी लिपि). Do NOT use Roman script, English sentences, or Romanized Hinglish under any circumstances. Exception: keep UPYOG, NUDM, NOC, GIS, ULB, MoU as-is."
     else:
-        lang_rule = "LANGUAGE: Respond in English only."
+        lang_rule = "CRITICAL LANGUAGE INSTRUCTION: The user is asking in English. You MUST respond in pure standard English script and language ONLY. Do NOT use Romanized Hinglish, Hindi words, or Devanagari script under any circumstances."
 
     # Step 3: Build context section
     if context:
@@ -589,11 +595,21 @@ Answer from your general knowledge about:
 - Indian Urban Local Body (ULB) services
 - Standard government processes for urban services in India"""
 
-    # Step 4: Build conversation history
+    # Step 4: Build conversation history with language isolation
     history_messages = []
     for turn in history[-6:]:
         if "content" in turn and "role" in turn:
-            history_messages.append({"role": turn["role"], "content": turn["content"]})
+            content = turn["content"]
+            if turn["role"] == "assistant":
+                if lang == 'en' and any('ऀ' <= c <= 'ॿ' for c in content):
+                    translated = translate_text(content, "hi", "en")
+                    if translated and len(translated.strip()) > 0:
+                        content = translated
+                elif lang == 'hi' and not any('ऀ' <= c <= 'ॿ' for c in content):
+                    translated = translate_text(content, "en", "hi")
+                    if translated and len(translated.strip()) > 0:
+                        content = translated
+            history_messages.append({"role": turn["role"], "content": content})
 
     # Step 5: System prompt - LLM as the brain
     system = f"""{lang_rule}
@@ -647,7 +663,16 @@ If unsure about numbers/dates, say "approximately" rather than refusing.
             max_tokens=400,
             temperature=0.3
         )
-        return response.choices[0].message.content.strip()
+        ans = response.choices[0].message.content.strip()
+        if lang == 'en' and any('ऀ' <= c <= 'ॿ' for c in ans):
+            translated = translate_text(ans, "hi", "en")
+            if translated and len(translated.strip()) > 0:
+                ans = translated
+        elif lang == 'hi' and not any('ऀ' <= c <= 'ॿ' for c in ans):
+            translated = translate_text(ans, "en", "hi")
+            if translated and len(translated.strip()) > 0:
+                ans = translated
+        return ans
 
     except Exception as e:
         logger.error(f"Groq error: {e}")
