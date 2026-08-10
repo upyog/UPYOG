@@ -121,6 +121,27 @@ public class PaymentUpdateService {
                 log.error("Failed to update allotment status on payment: {}", e.getMessage(), e);
             }
 
+            // Update scheduler log status to PAID
+            try {
+                SchedulerLog schedulerLogUpdate = SchedulerLog.builder()
+                        .allotmentId(allotmentId)
+                        .allotmentNo(consumerCode)
+                        .status(ServiceConstants.STATUS_PAID)
+                        .lastModifiedBy(userUuid)
+                        .lastModifiedTime(now)
+                        .build();
+
+                SchedulerLogRequest schedulerLogRequest = SchedulerLogRequest.builder()
+                        .requestInfo(paymentRequest.getRequestInfo())
+                        .schedulerLog(schedulerLogUpdate)
+                        .build();
+
+                estateRepository.save(config.getSchedulerLogUpdateTopic(), schedulerLogRequest);
+                log.info("Updated SchedulerLog status to PAID for allotmentNo: {}", consumerCode);
+            } catch (Exception e) {
+                log.error("Failed to update scheduler log status on payment: {}", e.getMessage(), e);
+            }
+
         } catch (Exception e) {
             log.error("Error processing payment update for estate: {}", e.getMessage(), e);
         }

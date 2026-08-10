@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class SchedulerLog {
     private String id;
     private String allotmentId;
+    private String allotmentNo;
     private String tenantId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate billingDate;

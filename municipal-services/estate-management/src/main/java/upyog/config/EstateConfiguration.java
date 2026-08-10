@@ -115,6 +115,10 @@ public class EstateConfiguration {
     @Value("${save-scheduler-log-topic}")
     private String schedulerLogTopic;
 
+    // update scheduler log topic
+    @Value("${update-scheduler-log-topic}")
+    private String schedulerLogUpdateTopic;
+
 
     // EST Business Service Config
     @Value("${est.module.name}")

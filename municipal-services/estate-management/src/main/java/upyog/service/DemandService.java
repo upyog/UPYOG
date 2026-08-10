@@ -236,6 +236,7 @@ public class DemandService {
                 SchedulerLog.builder()
                         .id(UUID.randomUUID().toString())
                         .allotmentId(allotment.getAllotmentId())
+                        .allotmentNo(allotment.getAllotmentNo())
                         .tenantId(allotment.getTenantId())
                         .billingDate(billingDate)
                         .billingPeriodFrom(convertToTimestamp(periodFrom))
@@ -253,9 +254,14 @@ public class DemandService {
                         .lastModifiedTime(now)
                         .build();
 
+        SchedulerLogRequest schedulerLogRequest = SchedulerLogRequest.builder()
+                .requestInfo(requestInfo)
+                .schedulerLog(schedulerLog)
+                .build();
+
         estateRepository.save(
                 config.getSchedulerLogTopic(),
-                Map.of("schedulerLog", schedulerLog));
+                schedulerLogRequest);
 
         // Update allotment due date and status to PENDING_FOR_PAYMENT
         try {

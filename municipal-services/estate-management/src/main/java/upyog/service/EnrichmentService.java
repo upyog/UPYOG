@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import upyog.config.EstateConfiguration;
 import upyog.config.ServiceConstants;
-import upyog.util.BillingPeriodUtil;
 import upyog.util.EstateUtil;
 import upyog.util.IdGenUtil;
 import upyog.web.models.*;
@@ -125,13 +124,7 @@ public class EnrichmentService {
             // Calculate and set initial due date based on agreement start date and billing cycle
             if (allotment.getDueDate() == null) {
                 try {
-                    BillingCycle billingCycle = BillingCycle.valueOf(allotment.getBillingCycle().toUpperCase(java.util.Locale.ROOT));
-                    BillingPeriod billingPeriod = BillingPeriodUtil.getBillingPeriod(
-                            allotment.getAgreementStartDate(),
-                            billingCycle,
-                            allotment.getAgreementEndDate()
-                    );
-                    allotment.setDueDate(billingPeriod.getPeriodTo());
+                    allotment.setDueDate(allotment.getAgreementStartDate());
                     log.info("Calculated initial due date: {}", allotment.getDueDate());
                 } catch (Exception e) {
                     log.error("Failed to calculate initial due date for allotment: {}", e.getMessage());
