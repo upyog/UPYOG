@@ -11,9 +11,7 @@ import upyog.config.ServiceConstants;
 import upyog.repository.EstateRepository;
 import upyog.util.EstateUtil;
 import upyog.web.models.*;
-import upyog.web.models.billing.Demand;
 import upyog.service.DemandService;
-import upyog.util.MdmsUtil;
 
 import java.util.List;
 

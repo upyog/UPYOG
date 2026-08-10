@@ -1,0 +1,996 @@
+---
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:9098/fsm
+  description: Generated server url
+paths:
+  "/plantmap/v1/_update":
+    post:
+      tags:
+      - plant-mapping-controller
+      operationId: update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/PlantMappingRequest"
+      responses:
+        '200':
+          description: default response
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/PlantMappingResponse"
+  "/plantmap/v1/_create":
+    post:
+      tags:
+      - plant-mapping-controller
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/PlantMappingRequest"
+      responses:
+        '200':
+          description: default response
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/PlantMappingResponse"
+  "/plantmap/v1/_search":
+    post:
+      tags:
+      - plant-mapping-controller
+      operationId: search
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                requestInfoWrapper:
+                  "$ref": "#/components/schemas/RequestInfoWrapper"
+                criteria:
+                  "$ref": "#/components/schemas/PlantMappingSearchCriteria"
+      responses:
+        '200':
+          description: default response
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/PlantMappingResponse"
+  "/v1/_update":
+    post:
+      tags:
+      - fsm-controller
+      operationId: update_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/FSMRequest"
+      responses:
+        '200':
+          description: default response
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/FSMResponse"
+  "/v1/_create":
+    post:
+      tags:
+      - fsm-controller
+      operationId: create_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/FSMRequest"
+      responses:
+        '200':
+          description: default response
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/FSMResponse"
+  "/v1/_search":
+    post:
+      tags:
+      - fsm-controller
+      operationId: search_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                requestInfoWrapper:
+                  "$ref": "#/components/schemas/RequestInfoWrapper"
+                criteria:
+                  "$ref": "#/components/schemas/FSMSearchCriteria"
+      responses:
+        '200':
+          description: default response
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/FSMResponse"
+  "/v1/_audit":
+    post:
+      tags:
+      - fsm-controller
+      operationId: audit
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                requestInfoWrapper:
+                  "$ref": "#/components/schemas/RequestInfoWrapper"
+                criteria:
+                  "$ref": "#/components/schemas/FSMAuditSearchCriteria"
+      responses:
+        '200':
+          description: default response
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/FSMAuditResponse"
+  "/v1/_getapplicationsforperiodic":
+    post:
+      tags:
+      - fsm-controller
+      operationId: getFSMApplicationsForPeriodicServices
+      parameters:
+      - name: tenantId
+        in: query
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/RequestInfoWrapper"
+      responses:
+        '200':
+          description: default response
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/PeriodicApplicationResponse"
+  "/v1/_createperiodicapplications":
+    post:
+      tags:
+      - fsm-controller
+      operationId: createPeriodicApplications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/PeriodicApplicationRequest"
+      responses:
+        '200':
+          description: default response
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/PeriodicApplicationResponse"
+  "/v1/_schedular":
+    post:
+      tags:
+      - fsm-controller
+      operationId: schedulePeriodicApplications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/RequestInfoWrapper"
+      responses:
+        '200':
+          description: default response
+  "/v1/_plainsearch":
+    post:
+      tags:
+      - fsm-controller
+      operationId: plainsearch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                requestInfoWrapper:
+                  "$ref": "#/components/schemas/RequestInfoWrapper"
+                criteria:
+                  "$ref": "#/components/schemas/FSMSearchCriteria"
+      responses:
+        '200':
+          description: default response
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/FSMResponse"
+  "/v1/fetchApplicationIds":
+    post:
+      tags:
+      - fsm-inbox-controller
+      operationId: fetchApplicationIds
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                requestInfoWrapper:
+                  "$ref": "#/components/schemas/RequestInfoWrapper"
+                criteria:
+                  "$ref": "#/components/schemas/VehicleTripSearchCriteria"
+      responses:
+        '200':
+          description: default response
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/VehicleCustomResponse"
+components:
+  schemas:
+    AuditDetails:
+      type: object
+      properties:
+        createdBy:
+          type: string
+        lastModifiedBy:
+          type: string
+        createdTime:
+          type: integer
+          format: int64
+        lastModifiedTime:
+          type: integer
+          format: int64
+    PlainAccessRequest:
+      type: object
+      properties:
+        recordId:
+          type: string
+        plainRequestFields:
+          type: array
+          items:
+            type: string
+    PlantMapping:
+      required:
+      - tenantId
+      type: object
+      properties:
+        id:
+          type: string
+        employeeUuid:
+          maxLength: 64
+          minLength: 0
+          type: string
+        plantCode:
+          maxLength: 64
+          minLength: 0
+          type: string
+        tenantId:
+          maxLength: 64
+          minLength: 2
+          type: string
+        auditDetails:
+          "$ref": "#/components/schemas/AuditDetails"
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+    PlantMappingRequest:
+      type: object
+      properties:
+        RequestInfo:
+          "$ref": "#/components/schemas/RequestInfo"
+        plantMapping:
+          "$ref": "#/components/schemas/PlantMapping"
+    RequestInfo:
+      type: object
+      properties:
+        apiId:
+          type: string
+        ver:
+          type: string
+        ts:
+          type: integer
+          format: int64
+        action:
+          type: string
+        did:
+          type: string
+        key:
+          type: string
+        msgId:
+          type: string
+        authToken:
+          type: string
+        correlationId:
+          type: string
+        plainAccessRequest:
+          "$ref": "#/components/schemas/PlainAccessRequest"
+        userInfo:
+          "$ref": "#/components/schemas/User"
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          maxLength: 128
+          minLength: 0
+          type: string
+        code:
+          maxLength: 50
+          minLength: 0
+          type: string
+        tenantId:
+          maxLength: 256
+          minLength: 0
+          type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        userName:
+          maxLength: 180
+          minLength: 0
+          type: string
+        name:
+          maxLength: 250
+          minLength: 0
+          type: string
+        type:
+          maxLength: 50
+          minLength: 0
+          type: string
+        mobileNumber:
+          maxLength: 150
+          minLength: 0
+          type: string
+        emailId:
+          maxLength: 300
+          minLength: 0
+          type: string
+        roles:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Role"
+        tenantId:
+          maxLength: 256
+          minLength: 0
+          type: string
+        uuid:
+          maxLength: 36
+          minLength: 0
+          type: string
+    PlantMappingResponse:
+      type: object
+      properties:
+        responseInfo:
+          "$ref": "#/components/schemas/ResponseInfo"
+        plantMapping:
+          type: array
+          items:
+            "$ref": "#/components/schemas/PlantMapping"
+    ResponseInfo:
+      type: object
+      properties:
+        apiId:
+          type: string
+        ver:
+          type: string
+        ts:
+          type: integer
+          format: int64
+        resMsgId:
+          type: string
+        msgId:
+          type: string
+        status:
+          type: string
+    RequestInfoWrapper:
+      type: object
+      properties:
+        RequestInfo:
+          "$ref": "#/components/schemas/RequestInfo"
+    PlantMappingSearchCriteria:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        tenantId:
+          type: string
+        plantCode:
+          type: string
+        employeeUuid:
+          type: array
+          items:
+            type: string
+        ids:
+          type: array
+          items:
+            type: string
+    Address:
+      type: object
+      properties:
+        tenantId:
+          type: string
+        doorNo:
+          maxLength: 256
+          minLength: 0
+          type: string
+        plotNo:
+          maxLength: 64
+          minLength: 0
+          type: string
+        id:
+          type: string
+        landmark:
+          maxLength: 1024
+          minLength: 0
+          type: string
+        city:
+          type: string
+        district:
+          type: string
+        region:
+          maxLength: 64
+          minLength: 0
+          type: string
+        state:
+          maxLength: 64
+          minLength: 0
+          type: string
+        country:
+          maxLength: 64
+          minLength: 0
+          type: string
+        pincode:
+          maxLength: 6
+          minLength: 0
+          pattern: "^[1-9]{1}[0-9]{5}$"
+          type: string
+        additionalDetails:
+          type: object
+        auditDetails:
+          "$ref": "#/components/schemas/AuditDetails"
+        buildingName:
+          maxLength: 64
+          minLength: 0
+          type: string
+        street:
+          maxLength: 256
+          minLength: 0
+          type: string
+        slumName:
+          type: string
+        locality:
+          "$ref": "#/components/schemas/Boundary"
+        geoLocation:
+          "$ref": "#/components/schemas/GeoLocation"
+    Boundary:
+      required:
+      - code
+      - name
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        label:
+          type: string
+        latitude:
+          type: string
+        longitude:
+          type: string
+        children:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Boundary"
+        materializedPath:
+          type: string
+    Document:
+      type: object
+      properties:
+        id:
+          maxLength: 64
+          minLength: 0
+          type: string
+        documentType:
+          type: string
+        fileStore:
+          type: string
+        documentUid:
+          maxLength: 64
+          minLength: 0
+          type: string
+        additionalDetails:
+          type: object
+    Driver:
+      type: object
+      properties:
+        id:
+          type: string
+        tenantId:
+          maxLength: 64
+          minLength: 0
+          type: string
+        name:
+          maxLength: 128
+          minLength: 0
+          type: string
+        owner:
+          "$ref": "#/components/schemas/User"
+        ownerId:
+          maxLength: 64
+          minLength: 0
+          type: string
+        additionalDetails:
+          type: object
+        description:
+          type: string
+        licenseNumber:
+          type: string
+        vendor:
+          "$ref": "#/components/schemas/Vendor"
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - DISABLED
+        auditDetails:
+          "$ref": "#/components/schemas/AuditDetails"
+        vendorDriverStatus:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+          - DISABLED
+    FSM:
+      required:
+      - tenantId
+      type: object
+      properties:
+        citizen:
+          "$ref": "#/components/schemas/User"
+        id:
+          type: string
+        tenantId:
+          maxLength: 64
+          minLength: 2
+          type: string
+        applicationNo:
+          type: string
+        description:
+          type: string
+        accountId:
+          type: string
+        additionalDetails:
+          type: object
+        applicationStatus:
+          type: string
+        source:
+          type: string
+        sanitationtype:
+          type: string
+        propertyUsage:
+          type: string
+        vehicleType:
+          type: string
+        noOfTrips:
+          type: integer
+          format: int32
+        vehicleCapacity:
+          type: string
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+        vehicleId:
+          type: string
+        vehicle:
+          "$ref": "#/components/schemas/Vehicle"
+        dsoId:
+          type: string
+        dso:
+          "$ref": "#/components/schemas/Vendor"
+        possibleServiceDate:
+          type: integer
+          format: int64
+        pitDetail:
+          "$ref": "#/components/schemas/PitDetail"
+        address:
+          "$ref": "#/components/schemas/Address"
+        auditDetails:
+          "$ref": "#/components/schemas/AuditDetails"
+        wasteCollected:
+          type: number
+          format: double
+        completedOn:
+          type: integer
+          format: int64
+        advanceAmount:
+          type: number
+        applicationType:
+          type: string
+        oldApplicationNo:
+          type: string
+        paymentPreference:
+          type: string
+    FSMRequest:
+      type: object
+      properties:
+        RequestInfo:
+          "$ref": "#/components/schemas/RequestInfo"
+        fsm:
+          "$ref": "#/components/schemas/FSM"
+        workflow:
+          "$ref": "#/components/schemas/Workflow"
+    GeoLocation:
+      type: object
+      properties:
+        id:
+          type: string
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        additionalDetails:
+          type: object
+    PitDetail:
+      type: object
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        tenantId:
+          type: string
+        height:
+          maximum: 99.9
+          exclusiveMaximum: false
+          type: number
+          format: double
+        length:
+          maximum: 99.9
+          exclusiveMaximum: false
+          type: number
+          format: double
+        width:
+          maximum: 99.9
+          exclusiveMaximum: false
+          type: number
+          format: double
+        diameter:
+          maximum: 99.9
+          exclusiveMaximum: false
+          type: number
+          format: double
+        distanceFromRoad:
+          type: number
+          format: double
+        auditDetails:
+          "$ref": "#/components/schemas/AuditDetails"
+        additionalDetails:
+          type: object
+    Vehicle:
+      type: object
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        registrationNumber:
+          type: string
+        model:
+          type: string
+        type:
+          type: string
+        tankCapacity:
+          type: number
+          format: double
+        suctionType:
+          type: string
+        pollutionCertiValidTill:
+          type: integer
+          format: int64
+        InsuranceCertValidTill:
+          type: integer
+          format: int64
+        fitnessValidTill:
+          type: integer
+          format: int64
+        roadTaxPaidTill:
+          type: integer
+          format: int64
+        gpsEnabled:
+          type: boolean
+        additionalDetails:
+          type: object
+        source:
+          type: string
+        ownerId:
+          type: string
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+        owner:
+          "$ref": "#/components/schemas/User"
+        auditDetails:
+          "$ref": "#/components/schemas/AuditDetails"
+    Vendor:
+      type: object
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        name:
+          type: string
+        address:
+          "$ref": "#/components/schemas/Address"
+        owner:
+          "$ref": "#/components/schemas/User"
+        vehicles:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Vehicle"
+        drivers:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Driver"
+        additionalDetails:
+          type: object
+        source:
+          type: string
+        description:
+          type: string
+        ownerId:
+          type: string
+        status:
+          type: string
+          enum:
+          - ACTIVE
+          - INACTIVE
+        auditDetails:
+          "$ref": "#/components/schemas/AuditDetails"
+    Workflow:
+      type: object
+      properties:
+        action:
+          type: string
+        assignes:
+          type: array
+          items:
+            type: string
+        comments:
+          type: string
+        verificationDocuments:
+          type: array
+          items:
+            "$ref": "#/components/schemas/Document"
+        rating:
+          type: integer
+          format: int32
+    FSMResponse:
+      required:
+      - fsm
+      - responseInfo
+      type: object
+      properties:
+        totalCount:
+          type: integer
+          format: int32
+        responseInfo:
+          "$ref": "#/components/schemas/ResponseInfo"
+        fsm:
+          type: array
+          items:
+            "$ref": "#/components/schemas/FSM"
+        workflow:
+          "$ref": "#/components/schemas/Workflow"
+    FSMSearchCriteria:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        offset:
+          type: integer
+          format: int32
+        limit:
+          type: integer
+          format: int32
+        tenantId:
+          type: string
+        mobileNumber:
+          type: string
+        applicationStatus:
+          type: array
+          items:
+            type: string
+        locality:
+          type: array
+          items:
+            type: string
+        ownerIds:
+          type: array
+          items:
+            type: string
+        fromDate:
+          type: integer
+          format: int64
+        toDate:
+          type: integer
+          format: int64
+        applicationNos:
+          type: array
+          items:
+            type: string
+        applicationType:
+          type: string
+        oldApplicationNos:
+          type: array
+          items:
+            type: string
+        ids:
+          type: array
+          items:
+            type: string
+        sortBy:
+          type: string
+          enum:
+          - applicationStatus
+          - applicationNumber
+          - propertyUsage
+          - vehicle
+          - locality
+          - createdTime
+        sortOrder:
+          type: string
+          enum:
+          - ASC
+          - DESC
+    FSMAuditSearchCriteria:
+      type: object
+      properties:
+        tenantId:
+          type: string
+        applicationNo:
+          type: string
+        id:
+          type: string
+    FSMAudit:
+      type: object
+      properties:
+        who:
+          type: string
+        when:
+          type: integer
+          format: int64
+        what:
+          type: object
+          additionalProperties:
+            type: object
+    FSMAuditResponse:
+      type: object
+      properties:
+        responseInfo:
+          "$ref": "#/components/schemas/ResponseInfo"
+        fsmAudit:
+          type: array
+          items:
+            "$ref": "#/components/schemas/FSMAudit"
+    PeriodicApplicationResponse:
+      type: object
+      properties:
+        responseInfo:
+          "$ref": "#/components/schemas/ResponseInfo"
+        applicationNoList:
+          type: array
+          items:
+            type: string
+    PeriodicApplicationRequest:
+      type: object
+      properties:
+        tenantId:
+          type: string
+        RequestInfo:
+          "$ref": "#/components/schemas/RequestInfo"
+        applicationNoList:
+          type: array
+          items:
+            type: string
+    VehicleTripSearchCriteria:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        offset:
+          type: integer
+          format: int32
+        limit:
+          type: integer
+          format: int32
+        tenantId:
+          type: string
+        businessService:
+          type: string
+        ids:
+          type: array
+          items:
+            type: string
+        vehicleIds:
+          type: array
+          items:
+            type: string
+        tripOwnerIds:
+          type: array
+          items:
+            type: string
+        driverIds:
+          type: array
+          items:
+            type: string
+        applicationStatus:
+          type: array
+          items:
+            type: string
+        refernceNos:
+          type: array
+          items:
+            type: string
+        applicationNos:
+          type: array
+          items:
+            type: string
+        sortBy:
+          type: string
+          enum:
+          - APPLICATIONSTATUS
+          - APPLICATIONINO
+          - VEHICLE
+          - REFERENCENO
+          - CREATEDTIME
+          - TRIPSTARTTIME
+          - TRIPENDTIME
+        sortOrder:
+          type: string
+          enum:
+          - ASC
+          - DESC
+    VehicleCustomResponse:
+      type: object
+      properties:
+        responseInfo:
+          "$ref": "#/components/schemas/ResponseInfo"
+        applicationStatusCount:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              type: object
+        applicationIds:
+          type: array
+          items:
+            type: string
