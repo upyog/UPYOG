@@ -25,13 +25,16 @@ class ModuleTest {
     @Test
     @DisplayName("Module has expected number of constants")
     void module_hasExpectedConstants() {
-        assertThat(Module.values()).hasSize(2);
+        assertThat(Module.values()).hasSize(5);
     }
 
     @Test
-    @DisplayName("PT and PGR constant names")
+    @DisplayName("PT, PGR, CHB, ADV, FINANCE constant names")
     void enum_names() {
         assertThat(Module.PT.name()).isEqualTo("PT");
         assertThat(Module.PGR.name()).isEqualTo("PGR");
+        assertThat(Module.CHB.name()).isEqualTo("CHB");
+        assertThat(Module.ADV.name()).isEqualTo("ADV");
+        assertThat(Module.FINANCE.name()).isEqualTo("FINANCE");
     }
 }
