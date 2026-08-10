@@ -9,15 +9,7 @@ import CheckPage from "../Create/CheckPage";
 import GCAcknowledgement from "../Create/GCAcknowledgement";
 
 /**
- * GC Edit Wizard
- * Flow:
- *  - Read applicationNo from URL
- *  - Search existing application
- *  - Pre-fill wizard (using session storage)
- *  - Submit updated payload via GC update service
- */
-/**
- * GC Edit Wizard Component
+ * GCEdIt Component — GC Edit Wizard
  * 
  * Handles the edit flow for an existing GC application in an editable status.
  * Flow:

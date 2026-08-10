@@ -2,6 +2,17 @@ import { CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, TelePhone
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 
+/**
+ * GCWFCaption Component
+ * 
+ * Renders the caption content for a single workflow checkpoint.
+ * Displays date, assignee name, mobile number, application channel source,
+ * comments, workflow comments, and any attached photo thumbnails.
+ * 
+ * Props:
+ * - `data`: Object containing date, name, mobileNumber, source, comment, wfComment, thumbnailsToShow
+ * - `OpenImage`: Callback to open a full-size image in a new tab
+ */
 const GCWFCaption = ({ data, OpenImage }) => {
   const { t } = useTranslation();
   return (
@@ -31,6 +42,18 @@ const GCWFCaption = ({ data, OpenImage }) => {
   );
 };
 
+/**
+ * GCWFApplicationTimeline Component
+ * 
+ * Renders the workflow timeline for a GC application, showing all state transitions
+ * with assignee details, timestamps, comments, and attachments.
+ * Fetches workflow history using the `useWorkflowDetails` hook.
+ * Renders a single `CheckPoint` for one-step workflows or `ConnectingCheckPoints` for multi-step.
+ * 
+ * Props:
+ * - `application`: The GC application object containing tenantId, applicationNo/grbgApplicationNumber,
+ *                  businessService, and channel
+ */
 const GCWFApplicationTimeline = ({ application }) => {
   const { t } = useTranslation();
   const businessService = application?.businessService || "garbage-service";

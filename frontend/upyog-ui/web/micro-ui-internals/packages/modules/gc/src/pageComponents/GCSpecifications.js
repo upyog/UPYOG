@@ -28,7 +28,6 @@ import {multiUnits} from "../utils";
  * - `renewApplication`: Existing application for pre-filling during edit
  */
 const GCSpecifications = ({ t, config, onSelect, formData, renewApplication }) => {
-    console.log("renewApplication", renewApplication);
 
     const convertToObject = (params) => ({ i18nKey: params, code: params, value: params });
 
@@ -86,12 +85,17 @@ const GCSpecifications = ({ t, config, onSelect, formData, renewApplication }) =
     })) || [];
 
     const specsData = formData?.[config?.key] || formData?.gcspecifications || formData?.GCSpecifications || {};
+    const applicantPhoneNumber = formData?.owner?.mobileNumber || formData?.owners?.[0]?.mobileNumber || "";
+
+    const isOwner = (ownerType) => String(ownerType?.code || ownerType?.i18nKey || "").toUpperCase() === "OWNER";
 
     const [oldGarbageId, setOldGarbageId] = useState(specsData.oldGarbageId || renewApplication?.grbgOldDetails?.oldGarbageId || "");
     const [typeOfCollection, setTypeOfCollection] = useState(specsData.typeOfCollection || convertToObject(renewApplication?.grbgCollectionUnits?.[0]?.unitType) || "");
     const [propertyOwnerType, setPropertyOwnerType] = useState(specsData.propertyOwnerType || convertToObject(renewApplication?.grbgCollectionUnits?.[0]?.ownerType) || "");
     const [name, setName] = useState(specsData.name || renewApplication?.name || "");
-    const [phoneNumber, setPhoneNumber] = useState(specsData.phoneNumber || renewApplication?.mobileNumber || user?.mobileNumber || "");
+    // This field intentionally starts blank. It is populated from Applicant Details
+    // only when the user explicitly selects Owner.
+    const [phoneNumber, setPhoneNumber] = useState("");
     const [gender, setGender] = useState(specsData.gender || convertToObject(renewApplication?.gender) || "");
     const [email, setEmail] = useState(specsData.email || renewApplication?.emailId || "");
     const [category, setCategory] = useState(specsData.category || convertToObject(renewApplication?.grbgCollectionUnits?.[0]?.category) || "");
@@ -230,7 +234,12 @@ const GCSpecifications = ({ t, config, onSelect, formData, renewApplication }) =
                         option={OwnerTypes}
                         optionKey="i18nKey"
                         selected={propertyOwnerType}
-                        select={setPropertyOwnerType}
+                        select={(val) => {
+                            setPropertyOwnerType(val);
+                            // Owners use the contact number entered in Applicant Details;
+                            // tenants must provide their own contact number.
+                            setPhoneNumber(isOwner(val) ? applicantPhoneNumber : "");
+                        }}
                         style={inputStyles}
                         t={t}
                     />
@@ -265,6 +274,7 @@ const GCSpecifications = ({ t, config, onSelect, formData, renewApplication }) =
                         inputMode="numeric"
                         maxLength={10}
                         value={phoneNumber}
+                        placeholder={t("GC_PHONE_NO_DISCLAIMER")}
                         style={inputStyles}
                         onChange={(e) => {
                             let value = e.target.value.replace(/\D/g, "").slice(0, 10);
