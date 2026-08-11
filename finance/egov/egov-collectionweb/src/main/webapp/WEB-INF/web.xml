@@ -87,6 +87,10 @@
         </init-param>
     </filter>
 
+	<!--
+		Disabled EHCache GzipFilter due to Jakarta Servlet API (Jakarta EE 9+) incompatibility.
+		Response compression is managed at the container/proxy level (e.g. WildFly, Nginx).
+	-->
 <!--    <filter>-->
 <!--        <filter-name>gzipFilter</filter-name>-->
 <!--        <filter-class>net.sf.ehcache.constructs.web.filter.GzipFilter</filter-class>-->
@@ -250,6 +254,11 @@
     </filter-mapping>
 
     <!-- Listeners Starts -->
+	<!--
+		Spring 6 / Multi-Module Root Context Loader:
+		SharedParentApplicationContext listener initializes and shares the root Spring application
+		context hierarchy across eGov sub-modules (replacing standard ContextLoaderListener).
+	-->
     <listener>
         <listener-class>org.egov.infra.config.SharedParentApplicationContext</listener-class>
     </listener>
@@ -278,6 +287,11 @@
         <load-on-startup>1</load-on-startup>
         <async-supported>true</async-supported>
 
+        <!--
+        	Standard Servlet Multipart Configuration (Jakarta Servlet API):
+        	Configured container-level multipart parsing (max 20MB file size / request size)
+        	for StandardServletMultipartResolver compatibility in Spring 6.
+        -->
         <multipart-config>
             <max-file-size>20971520</max-file-size>
             <max-request-size>20971520</max-request-size>

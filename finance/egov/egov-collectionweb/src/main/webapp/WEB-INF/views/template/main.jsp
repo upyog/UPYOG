@@ -54,6 +54,20 @@
 <!DOCTYPE html>
 <html>
 	<head>
+<%--
+	========================================================================================
+	Spring 6 & Jakarta EE Migration Notice:
+	========================================================================================
+	1. Jakarta JSTL Core Taglib:
+	   - JSTL URI updated to 'jakarta.tags.core' to support Jakarta EE 9+ / Servlet 5.0+
+	     containers (e.g. WildFly 27+, Tomcat 10+).
+
+	2. Analytics Property Resolution:
+	   - Replaced legacy SpEL expression (<spring:eval expression="@environment.getProperty(...)"/>)
+	     with WebApplicationContextUtils lookup for reliable environment property resolution
+	     in Spring 6 context.
+	========================================================================================
+--%>
 <%
 	org.springframework.web.context.WebApplicationContext _wac = org.springframework.web.context.support.WebApplicationContextUtils.getWebApplicationContext(application);
 	if (_wac != null && _wac.getEnvironment() != null) {

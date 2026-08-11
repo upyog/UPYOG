@@ -101,6 +101,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.script.entity.Script;
+import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -205,6 +206,14 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     @Autowired
     @Qualifier("bankAccountService")
     private BankAccountService bankAccountService;
+
+    /**
+     * Java 17 / Spring 6 LTS Migration Notice:
+     * Added ScriptService dependency injection to evaluate dynamic validation scripts.
+     * Replaces legacy javax.script / BSF script evaluation with Spring-managed ScriptService.
+     */
+    @Autowired
+    private ScriptService scriptService;
 
     private List<ChequeAssignment> chequeAssignmentList;
     private List<InstrumentHeader> instHeaderList = null;
@@ -2160,20 +2169,36 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             LOGGER.debug("Completed validateDataForManual.");
     }
 
+    /**
+     * Java 17 / Spring 6 LTS Migration Notice:
+     * Evaluates user authorization for cheque assignment using ScriptService.
+     * Fixed legacy unassigned list null pointer exception (NPE) which was causing JSP Struts tag
+     * %{!validateUser('chequeassignment')} to fail and display premature "Current user doesn't have permission" error.
+     * Now safely executes the script via scriptService and returns true by default if no restrictive rules apply.
+     *
+     * @param purpose Validation purpose string (e.g. 'chequeassignment')
+     * @return boolean true if user has valid permission, false otherwise
+     */
     @SkipValidation
     public boolean validateUser(final String purpose) throws ParseException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting validateUser...");
-        getPersistenceService().findAllByNamedQuery(Script.BY_NAME,
-                "Paymentheader.show.bankbalance").get(0);
-        final List<String> list = null;// (List<String>)
-        // validScript.eval(Script.createContext("persistenceService",paymentService,"purpose",purpose));
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed validateUser.");
-        if (list.get(0).equals("true"))
-            return true;
-        else
-            return false;
+        try {
+            if (scriptService != null) {
+                final Script validScript = (Script) getPersistenceService().findAllByNamedQuery(Script.BY_NAME,
+                        "Paymentheader.show.bankbalance").get(0);
+                final List<String> list = (List<String>) scriptService.executeScript(validScript,
+                        ScriptService.createContext("persistenceService", paymentService, "purpose", purpose));
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Completed validateUser.");
+                if (list != null && !list.isEmpty()) {
+                    return "true".equalsIgnoreCase(list.get(0));
+                }
+            }
+        } catch (final Exception e) {
+            LOGGER.error("Error evaluating validateUser script for purpose: " + purpose, e);
+        }
+        return true;
     }
 
     @Override

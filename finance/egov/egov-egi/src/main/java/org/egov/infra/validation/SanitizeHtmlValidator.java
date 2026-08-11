@@ -2,6 +2,7 @@ package org.egov.infra.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import org.apache.commons.text.StringEscapeUtils;
 import org.owasp.html.PolicyFactory;
 import org.owasp.html.Sanitizers;
 
@@ -27,6 +28,9 @@ public class SanitizeHtmlValidator implements ConstraintValidator<SanitizeHtml, 
         if (value == null) return true;
 
         String sanitized = POLICY.sanitize(value);
-        return value.equals(sanitized);
+        // Unescape HTML entities (e.g. &#64; for '@') to allow valid emails and text while rejecting malicious HTML tags
+        String unescapedSanitized = StringEscapeUtils.unescapeHtml4(sanitized);
+        String unescapedValue = StringEscapeUtils.unescapeHtml4(value);
+        return unescapedValue.equals(unescapedSanitized);
     }
 }

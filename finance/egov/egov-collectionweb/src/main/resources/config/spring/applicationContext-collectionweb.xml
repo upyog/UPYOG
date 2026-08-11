@@ -54,6 +54,27 @@
 
     <import resource="applicationSecurityContext-collection.xml"/>
 
+	<!--
+		========================================================================================
+		Spring Web Application Context Configuration (egov-collectionweb):
+		========================================================================================
+		1. Security Context Import:
+		   - Imports 'applicationSecurityContext-collection.xml' to set up security rules,
+		     interceptors, and authentication providers for the Collection web module.
+
+		2. Component Scanning & Filters:
+		   - Scans 'org.egov.collection.web' for Spring service/repository/component beans.
+		   - Excludes @Controller annotations as web controllers are managed separately in the
+		     servlet application context layer.
+
+		3. Spring 6 / Jakarta Servlet Multipart Resolver Migration:
+		   - Legacy 'org.springframework.web.multipart.commons.CommonsMultipartResolver' was
+		     removed in Spring Framework 6.x / Spring Boot 3.x (Jakarta EE migration).
+		   - Replaced with 'org.springframework.web.multipart.support.StandardServletMultipartResolver'
+		     as 'filterMultipartResolver' to handle file uploads via standard Servlet multipart API.
+		========================================================================================
+	-->
+
     <context:component-scan base-package="org.egov.collection.web">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
