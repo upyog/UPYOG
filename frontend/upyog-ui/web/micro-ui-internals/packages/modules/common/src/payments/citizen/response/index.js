@@ -231,6 +231,9 @@ const WrapPaymentComponent = (props) => {
           if(business_service=="WS" || business_service=="SW"){
             response = await Digit.PaymentService.generatePdf(state, { Payments: [{...paymentData}] }, generatePdfKeyForWs);
           }
+          else if(business_service?.includes("garbage-service")){
+            response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{...paymentData}] }, "garbage-service-receipt");
+          }
           else if(businessServ.includes("BPA")){
             let queryObj = { applicationNo: payments.Payments[0].paymentDetails[0]?.bill?.consumerCode };
             let bpaResponse = await Digit.OBPSService.BPASearch( payments.Payments[0].tenantId, queryObj);
@@ -903,6 +906,15 @@ const WrapPaymentComponent = (props) => {
           {t("PTR_CERTIFICATE")}
         </div>
       ) : null}
+      {business_service == "garbage-service" ? (
+        <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={printReciept}>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
+            <path d="M0 0h24v24H0V0z" fill="none" />
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+          </svg>
+          {t("GC_FEE_RECEIPT")}
+        </div>
+      ) : null}
       {window.location.href.includes("mcollect") ?
          <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px" }} onClick={printReciept}>
          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
@@ -1084,6 +1096,11 @@ const WrapPaymentComponent = (props) => {
       {business_service == "sv-services" && (
         <Link to={`/upyog-ui/citizen`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} style={{marginTop:"15px"}} />
+        </Link>
+      )}
+      {business_service == "garbage-service" && (
+        <Link to={`/upyog-ui/citizen`}>
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       )}
     </Card>
