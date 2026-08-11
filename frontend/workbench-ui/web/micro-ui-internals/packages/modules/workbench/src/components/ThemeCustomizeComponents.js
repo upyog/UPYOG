@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
-import { Modal, ThemePreviewIcon, Toast, DeleteIconv2, CopyIcon, CheckIcon, AddIcon } from "@upyog/workbench-ui-react-components";
+import { Modal, ThemePreviewIcon, Toast, DeleteIconv2, CopyIcon, CheckIcon, AddIcon, UploadIcon, CloseSvg } from "@upyog/workbench-ui-react-components";
 import { getCardIcon } from "../utils";
 
 /**
@@ -56,19 +56,19 @@ export function PreviewDropdown() {
 
   return (
     <div className="preview-dropdown-container">
-      <button 
+      <button
         className="preview-btn-trigger"
         onClick={() => setIsOpen(!isOpen)}
         title={t("Preview configuration pages")}
       >
-        <span>👁️</span> {t("Preview")}
+        <ThemePreviewIcon fill="#3D2364" /> {t("Preview")}
       </button>
       {isOpen && (
         <div className="preview-dropdown-menu">
           {pages.map((page) => {
             const isActive = currentPath.includes(page.path);
             return (
-              <div 
+              <div
                 key={page.path}
                 className={`preview-dropdown-item ${isActive ? "active" : ""}`}
                 onClick={() => {
@@ -138,9 +138,9 @@ export function ThemePageSelector() {
  * @param {React.ReactNode} props.children - Embedded card content components.
  * @param {Object} [props.style] - Inline style override properties.
  */
-export function Card({ children, style }) {
+export function Card({ children, className }) {
   return (
-    <div className="theme-card" style={style}>
+    <div className={`theme-card ${className || ""}`}>
       {children}
     </div>
   );
@@ -179,19 +179,18 @@ export function CardTitle({ icon, title, description, rightElement }) {
  * 
  * @param {Object} props
  * @param {React.ReactNode} props.children - Input fields rendered side-by-side.
- * @param {Object} [props.style] - Style override properties.
  * @param {boolean} [props.grid=true] - If true, applies standard css grid. If false, renders as flexbox row.
  */
-export function FieldsRow({ children, style, grid = true }) {
+export function FieldsRow({ children, grid = true }) {
   if (!grid) {
     return (
-      <div className="fields-row-flex" style={style}>
+      <div className="fields-row-flex">
         {children}
       </div>
     );
   }
   return (
-    <div className="fields-grid" style={style}>
+    <div className="fields-grid">
       {children}
     </div>
   );
@@ -209,7 +208,8 @@ export function FieldsRow({ children, style, grid = true }) {
  */
 export function ColorField({ label, value, onChange }) {
   const [copied, setCopied] = React.useState(false);
-  
+  const previewRef = React.useRef();
+
   const handleCopy = () => {
     navigator.clipboard?.writeText(value).then(() => {
       setCopied(true);
@@ -217,11 +217,17 @@ export function ColorField({ label, value, onChange }) {
     });
   };
 
+  React.useEffect(() => {
+    if (previewRef.current) {
+      previewRef.current.style.backgroundColor = value;
+    }
+  }, [value]);
+
   return (
     <div className="field-col">
       <span className="field-label-text">{label}</span>
       <div className="input-container">
-        <div className="color-picker-preview-box" style={{ background: value }}>
+        <div ref={previewRef} className="color-picker-preview-box">
           <input
             type="color"
             value={value}
@@ -259,9 +265,9 @@ export function ColorField({ label, value, onChange }) {
  * @param {Function} props.onChange - Field value change callback handler.
  * @param {Object} [props.style] - Inline style override properties.
  */
-export function NumberField({ label, value, unit, onChange, style }) {
+export function NumberField({ label, value, unit, onChange }) {
   return (
-    <div className="field-col" style={style}>
+    <div className="field-col">
       {label && <span className="field-label-text">{label}</span>}
       <div className="input-container number-field-width">
         <input
@@ -288,9 +294,9 @@ export function NumberField({ label, value, unit, onChange, style }) {
  * @param {string} [props.type="text"] - Renders input type ("text" or "textarea").
  * @param {Object} [props.style] - Style override configurations.
  */
-export function TextField({ label, value, onChange, placeholder, type = "text", style }) {
+export function TextField({ label, value, onChange, placeholder, type = "text" }) {
   return (
-    <div className="field-col" style={style}>
+    <div className="field-col">
       {label && <span className="field-label-text">{label}</span>}
       {type === "textarea" ? (
         <textarea
@@ -322,9 +328,9 @@ export function TextField({ label, value, onChange, placeholder, type = "text", 
  * @param {Function} props.onChange - Change toggle callback handler.
  * @param {Object} [props.style] - Style customization definitions.
  */
-export function CheckboxField({ label, checked, onChange, style }) {
+export function CheckboxField({ label, checked, onChange }) {
   return (
-    <div className="field-col" style={style}>
+    <div className="field-col">
       {label && <span className="field-label-text">{label}</span>}
       <label className="checkbox-wrapper">
         <input
@@ -350,9 +356,9 @@ export function CheckboxField({ label, checked, onChange, style }) {
  * @param {Function} props.onChange - Dropdown selection update method.
  * @param {Object} [props.style] - Style override declarations.
  */
-export function SelectField({ label, value, options = [], onChange, style }) {
+export function SelectField({ label, value, options = [], onChange }) {
   return (
-    <div className="field-col" style={style}>
+    <div className="field-col">
       {label && <span className="field-label-text">{label}</span>}
       <select
         value={value}
@@ -422,7 +428,7 @@ export function UploadBox({ label, value = {}, onChange }) {
     const file = e.target.files?.[0];
     if (file) {
       const allowedFileTypesRegex = /(.*?)(jpg|jpeg|png|image)$/i;
-      
+
       // Limit file size to 5MB
       if (file.size >= 5242880) {
         setUploadError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
@@ -439,12 +445,12 @@ export function UploadBox({ label, value = {}, onChange }) {
       try {
         const stateId = Digit.ULBService.getStateId() || Digit.ULBService.getCurrentTenantId()?.split(".")[0];
         const response = await Digit.UploadServices.Filestorage("workbench", file, stateId);
-        
+
         if (response?.data?.files?.length > 0) {
           const fileStoreId = response?.data?.files[0]?.fileStoreId;
           const fetchRes = await Digit.UploadServices.Filefetch([fileStoreId], stateId);
           const fileUrl = fetchRes?.data?.fileStoreIds?.[0]?.url;
-          
+
           if (fileUrl) {
             onChange?.({ src: fileUrl, alt });
           } else {
@@ -508,12 +514,12 @@ export function UploadBox({ label, value = {}, onChange }) {
       </div>
 
       <label className="upload-box-label upload-box-input-height">
-        <span>📎</span> {isUploading ? t("Uploading...") : t("Upload File")}
-        <input type="file" accept="image/*" onChange={handleFileChange} style={{ display: "none" }} disabled={isUploading} />
+        <UploadIcon fill="#3D2364" width="16" height="16" /> {isUploading ? t("Uploading...") : t("Upload File")}
+        <input type="file" accept="image/*" onChange={handleFileChange} className="upload-box-file-input" disabled={isUploading} />
       </label>
 
       {uploadError && (
-        <span style={{ fontSize: 11, color: "#D85A5A", marginTop: 4, textAlign: "center" }}>
+        <span className="upload-box-error-msg">
           {uploadError}
         </span>
       )}
@@ -530,9 +536,9 @@ export function UploadBox({ label, value = {}, onChange }) {
  * @param {Function} props.onClick - Button click handler method.
  * @param {Object} [props.style] - Custom CSS override properties.
  */
-export function SubmitButton({ label = "SUBMIT CHANGES", onClick, style }) {
+export function SubmitButton({ label = "SUBMIT CHANGES", onClick }) {
   return (
-    <button onClick={onClick} className="submit-btn" style={style}>
+    <button onClick={onClick} className="submit-btn">
       {label}
     </button>
   );
@@ -550,7 +556,7 @@ export function SubmitButton({ label = "SUBMIT CHANGES", onClick, style }) {
  * @param {Function} props.onChange - Value update callback method.
  */
 export function ShadowField({ label, value, onChange }) {
-  
+
   /**
    * Helper utility method that parses raw CSS box-shadow strings.
    * Extracts horizontal, vertical offsets, blur, spread radius metrics, and opacity colors.
@@ -666,6 +672,13 @@ export function ShadowField({ label, value, onChange }) {
   const g = parseInt(colorData.hex.slice(3, 5), 16) || 0;
   const b = parseInt(colorData.hex.slice(5, 7), 16) || 0;
   const rgbaColor = `rgba(${r}, ${g}, ${b}, ${colorData.opacity})`;
+  const rgbaPreviewRef = React.useRef();
+
+  React.useEffect(() => {
+    if (rgbaPreviewRef.current) {
+      rgbaPreviewRef.current.style.backgroundColor = rgbaColor;
+    }
+  }, [rgbaColor]);
 
   return (
     <div className="picker-section-wrapper">
@@ -684,8 +697,8 @@ export function ShadowField({ label, value, onChange }) {
           SHADOW PICKER & BUILDER
         </div>
 
-        <div className="two-col-grid" style={{ gap: 12 }}>
-          <div className="field-col" style={{ gap: 4 }}>
+        <div className="builder-grid">
+          <div className="builder-field-col">
             <span className="builder-slider-label">Horizontal Offset: {shadowData.hOffset}px</span>
             <input
               type="range" min="-50" max="50"
@@ -694,7 +707,7 @@ export function ShadowField({ label, value, onChange }) {
               className="builder-slider-range"
             />
           </div>
-          <div className="field-col" style={{ gap: 4 }}>
+          <div className="builder-field-col">
             <span className="builder-slider-label">Vertical Offset: {shadowData.vOffset}px</span>
             <input
               type="range" min="-50" max="50"
@@ -705,8 +718,8 @@ export function ShadowField({ label, value, onChange }) {
           </div>
         </div>
 
-        <div className="two-col-grid" style={{ gap: 12 }}>
-          <div className="field-col" style={{ gap: 4 }}>
+        <div className="builder-grid">
+          <div className="builder-field-col">
             <span className="builder-slider-label">Blur Radius: {shadowData.blur}px</span>
             <input
               type="range" min="0" max="100"
@@ -715,7 +728,7 @@ export function ShadowField({ label, value, onChange }) {
               className="builder-slider-range"
             />
           </div>
-          <div className="field-col" style={{ gap: 4 }}>
+          <div className="builder-field-col">
             <span className="builder-slider-label">Spread Radius: {shadowData.spread}px</span>
             <input
               type="range" min="-30" max="30"
@@ -726,11 +739,11 @@ export function ShadowField({ label, value, onChange }) {
           </div>
         </div>
 
-        <div className="two-col-grid" style={{ gap: 12, alignItems: "center" }}>
-          <div className="field-col" style={{ gap: 4 }}>
+        <div className="builder-grid-align-center">
+          <div className="builder-field-col">
             <span className="builder-slider-label">Color Hex</span>
             <div className="input-container builder-hex-input-wrapper">
-              <div className="builder-mini-color-box" style={{ background: rgbaColor }}>
+              <div ref={rgbaPreviewRef} className="builder-mini-color-box">
                 <input
                   type="color"
                   value={colorData.hex}
@@ -746,7 +759,7 @@ export function ShadowField({ label, value, onChange }) {
               />
             </div>
           </div>
-          <div className="field-col" style={{ gap: 4 }}>
+          <div className="builder-field-col">
             <span className="builder-slider-label">Opacity: {Math.round(colorData.opacity * 100)}%</span>
             <input
               type="range" min="0" max="1" step="0.01"
@@ -774,7 +787,23 @@ export function ShadowField({ label, value, onChange }) {
  * @param {Function} props.onChange - Selection trigger callback handler.
  */
 export function GradientField({ label, value, onChange }) {
-  
+  const previewBarRef = React.useRef();
+  const stopRefs = React.useRef([]);
+
+  React.useEffect(() => {
+    if (previewBarRef.current) {
+      previewBarRef.current.style.background = value;
+    }
+  }, [value]);
+
+  React.useEffect(() => {
+    gradientData.stops.forEach((stop, i) => {
+      if (stopRefs.current[i]) {
+        stopRefs.current[i].style.backgroundColor = stop.color;
+      }
+    });
+  }, [gradientData.stops]);
+
   /**
    * Parses linear-gradient configuration values into structured angles and stops.
    * 
@@ -908,7 +937,7 @@ export function GradientField({ label, value, onChange }) {
     <div className="picker-section-wrapper">
       <div className="field-col">
         {label && <span className="field-label-text">{label}</span>}
-        <div className="gradient-preview-bar" style={{ background: value }} />
+        <div ref={previewBarRef} className="gradient-preview-bar" />
         <input
           type="text"
           value={value}
@@ -930,7 +959,7 @@ export function GradientField({ label, value, onChange }) {
           </button>
         </div>
 
-        <div className="field-col" style={{ gap: 4 }}>
+        <div className="builder-field-col">
           <span className="builder-slider-label">Gradient Angle: {gradientData.angle}°</span>
           <input
             type="range" min="0" max="360"
@@ -940,10 +969,10 @@ export function GradientField({ label, value, onChange }) {
           />
         </div>
 
-        <div className="field-col" style={{ gap: 10 }}>
+        <div className="builder-field-col-gap-10">
           {gradientData.stops.map((stop, idx) => (
             <div key={idx} className="gradient-stop-row">
-              <div className="gradient-stop-circle" style={{ background: stop.color }}>
+              <div ref={el => stopRefs.current[idx] = el} className="gradient-stop-circle">
                 <input
                   type="color"
                   value={toHex(stop.color)}
@@ -952,14 +981,14 @@ export function GradientField({ label, value, onChange }) {
                 />
               </div>
 
-              <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 8 }}>
+              <div className="gradient-stop-slider-wrapper">
                 <input
                   type="range" min="0" max="100"
                   value={stop.position}
                   onChange={(e) => handleStopChange(idx, { position: parseInt(e.target.value) })}
                   className="gradient-stop-slider"
                 />
-                <span className="builder-slider-label" style={{ minWidth: 28, textAlign: "right" }}>{stop.position}%</span>
+                <span className="gradient-stop-position-label builder-slider-label">{stop.position}%</span>
               </div>
 
               {gradientData.stops.length > 2 && (
@@ -967,7 +996,7 @@ export function GradientField({ label, value, onChange }) {
                   onClick={() => handleRemoveStop(idx)}
                   className="gradient-stop-remove-btn"
                 >
-                  ✕
+                  <CloseSvg />
                 </button>
               )}
             </div>
@@ -1186,9 +1215,9 @@ export function ResponsiveImageQuartet({ responsiveData, onChange, basePath }) {
 export function FieldSubsection({ title, hasBorder = true, children }) {
   const { t } = useTranslation();
   return (
-    <div style={{ borderBottom: hasBorder ? "1.5px solid #EDE8F5" : "none", paddingBottom: hasBorder ? 20 : 0, marginBottom: 20 }}>
+    <div className={`field-subsection-container ${hasBorder ? "has-border" : ""}`}>
       {title && (
-        <div style={{ fontSize: 13, fontWeight: 800, color: "#3D2364", marginBottom: 12 }}>
+        <div className="field-subsection-title">
           {t(title)}
         </div>
       )}
@@ -1265,32 +1294,29 @@ export function SecondaryActionsEditor({ actions, onAdd, onRemove, onChange, bas
   const { t } = useTranslation();
   return (
     <div className="full-width-col">
-      <span className="section-sub-title" style={{ margin: "8px 0 4px" }}>{t("Secondary Actions")}</span>
+      <span className="section-sub-title secondary-actions-header-margin">{t("Secondary Actions")}</span>
       {actions.map((action, idx) => (
-        <div key={idx} className="feature-box-row" style={{ padding: "12px 16px" }}>
+        <div key={idx} className="feature-box-row secondary-action-row-padding">
           <div className="secondary-action-grid">
             <input
               type="text"
               value={action.icon || ""}
               onChange={(e) => onChange(`${basePath}.${idx}.icon`, e.target.value)}
               placeholder={t("Icon URL (https://...)")}
-              className="text-input-field"
-              style={{ height: 36, fontSize: 12 }}
+              className="text-input-field secondary-action-input-field"
             />
             <input
               type="text"
               value={action.label || ""}
               onChange={(e) => onChange(`${basePath}.${idx}.label`, e.target.value)}
               placeholder={t("Action Label")}
-              className="text-input-field"
-              style={{ height: 36, fontSize: 12 }}
+              className="text-input-field secondary-action-input-field"
             />
           </div>
           <button
             onClick={() => onRemove(idx)}
             title={t("Remove Action")}
-            className="remove-feature-btn"
-            style={{ padding: 4 }}
+            className="remove-feature-btn remove-action-btn-padding"
           >
             <DeleteIconv2 fill="#D85A5A" />
           </button>

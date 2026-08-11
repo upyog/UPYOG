@@ -27,6 +27,7 @@ const ColorSwatch = ({ label, value, onChange }) => {
   const [copied, setCopied] = useState(false);
   const [hexInput, setHexInput] = useState(value);
   const colorInputRef = React.useRef();
+  const previewRef = React.useRef();
 
   /**
    * Copies the current color hex code to the user's system clipboard
@@ -60,6 +61,13 @@ const ColorSwatch = ({ label, value, onChange }) => {
   // Synchronize internal text state with external prop changes
   React.useEffect(() => { setHexInput(value); }, [value]);
 
+  // Imperatively set background color of the preview swatch block to avoid inline CSS styles
+  React.useEffect(() => {
+    if (previewRef.current) {
+      previewRef.current.style.backgroundColor = value;
+    }
+  }, [value]);
+
   return (
     <div className="configuration__color-swatch">
       {/* Label: Automatically formats camelCase text into separate capitalized words */}
@@ -70,8 +78,8 @@ const ColorSwatch = ({ label, value, onChange }) => {
       <div className="configuration__color-swatch__box">
         {/* Color Preview Block: Clicking this opens the hidden native color picker */}
         <div
+          ref={previewRef}
           className="configuration__color-swatch__preview"
-          style={{ "--swatch-color": value }}
           onClick={() => colorInputRef.current.click()}
         >
           <input

@@ -86,11 +86,11 @@ function OnBoardingLogin() {
           description={t("Manage main heading, subtitle, and text content for the login screen")}
         />
         <div className="full-width-col">
-          <TextField
+          <TextField 
             label={t("Heading")}
             value={loginStep.heading || ""}
             onChange={(v) => set("pages.onboarding.steps.login.heading", v)}
-          />
+          /> 
           <TextField
             label={t("Description")}
             type="textarea"
