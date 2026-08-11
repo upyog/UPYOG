@@ -11223,88 +11223,42 @@
               "isCollapsible": false,
               "charts": [
                 {
-                  "id": "financePreviousYearRevenueCollected",
-                  "name": "NSS_FIN_PREV_YEAR_REVENUE",
+                  "id": "financeTotalDebit",
+                  "name": "NSS_FIN_TOTAL_DEBIT",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
                   "headers": []
                 },
                 {
-                  "id": "financePreviousYearExpenditure",
-                  "name": "NSS_FIN_PREV_YEAR_EXPENDITURE",
+                  "id": "financeTotalCredit",
+                  "name": "NSS_FIN_TOTAL_CREDIT",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
                   "headers": []
                 },
                 {
-                  "id": "financeTotalExpenditures",
-                  "name": "NURT_FINANCE_TOTAL_EXPENDITURE",
+                  "id": "financeTotalAmount",
+                  "name": "NSS_FIN_TOTAL_AMOUNT",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
                   "headers": []
                 },
                 {
-                  "id": "financeOutstandingDebt",
-                  "name": "NURT_FINANCE_OUTSTANDING_DEBT",
+                  "id": "financeTotalVouchers",
+                  "name": "NSS_FIN_TOTAL_VOUCHERS",
                   "code": "",
                   "chartType": "metric",
                   "filter": "",
                   "headers": []
                 },
                 {
-                  "id": "financeAuditCompletionRate",
-                  "name": "NURT_AUDIT_COMPLTE_RATE",
+                  "id": "financeAverageBalance",
+                  "name": "NSS_FIN_AVERAGE_BALANCE",
                   "code": "",
                   "chartType": "metric",
-                  "filter": "",
-                  "headers": []
-                },
-                {
-                  "id": "financePendingBills",
-                  "name": "NURT_FINANCE_PENDING_BILLS",
-                  "code": "",
-                  "chartType": "metric",
-                  "filter": "",
-                  "headers": []
-                },
-                {
-                  "id": "financeFundBalance",
-                  "name": "NURT_FINANCE_FUND_BALANCE",
-                  "code": "",
-                  "chartType": "metric",
-                  "filter": "",
-                  "headers": []
-                },
-                {
-                  "id": "financeRevenueToExpenditureRatio",
-                  "name": "FINANCE_REVENUE_TO_EXPENDITURE_RATIO",
-                  "code": "",
-                  "chartType": "metric",
-                  "filter": "",
-                  "headers": []
-                }
-              ]
-            },
-            {
-              "id": 412,
-              "name": "Total Cumulative Collection VS Expenditure",
-              "dimensions": {
-                "height": 350,
-                "width": 7
-              },
-              "vizType": "chart",
-              "label": "",
-              "noUnit": true,
-              "isCollapsible": false,
-              "charts": [
-                {
-                  "id": "financeIncomeExpenditureForLines",
-                  "name": "Monthly",
-                  "code": "",
-                  "chartType": "line",
                   "filter": "",
                   "headers": []
                 }
@@ -11314,14 +11268,14 @@
         },
         {
           "row": 2,
-          "name": "NURT_FINANCE",
+          "name": "NURT_FINANCE_DISTRIBUTIONS",
           "vizArray": [
             {
-              "id": 213,
-              "name": "Total Cumulative Collection",
+              "id": 412,
+              "name": "Voucher Type Distribution",
               "dimensions": {
                 "height": 350,
-                "width": 7
+                "width": 6
               },
               "vizType": "chart",
               "label": "",
@@ -11329,7 +11283,57 @@
               "isCollapsible": false,
               "charts": [
                 {
-                  "id": "financeTotalCollectionForLines",
+                  "id": "financeVoucherTypeDistribution",
+                  "name": "Voucher Type",
+                  "code": "",
+                  "chartType": "pie",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            },
+            {
+              "id": 413,
+              "name": "Payment Mode Distribution",
+              "dimensions": {
+                "height": 350,
+                "width": 6
+              },
+              "vizType": "chart",
+              "label": "",
+              "noUnit": true,
+              "isCollapsible": false,
+              "charts": [
+                {
+                  "id": "financePaymentModeDistribution",
+                  "name": "Payment Mode",
+                  "code": "",
+                  "chartType": "pie",
+                  "filter": "",
+                  "headers": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "row": 3,
+          "name": "NURT_FINANCE_TRENDS",
+          "vizArray": [
+            {
+              "id": 414,
+              "name": "Monthly Debit vs Credit Trends",
+              "dimensions": {
+                "height": 350,
+                "width": 12
+              },
+              "vizType": "chart",
+              "label": "",
+              "noUnit": true,
+              "isCollapsible": false,
+              "charts": [
+                {
+                  "id": "financeDebitVsCreditLines",
                   "name": "Monthly",
                   "code": "",
                   "chartType": "line",
