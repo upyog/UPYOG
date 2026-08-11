@@ -23,7 +23,7 @@ import org.upyog.dashboard.service.AuditService;
 import org.upyog.dashboard.util.JsonUtil;
 
 @Service
-@ConditionalOnProperty(name = "adapter.persister.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = "dashboard-data.persister.enabled", havingValue = "true", matchIfMissing = true)
 public class KafkaAuditServiceImpl implements AuditService {
 
     private static final Logger log = LoggerFactory.getLogger(KafkaAuditServiceImpl.class);
