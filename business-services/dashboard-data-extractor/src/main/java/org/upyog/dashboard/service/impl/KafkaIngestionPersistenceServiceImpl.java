@@ -22,11 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Kafka implementation of IngestionPersistenceService.
- * Used when adapter.persister.enabled is true (default).
+ * Used when dashboard-data.persister.enabled is true (default).
  */
 @Slf4j
 @Service
-@ConditionalOnProperty(name = "adapter.persister.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = "dashboard-data.persister.enabled", havingValue = "true", matchIfMissing = true)
 public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenceService {
 
     @Autowired
