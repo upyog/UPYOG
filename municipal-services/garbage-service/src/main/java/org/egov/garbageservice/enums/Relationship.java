@@ -12,8 +12,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * - Parsed from JSON with {@link #fromValue(String)}.
  * <p>
  * Notes:
- * - Used on {@link org.egov.garbageservice.model.contract.OwnerInfo}.
- * - For user-service guardian field use {@link GuardianRelation} on {@link org.egov.garbageservice.model.UserV2}.
+ * - Used on {@link org.egov.garbageservice.web.models.contract.OwnerInfo}.
+ * - For user-service guardian field use {@link GuardianRelation} on {@link org.egov.garbageservice.web.models.UserV2}.
  */
 public enum Relationship {
 

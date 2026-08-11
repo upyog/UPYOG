@@ -1,7 +1,7 @@
 package org.egov.garbageservice.util;
 
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.garbageservice.model.AuditDetails;
+import org.egov.garbageservice.web.models.AuditDetails;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;

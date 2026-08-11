@@ -4,13 +4,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.egov.garbageservice.model.GarbageAccount;
-import org.egov.garbageservice.model.GrbgCollectionUnit;
-import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
-import org.egov.garbageservice.producer.Producer;
+import org.egov.garbageservice.web.models.GarbageAccount;
+import org.egov.garbageservice.web.models.GrbgCollectionUnit;
+import org.egov.garbageservice.web.models.SearchCriteriaGarbageAccount;
+import org.egov.garbageservice.kafka.Producer;
+import org.egov.garbageservice.repository.builder.GarbageAccountQueryBuilder;
 import org.egov.garbageservice.repository.rowmapper.GarbageAccountRowMapper;
-import org.egov.garbageservice.util.GrbgConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -29,88 +28,8 @@ import java.util.stream.Collectors;
 @Repository
 @Slf4j
 public class GarbageAccountRepository {
-    public static final String SELECT_NEXT_SEQUENCE = "select nextval('seq_id_udd_grbg_account')";
-    public static final String DELETE_QUERY = "UPDATE ug_grbg_account SET is_active = false WHERE garbage_id = ?";
-    public static final String SELECT_NEXT_GARBAGE_ID = "select nextval('seq_ug_grbg_account_id')";
-    public static final String REPLACE_STRING = "{replace}";
-    public static final String GET_APPROVER_FOR_TENANT = "select code from ug_hrms_employee ehe "
-            + "join ug_userrole_v1 eur on eur.user_id = ehe.id WHERE role_tenantid = ? AND role_code = 'GB_APPROVER'";
-    private static final String SELECT_GRBG_ACC = " SELECT acc.* FROM ug_grbg_account acc"
-            + " LEFT JOIN ug_grbg_old_details old_dtl ON old_dtl.garbage_id = acc.garbage_id"
-            + " JOIN ug_grbg_collection_unit unit ON unit.garbage_id = acc.garbage_id"
-            + " JOIN ug_grbg_address address ON address.garbage_id = acc.garbage_id"
-            + " JOIN ug_grbg_application app ON app.garbage_id = acc.garbage_id";
-    private static final String SELECT_QUERY_ACCOUNT = "SELECT acc.*, acc.due_date as acc_due_date "
-            + ", old_dtl.uuid as old_dtl_uuid, old_dtl.garbage_id as old_dtl_garbage_id, old_dtl.old_garbage_id as old_dtl_old_garbage_id"
-            + ", address.uuid as address_uuid, address.address_type as address_address_type, address.address1 as address_address1, address.address2 as address_address2, address.city as address_city, address.state as address_state, address.pincode as address_pincode, address.is_active as address_is_active, address.zone as address_zone, address.ulb_name as address_ulb_name, address.ulb_type as address_ulb_type, address.ward_name as address_ward_name, address.additional_detail as address_additional_detail, address.garbage_id as address_garbage_id"
-            + ", unit.uuid as unit_uuid, unit.unit_name as unit_unit_name, unit.unit_ward as unit_unit_ward, unit.ulb_name as unit_ulb_name, unit.type_of_ulb as unit_type_of_ulb, unit.garbage_id as unit_garbage_id, unit.unit_type as unit_unit_type, unit.category as unit_category, unit.sub_category as unit_sub_category, unit.sub_category_type as unit_sub_category_type, unit.is_active as unit_is_active,unit.isbplunit as unit_isbplunit,unit.isbulkgeneration as unit_isbulkgeneration,unit.isvariablecalculation as unit_isvariablecalculation,unit.no_of_units as unit_no_of_units,unit.ismonthlybilling as unit_is_monthly_billing, unit.owner_type as unit_owner_type, unit.is_inheritance as unit_is_inheritance, unit.special_Category as unit_special_Category"
-            + ", doc.uuid as doc_uuid, doc.document_uid as doc_document_uid, doc.file_store_id as doc_file_store_id, doc.document_type as doc_document_type, doc.garbage_id as doc_garbage_id"
-            + ", sub_acc.id as sub_acc_id, sub_acc.uuid as sub_acc_uuid, sub_acc.garbage_id as sub_acc_garbage_id, sub_acc.property_id as sub_acc_property_id, sub_acc.type as sub_acc_type "
-            + ", sub_acc.name as sub_acc_name, sub_acc.mobile_number as sub_acc_mobile_number, sub_acc.gender as sub_acc_gender, sub_acc.email_id as sub_acc_email_id, sub_acc.is_owner as sub_acc_is_owner"
-            + ", sub_acc.user_uuid as sub_acc_user_uuid, sub_acc.declaration_uuid as sub_acc_declaration_uuid, sub_acc.status as sub_acc_status, sub_acc.business_service as sub_acc_business_service"
-            + ", sub_acc.approval_date as sub_acc_approval_date, sub_acc.channel as sub_acc_channel"
-            + ", sub_acc.created_by as sub_acc_created_by, sub_acc.created_date as sub_acc_created_date, sub_acc.last_modified_by as sub_acc_last_modified_by"
-            + ", sub_acc.last_modified_date as sub_acc_last_modified_date, sub_acc.additional_detail as sub_acc_additional_detail, sub_acc.tenant_id as sub_acc_tenant_id, sub_acc.parent_account as sub_acc_parent_account, sub_acc.is_active as sub_acc_is_active, sub_acc.sub_account_count as sub_acc_sub_account_count"
-            + ", sub_old_dtl.uuid as sub_old_dtl_uuid, sub_old_dtl.garbage_id as sub_old_dtl_garbage_id, sub_old_dtl.old_garbage_id as sub_old_dtl_old_garbage_id"
-            + ", sub_address.uuid as sub_address_uuid, sub_address.address_type as sub_address_address_type, sub_address.address1 as sub_address_address1, sub_address.address2 as sub_address_address2, sub_address.city as sub_address_city, sub_address.state as sub_address_state, sub_address.pincode as sub_address_pincode, sub_address.is_active as sub_address_is_active, sub_address.zone as sub_address_zone, sub_address.ulb_name as sub_address_ulb_name, sub_address.ulb_type as sub_address_ulb_type, sub_address.ward_name as sub_address_ward_name, sub_address.additional_detail as sub_address_additional_detail, sub_address.garbage_id as sub_address_garbage_id"
-            + ", app.uuid as app_uuid, app.application_no as app_application_no , app.status as app_status, app.garbage_id as app_garbage_id "
-            + ", sub_app.uuid as sub_app_uuid, sub_app.application_no as sub_app_application_no , sub_app.status as sub_app_status, sub_app.garbage_id as sub_app_garbage_id "
-            + ", sub_unit.uuid as sub_unit_uuid, sub_unit.unit_name as sub_unit_unit_name, sub_unit.unit_ward as sub_unit_unit_ward, sub_unit.ulb_name as sub_unit_ulb_name, sub_unit.type_of_ulb as sub_unit_type_of_ulb, sub_unit.garbage_id as sub_unit_garbage_id, sub_unit.unit_type as sub_unit_unit_type, sub_unit.category as sub_unit_category, sub_unit.sub_category as sub_unit_sub_category, sub_unit.sub_category_type as sub_unit_sub_category_type, sub_unit.is_active as sub_unit_is_active,sub_unit.isbplunit as sub_unit_isbplunit,sub_unit.isbulkgeneration as sub_unit_isbulkgeneration,sub_unit.isvariablecalculation as sub_unit_isvariablecalculation,sub_unit.no_of_units as sub_unit_no_of_units,sub_unit.ismonthlybilling as sub_unit_is_monthly_billing, sub_unit.owner_type as sub_unit_owner_type, sub_unit.is_inheritance as sub_unit_is_inheritance, sub_unit.special_Category as sub_unit_special_Category"
-            + ", sub_doc.uuid as sub_doc_uuid, sub_doc.document_uid as sub_doc_document_uid, sub_doc.file_store_id as sub_doc_file_store_id, sub_doc.document_type as sub_doc_document_type, sub_doc.garbage_id as sub_doc_garbage_id"
-            + " FROM filtered_acc as acc"
-            + " LEFT OUTER JOIN ug_grbg_application as app ON app.garbage_id = acc.garbage_id"
-            + " LEFT OUTER JOIN ug_grbg_old_details as old_dtl ON old_dtl.garbage_id = acc.garbage_id"
-            + " LEFT OUTER JOIN ug_grbg_collection_unit as unit ON unit.garbage_id = acc.garbage_id"
-            + " LEFT OUTER JOIN ug_grbg_address as address ON address.garbage_id = acc.garbage_id"
-            + " LEFT OUTER JOIN ug_grbg_document as doc ON doc.garbage_id = acc.garbage_id"
-            + " LEFT OUTER JOIN ug_grbg_account sub_acc ON acc.uuid = sub_acc.parent_account"
-            + " LEFT OUTER JOIN ug_grbg_application as sub_app ON sub_app.garbage_id = sub_acc.garbage_id"
-            + " LEFT OUTER JOIN ug_grbg_old_details as sub_old_dtl ON sub_old_dtl.garbage_id = sub_acc.garbage_id"
-            + " LEFT OUTER JOIN ug_grbg_collection_unit as sub_unit ON sub_unit.garbage_id = sub_acc.garbage_id"
-            + " LEFT OUTER JOIN ug_grbg_address as sub_address ON sub_address.garbage_id = sub_acc.garbage_id"
-            + " LEFT OUTER JOIN ug_grbg_document as sub_doc ON sub_doc.garbage_id = sub_acc.garbage_id";
-    public static final String WITH_SUB_QUERY = " WITH filtered_acc AS ({replace}) "
-            + SELECT_QUERY_ACCOUNT;
-    private static final String SELECT_QUERY_ACCOUNT_INDEX = "SELECT acc.* "
-            + ", old_dtl.uuid as old_dtl_uuid, old_dtl.garbage_id as old_dtl_garbage_id, old_dtl.old_garbage_id as old_dtl_old_garbage_id"
-            + ", address.uuid as address_uuid, address.address_type as address_address_type, address.address1 as address_address1, address.address2 as address_address2, address.city as address_city, address.state as address_state, address.pincode as address_pincode, address.is_active as address_is_active, address.zone as address_zone, address.ulb_name as address_ulb_name, address.ulb_type as address_ulb_type, address.ward_name as address_ward_name, address.additional_detail as address_additional_detail, address.garbage_id as address_garbage_id"
-            + ", unit.uuid as unit_uuid, unit.unit_name as unit_unit_name, unit.unit_ward as unit_unit_ward, unit.ulb_name as unit_ulb_name, unit.type_of_ulb as unit_type_of_ulb, unit.garbage_id as unit_garbage_id, unit.unit_type as unit_unit_type, unit.category as unit_category, unit.sub_category as unit_sub_category, unit.sub_category_type as unit_sub_category_type, unit.is_active as unit_is_active,unit.isbplunit as unit_isbplunit,unit.isbulkgeneration as unit_isbulkgeneration,unit.isvariablecalculation as unit_isvariablecalculation,unit.no_of_units as unit_no_of_units,unit.ismonthlybilling as unit_is_monthly_billing, unit.owner_type as unit_owner_type, unit.is_inheritance as unit_is_inheritance, unit.special_Category as unit_special_Category"
-            + ", app.uuid as app_uuid, app.application_no as app_application_no , app.status as app_status, app.garbage_id as app_garbage_id "
-            + ", doc.uuid as doc_uuid, doc.document_uid as doc_document_uid, doc.file_store_id as doc_file_store_id, doc.document_type as doc_document_type, doc.document_type as doc_document_type"
-            + " FROM filtered_acc as acc"
-            + " LEFT OUTER JOIN ug_grbg_application as app ON app.garbage_id = acc.garbage_id"
-            + " LEFT OUTER JOIN ug_grbg_old_details as old_dtl ON old_dtl.garbage_id = acc.garbage_id"
-            + " LEFT OUTER JOIN ug_grbg_collection_unit as unit ON unit.garbage_id = acc.garbage_id"
-            + " LEFT OUTER JOIN ug_grbg_address as address ON address.garbage_id = acc.garbage_id"
-            + " LEFT OUTER JOIN ug_grbg_document as doc ON doc.garbage_id = acc.garbage_id";
-    public static final String WITH_SUB_QUERY_INDEX = " WITH filtered_acc AS ({replace}) "
-            + SELECT_QUERY_ACCOUNT_INDEX;
-    private static final String INSERT_ACCOUNT = "INSERT INTO ug_grbg_account (id, uuid, garbage_id, property_id, type, name"
-            + ", mobile_number, gender, email_id, is_owner, user_uuid, declaration_uuid, status, additional_detail, created_by, created_date, "
-            + "last_modified_by, last_modified_date, tenant_id, parent_account, business_service, approval_date, is_active, channel) "
-            + "VALUES (:id, :uuid, :garbageId, :propertyId, :type, :name, :mobileNumber, :gender, :emailId, :isOwner, :userUuid, :declarationUuid, "
-            + ":status, :additionalDetail :: JSONB, :createdBy, :createdDate, "
-            + ":lastModifiedBy, :lastModifiedDate, :tenantId, :parentAccount, :businessService, :approvalDate, :isActive, :channel)";
-    private static final String UPDATE_ACCOUNT_BY_ID = "UPDATE ug_grbg_account SET garbage_id = :garbageId, uuid =:uuid"
-            + ", property_id = :propertyId, type = :type, name = :name, mobile_number = :mobileNumber, is_owner = :isOwner"
-            + ", user_uuid = :userUuid, declaration_uuid = :declarationUuid, status = :status"
-            + ", gender = :gender, email_id = :emailId, additional_detail = :additionalDetail :: JSONB, last_modified_by = :lastModifiedBy, last_modified_date = :lastModifiedDate,"
-            + " tenant_id = :tenantId, business_service = :businessService, approval_date = :approvalDate , channel= :channel, due_date = :dueDate WHERE id = :id";
-    private static final String COUNT_STATUS_BASED_QUERY = "SELECT COUNT(distinct grbg.id) as count, " +
-            "COUNT(distinct case when grbg.status = 'INITIATED' then grbg.id end) as applicationInitiated, " +
-            "COUNT(distinct case when grbg.status = 'PENDING_FOR_VERIFICATION' then grbg.id end) as applicationPendingForVerification, " +
-            "COUNT(distinct case when grbg.status = 'EDIT_APPLICATION' then grbg.id end) as applicationPendingForModification, " +
-            "COUNT(distinct case when grbg.status = 'PENDING_FOR_APPROVAL' then grbg.id end) as applicationPendingForApproval, " +
-            "COUNT(distinct case when grbg.status = 'APPROVED' then grbg.id end) as applicationApproved, " +
-            "COUNT(distinct case when grbg.status = 'REJECTED' then grbg.id end) as applicationRejected, " +
-            "0 as applicationPendingPayment, " +
-            "0 as applicationClosed, " +
-            "0 as applicationTemporaryClosed " +
-            "from ug_grbg_account as grbg";
-    private static final String INSERT_ACCOUNT_AUDIT = "INSERT INTO ug_grbg_account_audit (auditid, grbg_application_no, status, type"
-            + ", grbg_account_details, auditcreatedtime) VALUES ((select nextval('seq_ug_grbg_account_audit')), :grbgApplicationNo, :status"
-            + ", :type, :grbgAccountDetails, (SELECT extract(epoch from now())))";
     private final Producer producer;
+    private final GarbageAccountQueryBuilder queryBuilder;
     @Autowired
     GarbageAccountRowMapper garbageAccountRowMapper;
     @Autowired
@@ -124,10 +43,12 @@ public class GarbageAccountRepository {
      * <p>Initializes repository dependencies and configuration objects.
      */
 
-    public GarbageAccountRepository(Producer producer, NamedParameterJdbcTemplate namedParameterJdbcTemplate, JdbcTemplate jdbcTemplate) {
+    public GarbageAccountRepository(Producer producer, NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+                                    JdbcTemplate jdbcTemplate, GarbageAccountQueryBuilder queryBuilder) {
         this.producer = producer;
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
         this.jdbcTemplate = jdbcTemplate;
+        this.queryBuilder = queryBuilder;
     }
 
     /**
@@ -146,6 +67,7 @@ public class GarbageAccountRepository {
      */
 
     public GarbageAccount create(GarbageAccount account) {
+        log.info("Persisting garbage account to database. GarbageId: {}, Name: {}", account.getGarbageId(), account.getName());
 
         Map<String, Object> accountInputs = new HashMap<>();
         accountInputs.put("id", account.getId());
@@ -173,10 +95,11 @@ public class GarbageAccountRepository {
         accountInputs.put("channel", account.getChannel());
         accountInputs.put("isActive", account.getIsActive());
 
-        namedParameterJdbcTemplate.update(INSERT_ACCOUNT, accountInputs);
+        namedParameterJdbcTemplate.update(GarbageAccountQueryBuilder.INSERT_ACCOUNT, accountInputs);
 
         createGarbageAccountAudit(account);
 
+        log.info("Successfully persisted garbage account. GarbageId: {}", account.getGarbageId());
         return account;
     }
 
@@ -201,7 +124,7 @@ public class GarbageAccountRepository {
         accountAuditInputs.put("type", account.getType());
         SqlParameterSource parameters = new MapSqlParameterSource(accountAuditInputs).addValue("grbgAccountDetails",
                 objectMapper.convertValue(account, JsonNode.class).toString(), Types.OTHER);
-        namedParameterJdbcTemplate.update(INSERT_ACCOUNT_AUDIT, parameters);
+        namedParameterJdbcTemplate.update(GarbageAccountQueryBuilder.INSERT_ACCOUNT_AUDIT, parameters);
     }
 
     /**
@@ -219,7 +142,7 @@ public class GarbageAccountRepository {
      */
 
     public Long getNextSequence() {
-        return jdbcTemplate.queryForObject(SELECT_NEXT_SEQUENCE, Long.class);
+        return jdbcTemplate.queryForObject(GarbageAccountQueryBuilder.SELECT_NEXT_SEQUENCE, Long.class);
     }
 
     /**
@@ -237,7 +160,7 @@ public class GarbageAccountRepository {
      */
 
     public Long getNextGarbageId() {
-        return jdbcTemplate.queryForObject(SELECT_NEXT_GARBAGE_ID, Long.class);
+        return jdbcTemplate.queryForObject(GarbageAccountQueryBuilder.SELECT_NEXT_GARBAGE_ID, Long.class);
     }
 
     /**
@@ -255,6 +178,8 @@ public class GarbageAccountRepository {
      */
 
     public void update(GarbageAccount newGarbageAccount) {
+        log.info("Updating garbage account in database. GarbageId: {}, Status: {}", newGarbageAccount.getGarbageId(), newGarbageAccount.getStatus());
+
         Map<String, Object> accountInputs = new HashMap<>();
         accountInputs.put("id", newGarbageAccount.getId());
         accountInputs.put("uuid", newGarbageAccount.getUuid());
@@ -278,9 +203,11 @@ public class GarbageAccountRepository {
         accountInputs.put("approvalDate", newGarbageAccount.getApprovalDate());
         accountInputs.put("dueDate", newGarbageAccount.getDueDate());
 
-        namedParameterJdbcTemplate.update(UPDATE_ACCOUNT_BY_ID, accountInputs);
+        namedParameterJdbcTemplate.update(GarbageAccountQueryBuilder.UPDATE_ACCOUNT_BY_ID, accountInputs);
 
         createGarbageAccountAudit(newGarbageAccount);
+
+        log.info("Successfully updated garbage account in database. GarbageId: {}", newGarbageAccount.getGarbageId());
     }
 
     /**
@@ -306,9 +233,9 @@ public class GarbageAccountRepository {
         final List<Object> preparedStatementValues = new ArrayList<>();
 
         //generate search query
-        searchQuery = getSearchQueryByCriteria(searchQuery, searchCriteriaGarbageAccount, preparedStatementValues, garbageCriteriaMap);
+        searchQuery = queryBuilder.getSearchQueryByCriteria(searchQuery, searchCriteriaGarbageAccount, preparedStatementValues, garbageCriteriaMap);
 
-        log.info("### search garbage account: " + searchQuery.toString() + " {}", preparedStatementValues);
+        log.info("Executing database search with query: {} and parameters: {}", searchQuery, preparedStatementValues);
 
         List<GarbageAccount> garbageAccounts = jdbcTemplate.query(searchQuery.toString(), preparedStatementValues.toArray(), garbageAccountRowMapper);
 
@@ -353,6 +280,7 @@ public class GarbageAccountRepository {
             return garbageAccount;
         }).collect(Collectors.toList());
 
+        log.info("Database search returned {} accounts.", garbageAccounts != null ? garbageAccounts.size() : 0);
         return garbageAccounts;
     }
 
@@ -379,9 +307,9 @@ public class GarbageAccountRepository {
         final List<Object> preparedStatementValues = new ArrayList<>();
 
         //generate search query
-        searchQuery = getSearchQueryByCriteriaForIndex(searchQuery, searchCriteriaGarbageAccount, preparedStatementValues, garbageCriteriaMap);
+        searchQuery = queryBuilder.getSearchQueryByCriteriaForIndex(searchQuery, searchCriteriaGarbageAccount, preparedStatementValues, garbageCriteriaMap);
 
-        log.info("### search garbage account: " + searchQuery.toString() + " {}", preparedStatementValues);
+        log.info("Executing database search with query: {} and parameters: {}", searchQuery, preparedStatementValues);
 
         List<GarbageAccount> garbageAccounts = jdbcTemplate.query(searchQuery.toString(), preparedStatementValues.toArray(), garbageAccountRowMapper);
 
@@ -423,442 +351,9 @@ public class GarbageAccountRepository {
             return garbageAccount;
         }).collect(Collectors.toList());
 
+        log.info("Database search returned {} accounts.", garbageAccounts != null ? garbageAccounts.size() : 0);
         return garbageAccounts;
     }
-
-
-    /**
-     * Queries database for records matching the provided criteria.
-     *
-     * <p>The operation performs the following steps:
-     * <ol>
-     *   <li>Constructs a dynamic SQL query based on active search criteria parameters.</li>
-     *   <li>Appends pagination boundaries (limit and offset) and sorting clauses.</li>
-     *   <li>Executes the SQL query via JdbcTemplate using custom row mapping.</li>
-     *   <li>Assembles and returns the resulting entity list.</li>
-     * </ol>
-     *
-     * @param searchQuery                  the searchQuery parameter for this operation
-     * @param searchCriteriaGarbageAccount the filter criteria defining search boundaries
-     * @param preparedStatementValues      the preparedStatementValues parameter for this operation
-     * @param garbageCriteriaMap           the filter criteria defining search boundaries
-     * @return the output result of type {@link StringBuilder}
-     */
-
-    private StringBuilder getSearchQueryByCriteria(StringBuilder searchQuery,
-                                                   SearchCriteriaGarbageAccount searchCriteriaGarbageAccount, List<Object> preparedStatementValues,
-                                                   Map<Integer, SearchCriteriaGarbageAccount> garbageCriteriaMap) {
-
-
-        searchQuery = new StringBuilder(SELECT_GRBG_ACC);
-
-        searchQuery.append(" WHERE");
-        searchQuery.append(" 1=1 ");
-
-        String whereClause = "";
-        if (null != garbageCriteriaMap && !garbageCriteriaMap.isEmpty()) {
-            List<String> clause = new ArrayList<>();
-            garbageCriteriaMap.entrySet().forEach(garbageCriteriaValue -> {
-                clause.add("(" + addWhereClause(preparedStatementValues, garbageCriteriaValue.getValue()) + ")");
-            });
-            if (!CollectionUtils.isEmpty(clause) && !clause.contains("()")) {
-                addAndClauseIfRequired(true, searchQuery);
-                whereClause = String.join(" OR ", clause);
-            }
-        } else {
-            addAndClauseIfRequired(true, searchQuery);
-            whereClause = addWhereClause(preparedStatementValues, searchCriteriaGarbageAccount);
-        }
-
-        searchQuery.append(whereClause);
-
-        String withClauseQuery = WITH_SUB_QUERY.replace(REPLACE_STRING, searchQuery);
-
-        StringBuilder sb = new StringBuilder(withClauseQuery);
-
-        searchQuery = addOrderByClause(sb, searchCriteriaGarbageAccount);
-
-        if (!searchCriteriaGarbageAccount.getIsSchedulerCall()) {
-            searchQuery = addPaginationWrapper(sb, preparedStatementValues, searchCriteriaGarbageAccount);
-        }
-        return searchQuery;
-    }
-
-    /**
-     * Queries database for records matching the provided criteria.
-     *
-     * <p>The operation performs the following steps:
-     * <ol>
-     *   <li>Constructs a dynamic SQL query based on active search criteria parameters.</li>
-     *   <li>Appends pagination boundaries (limit and offset) and sorting clauses.</li>
-     *   <li>Executes the SQL query via JdbcTemplate using custom row mapping.</li>
-     *   <li>Assembles and returns the resulting entity list.</li>
-     * </ol>
-     *
-     * @param searchQuery                  the searchQuery parameter for this operation
-     * @param searchCriteriaGarbageAccount the filter criteria defining search boundaries
-     * @param preparedStatementValues      the preparedStatementValues parameter for this operation
-     * @param garbageCriteriaMap           the filter criteria defining search boundaries
-     * @return the output result of type {@link StringBuilder}
-     */
-
-    private StringBuilder getSearchQueryByCriteriaForIndex(StringBuilder searchQuery,
-                                                           SearchCriteriaGarbageAccount searchCriteriaGarbageAccount, List<Object> preparedStatementValues,
-                                                           Map<Integer, SearchCriteriaGarbageAccount> garbageCriteriaMap) {
-
-
-        searchQuery = new StringBuilder(SELECT_GRBG_ACC);
-
-        searchQuery.append(" WHERE");
-
-        String whereClause = "";
-        if (null != garbageCriteriaMap && !garbageCriteriaMap.isEmpty()) {
-            searchQuery.append(" acc.parent_account IS NULL ");
-            List<String> clause = new ArrayList<>();
-            garbageCriteriaMap.entrySet().forEach(garbageCriteriaValue -> {
-                clause.add("(" + addWhereClause(preparedStatementValues, garbageCriteriaValue.getValue()) + ")");
-            });
-            if (!CollectionUtils.isEmpty(clause) && !clause.contains("()")) {
-                addAndClauseIfRequired(true, searchQuery);
-                whereClause = "(" + String.join(" OR ", clause) + ")";
-
-            }
-        } else {
-            searchQuery.append(" 1=1 ");
-            addAndClauseIfRequired(true, searchQuery);
-            whereClause = addWhereClause(preparedStatementValues, searchCriteriaGarbageAccount);
-        }
-
-        searchQuery.append(whereClause);
-
-        String withClauseQuery = WITH_SUB_QUERY_INDEX.replace(REPLACE_STRING, searchQuery);
-
-        StringBuilder sb = new StringBuilder(withClauseQuery);
-
-        searchQuery = addOrderByClause(sb, searchCriteriaGarbageAccount);
-
-        if (!searchCriteriaGarbageAccount.getIsSchedulerCall()) {
-            searchQuery = addPaginationWrapper(sb, preparedStatementValues, searchCriteriaGarbageAccount);
-        }
-        return searchQuery;
-    }
-
-    /**
-     * Executes the addPaginationWrapper database operation.
-     *
-     * <p>The operation performs the following steps:
-     * <ol>
-     *   <li>Validates method parameters.</li>
-     *   <li>Executes repository database operation.</li>
-     *   <li>Processes and returns the resulting output.</li>
-     * </ol>
-     *
-     * @param searchQuery                  the searchQuery parameter for this operation
-     * @param preparedStatementValues      the preparedStatementValues parameter for this operation
-     * @param searchCriteriaGarbageAccount the filter criteria defining search boundaries
-     * @return the output result of type {@link StringBuilder}
-     */
-
-    private StringBuilder addPaginationWrapper(StringBuilder searchQuery, List<Object> preparedStatementValues,
-                                               SearchCriteriaGarbageAccount searchCriteriaGarbageAccount) {
-
-        Long limit = 5000L;
-        Long offset = 0L;
-
-        if (null != searchCriteriaGarbageAccount.getLimit()) {
-            limit = searchCriteriaGarbageAccount.getLimit();
-        }
-        if (null != searchCriteriaGarbageAccount.getOffset()) {
-            offset = searchCriteriaGarbageAccount.getOffset();
-        }
-
-        searchQuery.append(" limit ? ");
-        searchQuery.append(" offset ? ");
-
-        preparedStatementValues.add(limit + offset);
-        preparedStatementValues.add(offset);
-
-        return searchQuery;
-    }
-
-    /**
-     * Builds a dynamic SQL query string based on supplied criteria.
-     *
-     * <p>The operation performs the following steps:
-     * <ol>
-     *   <li>Initializes the SQL query string buffer with base SELECT/UPDATE statements.</li>
-     *   <li>Evaluates input criteria parameters and dynamically appends WHERE conditions.</li>
-     *   <li>Populates prepared statement parameter value list.</li>
-     *   <li>Returns the constructed dynamic SQL query string.</li>
-     * </ol>
-     *
-     * @param searchQuery                  the searchQuery parameter for this operation
-     * @param searchCriteriaGarbageAccount the filter criteria defining search boundaries
-     * @return the output result of type {@link StringBuilder}
-     */
-
-    private StringBuilder addOrderByClause(StringBuilder searchQuery, SearchCriteriaGarbageAccount searchCriteriaGarbageAccount) {
-
-        if (StringUtils.isNotEmpty(searchCriteriaGarbageAccount.getOrderBy())) {
-            searchQuery = searchQuery.append(" ORDER BY acc.id " + searchCriteriaGarbageAccount.getOrderBy());
-            return searchQuery;
-        }
-
-        return searchQuery;
-    }
-
-    /**
-     * Builds a dynamic SQL query string based on supplied criteria.
-     *
-     * <p>The operation performs the following steps:
-     * <ol>
-     *   <li>Initializes the SQL query string buffer with base SELECT/UPDATE statements.</li>
-     *   <li>Evaluates input criteria parameters and dynamically appends WHERE conditions.</li>
-     *   <li>Populates prepared statement parameter value list.</li>
-     *   <li>Returns the constructed dynamic SQL query string.</li>
-     * </ol>
-     *
-     * @param preparedStatementValues      the preparedStatementValues parameter for this operation
-     * @param searchCriteriaGarbageAccount the filter criteria defining search boundaries
-     * @return the output result of type {@link String}
-     */
-
-    private String addWhereClause(List<Object> preparedStatementValues,
-                                  SearchCriteriaGarbageAccount searchCriteriaGarbageAccount) {
-
-        StringBuilder whereClause = new StringBuilder();
-
-
-        boolean isAppendAndClause = false;
-
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getId())) {
-            isAppendAndClause = addAndClauseIfRequired(false, whereClause);
-            whereClause.append(" acc.id IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getId(),
-                    preparedStatementValues)).append(" )");
-        }
-
-        if (searchCriteriaGarbageAccount.getUserType() != null) {
-            if (searchCriteriaGarbageAccount.getUserType().equalsIgnoreCase(GrbgConstants.USER_TYPE_EMPLOYEE)) {
-                if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getCreatedBy())) {
-                    isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-                    whereClause.append(" acc.created_by IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getCreatedBy(),
-                            preparedStatementValues)).append(" )");
-                }
-
-                if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUser_uuid())) {
-                    isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-                    whereClause.append(" acc.user_uuid IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getUser_uuid(),
-                            preparedStatementValues)).append(" )");
-                }
-            } else {
-                if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getCreatedBy())) {
-                    isAppendAndClause = addORClauseIfRequired(isAppendAndClause, whereClause);
-                    whereClause.append(" acc.created_by IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getCreatedBy(),
-                            preparedStatementValues)).append(" )");
-                }
-
-                if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUser_uuid())) {
-                    isAppendAndClause = addORClauseIfRequired(isAppendAndClause, whereClause);
-                    whereClause.append(" acc.user_uuid IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getUser_uuid(),
-                            preparedStatementValues)).append(" )");
-                }
-            }
-        }
-
-
-//            whereClause.append(" acc.created_by IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getCreatedBy(),
-
-
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getGarbageId())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-            whereClause.append(" acc.garbage_id IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getGarbageId(),
-                    preparedStatementValues)).append(" )");
-        }
-
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getPropertyId())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-            whereClause.append(" acc.property_id IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getPropertyId(),
-                    preparedStatementValues)).append(" )");
-        }
-
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUuid())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-            whereClause.append(" acc.uuid IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getUuid(),
-                    preparedStatementValues)).append(" )");
-        }
-
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUser_uuid())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-            whereClause.append(" acc.user_uuid IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getUser_uuid(),
-                    preparedStatementValues)).append(" )");
-        }
-
-
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getType())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-            whereClause.append(" acc.type IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getType(),
-                    preparedStatementValues)).append(" )");
-        }
-
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getName())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-            whereClause.append(" acc.name IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getName(),
-                    preparedStatementValues)).append(" )");
-        }
-
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getMobileNumber())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-            whereClause.append(" acc.mobile_number IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getMobileNumber(),
-                    preparedStatementValues)).append(" )");
-        }
-
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getApplicationNumber())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-            whereClause.append(" app.application_no IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getApplicationNumber(),
-                    preparedStatementValues)).append(" )");
-        }
-
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getStatus())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-            whereClause.append(" acc.status IN ( ").append(getQueryForCollection(searchCriteriaGarbageAccount.getStatus(),
-                    preparedStatementValues)).append(" )");
-        }
-
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getStatusList())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-            whereClause.append(" acc.status IN ( ").append(
-                            getQueryForCollection(searchCriteriaGarbageAccount.getStatusList(), preparedStatementValues))
-                    .append(" )");
-        }
-
-        if (null != searchCriteriaGarbageAccount.getTenantId()) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-            whereClause.append(" acc.tenant_id = ").append("'" + searchCriteriaGarbageAccount.getTenantId() + "'");
-        }
-
-        if (null != searchCriteriaGarbageAccount.getIsOwner()) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-            whereClause.append(" acc.is_owner = ").append(searchCriteriaGarbageAccount.getIsOwner());
-        }
-
-        if (null != searchCriteriaGarbageAccount.getParentAccount()) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-            // use bind parameter to avoid SQL injection and BadSqlGrammarException
-            whereClause.append(" acc.parent_account = ?");
-            preparedStatementValues.add(searchCriteriaGarbageAccount.getParentAccount());
-        }
-
-        if (null != searchCriteriaGarbageAccount.getStartId()) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-            whereClause.append(" acc.id >= ").append(+searchCriteriaGarbageAccount.getStartId());
-        }
-
-        if (null != searchCriteriaGarbageAccount.getEndId()) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-            whereClause.append(" acc.id <= ").append(+searchCriteriaGarbageAccount.getEndId());
-        }
-
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getChannels())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-            whereClause.append(" acc.channel IN ( ")
-                    .append(getQueryForCollection(searchCriteriaGarbageAccount.getChannels(), preparedStatementValues))
-                    .append(" )");
-        }
-
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getWardNames())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-            whereClause.append(" address.ward_name IN ( ")
-                    .append(getQueryForCollection(searchCriteriaGarbageAccount.getWardNames(), preparedStatementValues))
-                    .append(" )");
-        }
-
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getOldGarbageIds())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-            whereClause.append(" old_dtl.old_garbage_id IN ( ").append(
-                            getQueryForCollection(searchCriteriaGarbageAccount.getOldGarbageIds(), preparedStatementValues))
-                    .append(" )");
-        }
-
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUnitCategories())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-            whereClause.append(" unit.category IN ( ").append(
-                            getQueryForCollection(searchCriteriaGarbageAccount.getUnitCategories(), preparedStatementValues))
-                    .append(" )");
-        }
-
-        if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getUnitTypes())) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-            whereClause.append(" unit.unit_type IN ( ")
-                    .append(getQueryForCollection(searchCriteriaGarbageAccount.getUnitTypes(), preparedStatementValues))
-                    .append(" )");
-        }
-
-        if (searchCriteriaGarbageAccount.getIsUserUuidNull() != null) {
-            isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-
-            if (searchCriteriaGarbageAccount.getIsUserUuidNull()) {
-                whereClause.append(" acc.user_uuid IS NULL ");
-            } else {
-                whereClause.append(" acc.user_uuid IS NOT NULL ");
-            }
-        }
-
-
-        return whereClause.toString();
-    }
-
-    /**
-     * Builds a dynamic SQL query string based on supplied criteria.
-     *
-     * <p>The operation performs the following steps:
-     * <ol>
-     *   <li>Initializes the SQL query string buffer with base SELECT/UPDATE statements.</li>
-     *   <li>Evaluates input criteria parameters and dynamically appends WHERE conditions.</li>
-     *   <li>Populates prepared statement parameter value list.</li>
-     *   <li>Returns the constructed dynamic SQL query string.</li>
-     * </ol>
-     *
-     * @param appendAndClauseFlag the appendAndClauseFlag parameter for this operation
-     * @param queryString         the queryString parameter for this operation
-     * @return the output result of type {@link boolean}
-     */
-
-    private boolean addAndClauseIfRequired(final boolean appendAndClauseFlag, final StringBuilder queryString) {
-        if (appendAndClauseFlag)
-            queryString.append(" AND ");
-
-        return true;
-    }
-
-    /**
-     * Queries database for records matching the provided criteria.
-     *
-     * <p>The operation performs the following steps:
-     * <ol>
-     *   <li>Constructs a dynamic SQL query based on active search criteria parameters.</li>
-     *   <li>Appends pagination boundaries (limit and offset) and sorting clauses.</li>
-     *   <li>Executes the SQL query via JdbcTemplate using custom row mapping.</li>
-     *   <li>Assembles and returns the resulting entity list.</li>
-     * </ol>
-     *
-     * @param ids              the ids parameter for this operation
-     * @param preparedStmtList the preparedStmtList parameter for this operation
-     * @return the output result of type {@link String}
-     */
-
-    private String getQueryForCollection(List<?> ids, List<Object> preparedStmtList) {
-        StringBuilder builder = new StringBuilder();
-        Iterator<?> iterator = ids.iterator();
-        while (iterator.hasNext()) {
-            builder.append(" ?");
-            preparedStmtList.add(iterator.next());
-
-            if (iterator.hasNext())
-                builder.append(",");
-        }
-        return builder.toString();
-    }
-
     /**
      * Executes the delete database operation.
      *
@@ -873,52 +368,7 @@ public class GarbageAccountRepository {
      */
 
     public void delete(GarbageAccount garbageAccount) {
-        jdbcTemplate.update(DELETE_QUERY, garbageAccount.getGarbageId());
-    }
-
-    /**
-     * Queries database for records matching the provided criteria.
-     *
-     * <p>The operation performs the following steps:
-     * <ol>
-     *   <li>Constructs a dynamic SQL query based on active search criteria parameters.</li>
-     *   <li>Appends pagination boundaries (limit and offset) and sorting clauses.</li>
-     *   <li>Executes the SQL query via JdbcTemplate using custom row mapping.</li>
-     *   <li>Assembles and returns the resulting entity list.</li>
-     * </ol>
-     *
-     * @param tenantId the tenant ID associated with the request
-     * @return the output result of type {@link String}
-     */
-
-    public String getApproverUserNameForTenant(String tenantId) {
-        StringBuilder searchQuery = new StringBuilder(GET_APPROVER_FOR_TENANT);
-        List<Object> preparedStmtList = new ArrayList<>();
-        preparedStmtList.add(tenantId);
-        List<String> userNames = jdbcTemplate.query(searchQuery.toString(), preparedStmtList.toArray(), (rs, rowNum) -> rs.getString("code"));
-        return userNames.get(0);
-    }
-
-    /**
-     * Builds a dynamic SQL query string based on supplied criteria.
-     *
-     * <p>The operation performs the following steps:
-     * <ol>
-     *   <li>Initializes the SQL query string buffer with base SELECT/UPDATE statements.</li>
-     *   <li>Evaluates input criteria parameters and dynamically appends WHERE conditions.</li>
-     *   <li>Populates prepared statement parameter value list.</li>
-     *   <li>Returns the constructed dynamic SQL query string.</li>
-     * </ol>
-     *
-     * @param appendAndClauseFlag the appendAndClauseFlag parameter for this operation
-     * @param queryString         the queryString parameter for this operation
-     * @return the output result of type {@link boolean}
-     */
-
-    private boolean addORClauseIfRequired(final boolean appendAndClauseFlag, final StringBuilder queryString) {
-        if (appendAndClauseFlag)
-            queryString.append(" OR ");
-        return true;
+        jdbcTemplate.update(GarbageAccountQueryBuilder.DELETE_QUERY, garbageAccount.getGarbageId());
     }
 
     /**
@@ -933,7 +383,7 @@ public class GarbageAccountRepository {
      * </ol>
      *
      * @param searchCriteriaGarbageAccount the filter criteria defining search boundaries
-     * @return the output result of type {@link List{@code <GarbageAccount>}}
+     * @return the output result of type {@link List<GarbageAccount>}
      */
 
     public List<GarbageAccount> searchV2(SearchCriteriaGarbageAccount searchCriteriaGarbageAccount) {

@@ -11,10 +11,9 @@ import upyog.config.ServiceConstants;
 import upyog.repository.EstateRepository;
 import upyog.util.EstateUtil;
 import upyog.web.models.*;
-import upyog.web.models.billing.Demand;
 import upyog.service.DemandService;
-import upyog.util.MdmsUtil;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -134,6 +133,31 @@ public class EstateServiceImpl implements EstateService {
         Allotment allotment = request.getAllotments().get(0);
         log.info("Processing allotment for asset: {}, allottee: {}",
                 allotment.getAssetNo(), allotment.getAlloteeName());
+
+        // Validate agreement start date
+        if (allotment.getAgreementStartDate() == null) {
+            log.error("Agreement start date is null for allotment request");
+            throw new CustomException(
+                    "INVALID_AGREEMENT_START_DATE",
+                    "Agreement start date is required for allotment creation"
+            );
+        }
+
+        if (allotment.getAgreementStartDate().isBefore(LocalDate.now())) {
+            log.error("Agreement start date {} is before today's date {}", allotment.getAgreementStartDate(), LocalDate.now());
+            throw new CustomException(
+                    "INVALID_AGREEMENT_START_DATE",
+                    "Agreement start date cannot be a past date. It must be today or a future date"
+            );
+        }
+
+        if (allotment.getAgreementEndDate() != null && allotment.getAgreementEndDate().isBefore(allotment.getAgreementStartDate())) {
+            log.error("Agreement end date {} is before start date {}", allotment.getAgreementEndDate(), allotment.getAgreementStartDate());
+            throw new CustomException(
+                    "INVALID_AGREEMENT_END_DATE",
+                    "Agreement end date cannot be before agreement start date"
+            );
+        }
 
         // If user UUID not provided, search or create user
         if (!StringUtils.hasText(allotment.getUserUuid())) {

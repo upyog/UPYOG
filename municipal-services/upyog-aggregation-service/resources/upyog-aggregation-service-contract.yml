@@ -1,0 +1,151 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: UPYOG Aggregation Service
+  description: |
+    Mobile dashboard aggregation service that orchestrates multiple downstream UPYOG providers
+    (draft applications, quick summary, notifications, due renewals, upcoming events, etc.)
+    into a single unified API response for the citizen mobile app.
+  contact:
+    name: UPYOG NUDM Team
+    email: cdg-contact@niua.org
+schemes:
+  - https
+basePath: /upyog-aggregation-service
+x-api-id: org.egov.upyog.aggregation.service
+x-common-path: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Returns service health status including cache connectivity.
+      responses:
+        '200':
+          description: Service is healthy
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                example: UP
+      tags:
+        - Health
+  /readiness:
+    get:
+      summary: Readiness probe
+      description: Kubernetes readiness probe endpoint.
+      responses:
+        '200':
+          description: Service is ready to accept traffic
+      tags:
+        - Health
+  /liveness:
+    get:
+      summary: Liveness probe
+      description: Kubernetes liveness probe endpoint.
+      responses:
+        '200':
+          description: Service is alive
+      tags:
+        - Health
+  /metrics:
+    get:
+      summary: Prometheus metrics
+      description: Exposes Prometheus metrics for monitoring.
+      produces:
+        - text/plain
+      responses:
+        '200':
+          description: Metrics exported successfully
+      tags:
+        - Observability
+  /api/v1/aggregate:
+    post:
+      summary: Aggregate dashboard data
+      description: |
+        Executes one or more registered aggregation providers in parallel and returns
+        a unified dashboard response. Supports providers such as draft applications,
+        quick summary, recent applications, notifications, due renewals, and upcoming events.
+      parameters:
+        - name: AggregateRequest
+          in: body
+          required: true
+          description: Aggregation request with tenant, locale, and provider list
+          schema:
+            $ref: '#/definitions/AggregateRequest'
+      responses:
+        '200':
+          description: Aggregation completed successfully
+          schema:
+            $ref: '#/definitions/AggregateResponse'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+        '429':
+          description: Rate limit exceeded
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - Aggregation
+definitions:
+  AggregateRequest:
+    type: object
+    description: Request to aggregate data from multiple providers
+    properties:
+      tenantId:
+        type: string
+        description: Unique identifier of ULB/tenant
+        minLength: 2
+        maxLength: 128
+      locale:
+        type: string
+        description: Locale for localized responses (e.g. en_IN)
+      providers:
+        type: array
+        description: List of provider keys to execute
+        items:
+          type: string
+          enum:
+            - draft_applications
+            - quick_summary
+            - recent_applications
+            - notifications
+            - due_renewals
+            - upcoming_events
+            - advertisement_banners
+            - new_applications
+    required:
+      - tenantId
+      - providers
+  AggregateResponse:
+    type: object
+    description: Unified aggregation response from all requested providers
+    properties:
+      tenantId:
+        type: string
+      locale:
+        type: string
+      results:
+        type: object
+        description: Map of provider key to provider-specific response payload
+        additionalProperties:
+          type: object
+      errors:
+        type: array
+        description: Partial failures from individual providers
+        items:
+          $ref: '#/definitions/ProviderError'
+  ProviderError:
+    type: object
+    properties:
+      provider:
+        type: string
+      message:
+        type: string
+      code:
+        type: string

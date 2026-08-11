@@ -12,7 +12,7 @@
 
 	<groupId>org.upyog</groupId>
 	<artifactId>dashboard-data-engine</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<packaging>jar</packaging>
 	<name>dashboard-data-engine</name>
 	<description>Library for transforming, validating, and loading dashboard

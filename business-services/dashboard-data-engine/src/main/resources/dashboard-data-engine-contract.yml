@@ -1,0 +1,90 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Dashboard Data Engine
+  description: |
+    Shared library for transforming, validating, and loading national dashboard
+    metrics in the UPYOG platform.
+
+    This module is packaged as a Maven JAR dependency and is consumed by services
+    such as dashboard-data-extractor. It does not run as a standalone deployable
+    service and does not expose REST APIs. Its public contract consists of the
+    dashboard ingest payload models and loader interfaces used by consuming modules.
+  contact:
+    name: UPYOG NUDM Team
+    email: cdg-contact@niua.org
+schemes:
+  - https
+basePath: /dashboard-data-engine
+x-api-id: org.upyog.dashboard.data.engine
+x-common-path: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml
+paths: {}
+definitions:
+  NationalDashboardIngestRequest:
+    type: object
+    description: |
+      Request envelope POSTed to the National Dashboard ingest endpoint
+      `/national-dashboard/metric/_ingest` by consuming services using this library.
+    properties:
+      RequestInfo:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo
+      Data:
+        type: array
+        description: Module metric records to ingest
+        items:
+          $ref: '#/definitions/DashboardData'
+    required:
+      - RequestInfo
+      - Data
+  DashboardData:
+    type: object
+    description: Single national dashboard metric record for one ULB and date
+    properties:
+      date:
+        type: string
+        description: Metric date in yyyy-MM-dd format
+      module:
+        type: string
+        description: Module code such as PT, PGR, WS, TL, or FSM
+      ward:
+        type: string
+        description: Ward identifier within the ULB
+      ulb:
+        type: string
+        description: ULB code
+      region:
+        type: string
+        description: Region or district code
+      state:
+        type: string
+        description: State code
+      metrics:
+        type: object
+        description: Module-specific KPI metrics as key-value pairs
+    required:
+      - date
+      - module
+      - ulb
+      - region
+      - state
+      - metrics
+  DashboardPayload:
+    type: object
+    description: Internal payload produced by module transformers before HTTP loading
+    properties:
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/DashboardData'
+  IngestionResult:
+    type: object
+    description: Result of a dashboard ingestion attempt including audit metadata
+    properties:
+      success:
+        type: boolean
+      module:
+        type: string
+      ulb:
+        type: string
+      message:
+        type: string

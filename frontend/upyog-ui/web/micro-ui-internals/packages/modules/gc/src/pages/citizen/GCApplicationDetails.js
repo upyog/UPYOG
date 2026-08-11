@@ -6,10 +6,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import GCWFApplicationTimeline from "../../pageComponents/GCWFApplicationTimeline";
 import { downloadGCReceipt, downloadGCAcknowledgement, multiUnits } from "../../utils";
 
-// GC Application Details Component
-// This component displays detailed information about a specific GC application,
-// including applicant details, property location, garbage specifications, and payment status.
-
 /**
  * GCApplicationDetails Component (Citizen)
  * 

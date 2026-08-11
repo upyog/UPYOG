@@ -141,6 +141,8 @@ function GCSelectDocument({
         if (selectedDocument?.code || (!doc?.hasDropdown && doc?.code)) {
             const childCode = selectedDocument?.code?.split('.').pop();
             const docCode = doc?.hasDropdown ? `${doc?.code}.${childCode}` : doc?.code;
+            // Keep one document entry per MDMS document type while the selected
+            // subtype or uploaded file changes.
             setDocuments((prev) => {
                 const filteredDocumentsByDocumentType = prev?.filter((item) => !item?.documentType?.startsWith(doc?.code));
 

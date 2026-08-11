@@ -21,7 +21,7 @@ import javax.sql.DataSource;
  * Entry point for the HP Garbage Service Spring Boot application.
  */
 @SpringBootApplication
-@ComponentScan(basePackages = {"org.egov.garbageservice", "org.egov.garbageservice.controller",
+@ComponentScan(basePackages = {"org.egov.garbageservice", "org.egov.garbageservice.web.controllers",
         "org.egov.garbageservice.config", "org.egov.garbageservice.repository"})
 @Import({TracerConfiguration.class})
 @EnableKafka

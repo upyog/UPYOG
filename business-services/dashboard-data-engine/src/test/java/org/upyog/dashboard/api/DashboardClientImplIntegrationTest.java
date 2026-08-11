@@ -46,6 +46,10 @@ class DashboardClientSimpleTest {
         DashboardProperties dashboardProperties = Mockito.mock(DashboardProperties.class);
         Mockito.lenient().when(dashboardProperties.getIngestMaxAttempts()).thenReturn(3);
         Mockito.lenient().when(dashboardProperties.getOauthMaxAttempts()).thenReturn(3);
+        Mockito.lenient().when(dashboardProperties.getUsername()).thenReturn("NDS1");
+        Mockito.lenient().when(dashboardProperties.getTenantId()).thenReturn("pg");
+        Mockito.lenient().when(dashboardProperties.getPassword()).thenReturn("eGov@123");
+        Mockito.lenient().when(dashboardProperties.getUserType()).thenReturn("EMPLOYEE");
 
         OAuthTokenService oAuthTokenService = new OAuthTokenService();
         TestUtils.setField(oAuthTokenService, "userFeignClient", userFeignClient);
@@ -84,5 +88,4 @@ class DashboardClientSimpleTest {
         IngestionResult result = dashboardClient.execute(request);
     }
 
-    
 }

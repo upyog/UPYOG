@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import getGcAcknowledgementData from "../../../getGcAcknowledgementData";
 
+// Resolves the banner message based on the current submission state
 const GetActionMessage = (props) => {
   const { t } = useTranslation();
   if (props?.isSuccess) {
@@ -32,17 +33,11 @@ const BannerPicker = (props) => {
 };
 
 /**
- * GCAcknowledgement component displays the acknowledgment of a Garbage Collection 
- * registration request. It shows the status of the operation, including 
- * success or failure messages. The component handles the mutation of 
- * GC data and manages loading states effectively.
- */
-/**
  * GCAcknowledgement Component
  * 
  * Displays the acknowledgment/receipt after a GC application is submitted or updated.
  * Shows a success or failure banner with the application number. Provides navigation
- * back to the home page and a "Make Payment" button for successful applications.
+ * back to the home page and a download acknowledgement button for successful applications.
  * 
  * Handles both citizen and employee user types with appropriate navigation paths.
  */

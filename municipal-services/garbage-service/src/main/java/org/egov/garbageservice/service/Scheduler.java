@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.garbageservice.model.GarbageAccount;
-import org.egov.garbageservice.model.SearchCriteriaGarbageAccount;
+import org.egov.garbageservice.web.models.GarbageAccount;
+import org.egov.garbageservice.web.models.SearchCriteriaGarbageAccount;
 import org.egov.garbageservice.repository.GarbageAccountRepository;
 import org.egov.garbageservice.util.ServiceConstants;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,7 +15,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
