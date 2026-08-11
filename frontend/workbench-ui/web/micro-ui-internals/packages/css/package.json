@@ -2,7 +2,7 @@
   "name": "@egovernments/digit-ui-css",
   "version": "1.8.1",
   "license": "MIT",
-  "main": "dist/index.css",
+  "main": "src/index.css",
   "author": "NUDMCDG Team, NIUA",
   "engines": {
     "node": ">=22"
@@ -20,7 +20,7 @@
     "> 3%",
     "last 2 versions"
   ],
-  "style": "./dist/index.css",
+  "style": "src/index.css",
   "dependencies": {
     "node-sass": "4.14.1",
     "normalize.css": "8.0.1",
