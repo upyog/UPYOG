@@ -790,20 +790,6 @@ export function GradientField({ label, value, onChange }) {
   const previewBarRef = React.useRef();
   const stopRefs = React.useRef([]);
 
-  React.useEffect(() => {
-    if (previewBarRef.current) {
-      previewBarRef.current.style.background = value;
-    }
-  }, [value]);
-
-  React.useEffect(() => {
-    gradientData.stops.forEach((stop, i) => {
-      if (stopRefs.current[i]) {
-        stopRefs.current[i].style.backgroundColor = stop.color;
-      }
-    });
-  }, [gradientData.stops]);
-
   /**
    * Parses linear-gradient configuration values into structured angles and stops.
    * 
@@ -884,6 +870,20 @@ export function GradientField({ label, value, onChange }) {
   };
 
   const gradientData = parseGradient(value);
+
+  React.useEffect(() => {
+    if (previewBarRef.current) {
+      previewBarRef.current.style.background = value;
+    }
+  }, [value]);
+
+  React.useEffect(() => {
+    gradientData.stops.forEach((stop, i) => {
+      if (stopRefs.current[i]) {
+        stopRefs.current[i].style.backgroundColor = stop.color;
+      }
+    });
+  }, [gradientData.stops]);
 
   /**
    * Helper utility mapping parsed rgb/rgba strings to direct hex codes for HTML inputs.
