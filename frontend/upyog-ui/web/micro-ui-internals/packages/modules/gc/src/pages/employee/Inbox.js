@@ -109,24 +109,13 @@ const Inbox = ({
   // still returns only applications belonging to the entered number.
   const searchedMobileNumber = String(searchParams?.mobileNumber || "").replace(/\D/g, "");
   const inboxData = searchedMobileNumber
-    ? data?.filter((entry) => {
-        const application = entry?.searchData || {};
-        const applicants = [
-          ...(Array.isArray(application?.applicantDetails) ? application.applicantDetails : []),
-          ...(Array.isArray(application?.additionalDetail?.applicantDetails) ? application.additionalDetail.applicantDetails : []),
-          ...(Array.isArray(application?.additionalDetails?.applicantDetails) ? application.additionalDetails.applicantDetails : []),
-        ];
-        const mobileNumbers = [
-          application?.mobileNumber,
-          application?.garbageSpecification?.phoneNumber,
-          application?.grbgCollectionUnits?.[0]?.phoneNumber,
-          ...applicants.map((applicant) => applicant?.mobileNumber),
-        ]
-          .filter(Boolean)
-          .map((mobileNumber) => String(mobileNumber).replace(/\D/g, ""));
-
-        return mobileNumbers.some((mobileNumber) => mobileNumber.includes(searchedMobileNumber));
-      })
+    ? Array.isArray(data)
+      ? data.filter((entry) => {
+          const application = entry?.searchData || {};
+          const mobileNumber = String(application?.mobileNumber || "").replace(/\D/g, "");
+          return mobileNumber.includes(searchedMobileNumber);
+        })
+      : []
     : data;
 
 
@@ -178,7 +167,7 @@ const Inbox = ({
             parentRoute={parentRoute}
             searchParams={searchParams}
             sortParams={sortParams}
-            totalRecords={searchedMobileNumber ? inboxData.length : Number(data?.[0]?.totalCount)}
+            totalRecords={searchedMobileNumber ? (inboxData?.length || 0) : Number(data?.[0]?.totalCount || 0)}
             filterComponent={filterComponent}
             EmptyResultInboxComp={EmptyResultInboxComp}
             useNewInboxAPI={useNewInboxAPI}
