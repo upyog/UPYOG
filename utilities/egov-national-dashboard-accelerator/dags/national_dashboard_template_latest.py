@@ -37,7 +37,6 @@ import logging
 import json
 import uuid
 import requests
-from elasticsearch import Elasticsearch, helpers
 from hooks.elastic_hook import ElasticHook
 from queries.tl import *
 from queries.pgr import *
@@ -363,6 +362,30 @@ def get_auth_token(connection):
     return (response.get('access_token'), response.get('refresh_token'), response.get('UserRequest'))
 
 
+def _write_adaptor_log(module, startdate, response):
+    """Write ingest response to adaptor_logs index using es_conn over HTTP."""
+    try:
+        conn = BaseHook.get_connection('es_conn')
+        scheme = conn.schema or 'https'
+        host = '{0}:{1}'.format(conn.host, conn.port) if conn.port else conn.host
+        url = '{0}://{1}/adaptor_logs/_doc/{2}'.format(scheme, host, uuid.uuid1())
+        doc = {
+            'timestamp': startdate,
+            'module': module,
+            'severity': 'Info',
+            'state': 'Punjab',
+            'message': json.dumps(response),
+        }
+        auth = (conn.login, conn.password) if conn.login else None
+        logging.info("Writing adaptor log to %s", url)
+        r = requests.post(url, json=doc, auth=auth, verify=False)
+        r.raise_for_status()
+        logging.info("Adaptor log written successfully")
+    except Exception as exc:
+        # Ingest already succeeded; do not fail the task if audit logging fails.
+        logging.warning("Failed to write adaptor log (ingest succeeded): %s", exc)
+
+
 def call_ingest_api(connection, access_token, user_info, payload, module,startdate):
     """POST a batch of ward payloads to national-dashboard/metric/_ingest and log the response."""
     endpoint = 'national-dashboard/metric/_ingest'
@@ -389,24 +412,7 @@ def call_ingest_api(connection, access_token, user_info, payload, module,startda
     logging.info(json.dumps(data))
     logging.info(response)
 
-    # Write ingest response to adaptor_logs index for audit/debugging.
-    q = {
-        'timestamp' : startdate,
-        'module' : module,
-        'severity' : 'Info',
-        'state' : 'Punjab',
-        'message' : json.dumps(response)
-    }
-    es = Elasticsearch(host = "elasticsearch-data-v1.es-cluster", port = 9200)
-    actions = [
-        {
-            '_index':'adaptor_logs',
-            '_type': '_doc',
-            '_id': str(uuid.uuid1()),
-            '_source': json.dumps(q),
-        }
-    ]
-    helpers.bulk(es, actions)
+    _write_adaptor_log(module, startdate, response)
     return response
 
 
