@@ -13,7 +13,7 @@ Trigger with optional conf: {"date": "DD-MM-YYYY"}. Defaults to yesterday (IST) 
 
 Required Airflow config:
   Connections: es_conn, digit-auth
-  Variables: username, password, tenantid, usertype, token, totalulb_url, mseva_base_url
+  Variables: username, password, tenantid, usertype, token, totalulb_url, upyogurl
 """
 
 import sys
@@ -227,9 +227,9 @@ def readulb(**kwargs):
     return total_ulbs
 
 def get_citizen_count(startdate):
-    """Fetch unique citizen count from mseva for the COMMON module metrics."""
-    mseva_base_url = Variable.get('mseva_base_url').rstrip('/')
-    url = '{0}/egov-searcher/unique-citizen-count?date={1}'.format(mseva_base_url, startdate)
+    """Fetch unique citizen count from UPYOG for the COMMON module metrics."""
+    upyogurl = Variable.get('upyogurl').rstrip('/')
+    url = '{0}/egov-searcher/unique-citizen-count?date={1}'.format(upyogurl, startdate)
     logging.info("Fetching citizen count from %s", url)
     response = requests.get(url)
     if response.status_code == 200:
