@@ -261,7 +261,13 @@ HARD_BLOCK_TOPICS = [
 def is_hard_blocked(query: str) -> bool:
     """Only block things that are DEFINITELY not UPYOG related."""
     q = query.lower()
-    return any(topic in q for topic in HARD_BLOCK_TOPICS)
+    blocked = any(topic in q for topic in HARD_BLOCK_TOPICS)
+    if blocked:
+        matched = [t for t in HARD_BLOCK_TOPICS if t in q]
+        logger.info(f"[DOMAIN CHECK] Query '{query}' matched hard-block topics: {matched}")
+    else:
+        logger.debug(f"[DOMAIN CHECK] Query '{query}' passed hard-block check.")
+    return blocked
 
 def is_in_domain(query: str) -> tuple:
     """Legacy wrapper for backward compatibility."""
@@ -271,6 +277,7 @@ def is_in_domain(query: str) -> tuple:
 
 def get_rejection_message(reason: str, lang: str) -> str:
     """Get rejection message based on reason and language."""
+    logger.info(f"[REJECTION] Generating rejection message for reason='{reason}', lang='{lang}'")
     if lang == 'hi':
         return "मैं केवल UPYOG और शहरी सरकारी सेवाओं के बारे में सहायता कर सकता हूँ। कृपया UPYOG सेवाओं के बारे में पूछें।"
     return "I can only help with UPYOG and urban government services. Please ask about UPYOG services."
@@ -342,14 +349,18 @@ def detect_language(text: str) -> dict:
     Returns dict: {'lang': 'hi'|'en', 'script': ..., 'search_lang': 'hi'|'en'}
     """
     if not text or not text.strip():
-        return {'lang': 'en', 'script': 'english', 'search_lang': 'en'}
+        result = {'lang': 'en', 'script': 'english', 'search_lang': 'en'}
+        logger.debug(f"[LANG DETECT] Empty text provided -> default result: {result}")
+        return result
 
     text = text.strip()
     words = text.split()
     total_alpha = sum(1 for c in text if c.isalpha())
 
     if total_alpha == 0:
-        return {'lang': 'en', 'script': 'english', 'search_lang': 'en'}
+        result = {'lang': 'en', 'script': 'english', 'search_lang': 'en'}
+        logger.debug(f"[LANG DETECT] No alpha characters in '{text}' -> result: {result}")
+        return result
 
     # Count Devanagari characters
     devanagari_chars = sum(1 for c in text if 'ऀ' <= c <= 'ॿ')
@@ -358,20 +369,28 @@ def detect_language(text: str) -> dict:
     if devanagari_ratio > 0.5:
         # Check for transliterated English question words first
         if any(w in text for w in ['व्हाट', 'वॉट', 'हाउ', 'व्हेन', 'वेयर', 'व्हाई', 'हू', 'विच']):
-            return {'lang': 'en', 'script': 'transliterated_english', 'search_lang': 'en'}
+            result = {'lang': 'en', 'script': 'transliterated_english', 'search_lang': 'en'}
+            logger.info(f"[LANG DETECT] Devanagari English question word detected in '{text}' -> result: {result}")
+            return result
 
         # Check for pure Hindi words in Devanagari script
         hindi_dev_words = ['है', 'हैं', 'था', 'थी', 'करोगे', 'करो', 'नहीं', 'दो', 'काम', 'खराब', 'चाहिए', 'बताओ', 'बताएं', 'करना', 'करते', 'सकते', 'सकता', 'सकती', 'कृपया', 'भरें', 'भरने', 'करें', 'किसे']
         if any(w in words for w in hindi_dev_words):
-            return {'lang': 'hi', 'script': 'devanagari', 'search_lang': 'hi'}
+            result = {'lang': 'hi', 'script': 'devanagari', 'search_lang': 'hi'}
+            logger.info(f"[LANG DETECT] Devanagari Hindi words detected in '{text}' -> result: {result}")
+            return result
 
         english_word_count = sum(1 for w in words if any(eng == w for eng in ENGLISH_IN_DEVANAGARI))
         english_ratio = english_word_count / len(words) if words else 0
 
         if english_ratio >= 0.3:
-            return {'lang': 'en', 'script': 'transliterated_english', 'search_lang': 'en'}
+            result = {'lang': 'en', 'script': 'transliterated_english', 'search_lang': 'en'}
+            logger.info(f"[LANG DETECT] Devanagari English words ratio {english_ratio:.2f} in '{text}' -> result: {result}")
+            return result
 
-        return {'lang': 'hi', 'script': 'devanagari', 'search_lang': 'hi'}
+        result = {'lang': 'hi', 'script': 'devanagari', 'search_lang': 'hi'}
+        logger.info(f"[LANG DETECT] Devanagari script detected in '{text}' -> result: {result}")
+        return result
 
     # Roman script — check for Hindi phonetics
     text_lower = text.lower()
@@ -390,9 +409,13 @@ def detect_language(text: str) -> dict:
     hindi_word_count = sum(1 for w in words_lower if w in hindi_phonetic)
 
     if hindi_word_count >= 1:
-        return {'lang': 'hi', 'script': 'roman_hindi', 'search_lang': 'hi'}
+        result = {'lang': 'hi', 'script': 'roman_hindi', 'search_lang': 'hi'}
+        logger.info(f"[LANG DETECT] Roman Hindi phonetic words matched ({hindi_word_count}) in '{text}' -> result: {result}")
+        return result
 
-    return {'lang': 'en', 'script': 'english', 'search_lang': 'en'}
+    result = {'lang': 'en', 'script': 'english', 'search_lang': 'en'}
+    logger.info(f"[LANG DETECT] Defaulting to English for '{text}' -> result: {result}")
+    return result
 
 def detect_language_per_turn(text: str) -> tuple:
     """Legacy wrapper for backward compatibility."""
@@ -403,7 +426,7 @@ def detect_language_per_turn(text: str) -> tuple:
 
 def translate_text_bhashini(text, source_lang, target_lang):
     """Translate text using Bhashini with caching."""
-    logger.info(f"Translating from {source_lang} to {target_lang}")
+    logger.info(f"[BHASHINI TRANSLATE] Translating {len(text)} chars from {source_lang} to {target_lang}")
     payload = {
         "pipelineTasks": [
             {
@@ -426,21 +449,24 @@ def translate_text_bhashini(text, source_lang, target_lang):
         response = requests.post(BHASHINI_URL, headers=BHASHINI_HEADERS, json=payload)
         if response.status_code == 200:
             translation_output = response.json()["pipelineResponse"][0]["output"][0]["target"]
+            logger.info(f"[BHASHINI TRANSLATE] Success: '{text[:30]}...' -> '{translation_output[:30]}...'")
             return translation_output
         else:
-            logger.error(f"Bhashini translation failed with status {response.status_code}")
+            logger.error(f"[BHASHINI TRANSLATE] Failed with status code {response.status_code}: {response.text}")
             return None
     except Exception as e:
-        logger.error(f"Bhashini Translation Error: {e}")
+        logger.error(f"[BHASHINI TRANSLATE] Exception: {e}")
         return None
 
 def translate_text(text, source_lang, target_lang):
     """Translate text with fallback."""
     if source_lang == target_lang or not text:
+        logger.debug(f"[TRANSLATE] Skipping translation since source_lang ({source_lang}) == target_lang ({target_lang})")
         return text
     translated = translate_text_bhashini(text, source_lang, target_lang)
     if translated:
         return translated
+    logger.warning(f"[TRANSLATE] Bhashini translation returned None, falling back to original text.")
     return text
 
 # ============== TTS ==============
@@ -456,6 +482,8 @@ async def generate_edge_tts(text, voice, output_path):
 
 def text_to_speech(text, language_code, gender="female"):
     """Convert text to speech using Edge-TTS with Bhashini fallback."""
+    logger.info(f"[TTS GENERATION] Input text length: {len(text)} | Language: '{language_code}' | Gender: '{gender}'")
+
     # Branding
     if language_code == "hi":
         text = re.sub(r'\bUPYOG\b', 'उपयोग', text, flags=re.IGNORECASE)
@@ -470,8 +498,10 @@ def text_to_speech(text, language_code, gender="female"):
 
     # Ensure script matches language
     if language_code == "en" and any('ऀ' <= c <= 'ॿ' for c in text):
+        logger.info("[TTS SCRIPT FIX] Devanagari detected in English TTS text — translating to English")
         text = translate_text(text, "hi", "en")
     elif language_code == "hi" and not any('ऀ' <= c <= 'ॿ' for c in text):
+        logger.info("[TTS SCRIPT FIX] Non-Devanagari detected in Hindi TTS text — translating to Hindi")
         text = translate_text(text, "en", "hi")
 
     # Strip emojis and markdown
@@ -481,7 +511,7 @@ def text_to_speech(text, language_code, gender="female"):
     ).strip()
     text = text.replace('**', '').replace('*', '')
 
-    logger.info(f"Generating TTS for language: {language_code}")
+    logger.info(f"[TTS] Generating TTS for language: {language_code}")
 
     # Try Edge-TTS first for English/Hindi
     if language_code in ["en", "hi"]:
@@ -490,19 +520,22 @@ def text_to_speech(text, language_code, gender="female"):
             "hi": "hi-IN-MadhurNeural"
         }
         voice = voice_map.get(language_code)
+        logger.info(f"[TTS EDGE-TTS] Attempting Edge-TTS with voice '{voice}'")
         try:
             with tempfile.NamedTemporaryFile(delete=False, suffix='.mp3') as temp_audio:
                 temp_path = temp_audio.name
             try:
                 asyncio.run(generate_edge_tts(text, voice, temp_path))
-            except:
-                pass
+            except Exception as async_err:
+                logger.warning(f"[TTS EDGE-TTS] asyncio generate_edge_tts exception: {async_err}")
+
             with open(temp_path, "rb") as f:
                 audio_content = base64.b64encode(f.read()).decode('utf-8')
             os.unlink(temp_path)
+            logger.info(f"[TTS EDGE-TTS] Successfully generated audio. Payload length: {len(audio_content)} chars")
             return audio_content
         except Exception as e:
-            logger.error(f"Edge-TTS failed: {e}")
+            logger.error(f"[TTS EDGE-TTS] Edge-TTS failed: {e}. Falling back to Bhashini...")
 
     # Fallback to Bhashini
     if language_code == "en":
@@ -514,6 +547,8 @@ def text_to_speech(text, language_code, gender="female"):
     else:
         tts_service_id = TTS_SERVICE_ID_MISC
 
+    logger.info(f"[TTS BHASHINI] Triggering Bhashini TTS with serviceId '{tts_service_id}' for lang '{language_code}'")
+
     payload = {
         "pipelineTasks": [{"taskType": "tts", "config": {"language": {"sourceLanguage": language_code}, "serviceId": tts_service_id, "gender": gender, "samplingRate": 8000}}],
         "inputData": {"input": [{"source": text}]}
@@ -522,10 +557,13 @@ def text_to_speech(text, language_code, gender="female"):
     try:
         response = requests.post(BHASHINI_URL, headers=BHASHINI_HEADERS, json=payload)
         if response.status_code == 200:
-            return response.json()["pipelineResponse"][0]["audio"][0]["audioContent"]
+            audio_data = response.json()["pipelineResponse"][0]["audio"][0]["audioContent"]
+            logger.info(f"[TTS BHASHINI] Successfully generated audio. Payload length: {len(audio_data)} chars")
+            return audio_data
+        logger.error(f"[TTS BHASHINI] Bhashini status code {response.status_code}: {response.text}")
         return None
     except Exception as e:
-        logger.error(f"Bhashini TTS Error: {e}")
+        logger.error(f"[TTS BHASHINI] Bhashini TTS Error: {e}")
         return None
 
 # ============== LLM RESPONSE GENERATION ==============
@@ -543,16 +581,18 @@ def get_rag_response(query: str, history: list, lang: str, search_lang: str = No
     if search_lang is None:
         search_lang = lang
 
+    logger.info(f"[RAG QUERY] Initiating get_rag_response for query='{query}', lang='{lang}', search_lang='{search_lang}'")
+
     # Step 1: Try FAISS for supporting context (relaxed, not a hard gate)
     context = ""
     try:
         # Use search_lang for FAISS (English searches English KB, Hindi searches Hindi)
         query_for_search = query
         if search_lang != 'en':
-            # Translate to English for better FAISS matches
             translated = translate_text(query, search_lang, "en")
             if translated and len(translated.strip()) > 2:
                 query_for_search = translated
+                logger.info(f"[RAG FAISS] Translated query for vector search: '{query_for_search}'")
 
         query_embedding = model.encode([query_for_search])
         distances, indices = index.search(query_embedding.astype(np.float32), k=5)
@@ -565,12 +605,12 @@ def get_rag_response(query: str, history: list, lang: str, search_lang: str = No
 
         if relevant_chunks:
             context = "\n\n".join(relevant_chunks[:3])
-            logger.info(f"FAISS context found: {len(relevant_chunks)} chunks")
+            logger.info(f"[RAG FAISS] FAISS context found: {len(relevant_chunks)} relevant chunks (top distance: {distances[0][0]:.3f})")
         else:
-            logger.info("No FAISS context found - LLM will answer from general knowledge")
+            logger.info("[RAG FAISS] No FAISS context found - LLM will answer from general knowledge")
 
     except Exception as e:
-        logger.error(f"FAISS error (non-fatal): {e}")
+        logger.error(f"[RAG FAISS] FAISS search error (non-fatal): {e}")
         context = ""
 
     # Step 2: Build language instruction
@@ -653,6 +693,9 @@ If unsure about numbers/dates, say "approximately" rather than refusing.
     messages.extend(history_messages)
     messages.append({"role": "user", "content": query})
 
+    logger.info(f"[GROQ RAG] Calling Groq API with {len(messages)} messages (history turns: {len(history_messages)})")
+    start_time = time.time()
+
     try:
         if not groq_client:
             groq_client = Groq(api_key=GROQ_API_KEY)
@@ -664,18 +707,23 @@ If unsure about numbers/dates, say "approximately" rather than refusing.
             temperature=0.3
         )
         ans = response.choices[0].message.content.strip()
+        elapsed = time.time() - start_time
+        logger.info(f"[GROQ RAG] Received answer in {elapsed:.2f}s (len: {len(ans)} chars)")
+
         if lang == 'en' and any('ऀ' <= c <= 'ॿ' for c in ans):
+            logger.info("[GROQ RAG] Output contained Devanagari for English query — translating to English")
             translated = translate_text(ans, "hi", "en")
             if translated and len(translated.strip()) > 0:
                 ans = translated
         elif lang == 'hi' and not any('ऀ' <= c <= 'ॿ' for c in ans):
+            logger.info("[GROQ RAG] Output contained Non-Devanagari for Hindi query — translating to Hindi")
             translated = translate_text(ans, "en", "hi")
             if translated and len(translated.strip()) > 0:
                 ans = translated
         return ans
 
     except Exception as e:
-        logger.error(f"Groq error: {e}")
+        logger.error(f"[GROQ RAG] Groq error: {e}")
         return "क्षमा करें, तकनीकी समस्या है।" if lang == 'hi' else "Sorry, technical issue."
 
 # ============== RETRIEVAL (legacy wrapper) ==============
@@ -684,15 +732,14 @@ def retrieve_document(query, user_lang, history):
     """Retrieve document using LLM-first approach with FAISS as optional context."""
     global stop_generation
     stop_generation.clear()
-
-    # Use new get_rag_response which has LLM-first architecture
-    # The old FAISS hard gate is removed - LLM will answer from general knowledge if no context
+    logger.info(f"[RETRIEVE DOC] Invoking retrieve_document for query='{query}', lang='{user_lang}'")
     return get_rag_response(query, history, user_lang, search_lang=user_lang)
 
 def retrieve_document_stream(query, user_lang, history):
     """Streaming version - yields chunks for SSE."""
     global stop_generation
     stop_generation.clear()
+    logger.info(f"[STREAMING] Starting SSE stream for query='{query}', lang='{user_lang}'")
 
     try:
         query_for_search = translate_text(query, user_lang, "en") if user_lang in ["hi", "mr", "bn", "gu", "ta", "te", "kn", "ml"] else query
@@ -713,8 +760,10 @@ def retrieve_document_stream(query, user_lang, history):
                 if idx != -1 and d < FAISS_THRESHOLD:
                     frs_context.append({"module": frs_data.iloc[idx]['module'], "text": f"Q: {frs_data.iloc[idx]['question']} A: {frs_data.iloc[idx]['answer']}"})
 
-        # Stream the LLM response
+        logger.info(f"[STREAMING] Context chunks matched: FAQ={len(faq_context)}, FRS={len(frs_context)}")
+
         if not Groq or not GROQ_API_KEY:
+            logger.warning("[STREAMING] Groq SDK/Key not present — sending fallback response")
             response_text = faq_context[0]['a'] if faq_context else "I'm sorry, I'm having trouble thinking right now."
             yield f"data: {json.dumps({'type': 'text', 'text': response_text})}\n\n"
             return
@@ -826,37 +875,45 @@ probes do not mark the pod as unhealthy.
 def chat():
     """Standard non-streaming chat endpoint with LLM-first architecture."""
     if request.method == "GET":
+        logger.info("[ENDPOINT /chat GET] Health check ping")
         return jsonify({"status": "ok", "message": "UPYOG Voice Bot Chat Endpoint"}), 200
 
     global model, data, index, is_loading
 
     try:
         if is_loading or any(x is None for x in [model, data, index]):
+            logger.warning("[ENDPOINT /chat POST] Resources still loading — waiting 1s...")
             time.sleep(1)
             if any(x is None for x in [model, data, index]):
+                logger.error("[ENDPOINT /chat POST] Resources unavailable (503 Service Unavailable)")
                 return jsonify({"error": "Loading resources..."}), 503
 
-        user_data = request.json
+        user_data = request.json or {}
         user_input = user_data.get("query", "")
         session_id = user_data.get("session_id", "default")
         history = user_data.get("history", [])
+        request_info = user_data.get("RequestInfo", {})
 
         if not user_input:
+            logger.info(f"[ENDPOINT /chat POST] Empty query received for session '{session_id}'")
             return jsonify({"response": "", "lang": "en", "audio": ""})
 
-        # NEW: Script-aware language detection returning dict
+        # Script-aware language detection
         lang_info = detect_language(user_input)
         user_language = lang_info['lang']
         detected_script = lang_info['script']
         search_lang = lang_info['search_lang']
 
-        print(f"━━━ REQUEST ━━━")
-        print(f"Query: {user_input}")
-        print(f"Lang: {user_language} | Script: {detected_script} | SearchLang: {search_lang}")
-        print(f"━━━━━━━━━━━━━━")
+        logger.info(f"━━━ REQUEST [Session: {session_id}] ━━━")
+        logger.info(f"Query: '{user_input}'")
+        logger.info(f"Lang: {user_language} | Script: {detected_script} | SearchLang: {search_lang}")
+        if request_info:
+            logger.info(f"Auth RequestInfo Present: authToken={bool(request_info.get('authToken'))}, msgId={request_info.get('msgId')}")
+        logger.info(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
         # Hard block check - only block truly unrelated topics
         if is_hard_blocked(user_input):
+            logger.info(f"[CHAT FLOW] Query hard-blocked for out-of-domain topic.")
             msg = ("मैं केवल UPYOG और शहरी सरकारी सेवाओं के बारे में "
                    "सहायता कर सकता हूँ।" if user_language == 'hi' else
                    "I can only help with UPYOG and urban government services.")
@@ -867,6 +924,7 @@ def chat():
         # GATE 1: Check if grievance flow is active for this session
         grievance_session = get_grievance_session(session_id)
         if grievance_session.get("active") and grievance_session.get("collecting"):
+            logger.info(f"[CHAT FLOW] Active grievance session detected at step='{grievance_session.get('step')}'")
             result = handle_grievance_turn(session_id, user_input, user_language)
             audio_output = text_to_speech(result["message"], result["lang"])
             return jsonify({
@@ -881,17 +939,14 @@ def chat():
             })
 
         # ===== INTENT CLASSIFICATION FLOW =====
-        # Run intent classifier FIRST - before any FAISS filtering
-
-        # Check if we have an active grievance offer pending
         g_offer = grievance_sessions.get(session_id, {})
 
         if g_offer.get("offer_pending"):
-            # PATH B: Bot already offered grievance, waiting for confirmation
+            logger.info(f"[CHAT FLOW] Pending grievance offer active for session '{session_id}' — running intent classifier")
             intent = classify_intent(user_input, history, user_language)
 
             if intent["intent"] == "grievance_confirm":
-                # User said YES - start grievance collection
+                logger.info(f"[CHAT FLOW] User confirmed grievance offer — initializing grievance collection flow")
                 grievance_sessions[session_id] = {
                     "active": True,
                     "collecting": True,
@@ -917,7 +972,7 @@ def chat():
                 })
 
             elif intent["intent"] == "grievance_cancel":
-                # User said NO - clear offer, continue normally
+                logger.info(f"[CHAT FLOW] User cancelled pending grievance offer — clearing offer and answering query")
                 grievance_sessions[session_id] = {"active": False, "offer_pending": False}
                 response_text = retrieve_document(user_input, user_language, history)
                 response_text = re.sub(r'\bUpyog\b', 'UPYOG', response_text, flags=re.IGNORECASE)
@@ -931,16 +986,15 @@ def chat():
                 })
 
             else:
-                # User asked something else - drop offer, answer their question
+                logger.info(f"[CHAT FLOW] User asked un-related query while offer pending — dropping offer")
                 grievance_sessions[session_id] = {"active": False, "offer_pending": False}
-                # Fall through to PATH C
 
         # PATH C: Normal flow - classify intent first
         intent = classify_intent(user_input, history, user_language)
-        logger.info(f"INTENT: {intent['intent']}, SERVICE: {intent.get('service')}, EMOTION: {intent.get('emotion')}")
+        logger.info(f"[INTENT CLASSIFIER RESULT] INTENT: {intent['intent']}, SERVICE: {intent.get('service')}, EMOTION: {intent.get('emotion')}, REASONING: {intent.get('reasoning')}")
 
         if intent["intent"] == "grievance_candidate":
-            # User has a problem - OFFER grievance (don't auto-start)
+            logger.info(f"[CHAT FLOW] Intent is grievance_candidate — offering grievance flow to user")
             grievance_sessions[session_id] = {
                 "active": False,
                 "offer_pending": True,
@@ -962,12 +1016,11 @@ def chat():
             })
 
         # PATH D: Normal RAG flow (intent is "faq")
-        # Apply domain filter AFTER intent classification
         in_domain, reason = is_in_domain(user_input)
         if not in_domain and reason == "out_of_domain":
             message = get_rejection_message("out_of_domain", user_language)
             audio_output = text_to_speech(message, user_language)
-            logger.info(f"Domain rejected (faq path): {reason}")
+            logger.info(f"[CHAT FLOW] Domain rejected (faq path): {reason}")
             return jsonify({
                 "response": message,
                 "lang": user_language,
@@ -979,6 +1032,7 @@ def chat():
         if not in_domain and reason == "too_short":
             message = get_rejection_message("too_short", user_language)
             audio_output = text_to_speech(message, user_language)
+            logger.info(f"[CHAT FLOW] Query rejected because too short: {reason}")
             return jsonify({
                 "response": message,
                 "lang": user_language,
@@ -988,11 +1042,9 @@ def chat():
 
         response_text = retrieve_document(user_input, user_language, history)
 
-        # Check if response is a grievance offer (from FAISS fallback)
         if response_text and ("शिकायत" in response_text or "grievance" in response_text.lower() or "एक शिकायत" in response_text):
-            # This is a fallback grievance offer - change mode
             audio_output = text_to_speech(response_text, user_language)
-            logger.info("Intent: faq but fallback offered grievance")
+            logger.info("[CHAT FLOW] Fallback response contains grievance wording — setting mode to grievance_offered")
             return jsonify({
                 "response": response_text,
                 "lang": user_language,
@@ -1000,11 +1052,9 @@ def chat():
                 "audio": audio_output
             })
 
-        # Branding fix
         response_text = re.sub(r'\bUpyog\b', 'UPYOG', response_text, flags=re.IGNORECASE)
-
-        # Generate TTS (language matches detected language)
         audio_output = text_to_speech(response_text, user_language)
+        logger.info(f"[CHAT FLOW] Successfully generated final FAQ response (length: {len(response_text)} chars)")
 
         return jsonify({
             "response": response_text,
@@ -1015,20 +1065,15 @@ def chat():
         }), 200
 
     except Exception as e:
-        logger.error(f"Chat Error: {e}")
+        logger.error(f"[ENDPOINT /chat ERROR] Exception: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
-"""
-Streaming SSE endpoint — two route aliases:
-  /stream                  → direct local access
-  /upyog-voice-bot/stream  → production via niautt EKS ingress
-GET requests return a health check response for Kubernetes liveness probes.
-"""
 @app.route("/stream", methods=["GET", "POST"])
 @app.route("/upyog-voice-bot/stream", methods=["GET", "POST"])
 def stream():
     """Streaming SSE endpoint for lower perceived latency."""
     if request.method == "GET":
+        logger.info("[ENDPOINT /stream GET] Health check ping")
         return jsonify({"status": "ok", "message": "UPYOG Voice Bot Stream Endpoint"}), 200
 
     global model, data, index, is_loading, stop_generation
@@ -1039,34 +1084,26 @@ def stream():
             if any(x is None for x in [model, data, index]):
                 return Response("data: {\"error\": \"Loading resources...\"}\n\n", mimetype='text/event-stream'), 503
 
-        user_data = request.json
+        user_data = request.json or {}
         user_input = user_data.get("query", "")
-        # NOTE: Don't use lang from frontend - detect fresh per turn
         history = user_data.get("history", [])
 
-        # DYNAMIC PER-TURN LANGUAGE DETECTION
         user_language, detected_script = detect_language_per_turn(user_input)
-        logger.info(f"Stream language detection: '{user_input}' -> {user_language} (script: {detected_script})")
+        logger.info(f"[ENDPOINT /stream POST] Stream request: '{user_input}' -> lang={user_language} (script: {detected_script})")
 
         return Response(retrieve_document_stream(user_input, user_language, history), mimetype='text/event-stream')
 
     except Exception as e:
-        logger.error(f"Stream Error: {e}")
+        logger.error(f"[ENDPOINT /stream ERROR] Exception: {e}")
         return Response(f"data: {json.dumps({'type': 'error', 'error': str(e)})}\n\n", mimetype='text/event-stream')
 
-"""
-Stop endpoint — called when the user interrupts (barges in) while the bot is speaking.
-Two route aliases:
-  /stop                  → direct local access
-  /upyog-voice-bot/stop  → production via niautt EKS ingress
-"""
 @app.route("/stop", methods=["POST"])
 @app.route("/upyog-voice-bot/stop", methods=["POST"])
 def stop():
     """Stop endpoint - called when user barges in."""
     global stop_generation
     stop_generation.set()
-    logger.info("Stop signal received - aborting generation")
+    logger.info("[ENDPOINT /stop POST] Stop signal set — interrupting generation thread")
     return jsonify({"status": "stopped"}), 200
 
 # ============== LLM INTENT CLASSIFIER ==============
@@ -1082,8 +1119,8 @@ def classify_intent(query: str, history: list, lang: str) -> dict:
     }
     """
     global groq_client
+    logger.info(f"[INTENT CLASSIFIER] Classifying intent for query='{query}', lang='{lang}'")
 
-    # Build last 3 turns of context
     recent_history = history[-3:] if len(history) >= 3 else history
     history_text = "\n".join([
         f"{turn.get('role', 'user').upper()}: {turn.get('content', '')}"
@@ -1196,15 +1233,17 @@ Respond ONLY with this JSON, no other text:
         raw = response.choices[0].message.content.strip()
         raw = raw.replace("```json", "").replace("```", "").strip()
         result = json.loads(raw)
+        logger.info(f"[INTENT CLASSIFIER] Groq raw response: {result}")
 
         valid_intents = ["faq", "grievance_candidate", "grievance_confirm", "grievance_cancel"]
         if result.get("intent") not in valid_intents:
+            logger.warning(f"[INTENT CLASSIFIER] Invalid intent '{result.get('intent')}' returned — resetting to 'faq'")
             result["intent"] = "faq"
 
         return result
 
     except Exception as e:
-        logger.error(f"Intent classifier error: {e}")
+        logger.error(f"[INTENT CLASSIFIER] Classifier exception: {e}")
         return {"intent": "faq", "reasoning": "classifier failed", "service": None, "emotion": "neutral"}
 
 
@@ -1285,11 +1324,15 @@ def generate_otp(mobile):
         },
         "RequestInfo": {"apiId": "Rainmaker", "msgId": "1|en_IN"}
     }
+    logger.info(f"[GRIEVANCE API] Requesting OTP generation for mobile: '{mobile}' via URL: '{url}'")
     try:
         res = requests.post(url, json=payload)
-        return res.json()
+        logger.info(f"[GRIEVANCE API] OTP generation response code: {res.status_code}")
+        data = res.json()
+        logger.info(f"[GRIEVANCE API] OTP generate result payload: {data}")
+        return data
     except Exception as e:
-        logger.error(f"OTP Generation Error: {e}")
+        logger.error(f"[GRIEVANCE API] OTP Generation Exception: {e}")
         return {"error": str(e)}
 
 def verify_otp(mobile, otp):
@@ -1303,11 +1346,19 @@ def verify_otp(mobile, otp):
         "tenantId": GRIEVANCE_MDMS_TENANT,
         "userType": "CITIZEN"
     }
+    logger.info(f"[GRIEVANCE API] Verifying OTP '{otp}' for mobile '{mobile}' via URL: '{url}'")
     try:
         res = requests.post(url, data=data, headers=GRIEVANCE_HEADERS)
-        return res.json()
+        logger.info(f"[GRIEVANCE API] OTP verification HTTP status: {res.status_code}")
+        resp_json = res.json()
+        logger.info(f"[GRIEVANCE API] OTP verify response keys: {list(resp_json.keys()) if isinstance(resp_json, dict) else 'N/A'}")
+        if "access_token" in resp_json:
+            logger.info("[GRIEVANCE API] Auth token received successfully.")
+        else:
+            logger.warning(f"[GRIEVANCE API] Verification failed or access_token missing. Full response: {resp_json}")
+        return resp_json
     except Exception as e:
-        logger.error(f"OTP Verification Error: {e}")
+        logger.error(f"[GRIEVANCE API] OTP Verification Exception: {e}")
         return {"error": str(e)}
 
 def fetch_categories(auth_token):
@@ -1320,8 +1371,10 @@ def fetch_categories(auth_token):
         },
         "RequestInfo": {"apiId": "Rainmaker", "authToken": auth_token, "msgId": "1|en_IN", "plainAccessRequest": {}}
     }
+    logger.info(f"[GRIEVANCE API] Fetching MDMS categories from URL: '{url}'")
     try:
         res = requests.post(url, json=payload)
+        logger.info(f"[GRIEVANCE API] MDMS Categories HTTP status: {res.status_code}")
         data = res.json()
         defs = data.get("MdmsRes", {}).get("RAINMAKER-PGR", {}).get("ServiceDefs", [])
         structured = {}
@@ -1330,9 +1383,10 @@ def fetch_categories(auth_token):
             menu = d.get("menuPath") or "Others"
             if menu not in structured: structured[menu] = []
             structured[menu].append({"name": d["name"], "code": d["serviceCode"]})
+        logger.info(f"[GRIEVANCE API] Fetched {len(defs)} definitions across {len(structured)} category groups: {list(structured.keys())}")
         return structured
     except Exception as e:
-        logger.error(f"MDMS Categories Fetch Error: {e}")
+        logger.error(f"[GRIEVANCE API] MDMS Categories Fetch Exception: {e}")
         return {}
 
 def fetch_localities(auth_token):
@@ -1341,20 +1395,26 @@ def fetch_localities(auth_token):
     payload = {
         "RequestInfo": {"apiId": "Rainmaker", "authToken": auth_token, "msgId": "1|en_IN", "plainAccessRequest": {}}
     }
+    logger.info(f"[GRIEVANCE API] Fetching localities from URL: '{url}'")
     try:
         res = requests.post(url, json=payload)
+        logger.info(f"[GRIEVANCE API] Localities HTTP status: {res.status_code}")
         data = res.json()
         boundaries = data.get("TenantBoundary", [])
         if boundaries and boundaries[0].get("boundary"):
-            return [{"name": b["name"], "code": b["code"]} for b in boundaries[0]["boundary"]]
+            result = [{"name": b["name"], "code": b["code"]} for b in boundaries[0]["boundary"]]
+            logger.info(f"[GRIEVANCE API] Fetched {len(result)} localities for tenant '{GRIEVANCE_TENANT_ID}'")
+            return result
+        logger.warning("[GRIEVANCE API] No boundaries found in MDMS response.")
         return []
     except Exception as e:
-        logger.error(f"MDMS Localities Fetch Error: {e}")
+        logger.error(f"[GRIEVANCE API] MDMS Localities Fetch Exception: {e}")
         return []
 
 def create_grievance(auth_token, user_info, grievance_data):
     """Create grievance via PGR API."""
     url = f"{GRIEVANCE_API_BASE}/pgr-services/v2/request/_create?tenantId={GRIEVANCE_TENANT_ID}"
+    logger.info(f"[GRIEVANCE API] Creating official PGR ticket via URL: '{url}'")
 
     citizen_block = {
         "id": user_info.get("id"),
@@ -1408,38 +1468,40 @@ def create_grievance(auth_token, user_info, grievance_data):
         }
     }
 
+    logger.info(f"[GRIEVANCE API] PGR Create Payload: serviceCode='{grievance_data.get('category_code')}', locality='{grievance_data.get('locality_name')}'")
+
     try:
         res = requests.post(url, json=payload)
         resp_data = res.json()
-        logger.info(f"PGR Create Response: {resp_data}")
+        logger.info(f"[GRIEVANCE API] PGR Create Response status {res.status_code}: {resp_data}")
 
         if "Errors" in resp_data:
-            logger.error(f"PGR Create Failed: {resp_data}")
+            logger.error(f"[GRIEVANCE API] PGR Create Failed with errors: {resp_data.get('Errors')}")
             return {"success": False, "error": resp_data.get("Errors", "Unknown error")}
 
         sw_list = resp_data.get("ServiceWrappers", [])
         if not sw_list:
+            logger.error("[GRIEVANCE API] PGR Create Failed: No ServiceWrappers returned")
             return {"success": False, "error": "No ServiceWrappers in response"}
 
         ticket_id = sw_list[0].get("service", {}).get("serviceRequestId")
         if ticket_id:
+            logger.info(f"[GRIEVANCE API] Ticket successfully created! Ticket ID: '{ticket_id}'")
             return {"success": True, "ticket_number": ticket_id, "raw": resp_data}
+        logger.error("[GRIEVANCE API] PGR Create Failed: No ticket number returned in ServiceWrappers")
         return {"success": False, "error": "No ticket number returned"}
 
     except Exception as e:
-        logger.error(f"PGR Create Exception: {e}")
+        logger.error(f"[GRIEVANCE API] PGR Create Exception: {e}")
         return {"success": False, "error": str(e)}
-
-# is_grievance_intent removed - replaced by LLM-based classify_intent() function
 
 def is_cancel_intent(text: str) -> bool:
     """Detect if user wants to cancel the grievance flow."""
     text_lower = text.lower()
 
-    # Check for Devanagari range in Unicode
     for c in text:
         if 'ऀ' <= c <= 'ॿ':
-            return True  # If Devanagari present, assume might be cancellation
+            return True
 
     cancel_patterns = [
         r'\b(cancel|cancelled|canceling|nevermind|never\s*mind)\b',
@@ -1450,6 +1512,7 @@ def is_cancel_intent(text: str) -> bool:
 
     for pattern in cancel_patterns:
         if re.search(pattern, text_lower):
+            logger.info(f"[INTENT CHECK] Cancel pattern matched in text: '{text}'")
             return True
 
     return False
@@ -1458,7 +1521,6 @@ def is_confirmation(text: str) -> bool:
     """Detect if user confirmed or said yes."""
     text_lower = text.lower()
 
-    # Check for Devanagari range
     for c in text:
         if 'ऀ' <= c <= 'ॿ':
             return True
@@ -1471,6 +1533,7 @@ def is_confirmation(text: str) -> bool:
 
     for pattern in confirm_patterns:
         if re.search(pattern, text_lower):
+            logger.info(f"[INTENT CHECK] Confirmation pattern matched in text: '{text}'")
             return True
 
     return False
@@ -1479,7 +1542,6 @@ def is_negative(text: str) -> bool:
     """Detect if user said no or rejected."""
     text_lower = text.lower()
 
-    # Check for Devanagari range
     for c in text:
         if 'ऀ' <= c <= 'ॿ':
             return True
@@ -1490,6 +1552,7 @@ def is_negative(text: str) -> bool:
 
     for pattern in negative_patterns:
         if re.search(pattern, text_lower):
+            logger.info(f"[INTENT CHECK] Negative pattern matched in text: '{text}'")
             return True
 
     return False
@@ -1599,20 +1662,29 @@ def normalize_spoken_number(text: str) -> str:
 def normalize_field(field_type: str, value: str) -> str:
     if field_type in ('mobile', 'phone', 'otp', 'pincode', 'number'):
         normalized = normalize_spoken_number(value)
+        logger.info(f"[NORMALIZE FIELD] {field_type}: '{value}' → '{normalized}'")
         print(f"[NORMALIZE] {field_type}: '{value}' → '{normalized}'")
         return normalized
+    logger.info(f"[NORMALIZE FIELD] {field_type}: '{value}' → '{value.strip()}'")
     return value.strip()
 
 def validate_field(field_type: str, value: str) -> tuple:
+    logger.info(f"[VALIDATE FIELD] Validating field_type='{field_type}', value='{value}'")
     if field_type == 'mobile':
         digits_only = re.sub(r'\D', '', value)
         if len(digits_only) != 10:
-            return False, f"मुझे 10 अंकों का मोबाइल नंबर चाहिए। आपने {len(digits_only)} अंक दिए। कृपया दोबारा बोलें।"
+            msg = f"मुझे 10 अंकों का मोबाइल नंबर चाहिए। आपने {len(digits_only)} अंक दिए। कृपया दोबारा बोलें।"
+            logger.warning(f"[VALIDATE FIELD] Mobile validation failed: got {len(digits_only)} digits")
+            return False, msg
+        logger.info("[VALIDATE FIELD] Mobile validation passed.")
         return True, None
     if field_type == 'otp':
         digits_only = re.sub(r'\D', '', value)
         if len(digits_only) not in (4, 6):
-            return False, f"OTP 4 या 6 अंकों का होना चाहिए। कृपया दोबारा बोलें।"
+            msg = f"OTP 4 या 6 अंकों का होना चाहिए। कृपया दोबारा बोलें।"
+            logger.warning(f"[VALIDATE FIELD] OTP validation failed: got {len(digits_only)} digits")
+            return False, msg
+        logger.info("[VALIDATE FIELD] OTP validation passed.")
         return True, None
     return True, None
 
@@ -1620,9 +1692,11 @@ def handle_grievance_turn(session_id, user_input, lang):
     """Handle a single turn in the grievance flow."""
     session = get_grievance_session(session_id)
     step = session["step"]
+    logger.info(f"[GRIEVANCE TURN] Session '{session_id}' | Step: '{step}' | Input: '{user_input}' | Lang: '{lang}'")
 
     # Check for cancellation
     if is_cancel_intent(user_input):
+        logger.info(f"[GRIEVANCE TURN] Cancel intent detected — clearing session '{session_id}'")
         clear_grievance_session(session_id)
         if lang == 'hi':
             return {"type": "cancelled", "message": "ठीक है, शिकायत दर्ज नहीं की गई। आप किस और विषय पर पूछना चाहेंगे?", "lang": lang}
@@ -1632,6 +1706,7 @@ def handle_grievance_turn(session_id, user_input, lang):
     if step == "START":
         session["active"] = True
         session["step"] = "AWAITING_PHONE"
+        logger.info(f"[GRIEVANCE TURN] Step START -> transitioning to AWAITING_PHONE")
         if lang == 'hi':
             return {"type": "collect", "message": "शिकायत दर्ज करने के लिए पहले आपका मोबाइल नंबर चाहिए। कृपया अपना 10 अंकों का मोबाइल नंबर बताएं।", "lang": lang, "field": "mobile", "input_type": "number", "options": []}
         return {"type": "collect", "message": "To register a complaint, I need your mobile number first. Please tell me your 10-digit mobile number.", "lang": lang, "field": "mobile", "input_type": "number", "options": []}
@@ -1643,15 +1718,17 @@ def handle_grievance_turn(session_id, user_input, lang):
             if lang != 'hi':
                 digits_count = len(re.sub(r'\D', '', normalized_value))
                 error_msg = f"I need a 10-digit mobile number. You provided {digits_count} digits. Please try again."
+            logger.warning(f"[GRIEVANCE TURN] AWAITING_PHONE invalid input: '{user_input}'")
             return {"type": "collect", "message": error_msg, "lang": lang, "field": "mobile", "input_type": "number", "options": []}
 
         mobile = re.sub(r'\D', '', normalized_value)
         session["data"]["mobile"] = mobile
         session["step"] = "AWAITING_OTP"
+        logger.info(f"[GRIEVANCE TURN] Mobile '{mobile}' stored. Transitioning to AWAITING_OTP and generating OTP...")
 
         # Send OTP
         otp_result = generate_otp(mobile)
-        logger.info(f"OTP sent: {otp_result}")
+        logger.info(f"[GRIEVANCE TURN] OTP send result: {otp_result}")
 
         if lang == 'hi':
             return {"type": "collect", "message": f"OTP आपके मोबाइल नंबर {mobile} पर भेजा गया है। कृपया 6 अंकों का OTP बताएं।", "lang": lang, "field": "otp", "input_type": "number", "options": []}
@@ -1663,16 +1740,19 @@ def handle_grievance_turn(session_id, user_input, lang):
         if not is_valid:
             if lang != 'hi':
                 error_msg = "OTP should be 4 or 6 digits. Please tell me the correct OTP."
+            logger.warning(f"[GRIEVANCE TURN] AWAITING_OTP invalid format: '{user_input}'")
             return {"type": "collect", "message": error_msg, "lang": lang, "field": "otp", "input_type": "number", "options": []}
 
         otp_value = re.sub(r'\D', '', normalized_value)
         mobile = session["data"]["mobile"]
+        logger.info(f"[GRIEVANCE TURN] Verifying OTP '{otp_value}' for mobile '{mobile}'...")
 
         # Verify OTP
         verify_result = verify_otp(mobile, otp_value)
-        logger.info(f"OTP verify result keys: {verify_result.keys() if isinstance(verify_result, dict) else 'N/A'}")
+        logger.info(f"[GRIEVANCE TURN] Verify OTP result keys: {verify_result.keys() if isinstance(verify_result, dict) else 'N/A'}")
 
         if "access_token" not in verify_result:
+            logger.warning(f"[GRIEVANCE TURN] OTP verification failed for session '{session_id}'")
             if lang == 'hi':
                 return {"type": "error", "message": "OTP गलत है। कृपया पुनः प्रयास करें।", "lang": lang}
             return {"type": "error", "message": "OTP is incorrect. Please try again.", "lang": lang}
@@ -1681,10 +1761,12 @@ def handle_grievance_turn(session_id, user_input, lang):
         session["data"]["user_info"] = verify_result.get("UserRequest", verify_result.get("userInfo", {}))
         
         # Fetch categories
+        logger.info(f"[GRIEVANCE TURN] OTP verified successfully. Fetching MDMS categories...")
         categories = fetch_categories(session["data"]["auth_token"])
         session["categories"] = categories
 
         if not categories:
+            logger.error("[GRIEVANCE TURN] Failed to fetch categories from MDMS")
             if lang == 'hi':
                 return {"type": "error", "message": "श्रेणियां लोड नहीं हो सकीं। कृपया कुछ देर बाद पुनः प्रयास करें।", "lang": lang}
             return {"type": "error", "message": "Could not load categories. Please try again later.", "lang": lang}
@@ -1692,6 +1774,7 @@ def handle_grievance_turn(session_id, user_input, lang):
         cat_list = list(categories.keys())
         session["step"] = "AWAITING_CATEGORY"
         session["data"]["category_group"] = None
+        logger.info(f"[GRIEVANCE TURN] Categories loaded ({len(cat_list)}). Transitioning to AWAITING_CATEGORY")
 
         if lang == 'hi':
             return {"type": "collect", "message": f"श्रेणी चुनें: {', '.join(cat_list)}", "lang": lang, "field": "category", "input_type": "choice", "options": cat_list}
@@ -1708,6 +1791,7 @@ def handle_grievance_turn(session_id, user_input, lang):
                 break
 
         if not selected_cat:
+            logger.warning(f"[GRIEVANCE TURN] Could not match category for input: '{user_input}'")
             if lang == 'hi':
                 return {"type": "collect", "message": f"मुझे श्रेणी समझ नहीं आया। कृपया इनमें से चुनें:", "lang": lang, "field": "category", "input_type": "choice", "options": cat_list}
             return {"type": "collect", "message": f"I didn't understand. Please choose from:", "lang": lang, "field": "category", "input_type": "choice", "options": cat_list}
@@ -1717,6 +1801,7 @@ def handle_grievance_turn(session_id, user_input, lang):
         session["step"] = "AWAITING_SUB_CATEGORY"
 
         sub_list = [s["name"] for s in categories[selected_cat]]
+        logger.info(f"[GRIEVANCE TURN] Category '{selected_cat}' selected. Sub-categories count: {len(sub_list)}. Transitioning to AWAITING_SUB_CATEGORY")
         if lang == 'hi':
             return {"type": "collect", "message": f"आप किस प्रकार की शिकायत करना चाहते हैं:", "lang": lang, "field": "sub_category", "input_type": "choice", "options": sub_list}
         return {"type": "collect", "message": f"What type of complaint:", "lang": lang, "field": "sub_category", "input_type": "choice", "options": sub_list}
@@ -1732,6 +1817,7 @@ def handle_grievance_turn(session_id, user_input, lang):
                 break
 
         if not selected_sub:
+            logger.warning(f"[GRIEVANCE TURN] Could not match sub-category for input: '{user_input}'")
             if lang == 'hi':
                 return {"type": "collect", "message": f"मुझे समझ नहीं आया। कृपया चुनें:", "lang": lang, "field": "sub_category", "input_type": "choice", "options": sub_list}
             return {"type": "collect", "message": f"I didn't understand. Please choose:", "lang": lang, "field": "sub_category", "input_type": "choice", "options": sub_list}
@@ -1739,6 +1825,7 @@ def handle_grievance_turn(session_id, user_input, lang):
         session["data"]["category_code"] = selected_sub["code"]
         session["data"]["category_name"] = selected_sub["name"]
         session["step"] = "AWAITING_DESCRIPTION"
+        logger.info(f"[GRIEVANCE TURN] Sub-category '{selected_sub['name']}' ({selected_sub['code']}) selected. Transitioning to AWAITING_DESCRIPTION")
 
         if lang == 'hi':
             return {"type": "collect", "message": "अब कृपया अपनी शिकायत का विवरण लिखें। समस्या क्या है?", "lang": lang, "field": "description", "input_type": "text", "options": []}
@@ -1746,25 +1833,28 @@ def handle_grievance_turn(session_id, user_input, lang):
 
     elif step == "AWAITING_DESCRIPTION":
         if len(user_input.strip()) < 10:
+            logger.warning(f"[GRIEVANCE TURN] Description too short ({len(user_input.strip())} chars)")
             if lang == 'hi':
                 return {"type": "collect", "message": "कृपया थोड़ा विस्तार से बताएं कि समस्या क्या है।", "lang": lang, "field": "description", "input_type": "text", "options": []}
             return {"type": "collect", "message": "Please describe the problem in more detail.", "lang": lang, "field": "description", "input_type": "text", "options": []}
 
         session["data"]["description"] = user_input
         session["step"] = "AWAITING_LOCALITY"
+        logger.info(f"[GRIEVANCE TURN] Description captured ({len(user_input)} chars). Fetching localities...")
 
         # Fetch localities
         localities = fetch_localities(session["data"]["auth_token"])
         session["localities"] = localities
 
         if not localities:
-            # Skip locality if not available
+            logger.warning("[GRIEVANCE TURN] Localities list empty — skipping to CONFIRM step")
             session["step"] = "CONFIRM"
             session["data"]["locality_code"] = ""
             session["data"]["locality_name"] = ""
             return build_confirmation(session, lang)
 
-        loc_list = [l["name"] for l in localities[:20]]  # Limit to first 20
+        loc_list = [l["name"] for l in localities[:20]]
+        logger.info(f"[GRIEVANCE TURN] Localities loaded ({len(localities)}). Transitioning to AWAITING_LOCALITY")
         if lang == 'hi':
             return {"type": "collect", "message": f"अपना इलाका/क्षेत्र चुनें:", "lang": lang, "field": "locality", "input_type": "choice", "options": loc_list}
         return {"type": "collect", "message": f"Please choose your area/locality:", "lang": lang, "field": "locality", "input_type": "choice", "options": loc_list}
@@ -1780,10 +1870,11 @@ def handle_grievance_turn(session_id, user_input, lang):
                 break
 
         if not selected_loc and len(user_input.strip()) > 2:
-            # Use custom locality if user typed something
+            logger.info(f"[GRIEVANCE TURN] Using custom user locality: '{user_input.strip()}'")
             selected_loc = {"name": user_input.strip(), "code": ""}
 
         if not selected_loc:
+            logger.warning(f"[GRIEVANCE TURN] Could not match locality for input: '{user_input}'")
             if lang == 'hi':
                 return {"type": "collect", "message": f"मुझे इलाका समझ नहीं आया। कृपया चुनें:", "lang": lang, "field": "locality", "input_type": "choice", "options": loc_list}
             return {"type": "collect", "message": f"I didn't understand. Please choose:", "lang": lang, "field": "locality", "input_type": "choice", "options": loc_list}
@@ -1791,20 +1882,25 @@ def handle_grievance_turn(session_id, user_input, lang):
         session["data"]["locality_code"] = selected_loc["code"]
         session["data"]["locality_name"] = selected_loc["name"]
         session["step"] = "CONFIRM"
+        logger.info(f"[GRIEVANCE TURN] Locality '{selected_loc['name']}' selected. Transitioning to CONFIRM")
 
         return build_confirmation(session, lang)
 
     elif step == "CONFIRM":
+        logger.info(f"[GRIEVANCE TURN] CONFIRM step evaluated for input: '{user_input}'")
         if is_negative(user_input):
+            logger.info(f"[GRIEVANCE TURN] User rejected confirmation — clearing session '{session_id}'")
             clear_grievance_session(session_id)
             if lang == 'hi':
                 return {"type": "cancelled", "message": "ठीक है, शिकायत दर्ज नहीं की गई। आप किस और विषय पर पूछना चाहेंगे?", "lang": lang}
             return {"type": "cancelled", "message": "OK, complaint not registered. What else can I help you with?", "lang": lang}
 
         if not is_confirmation(user_input):
+            logger.info("[GRIEVANCE TURN] Confirmation not explicit — re-displaying confirmation card")
             return build_confirmation(session, lang)
 
         # User confirmed - submit grievance
+        logger.info(f"[GRIEVANCE TURN] User confirmed! Calling create_grievance API...")
         result = create_grievance(
             session["data"]["auth_token"],
             session["data"]["user_info"],
@@ -1815,16 +1911,19 @@ def handle_grievance_turn(session_id, user_input, lang):
 
         if result["success"]:
             ticket = result["ticket_number"]
+            logger.info(f"[GRIEVANCE TURN] Ticket created successfully: {ticket}")
             if lang == 'hi':
                 return {"type": "done", "message": f"आपकी शिकायत सफलतापूर्वक दर्ज हो गई। आपका टिकट नंबर है: {ticket}", "lang": lang}
             return {"type": "done", "message": f"Your complaint has been registered successfully. Your ticket number is: {ticket}", "lang": lang}
         else:
             error_msg = result.get("error", "Unknown error")
+            logger.error(f"[GRIEVANCE TURN] Ticket creation failed: {error_msg}")
             if lang == 'hi':
                 return {"type": "error", "message": f"शिकायत दर्ज करने में समस्या हुई: {error_msg}", "lang": lang}
             return {"type": "error", "message": f"Failed to submit complaint: {error_msg}", "lang": lang}
 
     # Fallback
+    logger.error(f"[GRIEVANCE TURN] Reached unhandled step fallback for step='{step}'")
     if lang == 'hi':
         return {"type": "error", "message": "कुछ गलत हो गया। कृपया फिर से शुरू करें।", "lang": lang}
     return {"type": "error", "message": "Something went wrong. Please start again.", "lang": lang}
@@ -1832,6 +1931,7 @@ def handle_grievance_turn(session_id, user_input, lang):
 def build_confirmation(session, lang):
     """Build confirmation summary for the user."""
     data = session["data"]
+    logger.info(f"[BUILD CONFIRMATION] Building summary card for category='{data.get('category_name')}', locality='{data.get('locality_name')}'")
     summary_en = f"Please confirm your complaint details:\n\nCategory: {data.get('category_name', 'N/A')}\nDescription: {data.get('description', 'N/A')}\nLocality: {data.get('locality_name', 'N/A')}\n\nSay 'yes' to submit or 'no' to cancel."
     summary_hi = f"कृपया अपनी शिकायत की जानकारी की पुष्टि करें:\n\nश्रेणी: {data.get('category_name', 'N/A')}\nविवरण: {data.get('description', 'N/A')}\nइलाका: {data.get('locality_name', 'N/A')}\n\nदर्ज करने के लिए 'हाँ' बोलें या रद्द करने के लिए 'नहीं'।"
 

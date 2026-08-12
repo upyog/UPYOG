@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UPYOG AI Assistant</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/upyog-voice-bot/assets/styles.css">
 </head>
 
@@ -125,31 +127,24 @@
         } else if (window.location.pathname.includes('/upyog-voice')) {
             API_URL += '/upyog-voice';
         }
+        console.log('[UPYOG INIT] App script loaded', { API_URL, conversationSessionId });
 
         // ===== NIAUTT AUTH INTEGRATION =====
-        // When this chatbot is embedded as an iframe inside niautt, the parent page
-        // (UpyogBot.js component) sends the logged-in user's RequestInfo via postMessage
-        // as soon as this page finishes loading. We store it here and attach it to
-        // every /chat request so the backend receives standard niautt-style auth context.
-
-        // Holds the RequestInfo received from the niautt parent page.
-        // Starts empty — gets populated when the postMessage arrives.
         let NIAUTT_REQUEST_INFO = {};
 
-        // Listen for the postMessage sent by niautt's UpyogBot.js component (onLoad).
-        // type "INIT_DATA" identifies this as the niautt auth initialization message.
-        // Stores the full RequestInfo (authToken, userInfo, apiId, plainAccessRequest).
         function handleNiuattMessage(event) {
-            if (event.origin !== CONFIG.niuattOrigin) return;
+            console.log('[UPYOG POST_MESSAGE] Received window postMessage', { data: event.data, origin: event.origin });
             if (event.data?.type === "INIT_DATA") {
-                // Store the received RequestInfo for use in all subsequent /chat calls
                 NIAUTT_REQUEST_INFO = event.data.RequestInfo || {};
+                console.log('[UPYOG AUTH] Stored RequestInfo from parent page', NIAUTT_REQUEST_INFO);
+            }
+            if (event.data?.type === "TOGGLE_MIC" || event.data?.action === "TOGGLE_MIC" || (event.data?.type === "KEY_EVENT" && (event.data?.key === 'd' || event.data?.key === 'D'))) {
+                console.log('[UPYOG POST_MESSAGE] Triggering session toggle from postMessage command');
+                handleSessionToggle();
             }
         }
         window.addEventListener("message", handleNiuattMessage);
 
-        // Helper that returns the stored RequestInfo with a fresh msgId timestamp.
-        // niautt requires a unique msgId on every API request (format: timestamp|locale).
         const getRequestInfo = () => ({ ...NIAUTT_REQUEST_INFO, msgId: `${Date.now()}|en_IN` });
 
         // ============== SESSION INACTIVITY TIMER (5 SECONDS) ==============
@@ -158,8 +153,10 @@
         function startSessionInactivityTimer() {
             clearSessionInactivityTimer();
             if (sessionActive && currentState === States.LISTENING) {
+                console.log('[UPYOG TIMER] Starting 5-second session inactivity timer');
                 sessionInactivityTimer = setTimeout(() => {
                     if (sessionActive && currentState === States.LISTENING) {
+                        console.log('[UPYOG TIMER] 5-second inactivity timeout reached — auto ending session');
                         endSessionAuto();
                     }
                 }, 5000);
@@ -168,12 +165,14 @@
 
         function clearSessionInactivityTimer() {
             if (sessionInactivityTimer) {
+                console.log('[UPYOG TIMER] Clearing 5-second session inactivity timer');
                 clearTimeout(sessionInactivityTimer);
                 sessionInactivityTimer = null;
             }
         }
 
         function endSessionAuto() {
+            console.log('[UPYOG SESSION] endSessionAuto triggered');
             if (!sessionActive) return;
             sessionActive = false;
             clearTimeout(silenceTimer);
@@ -183,6 +182,8 @@
             destroyRecognition();
 
             if (currentAudio) {
+                currentAudio.onended = null;
+                currentAudio.onerror = null;
                 currentAudio.pause();
                 currentAudio.src = '';
                 currentAudio = null;
@@ -199,12 +200,12 @@
 
         // ============== STATE MACHINE ==============
         function setState(newState) {
+            console.log('[UPYOG STATE] Transitioning state: ' + currentState + ' -> ' + newState);
             currentState = newState;
 
             const sendBtn = document.getElementById('send-text-btn');
 
             if (newState === States.SPEAKING) {
-                // Bot is speaking voice response
                 statusDot.className = 'status-dot speaking';
                 statusDot.innerHTML = ICONS.speakingWave;
                 if (sendBtn) {
@@ -213,11 +214,7 @@
                     sendBtn.title = 'Stop Voice & End Session';
                     sendBtn.classList.add('stop-mode');
                 }
-                if (sessionBtn) {
-                    sessionBtn.innerHTML = ICONS.pause;
-                    sessionBtn.title = 'Interrupt & Ask';
-                    sessionBtn.className = 'icon-button voice-button end speaking';
-                }
+                updateSessionBtnIcon(sessionActive);
             } else if (newState === States.PROCESSING) {
                 statusDot.className = 'status-dot processing';
                 statusDot.innerHTML = '';
@@ -227,9 +224,18 @@
                     sendBtn.title = 'Stop Voice & End Session';
                     sendBtn.classList.add('stop-mode');
                 }
-                if (sessionBtn) {
-                    sessionBtn.className = 'icon-button voice-button end';
+                updateSessionBtnIcon(sessionActive);
+            } else if (newState === States.LISTENING) {
+                statusDot.className = 'status-dot listening';
+                statusDot.innerHTML = '';
+                if (sendBtn) {
+                    sendBtn.disabled = false;
+                    sendBtn.innerHTML = ICONS.send;
+                    sendBtn.title = 'Send message';
+                    sendBtn.classList.remove('stop-mode');
                 }
+                updateSessionBtnIcon(sessionActive);
+                startSessionInactivityTimer();
             } else {
                 statusDot.className = 'status-dot ' + newState.toLowerCase();
                 statusDot.innerHTML = '';
@@ -240,12 +246,8 @@
                     sendBtn.classList.remove('stop-mode');
                 }
                 updateSessionBtnIcon(sessionActive);
-            }
-
-            if (newState === States.LISTENING) {
-                startSessionInactivityTimer();
-            } else {
                 clearSessionInactivityTimer();
+                clearInterimDisplay();
             }
 
             statusText.innerText = STATE_LABELS[newState];
@@ -263,7 +265,9 @@
         ];
 
         function detectHinglish(text) {
-            return HINDI_PATTERNS.some(p => p.test(text));
+            const isMatch = HINDI_PATTERNS.some(p => p.test(text));
+            console.log('[UPYOG LANG] Hinglish detection executed', { text, isHinglish: isMatch });
+            return isMatch;
         }
 
         // ============== LANGUAGE TOGGLE ==============
@@ -272,18 +276,21 @@
                 document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 currentLang = btn.dataset.lang;
+                console.log('[UPYOG LANG] Header language toggled', { currentLang });
             });
         });
 
         // ============== SETTINGS PANEL ==============
         function toggleSettingsPanel() {
             settingsPanel.classList.toggle('show');
+            console.log('[UPYOG UI] Toggled settings panel', { isVisible: settingsPanel.classList.contains('show') });
         }
         settingsToggle.addEventListener('click', toggleSettingsPanel);
 
         function updateBargeSensitivity(e) {
             bargeInThreshold = parseFloat(e.target.value);
             sensitivityValue.innerText = bargeInThreshold.toFixed(2);
+            console.log('[UPYOG SETTINGS] Updated barge sensitivity', { bargeInThreshold });
         }
         bargeSensitivity.addEventListener('input', updateBargeSensitivity);
 
@@ -292,19 +299,55 @@
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.lang === currentLang);
             });
+            console.log('[UPYOG SETTINGS] Updated language preference', { currentLang });
         }
         document.getElementById('lang-preference').addEventListener('change', syncLangPreference);
+
+        // ============== THINKING INDICATOR ==============
+        function showThinkingIndicator() {
+            console.log('[UPYOG UI] Displaying Thinking indicator bubble');
+            removeThinkingIndicator();
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'message-wrapper bot thinking-wrapper';
+            wrapper.id = 'thinking-indicator';
+
+            const bubble = document.createElement('div');
+            bubble.className = 'message bot thinking-bubble';
+            bubble.innerHTML = `
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <span class="thinking-text">Thinking...</span>
+            `;
+
+            wrapper.appendChild(bubble);
+            chatContainer.appendChild(wrapper);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function removeThinkingIndicator() {
+            const indicator = document.getElementById('thinking-indicator');
+            if (indicator) {
+                console.log('[UPYOG UI] Removing Thinking indicator bubble');
+                indicator.remove();
+            }
+        }
 
         // ============== MESSAGE DISPLAY ==============
         let textInputBarActive = false;
 
         function showTextInputBar(field) {
+            console.log('[UPYOG UI] Showing text input bar for field', { field });
             const input = document.getElementById('text-input');
             input.placeholder = FIELD_PLACEHOLDERS[field] || FIELD_PLACEHOLDERS.default;
             setTimeout(() => input.focus(), 500);
         }
 
         function removeTextInputBar() {
+            console.log('[UPYOG UI] Resetting text input bar placeholder');
             const input = document.getElementById('text-input');
             if (input) {
                 input.placeholder = 'Ask anything about UPYOG services...';
@@ -312,6 +355,7 @@
         }
 
         function addUserMessage(text) {
+            console.log('[UPYOG UI] Adding user message card to chat', { text });
             const hero = document.getElementById('hero-welcome');
             if (hero) hero.classList.add('hidden');
 
@@ -330,10 +374,18 @@
             rowDiv.appendChild(avatarDiv);
 
             chatContainer.appendChild(rowDiv);
+
+            // Show thinking animation right below the user's message card
+            showThinkingIndicator();
+
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
         function addBotMessage(text, mode, inputType, options, field) {
+            console.log('[UPYOG UI] Adding bot message response card to chat', { text, mode, inputType, options, field });
+            // Remove thinking indicator before adding the bot's response
+            removeThinkingIndicator();
+
             const hero = document.getElementById('hero-welcome');
             if (hero) hero.classList.add('hidden');
 
@@ -451,23 +503,27 @@
 
         // FIX A: Destroy recognition object completely
         function destroyRecognition() {
+            console.log('[UPYOG RECOGNITION] destroyRecognition invoked');
+            clearInterimDisplay();
             if (recognition) {
                 recognition.onstart = null;
                 recognition.onresult = null;
                 recognition.onspeechend = null;
                 recognition.onend = null;
                 recognition.onerror = null;
-                try { recognition.abort(); } catch(e) {}
+                try { recognition.abort(); } catch (e) { }
                 recognition = null;
             }
         }
 
         // FIX A: Create recognition with language parameter
         function createRecognition(lang) {
+            console.log('[UPYOG RECOGNITION] createRecognition invoked', { lang, lastDetectedLang });
             destroyRecognition();
 
             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SR) {
+                console.log('[UPYOG RECOGNITION] SpeechRecognition API NOT supported in this browser');
                 alert('Speech recognition not supported in this browser');
                 return null;
             }
@@ -479,6 +535,7 @@
             recognition.lang = 'en-IN';
 
             recognition.onstart = function onRecognitionStart() {
+                console.log('[UPYOG RECOGNITION] SpeechRecognition onstart event fired');
                 setState(States.LISTENING);
             };
 
@@ -486,10 +543,15 @@
             recognition.onspeechend = handleSpeechEnd;
 
             recognition.onend = function onRecognitionEnd() {
+                console.log('[UPYOG RECOGNITION] SpeechRecognition onend event fired', { sessionActive, currentState });
                 if (sessionActive && currentState === States.LISTENING) {
                     setTimeout(() => {
                         if (sessionActive && recognition) {
-                            try { recognition.start(); } catch(e) {
+                            try {
+                                console.log('[UPYOG RECOGNITION] Auto-restarting speech recognition on end');
+                                recognition.start();
+                            } catch (e) {
+                                console.log('[UPYOG RECOGNITION] Error restarting recognition on end', e);
                             }
                         }
                     }, 100);
@@ -497,12 +559,14 @@
             };
 
             recognition.onerror = function onRecognitionError(e) {
+                console.log('[UPYOG RECOGNITION] SpeechRecognition onerror event fired', { error: e.error });
                 if (e.error === 'no-speech' || e.error === 'aborted') return;
 
                 setTimeout(() => {
                     if (sessionActive && currentState === States.LISTENING) {
+                        console.log('[UPYOG RECOGNITION] Re-creating recognition after error');
                         createRecognition(lastDetectedLang);
-                        try { recognition.start(); } catch(e) {}
+                        try { recognition.start(); } catch (err) { console.log('[UPYOG RECOGNITION] Error starting recognition after error', err); }
                     }
                 }, 500);
             };
@@ -512,11 +576,14 @@
 
         function createAndStartRecognition() {
             const lang = lastDetectedLang || 'en';
+            console.log('[UPYOG RECOGNITION] createAndStartRecognition invoked', { lang });
             createRecognition(lang);
             if (recognition) {
                 try {
                     recognition.start();
-                } catch(e) {
+                    console.log('[UPYOG RECOGNITION] recognition.start() called successfully');
+                } catch (e) {
+                    console.log('[UPYOG RECOGNITION] Failed to start recognition', e);
                     addBotMessage('Sorry, microphone could not start. Please try again.', null, null, null, null);
                 }
             } else {
@@ -545,49 +612,49 @@
                 finalTranscript += newFinal;
             }
 
-            // Show interim in UI so user sees what's being captured
             const displayText = finalTranscript + interim;
             if (displayText) {
+                console.log('[UPYOG SPEECH] Speech input captured', { interim, newFinal, displayText });
                 clearSessionInactivityTimer();
                 interimText.innerText = displayText;
                 interimDisplay.classList.add('show');
             }
 
-            // Set silence timer — send after 2.5s of no new speech
             const textToSend = finalTranscript.trim() || interim.trim();
             if (textToSend) {
+                console.log('[UPYOG SPEECH] Setting silence timer for auto-send', { textToSend, waitMs: CONFIG.silenceWaitMs });
                 silenceTimer = setTimeout(() => {
+                    console.log('[UPYOG SPEECH] Silence timer expired — attempting send', { textToSend });
                     attemptSend(textToSend);
                 }, CONFIG.silenceWaitMs);
 
-                // Also set a maximum wait timer
                 if (!forceTimer) {
                     forceTimer = setTimeout(() => {
+                        console.log('[UPYOG SPEECH] Force send timer expired — attempting send', { textToSend });
                         if (textToSend) attemptSend(textToSend);
                     }, CONFIG.forceSendMs);
                 }
             }
         }
 
-        // FIX B: Handle speech end - do NOT send immediately
         function handleSpeechEnd() {
-            // The silence timer in handleResult will handle sending
+            console.log('[UPYOG SPEECH] handleSpeechEnd event fired');
         }
 
         // FIX B: Attempt send with word gate
         function attemptSend(text) {
+            console.log('[UPYOG SPEECH] attemptSend invoked', { text });
             clearTimeout(silenceTimer);
             clearTimeout(forceTimer);
 
             const words = text.trim().split(/\s+/);
 
-            // Gate: don't send if too short (prevents partial captures)
             if (words.length < CONFIG.minWordsToSend) {
+                console.log('[UPYOG SPEECH] Gate check failed: words length less than minWordsToSend', { wordCount: words.length, minWords: CONFIG.minWordsToSend });
                 return;
             }
 
-            // Fully destroy recognition so the async onend handler can never
-            // restart the mic while we are in PROCESSING or SPEAKING state.
+            console.log('[UPYOG SPEECH] Gate check passed — destroying recognition and sending query', { text });
             destroyRecognition();
 
             finalTranscript = '';
@@ -596,10 +663,9 @@
             sendQuery(text.trim());
         }
 
-        // On turn complete — always recreate recognition from scratch
-        // (playAudio destroys it, so we must recreate unconditionally)
         function onTurnComplete() {
             turnCount++;
+            console.log('[UPYOG TURN] onTurnComplete invoked', { turnCount, sessionActive, lastDetectedLang });
             finalTranscript = '';
             currentTranscript = '';
             clearTimeout(silenceTimer);
@@ -609,15 +675,15 @@
 
             if (!sessionActive) return;
 
-            // Always recreate to get a clean instance
             destroyRecognition();
             createRecognition(lastDetectedLang);
 
-            // Resume listening
             try {
                 recognition.start();
                 setState(States.LISTENING);
+                console.log('[UPYOG TURN] Resumed listening for next turn');
             } catch (e) {
+                console.log('[UPYOG TURN] Error starting recognition on turn complete', e);
                 if (e.name === 'InvalidStateError') {
                     setState(States.LISTENING);
                 } else {
@@ -642,22 +708,19 @@
 
         // ============== SEND QUERY (FIX C: Memory management) ==============
         async function sendQuery(transcript) {
+            console.log('[UPYOG API] sendQuery initiated', { transcript, conversationSessionId });
             if (!transcript.trim()) return;
 
-            // Turn off microphone completely while processing query
             destroyRecognition();
-
             setState(States.PROCESSING);
             clearInterimDisplay();
 
-            // Abort any pending previous request
             if (currentFetch) {
+                console.log('[UPYOG API] Aborting previous in-flight fetch request');
                 currentFetch.abort();
                 currentFetch = null;
             }
 
-
-            // FIX C: Cap history to prevent growing payload
             history.push({ role: 'user', content: transcript });
             if (history.length > CONFIG.maxHistoryMemory) {
                 history.splice(0, history.length - CONFIG.maxHistoryMemory);
@@ -666,61 +729,63 @@
 
             currentFetch = new AbortController();
 
+            const payload = {
+                RequestInfo: getRequestInfo(),
+                query: transcript,
+                session_id: conversationSessionId,
+                history: history.slice(-CONFIG.historyToBackend)
+            };
+            console.log('[UPYOG API] Sending POST /chat request payload', payload);
+
             try {
                 const response = await fetch(`${API_URL}/chat`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        RequestInfo: getRequestInfo(),
-                        query: transcript,
-                        session_id: conversationSessionId,
-                        history: history.slice(-CONFIG.historyToBackend)
-                    }),
+                    body: JSON.stringify(payload),
                     signal: currentFetch.signal
                 });
 
                 const data = await response.json();
+                console.log('[UPYOG API] Received backend response', data);
                 currentFetch = null;
 
-                // Orange border on the input bar during grievance flow
                 const inputArea = document.querySelector('.input-area');
                 if (inputArea) {
                     const isGrievance = data.mode === 'grievance' || data.mode === 'grievance_collecting' || data.mode === 'grievance_offered';
                     inputArea.classList.toggle('input-area--grievance', isGrievance);
+                    console.log('[UPYOG UI] Updated grievance mode styling', { isGrievance, mode: data.mode });
                 }
 
                 if (data.error) {
+                    console.log('[UPYOG API] Backend returned an error in payload', data.error);
                     addBotMessage('Sorry, an error occurred.', null, null, null, null);
                     setState(States.LISTENING);
                     onTurnComplete();
                     return;
                 }
 
-                // Backend returns detected language - use for NEXT turn's speech recognition
                 const detectedLang = data.lang || 'en';
-                const detectedScript = data.detected_script || 'unknown';
-
-                // FIX B: Update lastDetectedLang for recognition recreation
                 lastDetectedLang = detectedLang;
+                console.log('[UPYOG LANG] Updated lastDetectedLang from backend response', { detectedLang, detectedScript: data.detected_script });
 
-                // Keep speech recognition language en-IN for universal multi-lingual capturing
                 if (recognition) {
                     recognition.lang = 'en-IN';
                 }
 
-                // Add to history (with detected lang for TTS reference if needed)
                 history.push({ role: 'assistant', content: data.response, lang: detectedLang });
                 addBotMessage(data.response, data.mode, data.input_type, data.options, data.field);
 
-                // Play audio
                 if (data.audio) {
+                    console.log('[UPYOG AUDIO] Audio data received in response — initiating playAudio()');
                     playAudio(data.audio);
                 } else {
+                    console.log('[UPYOG AUDIO] No audio in response — resuming listening');
                     setState(States.LISTENING);
                     onTurnComplete();
                 }
 
             } catch (error) {
+                console.log('[UPYOG API] Fetch error in sendQuery', error);
                 if (error.name !== 'AbortError') {
                     addBotMessage('Sorry, connection failed.', null, null, null, null);
                 }
@@ -744,8 +809,13 @@
         }
 
         function handleStopVoiceClick() {
-            // 1. Stop current audio playback
+            console.log('[UPYOG STOP] handleStopVoiceClick invoked — stopping audio and ending session');
+            removeThinkingIndicator();
+            // 1. Stop current audio playback & unhook async handlers
             if (currentAudio) {
+                console.log('[UPYOG AUDIO] Pausing currentAudio & clearing handlers');
+                currentAudio.onended = null;
+                currentAudio.onerror = null;
                 currentAudio.pause();
                 currentAudio.src = '';
                 currentAudio = null;
@@ -753,15 +823,17 @@
 
             // 2. Abort any in-flight fetch
             if (currentFetch) {
+                console.log('[UPYOG API] Aborting fetch in handleStopVoiceClick');
                 currentFetch.abort();
                 currentFetch = null;
             }
 
             // 3. Tell backend to stop TTS
-            fetch(`${API_URL}/stop`, { method: 'POST' }).catch(() => {});
+            console.log('[UPYOG API] Sending POST /stop request');
+            fetch(`${API_URL}/stop`, { method: 'POST' }).catch((err) => console.log('[UPYOG API] Stop fetch error', err));
 
             // 4. Clear audio pool
-            audioPool.forEach(u => { try { URL.revokeObjectURL(u); } catch(e) {} });
+            audioPool.forEach(u => { try { URL.revokeObjectURL(u); } catch (e) { } });
             audioPool.length = 0;
 
             // 5. Clear timers & destroy speech recognition
@@ -772,6 +844,7 @@
             destroyRecognition();
 
             if (micStream) {
+                console.log('[UPYOG MIC] Stopping micStream tracks');
                 micStream.getTracks().forEach(t => t.stop());
                 micStream = null;
             }
@@ -780,14 +853,19 @@
             sessionActive = false;
             updateSessionBtnIcon(false);
 
-            // 7. Hide action bar & set state to IDLE
+            // 7. Transition state to IDLE (updates UI & sessionBtnIcon cleanly to white Start Session state)
             hideInterruptBtn();
             setState(States.IDLE);
         }
 
         function handleInterruptClick() {
-            // 1. Stop bot audio immediately
+            console.log('[UPYOG INTERRUPT] handleInterruptClick invoked — pausing voice and starting listening');
+            removeThinkingIndicator();
+            // 1. Stop bot audio immediately & unhook async handlers
             if (currentAudio) {
+                console.log('[UPYOG AUDIO] Pausing currentAudio in handleInterruptClick');
+                currentAudio.onended = null;
+                currentAudio.onerror = null;
                 currentAudio.pause();
                 currentAudio.src = '';
                 currentAudio = null;
@@ -795,15 +873,17 @@
 
             // 2. Abort any in-flight fetch
             if (currentFetch) {
+                console.log('[UPYOG API] Aborting fetch in handleInterruptClick');
                 currentFetch.abort();
                 currentFetch = null;
             }
 
             // 3. Tell backend to stop TTS
-            fetch(`${API_URL}/stop`, { method: 'POST' }).catch(() => {});
+            console.log('[UPYOG API] Sending POST /stop request for interrupt');
+            fetch(`${API_URL}/stop`, { method: 'POST' }).catch((err) => console.log('[UPYOG API] Stop fetch error', err));
 
             // 4. Clear audio pool
-            audioPool.forEach(u => { try { URL.revokeObjectURL(u); } catch(e) {} });
+            audioPool.forEach(u => { try { URL.revokeObjectURL(u); } catch (e) { } });
             audioPool.length = 0;
 
             // 5. Clear transcript buffers & timers
@@ -819,14 +899,14 @@
 
             // 7. Resume listening immediately for user's next question
             if (sessionActive) {
-                // Always create a fresh recognition to avoid zombie state
+                console.log('[UPYOG INTERRUPT] Re-creating recognition and switching to States.LISTENING');
                 destroyRecognition();
                 createRecognition(lastDetectedLang);
                 setState(States.LISTENING);
                 clearInterimDisplay();
                 setTimeout(() => {
                     if (sessionActive && recognition) {
-                        try { recognition.start(); } catch(e) {}
+                        try { recognition.start(); } catch (e) { console.log('[UPYOG INTERRUPT] Error starting recognition', e); }
                     }
                 }, 150);
             }
@@ -837,26 +917,21 @@
 
         // ============== AUDIO PLAYBACK (FIX C: Blob URL cleanup) ==============
         async function playAudio(base64) {
+            console.log('[UPYOG AUDIO] playAudio initiated', { base64Length: base64.length });
             setState(States.SPEAKING);
 
-            // Fully destroy recognition while bot speaks — prevents the browser
-            // from picking up audio from speakers through the microphone.
-            // We recreate it fresh in onTurnComplete() once playback finishes.
             destroyRecognition();
-
-            // Show interrupt button so user can stop the bot mid-speech
             showInterruptBtn();
 
             try {
-                // FIX C: Stop and destroy previous audio completely
                 if (currentAudio) {
+                    console.log('[UPYOG AUDIO] Cleaning up previous Audio instance before playing new audio');
                     currentAudio.pause();
                     currentAudio.src = '';
                     currentAudio.load();
                     currentAudio = null;
                 }
 
-                // FIX C: Revoke old blob URLs to free memory
                 audioPool.forEach(url => {
                     try { URL.revokeObjectURL(url); } catch (e) { }
                 });
@@ -864,7 +939,6 @@
 
                 const mimeType = base64.startsWith('//O') || base64.startsWith('SUQz') ? 'audio/mp3' : 'audio/wav';
 
-                // FIX C: Use blob URL for better memory management
                 const byteCharacters = atob(base64);
                 const byteNumbers = new Array(byteCharacters.length);
                 for (let i = 0; i < byteCharacters.length; i++) {
@@ -875,28 +949,34 @@
                 const url = URL.createObjectURL(blob);
                 audioPool.push(url);
 
+                console.log('[UPYOG AUDIO] Created Audio blob URL', { url, mimeType, blobSize: blob.size });
+
                 const audio = currentAudio = new Audio(url);
 
-                // Guard flag — browsers sometimes fire both onended and onerror
-                // for the same element. Only the first event should trigger cleanup.
                 let audioHandled = false;
 
                 function afterAudioDone() {
                     if (audioHandled) return;
                     audioHandled = true;
+                    console.log('[UPYOG AUDIO] audio.onended / afterAudioDone fired — cleaning blob and resuming listening');
                     URL.revokeObjectURL(url);
                     currentAudio = null;
-                    // Hide the interrupt button now that audio is done
                     hideInterruptBtn();
                     setState(States.LISTENING);
                     onTurnComplete();
                 }
 
                 audio.onended = afterAudioDone;
-                audio.onerror = afterAudioDone;
+                audio.onerror = function onAudioErr(e) {
+                    console.log('[UPYOG AUDIO] Audio playback error', e);
+                    afterAudioDone();
+                };
 
+                console.log('[UPYOG AUDIO] Triggering currentAudio.play()');
                 await currentAudio.play();
+                console.log('[UPYOG AUDIO] Playback started successfully');
             } catch (e) {
+                console.log('[UPYOG AUDIO] Error in playAudio', e);
                 hideInterruptBtn();
                 setState(States.LISTENING);
                 onTurnComplete();
@@ -905,29 +985,44 @@
 
         function updateSessionBtnIcon(active) {
             if (!sessionBtn) return;
-            if (active) {
-                sessionBtn.classList.remove('start');
-                sessionBtn.classList.add('end');
+            console.log('[UPYOG UI] updateSessionBtnIcon invoked', { active, currentState });
+            if (!active) {
+                sessionBtn.className = 'icon-button voice-button start';
+                sessionBtn.innerHTML = ICONS.mic;
+                sessionBtn.title = 'Start Session';
+                return;
+            }
+
+            if (currentState === States.SPEAKING) {
+                sessionBtn.className = 'icon-button voice-button end speaking';
+                sessionBtn.innerHTML = ICONS.pause;
+                sessionBtn.title = 'Interrupt & Ask';
+            } else if (currentState === States.PROCESSING) {
+                sessionBtn.className = 'icon-button voice-button end processing';
+                sessionBtn.innerHTML = ICONS.mic;
+                sessionBtn.title = 'End Session';
+            } else if (currentState === States.LISTENING) {
+                sessionBtn.className = 'icon-button voice-button end listening';
                 sessionBtn.innerHTML = ICONS.mic;
                 sessionBtn.title = 'End Session';
             } else {
-                sessionBtn.classList.remove('end');
-                sessionBtn.classList.add('start');
+                sessionBtn.className = 'icon-button voice-button end';
                 sessionBtn.innerHTML = ICONS.mic;
-                sessionBtn.title = 'Start Session';
+                sessionBtn.title = 'End Session';
             }
         }
 
         // ============== SESSION MANAGEMENT ==============
         async function handleSessionToggle() {
+            console.log('[UPYOG SESSION] handleSessionToggle invoked', { sessionActive, currentState });
             if (currentState === States.SPEAKING) {
-                // If bot is giving voice response, clicking mic button interrupts response and starts listening
+                console.log('[UPYOG SESSION] Bot is speaking — handleSessionToggle redirecting to handleInterruptClick()');
                 handleInterruptClick();
                 return;
             }
 
             if (sessionActive) {
-                // End session
+                console.log('[UPYOG SESSION] Ending session manually');
                 sessionActive = false;
                 updateSessionBtnIcon(false);
 
@@ -937,6 +1032,8 @@
                 destroyRecognition();
 
                 if (currentAudio) {
+                    currentAudio.onended = null;
+                    currentAudio.onerror = null;
                     currentAudio.pause();
                     currentAudio.src = '';
                     currentAudio = null;
@@ -950,20 +1047,19 @@
                 setState(States.IDLE);
 
             } else {
-                // Start session
+                console.log('[UPYOG SESSION] Starting session manually');
                 sessionActive = true;
                 updateSessionBtnIcon(true);
 
-                // Reset state
                 turnCount = 0;
                 finalTranscript = '';
                 currentTranscript = '';
 
                 try {
-                    // Start continuous listening
                     createAndStartRecognition();
                     setState(States.LISTENING);
-                } catch(e) {
+                } catch (e) {
+                    console.log('[UPYOG SESSION] Error starting voice session', e);
                     sessionActive = false;
                     updateSessionBtnIcon(false);
                     alert('Could not start voice session. Please check microphone permissions.');
@@ -974,42 +1070,70 @@
 
         // Keyboard shortcut: Ctrl+D (or Cmd+D on Mac) to enable/disable mic session
         function handleKeydown(e) {
-            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'd') {
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'd' || e.key === 'D' || e.code === 'KeyD')) {
+                console.log('[UPYOG SHORTCUT] Ctrl+D / Cmd+D keydown detected — triggering handleSessionToggle()', { key: e.key, code: e.code });
                 e.preventDefault();
+                e.stopPropagation();
                 handleSessionToggle();
             }
         }
-        document.addEventListener('keydown', handleKeydown);
+        window.addEventListener('keydown', handleKeydown, true);
+        document.addEventListener('keydown', handleKeydown, true);
+
+        // Auto-focus window & text input on load and hover so Ctrl+D works immediately without requiring a manual click
+        function autoFocusChatbot() {
+            try {
+                console.log('[UPYOG FOCUS] autoFocusChatbot triggered — focusing window & text input');
+                window.focus();
+                const input = document.getElementById('text-input');
+                if (input && document.activeElement !== input) {
+                    input.focus();
+                }
+            } catch (e) {
+                console.log('[UPYOG FOCUS] autoFocusChatbot exception', e);
+            }
+        }
+
+        window.addEventListener('load', autoFocusChatbot);
+        document.addEventListener('DOMContentLoaded', autoFocusChatbot);
+        window.addEventListener('mouseenter', autoFocusChatbot);
+        document.addEventListener('mousemove', autoFocusChatbot, { once: true });
 
         // ============== TEXT INPUT HANDLING ==============
         const textInput = document.getElementById('text-input');
         const sendTextBtn = document.getElementById('send-text-btn');
 
         function handleTextSubmit() {
-            if (currentState === States.SPEAKING || currentState === States.PROCESSING) return;
+            console.log('[UPYOG TEXT_INPUT] handleTextSubmit invoked', { currentState });
+            if (currentState === States.SPEAKING || currentState === States.PROCESSING) {
+                console.log('[UPYOG TEXT_INPUT] Blocked text submission because bot is speaking or processing');
+                return;
+            }
 
             const text = textInput.value.trim();
             if (!text) return;
 
-            // Send the typed text (backend will detect language per-turn)
+            console.log('[UPYOG TEXT_INPUT] Submitting text input query', { text });
             sendQuery(text);
             textInput.value = '';
         }
 
         function handleSendBtnClick() {
+            console.log('[UPYOG UI] Send button clicked', { currentState });
             if (currentState === States.SPEAKING || currentState === States.PROCESSING) {
+                console.log('[UPYOG UI] Send button in Stop mode — invoking handleStopVoiceClick()');
                 handleStopVoiceClick();
             } else {
+                console.log('[UPYOG UI] Send button in Send mode — invoking handleTextSubmit()');
                 handleTextSubmit();
             }
         }
 
-        // Send on button click (or stop voice if speaking)
         sendTextBtn.addEventListener('click', handleSendBtnClick);
 
-        // Send on Enter key
         function handleTextInputKeypress(e) {
             if (e.key === 'Enter') {
+                console.log('[UPYOG TEXT_INPUT] Enter key pressed in text input box');
                 handleTextSubmit();
             }
         }
