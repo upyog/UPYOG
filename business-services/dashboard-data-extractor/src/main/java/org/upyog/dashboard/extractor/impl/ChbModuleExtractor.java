@@ -7,14 +7,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import jakarta.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
-import org.upyog.dashboard.chb.constants.CHBDatabaseConstants;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.upyog.dashboard.chb.dto.CHBAggregatedData;
 import org.upyog.dashboard.chb.dto.CHBDTO;
 import org.upyog.dashboard.chb.mapper.CHBRowMapper;
@@ -30,6 +27,7 @@ import org.upyog.dashboard.service.OAuthTokenService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -55,25 +53,15 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class ChbModuleExtractor implements ModuleExtractor<CHBDTO> {
 
-    @Autowired
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
-    @Autowired
-    private SchemaMappingConfig schemaMappingConfig;
-
-    @Autowired
-    private DashboardProperties dashboardProperties;
-
-    @Autowired
-    private UserFeignClient userFeignClient;
-
-    @Autowired
-    private OAuthTokenService oAuthTokenService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final SchemaMappingConfig schemaMappingConfig;
+    private final DashboardProperties dashboardProperties;
+    private final UserFeignClient userFeignClient;
+    private final OAuthTokenService oAuthTokenService;
+    private final ObjectMapper objectMapper;
 
     private String ulb;
     private String ward;
@@ -137,8 +125,7 @@ public class ChbModuleExtractor implements ModuleExtractor<CHBDTO> {
 
     /**
      * Resolves a JSON array of creator UUIDs into an Online/Offline booking type breakdown.
-     * Deduplicates UUIDs using a LinkedHashSet, then performs a single batch user-search API call.
-     * Users with type CITIZEN are counted as Online; all others as Offline.
+     * Delegates UUID extraction to extractUuids and user classification to classifyUsers.
      * Returns [] if input is blank or the user search fails.
      */
     private String buildBookingTypeJson(String createdByListJson) {
@@ -146,7 +133,17 @@ public class ChbModuleExtractor implements ModuleExtractor<CHBDTO> {
             return "[]";
         }
 
-        List<String> uuids;
+        List<String> uuids = extractUuids(createdByListJson);
+        if (uuids.isEmpty()) return "[]";
+
+        return classifyUsers(uuids);
+    }
+
+    /**
+     * Parses createdByListJson and returns a deduplicated list of creator UUIDs.
+     * Returns an empty list if parsing fails.
+     */
+    private List<String> extractUuids(String createdByListJson) {
         try {
             List<Map<String, Object>> rows = objectMapper.readValue(createdByListJson,
                     new TypeReference<List<Map<String, Object>>>() {});
@@ -155,15 +152,21 @@ public class ChbModuleExtractor implements ModuleExtractor<CHBDTO> {
                 Object cb = row.get("createdby");
                 if (cb != null) uuidSet.add(cb.toString());
             }
-            uuids = List.copyOf(uuidSet);
+            return List.copyOf(uuidSet);
         } catch (Exception e) {
             log.warn("ChbModuleExtractor | Failed to parse createdByListJson: {}", e.getMessage());
-            return "[]";
+            return List.of();
         }
+    }
 
-        if (uuids.isEmpty()) return "[]";
-
-        int online = 0, offline = 0;
+    /**
+     * Performs a single batch user-search API call for the given UUIDs.
+     * Users with type CITIZEN are counted as Online; all others as Offline.
+     * Returns [] if the user search fails.
+     */
+    private String classifyUsers(List<String> uuids) {
+        int online = 0;
+        int offline = 0;
         try {
             String token = oAuthTokenService.getToken();
             Map<String, Object> requestBody = Map.of(
@@ -193,7 +196,7 @@ public class ChbModuleExtractor implements ModuleExtractor<CHBDTO> {
 
     /**
      * Executes the given named-parameter SQL query with exponential backoff retry.
-     * Throws RuntimeException if all retry attempts are exhausted or the thread is interrupted.
+     * Throws IllegalStateException if the thread is interrupted during retry sleep.
      */
     private CHBAggregatedData executeQueryWithRetry(String query, Map<String, Object> params) {
         int attempt = 0;
@@ -213,7 +216,7 @@ public class ChbModuleExtractor implements ModuleExtractor<CHBDTO> {
                     Thread.sleep(backoff);
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
-                    throw new RuntimeException("DB query retry interrupted", ie);
+                    throw new IllegalStateException("DB query retry interrupted", ie);
                 }
             }
         }
