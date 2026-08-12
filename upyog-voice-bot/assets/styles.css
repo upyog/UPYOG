@@ -129,16 +129,11 @@ body {
 
 /* ===== HEADER ===== */
 header {
-    padding: 20px 32px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    z-index: 10;
-    background: rgba(255, 255, 255, 0.55);
-    backdrop-filter: blur(20px) saturate(150%);
-    -webkit-backdrop-filter: blur(20px) saturate(150%);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+    display: none !important;
+}
+
+.settings-panel {
+    display: none !important;
 }
 
 header h1 {
@@ -548,12 +543,72 @@ header h1 span.logo-icon {
     background: #ef4444;
     color: white;
     box-shadow: 0 8px 16px rgba(239, 68, 68, 0.3);
+}
+
+/* Pulse ring animation ONLY active while the mic is actively listening for user speech */
+.voice-button.end.listening {
     animation: pulse-red 2s infinite;
 }
 
 .voice-button.end:hover {
     transform: scale(1.05);
     box-shadow: 0 12px 24px rgba(239, 68, 68, 0.4);
+}
+
+/* ===== THINKING INDICATOR ===== */
+.message-wrapper.thinking-wrapper {
+    margin-bottom: 8px;
+    animation: slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.message.bot.thinking-bubble {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    min-width: 130px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 245, 240, 0.8) 100%);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 20px 20px 20px 6px;
+    box-shadow: 0 16px 36px rgba(249, 115, 22, 0.08), inset 0 2px 10px rgba(255,255,255,0.9);
+}
+
+.typing-dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.typing-dots span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-saffron), #f97316);
+    animation: typingBounce 1.4s infinite ease-in-out both;
+}
+
+.typing-dots span:nth-child(1) { animation-delay: 0s; }
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typingBounce {
+    0%, 80%, 100% {
+        transform: scale(0.5);
+        opacity: 0.3;
+    }
+    40% {
+        transform: scale(1.15);
+        opacity: 1;
+    }
+}
+
+.thinking-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.01em;
 }
 
 @keyframes pulse-red {
