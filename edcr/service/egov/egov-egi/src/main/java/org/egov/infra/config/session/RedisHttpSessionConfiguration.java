@@ -53,7 +53,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.session.FindByIndexNameSessionRepository;
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+import org.springframework.session.data.redis.config.ConfigureRedisAction;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisIndexedHttpSession;
 import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 import org.springframework.session.web.http.CookieHttpSessionIdResolver;
 import org.springframework.session.web.http.CookieSerializer;
@@ -63,14 +64,23 @@ import static org.egov.infra.security.utils.SecurityConstants.SESSION_COOKIE_NAM
 import static org.egov.infra.security.utils.SecurityConstants.SESSION_COOKIE_PATH;
 
 @Configuration
-@EnableRedisHttpSession
+@EnableRedisIndexedHttpSession
 public class RedisHttpSessionConfiguration {
-    
+
     @Value("${common.domain.name}")
     private String commonDomainName;
-    
+
     @Value("${secure.cookie}")
     private boolean secureCookie;
+
+    /**
+     * Prevents Spring Session from attempting to execute 'CONFIG' commands
+     * on Redis during startup, bypassing missing Jedis command classes.
+     */
+    @Bean
+    public ConfigureRedisAction configureRedisAction() {
+        return ConfigureRedisAction.NO_OP;
+    }
 
     @Bean
     public CookieSerializer cookieSerializer() {

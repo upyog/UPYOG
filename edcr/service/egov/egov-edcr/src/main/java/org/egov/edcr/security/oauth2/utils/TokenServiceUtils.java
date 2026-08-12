@@ -47,9 +47,8 @@
  */
 package org.egov.edcr.security.oauth2.utils;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthentication;
 import org.springframework.stereotype.Service;
 
 /**
@@ -62,10 +61,10 @@ public class TokenServiceUtils {
 
     private static final String SOURCE = "source";
 
-    @Autowired
-    private AuthorizationServerTokenServices tokenServices;
-
-    public Object getSource(final OAuth2Authentication authentication) {
-        return tokenServices.getAccessToken(authentication).getAdditionalInformation().get(SOURCE);
+    public Object getSource(final Authentication authentication) {
+        if (authentication instanceof BearerTokenAuthentication bearerTokenAuthentication) {
+            return bearerTokenAuthentication.getTokenAttributes().get(SOURCE);
+        }
+        return null;
     }
 }

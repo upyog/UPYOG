@@ -91,7 +91,7 @@ public class EdcrApplicationDetailService {
                         + " where appdtl.id=:applicationDetail");
 
         params.put("applicationDetail", edcrApplicationDetail.getId());
-        final Query query = getCurrentSession().createSQLQuery(queryApplnBldgDtls.toString());
+        final Query query = getCurrentSession().createNativeQuery(queryApplnBldgDtls.toString());
         for (final Map.Entry<String, Long> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         Object[] applnBldgDtls = (Object[]) query.uniqueResult();
@@ -114,7 +114,7 @@ public class EdcrApplicationDetailService {
                 "select floor.name, meas.area from edcr_floor floor left outer join edcr_measurement meas on floor.id = meas.id "
                         + "  where floor.building=:builing");
         params1.put("builing", Long.valueOf(String.valueOf(applnBldgDtls[8])));
-        final Query query1 = getCurrentSession().createSQLQuery(queryForFloorDtls.toString());
+        final Query query1 = getCurrentSession().createNativeQuery(queryForFloorDtls.toString());
         for (final Map.Entry<String, Long> param : params1.entrySet())
             query1.setParameter(param.getKey(), param.getValue());
         List<Object[]> existFloors = query1.list();

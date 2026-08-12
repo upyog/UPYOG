@@ -114,18 +114,34 @@ public class ApplicationTenantResolverFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
-        MultiReadRequestWrapper customRequest = new MultiReadRequestWrapper(req); 
-        HttpSession session = customRequest.getSession();
-        LOG.info("Request URL-->" + customRequest.getRequestURL());
-        LOG.info("Request URI-->" + customRequest.getRequestURI());
-        String domainURL = extractRequestDomainURL(customRequest, false);
-        String domainName = extractRequestedDomainName(customRequest);
+
+        // Wrap ALL requests — including multipart/form-data — in MultiReadRequestWrapper.
+        //
+        // MultiReadRequestWrapper's constructor now detects multipart requests and
+        // deliberately does NOT drain getInputStream() for them. This leaves Undertow's
+        // raw channel intact so that getParts() (called later by
+        // StandardServletMultipartResolver) can parse the multipart body correctly,
+        // allowing @RequestPart("planFile") to resolve as expected.
+        //
+        // For non-multipart requests the existing body-caching behaviour is preserved
+        // unchanged (body eagerly copied to byte[], getInputStream() fully replayable).
+        //
+        // getParts() / getPart() on the wrapper always delegate to the underlying
+        // Undertow request, so multipart parsing is performed by the container —
+        // not by this filter — as the Servlet spec intends.
+        final MultiReadRequestWrapper requestToUse = new MultiReadRequestWrapper(req);
+
+        HttpSession session = requestToUse.getSession();
+        LOG.info("Request URL-->" + requestToUse.getRequestURL());
+        LOG.info("Request URI-->" + requestToUse.getRequestURI());
+        String domainURL = extractRequestDomainURL(requestToUse, false);
+        String domainName = extractRequestedDomainName(requestToUse);
         ApplicationThreadLocals.setTenantID(environmentSettings.schemaName(domainName));
         ApplicationThreadLocals.setDomainName(domainName);
         ApplicationThreadLocals.setDomainURL(domainURL);
-        prepareRestService(customRequest, session);
+        prepareRestService(requestToUse, session);
         LOG.info("***Tenant ID-->" + ApplicationThreadLocals.getTenantID());
-        chain.doFilter(customRequest, response);
+        chain.doFilter(requestToUse, response);
     }
 
     @Override
@@ -143,33 +159,52 @@ public class ApplicationTenantResolverFilter implements Filter {
             tenants = tenantUtils.tenantsMap();
         }
 
-        // restricted only the state URL to access the rest API
-        // LOG.info("***********Enter to set tenant id and custom header**************" + req.getRequestURL().toString());
+        // Gate: state-URL REST/OAuth requests only.
         String requestURL = new StringBuilder().append(ApplicationThreadLocals.getDomainURL())
                 .append(customRequest.getRequestURI()).toString();
         if (requestURL.contains(tenants.get("state"))
-                &&
-                (requestURL.contains("/edcr/") && (requestURL.contains("/rest/")
-                        || requestURL.contains("/oauth/")))) {
+                && requestURL.contains("/edcr/")
+                && (requestURL.contains("/rest/") || requestURL.contains("/oauth/"))) {
 
             LOG.debug("All tenants from config" + tenants);
             LOG.info("tenants.get(state))" + tenants.get("state"));
             LOG.info("Inside method to set tenant id and custom header");
+
             String tenantFromBody = StringUtils.EMPTY;
-            tenantFromBody = setCustomHeader(requestURL, tenantFromBody, customRequest);
+
+            if (customRequest.isMultipart()) {
+                // Multipart/form-data: the edcrRequest JSON is a named form field.
+                // At filter time Undertow has not yet fully committed its parsed-parts
+                // cache, but getPart() on the underlying request triggers on-demand
+                // parsing from the raw channel (which the wrapper constructor left
+                // untouched for multipart). We read the "edcrRequest" part here to
+                // extract the tenantId before the gate logic below.
+                tenantFromBody = extractTenantFromMultipartField(customRequest);
+            } else {
+                // Non-multipart: read tenantId from the cached JSON body via the
+                // existing setCustomHeader() regex approach.
+                tenantFromBody = setCustomHeader(requestURL, tenantFromBody, customRequest);
+            }
+
             LOG.info("Tenant from Body***" + tenantFromBody);
-            String fullTenant = customRequest.getParameter("tenantId");
-            LOG.info("fullTenant***" + fullTenant);
+
+            // For non-multipart requests, also try getParameter() as a fallback
+            // (query-string or form-urlencoded tenantId).
+            String fullTenant = customRequest.isMultipart() ? tenantFromBody
+                    : customRequest.getParameter("tenantId");
             if (StringUtils.isBlank(fullTenant)) {
                 fullTenant = tenantFromBody;
             }
+            LOG.info("fullTenant***" + fullTenant);
             if (StringUtils.isBlank(fullTenant)) {
                 throw new ApplicationRestException("incorrect_request", "RestUrl does not contain tenantId: " + fullTenant);
             }
+
             String tenant = fullTenant.substring(fullTenant.lastIndexOf('.') + 1, fullTenant.length());
             LOG.info("tenant***" + tenant);
             LOG.info("tenant from rest request =" + tenant);
             LOG.info("City Code from session " + (String) session.getAttribute(CITY_CODE_KEY));
+
             boolean found = false;
             City stateCity = cityService.fetchStateCityDetails();
             if (tenant.equalsIgnoreCase("generic") || tenant.equalsIgnoreCase("state")) {
@@ -181,21 +216,62 @@ public class ApplicationTenantResolverFilter implements Filter {
             } else {
                 for (String city : tenants.keySet()) {
                     LOG.info("Key :" + city + " ,Value :" + tenants.get(city) + "request tenant" + tenant);
-
                     if (tenants.get(city).contains(tenant)) {
                         ApplicationThreadLocals.setTenantID(city);
                         found = true;
                         break;
-                    } else {
-
                     }
                 }
             }
             if (!found) {
                 throw new ApplicationRestException("invalid_tenant", "Invalid Tenant Id: " + tenant);
             }
-
         }
+    }
+
+    /**
+     * Extracts the {@code tenantId} value from the {@code edcrRequest} JSON
+     * form-data part of a multipart/form-data request.
+     *
+     * <p>The scrutinize, scrutinizeplan, scrutinizeocplan, extractplan, and
+     * anonymousScrutinize endpoints all send the tenant identifier inside a
+     * JSON string carried in a form field called {@code edcrRequest}, e.g.:
+     * <pre>
+     *   {"tenantId":"pb.amritsar","RequestInfo":{...},...}
+     * </pre>
+     * This method reads that part at filter time (before DispatcherServlet)
+     * using {@code request.getPart("edcrRequest")}. Undertow parses the
+     * multipart body lazily/on-demand when {@code getPart()} is first called,
+     * and the wrapper constructor has deliberately left the raw channel
+     * unconsumed for multipart requests, so this call succeeds.</p>
+     *
+     * @param request the multipart request wrapper
+     * @return the tenantId value (e.g. {@code "pb.amritsar"}), or an empty
+     *         string if the part or field cannot be found/parsed
+     */
+    private String extractTenantFromMultipartField(MultiReadRequestWrapper request) {
+        try {
+            jakarta.servlet.http.Part edcrPart = request.getPart("edcrRequest");
+            if (edcrPart == null) {
+                LOG.warn("edcrRequest part not found in multipart request; tenant cannot be extracted at filter time.");
+                return StringUtils.EMPTY;
+            }
+            StringWriter writer = new StringWriter();
+            IOUtils.copy(edcrPart.getInputStream(), writer, StandardCharsets.UTF_8);
+            String edcrJson = writer.toString();
+            if (StringUtils.isNoneBlank(edcrJson)) {
+                Pattern p = Pattern.compile("\"tenantId\"\\s*:\\s*\"([^\"]+)\"");
+                Matcher m = p.matcher(edcrJson);
+                if (m.find()) {
+                    String tenantId = m.group(1);
+                    LOG.info("Tenant extracted from multipart edcrRequest field: " + tenantId);
+                    return tenantId;
+                }
+            }
+        } catch (Exception e) {
+            LOG.error("Error extracting tenantId from multipart edcrRequest field", e);
+        }
+        return StringUtils.EMPTY;
     }
 
     /*

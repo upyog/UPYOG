@@ -60,7 +60,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 
 /**
@@ -83,7 +83,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         User user = userService.getUserByUsername(userName);
 
         if (user == null)
-            throw new OAuth2Exception("Invalid login credentials");
+            throw new BadCredentialsException("Invalid login credentials");
 
         String password = authentication.getCredentials().toString();
         if (passwordEncoder.matches(password, user.getPassword())) {
@@ -91,7 +91,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             user.getRoles().forEach(role -> grantedAuths.add(new SimpleGrantedAuthority("ROLE_" + role.getName())));
             return new UsernamePasswordAuthenticationToken(new CurrentUser(user), password, grantedAuths);
         } else
-            throw new OAuth2Exception("Invalid login credentials");
+            throw new BadCredentialsException("Invalid login credentials");
     }
 
     @Override

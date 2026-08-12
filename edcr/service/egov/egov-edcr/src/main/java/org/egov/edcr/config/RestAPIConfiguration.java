@@ -51,7 +51,6 @@ package org.egov.edcr.config;
 import org.egov.edcr.config.filter.APIRequestEnricherFilter;
 import org.egov.infra.rest.support.APIRequestEnricher;
 import org.egov.infra.rest.support.DefaultAPIRequestEnricher;
-import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
@@ -64,7 +63,7 @@ public class RestAPIConfiguration {
         return new DefaultAPIRequestEnricher();
     }
 
-    @Bean(autowire = Autowire.BY_TYPE)
+    @Bean
     public APIRequestEnricherFilter apiFilter() {
         return new APIRequestEnricherFilter();
     }

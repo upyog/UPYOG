@@ -76,8 +76,8 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
-//import static org.hibernate.cfg.AvailableSettings.*;
 import org.hibernate.cfg.AvailableSettings;
+
 @Configuration
 @EnableTransactionManagement(proxyTargetClass = true)
 @PropertySource("classpath:config/persistence-config.properties")
@@ -147,6 +147,10 @@ public class JpaConfiguration {
         properties.put(AvailableSettings.DIALECT, env.getProperty(AvailableSettings.DIALECT));
         properties.put(AvailableSettings.GENERATE_STATISTICS, generateStatistics);
         properties.put(AvailableSettings.CACHE_REGION_FACTORY, env.getProperty(AvailableSettings.CACHE_REGION_FACTORY));
+
+        // FIX: Fallback strategy for .hbm.xml cache tags in Hibernate 6
+        properties.put("hibernate.cache.default_cache_concurrency_strategy", "read-write");
+
         properties.put("hibernate.connection.handling_mode", "DELAYED_ACQUISITION_AND_RELEASE_AFTER_TRANSACTION");
         properties.put(AvailableSettings.USE_SECOND_LEVEL_CACHE, enableSecondLevelCache);
         properties.put(AvailableSettings.USE_QUERY_CACHE, enableQueryCache);

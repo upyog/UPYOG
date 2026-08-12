@@ -2,111 +2,184 @@ package org.egov.edcr.security.oauth2.config;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.logging.log4j.Logger;
+import org.egov.edcr.security.oauth2.entity.ClientDetail;
 import org.egov.edcr.security.oauth2.entity.SecuredClient;
-import org.egov.infra.rest.support.CustomTokenEnhancer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.oauth2.config.annotation.builders.InMemoryClientDetailsServiceBuilder;
-import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
-import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
-import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.OAuth2Token;
+import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
+import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
+import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
+import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
+import org.springframework.security.oauth2.server.authorization.token.DelegatingOAuth2TokenGenerator;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2AccessTokenGenerator;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2RefreshTokenGenerator;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
+import org.springframework.security.web.SecurityFilterChain;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * OAuth2 authorization server configuration
+ * Spring Security 6 authorization-server configuration.
  *
- * @author subhash
- *
+ * <p>The old {@code AuthorizationServerConfigurerAdapter} API was provided by
+ * the end-of-life {@code spring-security-oauth2} project and is not compatible
+ * with Spring Security 6. Client definitions remain in the existing JSON file
+ * so deployed client ids, secrets, scopes and token lifetimes are unchanged.
  */
 @Configuration
-@EnableAuthorizationServer
-public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
+public class AuthorizationServerConfiguration {
 
     private static final Logger LOGGER = LogManager.getLogger(AuthorizationServerConfiguration.class);
     private static final String CLIENTS_CONFIG = "config/restapi-secured-clients-config.json";
     private static final String CLIENTS_CONFIG_OVERRIDE = "config/restapi-secured-clients-config-override.json";
     private static final String SCOPE_WRITE = "write";
     private static final String SCOPE_READ = "read";
-    private static final String GRANT_TYPE_PASSWORD = "password";
-    private static final String GRANT_TYPE_REFRESH_TOKEN = "refresh_token";
-    private static final String GRANT_TYPE_AUTHORIZATION_CODE = "authorization_code";
-    private static final String RESOURCE_ID = "egov-edcr";
+    private static final String DEFAULT_REDIRECT_URI = "http://localhost:8080/login/oauth2/code/egov";
 
-    @Autowired
-    @Qualifier("authenticationManagerBean")
-    private AuthenticationManager authenticationManager;
+    private final ObjectMapper objectMapper;
 
-    @Autowired
-    private ClientDetailsService clientDetailsService;
-
-    @Autowired
-    private TokenStore tokenStore;
-
-    @Autowired
-    private CustomTokenEnhancer customTokenEnhancer;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Override
-    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        InMemoryClientDetailsServiceBuilder serviceBuilder = clients.inMemory();
-        getSecuredClientFromResource().getClients().forEach(client -> {
-            try {
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("Client Id:" + client.getClientId());
-                serviceBuilder.withClient(client.getClientId()).secret(client.getClientSecret())
-                        .authorizedGrantTypes(GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN,
-                                GRANT_TYPE_PASSWORD)
-                        .scopes(SCOPE_READ, SCOPE_WRITE).resourceIds(RESOURCE_ID)
-                        .accessTokenValiditySeconds(client.getAccessTokenValidity() * 60)
-                        .refreshTokenValiditySeconds(client.getRefreshTokenValidity() * 60);
-            } catch (Exception e) {
-                LOGGER.error("Exception occured while configuring: ", e);
-            }
-        });
+    public AuthorizationServerConfiguration(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
-    @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
-        endpoints.tokenStore(tokenStore).tokenEnhancer(customTokenEnhancer).authenticationManager(authenticationManager)
-                .setClientDetailsService(clientDetailsService);
+    /**
+     * Registers every client from the legacy JSON configuration with Spring
+     * Authorization Server. Password grant is deliberately retained through
+     * the custom converter/provider in this package for backwards compatibility.
+     */
+    @Bean
+    public RegisteredClientRepository registeredClientRepository() {
+        List<RegisteredClient> registeredClients = new ArrayList<>();
+        for (ClientDetail client : getSecuredClientFromResource().getClients()) {
+            registeredClients.add(toRegisteredClient(client));
+        }
+        return new InMemoryRegisteredClientRepository(registeredClients);
+    }
+
+    @Bean
+    public OAuth2AuthorizationService authorizationService() {
+        // This matches the previous in-process configuration for development.
+        // Production must replace this bean with a durable JDBC/Redis-backed
+        // OAuth2AuthorizationService before a rolling upgrade.
+        return new InMemoryOAuth2AuthorizationService();
+    }
+
+    @Bean
+    public OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator() {
+        // Retain opaque access tokens. Existing resource-server clients should
+        // not be switched to JWT until ResourceServerConfiguration is migrated.
+        return new DelegatingOAuth2TokenGenerator(
+                new OAuth2AccessTokenGenerator(), new OAuth2RefreshTokenGenerator());
+    }
+
+    @Bean
+    public AuthorizationServerSettings authorizationServerSettings() {
+        return AuthorizationServerSettings.builder().build();
+    }
+
+    @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    public SecurityFilterChain authorizationServerSecurityFilterChain(
+            HttpSecurity http,
+            @Qualifier("authenticationManagerBean") AuthenticationManager authenticationManager,
+            OAuth2AuthorizationService authorizationService,
+            OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator) throws Exception {
+
+        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+
+        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
+                .tokenEndpoint(tokenEndpoint -> tokenEndpoint
+                        .accessTokenRequestConverters(converters ->
+                                converters.add(0, new OAuth2ResourceOwnerPasswordAuthenticationConverter()))
+                        .authenticationProvider(new OAuth2ResourceOwnerPasswordAuthenticationProvider(
+                                authenticationManager, authorizationService, tokenGenerator)));
+
+        return http.build();
+    }
+
+    private RegisteredClient toRegisteredClient(ClientDetail client) {
+        Duration accessTokenTtl = Duration.ofMinutes(client.getAccessTokenValidity());
+        Duration refreshTokenTtl = Duration.ofMinutes(client.getRefreshTokenValidity());
+
+        // Spring Authorization Server 1.x strictly requires at least one non-empty redirectUri
+        String redirectUri = DEFAULT_REDIRECT_URI;
+
+        return RegisteredClient.withId(UUID.nameUUIDFromBytes(
+                        client.getClientId().getBytes(StandardCharsets.UTF_8)).toString())
+                .clientId(client.getClientId())
+                .clientSecret(withPasswordEncoderId(client.getClientSecret()))
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
+                .authorizationGrantType(OAuth2ResourceOwnerPasswordAuthenticationToken.PASSWORD)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                .redirectUri(redirectUri) // Satisfies mandatory validation in Spring Security 6
+                .scope(SCOPE_READ)
+                .scope(SCOPE_WRITE)
+                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
+                .tokenSettings(TokenSettings.builder()
+                        .accessTokenTimeToLive(accessTokenTtl)
+                        .refreshTokenTimeToLive(refreshTokenTtl)
+                        .build())
+                .build();
+    }
+
+    private String withPasswordEncoderId(String secret) {
+        // Legacy client JSON contains plaintext secrets. Keep them usable during
+        // migration; replace these values with {bcrypt} hashes after clients move.
+        return secret.startsWith("{") ? secret : "{noop}" + secret;
     }
 
     private SecuredClient getSecuredClientFromResource() {
         objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
         InputStream inputStream = null;
         try {
-        	inputStream = getClientsConfig().getInputStream();
-            return objectMapper.readValue(inputStream, SecuredClient.class);
+            inputStream = getClientsConfig().getInputStream();
+            SecuredClient securedClient = objectMapper.readValue(inputStream, SecuredClient.class);
+            if (securedClient == null || securedClient.getClients() == null || securedClient.getClients().isEmpty()) {
+                throw new IllegalStateException("No OAuth2 clients are configured");
+            }
+            return securedClient;
         } catch (IOException e) {
-            LOGGER.error("Exception occured while reading data: ", e);
+            throw new IllegalStateException("Unable to read OAuth2 client configuration", e);
         } finally {
-			IOUtils.closeQuietly(inputStream);
+            IOUtils.closeQuietly(inputStream);
         }
-        return null;
     }
 
     private Resource getClientsConfig() {
-        Resource res = new ClassPathResource(CLIENTS_CONFIG_OVERRIDE);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Overridden config present:" + res.exists());
-        if (!res.exists())
-            res = new ClassPathResource(CLIENTS_CONFIG);
-        return res;
+        Resource resource = new ClassPathResource(CLIENTS_CONFIG_OVERRIDE);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Overridden config present: " + resource.exists());
+        }
+        return resource.exists() ? resource : new ClassPathResource(CLIENTS_CONFIG);
     }
-
 }

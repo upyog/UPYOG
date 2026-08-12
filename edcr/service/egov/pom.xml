@@ -566,6 +566,11 @@
 				<artifactId>spring-security-oauth2-core</artifactId>
 				<version>${spring-security-version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-oauth2-resource-server</artifactId>
+				<version>${spring-security-version}</version>
+			</dependency>
 			<!-- TODO: spring-security-oauth2 (org.springframework.security.oauth) is EOL
 			     and has no Spring 6 compatible release. Migrate to built-in Spring Security 6 OAuth2:
 			       - Resource Server: spring-security-oauth2-resource-server
@@ -658,7 +663,11 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-
+			<dependency>
+				<groupId>com.github.spring-projects</groupId>
+				<artifactId>spring-tiles</artifactId>
+				<version>1.0.0.RELEASE</version>
+			</dependency>
 			<dependency>
 				<groupId>org.apache.tiles</groupId>
 				<artifactId>tiles-jsp</artifactId>
@@ -1266,6 +1275,16 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-oauth2-authorization-server</artifactId>
 			<version>3.2.2</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-tomcat</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-resource-server</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.data</groupId>

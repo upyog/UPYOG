@@ -48,55 +48,27 @@
 package org.egov.edcr.security.oauth2.config;
 
 import org.egov.edcr.security.oauth2.custom.CustomAuthenticationProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
 /**
- * OAuth2 Security configuration
- * 
- * @author subhash
+ * Authentication configuration for Spring Security 6.
  *
+ * <p>{@code WebSecurityConfigurerAdapter} and {@code RedisTokenStore} belonged
+ * to the retired Spring Security OAuth project. Token persistence is now the
+ * responsibility of {@code OAuth2AuthorizationService}.
  */
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, proxyTargetClass = true)
-public class OAuth2SecurityConfiguration extends WebSecurityConfigurerAdapter {
+@EnableMethodSecurity(prePostEnabled = true)
+public class OAuth2SecurityConfiguration {
 
-    @Autowired
-    private CustomAuthenticationProvider authProvider;
-
-    @Autowired
-    private RedisConnectionFactory redisConnectionFactory;
-
-    @Override
-    @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+    @Bean("authenticationManagerBean")
+    public AuthenticationManager authenticationManager(CustomAuthenticationProvider authProvider) {
+        return new ProviderManager(authProvider);
     }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(authProvider);
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-    }
-
-    @Bean
-    public TokenStore tokenStore() {
-        return new RedisTokenStore(redisConnectionFactory);
-    }
-
 }
