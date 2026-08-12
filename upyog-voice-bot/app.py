@@ -930,7 +930,8 @@ def chat():
             return jsonify({
                 "response": result["message"],
                 "lang": result["lang"],
-                "mode": "grievance_collecting",
+                "mode": "grievance_collecting" if not result.get("end_session") else "grievance_failed",
+                "end_session": result.get("end_session", False),
                 "grievance_type": result.get("type"),
                 "audio": audio_output,
                 "input_type": result.get("input_type", "text"),
@@ -1304,7 +1305,8 @@ def get_grievance_session(session_id):
             "auth_token": None,
             "user_info": None,
             "categories": {},
-            "localities": []
+            "localities": [],
+            "otp_attempts": 0
         }
     return grievance_sessions[session_id]
 
@@ -1738,9 +1740,21 @@ def handle_grievance_turn(session_id, user_input, lang):
         normalized_value = normalize_field("otp", user_input)
         is_valid, error_msg = validate_field("otp", normalized_value)
         if not is_valid:
+            session["otp_attempts"] = session.get("otp_attempts", 0) + 1
+            attempts = session["otp_attempts"]
+            logger.warning(f"[GRIEVANCE TURN] AWAITING_OTP invalid format: '{user_input}' (Attempt {attempts}/3)")
+
+            if attempts >= 3:
+                clear_grievance_session(session_id)
+                msg = ("गलत OTP! आपने 3 बार गलत OTP दर्ज किया है। कृपया बाद में पुनः प्रयास करें।" if lang == 'hi' else
+                       "Incorrect OTP. You have entered an incorrect OTP 3 times. Please try again later. Can i help you with something else?")
+                logger.info(f"[GRIEVANCE TURN] 3 failed OTP attempts reached for session '{session_id}' — closing application")
+                return {"type": "error", "message": msg, "lang": lang, "end_session": True}
+
             if lang != 'hi':
-                error_msg = "OTP should be 4 or 6 digits. Please tell me the correct OTP."
-            logger.warning(f"[GRIEVANCE TURN] AWAITING_OTP invalid format: '{user_input}'")
+                error_msg = f"OTP should be 4 or 6 digits. Please try again. ({attempts}/3 attempts)"
+            else:
+                error_msg = f"OTP 4 या 6 अंकों का होना चाहिए। कृपया पुनः प्रयास करें। ({attempts}/3 प्रयास)"
             return {"type": "collect", "message": error_msg, "lang": lang, "field": "otp", "input_type": "number", "options": []}
 
         otp_value = re.sub(r'\D', '', normalized_value)
@@ -1752,10 +1766,25 @@ def handle_grievance_turn(session_id, user_input, lang):
         logger.info(f"[GRIEVANCE TURN] Verify OTP result keys: {verify_result.keys() if isinstance(verify_result, dict) else 'N/A'}")
 
         if "access_token" not in verify_result:
-            logger.warning(f"[GRIEVANCE TURN] OTP verification failed for session '{session_id}'")
+            session["otp_attempts"] = session.get("otp_attempts", 0) + 1
+            attempts = session["otp_attempts"]
+            logger.warning(f"[GRIEVANCE TURN] OTP verification failed for session '{session_id}' (Attempt {attempts}/3)")
+
+            if attempts >= 3:
+                clear_grievance_session(session_id)
+                msg = ("गलत OTP! आपने 3 बार गलत OTP दर्ज किया है। कृपया बाद में पुनः प्रयास करें।" if lang == 'hi' else
+                       "Incorrect OTP. You have entered an incorrect OTP 3 times. Please try again later. Can i help you with something else?")
+                logger.info(f"[GRIEVANCE TURN] 3 failed OTP attempts reached for session '{session_id}' — closing application")
+                return {"type": "error", "message": msg, "lang": lang, "end_session": True}
+
             if lang == 'hi':
-                return {"type": "error", "message": "OTP गलत है। कृपया पुनः प्रयास करें।", "lang": lang}
-            return {"type": "error", "message": "OTP is incorrect. Please try again.", "lang": lang}
+                msg = f"OTP गलत है। कृपया पुनः प्रयास करें। ({attempts}/3 प्रयास)"
+            else:
+                msg = f"OTP is incorrect. Please try again. ({attempts}/3 attempts)"
+            return {"type": "collect", "message": msg, "lang": lang, "field": "otp", "input_type": "number", "options": []}
+
+        # Reset OTP attempts on success
+        session["otp_attempts"] = 0
 
         session["data"]["auth_token"] = verify_result["access_token"]
         session["data"]["user_info"] = verify_result.get("UserRequest", verify_result.get("userInfo", {}))
