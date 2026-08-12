@@ -17,11 +17,11 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * JDBC implementation of IngestionPersistenceService.
- * Used when adapter.persister.enabled is false.
+ * Used when dashboard-data.persister.enabled is false.
  */
 @Slf4j
 @Service
-@ConditionalOnProperty(name = "adapter.persister.enabled", havingValue = "false")
+@ConditionalOnProperty(name = "dashboard-data.persister.enabled", havingValue = "false")
 public class JdbcIngestionPersistenceServiceImpl implements IngestionPersistenceService {
 
     @Autowired
