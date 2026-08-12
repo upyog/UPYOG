@@ -916,8 +916,8 @@
         if (interruptMicBtn) interruptMicBtn.addEventListener('click', handleInterruptClick);
 
         // ============== AUDIO PLAYBACK (FIX C: Blob URL cleanup) ==============
-        async function playAudio(base64) {
-            console.log('[UPYOG AUDIO] playAudio initiated', { base64Length: base64.length });
+        async function playAudio(base64, shouldEndSession = false) {
+            console.log('[UPYOG AUDIO] playAudio initiated', { base64Length: base64.length, shouldEndSession });
             setState(States.SPEAKING);
 
             destroyRecognition();
@@ -958,12 +958,17 @@
                 function afterAudioDone() {
                     if (audioHandled) return;
                     audioHandled = true;
-                    console.log('[UPYOG AUDIO] audio.onended / afterAudioDone fired — cleaning blob and resuming listening');
+                    console.log('[UPYOG AUDIO] audio.onended / afterAudioDone fired — cleaning blob', { shouldEndSession });
                     URL.revokeObjectURL(url);
                     currentAudio = null;
                     hideInterruptBtn();
-                    setState(States.LISTENING);
-                    onTurnComplete();
+                    if (shouldEndSession) {
+                        console.log('[UPYOG AUDIO] Ending voice session after audio completion');
+                        endSessionAuto();
+                    } else {
+                        setState(States.LISTENING);
+                        onTurnComplete();
+                    }
                 }
 
                 audio.onended = afterAudioDone;
@@ -978,8 +983,12 @@
             } catch (e) {
                 console.log('[UPYOG AUDIO] Error in playAudio', e);
                 hideInterruptBtn();
-                setState(States.LISTENING);
-                onTurnComplete();
+                if (shouldEndSession) {
+                    endSessionAuto();
+                } else {
+                    setState(States.LISTENING);
+                    onTurnComplete();
+                }
             }
         }
 
