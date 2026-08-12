@@ -1,5 +1,12 @@
 package org.upyog.dashboard.chb.constants;
 
+/**
+ * SQL result-set column alias constants for the CHB (Community Hall Booking) combined metrics query.
+ *
+ * Each constant maps to the alias defined in chb-schema-mapping.yml and is used by
+ * org.upyog.dashboard.chb.mapper.CHBRowMapper to read columns from the java.sql.ResultSet.
+ * Centralising aliases here prevents typo-driven bugs and makes schema changes a single-point edit.
+ */
 public final class CHBDatabaseConstants {
 
     private CHBDatabaseConstants() {}

@@ -32,6 +32,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Extracts CHB (Community Hall Booking) metrics for a given date and builds a CHBDTO
+ * ready for ingestion into the National Dashboard.
+ *
+ * Extraction flow:
+ * 1. Runs the combinedMetricsQuery from chb-schema-mapping.yml for the target date window.
+ * 2. The query returns aggregated counts and two JSON columns:
+ *    bookingsjson (status buckets) and createdbylistjson (creator UUIDs).
+ * 3. Calls buildBookingTypeJson to batch-resolve creator UUIDs via a single user-search API call,
+ *    classifying each as Online (CITIZEN) or Offline (EMPLOYEE).
+ * 4. Attaches the resolved bookingTypeJson to the aggregated result and returns the DTO.
+ *
+ * Resilience:
+ * - DB query failures are retried with exponential backoff + jitter up to dbMaxAttempts.
+ * - User search failures are caught and logged; bookingType defaults to [] so
+ *   the rest of the metrics are still ingested.
+ *
+ * UUID deduplication:
+ * Creator UUIDs are collected into a LinkedHashSet before the API call to eliminate
+ * duplicates while preserving insertion order, ensuring a single batch request.
+ */
 @Slf4j
 @Component
 public class ChbModuleExtractor implements ModuleExtractor<CHBDTO> {
@@ -75,11 +96,16 @@ public class ChbModuleExtractor implements ModuleExtractor<CHBDTO> {
         this.dbMaxDelayMs = dashboardProperties.getDbMaxDelayMs();
     }
 
+    /** Returns Module.CHB to identify this extractor in the ExtractorRegistry. */
     @Override
     public Module getModule() {
         return Module.CHB;
     }
 
+    /**
+     * Extracts all CHB metrics for the given targetDate and returns a populated CHBDTO.
+     * Throws IllegalStateException if no query mapping is found for the CHB module.
+     */
     @Override
     public CHBDTO extractData(LocalDate targetDate) {
         String dateStr = targetDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
@@ -109,6 +135,12 @@ public class ChbModuleExtractor implements ModuleExtractor<CHBDTO> {
                 .build();
     }
 
+    /**
+     * Resolves a JSON array of creator UUIDs into an Online/Offline booking type breakdown.
+     * Deduplicates UUIDs using a LinkedHashSet, then performs a single batch user-search API call.
+     * Users with type CITIZEN are counted as Online; all others as Offline.
+     * Returns [] if input is blank or the user search fails.
+     */
     private String buildBookingTypeJson(String createdByListJson) {
         if (createdByListJson == null || createdByListJson.isBlank() || "[]".equals(createdByListJson)) {
             return "[]";
@@ -159,6 +191,10 @@ public class ChbModuleExtractor implements ModuleExtractor<CHBDTO> {
         return "[{\"name\":\"Online\",\"value\":" + online + "},{\"name\":\"Offline\",\"value\":" + offline + "}]";
     }
 
+    /**
+     * Executes the given named-parameter SQL query with exponential backoff retry.
+     * Throws RuntimeException if all retry attempts are exhausted or the thread is interrupted.
+     */
     private CHBAggregatedData executeQueryWithRetry(String query, Map<String, Object> params) {
         int attempt = 0;
         while (true) {
@@ -183,6 +219,10 @@ public class ChbModuleExtractor implements ModuleExtractor<CHBDTO> {
         }
     }
 
+    /**
+     * Calculates an exponential backoff delay with full jitter.
+     * Returns a randomized delay in milliseconds between 0 and the capped exponential delay.
+     */
     private long calculateBackoff(int attempt) {
         int power = Math.min(attempt - 1, 30);
         long expDelay = dbBaseDelayMs * (1L << power);

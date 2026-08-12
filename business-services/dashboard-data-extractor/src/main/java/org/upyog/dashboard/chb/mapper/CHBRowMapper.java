@@ -6,10 +6,22 @@ import org.springframework.jdbc.core.RowMapper;
 import org.upyog.dashboard.chb.constants.CHBDatabaseConstants;
 import org.upyog.dashboard.chb.dto.CHBAggregatedData;
 
+/**
+ * Factory class holding pre-built RowMapper instances for the CHB module.
+ * This class is not instantiable. All mappers are exposed as public static final
+ * constants so they can be reused without allocation overhead.
+ */
 public final class CHBRowMapper {
 
     private CHBRowMapper() {}
 
+    /**
+     * Maps a single row from the CHB combined metrics query to a CHBAggregatedData object.
+     * Expected columns: totalactivevenueavailable, totalapplicationreceived, totalcollections,
+     * noshowbookings, bookingsjson, createdbylistjson.
+     * Integer columns are read via getNullableInt to correctly handle SQL NULL values,
+     * since ResultSet.getInt() silently returns 0 for NULL without this guard.
+     */
     public static final RowMapper<CHBAggregatedData> COMBINED_ROW_MAPPER = new RowMapper<CHBAggregatedData>() {
         @Override
         public CHBAggregatedData mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -23,6 +35,10 @@ public final class CHBRowMapper {
             return data;
         }
 
+        /**
+         * Reads an integer column and returns null if the SQL value was NULL,
+         * avoiding the silent 0 default that ResultSet.getInt produces.
+         */
         private Integer getNullableInt(ResultSet rs, String col) throws SQLException {
             int v = rs.getInt(col);
             return rs.wasNull() ? null : v;
