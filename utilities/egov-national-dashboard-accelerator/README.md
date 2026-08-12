@@ -46,7 +46,9 @@ extract_{module}  >>  transform_{module}  >>  load_{module}
 |---|---|---|
 | `extract_{module}` | `dump_kibana()` | Runs ES queries, transforms aggregations into ward-level payloads, pushes to XCom |
 | `transform_{module}` | `transform()` | Placeholder — add custom transformations here |
-| `load_{module}` | `load()` | Pulls XCom payload, authenticates with UPYOG, calls ingest API in batches of 50 |
+| `load_{module}` | `load()` | Pulls XCom payload from the **extract** task, authenticates with UPYOG, calls ingest API in batches of 50 |
+
+> **Important:** The load task must pull XCom from `elastic_search_extract_{module}`, not from the transform task. The transform step is a no-op placeholder and does not push `payload_{MODULE}`. Without an explicit `task_ids`, Airflow defaults to the immediate upstream task and the load step will fail with a `NoneType` JSON error.
 
 ---
 
@@ -235,18 +237,48 @@ Example output payload for one ward:
 }
 ```
 
-This list of ward payloads is pushed to **XCom** under key `payload_PT`.
+This list of ward payloads is pushed to **XCom** under key `payload_PT` by task `elastic_search_extract_pt`.
 
 **Step 3 — `transform_pt` task**
 
-Currently a no-op placeholder. Add any post-processing logic here.
+Currently a no-op placeholder. Add any post-processing logic here. It does **not** push or modify the XCom payload.
 
 **Step 4 — `load_pt` task calls `load(module='PT')`**
 
 1. Fetches OAuth token from UPYOG (`user/oauth/token`) using Airflow connection `digit-auth`
-2. Pulls the ward payload list from XCom (`payload_PT`)
+2. Pulls the ward payload list from XCom key `payload_PT`, explicitly from task `elastic_search_extract_pt`
 3. Sends to `national-dashboard/metric/_ingest` in batches of 50 records
 4. (Manual DAG only) Logs each response to `adaptor_logs` index in Elasticsearch
+
+---
+
+## XCom Data Flow
+
+Each module stores its payload in XCom during the extract step and reads it back during load:
+
+```
+elastic_search_extract_pt
+  └─ xcom_push(key="payload_PT", value=<json ward list>)
+
+nudb_transform_pt
+  └─ (no XCom push — placeholder only)
+
+nudb_ingest_load_pt
+  └─ xcom_pull(key="payload_PT", task_ids="elastic_search_extract_pt")
+```
+
+XCom key format: `payload_{MODULE}` (e.g. `payload_PT`, `payload_TL`)
+
+Extract task ID format: `elastic_search_extract_{module}` (e.g. `elastic_search_extract_pt`)
+
+If load fails with:
+```
+TypeError: the JSON object must be str, bytes or bytearray, not NoneType
+```
+check that:
+1. The extract task completed successfully
+2. XCom contains `payload_{MODULE}` under the extract task
+3. `load()` is pulling with `task_ids=elastic_search_extract_{module}`
 
 ---
 
@@ -259,16 +291,49 @@ Currently a no-op placeholder. Add any post-processing logic here.
 | `es_conn` | HTTP | Elasticsearch host for querying indices |
 | `digit-auth` | HTTP | UPYOG platform host for OAuth + ingest API |
 
+**`digit-auth` connection usage:**
+
+| Endpoint | Built URL |
+|---|---|
+| OAuth token | `https://{host}/user/oauth/token` |
+| Ingest API | `https://{host}/national-dashboard/metric/_ingest` |
+
+Set `{host}` to your UPYOG domain (e.g. `niua-qa.upyog.org.in`).
+
 ### Variables (set in Airflow UI → Admin → Variables)
 
-| Variable | Purpose |
-|---|---|
-| `username` | UPYOG login username |
-| `password` | UPYOG login password |
-| `tenantid` | UPYOG tenant ID (e.g. `pb`) |
-| `usertype` | UPYOG user type (e.g. `EMPLOYEE`) |
-| `token` | Base64 Basic Auth token for OAuth endpoint |
-| `totalulb_url` | URL to fetch total ULB count JSON |
+| Variable | Required for | Example value | Purpose |
+|---|---|---|---|
+| `username` | Load (all modules) | `EMP-001` | UPYOG login username for OAuth |
+| `password` | Load (all modules) | `***` | UPYOG login password for OAuth |
+| `tenantid` | Load (all modules) | `pg` | UPYOG tenant ID |
+| `usertype` | Load (all modules) | `EMPLOYEE` | UPYOG user type |
+| `token` | Load (all modules) | `ZWdvdi1jbGllbnQ6Z292LXNlY3JldA==` | Base64 Basic Auth token for OAuth endpoint |
+| `totalulb_url` | COMMON module | `https://raw.githubusercontent.com/egovernments/punjab-mdms-data/master/data/pb/tenant/tenants.json` | URL to fetch onboarded ULB tenant list |
+| `upyogurl` | COMMON module | `https://niua-qa.upyog.org.in` | Base URL of the UPYOG platform for citizen count API |
+
+### External URL configuration
+
+#### Citizen count API (`upyogurl`)
+
+Used by `get_citizen_count()` in the manual DAG when the **COMMON** module is enabled. The full URL is built at runtime:
+
+```
+{upyogurl}/egov-searcher/unique-citizen-count?date={YYYY-MM-DD HH:MM:SS}
+```
+
+Example:
+```
+Variable upyogurl = https://niua-qa.upyog.org.in
+
+Final URL = https://niua-qa.upyog.org.in/egov-searcher/unique-citizen-count?date=2026-08-11 00:00:00
+```
+
+To change the base URL, update the `upyogurl` Airflow Variable. To change the API path, edit `get_citizen_count()` in `national_dashboard_template_latest.py`.
+
+#### ULB list (`totalulb_url`)
+
+Used by `readulb()` when the **COMMON** module is enabled. Fetches a JSON file containing tenant codes to compute total/onboarded ULB counts. The URL is read directly from the Airflow Variable — no hardcoded fallback.
 
 ---
 
@@ -297,13 +362,42 @@ extract_mymodule >> transform_mymodule >> load_mymodule
 
 ## Key Design Decisions
 
-- **XCom for inter-task data passing** — the extract task serializes the full ward payload list as JSON and pushes it; the load task pulls it back. Keep payload sizes reasonable (batch_size=50 guards the ingest API).
+- **XCom for inter-task data passing** — the extract task serializes the full ward payload list as JSON and pushes it; the load task pulls it back explicitly from the extract task (`task_ids=elastic_search_extract_{module}`). Keep payload sizes reasonable (`batch_size=50` guards the ingest API).
 - **Timezone handling** — all date windows are computed in `Asia/Kolkata` (IST) and converted to epoch milliseconds for ES queries.
 - **`pb.testing` exclusion** — all ES queries explicitly exclude the test tenant to avoid polluting dashboard metrics.
 - **Manual DAG date flexibility** — pass `{"date": "DD-MM-YYYY"}` in conf to backfill any specific date; omit it to default to yesterday.
 - **Scheduled DAG always uses yesterday** — no conf accepted; date is always `date.today() - timedelta(days=1)` at runtime.
+- **External URLs via Airflow Variables** — platform URLs (`upyogurl`, `totalulb_url`) are not hardcoded in DAG code; set them per environment in Airflow Admin → Variables.
 
+---
 
+## Logging
+
+Both DAG files log key steps to help debug failed runs:
+
+| Stage | What is logged |
+|---|---|
+| Extract | Module, date, ES time window, each query, XCom push with record count |
+| Load | Module, XCom key, source extract task, payload size, batch ingest calls |
+| Auth | OAuth URL, success/failure of token request |
+| ULB fetch | `totalulb_url` used and total ULB count returned |
+| Citizen count | Full citizen count URL built from `upyogurl`, response status |
+
+Check task logs in the Airflow UI under the failing task → **Log** tab.
+
+---
+
+## Troubleshooting
+
+| Symptom | Likely cause | Fix |
+|---|---|---|
+| `TypeError: ... not NoneType` in `load()` | XCom payload missing; load pulled from transform task | Ensure extract task succeeded; confirm `load()` uses `task_ids=elastic_search_extract_{module}` |
+| `No XCom payload found for key 'payload_PT'` | Extract task failed or did not push XCom | Check `elastic_search_extract_pt` logs; verify ES connection `es_conn` |
+| Auth token request failed | Wrong `digit-auth` host or OAuth Variables | Verify connection host and `username`/`password`/`token` Variables |
+| Citizen count request failed | Wrong `upyogurl` or API unavailable | Set `upyogurl` to correct UPYOG base URL; test endpoint manually |
+| ULB fetch failed | Invalid `totalulb_url` | Set a valid tenants JSON URL in Airflow Variables |
+
+---
 
 ## Development Note
 
