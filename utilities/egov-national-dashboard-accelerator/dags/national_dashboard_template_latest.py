@@ -363,6 +363,7 @@ def get_auth_token(connection):
 
 def _write_adaptor_log(module, startdate, response):
     """Write ingest response to adaptor_logs index using es_conn over HTTP."""
+    # Local import avoids shadowing: queries.pgr used to define uuid=[] via wildcard import.
     from uuid import uuid4
     try:
         conn = BaseHook.get_connection('es_conn')
