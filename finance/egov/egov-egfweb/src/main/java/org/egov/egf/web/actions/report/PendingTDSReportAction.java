@@ -60,6 +60,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -245,6 +246,29 @@ public class PendingTDSReportAction extends BaseFormAction {
     }
 
     Map<String, Object> getParamMap() {
+        /*
+         * Struts 7 migration note:
+         * Nested request values such as recovery.id and fund.id are not always
+         * materialized on the action before report parameter creation. Rehydrate them
+         * from the raw request so report headings and Jasper parameters remain valid.
+         */
+        if (recovery == null || recovery.getId() == null) {
+            String recId = ServletActionContext.getRequest().getParameter("recovery.id");
+            if (recId != null && !recId.trim().isEmpty() && !"-1".equals(recId.trim()))
+                recovery = (Recovery) persistenceService.find("from Recovery where id=?", Integer.valueOf(recId.trim()));
+        }
+        if (fund == null || fund.getId() == null) {
+            String fId = ServletActionContext.getRequest().getParameter("fund.id");
+            if (fId != null && !fId.trim().isEmpty() && !"-1".equals(fId.trim()))
+                fund = (Fund) persistenceService.find("from Fund where id=?", Integer.valueOf(fId.trim()));
+        }
+        if (department == null || department.getCode() == null) {
+            String dCode = ServletActionContext.getRequest().getParameter("department.code");
+            if (dCode != null && !dCode.trim().isEmpty() && !"-1".equals(dCode.trim())) {
+                department = new Department();
+                department.setCode(dCode.trim());
+            }
+        }
         final Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("remittedTDSJasper", this.getClass().getResourceAsStream("/reports/templates/remittedTDSReport.jasper"));
         paramMap.put("inWorkflowTDSJasper", this.getClass().getResourceAsStream("/reports/templates/inWorkflowTDSReport.jasper"));
@@ -255,28 +279,36 @@ public class PendingTDSReportAction extends BaseFormAction {
             paramMap.put("remittedTDS", null);
         final String formatedAsOndate = Constants.DDMMYYYYFORMAT2.format(asOnDate);
         paramMap.put("asOnDate", formatedAsOndate);
+        /*
+         * Java 17 / Spring 6 migration note:
+         * Optional filters can legitimately be absent after stricter request binding.
+         * Use blank report labels instead of failing report generation with NPEs.
+         */
+        String recType = recovery != null ? recovery.getType() : "";
         if (fromDate != null)
         {
             final String formatedFromDate = Constants.DDMMYYYYFORMAT2.format(fromDate);
             paramMap.put("fromDate", formatedFromDate);
-            paramMap.put("heading", "Deduction detailed report for "+ recovery.getType() +" From " + formatedFromDate + "  to " + formatedAsOndate);
-            paramMap.put("summaryheading", "Deductions remittance summary for "+ recovery.getType() +" From " + formatedFromDate + "  to " + formatedAsOndate);
+            paramMap.put("heading", "Deduction detailed report for "+ recType +" From " + formatedFromDate + "  to " + formatedAsOndate);
+            paramMap.put("summaryheading", "Deductions remittance summary for "+ recType +" From " + formatedFromDate + "  to " + formatedAsOndate);
             paramMap.put("fromDateText", "From Date :      " + formatedFromDate);
         } else{
-            paramMap.put("heading", "Deduction detailed report for "+ recovery.getType() +" as on " + formatedAsOndate);
-            paramMap.put("summaryheading", "Deductions remittance summary for "+ recovery.getType() +" as on " + formatedAsOndate);
+            paramMap.put("heading", "Deduction detailed report for "+ recType +" as on " + formatedAsOndate);
+            paramMap.put("summaryheading", "Deductions remittance summary for "+ recType +" as on " + formatedAsOndate);
         }
-        fund = (Fund) persistenceService.find("from Fund where id=?", fund.getId());
-        paramMap.put("fundName", fund.getName());
+        if (fund != null && fund.getId() != null)
+            fund = (Fund) persistenceService.find("from Fund where id=?", fund.getId());
+        paramMap.put("fundName", fund != null ? fund.getName() : "");
         paramMap.put("partyName", partyName);
-        if (department.getCode() != null && !department.getCode().equals("-1") ) {
+        if (department != null && department.getCode() != null && !department.getCode().equals("-1") ) {
           //TO-DO Get department from MS
             department = this.microserviceUtils.getDepartmentByCode(department.getCode());
 //            department = (Department) persistenceService.find("from Department where id=?", department.getId());
-            paramMap.put("departmentName", department.getName());
+            paramMap.put("departmentName", department != null ? department.getName() : "");
         }
-        recovery = (Recovery) persistenceService.find("from Recovery where id=?", recovery.getId());
-        paramMap.put("recoveryName", recovery.getRecoveryName());
+        if (recovery != null && recovery.getId() != null)
+            recovery = (Recovery) persistenceService.find("from Recovery where id=?", recovery.getId());
+        paramMap.put("recoveryName", recovery != null ? recovery.getRecoveryName() : "");
         String ulbName = microserviceUtils.getHeaderNameForTenant().toUpperCase();
         paramMap.put("ulbName", environment.getProperty(ulbName,ulbName));
         return paramMap;
@@ -284,10 +316,36 @@ public class PendingTDSReportAction extends BaseFormAction {
 
     @ReadOnly
     private void populateData() throws NumberFormatException, ValidationException, NoSuchMethodException, SecurityException {
+        /*
+         * Struts 7 migration note:
+         * Detail report query preparation needs selected Recovery/Fund/Department values.
+         * Pull them from request parameters if nested object binding did not populate
+         * them, preventing null dereferences during dynamic query construction.
+         */
+        if (recovery == null || recovery.getId() == null) {
+            String recId = ServletActionContext.getRequest().getParameter("recovery.id");
+            if (recId != null && !recId.trim().isEmpty() && !"-1".equals(recId.trim()))
+                recovery = (Recovery) persistenceService.find("from Recovery where id=?", Integer.valueOf(recId.trim()));
+        }
+        if (fund == null || fund.getId() == null) {
+            String fId = ServletActionContext.getRequest().getParameter("fund.id");
+            if (fId != null && !fId.trim().isEmpty() && !"-1".equals(fId.trim()))
+                fund = (Fund) persistenceService.find("from Fund where id=?", Integer.valueOf(fId.trim()));
+        }
+        if (department == null || department.getCode() == null) {
+            String dCode = ServletActionContext.getRequest().getParameter("department.code");
+            if (dCode != null && !dCode.trim().isEmpty() && !"-1".equals(dCode.trim())) {
+                department = new Department();
+                department.setCode(dCode.trim());
+            }
+        }
         validateFinYear();
         if (getFieldErrors().size() > 0)
             return;
-        recovery = (Recovery) persistenceService.find("from Recovery where id=?", recovery.getId());
+        if (recovery != null && recovery.getId() != null)
+            recovery = (Recovery) persistenceService.find("from Recovery where id=?", recovery.getId());
+        if (recovery == null)
+            return;
         type = recovery.getType();
         String deptQuery = "";
         String partyNameQuery = "";
@@ -547,7 +605,33 @@ public class PendingTDSReportAction extends BaseFormAction {
      */
     @ReadOnly
     private void populateSummaryData() {
-        recovery = (Recovery) persistenceService.find("from Recovery where id=?", recovery.getId());
+        /*
+         * Struts 7 migration note:
+         * Summary report generation uses the same nested form values as the detail
+         * report. Resolve them explicitly when OGNL binding has not created the nested
+         * Recovery/Fund/Department objects before query construction.
+         */
+        if (recovery == null || recovery.getId() == null) {
+            String recId = ServletActionContext.getRequest().getParameter("recovery.id");
+            if (recId != null && !recId.trim().isEmpty() && !"-1".equals(recId.trim()))
+                recovery = (Recovery) persistenceService.find("from Recovery where id=?", Integer.valueOf(recId.trim()));
+        }
+        if (fund == null || fund.getId() == null) {
+            String fId = ServletActionContext.getRequest().getParameter("fund.id");
+            if (fId != null && !fId.trim().isEmpty() && !"-1".equals(fId.trim()))
+                fund = (Fund) persistenceService.find("from Fund where id=?", Integer.valueOf(fId.trim()));
+        }
+        if (department == null || department.getCode() == null) {
+            String dCode = ServletActionContext.getRequest().getParameter("department.code");
+            if (dCode != null && !dCode.trim().isEmpty() && !"-1".equals(dCode.trim())) {
+                department = new Department();
+                department.setCode(dCode.trim());
+            }
+        }
+        if (recovery != null && recovery.getId() != null)
+            recovery = (Recovery) persistenceService.find("from Recovery where id=?", recovery.getId());
+        if (recovery == null)
+            return;
         type = recovery.getType();
         String deptQuery = "";
         String partyNameQuery = "";

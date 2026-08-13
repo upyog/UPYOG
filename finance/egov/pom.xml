@@ -438,12 +438,6 @@
                 <scope>provided</scope>
             </dependency>
 
-
-
-
-
-
-
             <dependency>
                 <groupId>jakarta.servlet.jsp</groupId>
                 <artifactId>jakarta.servlet.jsp-api</artifactId> <!-- Fixed: correct artifact ID for JSP API -->
@@ -506,9 +500,6 @@
                 <version>${xstream-version}</version>
             </dependency>
             <!-- STRUTS2 DEPENDENCIES END -->
-
-
-
 
             <!-- JSON START -->
 
@@ -734,12 +725,6 @@
             </dependency>
             <!-- SECURITY END -->
 
-
-
-
-
-
-
             <!-- EMBEDDED REDIS STARTS -->
 <!--            <dependency>-->
 <!--                <groupId>com.orange.redis-embedded</groupId>-->
@@ -754,14 +739,6 @@
                 <version>${embedded-redis-version}</version>
             </dependency>
             <!-- EMBEDDED REDIS ENDS -->
-
-
-
-
-
-
-
-
 
             <!-- QUARTZ START -->
             <dependency>
@@ -782,13 +759,6 @@
                 <version>${mchange-commons-version}</version>
             </dependency>
             <!-- QUARTZ END -->
-
-
-
-
-
-
-
 
             <!-- DISPLAYTAG START -->
 <!--            <dependency>-->
@@ -833,10 +803,6 @@
             <!-- DISPLAYTAG END -->
             <!-- DISPLAYTAG END -->
 
-
-
-
-
             <!-- VIEWS RELATED START -->
 <!--            <dependency>-->
 <!--                <groupId>org.apache.tiles</groupId>-->
@@ -873,16 +839,6 @@
                 <version>${apache-tiles-version}</version>
             </dependency>
             <!-- VIEWS RELATED END -->
-            <!-- VIEWS RELATED END -->
-
-
-
-
-
-
-
-
-
 
             <!-- REPORTS START -->
 
@@ -942,15 +898,6 @@
                 <version>${jexcelapi-version}</version>
             </dependency>
             <!-- REPORTS END -->
-
-
-
-
-
-
-
-
-
 
             <!-- COMMONS START -->
             <dependency>
@@ -1166,30 +1113,6 @@
             </dependency>
             <!-- IMAGE PROCESSING API END -->
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             <!-- TESTING START -->
             <dependency>
                 <groupId>junit</groupId>
@@ -1198,20 +1121,12 @@
                 <scope>test</scope>
             </dependency>
 
-
-
-
-
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
                 <version>${mockito-core-version}</version>
                 <scope>test</scope>
             </dependency>
-
-
-
-
 
 <!--            <dependency>-->
 <!--                <groupId>org.kubek2k</groupId>-->
@@ -1229,10 +1144,6 @@
 <!--                <scope>test</scope>-->
 <!--            </dependency>-->
 
-
-
-
-
             <dependency>
                 <groupId>org.easymock</groupId>
                 <artifactId>easymock</artifactId>
@@ -1245,8 +1156,6 @@
                 <version>3.4</version>
                 <scope>test</scope>
             </dependency>
-
-
 
 <!--            <dependency>-->
 <!--                <groupId>org.easymock</groupId>-->
@@ -1264,36 +1173,6 @@
 <!--                <scope>test</scope>-->
 <!--            </dependency>-->
             <!-- TESTING END -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
             <!-- LOGGING START -->
@@ -1332,17 +1211,6 @@
             </dependency>
             <!-- LOGGING END -->
 
-
-
-
-
-
-
-
-
-
-
-
             <!-- DATABASE START -->
             <dependency>
                 <groupId>org.postgresql</groupId>
@@ -1364,13 +1232,6 @@
 <!--            </dependency>-->
 
             <!-- DATABASE END -->
-
-
-
-
-
-
-
 
             <!-- GIS START -->
 
@@ -1438,12 +1299,6 @@
 <!--            </dependency>-->
 
             <!-- GIS END -->
-
-
-
-
-
-
 
         </dependencies>
 

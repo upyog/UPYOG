@@ -493,8 +493,14 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
 
     @Override
     public List<CChartOfAccounts> findByMajorCodeAndClassification(String majorCode, Long classification) {
+        /*
+         * Hibernate 6 migration note:
+         * HQL now validates entity attributes against Java property names. The mapped
+         * property is majorCode; using the old database-style majorcode token causes
+         * Hibernate's semantic parser to reject the query.
+         */
         final Query query = getCurrentSession().createQuery(
-                "from CChartOfAccounts where  " + "majorcode =:majorcode and classification=2");
+                "from CChartOfAccounts where  " + "majorCode =:majorcode and classification=2");
         query.setParameter("majorcode", majorCode);
         // query.setCacheable(true);
         return query.list();

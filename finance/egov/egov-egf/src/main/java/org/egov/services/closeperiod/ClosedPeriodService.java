@@ -130,11 +130,22 @@ public class ClosedPeriodService {
 		m.entity(ClosedPeriod.class);
 
 		final List<Predicate> predicates = new ArrayList<>();
+		/*
+		 * Hibernate 6 migration note:
+		 * financialYear is an entity association, while financialYearId is a Long from
+		 * the request. Compare against financialYear.id to satisfy strict Criteria API
+		 * type checking.
+		 */
 		if (closedPeriodSearchRequest.getFinancialYearId() != null)
 			predicates
-					.add(cb.equal(closedPeriods.get("financialYear"), closedPeriodSearchRequest.getFinancialYearId()));
+					.add(cb.equal(closedPeriods.get("financialYear").get("id"), closedPeriodSearchRequest.getFinancialYearId()));
 
-		if (closedPeriodSearchRequest.getIsClosed().booleanValue())
+		/*
+		 * Spring 6 / Java 17 migration note:
+		 * The binder can leave wrapper Boolean values null. Boolean.TRUE.equals keeps
+		 * the predicate conditional null-safe and avoids an unboxing NPE.
+		 */
+		if (Boolean.TRUE.equals(closedPeriodSearchRequest.getIsClosed()))
 			predicates.add(cb.equal(closedPeriods.get("isClosed"), true));
 
 		if (closedPeriodSearchRequest.getCloseType() != null) {

@@ -63,6 +63,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -731,6 +732,23 @@ public class ReceiptAction extends BaseFormAction {
 	}
 
 	private void validateMiscDetails() {
+		/*
+		 * Java 17 / Struts 7 migration note:
+		 * During testing, a few misc receipt fields reached validation before they were
+		 * populated on the action. Reading the request values as a fallback preserves
+		 * the legacy form behavior and prevents false required-field validation errors.
+		 */
+		if (ServletActionContext.getRequest() != null) {
+			if (StringUtils.isEmpty(serviceCategory)) {
+				setServiceCategory(ServletActionContext.getRequest().getParameter("serviceCategory"));
+			}
+			if (StringUtils.isEmpty(paidBy)) {
+				setPaidBy(ServletActionContext.getRequest().getParameter("paidBy"));
+			}
+			if (StringUtils.isEmpty(billSource)) {
+				setBillSource(ServletActionContext.getRequest().getParameter("billSource"));
+			}
+		}
 		if (StringUtils.isEmpty(serviceCategory))
 			addActionError(getText("error.select.service.category"));
 		if ((instrHeaderCash.getInstrumentAmount() != null

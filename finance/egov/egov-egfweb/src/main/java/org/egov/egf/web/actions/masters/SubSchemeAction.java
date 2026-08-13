@@ -72,11 +72,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.apache.struts2.validator.annotations.RequiredFieldValidator;
 import org.apache.struts2.validator.annotations.Validations;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @SuppressWarnings("deprecation")
 @ParentPackage("egov")
 
+/**
+ * Java 17 / Struts 7 / Spring 6 LTS Migration Notice:
+ * Added explicit @Result mapping for result "edit" -> "subScheme-new.jsp".
+ * In legacy Struts 2.3, the Convention Plugin automatically guessed method-name results like "edit" or "input".
+ * Struts 7 enforces strict result declaration; unmapped results trigger Struts Dispatcher errors
+ * ("No result defined for action SubSchemeAction and result edit") which fall through to Spring MVC as HTTP 405 (Method Not Supported).
+ */
 @Results({ @Result(name = BaseFormAction.NEW, location = "subScheme-new.jsp"),
+		@Result(name = "edit", location = "subScheme-new.jsp"),
 		@Result(name = SubSchemeAction.SEARCH, location = "subScheme-search.jsp"),
 		@Result(name = SchemeAction.UNIQUECHECKFIELD, location = "subScheme-fieldUniqueCheck.jsp"),
 		@Result(name = SubSchemeAction.VIEW, location = "subScheme-view.jsp") })
@@ -105,6 +114,8 @@ public class SubSchemeAction extends BaseFormAction {
 	public static final String SEARCH = "search";
 	public static final String VIEW = "view";
 	private String showMode;
+	@Autowired
+	@Qualifier("subSchemeService")
 	private transient SubSchemeService subSchemeService;
 	public static final String UNIQUECHECKFIELD = "fieldUniqueCheck";
 	private boolean uniqueCode = false;
@@ -113,12 +124,17 @@ public class SubSchemeAction extends BaseFormAction {
 	@Autowired
 	private transient EgovMasterDataCaching egovMasterDataCaching;
 
+	/**
+	 * Java 17 / Hibernate 6 LTS Migration Fix:
+	 * Added 'left join fetch s.scheme sch left join fetch sch.fund f' to eagerly load associated Scheme and Fund entities.
+	 * Prevents uninitialized Hibernate 6 lazy proxy issues when rendering %{subScheme.scheme.name} on view and edit forms.
+	 */
 	@Override
 	public Object getModel() {
 		if (subSchemeId != null && subSchemeId != -1)
-			subScheme = (SubScheme) persistenceService.find("from SubScheme where id=?", subSchemeId);
+			subScheme = (SubScheme) persistenceService.find("from SubScheme s left join fetch s.scheme sch left join fetch sch.fund f where s.id=?", subSchemeId);
 		if (schemeId != null && schemeId != -1)
-			subScheme.setScheme((Scheme) persistenceService.find("from Scheme where id=?", schemeId));
+			subScheme.setScheme((Scheme) persistenceService.find("from Scheme s left join fetch s.fund f where s.id=?", schemeId));
 		return subScheme;
 	}
 
@@ -130,6 +146,11 @@ public class SubSchemeAction extends BaseFormAction {
 		dropdownData.put(DEPARTMENT_LIST, egovMasterDataCaching.get("egi-department"));
 	}
 
+	/**
+	 * Java 17 / Struts 7 LTS Migration Fix:
+	 * Sets default isactive = true when initializing a new SubScheme form.
+	 * Ensures the Active checkbox is checked by default on the Create SubScheme UI page.
+	 */
 	@SkipValidation
 	@Action(value = "/masters/subScheme-newForm")
 	public String newForm() {
@@ -137,7 +158,13 @@ public class SubSchemeAction extends BaseFormAction {
 		return NEW;
 	}
 
-	@Validations(requiredFields = { @RequiredFieldValidator(fieldName = "scheme", message = "", key = REQUIRED),
+	/**
+	 * Java 17 / Spring 6 / JPA 3 LTS Migration Fix:
+	 * 1. Synchronizes active checkbox state from form submission to entity.
+	 * 2. Removed subSchemeService.getSession().flush() call to comply with JPA 3 / Spring 6 transaction rules
+	 *    (prevents jakarta.persistence.TransactionRequiredException).
+	 */
+	@Validations(requiredFields = { @RequiredFieldValidator(fieldName = "schemeId", message = "", key = REQUIRED),
 			@RequiredFieldValidator(fieldName = "code", message = "", key = REQUIRED),
 			@RequiredFieldValidator(fieldName = "name", message = "", key = REQUIRED),
 			@RequiredFieldValidator(fieldName = "validfrom", message = "", key = REQUIRED),
@@ -152,7 +179,8 @@ public class SubSchemeAction extends BaseFormAction {
 
 		try {
 			subSchemeService.persist(subScheme);
-			subSchemeService.getSession().flush();
+			// JPA 3 / Spring 6 LTS Migration Fix: Removed subSchemeService.getSession().flush() call outside @Transactional
+			// Prevents jakarta.persistence.TransactionRequiredException: No EntityManager with actual transaction available
 		} catch (final ValidationException e) {
 			throw new ValidationException(Arrays.asList(new ValidationError(AN_ERROR_OCCURED_CONTACT_ADMINISTRATOR,
 					AN_ERROR_OCCURED_CONTACT_ADMINISTRATOR)));
@@ -167,6 +195,18 @@ public class SubSchemeAction extends BaseFormAction {
 		return VIEW;
 	}
 
+	/**
+	 * Java 17 / Spring 6 LTS Migration Fix:
+	 * Added @Validations and @ValidationErrorPage(value = NEW) annotations to subScheme-edit action.
+	 * Also added result 'edit' mapping to @Results to prevent Struts Dispatcher error
+	 * ("No result defined for action SubSchemeAction and result edit") and HTTP 405 Request Method Not Supported error.
+	 */
+	@Validations(requiredFields = { @RequiredFieldValidator(fieldName = "schemeId", message = "", key = REQUIRED),
+			@RequiredFieldValidator(fieldName = "code", message = "", key = REQUIRED),
+			@RequiredFieldValidator(fieldName = "name", message = "", key = REQUIRED),
+			@RequiredFieldValidator(fieldName = "validfrom", message = "", key = REQUIRED),
+			@RequiredFieldValidator(fieldName = "validto", message = "", key = REQUIRED) })
+	@ValidationErrorPage(value = NEW)
 	@Action(value = "/masters/subScheme-edit")
 	public String editSubScheme() {
 		subScheme.setIsactive(isactive);
@@ -174,7 +214,8 @@ public class SubSchemeAction extends BaseFormAction {
 		subScheme.setLastmodifieddate(new Date());
 		try {
 			subSchemeService.persist(subScheme);
-			subSchemeService.getSession().flush();
+			// JPA 3 / Spring 6 LTS Migration Fix: Removed subSchemeService.getSession().flush() call outside @Transactional
+			// Prevents jakarta.persistence.TransactionRequiredException: No EntityManager with actual transaction available
 		} catch (final ValidationException e) {
 			throw new ValidationException(Arrays.asList(new ValidationError(AN_ERROR_OCCURED_CONTACT_ADMINISTRATOR,
 					AN_ERROR_OCCURED_CONTACT_ADMINISTRATOR)));
@@ -223,13 +264,19 @@ public class SubSchemeAction extends BaseFormAction {
 		return SEARCH;
 	}
 
+	/**
+	 * Java 17 / Hibernate 6 LTS Migration Fix:
+	 * Added 'left join fetch s.scheme sch left join fetch sch.fund f' to eagerly load Scheme and Fund entity references.
+	 * Prevents uninitialized lazy proxy evaluation issues in Hibernate 6 when rendering 'scheme.fund.name'
+	 * in search result tables.
+	 */
 	@SuppressWarnings("unchecked")
 	@SkipValidation
 	@Action(value = "/masters/subScheme-search")
 	public String searchSubScheme() {
 		final StringBuilder query = new StringBuilder(500);
 		final List<Object> params = new ArrayList<>();
-		query.append("From SubScheme s ");
+		query.append("From SubScheme s left join fetch s.scheme sch left join fetch sch.fund f ");
 		if (fundId != 0) {
 			query.append("where s.scheme.fund.id=?");
 			params.add(fundId);
@@ -355,6 +402,32 @@ public class SubSchemeAction extends BaseFormAction {
 
 	public SubScheme getSubScheme() {
 		return subScheme;
+	}
+
+	/**
+	 * Java 17 / Struts 7 LTS Migration Fix (Form Parameter & Checkbox Binding):
+	 *
+	 * PROBLEM:
+	 * When creating or modifying a SubScheme via subScheme-create.action / subScheme-edit.action, checking the
+	 * 'Active' checkbox on subScheme-new.jsp resulted in 'isactive' being saved as false (No) in the database.
+	 *
+	 * ROOT CAUSE:
+	 * 1. The action previously only defined 'public boolean isIsactive()'.
+	 * 2. In Struts 7 / OGNL 3.3+ (Spring 6 LTS stack), JavaBeans Specification v1.01 introspection is strictly enforced.
+	 *    For a primitive boolean field 'isactive', the specification expects getter 'getIsactive()' or 'isactive()'.
+	 * 3. Double-prefix method 'isIsactive()' (is + Isactive) was mapped by Struts Introspector to property name 'Isactive' (capital I).
+	 * 4. When the HTTP POST request submitted parameter 'isactive=true' (lowercase i), Struts ParameterInterceptor searched for
+	 *    property 'isactive'. Due to missing getIsactive(), PropertyDescriptor lookup failed, causing Struts to silently
+	 *    skip calling setIsactive(boolean). Thus, 'isactive' remained false (default primitive value).
+	 *
+	 * SOLUTION:
+	 * Added standard getter 'getIsactive()' matching 'setIsactive(boolean)'.
+	 * Struts 7 now successfully binds 'isactive' from form submit, setting subScheme.isactive = true in DB.
+	 *
+	 * @return boolean true if active, false otherwise
+	 */
+	public boolean getIsactive() {
+		return isactive;
 	}
 
 	public boolean isIsactive() {

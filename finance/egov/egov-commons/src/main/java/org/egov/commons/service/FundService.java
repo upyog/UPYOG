@@ -137,8 +137,14 @@ public class FundService {
 		}
 		if (fundSearchRequest.getIsactive().booleanValue())
 			predicates.add(cb.equal(funds.get("isactive"), true));
+		/*
+		 * Hibernate 6 migration note:
+		 * Criteria comparisons are now type checked strictly. parentId is mapped as a
+		 * Fund association, but the request supplies a Long id. Comparing parentId.id
+		 * avoids a Fund-vs-Long SemanticException.
+		 */
 		if (fundSearchRequest.getParentId() != null)
-			predicates.add(cb.equal(funds.get("parentId"), fundSearchRequest.getParentId()));
+			predicates.add(cb.equal(funds.get("parentId").get("id"), fundSearchRequest.getParentId()));
 
 		createQuery.where(predicates.toArray(new Predicate[] {}));
 		final TypedQuery<Fund> query = entityManager.createQuery(createQuery);

@@ -147,7 +147,12 @@ public class OpeningBalance
 
         OpeningBalanceBean ob = null;
         pstmt = persistenceService.getSession().createNativeQuery(query.toString());
-        int i = 0;
+        /*
+         * Hibernate 6 migration note:
+         * Native query positional parameters are one-based. Starting from zero was
+         * tolerated earlier but fails strict parameter binding in Hibernate 6.
+         */
+        int i = 1;
         pstmt.setParameter(i++, Long.valueOf(finYear));
         if (!fundId.equalsIgnoreCase(""))
             pstmt.setParameter(i++, Long.valueOf(fundId));

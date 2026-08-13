@@ -1256,8 +1256,13 @@ public class BudgetReportAction extends BaseFormAction {
 
     protected String getBudgetType(final String finalStatus) {
         String isBeRe = "BE";
+        /*
+         * Hibernate 6 migration note:
+         * HQL property names must match the Java entity mapping. Budget exposes this
+         * field as isbere, so the older isBeRe token is rejected by strict parsing.
+         */
         final Budget budget = (Budget) persistenceService
-                .find("from Budget where financialYear.id=? and parent is null and isPrimaryBudget=true and isActiveBudget=true and isBeRe='RE' and status.code=?",
+                .find("from Budget where financialYear.id=? and parent is null and isPrimaryBudget=true and isActiveBudget=true and isbere='RE' and status.code=?",
                         budgetReport.getFinancialYear().getId(), finalStatus);
         if (budget != null)
             isBeRe = "RE";
@@ -1579,9 +1584,14 @@ public class BudgetReportAction extends BaseFormAction {
 
     private void getBudgetReappropriationAmt() {
         final String status = getFinalStatus();
+        /*
+         * Hibernate 6 migration note:
+         * status is an EgwStatus association. Compare the associated status.id with
+         * the subquery result instead of comparing the entity itself to an id value.
+         */
         final List<Object[]> list = getPersistenceService()
                 .findAllBy(
-                        "select sum(br.additionAmount)-sum(br.deductionAmount),br.budgetDetail.id from BudgetReAppropriation br where br.status = (select id from EgwStatus where moduletype='BudgetReAppropriation' "
+                        "select sum(br.additionAmount)-sum(br.deductionAmount),br.budgetDetail.id from BudgetReAppropriation br where br.status.id = (select id from EgwStatus where moduletype='BudgetReAppropriation' "
                                 + "and description='Approved') group by br.budgetDetail.id");
         if (!list.isEmpty() && list.size() != 0)
             for (final Object[] obj : list)

@@ -49,6 +49,7 @@ package org.egov.collection.web.actions.receipts;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -75,6 +76,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -297,9 +299,44 @@ public class SearchReceiptAction extends SearchFormAction {
 
         resultList = searchResult.getList();
         return SUCCESS;
-    }
+	}
 
 	private void validateSearchParams() {
+		/*
+		 * Java 17 / Struts 7 migration note:
+		 * The upgraded binding flow can leave search fields unset on the action while
+		 * the raw request still contains them. Pulling values from the request and
+		 * parsing dd/MM/yyyy dates keeps existing receipt searches working under the
+		 * stricter validation/conversion sequence.
+		 */
+		if (ServletActionContext.getRequest() != null) {
+			if (StringUtils.isEmpty(serviceTypeId)) {
+				setServiceTypeId(ServletActionContext.getRequest().getParameter("serviceTypeId"));
+			}
+			if (StringUtils.isEmpty(receiptNumber)) {
+				setReceiptNumber(ServletActionContext.getRequest().getParameter("receiptNumber"));
+			}
+			if (fromDate == null) {
+				String fDateStr = ServletActionContext.getRequest().getParameter("fromDate");
+				if (StringUtils.isNotEmpty(fDateStr)) {
+					try {
+						setFromDate(new SimpleDateFormat("dd/MM/yyyy").parse(fDateStr));
+					} catch (Exception e) {
+						LOGGER.error("Error parsing fromDate: " + fDateStr, e);
+					}
+				}
+			}
+			if (toDate == null) {
+				String tDateStr = ServletActionContext.getRequest().getParameter("toDate");
+				if (StringUtils.isNotEmpty(tDateStr)) {
+					try {
+						setToDate(new SimpleDateFormat("dd/MM/yyyy").parse(tDateStr));
+					} catch (Exception e) {
+						LOGGER.error("Error parsing toDate: " + tDateStr, e);
+					}
+				}
+			}
+		}
 		if (StringUtils.isEmpty(serviceTypeId) || serviceTypeId.equals("-1"))
 			addActionError(getText("error.select.service.type"));
 		if (fromDate != null && toDate != null && !fromDate.equals(toDate) && !fromDate.before(toDate))

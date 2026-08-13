@@ -79,14 +79,21 @@ public class RemittanceServiceImpl implements RemittanceService{
     
     @Override
     public List<RemittanceReportModel> getRemittanceColectionsReports(RemittanceReportModel model) {
-        RemittanceSearcCriteria criteria = new RemittanceSearcCriteria();
-        this.prepareRemittanceSearchCriteria(model, criteria);
-        RemittanceResponse response = microserviceUtils.getRemittance(criteria);
-        List<Remittance> remittances = response.getRemittances();
-        List<RemittanceReportModel> resultList = new ArrayList<>();
-        if(remittances.isEmpty()){
-            return resultList;
-        }
+        /*
+         * Spring 6 migration note:
+         * Null response bodies and client exceptions from the remittance service now
+         * propagate more directly. Normalize them to an empty report list so the
+         * existing AJAX/report UI can render "no records" instead of failing.
+         */
+        try {
+            RemittanceSearcCriteria criteria = new RemittanceSearcCriteria();
+            this.prepareRemittanceSearchCriteria(model, criteria);
+            RemittanceResponse response = microserviceUtils.getRemittance(criteria);
+            if (response == null || response.getRemittances() == null || response.getRemittances().isEmpty()) {
+                return Collections.emptyList();
+            }
+            List<Remittance> remittances = response.getRemittances();
+            List<RemittanceReportModel> resultList = new ArrayList<>();
         List<Instrument> instruments = this.getInstruments(model, remittances);
         Set<String> receiptIds = new HashSet();
         Map<String, Instrument> recInstrumentMap = new HashMap<>();
@@ -124,6 +131,10 @@ public class RemittanceServiceImpl implements RemittanceService{
                 }
         }
         return resultList;
+        } catch (Exception e) {
+            LOGGER.warn("Microservice call for remittance search failed: {}", e.getMessage());
+            return Collections.emptyList();
+        }
     }
     
     private List<Instrument> getInstruments(RemittanceReportModel model, List<Remittance> remittances){

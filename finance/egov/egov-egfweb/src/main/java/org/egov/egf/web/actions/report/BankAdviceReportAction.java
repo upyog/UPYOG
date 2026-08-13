@@ -48,6 +48,7 @@
 package org.egov.egf.web.actions.report;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -188,7 +189,13 @@ public class BankAdviceReportAction extends BaseFormAction {
 			StringBuilder queryString = new StringBuilder(
 					"SELECT ih.id, ih.instrumentNumber FROM InstrumentHeader ih, InstrumentVoucher iv, Paymentheader ph ")
 							.append("WHERE ih.isPayCheque ='1' AND ih.bankAccountId.id = ? AND ih.statusId.description in ('New')")
-							.append(" AND ih.statusId.moduletype='Instrument' AND iv.instrumentHeaderId = ih.id")
+							/*
+							 * Hibernate 6 migration note:
+							 * InstrumentVoucher.instrumentHeaderId is an InstrumentHeader association.
+							 * Compare it with the InstrumentHeader alias rather than ih.id, because
+							 * Hibernate 6 rejects entity-vs-id comparisons in HQL.
+							 */
+							.append(" AND ih.statusId.moduletype='Instrument' AND iv.instrumentHeaderId = ih")
 							.append(" and ih.bankAccountId is not null ")
 							.append("AND iv.voucherHeaderId = ph.voucherheader AND ph.bankaccount = ih.bankAccountId AND ph.type =? ")
 							.append("GROUP BY ih.instrumentNumber,ih.id");
@@ -284,7 +291,22 @@ public class BankAdviceReportAction extends BaseFormAction {
     @ValidationErrorPage(NEW)
     @Action(value = "/report/bankAdviceReport-search")
     public String search() {
-        if (instrumentnumber.getId() == -1) {
+        /*
+         * Struts 7 migration note:
+         * The selected instrument can arrive as instrumentnumber.id instead of a fully
+         * populated nested InstrumentHeader. Resolve and load it from the request before
+         * applying the existing mandatory selection validation.
+         */
+        if (instrumentnumber == null || instrumentnumber.getId() == null) {
+            String instId = ServletActionContext.getRequest().getParameter("instrumentnumber.id");
+            if (instId == null || instId.trim().isEmpty()) {
+                instId = ServletActionContext.getRequest().getParameter("instrumentnumber");
+            }
+            if (instId != null && !instId.trim().isEmpty() && !"-1".equals(instId.trim())) {
+                instrumentnumber = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?", Long.valueOf(instId.trim()));
+            }
+        }
+        if (instrumentnumber == null || instrumentnumber.getId() == null || instrumentnumber.getId() == -1) {
             addFieldError("searchCriteria", "Please select all search criteria");
             return NEW;
         }

@@ -189,7 +189,14 @@ public class BillRegisterSearchAction extends BaseFormAction {
         final StringBuilder query = new StringBuilder(
                 "select br.expendituretype , br.billtype ,br.billnumber , br.billdate ,")
                         .append(" br.billamount , br.passedamount ,egwstatus.description,billmis.sourcePath,")
-                        .append(" br.id ,br.status.id,egwstatus.description ,br.state.id,br.lastModifiedBy.id ")
+                        /*
+                         * Hibernate 6 migration note:
+                         * br.lastModifiedBy is mapped as a User association. Selecting
+                         * br.lastModifiedBy.id caused semantic/type issues in this legacy
+                         * projection path, while the downstream code expects the associated
+                         * object from the result row.
+                         */
+                        .append(" br.id ,br.status.id,egwstatus.description ,br.state.id,br.lastModifiedBy ")
                         .append(" from EgBillregister br, EgBillregistermis billmis , EgwStatus egwstatus")
                         .append(" where   billmis.egBillregister.id = br.id and egwstatus.id = br.status.id  ")
                         .append(" and br.expendituretype=:expendituretype");

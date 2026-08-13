@@ -245,13 +245,31 @@ public class TransactionSummaryController {
 	}
 
 	@GetMapping(value = "/ajax/getMajorHeads")
-	public @ResponseBody List<CChartOfAccounts> getMajorHeads(@RequestParam("type") Character type) {
+	public @ResponseBody List<CChartOfAccounts> getMajorHeads(@RequestParam(value = "type", required = false) Character type) {
+		/*
+		 * Spring 6 migration note:
+		 * @RequestParam is required unless explicitly marked optional. This endpoint is
+		 * called while cascading dropdowns initialize, so missing type should mean "no
+		 * options yet" instead of an HTTP 400 response.
+		 */
+		if (type == null) {
+			return new ArrayList<>();
+		}
 		return chartOfAccountsDAO.findByType(type); 
 	}
 
 	@GetMapping(value = "/ajax/getMinorHeads")
-	public @ResponseBody List<CChartOfAccounts> getMinorHeads(@RequestParam("majorCode") @SanitizeHtml String majorCode,
-			@RequestParam("classification") Long classification) {
+	public @ResponseBody List<CChartOfAccounts> getMinorHeads(@RequestParam(value = "majorCode", required = false) @SanitizeHtml String majorCode,
+			@RequestParam(value = "classification", required = false) Long classification) {
+		/*
+		 * Spring 6 migration note:
+		 * The UI can call this before a major head is selected. Treat blank majorCode
+		 * as an empty result set to preserve the legacy AJAX behavior under stricter
+		 * request parameter validation.
+		 */
+		if (majorCode == null || majorCode.trim().isEmpty()) {
+			return new ArrayList<>();
+		}
 		return chartOfAccountsDAO.findByMajorCodeAndClassification(majorCode, classification);
 	}
 
