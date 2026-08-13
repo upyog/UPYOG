@@ -125,9 +125,9 @@ const VenueSearch = ({ t, config, onSelect, userType, formData }) => {
 
 
     const columns = [
-    { Header: `${t("CHB_HALL_NAME")}` + "/" + `${t("CHB_PARK")}`, accessor: "name" },
+    { Header: t("CHB_VENUE_NAME_LABEL"), accessor: "name" },
     { Header: `${t("CHB_ADDRESS")}`, accessor: "address" },
-    { Header: `${t("CHB_HALL_CODE")}`, accessor: "venueCode" },
+    { Header: t("CHB_HALL_CODE_LABEL"), accessor: "venueCode" },
     { Header: `${t("CHB_BOOKING_DATE")}`, accessor: "bookingDate" },
     { Header: `${t("CHB_STATUS")}`, accessor: "status" },
   ];
