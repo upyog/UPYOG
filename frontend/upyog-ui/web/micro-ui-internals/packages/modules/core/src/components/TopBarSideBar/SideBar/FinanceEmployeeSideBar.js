@@ -122,7 +122,7 @@ const FinanceEmployeeSideBar = ({ microUiModuleEnable, isFinanceEnabled }) => {
         const navUrlMatches = navUrl.includes(codeLower);
         let egfMatches = false;
         if (codeLower === "finance") {
-          egfMatches = pathRoot === "egf" || parentModule.includes("egf") || navUrl.includes("services/egf") || navUrl.includes("services/");
+          egfMatches = pathRoot === "egf" || parentModule.includes("egf") || navUrl.includes("services/egf") || navUrl.includes("services/finance");
         }
         return pathMatches || parentModuleMatches || navUrlMatches || egfMatches;
       });
@@ -158,7 +158,7 @@ const FinanceEmployeeSideBar = ({ microUiModuleEnable, isFinanceEnabled }) => {
         item.path.startsWith("EGF") || 
         (item.parentModule && item.parentModule.toLowerCase().includes("egf")) ||
         (item.parentModule && item.parentModule.toLowerCase().includes("finance")) ||
-        (item.navigationURL && item.navigationURL.includes("services/"))
+        (item.navigationURL && (item.navigationURL.toLowerCase().includes("services/egf") || item.navigationURL.toLowerCase().includes("services/finance")))
       );
       if (isFinance) {
         let newPath = item.path;
