@@ -586,11 +586,11 @@ type BaseProvider struct {                // public abstract class BaseProvider
 
 | Provider | What It Fetches | Backend API Called |
 |----------|----------------|-------------------|
-| `QuickSummaryProvider` | 4 aggregate counts (apps, payments, completed, drafts) | `/inbox/v2/_count`, `/billing-service/bill/v2/_count` |
-| `RecentApplicationsProvider` | Paginated recent applications | `/inbox/v2/_search` |
+| `QuickSummaryProvider` | 4 aggregate counts (apps, payments, completed, drafts) | `/egov-workflow-v2/egov-wf/process/dashboard/_count`, `/billing-service/bill/v2/short/_search` |
+| `RecentApplicationsProvider` | Paginated recent applications | `/egov-workflow-v2/egov-wf/process/_search` |
 | `NotificationsProvider` | User notifications, optional unread filter | `/egov-user-event/v1/events/_search` |
-| `DraftApplicationsProvider` | Draft (unsubmitted) applications | `/inbox/v2/_search?status=DRAFT` |
-| `DueRenewalsProvider` | Licences/registrations nearing expiry | `/tl-services/v1/BPAREG/_search` |
+| `DraftApplicationsProvider` | Draft (unsubmitted) applications | `/upyog-draft-service/draft/v1/_search` |
+| `DueRenewalsProvider` | Bills/licences nearing expiry | `/billing-service/bill/v2/short/_search` |
 | `UpcomingEventsProvider` | Future public events | `/egov-user-event/v1/events/_search?eventType=EVENTSONGROUND` |
 | `AdvertisementBannersProvider` | Ad banners with optional placement filter | `/advertisement-service/v1/advertisements/_search` |
 

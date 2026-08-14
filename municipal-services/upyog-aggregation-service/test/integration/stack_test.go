@@ -126,7 +126,7 @@ func buildStack(t *testing.T, opts stackOptions) http.Handler {
 	reg.Register(providers.NewNewApplicationsProvider(
 		newClient("egov-workflow-v2", opts.workflowURL), nil, log, m, time.Minute))
 	reg.Register(providers.NewRecentApplicationsProvider(
-		newClient("upyog-backend", opts.inboxURL), nil, log, m, time.Minute))
+		newClient("egov-workflow-v2", opts.workflowURL), nil, log, m, time.Minute))
 
 	exec := executor.NewExecutor(reg, log, m, 5*time.Second, opts.providerTimeouts)
 	eng := engine.NewEngine(exec, reg, log, m)

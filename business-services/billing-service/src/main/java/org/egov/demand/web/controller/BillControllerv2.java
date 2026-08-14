@@ -15,6 +15,8 @@ import org.egov.demand.service.BillServicev2;
 import org.egov.demand.util.Constants;
 import org.egov.demand.web.contract.BillRequestV2;
 import org.egov.demand.web.contract.BillResponseV2;
+import org.egov.demand.web.contract.ShortBillResponseV2;
+import org.egov.demand.web.contract.ShortBillV2;
 import org.egov.demand.web.contract.RequestInfoWrapper;
 import org.egov.demand.web.contract.factory.ResponseFactory;
 import org.egov.demand.web.validator.BillValidator;
@@ -54,6 +56,47 @@ public class BillControllerv2 {
 		RequestInfo requestInfo = requestInfoWrapper.getRequestInfo();
 		billValidator.validateBillSearchCriteria(billCriteria, requestInfo);
 		return new ResponseEntity<>(billService.searchBill(billCriteria,requestInfo), HttpStatus.OK);
+	}
+
+	/**
+	 * Searches and returns a compact list of bills containing only core fields
+	 * (id, totalAmount, businessService, billNumber, billDate, consumerCode).
+	 *
+	 * @param requestInfoWrapper Request body envelope containing RequestInfo
+	 * @param billCriteria Query parameters mapping search criteria (tenantId, mobileNumber, isActive, etc.)
+	 * @return ResponseEntity containing ShortBillResponseV2
+	 */
+	@PostMapping("short/_search")
+	@ResponseBody
+	public ResponseEntity<?> shortSearch(@RequestBody @Valid final RequestInfoWrapper requestInfoWrapper,
+			@ModelAttribute @Valid final BillSearchCriteria billCriteria) {
+
+		RequestInfo requestInfo = requestInfoWrapper.getRequestInfo();
+		billValidator.validateBillSearchCriteria(billCriteria, requestInfo);
+		
+		BillResponseV2 fullResponse = billService.searchBill(billCriteria, requestInfo);
+		
+		java.util.List<ShortBillV2> shortBills = new java.util.ArrayList<>();
+		if (fullResponse.getBill() != null) {
+			for (org.egov.demand.model.BillV2 b : fullResponse.getBill()) {
+				ShortBillV2 sb = ShortBillV2.builder()
+						.id(b.getId())
+						.totalAmount(b.getTotalAmount())
+						.businessService(b.getBusinessService())
+						.billNumber(b.getBillNumber())
+						.billDate(b.getBillDate())
+						.consumerCode(b.getConsumerCode())
+						.build();
+				shortBills.add(sb);
+			}
+		}
+		
+		ShortBillResponseV2 shortResponse = ShortBillResponseV2.builder()
+				.responseInfo(fullResponse.getResposneInfo())
+				.bill(shortBills)
+				.build();
+				
+		return new ResponseEntity<>(shortResponse, HttpStatus.OK);
 	}
 
 

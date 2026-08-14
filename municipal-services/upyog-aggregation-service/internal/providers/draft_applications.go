@@ -64,8 +64,20 @@ func (p *DraftApplicationsProvider) Execute(
 	request dto.ProviderRequest,
 	aggReq dto.AggregateRequest,
 ) (*dto.ProviderResponse, error) {
-	body := p.buildSearchBody(request, aggReq.TenantID, common.UserID(ctx))
-	body.RequestInfo = common.NewRequestInfo(ctx, aggReq.RequestID)
+	// Extract user UUID directly from the RequestInfo instead of context to fix draft mapping
+	var reqInfo struct {
+		UserInfo struct {
+			UUID string `json:"uuid"`
+		} `json:"userInfo"`
+	}
+	_ = json.Unmarshal(aggReq.RequestInfo, &reqInfo)
+	userUUID := reqInfo.UserInfo.UUID
+	if userUUID == "" {
+		userUUID = common.UserID(ctx)
+	}
+
+	body := p.buildSearchBody(request, aggReq.TenantID, userUUID)
+	body.RequestInfo = aggReq.RequestInfo
 
 	headers := map[string]string{
 		common.HeaderTenantID: aggReq.TenantID,
@@ -105,8 +117,8 @@ type draftSearchResponse struct {
 }
 
 type draftSearchBody struct {
-	RequestInfo common.RequestInfo `json:"RequestInfo"`
-	Criteria draftSearchCriteria `json:"DraftSearchCriteria"`
+	RequestInfo json.RawMessage     `json:"RequestInfo"`
+	Criteria    draftSearchCriteria `json:"draftSearchCriteria"`
 }
 
 type draftSearchCriteria struct {

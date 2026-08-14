@@ -80,10 +80,11 @@ func TestNewApplicationsProvider_Execute(t *testing.T) {
 		},
 	}
 	aggReq := dto.AggregateRequest{
-		RequestID: "f58c5b1d-2d53-4f8d-9cb3-1f5d6f0c2b45",
-		Page:      "citizen-home",
-		TenantID:  "pb.amritsar",
-		Requests:  []dto.ProviderRequest{req},
+		RequestID:   "f58c5b1d-2d53-4f8d-9cb3-1f5d6f0c2b45",
+		Page:        "citizen-home",
+		TenantID:    "pb.amritsar",
+		Requests:    []dto.ProviderRequest{req},
+		RequestInfo: []byte(`{"authToken":"test-token","msgId":"f58c5b1d-2d53-4f8d-9cb3-1f5d6f0c2b45"}`),
 	}
 
 	resp, err := p.Execute(ctx, req, aggReq)
@@ -121,11 +122,22 @@ func TestNewApplicationsProvider_Execute(t *testing.T) {
 	if err := json.Unmarshal(gotBody, &body); err != nil {
 		t.Fatalf("failed to parse request body: %v", err)
 	}
-	if body.RequestInfo.AuthToken != "test-token" {
-		t.Errorf("expected authToken in RequestInfo, got %q", body.RequestInfo.AuthToken)
+
+	var reqInfo struct {
+		AuthToken string `json:"authToken"`
+		MsgID     string `json:"msgId"`
 	}
-	if body.RequestInfo.MsgID != aggReq.RequestID {
-		t.Errorf("expected msgId=%q, got %q", aggReq.RequestID, body.RequestInfo.MsgID)
+	if len(body.RequestInfo) > 0 && string(body.RequestInfo) != "null" {
+		if err := json.Unmarshal(body.RequestInfo, &reqInfo); err != nil {
+			t.Fatalf("failed to parse RequestInfo: %v", err)
+		}
+	}
+
+	if reqInfo.AuthToken != "test-token" {
+		t.Errorf("expected authToken in RequestInfo, got %q", reqInfo.AuthToken)
+	}
+	if reqInfo.MsgID != aggReq.RequestID {
+		t.Errorf("expected msgId=%q, got %q", aggReq.RequestID, reqInfo.MsgID)
 	}
 
 	// --- Assert the mapped provider response. ---

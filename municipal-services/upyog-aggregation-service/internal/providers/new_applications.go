@@ -126,7 +126,7 @@ func (p *NewApplicationsProvider) Execute(
 
 	// egov-workflow-v2 expects a DIGIT RequestInfo envelope in the POST body.
 	body := workflowSearchBody{
-		RequestInfo: common.NewRequestInfo(ctx, aggReq.RequestID),
+		RequestInfo: aggReq.RequestInfo,
 	}
 
 	resp, err := p.Client.Post(ctx, path, body, headers)
@@ -212,7 +212,7 @@ func (p *NewApplicationsProvider) buildSearchQuery(
 
 // workflowSearchBody is the JSON body sent to the process search endpoint.
 type workflowSearchBody struct {
-	RequestInfo common.RequestInfo `json:"RequestInfo"`
+	RequestInfo json.RawMessage `json:"RequestInfo"`
 }
 
 // processInstanceSearchResponse mirrors the shape of the egov-workflow-v2

@@ -175,4 +175,45 @@ public class WorKflowRepository {
         Integer count =  jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
         return count;
     }
+
+    /**
+     * Retrieves the count of process instances matching dashboard criteria.
+     *
+     * @param criteria search criteria filter containing tenantId, statuses, etc.
+     * @return count of matching process instances
+     */
+    public Integer getDashboardApplicationCount(ProcessInstanceSearchCriteria criteria) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getDashboardProcessInstanceCount(criteria, preparedStmtList);
+        log.info("Query : "+query+" , preparedStatementList : "+preparedStmtList );
+        return jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
+     }
+
+    /**
+     * Retrieves dashboard process instances matching the search criteria.
+     *
+     * @param criteria search criteria filter containing tenantId, statuses, etc.
+     * @return List of matching ProcessInstance records
+     */
+    public List<ProcessInstance> getDashboardApplications(ProcessInstanceSearchCriteria criteria) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        List<String> ids = getDashboardProcessInstanceIds(criteria);
+        if (CollectionUtils.isEmpty(ids)) {
+            return new LinkedList<>();
+        }
+        String query = queryBuilder.getDashboardProcessInstanceSearchQueryById(ids, preparedStmtList);
+        return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+    }
+
+    /**
+     * Helper method to fetch list of process instance IDs matching the dashboard search criteria.
+     *
+     * @param criteria search criteria filter
+     * @return List of matching String IDs
+     */
+    private List<String> getDashboardProcessInstanceIds(ProcessInstanceSearchCriteria criteria) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getDashboardProcessInstanceIds(criteria, preparedStmtList);
+        return jdbcTemplate.query(query, preparedStmtList.toArray(), new SingleColumnRowMapper<>(String.class));
+    }
 }

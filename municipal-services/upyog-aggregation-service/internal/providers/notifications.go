@@ -84,9 +84,9 @@ func (p *NotificationsProvider) Execute(
 	}
 
 	body := struct {
-		RequestInfo common.RequestInfo `json:"RequestInfo"`
+		RequestInfo json.RawMessage `json:"RequestInfo"`
 	}{
-		RequestInfo: common.NewRequestInfo(ctx, aggReq.RequestID),
+		RequestInfo: aggReq.RequestInfo,
 	}
 
 	resp, err := p.Client.Post(ctx, path, body, headers)
@@ -102,18 +102,52 @@ func (p *NotificationsProvider) Execute(
 		return nil, fmt.Errorf("unmarshal notifications response: %w", err)
 	}
 
+	notifications := make([]Notification, 0, len(result.Events))
+	for _, evt := range result.Events {
+		var actionUrl string
+		if len(evt.Actions.ActionUrls) > 0 {
+			actionUrl = evt.Actions.ActionUrls[0].ActionUrl
+		}
+
+		notifications = append(notifications, Notification{
+			ID:        evt.ID,
+			Type:      evt.EventType,
+			Subject:   evt.Name,
+			Message:   evt.Description,
+			Timestamp: evt.AuditDetails.CreatedTime,
+			Read:      false,
+			ActionURL: actionUrl,
+		})
+	}
+
 	p.Log.WithContext(ctx).Debug("fetched notifications",
-		zap.Int("count", len(result.Events)),
+		zap.Int("count", len(notifications)),
 	)
 
 	return &dto.ProviderResponse{
 		Status: common.StatusSuccess,
-		Data:   result.Events,
+		Data:   notifications,
 	}, nil
 }
 
 // notificationSearchResponse mirrors the shape returned by the UPYOG
 // user-event search API.
 type notificationSearchResponse struct {
-	Events []Notification `json:"events"`
+	Events []egovEvent `json:"events"`
+}
+
+// egovEvent models the raw JSON structure returned by egov-user-event.
+type egovEvent struct {
+	ID           string `json:"id"`
+	EventType    string `json:"eventType"`
+	Name         string `json:"name"`
+	Description  string `json:"description"`
+	AuditDetails struct {
+		CreatedTime int64 `json:"createdTime"`
+	} `json:"auditDetails"`
+	Actions struct {
+		ActionUrls []struct {
+			ActionUrl string `json:"actionUrl"`
+		} `json:"actionUrls"`
+	} `json:"actions"`
 }

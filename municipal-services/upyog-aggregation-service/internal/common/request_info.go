@@ -17,9 +17,9 @@ type RequestInfo struct {
 	APIID     string    `json:"apiId"`
 	Ver       string    `json:"ver"`
 	Ts        int64     `json:"ts"`
-	MsgID     string    `json:"msgId"`
-	AuthToken string    `json:"authToken"`
-	UserInfo  *UserInfo `json:"userInfo,omitempty"`
+	MsgID     string   `json:"msgId"`
+	AuthToken string   `json:"authToken"`
+	UserInfo  UserInfo `json:"userInfo"`
 }
 
 // NewRequestInfo creates a standard RequestInfo structure populated from the context.
@@ -36,13 +36,7 @@ func NewRequestInfo(ctx context.Context, msgID string) RequestInfo {
 		AuthToken: AuthToken(ctx),
 	}
 
-	uuid := UserID(ctx)
-	if uuid != "" {
-		ri.UserInfo = &UserInfo{UUID: uuid}
-	} else {
-		// Even if empty, instantiate it for downstream services that require it
-		ri.UserInfo = &UserInfo{}
-	}
+	ri.UserInfo = UserInfo{UUID: UserID(ctx)}
 
 	return ri
 }

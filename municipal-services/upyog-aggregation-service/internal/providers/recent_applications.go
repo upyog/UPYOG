@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
 	"time"
 
 	"go.uber.org/zap"
@@ -24,24 +23,8 @@ import (
 
 const recentApplicationsProviderName = "recent-applications"
 
-// Application represents a single UPYOG inbox application entry.
-type Application struct {
-	// ID is the unique application identifier.
-	ID string `json:"id"`
-	// BusinessService is the service module (e.g. "PT", "TL", "WS").
-	BusinessService string `json:"businessService"`
-	// ApplicationNumber is the human-readable application number.
-	ApplicationNumber string `json:"applicationNumber"`
-	// Status is the current workflow status.
-	Status string `json:"status"`
-	// LastModifiedTime is the epoch-millis timestamp of the last update.
-	LastModifiedTime int64 `json:"lastModifiedTime"`
-	// TenantID is the ULB/tenant this application belongs to.
-	TenantID string `json:"tenantId"`
-}
-
 // RecentApplicationsProvider retrieves the most recently modified
-// applications from the UPYOG inbox search endpoint.
+// applications from the UPYOG process dashboard search endpoint.
 type RecentApplicationsProvider struct {
 	BaseProvider
 }
@@ -59,67 +42,112 @@ func NewRecentApplicationsProvider(
 	}
 }
 
-// Execute implements DataProvider. It builds query params from Pagination
-// and Sort, calls the inbox search API, and returns the parsed list.
+// Execute implements DataProvider. It builds the search body with Pagination,
+// calls the workflow dashboard search API, and returns the parsed list.
 func (p *RecentApplicationsProvider) Execute(
 	ctx context.Context,
 	request dto.ProviderRequest,
 	aggReq dto.AggregateRequest,
 ) (*dto.ProviderResponse, error) {
-	path := p.buildSearchPath(request)
+	path := "/egov-workflow-v2/egov-wf/process/dashboard/_search"
 
 	headers := map[string]string{
 		common.HeaderTenantID: aggReq.TenantID,
 	}
 
-	resp, err := p.Client.Get(ctx, path, headers)
-	if err != nil {
-		return nil, fmt.Errorf("GET %s: %w", path, err)
+	body := recentAppSearchBody{}
+	body.RequestInfo = aggReq.RequestInfo
+	body.Criteria.TenantID = aggReq.TenantID
+
+	// Extract user UUID directly from the RequestInfo instead of context
+	var reqInfo struct {
+		UserInfo struct {
+			UUID string `json:"uuid"`
+		} `json:"userInfo"`
 	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("GET %s returned status %d", path, resp.StatusCode)
+	_ = json.Unmarshal(aggReq.RequestInfo, &reqInfo)
+	if reqInfo.UserInfo.UUID != "" {
+		body.Criteria.CreatedBy = reqInfo.UserInfo.UUID
+	} else {
+		body.Criteria.CreatedBy = common.UserID(ctx)
+	}
+	if request.Pagination != nil {
+		body.Criteria.Offset = request.Pagination.Page * request.Pagination.Size
+		body.Criteria.Limit = request.Pagination.Size
+	} else {
+		body.Criteria.Offset = 0
+		body.Criteria.Limit = 50
 	}
 
-	var result inboxSearchResponse
+	body.Criteria.Status = []string{
+		"APPLIED",
+		"APPROVALPENDING",
+		"ASSIGN_DSO",
+		"ASSING_DSO",
+		"CHALLAN_GENERATED",
+		"CREATED",
+		"INITIATED",
+		"INWORKFLOW",
+		"OPEN",
+		"PENDINGFORASSIGNMENT",
+		"PENDINGPAYMENT",
+		"PENDING_APPL_FEE_PAYMENT",
+		"PENDING_FOR_APPROVAL",
+		"PENDING_FOR_COUNTER_EMPLOYEE_ACTION",
+		"PENDING_FOR_FIELD_INSPECTOR_ASSIGNMENT",
+		"PENDING_FOR_VERIFICATION",
+		"REFUNDPENDING",
+		"REQUESTCREATED",
+		"SCHEDULED",
+		"SEND_TO_CITIZEN",
+		"WAITING_FOR_DISPOSAL",
+		"WASTE_PICKUP_INPROGRESS",
+	}
+
+	resp, err := p.Client.Post(ctx, path, body, headers)
+	if err != nil {
+		return nil, fmt.Errorf("POST %s: %w", path, err)
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("POST %s returned status %d", path, resp.StatusCode)
+	}
+
+	var result recentAppProcessInstanceSearchResponse
 	if err := json.Unmarshal(resp.Body, &result); err != nil {
-		return nil, fmt.Errorf("unmarshal inbox response: %w", err)
+		return nil, fmt.Errorf("unmarshal workflow response: %w", err)
 	}
 
 	p.Log.WithContext(ctx).Debug("fetched recent applications",
-		zap.Int("count", len(result.Items)),
+		zap.Int("count", len(result.ProcessInstances)),
 	)
 
 	return &dto.ProviderResponse{
 		Status: common.StatusSuccess,
-		Data:   result.Items,
+		Data:   result,
 	}, nil
 }
 
-// inboxSearchResponse mirrors the shape of the UPYOG /inbox/v2/_search
-// JSON response.
-type inboxSearchResponse struct {
-	Items []Application `json:"items"`
+type recentAppSearchBody struct {
+	RequestInfo json.RawMessage `json:"RequestInfo"`
+	Criteria    struct {
+		TenantID  string   `json:"tenantId"`
+		CreatedBy string   `json:"createdBy"`
+		Offset    int      `json:"offset"`
+		Limit     int      `json:"limit"`
+		Status    []string `json:"status"`
+	} `json:"ProcessInstanceSearchCriteria"`
 }
 
-// buildSearchPath constructs the query-string-encoded search path from
-// the client-supplied pagination and sort parameters.
-func (p *RecentApplicationsProvider) buildSearchPath(request dto.ProviderRequest) string {
-	path := "/inbox/v2/_search?"
+type recentAppProcessInstanceSearchResponse struct {
+	ProcessInstances []recentAppProcessInstance `json:"ProcessInstances"`
+	TotalCount       int                        `json:"totalCount"`
+}
 
-	if request.Pagination != nil {
-		path += "offset=" + strconv.Itoa(request.Pagination.Page*request.Pagination.Size) +
-			"&limit=" + strconv.Itoa(request.Pagination.Size) + "&"
-	} else {
-		path += "offset=0&limit=10&"
-	}
-
-	if request.Sort != nil {
-		path += "sortBy=" + request.Sort.Field +
-			"&sortOrder=" + request.Sort.Order + "&"
-	} else {
-		path += "sortBy=lastModifiedTime&sortOrder=DESC&"
-	}
-
-	// Trim trailing '&' or '?'.
-	return path[:len(path)-1]
+type recentAppProcessInstance struct {
+	ID              string `json:"id"`
+	TenantID        string `json:"tenantId"`
+	BusinessService string `json:"businessService"`
+	BusinessID      string `json:"businessId"`
+	Action          string `json:"action"`
+	ModuleName      string `json:"moduleName"`
 }

@@ -15,7 +15,7 @@ server:
   enableCompression: true
 
 redis:
-  host: redis-headless.dev
+  host: localhost
   port: 6379
   password: ""
   db: 0
@@ -27,7 +27,7 @@ redis:
   enabled: true
 
 auth:
-  enabled: true
+  enabled: false
   jwksUrl: "https://keycloak.dev.upyog.org/auth/realms/upyog/protocol/openid-connect/certs"
   issuer: "https://keycloak.dev.upyog.org/auth/realms/upyog"
   audience: "upyog-client"

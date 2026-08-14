@@ -2,8 +2,12 @@
 // These structures define the contract between the API layer and consumers.
 package dto
 
+import "encoding/json"
+
 // AggregateRequest is the top-level request body for the POST /api/v1/aggregate endpoint.
 type AggregateRequest struct {
+	// RequestInfo is the standard eGov request info block passed through to backend services.
+	RequestInfo json.RawMessage `json:"requestInfo" binding:"required"`
 	// RequestID is a client-provided unique identifier for the request.
 	RequestID string `json:"requestId" binding:"required,uuid"`
 	// Page identifies the logical page the client is rendering (e.g., "citizen-home").

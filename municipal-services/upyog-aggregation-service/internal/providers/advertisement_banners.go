@@ -71,7 +71,7 @@ func (p *AdvertisementBannersProvider) Execute(
 	aggReq dto.AggregateRequest,
 ) (*dto.ProviderResponse, error) {
 	path := fmt.Sprintf(
-		"/advertisement-service/v1/advertisements/_search?tenantId=%s",
+		"/adv-services/booking/v1/_search?tenantId=%s",
 		aggReq.TenantID,
 	)
 
@@ -86,12 +86,18 @@ func (p *AdvertisementBannersProvider) Execute(
 		common.HeaderTenantID: aggReq.TenantID,
 	}
 
-	resp, err := p.Client.Get(ctx, path, headers)
+	body := struct {
+		RequestInfo json.RawMessage `json:"RequestInfo"`
+	}{
+		RequestInfo: aggReq.RequestInfo,
+	}
+
+	resp, err := p.Client.Post(ctx, path, body, headers)
 	if err != nil {
-		return nil, fmt.Errorf("GET %s: %w", path, err)
+		return nil, fmt.Errorf("POST %s: %w", path, err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("GET %s returned status %d", path, resp.StatusCode)
+		return nil, fmt.Errorf("POST %s returned status %d", path, resp.StatusCode)
 	}
 
 	var result bannerSearchResponse

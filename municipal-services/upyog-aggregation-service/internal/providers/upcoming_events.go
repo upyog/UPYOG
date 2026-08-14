@@ -81,9 +81,9 @@ func (p *UpcomingEventsProvider) Execute(
 	}
 
 	body := struct {
-		RequestInfo common.RequestInfo `json:"RequestInfo"`
+		RequestInfo json.RawMessage `json:"RequestInfo"`
 	}{
-		RequestInfo: common.NewRequestInfo(ctx, aggReq.RequestID),
+		RequestInfo: aggReq.RequestInfo,
 	}
 
 	resp, err := p.Client.Post(ctx, path, body, headers)

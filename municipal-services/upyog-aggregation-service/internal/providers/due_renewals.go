@@ -22,21 +22,6 @@ import (
 
 const dueRenewalsProviderName = "due-renewals"
 
-// Renewal represents a single licence/registration renewal entry.
-type Renewal struct {
-	// ID is the unique licence/registration identifier.
-	ID string `json:"id"`
-	// BusinessService is the service module (e.g. "TL", "BPAREG").
-	BusinessService string `json:"businessService"`
-	// ApplicationNumber is the human-readable licence number.
-	ApplicationNumber string `json:"applicationNumber"`
-	// ExpiryDate is the epoch-millis timestamp when the licence expires.
-	ExpiryDate int64 `json:"expiryDate"`
-	// Status is the current renewal status.
-	Status string `json:"status"`
-	// DaysRemaining is the number of calendar days until expiry.
-	DaysRemaining int `json:"daysRemaining"`
-}
 
 // DueRenewalsProvider fetches licences and registrations nearing expiry.
 type DueRenewalsProvider struct {
@@ -63,28 +48,31 @@ func (p *DueRenewalsProvider) Execute(
 	request dto.ProviderRequest,
 	aggReq dto.AggregateRequest,
 ) (*dto.ProviderResponse, error) {
-	// Build status filter from request filters or default to APPROVED.
-	statusFilter := "APPROVED"
-	if request.Filters != nil {
-		if v, ok := request.Filters["status"].(string); ok && v != "" {
-			statusFilter = v
-		}
+	// Parse mobileNumber and tenantId from the RequestInfo instead of relying on context defaults
+	var reqInfo struct {
+		UserInfo struct {
+			MobileNumber string `json:"mobileNumber"`
+			TenantID     string `json:"tenantId"`
+		} `json:"userInfo"`
+	}
+	_ = json.Unmarshal(aggReq.RequestInfo, &reqInfo)
+	userMobile := reqInfo.UserInfo.MobileNumber
+	tenantID := reqInfo.UserInfo.TenantID
+	if tenantID == "" {
+		tenantID = aggReq.TenantID
 	}
 
-	path := fmt.Sprintf(
-		"/tl-services/v1/BPAREG/_search?tenantId=%s&status=%s",
-		aggReq.TenantID,
-		statusFilter,
-	)
+	// Previously called /tl-services/v1/BPAREG/_search. Changed to hit billing service to fetch due renewals
+	path := fmt.Sprintf("/billing-service/bill/v2/short/_search?tenantId=%s&mobileNumber=%s&isActive=true&status=ACTIVE", tenantID, userMobile)
 
 	headers := map[string]string{
 		common.HeaderTenantID: aggReq.TenantID,
 	}
 
 	body := struct {
-		RequestInfo common.RequestInfo `json:"RequestInfo"`
+		RequestInfo json.RawMessage `json:"RequestInfo"`
 	}{
-		RequestInfo: common.NewRequestInfo(ctx, aggReq.RequestID),
+		RequestInfo: aggReq.RequestInfo,
 	}
 
 	resp, err := p.Client.Post(ctx, path, body, headers)
@@ -95,23 +83,19 @@ func (p *DueRenewalsProvider) Execute(
 		return nil, fmt.Errorf("POST %s returned status %d", path, resp.StatusCode)
 	}
 
-	var result renewalSearchResponse
-	if err := json.Unmarshal(resp.Body, &result); err != nil {
+	var searchResult struct {
+		Bill []interface{} `json:"Bill"`
+	}
+	if err := json.Unmarshal(resp.Body, &searchResult); err != nil {
 		return nil, fmt.Errorf("unmarshal renewals response: %w", err)
 	}
 
 	p.Log.WithContext(ctx).Debug("fetched due renewals",
-		zap.Int("count", len(result.Licenses)),
+		zap.Int("count", len(searchResult.Bill)),
 	)
 
 	return &dto.ProviderResponse{
 		Status: common.StatusSuccess,
-		Data:   result.Licenses,
+		Data:   searchResult.Bill,
 	}, nil
-}
-
-// renewalSearchResponse mirrors the shape of the UPYOG TL/BPAREG search
-// JSON response.
-type renewalSearchResponse struct {
-	Licenses []Renewal `json:"Licenses"`
 }
