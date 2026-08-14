@@ -89,9 +89,8 @@
     <artifactId>hibernate-ehcache</artifactId>
     <version>5.6.15.Final</version>
 </dependency>
-		<!--Removed ehcache-web as it is based on legacy Ehcache 2.x and javax.servlet APIs,
-        which are incompatible with WildFly 26/Jakarta EE. The dependency is no longer required
-		and removing it avoids compatibility and dependency conflicts.-->
+		<!--Removed ehcache-web as it is based on legacy Ehcache 2.x and javax.servlet APIs.
+        Removing it avoids compatibility and dependency conflicts.-->
 <!--<dependency>-->
 <!--    <groupId>net.sf.ehcache</groupId>-->
 <!--    <artifactId>ehcache-core</artifactId>-->
