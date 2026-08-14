@@ -118,6 +118,7 @@ public class ChartOfAccountsService extends PersistenceService<CChartOfAccounts,
 
 	@Transactional
 	public void updateActiveForPostingByMaterializedPath(final String materializedPath) {
+		// Replaced createSQLQuery and setString with createNativeQuery and setParameter for Hibernate 6 native SQL
 		final Query entitysQuery = getSession().createNativeQuery(
 				"update chartofaccounts set isactiveforposting = true where isactiveforposting = false and id in (select distinct bg.mincode from egf_budgetgroup bg,egf_budgetdetail bd where bd.budgetgroup = bg.id  and bd.materializedpath like :materializedPath ) ");
 		entitysQuery.setParameter("materializedPath", materializedPath + "%");

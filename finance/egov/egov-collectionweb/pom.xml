@@ -86,7 +86,7 @@
 <!--        </dependency>-->
 
 
-        <!-- NEW -->
+        <!-- Replaced legacy org.apache.tiles with com.github.tntim96.apache.tiles for Jakarta Servlet 6 compatibility -->
         <dependency>
             <groupId>com.github.tntim96.apache.tiles</groupId>
             <artifactId>tiles-core</artifactId>
@@ -102,6 +102,7 @@
         <!-- VIEWS RELATED END -->
 
         <!-- HIBERNATE START -->
+        <!-- Updated Hibernate 6 (org.hibernate.orm), Jakarta Validation API, and Hibernate Validator groupIds for Jakarta EE 10 -->
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>

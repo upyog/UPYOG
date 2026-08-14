@@ -54,6 +54,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infra.workflow.entity.StateAware;
+// Swapped deprecated org.hibernate.validator.constraints.SafeHtml import for org.egov.infra.validation.SanitizeHtml
 import org.egov.infra.validation.SanitizeHtml;
 
 import java.util.Date;

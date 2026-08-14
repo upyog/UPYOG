@@ -276,6 +276,7 @@ public class ServiceDetailsAction extends BaseFormAction {
     @ValidationErrorPage(value = BEFOREMODIFY)
     @Action(value = "/service/serviceDetails-modify")
     public String modify() {
+        // Replaced legacy session.createCriteria with typed HQL query for Hibernate 6 compatibility
         final List<ServiceAccountDetails> accountList = getPersistenceService().getSession()
                 .createQuery("from ServiceAccountDetails where serviceDetails.id = :serviceId", ServiceAccountDetails.class)
                 .setParameter("serviceId", serviceDetails.getId())

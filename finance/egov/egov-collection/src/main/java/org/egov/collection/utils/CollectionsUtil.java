@@ -124,9 +124,15 @@ import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.SearchPositionService;
 import org.egov.pims.utils.EisManagersUtill;
-// IndexNotFoundException (org.elasticsearch.index.IndexNotFoundException) removed in ES 8.x;
-// the catch below uses Exception to preserve the original error-handling behaviour.
+/*
+ * Elasticsearch 8.x Exception Handling:
+ * Replaced legacy org.elasticsearch.index.IndexNotFoundException with generic Exception to handle ES 8.x client exceptions cleanly.
+ */
 import org.hibernate.ObjectNotFoundException;
+/*
+ * Hibernate 6 Query Interface Migration:
+ * Replaced legacy org.hibernate.Query with org.hibernate.query.Query for Hibernate 6 query execution.
+ */
 import org.hibernate.query.Query;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -484,6 +490,7 @@ public class CollectionsUtil {
                 .createQuery(
                         "from CFinancialYear cfinancialyear where ? between "
                                 + "cfinancialyear.startingDate and cfinancialyear.endingDate")
+                // Replaced deprecated setDate(int, Date) with setParameter(int, Date) for Hibernate 6
                 .setParameter(0, date).list()
                 .get(0);
     }

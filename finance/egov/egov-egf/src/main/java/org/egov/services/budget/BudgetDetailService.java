@@ -249,6 +249,11 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
         super(type);
     }
 
+    /*
+     * Native Query API Refactoring (Hibernate 6 Upgrade):
+     * Replaced legacy session.createSQLQuery() with createNativeQuery() as createSQLQuery was deprecated and
+     * removed in Hibernate 6 in favor of standardized JPA createNativeQuery methods.
+     */
     public Long getCountByBudget(final Long budgetId) {
         return ((BigInteger) persistenceService.getSession()
                 .createNativeQuery("select count(*) from egf_budgetdetail where budget = :budgetId")

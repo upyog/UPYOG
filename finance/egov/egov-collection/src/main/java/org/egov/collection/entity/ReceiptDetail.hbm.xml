@@ -105,6 +105,7 @@
 			<column name="GROUPID" precision="22" scale="0" />
 		</property>
 	</class>
+	<!-- Converted legacy Hibernate positional placeholder '?' to 1-based ordinal parameter '?1' as mandated by Hibernate 6 HQL strict syntax -->
 	<query name="QUERY_RECEIPTDETAIL_BY_RECEIPTNUMBER">
 	<![CDATA[
 	select receiptDet from  org.egov.collection.entity.ReceiptDetail receiptDet WHERE receiptDet.receiptHeader.receiptnumber=?1 and  (cramount!=0  or (ordernumber!=0 and  dramount!=0)) order by receiptDet.ordernumber desc 

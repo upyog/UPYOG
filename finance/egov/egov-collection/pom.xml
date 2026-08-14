@@ -105,6 +105,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Updated Hibernate core and envers groupIds to org.hibernate.orm, hibernate-validator to org.hibernate.validator, and replaced javax.validation with jakarta.validation-api for Hibernate 6 / Jakarta EE 10 compatibility; hibernate-entitymanager (merged into hibernate-core in v6) and hibernate-infinispan (deprecated) are commented out -->
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
@@ -130,6 +131,7 @@
             <artifactId>jakarta.validation-api</artifactId>
         </dependency>
 
+        <!-- Added jakarta.xml.bind-api for Jakarta XML Binding support under Java 17 runtime -->
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
@@ -143,6 +145,7 @@
             <version>1.18.30</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Added Glassfish JAXB runtime 4.0.5 required for Jakarta XML binding implementation on Java 17 -->
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
@@ -182,6 +185,7 @@
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
         </dependency>
+        <!-- Updated Jackson Hibernate module from jackson-datatype-hibernate5 to jackson-datatype-hibernate6 for Hibernate 6 entity serialization -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-hibernate6</artifactId>
@@ -229,6 +233,7 @@
         <!-- QUARTZ END -->
 
         <!-- DISPLAYTAG START -->
+        <!-- Replaced legacy displaytag (javax.servlet dependent) with com.github.hazendaz:displaytag for Jakarta Servlet 6 compatibility -->
 <!--        <dependency>-->
 <!--            <groupId>displaytag</groupId>-->
 <!--            <artifactId>displaytag</artifactId>-->

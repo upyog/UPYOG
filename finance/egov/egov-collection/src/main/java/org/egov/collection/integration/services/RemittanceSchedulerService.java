@@ -60,6 +60,10 @@ import org.egov.infra.microservice.models.Instrument;
 import org.egov.infra.microservice.models.TransactionType;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.egov.infstr.services.PersistenceService;
+/*
+ * Hibernate 6 Query Interface Migration:
+ * Updated import from org.hibernate.Query to org.hibernate.query.Query per Hibernate 6 specifications.
+ */
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

@@ -84,7 +84,12 @@
 		<property name="modifiedDate" column="LASTMODIFIEDDATE" type="timestamp" />
 	</class>
 
-	    <query name="COLLECTION_BANKACCOUNT_BY_SERVICE_AND_BANK">
+	<!-- 
+		Hibernate 6 HQL Positional Parameter Binding:
+		Replaced legacy un-indexed '?' parameter placeholders with 1-based ordinal parameters '?1' and '?2' for
+		COLLECTION_BANKACCOUNT_BY_SERVICE_AND_BANK named query to comply with JPA 3.x / Hibernate 6 HQL parser rules.
+	-->
+	<query name="COLLECTION_BANKACCOUNT_BY_SERVICE_AND_BANK">
     <![CDATA[select cb.bankAccounttoRemit from org.egov.collection.entity.CollectionBankRemittance cb where cb.depositedInBank.code=?1 and cb.service.id=?2]]></query>
     
 </hibernate-mapping>

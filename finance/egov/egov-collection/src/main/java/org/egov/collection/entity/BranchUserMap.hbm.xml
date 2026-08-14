@@ -76,6 +76,11 @@
 		<property name="createdDate" column="CREATED_DATE" type="timestamp" />
 		<property name="modifiedDate" column="MODIFIED_DATE" type="timestamp" />
 	</class>
+	<!-- 
+		Hibernate 6 HQL Positional Parameter Binding:
+		Replaced legacy un-indexed '?' parameter placeholder with 1-based ordinal parameter '?1' for
+		QUERY_ACTIVE_BRANCHUSER_BY_USER named query to comply with JPA 3.x / Hibernate 6 HQL parser rules.
+	-->
 	<query name="QUERY_ACTIVE_BRANCHUSER_BY_USER">
 	<![CDATA[select bu from org.egov.collection.entity.BranchUserMap bu where bu.isActive=true and bu.bankuser.id=?1]]>
 	</query>

@@ -49,6 +49,11 @@ package org.egov.collection.integration.models;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+/*
+ * Jakarta EE 10 / JAXB 4.0 Annotation Migration:
+ * Replaced legacy javax.xml.bind.annotation.* (XmlAccessType, XmlAccessorType, XmlElement, XmlRootElement)
+ * with jakarta.xml.bind.annotation.* for JAXB 4.x runtime compatibility on JDK 17.
+ */
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;

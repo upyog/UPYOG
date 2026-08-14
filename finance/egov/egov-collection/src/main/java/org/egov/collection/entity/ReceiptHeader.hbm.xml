@@ -143,6 +143,7 @@
 			<key>
 				<column name="collectionheader" precision="22" scale="0" />
 			</key>
+			<!-- Configured entity-name="CollectionReceiptVoucher" for Hibernate 6 to avoid entity mapping resolution conflicts -->
 <!--			<one-to-many class="org.egov.collection.entity.ReceiptVoucher" />-->
 			<one-to-many entity-name="CollectionReceiptVoucher" />
 		</set>
@@ -197,6 +198,7 @@
 			<column name="consumertype" length="100" />
 		</property>	
 	</class>
+	<!-- Updated query RECEIPTS_FOR_VOUCHERS to reference entity-name CollectionReceiptVoucher instead of package path -->
 <!--	<query name="RECEIPTS_FOR_VOUCHERS">-->
 <!--	<![CDATA[select receiptHeader from org.egov.collection.entity.ReceiptVoucher rv where rv.voucherheader.id in (:param_0)]]></query>-->
 	<query name="RECEIPTS_FOR_VOUCHERS">
@@ -255,6 +257,7 @@ where rv.voucherheader.id in (:param_0)
 	]]>
 	</query>
 	
+	<!-- Updated unnumbered positional parameters to ordinal parameters ?1 and ?2 for Hibernate 6 parser compatibility -->
 <!--	<query name="QUERY_RECEIPT_BY_ID_AND_CITYCODE">-->
 <!--	<![CDATA[-->
 <!--	select rh from org.egov.collection.entity.ReceiptHeader rh, org.egov.infra.admin.master.entity.City city where rh.id = ? and city.code = ?-->

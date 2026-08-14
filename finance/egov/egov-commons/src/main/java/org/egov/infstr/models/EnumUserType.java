@@ -60,6 +60,13 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Properties;
 
+/*
+ * Hibernate 6 Custom UserType Interface Refactoring:
+ * Replaced legacy Hibernate 5 org.hibernate.usertype.UserType implementation with Hibernate 6 typed UserType<Object>:
+ * 1. Interface parameterization: implements UserType<Object>
+ * 2. Method signature change: replaced int[] sqlTypes() with int getSqlType() returning Types.VARCHAR
+ * 3. Session contract change: replaced SessionImplementor with SharedSessionContractImplementor across nullSafeGet & nullSafeSet
+ */
 public class EnumUserType implements UserType<Object>, ParameterizedType {
 
 	private Class clazz = null;

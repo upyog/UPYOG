@@ -47,6 +47,7 @@
   --%>
 
 <%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
+<%-- Updated JSTL taglib URIs from http://java.sun.com/jsp/jstl/ to jakarta.tags.* for Jakarta EE 10 --%>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <%@ taglib uri="jakarta.tags.functions" prefix="fn"%>

@@ -80,6 +80,7 @@
             <version>3.0.2-COE-SNAPSHOT</version>
         </dependency>
 
+        <!-- Updated Hibernate 6 (org.hibernate.orm), Hibernate Validator, and Jakarta Validation API dependencies; commented out hibernate-entitymanager (integrated into hibernate-core in v6) and hibernate-infinispan -->
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>

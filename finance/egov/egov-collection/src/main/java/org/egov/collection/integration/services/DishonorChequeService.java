@@ -109,6 +109,7 @@ import org.egov.services.voucher.GeneralLedgerService;
 import org.egov.services.voucher.VoucherHeaderService;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.ObjectNotFoundException;
+// Updated Query package import to org.hibernate.query.Query for Hibernate 6
 import org.hibernate.query.Query;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -701,6 +702,12 @@ public class DishonorChequeService implements FinancialIntegrationService {
     }
 
     public List<CChartOfAccounts> getChartOfAccounts(Set<String> glcodeSet) {
+        /*
+         * Hibernate 6 Criteria API Deprecation Refactoring:
+         * Replaced legacy session.createCriteria(CChartOfAccounts.class).add(Restrictions.in("glcode", glcodeSet))
+         * with typed HQL query createQuery("from CChartOfAccounts where glcode in (:glcodes)", CChartOfAccounts.class)
+         * as Session.createCriteria was removed in Hibernate 6.x.
+         */
         List list = persistenceService.getSession().createQuery("from CChartOfAccounts where glcode in (:glcodes)", CChartOfAccounts.class).setParameter("glcodes", glcodeSet).list();
         return list;
     }

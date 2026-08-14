@@ -51,6 +51,11 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFunction;
 import org.egov.infstr.models.BaseModel;
 
+/*
+ * Jakarta EE 10 / JPA 3.1 Entity Mapping Migration:
+ * Updated entity mapping annotations (Entity, Table, Id, GeneratedValue, ManyToOne, OneToMany, JoinColumn)
+ * from javax.persistence.* to jakarta.persistence.* as required by Hibernate 6.x and Jakarta EE 10.
+ */
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

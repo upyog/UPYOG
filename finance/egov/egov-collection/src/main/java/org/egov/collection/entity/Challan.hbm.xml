@@ -110,6 +110,11 @@
 		
 	</class>
 	
+	<!-- 
+		Hibernate 6 HQL Positional Parameter Binding:
+		Replaced legacy un-indexed '?' parameter placeholder with 1-based ordinal parameter '?1' for
+		TOBEEXPIREDCHALLANLIST named query to comply with JPA 3.x / Hibernate 6 HQL parser rules.
+	-->
 	<query name="TOBEEXPIREDCHALLANLIST">
     <![CDATA[select challan from org.egov.collection.entity.Challan as challan where challan.status.code not in('CANCELLED','EXPIRED') and challan.validUpto = trunc(?1) and challan.receiptHeader.status.code in('CANCELLED','PENDING')]]></query>
 	    

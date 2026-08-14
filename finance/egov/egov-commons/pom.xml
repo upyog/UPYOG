@@ -88,6 +88,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Updated Hibernate validator and envers groupIds to org.hibernate.validator / org.hibernate.orm for Hibernate 6; commented out hibernate-entitymanager (integrated into hibernate-core in v6) -->
 <!--        <dependency>-->
 <!--            <groupId>org.hibernate</groupId>-->
 <!--            <artifactId>hibernate-entitymanager</artifactId>-->

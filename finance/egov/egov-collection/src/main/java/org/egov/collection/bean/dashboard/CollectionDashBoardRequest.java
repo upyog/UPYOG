@@ -50,8 +50,17 @@ package org.egov.collection.bean.dashboard;
 
 import java.util.List;
 
+/*
+ * HTML Sanitization Annotation Migration (Hibernate Validator 7+):
+ * Replaced deprecated org.hibernate.validator.constraints.SafeHtml with custom org.egov.infra.validation.SanitizeHtml
+ * because SafeHtml was decoupled and removed in Hibernate Validator 7+ / Jakarta EE 10.
+ */
 import org.egov.infra.validation.SanitizeHtml;
 
+/**
+ * Request bean for Collection Dashboard search filter parameters.
+ * Uses @SanitizeHtml for input sanitization on string fields.
+ */
 public class CollectionDashBoardRequest {
 
 	@SanitizeHtml

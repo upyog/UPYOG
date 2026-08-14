@@ -119,6 +119,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
+// Updated Query interface import to org.hibernate.query.Query for Hibernate 6
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -173,6 +174,7 @@ public class RemittanceServiceImpl extends RemittanceService {
 
 		final StringBuilder cashInHandQueryString = new StringBuilder(
 				"SELECT COA.GLCODE FROM CHARTOFACCOUNTS COA WHERE COA.GLCODE = :glcode");
+		// Changed createSQLQuery to createNativeQuery for Hibernate 6 native SQL query execution
 		final Query cashInHand = persistenceService.getSession().createNativeQuery(cashInHandQueryString.toString());
 		cashInHand.setParameter("glcode", accountCode.getGlcode());
 
@@ -856,6 +858,11 @@ public class RemittanceServiceImpl extends RemittanceService {
                 rb1.setBankBranch(receiptInstrumentMap.get(payment.getId()).getBranchName());
 //            final Bank bank = (Bank) persistenceService.find("from Bank where id=?",
 //                    receiptInstrumentMap.get(r.getBill().get(0).getBillDetails().get(0).getReceiptNumber()).getBank().getId().intValue());
+                /*
+                 * Microservice Bank Model Mapping:
+                 * Replaced legacy Hibernate session.find HQL query on Bank entity with direct microservice Bank model lookup
+                 * from receiptInstrumentMap to improve performance and decouple database dependencies.
+                 */
                 org.egov.infra.microservice.models.Bank bank = receiptInstrumentMap.get(payment.getId()).getBank();
                 rb1.setBank(bank != null ? bank.getName() : "");
                 rb1.setReceiptId(payment.getId());

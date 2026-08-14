@@ -72,6 +72,7 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
     }
 
     @Override
+    // Replaced removed setEntity and setDate methods with setParameter for Hibernate 6 query parameter binding
     public List<Installment> getInsatllmentByModule(final Module module) {
         final Query qry = getCurrentSession().createQuery("from Installment I where I.module=:module order by installmentYear desc");
         qry.setParameter("module", module);

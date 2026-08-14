@@ -52,6 +52,11 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
 
+/*
+ * Jakarta EE 10 / JPA 3.1 & Validation API Migration:
+ * Replaced javax.persistence (Entity, Id, GeneratedValue, Table) and javax.validation (NotNull)
+ * with jakarta.persistence and jakarta.validation for Jakarta EE 10 compliance.
+ */
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

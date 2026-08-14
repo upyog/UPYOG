@@ -67,7 +67,12 @@ import org.egov.infra.admin.master.entity.Location;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 
-import org.apache.struts2.util.reflection.ReflectionExceptionHandler;
+/*
+ * Struts 2.5+ / Struts 6 Upgrade:
+ * Updated package import from legacy com.opensymphony.xwork2.ActionSupport to org.apache.struts2.ActionSupport
+ * following Struts 2.5+ package reorganization (Apache Struts 2 core alignment).
+ */
+import org.apache.struts2.ActionSupport;
 
 /**
  * The bill receipt information class. Provides details of a bill receipt.

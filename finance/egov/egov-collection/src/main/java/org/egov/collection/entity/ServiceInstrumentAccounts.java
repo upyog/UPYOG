@@ -47,6 +47,7 @@
  */
 package org.egov.collection.entity;
 
+// Migrated javax.persistence imports to jakarta.persistence for JPA 3.1
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

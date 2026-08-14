@@ -55,6 +55,12 @@ import org.egov.model.instrument.InstrumentHeader;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
 
+/*
+ * Jakarta EE 10 / JPA 3.1 Namespace Migration:
+ * Replaced legacy javax.persistence.* annotations (CascadeType, Column, Entity, FetchType, GeneratedValue,
+ * GenerationType, Id, JoinColumn, ManyToOne, OneToMany, SequenceGenerator, Table) with jakarta.persistence.*
+ * to ensure full compatibility with Hibernate 6 ORM and Jakarta EE 10 application servers (WildFly 27+/Tomcat 10+).
+ */
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
