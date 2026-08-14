@@ -1,6 +1,36 @@
 # Development Control Regulations
   Module used to scrutinize the building plan diagrams which are in the .dxf file format. It will extract data from from dxf file and will validate against ULB rules and will generate the scrutiny report in the PDF format, the scrutiny report contains the rules which are passing and failing.
 
+## Platform Requirements
+
+The EDCR service has been upgraded from Java 8 / WildFly 11 to a modern stack. Use the versions below when building or deploying locally.
+
+| Component | Version |
+|-----------|---------|
+| JDK | 17 (Amazon Corretto 17 recommended) |
+| Application Server | WildFly 26.x |
+| Spring Framework | 5.3.31 |
+| Spring Security | 5.7.11 |
+| Spring Data JPA | 2.7.18 |
+| Hibernate ORM | 5.6.15.Final |
+| Hibernate Validator | 6.2.5.Final |
+| PostgreSQL JDBC Driver | 42.7.10 |
+| JasperReports | 6.20.0 |
+| Flyway | 9.22.3 |
+| JUnit | 5.10.2 |
+| Maven | >= 3.6.x |
+
+### Docker Deployment
+
+The included `Dockerfile` builds with `amazoncorretto:17-alpine` and deploys to the `nudmcdg/edcr-wildfly26:07` runtime image. Database migration is enabled at container startup via `-Ddb.migration.enabled=true`.
+
+### Upgrade Notes
+
+- **javax namespace retained**: The application continues to use `javax.*` (Servlet, JPA, Validation) rather than Jakarta EE 9+ namespaces, which is compatible with WildFly 26 when server-provided JPA/Hibernate modules are excluded.
+- **Embedded Redis disabled by default**: Embedded Redis is no longer started automatically; configure a standalone Redis server or set `redis.enable.embedded=true` for Linux/macOS development.
+- **JasperReports on Java 17**: Report generation requires `jasperreports.properties` overrides (subreport runner factory, JDT compiler target 17, font settings). See `egov-config/src/main/resources/config/jasperreports.properties`.
+- **Classloading**: `jboss-deployment-structure.xml` excludes WildFly-bundled Hibernate, Jackson, and Infinispan modules so the application uses its packaged dependency versions.
+
 ## User Guide
 This section contains steps that are involved in build and deploy the application.
 
@@ -34,9 +64,9 @@ $ cd ${HOME}/egovgithub/UPYOG/edcr/service && make deploy
 
 * Install [maven v3.2.x][Maven]
 * Install [PostgreSQL v9.6][PostgreSQL]
-* Install [Jboss Wildfly v11.x][Wildfly Customized]
+* Install [Jboss Wildfly v26.x][Wildfly Customized]
 * Install [Git 2.8.3][Git]
-* Install [JDK 8 update 112 or higher][JDK8 build]
+* Install [JDK 17 (LTS)][JDK17 build]
 * Install [Postman 8.7.0][Postman]
 
 #### Database Setup
@@ -164,7 +194,7 @@ By default UPYOG uses embedded redis server (work only in Linux & OSx), to make 
 ### Setup Multitenancy Locally
 1. The state is configured by adding property tenant.{domain_name}=schema_name (state_name) in egov-erp-override.properties.
 
-2. Each new ULB is enabled by adding a schema name and domain name in egov-erp-override.properties file(Available in Wildfly server under ${HOME_DIR}/wildfly-11.0.0.Final/modules/system/layers/base/org/egov/settings/main/config). Schema names should follow a naming standard, It should be the same as that of the city name.
+2. Each new ULB is enabled by adding a schema name and domain name in egov-erp-override.properties file(Available in Wildfly server under ${HOME_DIR}/wildfly-26.x/modules/system/layers/base/org/egov/settings/main/config). Schema names should follow a naming standard, It should be the same as that of the city name.
 
 3. Each ULB can be configured by adding an entry like tenant.{domain_name}=schema_name (city_name) in egov-erp-override.properties file. 
 
@@ -213,9 +243,9 @@ This section gives more details regarding developing and contributing to UPYOG P
 * Install your favorite IDE for java project. Recommended Eclipse or IntelliJ IDEA
 * Install [maven >= v3.2.x][Maven]
 * Install [PostgreSQL >= v9.6 ][PostgreSQL]
-* Install [Jboss Wildfly v11.x][Wildfly Customized]
+* Install [Jboss Wildfly v26.x][Wildfly Customized]
 * Install [Git 2.8.3][Git]
-* Install [JDK 8 update 112 or later][JDK8 build]
+* Install [JDK 17 (LTS)][JDK17 build]
 * Install [Postman 8.7.0][Postman]
 
 __Note__: Please check in [eGov Tools Repository] for any of the above software installables before downloading from internet.
@@ -234,7 +264,7 @@ __Note__: Please check in [eGov Tools Repository] for any of the above software 
 
 * Install Intellij
 * Open project
-* In project settings set JDK to 1.8
+* In project settings set JDK to 17
 * Add a run configuration for JBoss and point the JBOSS home to the wildfly unzipped folder
 * Run
 
@@ -266,8 +296,8 @@ Browser:-
 * Postman
 
 [Git]: https://git-scm.com/downloads
-[JDK8 build]: http://www.oracle.com/technetwork/java/javase/downloads
-[Wildfly Customized]: https://devops.egovernments.org/Downloads/wildfly/wildfly-11.0.0.Final.zip
+[JDK17 build]: https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html
+[Wildfly Customized]: https://www.wildfly.org/downloads/
 [Eclipse Photon]: https://www.eclipse.org/downloads/packages/release/photon/r
 [Spring Profiles]: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-environment
 [Flyway]: http://flywaydb.org/documentation/
