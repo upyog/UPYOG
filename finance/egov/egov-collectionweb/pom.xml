@@ -86,7 +86,7 @@
 <!--        </dependency>-->
 
 
-        <!-- NEW -->
+        <!-- Replaced legacy org.apache.tiles with com.github.tntim96.apache.tiles for Jakarta Servlet 6 compatibility -->
         <dependency>
             <groupId>com.github.tntim96.apache.tiles</groupId>
             <artifactId>tiles-core</artifactId>
@@ -95,6 +95,9 @@
             <groupId>com.github.tntim96.apache.tiles</groupId>
             <artifactId>tiles-jsp</artifactId>
         </dependency>
+        <!-- jsoup removed: was only required by Hibernate Validator's @SafeHtml constraint,
+             which was dropped in Hibernate Validator 6.x. HTML sanitization is now handled
+             by the in-house @SanitizeHtml validator (AntiSamy/ESAPI-based) instead. -->
 <!--        <dependency>-->
 <!--            <groupId>org.jsoup</groupId>-->
 <!--            <artifactId>jsoup</artifactId>-->
@@ -102,6 +105,7 @@
         <!-- VIEWS RELATED END -->
 
         <!-- HIBERNATE START -->
+        <!-- Updated Hibernate 6 (org.hibernate.orm), Jakarta Validation API, and Hibernate Validator groupIds for Jakarta EE 10 -->
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>

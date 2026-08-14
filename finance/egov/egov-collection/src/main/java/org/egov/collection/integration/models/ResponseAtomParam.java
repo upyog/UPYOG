@@ -47,6 +47,7 @@
  */
 package org.egov.collection.integration.models;
 
+// Updated XML binding annotations to jakarta.xml.bind for Java 17 compatibility
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;

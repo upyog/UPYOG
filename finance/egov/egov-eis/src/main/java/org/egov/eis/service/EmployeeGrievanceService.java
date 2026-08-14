@@ -109,14 +109,17 @@ public class EmployeeGrievanceService {
         return employeeGrievanceRepository.save(employeeGrievance);
     }
 
+    // Refactored for Spring Data 2.x/3.x: replaced deprecated new Sort(...) with Sort.by(...)
     public List<EmployeeGrievance> findAll() {
         return employeeGrievanceRepository.findAll(Sort.by(Sort.Direction.ASC, "grievanceNumber"));
     }
 
+    // Refactored for Spring Data JPA 2.x/3.x & JDK 17 compatibility: findOne(id) replaced with findById(id).orElse(null)
     public EmployeeGrievance findOne(Long id) {
         return employeeGrievanceRepository.findById(id).orElse(null);
     }
 
+    // Refactored for Hibernate 6 / JDK 17 compatibility: replaced legacy org.hibernate.Criteria & Restrictions with JPA createQuery HQL
     public List<EmployeeGrievance> search(EmployeeGrievance employeeGrievance) {
         StringBuilder hql = new StringBuilder("from EmployeeGrievance eg join fetch eg.employee emp where 1=1");
         if (employeeGrievance.getGrievanceNumber() != null)

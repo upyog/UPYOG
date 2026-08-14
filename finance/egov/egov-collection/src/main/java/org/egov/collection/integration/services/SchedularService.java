@@ -63,6 +63,10 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
+/*
+ * Hibernate 6 Query Interface Migration:
+ * Replaced org.hibernate.Query with org.hibernate.query.Query per Hibernate 6 ORM specifications.
+ */
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -75,6 +79,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+/*
+ * Jakarta EE 10 / JAXB 4.0 Exception Migration:
+ * Replaced javax.xml.bind.JAXBException with jakarta.xml.bind.JAXBException for Jakarta EE 10 runtime compatibility.
+ */
 import jakarta.xml.bind.JAXBException;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;

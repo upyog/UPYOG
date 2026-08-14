@@ -74,17 +74,8 @@
             <version>3.0.2-COE-SNAPSHOT</version>
         </dependency>
 
-        <!-- VIEWS RELATED END -->
-<!--        <dependency>-->
-<!--            <groupId>org.apache.tiles</groupId>-->
-<!--            <artifactId>tiles-core</artifactId>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.apache.tiles</groupId>-->
-<!--            <artifactId>tiles-jsp</artifactId>-->
-<!--        </dependency>-->
-
-        <!-- NEW -->
+        <!-- VIEWS RELATED START -->
+        <!-- Jakarta EE 10 / Servlet 6.0 Upgrade: Switched to Jakarta-compatible Apache Tiles 3 fork -->
         <dependency>
             <groupId>com.github.tntim96.apache.tiles</groupId>
             <artifactId>tiles-core</artifactId>
@@ -93,13 +84,9 @@
             <groupId>com.github.tntim96.apache.tiles</groupId>
             <artifactId>tiles-jsp</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.jsoup</groupId>-->
-<!--            <artifactId>jsoup</artifactId>-->
-<!--        </dependency>-->
         <!-- VIEWS RELATED END -->
 
-        <!-- HIBERNATE START -->
+        <!-- HIBERNATE & JAKARTA VALIDATION START -->
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>

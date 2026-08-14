@@ -55,6 +55,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+/*
+ * Jakarta EE 10 Persistence Context Migration:
+ * Updated javax.persistence (EntityManager, PersistenceContext) to jakarta.persistence.
+ */
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
@@ -66,6 +70,10 @@ import org.egov.collection.entity.CollectionSummaryReportResult;
 import org.egov.collection.entity.OnlinePaymentResult;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.exception.ApplicationRuntimeException;
+/*
+ * Hibernate 6 Native Query Refactoring:
+ * Replaced legacy org.hibernate.SQLQuery with org.hibernate.query.NativeQuery and scalar types with StandardBasicTypes.
+ */
 import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;

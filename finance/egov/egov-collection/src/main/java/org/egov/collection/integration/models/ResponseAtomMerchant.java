@@ -49,6 +49,7 @@ package org.egov.collection.integration.models;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+// Replaced javax.xml.bind imports with jakarta.xml.bind imports for XML binding on Java 17
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;

@@ -105,6 +105,7 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
 
     @Override
     public List<CChartOfAccounts> findAll() {
+        // Replaced legacy session.createCriteria with typed HQL query for Hibernate 6 compatibility
         return getCurrentSession().createQuery("from CChartOfAccounts", CChartOfAccounts.class).list();
     }
 

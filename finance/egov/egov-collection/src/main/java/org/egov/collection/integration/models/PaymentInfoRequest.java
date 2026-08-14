@@ -47,6 +47,11 @@
  */
 package org.egov.collection.integration.models;
 
+/*
+ * Jakarta EE 10 Validation API Migration:
+ * Replaced javax.validation.constraints.NotNull with jakarta.validation.constraints.NotNull
+ * to support Bean Validation 3.0 runtime validation under Jakarta EE 10.
+ */
 import jakarta.validation.constraints.NotNull;
 
 public class PaymentInfoRequest {

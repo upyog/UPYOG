@@ -62,6 +62,11 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Location;
 import org.egov.infra.persistence.entity.Auditable;
+/*
+ * HTML Sanitization Annotation Migration (Hibernate Validator 7+ / Jakarta EE 10):
+ * Replaced legacy org.hibernate.validator.constraints.SafeHtml annotation with custom org.egov.infra.validation.SanitizeHtml
+ * because SafeHtml was removed in Hibernate Validator 7+ (JSoup dependency decoupled).
+ */
 import org.egov.infra.validation.SanitizeHtml;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.model.instrument.InstrumentHeader;

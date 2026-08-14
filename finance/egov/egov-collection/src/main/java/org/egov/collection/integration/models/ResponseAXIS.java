@@ -47,6 +47,11 @@
  */
 package org.egov.collection.integration.models;
 
+/*
+ * Jakarta EE 10 / JAXB 4.0 Annotation Migration:
+ * Replaced legacy javax.xml.bind.annotation.* (XmlAccessType, XmlAccessorType, XmlAttribute, XmlType)
+ * with jakarta.xml.bind.annotation.* to support standalone Jakarta XML Binding (JAXB 4.x) on JDK 17.
+ */
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;

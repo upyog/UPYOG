@@ -95,6 +95,10 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
+/*
+ * Hibernate 6 Query API Migration:
+ * Replaced legacy org.hibernate.Query with org.hibernate.query.Query for Hibernate 6 query execution.
+ */
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -508,6 +512,11 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
                         + " where receipt_date>=:fromDate and receipt_date<=:toDate and service=:serviceCode "
                         + " and source=:source and ulb=:ulbCode  group by ulb,service  ");
 
+        /*
+         * Native Query Execution & Parameter Binding (Hibernate 6 Upgrade):
+         * Replaced legacy session.createSQLQuery() with createNativeQuery() and query.setDate/setString
+         * with query.setParameter() for Hibernate 6 native SQL query execution.
+         */
         final Query query = getSession().createNativeQuery(queryBuilder.toString());
         query.setParameter("fromDate", aggrReq.getFromdate());
         query.setParameter("toDate", aggrReq.getTodate());
@@ -730,6 +739,11 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
             queryString.append(" and rh.service.name = :serviceName");
         if (!paymentInfoRequest.getConsumerCode().isEmpty())
             queryString.append(" and rh.consumerCode = :consumerCode");
+        /*
+         * Query Parameter Binding Migration (Hibernate 6 Upgrade):
+         * Replaced type-specific listQuery.setString() calls with generic listQuery.setParameter()
+         * per Hibernate 6 HQL parameter binding standards.
+         */
         final Query listQuery = getSession().createQuery(queryString.toString());
         if (!paymentInfoRequest.getUserName().isEmpty())
             listQuery.setParameter("userName", paymentInfoRequest.getUserName().toUpperCase());

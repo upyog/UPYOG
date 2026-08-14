@@ -55,6 +55,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/*
+ * Jakarta EE 10 Persistence Context Migration:
+ * Replaced javax.persistence (EntityManager, PersistenceContext) with jakarta.persistence.
+ */
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
@@ -62,6 +66,10 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.CollectionSummaryHeadWiseReport;
 import org.egov.collection.entity.CollectionSummaryHeadWiseReportResult;
+/*
+ * Hibernate 6 Native Query Refactoring:
+ * Replaced org.hibernate.SQLQuery with org.hibernate.query.NativeQuery and scalar type mappings with StandardBasicTypes.
+ */
 import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
@@ -196,6 +204,12 @@ public class CollectionReportHeadWiseService {
         final StringBuilder finalRebateQueryStr = new StringBuilder(finalSelectQueryStr).append(rebateQueryStr)
                 .append(finalGroupQuery);
 
+        /*
+         * Hibernate 6 NativeQuery & Scalar Type Mapping Migration:
+         * 1. Replaced legacy SQLQuery type-cast and session.createSQLQuery() with NativeQuery and session.createNativeQuery().
+         * 2. Replaced deprecated DoubleType.INSTANCE and org.hibernate.type.StringType.INSTANCE scalar type mappings
+         *    with StandardBasicTypes.DOUBLE and StandardBasicTypes.STRING as required by Hibernate 6.
+         */
         final NativeQuery aggrQuery = (NativeQuery) getCurrentSession().createNativeQuery(finalRevQueryStr.toString())
                 .addScalar("cashCount", StandardBasicTypes.STRING).addScalar("cashAmount", StandardBasicTypes.DOUBLE)
                 .addScalar("chequeddCount", StandardBasicTypes.STRING)
@@ -207,6 +221,10 @@ public class CollectionReportHeadWiseService {
                 .addScalar("totalReceiptCount", StandardBasicTypes.STRING)
                 .setResultTransformer(Transformers.aliasToBean(CollectionSummaryHeadWiseReport.class));
 
+        /*
+         * Hibernate 6 NativeQuery Migration for Rebate Query:
+         * Replaced legacy SQLQuery and DoubleType.INSTANCE scalar mappings with NativeQuery and StandardBasicTypes.
+         */
         final NativeQuery rebateQuery = (NativeQuery) getCurrentSession().createNativeQuery(finalRebateQueryStr.toString())
                 .addScalar("cashCount", StandardBasicTypes.STRING).addScalar("cashAmount", StandardBasicTypes.DOUBLE)
                 .addScalar("chequeddCount", StandardBasicTypes.STRING)

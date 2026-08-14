@@ -201,6 +201,11 @@ public class FunctionwiseIEService
 
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("sql====================" + sql);
+		/*
+		 * Native Query Parameterization & Execution (Hibernate 6 Upgrade):
+		 * 1. Replaced persistenceService.getSession().createSQLQuery() with createNativeQuery().
+		 * 2. Updated scalar type mappings to StandardBasicTypes to handle native query result transformers.
+		 */
 		final Query query = persistenceService.getSession().createNativeQuery(sql.toString());
 		queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
 		final List<Object[]> list = query.list();

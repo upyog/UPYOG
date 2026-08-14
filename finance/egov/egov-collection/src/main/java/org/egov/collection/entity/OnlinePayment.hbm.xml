@@ -110,6 +110,12 @@
 		
 	</class>
 	
+	<!-- 
+		Hibernate 6 HQL Positional Parameter Binding:
+		Replaced legacy un-indexed '?' parameter placeholders with 1-based ordinal parameter '?1' for
+		ONLINERECEIPTS_BY_STATUSCODE and CREATEDBYUSERS_OF_PAYMENT_RECEIPTS named queries to comply with
+		JPA 3.x / Hibernate 6 HQL parser rules.
+	-->
 	<query name="ONLINERECEIPTS_BY_STATUSCODE">
     <![CDATA[select receipt from org.egov.collection.entity.OnlinePayment receipt where receipt.status.code = ?1]]></query> 
 	 

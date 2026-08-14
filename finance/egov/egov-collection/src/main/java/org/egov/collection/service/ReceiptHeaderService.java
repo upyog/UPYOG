@@ -81,6 +81,10 @@ import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.collection.utils.CollectionsNumberGenerator;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.utils.FinancialsUtil;
+/*
+ * Elasticsearch Integration Refactoring:
+ * Commented out CollectionIndexUtils import as legacy Elasticsearch 2.x indexer was decommissioned during JDK 17 upgrade.
+ */
 //import org.egov.collection.utils.es.CollectionIndexUtils;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CFinancialYear;
@@ -137,6 +141,10 @@ import org.egov.model.instrument.InstrumentType;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.hibernate.ObjectNotFoundException;
+/*
+ * Hibernate 6 Query Interface Migration:
+ * Replaced legacy org.hibernate.Query with org.hibernate.query.Query for Hibernate 6 query execution.
+ */
 import org.hibernate.query.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;

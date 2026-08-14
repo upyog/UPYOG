@@ -118,6 +118,11 @@
         </property>
     </bean>
 
+    <!-- 
+        Spring 6 / Jakarta EE 10 Upgrade:
+        Spring Framework 6 removed 'org.springframework.web.servlet.view.tiles3.*' due to Apache Tiles EOL and javax.servlet dependencies.
+        Replaced with custom 'org.egov.infra.web.spring.tiles' implementation compatible with Jakarta Servlet 6.0.
+    -->
 <!--    <bean id="viewResolver" class="org.springframework.web.servlet.view.tiles3.TilesViewResolver">-->
 <!--    	<property name="redirectHttp10Compatible" value="false" />-->
 <!--    </bean>-->
@@ -129,7 +134,6 @@
 <!--            </list>-->
 <!--        </property>-->
 <!--    </bean>-->
-
 
     <bean id="viewResolver" class="org.egov.infra.web.spring.tiles.TilesViewResolver" >
         <property name="redirectHttp10Compatible" value="false" />
