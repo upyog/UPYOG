@@ -95,6 +95,9 @@
             <groupId>com.github.tntim96.apache.tiles</groupId>
             <artifactId>tiles-jsp</artifactId>
         </dependency>
+        <!-- jsoup removed: was only required by Hibernate Validator's @SafeHtml constraint,
+             which was dropped in Hibernate Validator 6.x. HTML sanitization is now handled
+             by the in-house @SanitizeHtml validator (AntiSamy/ESAPI-based) instead. -->
 <!--        <dependency>-->
 <!--            <groupId>org.jsoup</groupId>-->
 <!--            <artifactId>jsoup</artifactId>-->

@@ -92,6 +92,9 @@
             <groupId>com.github.tntim96.apache.tiles</groupId>
             <artifactId>tiles-jsp</artifactId>
         </dependency>
+        <!-- jsoup removed: was only required by Hibernate Validator's @SafeHtml constraint,
+             which was dropped in Hibernate Validator 6.x. HTML sanitization is now handled
+             by the in-house @SanitizeHtml validator (AntiSamy/ESAPI-based) instead. -->
 <!--        <dependency>-->
 <!--            <groupId>org.jsoup</groupId>-->
 <!--            <artifactId>jsoup</artifactId>-->
@@ -126,6 +129,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
+                    <!-- Excludes ES-dependent dashboard sources from compilation/javadoc — depends on
+                         egov-egf's excluded ES classes (see egov-egf/pom.xml), which are incompatible
+                         with JDK17 / updated ES client APIs post-migration. -->
                     <excludes>
                         <exclude>**/es/dashboard/**</exclude>
                     </excludes>
