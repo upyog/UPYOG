@@ -37,6 +37,8 @@ import org.egov.common.entity.edcr.ElectricLine;
 import org.egov.common.entity.edcr.Floor;
 import org.egov.common.entity.edcr.Occupancy;
 import org.egov.common.entity.edcr.Plan;
+import org.egov.common.entity.edcr.PlanInformation;
+import org.egov.common.entity.edcr.Plot;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.common.entity.edcr.ScrutinyDetail.ColumnHeadingDetail;
@@ -680,6 +682,9 @@ public class PlanReportService {
         valuesMap.put("blockCount",
                 plan.getBlocks() != null && !plan.getBlocks().isEmpty() ? plan.getBlocks().size() : 0);
         valuesMap.put("surrenderRoadArea", plan.getTotalSurrenderRoadArea());
+        valuesMap.put("planInformation",
+                plan.getPlanInformation() != null ? plan.getPlanInformation() : new PlanInformation());
+        valuesMap.put("plot", plan.getPlot() != null ? plan.getPlot() : new Plot());
         String imageURL = ReportUtil.getImageURL("/egi/resources/global/images/Upyog-logo.png");
         valuesMap.put("egovLogo", imageURL);
         valuesMap.put("cityLogo", cityService.getCityLogoURLByCurrentTenant());

@@ -42,7 +42,7 @@ public class SchemaDefinition implements Serializable{
     private String code = null;
 
     @JsonProperty("description")
-
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     @Size(min = 2, max = 512)
     private String description = null;
 
@@ -56,5 +56,8 @@ public class SchemaDefinition implements Serializable{
     @JsonProperty("auditDetails")
     @Valid
     private AuditDetails auditDetails = null;
+
+    @JsonProperty("operation")
+    private String operation = null;
 
 }

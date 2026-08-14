@@ -3,7 +3,7 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link,  } from "react-router-dom";
+import { Link, } from "react-router-dom";
 
 const description = {
   description: "PT_SEARCH_OR_DESC",
@@ -23,140 +23,21 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
   const { action = 0 } = Digit.Hooks.useQueryParams();
   const [searchData, setSearchData] = useState({});
   const [showToast, setShowToast] = useState(null);
-  sessionStorage.setItem("VisitedCommonPTSearch",true);
-  sessionStorage.setItem("VisitedLightCreate",false);
+  sessionStorage.setItem("VisitedCommonPTSearch", true);
+  sessionStorage.setItem("VisitedLightCreate", false);
   let allCities = Digit.Hooks.pt.useTenants()?.sort((a, b) => a?.i18nKey?.localeCompare?.(b?.i18nKey));
   // if called from tl module get tenants from tl usetenants
-  allCities = allCities ? allCities : Digit.Hooks.tl.useTenants()?.sort((a, b) => a?.i18nKey?.localeCompare?.(b?.i18nKey));  
-  
-  if(window.location.href.includes("obps") )
-  {
+  allCities = allCities ? allCities : Digit.Hooks.tl.useTenants()?.sort((a, b) => a?.i18nKey?.localeCompare?.(b?.i18nKey));
+
+  // For OBPS and FSM flows, retrieve the tenants from their respective SessionStorage objects
+  // since they configure and store tenant arrays synchronously on module initialization.
+  if (window.location.href.includes("obps")) {
     allCities = Digit.SessionStorage.get("OBPS_TENANTS")
   }
-  else if(window.location.href.includes("fsm") )
-  {
-    allCities = [
-      {
-          "i18nKey": "TENANT_TENANTS_PG_CITYA",
-          "code": "pg.citya",
-          "name": "City A",
-          "description": "City A",
-          "pincode": [
-              143001,
-              143002,
-              143003,
-              143004,
-              143005
-          ],
-          "logoId": "https://in-egov-assets.s3.ap-south-1.amazonaws.com/in.citya/logo.png",
-          "imageId": null,
-          "domainUrl": "https://www.upyog.niua.org",
-          "type": "CITY",
-          "twitterUrl": null,
-          "facebookUrl": null,
-          "emailId": "citya@gmail.com",
-          "OfficeTimings": {
-              "Mon - Fri": "9.00 AM - 6.00 PM"
-          },
-          "city": {
-              "name": "City A",
-              "localName": null,
-              "districtCode": "CITYA",
-              "districtName": null,
-              "districtTenantCode": "pg.citya",
-              "regionName": null,
-              "ulbGrade": "Municipal Corporation",
-              "longitude": 75.5761829,
-              "latitude": 31.3260152,
-              "shapeFileLocation": null,
-              "captcha": null,
-              "code": "1013",
-              "ddrName": "DDR A"
-          },
-          "address": "City A Municipal Corporation",
-          "contactNumber": "001-2345876"
-      },
-      {
-          "i18nKey": "TENANT_TENANTS_PG_CITYB",
-          "code": "pg.cityb",
-          "name": "City B",
-          "description": null,
-          "pincode": [
-              143006,
-              143007,
-              143008,
-              143009,
-              143010
-          ],
-          "logoId": "https://in-egov-assets.s3.ap-south-1.amazonaws.com/in.citya/logo.png",
-          "imageId": null,
-          "domainUrl": "https://www.upyog.niua.org",
-          "type": "CITY",
-          "twitterUrl": null,
-          "facebookUrl": null,
-          "emailId": "cityb@gmail.com",
-          "OfficeTimings": {
-              "Mon - Fri": "9.00 AM - 6.00 PM",
-              "Sat": "9.00 AM - 12.00 PM"
-          },
-          "city": {
-              "name": "City B",
-              "localName": null,
-              "districtCode": "CITYB",
-              "districtName": null,
-              "districtTenantCode": "pg.cityb",
-              "regionName": null,
-              "ulbGrade": "Municipal Corporation",
-              "longitude": 74.8722642,
-              "latitude": 31.6339793,
-              "shapeFileLocation": null,
-              "captcha": null,
-              "code": "107",
-              "ddrName": "DDR B"
-          },
-          "address": "City B Municipal Corporation Address",
-          "contactNumber": "0978-7645345",
-          "helpLineNumber": "0654-8734567"
-      },
-      {
-          "i18nKey": "TENANT_TENANTS_PG_CITYC",
-          "code": "pg.cityc",
-          "name": "City C",
-          "description": null,
-          "logoId": "https://in-egov-assets.s3.ap-south-1.amazonaws.com/in.citya/logo.png",
-          "imageId": null,
-          "domainUrl": "https://www.upyog.niua.org",
-          "type": "CITY",
-          "twitterUrl": null,
-          "facebookUrl": null,
-          "emailId": "cityc@gmail.com",
-          "OfficeTimings": {
-              "Mon - Fri": "9.00 AM - 6.00 PM",
-              "Sat": "9.00 AM - 12.00 PM"
-          },
-          "city": {
-              "name": "City C",
-              "localName": null,
-              "districtCode": "CITYC",
-              "districtName": null,
-              "districtTenantCode": "pg.cityc",
-              "regionName": null,
-              "ulbGrade": "Municipal Corporation",
-              "longitude": 73.8722642,
-              "latitude": 31.6339793,
-              "shapeFileLocation": null,
-              "captcha": null,
-              "code": "108",
-              "ddrName": "DDR C"
-          },
-          "address": "City C Municipal Corporation Address",
-          "contactNumber": "0978-7645345",
-          "helpLineNumber": "0654-8734567"
-      }
-  ]
-    
+  else if (window.location.href.includes("fsm")) {
+    allCities = Digit.SessionStorage.get("FSM_TENANTS")
   }
-  console.log("allCities",allCities)
+
   const [cityCode, setCityCode] = useState();
   const [formValue, setFormValue] = useState();
   const [errorShown, seterrorShown] = useState(false);
@@ -169,7 +50,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
   });
 
   useEffect(() => {
-    if ( !(searchData?.filters?.mobileNumber && Object.values(searchData?.filters)?.filter(ob => ob !== undefined)?.length == 1) && 
+    if (!(searchData?.filters?.mobileNumber && Object.values(searchData?.filters)?.filter(ob => ob !== undefined)?.length == 1) &&
       propertyData?.Properties.length > 0 &&
       ptSearchConfig?.maxResultValidation &&
       propertyData?.Properties.length > ptSearchConfig?.maxPropertyResult &&
@@ -184,11 +65,10 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
   }, [action, propertyDataLoading]);
 
   useEffect(() => {
-    if(!propertyDataLoading && propertyData && searchData && propertyData?.Properties?.length <= 0)
-    {
+    if (!propertyDataLoading && propertyData && searchData && propertyData?.Properties?.length <= 0) {
       setShowToast({ error: true, warning: true, label: "NO_PROPERTIES_FOUND" });
     }
-  },[propertyData?.Properties?.[0]?.propertyId, propertyDataLoading])
+  }, [propertyData?.Properties?.[0]?.propertyId, propertyDataLoading])
 
   useLayoutEffect(() => {
     //Why do we need this? !!!!!
@@ -240,6 +120,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
                 {...customProps}
                 selectedOption={props.value}
                 onSelect={(d) => {
+                  props.onChange(d);
                   props?.setValue("city", {});
                   props?.setValue("locality", {});
                   props?.setValue("mobileNumber", "");
@@ -247,7 +128,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
                   props?.setValue("doorNumber", "");
                   props?.setValue("oldPropertyId", "");
                   props?.setValue("name", "");
-                  navigate(`${location.pathname}?action=${action == 0 ? 1 : 0}`, { replace: true });
+                  navigate(`${location.pathname}?action=${d.code}`, { replace: true });
                 }}
               />
             ),
@@ -261,13 +142,14 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
             name: "city",
             defaultValue: null,
             rules: { required: true },
-            customProps: { t, isMandatory: true, option: [...allCities], optionKey: "i18nKey" },
+            // Safely spread allCities with fallback to empty array since the useTenants hook is asynchronous 
+            // and will initially return undefined during the loading phase.
+            customProps: { t, isMandatory: true, option: allCities ? [...allCities] : [], optionKey: "i18nKey" },
             component: (props, customProps) => (
               <Dropdown
                 {...customProps}
                 selected={props.value}
                 select={(d) => {
-                  "pg.citya"              
                   if (d.code !== cityCode) props.setValue("locality", null);
                   props.onChange(d);
                 }}
@@ -279,7 +161,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
           label: t("PT_PROVIDE_ONE_MORE_PARAM"),
           isInsideBox: true,
           placementinbox: 0,
-          isSectionText : true,
+          isSectionText: true,
         },
         {
           label: mobileNumber.label,
@@ -298,12 +180,12 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
           label: "",
           labelChildren: (
             <div className="tooltip" /* style={{position:"relative"}} */>
-              <div style={{display: "flex", /* alignItems: "center", */ gap: "0 4px"}}>
-              <h2>{t(property.label)}</h2>
-              <InfoBannerIcon fill="#0b0c0c" />
-              <span className="tooltiptext" style={{ position:"absolute",width:"72%", marginLeft:"50%", fontSize:"medium" }}>
-              {t(property.description) + " " + "PG-PT-xxxx-xxxxxx"}
-              </span>
+              <div style={{ display: "flex", /* alignItems: "center", */ gap: "0 4px" }}>
+                <h2>{t(property.label)}</h2>
+                <InfoBannerIcon fill="#0b0c0c" />
+                <span className="tooltiptext" style={{ position: "absolute", width: "72%", marginLeft: "50%", fontSize: "medium" }}>
+                  {t(property.description) + " " + "PG-PT-xxxx-xxxxxx"}
+                </span>
               </div>
             </div>
           ),
@@ -335,7 +217,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
         {
           type: "custom",
           populators: {
-            name: "addParam1",
+            name: "addParam",
             defaultValue: { code: 1, name: t('PT_SEARCH_DOOR_NO') },
             customProps: {
               t,
@@ -351,6 +233,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
                 {...customProps}
                 selectedOption={props.value}
                 onSelect={(d) => {
+                  props.onChange(d);
                   props?.setValue("city", {});
                   props?.setValue("locality", {});
                   props?.setValue("mobileNumber", "");
@@ -358,7 +241,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
                   props?.setValue("doorNumber", "");
                   props?.setValue("oldPropertyId", "");
                   props?.setValue("name", "");
-                  navigate(`${location.pathname}?action=${action == 0 ? 1 : 0}`, { replace: true });
+                  navigate(`${location.pathname}?action=${d.code}`, { replace: true });
                 }}
               />
             ),
@@ -372,7 +255,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
             name: "city",
             defaultValue: null,
             rules: { required: true },
-            customProps: { t, isMandatory: true, option: [...allCities], optionKey: "i18nKey" },
+            customProps: { t, isMandatory: true, option: allCities ? [...allCities] : [], optionKey: "i18nKey" },
             component: (props, customProps) => (
               <Dropdown
                 {...customProps}
@@ -419,7 +302,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
           label: t("PT_PROVIDE_ONE_MORE_PARAM"),
           isInsideBox: true,
           placementinbox: 0,
-          isSectionText : true,
+          isSectionText: true,
         },
         {
           label: doorNumber.label,
@@ -463,7 +346,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
       setShowToast({ error: true, label: "ERR_PT_FILL_VALID_FIELDS" });
       return;
     }
-   
+
     if (action == 0) {
       if (!(data?.mobileNumber || data?.propertyIds || data?.oldPropertyId)) {
         setShowToast({ error: true, label: "ERR_PT_FILL_VALID_FIELDS" });
@@ -515,32 +398,30 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
     delete tempObject.addParam;
     delete tempObject.addParam1;
     delete tempObject.city;
-    if(action === "0")
-    {
-      tempObject = { 
-        oldPropertyId : tempObject?.oldPropertyId,
-        mobileNumber : tempObject?.mobileNumber,
-        propertyIds : tempObject?.propertyIds,
+    if (action === "0") {
+      tempObject = {
+        oldPropertyId: tempObject?.oldPropertyId,
+        mobileNumber: tempObject?.mobileNumber,
+        propertyIds: tempObject?.propertyIds,
       }
     }
-    else if(action === "1")
-    {
+    else if (action === "1") {
       tempObject = {
-        name : tempObject?.name,
-        doorNo : tempObject?.doorNumber || tempObject?.doorNo,
-        locality : tempObject?.locality,
+        name: tempObject?.name,
+        doorNo: tempObject?.doorNumber || tempObject?.doorNo,
+        locality: tempObject?.locality,
       }
     }
     setSearchData({ city: city, filters: tempObject });
 
     return;
   };
- const onFormValueChange = (setValue, data, formState) => {
+  const onFormValueChange = (setValue, data, formState) => {
     const mobileNumberLength = data?.[mobileNumber.name]?.length;
     const oldPropId = data?.[oldProperty.name];
     const propId = data?.[property.name];
-    const city = data?.city || allCities[0];
-setCityCode(city.code);
+    const city = data?.city || allCities?.[0];
+    if (city) setCityCode(city.code);
     // if ((city!=null && Object.keys(city).length !=0) && !(mobileNumberLength > 0 || oldPropId!="" || propId!="")){
     //   setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });
     // }
@@ -565,77 +446,86 @@ setCityCode(city.code);
     }
   };
 
+  useEffect(() => {
+    let validation = ptSearchConfig?.maxResultValidation && !(searchData?.filters?.mobileNumber && Object.values(searchData?.filters)?.filter(ob => ob !== undefined)?.length == 1) ? propertyData?.Properties.length < ptSearchConfig?.maxPropertyResult && (showToast == null || (showToast !== null && !showToast?.error)) : true;
+
+    if (propertyData && !propertyDataLoading && !error && validation) {
+      let qs = {};
+      qs = { ...searchData.filters, city: searchData.city };
+
+      if (!(searchData?.filters?.mobileNumber && Object.values(searchData?.filters)?.filter(ob => ob !== undefined)?.length == 1) &&
+        ptSearchConfig?.ptSearchCount &&
+        searchData?.filters?.locality &&
+        propertyDataLoading &&
+        propertyDataLoading?.Properties?.length &&
+        propertyDataLoading.Properties.length > ptSearchConfig?.ptSearchCount
+      ) {
+        if (!showToast) {
+          setShowToast({ error: true, label: "PT_MODIFY_SEARCH_CRITERIA" });
+        }
+      } else if (propsConfig.action === "MUTATION") {
+        onSelect(propsConfig.key, qs, null, null, null, {
+          queryParams: { ...qs },
+        });
+      } else {
+        // beacuse of this commit 
+        // https://github.com/egovernments/DIGIT-Dev/commit/2bae1c36dd1f8242bca30366da80c88d46b6aaaa#diff-3c34510e8b422f53eb9633d014f50024496ad79f952849e1b42fd61877562c4cR385
+        // am adding one more condtion for this. 
+        if (redirectToUrl || window.location.href.includes("upyog-ui/citizen/commonpt/property/citizen-search")) {
+          navigate(
+            `/upyog-ui/citizen/commonPt/property/search-results?${Object.keys(qs)
+              .map((key) => `${key}=${qs[key]}`)
+              .join("&")}${redirectToUrl ? `&redirectToUrl=${redirectToUrl}` : ''}`
+          );
+        } else {
+          let SearchParams = {};
+          if (action == 0)
+            SearchParams = {
+              city: qs?.city,
+              mobileNumber: qs?.mobileNumber || "",
+              propertyIds: qs?.propertyIds || "",
+              oldPropertyIds: qs?.oldPropertyIds || "",
+              locality: "",
+              doorNo: "",
+              name: "",
+            }
+          else
+            SearchParams = {
+              city: qs?.city,
+              locality: qs?.locality || "",
+              doorNo: qs?.doorNumber || qs?.doorNo || "",
+              name: qs?.name || "",
+              mobileNumber: "",
+              propertyIds: "",
+              oldPropertyIds: "",
+            }
+          //onSelect('cptSearchQuery',{...SearchParams});
+          if (!propertyDataLoading && propertyData?.Properties?.length > 0) {
+            onSelect('cptSearchQuery', SearchParams, null, null, null, {
+              queryParams: { ...SearchParams },
+            });
+          }
+        }
+      }
+    }
+  }, [propertyData, propertyDataLoading, error, ptSearchConfig, searchData, propsConfig, redirectToUrl, action, navigate, onSelect]);
+
+  useEffect(() => {
+    if (error && !showToast) {
+      setShowToast({ error: true, label: error?.response?.data?.Errors?.[0]?.code || error });
+    }
+  }, [error]);
+
   if (isLoading) {
     return <Loader />;
   }
 
-  let validation = ptSearchConfig?.maxResultValidation && !(searchData?.filters?.mobileNumber && Object.values(searchData?.filters)?.filter(ob => ob !== undefined)?.length == 1)   ? propertyData?.Properties.length<ptSearchConfig?.maxPropertyResult && (showToast == null || (showToast !== null && !showToast?.error)) : true;
-
-  if (propertyData && !propertyDataLoading && !error && validation) {
-    let qs = {};
-    qs = { ...searchData.filters, city: searchData.city };
-
-    if ( !(searchData?.filters?.mobileNumber && Object.values(searchData?.filters)?.filter(ob => ob !== undefined)?.length == 1) && 
-      ptSearchConfig?.ptSearchCount &&
-      searchData?.filters?.locality &&
-      propertyDataLoading &&
-      propertyDataLoading?.Properties?.length &&
-      propertyDataLoading.Properties.length > ptSearchConfig?.ptSearchCount
-    ) {
-      !showToast && setShowToast({ error: true, label: "PT_MODIFY_SEARCH_CRITERIA" });
-    } else if (propsConfig.action === "MUTATION") {
-      onSelect(propsConfig.key, qs, null, null, null, {
-        queryParams: { ...qs },
-      });
-    } else {
-      // beacuse of this commit 
-      // https://github.com/egovernments/DIGIT-Dev/commit/2bae1c36dd1f8242bca30366da80c88d46b6aaaa#diff-3c34510e8b422f53eb9633d014f50024496ad79f952849e1b42fd61877562c4cR385
-      // am adding one more condtion for this. 
-      if(redirectToUrl || window.location.href.includes("upyog-ui/citizen/commonpt/property/citizen-search")) {
-        navigate(
-          `/upyog-ui/citizen/commonPt/property/search-results?${Object.keys(qs)
-            .map((key) => `${key}=${qs[key]}`)
-            .join("&")}${redirectToUrl ? `&redirectToUrl=${redirectToUrl}` : ''}`
-        );
-      } else {
-        let SearchParams = {};
-        if(action == 0)
-        SearchParams = {
-            city : qs?.city,
-            mobileNumber : qs?.mobileNumber || "",
-            propertyIds : qs?.propertyIds || "",
-            oldPropertyIds : qs?.oldPropertyIds || "", 
-            locality : "",
-            doorNo : "",
-            name : "",
-        }
-        else
-        SearchParams = {
-          city : qs?.city,
-          locality : qs?.locality || "",
-          doorNo : qs?.doorNumber || qs?.doorNo || "",
-          name : qs?.name || "",
-          mobileNumber : "",
-          propertyIds : "",
-          oldPropertyIds : "", 
-        }
-        //onSelect('cptSearchQuery',{...SearchParams});
-        !propertyDataLoading && propertyData?.Properties?.length > 0 && onSelect('cptSearchQuery', SearchParams, null, null, null, {
-          queryParams: { ...SearchParams },
-        });
-      }
-    }
-  }
-
-  if (error) {
-    !showToast && setShowToast({ error: true, label: error?.response?.data?.Errors?.[0]?.code || error });
-  }
   if (action == 1) {
     config[0].body = [...config[0].body1];
   }
 
   return (
-    <div style={{ marginTop: "16px", marginBottom: "16px" ,backgroundColor:"white", maxWidth:"960px"}}>
+    <div style={{ marginTop: "16px", marginBottom: "16px", backgroundColor: "white", maxWidth: "960px" }}>
       <FormComposer
         onSubmit={onPropertySearch}
         noBoxShadow
@@ -646,19 +536,19 @@ setCityCode(city.code);
         text={t(propsConfig.texts.text)}
         headingStyle={{ fontSize: "32px", marginBottom: "16px", fontFamily: "Roboto Condensed,sans-serif" }}
         onFormValueChange={onFormValueChange}
-        cardStyle={{marginBottom:"0",maxWidth:"960px"}}
+        cardStyle={{ marginBottom: "0", maxWidth: "960px" }}
       ></FormComposer>
-       <div style={{display:"flex"}}>
- 
-      {window.location.href.includes("/obps/bpa/") ?<span className="link" style={isMobile ? {display:"flex", justifyContent:"center",paddingBottom:"16px"} : {display:"flex", justifyContent:"left",paddingBottom:"16px", marginLeft: "45px"}}>
-        <Link to={"/upyog-ui/citizen/obps/bpa/building_plan_scrutiny/new_construction/location"}>{t("CORE_COMMON_SKIP_CONTINUE")}</Link>
-      </span>: window.location.href.includes("/fsm/new-application/") ? <span className="link" style={isMobile ? {display:"flex", justifyContent:"center",paddingBottom:"16px"} : {display:"flex", justifyContent:"left",paddingBottom:"16px", marginLeft: "45px"}}>
-        <Link to={"/upyog-ui/citizen/fsm/new-application/property-type"}>{t("CORE_COMMON_SKIP_CONTINUE")}</Link>
-      </span>:
-           <span className="link" style={isMobile ? {display:"flex", justifyContent:"center",paddingBottom:"16px"} : {display:"flex", justifyContent:"left",paddingBottom:"16px", marginLeft: "45px"}}>
-       
-           <Link to={window.location.href.includes("/ws/")?"/upyog-ui/citizen/ws/create-application/create-property" : window.location.href.includes("/tl/tradelicence/") ? "/upyog-ui/citizen/tl/tradelicence/new-application/create-property":window.location.href.includes("/fsm/")? "/upyog-ui/citizen/fsm/new-application/create-property":"/upyog-ui/citizen/commonpt/property/new-application"}>{t("CPT_REG_NEW_PROPERTY")}</Link>
-         </span>}
+      <div style={{ display: "flex" }}>
+
+        {window.location.href.includes("/obps/bpa/") ? <span className="link" style={isMobile ? { display: "flex", justifyContent: "center", paddingBottom: "16px" } : { display: "flex", justifyContent: "left", paddingBottom: "16px", marginLeft: "45px" }}>
+          <Link to={"/upyog-ui/citizen/obps/bpa/building_plan_scrutiny/new_construction/location"}>{t("CORE_COMMON_SKIP_CONTINUE")}</Link>
+        </span> : window.location.href.includes("/fsm/new-application/") ? <span className="link" style={isMobile ? { display: "flex", justifyContent: "center", paddingBottom: "16px" } : { display: "flex", justifyContent: "left", paddingBottom: "16px", marginLeft: "45px" }}>
+          <Link to={"/upyog-ui/citizen/fsm/new-application/property-type"}>{t("CORE_COMMON_SKIP_CONTINUE")}</Link>
+        </span> :
+          <span className="link" style={isMobile ? { display: "flex", justifyContent: "center", paddingBottom: "16px" } : { display: "flex", justifyContent: "left", paddingBottom: "16px", marginLeft: "45px" }}>
+
+            <Link to={window.location.href.includes("/ws/") ? "/upyog-ui/citizen/ws/create-application/create-property" : window.location.href.includes("/tl/tradelicence/") ? "/upyog-ui/citizen/tl/tradelicence/new-application/create-property" : window.location.href.includes("/fsm/") ? "/upyog-ui/citizen/fsm/new-application/create-property" : "/upyog-ui/citizen/commonpt/property/new-application"}>{t("CPT_REG_NEW_PROPERTY")}</Link>
+          </span>}
       </div>
       {showToast && (
         <Toast

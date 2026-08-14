@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Import;
 @Import({ TracerConfiguration.class })
 public class EchallanCalMain {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         SpringApplication.run(EchallanCalMain.class, args);
     }
 

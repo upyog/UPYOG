@@ -60,6 +60,7 @@ const GetDisconnectionDetails = () => {
   };
   Digit.Hooks.useClickOutside(menuRef, closeMenu, showOptions);
   const mobileView = Digit.Utils.browser.isMobile();
+  const { applicationDetails: _, ...serializableDetails } = applicationDetails || {};
   if (workflowDetails?.data?.nextActions?.length > 0 && workflowDetails?.data?.actionState?.nextActions?.length > 0 && !workflowDetails?.data?.actionState?.nextActions?.find(e => e.action === "EDIT") && !workflowDetails?.data?.actionState?.nextActions?.find(e => e.action === "RESUBMIT_APPLICATION") && !workflowDetails?.data?.actionState?.nextActions?.find(e => e.action === "EXECUTE_DISCONNECTION") && !workflowDetails?.data?.actionState?.nextActions?.find(e => e.action === "SUBMIT_APPLICATION") && !workflowDetails?.data?.actionState?.nextActions?.find(e => e.action === "DISCONNECTION_EXECUTED")) {
     workflowDetails?.data?.nextActions?.forEach(data => {
       if (data.action == "EDIT") workflowDetails.data.actionState.nextActions.push(data);
@@ -103,7 +104,7 @@ const GetDisconnectionDetails = () => {
         action: "ACTIVATE_CONNECTION",
         pathname: pathName,
         state: {
-          applicationDetails: applicationDetails,
+          applicationDetails: serializableDetails,
           action: "VERIFY_AND_FORWARD"
         }
       };
@@ -114,7 +115,7 @@ const GetDisconnectionDetails = () => {
         action: "ACTIVATE_CONNECTION",
         pathname: pathName,
         state: {
-          applicationDetails: applicationDetails,
+          applicationDetails: serializableDetails,
           action: "VERIFY_AND_FORWARD"
         }
       };

@@ -55,7 +55,7 @@ public class User {
     private String gender;
 
     @NotNull
-    @Pattern(regexp = "^[0-9]{10}$", message = "MobileNumber should be 10 digit number")
+    @Pattern(regexp = "^\\d{10}$", message = "MobileNumber should be 10 digit number")
     @JsonProperty("mobileNumber")
     private String mobileNumber;
 
@@ -71,7 +71,7 @@ public class User {
     @JsonProperty("pan")
     private String pan;
 
-    @Pattern(regexp = "^[0-9]{12}$", message = "AdharNumber should be 12 digit number")
+    @Pattern(regexp = "^\\d{12}$", message = "AdharNumber should be 12 digit number")
     @JsonProperty("aadhaarNumber")
     private String aadhaarNumber;
 
@@ -185,19 +185,5 @@ public class User {
 
             return Objects.hash(uuid, name, mobileNumber);
     }
-    
-//    public org.egov.common.contract.request.User toCommonUser(){
-//            org.egov.common.contract.request.User commonUser = new org.egov.common.contract.request.User();
-//            commonUser.setId(this.getId());
-//            commonUser.setUserName(this.getUserName());
-//            commonUser.setName(this.getName());
-//            commonUser.setType(this.getType());
-//            commonUser.setMobileNumber(this.getMobileNumber());
-//            commonUser.setEmailId(this.getEmailId());
-//            commonUser.setRoles(this.getRoles());
-//            commonUser.setTenantId(this.getTenantId());
-//            commonUser.setUuid(this.getUuid());
-//            return commonUser;
-//    }
 
 }

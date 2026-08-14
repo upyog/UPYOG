@@ -3,9 +3,9 @@ package org.egov.echallan.repository;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.echallan.config.ChallanConfiguration;
-import org.egov.echallan.web.models.Idgen.IdGenerationRequest;
-import org.egov.echallan.web.models.Idgen.IdGenerationResponse;
-import org.egov.echallan.web.models.Idgen.IdRequest;
+import org.egov.echallan.web.models.idgen.IdGenerationRequest;
+import org.egov.echallan.web.models.idgen.IdGenerationResponse;
+import org.egov.echallan.web.models.idgen.IdRequest;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;

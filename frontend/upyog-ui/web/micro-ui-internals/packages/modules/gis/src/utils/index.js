@@ -16,7 +16,7 @@ export const LEAFLET_DEFAULT_ICON_OPTIONS = {
 
 export const createMapIcons = () => ({
   userIcon: {
-    html: '<div style="font-size: 24px; color: blue;">⦿</div>',
+    html: '<div class="gis-user-marker">⦿</div>',
     iconSize: [40, 40],
     className: 'user-location-marker'
   },

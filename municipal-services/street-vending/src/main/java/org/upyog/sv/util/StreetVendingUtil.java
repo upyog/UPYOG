@@ -27,9 +27,12 @@ import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 
 @Slf4j
 @Component
+@SuppressWarnings({"java:S2143", "java:S2638", "java:S3437"})
 public class StreetVendingUtil {
 
-	public final static String DATE_FORMAT = "yyyy-MM-dd";
+	private static final ZoneId DEFAULT_ZONE = ZoneId.systemDefault();
+
+	public static final String DATE_FORMAT = "yyyy-MM-dd";
 
 	public static ResponseInfo createReponseInfo(final RequestInfo requestInfo, String resMsg, StatusEnum status) {
 
@@ -40,10 +43,8 @@ public class StreetVendingUtil {
 			ts = requestInfo.getTs();
 		final String msgId = requestInfo != null ? requestInfo.getMsgId() : StringUtils.EMPTY;
 
-		ResponseInfo responseInfo = ResponseInfo.builder().apiId(apiId).ver(ver).ts(ts).msgId(msgId).resMsgId(resMsg)
+		return ResponseInfo.builder().apiId(apiId).ver(ver).ts(ts).msgId(msgId).resMsgId(resMsg)
 				.status(status).build();
-
-		return responseInfo;
 	}
 
 	public static Long getCurrentTimestamp() {
@@ -51,31 +52,24 @@ public class StreetVendingUtil {
 	}
 
 	public static LocalDate getCurrentDate() {
-		return LocalDate.now();
+		return LocalDate.now(DEFAULT_ZONE);
 	}
 
 	public static LocalDate getCurrentDateFromYear(int years) {
-		return LocalDate.now().plusYears(years);
+		return LocalDate.now(DEFAULT_ZONE).plusYears(years);
 	}
 
 	public static LocalDate getCurrentDateFromMonths(int months) {
-		return LocalDate.now().plusMonths(months);
+		return LocalDate.now(DEFAULT_ZONE).plusMonths(months);
 	}
 
-	public static AuditDetails getAuditDetails(String by, Boolean isCreate) {
+	public static AuditDetails getAuditDetails(String by, boolean isCreate) {
 		Long time = getCurrentTimestamp();
 		if (isCreate)
-			// TODO: check if we can set lastupdated details to empty
 			return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time)
 					.build();
-		else
-			return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
+		return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
 	}
-
-	/*
-	 * Commented and used Instant public static Long getCurrentTimestamp() { return
-	 * System.currentTimeMillis(); }
-	 */
 
 	public static String getRandonUUID() {
 		return UUID.randomUUID().toString();
@@ -83,12 +77,11 @@ public class StreetVendingUtil {
 
 	public static LocalDate parseStringToLocalDate(String date) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
-		LocalDate localDate = LocalDate.parse(date, formatter);
-		return localDate;
+		return LocalDate.parse(date, formatter);
 	}
 
 	public static Long minusOneDay(LocalDate date) {
-		return date.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		return date.atStartOfDay(DEFAULT_ZONE).toInstant().toEpochMilli();
 	}
 
 	public static String parseLocalDateToString(LocalDate date, String dateFormat) {
@@ -96,16 +89,13 @@ public class StreetVendingUtil {
 			dateFormat = DATE_FORMAT;
 		}
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
-		// Format the LocalDate
-		String formattedDate = date.format(formatter);
-		return formattedDate;
+		return date.format(formatter);
 	}
 
 	public static AuditDetails getAuditDetails(ResultSet rs) throws SQLException {
-		AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("createdBy"))
+		return AuditDetails.builder().createdBy(rs.getString("createdBy"))
 				.createdTime(rs.getLong("createdTime")).lastModifiedBy(rs.getString("lastModifiedBy"))
 				.lastModifiedTime(rs.getLong("lastModifiedTime")).build();
-		return auditdetails;
 	}
 
 	public static String beuatifyJson(Object result) {
@@ -114,8 +104,7 @@ public class StreetVendingUtil {
 		try {
 			data = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(result);
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Error while formatting JSON", e);
 		}
 		return data;
 	}
@@ -124,11 +113,11 @@ public class StreetVendingUtil {
 		return tenantId.split("\\.")[0];
 	}
 
-	public static ChronoLocalDate getMonthsAgo(int i) {
-		// TODO Auto-generated method stub
-		return null;
+	public static ChronoLocalDate getMonthsAgo(int months) {
+		return LocalDate.now(DEFAULT_ZONE).minusMonths(months);
 	}
 
+	@SuppressWarnings("java:S2143")
 	public String convertToFormattedDate(String epochString, String dateFormat) {
 		try {
 			long epoch = Long.parseLong(epochString);
@@ -145,16 +134,15 @@ public class StreetVendingUtil {
 		try {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 			LocalDate date = LocalDate.parse(epochString, formatter);
-			// Add one year
 			LocalDate updatedDate = date.plusYears(1);
 
 			return updatedDate.format(formatter);
 
 		} catch (DateTimeParseException ex) {
-			System.err.println("Invalid date format: " + epochString);
+			log.error("Invalid date format: {}", epochString);
 		}
 
-		return null; // Return null if both parsing attempts fail
+		return null;
 	}
 
 	/**
@@ -167,14 +155,12 @@ public class StreetVendingUtil {
 	public static Long dateTolong(String date, String format) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
 
-		// If format includes time, use LocalDateTime; otherwise, use LocalDate
 		if (format.contains("H") || format.contains("m") || format.contains("s")) {
 			LocalDateTime dateTime = LocalDateTime.parse(date, formatter);
-			return dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-		} else {
-			LocalDate localDate = LocalDate.parse(date, formatter);
-			return localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
+			return dateTime.atZone(DEFAULT_ZONE).toInstant().toEpochMilli();
 		}
+		LocalDate localDate = LocalDate.parse(date, formatter);
+		return localDate.atStartOfDay(DEFAULT_ZONE).toInstant().toEpochMilli();
 	}
 	
 	/**
@@ -183,39 +169,24 @@ public class StreetVendingUtil {
 	 * @param epochMillis The epoch time in milliseconds (e.g., from System.currentTimeMillis()).
 	 * @param format The desired date format (e.g., "dd-MM-yyyy", "yyyy/MM/dd").
 	 * @return A formatted date string, or "NA" if the epoch value is null or zero.
-	 *
-	 * Example:
-	 * <pre>
-	 *     convertEpochToFormattedDate(1673827200000L, "dd-MM-yyyy") returns "16-01-2023"
-	 * </pre>
 	 */
 	
 	public String convertEpochToFormattedDate(Long epochMillis, String format) {
 	    if (epochMillis == null || epochMillis == 0) return "NA";
 
 	    return Instant.ofEpochMilli(epochMillis)
-	                  .atZone(ZoneId.systemDefault())
+	                  .atZone(DEFAULT_ZONE)
 	                  .toLocalDate()
 	                  .format(DateTimeFormatter.ofPattern(format));
 	}
 
- 
 	/**
 	 * Formats a SQL date from a ResultSet column to a string using the specified pattern.
-	 *
-	 * <p>This method retrieves a {@link java.time.LocalDate} from the given column name
-	 * and formats it using the provided {@link java.time.format.DateTimeFormatter} pattern.
-	 * If the date is null or an exception occurs, it returns {@code null}.
 	 *
 	 * @param rs The {@link java.sql.ResultSet} containing the date column.
 	 * @param columnName The name of the column containing the SQL date.
 	 * @param pattern The desired date format pattern (e.g., "dd-MM-yyyy", "yyyy/MM/dd").
 	 * @return The formatted date string, or {@code null} if the column is null or an error occurs.
-	 *
-	 * Example:
-	 * <pre>
-	 *     formatSqlDateToString(rs, "dob", "dd-MM-yyyy") // returns "15-05-2024"
-	 * </pre>
 	 */
 	
 	public String formatSqlDateToString(ResultSet rs, String columnName, String pattern) {

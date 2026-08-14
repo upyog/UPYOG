@@ -1,4 +1,4 @@
-package org.egov.echallan.Validation;
+package org.egov.echallan.validation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.owasp.html.PolicyFactory;

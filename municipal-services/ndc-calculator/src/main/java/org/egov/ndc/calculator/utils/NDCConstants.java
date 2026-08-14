@@ -1,9 +1,9 @@
 package org.egov.ndc.calculator.utils;
 
-import org.springframework.stereotype.Component;
-
-@Component
 public class NDCConstants {
+
+	private NDCConstants() {
+	}
 
 	public static final String SEARCH_MODULE = "rainmaker-ndcsrv";
 	public static final String TENANT_ID_FIELD_FOR_SEARCH_URL = "tenantId=";
@@ -16,7 +16,7 @@ public class NDCConstants {
 	public static final String CONSUMER_CODE_SEARCH_FIELD_NAME = "consumerCode=";
 	public static final String DEMAND_STATUS_PARAM = "status=";
 	public static final String DEMAND_STATUS_ACTIVE = "ACTIVE";
-	public static final String paymentcompleted = "isPaymentCompleted=false";
+	public static final String PAYMENT_COMPLETED = "isPaymentCompleted=false";
 	public static final String DEMAND_START_DATE_PARAM = "periodFrom=";
 	public static final String DEMAND_END_DATE_PARAM = "periodTo=";
 	public static final String EMPTY_DEMAND_ERROR_CODE = "EMPTY_DEMANDS";

@@ -1,6 +1,6 @@
 # FROM upyogio/alpine-node-builder-14:yarn AS build
 #FROM ghcr.io/egovernments/alpine-node-builder-14:yarn AS build
-FROM node:22.0.0-alpine AS build
+FROM node:22.11.0-alpine AS build
 RUN apk add --no-cache git>2.30.0
 
 

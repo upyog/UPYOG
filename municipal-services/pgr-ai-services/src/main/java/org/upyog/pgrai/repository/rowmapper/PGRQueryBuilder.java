@@ -6,10 +6,9 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.time.Instant;
-import java.util.Calendar;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -60,35 +59,13 @@ public class PGRQueryBuilder {
      * @param preparedStmtList The list of prepared statement parameters.
      * @return The constructed SQL query as a string.
      */
+    @SuppressWarnings({"java:S3776", "java:S6541"})
     public String getPGRSearchQuery(RequestSearchCriteria criteria, List<Object> preparedStmtList) {
 
         StringBuilder builder = new StringBuilder(QUERY);
 
-        if(criteria.getIsPlainSearch() != null && criteria.getIsPlainSearch()){
-            Set<String> tenantIds = criteria.getTenantIds();
-            if(!CollectionUtils.isEmpty(tenantIds)){
-                addClauseIfRequired(preparedStmtList, builder);
-                builder.append(" ser.tenantId IN (").append(createQuery(tenantIds)).append(")");
-                addToPreparedStatement(preparedStmtList, tenantIds);
-            }
-        }
-        else {
-            if (criteria.getTenantId() != null) {
-                String tenantId = criteria.getTenantId();
+        addTenantClause(criteria, preparedStmtList, builder);
 
-                String[] tenantIdChunks = tenantId.split("\\.");
-
-                if (tenantIdChunks.length == config.getStateLevelTenantIdLength()) {
-                    addClauseIfRequired(preparedStmtList, builder);
-                    builder.append(" ser.tenantid LIKE ? ");
-                    preparedStmtList.add(criteria.getTenantId() + '%');
-                } else {
-                    addClauseIfRequired(preparedStmtList, builder);
-                    builder.append(" ser.tenantid=? ");
-                    preparedStmtList.add(criteria.getTenantId());
-                }
-            }
-        }
         Set<String> serviceCodes = criteria.getServiceCode();
         if (!CollectionUtils.isEmpty(serviceCodes)) {
             addClauseIfRequired(preparedStmtList, builder);
@@ -154,31 +131,76 @@ public class PGRQueryBuilder {
             addToPreparedStatement(preparedStmtList, localities);
         }
 
-        if (criteria.getFromDate() != null) {
-            addClauseIfRequired(preparedStmtList, builder);
-
-            //If user does not specify toDate, take today's date as toDate by default.
-            if (criteria.getToDate() == null) {
-                criteria.setToDate(Instant.now().toEpochMilli());
-            }
-
-            builder.append(" ser.createdtime BETWEEN ? AND ?");
-            preparedStmtList.add(criteria.getFromDate());
-            preparedStmtList.add(criteria.getToDate());
-
-        } else {
-            //if only toDate is provided as parameter without fromDate parameter, throw an exception.
-            if (criteria.getToDate() != null) {
-                throw new CustomException("INVALID_SEARCH", "Cannot specify to-Date without a from-Date");
-            }
-        }
-
+        addDateClause(criteria, preparedStmtList, builder);
 
         addOrderByClause(builder, criteria);
 
         addLimitAndOffset(builder, criteria, preparedStmtList);
 
         return builder.toString();
+    }
+
+    /**
+     * Appends the tenant filtering clause to the query based on whether it is a plain search
+     * or a regular search, handling state-level tenant IDs with a LIKE match.
+     *
+     * @param criteria         The search criteria for filtering PGR services.
+     * @param preparedStmtList The list of prepared statement parameters.
+     * @param builder          The SQL query builder.
+     */
+    private void addTenantClause(RequestSearchCriteria criteria, List<Object> preparedStmtList, StringBuilder builder) {
+
+        if (criteria.getIsPlainSearch() != null && criteria.getIsPlainSearch()) {
+            Set<String> tenantIds = criteria.getTenantIds();
+            if (!CollectionUtils.isEmpty(tenantIds)) {
+                addClauseIfRequired(preparedStmtList, builder);
+                builder.append(" ser.tenantId IN (").append(createQuery(tenantIds)).append(")");
+                addToPreparedStatement(preparedStmtList, tenantIds);
+            }
+            return;
+        }
+
+        if (criteria.getTenantId() == null)
+            return;
+
+        String[] tenantIdChunks = criteria.getTenantId().split("\\.");
+
+        addClauseIfRequired(preparedStmtList, builder);
+        if (tenantIdChunks.length == config.getStateLevelTenantIdLength()) {
+            builder.append(" ser.tenantid LIKE ? ");
+            preparedStmtList.add(criteria.getTenantId() + '%');
+        } else {
+            builder.append(" ser.tenantid=? ");
+            preparedStmtList.add(criteria.getTenantId());
+        }
+    }
+
+    /**
+     * Appends the created-time date range clause to the query, defaulting the to-date to now
+     * when only a from-date is supplied.
+     *
+     * @param criteria         The search criteria for filtering PGR services.
+     * @param preparedStmtList The list of prepared statement parameters.
+     * @param builder          The SQL query builder.
+     */
+    private void addDateClause(RequestSearchCriteria criteria, List<Object> preparedStmtList, StringBuilder builder) {
+
+        if (criteria.getFromDate() == null) {
+            //if only toDate is provided as parameter without fromDate parameter, throw an exception.
+            if (criteria.getToDate() != null)
+                throw new CustomException("INVALID_SEARCH", "Cannot specify to-Date without a from-Date");
+            return;
+        }
+
+        addClauseIfRequired(preparedStmtList, builder);
+
+        //If user does not specify toDate, take today's date as toDate by default.
+        if (criteria.getToDate() == null)
+            criteria.setToDate(Instant.now().toEpochMilli());
+
+        builder.append(" ser.createdtime BETWEEN ? AND ?");
+        preparedStmtList.add(criteria.getFromDate());
+        preparedStmtList.add(criteria.getToDate());
     }
 
     /**
@@ -190,8 +212,7 @@ public class PGRQueryBuilder {
      */
     public String getCountQuery(RequestSearchCriteria criteria, List<Object> preparedStmtList){
         String query = getPGRSearchQuery(criteria, preparedStmtList);
-        String countQuery = COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
-        return countQuery;
+        return COUNT_WRAPPER.replace("{INTERNAL_QUERY}", query);
     }
 
     /**
@@ -202,16 +223,16 @@ public class PGRQueryBuilder {
      */
     private void addOrderByClause(StringBuilder builder, RequestSearchCriteria criteria){
 
-        if(StringUtils.isEmpty(criteria.getSortBy()))
+        if (criteria.getSortBy() == null)
             builder.append( " ORDER BY ser_createdtime ");
 
-        else if(criteria.getSortBy()== RequestSearchCriteria.SortBy.locality)
+        else if(criteria.getSortBy()== RequestSearchCriteria.SortBy.LOCALITY)
             builder.append(" ORDER BY ads.locality ");
 
-        else if(criteria.getSortBy()== RequestSearchCriteria.SortBy.applicationStatus)
+        else if(criteria.getSortBy()== RequestSearchCriteria.SortBy.APPLICATION_STATUS)
             builder.append(" ORDER BY ser.applicationstatus ");
 
-        else if(criteria.getSortBy()== RequestSearchCriteria.SortBy.serviceRequestId)
+        else if(criteria.getSortBy()== RequestSearchCriteria.SortBy.SERVICE_REQUEST_ID)
             builder.append(" ORDER BY ser.serviceRequestId ");
 
         if(criteria.getSortOrder()== RequestSearchCriteria.SortOrder.ASC)
@@ -246,9 +267,8 @@ public class PGRQueryBuilder {
     private static void addClauseIfRequired(List<Object> values, StringBuilder queryString) {
         if (values.isEmpty())
             queryString.append(" WHERE ");
-        else {
+        else
             queryString.append(" AND");
-        }
     }
 
     /**
@@ -275,7 +295,7 @@ public class PGRQueryBuilder {
      */
     private void addToPreparedStatement(List<Object> preparedStmtList, Collection<String> ids)
     {
-        ids.forEach(id ->{ preparedStmtList.add(id);});
+        ids.forEach(preparedStmtList::add);
     }
 
     /**
@@ -292,15 +312,10 @@ public class PGRQueryBuilder {
 		preparedStmtListComplaintsResolved.add(tenantId);
 
 		// In order to get data of last 12 months, the months variables is pre-configured in application properties
-    	int days = Integer.valueOf(config.getNumberOfDays()) ;
+    	int days = Integer.parseInt(config.getNumberOfDays());
 
-    	Calendar calendar = Calendar.getInstance();
-
-    	// To subtract 12 months from current time, we are adding -12 to the calendar instance, as subtract function is not in-built
-    	calendar.add(Calendar.DATE, -1*days);
-
-    	// Converting the timestamp to milliseconds and adding it to prepared statement list
-    	preparedStmtListComplaintsResolved.add(calendar.getTimeInMillis());
+    	long cutoffMillis = Instant.now().minus(days, ChronoUnit.DAYS).toEpochMilli();
+    	preparedStmtListComplaintsResolved.add(cutoffMillis);
 
 		return query.toString();
 	}

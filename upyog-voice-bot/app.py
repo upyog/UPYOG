@@ -321,7 +321,13 @@ HARD_BLOCK_TOPICS = [
 # Only blocks things that are definitely not UPYOG related (strict blocklist)
 def is_hard_blocked(query: str) -> bool:
     q = query.lower()
-    return any(topic in q for topic in HARD_BLOCK_TOPICS)
+    blocked = any(topic in q for topic in HARD_BLOCK_TOPICS)
+    if blocked:
+        matched = [t for t in HARD_BLOCK_TOPICS if t in q]
+        logger.info(f"[DOMAIN CHECK] Query '{query}' matched hard-block topics: {matched}")
+    else:
+        logger.debug(f"[DOMAIN CHECK] Query '{query}' passed hard-block check.")
+    return blocked
 
 # Legacy wrapper for backward compatibility with older domain checks
 def is_in_domain(query: str) -> tuple:
@@ -386,14 +392,14 @@ COMMON_ENGLISH_WORDS = {
 
 # English words commonly transliterated into Devanagari
 ENGLISH_IN_DEVANAGARI = [
-    'व्हाट', 'हाउ', 'व्हेन', 'व्हेयर', 'व्हाई', 'हू', 'विच',
+    'व्हाट', 'वॉट', 'हाउ', 'व्हेन', 'व्हेयर', 'वेयर', 'व्हाई', 'हू', 'विच',
     'इज', 'आर', 'वॉज', 'वेयर', 'हैव', 'हैज', 'डू', 'डज',
     'कैन', 'कुड', 'विल', 'वुड', 'शुड', 'मस्ट',
-    'द', 'ए', 'एन', 'इन', 'ऑन', 'एट', 'बाय', 'फॉर',
-    'ऑफ', 'टू', 'फ्रॉम', 'विद', 'अबाउट',
-    'नंबर', 'टोटल', 'लिस्ट', 'प्रोसेस', 'स्टेटस',
+    'द', 'थे', 'ए', 'एन', 'इन', 'ऑन', 'एट', 'बाय', 'फॉर',
+    'ऑफ', 'टू', 'फ्रॉम', 'विद', 'अबाउट', 'ई', 'पे', 'पेमेंट', 'फी', 'फीस',
+    'नंबर', 'टोटल', 'लिस्ट', 'प्रोसेस', 'स्टेटस', 'ट्रेड', 'लाइसेंस', 'प्रॉपर्टी', 'टैक्स',
     'एमओयू', 'एनयूएलएम', 'यूएलबी', 'एनयूडीएम',
-    'यूज़र', 'सर्च', 'सबमिट', 'अप्लाई', 'पेमेंट'
+    'यूज़र', 'सर्च', 'सबमिट', 'अप्लाई', 'सर्विस', 'स्टेट', 'पोर्टल', 'अकाउंट'
 ]
 
 def detect_language(text: str) -> dict:
@@ -402,30 +408,48 @@ def detect_language(text: str) -> dict:
     Returns dict: {'lang': 'hi'|'en', 'script': ..., 'search_lang': 'hi'|'en'}
     """
     if not text or not text.strip():
-        return {'lang': 'en', 'script': 'english', 'search_lang': 'en'}
+        result = {'lang': 'en', 'script': 'english', 'search_lang': 'en'}
+        logger.debug(f"[LANG DETECT] Empty text provided -> default result: {result}")
+        return result
 
     text = text.strip()
     words = text.split()
     total_alpha = sum(1 for c in text if c.isalpha())
 
     if total_alpha == 0:
-        return {'lang': 'en', 'script': 'english', 'search_lang': 'en'}
+        result = {'lang': 'en', 'script': 'english', 'search_lang': 'en'}
+        logger.debug(f"[LANG DETECT] No alpha characters in '{text}' -> result: {result}")
+        return result
 
     # Count Devanagari characters
     devanagari_chars = sum(1 for c in text if 'ऀ' <= c <= 'ॿ')
     devanagari_ratio = devanagari_chars / total_alpha
 
     if devanagari_ratio > 0.5:
-        # Mostly Devanagari — check if transliterated English
-        english_word_count = sum(1 for w in words if any(eng in w for eng in ENGLISH_IN_DEVANAGARI))
+        # Check for transliterated English question words first
+        if any(w in text for w in ['व्हाट', 'वॉट', 'हाउ', 'व्हेन', 'वेयर', 'व्हाई', 'हू', 'विच']):
+            result = {'lang': 'en', 'script': 'transliterated_english', 'search_lang': 'en'}
+            logger.info(f"[LANG DETECT] Devanagari English question word detected in '{text}' -> result: {result}")
+            return result
+
+        # Check for pure Hindi words in Devanagari script
+        hindi_dev_words = ['है', 'हैं', 'था', 'थी', 'करोगे', 'करो', 'नहीं', 'दो', 'काम', 'खराब', 'चाहिए', 'बताओ', 'बताएं', 'करना', 'करते', 'सकते', 'सकता', 'सकती', 'कृपया', 'भरें', 'भरने', 'करें', 'किसे']
+        if any(w in words for w in hindi_dev_words):
+            result = {'lang': 'hi', 'script': 'devanagari', 'search_lang': 'hi'}
+            logger.info(f"[LANG DETECT] Devanagari Hindi words detected in '{text}' -> result: {result}")
+            return result
+
+        english_word_count = sum(1 for w in words if any(eng == w for eng in ENGLISH_IN_DEVANAGARI))
         english_ratio = english_word_count / len(words) if words else 0
 
-        if english_ratio > 0.4:
-            # Transliterated English
-            return {'lang': 'en', 'script': 'transliterated_english', 'search_lang': 'en'}
+        if english_ratio >= 0.3:
+            result = {'lang': 'en', 'script': 'transliterated_english', 'search_lang': 'en'}
+            logger.info(f"[LANG DETECT] Devanagari English words ratio {english_ratio:.2f} in '{text}' -> result: {result}")
+            return result
 
-        # True Hindi
-        return {'lang': 'hi', 'script': 'devanagari', 'search_lang': 'hi'}
+        result = {'lang': 'hi', 'script': 'devanagari', 'search_lang': 'hi'}
+        logger.info(f"[LANG DETECT] Devanagari script detected in '{text}' -> result: {result}")
+        return result
 
     # Roman script — check for Hindi phonetics
     text_lower = text.lower()
@@ -443,10 +467,14 @@ def detect_language(text: str) -> dict:
 
     hindi_word_count = sum(1 for w in words_lower if w in hindi_phonetic)
 
-    if hindi_word_count >= 2:
-        return {'lang': 'hi', 'script': 'roman_hindi', 'search_lang': 'hi'}
+    if hindi_word_count >= 1:
+        result = {'lang': 'hi', 'script': 'roman_hindi', 'search_lang': 'hi'}
+        logger.info(f"[LANG DETECT] Roman Hindi phonetic words matched ({hindi_word_count}) in '{text}' -> result: {result}")
+        return result
 
-    return {'lang': 'en', 'script': 'english', 'search_lang': 'en'}
+    result = {'lang': 'en', 'script': 'english', 'search_lang': 'en'}
+    logger.info(f"[LANG DETECT] Defaulting to English for '{text}' -> result: {result}")
+    return result
 
 # Legacy wrapper for backward compatibility to detect language on a per-message basis
 def detect_language_per_turn(text: str) -> tuple:
@@ -480,21 +508,24 @@ def translate_text_bhashini(text, source_lang, target_lang):
         response = requests.post(BHASHINI_URL, headers=BHASHINI_HEADERS, json=payload)
         if response.status_code == 200:
             translation_output = response.json()["pipelineResponse"][0]["output"][0]["target"]
+            logger.info(f"[BHASHINI TRANSLATE] Success: '{text[:30]}...' -> '{translation_output[:30]}...'")
             return translation_output
         else:
-            logger.error(f"Bhashini translation failed with status {response.status_code}")
+            logger.error(f"[BHASHINI TRANSLATE] Failed with status code {response.status_code}: {response.text}")
             return None
     except Exception as e:
-        logger.error(f"Bhashini Translation Error: {e}")
+        logger.error(f"[BHASHINI TRANSLATE] Exception: {e}")
         return None
 
 # Translates text with a built-in fallback mechanism in case Bhashini is down
 def translate_text(text, source_lang, target_lang):
     if source_lang == target_lang or not text:
+        logger.debug(f"[TRANSLATE] Skipping translation since source_lang ({source_lang}) == target_lang ({target_lang})")
         return text
     translated = translate_text_bhashini(text, source_lang, target_lang)
     if translated:
         return translated
+    logger.warning(f"[TRANSLATE] Bhashini translation returned None, falling back to original text.")
     return text
 
 # ============== TTS ==============
@@ -510,6 +541,9 @@ async def generate_edge_tts(text, voice, output_path):
 
 # Converts AI text to speech audio using Edge-TTS with Bhashini as a fallback
 def text_to_speech(text, language_code, gender="female"):
+    """Convert text to speech using Edge-TTS with Bhashini fallback."""
+    logger.info(f"[TTS GENERATION] Input text length: {len(text)} | Language: '{language_code}' | Gender: '{gender}'")
+
     # Branding
     if language_code == "hi":
         text = re.sub(r'\bUPYOG\b', 'उपयोग', text, flags=re.IGNORECASE)
@@ -524,8 +558,10 @@ def text_to_speech(text, language_code, gender="female"):
 
     # Ensure script matches language
     if language_code == "en" and any('ऀ' <= c <= 'ॿ' for c in text):
+        logger.info("[TTS SCRIPT FIX] Devanagari detected in English TTS text — translating to English")
         text = translate_text(text, "hi", "en")
     elif language_code == "hi" and not any('ऀ' <= c <= 'ॿ' for c in text):
+        logger.info("[TTS SCRIPT FIX] Non-Devanagari detected in Hindi TTS text — translating to Hindi")
         text = translate_text(text, "en", "hi")
 
     # Strip emojis and markdown
@@ -535,7 +571,7 @@ def text_to_speech(text, language_code, gender="female"):
     ).strip()
     text = text.replace('**', '').replace('*', '')
 
-    logger.info(f"Generating TTS for language: {language_code}")
+    logger.info(f"[TTS] Generating TTS for language: {language_code}")
 
     # Try Edge-TTS first for English/Hindi
     if language_code in ["en", "hi"]:
@@ -544,6 +580,7 @@ def text_to_speech(text, language_code, gender="female"):
             "hi": "hi-IN-MadhurNeural"
         }
         voice = voice_map.get(language_code)
+        logger.info(f"[TTS EDGE-TTS] Attempting Edge-TTS with voice '{voice}'")
         try:
             with tempfile.NamedTemporaryFile(delete=False, suffix='.mp3') as temp_audio:
                 temp_path = temp_audio.name
@@ -561,7 +598,7 @@ def text_to_speech(text, language_code, gender="female"):
             else:
                 logger.error("Edge-TTS generated empty or invalid audio file, falling back to Bhashini.")
         except Exception as e:
-            logger.error(f"Edge-TTS failed: {e}")
+            logger.error(f"[TTS EDGE-TTS] Edge-TTS failed: {e}. Falling back to Bhashini...")
 
     # Fallback to Bhashini
     if language_code == "en":
@@ -573,6 +610,8 @@ def text_to_speech(text, language_code, gender="female"):
     else:
         tts_service_id = TTS_SERVICE_ID_MISC
 
+    logger.info(f"[TTS BHASHINI] Triggering Bhashini TTS with serviceId '{tts_service_id}' for lang '{language_code}'")
+
     payload = {
         "pipelineTasks": [{"taskType": "tts", "config": {"language": {"sourceLanguage": language_code}, "serviceId": tts_service_id, "gender": gender, "samplingRate": 8000}}],
         "inputData": {"input": [{"source": text}]}
@@ -581,10 +620,13 @@ def text_to_speech(text, language_code, gender="female"):
     try:
         response = requests.post(BHASHINI_URL, headers=BHASHINI_HEADERS, json=payload)
         if response.status_code == 200:
-            return response.json()["pipelineResponse"][0]["audio"][0]["audioContent"]
+            audio_data = response.json()["pipelineResponse"][0]["audio"][0]["audioContent"]
+            logger.info(f"[TTS BHASHINI] Successfully generated audio. Payload length: {len(audio_data)} chars")
+            return audio_data
+        logger.error(f"[TTS BHASHINI] Bhashini status code {response.status_code}: {response.text}")
         return None
     except Exception as e:
-        logger.error(f"Bhashini TTS Error: {e}")
+        logger.error(f"[TTS BHASHINI] Bhashini TTS Error: {e}")
         return None
 
 # ============== LLM RESPONSE GENERATION ==============
@@ -664,10 +706,10 @@ def get_rag_response(query: str, history: list, lang: str, search_lang: str = No
         # Use search_lang for FAISS (English searches English KB, Hindi searches Hindi)
         query_for_search = query
         if search_lang != 'en':
-            # Translate to English for better FAISS matches
             translated = translate_text(query, search_lang, "en")
             if translated and len(translated.strip()) > 2:
                 query_for_search = translated
+                logger.info(f"[RAG FAISS] Translated query for vector search: '{query_for_search}'")
 
         query_embedding = model.encode([query_for_search])
         distances, indices = index.search(query_embedding.astype(np.float32), k=5)
@@ -680,19 +722,19 @@ def get_rag_response(query: str, history: list, lang: str, search_lang: str = No
 
         if relevant_chunks:
             context = "\n\n".join(relevant_chunks[:3])
-            logger.info(f"FAISS context found: {len(relevant_chunks)} chunks")
+            logger.info(f"[RAG FAISS] FAISS context found: {len(relevant_chunks)} relevant chunks (top distance: {distances[0][0]:.3f})")
         else:
-            logger.info("No FAISS context found - LLM will answer from general knowledge")
+            logger.info("[RAG FAISS] No FAISS context found - LLM will answer from general knowledge")
 
     except Exception as e:
-        logger.error(f"FAISS error (non-fatal): {e}")
+        logger.error(f"[RAG FAISS] FAISS search error (non-fatal): {e}")
         context = ""
 
     # Step 2: Build language instruction
     if lang == 'hi':
-        lang_rule = "LANGUAGE: Respond in Hindi using Devanagari script only. Exception: keep UPYOG, NUDM, NOC, GIS, ULB, MoU as-is."
+        lang_rule = "CRITICAL LANGUAGE INSTRUCTION: The user is asking in Hindi. You MUST respond in pure Hindi language using Devanagari script ONLY (हिंदी लिपि). Do NOT use Roman script, English sentences, or Romanized Hinglish under any circumstances. Exception: keep UPYOG, NUDM, NOC, GIS, ULB, MoU as-is."
     else:
-        lang_rule = "LANGUAGE: Respond in English only."
+        lang_rule = "CRITICAL LANGUAGE INSTRUCTION: The user is asking in English. You MUST respond in pure standard English script and language ONLY. Do NOT use Romanized Hinglish, Hindi words, or Devanagari script under any circumstances."
 
     # Step 3: Build context section
     if context:
@@ -710,11 +752,21 @@ Answer from your general knowledge about:
 - Indian Urban Local Body (ULB) services
 - Standard government processes for urban services in India"""
 
-    # Step 4: Build conversation history
+    # Step 4: Build conversation history with language isolation
     history_messages = []
     for turn in history[-6:]:
         if "content" in turn and "role" in turn:
-            history_messages.append({"role": turn["role"], "content": turn["content"]})
+            content = turn["content"]
+            if turn["role"] == "assistant":
+                if lang == 'en' and any('ऀ' <= c <= 'ॿ' for c in content):
+                    translated = translate_text(content, "hi", "en")
+                    if translated and len(translated.strip()) > 0:
+                        content = translated
+                elif lang == 'hi' and not any('ऀ' <= c <= 'ॿ' for c in content):
+                    translated = translate_text(content, "en", "hi")
+                    if translated and len(translated.strip()) > 0:
+                        content = translated
+            history_messages.append({"role": turn["role"], "content": content})
 
     # Step 5: System prompt - LLM as the brain
     system = f"""{lang_rule}
@@ -788,6 +840,9 @@ Do NOT list fake IDs or made-up complaint descriptions.
     messages.extend(history_messages)
     messages.append({"role": "user", "content": query})
 
+    logger.info(f"[GROQ RAG] Calling Groq API with {len(messages)} messages (history turns: {len(history_messages)})")
+    start_time = time.time()
+
     try:
         if not groq_client:
             groq_client = Groq(api_key=GROQ_API_KEY)
@@ -798,10 +853,24 @@ Do NOT list fake IDs or made-up complaint descriptions.
             max_tokens=400,
             temperature=0.3
         )
-        return response.choices[0].message.content.strip()
+        ans = response.choices[0].message.content.strip()
+        elapsed = time.time() - start_time
+        logger.info(f"[GROQ RAG] Received answer in {elapsed:.2f}s (len: {len(ans)} chars)")
+
+        if lang == 'en' and any('ऀ' <= c <= 'ॿ' for c in ans):
+            logger.info("[GROQ RAG] Output contained Devanagari for English query — translating to English")
+            translated = translate_text(ans, "hi", "en")
+            if translated and len(translated.strip()) > 0:
+                ans = translated
+        elif lang == 'hi' and not any('ऀ' <= c <= 'ॿ' for c in ans):
+            logger.info("[GROQ RAG] Output contained Non-Devanagari for Hindi query — translating to Hindi")
+            translated = translate_text(ans, "en", "hi")
+            if translated and len(translated.strip()) > 0:
+                ans = translated
+        return ans
 
     except Exception as e:
-        logger.error(f"Groq error: {e}")
+        logger.error(f"[GROQ RAG] Groq error: {e}")
         return "क्षमा करें, तकनीकी समस्या है।" if lang == 'hi' else "Sorry, technical issue."
 
 # ============== RETRIEVAL (legacy wrapper) ==============
@@ -819,6 +888,7 @@ def retrieve_document(query, user_lang, history, session_id="default"):
 def retrieve_document_stream(query, user_lang, history, phone_anchor="default"):
     global stop_generation
     stop_generation.clear()
+    logger.info(f"[STREAMING] Starting SSE stream for query='{query}', lang='{user_lang}'")
 
     try:
         query_for_search = translate_text(query, user_lang, "en") if user_lang in ["hi", "mr", "bn", "gu", "ta", "te", "kn", "ml"] else query
@@ -839,8 +909,10 @@ def retrieve_document_stream(query, user_lang, history, phone_anchor="default"):
                 if idx != -1 and d < FAISS_THRESHOLD:
                     frs_context.append({"module": frs_data.iloc[idx]['module'], "text": f"Q: {frs_data.iloc[idx]['question']} A: {frs_data.iloc[idx]['answer']}"})
 
-        # Stream the LLM response
+        logger.info(f"[STREAMING] Context chunks matched: FAQ={len(faq_context)}, FRS={len(frs_context)}")
+
         if not Groq or not GROQ_API_KEY:
+            logger.warning("[STREAMING] Groq SDK/Key not present — sending fallback response")
             response_text = faq_context[0]['a'] if faq_context else "I'm sorry, I'm having trouble thinking right now."
             yield f"data: {json.dumps({'type': 'text', 'text': response_text})}\n\n"
             return
@@ -1139,17 +1211,20 @@ probes do not mark the pod as unhealthy.
 # Standard non-streaming chat endpoint using the LLM-first architecture
 def chat():
     if request.method == "GET":
+        logger.info("[ENDPOINT /chat GET] Health check ping")
         return jsonify({"status": "ok", "message": "UPYOG Voice Bot Chat Endpoint"}), 200
 
     global model, data, index, is_loading
 
     try:
         if is_loading or any(x is None for x in [model, data, index]):
+            logger.warning("[ENDPOINT /chat POST] Resources still loading — waiting 1s...")
             time.sleep(1)
             if any(x is None for x in [model, data, index]):
+                logger.error("[ENDPOINT /chat POST] Resources unavailable (503 Service Unavailable)")
                 return jsonify({"error": "Loading resources..."}), 503
 
-        user_data = request.json
+        user_data = request.json or {}
         user_input = user_data.get("query", "")
         session_id = user_data.get("session_id", "default")
         phone_anchor = extract_phone_from_session(session_id)
@@ -1245,13 +1320,16 @@ def chat():
         detected_script = lang_info['script']
         search_lang = lang_info['search_lang']
 
-        print(f"━━━ REQUEST ━━━")
-        print(f"Query: {user_input}")
-        print(f"Lang: {user_language} | Script: {detected_script} | SearchLang: {search_lang}")
-        print(f"━━━━━━━━━━━━━━")
+        logger.info(f"━━━ REQUEST [Session: {session_id}] ━━━")
+        logger.info(f"Query: '{user_input}'")
+        logger.info(f"Lang: {user_language} | Script: {detected_script} | SearchLang: {search_lang}")
+        if request_info:
+            logger.info(f"Auth RequestInfo Present: authToken={bool(request_info.get('authToken'))}, msgId={request_info.get('msgId')}")
+        logger.info(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
         # Hard block check - only block truly unrelated topics
         if is_hard_blocked(user_input):
+            logger.info(f"[CHAT FLOW] Query hard-blocked for out-of-domain topic.")
             msg = ("मैं केवल UPYOG और शहरी सरकारी सेवाओं के बारे में "
                    "सहायता कर सकता हूँ।" if user_language == 'hi' else
                    "I can only help with UPYOG and urban government services.")
@@ -1576,12 +1654,11 @@ def chat():
 
 
         # PATH D: Normal RAG flow (intent is "faq")
-        # Apply domain filter AFTER intent classification
         in_domain, reason = is_in_domain(user_input)
         if not in_domain and reason == "out_of_domain":
             message = get_rejection_message("out_of_domain", user_language)
             audio_output = text_to_speech(message, user_language)
-            logger.info(f"Domain rejected (faq path): {reason}")
+            logger.info(f"[CHAT FLOW] Domain rejected (faq path): {reason}")
             return jsonify({
                 "response": message,
                 "lang": user_language,
@@ -1593,6 +1670,7 @@ def chat():
         if not in_domain and reason == "too_short":
             message = get_rejection_message("too_short", user_language)
             audio_output = text_to_speech(message, user_language)
+            logger.info(f"[CHAT FLOW] Query rejected because too short: {reason}")
             return jsonify({
                 "response": message,
                 "lang": user_language,
@@ -1602,11 +1680,9 @@ def chat():
 
         response_text = retrieve_document(user_input, user_language, history, session_id=session_id)
 
-        # Check if response is a grievance offer (from FAISS fallback)
         if response_text and ("शिकायत" in response_text or "grievance" in response_text.lower() or "एक शिकायत" in response_text):
-            # This is a fallback grievance offer - change mode
             audio_output = text_to_speech(response_text, user_language)
-            logger.info("Intent: faq but fallback offered grievance")
+            logger.info("[CHAT FLOW] Fallback response contains grievance wording — setting mode to grievance_offered")
             return jsonify({
                 "response": response_text,
                 "lang": user_language,
@@ -1615,9 +1691,8 @@ def chat():
             })
 
         response_text = re.sub(r'\bUpyog\b', 'UPYOG', response_text, flags=re.IGNORECASE)
-
-        # Generate TTS (language matches detected language)
         audio_output = text_to_speech(response_text, user_language)
+        logger.info(f"[CHAT FLOW] Successfully generated final FAQ response (length: {len(response_text)} chars)")
 
         return jsonify({
             "response": response_text,
@@ -1628,7 +1703,7 @@ def chat():
         }), 200
 
     except Exception as e:
-        logger.error(f"Chat Error: {e}")
+        logger.error(f"[ENDPOINT /chat ERROR] Exception: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
 import threading
@@ -1736,6 +1811,7 @@ GET requests return a health check response for Kubernetes liveness probes.
 # Streaming SSE (Server-Sent Events) endpoint for a faster typing effect on the UI
 def stream():
     if request.method == "GET":
+        logger.info("[ENDPOINT /stream GET] Health check ping")
         return jsonify({"status": "ok", "message": "UPYOG Voice Bot Stream Endpoint"}), 200
 
     global model, data, index, is_loading, stop_generation
@@ -1746,7 +1822,7 @@ def stream():
             if any(x is None for x in [model, data, index]):
                 return Response("data: {\"error\": \"Loading resources...\"}\n\n", mimetype='text/event-stream'), 503
 
-        user_data = request.json
+        user_data = request.json or {}
         user_input = user_data.get("query", "")
         # NOTE: Don't use lang from frontend - detect fresh per turn
         session_id = user_data.get("session_id", "default")
@@ -1754,14 +1830,13 @@ def stream():
         from database import get_chat_history
         history = get_chat_history(phone_anchor) if phone_anchor != "default" else []
 
-        # DYNAMIC PER-TURN LANGUAGE DETECTION
         user_language, detected_script = detect_language_per_turn(user_input)
-        logger.info(f"Stream language detection: '{user_input}' -> {user_language} (script: {detected_script})")
+        logger.info(f"[ENDPOINT /stream POST] Stream request: '{user_input}' -> lang={user_language} (script: {detected_script})")
 
         return Response(retrieve_document_stream(user_input, user_language, history, phone_anchor=phone_anchor), mimetype='text/event-stream')
 
     except Exception as e:
-        logger.error(f"Stream Error: {e}")
+        logger.error(f"[ENDPOINT /stream ERROR] Exception: {e}")
         return Response(f"data: {json.dumps({'type': 'error', 'error': str(e)})}\n\n", mimetype='text/event-stream')
 
 """
@@ -1789,7 +1864,7 @@ def stop():
     """Stop endpoint - called when user barges in."""
     global stop_generation
     stop_generation.set()
-    logger.info("Stop signal received - aborting generation")
+    logger.info("[ENDPOINT /stop POST] Stop signal set — interrupting generation thread")
     return jsonify({"status": "stopped"}), 200
 
 # ============== UPYOG LOGIN & OTP API INTEGRATIONS ==============
@@ -1997,8 +2072,8 @@ def api_verify_otp():
 def classify_intent(query: str, history: list, lang: str) -> dict:
     """Classifies user intent using a fast LLM call."""
     global groq_client
+    logger.info(f"[INTENT CLASSIFIER] Classifying intent for query='{query}', lang='{lang}'")
 
-    # Build last 3 turns of context
     recent_history = history[-3:] if len(history) >= 3 else history
     history_text = "\n".join([
         f"{turn.get('role', 'user').upper()}: {turn.get('content', '')}"
@@ -2076,6 +2151,7 @@ Respond ONLY with this JSON, no other text:
         raw = response.choices[0].message.content.strip()
         raw = raw.replace("```json", "").replace("```", "").strip()
         result = json.loads(raw)
+        logger.info(f"[INTENT CLASSIFIER] Groq raw response: {result}")
 
         valid_intents = [
             "greeting", "faq", "grievance_candidate", "grievance_confirm", "grievance_cancel", "grievance_status_candidate",
@@ -2084,12 +2160,13 @@ Respond ONLY with this JSON, no other text:
         ]
        
         if result.get("intent") not in valid_intents:
+            logger.warning(f"[INTENT CLASSIFIER] Invalid intent '{result.get('intent')}' returned — resetting to 'faq'")
             result["intent"] = "faq"
 
         return result
 
     except Exception as e:
-        logger.error(f"Intent classifier error: {e}")
+        logger.error(f"[INTENT CLASSIFIER] Classifier exception: {e}")
         return {"intent": "faq", "reasoning": "classifier failed", "service": None, "emotion": "neutral"}
 
 

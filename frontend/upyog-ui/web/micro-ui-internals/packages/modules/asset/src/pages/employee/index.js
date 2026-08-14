@@ -119,8 +119,15 @@ const EmployeeApp = ({
             <Route path= "assetservice/report/*" element={<PrivateRoute><SearchReport  /></PrivateRoute>} />
             <Route path= "assetservice/edit-response/*" element={<PrivateRoute><EditResponse /></PrivateRoute>} />
             
-            <Route path="AssetapplicationReport" element={<PrivateRoute> <EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetapplicationReport" /></PrivateRoute>}/>
-
+            <Route path="AssetapplicationReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetapplicationReport" /></PrivateRoute>} />
+            <Route path="LandReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="LandReport" /></PrivateRoute>} />
+            <Route path="AssetapplicationReportULBwise/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetapplicationReportULBwise" /></PrivateRoute>} />
+            <Route path="AssetCountReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetCountReport" /></PrivateRoute>} />
+<Route path="AssetMaintenanceReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetMaintenanceReport" /></PrivateRoute>} />
+<Route path="AssetDisposalReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetDisposalReport" /></PrivateRoute>} />
+<Route path="AssetAssignmentReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetAssignmentReport" /></PrivateRoute>} />
+<Route path="DetailedBuildingAssetsReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="DetailedBuildingAssetsReport" /></PrivateRoute>} />
+<Route path="PlantsMachineryReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="PlantsMachineryReport" /></PrivateRoute>} />  
               <Route
                 path="LandReport"
                 element={

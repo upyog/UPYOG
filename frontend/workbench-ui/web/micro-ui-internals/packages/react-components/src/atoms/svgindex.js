@@ -1071,9 +1071,9 @@ const AddIcon = ({ styles, className, fill = "white" }) => (
   </svg>
 );
 
-const UploadIcon = ({styles, className, fill = "white",height="64",width="64" }) => (
-  <svg style={{...styles}} className={className} width={width} height={height} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g clip-path="url(#clip0_431_5084)">
+const UploadIcon = ({ styles, className, fill = "white", height = "64", width = "64" }) => (
+  <svg style={{ ...styles }} className={className} width={width} height={height} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clipPath="url(#clip0_431_5084)">
       <path
         d="M24.0007 42.6667H40.0007V26.6667H50.6673L32.0007 8L13.334 26.6667H24.0007V42.6667ZM13.334 48H50.6673V53.3333H13.334V48Z"
         fill="#B1B4B6"
@@ -1087,10 +1087,10 @@ const UploadIcon = ({styles, className, fill = "white",height="64",width="64" })
   </svg>
 );
 
-const DeleteIconv2 = ({styles, className, fill = "#F47738",height="24",width="24" }) => (
+const DeleteIconv2 = ({ styles, className, fill = "#F47738", height = "24", width = "24" }) => (
   <svg width={width} style={styles} className={className} height={height} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g clip-path="url(#clip0_431_5088)">
-      <path d="M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7H6V19ZM19 4H15.5L14.5 3H9.5L8.5 4H5V6H19V4Z" fill={fill}/>
+    <g clipPath="url(#clip0_431_5088)">
+      <path d="M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7H6V19ZM19 4H15.5L14.5 3H9.5L8.5 4H5V6H19V4Z" fill={fill} />
     </g>
     <defs>
       <clipPath id="clip0_431_5088">
@@ -1100,15 +1100,15 @@ const DeleteIconv2 = ({styles, className, fill = "#F47738",height="24",width="24
   </svg>
 );
 
-const InfoIconOutline = ({styles, className, fill = "#505A5F",height="20",width="20" }) => (
+const InfoIconOutline = ({ styles, className, fill = "#505A5F", height = "20", width = "20" }) => (
   <svg style={styles} className={className} xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 20 20" fill={fill}>
-  <path d="M8.7085 5.54171H10.2918V7.12504H8.7085V5.54171ZM8.7085 8.70837H10.2918V13.4584H8.7085V8.70837ZM9.50016 1.58337C5.13016 1.58337 1.5835 5.13004 1.5835 9.50004C1.5835 13.87 5.13016 17.4167 9.50016 17.4167C13.8702 17.4167 17.4168 13.87 17.4168 9.50004C17.4168 5.13004 13.8702 1.58337 9.50016 1.58337ZM9.50016 15.8334C6.00891 15.8334 3.16683 12.9913 3.16683 9.50004C3.16683 6.00879 6.00891 3.16671 9.50016 3.16671C12.9914 3.16671 15.8335 6.00879 15.8335 9.50004C15.8335 12.9913 12.9914 15.8334 9.50016 15.8334Z" fill="#505A5F"/>
-</svg>
+    <path d="M8.7085 5.54171H10.2918V7.12504H8.7085V5.54171ZM8.7085 8.70837H10.2918V13.4584H8.7085V8.70837ZM9.50016 1.58337C5.13016 1.58337 1.5835 5.13004 1.5835 9.50004C1.5835 13.87 5.13016 17.4167 9.50016 17.4167C13.8702 17.4167 17.4168 13.87 17.4168 9.50004C17.4168 5.13004 13.8702 1.58337 9.50016 1.58337ZM9.50016 15.8334C6.00891 15.8334 3.16683 12.9913 3.16683 9.50004C3.16683 6.00879 6.00891 3.16671 9.50016 3.16671C12.9914 3.16671 15.8335 6.00879 15.8335 9.50004C15.8335 12.9913 12.9914 15.8334 9.50016 15.8334Z" fill="#505A5F" />
+  </svg>
 )
 
 const FileIcon = ({ styles, className, fill = "white", height = "64", width = "64" }) => (
   <svg styles={styles} className={className} width="24" height="24" viewBox="0 0 24 24" fill={fill} xmlns="http://www.w3.org/2000/svg">
-    <g clip-path="url(#clip0_431_5092)">
+    <g clipPath="url(#clip0_431_5092)">
       <path
         d="M14 2H6C4.9 2 4.01 2.9 4.01 4L4 20C4 21.1 4.89 22 5.99 22H18C19.1 22 20 21.1 20 20V8L14 2ZM16 18H8V16H16V18ZM16 14H8V12H16V14ZM13 9V3.5L18.5 9H13Z"
         fill="#505A5F"
@@ -1178,7 +1178,7 @@ const AddFilled = ({ style = {} }) => (
 
 const NoResultsFoundIcon = () => (
   <svg width="336" height="262" viewBox="0 0 336 262" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g clip-path="url(#clip0_7426_33765)">
+    <g clipPath="url(#clip0_7426_33765)">
       <path
         opacity="0.1"
         d="M117.863 256.926C150.233 256.926 176.474 251.972 176.474 245.862C176.474 239.751 150.233 234.797 117.863 234.797C85.4937 234.797 59.2529 239.751 59.2529 245.862C59.2529 251.972 85.4937 256.926 117.863 256.926Z"
@@ -1659,7 +1659,7 @@ const ContractIcon = ({ className = "", fill = "none", style = {} }) => (
       d="M21.3333 3.00065H15.76C15.2 1.45398 13.7333 0.333984 12 0.333984C10.2667 0.333984 8.8 1.45398 8.24 3.00065H2.66667C1.2 3.00065 0 4.20065 0 5.66732V24.334C0 25.8007 1.2 27.0007 2.66667 27.0007H21.3333C22.8 27.0007 24 25.8007 24 24.334V5.66732C24 4.20065 22.8 3.00065 21.3333 3.00065ZM12 3.00065C12.7333 3.00065 13.3333 3.60065 13.3333 4.33398C13.3333 5.06732 12.7333 5.66732 12 5.66732C11.2667 5.66732 10.6667 5.06732 10.6667 4.33398C10.6667 3.60065 11.2667 3.00065 12 3.00065Z"
       fill="white"
     />
-    <g clip-path="url(#clip0_1_3)">
+    <g clipPath="url(#clip0_1_3)">
       <path d="M14.9269 16.7879L13.3359 18.3789L17.8331 22.8761L19.4241 21.2851L14.9269 16.7879Z" fill="#0B4B66" />
       <path
         d="M16.1242 14.4996C17.5717 14.4996 18.7492 13.3221 18.7492 11.8746C18.7492 11.4396 18.6292 11.0346 18.4417 10.6746L16.4167 12.6996L15.2992 11.5821L17.3242 9.55711C16.9642 9.36961 16.5592 9.24961 16.1242 9.24961C14.6767 9.24961 13.4992 10.4271 13.4992 11.8746C13.4992 12.1821 13.5592 12.4746 13.6567 12.7446L12.2692 14.1321L10.9342 12.7971L11.4667 12.2646L10.4092 11.2071L11.9992 9.61711C11.1217 8.73961 9.69672 8.73961 8.81922 9.61711L6.16422 12.2721L7.22172 13.3296H5.10672L4.57422 13.8621L7.22922 16.5171L7.76172 15.9846V13.8621L8.81922 14.9196L9.35172 14.3871L10.6867 15.7221L5.12922 21.2796L6.71922 22.8696L15.2542 14.3421C15.5242 14.4396 15.8167 14.4996 16.1242 14.4996Z"
@@ -1680,7 +1680,7 @@ const DashboardIcon = ({ className = "", fill = "none", style = {} }) => (
 );
 const HelperIcon = ({ className = "", fill = "none", style = {} }) => (
   <svg width="32" height="32" className={className} style={style} viewBox="0 0 32 32" fill={fill} xmlns="http://www.w3.org/2000/svg">
-    <g clip-path="url(#clip0_4347_41530)">
+    <g clipPath="url(#clip0_4347_41530)">
       <path
         d="M14.668 24.0003H17.3346V21.3337H14.668V24.0003ZM16.0013 2.66699C8.6413 2.66699 2.66797 8.64033 2.66797 16.0003C2.66797 23.3603 8.6413 29.3337 16.0013 29.3337C23.3613 29.3337 29.3346 23.3603 29.3346 16.0003C29.3346 8.64033 23.3613 2.66699 16.0013 2.66699ZM16.0013 26.667C10.1213 26.667 5.33464 21.8803 5.33464 16.0003C5.33464 10.1203 10.1213 5.33366 16.0013 5.33366C21.8813 5.33366 26.668 10.1203 26.668 16.0003C26.668 21.8803 21.8813 26.667 16.0013 26.667ZM16.0013 8.00033C13.0546 8.00033 10.668 10.387 10.668 13.3337H13.3346C13.3346 11.867 14.5346 10.667 16.0013 10.667C17.468 10.667 18.668 11.867 18.668 13.3337C18.668 16.0003 14.668 15.667 14.668 20.0003H17.3346C17.3346 17.0003 21.3346 16.667 21.3346 13.3337C21.3346 10.387 18.948 8.00033 16.0013 8.00033Z"
         fill="white"
@@ -1740,17 +1740,17 @@ const MuktaHomeIcon = ({ className = "", fill = "none", style = {} }) => (
 );
 const DoubleTickIcon = ({ className = "", fill = "none", style = {} }) => (
   <svg width="32" height="19" viewBox="0 0 32 19" className={className} style={style} fill={fill} xmlns="http://www.w3.org/2000/svg">
-    <path d="M24.0002 2.33312L22.1202 0.453125L13.6669 8.90646L15.5469 10.7865L24.0002 2.33312ZM29.6535 0.453125L15.5469 14.5598L9.97354 8.99979L8.09354 10.8798L15.5469 18.3331L31.5469 2.33312L29.6535 0.453125ZM0.546875 10.8798L8.00021 18.3331L9.88021 16.4531L2.44021 8.99979L0.546875 10.8798Z" fill="#F47738"/>
+    <path d="M24.0002 2.33312L22.1202 0.453125L13.6669 8.90646L15.5469 10.7865L24.0002 2.33312ZM29.6535 0.453125L15.5469 14.5598L9.97354 8.99979L8.09354 10.8798L15.5469 18.3331L31.5469 2.33312L29.6535 0.453125ZM0.546875 10.8798L8.00021 18.3331L9.88021 16.4531L2.44021 8.99979L0.546875 10.8798Z" fill="#F47738" />
   </svg>
 )
 const InfoIcon = ({ className = "", fill = "none", style = {} }) => (
   <svg width="20" height="20" viewBox="0 0 20 20" className={className} style={style} fill={fill} xmlns="http://www.w3.org/2000/svg">
-    <path d="M9 5H11V7H9V5ZM9 9H11V15H9V9ZM10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM10 18C5.59 18 2 14.41 2 10C2 5.59 5.59 2 10 2C14.41 2 18 5.59 18 10C18 14.41 14.41 18 10 18Z" fill="#505A5F"/>
+    <path d="M9 5H11V7H9V5ZM9 9H11V15H9V9ZM10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM10 18C5.59 18 2 14.41 2 10C2 5.59 5.59 2 10 2C14.41 2 18 5.59 18 10C18 14.41 14.41 18 10 18Z" fill="#505A5F" />
   </svg>
 )
 const PaymentIcon = ({ className = "", fill = "none", style = {} }) => (
   <svg width="34" height="34" viewBox="0 0 34 34" className={className} style={style} fill={fill} xmlns="http://www.w3.org/2000/svg">
-    <g clip-path="url(#clip0_7555_25801)">
+    <g clipPath="url(#clip0_7555_25801)">
       <path
         d="M23.9987 2.66675H7.9987C6.53203 2.66675 5.33203 3.86675 5.33203 5.33341V26.6667C5.33203 28.1334 6.53203 29.3334 7.9987 29.3334H23.9987C25.4654 29.3334 26.6654 28.1334 26.6654 26.6667V5.33341C26.6654 3.86675 25.4654 2.66675 23.9987 2.66675ZM7.9987 5.33341H14.6654V16.0001L11.332 14.0001L7.9987 16.0001V5.33341Z"
         fill="white"
@@ -1764,36 +1764,176 @@ const PaymentIcon = ({ className = "", fill = "none", style = {} }) => (
   </svg>
 );
 
-const HistoryIcon =({ className = "", fill = "none", style = {} })=>(
-  <svg width="36" height="36" viewBox="0 0 36 36" fill={fill } className={className} style={style}  xmlns="http://www.w3.org/2000/svg">
-<path d="M30.7437 5.30394C23.7393 -1.76798 12.3808 -1.76798 5.37636 5.30394L3.33196 7.36803V3.88935C3.33196 2.97184 2.5748 2.20731 1.66598 2.20731C0.757234 2.20731 0 2.97177 0 3.88935V11.42C0 12.3375 0.757166 13.102 1.66598 13.102H9.12473C10.0335 13.102 10.7907 12.3376 10.7907 11.42C10.7907 10.5025 10.0335 9.73794 9.12473 9.73794H5.67925L7.72365 7.67385C10.5633 4.80685 14.3116 3.35418 18.0599 3.35418C21.8083 3.35444 25.5565 4.80713 28.3961 7.67412C31.3493 10.6558 32.9017 14.7843 32.6366 18.9892C32.5988 19.9067 33.2802 20.7093 34.189 20.7858H34.3025C35.1733 20.7858 35.8927 20.0979 35.9685 19.2185C36.2714 14.0577 34.3783 8.97375 30.7435 5.304L30.7437 5.30394Z" fill="#F47738"/>
-<path d="M18.2519 8.16797C17.3432 8.16797 16.5859 8.93243 16.5859 9.85001V18.1069C16.5859 18.8714 17.0782 19.5213 17.7976 19.7125L23.8176 21.4326C24.6883 21.7003 25.6349 21.1267 25.862 20.2857C26.1271 19.4066 25.5968 18.4509 24.6883 18.2216L19.9178 16.8073V9.85007C19.9178 8.93277 19.1984 8.16804 18.2519 8.16804L18.2519 8.16797Z" fill="#F47738"/>
-<path d="M25.4454 31.0611C24.5746 31.5581 23.6659 31.9786 22.7194 32.2845C22.3406 32.3991 22.038 32.6668 21.8486 33.0108C21.6592 33.3548 21.6592 33.7753 21.7728 34.1577C22.038 34.9222 22.8707 35.3427 23.6281 35.1134C24.764 34.731 25.8619 34.2342 26.8842 33.6607C27.6036 33.2402 27.8307 32.3611 27.4143 31.6347C27.0733 30.9083 26.1646 30.6406 25.4454 31.0611Z" fill="#F47738"/>
-<path d="M3.40851 20.1747C3.37074 19.7923 3.14335 19.4483 2.84069 19.1808C2.57553 18.9897 2.27287 18.875 1.96994 18.875H1.78058C1.40185 18.9131 1.06114 19.1427 0.796242 19.4483C0.569113 19.7541 0.455548 20.1362 0.531082 20.5567C0.682414 21.7801 0.947574 22.9651 1.36404 24.0736C1.6292 24.838 2.49996 25.2585 3.25712 24.9911C3.63585 24.8764 3.9385 24.5706 4.09008 24.2266C4.24141 23.8826 4.27944 23.4621 4.16588 23.0797C3.78715 22.1622 3.55977 21.1684 3.40844 20.1746L3.40851 20.1747Z" fill="#F47738"/>
-<path d="M7.60837 28.6674C7.38124 28.4381 7.19188 28.2088 6.96476 27.9794C6.66183 27.6355 6.28338 27.4824 5.8669 27.4824C5.52621 27.4824 5.18553 27.5971 4.88257 27.8648C4.27672 28.4 4.20119 29.3556 4.769 29.9673C4.99613 30.235 5.26128 30.5025 5.52617 30.7702C6.09398 31.3435 6.73788 31.9171 7.38146 32.4138C8.02507 32.9109 8.97165 32.7578 9.42585 32.108C9.65298 31.8021 9.76655 31.42 9.72878 30.9995C9.69101 30.6172 9.46362 30.2732 9.16096 30.0057C8.63064 29.6231 8.10057 29.1645 7.6083 28.6675L7.60837 28.6674Z" fill="#F47738"/>
-<path d="M33.281 24.1352C33.0538 24.0206 32.8645 23.9824 32.6374 23.9824C32.486 23.9824 32.3344 24.0206 32.1831 24.0589C31.8044 24.1736 31.5017 24.4413 31.3123 24.8234C30.8581 25.7026 30.328 26.582 29.7222 27.3464C29.2299 27.9963 29.3434 28.9138 29.9493 29.449C30.5551 29.946 31.5395 29.8313 32.0317 29.2196C32.7512 28.264 33.3948 27.2702 33.9248 26.1999C34.1142 25.8559 34.1142 25.4354 34.0006 25.053C33.8868 24.5939 33.6217 24.288 33.281 24.1352Z" fill="#F47738"/>
-<path d="M17.1491 33.0137C16.1648 32.9371 15.1802 32.7844 14.2337 32.5166C14.1201 32.4785 13.9685 32.4785 13.855 32.4785C13.5898 32.4785 13.3627 32.555 13.1355 32.6697C12.7948 32.8609 12.5677 33.2049 12.4542 33.5872C12.227 34.3901 12.7193 35.1927 13.4765 35.422C14.6124 35.7279 15.7861 35.919 16.9975 35.9953H17.0733C17.8305 35.9953 18.4741 35.3836 18.5499 34.6192C18.5877 33.7784 17.9441 33.0521 17.1491 33.0137Z" fill="#F47738"/>
-</svg>)
+const HistoryIcon = ({ className = "", fill = "none", style = {} }) => (
+  <svg width="36" height="36" viewBox="0 0 36 36" fill={fill} className={className} style={style} xmlns="http://www.w3.org/2000/svg">
+    <path d="M30.7437 5.30394C23.7393 -1.76798 12.3808 -1.76798 5.37636 5.30394L3.33196 7.36803V3.88935C3.33196 2.97184 2.5748 2.20731 1.66598 2.20731C0.757234 2.20731 0 2.97177 0 3.88935V11.42C0 12.3375 0.757166 13.102 1.66598 13.102H9.12473C10.0335 13.102 10.7907 12.3376 10.7907 11.42C10.7907 10.5025 10.0335 9.73794 9.12473 9.73794H5.67925L7.72365 7.67385C10.5633 4.80685 14.3116 3.35418 18.0599 3.35418C21.8083 3.35444 25.5565 4.80713 28.3961 7.67412C31.3493 10.6558 32.9017 14.7843 32.6366 18.9892C32.5988 19.9067 33.2802 20.7093 34.189 20.7858H34.3025C35.1733 20.7858 35.8927 20.0979 35.9685 19.2185C36.2714 14.0577 34.3783 8.97375 30.7435 5.304L30.7437 5.30394Z" fill="#F47738" />
+    <path d="M18.2519 8.16797C17.3432 8.16797 16.5859 8.93243 16.5859 9.85001V18.1069C16.5859 18.8714 17.0782 19.5213 17.7976 19.7125L23.8176 21.4326C24.6883 21.7003 25.6349 21.1267 25.862 20.2857C26.1271 19.4066 25.5968 18.4509 24.6883 18.2216L19.9178 16.8073V9.85007C19.9178 8.93277 19.1984 8.16804 18.2519 8.16804L18.2519 8.16797Z" fill="#F47738" />
+    <path d="M25.4454 31.0611C24.5746 31.5581 23.6659 31.9786 22.7194 32.2845C22.3406 32.3991 22.038 32.6668 21.8486 33.0108C21.6592 33.3548 21.6592 33.7753 21.7728 34.1577C22.038 34.9222 22.8707 35.3427 23.6281 35.1134C24.764 34.731 25.8619 34.2342 26.8842 33.6607C27.6036 33.2402 27.8307 32.3611 27.4143 31.6347C27.0733 30.9083 26.1646 30.6406 25.4454 31.0611Z" fill="#F47738" />
+    <path d="M3.40851 20.1747C3.37074 19.7923 3.14335 19.4483 2.84069 19.1808C2.57553 18.9897 2.27287 18.875 1.96994 18.875H1.78058C1.40185 18.9131 1.06114 19.1427 0.796242 19.4483C0.569113 19.7541 0.455548 20.1362 0.531082 20.5567C0.682414 21.7801 0.947574 22.9651 1.36404 24.0736C1.6292 24.838 2.49996 25.2585 3.25712 24.9911C3.63585 24.8764 3.9385 24.5706 4.09008 24.2266C4.24141 23.8826 4.27944 23.4621 4.16588 23.0797C3.78715 22.1622 3.55977 21.1684 3.40844 20.1746L3.40851 20.1747Z" fill="#F47738" />
+    <path d="M7.60837 28.6674C7.38124 28.4381 7.19188 28.2088 6.96476 27.9794C6.66183 27.6355 6.28338 27.4824 5.8669 27.4824C5.52621 27.4824 5.18553 27.5971 4.88257 27.8648C4.27672 28.4 4.20119 29.3556 4.769 29.9673C4.99613 30.235 5.26128 30.5025 5.52617 30.7702C6.09398 31.3435 6.73788 31.9171 7.38146 32.4138C8.02507 32.9109 8.97165 32.7578 9.42585 32.108C9.65298 31.8021 9.76655 31.42 9.72878 30.9995C9.69101 30.6172 9.46362 30.2732 9.16096 30.0057C8.63064 29.6231 8.10057 29.1645 7.6083 28.6675L7.60837 28.6674Z" fill="#F47738" />
+    <path d="M33.281 24.1352C33.0538 24.0206 32.8645 23.9824 32.6374 23.9824C32.486 23.9824 32.3344 24.0206 32.1831 24.0589C31.8044 24.1736 31.5017 24.4413 31.3123 24.8234C30.8581 25.7026 30.328 26.582 29.7222 27.3464C29.2299 27.9963 29.3434 28.9138 29.9493 29.449C30.5551 29.946 31.5395 29.8313 32.0317 29.2196C32.7512 28.264 33.3948 27.2702 33.9248 26.1999C34.1142 25.8559 34.1142 25.4354 34.0006 25.053C33.8868 24.5939 33.6217 24.288 33.281 24.1352Z" fill="#F47738" />
+    <path d="M17.1491 33.0137C16.1648 32.9371 15.1802 32.7844 14.2337 32.5166C14.1201 32.4785 13.9685 32.4785 13.855 32.4785C13.5898 32.4785 13.3627 32.555 13.1355 32.6697C12.7948 32.8609 12.5677 33.2049 12.4542 33.5872C12.227 34.3901 12.7193 35.1927 13.4765 35.422C14.6124 35.7279 15.7861 35.919 16.9975 35.9953H17.0733C17.8305 35.9953 18.4741 35.3836 18.5499 34.6192C18.5877 33.7784 17.9441 33.0521 17.1491 33.0137Z" fill="#F47738" />
+  </svg>)
 
-const WarningIcon =({ className = "", fill = "none", style = {} })=>(<svg width="40" height="40" viewBox="0 0 40 40" fill={fill } className={className} style={style}  xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_7513_43945)">
-<path d="M1.66797 35.0007H38.3346L20.0013 3.33398L1.66797 35.0007ZM21.668 30.0007H18.3346V26.6673H21.668V30.0007ZM21.668 23.334H18.3346V16.6673H21.668V23.334Z" fill="#F47738"/>
-</g>
-<defs>
-<clipPath id="clip0_7513_43945">
-<rect width="40" height="40" fill="white"/>
-</clipPath>
-</defs>
+const WarningIcon = ({ className = "", fill = "none", style = {} }) => (<svg width="40" height="40" viewBox="0 0 40 40" fill={fill} className={className} style={style} xmlns="http://www.w3.org/2000/svg">
+  <g clipPath="url(#clip0_7513_43945)">
+    <path d="M1.66797 35.0007H38.3346L20.0013 3.33398L1.66797 35.0007ZM21.668 30.0007H18.3346V26.6673H21.668V30.0007ZM21.668 23.334H18.3346V16.6673H21.668V23.334Z" fill="#F47738" />
+  </g>
+  <defs>
+    <clipPath id="clip0_7513_43945">
+      <rect width="40" height="40" fill="white" />
+    </clipPath>
+  </defs>
 </svg>
 )
 
-const AttentionListIcon =({ className = "", fill = "none", style = {} })=>(
-<svg width="36" height="36" viewBox="0 0 24 27" fill={fill } className={className} style={style} xmlns="http://www.w3.org/2000/svg">
-<path d="M21.3333 3.00065H15.76C15.2 1.45398 13.7333 0.333984 12 0.333984C10.2667 0.333984 8.8 1.45398 8.24 3.00065H2.66667C1.2 3.00065 0 4.20065 0 5.66732V24.334C0 25.8007 1.2 27.0007 2.66667 27.0007H21.3333C22.8 27.0007 24 25.8007 24 24.334V5.66732C24 4.20065 22.8 3.00065 21.3333 3.00065ZM12 3.00065C12.7333 3.00065 13.3333 3.60065 13.3333 4.33398C13.3333 5.06732 12.7333 5.66732 12 5.66732C11.2667 5.66732 10.6667 5.06732 10.6667 4.33398C10.6667 3.60065 11.2667 3.00065 12 3.00065ZM12.6667 21.6673H5.33333V19.0007H12.6667V21.6673ZM18.6667 16.334H5.33333V13.6673H18.6667V16.334ZM18.6667 11.0007H5.33333V8.33398H18.6667V11.0007Z" fill="#F47738"/>
-</svg>
+const AttentionListIcon = ({ className = "", fill = "none", style = {} }) => (
+  <svg width="36" height="36" viewBox="0 0 24 27" fill={fill} className={className} style={style} xmlns="http://www.w3.org/2000/svg">
+    <path d="M21.3333 3.00065H15.76C15.2 1.45398 13.7333 0.333984 12 0.333984C10.2667 0.333984 8.8 1.45398 8.24 3.00065H2.66667C1.2 3.00065 0 4.20065 0 5.66732V24.334C0 25.8007 1.2 27.0007 2.66667 27.0007H21.3333C22.8 27.0007 24 25.8007 24 24.334V5.66732C24 4.20065 22.8 3.00065 21.3333 3.00065ZM12 3.00065C12.7333 3.00065 13.3333 3.60065 13.3333 4.33398C13.3333 5.06732 12.7333 5.66732 12 5.66732C11.2667 5.66732 10.6667 5.06732 10.6667 4.33398C10.6667 3.60065 11.2667 3.00065 12 3.00065ZM12.6667 21.6673H5.33333V19.0007H12.6667V21.6673ZM18.6667 16.334H5.33333V13.6673H18.6667V16.334ZM18.6667 11.0007H5.33333V8.33398H18.6667V11.0007Z" fill="#F47738" />
+  </svg>
 )
-
 const ExpenditureIcon = BillsIcon;
+
+const ThemeTextIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <line x1="4" y1="6" x2="20" y2="6"></line>
+    <line x1="4" y1="12" x2="20" y2="12"></line>
+    <line x1="4" y1="18" x2="14" y2="18"></line>
+  </svg>
+);
+
+const ThemeBrandIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 2v20M2 12h20M12 2C12 7.5 16.5 12 22 12c-5.5 0-10 4.5-10 10 0-5.5-4.5-10-10-10 5.5 0 10-4.5 10-10z"></path>
+  </svg>
+);
+
+const ThemeCommonIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="12" r="10"></circle>
+    <path d="M12 2v20a10 10 0 0 0 0-20z" fill={fill}></path>
+  </svg>
+);
+
+const ThemeBackgroundIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+    <rect x="7" y="7" width="10" height="10" rx="1" fill={fill} opacity="0.3"></rect>
+  </svg>
+);
+
+const ThemeBorderIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" strokeDasharray="4 2"></rect>
+    <rect x="6" y="6" width="12" height="12" rx="1" stroke={fill} strokeOpacity="0.5"></rect>
+  </svg>
+);
+
+const ThemeDividerIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <line x1="2" y1="12" x2="22" y2="12" strokeDasharray="4 4"></line>
+  </svg>
+);
+
+const ThemeShadowsIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="10" r="6" fill={fill} fillOpacity="0.1"></circle>
+    <ellipse cx="12" cy="18" rx="8" ry="2" fill={fill} fillOpacity="0.4" stroke="none"></ellipse>
+  </svg>
+);
+
+const ThemeRadiusIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 20V8a4 4 0 0 1 4-4h12"></path>
+    <rect x="12" y="12" width="8" height="8" rx="2"></rect>
+  </svg>
+);
+
+const ThemeSidebarIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+    <line x1="9" y1="3" x2="9" y2="21"></line>
+    <line x1="9" y1="9" x2="21" y2="9"></line>
+  </svg>
+);
+
+const ThemeHeaderIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+    <line x1="3" y1="8" x2="21" y2="8"></line>
+  </svg>
+);
+
+const ThemeGradientsIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor={fill} stopOpacity="0.8"></stop>
+        <stop offset="100%" stopColor={fill} stopOpacity="0.1"></stop>
+      </linearGradient>
+    </defs>
+    <rect x="3" y="3" width="18" height="18" rx="2" fill="url(#grad)"></rect>
+  </svg>
+);
+
+const ThemeTypographyIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <polyline points="4 7 4 4 20 4 20 7"></polyline>
+    <line x1="12" y1="4" x2="12" y2="20"></line>
+    <line x1="9" y1="20" x2="15" y2="20"></line>
+  </svg>
+);
+
+const ThemeLogoIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+    <line x1="7" y1="7" x2="7.01" y2="7" strokeWidth="4"></line>
+  </svg>
+);
+
+const ThemePreviewIcon = ({ fill = "#3D2364", className }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={fill} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} xmlns="http://www.w3.org/2000/svg">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+    <circle cx="12" cy="12" r="3"></circle>
+  </svg>
+);
+
+const CopyIcon = ({ fill = "currentColor", className, style = {} }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    width="16"
+    height="16"
+    fill="none"
+    stroke={fill}
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    style={style}
+  >
+    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+  </svg>
+);
+
+const CheckIcon = ({ fill = "currentColor", className, style = {} }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    width="16"
+    height="16"
+    fill="none"
+    stroke={fill}
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    style={style}
+  >
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
 
 export {
   AnnouncementIcon,
@@ -1949,5 +2089,21 @@ export {
   UploadIcon,
   FileIcon,
   DeleteIconv2,
-  InfoIconOutline
+  InfoIconOutline,
+  ThemeTextIcon,
+  ThemeBrandIcon,
+  ThemeCommonIcon,
+  ThemeBackgroundIcon,
+  ThemeBorderIcon,
+  ThemeDividerIcon,
+  ThemeShadowsIcon,
+  ThemeRadiusIcon,
+  ThemeSidebarIcon,
+  ThemeHeaderIcon,
+  ThemeGradientsIcon,
+  ThemeTypographyIcon,
+  ThemeLogoIcon,
+  ThemePreviewIcon,
+  CopyIcon,
+  CheckIcon
 };

@@ -20,7 +20,7 @@ public class State {
   private String applicationStatus;
 
   @JsonProperty("state")
-  private String state;
+  private String stateCode;
 
   @JsonProperty("isStateUpdatable")
   private Boolean isStateUpdatable;

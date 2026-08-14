@@ -104,7 +104,7 @@ const CreateOCEDCR = ({ parentRoute }) => {
 
   const onSuccess = () => {
     sessionStorage.removeItem("CurrentFinancialYear");
-    queryClient.invalidateQueries("TL_CREATE_TRADE");
+    queryClient.invalidateQueries({ queryKey: ["TL_CREATE_TRADE"] });
   };
   newConfig = newConfig?.OCEdcrConfig ? newConfig?.OCEdcrConfig : newConfigOCEDCR;
   newConfig.forEach((obj) => {

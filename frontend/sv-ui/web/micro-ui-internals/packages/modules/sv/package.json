@@ -17,6 +17,8 @@
   "dependencies": {
     "@nudmcdgnpm/digit-ui-libraries": "1.2.1",
     "@nudmcdgnpm/upyog-ui-react-components-lts": "1.0.0",
+    "@nudmcdgnpm/digit-ui-module-reports" : "1.0.0",
+
     "exif-js": "^2.3.0",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.2",

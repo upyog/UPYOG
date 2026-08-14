@@ -51,10 +51,10 @@ const CloseBtn = (props) => {
  * - A modal component with options to view existing booking details or submit a new booking request.
  * - Includes a close button to hide the modal.
  */
-const BookingPopup = ({ t, closeModal,onSubmit,setExistingDataSet,Searchdata }) => {
+const BookingPopup = ({ t,tenantId,closeModal,onSubmit,setExistingDataSet,searchData }) => {
+
    
     const [showExistingBookingDetails, setShowExistingBookingDetails] = useState(false);
-    const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
     const handleExistingDetailsClick = () => {
         setShowExistingBookingDetails(true); // Show the BookingSearchDetails component
     };
@@ -67,11 +67,13 @@ const BookingPopup = ({ t, closeModal,onSubmit,setExistingDataSet,Searchdata }) 
       tenantId:tenantId,
       filters: {
         bookingId:"",
-        communityHallCode:Searchdata.communityHallCode,
-        bookingStartDate:Searchdata.bookingStartDate,
-        bookingEndDate:Searchdata.bookingEndDate,
-        hallCode:Searchdata.hallCode,
+        venueCode:searchData.venueCode,
+        bookingStartDate:searchData.bookingStartDate,
+        bookingEndDate:searchData.bookingEndDate,
+        unitCode:searchData.unitCode,
         isTimerRequired:true,
+        fromTime: searchData.fromTime,
+        toTime: searchData.toTime,
       },
       enabled:false,
     });
@@ -107,7 +109,7 @@ const BookingPopup = ({ t, closeModal,onSubmit,setExistingDataSet,Searchdata }) 
             formId="modal-action"
         >
             <Card style={{ boxShadow: "none" }}>
-            {showExistingBookingDetails && <ExistingBookingDetails onSubmit={onSubmit} setExistingDataSet={setExistingDataSet} Searchdata={Searchdata} setShowExistingBookingDetails={setShowExistingBookingDetails} />}
+            {showExistingBookingDetails && <ExistingBookingDetails onSubmit={onSubmit} setExistingDataSet={setExistingDataSet} Searchdata={searchData} setShowExistingBookingDetails={setShowExistingBookingDetails} />}
             <div style={{
                     display: 'flex',
                     justifyContent: 'center',

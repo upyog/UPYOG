@@ -7,13 +7,10 @@ import {
   SubmitBar,
   MultiLink
 } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { Fragment, useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { businessServiceList, convertEpochToDate, stringReplaceAll } from "../../../utils";
-import { format } from "date-fns";
 import NDCDocument from "../../../pageComponents/NDCDocument";
-import { set } from "lodash";
 import getAcknowledgementData from "../../../getAcknowlegment";
 import NewApplicationTimeline from "../../../../../templates/ApplicationDetails/components/NewApplicationTimeline";
 import { EmployeeData } from "../../../utils";
@@ -28,23 +25,18 @@ const CitizenApplicationOverview = () => {
   const { id } = useParams();
   const { t } = useTranslation();
   const navigate = Digit.Hooks.useCustomNavigate();
-  // const tenantId = Digit.ULBService.getCurrentTenantId();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
   const state = tenantId?.split(".")[0];
   const [appDetails, setAppDetails] = useState({});
-  const [showToast, setShowToast] = useState(null);
   const [approver, setApprover] = useState(null);
   const[approverStatement, setApproverStatement]= useState(null)
   const [showOptions, setShowOptions] = useState(false);
   
-  const [ndcDatils, setNdcDetails] = useState([]);
   const [displayData, setDisplayData] = useState({});
   const [getLoader, setLoader] = useState(false);
 
   const [isDetailsLoading, setIsDetailsLoading] = useState(false);
-  const isMobile = window.Digit.Utils.browser.isMobile();
 
-  const { isLoading: nocDocsLoading, data: nocDocs } = Digit.Hooks.pt.usePropertyMDMS(state, "NDC", ["Documents"]);
 
   const { isLoading, data: applicationDetails } = Digit.Hooks.ndc.useSearchEmployeeApplication({ applicationNo: id }, tenantId);
 
@@ -130,7 +122,6 @@ const CitizenApplicationOverview = () => {
     });
   }
   
-  const userRoles = user?.info?.roles?.map((e) => e.code);
   const removeDuplicatesByUUID = (arr) => {
     const seen = new Set();
     return arr.filter((item) => {
@@ -259,7 +250,7 @@ const CitizenApplicationOverview = () => {
       <div className="ndc-application-overview">
         {/* <Header styles={{ fontSize: "32px" }}>{t("NDC_APP_OVER_VIEW_HEADER")}</Header> */}
 
-        <div style={{ display: "flex", justifyContent: "end", alignItems: "center", padding: "16px" }}>
+        <div className="ndc-flex-end">
           <div className="cardHeaderWithOptions ral-app-details-header">
             { getLoader && <Loader />}
             {dowloadOptions && dowloadOptions.length > 0 && (
@@ -321,21 +312,8 @@ const CitizenApplicationOverview = () => {
                 {/* <Row label={t("Name")} text={t(`${detail.businessService}`) || detail.businessService} /> */}
                 <Row label={t("NDC_CONSUMER_CODE")} text={detail.consumerCode || "N/A"} />
                 {/* <Row label={t("NDC_STATUS")} text={t(detail.status) || detail.status} /> */}
-                <div
-                  style={{
-                    background: isRed ? "red" : "none",
-                    color: isRed ? "white" : "black",
-                    paddingTop: isRed ? "8px" : "0",
-                    paddingLeft: isRed ? "10px" : "0",
-                  }}
-                >
-                  <Row
-                    rowContainerStyle={{
-                      backgroundColor: isRed ? "red" : "none",
-                    }}
-                    label={t("NDC_DUE_AMOUNT")}
-                    text={detail.dueAmount?.toString() || "0"}
-                  />
+                <div className={isRed ? 'ndc-due-red' : 'ndc-due-default'}>
+                  <Row label={t("NDC_DUE_AMOUNT")} text={detail.dueAmount?.toString() || "0"} />
                 </div>
                 <Row label={t("NDC_PROPERTY_TYPE")} text={t(detail.propertyType) || detail.propertyType} />
                 {detail?.businessService == "NDC_PROPERTY_TAX" && propertyDetailsFetch?.Properties && (

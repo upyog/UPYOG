@@ -84,16 +84,23 @@ const ReportSearchApplication = ({ onSubmit, isLoading, data, tableData, isTable
         return rowVal ? rowVal : "-"
     }
 
-    const columns = useMemo(() => {
-        const colArray = rowHeaders?.map((header, index) => {
-            return {
-                Header: t(header.label),
-                disableSortBy: true,
-                accessor: (row) => <span className="cell-text">{getCellValue(row, header, index)}</span>
-            }
-        })
-        return colArray
-    }, [rowHeaders])
+  const columns = useMemo(() => {
+    return rowHeaders
+        ?.map((header, originalIndex) => ({
+            ...header,
+            originalIndex
+        }))
+        .filter(header => header.showColumn !== false)
+        .map((header) => ({
+            Header: t(header.label),
+            disableSortBy: true,
+            accessor: (row) => (
+                <span className="cell-text">
+                    {getCellValue(row, header, header.originalIndex)}
+                </span>
+            )
+        }));
+}, [rowHeaders, t]);
     const [isDisplayDownloadMenu, setIsDisplayDownloadMenu] = useState(false)
     const downloadOptions = [
         {
@@ -119,9 +126,10 @@ const ReportSearchApplication = ({ onSubmit, isLoading, data, tableData, isTable
                 //[t(columnheader)]:data to display
                 //here finalObj is each row
                 const finalObj = {}
-                columns?.map((col, index) => {
-                    finalObj[[t(`${col?.Header}`)]] = getCellValue(data, rowHeaders[index], index)
-                })
+                columns?.forEach((col) => {
+    finalObj[t(col.Header)] =
+        getCellValue(data, col, col.originalIndex);
+})
                 return finalObj;
             }),
         [rowData, isTableDataLoading]

@@ -11,7 +11,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
-import java.util.HashMap;
+import java.util.Map;
 
 
 
@@ -19,25 +19,23 @@ import java.util.HashMap;
 @Component
 public class ChallanConsumer {
 
-    private NotificationService notificationService;
+    private final NotificationService notificationService;
 
-    private ChallanConfiguration config;
+    private final ChallanConfiguration config;
     
     @Autowired
-    public ChallanConsumer(NotificationService notificationService,ChallanConfiguration config) {
+    public ChallanConsumer(NotificationService notificationService, ChallanConfiguration config) {
         this.notificationService = notificationService;
         this.config = config;
     }
 
     @KafkaListener(topics = {"${persister.save.echallan.topic}","${persister.update.echallan.topic}"},concurrency = "${kafka.consumer.config.concurrency.count}")
-    public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+    public void listen(final Map<String, Object> messagePayload, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
         ObjectMapper mapper = new ObjectMapper();
         // Configure to ignore unknown properties like localityCode getter
         mapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        ChallanRequest challanRequest = new ChallanRequest();
-  
-            challanRequest = mapper.convertValue(record, ChallanRequest.class);
+        ChallanRequest challanRequest = mapper.convertValue(messagePayload, ChallanRequest.class);
 
         // Skip notifications if disabled (e.g., when localization messages are not configured)
         if (config.getIsNotificationEnabled() != null && !config.getIsNotificationEnabled()) {
@@ -52,7 +50,7 @@ public class ChallanConsumer {
             notificationService.sendChallanNotification(challanRequest,false);
         } catch (final Exception e) {
         	e.printStackTrace();
-            log.error("Error while listening to value: " + record + " on topic: " + topic + ": " + e);
+            log.error("Error while listening to value: " + messagePayload + " on topic: " + topic + ": " + e);
         }
     }
 }

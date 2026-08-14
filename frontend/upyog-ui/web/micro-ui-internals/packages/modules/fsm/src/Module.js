@@ -66,6 +66,8 @@ import AddWorker from "./pages/employee/FSMRegistry/Worker/AddWorker"
 import EditWorker from "./pages/employee/FSMRegistry/Worker/EditWorker";
 import WorkerDetails from "./pages/employee/FSMRegistry/Worker/WorkerDetails";
 import TqmCard from "./components/TqmCard";
+import { ReportSearchApplication, EnhancedReport } from "@nudmcdgnpm/digit-ui-module-reports";
+
 
 const FSMModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = "FSM";
@@ -227,6 +229,8 @@ const componentsToRegister = {
   EditWorker,
   WorkerDetails,
   TqmCard,
+  EnhancedReport,
+  ReportSearchApplication
 };
 
 export const initFSMComponents = () => {

@@ -39,20 +39,20 @@ const ADSSearch = ({
   const user = Digit.UserService.getUser().info;
   let index = 0;
   const [cartDetails, setCartDetails] = useState(formData.adslist && formData.adslist[index] && formData.adslist[index].cartDetails || formData?.adslist?.cartDetails || []);
-  const [adsType, setAdsType] = useState("" || formData?.adType);
-  const [selectedLocation, setSelectedLocation] = useState("" || formData?.location);
-  const [selectedFace, setSelectedFace] = useState("" || formData?.faceArea);
+  const [adsType, setAdsType] = useState(formData.adslist?.adsType || formData?.adslist?.adType || formData?.adType || "");
+  const [selectedLocation, setSelectedLocation] = useState(formData.adslist?.selectedLocation || formData?.adslist?.location || formData?.location || "");
+  const [selectedFace, setSelectedFace] = useState(formData.adslist?.selectedFace || formData?.adslist?.faceArea || formData?.faceArea || "");
   const [isExistingPopupRequired, setIsExistingPopupRequired] = useState(true);
-  const [fromDate, setFromDate] = useState("" || formData?.fromDate);
+  const [fromDate, setFromDate] = useState(formData.adslist?.fromDate || formData?.fromDate || "");
   // State to manage selected checkboxes
   const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
-  const [toDate, setToDate] = useState("" || formData?.toDate);
+  const [toDate, setToDate] = useState(formData.adslist?.toDate || formData?.toDate || "");
   const [Searchdata, setSearchData] = useState(formData.adslist && formData.adslist[index] && formData.adslist[index].Searchdata || formData?.adslist?.Searchdata || []);
   const [showToast, setShowToast] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [existingDataSet, setExistingDataSet] = useState("");
+  const [existingDataSet, setExistingDataSet] = useState(formData.adslist?.existingDataSet || "");
   // If no nightLight is provided), default to "Yes"
-  const [selectNight, setselectNight] = useState("" || formData?.nightLight || {
+  const [selectNight, setselectNight] = useState(formData.adslist?.selectNight || formData?.adslist?.nightLight || formData?.nightLight || {
     i18nKey: "Yes",
     code: "Yes",
     value: "true"
@@ -209,9 +209,11 @@ const ADSSearch = ({
   const {
     control
   } = useForm();
-  const goNext = () => {
+  const goNext = (sessionData) => {
     let owner = formData.adslist && formData.adslist[index];
     let ownerStep;
+    const currentDataSet = sessionData !== undefined ? sessionData : existingDataSet;
+
     if (userType === "citizen") {
       ownerStep = {
         ...owner,
@@ -223,7 +225,7 @@ const ADSSearch = ({
         selectNight,
         fromDate,
         toDate,
-        existingDataSet
+        existingDataSet: currentDataSet
       };
       onSelect(config.key, {
         ...formData[config.key],
@@ -240,7 +242,7 @@ const ADSSearch = ({
         selectedFace,
         fromDate,
         toDate,
-        existingDataSet
+        existingDataSet: currentDataSet
       };
       onSelect(config.key, ownerStep, false, index);
     }
@@ -285,20 +287,20 @@ const ADSSearch = ({
     Header: ({
       getToggleAllRowsSelectedProps
     }) => <div className="ads-auto-63">
-      <input type="checkbox" checked={selectedCheckboxes.length === data.length} onChange={() => {
-        if (selectedCheckboxes.length === data.length) {
-          setSelectedCheckboxes([]);
-        } else {
-          const allAvailableRows = data.filter(row => row.status.props.children === "Available").map(row => row.slotId);
-          setSelectedCheckboxes(allAvailableRows);
-        }
-      }} />
-    </div>,
+        <input type="checkbox" checked={selectedCheckboxes.length === data.length} onChange={() => {
+          if (selectedCheckboxes.length === data.length) {
+            setSelectedCheckboxes([]);
+          } else {
+            const allAvailableRows = data.filter(row => row.status.props.children === "Available").map(row => row.slotId);
+            setSelectedCheckboxes(allAvailableRows);
+          }
+        }} />
+      </div>,
     Cell: ({
       row
     }) => <div className="ads-auto-64">
-      <input type="checkbox" checked={selectedCheckboxes.includes(row.original.slotId)} onChange={() => handleRowSelection(row.index)} disabled={row.original.status.props.children !== "Available"} />
-    </div>
+        <input type="checkbox" checked={selectedCheckboxes.includes(row.original.slotId)} onChange={() => handleRowSelection(row.index)} disabled={row.original.status.props.children !== "Available"} />
+      </div>
   };
   const handleCartClick = () => {
     // Step 1: Check if any rows are selected
@@ -445,7 +447,7 @@ const ADSSearch = ({
       const filters = {
         addType: addType,
         faceArea: faceArea,
-        location: location,
+        location: selectedLocation?.code,
         nightLight: nightLight,
         bookingStartDate: startDate,
         bookingEndDate: endDate,
@@ -500,158 +502,158 @@ const ADSSearch = ({
     }
   }, [Searchdata]);
   return <React.Fragment>
-      {window.location.href.includes("/citizen")}
-      <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t}>
-        <CardHeader>{t("ADS_SEARCH_HEADER")}</CardHeader>
-        <CardLabel>
-          {`${t("ADS_TYPE")}`} <span className="check-page-link-button">*</span>
-        </CardLabel>
-          <Controller
-            control={control}
-            name={"adsType"}
-            defaultValue={adsType}
-            rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-            render={({ field }) => (
-              <Dropdown
-                className="form-field"
-                selected={adsType}
-                select={(selected) => {
-                  setAdsType(selected);}}
-                placeholder={"Select Advertisement Type"}
-                option={ADSTypeData}
-                optionKey="i18nKey"
-                t={t}
-              />
-            )}
+    {window.location.href.includes("/citizen")}
+    <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t}>
+      <CardHeader>{t("ADS_SEARCH_HEADER")}</CardHeader>
+      <CardLabel>
+        {`${t("ADS_TYPE")}`} <span className="check-page-link-button">*</span>
+      </CardLabel>
+      <Controller
+        control={control}
+        name={"adsType"}
+        defaultValue={adsType}
+        rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+        render={({ field }) => (
+          <Dropdown
+            className="form-field"
+            selected={adsType}
+            select={(selected) => {
+              setAdsType(selected);}}
+            placeholder={"Select Advertisement Type"}
+            option={ADSTypeData}
+            optionKey="i18nKey"
+            t={t}
           />
-        <CardLabel>
-          {`${t("ADS_LOCATION")}`} <span className="check-page-link-button">*</span>
-        </CardLabel>
-          <Controller
-            control={control}
-            name={"selectedLocation"}
-            defaultValue={selectedLocation}
-            rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-            render={({ field }) => (
-              <Dropdown
-                className="form-field"
-                selected={selectedLocation}
-                select={(selected) => {
-                  setSelectedLocation(selected);
-                }}
-                placeholder={"Select Ad Type"}
-                option={LocationData}
-                optionKey="i18nKey"
-                t={t}
-              />
-            )}
+        )}
+      />
+      <CardLabel>
+        {`${t("ADS_LOCATION")}`} <span className="check-page-link-button">*</span>
+      </CardLabel>
+      <Controller
+        control={control}
+        name={"selectedLocation"}
+        defaultValue={selectedLocation}
+        rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+        render={({ field }) => (
+          <Dropdown
+            className="form-field"
+            selected={selectedLocation}
+            select={(selected) => {
+              setSelectedLocation(selected);
+            }}
+            placeholder={"Select Ad Type"}
+            option={LocationData}
+            optionKey="i18nKey"
+            t={t}
           />
-          <CardLabel>
-            {`${t("ADS_FACE_AREA")}`} <span className="check-page-link-button">*</span>
-          </CardLabel>
-           <Controller
-              control={control}
-              name={"adsType"}
-              defaultValue={selectedFace}
-              rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={({ field }) => (
-                <Dropdown
-                  className="form-field"
-                  selected={selectedFace}
-                  select={(selected) => {
-                    setSelectedFace(selected);
-                  }}
-                  placeholder={"Select Ad Type"}
-                  option={FaceId}
-                  optionKey="i18nKey"
-                  t={t}
-                />
-              )}
-            />
-            <CardLabel>{`${t("ADS_FROM_DATE")}`} <span className="astericColor">*</span></CardLabel>
-            <TextInput
-              t={t}
-              type={"date"}
-              isMandatory={false}
-              optionKey="i18nKey"
-              name="fromDate"
-              value={fromDate || ""}
-              onChange={SetFromDate}
-              style={{width:user.type==="EMPLOYEE"?"50%":"86%" }}
-              min={new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0]}
-              rules={{
-                required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-                validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
-              }}
+        )}
+      />
+      <CardLabel>
+        {`${t("ADS_FACE_AREA")}`} <span className="check-page-link-button">*</span>
+      </CardLabel>
+      <Controller
+        control={control}
+        name={"adsType"}
+        defaultValue={selectedFace}
+        rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+        render={({ field }) => (
+          <Dropdown
+            className="form-field"
+            selected={selectedFace}
+            select={(selected) => {
+              setSelectedFace(selected);
+            }}
+            placeholder={"Select Ad Type"}
+            option={FaceId}
+            optionKey="i18nKey"
+            t={t}
+          />
+        )}
+      />
+      <CardLabel>{`${t("ADS_FROM_DATE")}`} <span className="astericColor">*</span></CardLabel>
+      <TextInput
+        t={t}
+        type={"date"}
+        isMandatory={false}
+        optionKey="i18nKey"
+        name="fromDate"
+        value={fromDate || ""}
+        onChange={SetFromDate}
+        style={{width:user.type==="EMPLOYEE"?"50%":"86%" }}
+        min={new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0]}
+        rules={{
+          required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+          validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+        }}
 
-            />
-            <CardLabel>{`${t("ADS_TO_DATE")}`} <span className="astericColor">*</span></CardLabel>
-            <TextInput
-              t={t}
-              type={"date"}
-              isMandatory={false}
-              optionKey="i18nKey"
-              name="toDate"
-              value={toDate || ""}
-              onChange={SetToDate}
-              style={{width:user.type==="EMPLOYEE"?"50%":"86%" }}
-              min={new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0]}
-              rules={{
-                required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-                validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
-              }}
+      />
+      <CardLabel>{`${t("ADS_TO_DATE")}`} <span className="astericColor">*</span></CardLabel>
+      <TextInput
+        t={t}
+        type={"date"}
+        isMandatory={false}
+        optionKey="i18nKey"
+        name="toDate"
+        value={toDate || ""}
+        onChange={SetToDate}
+        style={{width:user.type==="EMPLOYEE"?"50%":"86%" }}
+        min={new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0]}
+        rules={{
+          required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+          validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+        }}
 
-            />
+      />
 
-        <CardLabel>
-          {`${t("ADS_NIGHT_LIGHT")}`} <span className="astericColor">*</span>
-        </CardLabel>
-        <RadioButtons t={t} options={ABmenu} optionsKey="code" name="selectNight" value={selectNight} selectedOption={selectNight} innerStyles={{
+      <CardLabel>
+        {`${t("ADS_NIGHT_LIGHT")}`} <span className="astericColor">*</span>
+      </CardLabel>
+      <RadioButtons t={t} options={ABmenu} optionsKey="code" name="selectNight" value={selectNight} selectedOption={selectNight} innerStyles={{
         display: "inline-block",
         marginLeft: "10px",
         paddingBottom: "2px",
         marginBottom: "2px"
       }} onSelect={setselectNight} isDependent={true} />
-       <div className="ads-auto-65">
-          <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
-          <SubmitBar label={t("ADS_ADD_TO_CART")} onSubmit={handleCartClick} />
+      <div className="ads-auto-65">
+        <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
+        <SubmitBar label={t("ADS_ADD_TO_CART")} onSubmit={handleCartClick} />
 
-          <div>
-            <SubmitBar label={t("ADS_VIEW_CART")} onSubmit={handleViewCart} />
-          </div>
-          <div class="container" className="ads-auto-66">
-            <div className="ads-auto-67">
-              <div className="ads-auto-68">
-                <div> {cartDetails.length}</div>
-              </div>
+        <div>
+          <SubmitBar label={t("ADS_VIEW_CART")} onSubmit={handleViewCart} />
+        </div>
+        <div class="container" className="ads-auto-66">
+          <div className="ads-auto-67">
+            <div className="ads-auto-68">
+              <div> {cartDetails.length}</div>
             </div>
           </div>
-
           {showCartDetails && <ADSCartDetails onClose={handleCloseCart} cartDetails={cartDetails} setCartDetails={setCartDetails} />}
           <SubmitBar label={t("ADS_BOOK_NOW")} onSubmit={handleBookClick} />
         </div>
+      </div>
 
-      </FormStep>
-      {showTable &&
-    // Only show table when showTable is true
-    <Card className="ads-auto-69">
-          <ApplicationTable t={t} data={data} columns={enhancedColumns} getCellProps={cellInfo => ({
-        style: {
-          minWidth: "140px",
-          padding: "20px",
-          fontSize: "16px"
-        }
-      })} isPaginationRequired={false} totalRecords={data.length} className="ads-auto-70" />
-        </Card>}
-     {showToast && <Toast error={showToast.error} warning={showToast.warning} label={t(showToast.label)} onClose={() => {
+    </FormStep>
+    {showTable &&
+      // Only show table when showTable is true
+      <Card className="ads-auto-69">
+        <ApplicationTable t={t} data={data} columns={enhancedColumns} getCellProps={cellInfo => ({
+          style: {
+            minWidth: "140px",
+            padding: "20px",
+            fontSize: "16px"
+          }
+        })} isPaginationRequired={false} totalRecords={data.length} className="ads-auto-70" />
+      </Card>}
+    {showToast && <Toast error={showToast.error} warning={showToast.warning} label={t(showToast.label)} onClose={() => {
       setShowToast(null);
     }} />}
-     {showModal && <BookingPopup t={t} closeModal={() => setShowModal(false)} // Close modal when "BACK" is clicked
-    actionCancelOnSubmit={() => setShowModal(false)} // Close modal when "BACK" is clicked
-    onSubmit={() => {
-      goNext(); // Ensure action is called only when submitting
-      setShowModal(false); // Close modal after action
-    }} setExistingDataSet={setExistingDataSet} Searchdata={cartDetails} />}
-    </React.Fragment>;
+    {showModal && <BookingPopup t={t} closeModal={() => setShowModal(false)} /* Close modal when "BACK" is clicked */
+      actionCancelOnSubmit={() => setShowModal(false)} /* Close modal when "BACK" is clicked */
+      onSubmit={(sessionData) => {
+        /* Pass sessionData synchronously to avoid React state batching race condition in writing to session storage */
+        goNext(sessionData); 
+        setShowModal(false); /* Close modal after action */
+      }} setExistingDataSet={setExistingDataSet} Searchdata={cartDetails} selectedLocation={selectedLocation} /* Pass selectedLocation to map raw location codes */ />}
+  </React.Fragment>;
 };
 export default ADSSearch;

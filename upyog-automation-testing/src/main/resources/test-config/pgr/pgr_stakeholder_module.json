@@ -1,0 +1,19 @@
+{
+  "moduleName": "PUBLIC_GRIEVANCE_REDRESSAL",
+
+  "citizen": {
+    "mobile": "7906413996",
+    "otp": "123456",
+    "city": "City A"
+  },
+
+  "employee": {
+    "username": "UPYOGADMIN",
+    "password": "eGov@123"
+  },
+
+  "vendor": {
+    "mobile": "",
+    "otp": ""
+  }
+}

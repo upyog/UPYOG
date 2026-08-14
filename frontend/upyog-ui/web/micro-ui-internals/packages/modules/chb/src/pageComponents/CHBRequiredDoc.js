@@ -57,7 +57,7 @@ const CHBRequiredDoc = ({ t, config, onSelect, userType, formData, value = formD
       <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
         <CardHeader>{t("MODULE_CHB")}</CardHeader>
         <CardSubHeader>
-          <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.Searchdata} draftId={value?.existingDataSet?.draftId} />
+          <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.searchData} draftId={value?.existingDataSet?.draftId} />
         </CardSubHeader>
       </div>
         <div>

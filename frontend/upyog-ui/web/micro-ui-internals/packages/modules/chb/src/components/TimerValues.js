@@ -57,11 +57,13 @@ export const TimerValues = ({ timerValues, SlotSearchData, draftId = "" }) => {
     filters: {
       bookingId: "",
       draftId: draftId,
-      communityHallCode: SlotSearchData?.communityHallCode,
+      venueCode: SlotSearchData?.venueCode,
       bookingStartDate: SlotSearchData?.bookingStartDate,
       bookingEndDate: SlotSearchData?.bookingEndDate,
-      hallCode: SlotSearchData?.hallCode,
+      unitCode: SlotSearchData?.unitCode,
       isTimerRequired: true,
+      fromTime: SlotSearchData?.fromTime,
+      toTime: SlotSearchData?.toTime
     },
     enabled: false,
   });

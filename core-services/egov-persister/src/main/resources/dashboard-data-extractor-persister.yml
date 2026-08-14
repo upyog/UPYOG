@@ -1,0 +1,220 @@
+serviceMaps:
+  serviceName: dashboard-data-extractor
+  mappings:
+
+  # ============================================================
+  # 1. INSERT into ingestion_detail  (daily push records)
+  #    Topic: save-dashboard-ingestion-detail
+  #    Payload key: DailyIngestionData (list wrapped under "dailyIngestionData")
+  # ============================================================
+  - version: 1.0
+    name: save-ingestion-detail
+    description: Persists daily ingestion records into the ingestion_detail table
+    fromTopic: save-dashboard-ingestion-detail
+    isTransaction: true
+    queryMaps:
+
+    - query: >
+        INSERT INTO ingestion_detail (
+          module_ingestion_id,
+          tenant_id,
+          module_name,
+          push_date,
+          request_data,
+          response_data,
+          ingestion_status,
+          exception_code,
+          created_by,
+          created_time,
+          last_modified_by,
+          last_modified_time
+        ) VALUES (?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), ?::jsonb, ?::jsonb, ?, ?, ?, ?, ?, ?);
+
+      basePath: dailyIngestionData.*
+      jsonMaps:
+
+      - jsonPath: $.dailyIngestionData.*.moduleIngestionId
+
+      - jsonPath: $.dailyIngestionData.*.tenantId
+
+      - jsonPath: $.dailyIngestionData.*.moduleName
+
+      - jsonPath: $.dailyIngestionData.*.pushDate
+
+      - jsonPath: $.dailyIngestionData.*.requestData
+
+      - jsonPath: $.dailyIngestionData.*.responseData
+
+      - jsonPath: $.dailyIngestionData.*.ingestionStatus
+
+      - jsonPath: $.dailyIngestionData.*.exceptionCode
+
+      - jsonPath: $.dailyIngestionData.*.createdBy
+
+      - jsonPath: $.dailyIngestionData.*.createdTime
+
+      - jsonPath: $.dailyIngestionData.*.lastModifiedBy
+
+      - jsonPath: $.dailyIngestionData.*.lastModifiedTime
+
+  # ============================================================
+  # 2. INSERT into legacy_data_ingestion_detail  (legacy push records)
+  #    Topic: save-dashboard-data-module-ingestion-detail
+  #    Payload key: legacyIngestionData (list)
+  # ============================================================
+  - version: 1.0
+    name: save-legacy-ingestion-detail
+    description: Persists legacy ingestion records into the legacy_data_ingestion_detail table
+    fromTopic: save-dashboard-data-module-ingestion-detail
+    isTransaction: true
+    queryMaps:
+
+    - query: >
+        INSERT INTO legacy_data_ingestion_detail (
+          module_ingestion_id,
+          tenant_id,
+          ulb_name,
+          module_name,
+          push_date,
+          user_id,
+          request_data,
+          response_data,
+          ingestion_status,
+          exception_code,
+          created_by,
+          created_time,
+          last_modified_by,
+          last_modified_time
+        ) VALUES (?, ?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), ?, ?::jsonb, ?::jsonb, ?, ?, ?, ?, ?, ?);
+
+      basePath: legacyIngestionData.*
+      jsonMaps:
+
+      - jsonPath: $.legacyIngestionData.*.moduleIngestionId
+
+      - jsonPath: $.legacyIngestionData.*.tenantId
+
+      - jsonPath: $.legacyIngestionData.*.ulbName
+
+      - jsonPath: $.legacyIngestionData.*.moduleName
+
+      - jsonPath: $.legacyIngestionData.*.pushDate
+
+      - jsonPath: $.legacyIngestionData.*.userId
+
+      - jsonPath: $.legacyIngestionData.*.requestData
+
+      - jsonPath: $.legacyIngestionData.*.responseData
+
+      - jsonPath: $.legacyIngestionData.*.ingestionStatus
+
+      - jsonPath: $.legacyIngestionData.*.exceptionCode
+
+      - jsonPath: $.legacyIngestionData.*.createdBy
+
+      - jsonPath: $.legacyIngestionData.*.createdTime
+
+      - jsonPath: $.legacyIngestionData.*.lastModifiedBy
+
+      - jsonPath: $.legacyIngestionData.*.lastModifiedTime
+
+  # ============================================================
+  # 3. UPDATE legacy_data_ingestion_detail  (status update after re-push)
+  #    Topic: update-dashboard-data-module-ingestion-detail
+  #    Payload key: legacyIngestionData (list)
+  # ============================================================
+  - version: 1.0
+    name: update-legacy-ingestion-detail
+    description: Updates ingestion status and response for an existing legacy record
+    fromTopic: update-dashboard-data-module-ingestion-detail
+    isTransaction: true
+    queryMaps:
+
+    - query: >
+        UPDATE legacy_data_ingestion_detail SET
+          response_data       = ?::jsonb,
+          ingestion_status    = ?,
+          last_modified_by    = ?,
+          last_modified_time  = ?
+        WHERE module_ingestion_id = ?;
+
+      basePath: legacyIngestionData.*
+      jsonMaps:
+
+      - jsonPath: $.legacyIngestionData.*.responseData
+
+      - jsonPath: $.legacyIngestionData.*.ingestionStatus
+
+      - jsonPath: $.legacyIngestionData.*.lastModifiedBy
+
+      - jsonPath: $.legacyIngestionData.*.lastModifiedTime
+
+      - jsonPath: $.legacyIngestionData.*.moduleIngestionId
+
+  # ============================================================
+  # 4. INSERT into dashboard-data_ingestion_error_log
+  #    Topic: save-dashboard-data-error-log
+  #    Payload key: errorLog (list)
+  # ============================================================
+  - version: 1.0
+    name: save-dashboard-data-error-log
+    description: Persists error details into the dashboard-data_ingestion_error_log table
+    fromTopic: save-dashboard-data-error-log
+    isTransaction: true
+    queryMaps:
+
+    - query: >
+        INSERT INTO dashboard-data_ingestion_error_log (
+          id,
+          tenant_id,
+          module_name,
+          error_date,
+          issue_description,
+          created_time,
+          created_by
+        ) VALUES (?, ?, ?, ?, ?, ?, ?);
+
+      basePath: errorLog.*
+      jsonMaps:
+      - jsonPath: $.errorLog.*.id
+      - jsonPath: $.errorLog.*.tenantId
+      - jsonPath: $.errorLog.*.moduleName
+      - jsonPath: $.errorLog.*.errorDate
+      - jsonPath: $.errorLog.*.issueDescription
+      - jsonPath: $.errorLog.*.createdTime
+      - jsonPath: $.errorLog.*.createdBy
+
+  # ============================================================
+  # 5. UPSERT into ingestion_module_summary
+  #    Topic: update-dashboard-module-summary
+  #    Payload key: ingestionModuleSummary (list)
+  # ============================================================
+  - version: 1.0
+    name: update-dashboard-module-summary
+    description: Upserts last attempted and successful dates into ingestion_module_summary
+    fromTopic: update-dashboard-module-summary
+    isTransaction: true
+    queryMaps:
+
+    - query: >
+        INSERT INTO ingestion_module_summary (
+          id, tenant_id, module_name, last_successful_date, last_attempted_date,
+          created_by, created_time, last_modified_by, last_modified_time
+        ) VALUES (?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), TO_DATE(?, 'DD-MM-YYYY'), ?, ?, ?, ?)
+        ON CONFLICT (tenant_id, module_name) DO UPDATE SET
+          last_successful_date = EXCLUDED.last_successful_date,
+          last_attempted_date = EXCLUDED.last_attempted_date,
+          last_modified_by = EXCLUDED.last_modified_by,
+          last_modified_time = EXCLUDED.last_modified_time;
+
+      basePath: ingestionModuleSummary.*
+      jsonMaps:
+      - jsonPath: $.ingestionModuleSummary.*.id
+      - jsonPath: $.ingestionModuleSummary.*.tenantId
+      - jsonPath: $.ingestionModuleSummary.*.moduleName
+      - jsonPath: $.ingestionModuleSummary.*.lastSuccessfulDate
+      - jsonPath: $.ingestionModuleSummary.*.lastAttemptedDate
+      - jsonPath: $.ingestionModuleSummary.*.createdBy
+      - jsonPath: $.ingestionModuleSummary.*.createdTime
+      - jsonPath: $.ingestionModuleSummary.*.lastModifiedBy
+      - jsonPath: $.ingestionModuleSummary.*.lastModifiedTime

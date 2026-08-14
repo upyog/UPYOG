@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.tp.constant.TreePruningConstants;
 import org.upyog.tp.util.MdmsUtil;
@@ -16,8 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class CalculationService {
 
-    @Autowired
-    private MdmsUtil mdmsUtil;
+    private final MdmsUtil mdmsUtil;
+
+    public CalculationService(MdmsUtil mdmsUtil) {
+        this.mdmsUtil = mdmsUtil;
+    }
 
     public CalculationType calculateFee(RequestInfo requestInfo, String tenantId) {
         List<CalculationType> calculationTypes = mdmsUtil.getCalculationType(requestInfo,TreePruningUtil.extractTenantId(tenantId),

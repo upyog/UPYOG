@@ -1,0 +1,16 @@
+.application-details-map-btn {
+  background-color: #a82227;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  align-self: flex-start;
+}
+
+.application-details-digipin-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

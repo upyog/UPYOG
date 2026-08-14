@@ -31,11 +31,6 @@ public class Workflow {
   private String comment;
 
   @JsonProperty("documents")
-
   private List<DocumentDetail> documents = null;
 
-
-//  @JsonProperty("documents")
-//
-//  private List<DocumentDetail> documents = null;
 }

@@ -35,7 +35,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"fatherName",
       "action":"TYPE",
-      "inputValue":"Ramesh Singh",
+      "inputValue":"${applicant.guardian}",
       "dynamicSleep": 2000
     },
 
@@ -44,7 +44,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"emailId",
       "action":"TYPE",
-      "inputValue":"ramesh@gmail.com",
+      "inputValue": "${applicant.email}",
       "dynamicSleep": 2000
     },
 
@@ -105,7 +105,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"birthDate",
       "action":"TYPE",
-      "inputValue":"20-05-2025",
+      "inputValue":"${pet.birth.date}",
       "dynamicSleep": 2000
     },
 
@@ -114,7 +114,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"petName",
       "action":"TYPE",
-      "inputValue":"cherry",
+      "inputValue":"${pet.name}",
       "dynamicSleep": 2000
     },
 
@@ -123,7 +123,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"identificationMark",
       "action":"TYPE",
-      "inputValue":"black color",
+      "inputValue":"${pet.identification}",
       "dynamicSleep": 2000
     },
 
@@ -132,7 +132,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"doctorName",
       "action":"TYPE",
-      "inputValue":"Doctor Test",
+      "inputValue":"${doctor.name}",
       "dynamicSleep": 2000
     },
 
@@ -141,7 +141,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"clinicName",
       "action":"TYPE",
-      "inputValue":"Clinic Test",
+      "inputValue":"${clinic.name}",
       "dynamicSleep": 2000
     },
 
@@ -150,7 +150,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"lastVaccineDate",
       "action":"TYPE",
-      "inputValue":"20-05-2025",
+      "inputValue":"${vaccination.date}",
       "dynamicSleep": 2000
     },
 
@@ -159,7 +159,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"vaccinationNumber",
       "action":"TYPE",
-      "inputValue":"34545645",
+      "inputValue":"${vaccination.number}",
       "dynamicSleep": 2000
     },
 
@@ -179,7 +179,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"propertyId",
       "action":"TYPE",
-      "inputValue":"PG-PT-1013-008453",
+      "inputValue":"${property.id}",
       "dynamicSleep": 2000
     },
 
@@ -189,7 +189,7 @@
       "locatorStrategy":"XPATH",
       "locatorValue":"//h2[contains(.,'Door No./House No.')]/following::input[1]",
       "action":"TYPE",
-      "inputValue":"4534",
+      "inputValue":"${house.number}",
       "dynamicSleep": 2000
     },
     {
@@ -197,7 +197,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"houseName",
       "action":"TYPE",
-      "inputValue":"My House",
+      "inputValue":"${house.name}",
       "dynamicSleep": 2000
     },
 
@@ -206,7 +206,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"streetName",
       "action":"TYPE",
-      "inputValue":"Main Street",
+      "inputValue":"${street.name}",
       "dynamicSleep": 2000
     },
 
@@ -215,7 +215,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"addressline1",
       "action":"TYPE",
-      "inputValue":"123 Main Street",
+      "inputValue":"${address.line1}",
       "dynamicSleep": 2000
     },
 
@@ -224,7 +224,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"addressline2",
       "action":"TYPE",
-      "inputValue":"Near Park",
+      "inputValue":"${address.line2}",
       "dynamicSleep": 2000
     },
 
@@ -233,7 +233,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"landmark",
       "action":"TYPE",
-      "inputValue":"Opp Mall",
+      "inputValue":"${address.landmark}",
       "dynamicSleep": 2000
     },
     {
@@ -257,7 +257,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"pincode",
       "action":"TYPE",
-      "inputValue":"110011",
+      "inputValue":"${address.pincode}",
       "dynamicSleep": 2000
     },
     {
@@ -343,6 +343,14 @@
       "locatorValue":"//button[contains(.,'Submit')]",
       "action":"CLICK_JS",
       "dynamicSleep": 2000
+    },
+    {
+      "stepName":"Capture Application Number",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'Application No') or contains(text(),'Application Number')]/following-sibling::*[1]",
+      "action":"CAPTURE_TEXT",
+      "inputValue":"APPLICATION_NO",
+      "dynamicSleep":3000
     }
   ]
 }

@@ -11,7 +11,6 @@ import org.egov.ndc.web.model.AuditDetails;
 import org.egov.ndc.web.model.OwnerInfo;
 import org.egov.ndc.web.model.Workflow;
 import org.egov.ndc.web.model.workflow.ProcessInstance;
-import org.egov.ndc.validation.SanitizeHtml;
 
 import java.util.ArrayList;
 import java.util.List;

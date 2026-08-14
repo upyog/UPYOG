@@ -7,23 +7,22 @@ import org.egov.ndc.calculator.web.models.demand.Demand;
 import org.egov.ndc.calculator.web.models.demand.DemandRequest;
 import org.egov.ndc.calculator.web.models.demand.DemandResponse;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 @Repository
+@RequiredArgsConstructor
 public class DemandRepository {
 
 
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
+    private final ServiceRequestRepository serviceRequestRepository;
 
-    @Autowired
-    private NDCCalculatorConfig config;
+    private final NDCCalculatorConfig config;
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
 
     /**

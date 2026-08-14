@@ -143,7 +143,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
           className="mr-2"
           style={{ width: "12%" }}
           />
-          Register/Login with DigiLocker
+          {t("CORE_COMMON_DGILOCKER_REGISTER")}
         </button>
      { showToast &&   <Modal
       headerBarMain={<Heading label={t("Consent")} />}

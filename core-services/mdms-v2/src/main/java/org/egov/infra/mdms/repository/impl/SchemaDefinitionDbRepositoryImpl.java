@@ -5,6 +5,7 @@ import org.egov.infra.mdms.config.ApplicationConfig;
 import org.egov.infra.mdms.model.SchemaDefCriteria;
 import org.egov.infra.mdms.model.SchemaDefinition;
 import org.egov.infra.mdms.model.SchemaDefinitionRequest;
+import org.egov.infra.mdms.model.SchemaDeleteRequest;
 import org.egov.infra.mdms.producer.Producer;
 import org.egov.infra.mdms.repository.SchemaDefinitionRepository;
 import org.egov.infra.mdms.repository.querybuilder.SchemaDefinitionQueryBuilder;
@@ -39,7 +40,6 @@ public class SchemaDefinitionDbRepositoryImpl implements SchemaDefinitionReposit
         this.schemaDefinitionQueryBuilder = schemaDefinitionQueryBuilder;
     }
 
-
     /**
      * This method emits schema definition create request on kafka for async persistence
      * @param schemaDefinitionRequest
@@ -66,11 +66,20 @@ public class SchemaDefinitionDbRepositoryImpl implements SchemaDefinitionReposit
         return jdbcTemplate.query(query, preparedStatementList.toArray(), rowMapper);
     }
 
+
     /**
      * Skeleton method for update as update API has not been implemented
      * @param schemaDefinitionRequest
      */
-    @Override
+    /**
+     * Publishes schema delete request to Kafka.
+     * Persister is responsible for audit logging
+     * and deleting the schema.
+     */
+    public void delete(SchemaDeleteRequest request) {
+        producer.push(applicationConfig.getDeleteSchemaTopicName(), request);
+    }
+
     public Integer getTotalMastersCount(String tenantId) {
 
     String query = "SELECT COUNT(DISTINCT split_part(code, '.', 1))\n"

@@ -83,9 +83,14 @@ public class RequestSearchCriteria {
     }
 
     public enum SortBy {
-        locality,
-        applicationStatus,
-        serviceRequestId
+        @JsonProperty("locality")
+        LOCALITY,
+
+        @JsonProperty("applicationStatus")
+        APPLICATION_STATUS,
+
+        @JsonProperty("serviceRequestId")
+        SERVICE_REQUEST_ID
     }
 
     @SanitizeHtml

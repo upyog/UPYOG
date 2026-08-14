@@ -131,11 +131,11 @@ public class CommunityHallBookingValidator {
 	 */
 	private void validateAllowedSearchConfiguration(VenueBookingSearchCriteria criteria) {
 		String allowedParamStr = config.getAllowedEmployeeSearchParameters();
-
 		if (StringUtils.isEmpty(allowedParamStr) && !criteria.isEmpty()) {
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH,
 					"No search parameters are expected");
 		}
+		log.info("allowedParamStr {} in validateAllowedSearchConfiguration", allowedParamStr);
 		List<String> allowedParams = Arrays.asList(allowedParamStr.split(","));
 		validateSearchParams(criteria, allowedParams);
 	}
@@ -185,8 +185,8 @@ public class CommunityHallBookingValidator {
 		if (criteria.getMobileNumber() != null && !allowedParams.contains("mobileNumber"))
 			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "Search on mobile number is not allowed");
 		
-		if (criteria.getCommunityHallCode() != null && !allowedParams.contains("communityHallCode"))
-			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "Search on community hall name is not allowed");
+		if (criteria.getVenueCode() != null && !allowedParams.contains("venueCode"))
+			throw new CustomException(CommunityHallBookingConstants.INVALID_SEARCH, "Search on venue name is not allowed");
 	}
 	
 	public boolean isSameHallCode(List<BookingSlotDetail> bookingSlotDetails) {

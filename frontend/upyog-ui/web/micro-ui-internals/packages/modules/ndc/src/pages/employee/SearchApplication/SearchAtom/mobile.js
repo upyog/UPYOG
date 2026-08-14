@@ -99,11 +99,11 @@ const SearchApplicationMobileView = ({ SearchFormFieldsComponent, propsMobileInb
             </PopUp>
         ) : null}
         {data?.[0]?.display ? (
-            <Card style={{ marginTop: 20 }}>
+            <Card className="ndc-card-margin-top-20">
             {t(data?.[0]?.display)
                 .split("\\n")
                 .map((text, index) => (
-                <p key={index} style={{ textAlign: "center" }}>
+                <p key={index} className="ndc-text-center">
                     {text}
                 </p>
                 ))}

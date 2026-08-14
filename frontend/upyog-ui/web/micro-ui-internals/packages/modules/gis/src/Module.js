@@ -5,8 +5,10 @@ import CitizenApp from "./pages";
 import EmployeeApp from "./pages/employee";
 import ServiceTypes from "./components/ServiceTypes";
 import MapView from "./components/MapView";
+import LayerView from "./components/LayerView";
 import MarkOnMap from "./components/MarkOnMap";
 import ViewOnMap from "./components/ViewOnMap";
+import DiginpinMapPopup from "./components/DiginpinMapPopup";
 import GISCard from "./components/GISCard";
 import ViewOnMapAsset from "./components/ViewOnMapAsset";
 
@@ -14,9 +16,11 @@ import ViewOnMapAsset from "./components/ViewOnMapAsset";
 const componentsToRegister = {
     ServiceTypes,
     MapView,
+    LayerView,
     ViewOnMapAsset,
     MarkOnMap,
     ViewOnMap,
+    DiginpinMapPopup,
     GISCard,
     EmployeeApp
   };
@@ -74,4 +78,4 @@ const componentsToRegister = {
    
   };
 
-  export { MarkOnMap, MapView, ServiceTypes,ViewOnMap };
+  export { MarkOnMap, MapView, ServiceTypes, ViewOnMap, DiginpinMapPopup };

@@ -103,7 +103,7 @@ const CHBSlotDetails
         ownerStep = { ...owner,specialCategory,purpose,purposeDescription};
         onSelect(config.key, ownerStep, false, index);
       }
-      console.log(ownerStep);
+
     };
 
     const onSkip = () => onSelect();
@@ -141,10 +141,10 @@ const CHBSlotDetails
           {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
-           <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.Searchdata} draftId={value?.existingDataSet?.draftId} />
+           <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.searchData} draftId={value?.existingDataSet?.draftId} />
           </div>
         </CardSubHeader>
-        <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails}/>
+        <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails} SlotSearchData={value}/>
       </Card>
         <FormStep
           config={config}

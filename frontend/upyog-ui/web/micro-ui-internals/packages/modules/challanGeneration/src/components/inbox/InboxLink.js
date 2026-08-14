@@ -21,7 +21,7 @@ const InboxLinks = ({ parentRoute, businessService }) => {
   }, []);
 
   const GetLogo = () => (
-    <div className="header" style={{ justifyContent: "flex-start" }}>
+    <div className="header cg-justify-start">
       <span className="logo">
         <PTIcon />
       </span>{" "}

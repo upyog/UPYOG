@@ -74,7 +74,7 @@ const SearchApp = ({path}) => {
         }, {});
         
         // Check if any actual search field is provided (excluding pagination fields)
-        const hasSearchFields = payload.bookingNo || payload.fromDate || payload.status || payload.communityHallCode || payload.toDate || payload.mobileNumber;
+        const hasSearchFields = payload.bookingNo || payload.fromDate || payload.status || payload.venueType || payload.venueCode || payload.toDate || payload.mobileNumber;
         
         if(!hasSearchFields)
         setShowToast({ warning: true, label: "ERR_PROVIDE_ONE_PARAMETERS" });

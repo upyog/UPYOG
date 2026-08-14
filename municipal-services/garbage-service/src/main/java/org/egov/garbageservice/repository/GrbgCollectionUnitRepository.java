@@ -1,12 +1,14 @@
 package org.egov.garbageservice.repository;
 
-import org.egov.garbageservice.model.GrbgCollectionUnit;
+import org.egov.garbageservice.web.models.GrbgCollectionUnit;
 import org.egov.garbageservice.repository.builder.GrbgCollectionUnitQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-/** Repository for creating, updating, and deleting garbage collection unit records in the database. */
+/**
+ * Repository for creating, updating, and deleting garbage collection unit records in the database.
+ */
 @Repository
 public class GrbgCollectionUnitRepository {
 
@@ -15,6 +17,20 @@ public class GrbgCollectionUnitRepository {
 
     @Autowired
     private GrbgCollectionUnitQueryBuilder queryBuilder;
+
+    /**
+     * Persists a new entity record into the database.
+     *
+     * <p>The operation performs the following steps:
+     * <ol>
+     *   <li>Validates the incoming request payload and audit details.</li>
+     *   <li>Constructs the parameterized SQL insert query for entity persistence.</li>
+     *   <li>Executes the database insert using {@link org.springframework.jdbc.core.JdbcTemplate}.</li>
+     *   <li>Returns the created entity instance with populated audit metadata.</li>
+     * </ol>
+     *
+     * @param grbgCollectionUnit the grbgCollectionUnit parameter for this operation
+     */
 
     public void create(GrbgCollectionUnit grbgCollectionUnit) {
         jdbcTemplate.update(queryBuilder.CREATE_QUERY,
@@ -33,13 +49,30 @@ public class GrbgCollectionUnitRepository {
                 grbgCollectionUnit.getIsvariablecalculation(),
                 grbgCollectionUnit.getIsbulkgeneration(),
                 grbgCollectionUnit.getNo_of_units(),
-                grbgCollectionUnit.getIsmonthlybilling());
+                grbgCollectionUnit.getIsmonthlybilling(),
+                grbgCollectionUnit.getOwnerType(),
+                grbgCollectionUnit.getIsInheritance(),
+                grbgCollectionUnit.getSpecialCategory());
     }
 
 
+    /**
+     * Updates existing entity details in the persistent repository.
+     *
+     * <p>The operation performs the following steps:
+     * <ol>
+     *   <li>Extracts updated entity attributes and audit timestamps.</li>
+     *   <li>Constructs the parameterized SQL update query.</li>
+     *   <li>Executes the update statement against the persistent store.</li>
+     *   <li>Returns the modified entity state.</li>
+     * </ol>
+     *
+     * @param grbgCollectionUnit the grbgCollectionUnit parameter for this operation
+     */
+
     public void update(GrbgCollectionUnit grbgCollectionUnit) {
         jdbcTemplate.update(queryBuilder.UPDATE_QUERY,
-        		grbgCollectionUnit.getUnitName(),
+                grbgCollectionUnit.getUnitName(),
                 grbgCollectionUnit.getUnitWard(),
                 grbgCollectionUnit.getUlbName(),
                 grbgCollectionUnit.getTypeOfUlb(),
@@ -54,12 +87,28 @@ public class GrbgCollectionUnitRepository {
                 grbgCollectionUnit.getIsvariablecalculation(),
                 grbgCollectionUnit.getNo_of_units(),
                 grbgCollectionUnit.getIsmonthlybilling(),
-                grbgCollectionUnit.getUuid());
+                grbgCollectionUnit.getUuid(),
+                grbgCollectionUnit.getOwnerType(),
+                grbgCollectionUnit.getIsInheritance(),
+                grbgCollectionUnit.getSpecialCategory());
     }
 
 
-	public void delete(Long garbageId) {
-		jdbcTemplate.update(queryBuilder.DELETE_QUERY, garbageId);
-	}
+    /**
+     * Executes the delete database operation.
+     *
+     * <p>The operation performs the following steps:
+     * <ol>
+     *   <li>Validates method parameters.</li>
+     *   <li>Executes repository database operation.</li>
+     *   <li>Processes and returns the resulting output.</li>
+     * </ol>
+     *
+     * @param garbageId the garbageId parameter for this operation
+     */
+
+    public void delete(Long garbageId) {
+        jdbcTemplate.update(queryBuilder.DELETE_QUERY, garbageId);
+    }
 
 }

@@ -66,12 +66,19 @@ totalApplicationWithinSLA = 0
 
 
 
+def _extract_task_id(module):
+    return 'elastic_search_extract_{0}'.format(module.lower())
+
+
 def dump_kibana(**kwargs):
     hook = ElasticHook('GET', 'es_conn')
     module = kwargs['module']
     module_config = module_map.get(module)
+    if not module_config:
+        raise ValueError("Unknown module '{0}'. Available modules: {1}".format(module, list(module_map.keys())))
     queries = module_config[0]
     today = (date.today() - timedelta(days=1)).strftime("%d-%m-%Y")
+    logging.info("Starting extract for module=%s, date=%s", module, today)
     localtz = timezone('Asia/Kolkata')
     dt_aware = localtz.localize(datetime.strptime(today, "%d-%m-%Y"))
     start = int(dt_aware.timestamp() * 1000)
@@ -132,24 +139,30 @@ def dump_kibana(**kwargs):
         common_payload = empty_lambda('N/A', 'pb.amritsar', 'N/A', today)
         common_payload['metrics'] = common_metrics
         common_list.append(common_payload)
-        kwargs['ti'].xcom_push(key='payload_{0}'.format(module), value=json.dumps(common_list))
-        return json.dumps(common_list)
+        payload_json = json.dumps(common_list)
+        logging.info("Pushing XCom payload_%s with %d record(s) from extract task", module, len(common_list))
+        kwargs['ti'].xcom_push(key='payload_{0}'.format(module), value=payload_json)
+        return payload_json
     else:
         ward_list = transform_response_sample(merged_document, today, module)
-        kwargs['ti'].xcom_push(key='payload_{0}'.format(module), value=json.dumps(ward_list))
-        return json.dumps(ward_list)
+        payload_json = json.dumps(ward_list)
+        logging.info("Pushing XCom payload_%s with %d ward record(s) from extract task", module, len(ward_list))
+        kwargs['ti'].xcom_push(key='payload_{0}'.format(module), value=payload_json)
+        return payload_json
 
 
 def readulb(**kwargs):
     ulbs = []
     url = Variable.get('totalulb_url')
-    url = 'https://raw.githubusercontent.com/egovernments/punjab-mdms-data/master/data/pb/tenant/tenants.json'
-    json_data = requests.get(url)
-    json_data = json.loads(json_data.text)
-    tenants_array=json_data["tenants"]
+    logging.info("Fetching ULB list from %s", url)
+    response = requests.get(url)
+    response.raise_for_status()
+    json_data = json.loads(response.text)
+    tenants_array = json_data["tenants"]
     for tenant in tenants_array:
         ulbs.append(tenant["code"])
     total_ulbs = len(ulbs)
+    logging.info("Fetched %d ULBs", total_ulbs)
     return total_ulbs
 
 
@@ -235,6 +248,7 @@ def dump(**kwargs):
 def get_auth_token(connection):
     endpoint = 'user/oauth/token'
     url = '{0}://{1}/{2}'.format('https', connection.host, endpoint)
+    logging.info("Requesting auth token from %s", url)
     data = {
         'grant_type' : 'password',
         'scope' : 'read',
@@ -246,7 +260,10 @@ def get_auth_token(connection):
 
     r = requests.post(url, data=data, headers={'Authorization' : 'Basic {0}'.format(Variable.get('token')), 'Content-Type' : 'application/x-www-form-urlencoded'})
     response = r.json()
-    logging.info(response)
+    if not response.get('access_token'):
+        logging.error("Failed to obtain auth token: %s", response)
+        raise ValueError("Auth token request failed; check digit-auth connection and Airflow Variables")
+    logging.info("Auth token obtained successfully")
     return (response.get('access_token'), response.get('refresh_token'), response.get('UserRequest'))
 
 
@@ -281,13 +298,22 @@ def call_ingest_api(connection, access_token, user_info, payload, module):
 
 def load(**kwargs):
     connection = BaseHook.get_connection('digit-auth')
-    (access_token, refresh_token, user_info) = get_auth_token(connection)
     module = kwargs['module']
+    extract_task_id = _extract_task_id(module)
+    xcom_key = 'payload_{0}'.format(module)
+    logging.info("Starting load for module=%s, pulling XCom key=%s from task=%s", module, xcom_key, extract_task_id)
 
-    payload = kwargs['ti'].xcom_pull(key='payload_{0}'.format(module))
-    logging.info(payload)
+    (access_token, refresh_token, user_info) = get_auth_token(connection)
+
+    payload = kwargs['ti'].xcom_pull(key=xcom_key, task_ids=extract_task_id)
+    if payload is None:
+        raise ValueError(
+            "No XCom payload found for key '{0}' from task '{1}'. "
+            "Ensure the extract task completed successfully before load runs.".format(xcom_key, extract_task_id)
+        )
+    logging.info("Retrieved XCom payload for module=%s (length=%d chars)", module, len(payload))
     payload_obj = json.loads(payload)
-    logging.info("payload length {0} {1}".format(len(payload_obj),module))
+    logging.info("Payload contains %d record(s) for module=%s", len(payload_obj), module)
     if access_token and refresh_token:
         for i in range(0, len(payload_obj), batch_size):
             logging.info('calling ingest api for batch starting at {0} with batch size {1}'.format(i, batch_size))

@@ -6,6 +6,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw";
 import "leaflet-draw/dist/leaflet.draw.css";
+import "../css/gis-inline.css";
 
 /**
  * @author - Shivank - NUDM
@@ -134,8 +135,8 @@ const MarkOnMap = ({
       hideSubmit
       popupStyles={{ width: "90vw", height: "85vh" }}
     >
-      <div style={{ height: "100%", minHeight: "500px" }}>
-        <div ref={mapRef} style={{ height: "100%", width: "100%" }} />
+      <div className="gis-markmap-wrapper">
+        <div ref={mapRef} className="gis-markmap-map" />
       </div>
 
       {showToast && (

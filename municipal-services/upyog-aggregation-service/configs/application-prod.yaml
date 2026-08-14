@@ -1,0 +1,136 @@
+# =============================================================================
+# UPYOG Aggregation Service - Production Environment Configuration
+# =============================================================================
+# NOTE: Sensitive values MUST be injected via environment variables or secrets.
+# NEVER commit production credentials to source control.
+# =============================================================================
+
+server:
+  port: 8080
+  # The UPYOG API gateway routes /upyog-aggregation-service/** to this pod
+  # WITHOUT stripping the prefix, so all routes are served under it.
+  contextPath: /upyog-aggregation-service
+  readTimeout: 30s
+  writeTimeout: 30s
+  idleTimeout: 120s
+  shutdownTimeout: 30s
+  maxRequestBodyMB: 5
+  enableCompression: true
+
+redis:
+  host: "${REDIS_HOST}"
+  port: 6379
+  password: "${REDIS_PASSWORD}"
+  db: 0
+  poolSize: 50
+  minIdleConns: 20
+  dialTimeout: 5s
+  readTimeout: 3s
+  writeTimeout: 3s
+  enabled: true
+
+auth:
+  enabled: true
+  jwksUrl: "${KEYCLOAK_JWKS_URL}"
+  issuer: "${KEYCLOAK_ISSUER}"
+  audience: "upyog-client"
+  tokenExpLeeway: 30
+  publicPaths:
+    - /health
+    - /readiness
+    - /liveness
+    - /metrics
+    - /upyog-aggregation-service/health
+    - /upyog-aggregation-service/readiness
+    - /upyog-aggregation-service/liveness
+    - /upyog-aggregation-service/metrics
+
+observability:
+  metrics:
+    enabled: true
+    path: /metrics
+    namespace: upyog
+    subsystem: aggregation
+  tracing:
+    enabled: true
+    endpoint: "${OTEL_EXPORTER_ENDPOINT}"
+    serviceName: upyog-aggregation-service
+    samplingRate: 0.05
+
+providers:
+  defaultTimeout: 8s
+  maxRetries: 2
+  cacheTTL: 5m
+  custom:
+    quick-summary:
+      timeout: 12s
+      cacheTTL: 3m
+      retries: 3
+    notifications:
+      timeout: 5s
+      cacheTTL: 30s
+      retries: 1
+    advertisement-banners:
+      timeout: 5s
+      cacheTTL: 10m
+      retries: 1
+    new-applications:
+      timeout: 6s
+      cacheTTL: 1m
+      retries: 2
+
+rateLimit:
+  enabled: true
+  requestsPerSecond: 1000
+  burst: 2000
+
+backend:
+  services:
+    inbox:
+      baseUrl: "http://inbox-service:8080"
+      timeout: 8s
+      maxConns: 200
+      circuitThreshold: 10
+      circuitTimeout: 60s
+    billing:
+      baseUrl: "http://billing-service:8080"
+      timeout: 8s
+      maxConns: 100
+      circuitThreshold: 10
+      circuitTimeout: 60s
+    property:
+      baseUrl: "http://property-services:8080"
+      timeout: 8s
+      maxConns: 100
+      circuitThreshold: 10
+      circuitTimeout: 60s
+    workflow:
+      baseUrl: "http://egov-workflow:8080"
+      timeout: 8s
+      maxConns: 100
+      circuitThreshold: 10
+      circuitTimeout: 60s
+    tl-services:
+      baseUrl: "http://tl-services:8080"
+      timeout: 8s
+      maxConns: 100
+      circuitThreshold: 10
+      circuitTimeout: 60s
+    user-event:
+      baseUrl: "http://egov-user-event:8080"
+      timeout: 8s
+      maxConns: 100
+      circuitThreshold: 10
+      circuitTimeout: 60s
+    advertisement:
+      baseUrl: "http://advertisement-service:8080"
+      timeout: 8s
+      maxConns: 100
+      circuitThreshold: 10
+      circuitTimeout: 60s
+    draft:
+      baseUrl: "http://upyog-draft-service:8080"
+      timeout: 8s
+      maxConns: 100
+      circuitThreshold: 10
+      circuitTimeout: 60s

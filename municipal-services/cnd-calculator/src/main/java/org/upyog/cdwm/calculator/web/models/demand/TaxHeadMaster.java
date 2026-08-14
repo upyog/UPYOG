@@ -1,7 +1,5 @@
 package org.upyog.cdwm.calculator.web.models.demand;
 
-import java.util.List;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 

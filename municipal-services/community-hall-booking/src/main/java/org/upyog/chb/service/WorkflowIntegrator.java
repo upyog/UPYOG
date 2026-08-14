@@ -91,9 +91,9 @@ public class WorkflowIntegrator {
 
 	private static final String STATUSJSONKEY = "$.state.applicationStatus";
 
-	private RestTemplate rest;
+	private final RestTemplate rest;
 
-	private CommunityHallBookingConfiguration config;
+	private final CommunityHallBookingConfiguration config;
 
 	@Autowired
 	public WorkflowIntegrator(RestTemplate rest, CommunityHallBookingConfiguration config) {

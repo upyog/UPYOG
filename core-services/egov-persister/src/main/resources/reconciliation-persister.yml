@@ -1,0 +1,13 @@
+serviceName: reconciliation-service
+version: 1.0.0
+persisterConfigs:
+  - topic: save-reconciliation-details
+    description: Saves reconciliation extraction details to the database asynchronously
+    query: "INSERT INTO ug_recon_extraction_details (config_id, extraction_date, status, acknowledged, data_payload, error_message, created_at) VALUES (?, ?, ?, ?, ?::jsonb, ?, CURRENT_TIMESTAMP);"
+    jsonPaths:
+      - "$.configuration.id"
+      - "$.extractionDate"
+      - "$.status"
+      - "$.acknowledged"
+      - "$.dataPayload"
+      - "$.errorMessage"

@@ -1,6 +1,7 @@
 package org.upyog.chb.service;
 
 import java.time.Duration;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -82,7 +83,14 @@ public class PaymentTimerRedisService {
 	public void removeTimerRows(List<BookingPaymentTimerDetails> details, String fromTime, String toTime) {
 		for (var detail : details) {
 			redis.delete(PaymentTimerKeyBuilder.toRedisTimerRowKey(detail,fromTime , toTime));
-			redis.delete(PaymentTimerKeyBuilder.toRedisSlotKey(detail,fromTime,toTime));
+			
+			if (fromTime == null && detail != null && detail.getStartTime() != null)
+				fromTime = detail.getStartTime().toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+			
+			if (toTime == null && detail != null && detail.getEndTime() != null)
+				toTime = detail.getEndTime().toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+			
+			redis.delete(PaymentTimerKeyBuilder.toRedisSlotKey(detail,fromTime ,toTime));
 		}
 	}
 

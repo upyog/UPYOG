@@ -42,7 +42,7 @@
 
 import { execSync, spawnSync } from 'child_process';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { join } from 'path';
+import { basename, join } from "path";
 
 const ROOT = process.cwd();
 const rootPkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
@@ -115,19 +115,53 @@ function buildStrippedDeps(pkg) {
  *   - "main": "src/Module.js"     (Vite workspace resolution, never changes)
  */
 function writePublishManifest(pkgPath, pkg) {
-  const publishManifest = {
-    name: pkg.name,
-    version: pkg.version,
-    description: pkg.description || '',
-    license: pkg.license || 'MIT',
-    main: 'index.js',
-    module: 'index.modern.js',
-    peerDependencies: pkg.peerDependencies || {},
-    dependencies: buildStrippedDeps(pkg),
-    ...(pkg.keywords && { keywords: pkg.keywords }),
-    ...(pkg.repository && { repository: pkg.repository }),
-    ...(pkg.author && { author: pkg.author }),
-  };
+  const isCss = pkg.source?.endsWith(".scss");
+
+  const cssFile = isCss
+    ? `${basename(pkg.source, ".scss")}.css`
+    : null;
+
+  const publishManifest = isCss
+    ? {
+      name: pkg.name,
+      version: pkg.version,
+      description: pkg.description || "",
+      license: pkg.license || "MIT",
+
+      main: pkg.main || "index.js",
+      module: pkg.module || "index.modern.js",
+
+      style: cssFile,
+
+      files: [
+        cssFile,
+        "index.js",
+        "index.modern.js",
+      ],
+
+      dependencies: buildStrippedDeps(pkg),
+
+      ...(pkg.peerDependencies && {
+        peerDependencies: pkg.peerDependencies,
+      }),
+
+      ...(pkg.author && { author: pkg.author }),
+      ...(pkg.keywords && { keywords: pkg.keywords }),
+      ...(pkg.repository && { repository: pkg.repository }),
+    }
+    : {
+      name: pkg.name,
+      version: pkg.version,
+      description: pkg.description || '',
+      license: pkg.license || 'MIT',
+      main: 'index.js',
+      module: 'index.modern.js',
+      peerDependencies: pkg.peerDependencies || {},
+      dependencies: buildStrippedDeps(pkg),
+      ...(pkg.keywords && { keywords: pkg.keywords }),
+      ...(pkg.repository && { repository: pkg.repository }),
+      ...(pkg.author && { author: pkg.author }),
+    };
 
   writeFileSync(
     join(pkgPath, 'dist', 'package.json'),

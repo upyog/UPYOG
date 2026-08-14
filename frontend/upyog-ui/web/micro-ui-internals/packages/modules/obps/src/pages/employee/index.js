@@ -66,6 +66,8 @@ const EmployeeApp = ({ path }) => {
   const isLocation = window.location.href.includes("bpa") || window.location.href.includes("stakeholder-inbox/stakeholder") || window.location.href.includes("application");
   const isFromNoc = window.location.href.includes("upyog-ui/employee/obps/bpa/");
   const isRes = window.location.href.includes("obps/response") || window.location.href.includes("obps/stakeholder-response");
+  const EnhancedReport = Digit?.ComponentRegistryService?.getComponent("EnhancedReport");
+
   return (
     <Fragment>
       {!isFromNoc && !isRes ? <div style={isLocation ? {marginLeft: "10px"} : {}}><OBPSBreadCrumbs location={location} /></div> : null}
@@ -81,6 +83,11 @@ const EmployeeApp = ({ path }) => {
         <Route path={`/bpa/:id`} element={<PrivateRoute><BpaApplicationDetail /></PrivateRoute>} />
         <Route path={`/response`} element={<PrivateRoute><OBPSResponse /></PrivateRoute>} />
         <Route path={`/stakeholder-response`} element={<PrivateRoute><StakeholderResponse /></PrivateRoute>} />
+
+        <Route path="ObpsDailyCollectionReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-obps" reportName="ObpsDailyCollectionReport" /></PrivateRoute>} />
+        <Route path="ObpsApplicationStatusReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-obps" reportName="ObpsApplicationStatusReport" /></PrivateRoute>} />
+        
+        
       </Routes>
     </Fragment>
   )

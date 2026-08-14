@@ -22,8 +22,6 @@ public class GetBillCriteria {
 	@Default
 	private BigDecimal amountExpected = BigDecimal.ZERO;
 
-//	private String propertyId;
-	
 	private String assessmentYear;
 	
 	@NotNull

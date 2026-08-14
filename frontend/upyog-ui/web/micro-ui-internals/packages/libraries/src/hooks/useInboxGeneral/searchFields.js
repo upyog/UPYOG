@@ -100,8 +100,8 @@ const inboxSearchFields = {
       roles: [],
     },
     {
-      label: "CHB_COMMUNITY_HALL_NAME",
-      name: "communityHallCode",
+      label: "CHB_VENUE_TYPE_LABEL",
+      name: "venueType",
       type: "Dropdown",
       roles: [],
     },
@@ -171,6 +171,27 @@ const inboxSearchFields = {
       },
       {
         label: "TP_MOBILE_NUMBER",
+        name: "mobileNumber",
+        type: "mobileNumber",
+        maxLength: 10,
+        minLength: 0,
+        roles: [],
+        pattern: "^$|[6-9][0-9]{9}",
+        errorMessages: {
+          pattern: "",
+          minLength: "",
+          maxLength: "",
+        },
+      },
+    ],
+    GC: [
+      {
+        label: "GC_APPLICATION_NUMBER_LABEL",
+        name: "applicationNumber",
+        roles: [],
+      },
+      {
+        label: "GC_MOBILE_NUMBER",
         name: "mobileNumber",
         type: "mobileNumber",
         maxLength: 10,

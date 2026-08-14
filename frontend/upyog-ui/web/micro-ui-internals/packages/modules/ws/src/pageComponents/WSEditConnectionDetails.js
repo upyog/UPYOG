@@ -290,12 +290,12 @@ const ConnectionDetails = (_props) => {
                                     rules={{ validate: (e) => ((e && getPattern("WSOnlyNumbers").test(e)) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")), required: t("REQUIRED_FIELD") }}
                                     type="number"
                                     isMandatory={true}
-                                    render={(props) => (
+                                    render={({ field: props }) => (
                                         <TextInput
                                             type="number"
                                             value={props.value}
                                             autoFocus={focusIndex.index === connectionDetail?.key && focusIndex.type === "proposedTaps"}
-                                            errorStyle={(localFormState.touched.proposedTaps && errors?.proposedTaps?.message) ? true : false}
+                                            errorStyle={(localFormState.touchedFields.proposedTaps && errors?.proposedTaps?.message) ? true : false}
                                             onChange={(e) => {
                                                 props.onChange(e.target.value);
                                                 setFocusIndex({ index: connectionDetail?.key, type: "proposedTaps" });

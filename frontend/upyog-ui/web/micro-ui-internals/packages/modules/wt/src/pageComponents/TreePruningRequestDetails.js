@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, CardLabel, TextInput, UploadFile, Dropdown, LocationIcon } from "@nudmcdgnpm/digit-ui-react-components";
-import { getDigiPin } from "../../../../libraries/src/utils/digipin";
+import { FormStep, CardLabel, UploadFile, Dropdown, GeoLocationWithDigipin } from "@nudmcdgnpm/digit-ui-react-components";
+import { TPService } from "../../../../libraries/src/services/elements/TP";
 
 const TreePruningRequestDetails = ({ t, config, onSelect, userType, formData }) => {
   const user = Digit.UserService.getUser().info;
   const [reasonOfPruning, setReasonOfPruning] = useState(formData?.treePruningRequestDetails?.reasonOfPruning || "");
+  const [geoTagLocation, setGeoTagLocation] = useState(formData?.treePruningRequestDetails?.geoTagLocation || "");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
-  const [geoTagLocation, setGeoTagLocation] = useState(formData?.treePruningRequestDetails?.geoTagLocation || "");
   const [digipin, setDigipin] = useState(formData?.treePruningRequestDetails?.digipin || "");
   const [supportingDocumentFile, setSupportingDocumentFile] = useState(formData?.treePruningRequestDetails?.supportingDocumentFile || "");
   const [isUploading, setIsUploading] = useState(false);
@@ -29,7 +29,8 @@ const TreePruningRequestDetails = ({ t, config, onSelect, userType, formData }) 
       geoTagLocation,
       supportingDocumentFile,
       latitude,
-      longitude
+      longitude,
+      digipin
     };
     onSelect(config.key, Service, false);
   };
@@ -48,8 +49,7 @@ const TreePruningRequestDetails = ({ t, config, onSelect, userType, formData }) 
     };
     if (name === "reasonOfPruning") {
       setReasonOfPruning(value);
-    } else if (name === "geoTagLocation" || name === "location") {
-      setGeoTagLocation(value);
+      // Removed the "geoTagLocation" / "location" branch — geo state is now managed by handleGeoChange
     } else if (name === "supportingDocumentFile") {
       setSupportingDocumentFile(value);
     }
@@ -77,31 +77,18 @@ const TreePruningRequestDetails = ({ t, config, onSelect, userType, formData }) 
       })).finally(() => setIsUploading(false));
     }
   };
-  // Fetch user's current location (latitude & longitude), update state, and generate Digipin
-  const fetchCurrentLocation = () => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(position => {
-        const {
-          latitude,
-          longitude
-        } = position.coords;
-        setGeoTagLocation(`${latitude}, ${longitude}`);
-        setLatitude(latitude);
-        setLongitude(longitude);
-        try {
-          const pin = getDigiPin(latitude, longitude);
-          setDigipin(pin);
-        } catch (error) {
-          console.error("Error generating Digipin:", error);
-        }
-      },
-      (error) => {
-        console.error("Error getting location:", error);
-        alert("Unable to retrieve your location. Please check your browser settings.");
-      });
-    } else {
-      alert("Geolocation is not supported by your browser.");
-    }
+  // Replaces the old inline fetchCurrentLocation + manual setters; receives all geo fields from GeoLocationWithDigipin
+  const handleGeoChange = ({ geoTagLocation, latitude, longitude, digipin }) => {
+    setGeoTagLocation(geoTagLocation);
+    setLatitude(latitude);
+    setLongitude(longitude);
+    setDigipin(digipin);
+  };
+
+  // Passed as onFetchDigipin prop; delegates digipin generation to the backend instead of the old local utility
+  const handleFetchDigipin = async (latitude, longitude) => {
+    const res = await TPService.generateDigipin(latitude, longitude);
+    return res?.digipin || "";
   };
   const LoadingSpinner = () => <div className="loading-spinner" />;
   return <FormStep config={config} onSelect={goNext} t={t} isDisabled={!reasonOfPruning || !supportingDocumentFile}>
@@ -111,43 +98,18 @@ const TreePruningRequestDetails = ({ t, config, onSelect, userType, formData }) 
           {t("REASON_FOR_PRUNING")} <span className="check-page-link-button">*</span>
         </CardLabel>
         <Dropdown className="form-field" selected={reasonOfPruning} placeholder={"Select Reason"} select={setReasonOfPruning} option={ReasonOfPruningType} style={inputStyles} optionKey="code" t={t} />
-        <CardLabel>
-          {t("LOCATION_GEOTAG")}
-        </CardLabel>
-        <div style={{
-        display: "flex",
-        alignItems: "stretch",
-        gap: "8px",
-        width: user.type === "EMPLOYEE" ? "53%" : "100%"
-      }}>
-          <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name={"geoTagLocation"} value={geoTagLocation} placeholder={"Select Location"} onChange={handleInputChange} max={new Date().toISOString().split("T")[0]} rules={{
-          required: t("dddddddd"),
-          validDate: val => /^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("hhhhhhh")
-        }} className="location-input wt-auto-28" />
-          <div className="butt-icon wt-auto-29" onClick={() => {
-          fetchCurrentLocation("geoTagLocation");
-        }}>
-            <LocationIcon className="fill-path-primary-main" />
-          </div>
-        </div>
-        {digipin && (
-          <div style={{ 
-            marginTop: "10px", 
-            marginBottom: "16px",
-            padding: "12px 16px",
-            backgroundColor: "#f0f0f0",
-            borderRadius: "8px",
-            border: "1px solid #d4d4d4",
-            width: user.type === "EMPLOYEE" ? "50%" : "100%",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center"
-          }}>
-            <div>
-              <strong>Digipin:</strong> {digipin}
-            </div>
-          </div>
-        )}
+        <CardLabel>{t("LOCATION_GEOTAG")}</CardLabel>
+        {/* Replaced manual TextInput + LocationIcon + DigipinDisplay block with the reusable GeoLocationWithDigipin component */}
+        <GeoLocationWithDigipin
+          t={t}
+          value={geoTagLocation}
+          onChange={handleGeoChange}
+          onFetchDigipin={handleFetchDigipin}
+          // Slightly wider on employee view (60%) vs the old 53%
+          inputStyle={{ width: user.type === "EMPLOYEE" ? "60%" : "100%" }}
+          showDigipin
+          showMapLink
+        />
 
         {/* Upload Site Photograph */}
         <CardLabel>

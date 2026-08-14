@@ -19,14 +19,19 @@ import java.util.List;
 @Repository
 public class DemandRepository {
 
-	@Autowired
-	private ServiceRequestRepository serviceRequestRepository;
+	private final ServiceRequestRepository serviceRequestRepository;
+
+	private final StreetVendingConfiguration config;
+
+	private final ObjectMapper mapper;
 
 	@Autowired
-	private StreetVendingConfiguration config;
-
-	@Autowired
-	private ObjectMapper mapper;
+	public DemandRepository(ServiceRequestRepository serviceRequestRepository, StreetVendingConfiguration config,
+			ObjectMapper mapper) {
+		this.serviceRequestRepository = serviceRequestRepository;
+		this.config = config;
+		this.mapper = mapper;
+	}
 
 	/**
 	 * Creates demand

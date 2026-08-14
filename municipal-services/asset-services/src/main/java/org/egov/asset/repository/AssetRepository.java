@@ -11,7 +11,6 @@ import org.egov.asset.web.models.Asset;
 import org.egov.asset.web.models.AssetAssignment;
 import org.egov.asset.web.models.AssetRequest;
 import org.egov.asset.web.models.AssetSearchCriteria;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -22,24 +21,23 @@ import java.util.List;
 @Repository
 public class AssetRepository {
 
-    @Autowired
-    private AssetQueryBuilder queryBuilder;
+    private final AssetQueryBuilder queryBuilder;
+    private final AssetConfiguration config;
+    private final Producer producer;
+    private final JdbcTemplate jdbcTemplate;
+    private final AssetRowMapper rowMapper;
+    private final AssetLimitedDateRowMapper assetLimitedDateRowMapper;
 
-    @Autowired
-    private AssetConfiguration config;
-
-    @Autowired
-    private Producer producer;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    AssetRowMapper rowMapper;
-
-    @Autowired
-    AssetLimitedDateRowMapper assetLimitedDateRowMapper;
-
+    public AssetRepository(AssetQueryBuilder queryBuilder, AssetConfiguration config, Producer producer,
+                           JdbcTemplate jdbcTemplate, AssetRowMapper rowMapper,
+                           AssetLimitedDateRowMapper assetLimitedDateRowMapper) {
+        this.queryBuilder = queryBuilder;
+        this.config = config;
+        this.producer = producer;
+        this.jdbcTemplate = jdbcTemplate;
+        this.rowMapper = rowMapper;
+        this.assetLimitedDateRowMapper = assetLimitedDateRowMapper;
+    }
 
     /**
      * Pushes the request on save topic through kafka
@@ -89,26 +87,17 @@ public class AssetRepository {
 
     public List<Asset> getAssetData(AssetSearchCriteria searchCriteria) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String query = null;
         if (searchCriteria.getApplicationNo() != null) {
-            query = queryBuilder.getAssetSearchQuery(searchCriteria, preparedStmtList);
+            String query = queryBuilder.getAssetSearchQuery(searchCriteria, preparedStmtList);
             log.info("Final query: " + query);
-            return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
-        } else {
-            query = queryBuilder.getAssetSearchQueryForLimitedData(searchCriteria, preparedStmtList);
-            log.info("Final query: " + query);
-            return jdbcTemplate.query(query, preparedStmtList.toArray(), assetLimitedDateRowMapper);
+            return jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
         }
-        // Always use the full search query to get the gis data from additionaldetails
-//        String query = queryBuilder.getAssetSearchQuery(searchCriteria, preparedStmtList);
-//
-//        log.info("Final Asset Search Query: " + query);
-//
-//        // Always use FULL row mapper
-//        return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+        String query = queryBuilder.getAssetSearchQueryForLimitedData(searchCriteria, preparedStmtList);
+        log.info("Final query: " + query);
+        return jdbcTemplate.query(query, assetLimitedDateRowMapper, preparedStmtList.toArray());
     }
 
-    public List<AssetAssignment> getAssetAssignmentDetails(String tenantId, String assetId) {
-        return jdbcTemplate.query(queryBuilder.ASSIGNMENT_DETAILS, new AssetAssignmentRowMapper(), assetId);
+    public List<AssetAssignment> getAssetAssignmentDetails(String assetId) {
+        return jdbcTemplate.query(AssetQueryBuilder.ASSIGNMENT_DETAILS, new AssetAssignmentRowMapper(), assetId);
     }
 }

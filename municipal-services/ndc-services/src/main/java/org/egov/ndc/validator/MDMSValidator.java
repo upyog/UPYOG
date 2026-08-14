@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.ndc.util.NDCConstants;
-import org.egov.ndc.web.model.NdcRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -22,9 +21,9 @@ public class MDMSValidator {
 	/**
 	 * method to validate the mdms data in the request
 	 *
-	 * @param ndcRequest
+	 * @param mdmsData MDMS response data to validate
 	 */
-	public void validateMdmsData(NdcRequest ndcRequest, Object mdmsData) {
+	public void validateMdmsData(Object mdmsData) {
 
 		Map<String, List<String>> masterData = getAttributeValues(mdmsData);
 		String[] masterArray = { NDCConstants.NDC_TYPE};

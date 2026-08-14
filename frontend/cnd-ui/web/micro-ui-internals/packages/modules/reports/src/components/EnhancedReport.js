@@ -57,12 +57,19 @@ const getSearchParamsObj = (field, data, key, t) => {
       return obj
       
     case "epoch":
-      obj["name"] = key
-      if (key === "fromDate")
-        obj["input"] = new Date(data?.fromDate).getTime();
-      else
-        obj["input"] = new Date(data?.toDate).getTime();
-      return obj
+  obj["name"] = key;
+
+  if (key === "fromDate") {
+    const from = new Date(data.fromDate);
+    from.setHours(0, 0, 0, 0);
+    obj["input"] = from.getTime();
+  } else {
+    const to = new Date(data.toDate);
+    to.setHours(23, 59, 59, 999);
+    obj["input"] = to.getTime();
+  }
+
+  return obj;
       
     default:
       return

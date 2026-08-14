@@ -1,6 +1,5 @@
 package org.egov.ndc.workflow;
 
-
 import org.egov.common.contract.request.PlainAccessRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.ndc.config.NDCConfiguration;
@@ -9,7 +8,6 @@ import org.egov.ndc.web.model.RequestInfoWrapper;
 import org.egov.ndc.web.model.ndc.NdcApplicationRequest;
 import org.egov.ndc.web.model.workflow.*;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,21 +17,23 @@ import java.util.*;
 
 @Service
 public class WorkflowService {
-	
-	@Autowired
-	private NDCConfiguration config;
 
-	@Autowired
-	private ServiceRequestRepository serviceRequestRepository;
-	
-	@Autowired
-	private ObjectMapper mapper;
-	
+	private final NDCConfiguration config;
+	private final ServiceRequestRepository serviceRequestRepository;
+	private final ObjectMapper mapper;
+
+	public WorkflowService(NDCConfiguration config, ServiceRequestRepository serviceRequestRepository,
+			ObjectMapper mapper) {
+		this.config = config;
+		this.serviceRequestRepository = serviceRequestRepository;
+		this.mapper = mapper;
+	}
+
 	public BusinessService getBusinessService(NdcApplicationRequest ndc, RequestInfo requestInfo, String bussinessServiceValue) {
 		StringBuilder url = getSearchURLWithParams(bussinessServiceValue, ndc.getApplications().get(0).getTenantId());
 		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
 		Object result = serviceRequestRepository.fetchResult(url, requestInfoWrapper);
-		BusinessServiceResponse response = null;
+		BusinessServiceResponse response;
 		try {
 			response = mapper.convertValue(result, BusinessServiceResponse.class);
 		} catch (IllegalArgumentException e) {
@@ -41,7 +41,7 @@ public class WorkflowService {
 		}
 		return response.getBusinessServices().isEmpty() ? null : response.getBusinessServices().get(0);
 	}
-	
+
 	private StringBuilder getSearchURLWithParams(String bussinessServiceValue, String tenantId) {
         StringBuilder url = new StringBuilder(config.getWfHost());
         url.append(config.getWfBusinessServiceSearchPath());
@@ -51,20 +51,20 @@ public class WorkflowService {
         url.append(bussinessServiceValue);
         return url;
     }
-	
+
 	public State getCurrentState(String status, BusinessService businessService) {
 		for (State state : businessService.getStates()) {
 			if (state.getApplicationStatus() != null
-					&& state.getApplicationStatus().equalsIgnoreCase(status.toString()))
+					&& state.getApplicationStatus().equalsIgnoreCase(status))
 				return state;
 		}
 		return null;
 	}
-	
+
 	public Boolean isStateUpdatable(String status, BusinessService businessService) {
 		for (State state : businessService.getStates()) {
 			if (state.getApplicationStatus() != null
-					&& state.getApplicationStatus().equalsIgnoreCase(status.toString()))
+					&& state.getApplicationStatus().equalsIgnoreCase(status))
 				return state.getIsStateUpdatable();
 		}
 		return Boolean.FALSE;
@@ -77,42 +77,35 @@ public class WorkflowService {
 		Map<String, ProcessInstance> processInstanceMap = new HashMap<>();
 
 		PlainAccessRequest apiPlainAccessRequest = requestInfo.getPlainAccessRequest();
-		/* Creating a PlainAccessRequest object to get unmasked mobileNumber for Assignee */
-		List<String> plainRequestFieldsList = new ArrayList<String>() {{
-			add("mobileNumber");
-		}};
+		List<String> plainRequestFieldsList = List.of("mobileNumber");
 
 		ProcessInstanceResponse response;
 		try {
 			response = mapper.convertValue(result, ProcessInstanceResponse.class);
-			List<ProcessInstance> processInstanceList = new ArrayList<>();
 			for (ProcessInstance processInstance : response.getProcessInstances()) {
-				if (!ObjectUtils.isEmpty(processInstance)) {
-
-					if (response.getProcessInstances().get(0).getAssignes() != null) {
-						PlainAccessRequest plainAccessRequest = PlainAccessRequest.builder().recordId(response.
-										getProcessInstances().get(0).getAssignes().get(0).getUuid())
-								.plainRequestFields(plainRequestFieldsList).build();
-
-						requestInfo.setPlainAccessRequest(plainAccessRequest);
-						requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-					}
+				if (ObjectUtils.isEmpty(processInstance)) {
+					continue;
 				}
+
+				if (response.getProcessInstances().get(0).getAssignes() != null) {
+					PlainAccessRequest plainAccessRequest = PlainAccessRequest.builder()
+							.recordId(response.getProcessInstances().get(0).getAssignes().get(0).getUuid())
+							.plainRequestFields(plainRequestFieldsList)
+							.build();
+
+					requestInfo.setPlainAccessRequest(plainAccessRequest);
+					requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+				}
+
 				Object resultNew = serviceRequestRepository.fetchResult(url, requestInfoWrapper);
 				response = mapper.convertValue(resultNew, ProcessInstanceResponse.class);
-				//Re-setting the original PlainAccessRequest object that came from api request
 				requestInfo.setPlainAccessRequest(apiPlainAccessRequest);
 
 				Optional<ProcessInstance> processInstances = Optional.ofNullable(processInstance);
-				if (!ObjectUtils.isEmpty(response.getProcessInstances())) {
-
-					if (processInstances.get().getAssignes() != null) {
-						/* encrypt here */
-						processInstances.get().setAssignes((List<org.egov.common.contract.request.User>) (processInstances.get().getAssignes()));
-
-						/* decrypt here */
-						//	processInstances.get().setAssignes(encryptionDecryptionUtil.decryptObject(processInstances.get().getAssignes(), WNS_OWNER_ENCRYPTION_MODEL, User.class, requestInfo));
-					}
+				if (!ObjectUtils.isEmpty(response.getProcessInstances())
+						&& processInstances.isPresent()
+						&& processInstances.get().getAssignes() != null) {
+					processInstances.get().setAssignes(processInstances.get().getAssignes());
 				}
 				processInstanceMap.put(processInstance.getBusinessId(), processInstance);
 			}
@@ -138,6 +131,5 @@ public class WorkflowService {
 		url.setLength(url.length() - 1);
 		return url;
 	}
-
 
 }

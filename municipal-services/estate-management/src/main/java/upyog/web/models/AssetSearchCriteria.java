@@ -12,4 +12,6 @@ public class AssetSearchCriteria {
     private String buildingName;
     private String locality;
     private String assetStatus;
+    private Integer limit;
+    private Integer offset;
 }

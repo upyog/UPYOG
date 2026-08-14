@@ -217,7 +217,7 @@ export const filterFunctions = {
     const workflowFilters = {};
 
 
-    const { bookingNo, mobileNumber,communityHallCode, limit, offset, sortBy, sortOrder, total, services } = filtersArg || {};
+    const { bookingNo, mobileNumber,venueType, limit, offset, sortBy, sortOrder, total, services } = filtersArg || {};
 
     if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
       workflowFilters.assignee = uuid;
@@ -228,8 +228,8 @@ export const filterFunctions = {
     if(bookingNo) {   
       searchFilters.bookingNo = bookingNo;
     }
-    if(communityHallCode){
-      searchFilters.communityHallCode = communityHallCode.code;
+    if(venueType){
+      searchFilters.venueType = venueType.code;
     }
 
     if (services) {
@@ -378,6 +378,45 @@ export const filterFunctions = {
     searchFilters["isInboxSearch"] = true;
     searchFilters["creationReason"] = [""];
     workflowFilters["moduleName"] = "request-service.tree_pruning";
+    
+    return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
+  },
+
+   GC: (filtersArg) => {
+
+    let { uuid } = Digit.UserService.getUser()?.info || {};
+
+    const searchFilters = {};
+    const workflowFilters = {};
+
+
+    const { applicationNumber, mobileNumber, limit, offset, sortBy, sortOrder, total, applicationStatus, services, locality } = filtersArg || {};
+
+    if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
+      workflowFilters.assignee = uuid;
+    }
+    if (mobileNumber) {
+      searchFilters.mobileNumber = mobileNumber;
+    }
+    if(applicationNumber) {   
+      searchFilters.applicationNumber = applicationNumber;
+    }
+    if (applicationStatus && applicationStatus?.[0]?.applicationStatus) {
+      workflowFilters.status = applicationStatus.map((status) => status.uuid);
+      if (applicationStatus?.some((e) => e.nonActionableRole)) {
+        searchFilters.fetchNonActionableRecords = true;
+      }
+    }
+    if (services) {
+      workflowFilters.businessService = services;
+    }
+    if(locality?.length) {
+      searchFilters.localityCode = locality.map((item) => item.code.split("_").pop());
+    }
+
+    searchFilters["isInboxSearch"] = true;
+    searchFilters["creationReason"] = [""];
+    workflowFilters["moduleName"] = "garbage-service";
     
     return { searchFilters, workflowFilters, limit, offset, sortBy, sortOrder };
   },

@@ -113,6 +113,7 @@ const EmployeeApp = ({ path }) => {
           />
           <Route path="my-applications" element={<PrivateRoute><SearchApp path={`/my-applications`} /></PrivateRoute>} />
           <Route path="DemandCollectionBalancedRegister" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-ws" reportName="DemandCollectionBalancedRegister" /></PrivateRoute>} />
+          <Route path="eWasteRegisterReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-ew" reportName="eWasteRegisterReport" /></PrivateRoute>} />
         </Routes>
       </div>
     </React.Fragment>

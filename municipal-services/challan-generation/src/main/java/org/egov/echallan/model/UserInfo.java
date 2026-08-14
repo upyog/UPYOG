@@ -25,7 +25,7 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 import org.egov.common.contract.request.Role;
-import org.egov.echallan.Validation.SanitizeHtml;
+import org.egov.echallan.validation.SanitizeHtml;
 
 /**
  * This is acting ID token of the authenticated user on the server. Any value provided by the clients will be ignored and actual user based on authtoken will be used on the server.

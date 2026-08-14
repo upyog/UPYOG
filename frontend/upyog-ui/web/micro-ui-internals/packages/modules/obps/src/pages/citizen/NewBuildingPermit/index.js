@@ -47,7 +47,7 @@ const NewBuildingPermit = () => {
 
   const onSuccess = () => {
     //clearParams();
-    queryClient.invalidateQueries("PT_CREATE_PROPERTY");
+    queryClient.invalidateQueries({ queryKey: ["PT_CREATE_PROPERTY"] });
   };
   const createApplication = async () => {
     navigate(`${basePath}/acknowledgement`);

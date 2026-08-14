@@ -1,155 +1,293 @@
-import React, { useState, useEffect } from "react";
-import { Header, Loader, TextInput, Dropdown, SubmitBar, CardLabel, Card } from "@nudmcdgnpm/digit-ui-react-components";
-import { Link } from "react-router-dom";
+/**
+ * Citizen My Applications — card list with inline search.
+ * Data source: allotment _search only.
+ * Page load / empty search → { tenantId } so all allotments from API show.
+ * Status filter: Paid | Pending for payment (client-side on Allotments[].status).
+ */
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  Header,
+  Loader,
+  TextInput,
+  Dropdown,
+  SubmitBar,
+  CardLabel,
+  Card,
+  sortByOrder,
+} from "@nudmcdgnpm/digit-ui-react-components";
+import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import EstateApplication from "./est-application";
+import { resolveCitizenMyApplicationsConfig } from "../../../utils/estMdmsUtils";
+import {
+  getAllotmentPaymentStatus,
+  normalizeCitizenPaymentStatus,
+} from "../../../utils/estDisplayUtils";
+import styles from "../../../styles/ESTMyApplications.module.scss";
 
 export const ESTMyApplications = () => {
   const { t } = useTranslation();
-  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
-  const user = Digit.UserService.getUser().info;
+  const location = useLocation();
+  const tenantId =
+    Digit.ULBService.getCitizenCurrentTenant(true) ||
+    Digit.ULBService.getCurrentTenantId();
+  const stateId = Digit.ULBService.getStateId();
+
+  const { data: mdmsMyApps } = Digit.Hooks.useEnabledMDMS(
+    stateId,
+    "Estate",
+    [{ name: "CitizenMyApplicationsConfig" }],
+    {
+      select: (mdms) => mdms?.Estate?.CitizenMyApplicationsConfig || null,
+    }
+  );
+
+  const config = useMemo(
+    () => resolveCitizenMyApplicationsConfig(mdmsMyApps),
+    [mdmsMyApps]
+  );
+
+  const filters = useMemo(() => sortByOrder(config.filters), [config.filters]);
+  const pageSize = config.paginationDefaults?.limit || 50;
+  const allotmentNoFilter = filters.find(
+    (f) => f.name === "allotmentNo" || f.name === "estateNo"
+  );
+  const statusFilter = filters.find(
+    (f) =>
+      f.name === "paymentStatus" ||
+      f.name === "assetAllotmentStatus" ||
+      f.name === "assetStatus" ||
+      f.name === "status"
+  );
 
   const [searchTerm, setSearchTerm] = useState("");
   const [status, setStatus] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState({ Assets: [] });
+  const [searchFilters, setSearchFilters] = useState({});
+  const [hasSearched, setHasSearched] = useState(false);
 
-  let filter = window.location.href.split("/").pop();
-  let t1;
-  let off;
-  if (!isNaN(parseInt(filter))) {
-    off = filter;
-    t1 = parseInt(filter) + 50;
-  } else {
-    t1 = 4;
-  }
-
-  const fetchAllotments = async (searchFilters = {}) => {
-    setIsLoading(true);
-    try {
-      const response = await Digit.ESTService.assetSearch({
-        tenantId,
-        filters: {
-          AssetSearchCriteria: {
-            tenantId,
-            mobileNumber: user?.mobileNumber,
-            ...(searchFilters.estateNo && { estateNo: searchFilters.estateNo }),
-            ...(searchFilters.assetStatus && { assetStatus: searchFilters.assetStatus })
-          }
-        }
-      });
-      setData(response || { Assets: [] });
-    } catch (error) {
-      console.error("Error fetching assets:", error);
-      setData({ Assets: [] });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const pathOffset = useMemo(() => {
+    const segment = location.pathname.split("/").pop();
+    const parsed = parseInt(segment, 10);
+    return Number.isNaN(parsed) ? 0 : parsed;
+  }, [location.pathname]);
 
   useEffect(() => {
-    fetchAllotments();
+    setHasSearched(true);
+    setSearchFilters({});
   }, []);
 
-  const handleSearch = () => {
+  // Allotment _search with tenantId only — allotmentNo / status filtered client-side.
+  const allotmentSearchFilters = useMemo(
+    () => ({ tenantId }),
+    [tenantId]
+  );
+
+  const { isLoading, isSuccess, data, isFetching } =
+    Digit.Hooks.estate.useESTApplicationSearch({
+      filters: allotmentSearchFilters,
+      config: {
+        enabled: Boolean(hasSearched && tenantId),
+        structuralSharing: false,
+      },
+    });
+
+  const applications = useMemo(() => {
+    const list = data?.Allotments || data?.allotments || [];
+    const paymentFilter = String(searchFilters.paymentStatus || "").toUpperCase();
+    const allotmentNoFilterValue = String(searchFilters.allotmentNo || "")
+      .trim()
+      .toUpperCase();
+    let rows = Array.isArray(list) ? [...list] : [];
+
+    if (allotmentNoFilterValue) {
+      rows = rows.filter((item) => {
+        const no = String(
+          item?.allotmentNo ?? item?.additionalDetails?.allotmentNo ?? ""
+        )
+          .trim()
+          .toUpperCase();
+        return no.includes(allotmentNoFilterValue);
+      });
+    }
+
+    // Empty status → show every matching allotment.
+    if (!paymentFilter) return rows;
+
+    return rows.filter((item) => {
+      const rowPayment = normalizeCitizenPaymentStatus(
+        getAllotmentPaymentStatus(item)
+      );
+      return rowPayment === paymentFilter;
+    });
+  }, [data, searchFilters.paymentStatus, searchFilters.allotmentNo]);
+
+  const visibleApplications = useMemo(() => {
+    if (!pathOffset) return applications;
+    return applications.slice(pathOffset, pathOffset + pageSize);
+  }, [applications, pathOffset, pageSize]);
+
+  const handleSearch = useCallback(() => {
     const trimmedSearchTerm = searchTerm.trim();
-    const searchFilters = {
-      estateNo: trimmedSearchTerm || undefined,
-      assetStatus: status?.code || undefined,
-    };
+    const paymentStatus = status?.code || undefined;
+    setHasSearched(true);
 
-    fetchAllotments(searchFilters);
-  };
+    if (!trimmedSearchTerm && !paymentStatus) {
+      setSearchFilters({});
+      return;
+    }
 
-  if (isLoading) {
+    setSearchFilters({
+      allotmentNo: trimmedSearchTerm || undefined,
+      paymentStatus,
+    });
+  }, [searchTerm, status]);
+
+  const handleClear = useCallback(() => {
+    setSearchTerm("");
+    setStatus(null);
+    setHasSearched(true);
+    setSearchFilters({});
+  }, []);
+
+  const statusMasterName =
+    statusFilter?.dataSource?.masterName || "PaymentStatus";
+  const statusModuleName =
+    statusFilter?.dataSource?.moduleName || "Estate";
+
+  const { data: paymentStatusMdms = [] } = Digit.Hooks.useEnabledMDMS(
+    stateId,
+    statusModuleName,
+    [{ name: statusMasterName }],
+    {
+      select: (mdms) => mdms?.[statusModuleName]?.[statusMasterName] || [],
+    }
+  );
+
+  const statusOptions = useMemo(() => {
+    const wanted = ["PAID", "PENDING_FOR_PAYMENT"];
+    const byCode = {};
+    paymentStatusMdms.forEach((item) => {
+      const code = String(item.code || "").toUpperCase();
+      if (wanted.includes(code)) {
+        byCode[code] = {
+          code,
+          name: t(item.i18nKey || item.name) || item.name || code,
+        };
+      }
+    });
+    return wanted.map(
+      (code) =>
+        byCode[code] || {
+          code,
+          name:
+            code === "PAID"
+              ? t("EST_PAYMENT_STATUS_PAID") || "Paid"
+              : t("EST_PAYMENT_STATUS_PENDING_FOR_PAYMENT") ||
+                "Pending for payment",
+        }
+    );
+  }, [paymentStatusMdms, t]);
+
+  if (isLoading || (isFetching && !data)) {
     return <Loader />;
   }
 
-  const statusOptions = [
-    { code: "ACTIVE", value: t("EST_ACTIVE") },
-    { code: "PENDING", value: t("EST_PENDING") },
-    { code: "EXPIRED", value: t("EST_EXPIRED") },
-  ];
-
-  const filteredApplications = data?.Assets || [];
+  const totalCount = applications.length;
+  const nextOffset = pathOffset + pageSize;
+  const hasMore = pathOffset > 0 && totalCount > nextOffset;
 
   return (
-    <React.Fragment>
-      <Header>{`${t("EST_MY_APPLICATIONS")} (${filteredApplications.length})`}</Header>
+    <>
+      <Header>{`${t(config.header)} (${totalCount})`}</Header>
+
       <Card>
-        <div style={{ marginLeft: "16px" }}>
-          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "16px" }}>
-            <div style={{ flex: 1 }}>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <CardLabel>{t("EST_ASSET_NUMBER")}</CardLabel>
-                <TextInput
-                  placeholder={t("Enter Asset Number")}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  style={{ width: "100%", padding: "8px", height: "150%" }}
-                />
+        <div className={styles["est-myapps__container"]}>
+          <div className={styles["est-myapps__search-row"]}>
+            {allotmentNoFilter ? (
+              <div className={styles["est-myapps__field-col"]}>
+                <div className={styles["est-myapps__field-inner"]}>
+                  <CardLabel>
+                    {t(
+                      "EST_ALLOTMENT_NUMBER")}
+                  </CardLabel>
+                  <TextInput
+                    placeholder={t(
+                      "EST_ENTER_ALLOTMENT_NUMBER")}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className={styles["est-myapps__text-input"]}
+                  />
+                </div>
               </div>
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <CardLabel>{t("PT_COMMON_TABLE_COL_STATUS_LABEL")}</CardLabel>
-                <Dropdown
-                  className="form-field"
-                  selected={status}
-                  select={setStatus}
-                  option={statusOptions}
-                  placeholder={t("Select Status")}
-                  optionKey="value"
-                  style={{ width: "100%" }}
-                  t={t}
-                />
+            ) : null}
+            {statusFilter ? (
+              <div className={styles["est-myapps__field-col"]}>
+                <div className={styles["est-myapps__field-inner"]}>
+                  <CardLabel>{t(statusFilter.key)}</CardLabel>
+                  <Dropdown
+                    className={`form-field ${styles["est-myapps__dropdown"]}`}
+                    selected={status}
+                    select={setStatus}
+                    option={statusOptions}
+                    placeholder={t(statusFilter.placeholder || statusFilter.key)}
+                    optionKey="name"
+                    t={t}
+                  />
+                </div>
               </div>
-            </div>
+            ) : null}
             <div>
-              <div style={{ marginTop: "17%" }}>
-                <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
+              <div className={styles["est-myapps__search-btn-wrap"]}>
+                <SubmitBar
+                  label={t(config.actionButton?.search || "ES_COMMON_SEARCH")}
+                  onSubmit={handleSearch}
+                />
                 <p
-                  className="link"
-                  style={{ marginLeft: "30%", marginTop: "10px", display: "block" }}
-                  onClick={() => {
-                    setSearchTerm(""); 
-                    setStatus(null);
-                    fetchAllotments();
-                  }}
+                  className={`link ${styles["est-myapps__clear-link"]}`}
+                  onClick={handleClear}
                 >
-                  {t(`ES_COMMON_CLEAR_ALL`)}
+                  {t(config.actionButton?.clear || "ES_COMMON_CLEAR_ALL")}
                 </p>
               </div>
             </div>
           </div>
         </div>
       </Card>
+
       <div>
-        {filteredApplications.length > 0 &&
-          filteredApplications.map((application, index) => (
-            <div key={application.assetId || index}>
-              <EstateApplication 
-                application={application} 
-                tenantId={tenantId} 
+        {isSuccess &&
+          visibleApplications.map((allotment, index) => (
+            <div
+              key={`${allotment.allotmentId || allotment.allotmentNo || allotment.assetNo || "row"}-${index}`}
+            >
+              <EstateApplication
+                application={allotment}
+                allotment={allotment}
+                tenantId={tenantId}
                 buttonLabel={t("EST_SUMMARY")}
               />
             </div>
           ))}
-        {filteredApplications.length === 0 && !isLoading && (
-          <p style={{ marginLeft: "16px", marginTop: "16px" }}>{t("EST_NO_APPLICATION_FOUND_MSG")}</p>
+
+        {isSuccess && totalCount === 0 && (
+          <p className={styles["est-myapps__msg"]}>
+            {t(config.emptyState?.message || "EST_NO_APPLICATION_FOUND_MSG")}
+          </p>
         )}
 
-        {filteredApplications.length !== 0 && data?.count > t1 && (
+        {totalCount > 0 && hasMore && (
           <div>
-            <p style={{ marginLeft: "16px", marginTop: "16px" }}>
+            <p className={styles["est-myapps__msg"]}>
               <span className="link">
-                <Link to={`/upyog-ui/citizen/est/my-applications/${t1}`}>{t("EST_LOAD_MORE_MSG")}</Link>
+                <Link to={`/upyog-ui/citizen/est/my-applications/${nextOffset}`}>
+                  {t("EST_LOAD_MORE_MSG")}
+                </Link>
               </span>
             </p>
           </div>
         )}
       </div>
-    </React.Fragment>
+    </>
   );
 };
 

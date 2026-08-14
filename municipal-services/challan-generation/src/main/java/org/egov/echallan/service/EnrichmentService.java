@@ -5,7 +5,7 @@ import org.egov.echallan.repository.ChallanRepository;
 import org.egov.echallan.repository.IdGenRepository;
 import org.egov.echallan.repository.ServiceRequestRepository;
 import org.egov.echallan.util.CommonUtils;
-import org.egov.echallan.web.models.Idgen.IdResponse;
+import org.egov.echallan.web.models.idgen.IdResponse;
 import org.egov.echallan.web.models.user.User;
 import org.egov.echallan.web.models.user.UserDetailResponse;
 import org.egov.common.contract.request.RequestInfo;
@@ -27,7 +27,6 @@ import com.jayway.jsonpath.JsonPath;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -39,9 +38,9 @@ public class EnrichmentService {
     private UserService userService;
     private ChallanRepository challanRepository;
     private ServiceRequestRepository serviceRequestRepository;
-    
+
     @Autowired
-    public EnrichmentService(IdGenRepository idGenRepository, ChallanConfiguration config, CommonUtils commonUtils, UserService userService, 
+    public EnrichmentService(IdGenRepository idGenRepository, ChallanConfiguration config, CommonUtils commonUtils, UserService userService,
     		ChallanRepository challanRepository,ServiceRequestRepository serviceRequestRepository) {
         this.idGenRepository = idGenRepository;
         this.config = config;
@@ -59,12 +58,12 @@ public class EnrichmentService {
         challan.setAuditDetails(auditDetails);
         challan.setId(UUID.randomUUID().toString());
         challan.setApplicationStatus(StatusEnum.ACTIVE);
-        
+
         // Set default business service if not provided
         if (challan.getBusinessService() == null || challan.getBusinessService().isEmpty()) {
             challan.setBusinessService("Challan_Generation");
         }
-        
+
         // Handle address - only enrich if not null
         if(challan.getAddress()!=null) {
         	challan.getAddress().setId(UUID.randomUUID().toString());
@@ -72,7 +71,7 @@ public class EnrichmentService {
         	// Ensure locality is not null - if null, the persister will fail when trying to access locality.code
         	// We'll handle this by ensuring locality stays as null object (persister will use null for DB)
         }
-        
+
         // Handle documents - enrich with IDs and auditDetails
         if(challan.getUploadedDocumentDetails() != null && !challan.getUploadedDocumentDetails().isEmpty()) {
             challan.getUploadedDocumentDetails().forEach(document -> {
@@ -86,7 +85,7 @@ public class EnrichmentService {
                 document.setAuditDetails(auditDetails);
             });
         }
-        
+
         challan.setFilestoreid(null);
         setIdgenIds(challanRequest);
     }
@@ -99,7 +98,8 @@ public class EnrichmentService {
             throw new CustomException("IDGEN ERROR", "No ids returned from idgen Service");
 
         return idResponses.stream()
-                .map(IdResponse::getId).collect(Collectors.toList());
+                .map(IdResponse::getId)
+                .toList();
     }
 
     private void setIdgenIds(ChallanRequest request) {
@@ -134,7 +134,7 @@ public class EnrichmentService {
         }
     }
 
-    
+
     public SearchCriteria getChallanCriteriaFromIds(List<Challan> challans){
         SearchCriteria criteria = new SearchCriteria();
         Set<String> ids = new HashSet<>();
@@ -151,7 +151,7 @@ public class EnrichmentService {
         criteria.setTenantId(tenantId);
         return criteria;
     }
-    
+
     public void enrichSearchCriteriaWithOwnerids(SearchCriteria criteria, UserDetailResponse userDetailResponse){
         if(CollectionUtils.isEmpty(criteria.getUserIds())){
             Set<String> userIds = new HashSet<>();
@@ -167,12 +167,9 @@ public class EnrichmentService {
         challans.forEach(challan -> {
         	if(challan.getAccountId()==null)
                         throw new CustomException("OWNER SEARCH ERROR","The owner of the echallan "+challan.getId()+" is not coming in user search");
-            else {
-                   User user = userIdToOwnerMap.get(challan.getAccountId());
-                   UserInfo userinfo = getUserInfo(user);
-                    	
-                   challan.setCitizen(userinfo);
-                 }
+            User user = userIdToOwnerMap.get(challan.getAccountId());
+            UserInfo userinfo = getUserInfo(user);
+            challan.setCitizen(userinfo);
        });
 
     }
@@ -200,90 +197,98 @@ public class EnrichmentService {
             log.warn("User enrichment failed for challan search, continuing without user details: {}", ex.getMessage());
             // Continue without user enrichment
         }
-        
+
         // Enrich amount from billing service for each challan
         enrichAmountFromBillingService(challans, requestInfo);
-        
+
         return challans;
     }
-    
+
     /**
      * Enriches challans with amount data from billing service
      * Fetches bill details using challanNo and extracts amount array from billAccountDetails
      */
     private void enrichAmountFromBillingService(List<Challan> challans, RequestInfo requestInfo) {
         for (Challan challan : challans) {
-            // Skip if amount is already populated or challanNo is missing
-            if (challan.getAmount() != null && !challan.getAmount().isEmpty()) {
-                continue;
-            }
-            
-            if (challan.getChallanNo() == null || challan.getChallanNo().isEmpty()) {
-                continue;
-            }
-            
-            try {
-                StringBuilder billUri = new StringBuilder(config.getBillingHost());
-                billUri.append(config.getFetchBillEndpoint());
-                billUri.append("?tenantId=").append(challan.getTenantId());
-                billUri.append("&consumerCode=").append(challan.getChallanNo());
-                billUri.append("&businessService=").append(challan.getBusinessService());
-                
-                org.egov.echallan.model.RequestInfoWrapper requestInfoWrapper = 
-                    org.egov.echallan.model.RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-                
-                Object billResponse = serviceRequestRepository.fetchResult(billUri, requestInfoWrapper);
-                
-                if (billResponse != null) {
-                    // Parse bill response and extract amount array
-                    JsonPath jsonPath = JsonPath.compile("$.Bill[0].billDetails[0].billAccountDetails");
-                    List<Map<String, Object>> billAccountDetails = jsonPath.read(billResponse);
-                    
-                    if (billAccountDetails != null && !billAccountDetails.isEmpty()) {
-                        List<Amount> amountList = new ArrayList<>();
-                        for (Map<String, Object> accountDetail : billAccountDetails) {
-                            String taxHeadCode = (String) accountDetail.get("taxHeadCode");
-                            Object amountObj = accountDetail.get("amount");
-                            
-                            if (taxHeadCode != null && amountObj != null) {
-                                BigDecimal amountValue = null;
-                                if (amountObj instanceof Number) {
-                                    amountValue = new BigDecimal(amountObj.toString());
-                                } else if (amountObj instanceof String) {
-                                    amountValue = new BigDecimal((String) amountObj);
-                                }
-                                
-                                if (amountValue != null) {
-                                    Amount amount = Amount.builder()
-                                        .taxHeadCode(taxHeadCode)
-                                        .amount(amountValue)
-                                        .build();
-                                    amountList.add(amount);
-                                }
-                            }
-                        }
-                        
-                        if (!amountList.isEmpty()) {
-                            challan.setAmount(amountList);
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                log.warn("Failed to fetch amount from billing service for challan {}: {}", 
-                    challan.getChallanNo(), e.getMessage());
-                // Continue without amount enrichment
+            if (shouldEnrichAmountFromBilling(challan)) {
+                enrichChallanAmountFromBilling(challan, requestInfo);
             }
         }
     }
-    
-    
+
+    private boolean shouldEnrichAmountFromBilling(Challan challan) {
+        if (challan.getAmount() != null && !challan.getAmount().isEmpty()) {
+            return false;
+        }
+        return challan.getChallanNo() != null && !challan.getChallanNo().isEmpty();
+    }
+
+    private void enrichChallanAmountFromBilling(Challan challan, RequestInfo requestInfo) {
+        try {
+            StringBuilder billUri = new StringBuilder(config.getBillingHost());
+            billUri.append(config.getFetchBillEndpoint());
+            billUri.append("?tenantId=").append(challan.getTenantId());
+            billUri.append("&consumerCode=").append(challan.getChallanNo());
+            billUri.append("&businessService=").append(challan.getBusinessService());
+
+            org.egov.echallan.model.RequestInfoWrapper requestInfoWrapper =
+                org.egov.echallan.model.RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+
+            Object billResponse = serviceRequestRepository.fetchResult(billUri, requestInfoWrapper);
+
+            if (billResponse != null) {
+                JsonPath jsonPath = JsonPath.compile("$.Bill[0].billDetails[0].billAccountDetails");
+                List<Map<String, Object>> billAccountDetails = jsonPath.read(billResponse);
+
+                if (billAccountDetails != null && !billAccountDetails.isEmpty()) {
+                    List<Amount> amountList = buildAmountListFromBillDetails(billAccountDetails);
+                    if (!amountList.isEmpty()) {
+                        challan.setAmount(amountList);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Failed to fetch amount from billing service for challan {}: {}",
+                challan.getChallanNo(), e.getMessage());
+        }
+    }
+
+    private List<Amount> buildAmountListFromBillDetails(List<Map<String, Object>> billAccountDetails) {
+        List<Amount> amountList = new ArrayList<>();
+        for (Map<String, Object> accountDetail : billAccountDetails) {
+            String taxHeadCode = (String) accountDetail.get("taxHeadCode");
+            Object amountObj = accountDetail.get("amount");
+
+            if (taxHeadCode == null || amountObj == null) {
+                continue;
+            }
+            BigDecimal amountValue = parseAmountValue(amountObj);
+            if (amountValue != null) {
+                amountList.add(Amount.builder()
+                    .taxHeadCode(taxHeadCode)
+                    .amount(amountValue)
+                    .build());
+            }
+        }
+        return amountList;
+    }
+
+    private BigDecimal parseAmountValue(Object amountObj) {
+        if (amountObj instanceof Number number) {
+            return new BigDecimal(number.toString());
+        }
+        if (amountObj instanceof String str) {
+            return new BigDecimal(str);
+        }
+        return null;
+    }
+
+
     public SearchCriteria enrichChallanSearchCriteriaWithOwnerids(SearchCriteria criteria, List<Challan> challans) {
         SearchCriteria searchCriteria = new SearchCriteria();
         searchCriteria.setTenantId(criteria.getTenantId());
         Set<String> ownerids = new HashSet<>();
-        challans.forEach(challan -> {
-        	ownerids.add(challan.getAccountId());
-        });
+        challans.forEach(challan -> ownerids.add(challan.getAccountId()));
         searchCriteria.setUserIds(new ArrayList<>(ownerids));
         return searchCriteria;
     }

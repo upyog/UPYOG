@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Import;
 public class TreePruningMain {
 
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         SpringApplication.run(TreePruningMain.class, args);
     }
 

@@ -9,6 +9,11 @@ import { WTService } from "../services/elements/WT";
 import { MTService } from "../services/elements/MT";
 import { TPService } from "../services/elements/TP";
 import {NDCService} from "../services/elements/NDC";
+import { TLService } from "../services/elements/TL";
+import { NOCService } from "../services/elements/NOC";
+import {ESTService} from "../services/elements/EST";
+import {GCServices} from "../services/elements/GC";
+
 
 const fsmApplications = async (tenantId, filters) => {
   return (await FSMService.search(tenantId, { ...filters, limit: 10000 })).fsm;
@@ -16,6 +21,10 @@ const fsmApplications = async (tenantId, filters) => {
 
 const ptrApplications = async (tenantId, filters) => {
   return (await PTRService.search({ tenantId, filters })).PetRegistrationApplications;
+};
+
+const estApplications = async (tenantId, filters) => {  
+  return (await ESTService.search({ tenantId, filters })).ESTApplications; //applicationsForBillDetails
 };
 
 const ptApplications = async (tenantId, filters) => {
@@ -52,6 +61,12 @@ const tpBookings = async (tenantId, filters) => {
 const ndcApplications = async (tenantId, filters) => {
   return (await NDCService.search({ tenantId, filters })).Applications;
 };
+const nocApplications = async (tenantId, filters) => {
+  return (await NOCService.search(tenantId, filters)).FireNOCs;
+};
+const GCApplications = async (tenantId, filters) => {
+  return (await GCServices.search({ tenantId, filters })).Applications;
+};
 
 const refObj = (tenantId, filters) => {
   let consumerCodes = filters?.consumerCodes;
@@ -68,6 +83,12 @@ const refObj = (tenantId, filters) => {
       key: "applicationNumber",
       label: "PTR_UNIQUE_APPLICATION_NUMBER",
     },
+    est: {
+      searchFn: () => estApplications(null, { ...filters, allotmentNo: consumerCodes }),
+      key: "allotmentNo", 
+      label: "EST_UNIQUE_APPLICATION_NUMBER",
+    },
+
     fsm: {
       searchFn: () => fsmApplications(tenantId, filters),
       key: "applicationNo",
@@ -132,6 +153,16 @@ const refObj = (tenantId, filters) => {
       searchFn: () => ndcApplications(null, { ...filters, applicationNo: consumerCodes }),
       key: "applicationNo",
       label: "NDC_APPLICATION_NO",
+    },
+    firenoc: {
+      searchFn: () => nocApplications(tenantId, { ...filters, applicationNumber: consumerCodes }),
+      key: "applicationNumber",
+      label: "NOC_APPLICATION_NO",
+    },
+     gc: {
+      searchFn: () => GCApplications(null, { ...filters, applicationNo: consumerCodes }),
+      key: "applicationNo",
+      label: "GC_APPLICATION_NO",
     }
   };
 };
@@ -171,8 +202,15 @@ export const useApplicationsForBusinessServiceSearch = ({ tenantId, businessServ
   if (window.location.href.includes("ndc-services")) {
     _key = "ndc"
   }
-  
-
+  if (window.location.href.includes("est-services")) {
+    _key = "est"
+  }
+  if (window.location.href.includes("noc") || window.location.href.includes("firenoc")) {
+    _key = "noc";
+  }
+  if (window.location.href.includes("garbage-service")) {
+    _key = "gc"
+  } 
   /* key from application ie being used as consumer code in bill */
   const { searchFn, key, label } = refObj(tenantId, filters)[_key];
   const applications = queryTemplate({ queryKey: ["applicationsForBillDetails", { tenantId, businessService, filters, searchFn }], queryFn: searchFn, config });

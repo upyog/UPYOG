@@ -1,7 +1,6 @@
 package org.egov.echallan.web.controllers;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +17,6 @@ import org.egov.echallan.service.ChallanService;
 import org.egov.echallan.util.ResponseInfoFactory;
 import org.egov.echallan.producer.Producer;
 import org.egov.echallan.util.ChallanConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,14 +26,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/challan")
 public class ChallanGenerationController {
 
-	@Autowired
-	private ChallanService challanService;
+	private final ChallanService challanService;
 
-	@Autowired
-	private ResponseInfoFactory responseInfoFactory;
+	private final ResponseInfoFactory responseInfoFactory;
 
-	@Autowired
-	private Producer producer;
+	private final Producer producer;
+
+	public ChallanGenerationController(ChallanService challanService, ResponseInfoFactory responseInfoFactory,
+			Producer producer) {
+		this.challanService = challanService;
+		this.responseInfoFactory = responseInfoFactory;
+		this.producer = producer;
+	}
 
 	@PostMapping("/_create")
 	public ResponseEntity<ChallanResponse> create(@Valid @RequestBody ChallanRequest challanRequest) {
@@ -48,7 +50,7 @@ public class ChallanGenerationController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
-	 @RequestMapping(value = "/_search", method = RequestMethod.POST)
+	 @PostMapping("/_search")
 	 public ResponseEntity<ChallanResponse> search(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
 	                                                       @Valid @ModelAttribute SearchCriteria criteria) {
 		 String tenantId = criteria.getTenantId();
@@ -86,16 +88,13 @@ public class ChallanGenerationController {
 		}
 
 	@PostMapping("/_count")
-	private ResponseEntity<?> count(@RequestParam("tenantId") String tenantId, @RequestBody RequestInfo requestInfo) {
-
-		Map<String,Object> response = new HashMap<>();
-		response = challanService.getChallanCountResponse(requestInfo,tenantId);
-		return new ResponseEntity<>(response,HttpStatus.OK);
+	ResponseEntity<Map<String, Object>> count(@RequestParam("tenantId") String tenantId, @RequestBody RequestInfo requestInfo) {
+		return new ResponseEntity<>(challanService.getChallanCountResponse(requestInfo, tenantId), HttpStatus.OK);
 	}
 
 	@PostMapping("/_test")
-	public ResponseEntity test( @RequestBody ChallanRequest challanRequest){
-		producer.push("update-echallan",challanRequest);
-		return new ResponseEntity(HttpStatus.OK);
+	public ResponseEntity<Void> test(@RequestBody ChallanRequest challanRequest) {
+		producer.push("update-echallan", challanRequest);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

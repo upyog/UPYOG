@@ -3,7 +3,7 @@ package org.egov.ndc.calculator.web.models.workflow;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.egov.ndc.calculator.web.models.ndc.Document;
-import org.egov.ndc.calculator.Validation.SanitizeHtml;
+import org.egov.ndc.calculator.validation.SanitizeHtml;
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.validation.Valid;

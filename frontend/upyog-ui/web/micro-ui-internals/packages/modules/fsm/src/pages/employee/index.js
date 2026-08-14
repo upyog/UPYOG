@@ -201,6 +201,8 @@ const EmployeeApp = ({ path, url, userType }) => {
   const AddDriver = Digit.ComponentRegistryService.getComponent("AddDriver");
   const EditDriver = Digit.ComponentRegistryService.getComponent("EditDriver");
   const BreadCrumbComp = Digit.ComponentRegistryService.getComponent("FsmBreadCrumb");
+  const EnhancedReport = Digit?.ComponentRegistryService?.getComponent("EnhancedReport");
+
 
   const locationCheck =
     window.location.href.includes("/employee/fsm/inbox") ||
@@ -259,6 +261,12 @@ const EmployeeApp = ({ path, url, userType }) => {
 <Route path={`/home`} element={<PrivateRoute><ULBHomeCard module={module} /></PrivateRoute>} />
 <Route path={`/fstp/new-vehicle-entry`} element={<PrivateRoute><FstpOperatorDetails /></PrivateRoute>} />
           <Route path={`/fstp/new-vehicle-entry/:id`} element={<PrivateRoute><FstpOperatorDetails /></PrivateRoute>} />
+
+<Route path="FSMDailyCollectionReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="fsm" reportName="FSMDailyCollectionReport" /></PrivateRoute>} />
+<Route path="FSMRequestReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="fsm" reportName="FSMRequestReport" /></PrivateRoute>} />
+<Route path="TQMTest/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="fsm" reportName="TQMTest" /></PrivateRoute>} />
+
+
         </Routes>
       </div>
     </React.Fragment>

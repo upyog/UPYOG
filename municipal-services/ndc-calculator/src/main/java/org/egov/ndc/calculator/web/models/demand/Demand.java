@@ -16,7 +16,6 @@ import org.egov.common.contract.request.User;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
-import org.egov.ndc.calculator.web.models.demand.DemandDetail;
 import org.egov.ndc.calculator.web.models.ndc.AuditDetails;
 
 

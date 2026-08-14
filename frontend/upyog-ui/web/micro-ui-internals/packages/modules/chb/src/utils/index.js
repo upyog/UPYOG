@@ -21,158 +21,71 @@ export const shouldHideBackButton = (config = []) => {
   return config.filter((key) => window.location.href.includes(key.screenPath)).length > 0 ? true : false;
 };
 
-export const sethallDetails = (data) => {
-  let { slotlist } = data;
-  //TODO
-  const DateConvert = (date) => {
-    if (!date) return "";
-    const [day, month, year] = date.split("-");
-    return `${year}-${month}-${day}`; // For the <input type="date" /> format
-  };
-  let hallDetails = slotlist?.bookingSlotDetails.map((slot) => {
-    return { 
-      communityHallCode:slot.code,
-      communityHallName:slot.name,
-      hallCode: slot.hallCode1,
-      bookingDate:DateConvert(slot.bookingDate),
-      bookingFromTime:slot.fromTime,
-      bookingToTime:slot.toTime,
-      status:"BOOKING_CREATED",
-      capacity:slot.capacity
-    };
+export const CHBDataConvert = (data) => {
+  const { slotlist, ownerss, bankdetails, address, documents, slots } = data;
 
-  }) || [];
+  const draftId = slotlist?.existingDataSet?.draftId || "";
+  const searchData = slotlist?.searchData;
 
-  data.slotlist = hallDetails;
-  return data;
-}
-
-export const setBankDetails = (data) => {
-  let { bankdetails } = data;
-
-  let propbankdetails = {
-    accountNumber: bankdetails?.accountNumber,
-    ifscCode: bankdetails?.ifscCode,
-    bankName: bankdetails?.bankName,
-    bankBranchName: bankdetails?.bankBranchName,
-    accountHolderName: bankdetails?.accountHolderName,
-  };
-
-  data.bankdetails = propbankdetails;
-  return data;
-
-};
-
-export const setaddressDetails = (data) => {
-  let { address } = data;
-
-  let addressdetails = {
+  const addressPayload = {
     pincode: address?.pincode,
     city: address?.city?.city?.name,
-    cityCode:address?.city?.city?.code,
-    locality:address?.locality?.name,
+    cityCode: address?.city?.city?.code,
+    locality: address?.locality?.name,
     localityCode: address?.locality?.code,
     streetName: address?.streetName,
     houseNo: address?.houseNo,
     landmark: address?.landmark,
   };
 
-  data.address = addressdetails;
-  return data;
+  const applicantDetail = {
+    accountNumber: bankdetails?.accountNumber,
+    ifscCode: bankdetails?.ifscCode,
+    bankName: bankdetails?.bankName,
+    bankBranchName: bankdetails?.bankBranchName,
+    accountHolderName: bankdetails?.accountHolderName,
+    applicantName: ownerss?.applicantName,
+    applicantMobileNo: ownerss?.mobileNumber,
+    applicantAlternateMobileNo: ownerss?.alternateNumber || "",
+    applicantEmailId: ownerss?.emailId,
+  };
 
+  // One object per date, 2 dates = 2 objects
+  const bookingSlotDetails = slotlist?.bookingSlotDetails?.map((slot) => ({
+    unitCode: searchData?.unitCode,
+    bookingDate: slot.bookingDate
+      ? slot.bookingDate.split("-").reverse().join("-") // "28-06-2026" → "2026-06-28"
+      : "",
+    bookingFromTime: searchData?.fromTime,
+    bookingToTime: searchData?.toTime,
+    status: "BOOKING_CREATED",
+    capacity: slot.capacity || "",
+  })) || [];
+
+   const formdata= {
+    venueBookingApplication: {
+      tenantId: data.tenantId,
+      draftId,
+      applicantDetail,
+      address: addressPayload,
+      purposeDescription: slots?.purposeDescription,
+      documents: documents?.documents || [],
+      bookingStatus: "BOOKING_CREATED",
+      venueCode: slotlist?.venueName?.code,       
+      venueName: slotlist?.venueName?.value,      
+      venueType: slotlist?.venueTypes?.code,
+      specialCategory: {
+        category: slots?.specialCategory?.value,
+      },
+      purpose: {
+        purpose: slots?.purpose?.value,
+      },
+      bookingSlotDetails,
+      workflow: null,
+    
+  }}
+  return formdata
 };
-
-export const setOwnerDetails = (data) => {
-    let { ownerss } = data;
-  
-    let propOwners = {
-      applicantName:ownerss?.applicantName,
-      applicantMobileNo:ownerss?.mobileNumber,
-      applicantAlternateMobileNo:ownerss?.alternateNumber,
-      applicantEmailId:ownerss?.emailId,
-    };
-  
-    data.ownerss = propOwners;
-    return data;
-  };
-  
-  export const setSlotDetails = (data) => {
-    let { slots } = data;
-  
-    let bookingSlotDetails = {
-      ...slots,
-      type:slots?.residentType?.value,
-      category:slots?.specialCategory?.value,
-      purposes:slots?.purpose?.value,
-      purposeDescription:slots?.purposeDescription,
-      
-    };
-  
-    data.slots = bookingSlotDetails;
-    return data;
-  };
-
-  export const setDocumentDetails = (data) => {
-    let { documents } = data;
-  
-    let doc = {
-      ...documents,
-       
-      
-    };
-  
-    data.documents = doc;
-    return data;
-  };
-
-
-
-export const CHBDataConvert = (data) => {
-
-  // Captured before sethallDetails() overwrites data.slotlist with the hall details array.
-  const draftId = data?.slotlist?.existingDataSet?.draftId || "";
-  
-  data = setDocumentDetails(data);
-  data = setOwnerDetails(data);
-  data = setBankDetails(data);
-  data = setSlotDetails(data);
-  data= sethallDetails(data);
-  data=setaddressDetails(data);
-const formdata={
-  hallsBookingApplication: {
-    tenantId: data.tenantId,
-    draftId: draftId,
-    applicantDetail:{
-      ...data.bankdetails,
-      ...data.ownerss
-    },
-    address:data.address,
-    purposeDescription:data.slots?.purposeDescription,
-    ...data.documents,
-    bookingStatus:"BOOKING_CREATED",
-    communityHallCode:data.slotlist[0]?.communityHallCode,
-    communityHallName:data.slotlist[0]?.communityHallName,
-    specialCategory:{
-      category:data.slots?.specialCategory?.value
-    },
-    purpose:{
-      purpose:data.slots?.purpose?.value
-    },
-    bookingSlotDetails:data?.slotlist,
-
-    workflow:null
-
-  // workflow : {
-  //     businessService: "chb-services",
-  //     action : "APPLY",
-  //     moduleName: "chb-services"
-  //   }
-  }
-}
-
-  return formdata;
-};
-
 export const CompareTwoObjects = (ob1, ob2) => {
   let comp = 0;
 Object.keys(ob1).map((key) =>{

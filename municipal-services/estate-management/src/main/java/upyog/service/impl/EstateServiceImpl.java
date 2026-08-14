@@ -11,10 +11,9 @@ import upyog.config.ServiceConstants;
 import upyog.repository.EstateRepository;
 import upyog.util.EstateUtil;
 import upyog.web.models.*;
-import upyog.web.models.billing.Demand;
 import upyog.service.DemandService;
-import upyog.util.MdmsUtil;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -33,8 +32,6 @@ public class EstateServiceImpl implements EstateService {
     private AssetService assetService;
     @Autowired
     private DemandService demandService;
-    @Autowired
-    private MdmsUtil mdmsUtil;
     /**
      * Creates a new asset in the estate management system.
      *
@@ -137,6 +134,31 @@ public class EstateServiceImpl implements EstateService {
         log.info("Processing allotment for asset: {}, allottee: {}",
                 allotment.getAssetNo(), allotment.getAlloteeName());
 
+        // Validate agreement start date
+        if (allotment.getAgreementStartDate() == null) {
+            log.error("Agreement start date is null for allotment request");
+            throw new CustomException(
+                    "INVALID_AGREEMENT_START_DATE",
+                    "Agreement start date is required for allotment creation"
+            );
+        }
+
+        if (allotment.getAgreementStartDate().isBefore(LocalDate.now())) {
+            log.error("Agreement start date {} is before today's date {}", allotment.getAgreementStartDate(), LocalDate.now());
+            throw new CustomException(
+                    "INVALID_AGREEMENT_START_DATE",
+                    "Agreement start date cannot be a past date. It must be today or a future date"
+            );
+        }
+
+        if (allotment.getAgreementEndDate() != null && allotment.getAgreementEndDate().isBefore(allotment.getAgreementStartDate())) {
+            log.error("Agreement end date {} is before start date {}", allotment.getAgreementEndDate(), allotment.getAgreementStartDate());
+            throw new CustomException(
+                    "INVALID_AGREEMENT_END_DATE",
+                    "Agreement end date cannot be before agreement start date"
+            );
+        }
+
         // If user UUID not provided, search or create user
         if (!StringUtils.hasText(allotment.getUserUuid())) {
             log.info("User UUID not provided, checking if user exists with mobile: {}",
@@ -152,9 +174,52 @@ public class EstateServiceImpl implements EstateService {
 
         enrichmentService.enrichAllotmentRequest(request);
         
+        if (allotment.getAssetNo() == null || allotment.getAssetNo().trim().isEmpty()) {
+            throw new CustomException(
+                    ServiceConstants.EstateConstants.INVALID_REQUEST,
+                    "Asset Number (estateNo) is required for allotment creation"
+            );
+        }
+
+        // Validate asset existence in database
+        List<Asset> assets;
+        try {
+            AssetSearchCriteria assetSearchCriteria = new AssetSearchCriteria();
+            assetSearchCriteria.setEstateNo(allotment.getAssetNo());
+            assetSearchCriteria.setTenantId(allotment.getTenantId());
+            assets = estateRepository.searchAssets(assetSearchCriteria);
+        } catch (Exception e) {
+            log.error("Failed to query asset details: {}", e.getMessage(), e);
+            throw new CustomException(
+                    "ASSET_SEARCH_FAILED",
+                    "Failed to verify asset existence: " + e.getMessage()
+            );
+        }
+
+        if (assets == null || assets.isEmpty()) {
+            throw new CustomException(
+                    ServiceConstants.EstateConstants.INVALID_REQUEST,
+                    "No asset found with estateNo: " + allotment.getAssetNo()
+            );
+        }
+
         // Create demand for the allotment
-        Object mdmsData = mdmsUtil.mDMSCall(request.getRequestInfo(), allotment.getTenantId());
-        demandService.createDemand(request, mdmsData, true);
+        demandService.createDemand(request, true);
+
+        // Update corresponding asset allotment status to ALLOTTED
+        Asset asset = assets.get(0);
+        asset.setAssetAllotmentStatus(ServiceConstants.STATUS_ALLOTTED);
+        AssetRequest assetRequest = new AssetRequest(request.getRequestInfo(), List.of(asset));
+        try {
+            estateRepository.save(estateConfiguration.getEstateAssetUpdateTopic(), assetRequest);
+            log.info("Updated Asset allotment status to ALLOTTED for estateNo: {}", allotment.getAssetNo());
+        } catch (Exception e) {
+            log.error("Failed to update asset allotment status on allotment creation: {}", e.getMessage(), e);
+            throw new CustomException(
+                    "ASSET_UPDATE_FAILED",
+                    "Failed to update asset allotment status: " + e.getMessage()
+            );
+        }
         
         estateRepository.save(estateConfiguration.getEstateAllotmentSaveTopic(), request);
 
@@ -176,6 +241,23 @@ public class EstateServiceImpl implements EstateService {
         log.info("Searching allotments with criteria: {}", criteria);
 
         List<Allotment> allotments = estateRepository.searchAllotments(criteria);
+
+        /*
+           If allotmentNo is provided in criteria, enrich each allotment with its corresponding asset details
+         */
+        if (allotments != null && !allotments.isEmpty() && criteria.getAllotmentNo() != null && !criteria.getAllotmentNo().trim().isEmpty()) {
+            for (Allotment allotment : allotments) {
+                if (allotment.getAssetNo() != null && !allotment.getAssetNo().trim().isEmpty()) {
+                    AssetSearchCriteria assetSearchCriteria = new AssetSearchCriteria();
+                    assetSearchCriteria.setEstateNo(allotment.getAssetNo());
+                    assetSearchCriteria.setTenantId(allotment.getTenantId());
+                    List<Asset> assets = estateRepository.searchAssets(assetSearchCriteria);
+                    if (assets != null && !assets.isEmpty()) {
+                        allotment.setAsset(assets.get(0));
+                    }
+                }
+            }
+        }
 
         AllotmentResponse response = new AllotmentResponse();
         response.setAllotments(allotments);

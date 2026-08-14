@@ -254,7 +254,7 @@ const PlumberDetails = _props => {
             />
           </div>
         </LabelFieldPair>
-        <CardLabelError style={errorStyle}>{localFormState.touched.disConnectionProposeDate ? errors?.disConnectionProposeDate?.message : ""}</CardLabelError>
+        <CardLabelError style={errorStyle}>{localFormState.touchedFields.disConnectionProposeDate ? errors?.disConnectionProposeDate?.message : ""}</CardLabelError>
         <LabelFieldPair>
           <CardLabel style={isMobile && isEmployee ? {
           fontWeight: "700",
@@ -288,7 +288,7 @@ const PlumberDetails = _props => {
             ></Controller>
           </div>
         </LabelFieldPair>
-        <CardLabelError style={errorStyle}>{localFormState.touched.disConnectionReason ? errors?.disConnectionReason?.message : ""}</CardLabelError>
+        <CardLabelError style={errorStyle}>{localFormState.touchedFields.disConnectionReason ? errors?.disConnectionReason?.message : ""}</CardLabelError>
       </div>
     </div>;
 };

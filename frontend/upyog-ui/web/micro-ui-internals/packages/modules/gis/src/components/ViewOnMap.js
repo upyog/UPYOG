@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Modal } from "@nudmcdgnpm/digit-ui-react-components";
+import "../css/gis-inline.css";
 
 const Close = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
@@ -102,23 +103,8 @@ const ViewOnMap = ({ closeModal, location,assetDetails }) => {
             const props = assetDetails || {};
 
             const popupContent = `
-                <div style="
-                width: 280px; 
-                font-size: 13px; 
-                line-height: 1.5; 
-                font-family: Arial, sans-serif; 
-                border: 1px solid #ddd; 
-                border-radius: 6px; 
-                padding: 10px 12px; 
-                box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-                ">
-                <h3 style="
-                    text-align: center; 
-                    margin: 0 0 10px 0; 
-                    font-size: 15px; 
-                    font-weight: bold; 
-                    color: #333;
-                ">
+                <div class="gis-asset-popup">
+                <h3 class="gis-asset-popup__title">
                     Asset Details
                 </h3>
                 <div>
@@ -149,7 +135,7 @@ const ViewOnMap = ({ closeModal, location,assetDetails }) => {
       formId="modal-action"
       popupStyles={{ width: "90vw", height: "85vh" }}
     >
-      <div ref={mapRef} style={{ height: "75vh", width: "100%" }} />
+      <div ref={mapRef} className="gis-modal-map" />
     </Modal>
   );
 };

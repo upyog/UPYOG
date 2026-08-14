@@ -137,3 +137,40 @@ const formdata={
 
   return formdata;
 };
+
+/**
+ * Maps frontend application and slot data into the search criteria structure required by the slot-search API.
+ * Handles different parameter variations like custom booking ID, draft ID, and fallback location mappings.
+ */
+export const getSlotSearchCriteria = (searchData = [], tenantId = "", selectedLocation = {}, draftId, bookingId = "") => {
+  return searchData?.map((item) => {
+    const criterion = {
+      bookingId: bookingId,
+      addType: item?.addTypeCode || item?.addType,
+      bookingStartDate: item?.bookingDate,
+      bookingEndDate: item?.bookingDate,
+      faceArea: item?.faceAreaCode || item?.faceArea,
+      tenantId: tenantId,
+      location: selectedLocation?.code || item?.locationCode || item?.location,
+      nightLight: item?.nightLight,
+      isTimerRequired: true,
+    };
+    if (draftId !== undefined && draftId !== null) {
+      criterion.draftId = draftId;
+    }
+    return criterion;
+  }) || [];
+};
+
+/**
+ * Calculates the remaining time in seconds from the initial timer values and the lock creation timestamp.
+ * If the elapsed time exceeds the initial timer values, returns 0.
+ */
+export const calculateRemainingTime = (timerValues, timerStartedAt) => {
+  if (timerValues && timerStartedAt) {
+    const elapsed = Math.floor((Date.now() - timerStartedAt) / 1000);
+    const remaining = timerValues - elapsed;
+    return remaining > 0 ? remaining : 0;
+  }
+  return timerValues || 0;
+};

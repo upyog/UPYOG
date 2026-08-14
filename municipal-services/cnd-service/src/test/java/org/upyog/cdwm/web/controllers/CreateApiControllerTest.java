@@ -21,19 +21,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(SpringExtension.class)   // ✅ JUnit 5 extension
 @WebMvcTest(CNDController.class)
 @Import(TestConfiguration.class)
-public class CreateApiControllerTest {
+class CreateApiControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void createPostSuccess() throws Exception {
+    void createPostSuccess() throws Exception {
         mockMvc.perform(post("/cnd-service/v1/_create").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void createPostFailure() throws Exception {
+    void createPostFailure() throws Exception {
         mockMvc.perform(post("/cnd-service/v1/_create").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }

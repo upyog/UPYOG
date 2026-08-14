@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.egov.infra.mdms.repository.SchemaDefinitionRepository;
 import lombok.RequiredArgsConstructor;
+import org.egov.infra.mdms.model.SchemaDeleteRequest;
 
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2023-05-30T09:26:57.838+05:30[Asia/Kolkata]")
 @Controller
@@ -50,6 +51,21 @@ public class SchemaDefinitionController {
         schemaDefinitionRepository.getTotalMastersCount(
                 schemaDefinitionSearchRequest.getSchemaDefCriteria().getTenantId());
         return new ResponseEntity<>(ResponseUtil.getSchemaDefinitionResponse(schemaDefinitionSearchRequest.getRequestInfo(), schemaDefinitions,totalMasters), HttpStatus.ACCEPTED);
+    }
+
+    @RequestMapping(value = "_delete", method = RequestMethod.POST)
+public ResponseEntity<SchemaDefinitionResponse> delete(
+        @Valid @RequestBody SchemaDeleteRequest request) {
+
+    List<SchemaDefinition> schemaDefinitions =
+            schemaDefinitionService.delete(request);
+
+    return new ResponseEntity<>(
+        ResponseUtil.getSchemaDefinitionResponse(
+                request.getRequestInfo(),
+                schemaDefinitions,
+                schemaDefinitions.size()),
+        HttpStatus.OK);
     }
 
     /**

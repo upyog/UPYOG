@@ -68,6 +68,14 @@ config:
         image-name: "dashboard-ingest"
         dockerfile: "build/maven/Dockerfile"
 
+  - name: "builds/upyog/business-services/dashboard-data-extractor"
+    build:
+      - work-dir: "business-services/dashboard-data-extractor"
+        image-name: "dashboard-data-extractor"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "business-services/dashboard-data-extractor/src/main/resources/db"
+        image-name: "dashboard-data-extractor-db"
+
   - name: "builds/upyog/business-services/employee-dashboard"
     build:
       - work-dir: "business-services/employee-dashboard"
@@ -928,8 +936,6 @@ config:
       - work-dir: 'municipal-services/cnd-calculator'
         image-name: 'cnd-calculator'
         dockerfile: 'build/maven/Dockerfile'
-      - work-dir: "municipal-services/cnd-calculator/src/main/resources/db"
-        image-name: "cnd-calculate-db"
         
   - name: 'builds/upyog/municipal-services/pgr-ai-services'
     build:
@@ -1010,3 +1016,41 @@ config:
       - work-dir: "upyog-voice-bot"
         image-name: "upyog-voice-bot"
         dockerfile: "upyog-voice-bot/Dockerfile"
+
+  - name: "builds/upyog/municipal-services/upyog-aggregation-service"
+    build:
+      - work-dir: "municipal-services/upyog-aggregation-service"
+        image-name: "upyog-aggregation-service"
+        dockerfile: "municipal-services/upyog-aggregation-service/Dockerfile"
+
+  - name: "builds/upyog/municipal-services/garbage-service"
+    build:
+      - work-dir: "municipal-services/garbage-service"
+        image-name: "garbage-service"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/garbage-service/src/main/resources/db"
+        image-name: "garbage-service-db"
+
+  - name: "builds/upyog/municipal-services/advertisement-service"
+    build:
+      - work-dir: "municipal-services/advertisement-service"
+        image-name: "advertisement-service"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/advertisement-service/src/main/resources/db"
+        image-name: "advertisement-service-db"
+
+  - name: "builds/upyog/core-services/egov-user-event"
+    build:
+      - work-dir: "municipal-services/egov-user-event"
+        image-name: "egov-user-event"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/egov-user-event/src/main/resources/db"
+        image-name: "egov-user-event-db"
+
+  - name: "builds/upyog/core-services/upyog-draft-service"
+    build:
+      - work-dir: "core-services/upyog-draft-service"
+        image-name: "upyog-draft-service"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "core-services/upyog-draft-service/src/main/resources/db"
+        image-name: "upyog-draft-service-db"

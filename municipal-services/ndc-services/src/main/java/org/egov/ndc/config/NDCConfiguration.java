@@ -3,7 +3,6 @@ package org.egov.ndc.config;
 import java.util.TimeZone;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

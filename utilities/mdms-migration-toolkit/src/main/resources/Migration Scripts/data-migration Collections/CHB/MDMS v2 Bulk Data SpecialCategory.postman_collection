@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "fd17c53d-424b-4c0b-ba7d-a1cfc4e4a3f8",
-		"name": "MDMS v2 Bulk Data",
+		"_postman_id": "auto-CHB.SpecialCategory",
+		"name": "MDMS v2 Bulk Data - CHB SpecialCategory",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "25737272"
 	},
@@ -13,7 +13,7 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"var data=[",
+							"var data = [{\"name\": \"None\", \"code\": \"NONE\", \"active\": true}];",
 							"",
 							"pm.collectionVariables.set(\"raw\", data);",
 							"",
@@ -32,21 +32,15 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"var data = pm.collectionVariables.get(\"raw\");\r",
-							"\r",
-							"var items = pm.globals.get(\"i\");\r",
-							"\r",
-							"\r",
-							"if (items < data.length){\r",
-							"\r",
-							"    pm.globals.set(\"i\", Number(items) + 1);\r",
-							"\r",
-							"    postman.setNextRequest(\"MDMS v2 CreateData\");\r",
-							"}else{\r",
-							"    pm.globals.set(\"i\", 0);\r",
-							"    postman.setNextRequest(null)\r",
-							"}\r",
-							""
+							"var data = pm.collectionVariables.get(\"raw\");",
+							"var items = pm.globals.get(\"i\");",
+							"if (items < data.length){",
+							"    pm.globals.set(\"i\", Number(items) + 1);",
+							"    postman.setNextRequest(\"MDMS v2 CreateData\");",
+							"}else{",
+							"    pm.globals.set(\"i\", 0);",
+							"    postman.setNextRequest(null)",
+							"}"
 						],
 						"type": "text/javascript"
 					}
@@ -57,7 +51,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": \"asset-services\",\r\n        \"ver\": null,\r\n        \"ts\": null,\r\n        \"action\": null,\r\n        \"did\": null,\r\n        \"key\": null,\r\n        \"msgId\": \"search with from and to values\",\r\n        \"authToken\": \"{{authToken}}\",\r\n        \"correlationId\": null,\r\n        \"userInfo\": {\r\n            \"id\": \"1\",\r\n            \"userName\": null,\r\n            \"name\": null,\r\n            \"type\": null,\r\n            \"mobileNumber\": null,\r\n            \"emailId\": null,\r\n            \"roles\": null,\r\n            \"uuid\": \"40dceade-992d-4a8f-8243-19dda76a4171\"\r\n        }\r\n    },\r\n    \"Mdms\": {\r\n        \"tenantId\": \"pg\",\r\n        \"schemaCode\": \"CHB.SpecialCategory\",\r\n        \"data\": {{req}},\r\n        \"isActive\": true\r\n    }\r\n}",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": null,\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null,\n            \"uuid\": \"40dceade-992d-4a8f-8243-19dda76a4171\"\n        }\n    },\n    \"Mdms\": {\n        \"tenantId\": \"pg\",\n        \"schemaCode\": \"CHB.SpecialCategory\",\n        \"data\": {{req}},\n        \"isActive\": true\n    }\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -65,11 +59,11 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8094/mdms-v2/v2/_create/CHB.SpecialCategory",
+					"raw": "localhost:8055/mdms-v2/v2/_create/CHB.SpecialCategory",
 					"host": [
 						"localhost"
 					],
-					"port": "8094",
+					"port": "8055",
 					"path": [
 						"mdms-v2",
 						"v2",

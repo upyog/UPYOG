@@ -279,11 +279,23 @@ const CHBMapView = () => {
     // Store markers in a map for searching later
     const markerMap = new Map();
 
+    const hallIcon = window.L.icon({
+      iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+      iconRetinaUrl:
+        "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+      shadowUrl:
+        "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+    });
+
     geoJsonData.features.forEach(feature => {
       const [lng, lat] = feature.geometry.coordinates;
       const props = feature.properties;
       const distance = calculateDistance(userLocation.lat, userLocation.lng, lat, lng);
-      const marker = window.L.marker([lat, lng]).addTo(map);
+      const marker = window.L.marker([lat, lng], {
+        icon: hallIcon,
+      }).addTo(map);
 
       const popupContent = `
         <div style="position: relative; width: 300px;">

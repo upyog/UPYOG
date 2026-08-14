@@ -28,7 +28,7 @@ public enum CollectionType {
     @JsonCreator
     public static CollectionType fromValue(String text) {
         for (CollectionType b : CollectionType.values()) {
-            if (0 ==b.value.toString().compareTo(text)) {
+            if (b.value.compareTo(text) == 0) {
                 return b;
             }
         }

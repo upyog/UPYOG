@@ -548,7 +548,7 @@ export const SuccessfulPayment = (props) => {
         permissionLetterFilestoreId: response?.filestoreIds[0]
       };
       await mutation.mutateAsync({
-        hallsBookingApplication: updatedApplication
+        venueBookingApplication: updatedApplication
       });
       fileStoreId = response?.filestoreIds[0];
     }
@@ -682,7 +682,7 @@ export const SuccessfulPayment = (props) => {
         paymentReceiptFilestoreId: response?.filestoreIds[0]
       };
       await mutation.mutateAsync({
-        hallsBookingApplication: updatedApplication
+        venueBookingApplication: updatedApplication
       });
       fileStoreId = response?.filestoreIds[0];
     }

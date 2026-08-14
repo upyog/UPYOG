@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.egov.ewst.config.EwasteConfiguration;
 import org.egov.ewst.models.EwasteApplicationSearchCriteria;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -16,8 +15,11 @@ import org.springframework.util.ObjectUtils;
 @Component
 public class EwasteApplicationQueryBuilder {
 
-	@Autowired
-	private EwasteConfiguration configuration;
+	private final EwasteConfiguration configuration;
+
+	public EwasteApplicationQueryBuilder(EwasteConfiguration configuration) {
+		this.configuration = configuration;
+	}
 
 	// Base query for EwasteApplication
 	private static final String BASE_EW_QUERY = "SELECT RQ.id AS rqid, RQ.tenantId AS rqtenantid, RQ.requestId AS rqrequestid, RQ.calculatedAmount AS rqcalculatedamount, "
@@ -49,7 +51,7 @@ public class EwasteApplicationQueryBuilder {
 			+ "LEFT JOIN EG_EW_ADDRESS ADR ON ADR.ewId = RQ.id "
 			+ "LEFT JOIN EG_EW_EWASTEDOCUMENTS DOC ON DOC.ewId = RQ.id ";
 
-private final String paginationWrapper =
+	private static final String PAGINATION_WRAPPER =
 			"SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY rqcreatedtime DESC) AS offset_ FROM ({}) result) result_offset " +
 					"WHERE offset_ >= ? AND offset_ <= ?";
 
@@ -145,23 +147,6 @@ private final String paginationWrapper =
 	}
 
 	/**
-	 * Creates a query string for a list of IDs.
-	 *
-	 * @param ids The list of IDs.
-	 * @return The constructed query string.
-	 */
-	private String createQuery(List<String> ids) {
-		StringBuilder builder = new StringBuilder();
-		int length = ids.size();
-		for (int i = 0; i < length; i++) {
-			builder.append(" ?");
-			if (i != length - 1)
-				builder.append(",");
-		}
-		return builder.toString();
-	}
-
-	/**
 	 * Adds a list of IDs to the prepared statement parameters.
 	 *
 	 * @param preparedStmtList The list of prepared statement parameters.
@@ -176,7 +161,7 @@ private final String paginationWrapper =
 
 		int limit = configuration.getDefaultLimit();
 		int offset = configuration.getDefaultOffset();
-		String finalQuery = paginationWrapper.replace("{}", query);
+		String finalQuery = PAGINATION_WRAPPER.replace("{}", query);
 
 		if (criteria.getLimit() == null && criteria.getOffset() == null) {
 			limit = configuration.getMaxSearchLimit();

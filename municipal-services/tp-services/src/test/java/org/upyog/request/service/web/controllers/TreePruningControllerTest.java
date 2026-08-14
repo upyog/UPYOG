@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -21,22 +22,20 @@ import org.upyog.tp.web.controllers.TreePruningController;
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(TreePruningController.class)
 @Import(TestConfiguration.class)
-public class TreePruningControllerTest {
+class TreePruningControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-//    @Test
-    public void createPostSuccess() throws Exception {
-        mockMvc.perform(post("/tp/_create").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
+    @Test
+    void createPostSuccess() throws Exception {
+        mockMvc.perform(post("/tp/_create").contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk());
     }
 
-//    @Test
-    public void createPostFailure() throws Exception {
-        mockMvc.perform(post("/tp/_create").contentType(MediaType
-        .APPLICATION_JSON_UTF8))
+    @Test
+    void createPostFailure() throws Exception {
+        mockMvc.perform(post("/tp/_create").contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
     }
 

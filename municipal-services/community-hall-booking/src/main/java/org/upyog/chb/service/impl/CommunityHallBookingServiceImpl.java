@@ -233,7 +233,13 @@ public class CommunityHallBookingServiceImpl implements CommunityHallBookingServ
 		}
 		VenueBookingDetail bookingDetail = bookingDetails.get(0);
 		venueBookingRequest.setVenueBookingApplication(bookingDetail);
-		bookingRepository.updateBookingSynchronously(bookingDetail.getBookingId(), venueBookingRequest.getRequestInfo().getUserInfo().getUuid(), paymentDetail, status.toString());
+		try {
+			bookingRepository.updateBookingSynchronously(bookingDetail.getBookingId(), venueBookingRequest.getRequestInfo().getUserInfo().getUuid(), paymentDetail, status.toString());
+		} catch (Exception e) {
+			log.error("Error while updating booking synchronously for booking no : " + bookingNo, e);
+			throw new CustomException("BOOKING_UPDATE_FAILED",
+					"Failed to update booking status for : " + bookingNo);
+		}
 		if(deleteBookingTimer) {
 			log.info("Deleting booking timer with booking id  {}", venueBookingRequest.getVenueBookingApplication().getBookingId());
 			bookingTimerService.deleteBookingTimer(venueBookingRequest.getVenueBookingApplication().getBookingId(), false);
@@ -318,7 +324,7 @@ private List<VenueSlotAvailabilityDetail> checkTimerTableForAvailaibility(
 			Map<VenueSlotAvailabilityDetail, VenueSlotAvailabilityDetail> slotDetailsMap,
 			BookingPaymentTimerDetails detail) {
 		VenueSlotAvailabilityDetail availabilityDetail = VenueSlotAvailabilityDetail.builder()
-				.venueCode(detail.getVenuecode()).code(detail.getCode())
+				.venueCode(detail.getVenueCode()).code(detail.getUnitCode())
 				.bookingDate(CommunityHallBookingUtil.parseLocalDateToString(detail.getBookingDate(),
 						CommunityHallBookingConstants.DATE_FORMAT))
 				.tenantId(detail.getTenantId()).build();

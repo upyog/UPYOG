@@ -18,7 +18,7 @@ const Status = ({ onAssignmentChange, searchParams, businessServices, clearCheck
 
   return (
     <div className="status-container">
-      <div className="filter-label" style={{ fontWeight: "normal" }}>
+      <div className="filter-label cg-font-normal">
         {t("UC_COMMON_TABLE_COL_STATUS")}
       </div>
       {statutes?.map((option, index) => {

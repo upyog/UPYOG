@@ -162,7 +162,7 @@ const Urls = {
     count: "/egov-hrms/employees/_count",
   },
   obps: {
-    scrutinyDetails: "/edcr/rest/dcr/scrutinydetails",
+    scrutinyDetails: "/edcr/rest/dcr/edcrdetails",
     comparisionReport: "/edcr/rest/dcr/occomparison",
     create: "/bpa-services/v1/bpa/_create",
     nocSearch: "/noc-services/v1/noc/_search",
@@ -316,6 +316,11 @@ eSign:{
   noc: {
     nocSearch: "/noc-services/v1/noc/_search",
   },
+  firenoc: {
+    create: "/firenoc-services/v1/_create",
+    update: "/firenoc-services/v1/_update",
+    search: "/firenoc-services/v1/_search",
+  },
   reports: {
     reportSearch: "/report/",
   },
@@ -338,16 +343,17 @@ eSign:{
   },
 
  est: {
-    create: "/estate-management/estate/asset/v1/_create",
-    search: "/estate-management/estate/asset/v1/_search",
-    allotment: "/estate-management/estate/allotment/v1/_create",
-    allotmentSearch: "/estate-management/estate/allotment/v1/_search",
+    create: "/estate-management/estate/asset/v1/_create", // create first call - for creation 
+    search: "/estate-management/estate/asset/v1/_search", // table  - second screen post call = only tenant id
+    allotment: "/estate-management/estate/allotment/v1/_create", //crate allotment first call - for creation 
+    allotmentSearch: "/estate-management/estate/allotment/v1/_search", // table - second screen post call = only tenant id
   },
   
   tp: {
     create: "/tp-services/tree-pruning/v1/_create",
     update: "/tp-services/tree-pruning/v1/_update",
     search: "/tp-services/tree-pruning/v1/_search",
+    generateDigipin: "/requester-services-dx/digipin/v1/_generate",
   },
 
   vendor: {
@@ -366,6 +372,12 @@ eSign:{
   upyogBot: {
     iframeUrl: "/upyog-voice-bot",
   },
+
+ gc: {
+    create: "/gc-services/garbage-accounts/_create",
+    search: "/gc-services/garbage-accounts/_search",
+    update: "/gc-services/garbage-accounts/_update",
+  }
 };
 
 export default Urls;

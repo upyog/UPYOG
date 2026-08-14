@@ -27,6 +27,7 @@ import AcknowledgementCF from "../../core/src/components/AcknowledgementCF";
 import CHBRequiredDoc from "./pageComponents/CHBRequiredDoc";
 import CHBMapView from "./components/CHBMapView";
 import { ReportSearchApplication, EnhancedReport } from "@nudmcdgnpm/digit-ui-module-reports";
+import VenueSearch from "./pageComponents/VenueSearch";
 
 
 /**
@@ -79,7 +80,8 @@ const componentsToRegister = {
   CHBRequiredDoc,
   CHBMapView,
   EnhancedReport,
-  ReportSearchApplication
+  ReportSearchApplication,
+  VenueSearch
 };
 
 const addComponentsToRegistry = () => {

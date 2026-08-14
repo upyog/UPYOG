@@ -13,9 +13,10 @@ import org.egov.echallancalculation.web.models.demand.*;
 import org.egov.echallancalculation.web.models.demand.Demand.StatusEnum;
 import org.egov.echallancalculation.web.models.user.User;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -24,21 +25,17 @@ import java.util.stream.Collectors;
 
 
 @Service
+@RequiredArgsConstructor
 public class DemandService {
 
-    @Autowired
-    private CalculationUtils utils;
-
-    @Autowired
-    private ServiceRequestRepository serviceRequestRepository;
-
-    @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private DemandRepository demandRepository;
+    private final CalculationUtils utils;
+    private final ServiceRequestRepository serviceRequestRepository;
+    private final ObjectMapper mapper;
+    private final DemandRepository demandRepository;
 
     public static final String MDMS_ROUNDOFF_TAXHEAD= "_ROUNDOFF";
+    private static final String CHALLAN_FINE_TAX_HEAD = "CH.CHALLAN_FINE";
+    private static final String FEE_WAIVER = "feeWaiver";
     
     /**
      * Calculates total amount from demand details
@@ -132,16 +129,13 @@ public class DemandService {
             User owner = challan.getCitizen().toCommonUser();
 
             List<DemandDetail> demandDetails = new LinkedList<>();
-
-            BigDecimal totalAmount = BigDecimal.ZERO;
             
-            calculation.getTaxHeadEstimates().forEach(taxHeadEstimate -> {
+            calculation.getTaxHeadEstimates().forEach(taxHeadEstimate ->
                 demandDetails.add(DemandDetail.builder().taxAmount(taxHeadEstimate.getEstimateAmount())
                         .taxHeadMasterCode(taxHeadEstimate.getTaxHeadCode())
                         .collectionAmount(BigDecimal.ZERO)
                         .tenantId(tenantId)
-                        .build());
-            });
+                        .build()));
             
             Long taxPeriodFrom = challan.getTaxPeriodFrom();
             Long taxPeriodTo = challan.getTaxPeriodTo();
@@ -149,7 +143,7 @@ public class DemandService {
             addRoundOffTaxHead(calculation.getTenantId(), demandDetails,businessService);
             
             // Calculate total amount after adding round-off
-            totalAmount = calculateTotalAmount(demandDetails);
+            BigDecimal totalAmount = calculateTotalAmount(demandDetails);
             
             Demand singleDemand = Demand.builder()
                     .consumerCode(consumerCode)
@@ -324,13 +318,13 @@ public class DemandService {
      */
     private String getTaxHeadCodeForFeeWaiver(Demand demand, String businessService) {
         if(CollectionUtils.isEmpty(demand.getDemandDetails())) {
-            return "CH.CHALLAN_FINE"; // Default fallback
+            return CHALLAN_FINE_TAX_HEAD; // Default fallback
         }
         
         // Prefer CH.CHALLAN_FINE if exists
         for(DemandDetail detail : demand.getDemandDetails()) {
             if(detail.getTaxHeadMasterCode() != null && 
-               detail.getTaxHeadMasterCode().equalsIgnoreCase("CH.CHALLAN_FINE") &&
+               detail.getTaxHeadMasterCode().equalsIgnoreCase(CHALLAN_FINE_TAX_HEAD) &&
                !detail.getTaxHeadMasterCode().equalsIgnoreCase(businessService + MDMS_ROUNDOFF_TAXHEAD)) {
                 return detail.getTaxHeadMasterCode();
             }
@@ -344,7 +338,7 @@ public class DemandService {
             }
         }
         
-        return "CH.CHALLAN_FINE"; // Default fallback
+        return CHALLAN_FINE_TAX_HEAD; // Default fallback
     }
 
     /**
@@ -360,10 +354,10 @@ public class DemandService {
             @SuppressWarnings("unchecked")
             Map<String, Object> challanMap = mapper.convertValue(challan, Map.class);
             
-            if(challanMap != null && challanMap.containsKey("feeWaiver")) {
-                Object feeWaiverObj = challanMap.get("feeWaiver");
+            if(challanMap != null && challanMap.containsKey(FEE_WAIVER)) {
+                Object feeWaiverObj = challanMap.get(FEE_WAIVER);
                 if(feeWaiverObj != null) {
-                    return convertToBigDecimal(feeWaiverObj, "feeWaiver");
+                    return convertToBigDecimal(feeWaiverObj, FEE_WAIVER);
                 }
             }
             
@@ -375,10 +369,10 @@ public class DemandService {
                     Map.class
                 );
                 
-                if(additionalDetail != null && additionalDetail.containsKey("feeWaiver")) {
-                    Object feeWaiverObj = additionalDetail.get("feeWaiver");
+                if(additionalDetail != null && additionalDetail.containsKey(FEE_WAIVER)) {
+                    Object feeWaiverObj = additionalDetail.get(FEE_WAIVER);
                     if(feeWaiverObj != null) {
-                        return convertToBigDecimal(feeWaiverObj, "feeWaiver");
+                        return convertToBigDecimal(feeWaiverObj, FEE_WAIVER);
                     }
                 }
             }
@@ -387,10 +381,9 @@ public class DemandService {
             throw new CustomException("INVALID_REQUEST", 
                 "feeWaiver is required. Please provide feeWaiver at root level of Challan or in additionalDetail");
                 
-        } catch(Exception e) {
-            if(e instanceof CustomException) {
-                throw e;
-            }
+        } catch (CustomException e) {
+            throw e;
+        } catch (Exception e) {
             throw new CustomException("INVALID_FEE_WAIVER", 
                 "Failed to extract feeWaiver from challan: " + e.getMessage());
         }
@@ -403,11 +396,11 @@ public class DemandService {
      * @return BigDecimal value
      */
     private BigDecimal convertToBigDecimal(Object value, String fieldName) {
-        if(value instanceof Number) {
-            return BigDecimal.valueOf(((Number) value).doubleValue());
-        } else if(value instanceof String) {
+        if(value instanceof Number number) {
+            return BigDecimal.valueOf(number.doubleValue());
+        } else if(value instanceof String string) {
             try {
-                return new BigDecimal((String) value);
+                return new BigDecimal(string);
             } catch(NumberFormatException e) {
                 throw new CustomException("INVALID_FEE_WAIVER", 
                     fieldName + " must be a valid number. Received: " + value);
@@ -464,7 +457,7 @@ public class DemandService {
         uri = uri.replace("{3}",StringUtils.join(consumerCodes, ','));
 
         Object result = serviceRequestRepository.fetchResult(new StringBuilder(uri),RequestInfoWrapper.builder()
-                                                      .requestInfo(requestInfo).build());
+                                                      .requestInfo(requestInfo).build()).orElse(null);
 
         DemandResponse response;
         try {
@@ -475,9 +468,9 @@ public class DemandService {
         }
 
         if(CollectionUtils.isEmpty(response.getDemands()))
-            return null;
+            return Collections.emptyList();
 
-        else return response.getDemands();
+        return response.getDemands();
 
     }
 
@@ -505,7 +498,7 @@ public class DemandService {
         uri = uri.replace("{3}",billCriteria.getBusinessService());
 
         Object result = serviceRequestRepository.fetchResult(new StringBuilder(uri),RequestInfoWrapper.builder()
-                                                             .requestInfo(requestInfo).build());
+                                                             .requestInfo(requestInfo).build()).orElse(null);
         BillResponse response;
          try{
               response = mapper.convertValue(result,BillResponse.class);
@@ -594,7 +587,7 @@ public class DemandService {
         }
 
         BigDecimal decimalValue = totalTax.remainder(BigDecimal.ONE);
-        BigDecimal midVal = new BigDecimal(0.5);
+        BigDecimal midVal = BigDecimal.valueOf(0.5);
         BigDecimal roundOff = BigDecimal.ZERO;
 
         /*

@@ -47,12 +47,48 @@
  * - Includes a modal for viewing or managing booking details.
  */
   const CHBSearchApplication = ({tenantId, isLoading, t, onSubmit, onClear, data, count, setShowToast }) => {
-    
+      const [venueTypes, setVenueTypes] = useState("");
+      const [venueCode, setVenueCode] = useState("");
       const isMobile = window.Digit.Utils.browser.isMobile();
+
+      const { data: venueLists } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "Venues" }],
+      {
+        select: (data) => {
+          const formattedData = data?.["CHB"]?.["Venues"]
+          return formattedData;
+        },
+      });
+
+      const { data: venueNames } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: `${venueTypes?.parentMasterType}` }],
+      {
+        select: (data) => {
+          const formattedData = data?.["CHB"]?.[`${venueTypes?.parentMasterType}`]
+          return formattedData;
+        },
+      });
+
+
+      let venues = [];
+      venueLists && venueLists.map((venue) => {
+          venues.push({i18nKey: `${venue.code}`, code: `${venue.code}`, value: `${venue.name}`, parentMasterType:venue.parentMasterType});
+      });
+
+      let venuenames = [];
+      venueNames && venueNames.map((venuename) => {
+          venuenames.push({
+            i18nKey: `${venuename.code}`, 
+            code: `${venuename.code}`, 
+            value: `${venuename.venueName}`, 
+            venueId: `${venuename.venueId}`
+          });
+      });
+
+
       const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
           defaultValues: {
               bookingNo: "",
-              communityHallCode: "",
+              venueType: "",
+              venueCode: "",
               status: undefined,
               mobileNumber: "",
               fromDate: "",
@@ -121,24 +157,7 @@
         ? { bg: "#FFF3CD", border: "#FFEBAA", text: "#856404" }
         : { bg: "#E2E3E5", border: "#D6D8DB", text: "#383D41" };
 
-      // const { data: Menu } = Digit.Hooks.chb.useChbCommunityHalls(tenantId, "CHB", "CommunityHalls");
-
-    const { data: Menu } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "CommunityHalls" }],
-    {
-      select: (data) => {
-        const formattedData = data?.["CHB"]?.["CommunityHalls"]
-        return formattedData;
-      },
-    });
-    
-      let menu = [];
-
       
-
-      Menu &&
-    Menu.map((one) => {
-      menu.push({ i18nKey: `${one.code}`, code: `${one.code}`, value: `${one.name}` });
-    });
       const GetCell = (value) => <span className="cell-text">{value}</span>;
       const handleCancelBooking = async (data) => {
         setShowModal(false);
@@ -175,7 +194,7 @@
           }
 
           await mutation.mutateAsync({
-            hallsBookingApplication: updatedApplication
+            venueBookingApplication: updatedApplication
           });
 
           if (refundFailed) {
@@ -226,9 +245,17 @@
               disableSortBy: true,
             },
             {
-              Header: t("CHB_COMMUNITY_HALL_NAME"),
+              Header: t("CHB_VENUE_TYPE_LABEL"),
               Cell: ({ row }) => {
-                return GetCell(`${t(row.original["communityHallCode"])}`)
+                return GetCell(`${t(row.original["venueType"])}`)
+              },
+              disableSortBy: true,
+            
+            },
+            {
+              Header: t("CHB_VENUE_NAME_LABEL"),
+              Cell: ({ row }) => {
+                return GetCell(`${t(row.original["venueCode"])}`)
               },
               disableSortBy: true,
             
@@ -312,10 +339,10 @@
                   tenantId: application?.tenantId,
                   filters: {
                     bookingId:application?.bookingId,
-                    communityHallCode: application?.communityHallCode,
+                    venueType: application?.venueType,
                     bookingStartDate: application?.bookingSlotDetails?.[0]?.bookingDate,
                     bookingEndDate: application?.bookingSlotDetails?.[application.bookingSlotDetails.length - 1]?.bookingDate,
-                    hallCode: application?.bookingSlotDetails?.[0]?.hallCode,
+                    venueCode: application?.venueType,
                     isTimerRequired:true
                   },
                   enabled: false, // Disable automatic refetch
@@ -326,10 +353,10 @@
                   let SlotSearchData={
                     tenantId: application?.tenantId,
                     bookingId:application?.bookingId,
-                    communityHallCode: application?.communityHallCode,
+                    venueType: application?.venueType,
+                    venueCode: application?.venueType,
                     bookingStartDate: application?.bookingSlotDetails?.[0]?.bookingDate,
                     bookingEndDate: application?.bookingSlotDetails?.[application.bookingSlotDetails.length - 1]?.bookingDate,
-                    hallCode: application?.bookingSlotDetails?.[0]?.hallCode,
                     isTimerRequired:true
               
                   }
@@ -467,16 +494,40 @@
                     />
                   </SearchField>
                   <SearchField>
-                      <label>{t("CHB_COMMUNITY_HALL_NAME")}</label>
+                      <label>{t("CHB_VENUE_TYPE_LABEL")}</label>
                       <Controller
                               control={control}
-                              name="communityHallCode"
+                              name="venueType"
                               render={({ field }) => (
                                   <Dropdown
                                   selected={field.value}
-                                  select={field.onChange}
+                                  select={(value) => {
+                                    field.onChange(value);
+                                    setVenueTypes(value);
+                                  }}
                                   onBlur={field.onBlur}
-                                  option={menu}
+                                  option={venues}
+                                  optionKey="i18nKey"
+                                  t={t}
+                                  disable={false}
+                                  />
+                              )}
+                              />
+                  </SearchField>
+                  <SearchField>
+                      <label>{t("CHB_VENUE_NAME_LABEL")}</label>
+                      <Controller
+                              control={control}
+                              name="venueCode"
+                              render={({ field }) => (
+                                  <Dropdown
+                                  selected={field.value}
+                                  select={(value) => {
+                                    field.onChange(value);
+                                    setVenueCode(value);
+                                  }}
+                                  onBlur={field.onBlur}
+                                  option={venuenames}
                                   optionKey="i18nKey"
                                   t={t}
                                   disable={false}
@@ -558,7 +609,8 @@
                       onClick={() => {
                           reset({ 
                               bookingNo: "", 
-                              communityHallCode: "",
+                              venueType: "",
+                              venueCode: "",
                               fromDate: "", 
                               toDate: "",
                               mobileNumber:"",
@@ -566,9 +618,11 @@
                               offset: 0,
                               limit: 10,
                               sortBy: "commencementDate",
-                              sortOrder: "DESC"
+                              sortOrder: "DESC",
                           });
                           setShowToast(null);
+                          setVenueTypes(""); // setting local state empty when click on clear
+                          setVenueCode("");  
                           onClear();
                       }}>{t(`ES_COMMON_CLEAR_ALL`)}</p>
                   </SearchField>

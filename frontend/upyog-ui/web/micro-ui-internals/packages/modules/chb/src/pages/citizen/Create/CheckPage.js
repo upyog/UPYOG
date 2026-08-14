@@ -87,23 +87,25 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     isUpdateCHB,
     ownerss,
     documents,
-    address,
+    address
    
   } = value;
 
   const typeOfApplication = !isEditCHB && !isUpdateCHB ? `bookHall` : `editbookHall`;
   const columns = [
-    { Header: `${t("CHB_HALL_NAME")}` + "/" + `${t("CHB_PARK")}`, accessor: "name" },
+    { Header: t("CHB_VENUE_NAME_LABEL"), accessor: "name" },
     { Header: `${t("CHB_ADDRESS")}`, accessor: "address" },
-    { Header: `${t("CHB_HALL_CODE")}`, accessor: "hallCode" },
-    { Header: `${t("CHB_BOOKING_DATE")}`, accessor: "bookingDate" }
+    { Header: t("CHB_HALL_CODE_LABEL") || t("CHB_HALL_CODE"), accessor: "hallCode" },
+    { Header: `${t("CHB_BOOKING_DATE")}`, accessor: "bookingDate" },
+    { Header: `${t("CHB_BOOKING_TIME")}`, accessor: "time" }
   ];
   const slotlistRows = slotlist?.bookingSlotDetails?.map((slot) => (
     {
       name: slot.name,
       address:slot.address,
-      hallCode:slot.hallCode,
+      hallCode:slot.venueCode,
       bookingDate:slot.bookingDate,
+      time:slotlist.searchData.fromTime+" - "+slotlist.searchData.toTime
     }
   )) || [];
 
@@ -111,37 +113,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
   const setdeclarationhandler = () => {
     setAgree(!agree);
   };
-  // const getBookingDateRange = (bookingSlotDetails) => {
-  //   if (!bookingSlotDetails || bookingSlotDetails.length === 0) {
-  //     return t("CS_NA");
-  //   }
-  //   const startDate = bookingSlotDetails[0]?.bookingDate;
-  //   const endDate = bookingSlotDetails[bookingSlotDetails.length - 1]?.bookingDate;
-  //   if (startDate === endDate) {
-  //     return startDate; // Return only the start date
-  //   } else {
-  //     // Format date range as needed, for example: "startDate - endDate"
-  //     return startDate && endDate ? `${startDate} - ${endDate}` : t("CS_NA");
-  //   }
-  // };
-  // const getBookingTimeRange = (bookingSlotDetails) => {
-  //   if (!bookingSlotDetails || bookingSlotDetails.length === 0) {
-  //     return "10:00 - 11:59"; 
-  //   }
-  //   const startTime = "10:00"; 
-    
-  //   const length = bookingSlotDetails.length;
-  
-  //   let defaultEndTime = "11:59"; 
-  //   if (length === 2) {
-  //     defaultEndTime = "23:59"; 
-  //   } else if (length === 3) {
-  //     defaultEndTime = "71:59"; 
-  //   }
-  
-  //   // Return formatted time range
-  //   return `${startTime} - ${defaultEndTime}`;
-  // };
+ 
   return (
     <React.Fragment>
      {window.location.href.includes("/citizen") ? <Timeline currentStep={6}/> : null}
@@ -149,7 +121,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
       <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
         <CardHeader>{t("CHB_CHECK_YOUR_DETAILS")}</CardHeader>
         <CardSubHeader>
-          <TimerValues timerValues={slotlist?.existingDataSet?.timervalue?.timervalue} SlotSearchData={slotlist?.Searchdata} draftId={slotlist?.existingDataSet?.draftId} />
+          <TimerValues timerValues={slotlist?.existingDataSet?.timervalue?.timervalue} SlotSearchData={slotlist?.searchData} draftId={slotlist?.existingDataSet?.draftId} />
         </CardSubHeader>
       </div>
       <div>

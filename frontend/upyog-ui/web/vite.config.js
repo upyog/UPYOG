@@ -250,6 +250,7 @@ export default defineConfig(({ mode }) => {
   const sharedPackages = [
     path.join(packagesRoot, "libraries"),
     path.join(packagesRoot, "react-components"),
+    path.join(packagesRoot, "css"),
   ];
 
   sharedPackages.filter(pkgDir => fs.existsSync(pkgDir)).forEach(register);
@@ -286,6 +287,7 @@ export default defineConfig(({ mode }) => {
 
     resolve: {
       alias: moduleAliases,
+      preserveSymlinks: true,
       dedupe: ["react", "react-dom", "@tanstack/react-query", "react-router-dom", "i18next", "react-i18next", "@nudmcdgnpm/digit-ui-react-components"],
     },
 

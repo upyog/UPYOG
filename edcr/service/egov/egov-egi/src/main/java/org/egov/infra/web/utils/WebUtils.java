@@ -135,6 +135,10 @@ public final class WebUtils {
                     ? url.substring(0, url.length() - uri.length() + httpRequest.getContextPath().length()) + FORWARD_SLASH
                     : url.substring(0, url.length() - uri.length());
         }
+        // @FIX: Replace http with https if the request protocol is https
+        if (StringUtils.isNotBlank(protocol) && "https".equalsIgnoreCase(protocol.split(",")[0].trim())) {
+            domainURL = domainURL.replaceFirst("^http://", "https://");
+        }
         return domainURL;
     }
 

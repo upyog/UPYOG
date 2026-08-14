@@ -40,7 +40,7 @@ const MaintenanceAssetApplication = () => {
   const handleSubmit = (formData) => {
     mutation.mutate(
       {
-        Asset: formData,
+        AssetMaintenance: formData,
       },
       {
         onSuccess: (response) => {

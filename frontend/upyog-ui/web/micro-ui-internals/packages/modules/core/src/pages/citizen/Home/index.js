@@ -46,11 +46,18 @@ const Home = () => {
     },
   });
 
-  if (!tenantId) {
-    Digit.SessionStorage.get("locale") === null
-      ? navigate(`/upyog-ui/citizen/select-language`)
-      : navigate(`/upyog-ui/citizen/select-location`);
-  }
+   /* Added below condition inside useEffect because
+      When the Home component renders, if !tenantId is true,
+      it immediately calls navigate(), which tries to update the BrowserRouter's state 
+      while the Home component is still in the middle of rendering.
+   */
+    useEffect(() => {
+      if (!tenantId) {
+        Digit.SessionStorage.get("locale") === null
+          ? navigate(`/upyog-ui/citizen/select-language`)
+          : navigate(`/upyog-ui/citizen/select-location`);
+      }
+  }, [tenantId, navigate]);
 
   const appBannerWebObj = uiHomePage?.appBannerDesktop;
   const appBannerMobObj = uiHomePage?.appBannerMobile;

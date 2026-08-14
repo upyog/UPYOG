@@ -39,11 +39,11 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class NotificationUtil {
 
-	private ServiceRequestRepository serviceRequestRepository;
+	private final ServiceRequestRepository serviceRequestRepository;
 
-	private BookingConfiguration config;
+	private final BookingConfiguration config;
 
-	private Producer producer;
+	private final Producer producer;
 
 	private static final String URL_PARAM_KEY = "url";
 

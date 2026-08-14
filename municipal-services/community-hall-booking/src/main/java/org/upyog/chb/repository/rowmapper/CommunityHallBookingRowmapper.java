@@ -82,6 +82,7 @@ public class CommunityHallBookingRowmapper implements ResultSetExtractor<List<Ve
 						.applicationDate(rs.getLong("application_date"))
 						.tenantId(tenantId)
 						.venueCode(rs.getString("venue_code"))
+						.venueType(rs.getString("venue_type"))
 						.bookingStatus(rs.getString("booking_status"))
 						.specialCategory(specialCategory).purpose(bookingPurpose)
 						.purposeDescription(rs.getString("purpose_description"))

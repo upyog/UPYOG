@@ -1,8 +1,7 @@
-import { CardLabel, CardLabelError, FormStep, LabelFieldPair, TextInput, LocationIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { CardLabel, CardLabelError, FormStep, LabelFieldPair, TextInput, GeoLocationWithDigipin } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
-import { getDigiPin } from "../../../../libraries/src/utils/digipin";
 
 const PTSelectPincode = ({ t, config, onSelect, formData = {}, userType, register, errors, setError, formState, clearErrors }) => {
   const tenants = Digit.Hooks.pt.useTenants();
@@ -37,52 +36,21 @@ const PTSelectPincode = ({ t, config, onSelect, formData = {}, userType, registe
   const [pincodeServicability, setPincodeServicability] = useState(null);
   const [error, setLocalError] = useState("");
 
-  // Generate Digipin from coordinates using client-side function
-  const generateDigipin = (latitude, longitude) => {
+  // Generate Digipin via GeoLocationWithDigipin onChange
+  const handleGeoChange = ({ geoTagLocation, latitude, longitude, digipin: pin }) => {
+    const locationString = `${latitude}, ${longitude}`;
+    setLocationText(locationString);
+    setGeoLocation({ latitude, longitude });
+    setDigipin(pin);
+  };
+
+  const handleFetchDigipin = async (latitude, longitude) => {
     try {
-      const pin = getDigiPin(latitude, longitude);
-      setDigipin(pin);
-    } catch (error) {
-      console.error("Error generating Digipin:", error);
-    }
-  };
-
-  // Fetch user's current location (latitude & longitude), update state, and generate Digipin
-  const fetchCurrentLocation = () => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          const location = { latitude, longitude };
-          const locationString = `${latitude}, ${longitude}`;
-          setGeoLocation(location);
-          setLocationText(locationString);
-          generateDigipin(latitude, longitude);
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-          alert("Unable to retrieve your location. Please check your browser settings.");
-        }
-      );
-    } else {
-      alert("Geolocation is not supported by your browser.");
-    }
-  };
-
-  // Parse manually entered coordinates
-  const handleLocationTextChange = (e) => {
-    const value = e.target.value;
-    setLocationText(value);
-    
-    // Try to parse lat,long format
-    const coords = value.split(',');
-    if (coords.length === 2) {
-      const lat = parseFloat(coords[0].trim());
-      const lng = parseFloat(coords[1].trim());
-      if (!isNaN(lat) && !isNaN(lng)) {
-        setGeoLocation({ latitude: lat, longitude: lng });
-        generateDigipin(lat, lng);
-      }
+      const res = await Digit.TPService.generateDigipin(latitude, longitude);
+      return res?.digipin || "";
+    } catch (e) {
+      console.error("Error fetching digipin in PTSelectPincode:", e);
+      return "";
     }
   };
 
@@ -119,8 +87,8 @@ const PTSelectPincode = ({ t, config, onSelect, formData = {}, userType, registe
   };
   if (userType === "employee") {
     return inputs?.map((input, index) => {
-      return <React.Fragment>
-          <LabelFieldPair key={index}>
+      return <React.Fragment key={input.name || index}>
+          <LabelFieldPair key={input.name ? `field-${input.name}` : index}>
             <CardLabel className="card-label-smaller">{t(input.label)}</CardLabel>
             <div className="field">
               <TextInput key={input.name} value={pincode} onChange={onChange} {...input.validation} disable={presentInModifyApplication} autoFocus={presentInModifyApplication} />
@@ -135,53 +103,6 @@ const PTSelectPincode = ({ t, config, onSelect, formData = {}, userType, registe
     <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline currentStep={1}/> : null}
     
-    {/* Location Input with Fetch Button */}
-    <div style={{ marginBottom: "20px" }}>
-      <div style={{ position: "relative", width: "50%" }}>
-        <TextInput
-          t={t}
-          type="text"
-          name="currentLocation"
-          value={locationText}
-          onChange={handleLocationTextChange}
-          placeholder="Click location icon to fetch current location"
-          style={{ paddingRight: "40px" }}
-        />
-        <div
-          className="butt-icon"
-          onClick={fetchCurrentLocation}
-          style={{
-            position: "absolute",
-            left: "333px",
-            top: "50%",
-            transform: "translateY(-50%)",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            padding: "5px"
-          }}
-        >
-          <LocationIcon styles={{ width: "16px", border: "none" }} className="fill-path-primary-main" />
-        </div>
-      </div>
-      {digipin && (
-        <div style={{ 
-          marginTop: "10px", 
-          padding: "19px 78px",
-          backgroundColor: "#f0f0f0",
-          borderRadius: "37px",
-          border: "1px solid #d4d4d4",
-          width: "50%",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center"
-        }}>
-          <div>
-            <strong>Digipin:</strong> {digipin}
-          </div>
-        </div>
-      )}
-    </div>
     <FormStep
       t={t}
       config={{ ...config, inputs }}
@@ -191,7 +112,19 @@ const PTSelectPincode = ({ t, config, onSelect, formData = {}, userType, registe
       onSkip={onSkip}
       forcedError={t(pincodeServicability)}
       isDisabled={!pincode && !locationText || isEditProperty}
-    ></FormStep>
+    >
+      {/* Location Input with Fetch Button */}
+      <div style={{ marginBottom: "20px" }}>
+        <GeoLocationWithDigipin
+          t={t}
+          value={locationText}
+          onChange={handleGeoChange}
+          onFetchDigipin={handleFetchDigipin}
+          showDigipin
+          showMapLink={true}
+        />
+      </div>
+    </FormStep>
             </React.Fragment>
   );
 };

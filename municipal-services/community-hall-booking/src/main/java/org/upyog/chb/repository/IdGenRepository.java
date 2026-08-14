@@ -52,9 +52,9 @@ public class IdGenRepository {
 
 
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    private CommunityHallBookingConfiguration config;
+    private final CommunityHallBookingConfiguration config;
 
     @Autowired
     public IdGenRepository(RestTemplate restTemplate, CommunityHallBookingConfiguration config) {

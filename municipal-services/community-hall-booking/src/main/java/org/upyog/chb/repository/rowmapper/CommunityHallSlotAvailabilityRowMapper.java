@@ -32,7 +32,7 @@ import org.upyog.chb.web.models.VenueSlotAvailabilityDetail;
  * 
  * Fields Mapped:
  * - tenant_id: Maps to the tenantId field in CommunityHallSlotAvailabilityDetail.
- * - community_hall_code: Maps to the communityHallCode field in CommunityHallSlotAvailabilityDetail.
+ * - venue_code: Maps to the venueCode field in CommunityHallSlotAvailabilityDetail.
  * - hall_code: Maps to the hallCode field in CommunityHallSlotAvailabilityDetail.
  * - status: Maps to the slotStatus field in CommunityHallSlotAvailabilityDetail.
  * - booking_date: Maps to the bookingDate field in CommunityHallSlotAvailabilityDetail after date conversion.

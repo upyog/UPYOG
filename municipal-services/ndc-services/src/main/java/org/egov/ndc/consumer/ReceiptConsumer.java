@@ -24,8 +24,8 @@ public class ReceiptConsumer {
     @KafkaListener(topics = {"${kafka.topics.receipt.create}"}, groupId = "${spring.kafka.consumer.group-id}", concurrency = "${kafka.consumer.config.concurrency.count}")
     public void listenPayments(final String rawRecord) {
         try {
-            PaymentRequest record = new ObjectMapper().readValue(rawRecord, PaymentRequest.class);
-            paymentUpdateService.process(record);
+            PaymentRequest paymentRequest = new ObjectMapper().readValue(rawRecord, PaymentRequest.class);
+            paymentUpdateService.process(paymentRequest);
         } catch (Exception e) {
             log.error("Deserialization failed: {}", e.getMessage(), e);
         }

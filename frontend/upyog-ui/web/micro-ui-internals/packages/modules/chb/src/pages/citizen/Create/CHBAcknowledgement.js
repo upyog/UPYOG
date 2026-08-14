@@ -77,45 +77,18 @@ const CHBAcknowledgement = ({ data, onSuccess, mutation }) => {
   const { tenants } = storeData || {};
   const user = Digit.UserService.getUser().info;
   const [showToast, setShowToast] = useState(null);
-  const { data: slotSearchData, refetch } = Digit.Hooks.chb.useChbSlotSearch({
-    tenantId:tenantId,
-    filters: {
-      bookingId:mutation.data?.hallsBookingApplication[0].bookingId,
-      communityHallCode: mutation.data?.hallsBookingApplication[0].communityHallCode,
-      bookingStartDate: mutation.data?.hallsBookingApplication[0]?.bookingSlotDetails?.[0]?.bookingDate,
-      bookingEndDate: mutation.data?.hallsBookingApplication[0]?.bookingSlotDetails?.[mutation.data?.hallsBookingApplication[0].bookingSlotDetails.length - 1]?.bookingDate,
-      hallCode:mutation.data?.hallsBookingApplication[0]?.bookingSlotDetails?.[0]?.hallCode,
-      isTimerRequired:true,
-    },
-    enabled: false, // Disable automatic refetch
-  });
-  const handleMakePayment = async () => {
-    try{
-    const result = await refetch();
-    let SlotSearchData={
-      tenantId:tenantId,
-      bookingId:mutation.data?.hallsBookingApplication[0].bookingId,
-      communityHallCode: mutation.data?.hallsBookingApplication[0].communityHallCode,
-      bookingStartDate: mutation.data?.hallsBookingApplication[0]?.bookingSlotDetails?.[0]?.bookingDate,
-      bookingEndDate: mutation.data?.hallsBookingApplication[0]?.bookingSlotDetails?.[mutation.data?.hallsBookingApplication[0].bookingSlotDetails.length - 1]?.bookingDate,
-      hallCode:mutation.data?.hallsBookingApplication[0]?.bookingSlotDetails?.[0]?.hallCode,
-      isTimerRequired:true,
-    };
-    const isSlotBooked = result?.data?.hallSlotAvailabiltityDetails?.some(
-      (slot) => slot.slotStaus === "BOOKED"
-    );
 
-    if (isSlotBooked) {
-      setShowToast({ error: true, label: t("CHB_COMMUNITY_HALL_ALREADY_BOOKED") });
-    } else if (user?.type === "CITIZEN") {
+  const handleMakePayment = () => {
+
+    if (user?.type === "CITIZEN") {
         navigate(
           `/upyog-ui/citizen/payment/my-bills/chb-services/${mutation.data?.hallsBookingApplication?.[0]?.bookingNo}`,
           {
             state: {
               tenantId,
               bookingNo: mutation.data?.hallsBookingApplication?.[0]?.bookingNo,
-              timerValue: result?.data?.timerValue,
-              SlotSearchData,
+              timerValue: mutation.data?.hallsBookingApplication?.[0]?.timerValue,
+              SlotSearchData:mutation.data?.hallsBookingApplication?.[0]
             },
           }
         );
@@ -126,25 +99,14 @@ const CHBAcknowledgement = ({ data, onSuccess, mutation }) => {
             state: {
               tenantId,
               bookingNo: mutation.data?.hallsBookingApplication?.[0]?.bookingNo,
-              timerValue: result?.data?.timerValue,
-              SlotSearchData,
+              timerValue: mutation.data?.hallsBookingApplication?.[0]?.timerValue,
+              SlotSearchData:mutation.data?.hallsBookingApplication?.[0]
             },
           }
         );
       }
-  }catch (error) {
-    setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
   }
-  };
-  // useEffect(() => {
-  //   try {
-  //     data.tenantId = tenantId;
-  //     let formdata = CHBDataConvert(data);
-  //     mutation.mutate(formdata, {
-  //       onSuccess,
-  //     });
-  //   } catch (err) {}
-  // }, []);
+  
 
   useEffect(() => {
       if (showToast) {

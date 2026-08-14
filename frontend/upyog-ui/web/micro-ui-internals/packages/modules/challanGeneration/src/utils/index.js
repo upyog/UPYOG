@@ -50,12 +50,8 @@ export const getActionButton = (businessService, receiptNumber) => {
   return (
     <a
       href="javascript:void(0)"
-      style={{
-        color: "#FE7A51",
-        cursor: "pointer",
-      }}
+      className="cg-link-action"
       onClick={(value) => {
-        // printReciept(businessService, receiptNumber);
         downloadAndPrintReciept(businessService, receiptNumber);
       }}
     >

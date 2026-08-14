@@ -58,6 +58,8 @@ import BPAAcknowledgement from "./pages/citizen/NewBuildingPermit/OBPSAcknowledg
 import OCBPAAcknowledgement from "./pages/citizen/OCBuildingPermit/OBPSAcknowledgement";
 import OCSendBackAcknowledgement from "./pages/citizen/OCSendBackToCitizen/Acknowledgement";
 import StakeholderAcknowledgement from "./pages/citizen/StakeholderRegistration/StakeholderAcknowledgement";
+import { ReportSearchApplication, EnhancedReport } from "@nudmcdgnpm/digit-ui-module-reports";
+
  
 
 const OBPSModule = ({ stateCode, userType, tenants }) => {
@@ -155,7 +157,9 @@ const componentsToRegister = {
   ObpsOCSendBackToCitizen : OCSendBackToCitizen,
   ObpsEdcrInbox : EdcrInbox,
   ObpsEmpApplicationDetail : EmpApplicationDetail,
-  ObpsEmployeeBpaApplicationDetail : EmployeeBpaApplicationDetail
+  ObpsEmployeeBpaApplicationDetail : EmployeeBpaApplicationDetail,
+  EnhancedReport,
+  ReportSearchApplication
 }
 
 export const initOBPSComponents = () => {

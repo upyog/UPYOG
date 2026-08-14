@@ -197,6 +197,7 @@ export default defineConfig(({ mode }) => {
     "/egov-user-event",
     "/sv-services",
     "/employee-dashboard",
+    "/report",
   ];
 
   const packagesRoot = path.resolve(__dirname, "micro-ui-internals/packages");

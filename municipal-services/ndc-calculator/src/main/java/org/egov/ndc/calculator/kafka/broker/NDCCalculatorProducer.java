@@ -3,14 +3,16 @@ package org.egov.ndc.calculator.kafka.broker;
 import java.util.UUID;
 
 import org.egov.tracer.kafka.CustomKafkaTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class NDCCalculatorProducer {
 
-	@Autowired
-	private CustomKafkaTemplate kafkaTemplate;
+	private final CustomKafkaTemplate<String, Object> kafkaTemplate;
+
+	public NDCCalculatorProducer(CustomKafkaTemplate<String, Object> kafkaTemplate) {
+		this.kafkaTemplate = kafkaTemplate;
+	}
 	
 	/**
 	 * Listener method to push records to kafka queue.

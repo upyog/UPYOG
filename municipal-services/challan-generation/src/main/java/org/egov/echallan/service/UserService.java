@@ -28,11 +28,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Slf4j
 public class UserService {
 
-	@Autowired
-	private ChallanConfiguration config;
+	private static final String LAST_MODIFIED_DATE = "lastModifiedDate";
+	private static final String PWD_EXPIRY_DATE = "pwdExpiryDate";
 
-	@Autowired
-	private ServiceRequestRepository serviceRequestRepository;
+	private final ChallanConfiguration config;
+	private final ServiceRequestRepository serviceRequestRepository;
+	private final ObjectMapper mapper;
 
 	@Value("${egov.user.host}")
 	private String userHost;
@@ -49,9 +50,13 @@ public class UserService {
 	@Value("${egov.user.update.path}")
 	private String userUpdateEndpoint;
 
-
 	@Autowired
-	private ObjectMapper mapper;
+	public UserService(ChallanConfiguration config, ServiceRequestRepository serviceRequestRepository,
+			ObjectMapper mapper) {
+		this.config = config;
+		this.serviceRequestRepository = serviceRequestRepository;
+		this.mapper = mapper;
+	}
 
 	/**
 	 * Call search in user service based on ownerids from criteria
@@ -65,8 +70,7 @@ public class UserService {
 	public UserDetailResponse getUser(SearchCriteria criteria, RequestInfo requestInfo) {
 		UserSearchRequest userSearchRequest = getUserSearchRequest(criteria, requestInfo);
 		StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
-		UserDetailResponse userDetailResponse = userCall(userSearchRequest, uri);
-		return userDetailResponse;
+		return userCall(userSearchRequest, uri);
 	}
 
 	/**
@@ -82,10 +86,8 @@ public class UserService {
 		UserSearchRequest userSearchRequest = new UserSearchRequest();
 		userSearchRequest.setRequestInfo(requestInfo);
 		userSearchRequest.setTenantId(criteria.getTenantId().split("\\.")[0]);
-//		userSearchRequest.setUuid(criteria.getAccountId());
 		userSearchRequest.setMobileNumber(criteria.getMobileNumber());
 		userSearchRequest.setActive(true);
-		/* userSearchRequest.setUserType("CITIZEN"); */
 		if (!CollectionUtils.isEmpty(criteria.getUserIds()))
 			userSearchRequest.setUuid(criteria.getUserIds());
 		return userSearchRequest;
@@ -111,15 +113,12 @@ public class UserService {
 		try {
 			LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, userRequest);
 			parseResponse(responseMap, dobFormat);
-			UserDetailResponse userDetailResponse = mapper.convertValue(responseMap, UserDetailResponse.class);
-			return userDetailResponse;
+			return mapper.convertValue(responseMap, UserDetailResponse.class);
 		} catch (IllegalArgumentException e) {
 			log.error("ObjectMapper not able to convertValue in userCall: {}", e.getMessage());
-			// Return empty response instead of throwing exception
 			return new UserDetailResponse(null, new ArrayList<>());
 		} catch (Exception e) {
 			log.error("Error calling user service: {}", e.getMessage());
-			// Return empty response instead of throwing exception
 			return new UserDetailResponse(null, new ArrayList<>());
 		}
 	}
@@ -133,23 +132,22 @@ public class UserService {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void parseResponse(LinkedHashMap responeMap, String dobFormat) {
-		// Check if response contains error
 		if (responeMap.containsKey("Errors") || responeMap.containsKey("error")) {
 			log.warn("User service returned error response, skipping user enrichment");
 			return;
 		}
-		
+
 		List<LinkedHashMap> users = (List<LinkedHashMap>) responeMap.get("user");
 		String format1 = "dd-MM-yyyy HH:mm:ss";
 		if (users != null) {
 			users.forEach(map -> {
 				map.put("createdDate", dateTolong((String) map.get("createdDate"), format1));
-				if ((String) map.get("lastModifiedDate") != null)
-					map.put("lastModifiedDate", dateTolong((String) map.get("lastModifiedDate"), format1));
+				if ((String) map.get(LAST_MODIFIED_DATE) != null)
+					map.put(LAST_MODIFIED_DATE, dateTolong((String) map.get(LAST_MODIFIED_DATE), format1));
 				if ((String) map.get("dob") != null)
 					map.put("dob", dateTolong((String) map.get("dob"), dobFormat));
-				if ((String) map.get("pwdExpiryDate") != null)
-					map.put("pwdExpiryDate", dateTolong((String) map.get("pwdExpiryDate"), format1));
+				if ((String) map.get(PWD_EXPIRY_DATE) != null)
+					map.put(PWD_EXPIRY_DATE, dateTolong((String) map.get(PWD_EXPIRY_DATE), format1));
 			});
 		}
 	}
@@ -245,14 +243,11 @@ public class UserService {
 		owner.setCreatedDate(System.currentTimeMillis());
 		owner.setLastModifiedDate(System.currentTimeMillis());
 		owner.setActive(userResponse.getUser().get(0).getActive());
-		
-		// Set primaryrole from the user response (only for UserInfo)
-		if (owner instanceof UserInfo) {
-			UserInfo userInfo = (UserInfo) owner;
+
+		if (owner instanceof UserInfo userInfo) {
 			if (userResponse.getUser().get(0).getRoles() != null && !userResponse.getUser().get(0).getRoles().isEmpty()) {
 				userInfo.setPrimaryrole(userResponse.getUser().get(0).getRoles());
 			} else {
-				// Set default CITIZEN role if no roles found
 				Role citizenRole = getCitizenRole(owner.getTenantId());
 				userInfo.setPrimaryrole(Collections.singletonList(citizenRole));
 			}
@@ -285,7 +280,6 @@ public class UserService {
 					owner.setUuid(existingUser.getUuid());
 					setOwnerFields(owner, existingUserResponse, requestInfo);
 				} else {
-//						  UserResponse userResponse = userExists(owner,requestInfo);
 					StringBuilder uri = new StringBuilder(userHost).append(userContextPath).append(userCreateEndpoint);
 						setUserName(owner);
 					UserDetailResponse userResponse = userCall(new CreateUserRequest(requestInfo, owner), uri);
@@ -302,7 +296,6 @@ public class UserService {
 				StringBuilder uri = new StringBuilder(userHost);
 				uri.append(userContextPath).append(userUpdateEndpoint);
 				UserInfo ownerInfo = new UserInfo();
-//				ownerInfo.addUserWithoutAuditDetail(owner);
 				addNonUpdatableFields(ownerInfo, userResponse.getUser().get(0));
 				userResponse = userCall(new CreateUserRequest(requestInfo, ownerInfo), uri);
 				setOwnerFields(owner, userResponse, requestInfo);

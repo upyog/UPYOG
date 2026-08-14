@@ -29,8 +29,16 @@
 
 import { build } from 'vite';
 import react from '@vitejs/plugin-react';
-import { readFileSync, existsSync } from 'fs';
-import { join } from 'path';
+import { join, basename } from "path";
+import sass from "sass";
+import postcss from "postcss";
+import postcssrc from "postcss-load-config";
+import {
+  readFileSync,
+  existsSync,
+  writeFileSync,
+  mkdirSync,
+} from "fs";
 
 const ROOT = process.cwd();
 const rootPkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'));
@@ -109,8 +117,54 @@ function topoSort(packages) {
  * - All peerDependencies externalized — not bundled into output
  * - All @upyog/* and @nudmcdgnpm/* packages externalized (internal monorepo deps)
  */
+
+
+async function buildCssPackage({ path, pkg, entryField }) {
+  console.log(`\n🎨 Building ${pkg.name}...`);
+
+  const input = join(path, entryField);
+  const outDir = join(path, "dist");
+
+  mkdirSync(outDir, { recursive: true });
+
+  const cssFile = `${basename(entryField, ".scss")}.css`;
+
+  // Compile SCSS
+  const result = sass.compile(input, {
+    loadPaths: [path],
+    style: "expanded",
+  });
+
+  // Load root PostCSS config
+  const { plugins, options } = await postcssrc({}, ROOT);
+
+  // Run PostCSS
+  const processed = await postcss(plugins).process(result.css, {
+    from: input,
+    to: join(outDir, cssFile),
+    ...options,
+  });
+
+  writeFileSync(
+    join(outDir, cssFile),
+    processed.css
+  );
+
+  console.log(`✅ ${pkg.name} built`);
+}
+
+
 async function buildPackage({ path, pkg }) {
-  const entryField = pkg.source || 'src/index.js';
+
+  const entryField = pkg.source || "src/index.js";
+
+  if (entryField.endsWith(".scss")) {
+    return buildCssPackage({
+      path,
+      pkg,
+      entryField,
+    });
+  }
   const entryPath = join(path, entryField);
 
   if (!existsSync(entryPath)) {
