@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 import uuid
 
 # We will use Qdrant for both vector-based RAG and persistent sliding window memory.
-# Qdrant converts text into mathematical dimensions (vectors) so the AI can perform semantic searches.
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import Distance, VectorParams, PointStruct, Filter, FieldCondition, MatchValue, Range
 from langgraph.checkpoint.memory import MemorySaver
@@ -25,7 +24,7 @@ except Exception as e:
 LONG_TERM_MEMORY_COLLECTION = "long_term_chat_memory"
 KNOWLEDGE_BASE_COLLECTION = "upyog_knowledge_base"
 DRAFT_STATE_COLLECTION = "draft_states"
-VECTOR_SIZE = 768  # 768 dimensions used by the embedding model to mathematically represent sentences
+VECTOR_SIZE = 768  # 768 dimensions used by the embedding model
 
 # Creates missing Qdrant database collections on startup if they don't already exist
 def init_collections():
@@ -39,7 +38,6 @@ def init_collections():
                 collection_name=LONG_TERM_MEMORY_COLLECTION,
                 vectors_config=VectorParams(size=VECTOR_SIZE, distance=Distance.COSINE),
             )
-            # Create a payload index on timestamp for sliding window queries
             client.create_payload_index(
                 collection_name=LONG_TERM_MEMORY_COLLECTION,
                 field_name="timestamp",
@@ -55,8 +53,6 @@ def init_collections():
             
         if DRAFT_STATE_COLLECTION not in collection_names:
             logger.info(f"Creating {DRAFT_STATE_COLLECTION} collection.")
-            # Drafts don't need semantic search, so we can use a dummy vector config
-            # but Qdrant requires vectors_config. We'll use size=1.
             client.create_collection(
                 collection_name=DRAFT_STATE_COLLECTION,
                 vectors_config=VectorParams(size=1, distance=Distance.COSINE),
@@ -64,6 +60,11 @@ def init_collections():
             client.create_payload_index(
                 collection_name=DRAFT_STATE_COLLECTION,
                 field_name="phone_number",
+                field_schema="keyword"
+            )
+            client.create_payload_index(
+                collection_name=DRAFT_STATE_COLLECTION,
+                field_name="plugin_name",
                 field_schema="keyword"
             )
     except Exception as e:
@@ -74,14 +75,14 @@ init_collections()
 class MemoryManager:
     """
     ====================================================================
-    [THE BRAIN ARCHIVE]
-    Manages Long-Term Memory using Qdrant with a 30-Day Sliding Window.
-    Instead of bloating a SQL database with chat history, we store JSON 
-    payloads alongside vectors. 
+    [THE BRAIN ARCHIVE & DRAFT MANAGER]
+    Manages Long-Term Memory and Module-Isolated Draft States using Qdrant.
+    Supports multi-draft storage per user anchored by composite key (phone:plugin).
     ====================================================================
-      """
+    """
     
-    # Automatically deletes chat history older than 30 days to save space and keep the bot fast
+    # Automatically deletes chat history older than 30 days
+    @staticmethod
     def _enforce_sliding_window(phone_number: str):
         cutoff_date = datetime.now() - timedelta(days=30)
         cutoff_timestamp = int(cutoff_date.timestamp())
@@ -106,15 +107,10 @@ class MemoryManager:
         except Exception as e:
             logger.error(f"Error enforcing sliding window: {e}")
 
-
-
-    # Permanently saves a single chat message (or summary) into the Qdrant long-term database
+    # Permanently saves a single chat message into Qdrant long-term database
     @staticmethod
     def save_long_term_interaction(phone_number: str, role: str, content: str, embedding: Optional[List[float]] = None):
-        
         if not embedding:
-            # If no embedding is provided, just create a dummy vector so we can store the payload.
-            # In a real scenario, you'd embed the content here if you want semantic search over history.
             embedding = [0.0] * VECTOR_SIZE
             
         point_id = str(uuid.uuid4())
@@ -137,22 +133,28 @@ class MemoryManager:
                 collection_name=LONG_TERM_MEMORY_COLLECTION,
                 points=[point]
             )
-            # Enforce eviction policy
             MemoryManager._enforce_sliding_window(phone_number)
             return True
         except Exception as e:
             logger.error(f"Error saving to long term memory: {e}")
             return False
 
-    # Saves a partially completed form (draft) into the database so the user can resume later
+    # Dynamic Multi-Draft Saving: Isolated per module (phone_number:plugin_name)
     @staticmethod
     def save_draft_state(phone_number: str, plugin_name: str, draft_data: dict) -> None:
+        """
+        Saves or updates a draft specifically for (phone_number, plugin_name).
+        Does NOT overwrite drafts of other modules!
+        """
         try:
-            # Overwrite any existing draft for this phone number by deleting first
+            # Check for existing draft point for THIS specific phone + plugin combination
             records, _ = client.scroll(
                 collection_name=DRAFT_STATE_COLLECTION,
                 scroll_filter=Filter(
-                    must=[FieldCondition(key="phone_number", match=MatchValue(value=phone_number))]
+                    must=[
+                        FieldCondition(key="phone_number", match=MatchValue(value=phone_number)),
+                        FieldCondition(key="plugin_name", match=MatchValue(value=plugin_name))
+                    ]
                 ),
                 limit=10
             )
@@ -165,6 +167,7 @@ class MemoryManager:
             
             point_id = str(uuid.uuid4())
             payload = {
+                "draft_id": f"{phone_number}:{plugin_name}",
                 "phone_number": phone_number,
                 "plugin_name": plugin_name,
                 "draft_data": draft_data,
@@ -175,19 +178,69 @@ class MemoryManager:
                 collection_name=DRAFT_STATE_COLLECTION,
                 points=[PointStruct(id=point_id, vector=[0.0], payload=payload)]
             )
-            logger.info(f"Saved {plugin_name} draft for {phone_number}")
+            logger.info(f"Saved isolated draft [{plugin_name}] for user {phone_number}")
         except Exception as e:
-            logger.error(f"Error saving draft state: {e}")
+            logger.error(f"Error saving draft state for {phone_number}/{plugin_name}: {e}")
 
-    # Deletes the user's saved draft form after it is successfully submitted or cancelled
+    # Retrieves all active drafts for a citizen across all modules
     @staticmethod
-    def delete_draft_state(phone_number: str) -> None:
+    def get_all_draft_states(phone_number: str) -> List[Dict[str, Any]]:
+        """
+        Retrieves all active drafts for a citizen to allow dynamic draft switching.
+        """
         try:
             records, _ = client.scroll(
                 collection_name=DRAFT_STATE_COLLECTION,
                 scroll_filter=Filter(
                     must=[FieldCondition(key="phone_number", match=MatchValue(value=phone_number))]
                 ),
+                limit=20,
+                with_payload=True
+            )
+            if records:
+                return [r.payload for r in records]
+        except Exception as e:
+            logger.error(f"Error retrieving all draft states for {phone_number}: {e}")
+        return []
+
+    # Retrieves a specific draft form or the latest saved draft
+    @staticmethod
+    def get_draft_state(phone_number: str, plugin_name: Optional[str] = None) -> Optional[dict]:
+        """
+        Fetches the active draft for a specific module (plugin_name) or the latest draft.
+        """
+        try:
+            must_conditions = [FieldCondition(key="phone_number", match=MatchValue(value=phone_number))]
+            if plugin_name:
+                must_conditions.append(FieldCondition(key="plugin_name", match=MatchValue(value=plugin_name)))
+                
+            records, _ = client.scroll(
+                collection_name=DRAFT_STATE_COLLECTION,
+                scroll_filter=Filter(must=must_conditions),
+                limit=1,
+                with_payload=True
+            )
+            
+            if records:
+                return records[0].payload
+        except Exception as e:
+            logger.error(f"Error retrieving draft state for {phone_number}/{plugin_name}: {e}")
+        return None
+
+    # Deletes a specific module draft after successful submission or cancellation
+    @staticmethod
+    def delete_draft_state(phone_number: str, plugin_name: Optional[str] = None) -> None:
+        """
+        Deletes the draft for a specific module or all drafts if plugin_name is None.
+        """
+        try:
+            must_conditions = [FieldCondition(key="phone_number", match=MatchValue(value=phone_number))]
+            if plugin_name:
+                must_conditions.append(FieldCondition(key="plugin_name", match=MatchValue(value=plugin_name)))
+
+            records, _ = client.scroll(
+                collection_name=DRAFT_STATE_COLLECTION,
+                scroll_filter=Filter(must=must_conditions),
                 limit=10
             )
             if records:
@@ -196,30 +249,11 @@ class MemoryManager:
                     collection_name=DRAFT_STATE_COLLECTION,
                     points_selector=point_ids
                 )
-                logger.info(f"Deleted {len(point_ids)} saved draft(s) for {phone_number}")
+                logger.info(f"Deleted {len(point_ids)} draft(s) [{plugin_name or 'all'}] for {phone_number}")
         except Exception as e:
-            logger.error(f"Error deleting draft state: {e}")
+            logger.error(f"Error deleting draft state for {phone_number}/{plugin_name}: {e}")
 
-    # Retrieves the user's last saved form draft from the database to resume the flow
-    @staticmethod
-    def get_draft_state(phone_number: str) -> Optional[dict]:
-        try:
-            records = client.scroll(
-                collection_name=DRAFT_STATE_COLLECTION,
-                scroll_filter=Filter(
-                    must=[FieldCondition(key="phone_number", match=MatchValue(value=phone_number))]
-                ),
-                limit=1,
-                with_payload=True
-            )[0]
-            
-            if records:
-                return records[0].payload
-        except Exception as e:
-            logger.error(f"Error retrieving draft state for {phone_number}: {e}")
-        return None
-
-    # Fetches the last few messages of chat history so the AI remembers the immediate context
+    # Fetches recent chat history
     @staticmethod
     def get_recent_history(phone_number: str, limit: int = 15) -> List[Dict[str, Any]]:
         try:
@@ -237,8 +271,6 @@ class MemoryManager:
                 with_payload=True,
                 with_vectors=False
             )
-            
-            # Sort by timestamp ascending
             history = [r.payload for r in results]
             history.sort(key=lambda x: x.get("timestamp", 0))
             return history
@@ -246,10 +278,9 @@ class MemoryManager:
             logger.error(f"Error retrieving recent history: {e}")
             return []
         
-    # Uses AI similarity matching to find relevant past conversations mathematically
+    # Searches long-term vector memory
     @staticmethod
     def search_long_term_memory(phone_number: str, query_embedding: List[float], limit: int = 3) -> List[Dict[str, Any]]:
-
         try:
             res = client.query_points(
                 collection_name=LONG_TERM_MEMORY_COLLECTION,
@@ -264,28 +295,22 @@ class MemoryManager:
                 ),
                 limit=limit
             )
-            
-            # Sort by timestamp ascending for chronological order
-            history = [hit.payload for hit in res.points if hit.score > 0.4] # threshold for relevance
+            history = [hit.payload for hit in res.points if hit.score > 0.4]
             history.sort(key=lambda x: x.get("timestamp", 0))
             return history
         except Exception as e:
             logger.error(f"Error searching long term memory: {e}")
             return []
 
-    # Saves a summary of a completed booking permanently in the chat history
+    # Saves a summary of a completed booking permanently in chat history
     @staticmethod
     def save_booking_record(phone_number: str, booking_data: dict):
         content = f"BOOKING RECORD: ID {booking_data.get('bookingNo')}, Type {booking_data.get('addType')}, Status {booking_data.get('status', 'BOOKING_CREATED')}"
         MemoryManager.save_long_term_interaction(phone_number, "system_record", content)
-        # We can also keep storing it in Redis if needed for the exact JSON structure,
-        # but this logs it chronologically in Qdrant.
 
-
-    # Searches the official UPYOG knowledge base for correct answers to user questions
+    # Searches official UPYOG knowledge base
     @staticmethod
     def search_knowledge_base(embedding: List[float], limit: int = 3) -> str:
-       
         try:
             results = client.search(
                 collection_name=KNOWLEDGE_BASE_COLLECTION,
@@ -294,7 +319,7 @@ class MemoryManager:
             )
             context = []
             for r in results:
-                if r.score > 0.7:  # similarity threshold
+                if r.score > 0.7:
                     prompt = r.payload.get("prompt", "")
                     response = r.payload.get("response", "")
                     context.append(f"Q: {prompt}\nA: {response}")

@@ -20,7 +20,7 @@ services:
     name_hi: "शिकायत दर्ज करें"
     description_hi: "पानी, सड़क, कचरा जैसी नागरिक समस्या की शिकायत दर्ज करें"
     keywords: ["pgr", "complaint", "complaints", "grievance", "shikayat", "complain", "ticket"]
-    id_prefixes: ["PG-PGR-", "PGR-", "PG-PGR"]
+    id_prefixes: ["PGR-"]
 
   - key: "faq"
     name: "General Questions"
@@ -32,12 +32,7 @@ upyog:
   # Base URL of the UPYOG environment (switch between UAT / production here)
   base_url: "https://niuatt.niua.in"
 
-  # ── TENANT CONFIGURATION ──────────────────────────────────
-  # UPYOG uses a hierarchical tenant structure.
-  # 1. State-level Tenant (e.g., "pg"): Used for Master Data (MDMS), Filestore (documents), and Auth (OTP).
-  # 2. City-level Tenant (e.g., "pg.citya"): Used for citizen forms (Advertisement Booking, Grievance creation).
-  
-  # City-level Tenant (used when submitting actual applications/forms)
+  # Tenant ID for MDMS and advertisement services
   tenant_id: "pg.citya"
 
   # State-level Tenant (used for fetching configs, uploading files, and sending OTP)
@@ -129,11 +124,8 @@ upyog:
     identity: "APPLICANT.IDENTITYPROOF.AADHAAR"
 
   # ── Filestore ────────────────────────────────────────────
-  # Configuration for uploading/downloading documents to UPYOG's central filestore.
   filestore:
     module:   "Advertisement"
-    # CRITICAL: Filestore operations MUST happen at the state level (pg), not the city level (pg.citya).
-    # If the wrong tenant is used, the file will be uploaded but will show as a broken link on the UI.
     tenant:   "pg"
 
   # ── Grievance (PGR) Settings ─────────────────────────────

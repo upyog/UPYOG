@@ -18,16 +18,35 @@ logger = logging.getLogger(__name__)
 llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0) if os.environ.get("GROQ_API_KEY") else None
 
 
+# ==========================================
+# STATE
+# ==========================================
 
 class GrievanceState(BaseAgentState):
-    
+    """
+    Extends BaseAgentState with grievance-specific fields.
+
+    draft_grievance keys:
+      category          -- main complaint category name (display)
+      sub_category      -- specific complaint type name (display)
+      description       -- free-text problem description
+      locality          -- area/locality name (display)
+      category_code     -- service code sent to PGR API
+      locality_code     -- boundary code sent to PGR API
+      _category_options -- cached {group: [{name, code}]} dict from MDMS
+      _sub_options      -- cached [{name, code}] for selected category
+      _locality_options -- cached [{name, code}] from egov-location
+      _awaiting_confirm -- True after confirm_node shows the summary
+      _confirmed        -- True when user says yes at confirmation step
+      _cancelled        -- True when user says no at confirmation step
+    """
     draft_grievance: Dict[str, Any]
     missing_fields: List[str]
 
 
-# ==========================================
-# CONFIG  (from config.yml -- no hardcoding)
-# ==========================================
+# ==========
+# CONFIG
+# ==========
 
 _this_dir = os.path.dirname(os.path.abspath(__file__))
 _config_path = os.path.join(os.path.dirname(_this_dir), "config.yml")
@@ -86,7 +105,7 @@ def _pgr_localities() -> list:
 # NODES
 # ==========================================
 
-# Checks if the user wants to cancel the current complaint or view past complaints
+# Checks if the user wants to cancel the current compl@aint or view past complaints
 def intent_and_ui_node(state: GrievanceState):
     messages     = state.get("messages", [])
     phone_number = state.get("phone_number", "default")
@@ -210,42 +229,43 @@ def extraction_node(state: GrievanceState):
     schema_hints: dict = {}
     for f in missing:
         if f == "category":
-            opts = list((draft.get("_category_options") or {}).keys())
-            schema_hints[f] = (f"MUST EXACTLY MATCH one of: {opts}" if opts
-                               else "Main grievance category (e.g. Water, Garbage, Roads)")
+            cats = draft.get("_category_options") or _pgr_categories()
+            draft["_category_options"] = cats
+            opts = list(cats.keys())
+            schema_hints[f] = (f"MUST MATCH one of: {opts}" if opts
+                               else "Main grievance category (e.g. PublicToilets, StreetLights, Water, Garbage)")
         elif f == "sub_category":
-            sub_opts = [s["name"] for s in (draft.get("_sub_options") or [])]
-            schema_hints[f] = (f"MUST EXACTLY MATCH one of: {sub_opts}" if sub_opts
+            sub_ops = [s["name"] for s in (draft.get("_sub_options") or [])]
+            schema_hints[f] = (f"MUST MATCH one of: {sub_ops}" if sub_ops
                                else "Specific complaint type")
         elif f == "locality":
-            loc_opts = [l["name"] for l in (draft.get("_locality_options") or [])[:30]]
-            schema_hints[f] = (f"MUST EXACTLY MATCH one of: {loc_opts}. "
-                               "If not in list, use verbatim." if loc_opts
+            loc_ops = draft.get("_locality_options") or _pgr_localities()
+            draft["_locality_options"] = loc_ops
+            loc_names = [l["name"] for l in loc_ops[:30]]
+            schema_hints[f] = (f"MUST MATCH one of: {loc_names}. "
+                               "If not in list, use verbatim." if loc_names
                                else "Area or locality name")
         elif f == "description":
-            schema_hints[f] = "Detailed description of the problem (minimum 10 chars)"
+            schema_hints[f] = "Detailed description of the problem (minimum 5 chars)"
 
     collected_str = json.dumps({k: v for k, v in draft.items() if v and not k.startswith("_")})
-
-    extract_prompt = f"""You are a strict data extraction AI for UPYOG Grievance filing.
-Extract ONLY the missing fields from the user's message.
+    extract_prompt = f"""You are a smart, production-grade data extraction AI for UPYOG Grievance filing.
+Your job is to extract missing form field values from the user's message based on conversational context.
 
 Missing fields: {json.dumps(missing)}
-Extraction hints: {json.dumps(schema_hints)}
-Already collected: {collected_str}
+Field hints & valid options: {json.dumps(schema_hints)}
+Already collected fields: {collected_str}
 Bot's last question: "{last_ai}"
-User's message: "{user_msg}"
+User's current message: "{user_msg}"
 
-RULES:
-1. Extract only what is CLEARLY stated. Return null for fields not mentioned.
-2. For category/sub_category/locality: match EXACTLY to the hint list.
-3. For 'description': if the user's message describes a problem, issue, or situation (even briefly),
-   use it verbatim as the description. Duration phrases like 'from 1 month' are NOT descriptions.
-4. Simple confirmations like 'yes'/'ok' or duration-only phrases are NOT field values.
+EXTRACTION RULES:
+1. CONVERSATIONAL CONTEXT: Pay close attention to "Bot's last question". If the bot explicitly asked the user for a specific missing field (e.g. 'category', 'sub_category', 'description' or 'locality') and the user provided an answer, EXTRACT IT into that field.
+2. CATEGORY / SUB-CATEGORY / LOCALITY MATCHING: Match the user's input to the valid options list in the hints.
+3. DESCRIPTION FIELD: Extract actual problem details or description of the issue (e.g. "road accident at night", "water pipe leaking", "street light broken"). Do NOT extract generic intent phrases like "i want to file a complaint".
+4. Return null for any missing field that was NOT mentioned or answered in the user's message.
 
-Reply ONLY with valid JSON -- no markdown, no explanation.
-Include ALL missing fields as keys:
-{{{', '.join(f'"{f}": "value or null"' for f in missing)}}}"""
+Output MUST be a single valid JSON object containing keys for all missing fields:
+{{{', '.join(f'"{f}": "extracted value or null"' for f in missing)}}}"""
 
     try:
         ext = llm.invoke([SystemMessage(content=extract_prompt)])
@@ -255,25 +275,60 @@ Include ALL missing fields as keys:
             for field in missing:
                 val = extracted.get(field)
                 if val is not None and str(val).lower() not in ("null", "none", ""):
-                    draft[field] = val
-                    logger.info(f"[grievance extract] {field} = {val}")
+                    val_str = str(val).strip()
+                    logger.info(f"[grievance extract] {field} = {val_str}")
 
                     if field == "category":
-                        cats    = draft.get("_category_options") or {}
-                        sub_ops = cats.get(val, [])
-                        draft["_sub_options"] = sub_ops
+                        cats = draft.get("_category_options") or _pgr_categories()
+                        draft["_category_options"] = cats
+                        norm_val = re.sub(r'[\s_]+', '', val_str.lower())
+                        matched_cat = next((k for k in cats.keys() if re.sub(r'[\s_]+', '', k.lower()) == norm_val), None)
+                        if matched_cat:
+                            draft["category"] = matched_cat
+                            draft["_sub_options"] = cats[matched_cat]
+                        elif cats:
+                            draft["category"] = val_str
+                            first_key = list(cats.keys())[0]
+                            draft["_sub_options"] = cats[first_key]
 
-                    if field == "sub_category":
+                    elif field == "sub_category":
                         sub_ops = draft.get("_sub_options") or []
-                        matched = next((s for s in sub_ops if s["name"].lower() == val.lower()), None)
+                        norm_val = re.sub(r'[\s_]+', '', val_str.lower())
+                        matched = next((s for s in sub_ops if re.sub(r'[\s_]+', '', s["name"].lower()) == norm_val), None)
+                        if not matched and sub_ops:
+                            matched = sub_ops[0]
                         if matched:
+                            draft["sub_category"] = matched["name"]
                             draft["category_code"] = matched["code"]
+                        else:
+                            draft["sub_category"] = val_str
 
-                    if field == "locality":
-                        loc_ops = draft.get("_locality_options") or []
-                        matched = next((l for l in loc_ops if l["name"].lower() == val.lower()), None)
+                    elif field == "locality":
+                        loc_ops = draft.get("_locality_options") or _pgr_localities()
+                        draft["_locality_options"] = loc_ops
+                        norm_val = re.sub(r'[\s_]+', '', val_str.lower())
+                        matched = next((l for l in loc_ops if re.sub(r'[\s_]+', '', l["name"].lower()) == norm_val), None)
                         if matched:
+                            draft["locality"] = matched["name"]
                             draft["locality_code"] = matched["code"]
+                        elif loc_ops:
+                            draft["locality"] = val_str
+                            draft["locality_code"] = loc_ops[0]["code"]
+
+                    else:
+                        draft[field] = val_str
+            
+            # Filter out generic intent strings from description
+            desc_val = str(draft.get("description", "")).strip().lower()
+            generic_intents = ["i want to file a complaint", "file a complaint", "raise a grievance", "file complaint", "want to file a complaint", "i have a complaint"]
+            if any(g in desc_val for g in generic_intents):
+                draft["description"] = None
+
+            # Auto-Save to Qdrant Disk Store on every extraction turn!
+            phone_number = state.get("phone_number", "default")
+            if draft and phone_number and phone_number != "default":
+                from memory_manager import MemoryManager
+                MemoryManager.save_draft_state(phone_number, "grievance", draft)
 
     except Exception as e:
         logger.error(f"[grievance] extraction error: {e}")
@@ -379,11 +434,19 @@ def confirm_node(state: GrievanceState):
     messages     = state.get("messages", [])
     user_msg     = messages[-1].content if messages else ""
 
+    # Ensure description is meaningful and not a generic intent
+    desc = str(draft.get("description", "")).strip()
+    generic_intents = ["i want to file a complaint", "file a complaint", "raise a grievance", "file complaint", "want to file a complaint", "i have a complaint"]
+    if not desc or any(g in desc.lower() for g in generic_intents) or len(desc) < 5:
+        sub = draft.get('sub_category') or draft.get('category') or 'Complaint'
+        loc = draft.get('locality') or 'the specified locality'
+        draft['description'] = f"{sub} issue reported at {loc}"
+
     summary = (
         "**Review Your Complaint Details:**\n\n"
         f"- **Category:** {draft.get('category', 'N/A')}\n"
         f"- **Complaint Type:** {draft.get('sub_category', 'N/A')}\n"
-        f"- **Description:** {draft.get('description', 'N/A')}\n"
+        f"- **Description:** {draft.get('description')}\n"
         f"- **Locality:** {draft.get('locality', 'N/A')}\n\n"
         "Please reply **Yes** to submit or **No** to cancel."
     )
@@ -414,7 +477,7 @@ def create_complaint_node(state: GrievanceState):
     MemoryManager.save_long_term_interaction(phone_number=phone_number, role="assistant", content=resp)
 
     reset_draft = {f: None for f in ALL_FIELDS}
-    MemoryManager.delete_draft_state(phone_number)
+    MemoryManager.delete_draft_state(phone_number, "grievance")
     return {"messages": [AIMessage(content=resp)], "draft_grievance": reset_draft, "missing_fields": ALL_FIELDS, "input_type": "text", "options": []}
 
 
@@ -433,7 +496,7 @@ def cancel_node(state: GrievanceState):
     MemoryManager.save_long_term_interaction(phone_number=phone_number, role="assistant", content=resp)
 
     reset_draft = {f: None for f in ALL_FIELDS}
-    MemoryManager.delete_draft_state(phone_number)
+    MemoryManager.delete_draft_state(phone_number, "grievance")
     return {"messages": [AIMessage(content=resp)], "draft_grievance": reset_draft, "missing_fields": ALL_FIELDS}
 
 

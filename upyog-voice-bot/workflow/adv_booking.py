@@ -27,6 +27,7 @@ class AdvBookingState(BaseAgentState):
 
     draft_booking: Dict[str, Any]
     # draft_booking = Temporary storage for all collected form data during the conversation.
+    # Example: {"addType": "Hoarding", "location": "Jor Bagh", "start_date": "2026-08-01"}
     # It starts empty {} and gets filled field by field as user answers questions.
 
     missing_fields: List[str]
@@ -37,7 +38,6 @@ from mcp_tools import create_booking, mdms_get, slot_search, search_ads
 
 # Fetches dropdown options (like AdType or Location) directly from the UPYOG master database
 def _mdms_get(module_name: str, master_name: str) -> List[str]:
-    """Fetch master data options from UPYOG MDMS service."""
     try:
         result = mdms_get(module_name, master_name)
         return result if result else []
@@ -84,7 +84,7 @@ def _slot_search(draft: dict) -> list:
         logger.error(f"slot_search failed: {e}")
         return []
 
-
+# ==========================================
 _this_dir = os.path.dirname(os.path.abspath(__file__))
 config_path = os.path.join(os.path.dirname(_this_dir), "config.yml")
 if not os.path.exists(config_path):
@@ -106,7 +106,6 @@ FIELD_HINTS = {f["id"]: f.get("label", f["id"]) for f in FORM_FIELDS}
 
 # Looks at what we have so far, and figures out the very next question we need to ask the user
 def get_next_step(draft: dict) -> dict:
-    """Return the configuration dictionary for the first uncollected form field in draft."""
     if not isinstance(draft, dict):
         draft = {}
     for field in FORM_FIELDS:
@@ -121,7 +120,6 @@ def get_next_step(draft: dict) -> dict:
 
 # Checks if the user is clicking UI buttons (canceling, resuming, or uploading documents) before talking to the AI
 def intent_and_ui_node(state: AdvBookingState):
-    """Handle initial user intents: unsupported module requests, UI slot/form payloads, reset/resume draft state, or fetching past booking history."""
     # 1. Fetch current chat history and user's phone number from the state memory
     messages = state.get("messages", [])
     phone_number = state.get("phone_number", "default")
@@ -204,13 +202,15 @@ def intent_and_ui_node(state: AdvBookingState):
         draft_booking = {f: None for f in ALL_FIELDS}
         draft_booking["selected_slots"] = None
         draft_booking["applicant_details"] = None
-        MemoryManager.delete_draft_state(phone_number)
+        MemoryManager.delete_draft_state(phone_number, "adv_booking")
         # 20. Tell the user the booking was cancelled and start fresh
         return {"messages": [AIMessage(content="I have cleared your draft. Let's start a new booking.")], "draft_booking": draft_booking, "missing_fields": ALL_FIELDS}
 
-    # 3. Resume logic
+    # 3. Resume logic — 'continue' alone (sent by draft switcher) always resumes
     resume_keywords = ["resume", "proceed", "continue", "previous left", "start with previous"]
-    if any(w in user_msg.lower() for w in resume_keywords) and "booking" in user_msg.lower():
+    is_pure_continue = user_msg.strip().lower() == "continue"
+    is_resume_with_booking = any(w in user_msg.lower() for w in resume_keywords) and "booking" in user_msg.lower()
+    if is_pure_continue or is_resume_with_booking:
         if draft_booking:  # Only resume if there IS an existing incomplete draft
             user_msg = "continue"  # Signal to ask_next_node to pick up from where we left off
         else:
@@ -463,11 +463,12 @@ User just said: "{user_msg}"
 
 Instructions:
 1. Generate a natural, polite, conversational question asking for the "{field_label}".
-2. Do NOT say "Hello" unless the user explicitly greeted you.
-3. NEVER repeat or confirm what the user just selected. 
-4. DO NOT list the available options in the text (the UI will handle that).
-5. Maintain a formal, professional tone. NEVER use informal or familial terms of address like 'दीदी' (Didi), 'काकी' (Kaki), 'बेटा' (Beta), 'भैया' (Bhaiya), etc.
-6. Output ONLY the conversational question text."""
+2. Note: "Advertisement Type" refers to outdoor municipal advertising structure types (such as Hoarding, Unipole, Kiosk, Billboard, Banner, Poster, Digital Screen). NEVER ask about or refer to media file formats like videos, images, or audio formats.
+3. Do NOT say "Hello" unless the user explicitly greeted you.
+4. NEVER repeat or confirm what the user just selected. 
+5. DO NOT list the available options in the text (the UI will handle that).
+6. Maintain a formal, professional tone. NEVER use informal or familial terms of address like 'दीदी' (Didi), 'काकी' (Kaki), 'बेटा' (Beta), 'भैया' (Bhaiya), etc.
+7. Output ONLY the conversational question text."""
         try:
             conv = llm.invoke([SystemMessage(content=ctx)])
             text = conv.content.strip()
@@ -572,7 +573,7 @@ def create_booking_node(state: AdvBookingState):
     reset_draft["_awaiting_confirm"] = None
     
     # Delete from Qdrant since it's now a completed booking, no longer a draft
-    MemoryManager.delete_draft_state(phone_number)
+    MemoryManager.delete_draft_state(phone_number, "adv_booking")
     
     return {"messages": [AIMessage(content=resp)], "draft_booking": reset_draft, "missing_fields": ALL_FIELDS, "input_type": "text", "options": []}
 

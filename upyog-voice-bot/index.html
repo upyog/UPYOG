@@ -6,12 +6,13 @@
  <meta name="viewport" content="width=device-width, initial-scale=1.0">
  <title>UPYOG AI Assistant</title>
  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
- <link rel="stylesheet" href="/upyog-voice-bot/assets/styles.css">
+ <link rel="stylesheet" href="assets/styles.css">
 </head>
 
 <body>
   <div id="phone-login-modal">
-  <div class="phone-modal-card">
+  <div class="phone-modal-card" style="position: relative;">
+  <span onclick="closeLoginModal()" title="Close" style="position: absolute; top: 16px; right: 20px; cursor: pointer; font-size: 18px; color: #94a3b8; font-weight: bold;">✕</span>
   <h2>System Login</h2>
   <div id="login-mobile-screen">
   <p>Enter your 10-digit mobile number to receive an OTP via UPYOG.</p>
@@ -39,11 +40,10 @@
  </div>
 
  <header>
- <h1><span class="logo-icon" id="logo-icon"></span> UPYOG AI</h1>
+ <h1><span class="logo-icon" id="logo-icon"></span> UPYOG Assistant</h1>
  <div class="header-controls">
+ <button class="login-btn" onclick="openLoginModal()" id="login-btn" style="display: none;">Login</button>
  <button class="logout-btn" onclick="logoutSession()" id="logout-btn" style="display: none;">Logout</button>
- <div class="lang-toggle" id="lang-toggle"></div>
- <button class="settings-toggle" id="settings-toggle"></button>
  </div>
  </header>
 
@@ -62,6 +62,14 @@
  <span class="speech-preview-icon" id="speech-preview-icon"></span>
  <span id="speech-preview-text"></span>
  </div>
+  <div id="interrupt-wrapper">
+    <button class="stop-voice-btn" id="stop-voice-btn" title="Stop voice playback and end session">
+      <span id="stop-voice-icon"></span> Stop Voice
+    </button>
+    <button class="interrupt-mic-btn" id="interrupt-mic-btn" title="Interrupt bot &amp; start speaking next question">
+      <span id="interrupt-mic-icon"></span> Interrupt &amp; Ask
+    </button>
+  </div>
  </div>
  
  <div class="input-area" id="input-area-container">
@@ -92,20 +100,39 @@
  </div>
  </div>
 
- <script src="/upyog-voice-bot/assets/constants.js"></script>
- <script src="/upyog-voice-bot/assets/icons.js"></script>
+ <script src="assets/constants.js"></script>
+ <script src="assets/icons.js"></script>
  <script>
   // ============== REDIS LOGIN LOGIC ==============
   let conversationSessionId = null;
+
+  function openLoginModal() {
+    const modal = document.getElementById("phone-login-modal");
+    if (modal) {
+      modal.style.display = "flex";
+      showMobileScreen();
+    }
+  }
+
+  function closeLoginModal() {
+    const modal = document.getElementById("phone-login-modal");
+    if (modal) modal.style.display = "none";
+  }
 
   window.addEventListener('DOMContentLoaded', () => {
     const savedPhone = localStorage.getItem("upyog_redis_phone");
     const savedToken = localStorage.getItem("upyog_auth_token");
     const modal = document.getElementById("phone-login-modal");
+    const loginBtn = document.getElementById("login-btn");
+    const logoutBtn = document.getElementById("logout-btn");
     if (!savedPhone || !savedToken) {
-      modal.style.display = "flex";
+      if (modal) modal.style.display = "flex";
+      if (loginBtn) loginBtn.style.display = "inline-block";
+      if (logoutBtn) logoutBtn.style.display = "none";
       setTimeout(() => { document.getElementById("phone-input").focus(); }, 100);
     } else {
+      if (loginBtn) loginBtn.style.display = "none";
+      if (logoutBtn) logoutBtn.style.display = "inline-block";
       let sessionId = sessionStorage.getItem("upyog_active_session");
       if (!sessionId) {
         sessionId = `user_${savedPhone}_${Math.random().toString(36).substring(2, 9)}`;
@@ -258,7 +285,11 @@
     if (sendBtn) sendBtn.disabled = false;
     if (sessionToggleBtn) sessionToggleBtn.disabled = false;
     if (attachBtn) attachBtn.disabled = false;
-    document.getElementById("logout-btn").style.display = "inline-block";
+    
+    const loginBtn = document.getElementById("login-btn");
+    const logoutBtn = document.getElementById("logout-btn");
+    if (loginBtn) loginBtn.style.display = "none";
+    if (logoutBtn) logoutBtn.style.display = "inline-block";
     
     // Automatically send greeting message on successful activation
     sendQuery("hello");
@@ -311,14 +342,19 @@
  API_URL += '/upyog-voice';
  }
 
- let NIAUTT_REQUEST_INFO = {};
- function handleNiuattMessage(event) {
- if (event.origin !== CONFIG.niuattOrigin) return;
- if (event.data?.type === "INIT_DATA") {
- NIAUTT_REQUEST_INFO = event.data.RequestInfo || {};
- }
- }
- window.addEventListener("message", handleNiuattMessage);
+  let NIAUTT_REQUEST_INFO = {};
+  function handleNiuattMessage(event) {
+      console.log('[UPYOG POST_MESSAGE] Received window postMessage', { data: event.data, origin: event.origin });
+      if (event.data?.type === "INIT_DATA") {
+          NIAUTT_REQUEST_INFO = event.data.RequestInfo || {};
+          console.log('[UPYOG AUTH] Stored RequestInfo from parent page', NIAUTT_REQUEST_INFO);
+      }
+      if (event.data?.type === "TOGGLE_MIC" || event.data?.action === "TOGGLE_MIC" || (event.data?.type === "KEY_EVENT" && (event.data?.key === 'd' || event.data?.key === 'D'))) {
+          console.log('[UPYOG POST_MESSAGE] Triggering session toggle from postMessage command');
+          handleSessionToggle();
+      }
+  }
+  window.addEventListener("message", handleNiuattMessage);
 
    const getRequestInfo = () => {
      const info = { ...NIAUTT_REQUEST_INFO, msgId: `${Date.now()}|en_IN` };
@@ -334,17 +370,104 @@
      return info;
    };
 
- function setState(newState) {
- currentState = newState;
- if (newState === States.SPEAKING) {
- statusDot.className = 'status-dot speaking';
- statusDot.innerHTML = ICONS.speakingWave;
- } else {
- statusDot.className = 'status-dot ' + newState.toLowerCase();
- statusDot.innerHTML = '';
- }
- statusText.innerText = STATE_LABELS[newState];
- }
+  // ============== SESSION INACTIVITY TIMER (5 SECONDS) ==============
+  let sessionInactivityTimer = null;
+
+  function startSessionInactivityTimer() {
+      clearSessionInactivityTimer();
+      if (sessionActive && currentState === States.LISTENING) {
+          sessionInactivityTimer = setTimeout(() => {
+              if (sessionActive && currentState === States.LISTENING) {
+                  endSessionAuto();
+              }
+          }, 5000);
+      }
+  }
+
+  function clearSessionInactivityTimer() {
+      if (sessionInactivityTimer) {
+          clearTimeout(sessionInactivityTimer);
+          sessionInactivityTimer = null;
+      }
+  }
+
+  function endSessionAuto() {
+      if (!sessionActive) return;
+      sessionActive = false;
+      clearTimeout(silenceTimer);
+      clearTimeout(forceTimer);
+      clearSessionInactivityTimer();
+
+      destroyRecognition();
+
+      if (currentAudio) {
+          currentAudio.pause();
+          currentAudio.src = '';
+          currentAudio = null;
+      }
+
+      if (micStream) {
+          micStream.getTracks().forEach(t => t.stop());
+          micStream = null;
+      }
+
+      updateSessionBtnIcon(false);
+      setState(States.IDLE);
+  }
+
+  // ============== STATE MACHINE ==============
+  function setState(newState) {
+  console.log('[UPYOG STATE] Transitioning state: ' + currentState + ' -> ' + newState);
+  currentState = newState;
+  const sendBtn = document.getElementById('send-text-btn');
+
+  if (newState === States.SPEAKING) {
+  statusDot.className = 'status-dot speaking';
+  statusDot.innerHTML = ICONS.speakingWave;
+  if (sendBtn) {
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = ICONS.stop;
+      sendBtn.title = 'Stop Voice & End Session';
+      sendBtn.classList.add('stop-mode');
+  }
+  updateSessionBtnIcon(sessionActive);
+  } else if (newState === States.PROCESSING) {
+  statusDot.className = 'status-dot processing';
+  statusDot.innerHTML = '';
+  if (sendBtn) {
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = ICONS.stop;
+      sendBtn.title = 'Stop Voice & End Session';
+      sendBtn.classList.add('stop-mode');
+  }
+  updateSessionBtnIcon(sessionActive);
+  } else if (newState === States.LISTENING) {
+  statusDot.className = 'status-dot listening';
+  statusDot.innerHTML = '';
+  if (sendBtn) {
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = ICONS.send;
+      sendBtn.title = 'Send message';
+      sendBtn.classList.remove('stop-mode');
+  }
+  updateSessionBtnIcon(sessionActive);
+  startSessionInactivityTimer();
+  } else {
+  statusDot.className = 'status-dot ' + newState.toLowerCase();
+  statusDot.innerHTML = '';
+  if (sendBtn) {
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = ICONS.send;
+      sendBtn.title = 'Send message';
+      sendBtn.classList.remove('stop-mode');
+  }
+  updateSessionBtnIcon(sessionActive);
+  clearSessionInactivityTimer();
+  clearInterimDisplay();
+  }
+
+  statusText.innerText = STATE_LABELS[newState];
+  }
 
  document.querySelectorAll('.lang-btn').forEach(btn => {
  btn.addEventListener('click', function handleLangBtnClick() {
@@ -355,7 +478,7 @@
  });
 
  function toggleSettingsPanel() { settingsPanel.classList.toggle('show'); }
- settingsToggle.addEventListener('click', toggleSettingsPanel);
+ if (settingsToggle) settingsToggle.addEventListener('click', toggleSettingsPanel);
 
  function updateBargeSensitivity(e) {
  bargeInThreshold = parseFloat(e.target.value);
@@ -382,6 +505,39 @@
  if (input) input.placeholder = 'Ask anything about UPYOG services...';
  }
 
+  // ============== THINKING INDICATOR ==============
+  function showThinkingIndicator() {
+      console.log('[UPYOG UI] Displaying Thinking indicator bubble');
+      removeThinkingIndicator();
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'message-wrapper bot thinking-wrapper';
+      wrapper.id = 'thinking-indicator';
+
+      const bubble = document.createElement('div');
+      bubble.className = 'message bot thinking-bubble';
+      bubble.innerHTML = `
+          <div class="typing-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+          </div>
+          <span class="thinking-text">Thinking...</span>
+      `;
+
+      wrapper.appendChild(bubble);
+      chatContainer.appendChild(wrapper);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
+
+  function removeThinkingIndicator() {
+      const indicator = document.getElementById('thinking-indicator');
+      if (indicator) {
+          console.log('[UPYOG UI] Removing Thinking indicator bubble');
+          indicator.remove();
+      }
+  }
+
  function addUserMessage(text) {
  const hero = document.getElementById('hero-welcome');
  if (hero) hero.classList.add('hidden');
@@ -398,10 +554,12 @@
  rowDiv.appendChild(msgDiv);
  rowDiv.appendChild(avatarDiv);
  chatContainer.appendChild(rowDiv);
+ showThinkingIndicator();
  chatContainer.scrollTop = chatContainer.scrollHeight;
  }
 
   function addBotMessage(text, mode, inputType, options, field, minDate) {
+  removeThinkingIndicator();
  const hero = document.getElementById('hero-welcome');
  if (hero) hero.classList.add('hidden');
  if (mode !== 'grievance_collecting') removeTextInputBar();
@@ -762,7 +920,7 @@
 
  recognition = new SR();
  recognition.continuous = true; recognition.interimResults = true; recognition.maxAlternatives = 1;
- recognition.lang = lang === 'hi' ? 'hi-IN' : 'en-IN';
+ recognition.lang = 'en-IN';
 
  recognition.onstart = function onRecognitionStart() { setState(States.LISTENING); };
  recognition.onresult = handleResult;
@@ -797,10 +955,11 @@
  }
  if (newFinal) finalTranscript += newFinal;
  const displayText = finalTranscript + interim;
- if (displayText) {
- interimText.innerText = displayText;
- interimDisplay.classList.add('show');
- }
+  if (displayText) {
+  clearSessionInactivityTimer();
+  interimText.innerText = displayText;
+  interimDisplay.classList.add('show');
+  }
  const textToSend = finalTranscript.trim() || interim.trim();
  if (textToSend) {
  silenceTimer = setTimeout(() => { attemptSend(textToSend); }, CONFIG.silenceWaitMs);
@@ -819,20 +978,33 @@
  sendQuery(text.trim());
  }
 
- function onTurnComplete() {
- turnCount++; finalTranscript = ''; currentTranscript = '';
- clearTimeout(silenceTimer); clearTimeout(forceTimer);
- silenceTimer = null; forceTimer = null;
- if (!sessionActive) return;
- if (turnCount % 5 === 0) { destroyRecognition(); createRecognition(lastDetectedLang); }
- if (recognition) {
- try { recognition.start(); setState(States.LISTENING); } 
- catch(e) {
- if (e.name === 'InvalidStateError') setState(States.LISTENING);
- else { setTimeout(() => { if (sessionActive) { destroyRecognition(); createRecognition(lastDetectedLang); recognition.start(); setState(States.LISTENING); } }, 300); }
- }
- }
- }
+  function onTurnComplete() {
+  turnCount++; finalTranscript = ''; currentTranscript = '';
+  clearTimeout(silenceTimer); clearTimeout(forceTimer);
+  silenceTimer = null; forceTimer = null;
+  if (!sessionActive) return;
+
+  destroyRecognition();
+  createRecognition(lastDetectedLang);
+
+  try {
+      recognition.start();
+      setState(States.LISTENING);
+  } catch (e) {
+      if (e.name === 'InvalidStateError') {
+          setState(States.LISTENING);
+      } else {
+          setTimeout(() => {
+              if (sessionActive) {
+                  destroyRecognition();
+                  createRecognition(lastDetectedLang);
+                  recognition.start();
+                  setState(States.LISTENING);
+              }
+          }, 300);
+      }
+  }
+  }
 
  async function startBargeInMonitor() {
  try {
@@ -849,7 +1021,7 @@
  if (currentState === States.SPEAKING) {
  if (rms > bargeInThreshold) {
  voiceFrames++;
- if (voiceFrames > 8) { triggerBargeIn(); voiceFrames = 0; requestAnimationFrame(checkVolume); return; }
+ if (voiceFrames > 4) { triggerBargeIn(); voiceFrames = 0; requestAnimationFrame(checkVolume); return; }
  } else { voiceFrames = 0; }
  } else { voiceFrames = 0; }
  requestAnimationFrame(checkVolume);
@@ -873,9 +1045,10 @@
 
  function clearInterimDisplay() { if (interimDisplay) { interimDisplay.classList.remove('show'); interimText.innerText = ''; } }
 
- async function sendQuery(transcript, file_name = null, file_data = null, display_text = null) {
-  if ((!transcript.trim() && !file_name) || !conversationSessionId) return;
-  setState(States.PROCESSING);
+  async function sendQuery(transcript, file_name = null, file_data = null, display_text = null) {
+   if ((!transcript.trim() && !file_name) || !conversationSessionId) return;
+   destroyRecognition();
+   setState(States.PROCESSING);
   clearInterimDisplay();
   if (currentFetch) { currentFetch.abort(); currentFetch = null; }
   if (file_name) {
@@ -916,7 +1089,7 @@
 
  const detectedLang = data.lang || 'en';
  lastDetectedLang = detectedLang;
- if (recognition) recognition.lang = detectedLang === 'hi' ? 'hi-IN' : 'en-IN';
+ if (recognition) recognition.lang = 'en-IN';
 
   if (data.messages && Array.isArray(data.messages) && data.messages.length > 1) {
     data.messages.forEach((msg, idx) => {
@@ -941,67 +1114,242 @@
  }
  }
 
- async function playAudio(base64) {
- setState(States.SPEAKING);
- try {
- if (currentAudio) { currentAudio.onerror = null; currentAudio.onended = null; currentAudio.pause(); currentAudio.src = ''; currentAudio.load(); currentAudio = null; }
- audioPool.forEach(url => { try { URL.revokeObjectURL(url); } catch(e) {} });
- audioPool.length = 0;
+        // ============== INTERRUPT & STOP VOICE BUTTONS ==============
+        const interruptWrapper = document.getElementById('interrupt-wrapper');
+        const interruptMicBtn = document.getElementById('interrupt-mic-btn');
+        const stopVoiceBtn = document.getElementById('stop-voice-btn');
 
- const mimeType = base64.startsWith('UklGR') ? 'audio/wav' : 'audio/mp3';
- const byteCharacters = atob(base64); const byteNumbers = new Array(byteCharacters.length);
- for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
- const byteArray = new Uint8Array(byteNumbers); const blob = new Blob([byteArray], { type: mimeType });
- const url = URL.createObjectURL(blob); audioPool.push(url);
+        function showInterruptBtn() {
+            if (interruptWrapper) interruptWrapper.classList.add('visible');
+        }
 
- const audio = currentAudio = new Audio(url);
- let audioHandled = false;
+        function hideInterruptBtn() {
+            if (interruptWrapper) interruptWrapper.classList.remove('visible');
+        }
 
- audio.onended = function onAudioEnded() {
- if (audioHandled) return; audioHandled = true;
- URL.revokeObjectURL(url); currentAudio = null;
- setState(States.LISTENING); onTurnComplete();
- };
- audio.onerror = function onAudioError(e) {
- if (audioHandled) return; audioHandled = true;
- URL.revokeObjectURL(url); currentAudio = null;
- let errCode = audio.error ? audio.error.code : 'unknown';
- let errMsg = audio.error ? audio.error.message : 'no message';
- if (audio.currentTime > 0) { setState(States.LISTENING); onTurnComplete(); } 
- else { addBotMessage('Sorry, could not play audio. Error: ' + errCode + ' - ' + errMsg, null, null, null, null); setState(States.LISTENING); onTurnComplete(); }
- };
- await currentAudio.play();
- } catch(e) { setState(States.LISTENING); onTurnComplete(); }
- }
+        function handleStopVoiceClick() {
+            console.log('[UPYOG STOP] handleStopVoiceClick invoked — stopping audio and ending session');
+            removeThinkingIndicator();
+            if (currentAudio) {
+                currentAudio.onended = null;
+                currentAudio.onerror = null;
+                currentAudio.pause();
+                currentAudio.src = '';
+                currentAudio = null;
+            }
 
- async function handleSessionToggle() {
- if (sessionActive) {
- sessionActive = false;
- sessionBtn.innerText = 'Start Session'; sessionBtn.classList.remove('end'); sessionBtn.classList.add('start');
- clearTimeout(silenceTimer); clearTimeout(forceTimer); destroyRecognition();
- if (currentAudio) { currentAudio.onerror = null; currentAudio.onended = null; currentAudio.pause(); currentAudio.src = ''; currentAudio = null; }
- if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
- setState(States.IDLE);
- } else {
- sessionActive = true;
- sessionBtn.innerText = 'End Session'; sessionBtn.classList.remove('start'); sessionBtn.classList.add('end');
- turnCount = 0; finalTranscript = ''; currentTranscript = '';
- try { createAndStartRecognition(); startBargeInMonitor(); setState(States.LISTENING); } 
- catch(e) { sessionActive = false; setState(States.IDLE); }
- }
- }
- sessionBtn.addEventListener('click', handleSessionToggle);
+            if (currentFetch) {
+                currentFetch.abort();
+                currentFetch = null;
+            }
 
- const textInput = document.getElementById('text-input');
- const sendTextBtn = document.getElementById('send-text-btn');
- function handleTextSubmit() {
- const text = textInput.value.trim();
- if (!text) return;
- sendQuery(text);
- textInput.value = '';
- }
- sendTextBtn.addEventListener('click', handleTextSubmit);
- textInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleTextSubmit(); });
+            fetch(`${API_URL}/stop`, { method: 'POST' }).catch(() => {});
+
+            audioPool.forEach(u => { try { URL.revokeObjectURL(u); } catch(e) {} });
+            audioPool.length = 0;
+
+            clearTimeout(silenceTimer);
+            clearTimeout(forceTimer);
+            silenceTimer = null;
+            forceTimer = null;
+            destroyRecognition();
+
+            if (micStream) {
+                micStream.getTracks().forEach(t => t.stop());
+                micStream = null;
+            }
+
+            sessionActive = false;
+            updateSessionBtnIcon(false);
+
+            hideInterruptBtn();
+            setState(States.IDLE);
+        }
+
+        function handleInterruptClick() {
+            console.log('[UPYOG INTERRUPT] handleInterruptClick invoked — pausing voice and starting listening');
+            removeThinkingIndicator();
+            if (currentAudio) {
+                currentAudio.onended = null;
+                currentAudio.onerror = null;
+                currentAudio.pause();
+                currentAudio.src = '';
+                currentAudio = null;
+            }
+
+            if (currentFetch) {
+                currentFetch.abort();
+                currentFetch = null;
+            }
+
+            fetch(`${API_URL}/stop`, { method: 'POST' }).catch(() => {});
+
+            audioPool.forEach(u => { try { URL.revokeObjectURL(u); } catch(e) {} });
+            audioPool.length = 0;
+
+            finalTranscript = '';
+            currentTranscript = '';
+            clearTimeout(silenceTimer);
+            clearTimeout(forceTimer);
+            silenceTimer = null;
+            forceTimer = null;
+
+            hideInterruptBtn();
+
+            if (sessionActive) {
+                destroyRecognition();
+                createRecognition(lastDetectedLang);
+                setState(States.LISTENING);
+                clearInterimDisplay();
+                setTimeout(() => {
+                    if (sessionActive && recognition) {
+                        try { recognition.start(); } catch(e) {}
+                    }
+                }, 150);
+            }
+        }
+
+        if (stopVoiceBtn) stopVoiceBtn.addEventListener('click', handleStopVoiceClick);
+        if (interruptMicBtn) interruptMicBtn.addEventListener('click', handleInterruptClick);
+
+  async function playAudio(base64) {
+  setState(States.SPEAKING);
+
+  destroyRecognition();
+  showInterruptBtn();
+
+  try {
+  if (currentAudio) { currentAudio.onerror = null; currentAudio.onended = null; currentAudio.pause(); currentAudio.src = ''; currentAudio.load(); currentAudio = null; }
+  audioPool.forEach(url => { try { URL.revokeObjectURL(url); } catch(e) {} });
+  audioPool.length = 0;
+
+  const mimeType = base64.startsWith('UklGR') ? 'audio/wav' : 'audio/mp3';
+  const byteCharacters = atob(base64); const byteNumbers = new Array(byteCharacters.length);
+  for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
+  const byteArray = new Uint8Array(byteNumbers); const blob = new Blob([byteArray], { type: mimeType });
+  const url = URL.createObjectURL(blob); audioPool.push(url);
+
+  const audio = currentAudio = new Audio(url);
+  let audioHandled = false;
+
+  function afterAudioDone() {
+      if (audioHandled) return;
+      audioHandled = true;
+      URL.revokeObjectURL(url);
+      currentAudio = null;
+      hideInterruptBtn();
+      setState(States.LISTENING);
+      onTurnComplete();
+  }
+
+  audio.onended = afterAudioDone;
+  audio.onerror = afterAudioDone;
+
+  await currentAudio.play();
+  } catch(e) {
+  hideInterruptBtn();
+  setState(States.LISTENING);
+  onTurnComplete();
+  }
+  }
+
+  function updateSessionBtnIcon(active) {
+      if (!sessionBtn) return;
+      if (!active) {
+          sessionBtn.className = 'icon-button voice-button start';
+          sessionBtn.innerHTML = ICONS.mic;
+          sessionBtn.title = 'Start Session';
+          return;
+      }
+
+      if (currentState === States.SPEAKING) {
+          sessionBtn.className = 'icon-button voice-button end speaking';
+          sessionBtn.innerHTML = ICONS.pause;
+          sessionBtn.title = 'Interrupt & Ask';
+      } else if (currentState === States.PROCESSING) {
+          sessionBtn.className = 'icon-button voice-button end processing';
+          sessionBtn.innerHTML = ICONS.mic;
+          sessionBtn.title = 'End Session';
+      } else if (currentState === States.LISTENING) {
+          sessionBtn.className = 'icon-button voice-button end listening';
+          sessionBtn.innerHTML = ICONS.mic;
+          sessionBtn.title = 'End Session';
+      } else {
+          sessionBtn.className = 'icon-button voice-button end';
+          sessionBtn.innerHTML = ICONS.mic;
+          sessionBtn.title = 'End Session';
+      }
+  }
+
+  async function handleSessionToggle() {
+  if (currentState === States.SPEAKING) {
+      handleInterruptClick();
+      return;
+  }
+
+  if (sessionActive) {
+  sessionActive = false;
+  updateSessionBtnIcon(false);
+  clearTimeout(silenceTimer); clearTimeout(forceTimer); clearSessionInactivityTimer(); destroyRecognition();
+  if (currentAudio) { currentAudio.onerror = null; currentAudio.onended = null; currentAudio.pause(); currentAudio.src = ''; currentAudio = null; }
+  if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+  setState(States.IDLE);
+  } else {
+  sessionActive = true;
+  updateSessionBtnIcon(true);
+  turnCount = 0; finalTranscript = ''; currentTranscript = '';
+  try { createAndStartRecognition(); setState(States.LISTENING); } 
+  catch(e) { sessionActive = false; updateSessionBtnIcon(false); setState(States.IDLE); }
+  }
+  }
+  sessionBtn.addEventListener('click', handleSessionToggle);
+
+  function handleKeydown(e) {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'd' || e.key === 'D' || e.code === 'KeyD')) {
+          e.preventDefault();
+          e.stopPropagation();
+          handleSessionToggle();
+      }
+  }
+  window.addEventListener('keydown', handleKeydown, true);
+  document.addEventListener('keydown', handleKeydown, true);
+
+  function autoFocusChatbot() {
+      try {
+          window.focus();
+          const input = document.getElementById('text-input');
+          if (input && document.activeElement !== input) {
+              input.focus();
+          }
+      } catch (e) {}
+  }
+
+  window.addEventListener('load', autoFocusChatbot);
+  document.addEventListener('DOMContentLoaded', autoFocusChatbot);
+  window.addEventListener('mouseenter', autoFocusChatbot);
+  document.addEventListener('mousemove', autoFocusChatbot, { once: true });
+
+  const textInput = document.getElementById('text-input');
+  const sendTextBtn = document.getElementById('send-text-btn');
+
+  function handleTextSubmit() {
+  if (currentState === States.SPEAKING || currentState === States.PROCESSING) return;
+  const text = textInput.value.trim();
+  if (!text) return;
+  sendQuery(text);
+  textInput.value = '';
+  }
+
+  function handleSendBtnClick() {
+      if (currentState === States.SPEAKING || currentState === States.PROCESSING) {
+          handleStopVoiceClick();
+      } else {
+          handleTextSubmit();
+      }
+  }
+
+  sendTextBtn.addEventListener('click', handleSendBtnClick);
+  textInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleTextSubmit(); });
 
  // 1. Add this function to save history
 function saveChatHistory() {

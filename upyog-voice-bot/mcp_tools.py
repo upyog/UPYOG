@@ -165,9 +165,15 @@ class UpyogAPI:
           - Slot availability search
         Never use for create_booking or search_ads (those need citizen auth).
         """
+        token = None
+        try:
+            token = self.get_live_token()
+        except Exception as e:
+            logger.warning(f"Could not fetch live system OAuth token: {e}. Proceeding without token for system call.")
+
         return {
             "apiId":      "Rainmaker",
-            "authToken":  self.get_live_token(),
+            "authToken":  token,
             "userInfo": {
                 "id":            _mu.get("id", 0),
                 "uuid":          _mu.get("uuid", ""),
@@ -196,17 +202,24 @@ class UpyogAPI:
         If UPYOG returns 401 (expired token), silently refreshes and retries once.
         """
         is_system = False
-        if not payload.get("RequestInfo", {}).get("authToken"):
-            payload["RequestInfo"]["authToken"] = self.get_live_token()
-            is_system = True
+        req_info = payload.get("RequestInfo", {})
+        if "authToken" not in req_info or req_info.get("authToken") is None:
+            try:
+                payload["RequestInfo"]["authToken"] = self.get_live_token()
+                is_system = True
+            except Exception as e:
+                logger.warning(f"Could not fetch live system OAuth token: {e}. Proceeding with payload as is.")
             
         headers = {"Content-Type": "application/json"}
         res = requests.post(url, json=payload, headers=headers)
         if res.status_code == 401 and is_system:
             logger.info("Got 401 — refreshing token and retrying...")
             self.auth_token = None
-            payload["RequestInfo"]["authToken"] = self.get_live_token()
-            res = requests.post(url, json=payload, headers=headers)
+            try:
+                payload["RequestInfo"]["authToken"] = self.get_live_token()
+                res = requests.post(url, json=payload, headers=headers)
+            except Exception as e:
+                logger.warning(f"Token refresh failed: {e}")
             
         if res.status_code == 400:
             try:
@@ -297,7 +310,7 @@ def mdms_get(module_name: str, master_name: str) -> list:
     # Serve from cache if available
     if module_name in _mdms_cache:
         items = _mdms_cache[module_name].get(master_name, [])
-        return [item.get("name") or item.get("code") for item in items if item.get("active", True)]
+        return [(item.get("name") or item.get("code") or "").strip() for item in items if item.get("active", True) and (item.get("name") or item.get("code"))]
 
     state_tenant = MDMS_TENANT_ID.split(".")[0]
 
@@ -326,7 +339,7 @@ def mdms_get(module_name: str, master_name: str) -> list:
         module_data = data.get("MdmsRes", {}).get(module_name, {})
         _mdms_cache[module_name] = module_data   # cache for subsequent calls
         items = module_data.get(master_name, [])
-        return [item.get("name") or item.get("code") for item in items if item.get("active", True)]
+        return [(item.get("name") or item.get("code") or "").strip() for item in items if item.get("active", True) and (item.get("name") or item.get("code"))]
     except Exception as e:
         logger.error(f"MDMS error for {module_name}/{master_name}: {e}")
         return []

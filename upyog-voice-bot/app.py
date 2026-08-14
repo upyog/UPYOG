@@ -335,8 +335,8 @@ def is_in_domain(query: str) -> tuple:
         return False, "out_of_domain"
     return True, "ok"
 
-# Returns a translated rejection message based on the blocking reason
 def get_rejection_message(reason: str, lang: str) -> str:
+    logger.info(f"[REJECTION] Generating rejection message for reason='{reason}', lang='{lang}'")
     if lang == 'hi':
         return "मैं केवल UPYOG और शहरी सरकारी सेवाओं के बारे में सहायता कर सकता हूँ। कृपया UPYOG सेवाओं के बारे में पूछें।"
     return "I can only help with UPYOG and urban government services. Please ask about UPYOG services."
@@ -365,32 +365,7 @@ HINDI_PHONETIC_WORDS = {
     'ke', 'ka', 'ki', 'ko', 'se', 'me', 'mein', 'pe', 'ka'
 }
 
-# Common English words (for majority voting)
-COMMON_ENGLISH_WORDS = {
-    'the', 'is', 'are', 'was', 'were', 'be', 'been', 'being',
-    'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should',
-    'may', 'might', 'must', 'shall', 'can',
-    'i', 'you', 'he', 'she', 'it', 'we', 'they', 'what', 'which', 'who', 'whom',
-    'this', 'that', 'these', 'those', 'am', 'is', 'are', 'was', 'were',
-    'my', 'your', 'his', 'her', 'its', 'our', 'their',
-    'and', 'but', 'or', 'not', 'no', 'yes', 'if', 'then', 'else',
-    'how', 'when', 'where', 'why', 'what', 'which',
-    'please', 'thanks', 'thank', 'sorry', 'ok', 'okay',
-    'process', 'apply', 'register', 'form', 'document', 'certificate', 'license',
-    'need', 'want', 'require', 'require', 'required',
-    'online', 'offline', 'website', 'portal', 'app', 'mobile', 'phone',
-    'payment', 'pay', 'fee', 'charge', 'cost', 'price',
-    'time', 'date', 'day', 'week', 'month', 'year',
-    'help', 'information', 'info', 'details', 'tell', 'know', 'understand',
-    'download', 'upload', 'check', 'status', 'track',
-    'submit', 'approval', 'approve', 'reject', 'accept',
-    'property', 'tax', 'water', 'sewerage', 'trade', 'business', 'building',
-    'application', 'request', 'complaint', ' grievance', 'issue', 'problem',
-    'service', 'facility', 'benefit', 'scheme', 'program',
-    'available', 'provide', 'give', 'get', 'receive'
-}
-
-# English words commonly transliterated into Devanagari
+# Common Englis# English words commonly transliterated into Devanagari
 ENGLISH_IN_DEVANAGARI = [
     'व्हाट', 'वॉट', 'हाउ', 'व्हेन', 'व्हेयर', 'वेयर', 'व्हाई', 'हू', 'विच',
     'इज', 'आर', 'वॉज', 'वेयर', 'हैव', 'हैज', 'डू', 'डज',
@@ -403,10 +378,6 @@ ENGLISH_IN_DEVANAGARI = [
 ]
 
 def detect_language(text: str) -> dict:
-    """
-    Script-aware language detection.
-    Returns dict: {'lang': 'hi'|'en', 'script': ..., 'search_lang': 'hi'|'en'}
-    """
     if not text or not text.strip():
         result = {'lang': 'en', 'script': 'english', 'search_lang': 'en'}
         logger.debug(f"[LANG DETECT] Empty text provided -> default result: {result}")
@@ -485,7 +456,7 @@ def detect_language_per_turn(text: str) -> tuple:
 
 # Translates text using the official Bhashini API with caching for performance
 def translate_text_bhashini(text, source_lang, target_lang):
-    logger.info(f"Translating from {source_lang} to {target_lang}")
+    logger.info(f"[BHASHINI TRANSLATE] Translating {len(text)} chars from {source_lang} to {target_lang}")
     payload = {
         "pipelineTasks": [
             {
@@ -517,7 +488,6 @@ def translate_text_bhashini(text, source_lang, target_lang):
         logger.error(f"[BHASHINI TRANSLATE] Exception: {e}")
         return None
 
-# Translates text with a built-in fallback mechanism in case Bhashini is down
 def translate_text(text, source_lang, target_lang):
     if source_lang == target_lang or not text:
         logger.debug(f"[TRANSLATE] Skipping translation since source_lang ({source_lang}) == target_lang ({target_lang})")
@@ -587,16 +557,17 @@ def text_to_speech(text, language_code, gender="female"):
             try:
                 asyncio.run(generate_edge_tts(text, voice, temp_path))
             except Exception as e:
-                logger.error(f"Edge-TTS generation exception: {e}")
+                logger.error(f"[TTS EDGE-TTS] Edge-TTS generation exception: {e}")
             
             with open(temp_path, "rb") as f:
                 raw_audio = f.read()
             os.unlink(temp_path)
             
-            if len(raw_audio) > 100:  # Valid audio should be larger than 100 bytes
+            if len(raw_audio) > 100:
+                logger.info(f"[TTS EDGE-TTS] Successfully generated audio. Payload length: {len(raw_audio)} bytes")
                 return base64.b64encode(raw_audio).decode('utf-8')
             else:
-                logger.error("Edge-TTS generated empty or invalid audio file, falling back to Bhashini.")
+                logger.error("[TTS EDGE-TTS] Edge-TTS generated empty or invalid audio file, falling back to Bhashini.")
         except Exception as e:
             logger.error(f"[TTS EDGE-TTS] Edge-TTS failed: {e}. Falling back to Bhashini...")
 
@@ -733,7 +704,9 @@ def get_rag_response(query: str, history: list, lang: str, search_lang: str = No
     # Step 2: Build language instruction
     if lang == 'hi':
         lang_rule = "CRITICAL LANGUAGE INSTRUCTION: The user is asking in Hindi. You MUST respond in pure Hindi language using Devanagari script ONLY (हिंदी लिपि). Do NOT use Roman script, English sentences, or Romanized Hinglish under any circumstances. Exception: keep UPYOG, NUDM, NOC, GIS, ULB, MoU as-is."
+        lang_rule = "CRITICAL LANGUAGE INSTRUCTION: The user is asking in Hindi. You MUST respond in pure Hindi language using Devanagari script ONLY (हिंदी लिपि). Do NOT use Roman script, English sentences, or Romanized Hinglish under any circumstances. Exception: keep UPYOG, NUDM, NOC, GIS, ULB, MoU as-is."
     else:
+        lang_rule = "CRITICAL LANGUAGE INSTRUCTION: The user is asking in English. You MUST respond in pure standard English script and language ONLY. Do NOT use Romanized Hinglish, Hindi words, or Devanagari script under any circumstances."
         lang_rule = "CRITICAL LANGUAGE INSTRUCTION: The user is asking in English. You MUST respond in pure standard English script and language ONLY. Do NOT use Romanized Hinglish, Hindi words, or Devanagari script under any circumstances."
 
     # Step 3: Build context section
@@ -753,9 +726,21 @@ Answer from your general knowledge about:
 - Standard government processes for urban services in India"""
 
     # Step 4: Build conversation history with language isolation
+    # Step 4: Build conversation history with language isolation
     history_messages = []
     for turn in history[-6:]:
         if "content" in turn and "role" in turn:
+            content = turn["content"]
+            if turn["role"] == "assistant":
+                if lang == 'en' and any('ऀ' <= c <= 'ॿ' for c in content):
+                    translated = translate_text(content, "hi", "en")
+                    if translated and len(translated.strip()) > 0:
+                        content = translated
+                elif lang == 'hi' and not any('ऀ' <= c <= 'ॿ' for c in content):
+                    translated = translate_text(content, "en", "hi")
+                    if translated and len(translated.strip()) > 0:
+                        content = translated
+            history_messages.append({"role": turn["role"], "content": content})
             content = turn["content"]
             if turn["role"] == "assistant":
                 if lang == 'en' and any('ऀ' <= c <= 'ॿ' for c in content):
@@ -1227,6 +1212,7 @@ def chat():
         user_data = request.json or {}
         user_input = user_data.get("query", "")
         session_id = user_data.get("session_id", "default")
+        request_info = user_data.get("request_info") or user_data.get("RequestInfo", {})
         phone_anchor = extract_phone_from_session(session_id)
         from database import get_chat_history
         history = get_chat_history(phone_anchor) if phone_anchor != "default" else []
@@ -1411,6 +1397,46 @@ def chat():
                     "mode": "greeting", "audio": audio_output
                 })
 
+        # ===== EARLY INTERCEPTION: Multi-Draft Selection Menu =====
+        # Must run BEFORE intent classification to avoid keyword conflicts (e.g. "booking" triggering status search)
+        phone = extract_phone_from_session(session_id)
+        thread_key = phone if (phone and phone != "default") else session_id
+        config = {"configurable": {"thread_id": thread_key}}
+
+        pending_multi = _get_multi_draft_pending(phone)
+        if pending_multi and pending_multi.get("status") == "awaiting_multi_draft_choice":
+            from draft_switcher import MultiDraftSwitcher
+            drafts = pending_multi.get("drafts", [])
+            logger.info(f"[DraftSwitcher] Intercepted multi-draft response for {phone}. Input='{user_input}', Drafts={len(drafts)}")
+            selected_draft = MultiDraftSwitcher.resolve_citizen_selection(user_input, drafts)
+            
+            _clear_multi_draft_pending(phone)
+            
+            if selected_draft:
+                target_wf = selected_draft.get("plugin_name")
+                draft_data = selected_draft.get("draft_data", {})
+                logger.info(f"[DraftSwitcher] Selected: {target_wf}, draft_data keys: {list(draft_data.keys())}")
+                
+                # Restore selected draft into LangGraph workflow
+                if target_wf in workflows and draft_data:
+                    draft_key = "draft_booking" if target_wf == "adv_booking" else "draft_grievance"
+                    config_update = {"configurable": {"thread_id": phone if (phone and phone != "default") else session_id}}
+                    workflows[target_wf].update_state(config_update, {draft_key: draft_data})
+                    logger.info(f"[DraftSwitcher] Draft restored into LangGraph for {phone}/{target_wf}")
+                    
+                # Send 'continue' — triggers resume path in intent_and_ui_node directly
+                # 'Continue my application' was matching 'my application' keyword → past bookings bug
+                agent_res = process_user_message("continue", phone, session_id, target_workflow=target_wf)
+                audio = text_to_speech(agent_res.get("response", ""), user_language)
+                return jsonify({
+                    "response": agent_res.get("response", ""), "messages": agent_res.get("messages_list", []),
+                    "lang": user_language, "mode": "agent_active", "audio": audio,
+                    "input_type": agent_res.get("input_type", "text"), "options": agent_res.get("options", []),
+                    "show_button": agent_res.get("show_button")
+                })
+            else:
+                logger.warning(f"[DraftSwitcher] Could not resolve selection '{user_input}' from {len(drafts)} drafts")
+
         # ===== INTENT CLASSIFICATION FLOW =====
         ui_lower = user_input.strip().lower()
         is_ui_payload = False
@@ -1441,10 +1467,6 @@ def chat():
         intent = intent_data['intent']
         logger.info(f"INTENT: {intent}, SERVICE: {intent_data.get('service')}, EMOTION: {intent_data.get('emotion')}")
 
-        # Check if dynamic plugin workflow should handle this
-        phone = extract_phone_from_session(session_id)
-        thread_key = phone if (phone and phone != "default") else session_id
-        config = {"configurable": {"thread_id": thread_key}}
         active_plugin = None
         
         # Check if there's an active session in any plugin
@@ -1461,7 +1483,6 @@ def chat():
                         active_plugins.append((wf_name, timestamp))
         
         if active_plugins:
-            # Sort by timestamp descending (ISO 8601 string comparison works safely)
             active_plugins.sort(key=lambda x: x[1], reverse=True)
             active_plugin = active_plugins[0][0]
 
@@ -1516,20 +1537,22 @@ def chat():
                 "show_button": True
             })
 
-        # 2. Handle draft button actions
+        # 2. Handle explicit "Save Draft" intent
         if intent == "draft_save":
-            pending = pending_interruptions.get(phone)
-            if pending and pending["status"] == "awaiting_action":
-                plugin = pending["plugin"]
-                # Save draft to Vector DB
-                state = workflows[plugin].get_state(config)
+            plugin = (pending_interruptions.get(phone) or {}).get("plugin") or active_plugin
+            if plugin and plugin in workflows:
+                config_check = {"configurable": {"thread_id": phone if (phone and phone != "default") else session_id}}
+                state = workflows[plugin].get_state(config_check)
                 if state and state.values:
                     draft_key = "draft_booking" if plugin == "adv_booking" else "draft_grievance"
                     draft = state.values.get(draft_key) or {}
-                    from memory_manager import MemoryManager
-                    MemoryManager.save_draft_state(phone, plugin, draft)
+                    if draft:
+                        from memory_manager import MemoryManager
+                        MemoryManager.save_draft_state(phone, plugin, draft)
+                        logger.info(f"Explicitly saved draft for {phone}/{plugin}: {draft}")
                 
-                # Answer FAQ
+            pending = pending_interruptions.get(phone)
+            if pending and pending.get("status") == "awaiting_action":
                 faq_ans = retrieve_document(pending["question"], user_language, history, session_id=session_id)
                 msg = f"Your application has been saved successfully. You can continue it anytime.\n\n{faq_ans}\n\nWould you like to continue your application now?"
                 pending["status"] = "awaiting_resume"
@@ -1538,6 +1561,10 @@ def chat():
                     "response": msg, "lang": user_language, "mode": "agent_active", "audio": audio,
                     "input_type": "choice", "options": ["Continue Application", "End Conversation"], "show_button": True
                 })
+            else:
+                msg = "Your draft application has been saved successfully in memory. You can resume it anytime!"
+                audio = text_to_speech(msg, user_language)
+                return jsonify({"response": msg, "lang": user_language, "mode": "agent_active", "audio": audio})
 
         if intent == "draft_continue_no_save":
             pending = pending_interruptions.get(phone)
@@ -1560,6 +1587,8 @@ def chat():
                 faq_ans = retrieve_document(pending["question"], user_language, history, session_id=session_id)
                 target_wf = pending["plugin"]
                 pending_interruptions.pop(phone, None)
+                from memory_manager import MemoryManager
+                MemoryManager.delete_draft_state(phone, target_wf)
                 process_user_message("[CANCEL_DRAFT]", phone, session_id, target_workflow=target_wf)
                 msg = f"{faq_ans}\n\nYour previous application has been cancelled."
                 audio = text_to_speech(msg, user_language)
@@ -1573,15 +1602,15 @@ def chat():
                 target_wf = pending["plugin"]
                 pending_interruptions.pop(phone, None)
                 
-                # Fetch draft from Qdrant and inject it back into LangGraph checkpointer
+                # Fetch module-isolated draft from Qdrant and inject it back into LangGraph checkpointer
                 from memory_manager import MemoryManager
-                draft = MemoryManager.get_draft_state(phone)
+                draft = MemoryManager.get_draft_state(phone, target_wf)
                 if draft and draft.get("draft_data") and target_wf in workflows:
                     draft_key = "draft_booking" if target_wf == "adv_booking" else "draft_grievance"
                     config_update = {"configurable": {"thread_id": phone if (phone and phone != "default") else session_id}}
                     workflows[target_wf].update_state(config_update, {draft_key: draft["draft_data"]})
                 
-                agent_res = process_user_message("", phone, session_id, target_workflow=target_wf)
+                agent_res = process_user_message("Continue my application", phone, session_id, target_workflow=target_wf)
                 audio = text_to_speech(agent_res.get("response", ""), user_language)
                 return jsonify({
                     "response": agent_res.get("response", ""), "messages": agent_res.get("messages_list", []), "lang": user_language,
@@ -1595,30 +1624,40 @@ def chat():
             audio = text_to_speech(msg, user_language)
             return jsonify({"response": msg, "lang": user_language, "mode": "faq", "audio": audio})
             
-        # 3. Global Draft Resume
+        # 3. Global Dynamic Multi-Draft Resume & Switcher
         if intent == "draft_resume":
+            from draft_switcher import MultiDraftSwitcher
             from memory_manager import MemoryManager
-            saved_draft = MemoryManager.get_draft_state(phone)
-            # If Qdrant didn't have it, fallback to memory checkpointer if active_plugin is present
-            if not saved_draft and active_plugin:
-                state = workflows[active_plugin].get_state(config)
-                if state and state.values:
-                    draft_key = "draft_booking" if active_plugin == "adv_booking" else "draft_grievance"
-                    draft = state.values.get(draft_key) or {}
-                    if draft:
-                        saved_draft = {"plugin_name": active_plugin, "draft_data": draft}
-
-            if saved_draft:
-                plugin = saved_draft["plugin_name"]
-                draft_data = saved_draft["draft_data"]
-                summary = format_draft_summary(draft_data, plugin)
-                msg = f"{summary}\nWhat would you like to do?"
-                pending_interruptions[phone] = {"plugin": plugin, "status": "awaiting_resume"}
-                audio = text_to_speech(msg, user_language)
-                return jsonify({
-                    "response": msg, "lang": user_language, "mode": "agent_active", "audio": audio,
-                    "input_type": "choice", "options": ["Continue Application", "Cancel Draft"], "show_button": True
-                })
+            
+            switcher_res = MultiDraftSwitcher.inspect_and_render_switcher(phone, user_input=user_input, user_language=user_language)
+            
+            if switcher_res["has_drafts"]:
+                msg = switcher_res["menu"]
+                
+                # Single Draft Case: Show summary & Continue/Cancel options
+                if switcher_res["count"] == 1:
+                    single_draft = switcher_res.get("single_draft") or switcher_res["drafts"][0]
+                    plugin = single_draft.get("plugin_name", "adv_booking")
+                    draft_data = single_draft.get("draft_data", {})
+                    summary = format_draft_summary(draft_data, plugin)
+                    msg = f"{summary}\n\nWhat would you like to do?"
+                    pending_interruptions[phone] = {"plugin": plugin, "status": "awaiting_resume"}
+                    audio = text_to_speech(msg, user_language)
+                    return jsonify({
+                        "response": msg, "lang": user_language, "mode": "agent_active", "audio": audio,
+                        "input_type": "choice", "options": ["Continue Application", "Cancel Draft"], "show_button": True
+                    })
+                else:
+                    # Multiple Drafts Case (> 1): Display Dynamic Switcher Menu
+                    _set_multi_draft_pending(phone, switcher_res["drafts"])
+                    logger.info(f"[DraftSwitcher] Stored {len(switcher_res['drafts'])} drafts in Redis for {phone}")
+                    audio = text_to_speech(msg, user_language)
+                    return jsonify({
+                        "response": msg, "lang": user_language, "mode": "agent_active", "audio": audio,
+                        "input_type": "choice",
+                        "options": switcher_res.get("options") or [f"Option {i+1}" for i in range(switcher_res["count"])] + ["Start New Service Request"],
+                        "show_button": True
+                    })
             else:
                 msg = "I couldn't find any saved drafts for your account."
                 audio = text_to_speech(msg, user_language)
@@ -1626,13 +1665,19 @@ def chat():
                 
         if intent == "draft_cancel":
             pending = pending_interruptions.get(phone)
-            if pending:
-                target_wf = pending["plugin"]
-                pending_interruptions.pop(phone, None)
+            target_wf = (pending or {}).get("plugin") or active_plugin
+            pending_interruptions.pop(phone, None)
+            
+            # Explicitly delete draft from Qdrant Vector DB
+            from memory_manager import MemoryManager
+            MemoryManager.delete_draft_state(phone, target_wf)
+            
+            if target_wf and target_wf in workflows:
                 process_user_message("[CANCEL_DRAFT]", phone, session_id, target_workflow=target_wf)
-                msg = "Your draft has been cancelled successfully."
-                audio = text_to_speech(msg, user_language)
-                return jsonify({"response": msg, "lang": user_language, "mode": "faq", "audio": audio})
+                
+            msg = "Your draft has been cancelled successfully."
+            audio = text_to_speech(msg, user_language)
+            return jsonify({"response": msg, "lang": user_language, "mode": "faq", "audio": audio})
 
         target_wf = plugin_intent or active_plugin
         if target_wf and target_wf in workflows:
@@ -1847,6 +1892,36 @@ Two route aliases:
 """
 # === GENERIC WORKFLOW INTERRUPTION & DRAFT MANAGER ===
 pending_interruptions = {}
+
+# Redis-backed multi-draft pending state (survives across requests / gunicorn workers)
+def _set_multi_draft_pending(phone: str, drafts: list):
+    """Persist awaiting_multi_draft_choice state in Redis with 10-min TTL."""
+    try:
+        from database import r_client
+        r_client.set(f"pending_multi_draft:{phone}", json.dumps({"status": "awaiting_multi_draft_choice", "drafts": drafts}), ex=600)
+    except Exception as e:
+        logger.warning(f"[MultiDraft] Redis set failed, falling back to in-memory: {e}")
+        pending_interruptions[phone] = {"status": "awaiting_multi_draft_choice", "drafts": drafts}
+
+def _get_multi_draft_pending(phone: str):
+    """Retrieve awaiting_multi_draft_choice state from Redis, fallback to in-memory."""
+    try:
+        from database import r_client
+        raw = r_client.get(f"pending_multi_draft:{phone}")
+        if raw:
+            return json.loads(raw)
+    except Exception as e:
+        logger.warning(f"[MultiDraft] Redis get failed, using in-memory: {e}")
+    return pending_interruptions.get(phone) if pending_interruptions.get(phone, {}).get("status") == "awaiting_multi_draft_choice" else None
+
+def _clear_multi_draft_pending(phone: str):
+    """Clear awaiting_multi_draft_choice state from Redis and in-memory."""
+    try:
+        from database import r_client
+        r_client.delete(f"pending_multi_draft:{phone}")
+    except Exception:
+        pass
+    pending_interruptions.pop(phone, None)
 
 # Formats any generic workflow draft dictionary into a clean Markdown summary for the UI
 def format_draft_summary(draft_data: dict, wf_name: str) -> str:
