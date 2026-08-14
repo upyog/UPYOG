@@ -37,6 +37,9 @@ const EGFFinance = () => {
   if (menuUrl.startsWith("/finance")) {
     menuUrl = menuUrl.substring("/finance".length);
   }
+  if (location.search) {
+    menuUrl += location.search;
+  }
 
   const loc = window.location;
   const hostname = loc.hostname;
