@@ -36,4 +36,56 @@ public class ApplicationConfig {
     @Value("${egov.mdms.schema.delete.topic}")
     private String deleteSchemaTopicName;
 
+    /**
+ * Kafka topic name used for creating theme configuration.
+ *
+ * This topic is consumed by Persister to store
+ * theme configuration in live table.
+ */
+    @Value("${egov.mdms.theme.config.save.topic}")
+    private String saveThemeConfigTopicName;
+
+
+/**
+ * Kafka topic name used for creating theme configuration staging request.
+ *
+ * This topic is consumed by Persister to store
+ * pending theme configuration changes before workflow approval.
+ */
+    /**
+     * Kafka topic name used for updating theme configuration staging request.
+     */
+    @Value("${egov.mdms.theme.config.staging.update.topic}")
+    private String updateThemeConfigStagingTopicName;
+    @Value("${egov.mdms.theme.config.status.update.topic}")
+    private String updateThemeConfigStatusTopicName;
+
+
+    /**
+     * Kafka topic name used for creating theme configuration staging request.
+     */
+    @Value("${egov.mdms.theme.config.staging.save.topic}")
+    private String saveThemeConfigStagingTopicName;
+
+    @Value("${workflow.host}")
+    private String workflowHost;
+
+    @Value("${theme.config.workflow.business.service}")
+    private String themeConfigBusinessService;
+
+    public String getUpdateThemeConfigStatusTopicName() {
+        return updateThemeConfigStatusTopicName;
+    }
+
+
+    public String getSaveThemeConfigStagingTopicName() {
+        return saveThemeConfigStagingTopicName;
+    }
+
+
+    public String getUpdateThemeConfigStagingTopicName() {
+        return updateThemeConfigStagingTopicName;
+    }
+    
+
 }
