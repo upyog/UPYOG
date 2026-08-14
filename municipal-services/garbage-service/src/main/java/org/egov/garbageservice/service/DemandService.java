@@ -149,10 +149,10 @@ public class DemandService {
             penaltyAmount =
                     previousUnpaid
                             .multiply(penaltyRate)
-                            .setScale(2, RoundingMode.HALF_UP);
+                            .setScale(0, RoundingMode.HALF_UP);
 
             finalAmount =
-                    rentalFeeAmount.add(penaltyAmount);
+                    rentalFeeAmount.add(penaltyAmount .setScale(0, RoundingMode.HALF_UP));
 
             demandsToUpdate = unpaidDemands;
 
@@ -182,7 +182,7 @@ public class DemandService {
         demandDetails.add(
                 DemandDetail.builder()
                         .taxHeadMasterCode(ServiceConstants.GRBG_TAX_HEAD_CODE)
-                        .taxAmount(currentAmount.getTotalAmount().abs())
+                        .taxAmount(currentAmount.getTotalAmount().setScale(0, RoundingMode.HALF_UP))
                         .collectionAmount(BigDecimal.ZERO)
                         .tenantId(garbageAccount.getTenantId())
                         .build()
@@ -193,7 +193,7 @@ public class DemandService {
             demandDetails.add(
                     DemandDetail.builder()
                             .taxHeadMasterCode(ServiceConstants.GRBG_PENALTY_FEE)
-                            .taxAmount(penaltyAmount.abs())
+                            .taxAmount(penaltyAmount.setScale(0, RoundingMode.HALF_UP))
                             .collectionAmount(BigDecimal.ZERO)
                             .tenantId(garbageAccount.getTenantId())
                             .build()
@@ -204,7 +204,7 @@ public class DemandService {
             demandDetails.add(
                     DemandDetail.builder()
                             .taxHeadMasterCode(ServiceConstants.GRBG_REBATE_FEE)
-                            .taxAmount(currentAmount.getRebateAmount().negate())
+                            .taxAmount(currentAmount.getRebateAmount().negate().setScale(0, RoundingMode.HALF_UP))
                             .collectionAmount(BigDecimal.ZERO)
                             .tenantId(garbageAccount.getTenantId())
                             .build()
