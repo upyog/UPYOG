@@ -63,7 +63,7 @@ import java.util.List;
 /**
  * Spring configuration for Redis connectivity (standalone or sentinel mode).
  *
- * <p>Updated for WildFly 26 / Java 17 deployment:</p>
+ * <p>Configuration notes:</p>
  * <ul>
  *   <li>Embedded Redis server bean ({@code EmbeddedRedisServer}) is disabled by default.
  *       Set {@code redis.enable.embedded=true} in {@code egov-erp-<username>.properties}

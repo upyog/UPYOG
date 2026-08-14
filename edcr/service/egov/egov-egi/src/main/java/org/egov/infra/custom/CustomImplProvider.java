@@ -18,10 +18,9 @@ import org.springframework.stereotype.Service;
 /**
  * Resolves city-specific or district-specific custom implementation beans at runtime.
  *
- * <p>Updated for Spring 5.3 proxy compatibility: injects {@link ICityService}
- * (interface) instead of the concrete {@code CityService} class so that Spring
- * can apply JDK dynamic proxies or CGLIB proxies without type-mismatch errors
- * in {@code @Autowired} fields after the framework upgrade.</p>
+ * <p>Uses {@link ICityService} (interface) instead of the concrete
+ * {@code CityService} class so Spring can apply JDK dynamic proxies or CGLIB
+ * proxies without type-mismatch errors in {@code @Autowired} fields.</p>
  */
 @Service
 public class CustomImplProvider {

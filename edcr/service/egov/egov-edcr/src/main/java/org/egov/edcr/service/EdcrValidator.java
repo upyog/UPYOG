@@ -19,14 +19,9 @@ import org.springframework.stereotype.Service;
 /**
  * Validates EDCR REST API request payloads for allowed characters and HTML safety.
  *
- * <p>Updated during the platform upgrade:</p>
- * <ul>
- *   <li>Migrated logging to Log4j 2 ({@code org.apache.logging.log4j}).</li>
- *   <li>Uses Jsoup {@link Safelist#basic()} for HTML sanitization checks on
- *       string fields, replacing legacy ESAPI-based validation in some paths.</li>
- *   <li>Uses {@link org.egov.infra.utils.StringUtils} from the infra module
- *       (Commons Lang3 backed) instead of deprecated Commons Lang 2.x.</li>
- * </ul>
+ * <p>Uses Log4j 2 for logging, Jsoup {@link Safelist#basic()} for HTML sanitization
+ * checks on string fields, and {@link org.egov.infra.utils.StringUtils} from the
+ * infra module for string utilities.</p>
  */
 @Service
 public class EdcrValidator {

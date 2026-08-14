@@ -78,15 +78,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 /**
  * Custom Spring Security authentication filter for ERP login.
  *
- * <p>Updated during the platform upgrade:</p>
- * <ul>
- *   <li>Migrated logging from legacy log4j 1.x to {@code org.apache.logging.log4j}
- *       (Log4j 2.17.1) for Java 17 compatibility.</li>
- *   <li>Replaced {@code org.apache.commons.lang.StringUtils} with
- *       {@code org.apache.commons.lang3.StringUtils} (Commons Lang3).</li>
- *   <li>Input sanitization via Jsoup {@link Safelist#basic()} on location and
- *       credential fields.</li>
- * </ul>
+ * <p>Uses Log4j 2 for logging, Commons Lang3 for string utilities, and Jsoup
+ * {@link Safelist#basic()} to sanitize location and credential fields.</p>
  */
 public class ApplicationAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 

@@ -23,9 +23,8 @@ import static org.egov.common.constants.JasperReportConstants.*;
 /**
  * EDCR-specific JasperReports styling and PDF export helper.
  *
- * <p>Updated for Java 17 / JasperReports 6.20.0: PDF font constants now use
- * Helvetica (built-in PDF font) via {@code JasperReportConstants} instead of
- * file-based Arial lookups that fail under Java 17's stricter AWT font resolution.
+ * <p>PDF font constants use Helvetica (built-in PDF font) via
+ * {@code JasperReportConstants} instead of file-based Arial lookups.
  * Custom font extensions are registered in {@code fonts/fonts.xml} for templates
  * that require embedded fonts.</p>
  */

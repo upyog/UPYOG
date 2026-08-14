@@ -16,10 +16,9 @@ import org.egov.infra.admin.master.entity.City;
  * </p>
  *
  * <p>
- * Introduced during the Java 17 / Spring 5.3 upgrade so that servlet filters
- * and other components can inject the city service via its interface type.
- * This avoids Spring proxy type-mismatch errors when {@code CityService} is
- * wrapped by a JDK dynamic proxy or CGLIB subclass.
+ * Exposed as an interface so servlet filters and other components can inject
+ * the city service without Spring proxy type-mismatch errors when
+ * {@code CityService} is wrapped by a JDK dynamic proxy or CGLIB subclass.
  * </p>
  *
  * @see org.egov.infra.admin.master.service.CityService

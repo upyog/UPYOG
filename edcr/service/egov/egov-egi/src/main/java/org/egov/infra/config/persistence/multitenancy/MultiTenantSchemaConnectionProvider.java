@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Hibernate multi-tenant connection provider that switches PostgreSQL schemas per tenant.
  *
- * <p>Updated for WildFly 26 / Hibernate 5.6 JTA compatibility:</p>
+ * <p>JTA and connection lifecycle notes:</p>
  * <ul>
  *   <li>{@link #supportsAggressiveRelease()} returns {@code false} because returning
  *       {@code true} causes Hibernate to release connections mid-transaction, leading to
