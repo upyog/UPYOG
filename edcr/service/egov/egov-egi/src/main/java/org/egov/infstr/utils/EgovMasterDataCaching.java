@@ -75,7 +75,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @deprecated no longer supported
+ * Legacy in-memory master-data cache backed by Infinispan.
+ *
+ * <p><strong>Deprecated</strong> — no longer supported for new development.</p>
+ *
+ * <p>Updated for WildFly 26 compatibility: the legacy JNDI Infinispan container
+ * ({@code java:jboss/infinispan/container/master-data}) is no longer exposed by
+ * WildFly 26. A local {@link DefaultCacheManager} is created instead to preserve
+ * in-memory caching without requiring server-provided Infinispan resources.</p>
+ *
+ * @deprecated replaced by application-level caching; retained for backward compatibility only
  */
 @Deprecated
 public class EgovMasterDataCaching {

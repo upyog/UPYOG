@@ -58,6 +58,20 @@ import net.sf.jasperreports.export.SimpleTextExporterConfiguration;
 import net.sf.jasperreports.export.SimpleWriterExporterOutput;
 import net.sf.jasperreports.export.SimpleXlsExporterConfiguration;
 
+/**
+ * JasperReports engine service for generating PDF, XLS, CSV, and other report formats.
+ *
+ * <p>Updated for Java 17 / JasperReports 6.20.0 compatibility:</p>
+ * <ul>
+ *   <li>Static initializer sets {@code JRThreadSubreportRunnerFactory} to avoid
+ *       {@code InaccessibleObjectException} from the default thread-pool subreport runner
+ *       under Java 17's module system.</li>
+ *   <li>Loads {@code config/jasperreports.properties} for JDT compiler target 17 and
+ *       font configuration (see {@code egov-config} module).</li>
+ *   <li>Report template caching removed so JRXML changes take effect without an
+ *       application restart.</li>
+ * </ul>
+ */
 public class JasperReportService extends AbstractReportService<JasperReport> {
 
 	 static {

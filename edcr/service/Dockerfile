@@ -1,3 +1,6 @@
+# EDCR Service Docker image
+# Build stage: compiles the EAR with JDK 17 (upgraded from JDK 8 / alpine-maven-builder-jdk-8)
+# Runtime stage: deploys to WildFly 26 (upgraded from WildFly 11 / egovio/wildfly)
 #FROM egovio/alpine-maven-builder-jdk-8:gcp AS build
 FROM amazoncorretto:17-alpine AS build
 

@@ -85,6 +85,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 
+/**
+ * Core servlet filter that initializes per-request thread-local context (city, user, locale).
+ *
+ * <p>Updated for Spring 5.3 proxy compatibility: injects {@link ICityService}
+ * instead of the concrete {@code CityService} to avoid proxy type mismatches
+ * when Spring creates JDK or CGLIB proxies for the service bean.</p>
+ */
 public class ApplicationCoreFilter implements Filter {
 
     @Autowired
