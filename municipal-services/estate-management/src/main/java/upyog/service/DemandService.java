@@ -148,10 +148,10 @@ public class DemandService {
             penaltyAmount =
                     previousUnpaid
                             .multiply(penaltyRate)
-                            .setScale(2, RoundingMode.HALF_UP);
+                            .setScale(0, RoundingMode.HALF_UP);
 
             finalAmount =
-                    bookingFeeAmount.add(penaltyAmount);
+                    bookingFeeAmount.add(penaltyAmount.setScale(0, RoundingMode.HALF_UP));
 
             unpaidDemands.forEach(d ->
                     d.getDemandDetails().forEach(dd ->
@@ -186,7 +186,7 @@ public class DemandService {
         demandDetails.add(
                 DemandDetail.builder()
                         .taxHeadMasterCode(ServiceConstants.EST_BOOKING_FEE)
-                        .taxAmount(bookingFeeAmount)
+                        .taxAmount(bookingFeeAmount.setScale(0, RoundingMode.HALF_UP))
                         .collectionAmount(BigDecimal.ZERO)
                         .tenantId(allotment.getTenantId())
                         .build()
@@ -197,7 +197,7 @@ public class DemandService {
             demandDetails.add(
                     DemandDetail.builder()
                             .taxHeadMasterCode(ServiceConstants.EST_PENALTY_FEE)
-                            .taxAmount(penaltyAmount)
+                            .taxAmount(penaltyAmount.setScale(0, RoundingMode.HALF_UP))
                             .collectionAmount(BigDecimal.ZERO)
                             .tenantId(allotment.getTenantId())
                             .build()

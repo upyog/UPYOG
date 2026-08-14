@@ -35,7 +35,6 @@ from datetime import datetime, timedelta
 from pytz import timezone
 import logging
 import json
-import uuid
 import requests
 from hooks.elastic_hook import ElasticHook
 from queries.tl import *
@@ -364,11 +363,13 @@ def get_auth_token(connection):
 
 def _write_adaptor_log(module, startdate, response):
     """Write ingest response to adaptor_logs index using es_conn over HTTP."""
+    # Local import avoids shadowing: queries.pgr used to define uuid=[] via wildcard import.
+    from uuid import uuid4
     try:
         conn = BaseHook.get_connection('es_conn')
         scheme = conn.schema or 'https'
         host = '{0}:{1}'.format(conn.host, conn.port) if conn.port else conn.host
-        url = '{0}://{1}/adaptor_logs/_doc/{2}'.format(scheme, host, uuid.uuid1())
+        url = '{0}://{1}/adaptor_logs/_doc/{2}'.format(scheme, host, uuid4())
         doc = {
             'timestamp': startdate,
             'module': module,
