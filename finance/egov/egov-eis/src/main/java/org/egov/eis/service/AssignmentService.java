@@ -66,6 +66,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+// Refactored for Jakarta EE 10 & JDK 17 LTS upgrade:
+// Replaced legacy 'javax.persistence.*' with standard 'jakarta.persistence.*'.
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.ArrayList;
@@ -99,6 +101,7 @@ public class AssignmentService {
         this.employeeDepartmentRepository = employeeDepartmentRepository;
     }
 
+    // Refactored for Spring Data JPA 2.x/3.x & JDK 17 compatibility: findOne(id) replaced with findById(id).orElse(null)
     public Assignment getAssignmentById(final Long id) {
         return assignmentRepository.findById(id).orElse(null);
     }
@@ -277,6 +280,7 @@ public class AssignmentService {
         return assignmentRepository.getAllActiveAssignments(designationId);
     }
 
+    // Refactored for Spring Data JPA 2.x/3.x & JDK 17 compatibility: findOne(id) replaced with findById(id).orElse(null)
     @Transactional
     public Employee removeDeletedAssignments(final Employee employee, final String removedAssignIds) {
         if (null != removedAssignIds)
@@ -310,6 +314,7 @@ public class AssignmentService {
         return assignmentRepository.findEmployeePositions("%" + name + "%");
     }
 
+    // Refactored for Hibernate 6 / JDK 17 compatibility: replaced legacy 'org.hibernate.Query' with 'org.hibernate.query.Query'
     public List<Employee> searchEmployeeAssignments(final EmployeeAssignmentSearch employeeAssignmentSearch) {
         final StringBuilder queryString = new StringBuilder();
         queryString.append("select distinct(assign.employee) from Assignment assign where assign.id is not null ");

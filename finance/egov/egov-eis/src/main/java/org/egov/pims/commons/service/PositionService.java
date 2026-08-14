@@ -52,6 +52,8 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.hibernate.Session;
 
+// Refactored for Jakarta EE 10 & JDK 17 LTS upgrade:
+// Replaced legacy 'javax.persistence.*' with standard 'jakarta.persistence.*'.
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.Date;
@@ -80,6 +82,8 @@ public class PositionService extends PersistenceService<Position, Integer> {
 	 * @param designationMasterId
 	 * @return
 	 */
+	// Refactored for Hibernate 6 / JDK 17 compatibility:
+	// Replaced legacy Criteria & DetachedCriteria subqueries (removed in Hibernate 6) with type-safe HQL query returning List<Position>.
 	public List<Position> getVacantPositionCriteria(Date fromDate, Date toDate, Integer designationMasterId)
 	{
 		StringBuilder hql = new StringBuilder(

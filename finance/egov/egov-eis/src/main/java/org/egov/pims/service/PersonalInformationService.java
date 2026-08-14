@@ -294,6 +294,7 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 	 * @param pageSize
 	 * @return
 	 */
+	// Refactored for Hibernate 6 / JDK 17 compatibility: replaced legacy org.hibernate.Criteria with dynamic HQL query and subList pagination
 	public List<EmployeeView> getListOfEmployeeViewBasedOnCriteria(HashMap<String,Object> criteriaParams, Integer pageNo, Integer pageSize) {
 		List<EmployeeView> employeeList = new ArrayList<EmployeeView>();
 		try {
@@ -338,7 +339,8 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 	 * @return
 	 */
 	
-public List<EmployeeView> getListOfEmployeeViewBasedOnListOfDesignationAndOtherCriteria(HashMap<String,Object> criteriaParams, Integer pageNo, Integer pageSize) {
+	// Refactored for Hibernate 6 / JDK 17 compatibility: replaced legacy org.hibernate.Criteria with dynamic HQL query and subList pagination
+	public List<EmployeeView> getListOfEmployeeViewBasedOnListOfDesignationAndOtherCriteria(HashMap<String,Object> criteriaParams, Integer pageNo, Integer pageSize) {
 		List<EmployeeView> employeeList = new ArrayList<EmployeeView>();
 		try {
 			Date asOnDate = DateUtils.today();
