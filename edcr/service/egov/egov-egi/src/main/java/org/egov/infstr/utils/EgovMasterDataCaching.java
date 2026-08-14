@@ -75,7 +75,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @deprecated no longer supported
+ * Legacy in-memory master-data cache backed by Infinispan.
+ *
+ * <p><strong>Deprecated</strong> — no longer supported for new development.</p>
+ *
+ * <p>Uses a local {@link DefaultCacheManager} instead of the legacy JNDI
+ * Infinispan container ({@code java:jboss/infinispan/container/master-data})
+ * to preserve in-memory caching without server-provided Infinispan resources.</p>
+ *
+ * @deprecated replaced by application-level caching; retained for backward compatibility only
  */
 @Deprecated
 public class EgovMasterDataCaching {
@@ -98,12 +106,7 @@ public class EgovMasterDataCaching {
 //            throw new ApplicationRuntimeException("Error occurred while getting Cache Manager", e);
 //        }
 //    }
-/*
- * WildFly 26 no longer exposes the legacy JNDI Infinispan container
- * (java:jboss/infinispan/container/master-data) used in earlier versions.
- * Creating a local DefaultCacheManager avoids deployment failures caused by
- * missing JNDI resources while preserving in-memory caching functionality.
- */
+// Local DefaultCacheManager avoids dependency on the legacy JNDI Infinispan container.
     static {
         try {
         	CACHE_MANAGER = new DefaultCacheManager(false);  // local instance

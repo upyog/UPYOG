@@ -78,6 +78,25 @@ import java.util.Map;
 
 import static org.hibernate.cfg.AvailableSettings.*;
 
+/**
+ * Spring JPA and Hibernate configuration for the EDCR persistence layer.
+ *
+ * <p>Key Hibernate settings:</p>
+ * <ul>
+ *   <li>{@code hibernate.connection.handling_mode} set to
+ *       {@code DELAYED_ACQUISITION_AND_RELEASE_AFTER_TRANSACTION} for JTA-safe
+ *       connection lifecycle.</li>
+ *   <li>{@code hibernate.transaction.auto_close_session} hard-coded to {@code false}
+ *       so the Open EntityManager In View filter is not broken by premature session closure.</li>
+ *   <li>{@code hibernate.connection.release_mode} set to {@code after_transaction}
+ *       to align with container-managed JTA transactions.</li>
+ *   <li>Cache region factory and JTA platform are read from
+ *       {@code persistence-config.properties} (EhCache + JBossAppServerJtaPlatform).</li>
+ * </ul>
+ *
+ * @see org.egov.infra.config.persistence.multitenancy.MultiTenantSchemaConnectionProvider
+ * @see org.egov.infra.config.persistence.RepositoryConfiguration
+ */
 @Configuration
 @EnableTransactionManagement(proxyTargetClass = true)
 @PropertySource("classpath:config/persistence-config.properties")

@@ -12,6 +12,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * Hibernate multi-tenant connection provider that switches PostgreSQL schemas per tenant.
+ *
+ * <p>JTA and connection lifecycle notes:</p>
+ * <ul>
+ *   <li>{@link #supportsAggressiveRelease()} returns {@code false} because returning
+ *       {@code true} causes Hibernate to release connections mid-transaction, leading to
+ *       {@code Transaction cannot proceed: STATUS_COMMITTED} errors in JTA environments.</li>
+ *   <li>{@link #releaseConnection(String, Connection)} wraps schema reset in a try-catch
+ *       because {@code setSchema("public")} may fail when the JTA transaction is already
+ *       committed at connection release time.</li>
+ * </ul>
+ */
 public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectionProvider {
     private static final long serialVersionUID = -6022082859572861041L;
     private static final Logger LOG = LoggerFactory.getLogger(MultiTenantSchemaConnectionProvider.class);
