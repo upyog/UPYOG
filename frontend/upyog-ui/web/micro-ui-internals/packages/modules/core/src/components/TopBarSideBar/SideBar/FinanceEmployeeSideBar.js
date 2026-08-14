@@ -338,6 +338,7 @@ const FinanceEmployeeSideBar = ({ microUiModuleEnable, isFinanceEnabled }) => {
           setActivePath={setActivePath}
           configEmployeeSideBar1={configEmployeeSideBar1}
           t={t}
+          search={search}
         />
       ) : (
         splitKeyValue()

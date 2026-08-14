@@ -69,11 +69,56 @@ const getMinOrderNumber = (node) => {
 };
 
 /**
+ * Helper function to recursively check if a menu node or any of its descendants
+ * matches the current search query.
+ * - This allows folders (parent nodes) to remain visible if they contain matching sub-menus.
+ * - Leaf nodes are filtered out unless they match the search query directly.
+ *
+ * @param {object} node - The menu node configuration object.
+ * @param {string} key - The lookup key for the menu node.
+ * @param {string} search - The search term entered by the user.
+ * @param {function} t - The translation hook function.
+ * @param {object} i18n - The internationalization instance to verify translation existence.
+ * @returns {boolean} True if the node or any of its descendants matches the search criteria, false otherwise.
+ */
+const hasMatchingDescendant = (node, key, search, t, i18n) => {
+  if (!search) return true;
+
+  const hasChildren = typeof node === "object" && !node.id;
+  const translationKey = hasChildren 
+    ? `ACTION_TEST_${key.toUpperCase().replace(/[ -]/g, "_")}`
+    : `ACTION_TEST_${node.displayName ? node.displayName.toUpperCase().replace(/[.:-\s\/]/g, "_") : key.toUpperCase().replace(/[ -]/g, "_")}`;
+  
+  const displayLabel = i18n.exists(translationKey)
+    ? t(translationKey)
+    : (hasChildren ? key : (node.displayName || key));
+
+  // If the current node's label matches the search, return true
+  if (displayLabel.toLowerCase().includes(search.toLowerCase())) {
+    return true;
+  }
+
+  // If it's a folder, search its child nodes recursively
+  if (hasChildren) {
+    for (const childKey in node) {
+      if (["id", "name", "url", "displayName", "orderNumber", "parentModule", "serviceCode", "code", "leftIcon", "path", "navigationURL", "enabled"].includes(childKey)) {
+        continue;
+      }
+      if (hasMatchingDescendant(node[childKey], childKey, search, t, i18n)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+};
+
+/**
  * FinanceSideBar renders the custom inner sidebar layout when the user navigates into
  * the Finance section. It displays nested categories (like Transactions, Masters, Reports)
  * along with back navigation controls and layout padding aligned to core specs.
  */
-const FinanceSideBar = ({ activePath, setActivePath, configEmployeeSideBar1 }) => {
+const FinanceSideBar = ({ activePath, setActivePath, configEmployeeSideBar1, search }) => {
   const { t, i18n } = useTranslation();
   const { pathname } = useLocation();
   const currentNode = getNodeByPath(configEmployeeSideBar1, activePath);
@@ -106,6 +151,7 @@ const FinanceSideBar = ({ activePath, setActivePath, configEmployeeSideBar1 }) =
       <div className="submenu-links" style={{ overflowX: "auto", display: "flex", flexDirection: "column" }}>
         {Object.keys(currentNode)
           .filter((key) => !["id", "name", "url", "displayName", "orderNumber", "parentModule", "serviceCode", "code", "leftIcon", "path", "navigationURL", "enabled"].includes(key))
+          .filter((key) => hasMatchingDescendant(currentNode[key], key, search, t, i18n))
           .sort((a, b) => {
             const valA = currentNode[a];
             const valB = currentNode[b];
