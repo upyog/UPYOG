@@ -4,7 +4,7 @@
  * and provides a payment action button if payment is pending.
  */
 import { Card, Header, Loader, Row, StatusTable, SubmitBar, CardSubHeader, Table } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { useMemo } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import "../../css/noc-inline.css";
@@ -17,12 +17,13 @@ const NOCApplicationDetails = () => {
 
   const application = applicationDetails?.FireNOCs?.[0]?.fireNOCDetails;
 
-  const uomColumns = useMemo(() => [
-    { Header: t("NOC_UOM_CODE"), accessor: "code", Cell: ({ value }) => t(`NOC_UOM_${value}`) },
-    { Header: t("NOC_UOM_VALUE"), accessor: "value" },
-  ], [t]);
+  const uomColumns = [
+  { Header: t("NOC_UOM_CODE"), accessor: "code", Cell: ({ value }) => t(`NOC_UOM_${value}`) },
+  { Header: t("NOC_UOM_VALUE"), accessor: "value" },
+  ];
 
-  const uomData = useMemo(() => application?.buildings?.[0]?.uoms || [], [application]);
+  const uomData = application?.buildings?.[0]?.uoms || [];
+
 
   if (isLoading) return <Loader />;
 
