@@ -19,3 +19,4 @@ fastmcp
 qdrant-client
 pydantic
 pyyaml
+redis

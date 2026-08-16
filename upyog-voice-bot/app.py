@@ -1295,12 +1295,9 @@ def chat():
         name_match = re.search(r'\bi\s+am\s+([A-Za-z]+)\b|\bmy\s+name\s+is\s+([A-Za-z]+)\b', user_input, re.IGNORECASE)
         if name_match:
             detected_name = name_match.group(1) or name_match.group(2)
-            phone_match = re.search(r'user_(\d{10})', session_id)
-            phone_anchor = phone_match.group(1) if phone_match else session_id
             save_user_profile_name(phone_anchor, detected_name.strip().capitalize())
-       
 
-        # cript-aware language detection returning dict
+        # script-aware language detection returning dict
         lang_info = detect_language(user_input)
         user_language = lang_info['lang']
         detected_script = lang_info['script']
@@ -1310,7 +1307,7 @@ def chat():
         logger.info(f"Query: '{user_input}'")
         logger.info(f"Lang: {user_language} | Script: {detected_script} | SearchLang: {search_lang}")
         if request_info:
-            logger.info(f"Auth RequestInfo Present: authToken={bool(request_info.get('authToken'))}, msgId={request_info.get('msgId')}")
+            logger.info(f"Auth RequestInfo Present: authToken={'[REDACTED]' if request_info.get('authToken') else 'None'}, msgId={request_info.get('msgId')}")
         logger.info(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
         # Hard block check - only block truly unrelated topics
@@ -1520,11 +1517,11 @@ def chat():
         # 1. Handle FAQ while in active workflow
         if intent == "faq" and active_plugin:
             logger.info(f"FAQ Interruption triggered for {phone}")
-            pending_interruptions[phone] = {
+            _set_pending_interruption(phone, {
                 "question": user_input,
                 "plugin": active_plugin,
                 "status": "awaiting_action"
-            }
+            })
             msg = "Your current application is still in progress. What would you like to do?"
             audio = text_to_speech(msg, user_language)
             return jsonify({
@@ -1539,7 +1536,8 @@ def chat():
 
         # 2. Handle explicit "Save Draft" intent
         if intent == "draft_save":
-            plugin = (pending_interruptions.get(phone) or {}).get("plugin") or active_plugin
+            pending = _get_pending_interruption(phone)
+            plugin = pending.get("plugin") or active_plugin
             if plugin and plugin in workflows:
                 config_check = {"configurable": {"thread_id": phone if (phone and phone != "default") else session_id}}
                 state = workflows[plugin].get_state(config_check)
@@ -1551,11 +1549,11 @@ def chat():
                         MemoryManager.save_draft_state(phone, plugin, draft)
                         logger.info(f"Explicitly saved draft for {phone}/{plugin}: {draft}")
                 
-            pending = pending_interruptions.get(phone)
             if pending and pending.get("status") == "awaiting_action":
                 faq_ans = retrieve_document(pending["question"], user_language, history, session_id=session_id)
                 msg = f"Your application has been saved successfully. You can continue it anytime.\n\n{faq_ans}\n\nWould you like to continue your application now?"
                 pending["status"] = "awaiting_resume"
+                _set_pending_interruption(phone, pending)
                 audio = text_to_speech(msg, user_language)
                 return jsonify({
                     "response": msg, "lang": user_language, "mode": "agent_active", "audio": audio,
@@ -1567,11 +1565,11 @@ def chat():
                 return jsonify({"response": msg, "lang": user_language, "mode": "agent_active", "audio": audio})
 
         if intent == "draft_continue_no_save":
-            pending = pending_interruptions.get(phone)
+            pending = _get_pending_interruption(phone)
             if pending:
                 faq_ans = retrieve_document(pending["question"], user_language, history, session_id=session_id)
                 target_wf = pending["plugin"]
-                pending_interruptions.pop(phone, None)
+                _clear_pending_interruption(phone)
                 agent_res = process_user_message("", phone, session_id, target_workflow=target_wf)
                 msg = f"{faq_ans}\n\nContinuing Your Application...\n\n{agent_res.get('response', '')}"
                 audio = text_to_speech(msg, user_language)
@@ -1582,11 +1580,11 @@ def chat():
                 })
                 
         if intent == "draft_cancel_application":
-            pending = pending_interruptions.get(phone)
+            pending = _get_pending_interruption(phone)
             if pending:
                 faq_ans = retrieve_document(pending["question"], user_language, history, session_id=session_id)
                 target_wf = pending["plugin"]
-                pending_interruptions.pop(phone, None)
+                _clear_pending_interruption(phone)
                 from memory_manager import MemoryManager
                 MemoryManager.delete_draft_state(phone, target_wf)
                 process_user_message("[CANCEL_DRAFT]", phone, session_id, target_workflow=target_wf)
@@ -1597,10 +1595,10 @@ def chat():
                 })
                 
         if intent == "draft_continue_application":
-            pending = pending_interruptions.get(phone)
+            pending = _get_pending_interruption(phone)
             if pending:
                 target_wf = pending["plugin"]
-                pending_interruptions.pop(phone, None)
+                _clear_pending_interruption(phone)
                 
                 # Fetch module-isolated draft from Qdrant and inject it back into LangGraph checkpointer
                 from memory_manager import MemoryManager
@@ -1619,7 +1617,7 @@ def chat():
                 })
                 
         if intent == "end_conversation":
-            pending_interruptions.pop(phone, None)
+            _clear_pending_interruption(phone)
             msg = "Goodbye! Have a great day!"
             audio = text_to_speech(msg, user_language)
             return jsonify({"response": msg, "lang": user_language, "mode": "faq", "audio": audio})
@@ -1641,7 +1639,7 @@ def chat():
                     draft_data = single_draft.get("draft_data", {})
                     summary = format_draft_summary(draft_data, plugin)
                     msg = f"{summary}\n\nWhat would you like to do?"
-                    pending_interruptions[phone] = {"plugin": plugin, "status": "awaiting_resume"}
+                    _set_pending_interruption(phone, {"plugin": plugin, "status": "awaiting_resume"})
                     audio = text_to_speech(msg, user_language)
                     return jsonify({
                         "response": msg, "lang": user_language, "mode": "agent_active", "audio": audio,
@@ -1664,9 +1662,9 @@ def chat():
                 return jsonify({"response": msg, "lang": user_language, "mode": "faq", "audio": audio})
                 
         if intent == "draft_cancel":
-            pending = pending_interruptions.get(phone)
-            target_wf = (pending or {}).get("plugin") or active_plugin
-            pending_interruptions.pop(phone, None)
+            pending = _get_pending_interruption(phone)
+            target_wf = pending.get("plugin") or active_plugin
+            _clear_pending_interruption(phone)
             
             # Explicitly delete draft from Qdrant Vector DB
             from memory_manager import MemoryManager
@@ -1891,7 +1889,30 @@ Two route aliases:
   /upyog-voice-bot/stop  → production via niautt EKS ingress
 """
 # === GENERIC WORKFLOW INTERRUPTION & DRAFT MANAGER ===
-pending_interruptions = {}
+
+def _set_pending_interruption(phone: str, data: dict):
+    try:
+        from database import r_client
+        r_client.set(f"pending_interruption:{phone}", json.dumps(data), ex=600)
+    except Exception as e:
+        logger.error(f"[Interruption] Redis set error: {e}")
+
+def _get_pending_interruption(phone: str) -> dict:
+    try:
+        from database import r_client
+        raw = r_client.get(f"pending_interruption:{phone}")
+        if raw:
+            return json.loads(raw)
+    except Exception as e:
+        logger.error(f"[Interruption] Redis get error: {e}")
+    return {}
+
+def _clear_pending_interruption(phone: str):
+    try:
+        from database import r_client
+        r_client.delete(f"pending_interruption:{phone}")
+    except Exception as e:
+        logger.error(f"[Interruption] Redis delete error: {e}")
 
 # Redis-backed multi-draft pending state (survives across requests / gunicorn workers)
 def _set_multi_draft_pending(phone: str, drafts: list):
@@ -1900,28 +1921,26 @@ def _set_multi_draft_pending(phone: str, drafts: list):
         from database import r_client
         r_client.set(f"pending_multi_draft:{phone}", json.dumps({"status": "awaiting_multi_draft_choice", "drafts": drafts}), ex=600)
     except Exception as e:
-        logger.warning(f"[MultiDraft] Redis set failed, falling back to in-memory: {e}")
-        pending_interruptions[phone] = {"status": "awaiting_multi_draft_choice", "drafts": drafts}
+        logger.warning(f"[MultiDraft] Redis set failed: {e}")
 
 def _get_multi_draft_pending(phone: str):
-    """Retrieve awaiting_multi_draft_choice state from Redis, fallback to in-memory."""
+    """Retrieve awaiting_multi_draft_choice state from Redis."""
     try:
         from database import r_client
         raw = r_client.get(f"pending_multi_draft:{phone}")
         if raw:
             return json.loads(raw)
     except Exception as e:
-        logger.warning(f"[MultiDraft] Redis get failed, using in-memory: {e}")
-    return pending_interruptions.get(phone) if pending_interruptions.get(phone, {}).get("status") == "awaiting_multi_draft_choice" else None
+        logger.warning(f"[MultiDraft] Redis get failed: {e}")
+    return None
 
 def _clear_multi_draft_pending(phone: str):
-    """Clear awaiting_multi_draft_choice state from Redis and in-memory."""
+    """Clear awaiting_multi_draft_choice state from Redis."""
     try:
         from database import r_client
         r_client.delete(f"pending_multi_draft:{phone}")
     except Exception:
         pass
-    pending_interruptions.pop(phone, None)
 
 # Formats any generic workflow draft dictionary into a clean Markdown summary for the UI
 def format_draft_summary(draft_data: dict, wf_name: str) -> str:
@@ -2042,10 +2061,14 @@ def fetch_user_details_upyog(mobile, auth_token):
         logger.error(f"Error fetching user details from UPYOG: {e}")
         return {}
 
-def verify_user_auth(auth_token, uuid_or_mobile, tenant_id=None):
+def verify_user_auth(auth_token, uuid_or_mobile=None, tenant_id=None):
     from mcp_tools import UPYOG_BASE_URL, _cfg
     state_tenant = tenant_id or _cfg.get("state_tenant", "pg")
     url = f"{UPYOG_BASE_URL}{_cfg.get('endpoints', {}).get('user_search', '/user/_search')}?_={int(time.time() * 1000)}"
+    headers = {
+        "Content-Type": "application/json",
+        "auth-token": str(auth_token)
+    }
     payload = {
         "tenantId": state_tenant,
         "pageSize": "100",
@@ -2056,18 +2079,19 @@ def verify_user_auth(auth_token, uuid_or_mobile, tenant_id=None):
             "plainAccessRequest": {}
         }
     }
-    if uuid_or_mobile and "-" in str(uuid_or_mobile):
-        payload["uuid"] = [uuid_or_mobile]
-    else:
-        payload["userName"] = uuid_or_mobile
+    if uuid_or_mobile:
+        if "-" in str(uuid_or_mobile):
+            payload["uuid"] = [str(uuid_or_mobile)]
+        else:
+            payload["userName"] = str(uuid_or_mobile)
 
     max_retries = 2
     timeout_seconds = 5
     
     for attempt in range(max_retries + 1):
         try:
-            logger.info(f"[Auth] Verifying token (attempt {attempt + 1}/{max_retries + 1})...")
-            res = requests.post(url, json=payload, headers={"Content-Type": "application/json"}, timeout=timeout_seconds)
+            logger.info(f"[Auth] Verifying token for {uuid_or_mobile} (attempt {attempt + 1}/{max_retries + 1})...")
+            res = requests.post(url, json=payload, headers=headers, timeout=timeout_seconds)
             
             if res.status_code in [500, 502, 504]:
                 logger.warning(f"[Auth] Received transient status {res.status_code} from UPYOG user search. Retrying...")
@@ -2086,6 +2110,7 @@ def verify_user_auth(auth_token, uuid_or_mobile, tenant_id=None):
                 return False, {}
                 
             if "user" in data and len(data["user"]) > 0:
+                logger.info(f"[Auth] Verified user successfully: {data['user'][0].get('userName') or data['user'][0].get('mobileNumber')}")
                 return True, data["user"][0]
             else:
                 logger.error(f"UPYOG Verify Auth failed - No user found for {uuid_or_mobile}. Response: {data}")
@@ -2111,7 +2136,20 @@ def api_send_otp():
     mobile = req_data.get("mobile")
     if not mobile or len(mobile) != 10:
         return jsonify({"error": "Invalid mobile number"}), 400
-        
+
+    client_ip = request.remote_addr or "unknown"
+    rate_key = f"otp_ratelimit:{mobile}:{client_ip}"
+    try:
+        from database import r_client
+        attempts = r_client.incr(rate_key)
+        if attempts == 1:
+            r_client.expire(rate_key, 600)  # 10 minutes rate limit window
+        if attempts > 5:
+            logger.warning(f"[RateLimit] Excessive OTP requests for mobile={mobile} from IP={client_ip}")
+            return jsonify({"error": "Too many OTP requests. Please wait 10 minutes before requesting again."}), 429
+    except Exception as rate_err:
+        logger.error(f"[RateLimit] Rate limit check error: {rate_err}")
+
     res = send_otp_upyog(mobile)
     return jsonify(res)
 
@@ -2136,7 +2174,14 @@ def api_verify_otp():
         search_res = fetch_user_details_upyog(mobile, verify_res["access_token"])
         if search_res:
             user_info = search_res
-            
+
+    # 3. Save verified user profile & auth token into Redis cache
+    if user_info:
+        user_info["_auth_token"] = verify_res["access_token"]
+        user_info["_verified_at"] = time.time()
+        save_user_profile_info(mobile, user_info)
+        logger.info(f"[Auth] Logged in and cached user profile info in Redis for mobile={mobile}")
+
     return jsonify({
         "access_token": verify_res["access_token"],
         "user_info": user_info

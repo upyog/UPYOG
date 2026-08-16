@@ -46,7 +46,7 @@ def _mdms_get(module_name: str, master_name: str) -> List[str]:
         return []
 
 # Checks with the UPYOG API to see which dates and spaces are actually available for booking
-def _slot_search(draft: dict) -> list:
+def _slot_search(draft: dict, phone_number: str = "default") -> list:
     if not isinstance(draft, dict):
         draft = {}
     from mcp_tools import slot_search
@@ -59,7 +59,8 @@ def _slot_search(draft: dict) -> list:
             location=draft.get("location", ""),
             start_date=start,
             end_date=end,
-            nightLight=str(draft.get("nightLight", "No")).lower() == "yes"
+            nightLight=str(draft.get("nightLight", "No")).lower() == "yes",
+            phone_anchor=phone_number if (phone_number and phone_number != "default") else None
         )
         data = json.loads(raw) if isinstance(raw, str) else raw
         if not data:
@@ -497,7 +498,12 @@ def slot_search_node(state: AdvBookingState):
     user_msg = messages[-1].content if messages else ""
     
     draft_booking = dict(state.get("draft_booking", {}))
-    slots = _slot_search(draft_booking)
+    slots = _slot_search(draft_booking, phone_number=phone_number)
+    if not slots:
+        resp = "Sorry, no available advertisement slots were found for your selected location and date range. Please try selecting a different date range or location."
+        MemoryManager.save_long_term_interaction(phone_number=phone_number, role="assistant", content=resp)
+        return {"messages": [AIMessage(content=resp)], "missing_fields": ["start_date", "end_date"], "input_type": "text", "options": []}
+
     slots_json = json.dumps(slots)
     resp = f"Great! Here are the available slots. Please select one or more:\n<ui-slot-table data={slots_json} />"
     MemoryManager.save_long_term_interaction(phone_number=phone_number, role="assistant", content=resp)

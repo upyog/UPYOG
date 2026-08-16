@@ -14,9 +14,15 @@ logger = logging.getLogger(__name__)
 # Configuration
 REDIS_HOST = os.getenv("REDIS_HOST", "127.0.0.1")
 REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
+REDIS_PASSWORD = os.getenv("REDIS_PASSWORD", None)
 
-# Initialize Redis client
-r_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=False)
+# Initialize Redis client with password support
+r_client = redis.Redis(
+    host=REDIS_HOST,
+    port=REDIS_PORT,
+    password=REDIS_PASSWORD if REDIS_PASSWORD else None,
+    decode_responses=False
+)
 
 def verify_connection() -> bool:
     """Verify Redis is connected"""

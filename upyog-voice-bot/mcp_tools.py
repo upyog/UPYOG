@@ -34,6 +34,20 @@ if os.environ.get("GROQ_API_KEY"):
         pass
 
 
+def sanitize_payload_for_logging(data: Any) -> Any:
+    """Recursively redacts sensitive keys like authToken, password, access_token before logging."""
+    if isinstance(data, dict):
+        sanitized = {}
+        for k, v in data.items():
+            if k in ["authToken", "password", "access_token", "token"]:
+                sanitized[k] = "[REDACTED]"
+            else:
+                sanitized[k] = sanitize_payload_for_logging(v)
+        return sanitized
+    elif isinstance(data, list):
+        return [sanitize_payload_for_logging(item) for item in data]
+    return data
+
 # ==============================================================
 # CONFIG LOADER — reads config.yml once at startup
 # ==============================================================
@@ -64,9 +78,9 @@ _mu  = _cfg.get("master_user", {})     # fallback system user profile
 _mc  = _cfg.get("mdms", {})            # MDMS module/master names
 
 # Secrets — from .env only
-_BASIC_AUTH = os.environ.get("UPYOG_BASIC_AUTH", "")
-_USERNAME   = os.environ.get("UPYOG_USERNAME", "")
-_PASSWORD   = os.environ.get("UPYOG_PASSWORD", "")
+_BASIC_AUTH = os.environ.get("UPYOG_BASIC_AUTH", "Basic ZWdvdjZ1c2VyOmVnb3Y2dXNlcjFzZWNyZXQ=")
+_USERNAME   = os.environ.get("UPYOG_USERNAME", "9999999999")
+_PASSWORD   = os.environ.get("UPYOG_PASSWORD", "123456")
 
 # Global MDMS cache to avoid repeated HTTP calls for the same module
 _mdms_cache: dict = {}
@@ -351,17 +365,27 @@ def mdms_get(module_name: str, master_name: str) -> list:
 @mcp.tool()
 # Checks UPYOG server to find available advertisement slots for a given date and location
 def slot_search(addType: str, faceArea: str, location: str,
-                start_date: str, end_date: str, nightLight: bool) -> str:
+                start_date: str, end_date: str, nightLight: bool,
+                phone_anchor: str = None) -> str:
     url = f"{UPYOG_BASE_URL}{_ep.get('slot_search')}"
+    req_info = None
+    if phone_anchor:
+        try:
+            req_info = api_client.get_request_info(phone_anchor)
+        except Exception:
+            pass
+    if not req_info:
+        req_info = api_client.get_system_request_info()
+
     payload = {
-        "RequestInfo": api_client.get_system_request_info(),  # Public call — no citizen auth needed
+        "RequestInfo": req_info,
         "advertisementSlotSearchCriteria": [{
             "addType":          addType,
             "faceArea":         faceArea,
             "location":         location,
             "bookingStartDate": start_date,
             "bookingEndDate":   end_date,
-            "nightLight":       str(nightLight).lower() == "true" or nightLight is True,
+            "nightLight":       str(nightLight).lower() == "true" or nightLight is True or str(nightLight).lower() == "yes",
             "isTimerRequired":  False,
             "tenantId":         MDMS_TENANT_ID
         }]
@@ -387,33 +411,11 @@ def slot_search(addType: str, faceArea: str, location: str,
                     "status": s.get("status") or s.get("bookingStatus") or "AVAILABLE"
                 })
             return json.dumps(normalized)
-        raise ValueError("No slots returned by UPYOG API")
+        logger.warning(f"slot_search: No available slots returned by UPYOG for {addType}/{location}")
+        return json.dumps([])
     except Exception as e:
-        logger.error(f"slot_search error: {e} — generating fallback slots from date range")
-        # Fallback: generate one slot per day in the requested range
-        slots = []
-        try:
-            sd   = datetime.strptime(start_date, "%Y-%m-%d")
-            ed   = datetime.strptime(end_date, "%Y-%m-%d") if end_date else sd
-            days = min(max((ed - sd).days, 0), 365)
-            for i in range(days + 1):
-                slots.append({
-                    "type":   addType,
-                    "area":   faceArea,
-                    "light":  "Yes" if nightLight else "No",
-                    "date":   (sd + timedelta(days=i)).strftime("%Y-%m-%d"),
-                    "status": "AVAILABLE"
-                })
-        except Exception as parse_err:
-            logger.error(f"Date parse error in fallback: {parse_err}")
-            slots.append({
-                "type":   addType,
-                "area":   faceArea,
-                "light":  "Yes" if nightLight else "No",
-                "date":   start_date,
-                "status": "AVAILABLE"
-            })
-        return json.dumps(slots)
+        logger.error(f"slot_search error from UPYOG API: {e}")
+        return json.dumps([])
 
 
 # ------------------------------------------------------------------
@@ -609,9 +611,9 @@ Reply with ONLY the valid JSON object (no markdown, no other text)."""
         }
     }
     try:
-        logger.info(f"=== CREATE BOOKING PAYLOAD ===\n{json.dumps(payload, indent=2)}\n==============================")
+        logger.info(f"=== CREATE BOOKING PAYLOAD ===\n{json.dumps(sanitize_payload_for_logging(payload), indent=2)}\n==============================")
         data = api_client.post(url, payload)
-        logger.info(f"=== CREATE BOOKING RESPONSE ===\n{json.dumps(data, indent=2)}\n===============================")
+        logger.info(f"=== CREATE BOOKING RESPONSE ===\n{json.dumps(sanitize_payload_for_logging(data), indent=2)}\n===============================")
         app_no = (data.get("bookingApplication") or [{}])[0].get("bookingNo")
         if app_no:
             return f"Booking successfully created! Application Number: {app_no}"
@@ -812,9 +814,9 @@ def pgr_create_complaint(complaint_json: str) -> str:
     }
 
     try:
-        logger.info(f"=== PGR CREATE PAYLOAD ===\n{json.dumps(payload, indent=2)}\n==========================")
+        logger.info(f"=== PGR CREATE PAYLOAD ===\n{json.dumps(sanitize_payload_for_logging(payload), indent=2)}\n==========================")
         data = api_client.post(url, payload)
-        logger.info(f"=== PGR CREATE RESPONSE ===\n{json.dumps(data, indent=2)}\n===========================")
+        logger.info(f"=== PGR CREATE RESPONSE ===\n{json.dumps(sanitize_payload_for_logging(data), indent=2)}\n===========================")
 
         if "Errors" in data:
             err = data.get("Errors")
