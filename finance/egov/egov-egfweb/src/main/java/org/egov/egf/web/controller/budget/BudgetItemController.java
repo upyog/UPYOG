@@ -606,7 +606,8 @@ public class BudgetItemController {
 		model.addAttribute("currentFy", currentFy);
 		model.addAttribute("nextFy", nextFy);
 
-		System.out.println("Opening in GET = " + form.getOpening().getId());
+		// LTS Migration Fix (WildFly 40): System.out is discarded; use LOGGER.
+		LOGGER.info("Opening in GET = " + form.getOpening().getId());
 
 		return BUDGET_ITEM_EDIT;
 	}

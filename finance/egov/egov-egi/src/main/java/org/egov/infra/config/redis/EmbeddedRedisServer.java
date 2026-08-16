@@ -57,6 +57,15 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProce
 import redis.clients.jedis.ConnectionFactory;
 import redis.embedded.RedisServer;
 
+/**
+ * LTS Migration Fix (JDK 17): in-process Redis for local/dev only
+ * ({@code redis.enable.embedded=true}).
+ * <p>
+ * Uses {@code it.ozimov:embedded-redis} 0.7.3. The previous
+ * {@code redis.embedded} artifact does not run reliably on JDK 17, so this
+ * bean is off by default in deployed environments ({@link RedisServerConfiguration}).
+ * </p>
+ */
 public class EmbeddedRedisServer implements InitializingBean, DisposableBean, BeanDefinitionRegistryPostProcessor {
 
     private RedisServer redisServer;

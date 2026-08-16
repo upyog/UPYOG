@@ -51,7 +51,7 @@ package org.egov.infra.persistence.validator;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.Session;                              // ✅ same rehta hai
+import org.hibernate.Session;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -64,6 +64,14 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
+/**
+ * LTS Migration Fix (Hibernate 6): field uniqueness check used by {@link Unique}.
+ * <p>
+ * Hibernate 6: Hibernate {@code Criteria} was replaced with JPA
+ * {@link CriteriaBuilder}. {@code Restrictions.eq().ignoreCase()} became
+ * {@code cb.lower}; {@code uniqueResult() == null} became {@code result.isEmpty()}.
+ * </p>
+ */
 public class UniqueCheckValidator implements ConstraintValidator<Unique, Object> {
 
     private Unique unique;
@@ -100,10 +108,10 @@ public class UniqueCheckValidator implements ConstraintValidator<Unique, Object>
     private boolean checkUnique(final Object arg0, final Number id, final String fieldName)
             throws IllegalAccessException {
 
-        // ✅ CriteriaBuilder setup
+        // Hibernate 6: CriteriaBuilder setup
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-        // ✅ Dynamic class — superclass ya actual class
+        // Hibernate 6: target entity is the superclass or the concrete class.
         Class<?> targetClass = unique.isSuperclass()
                 ? arg0.getClass().getSuperclass()
                 : arg0.getClass();
@@ -113,25 +121,25 @@ public class UniqueCheckValidator implements ConstraintValidator<Unique, Object>
 
         List<Predicate> predicates = new ArrayList<>();
 
-        // ✅ fieldValue check — String ya other type
+        // Hibernate 6: string fields compared case-insensitively; others with cb.equal.
         final Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
         if (fieldValue instanceof String) {
-            // ✅ Restrictions.eq().ignoreCase() → cb.lower()
+            // Hibernate 6: Restrictions.eq().ignoreCase() → cb.lower()
             predicates.add(cb.equal(
                     cb.lower(root.get(fieldName)),
                     ((String) fieldValue).toLowerCase()
             ));
         } else {
-            // ✅ Restrictions.eq() → cb.equal()
+            // Hibernate 6: Restrictions.eq() → cb.equal()
             predicates.add(cb.equal(root.get(fieldName), fieldValue));
         }
 
-        // ✅ Restrictions.ne() → cb.notEqual()
+        // Hibernate 6: Restrictions.ne() → cb.notEqual()
         if (id != null) {
             predicates.add(cb.notEqual(root.get(unique.id()), id));
         }
 
-        // ✅ Projections.id() + setMaxResults(1) + uniqueResult() == null
+        // Hibernate 6: Projections.id() + setMaxResults(1) + uniqueResult() == null
         cq.select(root.get(unique.id()))
                 .where(cb.and(predicates.toArray(new Predicate[0])));
 
@@ -139,6 +147,6 @@ public class UniqueCheckValidator implements ConstraintValidator<Unique, Object>
                 .setMaxResults(1)
                 .getResultList();
 
-        return result.isEmpty();  // ✅ uniqueResult() == null → isEmpty()
+        return result.isEmpty();  // Hibernate 6: uniqueResult() == null → isEmpty()
     }
 }

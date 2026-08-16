@@ -97,9 +97,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 /**
- * Old persistence service
+ * Typed Hibernate/JPA helper used by legacy Struts actions and services.
+ * <p>
+ * New code should use Spring Data repositories instead. This class unwraps the
+ * JPA {@link EntityManager} to a Hibernate {@link Session} so existing HQL and
+ * native queries continue to work on Hibernate 6.
+ * </p>
  *
- * @deprecated use Repositories
+ * @param <T>  entity type
+ * @param <ID> identifier type
+ * @deprecated use Spring Data repositories
  **/
 @Transactional(readOnly = true)
 @Deprecated
@@ -115,14 +122,25 @@ public class PersistenceService<T, ID extends Serializable> {
 	@Qualifier("entityValidator")
 	private LocalValidatorFactoryBean entityValidator;
 
+	/**
+	 * @param type entity class this service manages
+	 */
 	public PersistenceService(final Class<T> type) {
 		this.type = type;
 	}
 
+	/**
+	 * @return entity class managed by this service
+	 */
 	public Class<T> getType() {
 		return this.type;
 	}
 
+	/**
+	 * Unwraps the JPA entity manager to the Hibernate 6 {@link Session}.
+	 *
+	 * @return current Hibernate session
+	 */
 	public Session getSession() {
 		return entityManager.unwrap(Session.class);
 	}
@@ -182,7 +200,9 @@ public class PersistenceService<T, ID extends Serializable> {
 			 */
 			for (int i = 0; i < list.size(); i++) {
 				T item = list.get(i);
-				if (item != null) {
+				// Hibernate 6: scalar / Object[] projections are not proxies.
+				// initialize/unproxy on arrays throws and breaks AJAX bank dropdowns.
+				if (item != null && !(item instanceof Object[])) {
 					Hibernate.initialize(item);
 					list.set(i, (T) Hibernate.unproxy(item));
 				}
@@ -207,6 +227,7 @@ public class PersistenceService<T, ID extends Serializable> {
 		return new Page(q, pageNumber, pageSize, 0);
 	}
 
+	@SuppressWarnings("unchecked")
 	private TypedQuery<T> getQueryWithParams(final String query, final Object... params) {
 		// LTS Migration Fix: Auto-normalize legacy unlabelled '?' parameters into numbered '?1', '?2'
 		// to prevent ParameterLabelException in Hibernate 6 HQL parser
@@ -231,7 +252,19 @@ public class PersistenceService<T, ID extends Serializable> {
 			finalQuery = sb.toString();
 		}
 
-		final TypedQuery<T> q = entityManager.createQuery(finalQuery, this.type);
+		// Hibernate 6: persistenceService is constructed with type=null for generic
+		// HQL. createQuery(ql, null) NPEs. Projection queries (concat id/name for
+		// AJAX dropdowns) also cannot use a typed entity result class.
+		TypedQuery<T> q;
+		if (this.type == null) {
+			q = (TypedQuery<T>) entityManager.createQuery(finalQuery);
+		} else {
+			try {
+				q = entityManager.createQuery(finalQuery, this.type);
+			} catch (final IllegalArgumentException typedQueryEx) {
+				q = (TypedQuery<T>) entityManager.createQuery(finalQuery);
+			}
+		}
 		int index = 0;
 		for (final Object param : params) {
 			if (param instanceof Collection) {

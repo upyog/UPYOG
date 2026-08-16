@@ -66,6 +66,10 @@ public interface AppConfigRepository extends JpaRepository<AppConfig, Long> {
     @EntityGraph(value = FETCH_WITH_VALUES, type = FETCH)
     AppConfig findByModuleNameAndKeyName(String moduleName, String keyName);
 
+    // LTS Migration Fix (Spring Data 3): JpaRepository already provides findById.
+    // A second findById here conflicted with the new Optional return type.
+    // AppConfig findById(Long id);
+
     @EntityGraph(value = FETCH_WITH_VALUES, type = FETCH)
     AppConfig findByKeyName(final String keyName);
 

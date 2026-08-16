@@ -63,6 +63,16 @@ import org.springframework.session.web.http.DefaultCookieSerializer;
 import static org.egov.infra.security.utils.SecurityConstants.SESSION_COOKIE_NAME;
 import static org.egov.infra.security.utils.SecurityConstants.SESSION_COOKIE_PATH;
 
+/**
+ * LTS Migration Fix (Spring Session 3): HTTP session storage on Redis using
+ * indexed sessions.
+ * <p>
+ * {@code @EnableRedisHttpSession} was replaced with
+ * {@code @EnableRedisIndexedHttpSession} so that
+ * {@link FindByIndexNameSessionRepository} remains available for concurrent
+ * session control via {@link SpringSessionBackedSessionRegistry}.
+ * </p>
+ */
 @Configuration
 @EnableRedisIndexedHttpSession
 public class RedisHttpSessionConfiguration {
@@ -70,6 +80,12 @@ public class RedisHttpSessionConfiguration {
 	@Value("${secure.cookie}")
     private boolean secureCookie;
 	
+    /**
+     * Cookie used as the Spring Session id. Path and secure-flag come from security constants
+     * and {@code secure.cookie}.
+     *
+     * @return cookie serializer
+     */
     @Bean
     public CookieSerializer cookieSerializer() {
         DefaultCookieSerializer serializer = new DefaultCookieSerializer();
@@ -91,9 +107,13 @@ public class RedisHttpSessionConfiguration {
         return new SpringSessionBackedSessionRegistry(sessionRepository);
     }
 
+    /**
+     * Publishes session destroyed/expired events so login-audit records can be closed.
+     *
+     * @return session lifecycle listener
+     */
     @Bean
     public UserSessionDestroyListener httpSessionEventPublisher() {
-        System.out.println("****************************** UserSessionDestroyListener object created *******************");
         return new UserSessionDestroyListener();
     }
 }

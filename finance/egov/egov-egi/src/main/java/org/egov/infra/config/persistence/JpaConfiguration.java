@@ -78,6 +78,22 @@ import java.util.Map;
 
 import static org.hibernate.cfg.AvailableSettings.*;
 
+/**
+ * JPA / Hibernate 6 bootstrap for the ERP persistence unit.
+ * <p>
+ * Creates a JTA-bound {@link EntityManagerFactory} that scans
+ * {@code org.egov.**.entity} packages and legacy {@code *hbm.xml} mappings.
+ * When {@code multitenancy.enabled=true}, Hibernate SCHEMA multi-tenancy is
+ * wired through {@link org.egov.infra.config.persistence.multitenancy.MultiTenantSchemaConnectionProvider}
+ * and {@link org.egov.infra.config.persistence.multitenancy.DomainBasedSchemaTenantIdentifierResolver}.
+ * </p>
+ * <p>
+ * Hibernate 6 defaults to a pooled-lo identifier optimizer with
+ * {@code allocationSize=50}. Existing eGov sequences increment by 1, which
+ * produced negative IDs after the upgrade. Sequence allocation is therefore
+ * forced to size 1 with optimizer {@code none}.
+ * </p>
+ */
 @Configuration
 @EnableTransactionManagement(proxyTargetClass = true)
 @PropertySource("classpath:config/persistence-config.properties")
@@ -107,23 +123,32 @@ public class JpaConfiguration {
     @Value("${hibernate.jdbc.batch_size}")
     private Integer batchUpdateSize;
 
+    /**
+     * JTA transaction manager provided by the application server.
+     *
+     * @return the platform transaction manager
+     */
     @Bean
     public PlatformTransactionManager transactionManager() {
         return new JtaTransactionManager();
     }
 
+    /**
+     * Builds the shared persistence unit after Flyway has applied schema migrations.
+     *
+     * @return the configured entity manager factory
+     */
     @Bean
     @DependsOn("flyway")
     public EntityManagerFactory entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactory.setJtaDataSource(dataSource);
         entityManagerFactory.setPersistenceUnitName("EgovPersistenceUnit");
-        entityManagerFactory.setEntityManagerFactoryInterface(EntityManagerFactory.class);
+        entityManagerFactory.setEntityManagerFactoryInterface(EntityManagerFactory.class); //LTS Migration Fix: Explicitly expose the EntityManagerFactory interface from the LocalContainerEntityManagerFactoryBean to ensure consistent JPA,EntityManagerFactory bean resolution
         entityManagerFactory.setPackagesToScan("org.egov.**.entity");
         entityManagerFactory.setJpaVendorAdapter(jpaVendorAdapter());
         entityManagerFactory.setJpaPropertyMap(additionalProperties());
         entityManagerFactory.setValidationMode(ValidationMode.NONE);
-//        entityManagerFactory.setSharedCacheMode(SharedCacheMode.DISABLE_SELECTIVE);
         entityManagerFactory.setSharedCacheMode(SharedCacheMode.NONE);
         ClasspathScanningPersistenceUnitPostProcessor hbmScanner = new ClasspathScanningPersistenceUnitPostProcessor("org.egov");
         hbmScanner.setMappingFileNamePattern("**/*hbm.xml");

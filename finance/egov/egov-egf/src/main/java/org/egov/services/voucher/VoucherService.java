@@ -145,6 +145,12 @@ import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 import com.exilant.exility.common.TaskFailedException;
 
+/**
+ * LTS Migration Fix (Hibernate 6 / Spring 6): core financial voucher service.
+ * Extends legacy {@link PersistenceService} because voucher queries mix HQL,
+ * native SQL, and GL engine calls. Callers must use Hibernate 6 numbered
+ * parameters and enum types, not the pre-LTS string IN / {@code concat} style.
+ */
 @Service
 public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 	private static final Logger LOGGER = Logger.getLogger(VoucherService.class);

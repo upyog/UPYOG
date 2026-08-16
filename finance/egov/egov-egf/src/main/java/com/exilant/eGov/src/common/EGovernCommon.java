@@ -51,6 +51,7 @@
  */
 package com.exilant.eGov.src.common;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
@@ -69,14 +70,12 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFiscalPeriod;
-import org.egov.infra.persistence.utils.DatabaseSequenceCreator;
-import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.query.Query;
-import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -106,9 +105,7 @@ public class EGovernCommon extends AbstractTask {
 	private PersistenceService persistenceService;
 	
 	@Autowired
-	private DatabaseSequenceCreator databaseSequenceCreator;
-	@Autowired
-	private DatabaseSequenceProvider databaseSequenceProvider;
+	private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 	
 
 	@Override
@@ -209,23 +206,31 @@ public class EGovernCommon extends AbstractTask {
 		BigInteger cgvn = null;
 		String sequenceName = "";
 		// Sequence name will be SQ_U_DBP_CGVN_FP7 for vouType U/DBP/CGVN and fiscalPeriodIdStr 7
+		/*
+		 * LTS Migration Fix (Hibernate 6 + JTA):
+		 * CGVN used to call DatabaseSequenceProvider.nextval and catch
+		 * SQLGrammarException to CREATE SEQUENCE. After the LTS upgrade that
+		 * catch never ran — Hibernate 6 marks the JTA txn rollback-only
+		 * (same root cause as Bank to Bank Transfer: relation "sq_*" does
+		 * not exist). Use GenericSequenceNumberGenerator, which creates the
+		 * sequence only after an information_schema existence check.
+		 * NEXTVAL may return Long instead of BigInteger on Hibernate 6; accept both.
+		 */
 		try {
 			sequenceName   = VoucherHelper.sequenceNameFor(vouType, fiscalPeriod.getName());
-			cgvn = (BigInteger) databaseSequenceProvider.getNextSequence(sequenceName);
+			final Serializable nextSequence = genericSequenceNumberGenerator.getNextSequence(sequenceName);
+			if (nextSequence instanceof BigInteger)
+				cgvn = (BigInteger) nextSequence;
+			else
+				cgvn = BigInteger.valueOf(((Number) nextSequence).longValue());
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("----- CGVN : " + cgvn);
 
-		} catch (final SQLGrammarException e)
+		} catch (final Exception e)
 		{
-			databaseSequenceCreator.createSequence(sequenceName);
-			cgvn = (BigInteger) databaseSequenceProvider.getNextSequence(sequenceName);
 			LOGGER.error("Error in generating CGVN" + e);
 			throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
-        } /*
-           * catch (final Exception e) { LOGGER.error("Error in generating CGVN"
-           * + e); throw new ValidationException(Arrays.asList(new
-           * ValidationError(e.getMessage(), e.getMessage()))); }
-           */
+        }
 		return cgvn.toString();
 
 	}

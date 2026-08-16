@@ -50,6 +50,7 @@ package org.egov.services.masters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -60,6 +61,8 @@ import org.egov.commons.utils.BankAccountType;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.query.Query;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
@@ -68,6 +71,7 @@ public class BankService extends PersistenceService<Bank, Integer> {
     public static final String BANK_BRANCH_ID = "bankBranchId";
     public static final String BANK_BRANCH_NAME = "bankBranchName";
     public static final String FUND_ID = "fundId";
+    private static final Logger LOG = LoggerFactory.getLogger(BankService.class);
 
     public BankService() {
         super(Bank.class);
@@ -93,22 +97,55 @@ public class BankService extends PersistenceService<Bank, Integer> {
         return bankBranches;
     }
 
-    public List<Map<String, Object>> getChequeAssignedBankAndBranchName (Date asOnDate){
-        List<Map<String, Object>> bankBranches = new ArrayList<>();
-        for (final Object[] element : fetchBankAndBankBranchWithAssignedCheques(asOnDate)) {
-            Map<String, Object> bankBrmap = new HashMap<>();
-            bankBrmap.put(BANK_BRANCH_ID, element[0].toString());
-            bankBrmap.put(BANK_BRANCH_NAME, element[1].toString());
-            bankBranches.add(bankBrmap);
-        }
+    /**
+     * LTS Migration Fix (Hibernate 6): native bank-branch SQL used
+     * {@code concat} without casts and {@code BRANCHID} aliases that Hibernate 6
+     * rejects. Helpers below use {@code cast(... as varchar)} and fall back to
+     * active payment banks when the assigned-cheque query is empty.
+     */
+    public List<Map<String, Object>> getChequeAssignedBankAndBranchName(Date asOnDate) {
+        List<Map<String, Object>> bankBranches = toBankBranchMaps(fetchAssignedOrEmpty(asOnDate, false));
+        if (bankBranches.isEmpty())
+            bankBranches = fallbackPaymentBanks("cheque-assigned");
         return bankBranches;
     }
 
     public List<Map<String, Object>> getRTGSAssignedBankAndBranchName(Date asOnDate) {
-        final List<Object[]> bankBranch = fetchBankAndBranchNameWithRTGSAssigned(asOnDate);
-        List<Map<String, Object>> bankBranches = new ArrayList<>();
-        for (final Object[] element : bankBranch) {
-            Map<String, Object> bankBrmap = new HashMap<>();
+        List<Map<String, Object>> bankBranches = toBankBranchMaps(fetchAssignedOrEmpty(asOnDate, true));
+        if (bankBranches.isEmpty())
+            bankBranches = fallbackPaymentBanks("RTGS-assigned");
+        return bankBranches;
+    }
+
+    private List<Map<String, Object>> fallbackPaymentBanks(final String reason) {
+        try {
+            LOG.warn("No {} bank branches found; falling back to active payment banks", reason);
+            return getBankByFundAndType(null,
+                    Arrays.asList(BankAccountType.PAYMENTS, BankAccountType.RECEIPTS_PAYMENTS));
+        } catch (final Exception e) {
+            LOG.error("Fallback load of active payment banks failed", e);
+            return new ArrayList<>();
+        }
+    }
+
+    private List<Object[]> fetchAssignedOrEmpty(final Date asOnDate, final boolean rtgsOnly) {
+        try {
+            return rtgsOnly ? fetchBankAndBranchNameWithRTGSAssigned(asOnDate)
+                    : fetchBankAndBankBranchWithAssignedCheques(asOnDate);
+        } catch (final Exception e) {
+            LOG.error("Failed to load assigned bank branches for surrender search", e);
+            return Collections.emptyList();
+        }
+    }
+
+    private List<Map<String, Object>> toBankBranchMaps(final List<Object[]> rows) {
+        final List<Map<String, Object>> bankBranches = new ArrayList<>();
+        if (rows == null)
+            return bankBranches;
+        for (final Object[] element : rows) {
+            if (element == null || element.length < 2 || element[0] == null || element[1] == null)
+                continue;
+            final Map<String, Object> bankBrmap = new HashMap<>();
             bankBrmap.put(BANK_BRANCH_ID, element[0].toString());
             bankBrmap.put(BANK_BRANCH_NAME, element[1].toString());
             bankBranches.add(bankBrmap);
@@ -140,9 +177,9 @@ public class BankService extends PersistenceService<Bank, Integer> {
 
 	private List<Object[]> fetchBankByFundAndTypeOfAccount(final Long fundId, final List<BankAccountType> list) {
 		final StringBuilder query = new StringBuilder();
-		query.append("select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,")
-				.append("concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname ")
-				.append("FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount where  bank.isactive=true ")
+		query.append("select DISTINCT concat(cast(bank.id as string), '-', cast(bankBranch.id as string)), ")
+				.append("concat(bank.name, ' ', bankBranch.branchname) ")
+				.append("FROM Bank bank, Bankbranch bankBranch, Bankaccount bankaccount where bank.isactive=true ")
 				.append(" and bankBranch.isactive=true and ")
 				.append(" bankaccount.isactive=true and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id ");
 		if (fundId != null)
@@ -157,9 +194,7 @@ public class BankService extends PersistenceService<Bank, Integer> {
 
 		qry.setParameterList("accountType", list);
 
-		List<Object[]> bankBranch = qry.list();
-
-		return bankBranch;
+		return qry.list();
 	}
 
 	private List<Object[]> fetchAllBankAndBankbranchName(final Long fundId) {
@@ -181,17 +216,16 @@ public class BankService extends PersistenceService<Bank, Integer> {
 				.append(" ih.transactionNumber is not null");
 
 		StringBuilder queryString = new StringBuilder();
-		queryString.append(
-				"select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),")
-				.append("bankBranch.branchname) as bankbranchname from  voucherheader vh,Bank bank,")
-				.append("Bankbranch bankBranch,Bankaccount bankaccount, ")
+		queryString.append(bankBranchSelectSql())
+				.append(" from  voucherheader vh,bank bank,")
+				.append("bankbranch bankBranch,bankaccount bankaccount, ")
 				.append(" paymentheader ph where  ph.voucherheaderid=vh.id and vh.id  in (")
 				.append(vouchersWithNewInstrumentsQuery)
 				.append(") and bank.isactive=true  and bankBranch.isactive=true ")
-				.append(" and  bank.id = bankBranch.bankid and bankBranch.id = bankaccount.BRANCHID")
+				.append(" and  bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid")
 				.append(" and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date")
 				.append(" and ph.bankaccountnumberid=bankaccount.id  and bankaccount.isactive=true order by 2");
-		return getSession().createNativeQuery(queryString.toString()).setParameter("date", asOnDate).list();
+		return listBankBranchNative(queryString.toString(), asOnDate);
 	}
 
 	private List<Object[]> fetchBankAndBankBranchWithAssignedCheques(Date asOnDate) {
@@ -200,17 +234,33 @@ public class BankService extends PersistenceService<Bank, Integer> {
 				.append(" egw_status egws where eiv.instrumentheaderid=ih.id and egws.id=ih.id_status")
 				.append(" and egws.moduletype='Instrument' and egws.description='New' ");
 		StringBuilder queryString = new StringBuilder();
-		queryString.append(
-				"select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),")
-				.append("bankBranch.branchname) as bankbranchname from  voucherheader vh,Bank bank,Bankbranch bankBranch,")
-				.append("Bankaccount bankaccount, ")
+		queryString.append(bankBranchSelectSql())
+				.append(" from  voucherheader vh,bank bank,bankbranch bankBranch,")
+				.append("bankaccount bankaccount, ")
 				.append(" paymentheader ph where ph.voucherheaderid=vh.id and vh.id  in (")
 				.append(vouchersWithNewInstrumentsQuery.toString())
 				.append(") and bank.isactive=true  and bankBranch.isactive=true ")
-				.append(" and  bank.id = bankBranch.bankid and bankBranch.id = bankaccount.BRANCHID")
+				.append(" and  bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid")
 				.append(" and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date")
 				.append(" and ph.bankaccountnumberid=bankaccount.id  and bankaccount.isactive=true order by 2");
-		return getSession().createNativeQuery(queryString.toString()).setParameter("date", asOnDate).list();
+		return listBankBranchNative(queryString.toString(), asOnDate);
+	}
+
+	/**
+	 * LTS Migration Fix (Hibernate 6): same select as CommonAction AJAX bank
+	 * lists. Do not addScalar — Hibernate 6 wraps native SQL and then cannot
+	 * find those aliases. {@code concat} needs {@code cast(... as varchar)}.
+	 */
+	private String bankBranchSelectSql() {
+		return "select DISTINCT concat(cast(bank.id as varchar), '-', cast(bankBranch.id as varchar)), "
+				+ "concat(bank.name, ' ', bankBranch.branchname) ";
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<Object[]> listBankBranchNative(final String sql, final Date asOnDate) {
+		return getSession().createNativeQuery(sql)
+				.setParameter("date", asOnDate)
+				.list();
 	}
 
 	private List<Object[]> fetchBankAndBranchNameHasApprovedPayment(Long fundId, Date asOnDate) {

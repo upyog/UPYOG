@@ -261,7 +261,9 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.8</version>
+            <!-- LTS Migration Fix (JDK 17): Lombok 1.18.8 cannot process JDK 17
+                 records/bytecode. 1.18.30 is the first line that compiles this module. -->
+            <version>1.18.30</version>
             <scope>provided</scope>
         </dependency>
 

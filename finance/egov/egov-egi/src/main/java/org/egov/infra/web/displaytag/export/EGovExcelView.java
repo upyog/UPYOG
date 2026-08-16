@@ -63,8 +63,17 @@ import java.io.StringReader;
 import java.io.Writer;
 import java.util.regex.Pattern;
 
+// Displaytag Hazendaz fork + Jakarta JSP 3.1 (Spring 6). Was javax.servlet.jsp.JspException.
 import jakarta.servlet.jsp.JspException;
 
+/**
+ * LTS Migration Fix (Jakarta Servlet 6 / Spring 6): Excel export view for Displaytag tables.
+ * <p>
+ * The original {@code displaytag} artifact is unmaintained and Servlet 3 / javax
+ * only. The Hazendaz fork is Jakarta Servlet 6 compatible, which is why this
+ * class now imports {@link JspException} from {@code jakarta.servlet.jsp}.
+ * </p>
+ */
 public class EGovExcelView extends BaseExportView {
 
     /**

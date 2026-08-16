@@ -61,6 +61,9 @@
 }
 
 function populate${id}(params){
-    makeJSONCall(${fields},'${pageContext.request.contextPath}/${url}',params, ${id}SuccessHandler, ${id}FailureHandler) ;
+    <%-- LTS Migration Fix (Struts 7 / WildFly 40): collapse // so contextPath +
+         leading-slash url does not become /services/EGF//payment/... --%>
+    var ajaxUrl = '${pageContext.request.contextPath}/${url}'.replace(/([^:]\/)\/+/g, '$1');
+    makeJSONCall(${fields}, ajaxUrl, params, ${id}SuccessHandler, ${id}FailureHandler) ;
 }
 </script>

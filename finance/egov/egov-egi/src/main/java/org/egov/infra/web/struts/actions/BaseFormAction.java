@@ -81,6 +81,16 @@ import org.apache.struts2.ActionSupport;
 import org.apache.struts2.ModelDriven;
 import org.apache.struts2.Preparable;
 
+/**
+ * LTS Migration Fix (Struts 7): shared base action for form-driven screens.
+ * <p>
+ * Implements {@link ModelDriven}, {@link SessionAware}, {@link Preparable} and
+ * {@link ParameterNameAware} using the Struts 7 {@code withSession} callback
+ * (the older {@code setSession} contract was removed). Dropdown data, request
+ * parameters, and the legacy {@link PersistenceService} are available to
+ * subclasses.
+ * </p>
+ */
 @ParentPackage("egov")
 public abstract class BaseFormAction extends ActionSupport
         implements ModelDriven<Object>, SessionAware, Preparable, ParameterNameAware {

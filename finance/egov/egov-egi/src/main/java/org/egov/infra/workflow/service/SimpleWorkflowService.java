@@ -81,6 +81,11 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  *               &lt;constructor-arg index="0" ref="myStateAwarePersistenceService"/&gt;
  *       &lt;/bean&gt;
  * </pre>
+ * <p>
+ * LTS Migration Fix (Hibernate 6): {@code Session.createCriteria()} was removed. Matrix lookups
+ * below use JPA {@link CriteriaBuilder} / {@link CriteriaQuery}. Predicate
+ * semantics (department, amount, designation, dates) are unchanged.
+ * </p>
  **/
 public class SimpleWorkflowService<T extends StateAware> implements WorkflowService<T> {
 
@@ -188,7 +193,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
     @Override
     public WorkFlowMatrix getWfMatrix(String type, String department, BigDecimal amountRule,
                                       String additionalRule, String currentState, String pendingActions) {
-        // ✅ No date filter — delegate to helper directly
+        // Hibernate 6: No date filter — delegate to helper directly
         CriteriaQuery<WorkFlowMatrix> wfMatrixCriteria = createWfMatrixAdditionalCriteria(
                 type, department, amountRule, additionalRule, currentState, pendingActions, null);
         return getWorkflowMatrixObj(type, additionalRule, currentState, pendingActions,
@@ -215,16 +220,16 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
         Root<WorkFlowMatrix> root = (Root<WorkFlowMatrix>) (Root<?>) wfMatrixCriteria.getRoots().iterator().next();
         Date effectiveDate = date == null ? new Date() : date;
 
-        // ✅ Criterion fromDateCriteria — Restrictions.le("fromDate", date)
+        // Hibernate 6: Criterion fromDateCriteria — Restrictions.le("fromDate", date)
         Predicate fromDatePredicate = cb.lessThanOrEqualTo(root.get("fromDate"), effectiveDate);
 
-        // ✅ Criterion toDateCriteria — Restrictions.ge("toDate", date)
+        // Hibernate 6: Criterion toDateCriteria — Restrictions.ge("toDate", date)
         Predicate toDatePredicate = cb.greaterThanOrEqualTo(root.get("toDate"), effectiveDate);
 
-        // ✅ dateCriteria — conjunction of from + to
+        // Hibernate 6: dateCriteria — conjunction of from + to
         Predicate dateCriteria = cb.and(fromDatePredicate, toDatePredicate);
 
-        // ✅ Restrictions.or(dateCriteria, fromDateCriteria)
+        // Hibernate 6: Restrictions.or(dateCriteria, fromDateCriteria)
         Predicate existingWhere = wfMatrixCriteria.getRestriction();
         if (existingWhere != null)
             wfMatrixCriteria.where(cb.and(existingWhere, cb.or(dateCriteria, fromDatePredicate)));
@@ -239,7 +244,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
     public WorkFlowMatrix getWfMatrix(String type, String department, BigDecimal amountRule,
                                       String additionalRule, String currentState,
                                       String pendingActions, Date date, String designation) {
-        // ✅ 8-param version — with date + designation
+        // Hibernate 6: 8-param version — with date + designation
         CriteriaBuilder cb = this.stateAwarePersistenceService.getSession().getCriteriaBuilder();
         CriteriaQuery<WorkFlowMatrix> wfMatrixCriteria = createWfMatrixAdditionalCriteria(
                 type, department, amountRule, additionalRule, currentState, pendingActions, designation);
@@ -248,18 +253,18 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
         Root<WorkFlowMatrix> root = (Root<WorkFlowMatrix>) (Root<?>) wfMatrixCriteria.getRoots().iterator().next();
         Date effectiveDate = date == null ? new Date() : date;
 
-        // ✅ Date predicates
+        // Hibernate 6: Date predicates
         Predicate fromDatePredicate = cb.lessThanOrEqualTo(root.get("fromDate"), effectiveDate);
         Predicate toDatePredicate   = cb.greaterThanOrEqualTo(root.get("toDate"), effectiveDate);
         Predicate dateCriteria      = cb.and(fromDatePredicate, toDatePredicate);
 
-        // ✅ ilike(CURRENT_DESIGNATION, designation) → cb.like + cb.lower
+        // Hibernate 6: ilike(CURRENT_DESIGNATION, designation) → cb.like + cb.lower
         Predicate designationPredicate = cb.like(
                 cb.lower(root.get(CURRENT_DESIGNATION)),
                 (isNotBlank(designation) ? designation : EMPTY).toLowerCase()
         );
 
-        // ✅ Combine all
+        // Hibernate 6: Combine all
         Predicate existingWhere = wfMatrixCriteria.getRestriction();
         Predicate datePredicate = cb.or(dateCriteria, fromDatePredicate);
 
@@ -276,7 +281,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
                                                 String currentState, String pendingActions,
                                                 String designation,
                                                 CriteriaQuery<WorkFlowMatrix> wfMatrixCriteria) {
-        // ✅ .list() → .getResultList()
+        // Hibernate 6: .list() → .getResultList()
         List<WorkFlowMatrix> workflowMatrix = this.stateAwarePersistenceService.getSession()
                 .createQuery(wfMatrixCriteria)
                 .getResultList();
@@ -294,10 +299,10 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
                             : new Predicate[0])
             );
 
-            // ✅ Restrictions.eq(DEPARTMENT, ANY)
+            // Hibernate 6: Restrictions.eq(DEPARTMENT, ANY)
             predicates.add(cb.equal(root.get(DEPARTMENT), ANY));
 
-            // ✅ ilike(CURRENT_DESIGNATION, designation)
+            // Hibernate 6: ilike(CURRENT_DESIGNATION, designation)
             if (isNotBlank(designation))
                 predicates.add(cb.like(
                         cb.lower(root.get(CURRENT_DESIGNATION)),
@@ -313,7 +318,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
             return defaultMatrix.isEmpty() ? null : defaultMatrix.get(0);
 
         } else {
-            // ✅ same logic — toDate null wala pehle return karo
+            // Hibernate 6: same result as before — prefer the row whose toDate is null.
             for (WorkFlowMatrix matrix : workflowMatrix)
                 if (matrix.getToDate() == null)
                     return matrix;
@@ -337,11 +342,11 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
                         : new Predicate[0])
         );
 
-        // ✅ Restrictions.eq(DEPARTMENT, department)
+        // Hibernate 6: Restrictions.eq(DEPARTMENT, department)
         if (isNotBlank(department))
             predicates.add(cb.equal(root.get(DEPARTMENT), department));
 
-        // ✅ Amount rule — Disjunction of two Conjunctions
+        // Hibernate 6: Amount rule — Disjunction of two Conjunctions
         if (amountRule != null && BigDecimal.ZERO.compareTo(amountRule) != 0) {
             // amount1st — fromQty <= amountRule AND toQty >= amountRule
             Predicate amount1st = cb.and(
@@ -356,7 +361,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
             predicates.add(cb.or(amount1st, amount2nd));
         }
 
-        // ✅ ilike(CURRENT_DESIGNATION, designation) → cb.like + cb.lower
+        // Hibernate 6: ilike(CURRENT_DESIGNATION, designation) → cb.like + cb.lower
         if (isNotBlank(designation))
             predicates.add(cb.like(
                     cb.lower(root.get(CURRENT_DESIGNATION)),
@@ -370,7 +375,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
     public WorkFlowMatrix getPreviousStateFromWfMatrix(String type, String department,
                                                        BigDecimal amountRule, String additionalRule,
                                                        String currentState, String pendingActions) {
-        // ✅ FIXED — was still using old Criteria API
+        // Hibernate 6: FIXED — was still using old Criteria API
         CriteriaBuilder cb = this.stateAwarePersistenceService.getSession().getCriteriaBuilder();
         CriteriaQuery<WorkFlowMatrix> cq = previousWorkFlowMatrixCriteria(
                 type, additionalRule, currentState, pendingActions);
@@ -383,13 +388,13 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
                         : new Predicate[0])
         );
 
-        // ✅ department check
+        // Hibernate 6: department check
         if (department != null && !"".equals(department))
             predicates.add(cb.equal(root.get(DEPARTMENT), department));
         else
             predicates.add(cb.equal(root.get(DEPARTMENT), ANY));
 
-        // ✅ Amount rule — same disjunction pattern
+        // Hibernate 6: Amount rule — same disjunction pattern
         if (amountRule != null && BigDecimal.ZERO.compareTo(amountRule) != 0) {
             Predicate amount1st = cb.and(
                     cb.le(root.get(FROM_QTY), amountRule),
@@ -404,7 +409,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
 
         cq.where(cb.and(predicates.toArray(new Predicate[0])));
 
-        // ✅ .list() → .getResultList()
+        // Hibernate 6: .list() → .getResultList()
         List<WorkFlowMatrix> workflowMatrix = this.stateAwarePersistenceService.getSession()
                 .createQuery(cq)
                 .getResultList();
@@ -425,14 +430,14 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
         if (isNotBlank(additionalRule))
             predicates.add(cb.equal(root.get("additionalRule"), additionalRule));
 
-        // ✅ ilike("nextAction", ..., MatchMode.EXACT) → cb.like + lower, EXACT
+        // Hibernate 6: ilike("nextAction", ..., MatchMode.EXACT) → cb.like + lower, EXACT
         if (isNotBlank(pendingActions))
             predicates.add(cb.like(
                     cb.lower(root.get("nextAction")),
                     pendingActions.toLowerCase()
             ));
 
-        // ✅ ilike("nextState", ..., MatchMode.EXACT) → cb.like + lower, EXACT
+        // Hibernate 6: ilike("nextState", ..., MatchMode.EXACT) → cb.like + lower, EXACT
         if (isNotBlank(currentState))
             predicates.add(cb.like(
                     cb.lower(root.get("nextState")),
@@ -451,21 +456,21 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
 
         List<Predicate> predicates = new ArrayList<>();
 
-        // ✅ Restrictions.eq("objectType", type)
+        // Hibernate 6: Restrictions.eq("objectType", type)
         predicates.add(cb.equal(root.get("objectType"), type));
 
-        // ✅ Restrictions.eq("additionalRule", additionalRule)
+        // Hibernate 6: Restrictions.eq("additionalRule", additionalRule)
         if (isNotBlank(additionalRule))
             predicates.add(cb.equal(root.get("additionalRule"), additionalRule));
 
-        // ✅ ilike("pendingActions", ..., MatchMode.ANYWHERE) → "%value%"
+        // Hibernate 6: ilike("pendingActions", ..., MatchMode.ANYWHERE) → "%value%"
         if (isNotBlank(pendingActions))
             predicates.add(cb.like(
                     cb.lower(root.get("pendingActions")),
                     "%" + pendingActions.toLowerCase() + "%"
             ));
 
-        // ✅ ilike("currentState", ..., MatchMode.EXACT) → exact value
+        // Hibernate 6: ilike("currentState", ..., MatchMode.EXACT) → exact value
         if (isNotBlank(currentState))
             predicates.add(cb.like(
                     cb.lower(root.get("currentState")),

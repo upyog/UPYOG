@@ -57,20 +57,55 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.io.Serializable;
+import java.util.Locale;
 
+/**
+ * LTS Migration Fix (Hibernate 6 + WildFly JTA):
+ * {@link #getNextSequence(String)} must only be called for a sequence that
+ * already exists. A missing-sequence {@code NEXTVAL} used to be recovered by
+ * catching {@code SQLGrammarException}; Hibernate 6 marks that JTA transaction
+ * rollback-only, so {@code noRollbackFor} is not enough. Callers (see
+ * {@link GenericSequenceNumberGenerator}) must use {@link #sequenceExists(String)}
+ * first. Scoped to {@code current_schema()} for multi-tenant city schemas.
+ */
 @Service
 public class DatabaseSequenceProvider {
 
     private static final String NEXT_SEQ_QUERY = "SELECT NEXTVAL (:sequenceName) AS NEXTVAL";
+    private static final String SEQUENCE_EXISTS_QUERY =
+            "SELECT COUNT(*) FROM information_schema.sequences "
+                    + "WHERE sequence_schema = current_schema() AND sequence_name = :sequenceName";
 
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     * LTS: keep {@code REQUIRES_NEW} so nextval is isolated. {@code noRollbackFor}
+     * is retained for non-missing SQL errors but does <em>not</em> prevent
+     * Hibernate 6 from marking rollback-only when the relation is missing.
+     */
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW, noRollbackFor = SQLGrammarException.class)
     public Serializable getNextSequence(String sequenceName) throws SQLGrammarException {
         return (Serializable) entityManager.unwrap(Session.class)
                 .createNativeQuery(NEXT_SEQ_QUERY)
                 .setParameter("sequenceName", sequenceName)
                 .uniqueResult();
+    }
+
+    /**
+     * LTS Migration Fix (Hibernate 6 + JTA): catalog lookup that does not throw
+     * when the sequence is absent. Used instead of "try NEXTVAL and catch
+     * SQLGrammarException", which poisoned the Bank to Bank Transfer create
+     * transaction ({@code relation "sq_1_csl_202122" does not exist}).
+     */
+    @Transactional(readOnly = true)
+    public boolean sequenceExists(String sequenceName) {
+        if (sequenceName == null || sequenceName.trim().isEmpty())
+            return false;
+        final Object result = entityManager.unwrap(Session.class)
+                .createNativeQuery(SEQUENCE_EXISTS_QUERY)
+                .setParameter("sequenceName", sequenceName.toLowerCase(Locale.ROOT))
+                .uniqueResult();
+        return result instanceof Number && ((Number) result).longValue() > 0;
     }
 }

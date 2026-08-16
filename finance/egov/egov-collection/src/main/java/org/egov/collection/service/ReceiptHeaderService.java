@@ -1243,7 +1243,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         } catch (JsonProcessingException e) {
             LOGGER.error("json processing ", e);
         }
-        System.out.println(jsonInString);
+        // LTS Migration Fix (WildFly 40): System.out is discarded; use LOGGER.
+        LOGGER.info(jsonInString);
         return restTemplate.postForObject(url, request, DemandResponse.class);
     }
 
@@ -1263,7 +1264,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         } catch (JsonProcessingException e) {
            LOGGER.error("Json processing", e);
         }
-        System.out.println(jsonInString);
+        LOGGER.info(jsonInString);
         Map postForObject = restTemplate.postForObject(url, reqWrapper, Map.class);
         switch (ApplicationThreadLocals.getCollectionVersion().toUpperCase()) {
         case "V2":

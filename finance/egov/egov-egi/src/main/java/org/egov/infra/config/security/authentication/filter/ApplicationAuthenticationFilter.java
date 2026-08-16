@@ -50,6 +50,8 @@ package org.egov.infra.config.security.authentication.filter;
 
 import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
 import org.egov.infra.security.utils.SecurityConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -69,7 +71,13 @@ import static org.egov.infra.utils.ApplicationConstant.USERID_KEY;
 import static org.egov.infra.utils.ApplicationConstant.USERNAME_KEY;
 import static org.egov.infra.utils.StringUtils.emptyIfNull;
 
+/**
+ * LTS Migration Fix (WildFly 40): System.out is discarded under WildFly;
+ * authentication attempts are logged with SLF4J instead.
+ */
 public class ApplicationAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+
+    private static final Logger log = LoggerFactory.getLogger(ApplicationAuthenticationFilter.class);
 
     private List<String> credentialFields = new ArrayList<>();
 
@@ -102,7 +110,7 @@ public class ApplicationAuthenticationFilter extends UsernamePasswordAuthenticat
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
        
     	
-    	System.out.println("***************************************attemptAuthentication*********");
+    	log.info("attemptAuthentication");
     	
     	HashMap<String, String> credentials = new HashMap<>();
         for (String credential : credentialFields) {

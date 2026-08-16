@@ -120,7 +120,8 @@ public class BranchUserMapAction extends BaseFormAction {
     @Action(value = "/service/branchUserMap-newform")
     public String newform() {
         addDropdownData(BANK_NAME_LIST, bankHibernateDAO.getAllBankHavingBranchAndAccounts());
-        System.out.println(branchUserMap.getIsActive());
+        // LTS Migration Fix (WildFly 40): System.out is discarded; use LOGGER.
+        LOGGER.info("branchUserMap isActive: " + branchUserMap.getIsActive());
         addDropdownData(BANK_BRANCH_LIST, Collections.emptyList());
         addDropdownData(BANK_COLLECTION_OPERATOR_USER_LIST, getBankCollectionOperator());
         return NEW;

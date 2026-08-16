@@ -58,15 +58,33 @@ import jakarta.persistence.PersistenceContext;
 
 import static java.lang.String.format;
 
+/**
+ * LTS Migration Fix (Hibernate 6 + WildFly JTA):
+ * Creates per-fund/year voucher sequences (e.g. {@code sq_1_csl_202122}) that
+ * are not shipped in Flyway. {@code IF NOT EXISTS} is required so two concurrent
+ * first-voucher requests do not fail. {@code REQUIRES_NEW} commits the DDL
+ * independently of the voucher create transaction — needed because a failed
+ * {@code NEXTVAL} on Hibernate 6 would otherwise leave the outer JTA txn
+ * rollback-only. Sequence name is validated before interpolation.
+ */
 @Service
 public class DatabaseSequenceCreator {
-    private static final String CREATE_SEQ_QUERY = "CREATE SEQUENCE %s";
+    private static final String CREATE_SEQ_QUERY = "CREATE SEQUENCE IF NOT EXISTS %s";
+    private static final String VALID_SEQUENCE_NAME = "[A-Za-z][A-Za-z0-9_]*";
 
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     * LTS: {@code CREATE SEQUENCE IF NOT EXISTS} in a new transaction so the
+     * subsequent {@code NEXTVAL} can see the sequence. Name must match
+     * {@code [A-Za-z][A-Za-z0-9_]*} (voucher sequences are already normalized
+     * by {@link GenericSequenceNumberGenerator}).
+     */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void createSequence(String sequenceName) {
+        if (sequenceName == null || !sequenceName.matches(VALID_SEQUENCE_NAME))
+            throw new IllegalArgumentException("Invalid sequence name: " + sequenceName);
         entityManager.unwrap(Session.class)
                 .createNativeQuery(format(CREATE_SEQ_QUERY, sequenceName))
                 .executeUpdate();

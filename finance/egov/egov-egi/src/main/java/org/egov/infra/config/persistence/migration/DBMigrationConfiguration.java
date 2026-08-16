@@ -49,7 +49,6 @@
 
 package org.egov.infra.config.persistence.migration;
 
-import org.checkerframework.checker.units.qual.A;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.configuration.FluentConfiguration;
 import org.slf4j.Logger;
@@ -71,6 +70,16 @@ import java.util.List;
 
 import static java.lang.String.format;
 
+/**
+ * LTS Migration Fix (Flyway 9 / JDK 17): schema migration bootstrap.
+ * <p>
+ * Runs after the datasource is available and before the JPA
+ * {@code EntityManagerFactory} is created. Tenant schemas listed in
+ * {@code tenant.schemas} (preferred) or legacy {@code tenant.*} properties
+ * each receive the same migration set. Sample data scripts run only when
+ * {@code dev.mode=true}.
+ * </p>
+ */
 @Configuration
 public class DBMigrationConfiguration {
 

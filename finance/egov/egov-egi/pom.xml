@@ -59,6 +59,33 @@
     <name>e-governments egi</name>
     <artifactId>egov-egi</artifactId>
 
+    <!--
+      LTS Migration Fix (Spring 6 / Java 17 / Jakarta EE 10):
+      dependency upgrades in this module
+      (versions are managed by the parent pom unless noted). Code impact is
+      documented on the classes listed next to each library.
+
+      Hibernate ORM 6.4 (org.hibernate.orm) ........ JpaConfiguration, PersistenceService,
+                                                     DefaultInboxRenderServiceImpl, BaseRevisionEntity
+      hibernate-entitymanager (removed) ............ merged into hibernate-core in v6
+      infinispan-hibernate-cache-v60 ............... replaces hibernate-infinispan; EgovMasterDataCaching
+      Hibernate Validator 8 + jakarta.validation ... jakarta.validation.* on entities/services
+      Spring Data Envers 3.2 ....................... RepositoryConfiguration AuditorAware Optional
+      jackson-datatype-hibernate6 .................. HibernateAwareObjectMapper (was hibernate4/5 module)
+      Spring Session 3.2 + Jedis 5.1.2 ............. RedisHttpSessionConfiguration, RedisServerConfiguration,
+                                                     UserSessionDestroyListener, CacheConfiguration
+      Struts 7.1 ................................... BaseFormAction.withSession, SpringMultipartParser
+      Displaytag Hazendaz fork ..................... EGovExcelView; jakarta.servlet.jsp
+      Apache Tiles tntim96 fork .................... org.egov.infra.web.spring.tiles (Spring 6 dropped tiles3)
+      commons-configuration2 / commons-dbcp2 ....... Java 17 replacements for EOL commons-configuration / dbcp
+      locationtech jts-core ........................ replaces com.vividsolutions:jts
+      ESAPI 2.5.3.0 jakarta + AntiSamy ............. XSSValidator
+      jakarta.mail-api + angus-mail ................ EmailConfiguration (javax.mail runtime)
+      jakarta.servlet 6 / jsp 3.1 / jstl 3.0 ....... all filters, controllers, tags
+      Lombok 1.18.30 ............................... JDK 17 annotation processing
+      Elasticsearch Java sources excluded .......... Spring Data ES 5.x is incompatible with ES 2.4 client
+    -->
+
     <dependencies>
 
         <dependency>
@@ -80,6 +107,7 @@
             <artifactId>spring-data-envers</artifactId>
         </dependency>
 
+        <!-- Hibernate 6.4 (org.hibernate.orm). hibernate-entitymanager was folded into hibernate-core. -->
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
@@ -92,6 +120,7 @@
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-envers</artifactId>
         </dependency>
+        <!-- Hibernate 6 moved Infinispan L2 cache out of hibernate-infinispan into this artifact. -->
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-hibernate-cache-v60</artifactId>
@@ -137,6 +166,7 @@
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
         </dependency>
+        <!-- Jackson Hibernate 6 module: lazy-proxy JSON serialization (see HibernateAwareObjectMapper). -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-hibernate6</artifactId>
@@ -160,6 +190,7 @@
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
         </dependency>
+        <!-- Jakarta classifier required with Servlet 6; non-jakarta ESAPI still uses javax.servlet. -->
         <dependency>
             <groupId>org.owasp.esapi</groupId>
             <artifactId>esapi</artifactId>
@@ -172,6 +203,8 @@
         </dependency>
 
 
+        <!-- Compile-only javax.servlet.jsp-api: some Struts/Displaytag class files still reference javax types.
+             Runtime uses jakarta.servlet.jsp-api 3.1 below. -->
         <dependency>
             <groupId>javax.servlet.jsp</groupId>
             <artifactId>javax.servlet.jsp-api</artifactId>
@@ -190,6 +223,7 @@
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz-jobs</artifactId>
         </dependency>
+        <!-- Quartz 2.5 no longer pulls mchange-commons-java at compile scope; declare it explicitly. -->
         <dependency>
             <groupId>com.mchange</groupId>
             <artifactId>mchange-commons-java</artifactId>
@@ -205,6 +239,7 @@
         <!--            <groupId>displaytag</groupId>-->
         <!--            <artifactId>displaytag-export-poi</artifactId>-->
         <!--        </dependency>-->
+        <!-- Original displaytag is unmaintained and javax.servlet-only. Hazendaz fork is Jakarta Servlet 6 compatible. -->
         <dependency>
             <groupId>com.github.hazendaz</groupId>
             <artifactId>displaytag</artifactId>
@@ -235,6 +270,7 @@
         <!-- REPORTS END -->
 
         <!-- COMMONS START -->
+        <!-- commons-configuration and commons-dbcp are EOL on Java 17; use configuration2 and dbcp2. -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-configuration2</artifactId>
@@ -304,7 +340,7 @@
         <!--            <groupId>com.vividsolutions</groupId>-->
         <!--            <artifactId>jts</artifactId>-->
         <!--        </dependency>-->
-        <!--        used this instead of vividsolutions-->
+        <!-- JTS moved from com.vividsolutions to org.locationtech; GIS shapefile code uses this API. -->
         <dependency>
             <groupId>org.locationtech.jts</groupId>
             <artifactId>jts-core</artifactId>
@@ -339,6 +375,7 @@
         <!--            <version>3.2.0</version>-->
         <!--        </dependency>-->
 
+        <!-- Spring Session 3.2 (Spring 6). Indexed sessions replace @EnableRedisHttpSession. -->
         <dependency>
             <groupId>org.springframework.session</groupId>
             <artifactId>spring-session-core</artifactId>
@@ -423,6 +460,7 @@
         </dependency>
 
 
+        <!-- Jedis 5.x required by Spring Data Redis 3; connection setup is in RedisServerConfiguration. -->
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
@@ -436,6 +474,7 @@
             <version>3.1.0</version>
         </dependency>
 
+        <!-- Jakarta Mail 2.x + Angus implementation (javax.mail is not on the JDK 17 / Spring 6 classpath). -->
         <dependency>
             <groupId>jakarta.mail</groupId>
             <artifactId>jakarta.mail-api</artifactId>
@@ -489,7 +528,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- In egov-egi/pom.xml -->
+            <!-- Elasticsearch 2.4 client APIs in these packages do not compile against Spring Data ES 5.x. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

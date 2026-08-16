@@ -84,6 +84,7 @@ public class RoleService {
     }
 
     public List<Role> getAllRoles() {
+        // LTS Migration Fix (Spring Data 3): new Sort(...) constructor was removed; use Sort.by(...).
         return roleRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
     }
 
@@ -92,6 +93,7 @@ public class RoleService {
     }
 
     public Role getRoleById(final Long roleID) {
+        // LTS Migration Fix (Spring Data 3): findOne(id) was removed; findById returns Optional.
         return roleRepository.findById(roleID).orElse(null);
     }
 

@@ -72,6 +72,14 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
+/**
+ * LTS Migration Fix (Hibernate 6): multi-field uniqueness check used by {@link CompositeUnique}.
+ * <p>
+ * Hibernate 6: Hibernate {@code Criteria} was replaced with JPA CriteriaBuilder.
+ * {@code Restrictions.eq/isNull/ne} and {@code uniqueResult()} became
+ * {@code cb.equal/isNull/notEqual} and {@code getResultList().isEmpty()}.
+ * </p>
+ */
 public class CompositeUniqueCheckValidator implements ConstraintValidator<CompositeUnique, Object> {
 
     private CompositeUnique unique;
@@ -103,10 +111,10 @@ public class CompositeUniqueCheckValidator implements ConstraintValidator<Compos
     private boolean checkCompositeUniqueKey(final Object arg0, final Number id)
             throws IllegalAccessException {
 
-        // ✅ CriteriaBuilder setup
+        // Hibernate 6: CriteriaBuilder setup
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-        // ✅ Dynamic class — superclass ya actual class
+        // Hibernate 6: target entity is the superclass or the concrete class.
         Class<?> targetClass = unique.isSuperclass()
                 ? arg0.getClass().getSuperclass()
                 : arg0.getClass();
@@ -114,44 +122,44 @@ public class CompositeUniqueCheckValidator implements ConstraintValidator<Compos
         CriteriaQuery<Object> cq = cb.createQuery(Object.class);
         Root<?> root = cq.from(targetClass);
 
-        // ✅ Conjunction — list of predicates
+        // Hibernate 6: Conjunction — list of predicates
         List<Predicate> predicates = new ArrayList<>();
 
         for (final String fieldName : unique.fields()) {
             final Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
 
             if (unique.checkForNull() && fieldValue == null) {
-                // ✅ Restrictions.isNull() → cb.isNull()
+                // Hibernate 6: Restrictions.isNull() → cb.isNull()
                 predicates.add(cb.isNull(root.get(fieldName)));
 
             } else if (fieldValue instanceof String) {
-                // ✅ Restrictions.eq().ignoreCase() → cb.equal on lowercased values
+                // Hibernate 6: Restrictions.eq().ignoreCase() → cb.equal on lowercased values
                 predicates.add(cb.equal(
                         cb.lower(root.get(fieldName)),
                         ((String) fieldValue).toLowerCase()
                 ));
 
             } else {
-                // ✅ Restrictions.eq() → cb.equal()
+                // Hibernate 6: Restrictions.eq() → cb.equal()
                 predicates.add(cb.equal(root.get(fieldName), fieldValue));
             }
         }
 
-        // ✅ Restrictions.ne(unique.id(), id) — exclude current record
+        // Hibernate 6: Restrictions.ne(unique.id(), id) — exclude current record
         if (id != null) {
             predicates.add(cb.notEqual(root.get(unique.id()), id));
         }
 
-        // ✅ Projections.id() → select id field
+        // Hibernate 6: Projections.id() → select id field
         cq.select(root.get(unique.id()))
                 .where(cb.and(predicates.toArray(new Predicate[0])));
 
-        // ✅ setMaxResults(1).uniqueResult() → setMaxResults(1).getSingleResult()
+        // Hibernate 6: setMaxResults(1).uniqueResult() → setMaxResults(1).getSingleResult()
         List<Object> result = entityManager.createQuery(cq)
                 .setMaxResults(1)
                 .getResultList();
 
-        return result.isEmpty();  // ✅ null check → isEmpty()
+        return result.isEmpty();  // Hibernate 6: null check → isEmpty()
     }
 
 }

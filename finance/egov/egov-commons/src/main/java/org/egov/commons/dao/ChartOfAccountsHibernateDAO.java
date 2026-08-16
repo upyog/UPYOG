@@ -399,9 +399,22 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
                     "The supplied purposeId  can not be null or empty")));
         }
         final List<CChartOfAccounts> listChartOfAcc = new ArrayList<CChartOfAccounts>();
+        /*
+         * LTS Migration Fix (Hibernate 6 / Jakarta EE Upgrade):
+         * -----------------------------------------------------
+         * Problem:
+         *   In Hibernate 6, HQL strictly validates property paths against entity Java field names.
+         *   Using all-lowercase 'purposeid' in HQL failed with:
+         *     org.hibernate.query.SemanticException: Could not interpret path expression 'purposeid'
+         *   because CChartOfAccounts.java defines the property as camelCase 'private Long purposeId;'.
+         *
+         * Solution:
+         *   Updated 'purposeid' to camelCase 'purposeId' across all 4 HQL queries in this method
+         *   to match the Java entity property name.
+         */
         Query query = getCurrentSession()
                 .createQuery(
-                        " FROM CChartOfAccounts WHERE purposeid in(:purposeId)AND classification=4 AND isActiveForPosting=true ");
+                        " FROM CChartOfAccounts WHERE purposeId in(:purposeId) AND classification=4 AND isActiveForPosting=true ");
         query.setParameterList("purposeId", purposeId);
         query.setCacheable(true);
         listChartOfAcc.addAll(query.list());
@@ -409,7 +422,7 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
         query = persistenceService
                 .getSession()
                 .createQuery(
-                        " from CChartOfAccounts where parentId IN (select id  FROM CChartOfAccounts WHERE purposeid in (:purposeId) ) AND classification=4 AND isActiveForPosting=true ");
+                        " from CChartOfAccounts where parentId IN (select id FROM CChartOfAccounts WHERE purposeId in (:purposeId) ) AND classification=4 AND isActiveForPosting=true ");
         query.setParameterList("purposeId", purposeId);
         query.setCacheable(true);
         listChartOfAcc.addAll(query.list());
@@ -417,7 +430,7 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
         query = persistenceService
                 .getSession()
                 .createQuery(
-                        " from CChartOfAccounts where   parentId IN (select id from CChartOfAccounts where parentId IN (select id  FROM CChartOfAccounts WHERE purposeid in (:purposeId))) AND classification=4 AND isActiveForPosting=true");
+                        " from CChartOfAccounts where parentId IN (select id from CChartOfAccounts where parentId IN (select id FROM CChartOfAccounts WHERE purposeId in (:purposeId))) AND classification=4 AND isActiveForPosting=true");
         query.setParameterList("purposeId", purposeId);
         query.setCacheable(true);
         listChartOfAcc.addAll(query.list());
@@ -425,7 +438,7 @@ public class ChartOfAccountsHibernateDAO implements ChartOfAccountsDAO {
         query = persistenceService
                 .getSession()
                 .createQuery(
-                        " from CChartOfAccounts where   parentId IN (select id from  CChartOfAccounts where   parentId IN (select id from CChartOfAccounts where parentId IN (select id  FROM CChartOfAccounts WHERE purposeid in (:purposeId)))) AND classification=4 AND isActiveForPosting=true ");
+                        " from CChartOfAccounts where parentId IN (select id from CChartOfAccounts where parentId IN (select id from CChartOfAccounts where parentId IN (select id FROM CChartOfAccounts WHERE purposeId in (:purposeId)))) AND classification=4 AND isActiveForPosting=true ");
         query.setParameterList("purposeId", purposeId);
         query.setCacheable(true);
         listChartOfAcc.addAll(query.list());

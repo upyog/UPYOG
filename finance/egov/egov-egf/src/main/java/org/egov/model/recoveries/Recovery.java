@@ -284,4 +284,18 @@ public class Recovery extends AbstractAuditable {
 		this.bankLoan = bankLoan;
 	}
 
+	/**
+	 * LTS Migration Fix (Struts 7): Deduction Payments Recovery Code used
+	 * {@code listValue="chartofaccounts.glcode+'-'+type+'-'+recoveryName"}.
+	 * Nested Hibernate proxies and OGNL {@code +} fail silently, so the
+	 * dropdown showed only Choose. Build the same label in Java.
+	 */
+	public String getDropdownLabel() {
+		final String glcode = chartofaccounts != null && chartofaccounts.getGlcode() != null
+				? chartofaccounts.getGlcode() : "";
+		final String recoveryType = type != null ? type : "";
+		final String name = recoveryName != null ? recoveryName : "";
+		return glcode + "-" + recoveryType + "-" + name;
+	}
+
 }

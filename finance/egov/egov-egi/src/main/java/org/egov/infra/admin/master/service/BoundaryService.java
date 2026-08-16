@@ -123,6 +123,7 @@ public class BoundaryService {
     }
 
     public Boundary getBoundaryById(final Long id) {
+        // LTS Migration Fix (Spring Data 3): findOne(id) -> findById(id).orElse(null)
         return boundaryRepository.findById(id).orElse(null);
     }
 
@@ -135,6 +136,7 @@ public class BoundaryService {
     }
 
     public Page<Boundary> getPageOfBoundaries(BoundarySearchRequest searchRequest) {
+        // LTS Migration Fix (Spring Data 3): new PageRequest(...) / new Sort(...) constructors were removed.
         Pageable pageable = PageRequest.of(searchRequest.pageNumber(), searchRequest.pageSize(),
                 org.springframework.data.domain.Sort.by(searchRequest.orderDir(), searchRequest.orderBy()));
         return boundaryRepository.findByBoundaryTypeId(searchRequest.getBoundaryTypeId(), pageable);
@@ -287,6 +289,8 @@ public class BoundaryService {
                             return getBoundaryByNumberAndType((Long) feature.getAttribute("bndrynum"), (String) feature.getAttribute("bndrytype"));
                         }
                     }
+
+
                 }
             }
 

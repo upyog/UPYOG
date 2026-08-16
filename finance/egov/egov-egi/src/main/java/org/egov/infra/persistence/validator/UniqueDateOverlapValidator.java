@@ -52,7 +52,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.validator.annotation.UniqueDateOverlap;
 
-import org.hibernate.Session;                                    // ✅ same rehta hai
+import org.hibernate.Session;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -70,6 +70,14 @@ import java.util.Date;
 import static org.egov.infra.utils.DateUtils.endOfDay;
 import static org.egov.infra.utils.DateUtils.startOfDay;
 
+/**
+ * LTS Migration Fix (Hibernate 6): date-range overlap uniqueness used by {@link UniqueDateOverlap}.
+ * <p>
+ * Hibernate 6: Hibernate {@code Criteria} was replaced with JPA CriteriaBuilder.
+ * Conjunction / disjunction of date predicates and {@code uniqueResult()} became
+ * {@code cb.and} / {@code cb.or} and {@code getResultList().isEmpty()}.
+ * </p>
+ */
 public class UniqueDateOverlapValidator implements ConstraintValidator<UniqueDateOverlap, Object> {
 
     private UniqueDateOverlap uniqueDateOverlap;
@@ -100,18 +108,18 @@ public class UniqueDateOverlapValidator implements ConstraintValidator<UniqueDat
 
         Number id = (Number) FieldUtils.readField(object, uniqueDateOverlap.id(), true);
 
-        // ✅ CriteriaBuilder setup
+        // Hibernate 6: CriteriaBuilder setup
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object> cq = cb.createQuery(Object.class);
         Root<?> root = cq.from(object.getClass());
 
         List<Predicate> predicates = new ArrayList<>();
 
-        // ✅ uniqueFields loop — Conjunction
+        // Hibernate 6: uniqueFields loop — Conjunction
         for (String fieldName : uniqueDateOverlap.uniqueFields()) {
             Object fieldValue = FieldUtils.readField(object, fieldName, true);
             if (fieldValue instanceof String) {
-                // ✅ Restrictions.eq().ignoreCase() → cb.lower()
+                // Hibernate 6: Restrictions.eq().ignoreCase() → cb.lower()
                 predicates.add(cb.equal(
                         cb.lower(root.get(fieldName)),
                         ((String) fieldValue).toLowerCase()
@@ -121,7 +129,7 @@ public class UniqueDateOverlapValidator implements ConstraintValidator<UniqueDat
             }
         }
 
-        // ✅ Date fields
+        // Hibernate 6: Date fields
         Date fromDate = startOfDay((Date) FieldUtils.readField(object,
                 uniqueDateOverlap.fromField(), true));
         Date toDate = endOfDay((Date) FieldUtils.readField(object,
@@ -130,28 +138,28 @@ public class UniqueDateOverlapValidator implements ConstraintValidator<UniqueDat
         String fromField = uniqueDateOverlap.fromField();
         String toField   = uniqueDateOverlap.toField();
 
-        // ✅ checkFromDate — record ka fromDate, given fromDate ke andar hai
+        // Hibernate 6: fromDate of the existing record falls inside the given fromDate.
         // Restrictions.le(fromField, fromDate) AND Restrictions.ge(toField, fromDate)
         Predicate checkFromDate = cb.and(
                 cb.lessThanOrEqualTo(root.get(fromField), fromDate),
                 cb.greaterThanOrEqualTo(root.get(toField), fromDate)
         );
 
-        // ✅ checkToDate — record ka toDate, given toDate ke andar hai
+        // Hibernate 6: toDate of the existing record falls inside the given toDate.
         // Restrictions.le(fromField, toDate) AND Restrictions.ge(toField, toDate)
         Predicate checkToDate = cb.and(
                 cb.lessThanOrEqualTo(root.get(fromField), toDate),
                 cb.greaterThanOrEqualTo(root.get(toField), toDate)
         );
 
-        // ✅ checkFromAndToDate — given range, record ki range ko fully cover karta hai
+        // Hibernate 6: given range fully covers the existing record's range.
         // Restrictions.ge(fromField, fromDate) AND Restrictions.le(toField, toDate)
         Predicate checkFromAndToDate = cb.and(
                 cb.greaterThanOrEqualTo(root.get(fromField), fromDate),
                 cb.lessThanOrEqualTo(root.get(toField), toDate)
         );
 
-        // ✅ Disjunction — teen date range checks mein se koi bhi match ho
+        // Hibernate 6: disjunction — any of the three date-range checks may match.
         Predicate dateRangeChecker = cb.or(
                 checkFromDate,
                 checkToDate,
@@ -160,12 +168,12 @@ public class UniqueDateOverlapValidator implements ConstraintValidator<UniqueDat
 
         predicates.add(dateRangeChecker);
 
-        // ✅ Exclude current record
+        // Hibernate 6: Exclude current record
         if (id != null) {
             predicates.add(cb.notEqual(root.get(uniqueDateOverlap.id()), id));
         }
 
-        // ✅ Projections.id() + setMaxResults(1) + uniqueResult()
+        // Hibernate 6: Projections.id() + setMaxResults(1) + uniqueResult()
         cq.select(root.get(uniqueDateOverlap.id()))
                 .where(cb.and(predicates.toArray(new Predicate[0])));
 

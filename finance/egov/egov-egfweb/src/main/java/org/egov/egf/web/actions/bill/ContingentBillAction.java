@@ -184,7 +184,9 @@ public class ContingentBillAction extends BaseBillAction {
     @Override
     public void prepare() {
         super.prepare();
-        System.out.println("*********** New ExpenseBill recieved - Prepare *********************");
+        // LTS Migration Fix (WildFly 40): do not use System.out; it is discarded
+        // under the server log manager. Use the action logger instead.
+        LOGGER.info("New ExpenseBill received - prepare");
         accountDetailTypeList = persistenceService.findAllBy("from Accountdetailtype where isactive=true order by name");
         addDropdownData(ACCOUNT_DETAIL_TYPE_LIST, accountDetailTypeList);
         addDropdownData(BILL_SUB_TYPE_LIST, getBillSubTypes());
@@ -265,7 +267,7 @@ public class ContingentBillAction extends BaseBillAction {
     @SkipValidation
     @Action(value = "/bill/contingentBill-newform")
     public String newform() {
-    	System.out.println("*********** New ExpenseBill recieved- newForm*********************");
+    	LOGGER.info("New ExpenseBill received - newForm");
         List<AppConfigValues> cutOffDateconfigValue = appConfigValuesService.getConfigValuesByModuleAndKey("EGF",
                 "DataEntryCutOffDate");
         Date date;
@@ -361,7 +363,7 @@ public class ContingentBillAction extends BaseBillAction {
     public String create() {
         if (LOGGER.isInfoEnabled())
             LOGGER.info(billDetailsTableCreditFinal);
-        System.out.println("*********** ExpenseBill creation started*********************");
+        LOGGER.info("ExpenseBill creation started");
         try {
         	populateWorkflowBean();
             if (FinancialConstants.BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {

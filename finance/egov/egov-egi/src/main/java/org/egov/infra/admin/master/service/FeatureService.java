@@ -74,6 +74,7 @@ public class FeatureService {
     }
 
     public Feature getFeatureById(Long id) {
+        // LTS Migration Fix (Spring Data 3): findOne(id) was removed; findById returns Optional.
         return featureRepository.findById(id).orElse(null);
     }
 

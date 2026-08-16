@@ -76,6 +76,7 @@ public class UserAuditService {
     }
 
     public Page<Revision<Integer, User>> getPagedUserRevision(Long userId, DataTableSearchRequest dataTableSearchRequest) {
+        // LTS Migration Fix (Spring Data 3): new PageRequest(...) / new Sort(...) constructors were removed.
         final Pageable pageable = PageRequest.of(dataTableSearchRequest.pageNumber(),
                 dataTableSearchRequest.pageSize(),
                 org.springframework.data.domain.Sort.by(dataTableSearchRequest.orderDir(), dataTableSearchRequest.orderBy()));

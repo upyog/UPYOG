@@ -73,12 +73,17 @@ import static org.egov.infra.security.utils.SecurityConstants.USER_AGENT;
 import static org.egov.infra.utils.ApplicationConstant.TENANTID_KEY;
 import static org.egov.infra.utils.ApplicationConstant.USERID_KEY;
 
-/*
- * Spring Session Redis Expiration Fix:
- * Implemented ApplicationListener<AbstractSessionEvent> directly instead of Servlet HttpSessionListener.
- * This prevents Spring Session Redis from attempting to construct standard Servlet HttpSessionAdapter instances
- * on background Redis listener threads where ServletContext is null, eliminating:
- * "IllegalArgumentException: servletContext cannot be null" error logs during session expiration.
+/**
+ * LTS Migration Fix (Spring Session 3): closes login-audit records and Redis
+ * session keys when a Spring Session is
+ * destroyed or expires.
+ * <p>
+ * Spring Session 3.x no longer delivers servlet {@code HttpSessionListener}
+ * events for Redis-backed sessions. This listener therefore handles
+ * {@link SessionDestroyedEvent} and {@link SessionExpiredEvent} instead.
+ * Business behaviour (token cleanup, login audit on the master server,
+ * {@link org.egov.infra.config.core.ApplicationThreadLocals} cleanup) is unchanged.
+ * </p>
  */
 public class UserSessionDestroyListener implements ApplicationListener<AbstractSessionEvent> {
 
@@ -107,6 +112,7 @@ public class UserSessionDestroyListener implements ApplicationListener<AbstractS
             if (session == null) {
                 return;
             }
+
             String sessionId = session.getId();
             LOGGER.info("Session Destroyed/Expired Event received for session: {}", sessionId);
             try {
@@ -137,11 +143,10 @@ public class UserSessionDestroyListener implements ApplicationListener<AbstractS
                 loginAudit.setIpAddress((String) session.getAttribute(IP_ADDRESS));
                 loginAudit.setUserAgent((String) session.getAttribute(USER_AGENT));
                 loginAudit.setLogoutTime(new Date());
+
                 if (entityValidator.validate(loginAudit).isEmpty()) {
                     loginAuditService.auditLogin(loginAudit);
                 }
-            } catch (Exception e) {
-                LOGGER.error("Error during audit login for destroyed session", e);
             } finally {
                 ApplicationThreadLocals.clearValues();
             }

@@ -72,6 +72,7 @@ public class LoginAuditService {
     }
 
     public Page<LoginAudit> getLoginAudits(LoginAuditReportRequest loginAuditReportRequest) {
+        // LTS Migration Fix (Spring Data 3): new PageRequest(...) / new Sort(...) constructors were removed.
         Pageable pageable = PageRequest.of(loginAuditReportRequest.pageNumber(),
                 loginAuditReportRequest.pageSize(),
                 org.springframework.data.domain.Sort.by(loginAuditReportRequest.orderDir(), loginAuditReportRequest.orderBy()));

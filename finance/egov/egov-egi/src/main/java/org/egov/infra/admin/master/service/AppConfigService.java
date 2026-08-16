@@ -83,6 +83,8 @@ public class AppConfigService {
         return appConfigRepository.findByModuleName(moduleName);
     }
 
+    // LTS Migration Fix (Spring Data 3): PageRequest constructor removed.
+    // Use PageRequest.of() and Sort.by() for pagination.
     public Page<AppConfig> getAllAppConfig(AppConfigSearchRequest searchRequest) {
         Pageable pageable = PageRequest.of(searchRequest.pageNumber(), searchRequest.pageSize(),
                 org.springframework.data.domain.Sort.by(searchRequest.orderDir(), searchRequest.orderBy()));

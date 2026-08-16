@@ -62,6 +62,7 @@ public class WorkFlowMatrixService {
     private WorkflowMatrixRepository workflowMatrixRepository;
 
     public WorkFlowMatrix getWorkFlowObjectbyId(Long matrixId) {
+        // LTS Migration Fix (Spring Data 3): findOne(id) was removed; findById returns Optional.
         return workflowMatrixRepository.findById(matrixId).orElse(null);
     }
 

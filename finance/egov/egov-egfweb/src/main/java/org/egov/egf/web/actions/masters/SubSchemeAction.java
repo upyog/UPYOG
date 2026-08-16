@@ -53,6 +53,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -155,6 +156,9 @@ public class SubSchemeAction extends BaseFormAction {
 	@Action(value = "/masters/subScheme-newForm")
 	public String newForm() {
 		showMode = "new";
+		isactive = true;
+		if (subScheme != null)
+			subScheme.setIsactive(Boolean.TRUE);
 		return NEW;
 	}
 
@@ -172,7 +176,7 @@ public class SubSchemeAction extends BaseFormAction {
 	@ValidationErrorPage(value = NEW)
 	@Action(value = "/masters/subScheme-create")
 	public String save() {
-		subScheme.setIsactive(isactive);
+		applySubmittedIsActive();
 		subScheme.setCreatedDate(new Date());
 		subScheme.setCreatedBy(ApplicationThreadLocals.getUserId());
 		subScheme.setLastmodifieddate(new Date());
@@ -209,7 +213,7 @@ public class SubSchemeAction extends BaseFormAction {
 	@ValidationErrorPage(value = NEW)
 	@Action(value = "/masters/subScheme-edit")
 	public String editSubScheme() {
-		subScheme.setIsactive(isactive);
+		applySubmittedIsActive();
 		subScheme.setLastModifiedBy(ApplicationThreadLocals.getUserId());
 		subScheme.setLastmodifieddate(new Date());
 		try {
@@ -436,6 +440,38 @@ public class SubSchemeAction extends BaseFormAction {
 
 	public void setIsactive(boolean isactive) {
 		this.isactive = isactive;
+	}
+
+	/**
+	 * Struts 7 ModelDriven binds {@code isactive} onto {@code SubScheme} (the
+	 * model), not this action field. {@code save()} used to copy the action
+	 * default {@code false} over the entity and persist inactive. Read the
+	 * submitted checkbox from the request first.
+	 */
+	private void applySubmittedIsActive() {
+		isactive = resolveSubmittedIsActive();
+		subScheme.setIsactive(isactive);
+	}
+
+	private boolean resolveSubmittedIsActive() {
+		final String[] values = ServletActionContext.getRequest().getParameterValues("isactive");
+		if (values != null) {
+			for (final String value : values) {
+				if (value == null)
+					continue;
+				final String trimmed = value.trim();
+				if ("true".equalsIgnoreCase(trimmed) || "on".equalsIgnoreCase(trimmed)
+						|| "yes".equalsIgnoreCase(trimmed) || "1".equals(trimmed))
+					return true;
+			}
+			for (final String value : values) {
+				if (value != null && "false".equalsIgnoreCase(value.trim()))
+					return false;
+			}
+		}
+		if (isactive)
+			return true;
+		return subScheme != null && Boolean.TRUE.equals(subScheme.getIsactive());
 	}
 
 	public void setClearValues(final boolean clearValues) {

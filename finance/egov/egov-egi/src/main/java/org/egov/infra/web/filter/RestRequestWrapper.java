@@ -15,8 +15,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * LTS Migration Fix (WildFly 40): System.out is discarded under WildFly;
+ * request-body diagnostics are logged with SLF4J instead.
+ */
 public class RestRequestWrapper extends HttpServletRequestWrapper {
+
+    private static final Logger log = LoggerFactory.getLogger(RestRequestWrapper.class);
     
     private String  strBody;
     private Map<String,String[]> reqParamMap;
@@ -32,15 +40,15 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
     @Override
     public ServletInputStream getInputStream() throws IOException{
         final ByteArrayInputStream bsiStream = new ByteArrayInputStream(strBody.getBytes("UTF-8"));
-        System.out.println("********** getinputstream request************* ");
+        log.info("getInputStream request");
         
         return new ServletInputStream() {
             
             @Override
             public int read() throws IOException {
                 
-             /*   System.out.println("**************** read() ***************");
-                System.out.println(strBody);*/
+             /*   log.info("read()");
+                log.info(strBody);*/
                 return bsiStream.read();
             }
             

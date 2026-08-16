@@ -62,6 +62,12 @@ import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 
+/**
+ * LTS Migration Fix (Spring 6 / Hibernate 6): reads and updates the budget
+ * control type (mandatory / optional / none) used when creating bills and
+ * vouchers. Keep JPA lookups on this service — do not revert to Session.createQuery
+ * string HQL that Hibernate 6 rejects.
+ */
 @Service 
 @Transactional(readOnly = true)
 public class BudgetControlTypeService  {

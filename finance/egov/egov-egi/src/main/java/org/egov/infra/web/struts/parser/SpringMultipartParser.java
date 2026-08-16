@@ -74,6 +74,14 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 /**
+ * LTS Migration Fix (Struts 7): bridges Spring {@link MultipartHttpServletRequest} into Struts 7's
+ * {@link MultiPartRequest} SPI.
+ * <p>
+ * Struts 7 change: {@code UploadedFile} is no longer constructed with
+ * {@code new StrutsUploadedFile(file)}. Files must be built with
+ * {@link StrutsUploadedFile.Builder} so original name and content type are kept.
+ * </p>
+ *
  * @author subhash
  */
 public class SpringMultipartParser implements MultiPartRequest {
@@ -177,6 +185,7 @@ public class SpringMultipartParser implements MultiPartRequest {
                             ? multipartFile.getContentType()
                             : null;
 
+            // Struts 7: StrutsUploadedFile(File) constructor was removed; use Builder.
             uploadedFiles[i] = StrutsUploadedFile.Builder
                     .create(file)
                     .withOriginalName(originalName)

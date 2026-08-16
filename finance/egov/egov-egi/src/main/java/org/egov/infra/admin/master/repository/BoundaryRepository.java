@@ -153,6 +153,8 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
             @Param("boundaryTypeName") String boundaryTypeName, @Param("hierarchyTypeName") String hierarchyTypeName,
             @Param("name") String name);
 
+    // LTS Migration Fix (Hibernate 6): removed the extra closing parenthesis so
+    // this JPQL is valid under Hibernate 6 SQM.
     @Query("from Boundary BND where BND.active=true AND BND.parent.id=:parentId")
     List<Boundary> findActiveImmediateChildrenWithOutParent(@Param("parentId") Long parentId);
 

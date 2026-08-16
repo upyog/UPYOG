@@ -129,6 +129,7 @@ public class CrossHierarchyService {
     }
 
     public CrossHierarchy findById(Long id) {
+        // LTS Migration Fix (Spring Data 3): findOne(id) was removed; findById returns Optional.
         return crossHierarchyRepository.findById(id).orElse(null);
     }
 

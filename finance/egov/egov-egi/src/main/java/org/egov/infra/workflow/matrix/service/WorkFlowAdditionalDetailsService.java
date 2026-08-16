@@ -66,6 +66,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * LTS Migration Fix (Hibernate 6): additional-rule lookups for workflow matrix configuration.
+ * <p>
+ * Hibernate 6: Hibernate {@code Criteria} API was replaced with JPA
+ * {@link jakarta.persistence.criteria.CriteriaBuilder}. {@code Restrictions.eq}
+ * / {@code isNull} / {@code ne} became {@code cb.equal} / {@code isNull} /
+ * {@code notEqual}; {@code list()} became {@code getResultList()}.
+ * </p>
+ */
 @Service
 @Transactional(readOnly = true)
 public class WorkFlowAdditionalDetailsService {
@@ -103,12 +112,12 @@ public class WorkFlowAdditionalDetailsService {
         CriteriaQuery<WorkFlowAdditionalRule> cq = cb.createQuery(WorkFlowAdditionalRule.class);
         Root<WorkFlowAdditionalRule> root = cq.from(WorkFlowAdditionalRule.class);
 
-        // ✅ Restrictions.eq() → cb.equal()
+        // Hibernate 6: Restrictions.eq() → cb.equal()
         cq.where(cb.equal(root.get(OBJECTTYPEID_ID), objectType));
 
         return entityQueryService.getSession()
                 .createQuery(cq)
-                .getResultList();  // ✅ .list() → .getResultList()
+                .getResultList();  // Hibernate 6: .list() → .getResultList()
     }
 
     public WorkFlowAdditionalRule getObjectbyTypeandRule(final Long objectType,
@@ -120,10 +129,10 @@ public class WorkFlowAdditionalDetailsService {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        // ✅ Restrictions.eq() → cb.equal()
+        // Hibernate 6: Restrictions.eq() → cb.equal()
         predicates.add(cb.equal(root.get(OBJECTTYPEID_ID), objectType));
 
-        // ✅ Restrictions.isNull() / Restrictions.eq()
+        // Hibernate 6: Restrictions.isNull() / Restrictions.eq()
         if ("-1".equals(additionalRules)) {
             predicates.add(cb.isNull(root.get(ADDITIONAL_RULE)));
         } else {
@@ -135,7 +144,7 @@ public class WorkFlowAdditionalDetailsService {
         List<WorkFlowAdditionalRule> wfAdditionalRules = entityQueryService.getSession()
                 .createQuery(cq)
                 .getResultList();
-        // ✅ same logic — pehla element ya null
+        // Hibernate 6: same result as before — first match or null.
         return wfAdditionalRules.isEmpty() ? null : wfAdditionalRules.get(0);
     }
 
@@ -149,13 +158,13 @@ public class WorkFlowAdditionalDetailsService {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        // ✅ Restrictions.eq() → cb.equal()
+        // Hibernate 6: Restrictions.eq() → cb.equal()
         predicates.add(cb.equal(root.get(OBJECTTYPEID_ID), objectType));
 
-        // ✅ Restrictions.ne() → cb.notEqual()
+        // Hibernate 6: Restrictions.ne() → cb.notEqual()
         predicates.add(cb.notEqual(root.get("id"), objectId));
 
-        // ✅ null check — Restrictions.isNull() / Restrictions.eq()
+        // Hibernate 6: null check — Restrictions.isNull() / Restrictions.eq()
         if (additionalRules == null) {
             predicates.add(cb.isNull(root.get(ADDITIONAL_RULE)));
         } else {
@@ -167,7 +176,7 @@ public class WorkFlowAdditionalDetailsService {
         List<WorkFlowAdditionalRule> wfAdditionalRules = entityQueryService.getSession()
                 .createQuery(cq)
                 .getResultList();
-        // ✅ same logic — pehla element ya null
+        // Hibernate 6: same result as before — first match or null.
         return wfAdditionalRules.isEmpty() ? null : wfAdditionalRules.get(0);
     }
 

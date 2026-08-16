@@ -51,7 +51,7 @@ package org.egov.infra.config.cache;
 import org.egov.infra.config.cache.resolver.MultiTenantCacheResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CachingConfigurerSupport;
+import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.CacheResolver;
 import org.springframework.cache.interceptor.KeyGenerator;
@@ -66,21 +66,57 @@ import org.springframework.data.redis.core.RedisTemplate;
 import jakarta.annotation.Resource;
 import java.util.List;
 
+
+/*
+ * LTS Migration Fix (Spring Data Redis / Spring Session):
+ * Updated Redis cache configuration as part of the LTS migration and the upgrade
+ * of Spring Data Redis/Spring Session Redis dependencies.
+ *
+ * The legacy RedisCacheManager constructor and setter-based APIs have been
+ * replaced with the builder-based configuration required by the upgraded
+ * Spring Data Redis version.
+ *
+ * Existing cache configuration is retained by:
+ * - Keeping transaction-aware caching enabled.
+ * - Initializing the existing city-based cache names.
+ * - Maintaining the existing 1-hour cache expiration using Duration.
+ *
+ */
+
+
+/**
+ * Redis-backed Spring Cache configuration for the multi-tenant ERP.
+ * <p>
+ * Spring 6 deprecated {@code CachingConfigurerSupport}; this class implements
+ * {@link CachingConfigurer} directly. Cache names are tenant/city specific so
+ * that cached values are not shared across schemas.
+ * </p>
+ */
 @Configuration
 @EnableCaching(proxyTargetClass = true)
 @DependsOn("applicationConfiguration")
-public class CacheConfiguration extends CachingConfigurerSupport {
+public class CacheConfiguration implements CachingConfigurer {
 
     @Autowired
     private RedisTemplate redisTemplate;
     private List<String> cities;
 
+    /**
+     * Resolves cache names per tenant so Redis keys are not shared across schemas.
+     *
+     * @return multi-tenant cache resolver
+     */
     @Bean
     @Override
     public CacheResolver cacheResolver() {
         return new MultiTenantCacheResolver(cacheManager());
     }
 
+    /**
+     * Builds a cache key from class name, method name, and argument values.
+     *
+     * @return cache key generator
+     */
     @Bean
     @Override
     public KeyGenerator keyGenerator() {
@@ -95,6 +131,12 @@ public class CacheConfiguration extends CachingConfigurerSupport {
         };
     }
 
+    /**
+     * Transaction-aware Redis cache manager with a 1-hour TTL and one cache region
+     * per configured city/tenant.
+     *
+     * @return Redis cache manager
+     */
     @Bean
     @Override
     public CacheManager cacheManager() {
