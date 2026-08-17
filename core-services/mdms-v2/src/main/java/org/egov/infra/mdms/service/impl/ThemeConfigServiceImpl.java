@@ -1,6 +1,7 @@
 package org.egov.infra.mdms.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.infra.mdms.model.ThemeConfig;
 import org.egov.infra.mdms.repository.ThemeConfigRepository;
@@ -18,20 +19,13 @@ import java.util.UUID;
  * update and workflow status management.
  */
 @Slf4j
+@RequiredArgsConstructor    
 @Service
 public class ThemeConfigServiceImpl implements ThemeConfigService {
 
     private final ThemeConfigRepository themeConfigRepository;
     private final WorkflowService workflowService;
 
-    @Autowired
-    public ThemeConfigServiceImpl(
-            ThemeConfigRepository themeConfigRepository,
-            WorkflowService workflowService) {
-
-        this.themeConfigRepository = themeConfigRepository;
-        this.workflowService = workflowService;
-    }
 
     /**
      * Creates theme configuration.
