@@ -115,7 +115,13 @@ public class TransferClosingBalanceAction extends BaseFormAction {
     @Action(value = "/pea/transferClosingBalance-transfer")
     public String transfer() {
         try {
-            if (financialYear == -1 || financialYear == null || financialYear==0) {
+            /*
+             * Java 17 migration note:
+             * financialYear is a Long wrapper. Check null before comparing sentinel
+             * values to avoid unboxing/null pointer failures under stricter runtime
+             * behavior.
+             */
+            if (financialYear == null || financialYear.equals(-1L) || financialYear.equals(0L)) {
                 addFieldError("searchCriteria", "Please select FinancialYear");
                 return NEW;
              }

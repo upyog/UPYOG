@@ -74,7 +74,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("egov")
@@ -137,7 +137,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
 						.append("EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.bankaccount=ba.ID and asm.servicedetails=sd.ID and ")
 						.append("ba.BRANCHID=bb.ID and bb.BANKID=b.ID and fd.ID=ba.FUNDID and sd.NAME=:servicename and fd.NAME= :fundname");
 
-		final Query bankBranchQuery = persistenceService.getSession().createSQLQuery(bankBranchQueryString.toString());
+		final Query bankBranchQuery = persistenceService.getSession().createNativeQuery(bankBranchQueryString.toString());
 		bankBranchQuery.setParameter("servicename", serviceName);
 		bankBranchQuery.setParameter("fundname", getFundName());
         final List<Object[]> queryResults = bankBranchQuery.list();
@@ -167,7 +167,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
 							.append("EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.bankaccount=ba.ID and asm.servicedetails=sd.ID and ")
 							.append("ba.BRANCHID=bb.ID and bb.BANKID=b.ID");
 
-		final Query bankBranchQuery = persistenceService.getSession().createSQLQuery(bankBranchQueryString.toString());
+		final Query bankBranchQuery = persistenceService.getSession().createNativeQuery(bankBranchQueryString.toString());
 		if(isUser) {
 			bankBranchQuery.setParameter("isUser", collectionsUtil.getLoggedInUser().getId());
 		}
@@ -208,7 +208,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
 						.append("ba.BRANCHID=:branchid and sd.NAME=:sname and fd.NAME=:fname");
 
 		final Query bankAccountQuery = persistenceService.getSession()
-				.createSQLQuery(bankAccountQueryString.toString());
+				.createNativeQuery(bankAccountQueryString.toString());
 		bankAccountQuery.setParameter("branchid", branchId);
 		bankAccountQuery.setParameter("sname", serviceName);
 		bankAccountQuery.setParameter("fname", fundName);
@@ -235,7 +235,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
 						.append("ba.BRANCHID=:branchid");
 
 		final Query bankAccountQuery = persistenceService.getSession()
-				.createSQLQuery(bankAccountQueryString.toString());
+				.createNativeQuery(bankAccountQueryString.toString());
 		bankAccountQuery.setParameter("branchid", branchId);
         final List<Object[]> queryResults = bankAccountQuery.list();
 
@@ -256,7 +256,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
     public String serviceListOfAccount() {
 		final StringBuilder serviceAccountQueryString = new StringBuilder(
 				"select sd.id as serviceid,sd.name as servicename from EGCL_SERVICEDETAILS sd,EGCL_BANKACCOUNTSERVICEMAPPING asm where sd.id=asm.servicedetails and asm.bankaccount=:bankAccountId");
-        final Query serviceListQuery = persistenceService.getSession().createSQLQuery(serviceAccountQueryString.toString());
+        final Query serviceListQuery = persistenceService.getSession().createNativeQuery(serviceAccountQueryString.toString());
         serviceListQuery.setParameter("bankAccountId", bankAccountId);
         final List<Object[]> queryResults = serviceListQuery.list();
 

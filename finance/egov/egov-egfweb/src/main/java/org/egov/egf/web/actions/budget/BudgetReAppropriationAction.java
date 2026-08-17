@@ -47,8 +47,8 @@
  */
 package org.egov.egf.web.actions.budget;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.util.ValueStack;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.util.ValueStack;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -89,7 +89,7 @@ import org.egov.services.budget.BudgetService;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetDetailHelper;
 import org.egov.utils.Constants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -250,13 +250,23 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         if (shouldShowField(Constants.FUNCTION))
             dropdownData.put("functionList", masterDataCache.get("egi-function"));
         if (shouldShowField(Constants.SCHEME))
-            dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isActive=true order by name"));
+            /*
+             * LTS Migration Fix (Hibernate 6 Upgrade):
+             * Changed field name from camelCase 'isActive=true' to lowercase 'isactive=true' in Scheme HQL.
+             * The Scheme entity maps database column 'isactive' to Java property 'isactive'.
+             */
+            dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isactive=true order by name"));
         if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
             dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
         if (shouldShowField(Constants.FUND))
             dropdownData
                     .put("fundList",
-                            persistenceService.findAllBy("from Fund where isNotLeaf=false and isActive=true order by name"));
+                            /*
+                             * LTS Migration Fix (Hibernate 6 Upgrade):
+                             * Changed field names to lowercase 'isnotleaf=false and isactive=true' in Fund HQL.
+                             * The Fund entity maps database columns to Java properties 'isnotleaf' and 'isactive'.
+                             */
+                            persistenceService.findAllBy("from Fund where isnotleaf=false and isactive=true order by name"));
         if (shouldShowField(Constants.BOUNDARY))
             dropdownData.put("boundaryList", persistenceService.findAllBy("from Boundary order by name"));
         dropdownData.put("finYearList",

@@ -27,8 +27,8 @@
     - Requires additional bytecode generation and cannot proxy final classes
       or final methods.
 
-    This configuration is required to ensure transactional boundaries are
-    applied correctly to ERP service layer methods after the Spring upgrade.
+    This configuration ensures transactional boundaries are applied correctly
+    to ERP service layer methods.
     -->
     <tx:annotation-driven proxy-target-class="true"/>
 

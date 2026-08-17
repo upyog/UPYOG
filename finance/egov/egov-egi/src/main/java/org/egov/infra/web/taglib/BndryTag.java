@@ -53,7 +53,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.utils.StringUtils;
 
-import javax.servlet.jsp.tagext.BodyTagSupport;
+import jakarta.servlet.jsp.tagext.BodyTagSupport;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -173,7 +173,7 @@ public class BndryTag extends BodyTagSupport {
 	}
 
 	@Override
-	public int doStartTag() throws javax.servlet.jsp.JspTagException {
+	public int doStartTag() throws jakarta.servlet.jsp.JspTagException {
 		return SKIP_BODY;
 	}
 

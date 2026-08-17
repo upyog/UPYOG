@@ -2,28 +2,28 @@ package org.egov.infra.microservice.models;
 
 import java.util.List;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 public class BusinessDetails {
 
     private Long id;
-    @SafeHtml
+    @SanitizeHtml
     private String code;
-    @SafeHtml
+    @SanitizeHtml
     private String name;
 
     private Boolean active;
 
     private Long businessCategory;
-    @SafeHtml
+    @SanitizeHtml
     private String businessType;
-    @SafeHtml
+    @SanitizeHtml
     private String businessUrl;
-    @SafeHtml
+    @SanitizeHtml
     private String department;
-    @SafeHtml
+    @SanitizeHtml
     private String fundSource;
-    @SafeHtml
+    @SanitizeHtml
     private String functionary;
 
     private Boolean voucherCreation;
@@ -35,11 +35,11 @@ public class BusinessDetails {
     private Long voucherCutoffDate;
 
     private Integer ordernumber;
-    @SafeHtml
+    @SanitizeHtml
     private String fund;
-    @SafeHtml
+    @SanitizeHtml
     private String function;
-    @SafeHtml
+    @SanitizeHtml
     private String tenantId;
 
     private List<BusinessAccountDetails> accountDetails;

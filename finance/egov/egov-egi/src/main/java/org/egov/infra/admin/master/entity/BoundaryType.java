@@ -54,18 +54,18 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotNull;
 import java.util.Set;
 
 import static org.egov.infra.admin.master.entity.BoundaryType.SEQ_BOUNDARY_TYPE;
@@ -84,12 +84,12 @@ public class BoundaryType extends AbstractAuditable {
     private Long id;
 
     @NotBlank
-    @SafeHtml
+    @SanitizeHtml
     private String name;
 
     @NotBlank
     @Length(max = 25)
-    @SafeHtml
+    @SanitizeHtml
     private String code;
 
     @ManyToOne
@@ -103,7 +103,7 @@ public class BoundaryType extends AbstractAuditable {
 
     private Long hierarchy;
 
-    @SafeHtml
+    @SanitizeHtml
     private String localName;
 
     @Transient

@@ -33,7 +33,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.apache.commons.fileupload.FileItem;
+import org.springframework.mock.web.MockMultipartFile;
 
 @Component("microDiskFileStoreService")
 public class MicroDiskFileStoreService implements FileStoreService {
@@ -122,7 +123,8 @@ public class MicroDiskFileStoreService implements FileStoreService {
                 ret = inputs.read();
             }
             os.flush();
-            MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
+            MultipartFile multipartFile = new MockMultipartFile(
+                    "files", name, probeContentType, fileItem.getInputStream());
             FileStoreMapper fileStoreMapper = storeFiles(Arrays.asList(multipartFile),
                     name,
                     mimeType, moduleName,false);
@@ -166,7 +168,8 @@ public class MicroDiskFileStoreService implements FileStoreService {
                 ret = fileStream.read();
             }
             os.flush();
-            MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
+            MultipartFile multipartFile = new MockMultipartFile(
+                    "file", fileName, mimeType, fileItem.getInputStream());
             FileStoreMapper fileStoreMapper = storeFiles(Arrays.asList(multipartFile),
                     fileName,
                     mimeType, moduleName,false);

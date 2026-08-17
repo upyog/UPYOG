@@ -39,11 +39,15 @@ const FinanceSubMenu = ({ item, onHeaderClick }) => {
   const getHref = (navUrl) => {
     if (!navUrl) return "";
     const isUpyog = window.location.href.includes("/upyog-ui");
-    if (navUrl.startsWith("/employee/") || (navUrl.startsWith("/digit-ui/") && !navUrl.includes("upyog-ui"))) {
-      return window.location.origin + navUrl;
-    }
-    const prefix = isUpyog ? "/upyog-ui/employee/finance/" : "/employee/finance/";
+    // Normalize url by replacing digit-ui namespace with upyog-ui if on the upyog platform
     const url = isUpyog ? navUrl.replace("digit-ui", "upyog-ui") : navUrl;
+    if (url.startsWith("/employee/") || (url.startsWith("/digit-ui/") && !url.includes("upyog-ui")) || url.startsWith("/upyog-ui/")) {
+      return window.location.origin + url;
+    }
+    const isFinance = item?.moduleName === "FINANCE";
+    const prefix = isFinance
+      ? (isUpyog ? "/upyog-ui/employee/finance/" : "/employee/finance/")
+      : "/employee/";
     return window.location.origin + (url.includes("upyog-ui") || url.includes("digit-ui") ? url : prefix + url);
   };
 

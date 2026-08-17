@@ -84,6 +84,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * Resolves the tenant (ULB schema) from the incoming HTTP request domain or tenant header.
+ *
+ * <p>City service lookups use the {@link org.egov.infra.admin.master.service.ICityService}
+ * interface for proxy-safe dependency injection in servlet filters.</p>
+ */
 public class ApplicationTenantResolverFilter implements Filter {
 
     @Autowired

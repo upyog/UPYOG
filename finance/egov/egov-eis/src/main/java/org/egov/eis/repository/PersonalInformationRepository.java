@@ -61,8 +61,8 @@ import org.springframework.stereotype.Repository;
 public interface PersonalInformationRepository extends JpaRepository<PersonalInformation, Integer>{
 	
 	public PersonalInformation findByIdPersonalInformation(Integer idPersonalInformation);
-	
-	@Query("from PersonalInformation P where P.userMaster.id =:userId")
+
+	@Query("from PersonalInformation P where P.userMaster =:userId")
 	public PersonalInformation getPersonalInformationByUserId(@Param("userId")Long userId);
 	
 }

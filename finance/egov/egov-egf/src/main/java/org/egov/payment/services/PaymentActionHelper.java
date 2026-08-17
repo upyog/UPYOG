@@ -99,7 +99,7 @@ import org.egov.services.payment.MiscbilldetailService;
 import org.egov.services.payment.PaymentService;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -374,8 +374,8 @@ public class PaymentActionHelper {
                 remitDetail.setLastmodifieddate(currDate);
                 egRemittanceDetail.add(remitDetail);
             } else if (rbean.getRemittance_gl_Id() != null) {
-				SQLQuery createSQLQuery = persistenceService.getSession()
-						.createSQLQuery("select * from eg_remittance_gl where id=:remGlid");
+				NativeQuery createSQLQuery = persistenceService.getSession()
+						.createNativeQuery("select * from eg_remittance_gl where id=:remGlid");
 				List<EgRemittanceGl> list = createSQLQuery.addEntity(EgRemittanceGl.class)
 						.setParameter("remGlid", rbean.getRemittance_gl_Id()).list();
                 if (!list.isEmpty()) {

@@ -2,23 +2,23 @@ package org.egov.model.cheque;
 
 import java.util.Date;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.validator.annotation.DateFormat;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 public class ChequeReportModel {
 
 	private int id;
 	private int fundId;
-	@SafeHtml
+	@SanitizeHtml
 	private String bankBranchId;
 	private int bankAccountId;
-	@SafeHtml
+	@SanitizeHtml
 	private String bankBranch;
-	@SafeHtml
+	@SanitizeHtml
 	private String bankAccountNumber;
-	@SafeHtml
+	@SanitizeHtml
 	private String surrenderReason;
 	@NotNull
 	@DateFormat
@@ -26,13 +26,13 @@ public class ChequeReportModel {
 	@NotNull
 	@DateFormat
 	private Date toDate;
-	@SafeHtml
+	@SanitizeHtml
 	private String chequeNumber;
 	@DateFormat
 	private Date chequeDate;
-	@SafeHtml
+	@SanitizeHtml
 	private String payTo;
-	@SafeHtml
+	@SanitizeHtml
 	private String voucherNumber;
 	@DateFormat
 	private Date voucherDate;

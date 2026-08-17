@@ -2,798 +2,1128 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UPYOG AI Assistant</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="/upyog-voice-bot/assets/styles.css">
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>UPYOG Assistant</title>
+ <script>
+  (function() {
+    let p = window.location.pathname;
+    let b = '/';
+    if (p.includes('/upyog-voice-bot')) b = '/upyog-voice-bot/';
+    else if (p.includes('/upyog-voice')) b = '/upyog-voice/';
+    let baseEl = document.createElement('base');
+    baseEl.href = window.location.origin + b;
+    document.head.appendChild(baseEl);
+  })();
+ </script>
+ <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="assets/styles.css">
 </head>
 
 <body>
-    <div id="bg-layers"></div>
+  <div id="phone-login-modal">
+  <div class="phone-modal-card" style="position: relative;">
+  <span onclick="closeLoginModal()" title="Close" style="position: absolute; top: 16px; right: 20px; cursor: pointer; font-size: 18px; color: #94a3b8; font-weight: bold;">✕</span>
+  <h2>System Login</h2>
+  <div id="login-mobile-screen">
+  <p>Enter your 10-digit mobile number to receive an OTP via UPYOG.</p>
+  <div id="login-error" style="color: #ff6b6b; margin-bottom: 10px; display: none; font-size: 14px;">Invalid phone number.</div>
+  <input type="text" id="phone-input" placeholder="e.g. 9876543210" maxlength="10" onkeypress="handleLoginKeyPress(event)">
+  <button onclick="handlePhoneLogin()">Send OTP</button>
+  </div>
+  <div id="login-otp-screen" style="display: none;">
+  <p>Enter the 6-digit OTP sent to your phone.</p>
+  <div id="otp-error" style="color: #ff6b6b; margin-bottom: 10px; display: none; font-size: 14px;">Invalid OTP. Please try again.</div>
+  <input type="text" id="otp-input" placeholder="Enter 6-digit OTP" maxlength="6" onkeypress="handleOtpKeyPress(event)">
+  <div class="modal-button-group" style="display: flex; gap: 10px; margin-top: 15px;">
+  <button onclick="handleOtpVerify()" style="flex: 1;">Verify OTP</button>
+  <button onclick="showMobileScreen()" style="flex: 1; background: #555;">Back</button>
+  </div>
+  </div>
+  </div>
+  </div>
 
-    <!-- Top Status Pill (Shows when active) -->
-    <div class="status-pill" id="status-pill">
-        <div class="status-dot idle" id="status-dot"></div>
-        <span id="status-text">Ready</span>
-    </div>
+ <div id="bg-layers"></div>
 
-    <header>
-        <h1><span class="logo-icon" id="logo-icon"></span> UPYOG AI</h1>
+ <div class="status-pill" id="status-pill">
+ <div class="status-dot idle" id="status-dot"></div>
+ <span id="status-text">Ready</span>
+ </div>
 
-        <div class="header-controls">
-            <div class="lang-toggle" id="lang-toggle"></div>
-            <button class="settings-toggle" id="settings-toggle"></button>
-        </div>
-    </header>
+ <header>
+ <h1><span class="logo-icon" id="logo-icon"></span> UPYOG Assistant</h1>
+ <div class="header-controls">
+ <button class="login-btn" onclick="openLoginModal()" id="login-btn" style="display: none;">Login</button>
+ <button class="logout-btn" onclick="logoutSession()" id="logout-btn" style="display: none;">Logout</button>
+ </div>
+ </header>
 
-    <div id="chat-container">
-        <!-- Hero / Welcome state -->
-        <div class="hero-container" id="hero-welcome">
-            <div class="hero-tagline">Speak. Ask. Solve.</div>
-            <div class="voice-orb"></div>
-            <h2 class="hero-title">Smart Voice Assistant</h2>
-            <p class="hero-subtitle">Talk naturally and get instant answers, help, and guidance for government services.
-            </p>
-        </div>
-    </div>
+ <div id="chat-container">
+ <div class="hero-container" id="hero-welcome">
+ <div class="hero-tagline">Speak. Ask. Solve.</div>
+ <div class="voice-orb"></div>
+ <h2 class="hero-title">Smart Voice Assistant</h2>
+ <p class="hero-subtitle">Talk naturally and get instant answers, help, and guidance for government services.</p>
+ </div>
+ </div>
 
-    <!-- Floating Input Container at Bottom -->
-    <div class="bottom-input-bar">
-        <div class="speech-preview-wrapper">
-            <div id="speech-preview">
-                <span class="speech-preview-icon" id="speech-preview-icon"></span>
-                <span id="speech-preview-text"></span>
-            </div>
-        </div>
+ <div class="bottom-input-bar">
+ <div class="speech-preview-wrapper">
+ <div id="speech-preview">
+ <span class="speech-preview-icon" id="speech-preview-icon"></span>
+ <span id="speech-preview-text"></span>
+ </div>
+  <div id="interrupt-wrapper">
+    <button class="stop-voice-btn" id="stop-voice-btn" title="Stop voice playback and end session">
+      <span id="stop-voice-icon"></span> Stop Voice
+    </button>
+    <button class="interrupt-mic-btn" id="interrupt-mic-btn" title="Interrupt bot &amp; start speaking next question">
+      <span id="interrupt-mic-icon"></span> Interrupt &amp; Ask
+    </button>
+  </div>
+ </div>
+ 
+ <div class="input-area" id="input-area-container">
+ <button id="attach-btn" class="icon-button attach-btn" title="Upload Document" disabled style="padding: 10px; cursor: pointer; color: #555;">
+   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+     <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"></path>
+   </svg>
+ </button>
+ <input type="file" id="global-file-input" style="display:none" accept="image/*,application/pdf">
+ <input type="text" id="text-input" placeholder="Please login..." disabled autocomplete="off">
+ <div class="input-actions">
+ <button class="icon-button voice-button start" id="session-toggle-btn" title="Tap to speak" disabled></button>
+ <button id="send-text-btn" class="icon-button send-btn" title="Send message" disabled></button>
+ </div>
+ </div>
+ </div>
 
+ <div class="settings-panel" id="settings-panel">
+ <h3>Settings</h3>
+ <div class="settings-row">
+ <label>Barge-in Sensitivity: <span id="sensitivity-value">0.02</span></label>
+ <input type="range" id="barge-sensitivity" min="0.01" max="0.05" step="0.01" value="0.02">
+ <div class="settings-hint">Lower = more sensitive</div>
+ </div>
+ <div class="settings-row">
+ <label>Language Preference</label>
+ <select id="lang-preference"></select>
+ </div>
+ </div>
 
+ <script src="assets/constants.js"></script>
+ <script src="assets/icons.js"></script>
+ <script>
+  // ============== REDIS LOGIN LOGIC ==============
+  let conversationSessionId = null;
 
-        <div class="input-area" id="input-area-container">
-            <input type="text" id="text-input" placeholder="Ask anything about UPYOG services..." autocomplete="off">
-            <div class="input-actions">
-                <!-- Icons injected by assets/icons.js -->
-                <button class="icon-button voice-button start" id="session-toggle-btn" title="Tap to speak"></button>
-                <button id="send-text-btn" class="icon-button send-btn" title="Send message"></button>
-            </div>
-        </div>
-    </div>
+  function openLoginModal() {
+    const modal = document.getElementById("phone-login-modal");
+    if (modal) {
+      modal.style.display = "flex";
+      showMobileScreen();
+    }
+  }
 
-    <div class="settings-panel" id="settings-panel">
-        <h3>Settings</h3>
-        <div class="settings-row">
-            <label>Barge-in Sensitivity: <span id="sensitivity-value">0.02</span></label>
-            <input type="range" id="barge-sensitivity" min="0.01" max="0.05" step="0.01" value="0.02">
-            <div class="settings-hint">Lower = more sensitive</div>
-        </div>
-        <div class="settings-row">
-            <label>Language Preference</label>
-            <select id="lang-preference"></select>
-        </div>
-    </div>
+  function closeLoginModal() {
+    const modal = document.getElementById("phone-login-modal");
+    if (modal) modal.style.display = "none";
+  }
 
-    <script src="/upyog-voice-bot/assets/constants.js"></script>
-    <script src="/upyog-voice-bot/assets/icons.js"></script>
-    <script>
-        // ============== STATE ==============
-        // States, STATE_LABELS, CONFIG, BG_LAYERS, LANG_OPTIONS, LANG_PREFERENCES
-        // are defined in assets/constants.js (loaded before this script).
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedPhone = localStorage.getItem("upyog_redis_phone");
+    const savedToken = localStorage.getItem("upyog_auth_token");
+    const modal = document.getElementById("phone-login-modal");
+    const loginBtn = document.getElementById("login-btn");
+    const logoutBtn = document.getElementById("logout-btn");
+    if (!savedPhone || !savedToken) {
+      if (modal) modal.style.display = "flex";
+      if (loginBtn) loginBtn.style.display = "inline-block";
+      if (logoutBtn) logoutBtn.style.display = "none";
+      setTimeout(() => { document.getElementById("phone-input").focus(); }, 100);
+    } else {
+      if (loginBtn) loginBtn.style.display = "none";
+      if (logoutBtn) logoutBtn.style.display = "inline-block";
+      let sessionId = sessionStorage.getItem("upyog_active_session");
+      if (!sessionId) {
+        sessionId = `user_${savedPhone}_${Math.random().toString(36).substring(2, 9)}`;
+        sessionStorage.setItem("upyog_active_session", sessionId);
+      }
+      activateUser(sessionId);
+    }
+  });
 
-        let currentState = States.IDLE;
-        let sessionActive = false;
-        let currentLang = 'auto';
-        let history = [];  // Conversation memory
-        let recognition = null;
-        let currentAudio = null;
-        let conversationSessionId = 'upyog_' + Math.random().toString(36).substr(2, 9);
-        let currentFetch = null;
+  function handleLoginKeyPress(event) {
+    if (event.key === "Enter") handlePhoneLogin();
+  }
 
-        // FIX B: Turn tracking for recognition recreation
-        let turnCount = 0;
-        let lastDetectedLang = 'en';
-        let currentTranscript = '';
-        let finalTranscript = '';
-        let silenceTimer = null;
-        let forceTimer = null;
+  function handleOtpKeyPress(event) {
+    if (event.key === "Enter") handleOtpVerify();
+  }
 
-        // FIX C: Audio pool for cleanup
-        const audioPool = [];
+  function showMobileScreen() {
+    document.getElementById("login-mobile-screen").style.display = "block";
+    document.getElementById("login-otp-screen").style.display = "none";
+    document.getElementById("login-error").style.display = "none";
+    document.getElementById("otp-error").style.display = "none";
+    setTimeout(() => { document.getElementById("phone-input").focus(); }, 100);
+  }
 
-        // Barge-in monitoring
-        let analyser = null;
-        let micStream = null;
-        let bargeInThreshold = CONFIG.bargeInThreshold;
-        let voiceFrames = 0;
-
-        // DOM elements
-        const chatContainer = document.getElementById('chat-container');
-        const statusDot = document.getElementById('status-dot');
-        const statusText = document.getElementById('status-text');
-        const sessionBtn = document.getElementById('session-toggle-btn');
-        const interimDisplay = document.getElementById('speech-preview');
-        const interimText = document.getElementById('speech-preview-text');
-        const settingsToggle = document.getElementById('settings-toggle');
-        const settingsPanel = document.getElementById('settings-panel');
-        const bargeSensitivity = document.getElementById('barge-sensitivity');
-        const sensitivityValue = document.getElementById('sensitivity-value');
-
-        // API URL
-        // Use dynamic URL for both local testing and Nginx proxy compatibility
-        let API_URL = window.location.origin;
-        if (window.location.pathname.includes('/upyog-voice-bot')) {
-            API_URL += '/upyog-voice-bot';
-        } else if (window.location.pathname.includes('/upyog-voice')) {
-            API_URL += '/upyog-voice';
+  async function handlePhoneLogin() {
+    const phoneInput = document.getElementById("phone-input");
+    const phone = phoneInput.value.trim();
+    const errorText = document.getElementById("login-error");
+    const phoneRegex = /^[0-9]{10}$/;
+    
+    if (!phoneRegex.test(phone)) {
+      errorText.style.display = "block";
+      errorText.textContent = "Invalid phone number. Must be 10 digits.";
+      return;
+    }
+    errorText.style.display = "none";
+    
+    try {
+      const response = await fetch(`${API_URL}/api/send-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobile: phone })
+      });
+      const data = await response.json();
+      let errorMsg = null;
+      if (data.error) {
+        if (typeof data.error === 'object') {
+          errorMsg = data.error.message || data.error.description || JSON.stringify(data.error);
+        } else {
+          errorMsg = data.error;
         }
-        console.log('[UPYOG INIT] App script loaded', { API_URL, conversationSessionId });
+      } else if (data.Errors && data.Errors.length > 0) {
+        errorMsg = data.Errors[0].message || data.Errors[0].code;
+      }
+      
+      if (errorMsg) {
+        errorText.style.display = "block";
+        errorText.textContent = "Failed to send OTP: " + errorMsg;
+        return;
+      }
+      
+      localStorage.setItem("upyog_redis_phone", phone);
+      document.getElementById("login-mobile-screen").style.display = "none";
+      document.getElementById("login-otp-screen").style.display = "block";
+      setTimeout(() => { document.getElementById("otp-input").focus(); }, 100);
+    } catch (err) {
+      errorText.style.display = "block";
+      errorText.textContent = "Error sending OTP. Please try again.";
+    }
+  }
 
-        // ===== NIAUTT AUTH INTEGRATION =====
-        let NIAUTT_REQUEST_INFO = {};
-
-        function handleNiuattMessage(event) {
-            console.log('[UPYOG POST_MESSAGE] Received window postMessage', { data: event.data, origin: event.origin });
-            if (event.data?.type === "INIT_DATA") {
-                NIAUTT_REQUEST_INFO = event.data.RequestInfo || {};
-                console.log('[UPYOG AUTH] Stored RequestInfo from parent page', NIAUTT_REQUEST_INFO);
-            }
-            if (event.data?.type === "TOGGLE_MIC" || event.data?.action === "TOGGLE_MIC" || (event.data?.type === "KEY_EVENT" && (event.data?.key === 'd' || event.data?.key === 'D'))) {
-                console.log('[UPYOG POST_MESSAGE] Triggering session toggle from postMessage command');
-                handleSessionToggle();
-            }
+  async function handleOtpVerify() {
+    const otpInput = document.getElementById("otp-input");
+    const otp = otpInput.value.trim();
+    const errorText = document.getElementById("otp-error");
+    const phone = localStorage.getItem("upyog_redis_phone");
+    
+    if (otp.length !== 6 || !/^\d+$/.test(otp)) {
+      errorText.style.display = "block";
+      errorText.textContent = "OTP must be 6 digits.";
+      return;
+    }
+    errorText.style.display = "none";
+    
+    try {
+      const response = await fetch(`${API_URL}/api/verify-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobile: phone, otp: otp })
+      });
+      if (!response.ok) {
+        const errData = await response.json();
+        let errMsg = "Invalid OTP. Please try again.";
+        if (errData.error) {
+          errMsg = typeof errData.error === 'object' ? (errData.error.message || errData.error.description || JSON.stringify(errData.error)) : errData.error;
+        } else if (errData.Errors && errData.Errors.length > 0) {
+          errMsg = errData.Errors[0].message || errData.Errors[0].code;
         }
-        window.addEventListener("message", handleNiuattMessage);
-
-        const getRequestInfo = () => ({ ...NIAUTT_REQUEST_INFO, msgId: `${Date.now()}|en_IN` });
-
-        // ============== SESSION INACTIVITY TIMER (5 SECONDS) ==============
-        let sessionInactivityTimer = null;
-
-        function startSessionInactivityTimer() {
-            clearSessionInactivityTimer();
-            if (sessionActive && currentState === States.LISTENING) {
-                console.log('[UPYOG TIMER] Starting 5-second session inactivity timer');
-                sessionInactivityTimer = setTimeout(() => {
-                    if (sessionActive && currentState === States.LISTENING) {
-                        console.log('[UPYOG TIMER] 5-second inactivity timeout reached — auto ending session');
-                        endSessionAuto();
-                    }
-                }, 5000);
-            }
-        }
-
-        function clearSessionInactivityTimer() {
-            if (sessionInactivityTimer) {
-                console.log('[UPYOG TIMER] Clearing 5-second session inactivity timer');
-                clearTimeout(sessionInactivityTimer);
-                sessionInactivityTimer = null;
-            }
-        }
-
-        function endSessionAuto() {
-            console.log('[UPYOG SESSION] endSessionAuto triggered');
-            if (!sessionActive) return;
-            sessionActive = false;
-            clearTimeout(silenceTimer);
-            clearTimeout(forceTimer);
-            clearSessionInactivityTimer();
-
-            destroyRecognition();
-
-            if (currentAudio) {
-                currentAudio.onended = null;
-                currentAudio.onerror = null;
-                currentAudio.pause();
-                currentAudio.src = '';
-                currentAudio = null;
-            }
-
-            if (micStream) {
-                micStream.getTracks().forEach(t => t.stop());
-                micStream = null;
-            }
-
-            updateSessionBtnIcon(false);
-            setState(States.IDLE);
-        }
-
-        // ============== STATE MACHINE ==============
-        function setState(newState) {
-            console.log('[UPYOG STATE] Transitioning state: ' + currentState + ' -> ' + newState);
-            currentState = newState;
-
-            const sendBtn = document.getElementById('send-text-btn');
-
-            if (newState === States.SPEAKING) {
-                statusDot.className = 'status-dot speaking';
-                statusDot.innerHTML = ICONS.speakingWave;
-                if (sendBtn) {
-                    sendBtn.disabled = false;
-                    sendBtn.innerHTML = ICONS.stop;
-                    sendBtn.title = 'Stop Voice & End Session';
-                    sendBtn.classList.add('stop-mode');
-                }
-                updateSessionBtnIcon(sessionActive);
-            } else if (newState === States.PROCESSING) {
-                statusDot.className = 'status-dot processing';
-                statusDot.innerHTML = '';
-                if (sendBtn) {
-                    sendBtn.disabled = false;
-                    sendBtn.innerHTML = ICONS.stop;
-                    sendBtn.title = 'Stop Voice & End Session';
-                    sendBtn.classList.add('stop-mode');
-                }
-                updateSessionBtnIcon(sessionActive);
-            } else if (newState === States.LISTENING) {
-                statusDot.className = 'status-dot listening';
-                statusDot.innerHTML = '';
-                if (sendBtn) {
-                    sendBtn.disabled = false;
-                    sendBtn.innerHTML = ICONS.send;
-                    sendBtn.title = 'Send message';
-                    sendBtn.classList.remove('stop-mode');
-                }
-                updateSessionBtnIcon(sessionActive);
-                startSessionInactivityTimer();
-            } else {
-                statusDot.className = 'status-dot ' + newState.toLowerCase();
-                statusDot.innerHTML = '';
-                if (sendBtn) {
-                    sendBtn.disabled = false;
-                    sendBtn.innerHTML = ICONS.send;
-                    sendBtn.title = 'Send message';
-                    sendBtn.classList.remove('stop-mode');
-                }
-                updateSessionBtnIcon(sessionActive);
-                clearSessionInactivityTimer();
-                clearInterimDisplay();
-            }
-
-            statusText.innerText = STATE_LABELS[newState];
-        }
-
-        // ============== HINGLISH DETECTION ==============
-        const HINDI_PATTERNS = [
-            /\b(kya|kaise|kahan|kab|kyun|kon|kitna|kitne)\b/i,
-            /\b(hai|hain|tha|the|thi|hoga|hogi|hoge)\b/i,
-            /\b(mujhe|aapko|humko|tumhe|unhe)\b/i,
-            /\b(batao|bataye|bataiye|samjhao|dikhao)\b/i,
-            /\b(nahi|nahin|mat|na)\b/i,
-            /\b(aur|ya|lekin|toh|ki|ke|ka|ko)\b/i,
-            /\b(please|plz)\s+(batao|karo|dijiye|karein)\b/i
-        ];
-
-        function detectHinglish(text) {
-            const isMatch = HINDI_PATTERNS.some(p => p.test(text));
-            console.log('[UPYOG LANG] Hinglish detection executed', { text, isHinglish: isMatch });
-            return isMatch;
-        }
-
-        // ============== LANGUAGE TOGGLE ==============
-        document.querySelectorAll('.lang-btn').forEach(btn => {
-            btn.addEventListener('click', function handleLangBtnClick() {
-                document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentLang = btn.dataset.lang;
-                console.log('[UPYOG LANG] Header language toggled', { currentLang });
-            });
-        });
-
-        // ============== SETTINGS PANEL ==============
-        function toggleSettingsPanel() {
-            settingsPanel.classList.toggle('show');
-            console.log('[UPYOG UI] Toggled settings panel', { isVisible: settingsPanel.classList.contains('show') });
-        }
-        settingsToggle.addEventListener('click', toggleSettingsPanel);
-
-        function updateBargeSensitivity(e) {
-            bargeInThreshold = parseFloat(e.target.value);
-            sensitivityValue.innerText = bargeInThreshold.toFixed(2);
-            console.log('[UPYOG SETTINGS] Updated barge sensitivity', { bargeInThreshold });
-        }
-        bargeSensitivity.addEventListener('input', updateBargeSensitivity);
-
-        function syncLangPreference(e) {
-            currentLang = e.target.value;
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.lang === currentLang);
-            });
-            console.log('[UPYOG SETTINGS] Updated language preference', { currentLang });
-        }
-        document.getElementById('lang-preference').addEventListener('change', syncLangPreference);
-
-        // ============== THINKING INDICATOR ==============
-        function showThinkingIndicator() {
-            console.log('[UPYOG UI] Displaying Thinking indicator bubble');
-            removeThinkingIndicator();
-
-            const wrapper = document.createElement('div');
-            wrapper.className = 'message-wrapper bot thinking-wrapper';
-            wrapper.id = 'thinking-indicator';
-
-            const bubble = document.createElement('div');
-            bubble.className = 'message bot thinking-bubble';
-            bubble.innerHTML = `
-                <div class="typing-dots">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-                <span class="thinking-text">Thinking...</span>
-            `;
-
-            wrapper.appendChild(bubble);
-            chatContainer.appendChild(wrapper);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        function removeThinkingIndicator() {
-            const indicator = document.getElementById('thinking-indicator');
-            if (indicator) {
-                console.log('[UPYOG UI] Removing Thinking indicator bubble');
-                indicator.remove();
-            }
-        }
-
-        // ============== MESSAGE DISPLAY ==============
-        let textInputBarActive = false;
-
-        function showTextInputBar(field) {
-            console.log('[UPYOG UI] Showing text input bar for field', { field });
-            const input = document.getElementById('text-input');
-            input.placeholder = FIELD_PLACEHOLDERS[field] || FIELD_PLACEHOLDERS.default;
-            setTimeout(() => input.focus(), 500);
-        }
-
-        function removeTextInputBar() {
-            console.log('[UPYOG UI] Resetting text input bar placeholder');
-            const input = document.getElementById('text-input');
-            if (input) {
-                input.placeholder = 'Ask anything about UPYOG services...';
-            }
-        }
-
-        function addUserMessage(text) {
-            console.log('[UPYOG UI] Adding user message card to chat', { text });
-            const hero = document.getElementById('hero-welcome');
-            if (hero) hero.classList.add('hidden');
-
-            const rowDiv = document.createElement('div');
-            rowDiv.className = 'message-row user-row';
-
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'message user';
-            msgDiv.innerText = text;
-
-            const avatarDiv = document.createElement('div');
-            avatarDiv.className = 'user-avatar';
-            avatarDiv.innerHTML = ICONS.avatar;
-
-            rowDiv.appendChild(msgDiv);
-            rowDiv.appendChild(avatarDiv);
-
-            chatContainer.appendChild(rowDiv);
-
-            // Show thinking animation right below the user's message card
-            showThinkingIndicator();
-
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        function addBotMessage(text, mode, inputType, options, field) {
-            console.log('[UPYOG UI] Adding bot message response card to chat', { text, mode, inputType, options, field });
-            // Remove thinking indicator before adding the bot's response
-            removeThinkingIndicator();
-
-            const hero = document.getElementById('hero-welcome');
-            if (hero) hero.classList.add('hidden');
-
-            if (mode !== 'grievance_collecting') {
-                removeTextInputBar();
-            }
-
-            const wrapper = document.createElement('div');
-            wrapper.className = 'message-wrapper bot';
-
-            // Message bubble
-            const bubble = document.createElement('div');
-            bubble.className = 'message bot';
-            if (mode === 'grievance_collecting') {
-                bubble.classList.add('grievance-collecting');
-            }
-            if (mode === 'grievance_offered') {
-                bubble.classList.add('grievance-offered');
-            }
-            bubble.textContent = text;
-            wrapper.appendChild(bubble);
-
-            // CHOICE input — show pill buttons
-            if (inputType === 'choice' && options && options.length > 0) {
-
-                // If more than 6 options, use a styled dropdown instead of buttons
-                if (options.length > 6) {
-                    const selectWrapper = document.createElement('div');
-                    selectWrapper.className = 'choice-dropdown-wrapper';
-
-                    const select = document.createElement('select');
-                    select.className = 'choice-select';
-
-                    const defaultOpt = document.createElement('option');
-                    defaultOpt.value = '';
-                    defaultOpt.textContent = '-- Select an option --';
-                    defaultOpt.disabled = true;
-                    defaultOpt.selected = true;
-                    select.appendChild(defaultOpt);
-
-                    options.forEach(opt => {
-                        const o = document.createElement('option');
-                        o.value = opt;
-                        o.textContent = opt;
-                        select.appendChild(o);
-                    });
-
-                    const confirmBtn = document.createElement('button');
-                    confirmBtn.textContent = 'Confirm';
-                    confirmBtn.className = 'choice-confirm-btn';
-
-                    confirmBtn.onclick = function handleConfirmSelection() {
-                        if (!select.value) return;
-                        const chosen = select.value;
-                        select.disabled = true;
-                        confirmBtn.disabled = true;
-                        sendQuery(chosen);
-                    };
-
-                    selectWrapper.appendChild(select);
-                    selectWrapper.appendChild(confirmBtn);
-                    wrapper.appendChild(selectWrapper);
-
-                } else {
-                    // 6 or fewer options — show pill buttons
-                    const btnContainer = document.createElement('div');
-                    btnContainer.className = 'choice-pill-container';
-
-                    options.forEach(opt => {
-                        const btn = document.createElement('button');
-                        btn.textContent = opt;
-                        btn.className = 'choice-pill-btn';
-
-                        btn.onclick = function handleChoiceBtnClick() {
-                            // Disable all sibling buttons, highlight the chosen one
-                            btnContainer.querySelectorAll('button').forEach(b => { b.disabled = true; });
-                            btn.classList.add('selected');
-                            sendQuery(opt);
-                        };
-
-                        btnContainer.appendChild(btn);
-                    });
-
-                    wrapper.appendChild(btnContainer);
-                }
-
-                // Voice hint
-                const hint = document.createElement('div');
-                hint.className = 'choice-hint';
-                hint.textContent = HINT_MESSAGES.speakChoice;
-                wrapper.appendChild(hint);
-            }
-
-            // NUMBER input — show numeric keyboard shortcut hint
-            if (inputType === 'number') {
-                const hint = document.createElement('div');
-                hint.className = 'number-hint';
-                hint.textContent = HINT_MESSAGES.speakDigits;
-                wrapper.appendChild(hint);
-
-                // Show the text input bar for number fields
-                showTextInputBar(field);
-            }
-
-            // TEXT input — show text input bar
-            if (inputType === 'text') {
-                showTextInputBar(field);
-            }
-
-            chatContainer.appendChild(wrapper);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        // ============== SPEECH RECOGNITION (FIX A & B) ==============
-
-        // FIX A: Destroy recognition object completely
-        function destroyRecognition() {
-            console.log('[UPYOG RECOGNITION] destroyRecognition invoked');
-            clearInterimDisplay();
-            if (recognition) {
-                recognition.onstart = null;
-                recognition.onresult = null;
-                recognition.onspeechend = null;
-                recognition.onend = null;
-                recognition.onerror = null;
-                try { recognition.abort(); } catch (e) { }
-                recognition = null;
-            }
-        }
-
-        // FIX A: Create recognition with language parameter
-        function createRecognition(lang) {
-            console.log('[UPYOG RECOGNITION] createRecognition invoked', { lang, lastDetectedLang });
-            destroyRecognition();
-
-            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SR) {
-                console.log('[UPYOG RECOGNITION] SpeechRecognition API NOT supported in this browser');
-                alert('Speech recognition not supported in this browser');
-                return null;
-            }
-
-            recognition = new SR();
-            recognition.continuous = true;
-            recognition.interimResults = true;
-            recognition.maxAlternatives = 1;
-            recognition.lang = 'en-IN';
-
-            recognition.onstart = function onRecognitionStart() {
-                console.log('[UPYOG RECOGNITION] SpeechRecognition onstart event fired');
-                setState(States.LISTENING);
+        errorText.style.display = "block";
+        errorText.textContent = errMsg;
+        return;
+      }
+      const data = await response.json();
+      
+      localStorage.setItem("upyog_auth_token", data.access_token);
+      localStorage.setItem("upyog_user_info", JSON.stringify(data.user_info));
+      
+      const sessionId = `user_${phone}_${Math.random().toString(36).substring(2, 9)}`;
+      sessionStorage.setItem("upyog_active_session", sessionId);
+      document.getElementById("phone-login-modal").style.display = "none";
+      activateUser(sessionId);
+    } catch (err) {
+      errorText.style.display = "block";
+      errorText.textContent = "Error verifying OTP. Please try again.";
+    }
+  }
+
+  function activateUser(sessionId) {
+    conversationSessionId = sessionId;
+    console.log("Memory active for session:", conversationSessionId);
+    
+    const textInput = document.getElementById('text-input');
+    const sendBtn = document.getElementById('send-text-btn');
+    const sessionToggleBtn = document.getElementById('session-toggle-btn');
+    const attachBtn = document.getElementById('attach-btn');
+    const globalFileInput = document.getElementById('global-file-input');
+    
+    attachBtn.addEventListener('click', () => {
+        globalFileInput.click();
+    });
+    
+    globalFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const base64Data = evt.target.result;
+                sendQuery('', file.name, base64Data, "Uploaded document: " + file.name);
             };
-
-            recognition.onresult = handleResult;
-            recognition.onspeechend = handleSpeechEnd;
-
-            recognition.onend = function onRecognitionEnd() {
-                console.log('[UPYOG RECOGNITION] SpeechRecognition onend event fired', { sessionActive, currentState });
-                if (sessionActive && currentState === States.LISTENING) {
-                    setTimeout(() => {
-                        if (sessionActive && recognition) {
-                            try {
-                                console.log('[UPYOG RECOGNITION] Auto-restarting speech recognition on end');
-                                recognition.start();
-                            } catch (e) {
-                                console.log('[UPYOG RECOGNITION] Error restarting recognition on end', e);
-                            }
-                        }
-                    }, 100);
-                }
-            };
-
-            recognition.onerror = function onRecognitionError(e) {
-                console.log('[UPYOG RECOGNITION] SpeechRecognition onerror event fired', { error: e.error });
-                if (e.error === 'no-speech' || e.error === 'aborted') return;
-
-                setTimeout(() => {
-                    if (sessionActive && currentState === States.LISTENING) {
-                        console.log('[UPYOG RECOGNITION] Re-creating recognition after error');
-                        createRecognition(lastDetectedLang);
-                        try { recognition.start(); } catch (err) { console.log('[UPYOG RECOGNITION] Error starting recognition after error', err); }
-                    }
-                }, 500);
-            };
-
-            return recognition;
+            reader.readAsDataURL(file);
+            globalFileInput.value = "";
         }
+    });
 
-        function createAndStartRecognition() {
-            const lang = lastDetectedLang || 'en';
-            console.log('[UPYOG RECOGNITION] createAndStartRecognition invoked', { lang });
-            createRecognition(lang);
-            if (recognition) {
-                try {
-                    recognition.start();
-                    console.log('[UPYOG RECOGNITION] recognition.start() called successfully');
-                } catch (e) {
-                    console.log('[UPYOG RECOGNITION] Failed to start recognition', e);
-                    addBotMessage('Sorry, microphone could not start. Please try again.', null, null, null, null);
-                }
-            } else {
-                addBotMessage('Sorry, voice recognition is not supported on this browser.', null, null, null, null);
-            }
+    if (textInput) {
+      textInput.disabled = false;
+      textInput.placeholder = "Ask anything about UPYOG services...";
+    }
+    if (sendBtn) sendBtn.disabled = false;
+    if (sessionToggleBtn) sessionToggleBtn.disabled = false;
+    if (attachBtn) attachBtn.disabled = false;
+    
+    const loginBtn = document.getElementById("login-btn");
+    const logoutBtn = document.getElementById("logout-btn");
+    if (loginBtn) loginBtn.style.display = "none";
+    if (logoutBtn) logoutBtn.style.display = "inline-block";
+    
+    // Automatically send greeting message on successful activation
+    sendQuery("hello");
+  }
+
+  function logoutSession() {
+    localStorage.removeItem("upyog_redis_phone");
+    localStorage.removeItem("upyog_auth_token");
+    localStorage.removeItem("upyog_user_info");
+    sessionStorage.removeItem("upyog_active_session");
+    window.location.reload();
+  }
+
+ // ============== STATE ==============
+ let currentState = States.IDLE;
+ let sessionActive = false;
+ let currentLang = 'auto';
+ let recognition = null;
+ let currentAudio = null;
+ let currentFetch = null;
+
+ let turnCount = 0;
+ let lastDetectedLang = 'en';
+ let currentTranscript = '';
+ let finalTranscript = '';
+ let silenceTimer = null;
+ let forceTimer = null;
+
+ const audioPool = [];
+ let analyser = null;
+ let micStream = null;
+ let bargeInThreshold = CONFIG.bargeInThreshold;
+ let voiceFrames = 0;
+
+ const chatContainer = document.getElementById('chat-container');
+ const statusDot = document.getElementById('status-dot');
+ const statusText = document.getElementById('status-text');
+ const sessionBtn = document.getElementById('session-toggle-btn');
+ const interimDisplay = document.getElementById('speech-preview');
+ const interimText = document.getElementById('speech-preview-text');
+ const settingsToggle = document.getElementById('settings-toggle');
+ const settingsPanel = document.getElementById('settings-panel');
+ const bargeSensitivity = document.getElementById('barge-sensitivity');
+ const sensitivityValue = document.getElementById('sensitivity-value');
+
+ let API_URL = window.location.origin;
+ if (window.location.pathname.includes('/upyog-voice-bot')) {
+ API_URL += '/upyog-voice-bot';
+ } else if (window.location.pathname.includes('/upyog-voice')) {
+ API_URL += '/upyog-voice';
+ }
+
+  let NIAUTT_REQUEST_INFO = {};
+  function handleNiuattMessage(event) {
+      console.log('[UPYOG POST_MESSAGE] Received window postMessage', { data: event.data, origin: event.origin });
+      if (event.data?.type === "INIT_DATA") {
+          NIAUTT_REQUEST_INFO = event.data.RequestInfo || {};
+          console.log('[UPYOG AUTH] Stored RequestInfo from parent page', NIAUTT_REQUEST_INFO);
+      }
+      if (event.data?.type === "TOGGLE_MIC" || event.data?.action === "TOGGLE_MIC" || (event.data?.type === "KEY_EVENT" && (event.data?.key === 'd' || event.data?.key === 'D'))) {
+          console.log('[UPYOG POST_MESSAGE] Triggering session toggle from postMessage command');
+          handleSessionToggle();
+      }
+  }
+  window.addEventListener("message", handleNiuattMessage);
+
+   const getRequestInfo = () => {
+     const info = { ...NIAUTT_REQUEST_INFO, msgId: `${Date.now()}|en_IN` };
+     const savedToken = localStorage.getItem("upyog_auth_token");
+     if (savedToken) {
+       info.authToken = savedToken;
+     } else {
+       const savedPhone = localStorage.getItem("upyog_redis_phone");
+       if (savedPhone && savedPhone.length === 10 && /^\d+$/.test(savedPhone)) {
+         info.authToken = savedPhone;
+       }
+     }
+     return info;
+   };
+
+  // ============== SESSION INACTIVITY TIMER (5 SECONDS) ==============
+  let sessionInactivityTimer = null;
+
+  function startSessionInactivityTimer() {
+      clearSessionInactivityTimer();
+      if (sessionActive && currentState === States.LISTENING) {
+          sessionInactivityTimer = setTimeout(() => {
+              if (sessionActive && currentState === States.LISTENING) {
+                  endSessionAuto();
+              }
+          }, 5000);
+      }
+  }
+
+  function clearSessionInactivityTimer() {
+      if (sessionInactivityTimer) {
+          clearTimeout(sessionInactivityTimer);
+          sessionInactivityTimer = null;
+      }
+  }
+
+  function endSessionAuto() {
+      if (!sessionActive) return;
+      sessionActive = false;
+      clearTimeout(silenceTimer);
+      clearTimeout(forceTimer);
+      clearSessionInactivityTimer();
+
+      destroyRecognition();
+
+      if (currentAudio) {
+          currentAudio.pause();
+          currentAudio.src = '';
+          currentAudio = null;
+      }
+
+      if (micStream) {
+          micStream.getTracks().forEach(t => t.stop());
+          micStream = null;
+      }
+
+      updateSessionBtnIcon(false);
+      setState(States.IDLE);
+  }
+
+  // ============== STATE MACHINE ==============
+  function setState(newState) {
+  console.log('[UPYOG STATE] Transitioning state: ' + currentState + ' -> ' + newState);
+  currentState = newState;
+  const sendBtn = document.getElementById('send-text-btn');
+
+  if (newState === States.SPEAKING) {
+  statusDot.className = 'status-dot speaking';
+  statusDot.innerHTML = ICONS.speakingWave;
+  if (sendBtn) {
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = ICONS.stop;
+      sendBtn.title = 'Stop Voice & End Session';
+      sendBtn.classList.add('stop-mode');
+  }
+  updateSessionBtnIcon(sessionActive);
+  } else if (newState === States.PROCESSING) {
+  statusDot.className = 'status-dot processing';
+  statusDot.innerHTML = '';
+  if (sendBtn) {
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = ICONS.stop;
+      sendBtn.title = 'Stop Voice & End Session';
+      sendBtn.classList.add('stop-mode');
+  }
+  updateSessionBtnIcon(sessionActive);
+  } else if (newState === States.LISTENING) {
+  statusDot.className = 'status-dot listening';
+  statusDot.innerHTML = '';
+  if (sendBtn) {
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = ICONS.send;
+      sendBtn.title = 'Send message';
+      sendBtn.classList.remove('stop-mode');
+  }
+  updateSessionBtnIcon(sessionActive);
+  startSessionInactivityTimer();
+  } else {
+  statusDot.className = 'status-dot ' + newState.toLowerCase();
+  statusDot.innerHTML = '';
+  if (sendBtn) {
+      sendBtn.disabled = false;
+      sendBtn.innerHTML = ICONS.send;
+      sendBtn.title = 'Send message';
+      sendBtn.classList.remove('stop-mode');
+  }
+  updateSessionBtnIcon(sessionActive);
+  clearSessionInactivityTimer();
+  clearInterimDisplay();
+  }
+
+  statusText.innerText = STATE_LABELS[newState];
+  }
+
+ document.querySelectorAll('.lang-btn').forEach(btn => {
+ btn.addEventListener('click', function handleLangBtnClick() {
+ document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+ btn.classList.add('active');
+ currentLang = btn.dataset.lang;
+ });
+ });
+
+ function toggleSettingsPanel() { settingsPanel.classList.toggle('show'); }
+ if (settingsToggle) settingsToggle.addEventListener('click', toggleSettingsPanel);
+
+ function updateBargeSensitivity(e) {
+ bargeInThreshold = parseFloat(e.target.value);
+ sensitivityValue.innerText = bargeInThreshold.toFixed(2);
+ }
+ bargeSensitivity.addEventListener('input', updateBargeSensitivity);
+
+ function syncLangPreference(e) {
+ currentLang = e.target.value;
+ document.querySelectorAll('.lang-btn').forEach(btn => {
+ btn.classList.toggle('active', btn.dataset.lang === currentLang);
+ });
+ }
+ document.getElementById('lang-preference').addEventListener('change', syncLangPreference);
+
+ function showTextInputBar(field) {
+ const input = document.getElementById('text-input');
+ input.placeholder = FIELD_PLACEHOLDERS[field] || FIELD_PLACEHOLDERS.default;
+ setTimeout(() => input.focus(), 500);
+ }
+
+ function removeTextInputBar() {
+ const input = document.getElementById('text-input');
+ if (input) input.placeholder = 'Ask anything about UPYOG services...';
+ }
+
+  // ============== THINKING INDICATOR ==============
+  function showThinkingIndicator() {
+      console.log('[UPYOG UI] Displaying Thinking indicator bubble');
+      removeThinkingIndicator();
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'message-wrapper bot thinking-wrapper';
+      wrapper.id = 'thinking-indicator';
+
+      const bubble = document.createElement('div');
+      bubble.className = 'message bot thinking-bubble';
+      bubble.innerHTML = `
+          <div class="typing-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+          </div>
+          <span class="thinking-text">Thinking...</span>
+      `;
+
+      wrapper.appendChild(bubble);
+      chatContainer.appendChild(wrapper);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
+
+  function removeThinkingIndicator() {
+      const indicator = document.getElementById('thinking-indicator');
+      if (indicator) {
+          console.log('[UPYOG UI] Removing Thinking indicator bubble');
+          indicator.remove();
+      }
+  }
+
+ function addUserMessage(text) {
+ const hero = document.getElementById('hero-welcome');
+ if (hero) hero.classList.add('hidden');
+ 
+ const rowDiv = document.createElement('div');
+ rowDiv.className = 'message-row user-row';
+ const msgDiv = document.createElement('div');
+ msgDiv.className = 'message user';
+ msgDiv.innerText = text;
+ const avatarDiv = document.createElement('div');
+ avatarDiv.className = 'user-avatar';
+ avatarDiv.innerHTML = ICONS.avatar;
+ 
+ rowDiv.appendChild(msgDiv);
+ rowDiv.appendChild(avatarDiv);
+ chatContainer.appendChild(rowDiv);
+ showThinkingIndicator();
+ chatContainer.scrollTop = chatContainer.scrollHeight;
+ }
+
+  function addBotMessage(text, mode, inputType, options, field, minDate) {
+  removeThinkingIndicator();
+ const hero = document.getElementById('hero-welcome');
+ if (hero) hero.classList.add('hidden');
+ if (mode !== 'grievance_collecting') removeTextInputBar();
+
+ const wrapper = document.createElement('div');
+ wrapper.className = 'message-wrapper bot';
+ const bubble = document.createElement('div');
+ bubble.className = 'message bot';
+ if (mode === 'grievance_collecting') bubble.classList.add('grievance-collecting');
+  let formatted = (text || '')
+    .replace(/### (.*?)\n/g, '<h3>$1</h3>')
+    .replace(/## (.*?)\n/g, '<h2>$1</h2>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/\n\n/g, '<br/><br/>')
+    .replace(/\n/g, '<br/>');
+  bubble.innerHTML = formatted;
+  wrapper.appendChild(bubble);
+
+ if (inputType === 'choice' && options && options.length > 0) {
+ if (options.length > 6) {
+ const selectWrapper = document.createElement('div');
+ selectWrapper.className = 'choice-dropdown-wrapper';
+ const select = document.createElement('select');
+ select.className = 'choice-select';
+ const defaultOpt = document.createElement('option');
+ defaultOpt.value = ''; defaultOpt.textContent = '-- Select an option --'; defaultOpt.disabled = true; defaultOpt.selected = true;
+ select.appendChild(defaultOpt);
+ options.forEach(opt => {
+ const o = document.createElement('option'); o.value = opt; o.textContent = opt; select.appendChild(o);
+ });
+ const confirmBtn = document.createElement('button');
+ confirmBtn.textContent = 'Confirm'; confirmBtn.className = 'choice-confirm-btn';
+ confirmBtn.onclick = function handleConfirmSelection() {
+ if (!select.value) return;
+ select.disabled = true; confirmBtn.disabled = true;
+ sendQuery(select.value);
+ };
+ selectWrapper.appendChild(select); selectWrapper.appendChild(confirmBtn);
+ wrapper.appendChild(selectWrapper);
+ } else {
+ const btnContainer = document.createElement('div');
+ btnContainer.className = 'choice-pill-container';
+ options.forEach(opt => {
+ const btn = document.createElement('button');
+ btn.textContent = opt; btn.className = 'choice-pill-btn';
+ btn.onclick = function handleChoiceBtnClick() {
+ btnContainer.querySelectorAll('button').forEach(b => { b.disabled = true; });
+ btn.classList.add('selected');
+ sendQuery(opt);
+ };
+ btnContainer.appendChild(btn);
+ });
+ wrapper.appendChild(btnContainer);
+ }
+ const hint = document.createElement('div');
+ hint.className = 'choice-hint'; hint.textContent = HINT_MESSAGES.speakChoice;
+ wrapper.appendChild(hint);
+ }
+  
+  if (inputType === 'checkbox' && options && options.length > 0) {
+  const checkContainer = document.createElement('div');
+  checkContainer.className = 'choice-dropdown-wrapper';
+  checkContainer.style.display = 'flex';
+  checkContainer.style.flexDirection = 'column';
+  checkContainer.style.gap = '8px';
+  checkContainer.style.alignItems = 'flex-start';
+  checkContainer.style.background = 'rgba(255, 255, 255, 0.7)';
+  checkContainer.style.padding = '12px';
+  checkContainer.style.borderRadius = '16px';
+  checkContainer.style.marginTop = '8px';
+  
+  options.forEach(opt => {
+      const label = document.createElement('label');
+      label.style.display = 'flex';
+      label.style.alignItems = 'center';
+      label.style.gap = '8px';
+      label.style.cursor = 'pointer';
+      
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.value = opt;
+      
+      label.appendChild(cb);
+      label.appendChild(document.createTextNode(opt));
+      checkContainer.appendChild(label);
+  });
+  
+  const confirmBtn = document.createElement('button');
+  confirmBtn.textContent = 'Submit';
+  confirmBtn.className = 'choice-confirm-btn';
+  confirmBtn.style.marginTop = '10px';
+  confirmBtn.style.alignSelf = 'center';
+  
+  confirmBtn.onclick = function() {
+      const selected = Array.from(checkContainer.querySelectorAll('input:checked')).map(cb => cb.value);
+      if (selected.length === 0) return;
+      checkContainer.querySelectorAll('input').forEach(cb => cb.disabled = true);
+      confirmBtn.disabled = true;
+      sendQuery(selected.join(', '));
+  };
+  
+  checkContainer.appendChild(confirmBtn);
+  wrapper.appendChild(checkContainer);
+  }
+ if (inputType === 'number') {
+ const hint = document.createElement('div');
+ hint.className = 'number-hint'; hint.textContent = HINT_MESSAGES.speakDigits;
+ wrapper.appendChild(hint);
+ showTextInputBar(field);
+ }
+  if (inputType === 'date') {
+  const dateContainer = document.createElement('div');
+  dateContainer.className = 'date-input-container';
+  dateContainer.style.marginTop = '10px';
+  const dateInput = document.createElement('input');
+  dateInput.type = 'date';
+  dateInput.className = 'native-date-input';
+  dateInput.style.padding = '8px';
+  dateInput.style.borderRadius = '8px';
+  dateInput.style.border = '1px solid #ccc';
+  dateInput.style.fontSize = '16px';
+  dateInput.style.marginRight = '10px';
+  
+  if (minDate) {
+    dateInput.min = minDate;
+  } else {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    dateInput.min = `${year}-${month}-${day}`;
+  }
+ 
+ const confirmBtn = document.createElement('button');
+ confirmBtn.textContent = 'Confirm';
+ confirmBtn.className = 'choice-confirm-btn';
+ confirmBtn.onclick = function() {
+ if (!dateInput.value) return;
+ dateInput.disabled = true; confirmBtn.disabled = true;
+ sendQuery(dateInput.value);
+ };
+ 
+ dateContainer.appendChild(dateInput);
+ dateContainer.appendChild(confirmBtn);
+ wrapper.appendChild(dateContainer);
+ }
+ if (inputType === 'file') {
+ const fileContainer = document.createElement('div');
+ fileContainer.className = 'file-input-container';
+ fileContainer.style.marginTop = '10px';
+ 
+ const fileInput = document.createElement('input');
+ fileInput.type = 'file';
+ fileInput.accept = 'image/*,application/pdf';
+ fileInput.className = 'native-file-input';
+ fileInput.style.display = 'none';
+ 
+ const uploadBtn = document.createElement('button');
+ uploadBtn.textContent = 'Choose File';
+ uploadBtn.className = 'choice-confirm-btn';
+ uploadBtn.style.marginRight = '10px';
+ 
+ const fileLabel = document.createElement('span');
+ fileLabel.textContent = 'No file chosen';
+ fileLabel.style.fontSize = '14px';
+ fileLabel.style.color = '#666';
+ fileLabel.style.marginRight = '10px';
+ 
+ uploadBtn.onclick = function() {
+ fileInput.click();
+ };
+ 
+ let selectedFile = null;
+ fileInput.onchange = function(e) {
+ const file = e.target.files[0];
+ if (file) {
+ selectedFile = file;
+ fileLabel.textContent = file.name;
+ confirmBtn.disabled = false;
+ }
+ };
+ 
+ const confirmBtn = document.createElement('button');
+ confirmBtn.textContent = 'Upload & Confirm';
+ confirmBtn.className = 'choice-confirm-btn';
+ confirmBtn.disabled = true;
+ 
+ confirmBtn.onclick = function() {
+ if (!selectedFile) return;
+ fileInput.disabled = true; uploadBtn.disabled = true; confirmBtn.disabled = true;
+ 
+ const reader = new FileReader();
+ reader.onload = function(evt) {
+ const base64Data = evt.target.result;
+ sendQuery('', selectedFile.name, base64Data);
+ };
+ reader.readAsDataURL(selectedFile);
+ };
+ 
+ fileContainer.appendChild(fileInput);
+ fileContainer.appendChild(uploadBtn);
+ fileContainer.appendChild(fileLabel);
+ fileContainer.appendChild(confirmBtn);
+ wrapper.appendChild(fileContainer);
+ }
+  if (inputType === 'slot_table' && options && options.length > 0) {
+    const tableContainer = document.createElement('div');
+    tableContainer.className = 'ui-table-wrapper';
+    const table = document.createElement('table');
+    table.className = 'ui-table';
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>Select</th>
+          <th>Ad Type</th>
+          <th>Face Area</th>
+          <th>Night Light</th>
+          <th>Booking Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    `;
+    const tbody = table.querySelector('tbody');
+    options.forEach(opt => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input type="checkbox" value='${JSON.stringify(opt)}' class="slot-checkbox"></td>
+        <td>${opt.type || ''}</td>
+        <td>${opt.area || ''}</td>
+        <td>${opt.light || ''}</td>
+        <td>${opt.date || ''}</td>
+        <td><span class="status-badge available">${opt.status || 'Available'}</span></td>
+      `;
+      tbody.appendChild(tr);
+    });
+    const btnContainer = document.createElement('div');
+    btnContainer.className = 'ui-table-actions';
+    const addBtn = document.createElement('button');
+    addBtn.className = 'ui-button primary';
+    addBtn.textContent = 'Add to Cart';
+    addBtn.onclick = () => {
+      const selected = Array.from(table.querySelectorAll('.slot-checkbox:checked')).map(cb => JSON.parse(cb.value));
+      if (selected.length === 0) return;
+      table.querySelectorAll('input').forEach(cb => cb.disabled = true);
+      addBtn.disabled = true;
+      sendQuery(JSON.stringify(selected), null, null, `Selected ${selected.length} slot(s)`);
+    };
+    tableContainer.appendChild(table);
+    btnContainer.appendChild(addBtn);
+    tableContainer.appendChild(btnContainer);
+    wrapper.appendChild(tableContainer);
+  }
+
+  if ((inputType === 'booking_history' || inputType === 'complaint_history') && options && options.length > 0) {
+    const listContainer = document.createElement('div');
+    listContainer.className = 'ui-card-list';
+    options.forEach(opt => {
+      const card = document.createElement('div');
+      card.className = 'ui-card';
+      const isComplaint = (inputType === 'complaint_history');
+      const idLabel = isComplaint ? "Complaint No." : "Booking No.";
+      const idVal = opt.serviceRequestId || opt.bookingNo || 'N/A';
+      const typeLabel = isComplaint ? "Complaint Type" : "Applicant Name";
+      const typeVal = opt.serviceCode || (opt.applicantDetail && opt.applicantDetail.applicantName) || opt.name || 'N/A';
+      const dateLabel = isComplaint ? "Date Registered" : "Booking Date";
+      const dateVal = opt.filed_on || opt.bookingDate || 'N/A';
+      const statusVal = opt.applicationStatus || opt.status || 'N/A';
+
+      card.innerHTML = `
+        <div class="ui-card-header">
+          <strong>${idLabel}</strong>
+          <span>${idVal}</span>
+        </div>
+        <div class="ui-card-body">
+          <div class="ui-card-row">
+            <span class="label">${typeLabel}</span>
+            <span class="value">${typeVal}</span>
+          </div>
+          <div class="ui-card-row">
+            <span class="label">${dateLabel}</span>
+            <span class="value">${dateVal}</span>
+          </div>
+          <div class="ui-card-row">
+            <span class="label">Status</span>
+            <span class="value">${statusVal}</span>
+          </div>
+        </div>
+      `;
+      listContainer.appendChild(card);
+    });
+    wrapper.appendChild(listContainer);
+  }
+
+  if (inputType === 'applicant_form' && options) {
+    const formContainer = document.createElement('div');
+    formContainer.className = 'ui-applicant-form';
+    formContainer.innerHTML = `
+      <div class="ui-cart-summary">
+        <h3>Cart Details</h3>
+        <div class="cart-total">Total Booking Amount: <span>${options.cartAmount || '0'} INR</span></div>
+      </div>
+      <div class="ui-form-body">
+        <h3>Applicant Personal Details</h3>
+        <div class="ui-form-group">
+          <label>Applicant Name <span class="required">*</span></label>
+          <input type="text" id="app-name" placeholder="Enter full name">
+        </div>
+        <div class="ui-form-group">
+          <label>Mobile Number <span class="required">*</span></label>
+          <input type="text" id="app-mobile" placeholder="+91" value="${localStorage.getItem('upyog_redis_phone') || ''}">
+        </div>
+        <div class="ui-form-group">
+          <label>Email ID <span class="required">*</span></label>
+          <input type="email" id="app-email" placeholder="example@gmail.com">
+        </div>
+        <button class="ui-button primary w-100" id="app-submit">Next</button>
+      </div>
+    `;
+    wrapper.appendChild(formContainer);
+    setTimeout(() => {
+      const submitBtn = formContainer.querySelector('#app-submit');
+      submitBtn.onclick = () => {
+        const name = formContainer.querySelector('#app-name').value;
+        const mobile = formContainer.querySelector('#app-mobile').value;
+        const email = formContainer.querySelector('#app-email').value;
+        if (!name || !mobile || !email) {
+          alert('Please fill all required fields');
+          return;
         }
+        formContainer.querySelectorAll('input').forEach(i => i.disabled = true);
+        submitBtn.disabled = true;
+        sendQuery(JSON.stringify({name, mobile, email}), null, null, "Submitted applicant details");
+      };
+    }, 100);
+  }
 
-        // FIX B: Handle result with silence timer
-        function handleResult(event) {
-            clearTimeout(silenceTimer);
-            clearTimeout(forceTimer);
+  if (inputType === 'text') showTextInputBar(field);
+ chatContainer.appendChild(wrapper);
+ chatContainer.scrollTop = chatContainer.scrollHeight;
+ }
 
-            let interim = '';
-            let newFinal = '';
+ function destroyRecognition() {
+ if (recognition) {
+ recognition.onstart = null; recognition.onresult = null; recognition.onspeechend = null;
+ recognition.onend = null; recognition.onerror = null;
+ try { recognition.abort(); } catch(e) {}
+ recognition = null;
+ }
+ }
 
-            for (let i = event.resultIndex; i < event.results.length; i++) {
-                const transcript = event.results[i][0].transcript;
-                if (event.results[i].isFinal) {
-                    newFinal += transcript + ' ';
-                } else {
-                    interim += transcript;
-                }
-            }
+ function createRecognition(lang) {
+ destroyRecognition();
+ const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+ if (!SR) { alert('Speech recognition not supported in this browser'); return null; }
 
-            if (newFinal) {
-                finalTranscript += newFinal;
-            }
+ recognition = new SR();
+ recognition.continuous = true; recognition.interimResults = true; recognition.maxAlternatives = 1;
+ recognition.lang = 'en-IN';
 
-            const displayText = finalTranscript + interim;
-            if (displayText) {
-                console.log('[UPYOG SPEECH] Speech input captured', { interim, newFinal, displayText });
-                clearSessionInactivityTimer();
-                interimText.innerText = displayText;
-                interimDisplay.classList.add('show');
-            }
+ recognition.onstart = function onRecognitionStart() { setState(States.LISTENING); };
+ recognition.onresult = handleResult;
+ recognition.onspeechend = handleSpeechEnd;
+ recognition.onend = function onRecognitionEnd() {
+ if (sessionActive && currentState === States.LISTENING) {
+ setTimeout(() => { if (sessionActive && recognition) { try { recognition.start(); } catch(e) {} } }, 100);
+ }
+ };
+ recognition.onerror = function onRecognitionError(e) {
+ if (e.error === 'no-speech' || e.error === 'aborted') return;
+ setTimeout(() => { if (sessionActive) { createRecognition(lastDetectedLang); try { recognition.start(); } catch(e) {} } }, 500);
+ };
+ return recognition;
+ }
 
-            const textToSend = finalTranscript.trim() || interim.trim();
-            if (textToSend) {
-                console.log('[UPYOG SPEECH] Setting silence timer for auto-send', { textToSend, waitMs: CONFIG.silenceWaitMs });
-                silenceTimer = setTimeout(() => {
-                    console.log('[UPYOG SPEECH] Silence timer expired — attempting send', { textToSend });
-                    attemptSend(textToSend);
-                }, CONFIG.silenceWaitMs);
+ function createAndStartRecognition() {
+ const lang = lastDetectedLang || 'en';
+ createRecognition(lang);
+ if (recognition) {
+ try { recognition.start(); } catch(e) { addBotMessage('Sorry, microphone could not start.', null, null, null, null); }
+ }
+ }
 
-                if (!forceTimer) {
-                    forceTimer = setTimeout(() => {
-                        console.log('[UPYOG SPEECH] Force send timer expired — attempting send', { textToSend });
-                        if (textToSend) attemptSend(textToSend);
-                    }, CONFIG.forceSendMs);
-                }
-            }
-        }
+ function handleResult(event) {
+ clearTimeout(silenceTimer); clearTimeout(forceTimer);
+ let interim = ''; let newFinal = '';
+ for (let i = event.resultIndex; i < event.results.length; i++) {
+ const transcript = event.results[i][0].transcript;
+ if (event.results[i].isFinal) newFinal += transcript + ' ';
+ else interim += transcript;
+ }
+ if (newFinal) finalTranscript += newFinal;
+ const displayText = finalTranscript + interim;
+  if (displayText) {
+  clearSessionInactivityTimer();
+  interimText.innerText = displayText;
+  interimDisplay.classList.add('show');
+  }
+ const textToSend = finalTranscript.trim() || interim.trim();
+ if (textToSend) {
+ silenceTimer = setTimeout(() => { attemptSend(textToSend); }, CONFIG.silenceWaitMs);
+ if (!forceTimer) { forceTimer = setTimeout(() => { if (textToSend) attemptSend(textToSend); }, CONFIG.forceSendMs); }
+ }
+ }
 
-        function handleSpeechEnd() {
-            console.log('[UPYOG SPEECH] handleSpeechEnd event fired');
-        }
+ function handleSpeechEnd() {}
 
-        // FIX B: Attempt send with word gate
-        function attemptSend(text) {
-            console.log('[UPYOG SPEECH] attemptSend invoked', { text });
-            clearTimeout(silenceTimer);
-            clearTimeout(forceTimer);
+ function attemptSend(text) {
+ clearTimeout(silenceTimer); clearTimeout(forceTimer);
+ const words = text.trim().split(/\s+/);
+ if (words.length < CONFIG.minWordsToSend) return;
+ try { recognition.stop(); } catch(e) {}
+ finalTranscript = ''; currentTranscript = '';
+ sendQuery(text.trim());
+ }
 
-            const words = text.trim().split(/\s+/);
+  function onTurnComplete() {
+  turnCount++; finalTranscript = ''; currentTranscript = '';
+  clearTimeout(silenceTimer); clearTimeout(forceTimer);
+  silenceTimer = null; forceTimer = null;
+  if (!sessionActive) return;
 
-            if (words.length < CONFIG.minWordsToSend) {
-                console.log('[UPYOG SPEECH] Gate check failed: words length less than minWordsToSend', { wordCount: words.length, minWords: CONFIG.minWordsToSend });
-                return;
-            }
+  destroyRecognition();
+  createRecognition(lastDetectedLang);
 
-            console.log('[UPYOG SPEECH] Gate check passed — destroying recognition and sending query', { text });
-            destroyRecognition();
+  try {
+      recognition.start();
+      setState(States.LISTENING);
+  } catch (e) {
+      if (e.name === 'InvalidStateError') {
+          setState(States.LISTENING);
+      } else {
+          setTimeout(() => {
+              if (sessionActive) {
+                  destroyRecognition();
+                  createRecognition(lastDetectedLang);
+                  recognition.start();
+                  setState(States.LISTENING);
+              }
+          }, 300);
+      }
+  }
+  }
 
-            finalTranscript = '';
-            currentTranscript = '';
+ async function startBargeInMonitor() {
+ try {
+ micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+ const audioCtx = new AudioContext();
+ const source = audioCtx.createMediaStreamSource(micStream);
+ analyser = audioCtx.createAnalyser(); analyser.fftSize = 512; source.connect(analyser);
+ const buffer = new Float32Array(analyser.fftSize);
 
-            sendQuery(text.trim());
-        }
+ function checkVolume() {
+ if (!sessionActive) return;
+ analyser.getFloatTimeDomainData(buffer);
+ const rms = Math.sqrt(buffer.reduce((s, v) => s + v * v, 0) / buffer.length);
+ if (currentState === States.SPEAKING) {
+ if (rms > bargeInThreshold) {
+ voiceFrames++;
+ if (voiceFrames > 4) { triggerBargeIn(); voiceFrames = 0; requestAnimationFrame(checkVolume); return; }
+ } else { voiceFrames = 0; }
+ } else { voiceFrames = 0; }
+ requestAnimationFrame(checkVolume);
+ }
+ checkVolume();
+ } catch(e) {}
+ }
 
-        function onTurnComplete() {
-            turnCount++;
-            console.log('[UPYOG TURN] onTurnComplete invoked', { turnCount, sessionActive, lastDetectedLang });
-            finalTranscript = '';
-            currentTranscript = '';
-            clearTimeout(silenceTimer);
-            clearTimeout(forceTimer);
-            silenceTimer = null;
-            forceTimer = null;
+ function triggerBargeIn() {
+ if (currentAudio) { currentAudio.onerror = null; currentAudio.onended = null; currentAudio.pause(); currentAudio.currentTime = 0; currentAudio.src = ''; currentAudio = null; }
+ if (currentFetch) { currentFetch.abort(); currentFetch = null; }
+ fetch(`${API_URL}/stop`, { method: 'POST' }).catch(() => {});
 
-            if (!sessionActive) return;
+ finalTranscript = ''; currentTranscript = '';
+ clearTimeout(silenceTimer); clearTimeout(forceTimer); silenceTimer = null; forceTimer = null;
+ destroyRecognition();
+ setState('LISTENING');
+ clearInterimDisplay();
+ setTimeout(() => { if (sessionActive) { createRecognition(lastDetectedLang); try { recognition.start(); } catch(e) {} } }, 300);
+ }
 
-            destroyRecognition();
-            createRecognition(lastDetectedLang);
+ function clearInterimDisplay() { if (interimDisplay) { interimDisplay.classList.remove('show'); interimText.innerText = ''; } }
 
-            try {
-                recognition.start();
-                setState(States.LISTENING);
-                console.log('[UPYOG TURN] Resumed listening for next turn');
-            } catch (e) {
-                console.log('[UPYOG TURN] Error starting recognition on turn complete', e);
-                if (e.name === 'InvalidStateError') {
-                    setState(States.LISTENING);
-                } else {
-                    setTimeout(() => {
-                        if (sessionActive) {
-                            destroyRecognition();
-                            createRecognition(lastDetectedLang);
-                            recognition.start();
-                            setState(States.LISTENING);
-                        }
-                    }, 300);
-                }
-            }
-        }
+  async function sendQuery(transcript, file_name = null, file_data = null, display_text = null) {
+   if ((!transcript.trim() && !file_name) || !conversationSessionId) return;
+   destroyRecognition();
+   setState(States.PROCESSING);
+  clearInterimDisplay();
+  if (currentFetch) { currentFetch.abort(); currentFetch = null; }
+  if (file_name) {
+  addUserMessage(`[Uploaded Document: ${file_name}]`);
+  } else {
+  addUserMessage(display_text || transcript);
+  }
+  currentFetch = new AbortController();
 
-        function clearInterimDisplay() {
-            if (interimDisplay) {
-                interimDisplay.classList.remove('show');
-                interimText.innerText = '';
-            }
-        }
+ try {
+ const response = await fetch(`${API_URL}/chat`, {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({
+ RequestInfo: getRequestInfo(),
+ query: transcript || '',
+ session_id: conversationSessionId,
+ auth_token: localStorage.getItem("upyog_auth_token"),
+ file_name: file_name,
+ file_data: file_data
+ }),
+ signal: currentFetch.signal
+ });
 
-        // ============== SEND QUERY (FIX C: Memory management) ==============
-        async function sendQuery(transcript) {
-            console.log('[UPYOG API] sendQuery initiated', { transcript, conversationSessionId });
-            if (!transcript.trim()) return;
+ const data = await response.json();
+ currentFetch = null;
 
-            destroyRecognition();
-            setState(States.PROCESSING);
-            clearInterimDisplay();
+ const inputArea = document.querySelector('.input-area');
+ if (inputArea) {
+ const isGrievance = data.mode === 'grievance' || data.mode === 'grievance_collecting' || data.mode === 'grievance_offered';
+ inputArea.classList.toggle('input-area--grievance', isGrievance);
+ }
 
-            if (currentFetch) {
-                console.log('[UPYOG API] Aborting previous in-flight fetch request');
-                currentFetch.abort();
-                currentFetch = null;
-            }
+ if (data.error) {
+ addBotMessage('Sorry, an error occurred.', null, null, null, null);
+ setState(States.LISTENING); onTurnComplete(); return;
+ }
 
-            history.push({ role: 'user', content: transcript });
-            if (history.length > CONFIG.maxHistoryMemory) {
-                history.splice(0, history.length - CONFIG.maxHistoryMemory);
-            }
-            addUserMessage(transcript);
+ const detectedLang = data.lang || 'en';
+ lastDetectedLang = detectedLang;
+ if (recognition) recognition.lang = 'en-IN';
 
-            currentFetch = new AbortController();
+  if (data.messages && Array.isArray(data.messages) && data.messages.length > 1) {
+    data.messages.forEach((msg, idx) => {
+      const isLast = (idx === data.messages.length - 1);
+      addBotMessage(
+        msg,
+        data.mode,
+        isLast ? data.input_type : 'text',
+        isLast ? data.options : [],
+        data.field,
+        data.min_date
+      );
+    });
+  } else {
+    addBotMessage(data.response, data.mode, data.input_type, data.options, data.field, data.min_date);
+  }
+  if (data.audio) { playAudio(data.audio); } else { setState(States.LISTENING); onTurnComplete(); }
 
-            const payload = {
-                RequestInfo: getRequestInfo(),
-                query: transcript,
-                session_id: conversationSessionId,
-                history: history.slice(-CONFIG.historyToBackend)
-            };
-            console.log('[UPYOG API] Sending POST /chat request payload', payload);
-
-            try {
-                const response = await fetch(`${API_URL}/chat`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload),
-                    signal: currentFetch.signal
-                });
-
-                const data = await response.json();
-                console.log('[UPYOG API] Received backend response', data);
-                currentFetch = null;
-
-                const inputArea = document.querySelector('.input-area');
-                if (inputArea) {
-                    const isGrievance = data.mode === 'grievance' || data.mode === 'grievance_collecting' || data.mode === 'grievance_offered';
-                    inputArea.classList.toggle('input-area--grievance', isGrievance);
-                    console.log('[UPYOG UI] Updated grievance mode styling', { isGrievance, mode: data.mode });
-                }
-
-                if (data.error) {
-                    console.log('[UPYOG API] Backend returned an error in payload', data.error);
-                    addBotMessage('Sorry, an error occurred.', null, null, null, null);
-                    setState(States.LISTENING);
-                    onTurnComplete();
-                    return;
-                }
-
-                const detectedLang = data.lang || 'en';
-                lastDetectedLang = detectedLang;
-                console.log('[UPYOG LANG] Updated lastDetectedLang from backend response', { detectedLang, detectedScript: data.detected_script });
-
-                if (recognition) {
-                    recognition.lang = 'en-IN';
-                }
-
-                history.push({ role: 'assistant', content: data.response, lang: detectedLang });
-                addBotMessage(data.response, data.mode, data.input_type, data.options, data.field);
-
-                if (data.audio) {
-                    console.log('[UPYOG AUDIO] Audio data received in response — initiating playAudio()');
-                    playAudio(data.audio);
-                } else {
-                    console.log('[UPYOG AUDIO] No audio in response — resuming listening');
-                    setState(States.LISTENING);
-                    onTurnComplete();
-                }
-
-            } catch (error) {
-                console.log('[UPYOG API] Fetch error in sendQuery', error);
-                if (error.name !== 'AbortError') {
-                    addBotMessage('Sorry, connection failed.', null, null, null, null);
-                }
-                setState(States.LISTENING);
-                currentFetch = null;
-                onTurnComplete();
-            }
-        }
+ } catch (error) {
+ if (error.name !== 'AbortError') addBotMessage('Sorry, connection failed.', null, null, null, null);
+ setState(States.LISTENING); currentFetch = null; onTurnComplete();
+ }
+ }
 
         // ============== INTERRUPT & STOP VOICE BUTTONS ==============
         const interruptWrapper = document.getElementById('interrupt-wrapper');
@@ -811,9 +1141,7 @@
         function handleStopVoiceClick() {
             console.log('[UPYOG STOP] handleStopVoiceClick invoked — stopping audio and ending session');
             removeThinkingIndicator();
-            // 1. Stop current audio playback & unhook async handlers
             if (currentAudio) {
-                console.log('[UPYOG AUDIO] Pausing currentAudio & clearing handlers');
                 currentAudio.onended = null;
                 currentAudio.onerror = null;
                 currentAudio.pause();
@@ -821,22 +1149,16 @@
                 currentAudio = null;
             }
 
-            // 2. Abort any in-flight fetch
             if (currentFetch) {
-                console.log('[UPYOG API] Aborting fetch in handleStopVoiceClick');
                 currentFetch.abort();
                 currentFetch = null;
             }
 
-            // 3. Tell backend to stop TTS
-            console.log('[UPYOG API] Sending POST /stop request');
-            fetch(`${API_URL}/stop`, { method: 'POST' }).catch((err) => console.log('[UPYOG API] Stop fetch error', err));
+            fetch(`${API_URL}/stop`, { method: 'POST' }).catch(() => {});
 
-            // 4. Clear audio pool
-            audioPool.forEach(u => { try { URL.revokeObjectURL(u); } catch (e) { } });
+            audioPool.forEach(u => { try { URL.revokeObjectURL(u); } catch(e) {} });
             audioPool.length = 0;
 
-            // 5. Clear timers & destroy speech recognition
             clearTimeout(silenceTimer);
             clearTimeout(forceTimer);
             silenceTimer = null;
@@ -844,16 +1166,13 @@
             destroyRecognition();
 
             if (micStream) {
-                console.log('[UPYOG MIC] Stopping micStream tracks');
                 micStream.getTracks().forEach(t => t.stop());
                 micStream = null;
             }
 
-            // 6. End session completely
             sessionActive = false;
             updateSessionBtnIcon(false);
 
-            // 7. Transition state to IDLE (updates UI & sessionBtnIcon cleanly to white Start Session state)
             hideInterruptBtn();
             setState(States.IDLE);
         }
@@ -861,9 +1180,7 @@
         function handleInterruptClick() {
             console.log('[UPYOG INTERRUPT] handleInterruptClick invoked — pausing voice and starting listening');
             removeThinkingIndicator();
-            // 1. Stop bot audio immediately & unhook async handlers
             if (currentAudio) {
-                console.log('[UPYOG AUDIO] Pausing currentAudio in handleInterruptClick');
                 currentAudio.onended = null;
                 currentAudio.onerror = null;
                 currentAudio.pause();
@@ -871,22 +1188,16 @@
                 currentAudio = null;
             }
 
-            // 2. Abort any in-flight fetch
             if (currentFetch) {
-                console.log('[UPYOG API] Aborting fetch in handleInterruptClick');
                 currentFetch.abort();
                 currentFetch = null;
             }
 
-            // 3. Tell backend to stop TTS
-            console.log('[UPYOG API] Sending POST /stop request for interrupt');
-            fetch(`${API_URL}/stop`, { method: 'POST' }).catch((err) => console.log('[UPYOG API] Stop fetch error', err));
+            fetch(`${API_URL}/stop`, { method: 'POST' }).catch(() => {});
 
-            // 4. Clear audio pool
-            audioPool.forEach(u => { try { URL.revokeObjectURL(u); } catch (e) { } });
+            audioPool.forEach(u => { try { URL.revokeObjectURL(u); } catch(e) {} });
             audioPool.length = 0;
 
-            // 5. Clear transcript buffers & timers
             finalTranscript = '';
             currentTranscript = '';
             clearTimeout(silenceTimer);
@@ -894,19 +1205,16 @@
             silenceTimer = null;
             forceTimer = null;
 
-            // 6. Hide interrupt button
             hideInterruptBtn();
 
-            // 7. Resume listening immediately for user's next question
             if (sessionActive) {
-                console.log('[UPYOG INTERRUPT] Re-creating recognition and switching to States.LISTENING');
                 destroyRecognition();
                 createRecognition(lastDetectedLang);
                 setState(States.LISTENING);
                 clearInterimDisplay();
                 setTimeout(() => {
                     if (sessionActive && recognition) {
-                        try { recognition.start(); } catch (e) { console.log('[UPYOG INTERRUPT] Error starting recognition', e); }
+                        try { recognition.start(); } catch(e) {}
                     }
                 }, 150);
             }
@@ -915,241 +1223,161 @@
         if (stopVoiceBtn) stopVoiceBtn.addEventListener('click', handleStopVoiceClick);
         if (interruptMicBtn) interruptMicBtn.addEventListener('click', handleInterruptClick);
 
-        // ============== AUDIO PLAYBACK (FIX C: Blob URL cleanup) ==============
-        async function playAudio(base64, shouldEndSession = false) {
-            console.log('[UPYOG AUDIO] playAudio initiated', { base64Length: base64.length, shouldEndSession });
-            setState(States.SPEAKING);
+  async function playAudio(base64) {
+  setState(States.SPEAKING);
 
-            destroyRecognition();
-            showInterruptBtn();
+  destroyRecognition();
+  showInterruptBtn();
 
-            try {
-                if (currentAudio) {
-                    console.log('[UPYOG AUDIO] Cleaning up previous Audio instance before playing new audio');
-                    currentAudio.pause();
-                    currentAudio.src = '';
-                    currentAudio.load();
-                    currentAudio = null;
-                }
+  try {
+  if (currentAudio) { currentAudio.onerror = null; currentAudio.onended = null; currentAudio.pause(); currentAudio.src = ''; currentAudio.load(); currentAudio = null; }
+  audioPool.forEach(url => { try { URL.revokeObjectURL(url); } catch(e) {} });
+  audioPool.length = 0;
 
-                audioPool.forEach(url => {
-                    try { URL.revokeObjectURL(url); } catch (e) { }
-                });
-                audioPool.length = 0;
+  const mimeType = base64.startsWith('UklGR') ? 'audio/wav' : 'audio/mp3';
+  const byteCharacters = atob(base64); const byteNumbers = new Array(byteCharacters.length);
+  for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
+  const byteArray = new Uint8Array(byteNumbers); const blob = new Blob([byteArray], { type: mimeType });
+  const url = URL.createObjectURL(blob); audioPool.push(url);
 
-                const mimeType = base64.startsWith('//O') || base64.startsWith('SUQz') ? 'audio/mp3' : 'audio/wav';
+  const audio = currentAudio = new Audio(url);
+  let audioHandled = false;
 
-                const byteCharacters = atob(base64);
-                const byteNumbers = new Array(byteCharacters.length);
-                for (let i = 0; i < byteCharacters.length; i++) {
-                    byteNumbers[i] = byteCharacters.charCodeAt(i);
-                }
-                const byteArray = new Uint8Array(byteNumbers);
-                const blob = new Blob([byteArray], { type: mimeType });
-                const url = URL.createObjectURL(blob);
-                audioPool.push(url);
+  function afterAudioDone() {
+      if (audioHandled) return;
+      audioHandled = true;
+      URL.revokeObjectURL(url);
+      currentAudio = null;
+      hideInterruptBtn();
+      setState(States.LISTENING);
+      onTurnComplete();
+  }
 
-                console.log('[UPYOG AUDIO] Created Audio blob URL', { url, mimeType, blobSize: blob.size });
+  audio.onended = afterAudioDone;
+  audio.onerror = afterAudioDone;
 
-                const audio = currentAudio = new Audio(url);
+  await currentAudio.play();
+  } catch(e) {
+  hideInterruptBtn();
+  setState(States.LISTENING);
+  onTurnComplete();
+  }
+  }
 
-                let audioHandled = false;
+  function updateSessionBtnIcon(active) {
+      if (!sessionBtn) return;
+      if (!active) {
+          sessionBtn.className = 'icon-button voice-button start';
+          sessionBtn.innerHTML = ICONS.mic;
+          sessionBtn.title = 'Start Session';
+          return;
+      }
 
-                function afterAudioDone() {
-                    if (audioHandled) return;
-                    audioHandled = true;
-                    console.log('[UPYOG AUDIO] audio.onended / afterAudioDone fired — cleaning blob', { shouldEndSession });
-                    URL.revokeObjectURL(url);
-                    currentAudio = null;
-                    hideInterruptBtn();
-                    if (shouldEndSession) {
-                        console.log('[UPYOG AUDIO] Ending voice session after audio completion');
-                        endSessionAuto();
-                    } else {
-                        setState(States.LISTENING);
-                        onTurnComplete();
-                    }
-                }
+      if (currentState === States.SPEAKING) {
+          sessionBtn.className = 'icon-button voice-button end speaking';
+          sessionBtn.innerHTML = ICONS.pause;
+          sessionBtn.title = 'Interrupt & Ask';
+      } else if (currentState === States.PROCESSING) {
+          sessionBtn.className = 'icon-button voice-button end processing';
+          sessionBtn.innerHTML = ICONS.mic;
+          sessionBtn.title = 'End Session';
+      } else if (currentState === States.LISTENING) {
+          sessionBtn.className = 'icon-button voice-button end listening';
+          sessionBtn.innerHTML = ICONS.mic;
+          sessionBtn.title = 'End Session';
+      } else {
+          sessionBtn.className = 'icon-button voice-button end';
+          sessionBtn.innerHTML = ICONS.mic;
+          sessionBtn.title = 'End Session';
+      }
+  }
 
-                audio.onended = afterAudioDone;
-                audio.onerror = function onAudioErr(e) {
-                    console.log('[UPYOG AUDIO] Audio playback error', e);
-                    afterAudioDone();
-                };
+  async function handleSessionToggle() {
+  if (currentState === States.SPEAKING) {
+      handleInterruptClick();
+      return;
+  }
 
-                console.log('[UPYOG AUDIO] Triggering currentAudio.play()');
-                await currentAudio.play();
-                console.log('[UPYOG AUDIO] Playback started successfully');
-            } catch (e) {
-                console.log('[UPYOG AUDIO] Error in playAudio', e);
-                hideInterruptBtn();
-                if (shouldEndSession) {
-                    endSessionAuto();
-                } else {
-                    setState(States.LISTENING);
-                    onTurnComplete();
-                }
-            }
-        }
+  if (sessionActive) {
+  sessionActive = false;
+  updateSessionBtnIcon(false);
+  clearTimeout(silenceTimer); clearTimeout(forceTimer); clearSessionInactivityTimer(); destroyRecognition();
+  if (currentAudio) { currentAudio.onerror = null; currentAudio.onended = null; currentAudio.pause(); currentAudio.src = ''; currentAudio = null; }
+  if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+  setState(States.IDLE);
+  } else {
+  sessionActive = true;
+  updateSessionBtnIcon(true);
+  turnCount = 0; finalTranscript = ''; currentTranscript = '';
+  try { createAndStartRecognition(); setState(States.LISTENING); } 
+  catch(e) { sessionActive = false; updateSessionBtnIcon(false); setState(States.IDLE); }
+  }
+  }
+  sessionBtn.addEventListener('click', handleSessionToggle);
 
-        function updateSessionBtnIcon(active) {
-            if (!sessionBtn) return;
-            console.log('[UPYOG UI] updateSessionBtnIcon invoked', { active, currentState });
-            if (!active) {
-                sessionBtn.className = 'icon-button voice-button start';
-                sessionBtn.innerHTML = ICONS.mic;
-                sessionBtn.title = 'Start Session';
-                return;
-            }
+  function handleKeydown(e) {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'd' || e.key === 'D' || e.code === 'KeyD')) {
+          e.preventDefault();
+          e.stopPropagation();
+          handleSessionToggle();
+      }
+  }
+  window.addEventListener('keydown', handleKeydown, true);
+  document.addEventListener('keydown', handleKeydown, true);
 
-            if (currentState === States.SPEAKING) {
-                sessionBtn.className = 'icon-button voice-button end speaking';
-                sessionBtn.innerHTML = ICONS.pause;
-                sessionBtn.title = 'Interrupt & Ask';
-            } else if (currentState === States.PROCESSING) {
-                sessionBtn.className = 'icon-button voice-button end processing';
-                sessionBtn.innerHTML = ICONS.mic;
-                sessionBtn.title = 'End Session';
-            } else if (currentState === States.LISTENING) {
-                sessionBtn.className = 'icon-button voice-button end listening';
-                sessionBtn.innerHTML = ICONS.mic;
-                sessionBtn.title = 'End Session';
-            } else {
-                sessionBtn.className = 'icon-button voice-button end';
-                sessionBtn.innerHTML = ICONS.mic;
-                sessionBtn.title = 'End Session';
-            }
-        }
+  function autoFocusChatbot() {
+      try {
+          window.focus();
+          const input = document.getElementById('text-input');
+          if (input && document.activeElement !== input) {
+              input.focus();
+          }
+      } catch (e) {}
+  }
 
-        // ============== SESSION MANAGEMENT ==============
-        async function handleSessionToggle() {
-            console.log('[UPYOG SESSION] handleSessionToggle invoked', { sessionActive, currentState });
-            if (currentState === States.SPEAKING) {
-                console.log('[UPYOG SESSION] Bot is speaking — handleSessionToggle redirecting to handleInterruptClick()');
-                handleInterruptClick();
-                return;
-            }
+  window.addEventListener('load', autoFocusChatbot);
+  document.addEventListener('DOMContentLoaded', autoFocusChatbot);
+  window.addEventListener('mouseenter', autoFocusChatbot);
+  document.addEventListener('mousemove', autoFocusChatbot, { once: true });
 
-            if (sessionActive) {
-                console.log('[UPYOG SESSION] Ending session manually');
-                sessionActive = false;
-                updateSessionBtnIcon(false);
+  const textInput = document.getElementById('text-input');
+  const sendTextBtn = document.getElementById('send-text-btn');
 
-                clearTimeout(silenceTimer);
-                clearTimeout(forceTimer);
+  function handleTextSubmit() {
+  if (currentState === States.SPEAKING || currentState === States.PROCESSING) return;
+  const text = textInput.value.trim();
+  if (!text) return;
+  sendQuery(text);
+  textInput.value = '';
+  }
 
-                destroyRecognition();
+  function handleSendBtnClick() {
+      if (currentState === States.SPEAKING || currentState === States.PROCESSING) {
+          handleStopVoiceClick();
+      } else {
+          handleTextSubmit();
+      }
+  }
 
-                if (currentAudio) {
-                    currentAudio.onended = null;
-                    currentAudio.onerror = null;
-                    currentAudio.pause();
-                    currentAudio.src = '';
-                    currentAudio = null;
-                }
+  sendTextBtn.addEventListener('click', handleSendBtnClick);
+  textInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleTextSubmit(); });
 
-                if (micStream) {
-                    micStream.getTracks().forEach(t => t.stop());
-                    micStream = null;
-                }
+ // 1. Add this function to save history
+function saveChatHistory() {
+    const chatContainer = document.getElementById("chat-box"); // Change to your actual chat container ID
+    localStorage.setItem("upyogChatHistory", chatContainer.innerHTML);
+}
 
-                setState(States.IDLE);
+// 2. Call saveChatHistory() every time a new message is appended.
 
-            } else {
-                console.log('[UPYOG SESSION] Starting session manually');
-                sessionActive = true;
-                updateSessionBtnIcon(true);
-
-                turnCount = 0;
-                finalTranscript = '';
-                currentTranscript = '';
-
-                try {
-                    createAndStartRecognition();
-                    setState(States.LISTENING);
-                } catch (e) {
-                    console.log('[UPYOG SESSION] Error starting voice session', e);
-                    sessionActive = false;
-                    updateSessionBtnIcon(false);
-                    alert('Could not start voice session. Please check microphone permissions.');
-                }
-            }
-        }
-        sessionBtn.addEventListener('click', handleSessionToggle);
-
-        // Keyboard shortcut: Ctrl+D (or Cmd+D on Mac) to enable/disable mic session
-        function handleKeydown(e) {
-            if ((e.ctrlKey || e.metaKey) && (e.key === 'd' || e.key === 'D' || e.code === 'KeyD')) {
-                console.log('[UPYOG SHORTCUT] Ctrl+D / Cmd+D keydown detected — triggering handleSessionToggle()', { key: e.key, code: e.code });
-                e.preventDefault();
-                e.stopPropagation();
-                handleSessionToggle();
-            }
-        }
-        window.addEventListener('keydown', handleKeydown, true);
-        document.addEventListener('keydown', handleKeydown, true);
-
-        // Auto-focus window & text input on load and hover so Ctrl+D works immediately without requiring a manual click
-        function autoFocusChatbot() {
-            try {
-                console.log('[UPYOG FOCUS] autoFocusChatbot triggered — focusing window & text input');
-                window.focus();
-                const input = document.getElementById('text-input');
-                if (input && document.activeElement !== input) {
-                    input.focus();
-                }
-            } catch (e) {
-                console.log('[UPYOG FOCUS] autoFocusChatbot exception', e);
-            }
-        }
-
-        window.addEventListener('load', autoFocusChatbot);
-        document.addEventListener('DOMContentLoaded', autoFocusChatbot);
-        window.addEventListener('mouseenter', autoFocusChatbot);
-        document.addEventListener('mousemove', autoFocusChatbot, { once: true });
-
-        // ============== TEXT INPUT HANDLING ==============
-        const textInput = document.getElementById('text-input');
-        const sendTextBtn = document.getElementById('send-text-btn');
-
-        function handleTextSubmit() {
-            console.log('[UPYOG TEXT_INPUT] handleTextSubmit invoked', { currentState });
-            if (currentState === States.SPEAKING || currentState === States.PROCESSING) {
-                console.log('[UPYOG TEXT_INPUT] Blocked text submission because bot is speaking or processing');
-                return;
-            }
-
-            const text = textInput.value.trim();
-            if (!text) return;
-
-            console.log('[UPYOG TEXT_INPUT] Submitting text input query', { text });
-            sendQuery(text);
-            textInput.value = '';
-        }
-
-        function handleSendBtnClick() {
-            console.log('[UPYOG UI] Send button clicked', { currentState });
-            if (currentState === States.SPEAKING || currentState === States.PROCESSING) {
-                console.log('[UPYOG UI] Send button in Stop mode — invoking handleStopVoiceClick()');
-                handleStopVoiceClick();
-            } else {
-                console.log('[UPYOG UI] Send button in Send mode — invoking handleTextSubmit()');
-                handleTextSubmit();
-            }
-        }
-
-        sendTextBtn.addEventListener('click', handleSendBtnClick);
-
-        function handleTextInputKeypress(e) {
-            if (e.key === 'Enter') {
-                console.log('[UPYOG TEXT_INPUT] Enter key pressed in text input box');
-                handleTextSubmit();
-            }
-        }
-
-        textInput.addEventListener('keypress', handleTextInputKeypress);
-
-    </script>
+// 3. Add this at the very bottom of your JS file so it loads history on refresh:
+window.onload = function() {
+    const savedChat = localStorage.getItem("upyogChatHistory");
+    if (savedChat) {
+        document.getElementById("chat-box").innerHTML = savedChat; // Change to your actual chat container ID
+    }
+};
+ </script>
 </body>
 
 </html>

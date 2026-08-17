@@ -48,8 +48,8 @@
 
 package org.egov.infra.web.controller.admin.masters.role;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.RoleService;

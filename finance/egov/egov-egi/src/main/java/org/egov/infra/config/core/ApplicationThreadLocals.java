@@ -48,6 +48,15 @@
 
 package org.egov.infra.config.core;
 
+/**
+ * LTS Migration Fix (Hibernate 6 SCHEMA multi-tenancy): request-scoped tenant
+ * and user context stored in {@link ThreadLocal}s.
+ * <p>
+ * Hibernate SCHEMA multi-tenancy and cache keys read the tenant id from here.
+ * Callers must {@link #clearValues()} at the end of the request to avoid leaking
+ * context onto pooled threads.
+ * </p>
+ */
 public class ApplicationThreadLocals {
 
     private static ThreadLocal<String> domainName = new ThreadLocal<>();
@@ -155,6 +164,10 @@ public class ApplicationThreadLocals {
         collectionVersion.set(colVersion);
     }
     
+    /**
+     * Removes all thread-local values. Must be called at the end of a request or job
+     * so pooled threads do not reuse another tenant's context.
+     */
     public static void clearValues() {
         domainName.remove();
         userId.remove();

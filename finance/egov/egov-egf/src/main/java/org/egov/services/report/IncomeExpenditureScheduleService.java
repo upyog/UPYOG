@@ -56,7 +56,7 @@ import org.egov.egf.model.StatementEntry;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -128,7 +128,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
 			formattedToDate = fromDate;
 		else
 			formattedToDate = incomeExpenditureService.getPreviousYearFor(toDate);
-		final Query query = persistenceService.getSession().createSQLQuery(
+		final Query query = persistenceService.getSession().createNativeQuery(
 				new StringBuilder("select c.glcode,c.name ,sum(g.debitamount)-sum(g.creditamount),v.fundid ,c.type ,")
 						.append("c.majorcode  from generalledger g,chartofaccounts c,voucherheader v ,vouchermis mis")
 						.append(" where v.id=mis.voucherheaderid and  v.fundid in (:fundId)")
@@ -363,7 +363,7 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("Getting All ledger codes ..");
 		final List<Object[]> AllLedger = persistenceService.getSession()
-				.createSQLQuery(new StringBuilder("select coa.glcode,coa.name from chartofaccounts coa")
+				.createNativeQuery(new StringBuilder("select coa.glcode,coa.name from chartofaccounts coa")
 						.append(" where coa.majorcode=:majorCode and coa.classification=4 and coa.type=:type")
 						.append("  order by coa.glcode").toString())
 				.setParameter("majorCode", majorCode).setParameter("type", type).list();

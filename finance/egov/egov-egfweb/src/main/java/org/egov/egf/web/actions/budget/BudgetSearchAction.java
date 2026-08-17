@@ -47,8 +47,8 @@
  */
 package org.egov.egf.web.actions.budget;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.util.ValueStack;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.util.ValueStack;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -281,14 +281,20 @@ public class BudgetSearchAction extends BaseFormAction {
             if (shouldShowField(Constants.FUNCTION))
                 dropdownData.put("functionList", masterDataCache.get("egi-function"));
             if (shouldShowField(Constants.SCHEME))
-                dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isActive=true order by name"));
+                /*
+                 * LTS Migration Fix (Hibernate 6 Upgrade):
+                 * Changed field name from camelCase 'isActive=true' to lowercase 'isactive=true' in Scheme HQL.
+                 * The Scheme entity maps database column 'isactive' to Java property 'isactive'.
+                 */
+                dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isactive=true order by name"));
             if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
                 dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
             if (shouldShowField(Constants.BOUNDARY))
                 dropdownData.put("boundaryList", persistenceService.findAllBy("from Boundary order by name"));
             if (shouldShowField(Constants.FUND))
+                // LTS Migration Fix: Changed 'isActive=true' to 'isactive=true' to match Fund entity field name 'isactive' for Hibernate 6
                 dropdownData.put("fundList",
-                        persistenceService.findAllBy("from Fund where isActive=true order by name"));
+                        persistenceService.findAllBy("from Fund where isactive=true order by name"));
         }
     }
 
@@ -411,8 +417,7 @@ public class BudgetSearchAction extends BaseFormAction {
             final Budget Budget = budgetService.findById(Long.valueOf(parameters.get("budget.id")[0]), false);
             setTopBudget(Budget);
         }
-        final BudgetDetail criteria = (BudgetDetail) persistenceService.getSession().createCriteria(
-                Constants.SEARCH_CRITERIA_KEY);
+        final BudgetDetail criteria = (BudgetDetail) getSession().get(Constants.SEARCH_CRITERIA_KEY);
         criteria.setBudget(budgetDetail.getBudget());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(

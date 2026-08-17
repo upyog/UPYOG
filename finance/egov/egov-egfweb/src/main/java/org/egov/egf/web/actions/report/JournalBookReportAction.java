@@ -49,8 +49,8 @@ package org.egov.egf.web.actions.report;
 
 import com.exilant.GLEngine.GeneralLedgerBean;
 import com.exilant.exility.common.TaskFailedException;
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import org.apache.struts2.validator.annotations.RequiredFieldValidator;
+import org.apache.struts2.validator.annotations.Validations;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -69,9 +69,11 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.StringType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -169,16 +171,16 @@ public class JournalBookReportAction extends BaseFormAction {
     private void prepareResultList() {
         final Map.Entry<String, Map<String, Object>> queryMapEntry = getQuery().entrySet().iterator().next();
         String voucherDate = "", voucherNumber = "", voucherName = "", narration = "";
-        final Query query = persistenceService.getSession().createSQLQuery(queryMapEntry.getKey())
-                .addScalar("voucherdate", StringType.INSTANCE)
-                .addScalar("vouchernumber", StringType.INSTANCE)
-                .addScalar("code", StringType.INSTANCE)
-                .addScalar("accName", StringType.INSTANCE)
-                .addScalar("narration", StringType.INSTANCE)
-                .addScalar("debitamount", StringType.INSTANCE)
-                .addScalar("creditamount", StringType.INSTANCE)
-                .addScalar("voucherName", StringType.INSTANCE)
-                .addScalar("vhId", StringType.INSTANCE)
+        final Query query = persistenceService.getSession().createNativeQuery(queryMapEntry.getKey())
+                .addScalar("voucherdate", StandardBasicTypes.STRING)
+                .addScalar("vouchernumber", StandardBasicTypes.STRING)
+                .addScalar("code", StandardBasicTypes.STRING)
+                .addScalar("accName", StandardBasicTypes.STRING)
+                .addScalar("narration", StandardBasicTypes.STRING)
+                .addScalar("debitamount", StandardBasicTypes.STRING)
+                .addScalar("creditamount", StandardBasicTypes.STRING)
+                .addScalar("voucherName", StandardBasicTypes.STRING)
+                .addScalar("vhId", StandardBasicTypes.STRING)
                 .setParameterList("voucherName", VoucherHelper.VOUCHER_TYPE_NAMES.get(FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL))
                 .setResultTransformer(Transformers.aliasToBean(GeneralLedgerBean.class));
         queryMapEntry.getValue().entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));

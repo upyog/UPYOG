@@ -50,12 +50,12 @@ package org.egov.egf.web.controller;
 import java.util.List;
 import java.util.Locale;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.commons.Fundsource;
 import org.egov.commons.service.FundsourceService;
 import org.egov.egf.web.adaptor.FundsourceJsonAdaptor;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -148,7 +148,7 @@ public class FundsourceController {
 	}
 
 	@GetMapping(value = "/search/{mode}")
-	public String search(@PathVariable("mode") @SafeHtml final String mode, final Model model) {
+	public String search(@PathVariable("mode") @SanitizeHtml final String mode, final Model model) {
 		final Fundsource fundsource = new Fundsource();
 		prepareNewForm(model);
 		model.addAttribute(FUNDSOURCE, fundsource);
@@ -157,7 +157,7 @@ public class FundsourceController {
 	}
 
 	@PostMapping(value = "/ajaxsearch/{mode}", produces = MediaType.TEXT_PLAIN_VALUE)
-	public @ResponseBody String ajaxsearch(@PathVariable("mode") @SafeHtml final String mode, final Model model,
+	public @ResponseBody String ajaxsearch(@PathVariable("mode") @SanitizeHtml final String mode, final Model model,
 			@Valid @ModelAttribute final Fundsource fundsource) {
 		final List<Fundsource> searchResultList = fundsourceService.search(fundsource);
 		return new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}").toString();

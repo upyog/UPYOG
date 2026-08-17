@@ -131,11 +131,9 @@ import org.egov.services.bills.EgBillRegisterService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.ObjectNotFoundException;
-import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -147,6 +145,12 @@ import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 import com.exilant.exility.common.TaskFailedException;
 
+/**
+ * LTS Migration Fix (Hibernate 6 / Spring 6): core financial voucher service.
+ * Extends legacy {@link PersistenceService} because voucher queries mix HQL,
+ * native SQL, and GL engine calls. Callers must use Hibernate 6 numbered
+ * parameters and enum types, not the pre-LTS string IN / {@code concat} style.
+ */
 @Service
 public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 	private static final Logger LOGGER = Logger.getLogger(VoucherService.class);
@@ -1545,36 +1549,47 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
         }
 
     public VoucherResponse findVouchersByCriteria(VoucherSearchCriteria criteria, VoucherSearchRequest voucherSearchRequest) {
-        Criteria createCriteria = persistenceService.getSession().createCriteria(CVoucherHeader.class, "voucherHeader")
-                .createAlias("voucherHeader.fundId", "fund")
-                .createAlias("voucherHeader.vouchermis", "voucherMis");
+        final StringBuilder query = new StringBuilder("select voucherHeader from CVoucherHeader voucherHeader ")
+                .append("join voucherHeader.fundId fund join voucherHeader.vouchermis voucherMis where 1=1");
+        final Map<String, Object> params = new HashMap<>();
         if(criteria.getIds() != null && !criteria.getIds().isEmpty()){
-            createCriteria.add(Restrictions.in("voucherHeader.id", criteria.getIds()));
+            query.append(" and voucherHeader.id in (:ids)");
+            params.put("ids", criteria.getIds());
         }
         if(criteria.getVoucherNumbers() != null && !criteria.getVoucherNumbers().isEmpty()){
-            createCriteria.add(Restrictions.in("voucherHeader.voucherNumber", criteria.getVoucherNumbers()));
+            query.append(" and voucherHeader.voucherNumber in (:voucherNumbers)");
+            params.put("voucherNumbers", criteria.getVoucherNumbers());
         }
         if(criteria.getVoucherFromDate() != null && criteria.getVoucherFromDate() != 0){
-            createCriteria.add(Restrictions.ge("voucherHeader.voucherDate", criteria.getVoucherFromDate()));
+            query.append(" and voucherHeader.voucherDate >= :voucherFromDate");
+            params.put("voucherFromDate", criteria.getVoucherFromDate());
         }
         if(criteria.getVoucherToDate() != null && criteria.getVoucherToDate() != 0){
-            createCriteria.add(Restrictions.le("voucherHeader.voucherDate", criteria.getVoucherToDate()));
+            query.append(" and voucherHeader.voucherDate <= :voucherToDate");
+            params.put("voucherToDate", criteria.getVoucherToDate());
         }
         if(StringUtils.isNotBlank(criteria.getVoucherName())){
-            createCriteria.add(Restrictions.eq("voucherHeader.name", criteria.getVoucherName()));
+            query.append(" and voucherHeader.name = :voucherName");
+            params.put("voucherName", criteria.getVoucherName());
         }
         if(StringUtils.isNotBlank(criteria.getVoucherType())){
-            createCriteria.add(Restrictions.eq("voucherHeader.type", criteria.getVoucherType()));
+            query.append(" and voucherHeader.type = :voucherType");
+            params.put("voucherType", criteria.getVoucherType());
         }
         if(StringUtils.isNotBlank(criteria.getFundId())){
-            createCriteria.add(Restrictions.eq("fund.code", criteria.getFundId()));
+            query.append(" and fund.code = :fundId");
+            params.put("fundId", criteria.getFundId());
         }
         if(StringUtils.isNotBlank(criteria.getDeptCode())){
-            createCriteria.add(Restrictions.eq("voucherMis.departmentcode", criteria.getDeptCode()));
+            query.append(" and voucherMis.departmentcode = :deptCode");
+            params.put("deptCode", criteria.getDeptCode());
         }
-        
-        createCriteria.setMaxResults(criteria.getPageSize() != null && criteria.getPageSize() != 0 ? criteria.getPageSize() : DEAFULT_PAGE_SIZE);
-        List<CVoucherHeader> list = createCriteria.list();
+
+        final Query<CVoucherHeader> createQuery = persistenceService.getSession()
+                .createQuery(query.toString(), CVoucherHeader.class);
+        params.entrySet().forEach(entry -> createQuery.setParameter(entry.getKey(), entry.getValue()));
+        createQuery.setMaxResults(criteria.getPageSize() != null && criteria.getPageSize() != 0 ? criteria.getPageSize() : DEAFULT_PAGE_SIZE);
+        List<CVoucherHeader> list = createQuery.list();
         List<Voucher> returnList = new ArrayList<>();
         for(CVoucherHeader header : list){
             Voucher voucher = new Voucher(header);
