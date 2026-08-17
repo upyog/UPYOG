@@ -2,13 +2,14 @@ package org.egov.infra.mdms.controller;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.egov.infra.mdms.model.ThemeConfig;
 import org.egov.infra.mdms.model.ThemeConfigWorkflowRequest;
 import org.egov.infra.mdms.service.ThemeConfigService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 
 /**
@@ -23,19 +24,12 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 @RequestMapping(value = "/v1/theme-config")
 public class ThemeConfigController {
 
 
     private final ThemeConfigService themeConfigService;
-
-
-    @Autowired
-    public ThemeConfigController(
-            ThemeConfigService themeConfigService) {
-
-        this.themeConfigService = themeConfigService;
-    }
 
 
     /**
@@ -90,18 +84,7 @@ public class ThemeConfigController {
     }
 
 
-    /**
-     * Handles workflow approval/rejection callback.
-     *
-     * APPROVE:
-     * - Updates configuration status to APPROVED
-     *
-     * REJECT:
-     * - Updates configuration status to REJECTED
-     *
-     * @param request workflow action request
-     * @return updated theme configuration
-     */
+  
 
     /**
      * Fetches active theme configuration.
@@ -115,7 +98,7 @@ public class ThemeConfigController {
             method = RequestMethod.POST
     )
     public ResponseEntity<?> search(
-            @RequestBody ThemeConfig request) {
+          @Valid @RequestBody ThemeConfig request) {
 
         ThemeConfig response =
                 themeConfigService.search(
@@ -129,7 +112,18 @@ public class ThemeConfigController {
         );
     }
 
-
+  /**
+     * Handles workflow approval/rejection callback.
+     *
+     * APPROVE:
+     * - Updates configuration status to APPROVED
+     *
+     * REJECT:
+     * - Updates configuration status to REJECTED
+     *
+     * @param request workflow action request
+     * @return updated theme configuration
+     */
     @RequestMapping(
             value = "/_action",
             method = RequestMethod.POST
