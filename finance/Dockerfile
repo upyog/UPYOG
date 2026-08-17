@@ -18,7 +18,7 @@ RUN cd ${WORK_DIR} \
 # Create runtime image
 #FROM egovio/wildfly:1-helm-fin-e6312078
 #FROM egovio/wildfly:wildfly-docker-9371e7becf-5
-FROM nudmcdg/finance-wildfly40:03
+FROM nudmcdg/finance-wildfly40:v3
 
 USER root
 RUN mkdir -p /opt/jboss/wildfly/standalone/log && chown -R jboss:jboss /opt/jboss/wildfly/standalone/log
