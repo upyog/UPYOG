@@ -15,7 +15,7 @@ server:
   enableCompression: true
 
 redis:
-  host: localhost
+  host: redis.backbone
   port: 6379
   password: ""
   db: 0
@@ -86,6 +86,7 @@ providers:
     - "VOIDED"
     - "COMPLETE_REQUEST"
     - "COMPLETEREQUEST"
+    - "SETTLED"
   custom:
     quick-summary:
       timeout: 15s
