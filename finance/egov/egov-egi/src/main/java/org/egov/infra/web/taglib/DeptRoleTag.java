@@ -54,8 +54,8 @@ package org.egov.infra.web.taglib;
 
 import org.egov.infra.admin.master.entity.Department;
 
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.BodyTagSupport;
+import jakarta.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.tagext.BodyTagSupport;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -108,7 +108,7 @@ public class DeptRoleTag extends BodyTagSupport {
 	}
 
 	@Override
-	public int doStartTag() throws javax.servlet.jsp.JspTagException {
+	public int doStartTag() throws jakarta.servlet.jsp.JspTagException {
 		return SKIP_BODY;
 	}
 

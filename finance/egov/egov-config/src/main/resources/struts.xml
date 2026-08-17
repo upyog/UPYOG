@@ -48,8 +48,8 @@
   ~
   -->
  <!DOCTYPE struts PUBLIC
-	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
-	"http://struts.apache.org/dtds/struts-2.5.dtd">
+	"-//Apache Software Foundation//DTD Struts Configuration 6.0//EN"
+	"http://struts.apache.org/dtds/struts-6.0.dtd">
 
 <struts>
 	<!-- Production Performance Environment Setting, Change to inverse value of the same in Development Environment -->
@@ -63,6 +63,14 @@
 	<constant name="struts.i18n.reload" value="false" />
 	<constant name="struts.configuration.xml.reload" value="false" />
 	<constant name="struts.freemarker.beanwrapperCache" value="false" />
+	<!-- 
+		LTS Migration Fix (Struts 7 Security & OGNL Upgrade):
+		Configured struts.ognl.allowProxyMemberAccess=true and package allowlists.
+		Struts 7 restricts OGNL evaluation by default. Allowing proxy member access and adding org.egov and org.hibernate 
+		to the allowlist enables Struts UI tags to read model properties from entity objects and unproxied proxies without throwing security exceptions.
+	-->
+	<constant name="struts.ognl.allowProxyMemberAccess" value="true" />
+	<constant name="struts.allowlist.packageNames" value="org.egov,org.hibernate,java.lang,java.util" />
 	<!-- Performance Environment Setting Ends -->
 	<constant name="struts.convention.exclude.parentClassLoader" value="true" />
 	<constant name="struts.convention.action.fileProtocols" value="jar,vfsfile,vfszip,vfs,zip" />
@@ -116,7 +124,7 @@
 				<interceptor-ref name="staticParams" />
 				<interceptor-ref name="actionMappingParams" />
 				<interceptor-ref name="egov-trim" />
-				<interceptor-ref name="fileUpload" />
+				<interceptor-ref name="actionFileUpload" />
 				<interceptor-ref name="params"/>
 				<interceptor-ref name="conversionError" />
 				<interceptor-ref name="validation">

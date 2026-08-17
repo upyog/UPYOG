@@ -345,6 +345,8 @@
 					</tr>
 					<tr>
 						<td class="greybox"></td>
+						<%-- LTS Migration Fix (Struts 7 / WildFly 40): no leading slash on
+						     url so contextPath + url does not become //voucher/... --%>
 						<egov:ajaxdropdown id="bankaccount" fields="['Text','Value']"
 							dropdownId="bankaccount"
 							url="voucher/common-ajaxLoadBankAccountsByBranch.action" />

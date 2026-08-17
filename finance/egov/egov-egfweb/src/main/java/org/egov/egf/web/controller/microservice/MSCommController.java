@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.egov.infra.microservice.models.Department;
 import org.egov.infra.microservice.models.Designation;
@@ -21,13 +21,13 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.inbox.InboxRenderServiceDelegate;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.session.data.redis.RedisOperationsSessionRepository;
+import org.springframework.session.data.redis.RedisIndexedSessionRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,7 +50,7 @@ public class MSCommController {
     MicroserviceUtils microserviceUtils;
     
     @Autowired
-    RedisOperationsSessionRepository redisRepository;
+    RedisIndexedSessionRepository redisRepository;
     
     @Autowired
     private WorkflowService<StateAware> workflowService;
@@ -64,27 +64,45 @@ public class MSCommController {
         return microserviceUtils.getDepartments();
     }
 
+	/*
+	 * Spring 6 / Hibernate 6 Migration Fix:
+	 * 1. Added null-safety check for `params` and `departmentRule` parameter.
+	 *    Calling `.trim()` directly on `params.get("departmentRule")` without null check threw a `NullPointerException`
+	 *    when departmentRule was missing/empty, returning HTTP 400 / 500 Bad Request ("json fail").
+	 * 2. Added null verification for `wfmatrix` and `microserviceUtils.getDesignations()` to prevent unhandled NPEs
+	 *    during workflow designation filtering.
+	 */
 	@GetMapping(value = "/designations")
 	@ResponseBody
-	public List<Designation> getDesignations(@RequestParam Map<String, String> params) {
+	public List<Designation> getDesignations(@RequestParam final Map<String, String> params) {
 		final List<String> workflowDesignations = new ArrayList<>();
-		if (!SELECT.equals(params.get("departmentRule").trim())) {
-			final WorkFlowMatrix wfmatrix = workflowService.getWfMatrix(params.get("type"),
-					params.get("departmentRule").trim(), null, params.get("additionalRule"), params.get("currentState"),
-					params.get("pendingAction"));
-			if (wfmatrix.getCurrentDesignation() != null) {
+		final String departmentRule = params != null ? params.get("departmentRule") : null;
+		if (departmentRule != null && !SELECT.equalsIgnoreCase(departmentRule.trim())) {
+			final WorkFlowMatrix wfmatrix = workflowService.getWfMatrix(
+					params.get("type"),
+					departmentRule.trim(),
+					null,
+					params.get("additionalRule"),
+					params.get("currentState"),
+					params.get("pendingAction")
+			);
+			if (wfmatrix != null && wfmatrix.getCurrentDesignation() != null) {
 				workflowDesignations.addAll(Arrays.asList(wfmatrix.getCurrentDesignation().split(",")));
 			}
-			return microserviceUtils.getDesignations().stream()
-					.filter(desig -> workflowDesignations.contains(desig.getName())).collect(Collectors.toList());
+			final List<Designation> allDesignations = microserviceUtils.getDesignations();
+			if (allDesignations != null) {
+				return allDesignations.stream()
+						.filter(desig -> desig != null && desig.getName() != null && workflowDesignations.contains(desig.getName()))
+						.collect(Collectors.toList());
+			}
 		}
 		return Collections.emptyList();
 	}
 
 	@GetMapping(value = "/approvers/{deptId}/{desgId}")
 	@ResponseBody
-	public List<EmployeeInfo> getApprovers(@PathVariable(name = "deptId") @SafeHtml String deptId,
-			@PathVariable(name = "desgId") @SafeHtml String desgnId) {
+	public List<EmployeeInfo> getApprovers(@PathVariable(name = "deptId") @SanitizeHtml String deptId,
+			@PathVariable(name = "desgId") @SanitizeHtml String desgnId) {
 		return microserviceUtils.getApprovers(deptId, desgnId);
 	}
 
@@ -111,8 +129,8 @@ public class MSCommController {
 
     @PostMapping(value = "/rest/refreshToken")
     @ResponseBody
-    public ResponseEntity<Object> refreshToken(@RequestParam(value = "oldToken") @SafeHtml String oldToken,
-            @RequestParam(value = "newToken") @SafeHtml String newToken) {
+    public ResponseEntity<Object> refreshToken(@RequestParam(value = "oldToken") @SanitizeHtml String oldToken,
+            @RequestParam(value = "newToken") @SanitizeHtml String newToken) {
 
         try {
             if (null != oldToken && null != newToken) {
@@ -135,7 +153,7 @@ public class MSCommController {
 
     @GetMapping(value = "inbox/history", produces = APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public List<Inbox> showInboxHistory(@RequestParam Long stateId) {
+    public List<Inbox> showInboxHistory(@RequestParam("stateId") Long stateId) {
         return inboxRenderServiceDelegate.getWorkflowHistoryItems(stateId);
     }
 }

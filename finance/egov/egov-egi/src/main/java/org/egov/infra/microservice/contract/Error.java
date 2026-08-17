@@ -2,14 +2,14 @@ package org.egov.infra.microservice.contract;
 
 import java.io.Serializable;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 public class Error implements Serializable{
 
 	private Integer code;
-	@SafeHtml
+	@SanitizeHtml
 	private String message;
-	@SafeHtml
+	@SanitizeHtml
 	private String description;
 	
 	public Error(){}

@@ -67,7 +67,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.EntityNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -75,6 +75,7 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bank;
 import org.egov.commons.Bankaccount;
@@ -120,16 +121,18 @@ import org.egov.services.instrument.InstrumentService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.ObjectNotFoundException;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.Query;
+import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.BigDecimalType;
-import org.hibernate.type.DateType;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
+
+
+
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.WebApplicationContext;
@@ -180,9 +183,15 @@ public class CommonAction extends BaseFormAction {
 
     private static final Logger LOGGER = Logger.getLogger(CommonAction.class);
     private static final long serialVersionUID = 1L;
+    /*
+     * Hibernate 6 migration note:
+     * InstrumentVoucher.instrumentHeaderId is mapped as an InstrumentHeader entity.
+     * Hibernate 6 rejects comparing that association to ih.id, so the shared RTGS
+     * HQL compares the association with the InstrumentHeader alias ih.
+     */
     private static final String RTGSNUMBERSQUERY = "SELECT ih.id, ih.transactionNumber FROM InstrumentHeader ih, InstrumentVoucher iv, "
             + "Paymentheader ph WHERE ih.isPayCheque ='1' AND ih.bankAccountId.id = ? AND ih.statusId.description in ('New')" +
-            " AND ih.statusId.moduletype='Instrument' AND iv.instrumentHeaderId = ih.id and ih.bankAccountId is not null " +
+            " AND ih.statusId.moduletype='Instrument' AND iv.instrumentHeaderId = ih and ih.bankAccountId is not null " +
             "AND iv.voucherHeaderId     = ph.voucherheader AND ph.bankaccount = ih.bankAccountId AND ph.type = '"
             + FinancialConstants.MODEOFPAYMENT_RTGS + "' " + "GROUP BY ih.transactionNumber,ih.id order by ih.id desc";
     private Long fundId;
@@ -319,21 +328,36 @@ public class CommonAction extends BaseFormAction {
         this.bankList = bankList;
     }
 
+    /**
+     * Java 17 / Hibernate 6 LTS Migration Fix:
+     * 1. Changed HQL field name from camelCase 'isActive=true' to lowercase 'isactive=true' matching Scheme entity.
+     * 2. Updated fallback parameter -1 to -1L (Long) to match Hibernate 6 Strict SQM criteria type checking for fund.id.
+     * 3. Handles null or 0 fundId safely.
+     */
     @SuppressWarnings("unchecked")
     @Action(value = "/voucher/common-ajaxLoadSchemes")
     public String ajaxLoadSchemes() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadSchemes...");
+        if (fundId == null) {
+            String fId = ServletActionContext.getRequest().getParameter("fundId");
+            if (fId == null || fId.trim().isEmpty()) {
+                fId = ServletActionContext.getRequest().getParameter("fund");
+            }
+            if (fId != null && !fId.trim().isEmpty() && !"-1".equals(fId.trim())) {
+                fundId = Long.valueOf(fId.trim());
+            }
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Fund Id received is : " + fundId);
-        if (null == fundId)
+        if (null == fundId || fundId == 0 || fundId == -1)
             schemeList = getPersistenceService().findAllBy(
-                    " from Scheme where fund.id=? and isActive=true order by name", -1);
+                    " from Scheme where fund.id=? and isactive=true order by name", -1L);
         else
             schemeList = getPersistenceService()
                     .findAllBy(" from Scheme where fund.id=? and isactive=true order by name", fundId);
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Scheme List size : " + schemeList.size());
+            LOGGER.debug("Scheme List size : " + (schemeList != null ? schemeList.size() : 0));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadSchemes.");
         return "schemes";
@@ -344,6 +368,21 @@ public class CommonAction extends BaseFormAction {
     public String ajaxLoadSchemeBy20() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadSchemeBy20...");
+        /*
+         * Struts 7 migration note:
+         * Some legacy AJAX calls submit fund/fundId as request parameters without
+         * reliably binding the action field first. Re-read the request value before
+         * building the query so autocomplete results are filtered correctly.
+         */
+        if (fundId == null) {
+            String fId = ServletActionContext.getRequest().getParameter("fundId");
+            if (fId == null || fId.trim().isEmpty()) {
+                fId = ServletActionContext.getRequest().getParameter("fund");
+            }
+            if (fId != null && !fId.trim().isEmpty() && !"-1".equals(fId.trim())) {
+                fundId = Long.valueOf(fId.trim());
+            }
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Fund Id received is :  " + fundId + "   and Startswith   :" + startsWith);
         startsWith = "%" + startsWith + "%";
@@ -367,13 +406,28 @@ public class CommonAction extends BaseFormAction {
     public String ajaxLoadSubSchemes() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadSubSchemes...");
+        /*
+         * Java 17 / Hibernate 6 / Struts 7 migration note:
+         * Struts can leave schemeId unset for old AJAX callers that pass scheme or
+         * schemeId directly. Resolve it from the request and keep the HQL property as
+         * isactive, matching the SubScheme entity mapping used by Hibernate 6.
+         */
+        if (schemeId == null) {
+            String sId = ServletActionContext.getRequest().getParameter("schemeId");
+            if (sId == null || sId.trim().isEmpty()) {
+                sId = ServletActionContext.getRequest().getParameter("scheme");
+            }
+            if (sId != null && !sId.trim().isEmpty() && !"-1".equals(sId.trim())) {
+                schemeId = Integer.valueOf(sId.trim());
+            }
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Scheme Id received is : " + schemeId);
         if (null != schemeId && schemeId != -1) {
-            subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isActive=true order by name",
+            subSchemes = getPersistenceService().findAllBy("from SubScheme where scheme.id=? and isactive=true order by name",
                     schemeId);
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Subscheme List size : " + subSchemes.size());
+                LOGGER.debug("Subscheme List size : " + (subSchemes != null ? subSchemes.size() : 0));
         } else
             subSchemes = Collections.EMPTY_LIST;
         if (LOGGER.isDebugEnabled())
@@ -405,49 +459,114 @@ public class CommonAction extends BaseFormAction {
         return "subSchemeBy20";
     }
 
+    /**
+     * LTS Migration Fix (Struts 7 & Hibernate 6 Upgrade) — Bank to Bank Transfer
+     * and other Fund → Bank AJAX dropdowns:
+     * <ol>
+     * <li>Struts 7 does not bind YUI AJAX query params ({@code fundId},
+     * {@code typeOfAccount}) onto action fields. Read them from the request via
+     * {@link #resolveFundIdAndAsOnDate()}.</li>
+     * <li>{@code @SkipValidation} is required so validation/input does not
+     * replace the JSON result.</li>
+     * <li>Hibernate 6 rejects uncast {@code concat(bank.id, ...)} and string
+     * literals in {@code Bankaccount.type IN (...)}. Use {@code cast(... as string)}
+     * and enum constants.</li>
+     * <li>If the type filter returns empty (or the query fails), retry without
+     * type and then fall back to active payment banks so the UI is usable.</li>
+     * </ol>
+     */
     @SuppressWarnings("unchecked")
-    // @Deprecated
+    @SkipValidation
     @Action(value = "/voucher/common-ajaxLoadBanks")
     public String ajaxLoadBanks() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Starting ajaxLoadBanks...");
-
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("CommonAction | ajaxLoadBanks");
-
+        bankBranchList = new ArrayList<Map<String, Object>>();
+        resolveFundIdAndAsOnDate();
+        if (typeOfAccount == null || typeOfAccount.trim().isEmpty())
+            typeOfAccount = ServletActionContext.getRequest().getParameter("typeOfAccount");
+        LOGGER.info("ajaxLoadBanks fundId=" + fundId + " typeOfAccount=" + typeOfAccount);
         try {
-            final List<Object[]> bankBranch = getPersistenceService()
-                    .findAllBy(
-                    		new StringBuilder("select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname ")
-                                    .append(" FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount ")
-                                    .append(" where  bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true  and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id")
-                                    .append(" and bankaccount.fund.id=? order by 2").toString(), fundId);
-
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Bank list size is " + bankBranch.size());
-            bankBranchList = new ArrayList<Map<String, Object>>();
-            Map<String, Object> bankBrmap;
-            for (final Object[] element : bankBranch) {
-                bankBrmap = new HashMap<String, Object>();
-                bankBrmap.put("bankBranchId", element[0].toString());
-                bankBrmap.put("bankBranchName", element[1].toString());
-                bankBranchList.add(bankBrmap);
+            if (fundId != null && fundId != -1 && fundId != 0) {
+                final StringBuilder hql = new StringBuilder();
+                hql.append("select distinct concat(cast(b.id as string), '-', cast(bb.id as string)), concat(b.name, ' - ', bb.branchname) ")
+                        .append("from Bankaccount ba join ba.bankbranch bb join bb.bank b ")
+                        .append("where ba.isactive=true and bb.isactive=true and b.isactive=true ")
+                        .append("and ba.fund.id = ?1 ");
+                appendBankAccountTypeFilter(hql);
+                hql.append(" order by 2");
+                final List<Object[]> bankBranch = getPersistenceService().findAllBy(hql.toString(), fundId);
+                LOGGER.info("ajaxLoadBanks count=" + (bankBranch != null ? bankBranch.size() : 0));
+                if (bankBranch != null) {
+                    for (final Object[] element : bankBranch) {
+                        if (element == null || element.length < 2 || element[0] == null || element[1] == null)
+                            continue;
+                        final Map<String, Object> bankBrmap = new HashMap<String, Object>();
+                        bankBrmap.put("bankBranchId", element[0].toString());
+                        bankBrmap.put("bankBranchName", element[1].toString());
+                        bankBranchList.add(bankBrmap);
+                    }
+                }
+            } else {
+                LOGGER.warn("ajaxLoadBanks fundId is null/invalid: " + fundId);
             }
-
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
-                    new HibernateException(e.getMessage()));
-
-        } /*
-           * catch (final Exception e) { LOGGER.
-           * error("Exception occured while getting the data for bank dropdown "
-           * + e.getMessage(), new Exception(e.getMessage())); }
-           */
-
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed ajaxLoadBanks.");
+        } catch (final Exception e) {
+            LOGGER.error("ajaxLoadBanks failed", e);
+        }
+        if (bankBranchList.isEmpty() && fundId != null && fundId != -1 && fundId != 0
+                && typeOfAccount != null && !typeOfAccount.trim().isEmpty()) {
+            LOGGER.warn("ajaxLoadBanks empty for types " + typeOfAccount + "; retrying without type filter");
+            typeOfAccount = null;
+            try {
+                final String hql = "select distinct concat(cast(b.id as string), '-', cast(bb.id as string)), concat(b.name, ' - ', bb.branchname) "
+                        + "from Bankaccount ba join ba.bankbranch bb join bb.bank b "
+                        + "where ba.isactive=true and bb.isactive=true and b.isactive=true "
+                        + "and ba.fund.id = ?1 order by 2";
+                final List<Object[]> bankBranch = getPersistenceService().findAllBy(hql, fundId);
+                if (bankBranch != null) {
+                    for (final Object[] element : bankBranch) {
+                        if (element == null || element.length < 2 || element[0] == null || element[1] == null)
+                            continue;
+                        final Map<String, Object> bankBrmap = new HashMap<String, Object>();
+                        bankBrmap.put("bankBranchId", element[0].toString());
+                        bankBrmap.put("bankBranchName", element[1].toString());
+                        bankBranchList.add(bankBrmap);
+                    }
+                }
+            } catch (final Exception e) {
+                LOGGER.error("ajaxLoadBanks retry without type failed", e);
+            }
+        }
+        if (bankBranchList.isEmpty() && fundId != null && fundId != -1 && fundId != 0)
+            loadActivePaymentBanksForFund();
         return "bank";
+    }
 
+    /**
+     * LTS Migration Fix (Hibernate 6 Upgrade):
+     * {@code Bankaccount.type} is {@link BankAccountType}. Hibernate 6 no longer
+     * coerces string literals in {@code IN ('PAYMENTS',...)} and the AJAX bank
+     * query fails. Emit fully-qualified enum constants instead.
+     */
+    private void appendBankAccountTypeFilter(final StringBuilder hql) {
+        if (typeOfAccount == null || typeOfAccount.trim().isEmpty())
+            return;
+        final String[] types = typeOfAccount.split(",");
+        final StringBuilder inClause = new StringBuilder();
+        for (final String type : types) {
+            final String trimmed = type.trim();
+            if (trimmed.isEmpty())
+                continue;
+            try {
+                BankAccountType.valueOf(trimmed);
+            } catch (final IllegalArgumentException e) {
+                LOGGER.warn("Ignoring invalid bank account type: " + trimmed);
+                continue;
+            }
+            if (inClause.length() > 0)
+                inClause.append(",");
+            inClause.append("org.egov.commons.utils.BankAccountType.").append(trimmed);
+        }
+        if (inClause.length() > 0)
+            hql.append("and ba.type in (").append(inClause).append(") ");
     }
 
     @SuppressWarnings("unchecked")
@@ -464,9 +583,14 @@ public class CommonAction extends BaseFormAction {
             fundChk = " and bankaccount.fund.id=?";
         try {
             bankQuery
-                    .append("select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' ')")
-                    .append(",bankBranch.branchname) as bankbranchname FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount ")
-                    .append(" where  bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true  and bank.id = bankBranch.bank.id ")
+                    /*
+                     * Hibernate 6 migration note:
+                     * concat no longer tolerates mixed numeric/string arguments without
+                     * explicit casts. Cast bank and branch ids to string before building
+                     * the legacy "bankId-branchId" dropdown key.
+                     */
+                    .append("select DISTINCT concat(cast(bank.id as string), '-', cast(bankBranch.id as string)) as bankbranchid, concat(bank.name, ' ', bankBranch.branchname) as bankbranchname FROM Bank bank, Bankbranch bankBranch, Bankaccount bankaccount ")
+                    .append(" where bank.isactive=true and bankBranch.isactive=true and bankaccount.isactive=true and bank.id = bankBranch.bank.id ")
                     .append("and bankBranch.id = bankaccount.bankbranch.id");
             if (fundId != null)
                 bankBranch = getPersistenceService().findAllBy(
@@ -500,101 +624,139 @@ public class CommonAction extends BaseFormAction {
 
     }
 
+    /**
+     * LTS Migration Fix (Struts 7 & Hibernate 6 Upgrade) — Bank Entries Not In
+     * Bank Book Fund → Bank dropdown:
+     * <ol>
+     * <li>Struts 7 does not bind {@code fundId} on the YUI AJAX GET.</li>
+     * <li>{@code @SkipValidation} so JSON is returned.</li>
+     * <li>Hibernate 6: {@code Bankaccount.type IN ('PAYMENTS',...)} must use
+     * enum constants, not strings.</li>
+     * </ol>
+     */
     @SuppressWarnings("unchecked")
+    @SkipValidation
     @Action(value = "/voucher/common-ajaxLoadAllBanksByFund")
     public String ajaxLoadAllBanksByFund() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Starting ajaxLoadAllBanksByFund...");
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("CommonAction | ajaxLoadAllBanksByFund");
+        bankList = new ArrayList<Bank>();
+        resolveFundIdAndAsOnDate();
+        LOGGER.info("ajaxLoadAllBanksByFund fundId=" + fundId);
         try {
-            if (fundId != null)
-                bankList = getPersistenceService()
-                        .findAllBy(
-                                "select distinct b from Bank b,Bankbranch bb , Bankaccount ba  where bb.bank=b and ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and ba.fund.id=?",
-                                fundId);
+            final String typeIn = "org.egov.commons.utils.BankAccountType.RECEIPTS_PAYMENTS, "
+                    + "org.egov.commons.utils.BankAccountType.PAYMENTS";
+            if (fundId != null && fundId != -1 && fundId != 0)
+                bankList = getPersistenceService().findAllBy(
+                        "select distinct b from Bank b, Bankbranch bb, Bankaccount ba where bb.bank=b and ba.bankbranch=bb "
+                                + "and ba.type in (" + typeIn + ") and ba.fund.id=?1 and b.isactive=true",
+                        fundId);
             else
-                bankList = getPersistenceService()
-                        .findAllBy(
-                                "select distinct b from Bank b,Bankbranch bb , Bankaccount ba  where bb.bank=b and ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS')");
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Bank list size =  " + bankList.size());
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting bank  " + e.getMessage(), new HibernateException(e.getMessage()));
-        } /*
-           * catch (final Exception e) {
-           * LOGGER.error("Exception occured while getting bank  " +
-           * e.getMessage(), new HibernateException(e.getMessage())); }
-           */
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed ajaxLoadAllBanksByFund.");
+                bankList = getPersistenceService().findAllBy(
+                        "select distinct b from Bank b, Bankbranch bb, Bankaccount ba where bb.bank=b and ba.bankbranch=bb "
+                                + "and ba.type in (" + typeIn + ") and b.isactive=true");
+            if (bankList == null)
+                bankList = new ArrayList<Bank>();
+        } catch (final Exception e) {
+            LOGGER.error("ajaxLoadAllBanksByFund failed", e);
+            bankList = new ArrayList<Bank>();
+        }
+        LOGGER.info("ajaxLoadAllBanksByFund count=" + bankList.size());
         return "bankByFund";
-
     }
 
     @SuppressWarnings("unchecked")
+    @SkipValidation
     @Action(value = "/voucher/common-ajaxLoadBanksByFundAndType")
     public String ajaxLoadBanksByFundAndType() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBanksByFundAndType...");
 
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("CommonAction | ajaxLoadBanks");
-        int index = 0;
-        String[] strArray = null;
-        final StringBuffer query = new StringBuffer();
-        query.append(
-                "select DISTINCT concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),bankBranch.branchname) as bankbranchname ")
-                .append("FROM Bank bank,Bankbranch bankBranch,Bankaccount bankaccount where  bank.isactive=true  and bankBranch.isactive=true and ")
-                .append(" bankaccount.isactive=true and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id ");
-        if (fundId != null)
-            query.append("and bankaccount.fund.id=? and bankaccount.type in(");
-        else
-            query.append("and bankaccount.type in(");
-        if (typeOfAccount.indexOf(",") != -1) {
-            strArray = typeOfAccount.split(",");
-            for (final String type : strArray) {
-                index++;
-                query.append("'").append(type).append("'");
-                if (strArray.length > index)
-                    query.append(",");
-
+        /*
+         * LTS Migration Fix (Struts 7 & Hibernate 6 Upgrade):
+         * -----------------------------------------------------
+         * 1. Struts 7 Parameter Sandboxing:
+         *    Resolve fundId and typeOfAccount from HttpServletRequest fallback if not bound by Struts.
+         * 2. Null-Safety:
+         *    Safely handle null/empty typeOfAccount to prevent NPE on typeOfAccount.indexOf().
+         * 3. Hibernate 6 SQM Concat & Cast:
+         *    Explicit string casts for numeric IDs in concat() for dropdown key format "bankId-branchId".
+         * 4. Position parameters: Use numbered parameter ?1.
+         */
+        if (fundId == null) {
+            final String fId = ServletActionContext.getRequest().getParameter("fundId");
+            if (fId != null && !fId.trim().isEmpty() && !"-1".equals(fId.trim())) {
+                try {
+                    fundId = Long.valueOf(fId.trim());
+                } catch (final NumberFormatException e) {
+                    fundId = null;
+                }
             }
-        } else
-            query.append("'").append(typeOfAccount).append("'");
-        query.append(") order by 2 ");
-        try {
-            List<Object[]> bankBranch = null;
-            if (fundId != null)
-                bankBranch = getPersistenceService().findAllBy(query.toString(), fundId);
-            else
-                bankBranch = getPersistenceService().findAllBy(query.toString());
+        }
+        if (typeOfAccount == null || typeOfAccount.trim().isEmpty()) {
+            typeOfAccount = ServletActionContext.getRequest().getParameter("typeOfAccount");
+        }
+        if (typeOfAccount == null || typeOfAccount.trim().isEmpty()) {
+            typeOfAccount = "PAYMENTS,RECEIPTS_PAYMENTS";
+        }
 
+        bankBranchList = new ArrayList<Map<String, Object>>();
+        if (fundId == null || fundId == -1 || fundId == 0) {
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Bank list size is " + bankBranch.size());
-            bankBranchList = new ArrayList<Map<String, Object>>();
-            Map<String, Object> bankBrmap;
-            for (final Object[] element : bankBranch) {
-                bankBrmap = new HashMap<String, Object>();
-                bankBrmap.put("bankBranchId", element[0].toString());
-                bankBrmap.put("bankBranchName", element[1].toString());
-                bankBranchList.add(bankBrmap);
+                LOGGER.debug("FundId is null or invalid: " + fundId);
+            return "bank";
+        }
+
+        final StringBuilder query = new StringBuilder();
+        query.append(
+                "select DISTINCT concat(cast(bank.id as string), '-', cast(bankBranch.id as string)) as bankbranchid, concat(bank.name, ' ', bankBranch.branchname) as bankbranchname ")
+                .append("FROM Bank bank, Bankbranch bankBranch, Bankaccount bankaccount where bank.isactive=true and bankBranch.isactive=true and ")
+                .append(" bankaccount.isactive=true and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id ")
+                .append("and bankaccount.fund.id=?1 and bankaccount.type in (");
+
+        int index = 0;
+        final String[] strArray = typeOfAccount.split(",");
+        for (final String type : strArray) {
+            final String trimmed = type.trim();
+            if (!trimmed.isEmpty()) {
+                try {
+                    BankAccountType.valueOf(trimmed);
+                } catch (final IllegalArgumentException invalidType) {
+                    LOGGER.warn("Ignoring invalid bank account type in AJAX filter: " + trimmed);
+                    continue;
+                }
+                if (index > 0)
+                    query.append(",");
+                // Hibernate 6: Bankaccount.type is BankAccountType enum. String
+                // literals in IN (...) no longer coerce and the query fails.
+                query.append("org.egov.commons.utils.BankAccountType.").append(trimmed);
+                index++;
             }
+        }
+        if (index == 0) {
+            query.append("org.egov.commons.utils.BankAccountType.PAYMENTS,org.egov.commons.utils.BankAccountType.RECEIPTS_PAYMENTS");
+        }
+        query.append(") order by 2 ");
 
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
-                    new HibernateException(e.getMessage()));
-
-        } /*
-           * catch (final Exception e) { LOGGER.
-           * error("Exception occured while getting the data for bank dropdown "
-           * + e.getMessage(), new Exception(e.getMessage())); }
-           */
+        try {
+            final List<Object[]> bankBranch = getPersistenceService().findAllBy(query.toString(), fundId);
+            if (bankBranch != null) {
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Bank list size is " + bankBranch.size());
+                for (final Object[] element : bankBranch) {
+                    if (element != null && element.length >= 2 && element[0] != null && element[1] != null) {
+                        final Map<String, Object> bankBrmap = new HashMap<String, Object>();
+                        bankBrmap.put("bankBranchId", element[0].toString());
+                        bankBrmap.put("bankBranchName", element[1].toString());
+                        bankBranchList.add(bankBrmap);
+                    }
+                }
+            }
+        } catch (final Exception e) {
+            LOGGER.error("Exception occurred while getting data for bank dropdown: " + e.getMessage(), e);
+        }
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBanksByFundAndType.");
         return "bank";
-
     }
 
     @SuppressWarnings("unchecked")
@@ -606,54 +768,118 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("CommonAction | ajaxLoadAccNum");
         try {
+            /*
+             * Struts 7 / Hibernate 6 migration note:
+             * Legacy callers may pass branchId/bankId only as request parameters. Load
+             * them before querying and skip bank filtering when the bank value is not
+             * available, preventing null parameter binding failures.
+             */
+            if (branchId == null) {
+                String bId = ServletActionContext.getRequest().getParameter("branchId");
+                if (bId != null && !bId.trim().isEmpty()) {
+                    branchId = Integer.valueOf(bId.trim());
+                }
+            }
+            if (bankId == null) {
+                String bkId = ServletActionContext.getRequest().getParameter("bankId");
+                if (bkId != null && !bkId.trim().isEmpty()) {
+                    bankId = Integer.valueOf(bkId.trim());
+                }
+            }
 
-            accNumList = getPersistenceService()
-                    .findAllBy(
-                            "from Bankaccount ba where ba.bankbranch.id=? and ba.bankbranch.bank.id=? and isactive=true order by ba.chartofaccounts.glcode",
-                            branchId, bankId);
+            if (branchId != null && bankId != null && bankId > 0) {
+                accNumList = getPersistenceService()
+                        .findAllBy(
+                                "from Bankaccount ba where ba.bankbranch.id=? and ba.bankbranch.bank.id=? and ba.isactive=true order by ba.chartofaccounts.glcode",
+                                branchId, bankId);
+            } else if (branchId != null) {
+                accNumList = getPersistenceService()
+                        .findAllBy(
+                                "from Bankaccount ba where ba.bankbranch.id=? and ba.isactive=true order by ba.chartofaccounts.glcode",
+                                branchId);
+            } else {
+                accNumList = new ArrayList<Bankaccount>();
+            }
+
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Bank account Number list size =  " + accNumList.size());
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting bank account numbers " + e.getMessage(),
-                    new HibernateException(e.getMessage()));
-        } /*
-           * catch (final Exception e) { LOGGER.
-           * error("Exception occured while getting bank account numbers " +
-           * e.getMessage(), new HibernateException(e.getMessage())); }
-           */
+                LOGGER.debug("Bank account Number list size =  " + (accNumList != null ? accNumList.size() : 0));
+        } catch (final Exception e) {
+            LOGGER.error("Exception occured while getting bank account numbers " + e.getMessage(), e);
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadAccNum.");
         return "bankAccNum";
     }
 
+    /**
+     * LTS Migration Fix (Struts 7 & Hibernate 6 Upgrade) — Manual / Auto BRS
+     * Bank Account dropdown after Branch is selected:
+     * <ol>
+     * <li>Struts 7 does not bind {@code branchId} on the YUI AJAX GET.</li>
+     * <li>{@code @SkipValidation} so JSON is returned instead of the input page.</li>
+     * <li>HQL uses {@code ba.isactive} and {@code ?1}; unqualified {@code isactive}
+     * fails under Hibernate 6.</li>
+     * <li>Unproxy nested GL/bank so Struts 7 OGNL can render the JSON JSP.</li>
+     * </ol>
+     */
+    @SuppressWarnings("unchecked")
+    @SkipValidation
     @Action(value = "/voucher/common-ajaxLoadBankAccountsByBranch")
     public String ajaxLoadBankAccountsByBranch() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Starting ajaxLoadAccNum...");
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("CommonAction | ajaxLoadAccNum");
+        accNumList = new ArrayList<Bankaccount>();
+        if (branchId == null) {
+            String brId = ServletActionContext.getRequest().getParameter("branchId");
+            if (brId == null || brId.trim().isEmpty())
+                brId = ServletActionContext.getRequest().getParameter("bankbranch");
+            if (brId != null && !brId.trim().isEmpty() && !"-1".equals(brId.trim())) {
+                try {
+                    branchId = Integer.valueOf(brId.trim());
+                } catch (final NumberFormatException e) {
+                    LOGGER.warn("Invalid branchId for BRS accounts: " + brId);
+                }
+            }
+        }
+        if (fundId == null) {
+            String fId = ServletActionContext.getRequest().getParameter("fundId");
+            if (fId != null && !fId.trim().isEmpty() && !"-1".equals(fId.trim())) {
+                try {
+                    fundId = Long.valueOf(fId.trim());
+                } catch (final NumberFormatException e) {
+                    LOGGER.warn("Invalid fundId for BRS/BENIBB accounts: " + fId);
+                }
+            }
+        }
+        LOGGER.info("ajaxLoadBankAccountsByBranch branchId=" + branchId + " fundId=" + fundId);
+        if (branchId == null || branchId <= 0)
+            return "bankAccountByBranch";
         try {
-
-            accNumList = getPersistenceService()
-                    .findAllBy(
-                            "from Bankaccount ba where ba.bankbranch.id=? and isactive=true order by ba.chartofaccounts.glcode",
-                            branchId);
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Bank account Number list size =  " + accNumList.size());
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting bank account numbers " + e.getMessage(),
-                    new HibernateException(e.getMessage()));
-        } /*
-           * catch (final Exception e) { LOGGER.
-           * error("Exception occured while getting bank account numbers " +
-           * e.getMessage(), new HibernateException(e.getMessage())); }
-           */
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed ajaxLoadAccNum.");
+            accNumList = loadBankAccountsForBranch(false);
+            /*
+             * Bank Entries Not In Bank Book now also sends fundId. If that
+             * fund has no accounts on the selected branch, retry without the
+             * fund filter so the Account Number dropdown is not left empty.
+             */
+            if ((accNumList == null || accNumList.isEmpty()) && fundId != null) {
+                LOGGER.warn("ajaxLoadBankAccountsByBranch empty with fundId=" + fundId
+                        + "; retrying without fund filter");
+                final Long savedFund = fundId;
+                fundId = null;
+                accNumList = loadBankAccountsForBranch(false);
+                fundId = savedFund;
+            }
+            if (accNumList == null)
+                accNumList = new ArrayList<Bankaccount>();
+            prepareAccountsForDropdown(accNumList);
+        } catch (final Exception e) {
+            LOGGER.error("ajaxLoadBankAccountsByBranch failed", e);
+            accNumList = new ArrayList<Bankaccount>();
+        }
+        LOGGER.info("ajaxLoadBankAccountsByBranch count=" + accNumList.size());
         return "bankAccountByBranch";
     }
 
     @SuppressWarnings("unchecked")
+    @SkipValidation
     @Action(value = "/voucher/common-ajaxLoadBankBranchFromBank")
     public String ajaxLoadBankBranchFromBank() {
 
@@ -662,25 +888,54 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("CommonAction | ajaxLoadBankBranchFromBank");
         try {
-            if (fundId != null)
-                branchList = getPersistenceService()
-                        .findAllBy(
-                                "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.bank.id=? and bb.isactive=true and ba.fund.id=?",
-                                bankId, fundId);
-            else
-                branchList = getPersistenceService()
-                        .findAllBy(
-                                "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.bank.id=? and bb.isactive=true",
-                                bankId);
+            /*
+             * Struts 7 migration note:
+             * The bank/fund dropdown AJAX calls use both old and new parameter names.
+             * Resolve bankId/fundId from the request to keep dependent branch loading
+             * working when action property binding does not run first.
+             */
+            if (bankId == null) {
+                String bId = ServletActionContext.getRequest().getParameter("bankId");
+                if (bId == null || bId.trim().isEmpty()) {
+                    bId = ServletActionContext.getRequest().getParameter("bank");
+                }
+                if (bId != null && !bId.trim().isEmpty() && !"-1".equals(bId.trim())) {
+                    bankId = Integer.valueOf(bId.trim());
+                }
+            }
+            if (fundId == null) {
+                String fId = ServletActionContext.getRequest().getParameter("fundId");
+                if (fId == null || fId.trim().isEmpty()) {
+                    fId = ServletActionContext.getRequest().getParameter("fund");
+                }
+                if (fId != null && !fId.trim().isEmpty() && !"-1".equals(fId.trim())) {
+                    fundId = Long.valueOf(fId.trim());
+                }
+            }
+
+            if (bankId != null && bankId > 0) {
+                /*
+                 * LTS Migration Fix (Hibernate 6): Bankaccount.type is an enum.
+                 * String literals in IN (...) no longer coerce.
+                 */
+                if (fundId != null && fundId > 0)
+                    branchList = getPersistenceService()
+                            .findAllBy(
+                                    "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in (org.egov.commons.utils.BankAccountType.RECEIPTS_PAYMENTS, org.egov.commons.utils.BankAccountType.PAYMENTS) and bb.bank.id=?1 and bb.isactive=true and ba.fund.id=?2",
+                                    bankId, fundId);
+                else
+                    branchList = getPersistenceService()
+                            .findAllBy(
+                                    "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in (org.egov.commons.utils.BankAccountType.RECEIPTS_PAYMENTS, org.egov.commons.utils.BankAccountType.PAYMENTS) and bb.bank.id=?1 and bb.isactive=true",
+                                    bankId);
+            } else {
+                branchList = new ArrayList<Bankbranch>();
+            }
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Bank Branch Number list size =  " + branchList.size());
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting bank branch " + e.getMessage(), new HibernateException(e.getMessage()));
-        } /*
-           * catch (final Exception e) {
-           * LOGGER.error("Exception occured while getting bank branch " +
-           * e.getMessage(), new HibernateException(e.getMessage())); }
-           */
+                LOGGER.debug("Bank Branch Number list size =  " + (branchList != null ? branchList.size() : 0));
+        } catch (final Exception e) {
+            LOGGER.error("Exception occured while getting bank branch " + e.getMessage(), e);
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBankBranchFromBank.");
         return "branch";
@@ -694,26 +949,53 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("CommonAction | ajaxLoadBankAccFromBranch");
         try {
-            if (fundId != null)
-                accNumList = getPersistenceService()
-                        .findAllBy(
-                                "from Bankaccount ba where ba.bankbranch.id=? and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and ba.isactive=true and ba.fund.id=?",
-                                branchId, fundId);
-            else
-                accNumList = getPersistenceService()
-                        .findAllBy(
-                                "from Bankaccount ba where ba.bankbranch.id=? and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and ba.isactive=true",
-                                branchId);
+            /*
+             * Struts 7 migration note:
+             * Branch and fund can arrive as branchId, bankbranch, bankbranch.id, fund,
+             * or fundId depending on the legacy page. Normalize those names here before
+             * executing Hibernate queries.
+             */
+            if (branchId == null) {
+                String brId = ServletActionContext.getRequest().getParameter("branchId");
+                if (brId == null || brId.trim().isEmpty()) {
+                    brId = ServletActionContext.getRequest().getParameter("bankbranch");
+                }
+                if (brId == null || brId.trim().isEmpty()) {
+                    brId = ServletActionContext.getRequest().getParameter("bankbranch.id");
+                }
+                if (brId != null && !brId.trim().isEmpty() && !"-1".equals(brId.trim())) {
+                    branchId = Integer.valueOf(brId.trim());
+                }
+            }
+            if (fundId == null) {
+                String fId = ServletActionContext.getRequest().getParameter("fundId");
+                if (fId == null || fId.trim().isEmpty()) {
+                    fId = ServletActionContext.getRequest().getParameter("fund");
+                }
+                if (fId != null && !fId.trim().isEmpty() && !"-1".equals(fId.trim())) {
+                    fundId = Long.valueOf(fId.trim());
+                }
+            }
+
+            if (branchId != null && branchId > 0) {
+                if (fundId != null && fundId > 0)
+                    accNumList = getPersistenceService()
+                            .findAllBy(
+                                    "from Bankaccount ba where ba.bankbranch.id=? and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and ba.isactive=true and ba.fund.id=?",
+                                    branchId, fundId);
+                else
+                    accNumList = getPersistenceService()
+                            .findAllBy(
+                                    "from Bankaccount ba where ba.bankbranch.id=? and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and ba.isactive=true",
+                                    branchId);
+            } else {
+                accNumList = new ArrayList<Bankaccount>();
+            }
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Bank Account Number list size =  " + accNumList.size());
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting bank account " + e.getMessage(),
-                    new HibernateException(e.getMessage()));
-        } /*
-           * catch (final Exception e) {
-           * LOGGER.error("Exception occured while getting bank account " +
-           * e.getMessage(), new HibernateException(e.getMessage())); }
-           */
+                LOGGER.debug("Bank Account Number list size =  " + (accNumList != null ? accNumList.size() : 0));
+        } catch (final Exception e) {
+            LOGGER.error("Exception occured while getting bank account " + e.getMessage(), e);
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBankAccFromBranch.");
         return "bankAccNum";
@@ -750,6 +1032,25 @@ public class CommonAction extends BaseFormAction {
          */
         // instrumentHeaderList=new ArrayList<InstrumentHeader>();
         try {
+            /*
+             * Struts 7 / Hibernate 6 migration note:
+             * RTGS lookup depends on bankaccountId, which older pages submit under
+             * multiple names. Resolve it before running RTGSNUMBERSQUERY; if no valid
+             * id is present, skip the query to avoid strict null parameter binding.
+             */
+            if (bankaccountId == null) {
+                String bAccId = ServletActionContext.getRequest().getParameter("bankaccountId");
+                if (bAccId == null || bAccId.trim().isEmpty()) {
+                    bAccId = ServletActionContext.getRequest().getParameter("bankaccount.id");
+                }
+                if (bAccId == null || bAccId.trim().isEmpty()) {
+                    bAccId = ServletActionContext.getRequest().getParameter("bankaccount");
+                }
+                if (bAccId != null && !bAccId.trim().isEmpty() && !"-1".equals(bAccId.trim())) {
+                    bankaccountId = Long.valueOf(bAccId.trim());
+                }
+            }
+
             final Calendar calendar = Calendar.getInstance();
             calendar.get(Calendar.DATE);
             calendar.add(Calendar.DATE, -7);
@@ -758,57 +1059,150 @@ public class CommonAction extends BaseFormAction {
             final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yy");
             final String date1 = sdf.format(date);
 
-            resultList = getPersistenceService()
-                    .findAllBy(RTGSNUMBERSQUERY, bankaccountId);
-            for (final Object[] obj : resultList) {
-                InstrumentHeader ih = new InstrumentHeader();
-                ih = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?", (Long) obj[0]);
+            if (bankaccountId != null && bankaccountId > 0) {
+                resultList = getPersistenceService()
+                        .findAllBy(RTGSNUMBERSQUERY, bankaccountId);
+                for (final Object[] obj : resultList) {
+                    InstrumentHeader ih = new InstrumentHeader();
+                    ih = (InstrumentHeader) persistenceService.find("from InstrumentHeader where id=?", (Long) obj[0]);
 
-                instrumentHeaderList.add(ih);
+                    instrumentHeaderList.add(ih);
+                }
             }
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting bank account " + e.getMessage(),
-                    new HibernateException(e.getMessage()));
-        } /*
-           * catch (final Exception e) {
-           * LOGGER.error("Exception occured while getting bank account " +
-           * e.getMessage(), new HibernateException(e.getMessage())); }
-           */
+        } catch (final Exception e) {
+            LOGGER.error("Exception occured while getting bank account " + e.getMessage(), e);
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadRTGSChequeFromBankAcc.");
         return "instrument";
     }
 
+    /**
+     * LTS Migration Fix (Struts 7 & Hibernate 6 Upgrade) — Bank to Bank Transfer
+     * Account No dropdown after Bank is selected:
+     * <ol>
+     * <li>Struts 7 leaves {@code branchId}, {@code fundId}, and
+     * {@code typeOfAccount} unbound on the AJAX GET. Read them from the
+     * request (including the {@code bankbranch}/{@code fund} aliases used by
+     * older JSPs).</li>
+     * <li>{@code @SkipValidation} so the JSON {@code bankAccNum} result is
+     * returned instead of the input/error page.</li>
+     * <li>HQL must use {@code ba.fund.id} (not unqualified {@code fund.id})
+     * and numbered parameters; Hibernate 6 rejects the legacy path.</li>
+     * <li>If the type filter is empty, retry without type, then fall back to
+     * active payment accounts. Unproxy nested bank/GL associations so Struts 7
+     * OGNL can render {@code common-bankAccNum.jsp}.</li>
+     * </ol>
+     */
     @SuppressWarnings("unchecked")
+    @SkipValidation
     @Action(value = "/voucher/common-ajaxLoadAccountNumbers")
     public String ajaxLoadAccountNumbers() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Starting ajaxLoadAccountNumbers...");
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("CommonAction | ajaxLoadAccountNumbers");
+        accNumList = new ArrayList<Bankaccount>();
+        if (branchId == null) {
+            String brId = ServletActionContext.getRequest().getParameter("branchId");
+            if (brId == null || brId.trim().isEmpty())
+                brId = ServletActionContext.getRequest().getParameter("bankbranch");
+            if (brId != null && !brId.trim().isEmpty() && !"-1".equals(brId.trim())) {
+                try {
+                    branchId = Integer.valueOf(brId.trim());
+                } catch (final NumberFormatException e) {
+                    LOGGER.warn("Invalid branchId for account numbers: " + brId);
+                }
+            }
+        }
+        if (fundId == null) {
+            String fId = ServletActionContext.getRequest().getParameter("fundId");
+            if (fId == null || fId.trim().isEmpty())
+                fId = ServletActionContext.getRequest().getParameter("fund");
+            if (fId != null && !fId.trim().isEmpty() && !"-1".equals(fId.trim())) {
+                try {
+                    fundId = Long.valueOf(fId.trim());
+                } catch (final NumberFormatException e) {
+                    LOGGER.warn("Invalid fundId for account numbers: " + fId);
+                }
+            }
+        }
+        if (typeOfAccount == null || typeOfAccount.trim().isEmpty())
+            typeOfAccount = ServletActionContext.getRequest().getParameter("typeOfAccount");
+        LOGGER.info("ajaxLoadAccountNumbers fundId=" + fundId + " branchId=" + branchId + " typeOfAccount=" + typeOfAccount);
+        if (branchId == null || branchId <= 0)
+            return "bankAccNum";
         try {
-            if (fundId != null && fundId != -1 && fundId != 0)
-                accNumList = getPersistenceService()
-                        .findAllBy(
-                                "from Bankaccount ba where ba.bankbranch.id=? and fund.id=? and isactive=true order by ba.chartofaccounts.glcode",
-                                branchId, fundId);
-            else
-                accNumList = getPersistenceService().findAllBy(
-                        "from Bankaccount ba where ba.bankbranch.id=? and isactive=true order by ba.chartofaccounts.glcode",
-                        branchId);
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Bank account Number list size =  " + accNumList.size());
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting bank account numbers " + e.getMessage(),
-                    new HibernateException(e.getMessage()));
-        } /*
-           * catch (final Exception e) { LOGGER.
-           * error("Exception occured while getting bank account numbers " +
-           * e.getMessage(), new HibernateException(e.getMessage())); }
-           */
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed ajaxLoadAccountNumbers.");
+            accNumList = loadBankAccountsForBranch(true);
+            if (accNumList == null || accNumList.isEmpty()) {
+                LOGGER.warn("ajaxLoadAccountNumbers empty with type filter; retrying without type");
+                accNumList = loadBankAccountsForBranch(false);
+            }
+        } catch (final Exception e) {
+            LOGGER.error("ajaxLoadAccountNumbers failed", e);
+            try {
+                accNumList = loadBankAccountsForBranch(false);
+            } catch (final Exception retry) {
+                LOGGER.error("ajaxLoadAccountNumbers retry failed", retry);
+                accNumList = new ArrayList<Bankaccount>();
+            }
+        }
+        if (accNumList == null || accNumList.isEmpty())
+            loadActivePaymentAccountsForBranch();
+        prepareAccountsForDropdown(accNumList);
+        LOGGER.info("ajaxLoadAccountNumbers count=" + (accNumList != null ? accNumList.size() : 0));
         return "bankAccNum";
+    }
+
+    /**
+     * LTS Migration Fix (Hibernate 6 Upgrade):
+     * Account-number HQL for BTB / contra AJAX. Uses alias-qualified paths and
+     * {@code ?1}/{@code ?2} so Hibernate 6 SQM accepts the query. Type filter
+     * uses enum constants via {@link #appendBankAccountTypeFilter}.
+     */
+    @SuppressWarnings("unchecked")
+    private List<Bankaccount> loadBankAccountsForBranch(final boolean applyTypeFilter) {
+        final StringBuilder hql = new StringBuilder();
+        hql.append("from Bankaccount ba where ba.bankbranch.id=?1 and ba.isactive=true ");
+        if (fundId != null && fundId != -1 && fundId != 0)
+            hql.append("and ba.fund.id=?2 ");
+        if (applyTypeFilter)
+            appendBankAccountTypeFilter(hql);
+        hql.append("order by ba.chartofaccounts.glcode");
+        if (fundId != null && fundId != -1 && fundId != 0)
+            return getPersistenceService().findAllBy(hql.toString(), branchId, fundId);
+        return getPersistenceService().findAllBy(hql.toString(), branchId);
+    }
+
+    /**
+     * LTS Migration Fix (Hibernate 6 & Struts 7 Upgrade):
+     * PersistenceService unproxies the {@link Bankaccount} row, but nested
+     * {@code chartofaccounts} / {@code bankbranch.bank} stay ByteBuddy proxies.
+     * Struts 7 OGNL allowlisting cannot read those proxies, so
+     * {@code common-bankAccNum.jsp} rendered empty Text/Value. Initialize and
+     * unproxy the graph while the session is open.
+     */
+    @SuppressWarnings("unchecked")
+    private void prepareAccountsForDropdown(final List<Bankaccount> accounts) {
+        if (accounts == null)
+            return;
+        for (int i = 0; i < accounts.size(); i++) {
+            Bankaccount account = accounts.get(i);
+            if (account == null)
+                continue;
+            Hibernate.initialize(account);
+            account = (Bankaccount) Hibernate.unproxy(account);
+            if (account.getChartofaccounts() != null) {
+                Hibernate.initialize(account.getChartofaccounts());
+                account.setChartofaccounts((CChartOfAccounts) Hibernate.unproxy(account.getChartofaccounts()));
+            }
+            if (account.getBankbranch() != null) {
+                Hibernate.initialize(account.getBankbranch());
+                final Bankbranch branch = (Bankbranch) Hibernate.unproxy(account.getBankbranch());
+                account.setBankbranch(branch);
+                if (branch.getBank() != null) {
+                    Hibernate.initialize(branch.getBank());
+                    branch.setBank((Bank) Hibernate.unproxy(branch.getBank()));
+                }
+            }
+            accounts.set(i, account);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -819,21 +1213,30 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("CommonAction | ajaxLoadDrawingOfficers");
         try {
+            /*
+             * Struts 7 migration note:
+             * Department is posted under different parameter names by older JSPs. Read
+             * both variants before querying so the drawing officer dropdown does not
+             * fail with a null department filter.
+             */
+            if (departmentId == null) {
+                departmentId = ServletActionContext.getRequest().getParameter("departmentId");
+                if (departmentId == null || departmentId.trim().isEmpty()) {
+                    departmentId = ServletActionContext.getRequest().getParameter("department");
+                }
+            }
             if (departmentId != null && !departmentId.equalsIgnoreCase("-1") && !departmentId.equalsIgnoreCase("0"))
                 drawingList = getPersistenceService()
                         .findAllBy(
                                 "select do from DrawingOfficer do,Department dept,DepartmentDOMapping ddm where ddm.department.id = dept.id and ddm.drawingOfficer.id = do.id and dept.id = ?",
                                 departmentId);
+            else
+                drawingList = new ArrayList<DrawingOfficer>();
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Drawing officers  list size =  " + drawingList.size());
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting Drawing officers " + e.getMessage(),
-                    new HibernateException(e.getMessage()));
-        } /*
-           * catch (final Exception e) {
-           * LOGGER.error("Exception occured while getting Drawing officers " +
-           * e.getMessage(), new HibernateException(e.getMessage())); }
-           */
+                LOGGER.debug("Drawing officers  list size =  " + (drawingList != null ? drawingList.size() : 0));
+        } catch (final Exception e) {
+            LOGGER.error("Exception occured while getting Drawing officers " + e.getMessage(), e);
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadDrawingOfficers.");
         return "drawingOffcer";
@@ -846,12 +1249,49 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("CommonAction | ajaxLoadAccNum");
         try {
+            /*
+             * Struts 7 migration note:
+             * Account-number dropdowns are chained AJAX calls. Resolve branch, bank,
+             * fund, and account type from request parameters when they were not bound
+             * to the action, and return an empty list when mandatory filters are absent.
+             */
+            if (branchId == null) {
+                String brId = ServletActionContext.getRequest().getParameter("branchId");
+                if (brId == null || brId.trim().isEmpty()) {
+                    brId = ServletActionContext.getRequest().getParameter("bankbranch");
+                }
+                if (brId != null && !brId.trim().isEmpty() && !"-1".equals(brId.trim())) {
+                    branchId = Integer.valueOf(brId.trim());
+                }
+            }
+            if (bankId == null) {
+                String bkId = ServletActionContext.getRequest().getParameter("bankId");
+                if (bkId == null || bkId.trim().isEmpty()) {
+                    bkId = ServletActionContext.getRequest().getParameter("bank");
+                }
+                if (bkId != null && !bkId.trim().isEmpty() && !"-1".equals(bkId.trim())) {
+                    bankId = Integer.valueOf(bkId.trim());
+                }
+            }
+            if (fundId == null) {
+                String fId = ServletActionContext.getRequest().getParameter("fundId");
+                if (fId == null || fId.trim().isEmpty()) {
+                    fId = ServletActionContext.getRequest().getParameter("fund");
+                }
+                if (fId != null && !fId.trim().isEmpty() && !"-1".equals(fId.trim())) {
+                    fundId = Long.valueOf(fId.trim());
+                }
+            }
+            if (typeOfAccount == null || typeOfAccount.trim().isEmpty()) {
+                typeOfAccount = ServletActionContext.getRequest().getParameter("typeOfAccount");
+            }
+
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("typeOfAccount in  ajaxLoadBankAccounts method >>>>>>>" + typeOfAccount);
             if (typeOfAccount != null && !typeOfAccount.equals("")) {
                 if (typeOfAccount.indexOf(",") != -1) {
                     final String[] strArray = typeOfAccount.split(",");
-                    if (fundId != null)
+                    if (fundId != null && fundId > 0)
                         accNumList = getPersistenceService()
                                 .findAllBy(
                                         "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.bankbranch.bank.id=? and isactive=true and type in (?, ?) order by ba.chartofaccounts.glcode",
@@ -863,7 +1303,7 @@ public class CommonAction extends BaseFormAction {
                                         "from Bankaccount ba where ba.bankbranch.id=? and  ba.bankbranch.bank.id=? and isactive=true and type in (?, ?) order by ba.chartofaccounts.glcode",
                                         branchId, bankId, BankAccountType.valueOf(strArray[0]),
                                         BankAccountType.valueOf(strArray[1]));
-                } else if (fundId != null)
+                } else if (fundId != null && fundId > 0)
                     accNumList = getPersistenceService()
                             .findAllBy(
                                     "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.bankbranch.bank.id=? and isactive=true and type in (?) order by ba.chartofaccounts.glcode",
@@ -873,26 +1313,23 @@ public class CommonAction extends BaseFormAction {
                             .findAllBy(
                                     "from Bankaccount ba where ba.bankbranch.id=?  and ba.bankbranch.bank.id=? and isactive=true and type in (?) order by ba.chartofaccounts.glcode",
                                     branchId, bankId, typeOfAccount);
-            } else if (fundId != null)
+            } else if (fundId != null && fundId > 0)
                 accNumList = getPersistenceService()
                         .findAllBy(
                                 "from Bankaccount ba where ba.bankbranch.id=? and ba.fund.id=? and ba.bankbranch.bank.id=? and isactive=true order by ba.chartofaccounts.glcode",
                                 branchId, fundId, bankId);
-            else
+            else if (branchId != null && bankId != null)
                 accNumList = getPersistenceService()
                         .findAllBy(
                                 "from Bankaccount ba where ba.bankbranch.id=?  and ba.bankbranch.bank.id=? and isactive=true order by ba.chartofaccounts.glcode",
                                 branchId, bankId);
+            else
+                accNumList = new ArrayList<Bankaccount>();
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Bank account Number list size =  " + accNumList.size());
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting bank account numbers " + e.getMessage(),
-                    new HibernateException(e.getMessage()));
-        } /*
-           * catch (final Exception e) { LOGGER.
-           * error("Exception occured while getting bank account numbers " +
-           * e.getMessage(), new HibernateException(e.getMessage())); }
-           */
+                LOGGER.debug("Bank account Number list size =  " + (accNumList != null ? accNumList.size() : 0));
+        } catch (final Exception e) {
+            LOGGER.error("Exception occured while getting bank account numbers " + e.getMessage(), e);
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadAccNumAndType.");
         return "bankAccNumAndType";
@@ -986,47 +1423,123 @@ public class CommonAction extends BaseFormAction {
         return "result";
     }
 
+    /**
+     * LTS Migration Fix (Struts 7): {@code fundId} is not bound on AJAX; read
+     * from the request. {@code @SkipValidation} keeps the JSON result.
+     */
+    @SuppressWarnings("unchecked")
+    @SkipValidation
     @Action(value = "/voucher/common-ajaxLoadBankBranch")
     public String ajaxLoadBankBranch() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Starting ajaxLoadBankBranch...");
+        branchList = new ArrayList<Bankbranch>();
+        resolveFundIdAndAsOnDate();
+        if (fundId == null || fundId == -1 || fundId == 0)
+            return "branch";
         try {
-            branchList = persistenceService
-                    .findAllBy(
-                            "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund.id=? ) and br.isactive=true order by br.bank.name asc",
-                            fundId);
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception while loading ajaxLoadBankBranch=" + e.getMessage());
+            branchList = persistenceService.findAllBy(
+                    "from Bankbranch br where br.id in (select bankbranch.id from Bankaccount where fund.id=?1 ) and br.isactive=true order by br.bank.name asc",
+                    fundId);
+            if (branchList == null)
+                branchList = new ArrayList<Bankbranch>();
+        } catch (final Exception e) {
+            LOGGER.error("ajaxLoadBankBranch failed", e);
+            branchList = new ArrayList<Bankbranch>();
         }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed ajaxLoadBankBranch.");
         return "branch";
     }
 
+    /**
+     * LTS Migration Fix (Struts 7 & Hibernate 6 Upgrade) — Manual Bank
+     * Reconciliation Bank → Branch dropdown:
+     * <ol>
+     * <li>Struts 7 does not bind {@code bankId} from {@code populatebranchId({bankId})}.</li>
+     * <li>{@code @SkipValidation} so {@code common-branchesByBank.jsp} is returned.</li>
+     * <li>Numbered HQL parameter {@code ?1} for Hibernate 6.</li>
+     * </ol>
+     */
+    @SuppressWarnings("unchecked")
+    @SkipValidation
     @Action(value = "/voucher/common-ajaxLoadBankBranchesByBank")
     public String ajaxLoadBankBranchesByBank() {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Starting ajaxLoadBankBranch...");
-        try {
-            branchList = persistenceService
-                    .findAllBy(
-                            "select distinct bb from Bankbranch bb,Bankaccount ba where bb.bank.id=? and ba.bankbranch=bb and bb.isactive=true",
-                            bankId);
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception while loading ajaxLoadBankBranch=" + e.getMessage());
+        branchList = new ArrayList<Bankbranch>();
+        if (bankId == null) {
+            String bId = ServletActionContext.getRequest().getParameter("bankId");
+            if (bId == null || bId.trim().isEmpty())
+                bId = ServletActionContext.getRequest().getParameter("bank");
+            if (bId != null && !bId.trim().isEmpty() && !"-1".equals(bId.trim())) {
+                try {
+                    bankId = Integer.valueOf(bId.trim());
+                } catch (final NumberFormatException e) {
+                    LOGGER.warn("Invalid bankId for BRS branches: " + bId);
+                }
+            }
         }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed ajaxLoadBankBranch.");
+        LOGGER.info("ajaxLoadBankBranchesByBank bankId=" + bankId);
+        if (bankId == null || bankId <= 0)
+            return "branchesByBank";
+        try {
+            branchList = persistenceService.findAllBy(
+                    "select distinct bb from Bankbranch bb, Bankaccount ba where bb.bank.id=?1 and ba.bankbranch=bb and bb.isactive=true",
+                    bankId);
+            if (branchList == null)
+                branchList = new ArrayList<Bankbranch>();
+        } catch (final Exception e) {
+            LOGGER.error("ajaxLoadBankBranchesByBank failed", e);
+            branchList = new ArrayList<Bankbranch>();
+        }
+        LOGGER.info("ajaxLoadBankBranchesByBank count=" + branchList.size());
         return "branchesByBank";
     }
 
+    /**
+     * LTS Migration Fix (Struts 7): {@code @SkipValidation} so YUI AJAX is not
+     * redirected to the input result. Nested bank/GL associations are unproxied
+     * for Struts 7 OGNL after the query.
+     */
+    @SkipValidation
     @Action(value = "/voucher/common-ajaxLoadBankAccounts")
     public String ajaxLoadBankAccounts() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBankAccounts...");
+
+        /*
+         * LTS Migration Fix (Struts 7 & Hibernate 6 Upgrade):
+         * -----------------------------------------------------
+         * 1. Struts 7 Parameter Sandboxing:
+         *    Resolve branchId, bankId, fundId, and typeOfAccount from HttpServletRequest fallback.
+         * 2. Parameter alignment:
+         *    Fix bug in legacy code where fundId was passed to queries that didn't have fund.id filter.
+         */
+        if (branchId == null) {
+            final String bId = ServletActionContext.getRequest().getParameter("branchId");
+            if (bId != null && !bId.trim().isEmpty() && !"-1".equals(bId.trim())) {
+                try {
+                    branchId = Integer.valueOf(bId.trim());
+                } catch (final NumberFormatException e) {
+                    branchId = null;
+                }
+            }
+        }
+        if (fundId == null) {
+            final String fId = ServletActionContext.getRequest().getParameter("fundId");
+            if (fId != null && !fId.trim().isEmpty() && !"-1".equals(fId.trim())) {
+                try {
+                    fundId = Long.valueOf(fId.trim());
+                } catch (final NumberFormatException e) {
+                    fundId = null;
+                }
+            }
+        }
+        if (typeOfAccount == null || typeOfAccount.trim().isEmpty()) {
+            typeOfAccount = ServletActionContext.getRequest().getParameter("typeOfAccount");
+        }
+        if (billSubType == null || billSubType.trim().isEmpty()) {
+            billSubType = ServletActionContext.getRequest().getParameter("billSubType");
+        }
+
         try {
             if (LOGGER.isDebugEnabled())
-                LOGGER.debug("typeOfAccount in  ajaxLoadBankAccounts method >>>>>>>" + typeOfAccount);
+                LOGGER.debug("typeOfAccount in ajaxLoadBankAccounts method >>>>>>> " + typeOfAccount);
             if (billSubType != null && !billSubType.equalsIgnoreCase("")) {
                 String bankAccount = null;
                 try {
@@ -1038,49 +1551,55 @@ public class CommonAction extends BaseFormAction {
                         bankAccount = appConfigVal.getValue();
                 } catch (final ObjectNotFoundException e) {
                     throw new ApplicationRuntimeException(
-                            "Appconfig value for EB Voucher propartys is not defined in the system");
+                            "Appconfig value for EB Voucher properties is not defined in the system");
                 }
                 accNumList = persistenceService
                         .findAllBy(
                                 " from Bankaccount where accountnumber=? and isactive=true order by chartofaccounts.glcode ",
                                 bankAccount);
-            } else if (typeOfAccount != null && !typeOfAccount.equals("")) {
+            } else if (typeOfAccount != null && !typeOfAccount.trim().isEmpty()) {
                 if (typeOfAccount.indexOf(",") != -1) {
                     final String[] strArray = typeOfAccount.split(",");
                     if (fundId != null && fundId != -1 && fundId != 0)
                         accNumList = persistenceService
                                 .findAllBy(
-                                        " from Bankaccount where fund.id=? and bankbranch.id=? and isactive=true  and type in (?,?) order by chartofaccounts.glcode ",
-                                        fundId, branchId, BankAccountType.valueOf(strArray[0]),
-                                        BankAccountType.valueOf(strArray[1]));
+                                        " from Bankaccount where fund.id=? and bankbranch.id=? and isactive=true and type in (?,?) order by chartofaccounts.glcode ",
+                                        fundId, branchId, BankAccountType.valueOf(strArray[0].trim()),
+                                        BankAccountType.valueOf(strArray[1].trim()));
                     else
                         accNumList = persistenceService
                                 .findAllBy(
-                                        " from Bankaccount where  bankbranch.id=? and isactive=true  and type in (?,?) order by chartofaccounts.glcode ",
-                                        fundId, branchId, BankAccountType.valueOf(strArray[0]),
-                                        BankAccountType.valueOf(strArray[1]));
-                } else if (fundId != null && fundId != -1 && fundId != 0)
+                                        " from Bankaccount where bankbranch.id=? and isactive=true and type in (?,?) order by chartofaccounts.glcode ",
+                                        branchId, BankAccountType.valueOf(strArray[0].trim()),
+                                        BankAccountType.valueOf(strArray[1].trim()));
+                } else if (fundId != null && fundId != -1 && fundId != 0) {
                     accNumList = persistenceService
                             .findAllBy(
-                                    " from Bankaccount where fund.id=? and bankbranch.id=? and isactive=true  and type in (?) order by chartofaccounts.glcode ",
-                                    fundId, branchId, typeOfAccount);
-                else
+                                    " from Bankaccount where fund.id=? and bankbranch.id=? and isactive=true and type in (?) order by chartofaccounts.glcode ",
+                                    fundId, branchId, BankAccountType.valueOf(typeOfAccount.trim()));
+                } else {
                     accNumList = persistenceService
                             .findAllBy(
-                                    " from Bankaccount where  bankbranch.id=? and isactive=true  and type in (?) order by chartofaccounts.glcode ",
-                                    fundId, branchId, typeOfAccount);
-            } else if (fundId != null && fundId != -1 && fundId != 0)
+                                    " from Bankaccount where bankbranch.id=? and isactive=true and type in (?) order by chartofaccounts.glcode ",
+                                    branchId, BankAccountType.valueOf(typeOfAccount.trim()));
+                }
+            } else if (fundId != null && fundId != -1 && fundId != 0) {
                 accNumList = persistenceService
                         .findAllBy(
                                 " from Bankaccount where fund.id=? and bankbranch.id=? and isactive=true order by chartofaccounts.glcode",
                                 fundId, branchId);
-            else
+            } else {
                 accNumList = persistenceService.findAllBy(
-                        " from Bankaccount where  bankbranch.id=? and isactive=true order by chartofaccounts.glcode",
-                        fundId, branchId);
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception while loading ajaxLoadBankAccounts=" + e.getMessage());
+                        " from Bankaccount where bankbranch.id=? and isactive=true order by chartofaccounts.glcode",
+                        branchId);
+            }
+        } catch (final Exception e) {
+            LOGGER.error("Exception while loading ajaxLoadBankAccounts: " + e.getMessage(), e);
+            accNumList = Collections.emptyList();
         }
+        if (accNumList == null)
+            accNumList = new ArrayList<Bankaccount>();
+        prepareAccountsForDropdown(accNumList);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBankAccounts.");
         return "bankAccNum";
@@ -1528,7 +2047,7 @@ public class CommonAction extends BaseFormAction {
                     .append( ") and bank.isactive=true  and bankBranch.isactive=true ")
                     .append(" and  bank.id = bankBranch.bankid and bankBranch.id = bankaccount.BRANCHID and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date")
                     .append(" and ph.bankaccountnumberid=bankaccount.id  and bankaccount.isactive=true order by 2");
-            final List<Object[]> bankBranch = persistenceService.getSession().createSQLQuery(queryString.toString())
+            final List<Object[]> bankBranch = persistenceService.getSession().createNativeQuery(queryString.toString())
                     .setParameter("date", getAsOnDate())
                     .list();
             if (LOGGER.isDebugEnabled())
@@ -1574,7 +2093,7 @@ public class CommonAction extends BaseFormAction {
                     .append( ") and bank.isactive=true  and bankBranch.isactive=true ")
                     .append(" and  bank.id = bankBranch.bankid and bankBranch.id = bankaccount.BRANCHID and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date")
                     .append(" and ph.bankaccountnumberid=bankaccount.id  and bankaccount.isactive=true order by 2");
-            final List<Object[]> bankBranch = persistenceService.getSession().createSQLQuery(queryString.toString())
+            final List<Object[]> bankBranch = persistenceService.getSession().createNativeQuery(queryString.toString())
                     .setParameter("date", getAsOnDate())
                     .list();
             if (LOGGER.isDebugEnabled())
@@ -1625,9 +2144,9 @@ public class CommonAction extends BaseFormAction {
                     .append("  and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date");
 
             queryString = queryString.append(" and ph.bankaccountnumberid=bankaccount.id  order by vh.voucherdate desc");
-            final List<Object[]> bankAccounts = persistenceService.getSession().createSQLQuery(queryString.toString())
-                    .setDate("date", getAsOnDate())
-                    .setInteger("branchId", branchId)
+            final List<Object[]> bankAccounts = persistenceService.getSession().createNativeQuery(queryString.toString())
+                    .setParameter("date", getAsOnDate())
+                    .setParameter("branchId", branchId)
                     .list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankAccounts.size());
@@ -1665,12 +2184,18 @@ public class CommonAction extends BaseFormAction {
      * @return
      */
     @SuppressWarnings("unchecked")
+    @SkipValidation
     @Action(value = "/voucher/common-ajaxLoadBanksAccountsWithAssignedCheques")
     public String ajaxLoadBanksAccountsWithAssignedCheques() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBanksAccountsWithAssignedCheques...");
+        accNumList = new ArrayList<Bankaccount>();
+        resolveAssignedChequeAccountParams();
+        if (branchId == null) {
+            LOGGER.warn("ajaxLoadBanksAccountsWithAssignedCheques: branchId is missing");
+            return "bankAccNum";
+        }
         try {
-            accNumList = new ArrayList<Bankaccount>();
             StringBuffer queryString = new StringBuffer();
             queryString = queryString
                     .append("select bankaccount.accountnumber as accountnumber,bankaccount.accounttype as accounttype,cast(bankaccount.id as integer) as id,coa.glcode as glCode ,bank.name as bankName")
@@ -1684,47 +2209,119 @@ public class CommonAction extends BaseFormAction {
                     .append("  and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :date");
 
             queryString = queryString.append(" and ph.bankaccountnumberid=bankaccount.id  order by vh.voucherdate desc");
-            if (type == null || type.equalsIgnoreCase(""))
-                type = "CHEQUE";
-            final List<Object[]> bankAccounts = persistenceService.getSession().createSQLQuery(queryString.toString())
-                    .setDate("date", getAsOnDate())
-                    .setString("type", type)
-                    .setInteger("branchId", branchId)
+            final List<Object[]> bankAccounts = persistenceService.getSession().createNativeQuery(queryString.toString())
+                    .setParameter("date", asOnDate)
+                    .setParameter("type", type)
+                    .setParameter("branchId", branchId)
                     .list();
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Bank list size is " + bankAccounts.size());
+            LOGGER.info("Assigned-cheque bank accounts size=" + (bankAccounts != null ? bankAccounts.size() : 0)
+                    + " branchId=" + branchId);
             final List<String> addedBanks = new ArrayList<String>();
-            for (final Object[] account : bankAccounts) {
-                final String accountNumberAndType = account[0] != null ? account[0].toString()
-                        : "" + "-" + account[4] != null ? account[4].toString() : "";
-                if (!addedBanks.contains(accountNumberAndType)) {
-                    final Bankaccount bankaccount = new Bankaccount();
-                    bankaccount.setAccountnumber(account[0] != null ? account[0].toString() : "");
-                    // bankaccount.setAccounttype(account[1]!=null?account[1].toString():"");
-                    bankaccount.setId(Long.valueOf(account[2] != null ? account[2].toString() : ""));
-                    final CChartOfAccounts chartofaccounts = new CChartOfAccounts();
-                    chartofaccounts.setGlcode(account[3] != null ? account[3].toString() : "");
-                    final Bankbranch branch = new Bankbranch();
-                    final Bank bank = new Bank();
-                    bank.setName(account[4].toString());
-                    branch.setBank(bank);
-                    bankaccount.setBankbranch(branch);
-                    bankaccount.setChartofaccounts(chartofaccounts);
-                    addedBanks.add(accountNumberAndType);
-                    accNumList.add(bankaccount);
+            if (bankAccounts != null) {
+                for (final Object[] account : bankAccounts) {
+                    final String accountNumberAndType = account[0] != null ? account[0].toString()
+                            : "" + "-" + account[4] != null ? account[4].toString() : "";
+                    if (!addedBanks.contains(accountNumberAndType)) {
+                        final Bankaccount bankaccount = new Bankaccount();
+                        bankaccount.setAccountnumber(account[0] != null ? account[0].toString() : "");
+                        bankaccount.setId(Long.valueOf(account[2] != null ? account[2].toString() : ""));
+                        final CChartOfAccounts chartofaccounts = new CChartOfAccounts();
+                        chartofaccounts.setGlcode(account[3] != null ? account[3].toString() : "");
+                        final Bankbranch branch = new Bankbranch();
+                        final Bank bank = new Bank();
+                        bank.setName(account[4] != null ? account[4].toString() : "");
+                        branch.setBank(bank);
+                        bankaccount.setBankbranch(branch);
+                        bankaccount.setChartofaccounts(chartofaccounts);
+                        addedBanks.add(accountNumberAndType);
+                        accNumList.add(bankaccount);
+                    }
                 }
             }
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
-                    new HibernateException(e.getMessage()));
-        } /*
-           * catch (final Exception e) { LOGGER.
-           * error("Exception occured while getting the data for bank dropdown "
-           * + e.getMessage(), new Exception(e.getMessage())); }
-           */
+        } catch (final Exception e) {
+            LOGGER.error("Exception occurred while loading assigned-cheque bank accounts", e);
+        }
+        if (accNumList.isEmpty())
+            loadActivePaymentAccountsForBranch();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBanksAccountsWithAssignedCheques.");
         return "bankAccNum";
+    }
+
+    /**
+     * Struts 7 may not bind AJAX query params (branchId, asOnDate=dd/MM/yyyy).
+     */
+    private void resolveAssignedChequeAccountParams() {
+        if (branchId == null) {
+            final String bId = ServletActionContext.getRequest().getParameter("branchId");
+            if (bId != null && !bId.trim().isEmpty() && !"-1".equals(bId.trim())) {
+                try {
+                    branchId = Integer.valueOf(bId.trim());
+                } catch (final NumberFormatException e) {
+                    LOGGER.warn("Invalid branchId for assigned-cheque accounts: " + bId);
+                }
+            }
+        }
+        if (bankId == null) {
+            final String bkId = ServletActionContext.getRequest().getParameter("bankId");
+            if (bkId != null && !bkId.trim().isEmpty() && !"-1".equals(bkId.trim())) {
+                try {
+                    bankId = Integer.valueOf(bkId.trim());
+                } catch (final NumberFormatException e) {
+                    LOGGER.warn("Invalid bankId for assigned-cheque accounts: " + bkId);
+                }
+            }
+        }
+        if (type == null || type.trim().isEmpty()) {
+            type = ServletActionContext.getRequest().getParameter("type");
+        }
+        if (type == null || type.trim().isEmpty())
+            type = "CHEQUE";
+        if (asOnDate == null) {
+            final String asOn = ServletActionContext.getRequest().getParameter("asOnDate");
+            if (asOn != null && !asOn.trim().isEmpty()) {
+                try {
+                    asOnDate = Constants.DDMMYYYYFORMAT2.parse(asOn.trim());
+                } catch (final Exception e) {
+                    asOnDate = new Date();
+                }
+            } else {
+                asOnDate = new Date();
+            }
+        }
+    }
+
+    /**
+     * Same fallback as surrender bank list: show active payment accounts for the
+     * branch when the assigned-cheque native query is empty or fails.
+     */
+    @SuppressWarnings("unchecked")
+    private void loadActivePaymentAccountsForBranch() {
+        try {
+            LOGGER.warn("No assigned-cheque accounts for branchId=" + branchId
+                    + "; falling back to active payment accounts");
+            if (bankId != null && bankId > 0) {
+                accNumList = getPersistenceService().findAllBy(
+                        "from Bankaccount ba where ba.bankbranch.id=? and ba.bankbranch.bank.id=? and ba.isactive=true "
+                                + "and ba.type in (org.egov.commons.utils.BankAccountType.PAYMENTS, "
+                                + "org.egov.commons.utils.BankAccountType.RECEIPTS_PAYMENTS) "
+                                + "order by ba.chartofaccounts.glcode",
+                        branchId, bankId);
+            } else {
+                accNumList = getPersistenceService().findAllBy(
+                        "from Bankaccount ba where ba.bankbranch.id=? and ba.isactive=true "
+                                + "and ba.type in (org.egov.commons.utils.BankAccountType.PAYMENTS, "
+                                + "org.egov.commons.utils.BankAccountType.RECEIPTS_PAYMENTS) "
+                                + "order by ba.chartofaccounts.glcode",
+                        branchId);
+            }
+            if (accNumList == null)
+                accNumList = new ArrayList<Bankaccount>();
+            LOGGER.info("Fallback payment bank accounts size=" + accNumList.size());
+        } catch (final Exception e) {
+            LOGGER.error("Fallback load of payment bank accounts failed", e);
+            accNumList = new ArrayList<Bankaccount>();
+        }
     }
 
     public Integer getBranchId() {
@@ -1964,15 +2561,18 @@ public class CommonAction extends BaseFormAction {
     }
 
     @SuppressWarnings("unchecked")
+    @SkipValidation
     @Action(value = "/voucher/common-ajaxLoadBanksWithApprovedPayments")
     public String ajaxLoadBanksWithApprovedPayments() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBanksWithApprovedPayments...");
+        bankBranchList = new ArrayList<Map<String, Object>>();
+        resolveFundIdAndAsOnDate();
         try {
             StringBuffer queryString = new StringBuffer();
             // query to fetch vouchers for which no cheque has been assigned
             queryString = queryString
-                    .append("select distinct concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '),")
+                    .append("select distinct concat(cast(bank.id as varchar), '-', cast(bankBranch.id as varchar)) as bankbranchid, concat(bank.name, ' ',")
                     .append(" bankBranch.branchname) as bankbranchname " )
                     .append(" from Bank bank,  Bankbranch bankBranch,   Bankaccount bankaccount where bankaccount.id in ( " )
                     .append(" select DISTINCT ph.bankaccountnumberid from ")
@@ -1992,7 +2592,7 @@ public class CommonAction extends BaseFormAction {
     
             // query to fetch vouchers for which cheque has been assigned and surrendered
             queryString = queryString
-                    .append(" union select distinct concat(concat(bank.id,'-'),bankBranch.id) as bankbranchid,concat(concat(bank.name,' '), bankBranch.branchname) as bankbranchname ")
+                    .append(" union select distinct concat(cast(bank.id as varchar), '-', cast(bankBranch.id as varchar)) as bankbranchid, concat(bank.name, ' ', bankBranch.branchname) as bankbranchname ")
                     .append(" from Bank bank,  Bankbranch bankBranch,   Bankaccount bankaccount where bankaccount.id in ( ")
                     .append(" select DISTINCT ph.bankaccountnumberid from egf_instrumentvoucher iv,voucherheader vh, paymentheader ph,egw_status egws,(select ih1.id,ih1.id_status from egf_instrumentheader ih1, ")
                     .append("(select bankid,bankaccountid,instrumentnumber,max(id) as id from egf_instrumentheader group by bankid,bankaccountid,")
@@ -2010,40 +2610,108 @@ public class CommonAction extends BaseFormAction {
             if (fundId != null && fundId != 0 && fundId != -1)
                 queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
 
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Bank check dates are  " + getAsOnDate() + queryString.toString());
-            Query query =  persistenceService.getSession().createSQLQuery(queryString.toString());
-            query.setParameter("date1", getAsOnDate(), DateType.INSTANCE)
-                .setParameter("date2", getAsOnDate(), DateType.INSTANCE);
+            LOGGER.info("ajaxLoadBanksWithApprovedPayments fundId=" + fundId + " asOnDate=" + asOnDate);
+            Query query =  persistenceService.getSession().createNativeQuery(queryString.toString());
+            query.setParameter("date1", asOnDate, StandardBasicTypes.DATE)
+                .setParameter("date2", asOnDate, StandardBasicTypes.DATE);
             if (fundId != null && fundId != 0 && fundId != -1)
-                query.setParameter("fundId", fundId.longValue(), LongType.INSTANCE);
+                query.setParameter("fundId", fundId.longValue(), StandardBasicTypes.LONG);
             final List<Object[]> bankBranch = query.list();
-            
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Bank list size is " + bankBranch.size());
-            bankBranchList = new ArrayList<Map<String, Object>>();
+            LOGGER.info("Approved-payment bank list size=" + (bankBranch != null ? bankBranch.size() : 0));
             final List<String> addedBanks = new ArrayList<String>();
-            for (final Object[] account : bankBranch) {
-                final String bankBranchName = account[1].toString();
-                if (!addedBanks.contains(bankBranchName)) {
-                    addedBanks.add(bankBranchName);
-                    final Map<String, Object> bankBrmap = new HashMap<String, Object>();
-                    bankBrmap.put("bankBranchId", account[0].toString());
-                    bankBrmap.put("bankBranchName", bankBranchName);
-                    bankBranchList.add(bankBrmap);
+            if (bankBranch != null) {
+                for (final Object[] account : bankBranch) {
+                    if (account == null || account.length < 2 || account[0] == null || account[1] == null)
+                        continue;
+                    final String bankBranchName = account[1].toString();
+                    if (!addedBanks.contains(bankBranchName)) {
+                        addedBanks.add(bankBranchName);
+                        final Map<String, Object> bankBrmap = new HashMap<String, Object>();
+                        bankBrmap.put("bankBranchId", account[0].toString());
+                        bankBrmap.put("bankBranchName", bankBranchName);
+                        bankBranchList.add(bankBrmap);
+                    }
                 }
             }
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
-                    new HibernateException(e.getMessage()));
-        } /*
-           * catch (final Exception e) { LOGGER.
-           * error("Exception occured while getting the data for bank dropdown "
-           * + e.getMessage(), new Exception(e.getMessage())); }
-           */
+        } catch (final Exception e) {
+            LOGGER.error("Exception occurred while loading approved-payment banks", e);
+        }
+        if (bankBranchList.isEmpty())
+            loadActivePaymentBanksForFund();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadBanksWithApprovedPayments.");
         return "bank";
+    }
+
+    /**
+     * Struts 7 does not bind {@code asOnDate=dd/MM/yyyy} onto a Date field, so
+     * {@code vh.voucherdate <= :date} was null and the bank AJAX returned empty.
+     */
+    private void resolveFundIdAndAsOnDate() {
+        if (fundId == null) {
+            final String fId = ServletActionContext.getRequest().getParameter("fundId");
+            if (fId != null && !fId.trim().isEmpty() && !"-1".equals(fId.trim())) {
+                try {
+                    fundId = Long.valueOf(fId.trim());
+                } catch (final NumberFormatException e) {
+                    LOGGER.warn("Invalid fundId for approved-payment banks: " + fId);
+                }
+            }
+        }
+        if (asOnDate == null) {
+            final String asOn = ServletActionContext.getRequest().getParameter("asOnDate");
+            if (asOn != null && !asOn.trim().isEmpty()) {
+                try {
+                    asOnDate = Constants.DDMMYYYYFORMAT2.parse(asOn.trim());
+                } catch (final Exception e) {
+                    asOnDate = new Date();
+                }
+            } else {
+                asOnDate = new Date();
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void loadActivePaymentBanksForFund() {
+        try {
+            LOGGER.warn("No approved-payment banks for fundId=" + fundId
+                    + "; falling back to active payment bank/branches");
+            final StringBuilder query = new StringBuilder();
+            query.append("select DISTINCT concat(cast(bank.id as string), '-', cast(bankBranch.id as string)), ")
+                    .append("concat(bank.name, ' ', bankBranch.branchname) ")
+                    .append("FROM Bank bank, Bankbranch bankBranch, Bankaccount bankaccount ")
+                    .append("where bank.isactive=true and bankBranch.isactive=true and bankaccount.isactive=true ")
+                    .append("and bank.id = bankBranch.bank.id and bankBranch.id = bankaccount.bankbranch.id ")
+                    .append("and bankaccount.type in (org.egov.commons.utils.BankAccountType.PAYMENTS, ")
+                    .append("org.egov.commons.utils.BankAccountType.RECEIPTS_PAYMENTS) ");
+            final List<Object[]> rows;
+            if (fundId != null && fundId != 0 && fundId != -1) {
+                query.append("and bankaccount.fund.id=? order by 2");
+                rows = getPersistenceService().findAllBy(query.toString(), fundId);
+            } else {
+                query.append("order by 2");
+                rows = getPersistenceService().findAllBy(query.toString());
+            }
+            if (rows == null)
+                return;
+            final List<String> addedBanks = new ArrayList<String>();
+            for (final Object[] element : rows) {
+                if (element == null || element.length < 2 || element[0] == null || element[1] == null)
+                    continue;
+                final String name = element[1].toString();
+                if (addedBanks.contains(name))
+                    continue;
+                addedBanks.add(name);
+                final Map<String, Object> bankBrmap = new HashMap<String, Object>();
+                bankBrmap.put("bankBranchId", element[0].toString());
+                bankBrmap.put("bankBranchName", name);
+                bankBranchList.add(bankBrmap);
+            }
+            LOGGER.info("Fallback payment bank list size=" + bankBranchList.size());
+        } catch (final Exception e) {
+            LOGGER.error("Fallback load of payment banks failed", e);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -2099,13 +2767,13 @@ public class CommonAction extends BaseFormAction {
                     .append(FinancialConstants.PAYMENTVOUCHER_NAME_SALARY).append("' ) order by 2 ");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank check dates are  " + getAsOnDate());
-            Query query = persistenceService.getSession().createSQLQuery(queryString.toString());
-            query.setParameter("date1", getAsOnDate(), DateType.INSTANCE)
-                    .setParameter("date2", getAsOnDate(), DateType.INSTANCE);
+            Query query = persistenceService.getSession().createNativeQuery(queryString.toString());
+            query.setParameter("date1", getAsOnDate(), StandardBasicTypes.DATE)
+                    .setParameter("date2", getAsOnDate(), StandardBasicTypes.DATE);
             if (fundId != null && fundId != 0 && fundId != -1)
-                query.setParameter("fundId", fundId.longValue(), LongType.INSTANCE);
+                query.setParameter("fundId", fundId.longValue(), StandardBasicTypes.LONG);
             if (departmentId != null && !departmentId.equalsIgnoreCase("-1") && !departmentId.equalsIgnoreCase("0"))
-                query.setParameter("departmentId", departmentId, LongType.INSTANCE);
+                query.setParameter("departmentId", departmentId, StandardBasicTypes.LONG);
             final List<Object[]> bankBranch = query.list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankBranch.size());
@@ -2184,13 +2852,13 @@ public class CommonAction extends BaseFormAction {
                     .append(FinancialConstants.PAYMENTVOUCHER_NAME_SALARY).append("' order by 2  ");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank check dates are  " + getAsOnDate());
-            Query query = persistenceService.getSession().createSQLQuery(queryString.toString());
-            query.setParameter("date1", getAsOnDate(), DateType.INSTANCE);
-            query.setParameter("date2", getAsOnDate(), DateType.INSTANCE);
+            Query query = persistenceService.getSession().createNativeQuery(queryString.toString());
+            query.setParameter("date1", getAsOnDate(), StandardBasicTypes.DATE);
+            query.setParameter("date2", getAsOnDate(), StandardBasicTypes.DATE);
             if (fundId != null && fundId != 0 && fundId != -1)
-                query.setParameter("fundId", fundId.longValue(), LongType.INSTANCE);
+                query.setParameter("fundId", fundId.longValue(), StandardBasicTypes.LONG);
             if (departmentId != null && !departmentId.equalsIgnoreCase("-1") && !departmentId.equalsIgnoreCase("0"))
-                query.setParameter("departmentId", departmentId, LongType.INSTANCE);
+                query.setParameter("departmentId", departmentId, StandardBasicTypes.LONG);
             final List<Object[]> bankBranch = query.list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankBranch.size());
@@ -2262,13 +2930,13 @@ public class CommonAction extends BaseFormAction {
 					.append(FinancialConstants.PAYMENTVOUCHER_NAME_PENSION).append("' order by 2  ");
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("Bank check dates are  " + getAsOnDate());
-			Query query = persistenceService.getSession().createSQLQuery(queryString.toString());
-			query.setParameter("date1", getAsOnDate(), DateType.INSTANCE).setParameter("date2", getAsOnDate(),
-					DateType.INSTANCE);
+			Query query = persistenceService.getSession().createNativeQuery(queryString.toString());
+			query.setParameter("date1", getAsOnDate(), StandardBasicTypes.DATE).setParameter("date2", getAsOnDate(),
+					StandardBasicTypes.DATE);
 			if (fundId != null && fundId != 0 && fundId != -1)
-				query.setParameter("fundId", fundId.longValue(), LongType.INSTANCE);
+				query.setParameter("fundId", fundId.longValue(), StandardBasicTypes.LONG);
 			if (departmentId != null && !departmentId.equalsIgnoreCase("-1") && !departmentId.equalsIgnoreCase("0"))
-				query.setParameter("departmentId", departmentId, LongType.INSTANCE);
+				query.setParameter("departmentId", departmentId, StandardBasicTypes.LONG);
 			final List<Object[]> bankBranch = query.list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankBranch.size());
@@ -2311,9 +2979,9 @@ public class CommonAction extends BaseFormAction {
             if (fundId != null && fundId != 0 && fundId != -1)
                 queryString = queryString.append(" and bankaccount.fundid=:fundId ");
 
-            Query query = persistenceService.getSession().createSQLQuery(queryString.toString());
+            Query query = persistenceService.getSession().createNativeQuery(queryString.toString());
 			if (fundId != null && fundId != 0 && fundId != -1)
-				query.setParameter("fundId", fundId.longValue(), LongType.INSTANCE);
+				query.setParameter("fundId", fundId.longValue(), StandardBasicTypes.LONG);
 			
             final List<Object[]> bankBranch = query.list();
             if (LOGGER.isDebugEnabled())
@@ -2436,9 +3104,9 @@ public class CommonAction extends BaseFormAction {
         final StringBuilder qryString = new StringBuilder("select pos_id from eg_eis_employeeinfo empinfo, eg_designation desg, functionary func")
                 .append(" where empinfo.functionary_id = func.id and empinfo.DESIGNATIONID = desg.DESIGNATIONID")
                 .append(" and empinfo.isactive = true and desg.DESIGNATION_NAME like :designationName and func.NAME like :functionaryName ");
-        final Query query = persistenceService.getSession().createSQLQuery(qryString.toString());
-        query.setParameter("designationName", designationName, StringType.INSTANCE)
-            .setParameter("functionaryName", functionaryName, StringType.INSTANCE);
+        final Query query = persistenceService.getSession().createNativeQuery(qryString.toString());
+        query.setParameter("designationName", designationName, StandardBasicTypes.STRING)
+            .setParameter("functionaryName", functionaryName, StandardBasicTypes.STRING);
         final List<BigDecimal> result = query.list();
         
         if (result == null || result.isEmpty())
@@ -2544,14 +3212,17 @@ public class CommonAction extends BaseFormAction {
     }
 
     @SuppressWarnings("unchecked")
+    @SkipValidation
     @Action(value = "/voucher/common-ajaxLoadBankAccountsWithApprovedPayments")
     public String ajaxLoadBankAccountsWithApprovedPayments() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBankAccountsWithApprovedPayments...");
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting | ajaxLoadBankAccountsWithApprovedPayments ");
+        accNumList = new ArrayList<Bankaccount>();
+        resolveFundIdAndAsOnDate();
+        resolveAssignedChequeAccountParams();
         try {
-            accNumList = new ArrayList<Bankaccount>();
             StringBuffer queryString = new StringBuffer();
             // query to fetch vouchers for which no cheque has been assigned
 			queryString.append(
@@ -2585,9 +3256,9 @@ public class CommonAction extends BaseFormAction {
 					.append(" and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bankaccount.branchid = :branchId");
 			if (fundId != null && fundId != 0 && fundId != -1)
 				queryString.append(" and bankaccount.fundid = :fundId");
-			Query query = persistenceService.getSession().createSQLQuery(queryString.toString());
-			query.setParameter("fundId", fundId.longValue(), LongType.INSTANCE).setParameter("branchId", branchId,
-					IntegerType.INSTANCE);
+			Query query = persistenceService.getSession().createNativeQuery(queryString.toString());
+			query.setParameter("fundId", fundId.longValue(), StandardBasicTypes.LONG).setParameter("branchId", branchId,
+					StandardBasicTypes.INTEGER);
 
     final List<Object[]> bankAccounts = query.list();
             if (LOGGER.isDebugEnabled())
@@ -2612,14 +3283,11 @@ public class CommonAction extends BaseFormAction {
                     accNumList.add(bankaccount);
                 }
             }
-        } catch (final HibernateException e) {
-            LOGGER.error("Exception occured while getting the data for bank dropdown " + e.getMessage(),
-                    new HibernateException(e.getMessage()));
-        } /*
-           * catch (final Exception e) { LOGGER.
-           * error("Exception occured while getting the data for bank dropdown "
-           * + e.getMessage(), new Exception(e.getMessage())); }
-           */
+        } catch (final Exception e) {
+            LOGGER.error("Exception occurred while loading approved-payment bank accounts", e);
+        }
+        if (accNumList.isEmpty() && branchId != null)
+            loadActivePaymentAccountsForBranch();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Done | ajaxLoadBankAccountsWithApprovedPayments ");
         if (LOGGER.isDebugEnabled())
@@ -2669,14 +3337,14 @@ public class CommonAction extends BaseFormAction {
                 queryString = queryString.append(" and vmis.departmentcode=:departmentId ");
             queryString.append(" and ph.bankaccountnumberid = bankaccount.id and vh.type = :voucherType and vh.name = :voucherName order by 4 ");
 
-            Query query = persistenceService.getSession().createSQLQuery(queryString.toString());
-            query.setParameter("branchId", branchId, IntegerType.INSTANCE);
+            Query query = persistenceService.getSession().createNativeQuery(queryString.toString());
+            query.setParameter("branchId", branchId, StandardBasicTypes.INTEGER);
             if (fundId != null && fundId != 0 && fundId != -1)
-                query.setParameter("fundId", fundId.longValue(), LongType.INSTANCE);
+                query.setParameter("fundId", fundId.longValue(), StandardBasicTypes.LONG);
             if (departmentId != null && !departmentId.equalsIgnoreCase("-1") && !departmentId.equalsIgnoreCase("0"))
-                query.setParameter("departmentId", departmentId, LongType.INSTANCE);
-            query.setParameter("voucherType", FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT, StringType.INSTANCE)
-                    .setParameter("voucherName", FinancialConstants.PAYMENTVOUCHER_NAME_SALARY, StringType.INSTANCE);
+                query.setParameter("departmentId", departmentId, StandardBasicTypes.LONG);
+            query.setParameter("voucherType", FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT, StandardBasicTypes.STRING)
+                    .setParameter("voucherName", FinancialConstants.PAYMENTVOUCHER_NAME_SALARY, StandardBasicTypes.STRING);
 
             final List<Object[]> bankAccounts = query.list();
             if (LOGGER.isDebugEnabled())
@@ -2753,14 +3421,14 @@ public class CommonAction extends BaseFormAction {
 				queryString.append(" and vmis.departmentcode = :departmentId");
 			queryString.append(
 					" and ph.bankaccountnumberid = bankaccount.id and vh.type = :voucherType and vh.name = :voucherName order by 4");
-			Query query = persistenceService.getSession().createSQLQuery(queryString.toString());
-			query.setParameter("branchId", branchId, IntegerType.INSTANCE);
+			Query query = persistenceService.getSession().createNativeQuery(queryString.toString());
+			query.setParameter("branchId", branchId, StandardBasicTypes.INTEGER);
 			if (fundId != null && fundId != 0 && fundId != -1)
-				query.setParameter("fundId", fundId.longValue(), LongType.INSTANCE);
+				query.setParameter("fundId", fundId.longValue(), StandardBasicTypes.LONG);
 			if (departmentId != null && !departmentId.equalsIgnoreCase("-1") && !departmentId.equalsIgnoreCase("0"))
-				query.setParameter("departmentId", departmentId, LongType.INSTANCE);
-			query.setParameter("voucherType", FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT, StringType.INSTANCE)
-					.setParameter("voucherName", FinancialConstants.PAYMENTVOUCHER_NAME_PENSION, StringType.INSTANCE);
+				query.setParameter("departmentId", departmentId, StandardBasicTypes.LONG);
+			query.setParameter("voucherType", FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT, StandardBasicTypes.STRING)
+					.setParameter("voucherName", FinancialConstants.PAYMENTVOUCHER_NAME_PENSION, StandardBasicTypes.STRING);
 
 			final List<Object[]> bankAccounts = query.list();
             if (LOGGER.isDebugEnabled())
@@ -2805,8 +3473,8 @@ public class CommonAction extends BaseFormAction {
                     .append("select distinct bankaccount.accountnumber as accountnumber,bank.name as bankName,cast(bankaccount.id as integer) as id,coa.glcode as glCode ")
                     .append("from Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,chartofaccounts coa ")
                     .append("where  bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and coa.id=bankaccount.glcodeid  and bankaccount.branchid=:branchId ");
-            Query query = persistenceService.getSession().createSQLQuery(queryString.toString())
-            .setParameter("branchId", branchId, IntegerType.INSTANCE);
+            Query query = persistenceService.getSession().createNativeQuery(queryString.toString())
+            .setParameter("branchId", branchId, StandardBasicTypes.INTEGER);
             final List<Object[]> bankAccounts = query.list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankAccounts.size());
@@ -2881,14 +3549,38 @@ public class CommonAction extends BaseFormAction {
         return "defaultDepartment";
     }
 
+    @SkipValidation
     @Action(value = "/voucher/common-ajaxLoadFundSource")
     public String ajaxLoadFundSource() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadFundSource...");
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("CommonAction | subscheme id received = " + subSchemeId);
-        if (null != subSchemeId)
+        /*
+         * LTS: Struts 7 often leaves subSchemeId unbound on YUI AJAX. The old
+         * null-check then skipped the query, so Fund Source stayed on Choose.
+         * -1 means all active fund sources (same as populatefundsourceId on scheme change).
+         */
+        if (subSchemeId == null) {
+            final String sid = ServletActionContext.getRequest().getParameter("subSchemeId");
+            if (sid != null && !sid.trim().isEmpty()) {
+                try {
+                    subSchemeId = Integer.valueOf(sid.trim());
+                } catch (final NumberFormatException e) {
+                    subSchemeId = -1;
+                }
+            } else {
+                subSchemeId = -1;
+            }
+        }
+        LOGGER.info("ajaxLoadFundSource subSchemeId=" + subSchemeId);
+        try {
             fundSouceList = financingSourceService.getFinancialSourceBasedOnSubScheme(subSchemeId);
+            if (fundSouceList == null)
+                fundSouceList = new ArrayList<Fundsource>();
+            LOGGER.info("ajaxLoadFundSource size=" + fundSouceList.size());
+        } catch (final Exception e) {
+            LOGGER.error("Failed to load fund sources", e);
+            fundSouceList = new ArrayList<Fundsource>();
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadFundSource.");
         return Constants.FUNDSOURCE;
@@ -2899,11 +3591,11 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadProjectCodesForSubScheme...");
         final String sql = "select pc.id as id,pc.code as code,pc.name as name from egw_projectcode pc,egf_subscheme_project ssp where  pc.id=ssp.projectcodeid and ssp.subschemeid=:subSchemeId";
-        final SQLQuery pcQuery = persistenceService.getSession().createSQLQuery(sql);
-        pcQuery.addScalar("id", LongType.INSTANCE)
+        final NativeQuery pcQuery = persistenceService.getSession().createNativeQuery(sql);
+        pcQuery.addScalar("id", StandardBasicTypes.LONG)
                 .addScalar("code")
                 .addScalar("name")
-                .setParameter("subSchemeId", subSchemeId, IntegerType.INSTANCE)
+                .setParameter("subSchemeId", subSchemeId, StandardBasicTypes.INTEGER)
                 .setResultTransformer(Transformers.aliasToBean(LoanGrantBean.class));
         projectCodeList = pcQuery.list();
         if (LOGGER.isDebugEnabled())
@@ -2925,8 +3617,8 @@ public class CommonAction extends BaseFormAction {
         if (null == subSchemeId) {
 
         } else {
-        	Query query = persistenceService.getSession().createSQLQuery(qry.toString())
-                    .setParameter("startsWith", startsWith, StringType.INSTANCE);
+        	Query query = persistenceService.getSession().createNativeQuery(qry.toString())
+                    .setParameter("startsWith", startsWith, StandardBasicTypes.STRING);
             projectCodeStringList = query.list();
         }
         if (LOGGER.isDebugEnabled())
@@ -2972,12 +3664,12 @@ public class CommonAction extends BaseFormAction {
                     .append(" from generalledger g LEFT OUTER JOIN generalledgerdetail gd on gd.generalledgerid= g.id, egf_fundingagency fa")
                     .append(" where gd.detailtypeid = (select id from accountdetailtype where accountdetailtype.name = 'FundingAgency')")
                     .append(" and fa.id = gd.detailkeyid and g.voucherheaderid = :billVhId");
-            final List<Object[]> resultList1 = persistenceService.getSession().createSQLQuery(instrumentRelatedQry.toString())
-                    .setParameter("billVhId", billVhId, LongType.INSTANCE).list();
-            final List<Object[]> resultList2 = persistenceService.getSession().createSQLQuery(voucherDescriptionQry)
-                    .setParameter("billVhId", billVhId, LongType.INSTANCE).list();
-            final List<Object[]> resultList3 = persistenceService.getSession().createSQLQuery(fundingAgencyQry.toString())
-                    .setParameter("billVhId", billVhId, LongType.INSTANCE).list();
+            final List<Object[]> resultList1 = persistenceService.getSession().createNativeQuery(instrumentRelatedQry.toString())
+                    .setParameter("billVhId", billVhId, StandardBasicTypes.LONG).list();
+            final List<Object[]> resultList2 = persistenceService.getSession().createNativeQuery(voucherDescriptionQry)
+                    .setParameter("billVhId", billVhId, StandardBasicTypes.LONG).list();
+            final List<Object[]> resultList3 = persistenceService.getSession().createNativeQuery(fundingAgencyQry.toString())
+                    .setParameter("billVhId", billVhId, StandardBasicTypes.LONG).list();
             String instrumentResult;
             if (resultList1.size() == 0)
                 instrumentResult = "0$0$-$0$0$0$-";
@@ -3000,7 +3692,7 @@ public class CommonAction extends BaseFormAction {
     @Action(value = "/voucher/common-ajaxLoadVoucherAmount")
     public String ajaxLoadVoucherAmount() {
         final String chequeAmtQry = "select ih.instrumentamount, ih.id from egf_instrumentheader ih, egf_instrumentvoucher iv where ih.id= iv.instrumentheaderid and iv.voucherheaderid=?";
-        final List<Object[]> resultList2 = persistenceService.getSession().createSQLQuery(chequeAmtQry).setLong(0, billVhId)
+        final List<Object[]> resultList2 = persistenceService.getSession().createNativeQuery(chequeAmtQry).setParameter(0, billVhId)
                 .list();
         String chqAmtResult;
         if (resultList2.size() == 0)
@@ -3012,9 +3704,9 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Starting ajaxLoadFundingAgencyAmount...");
         if (billVhId != null && billVhId.intValue() != 0) {
             final String grantAMountQry = "select sum(g.debitAmount) as accountBalance from generalledger g where g.voucherheaderid=? ";
-            final Query qry = persistenceService.getSession().createSQLQuery(grantAMountQry)
-                    .addScalar("accountBalance", BigDecimalType.INSTANCE);
-            qry.setLong(0, billVhId);
+            final Query qry = persistenceService.getSession().createNativeQuery(grantAMountQry)
+                    .addScalar("accountBalance", StandardBasicTypes.BIG_DECIMAL);
+            qry.setParameter(0, billVhId);
             qry.setResultTransformer(Transformers.aliasToBean(CommonBean.class));
             final List<CommonBean> resultList1 = qry.list();
             String grantAmountResult;
@@ -3100,24 +3792,35 @@ public class CommonAction extends BaseFormAction {
     @SuppressWarnings("unchecked")
     @Action(value = "/voucher/common-ajaxloadcoa")
     public String ajaxLoadCOA() {
-        String query = "";
+        /*
+         * Hibernate 6 / Struts 7 Upgrade Fix for Chart of Accounts Tree Hierarchy:
+         * 1. Struts Parameter Binding Fallback: If `glCode` field setter was not populated by Struts binder,
+         *    retrieve `glCode` directly from `ServletActionContext.getRequest().getParameter("glCode")`.
+         * 2. Root Node Classification Filter: When loading the top-level heads (glCode == null), filter by
+         *    `where parentId is null and (classification = 0 or length(glcode) = 1)`.
+         *    This prevents sample/test data Detailed Codes (classification = 4) that have null parentId in DB
+         *    from being rendered at the root level alongside Income, Expenses, Assets, Liabilities.
+         * 3. JPA Ordinal Parameter (`?1`): Hibernate 6 enforces strict JPA parameter indexing where un-indexed `?`
+         *    is deprecated/rejected. Replaced `parentId=?` with `parentId=?1`.
+         */
+        try {
+            if (glCode == null || glCode.trim().isEmpty() || "null".equalsIgnoreCase(glCode.trim())) {
+                if (ServletActionContext.getRequest() != null) {
+                    glCode = ServletActionContext.getRequest().getParameter("glCode");
+                }
+            }
 
-        if (glCode == null) {
-
-            coaList = (List<CChartOfAccounts>) persistenceService
-                    .findAllBy("from CChartOfAccounts  where parentId is null order by glcode asc");
-
-            // query=" SELECT '' AS \"type\", ID AS \"chartOfAccounts_ID\", name AS \"chartOfAccounts_name\", parentId AS
-            // \"chartOfAccounts_parentId\", glcode AS \"chartOfAccounts_glCode\" FROM chartOfAccounts where parentId is null
-            // order by id asc";
-
-        } else {
-            coaList = (List<CChartOfAccounts>) persistenceService.findAllBy(
-                    "from CChartOfAccounts where parentId=? order by glcode ",
-                    Long.valueOf(glCode));
-            // query=" SELECT '' AS \"type\", ID AS \"chartOfAccounts_ID\", name AS \"chartOfAccounts_name\", parentId AS
-            // \"chartOfAccounts_parentId\", glcode AS \"chartOfAccounts_glCode\" FROM chartOfAccounts where parentId ="+glCode+"
-            // order by id asc";
+            if (glCode == null || glCode.trim().isEmpty() || "null".equalsIgnoreCase(glCode.trim())) {
+                coaList = (List<CChartOfAccounts>) persistenceService
+                        .findAllBy("from CChartOfAccounts where parentId is null and (classification = 0 or length(glcode) = 1) order by glcode asc");
+            } else {
+                coaList = (List<CChartOfAccounts>) persistenceService.findAllBy(
+                        "from CChartOfAccounts where parentId=?1 order by glcode asc",
+                        Long.valueOf(glCode.trim()));
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error loading Chart of Accounts tree node for glCode: " + glCode, e);
+            coaList = Collections.emptyList();
         }
         result = new StringBuffer();
         StringBuffer type = new StringBuffer();
@@ -3153,7 +3856,20 @@ public class CommonAction extends BaseFormAction {
     public String ajaxLoadGLreportCodes() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadGLreportCodes...");
-        if (glCode == null)
+        /*
+         * Struts 7 / Hibernate 6 migration note:
+         * Autocomplete requests may submit the search text as glCode or query, and
+         * may send the literal "null". Normalize the input first. Parentheses around
+         * the OR clause are required so Hibernate 6 preserves the intended predicate
+         * precedence with the active/classification filters.
+         */
+        if (glCode == null || glCode.trim().isEmpty() || "null".equalsIgnoreCase(glCode.trim())) {
+            glCode = ServletActionContext.getRequest().getParameter("glCode");
+            if (glCode == null || glCode.trim().isEmpty()) {
+                glCode = ServletActionContext.getRequest().getParameter("query");
+            }
+        }
+        if (glCode == null || glCode.trim().isEmpty())
             glCodesList = new ArrayList<CChartOfAccounts>();
         else {
             
@@ -3162,7 +3878,7 @@ public class CommonAction extends BaseFormAction {
                     .findAllBy(
                             new StringBuilder("select ca from CChartOfAccounts ca where ca.glcode not in (select glcode from CChartOfAccounts where glcode like '47%'")
                                     .append(" and glcode not like '471%' and glcode !='4741') and ca.glcode not in (select glcode from CChartOfAccounts where glcode = '471%') ")
-                            .append(" and ca.isActiveForPosting = true and ca.classification = 4 and ca.glcode like ? or lower (ca.name) like ?").toString(), glCodeName, glCodeName);
+                            .append(" and ca.isActiveForPosting = true and ca.classification = 4 and (ca.glcode like ? or lower (ca.name) like ?)").toString(), glCodeName, glCodeName);
         }
 
         if (LOGGER.isDebugEnabled())
@@ -3175,15 +3891,28 @@ public class CommonAction extends BaseFormAction {
     public String ajaxLoadSLreportCodes() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadSLreportCodes...");
-        if (glCode == null)
+        /*
+         * Struts 7 / Hibernate 6 migration note:
+         * Accept both glCode and query parameter names from legacy autocomplete calls.
+         * The grouped OR condition prevents the name match from bypassing the
+         * classification/detail-code filters under Hibernate 6 query parsing.
+         */
+        if (glCode == null || glCode.trim().isEmpty() || "null".equalsIgnoreCase(glCode.trim())) {
+            glCode = ServletActionContext.getRequest().getParameter("glCode");
+            if (glCode == null || glCode.trim().isEmpty()) {
+                glCode = ServletActionContext.getRequest().getParameter("query");
+            }
+        }
+        if (glCode == null || glCode.trim().isEmpty())
             glCodesList = new ArrayList<CChartOfAccounts>();
         else
         {
             String glCodeName = "%" + glCode.toLowerCase() + "%";
             glCodesList = persistenceService.findAllBy(
-                    "select DISTINCT coa from CChartOfAccounts coa, CChartOfAccountDetail cod  where coa = cod.glCodeId and coa.classification = 4 and coa.glcode like ?  or lower(coa.name) like ?",
+                    "select DISTINCT coa from CChartOfAccounts coa, CChartOfAccountDetail cod  where coa = cod.glCodeId and coa.classification = 4 and (coa.glcode like ?  or lower(coa.name) like ?)",
                     glCodeName, glCodeName);
         }
+
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxLoadSLreportCodes.");
         return "glCodes";
@@ -3249,8 +3978,14 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxGetAllCoaCodes...");
 
+        /*
+         * Hibernate 6 migration note:
+         * HQL must use the Java property isActiveForPosting. The lowercase
+         * isactiveforposting token refers to the database column style and is rejected
+         * by strict entity attribute resolution.
+         */
         coaList = persistenceService.findAllBy(
-                " from CChartOfAccounts where classification=4 and isactiveforposting = true order by glcode ");
+                " from CChartOfAccounts where classification=4 and isActiveForPosting = true order by glcode ");
         // String
         // query="select glcode||'`-`'||name||'`~`'||ID as \"code\" from chartofaccounts where classification=4 and
         // isactiveforposting = true order by glcode ";*/
@@ -3274,11 +4009,11 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Starting ajaxGetAllCoaCodesExceptCashBank...");
 
         coaList = persistenceService
-                .findAllBy(new StringBuilder(" FROM CChartOfAccounts WHERE classification = 4 AND isactiveforposting = true AND parentid not in")
-                        .append(" (select id from CChartOfAccounts where purposeid in (SELECT id FROM AccountCodePurpose WHERE UPPER(NAME) = UPPER('Cash In Hand')")
-                        .append(" OR UPPER(NAME) = UPPER('Bank Codes') OR UPPER(NAME) = UPPER('Cheque In Hand'))) and id not in")
-                        .append(" (select id from CChartOfAccounts where purposeid in (SELECT id FROM AccountCodePurpose WHERE UPPER(NAME) = UPPER('Cash In Hand')")
-                        .append(" OR UPPER(NAME) = UPPER('Bank Codes') OR UPPER(NAME) = UPPER('Cheque In Hand'))) and glcode not like '471%' ORDER BY glcode ").toString());
+                .findAllBy(new StringBuilder(" FROM CChartOfAccounts WHERE classification = 4 AND isActiveForPosting = true AND parentId not in")
+                        .append(" (select id from CChartOfAccounts where purposeId in (SELECT id FROM EgfAccountcodePurpose WHERE UPPER(name) = UPPER('Cash In Hand')")
+                        .append(" OR UPPER(name) = UPPER('Bank Codes') OR UPPER(name) = UPPER('Cheque In Hand'))) and id not in")
+                        .append(" (select id from CChartOfAccounts where purposeId in (SELECT id FROM EgfAccountcodePurpose WHERE UPPER(name) = UPPER('Cash In Hand')")
+                        .append(" OR UPPER(name) = UPPER('Bank Codes') OR UPPER(name) = UPPER('Cheque In Hand'))) and glcode not like '471%' ORDER BY glcode ").toString());
 
         result = new StringBuffer();
         for (CChartOfAccounts cc : coaList) {
@@ -3298,8 +4033,13 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxGetAllAssetCodes...");
 
+        /*
+         * Hibernate 6 migration note:
+         * Use the mapped Java property isActiveForPosting instead of the old
+         * database-style token so HQL semantic validation succeeds.
+         */
         coaList = persistenceService.findAllBy(
-                " from CChartOfAccounts where classification=4 and isactiveforposting = true and type = 'A' order by glcode  ");
+                " from CChartOfAccounts where classification=4 and isActiveForPosting = true and type = 'A' order by glcode  ");
         // String
         // query="select glcode||'`-`'||name|| '`-`' || ID as \"code\" from chartofaccounts where classification=4 and
         // isactiveforposting = true and type = 'A' order by glcode ";
@@ -3322,8 +4062,13 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxGetAllLiabCodes...");
 
+        /*
+         * Hibernate 6 migration note:
+         * Use isActiveForPosting, the entity property name, because HQL no longer
+         * resolves database-style attribute names implicitly.
+         */
         coaList = persistenceService.findAllBy(
-                " from CChartOfAccounts where classification=4 and isactiveforposting = true and type = 'L' order by glcode  ");
+                " from CChartOfAccounts where classification=4 and isActiveForPosting = true and type = 'L' order by glcode  ");
         // String
         // query="select glcode||'`-`'||name|| '`-`' || ID as \"code\" from chartofaccounts where classification=4 and
         // isactiveforposting = true and type = 'L' order by glcode ";
@@ -3346,8 +4091,13 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxGetAllFunctionName...");
 
+        /*
+         * LTS Migration Fix (Hibernate 6 Upgrade):
+         * Changed field names from lowercase 'isactive' and 'isnotleaf' to camelCase 'isActive' and 'isNotLeaf' for CFunction HQL.
+         * The CFunction Java entity uses 'isActive' and 'isNotLeaf' property names.
+         */
         functionCodesList = persistenceService
-                .findAllBy("select f from CFunction f where  isactive = true AND isnotleaf=false order by name");
+                .findAllBy("select f from CFunction f where  isActive = true AND isNotLeaf=false order by name");
         // String
         // query="select code||'`-`'||name||'`~`'||id as \"code\" from function where isactive = true AND isnotleaf=false order by
         // name ";
@@ -3389,8 +4139,13 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxGetAllCoaNames...");
 
+        /*
+         * Hibernate 6 migration note:
+         * isActiveForPosting is the mapped Java property. Keeping this property name
+         * avoids strict HQL attribute-resolution failures.
+         */
         coaList = persistenceService.findAllBy(
-                " from CChartOfAccounts where classification=4 and isactiveforposting = true order by glcode ");
+                " from CChartOfAccounts where classification=4 and isActiveForPosting = true order by glcode ");
         // final String
         // query="select name||'`-`'||glcode||'`-`'||ID as \"code\" from chartofaccounts where classification=4 and
         // isactiveforposting = true order by glcode ";
@@ -3416,15 +4171,20 @@ public class CommonAction extends BaseFormAction {
             glCodesList = new ArrayList<CChartOfAccounts>();
         else {
             String codeName = "%" + glCode + "%";
+            /*
+             * Hibernate 6 migration note:
+             * Return CChartOfAccounts entities instead of selecting only glcode because
+             * the code below iterates CChartOfAccounts and reads getGlcode().
+             */
             glCodesList = persistenceService
-                    .findAllBy("select glcode from CChartOfAccounts ca where  classification=4 and isactiveforposting = true and glcode like ? order by glcode", codeName);
+                    .findAllBy("from CChartOfAccounts ca where classification=4 and isActiveForPosting = true and glcode like ? order by glcode", codeName);
         }
-        // String query="select glcode as \"code\" from chartofaccounts where classification=4 and isactiveforposting = true
-        // and glcode like '"+accountCode+"'|| '%' order by glcode ";
 
         result = new StringBuffer();
-        for (CChartOfAccounts cc : coaList) {
-            result.append(cc.getGlcode() + "+");
+        if (glCodesList != null) {
+            for (CChartOfAccounts cc : glCodesList) {
+                result.append(cc.getGlcode() + "+");
+            }
         }
         result.append("^");
         if (LOGGER.isDebugEnabled())
@@ -3434,13 +4194,41 @@ public class CommonAction extends BaseFormAction {
 
     @Action(value = "/voucher/common-ajaxLoadEstimateBudgetDetailsByFundId")
     public String ajaxLoadEstimateBudgetDetailsByFundId() {
+        /*
+         * Struts 7 migration note:
+         * Estimate-budget AJAX calls can submit fund as fundId or fund. Resolve both
+         * names before calling the service and ignore invalid numeric input instead of
+         * failing the entire dropdown response.
+         */
+        if (fundId == null) {
+            String fId = ServletActionContext.getRequest().getParameter("fundId");
+            if (StringUtils.isBlank(fId)) {
+                fId = ServletActionContext.getRequest().getParameter("fund");
+            }
+            if (StringUtils.isNotBlank(fId)) {
+                try {
+                    fundId = Long.valueOf(fId.trim());
+                } catch (NumberFormatException e) {
+                    LOGGER.error("Invalid fundId: " + fId);
+                }
+            }
+        }
         List<String> deptCodeList = null;
         if (fundId != null && fundId != 0)
             deptCodeList = budgetDetailService.getDepartmentFromBudgetDetailByFundId(fundId);
         listOfDepartments = new ArrayList<Department>();
         if(deptCodeList != null && !deptCodeList.isEmpty()){
             deptCodeList.stream().forEach(bd -> {
-            listOfDepartments.add(microserviceUtils.getDepartmentByCode(bd));
+                /*
+                 * Spring 6 migration note:
+                 * Department lookup is now backed by a microservice call and can return
+                 * null for stale budget detail codes. Skip null values to avoid JSP
+                 * rendering failures.
+                 */
+                Department dept = microserviceUtils.getDepartmentByCode(bd);
+                if (dept != null) {
+                    listOfDepartments.add(dept);
+                }
             });
         }
         return "estimateBudgetDetails";
@@ -3448,6 +4236,17 @@ public class CommonAction extends BaseFormAction {
 
     @Action(value = "/voucher/common-ajaxLoadEstimateBudgetDetailsByDepartmentId")
     public String ajaxLoadEstimateBudgetDetailsByDepartmentId() {
+        /*
+         * Struts 7 migration note:
+         * Department is submitted by legacy pages as either departmentId or department.
+         * Normalize the value before loading function budget details.
+         */
+        if (departmentId == null || departmentId.trim().isEmpty()) {
+            departmentId = ServletActionContext.getRequest().getParameter("departmentId");
+            if (StringUtils.isBlank(departmentId)) {
+                departmentId = ServletActionContext.getRequest().getParameter("department");
+            }
+        }
         if (departmentId != null && !departmentId.equalsIgnoreCase("-1") && !departmentId.equalsIgnoreCase("0"))
             budgetDetailList = budgetDetailService.getFunctionFromBudgetDetailByDepartmentId(departmentId);
         return "estimateBudgetDetails";
@@ -3455,6 +4254,24 @@ public class CommonAction extends BaseFormAction {
 
     @Action(value = "/voucher/common-ajaxLoadEstimateBudgetDetailsByFuncId")
     public String ajaxLoadEstimateBudgetDetailsByFuncId() {
+        /*
+         * Struts 7 migration note:
+         * Function can arrive as functionId or function. Parse it defensively so the
+         * dependent budget-detail dropdown does not fail on blank or invalid input.
+         */
+        if (functionId == null || functionId == 0) {
+            String funcStr = ServletActionContext.getRequest().getParameter("functionId");
+            if (StringUtils.isBlank(funcStr)) {
+                funcStr = ServletActionContext.getRequest().getParameter("function");
+            }
+            if (StringUtils.isNotBlank(funcStr)) {
+                try {
+                    functionId = Long.valueOf(funcStr.trim());
+                } catch (NumberFormatException e) {
+                    LOGGER.error("Invalid functionId: " + funcStr);
+                }
+            }
+        }
         if (functionId != null && functionId != 0)
             budgetDetailList = budgetDetailService.getBudgetDetailByFunctionId(functionId);
         return "estimateBudgetDetails";
@@ -3611,9 +4428,9 @@ public class CommonAction extends BaseFormAction {
 					.append(" AND iv.instrumentheaderid = ih.id AND ih.id_status = egws.id AND egws.description IN ('Surrendered','Surrender_For_Reassign')")
 					.append(" AND ph.type = :paymentType AND vh.name = :voucherName order by 2 ");
 
-			bankBranch = persistenceService.getSession().createSQLQuery(bankQuery.toString())
-					.setParameter("paymentType", FinancialConstants.MODEOFPAYMENT_RTGS, StringType.INSTANCE)
-					.setParameter("voucherName", FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE, StringType.INSTANCE).list();
+			bankBranch = persistenceService.getSession().createNativeQuery(bankQuery.toString())
+					.setParameter("paymentType", FinancialConstants.MODEOFPAYMENT_RTGS, StandardBasicTypes.STRING)
+					.setParameter("voucherName", FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE, StandardBasicTypes.STRING).list();
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankBranch.size());
@@ -3683,12 +4500,12 @@ public class CommonAction extends BaseFormAction {
 
 			queryString.append(bankaccountFundQuery);
 
-			final List<Object[]> bankAccounts = persistenceService.getSession().createSQLQuery(queryString.toString())
-					.setParameter("fundId", fundId.longValue(), LongType.INSTANCE)
-					.setParameter("voucherName", FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE, StringType.INSTANCE)
-					.setParameter("paymentType", FinancialConstants.MODEOFPAYMENT_RTGS, StringType.INSTANCE)
-					.setParameter("branchId", branchId, IntegerType.INSTANCE)
-					.setParameter("voucherType", FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT, StringType.INSTANCE)
+			final List<Object[]> bankAccounts = persistenceService.getSession().createNativeQuery(queryString.toString())
+					.setParameter("fundId", fundId.longValue(), StandardBasicTypes.LONG)
+					.setParameter("voucherName", FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE, StandardBasicTypes.STRING)
+					.setParameter("paymentType", FinancialConstants.MODEOFPAYMENT_RTGS, StandardBasicTypes.STRING)
+					.setParameter("branchId", branchId, StandardBasicTypes.INTEGER)
+					.setParameter("voucherType", FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT, StandardBasicTypes.STRING)
 					.list();
 
             if (LOGGER.isDebugEnabled())

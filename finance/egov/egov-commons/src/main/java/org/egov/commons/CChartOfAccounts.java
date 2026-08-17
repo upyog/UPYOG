@@ -55,20 +55,20 @@ import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -91,42 +91,59 @@ public class CChartOfAccounts extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_CHARTOFACCOUNTS, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @SafeHtml
+    @SanitizeHtml
     @NotNull
     @Length(max = 50)
     private String glcode;
 
-    @SafeHtml
+    @SanitizeHtml
     @NotNull
     @Length(max = 150)
     private String name;
 
+    /* 
+     * Hibernate 6 / Spring Boot 3 Migration Fix:
+     * Explicitly specifying @Column(name = "...") annotations for all camelCase field names.
+     * In Hibernate 6, the default implicit physical naming strategy automatically converts camelCase Java fields
+     * into underscore_separated SQL columns (e.g., parentId -> parent_id, purposeId -> purpose_id).
+     * Since existing PostgreSQL database schema uses uppercase non-underscored column names (PARENTID, PURPOSEID,
+     * ISACTIVEFORPOSTING, FUNCTIONREQD, etc.), these explicit annotations prevent "column parent_id does not exist" SQL errors.
+     */
+    @Column(name = "PURPOSEID")
     private Long purposeId;
 
-    @SafeHtml
+    @SanitizeHtml
     @Column(name = "DESCRIPTION")
     private String desc;
 
+    @Column(name = "ISACTIVEFORPOSTING")
     private Boolean isActiveForPosting;
 
+    @Column(name = "PARENTID")
     private Long parentId;
 
     @Column(name = "SCHEDULEID")
     private Long schedule;
 
+    @Column(name = "OPERATION")
     private Character operation;
 
     @NotNull
+    @Column(name = "TYPE")
     private Character type;
 
+    @Column(name = "CLASSIFICATION")
     private Long classification;
 
+    @Column(name = "FUNCTIONREQD")
     private Boolean functionReqd;
 
+    @Column(name = "BUDGETCHECKREQ")
     private Boolean budgetCheckReq;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 255)
+    @Column(name = "MAJORCODE")
     private String majorCode;
 
     @Column(name = "CLASS")

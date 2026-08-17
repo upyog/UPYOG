@@ -51,22 +51,33 @@ package org.egov.infra.persistence.validator;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.validator.annotation.UniqueDateOverlap;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Conjunction;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import org.hibernate.Session;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
+import java.util.ArrayList;
+import java.util.List;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.Date;
 
 import static org.egov.infra.utils.DateUtils.endOfDay;
 import static org.egov.infra.utils.DateUtils.startOfDay;
 
+/**
+ * LTS Migration Fix (Hibernate 6): date-range overlap uniqueness used by {@link UniqueDateOverlap}.
+ * <p>
+ * Hibernate 6: Hibernate {@code Criteria} was replaced with JPA CriteriaBuilder.
+ * Conjunction / disjunction of date predicates and {@code uniqueResult()} became
+ * {@code cb.and} / {@code cb.or} and {@code getResultList().isEmpty()}.
+ * </p>
+ */
 public class UniqueDateOverlapValidator implements ConstraintValidator<UniqueDateOverlap, Object> {
 
     private UniqueDateOverlap uniqueDateOverlap;
@@ -94,32 +105,82 @@ public class UniqueDateOverlapValidator implements ConstraintValidator<UniqueDat
     }
 
     private boolean checkUnique(Object object) throws IllegalAccessException {
+
         Number id = (Number) FieldUtils.readField(object, uniqueDateOverlap.id(), true);
-        Criteria uniqueDateOverlapChecker = entityManager.unwrap(Session.class).createCriteria(object.getClass()).setReadOnly(true);
-        Conjunction uniqueCheck = Restrictions.conjunction();
+
+        // Hibernate 6: CriteriaBuilder setup
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Object> cq = cb.createQuery(Object.class);
+        Root<?> root = cq.from(object.getClass());
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        // Hibernate 6: uniqueFields loop — Conjunction
         for (String fieldName : uniqueDateOverlap.uniqueFields()) {
             Object fieldValue = FieldUtils.readField(object, fieldName, true);
-            if (fieldValue instanceof String)
-                uniqueCheck.add(Restrictions.eq(fieldName, fieldValue).ignoreCase());
-            else
-                uniqueCheck.add(Restrictions.eq(fieldName, fieldValue));
+            if (fieldValue instanceof String) {
+                // Hibernate 6: Restrictions.eq().ignoreCase() → cb.lower()
+                predicates.add(cb.equal(
+                        cb.lower(root.get(fieldName)),
+                        ((String) fieldValue).toLowerCase()
+                ));
+            } else {
+                predicates.add(cb.equal(root.get(fieldName), fieldValue));
+            }
         }
-        Date fromDate = startOfDay((Date) FieldUtils.readField(object, uniqueDateOverlap.fromField(), true));
-        Date toDate = endOfDay((Date) FieldUtils.readField(object, uniqueDateOverlap.toField(), true));
-        Conjunction checkFromDate = Restrictions.conjunction();
-        checkFromDate.add(Restrictions.le(uniqueDateOverlap.fromField(), fromDate));
-        checkFromDate.add(Restrictions.ge(uniqueDateOverlap.toField(), fromDate));
-        Conjunction checkToDate = Restrictions.conjunction();
-        checkToDate.add(Restrictions.le(uniqueDateOverlap.fromField(), toDate));
-        checkToDate.add(Restrictions.ge(uniqueDateOverlap.toField(), toDate));
-        Conjunction checkFromAndToDate = Restrictions.conjunction();
-        checkFromAndToDate.add(Restrictions.ge(uniqueDateOverlap.fromField(), fromDate));
-        checkFromAndToDate.add(Restrictions.le(uniqueDateOverlap.toField(), toDate));
-        Disjunction dateRangeChecker = Restrictions.disjunction();
-        dateRangeChecker.add(checkFromDate).add(checkToDate).add(checkFromAndToDate);
-        uniqueCheck.add(dateRangeChecker);
-        if (id != null)
-            uniqueCheck.add(Restrictions.ne(uniqueDateOverlap.id(), id));
-        return uniqueDateOverlapChecker.add(uniqueCheck).setProjection(Projections.id()).setMaxResults(1).uniqueResult() == null;
+
+        // Hibernate 6: Date fields
+        Date fromDate = startOfDay((Date) FieldUtils.readField(object,
+                uniqueDateOverlap.fromField(), true));
+        Date toDate = endOfDay((Date) FieldUtils.readField(object,
+                uniqueDateOverlap.toField(), true));
+
+        String fromField = uniqueDateOverlap.fromField();
+        String toField   = uniqueDateOverlap.toField();
+
+        // Hibernate 6: fromDate of the existing record falls inside the given fromDate.
+        // Restrictions.le(fromField, fromDate) AND Restrictions.ge(toField, fromDate)
+        Predicate checkFromDate = cb.and(
+                cb.lessThanOrEqualTo(root.get(fromField), fromDate),
+                cb.greaterThanOrEqualTo(root.get(toField), fromDate)
+        );
+
+        // Hibernate 6: toDate of the existing record falls inside the given toDate.
+        // Restrictions.le(fromField, toDate) AND Restrictions.ge(toField, toDate)
+        Predicate checkToDate = cb.and(
+                cb.lessThanOrEqualTo(root.get(fromField), toDate),
+                cb.greaterThanOrEqualTo(root.get(toField), toDate)
+        );
+
+        // Hibernate 6: given range fully covers the existing record's range.
+        // Restrictions.ge(fromField, fromDate) AND Restrictions.le(toField, toDate)
+        Predicate checkFromAndToDate = cb.and(
+                cb.greaterThanOrEqualTo(root.get(fromField), fromDate),
+                cb.lessThanOrEqualTo(root.get(toField), toDate)
+        );
+
+        // Hibernate 6: disjunction — any of the three date-range checks may match.
+        Predicate dateRangeChecker = cb.or(
+                checkFromDate,
+                checkToDate,
+                checkFromAndToDate
+        );
+
+        predicates.add(dateRangeChecker);
+
+        // Hibernate 6: Exclude current record
+        if (id != null) {
+            predicates.add(cb.notEqual(root.get(uniqueDateOverlap.id()), id));
+        }
+
+        // Hibernate 6: Projections.id() + setMaxResults(1) + uniqueResult()
+        cq.select(root.get(uniqueDateOverlap.id()))
+                .where(cb.and(predicates.toArray(new Predicate[0])));
+
+        List<Object> result = entityManager.createQuery(cq)
+                .setMaxResults(1)
+                .getResultList();
+
+        return result.isEmpty();
     }
 }

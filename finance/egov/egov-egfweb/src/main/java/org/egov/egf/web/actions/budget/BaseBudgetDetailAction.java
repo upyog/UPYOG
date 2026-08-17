@@ -47,8 +47,8 @@
  */
 package org.egov.egf.web.actions.budget;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.util.ValueStack;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.util.ValueStack;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -383,13 +383,23 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
         if (shouldShowField(Constants.FUNCTION))
             dropdownData.put("functionList", masterDataCache.get(EGI_FUNCTION));
         if (shouldShowField(Constants.SCHEME))
+            /*
+             * LTS Migration Fix (Hibernate 6 Upgrade):
+             * Changed field name from camelCase 'isActive=true' to lowercase 'isactive=true' in Scheme HQL.
+             * The Scheme entity maps database column 'isactive' to Java property 'isactive'.
+             */
             dropdownData.put("schemeList",
-                    persistenceService.findAllBy("from Scheme where isActive=true order by name"));
+                    persistenceService.findAllBy("from Scheme where isactive=true order by name"));
         if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
             dropdownData.put("executingDepartmentList", masterDataCache.get(EGI_DEPARTMENT));
         if (shouldShowField(Constants.FUND))
+            /*
+             * LTS Migration Fix (Hibernate 6 Upgrade):
+             * Changed field names to lowercase 'isnotleaf=false and isactive=true' in Fund HQL.
+             * The Fund entity maps database columns to Java properties 'isnotleaf' and 'isactive'.
+             */
             dropdownData.put("fundList",
-                    persistenceService.findAllBy("from Fund where isNotLeaf=false and isActive=true order by name"));
+                    persistenceService.findAllBy("from Fund where isnotleaf=false and isactive=true order by name"));
         if (shouldShowField(Constants.BOUNDARY))
             dropdownData.put("boundaryList", persistenceService.findAllBy("from Boundary order by name"));
         addDropdownData("financialYearList", getPersistenceService()

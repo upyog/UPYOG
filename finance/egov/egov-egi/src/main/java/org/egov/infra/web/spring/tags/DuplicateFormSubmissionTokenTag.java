@@ -50,9 +50,9 @@ package org.egov.infra.web.spring.tags;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.BodyTagSupport;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.tagext.BodyTagSupport;
 import java.io.IOException;
 
 public class DuplicateFormSubmissionTokenTag extends BodyTagSupport {

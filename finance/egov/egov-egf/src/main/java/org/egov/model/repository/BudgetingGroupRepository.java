@@ -61,11 +61,11 @@ public interface BudgetingGroupRepository extends JpaRepository<BudgetGroup, Lon
 
     BudgetGroup findByMajorCode_Id(Long id);
 
-    BudgetGroup findByMajorCode_IdAndIdNotIn(Long majorCodeId, Long id);
+    BudgetGroup findByMajorCode_IdAndIdNot(Long majorCodeId, Long id);
 
     List<BudgetGroup> findByMinCodeGlcodeLessThanEqualAndMaxCodeGlcodeGreaterThanEqual(String minCode, String minCode1);
 
-    List<BudgetGroup> findByMinCodeGlcodeLessThanEqualAndMaxCodeGlcodeGreaterThanEqualAndIdNotIn(String minCode,
+    List<BudgetGroup> findByMinCodeGlcodeLessThanEqualAndMaxCodeGlcodeGreaterThanEqualAndIdNot(String minCode,
             String minCode1, Long id);
 
     @Query("from BudgetGroup  where  upper(name) like '%'||upper(:name)||'%' order by id")
