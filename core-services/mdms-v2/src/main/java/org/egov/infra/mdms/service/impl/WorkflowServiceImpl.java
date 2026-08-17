@@ -4,13 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.infra.mdms.config.ApplicationConfig;
 import org.egov.infra.mdms.model.ThemeConfig;
+import org.egov.infra.mdms.model.WorkflowProcessInstance;
+import org.egov.infra.mdms.model.WorkflowRequest;
 import org.egov.infra.mdms.service.WorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -53,58 +54,29 @@ public class WorkflowServiceImpl implements WorkflowService {
 
 
         String url = applicationConfig.getWorkflowHost()
-                + "/egov-workflow-v2/egov-wf/process/_transition";
+                + applicationConfig.getWorkflowTransitionEndpoint();
 
 
-        Map<String, Object> process = new HashMap<>();
+        WorkflowProcessInstance process = new WorkflowProcessInstance();
 
         // Same id will be used to track workflow against theme config row.
-        process.put(
-                "businessId",
-                themeConfig.getId()
-        );
-
-        process.put(
-                "tenantId",
-                themeConfig.getTenantId()
-        );
-
-        process.put(
-                "businessService",
+        process.setBusinessId(themeConfig.getId());
+        process.setTenantId(themeConfig.getTenantId());
+        process.setBusinessService(
                 applicationConfig.getThemeConfigBusinessService()
         );
-
-        process.put(
-                "moduleName",
-                "MDMS"
-        );
-
-        process.put(
-                "action",
-                "INITIATE"
-        );
-
-        process.put(
-                "comment",
-                "Theme config update"
-        );
+        process.setModuleName("MDMS");
+        process.setAction("INITIATE");
+        process.setComment("Theme config update");
 
 
-        List<Map<String, Object>> processInstances = new ArrayList<>();
+        List<WorkflowProcessInstance> processInstances = new ArrayList<>();
         processInstances.add(process);
 
 
-        Map<String, Object> request = new HashMap<>();
-
-        request.put(
-                "RequestInfo",
-                requestInfo
-        );
-
-        request.put(
-                "ProcessInstances",
-                processInstances
-        );
+        WorkflowRequest request = new WorkflowRequest();
+        request.setRequestInfo(requestInfo);
+        request.setProcessInstances(processInstances);
 
 
         log.info(
@@ -168,35 +140,51 @@ public class WorkflowServiceImpl implements WorkflowService {
     }
 
 
+    /**
+     * Updates workflow transition.
+     *
+     * @param themeConfig theme configuration details
+     * @param requestInfo request information
+     * @param action workflow action
+     * @return workflow id
+     */
     @Override
     public String transitionWorkflow(
             ThemeConfig themeConfig,
             RequestInfo requestInfo,
             String action) {
 
+
         String url = applicationConfig.getWorkflowHost()
-                + "/egov-workflow-v2/egov-wf/process/_transition";
+                + applicationConfig.getWorkflowTransitionEndpoint();
 
-        Map<String, Object> process = new HashMap<>();
 
-        process.put("businessId", themeConfig.getId());
-        process.put("tenantId", themeConfig.getTenantId());
-        process.put(
-                "businessService",
+        WorkflowProcessInstance process = new WorkflowProcessInstance();
+
+        process.setBusinessId(themeConfig.getId());
+        process.setTenantId(themeConfig.getTenantId());
+        process.setBusinessService(
                 applicationConfig.getThemeConfigBusinessService()
         );
-        process.put("moduleName", "MDMS");
-        process.put("action", action);
-        process.put("comment", "Theme config " + action);
+        process.setModuleName("MDMS");
+        process.setAction(action);
+        process.setComment("Theme config " + action);
 
-        List<Map<String, Object>> processInstances = new ArrayList<>();
+
+        List<WorkflowProcessInstance> processInstances = new ArrayList<>();
         processInstances.add(process);
 
-        Map<String, Object> request = new HashMap<>();
-        request.put("RequestInfo", requestInfo);
-        request.put("ProcessInstances", processInstances);
 
-        log.info("Workflow transition request : {}", request);
+        WorkflowRequest request = new WorkflowRequest();
+        request.setRequestInfo(requestInfo);
+        request.setProcessInstances(processInstances);
+
+
+        log.info(
+                "Workflow transition request : {}",
+                request
+        );
+
 
         Map<String, Object> response =
                 restTemplate.postForObject(
@@ -205,7 +193,12 @@ public class WorkflowServiceImpl implements WorkflowService {
                         Map.class
                 );
 
-        log.info("Workflow transition response : {}", response);
+
+        log.info(
+                "Workflow transition response : {}",
+                response
+        );
+
 
         if (response != null
                 && response.get("ProcessInstances") != null) {
@@ -214,11 +207,13 @@ public class WorkflowServiceImpl implements WorkflowService {
                     (List<Map<String, Object>>) response.get("ProcessInstances");
 
             if (!instances.isEmpty()) {
+
                 return String.valueOf(
                         instances.get(0).get("id")
                 );
             }
         }
+
 
         return null;
     }
