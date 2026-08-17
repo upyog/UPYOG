@@ -64,6 +64,9 @@ public class ApplicationConfig {
     @Value("${workflow.host}")
     private String workflowHost;
 
+    @Value("${workflow.transition.endpoint}")
+    private String workflowTransitionEndpoint;
+
     @Value("${theme.config.workflow.business.service}")
     private String themeConfigBusinessService;
 
