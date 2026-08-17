@@ -85,3 +85,82 @@ This method fetches a list of masters for a specified module and tenantId.
 ### Kafka Producers
 
 - NA
+
+- ## MDMS Enhancements
+
+### Schema Search Enhancements
+
+Schema search API has been enhanced with additional capabilities:
+
+- Added `isGetAllCodes` flag to support fetching all codes from schema masters.
+- Added `totalMasters` parameter to provide total master count information in schema search response.
+
+### Schema Delete API
+
+Added API support for deleting schema definitions from MDMS.
+
+Delete flow:
+1. Validates tenant and schema details.
+2. Deletes schema definition data.
+3. Publishes persistence events through Kafka.
+
+### MDMS Data and Schema Delete Support
+
+Added generic delete support for MDMS entities.
+
+Supported operations:
+- Schema definition deletion
+- MDMS data deletion
+
+### Theme Configuration Management
+
+Theme Configuration provides APIs to manage UI theme configurations.
+
+### APIs
+
+#### Create Theme Configuration
+
+
+Creates a new theme configuration and persists data asynchronously through Persister.
+
+#### Update Theme Configuration
+
+Creates a pending theme configuration update request and triggers workflow approval.
+
+Workflow states:
+- `PENDING`
+- `APPROVED`
+- `REJECTED`
+
+#### Theme Configuration Workflow Action
+
+Handles workflow approval and rejection actions.
+
+Supported actions:
+- `APPROVE`
+- `REJECT`
+
+#### Search Theme Configuration
+
+Fetches active theme configuration.
+
+Priority:
+1. `APPROVED` configuration
+2. `DEFAULT` configuration fallback
+
+### Audit Support
+
+Added audit tracking for theme configuration lifecycle.
+
+Audit captures:
+- Theme configuration changes
+- Workflow status changes
+- Created and modified details
+- Workflow information
+- Operation performed
+
+Supported audit operations:
+- `CREATE`
+- `APPROVE`
+- `REJECT`
+- `UPDATE`
