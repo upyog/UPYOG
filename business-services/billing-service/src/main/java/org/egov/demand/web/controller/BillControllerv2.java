@@ -74,25 +74,10 @@ public class BillControllerv2 {
 		RequestInfo requestInfo = requestInfoWrapper.getRequestInfo();
 		billValidator.validateBillSearchCriteria(billCriteria, requestInfo);
 		
-		BillResponseV2 fullResponse = billService.searchBill(billCriteria, requestInfo);
-		
-		java.util.List<ShortBillV2> shortBills = new java.util.ArrayList<>();
-		if (fullResponse.getBill() != null) {
-			for (org.egov.demand.model.BillV2 b : fullResponse.getBill()) {
-				ShortBillV2 sb = ShortBillV2.builder()
-						.id(b.getId())
-						.totalAmount(b.getTotalAmount())
-						.businessService(b.getBusinessService())
-						.billNumber(b.getBillNumber())
-						.billDate(b.getBillDate())
-						.consumerCode(b.getConsumerCode())
-						.build();
-				shortBills.add(sb);
-			}
-		}
+		java.util.List<ShortBillV2> shortBills = billService.searchShortBills(billCriteria, requestInfo);
 		
 		ShortBillResponseV2 shortResponse = ShortBillResponseV2.builder()
-				.responseInfo(fullResponse.getResposneInfo())
+				.responseInfo(responseFactory.getResponseInfo(requestInfo, HttpStatus.OK))
 				.bill(shortBills)
 				.build();
 				

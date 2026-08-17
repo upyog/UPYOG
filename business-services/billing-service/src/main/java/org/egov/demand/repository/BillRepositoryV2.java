@@ -21,6 +21,10 @@ import org.egov.demand.repository.querybuilder.BillQueryBuilder;
 import org.egov.demand.repository.rowmapper.BillRowMapperV2;
 import org.egov.demand.util.Util;
 import org.egov.demand.web.contract.BillRequestV2;
+import org.egov.demand.web.contract.ShortBillV2;
+import java.math.BigDecimal;
+import java.sql.ResultSet;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -52,6 +56,42 @@ public class BillRepositoryV2 {
 		String queryStr = billQueryBuilder.getBillQuery(billCriteria, preparedStatementValues);
 		log.debug("query:::"+queryStr+"  preparedStatementValues::"+preparedStatementValues);
 		return jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), searchBillRowMapper);
+	}
+	
+	private final ResultSetExtractor<List<ShortBillV2>> shortBillRowMapper = new ResultSetExtractor<List<ShortBillV2>>() {
+		@Override
+		public List<ShortBillV2> extractData(ResultSet rs) throws SQLException {
+			Map<String, ShortBillV2> billMap = new java.util.LinkedHashMap<>();
+			while (rs.next()) {
+				String billId = rs.getString("b_id");
+				ShortBillV2 bill = billMap.get(billId);
+				BigDecimal amount = rs.getBigDecimal("bd_totalamount");
+				if (amount == null) {
+					amount = BigDecimal.ZERO;
+				}
+				if (bill == null) {
+					bill = ShortBillV2.builder()
+							.id(billId)
+							.totalAmount(amount)
+							.businessService(rs.getString("bd_businessservice"))
+							.billNumber(rs.getString("bd_billno"))
+							.billDate(rs.getLong("bd_billdate"))
+							.consumerCode(rs.getString("bd_consumercode"))
+							.build();
+					billMap.put(billId, bill);
+				} else {
+					bill.setTotalAmount(bill.getTotalAmount().add(amount));
+				}
+			}
+			return new ArrayList<>(billMap.values());
+		}
+	};
+
+	public List<ShortBillV2> findShortBills(BillSearchCriteria billCriteria) {
+		List<Object> preparedStatementValues = new ArrayList<>();
+		String queryStr = billQueryBuilder.getShortBillQuery(billCriteria, preparedStatementValues);
+		log.debug("short query:::"+queryStr+"  preparedStatementValues::"+preparedStatementValues);
+		return jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), shortBillRowMapper);
 	}
 	
 	@Transactional

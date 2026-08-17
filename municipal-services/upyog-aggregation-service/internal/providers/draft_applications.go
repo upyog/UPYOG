@@ -122,13 +122,13 @@ type draftSearchBody struct {
 }
 
 type draftSearchCriteria struct {
-	TenantID    string `json:"tenantId"`
-	UserUUID    string `json:"userUuid"`
-	Status      string `json:"status"`
-	Offset      int    `json:"offset"`
-	Limit       int    `json:"limit"`
-	SortBy      string `json:"sortBy,omitempty"`
-	SortOrder   string `json:"sortOrder,omitempty"`
+	TenantID  string `json:"tenantId"`
+	UserUUID  string `json:"userUuid"`
+	Status    string `json:"status"`
+	Offset    int    `json:"offset"`
+	Limit     int    `json:"limit"`
+	SortBy    string `json:"sortBy,omitempty"`
+	SortOrder string `json:"sortOrder,omitempty"`
 }
 
 func (p *DraftApplicationsProvider) buildSearchBody(
@@ -136,12 +136,12 @@ func (p *DraftApplicationsProvider) buildSearchBody(
 	tenantID, userUUID string,
 ) draftSearchBody {
 	criteria := draftSearchCriteria{
-		TenantID: tenantID,
-		UserUUID: userUUID,
-		Status:   "ACTIVE",
-		Offset:   0,
-		Limit:    10,
-		SortBy:   "lastModifiedTime",
+		TenantID:  tenantID,
+		UserUUID:  userUUID,
+		Status:    "ACTIVE",
+		Offset:    0,
+		Limit:     10,
+		SortBy:    "lastModifiedTime",
 		SortOrder: "DESC",
 	}
 

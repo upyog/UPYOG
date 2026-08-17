@@ -159,16 +159,12 @@ public class WorkflowController {
 			@Valid @RequestBody StatusCountRequest statusCountRequest) {
 		log.info("Received request for dashboard applications search: {}", statusCountRequest.getProcessInstanceSearchCriteria());
 		ProcessInstanceSearchCriteria searchCriteria = statusCountRequest.getProcessInstanceSearchCriteria();
-		List<DashboardProcessInstance> processInstances = workflowService
-				.getDashboardApplications(statusCountRequest.getRequestInfo(), searchCriteria);
-		Integer count = workflowService.getDashboardApplicationCount(statusCountRequest.getRequestInfo(), searchCriteria);
+		DashboardProcessInstanceResponse response = workflowService
+				.getDashboardApplicationsWithCount(statusCountRequest.getRequestInfo(), searchCriteria);
 
-		DashboardProcessInstanceResponse response = DashboardProcessInstanceResponse.builder()
-				.processInstances(processInstances)
-				.totalCount(count)
-				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(statusCountRequest.getRequestInfo(), true))
-				.build();
-		log.info("Returning dashboard applications search response, size: {}, total: {}", processInstances.size(), count);
+		response.setResponseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(statusCountRequest.getRequestInfo(), true));
+		log.info("Returning dashboard applications search response, size: {}, total: {}",
+				response.getProcessInstances() != null ? response.getProcessInstances().size() : 0, response.getTotalCount());
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 }

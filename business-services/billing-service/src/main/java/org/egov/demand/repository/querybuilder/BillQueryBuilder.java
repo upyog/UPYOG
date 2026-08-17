@@ -66,9 +66,34 @@ public class BillQueryBuilder {
 			+ " LEFT OUTER JOIN egbs_billdetail_v1 bd ON b.id = bd.billid AND b.tenantid = bd.tenantid"
 			+ " LEFT OUTER JOIN egbs_billaccountdetail_v1 ad ON bd.id = ad.billdetail AND bd.tenantid = ad.tenantid";
 	
+	public static final String BILL_SHORT_BASE_QUERY = "SELECT b.id AS b_id, b.tenantid AS b_tenantid, b.status AS b_status,"
+			+ " b.mobilenumber AS mobilenumber, b.createddate AS b_createddate, b.payeremail, bd.id AS bd_id,"
+			+ " bd.businessservice AS bd_businessservice, bd.billno AS bd_billno, bd.billdate AS bd_billdate,"
+			+ " bd.consumercode AS bd_consumercode, bd.totalamount AS bd_totalamount, bd.fromperiod, bd.toperiod"
+			+ " FROM egbs_bill_v1 b"
+			+ " LEFT OUTER JOIN egbs_billdetail_v1 bd ON b.id = bd.billid AND b.tenantid = bd.tenantid";
+	
 	public String getBillQuery(BillSearchCriteria billSearchCriteria, List<Object> preparedStatementValues){
 		
 		StringBuilder billQuery = new StringBuilder(BILL_BASE_QUERY);
+		String tenantId = billSearchCriteria.getTenantId();
+		String[] tenantIdChunks = tenantId.split("\\.");
+		if(tenantIdChunks.length == 1){
+			billQuery.append(" WHERE b.tenantid LIKE ? ");
+			preparedStatementValues.add(billSearchCriteria.getTenantId() + '%');
+		}else{
+			billQuery.append(" WHERE b.tenantid = ? ");
+			preparedStatementValues.add(billSearchCriteria.getTenantId());
+		}
+		addWhereClause(billQuery, preparedStatementValues, billSearchCriteria);
+		StringBuilder maxQuery = addPagingClause(billQuery, preparedStatementValues, billSearchCriteria);
+		
+		return maxQuery.toString();
+	}
+
+	public String getShortBillQuery(BillSearchCriteria billSearchCriteria, List<Object> preparedStatementValues){
+		
+		StringBuilder billQuery = new StringBuilder(BILL_SHORT_BASE_QUERY);
 		String tenantId = billSearchCriteria.getTenantId();
 		String[] tenantIdChunks = tenantId.split("\\.");
 		if(tenantIdChunks.length == 1){

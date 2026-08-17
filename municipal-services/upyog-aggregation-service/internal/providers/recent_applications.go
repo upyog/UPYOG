@@ -23,10 +23,9 @@ import (
 
 const recentApplicationsProviderName = "recent-applications"
 
-// RecentApplicationsProvider retrieves the most recently modified
-// applications from the UPYOG process dashboard search endpoint.
 type RecentApplicationsProvider struct {
 	BaseProvider
+	sinceDays int
 }
 
 // NewRecentApplicationsProvider creates a new RecentApplicationsProvider.
@@ -36,9 +35,11 @@ func NewRecentApplicationsProvider(
 	log *logger.Logger,
 	m *metrics.Metrics,
 	ttl time.Duration,
+	sinceDays int,
 ) *RecentApplicationsProvider {
 	return &RecentApplicationsProvider{
 		BaseProvider: NewBaseProvider(recentApplicationsProviderName, client, c, log, m, ttl),
+		sinceDays:    sinceDays,
 	}
 }
 
@@ -78,6 +79,12 @@ func (p *RecentApplicationsProvider) Execute(
 		body.Criteria.Offset = 0
 		body.Criteria.Limit = 50
 	}
+
+	sinceDays := p.sinceDays
+	if sinceDays <= 0 {
+		sinceDays = 7
+	}
+	body.Criteria.FromDate = time.Now().AddDate(0, 0, -sinceDays).UnixMilli()
 
 	body.Criteria.Status = []string{
 		"APPLIED",
@@ -123,7 +130,7 @@ func (p *RecentApplicationsProvider) Execute(
 
 	return &dto.ProviderResponse{
 		Status: common.StatusSuccess,
-		Data:   result,
+		Data:   result.ProcessInstances,
 	}, nil
 }
 
@@ -135,6 +142,8 @@ type recentAppSearchBody struct {
 		Offset    int      `json:"offset"`
 		Limit     int      `json:"limit"`
 		Status    []string `json:"status"`
+		FromDate  int64    `json:"fromDate,omitempty"`
+		ToDate    int64    `json:"toDate,omitempty"`
 	} `json:"ProcessInstanceSearchCriteria"`
 }
 

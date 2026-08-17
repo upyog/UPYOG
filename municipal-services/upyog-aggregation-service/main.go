@@ -101,8 +101,8 @@ func main() {
 	workflowClient    := newServiceClient("workflow", "egov-workflow-v2")
 
 	cacheTTL := cfg.Providers.CacheTTL
-	reg.Register(providers.NewQuickSummaryProvider(inboxClient, billingClient, draftClient, workflowClient, c, log, m, cacheTTL))
-	reg.Register(providers.NewRecentApplicationsProvider(workflowClient, c, log, m, cacheTTL))
+	reg.Register(providers.NewQuickSummaryProvider(inboxClient, billingClient, draftClient, workflowClient, c, log, m, cacheTTL, cfg.Providers.CompletedServiceStatuses))
+	reg.Register(providers.NewRecentApplicationsProvider(workflowClient, c, log, m, cacheTTL, cfg.Providers.RecentApplicationsSinceDays))
 	reg.Register(providers.NewNotificationsProvider(userEventClient, c, log, m, cacheTTL))
 	reg.Register(providers.NewDraftApplicationsProvider(draftClient, c, log, m, cacheTTL))
 	// Replaced tlServicesClient with billingClient to fetch due renewals from billing-service

@@ -194,7 +194,6 @@ public class WorkflowQueryBuilder {
             preparedStmtList.add(criteria.getModuleName());
         }
 
-
         with_query_builder.append(" ORDER BY pi_outer.lastModifiedTime DESC ");
 
         addPagination(with_query_builder,preparedStmtList,criteria);
@@ -601,8 +600,8 @@ public class WorkflowQueryBuilder {
      * @return the SQL count query string
      */
     public String getDashboardProcessInstanceCount(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList) {
-        String finalQuery = getDashboardProcessInstanceSearchQueryWithoutPagination(criteria, preparedStmtList);
-        return addCountWrapper(finalQuery);
+        String finalQuery = getDashboardProcessInstanceIds(criteria, preparedStmtList, false);
+        return addCountWrapperForInboxIdQuery(finalQuery);
     }
 
     /**
@@ -630,12 +629,21 @@ public class WorkflowQueryBuilder {
             preparedStmtList.add(criteria.getCreatedByUUID());
         }
 
+        if (criteria.getFromDate() != null) {
+            builder.append(" AND pi.createdtime >= ? ");
+            preparedStmtList.add(criteria.getFromDate());
+        }
+        if (criteria.getToDate() != null) {
+            builder.append(" AND pi.createdtime <= ? ");
+            preparedStmtList.add(criteria.getToDate());
+        }
+
         builder.append(" ORDER BY pi.createdtime DESC ");
 
         return builder.toString();
     }
 
-    public String getDashboardProcessInstanceIds(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList) {
+    public String getDashboardProcessInstanceIds(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList, Boolean isPaginationRequired) {
         StringBuilder with_query_builder = new StringBuilder(WITH_CLAUSE);
 
         if (!criteria.getHistory()) {
@@ -697,9 +705,20 @@ public class WorkflowQueryBuilder {
             preparedStmtList.add(criteria.getCreatedByUUID());
         }
 
+        if (criteria.getFromDate() != null) {
+            with_query_builder.append(" AND pi_outer.createdtime >= ? ");
+            preparedStmtList.add(criteria.getFromDate());
+        }
+        if (criteria.getToDate() != null) {
+            with_query_builder.append(" AND pi_outer.createdtime <= ? ");
+            preparedStmtList.add(criteria.getToDate());
+        }
+
         with_query_builder.append(" ORDER BY pi_outer.createdtime DESC ");
 
-        addPagination(with_query_builder, preparedStmtList, criteria);
+        if (isPaginationRequired) {
+            addPagination(with_query_builder, preparedStmtList, criteria);
+        }
 
         return with_query_builder.toString();
     }

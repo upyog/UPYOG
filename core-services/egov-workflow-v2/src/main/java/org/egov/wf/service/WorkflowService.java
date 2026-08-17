@@ -330,4 +330,10 @@ public class WorkflowService {
         log.info("Successfully fetched and mapped {} dashboard applications", dashboardInstances.size());
         return dashboardInstances;
     }
+
+    public DashboardProcessInstanceResponse getDashboardApplicationsWithCount(RequestInfo requestInfo, ProcessInstanceSearchCriteria criteria) {
+        log.info("Fetching dashboard applications list and count for tenant: {}, statusList: {}, createdBy: {}, limit: {}, offset: {}",
+                criteria.getTenantId(), criteria.getStatus(), criteria.getCreatedByUUID(), criteria.getLimit(), criteria.getOffset());
+        return workflowRepository.getDashboardApplicationsWithCount(criteria);
+    }
 }

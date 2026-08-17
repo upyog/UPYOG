@@ -43,9 +43,10 @@ type QuickSummaryData struct {
 // services concurrently and returns a single merged response.
 type QuickSummaryProvider struct {
 	BaseProvider
-	billingClient  *clients.Client
-	draftClient    *clients.Client
-	workflowClient *clients.Client
+	billingClient     *clients.Client
+	draftClient       *clients.Client
+	workflowClient    *clients.Client
+	completedStatuses []string
 }
 
 // NewQuickSummaryProvider creates a new QuickSummaryProvider.
@@ -62,12 +63,14 @@ func NewQuickSummaryProvider(
 	log *logger.Logger,
 	m *metrics.Metrics,
 	ttl time.Duration,
+	completedStatuses []string,
 ) *QuickSummaryProvider {
 	return &QuickSummaryProvider{
-		BaseProvider:   NewBaseProvider(quickSummaryProviderName, client, c, log, m, ttl),
-		billingClient:  billingClient,
-		draftClient:    draftClient,
-		workflowClient: workflowClient,
+		BaseProvider:      NewBaseProvider(quickSummaryProviderName, client, c, log, m, ttl),
+		billingClient:     billingClient,
+		draftClient:       draftClient,
+		workflowClient:    workflowClient,
+		completedStatuses: completedStatuses,
 	}
 }
 
@@ -250,34 +253,6 @@ func (p *QuickSummaryProvider) fetchCount(ctx context.Context, requestInfo json.
 	return cr.Count, nil
 }
 
-// fetchWorkflowCount issues a POST to the given path and extracts the integer count.
-// Unlike fetchCount, it handles cases where the API returns a raw integer instead of a JSON object.
-func (p *QuickSummaryProvider) fetchWorkflowCount(ctx context.Context, requestInfo json.RawMessage, path string, headers map[string]string) (int, error) {
-	body := struct {
-		RequestInfo json.RawMessage `json:"RequestInfo"`
-	}{
-		RequestInfo: requestInfo,
-	}
-	resp, err := p.workflowClient.Post(ctx, path, body, headers)
-	if err != nil {
-		return 0, fmt.Errorf("POST %s: %w", path, err)
-	}
-	if resp.StatusCode != http.StatusOK {
-		return 0, fmt.Errorf("POST %s returned status %d", path, resp.StatusCode)
-	}
-
-	var count int
-	if err := json.Unmarshal(resp.Body, &count); err == nil {
-		return count, nil
-	}
-
-	var cr countResponse
-	if err := json.Unmarshal(resp.Body, &cr); err != nil {
-		return 0, fmt.Errorf("unmarshal count from %s: %w", path, err)
-	}
-	return cr.Count, nil
-}
-
 type draftCountBody struct {
 	RequestInfo json.RawMessage `json:"RequestInfo"`
 	Criteria    struct {
@@ -346,32 +321,7 @@ func (p *QuickSummaryProvider) fetchCompletedServicesCount(
 	body.Criteria.CreatedBy = userUUID
 	body.Criteria.Offset = 0
 	body.Criteria.Limit = 50
-	body.Criteria.Status = []string{
-		"APPROVE",
-		"APPROVED",
-		"AUTO_APPROVED",
-		"CANCELED",
-		"CANCELLED",
-		"CLOSEDAFTERREJECTION",
-		"CLOSEDAFTERRESOLUTION",
-		"CLOSURE",
-		"COMPLETED",
-		"CONNECTION_ACTIVATED",
-		"DELIVERED",
-		"DISCONNECTION_EXECUTED",
-		"DISPOSED",
-		"EXPIRED",
-		"MANUALEXPIRED",
-		"REFUNDAPPROVED",
-		"REGISTRATIONCOMPLETED",
-		"REJECTED",
-		"REQUESTCOMPLETED",
-		"REQUESTREJECTED",
-		"RESOLVED",
-		"REVOCATED",
-		"TREE_PRUNING_SERVICE_COMPLETED",
-		"VOIDED",
-	}
+	body.Criteria.Status = p.completedStatuses
 
 	path := "/egov-workflow-v2/egov-wf/process/dashboard/_search"
 	resp, err := p.workflowClient.Post(ctx, path, body, headers)
