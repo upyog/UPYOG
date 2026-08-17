@@ -61,7 +61,12 @@
 
 <egEmp-function>
 	<type>hql</type>
-        <query>from CFunction where isactive = true AND isnotleaf=false order by upper(name)</query> 
+        <!-- 
+        	LTS Migration Fix (Hibernate 6 Upgrade):
+        	Changed field names from lowercase 'isactive' and 'isnotleaf' to camelCase 'isActive' and 'isNotLeaf' for CFunction HQL.
+        	The CFunction Java entity uses 'isActive' and 'isNotLeaf' property names.
+        -->
+        <query>from CFunction where isActive = true AND isNotLeaf=false order by upper(name)</query> 
 </egEmp-function> 
 
 <egEmp-CFinancialYear>
@@ -98,7 +103,12 @@
 
 <egEmp-fund>
 	<type>hql</type>
-	<query>from Fund where isactive = true and isNotLeaf!=true order by upper(name)</query>
+	<!-- 
+		LTS Migration Fix (Hibernate 6 Upgrade):
+		Changed field name from camelCase 'isNotLeaf' to lowercase 'isnotleaf' in Fund HQL.
+		The Fund entity maps database column 'isnotleaf' to Java property 'isnotleaf'.
+	-->
+	<query>from Fund where isactive = true and isnotleaf!=true order by upper(name)</query>
 </egEmp-fund> 
 <egEmp-EmployeeStatusMaster>
 	<type>hql</type>

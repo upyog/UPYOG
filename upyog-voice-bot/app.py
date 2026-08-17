@@ -1,4 +1,4 @@
-"""
+""""
 UPYOG Voice Assistant v2 - Telephone Call Model
 =================================================
 A new project that adapts the existing chatbot with continuous listening,
@@ -9,12 +9,12 @@ Port: 8090 (Original project runs on 8080)
 
 from flask import Flask, request, jsonify, send_from_directory, Response
 from flask_cors import CORS
-from sentence_transformers import SentenceTransformer
-import faiss
+from sentence_transformers import SentenceTransformer 
+import faiss 
 import numpy as np
-import pandas as pd
-import os
-import time
+import pandas as pd 
+import os 
+import time 
 import requests
 from langdetect import detect, DetectorFactory
 import logging
@@ -22,6 +22,9 @@ from functools import lru_cache
 import threading
 import json
 import re
+from database import get_any_user_profile_name, save_user_profile_name
+
+
 
 try:
     from groq import Groq
@@ -31,11 +34,57 @@ except ImportError:
 from dotenv import load_dotenv
 load_dotenv()
 
+
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+# ============== HELPER: Extract Phone Number from Session ==============
+
+def extract_phone_from_session(session_id: str) -> str:
+    """
+    Extract phone number from session_id format.
+    Handles: "user_9876543210" or "user-9876543210"
+    Returns: "9876543210" or "default" if not found
+    """
+    if not session_id:
+        return "default"
+   
+    # Normalize: convert hyphens to underscores
+    session_clean = session_id.replace("-", "_")
+    parts = session_clean.split("_")
+   
+    # Check if second part is a 10-digit number
+    if len(parts) > 1:
+        potential_phone = parts[1]
+        if potential_phone.isdigit() and len(potential_phone) == 10:
+            logger.info(f"Extracted phone {potential_phone} from session {session_id}")
+            return potential_phone
+   
+    logger.warning(f"Could not extract phone from session_id: {session_id}")
+    return "default"
+
+# ============== END HELPER ==============
+
+def save_user_profile_info(phone_anchor: str, user_info: dict) -> bool:
+    try:
+        from database import r_client
+        r_client.set(f"user_profile_info:{phone_anchor}", json.dumps(user_info))
+        return True
+    except Exception as e:
+        logger.error(f"Error saving user profile info: {e}")
+        return False
+
+def get_user_profile_info(phone_anchor: str) -> dict:
+    try:
+        from database import r_client
+        data = r_client.get(f"user_profile_info:{phone_anchor}")
+        if data:
+            return json.loads(data.decode('utf-8'))
+    except Exception as e:
+        logger.error(f"Error getting user profile info: {e}")
+    return {}
 
 # Ensure consistent language detection
 DetectorFactory.seed = 0
@@ -80,8 +129,8 @@ load_lock = threading.Lock()
 FAISS_THRESHOLD = 1.08
 EMBEDDING_MODEL = 'all-mpnet-base-v2'
 
+# Loads all required AI models and system resources into memory on startup
 def load_resources():
-    """Load all required resources."""
     global model, data, index, prompt_embeddings, frs_data, frs_index, is_loading
 
     with load_lock:
@@ -175,6 +224,12 @@ Do NOT add information from your general training data.
 Do NOT make up fees, timelines, document names, or process steps.
 If the knowledge base does not have the answer, say so honestly.
 
+RULE 4 — TRANSACTIONAL LIMITATION:
+- You can ONLY execute/book/create transactions for "Advertisement Booking".
+- If the user asks you to apply, register, pay, or book for "Trade License" or "Property Tax", you MUST state directly and professionally:
+  "Currently, UPYOG AI can only execute bookings for Advertisements. I cannot process or apply for Property Tax payments or Trade Licenses directly. However, I can guide you on the steps, fees, or documents required for them. Please let me know if you would like me to explain the guidelines or document requirements!"
+  (In Hindi: "वर्तमान में, UPYOG AI केवल विज्ञापन बुकिंग ही कर सकता है। मैं सीधे संपत्ति कर भुगतान या व्यापार लाइसेंस के लिए आवेदन नहीं कर सकता। हालांकि, मैं आपको उनके लिए आवश्यक चरणों, शुल्क या दस्तावेजों के बारे में मार्गदर्शन कर सकता हूँ। कृपया मुझे बताएं कि क्या आप चाहते हैं कि मैं दिशा-निर्देश या दस्तावेज़ आवश्यकताओं की व्याख्या करूँ!")
+
 RULE 4 — NO HALLUCINATION:
 Never invent information. If you are not sure, say:
   English: "I don't have specific information about that in my knowledge base.
@@ -187,6 +242,11 @@ Always reply in the same language the user used.
 If Hindi → reply in pure Devanagari Hindi.
 If English → reply in English.
 Never mix scripts.
+
+RULE 6 — PROFESSIONAL TONE AND FORMAL ADDRESS:
+Maintain a formal, polite, and professional tone at all times as an official government services AI assistant.
+STRICT RULE: NEVER use informal, overly familiar, or colloquial Hindi terms of address such as "दीदी" (Didi), "काकी" (Kaki), "बेटा" (Beta), "भैया" (Bhaiya), "चाचा" (Chacha), "अंकल" (Uncle), "आंटी" (Aunty), etc.
+Always address the citizen respectfully using formal language (e.g. "आप") and clean professional greetings (e.g. "नमस्ते", "नमस्कार", "Hello") without adding informal terms of address.
 """
 
 # Keywords that are clearly out of domain — reject immediately
@@ -258,8 +318,8 @@ HARD_BLOCK_TOPICS = [
     'jod', 'pyaar', 'shaadi',
 ]
 
+# Only blocks things that are definitely not UPYOG related (strict blocklist)
 def is_hard_blocked(query: str) -> bool:
-    """Only block things that are DEFINITELY not UPYOG related."""
     q = query.lower()
     blocked = any(topic in q for topic in HARD_BLOCK_TOPICS)
     if blocked:
@@ -269,14 +329,13 @@ def is_hard_blocked(query: str) -> bool:
         logger.debug(f"[DOMAIN CHECK] Query '{query}' passed hard-block check.")
     return blocked
 
+# Legacy wrapper for backward compatibility with older domain checks
 def is_in_domain(query: str) -> tuple:
-    """Legacy wrapper for backward compatibility."""
     if is_hard_blocked(query):
         return False, "out_of_domain"
     return True, "ok"
 
 def get_rejection_message(reason: str, lang: str) -> str:
-    """Get rejection message based on reason and language."""
     logger.info(f"[REJECTION] Generating rejection message for reason='{reason}', lang='{lang}'")
     if lang == 'hi':
         return "मैं केवल UPYOG और शहरी सरकारी सेवाओं के बारे में सहायता कर सकता हूँ। कृपया UPYOG सेवाओं के बारे में पूछें।"
@@ -306,32 +365,7 @@ HINDI_PHONETIC_WORDS = {
     'ke', 'ka', 'ki', 'ko', 'se', 'me', 'mein', 'pe', 'ka'
 }
 
-# Common English words (for majority voting)
-COMMON_ENGLISH_WORDS = {
-    'the', 'is', 'are', 'was', 'were', 'be', 'been', 'being',
-    'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should',
-    'may', 'might', 'must', 'shall', 'can',
-    'i', 'you', 'he', 'she', 'it', 'we', 'they', 'what', 'which', 'who', 'whom',
-    'this', 'that', 'these', 'those', 'am', 'is', 'are', 'was', 'were',
-    'my', 'your', 'his', 'her', 'its', 'our', 'their',
-    'and', 'but', 'or', 'not', 'no', 'yes', 'if', 'then', 'else',
-    'how', 'when', 'where', 'why', 'what', 'which',
-    'please', 'thanks', 'thank', 'sorry', 'ok', 'okay',
-    'process', 'apply', 'register', 'form', 'document', 'certificate', 'license',
-    'need', 'want', 'require', 'require', 'required',
-    'online', 'offline', 'website', 'portal', 'app', 'mobile', 'phone',
-    'payment', 'pay', 'fee', 'charge', 'cost', 'price',
-    'time', 'date', 'day', 'week', 'month', 'year',
-    'help', 'information', 'info', 'details', 'tell', 'know', 'understand',
-    'download', 'upload', 'check', 'status', 'track',
-    'submit', 'approval', 'approve', 'reject', 'accept',
-    'property', 'tax', 'water', 'sewerage', 'trade', 'business', 'building',
-    'application', 'request', 'complaint', ' grievance', 'issue', 'problem',
-    'service', 'facility', 'benefit', 'scheme', 'program',
-    'available', 'provide', 'give', 'get', 'receive'
-}
-
-# English words commonly transliterated into Devanagari
+# Common Englis# English words commonly transliterated into Devanagari
 ENGLISH_IN_DEVANAGARI = [
     'व्हाट', 'वॉट', 'हाउ', 'व्हेन', 'व्हेयर', 'वेयर', 'व्हाई', 'हू', 'विच',
     'इज', 'आर', 'वॉज', 'वेयर', 'हैव', 'हैज', 'डू', 'डज',
@@ -344,10 +378,6 @@ ENGLISH_IN_DEVANAGARI = [
 ]
 
 def detect_language(text: str) -> dict:
-    """
-    Script-aware language detection.
-    Returns dict: {'lang': 'hi'|'en', 'script': ..., 'search_lang': 'hi'|'en'}
-    """
     if not text or not text.strip():
         result = {'lang': 'en', 'script': 'english', 'search_lang': 'en'}
         logger.debug(f"[LANG DETECT] Empty text provided -> default result: {result}")
@@ -417,15 +447,15 @@ def detect_language(text: str) -> dict:
     logger.info(f"[LANG DETECT] Defaulting to English for '{text}' -> result: {result}")
     return result
 
+# Legacy wrapper for backward compatibility to detect language on a per-message basis
 def detect_language_per_turn(text: str) -> tuple:
-    """Legacy wrapper for backward compatibility."""
     info = detect_language(text)
     return info['lang'], info['script']
 
 # ============== TRANSLATION ==============
 
+# Translates text using the official Bhashini API with caching for performance
 def translate_text_bhashini(text, source_lang, target_lang):
-    """Translate text using Bhashini with caching."""
     logger.info(f"[BHASHINI TRANSLATE] Translating {len(text)} chars from {source_lang} to {target_lang}")
     payload = {
         "pipelineTasks": [
@@ -459,7 +489,6 @@ def translate_text_bhashini(text, source_lang, target_lang):
         return None
 
 def translate_text(text, source_lang, target_lang):
-    """Translate text with fallback."""
     if source_lang == target_lang or not text:
         logger.debug(f"[TRANSLATE] Skipping translation since source_lang ({source_lang}) == target_lang ({target_lang})")
         return text
@@ -480,6 +509,7 @@ async def generate_edge_tts(text, voice, output_path):
     communicate = edge_tts.Communicate(text, voice)
     await communicate.save(output_path)
 
+# Converts AI text to speech audio using Edge-TTS with Bhashini as a fallback
 def text_to_speech(text, language_code, gender="female"):
     """Convert text to speech using Edge-TTS with Bhashini fallback."""
     logger.info(f"[TTS GENERATION] Input text length: {len(text)} | Language: '{language_code}' | Gender: '{gender}'")
@@ -526,14 +556,18 @@ def text_to_speech(text, language_code, gender="female"):
                 temp_path = temp_audio.name
             try:
                 asyncio.run(generate_edge_tts(text, voice, temp_path))
-            except Exception as async_err:
-                logger.warning(f"[TTS EDGE-TTS] asyncio generate_edge_tts exception: {async_err}")
-
+            except Exception as e:
+                logger.error(f"[TTS EDGE-TTS] Edge-TTS generation exception: {e}")
+            
             with open(temp_path, "rb") as f:
-                audio_content = base64.b64encode(f.read()).decode('utf-8')
+                raw_audio = f.read()
             os.unlink(temp_path)
-            logger.info(f"[TTS EDGE-TTS] Successfully generated audio. Payload length: {len(audio_content)} chars")
-            return audio_content
+            
+            if len(raw_audio) > 100:
+                logger.info(f"[TTS EDGE-TTS] Successfully generated audio. Payload length: {len(raw_audio)} bytes")
+                return base64.b64encode(raw_audio).decode('utf-8')
+            else:
+                logger.error("[TTS EDGE-TTS] Edge-TTS generated empty or invalid audio file, falling back to Bhashini.")
         except Exception as e:
             logger.error(f"[TTS EDGE-TTS] Edge-TTS failed: {e}. Falling back to Bhashini...")
 
@@ -571,7 +605,7 @@ def text_to_speech(text, language_code, gender="female"):
 def contains_urdu_script(text):
     return bool(re.compile(r'[؀-ۿ]').search(text))
 
-def get_rag_response(query: str, history: list, lang: str, search_lang: str = None) -> str:
+def get_rag_response(query: str, history: list, lang: str, search_lang: str = None, session_id: str = "default") -> str:
     """
     LLM-first architecture: LLM understands human language, FAISS provides optional context.
     FAISS is NOT a hard gate - if no context found, LLM answers from general knowledge.
@@ -581,7 +615,61 @@ def get_rag_response(query: str, history: list, lang: str, search_lang: str = No
     if search_lang is None:
         search_lang = lang
 
-    logger.info(f"[RAG QUERY] Initiating get_rag_response for query='{query}', lang='{lang}', search_lang='{search_lang}'")
+    # --- Fetch persistent profile values from Redis ---
+    phone_anchor = extract_phone_from_session(session_id)
+    user_info = get_user_profile_info(phone_anchor)
+    
+    # --- LOAD USER'S LONG-TERM MEMORY (BOOKINGS) ---
+    long_term_bookings_str = ""
+    if phone_anchor != "default":
+        long_term_bookings_str = ""
+    
+    # --- LOAD USER'S PERSISTENT CHAT HISTORY (LONG-TERM REDIS MEMORY) ---
+    long_term_chat_str = ""
+    qdrant_summary_str = ""
+    if phone_anchor != "default":
+        try:
+            from database import get_chat_history
+            redis_chat = get_chat_history(phone_anchor)
+            if redis_chat:
+                long_term_chat_str = "\n\nUSER'S PAST CHAT HISTORY (LONG-TERM REDIS MEMORY):\n"
+                for msg in redis_chat[-15:]:
+                    role_label = "User" if msg.get("role") == "user" else "Assistant"
+                    long_term_chat_str += f"{role_label}: {msg.get('content')}\n"
+                    
+            from memory_manager import MemoryManager
+            query_emb = model.encode([query])[0].tolist()
+            past_summaries = MemoryManager.search_long_term_memory(phone_anchor, query_emb, limit=3)
+            if past_summaries:
+                qdrant_summary_str = "\n\nUSER'S PAST CHAT HISTORY (SUMMARIES FROM QDRANT):\n"
+                for s in past_summaries:
+                    qdrant_summary_str += f"- [{s.get('date_str')}] {s.get('content')}\n"
+        except Exception as e:
+            logger.error(f"Error loading chat history or summaries for RAG context: {e}")
+    
+    profile_details_str = "NO ACTIVE CITIZEN PROFILE FOUND."
+    profile_name = "User"
+    if user_info:
+        profile_name = user_info.get("name") or user_info.get("userName") or "User"
+        profile_details_str = f"""ACTIVE CITIZEN PROFILE:
+- Name: {profile_name}
+- Mobile Number: {user_info.get("mobileNumber") or user_info.get("userName") or "N/A"}
+- Email ID: {user_info.get("emailId") or "N/A"}
+- User ID (UUID): {user_info.get("uuid") or "N/A"}
+- Roles: {', '.join([r.get('name') for r in user_info.get('roles', [])]) if user_info.get('roles') else 'Citizen'}
+- Tenant ID: {user_info.get("tenantId") or "pg"}"""
+    else:
+        profile_name = get_any_user_profile_name()
+        if profile_name and profile_name != "User":
+            profile_details_str = f"""ACTIVE CITIZEN PROFILE:
+- Name: {profile_name}"""
+
+    if long_term_bookings_str:
+        profile_details_str += long_term_bookings_str
+    if qdrant_summary_str:
+        profile_details_str += qdrant_summary_str
+    if long_term_chat_str:
+        profile_details_str += long_term_chat_str
 
     # Step 1: Try FAISS for supporting context (relaxed, not a hard gate)
     context = ""
@@ -616,7 +704,9 @@ def get_rag_response(query: str, history: list, lang: str, search_lang: str = No
     # Step 2: Build language instruction
     if lang == 'hi':
         lang_rule = "CRITICAL LANGUAGE INSTRUCTION: The user is asking in Hindi. You MUST respond in pure Hindi language using Devanagari script ONLY (हिंदी लिपि). Do NOT use Roman script, English sentences, or Romanized Hinglish under any circumstances. Exception: keep UPYOG, NUDM, NOC, GIS, ULB, MoU as-is."
+        lang_rule = "CRITICAL LANGUAGE INSTRUCTION: The user is asking in Hindi. You MUST respond in pure Hindi language using Devanagari script ONLY (हिंदी लिपि). Do NOT use Roman script, English sentences, or Romanized Hinglish under any circumstances. Exception: keep UPYOG, NUDM, NOC, GIS, ULB, MoU as-is."
     else:
+        lang_rule = "CRITICAL LANGUAGE INSTRUCTION: The user is asking in English. You MUST respond in pure standard English script and language ONLY. Do NOT use Romanized Hinglish, Hindi words, or Devanagari script under any circumstances."
         lang_rule = "CRITICAL LANGUAGE INSTRUCTION: The user is asking in English. You MUST respond in pure standard English script and language ONLY. Do NOT use Romanized Hinglish, Hindi words, or Devanagari script under any circumstances."
 
     # Step 3: Build context section
@@ -636,9 +726,21 @@ Answer from your general knowledge about:
 - Standard government processes for urban services in India"""
 
     # Step 4: Build conversation history with language isolation
+    # Step 4: Build conversation history with language isolation
     history_messages = []
     for turn in history[-6:]:
         if "content" in turn and "role" in turn:
+            content = turn["content"]
+            if turn["role"] == "assistant":
+                if lang == 'en' and any('ऀ' <= c <= 'ॿ' for c in content):
+                    translated = translate_text(content, "hi", "en")
+                    if translated and len(translated.strip()) > 0:
+                        content = translated
+                elif lang == 'hi' and not any('ऀ' <= c <= 'ॿ' for c in content):
+                    translated = translate_text(content, "en", "hi")
+                    if translated and len(translated.strip()) > 0:
+                        content = translated
+            history_messages.append({"role": turn["role"], "content": content})
             content = turn["content"]
             if turn["role"] == "assistant":
                 if lang == 'en' and any('ऀ' <= c <= 'ॿ' for c in content):
@@ -662,6 +764,10 @@ You are UPYOG Assistant — expert on:
   GIS Services, Community Hall, Street Vendors, Livelihood, Works Management, etc.
 - MoU details, NUDM state partnerships, citizen processes
 
+{profile_details_str}
+
+If the user asks "who am I?", "what is my name?", "show my details", "show my profile", or asks for their registered details (mobile number, email address, UUID, or roles), respond by listing their CITIZEN PROFILE details above. Address them warmly by their name ({profile_name}).
+
 CRITICAL RULES:
 
 RULE 1 — UNDERSTAND HUMAN LANGUAGE:
@@ -673,6 +779,7 @@ Understand MEANING, not literal words.
 RULE 2 — ALWAYS TRY TO HELP:
 If you know about the topic, answer it.
 NEVER say "जानकारी नहीं है" for UPYOG-related questions.
+If the user asks "what is my name?", "do you remember my name?", or "who am I?", greet them warmly by their name ({profile_name}) stored in your profile system context matrix.
 
 RULE 3 — CONVERSATIONAL SCENARIOS:
 Users describe situations, not textbook questions.
@@ -685,6 +792,31 @@ Only UPYOG/NUDM/ULB services. Politely redirect for unrelated topics.
 
 RULE 5 — BE HONEST:
 If unsure about numbers/dates, say "approximately" rather than refusing.
+
+RULE 6 — TRANSACTIONAL LIMITATION:
+- You can ONLY execute/book/create transactions for "Advertisement Booking".
+- You CANNOT apply, register, pay, or book for "Trade License" or "Property Tax". You must state directly and clearly that you can guide and provide information about them, but you cannot execute or book payments for them.
+
+RULE 7 — FORMATTING (ALWAYS APPLY):
+Format every response using markdown for a clear, professional look:
+- Use **bold** for service names, key terms, and important values.
+- Use numbered lists (1. 2. 3.) for step-by-step processes.
+- Use bullet points (-) for features, requirements, or multiple items.
+- Use headers (### or ####) for multi-section answers.
+- Keep paragraphs short (2-3 lines max).
+- End with a helpful follow-up question when appropriate.
+- Do NOT use emojis. This is a government services portal.
+
+RULE 8 — PROFESSIONAL TONE AND FORMAL ADDRESS:
+Maintain a formal, polite, and professional tone at all times as an official government services AI assistant.
+STRICT RULE: NEVER use informal, overly familiar, or colloquial Hindi terms of address such as "दीदी" (Didi), "काकी" (Kaki), "बेटा" (Beta), "भैया" (Bhaiya), "चाचा" (Chacha), "अंकल" (Uncle), "आंटी" (Aunty), etc.
+Always address the citizen respectfully using formal language (e.g. "आप") and clean professional greetings (e.g. "नमस्ते", "नमस्कार", "Hello") without adding informal terms of address.
+
+RULE 9 — NEVER FABRICATE PERSONAL DATA:
+NEVER invent, guess, or hallucinate complaint IDs, booking numbers, application numbers, dates, or statuses.
+If the user asks to see their complaints or bookings (e.g. "show my complaints", "my grievances", "my bookings"),
+respond: "To view your registered complaints, please type 'show my complaints' or provide your complaint ID (e.g. PG-PGR-XXXX) and I will look it up for you."
+Do NOT list fake IDs or made-up complaint descriptions.
 
 {context_section}"""
 
@@ -728,15 +860,17 @@ If unsure about numbers/dates, say "approximately" rather than refusing.
 
 # ============== RETRIEVAL (legacy wrapper) ==============
 
-def retrieve_document(query, user_lang, history):
-    """Retrieve document using LLM-first approach with FAISS as optional context."""
+# Retrieves relevant documents using an LLM-first approach with FAISS as optional context
+def retrieve_document(query, user_lang, history, session_id="default"):
     global stop_generation
     stop_generation.clear()
-    logger.info(f"[RETRIEVE DOC] Invoking retrieve_document for query='{query}', lang='{user_lang}'")
-    return get_rag_response(query, history, user_lang, search_lang=user_lang)
 
-def retrieve_document_stream(query, user_lang, history):
-    """Streaming version - yields chunks for SSE."""
+    # Use new get_rag_response which has LLM-first architecture
+    # The old FAISS hard gate is removed - LLM will answer from general knowledge if no context
+    return get_rag_response(query, history, user_lang, search_lang=user_lang, session_id=session_id)
+
+# Streaming version of document retrieval that yields text chunks for SSE rendering
+def retrieve_document_stream(query, user_lang, history, phone_anchor="default"):
     global stop_generation
     stop_generation.clear()
     logger.info(f"[STREAMING] Starting SSE stream for query='{query}', lang='{user_lang}'")
@@ -785,13 +919,27 @@ def retrieve_document_stream(query, user_lang, history):
         if frs_context:
             context_str += "\nTechnical Specs:\n" + "\n".join([c['text'] for c in frs_context])
 
+        qdrant_summary_str = ""
+        if phone_anchor != "default":
+            try:
+                from memory_manager import MemoryManager
+                query_emb = model.encode([query_for_search])[0].tolist()
+                past_summaries = MemoryManager.search_long_term_memory(phone_anchor, query_emb, limit=3)
+                if past_summaries:
+                    qdrant_summary_str = "\nPAST CHAT SUMMARIES FROM QDRANT:\n" + "\n".join([f"- [{s.get('date_str')}] {s.get('content')}" for s in past_summaries])
+            except Exception as e:
+                logger.error(f"Error fetching Qdrant summaries in stream: {e}")
+
         system_instr = (
             f"You are the UPYOG AI Concierge. CURRENT OUTPUT LANGUAGE: {'HINDI (DEVANAGARI)' if user_lang == 'hi' else 'ENGLISH'}.\n"
             f"{lang_instruction}\n\n"
             "STRICT GROUNDING RULES:\n"
             "1. USE ONLY THE PROVIDED CONTEXT. Do not use outside knowledge.\n"
-            "2. Max 2-3 sentences.\n\n"
-            f"CONTEXT PROVIDED:\n{context_str if context_str else 'NO CONTEXT. ASK FOR CLARIFICATION.'}"
+            "2. Max 3-4 sentences or a short structured list.\n"
+            "3. You can only execute/book/create transactions for 'Advertisement Booking'. You CANNOT book or execute payments for 'Trade License' or 'Property Tax'. State directly that you can only guide/provide information about them, not perform transactions.\n"
+            "4. FORMATTING: Use **bold** for key terms and service names. Use numbered lists for steps. Use bullet points for features or requirements. Do NOT use emojis. Keep the tone professional and formal.\n"
+            "5. PROFESSIONAL TONE: NEVER use informal or familial terms of address such as 'दीदी' (Didi), 'काकी' (Kaki), 'बेटा' (Beta), 'भैया' (Bhaiya), 'चाचा', 'अंकल', etc. Use clean formal greetings (e.g. 'नमस्ते', 'नमस्कार', 'Hello').\n\n"
+            f"CONTEXT PROVIDED:\n{context_str if context_str else 'NO CONTEXT. ASK FOR CLARIFICATION.'}\n{qdrant_summary_str}"
         )
 
         messages = [
@@ -834,6 +982,179 @@ def retrieve_document_stream(query, user_lang, history):
         logger.error(f"Error in retrieve_document_stream: {e}")
         yield f"data: {json.dumps({'type': 'error', 'error': str(e)})}\n\n"
 
+
+# ==========================================
+# DYNAMIC PLUGIN LOADER & ROUTER
+# ==========================================
+import glob
+import importlib
+from langchain_core.messages import HumanMessage
+from typing import Dict, Any
+
+workflows = {}
+
+def load_plugins():
+    workflow_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "workflow")
+    logger.info(f"Scanning for plugins in {workflow_dir}")
+    
+    for file_path in glob.glob(os.path.join(workflow_dir, "*.py")):
+        module_name = os.path.basename(file_path)[:-3]
+        if module_name in ["__init__", "base_state"] or module_name.startswith("."):
+            continue
+            
+        try:
+            module = importlib.import_module(f"workflow.{module_name}")
+            graph_var_name = f"{module_name}_graph"
+            if hasattr(module, graph_var_name):
+                workflows[module_name] = getattr(module, graph_var_name)
+                logger.info(f"Successfully registered workflow plugin: {module_name}")
+        except Exception as e:
+            logger.error(f"Failed to load plugin '{module_name}': {e}")
+
+# Load plugins immediately at module import time so `workflows` dictionary is populated for Flask
+load_plugins()
+
+# Dispatches the user's input to the correct LangGraph plugin workflow (adv_booking, grievance, etc)
+def process_user_message(user_input: str, phone_number: str, session_id: str,
+                         target_workflow: str = "adv_booking") -> Dict[str, Any]:
+    intent = target_workflow
+    if intent not in workflows:
+        return {"response": f"Service '{intent}' unavailable.", "status": "error"}
+
+    target_graph = workflows[intent]
+    thread_key = phone_number if (phone_number and phone_number != "default") else session_id
+    config = {"configurable": {"thread_id": thread_key}}
+
+    events = target_graph.stream(
+        {"messages": [HumanMessage(content=user_input)], "phone_number": phone_number,
+         "session_id": session_id, "active_service": intent},
+        config,
+        stream_mode="values"
+    )
+    
+    final_message = None
+    graph_input_type = "text"
+    graph_options = []
+
+    event_list = list(events) if events else []
+    if event_list:
+        for ev in event_list:
+            if isinstance(ev, dict) and ev.get("messages"):
+                final_message = ev["messages"][-1]
+            # Capture input_type/options from ANY event that explicitly sets them
+            if isinstance(ev, dict):
+                ev_type = ev.get("input_type")
+                ev_opts = ev.get("options")
+                if ev_type is not None:
+                    graph_input_type = ev_type
+                if ev_opts is not None:
+                    graph_options = ev_opts
+
+    response_text = final_message.content if hasattr(final_message, "content") else str(final_message)
+    
+    import ast
+    input_type = graph_input_type or "text"
+    options = graph_options or []
+    
+    # Parse <ui-dropdown>, <ui-button>, <ui-checkbox-group> options=[...] />
+    choice_match = re.search(r'<ui-(dropdown|button|checkbox-group) options=\[([^\]]*)\]\s*/>', response_text)
+    if choice_match:
+        tag_type = choice_match.group(1)
+        input_type = "choice" if tag_type in ["dropdown", "button"] else "checkbox"
+        raw_options = choice_match.group(2)
+        try:
+            options = ast.literal_eval(f"[{raw_options}]")
+        except:
+            options = [opt.strip().strip('\'"') for opt in raw_options.split(',')]
+        response_text = re.sub(r'<ui-(dropdown|button|checkbox-group)[^>]+>', '', response_text).strip()
+        
+    # Parse <ui-calendar ... />
+    if re.search(r'<ui-calendar[^>]*>', response_text):
+        input_type = "date"
+        response_text = re.sub(r'<ui-calendar[^>]*>', '', response_text).strip()
+        
+    # Parse <ui-file ... />
+    if re.search(r'<ui-file[^>]*>', response_text):
+        input_type = "file"
+        response_text = re.sub(r'<ui-file[^>]*>', '', response_text).strip()
+        
+    # Parse <ui-slot-table data=[...] />  — handles nested JSON objects
+    slot_tag_match = re.search(r'<ui-slot-table data=(\[.*?\])\s*/>', response_text, re.DOTALL)
+    if slot_tag_match:
+        input_type = "slot_table"
+        try:
+            import json
+            options = json.loads(slot_tag_match.group(1))
+        except:
+            pass
+        response_text = re.sub(r'<ui-slot-table[^>]*>', '', response_text).strip()
+        
+
+    # Parse <ui-applicant-form cartAmount="..." />
+    form_match = re.search(r'<ui-applicant-form cartAmount="([^"]*)"\s*/>', response_text)
+    if form_match:
+        input_type = "applicant_form"
+        options = {"cartAmount": form_match.group(1)}
+        response_text = re.sub(r'<ui-applicant-form[^>]*>', '', response_text).strip()
+        
+    # Parse <ui-booking-history data='[...]' /> or <ui-complaint-history data='[...]' />
+    history_match = re.search(r"<ui-(booking|complaint)-history data='(\[.*?\])'\s*/>", response_text, re.DOTALL)
+    if not history_match:
+        history_match = re.search(r'<ui-(booking|complaint)-history data=(\[.*?\])\s*/>', response_text, re.DOTALL)
+    if history_match:
+        tag_kind = history_match.group(1)
+        input_type = "complaint_history" if tag_kind == "complaint" else "booking_history"
+        try:
+            import json
+            options = json.loads(history_match.group(2))
+        except:
+            pass
+        response_text = re.sub(r'<ui-(booking|complaint)-history[^>]*/>', '', response_text).strip()
+    
+    messages_list = []
+    if "\n\n**Continuing Your " in response_text:
+        parts = response_text.split("\n\n**Continuing Your ", 1)
+        msg1 = parts[0].strip()
+        msg2 = ("**Continuing Your " + parts[1]).strip()
+        messages_list = [msg1, msg2]
+    
+    return {
+        "response": response_text,
+        "messages_list": messages_list,
+        "input_type": input_type,
+        "options": options,
+        "status": "done"
+    }
+
+### --- Added Proxy Function for Ad Agent --- ###
+def handle_adv_turn(session_id, user_input, auth_token=None, workflow="booking", reset=False, file_name=None, file_data=None):
+    """
+    Proxy conversation directly to Local LangGraph Agent.
+    CRITICAL: Extract phone_number from session_id before sending to agent.
+    This ensures each phone number has separate MemorySaver memory.
+    """
+    # Extract phone number from session_id 
+    phone_number = extract_phone_from_session(session_id)
+    
+    logger.info(f"[AdAgent] Calling local dynamic plugin engine with phone: {phone_number}")
+    
+    try:
+        result = process_user_message(user_input, phone_number, session_id, target_workflow=workflow)
+        logger.info(f"[PluginAgent] Response status: {result.get('status')}")
+        return result
+    except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        logger.error(f"[AdAgent] Error running LangGraph:\n{error_details}")
+        return {
+            "response": "Sorry, something went wrong while processing your request. Please try again.",
+            "status": "error"
+        }
+
+adv_sessions = {}
+### --- [END] --- ###
+
+
 # ============== ROUTES ==============
 
 """
@@ -846,8 +1167,8 @@ strict_slashes=False accepts both trailing-slash and non-trailing-slash URLs.
 @app.route("/")
 @app.route("/upyog-voice-bot", strict_slashes=False)
 @app.route("/upyog-voice-bot/")
+# Serves the main React frontend application
 def index_page():
-    """Serve the frontend."""
     return send_from_directory(os.path.dirname(os.path.abspath(__file__)), 'index.html')
 
 """
@@ -872,8 +1193,8 @@ probes do not mark the pod as unhealthy.
 @app.route("/chat", methods=["GET", "POST"])
 @app.route("/upyog-voice-bot/chat", methods=["GET", "POST"])
 @app.route("/upyog-voice/chat", methods=["GET", "POST"])
+# Standard non-streaming chat endpoint using the LLM-first architecture
 def chat():
-    """Standard non-streaming chat endpoint with LLM-first architecture."""
     if request.method == "GET":
         logger.info("[ENDPOINT /chat GET] Health check ping")
         return jsonify({"status": "ok", "message": "UPYOG Voice Bot Chat Endpoint"}), 200
@@ -891,14 +1212,92 @@ def chat():
         user_data = request.json or {}
         user_input = user_data.get("query", "")
         session_id = user_data.get("session_id", "default")
-        history = user_data.get("history", [])
-        request_info = user_data.get("RequestInfo", {})
+        request_info = user_data.get("request_info") or user_data.get("RequestInfo", {})
+        phone_anchor = extract_phone_from_session(session_id)
+        from database import get_chat_history
+        history = get_chat_history(phone_anchor) if phone_anchor != "default" else []
+        file_name = user_data.get("file_name")
+        file_data = user_data.get("file_data")
 
-        if not user_input:
-            logger.info(f"[ENDPOINT /chat POST] Empty query received for session '{session_id}'")
+        token = None
+        cached_info = None
+
+        # --- Cache & Validate User Profile Info in Redis dynamically ---
+        phone_anchor = extract_phone_from_session(session_id)
+        if phone_anchor != "default":
+            token = user_data.get("auth_token") or user_data.get("RequestInfo", {}).get("authToken")
+            if token and len(token) > 15:
+                cached_info = get_user_profile_info(phone_anchor)
+                cached_token = cached_info.get("_auth_token") if cached_info else None
+                verified_at = cached_info.get("_verified_at", 0) if cached_info else 0
+                
+                is_valid = False
+                user_info = cached_info
+                
+                # Trust cache if same token and verified in the last 10 minutes (600s)
+                if cached_token == token and (time.time() - verified_at) < 600:
+                    is_valid = True
+                    logger.info(f"[Auth] Token for {phone_anchor} verified from cache (last check: {int(time.time() - verified_at)}s ago)")
+                else:
+                    logger.info(f"[Auth] Token cache miss/expired for {phone_anchor}. Validating with UPYOG...")
+                    is_valid, fresh_user_info = verify_user_auth(token, phone_anchor)
+                    if is_valid:
+                        user_info = fresh_user_info
+                        user_info["_auth_token"] = token
+                        user_info["_verified_at"] = time.time()
+                        save_user_profile_info(phone_anchor, user_info)
+                        cached_info = user_info
+
+                if is_valid:
+                    
+                    # Clear chat history if the user was previously locked out by an expired session
+                    try:
+                        from database import get_chat_history, r_client
+                        history = get_chat_history(phone_anchor)
+                        if history and len(history) > 0:
+                            # Check the entire history to ensure we catch any previous lockout messages
+                            last_messages = [msg.get("content", "") for msg in history]
+                            if any("session has expired" in content.lower() or "सत्र समाप्त हो गया है" in content for content in last_messages):
+                                r_client.delete(f"chat_history:{phone_anchor}")
+                                logger.info(f"[Auth] Cleared old expired session chat history for {phone_anchor}")
+                    except Exception as history_err:
+                        logger.error(f"Error checking/clearing history on re-login: {history_err}")
+                else:
+                    from database import r_client
+                    r_client.delete(f"user_profile_info:{phone_anchor}")
+                    
+                    lang_info = detect_language(user_input)
+                    user_language = lang_info['lang']
+                    msg = "सत्र समाप्त हो गया है। कृपया फिर से लॉगिन करें।" if user_language == 'hi' else "Your login session has expired. Please log in again using the System Login button."
+                    audio = text_to_speech(msg, user_language)
+                    return jsonify({
+                        "response": msg,
+                        "lang": user_language,
+                        "mode": "blocked",
+                        "audio": audio
+                    })
+
+        if file_name and file_data and token:
+            from mcp_tools import upload_to_filestore
+            file_store_id = upload_to_filestore(file_name, file_data, token)
+            if file_store_id:
+                user_input = json.dumps({"document": file_store_id})
+                file_name = None
+
+        if file_name and not user_input:
+            user_input = json.dumps({"document": file_name})
+
+        if not user_input and not file_name:
             return jsonify({"response": "", "lang": "en", "audio": ""})
 
-        # Script-aware language detection
+        # PROFILE MEMORY INTERCEPTOR 
+        # Capture name introductions and anchor permanently to phone number inside Redis
+        name_match = re.search(r'\bi\s+am\s+([A-Za-z]+)\b|\bmy\s+name\s+is\s+([A-Za-z]+)\b', user_input, re.IGNORECASE)
+        if name_match:
+            detected_name = name_match.group(1) or name_match.group(2)
+            save_user_profile_name(phone_anchor, detected_name.strip().capitalize())
+
+        # script-aware language detection returning dict
         lang_info = detect_language(user_input)
         user_language = lang_info['lang']
         detected_script = lang_info['script']
@@ -908,7 +1307,7 @@ def chat():
         logger.info(f"Query: '{user_input}'")
         logger.info(f"Lang: {user_language} | Script: {detected_script} | SearchLang: {search_lang}")
         if request_info:
-            logger.info(f"Auth RequestInfo Present: authToken={bool(request_info.get('authToken'))}, msgId={request_info.get('msgId')}")
+            logger.info(f"Auth RequestInfo Present: authToken={'[REDACTED]' if request_info.get('authToken') else 'None'}, msgId={request_info.get('msgId')}")
         logger.info(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
         # Hard block check - only block truly unrelated topics
@@ -921,100 +1320,381 @@ def chat():
             return jsonify({"response": msg, "lang": user_language,
                            "audio": audio_output, "mode": "blocked"})
 
-        # GATE 1: Check if grievance flow is active for this session
-        grievance_session = get_grievance_session(session_id)
-        if grievance_session.get("active") and grievance_session.get("collecting"):
-            logger.info(f"[CHAT FLOW] Active grievance session detected at step='{grievance_session.get('step')}'")
-            result = handle_grievance_turn(session_id, user_input, user_language)
-            audio_output = text_to_speech(result["message"], result["lang"])
+        # Intercept unsupported transactional requests professionally (Trade License, Property Tax)
+        unsupported_keywords = ["trade license", "property tax", "property text", "व्यापार लाइसेंस", "संपत्ति कर"]
+        action_keywords = ["pay", "book", "apply", "register", "fill", "payment", "details", "भरें", "भुगतान", "आवेदन"]
+        ui_lower = user_input.lower()
+        if any(u in ui_lower for u in unsupported_keywords) and any(a in ui_lower for a in action_keywords):
+            msg = (
+                "वर्तमान में, मैं केवल विज्ञापन बुकिंग में आपकी सहायता कर सकता हूँ। व्यापार लाइसेंस और संपत्ति कर सेवाओं पर काम चल रहा है और वे जल्द ही शुरू की जाएंगी। कृपया मुझे बताएं कि क्या आप विज्ञापन बुकिंग के साथ आगे बढ़ना चाहते हैं!"
+                if user_language == 'hi' else
+                "Currently, I can only assist you with Advertisement Bookings. Support for Trade License and Property Tax services is under development and will be launched soon. Please let me know if you would like to proceed with an advertisement booking!"
+            )
+            audio_output = text_to_speech(msg, user_language)
             return jsonify({
-                "response": result["message"],
-                "lang": result["lang"],
-                "mode": "grievance_collecting" if not result.get("end_session") else "grievance_failed",
-                "end_session": result.get("end_session", False),
-                "grievance_type": result.get("type"),
+                "response": msg,
+                "lang": user_language,
                 "audio": audio_output,
-                "input_type": result.get("input_type", "text"),
-                "options": result.get("options", []),
-                "field": result.get("field", "")
+                "mode": "blocked"
             })
+
+        # ── Direct greeting pre-check (before LLM classifier) ───────────────────
+        # Greet keywords are loaded from config.yml `greeting_keywords`; fallback to
+        # a minimal built-in list so zero Python code needs updating when config changes.
+        _greet_cfg = next(
+            (s for s in _SERVICES_REGISTRY if s.get("key") == "greeting"), {}
+        )
+        _greet_kws = [w.lower() for w in _greet_cfg.get("keywords", [
+            "hello", "hi", "hey", "namaste", "good morning", "good afternoon",
+            "good evening", "hola", "howdy", "greetings", "नमस्ते", "हेलो"
+        ])]
+        _is_pure_greeting = (
+            user_input.lower().strip() in _greet_kws or
+            (len(user_input.split()) <= 3 and any(w in user_input.lower() for w in _greet_kws))
+        )
+        if _is_pure_greeting:
+            # Check active plugin first so we resume, not reset
+            phone = extract_phone_from_session(session_id)
+            thread_key = phone if (phone and phone != "default") else session_id
+            _cfg = {"configurable": {"thread_id": thread_key}}
+            _active_on_greet = None
+            _active_plugins = []
+            for _wf_name, _graph in workflows.items():
+                _st = _graph.get_state(_cfg)
+                if _st and _st.values:
+                    _dk = "draft_booking" if _wf_name == "adv_booking" else "draft_grievance"
+                    _dr = _st.values.get(_dk) or {}
+                    if isinstance(_dr, dict) and any(
+                        v for k, v in _dr.items() if not k.startswith("_") and v is not None
+                    ):
+                        timestamp = getattr(_st, "created_at", "")
+                        _active_plugins.append((_wf_name, timestamp))
+            
+            if _active_plugins:
+                _active_plugins.sort(key=lambda x: x[1], reverse=True)
+                _active_on_greet = _active_plugins[0][0]
+            if _active_on_greet:
+                # Resume active workflow — re-prompt the pending step
+                logger.info(f"[Greeting] Active plugin '{_active_on_greet}' — resuming")
+                _res = process_user_message(user_input, phone, session_id, target_workflow=_active_on_greet)
+                _audio = text_to_speech(_res.get("response", ""), user_language)
+                return jsonify({
+                    "response": _res.get("response", ""),
+                    "lang": user_language, "mode": "agent_active", "audio": _audio,
+                    "input_type": _res.get("input_type", "text"),
+                    "options": _res.get("options", []),
+                })
+            else:
+                # No active workflow — show fresh dynamic greeting
+                greet_msg = build_greeting_response(user_language, workflows)
+                audio_output = text_to_speech(greet_msg, user_language)
+                logger.info("[Greeting] No active plugin — fresh greeting")
+                return jsonify({
+                    "response": greet_msg, "lang": user_language,
+                    "mode": "greeting", "audio": audio_output
+                })
+
+        # ===== EARLY INTERCEPTION: Multi-Draft Selection Menu =====
+        # Must run BEFORE intent classification to avoid keyword conflicts (e.g. "booking" triggering status search)
+        phone = extract_phone_from_session(session_id)
+        thread_key = phone if (phone and phone != "default") else session_id
+        config = {"configurable": {"thread_id": thread_key}}
+
+        pending_multi = _get_multi_draft_pending(phone)
+        if pending_multi and pending_multi.get("status") == "awaiting_multi_draft_choice":
+            from draft_switcher import MultiDraftSwitcher
+            drafts = pending_multi.get("drafts", [])
+            logger.info(f"[DraftSwitcher] Intercepted multi-draft response for {phone}. Input='{user_input}', Drafts={len(drafts)}")
+            selected_draft = MultiDraftSwitcher.resolve_citizen_selection(user_input, drafts)
+            
+            _clear_multi_draft_pending(phone)
+            
+            if selected_draft:
+                target_wf = selected_draft.get("plugin_name")
+                draft_data = selected_draft.get("draft_data", {})
+                logger.info(f"[DraftSwitcher] Selected: {target_wf}, draft_data keys: {list(draft_data.keys())}")
+                
+                # Restore selected draft into LangGraph workflow
+                if target_wf in workflows and draft_data:
+                    draft_key = "draft_booking" if target_wf == "adv_booking" else "draft_grievance"
+                    config_update = {"configurable": {"thread_id": phone if (phone and phone != "default") else session_id}}
+                    workflows[target_wf].update_state(config_update, {draft_key: draft_data})
+                    logger.info(f"[DraftSwitcher] Draft restored into LangGraph for {phone}/{target_wf}")
+                    
+                # Send 'continue' — triggers resume path in intent_and_ui_node directly
+                # 'Continue my application' was matching 'my application' keyword → past bookings bug
+                agent_res = process_user_message("continue", phone, session_id, target_workflow=target_wf)
+                audio = text_to_speech(agent_res.get("response", ""), user_language)
+                return jsonify({
+                    "response": agent_res.get("response", ""), "messages": agent_res.get("messages_list", []),
+                    "lang": user_language, "mode": "agent_active", "audio": audio,
+                    "input_type": agent_res.get("input_type", "text"), "options": agent_res.get("options", []),
+                    "show_button": agent_res.get("show_button")
+                })
+            else:
+                logger.warning(f"[DraftSwitcher] Could not resolve selection '{user_input}' from {len(drafts)} drafts")
 
         # ===== INTENT CLASSIFICATION FLOW =====
-        g_offer = grievance_sessions.get(session_id, {})
+        ui_lower = user_input.strip().lower()
+        is_ui_payload = False
+        if (ui_lower.startswith("[") and ui_lower.endswith("]")) or (ui_lower.startswith("{") and ui_lower.endswith("}")):
+            is_ui_payload = True
 
-        if g_offer.get("offer_pending"):
-            logger.info(f"[CHAT FLOW] Pending grievance offer active for session '{session_id}' — running intent classifier")
-            intent = classify_intent(user_input, history, user_language)
+        if is_ui_payload:
+            intent_data = {"intent": "none", "service": "None", "emotion": "neutral"}
+            logger.info("Bypassed intent classification for UI payload.")
+        elif "save draft" in ui_lower or "save the draft" in ui_lower:
+            intent_data = {"intent": "draft_save", "service": "None", "emotion": "neutral"}
+        elif "continue without saving" in ui_lower:
+            intent_data = {"intent": "draft_continue_no_save", "service": "None", "emotion": "neutral"}
+        elif "cancel application" in ui_lower:
+            intent_data = {"intent": "draft_cancel_application", "service": "None", "emotion": "neutral"}
+        elif "continue application" in ui_lower:
+            intent_data = {"intent": "draft_continue_application", "service": "None", "emotion": "neutral"}
+        elif "cancel draft" in ui_lower:
+            intent_data = {"intent": "draft_cancel", "service": "None", "emotion": "neutral"}
+        elif "end conversation" in ui_lower:
+            intent_data = {"intent": "end_conversation", "service": "None", "emotion": "neutral"}
+        elif "draft" in ui_lower and any(w in ui_lower for w in ["show", "resume", "continue", "open"]):
+            intent_data = {"intent": "draft_resume", "service": "None", "emotion": "neutral"}
+        else:
+            # Run intent classifier FIRST - before any FAISS filtering
+            intent_data = classify_intent(user_input, history, user_language)
+            
+        intent = intent_data['intent']
+        logger.info(f"INTENT: {intent}, SERVICE: {intent_data.get('service')}, EMOTION: {intent_data.get('emotion')}")
 
-            if intent["intent"] == "grievance_confirm":
-                logger.info(f"[CHAT FLOW] User confirmed grievance offer — initializing grievance collection flow")
-                grievance_sessions[session_id] = {
-                    "active": True,
-                    "collecting": True,
-                    "step": "START",
-                    "data": {},
-                    "offer_pending": False,
-                    "auth_token": None,
-                    "user_info": None,
-                    "categories": {},
-                    "localities": []
-                }
-                result = handle_grievance_turn(session_id, "", user_language)
-                audio_output = text_to_speech(result["message"], result["lang"])
-                return jsonify({
-                    "response": result["message"],
-                    "lang": user_language,
-                    "mode": "grievance_collecting",
-                    "step": "START",
-                    "audio": audio_output,
-                    "input_type": result.get("input_type", "text"),
-                    "options": result.get("options", []),
-                    "field": result.get("field", "")
-                })
+        active_plugin = None
+        
+        # Check if there's an active session in any plugin
+        active_plugins = []
+        for wf_name, graph in workflows.items():
+            state = graph.get_state(config)
+            if state and state.values:
+                draft_key = "draft_booking" if wf_name == "adv_booking" else "draft_grievance"
+                draft = state.values.get(draft_key) or {}
+                if isinstance(draft, dict):
+                    user_fields = [v for k, v in draft.items() if not k.startswith("_") and v is not None]
+                    if user_fields:
+                        timestamp = getattr(state, "created_at", "")
+                        active_plugins.append((wf_name, timestamp))
+        
+        if active_plugins:
+            active_plugins.sort(key=lambda x: x[1], reverse=True)
+            active_plugin = active_plugins[0][0]
 
-            elif intent["intent"] == "grievance_cancel":
-                logger.info(f"[CHAT FLOW] User cancelled pending grievance offer — clearing offer and answering query")
-                grievance_sessions[session_id] = {"active": False, "offer_pending": False}
-                response_text = retrieve_document(user_input, user_language, history)
-                response_text = re.sub(r'\bUpyog\b', 'UPYOG', response_text, flags=re.IGNORECASE)
-                audio_output = text_to_speech(response_text, user_language)
-                return jsonify({
-                    "response": response_text,
-                    "lang": user_language,
-                    "detected_script": detected_script,
-                    "mode": "faq",
-                    "audio": audio_output
-                })
+        # Map ML intents & dynamic config keywords to plugin names (Zero Hardcoding)
+        plugin_intent = None
+        ui_lower = user_input.lower()
 
-            else:
-                logger.info(f"[CHAT FLOW] User asked un-related query while offer pending — dropping offer")
-                grievance_sessions[session_id] = {"active": False, "offer_pending": False}
+        # Dynamic keyword & ID prefix matching from config.yml services registry
+        for srv in _SERVICES_REGISTRY:
+            s_key = srv.get("key")
+            if s_key not in workflows:
+                continue
+            keywords = [k.lower() for k in srv.get("keywords", [])]
+            id_prefixes = [p.lower() for p in srv.get("id_prefixes", [])]
+            
+            has_id = any(p in ui_lower for p in id_prefixes)
+            has_kw = any(re.search(rf'\b{re.escape(w)}\b', ui_lower) for w in keywords)
+            
+            if has_id or has_kw:
+                plugin_intent = s_key
+                break
 
-        # PATH C: Normal flow - classify intent first
-        intent = classify_intent(user_input, history, user_language)
-        logger.info(f"[INTENT CLASSIFIER RESULT] INTENT: {intent['intent']}, SERVICE: {intent.get('service')}, EMOTION: {intent.get('emotion')}, REASONING: {intent.get('reasoning')}")
+        if not plugin_intent:
+            if intent in ["grievance_candidate", "grievance_status_candidate"]:
+                plugin_intent = "grievance"
+            elif intent in ["adv_candidate", "adv_confirm", "adv_status_candidate", "booking_candidate", "booking_confirm"]:
+                plugin_intent = "adv_booking"
 
-        if intent["intent"] == "grievance_candidate":
-            logger.info(f"[CHAT FLOW] Intent is grievance_candidate — offering grievance flow to user")
-            grievance_sessions[session_id] = {
-                "active": False,
-                "offer_pending": True,
-                "pending_service": intent.get("service"),
-                "pending_emotion": intent.get("emotion", "neutral")
-            }
-            offer_message = build_grievance_offer(
-                service=intent.get("service"),
-                emotion=intent.get("emotion", "neutral"),
-                lang=user_language
-            )
-            audio_output = text_to_speech(offer_message, user_language)
-            return jsonify({
-                "response": offer_message,
-                "lang": user_language,
-                "mode": "grievance_offered",
-                "detected_emotion": intent.get("emotion"),
-                "audio": audio_output
+        # Clear active_plugin if user explicitly requested a different workflow
+        if plugin_intent and active_plugin and plugin_intent != active_plugin:
+            logger.info(f"[Router] User switched service: {active_plugin} -> {plugin_intent}")
+            active_plugin = plugin_intent
+
+        # === GENERIC WORKFLOW INTERRUPTION & DRAFT MANAGER ===
+        # 1. Handle FAQ while in active workflow
+        if intent == "faq" and active_plugin:
+            logger.info(f"FAQ Interruption triggered for {phone}")
+            _set_pending_interruption(phone, {
+                "question": user_input,
+                "plugin": active_plugin,
+                "status": "awaiting_action"
             })
+            msg = "Your current application is still in progress. What would you like to do?"
+            audio = text_to_speech(msg, user_language)
+            return jsonify({
+                "response": msg,
+                "lang": user_language,
+                "mode": "agent_active",
+                "audio": audio,
+                "input_type": "choice",
+                "options": ["Save Draft", "Continue Without Saving", "Cancel Application"],
+                "show_button": True
+            })
+
+        # 2. Handle explicit "Save Draft" intent
+        if intent == "draft_save":
+            pending = _get_pending_interruption(phone)
+            plugin = pending.get("plugin") or active_plugin
+            if plugin and plugin in workflows:
+                config_check = {"configurable": {"thread_id": phone if (phone and phone != "default") else session_id}}
+                state = workflows[plugin].get_state(config_check)
+                if state and state.values:
+                    draft_key = "draft_booking" if plugin == "adv_booking" else "draft_grievance"
+                    draft = state.values.get(draft_key) or {}
+                    if draft:
+                        from memory_manager import MemoryManager
+                        MemoryManager.save_draft_state(phone, plugin, draft)
+                        logger.info(f"Explicitly saved draft for {phone}/{plugin}: {draft}")
+                
+            if pending and pending.get("status") == "awaiting_action":
+                faq_ans = retrieve_document(pending["question"], user_language, history, session_id=session_id)
+                msg = f"Your application has been saved successfully. You can continue it anytime.\n\n{faq_ans}\n\nWould you like to continue your application now?"
+                pending["status"] = "awaiting_resume"
+                _set_pending_interruption(phone, pending)
+                audio = text_to_speech(msg, user_language)
+                return jsonify({
+                    "response": msg, "lang": user_language, "mode": "agent_active", "audio": audio,
+                    "input_type": "choice", "options": ["Continue Application", "End Conversation"], "show_button": True
+                })
+            else:
+                msg = "Your draft application has been saved successfully in memory. You can resume it anytime!"
+                audio = text_to_speech(msg, user_language)
+                return jsonify({"response": msg, "lang": user_language, "mode": "agent_active", "audio": audio})
+
+        if intent == "draft_continue_no_save":
+            pending = _get_pending_interruption(phone)
+            if pending:
+                faq_ans = retrieve_document(pending["question"], user_language, history, session_id=session_id)
+                target_wf = pending["plugin"]
+                _clear_pending_interruption(phone)
+                agent_res = process_user_message("", phone, session_id, target_workflow=target_wf)
+                msg = f"{faq_ans}\n\nContinuing Your Application...\n\n{agent_res.get('response', '')}"
+                audio = text_to_speech(msg, user_language)
+                return jsonify({
+                    "response": msg, "messages": agent_res.get("messages_list", []), "lang": user_language,
+                    "mode": "agent_active", "audio": audio, "input_type": agent_res.get("input_type", "text"),
+                    "options": agent_res.get("options", []), "show_button": agent_res.get("show_button")
+                })
+                
+        if intent == "draft_cancel_application":
+            pending = _get_pending_interruption(phone)
+            if pending:
+                faq_ans = retrieve_document(pending["question"], user_language, history, session_id=session_id)
+                target_wf = pending["plugin"]
+                _clear_pending_interruption(phone)
+                from memory_manager import MemoryManager
+                MemoryManager.delete_draft_state(phone, target_wf)
+                process_user_message("[CANCEL_DRAFT]", phone, session_id, target_workflow=target_wf)
+                msg = f"{faq_ans}\n\nYour previous application has been cancelled."
+                audio = text_to_speech(msg, user_language)
+                return jsonify({
+                    "response": msg, "lang": user_language, "mode": "faq", "audio": audio
+                })
+                
+        if intent == "draft_continue_application":
+            pending = _get_pending_interruption(phone)
+            if pending:
+                target_wf = pending["plugin"]
+                _clear_pending_interruption(phone)
+                
+                # Fetch module-isolated draft from Qdrant and inject it back into LangGraph checkpointer
+                from memory_manager import MemoryManager
+                draft = MemoryManager.get_draft_state(phone, target_wf)
+                if draft and draft.get("draft_data") and target_wf in workflows:
+                    draft_key = "draft_booking" if target_wf == "adv_booking" else "draft_grievance"
+                    config_update = {"configurable": {"thread_id": phone if (phone and phone != "default") else session_id}}
+                    workflows[target_wf].update_state(config_update, {draft_key: draft["draft_data"]})
+                
+                agent_res = process_user_message("Continue my application", phone, session_id, target_workflow=target_wf)
+                audio = text_to_speech(agent_res.get("response", ""), user_language)
+                return jsonify({
+                    "response": agent_res.get("response", ""), "messages": agent_res.get("messages_list", []), "lang": user_language,
+                    "mode": "agent_active", "audio": audio, "input_type": agent_res.get("input_type", "text"),
+                    "options": agent_res.get("options", []), "show_button": agent_res.get("show_button")
+                })
+                
+        if intent == "end_conversation":
+            _clear_pending_interruption(phone)
+            msg = "Goodbye! Have a great day!"
+            audio = text_to_speech(msg, user_language)
+            return jsonify({"response": msg, "lang": user_language, "mode": "faq", "audio": audio})
+            
+        # 3. Global Dynamic Multi-Draft Resume & Switcher
+        if intent == "draft_resume":
+            from draft_switcher import MultiDraftSwitcher
+            from memory_manager import MemoryManager
+            
+            switcher_res = MultiDraftSwitcher.inspect_and_render_switcher(phone, user_input=user_input, user_language=user_language)
+            
+            if switcher_res["has_drafts"]:
+                msg = switcher_res["menu"]
+                
+                # Single Draft Case: Show summary & Continue/Cancel options
+                if switcher_res["count"] == 1:
+                    single_draft = switcher_res.get("single_draft") or switcher_res["drafts"][0]
+                    plugin = single_draft.get("plugin_name", "adv_booking")
+                    draft_data = single_draft.get("draft_data", {})
+                    summary = format_draft_summary(draft_data, plugin)
+                    msg = f"{summary}\n\nWhat would you like to do?"
+                    _set_pending_interruption(phone, {"plugin": plugin, "status": "awaiting_resume"})
+                    audio = text_to_speech(msg, user_language)
+                    return jsonify({
+                        "response": msg, "lang": user_language, "mode": "agent_active", "audio": audio,
+                        "input_type": "choice", "options": ["Continue Application", "Cancel Draft"], "show_button": True
+                    })
+                else:
+                    # Multiple Drafts Case (> 1): Display Dynamic Switcher Menu
+                    _set_multi_draft_pending(phone, switcher_res["drafts"])
+                    logger.info(f"[DraftSwitcher] Stored {len(switcher_res['drafts'])} drafts in Redis for {phone}")
+                    audio = text_to_speech(msg, user_language)
+                    return jsonify({
+                        "response": msg, "lang": user_language, "mode": "agent_active", "audio": audio,
+                        "input_type": "choice",
+                        "options": switcher_res.get("options") or [f"Option {i+1}" for i in range(switcher_res["count"])] + ["Start New Service Request"],
+                        "show_button": True
+                    })
+            else:
+                msg = "I couldn't find any saved drafts for your account."
+                audio = text_to_speech(msg, user_language)
+                return jsonify({"response": msg, "lang": user_language, "mode": "faq", "audio": audio})
+                
+        if intent == "draft_cancel":
+            pending = _get_pending_interruption(phone)
+            target_wf = pending.get("plugin") or active_plugin
+            _clear_pending_interruption(phone)
+            
+            # Explicitly delete draft from Qdrant Vector DB
+            from memory_manager import MemoryManager
+            MemoryManager.delete_draft_state(phone, target_wf)
+            
+            if target_wf and target_wf in workflows:
+                process_user_message("[CANCEL_DRAFT]", phone, session_id, target_workflow=target_wf)
+                
+            msg = "Your draft has been cancelled successfully."
+            audio = text_to_speech(msg, user_language)
+            return jsonify({"response": msg, "lang": user_language, "mode": "faq", "audio": audio})
+
+        target_wf = plugin_intent or active_plugin
+        if target_wf and target_wf in workflows:
+            logger.info(f"Routing to dynamic plugin: {target_wf}")
+            agent_res = process_user_message(user_input, phone, session_id, target_workflow=target_wf)
+            audio = text_to_speech(agent_res.get("response", ""), user_language)
+            return jsonify({
+                "response": agent_res.get("response", ""),
+                "messages": agent_res.get("messages_list", []),
+                "lang": user_language,
+                "mode": "agent_active",
+                "audio": audio,
+                "input_type": agent_res.get("input_type", "text"),
+                "options": agent_res.get("options", []),
+                "show_button": agent_res.get("show_button"),
+                "redirect_url": agent_res.get("redirect_url")
+            })
+
+
 
         # PATH D: Normal RAG flow (intent is "faq")
         in_domain, reason = is_in_domain(user_input)
@@ -1041,7 +1721,7 @@ def chat():
                 "audio": audio_output
             })
 
-        response_text = retrieve_document(user_input, user_language, history)
+        response_text = retrieve_document(user_input, user_language, history, session_id=session_id)
 
         if response_text and ("शिकायत" in response_text or "grievance" in response_text.lower() or "एक शिकायत" in response_text):
             audio_output = text_to_speech(response_text, user_language)
@@ -1069,10 +1749,110 @@ def chat():
         logger.error(f"[ENDPOINT /chat ERROR] Exception: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
+import threading
+
+# Summarizes a block of older chat messages and archives them in Qdrant long-term memory
+def summarize_and_store_memory(phone_anchor, messages_to_summarize):
+    global groq_client, model
+    try:
+        from memory_manager import MemoryManager
+        
+        # Format messages for LLM
+        convo_text = ""
+        for msg in messages_to_summarize:
+            role = "User" if msg.get("role") == "user" else "Assistant"
+            convo_text += f"{role}: {msg.get('content')}\n"
+            
+        if not groq_client:
+            from groq import Groq
+            groq_client = Groq(api_key=GROQ_API_KEY)
+            
+        prompt = f"""You are an AI memory summarization assistant.
+Please summarize the following conversation chunk into 2 concise sentences. Focus on the core intent, entities, and any factual details discussed.
+
+Conversation:
+{convo_text}
+
+Summary:"""
+
+        response = groq_client.chat.completions.create(
+            messages=[{"role": "user", "content": prompt}],
+            model="llama-3.1-8b-instant",
+            max_tokens=150,
+            temperature=0.3
+        )
+        summary_text = response.choices[0].message.content.strip()
+        
+        # Generate embedding
+        embedding = model.encode([summary_text])[0].tolist()
+        
+        # Save to Qdrant
+        success = MemoryManager.save_long_term_interaction(
+            phone_number=phone_anchor,
+            role="system_summary",
+            content=summary_text,
+            embedding=embedding
+        )
+        if success:
+            logger.info(f"Successfully summarized and stored memory for {phone_anchor}")
+    except Exception as e:
+        logger.error(f"Error in summarize_and_store_memory: {e}")
+
+@app.after_request
+def log_chat_to_redis(response):
+    # Only intercept chat endpoints
+    if request.path not in ["/chat", "/upyog-voice-bot/chat"]:
+        return response
+        
+    try:
+        if response.status_code == 200:
+            req_data = request.get_json(silent=True) or {}
+            session_id = req_data.get("session_id")
+            user_input = req_data.get("query", "").strip()
+            
+            # Fallback label for file uploads
+            file_name = req_data.get("file_name")
+            if not user_input and file_name:
+                user_input = json.dumps({"document": file_name})
+                
+            res_data = response.get_json(silent=True) or {}
+            response_text = res_data.get("response", "").strip()
+            
+            if session_id and user_input and response_text:
+                phone_anchor = extract_phone_from_session(session_id)
+                if phone_anchor != "default":
+                    from database import get_chat_history, save_chat_history
+                    redis_chat = get_chat_history(phone_anchor)
+                    # Check safety buffer to avoid duplicate saves on page refresh or retries
+                    if not redis_chat or redis_chat[-1].get("content") != response_text or redis_chat[-2].get("content") != user_input:
+                        redis_chat.append({"role": "user", "content": user_input})
+                        redis_chat.append({"role": "assistant", "content": response_text})
+                        
+                        # --- SLIDING WINDOW SUMMARIZATION ---
+                        if len(redis_chat) >= 20: # 10 turns
+                            messages_to_summarize = redis_chat[:10] # Take oldest 10
+                            redis_chat = redis_chat[10:] # Keep newest 10
+                            
+                            # Run summarization asynchronously to avoid blocking the HTTP response
+                            threading.Thread(target=summarize_and_store_memory, args=(phone_anchor, messages_to_summarize)).start()
+                            logger.info(f"Summarization Triggered for {phone_anchor}. Truncating Redis chat.")
+                            
+                        save_chat_history(phone_anchor, redis_chat)
+    except Exception as e:
+        logger.error(f"Error logging chat to Redis after_request: {e}")
+        
+    return response
+
+"""
+Streaming SSE endpoint — two route aliases:
+  /stream                  → direct local access
+  /upyog-voice-bot/stream  → production via niautt EKS ingress
+GET requests return a health check response for Kubernetes liveness probes.
+"""
 @app.route("/stream", methods=["GET", "POST"])
 @app.route("/upyog-voice-bot/stream", methods=["GET", "POST"])
+# Streaming SSE (Server-Sent Events) endpoint for a faster typing effect on the UI
 def stream():
-    """Streaming SSE endpoint for lower perceived latency."""
     if request.method == "GET":
         logger.info("[ENDPOINT /stream GET] Health check ping")
         return jsonify({"status": "ok", "message": "UPYOG Voice Bot Stream Endpoint"}), 200
@@ -1087,16 +1867,90 @@ def stream():
 
         user_data = request.json or {}
         user_input = user_data.get("query", "")
-        history = user_data.get("history", [])
+        # NOTE: Don't use lang from frontend - detect fresh per turn
+        session_id = user_data.get("session_id", "default")
+        phone_anchor = extract_phone_from_session(session_id)
+        from database import get_chat_history
+        history = get_chat_history(phone_anchor) if phone_anchor != "default" else []
 
         user_language, detected_script = detect_language_per_turn(user_input)
         logger.info(f"[ENDPOINT /stream POST] Stream request: '{user_input}' -> lang={user_language} (script: {detected_script})")
 
-        return Response(retrieve_document_stream(user_input, user_language, history), mimetype='text/event-stream')
+        return Response(retrieve_document_stream(user_input, user_language, history, phone_anchor=phone_anchor), mimetype='text/event-stream')
 
     except Exception as e:
         logger.error(f"[ENDPOINT /stream ERROR] Exception: {e}")
         return Response(f"data: {json.dumps({'type': 'error', 'error': str(e)})}\n\n", mimetype='text/event-stream')
+
+"""
+Stop endpoint — called when the user interrupts (barges in) while the bot is speaking.
+Two route aliases:
+  /stop                  → direct local access
+  /upyog-voice-bot/stop  → production via niautt EKS ingress
+"""
+# === GENERIC WORKFLOW INTERRUPTION & DRAFT MANAGER ===
+
+def _set_pending_interruption(phone: str, data: dict):
+    try:
+        from database import r_client
+        r_client.set(f"pending_interruption:{phone}", json.dumps(data), ex=600)
+    except Exception as e:
+        logger.error(f"[Interruption] Redis set error: {e}")
+
+def _get_pending_interruption(phone: str) -> dict:
+    try:
+        from database import r_client
+        raw = r_client.get(f"pending_interruption:{phone}")
+        if raw:
+            return json.loads(raw)
+    except Exception as e:
+        logger.error(f"[Interruption] Redis get error: {e}")
+    return {}
+
+def _clear_pending_interruption(phone: str):
+    try:
+        from database import r_client
+        r_client.delete(f"pending_interruption:{phone}")
+    except Exception as e:
+        logger.error(f"[Interruption] Redis delete error: {e}")
+
+# Redis-backed multi-draft pending state (survives across requests / gunicorn workers)
+def _set_multi_draft_pending(phone: str, drafts: list):
+    """Persist awaiting_multi_draft_choice state in Redis with 10-min TTL."""
+    try:
+        from database import r_client
+        r_client.set(f"pending_multi_draft:{phone}", json.dumps({"status": "awaiting_multi_draft_choice", "drafts": drafts}), ex=600)
+    except Exception as e:
+        logger.warning(f"[MultiDraft] Redis set failed: {e}")
+
+def _get_multi_draft_pending(phone: str):
+    """Retrieve awaiting_multi_draft_choice state from Redis."""
+    try:
+        from database import r_client
+        raw = r_client.get(f"pending_multi_draft:{phone}")
+        if raw:
+            return json.loads(raw)
+    except Exception as e:
+        logger.warning(f"[MultiDraft] Redis get failed: {e}")
+    return None
+
+def _clear_multi_draft_pending(phone: str):
+    """Clear awaiting_multi_draft_choice state from Redis."""
+    try:
+        from database import r_client
+        r_client.delete(f"pending_multi_draft:{phone}")
+    except Exception:
+        pass
+
+# Formats any generic workflow draft dictionary into a clean Markdown summary for the UI
+def format_draft_summary(draft_data: dict, wf_name: str) -> str:
+    title = wf_name.replace('_', ' ').title()
+    summary = f"**{title} Draft**\n\n"
+    for k, v in draft_data.items():
+        if not k.startswith("_") and v is not None:
+            clean_k = k.replace('_', ' ').title()
+            summary += f"• **{clean_k}**: {v}\n"
+    return summary
 
 @app.route("/stop", methods=["POST"])
 @app.route("/upyog-voice-bot/stop", methods=["POST"])
@@ -1107,18 +1961,236 @@ def stop():
     logger.info("[ENDPOINT /stop POST] Stop signal set — interrupting generation thread")
     return jsonify({"status": "stopped"}), 200
 
+# ============== UPYOG LOGIN & OTP API INTEGRATIONS ==============
+
+def send_otp_upyog(mobile):
+    from mcp_tools import UPYOG_BASE_URL, _cfg, _BASIC_AUTH
+    auth_cfg   = _cfg.get("auth", {})
+    state_tenant = _cfg.get("state_tenant", "pg")
+    url = f"{UPYOG_BASE_URL}{_cfg.get('endpoints', {}).get('send_otp', '/user-otp/v1/_send')}?tenantId={state_tenant}&_={int(time.time() * 1000)}"
+    payload = {
+        "otp": {
+            "mobileNumber": mobile,
+            "tenantId":     state_tenant,
+            "userType":     auth_cfg.get("user_type", "CITIZEN").lower(),
+            "type":         "login"
+        },
+        "RequestInfo": {
+            "apiId":              "Rainmaker",
+            "msgId":              f"{int(time.time() * 1000)}|en_IN",
+            "plainAccessRequest": {}
+        }
+    }
+    try:
+        res = requests.post(url, json=payload, headers={"Content-Type": "application/json"})
+        # UPYOG OTP API returns 201 Created on success (not 200) — both are valid
+        if res.status_code not in (200, 201):
+            logger.error(f"UPYOG OTP Error {res.status_code}: {res.text}")
+        else:
+            logger.info(f"UPYOG OTP sent successfully (HTTP {res.status_code})")
+        
+        try:
+            return res.json()
+        except ValueError:
+            logger.error(f"UPYOG OTP Non-JSON response: {res.text}")
+            return {"error": f"Invalid response from server: {res.status_code}", "details": res.text[:200]}
+            
+    except Exception as e:
+        logger.error(f"Error sending UPYOG OTP: {e}")
+        return {"error": str(e)}
+
+def verify_otp_upyog(mobile, otp):
+    from mcp_tools import UPYOG_BASE_URL, _cfg, _BASIC_AUTH
+    auth_cfg     = _cfg.get("auth", {})
+    state_tenant = _cfg.get("state_tenant", "pg")
+    url = f"{UPYOG_BASE_URL}{auth_cfg.get('token_path', '/user/oauth/token')}"
+    data = {
+        "username":   mobile,
+        "password":   otp,
+        "grant_type": auth_cfg.get("grant_type", "password"),
+        "scope":      auth_cfg.get("scope", "read"),
+        "tenantId":   state_tenant,
+        "userType":   auth_cfg.get("user_type", "CITIZEN")
+    }
+    headers = {
+        "Content-Type":  "application/x-www-form-urlencoded",
+        "Authorization": _BASIC_AUTH
+    }
+    try:
+        res = requests.post(url, data=data, headers=headers)
+        if res.status_code != 200:
+            logger.error(f"UPYOG Verify OTP Error {res.status_code}: {res.text}")
+        try:
+            return res.json()
+        except ValueError:
+            logger.error(f"UPYOG Verify OTP Non-JSON response: {res.text}")
+            return {"error": f"Invalid response from server: {res.status_code}", "details": res.text[:200]}
+    except Exception as e:
+        logger.error(f"Error verifying UPYOG OTP: {e}")
+        return {"error": str(e)}
+
+def fetch_user_details_upyog(mobile, auth_token):
+    from mcp_tools import UPYOG_BASE_URL, _cfg
+    state_tenant = _cfg.get("state_tenant", "pg")
+    url = f"{UPYOG_BASE_URL}{_cfg.get('endpoints', {}).get('user_search', '/user/_search')}?_={int(time.time() * 1000)}"
+    payload = {
+        "tenantId":  state_tenant,
+        "userName":  mobile,
+        "pageSize":  "100",
+        "RequestInfo": {
+            "apiId":              "Rainmaker",
+            "authToken":          auth_token,
+            "msgId":              f"{int(time.time() * 1000)}|en_IN",
+            "plainAccessRequest": {}
+        }
+    }
+    try:
+        res  = requests.post(url, json=payload, headers={"Content-Type": "application/json"})
+        if res.status_code != 200:
+            logger.error(f"UPYOG User Search Error {res.status_code}: {res.text}")
+        try:
+            data = res.json()
+        except ValueError:
+            logger.error(f"UPYOG User Search Non-JSON response: {res.text}")
+            return {}
+            
+        if "user" in data and len(data["user"]) > 0:
+            return data["user"][0]
+        return {}
+    except Exception as e:
+        logger.error(f"Error fetching user details from UPYOG: {e}")
+        return {}
+
+def verify_user_auth(auth_token, uuid_or_mobile=None, tenant_id=None):
+    from mcp_tools import UPYOG_BASE_URL, _cfg
+    state_tenant = tenant_id or _cfg.get("state_tenant", "pg")
+    url = f"{UPYOG_BASE_URL}{_cfg.get('endpoints', {}).get('user_search', '/user/_search')}?_={int(time.time() * 1000)}"
+    headers = {
+        "Content-Type": "application/json",
+        "auth-token": str(auth_token)
+    }
+    payload = {
+        "tenantId": state_tenant,
+        "pageSize": "100",
+        "RequestInfo": {
+            "apiId":              "Rainmaker",
+            "authToken":          auth_token,
+            "msgId":              f"{int(time.time() * 1000)}|en_IN",
+            "plainAccessRequest": {}
+        }
+    }
+    if uuid_or_mobile:
+        if "-" in str(uuid_or_mobile):
+            payload["uuid"] = [str(uuid_or_mobile)]
+        else:
+            payload["userName"] = str(uuid_or_mobile)
+
+    max_retries = 2
+    timeout_seconds = 5
+    
+    for attempt in range(max_retries + 1):
+        try:
+            logger.info(f"[Auth] Verifying token for {uuid_or_mobile} (attempt {attempt + 1}/{max_retries + 1})...")
+            res = requests.post(url, json=payload, headers=headers, timeout=timeout_seconds)
+            
+            if res.status_code in [500, 502, 504]:
+                logger.warning(f"[Auth] Received transient status {res.status_code} from UPYOG user search. Retrying...")
+                if attempt < max_retries:
+                    time.sleep(1)
+                    continue
+                
+            if res.status_code != 200:
+                logger.error(f"UPYOG Verify Auth Error {res.status_code}: {res.text}")
+                return False, {}
+                
+            try:
+                data = res.json()
+            except ValueError:
+                logger.error(f"UPYOG Verify Auth Non-JSON response: {res.text}")
+                return False, {}
+                
+            if "user" in data and len(data["user"]) > 0:
+                logger.info(f"[Auth] Verified user successfully: {data['user'][0].get('userName') or data['user'][0].get('mobileNumber')}")
+                return True, data["user"][0]
+            else:
+                logger.error(f"UPYOG Verify Auth failed - No user found for {uuid_or_mobile}. Response: {data}")
+                return False, {}
+                
+        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as net_err:
+            logger.warning(f"[Auth] Network error/timeout on attempt {attempt + 1}: {net_err}")
+            if attempt < max_retries:
+                time.sleep(1)
+                continue
+            logger.error("[Auth] All auth verification retries failed due to network errors.")
+            return False, {}
+        except Exception as e:
+            logger.error(f"Error checking user auth: {e}")
+            return False, {}
+            
+    return False, {}
+
+@app.route("/api/send-otp", methods=["POST"])
+@app.route("/upyog-voice-bot/api/send-otp", methods=["POST"])
+def api_send_otp():
+    req_data = request.json or {}
+    mobile = req_data.get("mobile")
+    if not mobile or len(mobile) != 10:
+        return jsonify({"error": "Invalid mobile number"}), 400
+
+    client_ip = request.remote_addr or "unknown"
+    rate_key = f"otp_ratelimit:{mobile}:{client_ip}"
+    try:
+        from database import r_client
+        attempts = r_client.incr(rate_key)
+        if attempts == 1:
+            r_client.expire(rate_key, 600)  # 10 minutes rate limit window
+        if attempts > 5:
+            logger.warning(f"[RateLimit] Excessive OTP requests for mobile={mobile} from IP={client_ip}")
+            return jsonify({"error": "Too many OTP requests. Please wait 10 minutes before requesting again."}), 429
+    except Exception as rate_err:
+        logger.error(f"[RateLimit] Rate limit check error: {rate_err}")
+
+    res = send_otp_upyog(mobile)
+    return jsonify(res)
+
+@app.route("/api/verify-otp", methods=["POST"])
+@app.route("/upyog-voice-bot/api/verify-otp", methods=["POST"])
+def api_verify_otp():
+    req_data = request.json or {}
+    mobile = req_data.get("mobile")
+    otp = req_data.get("otp")
+    if not mobile or not otp:
+        return jsonify({"error": "Mobile and OTP are required"}), 400
+
+    # 1. Verify OTP
+    verify_res = verify_otp_upyog(mobile, otp)
+    if "access_token" not in verify_res:
+        return jsonify({"error": "Invalid OTP or verification failed", "details": verify_res}), 400
+    
+    # 2. Get user info (either from verify response or search)
+    user_info = verify_res.get("UserRequest", verify_res.get("userInfo", {}))
+    if not user_info or not user_info.get("uuid"):
+        # fallback search
+        search_res = fetch_user_details_upyog(mobile, verify_res["access_token"])
+        if search_res:
+            user_info = search_res
+
+    # 3. Save verified user profile & auth token into Redis cache
+    if user_info:
+        user_info["_auth_token"] = verify_res["access_token"]
+        user_info["_verified_at"] = time.time()
+        save_user_profile_info(mobile, user_info)
+        logger.info(f"[Auth] Logged in and cached user profile info in Redis for mobile={mobile}")
+
+    return jsonify({
+        "access_token": verify_res["access_token"],
+        "user_info": user_info
+    })
+
 # ============== LLM INTENT CLASSIFIER ==============
 
 def classify_intent(query: str, history: list, lang: str) -> dict:
-    """
-    Classifies user intent using a fast LLM call.
-    Returns: {
-        "intent": "faq" | "grievance_candidate" | "grievance_confirm" | "grievance_cancel",
-        "reasoning": "brief explanation",
-        "service": "which UPYOG service is involved, if any",
-        "emotion": "neutral" | "frustrated" | "stuck" | "urgent"
-    }
-    """
+    """Classifies user intent using a fast LLM call."""
     global groq_client
     logger.info(f"[INTENT CLASSIFIER] Classifying intent for query='{query}', lang='{lang}'")
 
@@ -1135,75 +2207,40 @@ Classify the user message into exactly one category.
 
 ━━━ CATEGORY DEFINITIONS ━━━
 
-"faq" — User wants INFORMATION or EXPLANATION.
-They are learning, not complaining.
-They use words like: what is, how does, kya hai, kaise hota hai,
-batao, explain, tell me about, documents kya chahiye.
-The problem described is HYPOTHETICAL or GENERAL, not personal.
+"greeting" — User says hello, hi, namaste, good morning, good evening, or any social opener with NO service request.
+Examples: "hello", "hi", "namaste", "good morning", "नमस्ते"
 
-Examples of faq:
-→ "what is property mutation?"
-→ "property tax kaise calculate hota hai?"
-→ "trade license ke liye kya documents chahiye?"
-→ "UPYOG mein kaun si services hain?"
-→ "desludging service kya hoti hai?"
-→ "complaint process kya hai?"  ← asking ABOUT process, not filing one
-→ "fire NOC ke liye kya karna padta hai?"
+"faq" — User wants INFORMATION or EXPLANATION about any UPYOG service.
 
-"grievance_candidate" — User is describing a PERSONAL PROBLEM happening
-RIGHT NOW to them specifically.
-Key signals:
-- Personal pronouns: I, my, mera, meri, mere, humara, hamare
-- Time of suffering: days, weeks, months, din se, hafte se, mahine se
-- Something not working FOR THEM: nahi aa raha, nahi hua, pending hai,
-  reject ho gaya, kaam nahi kar raha, nahi mila, abhi tak nahi
-- Frustration or helplessness: kaise karoon, kya karoon, pareshan hoon,
-  help nahi kar rahe, action lena hai, complaint karni hai
-- A specific service failing: pani, bijli, garbage, property, license,
-  certificate, noc, registration, sewerage, road, light
-- Asking for action not information: kuch karna chahta hoon,
-  inke against action, shikayat darz karni hai
-
-Examples of grievance_candidate:
-→ "पानी नहीं आ रहा है बहुत दिन हो गए हैं"
-→ "मैंने बहुत दिन पहले प्रॉपर्टी रजिस्टर करी थी अभी तक हो ही नहीं है"
-→ "वह हेल्प नहीं कर रहे हैं मुझे इनके अगेंस्ट कुछ एक्शन लेना है"
-→ "I am not able to pay my property tax online"
-→ "mera trade license 3 mahine se pending hai"
-→ "garbage not collected in my area for 2 weeks"
-→ "birth certificate ke liye apply kiya tha but still pending"
-→ "fire NOC reject ho gaya bina reason ke"
-→ "nagar palika wale sun nahi rahe"
-→ "building plan approve nahi ho raha kaafi time se"
-→ "water supply band hai"
-→ "mere ghar ke saamne road toot gayi है"
-→ "sewerage overflow ho raha है"
-→ "street light kharab है kaafi din se"
-→ "sanitation worker nahi aata hamare area mein"
-
+"grievance_candidate" — User is describing a PERSONAL PROBLEM happening RIGHT NOW to them specifically.
 "grievance_confirm" — User is saying YES to bot's offer to file a grievance.
-Only classify this if the PREVIOUS bot message was asking
-"would you like to file a grievance?"
-Examples: yes, haan, please, theek hai karo, file karo,
-          bilkul, zaroor, go ahead, haan karein
-
 "grievance_cancel" — User says NO to the grievance offer.
-Examples: no, nahi, rehne do, chhodo, cancel,
-          baad mein, abhi nahi, nevermind, bas
+"grievance_status_candidate" — User wants to check the status of their existing complaints, view complaint history, or look up a complaint ID.
+Examples:
+→ "show my complaints"
+→ "show my latest complaints"
+→ "track my complaint"
+→ "my complaint status"
+
+"booking_candidate" — User wants to BOOK or RESERVE a resource (e.g. community hall).
+"booking_confirm" — User is saying YES to the bot's offer to book a resource.
+"booking_cancel" — User says NO to the booking offer.
+
+"adv_candidate" — User wants to book advertisement space, hoardings, or unipoles.
+"adv_confirm" — User says YES to the bot's offer to book an ad.
+"adv_cancel" — User says NO to the ad booking offer.
+
+"adv_status_candidate" — User wants to check the status of their existing advertisement bookings or know their booking ID.
+Examples:
+→ "show my bookings"
+→ "what is my booking number"
+→ "track my ad booking"
+→ "my applications"
 
 ━━━ IMPORTANT RULES ━━━
-1. When in doubt between faq and grievance_candidate,
-   check: is the user describing THEIR OWN current problem?
-   If YES → grievance_candidate
-   If they are asking HOW something works → faq
-
-2. Sentences with "nahi ho raha", "pending hai", "nahi aaya",
-   "kaam nahi kar raha" about a government service
-   → ALWAYS grievance_candidate
-
-3. Short frustrated sentences like "sun nahi rahe",
-   "help nahi kar rahe", "kuch karo"
-   → grievance_candidate (read with conversation context)
+1. Look at the last message and context. If the user says "yes" or "haan":
+   - If the previous turn offered an advertisement -> "adv_confirm"
+2. Pure social openers (hello/hi/namaste) with NO service content = "greeting".
 
 ━━━ CONVERSATION CONTEXT (last 3 turns) ━━━
 {history_text}
@@ -1214,7 +2251,7 @@ Language: {lang}
 
 Respond ONLY with this JSON, no other text:
 {{
-  "intent": "faq" | "grievance_candidate" | "grievance_confirm" | "grievance_cancel",
+  "intent": "greeting" | "faq" | "grievance_candidate" | "grievance_confirm" | "grievance_cancel" | "grievance_status_candidate" | "booking_candidate" | "booking_confirm" | "booking_cancel" | "adv_candidate" | "adv_confirm" | "adv_cancel" | "adv_status_candidate",
   "reasoning": "one sentence why",
   "service": "specific UPYOG service name or null",
   "emotion": "neutral" | "frustrated" | "stuck" | "urgent"
@@ -1236,7 +2273,12 @@ Respond ONLY with this JSON, no other text:
         result = json.loads(raw)
         logger.info(f"[INTENT CLASSIFIER] Groq raw response: {result}")
 
-        valid_intents = ["faq", "grievance_candidate", "grievance_confirm", "grievance_cancel"]
+        valid_intents = [
+            "greeting", "faq", "grievance_candidate", "grievance_confirm", "grievance_cancel", "grievance_status_candidate",
+            "booking_candidate", "booking_confirm", "booking_cancel",
+            "adv_candidate", "adv_confirm", "adv_cancel", "adv_status_candidate"
+        ]
+       
         if result.get("intent") not in valid_intents:
             logger.warning(f"[INTENT CLASSIFIER] Invalid intent '{result.get('intent')}' returned — resetting to 'faq'")
             result["intent"] = "faq"
@@ -1248,727 +2290,72 @@ Respond ONLY with this JSON, no other text:
         return {"intent": "faq", "reasoning": "classifier failed", "service": None, "emotion": "neutral"}
 
 
-def build_grievance_offer(service: str, emotion: str, lang: str) -> str:
-    """
-    Builds an empathetic offer to file a grievance.
-    """
-    service_text = f" {service}" if service else ""
-    service_text_hi = f" {service} के बारे में" if service else ""
+# ─── Config-driven greeting builder ────────────────────────────────────────────
+def _load_services_registry() -> list:
+    """Load the services list from config.yml once at startup."""
+    import yaml
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    cfg_path = os.path.join(base_dir, "config.yml")
+    if not os.path.exists(cfg_path):
+        cfg_path = os.path.join(base_dir, "workflow", "config.yml")
+    try:
+        with open(cfg_path, "r") as f:
+            return yaml.safe_load(f).get("services", [])
+    except Exception as e:
+        logger.error(f"Failed to load config.yml in _load_services_registry: {e}")
+        return []
 
-    if emotion in ["frustrated", "urgent"]:
-        if lang == 'hi':
-            return (
-                f"मैं समझ सकता हूँ कि यह स्थिति परेशान करने वाली है।"
-                f"{service_text_hi} आपकी समस्या को आधिकारिक रूप से दर्ज कराने के लिए "
-                f"क्या मैं आपके लिए एक शिकायत दर्ज करूँ? "
-                f"इससे संबंधित विभाग को सूचित किया जाएगा और आपको एक ट्रैकिंग नंबर मिलेगा।"
-            )
-        else:
-            return (
-                f"I understand this situation must be frustrating for you. "
-                f"Would you like me to file an official grievance{service_text}? "
-                f"This will notify the concerned department and you'll receive a tracking number."
-            )
+_SERVICES_REGISTRY: list = _load_services_registry()
+
+
+def build_greeting_response(lang: str, active_workflows: dict) -> str:
+    """
+    Returns a short, polite, professional greeting using LLM.
+    No service list — just a professional hello.
+    """
+    import random
+    rand_seed = random.randint(1, 9999)
+
+    if lang == "hi":
+        prompt = (
+            f"[seed:{rand_seed}] You are UPYOG AI, an official government services AI assistant for UPYOG. "
+            f"The user just said hello. Reply with a polite, professional, short greeting in Hindi (Devanagari script). "
+            f"STRICT RULE: Keep tone professional and formal. DO NOT use informal, familiar, or colloquial terms of address such as 'दीदी' (Didi), 'काकी' (Kaki), 'बेटा' (Beta), 'भैया' (Bhaiya), 'चाचा', 'अंकल', etc. "
+            f"Use formal Hindi (e.g., 'नमस्ते! मैं UPYOG AI हूँ। मैं आपकी क्या सहायता कर सकता हूँ?'). "
+            f"Just greet them politely and ask how you can help. 1-2 sentences only. No bullet points, no service lists."
+        )
     else:
-        if lang == 'hi':
-            return (
-                f"लगता है आपको{service_text_hi} एक समस्या आ रही है। "
-                f"क्या आप चाहेंगे कि मैं इसके लिए एक आधिकारिक शिकायत दर्ज करूँ? "
-                f"हाँ कहें तो मैं प्रक्रिया शुरू करता हूँ।"
-            )
-        else:
-            return (
-                f"It seems you're facing an issue{service_text}. "
-                f"Would you like me to file an official grievance for this? "
-                f"Just say yes and I'll guide you through the process."
-            )
-
-
-# ============== GRIEVANCE FLOW ==============
-# Sourced from app7.py - UPYOG Public Grievance Redressal
-
-GRIEVANCE_API_BASE = "https://niuatt.niua.in"
-GRIEVANCE_TENANT_ID = "pg.citya"
-GRIEVANCE_MDMS_TENANT = "pg"
-GRIEVANCE_HEADERS = {"Content-Type": "application/x-www-form-urlencoded", "Authorization": os.environ.get("UPYOG_BASIC_AUTH")}
-
-# Grievance session storage
-grievance_sessions = {}
-
-def get_grievance_session(session_id):
-    """Get or create grievance session for a session ID."""
-    if session_id not in grievance_sessions:
-        grievance_sessions[session_id] = {
-            "active": False,
-            "step": "START",
-            "data": {},
-            "auth_token": None,
-            "user_info": None,
-            "categories": {},
-            "localities": [],
-            "otp_attempts": 0
-        }
-    return grievance_sessions[session_id]
-
-def clear_grievance_session(session_id):
-    """Clear grievance session after completion or cancellation."""
-    grievance_sessions.pop(session_id, None)
-
-def generate_otp(mobile):
-    """Send OTP to mobile number."""
-    url = f"{GRIEVANCE_API_BASE}/user/otp/generate"
-    payload = {
-        "otp": {
-            "mobileNumber": mobile,
-            "type": "login",
-            "tenantId": GRIEVANCE_MDMS_TENANT,
-            "userType": "CITIZEN"
-        },
-        "RequestInfo": {"apiId": "Rainmaker", "msgId": "1|en_IN"}
-    }
-    logger.info(f"[GRIEVANCE API] Requesting OTP generation for mobile: '{mobile}' via URL: '{url}'")
-    try:
-        res = requests.post(url, json=payload)
-        logger.info(f"[GRIEVANCE API] OTP generation response code: {res.status_code}")
-        data = res.json()
-        logger.info(f"[GRIEVANCE API] OTP generate result payload: {data}")
-        return data
-    except Exception as e:
-        logger.error(f"[GRIEVANCE API] OTP Generation Exception: {e}")
-        return {"error": str(e)}
-
-def verify_otp(mobile, otp):
-    """Verify OTP and get auth token."""
-    url = f"{GRIEVANCE_API_BASE}/user/oauth/token"
-    data = {
-        "username": mobile,
-        "password": otp,
-        "grant_type": "password",
-        "scope": "read",
-        "tenantId": GRIEVANCE_MDMS_TENANT,
-        "userType": "CITIZEN"
-    }
-    logger.info(f"[GRIEVANCE API] Verifying OTP '{otp}' for mobile '{mobile}' via URL: '{url}'")
-    try:
-        res = requests.post(url, data=data, headers=GRIEVANCE_HEADERS)
-        logger.info(f"[GRIEVANCE API] OTP verification HTTP status: {res.status_code}")
-        resp_json = res.json()
-        logger.info(f"[GRIEVANCE API] OTP verify response keys: {list(resp_json.keys()) if isinstance(resp_json, dict) else 'N/A'}")
-        if "access_token" in resp_json:
-            logger.info("[GRIEVANCE API] Auth token received successfully.")
-        else:
-            logger.warning(f"[GRIEVANCE API] Verification failed or access_token missing. Full response: {resp_json}")
-        return resp_json
-    except Exception as e:
-        logger.error(f"[GRIEVANCE API] OTP Verification Exception: {e}")
-        return {"error": str(e)}
-
-def fetch_categories(auth_token):
-    """Fetch grievance categories from MDMS."""
-    url = f"{GRIEVANCE_API_BASE}/mdms-v2/v1/_search?tenantId={GRIEVANCE_MDMS_TENANT}"
-    payload = {
-        "MdmsCriteria": {
-            "tenantId": GRIEVANCE_MDMS_TENANT,
-            "moduleDetails": [{"moduleName": "RAINMAKER-PGR", "masterDetails": [{"name": "ServiceDefs"}]}]
-        },
-        "RequestInfo": {"apiId": "Rainmaker", "authToken": auth_token, "msgId": "1|en_IN", "plainAccessRequest": {}}
-    }
-    logger.info(f"[GRIEVANCE API] Fetching MDMS categories from URL: '{url}'")
-    try:
-        res = requests.post(url, json=payload)
-        logger.info(f"[GRIEVANCE API] MDMS Categories HTTP status: {res.status_code}")
-        data = res.json()
-        defs = data.get("MdmsRes", {}).get("RAINMAKER-PGR", {}).get("ServiceDefs", [])
-        structured = {}
-        for d in defs:
-            if not d.get("active", True): continue
-            menu = d.get("menuPath") or "Others"
-            if menu not in structured: structured[menu] = []
-            structured[menu].append({"name": d["name"], "code": d["serviceCode"]})
-        logger.info(f"[GRIEVANCE API] Fetched {len(defs)} definitions across {len(structured)} category groups: {list(structured.keys())}")
-        return structured
-    except Exception as e:
-        logger.error(f"[GRIEVANCE API] MDMS Categories Fetch Exception: {e}")
-        return {}
-
-def fetch_localities(auth_token):
-    """Fetch localities for the tenant."""
-    url = f"{GRIEVANCE_API_BASE}/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Locality&tenantId={GRIEVANCE_TENANT_ID}"
-    payload = {
-        "RequestInfo": {"apiId": "Rainmaker", "authToken": auth_token, "msgId": "1|en_IN", "plainAccessRequest": {}}
-    }
-    logger.info(f"[GRIEVANCE API] Fetching localities from URL: '{url}'")
-    try:
-        res = requests.post(url, json=payload)
-        logger.info(f"[GRIEVANCE API] Localities HTTP status: {res.status_code}")
-        data = res.json()
-        boundaries = data.get("TenantBoundary", [])
-        if boundaries and boundaries[0].get("boundary"):
-            result = [{"name": b["name"], "code": b["code"]} for b in boundaries[0]["boundary"]]
-            logger.info(f"[GRIEVANCE API] Fetched {len(result)} localities for tenant '{GRIEVANCE_TENANT_ID}'")
-            return result
-        logger.warning("[GRIEVANCE API] No boundaries found in MDMS response.")
-        return []
-    except Exception as e:
-        logger.error(f"[GRIEVANCE API] MDMS Localities Fetch Exception: {e}")
-        return []
-
-def create_grievance(auth_token, user_info, grievance_data):
-    """Create grievance via PGR API."""
-    url = f"{GRIEVANCE_API_BASE}/pgr-services/v2/request/_create?tenantId={GRIEVANCE_TENANT_ID}"
-    logger.info(f"[GRIEVANCE API] Creating official PGR ticket via URL: '{url}'")
-
-    citizen_block = {
-        "id": user_info.get("id"),
-        "userName": user_info.get("userName") or user_info.get("mobileNumber"),
-        "name": user_info.get("name"),
-        "type": user_info.get("type", "CITIZEN"),
-        "mobileNumber": user_info.get("mobileNumber"),
-        "emailId": user_info.get("emailId", ""),
-        "roles": user_info.get("roles", [{"id": None, "name": "Citizen", "code": "CITIZEN", "tenantId": "pg"}]),
-        "tenantId": user_info.get("tenantId", "pg"),
-        "uuid": user_info.get("uuid")
-    }
-
-    payload = {
-        "service": {
-            "tenantId": GRIEVANCE_TENANT_ID,
-            "serviceCode": grievance_data.get("category_code"),
-            "accountId": user_info.get("uuid"),
-            "citizen": citizen_block,
-            "priority": "HIGH",
-            "description": grievance_data.get("description", ""),
-            "additionalDetail": {},
-            "source": "web",
-            "address": {
-                "tenantId": GRIEVANCE_TENANT_ID,
-                "landmark": grievance_data.get("address_manual", ""),
-                "city": "New Delhi",
-                "district": "New Delhi",
-                "region": "New Delhi",
-                "state": "Demo",
-                "pincode": grievance_data.get("pincode") or "143001",
-                "locality": {
-                    "code": grievance_data.get("locality_code", ""),
-                    "name": grievance_data.get("locality_name", "")
-                },
-                "geoLocation": {"latitude": 0.0, "longitude": 0.0}
-            }
-        },
-        "workflow": {"action": "APPLY", "comments": "", "assignes": []},
-        "RequestInfo": {
-            "apiId": "Rainmaker",
-            "ver": ".01",
-            "ts": "",
-            "action": "_create",
-            "did": "1",
-            "key": "",
-            "authToken": auth_token,
-            "msgId": f"{int(time.time() * 1000)}|en_IN",
-            "plainAccessRequest": {},
-            "userInfo": user_info
-        }
-    }
-
-    logger.info(f"[GRIEVANCE API] PGR Create Payload: serviceCode='{grievance_data.get('category_code')}', locality='{grievance_data.get('locality_name')}'")
-
-    try:
-        res = requests.post(url, json=payload)
-        resp_data = res.json()
-        logger.info(f"[GRIEVANCE API] PGR Create Response status {res.status_code}: {resp_data}")
-
-        if "Errors" in resp_data:
-            logger.error(f"[GRIEVANCE API] PGR Create Failed with errors: {resp_data.get('Errors')}")
-            return {"success": False, "error": resp_data.get("Errors", "Unknown error")}
-
-        sw_list = resp_data.get("ServiceWrappers", [])
-        if not sw_list:
-            logger.error("[GRIEVANCE API] PGR Create Failed: No ServiceWrappers returned")
-            return {"success": False, "error": "No ServiceWrappers in response"}
-
-        ticket_id = sw_list[0].get("service", {}).get("serviceRequestId")
-        if ticket_id:
-            logger.info(f"[GRIEVANCE API] Ticket successfully created! Ticket ID: '{ticket_id}'")
-            return {"success": True, "ticket_number": ticket_id, "raw": resp_data}
-        logger.error("[GRIEVANCE API] PGR Create Failed: No ticket number returned in ServiceWrappers")
-        return {"success": False, "error": "No ticket number returned"}
-
-    except Exception as e:
-        logger.error(f"[GRIEVANCE API] PGR Create Exception: {e}")
-        return {"success": False, "error": str(e)}
-
-def is_cancel_intent(text: str) -> bool:
-    """Detect if user wants to cancel the grievance flow."""
-    text_lower = text.lower()
-
-    for c in text:
-        if 'ऀ' <= c <= 'ॿ':
-            return True
-
-    cancel_patterns = [
-        r'\b(cancel|cancelled|canceling|nevermind|never\s*mind)\b',
-        r'\b(chhod|chhodo|chhoda|chodna)\b',
-        r'\b(skip|forget\s*it)\b',
-        r"\b(stop|don.?t\s+want|don.?t\s+think\s+so)\b"
-    ]
-
-    for pattern in cancel_patterns:
-        if re.search(pattern, text_lower):
-            logger.info(f"[INTENT CHECK] Cancel pattern matched in text: '{text}'")
-            return True
-
-    return False
-
-def is_confirmation(text: str) -> bool:
-    """Detect if user confirmed or said yes."""
-    text_lower = text.lower()
-
-    for c in text:
-        if 'ऀ' <= c <= 'ॿ':
-            return True
-
-    confirm_patterns = [
-        r'\b(yes|yeah|yup|ya|ok|okay|sure|confirm|proceed|go\s*ahead)\b',
-        r'\b(haan|theek|karo|dijiyega|dijiye)\b',
-        r'\b(submit|register|file)\b'
-    ]
-
-    for pattern in confirm_patterns:
-        if re.search(pattern, text_lower):
-            logger.info(f"[INTENT CHECK] Confirmation pattern matched in text: '{text}'")
-            return True
-
-    return False
-
-def is_negative(text: str) -> bool:
-    """Detect if user said no or rejected."""
-    text_lower = text.lower()
-
-    for c in text:
-        if 'ऀ' <= c <= 'ॿ':
-            return True
-
-    negative_patterns = [
-        r'\b(no|nope|nah|not|nothing|don?t\s+want|cancel)\b'
-    ]
-
-    for pattern in negative_patterns:
-        if re.search(pattern, text_lower):
-            logger.info(f"[INTENT CHECK] Negative pattern matched in text: '{text}'")
-            return True
-
-    return False
-
-# ── Digit word mappings ──────────────────────────────────────
-DIGIT_MAP_EN = {
-    'zero':'0','one':'1','two':'2','three':'3','four':'4',
-    'five':'5','six':'6','seven':'7','eight':'8','nine':'9',
-    'oh':'0','o':'0','nought':'0',
-}
-
-DIGIT_MAP_HI_DEVANAGARI = {
-    'शून्य':'0','एक':'1','दो':'2','तीन':'3','चार':'4',
-    'पाँच':'5','पांच':'5','छह':'6','छः':'6','सात':'7',
-    'आठ':'8','नौ':'9',
-}
-
-DIGIT_MAP_HI_ROMAN = {
-    'shunya':'0','ek':'1','do':'2','teen':'3','char':'4',
-    'paanch':'5','panch':'5','chhe':'6','chah':'6','chhah':'6',
-    'saat':'7','aath':'8','nau':'9','nao':'9','nav':'9',
-}
-
-ALL_DIGIT_MAPS = {**DIGIT_MAP_EN, **DIGIT_MAP_HI_DEVANAGARI, **DIGIT_MAP_HI_ROMAN}
-
-MULTIPLIER_MAP = {
-    'once': 1, 'twice': 2, 'double': 2, 'triple': 3, 'thrice': 3,
-    'two times': 2, 'three times': 3, 'four times': 4, 'five times': 5,
-    'six times': 6, 'seven times': 7, 'eight times': 8, 'nine times': 9,
-    'ten times': 10,
-    'ek baar': 1, 'do baar': 2, 'teen baar': 3, 'char baar': 4,
-    'paanch baar': 5, 'chhe baar': 6, 'saat baar': 7, 'aath baar': 8,
-    'nau baar': 9, 'das baar': 10, 'dus baar': 10,
-    'ek bari': 1, 'do bari': 2, 'teen bari': 3, 'char bari': 4,
-    'paanch bari': 5, 'das bari': 10, 'dus bari': 10,
-    'एक बार': 1, 'दो बार': 2, 'तीन बार': 3, 'चार बार': 4,
-    'पाँच बार': 5, 'दस बार': 10,
-}
-
-def normalize_spoken_number(text: str) -> str:
-    if not text: return text
-    original = text.strip()
-    cleaned = re.sub(r'[\s\-]', '', original)
-    if cleaned.isdigit(): return cleaned
-
-    text_lower = original.lower()
-    result_digits = []
-    sorted_multipliers = sorted(MULTIPLIER_MAP.keys(), key=len, reverse=True)
-    working = text_lower
-    
-    for phrase in sorted_multipliers:
-        if phrase in working:
-            count = MULTIPLIER_MAP[phrase]
-            pattern = re.escape(phrase) + r'\s+(\w+)'
-            match = re.search(pattern, working)
-            if match:
-                following_word = match.group(1)
-                digit = ALL_DIGIT_MAPS.get(following_word, None)
-                if digit is None and following_word.isdigit(): digit = following_word
-                if digit:
-                    replacement = digit * count
-                    working = working[:match.start()] + replacement + working[match.end():]
-                    continue
-            
-            if phrase in ('double', 'twice'):
-                pattern2 = r'double\s+(\w+)|twice\s+(\w+)'
-                for m in re.finditer(pattern2, working):
-                    word = m.group(1) or m.group(2)
-                    digit = ALL_DIGIT_MAPS.get(word, word if word.isdigit() else None)
-                    if digit:
-                        working = working.replace(m.group(0), digit * 2, 1)
-            if phrase == 'triple':
-                pattern3 = r'triple\s+(\w+)'
-                for m in re.finditer(pattern3, working):
-                    word = m.group(1)
-                    digit = ALL_DIGIT_MAPS.get(word, word if word.isdigit() else None)
-                    if digit:
-                        working = working.replace(m.group(0), digit * 3, 1)
-
-    FILLERS = {'and','aur','then','phir','comma','point','dot','please','ok','okay','um','uh','er','hmm','mera','number','hai','my','is','the','it'}
-    tokens = re.split(r'[\s,\-]+', working)
-    for token in tokens:
-        token = token.strip().lower()
-        if not token or token in FILLERS: continue
-        if token.isdigit():
-            result_digits.append(token)
-            continue
-        digit = ALL_DIGIT_MAPS.get(token)
-        if digit:
-            result_digits.append(digit)
-            continue
-        devanagari_digit = ''
-        all_deva = True
-        for ch in token:
-            if '\u0966' <= ch <= '\u096F':
-                devanagari_digit += str(ord(ch) - ord('\u0966'))
-            else:
-                all_deva = False
-                break
-        if all_deva and devanagari_digit:
-            result_digits.append(devanagari_digit)
-            continue
-
-    result = ''.join(result_digits)
-    return result if result else original
-
-def normalize_field(field_type: str, value: str) -> str:
-    if field_type in ('mobile', 'phone', 'otp', 'pincode', 'number'):
-        normalized = normalize_spoken_number(value)
-        logger.info(f"[NORMALIZE FIELD] {field_type}: '{value}' → '{normalized}'")
-        print(f"[NORMALIZE] {field_type}: '{value}' → '{normalized}'")
-        return normalized
-    logger.info(f"[NORMALIZE FIELD] {field_type}: '{value}' → '{value.strip()}'")
-    return value.strip()
-
-def validate_field(field_type: str, value: str) -> tuple:
-    logger.info(f"[VALIDATE FIELD] Validating field_type='{field_type}', value='{value}'")
-    if field_type == 'mobile':
-        digits_only = re.sub(r'\D', '', value)
-        if len(digits_only) != 10:
-            msg = f"मुझे 10 अंकों का मोबाइल नंबर चाहिए। आपने {len(digits_only)} अंक दिए। कृपया दोबारा बोलें।"
-            logger.warning(f"[VALIDATE FIELD] Mobile validation failed: got {len(digits_only)} digits")
-            return False, msg
-        logger.info("[VALIDATE FIELD] Mobile validation passed.")
-        return True, None
-    if field_type == 'otp':
-        digits_only = re.sub(r'\D', '', value)
-        if len(digits_only) not in (4, 6):
-            msg = f"OTP 4 या 6 अंकों का होना चाहिए। कृपया दोबारा बोलें।"
-            logger.warning(f"[VALIDATE FIELD] OTP validation failed: got {len(digits_only)} digits")
-            return False, msg
-        logger.info("[VALIDATE FIELD] OTP validation passed.")
-        return True, None
-    return True, None
-
-def handle_grievance_turn(session_id, user_input, lang):
-    """Handle a single turn in the grievance flow."""
-    session = get_grievance_session(session_id)
-    step = session["step"]
-    logger.info(f"[GRIEVANCE TURN] Session '{session_id}' | Step: '{step}' | Input: '{user_input}' | Lang: '{lang}'")
-
-    # Check for cancellation
-    if is_cancel_intent(user_input):
-        logger.info(f"[GRIEVANCE TURN] Cancel intent detected — clearing session '{session_id}'")
-        clear_grievance_session(session_id)
-        if lang == 'hi':
-            return {"type": "cancelled", "message": "ठीक है, शिकायत दर्ज नहीं की गई। आप किस और विषय पर पूछना चाहेंगे?", "lang": lang}
-        return {"type": "cancelled", "message": "OK, complaint not registered. What else can I help you with?", "lang": lang}
-
-    # Step handlers
-    if step == "START":
-        session["active"] = True
-        session["step"] = "AWAITING_PHONE"
-        logger.info(f"[GRIEVANCE TURN] Step START -> transitioning to AWAITING_PHONE")
-        if lang == 'hi':
-            return {"type": "collect", "message": "शिकायत दर्ज करने के लिए पहले आपका मोबाइल नंबर चाहिए। कृपया अपना 10 अंकों का मोबाइल नंबर बताएं।", "lang": lang, "field": "mobile", "input_type": "number", "options": []}
-        return {"type": "collect", "message": "To register a complaint, I need your mobile number first. Please tell me your 10-digit mobile number.", "lang": lang, "field": "mobile", "input_type": "number", "options": []}
-
-    elif step == "AWAITING_PHONE":
-        normalized_value = normalize_field("mobile", user_input)
-        is_valid, error_msg = validate_field("mobile", normalized_value)
-        if not is_valid:
-            if lang != 'hi':
-                digits_count = len(re.sub(r'\D', '', normalized_value))
-                error_msg = f"I need a 10-digit mobile number. You provided {digits_count} digits. Please try again."
-            logger.warning(f"[GRIEVANCE TURN] AWAITING_PHONE invalid input: '{user_input}'")
-            return {"type": "collect", "message": error_msg, "lang": lang, "field": "mobile", "input_type": "number", "options": []}
-
-        mobile = re.sub(r'\D', '', normalized_value)
-        session["data"]["mobile"] = mobile
-        session["step"] = "AWAITING_OTP"
-        logger.info(f"[GRIEVANCE TURN] Mobile '{mobile}' stored. Transitioning to AWAITING_OTP and generating OTP...")
-
-        # Send OTP
-        otp_result = generate_otp(mobile)
-        logger.info(f"[GRIEVANCE TURN] OTP send result: {otp_result}")
-
-        if lang == 'hi':
-            return {"type": "collect", "message": f"OTP आपके मोबाइल नंबर {mobile} पर भेजा गया है। कृपया 6 अंकों का OTP बताएं।", "lang": lang, "field": "otp", "input_type": "number", "options": []}
-        return {"type": "collect", "message": f"An OTP has been sent to your mobile number {mobile}. Please tell me the 6-digit OTP.", "lang": lang, "field": "otp", "input_type": "number", "options": []}
-
-    elif step == "AWAITING_OTP":
-        normalized_value = normalize_field("otp", user_input)
-        is_valid, error_msg = validate_field("otp", normalized_value)
-        if not is_valid:
-            session["otp_attempts"] = session.get("otp_attempts", 0) + 1
-            attempts = session["otp_attempts"]
-            logger.warning(f"[GRIEVANCE TURN] AWAITING_OTP invalid format: '{user_input}' (Attempt {attempts}/3)")
-
-            if attempts >= 3:
-                clear_grievance_session(session_id)
-                msg = ("गलत OTP! आपने 3 बार गलत OTP दर्ज किया है। कृपया बाद में पुनः प्रयास करें।" if lang == 'hi' else
-                       "Incorrect OTP. You have entered an incorrect OTP 3 times. Please try again later. Can i help you with something else?")
-                logger.info(f"[GRIEVANCE TURN] 3 failed OTP attempts reached for session '{session_id}' — closing application")
-                return {"type": "error", "message": msg, "lang": lang, "end_session": True}
-
-            if lang != 'hi':
-                error_msg = f"OTP should be 4 or 6 digits. Please try again. ({attempts}/3 attempts)"
-            else:
-                error_msg = f"OTP 4 या 6 अंकों का होना चाहिए। कृपया पुनः प्रयास करें। ({attempts}/3 प्रयास)"
-            return {"type": "collect", "message": error_msg, "lang": lang, "field": "otp", "input_type": "number", "options": []}
-
-        otp_value = re.sub(r'\D', '', normalized_value)
-        mobile = session["data"]["mobile"]
-        logger.info(f"[GRIEVANCE TURN] Verifying OTP '{otp_value}' for mobile '{mobile}'...")
-
-        # Verify OTP
-        verify_result = verify_otp(mobile, otp_value)
-        logger.info(f"[GRIEVANCE TURN] Verify OTP result keys: {verify_result.keys() if isinstance(verify_result, dict) else 'N/A'}")
-
-        if "access_token" not in verify_result:
-            session["otp_attempts"] = session.get("otp_attempts", 0) + 1
-            attempts = session["otp_attempts"]
-            logger.warning(f"[GRIEVANCE TURN] OTP verification failed for session '{session_id}' (Attempt {attempts}/3)")
-
-            if attempts >= 3:
-                clear_grievance_session(session_id)
-                msg = ("गलत OTP! आपने 3 बार गलत OTP दर्ज किया है। कृपया बाद में पुनः प्रयास करें।" if lang == 'hi' else
-                       "Incorrect OTP. You have entered an incorrect OTP 3 times. Please try again later. Can i help you with something else?")
-                logger.info(f"[GRIEVANCE TURN] 3 failed OTP attempts reached for session '{session_id}' — closing application")
-                return {"type": "error", "message": msg, "lang": lang, "end_session": True}
-
-            if lang == 'hi':
-                msg = f"OTP गलत है। कृपया पुनः प्रयास करें। ({attempts}/3 प्रयास)"
-            else:
-                msg = f"OTP is incorrect. Please try again. ({attempts}/3 attempts)"
-            return {"type": "collect", "message": msg, "lang": lang, "field": "otp", "input_type": "number", "options": []}
-
-        # Reset OTP attempts on success
-        session["otp_attempts"] = 0
-
-        session["data"]["auth_token"] = verify_result["access_token"]
-        session["data"]["user_info"] = verify_result.get("UserRequest", verify_result.get("userInfo", {}))
-        
-        # Fetch categories
-        logger.info(f"[GRIEVANCE TURN] OTP verified successfully. Fetching MDMS categories...")
-        categories = fetch_categories(session["data"]["auth_token"])
-        session["categories"] = categories
-
-        if not categories:
-            logger.error("[GRIEVANCE TURN] Failed to fetch categories from MDMS")
-            if lang == 'hi':
-                return {"type": "error", "message": "श्रेणियां लोड नहीं हो सकीं। कृपया कुछ देर बाद पुनः प्रयास करें।", "lang": lang}
-            return {"type": "error", "message": "Could not load categories. Please try again later.", "lang": lang}
-
-        cat_list = list(categories.keys())
-        session["step"] = "AWAITING_CATEGORY"
-        session["data"]["category_group"] = None
-        logger.info(f"[GRIEVANCE TURN] Categories loaded ({len(cat_list)}). Transitioning to AWAITING_CATEGORY")
-
-        if lang == 'hi':
-            return {"type": "collect", "message": f"श्रेणी चुनें: {', '.join(cat_list)}", "lang": lang, "field": "category", "input_type": "choice", "options": cat_list}
-        return {"type": "collect", "message": f"Please choose a category: {', '.join(cat_list)}", "lang": lang, "field": "category", "input_type": "choice", "options": cat_list}
-
-    elif step == "AWAITING_CATEGORY":
-        categories = session["categories"]
-        selected_cat = None
-        cat_list = list(categories.keys())
-
-        for cat_name in categories.keys():
-            if cat_name.lower() in user_input.lower():
-                selected_cat = cat_name
-                break
-
-        if not selected_cat:
-            logger.warning(f"[GRIEVANCE TURN] Could not match category for input: '{user_input}'")
-            if lang == 'hi':
-                return {"type": "collect", "message": f"मुझे श्रेणी समझ नहीं आया। कृपया इनमें से चुनें:", "lang": lang, "field": "category", "input_type": "choice", "options": cat_list}
-            return {"type": "collect", "message": f"I didn't understand. Please choose from:", "lang": lang, "field": "category", "input_type": "choice", "options": cat_list}
-
-        session["data"]["category_group"] = selected_cat
-        session["data"]["available_subs"] = categories[selected_cat]
-        session["step"] = "AWAITING_SUB_CATEGORY"
-
-        sub_list = [s["name"] for s in categories[selected_cat]]
-        logger.info(f"[GRIEVANCE TURN] Category '{selected_cat}' selected. Sub-categories count: {len(sub_list)}. Transitioning to AWAITING_SUB_CATEGORY")
-        if lang == 'hi':
-            return {"type": "collect", "message": f"आप किस प्रकार की शिकायत करना चाहते हैं:", "lang": lang, "field": "sub_category", "input_type": "choice", "options": sub_list}
-        return {"type": "collect", "message": f"What type of complaint:", "lang": lang, "field": "sub_category", "input_type": "choice", "options": sub_list}
-
-    elif step == "AWAITING_SUB_CATEGORY":
-        subs = session["data"].get("available_subs", [])
-        selected_sub = None
-        sub_list = [s["name"] for s in subs]
-
-        for s in subs:
-            if s["name"].lower() in user_input.lower():
-                selected_sub = s
-                break
-
-        if not selected_sub:
-            logger.warning(f"[GRIEVANCE TURN] Could not match sub-category for input: '{user_input}'")
-            if lang == 'hi':
-                return {"type": "collect", "message": f"मुझे समझ नहीं आया। कृपया चुनें:", "lang": lang, "field": "sub_category", "input_type": "choice", "options": sub_list}
-            return {"type": "collect", "message": f"I didn't understand. Please choose:", "lang": lang, "field": "sub_category", "input_type": "choice", "options": sub_list}
-
-        session["data"]["category_code"] = selected_sub["code"]
-        session["data"]["category_name"] = selected_sub["name"]
-        session["step"] = "AWAITING_DESCRIPTION"
-        logger.info(f"[GRIEVANCE TURN] Sub-category '{selected_sub['name']}' ({selected_sub['code']}) selected. Transitioning to AWAITING_DESCRIPTION")
-
-        if lang == 'hi':
-            return {"type": "collect", "message": "अब कृपया अपनी शिकायत का विवरण लिखें। समस्या क्या है?", "lang": lang, "field": "description", "input_type": "text", "options": []}
-        return {"type": "collect", "message": "Now please describe your complaint. What is the issue?", "lang": lang, "field": "description", "input_type": "text", "options": []}
-
-    elif step == "AWAITING_DESCRIPTION":
-        if len(user_input.strip()) < 10:
-            logger.warning(f"[GRIEVANCE TURN] Description too short ({len(user_input.strip())} chars)")
-            if lang == 'hi':
-                return {"type": "collect", "message": "कृपया थोड़ा विस्तार से बताएं कि समस्या क्या है।", "lang": lang, "field": "description", "input_type": "text", "options": []}
-            return {"type": "collect", "message": "Please describe the problem in more detail.", "lang": lang, "field": "description", "input_type": "text", "options": []}
-
-        session["data"]["description"] = user_input
-        session["step"] = "AWAITING_LOCALITY"
-        logger.info(f"[GRIEVANCE TURN] Description captured ({len(user_input)} chars). Fetching localities...")
-
-        # Fetch localities
-        localities = fetch_localities(session["data"]["auth_token"])
-        session["localities"] = localities
-
-        if not localities:
-            logger.warning("[GRIEVANCE TURN] Localities list empty — skipping to CONFIRM step")
-            session["step"] = "CONFIRM"
-            session["data"]["locality_code"] = ""
-            session["data"]["locality_name"] = ""
-            return build_confirmation(session, lang)
-
-        loc_list = [l["name"] for l in localities[:20]]
-        logger.info(f"[GRIEVANCE TURN] Localities loaded ({len(localities)}). Transitioning to AWAITING_LOCALITY")
-        if lang == 'hi':
-            return {"type": "collect", "message": f"अपना इलाका/क्षेत्र चुनें:", "lang": lang, "field": "locality", "input_type": "choice", "options": loc_list}
-        return {"type": "collect", "message": f"Please choose your area/locality:", "lang": lang, "field": "locality", "input_type": "choice", "options": loc_list}
-
-    elif step == "AWAITING_LOCALITY":
-        localities = session["localities"]
-        selected_loc = None
-        loc_list = [l["name"] for l in localities[:20]]
-
-        for loc in localities:
-            if loc["name"].lower() in user_input.lower():
-                selected_loc = loc
-                break
-
-        if not selected_loc and len(user_input.strip()) > 2:
-            logger.info(f"[GRIEVANCE TURN] Using custom user locality: '{user_input.strip()}'")
-            selected_loc = {"name": user_input.strip(), "code": ""}
-
-        if not selected_loc:
-            logger.warning(f"[GRIEVANCE TURN] Could not match locality for input: '{user_input}'")
-            if lang == 'hi':
-                return {"type": "collect", "message": f"मुझे इलाका समझ नहीं आया। कृपया चुनें:", "lang": lang, "field": "locality", "input_type": "choice", "options": loc_list}
-            return {"type": "collect", "message": f"I didn't understand. Please choose:", "lang": lang, "field": "locality", "input_type": "choice", "options": loc_list}
-
-        session["data"]["locality_code"] = selected_loc["code"]
-        session["data"]["locality_name"] = selected_loc["name"]
-        session["step"] = "CONFIRM"
-        logger.info(f"[GRIEVANCE TURN] Locality '{selected_loc['name']}' selected. Transitioning to CONFIRM")
-
-        return build_confirmation(session, lang)
-
-    elif step == "CONFIRM":
-        logger.info(f"[GRIEVANCE TURN] CONFIRM step evaluated for input: '{user_input}'")
-        if is_negative(user_input):
-            logger.info(f"[GRIEVANCE TURN] User rejected confirmation — clearing session '{session_id}'")
-            clear_grievance_session(session_id)
-            if lang == 'hi':
-                return {"type": "cancelled", "message": "ठीक है, शिकायत दर्ज नहीं की गई। आप किस और विषय पर पूछना चाहेंगे?", "lang": lang}
-            return {"type": "cancelled", "message": "OK, complaint not registered. What else can I help you with?", "lang": lang}
-
-        if not is_confirmation(user_input):
-            logger.info("[GRIEVANCE TURN] Confirmation not explicit — re-displaying confirmation card")
-            return build_confirmation(session, lang)
-
-        # User confirmed - submit grievance
-        logger.info(f"[GRIEVANCE TURN] User confirmed! Calling create_grievance API...")
-        result = create_grievance(
-            session["data"]["auth_token"],
-            session["data"]["user_info"],
-            session["data"]
+        prompt = (
+            f"[seed:{rand_seed}] You are UPYOG AI, an official government services AI assistant for UPYOG. "
+            f"The user just said hello. Reply with a polite, professional, short greeting in English. "
+            f"STRICT RULE: Keep tone professional and formal. DO NOT use informal or colloquial terms of address. "
+            f"Just greet them politely and ask how you can help. 1-2 sentences only. No bullet points, no service lists."
         )
 
-        clear_grievance_session(session_id)
+    try:
+        import groq as groq_lib
+        global groq_client
+        if not groq_client:
+            groq_client = groq_lib.Groq(api_key=GROQ_API_KEY)
+        resp = groq_client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=60,
+            temperature=0.2,
+        )
+        return resp.choices[0].message.content.strip()
+    except Exception:
+        if lang == "hi":
+            return "नमस्ते! मैं UPYOG AI हूँ। मैं आपकी क्या सहायता कर सकता हूँ?"
+        return "Hello! I'm UPYOG AI. How can I help you today?"
 
-        if result["success"]:
-            ticket = result["ticket_number"]
-            logger.info(f"[GRIEVANCE TURN] Ticket created successfully: {ticket}")
-            if lang == 'hi':
-                return {"type": "done", "message": f"आपकी शिकायत सफलतापूर्वक दर्ज हो गई। आपका टिकट नंबर है: {ticket}", "lang": lang}
-            return {"type": "done", "message": f"Your complaint has been registered successfully. Your ticket number is: {ticket}", "lang": lang}
-        else:
-            error_msg = result.get("error", "Unknown error")
-            logger.error(f"[GRIEVANCE TURN] Ticket creation failed: {error_msg}")
-            if lang == 'hi':
-                return {"type": "error", "message": f"शिकायत दर्ज करने में समस्या हुई: {error_msg}", "lang": lang}
-            return {"type": "error", "message": f"Failed to submit complaint: {error_msg}", "lang": lang}
 
-    # Fallback
-    logger.error(f"[GRIEVANCE TURN] Reached unhandled step fallback for step='{step}'")
-    if lang == 'hi':
-        return {"type": "error", "message": "कुछ गलत हो गया। कृपया फिर से शुरू करें।", "lang": lang}
-    return {"type": "error", "message": "Something went wrong. Please start again.", "lang": lang}
-
-def build_confirmation(session, lang):
-    """Build confirmation summary for the user."""
-    data = session["data"]
-    logger.info(f"[BUILD CONFIRMATION] Building summary card for category='{data.get('category_name')}', locality='{data.get('locality_name')}'")
-    summary_en = f"Please confirm your complaint details:\n\nCategory: {data.get('category_name', 'N/A')}\nDescription: {data.get('description', 'N/A')}\nLocality: {data.get('locality_name', 'N/A')}\n\nSay 'yes' to submit or 'no' to cancel."
-    summary_hi = f"कृपया अपनी शिकायत की जानकारी की पुष्टि करें:\n\nश्रेणी: {data.get('category_name', 'N/A')}\nविवरण: {data.get('description', 'N/A')}\nइलाका: {data.get('locality_name', 'N/A')}\n\nदर्ज करने के लिए 'हाँ' बोलें या रद्द करने के लिए 'नहीं'।"
-
-    session["step"] = "CONFIRM"
-    return {"type": "confirm", "message": summary_hi if lang == 'hi' else summary_en, "lang": lang}
 
 if __name__ == "__main__":
+    from memory_manager import init_collections
     try:
+        init_collections()
+        load_plugins()
         logger.info("Starting UPYOG Voice Assistant v2 on port 8090...")
         app.run(host='0.0.0.0', port=8090)
     except Exception as e:

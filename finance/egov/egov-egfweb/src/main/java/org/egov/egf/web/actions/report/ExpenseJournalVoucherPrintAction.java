@@ -71,7 +71,7 @@ import org.egov.model.bills.EgBillregistermis;
 import org.egov.pims.commons.Position;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
-import org.hibernate.FlushMode;
+import jakarta.persistence.FlushModeType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -156,7 +156,7 @@ public class ExpenseJournalVoucherPrintAction extends BaseFormAction {
 
     private void populateVoucher() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setFlushMode(FlushModeType.COMMIT);
         if (!StringUtils.isBlank(parameters.get("id")[0])) {
             final Long id = Long.valueOf(parameters.get("id")[0]);
             final CVoucherHeader voucherHeader = persistenceService.getSession().get(CVoucherHeader.class, id);

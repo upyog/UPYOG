@@ -54,7 +54,7 @@ package com.exilant.eGov.src.reports;
 import com.exilant.exility.common.TaskFailedException;
 import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -146,18 +146,23 @@ public class OpeningBalance
             LOGGER.debug("Opening balance Query ...." + query);
 
         OpeningBalanceBean ob = null;
-        pstmt = persistenceService.getSession().createSQLQuery(query.toString());
-        int i = 0;
-        pstmt.setLong(i++, Long.valueOf(finYear));
+        pstmt = persistenceService.getSession().createNativeQuery(query.toString());
+        /*
+         * Hibernate 6 migration note:
+         * Native query positional parameters are one-based. Starting from zero was
+         * tolerated earlier but fails strict parameter binding in Hibernate 6.
+         */
+        int i = 1;
+        pstmt.setParameter(i++, Long.valueOf(finYear));
         if (!fundId.equalsIgnoreCase(""))
-            pstmt.setLong(i++, Long.valueOf(fundId));
+            pstmt.setParameter(i++, Long.valueOf(fundId));
         if (!deptCode.equalsIgnoreCase(""))
-            pstmt.setString(i++,deptCode);
-        pstmt.setLong(i++, Long.valueOf(finYear));
+            pstmt.setParameter(i++,deptCode);
+        pstmt.setParameter(i++, Long.valueOf(finYear));
         if (!fundId.equalsIgnoreCase(""))
-            pstmt.setLong(i++, Long.valueOf(fundId));
+            pstmt.setParameter(i++, Long.valueOf(fundId));
         if (!deptCode.equalsIgnoreCase(""))
-            pstmt.setString(i++,deptCode);
+            pstmt.setParameter(i++,deptCode);
         List<Object[]> list= pstmt.list();
         resultset =list;
         

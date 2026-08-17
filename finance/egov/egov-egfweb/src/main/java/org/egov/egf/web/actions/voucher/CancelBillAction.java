@@ -60,8 +60,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -84,9 +84,10 @@ import org.egov.model.bills.EgBillregister;
 import org.egov.services.bills.BillsService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.type.LongType;
+import org.hibernate.query.Query;
+import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.query.NativeQuery;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -182,9 +183,9 @@ public class CancelBillAction extends BaseFormAction {
 		addDropdownData("fundList",
 				persistenceService.findAllBy("from Fund where isactive=true and isnotleaf=false order by name"));
 		// Important - Remove the like part of the query below to generalize the
-		// bill cancellation screen
+		// LTS Migration Fix: Updated unlabelled '?' to numbered positional parameters '?1', '?2', '?3' for Hibernate 6 HQL compliance
 		addDropdownData("expenditureList", persistenceService.findAllBy(
-				"select distinct bill.expendituretype from EgBillregister bill where bill.expendituretype=? or bill.expendituretype=? or bill.expendituretype=? order by bill.expendituretype", 
+				"select distinct bill.expendituretype from EgBillregister bill where bill.expendituretype=?1 or bill.expendituretype=?2 or bill.expendituretype=?3 order by bill.expendituretype", 
 				FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS, FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE));
 	}
 
@@ -450,8 +451,8 @@ public class CancelBillAction extends BaseFormAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(" Cancel Query - " + cancelQuery.toString());
             final Query totalNativeQuery = persistenceService.getSession()
-                    .createSQLQuery(cancelQuery.toString());
-            totalNativeQuery.setParameter("statusId", Long.valueOf(status.getId()), LongType.INSTANCE);
+                    .createNativeQuery(cancelQuery.toString());
+            totalNativeQuery.setParameter("statusId", Long.valueOf(status.getId()), StandardBasicTypes.LONG);
             cancelQueryMap.entrySet().forEach(entry -> totalNativeQuery.setParameter(entry.getKey(), entry.getValue()));
             totalNativeQuery.setParameterList("ids", ids);
             if (!ids.isEmpty())

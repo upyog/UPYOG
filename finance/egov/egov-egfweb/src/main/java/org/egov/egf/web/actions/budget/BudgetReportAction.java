@@ -96,9 +96,10 @@ import org.egov.services.budget.BudgetService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
-import org.hibernate.Query;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
+import org.hibernate.query.Query;
+import org.hibernate.type.StandardBasicTypes;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
@@ -382,7 +383,7 @@ public class BudgetReportAction extends BaseFormAction {
                     .append(" and bd.budget.isbere='RE' and bd.approvedAmount is not null  and bd.budget.status.code=:status")
                     .append(" order by bd.executingDepartment,bd.function.name,bd.budgetGroup.minCode.type,bd.budgetGroup.minCode.glcode");
             final Query qry1 = getPersistenceService().getSession().createQuery(query1.toString());
-            qry1.setParameter("status", finalStatus, StringType.INSTANCE);
+            qry1.setParameter("status", finalStatus, StandardBasicTypes.STRING);
             queryParams.entrySet().forEach(entry -> qry1.setParameter(entry.getKey(), entry.getValue()));
             budgetDetailList = qry1.list();
             isBERE = "RE";
@@ -394,7 +395,7 @@ public class BudgetReportAction extends BaseFormAction {
                         .append(" and bd.budget.isbere='BE' and  bd.budget.status.code =:status")
                         .append(" order by bd.executingDepartment,bd.function.name,bd.budgetGroup.minCode.type,bd.budgetGroup.minCode.glcode");
                 final Query qry2 = getPersistenceService().getSession().createQuery(query2.toString());
-                qry2.setParameter("status", finalStatus, StringType.INSTANCE);
+                qry2.setParameter("status", finalStatus, StandardBasicTypes.STRING);
                 queryParams.entrySet().forEach(entry -> qry2.setParameter(entry.getKey(), entry.getValue()));
                 budgetDetailList = qry2.list();
                 isBERE = "BE";
@@ -480,7 +481,7 @@ public class BudgetReportAction extends BaseFormAction {
                     .append(" order by bd.executingDepartment,bd.function.name,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode");
             final Query qry2 = getPersistenceService().getSession().createQuery(query2.toString());
             queryParams.entrySet().forEach(entry -> qry2.setParameter(entry.getKey(), entry.getValue()));
-            qry2.setParameter("status", finalStatus, StringType.INSTANCE);
+            qry2.setParameter("status", finalStatus, StandardBasicTypes.STRING);
             budgetDetailList = qry2.list();
             if (budgetDetailList.isEmpty()) {
                 StringBuilder query3 = new StringBuilder(" from BudgetDetail bd where ")
@@ -489,7 +490,7 @@ public class BudgetReportAction extends BaseFormAction {
                         .append(" order by bd.executingDepartment,bd.function.name,bd.budgetGroup.majorCode.type,bd.budgetGroup.majorCode.glcode");
                 final Query qry3 = getPersistenceService().getSession().createQuery(query3.toString());
                 queryParams.entrySet().forEach(entry -> qry3.setParameter(entry.getKey(), entry.getValue()));
-                qry3.setParameter("status", finalStatus, StringType.INSTANCE);
+                qry3.setParameter("status", finalStatus, StandardBasicTypes.STRING);
                 budgetDetailList = qry3.list();
             }
         }
@@ -869,12 +870,12 @@ public class BudgetReportAction extends BaseFormAction {
                 .append("),bd.executingDepartment,bd.function.id");
         final Query qry = getPersistenceService().getSession().createQuery(queryString.toString());
         if (dept != null && dept.getId() != null)
-            qry.setParameter("execDept", dept.getCode(), StringType.INSTANCE);
+            qry.setParameter("execDept", dept.getCode(), StandardBasicTypes.STRING);
         if (function != null && function.getId() != null)
-            qry.setParameter("functionId", function.getId(), LongType.INSTANCE);
+            qry.setParameter("functionId", function.getId(), StandardBasicTypes.LONG);
         qry.setParameter("finYear", finyear)
-            .setParameter("status", finalStatus, StringType.INSTANCE)
-            .setParameter("isBere", isBERE, StringType.INSTANCE);
+            .setParameter("status", finalStatus, StandardBasicTypes.STRING)
+            .setParameter("isBere", isBERE, StandardBasicTypes.STRING);
         List<Object[]> amountList = qry.list();
         
         BigDecimal reAppropriationAmt = BigDecimal.ZERO;
@@ -899,8 +900,8 @@ public class BudgetReportAction extends BaseFormAction {
                 .append(")");
         Query qry1 = getPersistenceService().getSession().createQuery(query.toString());
         qry1.setParameter("finYear", finyear)
-            .setParameter("status", finalStatus, StringType.INSTANCE)
-            .setParameter("isBeRe", isBERE, StringType.INSTANCE);
+            .setParameter("status", finalStatus, StandardBasicTypes.STRING)
+            .setParameter("isBeRe", isBERE, StandardBasicTypes.STRING);
         amountList = qry1.list();
 
         for (final Object[] obj : amountList)
@@ -938,11 +939,11 @@ public class BudgetReportAction extends BaseFormAction {
 				.append("),bd.executingDepartment,bd.function.id");
 		Query query = getPersistenceService().getSession().createQuery(queryString.toString());
 		if (dept != null && dept.getId() != null)
-			query.setParameter("execDept", dept.getCode(), StringType.INSTANCE);
+			query.setParameter("execDept", dept.getCode(), StandardBasicTypes.STRING);
 		if (function != null && function.getId() != null)
-			query.setParameter("functionId", function.getId(), LongType.INSTANCE);
+			query.setParameter("functionId", function.getId(), StandardBasicTypes.LONG);
 		query.setParameter("finYear", finyear).setParameter("owner", pos).setParameter("budget", topBudget)
-				.setParameter("isBeRe", isBERE, StringType.INSTANCE);
+				.setParameter("isBeRe", isBERE, StandardBasicTypes.STRING);
 		final List<Object[]> amountList = query.list();
 
 		BigDecimal reAppropriationAmt = BigDecimal.ZERO;
@@ -1255,8 +1256,13 @@ public class BudgetReportAction extends BaseFormAction {
 
     protected String getBudgetType(final String finalStatus) {
         String isBeRe = "BE";
+        /*
+         * Hibernate 6 migration note:
+         * HQL property names must match the Java entity mapping. Budget exposes this
+         * field as isbere, so the older isBeRe token is rejected by strict parsing.
+         */
         final Budget budget = (Budget) persistenceService
-                .find("from Budget where financialYear.id=? and parent is null and isPrimaryBudget=true and isActiveBudget=true and isBeRe='RE' and status.code=?",
+                .find("from Budget where financialYear.id=? and parent is null and isPrimaryBudget=true and isActiveBudget=true and isbere='RE' and status.code=?",
                         budgetReport.getFinancialYear().getId(), finalStatus);
         if (budget != null)
             isBeRe = "RE";
@@ -1565,11 +1571,11 @@ public class BudgetReportAction extends BaseFormAction {
 						.append(deptQuery).append(" and bd.budget.isbere=:isBeRe and bd.budget.status.code =:status ")
 						.append(getQueryForSelectedType(code, params))
 						.append(String.format("  order by bd.budgetGroup.%s.glcode", code)).toString())
-				.setParameter("finYearId", budgetReport.getFinancialYear().getId(), LongType.INSTANCE)
-				.setParameter("isBeRe", budgetType, StringType.INSTANCE)
-				.setParameter("status", finalStatus, StringType.INSTANCE);
+				.setParameter("finYearId", budgetReport.getFinancialYear().getId(), StandardBasicTypes.LONG)
+				.setParameter("isBeRe", budgetType, StandardBasicTypes.STRING)
+				.setParameter("status", finalStatus, StandardBasicTypes.STRING);
 		if (!deptQuery.equals("")) {
-			query.setParameter("execDept", budgetReport.getDepartment().getCode(), StringType.INSTANCE);
+			query.setParameter("execDept", budgetReport.getDepartment().getCode(), StandardBasicTypes.STRING);
 		}
 		persistenceService.populateQueryWithParams(query, params);
 		final List<BudgetDetail> results = query.list();
@@ -1578,9 +1584,14 @@ public class BudgetReportAction extends BaseFormAction {
 
     private void getBudgetReappropriationAmt() {
         final String status = getFinalStatus();
+        /*
+         * Hibernate 6 migration note:
+         * status is an EgwStatus association. Compare the associated status.id with
+         * the subquery result instead of comparing the entity itself to an id value.
+         */
         final List<Object[]> list = getPersistenceService()
                 .findAllBy(
-                        "select sum(br.additionAmount)-sum(br.deductionAmount),br.budgetDetail.id from BudgetReAppropriation br where br.status = (select id from EgwStatus where moduletype='BudgetReAppropriation' "
+                        "select sum(br.additionAmount)-sum(br.deductionAmount),br.budgetDetail.id from BudgetReAppropriation br where br.status.id = (select id from EgwStatus where moduletype='BudgetReAppropriation' "
                                 + "and description='Approved') group by br.budgetDetail.id");
         if (!list.isEmpty() && list.size() != 0)
             for (final Object[] obj : list)

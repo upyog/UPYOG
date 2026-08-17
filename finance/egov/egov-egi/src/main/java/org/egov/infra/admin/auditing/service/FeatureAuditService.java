@@ -65,9 +65,15 @@ public class FeatureAuditService {
     private FeatureRepository featureRepository;
 
     public Page<Revision<Integer, Feature>> getFeatureRoleChangeAudit(FeatureRoleChangeAuditReportRequest featureRoleChangeAuditReportRequest) {
-        final Pageable pageable = new PageRequest(featureRoleChangeAuditReportRequest.pageNumber(),
+        // LTS Migration (Spring 6): Replaced deprecated 'new PageRequest(pageNumber, pageSize, sort)'
+        // constructor with the static factory method 'PageRequest.of(...)' as the constructor was
+        // removed in Spring Data 3.x (Spring 6 compatible).
+        // LTS Migration (Spring 6): Replaced deprecated 'new Sort(direction, properties)' constructor
+        // with 'Sort.by(direction, properties)' static factory method, as the Sort constructor was
+        // removed in Spring Data 3.x (Spring 6 compatible).
+        final Pageable pageable = PageRequest.of(featureRoleChangeAuditReportRequest.pageNumber(),
                 featureRoleChangeAuditReportRequest.pageSize(),
-                featureRoleChangeAuditReportRequest.orderDir(), featureRoleChangeAuditReportRequest.orderBy());
+                org.springframework.data.domain.Sort.by(featureRoleChangeAuditReportRequest.orderDir(), featureRoleChangeAuditReportRequest.orderBy()));
         return featureRepository.findRevisions(featureRoleChangeAuditReportRequest.getFeatureId(), pageable);
     }
 }

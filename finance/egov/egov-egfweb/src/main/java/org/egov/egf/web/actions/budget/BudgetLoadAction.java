@@ -58,6 +58,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.dispatcher.multipart.UploadedFile;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
@@ -121,7 +122,7 @@ public class BudgetLoadAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LoggerFactory.getLogger(BudgetLoadAction.class);
-    private File budgetInXls;
+    private UploadedFile budgetInXls;
     private String budgetInXlsFileName;
     private String budgetInXlsContentType;
     private static final int RE_YEAR_ROW_INDEX = 1;
@@ -272,7 +273,12 @@ public class BudgetLoadAction extends BaseFormAction {
                 LOGGER.debug("done findApprovedBudgetsForFY");
             dropdownData.put("financialYearList", persistenceService.findAllBy("from CFinancialYear where isActive=true order by finYearRange desc"));
             if (shouldShowField(Constants.FUND))
-                dropdownData.put("fundList",persistenceService.findAllBy("from Fund where isActive=true and isnotleaf=false ORDER BY name ASC "));
+                /*
+                 * LTS Migration Fix (Hibernate 6 Upgrade):
+                 * Changed field names to lowercase 'isactive=true and isnotleaf=false' for Fund HQL.
+                 * The Fund entity maps database columns to Java properties 'isactive' and 'isnotleaf'.
+                 */
+                dropdownData.put("fundList",persistenceService.findAllBy("from Fund where isactive=true and isnotleaf=false ORDER BY name ASC "));
             if (shouldShowField(Constants.EXECUTING_DEPARTMENT)) {
                 List<Department> departmentList = (List<Department>) masterDataCache.get("egi-department");
                 if (departmentList != null) {
@@ -284,10 +290,15 @@ public class BudgetLoadAction extends BaseFormAction {
                 dropdownData.put("executingDepartmentList", departmentList);
             }
             if (shouldShowField(Constants.FUNCTION))
-                dropdownData.put("functionList", persistenceService.findAllBy("from CFunction where isactive=true and isnotleaf=false ORDER BY name ASC"));
+                /*
+                 * LTS Migration Fix (Hibernate 6 Upgrade):
+                 * Changed field names to camelCase 'isActive=true and isNotLeaf=false' for CFunction HQL.
+                 * The CFunction Java entity uses 'isActive' and 'isNotLeaf' property names.
+                 */
+                dropdownData.put("functionList", persistenceService.findAllBy("from CFunction where isActive=true and isNotLeaf=false ORDER BY name ASC"));
             // if (shouldShowField(Constants.FUNCTION))
             //     dropdownData.put("functionList", masterDataCache.get("egi-function"));
-            System.out.println("shouldShowField(CHARTOFACCOUNTS): " + shouldShowField(Constants.CHARTOFACCOUNTS));
+            LOGGER.info("shouldShowField(CHARTOFACCOUNTS): {}", shouldShowField(Constants.CHARTOFACCOUNTS));
             if (shouldShowField(Constants.CHARTOFACCOUNTS))
             dropdownData.put("chartOfAccountList",persistenceService.findAllBy("from CChartOfAccounts where isActiveForPosting=true ORDER BY id ASC"));
             
@@ -306,12 +317,41 @@ public class BudgetLoadAction extends BaseFormAction {
         return "upload";
     }
 
+    private File getBudgetUploadFile() {
+        if (budgetInXls == null) {
+            return null;
+        }
+        return new File(budgetInXls.getAbsolutePath());
+    }
+
+    private String getResolvedBudgetFileName() {
+        if (budgetInXlsFileName != null && !budgetInXlsFileName.isEmpty()) {
+            return budgetInXlsFileName;
+        }
+        return budgetInXls != null ? budgetInXls.getOriginalName() : null;
+    }
+
+    private String getResolvedBudgetContentType() {
+        if (budgetInXlsContentType != null && !budgetInXlsContentType.isEmpty()) {
+            return budgetInXlsContentType;
+        }
+        return budgetInXls != null ? budgetInXls.getContentType() : null;
+    }
+
     @ValidationErrorPage("upload")
     @Action(value = "/budget/budgetLoad-upload")
     public String upload()
     {
         try {
-            FileInputStream fsIP = new FileInputStream(budgetInXls);
+            final File budgetFile = getBudgetUploadFile();
+            if (budgetFile == null) {
+                throw new ValidationException(Arrays.asList(new ValidationError(
+                        getText("msg.select.file.to.upload"),
+                        getText("msg.select.file.to.upload"))));
+            }
+            budgetInXlsFileName = getResolvedBudgetFileName();
+            budgetInXlsContentType = getResolvedBudgetContentType();
+            FileInputStream fsIP = new FileInputStream(budgetFile);
 
             final POIFSFileSystem fs = new POIFSFileSystem(fsIP);
             final HSSFWorkbook wb = new HSSFWorkbook(fs);
@@ -348,7 +388,7 @@ public class BudgetLoadAction extends BaseFormAction {
                             + budgetInXlsFileName.split("\\.")[1];
             }
 
-            final FileStoreMapper originalFileStore = fileStoreService.store(budgetInXls,
+            final FileStoreMapper originalFileStore = fileStoreService.store(budgetFile,
                     budgetOriginalFileName,
                     budgetInXlsContentType, FinancialConstants.MODULE_NAME_APPCONFIG,false);
 
@@ -552,7 +592,8 @@ public class BudgetLoadAction extends BaseFormAction {
     private void prepareOutPutFileWithErrors(List<BudgetUpload> budgetUploadList) {
         FileInputStream fsIP;
         try {
-            fsIP = new FileInputStream(budgetInXls);
+            final File budgetFile = getBudgetUploadFile();
+            fsIP = new FileInputStream(budgetFile);
             Map<String, String> errorsMap = new HashMap<String, String>();
             final POIFSFileSystem fs = new POIFSFileSystem(fsIP);
             final HSSFWorkbook wb = new HSSFWorkbook(fs);
@@ -588,7 +629,7 @@ public class BudgetLoadAction extends BaseFormAction {
                 }
             }
 
-            FileOutputStream output_file = new FileOutputStream(budgetInXls);
+            FileOutputStream output_file = new FileOutputStream(budgetFile);
             wb.write(output_file);
             output_file.close();
             if (budgetInXlsFileName.contains("_budget_original_")) {
@@ -609,7 +650,7 @@ public class BudgetLoadAction extends BaseFormAction {
                             + timeStamp + "."
                             + budgetInXlsFileName.split("\\.")[1];
             }
-            final FileStoreMapper outPutFileStore = fileStoreService.store(budgetInXls,
+            final FileStoreMapper outPutFileStore = fileStoreService.store(budgetFile,
                     budgetOutPutFileName,
                     budgetInXlsContentType, FinancialConstants.MODULE_NAME_APPCONFIG);
 
@@ -628,7 +669,8 @@ public class BudgetLoadAction extends BaseFormAction {
     private void prepareOutPutFileWithFinalStatus(List<BudgetUpload> budgetUploadList) {
         FileInputStream fsIP;
         try {
-            fsIP = new FileInputStream(budgetInXls);
+            final File budgetFile = getBudgetUploadFile();
+            fsIP = new FileInputStream(budgetFile);
 
             Map<String, String> errorsMap = new HashMap<String, String>();
             final POIFSFileSystem fs = new POIFSFileSystem(fsIP);
@@ -655,7 +697,7 @@ public class BudgetLoadAction extends BaseFormAction {
                         .getCell(GLCODE_CELL_INDEX)))));
             }
 
-            FileOutputStream output_file = new FileOutputStream(budgetInXls);
+            FileOutputStream output_file = new FileOutputStream(budgetFile);
             wb.write(output_file);
             output_file.close();
             if (budgetInXlsFileName.contains("_budget_original_")) {
@@ -676,7 +718,7 @@ public class BudgetLoadAction extends BaseFormAction {
                             + timeStamp + "."
                             + budgetInXlsFileName.split("\\.")[1];
             }
-            final FileStoreMapper outPutFileStore = fileStoreService.store(budgetInXls,
+            final FileStoreMapper outPutFileStore = fileStoreService.store(budgetFile,
                     budgetOutPutFileName,
                     budgetInXlsContentType, FinancialConstants.MODULE_NAME_APPCONFIG);
             persistenceService.persist(outPutFileStore);
@@ -984,10 +1026,10 @@ public class BudgetLoadAction extends BaseFormAction {
     }
 
     public File getBudgetInXls() {
-        return budgetInXls;
+        return getBudgetUploadFile();
     }
 
-    public void setBudgetInXls(File budgetInXls) {
+    public void setBudgetInXls(UploadedFile budgetInXls) {
         this.budgetInXls = budgetInXls;
     }
 

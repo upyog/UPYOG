@@ -49,22 +49,22 @@ package org.egov.commons.service;
 
 import org.egov.commons.Fundsource;
 import org.egov.commons.repository.FundsourceRepository;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.Metamodel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,7 +92,7 @@ public class FundsourceService {
     }
 
     public List<Fundsource> findAll() {
-        return fundsourceRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+        return fundsourceRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
     }
 
     public Fundsource findByName(final String name) {
@@ -104,14 +104,14 @@ public class FundsourceService {
     }
 
     public Fundsource findOne(final Long id) {
-        return fundsourceRepository.findOne(id);
+        return fundsourceRepository.findById(id).orElse(null);
     }
 
     public List<Fundsource> getBySubSchemeId(final Integer subSchemeId) {
         final Query query = entityManager.unwrap(Session.class)
                 .createQuery(" from Fundsource where isactive = true and subSchemeId.id=:subSchemeId");
 
-        query.setInteger("subSchemeId", subSchemeId);
+        query.setParameter("subSchemeId", subSchemeId);
         return query.list();
     }
 

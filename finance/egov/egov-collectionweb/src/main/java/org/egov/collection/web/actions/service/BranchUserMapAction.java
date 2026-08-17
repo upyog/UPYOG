@@ -64,9 +64,9 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -120,7 +120,8 @@ public class BranchUserMapAction extends BaseFormAction {
     @Action(value = "/service/branchUserMap-newform")
     public String newform() {
         addDropdownData(BANK_NAME_LIST, bankHibernateDAO.getAllBankHavingBranchAndAccounts());
-        System.out.println(branchUserMap.getIsActive());
+        // LTS Migration Fix (WildFly 40): System.out is discarded; use LOGGER.
+        LOGGER.info("branchUserMap isActive: " + branchUserMap.getIsActive());
         addDropdownData(BANK_BRANCH_LIST, Collections.emptyList());
         addDropdownData(BANK_COLLECTION_OPERATOR_USER_LIST, getBankCollectionOperator());
         return NEW;

@@ -41,23 +41,23 @@ package org.egov.infra.microservice.models;
 
 import java.math.BigDecimal;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class DemandDetail {
 
-    @SafeHtml
+    @SanitizeHtml
     @JsonProperty("id")
     private String id;
     
-    @SafeHtml
+    @SanitizeHtml
     @JsonProperty("demandId")
     private String demandId;
 
-    @SafeHtml
+    @SanitizeHtml
     @NotNull @JsonProperty("taxHeadMasterCode")
     private String taxHeadMasterCode;
 
@@ -73,7 +73,7 @@ public class DemandDetail {
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 
-    @SafeHtml
+    @SanitizeHtml
     @JsonProperty("tenantId")
     private String tenantId;
 

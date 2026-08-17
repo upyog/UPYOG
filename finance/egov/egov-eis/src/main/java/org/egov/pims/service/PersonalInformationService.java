@@ -60,17 +60,17 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.model.PersonalInformation;
-import org.hibernate.Criteria;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+
+
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -241,91 +241,40 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 	 * @return
 	 */
 	public  List<PersonalInformation> getEmployeesByStatus(Integer statusid ,Date fromDate,Date toDate){
-		List<PersonalInformation> employeeList ; 
-		Criteria criteria=null;
-
-		try
-		{
-			criteria=getCriteriaForEmpSearchByStatus(statusid,fromDate,toDate);	
-			employeeList= criteria.list();
-
+		List<PersonalInformation> employeeList;
+		try {
+			employeeList = buildQueryForEmpSearchByStatus(statusid, fromDate, toDate).getResultList();
 		} catch (HibernateException he) {
 			throw new ApplicationRuntimeException("Exception:" + he.getMessage(),he);
-        } /*
-           * catch (Exception he) { throw new
-           * ApplicationRuntimeException("Exception:" + he.getMessage(),he); }
-           */
+		}
 		return employeeList;
 	}
-	/**
-	 * Returns Page  for the given status  and
-	 * Date range considered for the status['Retired','Deceased'] and as of toDate for the status[ 'Employed','Suspended' ]
-	 * @param statusid 
-	 * @param fromDate
-	 * @param toDate
-	 * @param pageNumber
-	 * @param pageSize
-	 * @return
-	 */
+
 	public  Page getEmployeesByStatus(Integer statusid ,Date fromDate,Date toDate,Integer pageNumber,Integer pageSize){
-
-		Criteria criteria=null;			
-		criteria=getCriteriaForEmpSearchByStatus(statusid,fromDate,toDate);				
-		return new Page(criteria,pageNumber,pageSize);
-
+		org.hibernate.query.Query q = buildQueryForEmpSearchByStatus(statusid, fromDate, toDate);
+		List list = q.setFirstResult((pageNumber - 1) * pageSize).setMaxResults(pageSize).getResultList();
+		return new Page(pageNumber, pageSize, list);
 	}
-	/**
-	 * Returns total record count  for the given status  and
-	 * Date range considered for the status['Retired','Deceased'] and as of toDate for the status[ 'Employed','Suspended' ]
-	 * @param statusid 
-	 * @param fromDate
-	 * @param toDate
-	 * @return
-	 */
+
 	public  int getTotalCountOfEmployeesByStatus(Integer statusid ,Date fromDate,Date toDate){
-		Criteria criteria=null;
-		int totalSize=0;
-		try
-		{
-
-			criteria=getCriteriaForEmpSearchByStatus(statusid,fromDate,toDate);	
-
-			criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY); 
-			criteria.setProjection(Projections.rowCount());
-			if(criteria.uniqueResult()!=null)
-			{
-				totalSize=((Long)criteria.uniqueResult()).intValue();
-			}
-		} catch (HibernateException he) {
-			throw new ApplicationRuntimeException("Exception:" + he.getMessage(),he);
-        } /*
-           * catch (Exception he) { throw new
-           * ApplicationRuntimeException("Exception:" + he.getMessage(),he); }
-           */
-		return totalSize;
+		return buildQueryForEmpSearchByStatus(statusid, fromDate, toDate).getResultList().size();
 	}
 
-	private Criteria getCriteriaForEmpSearchByStatus(Integer statusid ,Date fromDate,Date toDate)
-	{
-		EgwStatus egwStatus=egwStatusHibernateDAO.findById(statusid,false);
-		DetachedCriteria detachCriteriaPersonalInfo=DetachedCriteria.forClass(PersonalInformation.class,"emp");
-		if(egwStatus.getModuletype().equals("Employee") && egwStatus.getDescription().equalsIgnoreCase("Employed"))
-		{
-			detachCriteriaPersonalInfo.createAlias("emp.egpimsAssignment", "assPrd").
-			add(Restrictions.and(Restrictions.le("assPrd.fromDate", toDate), Restrictions.or(Restrictions.ge("assPrd.toDate", toDate), Restrictions.isNull("assPrd.toDate")) ));
-
-
+	private org.hibernate.query.Query buildQueryForEmpSearchByStatus(Integer statusid, Date fromDate, Date toDate) {
+		EgwStatus egwStatus = egwStatusHibernateDAO.findById(statusid, false);
+		String hql;
+		if (egwStatus.getModuletype().equals("Employee") && egwStatus.getDescription().equalsIgnoreCase("Employed")) {
+			hql = "from PersonalInformation emp join emp.egpimsAssignment assPrd" +
+					" where assPrd.fromDate <= :toDate and (assPrd.toDate >= :toDate or assPrd.toDate is null)";
+		} else if (egwStatus.getModuletype().equals("Employee") && egwStatus.getDescription().equalsIgnoreCase("Retired")) {
+			hql = "from PersonalInformation emp where emp.retirementDate between :fromDate and :toDate";
+		} else {
+			hql = "from PersonalInformation emp where emp.deathDate between :fromDate and :toDate";
 		}
-		else if(egwStatus.getModuletype().equals("Employee") && egwStatus.getDescription().equalsIgnoreCase("Retired"))
-		{
-			detachCriteriaPersonalInfo.add(Restrictions.between("emp.retirementDate", fromDate, toDate));				
-
-		}
-		else if(egwStatus.getModuletype().equals("Employee") && egwStatus.getDescription().equalsIgnoreCase("Deceased"))
-		{
-			detachCriteriaPersonalInfo.add(Restrictions.between("emp.deathDate", fromDate, toDate));
-		}
-		return detachCriteriaPersonalInfo.getExecutableCriteria(getCurrentSession());	
+		org.hibernate.query.Query q = getCurrentSession().createQuery(hql);
+		if (hql.contains(":toDate")) q.setParameter("toDate", toDate);
+		if (hql.contains(":fromDate")) q.setParameter("fromDate", fromDate);
+		return q;
 	}
 	
 	/**
@@ -345,39 +294,28 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 	 * @param pageSize
 	 * @return
 	 */
+	// Refactored for Hibernate 6 / JDK 17 compatibility: replaced legacy org.hibernate.Criteria with dynamic HQL query and subList pagination
 	public List<EmployeeView> getListOfEmployeeViewBasedOnCriteria(HashMap<String,Object> criteriaParams, Integer pageNo, Integer pageSize) {
-		
 		List<EmployeeView> employeeList = new ArrayList<EmployeeView>();
 		try {
-			Criteria criteria=getCurrentSession().createCriteria(EmployeeView.class);
-			Date asOnDate;
-			for (Map.Entry<String, Object> entry : criteriaParams.entrySet())
-			{
-				if ("departmentId".equals(entry.getKey())) {
-					criteria.createAlias("deptId","department")
-					.add(Restrictions.eq("department.id",entry.getValue() ));
-				}
-				if ("designationId".equals(entry.getKey())) {
-					criteria.createAlias("desigId","designation")
-					.add(Restrictions.eq("designation.designationId",entry.getValue() ));
-				}
-				if ("isPrimary".equals(entry.getKey())) {
-					criteria.add(Restrictions.eq("isPrimary",entry.getValue() ));
-				}
-				if ("asOnDate".equals(entry.getKey())) 
-					asOnDate = (Date)entry.getValue();
-				else
-					asOnDate = DateUtils.today();
-				criteria.add(Restrictions.and(Restrictions.le("fromDate",asOnDate), Restrictions.ge("toDate",asOnDate)));
-
-				
-			}
-			criteria.addOrder(Order.asc("id"));
-			employeeList = new Page(criteria, pageNo, pageSize).getList();
+			Date asOnDate = DateUtils.today();
+			StringBuilder hql = new StringBuilder("from EmployeeView ev where 1=1");
+			if (criteriaParams.containsKey("departmentId")) hql.append(" and ev.deptId.id = :departmentId");
+			if (criteriaParams.containsKey("designationId")) hql.append(" and ev.desigId.designationId = :designationId");
+			if (criteriaParams.containsKey("isPrimary")) hql.append(" and ev.isPrimary = :isPrimary");
+			if (criteriaParams.containsKey("asOnDate")) asOnDate = (Date) criteriaParams.get("asOnDate");
+			hql.append(" and ev.fromDate <= :asOnDate and ev.toDate >= :asOnDate order by ev.id asc");
+			org.hibernate.query.Query<EmployeeView> q = getCurrentSession().createQuery(hql.toString(), EmployeeView.class);
+			if (criteriaParams.containsKey("departmentId")) q.setParameter("departmentId", criteriaParams.get("departmentId"));
+			if (criteriaParams.containsKey("designationId")) q.setParameter("designationId", criteriaParams.get("designationId"));
+			if (criteriaParams.containsKey("isPrimary")) q.setParameter("isPrimary", criteriaParams.get("isPrimary"));
+			q.setParameter("asOnDate", asOnDate);
+			List<EmployeeView> all = q.getResultList();
+			int start = (pageNo - 1) * pageSize;
+			employeeList = all.subList(Math.min(start, all.size()), Math.min(start + pageSize, all.size()));
 		} catch (HibernateException e) {
 			throw new ApplicationRuntimeException("Error occured in searching for employees",e);
 		}
-		
 		return employeeList;
 	}
 	/**
@@ -401,51 +339,34 @@ public class PersonalInformationService extends PersistenceService<PersonalInfor
 	 * @return
 	 */
 	
-public List<EmployeeView> getListOfEmployeeViewBasedOnListOfDesignationAndOtherCriteria(HashMap<String,Object> criteriaParams, Integer pageNo, Integer pageSize) {
-		
+	// Refactored for Hibernate 6 / JDK 17 compatibility: replaced legacy org.hibernate.Criteria with dynamic HQL query and subList pagination
+	public List<EmployeeView> getListOfEmployeeViewBasedOnListOfDesignationAndOtherCriteria(HashMap<String,Object> criteriaParams, Integer pageNo, Integer pageSize) {
 		List<EmployeeView> employeeList = new ArrayList<EmployeeView>();
 		try {
-			Criteria criteria=getCurrentSession().createCriteria(EmployeeView.class);
-			Date asOnDate;
-			for (Map.Entry<String, Object> entry : criteriaParams.entrySet())
-			{
-				if ("departmentId".equals(entry.getKey())) {
-					criteria.createAlias("deptId","department")
-					.add(Restrictions.eq("department.id",entry.getValue() ));
-				}
-				if ("designationId".equals(entry.getKey())) {
-					criteria.createAlias("desigId","designation")
-					.add(Restrictions.in("designation.designationId",(List<Integer>) entry.getValue()));
-				}
-				if ("isPrimary".equals(entry.getKey())) {
-					criteria.add(Restrictions.eq("isPrimary",entry.getValue() ));
-				}
-				if("employeeName".equals(entry.getKey()) && entry.getValue()!=null && !"".equals(entry.getValue()))
-				{
-					criteria.add(Restrictions.ilike("employeeName",entry.getValue().toString() ,org.hibernate.criterion.MatchMode.ANYWHERE));
-				}
-				if("isActive".equals(entry.getKey()) && entry.getValue()!=null && !"".equals(entry.getValue()))
-				{
-					criteria.add(Restrictions.eq("isActive",Integer.valueOf(entry.getValue().toString())));
-				}
-				if ("employeeCode".equals(entry.getKey())) {
-					criteria.add(Restrictions.in("employeeCode",(List<String>) entry.getValue()));
-				}
-				
-				if ("asOnDate".equals(entry.getKey())) 
-					asOnDate = (Date)entry.getValue();
-				else
-					asOnDate = DateUtils.today();
-				criteria.add(Restrictions.and(Restrictions.le("fromDate",asOnDate), Restrictions.ge("toDate",asOnDate)));
-
-				
-			}
-			criteria.addOrder(Order.asc("id"));
-			employeeList = new Page(criteria, pageNo, pageSize).getList();
+			Date asOnDate = DateUtils.today();
+			StringBuilder hql = new StringBuilder("from EmployeeView ev where 1=1");
+			if (criteriaParams.containsKey("departmentId")) hql.append(" and ev.deptId.id = :departmentId");
+			if (criteriaParams.containsKey("designationId")) hql.append(" and ev.desigId.designationId in :designationId");
+			if (criteriaParams.containsKey("isPrimary")) hql.append(" and ev.isPrimary = :isPrimary");
+			if (criteriaParams.containsKey("employeeName") && criteriaParams.get("employeeName") != null && !"".equals(criteriaParams.get("employeeName"))) hql.append(" and lower(ev.employeeName) like :employeeName");
+			if (criteriaParams.containsKey("isActive") && criteriaParams.get("isActive") != null && !"".equals(criteriaParams.get("isActive"))) hql.append(" and ev.isActive = :isActive");
+			if (criteriaParams.containsKey("employeeCode")) hql.append(" and ev.employeeCode in :employeeCode");
+			if (criteriaParams.containsKey("asOnDate")) asOnDate = (Date) criteriaParams.get("asOnDate");
+			hql.append(" and ev.fromDate <= :asOnDate and ev.toDate >= :asOnDate order by ev.id asc");
+			org.hibernate.query.Query<EmployeeView> q = getCurrentSession().createQuery(hql.toString(), EmployeeView.class);
+			if (criteriaParams.containsKey("departmentId")) q.setParameter("departmentId", criteriaParams.get("departmentId"));
+			if (criteriaParams.containsKey("designationId")) q.setParameterList("designationId", (List<Integer>) criteriaParams.get("designationId"));
+			if (criteriaParams.containsKey("isPrimary")) q.setParameter("isPrimary", criteriaParams.get("isPrimary"));
+			if (criteriaParams.containsKey("employeeName") && criteriaParams.get("employeeName") != null && !"".equals(criteriaParams.get("employeeName"))) q.setParameter("employeeName", "%" + criteriaParams.get("employeeName").toString().toLowerCase() + "%");
+			if (criteriaParams.containsKey("isActive") && criteriaParams.get("isActive") != null && !"".equals(criteriaParams.get("isActive"))) q.setParameter("isActive", Integer.valueOf(criteriaParams.get("isActive").toString()));
+			if (criteriaParams.containsKey("employeeCode")) q.setParameterList("employeeCode", (List<String>) criteriaParams.get("employeeCode"));
+			q.setParameter("asOnDate", asOnDate);
+			List<EmployeeView> all = q.getResultList();
+			int start = (pageNo - 1) * pageSize;
+			employeeList = all.subList(Math.min(start, all.size()), Math.min(start + pageSize, all.size()));
 		} catch (HibernateException e) {
 			throw new ApplicationRuntimeException("Error occured in searching for employees",e);
 		}
-		
 		return employeeList;
 	}
 	@Override

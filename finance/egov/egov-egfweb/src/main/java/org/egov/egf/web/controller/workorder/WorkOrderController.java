@@ -50,7 +50,7 @@ package org.egov.egf.web.controller.workorder;
 import java.io.IOException;
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.commons.service.FundService;
 import org.egov.egf.masters.services.ContractorService;
@@ -62,7 +62,7 @@ import org.egov.model.bills.EgBillregister;
 import org.egov.model.masters.WorkOrder;
 import org.egov.model.masters.WorkOrderSearchRequest;
 import org.egov.services.bills.EgBillRegisterService;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -183,7 +183,7 @@ public class WorkOrderController {
 	}
 
 	@PostMapping(value = "/search/{mode}")
-	public String search(@PathVariable("mode") @SafeHtml final String mode, final Model model) {
+	public String search(@PathVariable("mode") @SanitizeHtml final String mode, final Model model) {
 		final WorkOrderSearchRequest workOrderSearchRequest = new WorkOrderSearchRequest();
 		prepareNewForm(model);
 		model.addAttribute(WORK_ORDER_SEARCH_REQUEST, workOrderSearchRequest);
@@ -193,7 +193,7 @@ public class WorkOrderController {
 
 	@PostMapping(value = "/ajaxsearch/{mode}", produces = MediaType.TEXT_PLAIN_VALUE)
 	@ResponseBody
-	public String ajaxsearch(@PathVariable("mode") @SafeHtml final String mode, final Model model,
+	public String ajaxsearch(@PathVariable("mode") @SanitizeHtml final String mode, final Model model,
 			@Valid @ModelAttribute final WorkOrderSearchRequest workOrderSearchRequest) {
 		final List<WorkOrder> searchResultList = workOrderService.search(workOrderSearchRequest);
 		return new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}").toString();
@@ -206,7 +206,7 @@ public class WorkOrderController {
 	}
 
 	@GetMapping(value = "/result/{id}/{mode}")
-	public String result(@PathVariable("id") final Long id, @PathVariable("mode") @SafeHtml final String mode,
+	public String result(@PathVariable("id") final Long id, @PathVariable("mode") @SanitizeHtml final String mode,
 			final Model model) {
 		final WorkOrder workOrder = workOrderService.getById(id);
 		populateDepartmentName(workOrder);

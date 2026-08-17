@@ -53,22 +53,39 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.session.FindByIndexNameSessionRepository;
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+//import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisIndexedHttpSession;
 import org.springframework.session.security.SpringSessionBackedSessionRegistry;
-import org.springframework.session.web.http.CookieHttpSessionStrategy;
+import org.springframework.session.web.http.CookieHttpSessionIdResolver;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
 
 import static org.egov.infra.security.utils.SecurityConstants.SESSION_COOKIE_NAME;
 import static org.egov.infra.security.utils.SecurityConstants.SESSION_COOKIE_PATH;
 
+/**
+ * LTS Migration Fix (Spring Session 3): HTTP session storage on Redis using
+ * indexed sessions.
+ * <p>
+ * {@code @EnableRedisHttpSession} was replaced with
+ * {@code @EnableRedisIndexedHttpSession} so that
+ * {@link FindByIndexNameSessionRepository} remains available for concurrent
+ * session control via {@link SpringSessionBackedSessionRegistry}.
+ * </p>
+ */
 @Configuration
-@EnableRedisHttpSession
+@EnableRedisIndexedHttpSession
 public class RedisHttpSessionConfiguration {
 
 	@Value("${secure.cookie}")
     private boolean secureCookie;
 	
+    /**
+     * Cookie used as the Spring Session id. Path and secure-flag come from security constants
+     * and {@code secure.cookie}.
+     *
+     * @return cookie serializer
+     */
     @Bean
     public CookieSerializer cookieSerializer() {
         DefaultCookieSerializer serializer = new DefaultCookieSerializer();
@@ -79,10 +96,10 @@ public class RedisHttpSessionConfiguration {
     }
 
     @Bean
-    public CookieHttpSessionStrategy cookieHttpSessionStrategy(CookieSerializer cookieSerializer) {
-        CookieHttpSessionStrategy cookieHttpSession = new CookieHttpSessionStrategy();
-        cookieHttpSession.setCookieSerializer(cookieSerializer);
-        return cookieHttpSession;
+    public CookieHttpSessionIdResolver cookieHttpSessionIdResolver(CookieSerializer cookieSerializer) {
+        CookieHttpSessionIdResolver resolver = new CookieHttpSessionIdResolver();
+        resolver.setCookieSerializer(cookieSerializer);
+        return resolver;
     }
 
     @Bean
@@ -90,9 +107,13 @@ public class RedisHttpSessionConfiguration {
         return new SpringSessionBackedSessionRegistry(sessionRepository);
     }
 
+    /**
+     * Publishes session destroyed/expired events so login-audit records can be closed.
+     *
+     * @return session lifecycle listener
+     */
     @Bean
     public UserSessionDestroyListener httpSessionEventPublisher() {
-        System.out.println("****************************** UserSessionDestroyListener object created *******************");
         return new UserSessionDestroyListener();
     }
 }

@@ -74,10 +74,10 @@ import org.egov.model.recoveries.Recovery;
 import org.egov.services.deduction.RemitRecoveryService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.StringType;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -574,14 +574,14 @@ public class AutoRemittanceReportAction extends BaseFormAction {
         final Session session = persistenceService.getSession();
         final Query sqlQuery;
         if (level.equals("atcoc"))
-            sqlQuery = session.createSQLQuery(query.toString())
+            sqlQuery = session.createNativeQuery(query.toString())
                     .addScalar("remittanceCOA").addScalar("department").addScalar("drawingOfficer")
                     .addScalar("bankbranchAccount")
                     .addScalar("remittancePaymentNo").addScalar("rtgsNoDate")
                     .addScalar("rtgsAmount").addScalar("remittanceDTId").addScalar("paymentVoucherId")
                     .setResultTransformer(Transformers.aliasToBean(AutoRemittanceBeanReport.class));
         else
-            sqlQuery = session.createSQLQuery(query.toString())
+            sqlQuery = session.createNativeQuery(query.toString())
                     .addScalar("remittanceCOA").addScalar("fundName").addScalar("bankbranchAccount")
                     .addScalar("remittancePaymentNo").addScalar("rtgsNoDate")
                     .addScalar("rtgsAmount").addScalar("remittanceDTId").addScalar("paymentVoucherId")
@@ -641,17 +641,17 @@ public class AutoRemittanceReportAction extends BaseFormAction {
         queryString1.append(" )) ");
         
         final Session session = persistenceService.getSession();
-        final Query sqlQuery = session.createSQLQuery(queryString1.toString())
+        final Query sqlQuery = session.createNativeQuery(queryString1.toString())
                 .addScalar("incomeTaxRemittedAmt").addScalar("salesTaxRemittedAmt").addScalar("mwgwfRemittedAmt")
                 .addScalar("serviceTaxRemittedAmt").addScalar("grandTotal")
                 .setResultTransformer(Transformers.aliasToBean(AutoRemittanceCOCLevelBeanReport.class));
-        sqlQuery.setParameter("incometaxCapital",FinancialConstants.INCOMETAX_CAPITAL, StringType.INSTANCE)
-                .setParameter("incometaxRevenue",FinancialConstants.INCOMETAX_REVENUE, StringType.INSTANCE)
-                .setParameter("saletaxCapital",FinancialConstants.SALESTAX_CAPITAL, StringType.INSTANCE)
-                .setParameter("saletaxRevenue",FinancialConstants.SALESTAX_REVENUE, StringType.INSTANCE)
-                .setParameter("maintainance",FinancialConstants.MWGWF_MAINTENANCE, StringType.INSTANCE)
-                .setParameter("maintainanceCapital",FinancialConstants.MWGWF_CAPITAL, StringType.INSTANCE)
-                .setParameter("serviceTaxRevenue",FinancialConstants.SERVICETAX_REVENUE, StringType.INSTANCE);
+        sqlQuery.setParameter("incometaxCapital",FinancialConstants.INCOMETAX_CAPITAL, StandardBasicTypes.STRING)
+                .setParameter("incometaxRevenue",FinancialConstants.INCOMETAX_REVENUE, StandardBasicTypes.STRING)
+                .setParameter("saletaxCapital",FinancialConstants.SALESTAX_CAPITAL, StandardBasicTypes.STRING)
+                .setParameter("saletaxRevenue",FinancialConstants.SALESTAX_REVENUE, StandardBasicTypes.STRING)
+                .setParameter("maintainance",FinancialConstants.MWGWF_MAINTENANCE, StandardBasicTypes.STRING)
+                .setParameter("maintainanceCapital",FinancialConstants.MWGWF_CAPITAL, StandardBasicTypes.STRING)
+                .setParameter("serviceTaxRevenue",FinancialConstants.SERVICETAX_REVENUE, StandardBasicTypes.STRING);
         params.entrySet().forEach(rec -> sqlQuery.setParameter(rec.getKey(),rec.getValue()));
         sqlQuery.setParameterList("types", Arrays.asList(FinancialConstants.INCOMETAX_CAPITAL,FinancialConstants.INCOMETAX_REVENUE,
                 FinancialConstants.SALESTAX_CAPITAL,FinancialConstants.SALESTAX_REVENUE, FinancialConstants.MWGWF_MAINTENANCE,FinancialConstants.MWGWF_CAPITAL,
@@ -704,17 +704,17 @@ public class AutoRemittanceReportAction extends BaseFormAction {
         queryString2.append(" ))GROUP BY departmentcode  ORDER BY departmentcode ");
         
         
-        final Query sqlQuery2 = session.createSQLQuery(queryString2.toString())
+        final Query sqlQuery2 = session.createNativeQuery(queryString2.toString())
                 .addScalar("departmentCode")
                 .addScalar("incomeTaxRemittedAmt").addScalar("salesTaxRemittedAmt").addScalar("mwgwfRemittedAmt")
                 .addScalar("serviceTaxRemittedAmt").addScalar("departmentTotal")
                 .setResultTransformer(Transformers.aliasToBean(AutoRemittanceCOCLevelBeanReport.class));
-        sqlQuery2.setParameter("incomeTaxCapital",FinancialConstants.INCOMETAX_CAPITAL,StringType.INSTANCE)
-                 .setParameter("incomeTaxRevenue",FinancialConstants.INCOMETAX_REVENUE,StringType.INSTANCE)
-                 .setParameter("saleTaxCapital",FinancialConstants.SALESTAX_CAPITAL,StringType.INSTANCE)
-                 .setParameter("saleTaxRevenue",FinancialConstants.SALESTAX_REVENUE,StringType.INSTANCE)
-                 .setParameter("maintenance",FinancialConstants.MWGWF_MAINTENANCE, StringType.INSTANCE)
-                 .setParameter("maintenanceCapital",FinancialConstants.MWGWF_CAPITAL,StringType.INSTANCE)
+        sqlQuery2.setParameter("incomeTaxCapital",FinancialConstants.INCOMETAX_CAPITAL,StandardBasicTypes.STRING)
+                 .setParameter("incomeTaxRevenue",FinancialConstants.INCOMETAX_REVENUE,StandardBasicTypes.STRING)
+                 .setParameter("saleTaxCapital",FinancialConstants.SALESTAX_CAPITAL,StandardBasicTypes.STRING)
+                 .setParameter("saleTaxRevenue",FinancialConstants.SALESTAX_REVENUE,StandardBasicTypes.STRING)
+                 .setParameter("maintenance",FinancialConstants.MWGWF_MAINTENANCE, StandardBasicTypes.STRING)
+                 .setParameter("maintenanceCapital",FinancialConstants.MWGWF_CAPITAL,StandardBasicTypes.STRING)
                  .setParameter("serviceTaxRevenue",FinancialConstants.SERVICETAX_REVENUE);
         parameters.entrySet().forEach(entry -> sqlQuery2.setParameter(entry.getKey(), entry.getValue()));
         sqlQuery2.setParameterList("tdsTypes", Arrays.asList(FinancialConstants.INCOMETAX_CAPITAL,FinancialConstants.INCOMETAX_REVENUE,

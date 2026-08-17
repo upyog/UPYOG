@@ -83,7 +83,7 @@ public class DrawingOfficerService implements EntityTypeService {
      * @return Drawing officer object
      */
     public DrawingOfficer findById(Long id) {
-        return drawingOfficerRepository.findOne(id);
+        return drawingOfficerRepository.findById(id).orElse(null);
     }
     
     /**

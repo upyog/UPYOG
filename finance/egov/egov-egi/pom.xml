@@ -59,6 +59,33 @@
     <name>e-governments egi</name>
     <artifactId>egov-egi</artifactId>
 
+    <!--
+      LTS Migration Fix (Spring 6 / Java 17 / Jakarta EE 10):
+      dependency upgrades in this module
+      (versions are managed by the parent pom unless noted). Code impact is
+      documented on the classes listed next to each library.
+
+      Hibernate ORM 6.4 (org.hibernate.orm) ........ JpaConfiguration, PersistenceService,
+                                                     DefaultInboxRenderServiceImpl, BaseRevisionEntity
+      hibernate-entitymanager (removed) ............ merged into hibernate-core in v6
+      infinispan-hibernate-cache-v60 ............... replaces hibernate-infinispan; EgovMasterDataCaching
+      Hibernate Validator 8 + jakarta.validation ... jakarta.validation.* on entities/services
+      Spring Data Envers 3.2 ....................... RepositoryConfiguration AuditorAware Optional
+      jackson-datatype-hibernate6 .................. HibernateAwareObjectMapper (was hibernate4/5 module)
+      Spring Session 3.2 + Jedis 5.1.2 ............. RedisHttpSessionConfiguration, RedisServerConfiguration,
+                                                     UserSessionDestroyListener, CacheConfiguration
+      Struts 7.1 ................................... BaseFormAction.withSession, SpringMultipartParser
+      Displaytag Hazendaz fork ..................... EGovExcelView; jakarta.servlet.jsp
+      Apache Tiles tntim96 fork .................... org.egov.infra.web.spring.tiles (Spring 6 dropped tiles3)
+      commons-configuration2 / commons-dbcp2 ....... Java 17 replacements for EOL commons-configuration / dbcp
+      locationtech jts-core ........................ replaces com.vividsolutions:jts
+      ESAPI 2.5.3.0 jakarta + AntiSamy ............. XSSValidator
+      jakarta.mail-api + angus-mail ................ EmailConfiguration (javax.mail runtime)
+      jakarta.servlet 6 / jsp 3.1 / jstl 3.0 ....... all filters, controllers, tags
+      Lombok 1.18.30 ............................... JDK 17 annotation processing
+      Elasticsearch Java sources excluded .......... Spring Data ES 5.x is incompatible with ES 2.4 client
+    -->
+
     <dependencies>
 
         <dependency>
@@ -80,29 +107,31 @@
             <artifactId>spring-data-envers</artifactId>
         </dependency>
 
+        <!-- Hibernate 6.4 (org.hibernate.orm). hibernate-entitymanager was folded into hibernate-core. -->
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
         </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>org.hibernate</groupId>-->
+        <!--            <artifactId>hibernate-entitymanager</artifactId>-->
+        <!--        </dependency>-->
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-envers</artifactId>
         </dependency>
+        <!-- Hibernate 6 moved Infinispan L2 cache out of hibernate-infinispan into this artifact. -->
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-infinispan</artifactId>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-hibernate-cache-v60</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
         </dependency>
 
         <!-- STRUTS2 DEPENDENCIES START -->
@@ -137,9 +166,10 @@
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
         </dependency>
+        <!-- Jackson Hibernate 6 module: lazy-proxy JSON serialization (see HibernateAwareObjectMapper). -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-hibernate5</artifactId>
+            <artifactId>jackson-datatype-hibernate6</artifactId>
         </dependency>
         <!-- JSON END -->
 
@@ -160,14 +190,26 @@
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
         </dependency>
+        <!-- Jakarta classifier required with Servlet 6; non-jakarta ESAPI still uses javax.servlet. -->
         <dependency>
             <groupId>org.owasp.esapi</groupId>
             <artifactId>esapi</artifactId>
-            <version>2.2.3.1</version>
+            <version>2.5.3.0</version>
+            <classifier>jakarta</classifier>
         </dependency>
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
+        </dependency>
+
+
+        <!-- Compile-only javax.servlet.jsp-api: some Struts/Displaytag class files still reference javax types.
+             Runtime uses jakarta.servlet.jsp-api 3.1 below. -->
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>javax.servlet.jsp-api</artifactId>
+            <version>2.3.3</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- SECURITY END -->
@@ -181,16 +223,30 @@
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz-jobs</artifactId>
         </dependency>
+        <!-- Quartz 2.5 no longer pulls mchange-commons-java at compile scope; declare it explicitly. -->
+        <dependency>
+            <groupId>com.mchange</groupId>
+            <artifactId>mchange-commons-java</artifactId>
+        </dependency>
         <!-- QUARTZ END -->
 
         <!-- DISPLAYTAG START -->
+        <!--        <dependency>-->
+        <!--            <groupId>displaytag</groupId>-->
+        <!--            <artifactId>displaytag</artifactId>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>displaytag</groupId>-->
+        <!--            <artifactId>displaytag-export-poi</artifactId>-->
+        <!--        </dependency>-->
+        <!-- Original displaytag is unmaintained and javax.servlet-only. Hazendaz fork is Jakarta Servlet 6 compatible. -->
         <dependency>
-            <groupId>displaytag</groupId>
+            <groupId>com.github.hazendaz</groupId>
             <artifactId>displaytag</artifactId>
         </dependency>
         <dependency>
-            <groupId>displaytag</groupId>
-            <artifactId>displaytag-export-poi</artifactId>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf</artifactId>
         </dependency>
         <!-- DISPLAYTAG END -->
 
@@ -214,9 +270,10 @@
         <!-- REPORTS END -->
 
         <!-- COMMONS START -->
+        <!-- commons-configuration and commons-dbcp are EOL on Java 17; use configuration2 and dbcp2. -->
         <dependency>
-            <groupId>commons-configuration</groupId>
-            <artifactId>commons-configuration</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-configuration2</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
@@ -235,17 +292,17 @@
             <artifactId>commons-codec</artifactId>
         </dependency>
         <dependency>
-            <groupId>commons-dbcp</groupId>
-            <artifactId>commons-dbcp</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
         </dependency>
         <!-- COMMONS END -->
 
         <!-- GIS START -->
 
-        <dependency>
-            <groupId>org.opengis</groupId>
-            <artifactId>geoapi</artifactId>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>org.opengis</groupId>-->
+        <!--            <artifactId>geoapi</artifactId>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-main</artifactId>
@@ -266,49 +323,180 @@
             <groupId>org.geotools</groupId>
             <artifactId>gt-shapefile</artifactId>
         </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>org.geotools</groupId>-->
+        <!--            <artifactId>gt-shapefile-renderer</artifactId>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>jakarta.media</groupId>-->
+        <!--            <artifactId>jai_core</artifactId>-->
+        <!--            <classifier>alpha</classifier>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>net.java.dev.jsr-275</groupId>-->
+        <!--            <artifactId>jsr-275</artifactId>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.vividsolutions</groupId>-->
+        <!--            <artifactId>jts</artifactId>-->
+        <!--        </dependency>-->
+        <!-- JTS moved from com.vividsolutions to org.locationtech; GIS shapefile code uses this API. -->
         <dependency>
-            <groupId>org.geotools</groupId>
-            <artifactId>gt-shapefile-renderer</artifactId>
+            <groupId>org.locationtech.jts</groupId>
+            <artifactId>jts-core</artifactId>
+        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>units</groupId>-->
+        <!--            <artifactId>units</artifactId>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>java3d</groupId>-->
+        <!--            <artifactId>vecmath</artifactId>-->
+        <!--        </dependency>-->
+
+
+        <dependency>
+            <groupId>jakarta.servlet.jsp</groupId>
+            <artifactId>jakarta.servlet.jsp-api</artifactId>
+            <version>3.1.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.session</groupId>-->
+        <!--            <artifactId>spring-session-core</artifactId>-->
+        <!--            <version>3.2.0</version>-->
+        <!--        </dependency>-->
+
+        <!-- Spring Session 3.2 (Spring 6). Indexed sessions replace @EnableRedisHttpSession. -->
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-core</artifactId>
+            <version>${spring-session-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.servlet.jsp.jstl</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+            <version>3.0.0</version>
         </dependency>
         <dependency>
-            <groupId>javax.media</groupId>
-            <artifactId>jai_core</artifactId>
-            <classifier>alpha</classifier>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+
+        <!-- Required for org.egov.infra.web.spring.tiles.* classes, which vendor
+             Spring's removed tiles3 integration for Spring 6 compatibility. -->
+        <dependency>
+            <groupId>com.github.tntim96.apache.tiles</groupId>
+            <artifactId>tiles-core</artifactId>
+            <version>${apache-tiles-version}</version>
         </dependency>
         <dependency>
-            <groupId>net.java.dev.jsr-275</groupId>
-            <artifactId>jsr-275</artifactId>
+            <groupId>com.github.tntim96.apache.tiles</groupId>
+            <artifactId>tiles-jsp</artifactId>
+            <version>${apache-tiles-version}</version>
         </dependency>
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.owasp.esapi</groupId>-->
+        <!--            <artifactId>esapi</artifactId>-->
+        <!--            <version>2.2.3.0</version>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.projectlombok</groupId>-->
+        <!--            <artifactId>lombok</artifactId>-->
+        <!--            <version>1.18.8</version>-->
+        <!--            <scope>provided</scope>-->
+        <!--        </dependency>-->
+
+        <!--        <dependency>-->
+        <!--            <groupId>org.geotools</groupId>-->
+        <!--            <artifactId>gt-shapefile-renderer</artifactId>-->
+        <!--        </dependency>-->
+
+
         <dependency>
-            <groupId>com.vividsolutions</groupId>
-            <artifactId>jts</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>units</groupId>
-            <artifactId>units</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>java3d</groupId>
-            <artifactId>vecmath</artifactId>
+            <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+            <artifactId>owasp-java-html-sanitizer</artifactId>
+            <version>20211018.2</version>
         </dependency>
 
         <!-- GIS END -->
         <!-- https://mvnrepository.com/artifact/com.jayway.jsonpath/json-path -->
-		<dependency>
-    		<groupId>com.jayway.jsonpath</groupId>
-    		<artifactId>json-path</artifactId>
-    		<version>2.4.0</version>
-		</dependency>
-		
-	<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
-	<dependency>
-		<groupId>org.projectlombok</groupId>
-		<artifactId>lombok</artifactId>
-		<version>1.18.8</version>
-		<scope>provided</scope>
-	</dependency>
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.30</version>
+            <scope>provided</scope>
+        </dependency>
+
+
+        <!-- Jedis 5.x required by Spring Data Redis 3; connection setup is in RedisServerConfiguration. -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>5.1.2</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>jakarta.jms</groupId>
+            <artifactId>jakarta.jms-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+
+        <!-- Jakarta Mail 2.x + Angus implementation (javax.mail is not on the JDK 17 / Spring 6 classpath). -->
+        <dependency>
+            <groupId>jakarta.mail</groupId>
+            <artifactId>jakarta.mail-api</artifactId>
+            <version>2.1.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-mail</artifactId>
+            <version>2.0.3</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!--        <dependency>-->
+        <!--            <groupId>jakarta.script</groupId>-->
+        <!--            <artifactId>jakarta.script-api</artifactId>-->
+        <!--            <version>3.0.2</version>-->
+        <!--        </dependency>-->
+
 
     </dependencies>
+
 
     <build>
         <resources>
@@ -340,6 +528,86 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Elasticsearch 2.4 client APIs in these packages do not compile against Spring Data ES 5.x. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/elasticsearch/**/*.java</exclude>
+                        <!--                        <exclude>**/RestServiceAuthFilter.java</exclude>-->
+<!--                        <exclude>**/SpringMultipartParser.java</exclude>-->
+                        <!--                        <exclude>**/CacheControlInterceptor.java</exclude>-->
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <!-- Exclude Elasticsearch packages from Javadoc - incompatible with Spring Data ES 5.x -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <excludePackageNames>org.egov.infra.elasticsearch.*:org.egov.infra.admin.master.repository.es:org.egov.infra.admin.master.entity.es:org.egov.infra.admin.master.service.es:org.egov.infra.config.elasticsearch</excludePackageNames>
+                    <doclint>none</doclint>
+                    <failOnError>false</failOnError>
+                    <failOnWarnings>false</failOnWarnings>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
+
+
+
+
+    <!--    <build>-->
+    <!--        <resources>-->
+    <!--            <resource>-->
+    <!--                <directory>src/main/java</directory>-->
+    <!--                <excludes>-->
+    <!--                    <exclude>**/*.java</exclude>-->
+    <!--                </excludes>-->
+    <!--            </resource>-->
+    <!--            <resource>-->
+    <!--                <directory>src/main/resources</directory>-->
+    <!--                <filtering>true</filtering>-->
+    <!--                <includes>-->
+    <!--                    <include>**/*.*</include>-->
+    <!--                </includes>-->
+    <!--            </resource>-->
+    <!--        </resources>-->
+
+    <!--        <plugins>-->
+    <!--            <plugin>-->
+    <!--                <groupId>org.apache.maven.plugins</groupId>-->
+    <!--                <artifactId>maven-compiler-plugin</artifactId>-->
+    <!--                <version>${mvn.compiler.plugin.version}</version>-->
+    <!--                <configuration>-->
+    <!--                    <source>17</source>-->
+    <!--                    <target>17</target>-->
+    <!--                    <annotationProcessorPaths>-->
+    <!--                        <path>-->
+    <!--                            <groupId>org.projectlombok</groupId>-->
+    <!--                            <artifactId>lombok</artifactId>-->
+    <!--                            <version>1.18.30</version>-->
+    <!--                        </path>-->
+    <!--                    </annotationProcessorPaths>-->
+    <!--                </configuration>-->
+    <!--            </plugin>-->
+
+    <!--            <plugin>-->
+    <!--                <groupId>org.apache.maven.plugins</groupId>-->
+    <!--                <artifactId>maven-jar-plugin</artifactId>-->
+    <!--                <version>${mvn.jar.plugin.version}</version>-->
+    <!--                <executions>-->
+    <!--                    <execution>-->
+    <!--                        <goals>-->
+    <!--                            <goal>test-jar</goal>-->
+    <!--                        </goals>-->
+    <!--                    </execution>-->
+    <!--                </executions>-->
+    <!--            </plugin>-->
+    <!--        </plugins>-->
+    <!--    </build>-->
+
 </project>
