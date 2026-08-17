@@ -66,6 +66,10 @@ public class BillQueryBuilder {
 			+ " LEFT OUTER JOIN egbs_billdetail_v1 bd ON b.id = bd.billid AND b.tenantid = bd.tenantid"
 			+ " LEFT OUTER JOIN egbs_billaccountdetail_v1 ad ON bd.id = ad.billdetail AND bd.tenantid = ad.tenantid";
 	
+	/**
+	 * SQL projection base query for fetching lightweight bill details (short search) without
+	 * loading associated bill account details.
+	 */
 	public static final String BILL_SHORT_BASE_QUERY = "SELECT b.id AS b_id, b.tenantid AS b_tenantid, b.status AS b_status,"
 			+ " b.mobilenumber AS mobilenumber, b.createddate AS b_createddate, b.payeremail, bd.id AS bd_id,"
 			+ " bd.businessservice AS bd_businessservice, bd.billno AS bd_billno, bd.billdate AS bd_billdate,"
@@ -91,6 +95,13 @@ public class BillQueryBuilder {
 		return maxQuery.toString();
 	}
 
+	/**
+	 * Builds the SQL query for the compact/lightweight bill search (short search criteria).
+	 *
+	 * @param billSearchCriteria      The search criteria containing filters (tenantId, mobileNumber, etc.)
+	 * @param preparedStatementValues List to collect parameter values for the prepared statement
+	 * @return The formatted SQL query string
+	 */
 	public String getShortBillQuery(BillSearchCriteria billSearchCriteria, List<Object> preparedStatementValues){
 		
 		StringBuilder billQuery = new StringBuilder(BILL_SHORT_BASE_QUERY);

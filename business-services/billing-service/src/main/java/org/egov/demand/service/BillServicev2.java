@@ -361,6 +361,13 @@ public class BillServicev2 {
 				.bill(bills).build();
 	}
 	
+	/**
+	 * Delegate method to fetch a compact list of bills (short bill search) matching criteria.
+	 *
+	 * @param billCriteria The search criteria containing filters (tenantId, mobileNumber, etc.)
+	 * @param requestInfo  The request metadata wrapper
+	 * @return List of ShortBillV2 matching bills
+	 */
 	public List<ShortBillV2> searchShortBills(BillSearchCriteria billCriteria, RequestInfo requestInfo) {
 		return billRepository.findShortBills(billCriteria);
 	}

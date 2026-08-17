@@ -331,6 +331,13 @@ public class WorkflowService {
         return dashboardInstances;
     }
 
+    /**
+     * Fetches a paginated list of dashboard applications along with the total matching count.
+     *
+     * @param requestInfo RequestInfo header from the incoming request envelope
+     * @param criteria    The search criteria mapping filters (tenantId, status, createdBy, etc.)
+     * @return DashboardProcessInstanceResponse containing the paginated list and total count
+     */
     public DashboardProcessInstanceResponse getDashboardApplicationsWithCount(RequestInfo requestInfo, ProcessInstanceSearchCriteria criteria) {
         log.info("Fetching dashboard applications list and count for tenant: {}, statusList: {}, createdBy: {}, limit: {}, offset: {}",
                 criteria.getTenantId(), criteria.getStatus(), criteria.getCreatedByUUID(), criteria.getLimit(), criteria.getOffset());

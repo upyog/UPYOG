@@ -58,6 +58,9 @@ public class BillRepositoryV2 {
 		return jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), searchBillRowMapper);
 	}
 	
+	/**
+	 * ResultSetExtractor to map database result set rows to a compact list of ShortBillV2 objects.
+	 */
 	private final ResultSetExtractor<List<ShortBillV2>> shortBillRowMapper = new ResultSetExtractor<List<ShortBillV2>>() {
 		@Override
 		public List<ShortBillV2> extractData(ResultSet rs) throws SQLException {
@@ -87,6 +90,12 @@ public class BillRepositoryV2 {
 		}
 	};
 
+	/**
+	 * Executes a high-performance database projection query to fetch lightweight bills.
+	 *
+	 * @param billCriteria The search filters (tenantId, mobileNumber, isActive, etc.)
+	 * @return List of matching ShortBillV2 objects
+	 */
 	public List<ShortBillV2> findShortBills(BillSearchCriteria billCriteria) {
 		List<Object> preparedStatementValues = new ArrayList<>();
 		String queryStr = billQueryBuilder.getShortBillQuery(billCriteria, preparedStatementValues);

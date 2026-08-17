@@ -147,11 +147,13 @@ type recentAppSearchBody struct {
 	} `json:"ProcessInstanceSearchCriteria"`
 }
 
+// recentAppProcessInstanceSearchResponse represents the nested search response envelope from the dashboard search API.
 type recentAppProcessInstanceSearchResponse struct {
 	ProcessInstances []recentAppProcessInstance `json:"ProcessInstances"`
 	TotalCount       int                        `json:"totalCount"`
 }
 
+// recentAppProcessInstance represents a single process instance from the dashboard query.
 type recentAppProcessInstance struct {
 	ID              string `json:"id"`
 	TenantID        string `json:"tenantId"`

@@ -643,6 +643,15 @@ public class WorkflowQueryBuilder {
         return builder.toString();
     }
 
+    /**
+     * Builds the SQL query to fetch process instance IDs matching the dashboard search criteria.
+     * Optionally appends SQL pagination constraints (LIMIT and OFFSET).
+     *
+     * @param criteria             ProcessInstanceSearchCriteria filters
+     * @param preparedStmtList     The list to accumulate parameter values for prepared statement binding
+     * @param isPaginationRequired Flag indicating whether to append database pagination clauses
+     * @return The formatted SQL query string
+     */
     public String getDashboardProcessInstanceIds(ProcessInstanceSearchCriteria criteria, List<Object> preparedStmtList, Boolean isPaginationRequired) {
         StringBuilder with_query_builder = new StringBuilder(WITH_CLAUSE);
 
