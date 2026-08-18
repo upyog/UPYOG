@@ -64,6 +64,7 @@ import ar.com.fdvs.dj.domain.constants.Transparency;
 import ar.com.fdvs.dj.domain.constants.VerticalAlign;
 import ar.com.fdvs.dj.domain.entities.Subreport;
 import com.exilant.eGov.src.reports.TrialBalanceBean;
+import net.sf.jasperreports.engine.DefaultJasperReportsContext;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -108,6 +109,18 @@ public class ReportHelper {
     private InputStream reportStream;
     private static final Logger LOGGER = Logger.getLogger(ReportHelper.class);
     private static SimpleDateFormat FORMATDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+
+    /*
+     * LTS Migration Fix (JDK 17): DynamicJasper Excel/PDF compile uses JRJdtCompiler.
+     * tomcat:jasper-compiler-jdt:5.5.23 cannot read JDK 17 class files
+     * (ClassFormatException → "java.lang.String cannot be resolved"). Point Jasper
+     * at JRJdtCompiler so the Java 17-capable Eclipse ECJ on the EAR classpath is used.
+     */
+    static {
+        DefaultJasperReportsContext.getInstance().setProperty(
+                "net.sf.jasperreports.compiler.class",
+                "net.sf.jasperreports.engine.design.JRJdtCompiler");
+    }
 
     public OutputStream getOutputBytes() {
         return outputBytes;

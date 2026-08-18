@@ -54,11 +54,13 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.dispatcher.multipart.UploadedFile;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
@@ -102,7 +104,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.egov.model.budget.ManualWrapper;
 import org.egov.model.budget.BudgetUploadManual;
 import org.egov.utils.Constants;
@@ -298,15 +299,14 @@ public class BudgetLoadAction extends BaseFormAction {
                 dropdownData.put("functionList", persistenceService.findAllBy("from CFunction where isActive=true and isNotLeaf=false ORDER BY name ASC"));
             // if (shouldShowField(Constants.FUNCTION))
             //     dropdownData.put("functionList", masterDataCache.get("egi-function"));
-            LOGGER.info("shouldShowField(CHARTOFACCOUNTS): {}", shouldShowField(Constants.CHARTOFACCOUNTS));
             if (shouldShowField(Constants.CHARTOFACCOUNTS))
             dropdownData.put("chartOfAccountList",persistenceService.findAllBy("from CChartOfAccounts where isActiveForPosting=true ORDER BY id ASC"));
-            
-            LOGGER.info("Dropdown Data: " + dropdownData);
-            LOGGER.info("-----------------------------");
         }
     }
     
+    // LTS Migration Fix (Struts 7): skip validation so the upload form is returned,
+    // not the input result.
+    @SkipValidation
     @Action(value = "/budget/budgetLoad-beforeUpload")
     public String beforeUpload()
     {
@@ -338,7 +338,20 @@ public class BudgetLoadAction extends BaseFormAction {
         return budgetInXls != null ? budgetInXls.getContentType() : null;
     }
 
+    /*
+     * LTS Migration Fix (Struts 7): ParametersInterceptor does not bind the hidden
+     * budgetData JSON onto the action field. Read it from the request.
+     */
+    private String resolveBudgetData() {
+        if (budgetData != null && !budgetData.trim().isEmpty()) {
+            return budgetData;
+        }
+        return ServletActionContext.getRequest().getParameter("budgetData");
+    }
+
     @ValidationErrorPage("upload")
+    // LTS Migration Fix (Struts 7): skip validation so the Excel upload is processed.
+    @SkipValidation
     @Action(value = "/budget/budgetLoad-upload")
     public String upload()
     {
@@ -493,26 +506,39 @@ public class BudgetLoadAction extends BaseFormAction {
 	    }
 	}
 
+	// LTS Migration Fix (Struts 7): skip validation so hidden budgetData JSON is
+	// processed; binding is handled by resolveBudgetData() below.
+	@SkipValidation
 	@Action(value = "/budget/budgetLoad-manualSubmit")
 	public String manualSubmit() {
 		
-	    LOG.info("---------------Inside manualSubmit------------------------------");
+	    LOGGER.info("Inside manualSubmit");
 	    isManualEntry = true;
 	    ManualWrapper manualWrapper;
+
+	    // LTS Migration Fix (Struts 7): budgetData is posted as a hidden field but
+	    // is not bound onto the action. Jackson 2.21 throws IllegalArgumentException
+	    // (not IOException) when content is null, which blanked the page.
+	    budgetData = resolveBudgetData();
+	    if (budgetData == null || budgetData.trim().isEmpty()) {
+	        LOGGER.error("budgetData is null; Struts 7 did not bind the posted JSON");
+	        addActionError("Error reading submitted data. Please ensure the format is correct.");
+	        return "upload";
+	    }
 
 	    // Step 1: Parse JSON
 	    try {
 	        ObjectMapper mapper = new ObjectMapper();
 	        manualWrapper = mapper.readValue(budgetData, ManualWrapper.class);
-	    } catch (IOException e) {
-	        LOG.error("Failed to parse budgetData JSON", e);
+	    } catch (Exception e) {
+	        LOGGER.error("Failed to parse budgetData JSON", e);
 	        addActionError("Error reading submitted data. Please ensure the format is correct.");
-	        return "result";
+	        return "upload";
 	    }
 
 	    // Step 2: Get Manual Budget Rows
 	    List<BudgetUploadManual> manualList = manualWrapper.getBudgetRows();
-	    LOG.info("----------manualList created using manualwrapper func-------------------");
+	    LOGGER.info("----------manualList created using manualwrapper func-------------------");
 	    if (manualList == null || manualList.isEmpty()) {
 	        addActionError("No budget records found. Please check the input.");
 	        return "result";
@@ -527,21 +553,21 @@ public class BudgetLoadAction extends BaseFormAction {
 	            manualWrapper.getBeYear()
 	        );
 	    } catch (Exception e) {
-	        LOG.error("Error converting manual data to domain object", e);
+	        LOGGER.error("Error converting manual data to domain object", e);
 	        addActionError("Error processing budget data. Please verify the year or record details.");
 	        return "result";
 	    }
-	    LOG.info("-----------conversion of manual to budget upload done-----------------");
+	    LOGGER.info("-----------conversion of manual to budget upload done-----------------");
 
 	    // Step 4: Validate against Master Data
 	    try {
 	        budgetUploadList = validateMasterData(budgetUploadList);
 	    } catch (Exception e) {
-	        LOG.error("Error during master data validation", e);
+	        LOGGER.error("Error during master data validation", e);
 	        addActionError("Validation failed due to missing or incorrect master data.");
 	        return "result";
 	    }
-	    LOG.info("---------------------validating data againt master data done-----------------");
+	    LOGGER.info("---------------------validating data againt master data done-----------------");
 
 	    if (errorInMasterData) {
 	        addActionError("Error at validating MasterData");
@@ -552,7 +578,7 @@ public class BudgetLoadAction extends BaseFormAction {
 	    try {
 	        budgetUploadList = validateDuplicateData(budgetUploadList);
 	    } catch (Exception e) {
-	        LOG.error("Error checking for duplicates", e);
+	        LOGGER.error("Error checking for duplicates", e);
 	        addActionError("Error at validating Duplicate Data");
 	        return "result";
 	    }
@@ -561,11 +587,11 @@ public class BudgetLoadAction extends BaseFormAction {
 	    try {
 	        budgetUploadList = removeEmptyRows(budgetUploadList);
 	    } catch (Exception e) {
-	        LOG.error("Error removing empty rows", e);
+	        LOGGER.error("Error removing empty rows", e);
 	        addActionError("Unable to process data. Please ensure all rows are correctly filled");
 	        return "result";
 	    }
-	    LOG.info("------validating duplicate data and removal of empty rows done----");
+	    LOGGER.info("------validating duplicate data and removal of empty rows done----");
 
 	    // Step 7: Load Budget
 	    try {
@@ -577,11 +603,11 @@ public class BudgetLoadAction extends BaseFormAction {
 
 	        budgetUploadList = budgetDetailService.loadBudget(budgetUploadList, reFYear, beFYear, isManualEntry);
 	    } catch (Exception e) {
-	        LOG.error("Error during budget upload", e);
+	        LOGGER.error("Error during budget upload", e);
 	        addActionError("Error during budget upload");
 	        return "result";
 	    }
-	    LOG.info("-----------loadBudget done-------------");
+	    LOGGER.info("-----------loadBudget done-------------");
 
 	    addActionMessage(getText("budget.load.sucessful"));
 	    return "result";

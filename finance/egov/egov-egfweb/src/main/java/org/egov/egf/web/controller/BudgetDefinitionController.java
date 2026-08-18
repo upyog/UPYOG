@@ -62,6 +62,7 @@ import org.egov.model.budget.BudgetDefinitionSearchRequest;
 import org.egov.model.budget.BudgetDetail;
 import org.egov.model.service.BudgetDefinitionService;
 import org.egov.utils.BeReType;
+import org.egov.infra.persistence.utils.PersistenceUtils;
 import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -79,8 +80,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 
 @Controller
 @RequestMapping("/budgetdefinition")
@@ -187,10 +187,25 @@ public class BudgetDefinitionController {
 		return new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}").toString();
 	}
 
+	/*
+	 * LTS Migration Fix (Hibernate 6 / Gson): do not let Gson reflect on Budget
+	 * entities. Hibernate 6 ByteBuddy proxies expose Class/HibernateProxy and
+	 * throw UnsupportedOperationException, which leaves DataTables on "Loading...".
+	 * Build the array with BudgetJsonAdaptor after unproxying.
+	 */
 	public Object toSearchResultJson(final Object object) {
-		final GsonBuilder gsonBuilder = new GsonBuilder();
-		final Gson gson = gsonBuilder.registerTypeAdapter(Budget.class, new BudgetJsonAdaptor()).create();
-		return gson.toJson(object);
+		final BudgetJsonAdaptor adaptor = new BudgetJsonAdaptor();
+		if (object instanceof Iterable) {
+			final JsonArray array = new JsonArray();
+			for (final Object item : (Iterable<?>) object) {
+				array.add(adaptor.serialize(PersistenceUtils.unproxy((Budget) item), Budget.class, null));
+			}
+			return array.toString();
+		}
+		if (object instanceof Budget) {
+			return adaptor.serialize(PersistenceUtils.unproxy((Budget) object), Budget.class, null).toString();
+		}
+		return "[]";
 	}
 
 	@GetMapping(value = "/parents", produces = MediaType.APPLICATION_JSON_VALUE)

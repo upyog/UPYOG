@@ -151,10 +151,13 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
         </dependency>
+        <!--
+          LTS Migration Fix (JDK 17): replace tomcat:jasper-compiler-jdt:5.5.23.
+          Same Jasper runtime compile path as EGF Excel/PDF export.
+        -->
         <dependency>
-            <groupId>tomcat</groupId>
-            <artifactId>jasper-compiler-jdt</artifactId>
-            <version>5.5.23</version>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>ecj</artifactId>
         </dependency>
 
         <!-- REPORTS END -->

@@ -193,6 +193,16 @@ public class CChartOfAccounts extends AbstractAuditable {
         return name;
     }
 
+    /**
+     * LTS Migration Fix (Struts 7 OGNL): concatenate glcode and name in Java.
+     * JSP {@code listValue="%{glcode + ' - ' + name}"} fails silently on Hibernate 6 proxies.
+     */
+    public String getDropdownLabel() {
+        final String code = glcode != null ? glcode : "";
+        final String accountName = name != null ? name : "";
+        return code + " - " + accountName;
+    }
+
     public void setName(final String name) {
         this.name = name;
     }
