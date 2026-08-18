@@ -58,10 +58,10 @@ public class FirenocInboxFilterService {
     public List<String> fetchApplicationNumbersFromSearcher(InboxSearchCriteria criteria,
                                                             HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo) {
         List<String> applicationNumbers = new ArrayList<>();
-        HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();  // fix 4: parameterized generic
+        HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();
         ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
 
-        // fix 3: removed isSearchResultEmpty variable and wrapper if block
+
         Object result = null;
 
         Map<String, Object> searcherRequest = new HashMap<>();
@@ -80,7 +80,7 @@ public class FirenocInboxFilterService {
         if (!ObjectUtils.isEmpty(processCriteria.getStatus())) {
             searchCriteria.put(STATUS_PARAM, processCriteria.getStatus());
         } else {
-            // fix 2: null check before accessing StatusIdNameMap
+
             if (StatusIdNameMap != null && !StatusIdNameMap.isEmpty()) {
                 if (CollectionUtils.isEmpty(processCriteria.getStatus())) {
                     searchCriteria.put(STATUS_PARAM, StatusIdNameMap.keySet());
@@ -131,10 +131,10 @@ public class FirenocInboxFilterService {
     public Integer fetchApplicationCountFromSearcher(InboxSearchCriteria criteria,
                                                      HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo) {
         Integer totalCount = 0;
-        HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();  // fix 4: parameterized generic
+        HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();
         ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
 
-        // fix 3: removed isSearchResultEmpty variable and wrapper if block
+
         Object result = null;
 
         Map<String, Object> searcherRequest = new HashMap<>();
@@ -153,7 +153,6 @@ public class FirenocInboxFilterService {
         if (!ObjectUtils.isEmpty(processCriteria.getStatus())) {
             searchCriteria.put(STATUS_PARAM, processCriteria.getStatus());
         } else {
-            // fix 2: null check before accessing StatusIdNameMap
             if (StatusIdNameMap != null && !StatusIdNameMap.isEmpty()) {
                 if (CollectionUtils.isEmpty(processCriteria.getStatus())) {
                     searchCriteria.put(STATUS_PARAM, StatusIdNameMap.keySet());
@@ -172,7 +171,6 @@ public class FirenocInboxFilterService {
 
         try {
             String jsonString = mapper.writeValueAsString(result);
-            // fix 1: bind to Number first, then call intValue()
             Number count = JsonPath.read(jsonString, "$.TotalCount[0].count");
             totalCount = (count != null) ? count.intValue() : 0;
         } catch (Exception e) {
