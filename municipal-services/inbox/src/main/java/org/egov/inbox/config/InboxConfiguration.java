@@ -166,4 +166,14 @@ public class InboxConfiguration {
 
 	@Value("${egov.searcher.gc.count.path}")
 	private String gcInboxSearcherCountEndpoint;
+
+
+	@Value("${egov.searcher.fn.search.path}")
+	private String firenocInboxSearcherEndpoint;
+
+	@Value("${egov.searcher.fn.search.desc.path}")
+	private String firenocInboxSearcherDescEndpoint;
+
+	@Value("${egov.searcher.fn.count.path}")
+	private String firenocInboxSearcherCountEndpoint;
 }

@@ -17,7 +17,7 @@ export default ({ config }) => {
     "/_search",
     asyncHandler(async (request, res, next) => {
       let response = await searchApiResponse(request, next);
-      res.json(response);
+      if (response !== undefined) res.json(response);
     })
   );
   return api;
@@ -207,10 +207,19 @@ export const searchApiResponse = async (request, next = {}) => {
           item != "ids" &&
           item != "mobileNumber" &&
           item != "offset" &&
-          item != "limit"
+          item != "limit" &&
+          item != "sortOrder"
         ) {
-          queryObj[item]=queryObj[item].toUpperCase();
-          sqlQuery = `${sqlQuery} AND ${item}='${queryObj[item]}' `;
+          // queryObj[item]=queryObj[item].toUpperCase();
+          // sqlQuery = `${sqlQuery} AND ${item}='${queryObj[item]}' `;
+          const val = queryObj[item].toUpperCase();
+         
+          if (val.includes(",")) {
+            const list = val.split(",").map(v => `'${v.trim()}'`).join(",");
+            sqlQuery = `${sqlQuery} AND ${item} IN (${list}) `;
+          } else {
+            sqlQuery = `${sqlQuery} AND ${item}='${val}' `;
+          }
         }
       }
     });
