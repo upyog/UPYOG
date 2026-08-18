@@ -71,9 +71,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javaxt.utils.Base64;
+import java.util.Base64;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -122,7 +122,7 @@ public class ViewAndUpdateEmployeController {
             assign.setDeptSet(headOfDepartmentsRepository.getAllHodDepartments(assign.getId()));
         String image = null;
         if (null != employee.getSignature())
-            image = Base64.encodeBytes(employee.getSignature());
+            image = Base64.getEncoder().encodeToString(employee.getSignature());
         model.addAttribute(IMAGE, image);
         return EMPLOYEEFORM;
     }
@@ -165,7 +165,7 @@ public class ViewAndUpdateEmployeController {
 
         String image = null;
         if (null != employee.getSignature())
-            image = Base64.encodeBytes(employee.getSignature());
+            image = Base64.getEncoder().encodeToString(employee.getSignature());
         model.addAttribute(IMAGE, image);
 
         employeeService.update(employee);
@@ -200,7 +200,7 @@ public class ViewAndUpdateEmployeController {
         for (final Assignment assign : employee.getAssignments())
             assign.setDeptSet(headOfDepartmentsRepository.getAllHodDepartments(assign.getId()));
         if (null != employee.getSignature())
-            image = Base64.encodeBytes(employee.getSignature());
+            image = Base64.getEncoder().encodeToString(employee.getSignature());
         model.addAttribute(IMAGE, image);
         return EMPLOYEESUCCESS;
     }

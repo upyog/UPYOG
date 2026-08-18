@@ -76,13 +76,14 @@ import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetingType;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.BigDecimalType;
-import org.hibernate.type.DateType;
-import org.hibernate.type.LongType;
+
+
+
 import org.hibernate.type.StandardBasicTypes;
-import org.hibernate.type.StringType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -282,7 +283,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("BudgetAppropriationRegisterReportAction -- strQuery...." + strQuery);
 
-            query = persistenceService.getSession().createSQLQuery(strQuery.toString())
+            query = persistenceService.getSession().createNativeQuery(strQuery.toString())
                     .addScalar("bdgApprNumber")
                     .addScalar("voucherDate", StandardBasicTypes.DATE)
                     .addScalar("billDate", StandardBasicTypes.DATE)
@@ -291,8 +292,8 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
                     .addScalar("description")
                     .addScalar("VoucherNumber")
                     .addScalar("billNumber")
-                    .addScalar("debitAmount", BigDecimalType.INSTANCE)
-                    .addScalar("creditAmount", BigDecimalType.INSTANCE)
+                    .addScalar("debitAmount", StandardBasicTypes.BIG_DECIMAL)
+                    .addScalar("creditAmount", StandardBasicTypes.BIG_DECIMAL)
                     .setResultTransformer(Transformers.aliasToBean(BudgetAppDisplay.class));
             query=setParameterForBudgetAppDisplay(query,dtAsOnDate,dStartDate);
         }
@@ -320,7 +321,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("BudgetAppropriationRegisterReportAction -- strsubQuery...." + strsubQuery);
 
-            query = persistenceService.getSession().createSQLQuery(strsubQuery.toString())
+            query = persistenceService.getSession().createNativeQuery(strsubQuery.toString())
                     .addScalar("bdgApprNumber")
                     .addScalar("voucherDate", StandardBasicTypes.DATE)
                     .addScalar("billDate", StandardBasicTypes.DATE)
@@ -329,8 +330,8 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
                     .addScalar("description")
                     .addScalar("VoucherNumber")
                     .addScalar("billNumber")
-                    .addScalar("debitAmount", BigDecimalType.INSTANCE)
-                    .addScalar("creditAmount", BigDecimalType.INSTANCE)
+                    .addScalar("debitAmount", StandardBasicTypes.BIG_DECIMAL)
+                    .addScalar("creditAmount", StandardBasicTypes.BIG_DECIMAL)
                     .setResultTransformer(Transformers.aliasToBean(BudgetAppDisplay.class));
             query=setParameterForBudgetAppDisplay(query,dtAsOnDate,dStartDate); 
             budgetApprRegNewList = query.list();
@@ -571,28 +572,28 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
     {
         if (function.getId() != null && function.getId() != -1)
         {
-            query.setParameter("functionId", function.getId(), LongType.INSTANCE);
+            query.setParameter("functionId", function.getId(), StandardBasicTypes.LONG);
         }
         if (department.getId() != null && department.getId() != -1)
         {
-            query.setParameter("departmentcode", department.getCode(), StringType.INSTANCE);
+            query.setParameter("departmentcode", department.getCode(), StandardBasicTypes.STRING);
         }
         if (fund.getId() != null && fund.getId() != -1)
         {
-            query.setParameter("fundId", Long.valueOf(fund.getId()), LongType.INSTANCE);
+            query.setParameter("fundId", Long.valueOf(fund.getId()), StandardBasicTypes.LONG);
         }
         if (budgetGroup.getMinCode().getId() != null )
         {
-            query.setParameter("glCodeId", budgetGroup.getMinCode().getId(), LongType.INSTANCE);
+            query.setParameter("glCodeId", budgetGroup.getMinCode().getId(), StandardBasicTypes.LONG);
         }
         if (asOnDate != null )
         {
-            query.setParameter("strAODate", asOnDate, DateType.INSTANCE);
+            query.setParameter("strAODate", asOnDate, StandardBasicTypes.DATE);
         }
         
         if (startDate != null )
         {
-            query.setParameter("strStDate", startDate, DateType.INSTANCE);
+            query.setParameter("strStDate", startDate, StandardBasicTypes.DATE);
         }
         return query;
     }

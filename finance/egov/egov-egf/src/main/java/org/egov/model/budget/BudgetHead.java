@@ -1,14 +1,14 @@
 package org.egov.model.budget;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.utils.BudgetAccountType;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 
 /**
@@ -53,12 +53,12 @@ public class BudgetHead extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_BUDGETHEAD, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @SafeHtml
+    @SanitizeHtml
     @Required(message = "Name should not be empty")
     @Length(max = 250)
     private String name;
 
-    @SafeHtml
+    @SanitizeHtml
     @Required(message = "Code should not be empty")
     @Length(max = 20)
     private String code;
@@ -67,21 +67,21 @@ public class BudgetHead extends AbstractAuditable {
     @NotNull(message = "Please select accounttype")
     private BudgetAccountType accountType;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 5)
     private String accountTypeCode;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 5)
     private String program;
 
-    @SafeHtml
+    @SanitizeHtml
     @NotNull
     private String category;
 
     private Boolean isactive;
 
-    @SafeHtml
+    @SanitizeHtml
     @Column(name = "state_code")
     private String stateCode;
 

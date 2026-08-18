@@ -47,14 +47,16 @@
  */
 package org.egov.egf.web.actions.budget;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.util.ValueStack;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.util.ValueStack;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
@@ -71,6 +73,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.microservice.models.Department;
+import org.egov.infra.persistence.utils.PersistenceUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
@@ -117,6 +120,12 @@ public class BudgetSearchAction extends BaseFormAction {
     protected SimpleWorkflowService<BudgetDetail> budgetDetailWorkflowService;
     protected Long financialYear;
     protected List<Budget> budgets;
+    /*
+     * LTS Migration Fix: populated by toBudgetDropdownItems(). Used by
+     * budgetSearch-budgets.jsp as #s['Text'] / #s['Value'] so the AJAX Budget
+     * dropdown is not blank/scattered. See ajaxLoadBudget for the full reason.
+     */
+    protected List<Map<String, String>> budgetDropdownItems = new ArrayList<Map<String, String>>();
     protected boolean isApproveAction = false;
     protected String mode;
     protected boolean showButton = true;
@@ -269,7 +278,11 @@ public class BudgetSearchAction extends BaseFormAction {
             gridFields = budgetDetailConfig.getGridFields();
             // setupDropdownDataExcluding(Constants.SUB_SCHEME);
             dropdownData.put("budgetGroupList", masterDataCache.get("egf-budgetGroup"));
-            dropdownData.put("budgetList", budgetDetailService.findApprovedBudgetsForFY(getFinancialYear()));
+            // LTS Migration Fix: wrap Budget entities as id/name maps — see
+            // ajaxLoadBudget for why OGNL on Hibernate 6 Budget rows left blank
+            // scattered options in the Search Budget dropdown.
+            dropdownData.put("budgetList",
+                    toBudgetDropdownItems(budgetDetailService.findApprovedBudgetsForFY(getFinancialYear())));
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("done findApprovedBudgetsForFY");
             dropdownData.put("financialYearList",
@@ -281,14 +294,20 @@ public class BudgetSearchAction extends BaseFormAction {
             if (shouldShowField(Constants.FUNCTION))
                 dropdownData.put("functionList", masterDataCache.get("egi-function"));
             if (shouldShowField(Constants.SCHEME))
-                dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isActive=true order by name"));
+                /*
+                 * LTS Migration Fix (Hibernate 6 Upgrade):
+                 * Changed field name from camelCase 'isActive=true' to lowercase 'isactive=true' in Scheme HQL.
+                 * The Scheme entity maps database column 'isactive' to Java property 'isactive'.
+                 */
+                dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isactive=true order by name"));
             if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
                 dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
             if (shouldShowField(Constants.BOUNDARY))
                 dropdownData.put("boundaryList", persistenceService.findAllBy("from Boundary order by name"));
             if (shouldShowField(Constants.FUND))
+                // LTS Migration Fix: Changed 'isActive=true' to 'isactive=true' to match Fund entity field name 'isactive' for Hibernate 6
                 dropdownData.put("fundList",
-                        persistenceService.findAllBy("from Fund where isActive=true order by name"));
+                        persistenceService.findAllBy("from Fund where isactive=true order by name"));
         }
     }
 
@@ -334,23 +353,82 @@ public class BudgetSearchAction extends BaseFormAction {
         return Constants.LIST;
     }
 
-    // serach screen
+    private Long parseOptionalId(final String value) {
+        if (value == null) {
+            return null;
+        }
+        final String trimmed = value.trim();
+        if (trimmed.isEmpty() || "0".equals(trimmed) || "-1".equals(trimmed)) {
+            return null;
+        }
+        return Long.valueOf(trimmed);
+    }
+
+    /*
+     * LTS Migration Fix (Struts 7): Search Budget posts nested ModelDriven params
+     * (budget.id, budget.financialYear.id). Struts 7 does not bind those onto
+     * budgetDetail, so groupedBudgets NPEd on getBudget() and the iframe stayed
+     * on loading / 500. Read ids from the request here.
+     */
+    private void resolveBudgetSearchCriteriaFromRequest() {
+        final jakarta.servlet.http.HttpServletRequest request = ServletActionContext.getRequest();
+        if (budgetDetail.getBudget() == null) {
+            budgetDetail.setBudget(new Budget());
+        }
+        final Long budgetId = parseOptionalId(request.getParameter("budget.id"));
+        if (budgetId != null) {
+            budgetDetail.getBudget().setId(budgetId);
+        }
+        final Long fyId = parseOptionalId(request.getParameter("budget.financialYear.id"));
+        if (fyId != null) {
+            if (budgetDetail.getBudget().getFinancialYear() == null) {
+                budgetDetail.getBudget().setFinancialYear(new CFinancialYear());
+            }
+            budgetDetail.getBudget().getFinancialYear().setId(fyId);
+        }
+        final String executingDepartment = request.getParameter("executingDepartment");
+        if (executingDepartment != null && !executingDepartment.trim().isEmpty()
+                && !"0".equals(executingDepartment.trim())) {
+            budgetDetail.setExecutingDepartment(executingDepartment.trim());
+        }
+    }
+
+    // search screen
+    /*
+     * LTS Migration Fix (Struts 7): @SkipValidation — Budget.@Required name was
+     * firing on this search POST (no input result mapped → 500). Criteria come
+     * from resolveBudgetSearchCriteriaFromRequest(), not entity validation.
+     */
+    @SkipValidation
     @Action(value = "/budget/budgetSearch-groupedBudgets")
     public String groupedBudgets() {
-		if (budgetDetail.getBudget().getFinancialYear() == null
-				|| budgetDetail.getBudget().getFinancialYear().getId() == null) {
-			addActionError(getText("msg.please.select.financial.year"));
-			return Constants.LIST;
-		}
-        final Budget budget = budgetDetail.getBudget();
-        final Budget selectedBudget=budget;
+        resolveBudgetSearchCriteriaFromRequest();
+        if (budgetDetail.getBudget() == null) {
+            budgetDetail.setBudget(new Budget());
+        }
+        Long fyId = budgetDetail.getBudget().getFinancialYear() != null
+                ? budgetDetail.getBudget().getFinancialYear().getId() : null;
+        if (fyId == null && budgetDetail.getBudget().getId() != null && budgetDetail.getBudget().getId() != 0) {
+            final Budget persisted = budgetService.find("from Budget where id=?", budgetDetail.getBudget().getId());
+            if (persisted != null) {
+                budgetDetail.setBudget(persisted);
+                fyId = persisted.getFinancialYear() != null ? persisted.getFinancialYear().getId() : null;
+            }
+        }
+        if (fyId == null) {
+            addActionError(getText("msg.please.select.financial.year"));
+            return Constants.LIST;
+        }
+        final Budget selectedBudget = budgetDetail.getBudget();
         // Dont restrict search by the selected budget, but by all budgets in the tree of selected budget
         budgetDetail.setBudget(null);
-        if (budget != null && budget.getId() != null && budget.getId() != 0)
-            budgetList.addAll(budgetDetailService.findBudgetTree(budget, budgetDetail));
-        else if (budget != null && budget.getFinancialYear() != null && budget.getFinancialYear().getId() != null)
-            budgetList.addAll(budgetDetailService.findBudgetTree(
-                    budgetDetailService.findApprovedPrimaryParentBudgetForFY(budget.getFinancialYear().getId()), budgetDetail));
+        if (selectedBudget.getId() != null && selectedBudget.getId() != 0)
+            budgetList.addAll(budgetDetailService.findBudgetTree(selectedBudget, budgetDetail));
+        else {
+            final Budget parentBudget = budgetDetailService.findApprovedPrimaryParentBudgetForFY(fyId);
+            if (parentBudget != null)
+                budgetList.addAll(budgetDetailService.findBudgetTree(parentBudget, budgetDetail));
+        }
         getSession().put(Constants.SEARCH_CRITERIA_KEY, budgetDetail);
         if (budgetList.isEmpty())
             addActionError(getText("budget.no.details.found"));
@@ -384,15 +462,27 @@ public class BudgetSearchAction extends BaseFormAction {
         return "";
     }
     
+    /*
+     * LTS Migration Fix (Struts 7 / Hibernate 6): null-safe after unbound nested
+     * budget/FY; reload the Budget dropdown via toBudgetDropdownItems() so labels
+     * are not blank after Search.
+     */
     public void setRelatedEntitiesOn(){
-        if(budgetDetail.getBudget() != null && budgetDetail.getBudget().getId() != 0){
+        if (budgetDetail.getBudget() != null && budgetDetail.getBudget().getId() != null
+                && budgetDetail.getBudget().getId() != 0) {
             budgetDetail.setBudget(budgetService.find("from Budget where id=?", budgetDetail.getBudget().getId()));
-        }else if(budgetDetail.getBudget().getFinancialYear() != null && budgetDetail.getBudget().getFinancialYear().getId() != 0){
+        } else if (budgetDetail.getBudget() != null && budgetDetail.getBudget().getFinancialYear() != null
+                && budgetDetail.getBudget().getFinancialYear().getId() != null
+                && budgetDetail.getBudget().getFinancialYear().getId() != 0) {
             budgetDetail.getBudget().setFinancialYear((CFinancialYear) getPersistenceService().find("from CFinancialYear where id=?",
                     budgetDetail.getBudget().getFinancialYear().getId()));
         }
-        financialYear = budgetDetail.getBudget().getFinancialYear().getId();
-        dropdownData.put("budgetList", budgetDetailService.findApprovedBudgetsForFY(financialYear));
+        if (budgetDetail.getBudget() != null && budgetDetail.getBudget().getFinancialYear() != null
+                && budgetDetail.getBudget().getFinancialYear().getId() != null) {
+            financialYear = budgetDetail.getBudget().getFinancialYear().getId();
+            dropdownData.put("budgetList",
+                    toBudgetDropdownItems(budgetDetailService.findApprovedBudgetsForFY(financialYear)));
+        }
     }
 
     public boolean showApprovalDetails() {
@@ -411,8 +501,7 @@ public class BudgetSearchAction extends BaseFormAction {
             final Budget Budget = budgetService.findById(Long.valueOf(parameters.get("budget.id")[0]), false);
             setTopBudget(Budget);
         }
-        final BudgetDetail criteria = (BudgetDetail) persistenceService.getSession().createCriteria(
-                Constants.SEARCH_CRITERIA_KEY);
+        final BudgetDetail criteria = (BudgetDetail) getSession().get(Constants.SEARCH_CRITERIA_KEY);
         criteria.setBudget(budgetDetail.getBudget());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(
@@ -450,8 +539,14 @@ public class BudgetSearchAction extends BaseFormAction {
     }
 
     // for search screen
+    /*
+     * LTS Migration Fix (Struts 7): budget.id on the result-row link is not bound.
+     * Read it from the request; skip validation so the detail list is returned.
+     */
+    @SkipValidation
     @Action(value = "/budget/budgetSearch-groupedBudgetDetailList")
     public String groupedBudgetDetailList() {
+        resolveBudgetSearchCriteriaFromRequest();
 
         final BudgetDetail criteria = new BudgetDetail();
         /*
@@ -574,10 +669,84 @@ public class BudgetSearchAction extends BaseFormAction {
         return cal.getTime();
     }
 
+    /*
+     * LTS Migration Fix (Struts 7 / Hibernate 6) — Search Budget dropdown
+     *
+     * What was the issue?
+     *   On Search Budget, the Budget <select> showed real names mixed with blank
+     *   option rows (a "scattered" list). Changing Financial Year calls
+     *   budgetSearch-ajaxLoadBudget.action, which budgetSearch-budgets.jsp turns
+     *   into JSON {Text, Value} for egov:ajaxdropdown. The JSP used to read each
+     *   Budget with OGNL (%{name} / %{id}, later #s.name / #s.id). Hibernate 6
+     *   returns some rows as ByteBuddy HibernateProxy subclasses. Struts 7 OGNL
+     *   fails silently on those proxies, so JSON became {"Text":"","Value":"..."}.
+     *   A native <select> still renders those as empty <option> rows. The first
+     *   page load had the same gap: s:select listValue="name" on Budget entities.
+     *
+     * Why do we need this change?
+     *   The JSP cannot read name/id from Hibernate 6 Budget proxies. Leaving the
+     *   dropdown on entity OGNL would keep shipping blank options after the LTS
+     *   upgrade. financialYear is also an AJAX query param that Struts 7 does not
+     *   bind onto this action, so without reading the request the list would be
+     *   for the wrong year (or validation would return the input page instead of JSON).
+     *
+     * How we solved this?
+     *   1. Unproxy each Budget in Java (PersistenceUtils.unproxy) and copy getName()
+     *      / getId() into HashMaps with keys id, name, Text, Value
+     *      (toBudgetDropdownItems).
+     *   2. First-load s:select uses dropdownData.budgetList of those maps
+     *      (listKey=id, listValue=name).
+     *   3. AJAX JSON (budgetSearch-budgets.jsp) iterates budgetDropdownItems with
+     *      #s['Text'] / #s['Value'] — the same map pattern as common-bank.jsp.
+     *   4. ajaxLoadBudget reads financialYear from the HTTP request and uses
+     *      @SkipValidation so the JSON result is returned.
+     *
+     * What did we solve?
+     *   Every approved budget for the selected FY now has a non-blank label in
+     *   both the initial dropdown and the AJAX refresh. The list matches production:
+     *   compact, no empty scattered options.
+     */
+
+    @SkipValidation
     @Action(value = "/budget/budgetSearch-ajaxLoadBudget")
     public String ajaxLoadBudget() {
+        final String fyParam = ServletActionContext.getRequest().getParameter("financialYear");
+        if (fyParam != null && !fyParam.trim().isEmpty()) {
+            financialYear = Long.valueOf(fyParam.trim());
+        }
         budgets = budgetDetailService.findApprovedBudgetsForFY(getFinancialYear());
+        budgetDropdownItems = toBudgetDropdownItems(budgets);
         return Constants.BUDGETS;
+    }
+
+    /*
+     * Builds id/name maps for the Budget dropdown (see ajaxLoadBudget comment).
+     * Keys id/name are for s:select; Text/Value are for ajaxdropdown JSON.
+     */
+    protected List<Map<String, String>> toBudgetDropdownItems(final List<Budget> budgetEntities) {
+        final List<Map<String, String>> items = new ArrayList<Map<String, String>>();
+        if (budgetEntities == null) {
+            return items;
+        }
+        for (Budget budget : budgetEntities) {
+            budget = PersistenceUtils.unproxy(budget);
+            if (budget == null || budget.getId() == null) {
+                continue;
+            }
+            final Map<String, String> item = new HashMap<String, String>();
+            final String name = budget.getName() == null ? "" : budget.getName();
+            final String id = String.valueOf(budget.getId());
+            item.put("id", id);
+            item.put("name", name);
+            item.put("Text", name);
+            item.put("Value", id);
+            items.add(item);
+        }
+        return items;
+    }
+
+    public List<Map<String, String>> getBudgetDropdownItems() {
+        return budgetDropdownItems;
     }
 
     public Position getPosition() throws ApplicationRuntimeException {

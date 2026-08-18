@@ -4,7 +4,7 @@ package org.egov.egf.web.controller.scheme;
 import org.egov.commons.Scheme;
 import org.egov.commons.dao.SchemeHibernateDAO;
 import org.egov.services.masters.SchemeService;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -48,7 +48,7 @@ import java.util.List;
  *
  * <h3>Security</h3>
  * <ul>
- *     <li>Input parameters are validated using {@code @SafeHtml}.</li>
+ *     <li>Input parameters are validated using {@code @SanitizeHtml}.</li>
  * </ul>
  *
  * @see Scheme
@@ -66,9 +66,9 @@ public class SchemeRestController {
 
 
 
-    @GetMapping(value = "/ajaxSchemes", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/getByNameOrCode", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<Scheme> findSchemesByNameOrCode(@RequestParam @SafeHtml final String query) {
+    public List<Scheme> findSchemesByNameOrCode(@RequestParam("query") @SanitizeHtml final String query) {
         final List<Scheme> schemes = schemeHibernateDAO.getSchemeByNameOrCode(query);
         return schemes;
     }

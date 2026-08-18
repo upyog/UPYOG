@@ -58,7 +58,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -115,7 +115,7 @@ public class RequiredValidator {
 		final StringBuilder sql = new StringBuilder("select detailKey as \"detailKey\" ,detailName as \"detailName\",")
 				.append("groupID as \"groupID\",ID as \"ID\" from accountdetailkey where detailTypeId=:detailTypeId")
 				.append(" and detailKey = :detailKey");
-		final Query qry = persistenceService.getSession().createSQLQuery(sql.toString());
+		final Query qry = persistenceService.getSession().createNativeQuery(sql.toString());
 		qry.setParameter("detailTypeId", Integer.valueOf(detailId)).setParameter("detailKey",
 				Integer.valueOf(keyToValidate));
 

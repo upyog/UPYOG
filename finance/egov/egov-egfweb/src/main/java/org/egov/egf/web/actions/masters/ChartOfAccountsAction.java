@@ -79,18 +79,24 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.masters.AccountCodePurpose;
 import org.egov.services.voucher.GeneralLedgerService;
 import org.egov.utils.Constants;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.Query;
+import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.cache.CacheException;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.StringType;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.CoaCache;
 import com.mchange.v1.cachedstore.CacheFlushException;
 
+// LTS Migration Fix (Spring 6 / JPA 3 Upgrade):
+// Added @Transactional to Action class so that operations like deleteAccountDetailType, saveCoaDetails
+// and manual .flush() have an active EntityManager transaction context.
+@Transactional
 @ParentPackage("egov")
 @Results({
     @Result(name = "detailed", location = "chartOfAccounts-detailed.jsp"),
@@ -310,11 +316,19 @@ public class ChartOfAccountsAction extends BaseFormAction {
                     Integer.valueOf(row)));
     }
 
+    /*
+     * Spring 6 / JPA 3 / Hibernate 6 Migration Fix:
+     * Added early return check for null/empty accountDetailType list and replaced direct session.flush() 
+     * calls with transactional service.flush() invocations.
+     * When creating a new Chart of Accounts (e.g. Detailed Code), accountDetailType list is empty.
+     * Without the null/empty check, calling .flush() outside an active transaction threw:
+     * "jakarta.persistence.TransactionRequiredException: No EntityManager with actual transaction available for current thread".
+     */
     void deleteAccountDetailType(final List<Accountdetailtype> accountDetailType, final CChartOfAccounts accounts) {
         String accountDetail = "";
-        if (accounts.getChartOfAccountDetails() == null)
+        if (accounts.getChartOfAccountDetails() == null || accountDetailType == null || accountDetailType.isEmpty())
             return;
-        chartOfAccountsService.getSession().flush();
+        chartOfAccountsService.flush();
         //persistenceService.setType(CChartOfAccountDetail.class);
         try {
             for (final Accountdetailtype row : accountDetailType) {
@@ -325,7 +339,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
                     if (next == null || next.getDetailTypeId().getId().equals(row.getId())) {
                         iterator.remove();
                         chartOfAccountDetailService.delete(chartOfAccountDetailService.findById(next.getId(), false));
-                        persistenceService.getSession().flush();
+                        persistenceService.flush();
                     }
                 }
             }
@@ -342,9 +356,9 @@ public class ChartOfAccountsAction extends BaseFormAction {
     	StringBuilder queryString = new StringBuilder("select * from chartofaccounts c,generalledger gl,generalledgerdetail gd ")
                 .append("where c.glcode=:glCode")
                 .append(" and gl.glcodeid=c.id and gd.generalledgerid=gl.id and gd.DETAILTYPEID=:id");
-        final Query query = persistenceService.getSession().createSQLQuery(queryString.toString())
-                .setParameter("glCode", glCode, StringType.INSTANCE)
-                .setParameter("id", id, IntegerType.INSTANCE);
+        final Query query = persistenceService.getSession().createNativeQuery(queryString.toString())
+                .setParameter("glCode", glCode, StandardBasicTypes.STRING)
+                .setParameter("id", id, StandardBasicTypes.INTEGER);
         final List list = query.list();
         if (list != null && list.size() > 0)
             return true;
@@ -360,8 +374,8 @@ public class ChartOfAccountsAction extends BaseFormAction {
                 .append(" intersect SELECT br.id FROM eg_billregister br, eg_billdetails bd, chartofaccounts coa,egw_status  sts WHERE coa.glcode =:glCode")
                 .append(" AND bd.glcodeid = coa.id AND br.id= bd.billid AND br.statusid=sts.id ");
         strQuery.append(" and sts.id not in (select id from egw_status where upper(moduletype) like '%BILL%' and upper(description) like '%CANCELLED%') ");
-        final Query query = persistenceService.getSession().createSQLQuery(strQuery.toString())
-                .setParameter("glCode", glCode, StringType.INSTANCE);
+        final Query query = persistenceService.getSession().createNativeQuery(strQuery.toString())
+                .setParameter("glCode", glCode, StandardBasicTypes.STRING);
         final List list = query.list();
         if (!list.isEmpty())
             flag = false;
@@ -431,7 +445,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
             }
         }
 
-        chartOfAccountsService.getSession().flush();
+        chartOfAccountsService.flush();
     }
 
     List<Accountdetailtype> getAccountDetailTypeToBeDeleted(final List<Accountdetailtype> accountDetailType,

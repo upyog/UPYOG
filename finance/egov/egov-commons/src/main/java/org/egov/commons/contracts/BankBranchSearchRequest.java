@@ -51,7 +51,7 @@ package org.egov.commons.contracts;
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 import org.egov.infra.validation.regex.Constants;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 /**
  * 
@@ -65,28 +65,28 @@ public class BankBranchSearchRequest {
 	private Integer bankBranchId;
 
 	@Length(max = 50)
-	@SafeHtml
+	@SanitizeHtml
 	private String branchcode;
 
 	@Length(max = 50)
-	@SafeHtml
+	@SanitizeHtml
 	private String branchMICR;
 
 	@Length(max = 50)
-	@SafeHtml
+	@SanitizeHtml
 	private String branchaddress1;
 
-	@SafeHtml
+	@SanitizeHtml
 	@Length(max = 50)
 	private String contactperson;
 
-	@SafeHtml
+	@SanitizeHtml
 	@Length(max = 15)
 	@OptionalPattern(regex = Constants.MOBILE_NUM, message = "Please enter valid mobile number")
 	private String branchphone;
 
 	@Length(max = 250)
-	@SafeHtml
+	@SanitizeHtml
 	private String narration;
 
 	private Boolean isactive;

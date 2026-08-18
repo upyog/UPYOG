@@ -44,4 +44,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
-  --%>{ "ResultSet": { "Result":[<s:iterator var="s" value="branchList" status="status"> {"Text":"<s:property value="%{branchname}" />","Value":"<s:property value="%{id}" />"}<s:if test="!#status.last">,</s:if></s:iterator>] } }
+  --%><%--
+  LTS Migration Fix (Struts 7 OGNL): use #s.branchname / #s.id (same as
+  common-branchesByBank.jsp).
+  --%>{ "ResultSet": { "Result":[<s:iterator var="s" value="branchList" status="status"> {"Text":"<s:property value="%{#s.branchname}" />","Value":"<s:property value="%{#s.id}" />"}<s:if test="!#status.last">,</s:if></s:iterator>] } }

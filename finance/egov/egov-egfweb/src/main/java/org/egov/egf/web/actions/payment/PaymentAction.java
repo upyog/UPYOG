@@ -65,6 +65,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -111,19 +112,19 @@ import org.egov.services.voucher.VoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.FlushMode;
-import org.hibernate.Query;
-import org.hibernate.type.StringType;
+
+import org.hibernate.query.Query;
+import jakarta.persistence.FlushModeType;
+import org.hibernate.type.StandardBasicTypes;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 import com.exilant.exility.common.TaskFailedException;
-import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
-@Validation
 @Results({ @Result(name = "search", location = "payment-search.jsp"),
         @Result(name = "searchbills", location = "payment-searchbills.jsp"),
         @Result(name = "tnebSearch", location = "payment-tnebSearch.jsp"),
@@ -433,7 +434,7 @@ public class PaymentAction extends BasePaymentAction {
     @Action(value = "/payment/payment-search")
     public String search() throws ParseException {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setFlushMode(FlushModeType.COMMIT);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting search...");
         // Get App config value
@@ -632,7 +633,23 @@ public class PaymentAction extends BasePaymentAction {
         if (expType == null || expType.equals("-1")
                 || expType.equals(FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT)) {
         	
-        	final StringBuilder cBillmainquery = new StringBuilder("from EgBillregister bill left join fetch")
+        	/*
+        	 * LTS Migration Fix (Hibernate 6 / Jakarta EE Upgrade):
+        	 * -----------------------------------------------------
+        	 * Problem:
+        	 *   In Hibernate 6 SQM query parsing, using 'left join fetch' on a nested association path
+        	 *   (bill.egBillregistermis.egBillSubType) with an alias used for WHERE clause filtering
+        	 *   throws:
+        	 *     org.hibernate.query.SemanticException: Query specified join fetching, but the owner
+        	 *     of the fetched association was not present in the select list
+        	 *
+        	 * Solution:
+        	 *   Changed 'left join fetch' to 'left join' in both cBillmainquery and cBillmainquery1.
+        	 *   In JPA/Hibernate, 'fetch' is reserved exclusively for eager association fetching into
+        	 *   the root entity select projection; filtering on sub-properties in WHERE requires a standard
+        	 *   'left join' without 'fetch'.
+        	 */
+        	final StringBuilder cBillmainquery = new StringBuilder("from EgBillregister bill left join")
         			.append(" bill.egBillregistermis.egBillSubType egBillSubType")
                     .append(" where (egBillSubType is null or egBillSubType.name not in (:billSubType)) ")
                     .append("and bill.expendituretype=:expenditureType and bill.egBillregistermis.voucherHeader.status=0 ")
@@ -644,7 +661,7 @@ public class PaymentAction extends BasePaymentAction {
             cBillmainQueryParams.put("billSubType", FinancialConstants.BILLSUBTYPE_TNEBBILL);
             cBillmainQueryParams.put("expenditureType", FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
 
-            final StringBuilder cBillmainquery1 = new StringBuilder("from EgBillregister bill left join fetch")
+            final StringBuilder cBillmainquery1 = new StringBuilder("from EgBillregister bill left join")
             		.append(" bill.egBillregistermis.egBillSubType egBillSubType ")
                     .append(" where (egBillSubType is null or egBillSubType.name not in (:billSubType))")
                     .append(" and bill.expendituretype=:expenditureType and bill.egBillregistermis.voucherHeader.status=0 ")
@@ -933,13 +950,13 @@ public class PaymentAction extends BasePaymentAction {
                 .append(" order by bill.billdate desc");
         
         final Query tnebBillQuery = getPersistenceService().getSession().createQuery(tnebBillSql.toString());
-        tnebBillQuery.setParameter("expenditureType", FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, StringType.INSTANCE)
+        tnebBillQuery.setParameter("expenditureType", FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, StandardBasicTypes.STRING)
                 .setParameterList("billStatus", Arrays.asList(egwStatus, egwStatus1));
         persistenceService.populateQueryWithParams(tnebBillQuery, sqlParams);
         contingentBillList = new Page(tnebBillQuery, 1, 500).getList();
 
         final Query tnebBillQuery1 = getPersistenceService().getSession().createQuery(tnebBillSql1.toString());
-        tnebBillQuery1.setParameter("expenditureType", FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, StringType.INSTANCE)
+        tnebBillQuery1.setParameter("expenditureType", FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, StandardBasicTypes.STRING)
                 .setParameterList("billStatus", Arrays.asList(egwStatus, egwStatus1));
         persistenceService.populateQueryWithParams(tnebBillQuery1, sqlParams);
         
@@ -1438,10 +1455,29 @@ public class PaymentAction extends BasePaymentAction {
     public String ajaxGetAccountBalance() throws ParseException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Inside ajaxGetAccountBalance.");
-        getBankBalance(parameters.get("bankaccount")[0], parameters.get("voucherDate")[0], null, null, null);
+        /*
+         * LTS: Struts 7 may not populate the parameters map for YUI AJAX GETs.
+         * Also do not append JavaScript Date.toString() to voucherDate — spaces
+         * and parentheses make WildFly 40 return HTTP 400.
+         */
+        final String accountId = firstParam("bankaccount");
+        final String voucherDate = firstParam("voucherDate");
+        if (accountId != null && voucherDate != null)
+            getBankBalance(accountId, voucherDate, null, null, null);
+        else {
+            LOGGER.warn("ajaxGetAccountBalance missing bankaccount or voucherDate");
+            balance = BigDecimal.valueOf(-1);
+        }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxGetAccountBalance.");
         return "balance";
+    }
+
+    private String firstParam(final String name) {
+        if (parameters != null && parameters.get(name) != null && parameters.get(name).length > 0
+                && StringUtils.isNotBlank(parameters.get(name)[0]))
+            return parameters.get(name)[0];
+        return ServletActionContext.getRequest().getParameter(name);
     }
 
     @SkipValidation

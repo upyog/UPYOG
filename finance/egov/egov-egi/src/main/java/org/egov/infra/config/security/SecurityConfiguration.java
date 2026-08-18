@@ -53,9 +53,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+/**
+ * LTS Migration Fix (Spring Security 6): password encoding for authentication.
+ * BCrypt is retained so existing stored hashes remain valid.
+ */
 @Configuration
 public class SecurityConfiguration {
 
+	/**
+	 * @return BCrypt encoder used for user password verification and new hashes
+	 */
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();

@@ -91,13 +91,15 @@ import org.egov.model.bills.EgBillregistermis;
 import org.egov.services.payment.PaymentService;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.Session;
-import org.hibernate.type.DateType;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
-import org.hibernate.type.TimestampType;
+
+
+
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -400,7 +402,7 @@ public class CancelVoucherAction extends BaseFormAction {
 			filterQuerySql = filterQuerySql.replace(" and vh.fundId.id=:fundId", " and vh.fundId=:fundId");
 
 			final Query query1 = persistenceService.getSession()
-					.createSQLQuery(new StringBuilder("SELECT distinct vh.id FROM egw_status status").append(misTab)
+					.createNativeQuery(new StringBuilder("SELECT distinct vh.id FROM egw_status status").append(misTab)
 							.append(", voucherheader vh ")
 							.append(" LEFT JOIN EGF_INSTRUMENTVOUCHER IV ON VH.ID=IV.VOUCHERHEADERID")
 							.append(" LEFT JOIN EGF_INSTRUMENTHEADER IH ON IV.INSTRUMENTHEADERID=IH.ID INNER JOIN ")
@@ -498,10 +500,10 @@ public class CancelVoucherAction extends BaseFormAction {
 			case FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL: {
 
 				final Query query = session.createQuery(cancelVhQuery);
-				query.setParameter(MODIFIEDBY, loggedInUser, IntegerType.INSTANCE)
-						.setParameter(MODIFIED_DATE, modifiedDate, TimestampType.INSTANCE)
-						.setParameter("vhId", selectedVhs[i], LongType.INSTANCE)
-						.setParameter(VH_STATUS, FinancialConstants.CANCELLEDVOUCHERSTATUS, IntegerType.INSTANCE);
+				query.setParameter(MODIFIEDBY, loggedInUser, StandardBasicTypes.INTEGER)
+						.setParameter(MODIFIED_DATE, modifiedDate, StandardBasicTypes.TIMESTAMP)
+						.setParameter("vhId", selectedVhs[i], StandardBasicTypes.LONG)
+						.setParameter(VH_STATUS, FinancialConstants.CANCELLEDVOUCHERSTATUS, StandardBasicTypes.INTEGER);
 				query.executeUpdate();
 				// for old vouchers when workflow was not implemented
 
@@ -513,10 +515,10 @@ public class CancelVoucherAction extends BaseFormAction {
 			}
 			case FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT: {
 				final Query query = session.createQuery(cancelVhQuery)
-						.setParameter("vhId", selectedVhs[i], LongType.INSTANCE)
-						.setParameter(MODIFIEDBY, loggedInUser, IntegerType.INSTANCE)
-						.setParameter(MODIFIED_DATE, modifiedDate, TimestampType.INSTANCE)
-						.setParameter(VH_STATUS, FinancialConstants.CANCELLEDVOUCHERSTATUS, IntegerType.INSTANCE);
+						.setParameter("vhId", selectedVhs[i], StandardBasicTypes.LONG)
+						.setParameter(MODIFIEDBY, loggedInUser, StandardBasicTypes.INTEGER)
+						.setParameter(MODIFIED_DATE, modifiedDate, StandardBasicTypes.TIMESTAMP)
+						.setParameter(VH_STATUS, FinancialConstants.CANCELLEDVOUCHERSTATUS, StandardBasicTypes.INTEGER);
 				query.executeUpdate();
 				if (FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE.equalsIgnoreCase(voucherObj.getName())) {
 					paymentService.backUpdateRemittanceDateInGL(voucherHeader.getId());
@@ -525,29 +527,29 @@ public class CancelVoucherAction extends BaseFormAction {
 			}
 			case FinancialConstants.STANDARD_VOUCHER_TYPE_CONTRA: {
 				final Query query = session.createQuery(cancelVhQuery);
-				query.setParameter("vhId", selectedVhs[i], LongType.INSTANCE)
-						.setParameter(MODIFIEDBY, loggedInUser, IntegerType.INSTANCE)
-						.setParameter(MODIFIED_DATE, modifiedDate, TimestampType.INSTANCE)
-						.setParameter(VH_STATUS, FinancialConstants.CANCELLEDVOUCHERSTATUS, IntegerType.INSTANCE);
+				query.setParameter("vhId", selectedVhs[i], StandardBasicTypes.LONG)
+						.setParameter(MODIFIEDBY, loggedInUser, StandardBasicTypes.INTEGER)
+						.setParameter(MODIFIED_DATE, modifiedDate, StandardBasicTypes.TIMESTAMP)
+						.setParameter(VH_STATUS, FinancialConstants.CANCELLEDVOUCHERSTATUS, StandardBasicTypes.INTEGER);
 				query.executeUpdate();
 				if (FinancialConstants.CONTRAVOUCHER_NAME_INTERFUND.equalsIgnoreCase(voucherObj.getName())) {
 					Long vhId;
 					vhId = voucherObj.getId();
 					final Query queryFnd = session.createQuery(cancelVhByCGNQuery);
-					queryFnd.setParameter("vhId", vhId, LongType.INSTANCE)
-							.setParameter(MODIFIEDBY, loggedInUser, IntegerType.INSTANCE)
-							.setParameter(MODIFIED_DATE, modifiedDate, DateType.INSTANCE)
-							.setParameter(VH_STATUS, FinancialConstants.CANCELLEDVOUCHERSTATUS, IntegerType.INSTANCE);
+					queryFnd.setParameter("vhId", vhId, StandardBasicTypes.LONG)
+							.setParameter(MODIFIEDBY, loggedInUser, StandardBasicTypes.INTEGER)
+							.setParameter(MODIFIED_DATE, modifiedDate, StandardBasicTypes.DATE)
+							.setParameter(VH_STATUS, FinancialConstants.CANCELLEDVOUCHERSTATUS, StandardBasicTypes.INTEGER);
 					queryFnd.executeUpdate();
 				}
 				break;
 			}
 			case FinancialConstants.STANDARD_VOUCHER_TYPE_RECEIPT: {
 				final Query query = session.createQuery(cancelVhQuery);
-				query.setParameter("vhId", selectedVhs[i], LongType.INSTANCE)
-						.setParameter(MODIFIEDBY, loggedInUser, IntegerType.INSTANCE)
-						.setParameter(MODIFIED_DATE, modifiedDate, TimestampType.INSTANCE)
-						.setParameter(VH_STATUS, FinancialConstants.CANCELLEDVOUCHERSTATUS, IntegerType.INSTANCE);
+				query.setParameter("vhId", selectedVhs[i], StandardBasicTypes.LONG)
+						.setParameter(MODIFIEDBY, loggedInUser, StandardBasicTypes.INTEGER)
+						.setParameter(MODIFIED_DATE, modifiedDate, StandardBasicTypes.TIMESTAMP)
+						.setParameter(VH_STATUS, FinancialConstants.CANCELLEDVOUCHERSTATUS, StandardBasicTypes.INTEGER);
 				query.executeUpdate();
 				break;
 			}
@@ -616,11 +618,11 @@ public class CancelVoucherAction extends BaseFormAction {
 					moduleType = FinancialConstants.PENSIONBILL;
 				}
 
-			final Query billQry = persistenceService.getSession().createSQLQuery(cancelQuery.toString());
-			billQry.setParameter("module", moduleType, StringType.INSTANCE)
-					.setParameter(DESCRIPTION, description, StringType.INSTANCE)
-					.setParameter("billstatus", billstatus, StringType.INSTANCE)
-					.setParameter("billId", (Long) bill[1], LongType.INSTANCE);
+			final Query billQry = persistenceService.getSession().createNativeQuery(cancelQuery.toString());
+			billQry.setParameter("module", moduleType, StandardBasicTypes.STRING)
+					.setParameter(DESCRIPTION, description, StandardBasicTypes.STRING)
+					.setParameter("billstatus", billstatus, StandardBasicTypes.STRING)
+					.setParameter("billId", (Long) bill[1], StandardBasicTypes.LONG);
 			billQry.executeUpdate();
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("Bill Cancelled Successfully" + bill[1]);
@@ -728,7 +730,7 @@ public class CancelVoucherAction extends BaseFormAction {
 		} else
 			filterQuerySql = filter;
 		final Query query1 = persistenceService.getSession()
-				.createSQLQuery(new StringBuilder("SELECT distinct vh.id, vh.voucherNumber FROM egw_status status")
+				.createNativeQuery(new StringBuilder("SELECT distinct vh.id, vh.voucherNumber FROM egw_status status")
 						.append(misTab)
 						.append(", voucherheader vh LEFT JOIN EGF_INSTRUMENTVOUCHER IV ON VH.ID=IV.VOUCHERHEADERID")
 						.append(" LEFT JOIN EGF_INSTRUMENTHEADER IH ON IV.INSTRUMENTHEADERID=IH.ID")

@@ -469,7 +469,7 @@ public class BudgetRegisterWorkflowService {
      */
 
     public List<BudgetRegister> findBudgetRegisters() {
-        List<BudgetRegister> budgetRegisters =  budgetRegisterWorkflowRepository.findAll(new Sort(Sort.Direction.DESC, "budgetRegisterNumber"));
+        List<BudgetRegister> budgetRegisters =  budgetRegisterWorkflowRepository.findAll(Sort.by(Sort.Direction.DESC, "budgetRegisterNumber"));
 
         budgetRegisters.stream().map(budgetRegister -> {
 
@@ -505,7 +505,7 @@ public class BudgetRegisterWorkflowService {
      */
 
     public BudgetRegister findOne(Long id) {
-        return budgetRegisterWorkflowRepository.findOne(id);
+        return budgetRegisterWorkflowRepository.findById(id).orElse(null);
     }
 
 

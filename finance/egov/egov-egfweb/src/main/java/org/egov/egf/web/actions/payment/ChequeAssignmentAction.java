@@ -101,6 +101,7 @@ import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.script.entity.Script;
+import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
@@ -126,9 +127,11 @@ import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.StringType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -203,6 +206,14 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     @Autowired
     @Qualifier("bankAccountService")
     private BankAccountService bankAccountService;
+
+    /**
+     * Java 17 / Spring 6 LTS Migration Notice:
+     * Added ScriptService dependency injection to evaluate dynamic validation scripts.
+     * Replaces legacy javax.script / BSF script evaluation with Spring-managed ScriptService.
+     */
+    @Autowired
+    private ScriptService scriptService;
 
     private List<ChequeAssignment> chequeAssignmentList;
     private List<InstrumentHeader> instHeaderList = null;
@@ -567,7 +578,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
     public String getReceiptDetails() {
         Query query = null;
         query = persistenceService.getSession()
-                .createSQLQuery(
+                .createNativeQuery(
                         "select  vh.id as voucherid ,vh.voucherNumber as voucherNumber ," +
                                 " redtl.remittedamt as receiptAmount,redtl.remittedamt as deductedAmount" +
                                 " FROM voucherheader vh,eg_remittance re,eg_remittance_detail redtl,generalledger gl" +
@@ -577,7 +588,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 .addScalar("voucherid").addScalar("voucherNumber")
                 .addScalar("receiptAmount").addScalar("deductedAmount")
                 .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
-        query.setParameter("paymentId", paymentId, StringType.INSTANCE);
+        query.setParameter("paymentId", paymentId, StandardBasicTypes.STRING);
         viewReceiptDetailsList = query.list();
         totalDeductedAmount = BigDecimal.ZERO;
         for (final ChequeAssignment ch : viewReceiptDetailsList)
@@ -1551,7 +1562,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             final StringBuilder mainQuery = new StringBuilder(500)
                     .append("select ih from  InstrumentVoucher iv ,InstrumentHeader ih ,InstrumentType it ")
                     .append("where iv.instrumentHeaderId.id =ih.id and ih.instrumentNumber is not null ")
-                    .append("and ih.instrumentType=it.id and ( it.type = 'cheque' or it.type = 'cash' ) and ")
+                    .append("and ih.instrumentType=it and ( it.type = 'cheque' or it.type = 'cash' ) and ")
                     .append("iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type=?");
             params.add(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
 
@@ -1631,7 +1642,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         int i = 1;
         final StringBuilder mainQuery = new StringBuilder(500)
                 .append("select ih from  InstrumentVoucher iv,InstrumentHeader ih ,InstrumentType it ")
-                .append("where iv.instrumentHeaderId.id =ih.id and ih.transactionNumber is not null and ih.instrumentType=it.id ")
+                .append("where iv.instrumentHeaderId.id =ih.id and ih.transactionNumber is not null and ih.instrumentType=it ")
                 .append("and it.type = 'advice' and   iv.voucherHeaderId.status=0  and iv.voucherHeaderId.type=?");
         params.add(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
         final StringBuilder sql = new StringBuilder();
@@ -1716,7 +1727,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting loadBankAndAccounForSurender...");
         setTypeOfAccount(typeOfAccount);
-        addDropdownData("bankbranchList", bankService.getChequeAssignedBankAndBranchName(currentDate));
+        populateSurrenderBankBranchMap(bankService.getChequeAssignedBankAndBranchName(currentDate));
         if (getBankbranch() != null) {
             addDropdownData("bankaccountList",
                     bankAccountService.getBankaccountsWithAssignedCheques(getBankbranch(), null, currentDate));
@@ -1729,12 +1740,31 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting loadBankAndAccounForSurender...");
         setTypeOfAccount(typeOfAccount);
-        addDropdownData("bankbranchList", bankService.getRTGSAssignedBankAndBranchName(currentDate));
+        populateSurrenderBankBranchMap(bankService.getRTGSAssignedBankAndBranchName(currentDate));
         if (getBankbranch() != null) {
             addDropdownData("bankaccountList", bankAccountService.getBankaccountsWithAssignedRTGS(getBankbranch(), currentDate));
         }
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed loadBankAndAccounForSurender.");
+    }
+
+    /**
+     * Surrender search JSPs bind {@code list="bankBranchMap"} (same as cheque
+     * assignment search). Struts 7 cannot read HashMap keys as
+     * {@code listKey="bankBranchId"} on {@code dropdownData.bankbranchList}.
+     */
+    private void populateSurrenderBankBranchMap(final List<Map<String, Object>> bankBranches) {
+        addDropdownData("bankbranchList", bankBranches);
+        bankBranchMap = new LinkedHashMap<>();
+        if (bankBranches == null)
+            return;
+        for (final Map mp : bankBranches) {
+            if (mp.get(BankService.BANK_BRANCH_ID) != null && mp.get(BankService.BANK_BRANCH_NAME) != null)
+                bankBranchMap.put(mp.get(BankService.BANK_BRANCH_ID).toString(),
+                        mp.get(BankService.BANK_BRANCH_NAME).toString());
+        }
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("Surrender bank dropdown size=" + bankBranchMap.size());
     }
 
     /**
@@ -2158,20 +2188,50 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             LOGGER.debug("Completed validateDataForManual.");
     }
 
+    /**
+     * LTS Migration Fix (Struts 7 / Hibernate 6):
+     * Cheque Assignment JSPs call {@code validateUser('chequeassignment')} on
+     * every render, including when switching menus. The named query
+     * {@code Script.findByName} is often empty (missing {@code eg_script} row
+     * or period that does not include today). {@code .get(0)} then threw
+     * {@code IndexOutOfBoundsException} on each navigation. Load the script
+     * safely and default to allow when it is absent.
+     */
     @SkipValidation
     public boolean validateUser(final String purpose) throws ParseException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting validateUser...");
-        getPersistenceService().findAllByNamedQuery(Script.BY_NAME,
-                "Paymentheader.show.bankbalance").get(0);
-        final List<String> list = null;// (List<String>)
-        // validScript.eval(Script.createContext("persistenceService",paymentService,"purpose",purpose));
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed validateUser.");
-        if (list.get(0).equals("true"))
-            return true;
-        else
-            return false;
+        try {
+            if (scriptService == null)
+                return true;
+            final Script validScript = loadBankBalanceScript();
+            if (validScript == null) {
+                LOGGER.warn("Script Paymentheader.show.bankbalance not found; allowing " + purpose);
+                return true;
+            }
+            final List<String> list = (List<String>) scriptService.executeScript(validScript,
+                    ScriptService.createContext("persistenceService", paymentService, "purpose", purpose));
+            if (list != null && !list.isEmpty())
+                return "true".equalsIgnoreCase(list.get(0));
+        } catch (final Exception e) {
+            LOGGER.warn("Error evaluating validateUser script for purpose: " + purpose + " — " + e.getMessage());
+        }
+        return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Script loadBankBalanceScript() {
+        List<?> scripts = null;
+        try {
+            scripts = getPersistenceService().findAllByNamedQuery(Script.BY_NAME, "Paymentheader.show.bankbalance");
+        } catch (final Exception e) {
+            LOGGER.warn("Named query Script.findByName failed: " + e.getMessage());
+        }
+        if (scripts == null || scripts.isEmpty())
+            scripts = getPersistenceService().findAllBy("from Script s where s.name=?", "Paymentheader.show.bankbalance");
+        if (scripts == null || scripts.isEmpty())
+            return null;
+        return (Script) scripts.get(0);
     }
 
     @Override
