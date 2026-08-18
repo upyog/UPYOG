@@ -76,8 +76,10 @@ public class FirenocInboxFilterService {
         Object result = restTemplate.postForObject(uri.toString(), searcherRequest, Map.class);
 
         try {
-            applicationNumbers = JsonPath.read(result, "$.FireNOCs[*].applicationnumber");
-            log.info("FireNoc Application Numbers: {}", applicationNumbers);
+            if (result != null) {
+                applicationNumbers = JsonPath.read(result, "$.FireNOCs[*].applicationnumber");
+                log.info("FireNoc Application Numbers: {}", applicationNumbers);
+            }
         } catch (Exception e) {
             log.error("Error while parsing FireNoc searcher results", e);
         }
@@ -110,8 +112,10 @@ public class FirenocInboxFilterService {
         Object result = restTemplate.postForObject(uri.toString(), searcherRequest, Map.class);
 
         try {
-            Number count = JsonPath.read(result, "$.TotalCount[0].count");
-            totalCount = (count != null) ? count.intValue() : 0;
+            if (result != null) {
+                Number count = JsonPath.read(result, "$.TotalCount[0].count");
+                totalCount = (count != null) ? count.intValue() : 0;
+            }
         } catch (Exception e) {
             log.error("Error while parsing FireNoc count results", e);
         }
