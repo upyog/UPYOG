@@ -49,6 +49,7 @@
 
 package org.egov.infra.persistence.utils;
 
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 
@@ -75,6 +76,25 @@ public class Page<T> {
     }
 
     public Page(TypedQuery<T> query, int pageNumber, int pageSize) {
+        this(query, pageNumber, pageSize, 0);
+    }
+
+    public Page(Query query, int pageNumber, int pageSize, int recordTotal) {
+        int currentPageNo = pageNumber < 1 ? 1 : pageNumber;
+        this.pageNumber = currentPageNo;
+
+        if (pageSize > 0) {
+            query.setFirstResult((currentPageNo - 1) * pageSize);
+            query.setMaxResults(pageSize + 1);
+            this.pageSize = pageSize;
+        } else {
+            this.pageSize = -1;
+        }
+        this.results = (List<T>) query.getResultList();
+        this.recordTotal = recordTotal;
+    }
+
+    public Page(Query query, int pageNumber, int pageSize) {
         this(query, pageNumber, pageSize, 0);
     }
 

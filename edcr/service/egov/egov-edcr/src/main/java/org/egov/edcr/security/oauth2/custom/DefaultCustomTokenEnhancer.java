@@ -49,16 +49,21 @@ package org.egov.edcr.security.oauth2.custom;
 
 // TODO: DEAD CODE - NOT USED IN UPYOG
 /*
-import java.util.Map;
-
 import org.egov.infra.rest.support.CustomTokenEnhancer;
-import org.springframework.stereotype.Component;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
-@Component
+/**
+ *
+ * @author subhash
+ *
+ *\/
 public class DefaultCustomTokenEnhancer implements CustomTokenEnhancer {
 
     @Override
-    public void enhance(Map<String, Object> claims) {
+    public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
+        return accessToken;
     }
+
 }
 */

@@ -21,6 +21,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ * Cache configuration for the application.
+ *
+ * <p>Note (Spring 6 Migration):
+ * {@code CachingConfigurerSupport} is deprecated in Spring Framework 6 in favor of directly
+ * implementing the {@link CachingConfigurer} interface. Since {@link CachingConfigurer} defines
+ * default methods for all configuration hooks, extending an adapter class is no longer necessary.
+ */
 @Configuration
 @EnableCaching(proxyTargetClass = true)
 @DependsOn("applicationConfiguration")

@@ -47,41 +47,15 @@
  */
 package org.egov.infra.rest.support;
 
-import java.util.Map;
+/*
+import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 
 /**
- * Application-level hook for adding extra claims to an OAuth2 token at issuance time.
  *
- * <p>This interface has <strong>zero framework dependencies</strong> so {@code egov-egi}
- * compiles without any OAuth2 library on its classpath.  Implementations live in
- * {@code egov-edcr}, which carries the relevant OAuth2 deps.
+ * @author subhash
  *
- * <p>Replaces the removed {@code org.springframework.security.oauth2.provider.token.TokenEnhancer}
- * from the EOL {@code spring-security-oauth2} library (incompatible with Spring Security 6).
- *
- * <p>To add custom JWT claims implement this interface and register the bean; then
- * bridge it into the authorization-server token customizer in {@code egov-edcr}:
- * <pre>
- *   {@literal @}Bean
- *   public OAuth2TokenCustomizer{@literal <}JwtEncodingContext{@literal >} tokenCustomizer(
- *           CustomTokenEnhancer enhancer) {
- *       return context -> enhancer.enhance(context.getClaims().build().getClaims());
- *   }
- * </pre>
- *
- * @author subhash (migrated away from EOL TokenEnhancer — Spring Security 6)
- */
-public interface CustomTokenEnhancer {
+ *\/
+public interface CustomTokenEnhancer extends TokenEnhancer {
 
-    /**
-     * Add or override JWT claims before the token is signed.
-     *
-     * @param claims mutable map of token claims; changes are reflected in the final JWT
-     *
-     * TODO: This method is currently a no-op (see DefaultCustomTokenEnhancer).
-     *       Implement this in a concrete subclass to inject custom JWT claims
-     *       (e.g. source system, tenantId). Wire the bean into the authorization
-     *       server token customizer in AuthorizationServerConfiguration.
-     */
-    void enhance(Map<String, Object> claims);
 }
+*/

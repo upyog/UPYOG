@@ -58,6 +58,10 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class RestAPIConfiguration {
 
+    // Note (Spring 6 Migration):
+    // In Spring 6, the 'autowire' attribute on @Bean (e.g., @Bean(autowire = Autowire.BY_TYPE))
+    // and the org.springframework.beans.factory.annotation.Autowire enum were removed from Spring Framework.
+    // Standard @Bean declarations with default dependency resolution are used instead.
     @Bean
     public APIRequestEnricher apiRequestEnricher() {
         return new DefaultAPIRequestEnricher();

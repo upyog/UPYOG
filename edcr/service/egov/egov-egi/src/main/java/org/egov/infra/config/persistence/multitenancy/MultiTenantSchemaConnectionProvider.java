@@ -12,6 +12,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * Multi-tenant schema connection provider for Hibernate.
+ *
+ * <p>Note (Hibernate 6 Migration):
+ * In Hibernate 6, {@link MultiTenantConnectionProvider} is parameterized with the tenant identifier type {@code <T>}.
+ * Since UPYOG uses {@link String} tenant identifiers (schema names like "pb.amritsar"),
+ * {@code MultiTenantConnectionProvider<String>} is explicitly specified for compile-time type safety.
+ */
 public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectionProvider<String> {
     private static final long serialVersionUID = -6022082859572861041L;
     private static final Logger LOG = LoggerFactory.getLogger(MultiTenantSchemaConnectionProvider.class);
