@@ -1,78 +1,82 @@
 combinedMetricsQuery: |
   SELECT 
-    (SELECT COUNT(DISTINCT COALESCE(accountid, createdby)) FROM eg_pgr_service_v2 WHERE createdtime >= :startTime AND createdtime <= :endTime AND tenantid = :tenantId) AS uniqueCitizens,
+    main.tenantid,
+    (SELECT COUNT(DISTINCT COALESCE(accountid, createdby)) FROM eg_pgr_service_v2 v2 WHERE v2.tenantid = main.tenantid AND createdtime >= :startTime AND createdtime <= :endTime) AS uniqueCitizens,
     
     -- slaAchievement
     (SELECT COALESCE(json_agg(json_build_object('name', dept, 'value', val)), '[]'::json) FROM (
-        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 WHERE createdtime >= :startTime AND createdtime <= :endTime AND tenantid = :tenantId AND (lastmodifiedtime - createdtime) <= 432000000 GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
+        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 v2 WHERE v2.tenantid = main.tenantid AND createdtime >= :startTime AND createdtime <= :endTime AND (lastmodifiedtime - createdtime) <= 432000000 GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
     ) sla) AS slaAchievementJson,
 
     -- completionRate
     (SELECT COALESCE(json_agg(json_build_object('name', dept, 'value', val)), '[]'::json) FROM (
-        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 WHERE createdtime >= :startTime AND createdtime <= :endTime AND tenantid = :tenantId AND applicationstatus IN ('RESOLVED', 'CLOSEDAFTERRESOLUTION', 'CLOSEDAFTERREJECTION') GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
+        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 v2 WHERE v2.tenantid = main.tenantid AND createdtime >= :startTime AND createdtime <= :endTime AND applicationstatus IN ('RESOLVED', 'CLOSEDAFTERRESOLUTION', 'CLOSEDAFTERREJECTION') GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
     ) cr) AS completionRateJson,
 
     -- complaintsByStatusJson
     (SELECT COALESCE(json_agg(json_build_object('name', status_name, 'value', val)), '[]'::json) FROM (
-        SELECT LOWER(applicationstatus) AS status_name, COUNT(*) AS val FROM eg_pgr_service_v2 WHERE createdtime >= :startTime AND createdtime <= :endTime AND tenantid = :tenantId GROUP BY LOWER(applicationstatus)
+        SELECT LOWER(applicationstatus) AS status_name, COUNT(*) AS val FROM eg_pgr_service_v2 v2 WHERE v2.tenantid = main.tenantid AND createdtime >= :startTime AND createdtime <= :endTime GROUP BY LOWER(applicationstatus)
     ) s) AS complaintsByStatusJson,
     
     -- complaintsByChannelJson
     (SELECT COALESCE(json_agg(json_build_object('name', UPPER(COALESCE(source, 'WEB')), 'value', val)), '[]'::json) FROM (
-        SELECT UPPER(COALESCE(source, 'WEB')) AS source, COUNT(*) AS val FROM eg_pgr_service_v2 WHERE createdtime >= :startTime AND createdtime <= :endTime AND tenantid = :tenantId GROUP BY UPPER(COALESCE(source, 'WEB'))
+        SELECT UPPER(COALESCE(source, 'WEB')) AS source, COUNT(*) AS val FROM eg_pgr_service_v2 v2 WHERE v2.tenantid = main.tenantid AND createdtime >= :startTime AND createdtime <= :endTime GROUP BY UPPER(COALESCE(source, 'WEB'))
     ) c) AS complaintsByChannelJson,
 
     -- complaintsByDepartmentJson
     (SELECT COALESCE(json_agg(json_build_object('name', dept, 'value', val)), '[]'::json) FROM (
-        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 WHERE createdtime >= :startTime AND createdtime <= :endTime AND tenantid = :tenantId GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
+        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 v2 WHERE v2.tenantid = main.tenantid AND createdtime >= :startTime AND createdtime <= :endTime GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
     ) d) AS complaintsByDepartmentJson,
 
     -- complaintsByCategoryJson
     (SELECT COALESCE(json_agg(json_build_object('name', servicecode, 'value', val)), '[]'::json) FROM (
-        SELECT servicecode, COUNT(*) AS val FROM eg_pgr_service_v2 WHERE createdtime >= :startTime AND createdtime <= :endTime AND tenantid = :tenantId GROUP BY servicecode
+        SELECT servicecode, COUNT(*) AS val FROM eg_pgr_service_v2 v2 WHERE v2.tenantid = main.tenantid AND createdtime >= :startTime AND createdtime <= :endTime GROUP BY servicecode
     ) cat) AS complaintsByCategoryJson,
 
     -- todaysReopenedComplaintsJson
     (SELECT COALESCE(json_agg(json_build_object('name', dept, 'value', val)), '[]'::json) FROM (
-        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 WHERE lastmodifiedtime >= :startTime AND lastmodifiedtime <= :endTime AND tenantid = :tenantId AND applicationstatus = 'PENDINGFORASSIGNMENT' GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
+        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 v2 WHERE v2.tenantid = main.tenantid AND lastmodifiedtime >= :startTime AND lastmodifiedtime <= :endTime AND applicationstatus = 'PENDINGFORASSIGNMENT' GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
     ) reop) AS todaysReopenedComplaintsJson,
 
     -- todaysOpenComplaintsJson
     (SELECT COALESCE(json_agg(json_build_object('name', dept, 'value', val)), '[]'::json) FROM (
-        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 WHERE tenantid = :tenantId AND applicationstatus IN ('PENDINGFORASSIGNMENT', 'PENDINGATLME', 'PENDINGFORREASSIGNMENT') GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
+        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 v2 WHERE v2.tenantid = main.tenantid AND applicationstatus IN ('PENDINGFORASSIGNMENT', 'PENDINGATLME', 'PENDINGFORREASSIGNMENT') GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
     ) opencomp) AS todaysOpenComplaintsJson,
 
     -- todaysAssignedComplaintsJson
     (SELECT COALESCE(json_agg(json_build_object('name', dept, 'value', val)), '[]'::json) FROM (
-        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 WHERE lastmodifiedtime >= :startTime AND lastmodifiedtime <= :endTime AND tenantid = :tenantId AND applicationstatus = 'PENDINGATLME' GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
+        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 v2 WHERE v2.tenantid = main.tenantid AND lastmodifiedtime >= :startTime AND lastmodifiedtime <= :endTime AND applicationstatus = 'PENDINGATLME' GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
     ) asgn) AS todaysAssignedComplaintsJson,
 
     -- averageSolutionTimeJson
     (SELECT COALESCE(json_agg(json_build_object('name', dept, 'value', val)), '[]'::json) FROM (
-        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COALESCE(ROUND(AVG((lastmodifiedtime - createdtime) / 86400000.0)), 0) AS val FROM eg_pgr_service_v2 WHERE tenantid = :tenantId AND applicationstatus IN ('RESOLVED', 'CLOSEDAFTERRESOLUTION') GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
+        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COALESCE(ROUND(AVG((lastmodifiedtime - createdtime) / 86400000.0)), 0) AS val FROM eg_pgr_service_v2 v2 WHERE v2.tenantid = main.tenantid AND applicationstatus IN ('RESOLVED', 'CLOSEDAFTERRESOLUTION') GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
     ) avgsol) AS averageSolutionTimeJson,
 
     -- todaysRejectedComplaintsJson
     (SELECT COALESCE(json_agg(json_build_object('name', dept, 'value', val)), '[]'::json) FROM (
-        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 WHERE lastmodifiedtime >= :startTime AND lastmodifiedtime <= :endTime AND tenantid = :tenantId AND applicationstatus IN ('REJECTED', 'CLOSEDAFTERREJECTION') GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
+        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 v2 WHERE v2.tenantid = main.tenantid AND lastmodifiedtime >= :startTime AND lastmodifiedtime <= :endTime AND applicationstatus IN ('REJECTED', 'CLOSEDAFTERREJECTION') GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
     ) rej) AS todaysRejectedComplaintsJson,
 
     -- todaysReassignedComplaintsJson
     (SELECT COALESCE(json_agg(json_build_object('name', dept, 'value', val)), '[]'::json) FROM (
-        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 WHERE lastmodifiedtime >= :startTime AND lastmodifiedtime <= :endTime AND tenantid = :tenantId AND applicationstatus = 'PENDINGFORREASSIGNMENT' GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
+        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 v2 WHERE v2.tenantid = main.tenantid AND lastmodifiedtime >= :startTime AND lastmodifiedtime <= :endTime AND applicationstatus = 'PENDINGFORREASSIGNMENT' GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
     ) reasgn) AS todaysReassignedComplaintsJson,
 
     -- todaysReassignRequestedComplaintsJson
     (SELECT COALESCE(json_agg(json_build_object('name', dept, 'value', val)), '[]'::json) FROM (
-        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 WHERE lastmodifiedtime >= :startTime AND lastmodifiedtime <= :endTime AND tenantid = :tenantId AND applicationstatus = 'PENDINGFORREASSIGNMENT' GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
+        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 v2 WHERE v2.tenantid = main.tenantid AND lastmodifiedtime >= :startTime AND lastmodifiedtime <= :endTime AND applicationstatus = 'PENDINGFORREASSIGNMENT' GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
     ) reasgnreq) AS todaysReassignRequestedComplaintsJson,
 
     -- todaysClosedComplaintsJson
     (SELECT COALESCE(json_agg(json_build_object('name', dept, 'value', val)), '[]'::json) FROM (
-        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 WHERE lastmodifiedtime >= :startTime AND lastmodifiedtime <= :endTime AND tenantid = :tenantId AND applicationstatus IN ('CLOSEDAFTERRESOLUTION', 'CLOSEDAFTERREJECTION') GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
+        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 v2 WHERE v2.tenantid = main.tenantid AND lastmodifiedtime >= :startTime AND lastmodifiedtime <= :endTime AND applicationstatus IN ('CLOSEDAFTERRESOLUTION', 'CLOSEDAFTERREJECTION') GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
     ) cls) AS todaysClosedComplaintsJson,
 
     -- todaysResolvedComplaintsJson
     (SELECT COALESCE(json_agg(json_build_object('name', dept, 'value', val)), '[]'::json) FROM (
-        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 WHERE lastmodifiedtime >= :startTime AND lastmodifiedtime <= :endTime AND tenantid = :tenantId AND applicationstatus IN ('RESOLVED', 'CLOSEDAFTERRESOLUTION') GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
+        SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 v2 WHERE v2.tenantid = main.tenantid AND lastmodifiedtime >= :startTime AND lastmodifiedtime <= :endTime AND applicationstatus IN ('RESOLVED', 'CLOSEDAFTERRESOLUTION') GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
     ) res) AS todaysResolvedComplaintsJson
+  FROM (
+    SELECT DISTINCT tenantid FROM eg_pgr_service_v2 WHERE tenantid LIKE CONCAT(:tenantId, '%')
+  ) main

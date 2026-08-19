@@ -17,6 +17,11 @@ public final class PTRowmapper {
         // Prevent instantiation
     }
 
+    /**
+     * Maps a single row from the PT combined metrics query to a {@link PTAggregatedData} object.
+     * Integer columns are read via {@code getNullableInt} to correctly handle SQL {@code NULL} values;
+     * {@code ResultSet.getInt()} silently returns {@code 0} for {@code NULL} without this guard.
+     */
     public static final RowMapper<PTAggregatedData> COMBINED_ROW_MAPPER = new RowMapper<PTAggregatedData>() {
         @Override
         public PTAggregatedData mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -35,6 +40,10 @@ public final class PTRowmapper {
         }
     };
 
+    /**
+     * Maps a single row from the PT collection metrics query to a {@link PTCollectionDTO} object.
+     * Double columns are read via {@code getNullableDouble} to correctly handle SQL {@code NULL} values.
+     */
     public static final RowMapper<PTCollectionDTO> COLLECTION_ROW_MAPPER = new RowMapper<PTCollectionDTO>() {
         @Override
         public PTCollectionDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -48,11 +57,31 @@ public final class PTRowmapper {
         }
     };
 
+    /**
+     * Reads an integer column from the given {@link ResultSet} and returns {@code null}
+     * if the SQL value was {@code NULL}, avoiding the silent {@code 0} default that
+     * {@link ResultSet#getInt} produces.
+     *
+     * @param rs          the result set positioned at the current row
+     * @param columnLabel the column label (alias) to read
+     * @return the integer value, or {@code null} if the column was SQL {@code NULL}
+     * @throws SQLException if a database access error occurs
+     */
     private static Integer getNullableInt(ResultSet rs, String columnLabel) throws SQLException {
         int value = rs.getInt(columnLabel);
         return rs.wasNull() ? null : value;
     }
 
+    /**
+     * Reads a double column from the given {@link ResultSet} and returns {@code null}
+     * if the SQL value was {@code NULL}, avoiding the silent {@code 0.0} default that
+     * {@link ResultSet#getDouble} produces.
+     *
+     * @param rs          the result set positioned at the current row
+     * @param columnLabel the column label (alias) to read
+     * @return the double value, or {@code null} if the column was SQL {@code NULL}
+     * @throws SQLException if a database access error occurs
+     */
     private static Double getNullableDouble(ResultSet rs, String columnLabel) throws SQLException {
         double value = rs.getDouble(columnLabel);
         return rs.wasNull() ? null : value;

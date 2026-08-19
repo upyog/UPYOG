@@ -36,3 +36,14 @@ mvn clean install
    ```bash
    mvn spring-boot:run
    ```
+
+## Tenant Hierarchy and Multiple ULBs Support
+
+The extractor service natively handles dot-notation tenant IDs representing the geographical hierarchy (e.g., `state.ulb.region.ward`).
+The `HierarchyParser` utility splits this incoming `tenantId` (usually prefixed with the state code, e.g., `pg.citya`) and maps it into:
+- **State**: The prefix (e.g., `pg`)
+- **ULB**: The state prefix plus the ULB shortcode (e.g., `pg.citya`)
+- **Region**: Extracted from the 3rd segment, or falls back to the `dashboard-data.metric.region` property if absent.
+- **Ward**: Extracted from the 4th segment, or falls back to the `dashboard-data.metric.ward` property if absent.
+
+This allows the National Dashboard metrics payload to correctly attribute data to the respective region and ward defaults when the local system only operates at the state or ULB level.

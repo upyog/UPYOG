@@ -25,6 +25,7 @@ import org.upyog.dashboard.config.DashboardProperties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.*;
 
@@ -38,6 +39,9 @@ class PgrModuleExtractorTest {
 
 	@Mock
 	private SchemaMappingConfig schemaMappingConfig;
+
+	@Mock
+	private org.upyog.dashboard.util.HierarchyParser hierarchyParser;
 
 	@InjectMocks
 	private PgrModuleExtractor extractor;
@@ -55,7 +59,7 @@ class PgrModuleExtractorTest {
 
 		// Mock and inject DashboardProperties
 		DashboardProperties dashboardProperties = mock(DashboardProperties.class);
-		when(dashboardProperties.getMetricUlb()).thenReturn("pg.citya");
+		when(dashboardProperties.getMetricUlb()).thenReturn("PG.citya.City A.Ward 1");
 		when(dashboardProperties.getMetricWard()).thenReturn("Ward 1");
 		when(dashboardProperties.getMetricRegion()).thenReturn("City A");
 		when(dashboardProperties.getMetricState()).thenReturn("PG");
@@ -66,6 +70,8 @@ class PgrModuleExtractorTest {
 		java.lang.reflect.Field propsField = PgrModuleExtractor.class.getDeclaredField("dashboardProperties");
 		propsField.setAccessible(true);
 		propsField.set(extractor, dashboardProperties);
+
+		when(hierarchyParser.parseTenantId(anyString())).thenReturn(java.util.Map.of("state", "PG", "ulb", "citya", "region", "City A", "ward", "Ward 1"));
 
 		extractor.init();
 	}
@@ -87,6 +93,7 @@ class PgrModuleExtractorTest {
 		when(schemaMappingConfig.getQueriesForModule(Module.PGR)).thenReturn(queries);
 
 		Map<String, Object> mockDbResult = new HashMap<>();
+		mockDbResult.put("tenantid", "PG.citya.City A.Ward 1");
 		mockDbResult.put("uniquecitizens", 22);
 		mockDbResult.put("slaachievementjson", "[{\"name\":\"DEPT1\",\"value\":2},{\"name\":\"DEPT2\",\"value\":0},{\"name\":\"DEPT3\",\"value\":6}]");
 		mockDbResult.put("completionratejson", "[{\"name\":\"DEPT1\",\"value\":2},{\"name\":\"DEPT2\",\"value\":0},{\"name\":\"DEPT3\",\"value\":6}]");
@@ -104,16 +111,18 @@ class PgrModuleExtractorTest {
 		mockDbResult.put("todaysclosedcomplaintsjson", "[{\"name\":\"DEPT1\",\"value\":1},{\"name\":\"DEPT2\",\"value\":3},{\"name\":\"DEPT3\",\"value\":1}]");
 		mockDbResult.put("todaysresolvedcomplaintsjson", "[{\"name\":\"DEPT1\",\"value\":1},{\"name\":\"DEPT2\",\"value\":3},{\"name\":\"DEPT3\",\"value\":1}]");
 
-		when(namedParameterJdbcTemplate.queryForMap(any(), anyMap())).thenReturn(mockDbResult);
+		when(namedParameterJdbcTemplate.queryForList(any(), anyMap())).thenReturn(List.of(mockDbResult));
 
 		LocalDate testDate = LocalDate.of(2022, 6, 1);
-		DashboardData data = extractor.extractData(testDate);
+		List<DashboardData> dataList = extractor.extractData(testDate);
 
-		assertThat(data).isNotNull();
+		assertThat(dataList).isNotNull().hasSize(1);
+		DashboardData data = dataList.get(0);
+		
 		assertThat(data.getDate()).isEqualTo("01-06-2022");
 		assertThat(data.getModule()).isEqualTo("PGR");
 		assertThat(data.getWard()).isEqualTo("Ward 1");
-		assertThat(data.getUlb()).isEqualTo("pg.citya");
+		assertThat(data.getUlb()).isEqualTo("citya");
 		assertThat(data.getRegion()).isEqualTo("City A");
 		assertThat(data.getState()).isEqualTo("PG");
 
@@ -139,19 +148,20 @@ class PgrModuleExtractorTest {
 		when(schemaMappingConfig.getQueriesForModule(Module.PGR)).thenReturn(queries);
 
 		Map<String, Object> mockDbResult = new HashMap<>();
+		mockDbResult.put("tenantid", "PG.citya.City A.Ward 1");
 		mockDbResult.put("uniquecitizens", 5);
 
 		// Fail on first attempt, succeed on second
-		when(namedParameterJdbcTemplate.queryForMap(any(), anyMap()))
+		when(namedParameterJdbcTemplate.queryForList(any(), anyMap()))
 				.thenThrow(new RuntimeException("Transient lock conflict"))
-				.thenReturn(mockDbResult);
+				.thenReturn(List.of(mockDbResult));
 
 		LocalDate testDate = LocalDate.of(2022, 6, 1);
-		DashboardData data = extractor.extractData(testDate);
+		List<DashboardData> dataList = extractor.extractData(testDate);
 
-		assertThat(data).isNotNull();
-		assertThat(data.getMetrics().get("uniqueCitizens")).isEqualTo(5);
-		verify(namedParameterJdbcTemplate, times(2)).queryForMap(any(), anyMap());
+		assertThat(dataList).isNotNull().hasSize(1);
+		assertThat(dataList.get(0).getMetrics()).containsEntry("uniqueCitizens", 5);
+		verify(namedParameterJdbcTemplate, times(2)).queryForList(any(), anyMap());
 	}
 
 	@Test
@@ -162,14 +172,13 @@ class PgrModuleExtractorTest {
 
 		when(schemaMappingConfig.getQueriesForModule(Module.PGR)).thenReturn(queries);
 
-		when(namedParameterJdbcTemplate.queryForMap(any(), anyMap()))
+		when(namedParameterJdbcTemplate.queryForList(any(), anyMap()))
 				.thenThrow(new RuntimeException("Persistent DB disconnect"));
 
 		LocalDate testDate = LocalDate.of(2022, 6, 1);
-		DashboardData data = extractor.extractData(testDate);
+		List<DashboardData> dataList = extractor.extractData(testDate);
 
-		assertThat(data).isNotNull();
-		assertThat(data.getMetrics().get("uniqueCitizens")).isEqualTo(0); // empty default
-		verify(namedParameterJdbcTemplate, times(3)).queryForMap(any(), anyMap());
+		assertThat(dataList).isNotNull().isEmpty(); // Empty default
+		verify(namedParameterJdbcTemplate, times(3)).queryForList(any(), anyMap());
 	}
 }

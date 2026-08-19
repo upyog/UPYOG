@@ -9,7 +9,6 @@ import java.util.Map;
 
 import jakarta.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -20,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -31,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Data
 @Component
+@RequiredArgsConstructor
 public class SchemaMappingConfig {
 
     /**
@@ -39,8 +40,7 @@ public class SchemaMappingConfig {
     @Value("${extractor.enabled-modules}")
     private List<Module> enabledModules = new ArrayList<>();
 
-    @Autowired
-    private ResourceLoader resourceLoader;
+    private final ResourceLoader resourceLoader;
 
     /**
      * Map of dynamic SQL query configurations indexed by module.

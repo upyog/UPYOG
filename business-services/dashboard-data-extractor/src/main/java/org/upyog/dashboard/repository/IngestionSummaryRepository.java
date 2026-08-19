@@ -9,9 +9,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.upyog.dashboard.repository.querybuilder.IngestionSummaryQueryBuilder;
@@ -27,27 +24,22 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Repository
+@lombok.RequiredArgsConstructor
 public class IngestionSummaryRepository {
 
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
+	private final JdbcTemplate jdbcTemplate;
+	private final IngestionSummaryQueryBuilder queryBuilder;
+	private final IngestionPersistenceService persistenceService;
 
-	@Autowired
-	private IngestionSummaryQueryBuilder queryBuilder;
-	
-	@Autowired
-	private IngestionPersistenceService persistenceService;
 
 	/**
-	 * Retrieves the last successfully ingested date for the specified tenant and
-	 * module.
-	 *
-	 * @param tenantId   tenant ID (exception.g. "pg.citya" or "pg")
-	 * @param moduleName module short code (exception.g. "PT")
-	 * @return Optional containing the last successful date, or empty if no entry
-	 *         exists
-	 */
-	public Optional<LocalDate> findLastSuccessfulDate(String tenantId, String moduleName) {
+ * Retrieves the last successfully ingested date for the specified tenant and module.
+ *
+ * @param tenantId   the tenant identifier (e.g., "pg.citya" or "pg")
+ * @param moduleName the module short code (e.g., "PT")
+ * @return an {@code Optional} containing the last successful {@link LocalDate}, or empty if none exists
+ */
+public Optional<LocalDate> findLastSuccessfulDate(String tenantId, String moduleName) {
 		try {
 			List<Date> dates = jdbcTemplate.query(queryBuilder.getSelectLastSuccessfulDateQuery(),
 					(rs, rowNum) -> rs.getDate("last_successful_date"), tenantId, moduleName);
@@ -68,13 +60,15 @@ public class IngestionSummaryRepository {
 	 * successfully ingested (via daily or legacy pipelines) for the given tenant
 	 * and module.
 	 *
-	 * @param tenantId   tenant ID
-	 * @param moduleName module short code
-	 * @param startDate  start of range
-	 * @param endDate    end of range
-	 * @return Set of LocalDate instances that are already marked SUCCESS
-	 */
-	public java.util.Set<LocalDate> findSuccessfullyIngestedDates(String tenantId, String moduleName,
+ * Retrieves all dates within the given range that have already been successfully ingested for the specified tenant and module.
+ *
+ * @param tenantId   the tenant identifier
+ * @param moduleName the module short code
+ * @param startDate  the start of the date range (inclusive)
+ * @param endDate    the end of the date range (inclusive)
+ * @return a {@link Set} of {@link LocalDate} instances representing successful ingest dates
+ */
+public java.util.Set<LocalDate> findSuccessfullyIngestedDates(String tenantId, String moduleName,
 			LocalDate startDate, LocalDate endDate) {
 		java.util.Set<LocalDate> result = new java.util.HashSet<>();
 		try {
@@ -96,15 +90,36 @@ public class IngestionSummaryRepository {
 		return result;
 	}
 
-	public void saveOrUpdateLastSuccessfulDate(String tenantId, String moduleName, LocalDate successfulDate) {
+	/**
+ * Persists or updates the last successful ingestion date for a tenant and module.
+ *
+ * @param tenantId       the tenant identifier
+ * @param moduleName     the module short code
+ * @param successfulDate the date of the successful ingestion
+ */
+public void saveOrUpdateLastSuccessfulDate(String tenantId, String moduleName, LocalDate successfulDate) {
 		persistenceService.saveOrUpdateLastSuccessfulDate(tenantId, moduleName, successfulDate);
 	}
 
-	public void saveOrUpdateLastAttemptedDate(String tenantId, String moduleName, LocalDate attemptedDate) {
+	/**
+ * Persists or updates the last attempted ingestion date for a tenant and module.
+ *
+ * @param tenantId       the tenant identifier
+ * @param moduleName     the module short code
+ * @param attemptedDate  the date of the attempted ingestion
+ */
+public void saveOrUpdateLastAttemptedDate(String tenantId, String moduleName, LocalDate attemptedDate) {
 		persistenceService.saveOrUpdateLastAttemptedDate(tenantId, moduleName, attemptedDate);
 	}
 
-	public Set<LocalDate> findRegisteredLegacyJobDates(String tenantId, String moduleName) {
+	/**
+ * Retrieves all legacy job dates that have been registered for a given tenant and module.
+ *
+ * @param tenantId   the tenant identifier
+ * @param moduleName the module short code
+ * @return a {@link Set} of {@link LocalDate} representing registered legacy job dates
+ */
+public Set<LocalDate> findRegisteredLegacyJobDates(String tenantId, String moduleName) {
 		Set<LocalDate> dates = new HashSet<>();
 		try {
 			List<Date> results = jdbcTemplate.query(queryBuilder.getSelectLegacyJobDatesQuery(),
@@ -121,29 +136,65 @@ public class IngestionSummaryRepository {
 		return dates;
 	}
 
-	public void createLegacyJob(String tenantId, String moduleName, LocalDate date) {
+	/**
+ * Creates a new legacy ingestion job entry.
+ *
+ * @param tenantId   the tenant identifier
+ * @param moduleName the module short code
+ * @param date       the date for which the legacy job is created
+ */
+public void createLegacyJob(String tenantId, String moduleName, LocalDate date) {
 		persistenceService.createLegacyJob(tenantId, moduleName, date);
 	}
 
+	/**
+	 * Immutable value object representing a legacy ingestion job entry retrieved from
+	 * {@code legacy_data_ingestion_detail}. Carries the unique job identifier and the
+	 * date for which data should be ingested.
+	 */
 	public static class LegacyJob {
 		private final String jobId;
 		private final LocalDate pushDate;
 
+		/**
+		 * Constructs a {@code LegacyJob} with the given job ID and push date.
+		 *
+		 * @param jobId    the unique identifier of the legacy job
+		 * @param pushDate the date for which the legacy job should ingest data
+		 */
 		public LegacyJob(String jobId, LocalDate pushDate) {
 			this.jobId = jobId;
 			this.pushDate = pushDate;
 		}
 
+		/**
+		 * Returns the unique identifier of this legacy job.
+		 *
+		 * @return the job ID string
+		 */
 		public String getJobId() {
 			return jobId;
 		}
 
+		/**
+		 * Returns the date for which this legacy job should ingest data.
+		 *
+		 * @return the push date
+		 */
 		public LocalDate getPushDate() {
 			return pushDate;
 		}
 	}
 
-	public List<LegacyJob> findPendingOrFailedLegacyJobs(String tenantId, String moduleName, int limit) {
+	/**
+ * Retrieves pending or failed legacy jobs up to a specified limit.
+ *
+ * @param tenantId   the tenant identifier
+ * @param moduleName the module short code
+ * @param limit      maximum number of jobs to return
+ * @return a {@link List} of {@link LegacyJob} objects representing pending/failed jobs
+ */
+public List<LegacyJob> findPendingOrFailedLegacyJobs(String tenantId, String moduleName, int limit) {
 		try {
 			return jdbcTemplate.query(queryBuilder.getSelectPendingOrFailedLegacyJobsQuery(),
 					(rs, rowNum) -> new LegacyJob(rs.getString("module_ingestion_id"),
@@ -156,7 +207,15 @@ public class IngestionSummaryRepository {
 		}
 	}
 
-	public void updateLegacyJobStatus(String jobId, String status, String requestData, String responseData) {
+	/**
+ * Updates the status and payload data of a legacy job.
+ *
+ * @param jobId        the unique identifier of the legacy job
+ * @param status       the new status (e.g., SUCCESS, FAILURE)
+ * @param requestData  the request payload sent to the external system
+ * @param responseData the response payload received from the external system
+ */
+public void updateLegacyJobStatus(String jobId, String status, String requestData, String responseData) {
 		persistenceService.updateLegacyJobStatus(jobId, status, requestData, responseData);
 	}
 }

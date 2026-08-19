@@ -4,7 +4,6 @@ import org.upyog.dashboard.repository.IngestionSummaryRepository;
 
 import java.time.LocalDate;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +15,7 @@ import org.upyog.dashboard.common.constants.Module;
 import org.upyog.dashboard.model.LegacyIngestionResponse;
 import org.upyog.dashboard.service.LegacyIngestionService;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -24,13 +24,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/legacy")
+@RequiredArgsConstructor
 public class LegacyIngestionController {
 
-    @Autowired
-    private LegacyIngestionService legacyIngestionService;
-    
-    @Autowired
-    private IngestionSummaryRepository summaryRepository;
+    private final LegacyIngestionService legacyIngestionService;
+    private final IngestionSummaryRepository summaryRepository;
 
     /**
      * Retrieves the status of legacy jobs.
@@ -75,7 +73,7 @@ public class LegacyIngestionController {
         }
 
         Module targetModule = parseModule(module);
-        log.info("LegacyIngestionController | Triggering historical ingestion from {} to {} for module {}",
+        log.info("Triggering historical ingestion from {} to {} for module {}",
                 startDate, endDate, targetModule != null ? targetModule : "ALL");
 
         LegacyIngestionResponse response = legacyIngestionService.ingestHistoricalDataForRange(startDate, endDate, targetModule);
@@ -95,13 +93,21 @@ public class LegacyIngestionController {
             @RequestParam(required = false) String module) {
 
         Module targetModule = parseModule(module);
-        log.info("LegacyIngestionController | Triggering historical ingestion for last {} months for module {}",
+        log.info("Triggering historical ingestion for last {} months for module {}",
                 months, targetModule != null ? targetModule : "ALL");
 
         LegacyIngestionResponse response = legacyIngestionService.ingestHistoricalDataForLastMonths(months, targetModule);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    /**
+     * Attempts to parse a module name string into the corresponding {@link Module} enum constant.
+     * Returns {@code null} if the input is blank or does not match any known module name,
+     * and logs a warning rather than throwing an exception.
+     *
+     * @param moduleStr the raw module name string from the request parameter; may be {@code null}
+     * @return the matching {@link Module} constant, or {@code null} to signal all-modules processing
+     */
     private Module parseModule(String moduleStr) {
         if (moduleStr == null || moduleStr.isBlank()) {
             return null;
@@ -109,7 +115,7 @@ public class LegacyIngestionController {
         try {
             return Module.valueOf(moduleStr.trim().toUpperCase());
         } catch (Exception exception) {
-            log.warn("LegacyIngestionController | Unknown module name '{}'. Will process all enabled modules.", moduleStr);
+            log.warn("Unknown module name '{}'. Will process all enabled modules.", moduleStr);
             return null;
         }
     }

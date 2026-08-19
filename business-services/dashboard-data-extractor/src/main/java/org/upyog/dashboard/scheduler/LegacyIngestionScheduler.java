@@ -1,12 +1,12 @@
 package org.upyog.dashboard.scheduler;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.upyog.dashboard.config.DashboardProperties;
 import org.upyog.dashboard.service.LegacyIngestionService;
 import jakarta.annotation.PostConstruct;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -17,17 +17,20 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class LegacyIngestionScheduler {
 
-    @Autowired
-    private LegacyIngestionService legacyIngestionService;
-
-    @Autowired
-    private DashboardProperties dashboardProperties;
+    private final LegacyIngestionService legacyIngestionService;
+    private final DashboardProperties dashboardProperties;
 
     private boolean legacyIngestionEnabled;
     private int defaultMonths;
 
+    /**
+     * Initialises service-level configuration values from {@link org.upyog.dashboard.config.DashboardProperties}
+     * after bean construction. Sets the flags that control whether legacy ingestion is enabled
+     * and the default look-back period in months.
+     */
     @PostConstruct
     public void init() {
         this.legacyIngestionEnabled = dashboardProperties.isLegacyIngestionEnabled();
@@ -35,33 +38,42 @@ public class LegacyIngestionScheduler {
     }
 
     /**
-     * Scheduler 1: Checks for missing legacy dates/jobs and populates them in the table.
+     * Scheduled method (cron: {@code legacy.ingestion.populate.cron}) that scans the past
+     * {@code defaultMonths} months and inserts missing date rows into the legacy job queue
+     * for all enabled modules.
+     *
+     * <p>Does nothing when legacy ingestion is disabled via
+     * {@code legacy.ingestion.enabled=false}.
      */
     @Scheduled(cron = "${legacy.ingestion.populate.cron}")
     public void populateLegacyJobs() {
         if (!legacyIngestionEnabled) {
-            log.debug("LegacyIngestionScheduler | Legacy job populator is disabled via legacy.ingestion.enabled=false");
+            log.debug("Legacy job populator is disabled via legacy.ingestion.enabled=false");
             return;
         }
 
-        log.info("LegacyIngestionScheduler | Populating legacy jobs for past {} months...", defaultMonths);
+        log.info("Populating legacy jobs for past {} months...", defaultMonths);
         int createdCount = legacyIngestionService.populateLegacyJobs(defaultMonths, null);
-        log.info("LegacyIngestionScheduler | Created {} new legacy jobs in the queue.", createdCount);
+        log.info("Created {} new legacy jobs in the queue.", createdCount);
     }
 
     /**
-     * Scheduler 2: Fetches pending or failed jobs and executes them.
+     * Scheduled method (cron: {@code legacy.ingestion.execute.cron}) that fetches up to 50
+     * pending or failed legacy jobs from the queue and attempts to ingest them.
+     *
+     * <p>Does nothing when legacy ingestion is disabled via
+     * {@code legacy.ingestion.enabled=false}.
      */
     @Scheduled(cron = "${legacy.ingestion.execute.cron}")
     public void executeLegacyJobs() {
         if (!legacyIngestionEnabled) {
-            log.debug("LegacyIngestionScheduler | Legacy job executor is disabled via legacy.ingestion.enabled=false");
+            log.debug("Legacy job executor is disabled via legacy.ingestion.enabled=false");
             return;
         }
 
-        log.info("LegacyIngestionScheduler | Processing pending legacy jobs...");
+        log.info("Processing pending legacy jobs...");
         int limit = 50; // Batch limit per execution loop
         int executedCount = legacyIngestionService.executeLegacyJobs(limit, null);
-        log.info("LegacyIngestionScheduler | Executed {} pending legacy jobs.", executedCount);
+        log.info("Executed {} pending legacy jobs.", executedCount);
     }
 }

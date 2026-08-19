@@ -1,12 +1,16 @@
 combinedMetricsQuery: |
   SELECT
-    (SELECT COUNT(DISTINCT venue_code) FROM eg_chb_booking_detail WHERE tenant_id = :tenantId) AS totalactivevenueavailable,
-    (SELECT COUNT(*) FROM eg_chb_booking_detail WHERE application_date >= :startTime AND application_date <= :endTime AND tenant_id = :tenantId AND booking_status = 'BOOKED') AS totalapplicationreceived,
-    (SELECT COALESCE(SUM(ep.totalamountpaid), 0) FROM egcl_payment ep JOIN egcl_paymentdetail epd ON ep.id = epd.paymentid WHERE ep.transactiondate >= :startTime AND ep.transactiondate <= :endTime AND epd.businessservice = 'chb-services' AND ep.paymentstatus <> 'CANCELLED' AND ep.tenantid = :tenantId) AS totalcollections,
-    (SELECT COUNT(*) FROM eg_chb_booking_detail WHERE application_date >= :startTime AND application_date <= :endTime AND tenant_id = :tenantId AND booking_status = 'EXPIRED') AS noshowbookings,
+    main.tenant_id as tenantid,
+    (SELECT COUNT(DISTINCT venue_code) FROM eg_chb_booking_detail bd WHERE bd.tenant_id = main.tenant_id) AS totalactivevenueavailable,
+    (SELECT COUNT(*) FROM eg_chb_booking_detail bd WHERE bd.tenant_id = main.tenant_id AND application_date >= :startTime AND application_date <= :endTime AND booking_status = 'BOOKED') AS totalapplicationreceived,
+    (SELECT COALESCE(SUM(ep.totalamountpaid), 0) FROM egcl_payment ep JOIN egcl_paymentdetail epd ON ep.id = epd.paymentid WHERE ep.tenantid = main.tenant_id AND ep.transactiondate >= :startTime AND ep.transactiondate <= :endTime AND epd.businessservice = 'chb-services' AND ep.paymentstatus <> 'CANCELLED') AS totalcollections,
+    (SELECT COUNT(*) FROM eg_chb_booking_detail bd WHERE bd.tenant_id = main.tenant_id AND application_date >= :startTime AND application_date <= :endTime AND booking_status = 'EXPIRED') AS noshowbookings,
     (SELECT COALESCE(json_agg(json_build_object('name', name, 'value', value)), '[]'::json) FROM (
-        SELECT booking_status AS name, COUNT(*) AS value FROM eg_chb_booking_detail WHERE application_date >= :startTime AND application_date <= :endTime AND tenant_id = :tenantId AND booking_status IN ('BOOKED', 'CANCELLED') GROUP BY booking_status
+        SELECT booking_status AS name, COUNT(*) AS value FROM eg_chb_booking_detail bd WHERE bd.tenant_id = main.tenant_id AND application_date >= :startTime AND application_date <= :endTime AND booking_status IN ('BOOKED', 'CANCELLED') GROUP BY booking_status
     ) b) AS bookingsjson,
     (SELECT COALESCE(json_agg(json_build_object('createdby', createdby)), '[]'::json) FROM (
-        SELECT DISTINCT createdby FROM eg_chb_booking_detail WHERE application_date >= :startTime AND application_date <= :endTime AND tenant_id = :tenantId
+        SELECT DISTINCT createdby FROM eg_chb_booking_detail bd WHERE bd.tenant_id = main.tenant_id AND application_date >= :startTime AND application_date <= :endTime
     ) c) AS createdbylistjson
+  FROM (
+    SELECT DISTINCT tenant_id FROM eg_chb_booking_detail WHERE tenant_id LIKE CONCAT(:tenantId, '%')
+  ) main
