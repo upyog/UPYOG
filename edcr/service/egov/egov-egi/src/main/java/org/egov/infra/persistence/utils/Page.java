@@ -53,6 +53,25 @@ import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 
+/**
+ * Generic Pagination Helper for Jakarta Persistence / Hibernate 6.
+ *
+ * <p><b>Migration Notes (Hibernate 6 &amp; Jakarta EE):</b></p>
+ * <ul>
+ *   <li><b>TypedQuery Support:</b> Uses {@link TypedQuery} for 100% type-safe entity pagination
+ *       without unchecked casting.</li>
+ *   <li><b>Backward Compatibility:</b> Retains {@link Query} constructors for legacy or native queries,
+ *       migrating from legacy {@code query.list()} to standard Jakarta {@code query.getResultList()}.</li>
+ *   <li><b>Criteria Removal:</b> Legacy {@code org.hibernate.Criteria} constructor was removed as the
+ *       Criteria API was retired in Hibernate 6 in favor of JPA Criteria.</li>
+ *   <li><b>Page Index Clamping:</b> Uses {@code pageNumber < 1 ? 1 : pageNumber} instead of legacy
+ *       {@code ++pageNumber} to safely handle both 0-based and 1-based page indices without off-by-one errors.</li>
+ *   <li><b>Telescoping Constructors:</b> 4-argument constructors act as the canonical implementation
+ *       setting {@code recordTotal}, while 3-argument overloads chain cleanly with default {@code recordTotal = 0}.</li>
+ * </ul>
+ *
+ * @param <T> the entity or result type
+ */
 public class Page<T> {
 
     private final List<T> results;
