@@ -59,19 +59,8 @@ public class Page<T> {
     private final int pageNumber;
     private int recordTotal;
 
-    /**
-     * Paginate using a Jakarta Persistence {@link TypedQuery}.
-     *
-     * <p>The {@code recordTotal} overload is required when the total count has
-     * already been fetched separately (e.g. via a count query), and it must be
-     * provided rather than derived from the result slice.</p>
-     */
     public Page(TypedQuery<T> query, int pageNumber, int pageSize, int recordTotal) {
-        int currentPageNo = pageNumber;
-        if (pageNumber < 1) {
-            currentPageNo = 1;
-        }
-
+        int currentPageNo = pageNumber < 1 ? 1 : pageNumber;
         this.pageNumber = currentPageNo;
 
         if (pageSize > 0) {
@@ -83,6 +72,10 @@ public class Page<T> {
         }
         this.results = query.getResultList();
         this.recordTotal = recordTotal;
+    }
+
+    public Page(TypedQuery<T> query, int pageNumber, int pageSize) {
+        this(query, pageNumber, pageSize, 0);
     }
 
     public boolean isNextPage() {

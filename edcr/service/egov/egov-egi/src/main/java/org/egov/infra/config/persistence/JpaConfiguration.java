@@ -122,8 +122,9 @@ public class JpaConfiguration {
         entityManagerFactory.setJpaVendorAdapter(jpaVendorAdapter());
         entityManagerFactory.setJpaPropertyMap(additionalProperties());
         entityManagerFactory.setValidationMode(ValidationMode.NONE);
-        entityManagerFactory.setSharedCacheMode(SharedCacheMode.DISABLE_SELECTIVE);
-        ClasspathScanningPersistenceUnitPostProcessor hbmScanner = new ClasspathScanningPersistenceUnitPostProcessor("org.egov");
+        entityManagerFactory.setSharedCacheMode(SharedCacheMode.ENABLE_SELECTIVE);
+        ClasspathScanningPersistenceUnitPostProcessor hbmScanner = new ClasspathScanningPersistenceUnitPostProcessor(
+                "org.egov");
         hbmScanner.setMappingFileNamePattern("**/*hbm.xml");
         entityManagerFactory.setPersistenceUnitPostProcessors(hbmScanner);
         entityManagerFactory.afterPropertiesSet();
@@ -155,7 +156,8 @@ public class JpaConfiguration {
         properties.put(AvailableSettings.USE_SECOND_LEVEL_CACHE, enableSecondLevelCache);
         properties.put(AvailableSettings.USE_QUERY_CACHE, enableQueryCache);
         properties.put(AvailableSettings.USE_MINIMAL_PUTS, env.getProperty(AvailableSettings.USE_MINIMAL_PUTS));
-        properties.put("hibernate.cache.infinispan.cachemanager", env.getProperty("hibernate.cache.infinispan.cachemanager"));
+        properties.put("hibernate.cache.infinispan.cachemanager",
+                env.getProperty("hibernate.cache.infinispan.cachemanager"));
         properties.put(AvailableSettings.JTA_PLATFORM, env.getProperty(AvailableSettings.JTA_PLATFORM));
         properties.put(AvailableSettings.AUTO_CLOSE_SESSION, env.getProperty(AvailableSettings.AUTO_CLOSE_SESSION));
         properties.put(AvailableSettings.DEFAULT_BATCH_FETCH_SIZE, batchUpdateSize);

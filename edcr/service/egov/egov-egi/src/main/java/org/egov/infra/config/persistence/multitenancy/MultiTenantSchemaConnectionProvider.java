@@ -66,7 +66,12 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
 
     @Override
     public boolean supportsAggressiveRelease() {
-        return false;
+        /*
+          FIX: Must be FALSE in JTA/WildFly environment.
+          TRUE causes Hibernate to release connections mid-transaction,
+          leading to "Transaction cannot proceed: STATUS_COMMITTED" errors.
+        */
+        return Boolean.FALSE;
     }
 
     @Override

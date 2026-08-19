@@ -44,27 +44,25 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
- */
 package org.egov.edcr.security.oauth2.utils;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthentication;
+// TODO: DEAD CODE - NOT USED IN UPYOG
+/*
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.stereotype.Service;
 
-/**
- *
- * @author subhash
- *
- */
 @Service
 public class TokenServiceUtils {
 
     private static final String SOURCE = "source";
 
-    public Object getSource(final Authentication authentication) {
-        if (authentication instanceof BearerTokenAuthentication bearerTokenAuthentication) {
-            return bearerTokenAuthentication.getTokenAttributes().get(SOURCE);
-        }
-        return null;
+    @Autowired
+    private AuthorizationServerTokenServices tokenServices;
+
+    public Object getSource(final OAuth2Authentication authentication) {
+        return tokenServices.getAccessToken(authentication).getAdditionalInformation().get(SOURCE);
     }
 }
+*/

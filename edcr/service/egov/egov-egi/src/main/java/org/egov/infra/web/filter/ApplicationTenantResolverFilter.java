@@ -114,34 +114,18 @@ public class ApplicationTenantResolverFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
-
-        // Wrap ALL requests — including multipart/form-data — in MultiReadRequestWrapper.
-        //
-        // MultiReadRequestWrapper's constructor now detects multipart requests and
-        // deliberately does NOT drain getInputStream() for them. This leaves Undertow's
-        // raw channel intact so that getParts() (called later by
-        // StandardServletMultipartResolver) can parse the multipart body correctly,
-        // allowing @RequestPart("planFile") to resolve as expected.
-        //
-        // For non-multipart requests the existing body-caching behaviour is preserved
-        // unchanged (body eagerly copied to byte[], getInputStream() fully replayable).
-        //
-        // getParts() / getPart() on the wrapper always delegate to the underlying
-        // Undertow request, so multipart parsing is performed by the container —
-        // not by this filter — as the Servlet spec intends.
-        final MultiReadRequestWrapper requestToUse = new MultiReadRequestWrapper(req);
-
-        HttpSession session = requestToUse.getSession();
-        LOG.info("Request URL-->" + requestToUse.getRequestURL());
-        LOG.info("Request URI-->" + requestToUse.getRequestURI());
-        String domainURL = extractRequestDomainURL(requestToUse, false);
-        String domainName = extractRequestedDomainName(requestToUse);
+        MultiReadRequestWrapper customRequest = new MultiReadRequestWrapper(req);
+        HttpSession session = customRequest.getSession();
+        LOG.info("Request URL-->" + customRequest.getRequestURL());
+        LOG.info("Request URI-->" + customRequest.getRequestURI());
+        String domainURL = extractRequestDomainURL(customRequest, false);
+        String domainName = extractRequestedDomainName(customRequest);
         ApplicationThreadLocals.setTenantID(environmentSettings.schemaName(domainName));
         ApplicationThreadLocals.setDomainName(domainName);
         ApplicationThreadLocals.setDomainURL(domainURL);
-        prepareRestService(requestToUse, session);
+        prepareRestService(customRequest, session);
         LOG.info("***Tenant ID-->" + ApplicationThreadLocals.getTenantID());
-        chain.doFilter(requestToUse, response);
+        chain.doFilter(customRequest, response);
     }
 
     @Override
@@ -197,7 +181,8 @@ public class ApplicationTenantResolverFilter implements Filter {
             }
             LOG.info("fullTenant***" + fullTenant);
             if (StringUtils.isBlank(fullTenant)) {
-                throw new ApplicationRestException("incorrect_request", "RestUrl does not contain tenantId: " + fullTenant);
+                throw new ApplicationRestException("incorrect_request",
+                        "RestUrl does not contain tenantId: " + fullTenant);
             }
 
             String tenant = fullTenant.substring(fullTenant.lastIndexOf('.') + 1, fullTenant.length());
@@ -233,17 +218,21 @@ public class ApplicationTenantResolverFilter implements Filter {
      * Extracts the {@code tenantId} value from the {@code edcrRequest} JSON
      * form-data part of a multipart/form-data request.
      *
-     * <p>The scrutinize, scrutinizeplan, scrutinizeocplan, extractplan, and
+     * <p>
+     * The scrutinize, scrutinizeplan, scrutinizeocplan, extractplan, and
      * anonymousScrutinize endpoints all send the tenant identifier inside a
      * JSON string carried in a form field called {@code edcrRequest}, e.g.:
+     * 
      * <pre>
      *   {"tenantId":"pb.amritsar","RequestInfo":{...},...}
      * </pre>
+     * 
      * This method reads that part at filter time (before DispatcherServlet)
      * using {@code request.getPart("edcrRequest")}. Undertow parses the
      * multipart body lazily/on-demand when {@code getPart()} is first called,
      * and the wrapper constructor has deliberately left the raw channel
-     * unconsumed for multipart requests, so this call succeeds.</p>
+     * unconsumed for multipart requests, so this call succeeds.
+     * </p>
      *
      * @param request the multipart request wrapper
      * @return the tenantId value (e.g. {@code "pb.amritsar"}), or an empty
@@ -275,21 +264,36 @@ public class ApplicationTenantResolverFilter implements Filter {
     }
 
     /*
-     * public Map<String, String> tenantsMap() { URL url; LOG.info("cities" + applicationConfiguration.cities()); try { url = new
-     * URL(ApplicationThreadLocals.getDomainURL()); // first get from override properties
-     * environment.getPropertySources().iterator().forEachRemaining(propertySource -> { LOG.info( "Property Source" +
-     * propertySource.getName() + " Class Name" + propertySource.getClass().getSimpleName()); if
-     * (propertySource.getName().contains("egov-erp-override.properties") && propertySource instanceof MapPropertySource) {
-     * ((MapPropertySource) propertySource).getSource().forEach((key, value) -> { if (key.startsWith(TENANT)) {
-     * tenants.put(value.toString(), url.getProtocol() + "://" + key.replace(TENANT, "")); LOG.info("*****override tenants******"
-     * + value.toString() + url.getProtocol() + "://" + key.replace(TENANT, "")); } }); } }); // second get from application
-     * config only properties if it is not overriden environment.getPropertySources().iterator().forEachRemaining(propertySource
-     * -> { LOG.info( "Property Source" + propertySource.getName() + " Class Name" + propertySource.getClass().getSimpleName());
-     * if (propertySource.getName().contains("application-config.properties") && propertySource instanceof MapPropertySource) {
-     * ((MapPropertySource) propertySource).getSource().forEach((key, value) -> { if (key.startsWith(TENANT) &&
-     * !tenants.containsKey(value)) { tenants.put(value.toString(), url.getProtocol() + "://" + key.replace(TENANT, ""));
-     * LOG.info( "*****application config tenants******" + value.toString() + url.getProtocol() + "://" + key.replace(TENANT,
-     * "")); } }); } }); } catch (MalformedURLException e) { LOG.error("Error occurred, while forming URL", e); } return tenants;
+     * public Map<String, String> tenantsMap() { URL url; LOG.info("cities" +
+     * applicationConfiguration.cities()); try { url = new
+     * URL(ApplicationThreadLocals.getDomainURL()); // first get from override
+     * properties
+     * environment.getPropertySources().iterator().forEachRemaining(propertySource
+     * -> { LOG.info( "Property Source" +
+     * propertySource.getName() + " Class Name" +
+     * propertySource.getClass().getSimpleName()); if
+     * (propertySource.getName().contains("egov-erp-override.properties") &&
+     * propertySource instanceof MapPropertySource) {
+     * ((MapPropertySource) propertySource).getSource().forEach((key, value) -> { if
+     * (key.startsWith(TENANT)) {
+     * tenants.put(value.toString(), url.getProtocol() + "://" + key.replace(TENANT,
+     * "")); LOG.info("*****override tenants******"
+     * + value.toString() + url.getProtocol() + "://" + key.replace(TENANT, "")); }
+     * }); } }); // second get from application
+     * config only properties if it is not overriden
+     * environment.getPropertySources().iterator().forEachRemaining(propertySource
+     * -> { LOG.info( "Property Source" + propertySource.getName() + " Class Name" +
+     * propertySource.getClass().getSimpleName());
+     * if (propertySource.getName().contains("application-config.properties") &&
+     * propertySource instanceof MapPropertySource) {
+     * ((MapPropertySource) propertySource).getSource().forEach((key, value) -> { if
+     * (key.startsWith(TENANT) &&
+     * !tenants.containsKey(value)) { tenants.put(value.toString(),
+     * url.getProtocol() + "://" + key.replace(TENANT, ""));
+     * LOG.info( "*****application config tenants******" + value.toString() +
+     * url.getProtocol() + "://" + key.replace(TENANT,
+     * "")); } }); } }); } catch (MalformedURLException e) {
+     * LOG.error("Error occurred, while forming URL", e); } return tenants;
      * }
      */
 
@@ -325,13 +329,18 @@ public class ApplicationTenantResolverFilter implements Filter {
                                 if (LOG.isDebugEnabled())
                                     LOG.debug("############Tenant From Body######" + tenantAtBody);
                             } /*
-                               * else if (param.contains("authToken")) { String[] authTokenVal = param.split(":"); // Next to
-                               * 'bearer' word space is required to differentiate token type and access token String tokenType =
-                               * "bearer "; if (authTokenVal[1].startsWith("\"") && authTokenVal[1].endsWith("\"")) { String
+                               * else if (param.contains("authToken")) { String[] authTokenVal =
+                               * param.split(":"); // Next to
+                               * 'bearer' word space is required to differentiate token type and access token
+                               * String tokenType =
+                               * "bearer "; if (authTokenVal[1].startsWith("\"") &&
+                               * authTokenVal[1].endsWith("\"")) { String
                                * authToken = authTokenVal[1].substring(1, authTokenVal[1].length() - 1);
                                * LOG.info("############Auth Token######" + tokenType + authToken);
-                               * multiReadRequestWrapper.putHeader("Authorization", tokenType + authToken); } else {
-                               * multiReadRequestWrapper.putHeader("Authorization", tokenType + authTokenVal[1]); } }
+                               * multiReadRequestWrapper.putHeader("Authorization", tokenType + authToken); }
+                               * else {
+                               * multiReadRequestWrapper.putHeader("Authorization", tokenType +
+                               * authTokenVal[1]); } }
                                */
                         }
                     }

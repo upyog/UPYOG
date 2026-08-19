@@ -79,7 +79,8 @@ public class RedisHttpSessionConfiguration {
      */
     @Bean
     public ConfigureRedisAction configureRedisAction() {
-        return ConfigureRedisAction.NO_OP;
+        return
+                ConfigureRedisAction.NO_OP;
     }
 
     @Bean

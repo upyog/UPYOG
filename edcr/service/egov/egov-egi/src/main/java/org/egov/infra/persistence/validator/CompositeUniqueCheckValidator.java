@@ -105,13 +105,15 @@ public class CompositeUniqueCheckValidator implements ConstraintValidator<Compos
         // Get the correct entity target class based on whether it's a superclass
         Class<?> targetClass = unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass();
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         // Build a query selecting only the ID property to match Projections.id()
-        CriteriaQuery<Object> cq = cb.createQuery();
-        Root<?> root = cq.from(targetClass);
+        CriteriaQuery<Object> criteriaQuery = criteriaBuilder.createQuery();
+        // In JPA Criteria API, 'Root' represents the FROM clause entity (like 'FROM Entity e' in SQL).
+        // It provides the base object from which entity properties (root.get(fieldName)) are referenced.
+        Root<?> root = criteriaQuery.from(targetClass);
 
         // Select the ID attribute of the entity dynamically
-        cq.select(root.get(unique.id()));
+        criteriaQuery.select(root.get(unique.id()));
 
         List<Predicate> predicates = new ArrayList<>();
 
@@ -120,24 +122,24 @@ public class CompositeUniqueCheckValidator implements ConstraintValidator<Compos
             final Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
 
             if (unique.checkForNull() && fieldValue == null) {
-                predicates.add(cb.isNull(root.get(fieldName)));
+                predicates.add(criteriaBuilder.isNull(root.get(fieldName)));
             } else if (fieldValue instanceof String) {
                 // Replicates Restrictions.eq(fieldName, fieldValue).ignoreCase()
-                predicates.add(cb.equal(cb.lower(root.get(fieldName)), ((String) fieldValue).toLowerCase()));
+                predicates.add(criteriaBuilder.equal(criteriaBuilder.lower(root.get(fieldName)), ((String) fieldValue).toLowerCase()));
             } else {
-                predicates.add(cb.equal(root.get(fieldName), fieldValue));
+                predicates.add(criteriaBuilder.equal(root.get(fieldName), fieldValue));
             }
         }
 
         // Exclude current record if updating (Restrictions.ne)
         if (id != null) {
-            predicates.add(cb.notEqual(root.get(unique.id()), id));
+            predicates.add(criteriaBuilder.notEqual(root.get(unique.id()), id));
         }
 
-        cq.where(cb.and(predicates.toArray(new Predicate[0])));
+        criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
 
         // Execute the query using MaxResults(1)
-        List<?> result = entityManager.createQuery(cq)
+        List<?> result = entityManager.createQuery(criteriaQuery)
                 .setMaxResults(1)
                 .getResultList();
 

@@ -96,50 +96,50 @@ public class UniqueDateOverlapValidator implements ConstraintValidator<UniqueDat
 
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     private boolean checkUnique(Object object) throws IllegalAccessException {
         Number id = (Number) FieldUtils.readField(object, uniqueDateOverlap.id(), true);
 
-        final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<Long> query = cb.createQuery(Long.class);
-        final Root root = query.from(object.getClass());
+        final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+        // 'Root' represents the query's FROM entity, allowing access to its fields (root.get(fieldName))
+        final Root root = criteriaQuery.from(object.getClass());
 
         // Build unique-field predicates (AND)
         java.util.List<Predicate> uniquePredicates = new java.util.ArrayList<>();
         for (String fieldName : uniqueDateOverlap.uniqueFields()) {
             Object fieldValue = FieldUtils.readField(object, fieldName, true);
             if (fieldValue instanceof String)
-                uniquePredicates.add(cb.equal(cb.lower(root.get(fieldName)), ((String) fieldValue).toLowerCase()));
+                uniquePredicates.add(criteriaBuilder.equal(criteriaBuilder.lower(root.get(fieldName)), ((String) fieldValue).toLowerCase()));
             else
-                uniquePredicates.add(cb.equal(root.get(fieldName), fieldValue));
+                uniquePredicates.add(criteriaBuilder.equal(root.get(fieldName), fieldValue));
         }
 
         Date fromDate = startOfDay((Date) FieldUtils.readField(object, uniqueDateOverlap.fromField(), true));
         Date toDate = endOfDay((Date) FieldUtils.readField(object, uniqueDateOverlap.toField(), true));
 
         // existing.fromField <= fromDate AND existing.toField >= fromDate
-        Predicate checkFromDate = cb.and(
-                cb.lessThanOrEqualTo(root.get(uniqueDateOverlap.fromField()), fromDate),
-                cb.greaterThanOrEqualTo(root.get(uniqueDateOverlap.toField()), fromDate));
+        Predicate checkFromDate = criteriaBuilder.and(
+                criteriaBuilder.lessThanOrEqualTo(root.get(uniqueDateOverlap.fromField()), fromDate),
+                criteriaBuilder.greaterThanOrEqualTo(root.get(uniqueDateOverlap.toField()), fromDate));
 
         // existing.fromField <= toDate AND existing.toField >= toDate
-        Predicate checkToDate = cb.and(
-                cb.lessThanOrEqualTo(root.get(uniqueDateOverlap.fromField()), toDate),
-                cb.greaterThanOrEqualTo(root.get(uniqueDateOverlap.toField()), toDate));
+        Predicate checkToDate = criteriaBuilder.and(
+                criteriaBuilder.lessThanOrEqualTo(root.get(uniqueDateOverlap.fromField()), toDate),
+                criteriaBuilder.greaterThanOrEqualTo(root.get(uniqueDateOverlap.toField()), toDate));
 
         // existing.fromField >= fromDate AND existing.toField <= toDate
-        Predicate checkFromAndToDate = cb.and(
-                cb.greaterThanOrEqualTo(root.get(uniqueDateOverlap.fromField()), fromDate),
-                cb.lessThanOrEqualTo(root.get(uniqueDateOverlap.toField()), toDate));
+        Predicate checkFromAndToDate = criteriaBuilder.and(
+                criteriaBuilder.greaterThanOrEqualTo(root.get(uniqueDateOverlap.fromField()), fromDate),
+                criteriaBuilder.lessThanOrEqualTo(root.get(uniqueDateOverlap.toField()), toDate));
 
         // Date overlap = any of the three cases above
-        uniquePredicates.add(cb.or(checkFromDate, checkToDate, checkFromAndToDate));
+        uniquePredicates.add(criteriaBuilder.or(checkFromDate, checkToDate, checkFromAndToDate));
 
         // Exclude current record when updating
         if (id != null)
-            uniquePredicates.add(cb.notEqual(root.get(uniqueDateOverlap.id()), id));
+            uniquePredicates.add(criteriaBuilder.notEqual(root.get(uniqueDateOverlap.id()), id));
 
-        query.select(cb.count(root)).where(cb.and(uniquePredicates.toArray(new Predicate[0])));
-        return entityManager.createQuery(query).getSingleResult() == 0L;
+        criteriaQuery.select(criteriaBuilder.count(root)).where(criteriaBuilder.and(uniquePredicates.toArray(new Predicate[0])));
+        return entityManager.createQuery(criteriaQuery).getSingleResult() == 0L;
     }
 }

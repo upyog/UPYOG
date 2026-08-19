@@ -220,10 +220,19 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
         <async-supported>true</async-supported>
+        <!--
+            Multipart File Upload Configuration (Spring 6 / Servlet 3.1+ Migration):
+            Previously, multipart resolution was configured via a CommonsMultipartResolver bean in
+            applicationContext-egiweb.xml (with maxUploadSize and maxInMemorySize).
+            In Spring 6, CommonsMultipartResolver was removed because Apache Commons FileUpload was retired
+            in favor of the standard Servlet container multipart support (StandardServletMultipartResolver).
+            Under Servlet 3.1+, multipart limits must be declared directly on the DispatcherServlet via
+            <multipart-config> in web.xml, while StandardServletMultipartResolver is declared in egiweb-servlet.xml.
+        -->
         <multipart-config>
-            <max-file-size>52428800</max-file-size>
-            <max-request-size>104857600</max-request-size>
-            <file-size-threshold>0</file-size-threshold>
+            <max-file-size>104857600</max-file-size> <!-- 100MB per file (formerly CommonsMultipartResolver maxUploadSize) -->
+            <max-request-size>104857600</max-request-size> <!-- 100MB total request size -->
+            <file-size-threshold>1048576</file-size-threshold> <!-- 1MB in-memory threshold (formerly CommonsMultipartResolver maxInMemorySize) -->
         </multipart-config>
     </servlet>
 

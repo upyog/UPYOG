@@ -81,13 +81,15 @@
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-envers</artifactId>
     </dependency>
-    <dependency>
-    <groupId>org.hibernate</groupId>
-    <artifactId>hibernate-ehcache</artifactId>
-    <version>5.6.15.Final</version>
-</dependency>
-		<!--Removed ehcache-web as it is based on legacy Ehcache 2.x and javax.servlet APIs.
-        Removing it avoids compatibility and dependency conflicts.-->
+    <!-- hibernate-ehcache removed: discontinued in Hibernate 6.x and replaced by infinispan-hibernate-cache-v62 -->
+    <!-- <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-ehcache</artifactId>
+        <version>5.6.15.Final</version>
+    </dependency> -->
+		<!--Removed ehcache-web as it is based on legacy Ehcache 2.x and javax.servlet APIs,
+        which are incompatible with WildFly 26/Jakarta EE. The dependency is no longer required
+		and removing it avoids compatibility and dependency conflicts.-->
 <!--<dependency>-->
 <!--    <groupId>net.sf.ehcache</groupId>-->
 <!--    <artifactId>ehcache-core</artifactId>-->

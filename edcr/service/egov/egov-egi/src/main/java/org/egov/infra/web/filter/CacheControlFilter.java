@@ -83,7 +83,9 @@ public class CacheControlFilter implements Filter {
     
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
-        // TODO uncomment when work with esapi
+        // EDCR functions as a headless backend REST service without static UI assets.
+        // ESAPI-based static cache header configuration is kept commented out for reference.
+        // TODO: Uncomment when integrating with active ESAPI configuration.
 //        final HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 //        ESAPI.httpUtilities().addHeader(httpServletResponse, CACHE_CONTROL_HEADER, "public,max-age=" + expireInSeconds);
 //        httpServletResponse.setDateHeader(EXPIRE_HEADER, System.currentTimeMillis() + expireInSeconds * 1000L);

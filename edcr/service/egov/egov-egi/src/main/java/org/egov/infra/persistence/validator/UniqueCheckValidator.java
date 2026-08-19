@@ -104,24 +104,25 @@ public class UniqueCheckValidator implements ConstraintValidator<Unique, Object>
         final Class entityClass = unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass();
         final Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
 
-        final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<Long> query = cb.createQuery(Long.class);
-        final Root root = query.from(entityClass);
+        final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+        // 'Root' represents the query's FROM entity, allowing access to its fields (root.get(fieldName))
+        final Root root = criteriaQuery.from(entityClass);
 
         Predicate fieldPredicate;
         if (fieldValue instanceof String)
-            fieldPredicate = cb.equal(cb.lower(root.get(fieldName)), ((String) fieldValue).toLowerCase());
+            fieldPredicate = criteriaBuilder.equal(criteriaBuilder.lower(root.get(fieldName)), ((String) fieldValue).toLowerCase());
         else
-            fieldPredicate = cb.equal(root.get(fieldName), fieldValue);
+            fieldPredicate = criteriaBuilder.equal(root.get(fieldName), fieldValue);
 
         if (id != null) {
-            Predicate notSelf = cb.notEqual(root.get(unique.id()), id);
-            query.select(cb.count(root)).where(cb.and(fieldPredicate, notSelf));
+            Predicate notSelf = criteriaBuilder.notEqual(root.get(unique.id()), id);
+            criteriaQuery.select(criteriaBuilder.count(root)).where(criteriaBuilder.and(fieldPredicate, notSelf));
         } else {
-            query.select(cb.count(root)).where(fieldPredicate);
+            criteriaQuery.select(criteriaBuilder.count(root)).where(fieldPredicate);
         }
 
-        return entityManager.createQuery(query).getSingleResult() == 0L;
+        return entityManager.createQuery(criteriaQuery).getSingleResult() == 0L;
     }
 
 }

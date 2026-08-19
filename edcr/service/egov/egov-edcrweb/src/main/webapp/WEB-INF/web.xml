@@ -44,11 +44,12 @@
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
 
-    <filter>
-        <filter-name>securityFilterChain</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-    </filter>
-
+    <!--
+        Spring Security Filter:
+        DelegatingFilterProxy delegates to the 'springSecurityFilterChain' FilterChainProxy bean.
+        Note: The redundant duplicate 'securityFilterChain' filter declaration was removed to prevent
+        executing Spring Security's filter chain twice on every request.
+    -->
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -89,13 +90,6 @@
     </filter-mapping>
 
     <filter-mapping>
-        <filter-name>securityFilterChain</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>ASYNC</dispatcher>
-    </filter-mapping>
-
-    <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
@@ -119,11 +113,19 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
         <async-supported>true</async-supported>
-        <!-- Enables multipart file upload parsing in Undertow/WildFly -->
+        <!--
+            Multipart File Upload Configuration (Spring 6 / Servlet 3.1+ Migration):
+            Previously, multipart resolution was configured via a CommonsMultipartResolver bean in
+            applicationContext-edcrweb.xml (with maxUploadSize="104857600" and maxInMemorySize="1048576").
+            In Spring 6, CommonsMultipartResolver was removed because Apache Commons FileUpload was retired
+            in favor of the standard Servlet container multipart support (StandardServletMultipartResolver).
+            Under Servlet 3.1+, multipart limits must be declared directly on the DispatcherServlet via
+            <multipart-config> in web.xml, while StandardServletMultipartResolver is declared in edcrweb-servlet.xml.
+        -->
         <multipart-config>
-            <max-file-size>52428800</max-file-size> <!-- 50MB per file -->
-            <max-request-size>104857600</max-request-size> <!-- 100MB total request -->
-            <file-size-threshold>0</file-size-threshold>
+            <max-file-size>104857600</max-file-size> <!-- 100MB per file (formerly CommonsMultipartResolver maxUploadSize) -->
+            <max-request-size>104857600</max-request-size> <!-- 100MB total request size -->
+            <file-size-threshold>1048576</file-size-threshold> <!-- 1MB in-memory threshold (formerly CommonsMultipartResolver maxInMemorySize) -->
         </multipart-config>
     </servlet>
 

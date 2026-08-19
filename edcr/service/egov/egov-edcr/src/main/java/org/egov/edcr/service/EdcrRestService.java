@@ -1019,10 +1019,10 @@ public class EdcrRestService {
                 return sortedList;
             }
         } else {
-            final CriteriaQuery<EdcrApplicationDetail> cq = getCriteriaofSingleTenant(edcrRequest, userInfo, userId, onlyTenantId, isStakeholder);
+            final CriteriaQuery<EdcrApplicationDetail> criteriaQuery = getCriteriaofSingleTenant(edcrRequest, userInfo, userId, onlyTenantId, isStakeholder);
 
-            LOG.info(cq.toString());
-            edcrApplications = entityManager.createQuery(cq)
+            LOG.info(criteriaQuery.toString());
+            edcrApplications = entityManager.createQuery(criteriaQuery)
                     .setFirstResult(offset)
                     .setMaxResults(limit)
                     .getResultList();
@@ -1166,10 +1166,10 @@ public class EdcrRestService {
                 return sortedList;
             }
         } else {
-            final CriteriaQuery<EdcrApplicationDetail> cq = getCriteriaofSingleTenant(edcrRequest, userInfo, userId, onlyTenantId, isStakeholder);
+            final CriteriaQuery<EdcrApplicationDetail> criteriaQuery = getCriteriaofSingleTenant(edcrRequest, userInfo, userId, onlyTenantId, isStakeholder);
 
-            LOG.info(cq.toString());
-            edcrApplications = entityManager.createQuery(cq)
+            LOG.info(criteriaQuery.toString());
+            edcrApplications = entityManager.createQuery(criteriaQuery)
                     .setFirstResult(offset)
                     .setMaxResults(limit)
                     .getResultList();
@@ -1225,8 +1225,8 @@ public class EdcrRestService {
                 query.setParameter(param.getKey(), param.getValue());
             return query.list().size();
         } else {
-            final CriteriaQuery<EdcrApplicationDetail> cq = getCriteriaofSingleTenant(edcrRequest, userInfo, userId, onlyTenantId, isStakeholder);
-            return entityManager.createQuery(cq).getResultList().size();
+            final CriteriaQuery<EdcrApplicationDetail> criteriaQuery = getCriteriaofSingleTenant(edcrRequest, userInfo, userId, onlyTenantId, isStakeholder);
+            return entityManager.createQuery(criteriaQuery).getResultList().size();
         }
 
     }
@@ -1336,21 +1336,21 @@ public class EdcrRestService {
 
     private CriteriaQuery<EdcrApplicationDetail> getCriteriaofSingleTenant(final EdcrRequest edcrRequest, UserInfo userInfo, String userId,
                                                                            boolean onlyTenantId, boolean isStakeholder) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<EdcrApplicationDetail> cq = cb.createQuery(EdcrApplicationDetail.class);
-        Root<EdcrApplicationDetail> root = cq.from(EdcrApplicationDetail.class);
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<EdcrApplicationDetail> criteriaQuery = criteriaBuilder.createQuery(EdcrApplicationDetail.class);
+        Root<EdcrApplicationDetail> root = criteriaQuery.from(EdcrApplicationDetail.class);
         Join<Object, Object> application = root.join("application");
 
         List<Predicate> predicates = new ArrayList<>();
 
         if (edcrRequest != null && isNotBlank(edcrRequest.getEdcrNumber())) {
-            predicates.add(cb.equal(root.get("dcrNumber"), edcrRequest.getEdcrNumber()));
+            predicates.add(criteriaBuilder.equal(root.get("dcrNumber"), edcrRequest.getEdcrNumber()));
         }
         if (edcrRequest != null && isNotBlank(edcrRequest.getTransactionNumber())) {
-            predicates.add(cb.equal(application.get("transactionNumber"), edcrRequest.getTransactionNumber()));
+            predicates.add(criteriaBuilder.equal(application.get("transactionNumber"), edcrRequest.getTransactionNumber()));
         }
         if (edcrRequest != null && isNotBlank(edcrRequest.getApplicationNumber())) {
-            predicates.add(cb.equal(application.get("applicationNumber"), edcrRequest.getApplicationNumber()));
+            predicates.add(criteriaBuilder.equal(application.get("applicationNumber"), edcrRequest.getApplicationNumber()));
         }
 
         String appliactionType = edcrRequest != null ? edcrRequest.getAppliactionType() : null;
@@ -1368,39 +1368,39 @@ public class EdcrRestService {
                 applicationType = ApplicationType.OCCUPANCY_CERTIFICATE;
             }
             if (applicationType != null) {
-                predicates.add(cb.equal(application.get("applicationType"), applicationType));
+                predicates.add(criteriaBuilder.equal(application.get("applicationType"), applicationType));
             }
         }
 
         if (edcrRequest != null && isNotBlank(edcrRequest.getApplicationSubType())) {
-            predicates.add(cb.equal(application.get("serviceType"), edcrRequest.getApplicationSubType()));
+            predicates.add(criteriaBuilder.equal(application.get("serviceType"), edcrRequest.getApplicationSubType()));
         }
 
         if ((onlyTenantId || isStakeholder) && userInfo != null && isNotBlank(userId)) {
-            predicates.add(cb.equal(application.get("thirdPartyUserCode"), userId));
+            predicates.add(criteriaBuilder.equal(application.get("thirdPartyUserCode"), userId));
         }
 
         if (edcrRequest != null && isNotBlank(edcrRequest.getStatus())) {
-            predicates.add(cb.equal(root.get("status"), edcrRequest.getStatus()));
+            predicates.add(criteriaBuilder.equal(root.get("status"), edcrRequest.getStatus()));
         }
         if (edcrRequest != null && edcrRequest.getFromDate() != null) {
-            predicates.add(cb.greaterThanOrEqualTo(application.get("applicationDate"), edcrRequest.getFromDate()));
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(application.get("applicationDate"), edcrRequest.getFromDate()));
         }
         if (edcrRequest != null && edcrRequest.getToDate() != null) {
-            predicates.add(cb.lessThanOrEqualTo(application.get("applicationDate"), edcrRequest.getToDate()));
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(application.get("applicationDate"), edcrRequest.getToDate()));
         }
 
-        cq.where(predicates.toArray(new Predicate[0]));
+        criteriaQuery.where(predicates.toArray(new Predicate[0]));
 
         String orderBy = (edcrRequest != null && isNotBlank(edcrRequest.getOrderBy())) ? edcrRequest.getOrderBy() : "desc";
         if (orderBy.equalsIgnoreCase("asc")) {
-            cq.orderBy(cb.asc(root.get("createdDate")));
+            criteriaQuery.orderBy(criteriaBuilder.asc(root.get("createdDate")));
         } else {
-            cq.orderBy(cb.desc(root.get("createdDate")));
+            criteriaQuery.orderBy(criteriaBuilder.desc(root.get("createdDate")));
         }
 
-        cq.distinct(true);
-        return cq;
+        criteriaQuery.distinct(true);
+        return criteriaQuery;
     }
 
     public ErrorDetail validatePlanFile(final MultipartFile file) {

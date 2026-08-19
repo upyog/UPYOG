@@ -38,165 +38,84 @@ import org.springframework.security.web.savedrequest.Enumerator;
  * subsequent reads.
  * </p>
  *
- * <h3>Multipart handling</h3>
  * <p>
- * For <strong>multipart/form-data</strong> requests the constructor deliberately
- * does <em>not</em> drain {@code getInputStream()}. Eagerly copying the raw
- * channel bytes would consume the same underlying source that Undertow's
- * {@code getParts()} implementation reads from. Once that channel is drained,
- * {@code getParts()} finds nothing, {@code StandardServletMultipartResolver}
- * resolves zero parts, and {@code @RequestPart("planFile")} fails with
- * "Required part not present".
- * </p>
- * <p>
- * Instead, for multipart requests:
- * <ul>
- *   <li>{@code getParts()} / {@code getPart(String)} delegate directly to the
- *       underlying Undertow request, whose raw channel bytes are still intact.</li>
- *   <li>{@code getInputStream()} also delegates to the underlying request
- *       (multipart body is not re-readable as a raw stream; callers must use
- *       {@code getParts()}).</li>
- * </ul>
+ * For multipart/form-data requests, the stream is intentionally left unread
+ * so the servlet container can parse parts and files via {@link #getParts()}.
  * </p>
  *
  * <p>
- * For non-multipart requests the existing caching behaviour (body eagerly read
- * into a byte array, re-served on every {@code getInputStream()} call) is
- * preserved exactly.
+ * It also supports adding and retrieving custom request headers.
  * </p>
- *
- * <p>It also supports adding and retrieving custom request headers.</p>
  */
 public class MultiReadRequestWrapper extends HttpServletRequestWrapper {
-
+    
     private static final Logger LOG = LogManager.getLogger(MultiReadRequestWrapper.class);
-
-    /**
-     * Cached body bytes — non-null only for non-multipart requests.
-     * {@code null} for multipart requests (body must not be pre-consumed).
-     */
+    
     private final byte[] cachedBody;
-
-    /** {@code true} when the wrapped request is multipart/form-data. */
     private final boolean multipart;
-
     private final Map<String, String> customHeaders;
 
     /**
-     * Creates a request wrapper.
-     *
-     * <p>For non-multipart requests the body is eagerly cached so that
-     * {@link #getInputStream()} can be replayed any number of times.</p>
-     *
-     * <p>For multipart requests the body is deliberately <em>not</em> cached:
-     * the underlying Undertow channel is left untouched so that
-     * {@code StandardServletMultipartResolver} can call {@code getParts()} on
-     * the container later without finding an already-drained stream.</p>
-     *
+     * Creates a request wrapper and caches the request body in memory.
      * @param request the original HTTP request
-     * @throws IOException if an error occurs while reading the body of a
-     *                     non-multipart request
+     * @throws IOException if an error occurs while reading the request body
      */
     public MultiReadRequestWrapper(HttpServletRequest request) throws IOException {
         super(request);
         this.customHeaders = new HashMap<>();
-
         String contentType = request.getContentType();
-        this.multipart = (contentType != null
-                && contentType.toLowerCase().startsWith("multipart/"));
-
+        this.multipart = (contentType != null && contentType.toLowerCase().startsWith("multipart/"));
         if (!this.multipart) {
-            // Non-multipart: eagerly cache body so getInputStream() is replayable.
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             IOUtils.copy(request.getInputStream(), baos);
             this.cachedBody = baos.toByteArray();
-            LOG.debug("Cached non-multipart request body: {} bytes", cachedBody.length);
+            LOG.debug("Cached request body size: {} bytes", cachedBody.length);
         } else {
-            // Multipart: do NOT drain the underlying channel.
-            // Undertow's getParts() must be able to read the raw channel bytes.
             this.cachedBody = null;
             LOG.debug("Multipart request — body NOT cached; getParts() will delegate to container.");
         }
     }
 
-    // -------------------------------------------------------------------------
-    // InputStream / Reader overrides
-    // -------------------------------------------------------------------------
-
     /**
-     * For non-multipart requests: returns a fresh {@link ServletInputStream}
-     * backed by the cached body bytes on every call (fully replayable).
-     *
-     * <p>For multipart requests: delegates to the underlying container request.
-     * Callers on multipart requests should use {@link #getParts()} instead
-     * of this method.</p>
+     * Returns a new ServletInputStream backed by the cached request body.
+     * @return cached request body input stream
      */
     @Override
     public ServletInputStream getInputStream() throws IOException {
         if (!multipart) {
             return new CachedServletInputStream(this.cachedBody);
         }
-        // Multipart: delegate to the underlying Undertow request stream.
-        // StandardServletMultipartResolver uses getParts(), not getInputStream(),
-        // so this path is not reached during normal multipart processing.
         return super.getInputStream();
     }
 
     /**
-     * Returns a {@link BufferedReader} for reading the request body.
+     * Returns a BufferedReader for reading the cached request body.
+     * @return reader for the cached request content
      */
     @Override
     public BufferedReader getReader() throws IOException {
         return new BufferedReader(new InputStreamReader(getInputStream(), StandardCharsets.UTF_8));
     }
 
-    // -------------------------------------------------------------------------
-    // Parts overrides
-    // -------------------------------------------------------------------------
-
-    /**
-     * Delegates {@code getParts()} directly to the underlying servlet-container
-     * request (Undertow) so that multipart bodies are parsed from the raw
-     * channel, which this wrapper has not consumed.
-     *
-     * <p>This is the method called by {@code StandardServletMultipartResolver}
-     * when resolving {@code @RequestPart} parameters.</p>
-     *
-     * @throws IOException      if an I/O error occurs during parsing
-     * @throws ServletException if the request is not a multipart request
-     */
     @Override
     public Collection<Part> getParts() throws IOException, ServletException {
-        // Delegate to the underlying request so that Undertow can parse the
-        // raw multipart channel (not consumed by our constructor for multipart).
         return ((HttpServletRequest) getRequest()).getParts();
     }
 
-    /**
-     * Delegates {@code getPart(String)} to the underlying servlet-container
-     * request (Undertow).
-     *
-     * @param name the part name
-     * @throws IOException      if an I/O error occurs
-     * @throws ServletException if the request is not a multipart request
-     */
     @Override
     public Part getPart(String name) throws IOException, ServletException {
         return ((HttpServletRequest) getRequest()).getPart(name);
     }
 
-    // -------------------------------------------------------------------------
-    // Inner class: CachedServletInputStream (non-multipart only)
-    // -------------------------------------------------------------------------
-
-    /**
-     * {@link ServletInputStream} backed by a cached byte array.
-     * Provides repeated access to the request body without consuming the
-     * original request stream. Used only for non-multipart requests.
-     */
+    // Update CachedServletInputStream to take byte[] parameter
     public class CachedServletInputStream extends ServletInputStream {
         private final ByteArrayInputStream input;
 
+        /**
+         * ServletInputStream implementation backed by a cached byte array.
+         * Provides repeated access to the request body without consuming
+         * the original request stream.
+         */
         public CachedServletInputStream(byte[] cachedBody) {
             this.input = new ByteArrayInputStream(cachedBody);
         }
@@ -218,13 +137,9 @@ public class MultiReadRequestWrapper extends HttpServletRequestWrapper {
 
         @Override
         public void setReadListener(ReadListener readListener) {
-            // Nothing — synchronous usage only.
+            // Nothing
         }
     }
-
-    // -------------------------------------------------------------------------
-    // Custom header support
-    // -------------------------------------------------------------------------
 
     public void putHeader(String name, String value) {
         this.customHeaders.put(name, value);
@@ -258,15 +173,11 @@ public class MultiReadRequestWrapper extends HttpServletRequestWrapper {
         return super.getHeaders(name);
     }
 
-    // -------------------------------------------------------------------------
-    // Accessor
-    // -------------------------------------------------------------------------
-
     /**
-     * Returns {@code true} if the wrapped request is a multipart/form-data
-     * request.
+     * Returns true if the request is a multipart/form-data request.
      */
     public boolean isMultipart() {
-        return multipart;
+        String contentType = getContentType();
+        return contentType != null && contentType.toLowerCase().startsWith("multipart/");
     }
 }

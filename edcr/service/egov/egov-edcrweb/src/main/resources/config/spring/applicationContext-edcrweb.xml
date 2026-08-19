@@ -33,5 +33,11 @@
     </context:component-scan>
 
     <bean name="edcrBpaRestService" class="org.egov.edcr.service.EdcrBpaRestService"/>
-
+ 
+    <!--
+        Note on multipartResolver (Spring 6 Upgrade):
+        CommonsMultipartResolver was removed in Spring 6. StandardServletMultipartResolver is now configured
+        in edcrweb-servlet.xml (DispatcherServlet context) and upload limits (max 100MB, threshold 1MB)
+        are configured in web.xml under <multipart-config>.
+    -->
 </beans>

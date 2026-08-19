@@ -48,7 +48,9 @@
 
 package org.egov.infra.web.support.json.mapper;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 
 public class HibernateAwareObjectMapper extends ObjectMapper {
@@ -57,5 +59,9 @@ public class HibernateAwareObjectMapper extends ObjectMapper {
 
     public HibernateAwareObjectMapper() {
         registerModule(new Hibernate6Module());
+        // Enforce exact decimal precision (BigDecimal) instead of Double to prevent
+        // floating-point rounding errors during plan measurements, setbacks, and fee calculations.
+        enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
+        setNodeFactory(JsonNodeFactory.withExactBigDecimals(true));
     }
 }
