@@ -56,20 +56,6 @@ import java.util.List;
 /**
  * Generic Pagination Helper for Jakarta Persistence / Hibernate 6.
  *
- * <p><b>Migration Notes (Hibernate 6 &amp; Jakarta EE):</b></p>
- * <ul>
- *   <li><b>TypedQuery Support:</b> Uses {@link TypedQuery} for 100% type-safe entity pagination
- *       without unchecked casting.</li>
- *   <li><b>Backward Compatibility:</b> Retains {@link Query} constructors for legacy or native queries,
- *       migrating from legacy {@code query.list()} to standard Jakarta {@code query.getResultList()}.</li>
- *   <li><b>Criteria Removal:</b> Legacy {@code org.hibernate.Criteria} constructor was removed as the
- *       Criteria API was retired in Hibernate 6 in favor of JPA Criteria.</li>
- *   <li><b>Page Index Clamping:</b> Uses {@code pageNumber < 1 ? 1 : pageNumber} instead of legacy
- *       {@code ++pageNumber} to safely handle both 0-based and 1-based page indices without off-by-one errors.</li>
- *   <li><b>Telescoping Constructors:</b> 4-argument constructors act as the canonical implementation
- *       setting {@code recordTotal}, while 3-argument overloads chain cleanly with default {@code recordTotal = 0}.</li>
- * </ul>
- *
  * @param <T> the entity or result type
  */
 public class Page<T> {
@@ -79,8 +65,39 @@ public class Page<T> {
     private final int pageNumber;
     private int recordTotal;
 
+    public Page(Query query, int pageNumber, int pageSize, int recordTotal) {
+        this(query, ++pageNumber, pageSize);
+        this.recordTotal = recordTotal;
+    }
+
+    public Page(Query query, int pageNumber, int pageSize) {
+        int currentPageNo = pageNumber;
+        if (pageNumber < 1) {
+            currentPageNo = 1;
+        }
+
+        this.pageNumber = currentPageNo;
+        if (pageSize > 0) {
+            query.setFirstResult((currentPageNo - 1) * pageSize);
+            query.setMaxResults(pageSize + 1);
+            this.pageSize = pageSize;
+        } else {
+            this.pageSize = -1;
+        }
+        this.results = (List<T>) query.getResultList();
+    }
+
     public Page(TypedQuery<T> query, int pageNumber, int pageSize, int recordTotal) {
-        int currentPageNo = pageNumber < 1 ? 1 : pageNumber;
+        this(query, ++pageNumber, pageSize);
+        this.recordTotal = recordTotal;
+    }
+
+    public Page(TypedQuery<T> query, int pageNumber, int pageSize) {
+        int currentPageNo = pageNumber;
+        if (pageNumber < 1) {
+            currentPageNo = 1;
+        }
+
         this.pageNumber = currentPageNo;
 
         if (pageSize > 0) {
@@ -91,30 +108,6 @@ public class Page<T> {
             this.pageSize = -1;
         }
         this.results = query.getResultList();
-        this.recordTotal = recordTotal;
-    }
-
-    public Page(TypedQuery<T> query, int pageNumber, int pageSize) {
-        this(query, pageNumber, pageSize, 0);
-    }
-
-    public Page(Query query, int pageNumber, int pageSize, int recordTotal) {
-        int currentPageNo = pageNumber < 1 ? 1 : pageNumber;
-        this.pageNumber = currentPageNo;
-
-        if (pageSize > 0) {
-            query.setFirstResult((currentPageNo - 1) * pageSize);
-            query.setMaxResults(pageSize + 1);
-            this.pageSize = pageSize;
-        } else {
-            this.pageSize = -1;
-        }
-        this.results = (List<T>) query.getResultList();
-        this.recordTotal = recordTotal;
-    }
-
-    public Page(Query query, int pageNumber, int pageSize) {
-        this(query, pageNumber, pageSize, 0);
     }
 
     public boolean isNextPage() {
