@@ -2,18 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
-import {
-  Stepper,
-  CardHeader,
-  Toast,
-} from "@nudmcdgnpm/digit-ui-react-components";
+import { Stepper, CardHeader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 
 import { config } from "../../../config/citizen/CitizenNDCApplicationConfig";
-import {
-  setNDCStep,
-  updateNDCForm,
-  resetNDCForm,
-} from "../../../redux/actions/NDCFormActions";
+import { setNDCStep, updateNDCForm, resetNDCForm } from "../../../redux/actions/NDCFormActions";
 
 const createEmployeeConfig = [
   {
@@ -62,10 +54,7 @@ const createEmployeeConfig = [
 const updatedCreateEmployeeconfig = createEmployeeConfig.map((item) => {
   return {
     ...item,
-    currStepConfig: config.filter(
-      (newConfigItem) =>
-        newConfigItem.stepNumber === item.stepNumber
-    ),
+    currStepConfig: config.filter((newConfigItem) => newConfigItem.stepNumber === item.stepNumber),
   };
 });
 
@@ -86,24 +75,16 @@ export const NewNDCStepForm = () => {
 
   const id = window.location.pathname.split("/").pop();
 
-  const {
-    isLoading,
-    data: applicationDetails,
-  } = Digit.Hooks.ndc.useSearchEmployeeApplication(
+  const { isLoading, data: applicationDetails } = Digit.Hooks.ndc.useSearchEmployeeApplication(
     {
       applicationNo: id,
     },
-    tenantId
+    tenantId,
   );
 
   useEffect(() => {
     if (applicationDetails?.Applications?.length) {
-      dispatch(
-        updateNDCForm(
-          "responseData",
-          applicationDetails.Applications
-        )
-      );
+      dispatch(updateNDCForm("responseData", applicationDetails.Applications));
     }
   }, [applicationDetails, dispatch]);
 
@@ -119,19 +100,11 @@ export const NewNDCStepForm = () => {
 
   return (
     <div className="employeeCard ndc-hide-vertical-stepper">
-      <CardHeader
-        className="ndc-step-form"
-        divider={true}
-      >
+      <CardHeader className="ndc-step-form" divider={true}>
         {t("ndc_header_application")}
       </CardHeader>
 
-      <Stepper
-        stepsList={updatedCreateEmployeeconfig}
-        onSubmit={handleSubmit}
-        step={step}
-        setStep={setStep}
-      />
+      <Stepper stepsList={updatedCreateEmployeeconfig} onSubmit={handleSubmit} step={step} setStep={setStep} />
 
       {showToast && (
         <Toast

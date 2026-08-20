@@ -1,28 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  FormComposer,
-  Toast,
-} from "@nudmcdgnpm/digit-ui-react-components";
+import { FormComposer, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import { updateNDCForm } from "../../../redux/actions/NDCFormActions";
 import _ from "lodash";
 
-const NewNDCStepFormTwo = ({
-  config,
-  onGoNext,
-  onBackClick,
-  t,
-}) => {
+const NewNDCStepFormTwo = ({ config, onGoNext, onBackClick, t }) => {
   const currentStepData = useSelector((state) =>
-    state.ndc.NDCForm.formData &&
-    state.ndc.NDCForm.formData[config.key]
-      ? state.ndc.NDCForm.formData[config.key]
-      : {}
+    state.ndc.NDCForm.formData && state.ndc.NDCForm.formData[config.key] ? state.ndc.NDCForm.formData[config.key] : {},
   );
 
-  const checkFormData = useSelector(
-    (state) => state.ndc.NDCForm.formData || {}
-  );
+  const checkFormData = useSelector((state) => state.ndc.NDCForm.formData || {});
 
   const dispatch = useDispatch();
 
@@ -31,36 +18,19 @@ const NewNDCStepFormTwo = ({
   const [showToast, setShowToast] = useState(false);
   const [error, setError] = useState("");
 
-  const tenantId =
-    Digit.ULBService.getCitizenCurrentTenant(true) ||
-    Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
 
-  const { isLoading, data } = Digit.Hooks.ndc.useNDCDoc(
-    stateId,
-    "NDC",
-    "Documents"
-  );
+  const { isLoading, data } = Digit.Hooks.ndc.useNDCDoc(stateId, "NDC", "Documents");
 
   const id = window.location.pathname.split("/").pop();
 
   const user = Digit.UserService.getUser();
 
-  const {
-    isLoading: propertyLoading,
-    data: applicationDetails,
-  } = Digit.Hooks.ndc.useSearchEmployeeApplication(
-    { applicationNo: id },
-    tenantId
-  );
+  const { isLoading: propertyLoading, data: applicationDetails } = Digit.Hooks.ndc.useSearchEmployeeApplication({ applicationNo: id }, tenantId);
 
   useEffect(() => {
     if (applicationDetails?.Applications?.length) {
-      dispatch(
-        updateNDCForm(
-          "responseData",
-          applicationDetails.Applications
-        )
-      );
+      dispatch(updateNDCForm("responseData", applicationDetails.Applications));
     }
   }, [applicationDetails, dispatch]);
 
@@ -68,22 +38,11 @@ const NewNDCStepFormTwo = ({
    * Handle Next button.
    */
   const goNext = async (finaldata) => {
-    console.log(
-      `Data in step ${config.currStepNumber} is:`,
-      finaldata
-    );
 
     const missingFields = validation(finaldata);
 
     if (missingFields.length > 0) {
-      setError(
-        `${t(
-          "NDC_MESSAGE_" +
-            missingFields[0]
-              .replace(".", "_")
-              .toUpperCase()
-        )}`
-      );
+      setError(`${t("NDC_MESSAGE_" + missingFields[0].replace(".", "_").toUpperCase())}`);
 
       setShowToast(true);
 
@@ -94,21 +53,11 @@ const NewNDCStepFormTwo = ({
       return;
     }
 
-    const isRealId =
-      id && id.startsWith("NDC-");
+    const isRealId = id && id.startsWith("NDC-");
 
     if (isRealId) {
-      console.log(
-        "Updating existing NDC application:",
-        id
-      );
-
       await updateApplication(finaldata);
     } else {
-      console.log(
-        "Creating new NDC application"
-      );
-
       onGoNext();
     }
   };
@@ -120,26 +69,17 @@ const NewNDCStepFormTwo = ({
    */
   const updateApplication = async (formData) => {
     try {
-      const applicant =
-        Digit.UserService.getUser()?.info || {};
+      const applicant = Digit.UserService.getUser()?.info || {};
 
       /**
        * Existing application from backend.
        */
-      const baseApplication =
-        checkFormData?.responseData?.[0] || {};
+      const baseApplication = checkFormData?.responseData?.[0] || {};
 
       if (!baseApplication?.applicationNo) {
-        console.error(
-          "NDC update failed: application data is missing.",
-          baseApplication
-        );
+        console.error("NDC update failed: application data is missing.", baseApplication);
 
-        setError(
-          t(
-            "NDC_MESSAGE_APPLICATION_DATA_NOT_FOUND"
-          )
-        );
+        setError(t("NDC_MESSAGE_APPLICATION_DATA_NOT_FOUND"));
 
         setShowToast(true);
 
@@ -149,15 +89,12 @@ const NewNDCStepFormTwo = ({
       /**
        * Build owners array.
        */
-      const existingOwners =
-        baseApplication?.owners || [];
+      const existingOwners = baseApplication?.owners || [];
 
       const owners =
         existingOwners.length > 0
           ? existingOwners.map((item) => {
-              const obj = JSON.parse(
-                JSON.stringify(item)
-              );
+              const obj = JSON.parse(JSON.stringify(item));
 
               delete obj.status;
 
@@ -166,13 +103,9 @@ const NewNDCStepFormTwo = ({
           : [
               {
                 name: applicant?.name,
-                mobileNumber:
-                  applicant?.mobileNumber,
-                gender:
-                  checkFormData?.NDCDetails
-                    ?.PropertyDetails?.gender,
-                emailId:
-                  applicant?.emailId,
+                mobileNumber: applicant?.mobileNumber,
+                gender: checkFormData?.NDCDetails?.PropertyDetails?.gender,
+                emailId: applicant?.emailId,
                 type: applicant?.type,
               },
             ];
@@ -182,8 +115,7 @@ const NewNDCStepFormTwo = ({
        */
       const documents = [];
 
-      const uploadedDocuments =
-        formData?.documents?.documents || [];
+      const uploadedDocuments = formData?.documents?.documents || [];
 
       uploadedDocuments.forEach((doc) => {
         if (!doc) {
@@ -193,10 +125,7 @@ const NewNDCStepFormTwo = ({
         documents.push({
           uuid: doc?.documentUid,
           documentType: doc?.documentType,
-          documentAttachment:
-            doc?.fileStoreId ||
-            doc?.filestoreId ||
-            doc?.documentAttachment,
+          documentAttachment: doc?.fileStoreId || doc?.filestoreId || doc?.documentAttachment,
         });
       });
 
@@ -218,87 +147,35 @@ const NewNDCStepFormTwo = ({
 
         owners,
 
-        NdcDetails:
-          baseApplication?.NdcDetails,
+        NdcDetails: baseApplication?.NdcDetails,
 
         Documents: documents,
 
-        active:
-          baseApplication?.active !== undefined
-            ? baseApplication.active
-            : true,
+        active: baseApplication?.active !== undefined ? baseApplication.active : true,
 
-        applicationStatus:
-          baseApplication?.applicationStatus ||
-          "INITIATED",
+        applicationStatus: baseApplication?.applicationStatus || "INITIATED",
       };
 
       /**
        * Final payload.
        */
       const payload = {
-        Applications: [
-          updatedApplication,
-        ],
+        Applications: [updatedApplication],
       };
-
-      /**
-       * Debug.
-       */
-      console.log(
-        "========== NDC APPLY UPDATE =========="
-      );
-
-      console.log(
-        "Workflow action:",
-        updatedApplication?.workflow?.action
-      );
-
-      console.log(
-        "Application action:",
-        updatedApplication?.action
-      );
-
-      console.log(
-        "Full payload:",
-        JSON.stringify(
-          payload,
-          null,
-          2
-        )
-      );
-
-      console.log(
-        "======================================"
-      );
 
       /**
        * Call NDC update API.
        */
-      const response =
-        await Digit.NDCService.NDCUpdate({
-          tenantId,
-          details: payload,
-        });
-
-      console.log(
-        "NDC UPDATE RESPONSE:",
-        response
-      );
+      const response = await Digit.NDCService.NDCUpdate({
+        tenantId,
+        details: payload,
+      });
 
       /**
        * Successful update.
        */
-      if (
-        response?.ResponseInfo?.status ===
-        "successful"
-      ) {
-        dispatch(
-          updateNDCForm(
-            "apiData",
-            response
-          )
-        );
+      if (response?.ResponseInfo?.status === "successful") {
+        dispatch(updateNDCForm("apiData", response));
 
         onGoNext();
 
@@ -311,15 +188,9 @@ const NewNDCStepFormTwo = ({
       /**
        * Backend error.
        */
-      console.error(
-        "NDC update failed:",
-        response
-      );
+      console.error("NDC update failed:", response);
 
-      const backendError =
-        response?.Errors?.[0]?.message ||
-        response?.Errors?.[0]?.code ||
-        t("NDC_MESSAGE_UPDATE_FAILED");
+      const backendError = response?.Errors?.[0]?.message || response?.Errors?.[0]?.code || t("NDC_MESSAGE_UPDATE_FAILED");
 
       setError(backendError);
       setShowToast(true);
@@ -329,15 +200,9 @@ const NewNDCStepFormTwo = ({
         response,
       };
     } catch (err) {
-      console.error(
-        "NDC update API exception:",
-        err
-      );
+      console.error("NDC update API exception:", err);
 
-      setError(
-        err?.message ||
-          t("NDC_MESSAGE_UPDATE_FAILED")
-      );
+      setError(err?.message || t("NDC_MESSAGE_UPDATE_FAILED"));
 
       setShowToast(true);
 
@@ -364,26 +229,18 @@ const NewNDCStepFormTwo = ({
       return [];
     }
 
-    const ndcDocumentsType =
-      data?.NDC?.Documents || [];
+    const ndcDocumentsType = data?.NDC?.Documents || [];
 
-    const documentsData =
-      documents?.documents?.documents || [];
+    const documentsData = documents?.documents?.documents || [];
 
     const requiredDocs = ndcDocumentsType
       .filter((doc) => doc?.required)
       .map((doc) => doc?.code)
       .filter(Boolean);
 
-    const uploadedDocs = documentsData
-      .map((doc) => doc?.documentType)
-      .filter(Boolean);
+    const uploadedDocs = documentsData.map((doc) => doc?.documentType).filter(Boolean);
 
-    const missingDocs =
-      requiredDocs.filter(
-        (requiredDoc) =>
-          !uploadedDocs.includes(requiredDoc)
-      );
+    const missingDocs = requiredDocs.filter((requiredDoc) => !uploadedDocs.includes(requiredDoc));
 
     return missingDocs;
   };
@@ -392,31 +249,15 @@ const NewNDCStepFormTwo = ({
    * Back button.
    */
   const onGoBack = (formData) => {
-    onBackClick(
-      config.key,
-      formData
-    );
+    onBackClick(config.key, formData);
   };
 
   /**
    * Keep Redux state updated.
    */
-  const onFormValueChange = (
-    setValue = true,
-    formData
-  ) => {
-    if (
-      !_.isEqual(
-        formData,
-        currentStepData
-      )
-    ) {
-      dispatch(
-        updateNDCForm(
-          config.key,
-          formData
-        )
-      );
+  const onFormValueChange = (setValue = true, formData) => {
+    if (!_.isEqual(formData, currentStepData)) {
+      dispatch(updateNDCForm(config.key, formData));
     }
   };
 
@@ -426,26 +267,13 @@ const NewNDCStepFormTwo = ({
         defaultValues={currentStepData}
         config={config.currStepConfig}
         onSubmit={goNext}
-        onFormValueChange={
-          onFormValueChange
-        }
-        label={t(
-          `${config.texts.submitBarLabel}`
-        )}
-        currentStep={
-          config.currStepNumber
-        }
+        onFormValueChange={onFormValueChange}
+        label={t(`${config.texts.submitBarLabel}`)}
+        currentStep={config.currStepNumber}
         onBackClick={onGoBack}
       />
 
-      {showToast && (
-        <Toast
-          isDleteBtn={true}
-          error={true}
-          label={error}
-          onClose={closeToast}
-        />
-      )}
+      {showToast && <Toast isDleteBtn={true} error={true} label={error} onClose={closeToast} />}
     </React.Fragment>
   );
 };

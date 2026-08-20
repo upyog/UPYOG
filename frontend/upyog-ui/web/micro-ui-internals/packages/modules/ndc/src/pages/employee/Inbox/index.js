@@ -1,17 +1,6 @@
-import React, {
-  Fragment,
-  useCallback,
-  useMemo,
-  useReducer,
-  useState,
-  useEffect,
-} from "react";
+import React, { Fragment, useCallback, useMemo, useReducer, useState, useEffect } from "react";
 
-import {
-  InboxComposer,
-  ComplaintIcon,
-  Header,
-} from "@nudmcdgnpm/digit-ui-react-components";
+import { InboxComposer, ComplaintIcon, Header } from "@nudmcdgnpm/digit-ui-react-components";
 
 import { useTranslation } from "react-i18next";
 
@@ -120,8 +109,7 @@ const Inbox = ({ parentRoute }) => {
    * ------------------------------------------------------------
    */
 
-  const InboxObjectInSessionStorage =
-    Digit.SessionStorage.get("NDC.INBOX");
+  const InboxObjectInSessionStorage = Digit.SessionStorage.get("NDC.INBOX");
 
   /*
    * ------------------------------------------------------------
@@ -189,16 +177,9 @@ const Inbox = ({ parentRoute }) => {
         tableForm: tableOrderFormDefaultValues,
       }
     );
-  }, [
-    InboxObjectInSessionStorage?.filterForm,
-    InboxObjectInSessionStorage?.searchForm,
-    InboxObjectInSessionStorage?.tableForm,
-  ]);
+  }, [InboxObjectInSessionStorage?.filterForm, InboxObjectInSessionStorage?.searchForm, InboxObjectInSessionStorage?.tableForm]);
 
-  const [formState, dispatch] = useReducer(
-    formReducer,
-    formInitValue
-  );
+  const [formState, dispatch] = useReducer(formReducer, formInitValue);
 
   /*
    * ------------------------------------------------------------
@@ -230,10 +211,7 @@ const Inbox = ({ parentRoute }) => {
       const sortOrder = desc ? "DESC" : "ASC";
       const sortBy = id;
 
-      if (
-        formState.tableForm.sortBy !== sortBy ||
-        formState.tableForm.sortOrder !== sortOrder
-      ) {
+      if (formState.tableForm.sortBy !== sortBy || formState.tableForm.sortOrder !== sortOrder) {
         dispatch({
           action: "mutateTableForm",
           data: {
@@ -270,14 +248,11 @@ const Inbox = ({ parentRoute }) => {
    * ------------------------------------------------------------
    */
 
-  const {
-    data: localitiesForEmployeesCurrentTenant,
-    isLoading: loadingLocalitiesForEmployeesCurrentTenant,
-  } = Digit.Hooks.useBoundaryLocalities(
+  const { data: localitiesForEmployeesCurrentTenant, isLoading: loadingLocalitiesForEmployeesCurrentTenant } = Digit.Hooks.useBoundaryLocalities(
     tenantId,
     "revenue",
     {},
-    t
+    t,
   );
 
   /*
@@ -296,10 +271,7 @@ const Inbox = ({ parentRoute }) => {
    * ------------------------------------------------------------
    */
 
-  const {
-    isLoading: isInboxLoading,
-    data,
-  } = Digit.Hooks.ndc.useInbox({
+  const { isLoading: isInboxLoading, data } = Digit.Hooks.ndc.useInbox({
     tenantId,
     filters: {
       ...formState,
@@ -352,12 +324,7 @@ const Inbox = ({ parentRoute }) => {
    */
 
   const SearchFormFields = useCallback(
-    ({
-      registerRef,
-      control,
-      searchFormState,
-      searchFieldComponents,
-    }) => (
+    ({ registerRef, control, searchFormState, searchFieldComponents }) => (
       <SearchFormFieldsComponents
         {...{
           registerRef,
@@ -367,7 +334,7 @@ const Inbox = ({ parentRoute }) => {
         }}
       />
     ),
-    []
+    [],
   );
 
   /*
@@ -377,12 +344,7 @@ const Inbox = ({ parentRoute }) => {
    */
 
   const FilterFormFields = useCallback(
-    ({
-      registerRef,
-      controlFilterForm,
-      setFilterFormValue,
-      getFilterFormValue,
-    }) => (
+    ({ registerRef, controlFilterForm, setFilterFormValue, getFilterFormValue }) => (
       <FilterFormFieldsComponent
         {...{
           statuses,
@@ -398,13 +360,7 @@ const Inbox = ({ parentRoute }) => {
         handleFilter={handleFilter}
       />
     ),
-    [
-      statuses,
-      isInboxLoading,
-      localitiesForEmployeesCurrentTenant,
-      loadingLocalitiesForEmployeesCurrentTenant,
-      formState?.filterForm,
-    ]
+    [statuses, isInboxLoading, localitiesForEmployeesCurrentTenant, loadingLocalitiesForEmployeesCurrentTenant, formState?.filterForm],
   );
 
   /*
@@ -765,11 +721,7 @@ const Inbox = ({ parentRoute }) => {
       <Header>
         {t("ES_COMMON_INBOX")}
 
-        {totalCount ? (
-          <p className="inbox-count">
-            {totalCount}
-          </p>
-        ) : null}
+        {totalCount ? <p className="inbox-count">{totalCount}</p> : null}
       </Header>
 
       <div className="NDCSection">

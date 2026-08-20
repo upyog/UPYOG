@@ -3,7 +3,6 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 
-
 //NDCResponseCitizen is a component that displays the response after a citizen submits an NDC application.
 //  It shows a banner with the application status and provides options to go back to the home page, go to the NDC home page, or make a payment if the application is approved.
 //  The content of the banner and the available actions are based on the application status.
@@ -25,7 +24,6 @@ const NDCResponseCitizen = (props) => {
     navigate(`/upyog-ui/citizen/payment/collect/NDC/${ndcCode}/${tenantId}?tenantId=${tenantId}`);
     // pathname: `/digit-ui/citizen/payment/collect/${application?.businessService}/${application?.applicationNumber}`,
   };
-
 
   return (
     <div>

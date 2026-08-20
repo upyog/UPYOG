@@ -1,39 +1,21 @@
 import React, { useEffect, useState } from "react";
 
-import {
-  CardLabel,
-  LabelFieldPair,
-  TextInput,
-  Loader,
-  DeleteIcon,
-  Table,
-} from "@nudmcdgnpm/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, TextInput, Loader, DeleteIcon, Table } from "@nudmcdgnpm/digit-ui-react-components";
 
-import {
-  useForm,
-  Controller,
-} from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 
 import { useSelector } from "react-redux";
 
 import { useTranslation } from "react-i18next";
 
-export const PropertyDetailsForm = ({
-  config,
-  onSelect,
-  userType,
-  formData,
-  formState,
-  clearErrors,
-}) => {
+export const PropertyDetailsForm = ({ config, onSelect, userType, formData, formState, clearErrors }) => {
   const { control } = useForm({
     mode: "onChange",
   });
 
   const { t } = useTranslation();
 
-  const tenantId =
-    Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.ULBService.getCurrentTenantId();
 
   /*
    * =========================================================
@@ -41,33 +23,15 @@ export const PropertyDetailsForm = ({
    * =========================================================
    */
 
-  const apiDataCheck = useSelector(
-    (state) =>
-      state.ndc.NDCForm
-        ?.formData
-        ?.responseData
-  );
+  const apiDataCheck = useSelector((state) => state.ndc.NDCForm?.formData?.responseData);
 
-  const checkApiDataCheck = useSelector(
-    (state) =>
-      state.ndc.NDCForm
-        ?.formData
-        ?.apiData
-  );
+  const checkApiDataCheck = useSelector((state) => state.ndc.NDCForm?.formData?.apiData);
 
-  const cptFromRedux = useSelector(
-    (state) =>
-      state.ndc.NDCForm
-        ?.formData
-        ?.cpt
-  );
+  const cptFromRedux = useSelector((state) => state.ndc.NDCForm?.formData?.cpt);
 
-  const cpt =
-    cptFromRedux ||
-    formData?.cpt;
+  const cpt = cptFromRedux || formData?.cpt;
 
-  const propertyId =
-    cpt?.details?.propertyId;
+  const propertyId = cpt?.details?.propertyId;
 
   /*
    * =========================================================
@@ -75,38 +39,17 @@ export const PropertyDetailsForm = ({
    * =========================================================
    */
 
-  const [
-    showToast,
-    setShowToast,
-  ] = useState(null);
+  const [showToast, setShowToast] = useState(null);
 
-  const [
-    propertyLoader,
-    setPropertyLoader,
-  ] = useState(false);
+  const [propertyLoader, setPropertyLoader] = useState(false);
 
-  const [
-    showPayModal,
-    setShowPayModal,
-  ] = useState(false);
+  const [showPayModal, setShowPayModal] = useState(false);
 
-  const [
-    selectedBillData,
-    setSelectedBillData,
-  ] = useState({});
+  const [selectedBillData, setSelectedBillData] = useState({});
 
-  const [
-    propertyDetails,
-    setPropertyDetails,
-  ] = useState(
-    formData?.PropertyDetails ||
-      {}
-  );
+  const [propertyDetails, setPropertyDetails] = useState(formData?.PropertyDetails || {});
 
-  const [
-    selectedRow,
-    setSelectedRow,
-  ] = useState(null);
+  const [selectedRow, setSelectedRow] = useState(null);
 
   /*
    * =========================================================
@@ -114,11 +57,9 @@ export const PropertyDetailsForm = ({
    * =========================================================
    */
 
-  const FIELD_WIDTH =
-    "450px";
+  const FIELD_WIDTH = "450px";
 
-  const FIELD_HEIGHT =
-    "40px";
+  const FIELD_HEIGHT = "40px";
 
   /*
    * =========================================================
@@ -127,34 +68,25 @@ export const PropertyDetailsForm = ({
    */
 
   const fieldContainerStyle = {
-    width:
-      FIELD_WIDTH,
+    width: FIELD_WIDTH,
 
-    maxWidth:
-      "100%",
+    maxWidth: "100%",
 
-    boxSizing:
-      "border-box",
+    boxSizing: "border-box",
   };
 
   const inputStyle = {
-    width:
-      FIELD_WIDTH,
+    width: FIELD_WIDTH,
 
-    minWidth:
-      FIELD_WIDTH,
+    minWidth: FIELD_WIDTH,
 
-    maxWidth:
-      FIELD_WIDTH,
+    maxWidth: FIELD_WIDTH,
 
-    height:
-      FIELD_HEIGHT,
+    height: FIELD_HEIGHT,
 
-    minHeight:
-      FIELD_HEIGHT,
+    minHeight: FIELD_HEIGHT,
 
-    boxSizing:
-      "border-box",
+    boxSizing: "border-box",
   };
 
   /*
@@ -164,71 +96,49 @@ export const PropertyDetailsForm = ({
    */
 
   const buttonStyle = {
-    display:
-      "flex",
+    display: "flex",
 
-    alignItems:
-      "center",
+    alignItems: "center",
 
-    justifyContent:
-      "center",
+    justifyContent: "center",
 
-    width:
-      "155px",
+    width: "155px",
 
-    minWidth:
-      "155px",
+    minWidth: "155px",
 
-    height:
-      FIELD_HEIGHT,
+    height: FIELD_HEIGHT,
 
-    minHeight:
-      FIELD_HEIGHT,
+    minHeight: FIELD_HEIGHT,
 
-    margin:
-      "0",
+    margin: "0",
 
-    padding:
-      "0 14px",
+    padding: "0 14px",
 
-    backgroundColor:
-      "#a82227",
+    backgroundColor: "#a82227",
 
-    color:
-      "#ffffff",
+    color: "#ffffff",
 
-    border:
-      "none",
+    border: "none",
 
-    borderRadius:
-      "0",
+    borderRadius: "0",
 
-    outline:
-      "none",
+    outline: "none",
 
-    fontSize:
-      "12px",
+    fontSize: "12px",
 
-    fontWeight:
-      "600",
+    fontWeight: "600",
 
-    lineHeight:
-      "1",
+    lineHeight: "1",
 
-    cursor:
-      "pointer",
+    cursor: "pointer",
 
-    boxSizing:
-      "border-box",
+    boxSizing: "border-box",
 
-    whiteSpace:
-      "nowrap",
+    whiteSpace: "nowrap",
 
-    textAlign:
-      "center",
+    textAlign: "center",
 
-    flexShrink:
-      0,
+    flexShrink: 0,
   };
 
   /*
@@ -241,71 +151,49 @@ export const PropertyDetailsForm = ({
    */
 
   const noDueStyle = {
-    display:
-      "flex",
+    display: "flex",
 
-    alignItems:
-      "center",
+    alignItems: "center",
 
-    justifyContent:
-      "flex-start",
+    justifyContent: "flex-start",
 
-    width:
-      "320px",
+    width: "320px",
 
-    minWidth:
-      "320px",
+    minWidth: "320px",
 
-    maxWidth:
-      "320px",
+    maxWidth: "320px",
 
-    minHeight:
-      FIELD_HEIGHT,
+    minHeight: FIELD_HEIGHT,
 
-    margin:
-      "0",
+    margin: "0",
 
-    padding:
-      "10px 16px",
+    padding: "10px 16px",
 
-    backgroundColor:
-      "#a82227",
+    backgroundColor: "#a82227",
 
-    color:
-      "#ffffff",
+    color: "#ffffff",
 
-    border:
-      "none",
+    border: "none",
 
-    borderRadius:
-      "0",
+    borderRadius: "0",
 
-    fontSize:
-      "12px",
+    fontSize: "12px",
 
-    fontWeight:
-      "600",
+    fontWeight: "600",
 
-    lineHeight:
-      "16px",
+    lineHeight: "16px",
 
-    boxSizing:
-      "border-box",
+    boxSizing: "border-box",
 
-    whiteSpace:
-      "normal",
+    whiteSpace: "normal",
 
-    wordBreak:
-      "break-word",
+    wordBreak: "break-word",
 
-    overflowWrap:
-      "anywhere",
+    overflowWrap: "anywhere",
 
-    textAlign:
-      "left",
+    textAlign: "left",
 
-    flexShrink:
-      0,
+    flexShrink: 0,
   };
 
   /*
@@ -315,32 +203,23 @@ export const PropertyDetailsForm = ({
    */
 
   const actionColumnStyle = {
-    display:
-      "flex",
+    display: "flex",
 
-    flexDirection:
-      "column",
+    flexDirection: "column",
 
-    alignItems:
-      "flex-start",
+    alignItems: "flex-start",
 
-    width:
-      FIELD_WIDTH,
+    width: FIELD_WIDTH,
 
-    maxWidth:
-      "100%",
+    maxWidth: "100%",
 
-    marginTop:
-      "10px",
+    marginTop: "10px",
 
-    marginBottom:
-      "24px",
+    marginBottom: "24px",
 
-    boxSizing:
-      "border-box",
+    boxSizing: "border-box",
 
-    gap:
-      "8px",
+    gap: "8px",
   };
 
   /*
@@ -350,33 +229,26 @@ export const PropertyDetailsForm = ({
    */
 
   const {
-    isLoading:
-      waterConnectionLoading,
+    isLoading: waterConnectionLoading,
 
-    data:
-      waterConnectionData,
-  } =
-    Digit.Hooks.ws.useSearchWS({
-      tenantId,
+    data: waterConnectionData,
+  } = Digit.Hooks.ws.useSearchWS({
+    tenantId,
 
-      filters: {
-        searchType:
-          "CONNECTION",
+    filters: {
+      searchType: "CONNECTION",
 
-        propertyId:
-          propertyId,
-      },
+      propertyId: propertyId,
+    },
 
-      config: {
-        enabled:
-          !!propertyId,
-      },
+    config: {
+      enabled: !!propertyId,
+    },
 
-      bussinessService:
-        "WS",
+    bussinessService: "WS",
 
-      t,
-    });
+    t,
+  });
 
   /*
    * =========================================================
@@ -385,33 +257,26 @@ export const PropertyDetailsForm = ({
    */
 
   const {
-    isLoading:
-      sewerageConnectionLoading,
+    isLoading: sewerageConnectionLoading,
 
-    data:
-      sewerageConnectionData,
-  } =
-    Digit.Hooks.ws.useSearchWS({
-      tenantId,
+    data: sewerageConnectionData,
+  } = Digit.Hooks.ws.useSearchWS({
+    tenantId,
 
-      filters: {
-        searchType:
-          "CONNECTION",
+    filters: {
+      searchType: "CONNECTION",
 
-        propertyId:
-          propertyId,
-      },
+      propertyId: propertyId,
+    },
 
-      config: {
-        enabled:
-          !!propertyId,
-      },
+    config: {
+      enabled: !!propertyId,
+    },
 
-      bussinessService:
-        "SW",
+    bussinessService: "SW",
 
-      t,
-    });
+    t,
+  });
 
   /*
    * =========================================================
@@ -421,54 +286,24 @@ export const PropertyDetailsForm = ({
 
   const applicationFeeColumns = [
     {
-      Header: t(
-        "TL_COMMON_TABLE_COL_OWN_NAME"
-      ),
+      Header: t("TL_COMMON_TABLE_COL_OWN_NAME"),
 
-      accessor:
-        "name",
+      accessor: "name",
 
-      Cell: ({
-        row,
-      }) => (
-        <div>
-          {
-            row
-              ?.original
-              ?.name
-          }
-        </div>
-      ),
+      Cell: ({ row }) => <div>{row?.original?.name}</div>,
     },
 
     {
-      Header:
-        "",
+      Header: "",
 
-      accessor:
-        "amount",
+      accessor: "amount",
 
-      Cell: ({
-        row,
-      }) => (
+      Cell: ({ row }) => (
         <input
           type="radio"
-
           name="applicationFee"
-
-          checked={
-            selectedRow
-              ?.uuid ===
-            row
-              ?.original
-              ?.uuid
-          }
-
-          onChange={() =>
-            setSelectedRow(
-              row?.original
-            )
-          }
+          checked={selectedRow?.uuid === row?.original?.uuid}
+          onChange={() => setSelectedRow(row?.original)}
         />
       ),
     },
@@ -481,89 +316,47 @@ export const PropertyDetailsForm = ({
    */
 
   useEffect(() => {
-    const owner =
-      cpt
-        ?.details
-        ?.owners?.[0];
+    const owner = cpt?.details?.owners?.[0];
 
-    const ownerObj =
-      selectedRow;
+    const ownerObj = selectedRow;
 
-    const emailApi =
-      apiDataCheck?.[0]
-        ?.owners?.[0]
-        ?.emailId;
+    const emailApi = apiDataCheck?.[0]?.owners?.[0]?.emailId;
 
-    const firstName =
-      ownerObj?.name ||
-      owner?.name ||
-      "";
+    const firstName = ownerObj?.name || owner?.name || "";
 
-    const email =
-      ownerObj?.emailId ||
-      emailApi ||
-      owner?.emailId ||
-      "";
+    const email = ownerObj?.emailId || emailApi || owner?.emailId || "";
 
-    const mobileNumber =
-      ownerObj?.mobileNumber ||
-      owner?.mobileNumber ||
-      "";
+    const mobileNumber = ownerObj?.mobileNumber || owner?.mobileNumber || "";
 
-    const address =
-      ownerObj?.permanentAddress ||
-      owner?.permanentAddress ||
-      "";
+    const address = ownerObj?.permanentAddress || owner?.permanentAddress || "";
 
     const updated = {
       email,
 
       propertyBillData: {
-        isLoading:
-          false,
+        isLoading: false,
 
-        billData:
-          formData
-            ?.PropertyDetails
-            ?.propertyBillData
-            ?.billData ||
-          {},
+        billData: formData?.PropertyDetails?.propertyBillData?.billData || {},
       },
     };
 
-    if (
-      firstName
-    ) {
-      updated.firstName =
-        firstName;
+    if (firstName) {
+      updated.firstName = firstName;
     }
 
-    if (
-      mobileNumber
-    ) {
-      updated.mobileNumber =
-        mobileNumber;
+    if (mobileNumber) {
+      updated.mobileNumber = mobileNumber;
     }
 
-    if (
-      address
-    ) {
-      updated.address =
-        address;
+    if (address) {
+      updated.address = address;
     }
 
-    setPropertyDetails(
-      (prev) => ({
-        ...prev,
-        ...updated,
-      })
-    );
-  }, [
-    cpt?.details,
-    apiDataCheck,
-    selectedRow,
-    formData?.PropertyDetails,
-  ]);
+    setPropertyDetails((prev) => ({
+      ...prev,
+      ...updated,
+    }));
+  }, [cpt?.details, apiDataCheck, selectedRow, formData?.PropertyDetails]);
 
   /*
    * =========================================================
@@ -572,69 +365,40 @@ export const PropertyDetailsForm = ({
    */
 
   useEffect(() => {
-    let waterConnection =
-      [];
+    let waterConnection = [];
 
-    if (
-      apiDataCheck?.[0]
-        ?.NdcDetails
-    ) {
+    if (apiDataCheck?.[0]?.NdcDetails) {
       waterConnection =
-        apiDataCheck?.[0]
-          ?.NdcDetails
-          ?.filter(
-            (item) =>
-              item.businessService ===
-              "WS"
-          )
-          ?.map(
-            (item) => ({
-              connectionNo:
-                item?.consumerCode,
+        apiDataCheck?.[0]?.NdcDetails?.filter((item) => item.businessService === "WS")?.map((item) => ({
+          connectionNo: item?.consumerCode,
 
-              isEdit:
-                false,
+          isEdit: false,
 
-              billData: {
-                totalAmount:
-                  0,
-              },
+          billData: {
+            totalAmount: 0,
+          },
 
-              isLoading:
-                false,
-            })
-          ) || [];
+          isLoading: false,
+        })) || [];
     } else {
       waterConnection =
-        waterConnectionData
-          ?.map(
-            (item) => ({
-              connectionNo:
-                item?.connectionNo,
+        waterConnectionData?.map((item) => ({
+          connectionNo: item?.connectionNo,
 
-              isEdit:
-                false,
+          isEdit: false,
 
-              billData:
-                {},
+          billData: {},
 
-              isLoading:
-                false,
-            })
-          ) || [];
+          isLoading: false,
+        })) || [];
     }
 
-    setPropertyDetails(
-      (prev) => ({
-        ...prev,
+    setPropertyDetails((prev) => ({
+      ...prev,
 
-        waterConnection,
-      })
-    );
-  }, [
-    waterConnectionData,
-    apiDataCheck,
-  ]);
+      waterConnection,
+    }));
+  }, [waterConnectionData, apiDataCheck]);
 
   /*
    * =========================================================
@@ -643,69 +407,40 @@ export const PropertyDetailsForm = ({
    */
 
   useEffect(() => {
-    let sewerageConnection =
-      [];
+    let sewerageConnection = [];
 
-    if (
-      apiDataCheck?.[0]
-        ?.NdcDetails
-    ) {
+    if (apiDataCheck?.[0]?.NdcDetails) {
       sewerageConnection =
-        apiDataCheck?.[0]
-          ?.NdcDetails
-          ?.filter(
-            (item) =>
-              item.businessService ===
-              "SW"
-          )
-          ?.map(
-            (item) => ({
-              connectionNo:
-                item?.consumerCode,
+        apiDataCheck?.[0]?.NdcDetails?.filter((item) => item.businessService === "SW")?.map((item) => ({
+          connectionNo: item?.consumerCode,
 
-              isEdit:
-                false,
+          isEdit: false,
 
-              billData: {
-                totalAmount:
-                  0,
-              },
+          billData: {
+            totalAmount: 0,
+          },
 
-              isLoading:
-                false,
-            })
-          ) || [];
+          isLoading: false,
+        })) || [];
     } else {
       sewerageConnection =
-        sewerageConnectionData
-          ?.map(
-            (item) => ({
-              connectionNo:
-                item?.connectionNo,
+        sewerageConnectionData?.map((item) => ({
+          connectionNo: item?.connectionNo,
 
-              isEdit:
-                false,
+          isEdit: false,
 
-              billData:
-                {},
+          billData: {},
 
-              isLoading:
-                false,
-            })
-          ) || [];
+          isLoading: false,
+        })) || [];
     }
 
-    setPropertyDetails(
-      (prev) => ({
-        ...prev,
+    setPropertyDetails((prev) => ({
+      ...prev,
 
-        sewerageConnection,
-      })
-    );
-  }, [
-    sewerageConnectionData,
-    apiDataCheck,
-  ]);
+      sewerageConnection,
+    }));
+  }, [sewerageConnectionData, apiDataCheck]);
 
   /*
    * =========================================================
@@ -714,19 +449,10 @@ export const PropertyDetailsForm = ({
    */
 
   useEffect(() => {
-    if (
-      typeof onSelect ===
-      "function"
-    ) {
-      onSelect(
-        "PropertyDetails",
-        propertyDetails,
-        config
-      );
+    if (typeof onSelect === "function") {
+      onSelect("PropertyDetails", propertyDetails, config);
     }
-  }, [
-    propertyDetails,
-  ]);
+  }, [propertyDetails]);
 
   /*
    * =========================================================
@@ -735,30 +461,23 @@ export const PropertyDetailsForm = ({
    */
 
   function addWaterConnection() {
-    setPropertyDetails(
-      (prev) => ({
-        ...prev,
+    setPropertyDetails((prev) => ({
+      ...prev,
 
-        waterConnection: [
-          ...(prev.waterConnection ||
-            []),
+      waterConnection: [
+        ...(prev.waterConnection || []),
 
-          {
-            connectionNo:
-              "",
+        {
+          connectionNo: "",
 
-            isEdit:
-              true,
+          isEdit: true,
 
-            billData:
-              {},
+          billData: {},
 
-            isLoading:
-              false,
-          },
-        ],
-      })
-    );
+          isLoading: false,
+        },
+      ],
+    }));
   }
 
   /*
@@ -768,30 +487,23 @@ export const PropertyDetailsForm = ({
    */
 
   function addSewerageConnection() {
-    setPropertyDetails(
-      (prev) => ({
-        ...prev,
+    setPropertyDetails((prev) => ({
+      ...prev,
 
-        sewerageConnection: [
-          ...(prev.sewerageConnection ||
-            []),
+      sewerageConnection: [
+        ...(prev.sewerageConnection || []),
 
-          {
-            connectionNo:
-              "",
+        {
+          connectionNo: "",
 
-            isEdit:
-              true,
+          isEdit: true,
 
-            billData:
-              {},
+          billData: {},
 
-            isLoading:
-              false,
-          },
-        ],
-      })
-    );
+          isLoading: false,
+        },
+      ],
+    }));
   }
 
   /*
@@ -800,110 +512,69 @@ export const PropertyDetailsForm = ({
    * =========================================================
    */
 
-  async function fetchBill(
-    bussinessService,
-    consumercodes,
-    index
-  ) {
+  async function fetchBill(bussinessService, consumercodes, index) {
     try {
       /*
        * WATER LOADER
        */
 
-      if (
-        bussinessService ===
-        "WS"
-      ) {
-        const updated = [
-          ...(propertyDetails
-            ?.waterConnection ||
-            []),
-        ];
+      if (bussinessService === "WS") {
+        const updated = [...(propertyDetails?.waterConnection || [])];
 
-        if (
-          !updated[index]
-        ) {
+        if (!updated[index]) {
           return;
         }
 
         updated[index] = {
           ...updated[index],
 
-          isLoading:
-            true,
+          isLoading: true,
         };
 
-        setPropertyDetails(
-          (prev) => ({
-            ...prev,
+        setPropertyDetails((prev) => ({
+          ...prev,
 
-            waterConnection:
-              updated,
-          })
-        );
+          waterConnection: updated,
+        }));
       }
 
       /*
        * SEWERAGE LOADER
        */
 
-      if (
-        bussinessService ===
-        "SW"
-      ) {
-        const updated = [
-          ...(propertyDetails
-            ?.sewerageConnection ||
-            []),
-        ];
+      if (bussinessService === "SW") {
+        const updated = [...(propertyDetails?.sewerageConnection || [])];
 
-        if (
-          !updated[index]
-        ) {
+        if (!updated[index]) {
           return;
         }
 
         updated[index] = {
           ...updated[index],
 
-          isLoading:
-            true,
+          isLoading: true,
         };
 
-        setPropertyDetails(
-          (prev) => ({
-            ...prev,
+        setPropertyDetails((prev) => ({
+          ...prev,
 
-            sewerageConnection:
-              updated,
-          })
-        );
+          sewerageConnection: updated,
+        }));
       }
 
-      if (
-        bussinessService ===
-        "PT"
-      ) {
-        setPropertyLoader(
-          true
-        );
+      if (bussinessService === "PT") {
+        setPropertyLoader(true);
       }
 
       /*
        * API
        */
 
-      const result =
-        await Digit.PaymentService.fetchBill(
-          tenantId,
-          {
-            businessService:
-              bussinessService,
+      const result = await Digit.PaymentService.fetchBill(tenantId, {
+        businessService: bussinessService,
 
-            consumerCode:
-              consumercodes,
-          }
-        );
+        consumerCode: consumercodes,
+      });
 
       /*
        * =====================================================
@@ -911,73 +582,43 @@ export const PropertyDetailsForm = ({
        * =====================================================
        */
 
-      if (
-        result?.Bill?.length >
-        0
-      ) {
-        const bill =
-          result.Bill[0];
+      if (result?.Bill?.length > 0) {
+        const bill = result.Bill[0];
 
         /*
          * WATER
          */
 
-        if (
-          bussinessService ===
-          "WS"
-        ) {
-          const updated = [
-            ...(propertyDetails
-              ?.waterConnection ||
-              []),
-          ];
+        if (bussinessService === "WS") {
+          const updated = [...(propertyDetails?.waterConnection || [])];
 
-          if (
-            updated[index]
-          ) {
+          if (updated[index]) {
             updated[index] = {
               ...updated[index],
 
-              billData:
-                bill,
+              billData: bill,
 
-              isLoading:
-                false,
+              isLoading: false,
             };
           }
 
-          setPropertyDetails(
-            (prev) => ({
-              ...prev,
+          setPropertyDetails((prev) => ({
+            ...prev,
 
-              waterConnection:
-                updated,
-            })
-          );
+            waterConnection: updated,
+          }));
 
-          if (
-            Number(
-              bill?.totalAmount
-            ) > 0
-          ) {
+          if (Number(bill?.totalAmount) > 0) {
             setShowToast({
-              error:
-                true,
+              error: true,
 
-              label:
-                t(
-                  "NDC_MESSAGE_DUES_FOUND_PLEASE_PAY"
-                ),
+              label: t("NDC_MESSAGE_DUES_FOUND_PLEASE_PAY"),
             });
           } else {
             setShowToast({
-              error:
-                false,
+              error: false,
 
-              label:
-                t(
-                  "NDC_NO_BILLS_FOUND_WS"
-                ),
+              label: t("NDC_NO_BILLS_FOUND_WS"),
             });
           }
 
@@ -988,62 +629,36 @@ export const PropertyDetailsForm = ({
          * SEWERAGE
          */
 
-        if (
-          bussinessService ===
-          "SW"
-        ) {
-          const updated = [
-            ...(propertyDetails
-              ?.sewerageConnection ||
-              []),
-          ];
+        if (bussinessService === "SW") {
+          const updated = [...(propertyDetails?.sewerageConnection || [])];
 
-          if (
-            updated[index]
-          ) {
+          if (updated[index]) {
             updated[index] = {
               ...updated[index],
 
-              billData:
-                bill,
+              billData: bill,
 
-              isLoading:
-                false,
+              isLoading: false,
             };
           }
 
-          setPropertyDetails(
-            (prev) => ({
-              ...prev,
+          setPropertyDetails((prev) => ({
+            ...prev,
 
-              sewerageConnection:
-                updated,
-            })
-          );
+            sewerageConnection: updated,
+          }));
 
-          if (
-            Number(
-              bill?.totalAmount
-            ) > 0
-          ) {
+          if (Number(bill?.totalAmount) > 0) {
             setShowToast({
-              error:
-                true,
+              error: true,
 
-              label:
-                t(
-                  "NDC_MESSAGE_DUES_FOUND_PLEASE_PAY"
-                ),
+              label: t("NDC_MESSAGE_DUES_FOUND_PLEASE_PAY"),
             });
           } else {
             setShowToast({
-              error:
-                false,
+              error: false,
 
-              label:
-                t(
-                  "NDC_NO_BILLS_FOUND_SW"
-                ),
+              label: t("NDC_NO_BILLS_FOUND_SW"),
             });
           }
 
@@ -1054,54 +669,32 @@ export const PropertyDetailsForm = ({
          * PROPERTY
          */
 
-        if (
-          bussinessService ===
-          "PT"
-        ) {
-          setPropertyDetails(
-            (prev) => ({
-              ...prev,
+        if (bussinessService === "PT") {
+          setPropertyDetails((prev) => ({
+            ...prev,
 
-              propertyBillData: {
-                ...(prev.propertyBillData ||
-                  {}),
+            propertyBillData: {
+              ...(prev.propertyBillData || {}),
 
-                billData:
-                  bill,
+              billData: bill,
 
-                isLoading:
-                  false,
-              },
-            })
-          );
+              isLoading: false,
+            },
+          }));
 
-          setPropertyLoader(
-            false
-          );
+          setPropertyLoader(false);
 
-          if (
-            Number(
-              bill?.totalAmount
-            ) > 0
-          ) {
+          if (Number(bill?.totalAmount) > 0) {
             setShowToast({
-              error:
-                true,
+              error: true,
 
-              label:
-                t(
-                  "NDC_MESSAGE_DUES_FOUND_PLEASE_PAY"
-                ),
+              label: t("NDC_MESSAGE_DUES_FOUND_PLEASE_PAY"),
             });
           } else {
             setShowToast({
-              error:
-                false,
+              error: false,
 
-              label:
-                t(
-                  "NDC_NO_BILLS_FOUND_PROPERTY"
-                ),
+              label: t("NDC_NO_BILLS_FOUND_PROPERTY"),
             });
           }
 
@@ -1115,22 +708,11 @@ export const PropertyDetailsForm = ({
        * =====================================================
        */
 
-      if (
-        result?.Bill
-      ) {
-        if (
-          bussinessService ===
-          "WS"
-        ) {
-          const updated = [
-            ...(propertyDetails
-              ?.waterConnection ||
-              []),
-          ];
+      if (result?.Bill) {
+        if (bussinessService === "WS") {
+          const updated = [...(propertyDetails?.waterConnection || [])];
 
-          if (
-            !updated[index]
-          ) {
+          if (!updated[index]) {
             return;
           }
 
@@ -1138,49 +720,31 @@ export const PropertyDetailsForm = ({
             ...updated[index],
 
             billData: {
-              totalAmount:
-                0,
+              totalAmount: 0,
             },
 
-            isLoading:
-              false,
+            isLoading: false,
           };
 
-          setPropertyDetails(
-            (prev) => ({
-              ...prev,
+          setPropertyDetails((prev) => ({
+            ...prev,
 
-              waterConnection:
-                updated,
-            })
-          );
+            waterConnection: updated,
+          }));
 
           setShowToast({
-            error:
-              false,
+            error: false,
 
-            label:
-              t(
-                "NDC_NO_BILLS_FOUND_WS"
-              ),
+            label: t("NDC_NO_BILLS_FOUND_WS"),
           });
 
           return;
         }
 
-        if (
-          bussinessService ===
-          "SW"
-        ) {
-          const updated = [
-            ...(propertyDetails
-              ?.sewerageConnection ||
-              []),
-          ];
+        if (bussinessService === "SW") {
+          const updated = [...(propertyDetails?.sewerageConnection || [])];
 
-          if (
-            !updated[index]
-          ) {
+          if (!updated[index]) {
             return;
           }
 
@@ -1188,71 +752,48 @@ export const PropertyDetailsForm = ({
             ...updated[index],
 
             billData: {
-              totalAmount:
-                0,
+              totalAmount: 0,
             },
 
-            isLoading:
-              false,
+            isLoading: false,
           };
 
-          setPropertyDetails(
-            (prev) => ({
-              ...prev,
+          setPropertyDetails((prev) => ({
+            ...prev,
 
-              sewerageConnection:
-                updated,
-            })
-          );
+            sewerageConnection: updated,
+          }));
 
           setShowToast({
-            error:
-              false,
+            error: false,
 
-            label:
-              t(
-                "NDC_NO_BILLS_FOUND_SW"
-              ),
+            label: t("NDC_NO_BILLS_FOUND_SW"),
           });
 
           return;
         }
 
-        if (
-          bussinessService ===
-          "PT"
-        ) {
-          setPropertyDetails(
-            (prev) => ({
-              ...prev,
+        if (bussinessService === "PT") {
+          setPropertyDetails((prev) => ({
+            ...prev,
 
-              propertyBillData: {
-                ...(prev.propertyBillData ||
-                  {}),
+            propertyBillData: {
+              ...(prev.propertyBillData || {}),
 
-                isLoading:
-                  false,
+              isLoading: false,
 
-                billData: {
-                  totalAmount:
-                    0,
-                },
+              billData: {
+                totalAmount: 0,
               },
-            })
-          );
+            },
+          }));
 
-          setPropertyLoader(
-            false
-          );
+          setPropertyLoader(false);
 
           setShowToast({
-            error:
-              false,
+            error: false,
 
-            label:
-              t(
-                "NDC_NO_BILLS_FOUND_PROPERTY"
-              ),
+            label: t("NDC_NO_BILLS_FOUND_PROPERTY"),
           });
 
           return;
@@ -1265,227 +806,142 @@ export const PropertyDetailsForm = ({
        * =====================================================
        */
 
-      if (
-        bussinessService ===
-        "WS"
-      ) {
-        const updated = [
-          ...(propertyDetails
-            ?.waterConnection ||
-            []),
-        ];
+      if (bussinessService === "WS") {
+        const updated = [...(propertyDetails?.waterConnection || [])];
 
-        if (
-          !updated[index]
-        ) {
+        if (!updated[index]) {
           return;
         }
 
         updated[index] = {
           ...updated[index],
 
-          isLoading:
-            false,
+          isLoading: false,
 
           billData: {
-            totalAmount:
-              0,
+            totalAmount: 0,
           },
         };
 
-        setPropertyDetails(
-          (prev) => ({
-            ...prev,
+        setPropertyDetails((prev) => ({
+          ...prev,
 
-            waterConnection:
-              updated,
-          })
-        );
+          waterConnection: updated,
+        }));
 
         setShowToast({
-          error:
-            false,
+          error: false,
 
-          label:
-            t(
-              "NDC_NO_BILLS_FOUND_WS"
-            ),
+          label: t("NDC_NO_BILLS_FOUND_WS"),
         });
       }
 
-      if (
-        bussinessService ===
-        "SW"
-      ) {
-        const updated = [
-          ...(propertyDetails
-            ?.sewerageConnection ||
-            []),
-        ];
+      if (bussinessService === "SW") {
+        const updated = [...(propertyDetails?.sewerageConnection || [])];
 
-        if (
-          !updated[index]
-        ) {
+        if (!updated[index]) {
           return;
         }
 
         updated[index] = {
           ...updated[index],
 
-          isLoading:
-            false,
+          isLoading: false,
 
           billData: {
-            totalAmount:
-              0,
+            totalAmount: 0,
           },
         };
 
-        setPropertyDetails(
-          (prev) => ({
-            ...prev,
+        setPropertyDetails((prev) => ({
+          ...prev,
 
-            sewerageConnection:
-              updated,
-          })
-        );
+          sewerageConnection: updated,
+        }));
 
         setShowToast({
-          error:
-            false,
+          error: false,
 
-          label:
-            t(
-              "NDC_NO_BILLS_FOUND_SW"
-            ),
+          label: t("NDC_NO_BILLS_FOUND_SW"),
         });
       }
 
-      if (
-        bussinessService ===
-        "PT"
-      ) {
-        setPropertyDetails(
-          (prev) => ({
-            ...prev,
+      if (bussinessService === "PT") {
+        setPropertyDetails((prev) => ({
+          ...prev,
 
-            propertyBillData: {
-              ...(prev.propertyBillData ||
-                {}),
+          propertyBillData: {
+            ...(prev.propertyBillData || {}),
 
-              isLoading:
-                false,
+            isLoading: false,
 
-              billData: {
-                totalAmount:
-                  0,
-              },
+            billData: {
+              totalAmount: 0,
             },
-          })
-        );
+          },
+        }));
 
-        setPropertyLoader(
-          false
-        );
+        setPropertyLoader(false);
 
         setShowToast({
-          error:
-            false,
+          error: false,
 
-          label:
-            t(
-              "NDC_NO_BILLS_FOUND_PROPERTY"
-            ),
+          label: t("NDC_NO_BILLS_FOUND_PROPERTY"),
         });
       }
     } catch (error) {
-      console.error(
-        "Error while fetching bill:",
-        error
-      );
+      console.error("Error while fetching bill:", error);
 
-      setPropertyLoader(
-        false
-      );
+      setPropertyLoader(false);
 
       /*
        * STOP WATER LOADER
        */
 
-      if (
-        bussinessService ===
-        "WS"
-      ) {
-        const updated = [
-          ...(propertyDetails
-            ?.waterConnection ||
-            []),
-        ];
+      if (bussinessService === "WS") {
+        const updated = [...(propertyDetails?.waterConnection || [])];
 
-        if (
-          updated[index]
-        ) {
+        if (updated[index]) {
           updated[index] = {
             ...updated[index],
 
-            isLoading:
-              false,
+            isLoading: false,
           };
         }
 
-        setPropertyDetails(
-          (prev) => ({
-            ...prev,
+        setPropertyDetails((prev) => ({
+          ...prev,
 
-            waterConnection:
-              updated,
-          })
-        );
+          waterConnection: updated,
+        }));
       }
 
       /*
        * STOP SEWERAGE LOADER
        */
 
-      if (
-        bussinessService ===
-        "SW"
-      ) {
-        const updated = [
-          ...(propertyDetails
-            ?.sewerageConnection ||
-            []),
-        ];
+      if (bussinessService === "SW") {
+        const updated = [...(propertyDetails?.sewerageConnection || [])];
 
-        if (
-          updated[index]
-        ) {
+        if (updated[index]) {
           updated[index] = {
             ...updated[index],
 
-            isLoading:
-              false,
+            isLoading: false,
           };
         }
 
-        setPropertyDetails(
-          (prev) => ({
-            ...prev,
+        setPropertyDetails((prev) => ({
+          ...prev,
 
-            sewerageConnection:
-              updated,
-          })
-        );
+          sewerageConnection: updated,
+        }));
       }
 
       setShowToast({
-        error:
-          true,
+        error: true,
 
-        label:
-          t(
-            "NDC_MESSAGE_FETCH_FAILED"
-          ),
+        label: t("NDC_MESSAGE_FETCH_FAILED"),
       });
     }
   }
@@ -1496,12 +952,9 @@ export const PropertyDetailsForm = ({
    * =========================================================
    */
 
-  const closeToast =
-    () => {
-      setShowToast(
-        null
-      );
-    };
+  const closeToast = () => {
+    setShowToast(null);
+  };
 
   /*
    * =========================================================
@@ -1509,12 +962,7 @@ export const PropertyDetailsForm = ({
    * =========================================================
    */
 
-  const PayWSBillModal =
-    Digit
-      ?.ComponentRegistryService
-      ?.getComponent(
-        "PayWSBillModal"
-      );
+  const PayWSBillModal = Digit?.ComponentRegistryService?.getComponent("PayWSBillModal");
 
   /*
    * =========================================================
@@ -1523,29 +971,16 @@ export const PropertyDetailsForm = ({
    */
 
   useEffect(() => {
-    if (
-      !showToast
-    ) {
+    if (!showToast) {
       return;
     }
 
-    const timer =
-      setTimeout(
-        () => {
-          setShowToast(
-            null
-          );
-        },
-        3000
-      );
+    const timer = setTimeout(() => {
+      setShowToast(null);
+    }, 3000);
 
-    return () =>
-      clearTimeout(
-        timer
-      );
-  }, [
-    showToast,
-  ]);
+    return () => clearTimeout(timer);
+  }, [showToast]);
 
   /*
    * =========================================================
@@ -1554,34 +989,16 @@ export const PropertyDetailsForm = ({
    */
 
   useEffect(() => {
-    if (
-      !selectedRow &&
-      checkApiDataCheck
-        ?.Applications?.[0]
-    ) {
-      const owners =
-        checkApiDataCheck
-          ?.Applications?.[0]
-          ?.owners;
+    if (!selectedRow && checkApiDataCheck?.Applications?.[0]) {
+      const owners = checkApiDataCheck?.Applications?.[0]?.owners;
 
-      const primaryOwner =
-        owners?.find(
-          (owner) =>
-            owner?.isPrimaryOwner
-        );
+      const primaryOwner = owners?.find((owner) => owner?.isPrimaryOwner);
 
-      if (
-        primaryOwner
-      ) {
-        setSelectedRow(
-          primaryOwner
-        );
+      if (primaryOwner) {
+        setSelectedRow(primaryOwner);
       }
     }
-  }, [
-    checkApiDataCheck,
-    selectedRow,
-  ]);
+  }, [checkApiDataCheck, selectedRow]);
 
   /*
    * =========================================================
@@ -1589,324 +1006,173 @@ export const PropertyDetailsForm = ({
    * =========================================================
    */
 
-  const renderConnectionRows =
-    (
-      connectionType,
-      connections,
-      loading,
-      labelKey,
-      checkStatusKey,
-      addHandler
-    ) => {
-      return (
-        <>
+  const renderConnectionRows = (connectionType, connections, loading, labelKey, checkStatusKey, addHandler) => {
+    return (
+      <>
+        <div
+          style={{
+            marginTop: "32px",
+
+            marginBottom: "24px",
+          }}
+        >
           <div
             style={{
-              marginTop:
-                "32px",
+              ...fieldContainerStyle,
 
-              marginBottom:
-                "24px",
+              marginBottom: "10px",
             }}
           >
+            <CardLabel className="card-label-smaller ndc_card_labels">{t(labelKey)}</CardLabel>
+          </div>
+
+          {loading ? (
+            <Loader />
+          ) : (
             <div
               style={{
                 ...fieldContainerStyle,
 
-                marginBottom:
-                  "10px",
+                display: "flex",
+
+                flexDirection: "column",
+
+                gap: "10px",
               }}
             >
-              <CardLabel className="card-label-smaller ndc_card_labels">
-                {t(
-                  labelKey
-                )}
-              </CardLabel>
-            </div>
+              {connections?.map((item, index) => (
+                <div
+                  key={index}
+                  style={{
+                    ...fieldContainerStyle,
 
-            {loading ? (
-              <Loader />
-            ) : (
-              <div
-                style={{
-                  ...fieldContainerStyle,
+                    display: "flex",
 
-                  display:
-                    "flex",
+                    flexDirection: "column",
 
-                  flexDirection:
-                    "column",
+                    alignItems: "flex-start",
 
-                  gap:
-                    "10px",
-                }}
-              >
-                {connections?.map(
-                  (
-                    item,
-                    index
-                  ) => (
-                    <div
-                      key={
-                        index
-                      }
-                      style={{
-                        ...fieldContainerStyle,
+                    gap: "8px",
 
-                        display:
-                          "flex",
+                    marginBottom: "8px",
+                  }}
+                >
+                  <Controller
+                    control={control}
+                    name={`${connectionType}[${index}]`}
+                    defaultValue={item?.connectionNo || ""}
+                    render={({ field }) => (
+                      <TextInput
+                        value={item?.connectionNo || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
 
-                        flexDirection:
-                          "column",
+                          const updated = [...(connections || [])];
 
-                        alignItems:
-                          "flex-start",
+                          updated[index] = {
+                            ...updated[index],
 
-                        gap:
-                          "8px",
+                            connectionNo: value,
+                          };
 
-                        marginBottom:
-                          "8px",
-                      }}
-                    >
-                      <Controller
-                        control={
-                          control
-                        }
+                          setPropertyDetails((prev) => ({
+                            ...prev,
 
-                        name={`${connectionType}[${index}]`}
+                            [connectionType]: updated,
+                          }));
 
-                        defaultValue={
-                          item?.connectionNo ||
-                          ""
-                        }
-
-                        render={({
-                          field,
-                        }) => (
-                          <TextInput
-                            value={
-                              item?.connectionNo ||
-                              ""
-                            }
-
-                            onChange={(
-                              e
-                            ) => {
-                              const value =
-                                e
-                                  .target
-                                  .value;
-
-                              const updated =
-                                [
-                                  ...(connections ||
-                                    []),
-                                ];
-
-                              updated[
-                                index
-                              ] = {
-                                ...updated[
-                                  index
-                                ],
-
-                                connectionNo:
-                                  value,
-                              };
-
-                              setPropertyDetails(
-                                (
-                                  prev
-                                ) => ({
-                                  ...prev,
-
-                                  [connectionType]:
-                                    updated,
-                                })
-                              );
-
-                              field.onChange(
-                                value
-                              );
-                            }}
-
-                            onBlur={
-                              field.onBlur
-                            }
-
-                            disabled={
-                              !item?.isEdit
-                            }
-
-                            style={
-                              inputStyle
-                            }
-                          />
-                        )}
+                          field.onChange(value);
+                        }}
+                        onBlur={field.onBlur}
+                        disabled={!item?.isEdit}
+                        style={inputStyle}
                       />
+                    )}
+                  />
 
-                      {item?.isLoading ? (
-                        <Loader />
-                      ) : (
-                        <div
-                          style={
-                            actionColumnStyle
+                  {item?.isLoading ? (
+                    <Loader />
+                  ) : (
+                    <div style={actionColumnStyle}>
+                      {!apiDataCheck?.[0]?.NdcDetails && item?.connectionNo && !item?.billData?.id && item?.billData?.totalAmount !== 0 && (
+                        <button
+                          className="submit-bar ndc-action-button"
+                          type="button"
+                          style={buttonStyle}
+                          onClick={() =>
+                            fetchBill(
+                              connectionType === "waterConnection" ? "WS" : "SW",
+
+                              item.connectionNo,
+
+                              index,
+                            )
                           }
                         >
-                          {!apiDataCheck?.[0]
-                            ?.NdcDetails &&
-                            item?.connectionNo &&
-                            !item?.billData
-                              ?.id &&
-                            item?.billData
-                              ?.totalAmount !==
-                              0 && (
-                              <button
-                                className="submit-bar ndc-action-button"
-                                type="button"
-                                style={
-                                  buttonStyle
-                                }
+                          {t(checkStatusKey)}
+                        </button>
+                      )}
 
-                                onClick={() =>
-                                  fetchBill(
-                                    connectionType ===
-                                      "waterConnection"
-                                      ? "WS"
-                                      : "SW",
+                      {item?.connectionNo && item?.billData?.totalAmount > 0 && (
+                        <button
+                          className="submit-bar ndc-action-button"
+                          type="button"
+                          style={buttonStyle}
+                          onClick={() => {
+                            setSelectedBillData(item?.billData);
 
-                                    item.connectionNo,
+                            setShowPayModal(true);
+                          }}
+                        >
+                          {t("PAY_DUES")}
+                        </button>
+                      )}
 
-                                    index
-                                  )
-                                }
-                              >
-                                {t(
-                                  checkStatusKey
-                                )}
-                              </button>
-                            )}
-
-                          {item?.connectionNo &&
-                            item?.billData
-                              ?.totalAmount >
-                              0 && (
-                              <button
-                                className="submit-bar ndc-action-button"
-                                type="button"
-                                style={
-                                  buttonStyle
-                                }
-
-                                onClick={() => {
-                                  setSelectedBillData(
-                                    item?.billData
-                                  );
-
-                                  setShowPayModal(
-                                    true
-                                  );
-                                }}
-                              >
-                                {t(
-                                  "PAY_DUES"
-                                )}
-                              </button>
-                            )}
-
-                          {item?.connectionNo &&
-                            item?.billData
-                              ?.totalAmount ===
-                              0 && (
-                              <div
-                                className="ndc-no-dues-box"
-                                style={
-                                  noDueStyle
-                                }
-                              >
-                                {t(
-                                  "NO_DUES"
-                                )}
-                              </div>
-                            )}
-
-                          {item?.isEdit && (
-                            <button
-                              type="button"
-
-                              className="ndc-delete-button"
-
-                              onClick={() => {
-                                const updated =
-                                  [
-                                    ...(connections ||
-                                      []),
-                                  ];
-
-                                updated.splice(
-                                  index,
-                                  1
-                                );
-
-                                setPropertyDetails(
-                                  (
-                                    prev
-                                  ) => ({
-                                    ...prev,
-
-                                    [connectionType]:
-                                      updated,
-                                  })
-                                );
-                              }}
-                            >
-                              <DeleteIcon
-                                className="delete"
-
-                                fill="#a82227"
-                              />
-                            </button>
-                          )}
+                      {item?.connectionNo && item?.billData?.totalAmount === 0 && (
+                        <div className="ndc-no-dues-box" style={noDueStyle}>
+                          {t("NO_DUES")}
                         </div>
                       )}
+
+                      {item?.isEdit && (
+                        <button
+                          type="button"
+                          className="ndc-delete-button"
+                          onClick={() => {
+                            const updated = [...(connections || [])];
+
+                            updated.splice(index, 1);
+
+                            setPropertyDetails((prev) => ({
+                              ...prev,
+
+                              [connectionType]: updated,
+                            }));
+                          }}
+                        >
+                          <DeleteIcon className="delete" fill="#a82227" />
+                        </button>
+                      )}
                     </div>
-                  )
-                )}
-              </div>
-            )}
-          </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
-          <div
-            style={{
-              marginBottom:
-                "36px",
-            }}
-          >
-            <button
-              className="submit-bar ndc-action-button"
-
-              type="button"
-
-              style={
-                buttonStyle
-              }
-
-              onClick={
-                addHandler
-              }
-            >
-              {t(
-                connectionType ===
-                  "waterConnection"
-                  ? "ADD_WATER"
-                  : "ADD_SEWERAGE"
-              )}
-            </button>
-          </div>
-        </>
-      );
-    };
+        <div
+          style={{
+            marginBottom: "36px",
+          }}
+        >
+          <button className="submit-bar ndc-action-button" type="button" style={buttonStyle} onClick={addHandler}>
+            {t(connectionType === "waterConnection" ? "ADD_WATER" : "ADD_SEWERAGE")}
+          </button>
+        </div>
+      </>
+    );
+  };
 
   /*
    * =========================================================
@@ -1917,13 +1183,10 @@ export const PropertyDetailsForm = ({
   return (
     <div
       className="ndc-margin-bottom-16"
-
       style={{
-        width:
-          "100%",
+        width: "100%",
 
-        boxSizing:
-          "border-box",
+        boxSizing: "border-box",
       }}
     >
       <style>
@@ -2300,14 +1563,9 @@ export const PropertyDetailsForm = ({
         `}
       </style>
 
-      <div
-        className="ndc-details-form-wrapper"
-      >
-        {(cpt?.details ||
-          apiDataCheck?.[0]
-            ?.NdcDetails) && (
+      <div className="ndc-details-form-wrapper">
+        {(cpt?.details || apiDataCheck?.[0]?.NdcDetails) && (
           <div>
-
             {/* =================================================
                 WATER CONNECTION
             ================================================== */}
@@ -2315,8 +1573,7 @@ export const PropertyDetailsForm = ({
             {renderConnectionRows(
               "waterConnection",
 
-              propertyDetails
-                ?.waterConnection,
+              propertyDetails?.waterConnection,
 
               waterConnectionLoading,
 
@@ -2324,7 +1581,7 @@ export const PropertyDetailsForm = ({
 
               "CHECK_STATUS_WATER",
 
-              addWaterConnection
+              addWaterConnection,
             )}
 
             {/* =================================================
@@ -2333,23 +1590,17 @@ export const PropertyDetailsForm = ({
 
             <div
               style={{
-                marginBottom:
-                  "24px",
+                marginBottom: "24px",
               }}
             >
               <div
                 style={{
                   ...fieldContainerStyle,
 
-                  marginBottom:
-                    "10px",
+                  marginBottom: "10px",
                 }}
               >
-                <CardLabel className="card-label-smaller ndc_card_labels">
-                  {t(
-                    "NDC_SEWERAGE_CONNECTION"
-                  )}
-                </CardLabel>
+                <CardLabel className="card-label-smaller ndc_card_labels">{t("NDC_SEWERAGE_CONNECTION")}</CardLabel>
               </div>
 
               {sewerageConnectionLoading ? (
@@ -2359,255 +1610,130 @@ export const PropertyDetailsForm = ({
                   style={{
                     ...fieldContainerStyle,
 
-                    display:
-                      "flex",
+                    display: "flex",
 
-                    flexDirection:
-                      "column",
+                    flexDirection: "column",
 
-                    gap:
-                      "10px",
+                    gap: "10px",
                   }}
                 >
-                  {propertyDetails
-                    ?.sewerageConnection
-                    ?.map(
-                      (
-                        item,
-                        index
-                      ) => (
-                        <div
-                          key={
-                            index
-                          }
+                  {propertyDetails?.sewerageConnection?.map((item, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        ...fieldContainerStyle,
 
-                          style={{
-                            ...fieldContainerStyle,
+                        display: "flex",
 
-                            display:
-                              "flex",
+                        flexDirection: "column",
 
-                            flexDirection:
-                              "column",
+                        alignItems: "flex-start",
 
-                            alignItems:
-                              "flex-start",
+                        gap: "8px",
 
-                            gap:
-                              "8px",
+                        marginBottom: "8px",
+                      }}
+                    >
+                      <Controller
+                        control={control}
+                        name={`sewerageConnection[${index}]`}
+                        defaultValue={item?.connectionNo || ""}
+                        render={({ field }) => (
+                          <TextInput
+                            value={item?.connectionNo || ""}
+                            onChange={(e) => {
+                              const value = e.target.value;
 
-                            marginBottom:
-                              "8px",
-                          }}
-                        >
-                          <Controller
-                            control={
-                              control
-                            }
+                              const updated = [...(propertyDetails?.sewerageConnection || [])];
 
-                            name={`sewerageConnection[${index}]`}
+                              updated[index] = {
+                                ...updated[index],
 
-                            defaultValue={
-                              item?.connectionNo ||
-                              ""
-                            }
+                                connectionNo: value,
+                              };
 
-                            render={({
-                              field,
-                            }) => (
-                              <TextInput
-                                value={
-                                  item?.connectionNo ||
-                                  ""
-                                }
+                              setPropertyDetails((prev) => ({
+                                ...prev,
 
-                                onChange={(
-                                  e
-                                ) => {
-                                  const value =
-                                    e
-                                      .target
-                                      .value;
+                                sewerageConnection: updated,
+                              }));
 
-                                  const updated =
-                                    [
-                                      ...(propertyDetails
-                                        ?.sewerageConnection ||
-                                        []),
-                                    ];
-
-                                  updated[
-                                    index
-                                  ] = {
-                                    ...updated[
-                                      index
-                                    ],
-
-                                    connectionNo:
-                                      value,
-                                  };
-
-                                  setPropertyDetails(
-                                    (
-                                      prev
-                                    ) => ({
-                                      ...prev,
-
-                                      sewerageConnection:
-                                        updated,
-                                    })
-                                  );
-
-                                  field.onChange(
-                                    value
-                                  );
-                                }}
-
-                                onBlur={
-                                  field.onBlur
-                                }
-
-                                disabled={
-                                  !item?.isEdit
-                                }
-
-                                style={
-                                  inputStyle
-                                }
-                              />
-                            )}
+                              field.onChange(value);
+                            }}
+                            onBlur={field.onBlur}
+                            disabled={!item?.isEdit}
+                            style={inputStyle}
                           />
+                        )}
+                      />
 
-                          {item?.isLoading ? (
-                            <Loader />
-                          ) : (
-                            <div
-                              style={
-                                actionColumnStyle
+                      {item?.isLoading ? (
+                        <Loader />
+                      ) : (
+                        <div style={actionColumnStyle}>
+                          {!apiDataCheck?.[0]?.NdcDetails && item?.connectionNo && !item?.billData?.id && item?.billData?.totalAmount !== 0 && (
+                            <button
+                              className="submit-bar ndc-action-button"
+                              type="button"
+                              style={buttonStyle}
+                              onClick={() =>
+                                fetchBill(
+                                  "SW",
+
+                                  item.connectionNo,
+
+                                  index,
+                                )
                               }
                             >
-                              {!apiDataCheck?.[0]
-                                ?.NdcDetails &&
-                                item?.connectionNo &&
-                                !item?.billData
-                                  ?.id &&
-                                item?.billData
-                                  ?.totalAmount !==
-                                  0 && (
-                                  <button
-                                    className="submit-bar ndc-action-button"
+                              {t("CHECK_STATUS_SEWERAGE")}
+                            </button>
+                          )}
 
-                                    type="button"
+                          {item?.connectionNo && item?.billData?.totalAmount > 0 && (
+                            <button
+                              className="submit-bar ndc-action-button"
+                              type="button"
+                              style={buttonStyle}
+                              onClick={() => {
+                                setSelectedBillData(item?.billData);
 
-                                    style={
-                                      buttonStyle
-                                    }
+                                setShowPayModal(true);
+                              }}
+                            >
+                              {t("PAY_DUES")}
+                            </button>
+                          )}
 
-                                    onClick={() =>
-                                      fetchBill(
-                                        "SW",
-
-                                        item.connectionNo,
-
-                                        index
-                                      )
-                                    }
-                                  >
-                                    {t(
-                                      "CHECK_STATUS_SEWERAGE"
-                                    )}
-                                  </button>
-                                )}
-
-                              {item?.connectionNo &&
-                                item?.billData
-                                  ?.totalAmount >
-                                  0 && (
-                                  <button
-                                    className="submit-bar ndc-action-button"
-
-                                    type="button"
-
-                                    style={
-                                      buttonStyle
-                                    }
-
-                                    onClick={() => {
-                                      setSelectedBillData(
-                                        item?.billData
-                                      );
-
-                                      setShowPayModal(
-                                        true
-                                      );
-                                    }}
-                                  >
-                                    {t(
-                                      "PAY_DUES"
-                                    )}
-                                  </button>
-                                )}
-
-                              {item?.connectionNo &&
-                                item?.billData
-                                  ?.totalAmount ===
-                                  0 && (
-                                  <div
-                                    className="ndc-no-dues-box"
-
-                                    style={
-                                      noDueStyle
-                                    }
-                                  >
-                                    {t(
-                                      "NO_DUES"
-                                    )}
-                                  </div>
-                                )}
-
-                              {item?.isEdit && (
-                                <button
-                                  type="button"
-
-                                  className="ndc-delete-button"
-
-                                  onClick={() => {
-                                    const updated =
-                                      [
-                                        ...(propertyDetails
-                                          ?.sewerageConnection ||
-                                          []),
-                                      ];
-
-                                    updated.splice(
-                                      index,
-                                      1
-                                    );
-
-                                    setPropertyDetails(
-                                      (
-                                        prev
-                                      ) => ({
-                                        ...prev,
-
-                                        sewerageConnection:
-                                          updated,
-                                      })
-                                    );
-                                  }}
-                                >
-                                  <DeleteIcon
-                                    className="delete"
-
-                                    fill="#a82227"
-                                  />
-                                </button>
-                              )}
+                          {item?.connectionNo && item?.billData?.totalAmount === 0 && (
+                            <div className="ndc-no-dues-box" style={noDueStyle}>
+                              {t("NO_DUES")}
                             </div>
                           )}
+
+                          {item?.isEdit && (
+                            <button
+                              type="button"
+                              className="ndc-delete-button"
+                              onClick={() => {
+                                const updated = [...(propertyDetails?.sewerageConnection || [])];
+
+                                updated.splice(index, 1);
+
+                                setPropertyDetails((prev) => ({
+                                  ...prev,
+
+                                  sewerageConnection: updated,
+                                }));
+                              }}
+                            >
+                              <DeleteIcon className="delete" fill="#a82227" />
+                            </button>
+                          )}
                         </div>
-                      )
-                    )}
+                      )}
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
@@ -2618,26 +1744,11 @@ export const PropertyDetailsForm = ({
 
             <div
               style={{
-                marginBottom:
-                  "40px",
+                marginBottom: "40px",
               }}
             >
-              <button
-                className="submit-bar ndc-action-button"
-
-                type="button"
-
-                style={
-                  buttonStyle
-                }
-
-                onClick={
-                  addSewerageConnection
-                }
-              >
-                {t(
-                  "ADD_SEWERAGE"
-                )}
+              <button className="submit-bar ndc-action-button" type="button" style={buttonStyle} onClick={addSewerageConnection}>
+                {t("ADD_SEWERAGE")}
               </button>
             </div>
 
@@ -2647,86 +1758,50 @@ export const PropertyDetailsForm = ({
 
             <div
               style={{
-                width:
-                  "500px",
+                width: "500px",
 
-                maxWidth:
-                  "100%",
+                maxWidth: "100%",
 
-                marginTop:
-                  "10px",
+                marginTop: "10px",
 
-                marginBottom:
-                  "30px",
+                marginBottom: "30px",
               }}
             >
               <p
                 style={{
-                  color:
-                    "green",
+                  color: "green",
 
-                  fontSize:
-                    "12px",
+                  fontSize: "12px",
 
-                  lineHeight:
-                    "17px",
+                  lineHeight: "17px",
 
-                  padding:
-                    "0",
+                  padding: "0",
 
-                  margin:
-                    "0 0 10px 0",
+                  margin: "0 0 10px 0",
                 }}
               >
-                Please Select One
-                Owner Name Who
-                will have the access
-                of No Due Certificate
+                Please Select One Owner Name Who will have the access of No Due Certificate
               </p>
 
               <div
                 className="ndc-owner-table"
-
                 style={{
-                  width:
-                    "500px",
+                  width: "500px",
 
-                  maxWidth:
-                    "100%",
+                  maxWidth: "100%",
                 }}
               >
                 <Table
                   className="customTable table-border-style"
-
                   t={t}
-
-                  data={
-                    cpt
-                      ?.details
-                      ?.owners ||
-                    []
-                  }
-
-                  columns={
-                    applicationFeeColumns
-                  }
-
+                  data={cpt?.details?.owners || []}
+                  columns={applicationFeeColumns}
                   getCellProps={() => ({
-                    style:
-                      {},
+                    style: {},
                   })}
-
-                  disableSort={
-                    true
-                  }
-
-                  manualPagination={
-                    false
-                  }
-
-                  isPaginationRequired={
-                    false
-                  }
+                  disableSort={true}
+                  manualPagination={false}
+                  isPaginationRequired={false}
                 />
               </div>
             </div>
@@ -2737,30 +1812,23 @@ export const PropertyDetailsForm = ({
 
             {selectedRow && (
               <div>
-
                 {/* FULL NAME */}
 
                 <LabelFieldPair
                   style={{
-                    display:
-                      "block",
+                    display: "block",
 
-                    marginTop:
-                      "20px",
+                    marginTop: "20px",
 
-                    marginBottom:
-                      "22px",
+                    marginBottom: "22px",
                   }}
                 >
                   <CardLabel className="card-label-smaller ndc_card_labels">
-                    {t(
-                      "NDC_FULL_NAME"
-                    )}
+                    {t("NDC_FULL_NAME")}
 
                     <span
                       style={{
-                        color:
-                          "red",
+                        color: "red",
                       }}
                     >
                       {" "}
@@ -2768,110 +1836,41 @@ export const PropertyDetailsForm = ({
                     </span>
                   </CardLabel>
 
-                  <div
-                    className="form-field"
-
-                    style={
-                      fieldContainerStyle
-                    }
-                  >
+                  <div className="form-field" style={fieldContainerStyle}>
                     <Controller
-                      control={
-                        control
-                      }
-
+                      control={control}
                       name="firstName"
-
-                      defaultValue={
-                        propertyDetails
-                          ?.firstName ||
-                        ""
-                      }
-
+                      defaultValue={propertyDetails?.firstName || ""}
                       rules={{
-                        required:
-                          t(
-                            "REQUIRED_FIELD"
-                          ),
+                        required: t("REQUIRED_FIELD"),
 
                         validate: {
-                          pattern:
-                            (
-                              value
-                            ) => {
-                              if (
-                                !value ||
-                                String(
-                                  value
-                                ).trim() ===
-                                  ""
-                              ) {
-                                return t(
-                                  "REQUIRED_FIELD"
-                                );
-                              }
+                          pattern: (value) => {
+                            if (!value || String(value).trim() === "") {
+                              return t("REQUIRED_FIELD");
+                            }
 
-                              return /^[-@.\/#&+\w\s]*$/.test(
-                                String(
-                                  value
-                                )
-                              )
-                                ? true
-                                : t(
-                                    "INVALID_NAME"
-                                  );
-                            },
+                            return /^[-@.\/#&+\w\s]*$/.test(String(value)) ? true : t("INVALID_NAME");
+                          },
                         },
                       }}
-
-                      render={({
-                        field,
-                      }) => (
+                      render={({ field }) => (
                         <TextInput
-                          value={
-                            propertyDetails
-                              ?.firstName ||
-                            ""
-                          }
+                          value={propertyDetails?.firstName || ""}
+                          onChange={(e) => {
+                            const value = e.target.value;
 
-                          onChange={(
-                            e
-                          ) => {
-                            const value =
-                              e
-                                .target
-                                .value;
+                            setPropertyDetails((prev) => ({
+                              ...prev,
 
-                            setPropertyDetails(
-                              (
-                                prev
-                              ) => ({
-                                ...prev,
+                              firstName: value,
+                            }));
 
-                                firstName:
-                                  value,
-                              })
-                            );
-
-                            field.onChange(
-                              value
-                            );
+                            field.onChange(value);
                           }}
-
-                          onBlur={
-                            field.onBlur
-                          }
-
-                          disabled={
-                            !!cpt
-                              ?.details
-                              ?.owners?.[0]
-                              ?.name
-                          }
-
-                          style={
-                            inputStyle
-                          }
+                          onBlur={field.onBlur}
+                          disabled={!!cpt?.details?.owners?.[0]?.name}
+                          style={inputStyle}
                         />
                       )}
                     />
@@ -2882,22 +1881,17 @@ export const PropertyDetailsForm = ({
 
                 <LabelFieldPair
                   style={{
-                    display:
-                      "block",
+                    display: "block",
 
-                    marginBottom:
-                      "22px",
+                    marginBottom: "22px",
                   }}
                 >
                   <CardLabel className="card-label-smaller ndc_card_labels">
-                    {t(
-                      "NDC_EMAIL"
-                    )}
+                    {t("NDC_EMAIL")}
 
                     <span
                       style={{
-                        color:
-                          "red",
+                        color: "red",
                       }}
                     >
                       {" "}
@@ -2905,103 +1899,40 @@ export const PropertyDetailsForm = ({
                     </span>
                   </CardLabel>
 
-                  <div
-                    className="form-field"
-
-                    style={
-                      fieldContainerStyle
-                    }
-                  >
+                  <div className="form-field" style={fieldContainerStyle}>
                     <Controller
-                      control={
-                        control
-                      }
-
+                      control={control}
                       name="email"
-
-                      defaultValue={
-                        propertyDetails
-                          ?.email ||
-                        ""
-                      }
-
+                      defaultValue={propertyDetails?.email || ""}
                       rules={{
-                        required:
-                          t(
-                            "REQUIRED_FIELD"
-                          ),
+                        required: t("REQUIRED_FIELD"),
 
                         validate: {
-                          pattern:
-                            (
-                              value
-                            ) => {
-                              if (
-                                !value ||
-                                String(
-                                  value
-                                ).trim() ===
-                                  ""
-                              ) {
-                                return t(
-                                  "REQUIRED_FIELD"
-                                );
-                              }
+                          pattern: (value) => {
+                            if (!value || String(value).trim() === "") {
+                              return t("REQUIRED_FIELD");
+                            }
 
-                              return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-                                String(
-                                  value
-                                ).trim()
-                              )
-                                ? true
-                                : t(
-                                    "INVALID_EMAIL"
-                                  );
-                            },
+                            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value).trim()) ? true : t("INVALID_EMAIL");
+                          },
                         },
                       }}
-
-                      render={({
-                        field,
-                      }) => (
+                      render={({ field }) => (
                         <TextInput
-                          value={
-                            propertyDetails
-                              ?.email ||
-                            ""
-                          }
+                          value={propertyDetails?.email || ""}
+                          onChange={(e) => {
+                            const value = e.target.value;
 
-                          onChange={(
-                            e
-                          ) => {
-                            const value =
-                              e
-                                .target
-                                .value;
+                            setPropertyDetails((prev) => ({
+                              ...prev,
 
-                            setPropertyDetails(
-                              (
-                                prev
-                              ) => ({
-                                ...prev,
+                              email: value,
+                            }));
 
-                                email:
-                                  value,
-                              })
-                            );
-
-                            field.onChange(
-                              value
-                            );
+                            field.onChange(value);
                           }}
-
-                          onBlur={
-                            field.onBlur
-                          }
-
-                          style={
-                            inputStyle
-                          }
+                          onBlur={field.onBlur}
+                          style={inputStyle}
                         />
                       )}
                     />
@@ -3012,22 +1943,17 @@ export const PropertyDetailsForm = ({
 
                 <LabelFieldPair
                   style={{
-                    display:
-                      "block",
+                    display: "block",
 
-                    marginBottom:
-                      "22px",
+                    marginBottom: "22px",
                   }}
                 >
                   <CardLabel className="card-label-smaller ndc_card_labels">
-                    {t(
-                      "NDC_MOBILE_NUMBER"
-                    )}
+                    {t("NDC_MOBILE_NUMBER")}
 
                     <span
                       style={{
-                        color:
-                          "red",
+                        color: "red",
                       }}
                     >
                       {" "}
@@ -3035,110 +1961,43 @@ export const PropertyDetailsForm = ({
                     </span>
                   </CardLabel>
 
-                  <div
-                    className="form-field"
-
-                    style={
-                      fieldContainerStyle
-                    }
-                  >
+                  <div className="form-field" style={fieldContainerStyle}>
                     <Controller
-                      control={
-                        control
-                      }
-
+                      control={control}
                       name="mobileNumber"
-
-                      defaultValue={
-                        propertyDetails
-                          ?.mobileNumber ||
-                        ""
-                      }
-
+                      defaultValue={propertyDetails?.mobileNumber || ""}
                       rules={{
-                        required:
-                          t(
-                            "REQUIRED_FIELD"
-                          ),
+                        required: t("REQUIRED_FIELD"),
 
                         validate: {
-                          pattern:
-                            (
-                              value
-                            ) => {
-                              const mobile =
-                                String(
-                                  value ||
-                                    ""
-                                ).trim();
+                          pattern: (value) => {
+                            const mobile = String(value || "").trim();
 
-                              if (
-                                !mobile
-                              ) {
-                                return t(
-                                  "REQUIRED_FIELD"
-                                );
-                              }
+                            if (!mobile) {
+                              return t("REQUIRED_FIELD");
+                            }
 
-                              return /^[6-9]\d{9}$/.test(
-                                mobile
-                              )
-                                ? true
-                                : t(
-                                    "NDC_MESSAGE_MOBILE_NUMBER_MUST_BE_A_VALID_TEN_DIGIT_INDIAN_NUMBER"
-                                  );
-                            },
+                            return /^[6-9]\d{9}$/.test(mobile) ? true : t("NDC_MESSAGE_MOBILE_NUMBER_MUST_BE_A_VALID_TEN_DIGIT_INDIAN_NUMBER");
+                          },
                         },
                       }}
-
-                      render={({
-                        field,
-                      }) => (
+                      render={({ field }) => (
                         <TextInput
-                          value={
-                            propertyDetails
-                              ?.mobileNumber ||
-                            ""
-                          }
+                          value={propertyDetails?.mobileNumber || ""}
+                          onChange={(e) => {
+                            const value = e.target.value;
 
-                          onChange={(
-                            e
-                          ) => {
-                            const value =
-                              e
-                                .target
-                                .value;
+                            setPropertyDetails((prev) => ({
+                              ...prev,
 
-                            setPropertyDetails(
-                              (
-                                prev
-                              ) => ({
-                                ...prev,
+                              mobileNumber: value,
+                            }));
 
-                                mobileNumber:
-                                  value,
-                              })
-                            );
-
-                            field.onChange(
-                              value
-                            );
+                            field.onChange(value);
                           }}
-
-                          onBlur={
-                            field.onBlur
-                          }
-
-                          disabled={
-                            !!cpt
-                              ?.details
-                              ?.owners?.[0]
-                              ?.mobileNumber
-                          }
-
-                          style={
-                            inputStyle
-                          }
+                          onBlur={field.onBlur}
+                          disabled={!!cpt?.details?.owners?.[0]?.mobileNumber}
+                          style={inputStyle}
                         />
                       )}
                     />
@@ -3149,22 +2008,17 @@ export const PropertyDetailsForm = ({
 
                 <LabelFieldPair
                   style={{
-                    display:
-                      "block",
+                    display: "block",
 
-                    marginBottom:
-                      "22px",
+                    marginBottom: "22px",
                   }}
                 >
                   <CardLabel className="card-label-smaller ndc_card_labels">
-                    {t(
-                      "NDC_ADDRESS"
-                    )}
+                    {t("NDC_ADDRESS")}
 
                     <span
                       style={{
-                        color:
-                          "red",
+                        color: "red",
                       }}
                     >
                       {" "}
@@ -3172,97 +2026,35 @@ export const PropertyDetailsForm = ({
                     </span>
                   </CardLabel>
 
-                  <div
-                    className="form-field"
-
-                    style={
-                      fieldContainerStyle
-                    }
-                  >
+                  <div className="form-field" style={fieldContainerStyle}>
                     <Controller
-                      control={
-                        control
-                      }
-
+                      control={control}
                       name="address"
-
-                      defaultValue={
-                        propertyDetails
-                          ?.address ||
-                        ""
-                      }
-
+                      defaultValue={propertyDetails?.address || ""}
                       rules={{
-                        required:
-                          t(
-                            "REQUIRED_FIELD"
-                          ),
+                        required: t("REQUIRED_FIELD"),
 
                         validate: {
-                          required:
-                            (
-                              value
-                            ) =>
-                              value &&
-                              String(
-                                value
-                              ).trim() !==
-                                ""
-                                ? true
-                                : t(
-                                    "REQUIRED_FIELD"
-                                  ),
+                          required: (value) => (value && String(value).trim() !== "" ? true : t("REQUIRED_FIELD")),
                         },
                       }}
-
-                      render={({
-                        field,
-                      }) => (
+                      render={({ field }) => (
                         <TextInput
-                          value={
-                            propertyDetails
-                              ?.address ||
-                            ""
-                          }
+                          value={propertyDetails?.address || ""}
+                          onChange={(e) => {
+                            const value = e.target.value;
 
-                          onChange={(
-                            e
-                          ) => {
-                            const value =
-                              e
-                                .target
-                                .value;
+                            setPropertyDetails((prev) => ({
+                              ...prev,
 
-                            setPropertyDetails(
-                              (
-                                prev
-                              ) => ({
-                                ...prev,
+                              address: value,
+                            }));
 
-                                address:
-                                  value,
-                              })
-                            );
-
-                            field.onChange(
-                              value
-                            );
+                            field.onChange(value);
                           }}
-
-                          onBlur={
-                            field.onBlur
-                          }
-
-                          disabled={
-                            !!cpt
-                              ?.details
-                              ?.owners?.[0]
-                              ?.permanentAddress
-                          }
-
-                          style={
-                            inputStyle
-                          }
+                          onBlur={field.onBlur}
+                          disabled={!!cpt?.details?.owners?.[0]?.permanentAddress}
+                          style={inputStyle}
                         />
                       )}
                     />
@@ -3279,90 +2071,39 @@ export const PropertyDetailsForm = ({
 
         <LabelFieldPair
           style={{
-            display:
-              "block",
+            display: "block",
 
-            marginTop:
-              "10px",
+            marginTop: "10px",
 
-            marginBottom:
-              "22px",
+            marginBottom: "22px",
           }}
         >
-          <CardLabel className="card-label-smaller ndc_card_labels">
-            {t(
-              "Remarks"
-            )}
-          </CardLabel>
+          <CardLabel className="card-label-smaller ndc_card_labels">{t("Remarks")}</CardLabel>
 
-          <div
-            className="form-field"
-
-            style={
-              fieldContainerStyle
-            }
-          >
+          <div className="form-field" style={fieldContainerStyle}>
             <Controller
-              control={
-                control
-              }
-
+              control={control}
               name="remarks"
-
-              defaultValue={
-                propertyDetails
-                  ?.remarks ||
-                ""
-              }
-
+              defaultValue={propertyDetails?.remarks || ""}
               rules={{
-                required:
-                  t(
-                    "REQUIRED_FIELD"
-                  ),
+                required: t("REQUIRED_FIELD"),
               }}
-
-              render={({
-                field,
-              }) => (
+              render={({ field }) => (
                 <TextInput
-                  value={
-                    propertyDetails
-                      ?.remarks ||
-                    ""
-                  }
+                  value={propertyDetails?.remarks || ""}
+                  onChange={(e) => {
+                    const value = e.target.value;
 
-                  onChange={(
-                    e
-                  ) => {
-                    const value =
-                      e
-                        .target
-                        .value;
+                    setPropertyDetails((prev) => ({
+                      ...prev,
 
-                    setPropertyDetails(
-                      (
-                        prev
-                      ) => ({
-                        ...prev,
+                      remarks: value,
+                    }));
 
-                        remarks:
-                          value,
-                      })
-                    );
-
-                    field.onChange(
-                      value
-                    );
+                    field.onChange(value);
                   }}
-
-                  onBlur={
-                    field.onBlur
-                  }
-
-                  style={
-                    inputStyle
-                  }
+                  onBlur={field.onBlur}
+                  style={inputStyle}
                 />
               )}
             />
@@ -3375,80 +2116,34 @@ export const PropertyDetailsForm = ({
 
         <LabelFieldPair
           style={{
-            display:
-              "block",
+            display: "block",
 
-            marginBottom:
-              "22px",
+            marginBottom: "22px",
           }}
         >
-          <CardLabel className="card-label-smaller ndc_card_labels">
-            {t(
-              "NDC_TL_NUMBER"
-            )}
-          </CardLabel>
+          <CardLabel className="card-label-smaller ndc_card_labels">{t("NDC_TL_NUMBER")}</CardLabel>
 
-          <div
-            className="form-field"
-
-            style={
-              fieldContainerStyle
-            }
-          >
+          <div className="form-field" style={fieldContainerStyle}>
             <Controller
-              control={
-                control
-              }
-
+              control={control}
               name="tlNumber"
-
-              defaultValue={
-                propertyDetails
-                  ?.tlNumber ||
-                ""
-              }
-
-              render={({
-                field,
-              }) => (
+              defaultValue={propertyDetails?.tlNumber || ""}
+              render={({ field }) => (
                 <TextInput
-                  value={
-                    propertyDetails
-                      ?.tlNumber ||
-                    ""
-                  }
+                  value={propertyDetails?.tlNumber || ""}
+                  onChange={(e) => {
+                    const value = e.target.value;
 
-                  onChange={(
-                    e
-                  ) => {
-                    const value =
-                      e
-                        .target
-                        .value;
+                    setPropertyDetails((prev) => ({
+                      ...prev,
 
-                    setPropertyDetails(
-                      (
-                        prev
-                      ) => ({
-                        ...prev,
+                      tlNumber: value,
+                    }));
 
-                        tlNumber:
-                          value,
-                      })
-                    );
-
-                    field.onChange(
-                      value
-                    );
+                    field.onChange(value);
                   }}
-
-                  onBlur={
-                    field.onBlur
-                  }
-
-                  style={
-                    inputStyle
-                  }
+                  onBlur={field.onBlur}
+                  style={inputStyle}
                 />
               )}
             />
@@ -3460,13 +2155,8 @@ export const PropertyDetailsForm = ({
         ====================================================== */}
 
         {showToast && (
-          <div
-            className="ndc-details-form-message"
-            role="alert"
-          >
-            {t(
-              showToast?.label
-            )}
+          <div className="ndc-details-form-message" role="alert">
+            {t(showToast?.label)}
           </div>
         )}
 
@@ -3474,32 +2164,22 @@ export const PropertyDetailsForm = ({
             PAYMENT MODAL
         ====================================================== */}
 
-        {showPayModal &&
-          PayWSBillModal && (
-            <PayWSBillModal
-              setShowToast={() => {
-                setShowPayModal(
-                  false
-                );
+        {showPayModal && PayWSBillModal && (
+          <PayWSBillModal
+            setShowToast={() => {
+              setShowPayModal(false);
 
-                setSelectedBillData(
-                  {}
-                );
-              }}
-
-              billData={
-                selectedBillData
-              }
-            />
-          )}
+              setSelectedBillData({});
+            }}
+            billData={selectedBillData}
+          />
+        )}
 
         {/* =====================================================
             LOADER
         ====================================================== */}
 
-        {propertyLoader && (
-          <Loader />
-        )}
+        {propertyLoader && <Loader />}
       </div>
     </div>
   );

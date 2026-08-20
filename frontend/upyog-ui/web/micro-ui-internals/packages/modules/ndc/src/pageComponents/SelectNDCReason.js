@@ -1,16 +1,6 @@
-import React, {
-  useState,
-  useEffect,
-  useMemo,
-} from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
-import {
-  CardLabel,
-  Dropdown,
-  TextInput,
-  CardLabelError,
-  Loader,
-} from "@nudmcdgnpm/digit-ui-react-components";
+import { CardLabel, Dropdown, TextInput, CardLabelError, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 
 import { useForm, Controller } from "react-hook-form";
 import { useSelector } from "react-redux";
@@ -27,19 +17,8 @@ import Timeline from "../components/NDCTimeline";
 // Label
 // TextInput
 
-function SelectNDCReason({
-  config,
-  onSelect,
-  userType,
-  formData,
-  setError,
-  formState,
-  clearErrors,
-}) {
-  const [ndcReason, setNDCReason] =
-    useState(
-      formData?.NDCReason || {}
-    );
+function SelectNDCReason({ config, onSelect, userType, formData, setError, formState, clearErrors }) {
+  const [ndcReason, setNDCReason] = useState(formData?.NDCReason || {});
 
   const {
     control,
@@ -47,22 +26,14 @@ function SelectNDCReason({
     watch,
     setValue,
   } = useForm({
-    defaultValues:
-      formData?.NDCReason || {},
+    defaultValues: formData?.NDCReason || {},
   });
 
-  const { t } =
-    useTranslation();
+  const { t } = useTranslation();
 
-  const apiDataCheck =
-    useSelector(
-      (state) =>
-        state.ndc.NDCForm?.formData
-          ?.responseData
-    );
+  const apiDataCheck = useSelector((state) => state.ndc.NDCForm?.formData?.responseData);
 
-  const tenantId =
-    Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.ULBService.getCurrentTenantId();
 
   /*
    * ---------------------------------------------------------
@@ -70,15 +41,7 @@ function SelectNDCReason({
    * ---------------------------------------------------------
    */
 
-  const {
-    data: menuList,
-    isLoading,
-  } =
-    Digit.Hooks.useCustomMDMS(
-      tenantId,
-      "NDC",
-      [{ name: "Reasons" }]
-    );
+  const { data: menuList, isLoading } = Digit.Hooks.useCustomMDMS(tenantId, "NDC", [{ name: "Reasons" }]);
 
   /*
    * ---------------------------------------------------------
@@ -86,26 +49,20 @@ function SelectNDCReason({
    * ---------------------------------------------------------
    */
 
-  const ndcReasonOptions =
-    useMemo(() => {
-      const MenuListOfReasons = [];
+  const ndcReasonOptions = useMemo(() => {
+    const MenuListOfReasons = [];
 
-      if (
-        menuList?.NDC?.Reasons
-          ?.length > 0
-      ) {
-        menuList.NDC.Reasons.forEach(
-          (val) => {
-            MenuListOfReasons.push({
-              i18nKey: val?.code,
-              code: val?.code,
-            });
-          }
-        );
-      }
+    if (menuList?.NDC?.Reasons?.length > 0) {
+      menuList.NDC.Reasons.forEach((val) => {
+        MenuListOfReasons.push({
+          i18nKey: val?.code,
+          code: val?.code,
+        });
+      });
+    }
 
-      return MenuListOfReasons;
-    }, [menuList]);
+    return MenuListOfReasons;
+  }, [menuList]);
 
   /*
    * ---------------------------------------------------------
@@ -114,11 +71,7 @@ function SelectNDCReason({
    */
 
   useEffect(() => {
-    onSelect(
-      "NDCReason",
-      ndcReason,
-      config
-    );
+    onSelect("NDCReason", ndcReason, config);
   }, [ndcReason]);
 
   /*
@@ -128,33 +81,16 @@ function SelectNDCReason({
    */
 
   useEffect(() => {
-    if (
-      apiDataCheck &&
-      ndcReasonOptions?.length > 0
-    ) {
-      const matchedOption =
-        ndcReasonOptions.find(
-          (opt) =>
-            opt?.code ===
-            apiDataCheck?.[0]?.reason
-        );
+    if (apiDataCheck && ndcReasonOptions?.length > 0) {
+      const matchedOption = ndcReasonOptions.find((opt) => opt?.code === apiDataCheck?.[0]?.reason);
 
       if (matchedOption) {
-        setNDCReason(
-          matchedOption
-        );
+        setNDCReason(matchedOption);
 
-        setValue(
-          "NDCReason",
-          matchedOption
-        );
+        setValue("NDCReason", matchedOption);
       }
     }
-  }, [
-    apiDataCheck,
-    ndcReasonOptions,
-    setValue,
-  ]);
+  }, [apiDataCheck, ndcReasonOptions, setValue]);
 
   /*
    * ---------------------------------------------------------
@@ -212,28 +148,15 @@ function SelectNDCReason({
         boxSizing: "border-box",
       }}
     >
-      {window.location.href.includes(
-        "/citizen"
-      ) ? (
-        <Timeline currentStep={1} />
-      ) : null}
+      {window.location.href.includes("/citizen") ? <Timeline currentStep={1} /> : null}
 
       {/* =====================================================
           REASON
       ===================================================== */}
 
-      <div
-        style={
-          fieldWrapperStyle
-        }
-      >
-        <CardLabel
-          className="card-label-smaller ndc_card_labels"
-          style={labelStyle}
-        >
-          {t(
-            "NDC_NEW_NDC_APPLICATION_NDC_REASON"
-          )}
+      <div style={fieldWrapperStyle}>
+        <CardLabel className="card-label-smaller ndc_card_labels" style={labelStyle}>
+          {t("NDC_NEW_NDC_APPLICATION_NDC_REASON")}
 
           <span
             style={{
@@ -249,48 +172,29 @@ function SelectNDCReason({
           <Controller
             name="NDCReason"
             rules={{
-              required: t(
-                "REQUIRED_FIELD"
-              ),
+              required: t("REQUIRED_FIELD"),
             }}
-            defaultValue={
-              ndcReason
-            }
+            defaultValue={ndcReason}
             control={control}
             render={({ field }) => (
               <Dropdown
                 className="form-field"
-                selected={
-                  field.value
-                }
-                option={
-                  ndcReasonOptions
-                }
+                selected={field.value}
+                option={ndcReasonOptions}
                 select={(e) => {
                   setNDCReason(e);
                   field.onChange(e);
                 }}
                 optionKey="i18nKey"
-                onBlur={
-                  field.onBlur
-                }
+                onBlur={field.onBlur}
                 t={t}
               />
             )}
           />
         </div>
 
-        <CardLabelError
-          className="ndc-card-label-error"
-          style={errorStyle}
-        >
-          {localFormState
-            .touched?.NDCReason
-            ? localFormState
-                .errors
-                ?.NDCReason
-                ?.message
-            : ""}
+        <CardLabelError className="ndc-card-label-error" style={errorStyle}>
+          {localFormState.touched?.NDCReason ? localFormState.errors?.NDCReason?.message : ""}
         </CardLabelError>
       </div>
 
@@ -298,18 +202,9 @@ function SelectNDCReason({
           OTHER REASON
       ===================================================== */}
 
-      {watch("NDCReason")
-        ?.code ===
-        "OTHERS" && (
-        <div
-          style={
-            fieldWrapperStyle
-          }
-        >
-          <CardLabel
-            className="card-label-smaller ndc_card_labels"
-            style={labelStyle}
-          >
+      {watch("NDCReason")?.code === "OTHERS" && (
+        <div style={fieldWrapperStyle}>
+          <CardLabel className="card-label-smaller ndc_card_labels" style={labelStyle}>
             {t("Reason")}
           </CardLabel>
 
@@ -317,44 +212,23 @@ function SelectNDCReason({
             <Controller
               control={control}
               name="reason"
-              defaultValue={
-                ndcReason?.reason ||
-                ""
-              }
-              render={({
-                field,
-              }) => (
+              defaultValue={ndcReason?.reason || ""}
+              render={({ field }) => (
                 <TextInput
-                  value={
-                    field.value ||
-                    ""
-                  }
+                  value={field.value || ""}
                   onChange={(e) => {
-                    const updatedReason =
-                      {
-                        ...ndcReason,
-                        reason:
-                          e.target
-                            .value,
-                      };
+                    const updatedReason = {
+                      ...ndcReason,
+                      reason: e.target.value,
+                    };
 
-                    setNDCReason(
-                      updatedReason
-                    );
+                    setNDCReason(updatedReason);
 
-                    onSelect(
-                      "NDCReason",
-                      updatedReason,
-                      config
-                    );
+                    onSelect("NDCReason", updatedReason, config);
 
-                    field.onChange(
-                      e.target.value
-                    );
+                    field.onChange(e.target.value);
                   }}
-                  onBlur={
-                    field.onBlur
-                  }
+                  onBlur={field.onBlur}
                 />
               )}
             />

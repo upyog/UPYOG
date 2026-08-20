@@ -3,21 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import NDCSummary from "../../../../pageComponents/NDCSummary";
 import { resetNDCForm } from "../../../../redux/actions/NDCFormActions";
 
-const NDCNewFormSummaryStepThreeEmployee = ({
-  config,
-  onGoNext,
-  onBackClick,
-  t,
-}) => {
+const NDCNewFormSummaryStepThreeEmployee = ({ config, onGoNext, onBackClick, t }) => {
   const dispatch = useDispatch();
 
   const navigate = Digit.Hooks.useCustomNavigate();
 
   const tenantId = window.localStorage.getItem("CITIZEN.CITY");
 
-  const formData = useSelector(
-    (state) => state.ndc.NDCForm.formData || {}
-  );
+  const formData = useSelector((state) => state.ndc.NDCForm.formData || {});
 
   /**
    * FINAL WORKFLOW ACTION
@@ -41,13 +34,7 @@ const NDCNewFormSummaryStepThreeEmployee = ({
      *
      * we will still send APPLY.
      */
-    const actionStatus =
-      action?.action || FINAL_WORKFLOW_ACTION;
-
-    console.log(
-      "NDC Employee - Final Workflow Action:",
-      actionStatus
-    );
+    const actionStatus = action?.action || FINAL_WORKFLOW_ACTION;
 
     try {
       const res = await onSubmit(formData, actionStatus);
@@ -57,21 +44,12 @@ const NDCNewFormSummaryStepThreeEmployee = ({
        * successful API response.
        */
       if (res?.isSuccess) {
-        navigate(
-          "/upyog-ui/employee/ndc/response/" +
-            res?.response?.Applications?.[0]?.applicationNo
-        );
+        navigate("/upyog-ui/employee/ndc/response/" + res?.response?.Applications?.[0]?.applicationNo);
       } else {
-        console.error(
-          "NDC submission failed. Not moving to response page.",
-          res?.response
-        );
+        console.error("NDC submission failed. Not moving to response page.", res?.response);
       }
     } catch (error) {
-      console.error(
-        "Error while submitting NDC application:",
-        error
-      );
+      console.error("Error while submitting NDC application:", error);
 
       alert(`Error: ${error?.message}`);
     }
@@ -82,26 +60,17 @@ const NDCNewFormSummaryStepThreeEmployee = ({
    * expected by NDC Update API.
    */
   function mapToNDCPayload(inputData, actionStatus) {
-    const applicant =
-      Digit.UserService.getUser()?.info || {};
+    const applicant = Digit.UserService.getUser()?.info || {};
 
     /**
      * Make sure workflow action can NEVER be null/undefined.
      */
-    const finalWorkflowAction =
-      actionStatus || FINAL_WORKFLOW_ACTION;
-
-    console.log(
-      "NDC Employee - mapToNDCPayload action:",
-      finalWorkflowAction
-    );
+    const finalWorkflowAction = actionStatus || FINAL_WORKFLOW_ACTION;
 
     /**
      * Get owners from existing application data.
      */
-    const owners = (
-      inputData?.apiData?.Applications?.[0]?.owners || []
-    ).map((item) => {
+    const owners = (inputData?.apiData?.Applications?.[0]?.owners || []).map((item) => {
       const obj = JSON.parse(JSON.stringify(item));
 
       /**
@@ -115,10 +84,7 @@ const NDCNewFormSummaryStepThreeEmployee = ({
     /**
      * Pick the source of truth for the application.
      */
-    const baseApplication =
-      formData?.responseData?.[0] ||
-      formData?.apiData?.Applications?.[0] ||
-      {};
+    const baseApplication = formData?.responseData?.[0] || formData?.apiData?.Applications?.[0] || {};
 
     /**
      * Build updated application.
@@ -151,10 +117,7 @@ const NDCNewFormSummaryStepThreeEmployee = ({
     /**
      * Add uploaded documents.
      */
-    (
-      inputData?.DocummentDetails?.documents?.documents ||
-      []
-    ).forEach((doc) => {
+    (inputData?.DocummentDetails?.documents?.documents || []).forEach((doc) => {
       updatedApplication.Documents.push({
         uuid: doc?.documentUid,
         documentType: doc?.documentType,
@@ -168,30 +131,6 @@ const NDCNewFormSummaryStepThreeEmployee = ({
     const payload = {
       Applications: [updatedApplication],
     };
-
-    console.log(
-      "========== NDC EMPLOYEE APPLY PAYLOAD =========="
-    );
-
-    console.log(
-      "Workflow action:",
-      updatedApplication?.workflow?.action
-    );
-
-    console.log(
-      "Application:",
-      updatedApplication
-    );
-
-    console.log(
-      "Payload:",
-      payload
-    );
-
-    console.log(
-      "==============================================="
-    );
-
     return payload;
   }
 
@@ -202,35 +141,22 @@ const NDCNewFormSummaryStepThreeEmployee = ({
     /**
      * Never allow null/undefined action.
      */
-    const finalAction =
-      actionStatus || FINAL_WORKFLOW_ACTION;
+    const finalAction = actionStatus || FINAL_WORKFLOW_ACTION;
 
-    console.log(
-      "NDC Employee - Calling NDCUpdate with action:",
-      finalAction
-    );
-
-    const finalPayload = mapToNDCPayload(
-      data,
-      finalAction
-    );
+    const finalPayload = mapToNDCPayload(data, finalAction);
 
     try {
-      const response =
-        await Digit.NDCService.NDCUpdate({
-          tenantId,
-          details: finalPayload,
-        });
+      const response = await Digit.NDCService.NDCUpdate({
+        tenantId,
+        details: finalPayload,
+      });
 
       /**
        * Reset form only after API call.
        */
       dispatch(resetNDCForm());
 
-      if (
-        response?.ResponseInfo?.status ===
-        "successful"
-      ) {
+      if (response?.ResponseInfo?.status === "successful") {
         return {
           isSuccess: true,
           response,
@@ -242,10 +168,7 @@ const NDCNewFormSummaryStepThreeEmployee = ({
         response,
       };
     } catch (error) {
-      console.error(
-        "NDC Update API error:",
-        error
-      );
+      console.error("NDC Update API error:", error);
 
       return {
         isSuccess: false,
@@ -258,18 +181,13 @@ const NDCNewFormSummaryStepThreeEmployee = ({
    * Function to handle Back button.
    */
   const onGoBack = (data) => {
-    console.log("NDC Employee - Back:", data);
 
     onBackClick(config.key, data);
   };
 
   return (
     <React.Fragment>
-      <NDCSummary
-        formData={formData}
-        goNext={goNext}
-        onGoBack={onGoBack}
-      />
+      <NDCSummary formData={formData} goNext={goNext} onGoBack={onGoBack} />
     </React.Fragment>
   );
 };

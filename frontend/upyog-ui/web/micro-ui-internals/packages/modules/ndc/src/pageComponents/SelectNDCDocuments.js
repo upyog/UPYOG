@@ -1,47 +1,25 @@
 import React, { useEffect, useState } from "react";
-import {
-  CardLabel,
-  UploadFile,
-  Toast,
-} from "@nudmcdgnpm/digit-ui-react-components";
+import { CardLabel, UploadFile, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import { useSelector } from "react-redux";
 import { Loader } from "../components/Loader";
 import Timeline from "../components/NDCTimeline";
 
-const SelectNDCDocuments = ({
-  t,
-  config,
-  onSelect,
-  userType,
-  formData,
-  setError: setFormError,
-  clearErrors: clearFormErrors,
-  formState,
-}) => {
-  const checkFormData = useSelector(
-    (state) => state.ndc.NDCForm.formData || {}
-  );
+const SelectNDCDocuments = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {
+  const checkFormData = useSelector((state) => state.ndc.NDCForm.formData || {});
 
   const stateId = Digit.ULBService.getStateId();
 
-  const [documents, setDocuments] = useState(
-    formData?.documents?.documents || []
-  );
+  const [documents, setDocuments] = useState(formData?.documents?.documents || []);
 
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (
-      checkFormData?.responseData?.[0]?.Documents?.length &&
-      documents.length === 0
-    ) {
-      const apiDocs = checkFormData?.responseData?.[0]?.Documents?.map(
-        (doc) => ({
-          documentType: doc?.documentType,
-          fileStoreId: doc?.documentAttachment,
-          documentUid: doc?.documentAttachment,
-        })
-      );
+    if (checkFormData?.responseData?.[0]?.Documents?.length && documents.length === 0) {
+      const apiDocs = checkFormData?.responseData?.[0]?.Documents?.map((doc) => ({
+        documentType: doc?.documentType,
+        fileStoreId: doc?.documentAttachment,
+        documentUid: doc?.documentAttachment,
+      }));
 
       setDocuments(apiDocs);
     }
@@ -49,11 +27,7 @@ const SelectNDCDocuments = ({
 
   const { action = "create" } = Digit.Hooks.useQueryParams();
 
-  const { isLoading, data } = Digit.Hooks.ndc.useNDCDoc(
-    stateId,
-    "NDC",
-    "Documents"
-  );
+  const { isLoading, data } = Digit.Hooks.ndc.useNDCDoc(stateId, "NDC", "Documents");
 
   const ndcDocuments = data?.NDC?.Documents;
 
@@ -80,9 +54,7 @@ const SelectNDCDocuments = ({
       }}
     >
       {/* Timeline */}
-      {window.location.href.includes("/citizen") ? (
-        <Timeline currentStep={2} />
-      ) : null}
+      {window.location.href.includes("/citizen") ? <Timeline currentStep={2} /> : null}
 
       {/* Main Documents Card */}
       <div
@@ -121,8 +93,7 @@ const SelectNDCDocuments = ({
               color: "#333333",
             }}
           >
-            {t("NDC_SUPPORTED_FORMATS") ||
-              "Supported formats: JPG, PNG for photo and JPG, PNG, PDF for other documents"}
+            {t("NDC_SUPPORTED_FORMATS") || "Supported formats: JPG, PNG for photo and JPG, PNG, PDF for other documents"}
           </div>
 
           <div
@@ -133,8 +104,7 @@ const SelectNDCDocuments = ({
               color: "#333333",
             }}
           >
-            {t("NDC_MAXIMUM_UPLOAD_SIZE") ||
-              "Maximum upload size is 5 MB"}
+            {t("NDC_MAXIMUM_UPLOAD_SIZE") || "Maximum upload size is 5 MB"}
           </div>
         </div>
 
@@ -166,40 +136,20 @@ const SelectNDCDocuments = ({
         </div>
 
         {/* Error */}
-        {error && (
-          <Toast
-            isDleteBtn={true}
-            label={error}
-            onClose={() => setError(null)}
-            error
-          />
-        )}
+        {error && <Toast isDleteBtn={true} label={error} onClose={() => setError(null)} error />}
       </div>
     </div>
   );
 };
 
-function SelectDocument({
-  t,
-  document: doc,
-  setDocuments,
-  setError,
-  documents,
-  setFormError,
-  config,
-  formState,
-}) {
-  const filteredDocument = documents?.filter((item) =>
-    item?.documentType?.includes(doc?.code)
-  )[0];
+function SelectDocument({ t, document: doc, setDocuments, setError, documents, setFormError, config, formState }) {
+  const filteredDocument = documents?.filter((item) => item?.documentType?.includes(doc?.code))[0];
 
   const [getLoader, setLoader] = useState(false);
 
   const [file, setFile] = useState(null);
 
-  const [uploadedFile, setUploadedFile] = useState(
-    () => filteredDocument?.fileStoreId || null
-  );
+  const [uploadedFile, setUploadedFile] = useState(() => filteredDocument?.fileStoreId || null);
 
   function selectfile(e) {
     setFile(e.target.files[0]);
@@ -214,18 +164,13 @@ function SelectDocument({
   useEffect(() => {
     if (uploadedFile) {
       setDocuments((prev) => {
-        const filteredDocumentsByDocumentType = prev?.filter(
-          (item) => item?.documentType !== doc?.code
-        );
+        const filteredDocumentsByDocumentType = prev?.filter((item) => item?.documentType !== doc?.code);
 
         if (uploadedFile?.length === 0 || uploadedFile === null) {
           return filteredDocumentsByDocumentType;
         }
 
-        const filteredDocumentsByFileStoreId =
-          filteredDocumentsByDocumentType?.filter(
-            (item) => item?.fileStoreId !== uploadedFile
-          );
+        const filteredDocumentsByFileStoreId = filteredDocumentsByDocumentType?.filter((item) => item?.fileStoreId !== uploadedFile);
 
         return [
           ...filteredDocumentsByFileStoreId,
@@ -237,9 +182,7 @@ function SelectDocument({
         ];
       });
     } else if (uploadedFile === null) {
-      setDocuments((prev) =>
-        prev.filter((item) => item?.documentType !== doc?.code)
-      );
+      setDocuments((prev) => prev.filter((item) => item?.documentType !== doc?.code));
     }
   }, [uploadedFile]);
 
@@ -264,18 +207,12 @@ function SelectDocument({
           try {
             setUploadedFile(null);
 
-            const response = await Digit.UploadServices.Filestorage(
-              "NDC",
-              file,
-              Digit.ULBService.getStateId()
-            );
+            const response = await Digit.UploadServices.Filestorage("NDC", file, Digit.ULBService.getStateId());
 
             setLoader(false);
 
             if (response?.data?.files?.length > 0) {
-              setUploadedFile(
-                response?.data?.files[0]?.fileStoreId
-              );
+              setUploadedFile(response?.data?.files[0]?.fileStoreId);
             } else {
               setError(t("CS_FILE_UPLOAD_ERROR"));
             }
@@ -344,11 +281,7 @@ function SelectDocument({
           onDelete={() => {
             setUploadedFile(null);
           }}
-          message={
-            uploadedFile
-              ? `1 ${t("CS_ACTION_FILEUPLOADED")}`
-              : t("CS_ACTION_NO_FILEUPLOADED")
-          }
+          message={uploadedFile ? `1 ${t("CS_ACTION_FILEUPLOADED")}` : t("CS_ACTION_NO_FILEUPLOADED")}
           textStyles={{
             width: "100%",
           }}

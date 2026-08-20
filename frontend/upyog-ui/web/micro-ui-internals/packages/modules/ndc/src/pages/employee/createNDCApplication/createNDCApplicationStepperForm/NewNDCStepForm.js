@@ -81,7 +81,6 @@ export const NewNDCStepForm = () => {
   const setStep = (updatedStepNumber) => {
     dispatch(setNDCStep(updatedStepNumber));
   };
-console.log("formData in step form", formData);
   const handleSubmit = () => {};
 
   useEffect(() => {

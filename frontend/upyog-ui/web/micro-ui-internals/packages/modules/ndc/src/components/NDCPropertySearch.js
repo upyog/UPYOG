@@ -1,29 +1,14 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-} from "react";
+import React, { useState, useEffect, useRef } from "react";
 
-import {
-  TextInput,
-  Toast,
-} from "@nudmcdgnpm/digit-ui-react-components";
+import { TextInput, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 
 import { useTranslation } from "react-i18next";
 
-import {
-  useDispatch,
-  useSelector,
-} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-import {
-  updateNDCForm,
-} from "../redux/actions/NDCFormActions";
+import { updateNDCForm } from "../redux/actions/NDCFormActions";
 
-import {
-  useLocation,
-  Link,
-} from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 
 import { Loader } from "../components/Loader";
 
@@ -33,32 +18,11 @@ import { Loader } from "../components/Loader";
  * =========================================================
  */
 
-const getAddress = (
-  address,
-  t
-) => {
-  return `${address?.doorNo ? `${address?.doorNo}, ` : ""} ${
-    address?.street
-      ? `${address?.street}, `
-      : ""
-  }${
-    address?.landmark
-      ? `${address?.landmark}, `
-      : ""
-  }${t(
-    Digit.Utils.pt.getMohallaLocale(
-      address?.locality?.code,
-      address?.tenantId
-    )
-  )}, ${t(
-    Digit.Utils.pt.getCityLocale(
-      address?.tenantId
-    )
-  )}${
-    address?.pincode &&
-    t(address?.pincode)
-      ? `, ${address.pincode}`
-      : " "
+const getAddress = (address, t) => {
+  return `${address?.doorNo ? `${address?.doorNo}, ` : ""} ${address?.street ? `${address?.street}, ` : ""}${
+    address?.landmark ? `${address?.landmark}, ` : ""
+  }${t(Digit.Utils.pt.getMohallaLocale(address?.locality?.code, address?.tenantId))}, ${t(Digit.Utils.pt.getCityLocale(address?.tenantId))}${
+    address?.pincode && t(address?.pincode) ? `, ${address.pincode}` : " "
   }`;
 };
 
@@ -69,32 +33,16 @@ const getAddress = (
  * =========================================================
  */
 
-export const PropertySearchNSummary = ({
-  config,
-  onSelect,
-  formData,
-}) => {
-  const { t } =
-    useTranslation();
+export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
+  const { t } = useTranslation();
 
-  const myElementRef =
-    useRef(null);
+  const myElementRef = useRef(null);
 
-  const dispatch =
-    useDispatch();
+  const dispatch = useDispatch();
 
-  let {
-    pathname,
-    state,
-  } = useLocation();
+  let { pathname, state } = useLocation();
 
-  state =
-    state &&
-    (typeof state ===
-      "string" ||
-    state instanceof String)
-      ? JSON.parse(state)
-      : state;
+  state = state && (typeof state === "string" || state instanceof String) ? JSON.parse(state) : state;
 
   /*
    * =========================================================
@@ -102,13 +50,7 @@ export const PropertySearchNSummary = ({
    * =========================================================
    */
 
-  const apiDataCheck =
-    useSelector(
-      (state) =>
-        state.ndc.NDCForm
-          ?.formData
-          ?.responseData
-    );
+  const apiDataCheck = useSelector((state) => state.ndc.NDCForm?.formData?.responseData);
 
   /*
    * =========================================================
@@ -116,10 +58,7 @@ export const PropertySearchNSummary = ({
    * =========================================================
    */
 
-  const isEditScreen =
-    pathname.includes(
-      "/modify-application/"
-    );
+  const isEditScreen = pathname.includes("/modify-application/");
 
   /*
    * =========================================================
@@ -127,8 +66,7 @@ export const PropertySearchNSummary = ({
    * =========================================================
    */
 
-  const tenantId =
-    Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.ULBService.getCurrentTenantId();
 
   /*
    * =========================================================
@@ -136,16 +74,11 @@ export const PropertySearchNSummary = ({
    * =========================================================
    */
 
-  const search =
-    useLocation().search;
+  const search = useLocation().search;
 
-  const urlPropertyId =
-    new URLSearchParams(
-      search
-    ).get("propertyId");
+  const urlPropertyId = new URLSearchParams(search).get("propertyId");
 
-  const isfirstRender =
-    useRef(true);
+  const isfirstRender = useRef(true);
 
   /*
    * =========================================================
@@ -153,10 +86,7 @@ export const PropertySearchNSummary = ({
    * =========================================================
    */
 
-  const [
-    getLoader,
-    setLoader,
-  ] = useState(false);
+  const [getLoader, setLoader] = useState(false);
 
   /*
    * =========================================================
@@ -164,13 +94,7 @@ export const PropertySearchNSummary = ({
    * =========================================================
    */
 
-  const ptFromApi =
-    apiDataCheck?.[0]
-      ?.NdcDetails?.find(
-        (item) =>
-          item.businessService ===
-          "PT"
-      );
+  const ptFromApi = apiDataCheck?.[0]?.NdcDetails?.find((item) => item.businessService === "PT");
 
   /*
    * =========================================================
@@ -178,28 +102,10 @@ export const PropertySearchNSummary = ({
    * =========================================================
    */
 
-  const [
-    propertyId,
-    setPropertyId,
-  ] = useState(
-    formData?.cpt?.id ||
-      (urlPropertyId !== "null"
-        ? urlPropertyId
-        : "") ||
-      ptFromApi?.consumerCode ||
-      ""
-  );
+  const [propertyId, setPropertyId] = useState(formData?.cpt?.id || (urlPropertyId !== "null" ? urlPropertyId : "") || ptFromApi?.consumerCode || "");
 
-  const [
-    searchPropertyId,
-    setSearchPropertyId,
-  ] = useState(
-    formData?.cpt?.id ||
-      (urlPropertyId !== "null"
-        ? urlPropertyId
-        : "") ||
-      ptFromApi?.consumerCode ||
-      ""
+  const [searchPropertyId, setSearchPropertyId] = useState(
+    formData?.cpt?.id || (urlPropertyId !== "null" ? urlPropertyId : "") || ptFromApi?.consumerCode || "",
   );
 
   /*
@@ -208,10 +114,7 @@ export const PropertySearchNSummary = ({
    * =========================================================
    */
 
-  const [
-    showToast,
-    setShowToast,
-  ] = useState(null);
+  const [showToast, setShowToast] = useState(null);
 
   /*
    * =========================================================
@@ -219,22 +122,12 @@ export const PropertySearchNSummary = ({
    * =========================================================
    */
 
-  const [
-    propertyDetails,
-    setPropertyDetails,
-  ] = useState(() => {
-    if (
-      formData?.cpt?.details &&
-      Object.keys(
-        formData?.cpt?.details
-      ).length > 0
-    ) {
+  const [propertyDetails, setPropertyDetails] = useState(() => {
+    if (formData?.cpt?.details && Object.keys(formData?.cpt?.details).length > 0) {
       return {
         Properties: [
           {
-            ...formData
-              ?.cpt
-              ?.details,
+            ...formData?.cpt?.details,
           },
         ],
       };
@@ -251,20 +144,11 @@ export const PropertySearchNSummary = ({
    * =========================================================
    */
 
-  const [
-    propertyDues,
-    setPropertyDues,
-  ] = useState(() => {
-    if (
-      formData?.cpt?.dues &&
-      Object.keys(
-        formData?.cpt?.dues
-      ).length > 0
-    ) {
+  const [propertyDues, setPropertyDues] = useState(() => {
+    if (formData?.cpt?.dues && Object.keys(formData?.cpt?.dues).length > 0) {
       return {
         dues: {
-          ...formData?.cpt
-            ?.dues,
+          ...formData?.cpt?.dues,
         },
       };
     }
@@ -280,25 +164,13 @@ export const PropertySearchNSummary = ({
    * =========================================================
    */
 
-  const [
-    isSearchClicked,
-    setIsSearchClicked,
-  ] = useState(false);
+  const [isSearchClicked, setIsSearchClicked] = useState(false);
 
-  const [
-    getNoDue,
-    setNoDue,
-  ] = useState(false);
+  const [getNoDue, setNoDue] = useState(false);
 
-  const [
-    getCheckStatus,
-    setCheckStats,
-  ] = useState(false);
+  const [getCheckStatus, setCheckStats] = useState(false);
 
-  const [
-    getPayDuesButton,
-    setPayDuesButton,
-  ] = useState(false);
+  const [getPayDuesButton, setPayDuesButton] = useState(false);
 
   /*
    * =========================================================
@@ -310,38 +182,28 @@ export const PropertySearchNSummary = ({
     isLoading,
     isError,
     error,
-    data:
-      propertyDetailsFetch,
-  } =
-    Digit.Hooks.pt.usePropertySearch(
-      {
-        filters: {
-          propertyIds:
-            searchPropertyId,
-        },
-
-        tenantId:
-          tenantId,
+    data: propertyDetailsFetch,
+  } = Digit.Hooks.pt.usePropertySearch(
+    {
+      filters: {
+        propertyIds: searchPropertyId,
       },
 
-      {
-        filters: {
-          propertyIds:
-            searchPropertyId,
-        },
+      tenantId: tenantId,
+    },
 
-        tenantId:
-          tenantId,
+    {
+      filters: {
+        propertyIds: searchPropertyId,
+      },
 
-        enabled:
-          searchPropertyId
-            ? true
-            : false,
+      tenantId: tenantId,
 
-        privacy:
-          Digit.Utils.getPrivacyObject(),
-      }
-    );
+      enabled: searchPropertyId ? true : false,
+
+      privacy: Digit.Utils.getPrivacyObject(),
+    },
+  );
 
   /*
    * =========================================================
@@ -350,20 +212,12 @@ export const PropertySearchNSummary = ({
    */
 
   useEffect(() => {
-    if (
-      ptFromApi?.consumerCode
-    ) {
-      setIsSearchClicked(
-        true
-      );
+    if (ptFromApi?.consumerCode) {
+      setIsSearchClicked(true);
 
-      setPropertyId(
-        ptFromApi.consumerCode
-      );
+      setPropertyId(ptFromApi.consumerCode);
 
-      setSearchPropertyId(
-        ptFromApi.consumerCode
-      );
+      setSearchPropertyId(ptFromApi.consumerCode);
 
       setNoDue(true);
 
@@ -374,29 +228,16 @@ export const PropertySearchNSummary = ({
       });
 
       const updated = {
-        ...formData[
-          config.key
-        ],
+        ...formData[config.key],
 
-        id:
-          ptFromApi.consumerCode,
+        id: ptFromApi.consumerCode,
       };
 
-      onSelect(
-        config.key,
-        updated
-      );
+      onSelect(config.key, updated);
 
-      dispatch(
-        updateNDCForm(
-          config.key,
-          updated
-        )
-      );
+      dispatch(updateNDCForm(config.key, updated));
     }
-  }, [
-    ptFromApi,
-  ]);
+  }, [ptFromApi]);
 
   /*
    * =========================================================
@@ -405,40 +246,20 @@ export const PropertySearchNSummary = ({
    */
 
   useEffect(() => {
-    if (
-      propertyDetailsFetch &&
-      propertyDetailsFetch
-        ?.Properties &&
-      propertyDetailsFetch
-        ?.Properties
-        ?.length > 0
-    ) {
-      setPropertyDetails(
-        propertyDetailsFetch
-      );
+    if (propertyDetailsFetch && propertyDetailsFetch?.Properties && propertyDetailsFetch?.Properties?.length > 0) {
+      setPropertyDetails(propertyDetailsFetch);
 
-      setShowToast(
-        null
-      );
+      setShowToast(null);
 
-      setCheckStats(
-        true
-      );
+      setCheckStats(true);
     } else {
-      if (
-        isfirstRender.current
-      ) {
-        isfirstRender.current =
-          false;
+      if (isfirstRender.current) {
+        isfirstRender.current = false;
 
         return;
       }
 
-      if (
-        !formData?.cpt
-          ?.details &&
-        isSearchClicked
-      ) {
+      if (!formData?.cpt?.details && isSearchClicked) {
         setPropertyDetails({
           Properties: [],
         });
@@ -446,14 +267,11 @@ export const PropertySearchNSummary = ({
         setShowToast({
           error: true,
 
-          label:
-            "CS_PT_NO_PROPERTIES_FOUND",
+          label: "CS_PT_NO_PROPERTIES_FOUND",
         });
       }
     }
-  }, [
-    propertyDetailsFetch,
-  ]);
+  }, [propertyDetailsFetch]);
 
   /*
    * =========================================================
@@ -462,24 +280,10 @@ export const PropertySearchNSummary = ({
    */
 
   useEffect(() => {
-    if (
-      propertyId &&
-      (
-        window.location.href.includes(
-          "/renew-application-details/"
-        ) ||
-        window.location.href.includes(
-          "/edit-application-details/"
-        )
-      )
-    ) {
-      setSearchPropertyId(
-        propertyId
-      );
+    if (propertyId && (window.location.href.includes("/renew-application-details/") || window.location.href.includes("/edit-application-details/"))) {
+      setSearchPropertyId(propertyId);
     }
-  }, [
-    propertyId,
-  ]);
+  }, [propertyId]);
 
   /*
    * =========================================================
@@ -488,26 +292,14 @@ export const PropertySearchNSummary = ({
    */
 
   useEffect(() => {
-    if (
-      isLoading === false &&
-      error &&
-      error === true &&
-      propertyDetails
-        ?.Properties
-        ?.length === 0
-    ) {
+    if (isLoading === false && error && error === true && propertyDetails?.Properties?.length === 0) {
       setShowToast({
         error: true,
 
-        label:
-          "CS_PT_NO_PROPERTIES_FOUND",
+        label: "CS_PT_NO_PROPERTIES_FOUND",
       });
     }
-  }, [
-    error,
-    propertyDetails,
-    isLoading,
-  ]);
+  }, [error, propertyDetails, isLoading]);
 
   /*
    * =========================================================
@@ -517,30 +309,15 @@ export const PropertySearchNSummary = ({
 
   useEffect(() => {
     const updated = {
-      ...formData[
-        config.key
-      ],
+      ...formData[config.key],
 
-      details:
-        propertyDetails
-          ?.Properties?.[0],
+      details: propertyDetails?.Properties?.[0],
     };
 
-    onSelect(
-      config.key,
-      updated
-    );
+    onSelect(config.key, updated);
 
-    dispatch(
-      updateNDCForm(
-        config.key,
-        updated
-      )
-    );
-  }, [
-    propertyDetails,
-    pathname,
-  ]);
+    dispatch(updateNDCForm(config.key, updated));
+  }, [propertyDetails, pathname]);
 
   /*
    * =========================================================
@@ -550,29 +327,15 @@ export const PropertySearchNSummary = ({
 
   useEffect(() => {
     const updated = {
-      ...formData[
-        config.key
-      ],
+      ...formData[config.key],
 
-      dues:
-        propertyDues?.dues,
+      dues: propertyDues?.dues,
     };
 
-    onSelect(
-      config.key,
-      updated
-    );
+    onSelect(config.key, updated);
 
-    dispatch(
-      updateNDCForm(
-        config.key,
-        updated
-      )
-    );
-  }, [
-    propertyDues,
-    pathname,
-  ]);
+    dispatch(updateNDCForm(config.key, updated));
+  }, [propertyDues, pathname]);
 
   /*
    * =========================================================
@@ -580,64 +343,50 @@ export const PropertySearchNSummary = ({
    * =========================================================
    */
 
-  const searchProperty =
-    () => {
-      if (!propertyId) {
-        setShowToast({
-          error: true,
+  const searchProperty = () => {
+    if (!propertyId) {
+      setShowToast({
+        error: true,
 
-          label:
-            "PT_ENTER_PROPERTY_ID_AND_SEARCH",
-        });
+        label: "PT_ENTER_PROPERTY_ID_AND_SEARCH",
+      });
 
-        return;
-      }
+      return;
+    }
 
-      if (
-        propertyId !==
-        searchPropertyId
-      ) {
-        setPropertyDetails({
-          Properties: [],
-        });
+    if (propertyId !== searchPropertyId) {
+      setPropertyDetails({
+        Properties: [],
+      });
 
-        setSearchPropertyId(
-          propertyId
-        );
+      setSearchPropertyId(propertyId);
 
-        setIsSearchClicked(
-          true
-        );
+      setIsSearchClicked(true);
 
-        setPropertyDues({
-          dues: null,
-        });
+      setPropertyDues({
+        dues: null,
+      });
 
-        onSelect(
-          "PropertyDetails",
-          {
-            email: "",
+      onSelect("PropertyDetails", {
+        email: "",
 
-            propertyBillData: {
-              isLoading: false,
-              billData: {},
-            },
+        propertyBillData: {
+          isLoading: false,
+          billData: {},
+        },
 
-            waterConnection:
-              [],
+        waterConnection: [],
 
-            sewerageConnection:
-              [],
+        sewerageConnection: [],
 
-            firstName: "",
+        firstName: "",
 
-            mobileNumber: "",
+        mobileNumber: "",
 
-            address: "",
-          }
-        );
-      }
-    };
+        address: "",
+      });
+    }
+  };
 
   /*
    * =========================================================
@@ -645,34 +394,21 @@ export const PropertySearchNSummary = ({
    * =========================================================
    */
 
-  const handlePropertyChange =
-    (e) => {
-      const value =
-        e.target.value;
+  const handlePropertyChange = (e) => {
+    const value = e.target.value;
 
-      setPropertyId(
-        value
-      );
+    setPropertyId(value);
 
-      setValue(
-        value,
-        propertyIdInput.name
-      );
+    setValue(value, propertyIdInput.name);
 
-      setIsSearchClicked(
-        false
-      );
+    setIsSearchClicked(false);
 
-      setNoDue(false);
+    setNoDue(false);
 
-      setCheckStats(
-        false
-      );
+    setCheckStats(false);
 
-      setPayDuesButton(
-        false
-      );
-    };
+    setPayDuesButton(false);
+  };
 
   /*
    * =========================================================
@@ -681,9 +417,7 @@ export const PropertySearchNSummary = ({
    */
 
   if (isEditScreen) {
-    return (
-      <React.Fragment />
-    );
+    return <React.Fragment />;
   }
 
   /*
@@ -692,22 +426,10 @@ export const PropertySearchNSummary = ({
    * =========================================================
    */
 
-  let propertyAddress =
-    "";
+  let propertyAddress = "";
 
-  if (
-    propertyDetails &&
-    propertyDetails
-      ?.Properties
-      ?.length
-  ) {
-    propertyAddress =
-      getAddress(
-        propertyDetails
-          ?.Properties?.[0]
-          ?.address,
-        t
-      );
+  if (propertyDetails && propertyDetails?.Properties?.length) {
+    propertyAddress = getAddress(propertyDetails?.Properties?.[0]?.address, t);
   }
 
   /*
@@ -716,17 +438,13 @@ export const PropertySearchNSummary = ({
    * =========================================================
    */
 
-  const propertyIdInput =
-    {
-      label:
-        "PROPERTY_ID",
+  const propertyIdInput = {
+    label: "PROPERTY_ID",
 
-      type:
-        "text",
+    type: "text",
 
-      name:
-        "id",
-    };
+    name: "id",
+  };
 
   /*
    * =========================================================
@@ -734,30 +452,16 @@ export const PropertySearchNSummary = ({
    * =========================================================
    */
 
-  function setValue(
-    value,
-    input
-  ) {
+  function setValue(value, input) {
     const updated = {
-      ...formData[
-        config.key
-      ],
+      ...formData[config.key],
 
-      [input]:
-        value,
+      [input]: value,
     };
 
-    onSelect(
-      config.key,
-      updated
-    );
+    onSelect(config.key, updated);
 
-    dispatch(
-      updateNDCForm(
-        config.key,
-        updated
-      )
-    );
+    dispatch(updateNDCForm(config.key, updated));
   }
 
   /*
@@ -766,17 +470,8 @@ export const PropertySearchNSummary = ({
    * =========================================================
    */
 
-  function getValue(
-    input
-  ) {
-    return formData &&
-      formData[
-        config.key
-      ]
-      ? formData[
-          config.key
-        ][input]
-      : undefined;
+  function getValue(input) {
+    return formData && formData[config.key] ? formData[config.key][input] : undefined;
   }
 
   /*
@@ -789,145 +484,88 @@ export const PropertySearchNSummary = ({
     setLoader(true);
 
     try {
-      const result =
-        await Digit.PaymentService.fetchBill(
-          tenantId,
-          {
-            businessService:
-              "PT",
+      const result = await Digit.PaymentService.fetchBill(tenantId, {
+        businessService: "PT",
 
-            consumerCode:
-              propertyId,
-          }
-        );
+        consumerCode: propertyId,
+      });
 
-      if (
-        result?.Bill
-          ?.length > 0
-      ) {
-        if (
-          result
-            ?.Bill?.[0]
-            ?.totalAmount > 0
-        ) {
+      if (result?.Bill?.length > 0) {
+        if (result?.Bill?.[0]?.totalAmount > 0) {
           setShowToast({
             error: true,
 
-            label: t(
-              "NDC_MESSAGE_DUES_FOUND_PLEASE_PAY"
-            ),
+            label: t("NDC_MESSAGE_DUES_FOUND_PLEASE_PAY"),
           });
 
-          setPayDuesButton(
-            true
-          );
+          setPayDuesButton(true);
 
-          setNoDue(
-            false
-          );
+          setNoDue(false);
         } else {
           setShowToast({
             error: false,
 
-            label: t(
-              "NDC_NO_BILLS_FOUND_PROPERTY"
-            ),
+            label: t("NDC_NO_BILLS_FOUND_PROPERTY"),
           });
 
-          setNoDue(
-            true
-          );
+          setNoDue(true);
 
-          setCheckStats(
-            false
-          );
+          setCheckStats(false);
 
-          setPayDuesButton(
-            false
-          );
+          setPayDuesButton(false);
         }
 
         setPropertyDues({
-          dues:
-            result?.Bill?.[0],
+          dues: result?.Bill?.[0],
         });
-      } else if (
-        result?.Bill
-      ) {
+      } else if (result?.Bill) {
         setShowToast({
           error: false,
 
-          label: t(
-            "NDC_NO_BILLS_FOUND_PROPERTY"
-          ),
+          label: t("NDC_NO_BILLS_FOUND_PROPERTY"),
         });
 
         setPropertyDues({
           dues: {
-            totalAmount:
-              0,
+            totalAmount: 0,
           },
         });
 
-        setNoDue(
-          true
-        );
+        setNoDue(true);
 
-        setCheckStats(
-          false
-        );
+        setCheckStats(false);
 
-        setPayDuesButton(
-          false
-        );
+        setPayDuesButton(false);
       } else {
         setShowToast({
           error: false,
 
-          label: t(
-            "NDC_NO_BILLS_FOUND_PROPERTY"
-          ),
+          label: t("NDC_NO_BILLS_FOUND_PROPERTY"),
         });
 
         setPropertyDues({
           dues: {
-            totalAmount:
-              0,
+            totalAmount: 0,
           },
         });
 
-        setNoDue(
-          true
-        );
+        setNoDue(true);
 
-        setCheckStats(
-          false
-        );
+        setCheckStats(false);
 
-        setPayDuesButton(
-          false
-        );
+        setPayDuesButton(false);
       }
 
-      setLoader(
-        false
-      );
+      setLoader(false);
     } catch (error) {
-      console.error(
-        "Error while fetching property bill:",
-        error
-      );
+      console.error("Error while fetching property bill:", error);
 
-      setLoader(
-        false
-      );
+      setLoader(false);
 
       setShowToast({
         error: true,
 
-        label: t(
-          "NDC_MESSAGE_FETCH_FAILED"
-        ),
+        label: t("NDC_MESSAGE_FETCH_FAILED"),
       });
     }
   }
@@ -943,23 +581,12 @@ export const PropertySearchNSummary = ({
       return;
     }
 
-    const timer =
-      setTimeout(
-        () => {
-          setShowToast(
-            null
-          );
-        },
-        3000
-      );
+    const timer = setTimeout(() => {
+      setShowToast(null);
+    }, 3000);
 
-    return () =>
-      clearTimeout(
-        timer
-      );
-  }, [
-    showToast,
-  ]);
+    return () => clearTimeout(timer);
+  }, [showToast]);
 
   /*
    * =========================================================
@@ -967,11 +594,9 @@ export const PropertySearchNSummary = ({
    * =========================================================
    */
 
-  const FIELD_WIDTH =
-    "340px";
+  const FIELD_WIDTH = "340px";
 
-  const FIELD_HEIGHT =
-    "40px";
+  const FIELD_HEIGHT = "40px";
 
   /*
    * ---------------------------------------------------------
@@ -979,20 +604,15 @@ export const PropertySearchNSummary = ({
    * ---------------------------------------------------------
    */
 
-  const fieldWrapperStyle =
-    {
-      width:
-        FIELD_WIDTH,
+  const fieldWrapperStyle = {
+    width: FIELD_WIDTH,
 
-      maxWidth:
-        "100%",
+    maxWidth: "100%",
 
-      marginBottom:
-        "0",
+    marginBottom: "0",
 
-      boxSizing:
-        "border-box",
-    };
+    boxSizing: "border-box",
+  };
 
   /*
    * ---------------------------------------------------------
@@ -1000,38 +620,27 @@ export const PropertySearchNSummary = ({
    * ---------------------------------------------------------
    */
 
-  const fieldLabelStyle =
-    {
-      display:
-        "block",
+  const fieldLabelStyle = {
+    display: "block",
 
-      width:
-        FIELD_WIDTH,
+    width: FIELD_WIDTH,
 
-      maxWidth:
-        "100%",
+    maxWidth: "100%",
 
-      marginBottom:
-        "7px",
+    marginBottom: "7px",
 
-      padding:
-        "0",
+    padding: "0",
 
-      fontSize:
-        "12px",
+    fontSize: "12px",
 
-      lineHeight:
-        "16px",
+    lineHeight: "16px",
 
-      fontWeight:
-        "700",
+    fontWeight: "700",
 
-      color:
-        "#111111",
+    color: "#111111",
 
-      boxSizing:
-        "border-box",
-    };
+    boxSizing: "border-box",
+  };
 
   /*
    * ---------------------------------------------------------
@@ -1044,32 +653,23 @@ export const PropertySearchNSummary = ({
    * ---------------------------------------------------------
    */
 
-  const fieldInputWrapperStyle =
-    {
-      position:
-        "relative",
+  const fieldInputWrapperStyle = {
+    position: "relative",
 
-      width:
-        FIELD_WIDTH,
+    width: FIELD_WIDTH,
 
-      minWidth:
-        FIELD_WIDTH,
+    minWidth: FIELD_WIDTH,
 
-      maxWidth:
-        FIELD_WIDTH,
+    maxWidth: FIELD_WIDTH,
 
-      height:
-        FIELD_HEIGHT,
+    height: FIELD_HEIGHT,
 
-      minHeight:
-        FIELD_HEIGHT,
+    minHeight: FIELD_HEIGHT,
 
-      boxSizing:
-        "border-box",
+    boxSizing: "border-box",
 
-      flexShrink:
-        0,
-    };
+    flexShrink: 0,
+  };
 
   /*
    * ---------------------------------------------------------
@@ -1077,29 +677,21 @@ export const PropertySearchNSummary = ({
    * ---------------------------------------------------------
    */
 
-  const inputStyle =
-    {
-      width:
-        FIELD_WIDTH,
+  const inputStyle = {
+    width: FIELD_WIDTH,
 
-      minWidth:
-        FIELD_WIDTH,
+    minWidth: FIELD_WIDTH,
 
-      maxWidth:
-        FIELD_WIDTH,
+    maxWidth: FIELD_WIDTH,
 
-      height:
-        FIELD_HEIGHT,
+    height: FIELD_HEIGHT,
 
-      minHeight:
-        FIELD_HEIGHT,
+    minHeight: FIELD_HEIGHT,
 
-      boxSizing:
-        "border-box",
+    boxSizing: "border-box",
 
-      paddingRight:
-        "42px",
-    };
+    paddingRight: "42px",
+  };
 
   /*
    * ---------------------------------------------------------
@@ -1107,65 +699,45 @@ export const PropertySearchNSummary = ({
    * ---------------------------------------------------------
    */
 
-  const searchIconButtonStyle =
-    {
-      position:
-        "absolute",
+  const searchIconButtonStyle = {
+    position: "absolute",
 
-      top:
-        "50%",
+    top: "50%",
 
-      right:
-        "6px",
+    right: "6px",
 
-      transform:
-        "translateY(-50%)",
+    transform: "translateY(-50%)",
 
-      width:
-        "30px",
+    width: "30px",
 
-      height:
-        "30px",
+    height: "30px",
 
-      minWidth:
-        "30px",
+    minWidth: "30px",
 
-      minHeight:
-        "30px",
+    minHeight: "30px",
 
-      padding:
-        "0",
+    padding: "0",
 
-      margin:
-        "0",
+    margin: "0",
 
-      border:
-        "none",
+    border: "none",
 
-      outline:
-        "none",
+    outline: "none",
 
-      background:
-        "transparent",
+    background: "transparent",
 
-      display:
-        "flex",
+    display: "flex",
 
-      alignItems:
-        "center",
+    alignItems: "center",
 
-      justifyContent:
-        "center",
+    justifyContent: "center",
 
-      cursor:
-        "pointer",
+    cursor: "pointer",
 
-      zIndex:
-        20,
+    zIndex: 20,
 
-      boxSizing:
-        "border-box",
-    };
+    boxSizing: "border-box",
+  };
 
   /*
    * ---------------------------------------------------------
@@ -1178,32 +750,23 @@ export const PropertySearchNSummary = ({
    * ---------------------------------------------------------
    */
 
-  const actionAreaStyle =
-    {
-      width:
-        FIELD_WIDTH,
+  const actionAreaStyle = {
+    width: FIELD_WIDTH,
 
-      maxWidth:
-        "100%",
+    maxWidth: "100%",
 
-      display:
-        "flex",
+    display: "flex",
 
-      flexDirection:
-        "column",
+    flexDirection: "column",
 
-      alignItems:
-        "flex-start",
+    alignItems: "flex-start",
 
-      marginTop:
-        "12px",
+    marginTop: "12px",
 
-      marginBottom:
-        "32px",
+    marginBottom: "32px",
 
-      boxSizing:
-        "border-box",
-    };
+    boxSizing: "border-box",
+  };
 
   /*
    * ---------------------------------------------------------
@@ -1211,74 +774,51 @@ export const PropertySearchNSummary = ({
    * ---------------------------------------------------------
    */
 
-  const buttonStyle =
-    {
-      display:
-        "flex",
+  const buttonStyle = {
+    display: "flex",
 
-      alignItems:
-        "center",
+    alignItems: "center",
 
-      justifyContent:
-        "center",
+    justifyContent: "center",
 
-      width:
-        "155px",
+    width: "155px",
 
-      minWidth:
-        "155px",
+    minWidth: "155px",
 
-      height:
-        FIELD_HEIGHT,
+    height: FIELD_HEIGHT,
 
-      minHeight:
-        FIELD_HEIGHT,
+    minHeight: FIELD_HEIGHT,
 
-      margin:
-        "0",
+    margin: "0",
 
-      padding:
-        "0 16px",
+    padding: "0 16px",
 
-      backgroundColor:
-        "#a82227",
+    backgroundColor: "#a82227",
 
-      color:
-        "#ffffff",
+    color: "#ffffff",
 
-      border:
-        "none",
+    border: "none",
 
-      outline:
-        "none",
+    outline: "none",
 
-      borderRadius:
-        "0",
+    borderRadius: "0",
 
-      fontSize:
-        "12px",
+    fontSize: "12px",
 
-      fontWeight:
-        "600",
+    fontWeight: "600",
 
-      lineHeight:
-        "1",
+    lineHeight: "1",
 
-      cursor:
-        "pointer",
+    cursor: "pointer",
 
-      boxSizing:
-        "border-box",
+    boxSizing: "border-box",
 
-      whiteSpace:
-        "nowrap",
+    whiteSpace: "nowrap",
 
-      textAlign:
-        "center",
+    textAlign: "center",
 
-      flexShrink:
-        0,
-    };
+    flexShrink: 0,
+  };
 
   /*
    * ---------------------------------------------------------
@@ -1286,68 +826,47 @@ export const PropertySearchNSummary = ({
    * ---------------------------------------------------------
    */
 
-  const noDueStyle =
-    {
-      display:
-        "flex",
+  const noDueStyle = {
+    display: "flex",
 
-      alignItems:
-        "center",
+    alignItems: "center",
 
-      justifyContent:
-        "center",
+    justifyContent: "center",
 
-      width:
-        "155px",
+    width: "155px",
 
-      minWidth:
-        "155px",
+    minWidth: "155px",
 
-      height:
-        FIELD_HEIGHT,
+    height: FIELD_HEIGHT,
 
-      minHeight:
-        FIELD_HEIGHT,
+    minHeight: FIELD_HEIGHT,
 
-      margin:
-        "0",
+    margin: "0",
 
-      padding:
-        "0 16px",
+    padding: "0 16px",
 
-      backgroundColor:
-        "#a82227",
+    backgroundColor: "#a82227",
 
-      color:
-        "#ffffff",
+    color: "#ffffff",
 
-      border:
-        "none",
+    border: "none",
 
-      borderRadius:
-        "0",
+    borderRadius: "0",
 
-      fontSize:
-        "12px",
+    fontSize: "12px",
 
-      fontWeight:
-        "600",
+    fontWeight: "600",
 
-      lineHeight:
-        "1",
+    lineHeight: "1",
 
-      boxSizing:
-        "border-box",
+    boxSizing: "border-box",
 
-      whiteSpace:
-        "nowrap",
+    whiteSpace: "nowrap",
 
-      textAlign:
-        "center",
+    textAlign: "center",
 
-      flexShrink:
-        0,
-    };
+    flexShrink: 0,
+  };
 
   /*
    * =========================================================
@@ -1706,38 +1225,24 @@ export const PropertySearchNSummary = ({
       <div
         className="ndc-property-search-container ndc-margin-bottom-16"
         style={{
-          width:
-            "100%",
+          width: "100%",
 
-          boxSizing:
-            "border-box",
+          boxSizing: "border-box",
         }}
       >
         {/* ===================================================
             PROPERTY ID
         ==================================================== */}
 
-        <div
-          style={
-            fieldWrapperStyle
-          }
-        >
-          <label
-            style={
-              fieldLabelStyle
-            }
-          >
-            {t(
-              propertyIdInput.label
-            )}
+        <div style={fieldWrapperStyle}>
+          <label style={fieldLabelStyle}>
+            {t(propertyIdInput.label)}
 
             <span
               style={{
-                color:
-                  "#a82227",
+                color: "#a82227",
 
-                marginLeft:
-                  "3px",
+                marginLeft: "3px",
               }}
             >
               *
@@ -1751,43 +1256,15 @@ export const PropertySearchNSummary = ({
               DO NOT PUT BUTTONS INSIDE THIS DIV.
           ================================================= */}
 
-          <div
-            ref={
-              myElementRef
-            }
-            id="search-property-field"
-            className="ndc-property-input"
-            style={
-              fieldInputWrapperStyle
-            }
-          >
+          <div ref={myElementRef} id="search-property-field" className="ndc-property-input" style={fieldInputWrapperStyle}>
             <TextInput
-              key={
-                propertyIdInput.name
-              }
-
-              value={
-                propertyId ||
-                ""
-              }
-
-              onChange={
-                handlePropertyChange
-              }
-
-              disable={
-                false
-              }
-
-              defaultValue={
-                undefined
-              }
-
+              key={propertyIdInput.name}
+              value={propertyId || ""}
+              onChange={handlePropertyChange}
+              disable={false}
+              defaultValue={undefined}
               {...propertyIdInput.validation}
-
-              style={
-                inputStyle
-              }
+              style={inputStyle}
             />
 
             {/* ===============================================
@@ -1797,40 +1274,15 @@ export const PropertySearchNSummary = ({
             <button
               type="button"
               className="ndc-property-search-icon"
-              style={
-                searchIconButtonStyle
-              }
-              onClick={
-                searchProperty
-              }
-              aria-label={t(
-                "PT_SEARCH"
-              )}
-              title={t(
-                "PT_SEARCH"
-              )}
+              style={searchIconButtonStyle}
+              onClick={searchProperty}
+              aria-label={t("PT_SEARCH")}
+              title={t("PT_SEARCH")}
             >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle
-                  cx="10.8"
-                  cy="10.8"
-                  r="6.6"
-                  stroke="#555555"
-                  strokeWidth="2"
-                />
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="10.8" cy="10.8" r="6.6" stroke="#555555" strokeWidth="2" />
 
-                <path
-                  d="M16 16L21 21"
-                  stroke="#555555"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
+                <path d="M16 16L21 21" stroke="#555555" strokeWidth="2" strokeLinecap="round" />
               </svg>
             </button>
           </div>
@@ -1841,35 +1293,23 @@ export const PropertySearchNSummary = ({
               THIS FIXES THE OVERLAP.
           ================================================= */}
 
-          <div
-            className="ndc-property-actions"
-            style={
-              actionAreaStyle
-            }
-          >
+          <div className="ndc-property-actions" style={actionAreaStyle}>
             {/* ===============================================
                 CHECK STATUS
             ================================================ */}
 
-            {!apiDataCheck?.[0]
-              ?.NdcDetails &&
-              getCheckStatus &&
-              !getPayDuesButton && (
-                <button
-                  type="button"
-                  className="ndc-property-action-button"
-                  style={
-                    buttonStyle
-                  }
-                  onClick={() => {
-                    fetchBill();
-                  }}
-                >
-                  {t(
-                    "CHECK_STATUS_PROPERTY"
-                  )}
-                </button>
-              )}
+            {!apiDataCheck?.[0]?.NdcDetails && getCheckStatus && !getPayDuesButton && (
+              <button
+                type="button"
+                className="ndc-property-action-button"
+                style={buttonStyle}
+                onClick={() => {
+                  fetchBill();
+                }}
+              >
+                {t("CHECK_STATUS_PROPERTY")}
+              </button>
+            )}
 
             {/* ===============================================
                 PAY DUES AMOUNT
@@ -1880,22 +1320,15 @@ export const PropertySearchNSummary = ({
                 style={{
                   ...buttonStyle,
 
-                  color:
-                    "#ffffff",
+                  color: "#ffffff",
                 }}
               >
                 <span
                   style={{
-                    color:
-                      "#ffffff",
+                    color: "#ffffff",
                   }}
                 >
-                  Rs.{" "}
-                  {
-                    propertyDues
-                      ?.dues
-                      ?.totalAmount
-                  }
+                  Rs. {propertyDues?.dues?.totalAmount}
                 </span>
               </div>
             )}
@@ -1905,23 +1338,17 @@ export const PropertySearchNSummary = ({
             ================================================ */}
 
             {getPayDuesButton && (
-              <Link
-                className="ndc-property-pay-link"
-                to={`/upyog-ui/citizen/payment/my-bills/PT/${propertyId}`}
-              >
+              <Link className="ndc-property-pay-link" to={`/upyog-ui/citizen/payment/my-bills/PT/${propertyId}`}>
                 <button
                   type="button"
                   className="ndc-property-action-button"
                   style={{
                     ...buttonStyle,
 
-                    marginTop:
-                      "10px",
+                    marginTop: "10px",
                   }}
                 >
-                  {t(
-                    "PAY_DUES"
-                  )}
+                  {t("PAY_DUES")}
                 </button>
               </Link>
             )}
@@ -1931,21 +1358,13 @@ export const PropertySearchNSummary = ({
             ================================================ */}
 
             {getNoDue && (
-              <div
-                className="ndc-property-no-dues"
-                style={
-                  noDueStyle
-                }
-              >
+              <div className="ndc-property-no-dues" style={noDueStyle}>
                 <span
                   style={{
-                    color:
-                      "#ffffff",
+                    color: "#ffffff",
                   }}
                 >
-                  {t(
-                    "NO_DUES_FOUND_FOR_PROPERTY"
-                  )}
+                  {t("NO_DUES_FOUND_FOR_PROPERTY")}
                 </span>
               </div>
             )}
@@ -1958,28 +1377,13 @@ export const PropertySearchNSummary = ({
 
         {showToast && (
           <Toast
-            isDleteBtn={
-              true
-            }
-
+            isDleteBtn={true}
             labelClassName="ndc-label-width-100"
-
-            error={
-              showToast.error
-            }
-
-            warning={
-              showToast.warning
-            }
-
-            label={t(
-              showToast.label
-            )}
-
+            error={showToast.error}
+            warning={showToast.warning}
+            label={t(showToast.label)}
             onClose={() => {
-              setShowToast(
-                null
-              );
+              setShowToast(null);
             }}
           />
         )}
@@ -1989,14 +1393,7 @@ export const PropertySearchNSummary = ({
           LOADER
       ===================================================== */}
 
-      {(isLoading ||
-        getLoader) && (
-        <Loader
-          page={
-            true
-          }
-        />
-      )}
+      {(isLoading || getLoader) && <Loader page={true} />}
     </React.Fragment>
   );
 };

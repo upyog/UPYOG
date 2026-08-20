@@ -1,20 +1,12 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  FormComposer,
-  Toast,
-} from "@nudmcdgnpm/digit-ui-react-components";
+import { FormComposer, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import { updateNDCForm } from "../../../redux/actions/NDCFormActions";
 import { useState } from "react";
 import { Loader } from "../../../components/Loader";
 import _ from "lodash";
 
-export const NewNDCStepFormOne = ({
-  config,
-  onGoNext,
-  onBackClick,
-  t,
-}) => {
+export const NewNDCStepFormOne = ({ config, onGoNext, onBackClick, t }) => {
   const dispatch = useDispatch();
 
   const [showToast, setShowToast] = useState(false);
@@ -30,10 +22,7 @@ export const NewNDCStepFormOne = ({
    */
 
   const currentStepData = useSelector((state) =>
-    state.ndc.NDCForm.formData &&
-    state.ndc.NDCForm.formData[config.key]
-      ? state.ndc.NDCForm.formData[config.key]
-      : {}
+    state.ndc.NDCForm.formData && state.ndc.NDCForm.formData[config.key] ? state.ndc.NDCForm.formData[config.key] : {},
   );
 
   /*
@@ -42,13 +31,9 @@ export const NewNDCStepFormOne = ({
    * =========================================================
    */
 
-  const checkApiDataCheck = useSelector(
-    (state) => state.ndc.NDCForm?.formData?.apiData
-  );
+  const checkApiDataCheck = useSelector((state) => state.ndc.NDCForm?.formData?.apiData);
 
-  const checkFormData = useSelector(
-    (state) => state.ndc.NDCForm.formData || {}
-  );
+  const checkFormData = useSelector((state) => state.ndc.NDCForm.formData || {});
 
   /*
    * =========================================================
@@ -56,9 +41,7 @@ export const NewNDCStepFormOne = ({
    * =========================================================
    */
 
-  const tenantId =
-    Digit.ULBService.getCitizenCurrentTenant(true) ||
-    Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
 
   /*
    * =========================================================
@@ -78,8 +61,6 @@ export const NewNDCStepFormOne = ({
       ...data,
     };
 
-    console.log("NDC Step 1 Submitted Data:", stepData);
-
     const missingFields = validateStepData(stepData);
 
     if (missingFields.length > 0) {
@@ -95,11 +76,7 @@ export const NewNDCStepFormOne = ({
 
     const isRealId = id && id.startsWith("NDC-");
 
-    if (
-      checkFormData?.apiData?.Applications?.[0]?.applicationNo ||
-      checkFormData?.responseData?.[0]?.applicationNo ||
-      isRealId
-    ) {
+    if (checkFormData?.apiData?.Applications?.[0]?.applicationNo || checkFormData?.responseData?.[0]?.applicationNo || isRealId) {
       updateApplication(stepData);
     } else {
       createApplication(stepData);
@@ -113,8 +90,7 @@ export const NewNDCStepFormOne = ({
    */
 
   const createApplication = async (data) => {
-    const applicant =
-      Digit.UserService.getUser()?.info || {};
+    const applicant = Digit.UserService.getUser()?.info || {};
 
     const applicantId = applicant?.uuid;
 
@@ -124,25 +100,13 @@ export const NewNDCStepFormOne = ({
      * =======================================================
      */
 
-    const owners = (
-      data?.cpt?.details?.owners || []
-    ).map((owner) => {
-      const newOwner = JSON.parse(
-        JSON.stringify(owner)
-      );
+    const owners = (data?.cpt?.details?.owners || []).map((owner) => {
+      const newOwner = JSON.parse(JSON.stringify(owner));
 
       delete newOwner.status;
 
-      if (
-        newOwner?.name
-          ?.trim()
-          ?.toLowerCase() ===
-        data?.PropertyDetails?.firstName
-          ?.trim()
-          ?.toLowerCase()
-      ) {
-        newOwner.emailId =
-          data?.PropertyDetails?.email;
+      if (newOwner?.name?.trim()?.toLowerCase() === data?.PropertyDetails?.firstName?.trim()?.toLowerCase()) {
+        newOwner.emailId = data?.PropertyDetails?.email;
 
         newOwner.isPrimaryOwner = true;
       }
@@ -164,10 +128,7 @@ export const NewNDCStepFormOne = ({
      * =======================================================
      */
 
-    (
-      data?.PropertyDetails?.waterConnection ||
-      []
-    ).forEach((wc) => {
+    (data?.PropertyDetails?.waterConnection || []).forEach((wc) => {
       ndcDetails.push({
         uuid: wc?.billData?.id,
 
@@ -178,18 +139,14 @@ export const NewNDCStepFormOne = ({
         consumerCode: wc?.connectionNo,
 
         additionalDetails: {
-          propertyAddress:
-            data?.PropertyDetails?.address,
+          propertyAddress: data?.PropertyDetails?.address,
 
-          propertyType:
-            data?.cpt?.details?.usageCategory,
+          propertyType: data?.cpt?.details?.usageCategory,
         },
 
-        dueAmount:
-          wc?.billData?.totalAmount || 0,
+        dueAmount: wc?.billData?.totalAmount || 0,
 
-        status:
-          wc?.billData?.status,
+        status: wc?.billData?.status,
       });
     });
 
@@ -199,10 +156,7 @@ export const NewNDCStepFormOne = ({
      * =======================================================
      */
 
-    (
-      data?.PropertyDetails?.sewerageConnection ||
-      []
-    ).forEach((sc) => {
+    (data?.PropertyDetails?.sewerageConnection || []).forEach((sc) => {
       ndcDetails.push({
         uuid: sc?.billData?.id,
 
@@ -213,18 +167,14 @@ export const NewNDCStepFormOne = ({
         consumerCode: sc?.connectionNo,
 
         additionalDetails: {
-          propertyAddress:
-            data?.PropertyDetails?.address,
+          propertyAddress: data?.PropertyDetails?.address,
 
-          propertyType:
-            data?.cpt?.details?.usageCategory,
+          propertyType: data?.cpt?.details?.usageCategory,
         },
 
-        dueAmount:
-          sc?.billData?.totalAmount || 0,
+        dueAmount: sc?.billData?.totalAmount || 0,
 
-        status:
-          sc?.billData?.status,
+        status: sc?.billData?.status,
       });
     });
 
@@ -234,13 +184,8 @@ export const NewNDCStepFormOne = ({
      * =======================================================
      */
 
-    if (
-      data?.PropertyDetails
-        ?.propertyBillData?.billData
-    ) {
-      const billData =
-        data?.PropertyDetails
-          ?.propertyBillData?.billData;
+    if (data?.PropertyDetails?.propertyBillData?.billData) {
+      const billData = data?.PropertyDetails?.propertyBillData?.billData;
 
       ndcDetails.push({
         uuid: billData?.id,
@@ -252,24 +197,18 @@ export const NewNDCStepFormOne = ({
         consumerCode: data?.cpt?.id,
 
         additionalDetails: {
-          propertyAddress:
-            data?.PropertyDetails?.address,
+          propertyAddress: data?.PropertyDetails?.address,
 
-          propertyType:
-            data?.cpt?.details?.usageCategory,
+          propertyType: data?.cpt?.details?.usageCategory,
 
-          reason:
-            data?.NDCReason?.reason,
+          reason: data?.NDCReason?.reason,
 
-          remarks:
-            data?.PropertyDetails?.remarks,
+          remarks: data?.PropertyDetails?.remarks,
         },
 
-        dueAmount:
-          billData?.totalAmount || 0,
+        dueAmount: billData?.totalAmount || 0,
 
-        status:
-          billData?.status,
+        status: billData?.status,
       });
     }
 
@@ -292,8 +231,7 @@ export const NewNDCStepFormOne = ({
 
           active: true,
 
-          reason:
-            data?.NDCReason?.code,
+          reason: data?.NDCReason?.code,
 
           workflow: {
             action: "INITIATE",
@@ -303,24 +241,15 @@ export const NewNDCStepFormOne = ({
     };
 
     try {
-      const response =
-        await Digit.NDCService.NDCcreate({
-          tenantId,
-          details: payload,
-        });
+      const response = await Digit.NDCService.NDCcreate({
+        tenantId,
+        details: payload,
+      });
 
       setLoader(false);
 
-      if (
-        response?.ResponseInfo?.status ===
-        "successful"
-      ) {
-        dispatch(
-          updateNDCForm(
-            "apiData",
-            response
-          )
-        );
+      if (response?.ResponseInfo?.status === "successful") {
+        dispatch(updateNDCForm("apiData", response));
 
         onGoNext();
 
@@ -337,10 +266,7 @@ export const NewNDCStepFormOne = ({
     } catch (error) {
       setLoader(false);
 
-      console.error(
-        "NDC create application error:",
-        error
-      );
+      console.error("NDC create application error:", error);
 
       return {
         isSuccess: false,
@@ -356,8 +282,7 @@ export const NewNDCStepFormOne = ({
    */
 
   const updateApplication = async (data) => {
-    const applicant =
-      Digit.UserService.getUser()?.info || {};
+    const applicant = Digit.UserService.getUser()?.info || {};
 
     const applicantId = applicant?.uuid;
 
@@ -367,11 +292,7 @@ export const NewNDCStepFormOne = ({
      * =======================================================
      */
 
-    const owners =
-      checkApiDataCheck
-        ?.Applications?.[0]?.owners ||
-      checkFormData
-        ?.responseData?.[0]?.owners;
+    const owners = checkApiDataCheck?.Applications?.[0]?.owners || checkFormData?.responseData?.[0]?.owners;
 
     /*
      * =======================================================
@@ -386,15 +307,8 @@ export const NewNDCStepFormOne = ({
      * preserve them.
      */
 
-    if (
-      checkFormData
-        ?.responseData?.[0]
-        ?.NdcDetails?.length > 0
-    ) {
-      ndcDetails =
-        checkFormData
-          .responseData[0]
-          .NdcDetails;
+    if (checkFormData?.responseData?.[0]?.NdcDetails?.length > 0) {
+      ndcDetails = checkFormData.responseData[0].NdcDetails;
     } else {
       /*
        * =====================================================
@@ -402,10 +316,7 @@ export const NewNDCStepFormOne = ({
        * =====================================================
        */
 
-      (
-        data?.PropertyDetails
-          ?.waterConnection || []
-      ).forEach((wc) => {
+      (data?.PropertyDetails?.waterConnection || []).forEach((wc) => {
         ndcDetails.push({
           uuid: wc?.billData?.id,
 
@@ -413,24 +324,17 @@ export const NewNDCStepFormOne = ({
 
           businessService: "WS",
 
-          consumerCode:
-            wc?.connectionNo,
+          consumerCode: wc?.connectionNo,
 
           additionalDetails: {
-            propertyAddress:
-              data?.PropertyDetails?.address,
+            propertyAddress: data?.PropertyDetails?.address,
 
-            propertyType:
-              data?.cpt?.details
-                ?.usageCategory,
+            propertyType: data?.cpt?.details?.usageCategory,
           },
 
-          dueAmount:
-            wc?.billData
-              ?.totalAmount || 0,
+          dueAmount: wc?.billData?.totalAmount || 0,
 
-          status:
-            wc?.billData?.status,
+          status: wc?.billData?.status,
         });
       });
 
@@ -440,10 +344,7 @@ export const NewNDCStepFormOne = ({
        * =====================================================
        */
 
-      (
-        data?.PropertyDetails
-          ?.sewerageConnection || []
-      ).forEach((sc) => {
+      (data?.PropertyDetails?.sewerageConnection || []).forEach((sc) => {
         ndcDetails.push({
           uuid: sc?.billData?.id,
 
@@ -451,24 +352,17 @@ export const NewNDCStepFormOne = ({
 
           businessService: "SW",
 
-          consumerCode:
-            sc?.connectionNo,
+          consumerCode: sc?.connectionNo,
 
           additionalDetails: {
-            propertyAddress:
-              data?.PropertyDetails?.address,
+            propertyAddress: data?.PropertyDetails?.address,
 
-            propertyType:
-              data?.cpt?.details
-                ?.usageCategory,
+            propertyType: data?.cpt?.details?.usageCategory,
           },
 
-          dueAmount:
-            sc?.billData
-              ?.totalAmount || 0,
+          dueAmount: sc?.billData?.totalAmount || 0,
 
-          status:
-            sc?.billData?.status,
+          status: sc?.billData?.status,
         });
       });
 
@@ -478,13 +372,8 @@ export const NewNDCStepFormOne = ({
        * =====================================================
        */
 
-      if (
-        data?.PropertyDetails
-          ?.propertyBillData?.billData
-      ) {
-        const billData =
-          data?.PropertyDetails
-            ?.propertyBillData?.billData;
+      if (data?.PropertyDetails?.propertyBillData?.billData) {
+        const billData = data?.PropertyDetails?.propertyBillData?.billData;
 
         ndcDetails.push({
           uuid: billData?.id,
@@ -493,29 +382,21 @@ export const NewNDCStepFormOne = ({
 
           businessService: "PT",
 
-          consumerCode:
-            data?.cpt?.id,
+          consumerCode: data?.cpt?.id,
 
           additionalDetails: {
-            propertyAddress:
-              data?.PropertyDetails?.address,
+            propertyAddress: data?.PropertyDetails?.address,
 
-            propertyType:
-              data?.cpt?.details
-                ?.usageCategory,
+            propertyType: data?.cpt?.details?.usageCategory,
 
-            reason:
-              data?.NDCReason?.reason,
+            reason: data?.NDCReason?.reason,
 
-            remarks:
-              data?.PropertyDetails?.remarks,
+            remarks: data?.PropertyDetails?.remarks,
           },
 
-          dueAmount:
-            billData?.totalAmount || 0,
+          dueAmount: billData?.totalAmount || 0,
 
-          status:
-            billData?.status,
+          status: billData?.status,
         });
       }
     }
@@ -526,21 +407,9 @@ export const NewNDCStepFormOne = ({
      * =======================================================
      */
 
-    const appNumber =
-      checkApiDataCheck
-        ?.Applications?.[0]
-        ?.applicationNo ||
-      checkFormData
-        ?.responseData?.[0]
-        ?.applicationNo;
+    const appNumber = checkApiDataCheck?.Applications?.[0]?.applicationNo || checkFormData?.responseData?.[0]?.applicationNo;
 
-    const apUUid =
-      checkApiDataCheck
-        ?.Applications?.[0]
-        ?.uuid ||
-      checkFormData
-        ?.responseData?.[0]
-        ?.uuid;
+    const apUUid = checkApiDataCheck?.Applications?.[0]?.uuid || checkFormData?.responseData?.[0]?.uuid;
 
     /*
      * =======================================================
@@ -561,15 +430,11 @@ export const NewNDCStepFormOne = ({
 
           active: true,
 
-          reason:
-            data?.NDCReason?.code,
+          reason: data?.NDCReason?.code,
 
-          auditDetails:
-            data?.cpt?.details
-              ?.auditDetails,
+          auditDetails: data?.cpt?.details?.auditDetails,
 
-          applicationNo:
-            appNumber,
+          applicationNo: appNumber,
 
           uuid: apUUid,
 
@@ -581,22 +446,13 @@ export const NewNDCStepFormOne = ({
     };
 
     try {
-      const response =
-        await Digit.NDCService.NDCUpdate({
-          tenantId,
-          details: payload,
-        });
+      const response = await Digit.NDCService.NDCUpdate({
+        tenantId,
+        details: payload,
+      });
 
-      if (
-        response?.ResponseInfo?.status ===
-        "successful"
-      ) {
-        dispatch(
-          updateNDCForm(
-            "apiData",
-            response
-          )
-        );
+      if (response?.ResponseInfo?.status === "successful") {
+        dispatch(updateNDCForm("apiData", response));
 
         onGoNext();
 
@@ -611,10 +467,7 @@ export const NewNDCStepFormOne = ({
         response,
       };
     } catch (error) {
-      console.error(
-        "NDC update application error:",
-        error
-      );
+      console.error("NDC update application error:", error);
 
       return {
         isSuccess: false,
@@ -650,14 +503,11 @@ export const NewNDCStepFormOne = ({
 
     const cpt = data?.cpt || {};
 
-    const cptDetails =
-      cpt?.details || {};
+    const cptDetails = cpt?.details || {};
 
-    const propertyDetails =
-      data?.PropertyDetails || {};
+    const propertyDetails = data?.PropertyDetails || {};
 
-    const NDCReason =
-      data?.NDCReason || {};
+    const NDCReason = data?.NDCReason || {};
 
     /*
      * =======================================================
@@ -666,21 +516,11 @@ export const NewNDCStepFormOne = ({
      */
 
     if (!data?.cpt?.dues) {
-      missingFields.push(
-        `${t(
-          "NDC_MESSAGE_PLEASE_CHECK_STATUS_OF_PROPERTY_TAX"
-        )} ${cpt?.id || ""}`
-      );
+      missingFields.push(`${t("NDC_MESSAGE_PLEASE_CHECK_STATUS_OF_PROPERTY_TAX")} ${cpt?.id || ""}`);
     }
 
-    if (
-      data?.cpt?.dues?.totalAmount > 0
-    ) {
-      missingFields.push(
-        `${t(
-          "NDC_MESSAGE_PLEASE_PAY_DUES_OF_PROPERTY_TAX"
-        )} ${cpt?.id || ""}`
-      );
+    if (data?.cpt?.dues?.totalAmount > 0) {
+      missingFields.push(`${t("NDC_MESSAGE_PLEASE_PAY_DUES_OF_PROPERTY_TAX")} ${cpt?.id || ""}`);
     }
 
     /*
@@ -689,40 +529,16 @@ export const NewNDCStepFormOne = ({
      * =======================================================
      */
 
-    if (
-      propertyDetails
-        ?.waterConnection?.length > 0
-    ) {
-      propertyDetails.waterConnection.forEach(
-        (value) => {
-          if (
-            value?.billData
-              ?.totalAmount != 0
-          ) {
-            missingFields.push(
-              `${t(
-                "NDC_MESSAGE_PLEASE_CHECK_STATUS_OF_WATER_CONNECTION"
-              )} ${
-                value?.connectionNo || ""
-              }`
-            );
-          }
-
-          if (
-            value?.billData?.id &&
-            value?.billData
-              ?.totalAmount > 0
-          ) {
-            missingFields.push(
-              `${t(
-                "NDC_MESSAGE_PLEASE_PAY_DUES_OF_WATER_CONNECTION"
-              )} ${
-                value?.connectionNo || ""
-              }`
-            );
-          }
+    if (propertyDetails?.waterConnection?.length > 0) {
+      propertyDetails.waterConnection.forEach((value) => {
+        if (value?.billData?.totalAmount != 0) {
+          missingFields.push(`${t("NDC_MESSAGE_PLEASE_CHECK_STATUS_OF_WATER_CONNECTION")} ${value?.connectionNo || ""}`);
         }
-      );
+
+        if (value?.billData?.id && value?.billData?.totalAmount > 0) {
+          missingFields.push(`${t("NDC_MESSAGE_PLEASE_PAY_DUES_OF_WATER_CONNECTION")} ${value?.connectionNo || ""}`);
+        }
+      });
     }
 
     /*
@@ -731,40 +547,16 @@ export const NewNDCStepFormOne = ({
      * =======================================================
      */
 
-    if (
-      propertyDetails
-        ?.sewerageConnection?.length > 0
-    ) {
-      propertyDetails.sewerageConnection.forEach(
-        (value) => {
-          if (
-            value?.billData
-              ?.totalAmount != 0
-          ) {
-            missingFields.push(
-              `${t(
-                "NDC_MESSAGE_PLEASE_CHECK_STATUS_OF_SEWERAGE_CONNECTION"
-              )} ${
-                value?.connectionNo || ""
-              }`
-            );
-          }
-
-          if (
-            value?.billData?.id &&
-            value?.billData
-              ?.totalAmount > 0
-          ) {
-            missingFields.push(
-              `${t(
-                "NDC_MESSAGE_PLEASE_PAY_DUES_OF_SEWERAGE_CONNECTION"
-              )} ${
-                value?.connectionNo || ""
-              }`
-            );
-          }
+    if (propertyDetails?.sewerageConnection?.length > 0) {
+      propertyDetails.sewerageConnection.forEach((value) => {
+        if (value?.billData?.totalAmount != 0) {
+          missingFields.push(`${t("NDC_MESSAGE_PLEASE_CHECK_STATUS_OF_SEWERAGE_CONNECTION")} ${value?.connectionNo || ""}`);
         }
-      );
+
+        if (value?.billData?.id && value?.billData?.totalAmount > 0) {
+          missingFields.push(`${t("NDC_MESSAGE_PLEASE_PAY_DUES_OF_SEWERAGE_CONNECTION")} ${value?.connectionNo || ""}`);
+        }
+      });
     }
 
     /*
@@ -774,9 +566,7 @@ export const NewNDCStepFormOne = ({
      */
 
     if (!NDCReason?.code) {
-      missingFields.push(
-        t("NDC_MESSAGE_NDC_REASON")
-      );
+      missingFields.push(t("NDC_MESSAGE_NDC_REASON"));
     }
 
     /*
@@ -786,9 +576,7 @@ export const NewNDCStepFormOne = ({
      */
 
     if (!cpt?.id) {
-      missingFields.push(
-        t("NDC_MESSAGE_PROPERTY_ID")
-      );
+      missingFields.push(t("NDC_MESSAGE_PROPERTY_ID"));
     }
 
     /*
@@ -797,16 +585,8 @@ export const NewNDCStepFormOne = ({
      * =======================================================
      */
 
-    if (
-      !cptDetails ||
-      Object.keys(cptDetails)
-        .length === 0
-    ) {
-      missingFields.push(
-        t(
-          "NDC_MESSAGE_PLEASE_SEARCH_PROPERTY_ID"
-        )
-      );
+    if (!cptDetails || Object.keys(cptDetails).length === 0) {
+      missingFields.push(t("NDC_MESSAGE_PLEASE_SEARCH_PROPERTY_ID"));
     }
 
     /*
@@ -815,15 +595,8 @@ export const NewNDCStepFormOne = ({
      * =======================================================
      */
 
-    if (
-      !propertyDetails?.firstName ||
-      !String(
-        propertyDetails.firstName
-      ).trim()
-    ) {
-      missingFields.push(
-        t("REQUIRED_FIELD")
-      );
+    if (!propertyDetails?.firstName || !String(propertyDetails.firstName).trim()) {
+      missingFields.push(t("REQUIRED_FIELD"));
     }
 
     /*
@@ -832,15 +605,8 @@ export const NewNDCStepFormOne = ({
      * =======================================================
      */
 
-    if (
-      !propertyDetails?.email ||
-      !String(
-        propertyDetails.email
-      ).trim()
-    ) {
-      missingFields.push(
-        t("REQUIRED_FIELD")
-      );
+    if (!propertyDetails?.email || !String(propertyDetails.email).trim()) {
+      missingFields.push(t("REQUIRED_FIELD"));
     }
 
     /*
@@ -849,15 +615,8 @@ export const NewNDCStepFormOne = ({
      * =======================================================
      */
 
-    if (
-      !propertyDetails?.mobileNumber ||
-      !String(
-        propertyDetails.mobileNumber
-      ).trim()
-    ) {
-      missingFields.push(
-        t("REQUIRED_FIELD")
-      );
+    if (!propertyDetails?.mobileNumber || !String(propertyDetails.mobileNumber).trim()) {
+      missingFields.push(t("REQUIRED_FIELD"));
     }
 
     /*
@@ -866,15 +625,8 @@ export const NewNDCStepFormOne = ({
      * =======================================================
      */
 
-    if (
-      !propertyDetails?.address ||
-      !String(
-        propertyDetails.address
-      ).trim()
-    ) {
-      missingFields.push(
-        t("REQUIRED_FIELD")
-      );
+    if (!propertyDetails?.address || !String(propertyDetails.address).trim()) {
+      missingFields.push(t("REQUIRED_FIELD"));
     }
 
     /*
@@ -903,14 +655,11 @@ export const NewNDCStepFormOne = ({
      * =======================================================
      */
 
-    const nameRegex =
-      /^[A-Za-z\s]+(,\s*[A-Za-z\s]+)*$/;
+    const nameRegex = /^[A-Za-z\s]+(,\s*[A-Za-z\s]+)*$/;
 
-    const emailRegex =
-      /^(?!\.)(?!.*\.\.)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/;
+    const emailRegex = /^(?!\.)(?!.*\.\.)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$/;
 
-    const mobileRegex =
-      /^[6-9]\d{9}$/;
+    const mobileRegex = /^[6-9]\d{9}$/;
 
     /*
      * =======================================================
@@ -918,19 +667,8 @@ export const NewNDCStepFormOne = ({
      * =======================================================
      */
 
-    if (
-      propertyDetails?.firstName &&
-      !nameRegex.test(
-        String(
-          propertyDetails.firstName
-        ).trim()
-      )
-    ) {
-      invalidFields.push(
-        t(
-          "NDC_MESSAGE_FIRST_NAME_ONLY_ALPHABETS_ALLOWED"
-        )
-      );
+    if (propertyDetails?.firstName && !nameRegex.test(String(propertyDetails.firstName).trim())) {
+      invalidFields.push(t("NDC_MESSAGE_FIRST_NAME_ONLY_ALPHABETS_ALLOWED"));
     }
 
     /*
@@ -939,19 +677,8 @@ export const NewNDCStepFormOne = ({
      * =======================================================
      */
 
-    if (
-      propertyDetails?.email &&
-      !emailRegex.test(
-        String(
-          propertyDetails.email
-        ).trim()
-      )
-    ) {
-      invalidFields.push(
-        t(
-          "NDC_MESSAGE_EMAIL_INVALID_FORMAT"
-        )
-      );
+    if (propertyDetails?.email && !emailRegex.test(String(propertyDetails.email).trim())) {
+      invalidFields.push(t("NDC_MESSAGE_EMAIL_INVALID_FORMAT"));
     }
 
     /*
@@ -960,19 +687,8 @@ export const NewNDCStepFormOne = ({
      * =======================================================
      */
 
-    if (
-      propertyDetails?.mobileNumber &&
-      !mobileRegex.test(
-        String(
-          propertyDetails.mobileNumber
-        ).trim()
-      )
-    ) {
-      invalidFields.push(
-        t(
-          "NDC_MESSAGE_MOBILE_NUMBER_MUST_BE_A_VALID_TEN_DIGIT_INDIAN_NUMBER"
-        )
-      );
+    if (propertyDetails?.mobileNumber && !mobileRegex.test(String(propertyDetails.mobileNumber).trim())) {
+      invalidFields.push(t("NDC_MESSAGE_MOBILE_NUMBER_MUST_BE_A_VALID_TEN_DIGIT_INDIAN_NUMBER"));
     }
 
     /*
@@ -981,10 +697,7 @@ export const NewNDCStepFormOne = ({
      * =======================================================
      */
 
-    return [
-      ...missingFields,
-      ...invalidFields,
-    ];
+    return [...missingFields, ...invalidFields];
   }
 
   /*
@@ -994,10 +707,7 @@ export const NewNDCStepFormOne = ({
    */
 
   function onGoBack(data) {
-    onBackClick(
-      config.key,
-      data
-    );
+    onBackClick(config.key, data);
   }
 
   /*
@@ -1006,22 +716,9 @@ export const NewNDCStepFormOne = ({
    * =========================================================
    */
 
-  const onFormValueChange = (
-    setValue = true,
-    data
-  ) => {
-    if (
-      !_.isEqual(
-        data,
-        currentStepData
-      )
-    ) {
-      dispatch(
-        updateNDCForm(
-          config.key,
-          data
-        )
-      );
+  const onFormValueChange = (setValue = true, data) => {
+    if (!_.isEqual(data, currentStepData)) {
+      dispatch(updateNDCForm(config.key, data));
     }
   };
 
@@ -1062,47 +759,18 @@ export const NewNDCStepFormOne = ({
   return (
     <React.Fragment>
       <FormComposer
-        defaultValues={
-          currentStepData
-        }
-
-        config={
-          config?.currStepConfig || []
-        }
-
+        defaultValues={currentStepData}
+        config={config?.currStepConfig || []}
         onSubmit={goNext}
-
-        onFormValueChange={
-          onFormValueChange
-        }
-
-        label={t(
-          `${config?.texts?.submitBarLabel || "Next"}`
-        )}
-
-        currentStep={
-          config?.currStepNumber
-        }
-
-        onBackClick={
-          onGoBack
-        }
+        onFormValueChange={onFormValueChange}
+        label={t(`${config?.texts?.submitBarLabel || "Next"}`)}
+        currentStep={config?.currStepNumber}
+        onBackClick={onGoBack}
       />
 
-      {getLoader && (
-        <Loader page={true} />
-      )}
+      {getLoader && <Loader page={true} />}
 
-      {showToast && (
-        <Toast
-          isDleteBtn={true}
-          error={true}
-          label={error}
-          onClose={
-            closeToast
-          }
-        />
-      )}
+      {showToast && <Toast isDleteBtn={true} error={true} label={error} onClose={closeToast} />}
     </React.Fragment>
   );
 };

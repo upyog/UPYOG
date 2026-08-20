@@ -1,7 +1,5 @@
 import React from "react";
-import {
-  SubmitBar,
-} from "@nudmcdgnpm/digit-ui-react-components";
+import { SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import NDCDocument from "../components/NDCDocument";
 
@@ -14,14 +12,11 @@ const NDCSummary = ({ formData, goNext, onGoBack }) => {
    * =========================================================
    */
 
-  const propertyDetails =
-    formData?.NDCDetails?.PropertyDetails || {};
+  const propertyDetails = formData?.NDCDetails?.PropertyDetails || {};
 
-  const ndcReasonData =
-    formData?.NDCDetails?.NDCReason;
+  const ndcReasonData = formData?.NDCDetails?.NDCReason;
 
-  const docs =
-    formData?.DocummentDetails?.documents?.documents || [];
+  const docs = formData?.DocummentDetails?.documents?.documents || [];
 
   /*
    * =========================================================
@@ -29,14 +24,11 @@ const NDCSummary = ({ formData, goNext, onGoBack }) => {
    * =========================================================
    */
 
-  const fullName =
-    propertyDetails?.firstName || "NA";
+  const fullName = propertyDetails?.firstName || "NA";
 
-  const mobileNumber =
-    propertyDetails?.mobileNumber || "NA";
+  const mobileNumber = propertyDetails?.mobileNumber || "NA";
 
-  const email =
-    propertyDetails?.email || "NA";
+  const email = propertyDetails?.email || "NA";
 
   /*
    * =========================================================
@@ -44,22 +36,15 @@ const NDCSummary = ({ formData, goNext, onGoBack }) => {
    * =========================================================
    */
 
-  const address =
-    propertyDetails?.address || "NA";
+  const address = propertyDetails?.address || "NA";
 
-  const remarks =
-    propertyDetails?.remarks || "NA";
+  const remarks = propertyDetails?.remarks || "NA";
 
-  const propertyId =
-    formData?.NDCDetails?.cpt?.id ||
-    formData?.NDCDetails?.cpt?.details?.propertyId ||
-    "NA";
+  const propertyId = formData?.NDCDetails?.cpt?.id || formData?.NDCDetails?.cpt?.details?.propertyId || "NA";
 
-  const waterConnection =
-    propertyDetails?.waterConnection || [];
+  const waterConnection = propertyDetails?.waterConnection || [];
 
-  const sewerageConnection =
-    propertyDetails?.sewerageConnection || [];
+  const sewerageConnection = propertyDetails?.sewerageConnection || [];
 
   /*
    * =========================================================
@@ -67,12 +52,7 @@ const NDCSummary = ({ formData, goNext, onGoBack }) => {
    * =========================================================
    */
 
-  const ndcReason =
-    ndcReasonData?.i18nKey === "OTHERS"
-      ? t(ndcReasonData?.reason || "")
-      : ndcReasonData?.i18nKey
-      ? t(ndcReasonData.i18nKey)
-      : "NA";
+  const ndcReason = ndcReasonData?.i18nKey === "OTHERS" ? t(ndcReasonData?.reason || "") : ndcReasonData?.i18nKey ? t(ndcReasonData.i18nKey) : "NA";
 
   /*
    * =========================================================
@@ -299,11 +279,7 @@ const NDCSummary = ({ formData, goNext, onGoBack }) => {
    */
 
   const renderValue = (value) => {
-    if (
-      value === undefined ||
-      value === null ||
-      value === ""
-    ) {
+    if (value === undefined || value === null || value === "") {
       return "NA";
     }
 
@@ -312,31 +288,17 @@ const NDCSummary = ({ formData, goNext, onGoBack }) => {
 
   const renderLabel = (label, value) => (
     <div style={rowStyle}>
-      <div style={labelStyle}>
-        {label}
-      </div>
+      <div style={labelStyle}>{label}</div>
 
-      <div style={valueStyle}>
-        {renderValue(value)}
-      </div>
+      <div style={valueStyle}>{renderValue(value)}</div>
     </div>
   );
 
-  const renderSectionHeader = (
-    title,
-    onEdit
-  ) => (
+  const renderSectionHeader = (title, onEdit) => (
     <div style={sectionHeaderStyle}>
-      <div style={sectionTitleStyle}>
-        {title}
-      </div>
+      <div style={sectionTitleStyle}>{title}</div>
 
-      <button
-        type="button"
-        style={editButtonStyle}
-        title={t("Edit")}
-        onClick={onEdit}
-      >
+      <button type="button" style={editButtonStyle} title={t("Edit")} onClick={onEdit}>
         ✎
       </button>
     </div>
@@ -374,52 +336,32 @@ const NDCSummary = ({ formData, goNext, onGoBack }) => {
 
   return (
     <div style={pageStyle}>
-
       {/* ===================================================
           SUMMARY CARD
           Back button intentionally removed
       ==================================================== */}
 
       <div style={summaryCardStyle}>
-
         {/* =================================================
             HEADER
         ================================================== */}
 
-        <h2 style={titleStyle}>
-          {t("Summary")}
-        </h2>
+        <h2 style={titleStyle}>{t("Summary")}</h2>
 
-        <div style={subtitleStyle}>
-          {t("Check Your Details")}
-        </div>
+        <div style={subtitleStyle}>{t("Check Your Details")}</div>
 
         {/* =================================================
             APPLICANT DETAILS
         ================================================== */}
 
         <div style={sectionStyle}>
+          {renderSectionHeader(t("Applicant Details"), handleEdit)}
 
-          {renderSectionHeader(
-            t("Applicant Details"),
-            handleEdit
-          )}
+          {renderLabel(t("Full Name"), fullName)}
 
-          {renderLabel(
-            t("Full Name"),
-            fullName
-          )}
+          {renderLabel(t("Mobile Number"), mobileNumber)}
 
-          {renderLabel(
-            t("Mobile Number"),
-            mobileNumber
-          )}
-
-          {renderLabel(
-            t("Email ID"),
-            email
-          )}
-
+          {renderLabel(t("Email ID"), email)}
         </div>
 
         {/* =================================================
@@ -427,42 +369,19 @@ const NDCSummary = ({ formData, goNext, onGoBack }) => {
         ================================================== */}
 
         <div style={sectionStyle}>
+          {renderSectionHeader(t("Application Details"), handleEdit)}
 
-          {renderSectionHeader(
-            t("Application Details"),
-            handleEdit
-          )}
+          {renderLabel(t("Address"), address)}
 
-          {renderLabel(
-            t("Address"),
-            address
-          )}
+          {renderLabel(t("NDC Reason"), ndcReason)}
 
-          {renderLabel(
-            t("NDC Reason"),
-            ndcReason
-          )}
+          {renderLabel(t("Remarks"), remarks)}
 
-          {renderLabel(
-            t("Remarks"),
-            remarks
-          )}
+          {renderLabel(t("Water Connection"), waterConnectionValue)}
 
-          {renderLabel(
-            t("Water Connection"),
-            waterConnectionValue
-          )}
+          {renderLabel(t("Sewerage Connection"), sewerageConnectionValue)}
 
-          {renderLabel(
-            t("Sewerage Connection"),
-            sewerageConnectionValue
-          )}
-
-          {renderLabel(
-            t("Property ID"),
-            propertyId
-          )}
-
+          {renderLabel(t("Property ID"), propertyId)}
         </div>
 
         {/* =================================================
@@ -470,42 +389,17 @@ const NDCSummary = ({ formData, goNext, onGoBack }) => {
         ================================================== */}
 
         <div style={sectionStyle}>
-
-          {renderSectionHeader(
-            t("Documents"),
-            () => {}
-          )}
+          {renderSectionHeader(t("Documents"), () => {})}
 
           {docs?.length > 0 ? (
-
             <div style={documentsContainerStyle}>
-
               {docs.map((doc, index) => (
-
-                <div
-                  key={
-                    `${
-                      doc?.documentType ||
-                      "document"
-                    }-${index}`
-                  }
-
-                  style={documentCardStyle}
-                >
-                  <NDCDocument
-                    value={docs}
-                    Code={doc?.documentType}
-                    index={index}
-                    formData={formData}
-                  />
+                <div key={`${doc?.documentType || "document"}-${index}`} style={documentCardStyle}>
+                  <NDCDocument value={docs} Code={doc?.documentType} index={index} formData={formData} />
                 </div>
-
               ))}
-
             </div>
-
           ) : (
-
             <div
               style={{
                 fontSize: "13px",
@@ -515,9 +409,7 @@ const NDCSummary = ({ formData, goNext, onGoBack }) => {
             >
               {t("TL_NO_DOCUMENTS_MSG")}
             </div>
-
           )}
-
         </div>
 
         {/* =================================================
@@ -525,18 +417,13 @@ const NDCSummary = ({ formData, goNext, onGoBack }) => {
         ================================================== */}
 
         <div style={declarationContainerStyle}>
-
-          <input
-            type="checkbox"
-            style={checkboxStyle}
-          />
+          <input type="checkbox" style={checkboxStyle} />
 
           <div style={declarationTextStyle}>
             {t(
-              "I hereby declare and affirm that the above-furnished information is true and correct and nothing has been concealed therefrom. I am also aware of the fact that in case this information is found false/incorrect, the authorities are at liberty to initiate recovery of amount/interest/penalty/fine as provided in UPYOG Municipal Act 1911 or UPYOG Municipal Corporation Act 1976."
+              "I hereby declare and affirm that the above-furnished information is true and correct and nothing has been concealed therefrom. I am also aware of the fact that in case this information is found false/incorrect, the authorities are at liberty to initiate recovery of amount/interest/penalty/fine as provided in UPYOG Municipal Act 1911 or UPYOG Municipal Corporation Act 1976.",
             )}
           </div>
-
         </div>
 
         {/* =================================================
@@ -544,16 +431,9 @@ const NDCSummary = ({ formData, goNext, onGoBack }) => {
         ================================================== */}
 
         <div style={submitContainerStyle}>
-
-          <SubmitBar
-            label={t("Submit")}
-            onSubmit={handleSubmit}
-          />
-
+          <SubmitBar label={t("Submit")} onSubmit={handleSubmit} />
         </div>
-
       </div>
-
     </div>
   );
 };

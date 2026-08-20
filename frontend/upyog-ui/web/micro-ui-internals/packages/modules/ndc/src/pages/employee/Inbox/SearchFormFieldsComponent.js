@@ -1,15 +1,8 @@
 import React from "react";
-import {
-  SearchField,
-  TextInput,
-} from "@nudmcdgnpm/digit-ui-react-components";
+import { SearchField, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
-const SearchFormFieldsComponents = ({
-  registerRef,
-  searchFormState,
-  searchFieldComponents,
-}) => {
+const SearchFormFieldsComponents = ({ registerRef, searchFormState, searchFieldComponents }) => {
   const { t } = useTranslation();
 
   const isMobile = window.Digit.Utils.browser.isMobile();
@@ -23,12 +16,9 @@ const SearchFormFieldsComponents = ({
         <div className="search-container ndc-search-container-wide">
           <div className="search-complaint-container">
             <div className="complaint-input-container ndc-text-start">
-
               {/* Application Number */}
               <SearchField>
-                <label>
-                  {t("NOC_HOME_SEARCH_RESULTS_APP_NO_LABEL")}
-                </label>
+                <label>{t("NOC_HOME_SEARCH_RESULTS_APP_NO_LABEL")}</label>
 
                 <TextInput
                   name="applicationNo"
@@ -40,9 +30,7 @@ const SearchFormFieldsComponents = ({
 
               {/* Phone Number */}
               <SearchField>
-                <label>
-                  {t("CORE_COMMON_PHONE_NUMBER")}
-                </label>
+                <label>{t("CORE_COMMON_PHONE_NUMBER")}</label>
 
                 <TextInput
                   name="mobileNumber"
@@ -53,10 +41,7 @@ const SearchFormFieldsComponents = ({
               </SearchField>
 
               {/* Search / Clear Buttons */}
-              <div className="search-action-wrapper ndc-search-action-width">
-                {searchFieldComponents}
-              </div>
-
+              <div className="search-action-wrapper ndc-search-action-width">{searchFieldComponents}</div>
             </div>
           </div>
         </div>
@@ -69,31 +54,19 @@ const SearchFormFieldsComponents = ({
    */
   return (
     <React.Fragment>
-
       {/* Application Number */}
       <SearchField>
-        <label>
-          {t("NOC_HOME_SEARCH_RESULTS_APP_NO_LABEL")}
-        </label>
+        <label>{t("NOC_HOME_SEARCH_RESULTS_APP_NO_LABEL")}</label>
 
-        <TextInput
-          name="applicationNo"
-          {...registerRef("applicationNo")}
-        />
+        <TextInput name="applicationNo" {...registerRef("applicationNo")} />
       </SearchField>
 
       {/* Phone Number */}
       <SearchField>
-        <label>
-          {t("CORE_COMMON_PHONE_NUMBER")}
-        </label>
+        <label>{t("CORE_COMMON_PHONE_NUMBER")}</label>
 
-        <TextInput
-          name="mobileNumber"
-          {...registerRef("mobileNumber")}
-        />
+        <TextInput name="mobileNumber" {...registerRef("mobileNumber")} />
       </SearchField>
-
     </React.Fragment>
   );
 };

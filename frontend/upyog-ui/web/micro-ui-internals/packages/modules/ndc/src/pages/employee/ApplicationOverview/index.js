@@ -309,7 +309,6 @@ const ApplicationOverview = () => {
     const checkactionApp = action?.action == "APPROVE";
 
     if (hasDuePending && checkactionApp) {
-      console.log("alwasy coming appprve");
       setLable("You Can Not Approve This Application, Because It Has Pending Dues. Please Send It To Required Department");
       setError(true);
       setShowToast(true);
