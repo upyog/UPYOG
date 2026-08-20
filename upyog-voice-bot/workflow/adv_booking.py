@@ -17,7 +17,7 @@ from workflow.base_state import BaseAgentState
 
 logger = logging.getLogger(__name__)
 
-llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0) if os.environ.get("GROQ_API_KEY") else None
+llm = ChatGroq(model=os.environ.get("GROQ_MODEL", "openai/gpt-oss-20b"), temperature=0) if os.environ.get("GROQ_API_KEY") else None
 
 # ==========================================
 # STATE
@@ -50,6 +50,7 @@ def _slot_search(draft: dict, phone_number: str = "default") -> list:
     if not isinstance(draft, dict):
         draft = {}
     from mcp_tools import slot_search
+    from datetime import datetime
     start = draft.get("start_date", "")
     end = draft.get("end_date") or start
     try:
@@ -65,11 +66,17 @@ def _slot_search(draft: dict, phone_number: str = "default") -> list:
         data = json.loads(raw) if isinstance(raw, str) else raw
         if not data:
             raise ValueError("Empty slot result from API")
+        
+        today_str = datetime.now().strftime("%Y-%m-%d")
+
         # Normalize to frontend field names: type, area, light, date, status
         normalized = []
         seen = set()
         for slot in data:
             s_date = slot.get("fromDate") or slot.get("bookingStartDate") or slot.get("date") or start
+            if not s_date or str(s_date).strip() <= today_str:
+                # Exclude today's slot and past dates
+                continue
             if s_date in seen:
                 continue
             seen.add(s_date)
@@ -197,8 +204,8 @@ def intent_and_ui_node(state: AdvBookingState):
             user_msg = "continue"
 
     # 18. Check if the user wants to clear their current booking progress and start over
-    reset_keywords = ["start over", "new booking", "cancel booking", "start new", "restart", "cancel"]
-    if any(w in user_msg.lower() for w in reset_keywords):
+    reset_keywords = ["start over", "new booking", "cancel booking", "start new", "restart", "cancel", "clear draft", "delete draft"]
+    if user_msg == "[CANCEL_DRAFT]" or any(w in user_msg.lower() for w in reset_keywords):
         # 19. Wipe all fields in the draft memory completely clean
         draft_booking = {f: None for f in ALL_FIELDS}
         draft_booking["selected_slots"] = None
@@ -430,6 +437,21 @@ Example:
         except Exception as e:
             logger.error(f"Extraction error: {e}")
             
+    # Date constraint enforcement: bookings cannot start today or in the past
+    from datetime import datetime, timedelta
+    today_str = datetime.now().strftime("%Y-%m-%d")
+    tomorrow_str = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
+    if draft_booking.get("start_date"):
+        s_date = str(draft_booking.get("start_date")).strip()
+        if s_date <= today_str:
+            draft_booking["start_date"] = tomorrow_str
+            logger.info(f"[extract_node] start_date was today/past ({s_date}), updated to tomorrow ({tomorrow_str})")
+    if draft_booking.get("end_date"):
+        e_date = str(draft_booking.get("end_date")).strip()
+        if e_date <= today_str:
+            draft_booking["end_date"] = tomorrow_str
+            logger.info(f"[extract_node] end_date was today/past ({e_date}), updated to tomorrow ({tomorrow_str})")
+
     return {"draft_booking": draft_booking}
 
 
@@ -455,6 +477,8 @@ def ask_next_node(state: AdvBookingState):
 
     text = f"Please provide the {field_label}."
     if llm:
+        is_hindi = any('ऀ' <= c <= 'ॿ' for c in user_msg)
+        lang_rule = "Respond in Hindi." if is_hindi else "Respond in English. Do NOT output any Devanagari or Hindi text."
         ctx = f"""You are a conversational UPYOG advertisement booking concierge.
 Collected so far: {json.dumps({k: v for k, v in draft_booking.items() if v})}
 Your task: Ask the user to provide the next missing field: "{field_label}".
@@ -463,13 +487,14 @@ Available options for this field: {json.dumps(options) if options else "None (fr
 User just said: "{user_msg}"
 
 Instructions:
-1. Generate a natural, polite, conversational question asking for the "{field_label}".
-2. Note: "Advertisement Type" refers to outdoor municipal advertising structure types (such as Hoarding, Unipole, Kiosk, Billboard, Banner, Poster, Digital Screen). NEVER ask about or refer to media file formats like videos, images, or audio formats.
-3. Do NOT say "Hello" unless the user explicitly greeted you.
-4. NEVER repeat or confirm what the user just selected. 
-5. DO NOT list the available options in the text (the UI will handle that).
-6. Maintain a formal, professional tone. NEVER use informal or familial terms of address like 'दीदी' (Didi), 'काकी' (Kaki), 'बेटा' (Beta), 'भैया' (Bhaiya), etc.
-7. Output ONLY the conversational question text."""
+1. Language: {lang_rule}
+2. Generate a natural, polite, conversational question asking for the "{field_label}".
+3. Note: "Advertisement Type" refers to outdoor municipal advertising structure types (such as Hoarding, Unipole, Kiosk, Billboard, Banner, Poster, Digital Screen). NEVER ask about or refer to media file formats like videos, images, or audio formats.
+4. Do NOT say "Hello" unless the user explicitly greeted you.
+5. NEVER repeat or confirm what the user just selected. 
+6. DO NOT list the available options in the text (the UI will handle that).
+7. Maintain a formal, polite, professional tone. Never use informal or familial terms of address.
+8. Output ONLY the conversational question text."""
         try:
             conv = llm.invoke([SystemMessage(content=ctx)])
             text = conv.content.strip()
@@ -480,7 +505,11 @@ Instructions:
         opts_str = ", ".join(f"'{o}'" for o in options)
         resp = f"{text}\n<ui-dropdown options=[{opts_str}] />"
     elif ui_type == "date":
-        resp = f"{text}\n<ui-calendar mode=\"single\" minDate=\"tomorrow\" />"
+        if next_step.get("id") == "end_date" and draft_booking.get("start_date"):
+            s_date = draft_booking.get("start_date")
+            resp = f"{text}\n<ui-calendar mode=\"single\" minDate=\"{s_date}\" />"
+        else:
+            resp = f"{text}\n<ui-calendar mode=\"single\" minDate=\"tomorrow\" />"
     else:
         resp = text
 
@@ -496,15 +525,18 @@ def slot_search_node(state: AdvBookingState):
     phone_number = state.get("phone_number", "default")
     messages = state.get("messages", [])
     user_msg = messages[-1].content if messages else ""
+    logger.info(f"[adv_booking.slot_search_node] Entering for phone={phone_number}")
     
     draft_booking = dict(state.get("draft_booking", {}))
     slots = _slot_search(draft_booking, phone_number=phone_number)
     if not slots:
+        logger.warning(f"[adv_booking.slot_search_node] No slots found for draft: {draft_booking}")
         resp = "Sorry, no available advertisement slots were found for your selected location and date range. Please try selecting a different date range or location."
         MemoryManager.save_long_term_interaction(phone_number=phone_number, role="assistant", content=resp)
         return {"messages": [AIMessage(content=resp)], "missing_fields": ["start_date", "end_date"], "input_type": "text", "options": []}
 
     slots_json = json.dumps(slots)
+    logger.info(f"[adv_booking.slot_search_node] Found {len(slots)} slots. Presenting UI slot table.")
     resp = f"Great! Here are the available slots. Please select one or more:\n<ui-slot-table data={slots_json} />"
     MemoryManager.save_long_term_interaction(phone_number=phone_number, role="assistant", content=resp)
     return {"messages": [AIMessage(content=resp)], "missing_fields": ["selected_slots"], "input_type": "text", "options": []}
@@ -515,6 +547,7 @@ def applicant_form_node(state: AdvBookingState):
     phone_number = state.get("phone_number", "default")
     messages = state.get("messages", [])
     user_msg = messages[-1].content if messages else ""
+    logger.info(f"[adv_booking.applicant_form_node] Requesting applicant details for phone={phone_number}")
     
     resp = f"Great! Please fill in your details to finalize the booking:\n<ui-applicant-form cartAmount=\"0\" />"
     MemoryManager.save_long_term_interaction(phone_number=phone_number, role="assistant", content=resp)
@@ -526,6 +559,7 @@ def confirm_booking_node(state: AdvBookingState):
     phone_number = state.get("phone_number", "default")
     draft_booking = dict(state.get("draft_booking") or {})
     draft_booking["_awaiting_confirm"] = True
+    logger.info(f"[adv_booking.confirm_booking_node] Building booking summary for phone={phone_number}")
 
     app_details = draft_booking.get("applicant_details", {})
     name = app_details.get("name") or draft_booking.get("applicantName", "N/A")
@@ -561,14 +595,17 @@ def confirm_booking_node(state: AdvBookingState):
 def create_booking_node(state: AdvBookingState):
     phone_number = state.get("phone_number", "default")
     draft_booking = dict(state.get("draft_booking", {}))
+    logger.info(f"[adv_booking.create_booking_node] Executing booking registration for phone={phone_number}")
     
     app_details = draft_booking.get("applicant_details", {})
     draft_booking["applicantName"] = app_details.get("name", "")
-    draft_booking["mobileNumber"] = app_details.get("mobile", "")
+    draft_booking["mobileNumber"] = app_details.get("mobile") or (phone_number if phone_number != "default" else "")
     draft_booking["emailId"] = app_details.get("email", "")
+    draft_booking["phone_number"] = phone_number
     
     raw_resp = create_booking(json.dumps(draft_booking))
     resp = f"{raw_resp}\n\nIs there anything else I can help you with?"
+    logger.info(f"[adv_booking.create_booking_node] Booking API result: {raw_resp}")
     
     MemoryManager.save_long_term_interaction(phone_number=phone_number, role="assistant", content=resp)
     
@@ -588,6 +625,7 @@ def create_booking_node(state: AdvBookingState):
 def edit_prompt_node(state: AdvBookingState):
     phone_number = state.get("phone_number", "default")
     draft_booking = dict(state.get("draft_booking") or {})
+    logger.info(f"[adv_booking.edit_prompt_node] Prompting user for fields to edit for phone={phone_number}")
     
     resp = "Please tell me what details you would like to edit or change."
     MemoryManager.save_long_term_interaction(phone_number=phone_number, role="assistant", content=resp)
@@ -601,21 +639,27 @@ def router(state: AdvBookingState) -> str:
     user_msg = messages[-1].content if messages else ""
     
     if all(draft_booking.get(f) for f in SEARCH_FIELDS) and not draft_booking.get("selected_slots"):
+        logger.info("[adv_booking.router] Route -> slot_search")
         return "slot_search"
         
     if draft_booking.get("selected_slots") and not draft_booking.get("applicant_details"):
+        logger.info("[adv_booking.router] Route -> applicant_form")
         return "applicant_form"
         
     if all(draft_booking.get(f) for f in ALL_FIELDS):
         if draft_booking.get("_awaiting_confirm"):
             confirm_words = ["confirm", "submit", "yes", "yeah", "yup", "ok", "okay", "confirm & submit"]
             if any(w in user_msg.lower() for w in confirm_words):
+                logger.info("[adv_booking.router] Route -> create_booking (Confirmed)")
                 return "create_booking"
             edit_words = ["edit", "edit details", "modify", "correct", "update"]
             if any(w in user_msg.lower() for w in edit_words) and not any(f in user_msg.lower() for f in ["location", "address", "date", "type", "area"]):
+                logger.info("[adv_booking.router] Route -> edit_prompt")
                 return "edit_prompt"
+        logger.info("[adv_booking.router] Route -> confirm_booking")
         return "confirm_booking"
         
+    logger.info(f"[adv_booking.router] Route -> ask_next (missing fields: {[f for f in ALL_FIELDS if not draft_booking.get(f)]})")
     return "ask_next"
 
 # ==========================================
