@@ -55,6 +55,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Spring configuration class for REST API support components.
+ * <p>
+ * Configures API request enrichers, request enrichment servlet filters,
+ * and the shared {@link RestTemplate} instance for outbound HTTP communication.
+ * </p>
+ *
+ * @author eGovernments Foundation
+ */
 @Configuration
 public class RestAPIConfiguration {
 
@@ -62,16 +71,32 @@ public class RestAPIConfiguration {
     // In Spring 6, the 'autowire' attribute on @Bean (e.g., @Bean(autowire = Autowire.BY_TYPE))
     // and the org.springframework.beans.factory.annotation.Autowire enum were removed from Spring Framework.
     // Standard @Bean declarations with default dependency resolution are used instead.
+
+    /**
+     * Exposes the default API request enricher bean for populating audit and security headers.
+     *
+     * @return the {@link APIRequestEnricher} bean instance
+     */
     @Bean
     public APIRequestEnricher apiRequestEnricher() {
         return new DefaultAPIRequestEnricher();
     }
 
+    /**
+     * Exposes the API request enricher servlet filter bean.
+     *
+     * @return the {@link APIRequestEnricherFilter} filter bean instance
+     */
     @Bean
     public APIRequestEnricherFilter apiFilter() {
         return new APIRequestEnricherFilter();
     }
     
+    /**
+     * Exposes the shared {@link RestTemplate} bean for invoking downstream microservices.
+     *
+     * @return a new {@link RestTemplate} instance
+     */
     @Bean
 	public RestTemplate restTemplate() {
     	return new RestTemplate();

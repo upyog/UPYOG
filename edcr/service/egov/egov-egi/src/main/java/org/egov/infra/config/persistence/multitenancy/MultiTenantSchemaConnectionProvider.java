@@ -27,16 +27,34 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
     @Autowired
     private transient DataSource dataSource;
 
+    /**
+     * Obtains an unconfigured JDBC connection from the underlying data source.
+     *
+     * @return an open {@link Connection}
+     * @throws SQLException if a database access error occurs
+     */
     @Override
     public Connection getAnyConnection() throws SQLException {
         return dataSource.getConnection();
     }
 
+    /**
+     * Closes and releases an unconfigured JDBC connection back to the pool.
+     *
+     * @param connection the JDBC connection to release
+     * @throws SQLException if an error occurs while closing the connection
+     */
     @Override
     public void releaseAnyConnection(Connection connection) throws SQLException {
         connection.close();
     }
 
+    /**
+     * Obtains a JDBC connection configured with the specific tenant schema.
+     *
+     * @param tenantId the schema identifier for the target tenant
+     * @return the configured {@link Connection} targeting the tenant schema
+     */
     @Override
     public Connection getConnection(String tenantId) {
         try {
@@ -50,6 +68,12 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
         return null;
     }
 
+    /**
+     * Resets the schema and releases the tenant-specific connection back to the pool.
+     *
+     * @param tenantId the tenant schema identifier
+     * @param connection the JDBC connection to release
+     */
     @Override
     public void releaseConnection(String tenantId, Connection connection) {
         try {
@@ -72,6 +96,11 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
         }
     }
 
+    /**
+     * Determines whether the connection provider supports aggressive release of connections.
+     *
+     * @return {@code false} to prevent connection release mid-transaction in JTA environments
+     */
     @Override
     public boolean supportsAggressiveRelease() {
         /*
@@ -82,12 +111,26 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
         return Boolean.FALSE;
     }
 
+    /**
+     * Checks if this connection provider can be unwrapped as the specified target type.
+     *
+     * @param unwrapType the class type to unwrap
+     * @return {@code true} if unwrap is supported, {@code false} otherwise
+     */
     @Override
     public boolean isUnwrappableAs(Class<?> unwrapType) {
         return MultiTenantConnectionProvider.class.equals(unwrapType)
                 || AbstractMultiTenantConnectionProvider.class.isAssignableFrom(unwrapType);
     }
 
+    /**
+     * Unwraps this instance as the requested type.
+     *
+     * @param <T> the target type
+     * @param unwrapType the target class to unwrap
+     * @return this instance cast to the target type
+     * @throws UnknownUnwrapTypeException if unwrapping to the specified type is not supported
+     */
     @Override
     @SuppressWarnings("unchecked")
     public <T> T unwrap(Class<T> unwrapType) {

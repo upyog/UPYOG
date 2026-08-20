@@ -53,10 +53,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 
+/**
+ * Custom {@link ObjectMapper} that integrates Jackson with Hibernate 6 persistence entities.
+ * <p>
+ * Registers {@link Hibernate6Module} to prevent lazy initialization exceptions during JSON serialization
+ * and enforces exact {@link java.math.BigDecimal} precision to avoid floating-point rounding errors
+ * in CAD plan measurements, setbacks, and fee calculations.
+ * </p>
+ *
+ * @author eGovernments Foundation
+ */
 public class HibernateAwareObjectMapper extends ObjectMapper {
 
     private static final long serialVersionUID = -634721091120261971L;
 
+    /**
+     * Constructs a new HibernateAwareObjectMapper instance with Hibernate 6 module
+     * and exact BigDecimal deserialization enabled.
+     */
     public HibernateAwareObjectMapper() {
         registerModule(new Hibernate6Module());
         // Enforce exact decimal precision (BigDecimal) instead of Double to prevent

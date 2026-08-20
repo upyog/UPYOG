@@ -73,6 +73,12 @@ public class CacheControlFilter implements Filter {
 
     private long expireInSeconds = 0;
 
+    /**
+     * Initializes the filter and reads the {@code expireInSeconds} configuration parameter.
+     *
+     * @param filterConfig the filter configuration object
+     * @throws ServletException if initialization fails
+     */
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
         if (filterConfig.getInitParameter("expireInSeconds") == null)
@@ -81,6 +87,15 @@ public class CacheControlFilter implements Filter {
             expireInSeconds = Long.valueOf(filterConfig.getInitParameter("expireInSeconds"));
     }
     
+    /**
+     * Applies HTTP caching headers (Cache-Control, Expires, ETag, Pragma) to the response.
+     *
+     * @param request the incoming servlet request
+     * @param response the outgoing servlet response
+     * @param chain the filter execution chain
+     * @throws IOException if an I/O error occurs during filtering
+     * @throws ServletException if a servlet processing error occurs
+     */
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
         // EDCR functions as a headless backend REST service without static UI assets.
@@ -94,6 +109,9 @@ public class CacheControlFilter implements Filter {
 //        chain.doFilter(request, httpServletResponse);
     }
 
+    /**
+     * Destroys the filter and releases any allocated resources.
+     */
     @Override
     public void destroy() {
     }

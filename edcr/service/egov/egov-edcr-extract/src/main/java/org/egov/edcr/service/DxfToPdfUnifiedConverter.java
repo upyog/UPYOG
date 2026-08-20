@@ -38,11 +38,23 @@ import com.itextpdf.text.Rectangle;
 public class DxfToPdfUnifiedConverter {
     private static final Logger LOG = LogManager.getLogger(DxfToPdfUnifiedConverter.class);
 
+    /**
+     * Supported DXF to PDF conversion engines.
+     */
     public enum Engine {
+        /**
+         * Open-source Kabeja DXF-to-SVG-to-PDF conversion engine.
+         */
         KABEJA,
+        /**
+         * Aspose.CAD vector rendering engine.
+         */
         ASPOSE
     }
 
+    /**
+     * Application configuration service used to retrieve dynamic runtime parameters such as {@link DcrConstants#DXF_TO_PDF_ENGINE}.
+     */
     @Autowired
     private AppConfigValueService appConfigValueService;
 
@@ -87,13 +99,22 @@ public class DxfToPdfUnifiedConverter {
     }
 
     /**
-     * Reads DXF_TO_PDF_ENGINE from Digit DCR app config. Any value other than ASPOSE (case-insensitive) means Kabeja,
-     * including when the setting is missing.
+     * Reads {@link DcrConstants#DXF_TO_PDF_ENGINE} from Digit DCR application configuration.
+     * Any value other than {@code ASPOSE} (case-insensitive) resolves to Kabeja,
+     * including when the setting is missing or unconfigured.
+     *
+     * @return {@code true} if Aspose CAD engine is configured and active, {@code false} otherwise
      */
     public boolean isAsposeEngine() {
         return resolveEngine() == Engine.ASPOSE;
     }
 
+    /**
+     * Resolves the configured DXF to PDF engine from the application configuration service.
+     * Checks module {@link DcrConstants#APPLICATION_MODULE_TYPE} and key {@link DcrConstants#DXF_TO_PDF_ENGINE}.
+     *
+     * @return the resolved {@link Engine} (defaults to {@link Engine#KABEJA})
+     */
     private Engine resolveEngine() {
         List<AppConfigValues> vals = appConfigValueService.getConfigValuesByModuleAndKey(
                 DcrConstants.APPLICATION_MODULE_TYPE, DcrConstants.DXF_TO_PDF_ENGINE);
@@ -290,10 +311,26 @@ public class DxfToPdfUnifiedConverter {
      * </ul>
      */
     private static class SvgSanitizingHandler implements ContentHandler {
+        /**
+         * Downstream SAX ContentHandler to which sanitized events are delegated.
+         */
         private final ContentHandler delegate;
+
+        /**
+         * Dynamically calculated maximum allowed font size based on root SVG viewBox dimensions.
+         */
         private double maxFontSize = -1.0;
+
+        /**
+         * Counter for improperly positioned text elements grouped near the origin (0,0).
+         */
         private int buggedTextCount = 0;
 
+        /**
+         * Constructs a new {@code SvgSanitizingHandler} wrapping the specified delegate.
+         *
+         * @param delegate the downstream {@link ContentHandler} receiving sanitized SAX events
+         */
         public SvgSanitizingHandler(ContentHandler delegate) {
             this.delegate = delegate;
         }
@@ -314,26 +351,41 @@ public class DxfToPdfUnifiedConverter {
             return val;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void setDocumentLocator(org.xml.sax.Locator locator) {
             delegate.setDocumentLocator(locator);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void startDocument() throws SAXException {
             delegate.startDocument();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void endDocument() throws SAXException {
             delegate.endDocument();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void startPrefixMapping(String prefix, String uri) throws SAXException {
             delegate.startPrefixMapping(prefix, uri);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void endPrefixMapping(String prefix) throws SAXException {
             delegate.endPrefixMapping(prefix);
@@ -345,7 +397,7 @@ public class DxfToPdfUnifiedConverter {
          * It performs the following primary tasks:
          * 1. Extracts the "viewBox" from the root SVG element to establish dynamic limits.
          * 2. Overrides the "font-size" of text elements if they exceed the calculated maximum.
-         * 3. Detects bugged text dumped at the origin (<=5.0) and modifies their "x", "y", "text-anchor", 
+         * 3. Detects bugged text dumped at the origin (&lt;=5.0) and modifies their "x", "y", "text-anchor", 
          *    and "transform" attributes to stack them neatly in the bottom-left corner.
          * 
          * @param uri The Namespace URI
@@ -447,11 +499,22 @@ public class DxfToPdfUnifiedConverter {
             delegate.startElement(uri, localName, qName, cleanedAtts);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
             delegate.endElement(uri, localName, qName);
         }
 
+        /**
+         * Intercepts and sanitizes character data within SVG text elements to remove '@' font artifacts.
+         *
+         * @param ch the characters
+         * @param start the start position in the character array
+         * @param length the number of characters to use from the character array
+         * @throws SAXException if any SAX parsing error occurs
+         */
         @Override
         public void characters(char[] ch, int start, int length) throws SAXException {
             String str = new String(ch, start, length);
@@ -464,16 +527,25 @@ public class DxfToPdfUnifiedConverter {
             }
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
             delegate.ignorableWhitespace(ch, start, length);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void processingInstruction(String target, String data) throws SAXException {
             delegate.processingInstruction(target, data);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void skippedEntity(String name) throws SAXException {
             delegate.skippedEntity(name);

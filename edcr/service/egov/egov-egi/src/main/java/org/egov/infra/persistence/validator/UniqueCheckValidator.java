@@ -63,6 +63,17 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Jakarta Bean Validation {@link ConstraintValidator} implementation for {@link Unique}.
+ * <p>
+ * Validates that specified individual entity fields are unique across persistent records
+ * using Jakarta Persistence {@link CriteriaBuilder}. Supports case-insensitive string matching
+ * and self-exclusion during entity updates.
+ * </p>
+ *
+ * @author eGovernments Foundation
+ * @see Unique
+ */
 public class UniqueCheckValidator implements ConstraintValidator<Unique, Object> {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(UniqueCheckValidator.class);
@@ -72,11 +83,23 @@ public class UniqueCheckValidator implements ConstraintValidator<Unique, Object>
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     * Initializes the validator with metadata from the {@link Unique} annotation.
+     *
+     * @param unique the annotation instance
+     */
     @Override
     public void initialize(final Unique unique) {
         this.unique = unique;
     }
 
+    /**
+     * Validates that each configured field on the target entity is unique.
+     *
+     * @param arg0 the target entity instance being validated
+     * @param constraintValidatorContext the validation execution context
+     * @return {@code true} if all configured fields are unique, {@code false} otherwise
+     */
     @Override
     public boolean isValid(final Object arg0, final ConstraintValidatorContext constraintValidatorContext) {
         try {

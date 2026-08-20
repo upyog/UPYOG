@@ -38,12 +38,23 @@ public class CacheConfiguration implements CachingConfigurer {
     private RedisTemplate redisTemplate;
     private List<String> cities;
 
+    /**
+     * Creates and configures the multi-tenant cache resolver.
+     *
+     * @return the {@link CacheResolver} resolving cache instances per tenant
+     */
     @Bean
     @Override
     public CacheResolver cacheResolver() {
         return new MultiTenantCacheResolver(cacheManager());
     }
 
+    /**
+     * Creates a custom {@link KeyGenerator} that generates cache keys by combining
+     * the target class name, method name, and method arguments.
+     *
+     * @return the configured {@link KeyGenerator}
+     */
     @Bean
     @Override
     public KeyGenerator keyGenerator() {

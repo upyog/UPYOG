@@ -70,6 +70,17 @@ import jakarta.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Jakarta Bean Validation {@link ConstraintValidator} implementation for {@link CompositeUnique}.
+ * <p>
+ * Validates that a combination of multiple entity fields is unique in the database
+ * using Jakarta Persistence {@link CriteriaBuilder}. Supports case-insensitive string matching,
+ * null handling, and update-time self-ID exclusion.
+ * </p>
+ *
+ * @author eGovernments Foundation
+ * @see CompositeUnique
+ */
 public class CompositeUniqueCheckValidator implements ConstraintValidator<CompositeUnique, Object> {
 
     private static final Logger LOG = LogManager.getLogger(CompositeUniqueCheckValidator.class);
@@ -79,11 +90,23 @@ public class CompositeUniqueCheckValidator implements ConstraintValidator<Compos
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     * Initializes the validator with the metadata from the {@link CompositeUnique} annotation.
+     *
+     * @param unique the annotation instance
+     */
     @Override
     public void initialize(final CompositeUnique unique) {
         this.unique = unique;
     }
 
+    /**
+     * Validates that the composite field combination of the target object is unique.
+     *
+     * @param arg0 the target entity instance being validated
+     * @param constraintValidatorContext the validation execution context
+     * @return {@code true} if the composite field values are unique, {@code false} otherwise
+     */
     @Override
     public boolean isValid(final Object arg0, final ConstraintValidatorContext constraintValidatorContext) {
         try {

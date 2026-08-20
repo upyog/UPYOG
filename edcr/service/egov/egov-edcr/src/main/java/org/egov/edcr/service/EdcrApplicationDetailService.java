@@ -28,6 +28,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Service class for managing {@link EdcrApplicationDetail} lifecycle and queries.
+ * <p>
+ * Provides database operations for saving application details, querying by DCR numbers,
+ * transaction numbers, and third-party user identifiers, and constructing structural
+ * building models for approved plans.
+ * </p>
+ *
+ * @author eGovernments Foundation
+ */
 @Service
 @Transactional(readOnly = true)
 public class EdcrApplicationDetailService {
@@ -45,38 +55,98 @@ public class EdcrApplicationDetailService {
         return entityManager.unwrap(Session.class);
     }
 
+    /**
+     * Persists an individual {@link EdcrApplicationDetail} entity to the database.
+     *
+     * @param edcrApplicationDetail the application detail entity to persist
+     */
+    @Transactional
     public void save(EdcrApplicationDetail edcrApplicationDetail) {
         edcrApplicationDetailRepository.save(edcrApplicationDetail);
     }
 
+    /**
+     * Persists a collection of {@link EdcrApplicationDetail} entities to the database in batch.
+     *
+     * @param edcrApplicationDetails the list of application detail entities to save
+     */
+    @Transactional
     public void saveAll(List<EdcrApplicationDetail> edcrApplicationDetails) {
         edcrApplicationDetailRepository.saveAll(edcrApplicationDetails);
     }
 
+    /**
+     * Retrieves all application details associated with a given parent application ID.
+     *
+     * @param dcrApplicationId the unique identifier of the parent EDCR application
+     * @return a list of associated {@link EdcrApplicationDetail} entities
+     */
     public List<EdcrApplicationDetail> fingByDcrApplicationId(Long dcrApplicationId) {
         return edcrApplicationDetailRepository.findByApplicationId(dcrApplicationId);
     }
 
+    /**
+     * Retrieves an application detail record by its unique building plan scrutiny (DCR) number.
+     *
+     * @param dcrNumber the unique building plan scrutiny number
+     * @return the matching {@link EdcrApplicationDetail}, or {@code null} if not found
+     */
     public EdcrApplicationDetail findByDcrNumber(final String dcrNumber) {
         return edcrApplicationDetailRepository.findByDcrNumber(dcrNumber);
     }
 
+    /**
+     * Retrieves an application detail by DCR number and third-party user code.
+     *
+     * @param dcrNumber the unique building plan scrutiny number
+     * @param thirdPartyUserCode the user code or UUID of the third-party portal user
+     * @return the matching {@link EdcrApplicationDetail}, or {@code null} if not found
+     */
     public EdcrApplicationDetail findByDcrNumberAndTPUserCode(final String dcrNumber, final String thirdPartyUserCode) {
         return edcrApplicationDetailRepository.findByDcrNumberAndApplication_ThirdPartyUserCode(dcrNumber, thirdPartyUserCode);
     }
 
+    /**
+     * Retrieves an application detail by DCR number and transaction number.
+     *
+     * @param dcrNumber the unique building plan scrutiny number
+     * @param transactionNumber the client-side transaction identifier
+     * @return the matching {@link EdcrApplicationDetail}, or {@code null} if not found
+     */
     public EdcrApplicationDetail findByDcrAndTransactionNumber(final String dcrNumber, final String transactionNumber) {
         return edcrApplicationDetailRepository.findByDcrNumberAndApplication_TransactionNumber(dcrNumber, transactionNumber);
     }
     
+    /**
+     * Retrieves an application detail by DCR number, transaction number, and third-party user code.
+     *
+     * @param dcrNumber the unique building plan scrutiny number
+     * @param transactionNumber the client-side transaction identifier
+     * @param thirdPartyUserCode the user code or UUID of the third-party portal user
+     * @return the matching {@link EdcrApplicationDetail}, or {@code null} if not found
+     */
     public EdcrApplicationDetail findByDcrAndTransactionNumberAndTPUserCode(final String dcrNumber, final String transactionNumber, final String thirdPartyUserCode) {
         return edcrApplicationDetailRepository.findByDcrNumberAndApplication_TransactionNumberAndApplication_ThirdPartyUserCode(dcrNumber, transactionNumber, thirdPartyUserCode);
     }
     
+    /**
+     * Retrieves an application detail by DCR number and third-party user tenant.
+     *
+     * @param dcrNumber the unique building plan scrutiny number
+     * @param thirdPartyUserTenant the tenant ID of the third-party user
+     * @return the matching {@link EdcrApplicationDetail}, or {@code null} if not found
+     */
     public EdcrApplicationDetail findByDcrNumberAndTPUserTenant(final String dcrNumber, final String thirdPartyUserTenant) {
         return edcrApplicationDetailRepository.findByDcrNumberAndApplication_ThirdPartyUserTenant(dcrNumber, thirdPartyUserTenant);
     }
 
+    /**
+     * Constructs and populates building, floor, occupancy, and plan entities for approved plans
+     * and maps them into the provided {@link EdcrApplicationInfo}.
+     *
+     * @param edcrApplicationDetail the persistent application detail record
+     * @param applicationInfo the target application info DTO to populate
+     */
     public void buildBuildingDetailForApprovedPlans(EdcrApplicationDetail edcrApplicationDetail,
             EdcrApplicationInfo applicationInfo) {
         final Map<String, Long> params = new HashMap<>();
