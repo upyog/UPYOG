@@ -1,171 +1,559 @@
-import React, { useEffect, useState, useRef } from "react";
+import React from "react";
 import {
-  CardLabel,
-  ActionBar,
   SubmitBar,
-  Menu,
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import NDCDocument from "../components/NDCDocument";
-import Timeline from "../components/NDCTimeline";
 
-// This component is the summary page for the NDC application. 
-// It displays all the details entered by the user in the previous steps and allows them to review before submission.
-//  It also provides an option to go back and edit the details if needed. The user can also take actions based on the workflow state of the application.
 const NDCSummary = ({ formData, goNext, onGoBack }) => {
   const { t } = useTranslation();
-  const menuRef = useRef();
-  let user = Digit.UserService.getUser();
 
-  let docs = formData?.DocummentDetails?.documents?.documents;
-  const isCitizen = !user?.info?.type || user?.info?.type === "CITIZEN";
+  /*
+   * =========================================================
+   * FORM DATA
+   * =========================================================
+   */
 
+  const propertyDetails =
+    formData?.NDCDetails?.PropertyDetails || {};
 
-  const appId = formData?.apiData?.Applications?.[0]?.applicationNo || formData?.responseData?.[0]?.applicationNo;
+  const ndcReasonData =
+    formData?.NDCDetails?.NDCReason;
 
-  const propertyDet = formData?.apiData?.Applications?.[0]?.NdcDetails || formData?.responseData?.[0]?.NdcDetails;
+  const docs =
+    formData?.DocummentDetails?.documents?.documents || [];
 
-  const filterType = propertyDet?.filter((item) => item?.businessService == "PT");
+  /*
+   * =========================================================
+   * APPLICANT DETAILS
+   * =========================================================
+   */
 
+  const fullName =
+    propertyDetails?.firstName || "NA";
 
-  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
+  const mobileNumber =
+    propertyDetails?.mobileNumber || "NA";
 
+  const email =
+    propertyDetails?.email || "NA";
 
-  const [getData, setData] = useState();
-  const [displayMenu, setDisplayMenu] = useState(false);
+  /*
+   * =========================================================
+   * APPLICATION DETAILS
+   * =========================================================
+   */
 
-  const closeMenu = () => {
-    setDisplayMenu(false);
+  const address =
+    propertyDetails?.address || "NA";
+
+  const remarks =
+    propertyDetails?.remarks || "NA";
+
+  const propertyId =
+    formData?.NDCDetails?.cpt?.id ||
+    formData?.NDCDetails?.cpt?.details?.propertyId ||
+    "NA";
+
+  const waterConnection =
+    propertyDetails?.waterConnection || [];
+
+  const sewerageConnection =
+    propertyDetails?.sewerageConnection || [];
+
+  /*
+   * =========================================================
+   * NDC REASON
+   * =========================================================
+   */
+
+  const ndcReason =
+    ndcReasonData?.i18nKey === "OTHERS"
+      ? t(ndcReasonData?.reason || "")
+      : ndcReasonData?.i18nKey
+      ? t(ndcReasonData.i18nKey)
+      : "NA";
+
+  /*
+   * =========================================================
+   * CONNECTION DISPLAY
+   * =========================================================
+   */
+
+  const waterConnectionValue =
+    waterConnection?.length > 0
+      ? waterConnection
+          .map((item) => item?.connectionNo)
+          .filter(Boolean)
+          .join(", ") || "NA"
+      : "NA";
+
+  const sewerageConnectionValue =
+    sewerageConnection?.length > 0
+      ? sewerageConnection
+          .map((item) => item?.connectionNo)
+          .filter(Boolean)
+          .join(", ") || "NA"
+      : "NA";
+
+  /*
+   * =========================================================
+   * PAGE STYLES
+   * =========================================================
+   */
+
+  const pageStyle = {
+    width: "100%",
+    minHeight: "100%",
+    boxSizing: "border-box",
+    padding: "10px 0 30px 0",
   };
 
-  Digit.Hooks.useClickOutside(menuRef, closeMenu, displayMenu);
+  /*
+   * =========================================================
+   * SUMMARY CARD
+   * =========================================================
+   */
 
-  const fetchCalculations = async () => {
-    const payload = {
-      CalculationCriteria: [
-        {
-          applicationNumber: appId,
-          tenantId: tenantId,
-          propertyType: filterType?.[0]?.additionalDetails?.propertyType,
-        },
-      ],
-    };
-    const response = await Digit.NDCService.NDCCalculator({ tenantId, filters: { getCalculationOnly: true }, details: payload });
-    setData(response?.Calculation?.[0]);
+  const summaryCardStyle = {
+    backgroundColor: "#ffffff",
+    width: "620px",
+    maxWidth: "100%",
+    margin: "0",
+    padding: "18px",
+    boxSizing: "border-box",
+    borderRadius: "2px",
   };
 
-  useEffect(() => {
-    fetchCalculations();
-  }, []);
+  /*
+   * =========================================================
+   * TITLE
+   * =========================================================
+   */
 
-  const workflowDetails = Digit.Hooks.useWorkflowDetails({
-    tenantId: tenantId,
-    id: appId,
-    moduleCode: "ndc-services",
-  });
+  const titleStyle = {
+    fontSize: "28px",
+    lineHeight: "1.2",
+    fontWeight: "700",
+    color: "#111111",
+    margin: "0 0 4px 0",
+  };
 
-  const userRoles = user?.info?.roles?.map((e) => e.code);
-  let actions =
-    workflowDetails?.data?.actionState?.nextActions?.filter((e) => {
-      return userRoles?.some((role) => e.roles?.includes(role)) || !e.roles;
-    }) ||
-    workflowDetails?.data?.nextActions?.filter((e) => {
-      return userRoles?.some((role) => e.roles?.includes(role)) || !e.roles;
-    });
+  const subtitleStyle = {
+    fontSize: "13px",
+    lineHeight: "1.4",
+    color: "#555555",
+    marginBottom: "18px",
+  };
 
-  function onActionSelect(action) {
-    goNext(action);
-  }
+  /*
+   * =========================================================
+   * SECTION STYLES
+   * =========================================================
+   */
+
+  const sectionStyle = {
+    width: "100%",
+    marginBottom: "18px",
+  };
+
+  const sectionHeaderStyle = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+    minHeight: "32px",
+    borderBottom: "1px solid #cfcfcf",
+    boxSizing: "border-box",
+  };
+
+  const sectionTitleStyle = {
+    fontSize: "16px",
+    lineHeight: "1.4",
+    fontWeight: "700",
+    color: "#111111",
+    margin: "0",
+    padding: "5px 0",
+  };
+
+  const editButtonStyle = {
+    border: "none",
+    background: "transparent",
+    padding: "0",
+    margin: "0",
+    color: "#b21f2d",
+    fontSize: "19px",
+    fontWeight: "700",
+    lineHeight: "1",
+    cursor: "pointer",
+  };
+
+  /*
+   * =========================================================
+   * ROW STYLES
+   * =========================================================
+   */
+
+  const rowStyle = {
+    display: "grid",
+    gridTemplateColumns: "42% 58%",
+    width: "100%",
+    minHeight: "30px",
+    borderBottom: "1px solid #d5d5d5",
+    boxSizing: "border-box",
+  };
+
+  const labelStyle = {
+    fontSize: "13px",
+    lineHeight: "1.4",
+    fontWeight: "700",
+    color: "#111111",
+    padding: "6px 8px 6px 0",
+    boxSizing: "border-box",
+  };
+
+  const valueStyle = {
+    fontSize: "13px",
+    lineHeight: "1.4",
+    color: "#333333",
+    padding: "6px 0 6px 8px",
+    wordBreak: "break-word",
+    overflowWrap: "anywhere",
+    boxSizing: "border-box",
+  };
+
+  /*
+   * =========================================================
+   * DOCUMENT STYLES
+   * =========================================================
+   */
+
+  const documentsContainerStyle = {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: "10px",
+    width: "100%",
+    padding: "10px 0",
+    boxSizing: "border-box",
+  };
 
   const documentCardStyle = {
-    flex: isCitizen ? "1 1 18%" : "1 1 22%", // around 4 per row
-    minWidth: "200px", // keeps it from shrinking too small
-    maxWidth: "250px", // prevents oversized stretching on big screens
-    backgroundColor: "#fdfdfd",
-    padding: "0.75rem",
-    border: "1px solid #e0e0e0",
-    borderRadius: "6px",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+    flex: "0 0 120px",
+    width: "120px",
+    minHeight: "105px",
+    backgroundColor: "#ffffff",
+    border: "1px solid #d5d5d5",
+    borderRadius: "2px",
+    padding: "7px",
+    boxSizing: "border-box",
   };
 
-  const boldLabelStyle = { fontWeight: "bold", color: "#555" };
+  /*
+   * =========================================================
+   * DECLARATION
+   * =========================================================
+   */
+
+  const declarationContainerStyle = {
+    display: "flex",
+    alignItems: "flex-start",
+    width: "100%",
+    marginTop: "8px",
+    padding: "10px 0 0 0",
+    borderTop: "1px solid #d0d0d0",
+    boxSizing: "border-box",
+  };
+
+  const checkboxStyle = {
+    width: "15px",
+    height: "15px",
+    margin: "2px 8px 0 0",
+    flexShrink: 0,
+  };
+
+  const declarationTextStyle = {
+    fontSize: "10px",
+    lineHeight: "1.5",
+    color: "#333333",
+  };
+
+  /*
+   * =========================================================
+   * SUBMIT
+   * =========================================================
+   */
+
+  const submitContainerStyle = {
+    display: "flex",
+    justifyContent: "flex-end",
+    width: "100%",
+    marginTop: "16px",
+    boxSizing: "border-box",
+  };
+
+  /*
+   * =========================================================
+   * HELPERS
+   * =========================================================
+   */
+
+  const renderValue = (value) => {
+    if (
+      value === undefined ||
+      value === null ||
+      value === ""
+    ) {
+      return "NA";
+    }
+
+    return value;
+  };
 
   const renderLabel = (label, value) => (
-    <div className="bpa-summary-label-field-pair">
-      <CardLabel className="bpa-summary-bold-label" style={{ width: "auto" }}>
+    <div style={rowStyle}>
+      <div style={labelStyle}>
         {label}
-      </CardLabel>
+      </div>
 
-      <div>{value || "NA"}</div>
+      <div style={valueStyle}>
+        {renderValue(value)}
+      </div>
     </div>
   );
 
-  return (
-    <div>
-      {window.location.href.includes("/citizen") ? <Timeline currentStep={3} /> : null}
-    <div className="bpa-summary-page">
-      <h2 className="bpa-summary-heading">{t("Application Summary")}</h2>
-
-      {/* Property Details Section */}
-      <div className="bpa-summary-section">
-        {renderLabel(t("Full Name"), formData?.NDCDetails?.PropertyDetails?.firstName)}
-        {/* {renderLabel(t("Last Name"), formData?.NDCDetails?.PropertyDetails?.lastName)} */}
-        {renderLabel(t("Mobile Number"), formData?.NDCDetails?.PropertyDetails?.mobileNumber)}
-        {renderLabel(t("Email ID"), formData?.NDCDetails?.PropertyDetails?.email)}
-        {renderLabel(t("Address"), formData?.NDCDetails?.PropertyDetails?.address)}
-        {/* {renderLabel(t("NDC Reason"), t(formData?.NDCDetails?.NDCReason?.i18nKey))} */}
-        {formData?.NDCDetails?.NDCReason?.i18nKey === "OTHERS"
-          ? renderLabel(t("NDC Reason"), t(formData?.NDCDetails?.NDCReason?.reason))
-          : renderLabel(t("NDC Reason"), t(formData?.NDCDetails?.NDCReason?.i18nKey))}
-        {renderLabel(t("Remarks"), formData?.NDCDetails?.PropertyDetails?.remarks)}
-
-        {renderLabel(
-          t("Water Connection"),
-          formData?.NDCDetails?.PropertyDetails?.waterConnection?.length > 0
-            ? formData?.NDCDetails?.PropertyDetails?.waterConnection?.map((item, index) => <div key={index}>{item?.connectionNo}</div>)
-            : "NA"
-        )}
-
-        {renderLabel(
-          t("Sewerage Connection"),
-          formData?.NDCDetails?.PropertyDetails?.sewerageConnection?.length > 0
-            ? formData?.NDCDetails?.PropertyDetails?.sewerageConnection?.map((item, index) => <div key={index}>{item?.connectionNo}</div>)
-            : "NA"
-        )}
-
-        {renderLabel(t("Property ID"), formData?.NDCDetails?.cpt?.id)}
-        {renderLabel(
-          t("Application Fees"),
-          getData?.totalAmount ? new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(getData?.totalAmount) : "NA"
-        )}
+  const renderSectionHeader = (
+    title,
+    onEdit
+  ) => (
+    <div style={sectionHeaderStyle}>
+      <div style={sectionTitleStyle}>
+        {title}
       </div>
 
-      {/* Documents Section */}
-      {/* Documents Section */}
-      <h2 className="bpa-summary-heading">{t("Documents Uploaded")}</h2>
-      <div className="bpa-summary-section">
-        {docs?.length > 0 ? (
-          <div className="ndc-doc-view-comp">
-            {docs?.map((doc, index) => (
-              <div key={index} style={documentCardStyle}>
-                <NDCDocument value={docs} Code={doc?.documentType} index={index} formData={formData} />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div>{t("TL_NO_DOCUMENTS_MSG")}</div>
-        )}
-      </div>
-
-      {/* Action Section */}
-      <ActionBar>
-        <SubmitBar className="submit-bar-back" label="Back" onSubmit={onGoBack} />
-        {displayMenu && (workflowDetails?.data?.actionState?.nextActions || workflowDetails?.data?.nextActions) ? (
-          <Menu localeKeyPrefix={`WF_EMPLOYEE_${"NDC"}`} options={actions} optionKey={"action"} t={t} onSelect={onActionSelect} />
-        ) : null}
-        <SubmitBar ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
-      </ActionBar>
+      <button
+        type="button"
+        style={editButtonStyle}
+        title={t("Edit")}
+        onClick={onEdit}
+      >
+        ✎
+      </button>
     </div>
+  );
+
+  /*
+   * =========================================================
+   * EDIT
+   * =========================================================
+   */
+
+  const handleEdit = () => {
+    if (typeof onGoBack === "function") {
+      onGoBack();
+    }
+  };
+
+  /*
+   * =========================================================
+   * SUBMIT
+   * =========================================================
+   */
+
+  const handleSubmit = () => {
+    if (typeof goNext === "function") {
+      goNext();
+    }
+  };
+
+  /*
+   * =========================================================
+   * RENDER
+   * =========================================================
+   */
+
+  return (
+    <div style={pageStyle}>
+
+      {/* ===================================================
+          SUMMARY CARD
+          Back button intentionally removed
+      ==================================================== */}
+
+      <div style={summaryCardStyle}>
+
+        {/* =================================================
+            HEADER
+        ================================================== */}
+
+        <h2 style={titleStyle}>
+          {t("Summary")}
+        </h2>
+
+        <div style={subtitleStyle}>
+          {t("Check Your Details")}
+        </div>
+
+        {/* =================================================
+            APPLICANT DETAILS
+        ================================================== */}
+
+        <div style={sectionStyle}>
+
+          {renderSectionHeader(
+            t("Applicant Details"),
+            handleEdit
+          )}
+
+          {renderLabel(
+            t("Full Name"),
+            fullName
+          )}
+
+          {renderLabel(
+            t("Mobile Number"),
+            mobileNumber
+          )}
+
+          {renderLabel(
+            t("Email ID"),
+            email
+          )}
+
+        </div>
+
+        {/* =================================================
+            APPLICATION DETAILS
+        ================================================== */}
+
+        <div style={sectionStyle}>
+
+          {renderSectionHeader(
+            t("Application Details"),
+            handleEdit
+          )}
+
+          {renderLabel(
+            t("Address"),
+            address
+          )}
+
+          {renderLabel(
+            t("NDC Reason"),
+            ndcReason
+          )}
+
+          {renderLabel(
+            t("Remarks"),
+            remarks
+          )}
+
+          {renderLabel(
+            t("Water Connection"),
+            waterConnectionValue
+          )}
+
+          {renderLabel(
+            t("Sewerage Connection"),
+            sewerageConnectionValue
+          )}
+
+          {renderLabel(
+            t("Property ID"),
+            propertyId
+          )}
+
+        </div>
+
+        {/* =================================================
+            DOCUMENTS
+        ================================================== */}
+
+        <div style={sectionStyle}>
+
+          {renderSectionHeader(
+            t("Documents"),
+            () => {}
+          )}
+
+          {docs?.length > 0 ? (
+
+            <div style={documentsContainerStyle}>
+
+              {docs.map((doc, index) => (
+
+                <div
+                  key={
+                    `${
+                      doc?.documentType ||
+                      "document"
+                    }-${index}`
+                  }
+
+                  style={documentCardStyle}
+                >
+                  <NDCDocument
+                    value={docs}
+                    Code={doc?.documentType}
+                    index={index}
+                    formData={formData}
+                  />
+                </div>
+
+              ))}
+
+            </div>
+
+          ) : (
+
+            <div
+              style={{
+                fontSize: "13px",
+                color: "#555555",
+                padding: "10px 0",
+              }}
+            >
+              {t("TL_NO_DOCUMENTS_MSG")}
+            </div>
+
+          )}
+
+        </div>
+
+        {/* =================================================
+            DECLARATION
+        ================================================== */}
+
+        <div style={declarationContainerStyle}>
+
+          <input
+            type="checkbox"
+            style={checkboxStyle}
+          />
+
+          <div style={declarationTextStyle}>
+            {t(
+              "I hereby declare and affirm that the above-furnished information is true and correct and nothing has been concealed therefrom. I am also aware of the fact that in case this information is found false/incorrect, the authorities are at liberty to initiate recovery of amount/interest/penalty/fine as provided in UPYOG Municipal Act 1911 or UPYOG Municipal Corporation Act 1976."
+            )}
+          </div>
+
+        </div>
+
+        {/* =================================================
+            SUBMIT BUTTON
+        ================================================== */}
+
+        <div style={submitContainerStyle}>
+
+          <SubmitBar
+            label={t("Submit")}
+            onSubmit={handleSubmit}
+          />
+
+        </div>
+
+      </div>
+
     </div>
   );
 };

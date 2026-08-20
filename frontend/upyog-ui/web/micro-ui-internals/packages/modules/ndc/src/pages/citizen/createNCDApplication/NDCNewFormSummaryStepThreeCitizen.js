@@ -1,111 +1,398 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
-import { FormComposer } from "@nudmcdgnpm/digit-ui-react-components";
 import NDCSummary from "../../../pageComponents/NDCSummary";
 import { resetNDCForm } from "../../../redux/actions/NDCFormActions";
 
-// This component is the final step in the NDC application process for citizens. It displays a summary of all the information entered by the user in the previous steps and allows them to review before submission. The user can also go back to edit the details if needed. Upon clicking the "Next" button, it triggers the submission of the application and redirects to a response page based on the API response.
-const NDCNewFormSummaryStepThreeCitizen = ({ config, onGoNext, onBackClick, t }) => {
+const NDCNewFormSummaryStepThreeCitizen = ({
+  config,
+  onGoNext,
+  onBackClick,
+  t,
+}) => {
   const dispatch = useDispatch();
-  const navigate = Digit.Hooks.useCustomNavigate();
-  // const tenantId = Digit.ULBService.getCurrentTenantId();
-  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
-  const user = Digit.UserService.getUser();
 
-  const formData = useSelector((state) => state.ndc.NDCForm.formData || {});
-  // Function to handle the "Next" button click
+  const navigate =
+    Digit.Hooks.useCustomNavigate();
 
+  const tenantId =
+    Digit.ULBService.getCitizenCurrentTenant(true) ||
+    Digit.ULBService.getCurrentTenantId();
 
+  const formData = useSelector(
+    (state) =>
+      state.ndc.NDCForm.formData || {}
+  );
+
+  /**
+   * Final NDC submission.
+   *
+   * The final workflow action is APPLY.
+   */
   const goNext = async (action) => {
-    const actionStatus = action?.action;
+    /**
+     * Use APPLY as the default action.
+     *
+     * This prevents workflow.action from
+     * becoming null/undefined.
+     */
+    const actionStatus =
+      action?.action || "APPLY";
+
+    console.log(
+      "========== NDC SUMMARY SUBMIT =========="
+    );
+
+    console.log(
+      "Received action:",
+      action
+    );
+
+    console.log(
+      "Workflow action:",
+      actionStatus
+    );
+
     try {
-      const res = await onSubmit(formData, actionStatus); // wait for the API response
-      // Check if the API call was successful
+      const res = await onSubmit(
+        formData,
+        actionStatus
+      );
+
       if (res?.isSuccess) {
-        navigate(`/upyog-ui/citizen/ndc/response/${res?.response?.Applications?.[0]?.applicationNo}`);
+        const applicationNo =
+          res?.response
+            ?.Applications?.[0]
+            ?.applicationNo;
+
+        console.log(
+          "NDC submission successful:",
+          applicationNo
+        );
+
+        navigate(
+          `/upyog-ui/citizen/ndc/response/${applicationNo}`
+        );
       } else {
-        console.error("Submission failed, not moving to next step.", res?.response);
+        console.error(
+          "NDC submission failed:",
+          res?.response
+        );
       }
     } catch (error) {
-      alert(`Error: ${error?.message}`);
+      console.error(
+        "NDC submission error:",
+        error
+      );
+
+      alert(
+        `Error: ${
+          error?.message ||
+          "Something went wrong"
+        }`
+      );
     }
+
+    console.log(
+      "========================================"
+    );
   };
 
-  function mapToNDCPayload(inputData, actionStatus) {
-    const applicant = Digit.UserService.getUser()?.info || {};
+  /**
+   * Build final NDC update payload.
+   */
+  const mapToNDCPayload = (
+    inputData,
+    actionStatus
+  ) => {
+    /**
+     * Existing application is the source
+     * of truth.
+     */
+    const baseApplication =
+      inputData?.responseData?.[0] ||
+      inputData?.apiData
+        ?.Applications?.[0] ||
+      {};
 
-    const owners = (inputData?.apiData?.Applications?.[0]?.owners || [])?.map((item) => {
-      const obj = JSON.parse(JSON.stringify(item));
+    const applicant =
+      Digit.UserService.getUser()?.info ||
+      {};
+
+    /**
+     * Existing owners.
+     */
+    let owners = (
+      inputData?.apiData
+        ?.Applications?.[0]
+        ?.owners ||
+      baseApplication?.owners ||
+      []
+    ).map((item) => {
+      const obj = JSON.parse(
+        JSON.stringify(item)
+      );
+
       delete obj.status;
+
       return obj;
     });
-    // const owners = [
-    //   {
-    //     // name: `${data?.PropertyDetails?.firstName} ${data?.PropertyDetails?.lastName}`.trim(),
-    //     name: user?.info?.name,
-    //     mobileNumber: user?.info?.mobileNumber,
-    //     gender: formData?.NDCDetails?.PropertyDetails?.gender,
-    //     emailId: user?.info?.emailId,
-    //     type: user?.info?.type,
-    //   },
-    // ];
 
-    // Pick the source of truth for the application
-    const baseApplication = formData?.responseData?.[0] || formData?.apiData?.Applications?.[0] || {};
+    /**
+     * Fallback owner.
+     */
+    if (
+      owners.length === 0 &&
+      applicant
+    ) {
+      owners = [
+        {
+          name: applicant?.name,
+          mobileNumber:
+            applicant?.mobileNumber,
+          emailId:
+            applicant?.emailId,
+          type: applicant?.type,
+        },
+      ];
+    }
 
+    /**
+     * Final workflow action.
+     *
+     * APPLY is the required action for
+     * final NDC submission.
+     */
+    const workflowAction =
+      actionStatus || "APPLY";
 
-    // Clone and modify workflow action
+    /**
+     * Uploaded documents.
+     */
+    const documents = [];
+
+    const uploadedDocuments =
+      inputData?.DocummentDetails
+        ?.documents?.documents ||
+      inputData?.documents
+        ?.documents ||
+      [];
+
+    uploadedDocuments.forEach(
+      (doc) => {
+        if (!doc) {
+          return;
+        }
+
+        documents.push({
+          uuid: doc?.documentUid,
+          documentType:
+            doc?.documentType,
+          documentAttachment:
+            doc?.fileStoreId ||
+            doc?.filestoreId ||
+            doc?.documentAttachment,
+        });
+      }
+    );
+
+    /**
+     * Updated application.
+     */
     const updatedApplication = {
       ...baseApplication,
+
+      /**
+       * IMPORTANT:
+       * Workflow action must be APPLY.
+       */
       workflow: {
         ...baseApplication?.workflow,
-        action: actionStatus,
+        action: workflowAction,
       },
-      owners: owners,
-      NdcDetails: baseApplication?.NdcDetails,
-      Documents: [], // We'll populate below
+
+      /**
+       * Keep application action in sync.
+       */
+      action: workflowAction,
+
+      owners,
+
+      NdcDetails:
+        baseApplication?.NdcDetails,
+
+      Documents: documents,
+
+      active:
+        baseApplication?.active !== undefined
+          ? baseApplication.active
+          : true,
+
+      applicationStatus:
+        baseApplication?.applicationStatus ||
+        "INITIATED",
+
+      reason:
+        baseApplication?.reason,
     };
 
-    (inputData?.DocummentDetails?.documents?.documents || []).forEach((doc) => {
-      updatedApplication.Documents.push({
-        uuid: doc?.documentUid,
-        documentType: doc?.documentType,
-        documentAttachment: doc?.filestoreId,
-      });
-    });
-
-    // Final payload matches update API structure
+    /**
+     * Final payload.
+     */
     const payload = {
-      Applications: [updatedApplication],
+      Applications: [
+        updatedApplication,
+      ],
     };
 
+    /**
+     * Debug logging.
+     */
+    console.log(
+      "========== NDC APPLY PAYLOAD =========="
+    );
+
+    console.log(
+      "Workflow action:",
+      updatedApplication
+        ?.workflow?.action
+    );
+
+    console.log(
+      "Application action:",
+      updatedApplication?.action
+    );
+
+    console.log(
+      "Workflow:",
+      JSON.stringify(
+        updatedApplication?.workflow,
+        null,
+        2
+      )
+    );
+
+    console.log(
+      "Full payload:",
+      JSON.stringify(
+        payload,
+        null,
+        2
+      )
+    );
+
+    console.log(
+      "======================================="
+    );
 
     return payload;
-  }
+  };
 
-  const onSubmit = async (data, actionStatus) => {
-    const finalPayload = mapToNDCPayload(data, actionStatus);
-    // return;
-    const response = await Digit.NDCService.NDCUpdate({ tenantId, details: finalPayload });
-    dispatch(resetNDCForm());
-    if (response?.ResponseInfo?.status === "successful") {
-      return { isSuccess: true, response };
-    } else {
-      return { isSuccess: false, response };
+  /**
+   * Submit NDC update request.
+   */
+  const onSubmit = async (
+    data,
+    actionStatus
+  ) => {
+    try {
+      /**
+       * Never allow null/undefined action.
+       */
+      const finalAction =
+        actionStatus || "APPLY";
+
+      const finalPayload =
+        mapToNDCPayload(
+          data,
+          finalAction
+        );
+
+      console.log(
+        "Calling NDCUpdate with APPLY:"
+      );
+
+      console.log(
+        JSON.stringify(
+          finalPayload,
+          null,
+          2
+        )
+      );
+
+      const response =
+        await Digit.NDCService.NDCUpdate({
+          tenantId,
+          details: finalPayload,
+        });
+
+      console.log(
+        "NDC UPDATE RESPONSE:",
+        response
+      );
+
+      /**
+       * Successful response.
+       */
+      if (
+        response?.ResponseInfo?.status ===
+        "successful"
+      ) {
+        dispatch(
+          resetNDCForm()
+        );
+
+        return {
+          isSuccess: true,
+          response,
+        };
+      }
+
+      /**
+       * Backend returned an error.
+       */
+      console.error(
+        "NDC update failed:",
+        response
+      );
+
+      return {
+        isSuccess: false,
+        response,
+      };
+    } catch (error) {
+      console.error(
+        "NDC update exception:",
+        error
+      );
+
+      return {
+        isSuccess: false,
+        error,
+      };
     }
   };
 
-  // Function to handle the "Back" button click
+  /**
+   * Back button.
+   */
   const onGoBack = (data) => {
-    onBackClick(config.key, data);
+    onBackClick(
+      config.key,
+      data
+    );
   };
 
   return (
     <React.Fragment>
-      <NDCSummary formData={formData} goNext={goNext} onGoBack={onGoBack} />
+      <NDCSummary
+        formData={formData}
+        goNext={goNext}
+        onGoBack={onGoBack}
+      />
     </React.Fragment>
   );
 };
 
-export { NDCNewFormSummaryStepThreeCitizen };
+export {
+  NDCNewFormSummaryStepThreeCitizen,
+};

@@ -1,7 +1,6 @@
 import { Banner, Card, CardText, ActionBar, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { stringReplaceAll } from "../../utils";
 import { useLocation } from "react-router-dom";
 
 
@@ -16,13 +15,10 @@ const NDCResponseCitizen = (props) => {
   const nocData = state?.data?.Noc?.[0];
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
-  const ndcCode = location.pathname.split("/").pop(); 
-  const onSubmit = () => {
-    navigate(`/upyog-ui/citizen`);
-  };
+  const ndcCode = location.pathname.split("/").pop();
 
   const onGoToNDC = () => {
-    navigate(`/upyog-ui/citizen/ndc-home`);
+    navigate(`/upyog-ui/citizen/ndc/my-application`);
   };
 
   const handlePayment = () => {
@@ -47,11 +43,8 @@ const NDCResponseCitizen = (props) => {
             {t(`NDC_${stringReplaceAll(nocData?.nocType, ".", "_")}_${stringReplaceAll(nocData?.applicationStatus, ".", "_")}_SUB_HEADER`)}
           </CardText>
         ) : null} */}
-        <ActionBar className="ndc-action-bar" >
-          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} onSubmit={onSubmit} />
-          <SubmitBar label={t("CORE_COMMON_GO_TO_NDC")} onSubmit={onGoToNDC} />
-          <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handlePayment} />
-        </ActionBar>
+        <SubmitBar label={t("CORE_COMMON_GO_TO_NDC")} onSubmit={onGoToNDC} />
+        <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handlePayment} />
       </Card>
     </div>
   );

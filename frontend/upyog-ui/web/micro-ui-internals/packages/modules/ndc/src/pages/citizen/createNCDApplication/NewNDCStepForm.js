@@ -2,10 +2,18 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
-import {Stepper} from "@nudmcdgnpm/digit-ui-react-components";
+import {
+  Stepper,
+  CardHeader,
+  Toast,
+} from "@nudmcdgnpm/digit-ui-react-components";
+
 import { config } from "../../../config/citizen/CitizenNDCApplicationConfig";
-import { setNDCStep, updateNDCForm, resetNDCForm } from "../../../redux/actions/NDCFormActions";
-import { CardHeader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import {
+  setNDCStep,
+  updateNDCForm,
+  resetNDCForm,
+} from "../../../redux/actions/NDCFormActions";
 
 const createEmployeeConfig = [
   {
@@ -21,6 +29,7 @@ const createEmployeeConfig = [
       submitBarLabel: "Next",
     },
   },
+
   {
     head: "NDC_DOCUMENTS_REQUIRED",
     stepLabel: "Document Info",
@@ -34,6 +43,7 @@ const createEmployeeConfig = [
       submitBarLabel: "Next",
     },
   },
+
   {
     head: "Summary",
     stepLabel: "Summary",
@@ -50,30 +60,52 @@ const createEmployeeConfig = [
 ];
 
 const updatedCreateEmployeeconfig = createEmployeeConfig.map((item) => {
-  return { ...item, currStepConfig: config.filter((newConfigItem) => newConfigItem.stepNumber === item.stepNumber) };
+  return {
+    ...item,
+    currStepConfig: config.filter(
+      (newConfigItem) =>
+        newConfigItem.stepNumber === item.stepNumber
+    ),
+  };
 });
 
 export const NewNDCStepForm = () => {
   const navigate = Digit.Hooks.useCustomNavigate();
   const { t } = useTranslation();
   const dispatch = useDispatch();
+
   const [showToast, setShowToast] = useState(null);
+
   const formState = useSelector((state) => state.ndc.NDCForm);
   const formData = formState.formData;
   const step = formState.step;
+
   const location = useLocation();
-  // const tenantId = Digit.ULBService.getCurrentTenantId();
+
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
   const id = window.location.pathname.split("/").pop();
 
-  const { isLoading, data: applicationDetails } = Digit.Hooks.ndc.useSearchEmployeeApplication({ applicationNo: id }, tenantId);
+  const {
+    isLoading,
+    data: applicationDetails,
+  } = Digit.Hooks.ndc.useSearchEmployeeApplication(
+    {
+      applicationNo: id,
+    },
+    tenantId
+  );
 
   useEffect(() => {
-    if (applicationDetails?.Applications.length) {
-      dispatch(updateNDCForm("responseData", applicationDetails?.Applications));
+    if (applicationDetails?.Applications?.length) {
+      dispatch(
+        updateNDCForm(
+          "responseData",
+          applicationDetails.Applications
+        )
+      );
     }
-  }, [applicationDetails]);
+  }, [applicationDetails, dispatch]);
 
   const setStep = (updatedStepNumber) => {
     dispatch(setNDCStep(updatedStepNumber));
@@ -83,14 +115,24 @@ export const NewNDCStepForm = () => {
 
   useEffect(() => {
     dispatch(resetNDCForm());
-  }, [location.pathname]);
+  }, [location.pathname, dispatch]);
 
   return (
-    <div className="employeeCard" >
-      <CardHeader className="ndc-step-form"  divider={true}>
+    <div className="employeeCard ndc-hide-vertical-stepper">
+      <CardHeader
+        className="ndc-step-form"
+        divider={true}
+      >
         {t("ndc_header_application")}
       </CardHeader>
-      <Stepper stepsList={updatedCreateEmployeeconfig} onSubmit={handleSubmit} step={step} setStep={setStep} />
+
+      <Stepper
+        stepsList={updatedCreateEmployeeconfig}
+        onSubmit={handleSubmit}
+        step={step}
+        setStep={setStep}
+      />
+
       {showToast && (
         <Toast
           error={showToast.key}
