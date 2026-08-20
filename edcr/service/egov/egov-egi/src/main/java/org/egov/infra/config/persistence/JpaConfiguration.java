@@ -78,9 +78,18 @@ import java.util.Map;
 
 import org.hibernate.cfg.AvailableSettings;
 
+/**
+ * Spring {@link Configuration} class for JPA, Hibernate, Transaction Management, and Multi-Tenancy.
+ * <p>
+ * Configures the {@link LocalContainerEntityManagerFactoryBean}, {@link JtaTransactionManager},
+ * Hibernate vendor adapters, entity/hbm scanning, second-level caching, and multi-tenant schema resolution.
+ * </p>
+ *
+ * @author eGovernments Foundation
+ */
 @Configuration
 @EnableTransactionManagement(proxyTargetClass = true)
-@PropertySource(JpaConstants.PERSISTENCE_CONFIG_LOCATION)
+@PropertySource("classpath:config/persistence-config.properties")
 public class JpaConfiguration {
 
     @Autowired
@@ -89,31 +98,41 @@ public class JpaConfiguration {
     @Autowired
     private DataSource dataSource;
 
-    @Value(JpaConstants.PROP_JPA_SHOW_SQL)
+    @Value("${jpa.showSql}")
     private boolean showSQL;
 
-    @Value(JpaConstants.PROP_MULTITENANCY_ENABLED)
+    @Value("${multitenancy.enabled}")
     private boolean multiTenancyEnabled;
 
-    @Value(JpaConstants.PROP_HIBERNATE_CACHE_USE_QUERY_CACHE)
+    @Value("${hibernate.cache.use_query_cache}")
     private String enableQueryCache;
 
-    @Value(JpaConstants.PROP_HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE)
+    @Value("${hibernate.cache.use_second_level_cache}")
     private String enableSecondLevelCache;
 
-    @Value(JpaConstants.PROP_HIBERNATE_GENERATE_STATISTICS)
+    @Value("${hibernate.generate_statistics}")
     private String generateStatistics;
 
-    @Value(JpaConstants.PROP_HIBERNATE_JDBC_BATCH_SIZE)
+    @Value("${hibernate.jdbc.batch_size}")
     private Integer batchUpdateSize;
 
+    /**
+     * Configures the JTA platform transaction manager.
+     *
+     * @return the transaction manager instance
+     */
     @Bean
     public PlatformTransactionManager transactionManager() {
         return new JtaTransactionManager();
     }
 
+    /**
+     * Configures and creates the JPA {@link EntityManagerFactory} with entity scanning and Hibernate mapping files.
+     *
+     * @return the initialized {@link EntityManagerFactory}
+     */
     @Bean
-    @DependsOn(JpaConstants.DEPENDS_ON_FLYWAY)
+    @DependsOn("flyway")
     public EntityManagerFactory entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactory.setJtaDataSource(dataSource);
@@ -131,6 +150,11 @@ public class JpaConfiguration {
         return entityManagerFactory.getObject();
     }
 
+    /**
+     * Configures the Hibernate JPA vendor adapter.
+     *
+     * @return the configured {@link JpaVendorAdapter}
+     */
     @Bean
     public JpaVendorAdapter jpaVendorAdapter() {
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
@@ -140,6 +164,11 @@ public class JpaConfiguration {
         return vendorAdapter;
     }
 
+    /**
+     * Builds additional Hibernate and JPA properties including second-level cache, batching, and multitenancy.
+     *
+     * @return map of JPA properties
+     */
     private Map<String, Object> additionalProperties() {
         HashMap<String, Object> properties = new HashMap<>();
         properties.put(JpaConstants.HIBERNATE_VALIDATOR_APPLY_TO_DDL, false);
@@ -178,6 +207,11 @@ public class JpaConfiguration {
         return properties;
     }
 
+    /**
+     * Configures the transaction template with {@code REQUIRES_NEW} propagation.
+     *
+     * @return the transaction template instance
+     */
     @Bean
     public TransactionTemplate transactionTemplate() {
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager());
@@ -185,12 +219,22 @@ public class JpaConfiguration {
         return transactionTemplate;
     }
 
+    /**
+     * Bean providing the multi-tenant schema connection provider for switching database schemas.
+     *
+     * @return the schema connection provider instance
+     */
     @Bean
     @Lazy
     public MultiTenantSchemaConnectionProvider multiTenantSchemaConnectionProvider() {
         return new MultiTenantSchemaConnectionProvider();
     }
 
+    /**
+     * Bean providing the domain-based schema tenant identifier resolver.
+     *
+     * @return the tenant identifier resolver instance
+     */
     @Bean
     @Lazy
     public DomainBasedSchemaTenantIdentifierResolver domainBasedSchemaTenantIdentifierResolver() {

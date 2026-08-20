@@ -68,19 +68,66 @@ import org.egov.infra.persistence.validator.annotation.UniqueDateOverlap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * JSR-380 / Jakarta Bean Validation {@link ConstraintValidator} implementation for the {@link UniqueDateOverlap} annotation.
+ * <p>
+ * This validator ensures that an entity's effective date range (defined by {@link UniqueDateOverlap#fromField()}
+ * and {@link UniqueDateOverlap#toField()}) does not overlap with any existing persistent entity sharing
+ * the same set of unique attribute values (defined by {@link UniqueDateOverlap#uniqueFields()}).
+ * </p>
+ *
+ * <p><b>Validation Logic:</b></p>
+ * An overlap is detected if any existing entity matches all {@code uniqueFields} (case-insensitive for string values)
+ * and satisfies any of the following date boundary conditions:
+ * <ol>
+ *     <li>The existing entity's period encompasses the target's start date:
+ *         <br>{@code existing.fromField <= target.fromDate AND existing.toField >= target.fromDate}</li>
+ *     <li>The existing entity's period encompasses the target's end date:
+ *         <br>{@code existing.fromField <= target.toDate AND existing.toField >= target.toDate}</li>
+ *     <li>The existing entity's period is entirely contained within the target's date range:
+ *         <br>{@code existing.fromField >= target.fromDate AND existing.toField <= target.toDate}</li>
+ * </ol>
+ *
+ * <p><b>Update Handling:</b></p>
+ * During update operations, the current entity's primary key (defined by {@link UniqueDateOverlap#id()}) is
+ * excluded from the database count query to prevent false-positive self-collision.
+ *
+ * @author eGovernments Foundation
+ * @see UniqueDateOverlap
+ */
 public class UniqueDateOverlapValidator implements ConstraintValidator<UniqueDateOverlap, Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(UniqueDateOverlapValidator.class);
 
+    /**
+     * The constraint annotation instance containing configuration metadata (field names, message template, etc.).
+     */
     private UniqueDateOverlap uniqueDateOverlap;
 
+    /**
+     * JPA {@link EntityManager} used to build and execute the criteria query against the database.
+     */
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     * Initializes the validator with the metadata specified in the {@link UniqueDateOverlap} annotation.
+     *
+     * @param uniqueDateOverlap the annotation instance applied on the target class
+     */
     @Override
     public void initialize(final UniqueDateOverlap uniqueDateOverlap) {
         this.uniqueDateOverlap = uniqueDateOverlap;
     }
 
+    /**
+     * Validates whether the given object's date interval does not overlap with existing records in the database.
+     * <p>
+     * If validation fails, adds a property-level constraint violation bound to the {@link UniqueDateOverlap#fromField()}.
+     *
+     * @param object the entity instance being validated
+     * @param context the constraint validator context
+     * @return {@code true} if no date overlap exists; {@code false} if an overlap is found or reflection fails
+     */
     @Override
     public boolean isValid(Object object, ConstraintValidatorContext context) {
         try {
@@ -96,6 +143,13 @@ public class UniqueDateOverlapValidator implements ConstraintValidator<UniqueDat
 
     }
 
+    /**
+     * Performs reflective field extraction and executes a JPA {@link CriteriaQuery} count query to verify uniqueness.
+     *
+     * @param object the entity instance to inspect
+     * @return {@code true} if the count of overlapping existing records is 0; {@code false} otherwise
+     * @throws IllegalAccessException if any annotated field cannot be accessed reflectively
+     */
     private boolean checkUnique(Object object) throws IllegalAccessException {
         Number id = (Number) FieldUtils.readField(object, uniqueDateOverlap.id(), true);
 

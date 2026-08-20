@@ -123,6 +123,21 @@ import org.springframework.http.MediaType;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * REST Service layer for Electronic Development Control Regulations (EDCR) building plan scrutiny operations.
+ * <p>
+ * This service handles:
+ * <ul>
+ *     <li>Creation and processing of building plan scrutiny applications from uploaded DXF files</li>
+ *     <li>Integration with MDMS master data rules and bylaw engines</li>
+ *     <li>Pushing indexed application scrutiny data to Kafka / eGov indexer service</li>
+ *     <li>Single-tenant and multi-tenant cross-jurisdiction application searching and retrieval</li>
+ *     <li>Request validation for Permit and Occupancy Certificate (OC) applications</li>
+ *     <li>Generation of downloadable file URLs for CAD files, converted PDFs, and scrutiny reports</li>
+ * </ul>
+ *
+ * @author eGovernments Foundation
+ */
 @Service
 @Transactional(readOnly = true)
 public class EdcrRestService {
@@ -187,10 +202,28 @@ public class EdcrRestService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * Unwraps and retrieves the underlying Hibernate {@link Session} from the JPA {@link EntityManager}.
+     *
+     * @return the current active Hibernate {@link Session}
+     */
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
+    /**
+     * Creates and processes a new EDCR building plan scrutiny application.
+     * <p>
+     * Performs application initialization, attaches the uploaded CAD drawing file (DXF),
+     * enriches tenant and user information from {@link RequestInfo}, triggers the scrutiny engine,
+     * conditionally pushes indexed application summary data to the search indexer topic,
+     * and maps the processed scrutiny results into an {@link EdcrDetail} response.
+     *
+     * @param edcrRequest the incoming EDCR request containing applicant info, permit details, and metadata
+     * @param file the multipart CAD DXF drawing file to be scrutinized
+     * @param masterData MDMS master data rules and configurations mapped by module/rule key
+     * @return a populated {@link EdcrDetail} containing scrutiny status, report URLs, and plan details
+     */
     @Transactional
     public EdcrDetail createEdcr(final EdcrRequest edcrRequest, final MultipartFile file,
                                  Map<String, List<Object>> masterData){
@@ -266,6 +299,12 @@ public class EdcrRestService {
         return setEdcrResponse(edcrApplication.getEdcrApplicationDetails().get(0), edcrRequest);
     }
 
+    /**
+     * Publishes application index payload data to the eGov indexing microservice over HTTP REST.
+     *
+     * @param data the index data object or payload to be indexed
+     * @param topicName the target indexer queue or topic name (e.g. {@code "edcr-create-application"})
+     */
     public void pushDataToIndexer(Object data, String topicName) {
         try {
             restTemplate = new RestTemplate();
@@ -290,6 +329,16 @@ public class EdcrRestService {
         }
     }
 
+    /**
+     * Extracts and constructs an {@link EdcrIndexData} object from the given application and application detail.
+     * <p>
+     * Populates scrutiny details, permit numbers, plot boundary areas, building heights,
+     * occupancy classifications, total built-up areas, floor areas, and floor counts.
+     *
+     * @param edcrApplication the parent EDCR application entity
+     * @param edcrApplnDtl the specific application detail containing virtual building and plot features
+     * @return a populated {@link EdcrIndexData} instance ready for indexing
+     */
     public EdcrIndexData setEdcrIndexData(EdcrApplication edcrApplication, EdcrApplicationDetail edcrApplnDtl) {
 
         EdcrIndexData edcrIndexData = new EdcrIndexData();
@@ -383,6 +432,13 @@ public class EdcrRestService {
         return edcrIndexData;
     }
 
+    /**
+     * Converts a collection of {@link EdcrApplicationDetail} entities into a list of {@link EdcrDetail} responses.
+     *
+     * @param edcrApplications list of application detail entities
+     * @param edcrRequest the parent EDCR search or fetch request
+     * @return a list of transformed {@link EdcrDetail} response DTOs
+     */
     @Transactional
     public List<EdcrDetail> edcrDetailsResponse(List<EdcrApplicationDetail> edcrApplications, EdcrRequest edcrRequest) {
         List<EdcrDetail> edcrDetails = new ArrayList<>();
@@ -574,6 +630,17 @@ public class EdcrRestService {
         return edcrDetail;
     }
 
+    /**
+     * Maps an {@link EdcrApplicationDetail} entity and request metadata into a complete {@link EdcrDetail} response DTO.
+     * <p>
+     * Resolves file storage URLs for the original DXF file, scrutinized updated DXF, PDF scrutiny report,
+     * reads and deserializes the stored plan detail JSON into a {@link Plan} object, and appends layer-specific
+     * converted plan PDF download links.
+     *
+     * @param edcrApplnDtl the processed EDCR application detail record
+     * @param edcrRequest the incoming EDCR request
+     * @return a populated {@link EdcrDetail} response DTO
+     */
     public EdcrDetail setEdcrResponse(EdcrApplicationDetail edcrApplnDtl, EdcrRequest edcrRequest) {
         EdcrDetail edcrDetail = new EdcrDetail();
         List<String> planPdfs = new ArrayList<>();
@@ -689,6 +756,13 @@ public class EdcrRestService {
         return edcrDetail;
     }
 
+    /**
+     * Populates an {@link EdcrDetail} response object from raw native SQL result rows fetched during cross-tenant queries.
+     *
+     * @param applnDtls array of row columns containing tenantId, transactionNumber, dcrNumber, status, applicantName, etc.
+     * @param stateCityCode state or city code used for tenant prefix qualification
+     * @return a populated {@link EdcrDetail} DTO
+     */
     public EdcrDetail setEdcrResponseForAcrossTenants(Object[] applnDtls, String stateCityCode) {
         EdcrDetail edcrDetail = new EdcrDetail();
         edcrDetail.setTransactionNumber(String.valueOf(applnDtls[1]));
@@ -939,6 +1013,16 @@ public class EdcrRestService {
         return edcrDetail;
     }
 
+    /**
+     * Searches and retrieves EDCR applications based on the filters provided in {@link EdcrRequest}.
+     * <p>
+     * Supports both single-tenant querying via JPA {@link CriteriaQuery} and state-level multi-tenant searches
+     * via dynamic native SQL union queries across ULB database schemas.
+     *
+     * @param edcrRequest request containing search filters like edcrNumber, transactionNumber, dates, status, pagination
+     * @param reqInfoWrapper wrapper containing request metadata and authenticated user credentials
+     * @return list of matching {@link EdcrDetail} responses, or a single entry with "No Record Found" error
+     */
     @SuppressWarnings("unchecked")
     public List<EdcrDetail> fetchEdcr(final EdcrRequest edcrRequest, final RequestInfoWrapper reqInfoWrapper) {
         List<EdcrApplicationDetail> edcrApplications = new ArrayList<>();
@@ -1185,6 +1269,13 @@ public class EdcrRestService {
         }
     }
 
+    /**
+     * Counts the total number of EDCR applications matching the given search request filters and user context.
+     *
+     * @param edcrRequest the search criteria including tenant, dates, and application identifiers
+     * @param reqInfoWrapper wrapper containing user identity and role information
+     * @return the total count of matching records
+     */
     public Integer fetchCount(final EdcrRequest edcrRequest, final RequestInfoWrapper reqInfoWrapper) {
         UserInfo userInfo = reqInfoWrapper.getRequestInfo() == null ? null
                 : reqInfoWrapper.getRequestInfo().getUserInfo();
@@ -1231,6 +1322,18 @@ public class EdcrRestService {
 
     }
 
+    /**
+     * Builds a unified native SQL query string combining all tenant schemas via {@code UNION} clauses
+     * for state-level multi-tenant searches.
+     *
+     * @param edcrRequest the filter criteria for searching across tenants
+     * @param userInfo logged-in user details
+     * @param userId user ID or UUID
+     * @param onlyTenantId true if search only filters by tenant ID
+     * @param params map populated with named SQL parameters during query construction
+     * @param isStakeholder true if the user is filtering by stakeholder criteria
+     * @return the complete formatted native SQL string
+     */
     private String searchAtStateTenantLevel(final EdcrRequest edcrRequest, UserInfo userInfo, String userId, boolean onlyTenantId,
                                             final Map<String, String> params, boolean isStakeholder) {
         StringBuilder queryStr = new StringBuilder();
@@ -1334,6 +1437,16 @@ public class EdcrRestService {
         return query;
     }
 
+    /**
+     * Constructs a JPA {@link CriteriaQuery} for querying {@link EdcrApplicationDetail} records within a single tenant.
+     *
+     * @param edcrRequest the filter criteria from client request
+     * @param userInfo logged-in user details
+     * @param userId user identifier or UUID
+     * @param onlyTenantId flag indicating if only tenant filtering is active
+     * @param isStakeholder flag indicating if stakeholder filtering applies
+     * @return constructed {@link CriteriaQuery} ready for execution
+     */
     private CriteriaQuery<EdcrApplicationDetail> getCriteriaofSingleTenant(final EdcrRequest edcrRequest, UserInfo userInfo, String userId,
                                                                            boolean onlyTenantId, boolean isStakeholder) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -1403,6 +1516,12 @@ public class EdcrRestService {
         return criteriaQuery;
     }
 
+    /**
+     * Validates the uploaded multipart CAD plan file for presence, allowed extension format (e.g. DXF), and size constraints.
+     *
+     * @param file the multipart plan drawing file
+     * @return an {@link ErrorDetail} if validation fails (e.g. missing file, invalid extension, size exceeded), or {@code null} if valid
+     */
     public ErrorDetail validatePlanFile(final MultipartFile file) {
         List<String> dcrAllowedExtenstions = new ArrayList<>(
                 Arrays.asList(edcrApplicationSettings.getValue("dcr.dxf.allowed.extenstions").split(",")));
@@ -1431,6 +1550,14 @@ public class EdcrRestService {
         return null;
     }
 
+    /**
+     * Validates standard EDCR permit scrutiny request payload, ensuring required user ID, request body,
+     * unique transaction number, and valid CAD drawing file.
+     *
+     * @param edcrRequest the incoming scrutiny request
+     * @param planFile the multipart plan file
+     * @return an {@link ErrorDetail} if validation fails, or {@code null} if valid
+     */
     public ErrorDetail validateEdcrRequest(final EdcrRequest edcrRequest, final MultipartFile planFile) {
         if (edcrRequest.getRequestInfo() == null)
             return new ErrorDetail(BPA_07, REQ_BODY_REQUIRED);
@@ -1449,6 +1576,14 @@ public class EdcrRestService {
         return validatePlanFile(planFile);
     }
 
+    /**
+     * Validates Occupancy Certificate (OC) scrutiny request payload, verifying transaction number uniqueness,
+     * permit date presence, user authentication, and uploaded file validity.
+     *
+     * @param edcrRequest the incoming OC request
+     * @param planFile the multipart plan file
+     * @return an {@link ErrorDetail} if validation fails, or {@code null} if valid
+     */
     public ErrorDetail validateEdcrOcRequest(final EdcrRequest edcrRequest, final MultipartFile planFile) {
         if (edcrRequest.getRequestInfo() == null)
             return new ErrorDetail(BPA_07, REQ_BODY_REQUIRED);
@@ -1471,6 +1606,14 @@ public class EdcrRestService {
         return validatePlanFile(planFile);
     }
 
+    /**
+     * Performs thorough validation for Occupancy Certificate scrutiny against comparison parent permit applications,
+     * checking comparison DCR number existence, service type matching, permit date, and drawing file validity.
+     *
+     * @param edcrRequest the incoming OC scrutiny request
+     * @param planFile the uploaded CAD drawing file
+     * @return list of {@link ErrorDetail} validation errors encountered (empty if valid)
+     */
     public List<ErrorDetail> validateScrutinizeOcRequest(final EdcrRequest edcrRequest, final MultipartFile planFile) {
         List<ErrorDetail> errorDetails = new ArrayList<>();
 
@@ -1526,6 +1669,12 @@ public class EdcrRestService {
         return errorDetails;
     }
 
+    /**
+     * Validates that mandatory classification fields (applicationType and applicationSubType / serviceType) are present.
+     *
+     * @param edcrRequest the EDCR request to validate
+     * @return list of {@link ErrorDetail} validation errors (empty if valid)
+     */
     public List<ErrorDetail> validateEdcrMandatoryFields(final EdcrRequest edcrRequest) {
         List<ErrorDetail> errors = new ArrayList<>();
         if (StringUtils.isBlank(edcrRequest.getAppliactionType())) {
@@ -1539,6 +1688,13 @@ public class EdcrRestService {
         return errors;
     }
 
+    /**
+     * Validates that at least one search identifier (EDCR number or Transaction number) is provided.
+     *
+     * @param edcrNumber the DCR reference number
+     * @param transactionNumber the transaction identifier
+     * @return an {@link ErrorDetail} if both identifiers are blank, or {@code null} if valid
+     */
     public ErrorDetail validateSearchRequest(final String edcrNumber, final String transactionNumber) {
         ErrorDetail errorDetail = null;
         if (isBlank(edcrNumber) && isBlank(transactionNumber))
@@ -1554,6 +1710,15 @@ public class EdcrRestService {
      * String.valueOf(mimeType); }
      */
 
+    /**
+     * Validates upload parameters such as allowed file extensions, MIME types, and file size limits.
+     *
+     * @param allowedExtenstions list of permitted file extensions (e.g. {@code ["dxf"]})
+     * @param mimeTypes list of allowed MIME types
+     * @param file the uploaded file
+     * @param maxAllowSizeInMB maximum allowed file size in Megabytes
+     * @return an {@link ErrorDetail} if constraints are violated, or {@code null} if valid
+     */
     @SuppressWarnings("unused")
     public ErrorDetail validateParam(List<String> allowedExtenstions, List<String> mimeTypes, MultipartFile file,
                                      final String maxAllowSizeInMB) {
@@ -1580,6 +1745,13 @@ public class EdcrRestService {
         return null;
     }
 
+    /**
+     * Generates a standard eGov microservice {@link ResponseInfo} DTO based on the incoming {@link RequestInfo} and success flag.
+     *
+     * @param requestInfo the request metadata including apiId, version, timestamp, and message ID
+     * @param success boolean indicating whether operation was successful
+     * @return a constructed {@link ResponseInfo} instance
+     */
     public ResponseInfo createResponseInfoFromRequestInfo(RequestInfo requestInfo, Boolean success) {
         String apiId = null;
         String ver = null;
@@ -1598,11 +1770,24 @@ public class EdcrRestService {
         return new ResponseInfo(apiId, ver, ts, resMsgId, msgId, responseStatus);
     }
 
+    /**
+     * Builds the fully qualified REST download URL for a file stored in the FileStore service.
+     *
+     * @param fileStoreId the unique identifier of the stored file in filestore
+     * @param tenantId the tenant jurisdiction identifier owning the file
+     * @return the formatted downloadable file URL string
+     */
     public String getFileDownloadUrl(final String fileStoreId, final String tenantId) {
         return String.format(FILE_DOWNLOAD_URL, ApplicationThreadLocals.getDomainURL()) + "?tenantId=" + tenantId
                 + "&fileStoreId=" + fileStoreId;
     }
 
+    /**
+     * Normalizes a given {@link Date} timestamp to the start of the day (00:00:00.000).
+     *
+     * @param date the input date
+     * @return normalized {@link Date} set to midnight of that day
+     */
     public Date resetFromDateTimeStamp(final Date date) {
         final Calendar cal1 = Calendar.getInstance();
         cal1.setTime(date);
@@ -1613,6 +1798,12 @@ public class EdcrRestService {
         return cal1.getTime();
     }
 
+    /**
+     * Normalizes a given {@link Date} timestamp to the end of the day (23:59:59.999).
+     *
+     * @param date the input date
+     * @return normalized {@link Date} set to the final millisecond of that day
+     */
     public Date resetToDateTimeStamp(final Date date) {
         final Calendar cal1 = Calendar.getInstance();
         cal1.setTime(date);

@@ -114,7 +114,21 @@ public class Page<T> {
      * @param recordTotal the total count of records across all pages
      */
     public Page(TypedQuery<T> query, int pageNumber, int pageSize, int recordTotal) {
-        this(query, ++pageNumber, pageSize);
+        int currentPageNo = pageNumber;
+        if (pageNumber < 1) {
+            currentPageNo = 1;
+        }
+
+        this.pageNumber = currentPageNo;
+
+        if (pageSize > 0) {
+            query.setFirstResult((currentPageNo - 1) * pageSize);
+            query.setMaxResults(pageSize + 1);
+            this.pageSize = pageSize;
+        } else {
+            this.pageSize = -1;
+        }
+        this.results = query.getResultList();
         this.recordTotal = recordTotal;
     }
 
