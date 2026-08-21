@@ -20,6 +20,21 @@ The service supports two persistence modes, toggled via `dashboard-data.persiste
 
 Both implementations satisfy the `IngestionPersistenceService` interface and are loaded conditionally via `@ConditionalOnProperty`. All fields use constructor injection (`@RequiredArgsConstructor`).
 
+## Ingestion Statuses & Enum Mapping
+
+The pipeline uses the type-safe `IngestionStatus` enum (`org.upyog.dashboard.enums.IngestionStatus`) to evaluate ingestion execution outcomes:
+
+| Status Enum | Description / Behavior |
+| :--- | :--- |
+| `SUCCESS` | Ingestion succeeded and data was pushed to the National Dashboard API. |
+| `SUCCESS_ZERO_METRICS` | All extracted metrics for the date are zero. Downstream HTTP push is skipped to save bandwidth, but module tracker date advances. |
+| `SUCCESS_DUPLICATE` | The target date was already ingested (`EG_DS_RECORD_ALREADY_INGESTED_ERR`). Handled as success so module tracker advances. |
+| `FAILURE` | Ingestion failed (HTTP 4xx/5xx, timeout, or database exception). Halts catch-up loop. |
+| `SKIPPED` | Ingestion was skipped (e.g. module already up to date). |
+| `UNKNOWN` | Fallback status for unrecognized status strings (`@JsonCreator` fallback). |
+
+Both `SUCCESS`, `SUCCESS_ZERO_METRICS`, and `SUCCESS_DUPLICATE` return `isSuccess() = true`, enabling `last_successful_date` in `ingestion_module_summary` to advance cleanly.
+
 ## Database Schema
 
 ### Tables

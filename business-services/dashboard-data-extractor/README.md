@@ -40,10 +40,24 @@ mvn clean install
 ## Tenant Hierarchy and Multiple ULBs Support
 
 The extractor service natively handles dot-notation tenant IDs representing the geographical hierarchy (e.g., `state.ulb.region.ward`).
-The `HierarchyParser` utility splits this incoming `tenantId` (usually prefixed with the state code, e.g., `pg.citya`) and maps it into:
-- **State**: The prefix (e.g., `pg`)
-- **ULB**: The state prefix plus the ULB shortcode (e.g., `pg.citya`)
-- **Region**: Extracted from the 3rd segment, or falls back to the `dashboard-data.metric.region` property if absent.
-- **Ward**: Extracted from the 4th segment, or falls back to the `dashboard-data.metric.ward` property if absent.
+## Configuration Parameters Reference
 
-This allows the National Dashboard metrics payload to correctly attribute data to the respective region and ward defaults when the local system only operates at the state or ULB level.
+The service can be configured via `application.properties` (or environment-specific files like `application-local.properties`):
+
+| Configuration Key | Default Value | Description |
+| :--- | :--- | :--- |
+| `dashboard-data.timeout.enabled` | `true` | Enables or disables custom Feign client HTTP timeouts. |
+| `dashboard-data.timeout.connect-ms` | `5000` | Connection timeout in milliseconds when timeout is enabled. |
+| `dashboard-data.timeout.read-ms` | `15000` | Read timeout in milliseconds when timeout is enabled. |
+| `dashboard-data.metric.ulb` | `""` | Fallback placeholder property for metric ULB initialization. |
+| `state.level.tenant.id` | `pg` | State-level tenant ID fallback used for summary tracker records. |
+| `dashboard-data.daily.catch-up-limit-days` | `7` | Maximum number of days allowed for daily catch-up before halting. |
+| `dashboard-data.ingestion.batch-size` | `10` | Ingestion batch size for HTTP API payloads and database inserts. |
+
+## egov-persister Integration Setup
+
+To persist ingestion audit details and summary tracker dates into PostgreSQL via Kafka, ensure `egov-persister` has `dashboard-data-extractor-persister.yml` configured in its `application.properties`:
+
+```properties
+egov.persist.yml.repo.path=classpath:egov-pg-service-persister.yml,classpath:dashboard-data-extractor-persister.yml
+```

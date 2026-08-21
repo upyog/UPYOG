@@ -29,7 +29,7 @@ public class IngestionSummaryQueryBuilder {
     public String getUpsertLastSuccessfulDateQuery() {
         return "INSERT INTO ingestion_module_summary (" +
                "   id, tenant_id, module_name, last_successful_date, last_attempted_date, created_by, created_time, last_modified_by, last_modified_time" +
-               ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+               ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) " +
                "ON CONFLICT (tenant_id, module_name) " +
                "DO UPDATE SET last_successful_date = EXCLUDED.last_successful_date, " +
                "              last_attempted_date = EXCLUDED.last_attempted_date, " +
@@ -47,7 +47,7 @@ public class IngestionSummaryQueryBuilder {
     public String getUpsertLastAttemptedDateQuery() {
         return "INSERT INTO ingestion_module_summary (" +
                "   id, tenant_id, module_name, last_successful_date, last_attempted_date, created_by, created_time, last_modified_by, last_modified_time" +
-               ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) " +
+               ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) " +
                "ON CONFLICT (tenant_id, module_name) " +
                "DO UPDATE SET last_attempted_date = EXCLUDED.last_attempted_date, " +
                "              last_modified_by = EXCLUDED.last_modified_by, " +
@@ -127,5 +127,15 @@ public class IngestionSummaryQueryBuilder {
         return "UPDATE legacy_data_ingestion_detail " +
                "SET ingestion_status = ?, request_data = ?::jsonb, response_data = ?::jsonb, last_modified_time = ? " +
                "WHERE module_ingestion_id = ?";
+    }
+
+    /**
+     * Returns a SQL query that acquires a row-level lock (FOR UPDATE) on
+     * {@code ingestion_module_summary} for a given tenant and module.
+     *
+     * @return the parameterised SELECT FOR UPDATE query string
+     */
+    public String getSelectForUpdateSummaryQuery() {
+        return "SELECT id FROM ingestion_module_summary WHERE tenant_id = ? AND module_name = ? FOR UPDATE";
     }
 }

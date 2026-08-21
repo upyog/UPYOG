@@ -202,7 +202,11 @@ serviceMaps:
           created_by, created_time, last_modified_by, last_modified_time
         ) VALUES (?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), TO_DATE(?, 'DD-MM-YYYY'), ?, ?, ?, ?)
         ON CONFLICT (tenant_id, module_name) DO UPDATE SET
-          last_successful_date = EXCLUDED.last_successful_date,
+          last_successful_date = CASE 
+                                  WHEN EXCLUDED.last_successful_date = TO_DATE('01-01-1970', 'DD-MM-YYYY') 
+                                  THEN ingestion_module_summary.last_successful_date 
+                                  ELSE EXCLUDED.last_successful_date 
+                                END,
           last_attempted_date = EXCLUDED.last_attempted_date,
           last_modified_by = EXCLUDED.last_modified_by,
           last_modified_time = EXCLUDED.last_modified_time;

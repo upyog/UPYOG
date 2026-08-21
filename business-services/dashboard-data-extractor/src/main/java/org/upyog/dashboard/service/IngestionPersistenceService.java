@@ -44,4 +44,11 @@ public interface IngestionPersistenceService {
      * @param responseData the JSON response payload received from the external system
      */
     void updateLegacyJobStatus(String jobId, String status, String requestData, String responseData);
+
+    /**
+     * Persists a batch of daily ingestion detail audit records.
+     *
+     * @param details list of daily ingestion data objects or rows
+     */
+    void saveIngestionDetailsBatch(java.util.List<?> details);
 }

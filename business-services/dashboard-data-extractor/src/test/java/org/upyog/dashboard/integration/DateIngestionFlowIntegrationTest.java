@@ -120,6 +120,8 @@ class DateIngestionFlowIntegrationTest {
         lenient().when(ptDashboardProperties.getDbMaxAttempts()).thenReturn(3);
         lenient().when(ptDashboardProperties.getDbBaseDelayMs()).thenReturn(100L);
         lenient().when(ptDashboardProperties.getDbMaxDelayMs()).thenReturn(500L);
+        lenient().when(ptDashboardProperties.getMetricState()).thenReturn("pg");
+        lenient().when(ptDashboardProperties.getTenantId()).thenReturn("pg");
 
         org.upyog.dashboard.util.HierarchyParser hp = new org.upyog.dashboard.util.HierarchyParser("Block 4", "Test");
         ptExtractor = new PtModuleExtractor(namedParameterJdbcTemplate, schemaMappingConfig, ptDashboardProperties, hp);
@@ -142,6 +144,8 @@ class DateIngestionFlowIntegrationTest {
         lenient().when(dashboardProperties.getIngestBaseDelayMs()).thenReturn(1L);
         lenient().when(dashboardProperties.getIngestMaxDelayMs()).thenReturn(2L);
         lenient().when(dashboardProperties.getTenantId()).thenReturn("pg");
+        lenient().when(dashboardProperties.getMetricState()).thenReturn("pg");
+        lenient().when(dashboardProperties.getMetricUlb()).thenReturn("pg.citya");
         lenient().when(dashboardProperties.getDefaultStartDateStr()).thenReturn("2026-06-01");
         lenient().when(dashboardProperties.getPtUsageCategories()).thenReturn(List.of("RESIDENTIAL", "COMMERCIAL", "INDUSTRIAL"));
         lenient().when(dashboardProperties.getPtTaxHeads()).thenReturn(List.of("PT_TAX"));
@@ -165,7 +169,7 @@ class DateIngestionFlowIntegrationTest {
         dashboardClient = new DashboardClientImpl(transformerRegistry, httpLoader, commonValidator);
 
         // 7. Setup DailyIngestionService
-        dailyIngestionService = new DailyIngestionService(dashboardClient, extractorRegistry, schemaMappingConfig, summaryRepository, dashboardProperties);
+        dailyIngestionService = new DailyIngestionService(dashboardClient, extractorRegistry, schemaMappingConfig, summaryRepository, dashboardProperties, objectMapper);
         dailyIngestionService.init();
 
         // 8. Setup Controller
@@ -289,6 +293,7 @@ class DateIngestionFlowIntegrationTest {
 
         Map<String, Object> combinedMap = new HashMap<>();
         combinedMap.put("tenantid", "pg.citya.Test.Block 4");
+        combinedMap.put("assessments", 50);
         when(namedParameterJdbcTemplate.queryForList(eq("SELECT assessments, todaystotalapplications FROM pt_metrics WHERE tenantId = :tenantId"), Mockito.<Map<String, ?>>any())).thenReturn(List.of(combinedMap));
         when(namedParameterJdbcTemplate.queryForList(eq("SELECT usage_category, paymentmode, taxheadcode, tax_head_amount FROM pt_collection WHERE tenantId = :tenantId"), Mockito.<Map<String, ?>>any())).thenReturn(Collections.emptyList());
         when(oAuthTokenService.getToken()).thenReturn("token-123");

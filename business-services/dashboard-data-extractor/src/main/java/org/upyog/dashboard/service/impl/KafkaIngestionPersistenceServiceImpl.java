@@ -181,4 +181,27 @@ public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenc
             log.error("Failed to push update legacy job {} to status {}", jobId, status, exception);
         }
     }
+
+    /**
+     * Publishes a batch of daily ingestion detail audit records to the Kafka topic.
+     *
+     * @param details list of daily ingestion data objects
+     */
+    @Override
+    public void saveIngestionDetailsBatch(java.util.List<?> details) {
+        try {
+            if (details == null || details.isEmpty()) {
+                return;
+            }
+
+            Map<String, Object> message = new HashMap<>();
+            message.put("dailyIngestionData", details);
+            producer.push(KafkaTopics.SAVE_INGESTION_DETAIL, message);
+
+            log.info("Pushed batch of {} ingestion detail audit records to Kafka topic {}",
+                    details.size(), KafkaTopics.SAVE_INGESTION_DETAIL);
+        } catch (Exception exception) {
+            log.error("Failed to push batch ingestion detail audit records to Kafka", exception);
+        }
+    }
 }

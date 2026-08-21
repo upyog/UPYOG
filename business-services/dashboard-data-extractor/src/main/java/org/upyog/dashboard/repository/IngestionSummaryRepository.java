@@ -113,6 +113,15 @@ public void saveOrUpdateLastAttemptedDate(String tenantId, String moduleName, Lo
 	}
 
 	/**
+	 * Persists a batch of daily ingestion detail audit records.
+	 *
+	 * @param details list of daily ingestion data objects or rows
+	 */
+	public void saveIngestionDetailsBatch(List<?> details) {
+		persistenceService.saveIngestionDetailsBatch(details);
+	}
+
+	/**
  * Retrieves all legacy job dates that have been registered for a given tenant and module.
  *
  * @param tenantId   the tenant identifier
@@ -217,5 +226,22 @@ public List<LegacyJob> findPendingOrFailedLegacyJobs(String tenantId, String mod
  */
 public void updateLegacyJobStatus(String jobId, String status, String requestData, String responseData) {
 		persistenceService.updateLegacyJobStatus(jobId, status, requestData, responseData);
+	}
+
+	/**
+	 * Acquires a DB row-level pessimistic lock (FOR UPDATE) on the summary record for tenant and module.
+	 *
+	 * @param tenantId   the tenant identifier
+	 * @param moduleName the module short code
+	 * @return true if lock was acquired, false otherwise
+	 */
+	public boolean tryAcquireLock(String tenantId, String moduleName) {
+		try {
+			jdbcTemplate.queryForList(queryBuilder.getSelectForUpdateSummaryQuery(), tenantId, moduleName);
+			return true;
+		} catch (Exception exception) {
+			log.warn("IngestionSummaryRepository | Failed to acquire lock for tenant {} module {}", tenantId, moduleName, exception);
+			return false;
+		}
 	}
 }

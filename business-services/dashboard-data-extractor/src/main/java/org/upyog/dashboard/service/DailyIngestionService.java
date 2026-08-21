@@ -7,10 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.upyog.dashboard.api.DashboardClient;
 import org.upyog.dashboard.common.constants.Module;
 import org.upyog.dashboard.config.SchemaMappingConfig;
+import org.upyog.dashboard.entity.DailyIngestionData;
 import org.upyog.dashboard.extractor.ModuleExtractor;
 import org.upyog.dashboard.model.DashboardRequest;
 import org.upyog.dashboard.model.DashboardData;
@@ -18,6 +20,7 @@ import org.upyog.dashboard.model.IngestionResult;
 import org.upyog.dashboard.registry.ExtractorRegistry;
 import org.upyog.dashboard.repository.IngestionSummaryRepository;
 import org.upyog.dashboard.config.DashboardProperties;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 
 import lombok.RequiredArgsConstructor;
@@ -33,19 +36,27 @@ import lombok.extern.slf4j.Slf4j;
  * {@link IngestionSummaryRepository} and builds {@link IngestionResult} objects
  * that are returned to callers.</p>
  */
+import org.upyog.dashboard.enums.IngestionStatus;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class DailyIngestionService {
 
-	private static final String STATUS_SUCCESS = "SUCCESS";
-	private static final String STATUS_FAILURE = "FAILURE";
+	private static final String STATUS_SUCCESS = IngestionStatus.SUCCESS.getValue();
+	private static final String STATUS_FAILURE = IngestionStatus.FAILURE.getValue();
+	private static final String STATUS_SUCCESS_ZERO_METRICS = IngestionStatus.SUCCESS_ZERO_METRICS.getValue();
+	private static final String STATUS_SUCCESS_DUPLICATE = IngestionStatus.SUCCESS_DUPLICATE.getValue();
 
 	private final DashboardClient dashboardClient;
 	private final ExtractorRegistry extractorRegistry;
 	private final SchemaMappingConfig schemaMappingConfig;
 	private final IngestionSummaryRepository summaryRepository;
 	private final DashboardProperties dashboardProperties;
+	private final ObjectMapper objectMapper;
+
+	@Value("${dashboard-data.ingestion.batch-size:10}")
+	private int batchSize;
 
 	private String tenantId;
 	private String defaultStartDateStr;
@@ -127,8 +138,8 @@ private void processDateRange(Module module, ModuleExtractor<?> extractor, Local
 			summaryRepository.saveOrUpdateLastAttemptedDate(tenantId, module.name(), currentDate);
 			IngestionResult result = ingestModuleForDate(module, extractor, currentDate);
 			allResults.add(result);
-
-			if (STATUS_SUCCESS.equalsIgnoreCase(result.getIngestionStatus())) {
+			boolean isSuccess = result != null && IngestionStatus.fromValue(result.getIngestionStatus()).isSuccess();
+			if (isSuccess) {
 				summaryRepository.saveOrUpdateLastSuccessfulDate(tenantId, module.name(), currentDate);
 				currentDate = currentDate.plusDays(1);
 			} else {
@@ -166,7 +177,8 @@ public List<IngestionResult> ingestDailyData(LocalDate targetDate) {
 			IngestionResult result = ingestModuleForDate(module, extractor, targetDate);
 			results.add(result);
 
-			if (STATUS_SUCCESS.equalsIgnoreCase(result.getIngestionStatus())) {
+			boolean isSuccess = result != null && IngestionStatus.fromValue(result.getIngestionStatus()).isSuccess();
+			if (isSuccess) {
 				summaryRepository.saveOrUpdateLastSuccessfulDate(tenantId, module.name(), targetDate);
 			}
 		}
@@ -222,17 +234,61 @@ private IngestionResult processDataList(Module module, List<?> dataList, LocalDa
 		StringBuilder errors = new StringBuilder();
 		String responseData = null;
 
-		for (Object item : dataList) {
-			IngestionResult result = executeIngestion(module, item, date);
-			if (result != null && STATUS_SUCCESS.equalsIgnoreCase(result.getIngestionStatus())) {
-				if (responseData == null && result.getResponseData() != null) {
-					responseData = result.getResponseData();
+		int effectiveBatchSize = (this.batchSize > 0) ? this.batchSize : 10;
+		List<DailyIngestionData> batchAuditRecords = new ArrayList<>();
+		long now = CommonUtils.getCurrentEpochMillis();
+		java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+		for (int i = 0; i < dataList.size(); i += effectiveBatchSize) {
+			List<?> batchSubList = dataList.subList(i, Math.min(i + effectiveBatchSize, dataList.size()));
+
+			for (Object item : batchSubList) {
+				IngestionResult result;
+				if (isAllZeroMetrics(item)) {
+					log.info("All metrics for module {} on date {} are zero. Skipping downstream API push.", module, date);
+					result = buildResult(STATUS_SUCCESS_ZERO_METRICS, module, date, null, "{\"message\":\"All metrics are zero. Downstream API push skipped.\"}");
+				} else {
+					result = executeIngestion(module, item, date);
 				}
-			} else {
-				allSuccess = false;
-				if (result != null && result.getFailureReason() != null) {
-					errors.append(result.getFailureReason()).append("; ");
+
+				if (result != null && IngestionStatus.fromValue(result.getIngestionStatus()).isSuccess()) {
+					if (responseData == null && result.getResponseData() != null) {
+						responseData = result.getResponseData();
+					}
+				} else {
+					allSuccess = false;
+					if (result != null && result.getFailureReason() != null) {
+						errors.append(result.getFailureReason()).append("; ");
+					}
 				}
+
+				String itemRequestJson = null;
+				try {
+					itemRequestJson = objectMapper != null ? objectMapper.writeValueAsString(item) : item.toString();
+				} catch (Exception e) {
+					itemRequestJson = item.toString();
+				}
+
+				String itemTenantId = extractTenantId(item);
+				DailyIngestionData auditData = DailyIngestionData.builder()
+						.moduleIngestionId(CommonUtils.generateUUID())
+						.tenantId(itemTenantId)
+						.moduleName(module.name())
+						.pushDate(date.format(formatter))
+						.requestData(itemRequestJson)
+						.responseData(result != null ? result.getResponseData() : null)
+						.ingestionStatus(result != null ? result.getIngestionStatus() : STATUS_FAILURE)
+						.createdBy("SYSTEM")
+						.createdTime(now)
+						.lastModifiedBy("SYSTEM")
+						.lastModifiedTime(now)
+						.build();
+				batchAuditRecords.add(auditData);
+			}
+
+			if (!batchAuditRecords.isEmpty()) {
+				summaryRepository.saveIngestionDetailsBatch(batchAuditRecords);
+				batchAuditRecords.clear();
 			}
 		}
 
@@ -260,8 +316,16 @@ private IngestionResult executeIngestion(Module module, Object item, LocalDate d
 		DashboardRequest request = DashboardRequest.builder().module(module).rawData(payloadItem).build();
 		log.info("Executing dashboardClient for item: {}", item);
 		IngestionResult result = dashboardClient.execute(request);
-		if (result != null && result.getDate() == null) {
-			result.setDate(date.toString());
+		if (result != null) {
+			if (result.getDate() == null) {
+				result.setDate(date.toString());
+			}
+			String errorDetails = (result.getFailureReason() != null ? result.getFailureReason() : "")
+					+ (result.getResponseData() != null ? result.getResponseData() : "");
+			if (STATUS_FAILURE.equalsIgnoreCase(result.getIngestionStatus()) && isDuplicateDateError(errorDetails)) {
+				log.info("Duplicate date error detected for module {} on date {}. Marking status as SUCCESS_DUPLICATE.", module, date);
+				result.setIngestionStatus(STATUS_SUCCESS_DUPLICATE);
+			}
 		}
 		return result;
 	}
@@ -311,7 +375,7 @@ private IngestionResult buildResult(String status, Module module, LocalDate date
  *
  * @return the configured start date or yesterday as a fallback
  */
-private LocalDate parseDefaultStartDate() {
+	private LocalDate parseDefaultStartDate() {
 		try {
 			if (defaultStartDateStr != null && !defaultStartDateStr.isBlank()) {
 				return LocalDate.parse(defaultStartDateStr.trim());
@@ -320,5 +384,115 @@ private LocalDate parseDefaultStartDate() {
 			log.warn("Failed to parse defaultStartDateStr '{}'. Falling back to yesterday.", defaultStartDateStr, exception);
 		}
 		return LocalDate.now().minusDays(1);
+	}
+
+	/**
+	 * Helper to extract tenant ID (ULB) dynamically from an extracted item.
+	 *
+	 * @param item extracted metric DTO or DashboardData object
+	 * @return tenant ID string (e.g. "pg.citya") or configured tenant fallback
+	 */
+	private String extractTenantId(Object item) {
+		if (item == null) {
+			return this.tenantId;
+		}
+		if (item instanceof DashboardData d && d.getUlb() != null && !d.getUlb().isBlank()) {
+			return d.getUlb();
+		}
+		try {
+			java.lang.reflect.Method getUlbMethod = item.getClass().getMethod("getUlb");
+			Object val = getUlbMethod.invoke(item);
+			if (val != null && !val.toString().isBlank()) {
+				return val.toString();
+			}
+		} catch (Exception ignored) {
+		}
+		try {
+			java.lang.reflect.Method getTenantIdMethod = item.getClass().getMethod("getTenantId");
+			Object val = getTenantIdMethod.invoke(item);
+			if (val != null && !val.toString().isBlank()) {
+				return val.toString();
+			}
+		} catch (Exception ignored) {
+		}
+		return this.tenantId;
+	}
+
+	/**
+	 * Evaluates whether all metrics in an extracted data payload are zero.
+	 *
+	 * @param item extracted metric DTO or DashboardData object
+	 * @return true if all metrics are zero, false if any metric is greater than zero
+	 */
+	private boolean isAllZeroMetrics(Object item) {
+		if (item == null) {
+			return true;
+		}
+		if (item instanceof DashboardData d) {
+			if (d.getMetrics() == null || d.getMetrics().isEmpty()) {
+				return true;
+			}
+			for (Object val : d.getMetrics().values()) {
+				if (isNonZero(val)) {
+					return false;
+				}
+			}
+			return true;
+		}
+		if (item instanceof org.upyog.dashboard.pt.dto.PTDTO p) {
+			org.upyog.dashboard.pt.dto.PTAggregatedData combined = p.getCombinedMetrics();
+			if (combined != null) {
+				if (isPositive(combined.getAssessments())) return false;
+				if (isPositive(combined.getTodaysTotalApplications())) return false;
+				if (isPositive(combined.getTodaysClosedApplications())) return false;
+				if (isPositive(combined.getNoOfPropertiesPaidToday())) return false;
+				if (isPositive(combined.getTodaysApprovedApplications())) return false;
+				if (isPositive(combined.getTodaysApprovedApplicationsWithinSLA())) return false;
+			}
+			List<org.upyog.dashboard.pt.dto.PTCollectionDTO> collections = p.getCollectionMetrics();
+			if (collections != null && !collections.isEmpty()) {
+				for (org.upyog.dashboard.pt.dto.PTCollectionDTO col : collections) {
+					if (col.getTaxHeadAmount() != null && col.getTaxHeadAmount() > 0) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private boolean isPositive(Number num) {
+		return num != null && num.doubleValue() > 0;
+	}
+
+	private boolean isNonZero(Object val) {
+		if (val == null) return false;
+		if (val instanceof Number n) {
+			return n.doubleValue() > 0;
+		}
+		if (val instanceof String s) {
+			try {
+				return Double.parseDouble(s) > 0;
+			} catch (Exception ignored) {
+			}
+		}
+		return false;
+	}
+
+	private boolean isDuplicateDateError(String message) {
+		if (message == null || message.isBlank()) {
+			return false;
+		}
+		String lower = message.toLowerCase();
+		return lower.contains("duplicate")
+				|| lower.contains("already exists")
+				|| lower.contains("already_exist")
+				|| lower.contains("already present")
+				|| lower.contains("already ingested")
+				|| lower.contains("already_ingested")
+				|| lower.contains("record_already_ingested")
+				|| lower.contains("eg_ds_record_already_ingested_err")
+				|| lower.contains("409");
 	}
 }

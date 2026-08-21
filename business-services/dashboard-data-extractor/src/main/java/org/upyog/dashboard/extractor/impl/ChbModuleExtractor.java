@@ -60,7 +60,8 @@ public class ChbModuleExtractor implements ModuleExtractor<List<CHBDTO>> {
      */
     @PostConstruct
     public void init() {
-        this.dbTenantId = dashboardProperties.getMetricUlb();
+        String state = dashboardProperties.getMetricState();
+        this.dbTenantId = (state != null && !state.isBlank()) ? state : dashboardProperties.getTenantId();
         this.dbMaxAttempts = dashboardProperties.getDbMaxAttempts();
         this.dbBaseDelayMs = dashboardProperties.getDbBaseDelayMs();
         this.dbMaxDelayMs = dashboardProperties.getDbMaxDelayMs();
