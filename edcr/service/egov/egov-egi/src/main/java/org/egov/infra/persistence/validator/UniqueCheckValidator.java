@@ -122,15 +122,14 @@ public class UniqueCheckValidator implements ConstraintValidator<Unique, Object>
 
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     private boolean checkUnique(final Object arg0, final Number id, final String fieldName) throws IllegalAccessException {
-        final Class entityClass = unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass();
+        final Class<?> entityClass = unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass();
         final Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
 
         final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         final CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         // 'Root' represents the query's FROM entity, allowing access to its fields (root.get(fieldName))
-        final Root root = criteriaQuery.from(entityClass);
+        final Root<?> root = criteriaQuery.from(entityClass);
 
         Predicate fieldPredicate;
         if (fieldValue instanceof String)
