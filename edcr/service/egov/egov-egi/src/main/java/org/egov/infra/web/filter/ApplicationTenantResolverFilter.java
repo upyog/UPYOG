@@ -302,25 +302,23 @@ public class ApplicationTenantResolverFilter implements Filter {
         if (requestURL.contains("/rest/")) {
             LOG.info("***********Inside method to fetch auth token and tenant from reqbody**************");
             try {
-                String jsonContent = null;
+                StringWriter writer = new StringWriter();
 
                 if (customRequest.isMultipart()) {
                     // Multipart/form-data: the edcrRequest JSON is a named form field.
                     jakarta.servlet.http.Part edcrPart = customRequest.getPart("edcrRequest");
                     if (edcrPart != null) {
-                        StringWriter writer = new StringWriter();
                         IOUtils.copy(edcrPart.getInputStream(), writer, StandardCharsets.UTF_8);
-                        jsonContent = writer.toString();
                     } else {
                         LOG.warn(
                                 "edcrRequest part not found in multipart request; tenant cannot be extracted at filter time.");
                     }
                 } else {
                     // Non-multipart: read from the cached JSON input stream.
-                    StringWriter writer = new StringWriter();
                     IOUtils.copy(customRequest.getInputStream(), writer, StandardCharsets.UTF_8);
-                    jsonContent = writer.toString();
                 }
+
+                String jsonContent = writer.toString();
 
                 // Null/blank check after parsing jsonContent
                 if (StringUtils.isNotBlank(jsonContent)) {
