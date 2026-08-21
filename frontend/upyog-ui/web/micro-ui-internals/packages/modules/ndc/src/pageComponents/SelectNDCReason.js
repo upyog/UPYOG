@@ -1,3 +1,4 @@
+import "../../css/ndc.css";
 import React, { useState, useEffect, useMemo } from "react";
 
 import { CardLabel, Dropdown, TextInput, CardLabelError, Loader } from "@nudmcdgnpm/digit-ui-react-components";
@@ -108,33 +109,6 @@ function SelectNDCReason({ config, onSelect, userType, formData, setError, formS
    * ---------------------------------------------------------
    */
 
-  const fieldWrapperStyle = {
-    width: "100%",
-    maxWidth: "465px",
-    marginBottom: "22px",
-    boxSizing: "border-box",
-  };
-
-  const labelStyle = {
-    display: "block",
-    width: "100%",
-    marginBottom: "8px",
-    fontSize: "13px",
-    fontWeight: 600,
-    color: "#111111",
-    lineHeight: "1.4",
-    boxSizing: "border-box",
-  };
-
-  const fieldStyle = {
-    width: "100%",
-    boxSizing: "border-box",
-  };
-
-  const errorStyle = {
-    marginTop: "5px",
-  };
-
   /*
    * ---------------------------------------------------------
    * UI
@@ -142,11 +116,8 @@ function SelectNDCReason({ config, onSelect, userType, formData, setError, formS
    */
 
   return (
-    <div
-      style={{
-        width: "100%",
-        boxSizing: "border-box",
-      }}
+    <div className="ndc-css-87310ad8"
+      
     >
       {window.location.href.includes("/citizen") ? <Timeline currentStep={1} /> : null}
 
@@ -154,21 +125,18 @@ function SelectNDCReason({ config, onSelect, userType, formData, setError, formS
           REASON
       ===================================================== */}
 
-      <div style={fieldWrapperStyle}>
-        <CardLabel className="card-label-smaller ndc_card_labels" style={labelStyle}>
+      <div className="ndc-css-d088c348" >
+        <CardLabel className="card-label-smaller ndc_card_labels ndc-css-5b150134" >
           {t("NDC_NEW_NDC_APPLICATION_NDC_REASON")}
 
-          <span
-            style={{
-              color: "#a82227",
-              marginLeft: "3px",
-            }}
+          <span className="ndc-css-2c30dc20"
+            
           >
             *
           </span>
         </CardLabel>
 
-        <div style={fieldStyle}>
+        <div className="ndc-css-87310ad8" >
           <Controller
             name="NDCReason"
             rules={{
@@ -193,7 +161,7 @@ function SelectNDCReason({ config, onSelect, userType, formData, setError, formS
           />
         </div>
 
-        <CardLabelError className="ndc-card-label-error" style={errorStyle}>
+        <CardLabelError className="ndc-card-label-error ndc-css-c3d3dc34" >
           {localFormState.touched?.NDCReason ? localFormState.errors?.NDCReason?.message : ""}
         </CardLabelError>
       </div>
@@ -203,12 +171,12 @@ function SelectNDCReason({ config, onSelect, userType, formData, setError, formS
       ===================================================== */}
 
       {watch("NDCReason")?.code === "OTHERS" && (
-        <div style={fieldWrapperStyle}>
-          <CardLabel className="card-label-smaller ndc_card_labels" style={labelStyle}>
+        <div className="ndc-css-d088c348" >
+          <CardLabel className="card-label-smaller ndc_card_labels ndc-css-5b150134" >
             {t("Reason")}
           </CardLabel>
 
-          <div style={fieldStyle}>
+          <div className="ndc-css-87310ad8" >
             <Controller
               control={control}
               name="reason"

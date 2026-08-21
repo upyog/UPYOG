@@ -1,3 +1,4 @@
+import "../../css/ndc.css";
 import React, { useState, useEffect, useRef } from "react";
 
 import { TextInput, Toast } from "@nudmcdgnpm/digit-ui-react-components";
@@ -604,43 +605,11 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
    * ---------------------------------------------------------
    */
 
-  const fieldWrapperStyle = {
-    width: FIELD_WIDTH,
-
-    maxWidth: "100%",
-
-    marginBottom: "0",
-
-    boxSizing: "border-box",
-  };
-
   /*
    * ---------------------------------------------------------
    * LABEL
    * ---------------------------------------------------------
    */
-
-  const fieldLabelStyle = {
-    display: "block",
-
-    width: FIELD_WIDTH,
-
-    maxWidth: "100%",
-
-    marginBottom: "7px",
-
-    padding: "0",
-
-    fontSize: "12px",
-
-    lineHeight: "16px",
-
-    fontWeight: "700",
-
-    color: "#111111",
-
-    boxSizing: "border-box",
-  };
 
   /*
    * ---------------------------------------------------------
@@ -653,91 +622,17 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
    * ---------------------------------------------------------
    */
 
-  const fieldInputWrapperStyle = {
-    position: "relative",
-
-    width: FIELD_WIDTH,
-
-    minWidth: FIELD_WIDTH,
-
-    maxWidth: FIELD_WIDTH,
-
-    height: FIELD_HEIGHT,
-
-    minHeight: FIELD_HEIGHT,
-
-    boxSizing: "border-box",
-
-    flexShrink: 0,
-  };
-
   /*
    * ---------------------------------------------------------
    * INPUT
    * ---------------------------------------------------------
    */
 
-  const inputStyle = {
-    width: FIELD_WIDTH,
-
-    minWidth: FIELD_WIDTH,
-
-    maxWidth: FIELD_WIDTH,
-
-    height: FIELD_HEIGHT,
-
-    minHeight: FIELD_HEIGHT,
-
-    boxSizing: "border-box",
-
-    paddingRight: "42px",
-  };
-
   /*
    * ---------------------------------------------------------
    * SEARCH ICON
    * ---------------------------------------------------------
    */
-
-  const searchIconButtonStyle = {
-    position: "absolute",
-
-    top: "50%",
-
-    right: "6px",
-
-    transform: "translateY(-50%)",
-
-    width: "30px",
-
-    height: "30px",
-
-    minWidth: "30px",
-
-    minHeight: "30px",
-
-    padding: "0",
-
-    margin: "0",
-
-    border: "none",
-
-    outline: "none",
-
-    background: "transparent",
-
-    display: "flex",
-
-    alignItems: "center",
-
-    justifyContent: "center",
-
-    cursor: "pointer",
-
-    zIndex: 20,
-
-    boxSizing: "border-box",
-  };
 
   /*
    * ---------------------------------------------------------
@@ -750,123 +645,17 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
    * ---------------------------------------------------------
    */
 
-  const actionAreaStyle = {
-    width: FIELD_WIDTH,
-
-    maxWidth: "100%",
-
-    display: "flex",
-
-    flexDirection: "column",
-
-    alignItems: "flex-start",
-
-    marginTop: "12px",
-
-    marginBottom: "32px",
-
-    boxSizing: "border-box",
-  };
-
   /*
    * ---------------------------------------------------------
    * BUTTON
    * ---------------------------------------------------------
    */
 
-  const buttonStyle = {
-    display: "flex",
-
-    alignItems: "center",
-
-    justifyContent: "center",
-
-    width: "155px",
-
-    minWidth: "155px",
-
-    height: FIELD_HEIGHT,
-
-    minHeight: FIELD_HEIGHT,
-
-    margin: "0",
-
-    padding: "0 16px",
-
-    backgroundColor: "#a82227",
-
-    color: "#ffffff",
-
-    border: "none",
-
-    outline: "none",
-
-    borderRadius: "0",
-
-    fontSize: "12px",
-
-    fontWeight: "600",
-
-    lineHeight: "1",
-
-    cursor: "pointer",
-
-    boxSizing: "border-box",
-
-    whiteSpace: "nowrap",
-
-    textAlign: "center",
-
-    flexShrink: 0,
-  };
-
   /*
    * ---------------------------------------------------------
    * NO DUES
    * ---------------------------------------------------------
    */
-
-  const noDueStyle = {
-    display: "flex",
-
-    alignItems: "center",
-
-    justifyContent: "center",
-
-    width: "155px",
-
-    minWidth: "155px",
-
-    height: FIELD_HEIGHT,
-
-    minHeight: FIELD_HEIGHT,
-
-    margin: "0",
-
-    padding: "0 16px",
-
-    backgroundColor: "#a82227",
-
-    color: "#ffffff",
-
-    border: "none",
-
-    borderRadius: "0",
-
-    fontSize: "12px",
-
-    fontWeight: "600",
-
-    lineHeight: "1",
-
-    boxSizing: "border-box",
-
-    whiteSpace: "nowrap",
-
-    textAlign: "center",
-
-    flexShrink: 0,
-  };
 
   /*
    * =========================================================
@@ -876,374 +665,20 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
 
   return (
     <React.Fragment>
-      <style>
-        {`
-          /*
-           * =================================================
-           * NDC MODULE ONLY
-           * =================================================
-           */
-
-          .ndc-property-search-container {
-            width: 100%;
-            box-sizing: border-box;
-          }
-
-          /*
-           * =================================================
-           * PROPERTY INPUT
-           * =================================================
-           */
-
-          .ndc-property-search-container
-          .ndc-property-input {
-            position: relative !important;
-
-            width: 340px !important;
-            min-width: 340px !important;
-            max-width: 340px !important;
-
-            height: 40px !important;
-            min-height: 40px !important;
-            max-height: 40px !important;
-
-            box-sizing: border-box !important;
-
-            flex-shrink: 0 !important;
-          }
-
-          .ndc-property-search-container
-          .ndc-property-input input {
-            width: 340px !important;
-            min-width: 340px !important;
-            max-width: 340px !important;
-
-            height: 40px !important;
-            min-height: 40px !important;
-            max-height: 40px !important;
-
-            box-sizing: border-box !important;
-
-            padding-right: 42px !important;
-          }
-
-          /*
-           * =================================================
-           * SEARCH ICON
-           * =================================================
-           */
-
-          .ndc-property-search-container
-          .ndc-property-search-icon {
-            position: absolute !important;
-
-            top: 50% !important;
-            right: 6px !important;
-
-            transform:
-              translateY(-50%) !important;
-
-            width: 30px !important;
-            min-width: 30px !important;
-            max-width: 30px !important;
-
-            height: 30px !important;
-            min-height: 30px !important;
-            max-height: 30px !important;
-
-            margin: 0 !important;
-            padding: 0 !important;
-
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-
-            border: none !important;
-            outline: none !important;
-
-            background:
-              transparent !important;
-
-            cursor: pointer !important;
-
-            z-index: 100 !important;
-
-            box-sizing:
-              border-box !important;
-          }
-
-          /*
-           * =================================================
-           * ACTION AREA
-           * =================================================
-           */
-
-          .ndc-property-search-container
-          .ndc-property-actions {
-            width: 340px !important;
-            max-width: 100% !important;
-
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: flex-start !important;
-
-            margin-top: 12px !important;
-            margin-bottom: 32px !important;
-
-            box-sizing:
-              border-box !important;
-          }
-
-          /*
-           * =================================================
-           * ALL ACTION BUTTONS
-           * =================================================
-           */
-
-          .ndc-property-search-container
-          .ndc-property-action-button {
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-
-            width: 155px !important;
-            min-width: 155px !important;
-            max-width: 155px !important;
-
-            height: 40px !important;
-            min-height: 40px !important;
-            max-height: 40px !important;
-
-            margin: 0 !important;
-            padding: 0 16px !important;
-
-            background:
-              #a82227 !important;
-
-            color:
-              #ffffff !important;
-
-            border:
-              none !important;
-
-            outline:
-              none !important;
-
-            border-radius:
-              0 !important;
-
-            font-size:
-              12px !important;
-
-            font-weight:
-              600 !important;
-
-            line-height:
-              1 !important;
-
-            cursor:
-              pointer !important;
-
-            box-sizing:
-              border-box !important;
-
-            white-space:
-              nowrap !important;
-
-            text-align:
-              center !important;
-
-            flex-shrink:
-              0 !important;
-          }
-
-          /*
-           * =================================================
-           * FORCE BUTTON TEXT WHITE
-           * =================================================
-           */
-
-          .ndc-property-search-container
-          .ndc-property-action-button span,
-
-          .ndc-property-search-container
-          .ndc-property-action-button p,
-
-          .ndc-property-search-container
-          .ndc-property-action-button div {
-            color:
-              #ffffff !important;
-          }
-
-          /*
-           * =================================================
-           * PAY DUES LINK
-           * =================================================
-           */
-
-          .ndc-property-search-container
-          .ndc-property-pay-link {
-            display:
-              block !important;
-
-            width:
-              155px !important;
-
-            min-width:
-              155px !important;
-
-            max-width:
-              155px !important;
-
-            margin-top:
-              10px !important;
-
-            text-decoration:
-              none !important;
-
-            box-sizing:
-              border-box !important;
-          }
-
-          .ndc-property-search-container
-          .ndc-property-pay-link:hover {
-            text-decoration:
-              none !important;
-          }
-
-          /*
-           * =================================================
-           * NO DUES
-           * =================================================
-           */
-
-          .ndc-property-search-container
-          .ndc-property-no-dues {
-            display:
-              flex !important;
-
-            align-items:
-              center !important;
-
-            justify-content:
-              center !important;
-
-            width:
-              155px !important;
-
-            min-width:
-              155px !important;
-
-            max-width:
-              155px !important;
-
-            height:
-              40px !important;
-
-            min-height:
-              40px !important;
-
-            max-height:
-              40px !important;
-
-            margin:
-              0 !important;
-
-            padding:
-              0 16px !important;
-
-            background:
-              #a82227 !important;
-
-            color:
-              #ffffff !important;
-
-            border:
-              none !important;
-
-            border-radius:
-              0 !important;
-
-            font-size:
-              12px !important;
-
-            font-weight:
-              600 !important;
-
-            line-height:
-              1 !important;
-
-            box-sizing:
-              border-box !important;
-
-            white-space:
-              nowrap !important;
-
-            text-align:
-              center !important;
-
-            flex-shrink:
-              0 !important;
-          }
-
-          .ndc-property-search-container
-          .ndc-property-no-dues * {
-            color:
-              #ffffff !important;
-          }
-
-          /*
-           * =================================================
-           * MOBILE
-           * =================================================
-           */
-
-          @media (max-width: 600px) {
-
-            .ndc-property-search-container
-            .ndc-property-input,
-
-            .ndc-property-search-container
-            .ndc-property-input input,
-
-            .ndc-property-search-container
-            .ndc-property-actions {
-              width:
-                100% !important;
-
-              min-width:
-                0 !important;
-
-              max-width:
-                100% !important;
-            }
-
-          }
-        `}
-      </style>
-
-      <div
-        className="ndc-property-search-container ndc-margin-bottom-16"
-        style={{
-          width: "100%",
-
-          boxSizing: "border-box",
-        }}
+<div
+        className="ndc-property-search-container ndc-margin-bottom-16 ndc-css-80d9af92"
+        
       >
         {/* ===================================================
             PROPERTY ID
         ==================================================== */}
 
-        <div style={fieldWrapperStyle}>
-          <label style={fieldLabelStyle}>
+        <div className="ndc-css-e4092fcf" >
+          <label className="ndc-css-690dab27" >
             {t(propertyIdInput.label)}
 
-            <span
-              style={{
-                color: "#a82227",
-
-                marginLeft: "3px",
-              }}
+            <span className="ndc-css-38096d7a"
+              
             >
               *
             </span>
@@ -1256,15 +691,15 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
               DO NOT PUT BUTTONS INSIDE THIS DIV.
           ================================================= */}
 
-          <div ref={myElementRef} id="search-property-field" className="ndc-property-input" style={fieldInputWrapperStyle}>
-            <TextInput
+          <div ref={myElementRef} id="search-property-field" className="ndc-property-input ndc-css-f8d9d5bb" >
+            <TextInput className="ndc-css-fadab511"
               key={propertyIdInput.name}
               value={propertyId || ""}
               onChange={handlePropertyChange}
               disable={false}
               defaultValue={undefined}
               {...propertyIdInput.validation}
-              style={inputStyle}
+              
             />
 
             {/* ===============================================
@@ -1273,8 +708,8 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
 
             <button
               type="button"
-              className="ndc-property-search-icon"
-              style={searchIconButtonStyle}
+              className="ndc-property-search-icon ndc-css-27db4f2f"
+              
               onClick={searchProperty}
               aria-label={t("PT_SEARCH")}
               title={t("PT_SEARCH")}
@@ -1293,7 +728,7 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
               THIS FIXES THE OVERLAP.
           ================================================= */}
 
-          <div className="ndc-property-actions" style={actionAreaStyle}>
+          <div className="ndc-property-actions ndc-css-c1711082" >
             {/* ===============================================
                 CHECK STATUS
             ================================================ */}
@@ -1301,8 +736,8 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
             {!apiDataCheck?.[0]?.NdcDetails && getCheckStatus && !getPayDuesButton && (
               <button
                 type="button"
-                className="ndc-property-action-button"
-                style={buttonStyle}
+                className="ndc-property-action-button ndc-css-a999e0c4"
+                
                 onClick={() => {
                   fetchBill();
                 }}
@@ -1316,17 +751,11 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
             ================================================ */}
 
             {getPayDuesButton && (
-              <div
-                style={{
-                  ...buttonStyle,
-
-                  color: "#ffffff",
-                }}
+              <div className="ndc-css-a999e0c4"
+                
               >
-                <span
-                  style={{
-                    color: "#ffffff",
-                  }}
+                <span className="ndc-css-577ca9f3"
+                  
                 >
                   Rs. {propertyDues?.dues?.totalAmount}
                 </span>
@@ -1341,12 +770,8 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
               <Link className="ndc-property-pay-link" to={`/upyog-ui/citizen/payment/my-bills/PT/${propertyId}`}>
                 <button
                   type="button"
-                  className="ndc-property-action-button"
-                  style={{
-                    ...buttonStyle,
-
-                    marginTop: "10px",
-                  }}
+                  className="ndc-property-action-button ndc-css-985bd392"
+                  
                 >
                   {t("PAY_DUES")}
                 </button>
@@ -1358,11 +783,9 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
             ================================================ */}
 
             {getNoDue && (
-              <div className="ndc-property-no-dues" style={noDueStyle}>
-                <span
-                  style={{
-                    color: "#ffffff",
-                  }}
+              <div className="ndc-property-no-dues ndc-css-f93c4492" >
+                <span className="ndc-css-577ca9f3"
+                  
                 >
                   {t("NO_DUES_FOUND_FOR_PROPERTY")}
                 </span>

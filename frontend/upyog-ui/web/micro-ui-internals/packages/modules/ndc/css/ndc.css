@@ -1,0 +1,1032 @@
+/* =========================================================
+   NDC MODULE CSS
+   ========================================================= */
+
+.ndc-css-87310ad8 {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ndc-css-d088c348 {
+  width: 100%;
+  max-width: 465px;
+  margin-bottom: 22px;
+  box-sizing: border-box;
+}
+
+.ndc-css-5b150134 {
+  display: block;
+  width: 100%;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111111;
+  line-height: 1.4;
+  box-sizing: border-box;
+}
+
+.ndc-css-2c30dc20 {
+  color: #a82227;
+  margin-left: 3px;
+}
+
+.ndc-css-c3d3dc34 {
+  margin-top: 5px;
+}
+
+.ndc-css-fcfffca2 {
+  display: grid;
+  grid-template-columns: 42% 58%;
+  width: 100%;
+  min-height: 30px;
+  border-bottom: 1px solid #d5d5d5;
+  box-sizing: border-box;
+}
+
+.ndc-css-f8a36f7d {
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 700;
+  color: #111111;
+  padding: 6px 8px 6px 0;
+  box-sizing: border-box;
+}
+
+.ndc-css-500ff7b4 {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #333333;
+  padding: 6px 0 6px 8px;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  box-sizing: border-box;
+}
+
+.ndc-css-0913a7ec {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 32px;
+  border-bottom: 1px solid #cfcfcf;
+  box-sizing: border-box;
+}
+
+.ndc-css-70fcc8ba {
+  font-size: 16px;
+  line-height: 1.4;
+  font-weight: 700;
+  color: #111111;
+  margin: 0;
+  padding: 5px 0;
+}
+
+.ndc-css-76f24cb8 {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  color: #b21f2d;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.ndc-css-1e54a5cc {
+  width: 100%;
+  min-height: 100%;
+  box-sizing: border-box;
+  padding: 10px 0 30px 0;
+}
+
+.ndc-css-1afa1bd6 {
+  background-color: #ffffff;
+  width: 620px;
+  max-width: 100%;
+  margin: 0;
+  padding: 18px;
+  box-sizing: border-box;
+  border-radius: 2px;
+}
+
+.ndc-css-d5535c12 {
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #111111;
+  margin: 0 0 4px 0;
+}
+
+.ndc-css-446ce61a {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #555555;
+  margin-bottom: 18px;
+}
+
+.ndc-css-d175ed94 {
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+.ndc-css-f9744310 {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 0;
+  box-sizing: border-box;
+}
+
+.ndc-css-0ec02b21 {
+  flex: 0 0 120px;
+  width: 120px;
+  min-height: 105px;
+  background-color: #ffffff;
+  border: 1px solid #d5d5d5;
+  border-radius: 2px;
+  padding: 7px;
+  box-sizing: border-box;
+}
+
+.ndc-css-53470f08 {
+  font-size: 13px;
+  color: #555555;
+  padding: 10px 0;
+}
+
+.ndc-css-dea39455 {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 0 0 0;
+  border-top: 1px solid #d0d0d0;
+  box-sizing: border-box;
+}
+
+.ndc-css-3870986f {
+  width: 15px;
+  height: 15px;
+  margin: 2px 8px 0 0;
+  flex-shrink: 0;
+}
+
+.ndc-css-c1ad7f1a {
+  font-size: 10px;
+  line-height: 1.5;
+  color: #333333;
+}
+
+.ndc-css-b2739e19 {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-top: 16px;
+  box-sizing: border-box;
+}
+
+.ndc-css-2d867dee {
+  margin-top: 32px;
+  margin-bottom: 24px;
+}
+
+.ndc-css-95d004c9 {
+  width: 450px;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+.ndc-css-06664efe {
+  width: 450px;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ndc-css-c9ab0354 {
+  width: 450px;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.ndc-css-96211f4f {
+  width: 450px;
+  min-width: 450px;
+  max-width: 450px;
+  height: 40px;
+  min-height: 40px;
+  box-sizing: border-box;
+}
+
+.ndc-css-ce29047b {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 450px;
+  max-width: 100%;
+  margin-top: 10px;
+  margin-bottom: 24px;
+  box-sizing: border-box;
+  gap: 8px;
+}
+
+.ndc-css-c6ab9ae6,
+.ndc-css-a999e0c4,
+.ndc-css-f93c4492 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 155px;
+  min-width: 155px;
+  height: 40px;
+  min-height: 40px;
+  margin: 0;
+  padding: 0 14px;
+  background-color: #a82227;
+  color: #ffffff;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  box-sizing: border-box;
+  white-space: nowrap;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.ndc-css-985bd392 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 155px;
+  min-width: 155px;
+  height: 40px;
+  min-height: 40px;
+  margin: 10px 0 0 0;
+  padding: 0 16px;
+  background-color: #a82227;
+  color: #ffffff;
+  border: none;
+  outline: none;
+  border-radius: 0;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  box-sizing: border-box;
+  white-space: nowrap;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.ndc-css-0d6d4360 {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 320px;
+  min-width: 320px;
+  max-width: 320px;
+  min-height: 40px;
+  margin: 0;
+  padding: 10px 16px;
+  background-color: #a82227;
+  color: #ffffff;
+  border: none;
+  border-radius: 0;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  box-sizing: border-box;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  text-align: left;
+  flex-shrink: 0;
+}
+
+.ndc-css-74f1c66c {
+  margin-bottom: 36px;
+}
+
+.ndc-css-4127d6be {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ndc-css-2e05fa87 {
+  margin-bottom: 24px;
+}
+
+.ndc-css-aa48cd9d {
+  margin-bottom: 40px;
+}
+
+.ndc-css-2aa870f0 {
+  width: 500px;
+  max-width: 100%;
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
+.ndc-css-395daccd {
+  color: green;
+  font-size: 12px;
+  line-height: 17px;
+  padding: 0;
+  margin: 0 0 10px 0;
+}
+
+.ndc-css-c6ae225c {
+  width: 500px;
+  max-width: 100%;
+}
+
+.ndc-css-706be27a {
+  display: block;
+  margin-top: 20px;
+  margin-bottom: 22px;
+}
+
+.ndc-css-f6ef63c7 {
+  color: red;
+}
+
+.ndc-css-da1815c2 {
+  width: 450px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.ndc-css-e3b4639c {
+  display: block;
+  margin-bottom: 22px;
+}
+
+.ndc-css-6e542240 {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 22px;
+}
+
+.ndc-css-805e0033 {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ndc-css-40b8fae8 {
+  background: #ffffff;
+  width: 100%;
+  max-width: 620px;
+  box-sizing: border-box;
+  padding: 24px 28px;
+  margin: 0 auto;
+}
+
+.ndc-css-9acc18f3 {
+  margin-bottom: 24px;
+}
+
+.ndc-css-2ac5b85c {
+  margin: 0 0 16px 0;
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #111111;
+}
+
+.ndc-css-67ce6330 {
+  margin-bottom: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333333;
+}
+
+.ndc-css-323d1bd8 {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: #333333;
+}
+
+.ndc-css-8b064ad7,
+.ndc-css-80d9af92 {
+  width: 100%;
+}
+
+.ndc-css-6bf112df {
+  width: 100%;
+  margin-bottom: 22px;
+  box-sizing: border-box;
+}
+
+.ndc-css-a82d9187 {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.ndc-css-c851dfe0 {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 600;
+  color: #111111;
+}
+
+.ndc-css-326975fd {
+  margin-left: 3px;
+  color: #b21f2d;
+  font-weight: 700;
+}
+
+.ndc-css-e4092fcf {
+  width: 340px;
+  max-width: 100%;
+  margin-bottom: 0;
+  box-sizing: border-box;
+}
+
+.ndc-css-690dab27 {
+  display: block;
+  width: 340px;
+  max-width: 100%;
+  margin-bottom: 7px;
+  padding: 0;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 700;
+  color: #111111;
+  box-sizing: border-box;
+}
+
+.ndc-css-38096d7a {
+  color: #a82227;
+  margin-left: 3px;
+}
+
+.ndc-css-f8d9d5bb {
+  position: relative;
+  width: 340px;
+  min-width: 340px;
+  max-width: 340px;
+  height: 40px;
+  min-height: 40px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.ndc-css-fadab511 {
+  width: 340px;
+  min-width: 340px;
+  max-width: 340px;
+  height: 40px;
+  min-height: 40px;
+  box-sizing: border-box;
+  padding-right: 42px;
+}
+
+.ndc-css-27db4f2f {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  min-height: 30px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  box-sizing: border-box;
+}
+
+.ndc-css-c1711082 {
+  width: 340px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 12px;
+  margin-bottom: 32px;
+  box-sizing: border-box;
+}
+
+.ndc-css-577ca9f3 {
+  color: #ffffff;
+}
+
+.ndc-css-d57fc5bb {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  padding: 16px;
+}
+
+.ndc-css-f55e6646 {
+  padding-top: 0;
+  padding-left: 0;
+}
+
+.ndc-css-1023a2ab {
+  max-width: 200px;
+}
+
+
+/* =========================================================
+   PROPERTY DETAILS FORM
+   ========================================================= */
+
+.ndc-form-root {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ndc-details-form-wrapper {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CONNECTION SECTIONS
+   ========================================================= */
+
+.ndc-connection-section {
+  width: 100%;
+  margin-top: 32px;
+  margin-bottom: 24px;
+  box-sizing: border-box;
+}
+
+.ndc-sewerage-section {
+  width: 100%;
+  margin-bottom: 24px;
+  box-sizing: border-box;
+}
+
+.ndc-field-label-wrapper {
+  width: 450px;
+  max-width: 100%;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.ndc-connection-list {
+  width: 450px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+.ndc-connection-row {
+  width: 450px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CONNECTION BUTTONS
+   ========================================================= */
+
+.ndc-action-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 450px;
+  max-width: 100%;
+  margin-top: 10px;
+  margin-bottom: 24px;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+.ndc-action-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 155px !important;
+  min-width: 155px !important;
+  max-width: 155px !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  margin: 0 !important;
+  padding: 0 14px !important;
+  background-color: #a82227 !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 0 !important;
+  outline: none !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  cursor: pointer;
+  box-sizing: border-box;
+  white-space: nowrap;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.ndc-action-button span,
+.ndc-action-button p,
+.ndc-action-button div {
+  color: #ffffff !important;
+}
+
+.ndc-add-connection {
+  margin-bottom: 36px;
+}
+
+.ndc-add-sewerage {
+  margin-bottom: 40px;
+}
+
+
+/* =========================================================
+   OWNER SELECTION
+   ========================================================= */
+
+.ndc-owner-selection {
+  width: 500px;
+  max-width: 100%;
+  margin-top: 10px;
+  margin-bottom: 30px;
+  box-sizing: border-box;
+}
+
+.ndc-owner-help {
+  color: green;
+  font-size: 12px;
+  line-height: 17px;
+  padding: 0;
+  margin: 0 0 10px 0;
+}
+
+.ndc-owner-table {
+  width: 500px !important;
+  max-width: 100% !important;
+}
+
+
+/* =========================================================
+   OWNER FORM
+   ========================================================= */
+
+/*
+ * IMPORTANT:
+ *
+ * LabelFieldPair from Digit UI has its own layout.
+ * We explicitly make this component vertical.
+ *
+ * Desired:
+ *
+ * NDC_FULL_NAME *
+ * [Arpit Rao]
+ *
+ * NDC_EMAIL *
+ * [Asdj@gmail.com]
+ *
+ * NDC_MOBILE_NUMBER *
+ * [9999999999]
+ *
+ * NDC_ADDRESS *
+ * [              ]
+ *
+ * Remarks
+ * [              ]
+ *
+ * Trade License Number
+ * [              ]
+ */
+
+.ndc-owner-field {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+
+  width: 100% !important;
+  max-width: 100% !important;
+
+  margin-top: 20px !important;
+  margin-bottom: 22px !important;
+
+  padding: 0 !important;
+
+  box-sizing: border-box !important;
+}
+
+.ndc-owner-field-first {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+
+  width: 100% !important;
+
+  margin-top: 20px !important;
+  margin-bottom: 22px !important;
+
+  box-sizing: border-box !important;
+}
+
+.ndc-owner-field-remarks {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+
+  width: 100% !important;
+
+  margin-top: 10px !important;
+  margin-bottom: 22px !important;
+
+  box-sizing: border-box !important;
+}
+
+
+/*
+ * LABEL
+ *
+ * NEVER give this 450px width.
+ */
+
+.ndc-owner-field > .ndc_card_labels,
+.ndc-owner-field > .card-label-smaller,
+.ndc-owner-field > label,
+.ndc-owner-field > div:first-child .ndc_card_labels {
+  display: block !important;
+
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+
+  margin: 0 0 8px 0 !important;
+  padding: 0 !important;
+
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+  font-weight: 600 !important;
+
+  box-sizing: border-box !important;
+}
+
+
+/*
+ * FORM FIELD
+ */
+
+.ndc-owner-field > .form-field {
+  display: block !important;
+
+  width: 450px !important;
+  min-width: 450px !important;
+  max-width: 450px !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  box-sizing: border-box !important;
+}
+
+
+/*
+ * INPUT
+ */
+
+.ndc-owner-field > .form-field .ndc-input,
+.ndc-owner-field > .form-field input,
+.ndc-owner-field .ndc-input {
+  display: block !important;
+
+  width: 450px !important;
+  min-width: 450px !important;
+  max-width: 450px !important;
+
+  height: 40px !important;
+  min-height: 40px !important;
+
+  margin: 0 !important;
+
+  box-sizing: border-box !important;
+}
+
+
+/*
+ * GENERAL FORM FIELD
+ */
+
+.ndc-field-container {
+  display: block;
+  width: 450px;
+  min-width: 450px;
+  max-width: 450px;
+
+  margin: 0;
+  padding: 0;
+
+  box-sizing: border-box;
+}
+
+.ndc-input {
+  display: block;
+
+  width: 450px;
+  min-width: 450px;
+  max-width: 450px;
+
+  height: 40px;
+  min-height: 40px;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   REQUIRED FIELD
+   ========================================================= */
+
+.ndc-required-star {
+  color: red;
+}
+
+
+/* =========================================================
+   DELETE BUTTON
+   ========================================================= */
+
+.ndc-delete-button {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   NO DUES
+   ========================================================= */
+
+.ndc-no-dues-box {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  width: 320px;
+  min-width: 320px;
+  max-width: 320px;
+
+  min-height: 40px;
+
+  margin: 0;
+  padding: 10px 16px;
+
+  background-color: #a82227;
+  color: #ffffff;
+
+  border: none;
+  border-radius: 0;
+
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+
+  box-sizing: border-box;
+
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+
+  text-align: left;
+}
+
+.ndc-no-dues-box * {
+  color: #ffffff;
+}
+
+
+/* =========================================================
+   MESSAGE
+   ========================================================= */
+
+.ndc-details-form-message {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  width: 320px;
+  min-width: 320px;
+  max-width: 320px;
+
+  min-height: 40px;
+
+  margin-top: 10px;
+  margin-bottom: 20px;
+
+  padding: 10px 16px;
+
+  background-color: #a82227;
+  color: #ffffff;
+
+  border: none;
+  border-radius: 0;
+
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+
+  box-sizing: border-box;
+
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+
+  text-align: left;
+}
+
+.ndc-details-form-message * {
+  color: #ffffff;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .ndc-field-label-wrapper,
+  .ndc-connection-list,
+  .ndc-connection-row,
+  .ndc-action-column {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .ndc-owner-field,
+  .ndc-owner-field-first,
+  .ndc-owner-field-remarks {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .ndc-owner-field > .form-field,
+  .ndc-owner-field > .form-field .ndc-input,
+  .ndc-owner-field > .form-field input,
+  .ndc-owner-field .ndc-input {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .ndc-field-container,
+  .ndc-input {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .ndc-no-dues-box,
+  .ndc-details-form-message {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .ndc-owner-selection,
+  .ndc-owner-table {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}

@@ -1,3 +1,4 @@
+import "../../../../css/ndc.css";
 import React from "react";
 import { SearchField, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";

@@ -1,3 +1,4 @@
+import "../../../../css/ndc.css";
 import React, { Fragment, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";

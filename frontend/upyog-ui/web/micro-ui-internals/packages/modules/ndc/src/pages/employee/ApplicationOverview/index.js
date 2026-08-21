@@ -1,3 +1,4 @@
+import "../../../../css/ndc.css";
 import {
   Row,
   StatusTable,
@@ -496,7 +497,7 @@ const ApplicationOverview = () => {
       {/* <div>
         <Header styles={{ fontSize: "32px" }}>{t("NDC_APP_OVER_VIEW_HEADER")}</Header>
       </div> */}
-      <div style={{ display: "flex", justifyContent: "end", alignItems: "center", padding: "16px" }}>
+      <div className="ndc-css-d57fc5bb" >
         {isCemp && (
           <div className="cardHeaderWithOptions ral-app-details-header">
             {getLoader && <Loader />}
@@ -550,13 +551,8 @@ const ApplicationOverview = () => {
                 {/* <Row label={t("NDC_STATUS")} text={t(detail.status) || detail.status} /> */}
 
                 {(!canRaiseFlag || !isMarked) && (
-                  <div
-                    style={{
-                      background: isRed ? "red" : "none",
-                      color: isRed ? "white" : "black",
-                      paddingTop: isRed ? "8px" : "0",
-                      paddingLeft: isRed ? "10px" : "0",
-                    }}
+                  <div className="ndc-css-f55e6646"
+                    
                   >
                     <Row
                       rowContainerStyle={{
@@ -583,7 +579,7 @@ const ApplicationOverview = () => {
                           name={`amount[${index}]`}
                           defaultValue={markedPending[detail.consumerCode] === false ? 0 : amounts?.[detail.consumerCode] || detail?.dueAmount || 0}
                           render={(props) => (
-                            <TextInput
+                            <TextInput className="ndc-css-1023a2ab"
                               type="number"
                               value={props.value}
                               onChange={(e) => {
@@ -594,7 +590,7 @@ const ApplicationOverview = () => {
                                   [detail.consumerCode]: newValue,
                                 }));
                               }}
-                              style={{ maxWidth: "200px" }}
+                              
                               onBlur={props.onBlur}
                               disabled={markedPending[detail.consumerCode] === false}
                             />

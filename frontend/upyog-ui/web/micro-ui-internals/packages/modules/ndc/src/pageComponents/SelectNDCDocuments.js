@@ -1,3 +1,4 @@
+import "../../css/ndc.css";
 import React, { useEffect, useState } from "react";
 import { CardLabel, UploadFile, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import { useSelector } from "react-redux";
@@ -47,72 +48,42 @@ const SelectNDCDocuments = ({ t, config, onSelect, userType, formData, setError:
   }
 
   return (
-    <div
-      style={{
-        width: "100%",
-        boxSizing: "border-box",
-      }}
+    <div className="ndc-css-805e0033"
+      
     >
       {/* Timeline */}
       {window.location.href.includes("/citizen") ? <Timeline currentStep={2} /> : null}
 
       {/* Main Documents Card */}
-      <div
-        style={{
-          background: "#ffffff",
-          width: "100%",
-          maxWidth: "620px",
-          boxSizing: "border-box",
-          padding: "24px 28px",
-          margin: "0 auto",
-        }}
+      <div className="ndc-css-40b8fae8"
+        
       >
         {/* Header */}
-        <div
-          style={{
-            marginBottom: "24px",
-          }}
+        <div className="ndc-css-9acc18f3"
+          
         >
-          <h1
-            style={{
-              margin: "0 0 16px 0",
-              fontSize: "28px",
-              lineHeight: "1.2",
-              fontWeight: "700",
-              color: "#111111",
-            }}
+          <h1 className="ndc-css-2ac5b85c"
+            
           >
             {t("NDC_PROOF_OF_DOCUMENTS") || "Proof of Documents"}
           </h1>
 
-          <div
-            style={{
-              marginBottom: "10px",
-              fontSize: "14px",
-              lineHeight: "1.5",
-              color: "#333333",
-            }}
+          <div className="ndc-css-67ce6330"
+            
           >
             {t("NDC_SUPPORTED_FORMATS") || "Supported formats: JPG, PNG for photo and JPG, PNG, PDF for other documents"}
           </div>
 
-          <div
-            style={{
-              fontSize: "14px",
-              fontWeight: "600",
-              lineHeight: "1.5",
-              color: "#333333",
-            }}
+          <div className="ndc-css-323d1bd8"
+            
           >
             {t("NDC_MAXIMUM_UPLOAD_SIZE") || "Maximum upload size is 5 MB"}
           </div>
         </div>
 
         {/* Documents */}
-        <div
-          style={{
-            width: "100%",
-          }}
+        <div className="ndc-css-8b064ad7"
+          
         >
           {ndcDocuments?.map((document, index) => {
             return (
@@ -226,41 +197,21 @@ function SelectDocument({ t, document: doc, setDocuments, setError, documents, s
   }, [file]);
 
   return (
-    <div
-      style={{
-        width: "100%",
-        marginBottom: "22px",
-        boxSizing: "border-box",
-      }}
+    <div className="ndc-css-6bf112df"
+      
     >
       {/* Document Label */}
-      <div
-        style={{
-          width: "100%",
-          marginBottom: "8px",
-        }}
+      <div className="ndc-css-a82d9187"
+        
       >
-        <CardLabel
-          style={{
-            display: "block",
-            width: "100%",
-            margin: "0",
-            padding: "0",
-            fontSize: "15px",
-            lineHeight: "1.4",
-            fontWeight: "600",
-            color: "#111111",
-          }}
+        <CardLabel className="ndc-css-c851dfe0"
+          
         >
           {t(doc?.code)}
 
           {doc?.required && (
-            <span
-              style={{
-                marginLeft: "3px",
-                color: "#b21f2d",
-                fontWeight: "700",
-              }}
+            <span className="ndc-css-326975fd"
+              
             >
               *
             </span>
@@ -269,11 +220,8 @@ function SelectDocument({ t, document: doc, setDocuments, setError, documents, s
       </div>
 
       {/* Upload */}
-      <div
-        style={{
-          width: "100%",
-          boxSizing: "border-box",
-        }}
+      <div className="ndc-css-805e0033"
+        
       >
         <UploadFile
           id={`ndc-doc-${doc?.code}`}
