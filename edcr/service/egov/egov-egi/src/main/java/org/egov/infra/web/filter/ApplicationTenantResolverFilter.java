@@ -296,6 +296,10 @@ public class ApplicationTenantResolverFilter implements Filter {
     private String setCustomHeader(String requestURL, String tenantAtBody,
             MultiReadRequestWrapper customRequest) {
 
+        if (customRequest == null || StringUtils.isBlank(requestURL)) {
+            return tenantAtBody;
+        }
+
         if (requestURL.contains("/rest/")) {
             LOG.info("***********Inside method to fetch auth token and tenant from reqbody**************");
             try {
@@ -304,7 +308,7 @@ public class ApplicationTenantResolverFilter implements Filter {
                 if (customRequest.isMultipart()) {
                     // Multipart/form-data: the edcrRequest JSON is a named form field.
                     jakarta.servlet.http.Part edcrPart = customRequest.getPart("edcrRequest");
-                    if (edcrPart != null) {
+                    if (edcrPart != null && edcrPart.getInputStream() != null) {
                         StringWriter writer = new StringWriter();
                         IOUtils.copy(edcrPart.getInputStream(), writer, StandardCharsets.UTF_8);
                         jsonContent = writer.toString();
@@ -313,12 +317,14 @@ public class ApplicationTenantResolverFilter implements Filter {
                     }
                 } else {
                     // Non-multipart: read from the cached JSON input stream.
-                    StringWriter writer = new StringWriter();
-                    IOUtils.copy(customRequest.getInputStream(), writer, StandardCharsets.UTF_8);
-                    jsonContent = writer.toString();
+                    if (customRequest.getInputStream() != null) {
+                        StringWriter writer = new StringWriter();
+                        IOUtils.copy(customRequest.getInputStream(), writer, StandardCharsets.UTF_8);
+                        jsonContent = writer.toString();
+                    }
                 }
 
-                if (StringUtils.isNoneBlank(jsonContent)) {
+                if (StringUtils.isNotBlank(jsonContent)) {
                     Pattern p = Pattern.compile("\"tenantId\"\\s*:\\s*\"([^\"]+)\"");
                     Matcher m = p.matcher(jsonContent);
                     if (m.find()) {
