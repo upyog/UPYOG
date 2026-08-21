@@ -284,14 +284,17 @@ public class ApplicationTenantResolverFilter implements Filter {
     /**
      * Extracts the {@code tenantId} from the request body or multipart form fields.
      * <p>
-     * - For multipart requests (e.g. file scrutiny uploads), reads ONLY the {@code edcrRequest}
-     * form field to preserve the raw binary DXF/PDF stream without buffering heavy CAD files in RAM.
+     * - For multipart requests (e.g. file scrutiny uploads), reads ONLY the
+     * {@code edcrRequest}
+     * form field to preserve the raw binary DXF/PDF stream without buffering heavy
+     * CAD files in RAM.
      * - For standard REST requests, reads the cached JSON payload.
      *
-     * @param requestURL              the full request URL
-     * @param tenantAtBody            the existing tenant string buffer
-     * @param customRequest           the cached request wrapper
-     * @return the extracted tenant identifier from the request body, or unchanged if not found
+     * @param requestURL    the full request URL
+     * @param tenantAtBody  the existing tenant string buffer
+     * @param customRequest the cached request wrapper
+     * @return the extracted tenant identifier from the request body, or unchanged
+     *         if not found
      */
     private String setCustomHeader(String requestURL, String tenantAtBody,
             MultiReadRequestWrapper customRequest) {
@@ -309,7 +312,8 @@ public class ApplicationTenantResolverFilter implements Filter {
                         IOUtils.copy(edcrPart.getInputStream(), writer, StandardCharsets.UTF_8);
                         jsonContent = writer.toString();
                     } else {
-                        LOG.warn("edcrRequest part not found in multipart request; tenant cannot be extracted at filter time.");
+                        LOG.warn(
+                                "edcrRequest part not found in multipart request; tenant cannot be extracted at filter time.");
                     }
                 } else {
                     // Non-multipart: read from the cached JSON input stream.
@@ -330,7 +334,11 @@ public class ApplicationTenantResolverFilter implements Filter {
                                 LOG.debug("############Tenant From Body######" + tenantAtBody);
                             }
                         }
+                    } else {
+                        LOG.warn("tenantId was not found in the parsed edcrRequest / request payload.");
                     }
+                } else {
+                    LOG.warn("edcrRequest / request payload is empty or null; cannot extract tenantId.");
                 }
             } catch (Exception e) {
                 LOG.error("Error occurred, while parsing request body for tenantId", e);
