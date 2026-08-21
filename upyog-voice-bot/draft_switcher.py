@@ -40,9 +40,11 @@ class MultiDraftSwitcher:
         Inspects active drafts for a phone number.
         Returns draft count, single draft payload, or formatted interactive menu in English or Hinglish.
         """
+        logger.info(f"[MultiDraftSwitcher.inspect_and_render_switcher] Inspecting drafts for phone={phone_number}, lang={user_language}")
         drafts = MemoryManager.get_all_draft_states(phone_number)
         
         if not drafts:
+            logger.info(f"[MultiDraftSwitcher.inspect_and_render_switcher] 0 active drafts found for {phone_number}")
             return {
                 "has_drafts": False,
                 "count": 0,
@@ -57,6 +59,7 @@ class MultiDraftSwitcher:
             plugin_key = draft.get("plugin_name", "unknown")
             service_info = _SERVICES_MAP.get(plugin_key, {})
             module_title = service_info.get("name", plugin_key.replace("_", " ").title())
+            logger.info(f"[MultiDraftSwitcher.inspect_and_render_switcher] 1 active draft found: {plugin_key} ({module_title}) for {phone_number}")
             
             if is_hinglish:
                 msg = f"Aapka ek saved draft mila hai: **{module_title}**.\nKya aap isey continue karna chahte hain ya naya form start karein?"
@@ -72,6 +75,7 @@ class MultiDraftSwitcher:
             }
             
         # Multiple active drafts exist (> 1) -> Build Dynamic Switcher Menu
+        logger.info(f"[MultiDraftSwitcher.inspect_and_render_switcher] Rendering multi-draft switcher for {len(drafts)} drafts for {phone_number}")
         if is_hinglish:
             menu_lines = [f"Namaste! Aapke **{len(drafts)} active drafts** saved hain. Aap kisey continue karna chahte hain?\n"]
         else:
@@ -91,12 +95,15 @@ class MultiDraftSwitcher:
             
         if is_hinglish:
             menu_lines.append(f"{len(drafts) + 1}. ➕ **Start a New Service Request**")
+            menu_lines.append(f"{len(drafts) + 2}. 🗑️ **Delete All Drafts**")
             menu_lines.append("\nKripya option button choose karein ya number type karein.")
         else:
             menu_lines.append(f"{len(drafts) + 1}. ➕ **Start a New Service Request**")
+            menu_lines.append(f"{len(drafts) + 2}. 🗑️ **Delete All Drafts**")
             menu_lines.append("\nPlease select a button below or enter the option number.")
 
         options.append("Start New Service Request")
+        options.append("Delete All Drafts")
         
         return {
             "has_drafts": True,
@@ -110,19 +117,32 @@ class MultiDraftSwitcher:
     def resolve_citizen_selection(user_input: str, drafts: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
         """
         Parses citizen selection input (e.g. '1', '2', 'option 1', 'option 2', 'grievance', 'booking')
-        and returns the selected target draft or None for fresh start.
+        and returns the selected target draft or None for fresh start or deletion.
         """
         import re
         clean_input = user_input.strip().lower()
+        logger.info(f"[MultiDraftSwitcher.resolve_citizen_selection] Resolving input '{clean_input}' among {len(drafts)} candidate drafts")
         
+        # If user explicitly wants to delete, cancel, or clear, DO NOT resolve as a resume selection!
+        delete_words = ["delete", "cancel", "clear", "discard", "remove", "erase", "drop", "hatao", "hata", "mitado", "khatam"]
+        if any(w in clean_input for w in delete_words):
+            logger.info(f"[MultiDraftSwitcher.resolve_citizen_selection] Input '{clean_input}' contains deletion/cancellation keyword — bypassing resume selection")
+            return None
+
         # Check numeric or 'option X' selection (e.g., '1', '2', 'option 1', 'option 2')
         digits = re.findall(r'\d+', clean_input)
         if digits:
             idx = int(digits[0]) - 1
             if 0 <= idx < len(drafts):
-                return drafts[idx]
+                chosen = drafts[idx]
+                logger.info(f"[MultiDraftSwitcher.resolve_citizen_selection] Resolved by numeric index {idx} -> {chosen.get('plugin_name')}")
+                return chosen
             elif idx == len(drafts):
+                logger.info(f"[MultiDraftSwitcher.resolve_citizen_selection] User chose to start new application")
                 return None  # Selected "Start New Application"
+            elif idx == len(drafts) + 1:
+                logger.info(f"[MultiDraftSwitcher.resolve_citizen_selection] User chose to delete all drafts")
+                return None  # Selected "Delete All Drafts"
                 
         # Check text/keyword selection matching module keys
         for draft in drafts:
@@ -130,6 +150,8 @@ class MultiDraftSwitcher:
             if (plugin_key in clean_input or clean_input in plugin_key or
                 ("grievance" in clean_input and plugin_key == "grievance") or
                 ("booking" in clean_input and plugin_key == "adv_booking")):
+                logger.info(f"[MultiDraftSwitcher.resolve_citizen_selection] Resolved by keyword match -> {draft.get('plugin_name')}")
                 return draft
                 
+        logger.warning(f"[MultiDraftSwitcher.resolve_citizen_selection] Could not resolve '{user_input}' to any draft")
         return None

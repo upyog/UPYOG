@@ -2,7 +2,6 @@ import json
 import logging
 import re
 from typing import Dict, Any, List
-
 import os
 import yaml
 
@@ -15,7 +14,7 @@ from workflow.base_state import BaseAgentState
 
 logger = logging.getLogger(__name__)
 
-llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0) if os.environ.get("GROQ_API_KEY") else None
+llm = ChatGroq(model=os.environ.get("GROQ_MODEL", "openai/gpt-oss-20b"), temperature=0) if os.environ.get("GROQ_API_KEY") else None
 
 
 # ==========================================
@@ -76,7 +75,7 @@ def get_next_step(draft: dict) -> dict:
     return {}
 
 
-from mcp_tools import pgr_get_categories, pgr_get_localities, pgr_create_complaint, pgr_search_complaints
+from mcp_tools import pgr_get_categories, pgr_get_localities, pgr_create_complaint, pgr_search_complaints, pgr_search_complaints_raw
 
 # ==========================================
 # LIVE API HELPERS (thin wrappers)
@@ -100,18 +99,23 @@ def _pgr_localities() -> list:
         return []
 
 
-
 # ==========================================
 # NODES
 # ==========================================
 
-# Checks if the user wants to cancel the current compl@aint or view past complaints
+# Checks if the user wants to cancel the current complaint or view past complaints
 def intent_and_ui_node(state: GrievanceState):
     messages     = state.get("messages", [])
     phone_number = state.get("phone_number", "default")
     draft        = dict(state.get("draft_grievance", {}))
     user_msg     = messages[-1].content if messages else ""
-    ui_lower     = user_msg.lower()
+    ui_lower     = user_msg.lower().strip()
+
+    # Cancel command from draft management system
+    if user_msg == "[CANCEL_DRAFT]":
+        draft = {f: None for f in ALL_FIELDS}
+        MemoryManager.delete_draft_state(phone_number, "grievance")
+        return {"draft_grievance": draft, "missing_fields": ALL_FIELDS}
 
     # Reset — only match deliberate cancel/reset phrases, not substrings
     reset_phrases = [
@@ -119,8 +123,9 @@ def intent_and_ui_node(state: GrievanceState):
         r"\bnew complaint\b", r"\bstart new\b", r"\bclear draft\b",
         r"\breset\b", r"\bshuruaat karo\b"
     ]
-    if any(re.search(p, ui_lower) for p in reset_phrases):
+    if any(re.search(p, ui_lower) for p in reset_phrases) and not draft.get("_awaiting_confirm"):
         draft = {f: None for f in ALL_FIELDS}
+        MemoryManager.delete_draft_state(phone_number, "grievance")
         resp  = (
             "**Draft Reset**\n\n"
             "Your complaint draft has been cleared. Please describe the issue "
@@ -129,6 +134,10 @@ def intent_and_ui_node(state: GrievanceState):
         MemoryManager.save_long_term_interaction(phone_number=phone_number, role="user",      content=user_msg)
         MemoryManager.save_long_term_interaction(phone_number=phone_number, role="assistant", content=resp)
         return {"messages": [AIMessage(content=resp)], "draft_grievance": draft, "missing_fields": ALL_FIELDS}
+
+    # Explicit continue signal
+    if ui_lower == "continue" or "continue application" in ui_lower or "continue my complaint" in ui_lower:
+        return {"draft_grievance": draft}
 
     # Check for direct complaint ID match (e.g. PG-PGR-2026-07-23-000339 or PGR-000339)
     pgr_id_match = re.search(r'(PG-PGR-[\w-]+|PGR-[\w-]+)', user_msg, re.IGNORECASE)
@@ -154,7 +163,6 @@ def intent_and_ui_node(state: GrievanceState):
                 is_past_request = True
 
     if is_past_request:
-        from mcp_tools import pgr_search_complaints_raw
         raw_list = pgr_search_complaints_raw(phone_number, complaint_id=complaint_id_filter)
         if raw_list and len(raw_list) > 0:
             raw_json = json.dumps(raw_list)
@@ -187,7 +195,7 @@ def intent_router(state: GrievanceState) -> str:
     return "extraction"
 
 
-# Uses AI to read the user's message and extract missing complaint details
+# Uses AI and deterministic matching to extract missing complaint details
 def extraction_node(state: GrievanceState):
     draft = state.get("draft_grievance") or {}
     if not isinstance(draft, dict):
@@ -196,142 +204,227 @@ def extraction_node(state: GrievanceState):
     if not messages:
         return {"draft_grievance": draft}
 
-    user_msg = messages[-1].content
+    user_msg = messages[-1].content.strip()
+    ui_lower = user_msg.lower()
     last_ai  = ""
     if len(messages) >= 2 and isinstance(messages[-2], AIMessage):
         last_ai = messages[-2].content
 
+    # Detect yes/no at confirmation step
+    if draft.get("_awaiting_confirm"):
+        _confirm = ["yes", "yeah", "yup", "ya", "ok", "okay", "sure", "haan", "confirm",
+                    "submit", "file", "bilkul", "zaroor", "1", "option 1"]
+        _cancel  = ["no", "nope", "cancel", "nahi", "nahin", "mat", "band", "2", "option 2"]
+        if any(w in ui_lower for w in _cancel):
+            draft["_cancelled"] = True
+            draft["_awaiting_confirm"] = False
+            return {"draft_grievance": draft}
+        if any(w in ui_lower for w in _confirm):
+            draft["_confirmed"] = True
+            draft["_awaiting_confirm"] = False
+            return {"draft_grievance": draft}
+        return {"draft_grievance": draft}
+
+    # Meta / navigation / draft resume commands should NEVER be extracted as form field values
+    meta_commands = [
+        "continue", "resume", "continue application", "continue my application",
+        "continue complaint", "continue my complaint", "resume draft",
+        "resume my application", "open draft", "show drafts", "show my drafts",
+        "draft", "drafts", "my drafts", "view drafts", "list drafts", "my draft",
+        "start over", "cancel draft", "delete draft", "clear draft",
+        "aage badho", "chalu karo", "continue please", "proceed", "next", "skip"
+    ]
+    if any(ui_lower == w or ui_lower.startswith(w + " ") for w in meta_commands):
+        logger.info(f"[grievance extract_node] User message '{user_msg}' is a meta/resume command; skipping field extraction.")
+        return {"draft_grievance": draft}
+
     # Detect if user's message is a question/FAQ query rather than a form answer
     question_triggers = ["?", "what is", "what does", "explain", "meaning", "kya hai", "kaise", "kyun", "tell me about"]
-    is_question = any(q in user_msg.lower() for q in question_triggers)
+    is_question = any(q in ui_lower for q in question_triggers)
     if is_question:
         logger.info(f"[grievance extract_node] User asked a question ('{user_msg}'), skipping field extraction.")
         return {"draft_grievance": draft}
 
-    # Detect yes/no at confirmation step
-    if draft.get("_awaiting_confirm"):
-        _confirm = ["yes", "yeah", "yup", "ya", "ok", "okay", "sure", "haan", "confirm",
-                    "submit", "file", "bilkul", "zaroor"]
-        _cancel  = ["no", "nope", "cancel", "nahi", "nahin", "mat", "band"]
-        if any(w in user_msg.lower() for w in _cancel):
-            draft["_cancelled"] = True
-            return {"draft_grievance": draft}
-        if any(w in user_msg.lower() for w in _confirm):
-            draft["_confirmed"] = True
-            return {"draft_grievance": draft}
-        return {"draft_grievance": draft}
-
-    # Normal field extraction
     missing = [f for f in ALL_FIELDS if not draft.get(f)]
-    if not missing or not llm:
+    if not missing:
         return {"draft_grievance": draft}
 
-    schema_hints: dict = {}
-    for f in missing:
-        if f == "category":
-            cats = draft.get("_category_options") or _pgr_categories()
-            draft["_category_options"] = cats
-            opts = list(cats.keys())
-            schema_hints[f] = (f"MUST MATCH one of: {opts}" if opts
-                               else "Main grievance category (e.g. PublicToilets, StreetLights, Water, Garbage)")
-        elif f == "sub_category":
-            sub_ops = [s["name"] for s in (draft.get("_sub_options") or [])]
-            schema_hints[f] = (f"MUST MATCH one of: {sub_ops}" if sub_ops
-                               else "Specific complaint type")
-        elif f == "locality":
-            loc_ops = draft.get("_locality_options") or _pgr_localities()
-            draft["_locality_options"] = loc_ops
-            loc_names = [l["name"] for l in loc_ops[:30]]
-            schema_hints[f] = (f"MUST MATCH one of: {loc_names}. "
-                               "If not in list, use verbatim." if loc_names
-                               else "Area or locality name")
-        elif f == "description":
-            schema_hints[f] = "Detailed description of the problem (minimum 5 chars)"
+    next_step = get_next_step(draft)
+    curr_field = next_step.get("id")
 
-    collected_str = json.dumps({k: v for k, v in draft.items() if v and not k.startswith("_")})
-    extract_prompt = f"""You are a smart, production-grade data extraction AI for UPYOG Grievance filing.
-Your job is to extract missing form field values from the user's message based on conversational context.
+    # Deterministic extraction based on the active step being answered
+    cleaned_input = re.sub(r'^\d+[\.\)]\s*', '', user_msg).strip() # Strip leading numbering e.g. "1. PropertyTax" -> "PropertyTax"
 
-Missing fields: {json.dumps(missing)}
+    if curr_field == "category":
+        cats = draft.get("_category_options") or _pgr_categories()
+        draft["_category_options"] = cats
+        cat_keys = list(cats.keys())
+        
+        # Check option index matching (e.g. "1" or "Option 1")
+        idx_match = re.match(r'^(?:option\s*)?(\d+)$', ui_lower)
+        if idx_match:
+            idx = int(idx_match.group(1)) - 1
+            if 0 <= idx < len(cat_keys):
+                chosen_cat = cat_keys[idx]
+                draft["category"] = chosen_cat
+                draft["_sub_options"] = cats[chosen_cat]
+                logger.info(f"[grievance extract] category resolved by index {idx+1}: {chosen_cat}")
+        
+        if not draft.get("category"):
+            norm_input = re.sub(r'[\s_]+', '', cleaned_input.lower())
+            matched_cat = next((k for k in cat_keys if re.sub(r'[\s_]+', '', k.lower()) == norm_input), None)
+            if not matched_cat:
+                matched_cat = next((k for k in cat_keys if norm_input in re.sub(r'[\s_]+', '', k.lower()) or re.sub(r'[\s_]+', '', k.lower()) in norm_input), None)
+            
+            if matched_cat:
+                draft["category"] = matched_cat
+                draft["_sub_options"] = cats[matched_cat]
+                logger.info(f"[grievance extract] category matched: {matched_cat}")
+
+    elif curr_field == "sub_category":
+        cat_selected = draft.get("category", "")
+        cats = draft.get("_category_options") or _pgr_categories()
+        sub_ops = draft.get("_sub_options") or cats.get(cat_selected, [])
+        draft["_sub_options"] = sub_ops
+
+        # Check option index matching
+        idx_match = re.match(r'^(?:option\s*)?(\d+)$', ui_lower)
+        if idx_match and sub_ops:
+            idx = int(idx_match.group(1)) - 1
+            if 0 <= idx < len(sub_ops):
+                chosen_sub = sub_ops[idx]
+                draft["sub_category"] = chosen_sub["name"]
+                draft["category_code"] = chosen_sub["code"]
+                logger.info(f"[grievance extract] sub_category resolved by index {idx+1}: {chosen_sub['name']}")
+
+        if not draft.get("sub_category") and sub_ops:
+            norm_input = re.sub(r'[\s_]+', '', cleaned_input.lower())
+            matched = next((s for s in sub_ops if re.sub(r'[\s_]+', '', s["name"].lower()) == norm_input), None)
+            if not matched:
+                matched = next((s for s in sub_ops if norm_input in re.sub(r'[\s_]+', '', s["name"].lower()) or re.sub(r'[\s_]+', '', s["name"].lower()) in norm_input), None)
+            if matched:
+                draft["sub_category"] = matched["name"]
+                draft["category_code"] = matched["code"]
+                logger.info(f"[grievance extract] sub_category matched: {matched['name']}")
+
+    elif curr_field == "description":
+        # Any genuine answer to the problem description question is accepted
+        generic_intents = ["i want to file a complaint", "file a complaint", "raise a grievance", "file complaint", "want to file a complaint", "i have a complaint"] + meta_commands
+        if not any(g == ui_lower for g in generic_intents) and len(user_msg) >= 3 and ui_lower not in meta_commands:
+            draft["description"] = user_msg
+            logger.info(f"[grievance extract] description accepted: {user_msg}")
+
+    elif curr_field == "locality":
+        loc_ops = draft.get("_locality_options") or _pgr_localities()
+        draft["_locality_options"] = loc_ops
+
+        idx_match = re.match(r'^(?:option\s*)?(\d+)$', ui_lower)
+        if idx_match and loc_ops:
+            idx = int(idx_match.group(1)) - 1
+            if 0 <= idx < len(loc_ops):
+                chosen_loc = loc_ops[idx]
+                draft["locality"] = chosen_loc["name"]
+                draft["locality_code"] = chosen_loc["code"]
+                logger.info(f"[grievance extract] locality resolved by index {idx+1}: {chosen_loc['name']}")
+
+        if not draft.get("locality") and loc_ops:
+            norm_input = re.sub(r'[\s_]+', '', cleaned_input.lower())
+            matched = next((l for l in loc_ops if re.sub(r'[\s_]+', '', l["name"].lower()) == norm_input), None)
+            if not matched:
+                matched = next((l for l in loc_ops if norm_input in re.sub(r'[\s_]+', '', l["name"].lower()) or re.sub(r'[\s_]+', '', l["name"].lower()) in norm_input), None)
+            if matched:
+                draft["locality"] = matched["name"]
+                draft["locality_code"] = matched["code"]
+                logger.info(f"[grievance extract] locality matched: {matched['name']}")
+            elif (
+                len(cleaned_input) >= 3
+                and not is_question
+                and ui_lower not in meta_commands
+                and cleaned_input.lower() not in ["yes", "no", "ok", "okay", "none", "na", "null", "undefined", "1", "2", "3", "4"]
+            ):
+                draft["locality"] = cleaned_input
+                draft["locality_code"] = loc_ops[0]["code"] if loc_ops else "UNKNOWN"
+                logger.info(f"[grievance extract] locality accepted verbatim: {cleaned_input}")
+
+    # Fallback to LLM multi-field extraction if any missing fields remain and LLM is available
+    remaining_missing = [f for f in ALL_FIELDS if not draft.get(f)]
+    if remaining_missing and llm:
+        schema_hints = {}
+        for f in remaining_missing:
+            if f == "category":
+                cats = draft.get("_category_options") or _pgr_categories()
+                opts = list(cats.keys())
+                schema_hints[f] = f"MUST MATCH one of: {opts}" if opts else "Grievance Category"
+            elif f == "sub_category":
+                sub_ops = [s["name"] for s in (draft.get("_sub_options") or [])]
+                schema_hints[f] = f"MUST MATCH one of: {sub_ops}" if sub_ops else "Specific complaint type"
+            elif f == "locality":
+                loc_ops = draft.get("_locality_options") or _pgr_localities()
+                loc_names = [l["name"] for l in loc_ops[:25]]
+                schema_hints[f] = f"MUST MATCH one of: {loc_names}" if loc_names else "Area or locality name"
+            elif f == "description":
+                schema_hints[f] = "Detailed description of the issue provided by the citizen (e.g. 'i want a refund', 'dirty water from tap', 'pothole on road')"
+
+        collected_str = json.dumps({k: v for k, v in draft.items() if v and not k.startswith("_")})
+        extract_prompt = f"""You are a data extraction AI for UPYOG Grievance filing.
+Extract missing form field values from the user's message.
+
+Missing fields: {json.dumps(remaining_missing)}
 Field hints & valid options: {json.dumps(schema_hints)}
 Already collected fields: {collected_str}
 Bot's last question: "{last_ai}"
-User's current message: "{user_msg}"
+User's message: "{user_msg}"
 
-EXTRACTION RULES:
-1. CONVERSATIONAL CONTEXT: Pay close attention to "Bot's last question". If the bot explicitly asked the user for a specific missing field (e.g. 'category', 'sub_category', 'description' or 'locality') and the user provided an answer, EXTRACT IT into that field.
-2. CATEGORY / SUB-CATEGORY / LOCALITY MATCHING: Match the user's input to the valid options list in the hints.
-3. DESCRIPTION FIELD: Extract actual problem details or description of the issue (e.g. "road accident at night", "water pipe leaking", "street light broken"). Do NOT extract generic intent phrases like "i want to file a complaint".
-4. Return null for any missing field that was NOT mentioned or answered in the user's message.
+Rules:
+1. If the user answered the missing field in their message, extract the exact value.
+2. For 'description', extract the user's description of their problem/request (e.g. 'i want a refund', 'water leakage', 'streetlight damaged').
+3. Return null for any field not answered.
+4. NEVER extract meta or navigation words like 'continue', 'resume', 'draft', 'show drafts', 'my drafts' as any field value.
 
-Output MUST be a single valid JSON object containing keys for all missing fields:
-{{{', '.join(f'"{f}": "extracted value or null"' for f in missing)}}}"""
+Reply ONLY with valid JSON:
+{{{', '.join(f'"{f}": "extracted value or null"' for f in remaining_missing)}}}"""
 
-    try:
-        ext = llm.invoke([SystemMessage(content=extract_prompt)])
-        m   = re.search(r'\{.*\}', ext.content.strip(), re.DOTALL)
-        if m:
-            extracted = json.loads(m.group(0))
-            for field in missing:
-                val = extracted.get(field)
-                if val is not None and str(val).lower() not in ("null", "none", ""):
-                    val_str = str(val).strip()
-                    logger.info(f"[grievance extract] {field} = {val_str}")
+        try:
+            ext = llm.invoke([SystemMessage(content=extract_prompt)])
+            m = re.search(r'\{.*\}', ext.content.strip(), re.DOTALL)
+            if m:
+                extracted = json.loads(m.group(0))
+                for field in remaining_missing:
+                    val = extracted.get(field)
+                    if val is not None and str(val).lower() not in ("null", "none", ""):
+                        val_str = str(val).strip()
+                        if val_str.lower() in meta_commands:
+                            continue
+                        if field == "description" and len(val_str) >= 3:
+                            draft["description"] = val_str
+                            logger.info(f"[grievance LLM extract] description = {val_str}")
+                        elif field == "category" and not draft.get("category"):
+                            cats = draft.get("_category_options") or _pgr_categories()
+                            matched_cat = next((k for k in cats.keys() if k.lower() == val_str.lower()), None)
+                            if matched_cat:
+                                draft["category"] = matched_cat
+                                draft["_sub_options"] = cats[matched_cat]
+                        elif field == "sub_category" and not draft.get("sub_category"):
+                            sub_ops = draft.get("_sub_options") or []
+                            matched = next((s for s in sub_ops if s["name"].lower() == val_str.lower()), None)
+                            if matched:
+                                draft["sub_category"] = matched["name"]
+                        elif field == "locality" and not draft.get("locality"):
+                            loc_ops = draft.get("_locality_options") or _pgr_localities()
+                            matched = next((l for l in loc_ops if l["name"].lower() == val_str.lower()), None)
+                            if matched:
+                                draft["locality"] = matched["name"]
+                                draft["locality_code"] = matched["code"]
+                            elif len(val_str) >= 3 and val_str.lower() not in meta_commands:
+                                draft["locality"] = val_str
+                                draft["locality_code"] = loc_ops[0]["code"] if loc_ops else "UNKNOWN"
+        except Exception as e:
+            logger.error(f"[grievance] LLM extraction error: {e}")
 
-                    if field == "category":
-                        cats = draft.get("_category_options") or _pgr_categories()
-                        draft["_category_options"] = cats
-                        norm_val = re.sub(r'[\s_]+', '', val_str.lower())
-                        matched_cat = next((k for k in cats.keys() if re.sub(r'[\s_]+', '', k.lower()) == norm_val), None)
-                        if matched_cat:
-                            draft["category"] = matched_cat
-                            draft["_sub_options"] = cats[matched_cat]
-                        elif cats:
-                            draft["category"] = val_str
-                            first_key = list(cats.keys())[0]
-                            draft["_sub_options"] = cats[first_key]
-
-                    elif field == "sub_category":
-                        sub_ops = draft.get("_sub_options") or []
-                        norm_val = re.sub(r'[\s_]+', '', val_str.lower())
-                        matched = next((s for s in sub_ops if re.sub(r'[\s_]+', '', s["name"].lower()) == norm_val), None)
-                        if not matched and sub_ops:
-                            matched = sub_ops[0]
-                        if matched:
-                            draft["sub_category"] = matched["name"]
-                            draft["category_code"] = matched["code"]
-                        else:
-                            draft["sub_category"] = val_str
-
-                    elif field == "locality":
-                        loc_ops = draft.get("_locality_options") or _pgr_localities()
-                        draft["_locality_options"] = loc_ops
-                        norm_val = re.sub(r'[\s_]+', '', val_str.lower())
-                        matched = next((l for l in loc_ops if re.sub(r'[\s_]+', '', l["name"].lower()) == norm_val), None)
-                        if matched:
-                            draft["locality"] = matched["name"]
-                            draft["locality_code"] = matched["code"]
-                        elif loc_ops:
-                            draft["locality"] = val_str
-                            draft["locality_code"] = loc_ops[0]["code"]
-
-                    else:
-                        draft[field] = val_str
-            
-            # Filter out generic intent strings from description
-            desc_val = str(draft.get("description", "")).strip().lower()
-            generic_intents = ["i want to file a complaint", "file a complaint", "raise a grievance", "file complaint", "want to file a complaint", "i have a complaint"]
-            if any(g in desc_val for g in generic_intents):
-                draft["description"] = None
-
-            # Auto-Save to Qdrant Disk Store on every extraction turn!
-            phone_number = state.get("phone_number", "default")
-            if draft and phone_number and phone_number != "default":
-                from memory_manager import MemoryManager
-                MemoryManager.save_draft_state(phone_number, "grievance", draft)
-
-    except Exception as e:
-        logger.error(f"[grievance] extraction error: {e}")
+    # Auto-Save to Qdrant Disk Store on every turn if fields are present
+    phone_number = state.get("phone_number", "default")
+    if draft and any(v for k, v in draft.items() if not k.startswith("_") and v is not None) and phone_number and phone_number != "default":
+        MemoryManager.save_draft_state(phone_number, "grievance", draft)
 
     return {"draft_grievance": draft}
 
@@ -343,9 +436,9 @@ def ask_next_node(state: GrievanceState):
     if not isinstance(draft, dict):
         draft = {}
     messages = state.get("messages", [])
-    user_msg     = messages[-1].content if messages else ""
+    user_msg = messages[-1].content if messages else ""
 
-    next_step  = get_next_step(draft)
+    next_step = get_next_step(draft)
     if not next_step:
         return {}
 
@@ -361,7 +454,7 @@ def ask_next_node(state: GrievanceState):
 
     elif field_id == "sub_category":
         cat_selected = draft.get("category", "")
-        cats         = draft.get("_category_options") or {}
+        cats         = draft.get("_category_options") or _pgr_categories()
         sub_ops      = cats.get(cat_selected, [])
         draft["_sub_options"] = sub_ops
         options = [s["name"] for s in sub_ops]
@@ -373,6 +466,8 @@ def ask_next_node(state: GrievanceState):
 
     text = f"Please provide the {field_label}."
     if llm:
+        is_hindi = any('ऀ' <= c <= 'ॿ' for c in user_msg)
+        lang_rule = "Respond in Hindi." if is_hindi else "Respond in English. Do NOT output any Devanagari or Hindi text."
         ctx = f"""You are a UPYOG grievance filing assistant collecting a specific form field.
 Collected so far: {json.dumps({k: v for k, v in draft.items() if v and not k.startswith("_")})}
 Next field to collect: "{field_label}" (field id: "{field_id}")
@@ -380,13 +475,14 @@ Available options: {json.dumps(options) if options else "Free text -- user can t
 User's last message: "{user_msg}"
 
 CRITICAL INSTRUCTIONS:
-1. Ask ONLY for the "{field_label}" field. Do NOT ask anything else.
-2. Do NOT ask follow-up questions about duration, impact, or history.
-3. Do NOT list the options in text (the UI dropdown will show them).
-4. If field is 'description': ask the user to briefly describe the exact problem they are facing.
-5. Keep it to 1-2 sentences. Output ONLY the question, nothing else.
-6. Use **bold** for the field name when mentioning it.
-7. Maintain a formal, professional tone. NEVER use informal or familial terms of address like 'दीदी' (Didi), 'काकी' (Kaki), 'बेटा' (Beta), 'भैया' (Bhaiya), etc."""
+1. Language: {lang_rule}
+2. Ask ONLY for the "{field_label}" field. Do NOT ask anything else.
+3. Do NOT ask follow-up questions about duration, impact, or history.
+4. Do NOT list the options in text (the UI dropdown will show them).
+5. If field is 'description': ask the user to briefly describe the problem they are facing.
+6. Keep it to 1-2 sentences. Output ONLY the question, nothing else.
+7. Use **bold** for the field name when mentioning it.
+8. Maintain a formal, polite, professional tone. Never use informal or familial terms of address."""
         try:
             conv = llm.invoke([SystemMessage(content=ctx)])
             text = conv.content.strip()
@@ -395,14 +491,15 @@ CRITICAL INSTRUCTIONS:
 
     if field_type == "dropdown" and options:
         opts_str = ", ".join(f"'{o}'" for o in options)
-        resp     = f"{text}\n<ui-dropdown options=[{opts_str}] />"
+        resp = f"{text}\n<ui-dropdown options=[{opts_str}] />"
     else:
         resp = text
 
-
-    MemoryManager.save_long_term_interaction(phone_number=phone_number, role="user",      content=user_msg)
+    if user_msg and user_msg not in ["continue", "hello", "[CANCEL_DRAFT]"]:
+        MemoryManager.save_long_term_interaction(phone_number=phone_number, role="user", content=user_msg)
     MemoryManager.save_long_term_interaction(phone_number=phone_number, role="assistant", content=resp)
 
+    logger.info(f"[grievance.ask_next_node] Asked citizen for '{field_id}'. Missing fields left: {[f for f in ALL_FIELDS if not draft.get(f)]}")
     return {
         "messages":        [AIMessage(content=resp)],
         "draft_grievance": draft,
@@ -412,32 +509,17 @@ CRITICAL INSTRUCTIONS:
     }
 
 
-def intent_and_ui_node(state: GrievanceState):
-    messages = state.get("messages", [])
-    if not messages:
-        return {}
-
-    user_msg = messages[-1].content if messages else ""
-    draft = state.get("draft_grievance", {})
-    
-    if user_msg == "[CANCEL_DRAFT]":
-        return {"draft_grievance": {}, "_active": False}
-
-    ui_mode = False
-    return {"draft_grievance": draft}
-
-
 # Shows a final summary receipt of the complaint details and asks the user to confirm submission
 def confirm_node(state: GrievanceState):
     phone_number = state.get("phone_number", "default")
     draft        = dict(state.get("draft_grievance", {}))
     messages     = state.get("messages", [])
     user_msg     = messages[-1].content if messages else ""
+    logger.info(f"[grievance.confirm_node] Prompting confirmation for phone={phone_number}")
 
-    # Ensure description is meaningful and not a generic intent
+    # Ensure description is meaningful
     desc = str(draft.get("description", "")).strip()
-    generic_intents = ["i want to file a complaint", "file a complaint", "raise a grievance", "file complaint", "want to file a complaint", "i have a complaint"]
-    if not desc or any(g in desc.lower() for g in generic_intents) or len(desc) < 5:
+    if not desc or len(desc) < 3:
         sub = draft.get('sub_category') or draft.get('category') or 'Complaint'
         loc = draft.get('locality') or 'the specified locality'
         draft['description'] = f"{sub} issue reported at {loc}"
@@ -448,11 +530,12 @@ def confirm_node(state: GrievanceState):
         f"- **Complaint Type:** {draft.get('sub_category', 'N/A')}\n"
         f"- **Description:** {draft.get('description')}\n"
         f"- **Locality:** {draft.get('locality', 'N/A')}\n\n"
-        "Please reply **Yes** to submit or **No** to cancel."
+        "Please reply **Yes** to submit or **No** to cancel.\n"
+        "<ui-button options=['Yes', 'No'] />"
     )
     draft["_awaiting_confirm"] = True
 
-    MemoryManager.save_long_term_interaction(phone_number=phone_number, role="user",      content=user_msg)
+    MemoryManager.save_long_term_interaction(phone_number=phone_number, role="user", content=user_msg)
     MemoryManager.save_long_term_interaction(phone_number=phone_number, role="assistant", content=summary)
 
     return {"messages": [AIMessage(content=summary)], "draft_grievance": draft}
@@ -462,6 +545,7 @@ def confirm_node(state: GrievanceState):
 def create_complaint_node(state: GrievanceState):
     phone_number = state.get("phone_number", "default")
     draft        = dict(state.get("draft_grievance", {}))
+    logger.info(f"[grievance.create_complaint_node] Submitting complaint for phone={phone_number}")
 
     payload = {
         "phone_number":  phone_number,
@@ -474,6 +558,7 @@ def create_complaint_node(state: GrievanceState):
 
     raw_resp = pgr_create_complaint(json.dumps(payload))
     resp = f"{raw_resp}\n\nIs there anything else I can help you with?"
+    logger.info(f"[grievance.create_complaint_node] Result: {raw_resp}")
     MemoryManager.save_long_term_interaction(phone_number=phone_number, role="assistant", content=resp)
 
     reset_draft = {f: None for f in ALL_FIELDS}
@@ -486,13 +571,14 @@ def cancel_node(state: GrievanceState):
     phone_number = state.get("phone_number", "default")
     messages     = state.get("messages", [])
     user_msg     = messages[-1].content if messages else ""
+    logger.info(f"[grievance.cancel_node] Cancelling complaint draft for phone={phone_number}")
 
     resp = (
         "**Complaint Withdrawn**\n\n"
         "Your complaint has been cancelled. No submission was made to the portal.\n\n"
         "If you wish to file a new complaint, please describe the issue and I will assist you."
     )
-    MemoryManager.save_long_term_interaction(phone_number=phone_number, role="user",      content=user_msg)
+    MemoryManager.save_long_term_interaction(phone_number=phone_number, role="user", content=user_msg)
     MemoryManager.save_long_term_interaction(phone_number=phone_number, role="assistant", content=resp)
 
     reset_draft = {f: None for f in ALL_FIELDS}
@@ -506,11 +592,15 @@ def router(state: GrievanceState) -> str:
     all_filled = all(draft.get(f) for f in ALL_FIELDS)
 
     if draft.get("_cancelled"):
+        logger.info("[grievance.router] Route -> cancel")
         return "cancel"
     if draft.get("_confirmed"):
+        logger.info("[grievance.router] Route -> create_complaint")
         return "create_complaint"
     if not all_filled:
+        logger.info(f"[grievance.router] Route -> ask_next (missing fields: {[f for f in ALL_FIELDS if not draft.get(f)]})")
         return "ask_next"
+    logger.info("[grievance.router] Route -> confirm")
     return "confirm"
 
 
