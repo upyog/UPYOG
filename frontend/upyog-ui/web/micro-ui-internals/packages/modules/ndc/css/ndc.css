@@ -2,19 +2,19 @@
    NDC MODULE CSS
    ========================================================= */
 
-.ndc-css-87310ad8 {
+.ndc-reason-container {
   width: 100%;
   box-sizing: border-box;
 }
 
-.ndc-css-d088c348 {
+.ndc-reason-field {
   width: 100%;
   max-width: 465px;
   margin-bottom: 22px;
   box-sizing: border-box;
 }
 
-.ndc-css-5b150134 {
+.ndc-reason-label {
   display: block;
   width: 100%;
   margin-bottom: 8px;
@@ -25,16 +25,16 @@
   box-sizing: border-box;
 }
 
-.ndc-css-2c30dc20 {
+.ndc-required {
   color: #a82227;
   margin-left: 3px;
 }
 
-.ndc-css-c3d3dc34 {
+.ndc-error-message {
   margin-top: 5px;
 }
 
-.ndc-css-fcfffca2 {
+.ndc-summary-row {
   display: grid;
   grid-template-columns: 42% 58%;
   width: 100%;
@@ -43,7 +43,7 @@
   box-sizing: border-box;
 }
 
-.ndc-css-f8a36f7d {
+.ndc-summary-label {
   font-size: 13px;
   line-height: 1.4;
   font-weight: 700;
@@ -52,7 +52,7 @@
   box-sizing: border-box;
 }
 
-.ndc-css-500ff7b4 {
+.ndc-summary-value {
   font-size: 13px;
   line-height: 1.4;
   color: #333333;
@@ -62,7 +62,7 @@
   box-sizing: border-box;
 }
 
-.ndc-css-0913a7ec {
+.ndc-summary-section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -72,7 +72,7 @@
   box-sizing: border-box;
 }
 
-.ndc-css-70fcc8ba {
+.ndc-summary-section-title {
   font-size: 16px;
   line-height: 1.4;
   font-weight: 700;
@@ -81,7 +81,7 @@
   padding: 5px 0;
 }
 
-.ndc-css-76f24cb8 {
+.ndc-summary-edit-button {
   border: none;
   background: transparent;
   padding: 0;
@@ -93,14 +93,14 @@
   cursor: pointer;
 }
 
-.ndc-css-1e54a5cc {
+.ndc-summary-page {
   width: 100%;
   min-height: 100%;
   box-sizing: border-box;
   padding: 10px 0 30px 0;
 }
 
-.ndc-css-1afa1bd6 {
+.ndc-summary-card {
   background-color: #ffffff;
   width: 620px;
   max-width: 100%;
@@ -110,7 +110,7 @@
   border-radius: 2px;
 }
 
-.ndc-css-d5535c12 {
+.ndc-summary-title {
   font-size: 28px;
   line-height: 1.2;
   font-weight: 700;
@@ -118,19 +118,19 @@
   margin: 0 0 4px 0;
 }
 
-.ndc-css-446ce61a {
+.ndc-summary-subtitle {
   font-size: 13px;
   line-height: 1.4;
   color: #555555;
   margin-bottom: 18px;
 }
 
-.ndc-css-d175ed94 {
+.ndc-summary-section {
   width: 100%;
   margin-bottom: 18px;
 }
 
-.ndc-css-f9744310 {
+.ndc-document-list {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -140,7 +140,7 @@
   box-sizing: border-box;
 }
 
-.ndc-css-0ec02b21 {
+.ndc-document-item {
   flex: 0 0 120px;
   width: 120px;
   min-height: 105px;
@@ -151,13 +151,13 @@
   box-sizing: border-box;
 }
 
-.ndc-css-53470f08 {
+.ndc-summary-document-label {
   font-size: 13px;
   color: #555555;
   padding: 10px 0;
 }
 
-.ndc-css-dea39455 {
+.ndc-document-consent {
   display: flex;
   align-items: flex-start;
   width: 100%;
@@ -167,20 +167,20 @@
   box-sizing: border-box;
 }
 
-.ndc-css-3870986f {
+.ndc-document-checkbox {
   width: 15px;
   height: 15px;
   margin: 2px 8px 0 0;
   flex-shrink: 0;
 }
 
-.ndc-css-c1ad7f1a {
+.ndc-document-consent-text {
   font-size: 10px;
   line-height: 1.5;
   color: #333333;
 }
 
-.ndc-css-b2739e19 {
+.ndc-summary-actions {
   display: flex;
   justify-content: flex-end;
   width: 100%;
@@ -188,19 +188,19 @@
   box-sizing: border-box;
 }
 
-.ndc-css-2d867dee {
+.ndc-reason-spacing {
   margin-top: 32px;
   margin-bottom: 24px;
 }
 
-.ndc-css-95d004c9 {
+.ndc-reason-content {
   width: 450px;
   max-width: 100%;
   box-sizing: border-box;
   margin-bottom: 10px;
 }
 
-.ndc-css-06664efe {
+.ndc-reason-options {
   width: 450px;
   max-width: 100%;
   box-sizing: border-box;
@@ -209,7 +209,7 @@
   gap: 10px;
 }
 
-.ndc-css-c9ab0354 {
+.ndc-reason-option {
   width: 450px;
   max-width: 100%;
   box-sizing: border-box;
@@ -220,7 +220,7 @@
   margin-bottom: 8px;
 }
 
-.ndc-css-96211f4f {
+.ndc-reason-input {
   width: 450px;
   min-width: 450px;
   max-width: 450px;
@@ -229,7 +229,7 @@
   box-sizing: border-box;
 }
 
-.ndc-css-ce29047b {
+.ndc-reason-actions {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -241,9 +241,8 @@
   gap: 8px;
 }
 
-.ndc-css-c6ab9ae6,
-.ndc-css-a999e0c4,
-.ndc-css-f93c4492 {
+.ndc-primary-button,
+.ndc-no-dues-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -268,7 +267,7 @@
   flex-shrink: 0;
 }
 
-.ndc-css-985bd392 {
+.ndc-secondary-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -293,7 +292,7 @@
   flex-shrink: 0;
 }
 
-.ndc-css-0d6d4360 {
+.ndc-status-message {
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -318,31 +317,31 @@
   flex-shrink: 0;
 }
 
-.ndc-css-74f1c66c {
+.ndc-sewerage-spacing {
   margin-bottom: 36px;
 }
 
-.ndc-css-4127d6be {
+.ndc-full-width {
   width: 100%;
   box-sizing: border-box;
 }
 
-.ndc-css-2e05fa87 {
+.ndc-section-spacing {
   margin-bottom: 24px;
 }
 
-.ndc-css-aa48cd9d {
+.ndc-large-spacing {
   margin-bottom: 40px;
 }
 
-.ndc-css-2aa870f0 {
+.ndc-owner-selection {
   width: 500px;
   max-width: 100%;
   margin-top: 10px;
   margin-bottom: 30px;
 }
 
-.ndc-css-395daccd {
+.ndc-owner-help {
   color: green;
   font-size: 12px;
   line-height: 17px;
@@ -350,44 +349,44 @@
   margin: 0 0 10px 0;
 }
 
-.ndc-css-c6ae225c {
+.ndc-owner-table {
   width: 500px;
   max-width: 100%;
 }
 
-.ndc-css-706be27a {
+.ndc-owner-field {
   display: block;
   margin-top: 20px;
   margin-bottom: 22px;
 }
 
-.ndc-css-f6ef63c7 {
+.ndc-required-text {
   color: red;
 }
 
-.ndc-css-da1815c2 {
+.ndc-owner-input {
   width: 450px;
   max-width: 100%;
   box-sizing: border-box;
 }
 
-.ndc-css-e3b4639c {
+.ndc-owner-field-spacing {
   display: block;
   margin-bottom: 22px;
 }
 
-.ndc-css-6e542240 {
+.ndc-owner-field-small-spacing {
   display: block;
   margin-top: 10px;
   margin-bottom: 22px;
 }
 
-.ndc-css-805e0033 {
+.ndc-documents-page {
   width: 100%;
   box-sizing: border-box;
 }
 
-.ndc-css-40b8fae8 {
+.ndc-documents-card {
   background: #ffffff;
   width: 100%;
   max-width: 620px;
@@ -396,11 +395,11 @@
   margin: 0 auto;
 }
 
-.ndc-css-9acc18f3 {
+.ndc-documents-header {
   margin-bottom: 24px;
 }
 
-.ndc-css-2ac5b85c {
+.ndc-documents-title {
   margin: 0 0 16px 0;
   font-size: 28px;
   line-height: 1.2;
@@ -408,37 +407,37 @@
   color: #111111;
 }
 
-.ndc-css-67ce6330 {
+.ndc-documents-description {
   margin-bottom: 10px;
   font-size: 14px;
   line-height: 1.5;
   color: #333333;
 }
 
-.ndc-css-323d1bd8 {
+.ndc-documents-instruction {
   font-size: 14px;
   font-weight: 600;
   line-height: 1.5;
   color: #333333;
 }
 
-.ndc-css-8b064ad7,
-.ndc-css-80d9af92 {
+.ndc-documents-content,
+.ndc-property-search {
   width: 100%;
 }
 
-.ndc-css-6bf112df {
+.ndc-document-field {
   width: 100%;
   margin-bottom: 22px;
   box-sizing: border-box;
 }
 
-.ndc-css-a82d9187 {
+.ndc-document-label-wrapper {
   width: 100%;
   margin-bottom: 8px;
 }
 
-.ndc-css-c851dfe0 {
+.ndc-document-label {
   display: block;
   width: 100%;
   margin: 0;
@@ -449,20 +448,20 @@
   color: #111111;
 }
 
-.ndc-css-326975fd {
+.ndc-document-required {
   margin-left: 3px;
   color: #b21f2d;
   font-weight: 700;
 }
 
-.ndc-css-e4092fcf {
+.ndc-property-field {
   width: 340px;
   max-width: 100%;
   margin-bottom: 0;
   box-sizing: border-box;
 }
 
-.ndc-css-690dab27 {
+.ndc-property-label {
   display: block;
   width: 340px;
   max-width: 100%;
@@ -475,12 +474,12 @@
   box-sizing: border-box;
 }
 
-.ndc-css-38096d7a {
+.ndc-property-required {
   color: #a82227;
   margin-left: 3px;
 }
 
-.ndc-css-f8d9d5bb {
+.ndc-property-input-wrapper {
   position: relative;
   width: 340px;
   min-width: 340px;
@@ -491,7 +490,7 @@
   flex-shrink: 0;
 }
 
-.ndc-css-fadab511 {
+.ndc-property-input {
   width: 340px;
   min-width: 340px;
   max-width: 340px;
@@ -501,7 +500,7 @@
   padding-right: 42px;
 }
 
-.ndc-css-27db4f2f {
+.ndc-property-search-icon {
   position: absolute;
   top: 50%;
   right: 6px;
@@ -523,7 +522,7 @@
   box-sizing: border-box;
 }
 
-.ndc-css-c1711082 {
+.ndc-property-actions {
   width: 340px;
   max-width: 100%;
   display: flex;
@@ -534,23 +533,23 @@
   box-sizing: border-box;
 }
 
-.ndc-css-577ca9f3 {
+.ndc-button-text {
   color: #ffffff;
 }
 
-.ndc-css-d57fc5bb {
+.ndc-overview-actions {
   display: flex;
   justify-content: end;
   align-items: center;
   padding: 16px;
 }
 
-.ndc-css-f55e6646 {
+.ndc-overview-content {
   padding-top: 0;
   padding-left: 0;
 }
 
-.ndc-css-1023a2ab {
+.ndc-overview-input {
   max-width: 200px;
 }
 
@@ -704,30 +703,8 @@
    ========================================================= */
 
 /*
- * IMPORTANT:
- *
  * LabelFieldPair from Digit UI has its own layout.
  * We explicitly make this component vertical.
- *
- * Desired:
- *
- * NDC_FULL_NAME *
- * [Arpit Rao]
- *
- * NDC_EMAIL *
- * [Asdj@gmail.com]
- *
- * NDC_MOBILE_NUMBER *
- * [9999999999]
- *
- * NDC_ADDRESS *
- * [              ]
- *
- * Remarks
- * [              ]
- *
- * Trade License Number
- * [              ]
  */
 
 .ndc-owner-field {

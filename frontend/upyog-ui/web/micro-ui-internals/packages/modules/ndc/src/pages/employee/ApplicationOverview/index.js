@@ -497,7 +497,7 @@ const ApplicationOverview = () => {
       {/* <div>
         <Header styles={{ fontSize: "32px" }}>{t("NDC_APP_OVER_VIEW_HEADER")}</Header>
       </div> */}
-      <div className="ndc-css-d57fc5bb" >
+      <div className="ndc-overview-actions" >
         {isCemp && (
           <div className="cardHeaderWithOptions ral-app-details-header">
             {getLoader && <Loader />}
@@ -551,7 +551,7 @@ const ApplicationOverview = () => {
                 {/* <Row label={t("NDC_STATUS")} text={t(detail.status) || detail.status} /> */}
 
                 {(!canRaiseFlag || !isMarked) && (
-                  <div className="ndc-css-f55e6646"
+                  <div className="ndc-overview-content"
                     
                   >
                     <Row
@@ -579,7 +579,7 @@ const ApplicationOverview = () => {
                           name={`amount[${index}]`}
                           defaultValue={markedPending[detail.consumerCode] === false ? 0 : amounts?.[detail.consumerCode] || detail?.dueAmount || 0}
                           render={(props) => (
-                            <TextInput className="ndc-css-1023a2ab"
+                            <TextInput className="ndc-overview-input"
                               type="number"
                               value={props.value}
                               onChange={(e) => {

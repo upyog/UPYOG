@@ -666,18 +666,18 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
   return (
     <React.Fragment>
 <div
-        className="ndc-property-search-container ndc-margin-bottom-16 ndc-css-80d9af92"
+        className="ndc-property-search-container ndc-margin-bottom-16 ndc-property-search"
         
       >
         {/* ===================================================
             PROPERTY ID
         ==================================================== */}
 
-        <div className="ndc-css-e4092fcf" >
-          <label className="ndc-css-690dab27" >
+        <div className="ndc-property-field" >
+          <label className="ndc-property-label" >
             {t(propertyIdInput.label)}
 
-            <span className="ndc-css-38096d7a"
+            <span className="ndc-property-required"
               
             >
               *
@@ -691,8 +691,8 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
               DO NOT PUT BUTTONS INSIDE THIS DIV.
           ================================================= */}
 
-          <div ref={myElementRef} id="search-property-field" className="ndc-property-input ndc-css-f8d9d5bb" >
-            <TextInput className="ndc-css-fadab511"
+          <div ref={myElementRef} id="search-property-field" className="ndc-property-input ndc-property-input-wrapper" >
+            <TextInput className="ndc-property-input"
               key={propertyIdInput.name}
               value={propertyId || ""}
               onChange={handlePropertyChange}
@@ -708,7 +708,7 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
 
             <button
               type="button"
-              className="ndc-property-search-icon ndc-css-27db4f2f"
+              className="ndc-property-search-icon ndc-property-search-icon"
               
               onClick={searchProperty}
               aria-label={t("PT_SEARCH")}
@@ -728,7 +728,7 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
               THIS FIXES THE OVERLAP.
           ================================================= */}
 
-          <div className="ndc-property-actions ndc-css-c1711082" >
+          <div className="ndc-property-actions ndc-property-actions" >
             {/* ===============================================
                 CHECK STATUS
             ================================================ */}
@@ -736,7 +736,7 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
             {!apiDataCheck?.[0]?.NdcDetails && getCheckStatus && !getPayDuesButton && (
               <button
                 type="button"
-                className="ndc-property-action-button ndc-css-a999e0c4"
+                className="ndc-property-action-button ndc-primary-button"
                 
                 onClick={() => {
                   fetchBill();
@@ -751,10 +751,10 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
             ================================================ */}
 
             {getPayDuesButton && (
-              <div className="ndc-css-a999e0c4"
+              <div className="ndc-primary-button"
                 
               >
-                <span className="ndc-css-577ca9f3"
+                <span className="ndc-button-text"
                   
                 >
                   Rs. {propertyDues?.dues?.totalAmount}
@@ -770,7 +770,7 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
               <Link className="ndc-property-pay-link" to={`/upyog-ui/citizen/payment/my-bills/PT/${propertyId}`}>
                 <button
                   type="button"
-                  className="ndc-property-action-button ndc-css-985bd392"
+                  className="ndc-property-action-button ndc-secondary-button"
                   
                 >
                   {t("PAY_DUES")}
@@ -783,8 +783,8 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
             ================================================ */}
 
             {getNoDue && (
-              <div className="ndc-property-no-dues ndc-css-f93c4492" >
-                <span className="ndc-css-577ca9f3"
+              <div className="ndc-property-no-dues ndc-no-dues-button" >
+                <span className="ndc-button-text"
                   
                 >
                   {t("NO_DUES_FOUND_FOR_PROPERTY")}

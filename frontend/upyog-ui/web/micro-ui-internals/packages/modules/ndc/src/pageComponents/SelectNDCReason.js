@@ -116,7 +116,7 @@ function SelectNDCReason({ config, onSelect, userType, formData, setError, formS
    */
 
   return (
-    <div className="ndc-css-87310ad8"
+    <div className="ndc-reason-container"
       
     >
       {window.location.href.includes("/citizen") ? <Timeline currentStep={1} /> : null}
@@ -125,18 +125,18 @@ function SelectNDCReason({ config, onSelect, userType, formData, setError, formS
           REASON
       ===================================================== */}
 
-      <div className="ndc-css-d088c348" >
-        <CardLabel className="card-label-smaller ndc_card_labels ndc-css-5b150134" >
+      <div className="ndc-reason-field" >
+        <CardLabel className="card-label-smaller ndc_card_labels ndc-reason-label" >
           {t("NDC_NEW_NDC_APPLICATION_NDC_REASON")}
 
-          <span className="ndc-css-2c30dc20"
+          <span className="ndc-required"
             
           >
             *
           </span>
         </CardLabel>
 
-        <div className="ndc-css-87310ad8" >
+        <div className="ndc-reason-container" >
           <Controller
             name="NDCReason"
             rules={{
@@ -161,7 +161,7 @@ function SelectNDCReason({ config, onSelect, userType, formData, setError, formS
           />
         </div>
 
-        <CardLabelError className="ndc-card-label-error ndc-css-c3d3dc34" >
+        <CardLabelError className="ndc-card-label-error ndc-error-message" >
           {localFormState.touched?.NDCReason ? localFormState.errors?.NDCReason?.message : ""}
         </CardLabelError>
       </div>
@@ -171,12 +171,12 @@ function SelectNDCReason({ config, onSelect, userType, formData, setError, formS
       ===================================================== */}
 
       {watch("NDCReason")?.code === "OTHERS" && (
-        <div className="ndc-css-d088c348" >
-          <CardLabel className="card-label-smaller ndc_card_labels ndc-css-5b150134" >
+        <div className="ndc-reason-field" >
+          <CardLabel className="card-label-smaller ndc_card_labels ndc-reason-label" >
             {t("Reason")}
           </CardLabel>
 
-          <div className="ndc-css-87310ad8" >
+          <div className="ndc-reason-container" >
             <Controller
               control={control}
               name="reason"

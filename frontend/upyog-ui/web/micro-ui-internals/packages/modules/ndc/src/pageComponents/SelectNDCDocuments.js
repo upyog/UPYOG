@@ -48,33 +48,33 @@ const SelectNDCDocuments = ({ t, config, onSelect, userType, formData, setError:
   }
 
   return (
-    <div className="ndc-css-805e0033"
+    <div className="ndc-documents-page"
       
     >
       {/* Timeline */}
       {window.location.href.includes("/citizen") ? <Timeline currentStep={2} /> : null}
 
       {/* Main Documents Card */}
-      <div className="ndc-css-40b8fae8"
+      <div className="ndc-documents-card"
         
       >
         {/* Header */}
-        <div className="ndc-css-9acc18f3"
+        <div className="ndc-documents-header"
           
         >
-          <h1 className="ndc-css-2ac5b85c"
+          <h1 className="ndc-documents-title"
             
           >
             {t("NDC_PROOF_OF_DOCUMENTS") || "Proof of Documents"}
           </h1>
 
-          <div className="ndc-css-67ce6330"
+          <div className="ndc-documents-description"
             
           >
             {t("NDC_SUPPORTED_FORMATS") || "Supported formats: JPG, PNG for photo and JPG, PNG, PDF for other documents"}
           </div>
 
-          <div className="ndc-css-323d1bd8"
+          <div className="ndc-documents-instruction"
             
           >
             {t("NDC_MAXIMUM_UPLOAD_SIZE") || "Maximum upload size is 5 MB"}
@@ -82,7 +82,7 @@ const SelectNDCDocuments = ({ t, config, onSelect, userType, formData, setError:
         </div>
 
         {/* Documents */}
-        <div className="ndc-css-8b064ad7"
+        <div className="ndc-documents-content"
           
         >
           {ndcDocuments?.map((document, index) => {
@@ -197,20 +197,20 @@ function SelectDocument({ t, document: doc, setDocuments, setError, documents, s
   }, [file]);
 
   return (
-    <div className="ndc-css-6bf112df"
+    <div className="ndc-document-field"
       
     >
       {/* Document Label */}
-      <div className="ndc-css-a82d9187"
+      <div className="ndc-document-label-wrapper"
         
       >
-        <CardLabel className="ndc-css-c851dfe0"
+        <CardLabel className="ndc-document-label"
           
         >
           {t(doc?.code)}
 
           {doc?.required && (
-            <span className="ndc-css-326975fd"
+            <span className="ndc-document-required"
               
             >
               *
@@ -220,7 +220,7 @@ function SelectDocument({ t, document: doc, setDocuments, setError, documents, s
       </div>
 
       {/* Upload */}
-      <div className="ndc-css-805e0033"
+      <div className="ndc-documents-page"
         
       >
         <UploadFile
