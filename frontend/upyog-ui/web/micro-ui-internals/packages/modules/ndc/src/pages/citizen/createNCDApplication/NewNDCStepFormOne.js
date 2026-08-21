@@ -452,7 +452,9 @@ export const NewNDCStepFormOne = ({ config, onGoNext, onBackClick, t }) => {
         details: payload,
       });
 
-      if (response?.ResponseInfo?.status === "successful") {
+      const responseStatus = String(response?.ResponseInfo?.status || "").toLowerCase();
+
+      if (responseStatus === "successful") {
         dispatch(updateNDCForm("apiData", response));
 
         onGoNext();

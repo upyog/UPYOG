@@ -103,17 +103,6 @@ function SelectNDCReason({ config, onSelect, userType, formData, setError, formS
     return <Loader />;
   }
 
-  /*
-   * ---------------------------------------------------------
-   * INLINE STYLES
-   * ---------------------------------------------------------
-   */
-
-  /*
-   * ---------------------------------------------------------
-   * UI
-   * ---------------------------------------------------------
-   */
 
   return (
     <div className="ndc-reason-container"

@@ -155,49 +155,57 @@ const NDCNewFormSummaryStepThreeCitizen = ({ config, onGoNext, onBackClick, t })
    * Submit NDC update request.
    */
   const onSubmit = async (data, actionStatus) => {
-    try {
-      /**
-       * Never allow null/undefined action.
-       */
-      const finalAction = actionStatus || "APPLY";
+  try {
+    /**
+     * Never allow null/undefined action.
+     */
+    const finalAction = actionStatus || "APPLY";
 
-      const finalPayload = mapToNDCPayload(data, finalAction);
+    const finalPayload = mapToNDCPayload(data, finalAction);
 
-      const response = await Digit.NDCService.NDCUpdate({
-        tenantId,
-        details: finalPayload,
-      });
+    const response = await Digit.NDCService.NDCUpdate({
+      tenantId,
+      details: finalPayload,
+    });
 
-      /**
-       * Successful response.
-       */
-      if (response?.ResponseInfo?.status === "successful") {
-        dispatch(resetNDCForm());
+    /**
+     * Normalize response status before comparison
+     * to avoid case-sensitive matching issues.
+     */
+    const responseStatus = String(
+      response?.ResponseInfo?.status || ""
+    ).toLowerCase();
 
-        return {
-          isSuccess: true,
-          response,
-        };
-      }
-
-      /**
-       * Backend returned an error.
-       */
-      console.error("NDC update failed:", response);
+    /**
+     * Successful response.
+     */
+    if (responseStatus === "successful") {
+      dispatch(resetNDCForm());
 
       return {
-        isSuccess: false,
+        isSuccess: true,
         response,
       };
-    } catch (error) {
-      console.error("NDC update exception:", error);
-
-      return {
-        isSuccess: false,
-        error,
-      };
     }
-  };
+
+    /**
+     * Backend returned an error.
+     */
+    console.error("NDC update failed:", response);
+
+    return {
+      isSuccess: false,
+      response,
+    };
+  } catch (error) {
+    console.error("NDC update exception:", error);
+
+    return {
+      isSuccess: false,
+      error,
+    };
+  }
+};
 
   /**
    * Back button.
