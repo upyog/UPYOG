@@ -50,6 +50,7 @@ package org.egov.egf.web.actions.report;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,7 +63,11 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.persistence.FlushModeType;
+import jakarta.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -100,6 +105,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import net.sf.jasperreports.engine.JRException;
 
+/**
+ * LTS Migration Notes:
+ * 1. [Hibernate 6 Native Query & Types] Migrated createSQLQuery() to createNativeQuery(). Replaced removed
+ *    Hibernate 5 Type singletons (BigDecimalType, LongType, DateType, IntegerType) with StandardBasicTypes.
+ * 2. [Jakarta Persistence FlushModeType] Replaced legacy FlushMode.MANUAL with FlushModeType.COMMIT.
+ * 3. [Struts 7 & Jakarta EE Parameter Extraction] Added resolveCriteriaFromRequest() and parseReportDate()
+ *    to extract 'accountNumber.id', 'deptImpl.code', 'bank', and formatted dates ('dd/MM/yyyy') from HttpServletRequest.
+ */
 @Results(value = { @Result(name = "result", location = "chequeIssueRegisterReport-result.jsp"),
 		@Result(name = "PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
 				Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/pdf", Constants.CONTENT_DISPOSITION,
@@ -171,9 +184,87 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
 		this.reportHelper = reportHelper;
 	}
 
+	/**
+	 * LTS Migration Fix [Struts 7 & Jakarta EE Parameter Extraction]:
+	 * In Struts 7, form/URL parameters ('accountNumber.id', 'deptImpl.code', 'bank', 'fromDate', 'toDate')
+	 * are not automatically bound to nested bean properties. This method reads them directly from
+	 * HttpServletRequest and parses dates using dd/MM/yyyy.
+	 */
+	private void resolveCriteriaFromRequest() {
+		final HttpServletRequest request = ServletActionContext.getRequest();
+		if (request == null) {
+			return;
+		}
+
+		if (accountNumber == null || accountNumber.getId() == null) {
+			final String accountId = firstNonEmpty(request.getParameter("accountNumber.id"),
+					request.getParameter("accountNumber"), request.getParameter("bankAccount"));
+			if (StringUtils.isNotBlank(accountId) && !"-1".equals(accountId) && !"0".equals(accountId)) {
+				accountNumber = new Bankaccount();
+				accountNumber.setId(Long.valueOf(accountId.trim()));
+			}
+		}
+
+		if (deptImpl == null) {
+			deptImpl = new Department();
+		}
+		if (StringUtils.isBlank(deptImpl.getCode())) {
+			/*
+			 * Form listKey is department code; legacy JS still posts department.id with that
+			 * code value.
+			 */
+			final String deptCode = firstNonEmpty(request.getParameter("deptImpl.code"),
+					request.getParameter("department.id"), request.getParameter("department"));
+			if (StringUtils.isNotBlank(deptCode) && !"0".equals(deptCode) && !"-1".equals(deptCode)) {
+				deptImpl.setCode(deptCode.trim());
+			}
+		}
+
+		if (StringUtils.isBlank(bank)) {
+			bank = request.getParameter("bank");
+		}
+
+		if (fromDate == null) {
+			fromDate = parseReportDate(request.getParameter("fromDate"));
+		}
+		if (toDate == null) {
+			toDate = parseReportDate(request.getParameter("toDate"));
+		}
+	}
+
+	private static String firstNonEmpty(final String... values) {
+		if (values == null) {
+			return null;
+		}
+		for (final String value : values) {
+			if (StringUtils.isNotBlank(value)) {
+				return value.trim();
+			}
+		}
+		return null;
+	}
+
+	private static Date parseReportDate(final String value) {
+		if (StringUtils.isBlank(value)) {
+			return null;
+		}
+		try {
+			return Constants.DDMMYYYYFORMAT2.parse(value.trim());
+		} catch (final ParseException e) {
+			LOGGER.warn("Unable to parse report date: " + value);
+			return null;
+		}
+	}
+
 	public void generateReport() throws JRException, IOException {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("----Inside generateReport---- ");
+
+		resolveCriteriaFromRequest();
+		if (accountNumber == null || accountNumber.getId() == null) {
+			throw new ValidationException(Arrays.asList(new ValidationError("accountNumber",
+					"Please select a bank account")));
+		}
 
 		accountNumber = (Bankaccount) persistenceService.find("from Bankaccount where id=?", accountNumber.getId());
 		if (accountNumber.getChequeformat() != null && !accountNumber.getChequeformat().equals("")) {
@@ -210,6 +301,9 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
             queryString.append(" and vmis.departmentcode=:deptCode");
         queryString.append(" order by ih.instrumentDate,ih.instrumentNumber ");
         
+        // LTS Migration Fix [Hibernate 6 createNativeQuery & StandardBasicTypes]:
+        // Migrated from createSQLQuery() to createNativeQuery(). Replaced removed Hibernate 5
+        // Type singletons (BigDecimalType, LongType, DateType, IntegerType) with StandardBasicTypes.
         final Query query = persistenceService.getSession().createNativeQuery(queryString.toString())
                 .addScalar("chequeNumber").addScalar("chequeDate", StandardBasicTypes.DATE)
                 .addScalar("chequeAmount", StandardBasicTypes.BIG_DECIMAL).addScalar("voucherNumber")
