@@ -75,12 +75,12 @@ public class DxfToPdfUnifiedConverter {
      *       Kabeja is used as a fallback so a PDF is still produced when possible.</li>
      * </ul>
      *
-     * @param dxfSourceFile DXF file on disk for Aspose (may be null when only Kabeja is used)
-     * @param dxfDocument   parsed in-memory DXF document for Kabeja
-     * @param fileName      logical drawing name for logging
-     * @param layerName     stem for the output PDF file (for example basename without extension in direct mode)
-     * @param edcrPdfDetail PDF configuration settings (page size, hatch removal flag, single-PDF flag)
-     * @return generated PDF file, or {@code null} on failure
+     * @param dxfSourceFile source DXF file on disk for Aspose (may be {@code null} when only Kabeja is used)
+     * @param dxfDocument   in-memory parsed DXF document for Kabeja
+     * @param fileName      logical drawing name used for logging
+     * @param layerName     stem for the output PDF file (for example, DXF basename without extension in direct mode)
+     * @param edcrPdfDetail PDF configuration details (page size, hatch removal flag, single-PDF flag)
+     * @return the generated PDF {@link File}, or {@code null} on failure
      */
     public File convert(File dxfSourceFile, DXFDocument dxfDocument, String fileName, String layerName,
                         EdcrPdfDetail edcrPdfDetail) {
@@ -130,7 +130,7 @@ public class DxfToPdfUnifiedConverter {
     }
 
     /**
-     * Runs Kabeja SVG-to-PDF conversion with a property map whose configuration depends on legacy vs single full-DXF mode.
+     * Runs Kabeja SVG-to-PDF conversion with a property map whose configuration depends on legacy vs. single full-DXF mode.
      * <p>
      * <b>Legacy multi-sheet PDFs</b> ({@code EdcrPdfDetail.getKabejaSinglePageDXFToPdf()} not true):
      * <ul>
@@ -148,11 +148,11 @@ public class DxfToPdfUnifiedConverter {
      * <p>
      * The output file is {@code layerName + ".pdf"}; in direct mode {@code layerName} is typically the DXF basename.
      *
-     * @param dxfDocument   in-memory DXF document for Kabeja
-     * @param fileName      drawing name used in log messages
-     * @param layerName     PDF filename stem
+     * @param dxfDocument   in-memory parsed DXF document for Kabeja
+     * @param fileName      logical drawing name used for logging
+     * @param layerName     stem for the output PDF file
      * @param edcrPdfDetail PDF configuration details (page size, hatch removal flag, and single-PDF mode flag)
-     * @return generated PDF file if non-empty, otherwise {@code null}
+     * @return the generated PDF {@link File} if non-empty, otherwise {@code null}
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private File convertWithKabeja(DXFDocument dxfDocument, String fileName, String layerName,
@@ -212,7 +212,7 @@ public class DxfToPdfUnifiedConverter {
             }
             return fileOut.length() > 0 ? fileOut : null;
         } catch (Exception ep) {
-            LOG.error("Pdf convertion failed for {} - {} due to {}", fileName, layerName, ep.getMessage());
+            LOG.error("Pdf conversion failed for {} - {} due to {}", fileName, layerName, ep.getMessage());
             ep.printStackTrace();
             edcrPdfDetail.setFailureReasons(ep.getMessage());
             if (fileOut.exists()) {
@@ -229,36 +229,29 @@ public class DxfToPdfUnifiedConverter {
      * using configurable page dimensions derived from the provided
      * {@link EdcrPdfDetail}. If no valid page configuration is available,
      * default dimensions are used.
-     * </p>
-     *
      * <p>
      * Page size handling:
-     * </p>
      * <ul>
      *   <li>Reads page size, orientation, and enlargement factor from {@link PdfPageSize}.</li>
      *   <li>Supports portrait and landscape orientation.</li>
      *   <li>Falls back to default dimensions when page configuration is invalid or unavailable.</li>
      * </ul>
-     *
      * <p>
      * Aspose CAD rasterization settings:
-     * </p>
      * <ul>
      *   <li>White background color</li>
      *   <li>Uses original object colors from the DXF</li>
      *   <li>Automatic layout scaling enabled</li>
      *   <li>Scaling adjustments allowed</li>
      * </ul>
-     *
      * <p>
      * The generated PDF file is created in the working directory with the
      * provided layer name as the file name.
-     * </p>
      *
      * @param dxfSourceFile the source DXF file to be converted
      * @param layerName     the logical layer or output file name prefix used for the generated PDF
      * @param edcrPdfDetail PDF configuration details containing page size, orientation, and enlargement settings
-     * @return the generated PDF file if conversion succeeds and the file exists with non-zero size; otherwise {@code null}
+     * @return the generated PDF {@link File} if conversion succeeds and the file exists with non-zero size; otherwise {@code null}
      */
     private File convertWithAspose(File dxfSourceFile, String layerName, EdcrPdfDetail edcrPdfDetail) {
         LOG.info("Converting Dxf to Pdf with Aspose...");
@@ -412,7 +405,7 @@ public class DxfToPdfUnifiedConverter {
                             double h = Double.parseDouble(parts[3]);
                             maxFontSize = Math.max(w, h) * 0.004;
                         } catch (Exception e) {
-                            // ignore parsing errors
+                            // Ignore parsing errors
                         }
                     }
                 }
@@ -436,7 +429,7 @@ public class DxfToPdfUnifiedConverter {
                             buggedTextCount++;
                         }
                     } catch (Exception e) {
-                        // ignore parsing errors
+                        // Ignore parsing errors
                     }
                 }
             }
@@ -462,7 +455,7 @@ public class DxfToPdfUnifiedConverter {
                             value = String.valueOf(maxFontSize);
                         }
                     } catch (Exception e) {
-                        // ignore parsing errors
+                        // Ignore parsing errors
                     }
                 } else if (isBuggedText) {
                     if ("y".equalsIgnoreCase(name)) {
@@ -493,7 +486,7 @@ public class DxfToPdfUnifiedConverter {
         /**
          * Intercepts and sanitizes character data within SVG text elements to remove '@' font artifacts.
          *
-         * @param ch     the characters
+         * @param ch     the character array containing the text to be processed
          * @param start  the start position in the character array
          * @param length the number of characters to use from the character array
          * @throws SAXException if any SAX parsing error occurs
