@@ -3,7 +3,7 @@
  * Offers real-time search capabilities via provisional number integration to pull existing application data.
  */
 import React, { useState, useEffect } from "react";
-import { FormStep, RadioButtons, TextInput, CardLabel, CardLabelError, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, RadioButtons, TextInput, CardLabel, CardLabelError, Toast, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 
 const getCategoryCode = (docType) => {
   if (docType.startsWith("OWNER")) {
@@ -231,14 +231,8 @@ const NocTypeSelection = ({ t, config, onSelect, userType, formData }) => {
                 placeholder={t("NOC_PROVISIONAL_FIRE_NOC_NO_PLACEHOLDER")}
                 style={{ flex: 1 }}
               />
-              <button
-                className="submit-bar"
-                type="button"
-                onClick={handleSearchProvisional}
-                style={{ minWidth: "80px", height: "48px", marginTop: "0px" }}
-              >
-                {searching ? t("NOC_SEARCHING") : t("NOC_SEARCH")}
-              </button>
+              <SubmitBar label={t("NOC_SEARCH")} onSubmit={handleSearchProvisional} />
+             
             </div>
           </div>
         )}

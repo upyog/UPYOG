@@ -14,6 +14,7 @@ import { WTService } from "../../services/elements/WT";
 import { TPService } from "../../services/elements/TP";
 import { PGRAIService } from "../../services/elements/PGRAI";
 import { GCServices } from "../../services/elements/GC"
+import { NOCService } from "../../services/elements/NOC";
 
 const inboxConfig = (tenantId, filters) => ({
   PT: {
@@ -112,6 +113,21 @@ const inboxConfig = (tenantId, filters) => ({
     businessIdAliasForSearch: "serviceRequestId",
     fetchFilters: filterFunctions.PGRAI,
     _searchFn: () => PGRAIService.search({ tenantId, filters }),
+  },
+ /**
+ * FIRENOC Workflow Module Configuration
+ *
+ * Configuration object for the FIRENOC module used with the workflow/inbox engine.
+ * Defines how service data should be fetched, what keys to use in responses,
+ * and how filtering should be applied using predefined filter functions.
+ */
+  FIRENOC: {
+    services: ["FIRENOC"],
+    searchResponseKey: "fireNocApplications",
+    businessIdsParamForSearch: "applicationNumber",
+    businessIdAliasForSearch: "applicationNumber",
+    fetchFilters: filterFunctions.FireNoc,
+    _searchFn: () => NOCService.search(tenantId, filters),
   },
 });
 

@@ -14,6 +14,7 @@ import {
   CardLabelError,
   CardHeader,
   Toast,
+  SubmitBar
 } from "@nudmcdgnpm/digit-ui-react-components";
 import GIS from "./GIS";
 import { CurrentLocationIcon, ChooseLocationIcon } from "../utils";
@@ -826,14 +827,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
             placeholder={t("NOC_PROPERTY_ID_PLACEHOLDER")}
             style={{ flex: 1 }}
           />
-          <button
-            className="submit-bar"
-            type="button"
-            onClick={handlePropertySearch}
-            style={{ minWidth: "80px", height: "48px", marginTop: "0px" }}
-          >
-            {isSearchingProperty ? t("NOC_SEARCHING") : t("NOC_SEARCH")}
-          </button>
+          <SubmitBar label={t("NOC_SEARCH")} onSubmit={handlePropertySearch} />
         </div>
 
         <CardLabel>{t("NOC_PROPERTY_CITY_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>

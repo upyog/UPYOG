@@ -28,7 +28,10 @@ export const NocMyApplications = () => {
     : { limit: "10", offset: "0", mobileNumber: user?.mobileNumber, tenantId };
 
   const { isLoading, isError, error, data } = Digit.Hooks.noc.useFireNOCSearch(tenantId, filter1);
-  const { FireNOCs: applicationsList } = data || {};
+  const { FireNOCs: applicationsList=[] } = data || {};
+
+  const sortedApplications = [...applicationsList].sort((a, b) => (b?.fireNOCDetails?.applicationDate || 0) - (a?.fireNOCDetails?.applicationDate || 0));
+
 
   if (isLoading) {
     return <Loader />;
@@ -36,26 +39,42 @@ export const NocMyApplications = () => {
 
   return (
     <React.Fragment>
-      <Header>{`${t("NOC_MY_APPLICATIONS_HEADER")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
-      <div>
-        {applicationsList?.length > 0 &&
-          applicationsList.map((application, index) => (
-            <div key={index}>
-              <NocApplication application={application} tenantId={user?.permanentCity} />
-            </div>
-          ))}
-        {!applicationsList?.length > 0 && <p style={{ marginLeft: "16px", marginTop: "16px" }}>{t("NOC_NO_APPLICATION_FOUND_MSG", "No applications found.")}</p>}
+     <Header>{`${t("NOC_MY_APPLICATIONS_HEADER")} ${sortedApplications.length ? `(${sortedApplications.length})` : ""}`}</Header>
 
-        {applicationsList?.length !== 0 && applicationsList?.length >= 10 && (
-          <div>
-            <p style={{ marginLeft: "16px", marginTop: "16px" }}>
-              <span className="link">
-                <Link to={`/upyog-ui/citizen/firenoc/my-applications/${t1}`}>{t("NOC_LOAD_MORE_MSG", "Load More")}</Link>
-              </span>
-            </p>
+    <div>
+      {sortedApplications.length > 0 &&
+        sortedApplications.map((application, index) => (
+          <div key={application?.applicationNumber || index}>
+            <NocApplication
+              application={application}
+              tenantId={user?.permanentCity}
+            />
           </div>
-        )}
-      </div>
+        ))}
+
+      {sortedApplications.length === 0 && (
+        <p style={{ marginLeft: "16px", marginTop: "16px" }}>
+          {t(
+            "NOC_NO_APPLICATION_FOUND_MSG",
+            "No applications found."
+          )}
+        </p>
+      )}
+
+      {applicationsList.length >= 10 && (
+        <div>
+          <p style={{ marginLeft: "16px", marginTop: "16px" }}>
+            <span className="link">
+              <Link
+                to={`/upyog-ui/citizen/firenoc/my-applications/${t1}`}
+              >
+                {t("NOC_LOAD_MORE_MSG", "Load More")}
+              </Link>
+            </span>
+          </p>
+        </div>
+      )}
+    </div>
     </React.Fragment>
   );
 };
