@@ -144,7 +144,8 @@
     </filter>
     <filter>
         <filter-name>sitemesh</filter-name>
-        <filter-class>com.opensymphony.sitemesh.webapp.SiteMeshFilter</filter-class>
+        <!-- Skip decoration for displaytag PDF/Excel export (hazendaz 3.x getContentType NPE) -->
+        <filter-class>org.egov.infra.web.filter.DisplayTagExportAwareSiteMeshFilter</filter-class>
     </filter>
     <!-- Filter Declaration Ends Filter Mapping Starts -->
     <filter-mapping>

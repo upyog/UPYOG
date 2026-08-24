@@ -64,6 +64,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -106,6 +107,18 @@ import org.springframework.core.env.Environment;
 
 import net.sf.jasperreports.engine.JRException;
 
+/**
+ * LTS Migration Notes:
+ * 1. [Struts 7 & Jakarta EE] ModelDriven form parameter resolution: Struts 7 does not automatically bind
+ *    nested form fields (e.g. 'model.financialYear.id', 'model.department.code', 'model.function.id').
+ *    Added resolveBudgetReportCriteriaFromRequest() in setRelatedEntitesOn() to extract parameters
+ *    from HttpServletRequest and populate persistent entities.
+ * 2. [Hibernate 6 Strict SQM] Corrected HQL property names to match exact Java entity mapping casing:
+ *    - 'isBeRe' -> 'isbere' on Budget entity
+ *    - 'glCode' -> 'glcode' on CChartOfAccounts entity
+ *    - 'br.status = (select id...)' -> 'br.status.id = (select id...)' to enforce scalar-to-scalar comparison.
+ * 3. [Hibernate 6 Types] Replaced removed LongType.INSTANCE, StringType.INSTANCE with StandardBasicTypes.
+ */
 @ParentPackage("egov")
 @Results(value = {
         @Result(name = "department-PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
@@ -1238,14 +1251,78 @@ public class BudgetReportAction extends BaseFormAction {
     }
 
     protected void setRelatedEntitesOn() {
-        if (budgetReport.getDepartment() == null || budgetReport.getDepartment().getCode() == null)
+        // LTS Migration Fix [Struts 7 & Jakarta EE]:
+        // In Struts 7, form fields bound to ModelDriven entities (e.g., 'model.financialYear.id',
+        // 'model.department.code') are not automatically injected into action bean properties.
+        // We explicitly invoke resolveBudgetReportCriteriaFromRequest() to extract and populate them.
+        resolveBudgetReportCriteriaFromRequest();
+        if (budgetReport.getDepartment() == null || budgetReport.getDepartment().getCode() == null
+                || budgetReport.getDepartment().getCode().trim().isEmpty()
+                || "0".equals(budgetReport.getDepartment().getCode().trim()))
             budgetReport.setDepartment(null);
         else
             budgetReport.setDepartment(microserviceUtils.getDepartmentByCode(budgetReport.getDepartment().getCode()));
 
-        if (budgetReport.getFinancialYear() != null)
+        // LTS Migration Fix: Added null/zero safety check on financialYear.getId() before DB query
+        if (budgetReport.getFinancialYear() != null && budgetReport.getFinancialYear().getId() != null
+                && budgetReport.getFinancialYear().getId() != 0L)
             budgetReport.setFinancialYear((CFinancialYear) getPersistenceService().find("from CFinancialYear where id=?",
                     budgetReport.getFinancialYear().getId()));
+    }
+
+    /**
+     * LTS Migration Fix [Struts 7 Request Parameter Extraction]:
+     * Form posts 'financialYear' / 'model.financialYear.id' and 'department.code' / 'model.department.code'.
+     * This method safely reads these parameters from Jakarta HttpServletRequest and binds them to the model.
+     */
+    private void resolveBudgetReportCriteriaFromRequest() {
+        final jakarta.servlet.http.HttpServletRequest request = ServletActionContext.getRequest();
+        String fyId = firstNonEmpty(request.getParameter("financialYear"),
+                request.getParameter("financialYear.id"),
+                request.getParameter("model.financialYear.id"));
+        if (fyId != null && !"0".equals(fyId) && !"-1".equals(fyId)) {
+            if (budgetReport.getFinancialYear() == null) {
+                budgetReport.setFinancialYear(new CFinancialYear());
+            }
+            budgetReport.getFinancialYear().setId(Long.valueOf(fyId));
+        }
+
+        String deptCode = firstNonEmpty(request.getParameter("department"),
+                request.getParameter("department.code"),
+                request.getParameter("model.department.code"));
+        if (deptCode != null && !"0".equals(deptCode) && !"-1".equals(deptCode)) {
+            if (budgetReport.getDepartment() == null) {
+                budgetReport.setDepartment(new Department());
+            }
+            budgetReport.getDepartment().setCode(deptCode);
+        }
+
+        final String type = firstNonEmpty(request.getParameter("type"), request.getParameter("model.type"));
+        if (type != null) {
+            budgetReport.setType(type);
+        }
+
+        String functionId = firstNonEmpty(request.getParameter("function"),
+                request.getParameter("function.id"),
+                request.getParameter("model.function.id"));
+        if (functionId != null && !"0".equals(functionId) && !"-1".equals(functionId)) {
+            if (budgetReport.getFunction() == null) {
+                budgetReport.setFunction(new CFunction());
+            }
+            budgetReport.getFunction().setId(Long.valueOf(functionId));
+        }
+    }
+
+    private static String firstNonEmpty(final String... values) {
+        if (values == null) {
+            return null;
+        }
+        for (final String value : values) {
+            if (value != null && !value.trim().isEmpty() && !"null".equalsIgnoreCase(value.trim())) {
+                return value.trim();
+            }
+        }
+        return null;
     }
 
     protected void validateFinancialYear() {
@@ -1429,8 +1506,9 @@ public class BudgetReportAction extends BaseFormAction {
             budgetReportList.add(new BudgetReportView("", "No records found", "", null, null, null));
             return;
         }
+        // LTS Hibernate 6: property is glcode (not glCode); IN list is already quoted CSV
         final List<CChartOfAccounts> chartOfAccounts = getPersistenceService().findAllBy(
-                "from CChartOfAccounts where glCode in (?)", uniqueMajorCodesAsString);
+                "from CChartOfAccounts where glcode in (" + uniqueMajorCodesAsString + ")");
         for (final CChartOfAccounts account : chartOfAccounts) {
             final BigDecimal approved = majorCodeToAmountMap.get(account.getMajorCode());
             final BigDecimal reApp = majorCodeToAppropriationAmountMap.get(account.getMajorCode());
@@ -1562,6 +1640,11 @@ public class BudgetReportAction extends BaseFormAction {
         return budgetGroup.getMinCode() == null ? budgetGroup.getMajorCode().getGlcode() : budgetGroup.getMinCode().getGlcode();
     }
 
+	/**
+	 * LTS Migration Note [Hibernate 6 StandardBasicTypes & HQL]:
+	 * Replaced legacy LongType and StringType singletons with StandardBasicTypes.
+	 * Ensured HQL property casing matches Budget entity ('isbere') and Department ('execDept' via code).
+	 */
 	void fetchBudgetDetails(final List<BudgetDetail> budgetDetails, final String deptQuery, final String finalStatus,
 			final String budgetType, final String code) {
 

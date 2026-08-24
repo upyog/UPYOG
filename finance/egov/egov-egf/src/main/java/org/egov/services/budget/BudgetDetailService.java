@@ -2592,15 +2592,24 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     @SuppressWarnings("unchecked")
     public List<BudgetDetail> getFunctionFromBudgetDetailByDepartmentId(final String departmentId) {
+        /*
+         * LTS / PostgreSQL: SELECT DISTINCT + ORDER BY bd.function fails because Hibernate
+         * expands the entity in SELECT but ORDER BY uses the FK column (not in select list).
+         * Order by a selected Function property instead (e.g. name).
+         */
         return getSession().createQuery("select distinct bd.function from BudgetDetail bd "
-                        + "where bd.executingDepartment = :departmentId order by bd.function")
+                        + "where bd.executingDepartment = :departmentId order by bd.function.name")
                 .setParameter("departmentId", departmentId).list();
     }
 
     @SuppressWarnings("unchecked")
     public List<BudgetDetail> getBudgetDetailByFunctionId(final Long functionId) {
+        /*
+         * Same DISTINCT/ORDER BY rule as getFunctionFromBudgetDetailByDepartmentId —
+         * order by budgetGroup.name so PostgreSQL accepts the query.
+         */
         return getSession().createQuery("select distinct bd.budgetGroup from BudgetDetail bd "
-                        + "where bd.function.id = :functionId order by bd.budgetGroup")
+                        + "where bd.function.id = :functionId order by bd.budgetGroup.name")
                 .setParameter("functionId", functionId).list();
     }
 

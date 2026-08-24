@@ -46,34 +46,38 @@
  *
  */
 
-package org.egov.commons.repository;
+package org.egov.infra.web.filter;
 
+import java.io.IOException;
 
-import org.egov.commons.Accountdetailtype;
-import org.egov.masters.model.AccountEntity;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import org.displaytag.tags.TableTagParameters;
 
-import java.util.List;
+import com.opensymphony.sitemesh.webapp.SiteMeshFilter;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
-@Repository 
-public interface AccountEntityRepository extends JpaRepository<AccountEntity,Integer> {
-	AccountEntity findByName(String name);
-	AccountEntity findByCode(String Code);
+/**
+ * LTS Migration Notes [Jakarta EE / DisplayTag 3.x / SiteMesh]:
+ * 1. In DisplayTag 3.x (hazendaz), table export responses (Excel, CSV, PDF, XML) are buffered
+ *    by ResponseOverrideFilter before SiteMesh runs.
+ * 2. When SiteMesh executes on buffered export streams, BufferedResponseWrapper13Impl.getContentType()
+ *    throws a NullPointerException because the binary content type is still null.
+ * 3. Additionally, binary file exports must never be decorated with SiteMesh HTML layouts.
+ * 4. This filter intercepts requests containing 'TableTagParameters.PARAMETER_EXPORTING' and bypasses
+ *    SiteMesh decoration, passing the binary stream directly to the servlet response.
+ */
+public class DisplayTagExportAwareSiteMeshFilter extends SiteMeshFilter {
 
-	/**
-	 * LTS Migration Note [Spring Data JPA 3.x / Hibernate 6]:
-	 * Replaced ambiguous derived method name with an explicit, indexed JPQL query matching detailTypeId
-	 * directly and ordering by code, name.
-	 */
-	@Query("from AccountEntity where accountdetailtype.id=:detailTypeId and isactive=:isactive order by code,name")
-	List<AccountEntity> findByAccountdetailtypeIdAndIsactive(@Param("detailTypeId") Integer detailTypeId, @Param("isactive") boolean isactive);
-
-	@Query("from AccountEntity  where accountdetailtype.id=:detailTypeId and ((upper(code) like upper(:filterkey) or upper(name) like upper(:filterkey))  and isactive=true)   order by code,name")
-	List<AccountEntity> findBy20(@Param("detailTypeId") Integer typeId,@Param("filterkey")  String key);
+    @Override
+    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
+            throws IOException, ServletException {
+        if (request.getParameter(TableTagParameters.PARAMETER_EXPORTING) != null) {
+            chain.doFilter(request, response);
+            return;
+        }
+        super.doFilter(request, response, chain);
+    }
 }

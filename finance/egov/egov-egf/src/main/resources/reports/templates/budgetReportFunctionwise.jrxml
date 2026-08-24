@@ -44,9 +44,10 @@
 	<field name="totalAmount" class="java.lang.String">
 		<fieldDescription><![CDATA[totalAmountAsString]]></fieldDescription>
 	</field>
-	<field name="class" class="java.lang.Class">
-		<fieldDescription><![CDATA[class]]></fieldDescription>
-	</field>
+	<!-- LTS Migration Note [Java 17 & JasperReports]:
+	     Removed legacy '<field name="class" class="java.lang.Class">' declaration.
+	     In Java 17, reflecting on Object.getClass() in JRBeanCollectionDataSource causes
+	     module encapsulation/evaluation errors. The field was unused in the report template. -->
 	<field name="deptCode" class="java.lang.String">
 		<fieldDescription><![CDATA[deptCode]]></fieldDescription>
 	</field>

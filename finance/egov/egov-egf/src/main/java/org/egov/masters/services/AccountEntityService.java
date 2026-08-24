@@ -64,6 +64,10 @@ import java.util.List;
  * @author mani
  *
  */
+/**
+ * LTS Migration Notes:
+ * 1. [Hibernate 6 Query API] Migrated from deprecated org.hibernate.Query to org.hibernate.query.Query.
+ */
 @Deprecated
 @Transactional(readOnly = true)
 public class AccountEntityService extends PersistenceService<AccountEntity, Integer> implements EntityTypeService {

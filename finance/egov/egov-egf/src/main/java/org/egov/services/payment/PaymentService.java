@@ -49,12 +49,12 @@ package org.egov.services.payment;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -141,6 +141,16 @@ import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 import com.exilant.exility.common.TaskFailedException;
 
+/**
+ * LTS Migration Notes:
+ * 1. [Hibernate 6 Native Query & Types] Migrated all createSQLQuery() calls to createNativeQuery().
+ *    Replaced removed Hibernate 5 Type singletons (LongType, BigDecimalType, IntegerType, DateType, StringType)
+ *    with StandardBasicTypes.
+ * 2. [Hibernate 6 Query API] Replaced deprecated setLong(), setString(), setDate(), setInteger() with setParameter().
+ * 3. [Jakarta EE Persistence] Migrated EntityManager and PersistenceContext from javax.persistence to jakarta.persistence.
+ */
+@Service
+@Transactional(readOnly = true)
 public class PaymentService extends PersistenceService<Paymentheader, Long> {
     private static final Logger LOGGER = Logger.getLogger(PaymentService.class);
     public SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Constants.LOCALE);
@@ -1081,9 +1091,9 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
             dedList = getDeductionList(type, glcodeList);
             if (dedList != null && dedList.size() != 0)
                 for (final Object[] obj : dedList) {
-                    final BigInteger id = ((BigInteger) obj[0]);
-                    if (billIds.contains(id.longValue()))
-                        deductionAmtMap.put(id.longValue(), obj[1] == null ? BigDecimal.ZERO : (BigDecimal) obj[1]);
+                    final long id = ((Number) obj[0]).longValue();
+                    if (billIds.contains(id))
+                        deductionAmtMap.put(id, obj[1] == null ? BigDecimal.ZERO : (BigDecimal) obj[1]);
                 }
         }
         if (LOGGER.isDebugEnabled())
@@ -1094,7 +1104,20 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 	private List<Object[]> getDeductionList(final String expendituretype, final List<CChartOfAccounts> glcodeList) {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Starting getDeductionList...");
-		List<Object[]> dedList;
+		/*
+		 * LTS Migration Fix (Hibernate 6):
+		 * NativeQuery cannot resolve JDBC type for entity params or untyped
+		 * strings. Pass glcode Long ids and bind expendituretype with an
+		 * explicit StandardBasicTypes.STRING.
+		 */
+		final List<Long> glCodeIds = new ArrayList<>();
+		if (glcodeList != null)
+			for (final CChartOfAccounts coa : glcodeList)
+				if (coa != null && coa.getId() != null)
+					glCodeIds.add(coa.getId());
+		if (glCodeIds.isEmpty())
+			return Collections.emptyList();
+
 		final StringBuilder mainquery = new StringBuilder("select bill.id as id, sum (gl.creditAmount)")
 				.append(" from eg_Billregister bill,eg_billregistermis billmis left join ")
 				.append("voucherheader vh on vh.id=billmis.voucherheaderid left join (select sum(paidamount)")
@@ -1106,17 +1129,23 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 				.append(" and gl.voucherHeaderId=billmis.voucherHeaderid and gl.glcodeId not in(:glCodeList) and ")
 				.append("gl.creditAmount>0 and (misc.billvhid is null or (bill.passedamount > misc.paidamount))")
 				.append(" group by bill.id");
-		dedList = getSession().createNativeQuery(mainquery.toString()).setParameterList("glCodeList", glcodeList)
-				.setParameter("expendituretype", expendituretype).list();
+		/*
+		 * Hibernate 6: typed setParameter on an untyped native query is inferred
+		 * as MutationQuery (no list()/getResultList()). Keep it as NativeQuery.
+		 */
+		final NativeQuery query = getSession().createNativeQuery(mainquery.toString());
+		query.setParameter("expendituretype", expendituretype, StandardBasicTypes.STRING);
+		query.setParameterList("glCodeList", glCodeIds, Long.class);
+		final List<Object[]> dedList = query.getResultList();
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Completed getDeductionList.");
 		return dedList;
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<Object[]> getEarlierPaymentAmtList(final String expendituretype) {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Starting getEarlierPaymentAmtList...");
-		List<Object[]> dedList;
 		final StringBuilder mainquery = new StringBuilder(
 				"select bill.id as id,misc.paidamount from eg_Billregister bill,eg_billregistermis billmis left join ")
 						.append("voucherheader vh on vh.id=billmis.voucherheaderid left join (select sum(paidamount) as paidamount,")
@@ -1126,8 +1155,9 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 						.append(" and billmis.billid=bill.id and ")
 						.append("vh.status=0 and bill.expendituretype=:expendituretype")
 						.append(" and (bill.passedamount > misc.paidamount)");
-		dedList = getSession().createNativeQuery(mainquery.toString()).setParameter("expendituretype", expendituretype)
-				.list();
+		final NativeQuery query = getSession().createNativeQuery(mainquery.toString());
+		query.setParameter("expendituretype", expendituretype, StandardBasicTypes.STRING);
+		final List<Object[]> dedList = query.getResultList();
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Completed getEarlierPaymentAmtList.");
 		return dedList;
@@ -1146,10 +1176,9 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
             paidList = getEarlierPaymentAmtList(type);
             if (paidList != null && paidList.size() != 0)
                 for (final Object[] obj : paidList) {
-                    final long id = ((BigInteger) obj[0]).longValue();
+                    final long id = ((Number) obj[0]).longValue();
                     if (billIds.contains(id))
-                        paymentAmtMap.put(((BigInteger) obj[0]).longValue(),
-                                obj[1] == null ? BigDecimal.ZERO : (BigDecimal) obj[1]);
+                        paymentAmtMap.put(id, obj[1] == null ? BigDecimal.ZERO : (BigDecimal) obj[1]);
                 }
         }
         if (LOGGER.isDebugEnabled())
@@ -2121,6 +2150,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                         .addAll(chequeAssignmentService.getContractorSupplierPaymentsForChequeAssignment(parameters));
             else if (billType.equalsIgnoreCase(FinancialConstants.PAYMENTVOUCHER_NAME_DIRECTBANK))
                 chequeAssignmentList.addAll(chequeAssignmentService.getDirectBankPaymentsForChequeAssignment());
+            LOGGER.info("PaymentService.getPaymentVoucherNotInInstrument: billType=" + billType + ", total returned=" + chequeAssignmentList.size());
         } else {
             final StringBuilder sql = new StringBuilder();
             final Map<String, Object> sqlParams = new HashMap<>();
@@ -3202,6 +3232,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
 								.append(" group by vh.id,  vh.voucherNumber,  dept.name ,  vh.voucherDate,misbill.paidto, ")
 								.append(" ba.accountnumber, ba.id , gl.glcodeid,DO.name,do.tan,recovery.remitted ")
 								.append(" order by ba.id,dept.name,vh.voucherNumber ").toString())
+						// LTS Migration Note [Hibernate 6 Native Query & StandardBasicTypes]:
+						// Migrated createSQLQuery() to createNativeQuery() and mapped scalar columns using StandardBasicTypes.
 						.addScalar("voucherid", StandardBasicTypes.LONG).addScalar("voucherNumber")
 						.addScalar("departmentName").addScalar("voucherDate").addScalar("paidTo")
 						.addScalar("paidAmount", StandardBasicTypes.BIG_DECIMAL).addScalar("chequeDate")

@@ -150,8 +150,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
 		finalChequeAssignmentList.addAll(getExpenseBillPayments());
 		finalChequeAssignmentList.addAll(getDirectBankPaymentsForChequeAssignment());
 		finalChequeAssignmentList.addAll(getContractorSupplierPaymentsForChequeAssignment(parameters));
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Completed getPaymentVoucherNotInInstrument.");
+		LOGGER.info("getPaymentVoucherNotInInstrument: total results=" + finalChequeAssignmentList.size());
 		return finalChequeAssignmentList;
 	}
 
@@ -165,8 +164,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
 		getExpenseBillPaymentsWithSurrenderedCheques();
 		if (tempExpenseChequeAssignmentList != null && tempExpenseChequeAssignmentList.size() != 0)
 			prepareChequeList();
-		if (LOGGER.isDebugEnabled())
-			LOGGER.debug("Completed getExpenseBillPayments.");
+		LOGGER.info("getExpenseBillPayments: tempExpense count=" + (tempExpenseChequeAssignmentList == null ? 0 : tempExpenseChequeAssignmentList.size()) + ", finalCBill count=" + (finalCBillChequeAssignmentList == null ? 0 : finalCBillChequeAssignmentList.size()));
 		return finalCBillChequeAssignmentList;
 	}
 
@@ -412,6 +410,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("NOT YET ASSIGNED No cheques - " + strQuery);
 		billChequeAssignmentList = query.list();
+		LOGGER.info("getExpenseBillPaymentsHavingNoCheques: query returned " + (billChequeAssignmentList == null ? 0 : billChequeAssignmentList.size()) + " rows. FilterParams=" + params);
 
 		for (final ChequeAssignment ca : billChequeAssignmentList)
 			billVHIds.add(ca.getBillVHId().longValue());
