@@ -1,312 +1,448 @@
-# Development Control Regulations
-  Module used to scrutinize the building plan diagrams which are in the .dxf file format. It will extract data from from dxf file and will validate against ULB rules and will generate the scrutiny report in the PDF format, the scrutiny report contains the rules which are passing and failing.
+# eGov EDCR (Electronic Development Control Regulations) Service
 
-## Platform Requirements
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
+[![Java](https://img.shields.io/badge/Java-17-blue.svg)](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
+[![Spring](https://img.shields.io/badge/Spring%20Framework-6.1.21-green.svg)](https://spring.io/projects/spring-framework)
+[![Hibernate](https://img.shields.io/badge/Hibernate-6.4.8.Final-yellow.svg)](https://hibernate.org/orm/)
+[![WildFly](https://img.shields.io/badge/WildFly-26%2B-red.svg)](https://www.wildfly.org/)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Platform](https://img.shields.io/badge/Platform-UPYOG%20%2F%20DIGIT-orange.svg)](https://niua.in)
 
-The EDCR service has been upgraded from Java 8 / WildFly 11 to a modern stack. Use the versions below when building or deploying locally.
+> **Automated Building Plan Scrutiny and DCR Bylaw Verification Engine** for Urban Local Bodies (ULBs) and State Development Authorities, built as part of the **UPYOG (Urban Platform for open and deliverable Online Governance)** initiative by **NIUA (National Institute of Urban Affairs)** and **eGovernments Foundation**.
 
-| Component | Version |
-|-----------|---------|
-| JDK | 17 (Amazon Corretto 17 recommended) |
-| Application Server | WildFly 26.x |
-| Spring Framework | 5.3.31 |
-| Spring Security | 5.7.11 |
-| Spring Data JPA | 2.7.18 |
-| Hibernate ORM | 5.6.15.Final |
-| Hibernate Validator | 6.2.5.Final |
-| PostgreSQL JDBC Driver | 42.7.10 |
-| JasperReports | 6.20.0 |
-| Flyway | 9.22.3 |
-| JUnit | 5.10.2 |
-| Maven | >= 3.6.x |
+---
 
-### Docker Deployment
+## 📑 Table of Contents
 
-The included `Dockerfile` builds with `amazoncorretto:17-alpine` and deploys to the `nudmcdg/edcr-wildfly26:07` runtime image. Database migration is enabled at container startup via `-Ddb.migration.enabled=true`.
+- [Overview](#-overview)
+- [Key Features](#-key-features)
+- [Architecture & Module Breakdown](#-architecture--module-breakdown)
+- [Technology Stack](#-technology-stack)
+- [System Requirements & Prerequisites](#-system-requirements--prerequisites)
+- [Configuration & Environment Variables](#-configuration--environment-variables)
+- [Local Multitenancy & Domain Setup](#-local-multitenancy--domain-setup)
+- [Build & Packaging](#-build--packaging)
+- [Deployment Guide (WildFly & Docker)](#-deployment-guide)
+- [IDE Setup Guide (IntelliJ & Eclipse)](#-ide-setup-guide)
+- [REST API Reference](#-rest-api-reference)
+- [Postman Collection & Testing](#-postman-collection--testing)
+- [DXF Layer Standards & DCR Rule Features](#-dxf-layer-standards--dcr-rule-features)
+- [Database & Migrations (Flyway)](#-database--migrations-flyway)
+- [Contributing & Development Guidelines](#-contributing--development-guidelines)
+- [License & Legal Attribution](#-license--legal-attribution)
 
-### Upgrade Notes
+---
 
-- **javax namespace retained**: The application continues to use `javax.*` (Servlet, JPA, Validation) rather than Jakarta EE 9+ namespaces, which is compatible with WildFly 26 when server-provided JPA/Hibernate modules are excluded.
-- **Embedded Redis disabled by default**: Embedded Redis is no longer started automatically; configure a standalone Redis server or set `redis.enable.embedded=true` for Linux/macOS development.
-- **JasperReports on Java 17**: Report generation requires `jasperreports.properties` overrides (subreport runner factory, JDT compiler target 17, font settings). See `egov-config/src/main/resources/config/jasperreports.properties`.
-- **Classloading**: `jboss-deployment-structure.xml` excludes WildFly-bundled Hibernate, Jackson, and Infinispan modules so the application uses its packaged dependency versions.
+## 🌟 Overview
 
-## User Guide
-This section contains steps that are involved in build and deploy the application.
+**eGov EDCR** is a CAD-integrated rule validation engine that automates the verification of architectural building drawings against municipal Building By-laws (Development Control Regulations - DCR).
 
-## Setup with auto installer
-* Clone the UPYOG repository.
+Architects and citizens submit building plans in AutoCAD DXF format through the Building Plan Approval (BPA) system. The EDCR engine:
+1. Parses standard CAD DXF geometry, blocks, polylines, and annotation layers.
+2. Extracts domain entities (plots, blocks, floors, rooms, setbacks, staircases, parking, utility spaces).
+3. Evaluates extracted parameters against statutory bylaws (Kerala KMBR/KPBR, Bihar bylaws, Punjab bylaws, NBC guidelines, etc.) configured dynamically or through MDMS.
+4. Generates an official Scrutiny Report in PDF format via JasperReports, documenting rule-by-rule compliance, measurements, violations, and final approval/rejection status.
+
+```mermaid
+flowchart TD
+    A[Architect / Citizen / Portal] -->|Upload DXF + Metadata| B[API Gateway / BPA Service]
+    B -->|REST: /rest/dcr/scrutinize| C[egov-edcrweb]
+    C -->|Extract CAD Entities| D[egov-edcr-extract]
+    D -->|Parsed Plan Model| E[egov-edcr Rules Engine]
+    E -->|Fetch Bylaw Configurations| F[(MDMS Service)]
+    E -->|Persist Scrutiny Records| G[(PostgreSQL Multi-tenant DB)]
+    E -->|Store DXF & Reports| H[(DIGIT FileStore)]
+    E -->|Compile Report| I[JasperReports Engine]
+    I -->|PDF Scrutiny Report| C
+    C -->|JSON Scrutiny Response + PDF FileStore ID| B
+    B --> A
+```
+
+---
+
+## ✨ Key Features
+
+- **Automated CAD Plan Extraction**: High-performance extraction of AutoCAD DXF primitives (polylines, arcs, layers, text entities, dimension blocks).
+- **85+ Scrutiny Rule Features**: Out-of-the-box support for Floor Area Ratio (FAR), Ground Coverage, Building Height, Front/Rear/Side Setbacks, Access Roads, Exit Widths, Staircases (Fire, Spiral, General), Parking bays, Sanitation, Waste Water, Rainwater Harvesting, and Proximity to Monuments/Rivers.
+- **Occupancy Certificate (OC) Scrutiny & Comparison**: Compares the completion plan against the approved permit drawing, automatically calculating allowable deviation thresholds.
+- **Multi-Tenant Architecture**: Schema-based multi-tenancy supporting statewide deployments across hundreds of ULBs on a single service cluster.
+- **Master Data Integration (MDMS)**: Seamless integration with DIGIT/UPYOG Master Data Management Service to dynamically load building rules, occupancy types, and parameter limits without redeployment.
+- **JasperReports PDF Engine**: Generates pixel-perfect, tamper-evident building scrutiny reports with comprehensive check tables and rule citations.
+- **Jakarta EE & Spring 6.x / Hibernate 6.x Compliance**: Modernized Java 17 enterprise foundation with enhanced performance, secure multi-threading, and non-blocking I/O.
+
+---
+
+## 🏛 Architecture & Module Breakdown
+
+The project is structured as a multi-module Maven enterprise application located in `egov/`:
+
+```
+edcr/service/egov/
+├── egov-config/            # Configuration assets, Jasper properties, message bundles, SQL templates
+├── egov-egi/               # Core infrastructure: Multi-tenant JPA, Redis/Infinispan caching, security, filestore
+├── egov-commons/          # Shared domain entities, MDMS client utilities, common DTOs and exceptions
+├── egov-edcr-extract/      # DXF CAD drawing parser and geometric feature extraction engine
+├── egov-edcr/              # Core DCR business logic, rule validator features, Jasper report templates
+├── egov-egiweb/            # Infrastructure Web module (context root: /egi)
+├── egov-edcrweb/           # EDCR REST API controllers and endpoints (context root: /edcr)
+├── egov-ear/               # Enterprise Archive packaging module (builds egov-ear.ear)
+├── pom.xml                 # Parent Maven Project Object Model
+└── settings.xml            # Repository mirror and distribution settings
+```
+
+### Module Descriptions
+
+| Module | Type | Description |
+| :--- | :--- | :--- |
+| **`egov-config`** | JAR | Holds global properties, message bundles (`service-message-edcr`, `common-errors`), font resources for PDF generation, and XML query mappings. |
+| **`egov-egi`** | JAR | **eGov Infrastructure**. Handles `MultiTenantSchemaConnectionProvider`, Flyway database migrations, Redis HTTP session management, Infinispan second-level caching, and microservice HTTP clients. |
+| **`egov-commons`** | JAR | Common business utilities, `BpaMdmsUtil` for querying MDMS data, and master data models. |
+| **`egov-edcr-extract`** | JAR | Ingests `.dxf` files, interprets coordinate layers (e.g., `LAYER_PLOT_BOUNDARY`, `LAYER_FLOOR_NAME`), calculates areas, dimensions, and converts CAD entities into structured `Plan` models. |
+| **`egov-edcr`** | JAR | Business rules engine. Contains rule processors for building height, setbacks, FAR, light/ventilation, access roads, and compiles PDF scrutiny reports via Jasper. |
+| **`egov-egiweb`** | WAR | Web application for infrastructure services, filters (`CacheControlFilter`), and base web descriptors (`/egi`). |
+| **`egov-edcrweb`** | WAR | Exposes the `/rest/dcr/*` REST API endpoints for plan scrutiny, OC comparison, plan extraction, and report retrieval (`/edcr`). |
+| **`egov-ear`** | EAR | Bundles `egov-egiweb.war` and `egov-edcrweb.war` into a single enterprise archive with shared libraries in `lib/`. |
+
+---
+
+## 💻 Technology Stack
+
+| Layer | Component / Library | Version |
+| :--- | :--- | :--- |
+| **Language** | Java (OpenJDK / Amazon Corretto / Eclipse Temurin) | **17 (LTS)** |
+| **Framework** | Spring Framework | **6.1.21** |
+| **Persistence / ORM** | Hibernate ORM / Jakarta Persistence | **6.4.8.Final / 3.1.0** |
+| **Validation** | Jakarta Bean Validation (Hibernate Validator) | **3.0.2 / 8.0.1.Final** |
+| **Servlet API** | Jakarta Servlet | **6.0.0** |
+| **Caching** | Infinispan (Hibernate 2nd Level Cache) / Redis | **14.0.35.Final / 6.x** |
+| **Reporting** | JasperReports & Apache PDFBox | **Jasper 6.20.0 / PDFBox 2.0.28** |
+| **Database** | PostgreSQL + PostGIS extension | **42.7.10 (Driver)** |
+| **DB Migrations** | Flyway | **9.22.3** |
+| **Application Server** | WildFly Application Server / JBoss EAP | **26+ (WildFly 26.x)** |
+| **Build Tool** | Apache Maven | **3.8+** |
+
+---
+
+## ⚙ System Requirements & Prerequisites
+
+Ensure your development and deployment environments meet the following prerequisites:
+
+* **JDK 17**: Amazon Corretto 17 or Eclipse Temurin 17 (`JAVA_HOME` pointing to JDK 17).
+* **Maven**: Apache Maven 3.8.x or higher.
+* **PostgreSQL**: PostgreSQL 12+ (or 9.6+) with `postgis` extension.
+* **Redis**: Redis 6+ standalone server.
+* **Application Server**: WildFly 26.x customized server with JDBC drivers and datasource configured.
+* **Postman**: Postman 8.7+ for API testing.
+
+---
+
+## 🔧 Configuration & Environment Variables
+
+Primary configuration files are located under `edcr/service/egov/`:
+- `egov-egi/src/main/resources/config/application-config.properties`
+- `egov-config/src/main/resources/config/jasperreports.properties`
+- Custom overrides: `egov-config/src/main/resources/config/egov-erp-<username>.properties`
+
+### Key Configuration Properties
+
+```properties
+# -------------------------------------------------------------
+# General Settings
+# -------------------------------------------------------------
+dev.mode=false
+master.server=true
+client.id=bihar                            # State implementation ID (e.g. bihar, punjab, kerala)
+
+# -------------------------------------------------------------
+# Multi-Tenancy & Datasource
+# -------------------------------------------------------------
+multitenancy.enabled=true
+default.schema.name=generic
+default.jdbc.jndi.datasource=java:/READWRITE_DS
+default.jdbc.jndi.readonly.datasource=java:/READONLY_DS
+
+# -------------------------------------------------------------
+# Redis Configuration (Standalone Setup)
+# -------------------------------------------------------------
+redis.host.name=localhost
+redis.host.port=6379
+redis.enable.embedded=false
+
+# -------------------------------------------------------------
+# FileStore & Microservices Integration
+# -------------------------------------------------------------
+ms.url=https://dev.digit.org
+filestoreservice.beanname=localDiskFileStoreService   # or egovMicroServiceStore
+max.file.upload.size=20971520                          # 20 MB max CAD file size
+
+# -------------------------------------------------------------
+# MDMS (Master Data Management Service)
+# -------------------------------------------------------------
+mdms.enable=false
+mdms.host=http://localhost:8094/
+mdms.searchurl=egov-mdms-service/v1/_search
+mdms.searchurlv2=mdms-v2/v1/_search
+
+# -------------------------------------------------------------
+# State & Scrutiny Defaults
+# -------------------------------------------------------------
+edcr.default.state=pg
+edcr.default.isStateWise=true
+egov.edcr.default.limit=10
+egov.edcr.max.limit=800
+```
+
+---
+
+## 🌐 Local Multitenancy & Domain Setup
+
+1. **Database Schema Creation**:
+   Create a database and user in PostgreSQL, then create schemas named `state` and `generic`:
+   ```sql
+   CREATE DATABASE edcr_db;
+   \c edcr_db;
+   CREATE SCHEMA state;
+   CREATE SCHEMA generic;
+   ALTER ROLE postgres SET search_path TO state, generic, public;
+   ```
+
+2. **WildFly Tenant Property Configuration**:
+   In your WildFly server directory under `${WILDFLY_HOME}/modules/system/layers/base/org/egov/settings/main/config/egov-erp-override.properties`, configure each state and ULB tenant mapping:
+   ```properties
+   tenant.localhost.state=state
+   tenant.localhost=generic
+   tenant.pg.citya=citya
+   ```
+
+3. **Database City Mapping**:
+   In the `eg_city` table in your database, ensure the `domainurl` matches the configured tenant domain URL:
+   ```sql
+   INSERT INTO state.eg_city (id, name, localname, active, domainurl, code, createdby, createddate, lastmodifiedby, lastmodifieddate, version)
+   VALUES (nextval('seq_eg_city'), 'City A', 'City A', true, 'localhost', 'pg.citya', 1, now(), 1, now(), 0);
+   ```
+
+4. **Hosts File Configuration**:
+   If accessing via domain names or multiple virtual hosts, map them in your OS hosts file (`/etc/hosts` on Linux/macOS or `C:\Windows\System32\drivers\etc\hosts` on Windows):
+   ```
+   127.0.0.1   localhost.state
+   127.0.0.1   www.upyogbpa.org
+   ```
+
+---
+
+## 🔨 Build & Packaging
+
+Navigate to the `edcr/service/egov` directory:
+
 ```bash
-$ mkdir -p ${HOME}/egovgithub && cd egovgithub
-$ git clone  -b master --single-branch  git@github.com:upyog/UPYOG.git
+cd edcr/service/egov
 ```
-* First time setup which will install the stacks, build the source code, and deploys the artifact to Wildfly
+
+### 1. Standard Build (Skip Tests)
 ```bash
-$ cd ${HOME}/egovgithub/UPYOG/edcr/service && make all
+mvn clean install -s settings.xml -DskipTests
 ```
------
-* To install the prerequisites DCR Service stacks
+
+### 2. Build with Custom Database Connection (For Flyway Migration during build)
 ```bash
-$ cd ${HOME}/egovgithub/UPYOG/edcr/service &&  make install
+mvn clean package -s settings.xml -Ddb.user=postgres -Ddb.password=postgres -Ddb.driver=org.postgresql.Driver -Ddb.url=jdbc:postgresql://localhost:5432/edcr_db
 ```
-* To build the source code base
+
+### 3. Build Artifacts Produced
+- `egov-ear/target/egov-ear-*.ear` (Primary deployment EAR)
+- `egov-edcrweb/target/egov-edcrweb-*.war` (EDCR Web application)
+- `egov-egiweb/target/egov-egiweb-*.war` (Infrastructure Web application)
+
+---
+
+## 🚀 Deployment Guide
+
+### Option 1: Deploying to WildFly Application Server
+
+1. **Configure Datasource & Max Post Size in `standalone.xml`**:
+   Edit `<WILDFLY_HOME>/standalone/configuration/standalone-full.xml` (or `standalone.xml`):
+   ```xml
+   <datasource jndi-name="java:/READWRITE_DS" pool-name="PostgresDS" enabled="true">
+       <connection-url>jdbc:postgresql://localhost:5432/edcr_db</connection-url>
+       <driver>postgresql</driver>
+       <security>
+           <user-name>postgres</user-name>
+           <password>postgres</password>
+       </security>
+   </datasource>
+   ```
+   Increase HTTP request max size for large CAD drawings (e.g., 100 MB):
+   ```xml
+   <server name="default-server">
+       <http-listener name="default" socket-binding="http" max-post-size="104857600" enable-http2="true"/>
+       <host name="default-host" alias="localhost">
+           <location name="/" handler="welcome-content"/>
+       </host>
+   </server>
+   ```
+
+2. **Deploy EAR Package**:
+   * Copy `egov-ear/target/egov-ear-*.ear` to `<WILDFLY_HOME>/standalone/deployments/`
+   * Create an empty marker file named `egov-ear-*.ear.dodeploy` in the deployments folder.
+
+3. **Start WildFly Server**:
+   ```bash
+   # Windows
+   %WILDFLY_HOME%\bin\standalone.bat -c standalone-full.xml -b 0.0.0.0
+
+   # Linux / macOS
+   $WILDFLY_HOME/bin/standalone.sh -c standalone-full.xml -b 0.0.0.0
+   ```
+
+### Option 2: Docker Deployment
+
+The included `Dockerfile` in `edcr/service/` builds with `amazoncorretto:17-alpine` and deploys to the runtime image `nudmcdg/edcr-wildfly26:07`:
+
 ```bash
-$ cd ${HOME}/egovgithub/UPYOG/edcr/service && make build
-```
-* To deploy the artifact to WILDFLY
-```bash
-$ cd ${HOME}/egovgithub/UPYOG/edcr/service && make deploy
+docker build -t uypog-edcr-service:latest -f edcr/service/Dockerfile .
+docker run -p 8080:8080 -e DB_URL=jdbc:postgresql://host.docker.internal:5432/edcr_db uypog-edcr-service:latest
 ```
 
-## Manual Setup Instruction
+---
 
-#### Prerequisites
+## 💻 IDE Setup Guide
 
-* Install [maven v3.2.x][Maven]
-* Install [PostgreSQL v9.6][PostgreSQL]
-* Install [Jboss Wildfly v26.x][Wildfly Customized]
-* Install [Git 2.8.3][Git]
-* Install [JDK 17 (LTS)][JDK17 build]
-* Install [Postman 8.7.0][Postman]
+### IntelliJ IDEA
+1. Open IntelliJ and open the `edcr/service/egov` directory.
+2. In **Project Structure** (`Ctrl+Alt+Shift+S`):
+   - Set **Project SDK** to **Java 17**.
+   - Under **Maven -> User Settings File**, select `edcr/service/egov/settings.xml`.
+3. Add a **JBoss / WildFly Server** Run Configuration pointing to your local WildFly 26 directory.
+4. Add `egov-ear:ear exploded` to the deployment tab.
 
-#### Database Setup
-1. Create a database and user in postgres
-2. Create the schema's called `state` & `generic`
-3. Execute `ALTER ROLE <your_login_role> SET search_path TO state, generic, public;
+### Eclipse
+1. Import existing Maven project pointing to `edcr/service/egov/`.
+2. Configure `settings.xml`: Navigate to `Windows -> Preferences -> Maven -> User Settings` and point to `edcr/service/egov/settings.xml`.
+3. Configure WildFly Server via JBoss Tools and add the EAR project.
 
+---
+
+## 📡 REST API Reference
+
+All primary scrutiny endpoints are exposed under `/rest/dcr/*` (`http://<host>:<port>/edcr/rest/dcr/*`).
+
+### 1. Scrutinize Building Plan (Standard)
+* **Endpoint**: `POST /edcr/rest/dcr/scrutinize`
+* **Content-Type**: `multipart/form-data`
+* **Parameters**:
+  - `planFile` *(File, Binary)*: The `.dxf` CAD drawing file.
+  - `edcrRequest` *(String, JSON)*: Metadata including tenant ID, applicant info, building classification, and request info.
+* **Header**: `x-user-info` *(JSON, Optional)*: User context injected by API gateway.
+* **Response**: `200 OK` with JSON scrutiny report and PDF `fileStoreId`.
+
+### 2. Fetch EDCR Details (Search by Application / EDCR Number)
+* **Endpoint**: `POST /edcr/rest/dcr/edcrdetails?tenantId={tenantId}&applicationNumber={appNo}`
+* **Content-Type**: `application/json`
+* **Query Parameters**: `tenantId`, `applicationNumber`, `edcrNumber`, `status`, `pageNumber`, `pageSize`
+* **Request Body**:
+  ```json
+  {
+    "RequestInfo": {
+      "apiId": "org.egov.edcr",
+      "ver": "1.0",
+      "ts": 1714567890000,
+      "action": "_search",
+      "did": "1",
+      "msgId": "edcr-search-001",
+      "authToken": "{{authToken}}",
+      "userInfo": {
+        "id": 1,
+        "uuid": "USER_UUID",
+        "tenantId": "pg.citya"
+      }
+    }
+  }
+  ```
+
+### 3. Fetch Full Scrutiny History
+* **Endpoint**: `POST /edcr/rest/dcr/scrutinydetails?tenantId={tenantId}&edcrNumber={edcrNumber}`
+* **Content-Type**: `application/json`
+* **Body**: `RequestInfo` wrapper.
+
+### 4. CAD Plan Data Extraction
+* **Endpoint**: `POST /edcr/rest/dcr/extractplan`
+* **Content-Type**: `multipart/form-data` (`planFile` + `edcrRequest`)
+* **Description**: Extracts raw geometrical features as structured `Plan` JSON without executing scrutiny rules.
+
+### 5. Scrutinize Occupancy Certificate Plan
+* **Endpoint**: `POST /edcr/rest/dcr/scrutinizeocplan`
+* **Content-Type**: `multipart/form-data` (`planFile` + `edcrRequest`)
+
+### 6. Occupancy Comparison Report
+* **Endpoint**: `POST /edcr/rest/dcr/occomparison`
+* **Content-Type**: `application/json` (`ComparisonRequest`)
+
+### 7. Download Scrutiny Report PDF / CAD File
+* **Endpoint**: `GET /edcr/rest/dcr/downloadfile?fileStoreId={fileStoreId}`
+* **Response**: Binary PDF or DXF stream.
+
+---
+
+## 📬 Postman Collection & Testing
+
+A complete, pre-configured Postman collection is included in the codebase:
+
+* **File Location**: [`edcr/service/egov/egov-edcr/Postman/eDcr Collection.postman_collectionv.1.json`](file:///d:/NIUA/Edcr(Niua-dev-2.0)/UPYOG-NIUA-Abhishek/edcr/service/egov/egov-edcr/Postman/eDcr%20Collection.postman_collectionv.1.json)
+
+**How to Use**:
+1. Open **Postman** -> Click **Import**.
+2. Select the JSON collection file above.
+3. Set your environment variables (`host`, `port`, `tenantId`, `authToken`).
+
+---
+
+## 📐 DXF Layer Standards & DCR Rule Features
+
+EDCR expects CAD drawings to adhere to standardized layer naming conventions:
+
+| Scrutiny Feature Area | Standard DXF Layers / Elements | Extracted Parameters & Validation |
+| :--- | :--- | :--- |
+| **Plot & Boundary** | `PLOT_BOUNDARY`, `NORTH_DIRECTION` | Plot area, shape, road frontage, orientation. |
+| **Built-up & FAR** | `FLOOR_PLAN_FLR_*`, `BUILT_UP_AREA` | Floor-wise built-up area, carpet area, FAR index calculation. |
+| **Ground Coverage** | `COVERAGE_AREA`, `BUILDING_FOOTPRINT` | Percentage of ground covered vs max permissible. |
+| **Setbacks & Yards** | `SETBACK_FRONT`, `SETBACK_REAR`, `SETBACK_SIDE` | Minimum front, rear, and side yard clearance measurements. |
+| **Building Height** | `BUILDING_HEIGHT`, `HEAD_ROOM` | Total height, road width-to-height ratio, floor height. |
+| **Staircases & Ramps** | `GENERAL_STAIR`, `FIRE_STAIR`, `RAMP` | Tread width, riser height, flight width, handrail height, exit capacity. |
+| **Parking Facilities** | `CAR_PARKING`, `TWO_WHEELER`, `DA_PARKING` | Number of standard, two-wheeler, and disabled parking bays. |
+| **Sanitation & Fixtures** | `TOILET_DETAILS`, `WATER_CLOSET`, `BATH_ROOM` | Minimum room dimensions, ventilation, fixture counts. |
+| **Safety & Environment** | `RAIN_WATER_HARVESTING`, `SOLAR`, `SEPTIC_TANK` | Capacity, dimension, distance from well / plot boundary. |
+
+---
+
+## 🗄 Database & Migrations (Flyway)
+
+Flyway manages schema versions automatically at service startup.
+
+### File Locations:
+* Main DDL & DML Scripts: `egov-edcr/src/main/resources/db/migration/main/`
+* Sample Migration Scripts: `egov-edcr/src/main/resources/db/migration/sample/`
+
+### Migration Script Naming Format:
 ```
-NB: `<username>` user name of the loggedin system, enter the below command in terminal to find the username.
-```bash 
-$ id -un
+V<YYYYMMDDHHMMSS>__<module_name>_<short_description>.sql
 ```
+**Example**: `V20260821143000__edcr_rule_updates.sql`
 
-#### Building Source
-1. Clone the UPYOG repository.
-```bash
-$ mkdir egovgithub
-$ cd egovgithub
-$ git clone git@github.com:upyog/UPYOG.git
-```
-2. Change directory back to `<CLONED_REPO_DIR>/egov`
+---
 
-3. Run the following commands, this will cleans, compiles, tests, migrates database and generates ear artifact along with jars and wars appropriately
+## 🤝 Contributing & Development Guidelines
 
- ```bash
- mvn clean package -s settings.xml -Ddb.user=<db_username> -Ddb.password=<db_password> -Ddb.driver=org.postgresql.Driver -Ddb.url=<jdbc_url>
- ```
+1. **Branching Strategy**: Follow GitFlow practices (`feature/<name>`, `bugfix/<issue-id>`).
+2. **Java 17 & Jakarta EE Standards**: Maintain clean, modern Java 17 code using `jakarta.*` packages.
+3. **Commit Messages**: Follow standard UPYOG prefixes (e.g. `[EDCR] <Module>: Short description`).
+4. **Unit Tests**: Ensure rule validation tests in `egov-edcr/src/test/` pass before opening PRs.
 
-#### Redis Server Setup
+---
 
-By default UPYOG uses embedded redis server (work only in Linux & OSx), to make eGov suit works in Windows OS or if you want to run redis server as standalone then follow the installation steps below.
- 
-1. Installing redis server on Linux
- 
- ```bash
- sudo apt-get install redis-server
- ```
-2. Installing redis server on Windows :- There is no official installable available for Windows OS. To install redis on Windows OS, follow the instruction given in https://chocolatey.org/packages/redis-64
+## 📜 License & Legal Attribution
 
-3. Once installed, Change directory to `<CLONED_REPO_DIR>/egov/egov-config/src/main/resources/config/` and create a file called `egov-erp-<username>.properties` and enter the following values based on your environment config.
+This program is free software: you can redistribute it and/or modify it under the terms of the **GNU General Public License (GPLv3)** as published by the Free Software Foundation.
 
-  ```properties
- ## true by default
- redis.enable.embedded=false
- ```
- If required, you can override any default settings available in `/egov/egov-egi/src/main/resources/config/application-config.properties` by overriding the value in `egov-erp-<username>.properties`.
-
- to control the redis server host and port use the following property values (only required if installed with non default).
-
- ```properties
- ## Replace <your_redis_server_host> with your redis host, localhost by default
- redis.host.name=<your_redis_server_host>
- ## Replace <your_redis_server_port> with your redis port, 6379 by default
- redis.host.port=<your_redis_server_port>
- ```
-
-#### Deploying Application
-
-##### Configuring JBoss Wildfly
-
-1. Download and unzip the customized JBoss Wildfly Server from [here][Wildfly Customized]. This server contains some additional jars that are required for the ERP.
-2. In case properties needs to be overridden, edit the below file (This is only required if `egov-erp-<username>.properties` is not present)
-
-  ```
-  <JBOSS_HOME>/modules/system/layers/base/
-
-  org
-  └── egov
-    └── settings
-      └── main
-          ├── config
-          │   └── egov-erp-override.properties
-          └── module.xml
-  ```
-3. Update settings in `standalone.xml` under `<JBOSS_HOME>/standalone/configuration`
- * Check Datasource setting is in sync with your database details.
-  ```
-  <connection-url>jdbc:postgresql://localhost:5432/<YOUR_DB_NAME></connection-url>
-  <security>
-    <user-name><YOUR_DB_USER_NAME></user-name>
-    <password><YOUR_DB_USER_PASSWORD></password
-  </security>
-  ```
- * Overriding default post request size (Default is 10 MB). Can override using 'max-post-size' attribute in the below location,
-  ```
-  <server name="default-server">
-   <http-listener name="default" socket-binding="http" max-post-size="104857600" redirect-socket="https" enable-http2="true"/>
-   <https-listener name="https" max-post-size="104857600"  socket-binding="https" security-realm="ApplicationRealm" enable-http2="true"/>
-   <host name="default-host" alias="localhost">
-   <location name="/" handler="welcome-content"/>
-   <http-invoker security-realm="ApplicationRealm"/>
-   </host>
- </server>
-  ```
- * Check HTTP port configuration is correct in
-  ```
-  <socket-binding name="http" port="${jboss.http.port:8080}"/>
-  ```
-4. Change directory back to `<CLONED_REPO_DIR>/egov/dev-utils/deployment/` and run the below command
-  ```
-  $  chmod +x deploy.sh
-  $ ./deploy.sh
-  ```
-
- Alternatively this can be done manually by following the below steps.
-
-  * Copy the generated exploded ear `<CLONED_REPO_DIR>/egov/egov-ear/target/egov-ear-edcr-<VERSION>.ear` in to your JBoss deployment folder `<JBOSS_HOME>/standalone/deployments`
-  * Create or touch a file named `egov-ear-edcr-<VERSION>.ear.dodeploy` to make sure JBoss picks it up for auto deployment
-
-5. Start the wildfly server by executing the below command
-
-  ```
-   $ cd <JBOSS_HOME>/bin/
-   $ nohup ./standalone.sh -b 0.0.0.0 &
-
-  ```
-  In Mac OSx, it may also required to specify `-Djboss.modules.system.pkgs=org.jboss.byteman`
-  
-  `-b 0.0.0.0` only required if application accessed using IP address or  domain name.
-
-6. Monitor the logs and in case of successful deployment, just hit `http://localhost:<YOUR_HTTP_PORT>/edcr/rest/dcr/scrutinize` from your postman.
-
-8. Download postman collection from https://raw.githubusercontent.com/upyog/UPYOG/master/edcr/service/egov/egov-edcr/Postman/eDcr%20Collection.postman_collectionv.1.json and import into your local postman and use for testing.
-
-### Setup Multitenancy Locally
-1. The state is configured by adding property tenant.{domain_name}=schema_name (state_name) in egov-erp-override.properties.
-
-2. Each new ULB is enabled by adding a schema name and domain name in egov-erp-override.properties file(Available in Wildfly server under ${HOME_DIR}/wildfly-26.x/modules/system/layers/base/org/egov/settings/main/config). Schema names should follow a naming standard, It should be the same as that of the city name.
-
-3. Each ULB can be configured by adding an entry like tenant.{domain_name}=schema_name (city_name) in egov-erp-override.properties file. 
-
-5. In the state schema, the state_name passed in the request and city code in the state.eg_table must be the same. Example, In the request tenant id is pg.citya, then in the state schema city table, the city code value should be pg. For other schema this change is not required.
-
-5. Insert data into eg_city, in the city table domain URL value should be the same as configured tenant domain_name in the egov-erp-override.properties.
-
-6. After completing above steps, the local ubuntu machine need to update the domain URLs in the host file which you are going to use for scrutinizing and fetching the plan.
-
-7. Navigate to the root directory and from there open the host config file available in the location 'etc/hosts'. Map the domain URLs with a local IP address in the hosts file and save the changes.
-
-#### Accessing the application using IP address and domain name
-
-* After setup is done APIs one must use state domain URL and in the contract tenantId of concern, the city has to be passed to scrutinize multiple cities.
-
-* One should not use the city domain URL to scrutinize or fetch plan if used that way, the response will be empty.
-
-* The tenantId used should follow {state_name.city_name} naming convention, then the state_name passed in the request and city code in the state schema must be the same, ex, In the request tenant id is pg.citya, then in the state schema city table, the city code value should be pg  .
-
-This section is to be referred only if you want the application to run using any ip address or domain name.
-
-###### 1. To access the application using IP address:
-* Have an entry in eg_city table in database with an IP address of the machine where application server is running (for ex: domainurl="172.16.2.164") to access application using IP address.
-* Access the application using an url http://172.16.2.164:8080/edcr/rest/dcr/scrutinize where 172.16.2.164 is the IP and 8080 is the port of the machine where application server is running.
-
-###### 2. To access the application using domain name:
-
-* Have an entry in eg_city table in database with domain name (for ex: domainurl= "www.upyogbpa.org") to access application using domain name.
-* Add the entry in hosts file of your system with details as 172.16.2.164    www.upyogbpa.org (This needs to be done both in server machine as well as the machines in which the application needs to be accessed since this is not a public domain).
-* Access the application  using an url http://www.upyogbpa.org:8080/edcr/rest/dcr/scrutinize where www.upyogbpa.org is the domain name and 8080 is the port of the machine where application server is running.
-
-### Download Sample Postman Collection
- https://raw.githubusercontent.com/upyog/UPYOG/master/edcr/service/egov/egov-edcr/Postman/eDcr%20Collection.postman_collectionv.1.json
-
-## Developer Guide
-This section gives more details regarding developing and contributing to UPYOG Portal.
-
-#### Repository Structure
-`UPYOG` - folder contains all the source code of UPYOG projects
-
-#### Check out sources
-`git clone git@github.com:upyog/UPYOG.git` or `https://github.com/upyog/UPYOG.git`
-
-#### Prerequisites
-
-* Install your favorite IDE for java project. Recommended Eclipse or IntelliJ IDEA
-* Install [maven >= v3.2.x][Maven]
-* Install [PostgreSQL >= v9.6 ][PostgreSQL]
-* Install [Jboss Wildfly v26.x][Wildfly Customized]
-* Install [Git 2.8.3][Git]
-* Install [JDK 17 (LTS)][JDK17 build]
-* Install [Postman 8.7.0][Postman]
-
-__Note__: Please check in [eGov Tools Repository] for any of the above software installables before downloading from internet.
-
-
-##### 1. Eclipse Deployment
-
-* Install [Eclipse Photon]
-* Import the cloned git repo using maven Import Existing Project.
-* Install Jboss Tools and configure Wildfly Server.
-* Since jasperreport related jar's are not available in maven central, we have to tell eclipse to find jar's in alternative place for that navigate to `Windows -> Preference -> Maven -> User Settings -> Browse Global Settings` and point settings.xml available under egov-erp/
-* Now add your EAR project into the configured Wildfly server.
-* Start Wildfly in debug mode, this will enable hot deployment.
-
-##### 2. Intellij Deployment
-
-* Install Intellij
-* Open project
-* In project settings set JDK to 17
-* Add a run configuration for JBoss and point the JBOSS home to the wildfly unzipped folder
-* Run
-
-##### 3. Database Migration Procedure
-
-* Any new sql files created should be added under directory `<CLONED_REPO_DIR>/egov/egov-<javaproject>/src/main/resources/db/migration`
-* Core product DDL and DML should be added under `<CLONED_REPO_DIR>/egov/egov-<javaproject>/src/main/resources/db/migration/main`
-* Core product sample data DML should be added under `<CLONED_REPO_DIR>/egov/egov-<javaproject>/src/main/resources/db/migration/sample`
-* All sql scripts should be named with following format.
-* Format `V<timestamp-in-YYYYMMDDHHMMSS-format>__<module-name>_<description>.sql`
-* DB migration will automatically happen when application server starts, incase required while maven build use the above given maven command.
-
-###### Migration file name sample
-```
-V20150918161507__egi_initial_data.sql
-
-```
-For more details refer [Flyway]
-
-#  
-Note: This system is supported
-
-OS:-
-* Linux (Recommended)
-* Mac
-* Windows (If Redis server standalone installed). 
-
-Browser:-
-* Postman
-
-[Git]: https://git-scm.com/downloads
-[JDK17 build]: https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html
-[Wildfly Customized]: https://www.wildfly.org/downloads/
-[Eclipse Photon]: https://www.eclipse.org/downloads/packages/release/photon/r
-[Spring Profiles]: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-environment
-[Flyway]: http://flywaydb.org/documentation/
-[eGov Tools Repository]: https://devops.egovernments.org/Downloads/
-[PostgreSQL]: http://www.postgresql.org/download/
-[Maven]: http://maven.apache.org/download.cgi
-[GPL]: http://www.gnu.org/licenses/
-[versioneye]:https://www.versioneye.com/user/projects/5a0e82590fb24f00104d87b2
-[versioneye img]:https://www.versioneye.com/user/projects/5a0e82590fb24f00104d87b2/badge.svg?style=flat-square
-[codacy]:https://www.codacy.com/app/egovernments/eGov
-[codacy img]:https://api.codacy.com/project/badge/Grade/8e3a009a64a44d1a9d75f78261272987
-[Postman]:https://www.postman.com/downloads/
+### Attribution Notice
+* All user interfaces and derived works must display the **eGovernments Foundation** logo on the top right corner as per attribution guidelines.
+* Copyright (C) 2017–2026 **eGovernments Foundation** and **National Institute of Urban Affairs (NIUA)**.

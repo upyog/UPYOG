@@ -50,8 +50,8 @@ package org.egov.infra.admin.master.repository;
 
 import org.egov.infra.admin.master.entity.Role;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Set;
 

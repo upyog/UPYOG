@@ -23,10 +23,8 @@
             <type>war</type>
         </dependency>
         <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>javax.persistence-api</artifactId>
-            <version>2.2</version>
-
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
         </dependency>
 
 		<dependency>
@@ -62,9 +60,8 @@
             <artifactId>egov-edcr-extract</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-            <version>2.0.1.Final</version>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>
@@ -84,13 +81,15 @@
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-envers</artifactId>
     </dependency>
-    <dependency>
-    <groupId>org.hibernate</groupId>
-    <artifactId>hibernate-ehcache</artifactId>
-    <version>5.6.15.Final</version>
-</dependency>
-		<!--Removed ehcache-web as it is based on legacy Ehcache 2.x and javax.servlet APIs.
-        Removing it avoids compatibility and dependency conflicts.-->
+    <!-- hibernate-ehcache removed: discontinued in Hibernate 6.x and replaced by infinispan-hibernate-cache-v62 -->
+    <!-- <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-ehcache</artifactId>
+        <version>5.6.15.Final</version>
+    </dependency> -->
+		<!--Removed ehcache-web as it is based on legacy Ehcache 2.x and javax.servlet APIs,
+        which are incompatible with WildFly 26/Jakarta EE. The dependency is no longer required
+		and removing it avoids compatibility and dependency conflicts.-->
 <!--<dependency>-->
 <!--    <groupId>net.sf.ehcache</groupId>-->
 <!--    <artifactId>ehcache-core</artifactId>-->

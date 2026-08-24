@@ -47,16 +47,13 @@
  */
 package org.egov.edcr.security.oauth2.config;
 
+// TODO: DEAD CODE - NOT USED IN UPYOG
+/*
 import org.egov.edcr.security.oauth2.custom.DefaultCustomTokenEnhancer;
 import org.egov.infra.rest.support.CustomTokenEnhancer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- *
- * @author subhash
- *
- */
 @Configuration
 public class OAuth2ClientConfiguration {
 
@@ -65,3 +62,4 @@ public class OAuth2ClientConfiguration {
         return new DefaultCustomTokenEnhancer();
     }
 }
+*/

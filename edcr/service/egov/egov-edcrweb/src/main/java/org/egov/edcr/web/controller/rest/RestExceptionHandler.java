@@ -47,8 +47,8 @@
 
 package org.egov.edcr.web.controller.rest;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
@@ -76,7 +76,7 @@ public class RestExceptionHandler {
     @GetMapping(value = "/error", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> getHandleError(HttpServletRequest request, HttpServletResponse response) {
-    	String requestAttr = String.valueOf(request.getAttribute("javax.servlet.error.exception"));
+    	String requestAttr = String.valueOf(request.getAttribute("jakarta.servlet.error.exception"));
     	boolean isValid = Jsoup.isValid(requestAttr, Safelist.basic());
     	if (isValid)
     		return new ResponseEntity<>(requestAttr, HttpStatus.BAD_REQUEST);
@@ -87,7 +87,7 @@ public class RestExceptionHandler {
     @PostMapping(value = "/error", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> postHandleError(HttpServletRequest request, HttpServletResponse response) {
-    	String requestAttr = String.valueOf(request.getAttribute("javax.servlet.error.exception"));
+    	String requestAttr = String.valueOf(request.getAttribute("jakarta.servlet.error.exception"));
     	boolean isValid = Jsoup.isValid(requestAttr, Safelist.basic());
     	if (isValid)
     		return new ResponseEntity<>(requestAttr, HttpStatus.BAD_REQUEST);
