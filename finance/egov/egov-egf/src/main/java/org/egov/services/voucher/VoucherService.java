@@ -146,10 +146,11 @@ import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 import com.exilant.exility.common.TaskFailedException;
 
 /**
- * LTS Migration Fix (Hibernate 6 / Spring 6): core financial voucher service.
- * Extends legacy {@link PersistenceService} because voucher queries mix HQL,
- * native SQL, and GL engine calls. Callers must use Hibernate 6 numbered
- * parameters and enum types, not the pre-LTS string IN / {@code concat} style.
+ * LTS Migration Notes:
+ * 1. [Hibernate 6 Criteria Removal] Migrated findVouchersByCriteria() from removed org.hibernate.Criteria
+ *    and Restrictions API to dynamic type-safe HQL queries.
+ * 2. [Transactional Encapsulation] Added cancelVoucherHeaderById() and cancelVoucherHeaderByRefVhId()
+ *    annotated with @Transactional and StandardBasicTypes for Hibernate 6 executeUpdate() compliance.
  */
 @Service
 public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
@@ -1600,5 +1601,33 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
         voucherResponse.setVouchers(returnList);
         return voucherResponse;
     }
+
+	/**
+	 * Hibernate 6 requires an active transaction for {@code executeUpdate()}.
+	 * Same cancel fields/status as CancelVoucherAction historically used.
+	 */
+	@Transactional
+	public int cancelVoucherHeaderById(final Long vhId, final Integer modifiedBy, final Date modifiedDate) {
+		final Query query = getSession().createQuery(
+				"Update CVoucherHeader vh set vh.status=:vhStatus, vh.lastModifiedBy=:modifiedby, vh.lastModifiedDate=:modifiedDate where vh.id=:vhId");
+		query.setParameter("modifiedby", modifiedBy, org.hibernate.type.StandardBasicTypes.INTEGER)
+				.setParameter("modifiedDate", modifiedDate, org.hibernate.type.StandardBasicTypes.TIMESTAMP)
+				.setParameter("vhId", vhId, org.hibernate.type.StandardBasicTypes.LONG)
+				.setParameter("vhStatus", FinancialConstants.CANCELLEDVOUCHERSTATUS,
+						org.hibernate.type.StandardBasicTypes.INTEGER);
+		return query.executeUpdate();
+	}
+
+	@Transactional
+	public int cancelVoucherHeaderByRefVhId(final Long vhId, final Integer modifiedBy, final Date modifiedDate) {
+		final Query query = getSession().createQuery(
+				"Update CVoucherHeader vh set vh.status=:vhStatus, vh.lastModifiedBy=:modifiedby, vh.lastModifiedDate=:modifiedDate where vh.refvhId=:vhId");
+		query.setParameter("vhId", vhId, org.hibernate.type.StandardBasicTypes.LONG)
+				.setParameter("modifiedby", modifiedBy, org.hibernate.type.StandardBasicTypes.INTEGER)
+				.setParameter("modifiedDate", modifiedDate, org.hibernate.type.StandardBasicTypes.DATE)
+				.setParameter("vhStatus", FinancialConstants.CANCELLEDVOUCHERSTATUS,
+						org.hibernate.type.StandardBasicTypes.INTEGER);
+		return query.executeUpdate();
+	}
 
 }

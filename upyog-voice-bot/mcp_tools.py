@@ -20,7 +20,10 @@ from typing import Dict, Any
 from dotenv import load_dotenv
 
 load_dotenv()
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] [%(name)s:%(lineno)d] %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 mcp = FastMCP("UPYOG-Voice-Bot")
@@ -29,17 +32,24 @@ llm = None
 if os.environ.get("GROQ_API_KEY"):
     try:
         from langchain_groq import ChatGroq
-        llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0)
+        llm = ChatGroq(model=os.environ.get("GROQ_MODEL", "openai/gpt-oss-20b"), temperature=0)
     except ImportError:
         pass
 
 
+SENSITIVE_LOG_KEYS = {
+    "authtoken", "auth_token", "password", "access_token", "token",
+    "otp", "authorization", "basic_auth", "secret", "api_key", "jwt",
+    "refreshtoken", "refresh_token", "userpassword"
+}
+
 def sanitize_payload_for_logging(data: Any) -> Any:
-    """Recursively redacts sensitive keys like authToken, password, access_token before logging."""
+    """Recursively redacts sensitive keys like authToken, password, access_token, otp before logging."""
     if isinstance(data, dict):
         sanitized = {}
         for k, v in data.items():
-            if k in ["authToken", "password", "access_token", "token"]:
+            k_lower = str(k).lower().replace("-", "").replace("_", "")
+            if any(sens in k_lower for sens in ["authtoken", "password", "accesstoken", "secret", "apikey", "otp", "jwt"]):
                 sanitized[k] = "[REDACTED]"
             else:
                 sanitized[k] = sanitize_payload_for_logging(v)
@@ -140,13 +150,13 @@ class UpyogAPI:
     def get_request_info(self, phone_anchor: str = None) -> Dict[str, Any]:
         """
         Builds the UPYOG RequestInfo block.
-        - If the user is logged in via the UI → uses their real token/profile.
-        - Otherwise → falls back to the master system user from config.yml.
+        - If phone_anchor is provided -> looks up user_profile_info:{phone_anchor}
+        - If not found or phone_anchor is None -> scans Redis for ANY active authenticated citizen profile
         """
         user_info  = None
         auth_token = None
 
-        if phone_anchor:
+        if phone_anchor and phone_anchor != "default":
             try:
                 from app import get_user_profile_info
                 user_info = get_user_profile_info(phone_anchor)
@@ -154,6 +164,33 @@ class UpyogAPI:
                     auth_token = user_info.get("_auth_token")
             except Exception:
                 pass
+
+        # Fallback 1: check app in-memory profile cache
+        if not user_info or not auth_token:
+            try:
+                from app import _USER_PROFILE_CACHE
+                for p_num, p_info in _USER_PROFILE_CACHE.items():
+                    if isinstance(p_info, dict) and p_info.get("_auth_token"):
+                        user_info = p_info
+                        auth_token = p_info.get("_auth_token")
+                        break
+            except Exception:
+                pass
+
+        # Fallback 2: scan Redis/memory for any authenticated citizen profile
+        if not user_info or not auth_token:
+            try:
+                from database import r_client
+                for k in r_client.scan_iter("user_profile_info:*"):
+                    raw = r_client.get(k)
+                    if raw:
+                        parsed = json.loads(raw.decode('utf-8') if isinstance(raw, bytes) else raw)
+                        if parsed and parsed.get("_auth_token"):
+                            user_info = parsed
+                            auth_token = parsed.get("_auth_token")
+                            break
+            except Exception as e:
+                logger.error(f"[get_request_info] Error scanning active profiles: {e}")
 
         if user_info and auth_token:
             # Logged-in citizen: use their real identity
@@ -222,25 +259,31 @@ class UpyogAPI:
                 payload["RequestInfo"]["authToken"] = self.get_live_token()
                 is_system = True
             except Exception as e:
-                logger.warning(f"Could not fetch live system OAuth token: {e}. Proceeding with payload as is.")
+                logger.warning(f"[UpyogAPI.post] Could not fetch live system OAuth token: {e}. Proceeding with payload as is.")
             
         headers = {"Content-Type": "application/json"}
+        start_t = time.time()
+        logger.info(f"[UpyogAPI.post] POST {url} | systemToken={is_system} | payloadKeys={list(payload.keys())}")
         res = requests.post(url, json=payload, headers=headers)
+        elapsed = time.time() - start_t
+        logger.info(f"[UpyogAPI.post] Response HTTP {res.status_code} from {url} in {elapsed:.2f}s")
+        
         if res.status_code == 401 and is_system:
-            logger.info("Got 401 — refreshing token and retrying...")
+            logger.info("[UpyogAPI.post] Got 401 — refreshing token and retrying...")
             self.auth_token = None
             try:
                 payload["RequestInfo"]["authToken"] = self.get_live_token()
                 res = requests.post(url, json=payload, headers=headers)
+                logger.info(f"[UpyogAPI.post] Retry Response HTTP {res.status_code} from {url}")
             except Exception as e:
-                logger.warning(f"Token refresh failed: {e}")
+                logger.warning(f"[UpyogAPI.post] Token refresh failed: {e}")
             
-        if res.status_code == 400:
+        if res.status_code >= 400:
             try:
                 error_body = res.json()
-                logger.error(f"UPYOG 400 Bad Request details: {json.dumps(error_body, indent=2)}")
+                logger.error(f"[UpyogAPI.post] UPYOG {res.status_code} Error details: {json.dumps(sanitize_payload_for_logging(error_body), indent=2)}")
             except Exception:
-                logger.error(f"UPYOG 400 Bad Request raw text: {res.text}")
+                logger.error(f"[UpyogAPI.post] UPYOG {res.status_code} Error raw text: {res.text[:500]}")
                 
         res.raise_for_status()
         return res.json()
@@ -259,6 +302,7 @@ api_client = UpyogAPI()
 @mcp.tool()
 # Searches UPYOG database for past advertisement bookings using the citizen's mobile number
 def search_ads(mobile_number: str, booking_no: str = None, status: str = None, latest: bool = False) -> str:
+    logger.info(f"[search_ads] Called with mobile_number={mobile_number}, booking_no={booking_no}, status={status}, latest={latest}")
     url = (
         f"{UPYOG_BASE_URL}{_ep.get('search_ads')}"
         f"?tenantId={MDMS_TENANT_ID}"
@@ -275,11 +319,9 @@ def search_ads(mobile_number: str, booking_no: str = None, status: str = None, l
 
     payload = {"RequestInfo": api_client.get_request_info(mobile_number)}
     try:
-        logger.info(f"=====> [search_ads] URL: {url}")
         data = api_client.post(url, payload)
-        logger.info(f"=====> [search_ads] Response: {json.dumps(data)}")
-
         bookings = data.get("bookingApplication", [])
+        logger.info(f"[search_ads] Successfully retrieved {len(bookings)} bookings for {mobile_number}")
         if latest and bookings:
             bookings = [bookings[0]]
 
@@ -307,7 +349,7 @@ def search_ads(mobile_number: str, booking_no: str = None, status: str = None, l
             })
         return json.dumps(optimized)
     except Exception as e:
-        logger.error(f"search_ads error: {e}")
+        logger.error(f"[search_ads] Error fetching bookings: {e}")
         return json.dumps({"error": str(e), "message": "Failed to fetch bookings from UPYOG"})
 
 
@@ -317,6 +359,7 @@ def search_ads(mobile_number: str, booking_no: str = None, status: str = None, l
 @mcp.tool()
 # Fetches dropdown choices like AdType, FaceArea, or Location live from UPYOG MDMS API
 def mdms_get(module_name: str, master_name: str) -> list:
+    logger.info(f"[mdms_get] Requested master={master_name} for module={module_name}")
     # NightLight is a boolean — not in MDMS, return directly
     if master_name == "NightLight":
         return ["Yes", "No"]
@@ -324,6 +367,7 @@ def mdms_get(module_name: str, master_name: str) -> list:
     # Serve from cache if available
     if module_name in _mdms_cache:
         items = _mdms_cache[module_name].get(master_name, [])
+        logger.info(f"[mdms_get] Cache HIT for {module_name}/{master_name} ({len(items)} items)")
         return [(item.get("name") or item.get("code") or "").strip() for item in items if item.get("active", True) and (item.get("name") or item.get("code"))]
 
     state_tenant = MDMS_TENANT_ID.split(".")[0]
@@ -353,9 +397,11 @@ def mdms_get(module_name: str, master_name: str) -> list:
         module_data = data.get("MdmsRes", {}).get(module_name, {})
         _mdms_cache[module_name] = module_data   # cache for subsequent calls
         items = module_data.get(master_name, [])
-        return [(item.get("name") or item.get("code") or "").strip() for item in items if item.get("active", True) and (item.get("name") or item.get("code"))]
+        options = [(item.get("name") or item.get("code") or "").strip() for item in items if item.get("active", True) and (item.get("name") or item.get("code"))]
+        logger.info(f"[mdms_get] Fetched {len(options)} options from MDMS for {module_name}/{master_name}")
+        return options
     except Exception as e:
-        logger.error(f"MDMS error for {module_name}/{master_name}: {e}")
+        logger.error(f"[mdms_get] MDMS error for {module_name}/{master_name}: {e}")
         return []
 
 
@@ -367,6 +413,7 @@ def mdms_get(module_name: str, master_name: str) -> list:
 def slot_search(addType: str, faceArea: str, location: str,
                 start_date: str, end_date: str, nightLight: bool,
                 phone_anchor: str = None) -> str:
+    logger.info(f"[slot_search] Query: addType='{addType}', faceArea='{faceArea}', location='{location}', start='{start_date}', end='{end_date}', nightLight='{nightLight}', phone='{phone_anchor}'")
     url = f"{UPYOG_BASE_URL}{_ep.get('slot_search')}"
     req_info = None
     if phone_anchor:
@@ -393,6 +440,7 @@ def slot_search(addType: str, faceArea: str, location: str,
     try:
         data  = api_client.post(url, payload)
         slots = data.get("advertisementSlotAvailabiltityDetails", [])
+        today_str = datetime.now().strftime("%Y-%m-%d")
         if slots:
             normalized = []
             for i, s in enumerate(slots):
@@ -403,6 +451,11 @@ def slot_search(addType: str, faceArea: str, location: str,
                         d  = (sd + timedelta(days=i)).strftime("%Y-%m-%d")
                     except Exception:
                         d = start_date
+                
+                # Exclude today's slot and past dates
+                if not d or str(d).strip() <= today_str:
+                    continue
+
                 normalized.append({
                     "type":   s.get("addType")       or addType,
                     "area":   s.get("faceArea")       or faceArea,
@@ -410,8 +463,9 @@ def slot_search(addType: str, faceArea: str, location: str,
                     "date":   d,
                     "status": s.get("status") or s.get("bookingStatus") or "AVAILABLE"
                 })
+            logger.info(f"[slot_search] Returned {len(normalized)} normalized available slots (out of {len(slots)} raw)")
             return json.dumps(normalized)
-        logger.warning(f"slot_search: No available slots returned by UPYOG for {addType}/{location}")
+        logger.warning(f"[slot_search] No available slots returned by UPYOG for {addType}/{location}")
         return json.dumps([])
     except Exception as e:
         logger.error(f"slot_search error from UPYOG API: {e}")
@@ -424,9 +478,11 @@ def slot_search(addType: str, faceArea: str, location: str,
 @mcp.tool()
 # Calculates and fetches the estimated bill amount for an advertisement booking
 def fetch_bill(booking_no: str, mobile_number: str = None) -> str:
+    logger.info(f"[fetch_bill] Called for booking_no='{booking_no}', mobile='{mobile_number}'")
     try:
         request_info = api_client.get_request_info(mobile_number)
     except PermissionError as auth_err:
+        logger.warning(f"[fetch_bill] Auth permission error: {auth_err}")
         return f"Authentication required: {auth_err}"
     
     url = (
@@ -441,10 +497,12 @@ def fetch_bill(booking_no: str, mobile_number: str = None) -> str:
         bills = data.get("Bill", [])
         if bills:
             amount = bills[0].get("totalAmount")
+            logger.info(f"[fetch_bill] Successfully fetched bill for {booking_no}: ₹{amount}")
             return f"Total Estimated Amount: ₹{amount}"
+        logger.warning(f"[fetch_bill] No bill records returned for booking {booking_no}")
         return "Could not find a bill for this booking."
     except Exception as e:
-        logger.error(f"fetch_bill error: {e}")
+        logger.error(f"[fetch_bill] Error fetching bill for {booking_no}: {e}")
         return f"Error fetching bill: {e}"
 
 
@@ -631,12 +689,13 @@ Reply with ONLY the valid JSON object (no markdown, no other text)."""
                     error_details = f"{e} - Response: {e.response.text}"
             except Exception:
                 error_details = f"{e} - Response: {e.response.text}"
-        logger.error(f"create_booking error: {error_details}")
+        logger.error(f"[create_booking] Error creating booking: {error_details}")
         return f"Error creating booking: {error_details}"
 
 
 # Uploads a document to UPYOG's filestore and returns its unique file ID
 def upload_to_filestore(file_name: str, file_data_base64: str, token: str) -> str:
+    logger.info(f"[upload_to_filestore] Uploading file '{file_name}' (payload length: {len(file_data_base64) if file_data_base64 else 0} chars)")
     try:
         if "," in file_data_base64:
             header, encoded = file_data_base64.split(",", 1)
@@ -647,17 +706,22 @@ def upload_to_filestore(file_name: str, file_data_base64: str, token: str) -> st
 
         file_bytes = base64.b64decode(encoded)
         url = f"{UPYOG_BASE_URL}{_ep.get('filestore_upload')}"
+        logger.info(f"[upload_to_filestore] Sending {len(file_bytes)} bytes ({mime_type}) to {url}")
         resp = requests.post(
             url,
             headers={"auth-token": token},
             files={"file": (file_name, io.BytesIO(file_bytes), mime_type)},
             data={"tenantId": _fs.get("tenant", "pg"), "module": _fs.get("module")}
         )
+        logger.info(f"[upload_to_filestore] HTTP {resp.status_code} received")
         resp_json = resp.json()
         if "files" in resp_json and resp_json["files"]:
-            return resp_json["files"][0].get("fileStoreId", "")
+            file_store_id = resp_json["files"][0].get("fileStoreId", "")
+            logger.info(f"[upload_to_filestore] Successfully uploaded! fileStoreId: {file_store_id}")
+            return file_store_id
+        logger.warning(f"[upload_to_filestore] No fileStoreId returned in response: {resp_json}")
     except Exception as e:
-        logger.error(f"Filestore upload error: {e}")
+        logger.error(f"[upload_to_filestore] Filestore upload exception: {e}")
     return ""
 
 

@@ -55,6 +55,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBillregister;
 import org.hibernate.query.Query;
 import org.hibernate.Session;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -65,6 +66,14 @@ import jakarta.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * LTS Migration Notes:
+ * 1. [Jakarta EE Persistence] Migrated PersistenceContext and EntityManager from javax.persistence to jakarta.persistence.
+ * 2. [Hibernate 6 Criteria Removal] Replaced removed session.createCriteria() with session.createQuery("from EgBillregister", EgBillregister.class).
+ * 3. [Hibernate 6 Query API] Replaced deprecated qry.setLong() with qry.setParameter().
+ * 4. [Service Encapsulation] Added updateBillStatus() and cancelBillRegister() with StandardBasicTypes to encapsulate
+ *    bill status modifications in transactional DAO methods.
+ */
 @SuppressWarnings("unchecked")
 @Transactional(readOnly = true)
 @Repository
@@ -84,6 +93,30 @@ public class EgBillRegisterHibernateDAO {
     @Transactional
     public void delete(EgBillregister entity) {
         getCurrentSession().delete(entity);
+    }
+
+    @Transactional
+    public int updateBillStatus(final List<Long> ids, final Long statusId, final String billStatus) {
+        final Query query = getCurrentSession().createNativeQuery(
+                "Update eg_billregister set billstatus=:billStatus, statusid=:statusId where id in (:ids)");
+        query.setParameter("statusId", statusId, StandardBasicTypes.LONG);
+        query.setParameter("billStatus", billStatus);
+        query.setParameter("ids", ids);
+        return query.executeUpdate();
+    }
+
+    @Transactional
+    public int cancelBillRegister(final Long billId, final String billStatus, final String moduleType,
+            final String description) {
+        final Query billQry = getCurrentSession().createNativeQuery(
+                "Update eg_billregister set billstatus=:billstatus, statusid ="
+                        + "(select stat.id from egw_status stat where stat.moduletype=:module and stat.description=:description)"
+                        + " where id=:billId");
+        billQry.setParameter("module", moduleType, StandardBasicTypes.STRING)
+                .setParameter("description", description, StandardBasicTypes.STRING)
+                .setParameter("billstatus", billStatus, StandardBasicTypes.STRING)
+                .setParameter("billId", billId, StandardBasicTypes.LONG);
+        return billQry.executeUpdate();
     }
 
     

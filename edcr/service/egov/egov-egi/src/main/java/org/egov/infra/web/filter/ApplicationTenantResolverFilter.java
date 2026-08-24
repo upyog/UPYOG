@@ -61,15 +61,15 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Resource;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.annotation.Resource;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -85,36 +85,91 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Resolves the tenant (ULB schema) from the incoming HTTP request domain or tenant header.
+ * Servlet {@link Filter} responsible for dynamic tenant identification and
+ * multi-tenant context resolution.
+ * <p>
+ * This filter inspects incoming HTTP requests, determines the target urban
+ * local body (ULB) / city tenant
+ * based on domain names, URL paths, query parameters, JSON request payloads, or
+ * multipart form fields, and initializes
+ * the thread-local execution context via {@link ApplicationThreadLocals}.
+ * </p>
  *
- * <p>City service lookups use the {@link org.egov.infra.admin.master.service.ICityService}
- * interface for proxy-safe dependency injection in servlet filters.</p>
+ * <p>
+ * <b>Key Responsibilities:</b>
+ * </p>
+ * <ul>
+ * <li>Wraps incoming HTTP requests in {@link MultiReadRequestWrapper} for
+ * reusable request body consumption</li>
+ * <li>Extracts domain URL and host name to set schema and domain properties in
+ * {@link ApplicationThreadLocals}</li>
+ * <li>Resolves tenant identifiers for REST and OAuth2 endpoints across
+ * single-tenant and state-level URLs</li>
+ * <li>Safely extracts {@code tenantId} from {@code multipart/form-data}
+ * requests (e.g. DXF uploads) via {@code getPart("edcrRequest")}
+ * without consuming the raw file stream before DispatcherServlet</li>
+ * <li>Validates the resolved tenant against configured tenant mappings, setting
+ * the appropriate city context</li>
+ * </ul>
+ *
+ * @author eGovernments Foundation
+ * @see MultiReadRequestWrapper
+ * @see ApplicationThreadLocals
  */
 public class ApplicationTenantResolverFilter implements Filter {
 
+    /**
+     * Environment settings provider for resolving tenant schema configurations.
+     */
     @Autowired
     private EnvironmentSettings environmentSettings;
 
+    /**
+     * List of configured city codes injected from Spring context.
+     */
     @Resource(name = "cities")
     private transient List<String> cities;
 
+    /**
+     * Map of configured tenant names to their base URLs or codes.
+     */
     public static Map<String, String> tenants = new HashMap<>();
 
+    /**
+     * State-level base URL identifier.
+     */
     public static String stateUrl;
 
+    /**
+     * Utility service for querying tenant configurations and URL mappings.
+     */
     @Autowired
     private TenantUtils tenantUtils;
 
+    /**
+     * City master service for retrieving city and state metadata.
+     */
     @Autowired
     private ICityService cityService;
 
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationTenantResolverFilter.class);
 
+    /**
+     * Intercepts the servlet request, resolves the tenant context into
+     * {@link ApplicationThreadLocals},
+     * and continues the filter chain with the wrapped request.
+     *
+     * @param request  the incoming {@link ServletRequest}
+     * @param response the outgoing {@link ServletResponse}
+     * @param chain    the filter execution chain
+     * @throws IOException      if an I/O error occurs during filtering
+     * @throws ServletException if a servlet error occurs during filtering
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
-        MultiReadRequestWrapper customRequest = new MultiReadRequestWrapper(req); 
+        MultiReadRequestWrapper customRequest = new MultiReadRequestWrapper(req);
         HttpSession session = customRequest.getSession();
         LOG.info("Request URL-->" + customRequest.getRequestURL());
         LOG.info("Request URI-->" + customRequest.getRequestURI());
@@ -128,23 +183,48 @@ public class ApplicationTenantResolverFilter implements Filter {
         chain.doFilter(customRequest, response);
     }
 
+    /**
+     * Initializes the filter.
+     *
+     * @param filterConfig the filter configuration object
+     * @throws ServletException if initialization fails
+     */
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
         // Nothing to be initialized
     }
 
+    /**
+     * Destroys the filter and releases any allocated resources.
+     */
     @Override
     public void destroy() {
         // Nothing to be cleaned up
     }
 
+    /**
+     * Resolves the tenant context for REST and OAuth API requests.
+     * <p>
+     * For state-level URL requests targeting {@code /edcr/rest/} or
+     * {@code /edcr/oauth/}, this method extracts
+     * the tenant identifier from multipart form parts (if multipart) or request
+     * body / query parameters,
+     * validates it against registered tenants, and sets
+     * {@link ApplicationThreadLocals#setTenantID(String)}.
+     *
+     * @param customRequest the wrapped HTTP request
+     * @param session       the current HTTP session
+     * @throws ApplicationRestException if the tenant identifier is missing or
+     *                                  invalid
+     */
     private void prepareRestService(MultiReadRequestWrapper customRequest, HttpSession session) {
         if (tenants == null || tenants.isEmpty()) {
             tenants = tenantUtils.tenantsMap();
         }
 
         // restricted only the state URL to access the rest API
-        // LOG.info("***********Enter to set tenant id and custom header**************" + req.getRequestURL().toString());
+        // LOG.info("***********Enter to set tenant id and custom header**************"
+        // + req.getRequestURL().toString());
         String requestURL = new StringBuilder().append(ApplicationThreadLocals.getDomainURL())
                 .append(customRequest.getRequestURI()).toString();
         if (requestURL.contains(tenants.get("state"))
@@ -157,14 +237,17 @@ public class ApplicationTenantResolverFilter implements Filter {
             LOG.info("Inside method to set tenant id and custom header");
             String tenantFromBody = StringUtils.EMPTY;
             tenantFromBody = setCustomHeader(requestURL, tenantFromBody, customRequest);
+
             LOG.info("Tenant from Body***" + tenantFromBody);
-            String fullTenant = customRequest.getParameter("tenantId");
+            String fullTenant = customRequest.isMultipart() ? tenantFromBody
+                    : customRequest.getParameter("tenantId");
             LOG.info("fullTenant***" + fullTenant);
             if (StringUtils.isBlank(fullTenant)) {
                 fullTenant = tenantFromBody;
             }
             if (StringUtils.isBlank(fullTenant)) {
-                throw new ApplicationRestException("incorrect_request", "RestUrl does not contain tenantId: " + fullTenant);
+                throw new ApplicationRestException("incorrect_request",
+                        "RestUrl does not contain tenantId: " + fullTenant);
             }
             String tenant = fullTenant.substring(fullTenant.lastIndexOf('.') + 1, fullTenant.length());
             LOG.info("tenant***" + tenant);
@@ -198,73 +281,66 @@ public class ApplicationTenantResolverFilter implements Filter {
         }
     }
 
-    /*
-     * public Map<String, String> tenantsMap() { URL url; LOG.info("cities" + applicationConfiguration.cities()); try { url = new
-     * URL(ApplicationThreadLocals.getDomainURL()); // first get from override properties
-     * environment.getPropertySources().iterator().forEachRemaining(propertySource -> { LOG.info( "Property Source" +
-     * propertySource.getName() + " Class Name" + propertySource.getClass().getSimpleName()); if
-     * (propertySource.getName().contains("egov-erp-override.properties") && propertySource instanceof MapPropertySource) {
-     * ((MapPropertySource) propertySource).getSource().forEach((key, value) -> { if (key.startsWith(TENANT)) {
-     * tenants.put(value.toString(), url.getProtocol() + "://" + key.replace(TENANT, "")); LOG.info("*****override tenants******"
-     * + value.toString() + url.getProtocol() + "://" + key.replace(TENANT, "")); } }); } }); // second get from application
-     * config only properties if it is not overriden environment.getPropertySources().iterator().forEachRemaining(propertySource
-     * -> { LOG.info( "Property Source" + propertySource.getName() + " Class Name" + propertySource.getClass().getSimpleName());
-     * if (propertySource.getName().contains("application-config.properties") && propertySource instanceof MapPropertySource) {
-     * ((MapPropertySource) propertySource).getSource().forEach((key, value) -> { if (key.startsWith(TENANT) &&
-     * !tenants.containsKey(value)) { tenants.put(value.toString(), url.getProtocol() + "://" + key.replace(TENANT, ""));
-     * LOG.info( "*****application config tenants******" + value.toString() + url.getProtocol() + "://" + key.replace(TENANT,
-     * "")); } }); } }); } catch (MalformedURLException e) { LOG.error("Error occurred, while forming URL", e); } return tenants;
-     * }
+    /**
+     * Extracts the {@code tenantId} from the request body or multipart form fields.
+     * <p>
+     * - For multipart requests (e.g. file scrutiny uploads), reads ONLY the
+     * {@code edcrRequest}
+     * form field to preserve the raw binary DXF/PDF stream without buffering heavy
+     * CAD files in RAM.
+     * - For standard REST requests, reads the cached JSON payload.
+     *
+     * @param requestURL    the full request URL
+     * @param tenantAtBody  the existing tenant string buffer
+     * @param customRequest the cached request wrapper
+     * @return the extracted tenant identifier from the request body, or unchanged
+     *         if not found
      */
-
     private String setCustomHeader(String requestURL, String tenantAtBody,
-            MultiReadRequestWrapper multiReadRequestWrapper) {
+            MultiReadRequestWrapper customRequest) {
 
         if (requestURL.contains("/rest/")) {
             LOG.info("***********Inside method to fetch auth token and tenant from reqbody**************");
             try {
                 StringWriter writer = new StringWriter();
-                IOUtils.copy(multiReadRequestWrapper.getInputStream(), writer, StandardCharsets.UTF_8);
-                String reqBody = String.valueOf(writer);
-                if (StringUtils.isNoneBlank(reqBody)) {
-                    Pattern p = Pattern.compile("\\{.*?\\}");
-                    Matcher m = p.matcher(reqBody);
-                    while (m.find()) {
-                        CharSequence charSequence = m.group().subSequence(1, m.group().length() - 1);
-                        String[] reqBodyParams = String.valueOf(charSequence).split(",");
-                        if (LOG.isDebugEnabled())
-                            LOG.debug("***********Request Body Params**************" + String.valueOf(charSequence));
-                        for (String param : reqBodyParams) {
-                            if (LOG.isDebugEnabled())
-                                LOG.debug("*************************" + param);
-                            if (param.contains("userInfo") && StringUtils.isNotBlank(tenantAtBody))
-                                break;
 
-                            if (param.contains("tenantId")) {
-                                String[] tenant = param.split(":");
-                                if (tenant[1].startsWith("\"") && tenant[1].endsWith("\""))
-                                    tenantAtBody = tenant[1].substring(1, tenant[1].length() - 1);
-                                else
-                                    tenantAtBody = tenant[1];
-                                if (LOG.isDebugEnabled())
-                                    LOG.debug("############Tenant From Body######" + tenantAtBody);
-                            } /*
-                               * else if (param.contains("authToken")) { String[] authTokenVal = param.split(":"); // Next to
-                               * 'bearer' word space is required to differentiate token type and access token String tokenType =
-                               * "bearer "; if (authTokenVal[1].startsWith("\"") && authTokenVal[1].endsWith("\"")) { String
-                               * authToken = authTokenVal[1].substring(1, authTokenVal[1].length() - 1);
-                               * LOG.info("############Auth Token######" + tokenType + authToken);
-                               * multiReadRequestWrapper.putHeader("Authorization", tokenType + authToken); } else {
-                               * multiReadRequestWrapper.putHeader("Authorization", tokenType + authTokenVal[1]); } }
-                               */
-                        }
+                if (customRequest.isMultipart()) {
+                    // Multipart/form-data: the edcrRequest JSON is a named form field.
+                    jakarta.servlet.http.Part edcrPart = customRequest.getPart("edcrRequest");
+                    if (edcrPart != null) {
+                        IOUtils.copy(edcrPart.getInputStream(), writer, StandardCharsets.UTF_8);
+                    } else {
+                        LOG.warn(
+                                "edcrRequest part not found in multipart request; tenant cannot be extracted at filter time.");
                     }
+                } else {
+                    // Non-multipart: read from the cached JSON input stream.
+                    IOUtils.copy(customRequest.getInputStream(), writer, StandardCharsets.UTF_8);
                 }
 
-            } catch (IOException e) {
-                LOG.error("Error occurred, while parsing request body into json", e);
-            }
+                String jsonContent = writer.toString();
 
+                // Null/blank check after parsing jsonContent
+                if (StringUtils.isNotBlank(jsonContent)) {
+                    Pattern p = Pattern.compile("\"tenantId\"\\s*:\\s*\"([^\"]+)\"");
+                    Matcher m = p.matcher(jsonContent);
+                    if (m.find()) {
+                        String extractedTenant = m.group(1);
+                        if (StringUtils.isNotBlank(extractedTenant)) {
+                            tenantAtBody = extractedTenant.trim();
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("############Tenant From Body######" + tenantAtBody);
+                            }
+                        }
+                    } else {
+                        LOG.warn("tenantId was not found in the parsed edcrRequest / request payload.");
+                    }
+                } else {
+                    LOG.warn("edcrRequest / request payload is empty or null; cannot extract tenantId.");
+                }
+            } catch (Exception e) {
+                LOG.error("Error occurred, while parsing request body for tenantId", e);
+            }
         }
         return tenantAtBody;
     }

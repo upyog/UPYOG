@@ -27,10 +27,19 @@ public class AccountCodeTemplateController {
     @Autowired
     private AccountCodeTemplateService accCodeTempSer;
 
+    /**
+     * What was the issue? Selecting Bill Subtype on Expense Bill called this with
+     * detailTypeName="" (Sub Ledger Type often still empty); Spring 6 converts blank
+     * required @RequestParam Strings to null and throws MissingServletRequestParameterException.
+     * Why do we need this change? Templates must load from bill subtype alone before a
+     * sub-ledger type is chosen; the service already treats a null detail type as "no subledger".
+     * How we solved this? Mark detailTypeName (and billSubType) optional so blank/null is allowed.
+     */
     @GetMapping(value = "/list")
     public ResponseEntity<List<AccountCodeTemplate>> getTemplateList(@RequestParam("module") @SanitizeHtml String module,
-            @RequestParam("billSubType") @SanitizeHtml String billSubType, @RequestParam("detailTypeName") @SanitizeHtml String detailTypeName,
-            @RequestParam("detailTypeId") int detailTypeId) {
+            @RequestParam(value = "billSubType", required = false) @SanitizeHtml String billSubType,
+            @RequestParam(value = "detailTypeName", required = false) @SanitizeHtml String detailTypeName,
+            @RequestParam(value = "detailTypeId", required = false, defaultValue = "0") int detailTypeId) {
         List<AccountCodeTemplate> list = accCodeTempSer.getAccountTemplate(module, billSubType, detailTypeName,
                 detailTypeId);
         return new ResponseEntity<>(list, HttpStatus.OK);

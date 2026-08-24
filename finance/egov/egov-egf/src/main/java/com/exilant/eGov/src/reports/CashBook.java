@@ -843,7 +843,7 @@ public class CashBook {
         final StringBuilder query = new StringBuilder("select glcode from chartofaccounts ")
         		.append("where glcode like ?|| '%' and classification = 4 order by glcode asc");
         pstmt = persistenceService.getSession().createNativeQuery(query.toString());
-        pstmt.setParameter(0, minGlCode);
+        pstmt.setParameter(1, minGlCode);
         final List<Object[]> rset = pstmt.list();
         for (final Object[] element : rset)
             minCode = element[0].toString();
@@ -855,7 +855,7 @@ public class CashBook {
         final StringBuilder query = new StringBuilder("  select glcode from chartofaccounts ")
         		.append("where glcode like ?|| '%' and classification = 4 order by glcode desc");
         pstmt = persistenceService.getSession().createNativeQuery(query.toString());
-        pstmt.setParameter(0, maxGlCode);
+        pstmt.setParameter(1, maxGlCode);
         final List<Object[]> rset = pstmt.list();
         for (final Object[] element : rset)
             maxCode = element[0].toString();
@@ -871,7 +871,7 @@ public class CashBook {
                 final String queryCgn = "select CGN from VOUCHERHEADER where id=?";
                 pstmt = persistenceService.getSession().createNativeQuery(
                         queryCgn);
-                pstmt.setParameter(0, id);
+                pstmt.setParameter(1, id);
                 rsCgn = pstmt.list();
                 for (final Object[] element : rsCgn)
                     cgn = element[0].toString();
@@ -924,14 +924,14 @@ public class CashBook {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(query);
             pstmt = persistenceService.getSession().createNativeQuery(query.toString());
-            pstmt.setParameter(0, bId);
+            pstmt.setParameter(1, bId);
             rs = pstmt.list();
             for (final Object[] element : rs)
                 glcode[0] = element[0].toString();
             final StringBuilder str = new StringBuilder("select glcode from chartofaccounts ")
             		.append("where id in (select chequeinHand from codemapping where eg_boundaryid=?)");
             pstmt = persistenceService.getSession().createNativeQuery(str.toString());
-            pstmt.setParameter(0, bId);
+            pstmt.setParameter(1, bId);
             rs = pstmt.list();
             for (final Object[] element : rs)
                 glcode[1] = element[0].toString();
