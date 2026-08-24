@@ -57,6 +57,61 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
     t,
   });
 
+  /*
+   * Inline styles are kept here so the owner section remains
+   * exactly aligned with the reference UI without changing
+   * any form functionality.
+   */
+  const ownerFieldStyle = {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    width: "100%",
+    margin: "18px 0 16px 0",
+    padding: 0,
+    boxSizing: "border-box",
+  };
+
+  const ownerLabelStyle = {
+    display: "block",
+    width: "100%",
+    margin: "0 0 6px 0",
+    padding: 0,
+    textAlign: "left",
+    fontSize: "10px",
+    fontWeight: 700,
+    lineHeight: "14px",
+    boxSizing: "border-box",
+  };
+
+  const ownerFieldContainerStyle = {
+    width: "300px",
+    minWidth: "300px",
+    maxWidth: "300px",
+    margin: 0,
+    padding: 0,
+    boxSizing: "border-box",
+  };
+
+  const ownerInputStyle = {
+    width: "300px",
+    minWidth: "300px",
+    maxWidth: "300px",
+    height: "26px",
+    minHeight: "26px",
+    padding: "3px 8px",
+    fontSize: "12px",
+    lineHeight: "18px",
+    boxSizing: "border-box",
+  };
+
+  const ownerTableStyle = {
+    width: "372px",
+    minWidth: "372px",
+    maxWidth: "372px",
+  };
+
   const applicationFeeColumns = [
     {
       Header: t("TL_COMMON_TABLE_COL_OWN_NAME"),
@@ -788,7 +843,7 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
             <div className="ndc-owner-selection">
               <p className="ndc-owner-help">{t("NDC_OWNER_ACCESS_MESSAGE")}</p>
 
-              <div className="ndc-owner-table">
+              <div className="ndc-owner-table" style={ownerTableStyle}>
                 <Table
                   className="customTable table-border-style"
                   t={t}
@@ -804,13 +859,14 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
 
             {selectedRow && (
               <div>
-                <LabelFieldPair className="ndc-owner-field ndc-owner-field-first">
-                  <CardLabel className="card-label-smaller ndc_card_labels">
+                {/* FULL NAME */}
+                <LabelFieldPair className="ndc-owner-field ndc-owner-field-first" style={ownerFieldStyle}>
+                  <CardLabel className="card-label-smaller ndc_card_labels" style={ownerLabelStyle}>
                     {t("NDC_FULL_NAME")}
                     <span className="ndc-required-star"> *</span>
                   </CardLabel>
 
-                  <div className="form-field ndc-field-container">
+                  <div className="form-field ndc-field-container" style={ownerFieldContainerStyle}>
                     <Controller
                       control={control}
                       name="firstName"
@@ -843,19 +899,21 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
                           onBlur={field.onBlur}
                           disabled={!!cpt?.details?.owners?.[0]?.name}
                           className="ndc-input"
+                          style={ownerInputStyle}
                         />
                       )}
                     />
                   </div>
                 </LabelFieldPair>
 
-                <LabelFieldPair className="ndc-owner-field">
-                  <CardLabel className="card-label-smaller ndc_card_labels">
+                {/* EMAIL */}
+                <LabelFieldPair className="ndc-owner-field" style={ownerFieldStyle}>
+                  <CardLabel className="card-label-smaller ndc_card_labels" style={ownerLabelStyle}>
                     {t("NDC_EMAIL")}
                     <span className="ndc-required-star"> *</span>
                   </CardLabel>
 
-                  <div className="form-field ndc-field-container">
+                  <div className="form-field ndc-field-container" style={ownerFieldContainerStyle}>
                     <Controller
                       control={control}
                       name="email"
@@ -887,19 +945,21 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
                           }}
                           onBlur={field.onBlur}
                           className="ndc-input"
+                          style={ownerInputStyle}
                         />
                       )}
                     />
                   </div>
                 </LabelFieldPair>
 
-                <LabelFieldPair className="ndc-owner-field">
-                  <CardLabel className="card-label-smaller ndc_card_labels">
+                {/* MOBILE NUMBER */}
+                <LabelFieldPair className="ndc-owner-field" style={ownerFieldStyle}>
+                  <CardLabel className="card-label-smaller ndc_card_labels" style={ownerLabelStyle}>
                     {t("NDC_MOBILE_NUMBER")}
                     <span className="ndc-required-star"> *</span>
                   </CardLabel>
 
-                  <div className="form-field ndc-field-container">
+                  <div className="form-field ndc-field-container" style={ownerFieldContainerStyle}>
                     <Controller
                       control={control}
                       name="mobileNumber"
@@ -934,19 +994,21 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
                           onBlur={field.onBlur}
                           disabled={!!cpt?.details?.owners?.[0]?.mobileNumber}
                           className="ndc-input"
+                          style={ownerInputStyle}
                         />
                       )}
                     />
                   </div>
                 </LabelFieldPair>
 
-                <LabelFieldPair className="ndc-owner-field">
-                  <CardLabel className="card-label-smaller ndc_card_labels">
+                {/* ADDRESS */}
+                <LabelFieldPair className="ndc-owner-field" style={ownerFieldStyle}>
+                  <CardLabel className="card-label-smaller ndc_card_labels" style={ownerLabelStyle}>
                     {t("NDC_ADDRESS")}
                     <span className="ndc-required-star"> *</span>
                   </CardLabel>
 
-                  <div className="form-field ndc-field-container">
+                  <div className="form-field ndc-field-container" style={ownerFieldContainerStyle}>
                     <Controller
                       control={control}
                       name="address"
@@ -973,6 +1035,7 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
                           onBlur={field.onBlur}
                           disabled={!!cpt?.details?.owners?.[0]?.permanentAddress}
                           className="ndc-input"
+                          style={ownerInputStyle}
                         />
                       )}
                     />
@@ -983,10 +1046,13 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
           </div>
         )}
 
-        <LabelFieldPair className="ndc-owner-field ndc-owner-field-remarks">
-          <CardLabel className="card-label-smaller ndc_card_labels">{t("Remarks")}</CardLabel>
+        {/* REMARKS */}
+        <LabelFieldPair className="ndc-owner-field ndc-owner-field-remarks" style={ownerFieldStyle}>
+          <CardLabel className="card-label-smaller ndc_card_labels" style={ownerLabelStyle}>
+            {t("Remarks")}
+          </CardLabel>
 
-          <div className="form-field ndc-field-container">
+          <div className="form-field ndc-field-container" style={ownerFieldContainerStyle}>
             <Controller
               control={control}
               name="remarks"
@@ -1009,16 +1075,20 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
                   }}
                   onBlur={field.onBlur}
                   className="ndc-input"
+                  style={ownerInputStyle}
                 />
               )}
             />
           </div>
         </LabelFieldPair>
 
-        <LabelFieldPair className="ndc-owner-field">
-          <CardLabel className="card-label-smaller ndc_card_labels">{t("NDC_TL_NUMBER")}</CardLabel>
+        {/* TRADE LICENSE NUMBER */}
+        <LabelFieldPair className="ndc-owner-field" style={ownerFieldStyle}>
+          <CardLabel className="card-label-smaller ndc_card_labels" style={ownerLabelStyle}>
+            {t("NDC_TL_NUMBER")}
+          </CardLabel>
 
-          <div className="form-field ndc-field-container">
+          <div className="form-field ndc-field-container" style={ownerFieldContainerStyle}>
             <Controller
               control={control}
               name="tlNumber"
@@ -1038,6 +1108,7 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
                   }}
                   onBlur={field.onBlur}
                   className="ndc-input"
+                  style={ownerInputStyle}
                 />
               )}
             />
