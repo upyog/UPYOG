@@ -510,8 +510,13 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
 		// the account code those are detail codes.
 		final List<String> repeatedglCodes = VoucherHelper.getRepeatedGlcodes(billDetailslist);
 		for (final VoucherDetails voucherDetails : billDetailslist) {
+			/*
+			 * Hibernate 6: glCodeId is a CChartOfAccounts association. Comparing
+			 * it to a Long subquery (select id ...) throws SemanticException.
+			 * Match on the association's glcode instead.
+			 */
 			final CChartOfAccountDetail chartOfAccountDetail = (CChartOfAccountDetail) getPersistenceService().find(
-					" from CChartOfAccountDetail where glCodeId=(select id from CChartOfAccounts where glcode=?)",
+					" from CChartOfAccountDetail where glCodeId.glcode=?",
 					voucherDetails.getGlcodeDetail());
 			if (null != chartOfAccountDetail) {
 				accountDetailMap = new HashMap<>();

@@ -250,6 +250,15 @@
         </dependency>
         <!-- DISPLAYTAG END -->
 
+        <!-- LTS Migration Note [Jakarta EE / SiteMesh]:
+             Provides Jakarta EE 10 compatible SiteMesh classes for DisplayTagExportAwareSiteMeshFilter
+             to bypass HTML decoration during DisplayTag table exports (PDF/Excel/CSV). -->
+        <dependency>
+            <groupId>org.egov</groupId>
+            <artifactId>sitemesh-jakarta</artifactId>
+            <classifier>jakarta</classifier>
+        </dependency>
+
         <!-- REPORTS START -->
         <dependency>
             <groupId>net.sf.jasperreports</groupId>

@@ -48,7 +48,9 @@
 package org.egov.egf.web.actions.report;
 
 import net.sf.jasperreports.engine.JRException;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -107,6 +109,18 @@ import java.util.Map;
                 Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/xls", Constants.CONTENT_DISPOSITION,
                 "no-cache;filename=BudgetAppropriationRegisterRepor.xls" })
 })
+/**
+ * LTS Migration Notes:
+ * 1. [Struts 7 & Jakarta EE] Form parameter resolution: Struts 7 restricts automatic OGNL nested
+ *    parameter binding. Added resolveSearchCriteriaFromRequest() and hydrateSelectedEntities() to
+ *    safely extract search parameters from HttpServletRequest and populate persistent entities.
+ * 2. [Hibernate 6] Migrated native SQL queries from createSQLQuery() to createNativeQuery() and replaced
+ *    deprecated Hibernate 5 type constants (BigDecimalType, LongType, DateType, StringType) with
+ *    StandardBasicTypes (StandardBasicTypes.BIG_DECIMAL, StandardBasicTypes.LONG, etc.).
+ * 3. [MDMS Integration] Updated department query condition to evaluate department.getCode() rather than
+ *    legacy numeric IDs and corrected inverted "-1" dropdown filter logic.
+ * 4. [Defensive Null Safety] Added safe null checks for budgetGroup, minCode, and query results.
+ */
 @ParentPackage("egov")
 public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
     private static final long serialVersionUID = 1658431423915247237L;
@@ -153,7 +167,6 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
         addRelatedEntity(Constants.FUND, Fund.class);
     }
     private void populateSelectedData() {
-        // TODO Auto-generated method stub
         if (fund.getId() != null && fund.getId() != -1){
             fund = (Fund) persistenceService.find("from Fund where id=?", fund.getId());
             if (department.getCode() != null && department.getCode() != 0+""){
@@ -181,9 +194,110 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
         
     }
 
+    /**
+     * LTS Migration Note [Struts 7 & Jakarta EE]:
+     * In Struts 7, automatic OGNL nested property binding (e.g. 'fund.id', 'department.code',
+     * 'function.id', 'budgetGroup.id') is restricted for security. This method explicitly extracts
+     * form parameters from the Jakarta HttpServletRequest to ensure search filters are populated.
+     */
+    private void resolveSearchCriteriaFromRequest() {
+        final jakarta.servlet.http.HttpServletRequest request = ServletActionContext.getRequest();
+        if (request == null) {
+            return;
+        }
+
+        String fundId = firstNonEmpty(request.getParameter("fund.id"), request.getParameter("fund"));
+        if (StringUtils.isNotBlank(fundId) && !"0".equals(fundId) && !"-1".equals(fundId)) {
+            if (fund == null) {
+                fund = new Fund();
+            }
+            fund.setId(Long.valueOf(fundId.trim()));
+        }
+
+        String deptCode = firstNonEmpty(request.getParameter("department.code"),
+                request.getParameter("department"));
+        if (StringUtils.isNotBlank(deptCode) && !"0".equals(deptCode) && !"-1".equals(deptCode)) {
+            if (department == null) {
+                department = new Department();
+            }
+            department.setCode(deptCode.trim());
+        }
+
+        String functionId = firstNonEmpty(request.getParameter("function.id"),
+                request.getParameter("function"));
+        if (StringUtils.isNotBlank(functionId) && !"0".equals(functionId) && !"-1".equals(functionId)) {
+            if (function == null) {
+                function = new CFunction();
+            }
+            function.setId(Long.valueOf(functionId.trim()));
+        }
+
+        String budgetGroupId = firstNonEmpty(request.getParameter("budgetGroup.id"),
+                request.getParameter("budgetGroup"));
+        if (StringUtils.isNotBlank(budgetGroupId) && !"0".equals(budgetGroupId)
+                && !"-1".equals(budgetGroupId)) {
+            if (budgetGroup == null) {
+                budgetGroup = new BudgetGroup();
+            }
+            budgetGroup.setId(Long.valueOf(budgetGroupId.trim()));
+        }
+
+        if (StringUtils.isBlank(strAsOnDate)) {
+            strAsOnDate = request.getParameter("asOnDate");
+        }
+    }
+
+    private static String firstNonEmpty(final String... values) {
+        if (values == null) {
+            return null;
+        }
+        for (final String value : values) {
+            if (StringUtils.isNotBlank(value)) {
+                return value.trim();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * LTS Migration Note [Entity Hydration & MDMS]:
+     * Loads full persistent entities (Fund, Function, BudgetGroup) from database and Department
+     * from MDMS by code. This replaces legacy auto-hydration and avoids NullPointerExceptions in Java 17.
+     */
+    private void hydrateSelectedEntities() {
+        if (fund != null && fund.getId() != null && fund.getId() != -1) {
+            final Fund loadedFund = (Fund) persistenceService.find("from Fund where id=?", fund.getId());
+            if (loadedFund != null) {
+                fund = loadedFund;
+            }
+        }
+        if (department != null && StringUtils.isNotBlank(department.getCode())
+                && !"0".equals(department.getCode()) && !"-1".equals(department.getCode())) {
+            final Department loadedDept = microserviceUtils.getDepartmentByCode(department.getCode());
+            if (loadedDept != null) {
+                department = loadedDept;
+            }
+        }
+        if (function != null && function.getId() != null && function.getId() != -1) {
+            final CFunction loadedFunction = (CFunction) persistenceService.find(
+                    "from CFunction where id=?", function.getId());
+            if (loadedFunction != null) {
+                function = loadedFunction;
+            }
+        }
+        if (budgetGroup != null && budgetGroup.getId() != null && budgetGroup.getId() != -1) {
+            final BudgetGroup loadedGroup = (BudgetGroup) persistenceService.find(
+                    "from BudgetGroup where id=?", budgetGroup.getId());
+            if (loadedGroup != null) {
+                budgetGroup = loadedGroup;
+            }
+        }
+    }
+
     @Override
     public void prepare() {
         super.prepare();
+        resolveSearchCriteriaFromRequest();
         mandatoryFields = budgetDetailConfig.getMandatoryFields();
         dropdownData.put("functionList",Collections.EMPTY_LIST);
         dropdownData.put("executingDepartmentList",Collections.EMPTY_LIST);
@@ -196,9 +310,14 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
     @SkipValidation
     @Action(value = "/report/budgetAppropriationRegisterReport-search")
     public String search() {
+        resolveSearchCriteriaFromRequest();
+        hydrateSelectedEntities();
         CFinancialYear financialYear = new CFinancialYear();
-        if (parameters.get("asOnDate")[0] != null) {
+        if (StringUtils.isBlank(strAsOnDate) && parameters.get("asOnDate") != null
+                && parameters.get("asOnDate").length > 0) {
             strAsOnDate = parameters.get("asOnDate")[0];
+        }
+        if (StringUtils.isNotBlank(strAsOnDate)) {
             try {
                 dtAsOnDate = Constants.DDMMYYYYFORMAT2.parse(strAsOnDate);
                 financialYear = financialYearDAO.getFinancialYearByDate(dtAsOnDate);
@@ -239,7 +358,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
         final Date dStartDate = financialYear.getStartingDate();
         Query query = null;
 
-        if (budgetGroup != null) {
+        if (budgetGroup != null && budgetGroup.getId() != null) {
             budgetHead = budgetGroup.getName();
             StringBuilder strQuery = new StringBuilder();
             
@@ -283,6 +402,9 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("BudgetAppropriationRegisterReportAction -- strQuery...." + strQuery);
 
+            // LTS Migration Note [Hibernate 6]:
+            // Migrated from createSQLQuery() to createNativeQuery(). Replaced legacy Hibernate 5
+            // Type singletons (BigDecimalType.INSTANCE, DateType.INSTANCE) with StandardBasicTypes.
             query = persistenceService.getSession().createNativeQuery(strQuery.toString())
                     .addScalar("bdgApprNumber")
                     .addScalar("voucherDate", StandardBasicTypes.DATE)
@@ -297,7 +419,8 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
                     .setResultTransformer(Transformers.aliasToBean(BudgetAppDisplay.class));
             query=setParameterForBudgetAppDisplay(query,dtAsOnDate,dStartDate);
         }
-        budgetAppropriationRegisterList = query.list();
+        // LTS Migration Note: Defensive check preventing NullPointerException if budgetGroup is unselected
+        budgetAppropriationRegisterList = query != null ? query.list() : new ArrayList<BudgetAppDisplay>();
 
         List<BudgetAppDisplay> budgetApprRegNewList = new ArrayList<BudgetAppDisplay>();
         final List<BudgetAppDisplay> budgetApprRegUpdatedList1 = new ArrayList<BudgetAppDisplay>();
@@ -367,9 +490,16 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
         return query;
     }
 
+    /**
+     * LTS Migration Note [MDMS Department & Struts 7]:
+     * In MDMS, department identifiers are String codes (e.g. 'DEPT_1'). Fixed legacy bug where
+     * the filter was only applied when value equaled "-1" (Choose option). Now properly applies
+     * when a valid department code is selected.
+     */
     private String getDepartmentQuery(final String string) {
         final String query = "";
-        if (department.getCode() != null && "-1".equals(department.getCode()))
+        if (department.getCode() != null && !"-1".equals(department.getCode())
+                && !"0".equals(department.getCode()))
             return " and " + string + " =:departmentcode ";
         return query;
     }
@@ -472,6 +602,9 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
 
     private BigDecimal getBudgetBEorREAmt(final String type) {
         BigDecimal approvedAmount = new BigDecimal(0.0);
+        if (budgetGroup == null || budgetGroup.getId() == null) {
+            return approvedAmount;
+        }
         try {
             CFinancialYear financialYr = new CFinancialYear();
             financialYr = financialYearDAO.getFinancialYearByDate(dtAsOnDate);
@@ -485,7 +618,8 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
             params.add(type);
             params.add(Long.valueOf(budgetGroup.getId()));
             params.add(Long.valueOf(financialYear.getId()));
-            if (department.getCode() != null && "-1".equals(department.getCode())) {
+            if (department.getCode() != null && !"-1".equals(department.getCode())
+                    && !"0".equals(department.getCode())) {
                 query.append(" and bd.executingDepartment=?");
                 params.add(department.getCode());
             }
@@ -568,13 +702,19 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
         return "XLS";
     }
     
+    /**
+     * LTS Migration Note [Hibernate 6 & StandardBasicTypes]:
+     * In Hibernate 6, Query.setParameter() with explicit types requires org.hibernate.type.StandardBasicTypes.
+     * Replaced legacy LongType, StringType, DateType constants.
+     */
     private Query setParameterForBudgetAppDisplay(Query query ,Date asOnDate,Date startDate)
     {
         if (function.getId() != null && function.getId() != -1)
         {
             query.setParameter("functionId", function.getId(), StandardBasicTypes.LONG);
         }
-        if (department.getId() != null && department.getId() != -1)
+        if (department.getCode() != null && !"-1".equals(department.getCode())
+                && !"0".equals(department.getCode()))
         {
             query.setParameter("departmentcode", department.getCode(), StandardBasicTypes.STRING);
         }
@@ -582,7 +722,7 @@ public class BudgetAppropriationRegisterReportAction extends BaseFormAction {
         {
             query.setParameter("fundId", Long.valueOf(fund.getId()), StandardBasicTypes.LONG);
         }
-        if (budgetGroup.getMinCode().getId() != null )
+        if (budgetGroup.getMinCode() != null && budgetGroup.getMinCode().getId() != null )
         {
             query.setParameter("glCodeId", budgetGroup.getMinCode().getId(), StandardBasicTypes.LONG);
         }

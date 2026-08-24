@@ -116,7 +116,7 @@ public class CommnFunctions
         	LOGGER.info("getFundList: " + query);
         pstmt = persistenceService.getSession().createNativeQuery(query.toString());
         if (!fundId.equalsIgnoreCase(""))
-        	pstmt.setParameter(0, fundId);
+        	pstmt.setParameter(1, fundId);
         resultset = pstmt.list();
         int resSize = 0, i = 0;
         resSize = resultset.size();
@@ -442,10 +442,11 @@ public class CommnFunctions
         String startDate = "" ;
         final String query = "SELECT TO_CHAR(startingdate,'DD/MM/YYYY') FROM FINANCIALYEAR WHERE id= ?";
         pstmt = persistenceService.getSession().createNativeQuery(query);
-        pstmt.setParameter(0, finYearId);
+        // Hibernate 6: native SQL ? placeholders are 1-based (was 0-based in Hibernate 5).
+        pstmt.setParameter(1, finYearId);
 
         List list = pstmt.list();
-        if(list!=null)
+        if(list!=null && !list.isEmpty())
         	startDate = list.get(0).toString();
         return startDate;
     }
@@ -462,7 +463,8 @@ public class CommnFunctions
         String endDate = "";
         final String query = "SELECT TO_CHAR(endingdate,'DD/MM/YYYY') FROM FINANCIALYEAR WHERE id= ?";
         pstmt = persistenceService.getSession().createNativeQuery(query);
-        pstmt.setParameter(0, finYearId);
+        // Hibernate 6: ordinal parameters are 1-based.
+        pstmt.setParameter(1, finYearId);
         resultset = pstmt.list();
         for (final Object[] element : resultset)
             endDate = element[0].toString();

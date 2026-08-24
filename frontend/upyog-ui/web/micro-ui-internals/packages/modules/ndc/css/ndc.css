@@ -1,0 +1,987 @@
+/* =========================================================
+   NDC MODULE CSS
+   ========================================================= */
+
+.ndc-reason-container {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ndc-reason-field {
+  width: 100%;
+  max-width: 465px;
+  margin-bottom: 22px;
+  box-sizing: border-box;
+}
+
+.ndc-reason-label {
+  display: block;
+  width: 100%;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111111;
+  line-height: 1.4;
+  box-sizing: border-box;
+}
+
+.ndc-required {
+  color: #a82227;
+  margin-left: 3px;
+}
+
+.ndc-error-message {
+  margin-top: 5px;
+}
+
+.ndc-summary-row {
+  display: grid;
+  grid-template-columns: 42% 58%;
+  width: 100%;
+  min-height: 30px;
+  border-bottom: 1px solid #d5d5d5;
+  box-sizing: border-box;
+}
+
+.ndc-summary-label {
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 700;
+  color: #111111;
+  padding: 6px 8px 6px 0;
+  box-sizing: border-box;
+}
+
+.ndc-summary-value {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #333333;
+  padding: 6px 0 6px 8px;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  box-sizing: border-box;
+}
+
+.ndc-summary-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 32px;
+  border-bottom: 1px solid #cfcfcf;
+  box-sizing: border-box;
+}
+
+.ndc-summary-section-title {
+  font-size: 16px;
+  line-height: 1.4;
+  font-weight: 700;
+  color: #111111;
+  margin: 0;
+  padding: 5px 0;
+}
+
+.ndc-summary-edit-button {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  color: #b21f2d;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.ndc-summary-page {
+  width: 100%;
+  min-height: 100%;
+  box-sizing: border-box;
+  padding: 10px 0 30px 0;
+}
+
+.ndc-summary-card {
+  background-color: #ffffff;
+  width: 620px;
+  max-width: 100%;
+  margin: 0;
+  padding: 18px;
+  box-sizing: border-box;
+  border-radius: 2px;
+}
+
+.ndc-summary-title {
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #111111;
+  margin: 0 0 4px 0;
+}
+
+.ndc-summary-subtitle {
+  font-size: 13px;
+  line-height: 1.4;
+  color: #555555;
+  margin-bottom: 18px;
+}
+
+.ndc-summary-section {
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+.ndc-document-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 0;
+  box-sizing: border-box;
+}
+
+.ndc-document-item {
+  flex: 0 0 120px;
+  width: 120px;
+  min-height: 105px;
+  background-color: #ffffff;
+  border: 1px solid #d5d5d5;
+  border-radius: 2px;
+  padding: 7px;
+  box-sizing: border-box;
+}
+
+.ndc-summary-document-label {
+  font-size: 13px;
+  color: #555555;
+  padding: 10px 0;
+}
+
+.ndc-document-consent {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 0 0 0;
+  border-top: 1px solid #d0d0d0;
+  box-sizing: border-box;
+}
+
+.ndc-document-checkbox {
+  width: 15px;
+  height: 15px;
+  margin: 2px 8px 0 0;
+  flex-shrink: 0;
+}
+
+.ndc-document-consent-text {
+  font-size: 10px;
+  line-height: 1.5;
+  color: #333333;
+}
+
+.ndc-summary-actions {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-top: 16px;
+  box-sizing: border-box;
+}
+
+.ndc-reason-spacing {
+  margin-top: 32px;
+  margin-bottom: 24px;
+}
+
+.ndc-reason-content {
+  width: 450px;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+.ndc-reason-options {
+  width: 450px;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ndc-reason-option {
+  width: 450px;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.ndc-reason-input {
+  width: 450px;
+  min-width: 450px;
+  max-width: 450px;
+  height: 40px;
+  min-height: 40px;
+  box-sizing: border-box;
+}
+
+.ndc-reason-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 450px;
+  max-width: 100%;
+  margin-top: 10px;
+  margin-bottom: 24px;
+  box-sizing: border-box;
+  gap: 8px;
+}
+
+.ndc-primary-button,
+.ndc-no-dues-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 155px;
+  min-width: 155px;
+  height: 40px;
+  min-height: 40px;
+  margin: 0;
+  padding: 0 14px;
+  background-color: #a82227;
+  color: #ffffff;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  box-sizing: border-box;
+  white-space: nowrap;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.ndc-secondary-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 155px;
+  min-width: 155px;
+  height: 40px;
+  min-height: 40px;
+  margin: 10px 0 0 0;
+  padding: 0 16px;
+  background-color: #a82227;
+  color: #ffffff;
+  border: none;
+  outline: none;
+  border-radius: 0;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  box-sizing: border-box;
+  white-space: nowrap;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.ndc-status-message {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 320px;
+  min-width: 320px;
+  max-width: 320px;
+  min-height: 40px;
+  margin: 0;
+  padding: 10px 16px;
+  background-color: #a82227;
+  color: #ffffff;
+  border: none;
+  border-radius: 0;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  box-sizing: border-box;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  text-align: left;
+  flex-shrink: 0;
+}
+
+.ndc-sewerage-spacing {
+  margin-bottom: 36px;
+}
+
+.ndc-full-width {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ndc-section-spacing {
+  margin-bottom: 24px;
+}
+
+.ndc-large-spacing {
+  margin-bottom: 40px;
+}
+
+.ndc-owner-selection {
+  width: 500px;
+  max-width: 100%;
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
+.ndc-owner-help {
+  color: green;
+  font-size: 12px;
+  line-height: 17px;
+  padding: 0;
+  margin: 0 0 10px 0;
+}
+
+.ndc-owner-table {
+  width: 500px;
+  max-width: 100%;
+}
+
+.ndc-owner-field {
+  display: block;
+  margin-top: 20px;
+  margin-bottom: 22px;
+}
+
+.ndc-required-text {
+  color: red;
+}
+
+.ndc-owner-input {
+  width: 450px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.ndc-owner-field-spacing {
+  display: block;
+  margin-bottom: 22px;
+}
+
+.ndc-owner-field-small-spacing {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 22px;
+}
+
+.ndc-documents-page {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ndc-documents-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 620px;
+  box-sizing: border-box;
+  padding: 24px 28px;
+  margin: 0 auto;
+}
+
+.ndc-documents-header {
+  margin-bottom: 24px;
+}
+
+.ndc-documents-title {
+  margin: 0 0 16px 0;
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #111111;
+}
+
+.ndc-documents-description {
+  margin-bottom: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333333;
+}
+
+.ndc-documents-instruction {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: #333333;
+}
+
+.ndc-documents-content,
+.ndc-property-search {
+  width: 100%;
+}
+
+.ndc-document-field {
+  width: 100%;
+  margin-bottom: 22px;
+  box-sizing: border-box;
+}
+
+.ndc-document-label-wrapper {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.ndc-document-label {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 600;
+  color: #111111;
+}
+
+.ndc-document-required {
+  margin-left: 3px;
+  color: #b21f2d;
+  font-weight: 700;
+}
+
+.ndc-property-field {
+  width: 340px;
+  max-width: 100%;
+  margin-bottom: 0;
+  box-sizing: border-box;
+}
+
+.ndc-property-label {
+  display: block;
+  width: 340px;
+  max-width: 100%;
+  margin-bottom: 7px;
+  padding: 0;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 700;
+  color: #111111;
+  box-sizing: border-box;
+}
+
+.ndc-property-required {
+  color: #a82227;
+  margin-left: 3px;
+}
+
+.ndc-property-input-wrapper {
+  position: relative;
+  width: 340px;
+  min-width: 340px;
+  max-width: 340px;
+  height: 40px;
+  min-height: 40px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.ndc-property-input {
+  width: 340px;
+  min-width: 340px;
+  max-width: 340px;
+  height: 40px;
+  min-height: 40px;
+  box-sizing: border-box;
+  padding-right: 42px;
+}
+
+.ndc-property-search-icon {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  min-height: 30px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  box-sizing: border-box;
+}
+
+.ndc-property-actions {
+  width: 340px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 12px;
+  margin-bottom: 32px;
+  box-sizing: border-box;
+}
+
+.ndc-button-text {
+  color: #ffffff;
+}
+
+.ndc-overview-actions {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  padding: 16px;
+}
+
+.ndc-overview-content {
+  padding-top: 0;
+  padding-left: 0;
+}
+
+.ndc-overview-input {
+  max-width: 200px;
+}
+
+
+/* =========================================================
+   PROPERTY DETAILS FORM
+   ========================================================= */
+
+.ndc-form-root {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ndc-details-form-wrapper {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CONNECTION SECTIONS
+   ========================================================= */
+
+.ndc-connection-section {
+  width: 100%;
+  margin-top: 32px;
+  margin-bottom: 24px;
+  box-sizing: border-box;
+}
+
+.ndc-sewerage-section {
+  width: 100%;
+  margin-bottom: 24px;
+  box-sizing: border-box;
+}
+
+.ndc-field-label-wrapper {
+  width: 450px;
+  max-width: 100%;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.ndc-connection-list {
+  width: 450px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+.ndc-connection-row {
+  width: 450px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CONNECTION BUTTONS
+   ========================================================= */
+
+/* Common button style */
+.ndc-action-button,
+.ndc-primary-button,
+.ndc-no-dues-button,
+.ndc-secondary-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 155px;
+  min-width: 155px;
+  height: 40px;
+  min-height: 40px;
+  margin: 0;
+  padding: 0 14px;
+  background-color: #a82227;
+  color: #ffffff;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  box-sizing: border-box;
+  white-space: nowrap;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.ndc-secondary-button {
+  margin-top: 10px;
+  padding: 0 16px;
+}
+
+.ndc-action-button span,
+.ndc-action-button p,
+.ndc-action-button div,
+.ndc-primary-button span,
+.ndc-primary-button p,
+.ndc-primary-button div,
+.ndc-no-dues-button span,
+.ndc-no-dues-button p,
+.ndc-no-dues-button div,
+.ndc-secondary-button span,
+.ndc-secondary-button p,
+.ndc-secondary-button div {
+  color: #ffffff;
+}
+
+.ndc-add-connection {
+  margin-bottom: 36px;
+}
+
+.ndc-add-sewerage {
+  margin-bottom: 40px;
+}
+
+
+/* =========================================================
+   OWNER SELECTION
+   =========================================================
+   ========================================================= */
+
+.ndc-owner-selection {
+  width: 500px;
+  max-width: 100%;
+  margin-top: 10px;
+  margin-bottom: 30px;
+  box-sizing: border-box;
+}
+
+.ndc-owner-help {
+  color: green;
+  font-size: 12px;
+  line-height: 17px;
+  padding: 0;
+  margin: 0 0 10px 0;
+}
+
+.ndc-owner-table {
+  width: 500px;
+  max-width: 100%;
+}
+
+
+/* =========================================================
+   OWNER FORM
+   ========================================================= */
+
+.ndc-owner-field,
+.ndc-owner-field-first,
+.ndc-owner-field-remarks {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.ndc-owner-field {
+  margin-top: 20px;
+  margin-bottom: 22px;
+}
+
+.ndc-owner-field-first {
+  margin-top: 20px;
+  margin-bottom: 22px;
+}
+
+.ndc-owner-field-remarks {
+  margin-top: 10px;
+  margin-bottom: 22px;
+}
+
+/* Common field label */
+.ndc-owner-field > .ndc_card_labels,
+.ndc-owner-field > .card-label-smaller,
+.ndc-owner-field > label {
+  display: block;
+  width: auto;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0 0 8px;
+  padding: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 600;
+  box-sizing: border-box;
+}
+
+/* Common field container */
+.ndc-owner-field > .form-field,
+.ndc-field-container {
+  display: block;
+  width: 450px;
+  min-width: 450px;
+  max-width: 450px;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Common input */
+.ndc-owner-field .ndc-input,
+.ndc-owner-field > .form-field input,
+.ndc-input,
+.ndc-owner-input {
+  display: block;
+  width: 450px;
+  min-width: 450px;
+  max-width: 450px;
+  height: 40px;
+  min-height: 40px;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* Required field */
+.ndc-required-star,
+.ndc-required-text {
+  color: red;
+}
+
+/* Delete button */
+.ndc-delete-button {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* No dues/status message */
+.ndc-no-dues-box,
+.ndc-details-form-message,
+.ndc-status-message {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 320px;
+  min-width: 320px;
+  max-width: 320px;
+  min-height: 40px;
+  margin: 0;
+  padding: 10px 16px;
+  background-color: #a82227;
+  color: #ffffff;
+  border: none;
+  border-radius: 0;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  box-sizing: border-box;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+
+.ndc-no-dues-box *,
+.ndc-details-form-message *,
+.ndc-status-message * {
+  color: #ffffff;
+}
+
+
+/* =========================================================
+   REQUIRED FIELD
+   ========================================================= */
+
+.ndc-required-star {
+  color: red;
+}
+
+
+/* =========================================================
+   DELETE BUTTON
+   ========================================================= */
+
+.ndc-delete-button {
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   NO DUES
+   ========================================================= */
+
+.ndc-no-dues-box {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  width: 320px;
+  min-width: 320px;
+  max-width: 320px;
+
+  min-height: 40px;
+
+  margin: 0;
+  padding: 10px 16px;
+
+  background-color: #a82227;
+  color: #ffffff;
+
+  border: none;
+  border-radius: 0;
+
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+
+  box-sizing: border-box;
+
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+
+  text-align: left;
+}
+
+.ndc-no-dues-box * {
+  color: #ffffff;
+}
+
+
+/* =========================================================
+   MESSAGE
+   ========================================================= */
+
+.ndc-details-form-message {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  width: 320px;
+  min-width: 320px;
+  max-width: 320px;
+
+  min-height: 40px;
+
+  margin-top: 10px;
+  margin-bottom: 20px;
+
+  padding: 10px 16px;
+
+  background-color: #a82227;
+  color: #ffffff;
+
+  border: none;
+  border-radius: 0;
+
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+
+  box-sizing: border-box;
+
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+
+  text-align: left;
+}
+
+.ndc-details-form-message * {
+  color: #ffffff;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .ndc-field-label-wrapper,
+  .ndc-connection-list,
+  .ndc-connection-row,
+  .ndc-action-column {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .ndc-owner-field,
+  .ndc-owner-field-first,
+  .ndc-owner-field-remarks {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .ndc-owner-field > .form-field,
+  .ndc-owner-field > .form-field .ndc-input,
+  .ndc-owner-field > .form-field input,
+  .ndc-owner-field .ndc-input {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .ndc-field-container,
+  .ndc-input {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .ndc-no-dues-box,
+  .ndc-details-form-message {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .ndc-owner-selection,
+  .ndc-owner-table {
+    width: 100%;
+    max-width: 100%;
+  }
+}

@@ -102,6 +102,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -208,6 +209,15 @@ public class AutoReconcileHelper{
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
 
+    /**
+     * Configured with PROPAGATION_REQUIRES_NEW in {@code JpaConfiguration}. Used because
+     * Hibernate 6 rejects native {@code executeUpdate} without an active transaction, and
+     * declarative {@code @Transactional} on this prototype helper does not reliably enlist
+     * the OpenEntityManagerInView session under JTA.
+     */
+    @Autowired
+    private TransactionTemplate transactionTemplate;
+
     @Autowired
     private FileStoreService fileStoreService;
 
@@ -257,8 +267,15 @@ public class AutoReconcileHelper{
         this.bankAccount = bankAccount;
     }
 
-    @Transactional
     public String upload() {
+        /*
+         * LTS / Hibernate 6 + JTA: native inserts need an active transaction (same as schedule).
+         */
+        return transactionTemplate.execute(status -> uploadInTransaction());
+    }
+
+    private String uploadInTransaction() {
+        joinCurrentTransaction();
         try {
             insertQuery = persistenceService.getSession().createNativeQuery(insertsql);
             final Bankaccount ba = (Bankaccount) persistenceService.find("from Bankaccount ba where id=?",Long.valueOf(accountId));
@@ -792,8 +809,16 @@ public class AutoReconcileHelper{
     /**
      * @return
      */
-    @Transactional
     public String schedule() {
+        /*
+         * LTS / Hibernate 6 + JTA: wrap the full process in TransactionTemplate so native
+         * UPDATEs in markForProcessing / reconciliation do not throw TransactionRequiredException.
+         */
+        return transactionTemplate.execute(status -> scheduleInTransaction());
+    }
+
+    private String scheduleInTransaction() {
+        joinCurrentTransaction();
         // Step1: mark which are all we are going to process
         count = 0;
         String errorMessage = DID_NOT_FIND_MATCH_IN_BANKBOOK;
@@ -801,7 +826,7 @@ public class AutoReconcileHelper{
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Started at " + new Date());
         markForProcessing(BRS_TRANSACTION_TYPE_CHEQUE);
-        persistenceService.getSession().flush();
+        persistenceService.flush();
         // step2 :find duplicate and mark to be processed manually
         findandUpdateDuplicates();
 
@@ -930,7 +955,7 @@ public class AutoReconcileHelper{
                     LOGGER.debug("out of " + rowCount + "==>succesfull " + count);
 
                 if (rowCount % 20 == 0)
-                    persistenceService.getSession().flush();
+                    persistenceService.flush();
 
                 // These exception might be because the other entires in instrument which is not in egf_brs_bankstatements
                 // so any issues leave it for manual update
@@ -990,6 +1015,17 @@ public class AutoReconcileHelper{
     private Long getInstrumentType(final String typeName) {
 
         return (Long) persistenceService.find("select id from InstrumentType where upper(type)=upper(?)", typeName);
+    }
+
+    /**
+     * Hibernate 6 Session (from OpenEntityManagerInView) must explicitly join the JTA
+     * transaction started by {@link TransactionTemplate} before native executeUpdate.
+     */
+    private void joinCurrentTransaction() {
+        final org.hibernate.Session session = persistenceService.getSession();
+        if (!session.isJoinedToTransaction()) {
+            session.joinTransaction();
+        }
     }
 
     private void markForProcessing(final String type) {
