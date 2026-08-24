@@ -74,6 +74,12 @@ import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
  *
  * @author subhash
  *
+ * LTS Migration Notes:
+ * 1. [Struts 7 & Jakarta EE Parameter Extraction] Added manual extraction for AJAX parameters
+ *    ('designationId', 'approverDepartmentId', 'type', 'departmentRule', 'additionalRule', 'currentState', 'pendingAction')
+ *    from HttpServletRequest because Struts 7 does not bind loose AJAX query parameters.
+ * 2. [Java 17 Null Safety] Added null check for WorkFlowMatrix before calling getCurrentDesignation()
+ *    to prevent NullPointerExceptions when no matrix rule matches.
  */
 @ParentPackage("egov")
 @ResultPath("/WEB-INF/jsp/")
@@ -102,6 +108,10 @@ public class AjaxWorkFlowAction extends BaseFormAction {
 
 	@Action(value = "/workflow/ajaxWorkFlow-getPositionByPassingDesigId")
 	public String getPositionByPassingDesigId() {
+		// LTS: Struts 7 does not bind AJAX params
+		final jakarta.servlet.http.HttpServletRequest req = ServletActionContext.getRequest();
+		designationId = req.getParameter("designationId");
+		approverDepartmentId = req.getParameter("approverDepartmentId");
 		if (isNotEmpty(designationId) && !designationId.equalsIgnoreCase("-1") && isNotEmpty(approverDepartmentId)
 				&& !approverDepartmentId.equalsIgnoreCase("-1")) {
 			approverList = microserviceUtils.getAssignments(approverDepartmentId, designationId);
@@ -111,10 +121,17 @@ public class AjaxWorkFlowAction extends BaseFormAction {
 
 	@Action(value = "/workflow/ajaxWorkFlow-getDesignationsByObjectType")
 	public String getDesignationsByObjectType() {
+		// LTS: Struts 7 does not bind AJAX params; without these, wfmatrix is null → NPE
+		final jakarta.servlet.http.HttpServletRequest req = ServletActionContext.getRequest();
+		type = req.getParameter("type");
+		departmentRule = req.getParameter("departmentRule");
+		additionalRule = req.getParameter("additionalRule");
+		currentState = req.getParameter("currentState");
+		pendingAction = req.getParameter("pendingAction");
 		final List<String> workflowDesignations = new ArrayList<>();
 		if (!SELECT.equals(departmentRule)) {
 			final WorkFlowMatrix wfmatrix = getWfMatrix();
-			if (wfmatrix.getCurrentDesignation() != null) {
+			if (wfmatrix != null && wfmatrix.getCurrentDesignation() != null) {
 				workflowDesignations.addAll(Arrays.asList(wfmatrix.getCurrentDesignation().split(",")));
 			}
 			designationList = microserviceUtils.getDesignations().stream()

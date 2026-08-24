@@ -49,6 +49,7 @@
 package org.egov.collection.web.actions.service;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -142,6 +143,12 @@ public class BranchUserMapAction extends BaseFormAction {
 
     @Action(value = "/service/branchUserMap-bankBranchsByBankForReceiptPayments")
     public String bankBranchsByBankForReceiptPayments() {
+        if (bankId == null && ServletActionContext.getRequest() != null) {
+            final String value = ServletActionContext.getRequest().getParameter("bankId");
+            if (value != null && !value.trim().isEmpty() && !"-1".equals(value.trim())) {
+                bankId = Integer.valueOf(value.trim());
+            }
+        }
         bankBranchArrayList = bankBranchHibernateDAO.getAllBankBranchsByBankForReceiptPayments(bankId);
         return BANKBRANCHLIST;
     }

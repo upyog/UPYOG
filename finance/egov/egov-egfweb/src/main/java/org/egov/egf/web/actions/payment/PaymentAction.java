@@ -443,15 +443,17 @@ public class PaymentAction extends BasePaymentAction {
             return "search";
         final Map<String, Object> sqlParams = new HashMap<>();
         final StringBuffer sql = new StringBuffer();
-        if (!"".equals(billNumber)) {
+        // LTS / null-safe: !"".equals(null) is true, which wrongly added
+        // bill.billnumber = null and returned zero expense bills.
+        if (StringUtils.isNotBlank(billNumber)) {
             sql.append(" and bill.billnumber =:billNumber ");
             sqlParams.put("billNumber", billNumber);
         }
-        if (!"".equals(fromDate)) {
+        if (StringUtils.isNotBlank(fromDate)) {
             sql.append(" and bill.billdate>=:billFromDate ");
             sqlParams.put("billFromDate", formatter.parse(fromDate));
         }
-        if (!"".equals(toDate)) {
+        if (StringUtils.isNotBlank(toDate)) {
             sql.append(" and bill.billdate<=:billToDate");
             sqlParams.put("billToDate", formatter.parse(toDate));
         }
@@ -649,7 +651,7 @@ public class PaymentAction extends BasePaymentAction {
         	 *   the root entity select projection; filtering on sub-properties in WHERE requires a standard
         	 *   'left join' without 'fetch'.
         	 */
-        	final StringBuilder cBillmainquery = new StringBuilder("from EgBillregister bill left join")
+        	final StringBuilder cBillmainquery = new StringBuilder("select distinct bill from EgBillregister bill left join")
         			.append(" bill.egBillregistermis.egBillSubType egBillSubType")
                     .append(" where (egBillSubType is null or egBillSubType.name not in (:billSubType)) ")
                     .append("and bill.expendituretype=:expenditureType and bill.egBillregistermis.voucherHeader.status=0 ")
@@ -661,7 +663,7 @@ public class PaymentAction extends BasePaymentAction {
             cBillmainQueryParams.put("billSubType", FinancialConstants.BILLSUBTYPE_TNEBBILL);
             cBillmainQueryParams.put("expenditureType", FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
 
-            final StringBuilder cBillmainquery1 = new StringBuilder("from EgBillregister bill left join")
+            final StringBuilder cBillmainquery1 = new StringBuilder("select distinct bill from EgBillregister bill left join")
             		.append(" bill.egBillregistermis.egBillSubType egBillSubType ")
                     .append(" where (egBillSubType is null or egBillSubType.name not in (:billSubType))")
                     .append(" and bill.expendituretype=:expenditureType and bill.egBillregistermis.voucherHeader.status=0 ")
@@ -889,7 +891,7 @@ public class PaymentAction extends BasePaymentAction {
 
         final Map<String, Object> sqlParams = new HashMap<>();
         final StringBuffer sql = new StringBuffer();
-        if (!"".equals(billNumber)) {
+        if (StringUtils.isNotBlank(billNumber)) {
             sql.append(" and bill.billnumber = :billNumber");
             sqlParams.put("billNumber", billNumber);
         }
@@ -1096,8 +1098,9 @@ public class PaymentAction extends BasePaymentAction {
     private List<PaymentBean> prepareBillTypeList(List<PaymentBean> typeOfBillList,String selectedRowsRequest){
         // TODO Auto-generated method stub
         typeOfBillList = new ArrayList<>();
+        if (StringUtils.isBlank(selectedRowsRequest))
+            return typeOfBillList;
         String[] selectedRows = selectedRowsRequest.split(";,");
-        if(!selectedRowsRequest.isEmpty())
         for(String selectedRow : selectedRows){
             PaymentBean paymentBean = new PaymentBean();
             try {
@@ -1132,6 +1135,23 @@ public class PaymentAction extends BasePaymentAction {
             typeOfBillList.add(paymentBean);
     }
         return typeOfBillList;
+    }
+
+    private EgBillregister reloadBillregisterForPayment(final EgBillregister current, final List<PaymentBean> bills) {
+        Long billId = null;
+        if (current != null && current.getId() != null)
+            billId = current.getId();
+        else if (bills != null && !bills.isEmpty() && bills.get(0).getBillId() != null)
+            billId = bills.get(0).getBillId();
+        if (billId == null)
+            throw new ValidationException(Arrays.asList(new ValidationError("Please select a bill before making the payment.",
+                    "Please select a bill before making the payment.")));
+        final EgBillregister loaded = (EgBillregister) persistenceService.find(
+                "from EgBillregister bill left join fetch bill.egBillregistermis where bill.id=?", billId);
+        if (loaded == null || loaded.getEgBillregistermis() == null)
+            throw new ValidationException(Arrays.asList(new ValidationError("Bill register details not found for payment.",
+                    "Bill register details not found for payment.")));
+        return loaded;
     }
 
     private String populateBillListFor(final List<PaymentBean> list, String ids) {
@@ -1224,6 +1244,13 @@ public class PaymentAction extends BasePaymentAction {
                 }
             }
             validateBillVoucherDate(billList, paymentVoucherDate);
+            /*
+             * LTS Migration Fix (Struts 7):
+             * ParametersInterceptor can run after prepare() and replace the
+             * DB-loaded EgBillregister with a form stub that only has id set,
+             * leaving egBillregistermis null. Always reload before create.
+             */
+            billregister = reloadBillregisterForPayment(billregister, billList);
             paymentActionHelper.setbillRegisterFunction(billregister, cFunctionobj);
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Starting createPayment...");

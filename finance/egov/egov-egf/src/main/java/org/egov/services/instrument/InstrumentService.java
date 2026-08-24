@@ -94,8 +94,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * LTS Migration Notes:
+ * 1. [Hibernate 6 Strict SQM] Corrected HQL queries in isChequeNumberWithinRange() to compare scalar IDs
+ *    (ac.id = cd.accountCheque.id and ac.bankAccountId.id = ?) to prevent SemanticException.
+ * 2. [Hibernate 6 Native Query & Types] Migrated createSQLQuery() to createNativeQuery() and replaced
+ *    removed Hibernate 5 Type singletons (IntegerType, LongType) with StandardBasicTypes.
+ * 3. [Hibernate 6 Query API] Replaced deprecated setString(), setDate(), setInteger() with setParameter().
+ * 4. [Java 17 Null Safety] Added defensive parameter checks in isChequeNumberWithinRange().
+ */
+@Service
 @Transactional(readOnly = true)
 public class InstrumentService {
 
@@ -915,13 +926,22 @@ public class InstrumentService {
         return iAccCodes;
     }
 
-    // setters for Spring injection
-
+    /**
+     * LTS Migration Note [Hibernate 6 Strict SQM]:
+     * Corrected HQL association references ('ac.id = cd.accountCheque.id' and 'ac.bankAccountId.id = ?')
+     * so that scalar ID values are compared against scalar entity IDs instead of comparing entity objects
+     * to IDs, preventing SemanticException. Added defensive null/blank checks on input arguments.
+     */
     public boolean isChequeNumberWithinRange(final String chequeNumber,
             final Long bankAccountId, final String departmentId,
             final String serialNo) {
+        if (StringUtils.isBlank(chequeNumber) || bankAccountId == null || StringUtils.isBlank(departmentId)) {
+            LOGGER.info("isChequeNumberWithinRange: missing params chq=" + chequeNumber + ", bankAcc=" + bankAccountId
+                    + ", dept=" + departmentId + ", serialNo=" + serialNo + " -> result=false");
+            return false;
+        }
         AccountCheques accountCheques = new AccountCheques();
-        if (serialNo != null)
+        if (StringUtils.isNotBlank(serialNo))
 			accountCheques = (AccountCheques) persistenceService.find(
 					new StringBuilder("select ac from AccountCheques ac, ChequeDeptMapping cd")
 							.append(" where ac.id = cd.accountCheque.id and ")
@@ -934,6 +954,7 @@ public class InstrumentService {
 							.append(" where ac.id = cd.accountCheque.id and ")
 							.append(" ac.bankAccountId.id=? and cd.allotedTo=? and ? between ac.fromChequeNumber")
 							.append(" and ac.toChequeNumber ").toString(), bankAccountId, departmentId, chequeNumber);
+        LOGGER.info("isChequeNumberWithinRange: chq=" + chequeNumber + ", bankAcc=" + bankAccountId + ", dept=" + departmentId + ", serialNo=" + serialNo + " -> result=" + (accountCheques != null));
         if (accountCheques == null)
             return false;
         return true;

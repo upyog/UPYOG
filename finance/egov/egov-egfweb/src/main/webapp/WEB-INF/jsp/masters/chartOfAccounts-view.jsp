@@ -86,6 +86,10 @@
 		<s:fielderror /></span>
 	<s:form name="chartOfAccountsForm" id="chartOfAccountsForm"
 		action="chartOfAccounts" theme="simple">
+		<%-- LTS Migration Fix (Struts 7): keep coa id on the form so Add can post
+		     parentId even when nested model.id binding fails. --%>
+		<s:hidden name="coaId" value="%{coaId}" />
+		<s:hidden name="parentId" value="%{coaId}" />
 		<div class="formmainbox">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0"
 				id="chartOfAccountsTable">

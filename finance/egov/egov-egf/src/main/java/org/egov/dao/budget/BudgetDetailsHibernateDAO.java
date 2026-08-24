@@ -1011,11 +1011,12 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 
             query = query + getQuery(CFunction.class, functionid, " and gl.functionId=");
             query = query + (" and vmis.departmentcode='"+deptCode+"'");
-            query = query + getQuery(Functionary.class, functionaryid, " and vmis.functionary=");
-            query = query + getQuery(Scheme.class, schemeid, " and vmis.schemeid=");
-            query = query + getQuery(SubScheme.class, subschemeid, " and vmis.subschemeid=");
-            query = query + getQuery(Fund.class, fundid, " and vh.fundId=");
-            query = query + getQuery(Boundary.class, boundaryid, " and vmis.divisionid=");
+            // LTS Hibernate 6: association fields must compare via .id
+            query = query + getQuery(Functionary.class, functionaryid, " and vmis.functionary.id=");
+            query = query + getQuery(Scheme.class, schemeid, " and vmis.schemeid.id=");
+            query = query + getQuery(SubScheme.class, subschemeid, " and vmis.subschemeid.id=");
+            query = query + getQuery(Fund.class, fundid, " and vh.fundId.id=");
+            query = query + getQuery(Boundary.class, boundaryid, " and vmis.divisionid.id=");
 
             if (budgetheadid == null || budgetheadid.equals(EMPTY_STRING))
                 throw new ValidationException(EMPTY_STRING, "Budget head id is null or empty");
@@ -1060,8 +1061,9 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 
             final String voucherstatusExclude = list.get(0).getValue();
 
+            // LTS Hibernate 6: compare entity id to entity id (voucherheaderid is CVoucherHeader, not Long)
             query = select + " FROM CGeneralLedger gl,CVoucherHeader vh,Vouchermis vmis where  "
-                    + " vh.id = gl.voucherHeaderId.id AND vh.id=vmis.voucherheaderid and (vmis.budgetCheckReq is null or  vmis.budgetCheckReq=true) and vh.status not in ("
+                    + " vh.id = gl.voucherHeaderId.id AND vh.id=vmis.voucherheaderid.id and (vmis.budgetCheckReq is null or  vmis.budgetCheckReq=true) and vh.status not in ("
                     + voucherstatusExclude + ") and vh.voucherDate>=? and vh.voucherDate <=? " + query;
 
             if (LOGGER.isDebugEnabled())
@@ -1172,15 +1174,16 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                     else if (value.equals("function"))
                         query = query + getQuery(CFunction.class, functionid, " and gl.functionId=");
                     else if (value.equals("functionary"))
-                        query = query + getQuery(Functionary.class, functionaryid, " and vmis.functionary=");
+                        // LTS Hibernate 6: association fields must compare via .id
+                        query = query + getQuery(Functionary.class, functionaryid, " and vmis.functionary.id=");
                     else if (value.equals("fund"))
-                        query = query + getQuery(Fund.class, fundid, " and vh.fundId=");
+                        query = query + getQuery(Fund.class, fundid, " and vh.fundId.id=");
                     else if (value.equals("scheme"))
-                        query = query + getQuery(Scheme.class, schemeid, " and vmis.schemeid=");
+                        query = query + getQuery(Scheme.class, schemeid, " and vmis.schemeid.id=");
                     else if (value.equals("subscheme"))
-                        query = query + getQuery(SubScheme.class, subschemeid, " and vmis.subschemeid=");
+                        query = query + getQuery(SubScheme.class, subschemeid, " and vmis.subschemeid.id=");
                     else if (value.equals("boundary"))
-                        query = query + getQuery(Boundary.class, boundaryid, " and vmis.divisionid=");
+                        query = query + getQuery(Boundary.class, boundaryid, " and vmis.divisionid.id=");
                     else
                         throw new ValidationException(EMPTY_STRING,
                                 "budgetaryCheck_groupby_values is not matching=" + value);
@@ -1210,8 +1213,9 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
                         "exclude_status_forbudget_actual is not defined in AppConfig");
 
             list.get(0).getValue();
+            // LTS Hibernate 6: compare entity id to entity id (voucherheaderid is CVoucherHeader, not Long)
             query = select + " FROM CGeneralLedger gl,CVoucherHeader vh,Vouchermis vmis where  "
-                    + " vh.id = gl.voucherHeaderId.id AND vh.id=vmis.voucherheaderid and (vmis.budgetCheckReq=null or vmis.budgetCheckReq=true) and vh.status !=4 and vh.voucherDate>=? and vh.voucherDate <=? "
+                    + " vh.id = gl.voucherHeaderId.id AND vh.id=vmis.voucherheaderid.id and (vmis.budgetCheckReq=null or vmis.budgetCheckReq=true) and vh.status !=4 and vh.voucherDate>=? and vh.voucherDate <=? "
                     + query;
 
                 LOGGER.info("loadActualBudget query============" + query);
@@ -2393,7 +2397,8 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
         if (fromdate != null)
             query = query + " and  br.billdate>=? ";
 
-        query = query + " and bd.glcodeid='" + glcodeid + "'";
+        // LTS Hibernate 6: glcodeid is BigDecimal — do not quote as String
+        query = query + " and bd.glcodeid=" + glcodeid;
         query1 = "select sum(case when bd.debitamount is null then 0 ELSE bd.debitamount end -case when bd.creditamount is null then 0 else bd.creditamount end)  "
                 + " from EgBillregister br, EgBilldetails bd, EgBillregistermis bmis  "
                 + " where br.id=bd.egBillregister.id and br.id=bmis.egBillregister.id and (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true)  and bmis.voucherHeader is null and upper(br.status.description) not in ('CANCELLED') "
@@ -2442,9 +2447,10 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
 	private BigDecimal getBillAmountWhereCancelledVouchers(final String query, final Date fromdate,
             final Date asondate) {
 
+        // LTS Hibernate 6: voucherHeader is association; compare ids
         final String newQuery = "select sum(case when bd.debitamount is null then 0 else bd.debitamount end - case when bd.creditamount is null then 0 else bd.creditamount end )  "
                 + " from EgBillregister br, EgBilldetails bd, EgBillregistermis bmis,CVoucherHeader vh  "
-                + " where br.id=bd.egBillregister.id and br.id=bmis.egBillregister.id and (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true)  and bmis.voucherHeader=vh.id and upper(br.status.description) not in ('CANCELLED') "
+                + " where br.id=bd.egBillregister.id and br.id=bmis.egBillregister.id and (bmis.budgetCheckReq is null or bmis.budgetCheckReq=true)  and bmis.voucherHeader.id=vh.id and upper(br.status.description) not in ('CANCELLED') "
                 + "  and vh.status=4  " + query;
 
             LOGGER.info("getBillAmountWhereCancelledVouchers query============" + newQuery);

@@ -55,8 +55,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -94,8 +97,17 @@ import com.exilant.GLEngine.CoaCache;
 import com.mchange.v1.cachedstore.CacheFlushException;
 
 // LTS Migration Fix (Spring 6 / JPA 3 Upgrade):
-// Added @Transactional to Action class so that operations like deleteAccountDetailType, saveCoaDetails
-// and manual .flush() have an active EntityManager transaction context.
+/**
+ * LTS Migration Notes:
+ * 1. [Struts 7 Checkbox Binding] Form checkboxes ('activeForPosting', 'functionRequired', 'budgetCheckRequired')
+ *    were not binding to action bean properties in Struts 7 during update/create. Added applySubmittedCoaFlags()
+ *    and resolveSubmittedCheckbox() to read parameters directly from HttpServletRequest.
+ * 2. [Struts 7 OGNL Getters] Added getActiveForPosting(), getFunctionRequired(), getBudgetCheckRequired() getters
+ *    to support standard Struts 7 OGNL property evaluation.
+ * 3. [Java 17 Null Safety] Used Boolean.TRUE.equals() in populateCoaRequiredFields() and helper methods to prevent
+ *    NullPointerExceptions when unboxing Boolean entity properties.
+ * 4. [Hibernate 6 & Spring] Added @Transactional and explicit flush() to ensure persistence context synchronization.
+ */
 @Transactional
 @ParentPackage("egov")
 @Results({
@@ -217,9 +229,62 @@ public class ChartOfAccountsAction extends BaseFormAction {
         return (EgfAccountcodePurpose) persistenceService.find("from EgfAccountcodePurpose where id=?", id);
     }
 
+    /*
+     * LTS Migration Fix (Struts 7) — Chart of Accounts view / Add
+     *
+     * What was the issue?
+     *   Opening a COA node showed blank Account Code / Name / Type fields. Add then
+     *   failed with NPE: parent.getType() because parent was null (HTTP 405 page).
+     *
+     * Why do we need this change?
+     *   Tree links post model.id; Add posts parentId (and model.id). Struts 7 does
+     *   not bind nested ModelDriven params like model.id, and parentId on the add
+     *   POST is also unreliable. Without loading by id from the request, prepare()
+     *   keeps an empty CChartOfAccounts and addNewCoa() looks up a null parent.
+     *
+     * How we solved this?
+     *   Read model.id / parentId from the HTTP request before populate and before
+     *   addNewCoa, then findById. Empty parentId after that returns NEW with an
+     *   action error instead of NPE.
+     *
+     * What did we solve?
+     *   View shows the selected account; Add opens the create form under that parent.
+     */
+    private void resolveCoaIdsFromRequest() {
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        if (request == null)
+            return;
+        if (model.getId() == null) {
+            final Long id = parseOptionalLong(request.getParameter("model.id"));
+            if (id != null)
+                model.setId(id);
+        }
+        if (parentId == null)
+            parentId = parseOptionalLong(request.getParameter("parentId"));
+        if (coaId == null)
+            coaId = parseOptionalLong(request.getParameter("coaId"));
+    }
+
+    private static Long parseOptionalLong(final String value) {
+        if (value == null)
+            return null;
+        final String trimmed = value.trim();
+        if (trimmed.isEmpty() || "0".equals(trimmed) || "-1".equals(trimmed))
+            return null;
+        try {
+            return Long.valueOf(trimmed);
+        } catch (final NumberFormatException e) {
+            return null;
+        }
+    }
+
     private void populateChartOfAccounts() {
-        if (model.getId() != null)
-            model = chartOfAccountsService.findById(model.getId(), false);
+        resolveCoaIdsFromRequest();
+        if (model.getId() != null) {
+            final CChartOfAccounts found = chartOfAccountsService.findById(model.getId(), false);
+            if (found != null)
+                model = found;
+        }
     }
 
     @Override
@@ -227,6 +292,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         return NEW;
     }
 
+    @SkipValidation
     @Action(value = "/masters/chartOfAccounts-view")
     public String view() {
         populateAccountCodePurpose();
@@ -236,6 +302,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
         return Constants.VIEW;
     }
 
+    @SkipValidation
     @Action(value = "/masters/chartOfAccounts-viewChartOfAccounts")
     public String viewChartOfAccounts(){
         populateAccountCodePurpose();
@@ -244,6 +311,8 @@ public class ChartOfAccountsAction extends BaseFormAction {
         coaId = model.getId();
         return Constants.VIEW_COA;
     }
+
+    @SkipValidation
     @Action(value = "/masters/chartOfAccounts-modifyChartOfAccounts")
     public String modifyChartOfAccounts() {
         populateAccountCodePurpose();
@@ -265,9 +334,57 @@ public class ChartOfAccountsAction extends BaseFormAction {
     }
 
     private void populateCoaRequiredFields() {
-        activeForPosting = getIsActiveForPosting();
-        functionRequired = getFunctionReqd();
-        budgetCheckRequired = budgetCheckReq();
+        activeForPosting = model != null && Boolean.TRUE.equals(model.getIsActiveForPosting());
+        functionRequired = model != null && Boolean.TRUE.equals(model.getFunctionReqd());
+        budgetCheckRequired = model != null && Boolean.TRUE.equals(model.getBudgetCheckReq());
+    }
+
+    /**
+     * LTS Migration Fix (Struts 7):
+     * Function Required / Active For Posting / Budget Required checkboxes were not
+     * persisted on Modify Detailed Code. Struts 7 does not reliably bind these
+     * action boolean fields (and {@code value="functionReqd"} on the JSP confused
+     * fieldValue with checked-state). Read submitted checkbox params from the
+     * request and copy them onto the COA entity before persist — same pattern as
+     * SubScheme Active.
+     */
+    private void applySubmittedCoaFlags() {
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        if (request != null) {
+            activeForPosting = resolveSubmittedCheckbox(request, "activeForPosting");
+            functionRequired = resolveSubmittedCheckbox(request, "functionRequired");
+            budgetCheckRequired = resolveSubmittedCheckbox(request, "budgetCheckRequired");
+        }
+        if (model != null) {
+            model.setIsActiveForPosting(activeForPosting);
+            model.setFunctionReqd(functionRequired);
+            model.setBudgetCheckReq(budgetCheckRequired);
+        }
+    }
+
+    private static boolean resolveSubmittedCheckbox(final HttpServletRequest request, final String paramName) {
+        final String[] values = request.getParameterValues(paramName);
+        if (values == null || values.length == 0)
+            return false;
+        for (final String value : values) {
+            if (value == null)
+                continue;
+            final String trimmed = value.trim();
+            if ("true".equalsIgnoreCase(trimmed) || "on".equalsIgnoreCase(trimmed)
+                    || "yes".equalsIgnoreCase(trimmed) || "1".equals(trimmed))
+                return true;
+        }
+        for (final String value : values) {
+            if (value != null && ("false".equalsIgnoreCase(value.trim()) || "off".equalsIgnoreCase(value.trim())
+                    || "0".equals(value.trim())))
+                return false;
+        }
+        // Non-empty value present (legacy fieldValue quirks) ⇒ treated as checked
+        for (final String value : values) {
+            if (value != null && !value.trim().isEmpty())
+                return true;
+        }
+        return false;
     }
 
     private void populateAccountCodePurpose() {
@@ -277,6 +394,7 @@ public class ChartOfAccountsAction extends BaseFormAction {
 
     @Action(value = "/masters/chartOfAccounts-update")
     public String update() {
+        applySubmittedCoaFlags();
     	if (StringUtils.isEmpty(model.getName())) {
     		addActionError("Please Enter the Name");
     		populateAccountDetailTypeList();
@@ -286,16 +404,15 @@ public class ChartOfAccountsAction extends BaseFormAction {
     	}
         updateOnly = true;
         populateAccountDetailType();
-        model.setIsActiveForPosting(activeForPosting);
-        model.setFunctionReqd(functionRequired);
-        model.setBudgetCheckReq(budgetCheckRequired);
         dropdownData.put("mappedAccountDetailTypeList", accountDetailType);
 
         setPurposeOnCoa();
         populateAccountCodePurpose();
         chartOfAccountsService.persist(model);
+        chartOfAccountsService.flush();
         saveCoaDetails(model);
         populateAccountDetailTypeList();
+        populateCoaRequiredFields();
         addActionMessage(getText("chartOfAccount.modified.successfully"));
         clearCache();
         coaId = model.getId();
@@ -482,12 +599,23 @@ public class ChartOfAccountsAction extends BaseFormAction {
         return false;
     }
 
+    @SkipValidation
     @Action(value = "/masters/chartOfAccounts-addNewCoa")
     public String addNewCoa() {
+        resolveCoaIdsFromRequest();
+        if (parentId == null && model != null && model.getId() != null)
+            parentId = model.getId();
         model = new CChartOfAccounts();
-        if (parentId != null)
-            model.setParentId(parentId);
+        if (parentId == null) {
+            addActionError(getText("chartOfAccount.no.data"));
+            return NEW;
+        }
+        model.setParentId(parentId);
         final CChartOfAccounts parent = chartOfAccountsService.findById(parentId, false);
+        if (parent == null) {
+            addActionError(getText("chartOfAccount.no.data"));
+            return NEW;
+        }
         model.setType(parent.getType());
         setClassification(parent);
         final Long glCode = findNextGlCode(parent);
@@ -578,13 +706,12 @@ public class ChartOfAccountsAction extends BaseFormAction {
             model.setType(parent.getType());
         }
         setPurposeOnCoa();
-        model.setIsActiveForPosting(activeForPosting);
-        model.setBudgetCheckReq(budgetCheckRequired);
-        model.setFunctionReqd(functionRequired);
+        applySubmittedCoaFlags();
         populateAccountDetailType();
         model.setMajorCode(model.getGlcode().substring(0, majorCodeLength));
         model.setCreatedDate(DateUtils.now());
         chartOfAccountsService.persist(model);
+        chartOfAccountsService.flush();
         saveCoaDetails(model);
         addActionMessage(getText("chartOfAccount.saved.successfully"));
         clearCache();
@@ -603,26 +730,35 @@ public class ChartOfAccountsAction extends BaseFormAction {
         model = new CChartOfAccounts();
     }
 
+    /**
+     * Struts 7 expects getX() for boolean action fields; isX() alone is unreliable.
+     */
+    public boolean getActiveForPosting() {
+        return activeForPosting;
+    }
+
     public boolean isActiveForPosting() {
         return activeForPosting;
     }
 
+    public boolean getFunctionRequired() {
+        return functionRequired;
+    }
+
+    public boolean getBudgetCheckRequired() {
+        return budgetCheckRequired;
+    }
+
     public boolean budgetCheckReq() {
-        if (model != null && model.getBudgetCheckReq() != null && model.getBudgetCheckReq())
-            return true;
-        return false;
+        return model != null && Boolean.TRUE.equals(model.getBudgetCheckReq());
     }
 
     public boolean getFunctionReqd() {
-        if (model != null && model.getFunctionReqd() != null && model.getFunctionReqd())
-            return true;
-        return false;
+        return model != null && Boolean.TRUE.equals(model.getFunctionReqd());
     }
 
     public boolean getIsActiveForPosting() {
-        if (model != null && model.getIsActiveForPosting() != null && model.getIsActiveForPosting())
-            return true;
-        return false;
+        return model != null && Boolean.TRUE.equals(model.getIsActiveForPosting());
     }
 
 
@@ -711,17 +847,16 @@ public class ChartOfAccountsAction extends BaseFormAction {
             }
             parentId = parent.getId();
             model.setParentId(parentId);
-            model.setBudgetCheckReq(budgetCheckRequired);
-            model.setFunctionReqd(functionRequired);
             model.setType(parent.getType());
             setClassification(parent);
             model.setGlcode(generatedGlcode.concat(newGlcode));
             model.setMajorCode(model.getGlcode().substring(0, majorCodeLength));
             setPurposeOnCoa();
             populateAccountCodePurpose();
-            model.setIsActiveForPosting(activeForPosting);
+            applySubmittedCoaFlags();
             populateAccountDetailType();
             chartOfAccountsService.persist(model);
+            chartOfAccountsService.flush();
             saveCoaDetails(model);
             addActionMessage(getText("chartOfAccount.detailed.saved"));
         } else

@@ -101,10 +101,17 @@
 
 	<s:form name="budgetDetailReportForm" action="budgetReport"
 		theme="simple">
+		<%-- LTS Migration Note [MDMS Department Code Alignment]:
+		     In UPYOG, Department is an MDMS master where the unique identifier is an alphanumeric
+		     String 'code' (e.g., 'DEPT_1'), not a numeric database 'id'.
+		     The parent search screen (budgetReport-dept.jsp) binds the dropdown using listKey="code"
+		     onto 'model.department.code', leaving 'model.department.id' as null.
+		     Updated this hidden field from 'model.department.id' to 'model.department.code' so that
+		     the selected department is preserved when submitting for SAVE AS PDF / SAVE AS EXCEL exports. --%>
 		<input type="hidden" name="model.financialYear.id"
 			value='<s:property value="model.financialYear.id"/>' />
-		<input type="hidden" name="model.department.id"
-			value='<s:property value="model.department.id"/>' />
+		<input type="hidden" name="model.department.code"
+			value='<s:property value="model.department.code"/>' />
 		<input type="hidden" name="model.type"
 			value='<s:property value="model.type"/>' />
 		<div id="buttons" class="buttonbottom">
