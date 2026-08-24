@@ -80,6 +80,7 @@ public class BillRepositoryV2 {
 							.billNumber(rs.getString("bd_billno"))
 							.billDate(rs.getLong("bd_billdate"))
 							.consumerCode(rs.getString("bd_consumercode"))
+							.dueDate(rs.getLong("bd_expirydate"))
 							.build();
 					billMap.put(billId, bill);
 				} else {

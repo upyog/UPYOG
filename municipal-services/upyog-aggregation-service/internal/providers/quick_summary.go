@@ -46,19 +46,19 @@ type QuickSummaryProvider struct {
 	billingClient     *clients.Client
 	draftClient       *clients.Client
 	workflowClient    *clients.Client
+	advClient         *clients.Client
+	chbClient         *clients.Client
 	completedStatuses []string
 }
 
 // NewQuickSummaryProvider creates a new QuickSummaryProvider.
-//
-// client is the inbox service client (application counts).
-// billingClient is the billing service client (pending payments count).
-// draftClient is the draft service client (draft count).
 func NewQuickSummaryProvider(
 	client *clients.Client,
 	billingClient *clients.Client,
 	draftClient *clients.Client,
 	workflowClient *clients.Client,
+	advClient *clients.Client,
+	chbClient *clients.Client,
 	c *cache.Cache,
 	log *logger.Logger,
 	m *metrics.Metrics,
@@ -70,6 +70,8 @@ func NewQuickSummaryProvider(
 		billingClient:     billingClient,
 		draftClient:       draftClient,
 		workflowClient:    workflowClient,
+		advClient:         advClient,
+		chbClient:         chbClient,
 		completedStatuses: completedStatuses,
 	}
 }
@@ -130,18 +132,25 @@ func (p *QuickSummaryProvider) Execute(
 	}
 
 	g.Go(func() error {
-		// Replaced process/_count with dashboard/_count for accurate application counts
 		path := "/egov-workflow-v2/egov-wf/process/dashboard/_count"
 		p.Log.WithContext(gCtx).Info("fetching applicationCount from workflow dashboard API", zap.String("api", path))
 
-		count, fetchErr := p.fetchApplicationCount(gCtx, aggReq.RequestInfo, aggReq.TenantID, userUUID, headers)
+		wfCount, fetchErr := p.fetchApplicationCount(gCtx, aggReq.RequestInfo, aggReq.TenantID, userUUID, headers)
 		if fetchErr != nil {
-			p.Log.WithContext(gCtx).Warn("failed to fetch application count", zap.Error(fetchErr))
-			return nil // degrade gracefully
+			p.Log.WithContext(gCtx).Warn("failed to fetch workflow application count", zap.Error(fetchErr))
 		}
 
-		p.Log.WithContext(gCtx).Info("successfully fetched applicationCount", zap.Int("applicationCount", count))
-		data.ApplicationCount = count
+		advCount := p.fetchAdvCount(gCtx, aggReq.RequestInfo, aggReq.TenantID, userMobile, headers)
+		chbCount := p.fetchChbCount(gCtx, aggReq.RequestInfo, aggReq.TenantID, userMobile, headers)
+
+		totalAppCount := wfCount + advCount + chbCount
+		p.Log.WithContext(gCtx).Info("successfully calculated applicationCount",
+			zap.Int("workflowCount", wfCount),
+			zap.Int("advCount", advCount),
+			zap.Int("chbCount", chbCount),
+			zap.Int("totalApplicationCount", totalAppCount),
+		)
+		data.ApplicationCount = totalAppCount
 		return nil
 	})
 
@@ -180,18 +189,23 @@ func (p *QuickSummaryProvider) Execute(
 	})
 
 	g.Go(func() error {
-		// Updated to use dashboard/_search and parse totalCount instead of dashboard/_count for accurate completed services
 		path := "/egov-workflow-v2/egov-wf/process/dashboard/_search"
 		p.Log.WithContext(gCtx).Info("fetching completedServicesCount from workflow dashboard API", zap.String("api", path))
 
-		count, fetchErr := p.fetchCompletedServicesCount(gCtx, aggReq.RequestInfo, aggReq.TenantID, userUUID, headers)
+		wfCompletedCount, fetchErr := p.fetchCompletedServicesCount(gCtx, aggReq.RequestInfo, aggReq.TenantID, userUUID, headers)
 		if fetchErr != nil {
-			p.Log.WithContext(gCtx).Warn("failed to fetch completed services count", zap.Error(fetchErr))
-			return nil
+			p.Log.WithContext(gCtx).Warn("failed to fetch completed services count from workflow", zap.Error(fetchErr))
 		}
 
-		p.Log.WithContext(gCtx).Info("successfully fetched completedServicesCount", zap.Int("completedServicesCount", count))
-		data.CompletedServicesCount = count
+		advBookedCount := p.fetchAdvBookedCount(gCtx, aggReq.RequestInfo, aggReq.TenantID, userMobile, headers)
+
+		totalCompleted := wfCompletedCount + advBookedCount
+		p.Log.WithContext(gCtx).Info("successfully calculated completedServicesCount",
+			zap.Int("workflowCompletedCount", wfCompletedCount),
+			zap.Int("advBookedCount", advBookedCount),
+			zap.Int("totalCompletedServicesCount", totalCompleted),
+		)
+		data.CompletedServicesCount = totalCompleted
 		return nil
 	})
 
@@ -374,4 +388,100 @@ func (p *QuickSummaryProvider) fetchApplicationCount(
 		return 0, fmt.Errorf("unmarshal dashboard count from %s: %w", path, err)
 	}
 	return dcr.TotalCount, nil
+}
+
+func (p *QuickSummaryProvider) fetchAdvCount(
+	ctx context.Context,
+	requestInfo json.RawMessage,
+	tenantID, userMobile string,
+	headers map[string]string,
+) int {
+	if p.advClient == nil {
+		return 0
+	}
+	path := fmt.Sprintf("/adv-services/booking/v1/_search?tenantId=%s&limit=1&offset=0", tenantID)
+	if userMobile != "" {
+		path += fmt.Sprintf("&mobileNumber=%s", userMobile)
+	}
+
+	body := map[string]interface{}{
+		"RequestInfo": requestInfo,
+	}
+
+	resp, err := p.advClient.Post(ctx, path, body, headers)
+	if err != nil || resp.StatusCode != http.StatusOK {
+		return 0
+	}
+
+	var res struct {
+		BookingApplication []interface{} `json:"bookingApplication"`
+	}
+	if err := json.Unmarshal(resp.Body, &res); err != nil {
+		return 0
+	}
+	return len(res.BookingApplication)
+}
+
+func (p *QuickSummaryProvider) fetchChbCount(
+	ctx context.Context,
+	requestInfo json.RawMessage,
+	tenantID, userMobile string,
+	headers map[string]string,
+) int {
+	if p.chbClient == nil {
+		return 0
+	}
+	path := fmt.Sprintf("/chb-services/booking/v1/_search?tenantId=%s&limit=1&offset=0", tenantID)
+	if userMobile != "" {
+		path += fmt.Sprintf("&mobileNumber=%s", userMobile)
+	}
+
+	body := map[string]interface{}{
+		"RequestInfo": requestInfo,
+	}
+
+	resp, err := p.chbClient.Post(ctx, path, body, headers)
+	if err != nil || resp.StatusCode != http.StatusOK {
+		return 0
+	}
+
+	var res struct {
+		BookingApplication []interface{} `json:"hallsBookingApplication"`
+	}
+	if err := json.Unmarshal(resp.Body, &res); err != nil {
+		return 0
+	}
+	return len(res.BookingApplication)
+}
+
+func (p *QuickSummaryProvider) fetchAdvBookedCount(
+	ctx context.Context,
+	requestInfo json.RawMessage,
+	tenantID, userMobile string,
+	headers map[string]string,
+) int {
+	if p.advClient == nil {
+		return 0
+	}
+	path := fmt.Sprintf("/adv-services/booking/v1/_search?tenantId=%s&bookingStatus=BOOKED&limit=50&offset=0", tenantID)
+	if userMobile != "" {
+		path += fmt.Sprintf("&mobileNumber=%s", userMobile)
+	}
+
+	body := map[string]interface{}{
+		"RequestInfo": requestInfo,
+	}
+
+	resp, err := p.advClient.Post(ctx, path, body, headers)
+	if err != nil || resp.StatusCode != http.StatusOK {
+		return 0
+	}
+
+	var res struct {
+		BookingApplication []interface{} `json:"bookingApplication"`
+	}
+	if err := json.Unmarshal(resp.Body, &res); err != nil {
+		return 0
+	}
+	return len(res.BookingApplication)
 }

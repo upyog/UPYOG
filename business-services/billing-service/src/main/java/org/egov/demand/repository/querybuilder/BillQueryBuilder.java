@@ -73,7 +73,7 @@ public class BillQueryBuilder {
 	public static final String BILL_SHORT_BASE_QUERY = "SELECT b.id AS b_id, b.tenantid AS b_tenantid, b.status AS b_status,"
 			+ " b.mobilenumber AS mobilenumber, b.createddate AS b_createddate, b.payeremail, bd.id AS bd_id,"
 			+ " bd.businessservice AS bd_businessservice, bd.billno AS bd_billno, bd.billdate AS bd_billdate,"
-			+ " bd.consumercode AS bd_consumercode, bd.totalamount AS bd_totalamount, bd.fromperiod, bd.toperiod"
+			+ " bd.consumercode AS bd_consumercode, bd.totalamount AS bd_totalamount, bd.fromperiod, bd.toperiod, bd.expirydate AS bd_expirydate"
 			+ " FROM egbs_bill_v1 b"
 			+ " LEFT OUTER JOIN egbs_billdetail_v1 bd ON b.id = bd.billid AND b.tenantid = bd.tenantid";
 	

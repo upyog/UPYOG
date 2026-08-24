@@ -157,3 +157,9 @@ backend:
       maxConns: 30
       circuitThreshold: 5
       circuitTimeout: 30s
+    chb:
+      baseUrl: "http://localhost:8998"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s

@@ -143,3 +143,9 @@ backend:
       maxConns: 50
       circuitThreshold: 5
       circuitTimeout: 30s
+    chb:
+      baseUrl: "http://chb-services.uat:8080"
+      timeout: 10s
+      maxConns: 50
+      circuitThreshold: 5
+      circuitTimeout: 30s

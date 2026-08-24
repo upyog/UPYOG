@@ -169,3 +169,9 @@ backend:
       maxConns: 30
       circuitThreshold: 5
       circuitTimeout: 30s
+    chb:
+      baseUrl: "http://chb-services.egov:8080"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s

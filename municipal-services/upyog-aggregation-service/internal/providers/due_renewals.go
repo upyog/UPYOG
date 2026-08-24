@@ -62,7 +62,7 @@ func (p *DueRenewalsProvider) Execute(
 		tenantID = aggReq.TenantID
 	}
 
-	// Previously called /tl-services/v1/BPAREG/_search. Changed to hit billing service to fetch due renewals
+	// Fetch all bills to get accurate totalCount and perform pagination in-memory
 	path := fmt.Sprintf("/billing-service/bill/v2/short/_search?tenantId=%s&mobileNumber=%s&isActive=true&status=ACTIVE", tenantID, userMobile)
 
 	headers := map[string]string{
@@ -90,12 +90,51 @@ func (p *DueRenewalsProvider) Execute(
 		return nil, fmt.Errorf("unmarshal renewals response: %w", err)
 	}
 
+	allBills := searchResult.Bill
+	totalCount := len(allBills)
+
+	// Enrich each bill with a dummy payment redirectUrl
+	for i, billRaw := range allBills {
+		if billMap, ok := billRaw.(map[string]interface{}); ok {
+			consumerCode, _ := billMap["consumerCode"].(string)
+			businessService, _ := billMap["businessService"].(string)
+			billMap["redirectUrl"] = fmt.Sprintf("/upyog-ui/citizen/payment/pay?consumerCode=%s&tenantId=%s&businessService=%s", consumerCode, aggReq.TenantID, businessService)
+			allBills[i] = billMap
+		}
+	}
+
+	// Apply pagination if specified in request
+	finalBills := allBills
+	if request.Pagination != nil {
+		offset := request.Pagination.Page * request.Pagination.Size
+		limit := request.Pagination.Size
+
+		if offset < len(allBills) {
+			end := offset + limit
+			if end > len(allBills) {
+				end = len(allBills)
+			}
+			finalBills = allBills[offset:end]
+		} else {
+			finalBills = []interface{}{}
+		}
+	}
+
 	p.Log.WithContext(ctx).Debug("fetched due renewals",
-		zap.Int("count", len(searchResult.Bill)),
+		zap.Int("totalCount", totalCount),
+		zap.Int("returnedCount", len(finalBills)),
 	)
+
+	type DueRenewalsData struct {
+		Bills      []interface{} `json:"bills"`
+		TotalCount int           `json:"totalCount"`
+	}
 
 	return &dto.ProviderResponse{
 		Status: common.StatusSuccess,
-		Data:   searchResult.Bill,
+		Data: DueRenewalsData{
+			Bills:      finalBills,
+			TotalCount: totalCount,
+		},
 	}, nil
 }

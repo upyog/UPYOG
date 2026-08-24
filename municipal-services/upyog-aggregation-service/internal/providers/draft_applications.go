@@ -37,6 +37,8 @@ type DraftApplication struct {
 	LastModifiedTime int64 `json:"lastModifiedTime"`
 	// CompletionPercentage is the percentage of the form that has been filled.
 	CompletionPercentage float64 `json:"completionPercentage"`
+	// RedirectURL is the action link to resume draft application.
+	RedirectURL string `json:"redirectUrl"`
 }
 
 // DraftApplicationsProvider retrieves active drafts from upyog-draft-service.
@@ -99,6 +101,10 @@ func (p *DraftApplicationsProvider) Execute(
 	items := result.Items
 	if len(items) == 0 && len(result.Drafts) > 0 {
 		items = result.Drafts
+	}
+
+	for i := range items {
+		items[i].RedirectURL = fmt.Sprintf("/upyog-ui/citizen/%s/apply?draftId=%s", items[i].BusinessService, items[i].ID)
 	}
 
 	p.Log.WithContext(ctx).Debug("fetched draft applications",

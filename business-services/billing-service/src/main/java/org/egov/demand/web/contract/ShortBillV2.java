@@ -52,4 +52,10 @@ public class ShortBillV2 {
      */
     @JsonProperty("consumerCode")
     private String consumerCode;
+
+    /**
+     * Epoch timestamp representing the due date of the bill.
+     */
+    @JsonProperty("dueDate")
+    private Long dueDate;
 }
