@@ -1,171 +1,431 @@
+import "../../css/ndc.css";
 import React, { useState, useEffect, useRef } from "react";
-import { CardLabel, LabelFieldPair, TextInput, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+
+import { TextInput, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+
 import { useTranslation } from "react-i18next";
+
 import { useDispatch, useSelector } from "react-redux";
-import _ from "lodash";
+
 import { updateNDCForm } from "../redux/actions/NDCFormActions";
-import { useLocation,Link } from "react-router-dom";
+
+import { useLocation, Link } from "react-router-dom";
+
 import { Loader } from "../components/Loader";
+
+/*
+ * =========================================================
+ * ADDRESS
+ * =========================================================
+ */
 
 const getAddress = (address, t) => {
   return `${address?.doorNo ? `${address?.doorNo}, ` : ""} ${address?.street ? `${address?.street}, ` : ""}${
     address?.landmark ? `${address?.landmark}, ` : ""
-  }${t(Digit.Utils.pt.getMohallaLocale(address?.locality.code, address?.tenantId))}, ${t(Digit.Utils.pt.getCityLocale(address?.tenantId))}${
+  }${t(Digit.Utils.pt.getMohallaLocale(address?.locality?.code, address?.tenantId))}, ${t(Digit.Utils.pt.getCityLocale(address?.tenantId))}${
     address?.pincode && t(address?.pincode) ? `, ${address.pincode}` : " "
   }`;
 };
 
-// property search and fetch details component used in NDC application form summary step
+/*
+ * =========================================================
+ * PROPERTY SEARCH / FETCH DETAILS
+ * COMPONENT USED IN NDC
+ * =========================================================
+ */
+
 export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
   const { t } = useTranslation();
+
   const myElementRef = useRef(null);
+
   const dispatch = useDispatch();
+
   let { pathname, state } = useLocation();
+
   state = state && (typeof state === "string" || state instanceof String) ? JSON.parse(state) : state;
+
+  /*
+   * =========================================================
+   * REDUX DATA
+   * =========================================================
+   */
+
   const apiDataCheck = useSelector((state) => state.ndc.NDCForm?.formData?.responseData);
+
+  /*
+   * =========================================================
+   * EDIT SCREEN
+   * =========================================================
+   */
+
   const isEditScreen = pathname.includes("/modify-application/");
+
+  /*
+   * =========================================================
+   * TENANT
+   * =========================================================
+   */
+
   const tenantId = Digit.ULBService.getCurrentTenantId();
+
+  /*
+   * =========================================================
+   * URL PROPERTY ID
+   * =========================================================
+   */
+
   const search = useLocation().search;
+
   const urlPropertyId = new URLSearchParams(search).get("propertyId");
+
   const isfirstRender = useRef(true);
+
+  /*
+   * =========================================================
+   * LOADER
+   * =========================================================
+   */
+
   const [getLoader, setLoader] = useState(false);
 
-  const ptFromApi = apiDataCheck?.[0]?.NdcDetails?.find((item) => item.businessService == "PT");
+  /*
+   * =========================================================
+   * PROPERTY FROM API
+   * =========================================================
+   */
+
+  const ptFromApi = apiDataCheck?.[0]?.NdcDetails?.find((item) => item.businessService === "PT");
+
+  /*
+   * =========================================================
+   * PROPERTY ID
+   * =========================================================
+   */
 
   const [propertyId, setPropertyId] = useState(formData?.cpt?.id || (urlPropertyId !== "null" ? urlPropertyId : "") || ptFromApi?.consumerCode || "");
+
   const [searchPropertyId, setSearchPropertyId] = useState(
-    formData?.cpt?.id || (urlPropertyId !== "null" ? urlPropertyId : "") || ptFromApi?.consumerCode || ""
+    formData?.cpt?.id || (urlPropertyId !== "null" ? urlPropertyId : "") || ptFromApi?.consumerCode || "",
   );
+
+  /*
+   * =========================================================
+   * TOAST
+   * =========================================================
+   */
+
   const [showToast, setShowToast] = useState(null);
+
+  /*
+   * =========================================================
+   * PROPERTY DETAILS
+   * =========================================================
+   */
 
   const [propertyDetails, setPropertyDetails] = useState(() => {
     if (formData?.cpt?.details && Object.keys(formData?.cpt?.details).length > 0) {
-      return { Properties: [{ ...formData?.cpt?.details }] };
-    } else {
       return {
-        Properties: [],
+        Properties: [
+          {
+            ...formData?.cpt?.details,
+          },
+        ],
       };
     }
+
+    return {
+      Properties: [],
+    };
   });
+
+  /*
+   * =========================================================
+   * PROPERTY DUES
+   * =========================================================
+   */
 
   const [propertyDues, setPropertyDues] = useState(() => {
     if (formData?.cpt?.dues && Object.keys(formData?.cpt?.dues).length > 0) {
-      return { dues: { ...formData?.cpt?.dues } };
-    } else {
       return {
-        dues: {},
+        dues: {
+          ...formData?.cpt?.dues,
+        },
       };
     }
+
+    return {
+      dues: {},
+    };
   });
 
+  /*
+   * =========================================================
+   * UI STATES
+   * =========================================================
+   */
+
   const [isSearchClicked, setIsSearchClicked] = useState(false);
+
   const [getNoDue, setNoDue] = useState(false);
+
   const [getCheckStatus, setCheckStats] = useState(false);
+
   const [getPayDuesButton, setPayDuesButton] = useState(false);
 
-  const { isLoading, isError, error, data: propertyDetailsFetch } = Digit.Hooks.pt.usePropertySearch(
-    { filters: { propertyIds: searchPropertyId }, tenantId: tenantId },
+  /*
+   * =========================================================
+   * PROPERTY SEARCH API
+   * =========================================================
+   */
+
+  const {
+    isLoading,
+    isError,
+    error,
+    data: propertyDetailsFetch,
+  } = Digit.Hooks.pt.usePropertySearch(
     {
-      filters: { propertyIds: searchPropertyId },
+      filters: {
+        propertyIds: searchPropertyId,
+      },
+
       tenantId: tenantId,
+    },
+
+    {
+      filters: {
+        propertyIds: searchPropertyId,
+      },
+
+      tenantId: tenantId,
+
       enabled: searchPropertyId ? true : false,
+
       privacy: Digit.Utils.getPrivacyObject(),
-    }
+    },
   );
+
+  /*
+   * =========================================================
+   * PROPERTY DATA FROM API
+   * =========================================================
+   */
 
   useEffect(() => {
     if (ptFromApi?.consumerCode) {
       setIsSearchClicked(true);
+
       setPropertyId(ptFromApi.consumerCode);
+
       setSearchPropertyId(ptFromApi.consumerCode);
+
       setNoDue(true);
-      setPropertyDues({ dues: { totalAmount: 0 } });
-      const updated = { ...formData[config.key], id: ptFromApi.consumerCode };
+
+      setPropertyDues({
+        dues: {
+          totalAmount: 0,
+        },
+      });
+
+      const updated = {
+        ...formData[config.key],
+
+        id: ptFromApi.consumerCode,
+      };
+
       onSelect(config.key, updated);
+
       dispatch(updateNDCForm(config.key, updated));
     }
   }, [ptFromApi]);
 
+  /*
+   * =========================================================
+   * PROPERTY DETAILS FETCH
+   * =========================================================
+   */
+
   useEffect(() => {
     if (propertyDetailsFetch && propertyDetailsFetch?.Properties && propertyDetailsFetch?.Properties?.length > 0) {
       setPropertyDetails(propertyDetailsFetch);
+
       setShowToast(null);
+
       setCheckStats(true);
     } else {
       if (isfirstRender.current) {
         isfirstRender.current = false;
+
         return;
       }
+
       if (!formData?.cpt?.details && isSearchClicked) {
-        setPropertyDetails({});
-        setShowToast({ error: true, label: "CS_PT_NO_PROPERTIES_FOUND" });
+        setPropertyDetails({
+          Properties: [],
+        });
+
+        setShowToast({
+          error: true,
+
+          label: "CS_PT_NO_PROPERTIES_FOUND",
+        });
       }
     }
   }, [propertyDetailsFetch]);
 
+  /*
+   * =========================================================
+   * UPDATE SEARCH PROPERTY ID
+   * =========================================================
+   */
+
   useEffect(() => {
-    if (propertyId && (window.location.href.includes("/renew-application-details/") || window.location.href.includes("/edit-application-details/")))
+    if (propertyId && (window.location.href.includes("/renew-application-details/") || window.location.href.includes("/edit-application-details/"))) {
       setSearchPropertyId(propertyId);
+    }
   }, [propertyId]);
 
-  useEffect(() => {
-    if (isLoading == false && error && error == true && propertyDetails?.Properties?.length == 0) {
-      setShowToast({ error: true, label: "CS_PT_NO_PROPERTIES_FOUND" });
-    }
-  }, [error, propertyDetails]);
+  /*
+   * =========================================================
+   * PROPERTY SEARCH ERROR
+   * =========================================================
+   */
 
   useEffect(() => {
-    const updated = { ...formData[config.key], details: propertyDetails?.Properties?.[0] };
+    if (isLoading === false && error && error === true && propertyDetails?.Properties?.length === 0) {
+      setShowToast({
+        error: true,
+
+        label: "CS_PT_NO_PROPERTIES_FOUND",
+      });
+    }
+  }, [error, propertyDetails, isLoading]);
+
+  /*
+   * =========================================================
+   * UPDATE PROPERTY DETAILS
+   * =========================================================
+   */
+
+  useEffect(() => {
+    const updated = {
+      ...formData[config.key],
+
+      details: propertyDetails?.Properties?.[0],
+    };
+
     onSelect(config.key, updated);
+
     dispatch(updateNDCForm(config.key, updated));
   }, [propertyDetails, pathname]);
 
+  /*
+   * =========================================================
+   * UPDATE PROPERTY DUES
+   * =========================================================
+   */
+
   useEffect(() => {
-    const updated = { ...formData[config.key], dues: propertyDues?.dues };
+    const updated = {
+      ...formData[config.key],
+
+      dues: propertyDues?.dues,
+    };
+
     onSelect(config.key, updated);
+
     dispatch(updateNDCForm(config.key, updated));
   }, [propertyDues, pathname]);
 
+  /*
+   * =========================================================
+   * SEARCH PROPERTY
+   * =========================================================
+   */
+
   const searchProperty = () => {
     if (!propertyId) {
-      setShowToast({ error: true, label: "PT_ENTER_PROPERTY_ID_AND_SEARCH" });
+      setShowToast({
+        error: true,
+
+        label: "PT_ENTER_PROPERTY_ID_AND_SEARCH",
+      });
+
       return;
     }
 
     if (propertyId !== searchPropertyId) {
-      setPropertyDetails({ Properties: [] });
-      setSearchPropertyId(propertyId);
-      setIsSearchClicked(true);
-      setPropertyDues({ dues: null });
-
-      // 🔑 Clear PropertyDetails from formData
-      onSelect("PropertyDetails", {
-        email: "",
-        propertyBillData: { isLoading: false, billData: {} },
-        waterConnection: [],
-        sewerageConnection: [],
-        firstName: "",
-        mobileNumber: "",
-        address: "",
+      setPropertyDetails({
+        Properties: [],
       });
 
-      // dispatch(resetNDCForm());
-      // refetch();
+      setSearchPropertyId(propertyId);
+
+      setIsSearchClicked(true);
+
+      setPropertyDues({
+        dues: null,
+      });
+
+      onSelect("PropertyDetails", {
+        email: "",
+
+        propertyBillData: {
+          isLoading: false,
+          billData: {},
+        },
+
+        waterConnection: [],
+
+        sewerageConnection: [],
+
+        firstName: "",
+
+        mobileNumber: "",
+
+        address: "",
+      });
     }
   };
 
+  /*
+   * =========================================================
+   * PROPERTY ID CHANGE
+   * =========================================================
+   */
+
   const handlePropertyChange = (e) => {
-    setPropertyId(e.target.value);
-    setValue(e.target.value, propertyIdInput.name);
-    setIsSearchClicked(false); // show button again when input changes
+    const value = e.target.value;
+
+    setPropertyId(value);
+
+    setValue(value, propertyIdInput.name);
+
+    setIsSearchClicked(false);
+
     setNoDue(false);
+
     setCheckStats(false);
+
     setPayDuesButton(false);
   };
+
+  /*
+   * =========================================================
+   * EDIT SCREEN
+   * =========================================================
+   */
 
   if (isEditScreen) {
     return <React.Fragment />;
   }
+
+  /*
+   * =========================================================
+   * PROPERTY ADDRESS
+   * =========================================================
+   */
 
   let propertyAddress = "";
 
@@ -173,123 +433,370 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
     propertyAddress = getAddress(propertyDetails?.Properties?.[0]?.address, t);
   }
 
-  let clns = "";
-  if (window.location.href.includes("/ws/")) clns = ":";
+  /*
+   * =========================================================
+   * PROPERTY INPUT CONFIG
+   * =========================================================
+   */
 
   const propertyIdInput = {
     label: "PROPERTY_ID",
+
     type: "text",
+
     name: "id",
   };
 
+  /*
+   * =========================================================
+   * SET VALUE
+   * =========================================================
+   */
+
   function setValue(value, input) {
-    const updated = { ...formData[config.key], [input]: value };
+    const updated = {
+      ...formData[config.key],
+
+      [input]: value,
+    };
+
     onSelect(config.key, updated);
+
     dispatch(updateNDCForm(config.key, updated));
   }
+
+  /*
+   * =========================================================
+   * GET VALUE
+   * =========================================================
+   */
 
   function getValue(input) {
     return formData && formData[config.key] ? formData[config.key][input] : undefined;
   }
 
+  /*
+   * =========================================================
+   * FETCH PROPERTY BILL
+   * =========================================================
+   */
+
   async function fetchBill() {
     setLoader(true);
+
     try {
       const result = await Digit.PaymentService.fetchBill(tenantId, {
         businessService: "PT",
-        // consumerCode: formData?.cpt?.id,
-        consumerCode: propertyId,
 
+        consumerCode: propertyId,
       });
+
       if (result?.Bill?.length > 0) {
-        if (result?.Bill[0]?.totalAmount > 0) {
-          setShowToast({ error: true, label: t("NDC_MESSAGE_DUES_FOUND_PLEASE_PAY") });
+        if (result?.Bill?.[0]?.totalAmount > 0) {
+          setShowToast({
+            error: true,
+
+            label: t("NDC_MESSAGE_DUES_FOUND_PLEASE_PAY"),
+          });
+
           setPayDuesButton(true);
+
+          setNoDue(false);
         } else {
-          setShowToast({ error: false, label: t("NDC_NO_BILLS_FOUND_PROPERTY") });
+          setShowToast({
+            error: false,
+
+            label: t("NDC_NO_BILLS_FOUND_PROPERTY"),
+          });
+
           setNoDue(true);
+
           setCheckStats(false);
+
+          setPayDuesButton(false);
         }
-        setPropertyDues({ dues: result?.Bill[0] });
+
+        setPropertyDues({
+          dues: result?.Bill?.[0],
+        });
       } else if (result?.Bill) {
-        setShowToast({ error: false, label: t("NDC_NO_BILLS_FOUND_PROPERTY") });
-        setPropertyDues({ dues: { totalAmount: 0 } });
+        setShowToast({
+          error: false,
+
+          label: t("NDC_NO_BILLS_FOUND_PROPERTY"),
+        });
+
+        setPropertyDues({
+          dues: {
+            totalAmount: 0,
+          },
+        });
+
         setNoDue(true);
+
         setCheckStats(false);
+
+        setPayDuesButton(false);
       } else {
-        setShowToast({ error: false, label: t("NDC_NO_BILLS_FOUND_PROPERTY") });
-        setPropertyDues({ dues: { totalAmount: 0 } });
+        setShowToast({
+          error: false,
+
+          label: t("NDC_NO_BILLS_FOUND_PROPERTY"),
+        });
+
+        setPropertyDues({
+          dues: {
+            totalAmount: 0,
+          },
+        });
+
         setNoDue(true);
+
         setCheckStats(false);
+
+        setPayDuesButton(false);
       }
+
       setLoader(false);
     } catch (error) {
+      console.error("Error while fetching property bill:", error);
+
       setLoader(false);
-      setShowToast({ error: true, label: t("NDC_MESSAGE_FETCH_FAILED") });
+
+      setShowToast({
+        error: true,
+
+        label: t("NDC_MESSAGE_FETCH_FAILED"),
+      });
     }
   }
 
-  useEffect(() => {
-    if (showToast) {
-      const timer = setTimeout(() => {
-        setShowToast(null);
-      }, 3000); // auto close after 3 sec
+  /*
+   * =========================================================
+   * AUTO CLOSE TOAST
+   * =========================================================
+   */
 
-      return () => clearTimeout(timer); // cleanup
+  useEffect(() => {
+    if (!showToast) {
+      return;
     }
+
+    const timer = setTimeout(() => {
+      setShowToast(null);
+    }, 3000);
+
+    return () => clearTimeout(timer);
   }, [showToast]);
+
+  /*
+   * =========================================================
+   * NDC LAYOUT
+   * =========================================================
+   */
+
+  const FIELD_WIDTH = "340px";
+
+  const FIELD_HEIGHT = "40px";
+
+  /*
+   * ---------------------------------------------------------
+   * FIELD WRAPPER
+   * ---------------------------------------------------------
+   */
+
+  /*
+   * ---------------------------------------------------------
+   * LABEL
+   * ---------------------------------------------------------
+   */
+
+  /*
+   * ---------------------------------------------------------
+   * INPUT ONLY WRAPPER
+   *
+   * IMPORTANT:
+   * ONLY THE INPUT + SEARCH ICON LIVE HERE.
+   *
+   * Buttons are intentionally OUTSIDE this wrapper.
+   * ---------------------------------------------------------
+   */
+
+  /*
+   * ---------------------------------------------------------
+   * INPUT
+   * ---------------------------------------------------------
+   */
+
+  /*
+   * ---------------------------------------------------------
+   * SEARCH ICON
+   * ---------------------------------------------------------
+   */
+
+  /*
+   * ---------------------------------------------------------
+   * ACTION AREA
+   *
+   * THIS IS THE IMPORTANT FIX.
+   *
+   * It has its own height/spacing and is outside the
+   * 40px input wrapper.
+   * ---------------------------------------------------------
+   */
+
+  /*
+   * ---------------------------------------------------------
+   * BUTTON
+   * ---------------------------------------------------------
+   */
+
+  /*
+   * ---------------------------------------------------------
+   * NO DUES
+   * ---------------------------------------------------------
+   */
+
+  /*
+   * =========================================================
+   * RENDER
+   * =========================================================
+   */
 
   return (
     <React.Fragment>
-      <div className="ndc-margin-bottom-16">
-        <LabelFieldPair>
-          <CardLabel className={`card-label-smaller ndc_card_labels ${window.location.href.includes("/ws/") ? 'ndc-strong-label' : ''}`}>
-            {`${t(propertyIdInput.label)} *`}
-          </CardLabel>
-          <div className="field ndc_property_search" ref={myElementRef} id="search-property-field">
-            <TextInput
+<div
+        className="ndc-property-search-container ndc-margin-bottom-16 ndc-property-search"
+        
+      >
+        {/* ===================================================
+            PROPERTY ID
+        ==================================================== */}
+
+        <div className="ndc-property-field" >
+          <label className="ndc-property-label" >
+            {t(propertyIdInput.label)}
+
+            <span className="ndc-property-required"
+              
+            >
+              *
+            </span>
+          </label>
+
+          {/* =================================================
+              INPUT + SEARCH ICON ONLY
+              
+              IMPORTANT:
+              DO NOT PUT BUTTONS INSIDE THIS DIV.
+          ================================================= */}
+
+          <div ref={myElementRef} id="search-property-field" className="ndc-property-input ndc-property-input-wrapper" >
+            <TextInput className="ndc-property-input"
               key={propertyIdInput.name}
-              value={propertyId} //{propertyId}
+              value={propertyId || ""}
               onChange={handlePropertyChange}
               disable={false}
-              // maxlength={16}
               defaultValue={undefined}
               {...propertyIdInput.validation}
+              
             />
 
-            {!isSearchClicked && (
-              <button className="submit-bar" type="button" onClick={searchProperty}>
-                {`${t("PT_SEARCH")}`}
-              </button>
-            )}
+            {/* ===============================================
+                SEARCH ICON
+            ================================================ */}
+
+            <button
+              type="button"
+              className="ndc-property-search-icon ndc-property-search-icon"
+              
+              onClick={searchProperty}
+              aria-label={t("PT_SEARCH")}
+              title={t("PT_SEARCH")}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="10.8" cy="10.8" r="6.6" stroke="#555555" strokeWidth="2" />
+
+                <path d="M16 16L21 21" stroke="#555555" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
+          </div>
+
+          {/* =================================================
+              ACTIONS ARE OUTSIDE INPUT WRAPPER
+              
+              THIS FIXES THE OVERLAP.
+          ================================================= */}
+
+          <div className="ndc-property-actions ndc-property-actions" >
+            {/* ===============================================
+                CHECK STATUS
+            ================================================ */}
 
             {!apiDataCheck?.[0]?.NdcDetails && getCheckStatus && !getPayDuesButton && (
               <button
-                className="submit-bar"
                 type="button"
+                className="ndc-property-action-button ndc-primary-button"
+                
                 onClick={() => {
-                  fetchBill("PT", formData?.cpt?.id);
+                  fetchBill();
                 }}
               >
-                {`${t("CHECK_STATUS_PROPERTY")}`}
-                {/* Check Status */}
+                {t("CHECK_STATUS_PROPERTY")}
               </button>
             )}
-            {getPayDuesButton && <div className="ndc-pay-due-button">Rs. {formData?.cpt?.dues?.totalAmount} </div>}
+
+            {/* ===============================================
+                PAY DUES AMOUNT
+            ================================================ */}
 
             {getPayDuesButton && (
-  <Link to={`/upyog-ui/citizen/payment/my-bills/PT/${propertyId}`}>
-    <button
-      className="submit-bar"
-      type="button"
-    >
-      {`${t("PAY_DUES")}`}
-    </button>
-  </Link>
-)}
-            {getNoDue && <div className="ndc-no-due-button">{t("NO_DUES_FOUND_FOR_PROPERTY")}</div>}
+              <div className="ndc-primary-button"
+                
+              >
+                <span className="ndc-button-text"
+                  
+                >
+                  Rs. {propertyDues?.dues?.totalAmount}
+                </span>
+              </div>
+            )}
+
+            {/* ===============================================
+                PAY DUES
+            ================================================ */}
+
+            {getPayDuesButton && (
+              <Link className="ndc-property-pay-link" to={`/upyog-ui/citizen/payment/my-bills/PT/${propertyId}`}>
+                <button
+                  type="button"
+                  className="ndc-property-action-button ndc-secondary-button"
+                  
+                >
+                  {t("PAY_DUES")}
+                </button>
+              </Link>
+            )}
+
+            {/* ===============================================
+                NO DUES
+            ================================================ */}
+
+            {getNoDue && (
+              <div className="ndc-property-no-dues ndc-no-dues-button" >
+                <span className="ndc-button-text"
+                  
+                >
+                  {t("NO_DUES_FOUND_FOR_PROPERTY")}
+                </span>
+              </div>
+            )}
           </div>
-        </LabelFieldPair>
+        </div>
+
+        {/* ===================================================
+            TOAST
+        ==================================================== */}
 
         {showToast && (
           <Toast
@@ -304,7 +811,14 @@ export const PropertySearchNSummary = ({ config, onSelect, formData }) => {
           />
         )}
       </div>
+
+      {/* =====================================================
+          LOADER
+      ===================================================== */}
+
       {(isLoading || getLoader) && <Loader page={true} />}
     </React.Fragment>
   );
 };
+
+export default PropertySearchNSummary;

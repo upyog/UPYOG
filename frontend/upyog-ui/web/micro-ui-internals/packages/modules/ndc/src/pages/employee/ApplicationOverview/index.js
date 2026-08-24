@@ -1,3 +1,4 @@
+import "../../../../css/ndc.css";
 import {
   Row,
   StatusTable,
@@ -309,7 +310,6 @@ const ApplicationOverview = () => {
     const checkactionApp = action?.action == "APPROVE";
 
     if (hasDuePending && checkactionApp) {
-      console.log("alwasy coming appprve");
       setLable("You Can Not Approve This Application, Because It Has Pending Dues. Please Send It To Required Department");
       setError(true);
       setShowToast(true);
@@ -497,7 +497,7 @@ const ApplicationOverview = () => {
       {/* <div>
         <Header styles={{ fontSize: "32px" }}>{t("NDC_APP_OVER_VIEW_HEADER")}</Header>
       </div> */}
-      <div style={{ display: "flex", justifyContent: "end", alignItems: "center", padding: "16px" }}>
+      <div className="ndc-overview-actions" >
         {isCemp && (
           <div className="cardHeaderWithOptions ral-app-details-header">
             {getLoader && <Loader />}
@@ -551,13 +551,8 @@ const ApplicationOverview = () => {
                 {/* <Row label={t("NDC_STATUS")} text={t(detail.status) || detail.status} /> */}
 
                 {(!canRaiseFlag || !isMarked) && (
-                  <div
-                    style={{
-                      background: isRed ? "red" : "none",
-                      color: isRed ? "white" : "black",
-                      paddingTop: isRed ? "8px" : "0",
-                      paddingLeft: isRed ? "10px" : "0",
-                    }}
+                  <div className="ndc-overview-content"
+                    
                   >
                     <Row
                       rowContainerStyle={{
@@ -584,7 +579,7 @@ const ApplicationOverview = () => {
                           name={`amount[${index}]`}
                           defaultValue={markedPending[detail.consumerCode] === false ? 0 : amounts?.[detail.consumerCode] || detail?.dueAmount || 0}
                           render={(props) => (
-                            <TextInput
+                            <TextInput className="ndc-overview-input"
                               type="number"
                               value={props.value}
                               onChange={(e) => {
@@ -595,7 +590,7 @@ const ApplicationOverview = () => {
                                   [detail.consumerCode]: newValue,
                                 }));
                               }}
-                              style={{ maxWidth: "200px" }}
+                              
                               onBlur={props.onBlur}
                               disabled={markedPending[detail.consumerCode] === false}
                             />
