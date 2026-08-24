@@ -257,9 +257,6 @@ public class ApplicationTenantResolverFilter implements Filter {
             if (tenant.equalsIgnoreCase("generic") || tenant.equalsIgnoreCase("state")) {
                 ApplicationThreadLocals.setTenantID(tenant);
                 found = true;
-            } else if (tenants.containsKey(tenant)) {
-                ApplicationThreadLocals.setTenantID(tenant);
-                found = true;
             } else {
                 for (String city : tenants.keySet()) {
                     LOG.info("Key :" + city + " ,Value :" + tenants.get(city) + "request tenant" + tenant);
@@ -270,17 +267,17 @@ public class ApplicationTenantResolverFilter implements Filter {
                         break;
                     }
                 }
-            }
 
-            if (!found) {
-                try {
-                    City stateCity = cityService.fetchStateCityDetails();
-                    if (stateCity != null && tenant.equalsIgnoreCase(stateCity.getCode())) {
-                        ApplicationThreadLocals.setTenantID("state");
-                        found = true;
+                if (!found) {
+                    try {
+                        City stateCity = cityService.fetchStateCityDetails();
+                        if (stateCity != null && tenant.equalsIgnoreCase(stateCity.getCode())) {
+                            ApplicationThreadLocals.setTenantID("state");
+                            found = true;
+                        }
+                    } catch (Exception e) {
+                        LOG.warn("Could not fetch state city details from state schema: {}", e.getMessage());
                     }
-                } catch (Exception e) {
-                    LOG.warn("Could not fetch state city details from state schema: {}", e.getMessage());
                 }
             }
 
