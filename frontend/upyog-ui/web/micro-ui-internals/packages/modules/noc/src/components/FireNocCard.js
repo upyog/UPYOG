@@ -16,6 +16,26 @@ import { EmployeeModuleCard, PropertyHouse } from "@nudmcdgnpm/digit-ui-react-co
 const FireNocCard = () => {
   const { t } = useTranslation();
 
+  const [total, setTotal] = useState("-");
+  const { data, isLoading, isFetching, isSuccess } = Digit.Hooks.useNewInboxGeneral({
+    tenantId: Digit.ULBService.getCurrentTenantId(),
+    ModuleCode: "FIRENOC",
+    filters: { limit: 10, offset: 0, services: ["FIRENOC"] },
+
+    config: {
+      select: (data) => {
+        return {totalCount:data?.totalCount,nearingSlaCount:data?.nearingSlaCount} || "-";
+      },
+      enabled: Digit.Utils.NOCAccess(),
+    },
+  });
+
+  useEffect(() => {
+    if (!isFetching && isSuccess) setTotal(data);
+  }, [isFetching]);
+
+  console.log("total",total)
+
   if (!Digit.Utils.NOCAccess()) {
     return null;
   }
@@ -33,6 +53,13 @@ const FireNocCard = () => {
   const propsForModuleCard = {
     Icon: <PropertyHouse />,
     moduleName: t("NOC_FIRE_NOC_CARD"),
+    kpis: [
+      {
+        count: total?.totalCount,
+        label: t("ES_INBOX_APPLICATION"),
+        link: `/upyog-ui/employee/noc/firenoc/inbox`,
+      },
+    ],
     links:links.filter(link=>!link?.role||FIRENOC_CEMP),
   };
 
