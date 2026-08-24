@@ -18,7 +18,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, Link,  } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
-// import getPetAcknowledgementData from "../../getPetAcknowledgementData";
+
 
 
 const ApplicationDetails = () => {
@@ -91,6 +91,19 @@ const ApplicationDetails = () => {
     dowloadOptions.push({
       label: t("FN_FEE_RECIEPT"),
       onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+    });
+
+    // function to generate certificate when Application status is Approved
+    const printCertificate = async () => {
+    let response = await Digit.PaymentService.generatePdf(tenantId, { FireNOCs: [applicationDetails?.applicationData?.applicationData] }, "firenoccertificate");
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+    window.open(fileStore[response?.filestoreIds[0]], "_blank");
+  };
+
+    if (applicationDetails?.applicationData?.applicationData?.fireNOCDetails?.status==="APPROVED")
+    dowloadOptions.push({
+      label: t("FN_CERTIFICATE"),
+      onClick: () => printCertificate(),
     });
 
     return (

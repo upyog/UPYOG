@@ -64,7 +64,7 @@ const NOCApplicationDetails = () => {
       onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
     });
 
-    if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
+    if (status==="APPROVED")
     dowloadOptions.push({
       label: t("FN_CERTIFICATE"),
       onClick: () => printCertificate(),
