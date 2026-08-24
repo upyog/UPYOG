@@ -34,7 +34,6 @@ const FireNocCard = () => {
     if (!isFetching && isSuccess) setTotal(data);
   }, [isFetching]);
 
-  console.log("total",total)
 
   if (!Digit.Utils.NOCAccess()) {
     return null;
