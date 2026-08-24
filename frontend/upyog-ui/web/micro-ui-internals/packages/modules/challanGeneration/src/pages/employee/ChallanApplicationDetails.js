@@ -221,7 +221,7 @@ const ChallanApplicationDetails = () => {
 
   if (reciept_data && reciept_data?.Payments.length > 0 && !recieptDataLoading) {
     dowloadOptions.push({
-      label: t("PTR_FEE_RECIEPT"),
+      label: t("GC_FEE_RECIEPT"),
       onClick: () => printChallanReceipt({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
     });
   }

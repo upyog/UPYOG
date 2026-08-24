@@ -141,7 +141,7 @@ const ChallanDocuments = ({
         <div>
           {data?.Challan?.Documents?.map((document, index) => {
             return (
-              <PTRSelectDocument
+              <CGSelectDocument
                 key={index}
                 document={document}
                 t={t}
@@ -181,7 +181,7 @@ const ChallanDocuments = ({
   );
 };
 
-function PTRSelectDocument({ t, document: doc, setDocuments, setError, documents, action, formData, handleSubmit, id, onSelect, config }) {
+function CGSelectDocument({ t, document: doc, setDocuments, setError, documents, action, formData, handleSubmit, id, onSelect, config }) {
   const filteredDocument = documents?.find((item) => item?.documentType === doc?.code);
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -225,7 +225,7 @@ function PTRSelectDocument({ t, document: doc, setDocuments, setError, documents
   /**
    * Select document type.
    */
-  const handlePTRSelectDocument = (value) => {
+  const handleCGSelectDocument = (value) => {
     setSelectedDocument(value);
   };
 
@@ -470,7 +470,7 @@ function PTRSelectDocument({ t, document: doc, setDocuments, setError, documents
          */
         setUploadedFile(null);
 
-        const response = await Digit.UploadServices.Filestorage("PTR", file, Digit.ULBService.getStateId());
+        const response = await Digit.UploadServices.Filestorage("CG", file, Digit.ULBService.getStateId());
 
         if (response?.data?.files?.length > 0) {
           const fileStoreId = response?.data?.files?.[0]?.fileStoreId;
