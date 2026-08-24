@@ -54,10 +54,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -500,8 +502,9 @@ public class CreateVoucher {
 						egBilldetails.getDebitamount() == null ? BigDecimal.ZERO : egBilldetails.getDebitamount());
 				detailMap.put(VoucherConstant.CREDITAMOUNT,
 						egBilldetails.getCreditamount() == null ? BigDecimal.ZERO : egBilldetails.getCreditamount());
-				final String glcode = persistenceService.getSession().createQuery(
-						"select glcode from CChartOfAccounts where id = ?").setParameter(0, egBilldetails.getGlcodeid().longValue())
+				final String glcode = persistenceService.getSession()
+						.createQuery("select glcode from CChartOfAccounts where id = :id")
+						.setParameter("id", egBilldetails.getGlcodeid().longValue())
 						.list().get(0).toString();
 				detailMap.put(VoucherConstant.GLCODE, glcode);
 				accountdetails.add(detailMap);
@@ -1939,7 +1942,7 @@ public class CreateVoucher {
 
 			final Query query = persistenceService.getSession()
 					.createQuery("from CChartOfAccountDetail cd,CChartOfAccounts c where "
-							+ "cd.glCodeId = c.id and c.glcode=:glcode");
+							+ "cd.glCodeId = c and c.glcode=:glcode");
 
 			query.setParameter(VoucherConstant.GLCODE, glcode);
 			query.setCacheable(true);
@@ -1953,7 +1956,7 @@ public class CreateVoucher {
 				detailtypeid = subdetailDetailMap.get(VoucherConstant.DETAILTYPEID).toString();
 				final Session session = persistenceService.getSession();
 				final Query qry = session.createQuery("from CChartOfAccountDetail cd,CChartOfAccounts c where "
-						+ "cd.glCodeId = c.id and c.glcode=:glcode and cd.detailTypeId.id=:detailTypeId");
+						+ "cd.glCodeId = c and c.glcode=:glcode and cd.detailTypeId.id=:detailTypeId");
 				qry.setParameter(VoucherConstant.GLCODE, glcode);
 				qry.setParameter("detailTypeId", Integer.valueOf(detailtypeid));
 				qry.setCacheable(true);
@@ -2350,40 +2353,40 @@ public class CreateVoucher {
 			Query pstmt3 = null;
 			Query pstmt4 = null;
 
-			final String glQry = "select id from generalledger where voucherheaderid= ?";
-			final String glidQry = "select id from generalledgerdetail where generalledgerid= ?";
-			final String delQry = "delete from EG_REMITTANCE_GLDTL where gldtlid= ?";
-			final String delQrr = "delete from generalledgerdetail where generalledgerid=?";
-			final String delgl = " delete from generalledger where voucherheaderid=?";
-			final String delvh = " delete from voucherdetail where voucherheaderid=?";
+			final String glQry = "select id from generalledger where voucherheaderid= ?1";
+			final String glidQry = "select id from generalledgerdetail where generalledgerid= ?1";
+			final String delQry = "delete from EG_REMITTANCE_GLDTL where gldtlid= ?1";
+			final String delQrr = "delete from generalledgerdetail where generalledgerid= ?1";
+			final String delgl = " delete from generalledger where voucherheaderid= ?1";
+			final String delvh = " delete from voucherdetail where voucherheaderid= ?1";
 			pstmt1 = persistenceService.getSession().createNativeQuery(glQry);
-			pstmt1.setParameter(0, vh.getId());
+			pstmt1.setParameter(1, vh.getId());
 
 			final List<Object[]> rs = pstmt1.list();
 			List<Object[]> rs1 = null;
 			boolean delete = false;
 			while (rs != null && rs.size() > 0) {
 				pstmt2 = persistenceService.getSession().createNativeQuery(glidQry);
-				pstmt2.setParameter(0, Long.parseLong(rs.get(1).toString()));
+				pstmt2.setParameter(1, Long.parseLong(rs.get(1).toString()));
 				rs1 = pstmt2.list();
 				while (rs1 != null && rs1.size() > 0) {
 					delete = true;
 					pstmt3 = persistenceService.getSession().createNativeQuery(delQry);
-					pstmt3.setParameter(0, Long.parseLong(rs1.get(1).toString()));
+					pstmt3.setParameter(1, Long.parseLong(rs1.get(1).toString()));
 					pstmt3.executeUpdate();
 				}
 				if (delete) {
 					pstmt4 = persistenceService.getSession().createNativeQuery(delQrr);
-					pstmt4.setParameter(0, Long.parseLong(rs1.get(1).toString()));
+					pstmt4.setParameter(1, Long.parseLong(rs1.get(1).toString()));
 					pstmt4.executeUpdate();
 				}
 			}
 			pstmt1 = persistenceService.getSession().createNativeQuery(delgl);
-			pstmt1.setParameter(0, vh.getId());
+			pstmt1.setParameter(1, vh.getId());
 			pstmt1.executeUpdate();
 
 			pstmt1 = persistenceService.getSession().createNativeQuery(delvh);
-			pstmt1.setParameter(0, vh.getId());
+			pstmt1.setParameter(1, vh.getId());
 			pstmt1.executeUpdate();
 
 		} catch (final HibernateException e) {
@@ -2726,10 +2729,10 @@ public boolean isUniqueVN(String vcNum, final String vcDate) {
         
         // Query 1: Get financial year dates based on voucher date
         final String query1 = "SELECT startingDate, endingDate FROM financialYear " +
-                              "WHERE startingDate <= ? AND endingDate >= ?";
+                              "WHERE startingDate <= ?1 AND endingDate >= ?2";
         pst = persistenceService.getSession().createNativeQuery(query1)
-                .setParameter(0, voucherDate)
-                .setParameter(1, voucherDate);
+                .setParameter(1, voucherDate)
+                .setParameter(2, voucherDate);
         rs = pst.list();
         
         // Validate that financial year exists
@@ -2754,15 +2757,15 @@ public boolean isUniqueVN(String vcNum, final String vcDate) {
         
         // Query 2: Check if voucher number exists in this financial year
         final String query2 = "SELECT id FROM voucherHeader " +
-                              "WHERE UPPER(voucherNumber) = ? " +
-                              "AND voucherDate >= ? " +
-                              "AND voucherDate <= ? " +
+                              "WHERE UPPER(voucherNumber) = ?1 " +
+                              "AND voucherDate >= ?2 " +
+                              "AND voucherDate <= ?3 " +
                               "AND status != 4";
         
         pst = persistenceService.getSession().createNativeQuery(query2)
-                .setParameter(0, vcNum)
-                .setParameter(1, fyStartDate)
-                .setParameter(2, fyEndDate);
+                .setParameter(1, vcNum)
+                .setParameter(2, fyStartDate)
+                .setParameter(3, fyEndDate);
         rs = pst.list();
         LOGGER.info("---------------Fetch VH as per voucher date-----------------");
 
@@ -2817,27 +2820,56 @@ private Date parseVoucherDate(final String dateStr) throws ParseException {
     
     String trimmedDate = dateStr.trim();
     
-    // Try dd-MMM-yyyy format first (27-Jan-2026)
+    // Format 1: dd-MMM-yyyy (27-Jan-2026)
     try {
-        return formatter.parse(trimmedDate);
+        SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+        sdf1.setLenient(false);
+        return sdf1.parse(trimmedDate);
     } catch (ParseException e1) {
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Date format dd-MMM-yyyy not matched, trying other formats");
+            LOGGER.debug("Date format dd-MMM-yyyy not matched, trying next format");
         }
     }
     
-    // Try dd/MM/yyyy or dd/M/yyyy or dd/M/yy formats
+    // Format 2: dd/MM/yyyy (27/01/2026)
     try {
-        // Handle both single and double digit months and years
-        SimpleDateFormat flexibleFormatter = new SimpleDateFormat("dd/M/yyyy");
-        try {
-            return flexibleFormatter.parse(trimmedDate);
-        } catch (ParseException e2) {
-            // Try with 2-digit year (27/1/26)
-            flexibleFormatter = new SimpleDateFormat("dd/M/yy");
-            return flexibleFormatter.parse(trimmedDate);
+        SimpleDateFormat sdf2 = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+        sdf2.setLenient(false);
+        return sdf2.parse(trimmedDate);
+    } catch (ParseException e2) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Date format dd/MM/yyyy not matched, trying next format");
         }
-    } catch (ParseException e3) {
+    }
+    
+    // Format 3: dd/M/yyyy or dd/M/yy (27/1/2026 or 27/1/26)
+    try {
+        if (trimmedDate.contains("/")) {
+            String[] parts = trimmedDate.split("/");
+            if (parts.length == 3) {
+                int day = Integer.parseInt(parts[0]);
+                int month = Integer.parseInt(parts[1]);
+                int year = Integer.parseInt(parts[2]);
+                
+                // Handle 2-digit year (e.g., 26 -> 2026)
+                if (year < 100) {
+                    year += 2000;
+                }
+                
+                Calendar cal = Calendar.getInstance();
+                cal.setLenient(false);
+                cal.set(Calendar.YEAR, year);
+                cal.set(Calendar.MONTH, month - 1); // 0-based month
+                cal.set(Calendar.DAY_OF_MONTH, day);
+                cal.set(Calendar.HOUR_OF_DAY, 0);
+                cal.set(Calendar.MINUTE, 0);
+                cal.set(Calendar.SECOND, 0);
+                cal.set(Calendar.MILLISECOND, 0);
+                
+                return cal.getTime();
+            }
+        }
+    } catch (IllegalArgumentException e3) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Date format dd/M/yyyy or dd/M/yy not matched");
         }
@@ -2851,10 +2883,10 @@ private Date parseVoucherDate(final String dateStr) throws ParseException {
 
 	public CFiscalPeriod getFiscalPeriod(final String vDate) throws TaskFailedException {
 		CFiscalPeriod fiscalPeriod = null;
-		final String sql = "select id from fiscalperiod  where ? between startingdate and endingdate";
+		final String sql = "select id from fiscalperiod  where ?1 between startingdate and endingdate";
 		try {
 			final Query pst = persistenceService.getSession().createNativeQuery(sql).addEntity(CFiscalPeriod.class)
-					.setParameter(0, formatter.parse(vDate));
+					.setParameter(1, formatter.parse(vDate));
 			final List<CFiscalPeriod> rset = pst.list();
 			fiscalPeriod = rset != null ? rset.get(0) : null;
 		} catch (final HibernateException | ParseException e) {

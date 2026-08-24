@@ -992,10 +992,10 @@ public class EgovCommon {
             final Session session = persistenceService.getSession();
 			final Query qry = session
 					.createQuery(new StringBuilder("from CChartOfAccountDetail cd,CChartOfAccounts c where ")
-							.append("cd.glCodeId = c.id and c.glcode=:glcode and cd.detailTypeId=:detailTypeId")
+							.append("cd.glCodeId = c and c.glcode=:glcode and cd.detailTypeId.id=:detailTypeId")
 							.toString());
 			qry.setParameter(VoucherConstant.GLCODE, glcode);
-			qry.setParameter("detailTypeId", accountdetailType.toString());
+			qry.setParameter("detailTypeId", accountdetailType);
 
             if (null == qry.list() || qry.list().size() == 0)
                 throw new ValidationException(
@@ -1936,10 +1936,10 @@ public class EgovCommon {
 			final Session session = persistenceService.getSession();
 			final Query qry = session
 					.createQuery(new StringBuilder("from CChartOfAccountDetail cd,CChartOfAccounts c where ")
-							.append("cd.glCodeId = c.id and c.glcode=:glcode and cd.detailTypeId=:detailTypeId")
+							.append("cd.glCodeId = c and c.glcode=:glcode and cd.detailTypeId.id=:detailTypeId")
 							.toString());
 			qry.setParameter(VoucherConstant.GLCODE, glcode);
-			qry.setParameter("detailTypeId", accountdetailType.toString());
+			qry.setParameter("detailTypeId", accountdetailType);
 
 			final List list = qry.list();
 

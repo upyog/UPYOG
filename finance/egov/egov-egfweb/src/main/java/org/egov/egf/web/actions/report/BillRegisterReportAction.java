@@ -52,7 +52,6 @@ package org.egov.egf.web.actions.report;
 
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -260,7 +259,12 @@ public class BillRegisterReportAction extends SearchFormAction {
 
 		Query countQuery = persistenceService.getSession().createNativeQuery(countQry);
 		persistenceService.populateQueryWithParams(countQuery, params);
-		final int searchCount = ((BigInteger) countQuery.uniqueResult()).intValue();
+		/*
+		 * LTS / Hibernate 6 + PostgreSQL: count(*) used to come back as BigInteger;
+		 * newer drivers return Long. Accept any Number.
+		 */
+		final Number countResult = (Number) countQuery.uniqueResult();
+		final int searchCount = countResult == null ? 0 : countResult.intValue();
 
 		this.searchResult = new EgovPaginatedList(resultPage, searchCount, getSort(),
 				SortOrderEnum.fromName(getSortDir()));

@@ -73,6 +73,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * LTS Migration Notes:
+ * 1. [Spring Data JPA 3.x] Migrated removed findOne() to findById().orElse(null) and new Sort() to Sort.by().
+ * 2. [Direct Query Optimization] Updated getAllActiveEntities() to query directly by accountDetailTypeId.
+ * 3. [Jakarta EE Persistence] Migrated EntityManager, Metamodel, and Criteria API to jakarta.persistence.*.
+ */
 @Service
 @Transactional(readOnly = true)
 public class AccountEntityService implements EntityTypeService {
@@ -165,8 +171,10 @@ public class AccountEntityService implements EntityTypeService {
 
 	@Override
 	public List<? extends EntityType> getAllActiveEntities(Integer accountDetailTypeId) {
-		Accountdetailtype accountdetailtype = accountdetailtypeService.findOne(accountDetailTypeId);
-		return accountEntityRepository.findByAccountdetailtypeAndIsactive(accountdetailtype, true);
+		if (accountDetailTypeId != null) {
+			return accountEntityRepository.findByAccountdetailtypeIdAndIsactive(accountDetailTypeId, true);
+		}
+		return Collections.emptyList();
 	}
 
 	@Override

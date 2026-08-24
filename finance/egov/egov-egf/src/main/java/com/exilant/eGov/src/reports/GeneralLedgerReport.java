@@ -371,7 +371,8 @@ public class GeneralLedgerReport {
                             fundName = element[13].toString();
                         final String sqlString1 = "select name as \"glname\" from chartofaccounts where glcode=?";
                         pstmt = persistenceService.getSession().createNativeQuery(sqlString1);
-                        pstmt.setParameter(0, code);
+                        // Hibernate 6: ordinal parameters are 1-based.
+                        pstmt.setParameter(1, code);
                         final List res = pstmt.list();
                         String aName = "";
                         if (res != null)
@@ -1117,7 +1118,8 @@ public class GeneralLedgerReport {
 		Query pst = null;
 		final String query = "select name as \"name\" from  CHARTOFACCOUNTS where GLCODE=?";
         pst = persistenceService.getSession().createNativeQuery(query);
-        pst.setParameter(0, glCode);
+        // Hibernate 6: native SQL ? placeholders are 1-based (was 0-based in Hibernate 5).
+        pst.setParameter(1, glCode);
         final List list = pst.list();
         if (list != null && !list.isEmpty()) {
         	final Object[] objects = list.toArray();
@@ -1131,16 +1133,16 @@ public class GeneralLedgerReport {
         Query pst = null;
         final String query = "select name  as \"name\" from fund where id=?";
         pst = persistenceService.getSession().createNativeQuery(query);
+        // Hibernate 6: ordinal parameters are 1-based.
         if (fundId.isEmpty())
-            pst.setParameter(0, 0);
+            pst.setParameter(1, 0L);
         else
-            pst.setParameter(0, Integer.valueOf(fundId));
-        final List<Object[]> list = pst.list();
-        final Object[] objects = list.toArray();
-        if (objects.length == 0)
+            pst.setParameter(1, Long.valueOf(fundId));
+        final List list = pst.list();
+        if (list == null || list.isEmpty())
             fundName = "";
         else
-            fundName = objects[0].toString();
+            fundName = list.get(0).toString();
         return fundName;
     }
 

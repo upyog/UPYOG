@@ -49,6 +49,7 @@
 package org.egov.infstr.utils;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 import java.lang.reflect.InvocationTargetException;
@@ -92,8 +93,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * @deprecated no longer supported
- * */
+ * LTS Migration Notes:
+ * 1. [Hibernate 6 ByteBuddy Proxy & Infinispan] Master data entities stored in Infinispan cache become detached
+ *    after query session close. Added Hibernate.initialize() and Hibernate.unproxy() in queryByHibernate() so that
+ *    fully materialized POJOs are cached, preventing LazyInitializationException in Struts 7 JSP tags.
+ * 2. [Multi-Tenancy Schema Keying] Prefix cache keys with ApplicationThreadLocals.getTenantID() to support
+ *    session-based multi-tenancy and prevent cross-ULB cache collisions.
+ * 3. [WildFly 40 & Jakarta EE 10] Modernized Infinispan JNDI lookups and migrated to jakarta.persistence.*.
+ */
 @Deprecated
 @Transactional(readOnly = true)
 public class EgovMasterDataCaching {
@@ -190,16 +197,30 @@ public class EgovMasterDataCaching {
      * @throws ApplicationRuntimeException the eGOV runtime exception
      */
 
+    /**
+     * LTS Migration Fix (session-based multi-tenancy):
+     * Before LTS the cache key used domain/subdomain (each ULB had its own host).
+     * After LTS all ULBs share one URL; tenant is the schema from the session
+     * ({@code ApplicationThreadLocals.getTenantID()}). Keys that omit the schema
+     * reuse one Fund/Department list across tenants (or a stale default-schema
+     * list of only a few sample funds after EAR deploy). Include schema so each
+     * tenant caches its own master data; create/update still calls removeFromCache.
+     */
+    private static String buildCacheKey(final String applName, final String sqlTagName) {
+        final String domainName = defaultIfBlank(ApplicationThreadLocals.getDomainName(), "localhost");
+        final String tenantId = defaultIfBlank(ApplicationThreadLocals.getTenantID(), "default");
+        return applName + PATH_DELIM + domainName + PATH_DELIM + tenantId + PATH_DELIM + sqlTagName;
+    }
+
     public List get(final String sqlTagName) throws ApplicationRuntimeException {
         final String temp[] = sqlTagName.split("-");
-        final String domainName = ApplicationThreadLocals.getDomainName();
         final String applName = temp[0];
         List<Object> dataList = null;
         HashMap<String, Object> cacheValuesHashMap = new HashMap<String, Object>();
 
         try {
-            cacheValuesHashMap = (HashMap<String, Object>) getCache()
-                    .get(applName + PATH_DELIM + domainName + PATH_DELIM + sqlTagName);
+            final String cacheKey = buildCacheKey(applName, sqlTagName);
+            cacheValuesHashMap = (HashMap<String, Object>) getCache().get(cacheKey);
             if (cacheValuesHashMap != null)
                 dataList = (List<Object>) cacheValuesHashMap.get(sqlTagName);
 
@@ -237,9 +258,9 @@ public class EgovMasterDataCaching {
                 }
                 final HashMap<String, Object> hm = new HashMap<String, Object>();
                 hm.put(sqlTagName, dataList);
-                getCache().put(applName + PATH_DELIM + domainName + PATH_DELIM + sqlTagName, hm);
+                getCache().put(cacheKey, hm);
             } else
-                LOGGER.info("EgovMasterDataCaching: Got directly from cache, not from db");
+                LOGGER.debug("EgovMasterDataCaching: Got directly from cache, not from db: {}", cacheKey);
 
 
         } catch (final MicroServiceInvalidTokenException | MicroServiceNotAuthroizedException e) {
@@ -263,7 +284,6 @@ public class EgovMasterDataCaching {
         Map dataMap = new HashMap();
         final String temp[] = sqlTagName.split("-");
         final String applName = temp[0];
-        final String domainName = ApplicationThreadLocals.getDomainName();
         final String type = EGovConfig.getProperty(applName + CONFIG_FILE_SUFFIX, "type", EMPTY, SQL_TAG_PREFIX + sqlTagName)
                 .trim();
         try {
@@ -297,7 +317,7 @@ public class EgovMasterDataCaching {
                             "ClassName and MethodName should be mentioned for " + type + " in " + applName + CONFIG_FILE_SUFFIX);
                 final HashMap<String, Object> hm = new HashMap<String, Object>();
                 hm.put(sqlTagName, dataMap);
-                getCache().put(applName + PATH_DELIM + domainName + PATH_DELIM + sqlTagName, hm);
+                getCache().put(buildCacheKey(applName, sqlTagName), hm);
             } else
                 throw new ApplicationRuntimeException("This type (" + type + ") is not supported for " + sqlTagName);
         } catch (final CacheException e) {
@@ -321,8 +341,10 @@ public class EgovMasterDataCaching {
     public static void removeFromCache(final String sqlTagName) throws ApplicationRuntimeException {
         try {
             final String temp[] = sqlTagName.split("-");
-            final String domainName = ApplicationThreadLocals.getDomainName();
+            final String domainName = defaultIfBlank(ApplicationThreadLocals.getDomainName(), "localhost");
             final String applName = temp[0];
+            getCache().remove(buildCacheKey(applName, sqlTagName));
+            // Drop pre-LTS keys (domain only, no schema) left in WildFly Infinispan across EAR redeploy.
             getCache().remove(applName + PATH_DELIM + domainName + PATH_DELIM + sqlTagName);
         } catch (final CacheException e) {
             LOGGER.error("Error occurred in EgovMasterDataCaching removeFromCache", e);

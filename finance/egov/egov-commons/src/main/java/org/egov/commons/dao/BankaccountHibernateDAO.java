@@ -47,6 +47,7 @@
  */
 package org.egov.commons.dao;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -54,6 +55,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 import org.egov.commons.Bankaccount;
+import org.egov.commons.utils.BankAccountType;
 import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
@@ -145,12 +147,16 @@ public class BankaccountHibernateDAO {
     }
 
     public List<Bankaccount> getBankAccountByBankBranchForReceiptsPayments(final Integer bankBranchId, Long fundId) {
+        if (bankBranchId == null) {
+            return java.util.Collections.emptyList();
+        }
         final StringBuilder query = new StringBuilder(
-                "from Bankaccount bankacc where bankacc.isactive=true and bankacc.type in ('RECEIPTS_PAYMENTS','RECEIPTS') and bankacc.bankbranch.id=:bankBranchId");
+                "from Bankaccount bankacc where bankacc.isactive=true and bankacc.type in (:accTypes) and bankacc.bankbranch.id=:bankBranchId");
         if (fundId != null) {
             query.append(" and bankacc.fund.id=:fundId");
         }
         final Query qry = getCurrentSession().createQuery(query.toString());
+        qry.setParameterList("accTypes", Arrays.asList(BankAccountType.RECEIPTS_PAYMENTS, BankAccountType.RECEIPTS));
         qry.setParameter("bankBranchId", bankBranchId);
         if (fundId != null) {
             qry.setParameter("fundId", fundId);
