@@ -9,9 +9,46 @@
 
 .ndc-reason-field {
   width: 100%;
-  max-width: 465px;
+  max-width: 340px;
   margin-bottom: 22px;
   box-sizing: border-box;
+}
+
+/* Wraps the Dropdown / TextInput control inside each .ndc-reason-field */
+.ndc-reason-control {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* FIX: previously only reachable via ".ndc-owner-field > .form-field",
+   which never matched here since this component isn't nested inside
+   .ndc-owner-field. SelectNDCReason.jsx now applies this class directly. */
+.ndc-reason-dropdown {
+  width: 340px;
+  max-width: 100%;
+  height: 40px;
+  min-height: 40px;
+  box-sizing: border-box;
+}
+
+/* FIX: the "OTHERS" reason TextInput had no className before, so it was
+   completely unstyled. SelectNDCReason.jsx now applies this class. */
+.ndc-reason-input {
+  display: block;
+  width: 340px;
+  max-width: 100%;
+  height: 40px;
+  min-height: 40px;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  .ndc-reason-dropdown,
+  .ndc-reason-input {
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
 .ndc-reason-label {
@@ -182,7 +219,7 @@
 
 .ndc-summary-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   width: 100%;
   margin-top: 16px;
   box-sizing: border-box;
@@ -194,14 +231,14 @@
 }
 
 .ndc-reason-content {
-  width: 450px;
+  width: 340px;
   max-width: 100%;
   box-sizing: border-box;
   margin-bottom: 10px;
 }
 
 .ndc-reason-options {
-  width: 450px;
+  width: 340px;
   max-width: 100%;
   box-sizing: border-box;
   display: flex;
@@ -210,7 +247,7 @@
 }
 
 .ndc-reason-option {
-  width: 450px;
+  width: 340px;
   max-width: 100%;
   box-sizing: border-box;
   display: flex;
@@ -221,9 +258,9 @@
 }
 
 .ndc-reason-input {
-  width: 450px;
-  min-width: 450px;
-  max-width: 450px;
+  width: 340px;
+  min-width: 340px;
+  max-width: 340px;
   height: 40px;
   min-height: 40px;
   box-sizing: border-box;
@@ -233,7 +270,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  width: 450px;
+  width: 340px;
   max-width: 100%;
   margin-top: 10px;
   margin-bottom: 24px;
@@ -241,7 +278,14 @@
   gap: 8px;
 }
 
+
+/* =========================================================
+   BUTTONS (single shared definition — was duplicated 2-3x)
+   ========================================================= */
+
+.ndc-action-button,
 .ndc-primary-button,
+.ndc-secondary-button,
 .ndc-no-dues-button {
   display: flex;
   align-items: center;
@@ -268,30 +312,35 @@
 }
 
 .ndc-secondary-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 155px;
-  min-width: 155px;
-  height: 40px;
-  min-height: 40px;
-  margin: 10px 0 0 0;
-  padding: 0 16px;
-  background-color: #a82227;
-  color: #ffffff;
-  border: none;
-  outline: none;
-  border-radius: 0;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1;
-  cursor: pointer;
-  box-sizing: border-box;
-  white-space: nowrap;
-  text-align: center;
-  flex-shrink: 0;
+  margin-top: 10px;
 }
 
+.ndc-action-button span,
+.ndc-action-button p,
+.ndc-action-button div,
+.ndc-primary-button span,
+.ndc-primary-button p,
+.ndc-primary-button div,
+.ndc-no-dues-button span,
+.ndc-no-dues-button p,
+.ndc-no-dues-button div,
+.ndc-secondary-button span,
+.ndc-secondary-button p,
+.ndc-secondary-button div {
+  color: #ffffff;
+}
+
+.ndc-button-text {
+  color: #ffffff;
+}
+
+
+/* =========================================================
+   STATUS / MESSAGE BOXES (single shared definition)
+   ========================================================= */
+
+.ndc-no-dues-box,
+.ndc-details-form-message,
 .ndc-status-message {
   display: flex;
   align-items: center;
@@ -314,7 +363,17 @@
   word-break: break-word;
   overflow-wrap: anywhere;
   text-align: left;
-  flex-shrink: 0;
+}
+
+.ndc-details-form-message {
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.ndc-no-dues-box *,
+.ndc-details-form-message *,
+.ndc-status-message * {
+  color: #ffffff;
 }
 
 .ndc-sewerage-spacing {
@@ -334,11 +393,17 @@
   margin-bottom: 40px;
 }
 
+
+/* =========================================================
+   OWNER SELECTION (single shared definition — was duplicated)
+   ========================================================= */
+
 .ndc-owner-selection {
   width: 500px;
   max-width: 100%;
   margin-top: 10px;
   margin-bottom: 30px;
+  box-sizing: border-box;
 }
 
 .ndc-owner-help {
@@ -354,32 +419,10 @@
   max-width: 100%;
 }
 
-.ndc-owner-field {
-  display: block;
-  margin-top: 20px;
-  margin-bottom: 22px;
-}
 
-.ndc-required-text {
-  color: red;
-}
-
-.ndc-owner-input {
-  width: 450px;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-.ndc-owner-field-spacing {
-  display: block;
-  margin-bottom: 22px;
-}
-
-.ndc-owner-field-small-spacing {
-  display: block;
-  margin-top: 10px;
-  margin-bottom: 22px;
-}
+/* =========================================================
+   DOCUMENTS PAGE
+   ========================================================= */
 
 .ndc-documents-page {
   width: 100%;
@@ -454,6 +497,11 @@
   font-weight: 700;
 }
 
+
+/* =========================================================
+   PROPERTY SEARCH FIELD
+   ========================================================= */
+
 .ndc-property-field {
   width: 340px;
   max-width: 100%;
@@ -503,12 +551,12 @@
 .ndc-property-search-icon {
   position: absolute;
   top: 50%;
-  right: 6px;
+  right: 4px;
   transform: translateY(-50%);
-  width: 30px;
-  height: 30px;
-  min-width: 30px;
-  min-height: 30px;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  min-height: 18px;
   padding: 0;
   margin: 0;
   border: none;
@@ -531,10 +579,6 @@
   margin-top: 12px;
   margin-bottom: 32px;
   box-sizing: border-box;
-}
-
-.ndc-button-text {
-  color: #ffffff;
 }
 
 .ndc-overview-actions {
@@ -587,119 +631,62 @@
 }
 
 .ndc-field-label-wrapper {
-  width: 450px;
+  width: 340px;
   max-width: 100%;
   margin-bottom: 10px;
   box-sizing: border-box;
 }
 
 .ndc-connection-list {
-  width: 450px;
+  width: 340px;
   max-width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   box-sizing: border-box;
 }
 
+/* FIX: connection row now lays the input and its action button out in a
+   single aligned row (like the Property ID row above it) instead of
+   stacking them in a column. Wraps cleanly on narrow/mobile widths. */
 .ndc-connection-row {
-  width: 450px;
+  width: 340px;
   max-width: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  margin-bottom: 8px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0;
   box-sizing: border-box;
 }
 
-
-/* =========================================================
-   CONNECTION BUTTONS
-   ========================================================= */
-
-/* Common button style */
-.ndc-action-button,
-.ndc-primary-button,
-.ndc-no-dues-button,
-.ndc-secondary-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 155px;
-  min-width: 155px;
-  height: 40px;
-  min-height: 40px;
-  margin: 0;
-  padding: 0 14px;
-  background-color: #a82227;
-  color: #ffffff;
-  border: none;
-  border-radius: 0;
-  outline: none;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1;
-  cursor: pointer;
-  box-sizing: border-box;
-  white-space: nowrap;
-  text-align: center;
+.ndc-connection-row .ndc-input {
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
   flex-shrink: 0;
 }
 
-.ndc-secondary-button {
-  margin-top: 10px;
-  padding: 0 16px;
-}
-
-.ndc-action-button span,
-.ndc-action-button p,
-.ndc-action-button div,
-.ndc-primary-button span,
-.ndc-primary-button p,
-.ndc-primary-button div,
-.ndc-no-dues-button span,
-.ndc-no-dues-button p,
-.ndc-no-dues-button div,
-.ndc-secondary-button span,
-.ndc-secondary-button p,
-.ndc-secondary-button div {
-  color: #ffffff;
+/* FIX: this class was referenced in the JSX and used in the mobile media
+   query, but had no base (desktop) styles at all — buttons/loaders inside
+   it were falling back to default block layout with no gap/alignment. */
+.ndc-action-column {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .ndc-add-connection {
+  margin-top: 12px;
   margin-bottom: 36px;
 }
 
 .ndc-add-sewerage {
+  margin-top: 12px;
   margin-bottom: 40px;
-}
-
-
-/* =========================================================
-   OWNER SELECTION
-   =========================================================
-   ========================================================= */
-
-.ndc-owner-selection {
-  width: 500px;
-  max-width: 100%;
-  margin-top: 10px;
-  margin-bottom: 30px;
-  box-sizing: border-box;
-}
-
-.ndc-owner-help {
-  color: green;
-  font-size: 12px;
-  line-height: 17px;
-  padding: 0;
-  margin: 0 0 10px 0;
-}
-
-.ndc-owner-table {
-  width: 500px;
-  max-width: 100%;
 }
 
 
@@ -716,25 +703,16 @@
   justify-content: flex-start;
   width: 100%;
   max-width: 100%;
+  margin-top: 20px;
+  margin-bottom: 22px;
   box-sizing: border-box;
-}
-
-.ndc-owner-field {
-  margin-top: 20px;
-  margin-bottom: 22px;
-}
-
-.ndc-owner-field-first {
-  margin-top: 20px;
-  margin-bottom: 22px;
 }
 
 .ndc-owner-field-remarks {
   margin-top: 10px;
-  margin-bottom: 22px;
 }
 
-/* Common field label */
+/* Field label */
 .ndc-owner-field > .ndc_card_labels,
 .ndc-owner-field > .card-label-smaller,
 .ndc-owner-field > label {
@@ -750,34 +728,35 @@
   box-sizing: border-box;
 }
 
-/* Common field container */
+/* FIX: standardized to 340px (matches Property ID field above) so every
+   input in the form lines up on the same left edge/width instead of the
+   owner fields being wider (450px) than the property/connection fields. */
 .ndc-owner-field > .form-field,
 .ndc-field-container {
   display: block;
-  width: 450px;
-  min-width: 450px;
-  max-width: 450px;
+  width: 340px;
+  min-width: 340px;
+  max-width: 340px;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Common input */
 .ndc-owner-field .ndc-input,
 .ndc-owner-field > .form-field input,
 .ndc-input,
 .ndc-owner-input {
   display: block;
-  width: 450px;
-  min-width: 450px;
-  max-width: 450px;
+  width: 340px;
+  min-width: 340px;
+  max-width: 340px;
   height: 40px;
   min-height: 40px;
   margin: 0;
   box-sizing: border-box;
 }
 
-/* Required field */
+/* Required field marker */
 .ndc-required-star,
 .ndc-required-text {
   color: red;
@@ -785,152 +764,15 @@
 
 /* Delete button */
 .ndc-delete-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: none;
   background: transparent;
   padding: 0;
   margin: 0;
   cursor: pointer;
-}
-
-/* No dues/status message */
-.ndc-no-dues-box,
-.ndc-details-form-message,
-.ndc-status-message {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  width: 320px;
-  min-width: 320px;
-  max-width: 320px;
-  min-height: 40px;
-  margin: 0;
-  padding: 10px 16px;
-  background-color: #a82227;
-  color: #ffffff;
-  border: none;
-  border-radius: 0;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 16px;
-  box-sizing: border-box;
-  white-space: normal;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-  text-align: left;
-}
-
-.ndc-no-dues-box *,
-.ndc-details-form-message *,
-.ndc-status-message * {
-  color: #ffffff;
-}
-
-
-/* =========================================================
-   REQUIRED FIELD
-   ========================================================= */
-
-.ndc-required-star {
-  color: red;
-}
-
-
-/* =========================================================
-   DELETE BUTTON
-   ========================================================= */
-
-.ndc-delete-button {
-  border: none;
-  background: transparent;
-  padding: 0;
-  margin: 0;
-  cursor: pointer;
-}
-
-
-/* =========================================================
-   NO DUES
-   ========================================================= */
-
-.ndc-no-dues-box {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-
-  width: 320px;
-  min-width: 320px;
-  max-width: 320px;
-
-  min-height: 40px;
-
-  margin: 0;
-  padding: 10px 16px;
-
-  background-color: #a82227;
-  color: #ffffff;
-
-  border: none;
-  border-radius: 0;
-
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 16px;
-
-  box-sizing: border-box;
-
-  white-space: normal;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-
-  text-align: left;
-}
-
-.ndc-no-dues-box * {
-  color: #ffffff;
-}
-
-
-/* =========================================================
-   MESSAGE
-   ========================================================= */
-
-.ndc-details-form-message {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-
-  width: 320px;
-  min-width: 320px;
-  max-width: 320px;
-
-  min-height: 40px;
-
-  margin-top: 10px;
-  margin-bottom: 20px;
-
-  padding: 10px 16px;
-
-  background-color: #a82227;
-  color: #ffffff;
-
-  border: none;
-  border-radius: 0;
-
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 16px;
-
-  box-sizing: border-box;
-
-  white-space: normal;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-
-  text-align: left;
-}
-
-.ndc-details-form-message * {
-  color: #ffffff;
+  flex-shrink: 0;
 }
 
 
@@ -941,11 +783,21 @@
 @media (max-width: 600px) {
   .ndc-field-label-wrapper,
   .ndc-connection-list,
-  .ndc-connection-row,
-  .ndc-action-column {
+  .ndc-connection-row {
     width: 100%;
     min-width: 0;
     max-width: 100%;
+  }
+
+  .ndc-connection-row .ndc-input {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .ndc-action-column {
+    width: 100%;
+    flex-wrap: wrap;
   }
 
   .ndc-owner-field,
@@ -959,12 +811,7 @@
   .ndc-owner-field > .form-field,
   .ndc-owner-field > .form-field .ndc-input,
   .ndc-owner-field > .form-field input,
-  .ndc-owner-field .ndc-input {
-    width: 100%;
-    min-width: 0;
-    max-width: 100%;
-  }
-
+  .ndc-owner-field .ndc-input,
   .ndc-field-container,
   .ndc-input {
     width: 100%;
@@ -973,7 +820,8 @@
   }
 
   .ndc-no-dues-box,
-  .ndc-details-form-message {
+  .ndc-details-form-message,
+  .ndc-status-message {
     width: 100%;
     min-width: 0;
     max-width: 100%;
