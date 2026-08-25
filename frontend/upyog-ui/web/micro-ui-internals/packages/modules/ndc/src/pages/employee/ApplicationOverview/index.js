@@ -621,11 +621,11 @@ const ApplicationOverview = () => {
                     {/* <Row label={t("Mohalla")} text={propertyDetailsFetch?.Properties?.[0]?.address?.city} /> */}
                     <Row label={t("Pincode")} text={propertyDetailsFetch?.Properties?.[0]?.address?.pincode || "N/A"} />
                     {/* <Row label={t("Existing Pid")} text={propertyDetailsFetch?.Properties?.[0]?.address?.city} /> */}
-                    <Row label={t("Survey Id/UID")} text={propertyDetailsFetch?.Properties?.[0]?.surveyId} />
-                    <Row
+                    {/* <Row label={t("Survey Id/UID")} text={propertyDetailsFetch?.Properties?.[0]?.surveyId} /> */}
+                    {/* <Row
                       label={t("Year of creation of Property")}
                       text={propertyDetailsFetch?.Properties?.[0]?.additionalDetails?.yearConstruction}
-                    />
+                    /> */}
                     <Row
                       label={t("Remarks")}
                       text={
@@ -638,9 +638,6 @@ const ApplicationOverview = () => {
               </StatusTable>
               {canRaiseFlag && (
                 <div className="mychallan-custom">
-                  <CardLabel className="card-label-smaller ndc_card_labels">
-                    <b> Pending Dues</b>
-                  </CardLabel>
                 </div>
               )}
             </div>
