@@ -35,7 +35,6 @@
       useEffect(() => {
         register("offset")
         register("limit")
-        register("sortBy")
         register("sortOrder")
       },[register])
       
@@ -109,7 +108,6 @@
 
       const onSort = useCallback((args) => {
           if (args.length === 0) return
-          setValue("sortBy", args.id)
           setValue("sortOrder", args.desc ? "DESC" : "ASC")
       }, [])
 
