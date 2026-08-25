@@ -778,9 +778,7 @@ def get_rag_response(query: str, history: list, lang: str, search_lang: str = No
     # Step 2: Build language instruction
     if lang == 'hi':
         lang_rule = "CRITICAL LANGUAGE INSTRUCTION: The user is asking in Hindi. You MUST respond in pure Hindi language using Devanagari script ONLY (हिंदी लिपि). Do NOT use Roman script, English sentences, or Romanized Hinglish under any circumstances. Exception: keep UPYOG, NUDM, NOC, GIS, ULB, MoU as-is."
-        lang_rule = "CRITICAL LANGUAGE INSTRUCTION: The user is asking in Hindi. You MUST respond in pure Hindi language using Devanagari script ONLY (हिंदी लिपि). Do NOT use Roman script, English sentences, or Romanized Hinglish under any circumstances. Exception: keep UPYOG, NUDM, NOC, GIS, ULB, MoU as-is."
     else:
-        lang_rule = "CRITICAL LANGUAGE INSTRUCTION: The user is asking in English. You MUST respond in pure standard English script and language ONLY. Do NOT use Romanized Hinglish, Hindi words, or Devanagari script under any circumstances."
         lang_rule = "CRITICAL LANGUAGE INSTRUCTION: The user is asking in English. You MUST respond in pure standard English script and language ONLY. Do NOT use Romanized Hinglish, Hindi words, or Devanagari script under any circumstances."
 
     # Step 3: Build context section
@@ -800,21 +798,9 @@ Answer from your general knowledge about:
 - Standard government processes for urban services in India"""
 
     # Step 4: Build conversation history with language isolation
-    # Step 4: Build conversation history with language isolation
     history_messages = []
     for turn in history[-6:]:
         if "content" in turn and "role" in turn:
-            content = turn["content"]
-            if turn["role"] == "assistant":
-                if lang == 'en' and any('ऀ' <= c <= 'ॿ' for c in content):
-                    translated = translate_text(content, "hi", "en")
-                    if translated and len(translated.strip()) > 0:
-                        content = translated
-                elif lang == 'hi' and not any('ऀ' <= c <= 'ॿ' for c in content):
-                    translated = translate_text(content, "en", "hi")
-                    if translated and len(translated.strip()) > 0:
-                        content = translated
-            history_messages.append({"role": turn["role"], "content": content})
             content = turn["content"]
             if turn["role"] == "assistant":
                 if lang == 'en' and any('ऀ' <= c <= 'ॿ' for c in content):
@@ -1306,7 +1292,7 @@ def chat():
         from database import get_chat_history
         history = get_chat_history(phone_anchor) if phone_anchor != "default" else []
         file_name = user_data.get("file_name")
-        file_data = user_data.get("file_data")
+        file_data = user_data.get("file_data") 
 
         token = None
         cached_info = None
@@ -1678,6 +1664,11 @@ def chat():
                         from memory_manager import MemoryManager
                         MemoryManager.save_draft_state(phone, active_plugin, prev_draft)
                         logger.info(f"[AutoSave] Saved previous workflow draft for {phone}/{active_plugin}")
+                    
+                    # Reset previous workflow in-memory state so it doesn't hijack subsequent turns
+                    empty_draft = {f: None for f in (["category", "sub_category", "description", "locality"] if active_plugin == "grievance" else ["addType", "location", "faceArea", "start_date", "end_date", "nightLight"])}
+                    workflows[active_plugin].update_state(config, {prev_draft_key: empty_draft, "missing_fields": [], "messages": []})
+                    logger.info(f"[AutoSave] Reset in-memory state for {active_plugin}")
             active_plugin = plugin_intent
         elif active_plugin and is_generic_response:
             # Strictly preserve active_plugin for generic yes/no/confirm/cancel answers
