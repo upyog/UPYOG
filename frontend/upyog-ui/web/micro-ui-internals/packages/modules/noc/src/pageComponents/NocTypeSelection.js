@@ -28,16 +28,18 @@ const NocTypeSelection = ({ t, config, onSelect, userType, formData }) => {
   );
   const [searching, setSearching] = useState(false);
   const [error, setError] = useState(null);
+  const [toast, setToast] = useState(null);
 
-  /* Auto-dismisses warning toast messages after 3 seconds */
+  /* Auto-dismisses toast messages after 3 seconds */
   useEffect(() => {
-    if (error) {
+    if (error || toast) {
       const timer = setTimeout(() => {
         setError(null);
+        setToast(null);
       }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [error]);
+  }, [error, toast]);
 
   const menu = [
     { i18nKey: "NOC_TYPE_NEW_RADIOBUTTON", code: "NEW" },
@@ -177,6 +179,7 @@ const NocTypeSelection = ({ t, config, onSelect, userType, formData }) => {
           ...mappedData
         });
         setNocType({ i18nKey: "NOC_TYPE_NEW_RADIOBUTTON", code: "NEW" });
+        setToast({ error: false, label: t("NOC_APPLICATION_FOUND")});
       } else {
         setError(t("ERR_FIRENOC_NUMBER_INCORRECT"));
       }
@@ -237,6 +240,7 @@ const NocTypeSelection = ({ t, config, onSelect, userType, formData }) => {
           </div>
         )}
       </FormStep>
+      {toast && <Toast error={toast.error} label={toast.label} onClose={() => setToast(null)} />}
       {error && <Toast error={true} label={t(error)} onClose={() => setError(null)} />}
     </React.Fragment>
   );
