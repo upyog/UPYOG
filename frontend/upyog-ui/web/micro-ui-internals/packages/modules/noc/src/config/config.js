@@ -40,8 +40,8 @@ export const newConfig = [
         key: "property",
         withoutLabel: true,
         texts: {
-          header: "NOC_PROPERTY_DETAILS_HEADER",
-          cardText: "NOC_PROPERTY_DETAILS_TEXT",
+          header: "",
+          cardText: "",
           submitBarLabel: "CS_COMMON_NEXT",
         },
         timeLine: [

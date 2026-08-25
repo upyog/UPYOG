@@ -3,7 +3,7 @@
  * Offers real-time search capabilities via provisional number integration to pull existing application data.
  */
 import React, { useState, useEffect } from "react";
-import { FormStep, RadioButtons, TextInput, CardLabel, CardLabelError, Toast, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, RadioButtons, TextInput, CardLabel, CardLabelError, Toast, SearchIcon } from "@nudmcdgnpm/digit-ui-react-components";
 
 const getCategoryCode = (docType) => {
   if (docType.startsWith("OWNER")) {
@@ -220,7 +220,7 @@ const NocTypeSelection = ({ t, config, onSelect, userType, formData }) => {
 
         {nocType?.code === "NEW" && (
           <div style={{ marginTop: "20px" }}>
-            <CardLabel>{t("NOC_PROVISIONAL_FIRE_NOC_NO_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+            <CardLabel>{t("NOC_PROVISIONAL_FIRE_NOC_NO_LABEL")} <span className="astericColor">*</span></CardLabel>
             <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
               <TextInput
                 t={t}
@@ -234,8 +234,7 @@ const NocTypeSelection = ({ t, config, onSelect, userType, formData }) => {
                 placeholder={t("NOC_PROVISIONAL_FIRE_NOC_NO_PLACEHOLDER")}
                 style={{ flex: 1 }}
               />
-              <SubmitBar label={t("NOC_SEARCH")} onSubmit={handleSearchProvisional} />
-             
+              <div style={{ position: "relative", zIndex: "100", right: "45px", marginTop: "12px", cursor:"pointer" }} onClick={handleSearchProvisional}> <SearchIcon /> </div>
             </div>
           </div>
         )}

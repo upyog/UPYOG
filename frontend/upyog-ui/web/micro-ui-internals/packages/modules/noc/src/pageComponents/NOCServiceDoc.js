@@ -29,7 +29,7 @@ const NOCServiceDoc = ({ t, config, onSelect, userType, formData }) => {
       <Card>
         <CardHeader>{t("NOC_REQ_DOCS_HEADER", "Required Documents-Fire NOC")}</CardHeader>
         <div>
-          <CardText style={{ color: "red" }}>{t("NOC_PDF_AND_JPG_BOTH_FORMAT_ACCEPTED_IN_DOCUMENT_UPLOAD", "PDF, JPG, PNG formats are accepted")}</CardText>
+          <CardText className="astericColor">{t("NOC_PDF_AND_JPG_BOTH_FORMAT_ACCEPTED_IN_DOCUMENT_UPLOAD", "PDF, JPG, PNG formats are accepted")}</CardText>
 
           {isLoading && <Loader />}
           {Array.isArray(docs)

@@ -264,11 +264,7 @@ const CheckPage = ({ onSubmit, value }) => {
             ))}
           </StatusTable>
         </div>
-      </Card>
-
-
-
-      <div style={{ marginTop: "24px", marginBottom: "24px" }}>
+        <div style={{ marginTop: "24px", marginBottom: "24px" }}>
         <CheckBox
           label={t("NOC_FINAL_DECLARATION_MESSAGE")}
           onChange={setdeclarationhandler}
@@ -276,8 +272,9 @@ const CheckPage = ({ onSubmit, value }) => {
           styles={{ height: "auto" }}
         />
       </div>
-
       <SubmitBar label={t("CS_COMMON_SUBMIT")} onSubmit={onSubmit} disabled={!agree} />
+      </Card>
+
     </React.Fragment>
   );
 };

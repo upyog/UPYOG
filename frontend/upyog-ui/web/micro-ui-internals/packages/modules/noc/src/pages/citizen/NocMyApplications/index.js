@@ -24,8 +24,8 @@ export const NocMyApplications = () => {
   }
 
   let filter1 = !isNaN(parseInt(filter))
-    ? { limit: "4", offset: off, tenantId, mobileNumber: user?.mobileNumber }
-    : { limit: "4", offset: "0", mobileNumber: user?.mobileNumber, tenantId };
+    ? { limit: "10", offset: off, tenantId, mobileNumber: user?.mobileNumber }
+    : { limit: "10", offset: "0", mobileNumber: user?.mobileNumber, tenantId };
 
   const { isLoading, isError, error, data } = Digit.Hooks.noc.useFireNOCSearch(tenantId, filter1);
   const { FireNOCs: applicationsList=[] } = data || {};
