@@ -20,7 +20,6 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
-import { convertToFireNOCPayload } from "../../../utils";
 
 const CheckPage = ({ onSubmit, value }) => {
   const { t } = useTranslation();

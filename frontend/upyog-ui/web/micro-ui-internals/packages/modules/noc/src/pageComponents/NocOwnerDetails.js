@@ -340,7 +340,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
 
   /** Updates text input field in owner reducer and triggers real-time field validation. */
   function handleTextInputField(index, e, key) {
-    const val = e.target.value;
+    const val = typeof e === "object" && e?.target ? e.target.value : e;
     dispatch({
       type: "EDIT_CURRENT_OWNER_PROPERTY",
       payload: {
