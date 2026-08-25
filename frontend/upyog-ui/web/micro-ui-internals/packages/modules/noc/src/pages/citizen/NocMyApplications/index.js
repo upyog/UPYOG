@@ -18,14 +18,14 @@ export const NocMyApplications = () => {
   let off;
   if (!isNaN(parseInt(filter))) {
     off = filter;
-    t1 = parseInt(filter) + 10;
+    t1 = parseInt(filter) + 4;
   } else {
-    t1 = 10;
+    t1 = 4;
   }
 
   let filter1 = !isNaN(parseInt(filter))
-    ? { limit: "10", offset: off, tenantId, mobileNumber: user?.mobileNumber }
-    : { limit: "10", offset: "0", mobileNumber: user?.mobileNumber, tenantId };
+    ? { limit: "4", offset: off, tenantId, mobileNumber: user?.mobileNumber }
+    : { limit: "4", offset: "0", mobileNumber: user?.mobileNumber, tenantId };
 
   const { isLoading, isError, error, data } = Digit.Hooks.noc.useFireNOCSearch(tenantId, filter1);
   const { FireNOCs: applicationsList=[] } = data || {};
@@ -61,7 +61,7 @@ export const NocMyApplications = () => {
         </p>
       )}
 
-      {applicationsList.length >= 10 && (
+      {applicationsList.length !==0 && (
         <div>
           <p style={{ marginLeft: "16px", marginTop: "16px" }}>
             <span className="link">
