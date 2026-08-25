@@ -29,9 +29,9 @@ const CitizenApplicationOverview = () => {
   const state = tenantId?.split(".")[0];
   const [appDetails, setAppDetails] = useState({});
   const [approver, setApprover] = useState(null);
-  const[approverStatement, setApproverStatement]= useState(null)
+  const [approverStatement, setApproverStatement] = useState(null)
   const [showOptions, setShowOptions] = useState(false);
-  
+
   const [displayData, setDisplayData] = useState({});
   const [getLoader, setLoader] = useState(false);
 
@@ -49,7 +49,7 @@ const CitizenApplicationOverview = () => {
   useEffect(() => {
     if (workflowDetails) {
       const approveInstance = workflowDetails?.data?.processInstances?.find((pi) => pi?.action === "APPROVE" || pi?.action === "REJECT");
-      const name = approveInstance?.assigner?.name || "NA";          
+      const name = approveInstance?.assigner?.name || "NA";
       const status = applicationDetails?.Applications?.[0]?.applicationStatus;
       setApproverStatement(status ? `${t(status)} By` : "");
       setApprover(name);
@@ -68,7 +68,7 @@ const CitizenApplicationOverview = () => {
     const userInfo = userInfos ? JSON.parse(userInfos) : {};
     user = userInfo?.value;
   }
-   const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
+  const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
     {
       tenantId: tenantId,
       businessService: "NDC",
@@ -85,15 +85,17 @@ const CitizenApplicationOverview = () => {
       let application = applicationDetails?.Applications?.[0];
       if (payments?.fileStoreId) {
         response = { filestoreIds: [payments?.fileStoreId] };
-      }else {
+      } else {
         response = await Digit.PaymentService.generatePdf(
           tenantId,
-          { Payments: [
+          {
+            Payments: [
               {
                 ...(payments || {}),
                 ...application,
               },
-            ], },
+            ],
+          },
           "ndc-receipt"
         );
       }
@@ -109,11 +111,11 @@ const CitizenApplicationOverview = () => {
   }
   const dowloadOptions = [];
 
-  if(applicationDetails?.Applications?.[0]?.applicationStatus === "APPROVED" || applicationDetails?.Applications?.[0]?.applicationStatus === "REJECTED"){
+  if (applicationDetails?.Applications?.[0]?.applicationStatus === "APPROVED" || applicationDetails?.Applications?.[0]?.applicationStatus === "REJECTED") {
     dowloadOptions.push({
-    label: t("DOWNLOAD_CERTIFICATE"),
-    onClick: () => handleDownloadPdf(),
-  });
+      label: t("DOWNLOAD_CERTIFICATE"),
+      onClick: () => handleDownloadPdf(),
+    });
   }
   if (reciept_data && reciept_data?.Payments.length > 0 && !recieptDataLoading) {
     dowloadOptions.push({
@@ -121,7 +123,7 @@ const CitizenApplicationOverview = () => {
       onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
     });
   }
-  
+
   const removeDuplicatesByUUID = (arr) => {
     const seen = new Set();
     return arr.filter((item) => {
@@ -153,10 +155,10 @@ const CitizenApplicationOverview = () => {
           item?.businessService === "WS"
             ? "NDC_WATER_SERVICE_CONNECTION"
             : item?.businessService === "SW"
-            ? "NDC_SEWERAGE_SERVICE_CONNECTION"
-            : item?.businessService === "PT"
-            ? "NDC_PROPERTY_TAX"
-            : item?.businessService,
+              ? "NDC_SEWERAGE_SERVICE_CONNECTION"
+              : item?.businessService === "PT"
+                ? "NDC_PROPERTY_TAX"
+                : item?.businessService,
         consumerCode: item?.consumerCode || "",
         status: item?.status || "",
         dueAmount: item?.dueAmount || 0,
@@ -252,7 +254,7 @@ const CitizenApplicationOverview = () => {
 
         <div className="ndc-flex-end">
           <div className="cardHeaderWithOptions ral-app-details-header">
-            { getLoader && <Loader />}
+            {getLoader && <Loader />}
             {dowloadOptions && dowloadOptions.length > 0 && (
               <MultiLink
                 className="multilinkWrapper"
@@ -266,16 +268,16 @@ const CitizenApplicationOverview = () => {
 
         {(applicationDetails?.Applications?.[0]?.applicationStatus == "INITIATED" ||
           applicationDetails?.Applications?.[0]?.applicationStatus == "CITIZENACTIONREQUIRED") && (
-          <ActionBar>
-            <SubmitBar
-              label={t("COMMON_EDIT")}
-              onSubmit={() => {
-                const id = applicationDetails?.Applications?.[0]?.applicationNo;
-                navigate(`/upyog-ui/citizen/ndc/new-application/${id}`);
-              }}
-            />
-          </ActionBar>
-        )}
+            <ActionBar>
+              <SubmitBar
+                label={t("COMMON_EDIT")}
+                onSubmit={() => {
+                  const id = applicationDetails?.Applications?.[0]?.applicationNo;
+                  navigate(`/upyog-ui/citizen/ndc/new-application/${id}`);
+                }}
+              />
+            </ActionBar>
+          )}
       </div>
 
       <Card className="ndc_card_main">
@@ -293,8 +295,8 @@ const CitizenApplicationOverview = () => {
                     Array.isArray(value)
                       ? value.map((item) => (typeof item === "object" ? t(item?.code || "N/A") : t(item || "N/A"))).join(", ")
                       : typeof value === "object"
-                      ? t(value?.code || "N/A")
-                      : t(value || "N/A")
+                        ? t(value?.code || "N/A")
+                        : t(value || "N/A")
                   }
                 />
               ))}
@@ -321,17 +323,16 @@ const CitizenApplicationOverview = () => {
                     <Row
                       label={t("CHB_DISCOUNT_REASON")}
                       text={t(
-                        `${
-                          applicationDetails?.Applications?.[0]?.reason === "OTHERS"
-                            ? applicationDetails?.Applications?.[0]?.NdcDetails?.find((item) => item?.businessService === "PT")?.additionalDetails
-                                ?.reason
-                            : applicationDetails?.Applications?.[0]?.reason
+                        `${applicationDetails?.Applications?.[0]?.reason === "OTHERS"
+                          ? applicationDetails?.Applications?.[0]?.NdcDetails?.find((item) => item?.businessService === "PT")?.additionalDetails
+                            ?.reason
+                          : applicationDetails?.Applications?.[0]?.reason
                         }`
                       )}
                     />
                     <Row label={t("City")} text={propertyDetailsFetch?.Properties?.[0]?.address?.city || "N/A"} />
                     <Row label={t("House No")} text={propertyDetailsFetch?.Properties?.[0]?.address?.doorNo || "N/A"} />
-                    <Row label={t("Colony Name")} text={propertyDetailsFetch?.Properties?.[0]?.address?.buildingName || "N/A"} />
+                    {/* <Row label={t("Colony Name")} text={propertyDetailsFetch?.Properties?.[0]?.address?.buildingName || "N/A"} /> */}
                     <Row label={t("Street Name")} text={propertyDetailsFetch?.Properties?.[0]?.address?.street || "N/A"} />
                     {/* <Row label={t("Mohalla")} text={propertyDetailsFetch?.Properties?.[0]?.address?.city} /> */}
                     <Row label={t("Pincode")} text={propertyDetailsFetch?.Properties?.[0]?.address?.pincode || "N/A"} />
