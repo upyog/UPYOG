@@ -6,7 +6,7 @@ export const SearchField = ({ children, className, style }) => {
     window.location.href.includes("/obps/") ||
     window.location.href.includes("/noc/")
 
-  const disbaleModules = window.location.href.includes("obps/search") || window.location.href.includes("noc/search");
+  const disbaleModules = window.location.href.includes("obps/search") || window.location.href.includes("noc/search") || window.location.href.includes("noc/firenoc");
   if (isEnabledCommonModules && !isMobile && !disbaleModules) {
     return (
       <div className={`input-fields ${className || ""}`} style={style}>
@@ -27,7 +27,7 @@ export const SearchForm = ({ children, onSubmit, handleSubmit, id, className = "
     window.location.href.includes("/obps/") ||
     window.location.href.includes("/noc/");
 
-  const disbaleModules = window.location.href.includes("obps/search") || window.location.href.includes("noc/search");
+  const disbaleModules = window.location.href.includes("obps/search") || window.location.href.includes("noc/search") || window.location.href.includes("noc/firenoc");
 
   if (isEnabledCommonModules && !isMobile && !disbaleModules) {
     return (

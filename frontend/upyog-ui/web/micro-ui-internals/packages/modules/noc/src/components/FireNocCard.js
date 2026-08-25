@@ -43,10 +43,10 @@ const FireNocCard = () => {
       label: t("ES_COMMON_INBOX"),
       link: `/upyog-ui/employee/noc/firenoc/inbox`,
     },
-    // {
-    //   label: t("ES_COMMON_APPLICATION_SEARCH"),
-    //   link: `/upyog-ui/employee/noc/firenoc/my-applications`,
-    // },
+    {
+      label: t("ES_SEARCH_APPLICATIONS"),
+      link: `/upyog-ui/employee/noc/firenoc/my-applications`,
+    },
   ]
   const FIRENOC_CEMP = Digit.UserService.hasAccess(["NOC_CEMP","NOC_DOC_VERIFIER","NOC_FIELD_INSPECTOR","NOC_APPROVER"]) || false;
   const propsForModuleCard = {
