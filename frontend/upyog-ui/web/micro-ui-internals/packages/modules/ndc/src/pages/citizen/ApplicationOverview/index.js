@@ -1,12 +1,4 @@
-import {
-  Row,
-  StatusTable,
-  Card,
-  CardSubHeader,
-  ActionBar,
-  SubmitBar,
-  MultiLink
-} from "@nudmcdgnpm/digit-ui-react-components";
+import { Row, StatusTable, Card, CardSubHeader, ActionBar, SubmitBar, MultiLink } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -16,9 +8,9 @@ import NewApplicationTimeline from "../../../../../templates/ApplicationDetails/
 import { EmployeeData } from "../../../utils";
 import { Loader } from "../../../components/Loader";
 
-// This component is the overview page for the NDC application. 
-// It displays the details of the application along with the workflow status and timeline. 
-// It also provides options to download the application details and receipt if available. 
+// This component is the overview page for the NDC application.
+// It displays the details of the application along with the workflow status and timeline.
+// It also provides options to download the application details and receipt if available.
 // The user can also edit the application if it is in the initiated or citizen action required state.
 // The component also handles the download of the receipt and certificate.
 const CitizenApplicationOverview = () => {
@@ -29,14 +21,13 @@ const CitizenApplicationOverview = () => {
   const state = tenantId?.split(".")[0];
   const [appDetails, setAppDetails] = useState({});
   const [approver, setApprover] = useState(null);
-  const [approverStatement, setApproverStatement] = useState(null)
+  const [approverStatement, setApproverStatement] = useState(null);
   const [showOptions, setShowOptions] = useState(false);
 
   const [displayData, setDisplayData] = useState({});
   const [getLoader, setLoader] = useState(false);
 
   const [isDetailsLoading, setIsDetailsLoading] = useState(false);
-
 
   const { isLoading, data: applicationDetails } = Digit.Hooks.ndc.useSearchEmployeeApplication({ applicationNo: id }, tenantId);
 
@@ -75,7 +66,7 @@ const CitizenApplicationOverview = () => {
       consumerCodes: id,
       isEmployee: false,
     },
-    { enabled: id ? true : false }
+    { enabled: id ? true : false },
   );
 
   async function getRecieptSearch({ tenantId, payments, ...params }) {
@@ -96,7 +87,7 @@ const CitizenApplicationOverview = () => {
               },
             ],
           },
-          "ndc-receipt"
+          "ndc-receipt",
         );
       }
       const fileStore = await Digit.PaymentService.printReciept(tenantId, {
@@ -111,7 +102,10 @@ const CitizenApplicationOverview = () => {
   }
   const dowloadOptions = [];
 
-  if (applicationDetails?.Applications?.[0]?.applicationStatus === "APPROVED" || applicationDetails?.Applications?.[0]?.applicationStatus === "REJECTED") {
+  if (
+    applicationDetails?.Applications?.[0]?.applicationStatus === "APPROVED" ||
+    applicationDetails?.Applications?.[0]?.applicationStatus === "REJECTED"
+  ) {
     dowloadOptions.push({
       label: t("DOWNLOAD_CERTIFICATE"),
       onClick: () => handleDownloadPdf(),
@@ -213,14 +207,19 @@ const CitizenApplicationOverview = () => {
     }
   }, [displayData]);
 
-  const { isLoading: checkLoading, isError, error: checkError, data: propertyDetailsFetch } = Digit.Hooks.pt.usePropertySearch(
+  const {
+    isLoading: checkLoading,
+    isError,
+    error: checkError,
+    data: propertyDetailsFetch,
+  } = Digit.Hooks.pt.usePropertySearch(
     { filters: { propertyIds: getPropertyId }, tenantId: tenantId },
     {
       filters: { propertyIds: getPropertyId },
       tenantId: tenantId,
       enabled: getPropertyId ? true : false,
       privacy: Digit.Utils.getPrivacyObject(),
-    }
+    },
   );
 
   let address, formattedAddress;
@@ -314,7 +313,7 @@ const CitizenApplicationOverview = () => {
                 {/* <Row label={t("Name")} text={t(`${detail.businessService}`) || detail.businessService} /> */}
                 <Row label={t("NDC_CONSUMER_CODE")} text={detail.consumerCode || "N/A"} />
                 {/* <Row label={t("NDC_STATUS")} text={t(detail.status) || detail.status} /> */}
-                <div className={isRed ? 'ndc-due-red' : 'ndc-due-default'}>
+                <div className={isRed ? "ndc-due-red" : "ndc-due-default"}>
                   <Row label={t("NDC_DUE_AMOUNT")} text={detail.dueAmount?.toString() || "0"} />
                 </div>
                 <Row label={t("NDC_PROPERTY_TYPE")} text={t(detail.propertyType) || detail.propertyType} />
@@ -327,7 +326,7 @@ const CitizenApplicationOverview = () => {
                           ? applicationDetails?.Applications?.[0]?.NdcDetails?.find((item) => item?.businessService === "PT")?.additionalDetails
                             ?.reason
                           : applicationDetails?.Applications?.[0]?.reason
-                        }`
+                        }`,
                       )}
                     />
                     <Row label={t("City")} text={propertyDetailsFetch?.Properties?.[0]?.address?.city || "N/A"} />
@@ -356,7 +355,6 @@ const CitizenApplicationOverview = () => {
           );
         })}
       </Card>
-
 
       <Card className="ndc_card_main">
         <CardSubHeader className="ndc_label">{t("NDC_APPLICATION_DOCUMENTS_OVERVIEW")}</CardSubHeader>

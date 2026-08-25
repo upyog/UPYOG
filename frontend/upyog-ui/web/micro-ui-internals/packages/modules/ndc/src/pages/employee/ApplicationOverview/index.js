@@ -143,7 +143,7 @@ const ApplicationOverview = () => {
       consumerCodes: id,
       isEmployee: false,
     },
-    { enabled: id ? true : false }
+    { enabled: id ? true : false },
   );
 
   async function getRecieptSearch({ tenantId, payments, ...params }) {
@@ -164,7 +164,7 @@ const ApplicationOverview = () => {
               },
             ],
           },
-          "ndc-receipt"
+          "ndc-receipt",
         );
       }
       const fileStore = await Digit.PaymentService.printReciept(tenantId, {
@@ -448,14 +448,19 @@ const ApplicationOverview = () => {
     }
   }, [displayData]);
 
-  const { isLoading: checkLoading, isError, error: checkError, data: propertyDetailsFetch } = Digit.Hooks.pt.usePropertySearch(
+  const {
+    isLoading: checkLoading,
+    isError,
+    error: checkError,
+    data: propertyDetailsFetch,
+  } = Digit.Hooks.pt.usePropertySearch(
     { filters: { propertyIds: getPropertyId }, tenantId: tenantId },
     {
       filters: { propertyIds: getPropertyId },
       tenantId: tenantId,
       enabled: getPropertyId ? true : false,
       privacy: Digit.Utils.getPrivacyObject(),
-    }
+    },
   );
 
   useEffect(() => {
@@ -497,7 +502,7 @@ const ApplicationOverview = () => {
       {/* <div>
         <Header styles={{ fontSize: "32px" }}>{t("NDC_APP_OVER_VIEW_HEADER")}</Header>
       </div> */}
-      <div className="ndc-overview-actions" >
+      <div className="ndc-overview-actions">
         {isCemp && (
           <div className="cardHeaderWithOptions ral-app-details-header">
             {getLoader && <Loader />}
@@ -551,9 +556,7 @@ const ApplicationOverview = () => {
                 {/* <Row label={t("NDC_STATUS")} text={t(detail.status) || detail.status} /> */}
 
                 {(!canRaiseFlag || !isMarked) && (
-                  <div className="ndc-overview-content"
-
-                  >
+                  <div className="ndc-overview-content">
                     <Row
                       rowContainerStyle={{
                         backgroundColor: isRed ? "red" : "none",
@@ -579,7 +582,8 @@ const ApplicationOverview = () => {
                           name={`amount[${index}]`}
                           defaultValue={markedPending[detail.consumerCode] === false ? 0 : amounts?.[detail.consumerCode] || detail?.dueAmount || 0}
                           render={(props) => (
-                            <TextInput className="ndc-overview-input"
+                            <TextInput
+                              className="ndc-overview-input"
                               type="number"
                               value={props.value}
                               onChange={(e) => {
@@ -590,7 +594,6 @@ const ApplicationOverview = () => {
                                   [detail.consumerCode]: newValue,
                                 }));
                               }}
-
                               onBlur={props.onBlur}
                               disabled={markedPending[detail.consumerCode] === false}
                             />
@@ -611,7 +614,7 @@ const ApplicationOverview = () => {
                           ? applicationDetails?.Applications?.[0]?.NdcDetails?.find((item) => item?.businessService === "PT")?.additionalDetails
                             ?.reason
                           : applicationDetails?.Applications?.[0]?.reason
-                        }`
+                        }`,
                       )}
                     />
                     <Row label={t("City")} text={propertyDetailsFetch?.Properties?.[0]?.address?.city} />
