@@ -636,10 +636,6 @@ const ApplicationOverview = () => {
                   </>
                 )}
               </StatusTable>
-              {canRaiseFlag && (
-                <div className="mychallan-custom">
-                </div>
-              )}
             </div>
           );
         })}
