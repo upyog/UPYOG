@@ -201,8 +201,8 @@ public class JpaConfiguration {
         if (multiTenancyEnabled) {
             properties.put(JpaConstants.HIBERNATE_MULTI_TENANCY, env.getProperty(JpaConstants.HIBERNATE_MULTI_TENANCY));
             properties.put(JpaConstants.HIBERNATE_DATABASE_TYPE, env.getProperty(JpaConstants.JPA_DATABASE));
-            properties.put(JpaConstants.HIBERNATE_MULTI_TENANCY_CONNECTION_PROVIDER, multiTenantSchemaConnectionProvider());
-            properties.put(JpaConstants.HIBERNATE_TENANT_IDENTIFIER_RESOLVER, domainBasedSchemaTenantIdentifierResolver());
+            properties.put(AvailableSettings.MULTI_TENANT_CONNECTION_PROVIDER, multiTenantSchemaConnectionProvider());
+            properties.put(AvailableSettings.MULTI_TENANT_IDENTIFIER_RESOLVER, domainBasedSchemaTenantIdentifierResolver());
         }
         return properties;
     }

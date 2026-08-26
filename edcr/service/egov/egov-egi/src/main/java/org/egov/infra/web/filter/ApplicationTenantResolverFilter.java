@@ -254,8 +254,12 @@ public class ApplicationTenantResolverFilter implements Filter {
             LOG.info("tenant from rest request =" + tenant);
             LOG.info("City Code from session " + (String) session.getAttribute(CITY_CODE_KEY));
             boolean found = false;
+            City stateCity = cityService.fetchStateCityDetails();
             if (tenant.equalsIgnoreCase("generic") || tenant.equalsIgnoreCase("state")) {
                 ApplicationThreadLocals.setTenantID(tenant);
+                found = true;
+            } else if (tenant.equalsIgnoreCase(stateCity.getCode())) {
+                ApplicationThreadLocals.setTenantID("state");
                 found = true;
             } else {
                 for (String city : tenants.keySet()) {
@@ -265,22 +269,11 @@ public class ApplicationTenantResolverFilter implements Filter {
                         ApplicationThreadLocals.setTenantID(city);
                         found = true;
                         break;
-                    }
-                }
+                    } else {
 
-                if (!found) {
-                    try {
-                        City stateCity = cityService.fetchStateCityDetails();
-                        if (stateCity != null && tenant.equalsIgnoreCase(stateCity.getCode())) {
-                            ApplicationThreadLocals.setTenantID("state");
-                            found = true;
-                        }
-                    } catch (Exception e) {
-                        LOG.warn("Could not fetch state city details from state schema: {}", e.getMessage());
                     }
                 }
             }
-
             if (!found) {
                 throw new ApplicationRestException("invalid_tenant", "Invalid Tenant Id: " + tenant);
             }
@@ -304,7 +297,7 @@ public class ApplicationTenantResolverFilter implements Filter {
      *         if not found
      */
     private String setCustomHeader(String requestURL, String tenantAtBody,
-            MultiReadRequestWrapper customRequest) {
+                                   MultiReadRequestWrapper customRequest) {
 
         if (requestURL.contains("/rest/")) {
             LOG.info("***********Inside method to fetch auth token and tenant from reqbody**************");

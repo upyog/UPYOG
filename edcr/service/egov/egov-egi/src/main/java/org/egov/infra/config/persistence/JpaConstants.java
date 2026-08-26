@@ -46,7 +46,7 @@ public final class JpaConstants {
     // Multitenancy Settings
     public static final String HIBERNATE_MULTI_TENANCY = "hibernate.multiTenancy";
     public static final String HIBERNATE_DATABASE_TYPE = "hibernate.database.type";
-    public static final String HIBERNATE_MULTI_TENANCY_CONNECTION_PROVIDER = "hibernate.multi_tenancy_connection_provider";
+    public static final String HIBERNATE_MULTI_TENANT_CONNECTION_PROVIDER = "hibernate.multi_tenant_connection_provider";
     public static final String HIBERNATE_TENANT_IDENTIFIER_RESOLVER = "hibernate.tenant_identifier_resolver";
 
     private JpaConstants() {
