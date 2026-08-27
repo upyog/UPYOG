@@ -11,16 +11,8 @@ public final class JpaConstants {
     public static final String PACKAGES_TO_SCAN = "org.egov.**.entity";
     public static final String HBM_SCAN_PACKAGE = "org.egov";
     public static final String HBM_FILE_PATTERN = "**/*hbm.xml";
-    // public static final String DEPENDS_ON_FLYWAY = "flyway";
-    // public static final String PERSISTENCE_CONFIG_LOCATION = "classpath:config/persistence-config.properties";
 
     // Spring Property Keys
-    // public static final String PROP_JPA_SHOW_SQL = "${jpa.showSql}";
-    // public static final String PROP_MULTITENANCY_ENABLED = "${multitenancy.enabled}";
-    // public static final String PROP_HIBERNATE_CACHE_USE_QUERY_CACHE = "${hibernate.cache.use_query_cache}";
-    // public static final String PROP_HIBERNATE_CACHE_USE_SECOND_LEVEL_CACHE = "${hibernate.cache.use_second_level_cache}";
-    // public static final String PROP_HIBERNATE_GENERATE_STATISTICS = "${hibernate.generate_statistics}";
-    // public static final String PROP_HIBERNATE_JDBC_BATCH_SIZE = "${hibernate.jdbc.batch_size}";
     public static final String JPA_DATABASE = "jpa.database";
     public static final String JPA_GENERATE_DDL = "jpa.generateDdl";
 
@@ -46,8 +38,7 @@ public final class JpaConstants {
     // Multitenancy Settings
     public static final String HIBERNATE_MULTI_TENANCY = "hibernate.multiTenancy";
     public static final String HIBERNATE_DATABASE_TYPE = "hibernate.database.type";
-    // public static final String HIBERNATE_MULTI_TENANT_CONNECTION_PROVIDER = "hibernate.multi_tenant_connection_provider";
-    // public static final String HIBERNATE_TENANT_IDENTIFIER_RESOLVER = "hibernate.tenant_identifier_resolver";
+
 
     private JpaConstants() {
         // Utility class - prevent instantiation
