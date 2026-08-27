@@ -296,8 +296,7 @@ public class ApplicationTenantResolverFilter implements Filter {
      * @return the extracted tenant identifier from the request body, or unchanged
      *         if not found
      */
-    private String setCustomHeader(String requestURL, String tenantAtBody,
-            MultiReadRequestWrapper customRequest) {
+    private String setCustomHeader(String requestURL, String tenantAtBody, MultiReadRequestWrapper customRequest) {
 
         if (requestURL.contains("/rest/")) {
             LOG.info("***********Inside method to fetch auth token and tenant from reqbody**************");
