@@ -1078,7 +1078,7 @@ const WrapPaymentComponent = (props) => {
           </div>
         </div>
       ) : null}
-      {(business_service == "NDC" || business_service == "ndc-services" || business_service == "ndc") ? (
+      {business_service == "NDC" ? (
         <div style={{ display: 'flex', justifyContent: 'flex-start', gap: '20px', marginLeft: "unset", marginRight: "20px", marginTop: "15px", marginBottom: "15px" }}>
           <div className="primary-label-btn d-grid" onClick={printNDCReceipt}>
             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
@@ -1142,7 +1142,7 @@ const WrapPaymentComponent = (props) => {
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       )}
-      {(business_service == "NDC" || business_service == "ndc-services" || business_service == "ndc") && (
+      {business_service == "NDC" && (
         <Link to={`/upyog-ui/citizen`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>

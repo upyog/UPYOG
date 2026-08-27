@@ -1,4 +1,5 @@
 import React from "react";
+import getNdcAcknowledgementData from "../getNdcAcknowledgementData";
 
 /* methid to get date from epoch */
 export const convertEpochToDate = (dateEpoch) => {
@@ -96,7 +97,6 @@ export const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") =
 export const downloadNDCAcknowledgement = async (application, tenants, t) => {
   const appData = application?.Applications?.[0] || application?.data?.Applications?.[0] || application;
   const tenantInfo = tenants?.find((tenant) => tenant.code === appData?.tenantId);
-  const getNdcAcknowledgementData = (await import("../getNdcAcknowledgementData")).default;
   const ackData = await getNdcAcknowledgementData(application, tenantInfo, t);
   Digit.Utils.pdf.generate(ackData);
 };

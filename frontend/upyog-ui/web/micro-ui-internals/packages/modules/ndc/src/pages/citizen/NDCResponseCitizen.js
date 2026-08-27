@@ -123,6 +123,10 @@ const NDCResponseCitizen = () => {
     navigate(`/upyog-ui/citizen/ndc/my-application`);
   };
 
+  const handlePayment = () => {
+    navigate(`/upyog-ui/citizen/payment/collect/NDC/${ndcCode}/${tenantId}?tenantId=${tenantId}`);
+  };
+
   if (isLoading) {
     return <Loader />;
   }
@@ -138,6 +142,10 @@ const NDCResponseCitizen = () => {
 
       {reciept_data && reciept_data?.Payments?.length > 0 && (
         <SubmitBar label={t("NDC_FEE_RECIEPT")} onSubmit={handleDownloadReceipt} style={{ marginTop: "10px" }} />
+      )}
+
+      {isSuccess && (
+        <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handlePayment} style={{ marginTop: "10px" }} />
       )}
 
       <SubmitBar label={t("CORE_COMMON_GO_TO_NDC")} onSubmit={onGoToNDC} style={{ marginTop: "10px" }} />

@@ -865,7 +865,7 @@ export const SuccessfulPayment = (props) => {
                 {t("CS_DOWNLOAD_RECEIPT")}
               </div>
             ) : null}
-            {(businessService == "NDC" || businessService == "ndc-services" || businessService == "ndc") ? (
+            {businessService == "NDC" ? (
               <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop: "15px", marginBottom: "15px" }} onClick={printNDCReceipt}>
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
                   <path d="M0 0h24v24H0V0z" fill="none" />
