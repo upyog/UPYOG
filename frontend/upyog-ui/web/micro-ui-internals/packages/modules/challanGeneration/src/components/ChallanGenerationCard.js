@@ -50,7 +50,6 @@ const ChallanGenerationCard = () => {
     ]
 
   }
-  console.log("data", data);
   return <EmployeeModuleCard {...propsForModuleCard} />
 };
 
