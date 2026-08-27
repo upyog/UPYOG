@@ -24,7 +24,7 @@ import NDCModal from "../../../pageComponents/NDCModal";
 import { Loader } from "../../../components/Loader";
 import NewApplicationTimeline from "../../../../../templates/ApplicationDetails/components/NewApplicationTimeline";
 import getAcknowledgementData from "../../../getAcknowlegment";
-import { EmployeeData } from "../../../utils";
+import { EmployeeData, downloadNDCAcknowledgement } from "../../../utils";
 const availableOptions = [
   { code: "yes", name: "Yes" },
   { code: "no", name: "No" },
@@ -179,6 +179,13 @@ const ApplicationOverview = () => {
   }
   const dowloadOptions = [];
 
+  if (applicationDetails?.Applications?.[0]) {
+    dowloadOptions.push({
+      label: t("CS_COMMON_DOWNLOAD_ACKNOWLEDGEMENT"),
+      onClick: () => downloadNDCAcknowledgement(applicationDetails, tenants, t),
+    });
+  }
+
   if (
     applicationDetails?.Applications?.[0]?.applicationStatus === "APPROVED" ||
     applicationDetails?.Applications?.[0]?.applicationStatus === "REJECTED"
@@ -189,7 +196,7 @@ const ApplicationOverview = () => {
     });
     if (reciept_data && reciept_data?.Payments.length > 0 && !recieptDataLoading) {
       dowloadOptions.push({
-        label: t("PTR_FEE_RECIEPT"),
+        label: t("NDC_FEE_RECIEPT"),
         onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
       });
     }

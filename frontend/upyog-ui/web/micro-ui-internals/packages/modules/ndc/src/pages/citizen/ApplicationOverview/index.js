@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import NDCDocument from "../../../pageComponents/NDCDocument";
 import getAcknowledgementData from "../../../getAcknowlegment";
 import NewApplicationTimeline from "../../../../../templates/ApplicationDetails/components/NewApplicationTimeline";
-import { EmployeeData } from "../../../utils";
+import { EmployeeData, downloadNDCAcknowledgement } from "../../../utils";
 import { Loader } from "../../../components/Loader";
 
 // This component is the overview page for the NDC application.
@@ -102,6 +102,13 @@ const CitizenApplicationOverview = () => {
   }
   const dowloadOptions = [];
 
+  if (applicationDetails?.Applications?.[0]) {
+    dowloadOptions.push({
+      label: t("CS_COMMON_DOWNLOAD_ACKNOWLEDGEMENT"),
+      onClick: () => downloadNDCAcknowledgement(applicationDetails, tenants, t),
+    });
+  }
+
   if (
     applicationDetails?.Applications?.[0]?.applicationStatus === "APPROVED" ||
     applicationDetails?.Applications?.[0]?.applicationStatus === "REJECTED"
@@ -113,7 +120,7 @@ const CitizenApplicationOverview = () => {
   }
   if (reciept_data && reciept_data?.Payments.length > 0 && !recieptDataLoading) {
     dowloadOptions.push({
-      label: t("PTR_FEE_RECIEPT"),
+      label: t("NDC_FEE_RECIEPT"),
       onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
     });
   }
