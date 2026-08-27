@@ -510,19 +510,17 @@ const ApplicationOverview = () => {
         <Header styles={{ fontSize: "32px" }}>{t("NDC_APP_OVER_VIEW_HEADER")}</Header>
       </div> */}
       <div className="ndc-overview-actions">
-        {isCemp && (
-          <div className="cardHeaderWithOptions ral-app-details-header">
-            {getLoader && <Loader />}
-            {dowloadOptions && dowloadOptions.length > 0 && (
-              <MultiLink
-                className="multilinkWrapper"
-                onHeadClick={() => setShowOptions(!showOptions)}
-                displayOptions={showOptions}
-                options={dowloadOptions}
-              />
-            )}
-          </div>
-        )}
+        <div className="cardHeaderWithOptions ral-app-details-header">
+          {getLoader && <Loader />}
+          {dowloadOptions && dowloadOptions.length > 0 && (
+            <MultiLink
+              className="multilinkWrapper"
+              onHeadClick={() => setShowOptions(!showOptions)}
+              displayOptions={showOptions}
+              options={dowloadOptions}
+            />
+          )}
+        </div>
       </div>
       <Card>
         <CardSubHeader>{t("NDC_APPLICATION_DETAILS_OVERVIEW")}</CardSubHeader>
