@@ -73,6 +73,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Actions;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -140,6 +141,17 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 //import com.exilant.eGov.src.domain.Bank;
 
+/**
+ * LTS Migration Notes:
+ * 1. [Hibernate 6 Strict SQM] Corrected HQL association comparisons to use explicit scalar IDs
+ *    (e.g., 'ac.bankAccountId.id = ?' and 'ac.id = cd.accountCheque.id') preventing SemanticException.
+ * 2. [Hibernate 6 Native Queries & Types] Migrated all createSQLQuery() to createNativeQuery() and replaced
+ *    removed Hibernate 5 Type singletons (StringType, LongType, IntegerType, DateType) with StandardBasicTypes.
+ * 3. [Struts 7 & Jakarta EE Parameter Extraction] Added request parameter extraction for AJAX endpoints
+ *    (handling 'fundId'/'fund', 'departmentId'/'department', 'functionId'/'function', 'selectedBillIds')
+ *    and guarded against NumberFormatException on unselected dropdowns.
+ * 4. [MDMS Integration] Added null checks for microserviceUtils.getDepartmentByCode() results.
+ */
 @Results({
         @Result(name = "bankAccountByBranch", location = "common-bankAccountByBranch.jsp"),
         @Result(name = "branch", location = "common-branch.jsp"),
@@ -1405,9 +1417,10 @@ public class CommonAction extends BaseFormAction {
             LOGGER.debug("Account code selected is : = " + accountCode);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("index is : = " + index);
+        // LTS Hibernate 6: glCodeId/detailTypeId are associations — compare via .id
         final List<Accountdetailtype> list = getPersistenceService()
                 .findAllBy(
-                        " from Accountdetailtype where id in (select detailTypeId from CChartOfAccountDetail where glCodeId=(select id from CChartOfAccounts where glcode=?))  ",
+                        " from Accountdetailtype where id in (select detailTypeId.id from CChartOfAccountDetail where glCodeId.id=(select id from CChartOfAccounts where glcode=?))  ",
                         accountCode);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug(" list :" + list);
@@ -1694,8 +1707,9 @@ public class CommonAction extends BaseFormAction {
         set.toArray(accountCodes);
         for (final String accountCode : accountCodes) {
 
+            // LTS Hibernate 6: glCodeId is CChartOfAccounts — compare via .id
             final CChartOfAccountDetail chartOfAccountDetail = (CChartOfAccountDetail) getPersistenceService().find(
-                    " from CChartOfAccountDetail where glCodeId=(select id from CChartOfAccounts where glcode=?)",
+                    " from CChartOfAccountDetail where glCodeId.id=(select id from CChartOfAccounts where glcode=?)",
                     accountCode);
 
             if (null != chartOfAccountDetail)
@@ -1784,15 +1798,68 @@ public class CommonAction extends BaseFormAction {
 
     }
 
+    /*
+     * Struts 7: CommonAction already has Integer bankaccount and Integer department,
+     * so OGNL often fails to bind bankaccountId / departmentId from the AJAX query.
+     * Cheque validation must read the same names from the request (and fall back to
+     * bankaccount) before calling InstrumentService — otherwise every cheque number
+     * looks unused/invalid.
+     */
+    private void bindChequeValidationParams() {
+        if (StringUtils.isBlank(chequeNumber)) {
+            chequeNumber = ServletActionContext.getRequest().getParameter("chequeNumber");
+        }
+        if (bankaccountId == null) {
+            String bAccId = ServletActionContext.getRequest().getParameter("bankaccountId");
+            if (StringUtils.isBlank(bAccId)) {
+                bAccId = ServletActionContext.getRequest().getParameter("bankaccount.id");
+            }
+            if (StringUtils.isBlank(bAccId)) {
+                bAccId = ServletActionContext.getRequest().getParameter("bankaccount");
+            }
+            if (StringUtils.isNotBlank(bAccId) && !"-1".equals(bAccId.trim())) {
+                try {
+                    bankaccountId = Long.valueOf(bAccId.trim());
+                } catch (final NumberFormatException e) {
+                    LOGGER.warn("Invalid bank account id for cheque validation: " + bAccId);
+                }
+            }
+        }
+        if (bankaccountId == null && bankaccount != null && bankaccount > 0) {
+            bankaccountId = bankaccount.longValue();
+        }
+        if (StringUtils.isBlank(departmentId)) {
+            departmentId = ServletActionContext.getRequest().getParameter("departmentId");
+            if (StringUtils.isBlank(departmentId)) {
+                departmentId = ServletActionContext.getRequest().getParameter("department");
+            }
+        }
+        if (StringUtils.isBlank(serialNo)) {
+            serialNo = ServletActionContext.getRequest().getParameter("serialNo");
+        }
+        if (StringUtils.isBlank(serialNo)) {
+            serialNo = null;
+        }
+    }
+
+    private String chequeValidationIndex() {
+        if (parameters != null && parameters.get("index") != null && parameters.get("index").length > 0
+                && StringUtils.isNotBlank(parameters.get("index")[0])) {
+            return parameters.get("index")[0];
+        }
+        final String index = ServletActionContext.getRequest().getParameter("index");
+        return StringUtils.isNotBlank(index) ? index : "0";
+    }
+
     @Action(value = "/voucher/common-ajaxValidateChequeNumber")
     public String ajaxValidateChequeNumber() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxValidateChequeNumber...");
-        final String index = parameters.get("index")[0];
-        value = instrumentService.isChequeNumberValid(chequeNumber, bankaccountId, departmentId, serialNo) == true ? index
-                + "~true" : index + "~false";
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed ajaxValidateChequeNumber.");
+        bindChequeValidationParams();
+        final String index = chequeValidationIndex();
+        boolean isValid = instrumentService.isChequeNumberValid(chequeNumber, bankaccountId, departmentId, serialNo);
+        value = isValid ? index + "~true" : index + "~false";
+        LOGGER.info("ajaxValidateChequeNumber: chequeNumber=" + chequeNumber + ", bankaccountId=" + bankaccountId + ", departmentId=" + departmentId + ", serialNo=" + serialNo + " -> result value=" + value);
         return "result";
     }
 
@@ -1810,7 +1877,8 @@ public class CommonAction extends BaseFormAction {
     public String ajaxValidateReassignSurrenderChequeNumber() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxValidateReassignSurrenderChequeNumber...");
-        final String index = parameters.get("index")[0];
+        bindChequeValidationParams();
+        final String index = chequeValidationIndex();
         value = instrumentService.isReassigningChequeNumberValid(chequeNumber, bankaccountId, departmentId, serialNo) == true
                 ? index
                         + "~true"
@@ -1859,10 +1927,33 @@ public class CommonAction extends BaseFormAction {
         return "users";
     }
 
+    /*
+     * Struts 7: Integer accountDetailType often stays null on GET/AJAX
+     * (sub-ledger search popup, autocomplete). Read it from the request the
+     * same way as bankaccountId / departmentId.
+     */
+    private void bindAccountDetailType() {
+        if (accountDetailType != null && accountDetailType != 0) {
+            return;
+        }
+        String adt = ServletActionContext.getRequest().getParameter("accountDetailType");
+        if (StringUtils.isBlank(adt)) {
+            adt = ServletActionContext.getRequest().getParameter("accountDetailType.id");
+        }
+        if (StringUtils.isNotBlank(adt) && !"-1".equals(adt.trim()) && !"0".equals(adt.trim())) {
+            try {
+                accountDetailType = Integer.valueOf(adt.trim());
+            } catch (final NumberFormatException e) {
+                LOGGER.warn("Invalid accountDetailType: " + adt);
+            }
+        }
+    }
+
     @Action(value = "/voucher/common-ajaxLoadCodesOfDetailType")
     public String ajaxLoadCodesOfDetailType() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadCodesOfDetailType...");
+        bindAccountDetailType();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Detail type id  : " + accountDetailType);
         if (null == accountDetailType)
@@ -1881,6 +1972,7 @@ public class CommonAction extends BaseFormAction {
     public String ajaxLoadEntites() throws ClassNotFoundException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadEntites...");
+        bindAccountDetailType();
         if (accountDetailType == null)
             entitiesList = new ArrayList<EntityType>();
         else {
@@ -1906,6 +1998,7 @@ public class CommonAction extends BaseFormAction {
     public String ajaxLoadEntitesBy20() throws ClassNotFoundException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadEntitesBy20...");
+        bindAccountDetailType();
         if (accountDetailType == null || accountDetailType == 0)
             entitiesList = new ArrayList<EntityType>();
         else {
@@ -1979,37 +2072,43 @@ public class CommonAction extends BaseFormAction {
     }
 
     @SuppressWarnings("unchecked")
-    @Action(value = "/voucher/common-searchEntites")
+    @Actions({
+            @Action(value = "/voucher/common-searchEntites"),
+            @Action(value = "/voucher/common-searchEntities")
+    })
     public String searchEntites() throws ClassNotFoundException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting searchEntites...");
+        bindAccountDetailType();
         searchType = "EntitySearch";
         if (accountDetailType == null)
             entitiesList = new ArrayList<EntityType>();
         else {
             final Accountdetailtype detailType = (Accountdetailtype) persistenceService.find(
                     "from Accountdetailtype where id=? order by name", accountDetailType);
-            final String table = detailType.getFullQualifiedName();
-            accountDetailTypeName = detailType.getName();
-            try {
-                final Class<?> service = Class.forName(table);
-                String simpleName = service.getSimpleName();
-                simpleName = simpleName.substring(0, 1).toLowerCase() + simpleName.substring(1) + "Service";
+            LOGGER.info("searchEntites: accountDetailType=" + accountDetailType + ", detailType=" + (detailType == null ? "null" : detailType.getName()));
+            if (detailType != null) {
+                final String table = detailType.getFullQualifiedName();
+                accountDetailTypeName = detailType.getName();
+                try {
+                    final Class<?> service = Class.forName(table);
+                    String simpleName = service.getSimpleName();
+                    simpleName = simpleName.substring(0, 1).toLowerCase() + simpleName.substring(1) + "Service";
 
-                final WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(ServletActionContext
-                        .getServletContext());
-                EntityTypeService entityService = null;
-
-                entityService = (EntityTypeService) wac.getBean(simpleName);
-                entitiesList = (List<EntityType>) entityService.getAllActiveEntities(accountDetailType);
-            } catch (final EntityNotFoundException e) {
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("Service Not Available Exception : " + e.getMessage());
+                    final WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(ServletActionContext
+                            .getServletContext());
+                    EntityTypeService entityService = (EntityTypeService) wac.getBean(simpleName);
+                    entitiesList = (List<EntityType>) entityService.getAllActiveEntities(accountDetailType);
+                    LOGGER.info("searchEntites: bean=" + simpleName + ", count=" + (entitiesList == null ? 0 : entitiesList.size()));
+                } catch (final Exception e) {
+                    LOGGER.error("searchEntites error: " + e.getMessage(), e);
+                    entitiesList = new ArrayList<EntityType>();
+                }
+            } else {
+                LOGGER.warn("searchEntites: detailType not found for id=" + accountDetailType);
                 entitiesList = new ArrayList<EntityType>();
             }
         }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Completed searchEntites.");
         return "searchResult";
     }
 
@@ -2966,10 +3065,12 @@ public class CommonAction extends BaseFormAction {
     }
 
     @SuppressWarnings("unchecked")
+    @SkipValidation
     @Action(value = "/voucher/common-ajaxLoadBanksWithApprovedRemittances")
     public String ajaxLoadBanksWithApprovedRemittances() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBanksWithApprovedRemittances...");
+        resolveFundIdAndAsOnDate();
         try {
             StringBuilder queryString = new StringBuilder();
             queryString = queryString
@@ -3462,19 +3563,31 @@ public class CommonAction extends BaseFormAction {
     }
 
     @SuppressWarnings("unchecked")
+    @SkipValidation
     @Action(value = "/voucher/common-ajaxLoadBankAccountsWithApprovedRemittances")
     public String ajaxLoadBankAccountsWithApprovedRemittances() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadBankAccountsWithApprovedRemittances...");
+        /*
+         * LTS Migration Fix (Struts 7): remittance search AJAX may not bind
+         * branchId/fundId from the query string; resolve from request like the
+         * approved-payments cheque-assignment path.
+         */
+        resolveFundIdAndAsOnDate();
+        resolveAssignedChequeAccountParams();
+        accNumList = new ArrayList<Bankaccount>();
+        if (branchId == null || branchId <= 0) {
+            LOGGER.warn("ajaxLoadBankAccountsWithApprovedRemittances missing branchId");
+            return "bankAccNum";
+        }
         try {
-            accNumList = new ArrayList<Bankaccount>();
             StringBuffer queryString = new StringBuffer();
             queryString = queryString
                     .append("select distinct bankaccount.accountnumber as accountnumber,bank.name as bankName,cast(bankaccount.id as integer) as id,coa.glcode as glCode ")
                     .append("from Bank bank,Bankbranch bankBranch,Bankaccount bankaccount,chartofaccounts coa ")
                     .append("where  bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and coa.id=bankaccount.glcodeid  and bankaccount.branchid=:branchId ");
             Query query = persistenceService.getSession().createNativeQuery(queryString.toString())
-            .setParameter("branchId", branchId, StandardBasicTypes.INTEGER);
+                    .setParameter("branchId", branchId, StandardBasicTypes.INTEGER);
             final List<Object[]> bankAccounts = query.list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankAccounts.size());
@@ -3691,8 +3804,8 @@ public class CommonAction extends BaseFormAction {
     @SuppressWarnings("unchecked")
     @Action(value = "/voucher/common-ajaxLoadVoucherAmount")
     public String ajaxLoadVoucherAmount() {
-        final String chequeAmtQry = "select ih.instrumentamount, ih.id from egf_instrumentheader ih, egf_instrumentvoucher iv where ih.id= iv.instrumentheaderid and iv.voucherheaderid=?";
-        final List<Object[]> resultList2 = persistenceService.getSession().createNativeQuery(chequeAmtQry).setParameter(0, billVhId)
+        final String chequeAmtQry = "select ih.instrumentamount, ih.id from egf_instrumentheader ih, egf_instrumentvoucher iv where ih.id= iv.instrumentheaderid and iv.voucherheaderid=?1";
+        final List<Object[]> resultList2 = persistenceService.getSession().createNativeQuery(chequeAmtQry).setParameter(1, billVhId)
                 .list();
         String chqAmtResult;
         if (resultList2.size() == 0)
@@ -3703,10 +3816,10 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxLoadFundingAgencyAmount...");
         if (billVhId != null && billVhId.intValue() != 0) {
-            final String grantAMountQry = "select sum(g.debitAmount) as accountBalance from generalledger g where g.voucherheaderid=? ";
+            final String grantAMountQry = "select sum(g.debitAmount) as accountBalance from generalledger g where g.voucherheaderid=?1 ";
             final Query qry = persistenceService.getSession().createNativeQuery(grantAMountQry)
                     .addScalar("accountBalance", StandardBasicTypes.BIG_DECIMAL);
-            qry.setParameter(0, billVhId);
+            qry.setParameter(1, billVhId);
             qry.setResultTransformer(Transformers.aliasToBean(CommonBean.class));
             final List<CommonBean> resultList1 = qry.list();
             String grantAmountResult;
@@ -4564,7 +4677,7 @@ public class CommonAction extends BaseFormAction {
             if (bankaccount != null && departmentId != null) {
                 yearCodeList = persistenceService
                         .findAllBy(new StringBuilder("select DISTINCT fs from AccountCheques ac, CFinancialYear fs, ChequeDeptMapping cd where ac.serialNo = fs.id")
-                                .append(" and bankAccountId = ? and ac.id = cd.accountCheque and cd.allotedTo =? order by fs.id desc ").toString(),
+                                .append(" and ac.bankAccountId.id = ? and ac.id = cd.accountCheque.id and cd.allotedTo =? order by fs.id desc ").toString(),
                                 bankaccount.longValue(), departmentId.toString());
             }
         } catch (final HibernateException e) {

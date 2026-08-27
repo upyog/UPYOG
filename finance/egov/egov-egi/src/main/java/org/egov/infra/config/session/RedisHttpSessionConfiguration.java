@@ -50,6 +50,7 @@ package org.egov.infra.config.session;
 
 import org.egov.infra.config.security.authentication.listener.UserSessionDestroyListener;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.session.FindByIndexNameSessionRepository;
@@ -79,6 +80,18 @@ public class RedisHttpSessionConfiguration {
 
 	@Value("${secure.cookie}")
     private boolean secureCookie;
+
+    /**
+     * LTS Migration Fix (Spring Session 3.2.6): wrap findById so incomplete Redis
+     * session hashes (missing creationTime) are dropped instead of 500'ing the
+     * request — including after the 30-minute idle expiry, when the browser cookie
+     * remains and static JS all call getSession at once.
+     * Must be a static {@code @Bean} so this BeanPostProcessor is registered early.
+     */
+    @Bean
+    public static BeanPostProcessor tolerantRedisSessionRepositoryPostProcessor() {
+        return new TolerantRedisSessionRepositoryPostProcessor();
+    }
 	
     /**
      * Cookie used as the Spring Session id. Path and secure-flag come from security constants

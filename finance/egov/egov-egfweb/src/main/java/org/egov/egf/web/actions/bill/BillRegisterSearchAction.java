@@ -314,8 +314,10 @@ public class BillRegisterSearchAction extends BaseFormAction {
     private List<Object[]> getOwnersForWorkFlowState(final List<Long> stateIds)
     {
         List<Object[]> ownerNamesList = new ArrayList<Object[]>();
+        // Hibernate 6: State.ownerPosition is a Long (basic), not a Position association.
+        // Use state.ownerPosition directly — state.ownerPosition.id is an invalid path.
         final String ownerNamesQueryStr = "select a.employee.username,bill.state.id from Assignment a,State state, EgBillregister bill"
-                + " where  bill.state.id=state.id and a.position.id = state.ownerPosition.id and bill.state.id in (:IDS)";
+                + " where  bill.state.id=state.id and a.position.id = state.ownerPosition and bill.state.id in (:IDS)";
         int size = stateIds.size();
         if (size > 999)
         {

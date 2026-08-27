@@ -47,11 +47,16 @@
  */
 package org.egov.egf.web.actions.masters;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -132,10 +137,15 @@ public class SubSchemeAction extends BaseFormAction {
 	 */
 	@Override
 	public Object getModel() {
-		if (subSchemeId != null && subSchemeId != -1)
-			subScheme = (SubScheme) persistenceService.find("from SubScheme s left join fetch s.scheme sch left join fetch sch.fund f where s.id=?", subSchemeId);
+		resolveIdsFromRequest();
+		if (subSchemeId != null && subSchemeId != -1
+				&& (subScheme.getId() == null || !subSchemeId.equals(subScheme.getId())))
+			subScheme = (SubScheme) persistenceService.find(
+					"from SubScheme s left join fetch s.scheme sch left join fetch sch.fund f where s.id=?",
+					subSchemeId);
 		if (schemeId != null && schemeId != -1)
-			subScheme.setScheme((Scheme) persistenceService.find("from Scheme s left join fetch s.fund f where s.id=?", schemeId));
+			subScheme.setScheme((Scheme) persistenceService.find("from Scheme s left join fetch s.fund f where s.id=?",
+					schemeId));
 		return subScheme;
 	}
 
@@ -176,6 +186,7 @@ public class SubSchemeAction extends BaseFormAction {
 	@ValidationErrorPage(value = NEW)
 	@Action(value = "/masters/subScheme-create")
 	public String save() {
+		applySubmittedFormFields();
 		applySubmittedIsActive();
 		subScheme.setCreatedDate(new Date());
 		subScheme.setCreatedBy(ApplicationThreadLocals.getUserId());
@@ -213,6 +224,7 @@ public class SubSchemeAction extends BaseFormAction {
 	@ValidationErrorPage(value = NEW)
 	@Action(value = "/masters/subScheme-edit")
 	public String editSubScheme() {
+		applySubmittedFormFields();
 		applySubmittedIsActive();
 		subScheme.setLastModifiedBy(ApplicationThreadLocals.getUserId());
 		subScheme.setLastmodifieddate(new Date());
@@ -440,6 +452,185 @@ public class SubSchemeAction extends BaseFormAction {
 
 	public void setIsactive(boolean isactive) {
 		this.isactive = isactive;
+	}
+
+	/*
+	 * LTS Migration Fix (Struts 7) — Modify Sub Scheme department
+	 *
+	 * What was the issue?
+	 *   Modify Sub Scheme showed "Sub scheme Modified successfully", but Department
+	 *   (and other model-only fields) stayed unchanged when the record was viewed
+	 *   again. The dropdown posts name="department" (department code). Persist still
+	 *   wrote the entity loaded from DB, whose department was null / old.
+	 *
+	 * Why do we need this change?
+	 *   Struts 7 does not reliably bind ModelDriven form params onto SubScheme.
+	 *   getModel() also reloads by subSchemeId, which wipes any values that did
+	 *   bind. The action has name/code fields, so those can land on the action
+	 *   instead of the entity. Department has no action field, so it was dropped.
+	 *
+	 * How we solved this?
+	 *   Read schemeId, subSchemeId, department, name, code, dates and the other
+	 *   form fields from the HTTP request and copy them onto the loaded SubScheme
+	 *   before persist. Empty department ("0" / blank) is stored as null.
+	 *
+	 * What did we solve?
+	 *   Changing Department (for example to Street Lights) now persists and shows
+	 *   on view / next edit. Create and modify both keep the submitted values.
+	 */
+	private void applySubmittedFormFields() {
+		resolveIdsFromRequest();
+		if (subSchemeId != null && subSchemeId != -1
+				&& (subScheme.getId() == null || !subSchemeId.equals(subScheme.getId()))) {
+			final SubScheme loaded = (SubScheme) persistenceService.find(
+					"from SubScheme s left join fetch s.scheme sch left join fetch sch.fund f where s.id=?",
+					subSchemeId);
+			if (loaded != null)
+				subScheme = loaded;
+		}
+		final HttpServletRequest request = ServletActionContext.getRequest();
+		if (request == null)
+			return;
+
+		final String submittedName = firstNonBlank(request.getParameter("name"), name);
+		if (submittedName != null)
+			subScheme.setName(submittedName);
+		final String submittedCode = firstNonBlank(request.getParameter("code"), code);
+		if (submittedCode != null)
+			subScheme.setCode(submittedCode);
+
+		final String departmentParam = request.getParameter("department");
+		if (departmentParam != null) {
+			final String trimmed = departmentParam.trim();
+			if (trimmed.isEmpty() || "0".equals(trimmed) || "-1".equals(trimmed))
+				subScheme.setDepartment(null);
+			else
+				subScheme.setDepartment(trimmed);
+		}
+
+		final String estimate = request.getParameter("initialEstimateAmount");
+		if (estimate != null) {
+			final String trimmed = estimate.trim();
+			if (trimmed.isEmpty())
+				subScheme.setInitialEstimateAmount(null);
+			else {
+				try {
+					subScheme.setInitialEstimateAmount(new BigDecimal(trimmed));
+				} catch (final NumberFormatException e) {
+					// leave existing amount; client-side validate() already rejects non-numeric input
+				}
+			}
+		}
+
+		applySubmittedString(request, "councilLoanProposalNumber");
+		applySubmittedString(request, "councilAdminSanctionNumber");
+		applySubmittedString(request, "govtLoanProposalNumber");
+		applySubmittedString(request, "govtAdminSanctionNumber");
+
+		final Date validFrom = parseSubmittedDate(request.getParameter("validfrom"));
+		if (validFrom != null)
+			subScheme.setValidfrom(validFrom);
+		final Date validTo = parseSubmittedDate(request.getParameter("validto"));
+		if (validTo != null)
+			subScheme.setValidto(validTo);
+		subScheme.setCouncilLoanProposalDate(
+				parseSubmittedDateAllowClear(request.getParameter("councilLoanProposalDate"),
+						subScheme.getCouncilLoanProposalDate()));
+		subScheme.setCouncilAdminSanctionDate(
+				parseSubmittedDateAllowClear(request.getParameter("councilAdminSanctionDate"),
+						subScheme.getCouncilAdminSanctionDate()));
+		subScheme.setGovtLoanProposalDate(
+				parseSubmittedDateAllowClear(request.getParameter("govtLoanProposalDate"),
+						subScheme.getGovtLoanProposalDate()));
+		subScheme.setGovtAdminSanctionDate(
+				parseSubmittedDateAllowClear(request.getParameter("govtAdminSanctionDate"),
+						subScheme.getGovtAdminSanctionDate()));
+
+		if (schemeId != null && schemeId != -1)
+			subScheme.setScheme((Scheme) persistenceService.find(
+					"from Scheme s left join fetch s.fund f where s.id=?", schemeId));
+	}
+
+	private void resolveIdsFromRequest() {
+		final HttpServletRequest request = ServletActionContext.getRequest();
+		if (request == null)
+			return;
+		if (subSchemeId == null || subSchemeId == -1) {
+			final Integer parsed = parseInteger(request.getParameter("subSchemeId"));
+			if (parsed != null)
+				subSchemeId = parsed;
+		}
+		if (schemeId == null || schemeId == -1) {
+			final Integer parsed = parseInteger(request.getParameter("schemeId"));
+			if (parsed != null)
+				schemeId = parsed;
+		}
+	}
+
+	private void applySubmittedString(final HttpServletRequest request, final String paramName) {
+		final String value = request.getParameter(paramName);
+		if (value == null)
+			return;
+		final String trimmed = value.trim();
+		final String stored = trimmed.isEmpty() ? null : trimmed;
+		switch (paramName) {
+		case "councilLoanProposalNumber":
+			subScheme.setCouncilLoanProposalNumber(stored);
+			break;
+		case "councilAdminSanctionNumber":
+			subScheme.setCouncilAdminSanctionNumber(stored);
+			break;
+		case "govtLoanProposalNumber":
+			subScheme.setGovtLoanProposalNumber(stored);
+			break;
+		case "govtAdminSanctionNumber":
+			subScheme.setGovtAdminSanctionNumber(stored);
+			break;
+		default:
+			break;
+		}
+	}
+
+	private static String firstNonBlank(final String primary, final String fallback) {
+		if (primary != null && !primary.trim().isEmpty())
+			return primary.trim();
+		if (fallback != null && !fallback.trim().isEmpty())
+			return fallback.trim();
+		return null;
+	}
+
+	private static Integer parseInteger(final String value) {
+		if (value == null)
+			return null;
+		final String trimmed = value.trim();
+		if (trimmed.isEmpty() || "0".equals(trimmed) || "-1".equals(trimmed))
+			return null;
+		try {
+			return Integer.valueOf(trimmed);
+		} catch (final NumberFormatException e) {
+			return null;
+		}
+	}
+
+	private static Date parseSubmittedDate(final String value) {
+		if (value == null || value.trim().isEmpty())
+			return null;
+		try {
+			final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			sdf.setLenient(false);
+			return sdf.parse(value.trim());
+		} catch (final ParseException e) {
+			return null;
+		}
+	}
+
+	private static Date parseSubmittedDateAllowClear(final String value, final Date existing) {
+		if (value == null)
+			return existing;
+		if (value.trim().isEmpty())
+			return null;
+		final Date parsed = parseSubmittedDate(value);
+		return parsed != null ? parsed : existing;
 	}
 
 	/**

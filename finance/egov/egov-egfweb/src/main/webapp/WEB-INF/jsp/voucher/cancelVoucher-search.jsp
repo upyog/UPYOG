@@ -149,7 +149,7 @@ function loadNamesForSelectedType()
 		 <input type="reset" value="<s:text name='lbl.reset'/>" class="buttonsubmit" onclick="return fieldReset();" />
 		<input type="button" value="<s:text name='lbl.close'/>" onclick="javascript:window.parent.postMessage('close','*');" class="button" />
 	</div>
-	<s:if test="%{voucherSearchList.size!=0}">
+	<s:if test="%{voucherSearchList != null && voucherSearchList.size() > 0}">
 		<div id="listid">
 			<script>             
 			</script>
@@ -220,9 +220,9 @@ function loadNamesForSelectedType()
 
 		</div>
 	</s:if>
-	<s:else>
-		<s:if test="%{voucherList.size==0 && voucherList!=null}"><s:text name="msg.no.data.found"/></s:if>
-	</s:else>
+	<s:elseif test="%{afterSearch}">
+		<s:text name="msg.no.data.found"/>
+	</s:elseif>
 
 	<s:token />
 	</s:form>

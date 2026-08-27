@@ -408,6 +408,63 @@ header h1 span.logo-icon {
     align-self: flex-start;
 }
 
+.message.bot h1,
+.message.bot h2,
+.message.bot h3,
+.message.bot h4,
+.bot-message h1,
+.bot-message h2,
+.bot-message h3,
+.bot-message h4 {
+    margin: 0 0 8px 0;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--text-primary, #0f172a);
+    display: block;
+}
+
+.message.bot h1,
+.bot-message h1 {
+    font-size: 1.25rem;
+}
+
+.message.bot h2,
+.message.bot h3,
+.bot-message h2,
+.bot-message h3 {
+    font-size: 1.15rem;
+}
+
+.message.bot h4,
+.bot-message h4 {
+    font-size: 1.05rem;
+}
+
+.message.bot .list-item,
+.bot-message .list-item {
+    margin: 4px 0;
+    line-height: 1.5;
+}
+
+.message.bot .list-item.bullet,
+.bot-message .list-item.bullet {
+    padding-left: 4px;
+}
+
+.message.bot .list-item.num,
+.bot-message .list-item.num {
+    padding-left: 2px;
+}
+
+.message.bot code.inline-code,
+.bot-message code.inline-code {
+    background: rgba(0, 0, 0, 0.06);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9em;
+}
+
 /* User message */
 .message.user,
 .user-message {
@@ -1182,7 +1239,7 @@ header h1 span.logo-icon {
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.2);
     background: rgba(0, 0, 0, 0.3);
-    color: var(--accent-saffron);
+    color: #ffffff;
     cursor: pointer;
     font-size: 13px;
     font-weight: 500;
@@ -1209,6 +1266,10 @@ header h1 span.logo-icon {
     cursor: default;
 }
 
+.disabled-history {
+    display: none !important;
+}
+
 /* Small voice-hint shown below choice buttons */
 .choice-hint {
     font-size: 11px;
@@ -1220,7 +1281,7 @@ header h1 span.logo-icon {
 /* Pill-shaped hint shown below number/OTP inputs */
 .number-hint {
     font-size: 11px;
-    color: var(--accent-saffron);
+    color: #ffffff;
     margin-top: 8px;
     margin-left: 4px;
     padding: 6px 12px;

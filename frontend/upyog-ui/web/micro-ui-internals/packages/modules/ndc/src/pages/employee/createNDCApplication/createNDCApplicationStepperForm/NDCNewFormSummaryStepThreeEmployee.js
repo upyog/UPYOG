@@ -1,67 +1,128 @@
-import React, { useEffect } from "react";
+import "../../../../../css/ndc.css";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
-import { FormComposer } from "@nudmcdgnpm/digit-ui-react-components";
 import NDCSummary from "../../../../pageComponents/NDCSummary";
 import { resetNDCForm } from "../../../../redux/actions/NDCFormActions";
 
 const NDCNewFormSummaryStepThreeEmployee = ({ config, onGoNext, onBackClick, t }) => {
   const dispatch = useDispatch();
+
   const navigate = Digit.Hooks.useCustomNavigate();
+
   const tenantId = window.localStorage.getItem("CITIZEN.CITY");
-  const checkFormData = useSelector((state) => state.ndc.NDCForm.formData || {});
 
   const formData = useSelector((state) => state.ndc.NDCForm.formData || {});
-  // Function to handle the "Next" button click
-  const goNext = async (action) => {
-    const actionStatus = action?.action;
-    try {
-      const res = await onSubmit(formData, actionStatus); // wait for the API response
 
-      // Check if the API call was successful
+  /**
+   * FINAL WORKFLOW ACTION
+   *
+   * The NDC workflow expects APPLY as the final action.
+   * Never allow null / undefined action to reach the API.
+   */
+  const FINAL_WORKFLOW_ACTION = "APPLY";
+
+  /**
+   * Function to handle the "Next" button click.
+   */
+  const goNext = async (action) => {
+    /**
+     * Always use APPLY as the final workflow action.
+     *
+     * Even if NDCSummary sends:
+     * - undefined
+     * - null
+     * - empty action
+     *
+     * we will still send APPLY.
+     */
+    const actionStatus = action?.action || FINAL_WORKFLOW_ACTION;
+
+    try {
+      const res = await onSubmit(formData, actionStatus);
+
+      /**
+       * Move to response page only after
+       * successful API response.
+       */
       if (res?.isSuccess) {
-        navigate("/upyog-ui/employee/ndc/response/" + res?.response?.Applications?.[0]?.applicationNo);
+        navigate("/upyog-ui/employee/ndc/response/" + res?.response?.Applications?.[0]?.applicationNo, {
+          state: {
+            data: res?.response,
+            isSuccess: true,
+          },
+        });
       } else {
-        console.error("Submission failed, not moving to next step.", res?.response);
+        console.error("NDC submission failed. Not moving to response page.", res?.response);
       }
     } catch (error) {
+      console.error("Error while submitting NDC application:", error);
+
       alert(`Error: ${error?.message}`);
     }
   };
 
+  /**
+   * Convert Redux form data into the payload
+   * expected by NDC Update API.
+   */
   function mapToNDCPayload(inputData, actionStatus) {
     const applicant = Digit.UserService.getUser()?.info || {};
 
-    const owners = (inputData?.apiData?.Applications?.[0]?.owners || [])?.map((item) => {
+    /**
+     * Make sure workflow action can NEVER be null/undefined.
+     */
+    const finalWorkflowAction = actionStatus || FINAL_WORKFLOW_ACTION;
+
+    /**
+     * Get owners from existing application data.
+     */
+    const owners = (inputData?.apiData?.Applications?.[0]?.owners || []).map((item) => {
       const obj = JSON.parse(JSON.stringify(item));
+
+      /**
+       * status should not be sent in update payload.
+       */
       delete obj.status;
+
       return obj;
     });
-    // const owners = [
-    //   {
-    //     name: `${formData?.NDCDetails?.PropertyDetails?.firstName} ${formData?.NDCDetails?.PropertyDetails?.lastName}`.trim(),
-    //     mobileNumber: formData?.NDCDetails?.PropertyDetails?.mobileNumber,
-    //     gender: formData?.NDCDetails?.PropertyDetails?.gender,
-    //     emailId: formData?.NDCDetails?.PropertyDetails?.email,
-    //     type: "CITIZEN",
-    //   },
-    // ];
 
-    // Pick the source of truth for the application
+    /**
+     * Pick the source of truth for the application.
+     */
     const baseApplication = formData?.responseData?.[0] || formData?.apiData?.Applications?.[0] || {};
 
-    // Clone and modify workflow action
+    /**
+     * Build updated application.
+     *
+     * IMPORTANT:
+     * workflow.action is explicitly set to APPLY.
+     */
     const updatedApplication = {
       ...baseApplication,
+
       workflow: {
         ...baseApplication?.workflow,
-        action: actionStatus,
+
+        /**
+         * FINAL ACTION = APPLY
+         */
+        action: finalWorkflowAction,
       },
+
       owners: owners,
+
       NdcDetails: baseApplication?.NdcDetails,
-      Documents: [], // We'll populate below
+
+      /**
+       * Documents will be populated below.
+       */
+      Documents: [],
     };
 
+    /**
+     * Add uploaded documents.
+     */
     (inputData?.DocummentDetails?.documents?.documents || []).forEach((doc) => {
       updatedApplication.Documents.push({
         uuid: doc?.documentUid,
@@ -70,30 +131,63 @@ const NDCNewFormSummaryStepThreeEmployee = ({ config, onGoNext, onBackClick, t }
       });
     });
 
-    // Final payload matches update API structure
+    /**
+     * Final NDC Update API payload.
+     */
     const payload = {
       Applications: [updatedApplication],
     };
-
     return payload;
   }
 
+  /**
+   * Submit NDC application.
+   */
   const onSubmit = async (data, actionStatus) => {
-    const finalPayload = mapToNDCPayload(data, actionStatus);
+    /**
+     * Never allow null/undefined action.
+     */
+    const finalAction = actionStatus || FINAL_WORKFLOW_ACTION;
 
-    const response = await Digit.NDCService.NDCUpdate({ tenantId, details: finalPayload });
-    dispatch(resetNDCForm());
+    const finalPayload = mapToNDCPayload(data, finalAction);
 
-    if (response?.ResponseInfo?.status === "successful") {
-      return { isSuccess: true, response };
-    } else {
-      return { isSuccess: false, response };
+    try {
+      const response = await Digit.NDCService.NDCUpdate({
+        tenantId,
+        details: finalPayload,
+      });
+
+      /**
+       * Reset form only after API call.
+       */
+      dispatch(resetNDCForm());
+
+      if (response?.ResponseInfo?.status === "successful") {
+        return {
+          isSuccess: true,
+          response,
+        };
+      }
+
+      return {
+        isSuccess: false,
+        response,
+      };
+    } catch (error) {
+      console.error("NDC Update API error:", error);
+
+      return {
+        isSuccess: false,
+        response: error,
+      };
     }
   };
 
-  // Function to handle the "Back" button click
+  /**
+   * Function to handle Back button.
+   */
   const onGoBack = (data) => {
-    console.log("here", data);
+
     onBackClick(config.key, data);
   };
 

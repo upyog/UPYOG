@@ -239,6 +239,8 @@
         <quartz-version>2.5.2</quartz-version>
         <mchange-commons-version>0.5.0</mchange-commons-version>
         <jasper-report-version>6.1.0</jasper-report-version>
+        <!-- LTS Migration Fix (JDK 17): ECJ that can read JDK 17 class files. tomcat:jasper-compiler-jdt:5.5.23 cannot. -->
+        <eclipse-ecj-version>3.33.0</eclipse-ecj-version>
         <json-simple-version>1.1.1</json-simple-version>
 
         <jackson-version>2.21.5</jackson-version>
@@ -856,6 +858,16 @@
                 <groupId>net.sf.jasperreports</groupId>
                 <artifactId>jasperreports-javaflow</artifactId>
                 <version>${jasper-report-version}</version>
+            </dependency>
+            <!--
+              LTS Migration Fix (JDK 17): DynamicJasper Excel/PDF compile uses
+              JRJdtCompiler. tomcat:jasper-compiler-jdt:5.5.23 cannot read JDK 17
+              class files (ClassFormatException: java.lang.String cannot be resolved).
+            -->
+            <dependency>
+                <groupId>org.eclipse.jdt</groupId>
+                <artifactId>ecj</artifactId>
+                <version>${eclipse-ecj-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.poi</groupId>

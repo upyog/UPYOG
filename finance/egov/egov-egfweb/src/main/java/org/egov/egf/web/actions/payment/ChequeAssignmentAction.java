@@ -839,9 +839,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
 					StringBuilder query = new StringBuilder(
 							"select ac.serialNo ,fs.finYearRange from  AccountCheques ac,")
 									.append("CFinancialYear fs,ChequeDeptMapping cd")
-									.append(" where ac.serialNo = fs.id and  bankAccountId=? ")
-									.append(" and ac.id=cd.accountCheque and cd.allotedTo=? ")
-									.append(" order by serialNo desc ");
+									.append(" where ac.serialNo = fs.id and ac.bankAccountId.id=? ")
+									.append(" and ac.id=cd.accountCheque.id and cd.allotedTo=? ")
+									.append(" order by ac.serialNo desc ");
 					final List<Object[]> yearCodeList = persistenceService.findAllBy(query.toString(),
 							Long.valueOf(bankaccount), department);
                     if (yearCodeList != null) {
@@ -850,10 +850,10 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                     }
                 } else if (departmentId != null) {
                 	StringBuilder queryString = new StringBuilder("select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd ")
-                            .append(" where ac.serialNo = fs.id and  bankAccountId=?")
-                            .append(" and ac.id=cd.accountCheque and cd.allotedTo=(select id from Department where id =? ) ")
-                            .append(" order by serialNo desc ");
-                    final List<Object[]> yearCodeList = persistenceService.findAllBy(queryString.toString(),bankaccount,departmentId);
+                            .append(" where ac.serialNo = fs.id and ac.bankAccountId.id=?")
+                            .append(" and ac.id=cd.accountCheque.id and cd.allotedTo=(select id from Department where id =? ) ")
+                            .append(" order by ac.serialNo desc ");
+                    final List<Object[]> yearCodeList = persistenceService.findAllBy(queryString.toString(), Long.valueOf(bankaccount), departmentId);
                     if (yearCodeList != null) {
                         for (final Object[] s : yearCodeList)
                             chequeSlNoMap.put(s[0], s[1]);
@@ -862,9 +862,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                         && voucherHeader.getVouchermis().getDepartmentcode() != null
                         && !voucherHeader.getVouchermis().getDepartmentcode().equalsIgnoreCase("-1")) {
                 	StringBuilder queryString = new StringBuilder("select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd ")
-                            .append(" where ac.serialNo = fs.id and  ac.bankAccountId.id=?")
-                            .append(" and ac.id=cd.accountCheque and cd.allotedTo=? ")
-                            .append(" order by serialNo desc ");
+                            .append(" where ac.serialNo = fs.id and ac.bankAccountId.id=?")
+                            .append(" and ac.id=cd.accountCheque.id and cd.allotedTo=? ")
+                            .append(" order by ac.serialNo desc ");
 					final List<Object[]> yearCodeList = persistenceService.findAllBy(queryString.toString(),
 							Long.valueOf(bankaccount), voucherHeader.getVouchermis().getDepartmentcode());
                     if (yearCodeList != null) {
@@ -873,8 +873,8 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                     }
                 } else {
                 	StringBuilder query1 = new StringBuilder("select ac.serialNo ,fs.finYearRange from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd ")
-                            .append(" where ac.serialNo = fs.id and  bankAccountId=?")
-                            .append(" and ac.id=cd.accountCheque order by serialNo desc ");
+                            .append(" where ac.serialNo = fs.id and ac.bankAccountId.id=?")
+                            .append(" and ac.id=cd.accountCheque.id order by ac.serialNo desc ");
                     final List<Object[]> yearCodeList = persistenceService.findAllBy(query1.toString(), Long.valueOf(bankaccount));
                     if (yearCodeList != null) {
                         for (final Object[] s : yearCodeList)
@@ -1598,9 +1598,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             lhs.addAll(instrumentHeaderList);
             instrumentHeaderList.clear();
             instrumentHeaderList.addAll(lhs);
-            instrumentVoucherList = new ArrayList<InstrumentVoucher>();
-            for (final InstrumentHeader ih : instrumentHeaderList)
-                instrumentVoucherList.addAll(ih.getInstrumentVouchers());
+            initializeSurrenderChequeAssociations(instrumentHeaderList);
             getSession().put("instrumentVoucherList", instrumentVoucherList);
             getSession().put("instrumentHeaderList", instrumentHeaderList);
 
@@ -1663,9 +1661,9 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 sql.append(" and  ih.transactionNumber=?");
                 params.add(instrumentNumber);
             }
-            if (department != null) {
+            if (isNotBlank(department) && !"-1".equals(department)) {
                 sql.append(" and  iv.voucherHeaderId.vouchermis.departmentcode=?");
-                params.add(Long.valueOf(department));
+                params.add(department);
             }
             if (isNotBlank(voucherHeader.getVoucherNumber())) {
                 sql.append(" and  iv.voucherHeaderId.voucherNumber=?");
@@ -1679,9 +1677,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             lhs.addAll(instrumentHeaderList);
             instrumentHeaderList.clear();
             instrumentHeaderList.addAll(lhs);
-            instrumentVoucherList = new ArrayList<InstrumentVoucher>();
-            for (final InstrumentHeader ih : instrumentHeaderList)
-                instrumentVoucherList.addAll(ih.getInstrumentVouchers());
+            initializeSurrenderChequeAssociations(instrumentHeaderList);
             getSession().put("instrumentVoucherList", instrumentVoucherList);
             getSession().put("instrumentHeaderList", instrumentHeaderList);
 
@@ -1697,6 +1693,41 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed searchRTGSForSurrender.");
         return "surrenderRTGS";
+    }
+
+    /**
+     * Hibernate 6 leaves serialNo and instrumentVouchers lazy. Struts 7 OGNL will not
+     * initialize those associations, so Year Code and Payment Voucher No render blank
+     * unless they are loaded here before the JSP.
+     */
+    private void initializeSurrenderChequeAssociations(final List<InstrumentHeader> headers) {
+        instrumentVoucherList = new ArrayList<InstrumentVoucher>();
+        if (headers == null || headers.isEmpty()) {
+            return;
+        }
+        for (final InstrumentHeader ih : headers) {
+            if (ih.getSerialNo() != null) {
+                ih.getSerialNo().getFinYearRange();
+            }
+            Set<InstrumentVoucher> vouchers = ih.getInstrumentVouchers();
+            if (vouchers == null || vouchers.isEmpty()) {
+                final List<InstrumentVoucher> loaded = persistenceService.findAllBy(
+                        "from InstrumentVoucher iv left join fetch iv.voucherHeaderId where iv.instrumentHeaderId.id=?",
+                        ih.getId());
+                vouchers = new LinkedHashSet<InstrumentVoucher>();
+                if (loaded != null) {
+                    vouchers.addAll(loaded);
+                }
+                ih.setInstrumentVouchers(vouchers);
+            } else {
+                for (final InstrumentVoucher iv : vouchers) {
+                    if (iv.getVoucherHeaderId() != null) {
+                        iv.getVoucherHeaderId().getVoucherNumber();
+                    }
+                }
+            }
+            instrumentVoucherList.addAll(vouchers);
+        }
     }
 
     /**

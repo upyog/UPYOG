@@ -49,7 +49,6 @@ package org.egov.services.budget;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -250,14 +249,15 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
     }
 
     /*
-     * Native Query API Refactoring (Hibernate 6 Upgrade):
-     * Replaced legacy session.createSQLQuery() with createNativeQuery() as createSQLQuery was deprecated and
-     * removed in Hibernate 6 in favor of standardized JPA createNativeQuery methods.
+     * LTS Migration Fix (Hibernate 6): native COUNT(*) used to return BigInteger
+     * (Hibernate 5). Hibernate 6 returns Long, so the old cast crashed budget
+     * upload with ClassCastException. Number covers both.
      */
     public Long getCountByBudget(final Long budgetId) {
-        return ((BigInteger) persistenceService.getSession()
+        final Number count = (Number) persistenceService.getSession()
                 .createNativeQuery("select count(*) from egf_budgetdetail where budget = :budgetId")
-                .setParameter("budgetId", budgetId).uniqueResult()).longValue();
+                .setParameter("budgetId", budgetId).uniqueResult();
+        return count == null ? 0L : count.longValue();
     }
 
     public boolean canViewApprovedAmount(final PersistenceService persistenceService, final Budget budget) {
@@ -2592,15 +2592,24 @@ public class BudgetDetailService extends PersistenceService<BudgetDetail, Long> 
 
     @SuppressWarnings("unchecked")
     public List<BudgetDetail> getFunctionFromBudgetDetailByDepartmentId(final String departmentId) {
+        /*
+         * LTS / PostgreSQL: SELECT DISTINCT + ORDER BY bd.function fails because Hibernate
+         * expands the entity in SELECT but ORDER BY uses the FK column (not in select list).
+         * Order by a selected Function property instead (e.g. name).
+         */
         return getSession().createQuery("select distinct bd.function from BudgetDetail bd "
-                        + "where bd.executingDepartment = :departmentId order by bd.function")
+                        + "where bd.executingDepartment = :departmentId order by bd.function.name")
                 .setParameter("departmentId", departmentId).list();
     }
 
     @SuppressWarnings("unchecked")
     public List<BudgetDetail> getBudgetDetailByFunctionId(final Long functionId) {
+        /*
+         * Same DISTINCT/ORDER BY rule as getFunctionFromBudgetDetailByDepartmentId —
+         * order by budgetGroup.name so PostgreSQL accepts the query.
+         */
         return getSession().createQuery("select distinct bd.budgetGroup from BudgetDetail bd "
-                        + "where bd.function.id = :functionId order by bd.budgetGroup")
+                        + "where bd.function.id = :functionId order by bd.budgetGroup.name")
                 .setParameter("functionId", functionId).list();
     }
 

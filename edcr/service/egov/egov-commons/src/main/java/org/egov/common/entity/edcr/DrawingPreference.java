@@ -50,7 +50,7 @@ package org.egov.common.entity.edcr;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.Transient;
+import jakarta.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

@@ -52,10 +52,12 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
@@ -77,6 +79,15 @@ import org.egov.pims.commons.Designation;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import jakarta.servlet.http.HttpServletRequest;
+
+/**
+ * LTS Migration Notes:
+ * 1. [Hibernate 6 Native Queries] Migrated all createSQLQuery() calls to createNativeQuery().
+ * 2. [Struts 7 & Jakarta EE Parameter Extraction] Added bindAjaxParamsFromRequest() to extract
+ *    'bankId'/'bank', 'branchId'/'bankbranch', and 'fundId' directly from HttpServletRequest for YUI AJAX dropdowns.
+ * 3. [Validation Skipping] Annotated AJAX endpoints with @SkipValidation to prevent form validation on dropdown lookups.
+ */
 @ParentPackage("egov")
 @Results({
         @Result(name = AjaxBankRemittanceAction.BANKBRANCHLIST, location = "ajaxBankRemittance-bankBranchList.jsp"),
@@ -296,14 +307,18 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
         return SERVICENAMELIST;
     }
 
+    @SkipValidation
     @Action(value = "/receipts/ajaxBankRemittance-bankBranchsByBankForReceiptPayments")
     public String bankBranchsByBankForReceiptPayments() {
+        bindAjaxParamsFromRequest();
         bankBranchArrayList = bankBranchHibernateDAO.getAllBankBranchsByBankForReceiptPayments(bankId);
         return BANKBRANCHLIST;
     }
 
+    @SkipValidation
     @Action(value = "/receipts/ajaxBankRemittance-bankAccountByBankBranch")
     public String bankAccountByBankBranch() {
+        bindAjaxParamsFromRequest();
         //TODO : We need to filter out the account based on fund which is mapped to the service
 //        if (serviceId != null && !serviceId.isEmpty() && !serviceId.equalsIgnoreCase("-1")) {
 //            List<BusinessDetails> bds = microserviceUtils.getBusinessDetailsByCode(serviceId);
@@ -315,6 +330,53 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
 //        }
         bankAccountArrayList = bankaccountHibernateDAO.getBankAccountByBankBranchForReceiptsPayments(branchId, fundId);
         return BANKACCOUNTLIST;
+    }
+
+    /**
+     * LTS Migration Note [Struts 7 & Jakarta EE Parameter Extraction]:
+     * In Struts 7, GET/POST query parameters from legacy YUI AJAX dropdowns ('bankId'/'bank', 'branchId'/'bankbranch',
+     * 'fundId', 'serviceId') are not automatically populated on action properties.
+     * This method reads them directly from HttpServletRequest with defensive integer parsing.
+     */
+    private void bindAjaxParamsFromRequest() {
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        if (request == null) {
+            return;
+        }
+        if (bankId == null) {
+            bankId = parseInteger(request.getParameter("bankId"), request.getParameter("bank"));
+        }
+        if (branchId == null) {
+            branchId = parseInteger(request.getParameter("branchId"), request.getParameter("bankbranch"));
+        }
+        if (fundId == null) {
+            final Integer parsedFund = parseInteger(request.getParameter("fundId"));
+            if (parsedFund != null) {
+                fundId = parsedFund.longValue();
+            }
+        }
+        if (serviceId == null || serviceId.isEmpty()) {
+            final String value = request.getParameter("serviceId");
+            if (value != null && !value.trim().isEmpty()) {
+                serviceId = value.trim();
+            }
+        }
+    }
+
+    private static Integer parseInteger(final String... values) {
+        if (values == null) {
+            return null;
+        }
+        for (final String value : values) {
+            if (value != null && !value.trim().isEmpty() && !"-1".equals(value.trim())) {
+                try {
+                    return Integer.valueOf(value.trim());
+                } catch (final NumberFormatException ignored) {
+                    // keep looking
+                }
+            }
+        }
+        return null;
     }
 
     /**

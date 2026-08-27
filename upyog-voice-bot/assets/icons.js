@@ -70,26 +70,32 @@ const ICONS = {
 // so every DOM element already exists by the time these lines execute.
 
 // Inject animated background divs (ambient blobs, grain overlay)
-document.getElementById('bg-layers').innerHTML =
-    BG_LAYERS.map(cls => `<div class="${cls}"></div>`).join('');
+if (document.getElementById('bg-layers')) {
+    document.getElementById('bg-layers').innerHTML =
+        BG_LAYERS.map(cls => `<div class="${cls}"></div>`).join('');
+}
 
-// Render EN / HI / Auto language toggle buttons in the header
-document.getElementById('lang-toggle').innerHTML =
-    LANG_OPTIONS.map(opt =>
-        `<button class="lang-btn${opt.active ? ' active' : ''}" data-lang="${opt.value}">${opt.label}</button>`
-    ).join('');
+// Render EN / HI / Auto language toggle buttons in the header if container exists
+if (document.getElementById('lang-toggle')) {
+    document.getElementById('lang-toggle').innerHTML =
+        LANG_OPTIONS.map(opt =>
+            `<button class="lang-btn${opt.active ? ' active' : ''}" data-lang="${opt.value}">${opt.label}</button>`
+        ).join('');
+}
 
 // Populate the language preference dropdown in the settings panel
-document.getElementById('lang-preference').innerHTML =
-    LANG_PREFERENCES.map(opt =>
-        `<option value="${opt.value}">${opt.label}</option>`
-    ).join('');
+if (document.getElementById('lang-preference')) {
+    document.getElementById('lang-preference').innerHTML =
+        LANG_PREFERENCES.map(opt =>
+            `<option value="${opt.value}">${opt.label}</option>`
+        ).join('');
+}
 
 // Inject SVG icons into their placeholder elements
-document.getElementById('speech-preview-icon').innerHTML = ICONS.mic;
-document.getElementById('logo-icon').innerHTML = ICONS.logo;
+if (document.getElementById('speech-preview-icon')) document.getElementById('speech-preview-icon').innerHTML = ICONS.mic;
+if (document.getElementById('logo-icon')) document.getElementById('logo-icon').innerHTML = ICONS.logo;
 if (document.getElementById('settings-toggle')) document.getElementById('settings-toggle').innerHTML = ICONS.settings;
-document.getElementById('session-toggle-btn').innerHTML = ICONS.mic;
-document.getElementById('send-text-btn').innerHTML = ICONS.send;
-// if (document.getElementById('stop-voice-icon')) document.getElementById('stop-voice-icon').innerHTML = ICONS.stop;
-// if (document.getElementById('interrupt-mic-icon')) document.getElementById('interrupt-mic-icon').innerHTML = ICONS.pause;
+if (document.getElementById('session-toggle-btn')) document.getElementById('session-toggle-btn').innerHTML = ICONS.mic;
+if (document.getElementById('send-text-btn')) document.getElementById('send-text-btn').innerHTML = ICONS.send;
+if (document.getElementById('stop-voice-icon')) document.getElementById('stop-voice-icon').innerHTML = ICONS.stop;
+if (document.getElementById('interrupt-mic-icon')) document.getElementById('interrupt-mic-icon').innerHTML = ICONS.pause;
