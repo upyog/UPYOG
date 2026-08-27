@@ -3,7 +3,7 @@
  * Offers real-time search capabilities via provisional number integration to pull existing application data.
  */
 import React, { useState, useEffect } from "react";
-import { FormStep, RadioButtons, TextInput, CardLabel, CardLabelError, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, RadioButtons, TextInput, CardLabel, CardLabelError, Toast, SearchIcon } from "@nudmcdgnpm/digit-ui-react-components";
 
 const getCategoryCode = (docType) => {
   if (docType.startsWith("OWNER")) {
@@ -28,16 +28,18 @@ const NocTypeSelection = ({ t, config, onSelect, userType, formData }) => {
   );
   const [searching, setSearching] = useState(false);
   const [error, setError] = useState(null);
+  const [toast, setToast] = useState(null);
 
-  /* Auto-dismisses warning toast messages after 3 seconds */
+  /* Auto-dismisses toast messages after 3 seconds */
   useEffect(() => {
-    if (error) {
+    if (error || toast) {
       const timer = setTimeout(() => {
         setError(null);
+        setToast(null);
       }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [error]);
+  }, [error, toast]);
 
   const menu = [
     { i18nKey: "NOC_TYPE_NEW_RADIOBUTTON", code: "NEW" },
@@ -177,6 +179,7 @@ const NocTypeSelection = ({ t, config, onSelect, userType, formData }) => {
           ...mappedData
         });
         setNocType({ i18nKey: "NOC_TYPE_NEW_RADIOBUTTON", code: "NEW" });
+        setToast({ error: false, label: t("NOC_APPLICATION_FOUND")});
       } else {
         setError(t("ERR_FIRENOC_NUMBER_INCORRECT"));
       }
@@ -217,7 +220,7 @@ const NocTypeSelection = ({ t, config, onSelect, userType, formData }) => {
 
         {nocType?.code === "NEW" && (
           <div style={{ marginTop: "20px" }}>
-            <CardLabel>{t("NOC_PROVISIONAL_FIRE_NOC_NO_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+            <CardLabel>{t("NOC_PROVISIONAL_FIRE_NOC_NO_LABEL")} <span className="astericColor">*</span></CardLabel>
             <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
               <TextInput
                 t={t}
@@ -231,18 +234,12 @@ const NocTypeSelection = ({ t, config, onSelect, userType, formData }) => {
                 placeholder={t("NOC_PROVISIONAL_FIRE_NOC_NO_PLACEHOLDER")}
                 style={{ flex: 1 }}
               />
-              <button
-                className="submit-bar"
-                type="button"
-                onClick={handleSearchProvisional}
-                style={{ minWidth: "80px", height: "48px", marginTop: "0px" }}
-              >
-                {searching ? t("NOC_SEARCHING") : t("NOC_SEARCH")}
-              </button>
+              <div style={{ position: "relative", zIndex: "100", right: "45px", marginTop: "12px", cursor:"pointer" }} onClick={handleSearchProvisional}> <SearchIcon /> </div>
             </div>
           </div>
         )}
       </FormStep>
+      {toast && <Toast error={toast.error} label={toast.label} onClose={() => setToast(null)} />}
       {error && <Toast error={true} label={t(error)} onClose={() => setError(null)} />}
     </React.Fragment>
   );

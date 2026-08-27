@@ -1,8 +1,5 @@
 package org.egov.inbox.service;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
@@ -16,7 +13,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +20,12 @@ import java.util.Map;
 
 import static org.egov.inbox.util.CommonConstants.*;
 
+/**
+ * Service for filtering FireNOC inbox applications.
+ *
+ * <p>Provides methods to fetch application numbers and counts from the
+ * searcher service based on inbox search criteria and workflow status mappings.
+ */
 @Slf4j
 @Service
 public class FirenocInboxFilterService {
@@ -32,157 +34,137 @@ public class FirenocInboxFilterService {
     private RestTemplate restTemplate;
 
     @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
     private ServiceRequestRepository serviceRequestRepository;
 
     @Autowired
     private InboxConfiguration config;
 
     /**
-     * Fetches Garbage Collection application numbers from the searcher service
+     * Fetches FireNOC application numbers from the searcher service
      * based on the provided inbox search criteria.
      *
      * <p>Builds the search request, invokes the searcher API, and extracts
-     * the matching application numbers from the response.
+     * matching application numbers from the response. Supports ascending and
+     * descending sort order via {@code SORT_ORDER_PARAM}.
      *
-     * @param criteria the inbox search criteria
-     * @param StatusIdNameMap mapping of workflow status IDs to status names
-     * @param requestInfo the request information
-     * @return a list of matching application numbers; returns an empty list if
-     *         no applications are found or an error occurs
+     * @param criteria        the inbox search criteria containing tenant, offset, limit, and module filters
+     * @param StatusIdNameMap mapping of workflow status IDs to status names; may be {@code null}
+     * @param requestInfo     the request metadata
+     * @return list of matching application numbers; empty list if none found or an error occurs
      */
     public List<String> fetchApplicationNumbersFromSearcher(InboxSearchCriteria criteria,
                                                             HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo) {
         List<String> applicationNumbers = new ArrayList<>();
-        HashMap moduleSearchCriteria = criteria.getModuleSearchCriteria();
-        ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
-        Boolean isSearchResultEmpty = false;
+        HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();
 
-        if (!isSearchResultEmpty) {
-            Object result = null;
+        Map<String, Object> searcherRequest = buildSearcherRequest(criteria, StatusIdNameMap, requestInfo);
+        Map<String, Object> searchCriteria = (Map<String, Object>) searcherRequest.get(SEARCH_CRITERIA_PARAM);
 
-            Map<String, Object> searcherRequest = new HashMap<>();
-            Map<String, Object> searchCriteria = new HashMap<>();
+        searchCriteria.put(OFFSET_PARAM, criteria.getOffset());
+        searchCriteria.put(NO_OF_RECORDS_PARAM, criteria.getLimit());
+        moduleSearchCriteria.put(LIMIT_PARAM, criteria.getLimit());
 
-            searchCriteria.put(TENANT_ID_PARAM, criteria.getTenantId());
-            searchCriteria.put(BUSINESS_SERVICE_PARAM, processCriteria.getBusinessService());
-
-            // Accommodate module search criteria in searcher request
-            if (moduleSearchCriteria.containsKey("applicationNumber")) {
-                searchCriteria.put("applicationNumber", moduleSearchCriteria.get("applicationNumber"));
-            }
-
-            // Accommodate process search criteria in searcher request
-            if (!ObjectUtils.isEmpty(processCriteria.getAssignee())) {
-                searchCriteria.put(ASSIGNEE_PARAM, processCriteria.getAssignee());
-            }
-            if (!ObjectUtils.isEmpty(processCriteria.getStatus())) {
-                searchCriteria.put(STATUS_PARAM, processCriteria.getStatus());
-            } else {
-                if (StatusIdNameMap.values().size() > 0) {
-                    if (CollectionUtils.isEmpty(processCriteria.getStatus())) {
-                        searchCriteria.put(STATUS_PARAM, StatusIdNameMap.keySet());
-                    }
-                }
-            }
-
-            // Paginating searcher results
-            searchCriteria.put(OFFSET_PARAM, criteria.getOffset());
-            searchCriteria.put(NO_OF_RECORDS_PARAM, criteria.getLimit());
-            moduleSearchCriteria.put(LIMIT_PARAM, criteria.getLimit());
-
-            searcherRequest.put(REQUESTINFO_PARAM, requestInfo);
-            searcherRequest.put(SEARCH_CRITERIA_PARAM, searchCriteria);
-
-            StringBuilder uri = new StringBuilder();
-            if (moduleSearchCriteria.containsKey(SORT_ORDER_PARAM)
-                    && moduleSearchCriteria.get(SORT_ORDER_PARAM).equals(DESC_PARAM)) {
-                uri.append(config.getSearcherHost()).append(config.getFirenocInboxSearcherDescEndpoint());
-            } else {
-                uri.append(config.getSearcherHost()).append(config.getFirenocInboxSearcherEndpoint());
-            }
-            log.info("Checking FireNoc searcherRequest: " + searcherRequest);
-            result = restTemplate.postForObject(uri.toString(), searcherRequest, Map.class);
-
-            String jsonString = null;
-            try {
-                jsonString = mapper.writeValueAsString(result);
-                applicationNumbers = JsonPath.read(jsonString, "$.FireNOCs[*].applicationnumber");
-                log.info("FireNoc Application Numbers: " + applicationNumbers);
-            } catch (Exception e) {
-                log.error("Error while parsing FireNoc searcher results", e);
-            }
+        StringBuilder uri = new StringBuilder();
+        if (moduleSearchCriteria.containsKey(SORT_ORDER_PARAM)
+                && moduleSearchCriteria.get(SORT_ORDER_PARAM).equals(DESC_PARAM)) {
+            uri.append(config.getSearcherHost()).append(config.getFirenocInboxSearcherDescEndpoint());
+        } else {
+            uri.append(config.getSearcherHost()).append(config.getFirenocInboxSearcherEndpoint());
         }
+
+        log.info("Checking FireNoc searcherRequest: {}", searcherRequest);
+        Object result = restTemplate.postForObject(uri.toString(), searcherRequest, Map.class);
+
+        try {
+            if (result != null) {
+                applicationNumbers = JsonPath.read(result, "$.FireNOCs[*].applicationnumber");
+                log.info("FireNoc Application Numbers: {}", applicationNumbers);
+            }
+        } catch (Exception e) {
+            log.error("Error while parsing FireNoc searcher results", e);
+        }
+
         return applicationNumbers;
     }
 
     /**
-     * Fetches the total count of Garbage Collection applications matching the
+     * Fetches the total count of FireNOC applications matching the
      * provided inbox search criteria.
      *
      * <p>Builds the search request, invokes the searcher count API, and extracts
      * the total number of matching applications from the response.
      *
-     * @param criteria the inbox search criteria
-     * @param StatusIdNameMap mapping of workflow status IDs to status names
-     * @param requestInfo the request information
-     * @return the total number of matching applications; returns {@code 0} if
-     *         no records are found or an error occurs
+     * @param criteria        the inbox search criteria containing tenant and module filters
+     * @param StatusIdNameMap mapping of workflow status IDs to status names; may be {@code null}
+     * @param requestInfo     the request metadata
+     * @return total number of matching applications; {@code 0} if none found or an error occurs
      */
     public Integer fetchApplicationCountFromSearcher(InboxSearchCriteria criteria,
                                                      HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo) {
         Integer totalCount = 0;
-        HashMap moduleSearchCriteria = criteria.getModuleSearchCriteria();
+
+        Map<String, Object> searcherRequest = buildSearcherRequest(criteria, StatusIdNameMap, requestInfo);
+
+        StringBuilder uri = new StringBuilder();
+        uri.append(config.getSearcherHost()).append(config.getFirenocInboxSearcherCountEndpoint());
+
+        log.info("Checking FireNoc count searcherRequest: {}", searcherRequest);
+        Object result = restTemplate.postForObject(uri.toString(), searcherRequest, Map.class);
+
+        try {
+            if (result != null) {
+                Number count = JsonPath.read(result, "$.TotalCount[0].count");
+                totalCount = (count != null) ? count.intValue() : 0;
+            }
+        } catch (Exception e) {
+            log.error("Error while parsing FireNoc count results", e);
+        }
+
+        return totalCount;
+    }
+
+    /**
+     * Builds the common searcher request map shared by both search and count queries.
+     *
+     * <p>Populates tenant ID, business service, optional assignee, status filters
+     * (falling back to all statuses from {@code StatusIdNameMap} when none are specified),
+     * and the application number filter if present in the module search criteria.
+     *
+     * @param criteria        the inbox search criteria
+     * @param StatusIdNameMap mapping of workflow status IDs to status names; may be {@code null}
+     * @param requestInfo     the request metadata
+     * @return a map containing {@code RequestInfo} and {@code SearchCriteria} ready for the searcher API
+     */
+    private Map<String, Object> buildSearcherRequest(InboxSearchCriteria criteria,
+                                                     HashMap<String, String> StatusIdNameMap, RequestInfo requestInfo) {
+        HashMap<String, Object> moduleSearchCriteria = criteria.getModuleSearchCriteria();
         ProcessInstanceSearchCriteria processCriteria = criteria.getProcessSearchCriteria();
-        Boolean isSearchResultEmpty = false;
 
-        if (!isSearchResultEmpty) {
-            Object result = null;
+        Map<String, Object> searchCriteria = new HashMap<>();
+        searchCriteria.put(TENANT_ID_PARAM, criteria.getTenantId());
+        searchCriteria.put(BUSINESS_SERVICE_PARAM, processCriteria.getBusinessService());
 
-            Map<String, Object> searcherRequest = new HashMap<>();
-            Map<String, Object> searchCriteria = new HashMap<>();
+        if (moduleSearchCriteria.containsKey("applicationNumber")) {
+            searchCriteria.put("applicationNumber", moduleSearchCriteria.get("applicationNumber"));
+        }
 
-            searchCriteria.put(TENANT_ID_PARAM, criteria.getTenantId());
-            searchCriteria.put(BUSINESS_SERVICE_PARAM, processCriteria.getBusinessService());
+        if (!ObjectUtils.isEmpty(processCriteria.getAssignee())) {
+            searchCriteria.put(ASSIGNEE_PARAM, processCriteria.getAssignee());
+        }
 
-            // Accommodate module search criteria in searcher request
-            if (moduleSearchCriteria.containsKey("applicationNumber")) {
-                searchCriteria.put("applicationNumber", moduleSearchCriteria.get("applicationNumber"));
-            }
-
-            // Accommodate process search criteria in searcher request
-            if (!ObjectUtils.isEmpty(processCriteria.getAssignee())) {
-                searchCriteria.put(ASSIGNEE_PARAM, processCriteria.getAssignee());
-            }
-            if (!ObjectUtils.isEmpty(processCriteria.getStatus())) {
-                searchCriteria.put(STATUS_PARAM, processCriteria.getStatus());
-            } else {
-                if (StatusIdNameMap.values().size() > 0) {
-                    if (CollectionUtils.isEmpty(processCriteria.getStatus())) {
-                        searchCriteria.put(STATUS_PARAM, StatusIdNameMap.keySet());
-                    }
-                }
-            }
-
-            searcherRequest.put(REQUESTINFO_PARAM, requestInfo);
-            searcherRequest.put(SEARCH_CRITERIA_PARAM, searchCriteria);
-
-            StringBuilder uri = new StringBuilder();
-            uri.append(config.getSearcherHost()).append(config.getFirenocInboxSearcherCountEndpoint());
-
-            log.info("Checking FireNoc count searcherRequest: " + searcherRequest);
-            result = restTemplate.postForObject(uri.toString(), searcherRequest, Map.class);
-
-            try {
-                String jsonString = mapper.writeValueAsString(result);
-                double count = JsonPath.read(jsonString, "$.TotalCount[0].count");
-                totalCount = (int) count;
-            } catch (Exception e) {
-                log.error("Error while parsing FireNoc count results", e);
+        if (!ObjectUtils.isEmpty(processCriteria.getStatus())) {
+            searchCriteria.put(STATUS_PARAM, processCriteria.getStatus());
+        } else {
+            if (StatusIdNameMap != null && !StatusIdNameMap.isEmpty()
+                    && CollectionUtils.isEmpty(processCriteria.getStatus())) {
+                searchCriteria.put(STATUS_PARAM, StatusIdNameMap.keySet());
             }
         }
-        return totalCount;
+
+        Map<String, Object> searcherRequest = new HashMap<>();
+        searcherRequest.put(REQUESTINFO_PARAM, requestInfo);
+        searcherRequest.put(SEARCH_CRITERIA_PARAM, searchCriteria);
+
+        return searcherRequest;
     }
 }

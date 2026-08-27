@@ -77,7 +77,7 @@ const DocumentRow = ({ t, config, initialDoc, onChange }) => {
   return (
     <div style={{ marginBottom: "15px" }}>
       <CardLabel style={{ fontWeight: "bold" }}>
-        {t(config.code.replaceAll(".", "_"), config.name)} {config.required && <span style={{ color: "red" }}>*</span>}
+        {t(config.code.replaceAll(".", "_"), config.name)} {config.required && <span className="astericColor">*</span>}
       </CardLabel>
 
       {config.hasDropdown && (

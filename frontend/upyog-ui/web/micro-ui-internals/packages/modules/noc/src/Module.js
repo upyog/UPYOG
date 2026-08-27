@@ -24,6 +24,11 @@ import NocCitizenHome from "./pages/citizen/NocCitizenHome";
 import NOCServiceDoc from "./pageComponents/NOCServiceDoc";
 import { NocMyApplications } from "./pages/citizen/NocMyApplications";
 import NOCApplicationDetails from "./pages/citizen/NocApplicationDetails";
+import FireNocCard from "./components/FireNocCard";
+import FireNocInbox from "./pages/employee/Inbox/FireNocInbox";
+import {TableConfig} from "./config/inbox-table-config";
+import InboxFilter from "./components/inbox/NewInboxFilter";
+import ApplicationDetails from "./pages/employee/FireNocApplicationDetails";
 
 const NOCModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = ["noc", "firenoc", "common-noc"];
@@ -63,7 +68,12 @@ const componentsToRegister = {
   NOCCitizenHome: NocCitizenHome,
   NOCServiceDoc,
   NOCMyApplications: NocMyApplications,
-  NOCApplicationDetails
+  NOCApplicationDetails,
+  FireNocCard,
+  FireNocInbox,
+  FireNocInboxTableConfig: TableConfig,
+  FIRENOC_INBOX_FILTER: (props) => <InboxFilter {...props} />,
+  ApplicationDetails
 };
 
 export const initNOCComponents = () => {

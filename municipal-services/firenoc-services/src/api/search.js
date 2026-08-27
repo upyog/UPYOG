@@ -213,7 +213,7 @@ export const searchApiResponse = async (request, next = {}) => {
           // queryObj[item]=queryObj[item].toUpperCase();
           // sqlQuery = `${sqlQuery} AND ${item}='${queryObj[item]}' `;
           const val = queryObj[item].toUpperCase();
-          queryObj[item] = val;
+         
           if (val.includes(",")) {
             const list = val.split(",").map(v => `'${v.trim()}'`).join(",");
             sqlQuery = `${sqlQuery} AND ${item} IN (${list}) `;
