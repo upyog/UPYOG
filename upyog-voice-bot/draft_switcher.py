@@ -87,19 +87,16 @@ class MultiDraftSwitcher:
             service_info = _SERVICES_MAP.get(plugin_key, {})
             module_title = service_info.get("name", plugin_key.replace("_", " ").title())
             
-            draft_data = draft.get("draft_data", {})
-            location = draft_data.get("location") or draft_data.get("locality") or "In-Progress"
-            
-            menu_lines.append(f"{idx}. 📋 **{module_title}** (*Location: {location}*)")
+            menu_lines.append(f"{idx}.  **{module_title}**")
             options.append(f"{idx}. {module_title}")
             
         if is_hinglish:
-            menu_lines.append(f"{len(drafts) + 1}. ➕ **Start a New Service Request**")
-            menu_lines.append(f"{len(drafts) + 2}. 🗑️ **Delete All Drafts**")
+            menu_lines.append(f"{len(drafts) + 1}. **Start a New Service Request**")
+            menu_lines.append(f"{len(drafts) + 2}. **Delete All Drafts**")
             menu_lines.append("\nKripya option button choose karein ya number type karein.")
         else:
-            menu_lines.append(f"{len(drafts) + 1}. ➕ **Start a New Service Request**")
-            menu_lines.append(f"{len(drafts) + 2}. 🗑️ **Delete All Drafts**")
+            menu_lines.append(f"{len(drafts) + 1}. **Start a New Service Request**")
+            menu_lines.append(f"{len(drafts) + 2}. **Delete All Drafts**")
             menu_lines.append("\nPlease select a button below or enter the option number.")
 
         options.append("Start New Service Request")
