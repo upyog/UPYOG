@@ -480,9 +480,14 @@
   margin-bottom: 8px;
 }
 
-.ndc-document-label {
+.ndc-document-label,
+.ndc-document-label-wrapper .card-label,
+.ndc-document-label-wrapper .card-label-smaller,
+.ndc-document-label-wrapper .ndc-document-label {
   display: block;
   width: 100%;
+  max-width: 100%;
+  white-space: nowrap;
   margin: 0;
   padding: 0;
   font-size: 15px;
@@ -631,10 +636,21 @@
 }
 
 .ndc-field-label-wrapper {
-  width: 340px;
+  width: auto;
   max-width: 100%;
   margin-bottom: 10px;
   box-sizing: border-box;
+}
+
+.ndc-field-label-wrapper .card-label,
+.ndc-field-label-wrapper .card-label-smaller,
+.ndc-field-label-wrapper .ndc_card_labels,
+.card-label-smaller.ndc_card_labels,
+.ndc_card_labels {
+  width: auto;
+  max-width: 100%;
+  white-space: nowrap;
+  display: inline-block;
 }
 
 .ndc-connection-list {

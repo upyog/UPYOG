@@ -24,7 +24,7 @@ import NDCModal from "../../../pageComponents/NDCModal";
 import { Loader } from "../../../components/Loader";
 import NewApplicationTimeline from "../../../../../templates/ApplicationDetails/components/NewApplicationTimeline";
 import getAcknowledgementData from "../../../getAcknowlegment";
-import { EmployeeData } from "../../../utils";
+import { EmployeeData, downloadNDCAcknowledgement } from "../../../utils";
 const availableOptions = [
   { code: "yes", name: "Yes" },
   { code: "no", name: "No" },
@@ -179,6 +179,13 @@ const ApplicationOverview = () => {
   }
   const dowloadOptions = [];
 
+  if (applicationDetails?.Applications?.[0]) {
+    dowloadOptions.push({
+      label: t("CS_COMMON_DOWNLOAD_ACKNOWLEDGEMENT"),
+      onClick: () => downloadNDCAcknowledgement(applicationDetails, tenants, t),
+    });
+  }
+
   if (
     applicationDetails?.Applications?.[0]?.applicationStatus === "APPROVED" ||
     applicationDetails?.Applications?.[0]?.applicationStatus === "REJECTED"
@@ -189,7 +196,7 @@ const ApplicationOverview = () => {
     });
     if (reciept_data && reciept_data?.Payments.length > 0 && !recieptDataLoading) {
       dowloadOptions.push({
-        label: t("PTR_FEE_RECIEPT"),
+        label: t("NDC_FEE_RECIEPT"),
         onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
       });
     }
@@ -503,19 +510,17 @@ const ApplicationOverview = () => {
         <Header styles={{ fontSize: "32px" }}>{t("NDC_APP_OVER_VIEW_HEADER")}</Header>
       </div> */}
       <div className="ndc-overview-actions">
-        {isCemp && (
-          <div className="cardHeaderWithOptions ral-app-details-header">
-            {getLoader && <Loader />}
-            {dowloadOptions && dowloadOptions.length > 0 && (
-              <MultiLink
-                className="multilinkWrapper"
-                onHeadClick={() => setShowOptions(!showOptions)}
-                displayOptions={showOptions}
-                options={dowloadOptions}
-              />
-            )}
-          </div>
-        )}
+        <div className="cardHeaderWithOptions ral-app-details-header">
+          {getLoader && <Loader />}
+          {dowloadOptions && dowloadOptions.length > 0 && (
+            <MultiLink
+              className="multilinkWrapper"
+              onHeadClick={() => setShowOptions(!showOptions)}
+              displayOptions={showOptions}
+              options={dowloadOptions}
+            />
+          )}
+        </div>
       </div>
       <Card>
         <CardSubHeader>{t("NDC_APPLICATION_DETAILS_OVERVIEW")}</CardSubHeader>
