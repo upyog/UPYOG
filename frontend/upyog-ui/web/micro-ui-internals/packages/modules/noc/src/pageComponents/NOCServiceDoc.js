@@ -13,6 +13,11 @@ const NOCServiceDoc = ({ t, config, onSelect, userType, formData }) => {
   sessionStorage.removeItem("docReqScreenByBack");
   const stateId = Digit.ULBService.getStateId();
 
+  React.useEffect(() => {
+    Digit.SessionStorage.del("NOC_CREATE_APPLICATION");
+    Digit.SessionStorage.del("NOC_SUCCESSFUL_APPLICATION");
+  }, []);
+
   const { isLoading, data: docs } = Digit.Hooks.useCustomMDMS(
     stateId,
     "FireNoc",
