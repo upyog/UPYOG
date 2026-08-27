@@ -69,14 +69,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.SharedCacheMode;
-import javax.persistence.ValidationMode;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.SharedCacheMode;
+import jakarta.persistence.ValidationMode;
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hibernate.cfg.AvailableSettings.*;
+import org.hibernate.cfg.AvailableSettings;
 
 /**
  * Spring JPA and Hibernate configuration for the EDCR persistence layer.
@@ -126,73 +126,102 @@ public class JpaConfiguration {
     @Value("${hibernate.jdbc.batch_size}")
     private Integer batchUpdateSize;
 
+    /**
+     * Configures the JTA platform transaction manager.
+     *
+     * @return the transaction manager instance
+     */
     @Bean
     public PlatformTransactionManager transactionManager() {
         return new JtaTransactionManager();
     }
 
+    /**
+     * Configures and creates the JPA {@link EntityManagerFactory} with entity scanning and Hibernate mapping files.
+     *
+     * @return the initialized {@link EntityManagerFactory}
+     */
     @Bean
     @DependsOn("flyway")
     public EntityManagerFactory entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactory.setJtaDataSource(dataSource);
-        entityManagerFactory.setPersistenceUnitName("EgovPersistenceUnit");
-        entityManagerFactory.setPackagesToScan("org.egov.**.entity");
+        entityManagerFactory.setPersistenceUnitName(JpaConstants.PERSISTENCE_UNIT_NAME);
+        entityManagerFactory.setPackagesToScan(JpaConstants.PACKAGES_TO_SCAN);
         entityManagerFactory.setJpaVendorAdapter(jpaVendorAdapter());
         entityManagerFactory.setJpaPropertyMap(additionalProperties());
         entityManagerFactory.setValidationMode(ValidationMode.NONE);
         entityManagerFactory.setSharedCacheMode(SharedCacheMode.DISABLE_SELECTIVE);
-        ClasspathScanningPersistenceUnitPostProcessor hbmScanner = new ClasspathScanningPersistenceUnitPostProcessor("org.egov");
-        hbmScanner.setMappingFileNamePattern("**/*hbm.xml");
+        ClasspathScanningPersistenceUnitPostProcessor hbmScanner = new ClasspathScanningPersistenceUnitPostProcessor(
+                JpaConstants.HBM_SCAN_PACKAGE);
+        hbmScanner.setMappingFileNamePattern(JpaConstants.HBM_FILE_PATTERN);
         entityManagerFactory.setPersistenceUnitPostProcessors(hbmScanner);
         entityManagerFactory.afterPropertiesSet();
         return entityManagerFactory.getObject();
     }
 
+    /**
+     * Configures the Hibernate JPA vendor adapter.
+     *
+     * @return the configured {@link JpaVendorAdapter}
+     */
     @Bean
     public JpaVendorAdapter jpaVendorAdapter() {
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-        vendorAdapter.setDatabase(env.getProperty("jpa.database", Database.class));
+        vendorAdapter.setDatabase(env.getProperty(JpaConstants.JPA_DATABASE, Database.class));
         vendorAdapter.setShowSql(showSQL);
-        vendorAdapter.setGenerateDdl(env.getProperty("jpa.generateDdl", Boolean.class));
+        vendorAdapter.setGenerateDdl(env.getProperty(JpaConstants.JPA_GENERATE_DDL, Boolean.class));
         return vendorAdapter;
     }
 
+    /**
+     * Builds additional Hibernate and JPA properties including second-level cache, batching, and multitenancy.
+     *
+     * @return map of JPA properties
+     */
     private Map<String, Object> additionalProperties() {
         HashMap<String, Object> properties = new HashMap<>();
-        properties.put("hibernate.validator.apply_to_ddl", false);
-        properties.put("hibernate.validator.autoregister_listeners", false);
-        properties.put("hibernate.temp.use_jdbc_metadata_defaults", false);
-        properties.put(DIALECT, env.getProperty(DIALECT));
-        properties.put(GENERATE_STATISTICS, generateStatistics);
-        properties.put(CACHE_REGION_FACTORY, env.getProperty(CACHE_REGION_FACTORY));
-        properties.put("hibernate.connection.handling_mode", "DELAYED_ACQUISITION_AND_RELEASE_AFTER_TRANSACTION");
-        properties.put(USE_SECOND_LEVEL_CACHE, enableSecondLevelCache);
-        properties.put(USE_QUERY_CACHE, enableQueryCache);
-        properties.put(USE_MINIMAL_PUTS, env.getProperty(USE_MINIMAL_PUTS));
-        properties.put("hibernate.cache.infinispan.cachemanager", env.getProperty("hibernate.cache.infinispan.cachemanager"));
-        properties.put(JTA_PLATFORM, env.getProperty(JTA_PLATFORM));
-        properties.put(AUTO_CLOSE_SESSION, env.getProperty(AUTO_CLOSE_SESSION));
-        properties.put(USE_STREAMS_FOR_BINARY, env.getProperty(USE_STREAMS_FOR_BINARY));
-        properties.put(DEFAULT_BATCH_FETCH_SIZE, batchUpdateSize);
-        properties.put(BATCH_VERSIONED_DATA, true);
-        properties.put(ORDER_INSERTS, true);
-        properties.put(ORDER_UPDATES, true);
-        properties.put(AUTOCOMMIT, false);
-        properties.put(RELEASE_CONNECTIONS, "after_transaction");
-        properties.put("jadira.usertype.autoRegisterUserTypes", true);
-        properties.put("jadira.usertype.databaseZone", "jvm");
+        properties.put(JpaConstants.HIBERNATE_VALIDATOR_APPLY_TO_DDL, false);
+        properties.put(JpaConstants.HIBERNATE_VALIDATOR_AUTOREGISTER_LISTENERS, false);
+        properties.put(JpaConstants.HIBERNATE_TEMP_USE_JDBC_METADATA_DEFAULTS, false);
+        properties.put(AvailableSettings.DIALECT, env.getProperty(AvailableSettings.DIALECT));
+        properties.put(AvailableSettings.GENERATE_STATISTICS, generateStatistics);
+        properties.put(AvailableSettings.CACHE_REGION_FACTORY, env.getProperty(AvailableSettings.CACHE_REGION_FACTORY));
 
-        // Multitenancy Configuration
+        // FIX: Fallback strategy for .hbm.xml cache tags in Hibernate 6
+        properties.put(JpaConstants.HIBERNATE_CACHE_DEFAULT_CONCURRENCY_STRATEGY, JpaConstants.CACHE_CONCURRENCY_STRATEGY_READ_WRITE);
+
+        properties.put(JpaConstants.HIBERNATE_CONNECTION_HANDLING_MODE, JpaConstants.DELAYED_ACQUISITION_AND_RELEASE_AFTER_TRANSACTION);
+        properties.put(AvailableSettings.USE_SECOND_LEVEL_CACHE, enableSecondLevelCache);
+        properties.put(AvailableSettings.USE_QUERY_CACHE, enableQueryCache);
+        properties.put(AvailableSettings.USE_MINIMAL_PUTS, env.getProperty(AvailableSettings.USE_MINIMAL_PUTS));
+        properties.put(JpaConstants.HIBERNATE_CACHE_INFINISPAN_CACHEMANAGER,
+                env.getProperty(JpaConstants.HIBERNATE_CACHE_INFINISPAN_CACHEMANAGER));
+        properties.put(AvailableSettings.JTA_PLATFORM, env.getProperty(AvailableSettings.JTA_PLATFORM));
+        properties.put(AvailableSettings.AUTO_CLOSE_SESSION, env.getProperty(AvailableSettings.AUTO_CLOSE_SESSION));
+        properties.put(AvailableSettings.DEFAULT_BATCH_FETCH_SIZE, batchUpdateSize);
+        properties.put(AvailableSettings.BATCH_VERSIONED_DATA, true);
+        properties.put(AvailableSettings.ORDER_INSERTS, true);
+        properties.put(AvailableSettings.ORDER_UPDATES, true);
+        properties.put(AvailableSettings.AUTOCOMMIT, false);
+        properties.put(JpaConstants.JADIRA_USERTYPE_AUTO_REGISTER_USER_TYPES, true);
+        properties.put(JpaConstants.JADIRA_USERTYPE_DATABASE_ZONE, JpaConstants.DATABASE_ZONE_JVM);
+
+        // Multitenancy Configuration (Updated for Hibernate 6.x)
         if (multiTenancyEnabled) {
-            properties.put(MULTI_TENANT, env.getProperty(MULTI_TENANT));
-            properties.put("hibernate.database.type", env.getProperty("jpa.database"));
-            properties.put(MULTI_TENANT_CONNECTION_PROVIDER, multiTenantSchemaConnectionProvider());
-            properties.put(MULTI_TENANT_IDENTIFIER_RESOLVER, domainBasedSchemaTenantIdentifierResolver());
+            properties.put(JpaConstants.HIBERNATE_MULTI_TENANCY, env.getProperty(JpaConstants.HIBERNATE_MULTI_TENANCY));
+            properties.put(JpaConstants.HIBERNATE_DATABASE_TYPE, env.getProperty(JpaConstants.JPA_DATABASE));
+            properties.put(AvailableSettings.MULTI_TENANT_CONNECTION_PROVIDER, multiTenantSchemaConnectionProvider());
+            properties.put(AvailableSettings.MULTI_TENANT_IDENTIFIER_RESOLVER, domainBasedSchemaTenantIdentifierResolver());
         }
         return properties;
     }
 
+    /**
+     * Configures the transaction template with {@code REQUIRES_NEW} propagation.
+     *
+     * @return the transaction template instance
+     */
     @Bean
     public TransactionTemplate transactionTemplate() {
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager());
@@ -200,12 +229,22 @@ public class JpaConfiguration {
         return transactionTemplate;
     }
 
+    /**
+     * Bean providing the multi-tenant schema connection provider for switching database schemas.
+     *
+     * @return the schema connection provider instance
+     */
     @Bean
     @Lazy
     public MultiTenantSchemaConnectionProvider multiTenantSchemaConnectionProvider() {
         return new MultiTenantSchemaConnectionProvider();
     }
 
+    /**
+     * Bean providing the domain-based schema tenant identifier resolver.
+     *
+     * @return the tenant identifier resolver instance
+     */
     @Bean
     @Lazy
     public DomainBasedSchemaTenantIdentifierResolver domainBasedSchemaTenantIdentifierResolver() {

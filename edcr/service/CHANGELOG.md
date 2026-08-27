@@ -1,6 +1,49 @@
 # Changelog
 All notable changes to this module will be documented in this file.
 
+## 2.3.0 - 2026-08-21
+
+### Jakarta EE & Framework Modernization (Spring 6 & Hibernate 6 Migration)
+
+Major platform and framework upgrade migrating from legacy `javax.*` to `jakarta.*` namespace, alongside Spring 6 and Hibernate 6 modernization.
+
+#### Jakarta EE Migration (`javax.*` → `jakarta.*`)
+- **Jakarta Persistence (JPA 3.1.0)**: Migrated all entity mappings, repositories, converters, and Envers auditing from `javax.persistence.*` to `jakarta.persistence.*`.
+- **Jakarta Servlet (Servlet 6.0.0)**: Upgraded servlet API, updated `web.xml` deployment descriptors to Servlet 6.0 schema (`https://jakarta.ee/xml/ns/jakartaee`), and migrated filters/listeners/wrappers.
+- **Jakarta Validation (Bean Validation 3.0.2)**: Upgraded from `javax.validation.*` to `jakarta.validation.*` across all model annotations and custom validators.
+- **Jakarta Annotation & JMS**: Migrated `@PostConstruct`, `@PreDestroy`, `@Resource`, and messaging interfaces to `jakarta.annotation.*` and `jakarta.jms.*`.
+
+#### Framework & Dependency Upgrades
+- **Spring Framework**: Upgraded from 5.3.31 to **6.1.21** (Spring BOM `6.1.21`).
+- **Spring Data JPA & Commons**: Upgraded from 2.7.18 to **3.2.10** (Spring Data BOM `2023.1.9`).
+- **Spring Security**: Upgraded from 5.7.11 to **6.2.4**; added `spring-security-oauth2-core` (6.2.4) in preparation for built-in Spring Security 6 OAuth2 migration.
+- **Spring Session**: Upgraded from 2.7.4 to **3.2.4**.
+- **Hibernate ORM**: Upgraded from 5.6.15.Final to **6.4.8.Final** with `jackson-datatype-hibernate6`.
+- **Hibernate Validator**: Upgraded from 6.2.5.Final to **8.0.1.Final**.
+- **Infinispan Cache Provider**: Updated to `infinispan-hibernate-cache-v62` (`14.0.35.Final`).
+- **DisplayTag**: Replaced legacy `displaytag:1.2` with Jakarta-compatible `com.github.hazendaz:displaytag:3.7.0` (integrated POI export support).
+- **Jackson**: Upgraded from 2.13.5 to **2.17.3**.
+- **AntiSamy**: Upgraded from 1.7.5 to **1.7.8**.
+- **Logging**: Upgraded **Log4j 2** to `2.24.0` and **SLF4J** to `2.0.18`.
+- **Maven Compiler Plugin**: Enabled `-parameters` compilation flag for Spring 6.1 parameter name discovery.
+
+#### Core Infra & Web Enhancements
+- **ApplicationTenantResolverFilter**: Refactored filter logic for Jakarta Servlet 6; eliminated duplicate header extraction outside conditionals.
+- **MultiReadRequestWrapper**: Updated and optimized cached request input stream handling for multiple read operations under Jakarta Servlet 6.
+- **EdcrRestService**: Added robust null checks and defensive guards for incoming request JSON parsing and error handling.
+- **Persistence & Pagination**:
+  - Introduced `JpaConstants` for standardized JPA queries, sorting keys, and pagination defaults.
+  - Refactored `Page.java` pagination utility for compatibility with Hibernate 6 query execution.
+  - Updated `JpaConfiguration` and `MultiTenantSchemaConnectionProvider` for Hibernate 6 / Jakarta persistence lifecycle.
+- **Caching & Properties**:
+  - Resolved caching initialization and lookup issues in `EgovMasterDataCaching` and `CacheConfiguration`.
+  - Updated `application-config.properties` and `persistence-config.properties` for Spring 6 and Hibernate 6 compatibility.
+
+#### Code Quality & Documentation
+- Cleaned up redundant `@SuppressWarnings` annotations in `UniqueCheckValidator` and validator classes.
+- Added comprehensive Javadocs across core infra, persistence, and REST service classes.
+- Added updated documentation and module README files.
+
 ## 2.2.0 - 2026-04-15
 
 ### Platform Upgrade (Java 8 → Java 17)

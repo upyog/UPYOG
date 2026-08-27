@@ -1,8 +1,8 @@
 package org.egov.edcr.config;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,10 +24,9 @@ public class JacksonConfig {
      */
     @Bean
     public ObjectMapper objectMapper() {
-        return new ObjectMapper();
-//        mapper.setVisibility(
-//                PropertyAccessor.FIELD,
-//                JsonAutoDetect.Visibility.ANY);
-//        return mapper;
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
+        mapper.setNodeFactory(JsonNodeFactory.withExactBigDecimals(true));
+        return mapper;
     }
 }
