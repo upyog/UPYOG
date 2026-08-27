@@ -30,7 +30,7 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Rectangle;
 
 /**
- * Single entry point for DXF to PDF conversion: runs either the Kabeja pipeline or Aspose CAD, never both.
+ * Unified entry point for DXF to PDF conversion: runs either the Kabeja pipeline or Aspose CAD, never both.
  * <p>
  * Configure via application configuration module {@link DcrConstants#APPLICATION_MODULE_TYPE}, key
  * {@link DcrConstants#DXF_TO_PDF_ENGINE}: {@code KABEJA} (default) or {@code ASPOSE}.
@@ -41,23 +41,11 @@ import com.itextpdf.text.Rectangle;
 public class DxfToPdfUnifiedConverter {
     private static final Logger LOG = LogManager.getLogger(DxfToPdfUnifiedConverter.class);
 
-    /**
-     * Supported DXF to PDF conversion engines.
-     */
     public enum Engine {
-        /**
-         * Open-source Kabeja DXF-to-SVG-to-PDF conversion engine.
-         */
         KABEJA,
-        /**
-         * Aspose.CAD vector rendering engine.
-         */
         ASPOSE
     }
 
-    /**
-     * Application configuration service used to retrieve dynamic runtime parameters such as {@link DcrConstants#DXF_TO_PDF_ENGINE}.
-     */
     @Autowired
     private AppConfigValueService appConfigValueService;
 
@@ -100,23 +88,10 @@ public class DxfToPdfUnifiedConverter {
         return convertWithKabeja(dxfDocument, fileName, layerName, edcrPdfDetail);
     }
 
-    /**
-     * Reads {@link DcrConstants#DXF_TO_PDF_ENGINE} from Digit DCR application configuration.
-     * Any value other than {@code ASPOSE} (case-insensitive) resolves to Kabeja,
-     * including when the setting is missing or unconfigured.
-     *
-     * @return {@code true} if Aspose CAD engine is configured and active, {@code false} otherwise
-     */
     public boolean isAsposeEngine() {
         return resolveEngine() == Engine.ASPOSE;
     }
 
-    /**
-     * Resolves the configured DXF to PDF engine from the application configuration service.
-     * Checks module {@link DcrConstants#APPLICATION_MODULE_TYPE} and key {@link DcrConstants#DXF_TO_PDF_ENGINE}.
-     *
-     * @return the resolved {@link Engine} (defaults to {@link Engine#KABEJA})
-     */
     private Engine resolveEngine() {
         List<AppConfigValues> vals = appConfigValueService.getConfigValuesByModuleAndKey(
                 DcrConstants.APPLICATION_MODULE_TYPE, DcrConstants.DXF_TO_PDF_ENGINE);
@@ -132,27 +107,27 @@ public class DxfToPdfUnifiedConverter {
     /**
      * Runs Kabeja SVG-to-PDF conversion with a property map whose configuration depends on legacy vs. single full-DXF mode.
      * <p>
-     * <b>Legacy multi-sheet PDFs</b> ({@code EdcrPdfDetail.getKabejaSinglePageDXFToPdf()} not true):
+     * <b>Legacy multi-sheet PDFs</b> (<code>EdcrPdfDetail.getKabejaSinglePageDXFToPdf()</code> not true):
      * <ul>
-     *   <li>Margin {@code 0.5} and optional hatch stripping only (historical behavior).</li>
+     *   <li>Margin <code>0.5</code> and optional hatch stripping only (historical behavior).</li>
      * </ul>
      * <p>
-     * <b>Direct single full-DXF PDF</b> ({@code getKabejaSinglePageDXFToPdf()} true):
+     * <b>Direct single full-DXF PDF</b> (<code>getKabejaSinglePageDXFToPdf()</code> true):
      * <ul>
-     *   <li>{@code DcrSvgGenerator.PROPERTY_SINGLE_PDF} &mdash; enables DcrSvgGenerator and DcrSvgStyleGenerator
+     *   <li><code>DcrSvgGenerator.PROPERTY_SINGLE_PDF</code> &mdash; enables DcrSvgGenerator and DcrSvgStyleGenerator
      *       tuning for text, bounds, and fonts without affecting legacy runs.</li>
-     *   <li>{@code bounds-rule} = {@code Modelspace-Limits} &mdash; viewport from DXF header so the plan is not rendered as a speck.</li>
-     *   <li>{@code margin} = {@code 0} &mdash; avoids shrinking usable area in this mode.</li>
-     *   <li>{@code stroke-width} = {@code 0.02} &mdash; enforces uniform thin strokes so dimensions and linework render crisply without heavy black bars.</li>
+     *   <li><code>bounds-rule</code> = <code>Modelspace-Limits</code> &mdash; viewport from DXF header so the plan is not a speck.</li>
+     *   <li><code>margin</code> = <code>0</code> &mdash; avoids shrinking usable area in this mode.</li>
+     *   <li><code>stroke-width</code> = <code>0.12</code> &mdash; thin strokes so dimensions do not render as thick bars.</li>
      * </ul>
      * <p>
-     * The output file is {@code layerName + ".pdf"}; in direct mode {@code layerName} is typically the DXF basename.
+     * The output file is <code>layerName + ".pdf"</code>; in direct mode <code>layerName</code> is typically the DXF basename.
      *
-     * @param dxfDocument   in-memory parsed DXF document for Kabeja
-     * @param fileName      logical drawing name used for logging
-     * @param layerName     stem for the output PDF file
-     * @param edcrPdfDetail PDF configuration details (page size, hatch removal flag, and single-PDF mode flag)
-     * @return the generated PDF {@link File} if non-empty, otherwise {@code null}
+     * @param dxfDocument     in-memory DXF for Kabeja
+     * @param fileName        used in log messages
+     * @param layerName       PDF filename stem
+     * @param edcrPdfDetail   page size, hatch flag, and kabejaSinglePageDXFToPdf gate
+     * @return written PDF file if non-empty, otherwise <code>null</code>
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private File convertWithKabeja(DXFDocument dxfDocument, String fileName, String layerName,
@@ -177,26 +152,19 @@ public class DxfToPdfUnifiedConverter {
                     map.put("width", String.valueOf(rectangle.getHeight() * edcrPdfDetail.getPageSize().getEnlarge()));
                     map.put("height", String.valueOf(rectangle.getWidth() * edcrPdfDetail.getPageSize().getEnlarge()));
                 }
-
-                /*
-                 * Configure Kabeja SVG generator parameters:
-                 * - Direct Single-PDF mode:
-                 *     * Enables custom text/bounds tuning via DcrSvgGenerator.PROPERTY_SINGLE_PDF
-                 *     * Sets 'Modelspace-Limits' bounds rule so the drawing scales appropriately
-                 *     * Uses zero margins and thin stroke-width (0.02) to prevent heavy black linework
-                 * - Legacy multi-sheet mode:
-                 *     * Uses historical 0.5 margin and optional hatch stripping
-                 */
+                // Single-PDF: tighter viewBox + thinner strokes (legacy keeps original margin / behaviour).
                 boolean directSinglePdf = Boolean.TRUE.equals(edcrPdfDetail.getKabejaSinglePageDXFToPdf());
                 if (directSinglePdf) {
                     map.put(DcrSvgGenerator.PROPERTY_SINGLE_PDF, "true");
                     map.put("bounds-rule", "Modelspace-Limits");
                     map.put("margin", String.valueOf(0));
+                    // Uniform thin linework (dimension ticks, etc.); avoids heavy DXF lineweights in PDF.
                     map.put("stroke-width", String.valueOf(0.02));
                     if (Boolean.TRUE.equals(edcrPdfDetail.getPageSize().getRemoveHatch())) {
                         map.put("stroke.width", Double.valueOf(0));
                     }
                 } else {
+                    // Legacy per-sheet path: unchanged from historical Kabeja integration.
                     map.put("margin", String.valueOf(0.5));
                     if (edcrPdfDetail.getPageSize().getRemoveHatch()) {
                         map.put("stroke.width", Double.valueOf(0));
@@ -212,7 +180,7 @@ public class DxfToPdfUnifiedConverter {
             }
             return fileOut.length() > 0 ? fileOut : null;
         } catch (Exception ep) {
-            LOG.error("Pdf conversion failed for {} - {} due to {}", fileName, layerName, ep.getMessage());
+            LOG.error("Pdf convertion failed for {} - {} due to {}", fileName, layerName, ep.getMessage());
             ep.printStackTrace();
             edcrPdfDetail.setFailureReasons(ep.getMessage());
             if (fileOut.exists()) {
@@ -224,34 +192,48 @@ public class DxfToPdfUnifiedConverter {
 
     /**
      * Converts a DXF drawing file into a PDF document using the Aspose imaging library.
+     *
      * <p>
      * The conversion process rasterizes the CAD drawing and exports it as a PDF
      * using configurable page dimensions derived from the provided
      * {@link EdcrPdfDetail}. If no valid page configuration is available,
      * default dimensions are used.
+     * </p>
+     *
      * <p>
      * Page size handling:
+     * </p>
      * <ul>
-     *   <li>Reads page size, orientation, and enlargement factor from {@link PdfPageSize}.</li>
+     *   <li>Reads page size, orientation, and enlargement factor from
+     *       {@link PdfPageSize}.</li>
      *   <li>Supports portrait and landscape orientation.</li>
-     *   <li>Falls back to default dimensions when page configuration is invalid or unavailable.</li>
+     *   <li>Falls back to default dimensions when page configuration is invalid
+     *       or unavailable.</li>
      * </ul>
+     *
      * <p>
      * Aspose CAD rasterization settings:
+     * </p>
      * <ul>
      *   <li>White background color</li>
      *   <li>Uses original object colors from the DXF</li>
      *   <li>Automatic layout scaling enabled</li>
      *   <li>Scaling adjustments allowed</li>
      * </ul>
+     *
      * <p>
      * The generated PDF file is created in the working directory with the
      * provided layer name as the file name.
+     * </p>
      *
      * @param dxfSourceFile the source DXF file to be converted
-     * @param layerName     the logical layer or output file name prefix used for the generated PDF
-     * @param edcrPdfDetail PDF configuration details containing page size, orientation, and enlargement settings
-     * @return the generated PDF {@link File} if conversion succeeds and the file exists with non-zero size; otherwise {@code null}
+     * @param layerName the logical layer or output file name prefix used for the generated PDF
+     * @param edcrPdfDetail PDF configuration details containing page size, orientation,
+     *         and enlargement settings
+     * @return the generated PDF file if conversion succeeds and the file exists
+     *         with non-zero size; otherwise {@code null}
+     * @throws RuntimeException
+     *         if unexpected errors occur during PDF generation
      */
     private File convertWithAspose(File dxfSourceFile, String layerName, EdcrPdfDetail edcrPdfDetail) {
         LOG.info("Converting Dxf to Pdf with Aspose...");
@@ -293,47 +275,15 @@ public class DxfToPdfUnifiedConverter {
         return fileOut.exists() && fileOut.length() > 0 ? fileOut : null;
     }
 
-    /**
-     * A SAX {@link ContentHandler} that intercepts and sanitizes the SVG output generated by Kabeja.
-     * <p>
-     * This handler performs real-time modification of the SVG stream during DXF-to-PDF conversion to address:
-     * <ul>
-     *     <li>Corrupt font family attributes (e.g. "@Arial").</li>
-     *     <li>Excessively massive font sizes that overlap (dynamically capping them based on viewBox).</li>
-     *     <li>Misplaced text positioned at coordinates near the origin (0,0) by stacking them vertically into a list.</li>
-     * </ul>
-     */
     private static class SvgSanitizingHandler implements ContentHandler {
-        /**
-         * Downstream SAX ContentHandler to which sanitized events are delegated.
-         */
         private final ContentHandler delegate;
-
-        /**
-         * Dynamically calculated maximum allowed font size based on root SVG viewBox dimensions.
-         */
         private double maxFontSize = -1.0;
-
-        /**
-         * Counter for improperly positioned text elements grouped near the origin (0,0).
-         */
         private int buggedTextCount = 0;
 
-        /**
-         * Constructs a new {@code SvgSanitizingHandler} wrapping the specified delegate.
-         *
-         * @param delegate the downstream {@link ContentHandler} receiving sanitized SAX events
-         */
         public SvgSanitizingHandler(ContentHandler delegate) {
             this.delegate = delegate;
         }
 
-        /**
-         * Cleans corrupted or non-standard font strings originating from DXF properties.
-         * 
-         * @param val the raw font or style string
-         * @return the cleaned string safe for SVG rendering
-         */
         private String clean(String val) {
             if (val == null) return null;
             val = val.replaceAll("(?i)font-family\\s*:\\s*['\"]?@", "font-family:");
@@ -369,32 +319,10 @@ public class DxfToPdfUnifiedConverter {
             delegate.endPrefixMapping(prefix);
         }
 
-        /**
-         * Intercepts the start of an SVG element to dynamically patch its attributes.
-         * <p>
-         * It performs the following primary tasks:
-         * <ol>
-         *   <li>Extracts the {@code viewBox} from the root SVG element to establish dynamic limits.</li>
-         *   <li>Overrides the {@code font-size} of text elements if they exceed the calculated maximum.</li>
-         *   <li>Detects misplaced text dumped near the origin (&le; 5.0) and modifies their {@code x}, {@code y},
-         *       {@code text-anchor}, and {@code transform} attributes to stack them neatly in the bottom-left corner.</li>
-         * </ol>
-         * 
-         * @param uri       the Namespace URI
-         * @param localName the local name (without prefix)
-         * @param qName     the qualified name (with prefix)
-         * @param atts      the attributes attached to the element
-         * @throws SAXException if any SAX parsing error occurs
-         */
         @Override
         public void startElement(String uri, String localName, String qName, org.xml.sax.Attributes atts)
                 throws SAXException {
             
-            /*
-             * 1. Calculate dynamic maximum font size from the root SVG viewBox.
-             * Kabeja may miscalculate font sizes for leader/dimension texts, causing massive overlapping strings.
-             * Capping font size to 0.4% of the largest dimension provides a reliable upper bound.
-             */
             if ("svg".equalsIgnoreCase(localName)) {
                 String viewBox = atts.getValue("viewBox");
                 if (viewBox != null) {
@@ -405,17 +333,12 @@ public class DxfToPdfUnifiedConverter {
                             double h = Double.parseDouble(parts[3]);
                             maxFontSize = Math.max(w, h) * 0.004;
                         } catch (Exception e) {
-                            // Ignore parsing errors
+                            // ignore parsing errors
                         }
                     }
                 }
             }
 
-            /*
-             * 2. Detect misplaced or overlapping text strings near the origin (0,0).
-             * When Kabeja fails to resolve coordinates for certain labels, it defaults them near (0,0).
-             * Identifying text elements with (x <= 5.0 && y <= 5.0) allows reformatting them into a neat list.
-             */
             boolean isBuggedText = false;
             if ("text".equalsIgnoreCase(localName)) {
                 String xVal = atts.getValue("x");
@@ -429,18 +352,11 @@ public class DxfToPdfUnifiedConverter {
                             buggedTextCount++;
                         }
                     } catch (Exception e) {
-                        // Ignore parsing errors
+                        // ignore parsing errors
                     }
                 }
             }
 
-            /*
-             * 3. Sanitize and rebuild element attributes:
-             * - Clean corrupt font names and strip '@' prefixes.
-             * - Clamp excessive font sizes to maxFontSize.
-             * - For misplaced origin text: stack vertically with font-size proportional spacing,
-             *   left-align with offset x=2.0, and strip rotational transforms for horizontal readability.
-             */
             org.xml.sax.helpers.AttributesImpl cleanedAtts = new org.xml.sax.helpers.AttributesImpl();
             for (int i = 0; i < atts.getLength(); i++) {
                 String name = atts.getQName(i);
@@ -455,7 +371,7 @@ public class DxfToPdfUnifiedConverter {
                             value = String.valueOf(maxFontSize);
                         }
                     } catch (Exception e) {
-                        // Ignore parsing errors
+                        // ignore parsing errors
                     }
                 } else if (isBuggedText) {
                     if ("y".equalsIgnoreCase(name)) {
@@ -483,14 +399,6 @@ public class DxfToPdfUnifiedConverter {
             delegate.endElement(uri, localName, qName);
         }
 
-        /**
-         * Intercepts and sanitizes character data within SVG text elements to remove '@' font artifacts.
-         *
-         * @param ch     the character array containing the text to be processed
-         * @param start  the start position in the character array
-         * @param length the number of characters to use from the character array
-         * @throws SAXException if any SAX parsing error occurs
-         */
         @Override
         public void characters(char[] ch, int start, int length) throws SAXException {
             String str = new String(ch, start, length);
@@ -518,4 +426,4 @@ public class DxfToPdfUnifiedConverter {
             delegate.skippedEntity(name);
         }
     }
-}
+}
