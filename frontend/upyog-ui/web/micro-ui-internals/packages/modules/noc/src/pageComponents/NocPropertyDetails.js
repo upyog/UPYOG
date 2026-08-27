@@ -836,7 +836,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
             placeholder={t("NOC_PROPERTY_ID_PLACEHOLDER")}
             style={{ flex: 1 }}
           />
-          <div style={{ position: "relative", zIndex: "100", right: "45px", marginTop: "12px", cursor:"pointer" }} onClick={handlePropertySearch}> <SearchIcon /> </div>
+          <div style={{ position: "relative", right: "45px", marginTop: "12px", cursor:"pointer" }} onClick={handlePropertySearch}> <SearchIcon /> </div>
         </div>
         {fieldErrors.city && <CardLabelError>{fieldErrors.city}</CardLabelError>}
 

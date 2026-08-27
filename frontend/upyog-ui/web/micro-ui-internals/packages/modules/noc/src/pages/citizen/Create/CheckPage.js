@@ -233,7 +233,7 @@ const CheckPage = ({ onSubmit, value }) => {
             <Row label={t("NOC_LOCATION_STREET_LABEL")} text={location?.streetName || t("CS_NA")} />
             <Row label={t("NOC_LOCATION_BUILDING_LABEL")} text={location?.buildingName || t("CS_NA")} />
             <Row label={t("NOC_LOCATION_PINCODE_LABEL")} text={location?.pincode || t("CS_NA")} />
-            <Row label={t("NOC_LOCATION_FIRESTATION_LABEL")} text={location?.fireStation?.code || location?.fireStation?.name || location?.fireStation || t("CS_NA")} />
+            <Row label={t("NOC_LOCATION_FIRESTATION_LABEL")} text={t(location?.fireStation?.code || location?.fireStation?.name || location?.fireStation) || t("CS_NA")} />
             {location?.propertyId && <Row label={t("NOC_LOCATION_PROPERTY_ID_LABEL")} text={location.propertyId} />}
             {location?.latitude && <Row label={t("NOC_LOCATION_LATITUDE_LABEL")} text={`${location.latitude}`} />}
             {location?.longitude && <Row label={t("NOC_LOCATION_LONGITUDE_LABEL")} text={`${location.longitude}`} />}

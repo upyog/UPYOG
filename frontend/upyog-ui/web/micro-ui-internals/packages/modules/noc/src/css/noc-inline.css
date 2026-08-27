@@ -59,3 +59,43 @@
 .action-bar-flex-item {
   flex: 1;
 }
+
+
+.fn-myapps-container {
+  margin-left: 16px;
+}
+
+
+.fn-myapps-search-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.fn-myapps-field-col {
+  flex: 1;
+}
+
+.fn-myapps-field-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+
+.fn-myapps-text-input {
+  width: 100%;
+  padding: 8px;
+  height: 150%;
+}
+
+
+.fn-myapps-search-btn-wrap {
+  margin-top: 17%;
+}
+
+.fn-myapps-clear-link {
+  margin-left: 30%;
+  margin-top: 10px;
+  display: block;
+}
