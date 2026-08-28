@@ -299,9 +299,10 @@ public class BudgetRegisterController extends GenericWorkFlowController {
                     financialUtils.getHistory(budgetRegister.getState(), budgetRegister.getStateHistory()));
             if (budgetRegister.getCurrentState().getValue().equalsIgnoreCase("reverted") && allowCreate ) {
                 model.addAttribute("allowCreate", true);
+                model.addAttribute("showWorkflow", "true");
             }
         } else {
-            if (currentUser.getId().equals(budgetRegister.getCreatedBy())) {
+            if (currentUser.getId().equals(budgetRegister.getCreatedBy()) || allowCreate) {
                 model.addAttribute("showWorkflow", "true");
             }
             if (allowCreate) {
@@ -314,7 +315,7 @@ public class BudgetRegisterController extends GenericWorkFlowController {
 
     // to show from workflow
     @RequestMapping(value = "/workflow/form/{id}", method = { RequestMethod.GET, RequestMethod.POST })
-    public String workflowUpdateForm(final Model model, @PathVariable("id") @SanitizeHtml Long id,
+    public String workflowUpdateForm(final Model model, @PathVariable("id") Long id,
             RedirectAttributes redirectAttributes) {
 
         // BudgetRegister budgetRegister =

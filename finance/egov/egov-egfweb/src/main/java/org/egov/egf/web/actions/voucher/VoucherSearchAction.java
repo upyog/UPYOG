@@ -300,11 +300,21 @@ public class VoucherSearchAction extends BaseFormAction {
 				voucherMap.put("vouchernumber", voucherheader.getVoucherNumber());
 				voucherMap.put("type", voucherheader.getType());
 				voucherMap.put("name", voucherheader.getName());
+				/*
+				 * LTS Migration Note [MDMS Department Integration & Null Safety]:
+				 * microserviceUtils.getDepartmentByCode() fetches department metadata from the MDMS REST endpoint.
+				 * Added a defensive null-check on 'depList' to prevent NullPointerException when MDMS returns empty results
+				 * or when department codes do not strictly match MDMS master data.
+				 */
 				if (voucherheader.getVouchermis() != null && voucherheader.getVouchermis().getDepartmentcode() != null
 						&& !voucherheader.getVouchermis().getDepartmentcode().equals("-1")) {
 					org.egov.infra.microservice.models.Department depList = microserviceUtils
 							.getDepartmentByCode(voucherheader.getVouchermis().getDepartmentcode());
-					voucherMap.put("deptName", depList.getName());
+					if (depList != null) {
+						voucherMap.put("deptName", depList.getName());
+					} else {
+						voucherMap.put("deptName", voucherheader.getVouchermis().getDepartmentcode());
+					}
 				}
 				voucherMap.put("voucherdate", voucherheader.getVoucherDate());
 				voucherMap.put("fundname", voucherheader.getFundId().getName());

@@ -738,8 +738,13 @@ public abstract class BaseBudgetDetailAction extends GenericWorkFlowAction {
     }
 
     public String ajaxLoadSubSchemes() {
+        /*
+         * LTS Migration Note [Hibernate 6 HQL Strict Property Casing]:
+         * Hibernate 6 SQM validates entity field names strictly.
+         * Property 'isactive' on SubScheme entity replaces 'isActive' to avoid SemanticException.
+         */
         subSchemes = getPersistenceService()
-                .findAllBy("from SubScheme where scheme.id=? and isActive=true order by name", schemeId);
+                .findAllBy("from SubScheme where scheme.id=? and isactive=true order by name", schemeId);
         return Constants.SUBSCHEMES;
     }
 

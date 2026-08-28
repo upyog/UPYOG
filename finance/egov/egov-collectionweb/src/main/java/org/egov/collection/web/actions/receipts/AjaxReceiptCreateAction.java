@@ -451,8 +451,13 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
     public String ajaxLoadSubSchemes() {
         final Integer schemeId = Integer.valueOf(parameters.get("schemeId")[0]);
         if (null != schemeId && schemeId != -1)
+            /*
+             * LTS Migration Note [Hibernate 6 HQL Strict Property Casing]:
+             * In Hibernate 6 SQM, property names in HQL must strictly match the entity field name casing.
+             * SubScheme entity defines field 'isactive', so 'isActive=true' was corrected to 'isactive=true'.
+             */
             subSchemes = getPersistenceService()
-                    .findAllBy("from SubScheme where scheme.id=? and isActive=true order by name", schemeId);
+                    .findAllBy("from SubScheme where scheme.id=? and isactive=true order by name", schemeId);
         else
             subSchemes = Collections.emptyList();
 

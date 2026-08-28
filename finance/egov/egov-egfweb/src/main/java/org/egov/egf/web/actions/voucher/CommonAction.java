@@ -4021,8 +4021,13 @@ public class CommonAction extends BaseFormAction {
         else
         {
             String glCodeName = "%" + glCode.toLowerCase() + "%";
+            /*
+             * LTS Migration Note [Account Code Autocomplete Query]:
+             * Query CChartOfAccounts directly without inner-joining CChartOfAccountDetail
+             * to allow autocomplete suggestions for all matching chart of accounts (including high-level and sub-ledger codes).
+             */
             glCodesList = persistenceService.findAllBy(
-                    "select DISTINCT coa from CChartOfAccounts coa, CChartOfAccountDetail cod  where coa = cod.glCodeId and coa.classification = 4 and (coa.glcode like ?  or lower(coa.name) like ?)",
+                    "select ca from CChartOfAccounts ca where (ca.glcode like ? or lower(ca.name) like ?) order by ca.glcode",
                     glCodeName, glCodeName);
         }
 
@@ -4057,13 +4062,19 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("CommonAction | ajaxLoadSubLedgerTypesByGlCode");
         try {
-            if (glCode != null)
+            if (glCode == null || glCode.trim().isEmpty() || "null".equalsIgnoreCase(glCode.trim())) {
+                glCode = ServletActionContext.getRequest().getParameter("glCode");
+                if (glCode == null || glCode.trim().isEmpty()) {
+                    glCode = ServletActionContext.getRequest().getParameter("glcode");
+                }
+            }
+            if (glCode != null && !glCode.trim().isEmpty()) {
                 subLedgerTypeList = getPersistenceService()
                         .findAllBy(
-                                "select distinct adt from Accountdetailtype adt, CChartOfAccountDetail cad where cad.glCodeId.glcode = ? and cad.detailTypeId = adt ",
-                                glCode);
-            if (LOGGER.isDebugEnabled())
-                LOGGER.debug("Sub Ledger Type list size =  " + subLedgerTypeList.size());
+                                "select distinct adt from Accountdetailtype adt, CChartOfAccountDetail cad where cad.glCodeId.glcode = ? and cad.detailTypeId.id = adt.id",
+                                glCode.trim());
+            }
+            LOGGER.info("ajaxLoadSubLedgerTypesByGlCode: glCode=" + glCode + ", resultSize=" + (subLedgerTypeList != null ? subLedgerTypeList.size() : 0));
         } catch (final HibernateException e) {
             LOGGER.error("Exception occured while getting Sub Ledger Type " + e.getMessage(),
                     new HibernateException(e.getMessage()));
