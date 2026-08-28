@@ -66,7 +66,11 @@ public class SchemeRestController {
 
 
 
-    @GetMapping(value = "/getByNameOrCode", produces = MediaType.APPLICATION_JSON_VALUE)
+    /*
+     * LTS Migration Note [Spring Security 6 & REST URL Aliases]:
+     * Added '/ajaxSchemes' mapping alias for modern REST client interoperability and Spring Security 6 route matching.
+     */
+    @GetMapping(value = { "/getByNameOrCode", "/ajaxSchemes" }, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<Scheme> findSchemesByNameOrCode(@RequestParam("query") @SanitizeHtml final String query) {
         final List<Scheme> schemes = schemeHibernateDAO.getSchemeByNameOrCode(query);
