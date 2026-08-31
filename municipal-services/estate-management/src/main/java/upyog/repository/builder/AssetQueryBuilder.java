@@ -1,7 +1,9 @@
 package upyog.repository.builder;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import upyog.config.EstateConfiguration;
 import upyog.web.models.AssetSearchCriteria;
 import upyog.util.EstateUtil;
 
@@ -10,6 +12,9 @@ import java.util.List;
 
 @Component
 public class AssetQueryBuilder {
+
+    @Autowired
+    private EstateConfiguration estateConfiguration;
     
     // Base select query from the asset table getting all the fields for asset row mapper class
     private static final String BASE_SEARCH_QUERY = "SELECT " +
@@ -71,7 +76,7 @@ public class AssetQueryBuilder {
         // Add order by clause
         query.append(" ORDER BY createdtime DESC");
         
-        return EstateUtil.addPaginationWrapper(query.toString(), preparedStmtList, criteria.getLimit(), criteria.getOffset());
+        return EstateUtil.addPaginationWrapper(query.toString(), preparedStmtList, criteria.getLimit(), criteria.getOffset(), estateConfiguration);
     }
     
     /**

@@ -18,7 +18,7 @@ export const queryTemplate = ({
   const safeQueryFn = async (...args) => {
     const result = await queryFn(...args);
 
-    if (result === undefined) {
+    if (result === undefined || result === null) {
       throw new Error("Query function returned undefined.");
     }
 
