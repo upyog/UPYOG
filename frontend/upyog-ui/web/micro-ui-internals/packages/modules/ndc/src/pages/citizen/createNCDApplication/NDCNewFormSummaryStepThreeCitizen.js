@@ -33,7 +33,12 @@ const NDCNewFormSummaryStepThreeCitizen = ({ config, onGoNext, onBackClick, t })
       if (res?.isSuccess) {
         const applicationNo = res?.response?.Applications?.[0]?.applicationNo;
 
-        navigate(`/upyog-ui/citizen/ndc/response/${applicationNo}`);
+        navigate(`/upyog-ui/citizen/ndc/response/${applicationNo}`, {
+          state: {
+            data: res?.response,
+            isSuccess: true,
+          },
+        });
       } else {
         console.error("NDC submission failed:", res?.response);
       }

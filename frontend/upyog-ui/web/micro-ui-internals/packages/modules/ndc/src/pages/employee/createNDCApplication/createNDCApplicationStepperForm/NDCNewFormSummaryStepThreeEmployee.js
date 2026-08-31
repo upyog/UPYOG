@@ -45,7 +45,12 @@ const NDCNewFormSummaryStepThreeEmployee = ({ config, onGoNext, onBackClick, t }
        * successful API response.
        */
       if (res?.isSuccess) {
-        navigate("/upyog-ui/employee/ndc/response/" + res?.response?.Applications?.[0]?.applicationNo);
+        navigate("/upyog-ui/employee/ndc/response/" + res?.response?.Applications?.[0]?.applicationNo, {
+          state: {
+            data: res?.response,
+            isSuccess: true,
+          },
+        });
       } else {
         console.error("NDC submission failed. Not moving to response page.", res?.response);
       }
