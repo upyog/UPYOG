@@ -3,18 +3,21 @@ import { useTranslation } from "react-i18next";
 import { useLocation, useParams } from "react-router-dom";
 import {
   DynamicCheckPage,
+  Header,
   Loader,
+  MultiLink,
   formatCheckPageDate,
   mergeRouteConfig,
 } from "@nudmcdgnpm/digit-ui-react-components";
 import estateAllotmentFormOverrides from "../../config/Create/estateAllotmentFormOverrides";
 import { EST_CHECK_FLOWS } from "../../config/estCheckPageConfig";
-import { checkForNA, ESTDocumnetPreview } from "../../utils";
+import { checkForNA, ESTDocumnetPreview, downloadESTAcknowledgement, downloadESTReceipt } from "../../utils";
 import { buildAllotmentAckFormValues } from "../../utils/acknowledgementUtils";
 import {
   buildAllotmentAssetDisplay,
   resolveAllotmentAsset,
 } from "../../utils/estMdmsUtils";
+import styles from "../../styles/ESTApplicationDetails.module.scss";
 
 const getAllotmentNo = (item = {}) =>
   String(
@@ -281,6 +284,50 @@ const ESTApplicationDetails = () => {
     return display;
   }, [asset, allotment, t, decodedId]);
 
+  const [showOptions, setShowOptions] = useState(false);
+  const { data: storeData } = Digit.Hooks.useStore.getInitData();
+  const { tenants } = storeData || {};
+
+  const allotmentNo = getAllotmentNo(allotment);
+  const isEmployee = !window.location.href.includes("/citizen/");
+
+  const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
+    {
+      tenantId,
+      businessService: "est-services",
+      consumerCodes: allotmentNo,
+      isEmployee,
+    },
+    { enabled: !!allotmentNo }
+  );
+
+  const downloadOptions = useMemo(() => {
+    const options = [];
+    if (allotment || asset) {
+      options.push({
+        label: t("EST_DOWNLOAD_ACKNOWLEDGEMENT"),
+        onClick: () =>
+          downloadESTAcknowledgement(
+            {
+              Allotments: sessionValue?.Allotments?.Allotments,
+              assetData: sessionValue?.assetData || asset,
+              routeConfig,
+              routeConfigs: { Allotments: routeConfig },
+            },
+            tenants,
+            t
+          ),
+      });
+    }
+    if (reciept_data?.Payments?.length > 0 && !recieptDataLoading) {
+      options.push({
+        label: t("EST_FEE_RECEIPT"),
+        onClick: () => downloadESTReceipt(reciept_data.Payments[0].tenantId, reciept_data.Payments),
+      });
+    }
+    return options;
+  }, [allotment, asset, sessionValue, routeConfig, tenants, t, reciept_data, recieptDataLoading]);
+
   if (isLoading || mdmsLoading) return <Loader />;
 
   if (!asset && !allotment) {
@@ -292,6 +339,44 @@ const ESTApplicationDetails = () => {
   }
 
   return (
+    <div>
+      <div
+        className={
+          isEmployee
+            ? `employee-application-details ${styles["estAppDetails__header-employee"]}`
+            : `cardHeaderWithOptions ${styles["estAppDetails__header-citizen"]}`
+        }
+      >
+        <Header className={styles["estAppDetails__title"]}>
+          {t("EST_APPLICATION_DETAILS")}
+        </Header>
+        <div
+          className={
+            isEmployee
+              ? styles["estAppDetails__multilink-employee"]
+              : styles["estAppDetails__multilink-citizen"]
+          }
+        >
+          {downloadOptions && downloadOptions.length > 0 && (
+            <MultiLink
+              className={
+                isEmployee
+                  ? "multilinkWrapper employee-mulitlink-main-div"
+                  : "multilinkWrapper"
+              }
+              onHeadClick={() => setShowOptions(!showOptions)}
+              displayOptions={showOptions}
+              options={downloadOptions}
+              downloadBtnClassName={
+                isEmployee ? "employee-download-btn-className" : undefined
+              }
+              optionsClassName={
+                isEmployee ? "employee-options-btn-className" : undefined
+              }
+            />
+          )}
+        </div>
+      </div>
     <DynamicCheckPage
       routeConfig={routeConfig}
       config={{ key: flow.stepKey }}
@@ -305,6 +390,7 @@ const ESTApplicationDetails = () => {
       DocumentPreview={ESTDocumnetPreview}
       viewOnly
     />
+    </div>
   );
 };
 

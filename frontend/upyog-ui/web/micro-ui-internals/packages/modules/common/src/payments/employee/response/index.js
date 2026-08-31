@@ -723,6 +723,17 @@ export const SuccessfulPayment = (props) => {
     window.open(fileStore[fileStoreId], "_blank");
   }
 
+  const printESTReceipt = async () => {
+    const payments = await Digit.PaymentService.getReciept(tenantId, businessService, { receiptNumbers: receiptNumber });
+    let fileStoreId = payments?.Payments?.[0]?.fileStoreId;
+    if (!fileStoreId) {
+      let response = await Digit.PaymentService.generatePdf(tenantId, { Payments: payments.Payments }, "est-service-receipt");
+      fileStoreId = response?.filestoreIds[0];
+    }
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+    window.open(fileStore[fileStoreId], "_blank");
+  };
+
   return (
     <React.Fragment>
       <Card>
@@ -730,7 +741,7 @@ export const SuccessfulPayment = (props) => {
         <CardText>{getCardText()}</CardText>
         {generatePdfKey ? (
           <div style={{ display: "flex" }}>
-            {!["chb-services", "adv-services", "sv-services", "pet-services", "request-service.water_tanker", "request-service.mobile_toilet", "request-service.tree_pruning"].includes(businessService) && (
+            {!["chb-services", "adv-services", "sv-services", "pet-services", "request-service.water_tanker", "request-service.mobile_toilet", "request-service.tree_pruning", "NDC", "est-services"].includes(businessService) && (
               <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px" }} onClick={IsDisconnectionFlow === "true" ? printDisconnectionRecipet : printReciept}>
                 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
                   <path d="M0 0h24v24H0z" fill="none" />
@@ -872,6 +883,15 @@ export const SuccessfulPayment = (props) => {
                   <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
                 </svg>
                 {t("NDC_FEE_RECIEPT")}
+              </div>
+            ) : null}
+            {businessService == "est-services" ? (
+              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop: "15px", marginBottom: "15px" }} onClick={printESTReceipt}>
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
+                  <path d="M0 0h24v24H0V0z" fill="none" />
+                  <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+                </svg>
+                {t("EST_FEE_RECEIPT")}
               </div>
             ) : null}
 

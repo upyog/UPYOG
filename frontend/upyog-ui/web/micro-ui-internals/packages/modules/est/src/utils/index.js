@@ -10,6 +10,7 @@ import { getEstateRequestInfo } from "./assetPayloadUtils";
 import { parseAdditionalDetails } from "./estMdmsUtils";
 import estateFormConfig from "../config/estateFormConfig";
 import estateAllotmentFormOverrides from "../config/Create/estateAllotmentFormOverrides";
+import getESTAllotmentAcknowledgementData from "./getESTAllotmentAcknowledgementData";
 
 const parseESTDate = (value) => {
   if (value === null || value === undefined || value === "") return null;
@@ -409,6 +410,27 @@ export const createAllotmentData = (data, routeConfig) => {
       },
     ],
   };
+};
+
+export const downloadESTReceipt = async (tenantId, payments) => {
+  const paymentList = Array.isArray(payments) ? payments : [payments];
+  let response;
+  if (paymentList[0]?.fileStoreId) {
+    response = { filestoreIds: [paymentList[0].fileStoreId] };
+  } else {
+    response = await Digit.PaymentService.generatePdf(tenantId, { Payments: paymentList }, "est-service-receipt");
+  }
+  const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+  window.open(fileStore[response.filestoreIds[0]], "_blank");
+};
+
+export const downloadESTAcknowledgement = async (application, tenants, t) => {
+  const tenantInfo =
+    tenants?.find((tenant) => tenant.code === application?.tenantId) ||
+    tenants?.find((tenant) => tenant.code === Digit.ULBService.getCurrentTenantId()) ||
+    {};
+  const ackData = await getESTAllotmentAcknowledgementData(application, tenantInfo, t);
+  Digit.Utils.pdf.generate(ackData);
 };
 
 export { ESTDocumnetPreview } from "./ESTDocumentPreview";
