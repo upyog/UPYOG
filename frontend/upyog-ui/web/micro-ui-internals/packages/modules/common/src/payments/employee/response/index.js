@@ -3,6 +3,7 @@ import { Banner, Card, CardText, SubmitBar, ActionBar, DownloadPrefixIcon, Loade
 import { useParams, Link, } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
+import { BUSINESS_SERVICES, RECEIPT_KEYS, CUSTOM_BUSINESS_SERVICES } from "../../constants";
 
 export const convertEpochToDate = (dateEpoch) => {
   // Returning NA in else case because new Date(null) returns Current date from calender
@@ -55,19 +56,8 @@ export const SuccessfulPayment = (props) => {
   useEffect(() => {
     return () => {
       const fetchData = async () => {
-        const isCustomService = [
-          "chb-services",
-          "adv-services",
-          "sv-services",
-          "pet-services",
-          "request-service.water_tanker",
-          "request-service.mobile_toilet",
-          "request-service.tree_pruning",
-          "NDC",
-          "est-services",
-        ].includes(businessService);
-
-        if (isCustomService) return;
+        // Skip custom business services that manage their own on-demand receipt generation
+        if (CUSTOM_BUSINESS_SERVICES.includes(businessService)) return;
 
         const tenantId = Digit.ULBService.getCurrentTenantId();
         const state = Digit.ULBService.getStateId();
@@ -740,11 +730,14 @@ export const SuccessfulPayment = (props) => {
     window.open(fileStore[fileStoreId], "_blank");
   }
 
+  /**
+   * Generates and downloads the Estate Management (EST) fee receipt PDF on demand.
+   */
   const printESTReceipt = async () => {
     const payments = await Digit.PaymentService.getReciept(tenantId, businessService, { receiptNumbers: receiptNumber });
     let fileStoreId = payments?.Payments?.[0]?.fileStoreId;
     if (!fileStoreId) {
-      let response = await Digit.PaymentService.generatePdf(tenantId, { Payments: payments.Payments }, "est-service-receipt");
+      let response = await Digit.PaymentService.generatePdf(tenantId, { Payments: payments.Payments }, RECEIPT_KEYS.EST);
       fileStoreId = response?.filestoreIds[0];
     }
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
@@ -758,7 +751,7 @@ export const SuccessfulPayment = (props) => {
         <CardText>{getCardText()}</CardText>
         {generatePdfKey ? (
           <div style={{ display: "flex" }}>
-            {!["chb-services", "adv-services", "sv-services", "pet-services", "request-service.water_tanker", "request-service.mobile_toilet", "request-service.tree_pruning", "NDC", "est-services"].includes(businessService) && (
+            {!CUSTOM_BUSINESS_SERVICES.includes(businessService) && (
               <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px" }} onClick={IsDisconnectionFlow === "true" ? printDisconnectionRecipet : printReciept}>
                 <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
                   <path d="M0 0h24v24H0z" fill="none" />
@@ -902,12 +895,14 @@ export const SuccessfulPayment = (props) => {
                 {t("NDC_FEE_RECIEPT")}
               </div>
             ) : null}
-            {businessService == "est-services" ? (
-              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop: "15px", marginBottom: "15px" }} onClick={printESTReceipt}>
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
-                  <path d="M0 0h24v24H0V0z" fill="none" />
-                  <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
-                </svg>
+            {/* Estate Management Fee Receipt Action */}
+            {businessService === BUSINESS_SERVICES.EST ? (
+              <div
+                className="primary-label-btn d-grid"
+                style={{ marginLeft: "unset", marginRight: "20px", marginTop: "15px", marginBottom: "15px" }}
+                onClick={printESTReceipt}
+              >
+                <DownloadPrefixIcon />
                 {t("EST_FEE_RECEIPT")}
               </div>
             ) : null}

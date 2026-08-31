@@ -284,13 +284,17 @@ const ESTApplicationDetails = () => {
     return display;
   }, [asset, allotment, t, decodedId]);
 
+  // Controls visibility of the top-right download options dropdown menu (Acknowledgement & Fee Receipt)
   const [showOptions, setShowOptions] = useState(false);
+
+  // Retrieve global ULB tenant metadata to supply ULB name, logo, and contact info for generated PDFs
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
 
   const allotmentNo = getAllotmentNo(allotment);
   const isEmployee = !window.location.href.includes("/citizen/");
 
+  // Fetches receipt payment records for this allotment to determine if a fee receipt is available for download
   const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
     {
       tenantId,
@@ -301,6 +305,7 @@ const ESTApplicationDetails = () => {
     { enabled: !!allotmentNo }
   );
 
+  // Populates download actions for the multi-link button (Acknowledgement & Fee Receipt)
   const downloadOptions = useMemo(() => {
     const options = [];
     if (allotment || asset) {
