@@ -11,8 +11,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.upyog.dashboard.pgr.model.RawPgrMetric;
 import org.upyog.dashboard.common.constants.Module;
 import org.upyog.dashboard.config.SchemaMappingConfig;
 import org.upyog.dashboard.extractor.ModuleExtractor;
@@ -92,8 +94,8 @@ public class PgrModuleExtractor implements ModuleExtractor {
 		}
 
 		try {
-			List<Map<String, Object>> combinedResults = executeQueryWithRetry(pgrQueries.getCombinedMetricsQuery(), params);
-			for (Map<String, Object> combinedResult : combinedResults) {
+			List<RawPgrMetric> combinedResults = executeQueryWithRetry(pgrQueries.getCombinedMetricsQuery(), params, RawPgrMetric.class);
+			for (RawPgrMetric combinedResult : combinedResults) {
 				results.add(buildDashboardData(combinedResult, dateStr));
 			}
 		} catch (Exception exception) {
@@ -110,8 +112,8 @@ public class PgrModuleExtractor implements ModuleExtractor {
 	 * @param dateStr        the formatted date string (dd-MM-yyyy) for the extraction target date
 	 * @return a fully populated {@link org.upyog.dashboard.model.DashboardData}
 	 */
-	private DashboardData buildDashboardData(Map<String, Object> combinedResult, String dateStr) {
-		String currentTenantId = (String) combinedResult.get("tenantid");
+	private DashboardData buildDashboardData(RawPgrMetric combinedResult, String dateStr) {
+		String currentTenantId = combinedResult.getTenantid();
 		Map<String, String> parsedHierarchy = hierarchyParser.parseTenantId(currentTenantId);
 
 		return DashboardData.builder()
@@ -132,53 +134,41 @@ public class PgrModuleExtractor implements ModuleExtractor {
 	 * @param combinedResult a single row returned by the combined metrics query
 	 * @return a {@link java.util.LinkedHashMap} of metric names to their structured values
 	 */
-	private Map<String, Object> buildMetrics(Map<String, Object> combinedResult) {
+	private Map<String, Object> buildMetrics(RawPgrMetric combinedResult) {
 		Map<String, Object> metrics = new LinkedHashMap<>();
 		metrics.put("slaAchievement", List.of(Map.of(GROUP_BY, GROUP_BY_DEPARTMENT, BUCKETS,
-				parseJsonBuckets(combinedResult.get("slaachievementjson")))));
+				parseJsonBuckets(combinedResult.getSlaachievementjson()))));
 		metrics.put("completionRate", List.of(Map.of(GROUP_BY, GROUP_BY_DEPARTMENT, BUCKETS,
-				parseJsonBuckets(combinedResult.get("completionratejson")))));
-		metrics.put("uniqueCitizens", getIntegerValue(combinedResult.get("uniquecitizens")));
+				parseJsonBuckets(combinedResult.getCompletionratejson()))));
+		metrics.put("uniqueCitizens", combinedResult.getUniquecitizens() != null ? combinedResult.getUniquecitizens() : 0);
 		metrics.put("todaysComplaints", List.of(
-				Map.of(GROUP_BY, "status", BUCKETS, parseJsonBuckets(combinedResult.get("complaintsbystatusjson"))),
-				Map.of(GROUP_BY, "channel", BUCKETS, parseJsonBuckets(combinedResult.get("complaintsbychanneljson"))),
-				Map.of(GROUP_BY, GROUP_BY_DEPARTMENT, BUCKETS, parseJsonBuckets(combinedResult.get("complaintsbydepartmentjson"))),
-				Map.of(GROUP_BY, "category", BUCKETS, parseJsonBuckets(combinedResult.get("complaintsbycategoryjson")))
+				Map.of(GROUP_BY, "status", BUCKETS, parseJsonBuckets(combinedResult.getComplaintsbystatusjson())),
+				Map.of(GROUP_BY, "channel", BUCKETS, parseJsonBuckets(combinedResult.getComplaintsbychanneljson())),
+				Map.of(GROUP_BY, GROUP_BY_DEPARTMENT, BUCKETS, parseJsonBuckets(combinedResult.getComplaintsbydepartmentjson())),
+				Map.of(GROUP_BY, "category", BUCKETS, parseJsonBuckets(combinedResult.getComplaintsbycategoryjson()))
 		));
 		metrics.put("todaysReopenedComplaints", List.of(Map.of(GROUP_BY, GROUP_BY_DEPARTMENT, BUCKETS,
-				parseJsonBuckets(combinedResult.get("todaysreopenedcomplaintsjson")))));
+				parseJsonBuckets(combinedResult.getTodaysreopenedcomplaintsjson()))));
 		metrics.put("todaysOpenComplaints", List.of(Map.of(GROUP_BY, GROUP_BY_DEPARTMENT, BUCKETS,
-				parseJsonBuckets(combinedResult.get("todaysopencomplaintsjson")))));
+				parseJsonBuckets(combinedResult.getTodaysopencomplaintsjson()))));
 		metrics.put("todaysAssignedComplaints", List.of(Map.of(GROUP_BY, GROUP_BY_DEPARTMENT, BUCKETS,
-				parseJsonBuckets(combinedResult.get("todaysassignedcomplaintsjson")))));
+				parseJsonBuckets(combinedResult.getTodaysassignedcomplaintsjson()))));
 		metrics.put("averageSolutionTime", List.of(Map.of(GROUP_BY, GROUP_BY_DEPARTMENT, BUCKETS,
-				parseJsonBuckets(combinedResult.get("averagesolutiontimejson")))));
+				parseJsonBuckets(combinedResult.getAveragesolutiontimejson()))));
 		metrics.put("todaysRejectedComplaints", List.of(Map.of(GROUP_BY, GROUP_BY_DEPARTMENT, BUCKETS,
-				parseJsonBuckets(combinedResult.get("todaysrejectedcomplaintsjson")))));
+				parseJsonBuckets(combinedResult.getTodaysrejectedcomplaintsjson()))));
 		metrics.put("todaysReassignedComplaints", List.of(Map.of(GROUP_BY, GROUP_BY_DEPARTMENT, BUCKETS,
-				parseJsonBuckets(combinedResult.get("todaysreassignedcomplaintsjson")))));
+				parseJsonBuckets(combinedResult.getTodaysreassignedcomplaintsjson()))));
 		metrics.put("todaysReassignRequestedComplaints", List.of(Map.of(GROUP_BY, GROUP_BY_DEPARTMENT, BUCKETS,
-				parseJsonBuckets(combinedResult.get("todaysreassignrequestedcomplaintsjson")))));
+				parseJsonBuckets(combinedResult.getTodaysreassignrequestedcomplaintsjson()))));
 		metrics.put("todaysClosedComplaints", List.of(Map.of(GROUP_BY, GROUP_BY_DEPARTMENT, BUCKETS,
-				parseJsonBuckets(combinedResult.get("todaysclosedcomplaintsjson")))));
+				parseJsonBuckets(combinedResult.getTodaysclosedcomplaintsjson()))));
 		metrics.put("todaysResolvedComplaints", List.of(Map.of(GROUP_BY, GROUP_BY_DEPARTMENT, BUCKETS,
-				parseJsonBuckets(combinedResult.get("todaysresolvedcomplaintsjson")))));
+				parseJsonBuckets(combinedResult.getTodaysresolvedcomplaintsjson()))));
 		return metrics;
 	}
 
-	/**
-	 * Extracts an {@code Integer} from the given object, returning {@code 0} when the
-	 * object is not a {@link Number}.
-	 *
-	 * @param object the raw value from the query result row; may be {@code null}
-	 * @return the integer value, or {@code 0} if the object is {@code null} or not numeric
-	 */
-	private Integer getIntegerValue(Object object) {
-		if (object instanceof Number number) {
-			return number.intValue();
-		}
-		return 0;
-	}
+ 
 
 	/**
 	 * Deserialises a JSON array string into a list of bucket maps. Returns an empty list
@@ -212,12 +202,12 @@ public class PgrModuleExtractor implements ModuleExtractor {
 	 * @param params the named parameters to bind
 	 * @return the query result as a list of row maps
 	 */
-	private List<Map<String, Object>> executeQueryWithRetry(String query, Map<String, Object> params) {
+	private <T> List<T> executeQueryWithRetry(String query, Map<String, Object> params, Class<T> mappedClass) {
 		int attempt = 0;
 		while (true) {
 			attempt++;
 			try {
-				return namedParameterJdbcTemplate.queryForList(query, params);
+				return namedParameterJdbcTemplate.query(query, params, new BeanPropertyRowMapper<>(mappedClass));
 			} catch (Exception exception) {
 				if (attempt >= dbMaxAttempts) {
 					log.error("DB query failed after {} attempts.", attempt, exception);

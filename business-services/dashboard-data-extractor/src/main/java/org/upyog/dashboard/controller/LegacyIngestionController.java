@@ -18,6 +18,11 @@ import org.upyog.dashboard.service.LegacyIngestionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.upyog.dashboard.service.LegacyBatchIngestionOrchestrator;
+import org.upyog.dashboard.service.LegacyBatchIngestRequest;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.RequestBody;
+
 /**
  * Controller exposing endpoints to trigger bulk historical (legacy) metrics ingestion.
  */
@@ -28,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 public class LegacyIngestionController {
 
     private final LegacyIngestionService legacyIngestionService;
+    private final LegacyBatchIngestionOrchestrator legacyBatchIngestionOrchestrator;
     private final IngestionSummaryRepository summaryRepository;
 
     /**
@@ -97,6 +103,21 @@ public class LegacyIngestionController {
                 months, targetModule != null ? targetModule : "ALL");
 
         LegacyIngestionResponse response = legacyIngestionService.ingestHistoricalDataForLastMonths(months, targetModule);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * Triggers legacy batch DB extraction, SXSSF streaming Excel generation, and downstream ingestion.
+     *
+     * @param request payload containing moduleName, startDate (YYYY-MM-DD), and endDate (YYYY-MM-DD)
+     * @return ResponseEntity with LegacyIngestionResponse
+     */
+    @PostMapping("/batch-ingest")
+    public ResponseEntity<LegacyIngestionResponse> batchIngest(@Valid @RequestBody LegacyBatchIngestRequest request) {
+        log.info("Received request for legacy batch excel extraction & ingestion for module {} (date range: {} to {})",
+                request.getModuleName(), request.getStartDate(), request.getEndDate());
+
+        LegacyIngestionResponse response = legacyBatchIngestionOrchestrator.processLegacyBatchIngest(request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

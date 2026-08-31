@@ -8,8 +8,15 @@ import org.upyog.dashboard.model.IngestionResult;
 import org.upyog.dashboard.registry.TransformerRegistry;
 import org.upyog.dashboard.transformer.ModuleTransformer;
 import org.upyog.dashboard.validator.CommonValidator;
+import org.upyog.dashboard.service.SXSSFExcelGeneratorService;
+import org.upyog.dashboard.config.DashboardProperties;
+import org.upyog.dashboard.model.DashboardData;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Default Spring-managed implementation of {@link DashboardClient}.
@@ -48,6 +55,7 @@ import lombok.RequiredArgsConstructor;
  * 
  * <p>Contributes to the core Property Tax metrics ingestion pipeline.
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class DashboardClientImpl implements DashboardClient {
@@ -73,6 +81,9 @@ public class DashboardClientImpl implements DashboardClient {
      * @see CommonValidator#validate(DashboardPayload)
      */
     private final CommonValidator commonValidator;
+    private final DashboardProperties properties;
+    private final SXSSFExcelGeneratorService excelGeneratorService;
+    private final FileStoreClient fileStoreClient;
 
     // private final ValidatorRegistry validatorRegistry;
     // Un-comment once per-module validators are implemented for all active modules.
@@ -108,8 +119,57 @@ public class DashboardClientImpl implements DashboardClient {
 
         commonValidator.validate(payload);
 
-        // validatorRegistry.get(request.getModule()).validate(payload.getData().get(0).getMetrics());
+        if ("FILESTORE".equalsIgnoreCase(properties.getUploadMode())) {
+            return processViaFileStore(payload, request.getModule().name());
+        }
 
         return loader.load(payload);
+    }
+
+    private IngestionResult processViaFileStore(DashboardPayload payload, String moduleName) {
+        log.info("Executing FILESTORE routing for daily ingestion of module: {}", moduleName);
+        File tempFile = null;
+        try {
+            List<Object> records = new ArrayList<>();
+            for (DashboardData data : payload.getData()) {
+                records.add(data);
+            }
+
+            tempFile = excelGeneratorService.generateExcelFile(moduleName, records);
+            
+            String tenantId = properties.getTenantId();
+            if (payload.getData() != null && !payload.getData().isEmpty()) {
+                String payloadUlb = payload.getData().get(0).getUlb();
+                if (payloadUlb != null && payloadUlb.contains(".")) {
+                    tenantId = payloadUlb.split("\\.")[0];
+                } else if (payloadUlb != null) {
+                    tenantId = payloadUlb;
+                }
+            }
+
+            String fileStoreId = fileStoreClient.uploadFile(tempFile, tenantId, moduleName);
+
+            if (fileStoreId != null) {
+                return IngestionResult.builder()
+                        .ingestionStatus("SUCCESS")
+                        .responseData("{\"fileStoreId\": \"" + fileStoreId + "\"}")
+                        .build();
+            } else {
+                return IngestionResult.builder()
+                        .ingestionStatus("FAILURE")
+                        .failureReason("Failed to upload Excel file to egov-filestore")
+                        .build();
+            }
+        } catch (Exception e) {
+            log.error("Failed to generate and upload Excel file for module {}", moduleName, e);
+            return IngestionResult.builder()
+                    .ingestionStatus("FAILURE")
+                    .failureReason("Exception during FILESTORE routing: " + e.getMessage())
+                    .build();
+        } finally {
+            if (tempFile != null && tempFile.exists()) {
+                tempFile.delete();
+            }
+        }
     }
 }

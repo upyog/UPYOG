@@ -252,8 +252,10 @@ private IngestionResult processDataList(Module module, List<?> dataList, LocalDa
 				}
 
 				if (result != null && IngestionStatus.fromValue(result.getIngestionStatus()).isSuccess()) {
-					if (responseData == null && result.getResponseData() != null) {
-						responseData = result.getResponseData();
+					if (result.getResponseData() != null) {
+						if (responseData == null || responseData.contains("All metrics are zero")) {
+							responseData = result.getResponseData();
+						}
 					}
 				} else {
 					allSuccess = false;
@@ -475,6 +477,16 @@ private IngestionResult buildResult(String status, Module module, LocalDate date
 			try {
 				return Double.parseDouble(s) > 0;
 			} catch (Exception ignored) {
+			}
+		}
+		if (val instanceof java.util.Collection<?> c) {
+			for (Object item : c) {
+				if (isNonZero(item)) return true;
+			}
+		}
+		if (val instanceof java.util.Map<?, ?> m) {
+			for (Object v : m.values()) {
+				if (isNonZero(v)) return true;
 			}
 		}
 		return false;

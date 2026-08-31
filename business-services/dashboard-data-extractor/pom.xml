@@ -101,11 +101,7 @@
 			<version>1.0.2</version>
 		</dependency>
 
-		<!-- JDBC & Database -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-jdbc</artifactId>
-		</dependency>
+		<!-- Database Configuration -->
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
@@ -135,6 +131,8 @@
 			<version>4.42.0</version>
 		</dependency>
 
+
+
 		<!-- SpringDoc OpenAPI -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
@@ -142,23 +140,13 @@
 			<version>2.3.0</version>
 		</dependency>
 
-		<!-- OpenFeign Support -->
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-openfeign</artifactId>
-		</dependency>
+
 
 		<!-- Testing Support -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.egov.services</groupId>
-			<artifactId>tracer</artifactId>
-			<version>2.9.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>

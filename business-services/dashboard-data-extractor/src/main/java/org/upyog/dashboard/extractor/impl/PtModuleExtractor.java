@@ -12,7 +12,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
+import org.upyog.dashboard.pt.model.RawPtMetric;
+import org.upyog.dashboard.pt.model.RawPtCollection;
 import org.upyog.dashboard.common.constants.Module;
 import org.upyog.dashboard.config.SchemaMappingConfig;
 import org.upyog.dashboard.extractor.ModuleExtractor;
@@ -85,12 +89,12 @@ public class PtModuleExtractor implements ModuleExtractor<List<PTDTO>> {
 			throw new IllegalStateException("No query mapping found in schema-mapping.yml for module PT");
 		}
 
-		List<Map<String, Object>> combinedResults = executeQueryWithRetry(ptQueries.getCombinedMetricsQuery(), params);
-		List<Map<String, Object>> collectionRowsRaw = executeQueryWithRetry(ptQueries.getCollectionMetricsQuery(), params);
+		List<RawPtMetric> combinedResults = executeQueryWithRetry(ptQueries.getCombinedMetricsQuery(), params, RawPtMetric.class);
+		List<RawPtCollection> collectionRowsRaw = executeQueryWithRetry(ptQueries.getCollectionMetricsQuery(), params, RawPtCollection.class);
 		Map<String, List<PTCollectionDTO>> collectionsByTenant = groupCollectionsByTenant(collectionRowsRaw);
 
 		List<PTDTO> results = new ArrayList<>();
-		for (Map<String, Object> row : combinedResults) {
+		for (RawPtMetric row : combinedResults) {
 			results.add(buildPtDto(row, dateStr, collectionsByTenant));
 		}
 		return results;
@@ -103,17 +107,12 @@ public class PtModuleExtractor implements ModuleExtractor<List<PTDTO>> {
 	 * @param collectionRowsRaw the raw rows returned by the collection metrics query
 	 * @return a map from tenant ID to the list of {@link PTCollectionDTO} records for that tenant
 	 */
-	private Map<String, List<PTCollectionDTO>> groupCollectionsByTenant(List<Map<String, Object>> collectionRowsRaw) {
+	private Map<String, List<PTCollectionDTO>> groupCollectionsByTenant(List<RawPtCollection> collectionRowsRaw) {
 		Map<String, List<PTCollectionDTO>> collectionsByTenant = new HashMap<>();
-		for (Map<String, Object> row : collectionRowsRaw) {
-			String currentTenant = (String) row.get("tenantid");
-			PTCollectionDTO dto = PTCollectionDTO.builder()
-					.usageCategory((String) row.get(PTDatabaseConstants.USAGE_CATEGORY))
-					.paymentMode((String) row.get(PTDatabaseConstants.PAYMENT_MODE))
-					.paymentId((String) row.get(PTDatabaseConstants.PAYMENT_ID))
-					.taxHeadCode((String) row.get(PTDatabaseConstants.TAX_HEAD_CODE))
-					.taxHeadAmount(getNullableDouble(row, PTDatabaseConstants.TAX_HEAD_AMOUNT))
-					.build();
+		for (RawPtCollection row : collectionRowsRaw) {
+			String currentTenant = row.getTenantid();
+			PTCollectionDTO dto = new PTCollectionDTO();
+			BeanUtils.copyProperties(row, dto);
 			collectionsByTenant.computeIfAbsent(currentTenant, k -> new ArrayList<>()).add(dto);
 		}
 		return collectionsByTenant;
@@ -128,22 +127,12 @@ public class PtModuleExtractor implements ModuleExtractor<List<PTDTO>> {
 	 * @param collectionsByTenant a map from tenant ID to its collection records
 	 * @return a fully populated {@link PTDTO}
 	 */
-	private PTDTO buildPtDto(Map<String, Object> row, String dateStr, Map<String, List<PTCollectionDTO>> collectionsByTenant) {
-		String currentTenantId = (String) row.get("tenantid");
+	private PTDTO buildPtDto(RawPtMetric row, String dateStr, Map<String, List<PTCollectionDTO>> collectionsByTenant) {
+		String currentTenantId = row.getTenantid();
 		Map<String, String> parsedHierarchy = hierarchyParser.parseTenantId(currentTenantId);
 
-		PTAggregatedData combinedData = PTAggregatedData.builder()
-				.assessments(getNullableInt(row, PTDatabaseConstants.ASSESSMENTS))
-				.todaysTotalApplications(getNullableInt(row, PTDatabaseConstants.TODAYS_TOTAL_APPLICATIONS))
-				.todaysClosedApplications(getNullableInt(row, PTDatabaseConstants.TODAYS_CLOSED_APPLICATIONS))
-				.noOfPropertiesPaidToday(getNullableInt(row, PTDatabaseConstants.NO_OF_PROPERTIES_PAID_TODAY))
-				.todaysApprovedApplications(getNullableInt(row, PTDatabaseConstants.TODAYS_APPROVED_APPLICATIONS))
-				.todaysApprovedApplicationsWithinSLA(getNullableInt(row, PTDatabaseConstants.TODAYS_APPROVED_APPLICATIONS_WITHIN_SLA))
-				.avgDaysForApplicationApproval(getNullableInt(row, PTDatabaseConstants.AVG_DAYS_FOR_APPLICATION_APPROVAL))
-				.propertiesRegisteredJson(getStringValue(row.get(PTDatabaseConstants.PROPERTIES_REGISTERED_JSON)))
-				.assessedPropertiesJson(getStringValue(row.get(PTDatabaseConstants.ASSESSED_PROPERTIES_JSON)))
-				.movedApplicationsJson(getStringValue(row.get(PTDatabaseConstants.MOVED_APPLICATIONS_JSON)))
-				.build();
+		PTAggregatedData combinedData = new PTAggregatedData();
+		BeanUtils.copyProperties(row, combinedData);
 
 		List<PTCollectionDTO> tenantCollections = collectionsByTenant.getOrDefault(currentTenantId, List.of());
 
@@ -167,43 +156,7 @@ public class PtModuleExtractor implements ModuleExtractor<List<PTDTO>> {
 	 * @param column the column alias key
 	 * @return the double value, or {@code null} if the column is missing or SQL {@code NULL}
 	 */
-	private Double getNullableDouble(Map<String, Object> row, String column) {
-		Object value = row.get(column);
-		if (value instanceof Number number) {
-			return number.doubleValue();
-		}
-		return null;
-	}
-
-	/**
-	 * Extracts an {@code Integer} value from a result-set row map, returning {@code null}
-	 * when the column value is absent or not a {@link Number}.
-	 *
-	 * @param row    the row map from the JDBC query result
-	 * @param column the column alias key
-	 * @return the integer value, or {@code null} if the column is missing or SQL {@code NULL}
-	 */
-	private Integer getNullableInt(Map<String, Object> row, String column) {
-		Object value = row.get(column);
-		if (value instanceof Number number) {
-			return number.intValue();
-		}
-		return null;
-	}
-
-	/**
-	 * Converts the given object to its {@link Object#toString()} representation,
-	 * returning {@code null} for {@code null} input.
-	 *
-	 * @param obj the object to convert; may be {@code null}
-	 * @return the string representation, or {@code null}
-	 */
-	private String getStringValue(Object obj) {
-		if (obj == null) {
-			return null;
-		}
-		return obj.toString();
-	}
+	
 
 	/**
 	 * Executes the given named-parameter SQL query against the PT data source with
@@ -214,12 +167,12 @@ public class PtModuleExtractor implements ModuleExtractor<List<PTDTO>> {
 	 * @param params the named parameters to bind
 	 * @return the query result as a list of row maps
 	 */
-	private List<Map<String, Object>> executeQueryWithRetry(String query, Map<String, Object> params) {
+	private <T> List<T> executeQueryWithRetry(String query, Map<String, Object> params, Class<T> mappedClass) {
 		int attempt = 0;
 		while (true) {
 			attempt++;
 			try {
-				return namedParameterJdbcTemplate.queryForList(query, params);
+				return namedParameterJdbcTemplate.query(query, params, new BeanPropertyRowMapper<>(mappedClass));
 			} catch (Exception exception) {
 				if (attempt >= dbMaxAttempts) {
 					log.error("PtModuleExtractor | DB query failed after {} attempts.", attempt, exception);

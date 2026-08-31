@@ -7,8 +7,10 @@ import lombok.Getter;
 /**
  * Centralized application properties configuration class.
  *
- * <p>Retrieves properties from {@code application.properties} without default fallbacks
- * to ensure that missing configuration keys cause a fail-fast startup failure.
+ * <p>
+ * Retrieves properties from {@code application.properties} without default
+ * fallbacks to ensure that missing configuration keys cause a fail-fast startup
+ * failure.
  */
 @Getter
 @Component
@@ -130,6 +132,17 @@ public class DashboardProperties {
     private int dailyCatchUpLimitDays;
 
     // Toggle for persister vs direct JDBC
-    @Value("${dashboard-data.persister.enabled:true}")
+    @Value("${dashboard-data.persister.enabled}")
     private boolean persisterEnabled;
+
+    // Upload mode (API or FILESTORE)
+    @Value("${dashboard-data.upload-mode}")
+    private String uploadMode;
+
+    // FileStore properties
+    @Value("${egov.filestore.host}")
+    private String filestoreHost;
+
+    @Value("${egov.filestore.upload.endpoint}")
+    private String filestoreUploadEndpoint;
 }

@@ -11,8 +11,10 @@ import java.util.Map;
 
 import jakarta.annotation.PostConstruct;
 
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.BeanUtils;
 import org.upyog.dashboard.chb.constants.CHBDatabaseConstants;
 import org.upyog.dashboard.chb.dto.CHBAggregatedData;
 import org.upyog.dashboard.chb.dto.CHBDTO;
@@ -23,6 +25,7 @@ import org.upyog.dashboard.config.SchemaMappingConfig;
 import org.upyog.dashboard.extractor.ModuleExtractor;
 import org.upyog.dashboard.model.UserInfo;
 import org.upyog.dashboard.model.UserSearchResponse;
+import org.upyog.dashboard.chb.model.RawChbMetric;
 import org.upyog.dashboard.service.OAuthTokenService;
 import org.upyog.dashboard.util.HierarchyParser;
 
@@ -95,8 +98,8 @@ public class ChbModuleExtractor implements ModuleExtractor<List<CHBDTO>> {
             throw new IllegalStateException("No query mapping found in chb-schema-mapping.yml for module CHB");
         }
 
-        List<Map<String, Object>> combinedResults = executeQueryWithRetry(chbQueries.getCombinedMetricsQuery(), params);
-        for (Map<String, Object> row : combinedResults) {
+        List<RawChbMetric> combinedResults = executeQueryWithRetry(chbQueries.getCombinedMetricsQuery(), params, RawChbMetric.class);
+        for (RawChbMetric row : combinedResults) {
             results.add(buildChbDto(row, dateStr));
         }
         return results;
@@ -109,20 +112,12 @@ public class ChbModuleExtractor implements ModuleExtractor<List<CHBDTO>> {
      * @param dateStr the formatted date string (dd-MM-yyyy) for the extraction target date
      * @return a fully populated {@link CHBDTO}
      */
-    private CHBDTO buildChbDto(Map<String, Object> row, String dateStr) {
-        String currentTenantId = (String) row.get("tenantid");
+    private CHBDTO buildChbDto(RawChbMetric row, String dateStr) {
+        String currentTenantId = row.getTenantid();
         Map<String, String> parsedHierarchy = hierarchyParser.parseTenantId(currentTenantId);
 
         CHBAggregatedData combinedData = new CHBAggregatedData();
-        combinedData.setTotalActiveVenueAvailable(getNullableInt(row, CHBDatabaseConstants.TOTAL_ACTIVE_VENUE_AVAILABLE));
-        combinedData.setTotalApplicationReceived(getNullableInt(row, CHBDatabaseConstants.TOTAL_APPLICATION_RECEIVED));
-
-        Double totalCol = getNullableDouble(row, CHBDatabaseConstants.TOTAL_COLLECTIONS);
-        combinedData.setTotalCollections(totalCol != null ? totalCol.intValue() : null);
-
-        combinedData.setNoShowBookings(getNullableInt(row, CHBDatabaseConstants.NO_SHOW_BOOKINGS));
-        combinedData.setBookingsJson(getStringValue(row.get(CHBDatabaseConstants.BOOKINGS_JSON)));
-        combinedData.setCreatedByListJson(getStringValue(row.get(CHBDatabaseConstants.CREATED_BY_LIST_JSON)));
+        BeanUtils.copyProperties(row, combinedData);
         combinedData.setBookingTypeJson(buildBookingTypeJson(combinedData.getCreatedByListJson()));
 
         return CHBDTO.builder()
@@ -136,51 +131,7 @@ public class ChbModuleExtractor implements ModuleExtractor<List<CHBDTO>> {
                 .build();
     }
 
-    /**
-     * Extracts a {@code Double} value from a result-set row map, returning {@code null}
-     * when the column value is absent or not a {@link Number}.
-     *
-     * @param row    the row map from the JDBC query result
-     * @param column the column alias key
-     * @return the double value, or {@code null} if the column is missing or SQL {@code NULL}
-     */
-    private Double getNullableDouble(Map<String, Object> row, String column) {
-        Object value = row.get(column);
-        if (value instanceof Number number) {
-            return number.doubleValue();
-        }
-        return null;
-    }
-
-    /**
-     * Extracts an {@code Integer} value from a result-set row map, returning {@code null}
-     * when the column value is absent or not a {@link Number}.
-     *
-     * @param row    the row map from the JDBC query result
-     * @param column the column alias key
-     * @return the integer value, or {@code null} if the column is missing or SQL {@code NULL}
-     */
-    private Integer getNullableInt(Map<String, Object> row, String column) {
-        Object value = row.get(column);
-        if (value instanceof Number number) {
-            return number.intValue();
-        }
-        return null;
-    }
-
-    /**
-     * Converts the given object to its {@link Object#toString()} representation,
-     * returning {@code null} for {@code null} input.
-     *
-     * @param obj the object to convert; may be {@code null}
-     * @return the string representation, or {@code null}
-     */
-    private String getStringValue(Object obj) {
-        if (obj == null) {
-            return null;
-        }
-        return obj.toString();
-    }
+ 
 
     /**
      * Derives the booking-type classification JSON (online vs. offline) from the
@@ -276,12 +227,12 @@ public class ChbModuleExtractor implements ModuleExtractor<List<CHBDTO>> {
      * @param params the named parameters to bind
      * @return the query result as a list of row maps
      */
-    private List<Map<String, Object>> executeQueryWithRetry(String query, Map<String, Object> params) {
+    private <T> List<T> executeQueryWithRetry(String query, Map<String, Object> params, Class<T> mappedClass) {
         int attempt = 0;
         while (true) {
             attempt++;
             try {
-                return namedParameterJdbcTemplate.queryForList(query, params);
+                return namedParameterJdbcTemplate.query(query, params, new BeanPropertyRowMapper<>(mappedClass));
             } catch (Exception e) {
                 if (attempt >= dbMaxAttempts) {
                     log.error("ChbModuleExtractor | DB query failed after {} attempts.", attempt, e);

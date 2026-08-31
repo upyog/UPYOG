@@ -1,8 +1,6 @@
 package org.upyog.dashboard.service.impl;
 
 import org.upyog.dashboard.model.ErrorLogDTO;
-
-
 import org.upyog.dashboard.util.CommonUtils;
 import org.upyog.dashboard.repository.querybuilder.AuditQueryBuilder;
 
@@ -11,7 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.upyog.dashboard.entity.DailyIngestionData;
 import org.upyog.dashboard.model.DashboardData;
@@ -24,12 +23,16 @@ import org.upyog.dashboard.util.JsonUtil;
 public class JdbcAuditServiceImpl implements AuditService {
 
     private static final Logger log = LoggerFactory.getLogger(JdbcAuditServiceImpl.class);
+    
+    // Constants to fix Issue 3 (Hardcoded Values)
+    private static final String STATUS_FAILURE = "FAILURE";
+    private static final String SYSTEM_USER = "SYSTEM";
 
     @Autowired
     private AuditQueryBuilder queryBuilder;
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -46,16 +49,29 @@ public class JdbcAuditServiceImpl implements AuditService {
                     .pushDate(first != null ? first.getDate() : null)
                     .requestData(JsonUtil.toJsonString(requestJson, objectMapper))
                     .responseData(JsonUtil.toJsonString(responseOrError, objectMapper))
-                    .ingestionStatus(status).createdBy("SYSTEM")
-                    .createdTime(now).lastModifiedBy("SYSTEM").lastModifiedTime(now).build();
+                    .ingestionStatus(status).createdBy(SYSTEM_USER)
+                    .createdTime(now).lastModifiedBy(SYSTEM_USER).lastModifiedTime(now).build();
 
             String sqlDetail = queryBuilder.getInsertIngestionDetailQuery();
-            jdbcTemplate.update(sqlDetail,
-                    record.getModuleIngestionId(), record.getTenantId(), record.getModuleName(), record.getPushDate(),
-                    record.getRequestData(), record.getResponseData(), record.getIngestionStatus(), record.getExceptionCode(),
-                    record.getCreatedBy(), record.getCreatedTime(), record.getLastModifiedBy(), record.getLastModifiedTime());
+            
+            // Fix Issue 2: Using MapSqlParameterSource instead of positional params
+            MapSqlParameterSource detailParams = new MapSqlParameterSource()
+                    .addValue("moduleIngestionId", record.getModuleIngestionId())
+                    .addValue("tenantId", record.getTenantId())
+                    .addValue("moduleName", record.getModuleName())
+                    .addValue("pushDate", record.getPushDate())
+                    .addValue("requestData", record.getRequestData())
+                    .addValue("responseData", record.getResponseData())
+                    .addValue("ingestionStatus", record.getIngestionStatus())
+                    .addValue("exceptionCode", record.getExceptionCode())
+                    .addValue("createdBy", record.getCreatedBy())
+                    .addValue("createdTime", record.getCreatedTime())
+                    .addValue("lastModifiedBy", record.getLastModifiedBy())
+                    .addValue("lastModifiedTime", record.getLastModifiedTime());
+                    
+            namedParameterJdbcTemplate.update(sqlDetail, detailParams);
 
-            if ("FAILURE".equals(status)) {
+            if (STATUS_FAILURE.equals(status)) {
                 ErrorLogDTO errorLog = ErrorLogDTO.builder()
                         .id(CommonUtils.generateUUID())
                         .tenantId(first != null ? first.getUlb() : null)
@@ -63,13 +79,22 @@ public class JdbcAuditServiceImpl implements AuditService {
                         .errorDate(first != null ? first.getDate() : null)
                         .issueDescription(responseOrError)
                         .createdTime(now)
-                        .createdBy("SYSTEM")
+                        .createdBy(SYSTEM_USER)
                         .build();
 
                 String sqlError = queryBuilder.getInsertAdapterIngestionErrorLogQuery();
-                jdbcTemplate.update(sqlError,
-                        errorLog.getId(), errorLog.getTenantId(), errorLog.getModuleName(), errorLog.getErrorDate(),
-                        errorLog.getIssueDescription(), errorLog.getCreatedTime(), errorLog.getCreatedBy());
+                
+                // Fix Issue 4: Using MapSqlParameterSource
+                MapSqlParameterSource errorParams = new MapSqlParameterSource()
+                        .addValue("id", errorLog.getId())
+                        .addValue("tenantId", errorLog.getTenantId())
+                        .addValue("moduleName", errorLog.getModuleName())
+                        .addValue("errorDate", errorLog.getErrorDate())
+                        .addValue("issueDescription", errorLog.getIssueDescription())
+                        .addValue("createdTime", errorLog.getCreatedTime())
+                        .addValue("createdBy", errorLog.getCreatedBy());
+                        
+                namedParameterJdbcTemplate.update(sqlError, errorParams);
             }
         } catch (Exception exception) {
             log.error("JdbcAuditServiceImpl | failed to push ingestion record to Database", exception);

@@ -28,6 +28,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.upyog.dashboard.pt.model.RawPtMetric;
+import org.upyog.dashboard.pt.model.RawPtCollection;
 import org.upyog.dashboard.api.DashboardClientImpl;
 import org.upyog.dashboard.common.constants.Module;
 import org.upyog.dashboard.config.DashboardProperties;
@@ -166,7 +169,10 @@ class DateIngestionFlowIntegrationTest {
         TestUtils.setField(httpLoader, "dashboardProperties", dashboardProperties);
 
         // 6. Setup DashboardClientImpl
-        dashboardClient = new DashboardClientImpl(transformerRegistry, httpLoader, commonValidator);
+        dashboardClient = new DashboardClientImpl(transformerRegistry, httpLoader, commonValidator,
+                org.mockito.Mockito.mock(org.upyog.dashboard.config.DashboardProperties.class),
+                org.mockito.Mockito.mock(org.upyog.dashboard.service.SXSSFExcelGeneratorService.class),
+                org.mockito.Mockito.mock(org.upyog.dashboard.api.FileStoreClient.class));
 
         // 7. Setup DailyIngestionService
         dailyIngestionService = new DailyIngestionService(dashboardClient, extractorRegistry, schemaMappingConfig, summaryRepository, dashboardProperties, objectMapper);
@@ -183,35 +189,39 @@ class DateIngestionFlowIntegrationTest {
         LocalDate targetDate = LocalDate.of(2026, 7, 15);
 
         // 1. Mock DB query responses for the extraction phase
-        Map<String, Object> combinedMap = new HashMap<>();
-        combinedMap.put("tenantid", "pg.citya.Test.Block 4");
-        combinedMap.put("assessments", 50);
-        combinedMap.put("todaystotalapplications", 120);
-        combinedMap.put("todaysclosedapplications", 90);
-        combinedMap.put("noofpropertiespaidtoday", 35);
-        combinedMap.put("todaysapprovedapplications", 85);
-        combinedMap.put("todaysapprovedapplicationswithinsla", 80);
-        combinedMap.put("avgdaysforapplicationapproval", 3);
-        combinedMap.put("propertiesregisteredjson", "[{\"name\":\"2025-26\",\"value\":1500}]");
-        combinedMap.put("assessedpropertiesjson", "[{\"name\":\"RESIDENTIAL\",\"value\":1000},{\"name\":\"COMMERCIAL\",\"value\":500}]");
+        RawPtMetric metric = RawPtMetric.builder()
+                .tenantid("pg.citya.Test.Block 4")
+                .assessments(50)
+                .todaysTotalApplications(120)
+                .todaysClosedApplications(90)
+                .noOfPropertiesPaidToday(35)
+                .todaysApprovedApplications(85)
+                .todaysApprovedApplicationsWithinSLA(80)
+                .avgDaysForApplicationApproval(3)
+                .propertiesRegisteredJson("[{\"name\":\"2025-26\",\"value\":1500}]")
+                .assessedPropertiesJson("[{\"name\":\"RESIDENTIAL\",\"value\":1000},{\"name\":\"COMMERCIAL\",\"value\":500}]")
+                .build();
 
-        when(namedParameterJdbcTemplate.queryForList(
+        when(namedParameterJdbcTemplate.query(
                 eq("SELECT assessments, todaystotalapplications FROM pt_metrics WHERE tenantId = :tenantId"), 
-                Mockito.<Map<String, ?>>any()))
-                .thenReturn(List.of(combinedMap));
+                Mockito.<Map<String, ?>>any(),
+                any(RowMapper.class)))
+                .thenReturn(List.of(metric));
 
-        Map<String, Object> colMap = new HashMap<>();
-        colMap.put("tenantid", "pg.citya.Test.Block 4");
-        colMap.put("usage_category", "RESIDENTIAL");
-        colMap.put("paymentmode", "ONLINE");
-        colMap.put("paymentid", "PAY-101");
-        colMap.put("taxheadcode", "PT_TAX");
-        colMap.put("tax_head_amount", 15000.0);
+        RawPtCollection collection = RawPtCollection.builder()
+                .tenantid("pg.citya.Test.Block 4")
+                .usageCategory("RESIDENTIAL")
+                .paymentMode("ONLINE")
+                .paymentId("PAY-101")
+                .taxHeadCode("PT_TAX")
+                .taxHeadAmount(15000.0)
+                .build();
 
-        when(namedParameterJdbcTemplate.queryForList(
+        when(namedParameterJdbcTemplate.query(
                 eq("SELECT usage_category, paymentmode, taxheadcode, tax_head_amount FROM pt_collection WHERE tenantId = :tenantId"), 
-                Mockito.<Map<String, ?>>any()))
-                .thenReturn(List.of(colMap));
+                Mockito.<Map<String, ?>>any(),
+                any(RowMapper.class)))
+                .thenReturn(List.of(collection));
 
         // 2. Mock OAuthTokenService response for the API loading phase
         when(oAuthTokenService.getToken()).thenReturn("test-access-token-999");
@@ -264,12 +274,13 @@ class DateIngestionFlowIntegrationTest {
     void testCompleteIngestionFlow_ViaRestController() throws Exception {
         LocalDate targetDate = LocalDate.of(2026, 7, 20);
 
-        Map<String, Object> combinedMap = new HashMap<>();
-        combinedMap.put("tenantid", "pg.citya.Test.Block 4");
-        combinedMap.put("assessments", 10);
-        combinedMap.put("todaystotalapplications", 25);
-        when(namedParameterJdbcTemplate.queryForList(eq("SELECT assessments, todaystotalapplications FROM pt_metrics WHERE tenantId = :tenantId"), Mockito.<Map<String, ?>>any())).thenReturn(List.of(combinedMap));
-        when(namedParameterJdbcTemplate.queryForList(eq("SELECT usage_category, paymentmode, taxheadcode, tax_head_amount FROM pt_collection WHERE tenantId = :tenantId"), Mockito.<Map<String, ?>>any())).thenReturn(Collections.emptyList());
+        RawPtMetric metric = RawPtMetric.builder()
+                .tenantid("pg.citya.Test.Block 4")
+                .assessments(10)
+                .todaysTotalApplications(25)
+                .build();
+        when(namedParameterJdbcTemplate.query(eq("SELECT assessments, todaystotalapplications FROM pt_metrics WHERE tenantId = :tenantId"), Mockito.<Map<String, ?>>any(), any(RowMapper.class))).thenReturn(List.of(metric));
+        when(namedParameterJdbcTemplate.query(eq("SELECT usage_category, paymentmode, taxheadcode, tax_head_amount FROM pt_collection WHERE tenantId = :tenantId"), Mockito.<Map<String, ?>>any(), any(RowMapper.class))).thenReturn(Collections.emptyList());
 
         when(oAuthTokenService.getToken()).thenReturn("token-abc");
         when(dashboardFeignClient.ingestMetrics(eq(java.net.URI.create(targetApiUrl)), Mockito.anyString()))
@@ -291,11 +302,12 @@ class DateIngestionFlowIntegrationTest {
     void testCompleteIngestionFlow_ApiFailure_DoesNotUpdateTracker() throws Exception {
         LocalDate targetDate = LocalDate.of(2026, 7, 18);
 
-        Map<String, Object> combinedMap = new HashMap<>();
-        combinedMap.put("tenantid", "pg.citya.Test.Block 4");
-        combinedMap.put("assessments", 50);
-        when(namedParameterJdbcTemplate.queryForList(eq("SELECT assessments, todaystotalapplications FROM pt_metrics WHERE tenantId = :tenantId"), Mockito.<Map<String, ?>>any())).thenReturn(List.of(combinedMap));
-        when(namedParameterJdbcTemplate.queryForList(eq("SELECT usage_category, paymentmode, taxheadcode, tax_head_amount FROM pt_collection WHERE tenantId = :tenantId"), Mockito.<Map<String, ?>>any())).thenReturn(Collections.emptyList());
+        RawPtMetric metric = RawPtMetric.builder()
+                .tenantid("pg.citya.Test.Block 4")
+                .assessments(50)
+                .build();
+        when(namedParameterJdbcTemplate.query(eq("SELECT assessments, todaystotalapplications FROM pt_metrics WHERE tenantId = :tenantId"), Mockito.<Map<String, ?>>any(), any(RowMapper.class))).thenReturn(List.of(metric));
+        when(namedParameterJdbcTemplate.query(eq("SELECT usage_category, paymentmode, taxheadcode, tax_head_amount FROM pt_collection WHERE tenantId = :tenantId"), Mockito.<Map<String, ?>>any(), any(RowMapper.class))).thenReturn(Collections.emptyList());
         when(oAuthTokenService.getToken()).thenReturn("token-123");
 
         // Mock API throwing exception (e.g. HTTP 500 Server Error)
