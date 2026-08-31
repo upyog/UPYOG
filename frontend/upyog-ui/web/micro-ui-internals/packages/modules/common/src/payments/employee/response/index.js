@@ -53,18 +53,35 @@ export const SuccessfulPayment = (props) => {
     setDisplayMenu(false);
   }
   useEffect(() => {
-    const fetchData = async () => {
-      const tenantId = Digit.ULBService.getCurrentTenantId();
-      const state = Digit.ULBService.getStateId();
-      const payments = await Digit.PaymentService.getReciept(tenantId, businessService, { receiptNumbers: receiptNumber });
-      let response = { filestoreIds: [payments.Payments[0]?.fileStoreId] };
-      if (!payments.Payments[0]?.fileStoreId) {
-        response = await Digit.PaymentService.generatePdf(state, { Payments: payments.Payments }, generatePdfKey);
-      }
-    };
+    return () => {
+      const fetchData = async () => {
+        const isCustomService = [
+          "chb-services",
+          "adv-services",
+          "sv-services",
+          "pet-services",
+          "request-service.water_tanker",
+          "request-service.mobile_toilet",
+          "request-service.tree_pruning",
+          "NDC",
+          "est-services",
+        ].includes(businessService);
 
-    fetchData();
-    queryClient.clear();
+        if (isCustomService) return;
+
+        const tenantId = Digit.ULBService.getCurrentTenantId();
+        const state = Digit.ULBService.getStateId();
+        const payments = await Digit.PaymentService.getReciept(tenantId, businessService, { receiptNumbers: receiptNumber });
+        let response = { filestoreIds: [payments.Payments[0]?.fileStoreId] };
+        if (!payments.Payments[0]?.fileStoreId && generatePdfKey) {
+          response = await Digit.PaymentService.generatePdf(state, { Payments: payments.Payments }, generatePdfKey);
+        }
+      };
+
+      // call the function
+      fetchData();
+      queryClient.clear();
+    };
   }, []);
   useEffect(() => {
     switch (selectedAction) {
