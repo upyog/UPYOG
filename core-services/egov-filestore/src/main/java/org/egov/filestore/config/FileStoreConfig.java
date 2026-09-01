@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Configuration
 @Getter
+@Setter
 public class FileStoreConfig {
 
 	/**
@@ -22,11 +24,20 @@ public class FileStoreConfig {
 	@Value("#{'${allowed.audio.video.formats}'.split(',')}")
 	private List<String> allowedAudioVideoFormats;
 
-	/**
-	 * Maximum allowed size (bytes) for direct audio/video uploads. Defaults to 100 MB.
-	 */
-	@Value("${media.upload.max.size.bytes:104857600}")
+	@Value("${media.upload.max.size.bytes}")
 	private Long mediaUploadMaxSizeBytes;
+
+	@Value("${pdf.upload.max.size.bytes}")
+	private Long pdfUploadMaxSizeBytes;
+
+	@Value("${image.upload.max.size.bytes}")
+	private Long imageUploadMaxSizeBytes;
+
+	@Value("${document.upload.max.size.bytes}")
+	private Long documentUploadMaxSizeBytes;
+
+	@Value("${file.upload.max.size.bytes}")
+	private Long fileUploadMaxSizeBytes;
 
 	@Value("${image.charset.type}")
 	private String imageCharsetType;
@@ -62,12 +73,13 @@ public class FileStoreConfig {
 	
 	@PostConstruct
 	private void enrichKeysetForFormats() {
-		allowedKeySet = allowedFormatsMap.keySet();
+		if (allowedFormatsMap != null) {
+			allowedKeySet = allowedFormatsMap.keySet();
+		}
 	}
 
 	// -------------------------------------------------------------------------
-	// Explicit getters for new fields – ensures these are accessible even when
-	// Lombok's annotation processor fails on newer JDKs (Java 21/23 + Lombok <1.18.24)
+	// Explicit getters and setters – ensures accessibility across environments
 	// -------------------------------------------------------------------------
 
 	public List<String> getAllowedAudioVideoFormats() {
@@ -84,6 +96,46 @@ public class FileStoreConfig {
 
 	public void setMediaUploadMaxSizeBytes(Long mediaUploadMaxSizeBytes) {
 		this.mediaUploadMaxSizeBytes = mediaUploadMaxSizeBytes;
+	}
+
+	public Long getPdfUploadMaxSizeBytes() {
+		return pdfUploadMaxSizeBytes;
+	}
+
+	public void setPdfUploadMaxSizeBytes(Long pdfUploadMaxSizeBytes) {
+		this.pdfUploadMaxSizeBytes = pdfUploadMaxSizeBytes;
+	}
+
+	public Long getImageUploadMaxSizeBytes() {
+		return imageUploadMaxSizeBytes;
+	}
+
+	public void setImageUploadMaxSizeBytes(Long imageUploadMaxSizeBytes) {
+		this.imageUploadMaxSizeBytes = imageUploadMaxSizeBytes;
+	}
+
+	public Long getDocumentUploadMaxSizeBytes() {
+		return documentUploadMaxSizeBytes;
+	}
+
+	public void setDocumentUploadMaxSizeBytes(Long documentUploadMaxSizeBytes) {
+		this.documentUploadMaxSizeBytes = documentUploadMaxSizeBytes;
+	}
+
+	public Long getFileUploadMaxSizeBytes() {
+		return fileUploadMaxSizeBytes;
+	}
+
+	public void setFileUploadMaxSizeBytes(Long fileUploadMaxSizeBytes) {
+		this.fileUploadMaxSizeBytes = fileUploadMaxSizeBytes;
+	}
+
+	public List<String> getImageFormats() {
+		return imageFormats;
+	}
+
+	public void setImageFormats(List<String> imageFormats) {
+		this.imageFormats = imageFormats;
 	}
 
 	public void setAllowedFormatsMap(Map<String, List<String>> allowedFormatsMap) {

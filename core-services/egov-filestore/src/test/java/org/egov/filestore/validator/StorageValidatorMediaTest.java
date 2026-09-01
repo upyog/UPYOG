@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.filestore.config.FileStoreConfig;
+import org.egov.filestore.config.FileStoreConstants;
 import org.egov.filestore.domain.model.Artifact;
 import org.egov.filestore.domain.model.FileLocation;
 import org.egov.tracer.model.CustomException;
@@ -48,7 +49,7 @@ class StorageValidatorMediaTest {
         Artifact artifact = buildArtifact(file);
 
         CustomException ex = assertThrows(CustomException.class, () -> storageValidator.validateMediaFile(artifact));
-        assertEquals("EG_FILESTORE_INVALID_INPUT", ex.getCode());
+        assertEquals(FileStoreConstants.EG_FILESTORE_INVALID_INPUT, ex.getCode());
     }
 
     @Test
@@ -58,7 +59,7 @@ class StorageValidatorMediaTest {
         Artifact artifact = buildArtifact(file);
 
         CustomException ex = assertThrows(CustomException.class, () -> storageValidator.validateMediaFile(artifact));
-        assertEquals("EG_FILESTORE_INVALID_MEDIA_TYPE", ex.getCode());
+        assertEquals(FileStoreConstants.EG_FILESTORE_INVALID_MEDIA_TYPE, ex.getCode());
     }
 
     @Test
@@ -67,7 +68,7 @@ class StorageValidatorMediaTest {
         Artifact artifact = buildArtifact(file);
 
         CustomException ex = assertThrows(CustomException.class, () -> storageValidator.validateMediaFile(artifact));
-        assertEquals("EG_FILESTORE_INVALID_MEDIA_TYPE", ex.getCode());
+        assertEquals(FileStoreConstants.EG_FILESTORE_INVALID_MEDIA_TYPE, ex.getCode());
     }
 
     @Test
@@ -77,7 +78,7 @@ class StorageValidatorMediaTest {
         Artifact artifact = buildArtifact(file);
 
         CustomException ex = assertThrows(CustomException.class, () -> storageValidator.validateMediaFile(artifact));
-        assertEquals("EG_FILESTORE_MEDIA_TOO_LARGE", ex.getCode());
+        assertEquals(FileStoreConstants.EG_FILESTORE_MEDIA_TOO_LARGE, ex.getCode());
     }
 
     @Test
@@ -89,6 +90,34 @@ class StorageValidatorMediaTest {
 
         assertDoesNotThrow(() -> storageValidator.validateMediaFile(artifact));
     }
+
+    @Test
+    void testValidateFileSize_PdfExceedsLimit_ThrowsCustomException() {
+        fileStoreConfig.setPdfUploadMaxSizeBytes(500L);
+        MockMultipartFile file = new MockMultipartFile("file", "document.pdf", "application/pdf", new byte[1000]);
+
+        CustomException ex = assertThrows(CustomException.class, () -> storageValidator.validateFileSize(file, "pdf"));
+        assertEquals(FileStoreConstants.EG_FILESTORE_FILE_TOO_LARGE, ex.getCode());
+    }
+
+    @Test
+    void testValidateFileSize_ImageExceedsLimit_ThrowsCustomException() {
+        fileStoreConfig.setImageUploadMaxSizeBytes(500L);
+        fileStoreConfig.setImageFormats(Arrays.asList("jpg", "jpeg", "png"));
+        MockMultipartFile file = new MockMultipartFile("file", "photo.jpg", "image/jpeg", new byte[1000]);
+
+        CustomException ex = assertThrows(CustomException.class, () -> storageValidator.validateFileSize(file, "jpg"));
+        assertEquals(FileStoreConstants.EG_FILESTORE_FILE_TOO_LARGE, ex.getCode());
+    }
+
+    @Test
+    void testValidateFileSize_PdfWithinLimit_DoesNotThrow() {
+        fileStoreConfig.setPdfUploadMaxSizeBytes(2000L);
+        MockMultipartFile file = new MockMultipartFile("file", "document.pdf", "application/pdf", new byte[1000]);
+
+        assertDoesNotThrow(() -> storageValidator.validateFileSize(file, "pdf"));
+    }
+
 
     private Artifact buildArtifact(MockMultipartFile file) {
         FileLocation location = new FileLocation("id", "PGR", "tag", "pb.amritsar", "bucket/path/file.mp4", null);
