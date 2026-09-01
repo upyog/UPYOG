@@ -55,15 +55,26 @@ import org.egov.receipt.custom.exception.VoucherCustomException;
 import org.egov.tracer.model.CustomException;
 
 public interface VoucherService {
-	public VoucherResponse createReceiptVoucher(ReceiptReq req, FinanceMdmsModel finSerMdms, String collectionVersion) throws CustomException;
-	public VoucherResponse cancelReceiptVoucher(ReceiptReq req,  String tenantId, Set<String> voucherNumbers) throws CustomException, VoucherCustomException;
-	public boolean isVoucherCreationEnabled(Receipt receipt, RequestInfo req, FinanceMdmsModel finSerMdms) throws CustomException;
-	public boolean isTenantEnabledInFinanceModule(ReceiptReq req, FinanceMdmsModel finSerMdms) throws VoucherCustomException;
+	public VoucherResponse createReceiptVoucher(ReceiptReq req, FinanceMdmsModel finSerMdms, String collectionVersion)
+			throws CustomException;
+
+	public VoucherResponse cancelReceiptVoucher(ReceiptReq req, String tenantId, Set<String> voucherNumbers)
+			throws CustomException, VoucherCustomException;
+
+	public boolean isVoucherCreationEnabled(Receipt receipt, RequestInfo req, FinanceMdmsModel finSerMdms)
+			throws CustomException;
+
+	public boolean isTenantEnabledInFinanceModule(ReceiptReq req, FinanceMdmsModel finSerMdms)
+			throws VoucherCustomException;
+
 	VoucherResponse getVoucherByServiceAndRefDoc(RequestInfo requestInfo, String tenantId, String serviceCode,
 			String referenceDoc) throws VoucherCustomException, UnsupportedEncodingException;
+
 	VoucherResponse getVouchers(VoucherSearchCriteria criteria, RequestInfo requestInfo, String tenantId)
 			throws VoucherCustomException;
+
 	VoucherResponse createVoucher(List<Voucher> vouchers, RequestInfo requestInfo, String tenantId)
 			throws VoucherCustomException;
+
 	VoucherResponse processReversalVoucher(List<InstrumentContract> instruments, RequestInfo requestInfo);
 }
