@@ -37,7 +37,6 @@ public class StorageValidator {
 		}
 		String extension = (FilenameUtils.getExtension(originalFilename)).toLowerCase();
 		validateFileExtention(extension);
-		validateFileSize(file, extension);
 		validateContentType(artifact.getFileContentInString(), extension);
 		validateInputContentType(artifact);
 	}
@@ -136,52 +135,8 @@ public class StorageValidator {
 			throw new CustomException(FileStoreConstants.EG_FILESTORE_INVALID_INPUT, "Invalid Content Type");
 		}
 	}
-
-	/**
-	 * Validates file size based on specific file type/extension.
-	 * Restricts PDFs, images, and documents to smaller limits while allowing larger sizes for video/media.
-	 */
-	public void validateFileSize(MultipartFile file, String extension) {
-		long fileSize = file.getSize();
-		long maxAllowedSize;
-		String fileTypeLabel;
-
-		List<String> imageExts = fileStoreConfig.getImageFormats();
-		List<String> mediaExts = fileStoreConfig.getAllowedAudioVideoFormats();
-
-		if (imageExts != null && imageExts.contains(extension)) {
-			maxAllowedSize = fileStoreConfig.getImageUploadMaxSizeBytes() != null
-					? fileStoreConfig.getImageUploadMaxSizeBytes() : 5242880L;
-			fileTypeLabel = "Image";
-		} else if ("pdf".equalsIgnoreCase(extension)) {
-			maxAllowedSize = fileStoreConfig.getPdfUploadMaxSizeBytes() != null
-					? fileStoreConfig.getPdfUploadMaxSizeBytes() : 10485760L;
-			fileTypeLabel = "PDF";
-		} else if (mediaExts != null && mediaExts.contains(extension)) {
-			maxAllowedSize = fileStoreConfig.getMediaUploadMaxSizeBytes() != null
-					? fileStoreConfig.getMediaUploadMaxSizeBytes() : 104857600L;
-			fileTypeLabel = "Media";
-		} else if (isDocumentExtension(extension)) {
-			maxAllowedSize = fileStoreConfig.getDocumentUploadMaxSizeBytes() != null
-					? fileStoreConfig.getDocumentUploadMaxSizeBytes() : 10485760L;
-			fileTypeLabel = "Document";
-		} else {
-			maxAllowedSize = fileStoreConfig.getFileUploadMaxSizeBytes() != null
-					? fileStoreConfig.getFileUploadMaxSizeBytes() : 10485760L;
-			fileTypeLabel = "File";
-		}
-
-		if (fileSize > maxAllowedSize) {
-			throw new CustomException(FileStoreConstants.EG_FILESTORE_FILE_TOO_LARGE,
-					fileTypeLabel + " file (" + file.getOriginalFilename() + ") exceeds maximum allowed size of "
-							+ maxAllowedSize + " bytes (" + (maxAllowedSize / (1024 * 1024)) + " MB)");
-		}
-	}
-
-	private boolean isDocumentExtension(String extension) {
-		return List.of("doc", "docx", "xls", "xlsx", "txt", "csv", "ods", "odt", "dxf").contains(extension);
-	}
 }
+
 
 
 

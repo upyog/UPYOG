@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -26,18 +25,6 @@ public class FileStoreConfig {
 
 	@Value("${media.upload.max.size.bytes}")
 	private Long mediaUploadMaxSizeBytes;
-
-	@Value("${pdf.upload.max.size.bytes}")
-	private Long pdfUploadMaxSizeBytes;
-
-	@Value("${image.upload.max.size.bytes}")
-	private Long imageUploadMaxSizeBytes;
-
-	@Value("${document.upload.max.size.bytes}")
-	private Long documentUploadMaxSizeBytes;
-
-	@Value("${file.upload.max.size.bytes}")
-	private Long fileUploadMaxSizeBytes;
 
 	@Value("${image.charset.type}")
 	private String imageCharsetType;
@@ -78,10 +65,6 @@ public class FileStoreConfig {
 		}
 	}
 
-	// -------------------------------------------------------------------------
-	// Explicit getters and setters – ensures accessibility across environments
-	// -------------------------------------------------------------------------
-
 	public List<String> getAllowedAudioVideoFormats() {
 		return allowedAudioVideoFormats;
 	}
@@ -98,38 +81,6 @@ public class FileStoreConfig {
 		this.mediaUploadMaxSizeBytes = mediaUploadMaxSizeBytes;
 	}
 
-	public Long getPdfUploadMaxSizeBytes() {
-		return pdfUploadMaxSizeBytes;
-	}
-
-	public void setPdfUploadMaxSizeBytes(Long pdfUploadMaxSizeBytes) {
-		this.pdfUploadMaxSizeBytes = pdfUploadMaxSizeBytes;
-	}
-
-	public Long getImageUploadMaxSizeBytes() {
-		return imageUploadMaxSizeBytes;
-	}
-
-	public void setImageUploadMaxSizeBytes(Long imageUploadMaxSizeBytes) {
-		this.imageUploadMaxSizeBytes = imageUploadMaxSizeBytes;
-	}
-
-	public Long getDocumentUploadMaxSizeBytes() {
-		return documentUploadMaxSizeBytes;
-	}
-
-	public void setDocumentUploadMaxSizeBytes(Long documentUploadMaxSizeBytes) {
-		this.documentUploadMaxSizeBytes = documentUploadMaxSizeBytes;
-	}
-
-	public Long getFileUploadMaxSizeBytes() {
-		return fileUploadMaxSizeBytes;
-	}
-
-	public void setFileUploadMaxSizeBytes(Long fileUploadMaxSizeBytes) {
-		this.fileUploadMaxSizeBytes = fileUploadMaxSizeBytes;
-	}
-
 	public List<String> getImageFormats() {
 		return imageFormats;
 	}
@@ -142,3 +93,4 @@ public class FileStoreConfig {
 		this.allowedFormatsMap = allowedFormatsMap;
 	}
 }
+
