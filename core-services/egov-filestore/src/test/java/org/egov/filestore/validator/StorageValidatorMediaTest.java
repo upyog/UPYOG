@@ -34,6 +34,8 @@ class StorageValidatorMediaTest {
         fileStoreConfig = new FileStoreConfig();
         fileStoreConfig.setAllowedAudioVideoFormats(ALLOWED_AV_FORMATS);
         fileStoreConfig.setMediaUploadMaxSizeBytes(1024L);
+        fileStoreConfig.setDxfUploadMaxSizeBytes(31457280L);
+        fileStoreConfig.setFileUploadMaxSizeBytes(5242880L);
 
         Map<String, List<String>> formatsMap = new HashMap<>();
         formatsMap.put("mp3", Arrays.asList("audio/mpeg", "audio/mp3"));
@@ -42,6 +44,7 @@ class StorageValidatorMediaTest {
 
         storageValidator = new StorageValidator(fileStoreConfig);
     }
+
 
     @Test
     void testValidateMediaFile_EmptyFile_ThrowsCustomException() {
@@ -91,9 +94,33 @@ class StorageValidatorMediaTest {
         assertDoesNotThrow(() -> storageValidator.validateMediaFile(artifact));
     }
 
+    @Test
+    void testValidateFileSize_PdfExceeds5Mb_ThrowsCustomException() {
+        // 6 MB file
+        MockMultipartFile file = new MockMultipartFile("file", "document.pdf", "application/pdf", new byte[6 * 1024 * 1024]);
+        CustomException ex = assertThrows(CustomException.class, () -> storageValidator.validateFileSize(file, "pdf"));
+        assertEquals(FileStoreConstants.EG_FILESTORE_FILE_TOO_LARGE, ex.getCode());
+    }
+
+    @Test
+    void testValidateFileSize_PdfWithin5Mb_DoesNotThrow() {
+        // 2 MB file
+        MockMultipartFile file = new MockMultipartFile("file", "document.pdf", "application/pdf", new byte[2 * 1024 * 1024]);
+        assertDoesNotThrow(() -> storageValidator.validateFileSize(file, "pdf"));
+    }
+
+    @Test
+    void testValidateFileSize_DxfWithin30Mb_DoesNotThrow() {
+        // 20 MB DXF file
+        MockMultipartFile file = new MockMultipartFile("file", "plan.dxf", "text/plain", new byte[20 * 1024 * 1024]);
+        assertDoesNotThrow(() -> storageValidator.validateFileSize(file, FileStoreConstants.FORMAT_DXF));
+    }
+
+
     private Artifact buildArtifact(MockMultipartFile file) {
         FileLocation location = new FileLocation("id", "PGR", "tag", "pb.amritsar", "bucket/path/file.mp4", null);
         return Artifact.builder().multipartFile(file).fileLocation(location).build();
     }
 }
+
 

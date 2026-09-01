@@ -37,9 +37,11 @@ public class StorageValidator {
 		}
 		String extension = (FilenameUtils.getExtension(originalFilename)).toLowerCase();
 		validateFileExtention(extension);
+		validateFileSize(file, extension);
 		validateContentType(artifact.getFileContentInString(), extension);
 		validateInputContentType(artifact);
 	}
+
 
 	/**
 	 * Validates a directly uploaded audio/video file before it is stored in cloud storage.
@@ -135,7 +137,34 @@ public class StorageValidator {
 			throw new CustomException(FileStoreConstants.EG_FILESTORE_INVALID_INPUT, "Invalid Content Type");
 		}
 	}
+
+	/**
+	 * Validates file size based on file type:
+	 * - Video / Audio: max 100 MB (from media.upload.max.size.bytes)
+	 * - DXF (CAD files): max 30 MB (from dxf.upload.max.size.bytes)
+	 * - Images, PDFs, and all standard files: max 5 MB (from file.upload.max.size.bytes)
+	 */
+	public void validateFileSize(MultipartFile file, String extension) {
+		long fileSize = file.getSize();
+		long maxAllowedSize;
+
+		List<String> mediaExts = fileStoreConfig.getAllowedAudioVideoFormats();
+		if (mediaExts != null && mediaExts.contains(extension)) {
+			maxAllowedSize = fileStoreConfig.getMediaUploadMaxSizeBytes();
+		} else if (FileStoreConstants.FORMAT_DXF.equalsIgnoreCase(extension)) {
+			maxAllowedSize = fileStoreConfig.getDxfUploadMaxSizeBytes();
+		} else {
+			maxAllowedSize = fileStoreConfig.getFileUploadMaxSizeBytes();
+		}
+
+		if (fileSize > maxAllowedSize) {
+			throw new CustomException(FileStoreConstants.EG_FILESTORE_FILE_TOO_LARGE,
+					"File (" + file.getOriginalFilename() + ") exceeds maximum allowed size of "
+							+ (maxAllowedSize / (1024 * 1024)) + " MB");
+		}
+	}
 }
+
 
 
 

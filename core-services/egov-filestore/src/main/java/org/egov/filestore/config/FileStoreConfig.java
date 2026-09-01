@@ -9,11 +9,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Configuration
 @Getter
-@Setter
 public class FileStoreConfig {
 
 	/**
@@ -28,6 +26,18 @@ public class FileStoreConfig {
 	 */
 	@Value("${media.upload.max.size.bytes}")
 	private Long mediaUploadMaxSizeBytes;
+
+	/**
+	 * Maximum allowed size (bytes) for DXF files. Defaults to 30 MB.
+	 */
+	@Value("${dxf.upload.max.size.bytes}")
+	private Long dxfUploadMaxSizeBytes;
+
+	/**
+	 * Maximum allowed size (bytes) for images, PDFs, and standard files. Defaults to 5 MB.
+	 */
+	@Value("${file.upload.max.size.bytes}")
+	private Long fileUploadMaxSizeBytes;
 
 	@Value("${image.charset.type}")
 	private String imageCharsetType;
@@ -89,8 +99,25 @@ public class FileStoreConfig {
 		this.mediaUploadMaxSizeBytes = mediaUploadMaxSizeBytes;
 	}
 
+	public Long getDxfUploadMaxSizeBytes() {
+		return dxfUploadMaxSizeBytes;
+	}
+
+	public void setDxfUploadMaxSizeBytes(Long dxfUploadMaxSizeBytes) {
+		this.dxfUploadMaxSizeBytes = dxfUploadMaxSizeBytes;
+	}
+
+	public Long getFileUploadMaxSizeBytes() {
+		return fileUploadMaxSizeBytes;
+	}
+
+	public void setFileUploadMaxSizeBytes(Long fileUploadMaxSizeBytes) {
+		this.fileUploadMaxSizeBytes = fileUploadMaxSizeBytes;
+	}
+
 	public void setAllowedFormatsMap(Map<String, List<String>> allowedFormatsMap) {
 		this.allowedFormatsMap = allowedFormatsMap;
 	}
 }
+
 
