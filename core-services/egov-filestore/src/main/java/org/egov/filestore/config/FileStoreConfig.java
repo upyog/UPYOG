@@ -23,6 +23,9 @@ public class FileStoreConfig {
 	@Value("#{'${allowed.audio.video.formats}'.split(',')}")
 	private List<String> allowedAudioVideoFormats;
 
+	/**
+	 * Maximum allowed size (bytes) for direct audio/video uploads. Defaults to 100 MB.
+	 */
 	@Value("${media.upload.max.size.bytes}")
 	private Long mediaUploadMaxSizeBytes;
 
@@ -65,6 +68,11 @@ public class FileStoreConfig {
 		}
 	}
 
+    // -------------------------------------------------------------------------
+	// Explicit getters for new fields – ensures these are accessible even when
+	// Lombok's annotation processor fails on newer JDKs (Java 21/23 + Lombok <1.18.24)
+	// -------------------------------------------------------------------------
+	
 	public List<String> getAllowedAudioVideoFormats() {
 		return allowedAudioVideoFormats;
 	}
@@ -79,14 +87,6 @@ public class FileStoreConfig {
 
 	public void setMediaUploadMaxSizeBytes(Long mediaUploadMaxSizeBytes) {
 		this.mediaUploadMaxSizeBytes = mediaUploadMaxSizeBytes;
-	}
-
-	public List<String> getImageFormats() {
-		return imageFormats;
-	}
-
-	public void setImageFormats(List<String> imageFormats) {
-		this.imageFormats = imageFormats;
 	}
 
 	public void setAllowedFormatsMap(Map<String, List<String>> allowedFormatsMap) {
