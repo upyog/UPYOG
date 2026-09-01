@@ -1,5 +1,7 @@
 package org.upyog.dashboard.enums;
 
+import org.upyog.dashboard.constants.DashboardExtractorConstants;
+import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
@@ -13,8 +15,8 @@ import lombok.Getter;
 @Getter
 public enum IngestionStatus {
 
-    SUCCESS("SUCCESS", true),
-    FAILURE("FAILURE", false),
+    SUCCESS(DashboardExtractorConstants.STATUS_SUCCESS, true),
+    FAILURE(DashboardExtractorConstants.STATUS_FAILURE, false),
     SUCCESS_ZERO_METRICS("SUCCESS_ZERO_METRICS", true),
     SUCCESS_DUPLICATE("SUCCESS_DUPLICATE", true),
     SKIPPED("SKIPPED", false),
@@ -42,7 +44,7 @@ public enum IngestionStatus {
      */
     @JsonCreator
     public static IngestionStatus fromValue(String status) {
-        if (status == null || status.isBlank()) {
+        if (StringUtils.isBlank(status)) {
             return UNKNOWN;
         }
         for (IngestionStatus s : values()) {

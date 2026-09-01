@@ -45,6 +45,9 @@ class DashboardClientImplTest {
 	private CommonValidator commonValidator;
 
 	@Mock
+	private org.upyog.dashboard.config.DashboardProperties properties;
+
+	@Mock
 	private ModuleTransformer<Object> transformer;
 
 	@InjectMocks
@@ -78,6 +81,7 @@ class DashboardClientImplTest {
 		when(registry.get(Module.PT)).thenReturn(transformer);
 		when(transformer.transform(any())).thenReturn(payload);
 		doNothing().when(commonValidator).validate(payload);
+		lenient().when(properties.getEffectiveDailyUploadMode()).thenReturn("API");
 		when(loader.load(payload)).thenReturn(expectedResult);
 
 		// Act
@@ -145,6 +149,7 @@ class DashboardClientImplTest {
 		when(registry.get(Module.PT)).thenReturn(transformer);
 		when(transformer.transform(any())).thenReturn(payload);
 		doNothing().when(commonValidator).validate(payload);
+		lenient().when(properties.getEffectiveDailyUploadMode()).thenReturn("API");
 		when(loader.load(payload)).thenReturn(failureResult);
 
 		// Act

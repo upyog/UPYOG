@@ -1,5 +1,6 @@
 package org.upyog.dashboard.service.impl;
 
+import org.upyog.dashboard.constants.DashboardExtractorConstants;
 import org.upyog.dashboard.util.CommonUtils;
 
 import java.time.LocalDate;
@@ -118,22 +119,30 @@ public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenc
      * {@code NOT_STARTED} and publishes it to the {@code SAVE_LEGACY_INGESTION_DETAIL} Kafka
      * topic so the persister service inserts the new job row.
      *
+     * @param jobId      the unique identifier of the legacy job
      * @param tenantId   the tenant identifier
      * @param moduleName the module short code
-     * @param date       the push date for which the legacy job is created
+     * @param pushDate   the push date for which the legacy job is created
+     * @param startDate  the start date of the legacy range
+     * @param endDate    the end date of the legacy range
      */
     @Override
-    public void createLegacyJob(String tenantId, String moduleName, LocalDate date) {
+    public void createLegacyJob(String jobId, String tenantId, String moduleName, LocalDate pushDate, LocalDate startDate, LocalDate endDate) {
         try {
             long now = CommonUtils.getCurrentEpochMillis();
-            String jobId = CommonUtils.generateUUID();
+            String id = (jobId != null) ? jobId : CommonUtils.generateUUID();
+            LocalDate pDate = (pushDate != null) ? pushDate : (startDate != null ? startDate : LocalDate.now());
+            LocalDate sDate = (startDate != null) ? startDate : pDate;
+            LocalDate eDate = (endDate != null) ? endDate : pDate;
             
             LegacyIngestionData legacyData = LegacyIngestionData.builder()
-                .moduleIngestionId(jobId)
+                .moduleIngestionId(id)
                 .tenantId(tenantId)
                 .moduleName(moduleName)
-                .pushDate(date.format(DATE_FORMATTER))
-                .ingestionStatus("NOT_STARTED")
+                .pushDate(pDate.format(DATE_FORMATTER))
+                .startDate(sDate.format(DATE_FORMATTER))
+                .endDate(eDate.format(DATE_FORMATTER))
+                .ingestionStatus(DashboardExtractorConstants.STATUS_NOT_STARTED)
                 .createdBy(SYSTEM_USER)
                 .createdTime(now)
                 .lastModifiedBy(SYSTEM_USER)
@@ -144,9 +153,9 @@ public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenc
             message.put("legacyIngestionData", Collections.singletonList(legacyData));
             producer.push(KafkaTopics.SAVE_LEGACY_INGESTION_DETAIL, message);
 
-            log.debug("Pushed legacy job for tenant {} module {} date {}", tenantId, moduleName, date);
+            log.debug("Pushed legacy job {} for tenant {} module {} range [{} to {}]", id, tenantId, moduleName, sDate, eDate);
         } catch (Exception exception) {
-            log.error("Failed to push legacy job for tenant {} module {} date {}", tenantId, moduleName, date, exception);
+            log.error("Failed to push legacy job for tenant {} module {} range [{} to {}]", tenantId, moduleName, startDate, endDate, exception);
         }
     }
 

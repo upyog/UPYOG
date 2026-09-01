@@ -1,5 +1,6 @@
 package org.upyog.dashboard.service.impl;
 
+import org.upyog.dashboard.common.constants.DashboardConstants;
 import org.upyog.dashboard.model.ErrorLogDTO;
 import org.upyog.dashboard.util.CommonUtils;
 import org.upyog.dashboard.repository.querybuilder.AuditQueryBuilder;
@@ -23,10 +24,10 @@ import org.upyog.dashboard.util.JsonUtil;
 public class JdbcAuditServiceImpl implements AuditService {
 
     private static final Logger log = LoggerFactory.getLogger(JdbcAuditServiceImpl.class);
-    
+
     // Constants to fix Issue 3 (Hardcoded Values)
-    private static final String STATUS_FAILURE = "FAILURE";
-    private static final String SYSTEM_USER = "SYSTEM";
+    private static final String STATUS_FAILURE = DashboardConstants.STATUS_FAILURE;
+    private static final String SYSTEM_USER = DashboardConstants.SYSTEM_USER;
 
     @Autowired
     private AuditQueryBuilder queryBuilder;
@@ -53,22 +54,22 @@ public class JdbcAuditServiceImpl implements AuditService {
                     .createdTime(now).lastModifiedBy(SYSTEM_USER).lastModifiedTime(now).build();
 
             String sqlDetail = queryBuilder.getInsertIngestionDetailQuery();
-            
+
             // Fix Issue 2: Using MapSqlParameterSource instead of positional params
             MapSqlParameterSource detailParams = new MapSqlParameterSource()
-                    .addValue("moduleIngestionId", record.getModuleIngestionId())
-                    .addValue("tenantId", record.getTenantId())
-                    .addValue("moduleName", record.getModuleName())
-                    .addValue("pushDate", record.getPushDate())
-                    .addValue("requestData", record.getRequestData())
-                    .addValue("responseData", record.getResponseData())
-                    .addValue("ingestionStatus", record.getIngestionStatus())
-                    .addValue("exceptionCode", record.getExceptionCode())
-                    .addValue("createdBy", record.getCreatedBy())
-                    .addValue("createdTime", record.getCreatedTime())
-                    .addValue("lastModifiedBy", record.getLastModifiedBy())
-                    .addValue("lastModifiedTime", record.getLastModifiedTime());
-                    
+                    .addValue(DashboardConstants.PARAM_MODULE_INGESTION_ID, record.getModuleIngestionId())
+                    .addValue(DashboardConstants.PARAM_TENANT_ID, record.getTenantId())
+                    .addValue(DashboardConstants.PARAM_MODULE_NAME, record.getModuleName())
+                    .addValue(DashboardConstants.PARAM_PUSH_DATE, record.getPushDate())
+                    .addValue(DashboardConstants.PARAM_REQUEST_DATA, record.getRequestData())
+                    .addValue(DashboardConstants.PARAM_RESPONSE_DATA, record.getResponseData())
+                    .addValue(DashboardConstants.PARAM_INGESTION_STATUS, record.getIngestionStatus())
+                    .addValue(DashboardConstants.PARAM_EXCEPTION_CODE, record.getExceptionCode())
+                    .addValue(DashboardConstants.PARAM_CREATED_BY, record.getCreatedBy())
+                    .addValue(DashboardConstants.PARAM_CREATED_TIME, record.getCreatedTime())
+                    .addValue(DashboardConstants.PARAM_LAST_MODIFIED_BY, record.getLastModifiedBy())
+                    .addValue(DashboardConstants.PARAM_LAST_MODIFIED_TIME, record.getLastModifiedTime());
+
             namedParameterJdbcTemplate.update(sqlDetail, detailParams);
 
             if (STATUS_FAILURE.equals(status)) {
@@ -83,17 +84,17 @@ public class JdbcAuditServiceImpl implements AuditService {
                         .build();
 
                 String sqlError = queryBuilder.getInsertAdapterIngestionErrorLogQuery();
-                
+
                 // Fix Issue 4: Using MapSqlParameterSource
                 MapSqlParameterSource errorParams = new MapSqlParameterSource()
-                        .addValue("id", errorLog.getId())
-                        .addValue("tenantId", errorLog.getTenantId())
-                        .addValue("moduleName", errorLog.getModuleName())
-                        .addValue("errorDate", errorLog.getErrorDate())
-                        .addValue("issueDescription", errorLog.getIssueDescription())
-                        .addValue("createdTime", errorLog.getCreatedTime())
-                        .addValue("createdBy", errorLog.getCreatedBy());
-                        
+                        .addValue(DashboardConstants.PARAM_ID, errorLog.getId())
+                        .addValue(DashboardConstants.PARAM_TENANT_ID, errorLog.getTenantId())
+                        .addValue(DashboardConstants.PARAM_MODULE_NAME, errorLog.getModuleName())
+                        .addValue(DashboardConstants.PARAM_ERROR_DATE, errorLog.getErrorDate())
+                        .addValue(DashboardConstants.PARAM_ISSUE_DESCRIPTION, errorLog.getIssueDescription())
+                        .addValue(DashboardConstants.PARAM_CREATED_TIME, errorLog.getCreatedTime())
+                        .addValue(DashboardConstants.PARAM_CREATED_BY, errorLog.getCreatedBy());
+
                 namedParameterJdbcTemplate.update(sqlError, errorParams);
             }
         } catch (Exception exception) {

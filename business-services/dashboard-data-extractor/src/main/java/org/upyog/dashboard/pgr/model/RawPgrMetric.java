@@ -2,8 +2,9 @@ package org.upyog.dashboard.pgr.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Raw data class for PGR combined metrics fetched directly via
@@ -13,7 +14,8 @@ import lombok.NoArgsConstructor;
  * eliminating manual map extraction and type casting inside the extractor
  * service.
  */
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

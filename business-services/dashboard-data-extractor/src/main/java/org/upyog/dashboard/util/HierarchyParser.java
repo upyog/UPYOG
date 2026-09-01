@@ -1,5 +1,6 @@
 package org.upyog.dashboard.util;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +43,7 @@ public class HierarchyParser {
             @Value("${dashboard-data.system.user.tenantId:pg}") String statePrefix) {
         this.defaultWard = defaultWard;
         this.defaultRegion = defaultRegion;
-        this.statePrefix = statePrefix != null && !statePrefix.isBlank() ? statePrefix : "pg";
+        this.statePrefix = StringUtils.isNotBlank(statePrefix) ? statePrefix : "pg";
     }
 
     public HierarchyParser(String defaultWard, String defaultRegion) {
@@ -56,7 +57,7 @@ public class HierarchyParser {
     public Map<String, String> parseTenantId(String tenantId) {
         Map<String, String> hierarchy = new HashMap<>();
 
-        if (tenantId == null || tenantId.isEmpty()) {
+        if (StringUtils.isBlank(tenantId)) {
             hierarchy.put("state", statePrefix);
             hierarchy.put("ulb", statePrefix);
             hierarchy.put("region", defaultRegion != null ? defaultRegion : "");
@@ -77,10 +78,10 @@ public class HierarchyParser {
             hierarchy.put("state", parts[0]);
             hierarchy.put("ulb", parts[0] + "." + parts[1]);
 
-            String region = parts.length > 2 && !parts[2].isEmpty() ? parts[2] : defaultRegion;
+            String region = parts.length > 2 && StringUtils.isNotBlank(parts[2]) ? parts[2] : defaultRegion;
             hierarchy.put("region", region != null ? region : "");
 
-            String ward = parts.length > 3 && !parts[3].isEmpty() ? parts[3] : defaultWard;
+            String ward = parts.length > 3 && StringUtils.isNotBlank(parts[3]) ? parts[3] : defaultWard;
             hierarchy.put("ward", ward != null ? ward : "");
         }
 

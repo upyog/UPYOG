@@ -1,5 +1,7 @@
 package org.upyog.dashboard.extractor.impl;
 
+import org.upyog.dashboard.constants.DashboardExtractorConstants;
+import org.apache.commons.lang3.StringUtils;
 import org.upyog.dashboard.config.DashboardProperties;
 import org.upyog.dashboard.util.HierarchyParser;
 
@@ -13,6 +15,7 @@ import java.util.Map;
 
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Component;
 import org.upyog.dashboard.pgr.model.RawPgrMetric;
 import org.upyog.dashboard.common.constants.Module;
@@ -58,7 +61,7 @@ public class PgrModuleExtractor implements ModuleExtractor {
 	@jakarta.annotation.PostConstruct
 	public void init() {
 		String state = dashboardProperties.getMetricState();
-		this.dbTenantId = (state != null && !state.isBlank()) ? state : dashboardProperties.getTenantId();
+		this.dbTenantId = (StringUtils.isNotBlank(state)) ? state : dashboardProperties.getTenantId();
 		this.dbMaxAttempts = dashboardProperties.getDbMaxAttempts();
 		this.dbBaseDelayMs = dashboardProperties.getDbBaseDelayMs();
 		this.dbMaxDelayMs = dashboardProperties.getDbMaxDelayMs();
@@ -85,7 +88,10 @@ public class PgrModuleExtractor implements ModuleExtractor {
 		long startTime = targetDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli();
 		long endTime = targetDate.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli() - 1;
 
-		Map<String, Object> params = Map.of("startTime", startTime, "endTime", endTime, "tenantId", dbTenantId);
+		MapSqlParameterSource params = new MapSqlParameterSource()
+				.addValue(DashboardExtractorConstants.PARAM_START_TIME, startTime)
+				.addValue(DashboardExtractorConstants.PARAM_END_TIME, endTime)
+				.addValue(DashboardExtractorConstants.PARAM_TENANT_ID, dbTenantId);
 		List<DashboardData> results = new ArrayList<>();
 
 		SchemaMappingConfig.ModuleQueries pgrQueries = schemaMappingConfig.getQueriesForModule(Module.PGR);
@@ -119,10 +125,10 @@ public class PgrModuleExtractor implements ModuleExtractor {
 		return DashboardData.builder()
 				.date(dateStr)
 				.module(getModule().name())
-				.ward(parsedHierarchy.get("ward"))
-				.ulb(parsedHierarchy.get("ulb"))
-				.region(parsedHierarchy.get("region"))
-				.state(parsedHierarchy.get("state"))
+				.ward(parsedHierarchy.get(DashboardExtractorConstants.KEY_WARD))
+				.ulb(parsedHierarchy.get(DashboardExtractorConstants.KEY_ULB))
+				.region(parsedHierarchy.get(DashboardExtractorConstants.KEY_REGION))
+				.state(parsedHierarchy.get(DashboardExtractorConstants.KEY_STATE))
 				.metrics(buildMetrics(combinedResult))
 				.build();
 	}
@@ -182,7 +188,7 @@ public class PgrModuleExtractor implements ModuleExtractor {
 			return List.of();
 		}
 		String jsonStr = object.toString();
-		if (jsonStr.isBlank() || "[]".equals(jsonStr)) {
+		if (StringUtils.isBlank(jsonStr) || "[]".equals(jsonStr)) {
 			return List.of();
 		}
 		try {
@@ -202,7 +208,7 @@ public class PgrModuleExtractor implements ModuleExtractor {
 	 * @param params the named parameters to bind
 	 * @return the query result as a list of row maps
 	 */
-	private <T> List<T> executeQueryWithRetry(String query, Map<String, Object> params, Class<T> mappedClass) {
+	private <T> List<T> executeQueryWithRetry(String query, MapSqlParameterSource params, Class<T> mappedClass) {
 		int attempt = 0;
 		while (true) {
 			attempt++;

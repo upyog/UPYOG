@@ -1,11 +1,11 @@
 package org.upyog.dashboard.extractor.impl;
 
-import java.net.URI;
+import org.upyog.dashboard.constants.DashboardExtractorConstants;
+import org.apache.commons.lang3.StringUtils;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -13,24 +13,17 @@ import jakarta.annotation.PostConstruct;
 
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.BeanUtils;
-import org.upyog.dashboard.chb.constants.CHBDatabaseConstants;
 import org.upyog.dashboard.chb.dto.CHBAggregatedData;
 import org.upyog.dashboard.chb.dto.CHBDTO;
-import org.upyog.dashboard.client.UserFeignClient;
 import org.upyog.dashboard.common.constants.Module;
 import org.upyog.dashboard.config.DashboardProperties;
 import org.upyog.dashboard.config.SchemaMappingConfig;
 import org.upyog.dashboard.extractor.ModuleExtractor;
-import org.upyog.dashboard.model.UserInfo;
-import org.upyog.dashboard.model.UserSearchResponse;
 import org.upyog.dashboard.chb.model.RawChbMetric;
-import org.upyog.dashboard.service.OAuthTokenService;
 import org.upyog.dashboard.util.HierarchyParser;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,9 +40,6 @@ public class ChbModuleExtractor implements ModuleExtractor<List<CHBDTO>> {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final SchemaMappingConfig schemaMappingConfig;
     private final DashboardProperties dashboardProperties;
-    private final UserFeignClient userFeignClient;
-    private final OAuthTokenService oAuthTokenService;
-    private final ObjectMapper objectMapper;
     private final HierarchyParser hierarchyParser;
 
     private String dbTenantId;
@@ -64,7 +54,7 @@ public class ChbModuleExtractor implements ModuleExtractor<List<CHBDTO>> {
     @PostConstruct
     public void init() {
         String state = dashboardProperties.getMetricState();
-        this.dbTenantId = (state != null && !state.isBlank()) ? state : dashboardProperties.getTenantId();
+        this.dbTenantId = (StringUtils.isNotBlank(state)) ? state : dashboardProperties.getTenantId();
         this.dbMaxAttempts = dashboardProperties.getDbMaxAttempts();
         this.dbBaseDelayMs = dashboardProperties.getDbBaseDelayMs();
         this.dbMaxDelayMs = dashboardProperties.getDbMaxDelayMs();
@@ -90,7 +80,10 @@ public class ChbModuleExtractor implements ModuleExtractor<List<CHBDTO>> {
         long startTime = targetDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli();
         long endTime = targetDate.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli() - 1;
 
-        Map<String, Object> params = Map.of("startTime", startTime, "endTime", endTime, "tenantId", dbTenantId);
+        MapSqlParameterSource params = new MapSqlParameterSource()
+                .addValue(DashboardExtractorConstants.PARAM_START_TIME, startTime)
+                .addValue(DashboardExtractorConstants.PARAM_END_TIME, endTime)
+                .addValue(DashboardExtractorConstants.PARAM_TENANT_ID, dbTenantId);
         List<CHBDTO> results = new ArrayList<>();
 
         SchemaMappingConfig.ModuleQueries chbQueries = schemaMappingConfig.getQueriesForModule(Module.CHB);
@@ -118,104 +111,16 @@ public class ChbModuleExtractor implements ModuleExtractor<List<CHBDTO>> {
 
         CHBAggregatedData combinedData = new CHBAggregatedData();
         BeanUtils.copyProperties(row, combinedData);
-        combinedData.setBookingTypeJson(buildBookingTypeJson(combinedData.getCreatedByListJson()));
 
         return CHBDTO.builder()
                 .date(dateStr)
                 .module(getModule().name())
-                .ward(parsedHierarchy.get("ward"))
-                .ulb(parsedHierarchy.get("ulb"))
-                .region(parsedHierarchy.get("region"))
-                .state(parsedHierarchy.get("state"))
+                .ward(parsedHierarchy.get(DashboardExtractorConstants.KEY_WARD))
+                .ulb(parsedHierarchy.get(DashboardExtractorConstants.KEY_ULB))
+                .region(parsedHierarchy.get(DashboardExtractorConstants.KEY_REGION))
+                .state(parsedHierarchy.get(DashboardExtractorConstants.KEY_STATE))
                 .combinedMetrics(combinedData)
                 .build();
-    }
-
- 
-
-    /**
-     * Derives the booking-type classification JSON (online vs. offline) from the
-     * creator UUID list. Returns an empty JSON array ({@code "[]"}) when the input is
-     * blank or contains no UUIDs.
-     *
-     * @param createdByListJson a JSON array string of creator-UUID rows, or blank
-     * @return a JSON array string such as
-     *         {@code [{"name":"Online","value":3},{"name":"Offline","value":2}]}
-     */
-    private String buildBookingTypeJson(String createdByListJson) {
-        if (createdByListJson == null || createdByListJson.isBlank() || "[]".equals(createdByListJson)) {
-            return "[]";
-        }
-
-        List<String> uuids = extractUuids(createdByListJson);
-        if (uuids.isEmpty()) {
-            return "[]";
-        }
-
-        return classifyUsers(uuids);
-    }
-
-    /**
-     * Parses the {@code createdByListJson} JSON string and extracts unique creator UUIDs
-     * in encounter order.
-     *
-     * @param createdByListJson a JSON array string of objects containing a {@code createdby} field
-     * @return an ordered, deduplicated list of UUID strings; empty on parse failure
-     */
-    private List<String> extractUuids(String createdByListJson) {
-        try {
-            List<Map<String, Object>> rows = objectMapper.readValue(createdByListJson,
-                    new TypeReference<List<Map<String, Object>>>() {});
-            LinkedHashSet<String> uuidSet = new LinkedHashSet<>();
-            for (Map<String, Object> row : rows) {
-                Object cb = row.get("createdby");
-                if (cb != null) {
-                    uuidSet.add(cb.toString());
-                }
-            }
-            return List.copyOf(uuidSet);
-        } catch (Exception e) {
-            log.warn("ChbModuleExtractor | Failed to parse createdByListJson: {}", e.getMessage());
-            return List.of();
-        }
-    }
-
-    /**
-     * Calls the UPYOG user-search API to classify UUIDs as CITIZEN (online) or
-     * employee (offline), then returns the result as a JSON array string.
-     * Returns an empty JSON array ({@code "[]"}) if the API call fails.
-     *
-     * @param uuids the list of creator UUIDs to classify
-     * @return a JSON array string with {@code Online} and {@code Offline} counts
-     */
-    private String classifyUsers(List<String> uuids) {
-        int online = 0;
-        int offline = 0;
-        try {
-            String token = oAuthTokenService.getToken();
-            Map<String, Object> requestBody = Map.of(
-                    "RequestInfo", Map.of("apiId", "Rainmaker", "authToken", token),
-                    "tenantId", dashboardProperties.getTenantId(),
-                    "uuid", uuids);
-
-            String url = dashboardProperties.getOauthHost() + dashboardProperties.getUserSearchPath();
-            UserSearchResponse response = userFeignClient.searchUser(URI.create(url), requestBody);
-
-            if (response != null && response.getUser() != null) {
-                for (UserInfo user : response.getUser()) {
-                    if ("CITIZEN".equalsIgnoreCase(user.getType())) {
-                        online++;
-                    } else {
-                        offline++;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.warn("ChbModuleExtractor | User search failed, bookingType will be empty: {}", e.getMessage());
-            return "[]";
-        }
-
-        return "[{\"name\":\"Online\",\"value\":" + online + "},{\"name\":\"Offline\",\"value\":" + offline + "}]";
     }
 
     /**
@@ -224,10 +129,10 @@ public class ChbModuleExtractor implements ModuleExtractor<List<CHBDTO>> {
      * number of attempts is exhausted.
      *
      * @param query  the named-parameter SQL query string
-     * @param params the named parameters to bind
+     * @param params the named parameters to bind as MapSqlParameterSource
      * @return the query result as a list of row maps
      */
-    private <T> List<T> executeQueryWithRetry(String query, Map<String, Object> params, Class<T> mappedClass) {
+    private <T> List<T> executeQueryWithRetry(String query, MapSqlParameterSource params, Class<T> mappedClass) {
         int attempt = 0;
         while (true) {
             attempt++;

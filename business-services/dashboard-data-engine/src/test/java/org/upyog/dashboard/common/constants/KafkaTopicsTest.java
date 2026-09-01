@@ -25,14 +25,14 @@ class KafkaTopicsTest {
     @DisplayName("SAVE_LEGACY_INGESTION_DETAIL has expected topic name")
     void saveLegacyIngestionDetail_hasCorrectValue() {
         assertThat(KafkaTopics.SAVE_LEGACY_INGESTION_DETAIL)
-                .isEqualTo("save-adapter-module-ingestion-detail");
+                .isEqualTo("save-dashboard-data-module-ingestion-detail");
     }
 
     @Test
     @DisplayName("UPDATE_LEGACY_INGESTION_DETAIL has expected topic name")
     void updateLegacyIngestionDetail_hasCorrectValue() {
         assertThat(KafkaTopics.UPDATE_LEGACY_INGESTION_DETAIL)
-                .isEqualTo("update-adapter-module-ingestion-detail");
+                .isEqualTo("update-dashboard-data-module-ingestion-detail");
     }
 
     @Test

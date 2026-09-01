@@ -1,19 +1,25 @@
 package org.upyog.dashboard.model;
-
 import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 /**
  * Summary response object returned after executing a bulk historical / legacy ingestion run.
  */
-@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 public class LegacyIngestionResponse {
 
     /** Total number of calendar dates in the requested date range. */

@@ -33,7 +33,8 @@ public class DraftService {
         DraftDetail draft = request.getDraft();
         validateDraftForSave(draft);
 
-        String userUuid = resolveUserUuid(request.getRequestInfo(), draft.getUserUuid());
+        String userUuid = resolveUserUuid(request.getRequestInfo(), draft.getCreatedBy());
+        String creatorType = resolveCreatorType(request.getRequestInfo(), draft.getCreatorType());
         long now = System.currentTimeMillis();
         boolean isCreate = StringUtils.isBlank(draft.getDraftId());
 
@@ -41,6 +42,7 @@ public class DraftService {
             draft.setDraftId(UUID.randomUUID().toString());
             draft.setCreatedTime(now);
             draft.setCreatedBy(userUuid);
+            draft.setCreatorType(creatorType);
             draft.setStatus(DraftConstants.STATUS_ACTIVE);
         } else {
             DraftDetail existing = draftRepository.findByDraftId(
@@ -51,12 +53,15 @@ public class DraftService {
             }
             draft.setCreatedBy(existing.getCreatedBy());
             draft.setCreatedTime(existing.getCreatedTime());
+            if (StringUtils.isBlank(draft.getCreatorType())) {
+                draft.setCreatorType(existing.getCreatorType());
+            }
             if (StringUtils.isBlank(draft.getStatus())) {
                 draft.setStatus(existing.getStatus());
             }
         }
 
-        draft.setUserUuid(userUuid);
+        draft.setCreatedBy(userUuid);
         draft.setLastModifiedBy(userUuid);
         draft.setLastModifiedTime(now);
         if (draft.getCompletionPct() == null) {
@@ -77,8 +82,8 @@ public class DraftService {
             throw new CustomException("DRAFT_SEARCH_CRITERIA_REQUIRED", "DraftSearchCriteria is required");
         }
 
-        String userUuid = resolveUserUuid(request.getRequestInfo(), criteria.getUserUuid());
-        criteria.setUserUuid(userUuid);
+        String userUuid = resolveUserUuid(request.getRequestInfo(), criteria.getCreatedBy());
+        criteria.setCreatedBy(userUuid);
 
         if (StringUtils.isBlank(criteria.getStatus())) {
             criteria.setStatus(DraftConstants.STATUS_ACTIVE);
@@ -105,8 +110,8 @@ public class DraftService {
             throw new CustomException("DRAFT_SEARCH_CRITERIA_REQUIRED", "DraftSearchCriteria is required");
         }
 
-        String userUuid = resolveUserUuid(request.getRequestInfo(), criteria.getUserUuid());
-        criteria.setUserUuid(userUuid);
+        String userUuid = resolveUserUuid(request.getRequestInfo(), criteria.getCreatedBy());
+        criteria.setCreatedBy(userUuid);
 
         if (StringUtils.isBlank(criteria.getStatus())) {
             criteria.setStatus(DraftConstants.STATUS_ACTIVE);
@@ -126,10 +131,10 @@ public class DraftService {
             throw new CustomException("DRAFT_ID_REQUIRED", "draftId is required");
         }
 
-        String userUuid = resolveUserUuid(request.getRequestInfo(), draft.getUserUuid());
+        String userUuid = resolveUserUuid(request.getRequestInfo(), draft.getCreatedBy());
         long now = System.currentTimeMillis();
 
-        draft.setUserUuid(userUuid);
+        draft.setCreatedBy(userUuid);
         draft.setLastModifiedBy(userUuid);
         draft.setLastModifiedTime(now);
         draft.setStatus(DraftConstants.STATUS_DISCARDED);
@@ -145,10 +150,10 @@ public class DraftService {
             throw new CustomException("DRAFT_ID_REQUIRED", "draftId is required");
         }
 
-        String userUuid = resolveUserUuid(request.getRequestInfo(), draft.getUserUuid());
+        String userUuid = resolveUserUuid(request.getRequestInfo(), draft.getCreatedBy());
         long now = System.currentTimeMillis();
 
-        draft.setUserUuid(userUuid);
+        draft.setCreatedBy(userUuid);
         draft.setLastModifiedBy(userUuid);
         draft.setLastModifiedTime(now);
         draft.setStatus(DraftConstants.STATUS_SUBMITTED);
@@ -177,7 +182,7 @@ public class DraftService {
         List<DraftDetail> candidates = draftRepository.findActiveDraftsWithModuleEntity();
         for (DraftDetail draft : candidates) {
             draft.setStatus(DraftConstants.STATUS_SUBMITTED);
-            draft.setLastModifiedBy(draft.getUserUuid());
+            draft.setLastModifiedBy(draft.getCreatedBy());
             draft.setLastModifiedTime(System.currentTimeMillis());
             DraftRequest request = DraftRequest.builder()
                     .draft(draft)
@@ -189,7 +194,7 @@ public class DraftService {
 
     private void markDiscardedViaPersister(DraftDetail draft) {
         draft.setStatus(DraftConstants.STATUS_DISCARDED);
-        draft.setLastModifiedBy(draft.getUserUuid());
+        draft.setLastModifiedBy(draft.getCreatedBy());
         draft.setLastModifiedTime(System.currentTimeMillis());
         draftRepository.updateStatus(DraftRequest.builder().draft(draft).build());
     }
@@ -226,6 +231,22 @@ public class DraftService {
             throw new CustomException("UNAUTHORIZED_DRAFT_ACCESS", "Cannot access drafts for another user");
         }
         return authenticatedUuid;
+    }
+
+    private String resolveCreatorType(RequestInfo requestInfo, String requestedCreatorType) {
+        if (StringUtils.isNotBlank(requestedCreatorType)) {
+            String upper = requestedCreatorType.toUpperCase();
+            if ("EMPLOYEE".equals(upper) || "USER".equals(upper)) {
+                return upper;
+            }
+        }
+        if (requestInfo != null && requestInfo.getUserInfo() != null && StringUtils.isNotBlank(requestInfo.getUserInfo().getType())) {
+            String type = requestInfo.getUserInfo().getType().toUpperCase();
+            if ("EMPLOYEE".equals(type)) {
+                return "EMPLOYEE";
+            }
+        }
+        return "USER";
     }
 
     private DraftResponse buildResponse(RequestInfo requestInfo, DraftDetail draft,

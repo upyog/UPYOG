@@ -2,8 +2,9 @@ package org.upyog.dashboard.pt.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Raw data class for PT combined metrics fetched directly via
@@ -13,7 +14,8 @@ import lombok.NoArgsConstructor;
  * extracted from the Property Tax data sources, ready for transformation into
  * the final payload.
  */
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

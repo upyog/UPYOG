@@ -2,6 +2,7 @@ package org.upyog.dashboard.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import lombok.Getter;
 
 /**
@@ -135,14 +136,35 @@ public class DashboardProperties {
     @Value("${dashboard-data.persister.enabled}")
     private boolean persisterEnabled;
 
-    // Upload mode (API or FILESTORE)
-    @Value("${dashboard-data.upload-mode}")
-    private String uploadMode;
+    // Daily upload mode (API or S3)
+    @Value("${dashboard-data.daily.upload-mode}")
+    private String dailyUploadMode;
 
-    // FileStore properties
-    @Value("${egov.filestore.host}")
-    private String filestoreHost;
+    // Legacy upload mode (API or S3)
+    @Value("${dashboard-data.legacy.upload-mode}")
+    private String legacyUploadMode;
 
-    @Value("${egov.filestore.upload.endpoint}")
-    private String filestoreUploadEndpoint;
+    public String getEffectiveDailyUploadMode() {
+        return (dailyUploadMode != null && !dailyUploadMode.trim().isEmpty()) ? dailyUploadMode.trim() : "API";
+    }
+
+    public String getEffectiveLegacyUploadMode() {
+        return (legacyUploadMode != null && !legacyUploadMode.trim().isEmpty()) ? legacyUploadMode.trim() : "S3";
+    }
+
+    // S3 properties
+    @Value("${aws.s3.access-key}")
+    private String awsS3AccessKey;
+
+    @Value("${aws.s3.secret-key}")
+    private String awsS3SecretKey;
+
+    @Value("${aws.s3.region}")
+    private String awsS3Region;
+
+    @Value("${aws.s3.bucket}")
+    private String awsS3Bucket;
+
+    @Value("${aws.s3.folder}")
+    private String awsS3Folder;
 }

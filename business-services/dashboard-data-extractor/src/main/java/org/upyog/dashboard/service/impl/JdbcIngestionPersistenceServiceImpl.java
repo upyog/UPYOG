@@ -1,12 +1,14 @@
 package org.upyog.dashboard.service.impl;
 
+import org.upyog.dashboard.constants.DashboardExtractorConstants;
 import org.upyog.dashboard.util.CommonUtils;
 
 import java.sql.Date;
 import java.time.LocalDate;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Service;
 import org.upyog.dashboard.repository.querybuilder.IngestionSummaryQueryBuilder;
 import org.upyog.dashboard.service.IngestionPersistenceService;
@@ -26,7 +28,7 @@ public class JdbcIngestionPersistenceServiceImpl implements IngestionPersistence
 
     private static final String SYSTEM_USER = "SYSTEM";
 
-    private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final IngestionSummaryQueryBuilder queryBuilder;
 
     /**
@@ -44,10 +46,17 @@ public class JdbcIngestionPersistenceServiceImpl implements IngestionPersistence
             long now = CommonUtils.getCurrentEpochMillis();
             String id = CommonUtils.generateUUID();
             
-            jdbcTemplate.update(queryBuilder.getUpsertLastSuccessfulDateQuery(),
-                    id, tenantId, moduleName, 
-                    Date.valueOf(successfulDate), Date.valueOf(successfulDate), 
-                    SYSTEM_USER, now, SYSTEM_USER, now);
+            MapSqlParameterSource params = new MapSqlParameterSource()
+                    .addValue(DashboardExtractorConstants.PARAM_ID, id)
+                    .addValue(DashboardExtractorConstants.PARAM_TENANT_ID, tenantId)
+                    .addValue(DashboardExtractorConstants.PARAM_MODULE_NAME, moduleName)
+                    .addValue(DashboardExtractorConstants.PARAM_LAST_SUCCESSFUL_DATE, Date.valueOf(successfulDate))
+                    .addValue(DashboardExtractorConstants.PARAM_LAST_ATTEMPTED_DATE, Date.valueOf(successfulDate))
+                    .addValue(DashboardExtractorConstants.PARAM_CREATED_BY, SYSTEM_USER)
+                    .addValue(DashboardExtractorConstants.PARAM_CREATED_TIME, now)
+                    .addValue(DashboardExtractorConstants.PARAM_LAST_MODIFIED_BY, SYSTEM_USER)
+                    .addValue(DashboardExtractorConstants.PARAM_LAST_MODIFIED_TIME, now);
+            namedParameterJdbcTemplate.update(queryBuilder.getUpsertLastSuccessfulDateQuery(), params);
 
             log.info("Saved last_successful_date to {} for tenant {} module {}",
                     successfulDate, tenantId, moduleName);
@@ -73,10 +82,17 @@ public class JdbcIngestionPersistenceServiceImpl implements IngestionPersistence
             String id = CommonUtils.generateUUID();
             LocalDate fallbackSuccessDate = LocalDate.of(1970, 1, 1);
             
-            jdbcTemplate.update(queryBuilder.getUpsertLastAttemptedDateQuery(),
-                    id, tenantId, moduleName, 
-                    Date.valueOf(fallbackSuccessDate), Date.valueOf(attemptedDate), 
-                    SYSTEM_USER, now, SYSTEM_USER, now);
+            MapSqlParameterSource params = new MapSqlParameterSource()
+                    .addValue(DashboardExtractorConstants.PARAM_ID, id)
+                    .addValue(DashboardExtractorConstants.PARAM_TENANT_ID, tenantId)
+                    .addValue(DashboardExtractorConstants.PARAM_MODULE_NAME, moduleName)
+                    .addValue(DashboardExtractorConstants.PARAM_LAST_SUCCESSFUL_DATE, Date.valueOf(fallbackSuccessDate))
+                    .addValue(DashboardExtractorConstants.PARAM_LAST_ATTEMPTED_DATE, Date.valueOf(attemptedDate))
+                    .addValue(DashboardExtractorConstants.PARAM_CREATED_BY, SYSTEM_USER)
+                    .addValue(DashboardExtractorConstants.PARAM_CREATED_TIME, now)
+                    .addValue(DashboardExtractorConstants.PARAM_LAST_MODIFIED_BY, SYSTEM_USER)
+                    .addValue(DashboardExtractorConstants.PARAM_LAST_MODIFIED_TIME, now);
+            namedParameterJdbcTemplate.update(queryBuilder.getUpsertLastAttemptedDateQuery(), params);
 
             log.info("Saved last_attempted_date to {} for tenant {} module {}",
                     attemptedDate, tenantId, moduleName);
@@ -90,24 +106,40 @@ public class JdbcIngestionPersistenceServiceImpl implements IngestionPersistence
      * Inserts a new legacy job record into {@code legacy_data_ingestion_detail} with an
      * initial status of {@code NOT_STARTED}.
      *
+     * @param jobId      the unique identifier of the legacy job
      * @param tenantId   the tenant identifier
      * @param moduleName the module short code
-     * @param date       the push date for which the legacy job is created
+     * @param pushDate   the push date for which the legacy job is created
+     * @param startDate  the start date of the legacy range
+     * @param endDate    the end date of the legacy range
      */
     @Override
-    public void createLegacyJob(String tenantId, String moduleName, LocalDate date) {
+    public void createLegacyJob(String jobId, String tenantId, String moduleName, LocalDate pushDate, LocalDate startDate, LocalDate endDate) {
         try {
             long now = CommonUtils.getCurrentEpochMillis();
-            String jobId = CommonUtils.generateUUID();
+            String id = (jobId != null) ? jobId : CommonUtils.generateUUID();
+            LocalDate pDate = (pushDate != null) ? pushDate : (startDate != null ? startDate : LocalDate.now());
+            LocalDate sDate = (startDate != null) ? startDate : pDate;
+            LocalDate eDate = (endDate != null) ? endDate : pDate;
             
-            jdbcTemplate.update(queryBuilder.getInsertLegacyJobQuery(),
-                    jobId, tenantId, moduleName, 
-                    Date.valueOf(date), "NOT_STARTED", null,
-                    SYSTEM_USER, now, SYSTEM_USER, now);
+            MapSqlParameterSource params = new MapSqlParameterSource()
+                    .addValue(DashboardExtractorConstants.PARAM_ID, id)
+                    .addValue(DashboardExtractorConstants.PARAM_TENANT_ID, tenantId)
+                    .addValue(DashboardExtractorConstants.PARAM_MODULE_NAME, moduleName)
+                    .addValue(DashboardExtractorConstants.PARAM_PUSH_DATE, Date.valueOf(pDate))
+                    .addValue(DashboardExtractorConstants.PARAM_START_DATE, Date.valueOf(sDate))
+                    .addValue(DashboardExtractorConstants.PARAM_END_DATE, Date.valueOf(eDate))
+                    .addValue(DashboardExtractorConstants.PARAM_STATUS, DashboardExtractorConstants.STATUS_NOT_STARTED)
+                    .addValue(DashboardExtractorConstants.PARAM_EXCEPTION_CODE, null)
+                    .addValue(DashboardExtractorConstants.PARAM_CREATED_BY, SYSTEM_USER)
+                    .addValue(DashboardExtractorConstants.PARAM_CREATED_TIME, now)
+                    .addValue(DashboardExtractorConstants.PARAM_LAST_MODIFIED_BY, SYSTEM_USER)
+                    .addValue(DashboardExtractorConstants.PARAM_LAST_MODIFIED_TIME, now);
+            namedParameterJdbcTemplate.update(queryBuilder.getInsertLegacyJobQuery(), params);
 
-            log.debug("Inserted legacy job for tenant {} module {} date {}", tenantId, moduleName, date);
+            log.debug("Inserted legacy job {} for tenant {} module {} range [{} to {}]", id, tenantId, moduleName, sDate, eDate);
         } catch (Exception exception) {
-            log.error("Failed to insert legacy job for tenant {} module {} date {}", tenantId, moduleName, date, exception);
+            log.error("Failed to insert legacy job for tenant {} module {} range [{} to {}]", tenantId, moduleName, startDate, endDate, exception);
         }
     }
 
@@ -125,8 +157,13 @@ public class JdbcIngestionPersistenceServiceImpl implements IngestionPersistence
         try {
             long now = CommonUtils.getCurrentEpochMillis();
             
-            jdbcTemplate.update(queryBuilder.getUpdateLegacyJobStatusQuery(),
-                    status, requestData, responseData, now, jobId);
+            MapSqlParameterSource params = new MapSqlParameterSource()
+                    .addValue(DashboardExtractorConstants.PARAM_STATUS, status)
+                    .addValue(DashboardExtractorConstants.PARAM_REQUEST_DATA, requestData)
+                    .addValue(DashboardExtractorConstants.PARAM_RESPONSE_DATA, responseData)
+                    .addValue(DashboardExtractorConstants.PARAM_LAST_MODIFIED_TIME, now)
+                    .addValue(DashboardExtractorConstants.PARAM_ID, jobId);
+            namedParameterJdbcTemplate.update(queryBuilder.getUpdateLegacyJobStatusQuery(), params);
 
             log.info("Updated legacy job {} to status {}", jobId, status);
         } catch (Exception exception) {

@@ -1,5 +1,7 @@
 package org.upyog.dashboard.service;
 
+import org.upyog.dashboard.constants.DashboardExtractorConstants;
+import org.upyog.dashboard.repository.IngestionSummaryRepository;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -9,7 +11,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.upyog.dashboard.api.DashboardIngestionClient;
-import org.upyog.dashboard.api.FileStoreClient;
+import org.upyog.dashboard.api.S3UploadClient;
 import org.upyog.dashboard.config.DashboardProperties;
 import org.upyog.dashboard.extractor.LegacyBatchExtractor;
 import org.upyog.dashboard.model.IngestionResult;
@@ -41,9 +43,11 @@ public class LegacyBatchIngestionOrchestrator {
     private final LegacyBatchExtractor batchExtractor;
     private final SXSSFExcelGeneratorService excelGeneratorService;
     private final DashboardIngestionClient ingestionClient;
-    private final FileStoreClient fileStoreClient;
+    private final S3UploadClient s3UploadClient;
     private final DashboardProperties dashboardProperties;
     private final LockProvider lockProvider;
+    private final IngestionPersistenceService persistenceService;
+    private final IngestionSummaryRepository summaryRepository;
 
     @Value("${dashboard-data.legacy.batch-size:500}")
     private int batchSize;
@@ -63,6 +67,40 @@ public class LegacyBatchIngestionOrchestrator {
         LocalDate start = LocalDate.parse(request.getStartDate());
         LocalDate end = LocalDate.parse(request.getEndDate());
         String moduleName = request.getModuleName();
+
+        if (start.isAfter(end)) {
+            String errorMsg = "Invalid date range: startDate (" + start + ") cannot be after endDate (" + end + ")";
+            log.warn(errorMsg);
+            return LegacyIngestionResponse.builder()
+                    .totalDatesRequested(0)
+                    .datesFailed(1)
+                    .processedResults(List.of(IngestionResult.builder()
+                            .ingestionStatus(DashboardExtractorConstants.STATUS_FAILURE)
+                            .failureReason(errorMsg)
+                            .build()))
+                    .build();
+        }
+
+        // Check for already successfully ingested overlapping legacy records
+        List<IngestionSummaryRepository.LegacyJob> overlappingJobs = summaryRepository
+                .findOverlappingSuccessfulLegacyJobs(tenantId, moduleName, start, end);
+
+        if (!overlappingJobs.isEmpty()) {
+            String overlapMsg = String.format("Request aborted: Legacy data for module '%s' and date range [%s to %s] overlaps with %d already successfully ingested record(s).",
+                    moduleName, start, end, overlappingJobs.size());
+            log.warn(overlapMsg);
+            return LegacyIngestionResponse.builder()
+                    .totalDatesRequested((int) start.until(end.plusDays(1)).getDays())
+                    .datesSkipped(overlappingJobs.size())
+                    .datesProcessedSuccessfully(0)
+                    .datesFailed(1)
+                    .processedResults(List.of(IngestionResult.builder()
+                            .ingestionStatus(DashboardExtractorConstants.STATUS_FAILURE)
+                            .failureReason(overlapMsg)
+                            .build()))
+                    .build();
+        }
+
         String jobId = "JOB-" + moduleName.toUpperCase() + "-" + UUID.randomUUID().toString().substring(0, 8);
 
         log.info("Processing legacy batch ingestion job {} for module {} (date range: {} to {}, tenantId: {}, batchChunkSize: {})",
@@ -83,11 +121,14 @@ public class LegacyBatchIngestionOrchestrator {
                     .totalDatesRequested(0)
                     .datesFailed(1)
                     .processedResults(List.of(IngestionResult.builder()
-                            .ingestionStatus("FAILURE")
+                            .ingestionStatus(DashboardExtractorConstants.STATUS_FAILURE)
                             .failureReason("A batch extraction job is currently in progress for module " + moduleName + ". Please wait for it to complete.")
                             .build()))
                     .build();
         }
+
+        // Register initial legacy job audit entry with full range and execution date
+        persistenceService.createLegacyJob(jobId, tenantId, moduleName, LocalDate.now(), start, end);
 
         File generatedExcelFile = null;
 
@@ -101,6 +142,8 @@ public class LegacyBatchIngestionOrchestrator {
 
             if (totalExtracted == 0) {
                 log.info("No records found for legacy extraction job {}. Skipping Excel generation.", jobId);
+                String emptyResponse = "{\"message\": \"No records found for specified date range\"}";
+                persistenceService.updateLegacyJobStatus(jobId, DashboardExtractorConstants.STATUS_SUCCESS, null, emptyResponse);
                 return LegacyIngestionResponse.builder()
                         .totalDatesRequested((int) start.until(end.plusDays(1)).getDays())
                         .datesSkipped(0)
@@ -108,7 +151,7 @@ public class LegacyBatchIngestionOrchestrator {
                         .datesFailed(0)
                         .skippedDates(List.of())
                         .processedResults(List.of(IngestionResult.builder()
-                                .ingestionStatus("SUCCESS")
+                                .ingestionStatus(DashboardExtractorConstants.STATUS_SUCCESS)
                                 .failureReason("No records found for specified date range")
                                 .build()))
                         .build();
@@ -119,24 +162,31 @@ public class LegacyBatchIngestionOrchestrator {
 
             // Step 3: Send generated Excel file to appropriate endpoint
             IngestionResult ingestionResult;
-            if ("FILESTORE".equalsIgnoreCase(dashboardProperties.getUploadMode())) {
-                String fileStoreId = fileStoreClient.uploadFile(generatedExcelFile, tenantId, moduleName);
+            String legacyMode = dashboardProperties.getEffectiveLegacyUploadMode();
+            if ("FILESTORE".equalsIgnoreCase(legacyMode) || "S3".equalsIgnoreCase(legacyMode)) {
+                String fileStoreId = s3UploadClient.uploadFile(generatedExcelFile, tenantId, moduleName);
                 if (fileStoreId != null) {
                     ingestionResult = IngestionResult.builder()
-                            .ingestionStatus("SUCCESS")
+                            .ingestionStatus(DashboardExtractorConstants.STATUS_SUCCESS)
                             .responseData("{\"fileStoreId\": \"" + fileStoreId + "\"}")
                             .build();
                 } else {
                     ingestionResult = IngestionResult.builder()
-                            .ingestionStatus("FAILURE")
-                            .failureReason("Failed to upload Excel file to egov-filestore")
+                            .ingestionStatus(DashboardExtractorConstants.STATUS_FAILURE)
+                            .failureReason("Failed to upload Excel file to S3")
                             .build();
                 }
             } else {
                 ingestionResult = ingestionClient.uploadLegacyExcelFile(generatedExcelFile, moduleName, tenantId);
             }
 
-            boolean isSuccess = "SUCCESS".equalsIgnoreCase(ingestionResult.getIngestionStatus());
+            boolean isSuccess = DashboardExtractorConstants.STATUS_SUCCESS.equalsIgnoreCase(ingestionResult.getIngestionStatus());
+            String responseJson = ingestionResult.getResponseData() != null 
+                    ? ingestionResult.getResponseData() 
+                    : "{\"failureReason\": \"" + (ingestionResult.getFailureReason() != null ? ingestionResult.getFailureReason().replace("\"", "'") : "Unknown Error") + "\"}";
+
+            // Persist the status and fileStoreId into legacy_data_ingestion_detail
+            persistenceService.updateLegacyJobStatus(jobId, ingestionResult.getIngestionStatus(), null, responseJson);
 
             return LegacyIngestionResponse.builder()
                     .totalDatesRequested((int) start.until(end.plusDays(1)).getDays())
@@ -149,11 +199,13 @@ public class LegacyBatchIngestionOrchestrator {
 
         } catch (Exception exception) {
             log.error("Error executing streaming legacy batch ingestion job {}: {}", jobId, exception.getMessage(), exception);
+            String errResponse = "{\"error\": \"" + (exception.getMessage() != null ? exception.getMessage().replace("\"", "'") : "Exception") + "\"}";
+            persistenceService.updateLegacyJobStatus(jobId, DashboardExtractorConstants.STATUS_FAILURE, null, errResponse);
             return LegacyIngestionResponse.builder()
                     .totalDatesRequested((int) start.until(end.plusDays(1)).getDays())
                     .datesFailed(1)
                     .processedResults(List.of(IngestionResult.builder()
-                            .ingestionStatus("FAILURE")
+                            .ingestionStatus(DashboardExtractorConstants.STATUS_FAILURE)
                             .failureReason(exception.getMessage())
                             .build()))
                     .build();

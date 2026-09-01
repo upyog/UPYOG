@@ -2,8 +2,9 @@ package org.upyog.dashboard.chb.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Raw data class for CHB combined metrics fetched directly via
@@ -13,7 +14,8 @@ import lombok.NoArgsConstructor;
  * reflection mapping of flat SQL result sets directly into a structured Java
  * object.
  */
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

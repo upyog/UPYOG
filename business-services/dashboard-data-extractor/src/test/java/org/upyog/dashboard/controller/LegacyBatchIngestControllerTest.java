@@ -1,5 +1,6 @@
 package org.upyog.dashboard.controller;
 
+import org.upyog.dashboard.constants.DashboardExtractorConstants;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -24,7 +25,8 @@ import org.upyog.dashboard.service.LegacyBatchIngestRequest;
  * Verifies that legacy batch endpoints correctly parse the request payloads and 
  * delegate to the {@link org.upyog.dashboard.service.LegacyBatchIngestionOrchestrator}
  * appropriately, while returning correct HTTP response codes.
- */\n@ExtendWith(MockitoExtension.class)
+ */
+@ExtendWith(MockitoExtension.class)
 class LegacyBatchIngestControllerTest {
 
     @Mock
@@ -46,7 +48,7 @@ class LegacyBatchIngestControllerTest {
         LegacyIngestionResponse expectedResponse = LegacyIngestionResponse.builder()
                 .totalDatesRequested(31)
                 .datesProcessedSuccessfully(1)
-                .processedResults(java.util.List.of(IngestionResult.builder().ingestionStatus("SUCCESS").build()))
+                .processedResults(java.util.List.of(IngestionResult.builder().ingestionStatus(DashboardExtractorConstants.STATUS_SUCCESS).build()))
                 .build();
 
         when(orchestrator.processLegacyBatchIngest(any(LegacyBatchIngestRequest.class))).thenReturn(expectedResponse);

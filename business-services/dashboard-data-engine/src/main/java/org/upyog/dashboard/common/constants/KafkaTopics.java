@@ -24,8 +24,8 @@ package org.upyog.dashboard.common.constants;
  * Constant                        Topic name                               Persister action
  * ──────────────────────────────  ───────────────────────────────────────  ──────────────────────────────────────────────
  * SAVE_INGESTION_DETAIL           save-dashboard-ingestion-detail            INSERT into ingestion_detail
- * SAVE_LEGACY_INGESTION_DETAIL    save-adapter-module-ingestion-detail     INSERT into legacy_data_ingestion_detail
- * UPDATE_LEGACY_INGESTION_DETAIL  update-adapter-module-ingestion-detail   UPDATE legacy_data_ingestion_detail by PK
+ * SAVE_LEGACY_INGESTION_DETAIL    save-dashboard-data-module-ingestion-detail     INSERT into legacy_data_ingestion_detail
+ * UPDATE_LEGACY_INGESTION_DETAIL  update-dashboard-data-module-ingestion-detail   UPDATE legacy_data_ingestion_detail by PK
  * </pre>
  *
  * <p>
@@ -83,7 +83,7 @@ public final class KafkaTopics {
      *
      * @see org.upyog.dashboard.entity.LegacyIngestionData
      */
-    public static final String SAVE_LEGACY_INGESTION_DETAIL = "save-adapter-module-ingestion-detail";
+    public static final String SAVE_LEGACY_INGESTION_DETAIL = "save-dashboard-data-module-ingestion-detail";
 
     /**
      * Topic consumed by the persister to execute an
@@ -110,13 +110,13 @@ public final class KafkaTopics {
      *
      * @see org.upyog.dashboard.entity.LegacyIngestionData
      */
-    public static final String UPDATE_LEGACY_INGESTION_DETAIL = "update-adapter-module-ingestion-detail";
+    public static final String UPDATE_LEGACY_INGESTION_DETAIL = "update-dashboard-data-module-ingestion-detail";
     /**
      * Topic consumed by the persister to execute an
      * <strong>INSERT</strong>
      * into the {@code adapter_ingestion_error_log} table.
      */
-    public static final String SAVE_ADAPTER_ERROR_LOG = "save-adapter-error-log";
+    public static final String SAVE_ADAPTER_ERROR_LOG = "save-dashboard-data-error-log";
     /**
      * Topic consumed by the persister to execute an
      * <strong>UPSERT</strong>

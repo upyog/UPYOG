@@ -1,5 +1,6 @@
 package org.upyog.dashboard.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.upyog.dashboard.util.CommonUtils;
 
 import java.time.LocalDate;
@@ -379,7 +380,7 @@ private IngestionResult buildResult(String status, Module module, LocalDate date
  */
 	private LocalDate parseDefaultStartDate() {
 		try {
-			if (defaultStartDateStr != null && !defaultStartDateStr.isBlank()) {
+			if (StringUtils.isNotBlank(defaultStartDateStr)) {
 				return LocalDate.parse(defaultStartDateStr.trim());
 			}
 		} catch (Exception exception) {
@@ -398,13 +399,13 @@ private IngestionResult buildResult(String status, Module module, LocalDate date
 		if (item == null) {
 			return this.tenantId;
 		}
-		if (item instanceof DashboardData d && d.getUlb() != null && !d.getUlb().isBlank()) {
+		if (item instanceof DashboardData d && StringUtils.isNotBlank(d.getUlb())) {
 			return d.getUlb();
 		}
 		try {
 			java.lang.reflect.Method getUlbMethod = item.getClass().getMethod("getUlb");
 			Object val = getUlbMethod.invoke(item);
-			if (val != null && !val.toString().isBlank()) {
+			if (val != null && StringUtils.isNotBlank(val.toString())) {
 				return val.toString();
 			}
 		} catch (Exception ignored) {
@@ -412,7 +413,7 @@ private IngestionResult buildResult(String status, Module module, LocalDate date
 		try {
 			java.lang.reflect.Method getTenantIdMethod = item.getClass().getMethod("getTenantId");
 			Object val = getTenantIdMethod.invoke(item);
-			if (val != null && !val.toString().isBlank()) {
+			if (val != null && StringUtils.isNotBlank(val.toString())) {
 				return val.toString();
 			}
 		} catch (Exception ignored) {
@@ -493,7 +494,7 @@ private IngestionResult buildResult(String status, Module module, LocalDate date
 	}
 
 	private boolean isDuplicateDateError(String message) {
-		if (message == null || message.isBlank()) {
+		if (StringUtils.isBlank(message)) {
 			return false;
 		}
 		String lower = message.toLowerCase();

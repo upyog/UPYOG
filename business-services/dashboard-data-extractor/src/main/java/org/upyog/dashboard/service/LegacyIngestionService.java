@@ -1,5 +1,7 @@
 package org.upyog.dashboard.service;
 
+import org.upyog.dashboard.constants.DashboardExtractorConstants;
+import org.apache.commons.lang3.StringUtils;
 import org.upyog.dashboard.util.CommonUtils;
 
 import java.time.LocalDate;
@@ -35,8 +37,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class LegacyIngestionService {
 
-	private static final String STATUS_SUCCESS = "SUCCESS";
-	private static final String STATUS_FAILURE = "FAILURE";
+	private static final String STATUS_SUCCESS = DashboardExtractorConstants.STATUS_SUCCESS;
+	private static final String STATUS_FAILURE = DashboardExtractorConstants.STATUS_FAILURE;
 
 	private final DashboardClient dashboardClient;
 	private final ExtractorRegistry extractorRegistry;
@@ -97,7 +99,7 @@ public class LegacyIngestionService {
 			LocalDate currentDate = startDate;
 			while (!currentDate.isAfter(endDate)) {
 				if (!successfullyIngested.contains(currentDate) && !registeredLegacyJobs.contains(currentDate)) {
-					summaryRepository.createLegacyJob(tenantId, module.name(), currentDate);
+					summaryRepository.createLegacyJob(CommonUtils.generateUUID(), tenantId, module.name(), currentDate, currentDate, currentDate);
 					createdCount++;
 				}
 				currentDate = currentDate.plusDays(1);
@@ -297,7 +299,7 @@ public class LegacyIngestionService {
 	 * @return a valid JSON string; never {@code null}
 	 */
 	private String sanitizeJson(String input) {
-		if (input == null || input.isBlank()) {
+		if (StringUtils.isBlank(input)) {
 			return "{}";
 		}
 		try {
@@ -311,7 +313,7 @@ public class LegacyIngestionService {
 		try {
 			return objectMapper.writeValueAsString(java.util.Map.of("error", input));
 		} catch (Exception exception) {
-			return "{\"error\":\"" + input.replace("\"", "\\\"").replace("\n", " ") + "\"}";
+			return "{\"error\":\"" + input.replace("\"", "\\\"").replace("\\n", " ") + "\"}";
 		}
 	}
 }

@@ -1,5 +1,6 @@
 package org.upyog.dashboard.service.impl;
 
+import org.upyog.dashboard.constants.DashboardExtractorConstants;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -53,7 +54,7 @@ class KafkaIngestionPersistenceServiceImplTest {
     @DisplayName("createLegacyJob pushes to Kafka topic")
     void createLegacyJob_pushesToKafka() {
         LocalDate targetDate = LocalDate.of(2026, 7, 1);
-        service.createLegacyJob("pg", "PT", targetDate);
+        service.createLegacyJob("job-123", "pg", "PT", targetDate, targetDate, targetDate);
 
         verify(producer).push(
                 eq(KafkaTopics.SAVE_LEGACY_INGESTION_DETAIL),
@@ -64,7 +65,7 @@ class KafkaIngestionPersistenceServiceImplTest {
     @Test
     @DisplayName("updateLegacyJobStatus pushes to Kafka topic")
     void updateLegacyJobStatus_pushesToKafka() {
-        service.updateLegacyJobStatus("job123", "SUCCESS", "{}", "{}");
+        service.updateLegacyJobStatus("job123", DashboardExtractorConstants.STATUS_SUCCESS, "{}", "{}");
 
         verify(producer).push(
                 eq(KafkaTopics.UPDATE_LEGACY_INGESTION_DETAIL),

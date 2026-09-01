@@ -1,5 +1,6 @@
 package org.upyog.dashboard.loader.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.upyog.dashboard.client.DashboardFeignClient;
 import org.upyog.dashboard.config.DashboardProperties;
 
@@ -203,7 +204,7 @@ public class DashboardDataLoaderImpl implements DashboardDataLoader {
 				String responseOrErrorMessage = exception.getMessage();
 				if (exception instanceof feign.FeignException feignException) {
 					String feignExceptionContent = feignException.contentUTF8();
-					if (feignExceptionContent != null && !feignExceptionContent.isBlank()) {
+					if (StringUtils.isNotBlank(feignExceptionContent)) {
 						responseOrErrorMessage = feignExceptionContent;
 					}
 				}

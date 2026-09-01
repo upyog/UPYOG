@@ -1,5 +1,6 @@
 package org.upyog.dashboard.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.upyog.dashboard.repository.IngestionSummaryRepository;
 
 import java.time.LocalDate;
@@ -130,7 +131,7 @@ public class LegacyIngestionController {
      * @return the matching {@link Module} constant, or {@code null} to signal all-modules processing
      */
     private Module parseModule(String moduleStr) {
-        if (moduleStr == null || moduleStr.isBlank()) {
+        if (StringUtils.isBlank(moduleStr)) {
             return null;
         }
         try {

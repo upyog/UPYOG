@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.upyog.dashboard.common.constants.Module;
 import org.upyog.dashboard.config.SchemaMappingConfig;
 import org.upyog.dashboard.model.DashboardData;
@@ -92,26 +93,27 @@ class PgrModuleExtractorTest {
 
 		when(schemaMappingConfig.getQueriesForModule(Module.PGR)).thenReturn(queries);
 
-		Map<String, Object> mockDbResult = new HashMap<>();
-		mockDbResult.put("tenantid", "PG.citya.City A.Ward 1");
-		mockDbResult.put("uniquecitizens", 22);
-		mockDbResult.put("slaachievementjson", "[{\"name\":\"DEPT1\",\"value\":2},{\"name\":\"DEPT2\",\"value\":0},{\"name\":\"DEPT3\",\"value\":6}]");
-		mockDbResult.put("completionratejson", "[{\"name\":\"DEPT1\",\"value\":2},{\"name\":\"DEPT2\",\"value\":0},{\"name\":\"DEPT3\",\"value\":6}]");
-		mockDbResult.put("complaintsbystatusjson", "[{\"name\":\"reopened\",\"value\":15},{\"name\":\"open\",\"value\":20},{\"name\":\"assigned\",\"value\":16},{\"name\":\"rejected\",\"value\":14},{\"name\":\"reassign\",\"value\":10}]");
-		mockDbResult.put("complaintsbychanneljson", "[{\"name\":\"MOBILE\",\"value\":10},{\"name\":\"WEB\",\"value\":90}]");
-		mockDbResult.put("complaintsbydepartmentjson", "[{\"name\":\"DEPT1\",\"value\":20},{\"name\":\"DEPT2\",\"value\":50},{\"name\":\"DEPT3\",\"value\":30}]");
-		mockDbResult.put("complaintsbycategoryjson", "[{\"name\":\"Street Lights\",\"value\":20},{\"name\":\"Road Repair\",\"value\":60},{\"name\":\"Garbage Cleaning\",\"value\":10},{\"name\":\"Drainage Issue\",\"value\":10}]");
-		mockDbResult.put("todaysreopenedcomplaintsjson", "[{\"name\":\"DEPT1\",\"value\":20},{\"name\":\"DEPT2\",\"value\":5},{\"name\":\"DEPT3\",\"value\":3}]");
-		mockDbResult.put("todaysopencomplaintsjson", "[{\"name\":\"DEPT1\",\"value\":2},{\"name\":\"DEPT2\",\"value\":7},{\"name\":\"DEPT3\",\"value\":11}]");
-		mockDbResult.put("todaysassignedcomplaintsjson", "[{\"name\":\"DEPT1\",\"value\":1},{\"name\":\"DEPT2\",\"value\":0},{\"name\":\"DEPT3\",\"value\":2}]");
-		mockDbResult.put("averagesolutiontimejson", "[{\"name\":\"DEPT1\",\"value\":2},{\"name\":\"DEPT2\",\"value\":4},{\"name\":\"DEPT3\",\"value\":3}]");
-		mockDbResult.put("todaysrejectedcomplaintsjson", "[{\"name\":\"DEPT1\",\"value\":2},{\"name\":\"DEPT2\",\"value\":0},{\"name\":\"DEPT3\",\"value\":6}]");
-		mockDbResult.put("todaysreassignedcomplaintsjson", "[{\"name\":\"DEPT1\",\"value\":1},{\"name\":\"DEPT2\",\"value\":3},{\"name\":\"DEPT3\",\"value\":1}]");
-		mockDbResult.put("todaysreassignrequestedcomplaintsjson", "[{\"name\":\"DEPT1\",\"value\":1},{\"name\":\"DEPT2\",\"value\":3},{\"name\":\"DEPT3\",\"value\":1}]");
-		mockDbResult.put("todaysclosedcomplaintsjson", "[{\"name\":\"DEPT1\",\"value\":1},{\"name\":\"DEPT2\",\"value\":3},{\"name\":\"DEPT3\",\"value\":1}]");
-		mockDbResult.put("todaysresolvedcomplaintsjson", "[{\"name\":\"DEPT1\",\"value\":1},{\"name\":\"DEPT2\",\"value\":3},{\"name\":\"DEPT3\",\"value\":1}]");
+		org.upyog.dashboard.pgr.model.RawPgrMetric mockDbResult = org.upyog.dashboard.pgr.model.RawPgrMetric.builder()
+				.tenantid("PG.citya.City A.Ward 1")
+				.uniquecitizens(22)
+				.slaachievementjson("[{\"name\":\"DEPT1\",\"value\":2},{\"name\":\"DEPT2\",\"value\":0},{\"name\":\"DEPT3\",\"value\":6}]")
+				.completionratejson("[{\"name\":\"DEPT1\",\"value\":2},{\"name\":\"DEPT2\",\"value\":0},{\"name\":\"DEPT3\",\"value\":6}]")
+				.complaintsbystatusjson("[{\"name\":\"reopened\",\"value\":15},{\"name\":\"open\",\"value\":20},{\"name\":\"assigned\",\"value\":16},{\"name\":\"rejected\",\"value\":14},{\"name\":\"reassign\",\"value\":10}]")
+				.complaintsbychanneljson("[{\"name\":\"MOBILE\",\"value\":10},{\"name\":\"WEB\",\"value\":90}]")
+				.complaintsbydepartmentjson("[{\"name\":\"DEPT1\",\"value\":20},{\"name\":\"DEPT2\",\"value\":50},{\"name\":\"DEPT3\",\"value\":30}]")
+				.complaintsbycategoryjson("[{\"name\":\"Street Lights\",\"value\":20},{\"name\":\"Road Repair\",\"value\":60},{\"name\":\"Garbage Cleaning\",\"value\":10},{\"name\":\"Drainage Issue\",\"value\":10}]")
+				.todaysreopenedcomplaintsjson("[{\"name\":\"DEPT1\",\"value\":20},{\"name\":\"DEPT2\",\"value\":5},{\"name\":\"DEPT3\",\"value\":3}]")
+				.todaysopencomplaintsjson("[{\"name\":\"DEPT1\",\"value\":2},{\"name\":\"DEPT2\",\"value\":7},{\"name\":\"DEPT3\",\"value\":11}]")
+				.todaysassignedcomplaintsjson("[{\"name\":\"DEPT1\",\"value\":1},{\"name\":\"DEPT2\",\"value\":0},{\"name\":\"DEPT3\",\"value\":2}]")
+				.averagesolutiontimejson("[{\"name\":\"DEPT1\",\"value\":2},{\"name\":\"DEPT2\",\"value\":4},{\"name\":\"DEPT3\",\"value\":3}]")
+				.todaysrejectedcomplaintsjson("[{\"name\":\"DEPT1\",\"value\":2},{\"name\":\"DEPT2\",\"value\":0},{\"name\":\"DEPT3\",\"value\":6}]")
+				.todaysreassignedcomplaintsjson("[{\"name\":\"DEPT1\",\"value\":1},{\"name\":\"DEPT2\",\"value\":3},{\"name\":\"DEPT3\",\"value\":1}]")
+				.todaysreassignrequestedcomplaintsjson("[{\"name\":\"DEPT1\",\"value\":1},{\"name\":\"DEPT2\",\"value\":3},{\"name\":\"DEPT3\",\"value\":1}]")
+				.todaysclosedcomplaintsjson("[{\"name\":\"DEPT1\",\"value\":1},{\"name\":\"DEPT2\",\"value\":3},{\"name\":\"DEPT3\",\"value\":1}]")
+				.todaysresolvedcomplaintsjson("[{\"name\":\"DEPT1\",\"value\":1},{\"name\":\"DEPT2\",\"value\":3},{\"name\":\"DEPT3\",\"value\":1}]")
+				.build();
 
-		when(namedParameterJdbcTemplate.queryForList(any(), anyMap())).thenReturn(List.of(mockDbResult));
+		org.mockito.Mockito.lenient().when(namedParameterJdbcTemplate.query(anyString(), any(SqlParameterSource.class), any(org.springframework.jdbc.core.RowMapper.class))).thenReturn(List.of(mockDbResult));
 
 		LocalDate testDate = LocalDate.of(2022, 6, 1);
 		List<DashboardData> dataList = extractor.extractData(testDate);
@@ -147,12 +149,13 @@ class PgrModuleExtractorTest {
 
 		when(schemaMappingConfig.getQueriesForModule(Module.PGR)).thenReturn(queries);
 
-		Map<String, Object> mockDbResult = new HashMap<>();
-		mockDbResult.put("tenantid", "PG.citya.City A.Ward 1");
-		mockDbResult.put("uniquecitizens", 5);
+		org.upyog.dashboard.pgr.model.RawPgrMetric mockDbResult = org.upyog.dashboard.pgr.model.RawPgrMetric.builder()
+				.tenantid("PG.citya.City A.Ward 1")
+				.uniquecitizens(5)
+				.build();
 
 		// Fail on first attempt, succeed on second
-		when(namedParameterJdbcTemplate.queryForList(any(), anyMap()))
+		org.mockito.Mockito.lenient().when(namedParameterJdbcTemplate.query(anyString(), any(SqlParameterSource.class), any(org.springframework.jdbc.core.RowMapper.class)))
 				.thenThrow(new RuntimeException("Transient lock conflict"))
 				.thenReturn(List.of(mockDbResult));
 
@@ -161,7 +164,7 @@ class PgrModuleExtractorTest {
 
 		assertThat(dataList).isNotNull().hasSize(1);
 		assertThat(dataList.get(0).getMetrics()).containsEntry("uniqueCitizens", 5);
-		verify(namedParameterJdbcTemplate, times(2)).queryForList(any(), anyMap());
+		verify(namedParameterJdbcTemplate, times(2)).query(anyString(), any(SqlParameterSource.class), any(org.springframework.jdbc.core.RowMapper.class));
 	}
 
 	@Test
@@ -172,13 +175,13 @@ class PgrModuleExtractorTest {
 
 		when(schemaMappingConfig.getQueriesForModule(Module.PGR)).thenReturn(queries);
 
-		when(namedParameterJdbcTemplate.queryForList(any(), anyMap()))
+		org.mockito.Mockito.lenient().when(namedParameterJdbcTemplate.query(anyString(), any(SqlParameterSource.class), any(org.springframework.jdbc.core.RowMapper.class)))
 				.thenThrow(new RuntimeException("Persistent DB disconnect"));
 
 		LocalDate testDate = LocalDate.of(2022, 6, 1);
 		List<DashboardData> dataList = extractor.extractData(testDate);
 
 		assertThat(dataList).isNotNull().isEmpty(); // Empty default
-		verify(namedParameterJdbcTemplate, times(3)).queryForList(any(), anyMap());
+		verify(namedParameterJdbcTemplate, times(3)).query(anyString(), any(SqlParameterSource.class), any(org.springframework.jdbc.core.RowMapper.class));
 	}
 }

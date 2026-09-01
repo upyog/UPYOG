@@ -64,7 +64,8 @@ class DashboardClientSimpleTest {
         TransformerRegistry registry = new TransformerRegistry(Collections.singletonList(transformer));
         CommonValidator commonValidator = new CommonValidator();
 
-        dashboardClient = new DashboardClientImpl(registry, loader, commonValidator, org.mockito.Mockito.mock(org.upyog.dashboard.config.DashboardProperties.class), org.mockito.Mockito.mock(org.upyog.dashboard.service.SXSSFExcelGeneratorService.class), org.mockito.Mockito.mock(org.upyog.dashboard.api.FileStoreClient.class));
+        dashboardClient = new DashboardClientImpl(org.mockito.Mockito.mock(org.upyog.dashboard.api.S3UploadClient.class), registry, loader, commonValidator, org.mockito.Mockito.mock(org.upyog.dashboard.config.DashboardProperties.class), org.mockito.Mockito.mock(org.upyog.dashboard.service.SXSSFExcelGeneratorService.class));
+
     }
 
     // Method 1: Makes the dummy data

@@ -1,5 +1,6 @@
 package org.upyog.dashboard.service;
 
+import org.upyog.dashboard.constants.DashboardExtractorConstants;
 import org.upyog.dashboard.util.TestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -91,7 +92,7 @@ class LegacyIngestionServiceTest {
 
         when(extractor.extractData(d3)).thenReturn(DashboardData.builder().module("PT").ulb("pg.citya").build());
         when(dashboardClient.execute(any(DashboardRequest.class)))
-                .thenReturn(IngestionResult.builder().ingestionStatus("SUCCESS").build());
+                .thenReturn(IngestionResult.builder().ingestionStatus(DashboardExtractorConstants.STATUS_SUCCESS).build());
 
         LegacyIngestionResponse response = legacyService.ingestHistoricalDataForRange(d1, d3, Module.PT);
 
@@ -116,7 +117,7 @@ class LegacyIngestionServiceTest {
 
         when(extractor.extractData(d1)).thenReturn(DashboardData.builder().module("PT").ulb("pg.citya").build());
         when(dashboardClient.execute(any(DashboardRequest.class)))
-                .thenReturn(IngestionResult.builder().ingestionStatus("FAILURE").failureReason("Timeout").build());
+                .thenReturn(IngestionResult.builder().ingestionStatus(DashboardExtractorConstants.STATUS_FAILURE).failureReason("Timeout").build());
 
         LegacyIngestionResponse response = legacyService.ingestHistoricalDataForRange(d1, d1, Module.PT);
 

@@ -12,7 +12,7 @@
 
 	<groupId>org.upyog</groupId>
 	<artifactId>dashboard-data-engine</artifactId>
-	<version>1.0.2</version>
+	<version>1.0.3</version>
 	<packaging>jar</packaging>
 	<name>dashboard-data-engine</name>
 	<description>Library for transforming, validating, and loading dashboard
@@ -179,7 +179,12 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>5.2.5</version>
 		</dependency>
-
+		<!-- AWS S3 SDK -->
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>s3</artifactId>
+			<version>2.25.11</version>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>

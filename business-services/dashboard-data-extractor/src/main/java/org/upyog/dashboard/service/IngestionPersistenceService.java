@@ -27,13 +27,16 @@ public interface IngestionPersistenceService {
     void saveOrUpdateLastAttemptedDate(String tenantId, String moduleName, LocalDate attemptedDate);
 
     /**
-     * Submits a request to process legacy data ingestion for the given tenant, module, and date.
+     * Submits a request to process legacy data ingestion for the given tenant, module, and date range.
      *
+     * @param jobId      the unique identifier of the legacy job
      * @param tenantId   the tenant identifier
      * @param moduleName the module short code
-     * @param date       the date for which the legacy job should be created
+     * @param pushDate   the date for which the legacy job should be tracked (e.g. today or start date)
+     * @param startDate  inclusive start date of the legacy range
+     * @param endDate    inclusive end date of the legacy range
      */
-    void createLegacyJob(String tenantId, String moduleName, LocalDate date);
+    void createLegacyJob(String jobId, String tenantId, String moduleName, LocalDate pushDate, LocalDate startDate, LocalDate endDate);
 
     /**
      * Updates the status of an existing legacy data ingestion job.

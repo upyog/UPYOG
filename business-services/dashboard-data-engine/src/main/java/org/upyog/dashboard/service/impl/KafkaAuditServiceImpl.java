@@ -1,5 +1,6 @@
 package org.upyog.dashboard.service.impl;
 
+import org.upyog.dashboard.common.constants.DashboardConstants;
 import org.upyog.dashboard.model.ErrorLogDTO;
 
 
@@ -46,8 +47,8 @@ public class KafkaAuditServiceImpl implements AuditService {
                     .pushDate(first != null ? first.getDate() : null)
                     .requestData(JsonUtil.toJsonString(requestJson, objectMapper))
                     .responseData(JsonUtil.toJsonString(responseOrError, objectMapper))
-                    .ingestionStatus(status).createdBy("SYSTEM")
-                    .createdTime(now).lastModifiedBy("SYSTEM").lastModifiedTime(now).build();
+                    .ingestionStatus(status).createdBy(DashboardConstants.SYSTEM_USER)
+                    .createdTime(now).lastModifiedBy(DashboardConstants.SYSTEM_USER).lastModifiedTime(now).build();
 
             Map<String, Object> kafkaMessage = new HashMap<>();
             kafkaMessage.put("dailyIngestionData", Collections.singletonList(record));
@@ -61,7 +62,7 @@ public class KafkaAuditServiceImpl implements AuditService {
                         .errorDate(first != null ? first.getDate() : null)
                         .issueDescription(responseOrError)
                         .createdTime(now)
-                        .createdBy("SYSTEM")
+                        .createdBy(DashboardConstants.SYSTEM_USER)
                         .build();
                 Map<String, Object> errorKafkaMessage = new HashMap<>();
                 errorKafkaMessage.put("errorLog", Collections.singletonList(errorLog));

@@ -1,7 +1,10 @@
 package org.upyog.dashboard.model;
-
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
 
 /**
  * Standard {@code RequestInfo} block included in every outbound API request.
@@ -40,8 +43,11 @@ import lombok.Data;
  * 
  * <p>Contributes to the core Property Tax metrics ingestion pipeline.
  */
-@Data
 @Builder
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 public class RequestInfo {
 
     /**

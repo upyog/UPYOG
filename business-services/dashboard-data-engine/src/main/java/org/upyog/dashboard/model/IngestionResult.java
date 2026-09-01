@@ -1,10 +1,13 @@
 package org.upyog.dashboard.model;
-
 import org.upyog.dashboard.util.CommonUtils;
 
 import java.util.List;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
 
 /**
  * Immutable result object returned by a {@link org.upyog.dashboard.loader.Loader}
@@ -38,8 +41,11 @@ import lombok.Data;
  * 
  * <p>Contributes to the core Property Tax metrics ingestion pipeline.
  */
-@Data
 @Builder
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 public class IngestionResult {
 
     /**

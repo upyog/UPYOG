@@ -2,8 +2,9 @@ package org.upyog.dashboard.pt.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Raw data class for PT collection metrics fetched directly via
@@ -12,7 +13,8 @@ import lombok.NoArgsConstructor;
  * This class facilitates grouping and aggregation of individual collection
  * receipts by tenant, before being mapped to the target Dashboard payload DTO.
  */
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
