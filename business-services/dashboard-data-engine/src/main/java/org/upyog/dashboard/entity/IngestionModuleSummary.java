@@ -1,10 +1,13 @@
 package org.upyog.dashboard.entity;
-
 import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 /**
@@ -13,10 +16,13 @@ import lombok.NoArgsConstructor;
  * <p>Tracks the most recent calendar date for which metrics were successfully
  * ingested for a specific tenant and module.
  */
-@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 public class IngestionModuleSummary {
 
     /** Primary key UUID. */

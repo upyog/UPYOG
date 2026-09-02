@@ -17,6 +17,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -126,7 +127,7 @@ func buildStack(t *testing.T, opts stackOptions) http.Handler {
 	reg.Register(providers.NewNewApplicationsProvider(
 		newClient("egov-workflow-v2", opts.workflowURL), nil, log, m, time.Minute))
 	reg.Register(providers.NewRecentApplicationsProvider(
-		newClient("upyog-backend", opts.inboxURL), nil, log, m, time.Minute))
+		newClient("egov-workflow-v2", opts.workflowURL), nil, log, m, time.Minute, 7))
 
 	exec := executor.NewExecutor(reg, log, m, 5*time.Second, opts.providerTimeouts)
 	eng := engine.NewEngine(exec, reg, log, m)
@@ -199,10 +200,11 @@ func providerEntry(t *testing.T, body map[string]interface{}, name string) map[s
 
 func aggregateRequestBody(requests ...map[string]interface{}) map[string]interface{} {
 	return map[string]interface{}{
-		"requestId": testRequestID,
-		"page":      "citizen-home",
-		"tenantId":  testTenantID,
-		"requests":  requests,
+		"requestInfo": map[string]interface{}{},
+		"requestId":   testRequestID,
+		"page":        "citizen-home",
+		"tenantId":    testTenantID,
+		"requests":    requests,
 	}
 }
 
@@ -211,8 +213,10 @@ func TestAggregate_EndToEnd_Success(t *testing.T) {
 	var workflowAuthHeader string
 
 	workflowSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		workflowQuery = r.URL.Query()
-		workflowAuthHeader = r.Header.Get("Authorization")
+		if strings.Contains(r.URL.Path, "process/_search") {
+			workflowQuery = r.URL.Query()
+			workflowAuthHeader = r.Header.Get("Authorization")
+		}
 		w.Header().Set("Content-Type", "application/json")
 		_, _ = w.Write([]byte(sampleWorkflowResponse))
 	}))
@@ -285,17 +289,22 @@ func TestAggregate_EndToEnd_Success(t *testing.T) {
 	if recent["status"] != "SUCCESS" {
 		t.Fatalf("recent-applications: expected SUCCESS, got %v", recent["status"])
 	}
-	items := recent["data"].([]interface{})
-	if len(items) != 1 {
-		t.Errorf("expected 1 inbox item, got %d", len(items))
+	processInstances := recent["data"].([]interface{})
+	if len(processInstances) != 2 {
+		t.Errorf("expected 2 process instances, got %d", len(processInstances))
 	}
 }
 
 func TestAggregate_EndToEnd_PartialFailure(t *testing.T) {
 	// Workflow is broken (HTTP 500); inbox is healthy. The aggregate call must
 	// still return 200 with a FAILED entry for new-applications only.
-	workflowSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		w.WriteHeader(http.StatusInternalServerError)
+	workflowSrv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.Contains(r.URL.Path, "process/dashboard/_search") {
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = w.Write([]byte(sampleWorkflowResponse))
+		} else {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 	}))
 	defer workflowSrv.Close()
 
@@ -452,10 +461,11 @@ func TestAggregate_EndToEnd_ValidationError(t *testing.T) {
 	// requestId is not a UUID → binding validation must reject with 400
 	// before any provider executes.
 	rec, body := postAggregate(t, h, map[string]interface{}{
-		"requestId": "not-a-uuid",
-		"page":      "citizen-home",
-		"tenantId":  testTenantID,
-		"requests":  []map[string]interface{}{{"provider": "new-applications"}},
+		"requestInfo": map[string]interface{}{},
+		"requestId":   "not-a-uuid",
+		"page":        "citizen-home",
+		"tenantId":    testTenantID,
+		"requests":    []map[string]interface{}{{"provider": "new-applications"}},
 	})
 
 	if rec.Code != http.StatusBadRequest {

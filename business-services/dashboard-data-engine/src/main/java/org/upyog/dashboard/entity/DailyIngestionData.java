@@ -1,8 +1,12 @@
 package org.upyog.dashboard.entity;
-
+import org.upyog.dashboard.common.constants.DashboardConstants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 /**
@@ -55,10 +59,13 @@ import lombok.NoArgsConstructor;
  * 
  * <p>Contributes to the core Property Tax metrics ingestion pipeline.
  */
-@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 public class DailyIngestionData {
 
     /**
@@ -139,7 +146,7 @@ public class DailyIngestionData {
 
     /**
      * Identity of the process or user that created this record.
-     * Defaults to {@code "SYSTEM"} when the record originates from a
+     * Defaults to {@code DashboardConstants.SYSTEM_USER} when the record originates from a
      * scheduled background job.
      * Maps to {@code ingestion_detail.created_by}.
      */

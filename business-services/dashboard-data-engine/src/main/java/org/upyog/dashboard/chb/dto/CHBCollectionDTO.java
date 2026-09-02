@@ -1,8 +1,10 @@
 package org.upyog.dashboard.chb.dto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class CHBCollectionDTO {
     private String bookingStatus;
     private String bookingMode;

@@ -4,41 +4,33 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
 import org.upyog.dashboard.chb.constants.CHBDatabaseConstants;
-import org.upyog.dashboard.chb.dto.CHBAggregatedData;
+import org.upyog.dashboard.chb.model.RawChbMetric;
 
 /**
- * Factory class holding pre-built RowMapper instances for the CHB module.
- * This class is not instantiable. All mappers are exposed as public static final
- * constants so they can be reused without allocation overhead.
+ * Factory class holding explicit RowMapper instances for the CHB module.
+ * Maps SQL ResultSet rows to {@link RawChbMetric} without reflection.
  */
 public final class CHBRowMapper {
 
     private CHBRowMapper() {}
 
     /**
-     * Maps a single row from the CHB combined metrics query to a CHBAggregatedData object.
-     * Expected columns: totalactivevenueavailable, totalapplicationreceived, totalcollections,
-     * noshowbookings, bookingsjson, createdbylistjson.
-     * Integer columns are read via getNullableInt to correctly handle SQL NULL values,
-     * since ResultSet.getInt() silently returns 0 for NULL without this guard.
+     * Maps a single row from the CHB combined metrics query to a {@link RawChbMetric} object.
      */
-    public static final RowMapper<CHBAggregatedData> COMBINED_ROW_MAPPER = new RowMapper<CHBAggregatedData>() {
+    public static final RowMapper<RawChbMetric> COMBINED_ROW_MAPPER = new RowMapper<RawChbMetric>() {
         @Override
-        public CHBAggregatedData mapRow(ResultSet rs, int rowNum) throws SQLException {
-            CHBAggregatedData data = new CHBAggregatedData();
-            data.setTotalActiveVenueAvailable(getNullableInt(rs, CHBDatabaseConstants.TOTAL_ACTIVE_VENUE_AVAILABLE));
-            data.setTotalApplicationReceived(getNullableInt(rs, CHBDatabaseConstants.TOTAL_APPLICATION_RECEIVED));
-            data.setTotalCollections(getNullableInt(rs, CHBDatabaseConstants.TOTAL_COLLECTIONS));
-            data.setNoShowBookings(getNullableInt(rs, CHBDatabaseConstants.NO_SHOW_BOOKINGS));
-            data.setBookingsJson(rs.getString(CHBDatabaseConstants.BOOKINGS_JSON));
-            data.setCreatedByListJson(rs.getString(CHBDatabaseConstants.CREATED_BY_LIST_JSON));
-            return data;
+        public RawChbMetric mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return RawChbMetric.builder()
+                    .tenantid(rs.getString(CHBDatabaseConstants.TENANT_ID))
+                    .totalActiveVenueAvailable(getNullableInt(rs, CHBDatabaseConstants.TOTAL_ACTIVE_VENUE_AVAILABLE))
+                    .totalApplicationReceived(getNullableInt(rs, CHBDatabaseConstants.TOTAL_APPLICATION_RECEIVED))
+                    .totalCollections(getNullableInt(rs, CHBDatabaseConstants.TOTAL_COLLECTIONS))
+                    .noShowBookings(getNullableInt(rs, CHBDatabaseConstants.NO_SHOW_BOOKINGS))
+                    .bookingsJson(rs.getString(CHBDatabaseConstants.BOOKINGS_JSON))
+                    .createdByListJson(rs.getString(CHBDatabaseConstants.CREATED_BY_LIST_JSON))
+                    .build();
         }
 
-        /**
-         * Reads an integer column and returns null if the SQL value was NULL,
-         * avoiding the silent 0 default that ResultSet.getInt produces.
-         */
         private Integer getNullableInt(ResultSet rs, String col) throws SQLException {
             int v = rs.getInt(col);
             return rs.wasNull() ? null : v;

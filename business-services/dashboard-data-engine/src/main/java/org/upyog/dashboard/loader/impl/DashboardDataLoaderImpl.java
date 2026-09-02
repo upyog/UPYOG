@@ -1,5 +1,6 @@
 package org.upyog.dashboard.loader.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.upyog.dashboard.client.DashboardFeignClient;
 import org.upyog.dashboard.config.DashboardProperties;
 
@@ -64,7 +65,6 @@ import lombok.extern.slf4j.Slf4j;
  * @see Loader
  * @see DailyIngestionData
  * @see DashboardProducer
- * @see KafkaTopics#SAVE_INGESTION_DETAIL
  */
 /**
  * Class representing the DashboardDataLoaderImpl class.
@@ -72,7 +72,7 @@ import lombok.extern.slf4j.Slf4j;
  * <p>Contributes to the core Property Tax metrics ingestion pipeline.
  */
 @Slf4j
-@Component
+@Component("httpDataLoader")
 public class DashboardDataLoaderImpl implements DashboardDataLoader {
 
 	/**
@@ -203,7 +203,7 @@ public class DashboardDataLoaderImpl implements DashboardDataLoader {
 				String responseOrErrorMessage = exception.getMessage();
 				if (exception instanceof feign.FeignException feignException) {
 					String feignExceptionContent = feignException.contentUTF8();
-					if (feignExceptionContent != null && !feignExceptionContent.isBlank()) {
+					if (StringUtils.isNotBlank(feignExceptionContent)) {
 						responseOrErrorMessage = feignExceptionContent;
 					}
 				}

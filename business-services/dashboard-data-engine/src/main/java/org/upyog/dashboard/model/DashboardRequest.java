@@ -1,11 +1,14 @@
 package org.upyog.dashboard.model;
-
 import java.util.List;
 
 import org.upyog.dashboard.common.constants.Module;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
 
 /**
  * Encapsulates a single ingestion request passed into the adapter-service pipeline.
@@ -46,8 +49,11 @@ import lombok.Data;
  * 
  * <p>Contributes to the core Property Tax metrics ingestion pipeline.
  */
-@Data
 @Builder
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 public class DashboardRequest {
 
     /**

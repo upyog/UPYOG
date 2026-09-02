@@ -1,7 +1,7 @@
 package org.upyog.dashboard.service;
 
-import org.upyog.dashboard.producer.DashboardProducer;
-
+import org.upyog.dashboard.constants.DashboardExtractorConstants;
+import org.apache.commons.lang3.StringUtils;
 import org.upyog.dashboard.util.CommonUtils;
 
 import java.time.LocalDate;
@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.dashboard.api.DashboardClient;
 import org.upyog.dashboard.common.constants.Module;
@@ -23,53 +22,50 @@ import org.upyog.dashboard.model.LegacyIngestionResponse;
 import org.upyog.dashboard.registry.ExtractorRegistry;
 import org.upyog.dashboard.repository.IngestionSummaryRepository;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Service managing bulk historical (legacy) metrics ingestion for past date
- * ranges.
- *
- * <p>
- * Includes deduplication logic to ensure dates that have already been
- * successfully ingested for a tenant/module are skipped without re-pushing
- * duplicate metrics.
+ * Service managing bulk historical (legacy) metrics ingestion for past date ranges.
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class LegacyIngestionService {
 
-	@Autowired
-	private DashboardClient dashboardClient;
+	private static final String STATUS_SUCCESS = DashboardExtractorConstants.STATUS_SUCCESS;
+	private static final String STATUS_FAILURE = DashboardExtractorConstants.STATUS_FAILURE;
 
-	@Autowired
-	private ExtractorRegistry extractorRegistry;
-
-	@Autowired
-	private SchemaMappingConfig schemaMappingConfig;
-
-	@Autowired
-	private IngestionSummaryRepository summaryRepository;
-
-	@Autowired
-	private DashboardProducer producer;
-
-	@Autowired
-	private com.fasterxml.jackson.databind.ObjectMapper objectMapper;
-
-	@Autowired
-	private DashboardProperties dashboardProperties;
+	private final DashboardClient dashboardClient;
+	private final ExtractorRegistry extractorRegistry;
+	private final SchemaMappingConfig schemaMappingConfig;
+	private final IngestionSummaryRepository summaryRepository;
+	private final ObjectMapper objectMapper;
+	private final DashboardProperties dashboardProperties;
 
 	private String tenantId;
 
+	/**
+	 * Initialises the tenant ID from {@link org.upyog.dashboard.config.DashboardProperties}
+	 * after bean construction.
+	 */
 	@PostConstruct
 	public void init() {
 		this.tenantId = dashboardProperties.getTenantId();
 	}
 
 	/**
-	 * Scheduler 1 helper: Checks for missing dates/jobs and creates them in the
-	 * table.
+	 * Determines the start date for the look-back period and delegates to
+	 * {@link #populateLegacyJobsForRange(LocalDate, LocalDate, Module)}.
+	 *
+	 * @param months       number of months to look back from yesterday (must be &gt; 0)
+	 * @param targetModule the module to populate jobs for, or {@code null} for all enabled modules
+	 * @return the number of new legacy job rows created
+	 * @throws IllegalArgumentException if {@code months} is &le; 0
 	 */
 	public int populateLegacyJobs(int months, Module targetModule) {
 		if (months <= 0) {
@@ -81,7 +77,14 @@ public class LegacyIngestionService {
 	}
 
 	/**
-	 * Populates legacy jobs for a custom range.
+	 * Iterates over every date in {@code [startDate, endDate]} for each module to process
+	 * and inserts a pending legacy job row when the date has not yet been successfully
+	 * ingested and is not already registered in the legacy queue.
+	 *
+	 * @param startDate    the inclusive start date of the range
+	 * @param endDate      the inclusive end date of the range
+	 * @param targetModule the module to populate jobs for, or {@code null} for all enabled modules
+	 * @return the total number of new legacy job rows created across all modules
 	 */
 	public int populateLegacyJobsForRange(LocalDate startDate, LocalDate endDate, Module targetModule) {
 		List<Module> modulesToProcess = getModulesToProcess(targetModule);
@@ -96,7 +99,7 @@ public class LegacyIngestionService {
 			LocalDate currentDate = startDate;
 			while (!currentDate.isAfter(endDate)) {
 				if (!successfullyIngested.contains(currentDate) && !registeredLegacyJobs.contains(currentDate)) {
-					summaryRepository.createLegacyJob(tenantId, module.name(), currentDate);
+					summaryRepository.createLegacyJob(CommonUtils.generateUUID(), tenantId, module.name(), currentDate, currentDate, currentDate);
 					createdCount++;
 				}
 				currentDate = currentDate.plusDays(1);
@@ -106,7 +109,13 @@ public class LegacyIngestionService {
 	}
 
 	/**
-	 * Scheduler 2 helper: Fetches pending or failed legacy jobs and executes them.
+	 * Fetches up to {@code limit} pending or failed legacy jobs for each module to process
+	 * and executes them by extracting data and calling the dashboard client.
+	 * Updates the job status and the last-successful-date summary after each execution.
+	 *
+	 * @param limit        maximum number of jobs to process per module
+	 * @param targetModule the module to execute jobs for, or {@code null} for all enabled modules
+	 * @return the total number of legacy jobs executed across all modules
 	 */
 	public int executeLegacyJobs(int limit, Module targetModule) {
 		List<Module> modulesToProcess = getModulesToProcess(targetModule);
@@ -115,7 +124,7 @@ public class LegacyIngestionService {
 		for (Module module : modulesToProcess) {
 			ModuleExtractor<?> extractor = extractorRegistry.get(module);
 			if (extractor == null) {
-				log.error("LegacyIngestionService | Module {} has no registered ModuleExtractor", module);
+				log.error("Module {} has no registered ModuleExtractor", module);
 				continue;
 			}
 
@@ -127,51 +136,16 @@ public class LegacyIngestionService {
 
 			for (IngestionSummaryRepository.LegacyJob job : pendingJobs) {
 				LocalDate date = job.getPushDate();
-
-				// Mark attempted date in summary
 				summaryRepository.saveOrUpdateLastAttemptedDate(tenantId, module.name(), date);
 
-				// Run ingestion
-				long now = CommonUtils.getCurrentEpochMillis();
-				Object rawData = null;
-				IngestionResult result = null;
-				String requestJson = "{}";
-				String responseJson = "{}";
+				IngestionResult result = processLegacyJob(extractor, module, date);
 
-				try {
-					rawData = extractor.extractData(date);
-					Object requestRawData = rawData;
-					if (rawData instanceof DashboardData) {
-						requestRawData = List.of((DashboardData) rawData);
-					}
-					DashboardRequest request = DashboardRequest.builder().module(module).rawData(requestRawData).build();
-					try {
-						requestJson = objectMapper.writeValueAsString(request);
-					} catch (Exception ignored) {
-					}
+				String requestJson = serializeRequest(module, extractor, date);
+				String responseJson = sanitizeResponse(result);
 
-					result = dashboardClient.execute(request);
-					if (result != null && result.getDate() == null) {
-						result.setDate(date.toString());
-					}
-					log.info("LegacyIngestionService | Ingested legacy module {} date {}: status {}", module, date,
-							result.getIngestionStatus());
-					responseJson = result.getResponseData() != null ? sanitizeJson(result.getResponseData())
-							: sanitizeJson(result.getFailureReason());
+				summaryRepository.updateLegacyJobStatus(job.getJobId(), result.getIngestionStatus(), requestJson, responseJson);
 
-				} catch (Exception exception) {
-					log.error("LegacyIngestionService | Ingestion error for legacy module {} date {}", module, date, exception);
-					responseJson = sanitizeJson(exception.getMessage());
-					result = IngestionResult.builder().ingestionStatus("FAILURE").failureReason(exception.getMessage())
-							.ingestedAt(now).moduleName(module.name()).date(date.toString()).build();
-				}
-
-				// Update legacy job table directly
-				summaryRepository.updateLegacyJobStatus(job.getJobId(), result.getIngestionStatus(), requestJson,
-						responseJson);
-
-				// Update summary tracker on success if date is newer than recorded success date
-				if ("SUCCESS".equalsIgnoreCase(result.getIngestionStatus())) {
+				if (STATUS_SUCCESS.equals(result.getIngestionStatus())) {
 					if (currentLastSuccessOpt.isEmpty() || date.isAfter(currentLastSuccessOpt.get())) {
 						summaryRepository.saveOrUpdateLastSuccessfulDate(tenantId, module.name(), date);
 						currentLastSuccessOpt = Optional.of(date);
@@ -185,7 +159,83 @@ public class LegacyIngestionService {
 	}
 
 	/**
-	 * Backward-compatible endpoint trigger: last N months lookback backfill.
+	 * Executes the ingestion pipeline for a single legacy job: extracts raw data via
+	 * the module extractor, builds a {@link org.upyog.dashboard.model.DashboardRequest},
+	 * and submits it to the dashboard client.
+	 *
+	 * @param extractor the {@link ModuleExtractor} for the given module
+	 * @param module    the module being processed
+	 * @param date      the push date of the legacy job
+	 * @return an {@link org.upyog.dashboard.model.IngestionResult} describing success or failure
+	 */
+	private IngestionResult processLegacyJob(ModuleExtractor<?> extractor, Module module, LocalDate date) {
+		try {
+			Object rawData = extractor.extractData(date);
+			Object requestRawData = rawData instanceof DashboardData dashboardData ? List.of(dashboardData) : rawData;
+			DashboardRequest request = DashboardRequest.builder().module(module).rawData(requestRawData).build();
+
+			IngestionResult result = dashboardClient.execute(request);
+			if (result != null && result.getDate() == null) {
+				result.setDate(date.toString());
+			}
+			log.info("Ingested legacy module {} date {}: status {}", module, date, result != null ? result.getIngestionStatus() : null);
+			return result;
+		} catch (Exception exception) {
+			log.error("Ingestion error for legacy module {} date {}", module, date, exception);
+			return IngestionResult.builder()
+					.ingestionStatus(STATUS_FAILURE)
+					.failureReason(exception.getMessage())
+					.ingestedAt(CommonUtils.getCurrentEpochMillis())
+					.moduleName(module.name())
+					.date(date.toString())
+					.build();
+		}
+	}
+
+	/**
+	 * Extracts data for the given module and date and serialises the resulting
+	 * {@link org.upyog.dashboard.model.DashboardRequest} to a JSON string for audit storage.
+	 * Returns an empty JSON object string ({@code "{}"}) on any error.
+	 *
+	 * @param module    the module being processed
+	 * @param extractor the {@link ModuleExtractor} for the module
+	 * @param date      the date for which data should be serialised
+	 * @return a JSON string representation of the request payload, or {@code "{}"} on error
+	 */
+	private String serializeRequest(Module module, ModuleExtractor<?> extractor, LocalDate date) {
+		try {
+			Object rawData = extractor.extractData(date);
+			Object requestRawData = rawData instanceof DashboardData dashboardData ? List.of(dashboardData) : rawData;
+			DashboardRequest request = DashboardRequest.builder().module(module).rawData(requestRawData).build();
+			return objectMapper.writeValueAsString(request);
+		} catch (Exception e) {
+			return "{}";
+		}
+	}
+
+	/**
+	 * Extracts a safe JSON string from an {@link org.upyog.dashboard.model.IngestionResult} for
+	 * storage as the {@code response_data} audit field. Falls back to the failure reason when
+	 * response data is absent. Returns {@code "{}"} for a {@code null} result.
+	 *
+	 * @param result the ingestion result to sanitise; may be {@code null}
+	 * @return a valid JSON string representing the response or failure information
+	 */
+	private String sanitizeResponse(IngestionResult result) {
+		if (result == null) return "{}";
+		String data = result.getResponseData() != null ? result.getResponseData() : result.getFailureReason();
+		return sanitizeJson(data);
+	}
+
+	/**
+	 * Convenience method that calculates the start date as the first day of the month
+	 * {@code months} months ago and delegates to
+	 * {@link #ingestHistoricalDataForRange(LocalDate, LocalDate, Module)}.
+	 *
+	 * @param months       number of months to look back from yesterday (must be &gt; 0)
+	 * @param targetModule the module to ingest, or {@code null} for all enabled modules
+	 * @return a {@link LegacyIngestionResponse} summarising the ingestion outcome
+	 * @throws IllegalArgumentException if {@code months} is &le; 0
 	 */
 	public LegacyIngestionResponse ingestHistoricalDataForLastMonths(int months, Module targetModule) {
 		if (months <= 0) {
@@ -197,7 +247,15 @@ public class LegacyIngestionService {
 	}
 
 	/**
-	 * Backward-compatible endpoint trigger: custom date range backfill.
+	 * Populates pending legacy jobs and immediately executes them for the specified date range
+	 * and module. Returns a {@link LegacyIngestionResponse} summarising the total number of
+	 * dates requested and how many were successfully ingested.
+	 *
+	 * @param startDate    the inclusive start date (must not be {@code null} or after {@code endDate})
+	 * @param endDate      the inclusive end date (must not be {@code null})
+	 * @param targetModule the module to ingest, or {@code null} for all enabled modules
+	 * @return a {@link LegacyIngestionResponse} summarising the outcome
+	 * @throws IllegalArgumentException if the date range is invalid
 	 */
 	public LegacyIngestionResponse ingestHistoricalDataForRange(LocalDate startDate, LocalDate endDate,
 			Module targetModule) {
@@ -205,14 +263,9 @@ public class LegacyIngestionService {
 			throw new IllegalArgumentException("Invalid date range: startDate must be on or before endDate");
 		}
 
-		// Step 1: Populate pending jobs
 		populateLegacyJobsForRange(startDate, endDate, targetModule);
+		executeLegacyJobs(10000, targetModule);
 
-		// Step 2: Execute pending jobs immediately
-		int totalExpectedCount = 10000; // Batch limit representing custom trigger size
-		executeLegacyJobs(totalExpectedCount, targetModule);
-
-		// Step 3: Read result summaries from repository
 		Set<LocalDate> successfullyIngested = summaryRepository.findSuccessfullyIngestedDates(tenantId,
 				(targetModule != null ? targetModule.name() : "PT"), startDate, endDate);
 
@@ -222,6 +275,14 @@ public class LegacyIngestionService {
 				.skippedDates(List.of()).processedResults(List.of()).build();
 	}
 
+	/**
+	 * Returns the list of modules to process. When {@code targetModule} is non-null only that
+	 * module is returned; otherwise all modules enabled in
+	 * {@link org.upyog.dashboard.config.SchemaMappingConfig} are returned.
+	 *
+	 * @param targetModule a specific module, or {@code null} to process all enabled modules
+	 * @return an immutable list of modules to process; never {@code null}
+	 */
 	private List<Module> getModulesToProcess(Module targetModule) {
 		if (targetModule != null) {
 			return List.of(targetModule);
@@ -230,21 +291,29 @@ public class LegacyIngestionService {
 		return (enabled != null && !enabled.isEmpty()) ? enabled : List.of();
 	}
 
+	/**
+	 * Ensures that the given string is a valid JSON object or array before returning it.
+	 * Strings that are blank or not valid JSON are wrapped in a JSON error object.
+	 *
+	 * @param input the raw string to sanitise; may be {@code null}
+	 * @return a valid JSON string; never {@code null}
+	 */
 	private String sanitizeJson(String input) {
-		if (input == null || input.isBlank()) {
+		if (StringUtils.isBlank(input)) {
 			return "{}";
 		}
 		try {
-			com.fasterxml.jackson.databind.JsonNode node = objectMapper.readTree(input);
+			JsonNode node = objectMapper.readTree(input);
 			if (node != null && (node.isObject() || node.isArray())) {
 				return input;
 			}
-		} catch (Exception ignored) {
+		} catch (Exception exception) {
+			log.debug("Input is not valid JSON, wrapping as error object: {}", exception.getMessage());
 		}
 		try {
 			return objectMapper.writeValueAsString(java.util.Map.of("error", input));
 		} catch (Exception exception) {
-			return "{\"error\":\"" + input.replace("\"", "\\\"").replace("\n", " ") + "\"}";
+			return "{\"error\":\"" + input.replace("\"", "\\\"").replace("\\n", " ") + "\"}";
 		}
 	}
 }

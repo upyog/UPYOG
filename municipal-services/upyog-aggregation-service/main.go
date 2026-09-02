@@ -96,17 +96,18 @@ func main() {
 	inboxClient       := newServiceClient("inbox", "inbox")
 	billingClient     := newServiceClient("billing", "billing")
 	userEventClient   := newServiceClient("user-event", "egov-user-event")
-	tlServicesClient  := newServiceClient("tl-services", "tl-services")
 	advertisementClient := newServiceClient("advertisement", "advertisement-service")
 	draftClient       := newServiceClient("draft", "upyog-draft-service")
 	workflowClient    := newServiceClient("workflow", "egov-workflow-v2")
+	chbClient         := newServiceClient("chb", "chb-services")
 
 	cacheTTL := cfg.Providers.CacheTTL
-	reg.Register(providers.NewQuickSummaryProvider(inboxClient, billingClient, draftClient, c, log, m, cacheTTL))
-	reg.Register(providers.NewRecentApplicationsProvider(inboxClient, c, log, m, cacheTTL))
+	reg.Register(providers.NewQuickSummaryProvider(inboxClient, billingClient, draftClient, workflowClient, advertisementClient, chbClient, c, log, m, cacheTTL, cfg.Providers.CompletedServiceStatuses))
+	reg.Register(providers.NewRecentApplicationsProvider(workflowClient, advertisementClient, chbClient, c, log, m, cacheTTL, cfg.Providers.RecentApplicationsSinceDays))
 	reg.Register(providers.NewNotificationsProvider(userEventClient, c, log, m, cacheTTL))
 	reg.Register(providers.NewDraftApplicationsProvider(draftClient, c, log, m, cacheTTL))
-	reg.Register(providers.NewDueRenewalsProvider(tlServicesClient, c, log, m, cacheTTL))
+	// Replaced tlServicesClient with billingClient to fetch due renewals from billing-service
+	reg.Register(providers.NewDueRenewalsProvider(billingClient, c, log, m, cacheTTL))
 	reg.Register(providers.NewUpcomingEventsProvider(userEventClient, c, log, m, cacheTTL))
 	reg.Register(providers.NewAdvertisementBannersProvider(advertisementClient, c, log, m, cacheTTL))
 	reg.Register(providers.NewNewApplicationsProvider(workflowClient, c, log, m, cacheTTL))

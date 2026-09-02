@@ -76,6 +76,8 @@ serviceMaps:
           ulb_name,
           module_name,
           push_date,
+          start_date,
+          end_date,
           user_id,
           request_data,
           response_data,
@@ -85,7 +87,7 @@ serviceMaps:
           created_time,
           last_modified_by,
           last_modified_time
-        ) VALUES (?, ?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), ?, ?::jsonb, ?::jsonb, ?, ?, ?, ?, ?, ?);
+        ) VALUES (?, ?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), TO_DATE(?, 'DD-MM-YYYY'), TO_DATE(?, 'DD-MM-YYYY'), ?, ?::jsonb, ?::jsonb, ?, ?, ?, ?, ?, ?);
 
       basePath: legacyIngestionData.*
       jsonMaps:
@@ -99,6 +101,10 @@ serviceMaps:
       - jsonPath: $.legacyIngestionData.*.moduleName
 
       - jsonPath: $.legacyIngestionData.*.pushDate
+
+      - jsonPath: $.legacyIngestionData.*.startDate
+
+      - jsonPath: $.legacyIngestionData.*.endDate
 
       - jsonPath: $.legacyIngestionData.*.userId
 
@@ -152,19 +158,19 @@ serviceMaps:
       - jsonPath: $.legacyIngestionData.*.moduleIngestionId
 
   # ============================================================
-  # 4. INSERT into dashboard-data_ingestion_error_log
+  # 4. INSERT into adapter_ingestion_error_log
   #    Topic: save-dashboard-data-error-log
   #    Payload key: errorLog (list)
   # ============================================================
   - version: 1.0
     name: save-dashboard-data-error-log
-    description: Persists error details into the dashboard-data_ingestion_error_log table
+    description: Persists error details into the adapter_ingestion_error_log table
     fromTopic: save-dashboard-data-error-log
     isTransaction: true
     queryMaps:
 
     - query: >
-        INSERT INTO dashboard-data_ingestion_error_log (
+        INSERT INTO adapter_ingestion_error_log (
           id,
           tenant_id,
           module_name,
@@ -202,7 +208,11 @@ serviceMaps:
           created_by, created_time, last_modified_by, last_modified_time
         ) VALUES (?, ?, ?, TO_DATE(?, 'DD-MM-YYYY'), TO_DATE(?, 'DD-MM-YYYY'), ?, ?, ?, ?)
         ON CONFLICT (tenant_id, module_name) DO UPDATE SET
-          last_successful_date = EXCLUDED.last_successful_date,
+          last_successful_date = CASE 
+                                  WHEN EXCLUDED.last_successful_date = TO_DATE('01-01-1970', 'DD-MM-YYYY') 
+                                  THEN ingestion_module_summary.last_successful_date 
+                                  ELSE EXCLUDED.last_successful_date 
+                                END,
           last_attempted_date = EXCLUDED.last_attempted_date,
           last_modified_by = EXCLUDED.last_modified_by,
           last_modified_time = EXCLUDED.last_modified_time;

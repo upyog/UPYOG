@@ -5,6 +5,7 @@ import org.upyog.dashboard.service.IngestionPersistenceService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -22,14 +23,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.RowMapper;
 
 @ExtendWith(MockitoExtension.class)
 class IngestionSummaryRepositoryTest {
 
     @Mock
-    private JdbcTemplate jdbcTemplate;
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Mock
     private IngestionPersistenceService persistenceService;
@@ -47,7 +49,7 @@ class IngestionSummaryRepositoryTest {
     @Test
     @DisplayName("findLastSuccessfulDate returns empty when no row exists")
     void findLastSuccessfulDate_returnsEmptyWhenNotFound() {
-        when(jdbcTemplate.query(any(String.class), any(RowMapper.class), eq("pg"), eq("PT")))
+        org.mockito.Mockito.lenient().when(namedParameterJdbcTemplate.query(anyString(), any(SqlParameterSource.class), any(RowMapper.class)))
                 .thenReturn(Collections.emptyList());
 
         Optional<LocalDate> dateOpt = repository.findLastSuccessfulDate("pg", "PT");
@@ -59,7 +61,7 @@ class IngestionSummaryRepositoryTest {
     @DisplayName("findLastSuccessfulDate returns date when row exists")
     void findLastSuccessfulDate_returnsDateWhenFound() {
         LocalDate expected = LocalDate.of(2026, 6, 30);
-        when(jdbcTemplate.query(any(String.class), any(RowMapper.class), eq("pg"), eq("PT")))
+        org.mockito.Mockito.lenient().when(namedParameterJdbcTemplate.query(anyString(), any(SqlParameterSource.class), any(RowMapper.class)))
                 .thenReturn(List.of(Date.valueOf(expected)));
 
         Optional<LocalDate> dateOpt = repository.findLastSuccessfulDate("pg", "PT");

@@ -1,5 +1,6 @@
 package org.upyog.dashboard.transformer.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -179,7 +180,7 @@ public class PTTransformer implements ModuleTransformer<PTDTO> {
 	}
 
 	private List<Map<String, Object>> parseJsonBuckets(String jsonStr) {
-		if (jsonStr == null || jsonStr.isBlank() || "[]".equals(jsonStr)) {
+		if (StringUtils.isBlank(jsonStr) || "[]".equals(jsonStr)) {
 			return List.of();
 		}
 		try {

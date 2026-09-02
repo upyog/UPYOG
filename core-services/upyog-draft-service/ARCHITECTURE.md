@@ -372,9 +372,10 @@ C4Context
 CREATE TABLE ug_draft_detail (
     draft_id           VARCHAR(64)  PRIMARY KEY,
     tenant_id          VARCHAR(64)  NOT NULL,
-    user_uuid          VARCHAR(64)  NOT NULL,
     business_service   VARCHAR(64)  NOT NULL,   -- TL, SV, ADV, PT
+    module_name        VARCHAR(64),             -- TL, WS, BPA, etc.
     module_entity_id   VARCHAR(64),             -- optional link after partial create
+    creator_type       VARCHAR(32)  NOT NULL DEFAULT 'USER', -- USER or EMPLOYEE
     draft_data         JSONB        NOT NULL,   -- opaque module form JSON
     completion_pct     NUMERIC(5,2) DEFAULT 0,
     status             VARCHAR(32)  NOT NULL DEFAULT 'ACTIVE',

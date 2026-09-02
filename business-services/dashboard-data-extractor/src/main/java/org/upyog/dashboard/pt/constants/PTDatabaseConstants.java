@@ -2,13 +2,15 @@ package org.upyog.dashboard.pt.constants;
 
 /**
  * Constants representing the database column and alias names returned by
- * the Property Tax (PT) module SQL queries in schema-mapping.yml.
+ * the Property Tax (PT) module SQL queries in pt-schema-mapping.yml.
  */
 public final class PTDatabaseConstants {
 
     private PTDatabaseConstants() {
         // Prevent instantiation
     }
+
+    public static final String TENANT_ID = "tenantid";
 
     // Combined metrics query column/alias names (in lowercase as returned by PostgreSQL)
     public static final String ASSESSMENTS = "assessments";

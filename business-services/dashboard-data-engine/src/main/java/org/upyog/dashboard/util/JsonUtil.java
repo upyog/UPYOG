@@ -1,5 +1,6 @@
 package org.upyog.dashboard.util;
 
+import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 
@@ -21,7 +22,7 @@ public final class JsonUtil {
      * @return a valid JSON string
      */
     public static String toJsonString(String input, ObjectMapper objectMapper) {
-        if (input == null || input.isBlank()) {
+        if (StringUtils.isBlank(input)) {
             return "{}";
         }
         try {

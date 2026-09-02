@@ -1,8 +1,12 @@
 package org.upyog.dashboard.entity;
-
+import org.upyog.dashboard.common.constants.DashboardConstants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 /**
@@ -52,18 +56,19 @@ import lombok.NoArgsConstructor;
  *
  * @see org.upyog.dashboard.entity.DailyIngestionData
  * @see org.upyog.dashboard.producer.DashboardProducer
- * @see org.upyog.dashboard.common.constants.KafkaTopics#SAVE_LEGACY_INGESTION_DETAIL
- * @see org.upyog.dashboard.common.constants.KafkaTopics#UPDATE_LEGACY_INGESTION_DETAIL
  */
 /**
  * Class representing the LegacyIngestionData class.
  * 
  * <p>Contributes to the core Property Tax metrics ingestion pipeline.
  */
-@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 public class LegacyIngestionData {
 
     /**
@@ -111,6 +116,18 @@ public class LegacyIngestionData {
     private String pushDate;
 
     /**
+     * Start date for legacy ingestion range (e.g. 01-01-2024).
+     * Maps to legacy_data_ingestion_detail.start_date.
+     */
+    private String startDate;
+
+    /**
+     * End date for legacy ingestion range (e.g. 31-01-2026).
+     * Maps to legacy_data_ingestion_detail.end_date.
+     */
+    private String endDate;
+
+    /**
      * Identifier of the system or human user that triggered the legacy
      * ingestion.  May be {@code null} when the push originates from a
      * scheduled background job.
@@ -153,7 +170,7 @@ public class LegacyIngestionData {
 
     /**
      * Identity of the process or user that created this record.
-     * Defaults to {@code "SYSTEM"} for scheduler-originated records.
+     * Defaults to {@code DashboardConstants.SYSTEM_USER} for scheduler-originated records.
      * Maps to {@code legacy_data_ingestion_detail.created_by}.
      */
     private String createdBy;

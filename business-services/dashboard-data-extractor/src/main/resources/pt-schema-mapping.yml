@@ -1,30 +1,35 @@
 combinedMetricsQuery: |
   SELECT 
-    (SELECT COUNT(*) FROM eg_pt_asmt_assessment WHERE createdtime >= :startTime AND createdtime <= :endTime AND tenantid = :tenantId) AS assessments,
-    (SELECT COUNT(*) FROM eg_pt_property WHERE createdtime >= :startTime AND createdtime <= :endTime AND tenantid = :tenantId) AS todaysTotalApplications,
-    (SELECT COUNT(DISTINCT businessid) FROM eg_wf_processinstance_v2 WHERE createdtime >= :startTime AND createdtime <= :endTime AND modulename = 'PT' AND action IN ('APPROVE', 'REJECT') AND tenantid = :tenantId) AS todaysClosedApplications,
-    (SELECT COUNT(DISTINCT eb.consumercode) FROM egcl_payment ep JOIN egcl_paymentdetail epd ON ep.id = epd.paymentid JOIN egcl_bill eb ON eb.id = epd.billid WHERE ep.transactiondate >= :startTime AND ep.transactiondate <= :endTime AND epd.businessservice = 'PT' AND ep.paymentstatus <> 'CANCELLED' AND ep.tenantid = :tenantId) AS noOfPropertiesPaidToday,
-    (SELECT COUNT(DISTINCT businessid) FROM eg_wf_processinstance_v2 WHERE createdtime >= :startTime AND createdtime <= :endTime AND modulename = 'PT' AND action = 'APPROVE' AND tenantid = :tenantId) AS todaysApprovedApplications,
-    (SELECT COUNT(DISTINCT p.propertyid) FROM eg_pt_property p JOIN eg_wf_processinstance_v2 pi ON pi.businessid = p.propertyid AND pi.action = 'APPROVE' JOIN eg_wf_businessservice_v2 bs ON bs.businessservice = 'PT.CREATE' AND bs.tenantid = p.tenantid WHERE pi.createdtime >= :startTime AND pi.createdtime <= :endTime AND p.tenantid = :tenantId AND (pi.createdtime - p.createdtime) <= COALESCE(bs.businessservicesla, 2160000000)) AS todaysApprovedApplicationsWithinSLA,
-    (SELECT COALESCE(AVG((pi.createdtime - p.createdtime) / (1000.0 * 60 * 60 * 24)), 0) FROM eg_pt_property p JOIN eg_wf_processinstance_v2 pi ON pi.businessid = p.propertyid AND pi.action = 'APPROVE' WHERE pi.createdtime >= :startTime AND pi.createdtime <= :endTime AND p.tenantid = :tenantId) AS avgDaysForApplicationApproval,
+    main.tenantid,
+    (SELECT COUNT(*) FROM eg_pt_asmt_assessment a WHERE a.tenantid = main.tenantid AND createdtime >= :startTime AND createdtime <= :endTime) AS assessments,
+    (SELECT COUNT(*) FROM eg_pt_property p WHERE p.tenantid = main.tenantid AND createdtime >= :startTime AND createdtime <= :endTime) AS todaysTotalApplications,
+    (SELECT COUNT(DISTINCT businessid) FROM eg_wf_processinstance_v2 pi WHERE pi.tenantid = main.tenantid AND createdtime >= :startTime AND createdtime <= :endTime AND modulename = 'PT' AND action IN ('APPROVE', 'REJECT')) AS todaysClosedApplications,
+    (SELECT COUNT(DISTINCT eb.consumercode) FROM egcl_payment ep JOIN egcl_paymentdetail epd ON ep.id = epd.paymentid JOIN egcl_bill eb ON eb.id = epd.billid WHERE ep.tenantid = main.tenantid AND ep.transactiondate >= :startTime AND ep.transactiondate <= :endTime AND epd.businessservice = 'PT' AND ep.paymentstatus <> 'CANCELLED') AS noOfPropertiesPaidToday,
+    (SELECT COUNT(DISTINCT businessid) FROM eg_wf_processinstance_v2 pi WHERE pi.tenantid = main.tenantid AND createdtime >= :startTime AND createdtime <= :endTime AND modulename = 'PT' AND action = 'APPROVE') AS todaysApprovedApplications,
+    (SELECT COUNT(DISTINCT p.propertyid) FROM eg_pt_property p JOIN eg_wf_processinstance_v2 pi ON pi.businessid = p.propertyid AND pi.action = 'APPROVE' JOIN eg_wf_businessservice_v2 bs ON bs.businessservice = 'PT.CREATE' AND bs.tenantid = p.tenantid WHERE p.tenantid = main.tenantid AND pi.createdtime >= :startTime AND pi.createdtime <= :endTime AND (pi.createdtime - p.createdtime) <= COALESCE(bs.businessservicesla, 2160000000)) AS todaysApprovedApplicationsWithinSLA,
+    (SELECT COALESCE(AVG((pi.createdtime - p.createdtime) / (1000.0 * 60 * 60 * 24)), 0) FROM eg_pt_property p JOIN eg_wf_processinstance_v2 pi ON pi.businessid = p.propertyid AND pi.action = 'APPROVE' WHERE p.tenantid = main.tenantid AND pi.createdtime >= :startTime AND pi.createdtime <= :endTime) AS avgDaysForApplicationApproval,
    
     -- Properties Registered JSON List
     (SELECT COALESCE(json_agg(json_build_object('name', name, 'value', value)), '[]'::json) FROM (
-        SELECT CASE WHEN EXTRACT(MONTH FROM TO_TIMESTAMP(createdtime / 1000)) >= 4 THEN TO_CHAR(TO_TIMESTAMP(createdtime / 1000), 'YYYY') || '-' || TO_CHAR(TO_TIMESTAMP(createdtime / 1000) + INTERVAL '1 year', 'YY') ELSE TO_CHAR(TO_TIMESTAMP(createdtime / 1000) - INTERVAL '1 year', 'YYYY') || '-' || TO_CHAR(TO_TIMESTAMP(createdtime / 1000), 'YY') END AS name, COUNT(*) AS value FROM eg_pt_property WHERE creationreason = 'CREATE' AND tenantid = :tenantId GROUP BY name ORDER BY name
+        SELECT CASE WHEN EXTRACT(MONTH FROM TO_TIMESTAMP(createdtime / 1000)) >= 4 THEN TO_CHAR(TO_TIMESTAMP(createdtime / 1000), 'YYYY') || '-' || TO_CHAR(TO_TIMESTAMP(createdtime / 1000) + INTERVAL '1 year', 'YY') ELSE TO_CHAR(TO_TIMESTAMP(createdtime / 1000) - INTERVAL '1 year', 'YYYY') || '-' || TO_CHAR(TO_TIMESTAMP(createdtime / 1000), 'YY') END AS name, COUNT(*) AS value FROM eg_pt_property p WHERE p.tenantid = main.tenantid AND creationreason = 'CREATE' GROUP BY name ORDER BY name
     ) pr) AS propertiesRegisteredJson,
 
     -- Assessed Properties JSON List
     (SELECT COALESCE(json_agg(json_build_object('name', name, 'value', value)), '[]'::json) FROM (
-        SELECT CASE WHEN UPPER(p.usagecategory) LIKE 'RESIDENTIAL%' THEN 'RESIDENTIAL' WHEN UPPER(p.usagecategory) LIKE '%COMMERCIAL%' THEN 'COMMERCIAL' WHEN UPPER(p.usagecategory) LIKE '%INDUSTRIAL%' THEN 'INDUSTRIAL' ELSE 'OTHERS' END AS name, COUNT(DISTINCT a.propertyid) AS value FROM eg_pt_asmt_assessment a JOIN eg_pt_property p ON a.propertyid = p.propertyid WHERE a.createdtime >= :startTime AND a.createdtime <= :endTime AND a.tenantid = :tenantId GROUP BY name
+        SELECT CASE WHEN UPPER(p.usagecategory) LIKE 'RESIDENTIAL%' THEN 'RESIDENTIAL' WHEN UPPER(p.usagecategory) LIKE '%COMMERCIAL%' THEN 'COMMERCIAL' WHEN UPPER(p.usagecategory) LIKE '%INDUSTRIAL%' THEN 'INDUSTRIAL' ELSE 'OTHERS' END AS name, COUNT(DISTINCT a.propertyid) AS value FROM eg_pt_asmt_assessment a JOIN eg_pt_property p ON a.propertyid = p.propertyid WHERE a.tenantid = main.tenantid AND a.createdtime >= :startTime AND a.createdtime <= :endTime GROUP BY name
     ) ap) AS assessedPropertiesJson,
 
     -- Moved Applications JSON List
     (SELECT COALESCE(json_agg(json_build_object('name', name, 'value', value)), '[]'::json) FROM (
-        SELECT action AS name, COUNT(*) AS value FROM eg_wf_processinstance_v2 WHERE createdtime >= :startTime AND createdtime <= :endTime AND modulename = 'PT' AND tenantid = :tenantId GROUP BY name
+        SELECT action AS name, COUNT(*) AS value FROM eg_wf_processinstance_v2 pi WHERE pi.tenantid = main.tenantid AND createdtime >= :startTime AND createdtime <= :endTime AND modulename = 'PT' GROUP BY name
     ) ma) AS movedApplicationsJson
+  FROM (
+    SELECT DISTINCT tenantid FROM eg_pt_property WHERE tenantid LIKE CONCAT(:tenantId, '%')
+  ) main
 
 collectionMetricsQuery: |
   SELECT 
+    ep.tenantid,
     CASE 
       WHEN UPPER(p.usagecategory) LIKE 'RESIDENTIAL%' THEN 'RESIDENTIAL'
       WHEN UPPER(p.usagecategory) LIKE '%COMMERCIAL%' THEN 'COMMERCIAL'
@@ -44,4 +49,4 @@ collectionMetricsQuery: |
   WHERE ep.transactiondate >= :startTime AND ep.transactiondate <= :endTime
     AND epd.businessservice = 'PT'
     AND ep.paymentstatus <> 'CANCELLED'
-    AND ep.tenantid = :tenantId
+    AND ep.tenantid LIKE CONCAT(:tenantId, '%')

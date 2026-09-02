@@ -1,10 +1,10 @@
 package org.upyog.dashboard.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.upyog.dashboard.repository.IngestionSummaryRepository;
 
 import java.time.LocalDate;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,13 @@ import org.upyog.dashboard.common.constants.Module;
 import org.upyog.dashboard.model.LegacyIngestionResponse;
 import org.upyog.dashboard.service.LegacyIngestionService;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.upyog.dashboard.service.LegacyBatchIngestionOrchestrator;
+import org.upyog.dashboard.service.LegacyBatchIngestRequest;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * Controller exposing endpoints to trigger bulk historical (legacy) metrics ingestion.
@@ -24,13 +30,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/legacy")
+@RequiredArgsConstructor
 public class LegacyIngestionController {
 
-    @Autowired
-    private LegacyIngestionService legacyIngestionService;
-    
-    @Autowired
-    private IngestionSummaryRepository summaryRepository;
+    private final LegacyIngestionService legacyIngestionService;
+    private final LegacyBatchIngestionOrchestrator legacyBatchIngestionOrchestrator;
+    private final IngestionSummaryRepository summaryRepository;
 
     /**
      * Retrieves the status of legacy jobs.
@@ -75,7 +80,7 @@ public class LegacyIngestionController {
         }
 
         Module targetModule = parseModule(module);
-        log.info("LegacyIngestionController | Triggering historical ingestion from {} to {} for module {}",
+        log.info("Triggering historical ingestion from {} to {} for module {}",
                 startDate, endDate, targetModule != null ? targetModule : "ALL");
 
         LegacyIngestionResponse response = legacyIngestionService.ingestHistoricalDataForRange(startDate, endDate, targetModule);
@@ -95,21 +100,44 @@ public class LegacyIngestionController {
             @RequestParam(required = false) String module) {
 
         Module targetModule = parseModule(module);
-        log.info("LegacyIngestionController | Triggering historical ingestion for last {} months for module {}",
+        log.info("Triggering historical ingestion for last {} months for module {}",
                 months, targetModule != null ? targetModule : "ALL");
 
         LegacyIngestionResponse response = legacyIngestionService.ingestHistoricalDataForLastMonths(months, targetModule);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    /**
+     * Triggers legacy batch DB extraction, SXSSF streaming Excel generation, and downstream ingestion.
+     *
+     * @param request payload containing moduleName, startDate (YYYY-MM-DD), and endDate (YYYY-MM-DD)
+     * @return ResponseEntity with LegacyIngestionResponse
+     */
+    @PostMapping("/batch-ingest")
+    public ResponseEntity<LegacyIngestionResponse> batchIngest(@Valid @RequestBody LegacyBatchIngestRequest request) {
+        log.info("Received request for legacy batch excel extraction & ingestion for module {} (date range: {} to {})",
+                request.getModuleName(), request.getStartDate(), request.getEndDate());
+
+        LegacyIngestionResponse response = legacyBatchIngestionOrchestrator.processLegacyBatchIngest(request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * Attempts to parse a module name string into the corresponding {@link Module} enum constant.
+     * Returns {@code null} if the input is blank or does not match any known module name,
+     * and logs a warning rather than throwing an exception.
+     *
+     * @param moduleStr the raw module name string from the request parameter; may be {@code null}
+     * @return the matching {@link Module} constant, or {@code null} to signal all-modules processing
+     */
     private Module parseModule(String moduleStr) {
-        if (moduleStr == null || moduleStr.isBlank()) {
+        if (StringUtils.isBlank(moduleStr)) {
             return null;
         }
         try {
             return Module.valueOf(moduleStr.trim().toUpperCase());
         } catch (Exception exception) {
-            log.warn("LegacyIngestionController | Unknown module name '{}'. Will process all enabled modules.", moduleStr);
+            log.warn("Unknown module name '{}'. Will process all enabled modules.", moduleStr);
             return null;
         }
     }

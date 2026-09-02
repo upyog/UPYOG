@@ -16,9 +16,10 @@ public class DraftDetail {
 
     private String draftId;
     private String tenantId;
-    private String userUuid;
     private String businessService;
+    private String moduleName;
     private String moduleEntityId;
+    private String creatorType;
     private Object draftData;
     private BigDecimal completionPct;
     private String status;

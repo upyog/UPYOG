@@ -3,13 +3,13 @@ package org.upyog.dashboard.pt.mapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
-import org.upyog.dashboard.pt.dto.PTCollectionDTO;
-import org.upyog.dashboard.pt.dto.PTAggregatedData;
+import org.upyog.dashboard.pt.model.RawPtMetric;
+import org.upyog.dashboard.pt.model.RawPtCollection;
 import org.upyog.dashboard.pt.constants.PTDatabaseConstants;
 
 /**
- * Utility containing RowMapper instances for mapping database query results
- * to PT DTOs using constants.
+ * Utility containing explicit RowMapper instances for mapping database query results
+ * to PT models without reflection.
  */
 public final class PTRowmapper {
 
@@ -17,10 +17,14 @@ public final class PTRowmapper {
         // Prevent instantiation
     }
 
-    public static final RowMapper<PTAggregatedData> COMBINED_ROW_MAPPER = new RowMapper<PTAggregatedData>() {
+    /**
+     * Maps a single row from the PT combined metrics query to a {@link RawPtMetric} object.
+     */
+    public static final RowMapper<RawPtMetric> COMBINED_ROW_MAPPER = new RowMapper<RawPtMetric>() {
         @Override
-        public PTAggregatedData mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return PTAggregatedData.builder()
+        public RawPtMetric mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return RawPtMetric.builder()
+                .tenantid(rs.getString(PTDatabaseConstants.TENANT_ID))
                 .assessments(getNullableInt(rs, PTDatabaseConstants.ASSESSMENTS))
                 .todaysTotalApplications(getNullableInt(rs, PTDatabaseConstants.TODAYS_TOTAL_APPLICATIONS))
                 .todaysClosedApplications(getNullableInt(rs, PTDatabaseConstants.TODAYS_CLOSED_APPLICATIONS))
@@ -35,10 +39,14 @@ public final class PTRowmapper {
         }
     };
 
-    public static final RowMapper<PTCollectionDTO> COLLECTION_ROW_MAPPER = new RowMapper<PTCollectionDTO>() {
+    /**
+     * Maps a single row from the PT collection metrics query to a {@link RawPtCollection} object.
+     */
+    public static final RowMapper<RawPtCollection> COLLECTION_ROW_MAPPER = new RowMapper<RawPtCollection>() {
         @Override
-        public PTCollectionDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return PTCollectionDTO.builder()
+        public RawPtCollection mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return RawPtCollection.builder()
+                .tenantid(rs.getString(PTDatabaseConstants.TENANT_ID))
                 .usageCategory(rs.getString(PTDatabaseConstants.USAGE_CATEGORY))
                 .paymentMode(rs.getString(PTDatabaseConstants.PAYMENT_MODE))
                 .paymentId(rs.getString(PTDatabaseConstants.PAYMENT_ID))

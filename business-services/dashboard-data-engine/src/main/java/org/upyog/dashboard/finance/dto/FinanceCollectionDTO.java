@@ -1,8 +1,10 @@
 package org.upyog.dashboard.finance.dto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class FinanceCollectionDTO {
     // Basic fields for collection mapping if needed in the future
     private String paymentChannelType;
