@@ -494,6 +494,30 @@ const DynamicFormField = ({
                 <span>{t(field.resultLabel || labelKey || "CS_COMMON_ASSET_NUMBER")}</span>
                 <span>{panelForField.estateNo}</span>
               </div>
+              {panelForField.prefill?.buildingName && (
+                <div className="dynamic-form-field__result-row">
+                  <span>{t("EST_BUILDING_NAME")}</span>
+                  <span>{t(panelForField.prefill.buildingName)}</span>
+                </div>
+              )}
+              {panelForField.prefill?.assetType && (
+                <div className="dynamic-form-field__result-row">
+                  <span>{t("EST_ASSET_TYPE")}</span>
+                  <span>{t(panelForField.prefill.assetType)}</span>
+                </div>
+              )}
+              {panelForField.prefill?.serviceType && (
+                <div className="dynamic-form-field__result-row">
+                  <span>{t("EST_LOCALITY")}</span>
+                  <span>{t(panelForField.prefill.serviceType)}</span>
+                </div>
+              )}
+              {panelForField.prefill?.city && (
+                <div className="dynamic-form-field__result-row">
+                  <span>{t("EST_CITY")}</span>
+                  <span>{t(panelForField.prefill.city)}</span>
+                </div>
+              )}
               <button
                 type="button"
                 className="dynamic-form-field__select-button"

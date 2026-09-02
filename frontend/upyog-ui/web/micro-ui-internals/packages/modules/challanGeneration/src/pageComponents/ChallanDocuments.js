@@ -216,7 +216,9 @@ function CGSelectDocument({ t, document: doc, setDocuments, setError, documents,
 
   const [isHidden, setHidden] = useState(false);
 
-  const [getLoading, setLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
+
 
   const hasValue = (value) => {
     return value !== null && value !== undefined && value !== "";
@@ -452,12 +454,12 @@ function CGSelectDocument({ t, document: doc, setDocuments, setError, documents,
         return;
       }
 
-      setLoading(true);
+      setIsUploading(true);
 
       if (file.size >= 5242880) {
         setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
 
-        setLoading(false);
+        setIsUploading(false);
         return;
       }
 
@@ -484,7 +486,7 @@ function CGSelectDocument({ t, document: doc, setDocuments, setError, documents,
 
         setError(t("CS_FILE_UPLOAD_ERROR"));
       } finally {
-        setLoading(false);
+        setIsUploading(false);
       }
     };
 
@@ -583,7 +585,8 @@ function CGSelectDocument({ t, document: doc, setDocuments, setError, documents,
         </div>
       </LabelFieldPair>
 
-      {getLoading && <Loader page={true} />}
+      {isUploading && <Loader page={true} />}
+
     </div>
   );
 }

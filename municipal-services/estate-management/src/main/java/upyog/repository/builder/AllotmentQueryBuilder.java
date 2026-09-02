@@ -1,7 +1,9 @@
 package upyog.repository.builder;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import upyog.config.EstateConfiguration;
 import upyog.web.models.AllotmentSearchCriteria;
 import upyog.util.EstateUtil;
 
@@ -10,6 +12,9 @@ import java.util.List;
 
 @Component
 public class AllotmentQueryBuilder {
+
+    @Autowired
+    private EstateConfiguration estateConfiguration;
     
     private static final String BASE_SEARCH_QUERY = "SELECT " +
             "allotment_id, allotment_no, due_date, estate_no, tenant_id, user_uuid, allotee_name, mobile_number, " +
@@ -78,7 +83,7 @@ public class AllotmentQueryBuilder {
         // Add order by clause
         query.append(" ORDER BY createdtime DESC");
         
-        return EstateUtil.addPaginationWrapper(query.toString(), preparedStmtList, criteria.getLimit(), criteria.getOffset());
+        return EstateUtil.addPaginationWrapper(query.toString(), preparedStmtList, criteria.getLimit(), criteria.getOffset(), estateConfiguration);
     }
     
     /**

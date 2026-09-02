@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
+import upyog.config.EstateConfiguration;
 import upyog.config.ServiceConstants;
 
 import java.sql.ResultSet;
@@ -127,27 +128,27 @@ public class EstateUtil {
             "SELECT * FROM (SELECT *, DENSE_RANK() OVER (ORDER BY createdtime DESC) offset_ FROM ({}) result) result_offset WHERE offset_ > ? AND offset_ <= ? ORDER BY createdtime DESC";
 
     /**
-     * Adds a pagination wrapper to the select query.
+     * Adds a pagination wrapper to the select query using limit and offset from application.properties via EstateConfiguration.
      * 
      * How it works:
      * 1. Checks if the requested limit and offset are null; if so, returns the original query.
-     * 2. Sets a default limit of 20 (capped at a maximum of 100) and a default offset of 0.
+     * 2. Sets default limit and offset from EstateConfiguration (capped at configured max limit).
      * 3. Adds the calculated offset and (limit + offset) values to the SQL statement parameters list.
      * 4. Wraps the original query in a nested select statement using DENSE_RANK() ordered by createdtime descending.
      */
-    public static String addPaginationWrapper(String query, List<Object> preparedStmtList, Integer limitVal, Integer offsetVal) {
-        int limit = 20;
-        int offset = 0;
+    public static String addPaginationWrapper(String query, List<Object> preparedStmtList, Integer limitVal, Integer offsetVal, EstateConfiguration estateConfiguration) {
+        long limit = estateConfiguration.getDefaultLimit();
+        long offset = estateConfiguration.getDefaultOffset();
 
         if (limitVal == null && offsetVal == null) {
             limit = -1;
         }
 
-        if (limitVal != null && limitVal <= 100)
+        if (limitVal != null && limitVal <= estateConfiguration.getMaxSearchLimit())
             limit = limitVal;
 
-        if (limitVal != null && limitVal > 100) {
-            limit = 100;
+        if (limitVal != null && limitVal > estateConfiguration.getMaxSearchLimit()) {
+            limit = estateConfiguration.getMaxSearchLimit();
         }
 
         if (offsetVal != null)

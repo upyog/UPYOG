@@ -160,4 +160,15 @@ public class EstateConfiguration {
     // Demand Search Endpoint
     @Value("${egov.demand.search.endpoint}")
     private String demandSearchEndpoint;
+
+    // Pagination Config
+    @Value("${est.search.pagination.default.limit}")
+    private Long defaultLimit;
+
+    @Value("${est.search.pagination.default.offset}")
+    private Long defaultOffset;
+
+    @Value("${est.search.pagination.max.search.limit}")
+    private Long maxSearchLimit;
 }
+
