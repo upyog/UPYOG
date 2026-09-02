@@ -2,6 +2,7 @@ package org.upyog.dashboard.api;
 
 import org.springframework.stereotype.Component;
 import org.upyog.dashboard.loader.DashboardDataLoader;
+import org.upyog.dashboard.loader.DashboardDataLoaderFactory;
 import org.upyog.dashboard.model.DashboardRequest;
 import org.upyog.dashboard.model.DashboardPayload;
 import org.upyog.dashboard.model.IngestionResult;
@@ -10,44 +11,31 @@ import org.upyog.dashboard.transformer.ModuleTransformer;
 import org.upyog.dashboard.validator.CommonValidator;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Default Spring-managed implementation of {@link DashboardClient}.
  *
- * <p>This class wires together the four main collaborators of the ingestion
- * pipeline and executes them in sequence for every incoming request:
- *
+ * <p>This class wires together the core stages of the ingestion pipeline:
  * <ol>
- *   <li><strong>TransformerRegistry</strong> — looks up the
- *       {@link ModuleTransformer} registered for the requested module.</li>
- *   <li><strong>ModuleTransformer</strong> — converts module-specific raw data
- *       into a normalized {@link DashboardPayload}.</li>
- *   <li><strong>CommonValidator</strong> — asserts that mandatory cross-module
- *       fields (module, state, ULB, ward, region, metrics) are present.</li>
- *   <li><strong>Loader</strong> — pushes the payload to the national dashboard
- *       ingest endpoint and returns an {@link IngestionResult}.</li>
+ *   <li><b>Transformation:</b> maps the raw module-specific request into a
+ *       canonical {@link DashboardPayload} using the appropriate
+ *       {@link ModuleTransformer} retrieved from {@link TransformerRegistry}.</li>
+ *   <li><b>Validation:</b> enforces system-wide mandatory fields through
+ *       {@link CommonValidator}.</li>
+ *   <li><b>Delivery:</b> delegates payload delivery to the appropriate {@link DashboardDataLoader}
+ *       resolved by {@link DashboardDataLoaderFactory} based on runtime configuration.</li>
  * </ol>
  *
- * <h3>Commented-out code</h3>
- * The {@code ValidatorRegistry} injection and the module-specific
- * {@code validate()} call are temporarily commented out pending completion of
- * per-module validator implementations.  They should be re-enabled once all
- * active modules have a corresponding {@link org.upyog.dashboard.validator.ModuleValidator}.
- *
- * <h3>Dependencies</h3>
- * All dependencies are injected via constructor (Lombok {@code @RequiredArgsConstructor})
- * to keep the bean immutable and easy to test.
+ * <p>Adheres to SOLID principles by delegating transport-specific concerns (HTTP REST vs S3 Excel)
+ * to dedicated loader strategy beans.
  *
  * @see DashboardClient
  * @see TransformerRegistry
  * @see CommonValidator
- * @see Loader
+ * @see DashboardDataLoaderFactory
  */
-/**
- * Class representing the DashboardClientImpl class.
- * 
- * <p>Contributes to the core Property Tax metrics ingestion pipeline.
- */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class DashboardClientImpl implements DashboardClient {
@@ -55,16 +43,13 @@ public class DashboardClientImpl implements DashboardClient {
     /**
      * Registry that maps each {@link org.upyog.dashboard.common.constants.Module}
      * to its concrete {@link ModuleTransformer} implementation.
-     * Populated at startup by scanning all {@code ModuleTransformer} beans.
      */
     private final TransformerRegistry registry;
 
     /**
-     * Loader responsible for sending the transformed payload to the downstream
-     * endpoint and publishing the audit record to Kafka.
-     * The active implementation is {@link org.upyog.dashboard.loader.impl.DashboardDataLoaderImpl}.
+     * Factory responsible for resolving the appropriate {@link DashboardDataLoader} strategy.
      */
-    private final DashboardDataLoader loader;
+    private final DashboardDataLoaderFactory dataLoaderFactory;
 
     /**
      * Validator that enforces mandatory cross-module fields on every payload
@@ -73,9 +58,6 @@ public class DashboardClientImpl implements DashboardClient {
      * @see CommonValidator#validate(DashboardPayload)
      */
     private final CommonValidator commonValidator;
-
-    // private final ValidatorRegistry validatorRegistry;
-    // Un-comment once per-module validators are implemented for all active modules.
 
     /**
      * Executes the full ingestion pipeline for the given {@code request}.
@@ -88,28 +70,28 @@ public class DashboardClientImpl implements DashboardClient {
      *       {@code request.getRawData()} to produce a {@link DashboardPayload}.</li>
      *   <li>Calls {@link CommonValidator#validate(DashboardPayload)} to assert
      *       that mandatory fields are present and non-empty.</li>
-     *   <li>Calls {@link Loader#load(DashboardPayload)} and returns the result.</li>
+     *   <li>Resolves the appropriate {@link DashboardDataLoader} from {@link DashboardDataLoaderFactory}
+     *       and delegates delivery.</li>
      * </ol>
      *
-     * @param request the ingestion request; must not be {@code null}; must have a
-     *                non-{@code null} {@code module} that has a registered transformer
+     * @param request the ingestion request; must not be {@code null}; must have
+     *                a non-{@code null} {@code module} that has a registered transformer
      * @return the outcome of the loader call; never {@code null}
      * @throws org.upyog.dashboard.exception.ValidationException if
      *         {@link CommonValidator#validate} finds a missing or invalid field
-     * @throws IllegalArgumentException if no transformer is registered for
-     *         the requested module
+     * @throws IllegalArgumentException if no transformer is registered for the
+     *         requested module
      */
     @Override
     public IngestionResult execute(DashboardRequest request) {
+        log.debug("Executing ingestion pipeline for module: {}", request.getModule());
 
         ModuleTransformer<Object> transformer = registry.get(request.getModule());
-
         DashboardPayload payload = transformer.transform(request.getRawData());
 
         commonValidator.validate(payload);
 
-        // validatorRegistry.get(request.getModule()).validate(payload.getData().get(0).getMetrics());
-
+        DashboardDataLoader loader = dataLoaderFactory.getDailyDataLoader();
         return loader.load(payload);
     }
 }

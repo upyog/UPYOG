@@ -289,29 +289,36 @@ const DynamicCheckPage = ({
         {t(summaryHeaderCode || routeConfig?.texts?.header || "CS_COMMON_SUMMARY")}
       </CardHeader>
 
-      {sections.map((section, sIdx) => (
-        <React.Fragment key={section.headerCode || `section-${sIdx}`}>
-          <CardSubHeader>
-            {t(section.headerCode || defaultSectionHeaderCode)}
-          </CardSubHeader>
-          <StatusTable>
-            {section.fields.map((fc, fIdx) => (
-              <Row
-                key={fc.key}
-                label={t(resolveFieldLabelKey(fc, formValues))}
-                text={resolveValue(fc)}
-                actionButton={
-                  !viewOnly && sIdx === 0 && fIdx === 0 && editRoute
-                    ? <ActionButton jumpTo={editRoute} editNavigationState={editNavigationState} />
-                    : undefined
-                }
-              />
-            ))}
-          </StatusTable>
-        </React.Fragment>
-      ))}
+      {sections.map((section, sIdx) => {
+        const fieldsToShow = section.fields.filter(
+          (fc) => resolveValue(fc) !== "NA" && resolveValue(fc) !== t("CS_COMMON_NA")
+        );
+        if (fieldsToShow.length === 0) return null;
 
-      {(fileFields.length > 0 || uploadedFiles.length > 0) && (
+        return (
+          <React.Fragment key={section.headerCode || `section-${sIdx}`}>
+            <CardSubHeader>
+              {t(section.headerCode || defaultSectionHeaderCode)}
+            </CardSubHeader>
+            <StatusTable>
+              {fieldsToShow.map((fc, fIdx) => (
+                <Row
+                  key={fc.key}
+                  label={t(resolveFieldLabelKey(fc, formValues))}
+                  text={resolveValue(fc)}
+                  actionButton={
+                    !viewOnly && sIdx === 0 && fIdx === 0 && editRoute
+                      ? <ActionButton jumpTo={editRoute} editNavigationState={editNavigationState} />
+                      : undefined
+                  }
+                />
+              ))}
+            </StatusTable>
+          </React.Fragment>
+        );
+      })}
+
+      {uploadedFiles.length > 0 && (
         <>
           <CardSubHeader>{t(documentPreviewCode)}</CardSubHeader>
           {loadingDocs ? (
@@ -326,7 +333,7 @@ const DynamicCheckPage = ({
                 thumbSize={80}
               />
             </div>
-          ) : uploadedFiles.length > 0 ? (
+          ) : (
             <div className="dynamic-check-page__file-list">
               {uploadedFiles.map((file) => (
                 <div key={file.id} className="dynamic-check-page__file-item">
@@ -336,10 +343,6 @@ const DynamicCheckPage = ({
                   ) : null}
                 </div>
               ))}
-            </div>
-          ) : (
-            <div className="dynamic-check-page__empty-docs">
-              {t(noDocumentsCode)}
             </div>
           )}
         </>

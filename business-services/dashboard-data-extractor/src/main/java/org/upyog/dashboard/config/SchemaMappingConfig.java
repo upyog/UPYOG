@@ -9,7 +9,6 @@ import java.util.Map;
 
 import jakarta.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -19,7 +18,9 @@ import org.upyog.dashboard.common.constants.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -29,8 +30,10 @@ import lombok.extern.slf4j.Slf4j;
  * at startup according to the modules enabled in {@code application.properties}.
  */
 @Slf4j
-@Data
+@Getter
+@Setter
 @Component
+@RequiredArgsConstructor
 public class SchemaMappingConfig {
 
     /**
@@ -39,8 +42,7 @@ public class SchemaMappingConfig {
     @Value("${extractor.enabled-modules}")
     private List<Module> enabledModules = new ArrayList<>();
 
-    @Autowired
-    private ResourceLoader resourceLoader;
+    private final ResourceLoader resourceLoader;
 
     /**
      * Map of dynamic SQL query configurations indexed by module.
@@ -89,7 +91,8 @@ public class SchemaMappingConfig {
     /**
      * Nested configuration class holding SQL query templates for a specific module.
      */
-    @Data
+    @Getter
+@Setter
     public static class ModuleQueries {
         /**
          * SQL query retrieving scalar metrics and JSON aggregation subqueries in a single database call.

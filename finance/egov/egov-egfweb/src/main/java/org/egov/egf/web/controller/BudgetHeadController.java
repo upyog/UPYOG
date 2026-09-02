@@ -113,14 +113,19 @@ public class BudgetHeadController {
 	}
 
 
-	@GetMapping(value = "/getbudgetheads", produces = MediaType.APPLICATION_JSON_VALUE)
+	/*
+	 * LTS Migration Note [Spring Web REST Mapping Aliases]:
+	 * Added endpoint aliases ('/ajaxBudgetHead') to support unified Spring Web MVC URL mappings 
+	 * and Spring Security 6 authorization pattern matchers.
+	 */
+	@GetMapping(value = { "/getbudgetheads", "/ajaxBudgetHead" }, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public List<BudgetHead> findBudgetHead(@RequestParam("query") @SanitizeHtml final String query) {
 		return budgetHeadService.findBudgetHeadByNameOrCode(query);
 
 	}
 
-	@GetMapping(value = "/getfunctionbudgetheads/{functionId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = { "/getfunctionbudgetheads/{functionId}", "/ajaxBudgetHead/{functionId}" }, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public List<BudgetHead> findFunctionBudgetHeads(@PathVariable("functionId") Long functionId, @RequestParam("query") @SanitizeHtml final String query) {
 		final List<BudgetHead> budgetHeads = budgetHeadService.searchBudgetHeadsByFunctionNative(functionId, query);

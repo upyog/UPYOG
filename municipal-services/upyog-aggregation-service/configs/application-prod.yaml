@@ -61,6 +61,35 @@ providers:
   defaultTimeout: 8s
   maxRetries: 2
   cacheTTL: 5m
+  recentApplicationsSinceDays: 7
+  completedServiceStatuses:
+    - "APPROVE"
+    - "APPROVED"
+    - "AUTO_APPROVED"
+    - "CANCELED"
+    - "CANCELLED"
+    - "CLOSEDAFTERREJECTION"
+    - "CLOSEDAFTERRESOLUTION"
+    - "CLOSURE"
+    - "COMPLETED"
+    - "CONNECTION_ACTIVATED"
+    - "DELIVERED"
+    - "DISCONNECTION_EXECUTED"
+    - "DISPOSED"
+    - "EXPIRED"
+    - "MANUALEXPIRED"
+    - "REFUNDAPPROVED"
+    - "REGISTRATIONCOMPLETED"
+    - "REJECTED"
+    - "REQUESTCOMPLETED"
+    - "REQUESTREJECTED"
+    - "RESOLVED"
+    - "REVOCATED"
+    - "TREE_PRUNING_SERVICE_COMPLETED"
+    - "VOIDED"
+    - "COMPLETE_REQUEST"
+    - "COMPLETEREQUEST"
+    - "SETTLED"
   custom:
     quick-summary:
       timeout: 12s
@@ -130,6 +159,12 @@ backend:
       circuitTimeout: 60s
     draft:
       baseUrl: "http://upyog-draft-service:8080"
+      timeout: 8s
+      maxConns: 100
+      circuitThreshold: 10
+      circuitTimeout: 60s
+    chb:
+      baseUrl: "http://chb-services:8080"
       timeout: 8s
       maxConns: 100
       circuitThreshold: 10

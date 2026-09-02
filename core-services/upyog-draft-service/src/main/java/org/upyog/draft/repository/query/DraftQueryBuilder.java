@@ -9,8 +9,8 @@ import java.util.List;
 @Component
 public class DraftQueryBuilder {
 
-    private static final String BASE_SELECT = "SELECT draft_id, tenant_id, user_uuid, business_service, "
-            + "module_entity_id, draft_data, completion_pct, status, createdby, lastmodifiedby, "
+    private static final String BASE_SELECT = "SELECT draft_id, tenant_id, business_service, module_name, "
+            + "module_entity_id, creator_type, draft_data, completion_pct, status, createdby, lastmodifiedby, "
             + "createdtime, lastmodifiedtime FROM ug_draft_detail WHERE 1=1";
 
     public String getSearchQuery(DraftSearchCriteria criteria, List<Object> params) {
@@ -32,13 +32,21 @@ public class DraftQueryBuilder {
             query.append(" AND tenant_id = ?");
             params.add(criteria.getTenantId());
         }
-        if (criteria.getUserUuid() != null) {
-            query.append(" AND user_uuid = ?");
-            params.add(criteria.getUserUuid());
+        if (criteria.getCreatedBy() != null) {
+            query.append(" AND createdby = ?");
+            params.add(criteria.getCreatedBy());
         }
         if (criteria.getBusinessService() != null) {
             query.append(" AND business_service = ?");
             params.add(criteria.getBusinessService());
+        }
+        if (criteria.getModuleName() != null) {
+            query.append(" AND module_name = ?");
+            params.add(criteria.getModuleName());
+        }
+        if (criteria.getCreatorType() != null) {
+            query.append(" AND creator_type = ?");
+            params.add(criteria.getCreatorType());
         }
         if (criteria.getStatus() != null) {
             query.append(" AND status = ?");

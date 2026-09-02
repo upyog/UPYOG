@@ -15,6 +15,8 @@ import org.egov.demand.service.BillServicev2;
 import org.egov.demand.util.Constants;
 import org.egov.demand.web.contract.BillRequestV2;
 import org.egov.demand.web.contract.BillResponseV2;
+import org.egov.demand.web.contract.ShortBillResponseV2;
+import org.egov.demand.web.contract.ShortBillV2;
 import org.egov.demand.web.contract.RequestInfoWrapper;
 import org.egov.demand.web.contract.factory.ResponseFactory;
 import org.egov.demand.web.validator.BillValidator;
@@ -54,6 +56,38 @@ public class BillControllerv2 {
 		RequestInfo requestInfo = requestInfoWrapper.getRequestInfo();
 		billValidator.validateBillSearchCriteria(billCriteria, requestInfo);
 		return new ResponseEntity<>(billService.searchBill(billCriteria,requestInfo), HttpStatus.OK);
+	}
+
+	/**
+	 * Searches and returns a lightweight summary list of bills containing only core fields
+	 * (id, totalAmount, businessService, billNumber, billDate, consumerCode, dueDate).
+	 * <p>
+	 * Rationale: The standard `_search` API returns deep and heavy nested structures
+	 * (bill details, account details, line items, payers) which are unnecessary for Dashboard V2
+	 * display. This endpoint provides an optimized projection query returning only essential fields
+	 * to significantly minimize network payload and boost UI dashboard rendering speed.
+	 * </p>
+	 *
+	 * @param requestInfoWrapper Request body envelope containing RequestInfo
+	 * @param billCriteria Query parameters mapping search criteria (tenantId, mobileNumber, isActive, etc.)
+	 * @return ResponseEntity containing ShortBillResponseV2
+	 */
+	@PostMapping("_searchsummary")
+	@ResponseBody
+	public ResponseEntity<?> searchBillSummary(@RequestBody @Valid final RequestInfoWrapper requestInfoWrapper,
+			@ModelAttribute @Valid final BillSearchCriteria billCriteria) {
+
+		RequestInfo requestInfo = requestInfoWrapper.getRequestInfo();
+		billValidator.validateBillSearchCriteria(billCriteria, requestInfo);
+		
+		java.util.List<ShortBillV2> shortBills = billService.searchShortBills(billCriteria, requestInfo);
+		
+		ShortBillResponseV2 shortResponse = ShortBillResponseV2.builder()
+				.responseInfo(responseFactory.getResponseInfo(requestInfo, HttpStatus.OK))
+				.bill(shortBills)
+				.build();
+				
+		return new ResponseEntity<>(shortResponse, HttpStatus.OK);
 	}
 
 

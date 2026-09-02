@@ -1,5 +1,6 @@
 package org.upyog.dashboard.service.impl;
 
+import org.upyog.dashboard.common.constants.DashboardConstants;
 import org.upyog.dashboard.model.ErrorLogDTO;
 
 
@@ -14,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
-import org.upyog.dashboard.common.constants.KafkaTopics;
+import org.upyog.dashboard.config.DashboardProperties;
 import org.upyog.dashboard.entity.DailyIngestionData;
 import org.upyog.dashboard.model.DashboardData;
 import org.upyog.dashboard.model.DashboardPayload;
@@ -34,6 +35,9 @@ public class KafkaAuditServiceImpl implements AuditService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private DashboardProperties dashboardProperties;
+
     @Override
     public void pushIngestionRecord(DashboardPayload data, String requestJson, String responseOrError, String status) {
         try {
@@ -46,12 +50,12 @@ public class KafkaAuditServiceImpl implements AuditService {
                     .pushDate(first != null ? first.getDate() : null)
                     .requestData(JsonUtil.toJsonString(requestJson, objectMapper))
                     .responseData(JsonUtil.toJsonString(responseOrError, objectMapper))
-                    .ingestionStatus(status).createdBy("SYSTEM")
-                    .createdTime(now).lastModifiedBy("SYSTEM").lastModifiedTime(now).build();
+                    .ingestionStatus(status).createdBy(DashboardConstants.SYSTEM_USER)
+                    .createdTime(now).lastModifiedBy(DashboardConstants.SYSTEM_USER).lastModifiedTime(now).build();
 
             Map<String, Object> kafkaMessage = new HashMap<>();
             kafkaMessage.put("dailyIngestionData", Collections.singletonList(record));
-            producer.push(KafkaTopics.SAVE_INGESTION_DETAIL, kafkaMessage);
+            producer.push(dashboardProperties.getSaveIngestionDetailTopic(), kafkaMessage);
 
             if ("FAILURE".equals(status)) {
                 ErrorLogDTO errorLog = ErrorLogDTO.builder()
@@ -61,11 +65,11 @@ public class KafkaAuditServiceImpl implements AuditService {
                         .errorDate(first != null ? first.getDate() : null)
                         .issueDescription(responseOrError)
                         .createdTime(now)
-                        .createdBy("SYSTEM")
+                        .createdBy(DashboardConstants.SYSTEM_USER)
                         .build();
                 Map<String, Object> errorKafkaMessage = new HashMap<>();
                 errorKafkaMessage.put("errorLog", Collections.singletonList(errorLog));
-                producer.push(KafkaTopics.SAVE_ADAPTER_ERROR_LOG, errorKafkaMessage);
+                producer.push(dashboardProperties.getSaveAdapterErrorLogTopic(), errorKafkaMessage);
             }
         } catch (Exception exception) {
             log.error("KafkaAuditServiceImpl | failed to push ingestion record to Kafka", exception);

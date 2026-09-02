@@ -11,6 +11,7 @@ public final class CHBDatabaseConstants {
 
     private CHBDatabaseConstants() {}
 
+    public static final String TENANT_ID = "tenantid";
     public static final String TOTAL_ACTIVE_VENUE_AVAILABLE = "totalactivevenueavailable";
     public static final String TOTAL_APPLICATION_RECEIVED = "totalapplicationreceived";
     public static final String TOTAL_COLLECTIONS = "totalcollections";

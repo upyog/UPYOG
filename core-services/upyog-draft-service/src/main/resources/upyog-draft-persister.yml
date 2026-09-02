@@ -7,14 +7,15 @@ serviceMaps:
       fromTopic: save-upyog-draft
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO ug_draft_detail(draft_id, tenant_id, user_uuid, business_service, module_entity_id, draft_data, completion_pct, status, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?::jsonb, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO ug_draft_detail(draft_id, tenant_id, business_service, module_name, module_entity_id, creator_type, draft_data, completion_pct, status, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?::jsonb, ?, ?, ?, ?, ?, ?);
           basePath: Draft
           jsonMaps:
             - jsonPath: $.Draft.draftId
             - jsonPath: $.Draft.tenantId
-            - jsonPath: $.Draft.userUuid
             - jsonPath: $.Draft.businessService
+            - jsonPath: $.Draft.moduleName
             - jsonPath: $.Draft.moduleEntityId
+            - jsonPath: $.Draft.creatorType
             - jsonPath: $.Draft.draftData
               type: JSON
               dbType: JSONB
@@ -31,19 +32,21 @@ serviceMaps:
       fromTopic: update-upyog-draft
       isTransaction: true
       queryMaps:
-        - query: UPDATE ug_draft_detail SET draft_data = ?::jsonb, completion_pct = ?, module_entity_id = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE draft_id = ? AND tenant_id = ? AND user_uuid = ?;
+        - query: UPDATE ug_draft_detail SET draft_data = ?::jsonb, completion_pct = ?, module_name = ?, module_entity_id = ?, creator_type = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE draft_id = ? AND tenant_id = ? AND createdby = ?;
           basePath: Draft
           jsonMaps:
             - jsonPath: $.Draft.draftData
               type: JSON
               dbType: JSONB
             - jsonPath: $.Draft.completionPct
+            - jsonPath: $.Draft.moduleName
             - jsonPath: $.Draft.moduleEntityId
+            - jsonPath: $.Draft.creatorType
             - jsonPath: $.Draft.lastModifiedBy
             - jsonPath: $.Draft.lastModifiedTime
             - jsonPath: $.Draft.draftId
             - jsonPath: $.Draft.tenantId
-            - jsonPath: $.Draft.userUuid
+            - jsonPath: $.Draft.createdBy
 
     - version: 1.0
       name: upyog-draft-service
@@ -51,7 +54,7 @@ serviceMaps:
       fromTopic: update-upyog-draft-status
       isTransaction: true
       queryMaps:
-        - query: UPDATE ug_draft_detail SET status = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE draft_id = ? AND tenant_id = ? AND user_uuid = ?;
+        - query: UPDATE ug_draft_detail SET status = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE draft_id = ? AND tenant_id = ? AND createdby = ?;
           basePath: Draft
           jsonMaps:
             - jsonPath: $.Draft.status
@@ -59,7 +62,7 @@ serviceMaps:
             - jsonPath: $.Draft.lastModifiedTime
             - jsonPath: $.Draft.draftId
             - jsonPath: $.Draft.tenantId
-            - jsonPath: $.Draft.userUuid
+            - jsonPath: $.Draft.createdBy
 
     - version: 1.0
       name: upyog-draft-service

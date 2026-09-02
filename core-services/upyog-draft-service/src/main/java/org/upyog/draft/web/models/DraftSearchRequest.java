@@ -16,10 +16,10 @@ import jakarta.validation.constraints.NotNull;
 @AllArgsConstructor
 public class DraftSearchRequest {
 
-    @JsonProperty("RequestInfo")
+    @JsonProperty("requestInfo")
     private RequestInfo requestInfo;
 
-    @JsonProperty("DraftSearchCriteria")
+    @JsonProperty("draftSearchCriteria")
     @Valid
     @NotNull
     private DraftSearchCriteria criteria;

@@ -1,6 +1,9 @@
 package org.upyog.dashboard.model;
-
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
 
 /**
  * Represents a single role assigned to a {@link UserInfo}.
@@ -27,7 +30,10 @@ import lombok.Data;
  * 
  * <p>Contributes to the core Property Tax metrics ingestion pipeline.
  */
-@Data
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 public class Roles {
 
     /**

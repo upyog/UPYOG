@@ -36,3 +36,28 @@ mvn clean install
    ```bash
    mvn spring-boot:run
    ```
+
+## Tenant Hierarchy and Multiple ULBs Support
+
+The extractor service natively handles dot-notation tenant IDs representing the geographical hierarchy (e.g., `state.ulb.region.ward`).
+## Configuration Parameters Reference
+
+The service can be configured via `application.properties` (or environment-specific files like `application-local.properties`):
+
+| Configuration Key | Default Value | Description |
+| :--- | :--- | :--- |
+| `dashboard-data.timeout.enabled` | `true` | Enables or disables custom Feign client HTTP timeouts. |
+| `dashboard-data.timeout.connect-ms` | `5000` | Connection timeout in milliseconds when timeout is enabled. |
+| `dashboard-data.timeout.read-ms` | `15000` | Read timeout in milliseconds when timeout is enabled. |
+| `dashboard-data.metric.ulb` | `""` | Fallback placeholder property for metric ULB initialization. |
+| `state.level.tenant.id` | `pg` | State-level tenant ID fallback used for summary tracker records. |
+| `dashboard-data.daily.catch-up-limit-days` | `7` | Maximum number of days allowed for daily catch-up before halting. |
+| `dashboard-data.ingestion.batch-size` | `10` | Ingestion batch size for HTTP API payloads and database inserts. |
+
+## egov-persister Integration Setup
+
+To persist ingestion audit details and summary tracker dates into PostgreSQL via Kafka, ensure `egov-persister` has `dashboard-data-extractor-persister.yml` configured in its `application.properties`:
+
+```properties
+egov.persist.yml.repo.path=classpath:egov-pg-service-persister.yml,classpath:dashboard-data-extractor-persister.yml
+```

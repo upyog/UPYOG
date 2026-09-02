@@ -81,10 +81,12 @@ type TracingConfig struct {
 
 // ProvidersConfig holds global provider configuration.
 type ProvidersConfig struct {
-	DefaultTimeout time.Duration                   `mapstructure:"defaultTimeout"`
-	MaxRetries     int                             `mapstructure:"maxRetries"`
-	CacheTTL       time.Duration                   `mapstructure:"cacheTTL"`
-	Custom         map[string]ProviderCustomConfig `mapstructure:"custom"`
+	DefaultTimeout   time.Duration                   `mapstructure:"defaultTimeout"`
+	MaxRetries       int                             `mapstructure:"maxRetries"`
+	CacheTTL         time.Duration                   `mapstructure:"cacheTTL"`
+	CompletedServiceStatuses   []string                        `mapstructure:"completedServiceStatuses"`
+	RecentApplicationsSinceDays int                             `mapstructure:"recentApplicationsSinceDays"`
+	Custom                     map[string]ProviderCustomConfig `mapstructure:"custom"`
 }
 
 // ProviderCustomConfig holds per-provider overrides.

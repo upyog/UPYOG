@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
 	"time"
 
 	"go.uber.org/zap"
@@ -23,22 +22,41 @@ import (
 
 const upcomingEventsProviderName = "upcoming-events"
 
-// Event represents a scheduled public event.
+// Event represents a cleaned public event item returned in response.
 type Event struct {
-	// ID is the unique event identifier.
-	ID string `json:"id"`
-	// Title is the event headline.
-	Title string `json:"title"`
-	// Description is the detailed event description.
-	Description string `json:"description"`
-	// StartDate is the epoch-millis event start time.
-	StartDate int64 `json:"startDate"`
-	// EndDate is the epoch-millis event end time.
-	EndDate int64 `json:"endDate"`
-	// Venue is the physical or virtual location.
-	Venue string `json:"venue"`
-	// Category classifies the event (e.g. "WORKSHOP", "TOWN_HALL").
-	Category string `json:"category"`
+	ID            string `json:"id"`
+	Name          string `json:"name"`
+	Description   string `json:"description"`
+	EventType     string `json:"eventType"`
+	EventCategory string `json:"eventCategory"`
+	EventDetails  *struct {
+		ID        string  `json:"id"`
+		Organizer string  `json:"organizer"`
+		FromDate  int64   `json:"fromDate"`
+		ToDate    int64   `json:"toDate"`
+		Address   string  `json:"address"`
+		Fees      float64 `json:"fees"`
+	} `json:"eventDetails,omitempty"`
+	RedirectURL string `json:"redirectUrl"`
+}
+
+// RawEvent mirrors the raw JSON event structure from egov-user-event.
+type RawEvent struct {
+	ID            string `json:"id"`
+	TenantID      string `json:"tenantId"`
+	Name          string `json:"name"`
+	Description   string `json:"description"`
+	Status        string `json:"status"`
+	EventType     string `json:"eventType"`
+	EventCategory string `json:"eventCategory"`
+	EventDetails  *struct {
+		ID        string  `json:"id"`
+		Organizer string  `json:"organizer"`
+		FromDate  int64   `json:"fromDate"`
+		ToDate    int64   `json:"toDate"`
+		Address   string  `json:"address"`
+		Fees      float64 `json:"fees"`
+	} `json:"eventDetails"`
 }
 
 // UpcomingEventsProvider retrieves future events from the UPYOG
@@ -61,19 +79,15 @@ func NewUpcomingEventsProvider(
 }
 
 // Execute implements DataProvider. It queries the user-event search API
-// with a fromDate filter set to the current time so that only future
-// events are returned.
+// with status=ACTIVE and eventTypes=EVENTSONGROUND, filtering for active and upcoming/today events.
 func (p *UpcomingEventsProvider) Execute(
 	ctx context.Context,
 	request dto.ProviderRequest,
 	aggReq dto.AggregateRequest,
 ) (*dto.ProviderResponse, error) {
-	nowMillis := time.Now().UnixMilli()
-
 	path := fmt.Sprintf(
-		"/egov-user-event/v1/events/_search?tenantId=%s&eventType=EVENTSONGROUND&fromDate=%s",
+		"/egov-user-event/v1/events/_search?tenantId=%s&eventTypes=EVENTSONGROUND&status=ACTIVE",
 		aggReq.TenantID,
-		strconv.FormatInt(nowMillis, 10),
 	)
 
 	headers := map[string]string{
@@ -81,9 +95,9 @@ func (p *UpcomingEventsProvider) Execute(
 	}
 
 	body := struct {
-		RequestInfo common.RequestInfo `json:"RequestInfo"`
+		RequestInfo json.RawMessage `json:"RequestInfo"`
 	}{
-		RequestInfo: common.NewRequestInfo(ctx, aggReq.RequestID),
+		RequestInfo: aggReq.RequestInfo,
 	}
 
 	resp, err := p.Client.Post(ctx, path, body, headers)
@@ -94,23 +108,67 @@ func (p *UpcomingEventsProvider) Execute(
 		return nil, fmt.Errorf("POST %s returned status %d", path, resp.StatusCode)
 	}
 
-	var result eventSearchResponse
+	var result struct {
+		Events []RawEvent `json:"events"`
+	}
 	if err := json.Unmarshal(resp.Body, &result); err != nil {
 		return nil, fmt.Errorf("unmarshal upcoming events response: %w", err)
 	}
 
+	// Filter events: status must be ACTIVE, and event toDate/fromDate must be >= today's start of day
+	now := time.Now()
+	startOfTodayMillis := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location()).UnixMilli()
+
+	upcomingEvents := make([]Event, 0, len(result.Events))
+	for _, event := range result.Events {
+		if event.Status != "" && event.Status != "ACTIVE" {
+			continue
+		}
+		// If eventDetails has end date or start date, check that it hasn't ended before today
+		if event.EventDetails != nil {
+			if event.EventDetails.ToDate > 0 && event.EventDetails.ToDate < startOfTodayMillis {
+				continue
+			}
+			if event.EventDetails.ToDate == 0 && event.EventDetails.FromDate > 0 && event.EventDetails.FromDate < startOfTodayMillis {
+				continue
+			}
+		}
+
+		cleanedEvent := Event{
+			ID:            event.ID,
+			Name:          event.Name,
+			Description:   event.Description,
+			EventType:     event.EventType,
+			EventCategory: event.EventCategory,
+			RedirectURL:   fmt.Sprintf("/upyog-ui/citizen/engagement/events?eventId=%s", event.ID),
+		}
+		if event.EventDetails != nil {
+			cleanedEvent.EventDetails = &struct {
+				ID        string  `json:"id"`
+				Organizer string  `json:"organizer"`
+				FromDate  int64   `json:"fromDate"`
+				ToDate    int64   `json:"toDate"`
+				Address   string  `json:"address"`
+				Fees      float64 `json:"fees"`
+			}{
+				ID:        event.EventDetails.ID,
+				Organizer: event.EventDetails.Organizer,
+				FromDate:  event.EventDetails.FromDate,
+				ToDate:    event.EventDetails.ToDate,
+				Address:   event.EventDetails.Address,
+				Fees:      event.EventDetails.Fees,
+			}
+		}
+		upcomingEvents = append(upcomingEvents, cleanedEvent)
+	}
+
 	p.Log.WithContext(ctx).Debug("fetched upcoming events",
-		zap.Int("count", len(result.Events)),
+		zap.Int("totalReturned", len(result.Events)),
+		zap.Int("filteredUpcoming", len(upcomingEvents)),
 	)
 
 	return &dto.ProviderResponse{
 		Status: common.StatusSuccess,
-		Data:   result.Events,
+		Data:   upcomingEvents,
 	}, nil
-}
-
-// eventSearchResponse mirrors the shape returned by the UPYOG
-// user-event search API.
-type eventSearchResponse struct {
-	Events []Event `json:"events"`
 }

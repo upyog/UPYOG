@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.filestore.config.FileStoreConfig;
+import org.egov.filestore.config.FileStoreConstants;
 import org.egov.filestore.domain.model.Artifact;
 import org.egov.filestore.domain.model.FileLocation;
 import org.egov.tracer.model.CustomException;
@@ -33,6 +34,8 @@ class StorageValidatorMediaTest {
         fileStoreConfig = new FileStoreConfig();
         fileStoreConfig.setAllowedAudioVideoFormats(ALLOWED_AV_FORMATS);
         fileStoreConfig.setMediaUploadMaxSizeBytes(1024L);
+        fileStoreConfig.setDxfUploadMaxSizeBytes(31457280L);
+        fileStoreConfig.setFileUploadMaxSizeBytes(5242880L);
 
         Map<String, List<String>> formatsMap = new HashMap<>();
         formatsMap.put("mp3", Arrays.asList("audio/mpeg", "audio/mp3"));
@@ -42,13 +45,14 @@ class StorageValidatorMediaTest {
         storageValidator = new StorageValidator(fileStoreConfig);
     }
 
+
     @Test
     void testValidateMediaFile_EmptyFile_ThrowsCustomException() {
         MockMultipartFile file = new MockMultipartFile("file", "video.mp4", "video/mp4", new byte[0]);
         Artifact artifact = buildArtifact(file);
 
         CustomException ex = assertThrows(CustomException.class, () -> storageValidator.validateMediaFile(artifact));
-        assertEquals("EG_FILESTORE_INVALID_INPUT", ex.getCode());
+        assertEquals(FileStoreConstants.EG_FILESTORE_INVALID_INPUT, ex.getCode());
     }
 
     @Test
@@ -58,7 +62,7 @@ class StorageValidatorMediaTest {
         Artifact artifact = buildArtifact(file);
 
         CustomException ex = assertThrows(CustomException.class, () -> storageValidator.validateMediaFile(artifact));
-        assertEquals("EG_FILESTORE_INVALID_MEDIA_TYPE", ex.getCode());
+        assertEquals(FileStoreConstants.EG_FILESTORE_INVALID_MEDIA_TYPE, ex.getCode());
     }
 
     @Test
@@ -67,7 +71,7 @@ class StorageValidatorMediaTest {
         Artifact artifact = buildArtifact(file);
 
         CustomException ex = assertThrows(CustomException.class, () -> storageValidator.validateMediaFile(artifact));
-        assertEquals("EG_FILESTORE_INVALID_MEDIA_TYPE", ex.getCode());
+        assertEquals(FileStoreConstants.EG_FILESTORE_INVALID_MEDIA_TYPE, ex.getCode());
     }
 
     @Test
@@ -77,7 +81,7 @@ class StorageValidatorMediaTest {
         Artifact artifact = buildArtifact(file);
 
         CustomException ex = assertThrows(CustomException.class, () -> storageValidator.validateMediaFile(artifact));
-        assertEquals("EG_FILESTORE_MEDIA_TOO_LARGE", ex.getCode());
+        assertEquals(FileStoreConstants.EG_FILESTORE_MEDIA_TOO_LARGE, ex.getCode());
     }
 
     @Test
@@ -90,8 +94,33 @@ class StorageValidatorMediaTest {
         assertDoesNotThrow(() -> storageValidator.validateMediaFile(artifact));
     }
 
+    @Test
+    void testValidateFileSize_PdfExceeds5Mb_ThrowsCustomException() {
+        // 6 MB file
+        MockMultipartFile file = new MockMultipartFile("file", "document.pdf", "application/pdf", new byte[6 * 1024 * 1024]);
+        CustomException ex = assertThrows(CustomException.class, () -> storageValidator.validateFileSize(file, "pdf"));
+        assertEquals(FileStoreConstants.EG_FILESTORE_FILE_TOO_LARGE, ex.getCode());
+    }
+
+    @Test
+    void testValidateFileSize_PdfWithin5Mb_DoesNotThrow() {
+        // 2 MB file
+        MockMultipartFile file = new MockMultipartFile("file", "document.pdf", "application/pdf", new byte[2 * 1024 * 1024]);
+        assertDoesNotThrow(() -> storageValidator.validateFileSize(file, "pdf"));
+    }
+
+    @Test
+    void testValidateFileSize_DxfWithin30Mb_DoesNotThrow() {
+        // 20 MB DXF file
+        MockMultipartFile file = new MockMultipartFile("file", "plan.dxf", "text/plain", new byte[20 * 1024 * 1024]);
+        assertDoesNotThrow(() -> storageValidator.validateFileSize(file, FileStoreConstants.FORMAT_DXF));
+    }
+
+
     private Artifact buildArtifact(MockMultipartFile file) {
         FileLocation location = new FileLocation("id", "PGR", "tag", "pb.amritsar", "bucket/path/file.mp4", null);
         return Artifact.builder().multipartFile(file).fileLocation(location).build();
     }
 }
+
+

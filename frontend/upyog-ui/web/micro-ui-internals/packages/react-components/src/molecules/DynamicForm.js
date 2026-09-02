@@ -268,6 +268,16 @@ const DynamicForm = ({
   const [crossFieldMessages, setCrossFieldMessages] = useState([]);
   /** @type {[{ message: string, error: boolean }] | null} */
   const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => {
+        setToast(null);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
   const [isFieldSearching, setIsFieldSearching] = useState(false);
   /**
    * Asset / estate lookup panel state.

@@ -1,4 +1,4 @@
-CREATE TABLE eg_mdms_schema_definition_audit (
+CREATE TABLE IF NOT EXISTS eg_mdms_schema_definition_audit (
     id VARCHAR(64) NOT NULL,
     tenantid VARCHAR(255) NOT NULL,
     code VARCHAR(255) NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE eg_mdms_schema_definition_audit (
     operation varchar(20)
 );
 
-CREATE TABLE eg_mdms_data_audit (
+CREATE TABLE IF NOT EXISTS eg_mdms_data_audit (
     id VARCHAR(64) NOT NULL,
     tenantid VARCHAR(255) NOT NULL,
     uniqueidentifier VARCHAR(255),

@@ -88,6 +88,36 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("providers.defaultTimeout", 10*time.Second)
 	v.SetDefault("providers.maxRetries", 2)
 	v.SetDefault("providers.cacheTTL", 5*time.Minute)
+	v.SetDefault("providers.recentApplicationsSinceDays", 7)
+	v.SetDefault("providers.completedServiceStatuses", []string{
+		"APPROVE",
+		"APPROVED",
+		"AUTO_APPROVED",
+		"CANCELED",
+		"CANCELLED",
+		"CLOSEDAFTERREJECTION",
+		"CLOSEDAFTERRESOLUTION",
+		"CLOSURE",
+		"COMPLETED",
+		"CONNECTION_ACTIVATED",
+		"DELIVERED",
+		"DISCONNECTION_EXECUTED",
+		"DISPOSED",
+		"EXPIRED",
+		"MANUALEXPIRED",
+		"REFUNDAPPROVED",
+		"REGISTRATIONCOMPLETED",
+		"REJECTED",
+		"REQUESTCOMPLETED",
+		"REQUESTREJECTED",
+		"RESOLVED",
+		"REVOCATED",
+		"TREE_PRUNING_SERVICE_COMPLETED",
+		"VOIDED",
+		"COMPLETE_REQUEST",
+		"COMPLETEREQUEST",
+		"SETTLED",
+	})
 
 	// Rate limiting defaults.
 	v.SetDefault("rateLimit.enabled", false)

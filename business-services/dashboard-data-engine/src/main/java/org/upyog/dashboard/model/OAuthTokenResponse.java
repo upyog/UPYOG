@@ -1,9 +1,12 @@
 package org.upyog.dashboard.model;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
 
 /**
  * Deserializes the JSON body returned by the eGov OAuth2 token endpoint
@@ -27,7 +30,7 @@ import lombok.Data;
  * }</pre>
  *
  * <p>Note that the field names use {@code snake_case} ({@code access_token},
- * {@code expires_in}) as returned by the OAuth server.  Lombok's {@code @Data}
+ * {@code expires_in}) as returned by the OAuth server.  Lombok's {@code }
  * generates standard camelCase getters, which is why explicit getters
  * ({@link #getAccessToken()}, {@link #getExpiresIn()}) are provided alongside
  * Lombok's generated ones.
@@ -40,8 +43,11 @@ import lombok.Data;
  * 
  * <p>Contributes to the core Property Tax metrics ingestion pipeline.
  */
-@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 public class OAuthTokenResponse {
 
     /**

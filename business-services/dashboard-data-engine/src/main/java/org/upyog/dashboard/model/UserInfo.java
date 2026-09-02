@@ -1,8 +1,12 @@
 package org.upyog.dashboard.model;
-
+import org.upyog.dashboard.common.constants.DashboardConstants;
 import java.util.List;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
 
 /**
  * Represents the authenticated user's profile as returned by the eGov user
@@ -19,7 +23,7 @@ import lombok.Data;
  *       user search endpoint response ({@link UserSearchResponse#getUser()}).</li>
  * </ol>
  *
- * <p>All fields use standard Java types and Lombok {@code @Data} provides
+ * <p>All fields use standard Java types and Lombok {@code } provides
  * getters, setters, {@code equals}, {@code hashCode}, and {@code toString}.
  *
  * @see OAuthTokenResponse
@@ -32,7 +36,10 @@ import lombok.Data;
  * 
  * <p>Contributes to the core Property Tax metrics ingestion pipeline.
  */
-@Data
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 public class UserInfo {
 
     /**
@@ -87,7 +94,7 @@ public class UserInfo {
 
     /**
      * User type as defined by the eGov user service
-     * (e.g. {@code "EMPLOYEE"}, {@code "CITIZEN"}, {@code "SYSTEM"}).
+     * (e.g. {@code "EMPLOYEE"}, {@code "CITIZEN"}, {@code DashboardConstants.SYSTEM_USER}).
      *
      * <p>The adapter system user is configured as {@code "EMPLOYEE"} via the
      * {@code adapter.system.user.type} application property.

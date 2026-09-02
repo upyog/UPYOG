@@ -1,5 +1,6 @@
 package org.upyog.dashboard.service;
 
+import org.upyog.dashboard.constants.DashboardExtractorConstants;
 import org.upyog.dashboard.util.TestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -79,9 +80,9 @@ class DailyIngestionServiceTest {
         when(schemaMappingConfig.getEnabledModules()).thenReturn(List.of(Module.PT));
         doReturn(extractor).when(extractorRegistry).get(Module.PT);
         when(summaryRepository.findLastSuccessfulDate("pg", "PT")).thenReturn(Optional.of(dayBeforeYesterday.minusDays(1)));
-        when(extractor.extractData(any())).thenReturn(DashboardData.builder().module("PT").ulb("pg.citya").build());
+        when(extractor.extractData(any())).thenReturn(DashboardData.builder().module("PT").ulb("pg.citya").metrics(java.util.Map.of("assessments", 10)).build());
 
-        IngestionResult successResult = IngestionResult.builder().ingestionStatus("SUCCESS").build();
+        IngestionResult successResult = IngestionResult.builder().ingestionStatus(DashboardExtractorConstants.STATUS_SUCCESS).build();
         when(dashboardClient.execute(any(DashboardRequest.class))).thenReturn(successResult);
 
         List<IngestionResult> results = service.ingestDailyData();
@@ -99,15 +100,15 @@ class DailyIngestionServiceTest {
         when(schemaMappingConfig.getEnabledModules()).thenReturn(List.of(Module.PT));
         doReturn(extractor).when(extractorRegistry).get(Module.PT);
         when(summaryRepository.findLastSuccessfulDate("pg", "PT")).thenReturn(Optional.of(dayBeforeYesterday.minusDays(1)));
-        when(extractor.extractData(any())).thenReturn(DashboardData.builder().module("PT").ulb("pg.citya").build());
+        when(extractor.extractData(any())).thenReturn(DashboardData.builder().module("PT").ulb("pg.citya").metrics(java.util.Map.of("assessments", 10)).build());
 
-        IngestionResult failureResult = IngestionResult.builder().ingestionStatus("FAILURE").failureReason("Timeout").build();
+        IngestionResult failureResult = IngestionResult.builder().ingestionStatus(DashboardExtractorConstants.STATUS_FAILURE).failureReason("Timeout").build();
         when(dashboardClient.execute(any(DashboardRequest.class))).thenReturn(failureResult);
 
         List<IngestionResult> results = service.ingestDailyData();
 
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).getIngestionStatus()).isEqualTo("FAILURE");
+        assertThat(results.get(0).getIngestionStatus()).isEqualTo(DashboardExtractorConstants.STATUS_FAILURE);
         verify(summaryRepository, never()).saveOrUpdateLastSuccessfulDate(any(), any(), any());
     }
 
@@ -118,15 +119,15 @@ class DailyIngestionServiceTest {
 
         when(schemaMappingConfig.getEnabledModules()).thenReturn(List.of(Module.PT));
         doReturn(extractor).when(extractorRegistry).get(Module.PT);
-        when(extractor.extractData(targetDate)).thenReturn(DashboardData.builder().module("PT").ulb("pg.citya").build());
+        when(extractor.extractData(targetDate)).thenReturn(DashboardData.builder().module("PT").ulb("pg.citya").metrics(java.util.Map.of("assessments", 10)).build());
 
-        IngestionResult successResult = IngestionResult.builder().ingestionStatus("SUCCESS").build();
+        IngestionResult successResult = IngestionResult.builder().ingestionStatus(DashboardExtractorConstants.STATUS_SUCCESS).build();
         when(dashboardClient.execute(any(DashboardRequest.class))).thenReturn(successResult);
 
         List<IngestionResult> results = service.ingestDailyData(targetDate);
 
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).getIngestionStatus()).isEqualTo("SUCCESS");
+        assertThat(results.get(0).getIngestionStatus()).isEqualTo(DashboardExtractorConstants.STATUS_SUCCESS);
         verify(summaryRepository).saveOrUpdateLastSuccessfulDate("pg", "PT", targetDate);
     }
 
@@ -161,10 +162,43 @@ class DailyIngestionServiceTest {
         List<IngestionResult> results = service.ingestDailyData();
 
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).getIngestionStatus()).isEqualTo("FAILURE");
+        assertThat(results.get(0).getIngestionStatus()).isEqualTo(DashboardExtractorConstants.STATUS_FAILURE);
         assertThat(results.get(0).getFailureReason()).contains("exceeds max limit");
         verify(dashboardClient, never()).execute(any());
     }
 
-    
+    @Test
+    @DisplayName("Zero metrics skips HTTP API call and sets status SUCCESS_ZERO_METRICS while advancing tracker")
+    void zeroMetrics_skipsHttpCallAndAdvancesTracker() throws Exception {
+        LocalDate targetDate = LocalDate.of(2026, 7, 20);
+
+        when(schemaMappingConfig.getEnabledModules()).thenReturn(List.of(Module.PT));
+        doReturn(extractor).when(extractorRegistry).get(Module.PT);
+        when(extractor.extractData(targetDate)).thenReturn(DashboardData.builder().module("PT").ulb("pg.citya").metrics(java.util.Map.of("assessments", 0)).build());
+
+        List<IngestionResult> results = service.ingestDailyData(targetDate);
+
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).getIngestionStatus()).isEqualTo(DashboardExtractorConstants.STATUS_SUCCESS);
+        verify(dashboardClient, never()).execute(any());
+        verify(summaryRepository).saveOrUpdateLastSuccessfulDate("pg", "PT", targetDate);
+    }
+
+    @Test
+    @DisplayName("Duplicate date error marks status as SUCCESS_DUPLICATE and advances tracker")
+    void duplicateDate_marksStatusAsSuccessDuplicateAndAdvancesTracker() throws Exception {
+        LocalDate targetDate = LocalDate.of(2026, 7, 21);
+
+        when(schemaMappingConfig.getEnabledModules()).thenReturn(List.of(Module.PT));
+        doReturn(extractor).when(extractorRegistry).get(Module.PT);
+        when(extractor.extractData(targetDate)).thenReturn(DashboardData.builder().module("PT").ulb("pg.citya").metrics(java.util.Map.of("assessments", 10)).build());
+
+        IngestionResult duplicateResult = IngestionResult.builder().ingestionStatus(DashboardExtractorConstants.STATUS_FAILURE).failureReason("Duplicate entry for date 2026-07-21").build();
+        when(dashboardClient.execute(any(DashboardRequest.class))).thenReturn(duplicateResult);
+
+        List<IngestionResult> results = service.ingestDailyData(targetDate);
+
+        assertThat(results).hasSize(1);
+        verify(summaryRepository).saveOrUpdateLastSuccessfulDate("pg", "PT", targetDate);
+    }
 }

@@ -37,6 +37,8 @@ type DraftApplication struct {
 	LastModifiedTime int64 `json:"lastModifiedTime"`
 	// CompletionPercentage is the percentage of the form that has been filled.
 	CompletionPercentage float64 `json:"completionPercentage"`
+	// RedirectURL is the action link to resume draft application.
+	RedirectURL string `json:"redirectUrl"`
 }
 
 // DraftApplicationsProvider retrieves active drafts from upyog-draft-service.
@@ -64,8 +66,20 @@ func (p *DraftApplicationsProvider) Execute(
 	request dto.ProviderRequest,
 	aggReq dto.AggregateRequest,
 ) (*dto.ProviderResponse, error) {
-	body := p.buildSearchBody(request, aggReq.TenantID, common.UserID(ctx))
-	body.RequestInfo = common.NewRequestInfo(ctx, aggReq.RequestID)
+	// Extract user UUID directly from the RequestInfo instead of context to fix draft mapping
+	var reqInfo struct {
+		UserInfo struct {
+			UUID string `json:"uuid"`
+		} `json:"userInfo"`
+	}
+	_ = json.Unmarshal(aggReq.RequestInfo, &reqInfo)
+	userUUID := reqInfo.UserInfo.UUID
+	if userUUID == "" {
+		userUUID = common.UserID(ctx)
+	}
+
+	body := p.buildSearchBody(request, aggReq.TenantID, userUUID)
+	body.RequestInfo = aggReq.RequestInfo
 
 	headers := map[string]string{
 		common.HeaderTenantID: aggReq.TenantID,
@@ -89,6 +103,10 @@ func (p *DraftApplicationsProvider) Execute(
 		items = result.Drafts
 	}
 
+	for i := range items {
+		items[i].RedirectURL = fmt.Sprintf("/upyog-ui/citizen/%s/apply?draftId=%s", items[i].BusinessService, items[i].ID)
+	}
+
 	p.Log.WithContext(ctx).Debug("fetched draft applications",
 		zap.Int("count", len(items)),
 	)
@@ -105,18 +123,18 @@ type draftSearchResponse struct {
 }
 
 type draftSearchBody struct {
-	RequestInfo common.RequestInfo `json:"RequestInfo"`
-	Criteria draftSearchCriteria `json:"DraftSearchCriteria"`
+	RequestInfo json.RawMessage     `json:"RequestInfo"`
+	Criteria    draftSearchCriteria `json:"draftSearchCriteria"`
 }
 
 type draftSearchCriteria struct {
-	TenantID    string `json:"tenantId"`
-	UserUUID    string `json:"userUuid"`
-	Status      string `json:"status"`
-	Offset      int    `json:"offset"`
-	Limit       int    `json:"limit"`
-	SortBy      string `json:"sortBy,omitempty"`
-	SortOrder   string `json:"sortOrder,omitempty"`
+	TenantID  string `json:"tenantId"`
+	UserUUID  string `json:"userUuid"`
+	Status    string `json:"status"`
+	Offset    int    `json:"offset"`
+	Limit     int    `json:"limit"`
+	SortBy    string `json:"sortBy,omitempty"`
+	SortOrder string `json:"sortOrder,omitempty"`
 }
 
 func (p *DraftApplicationsProvider) buildSearchBody(
@@ -124,12 +142,12 @@ func (p *DraftApplicationsProvider) buildSearchBody(
 	tenantID, userUUID string,
 ) draftSearchBody {
 	criteria := draftSearchCriteria{
-		TenantID: tenantID,
-		UserUUID: userUUID,
-		Status:   "ACTIVE",
-		Offset:   0,
-		Limit:    10,
-		SortBy:   "lastModifiedTime",
+		TenantID:  tenantID,
+		UserUUID:  userUUID,
+		Status:    "ACTIVE",
+		Offset:    0,
+		Limit:     10,
+		SortBy:    "lastModifiedTime",
 		SortOrder: "DESC",
 	}
 

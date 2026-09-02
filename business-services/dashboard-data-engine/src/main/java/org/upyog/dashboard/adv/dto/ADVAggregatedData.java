@@ -1,8 +1,10 @@
 package org.upyog.dashboard.adv.dto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class ADVAggregatedData {
     private Integer previousYearRevenue;
     private Integer currentFYCollection;

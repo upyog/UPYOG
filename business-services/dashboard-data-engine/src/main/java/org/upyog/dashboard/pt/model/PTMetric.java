@@ -4,14 +4,16 @@ import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 import org.upyog.dashboard.pt.constants.PTMetricConstants;
 
 /**
  * Type-safe class representing Property Tax (PT) metrics (acts as PTTran / PTMetric).
  */
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

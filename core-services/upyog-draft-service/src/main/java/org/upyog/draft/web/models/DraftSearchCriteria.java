@@ -12,8 +12,10 @@ import lombok.NoArgsConstructor;
 public class DraftSearchCriteria {
 
     private String tenantId;
-    private String userUuid;
+    private String createdBy;
     private String businessService;
+    private String moduleName;
+    private String creatorType;
     private String status;
     private Integer offset;
     private Integer limit;

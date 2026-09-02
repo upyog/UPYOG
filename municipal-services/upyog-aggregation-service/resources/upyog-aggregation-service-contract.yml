@@ -97,31 +97,86 @@ definitions:
     type: object
     description: Request to aggregate data from multiple providers
     properties:
+      requestInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo"
+      requestId:
+        type: string
+        format: uuid
+        description: Client-provided unique identifier for the request
+      page:
+        type: string
+        description: Logical page identifying the client context (e.g., citizen-home)
+        minLength: 1
+        maxLength: 128
       tenantId:
         type: string
         description: Unique identifier of ULB/tenant
-        minLength: 2
+        minLength: 1
         maxLength: 128
       locale:
         type: string
-        description: Locale for localized responses (e.g. en_IN)
-      providers:
+        description: Locale for localized responses (e.g., en_IN)
+      requests:
         type: array
-        description: List of provider keys to execute
+        description: List of provider requests to execute
         items:
-          type: string
-          enum:
-            - draft_applications
-            - quick_summary
-            - recent_applications
-            - notifications
-            - due_renewals
-            - upcoming_events
-            - advertisement_banners
-            - new_applications
+          $ref: '#/definitions/ProviderRequest'
     required:
+      - requestInfo
+      - requestId
+      - page
       - tenantId
-      - providers
+      - requests
+
+  ProviderRequest:
+    type: object
+    properties:
+      provider:
+        type: string
+        description: Registered name of the provider
+        minLength: 1
+        maxLength: 64
+      pagination:
+        $ref: '#/definitions/Pagination'
+      sort:
+        $ref: '#/definitions/Sort'
+      filters:
+        type: object
+        description: Free-form map of provider-specific filters
+    required:
+      - provider
+
+  Pagination:
+    type: object
+    properties:
+      page:
+        type: integer
+        minimum: 0
+        description: Zero-based page number
+      size:
+        type: integer
+        minimum: 1
+        maximum: 100
+        description: Number of items per page
+    required:
+      - size
+
+  Sort:
+    type: object
+    properties:
+      field:
+        type: string
+        minLength: 1
+      order:
+        type: string
+        enum:
+          - ASC
+          - DESC
+          - asc
+          - desc
+    required:
+      - field
+      - order
   AggregateResponse:
     type: object
     description: Unified aggregation response from all requested providers

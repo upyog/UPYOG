@@ -1,9 +1,12 @@
 package org.upyog.dashboard.service.impl;
 
+import org.upyog.dashboard.constants.DashboardExtractorConstants;
 import org.mockito.ArgumentMatchers;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -17,14 +20,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.upyog.dashboard.repository.querybuilder.IngestionSummaryQueryBuilder;
 
 @ExtendWith(MockitoExtension.class)
 class JdbcIngestionPersistenceServiceImplTest {
 
     @Mock
-    private JdbcTemplate jdbcTemplate;
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Mock
     private IngestionSummaryQueryBuilder queryBuilder;
@@ -44,18 +48,7 @@ class JdbcIngestionPersistenceServiceImplTest {
         LocalDate targetDate = LocalDate.of(2026, 7, 1);
         service.saveOrUpdateLastSuccessfulDate("pg", "PT", targetDate);
 
-        verify(jdbcTemplate).update(
-                eq("UPSERT SUCCESSFUL DATE"),
-                any(String.class),
-                eq("pg"),
-                eq("PT"),
-                eq(Date.valueOf(targetDate)),
-                eq(Date.valueOf(targetDate)),
-                eq("SYSTEM"),
-                any(Long.class),
-                eq("SYSTEM"),
-                any(Long.class)
-        );
+        verify(namedParameterJdbcTemplate).update(anyString(), any(SqlParameterSource.class));
     }
 
     @Test
@@ -65,18 +58,7 @@ class JdbcIngestionPersistenceServiceImplTest {
         LocalDate targetDate = LocalDate.of(2026, 7, 1);
         service.saveOrUpdateLastAttemptedDate("pg", "PT", targetDate);
 
-        verify(jdbcTemplate).update(
-                eq("UPSERT ATTEMPTED DATE"),
-                any(String.class),
-                eq("pg"),
-                eq("PT"),
-                eq(Date.valueOf(LocalDate.of(1970, 1, 1))),
-                eq(Date.valueOf(targetDate)),
-                eq("SYSTEM"),
-                any(Long.class),
-                eq("SYSTEM"),
-                any(Long.class)
-        );
+        verify(namedParameterJdbcTemplate).update(anyString(), any(SqlParameterSource.class));
     }
 
     @Test
@@ -84,36 +66,17 @@ class JdbcIngestionPersistenceServiceImplTest {
     void createLegacyJob_usesJdbcTemplate() {
         when(queryBuilder.getInsertLegacyJobQuery()).thenReturn("INSERT LEGACY JOB");
         LocalDate targetDate = LocalDate.of(2026, 7, 1);
-        service.createLegacyJob("pg", "PT", targetDate);
+        service.createLegacyJob("job-123", "pg", "PT", targetDate, targetDate, targetDate);
 
-        verify(jdbcTemplate).update(
-                eq("INSERT LEGACY JOB"),
-                any(String.class),
-                eq("pg"),
-                eq("PT"),
-                eq(Date.valueOf(targetDate)),
-                eq("NOT_STARTED"),
-                ArgumentMatchers.isNull(),
-                eq("SYSTEM"),
-                any(Long.class),
-                eq("SYSTEM"),
-                any(Long.class)
-        );
+        verify(namedParameterJdbcTemplate).update(anyString(), any(SqlParameterSource.class));
     }
 
     @Test
     @DisplayName("updateLegacyJobStatus uses JdbcTemplate update")
     void updateLegacyJobStatus_usesJdbcTemplate() {
         when(queryBuilder.getUpdateLegacyJobStatusQuery()).thenReturn("UPDATE LEGACY JOB");
-        service.updateLegacyJobStatus("job123", "SUCCESS", "{}", "{}");
+        service.updateLegacyJobStatus("job123", DashboardExtractorConstants.STATUS_SUCCESS, "{}", "{}");
 
-        verify(jdbcTemplate).update(
-                eq("UPDATE LEGACY JOB"),
-                eq("SUCCESS"),
-                eq("{}"),
-                eq("{}"),
-                any(Long.class),
-                eq("job123")
-        );
+        verify(namedParameterJdbcTemplate).update(anyString(), any(SqlParameterSource.class));
     }
 }

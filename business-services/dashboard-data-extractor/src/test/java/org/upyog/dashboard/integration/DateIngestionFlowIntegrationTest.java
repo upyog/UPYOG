@@ -1,17 +1,19 @@
 package org.upyog.dashboard.integration;
 
+import org.upyog.dashboard.constants.DashboardExtractorConstants;
 import org.upyog.dashboard.client.DashboardFeignClient;
 import org.upyog.dashboard.model.DashboardPayload;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +30,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.RowMapper;
+import org.upyog.dashboard.pt.model.RawPtMetric;
+import org.upyog.dashboard.pt.model.RawPtCollection;
 import org.upyog.dashboard.api.DashboardClientImpl;
 import org.upyog.dashboard.common.constants.Module;
 import org.upyog.dashboard.config.DashboardProperties;
@@ -37,9 +43,7 @@ import org.upyog.dashboard.extractor.impl.PtModuleExtractor;
 import org.upyog.dashboard.loader.impl.DashboardDataLoaderImpl;
 import org.upyog.dashboard.model.IngestionResult;
 import org.upyog.dashboard.producer.DashboardProducer;
-import org.upyog.dashboard.pt.dto.PTAggregatedData;
-import org.upyog.dashboard.pt.dto.PTCollectionDTO;
-import org.upyog.dashboard.pt.mapper.PTRowmapper;
+
 import org.upyog.dashboard.registry.ExtractorRegistry;
 import org.upyog.dashboard.registry.TransformerRegistry;
 import org.upyog.dashboard.repository.IngestionSummaryRepository;
@@ -105,7 +109,7 @@ class DateIngestionFlowIntegrationTest {
         objectMapper = new ObjectMapper();
 
         // 1. Configure SchemaMappingConfig with PT query configurations
-        schemaMappingConfig = new SchemaMappingConfig();
+        schemaMappingConfig = new SchemaMappingConfig(Mockito.mock(org.springframework.core.io.ResourceLoader.class));
         schemaMappingConfig.setEnabledModules(List.of(Module.PT));
 
         SchemaMappingConfig.ModuleQueries ptQueries = new SchemaMappingConfig.ModuleQueries();
@@ -117,14 +121,18 @@ class DateIngestionFlowIntegrationTest {
         schemaMappingConfig.setMappings(mappings);
 
         // 2. Setup Extractor
-        ptExtractor = new PtModuleExtractor();
-        TestUtils.setField(ptExtractor, "namedParameterJdbcTemplate", namedParameterJdbcTemplate);
-        TestUtils.setField(ptExtractor, "schemaMappingConfig", schemaMappingConfig);
-        TestUtils.setField(ptExtractor, "ulb", "pg.citya");
-        TestUtils.setField(ptExtractor, "ward", "Block 4");
-        TestUtils.setField(ptExtractor, "region", "Test");
-        TestUtils.setField(ptExtractor, "state", "Punjab");
-        TestUtils.setField(ptExtractor, "dbTenantId", "pg");
+        DashboardProperties ptDashboardProperties = Mockito.mock(DashboardProperties.class);
+        lenient().when(ptDashboardProperties.getMetricUlb()).thenReturn("pg");
+        lenient().when(ptDashboardProperties.getDbMaxAttempts()).thenReturn(3);
+        lenient().when(ptDashboardProperties.getDbBaseDelayMs()).thenReturn(100L);
+        lenient().when(ptDashboardProperties.getDbMaxDelayMs()).thenReturn(500L);
+        lenient().when(ptDashboardProperties.getMetricState()).thenReturn("pg");
+        lenient().when(ptDashboardProperties.getTenantId()).thenReturn("pg");
+
+        org.upyog.dashboard.util.HierarchyParser hp = new org.upyog.dashboard.util.HierarchyParser("Block 4", "Test");
+        org.upyog.dashboard.util.DatabaseQueryExecutor queryExecutor = new org.upyog.dashboard.util.DatabaseQueryExecutor(namedParameterJdbcTemplate, ptDashboardProperties);
+        ptExtractor = new PtModuleExtractor(queryExecutor, schemaMappingConfig, ptDashboardProperties, hp);
+        ptExtractor.init();
 
         extractorRegistry = new ExtractorRegistry(List.of(ptExtractor));
 
@@ -143,6 +151,8 @@ class DateIngestionFlowIntegrationTest {
         lenient().when(dashboardProperties.getIngestBaseDelayMs()).thenReturn(1L);
         lenient().when(dashboardProperties.getIngestMaxDelayMs()).thenReturn(2L);
         lenient().when(dashboardProperties.getTenantId()).thenReturn("pg");
+        lenient().when(dashboardProperties.getMetricState()).thenReturn("pg");
+        lenient().when(dashboardProperties.getMetricUlb()).thenReturn("pg.citya");
         lenient().when(dashboardProperties.getDefaultStartDateStr()).thenReturn("2026-06-01");
         lenient().when(dashboardProperties.getPtUsageCategories()).thenReturn(List.of("RESIDENTIAL", "COMMERCIAL", "INDUSTRIAL"));
         lenient().when(dashboardProperties.getPtTaxHeads()).thenReturn(List.of("PT_TAX"));
@@ -163,21 +173,16 @@ class DateIngestionFlowIntegrationTest {
         TestUtils.setField(httpLoader, "dashboardProperties", dashboardProperties);
 
         // 6. Setup DashboardClientImpl
-        dashboardClient = new DashboardClientImpl(transformerRegistry, httpLoader, commonValidator);
+        org.upyog.dashboard.loader.DashboardDataLoaderFactory dataLoaderFactory = 
+                new org.upyog.dashboard.loader.DashboardDataLoaderFactory(httpLoader, httpLoader, dashboardProperties);
+        dashboardClient = new DashboardClientImpl(transformerRegistry, dataLoaderFactory, commonValidator);
 
         // 7. Setup DailyIngestionService
-        dailyIngestionService = new DailyIngestionService();
-        TestUtils.setField(dailyIngestionService, "dashboardClient", dashboardClient);
-        TestUtils.setField(dailyIngestionService, "extractorRegistry", extractorRegistry);
-        TestUtils.setField(dailyIngestionService, "schemaMappingConfig", schemaMappingConfig);
-        TestUtils.setField(dailyIngestionService, "summaryRepository", summaryRepository);
-        TestUtils.setField(dailyIngestionService, "tenantId", "pg");
-        TestUtils.setField(dailyIngestionService, "defaultStartDateStr", "2026-06-01");
-        TestUtils.setField(dailyIngestionService, "dashboardProperties", dashboardProperties);
+        dailyIngestionService = new DailyIngestionService(dashboardClient, extractorRegistry, schemaMappingConfig, summaryRepository, dashboardProperties, objectMapper);
+        dailyIngestionService.init();
 
         // 8. Setup Controller
-        ingestionTestController = new IngestionTestController();
-        TestUtils.setField(ingestionTestController, "service", dailyIngestionService);
+        ingestionTestController = new IngestionTestController(dailyIngestionService);
     }
 
     @Test
@@ -187,7 +192,8 @@ class DateIngestionFlowIntegrationTest {
         LocalDate targetDate = LocalDate.of(2026, 7, 15);
 
         // 1. Mock DB query responses for the extraction phase
-        PTAggregatedData combinedMetricsResult = PTAggregatedData.builder()
+        RawPtMetric metric = RawPtMetric.builder()
+                .tenantid("pg.citya.Test.Block 4")
                 .assessments(50)
                 .todaysTotalApplications(120)
                 .todaysClosedApplications(90)
@@ -199,27 +205,26 @@ class DateIngestionFlowIntegrationTest {
                 .assessedPropertiesJson("[{\"name\":\"RESIDENTIAL\",\"value\":1000},{\"name\":\"COMMERCIAL\",\"value\":500}]")
                 .build();
 
-        when(namedParameterJdbcTemplate.queryForObject(
+        org.mockito.Mockito.lenient().when(namedParameterJdbcTemplate.query(
                 eq("SELECT assessments, todaystotalapplications FROM pt_metrics WHERE tenantId = :tenantId"), 
-                Mockito.<Map<String, ?>>any(), 
-                eq(PTRowmapper.COMBINED_ROW_MAPPER)))
-                .thenReturn(combinedMetricsResult);
+                any(SqlParameterSource.class),
+                any(RowMapper.class)))
+                .thenReturn(List.of(metric));
 
-        List<PTCollectionDTO> collectionMetricsResult = new ArrayList<>();
-        PTCollectionDTO colRow = PTCollectionDTO.builder()
+        RawPtCollection collection = RawPtCollection.builder()
+                .tenantid("pg.citya.Test.Block 4")
                 .usageCategory("RESIDENTIAL")
                 .paymentMode("ONLINE")
                 .paymentId("PAY-101")
                 .taxHeadCode("PT_TAX")
                 .taxHeadAmount(15000.0)
                 .build();
-        collectionMetricsResult.add(colRow);
 
-        when(namedParameterJdbcTemplate.query(
+        org.mockito.Mockito.lenient().when(namedParameterJdbcTemplate.query(
                 eq("SELECT usage_category, paymentmode, taxheadcode, tax_head_amount FROM pt_collection WHERE tenantId = :tenantId"), 
-                Mockito.<Map<String, ?>>any(), 
-                eq(PTRowmapper.COLLECTION_ROW_MAPPER)))
-                .thenReturn(collectionMetricsResult);
+                any(SqlParameterSource.class),
+                any(RowMapper.class)))
+                .thenReturn(List.of(collection));
 
         // 2. Mock OAuthTokenService response for the API loading phase
         when(oAuthTokenService.getToken()).thenReturn("test-access-token-999");
@@ -238,7 +243,7 @@ class DateIngestionFlowIntegrationTest {
         // THEN: Verify full flow execution & results
         assertThat(results).isNotNull().hasSize(1);
         IngestionResult result = results.get(0);
-        assertThat(result.getIngestionStatus()).isEqualTo("SUCCESS");
+        assertThat(result.getIngestionStatus()).isEqualTo(DashboardExtractorConstants.STATUS_SUCCESS);
         assertThat(result.getResponseData()).isEqualTo(apiResponseBody);
 
         // Verify state tracking was updated for the passed date
@@ -256,7 +261,7 @@ class DateIngestionFlowIntegrationTest {
         JsonNode dataNode = rootNode.get("Data").get(0);
         assertThat(dataNode.get("date").asText()).isEqualTo("15-07-2026");
         assertThat(dataNode.get("module").asText()).isEqualTo("PT");
-        assertThat(dataNode.get("ulb").asText()).isEqualTo("pg.citya");
+        assertThat(dataNode.get(DashboardExtractorConstants.KEY_ULB).asText()).isEqualTo("pg.citya");
 
         // Check extracted metrics within payload
         JsonNode metricsNode = dataNode.get("metrics");
@@ -264,7 +269,7 @@ class DateIngestionFlowIntegrationTest {
         assertThat(metricsNode.get("todaysTotalApplications").asInt()).isEqualTo(120);
 
         // Verify Kafka audit record push
-        verify(auditService).pushIngestionRecord(any(DashboardPayload.class), any(String.class), any(String.class), eq("SUCCESS"));
+        verify(auditService).pushIngestionRecord(any(DashboardPayload.class), any(String.class), any(String.class), eq(DashboardExtractorConstants.STATUS_SUCCESS));
     }
 
     @Test
@@ -272,12 +277,13 @@ class DateIngestionFlowIntegrationTest {
     void testCompleteIngestionFlow_ViaRestController() throws Exception {
         LocalDate targetDate = LocalDate.of(2026, 7, 20);
 
-        PTAggregatedData combinedMetricsResult = PTAggregatedData.builder()
+        RawPtMetric metric = RawPtMetric.builder()
+                .tenantid("pg.citya.Test.Block 4")
                 .assessments(10)
                 .todaysTotalApplications(25)
                 .build();
-        when(namedParameterJdbcTemplate.queryForObject(any(String.class), Mockito.<Map<String, ?>>any(), any(org.springframework.jdbc.core.RowMapper.class))).thenReturn(combinedMetricsResult);
-        when(namedParameterJdbcTemplate.query(any(String.class), Mockito.<Map<String, ?>>any(), any(org.springframework.jdbc.core.RowMapper.class))).thenReturn(Collections.emptyList());
+        org.mockito.Mockito.lenient().when(namedParameterJdbcTemplate.query(eq("SELECT assessments, todaystotalapplications FROM pt_metrics WHERE tenantId = :tenantId"), any(SqlParameterSource.class), any(RowMapper.class))).thenReturn(List.of(metric));
+        org.mockito.Mockito.lenient().when(namedParameterJdbcTemplate.query(eq("SELECT usage_category, paymentmode, taxheadcode, tax_head_amount FROM pt_collection WHERE tenantId = :tenantId"), any(SqlParameterSource.class), any(RowMapper.class))).thenReturn(Collections.emptyList());
 
         when(oAuthTokenService.getToken()).thenReturn("token-abc");
         when(dashboardFeignClient.ingestMetrics(eq(java.net.URI.create(targetApiUrl)), Mockito.anyString()))
@@ -289,7 +295,7 @@ class DateIngestionFlowIntegrationTest {
         // THEN:
         assertThat(controllerResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(controllerResponse.getBody()).hasSize(1);
-        assertThat(controllerResponse.getBody().get(0).getIngestionStatus()).isEqualTo("SUCCESS");
+        assertThat(controllerResponse.getBody().get(0).getIngestionStatus()).isEqualTo(DashboardExtractorConstants.STATUS_SUCCESS);
 
         verify(summaryRepository).saveOrUpdateLastSuccessfulDate("pg", "PT", targetDate);
     }
@@ -299,8 +305,12 @@ class DateIngestionFlowIntegrationTest {
     void testCompleteIngestionFlow_ApiFailure_DoesNotUpdateTracker() throws Exception {
         LocalDate targetDate = LocalDate.of(2026, 7, 18);
 
-        when(namedParameterJdbcTemplate.queryForObject(any(String.class), Mockito.<Map<String, ?>>any(), any(org.springframework.jdbc.core.RowMapper.class))).thenReturn(new PTAggregatedData());
-        when(namedParameterJdbcTemplate.query(any(String.class), Mockito.<Map<String, ?>>any(), any(org.springframework.jdbc.core.RowMapper.class))).thenReturn(Collections.emptyList());
+        RawPtMetric metric = RawPtMetric.builder()
+                .tenantid("pg.citya.Test.Block 4")
+                .assessments(50)
+                .build();
+        org.mockito.Mockito.lenient().when(namedParameterJdbcTemplate.query(eq("SELECT assessments, todaystotalapplications FROM pt_metrics WHERE tenantId = :tenantId"), any(SqlParameterSource.class), any(RowMapper.class))).thenReturn(List.of(metric));
+        org.mockito.Mockito.lenient().when(namedParameterJdbcTemplate.query(eq("SELECT usage_category, paymentmode, taxheadcode, tax_head_amount FROM pt_collection WHERE tenantId = :tenantId"), any(SqlParameterSource.class), any(RowMapper.class))).thenReturn(Collections.emptyList());
         when(oAuthTokenService.getToken()).thenReturn("token-123");
 
         // Mock API throwing exception (e.g. HTTP 500 Server Error)
@@ -312,7 +322,7 @@ class DateIngestionFlowIntegrationTest {
 
         // THEN: Verify status is FAILURE and last successful date was NOT updated
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).getIngestionStatus()).isEqualTo("FAILURE");
+        assertThat(results.get(0).getIngestionStatus()).isEqualTo(DashboardExtractorConstants.STATUS_FAILURE);
         assertThat(results.get(0).getFailureReason()).contains("National Dashboard API Service Unavailable");
 
         verify(summaryRepository, Mockito.never()).saveOrUpdateLastSuccessfulDate(any(), any(), any());

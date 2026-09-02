@@ -4,7 +4,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.upyog.dashboard.common.constants.Module;
 import org.upyog.dashboard.extractor.ModuleExtractor;
@@ -25,7 +24,7 @@ public class ExtractorRegistry {
      * 
      * @param extractorList dataList of all ModuleExtractor components discovered by Spring
      */
-    @Autowired
+
     public ExtractorRegistry(List<ModuleExtractor<?>> extractorList) {
         for (ModuleExtractor<?> extractor : extractorList) {
             extractors.put(extractor.getModule(), extractor);

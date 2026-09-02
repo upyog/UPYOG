@@ -65,21 +65,37 @@ export const ESTMyApplications = () => {
   const [searchFilters, setSearchFilters] = useState({});
   const [hasSearched, setHasSearched] = useState(false);
 
-  const pathOffset = useMemo(() => {
-    const segment = location.pathname.split("/").pop();
-    const parsed = parseInt(segment, 10);
-    return Number.isNaN(parsed) ? 0 : parsed;
-  }, [location.pathname]);
+  const urlFilter = location.pathname.split("/").pop();
+  const isOffsetRoute = !isNaN(parseInt(urlFilter, 10));
+  const off = isOffsetRoute ? parseInt(urlFilter, 10) : 0;
+  const limit = isOffsetRoute ? 50 : 4;
 
   useEffect(() => {
     setHasSearched(true);
-    setSearchFilters({});
   }, []);
 
-  // Allotment _search with tenantId only — allotmentNo / status filtered client-side.
+  const isFiltered = Boolean(searchFilters.allotmentNo || searchFilters.paymentStatus);
+
+  // Allotment _search: When searching or filtering, reset offset to 0 and query up to 50 items.
   const allotmentSearchFilters = useMemo(
-    () => ({ tenantId }),
-    [tenantId]
+    () => ({
+      tenantId,
+      ...(searchFilters.allotmentNo ? { allotmentNo: searchFilters.allotmentNo } : {}),
+      ...(isFiltered
+        ? {
+            limit: "50",
+            offset: "0",
+            sortBy: "createdTime",
+            sortOrder: "DESC",
+          }
+        : {
+            limit: String(limit),
+            offset: String(off),
+            sortBy: "createdTime",
+            sortOrder: "DESC",
+          }),
+    }),
+    [tenantId, limit, off, searchFilters, isFiltered]
   );
 
   const { isLoading, isSuccess, data, isFetching } =
@@ -94,48 +110,44 @@ export const ESTMyApplications = () => {
   const applications = useMemo(() => {
     const list = data?.Allotments || data?.allotments || [];
     const paymentFilter = String(searchFilters.paymentStatus || "").toUpperCase();
-    const allotmentNoFilterValue = String(searchFilters.allotmentNo || "")
+    const allotmentNoFilter = String(searchFilters.allotmentNo || "")
       .trim()
       .toUpperCase();
+
     let rows = Array.isArray(list) ? [...list] : [];
 
-    if (allotmentNoFilterValue) {
+    // Filter by allotmentNo if user searched
+    if (allotmentNoFilter) {
       rows = rows.filter((item) => {
         const no = String(
           item?.allotmentNo ?? item?.additionalDetails?.allotmentNo ?? ""
         )
           .trim()
           .toUpperCase();
-        return no.includes(allotmentNoFilterValue);
+        return no.includes(allotmentNoFilter);
       });
     }
 
-    // Empty status → show every matching allotment.
-    if (!paymentFilter) return rows;
+    // Filter by paymentStatus if selected
+    if (paymentFilter) {
+      rows = rows.filter((item) => {
+        const rowPayment = normalizeCitizenPaymentStatus(
+          getAllotmentPaymentStatus(item)
+        );
+        return rowPayment === paymentFilter;
+      });
+    }
 
-    return rows.filter((item) => {
-      const rowPayment = normalizeCitizenPaymentStatus(
-        getAllotmentPaymentStatus(item)
-      );
-      return rowPayment === paymentFilter;
-    });
+    return rows;
   }, [data, searchFilters.paymentStatus, searchFilters.allotmentNo]);
 
-  const visibleApplications = useMemo(() => {
-    if (!pathOffset) return applications;
-    return applications.slice(pathOffset, pathOffset + pageSize);
-  }, [applications, pathOffset, pageSize]);
+  const visibleApplications = applications;
 
   const handleSearch = useCallback(() => {
     const trimmedSearchTerm = searchTerm.trim();
     const paymentStatus = status?.code || undefined;
+
     setHasSearched(true);
-
-    if (!trimmedSearchTerm && !paymentStatus) {
-      setSearchFilters({});
-      return;
-    }
-
     setSearchFilters({
       allotmentNo: trimmedSearchTerm || undefined,
       paymentStatus,
@@ -193,8 +205,8 @@ export const ESTMyApplications = () => {
   }
 
   const totalCount = applications.length;
-  const nextOffset = pathOffset + pageSize;
-  const hasMore = pathOffset > 0 && totalCount > nextOffset;
+  const nextOffset = isOffsetRoute ? off + limit : 4;
+  const hasMore = totalCount >= limit;
 
   return (
     <>
