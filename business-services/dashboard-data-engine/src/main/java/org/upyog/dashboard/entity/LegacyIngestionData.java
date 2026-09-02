@@ -56,8 +56,6 @@ import lombok.NoArgsConstructor;
  *
  * @see org.upyog.dashboard.entity.DailyIngestionData
  * @see org.upyog.dashboard.producer.DashboardProducer
- * @see org.upyog.dashboard.common.constants.KafkaTopics#SAVE_LEGACY_INGESTION_DETAIL
- * @see org.upyog.dashboard.common.constants.KafkaTopics#UPDATE_LEGACY_INGESTION_DETAIL
  */
 /**
  * Class representing the LegacyIngestionData class.

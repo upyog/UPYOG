@@ -27,11 +27,10 @@ import org.springframework.stereotype.Service;
  *
  * <h3>Topic constants</h3>
  * All topic names are defined as compile-time constants in
- * {@link org.upyog.dashboard.common.constants.KafkaTopics}.  The corresponding
+ * DashboardProperties.  The corresponding
  * INSERT / UPDATE SQL is declared in {@code adapter-service-persister.yml} and
  * executed by the persister service when it consumes the topic.
  *
- * @see org.upyog.dashboard.common.constants.KafkaTopics
  * @see org.upyog.dashboard.entity.DailyIngestionData
  * @see org.upyog.dashboard.entity.LegacyIngestionData
  */
@@ -65,7 +64,7 @@ public class DashboardProducer {
      * name is always visible in application logs regardless of the caller.
      *
      * @param topic the Kafka topic to publish to; use a constant from
-     *              {@link org.upyog.dashboard.common.constants.KafkaTopics}
+     *              DashboardProperties
      *              to avoid hard-coding topic strings at call sites
      * @param value the object to serialize and publish; must be
      *              JSON-serializable by Jackson (the configured

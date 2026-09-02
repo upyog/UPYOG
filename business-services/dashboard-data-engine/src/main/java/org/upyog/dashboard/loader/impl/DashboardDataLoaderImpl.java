@@ -65,7 +65,6 @@ import lombok.extern.slf4j.Slf4j;
  * @see Loader
  * @see DailyIngestionData
  * @see DashboardProducer
- * @see KafkaTopics#SAVE_INGESTION_DETAIL
  */
 /**
  * Class representing the DashboardDataLoaderImpl class.
