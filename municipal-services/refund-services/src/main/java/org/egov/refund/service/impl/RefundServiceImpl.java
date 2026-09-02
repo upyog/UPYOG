@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.refund.Repository.RefundRepository;
@@ -131,6 +132,7 @@ public class RefundServiceImpl implements RefundService {
 		}
 
 		String userId = getUserId(request.getRequestInfo());
+
 		long currentTime = System.currentTimeMillis();
 		String action = getAction(inputRefund);
 
@@ -138,15 +140,19 @@ public class RefundServiceImpl implements RefundService {
 		 * Finance workflow handling
 		 */
 		if (RefundConstants.STATUS_PENDING_WITH_FINANCE.equalsIgnoreCase(refund.getStatus())) {
+			RequestInfo systemRequestInfo = createSystemRequestInfo();
 
 			if (RefundConstants.ACTION_APPROVE.equalsIgnoreCase(action)) {
 
 				/*
 				 * Finance approved the refund. Continue with the next refund workflow action.
 				 */
+
+				createSystemRequestInfo();
 				RefundActionRequest nextActionRequest = RefundActionRequest.builder()
-						.action(RefundConstants.ACTION_REFUND_INITIATE).userId(userId)
-						.requestInfo(request.getRequestInfo()).build();
+						.action(RefundConstants.ACTION_REFUND_INITIATE)
+						.userId(systemRequestInfo.getUserInfo().getUuid()).requestInfo(request.getRequestInfo())
+						.build();
 
 				RefundResponse response = processInternal(refund.getId(), nextActionRequest);
 
@@ -193,8 +199,9 @@ public class RefundServiceImpl implements RefundService {
 			response = toResponse(refund);
 
 		} else if (RefundConstants.ACTION_APPROVE.equalsIgnoreCase(action)) {
+			RequestInfo systemRequestInfo = createSystemRequestInfo();
 
-			response = processApproval(refund, request.getRequestInfo(), userId);
+			response = processApproval(refund, systemRequestInfo, systemRequestInfo.getUserInfo().getUuid());
 
 		} else {
 
@@ -268,9 +275,9 @@ public class RefundServiceImpl implements RefundService {
 
 	@Override
 	@Transactional
-	public RefundResponse process(UUID id, RefundActionRequest request) {
+	public RefundResponse process(RefundActionRequest request) {
 
-		RefundResponse response = processInternal(id, request);
+		RefundResponse response = processInternal(request.getId(), request);
 
 		response.setResponseInfo(ResponseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true));
 
@@ -376,34 +383,63 @@ public class RefundServiceImpl implements RefundService {
 	// ============================================================
 
 	private void updateRefundFields(Refund refund, Refund inputRefund) {
+		if (refund == null || inputRefund == null) {
+			return;
+		}
 
-		refund.setApplicantName(inputRefund.getApplicantName());
+		// Identifiers & Meta parameters
+		if (inputRefund.getId() != null)
+			refund.setId(inputRefund.getId());
+		if (inputRefund.getRefundNo() != null)
+			refund.setRefundNo(inputRefund.getRefundNo());
+		if (inputRefund.getTenantId() != null)
+			refund.setTenantId(inputRefund.getTenantId());
+		if (inputRefund.getModuleName() != null)
+			refund.setModuleName(inputRefund.getModuleName());
+		if (inputRefund.getBusinessService() != null)
+			refund.setBusinessService(inputRefund.getBusinessService());
+		if (inputRefund.getConsumerCode() != null)
+			refund.setConsumerCode(inputRefund.getConsumerCode());
+		if (inputRefund.getPaymentId() != null)
+			refund.setPaymentId(inputRefund.getPaymentId());
 
-		refund.setMobileNumber(inputRefund.getMobileNumber());
+		// Applicant & Refund Details
+		if (inputRefund.getApplicantName() != null)
+			refund.setApplicantName(inputRefund.getApplicantName());
+		if (inputRefund.getMobileNumber() != null)
+			refund.setMobileNumber(inputRefund.getMobileNumber());
+		if (inputRefund.getRefundCategory() != null)
+			refund.setRefundCategory(inputRefund.getRefundCategory());
+		if (inputRefund.getRefundReason() != null)
+			refund.setRefundReason(inputRefund.getRefundReason());
+		if (inputRefund.getPaymentModeOriginal() != null)
+			refund.setPaymentModeOriginal(inputRefund.getPaymentModeOriginal());
 
-		refund.setRefundCategory(inputRefund.getRefundCategory());
+		if (inputRefund.getAmountPaid() != null)
+			refund.setAmountPaid(defaultAmount(inputRefund.getAmountPaid()));
+		if (inputRefund.getRefundAmount() != null)
+			refund.setRefundAmount(defaultAmount(inputRefund.getRefundAmount()));
 
-		refund.setRefundReason(inputRefund.getRefundReason());
+		String resolvedMode = resolveRefundMode(inputRefund);
+		if (resolvedMode != null)
+			refund.setRefundMode(resolvedMode);
 
-		refund.setPaymentModeOriginal(inputRefund.getPaymentModeOriginal());
+		if (inputRefund.getStatus() != null)
+			refund.setStatus(inputRefund.getStatus());
+		if (inputRefund.getSanctionRef() != null)
+			refund.setSanctionRef(inputRefund.getSanctionRef());
+		if (inputRefund.getFinanceApprovalDate() != null)
+			refund.setFinanceApprovalDate(inputRefund.getFinanceApprovalDate());
+		if (inputRefund.getGatewayRefundId() != null)
+			refund.setGatewayRefundId(inputRefund.getGatewayRefundId());
 
-		refund.setAmountPaid(defaultAmount(inputRefund.getAmountPaid()));
-
-		refund.setRefundAmount(defaultAmount(inputRefund.getRefundAmount()));
-
-		refund.setRefundMode(resolveRefundMode(inputRefund));
-
-		refund.setSanctionRef(inputRefund.getSanctionRef());
-
-		refund.setFinanceApprovalDate(inputRefund.getFinanceApprovalDate());
-
-		refund.setGatewayRefundId(inputRefund.getGatewayRefundId());
-
-		refund.setBeneficiaryDetails(inputRefund.getBeneficiaryDetails());
-
-		refund.setAdditionalDetails(inputRefund.getAdditionalDetails());
-
-		refund.setFileStoreId(inputRefund.getFileStoreId());
+		// Complex Objects & Maps
+		if (inputRefund.getBeneficiaryDetails() != null)
+			refund.setBeneficiaryDetails(inputRefund.getBeneficiaryDetails());
+		if (inputRefund.getAdditionalDetails() != null)
+			refund.setAdditionalDetails(inputRefund.getAdditionalDetails());
+		if (inputRefund.getFileStoreId() != null)
+			refund.setFileStoreId(inputRefund.getFileStoreId());
 	}
 
 	// ============================================================
@@ -640,10 +676,11 @@ public class RefundServiceImpl implements RefundService {
 	private RequestInfo createSystemRequestInfo() {
 
 		User userInfo = User.builder().uuid(applicationProperties.getSystemUUid()).type(RefundConstants.SYSTEM_USER)
-				.roles(Collections.emptyList()).id(0L).build();
+				.roles(Collections
+						.singletonList(Role.builder().code("SYSTEM").name("SYSTEM").tenantId("pg.citya").build()))
+				.id(0L).build();
 
-		return RequestInfo.builder().apiId("refund-service").ver("1.0").ts(System.currentTimeMillis()).action("SYSTEM")
-				.did("1").key("").msgId("refund-service|SYSTEM|" + UUID.randomUUID()).authToken(null).userInfo(userInfo)
-				.build();
+		return RequestInfo.builder().ver("1.0").ts(System.currentTimeMillis()).action("SYSTEM").did("1").key("")
+				.msgId("refund-service|SYSTEM|" + UUID.randomUUID()).authToken(null).userInfo(userInfo).build();
 	}
 }

@@ -1,6 +1,7 @@
 package org.egov.refund.web.controller;
 
 import org.egov.refund.service.RefundService;
+import org.egov.refund.web.contracat.RefundActionRequest;
 import org.egov.refund.web.contracat.RefundGetRequest;
 import org.egov.refund.web.contracat.RefundRequest;
 import org.egov.refund.web.contracat.RefundResponse;
@@ -45,4 +46,8 @@ public class RefundController {
 		return ResponseEntity.ok(refundService.get(request));
 	}
 
+	@PostMapping("/_process")
+	public ResponseEntity<RefundResponse> process(@RequestBody RefundActionRequest request) {
+		return ResponseEntity.ok(refundService.process(request));
+	}
 }

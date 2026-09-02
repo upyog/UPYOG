@@ -1,7 +1,5 @@
 package org.egov.refund.service;
 
-import java.util.UUID;
-
 import org.egov.refund.web.contracat.RefundActionRequest;
 import org.egov.refund.web.contracat.RefundGetRequest;
 import org.egov.refund.web.contracat.RefundRequest;
@@ -17,7 +15,7 @@ public interface RefundService {
 
 	RefundSearchResponse search(RefundSearchRequest request);
 
-	RefundResponse process(UUID id, RefundActionRequest request);
+	RefundResponse process(RefundActionRequest request);
 	
 	RefundResponse update(RefundRequest request);
 
