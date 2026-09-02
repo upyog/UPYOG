@@ -13,7 +13,7 @@ import org.upyog.dashboard.config.DashboardProperties;
 
 import jakarta.annotation.PostConstruct;
 import java.io.File;
-import java.util.UUID;
+import org.upyog.dashboard.util.CommonUtils;
 
 @Slf4j
 @Component
@@ -45,6 +45,13 @@ public class S3UploadClient {
         }
     }
 
+    /**
+     * Generates a standard S3 key using {@link CommonUtils#buildS3Key(String, String, String, String)}.
+     */
+    public String generateS3Key(String tenantId, String moduleName, String fileName) {
+        return CommonUtils.buildS3Key(properties.getAwsS3Folder(), tenantId, moduleName, fileName);
+    }
+
     public String uploadFile(File file, String tenantId, String moduleName) {
         if (s3Client == null) {
             log.error("S3Client is not initialized.");
@@ -52,7 +59,7 @@ public class S3UploadClient {
         }
 
         try {
-            String key = properties.getAwsS3Folder() + "/" + tenantId + "/" + moduleName + "/" + UUID.randomUUID().toString() + "_" + file.getName();
+            String key = generateS3Key(tenantId, moduleName, file.getName());
 
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(properties.getAwsS3Bucket())

@@ -1,6 +1,7 @@
 package org.upyog.dashboard.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.upyog.dashboard.constants.DashboardExtractorConstants;
 import org.upyog.dashboard.util.CommonUtils;
 
 import java.time.LocalDate;
@@ -205,7 +206,7 @@ private IngestionResult ingestModuleForDate(Module module, ModuleExtractor<?> ex
 			}
 			
 			if (rawData instanceof List) {
-				return processDataList(module, (List<?>) rawData, date);
+				return processDataList(module, extractor, (List<?>) rawData, date);
 			}
 
 			return processSingleData(module, rawData, date);
@@ -225,7 +226,7 @@ private IngestionResult ingestModuleForDate(Module module, ModuleExtractor<?> ex
  * @param date     the ingestion date
  * @return an {@link IngestionResult} reflecting overall success or failure
  */
-private IngestionResult processDataList(Module module, List<?> dataList, LocalDate date) {
+private IngestionResult processDataList(Module module, ModuleExtractor<?> extractor, List<?> dataList, LocalDate date) {
 		if (dataList.isEmpty()) {
 			log.info("No data found for module {} on date {}", module, date);
 			return buildResult(STATUS_SUCCESS, module, date, null, null);
@@ -238,14 +239,14 @@ private IngestionResult processDataList(Module module, List<?> dataList, LocalDa
 		int effectiveBatchSize = (this.batchSize > 0) ? this.batchSize : 10;
 		List<DailyIngestionData> batchAuditRecords = new ArrayList<>();
 		long now = CommonUtils.getCurrentEpochMillis();
-		java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern(DashboardExtractorConstants.DATE_FORMAT);
 
 		for (int i = 0; i < dataList.size(); i += effectiveBatchSize) {
 			List<?> batchSubList = dataList.subList(i, Math.min(i + effectiveBatchSize, dataList.size()));
 
 			for (Object item : batchSubList) {
 				IngestionResult result;
-				if (isAllZeroMetrics(item)) {
+				if (isAllZeroMetrics(extractor, item)) {
 					log.info("All metrics for module {} on date {} are zero. Skipping downstream API push.", module, date);
 					result = buildResult(STATUS_SUCCESS_ZERO_METRICS, module, date, null, "{\"message\":\"All metrics are zero. Downstream API push skipped.\"}");
 				} else {
@@ -423,11 +424,14 @@ private IngestionResult buildResult(String status, Module module, LocalDate date
 
 	/**
 	 * Evaluates whether all metrics in an extracted data payload are zero.
+	 * Delegates to {@link ModuleExtractor#isZeroMetrics(Object)} when available,
+	 * adhering to the Open/Closed Principle (OCP).
 	 *
+	 * @param extractor the extractor responsible for the module
 	 * @param item extracted metric DTO or DashboardData object
 	 * @return true if all metrics are zero, false if any metric is greater than zero
 	 */
-	private boolean isAllZeroMetrics(Object item) {
+	private boolean isAllZeroMetrics(ModuleExtractor<?> extractor, Object item) {
 		if (item == null) {
 			return true;
 		}
@@ -442,31 +446,10 @@ private IngestionResult buildResult(String status, Module module, LocalDate date
 			}
 			return true;
 		}
-		if (item instanceof org.upyog.dashboard.pt.dto.PTDTO p) {
-			org.upyog.dashboard.pt.dto.PTAggregatedData combined = p.getCombinedMetrics();
-			if (combined != null) {
-				if (isPositive(combined.getAssessments())) return false;
-				if (isPositive(combined.getTodaysTotalApplications())) return false;
-				if (isPositive(combined.getTodaysClosedApplications())) return false;
-				if (isPositive(combined.getNoOfPropertiesPaidToday())) return false;
-				if (isPositive(combined.getTodaysApprovedApplications())) return false;
-				if (isPositive(combined.getTodaysApprovedApplicationsWithinSLA())) return false;
-			}
-			List<org.upyog.dashboard.pt.dto.PTCollectionDTO> collections = p.getCollectionMetrics();
-			if (collections != null && !collections.isEmpty()) {
-				for (org.upyog.dashboard.pt.dto.PTCollectionDTO col : collections) {
-					if (col.getTaxHeadAmount() != null && col.getTaxHeadAmount() > 0) {
-						return false;
-					}
-				}
-			}
-			return true;
+		if (extractor != null) {
+			return extractor.isZeroMetrics(item);
 		}
 		return false;
-	}
-
-	private boolean isPositive(Number num) {
-		return num != null && num.doubleValue() > 0;
 	}
 
 	private boolean isNonZero(Object val) {

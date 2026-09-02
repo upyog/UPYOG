@@ -130,7 +130,8 @@ class DateIngestionFlowIntegrationTest {
         lenient().when(ptDashboardProperties.getTenantId()).thenReturn("pg");
 
         org.upyog.dashboard.util.HierarchyParser hp = new org.upyog.dashboard.util.HierarchyParser("Block 4", "Test");
-        ptExtractor = new PtModuleExtractor(namedParameterJdbcTemplate, schemaMappingConfig, ptDashboardProperties, hp);
+        org.upyog.dashboard.util.DatabaseQueryExecutor queryExecutor = new org.upyog.dashboard.util.DatabaseQueryExecutor(namedParameterJdbcTemplate, ptDashboardProperties);
+        ptExtractor = new PtModuleExtractor(queryExecutor, schemaMappingConfig, ptDashboardProperties, hp);
         ptExtractor.init();
 
         extractorRegistry = new ExtractorRegistry(List.of(ptExtractor));
@@ -172,11 +173,9 @@ class DateIngestionFlowIntegrationTest {
         TestUtils.setField(httpLoader, "dashboardProperties", dashboardProperties);
 
         // 6. Setup DashboardClientImpl
-        dashboardClient = new DashboardClientImpl(
-                org.mockito.Mockito.mock(org.upyog.dashboard.api.S3UploadClient.class),
-                transformerRegistry, httpLoader, commonValidator,
-                org.mockito.Mockito.mock(org.upyog.dashboard.config.DashboardProperties.class),
-                org.mockito.Mockito.mock(org.upyog.dashboard.service.SXSSFExcelGeneratorService.class));
+        org.upyog.dashboard.loader.DashboardDataLoaderFactory dataLoaderFactory = 
+                new org.upyog.dashboard.loader.DashboardDataLoaderFactory(httpLoader, httpLoader, dashboardProperties);
+        dashboardClient = new DashboardClientImpl(transformerRegistry, dataLoaderFactory, commonValidator);
 
         // 7. Setup DailyIngestionService
         dailyIngestionService = new DailyIngestionService(dashboardClient, extractorRegistry, schemaMappingConfig, summaryRepository, dashboardProperties, objectMapper);

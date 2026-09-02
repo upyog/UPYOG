@@ -245,7 +245,7 @@ class BillControllerv2Test {
     }
 
     @Test
-    void testShortSearch() throws Exception {
+    void testSearchBillSummary() throws Exception {
         doNothing().when(this.billValidator).validateBillSearchCriteria((org.egov.demand.model.BillSearchCriteria) any(), (RequestInfo) any());
         when(this.billServicev2.searchShortBills((org.egov.demand.model.BillSearchCriteria) any(), (RequestInfo) any()))
                 .thenReturn(new ArrayList<>());
@@ -254,7 +254,7 @@ class BillControllerv2Test {
         requestInfoWrapper.setRequestInfo(new RequestInfo());
         String content = (new ObjectMapper()).writeValueAsString(requestInfoWrapper);
 
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/bill/v2/short/_search")
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/bill/v2/_searchsummary")
                 .param("tenantId", "pb.amritsar")
                 .param("mobileNumber", "9999999999")
                 .contentType(MediaType.APPLICATION_JSON)

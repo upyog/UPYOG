@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.upyog.dashboard.common.constants.Module;
 import org.upyog.dashboard.exception.ValidationException;
 import org.upyog.dashboard.loader.DashboardDataLoader;
+import org.upyog.dashboard.loader.DashboardDataLoaderFactory;
 import org.upyog.dashboard.model.DashboardRequest;
 import org.upyog.dashboard.model.DashboardData;
 import org.upyog.dashboard.model.DashboardPayload;
@@ -39,13 +40,13 @@ class DashboardClientImplTest {
 	private TransformerRegistry registry;
 
 	@Mock
+	private DashboardDataLoaderFactory dataLoaderFactory;
+
+	@Mock
 	private DashboardDataLoader loader;
 
 	@Mock
 	private CommonValidator commonValidator;
-
-	@Mock
-	private org.upyog.dashboard.config.DashboardProperties properties;
 
 	@Mock
 	private ModuleTransformer<Object> transformer;
@@ -81,7 +82,7 @@ class DashboardClientImplTest {
 		when(registry.get(Module.PT)).thenReturn(transformer);
 		when(transformer.transform(any())).thenReturn(payload);
 		doNothing().when(commonValidator).validate(payload);
-		lenient().when(properties.getEffectiveDailyUploadMode()).thenReturn("API");
+		when(dataLoaderFactory.getDailyDataLoader()).thenReturn(loader);
 		when(loader.load(payload)).thenReturn(expectedResult);
 
 		// Act
@@ -94,6 +95,7 @@ class DashboardClientImplTest {
 		verify(registry).get(Module.PT);
 		verify(transformer).transform(any());
 		verify(commonValidator).validate(payload);
+		verify(dataLoaderFactory).getDailyDataLoader();
 		verify(loader).load(payload);
 	}
 
@@ -109,6 +111,7 @@ class DashboardClientImplTest {
 
 		verify(registry).get(Module.PT);
 		verify(transformer, never()).transform(any());
+		verify(dataLoaderFactory, never()).getDailyDataLoader();
 		verify(loader, never()).load(any());
 	}
 
@@ -129,6 +132,7 @@ class DashboardClientImplTest {
 		assertThatThrownBy(() -> dashboardClient.execute(request)).isInstanceOf(ValidationException.class)
 				.hasMessage("Module is mandatory");
 
+		verify(dataLoaderFactory, never()).getDailyDataLoader();
 		verify(loader, never()).load(any());
 	}
 
@@ -149,7 +153,7 @@ class DashboardClientImplTest {
 		when(registry.get(Module.PT)).thenReturn(transformer);
 		when(transformer.transform(any())).thenReturn(payload);
 		doNothing().when(commonValidator).validate(payload);
-		lenient().when(properties.getEffectiveDailyUploadMode()).thenReturn("API");
+		when(dataLoaderFactory.getDailyDataLoader()).thenReturn(loader);
 		when(loader.load(payload)).thenReturn(failureResult);
 
 		// Act

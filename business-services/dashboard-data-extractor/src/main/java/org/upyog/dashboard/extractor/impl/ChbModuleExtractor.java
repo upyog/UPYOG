@@ -11,53 +11,45 @@ import java.util.Map;
 
 import jakarta.annotation.PostConstruct;
 
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Component;
-import org.springframework.beans.BeanUtils;
 import org.upyog.dashboard.chb.dto.CHBAggregatedData;
 import org.upyog.dashboard.chb.dto.CHBDTO;
+import org.upyog.dashboard.chb.mapper.CHBRowMapper;
 import org.upyog.dashboard.common.constants.Module;
 import org.upyog.dashboard.config.DashboardProperties;
 import org.upyog.dashboard.config.SchemaMappingConfig;
 import org.upyog.dashboard.extractor.ModuleExtractor;
 import org.upyog.dashboard.chb.model.RawChbMetric;
 import org.upyog.dashboard.util.HierarchyParser;
+import org.upyog.dashboard.util.DatabaseQueryExecutor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * Extracts CHB (Community Hall Booking) metrics for a given date and builds a CHBDTO
- * ready for ingestion into the National Dashboard.
+ * ready for ingestion into the National Dashboard without reflection.
  */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class ChbModuleExtractor implements ModuleExtractor<List<CHBDTO>> {
 
-    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final DatabaseQueryExecutor queryExecutor;
     private final SchemaMappingConfig schemaMappingConfig;
     private final DashboardProperties dashboardProperties;
     private final HierarchyParser hierarchyParser;
 
     private String dbTenantId;
-    private int dbMaxAttempts;
-    private long dbBaseDelayMs;
-    private long dbMaxDelayMs;
 
     /**
-     * Initialises the database tenant ID and retry configuration values from
-     * {@link DashboardProperties} after bean construction.
+     * Initialises the database tenant ID from {@link DashboardProperties} after bean construction.
      */
     @PostConstruct
     public void init() {
         String state = dashboardProperties.getMetricState();
         this.dbTenantId = (StringUtils.isNotBlank(state)) ? state : dashboardProperties.getTenantId();
-        this.dbMaxAttempts = dashboardProperties.getDbMaxAttempts();
-        this.dbBaseDelayMs = dashboardProperties.getDbBaseDelayMs();
-        this.dbMaxDelayMs = dashboardProperties.getDbMaxDelayMs();
     }
 
     @Override
@@ -91,7 +83,7 @@ public class ChbModuleExtractor implements ModuleExtractor<List<CHBDTO>> {
             throw new IllegalStateException("No query mapping found in chb-schema-mapping.yml for module CHB");
         }
 
-        List<RawChbMetric> combinedResults = executeQueryWithRetry(chbQueries.getCombinedMetricsQuery(), params, RawChbMetric.class);
+        List<RawChbMetric> combinedResults = queryExecutor.executeQueryWithRetry(chbQueries.getCombinedMetricsQuery(), params, CHBRowMapper.COMBINED_ROW_MAPPER, "ChbModuleExtractor");
         for (RawChbMetric row : combinedResults) {
             results.add(buildChbDto(row, dateStr));
         }
@@ -99,18 +91,23 @@ public class ChbModuleExtractor implements ModuleExtractor<List<CHBDTO>> {
     }
 
     /**
-     * Builds a {@link CHBDTO} from a raw combined-metrics result-set row.
+     * Converts a single raw row map into a populated {@link CHBDTO}.
      *
-     * @param row     a single row returned by the combined metrics query, keyed by column alias
-     * @param dateStr the formatted date string (dd-MM-yyyy) for the extraction target date
-     * @return a fully populated {@link CHBDTO}
+     * @param row the raw column values returned by the database
+     * @param dateStr the formatted date string (dd-MM-yyyy) for the target date
+     * @return a fully populated {@link CHBDTO} instance
      */
     private CHBDTO buildChbDto(RawChbMetric row, String dateStr) {
         String currentTenantId = row.getTenantid();
         Map<String, String> parsedHierarchy = hierarchyParser.parseTenantId(currentTenantId);
 
         CHBAggregatedData combinedData = new CHBAggregatedData();
-        BeanUtils.copyProperties(row, combinedData);
+        combinedData.setTotalActiveVenueAvailable(row.getTotalActiveVenueAvailable());
+        combinedData.setTotalApplicationReceived(row.getTotalApplicationReceived());
+        combinedData.setTotalCollections(row.getTotalCollections());
+        combinedData.setNoShowBookings(row.getNoShowBookings());
+        combinedData.setBookingsJson(row.getBookingsJson());
+        combinedData.setCreatedByListJson(row.getCreatedByListJson());
 
         return CHBDTO.builder()
                 .date(dateStr)
@@ -121,64 +118,5 @@ public class ChbModuleExtractor implements ModuleExtractor<List<CHBDTO>> {
                 .state(parsedHierarchy.get(DashboardExtractorConstants.KEY_STATE))
                 .combinedMetrics(combinedData)
                 .build();
-    }
-
-    /**
-     * Executes the given named-parameter SQL query against the CHB data source with
-     * exponential backoff retry logic. Throws the underlying exception when the maximum
-     * number of attempts is exhausted.
-     *
-     * @param query  the named-parameter SQL query string
-     * @param params the named parameters to bind as MapSqlParameterSource
-     * @return the query result as a list of row maps
-     */
-    private <T> List<T> executeQueryWithRetry(String query, MapSqlParameterSource params, Class<T> mappedClass) {
-        int attempt = 0;
-        while (true) {
-            attempt++;
-            try {
-                return namedParameterJdbcTemplate.query(query, params, new BeanPropertyRowMapper<>(mappedClass));
-            } catch (Exception e) {
-                if (attempt >= dbMaxAttempts) {
-                    log.error("ChbModuleExtractor | DB query failed after {} attempts.", attempt, e);
-                    throw e;
-                }
-                long backoff = calculateBackoff(attempt);
-                log.warn("ChbModuleExtractor | DB query failed (attempt {}/{}). Retrying in {} ms. Error: {}",
-                        attempt, dbMaxAttempts, backoff, e.getMessage());
-                sleepWithInterruptHandling(backoff);
-            }
-        }
-    }
-
-    /**
-     * Sleeps for the specified duration, restoring the interrupted flag and throwing
-     * an {@link IllegalStateException} if the thread is interrupted during sleep.
-     *
-     * @param backoff the duration to sleep in milliseconds
-     */
-    private void sleepWithInterruptHandling(long backoff) {
-        try {
-            Thread.sleep(backoff);
-        } catch (InterruptedException ie) {
-            Thread.currentThread().interrupt();
-            throw new IllegalStateException("DB query retry interrupted", ie);
-        }
-    }
-
-    /**
-     * Calculates a jittered exponential back-off delay capped at {@code dbMaxDelayMs}.
-     *
-     * @param attempt the current attempt number (1-based)
-     * @return a random delay in milliseconds within {@code [0, min(dbMaxDelayMs, 2^(attempt-1) * dbBaseDelayMs)]}
-     */
-    private long calculateBackoff(int attempt) {
-        int power = Math.min(attempt - 1, 30);
-        long expDelay = dbBaseDelayMs * (1L << power);
-        if (expDelay < 0) {
-            expDelay = dbMaxDelayMs;
-        }
-        long currentMax = Math.min(dbMaxDelayMs, expDelay);
-        return java.util.concurrent.ThreadLocalRandom.current().nextLong(0, currentMax + 1);
     }
 }

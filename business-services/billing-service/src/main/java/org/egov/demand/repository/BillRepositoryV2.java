@@ -19,12 +19,10 @@ import org.egov.demand.model.BillV2.BillStatus;
 import org.egov.demand.model.UpdateBillCriteria;
 import org.egov.demand.repository.querybuilder.BillQueryBuilder;
 import org.egov.demand.repository.rowmapper.BillRowMapperV2;
+import org.egov.demand.repository.rowmapper.ShortBillRowMapperV2;
 import org.egov.demand.util.Util;
 import org.egov.demand.web.contract.BillRequestV2;
 import org.egov.demand.web.contract.ShortBillV2;
-import java.math.BigDecimal;
-import java.sql.ResultSet;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -38,250 +36,226 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BillRepositoryV2 {
 
-	@Autowired
-	private BillQueryBuilder billQueryBuilder;
-	
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
-	
-	@Autowired
-	private Util util;
-	
-	@Autowired
-	private BillRowMapperV2 searchBillRowMapper;
-	
-	public List<BillV2> findBill(BillSearchCriteria billCriteria){
-		
-		List<Object> preparedStatementValues = new ArrayList<>();
-		String queryStr = billQueryBuilder.getBillQuery(billCriteria, preparedStatementValues);
-		log.debug("query:::"+queryStr+"  preparedStatementValues::"+preparedStatementValues);
-		return jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), searchBillRowMapper);
-	}
-	
-	/**
-	 * ResultSetExtractor to map database result set rows to a compact list of ShortBillV2 objects.
-	 */
-	private final ResultSetExtractor<List<ShortBillV2>> shortBillRowMapper = new ResultSetExtractor<List<ShortBillV2>>() {
-		@Override
-		public List<ShortBillV2> extractData(ResultSet rs) throws SQLException {
-			Map<String, ShortBillV2> billMap = new java.util.LinkedHashMap<>();
-			while (rs.next()) {
-				String billId = rs.getString("b_id");
-				ShortBillV2 bill = billMap.get(billId);
-				BigDecimal amount = rs.getBigDecimal("bd_totalamount");
-				if (amount == null) {
-					amount = BigDecimal.ZERO;
-				}
-				if (bill == null) {
-					bill = ShortBillV2.builder()
-							.id(billId)
-							.totalAmount(amount)
-							.businessService(rs.getString("bd_businessservice"))
-							.billNumber(rs.getString("bd_billno"))
-							.billDate(rs.getLong("bd_billdate"))
-							.consumerCode(rs.getString("bd_consumercode"))
-							.dueDate(rs.getLong("bd_expirydate"))
-							.build();
-					billMap.put(billId, bill);
-				} else {
-					bill.setTotalAmount(bill.getTotalAmount().add(amount));
-				}
-			}
-			return new ArrayList<>(billMap.values());
-		}
-	};
+    @Autowired
+    private BillQueryBuilder billQueryBuilder;
 
-	/**
-	 * Executes a high-performance database projection query to fetch lightweight bills.
-	 *
-	 * @param billCriteria The search filters (tenantId, mobileNumber, isActive, etc.)
-	 * @return List of matching ShortBillV2 objects
-	 */
-	public List<ShortBillV2> findShortBills(BillSearchCriteria billCriteria) {
-		List<Object> preparedStatementValues = new ArrayList<>();
-		String queryStr = billQueryBuilder.getShortBillQuery(billCriteria, preparedStatementValues);
-		log.debug("short query:::"+queryStr+"  preparedStatementValues::"+preparedStatementValues);
-		return jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), shortBillRowMapper);
-	}
-	
-	@Transactional
-	public void saveBill(BillRequestV2 billRequest){
-		
-		List<BillV2> bills = billRequest.getBills();
-		
-		jdbcTemplate.batchUpdate(BillQueryBuilder.INSERT_BILL_QUERY, new BatchPreparedStatementSetter() {
-			
-			@Override
-			public void setValues(PreparedStatement ps, int index) throws SQLException {
-				BillV2 bill = bills.get(index);
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
-				AuditDetails auditDetails = bill.getAuditDetails();
-				
-				ps.setString(1, bill.getId());
-				ps.setString(15, bill.getUserId());
-				ps.setString(16, bill.getConsumerCode());
-				ps.setString(2, bill.getTenantId());
-				ps.setString(3, bill.getPayerName());
-				ps.setString(4, bill.getPayerAddress());
-				ps.setString(5, bill.getPayerEmail());
-				ps.setObject(6, null);
-				ps.setObject(7, null);
-				ps.setString(8, auditDetails.getCreatedBy());
-				ps.setLong(9, auditDetails.getCreatedTime());
-				ps.setString(10, auditDetails.getLastModifiedBy());
-				ps.setLong(11, auditDetails.getLastModifiedTime());
-				ps.setString(12, bill.getMobileNumber());
-				ps.setString(13, bill.getStatus().toString());
-				ps.setObject(14, util.getPGObject(bill.getAdditionalDetails()));
-			}
-			
-			@Override
-			public int getBatchSize() {
-				return bills.size();
-			}
-		});
-		saveBillDetails(billRequest);
-	}
-	
-	public void saveBillDetails(BillRequestV2 billRequest) {
+    @Autowired
+    private Util util;
 
-		List<BillV2> bills = billRequest.getBills();
-		List<BillDetailV2> billDetails = new ArrayList<>();
-		List<BillAccountDetailV2> billAccountDetails = new ArrayList<>();
-		AuditDetails auditDetails = bills.get(0).getAuditDetails();
-		
-		Map<String, BillV2> billDetailIdAndBillMap = new HashMap<>();
+    @Autowired
+    private BillRowMapperV2 searchBillRowMapper;
 
-		for (BillV2 bill : bills) {
-			
-			List<BillDetailV2> tempBillDetails = bill.getBillDetails();
-			billDetails.addAll(tempBillDetails);
+    @Autowired
+    private ShortBillRowMapperV2 shortBillRowMapper;
 
-			for (BillDetailV2 billDetail : tempBillDetails) {
-				
-				billDetailIdAndBillMap.put(billDetail.getId(), bill);
-				billAccountDetails.addAll(billDetail.getBillAccountDetails());
-			}
-		}
+    public List<BillV2> findBill(BillSearchCriteria billCriteria) {
 
-		jdbcTemplate.batchUpdate(BillQueryBuilder.INSERT_BILLDETAILS_QUERY, new BatchPreparedStatementSetter() {
+        List<Object> preparedStatementValues = new ArrayList<>();
+        String queryStr = billQueryBuilder.getBillQuery(billCriteria, preparedStatementValues);
+        log.debug("query:::" + queryStr + "  preparedStatementValues::" + preparedStatementValues);
+        return jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), searchBillRowMapper);
+    }
 
-			@Override
-			public void setValues(PreparedStatement ps, int index) throws SQLException {
-				BillDetailV2 billDetail = billDetails.get(index);
-				BillV2 bill = billDetailIdAndBillMap.get(billDetail.getId());
+    /**
+     * Executes a high-performance database projection query to fetch
+     * lightweight bills.
+     *
+     * @param billCriteria The search filters (tenantId, mobileNumber, isActive,
+     * etc.)
+     * @return List of matching ShortBillV2 objects
+     */
+    public List<ShortBillV2> findShortBills(BillSearchCriteria billCriteria) {
+        List<Object> preparedStatementValues = new ArrayList<>();
+        String queryStr = billQueryBuilder.getShortBillQuery(billCriteria, preparedStatementValues);
+        log.debug("short query:::" + queryStr + "  preparedStatementValues::" + preparedStatementValues);
+        return jdbcTemplate.query(queryStr, preparedStatementValues.toArray(), shortBillRowMapper);
+    }
 
-				ps.setString(1, billDetail.getId());
-				ps.setString(2, billDetail.getTenantId());
-				ps.setString(3, billDetail.getBillId());
-				ps.setString(4, billDetail.getDemandId());
-				ps.setLong(5, billDetail.getFromPeriod());
-				ps.setLong(6, billDetail.getToPeriod());
-				ps.setString(7, bill.getBusinessService());
-				ps.setString(8, bill.getBillNumber());
-				ps.setLong(9, bill.getBillDate());
-				ps.setString(10, bill.getConsumerCode());
-				ps.setString(11, null);
-				ps.setString(12, null);
-				ps.setString(13, null);
-				ps.setObject(14, null);
-				ps.setObject(15, billDetail.getAmount());
-				// apportioning logic does not reside in billing service anymore 
-				ps.setBoolean(16, false);
-				ps.setObject(17, null);
-				ps.setString(18, null);
-				ps.setString(19, auditDetails.getCreatedBy());
-				ps.setLong(20, auditDetails.getCreatedTime());
-				ps.setString(21, auditDetails.getLastModifiedBy());
-				ps.setLong(22, auditDetails.getLastModifiedTime());
-				ps.setObject(23, null);
-				ps.setLong(24, billDetail.getExpiryDate());
-				ps.setObject(25,util.getPGObject(billDetail.getAdditionalDetails()));
-			}
+    @Transactional
+    public void saveBill(BillRequestV2 billRequest) {
 
-			@Override
-			public int getBatchSize() {
-				return billDetails.size();
-			}
-		});
+        List<BillV2> bills = billRequest.getBills();
 
-		saveBillAccountDetail(billAccountDetails, auditDetails);
-	}
+        jdbcTemplate.batchUpdate(BillQueryBuilder.INSERT_BILL_QUERY, new BatchPreparedStatementSetter() {
 
-	public void saveBillAccountDetail(List<BillAccountDetailV2> billAccountDetails, AuditDetails auditDetails) {
+            @Override
+            public void setValues(PreparedStatement ps, int index) throws SQLException {
+                BillV2 bill = bills.get(index);
 
-		jdbcTemplate.batchUpdate(BillQueryBuilder.INSERT_BILLACCOUNTDETAILS_QUERY, new BatchPreparedStatementSetter() {
+                AuditDetails auditDetails = bill.getAuditDetails();
 
-			@Override
-			public void setValues(PreparedStatement ps, int index) throws SQLException {
-				BillAccountDetailV2 billAccountDetail = billAccountDetails.get(index);
+                ps.setString(1, bill.getId());
+                ps.setString(15, bill.getUserId());
+                ps.setString(16, bill.getConsumerCode());
+                ps.setString(2, bill.getTenantId());
+                ps.setString(3, bill.getPayerName());
+                ps.setString(4, bill.getPayerAddress());
+                ps.setString(5, bill.getPayerEmail());
+                ps.setObject(6, null);
+                ps.setObject(7, null);
+                ps.setString(8, auditDetails.getCreatedBy());
+                ps.setLong(9, auditDetails.getCreatedTime());
+                ps.setString(10, auditDetails.getLastModifiedBy());
+                ps.setLong(11, auditDetails.getLastModifiedTime());
+                ps.setString(12, bill.getMobileNumber());
+                ps.setString(13, bill.getStatus().toString());
+                ps.setObject(14, util.getPGObject(bill.getAdditionalDetails()));
+            }
 
-				ps.setString(1, billAccountDetail.getId());
-				ps.setString(2, billAccountDetail.getTenantId());
-				ps.setString(3, billAccountDetail.getBillDetailId());
-				ps.setString(4, billAccountDetail.getDemandDetailId());
-				ps.setObject(5, billAccountDetail.getOrder());
-				ps.setBigDecimal(6, billAccountDetail.getAmount());
-				ps.setObject(7, billAccountDetail.getAdjustedAmount());
-				ps.setObject(8, null);
-				ps.setString(9, null);
-				ps.setString(10, auditDetails.getCreatedBy());
-				ps.setLong(11, auditDetails.getCreatedTime());
-				ps.setString(12, auditDetails.getLastModifiedBy());
-				ps.setLong(13, auditDetails.getLastModifiedTime());
-				ps.setString(14, billAccountDetail.getTaxHeadCode());
-			}
+            @Override
+            public int getBatchSize() {
+                return bills.size();
+            }
+        });
+        saveBillDetails(billRequest);
+    }
 
-			@Override
-			public int getBatchSize() {
-				return billAccountDetails.size();
-			}
-		});
-	}
+    public void saveBillDetails(BillRequestV2 billRequest) {
 
-	/**
-	 * executes query to update bill status to expired 
-	 * @param billIds
-	 */
-	public Integer updateBillStatus(UpdateBillCriteria updateBillCriteria) {
+        List<BillV2> bills = billRequest.getBills();
+        List<BillDetailV2> billDetails = new ArrayList<>();
+        List<BillAccountDetailV2> billAccountDetails = new ArrayList<>();
+        AuditDetails auditDetails = bills.get(0).getAuditDetails();
 
-		Set<String> consumerCodes = updateBillCriteria.getConsumerCodes();
-		if(CollectionUtils.isEmpty(consumerCodes))
-			return 0;
-		
-		List<BillV2> bills =  findBill(BillSearchCriteria.builder()
-				.service(updateBillCriteria.getBusinessService())
-				.tenantId(updateBillCriteria.getTenantId())
-				.consumerCode(consumerCodes)
-				.build());
-		
-		if (CollectionUtils.isEmpty(bills))
-			return 0;
+        Map<String, BillV2> billDetailIdAndBillMap = new HashMap<>();
 
-		BillStatus status = bills.get(0).getStatus();
-		if (!status.equals(BillStatus.ACTIVE)) {
-			if (status.equals(BillStatus.PAID) || status.equals(BillStatus.PARTIALLY_PAID))
-				return -1;
-			else
-				return 0;
-		}
+        for (BillV2 bill : bills) {
 
-		if (BillStatus.CANCELLED.equals(updateBillCriteria.getStatusToBeUpdated())) {
+            List<BillDetailV2> tempBillDetails = bill.getBillDetails();
+            billDetails.addAll(tempBillDetails);
 
-			updateBillCriteria.setBillIds(Stream.of(bills.get(0).getId()).collect(Collectors.toSet()));
-			updateBillCriteria.setAdditionalDetails(
-					util.jsonMerge(updateBillCriteria.getAdditionalDetails(), bills.get(0).getAdditionalDetails()));
+            for (BillDetailV2 billDetail : tempBillDetails) {
 
-		} else {
+                billDetailIdAndBillMap.put(billDetail.getId(), bill);
+                billAccountDetails.addAll(billDetail.getBillAccountDetails());
+            }
+        }
 
-			updateBillCriteria.setBillIds(bills.stream().map(BillV2::getId).collect(Collectors.toSet()));
-		}
-		
-		List<Object> preparedStmtList = new ArrayList<>();
-		String queryStr = billQueryBuilder.getBillStatusUpdateQuery(updateBillCriteria, preparedStmtList);
-		log.info("Query for expiring bills is"+ queryStr);
-		log.info("parameters are "+ preparedStmtList.toString());
-		return jdbcTemplate.update(queryStr, preparedStmtList.toArray());
-	}
-	
+        jdbcTemplate.batchUpdate(BillQueryBuilder.INSERT_BILLDETAILS_QUERY, new BatchPreparedStatementSetter() {
+
+            @Override
+            public void setValues(PreparedStatement ps, int index) throws SQLException {
+                BillDetailV2 billDetail = billDetails.get(index);
+                BillV2 bill = billDetailIdAndBillMap.get(billDetail.getId());
+
+                ps.setString(1, billDetail.getId());
+                ps.setString(2, billDetail.getTenantId());
+                ps.setString(3, billDetail.getBillId());
+                ps.setString(4, billDetail.getDemandId());
+                ps.setLong(5, billDetail.getFromPeriod());
+                ps.setLong(6, billDetail.getToPeriod());
+                ps.setString(7, bill.getBusinessService());
+                ps.setString(8, bill.getBillNumber());
+                ps.setLong(9, bill.getBillDate());
+                ps.setString(10, bill.getConsumerCode());
+                ps.setString(11, null);
+                ps.setString(12, null);
+                ps.setString(13, null);
+                ps.setObject(14, null);
+                ps.setObject(15, billDetail.getAmount());
+                // apportioning logic does not reside in billing service anymore 
+                ps.setBoolean(16, false);
+                ps.setObject(17, null);
+                ps.setString(18, null);
+                ps.setString(19, auditDetails.getCreatedBy());
+                ps.setLong(20, auditDetails.getCreatedTime());
+                ps.setString(21, auditDetails.getLastModifiedBy());
+                ps.setLong(22, auditDetails.getLastModifiedTime());
+                ps.setObject(23, null);
+                ps.setLong(24, billDetail.getExpiryDate());
+                ps.setObject(25, util.getPGObject(billDetail.getAdditionalDetails()));
+            }
+
+            @Override
+            public int getBatchSize() {
+                return billDetails.size();
+            }
+        });
+
+        saveBillAccountDetail(billAccountDetails, auditDetails);
+    }
+
+    public void saveBillAccountDetail(List<BillAccountDetailV2> billAccountDetails, AuditDetails auditDetails) {
+
+        jdbcTemplate.batchUpdate(BillQueryBuilder.INSERT_BILLACCOUNTDETAILS_QUERY, new BatchPreparedStatementSetter() {
+
+            @Override
+            public void setValues(PreparedStatement ps, int index) throws SQLException {
+                BillAccountDetailV2 billAccountDetail = billAccountDetails.get(index);
+
+                ps.setString(1, billAccountDetail.getId());
+                ps.setString(2, billAccountDetail.getTenantId());
+                ps.setString(3, billAccountDetail.getBillDetailId());
+                ps.setString(4, billAccountDetail.getDemandDetailId());
+                ps.setObject(5, billAccountDetail.getOrder());
+                ps.setBigDecimal(6, billAccountDetail.getAmount());
+                ps.setObject(7, billAccountDetail.getAdjustedAmount());
+                ps.setObject(8, null);
+                ps.setString(9, null);
+                ps.setString(10, auditDetails.getCreatedBy());
+                ps.setLong(11, auditDetails.getCreatedTime());
+                ps.setString(12, auditDetails.getLastModifiedBy());
+                ps.setLong(13, auditDetails.getLastModifiedTime());
+                ps.setString(14, billAccountDetail.getTaxHeadCode());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return billAccountDetails.size();
+            }
+        });
+    }
+
+    /**
+     * executes query to update bill status to expired
+     *
+     * @param billIds
+     */
+    public Integer updateBillStatus(UpdateBillCriteria updateBillCriteria) {
+
+        Set<String> consumerCodes = updateBillCriteria.getConsumerCodes();
+        if (CollectionUtils.isEmpty(consumerCodes)) {
+            return 0;
+        }
+
+        List<BillV2> bills = findBill(BillSearchCriteria.builder()
+                .service(updateBillCriteria.getBusinessService())
+                .tenantId(updateBillCriteria.getTenantId())
+                .consumerCode(consumerCodes)
+                .build());
+
+        if (CollectionUtils.isEmpty(bills)) {
+            return 0;
+        }
+
+        BillStatus status = bills.get(0).getStatus();
+        if (!status.equals(BillStatus.ACTIVE)) {
+            if (status.equals(BillStatus.PAID) || status.equals(BillStatus.PARTIALLY_PAID)) {
+                return -1; 
+            }else {
+                return 0;
+            }
+        }
+
+        if (BillStatus.CANCELLED.equals(updateBillCriteria.getStatusToBeUpdated())) {
+
+            updateBillCriteria.setBillIds(Stream.of(bills.get(0).getId()).collect(Collectors.toSet()));
+            updateBillCriteria.setAdditionalDetails(
+                    util.jsonMerge(updateBillCriteria.getAdditionalDetails(), bills.get(0).getAdditionalDetails()));
+
+        } else {
+
+            updateBillCriteria.setBillIds(bills.stream().map(BillV2::getId).collect(Collectors.toSet()));
+        }
+
+        List<Object> preparedStmtList = new ArrayList<>();
+        String queryStr = billQueryBuilder.getBillStatusUpdateQuery(updateBillCriteria, preparedStmtList);
+        log.info("Query for expiring bills is" + queryStr);
+        log.info("parameters are " + preparedStmtList.toString());
+        return jdbcTemplate.update(queryStr, preparedStmtList.toArray());
+    }
+
 }

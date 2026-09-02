@@ -4,6 +4,7 @@ import org.upyog.dashboard.constants.DashboardExtractorConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.upyog.dashboard.config.DashboardProperties;
 import org.upyog.dashboard.util.HierarchyParser;
+import org.upyog.dashboard.util.DatabaseQueryExecutor;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -13,11 +14,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Component;
 import org.upyog.dashboard.pgr.model.RawPgrMetric;
+import org.upyog.dashboard.pgr.mapper.PGRRowMapper;
 import org.upyog.dashboard.common.constants.Module;
 import org.upyog.dashboard.config.SchemaMappingConfig;
 import org.upyog.dashboard.extractor.ModuleExtractor;
@@ -37,34 +37,27 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class PgrModuleExtractor implements ModuleExtractor {
+public class PgrModuleExtractor implements ModuleExtractor<List<DashboardData>> {
 
 	private static final String GROUP_BY = "groupBy";
 	private static final String GROUP_BY_DEPARTMENT = "department";
 	private static final String BUCKETS = "buckets";
 
-	private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private final DatabaseQueryExecutor queryExecutor;
 	private final SchemaMappingConfig schemaMappingConfig;
 	private final ObjectMapper objectMapper;
 	private final DashboardProperties dashboardProperties;
 	private final HierarchyParser hierarchyParser;
 
 	private String dbTenantId;
-	private int dbMaxAttempts;
-	private long dbBaseDelayMs;
-	private long dbMaxDelayMs;
 
 	/**
-	 * Initialises the database tenant ID and retry configuration values from
-	 * {@link DashboardProperties} after bean construction.
+	 * Initialises the database tenant ID from {@link DashboardProperties} after bean construction.
 	 */
 	@jakarta.annotation.PostConstruct
 	public void init() {
 		String state = dashboardProperties.getMetricState();
 		this.dbTenantId = (StringUtils.isNotBlank(state)) ? state : dashboardProperties.getTenantId();
-		this.dbMaxAttempts = dashboardProperties.getDbMaxAttempts();
-		this.dbBaseDelayMs = dashboardProperties.getDbBaseDelayMs();
-		this.dbMaxDelayMs = dashboardProperties.getDbMaxDelayMs();
 	}
 
 	@Override
@@ -84,7 +77,7 @@ public class PgrModuleExtractor implements ModuleExtractor {
 	 */
 	@Override
 	public List<DashboardData> extractData(LocalDate targetDate) {
-		String dateStr = targetDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+		String dateStr = targetDate.format(DateTimeFormatter.ofPattern(DashboardExtractorConstants.DATE_FORMAT));
 		long startTime = targetDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli();
 		long endTime = targetDate.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli() - 1;
 
@@ -100,7 +93,7 @@ public class PgrModuleExtractor implements ModuleExtractor {
 		}
 
 		try {
-			List<RawPgrMetric> combinedResults = executeQueryWithRetry(pgrQueries.getCombinedMetricsQuery(), params, RawPgrMetric.class);
+			List<RawPgrMetric> combinedResults = queryExecutor.executeQueryWithRetry(pgrQueries.getCombinedMetricsQuery(), params, PGRRowMapper.COMBINED_ROW_MAPPER, "PgrModuleExtractor");
 			for (RawPgrMetric combinedResult : combinedResults) {
 				results.add(buildDashboardData(combinedResult, dateStr));
 			}
@@ -174,8 +167,6 @@ public class PgrModuleExtractor implements ModuleExtractor {
 		return metrics;
 	}
 
- 
-
 	/**
 	 * Deserialises a JSON array string into a list of bucket maps. Returns an empty list
 	 * when the input is {@code null}, blank, or equals {@code "[]"}.
@@ -197,64 +188,5 @@ public class PgrModuleExtractor implements ModuleExtractor {
 			log.debug("Failed to parse JSON buckets: {}", exception.getMessage());
 			return List.of();
 		}
-	}
-
-	/**
-	 * Executes the given named-parameter SQL query against the PGR data source with
-	 * exponential backoff retry logic. Throws the underlying exception when the maximum
-	 * number of attempts is exhausted.
-	 *
-	 * @param query  the named-parameter SQL query string
-	 * @param params the named parameters to bind
-	 * @return the query result as a list of row maps
-	 */
-	private <T> List<T> executeQueryWithRetry(String query, MapSqlParameterSource params, Class<T> mappedClass) {
-		int attempt = 0;
-		while (true) {
-			attempt++;
-			try {
-				return namedParameterJdbcTemplate.query(query, params, new BeanPropertyRowMapper<>(mappedClass));
-			} catch (Exception exception) {
-				if (attempt >= dbMaxAttempts) {
-					log.error("DB query failed after {} attempts.", attempt, exception);
-					throw exception;
-				}
-				long backoff = calculateDbBackoffWithJitter(attempt);
-				log.warn("DB query failed (attempt {}/{}). Retrying in {} ms. Error: {}",
-						attempt, dbMaxAttempts, backoff, exception.getMessage());
-				sleepWithInterruptHandling(backoff);
-			}
-		}
-	}
-
-	/**
-	 * Sleeps for the specified duration, restoring the interrupted flag and throwing
-	 * an {@link IllegalStateException} if the thread is interrupted during sleep.
-	 *
-	 * @param backoff the duration to sleep in milliseconds
-	 */
-	private void sleepWithInterruptHandling(long backoff) {
-		try {
-			Thread.sleep(backoff);
-		} catch (InterruptedException ie) {
-			Thread.currentThread().interrupt();
-			throw new IllegalStateException("DB query retry interrupted", ie);
-		}
-	}
-
-	/**
-	 * Calculates a jittered exponential back-off delay capped at {@code dbMaxDelayMs}.
-	 *
-	 * @param attempt the current attempt number (1-based)
-	 * @return a random delay in milliseconds within {@code [0, min(dbMaxDelayMs, 2^(attempt-1) * dbBaseDelayMs)]}
-	 */
-	private long calculateDbBackoffWithJitter(int attempt) {
-		int power = Math.min(attempt - 1, 30);
-		long expDelay = dbBaseDelayMs * (1L << power);
-		if (expDelay < 0) {
-			expDelay = dbMaxDelayMs;
-		}
-		long currentMaxDelay = Math.min(dbMaxDelayMs, expDelay);
-		return java.util.concurrent.ThreadLocalRandom.current().nextLong(0, currentMaxDelay + 1);
 	}
 }

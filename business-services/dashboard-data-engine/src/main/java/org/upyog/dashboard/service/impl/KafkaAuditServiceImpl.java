@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
-import org.upyog.dashboard.common.constants.KafkaTopics;
+import org.upyog.dashboard.config.DashboardProperties;
 import org.upyog.dashboard.entity.DailyIngestionData;
 import org.upyog.dashboard.model.DashboardData;
 import org.upyog.dashboard.model.DashboardPayload;
@@ -35,6 +35,9 @@ public class KafkaAuditServiceImpl implements AuditService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private DashboardProperties dashboardProperties;
+
     @Override
     public void pushIngestionRecord(DashboardPayload data, String requestJson, String responseOrError, String status) {
         try {
@@ -52,7 +55,7 @@ public class KafkaAuditServiceImpl implements AuditService {
 
             Map<String, Object> kafkaMessage = new HashMap<>();
             kafkaMessage.put("dailyIngestionData", Collections.singletonList(record));
-            producer.push(KafkaTopics.SAVE_INGESTION_DETAIL, kafkaMessage);
+            producer.push(dashboardProperties.getSaveIngestionDetailTopic(), kafkaMessage);
 
             if ("FAILURE".equals(status)) {
                 ErrorLogDTO errorLog = ErrorLogDTO.builder()
@@ -66,7 +69,7 @@ public class KafkaAuditServiceImpl implements AuditService {
                         .build();
                 Map<String, Object> errorKafkaMessage = new HashMap<>();
                 errorKafkaMessage.put("errorLog", Collections.singletonList(errorLog));
-                producer.push(KafkaTopics.SAVE_ADAPTER_ERROR_LOG, errorKafkaMessage);
+                producer.push(dashboardProperties.getSaveAdapterErrorLogTopic(), errorKafkaMessage);
             }
         } catch (Exception exception) {
             log.error("KafkaAuditServiceImpl | failed to push ingestion record to Kafka", exception);

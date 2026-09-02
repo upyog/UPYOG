@@ -11,8 +11,8 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.upyog.dashboard.api.DashboardIngestionClient;
-import org.upyog.dashboard.api.S3UploadClient;
 import org.upyog.dashboard.config.DashboardProperties;
+import org.upyog.dashboard.common.constants.Module;
 import org.upyog.dashboard.extractor.LegacyBatchExtractor;
 import org.upyog.dashboard.model.IngestionResult;
 import org.upyog.dashboard.model.LegacyIngestionResponse;
@@ -43,7 +43,6 @@ public class LegacyBatchIngestionOrchestrator {
     private final LegacyBatchExtractor batchExtractor;
     private final SXSSFExcelGeneratorService excelGeneratorService;
     private final DashboardIngestionClient ingestionClient;
-    private final S3UploadClient s3UploadClient;
     private final DashboardProperties dashboardProperties;
     private final LockProvider lockProvider;
     private final IngestionPersistenceService persistenceService;
@@ -135,7 +134,8 @@ public class LegacyBatchIngestionOrchestrator {
         try (SXSSFExcelGeneratorService.StreamingExcelSession session = excelGeneratorService.createStreamingSession(moduleName)) {
 
             // Step 1: Extractor queries DB date-by-date and streams rows directly to single Excel session
-            long totalExtracted = batchExtractor.extractInBatches(start, end, tenantId, batchSize, batchRecords -> {
+            Module module = Module.valueOf(moduleName.toUpperCase());
+            long totalExtracted = batchExtractor.extractInBatches(module, start, end, tenantId, batchSize, batchRecords -> {
                 log.info("Streaming DB batch chunk of {} records to Excel file session...", batchRecords.size());
                 session.appendBatchRecords(batchRecords);
             });
@@ -160,25 +160,9 @@ public class LegacyBatchIngestionOrchestrator {
             // Step 2: Finalize single combined Excel file
             generatedExcelFile = session.finishWorkbook();
 
-            // Step 3: Send generated Excel file to appropriate endpoint
-            IngestionResult ingestionResult;
+            // Step 3: Send generated Excel file to appropriate endpoint via unified ingestion client
             String legacyMode = dashboardProperties.getEffectiveLegacyUploadMode();
-            if ("FILESTORE".equalsIgnoreCase(legacyMode) || "S3".equalsIgnoreCase(legacyMode)) {
-                String fileStoreId = s3UploadClient.uploadFile(generatedExcelFile, tenantId, moduleName);
-                if (fileStoreId != null) {
-                    ingestionResult = IngestionResult.builder()
-                            .ingestionStatus(DashboardExtractorConstants.STATUS_SUCCESS)
-                            .responseData("{\"fileStoreId\": \"" + fileStoreId + "\"}")
-                            .build();
-                } else {
-                    ingestionResult = IngestionResult.builder()
-                            .ingestionStatus(DashboardExtractorConstants.STATUS_FAILURE)
-                            .failureReason("Failed to upload Excel file to S3")
-                            .build();
-                }
-            } else {
-                ingestionResult = ingestionClient.uploadLegacyExcelFile(generatedExcelFile, moduleName, tenantId);
-            }
+            IngestionResult ingestionResult = ingestionClient.ingest(generatedExcelFile, moduleName, tenantId, legacyMode);
 
             boolean isSuccess = DashboardExtractorConstants.STATUS_SUCCESS.equalsIgnoreCase(ingestionResult.getIngestionStatus());
             String responseJson = ingestionResult.getResponseData() != null 

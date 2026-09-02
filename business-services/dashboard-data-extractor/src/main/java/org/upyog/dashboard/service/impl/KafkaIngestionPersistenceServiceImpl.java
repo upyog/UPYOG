@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
-import org.upyog.dashboard.common.constants.KafkaTopics;
+import org.upyog.dashboard.config.DashboardProperties;
 import org.upyog.dashboard.entity.IngestionModuleSummary;
 import org.upyog.dashboard.entity.LegacyIngestionData;
 import org.upyog.dashboard.producer.DashboardProducer;
@@ -31,9 +31,10 @@ import lombok.extern.slf4j.Slf4j;
 public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenceService {
 
     private static final String SYSTEM_USER = "SYSTEM";
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DashboardExtractorConstants.DATE_FORMAT);
 
     private final DashboardProducer producer;
+    private final DashboardProperties dashboardProperties;
 
     /**
      * Builds an {@link org.upyog.dashboard.entity.IngestionModuleSummary} payload and publishes
@@ -64,7 +65,7 @@ public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenc
 
             Map<String, Object> message = new HashMap<>();
             message.put("ingestionModuleSummary", Collections.singletonList(summary));
-            producer.push(KafkaTopics.UPDATE_ADAPTER_MODULE_SUMMARY, message);
+            producer.push(dashboardProperties.getUpdateAdapterModuleSummaryTopic(), message);
 
             log.info("Pushed update for last_successful_date to {} for tenant {} module {}",
                     successfulDate, tenantId, moduleName);
@@ -104,7 +105,7 @@ public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenc
 
             Map<String, Object> message = new HashMap<>();
             message.put("ingestionModuleSummary", Collections.singletonList(summary));
-            producer.push(KafkaTopics.UPDATE_ADAPTER_MODULE_SUMMARY, message);
+            producer.push(dashboardProperties.getUpdateAdapterModuleSummaryTopic(), message);
 
             log.info("Pushed update for last_attempted_date to {} for tenant {} module {}",
                     attemptedDate, tenantId, moduleName);
@@ -151,7 +152,7 @@ public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenc
                 
             Map<String, Object> message = new HashMap<>();
             message.put("legacyIngestionData", Collections.singletonList(legacyData));
-            producer.push(KafkaTopics.SAVE_LEGACY_INGESTION_DETAIL, message);
+            producer.push(dashboardProperties.getSaveLegacyIngestionDetailTopic(), message);
 
             log.debug("Pushed legacy job {} for tenant {} module {} range [{} to {}]", id, tenantId, moduleName, sDate, eDate);
         } catch (Exception exception) {
@@ -183,7 +184,7 @@ public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenc
                 
             Map<String, Object> message = new HashMap<>();
             message.put("legacyIngestionData", Collections.singletonList(legacyData));
-            producer.push(KafkaTopics.UPDATE_LEGACY_INGESTION_DETAIL, message);
+            producer.push(dashboardProperties.getUpdateLegacyIngestionDetailTopic(), message);
 
             log.info("Pushed update legacy job {} to status {}", jobId, status);
         } catch (Exception exception) {
@@ -205,10 +206,10 @@ public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenc
 
             Map<String, Object> message = new HashMap<>();
             message.put("dailyIngestionData", details);
-            producer.push(KafkaTopics.SAVE_INGESTION_DETAIL, message);
+            producer.push(dashboardProperties.getSaveIngestionDetailTopic(), message);
 
             log.info("Pushed batch of {} ingestion detail audit records to Kafka topic {}",
-                    details.size(), KafkaTopics.SAVE_INGESTION_DETAIL);
+                    details.size(), dashboardProperties.getSaveIngestionDetailTopic());
         } catch (Exception exception) {
             log.error("Failed to push batch ingestion detail audit records to Kafka", exception);
         }

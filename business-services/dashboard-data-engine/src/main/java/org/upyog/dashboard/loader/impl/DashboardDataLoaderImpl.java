@@ -73,7 +73,7 @@ import lombok.extern.slf4j.Slf4j;
  * <p>Contributes to the core Property Tax metrics ingestion pipeline.
  */
 @Slf4j
-@Component
+@Component("httpDataLoader")
 public class DashboardDataLoaderImpl implements DashboardDataLoader {
 
 	/**

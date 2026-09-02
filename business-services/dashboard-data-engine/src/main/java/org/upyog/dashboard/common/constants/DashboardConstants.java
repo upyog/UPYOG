@@ -35,5 +35,9 @@ public class DashboardConstants {
     public static final String STATUS_NOT_STARTED = "NOT_STARTED";
     public static final String STATUS_SUCCESS = "SUCCESS";
     public static final String STATUS_FAILURE = "FAILURE";
+
+    // Date Format Patterns
+    public static final String DATE_FORMAT = "dd-MM-yyyy";
+    public static final String SQL_DATE_FORMAT = "DD-MM-YYYY";
     
 }

@@ -30,9 +30,6 @@ public class JdbcAuditServiceImpl implements AuditService {
     private static final String SYSTEM_USER = DashboardConstants.SYSTEM_USER;
 
     @Autowired
-    private AuditQueryBuilder queryBuilder;
-
-    @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Autowired
@@ -53,8 +50,6 @@ public class JdbcAuditServiceImpl implements AuditService {
                     .ingestionStatus(status).createdBy(SYSTEM_USER)
                     .createdTime(now).lastModifiedBy(SYSTEM_USER).lastModifiedTime(now).build();
 
-            String sqlDetail = queryBuilder.getInsertIngestionDetailQuery();
-
             // Fix Issue 2: Using MapSqlParameterSource instead of positional params
             MapSqlParameterSource detailParams = new MapSqlParameterSource()
                     .addValue(DashboardConstants.PARAM_MODULE_INGESTION_ID, record.getModuleIngestionId())
@@ -70,7 +65,7 @@ public class JdbcAuditServiceImpl implements AuditService {
                     .addValue(DashboardConstants.PARAM_LAST_MODIFIED_BY, record.getLastModifiedBy())
                     .addValue(DashboardConstants.PARAM_LAST_MODIFIED_TIME, record.getLastModifiedTime());
 
-            namedParameterJdbcTemplate.update(sqlDetail, detailParams);
+            namedParameterJdbcTemplate.update(AuditQueryBuilder.INSERT_INGESTION_DETAIL, detailParams);
 
             if (STATUS_FAILURE.equals(status)) {
                 ErrorLogDTO errorLog = ErrorLogDTO.builder()
@@ -83,8 +78,6 @@ public class JdbcAuditServiceImpl implements AuditService {
                         .createdBy(SYSTEM_USER)
                         .build();
 
-                String sqlError = queryBuilder.getInsertAdapterIngestionErrorLogQuery();
-
                 // Fix Issue 4: Using MapSqlParameterSource
                 MapSqlParameterSource errorParams = new MapSqlParameterSource()
                         .addValue(DashboardConstants.PARAM_ID, errorLog.getId())
@@ -95,7 +88,7 @@ public class JdbcAuditServiceImpl implements AuditService {
                         .addValue(DashboardConstants.PARAM_CREATED_TIME, errorLog.getCreatedTime())
                         .addValue(DashboardConstants.PARAM_CREATED_BY, errorLog.getCreatedBy());
 
-                namedParameterJdbcTemplate.update(sqlError, errorParams);
+                namedParameterJdbcTemplate.update(AuditQueryBuilder.INSERT_ADAPTER_INGESTION_ERROR_LOG, errorParams);
             }
         } catch (Exception exception) {
             log.error("JdbcAuditServiceImpl | failed to push ingestion record to Database", exception);

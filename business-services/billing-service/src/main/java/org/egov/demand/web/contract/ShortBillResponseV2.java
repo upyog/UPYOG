@@ -10,8 +10,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Compact API response envelope wrapping the search results from the
- * `/bill/v2/short/_search` endpoint.
+ * Lightweight API response envelope wrapping compact bill summary search results.
+ * <p>
+ * Rationale: Created specifically to serve Dashboard V2 requirements. The standard bill search
+ * returns extensive nested data (full bill details, account head breakdowns, payer objects)
+ * which is redundant for dashboard listing views. This response encapsulates only the core fields
+ * needed by Dashboard V2 to reduce payload size and optimize response times.
+ * </p>
  */
 @Data
 @NoArgsConstructor

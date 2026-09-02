@@ -167,4 +167,20 @@ public class DashboardProperties {
 
     @Value("${aws.s3.folder}")
     private String awsS3Folder;
+
+    // Kafka Topics configuration
+    @Value("${kafka.topics.save.ingestion.detail}")
+    private String saveIngestionDetailTopic;
+
+    @Value("${kafka.topics.save.module.ingestion.detail}")
+    private String saveLegacyIngestionDetailTopic;
+
+    @Value("${kafka.topics.update.module.ingestion.detail}")
+    private String updateLegacyIngestionDetailTopic;
+
+    @Value("${kafka.topics.save.dashboard-data.error.log}")
+    private String saveAdapterErrorLogTopic;
+
+    @Value("${kafka.topics.update.dashboard-data.module.summary}")
+    private String updateAdapterModuleSummaryTopic;
 }

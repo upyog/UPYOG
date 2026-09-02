@@ -1,34 +1,33 @@
 package org.upyog.dashboard.pgr.extractor;
 
-import org.upyog.dashboard.util.TestUtils;
-
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import org.upyog.dashboard.util.HierarchyParser;
+import org.upyog.dashboard.util.DatabaseQueryExecutor;
+import org.upyog.dashboard.config.SchemaMappingConfig;
+import org.upyog.dashboard.config.DashboardProperties;
+import org.upyog.dashboard.extractor.impl.PgrModuleExtractor;
+import org.upyog.dashboard.common.constants.Module;
+import org.upyog.dashboard.model.DashboardData;
+import org.upyog.dashboard.pgr.model.RawPgrMetric;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.upyog.dashboard.common.constants.Module;
-import org.upyog.dashboard.config.SchemaMappingConfig;
-import org.upyog.dashboard.model.DashboardData;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.upyog.dashboard.extractor.impl.PgrModuleExtractor;
-
-import org.upyog.dashboard.config.DashboardProperties;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link PgrModuleExtractor}.
@@ -36,13 +35,13 @@ import static org.mockito.Mockito.*;
 class PgrModuleExtractorTest {
 
 	@Mock
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private DatabaseQueryExecutor queryExecutor;
 
 	@Mock
 	private SchemaMappingConfig schemaMappingConfig;
 
 	@Mock
-	private org.upyog.dashboard.util.HierarchyParser hierarchyParser;
+	private HierarchyParser hierarchyParser;
 
 	@InjectMocks
 	private PgrModuleExtractor extractor;
@@ -77,8 +76,6 @@ class PgrModuleExtractorTest {
 		extractor.init();
 	}
 
-	
-
 	@Test
 	@DisplayName("getModule returns Module.PGR")
 	void getModule_returnsPGR() {
@@ -93,13 +90,11 @@ class PgrModuleExtractorTest {
 
 		when(schemaMappingConfig.getQueriesForModule(Module.PGR)).thenReturn(queries);
 
-		org.upyog.dashboard.pgr.model.RawPgrMetric mockDbResult = org.upyog.dashboard.pgr.model.RawPgrMetric.builder()
+		RawPgrMetric mockDbResult = RawPgrMetric.builder()
 				.tenantid("PG.citya.City A.Ward 1")
 				.uniquecitizens(22)
 				.slaachievementjson("[{\"name\":\"DEPT1\",\"value\":2},{\"name\":\"DEPT2\",\"value\":0},{\"name\":\"DEPT3\",\"value\":6}]")
 				.completionratejson("[{\"name\":\"DEPT1\",\"value\":2},{\"name\":\"DEPT2\",\"value\":0},{\"name\":\"DEPT3\",\"value\":6}]")
-				.complaintsbystatusjson("[{\"name\":\"reopened\",\"value\":15},{\"name\":\"open\",\"value\":20},{\"name\":\"assigned\",\"value\":16},{\"name\":\"rejected\",\"value\":14},{\"name\":\"reassign\",\"value\":10}]")
-				.complaintsbychanneljson("[{\"name\":\"MOBILE\",\"value\":10},{\"name\":\"WEB\",\"value\":90}]")
 				.complaintsbydepartmentjson("[{\"name\":\"DEPT1\",\"value\":20},{\"name\":\"DEPT2\",\"value\":50},{\"name\":\"DEPT3\",\"value\":30}]")
 				.complaintsbycategoryjson("[{\"name\":\"Street Lights\",\"value\":20},{\"name\":\"Road Repair\",\"value\":60},{\"name\":\"Garbage Cleaning\",\"value\":10},{\"name\":\"Drainage Issue\",\"value\":10}]")
 				.todaysreopenedcomplaintsjson("[{\"name\":\"DEPT1\",\"value\":20},{\"name\":\"DEPT2\",\"value\":5},{\"name\":\"DEPT3\",\"value\":3}]")
@@ -113,7 +108,7 @@ class PgrModuleExtractorTest {
 				.todaysresolvedcomplaintsjson("[{\"name\":\"DEPT1\",\"value\":1},{\"name\":\"DEPT2\",\"value\":3},{\"name\":\"DEPT3\",\"value\":1}]")
 				.build();
 
-		org.mockito.Mockito.lenient().when(namedParameterJdbcTemplate.query(anyString(), any(SqlParameterSource.class), any(org.springframework.jdbc.core.RowMapper.class))).thenReturn(List.of(mockDbResult));
+		when(queryExecutor.executeQueryWithRetry(anyString(), any(), any(), anyString())).thenReturn(List.of(mockDbResult));
 
 		LocalDate testDate = LocalDate.of(2022, 6, 1);
 		List<DashboardData> dataList = extractor.extractData(testDate);
@@ -149,14 +144,12 @@ class PgrModuleExtractorTest {
 
 		when(schemaMappingConfig.getQueriesForModule(Module.PGR)).thenReturn(queries);
 
-		org.upyog.dashboard.pgr.model.RawPgrMetric mockDbResult = org.upyog.dashboard.pgr.model.RawPgrMetric.builder()
+		RawPgrMetric mockDbResult = RawPgrMetric.builder()
 				.tenantid("PG.citya.City A.Ward 1")
 				.uniquecitizens(5)
 				.build();
 
-		// Fail on first attempt, succeed on second
-		org.mockito.Mockito.lenient().when(namedParameterJdbcTemplate.query(anyString(), any(SqlParameterSource.class), any(org.springframework.jdbc.core.RowMapper.class)))
-				.thenThrow(new RuntimeException("Transient lock conflict"))
+		when(queryExecutor.executeQueryWithRetry(anyString(), any(), any(), anyString()))
 				.thenReturn(List.of(mockDbResult));
 
 		LocalDate testDate = LocalDate.of(2022, 6, 1);
@@ -164,7 +157,7 @@ class PgrModuleExtractorTest {
 
 		assertThat(dataList).isNotNull().hasSize(1);
 		assertThat(dataList.get(0).getMetrics()).containsEntry("uniqueCitizens", 5);
-		verify(namedParameterJdbcTemplate, times(2)).query(anyString(), any(SqlParameterSource.class), any(org.springframework.jdbc.core.RowMapper.class));
+		verify(queryExecutor).executeQueryWithRetry(anyString(), any(), any(), anyString());
 	}
 
 	@Test
@@ -175,13 +168,13 @@ class PgrModuleExtractorTest {
 
 		when(schemaMappingConfig.getQueriesForModule(Module.PGR)).thenReturn(queries);
 
-		org.mockito.Mockito.lenient().when(namedParameterJdbcTemplate.query(anyString(), any(SqlParameterSource.class), any(org.springframework.jdbc.core.RowMapper.class)))
+		when(queryExecutor.executeQueryWithRetry(anyString(), any(), any(), anyString()))
 				.thenThrow(new RuntimeException("Persistent DB disconnect"));
 
 		LocalDate testDate = LocalDate.of(2022, 6, 1);
 		List<DashboardData> dataList = extractor.extractData(testDate);
 
 		assertThat(dataList).isNotNull().isEmpty(); // Empty default
-		verify(namedParameterJdbcTemplate, times(3)).query(anyString(), any(SqlParameterSource.class), any(org.springframework.jdbc.core.RowMapper.class));
+		verify(queryExecutor).executeQueryWithRetry(anyString(), any(), any(), anyString());
 	}
 }

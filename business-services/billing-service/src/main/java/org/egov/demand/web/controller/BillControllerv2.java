@@ -59,16 +59,22 @@ public class BillControllerv2 {
 	}
 
 	/**
-	 * Searches and returns a compact list of bills containing only core fields
-	 * (id, totalAmount, businessService, billNumber, billDate, consumerCode).
+	 * Searches and returns a lightweight summary list of bills containing only core fields
+	 * (id, totalAmount, businessService, billNumber, billDate, consumerCode, dueDate).
+	 * <p>
+	 * Rationale: The standard `_search` API returns deep and heavy nested structures
+	 * (bill details, account details, line items, payers) which are unnecessary for Dashboard V2
+	 * display. This endpoint provides an optimized projection query returning only essential fields
+	 * to significantly minimize network payload and boost UI dashboard rendering speed.
+	 * </p>
 	 *
 	 * @param requestInfoWrapper Request body envelope containing RequestInfo
 	 * @param billCriteria Query parameters mapping search criteria (tenantId, mobileNumber, isActive, etc.)
 	 * @return ResponseEntity containing ShortBillResponseV2
 	 */
-	@PostMapping("short/_search")
+	@PostMapping("_searchsummary")
 	@ResponseBody
-	public ResponseEntity<?> shortSearch(@RequestBody @Valid final RequestInfoWrapper requestInfoWrapper,
+	public ResponseEntity<?> searchBillSummary(@RequestBody @Valid final RequestInfoWrapper requestInfoWrapper,
 			@ModelAttribute @Valid final BillSearchCriteria billCriteria) {
 
 		RequestInfo requestInfo = requestInfoWrapper.getRequestInfo();
