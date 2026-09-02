@@ -62,126 +62,148 @@ import lombok.ToString;
 @ToString
 public class PropertiesManager {
 
-    @Value("${egov.services.egov.user.host}")
-    private String userHostUrl;
+	@Value("${egov.services.egov.user.host}")
+	private String userHostUrl;
 
-    @Value("${egov.services.egf.voucher.create}")
-    private String voucherCreateUrl;
-    
-    @Value("${egov.services.egf.voucher.cancel}")
-    private String voucherCancelUrl;
+	@Value("${egov.services.egf.voucher.create}")
+	private String voucherCreateUrl;
 
-    @Value("${si.microservice.user}")
-    private String siUser;
+	@Value("${egov.services.egf.voucher.cancel}")
+	private String voucherCancelUrl;
 
-    @Value("${si.microservice.password}")
-    private String siPassword;
+	@Value("${si.microservice.user}")
+	private String siUser;
 
-    @Value("${si.microservice.usertype}")
-    private String siUserType;
+	@Value("${si.microservice.password}")
+	private String siPassword;
 
-    @Value("${si.microservice.scope}")
-    private String siScope;
+	@Value("${si.microservice.usertype}")
+	private String siUserType;
 
-    @Value("${si.microservice.granttype}")
-    private String siGrantType;
+	@Value("${si.microservice.scope}")
+	private String siScope;
 
-    @Value("${egov.services.user.token.url}")
-    private String tokenGenUrl;
+	@Value("${si.microservice.granttype}")
+	private String siGrantType;
 
-    @Value("${egov.services.egf.master.financialstatuses.search}")
-    private String financialStatusesSearch;
+	@Value("${egov.services.user.token.url}")
+	private String tokenGenUrl;
 
-    @Value("${egov.services.egf.instrument.instruments.create}")
-    private String instrumentCreate;
+	@Value("${egov.services.egf.master.financialstatuses.search}")
+	private String financialStatusesSearch;
 
-    @Value("${egov.services.collection.services.receipts.update}")
-    private String receiptsUpdate;
-    
-    @Value("${egov.services.instrument.search.accountcodes.uri}")
-    private String instrumentAccountCodeUrl;
-    
-    @Value("${egov.services.egf.voucher.search.by.service.reference}")
-    private String voucherSearchByRefUrl;
-    
-    @Value("${egov.services.egf.voucher.search}")
-    private String voucherSearchUrl;
-    
-    @Value("${egov.services.egf.voucher.manualreceiptdate.config.url}")
-    private String manualReceiptDateConfigUrl;
-    
-    @Value("${egov.services.master.mdms.search.url}")
-    private String mdmsSearchUrl;
-    
-    @Value("${egov.services.egf.instrument.instruments.cancel}")
-    private String instrumentCancel;
-    
-    @Value("${fin.coe.erp.domain.name}")
-    private String finCoeErpDomainName;
-    
-    @Value("${fin.coe.erp.environment.name}")
-    private String finCoeErpEnvName;
-    
-    @Value("${fin.coe.erp.http.protocol}")
-    private String httpProtocol;
-    
-    @Value("${egov.services.egf.voucher.moduleid.search}")
-    private String moduleIdSearchUrl;
-    
-    @Value("${egov.services.collection.receipts.view.source.url}")
-    private String receiptViewSourceUrl;
-    
-    @Value("${egov.services.mdms.hostname}")
-    private String mdmsHostUrl;
-    
-    @Value("${egov.services.egfinstrument.hostname}")
-    private String instrumentHostUrl;
-    
-    @Value("${egov.services.collections.hostname}")
-    private String collectionsHostUrl;
-    
-    @Value("${egov.services.businessservice.hostname}")
-    private String businessServiceHostUrl;
-    
-    @Value("${egov.services.egfmaster.hostname}")
-    private String egfMasterHostUrl;
-    
-    @Value("${token.authorization.key}")
-    private String tokenAuhorizationtKey;
-    
-    @Value("${egov.collection.receipt.voucher.save.topic}")
-    private String voucherCreateTopic;
-    
-    @Value("${egov.collection.receipt.voucher.cancel.topic}")
-    private String voucherCancelTopic;
-    
-    @Value("${kafka.topics.payment.create.name}")
-    private String createPaymentTopicName;
-    
-    @Value("${kafka.topics.payment.cancel.name}")
-    private String cancelPaymentTopicName;
-    
-    private String siAuthToken;
-    private User siUserInfo;
-    
-    @Value("${egov.services.egf.instrument.instruments.search}")
-    private String instrumentSearch;
-    
-    public String getErpURLBytenantId(String tenantId) throws VoucherCustomException {
-    	try {
-    		tenantId = tenantId.split(Pattern.quote("."))[1];
-    		if(finCoeErpEnvName != null && finCoeErpEnvName.equalsIgnoreCase("local")){
-    			return "http://jalandhar.lgpunjab.com:8080/";
-    		}
-    		if(finCoeErpEnvName != null && !finCoeErpEnvName.isEmpty()){
-    			return httpProtocol+"://"+tenantId+"-"+finCoeErpEnvName+"."+finCoeErpDomainName+"/";
-    		}else{
-    			//considered as the production url
-    			return httpProtocol+"://"+tenantId+"."+finCoeErpDomainName+"/";
-    		}
+	@Value("${egov.services.egf.instrument.instruments.create}")
+	private String instrumentCreate;
+
+	@Value("${egov.services.collection.services.receipts.update}")
+	private String receiptsUpdate;
+
+	@Value("${egov.services.instrument.search.accountcodes.uri}")
+	private String instrumentAccountCodeUrl;
+
+	@Value("${egov.services.egf.voucher.search.by.service.reference}")
+	private String voucherSearchByRefUrl;
+
+	@Value("${egov.services.egf.voucher.search}")
+	private String voucherSearchUrl;
+
+	@Value("${egov.services.egf.voucher.manualreceiptdate.config.url}")
+	private String manualReceiptDateConfigUrl;
+
+	@Value("${egov.services.master.mdms.search.url}")
+	private String mdmsSearchUrl;
+
+	@Value("${egov.services.egf.instrument.instruments.cancel}")
+	private String instrumentCancel;
+
+	@Value("${fin.coe.erp.domain.name}")
+	private String finCoeErpDomainName;
+
+	@Value("${fin.coe.erp.environment.name}")
+	private String finCoeErpEnvName;
+
+	@Value("${fin.coe.erp.http.protocol}")
+	private String httpProtocol;
+
+	@Value("${egov.services.egf.voucher.moduleid.search}")
+	private String moduleIdSearchUrl;
+
+	@Value("${egov.services.collection.receipts.view.source.url}")
+	private String receiptViewSourceUrl;
+
+	@Value("${egov.services.mdms.hostname}")
+	private String mdmsHostUrl;
+
+	@Value("${egov.services.egfinstrument.hostname}")
+	private String instrumentHostUrl;
+
+	@Value("${egov.services.collections.hostname}")
+	private String collectionsHostUrl;
+
+	@Value("${egov.services.businessservice.hostname}")
+	private String businessServiceHostUrl;
+
+	@Value("${egov.services.egfmaster.hostname}")
+	private String egfMasterHostUrl;
+
+	@Value("${token.authorization.key}")
+	private String tokenAuhorizationtKey;
+
+	@Value("${egov.collection.receipt.voucher.save.topic}")
+	private String voucherCreateTopic;
+
+	@Value("${egov.collection.receipt.voucher.cancel.topic}")
+	private String voucherCancelTopic;
+
+	@Value("${kafka.topics.payment.create.name}")
+	private String createPaymentTopicName;
+
+	@Value("${kafka.topics.payment.cancel.name}")
+	private String cancelPaymentTopicName;
+
+	private String siAuthToken;
+	private User siUserInfo;
+
+	@Value("${egov.services.egf.instrument.instruments.search}")
+	private String instrumentSearch;
+
+	@Value("${egov.refund.finance.process.topic}")
+	private String refundFinanceProcessTopic;
+
+	@Value("${egov.finance.refund.create.url}")
+	private String refundCreateUrl;
+
+	@Value("${egov.finance.refund.host}")
+	private String refundFinanceHost;
+
+	public String getRefundFinanceProcessTopic() {
+		return refundFinanceProcessTopic;
+	}
+
+	public String getRefundCreateUrl() {
+		return refundCreateUrl;
+	}
+
+	public String getRefundFinanceHost() {
+		return refundFinanceHost;
+	}
+
+	public String getErpURLBytenantId(String tenantId) throws VoucherCustomException {
+		try {
+			tenantId = tenantId.split(Pattern.quote("."))[1];
+			if (finCoeErpEnvName != null && finCoeErpEnvName.equalsIgnoreCase("local")) {
+				return "http://jalandhar.lgpunjab.com:8080/";
+			}
+			if (finCoeErpEnvName != null && !finCoeErpEnvName.isEmpty()) {
+				return httpProtocol + "://" + tenantId + "-" + finCoeErpEnvName + "." + finCoeErpDomainName + "/";
+			} else {
+				// considered as the production url
+				return httpProtocol + "://" + tenantId + "." + finCoeErpDomainName + "/";
+			}
 		} catch (Exception e) {
-			throw new VoucherCustomException(ProcessStatus.FAILED,"ERROR occured while generating ERP url to interact with the finance coexistence. Please check the configuration in properties file.");
+			throw new VoucherCustomException(ProcessStatus.FAILED,
+					"ERROR occured while generating ERP url to interact with the finance coexistence. Please check the configuration in properties file.");
 		}
-    }
+	}
 
 }

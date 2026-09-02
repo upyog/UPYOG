@@ -50,6 +50,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Assignment {
 
@@ -73,10 +74,17 @@ public class Assignment {
     @Valid
     private List<HODDepartment> hod = new ArrayList<HODDepartment>();
 
-    @NotNull
-    private Boolean isPrimary;
+	@NotNull
+	private Boolean isPrimary;
 
-    private float fromDate;
+	/*
+	 * Added for the UPYOG HRMS response. Current assignment and primary assignment
+	 * are separate fields.
+	 */
+	@JsonProperty("isCurrentAssignment")
+	private Boolean isCurrentAssignment;
+
+	private float fromDate;
 
     private float toDate;
 
@@ -202,9 +210,17 @@ public class Assignment {
         this.isPrimary = isPrimary;
     }
 
-    public float getFromDate() {
-        return fromDate;
-    }
+	public Boolean getIsCurrentAssignment() {
+		return isCurrentAssignment;
+	}
+
+	public void setIsCurrentAssignment(Boolean isCurrentAssignment) {
+		this.isCurrentAssignment = isCurrentAssignment;
+	}
+
+	public float getFromDate() {
+		return fromDate;
+	}
 
     public void setFromDate(float fromDate) {
         this.fromDate = fromDate;
@@ -316,121 +332,144 @@ public class Assignment {
         this.employeeName = employeeName;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Assignment other = (Assignment) obj;
-        if (createdBy == null) {
-            if (other.createdBy != null)
-                return false;
-        } else if (!createdBy.equals(other.createdBy))
-            return false;
-        if (createdDate == null) {
-            if (other.createdDate != null)
-                return false;
-        } else if (!createdDate.equals(other.createdDate))
-            return false;
-        if (department == null) {
-            if (other.department != null)
-                return false;
-        } else if (!department.equals(other.department))
-            return false;
-        if (designation == null) {
-            if (other.designation != null)
-                return false;
-        } else if (!designation.equals(other.designation))
-            return false;
-        if (documents == null) {
-            if (other.documents != null)
-                return false;
-        } else if (!documents.equals(other.documents))
-            return false;
-        if (fromDate == 0) {
-            if (other.fromDate != 0)
-                return false;
-        } else if (fromDate != other.fromDate)
-            return false;
-        if (function == null) {
-            if (other.function != null)
-                return false;
-        } else if (!function.equals(other.function))
-            return false;
-        if (functionary == null) {
-            if (other.functionary != null)
-                return false;
-        } else if (!functionary.equals(other.functionary))
-            return false;
-        if (fund == null) {
-            if (other.fund != null)
-                return false;
-        } else if (!fund.equals(other.fund))
-            return false;
-        if (govtOrderNumber == null) {
-            if (other.govtOrderNumber != null)
-                return false;
-        } else if (!govtOrderNumber.equals(other.govtOrderNumber))
-            return false;
-        if (grade == null) {
-            if (other.grade != null)
-                return false;
-        } else if (!grade.equals(other.grade))
-            return false;
-        if (hod == null) {
-            if (other.hod != null)
-                return false;
-        } else if (!hod.equals(other.hod))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (isPrimary == null) {
-            if (other.isPrimary != null)
-                return false;
-        } else if (!isPrimary.equals(other.isPrimary))
-            return false;
-        if (lastModifiedBy == null) {
-            if (other.lastModifiedBy != null)
-                return false;
-        } else if (!lastModifiedBy.equals(other.lastModifiedBy))
-            return false;
-        if (lastModifiedDate == null) {
-            if (other.lastModifiedDate != null)
-                return false;
-        } else if (!lastModifiedDate.equals(other.lastModifiedDate))
-            return false;
-        if (position == null) {
-            if (other.position != null)
-                return false;
-        } else if (!position.equals(other.position))
-            return false;
-        if (tenantId == null) {
-            if (other.tenantId != null)
-                return false;
-        } else if (!tenantId.equals(other.tenantId))
-            return false;
-        if (toDate == 0) {
-            if (other.toDate != 0)
-                return false;
-        } else if (toDate != other.toDate)
-            return false;
-        return true;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
 
-    @Override
-    public String toString() {
-        return "Assignment [id=" + id + ", position=" + position + ", fund=" + fund + ", functionary=" + functionary
-                + ", function=" + function + ", department=" + department + ", designation=" + designation + ", hod="
-                + hod + ", isPrimary=" + isPrimary + ", fromDate=" + fromDate + ", toDate=" + toDate + ", grade="
-                + grade + ", govtOrderNumber=" + govtOrderNumber + ", documents=" + documents + ", createdBy="
-                + createdBy + ", createdDate=" + createdDate + ", lastModifiedBy=" + lastModifiedBy
-                + ", lastModifiedDate=" + lastModifiedDate + ", tenantId=" + tenantId + "]";
-    }
+		if (obj == null)
+			return false;
 
+		if (getClass() != obj.getClass())
+			return false;
+
+		Assignment other = (Assignment) obj;
+
+		if (createdBy == null) {
+			if (other.createdBy != null)
+				return false;
+		} else if (!createdBy.equals(other.createdBy))
+			return false;
+
+		if (createdDate == null) {
+			if (other.createdDate != null)
+				return false;
+		} else if (!createdDate.equals(other.createdDate))
+			return false;
+
+		if (department == null) {
+			if (other.department != null)
+				return false;
+		} else if (!department.equals(other.department))
+			return false;
+
+		if (designation == null) {
+			if (other.designation != null)
+				return false;
+		} else if (!designation.equals(other.designation))
+			return false;
+
+		if (documents == null) {
+			if (other.documents != null)
+				return false;
+		} else if (!documents.equals(other.documents))
+			return false;
+
+		if (fromDate == 0) {
+			if (other.fromDate != 0)
+				return false;
+		} else if (fromDate != other.fromDate)
+			return false;
+
+		if (function == null) {
+			if (other.function != null)
+				return false;
+		} else if (!function.equals(other.function))
+			return false;
+
+		if (functionary == null) {
+			if (other.functionary != null)
+				return false;
+		} else if (!functionary.equals(other.functionary))
+			return false;
+
+		if (fund == null) {
+			if (other.fund != null)
+				return false;
+		} else if (!fund.equals(other.fund))
+			return false;
+
+		if (govtOrderNumber == null) {
+			if (other.govtOrderNumber != null)
+				return false;
+		} else if (!govtOrderNumber.equals(other.govtOrderNumber))
+			return false;
+
+		if (grade == null) {
+			if (other.grade != null)
+				return false;
+		} else if (!grade.equals(other.grade))
+			return false;
+
+		if (hod == null) {
+			if (other.hod != null)
+				return false;
+		} else if (!hod.equals(other.hod))
+			return false;
+
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+
+		if (isPrimary == null) {
+			if (other.isPrimary != null)
+				return false;
+		} else if (!isPrimary.equals(other.isPrimary))
+			return false;
+
+		if (lastModifiedBy == null) {
+			if (other.lastModifiedBy != null)
+				return false;
+		} else if (!lastModifiedBy.equals(other.lastModifiedBy))
+			return false;
+
+		if (lastModifiedDate == null) {
+			if (other.lastModifiedDate != null)
+				return false;
+		} else if (!lastModifiedDate.equals(other.lastModifiedDate))
+			return false;
+
+		if (position == null) {
+			if (other.position != null)
+				return false;
+		} else if (!position.equals(other.position))
+			return false;
+
+		if (tenantId == null) {
+			if (other.tenantId != null)
+				return false;
+		} else if (!tenantId.equals(other.tenantId))
+			return false;
+
+		if (toDate == 0) {
+			if (other.toDate != 0)
+				return false;
+		} else if (toDate != other.toDate)
+			return false;
+
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Assignment [id=" + id + ", position=" + position + ", fund=" + fund + ", functionary=" + functionary
+				+ ", function=" + function + ", department=" + department + ", designation=" + designation + ", hod="
+				+ hod + ", isPrimary=" + isPrimary + ", isCurrentAssignment=" + isCurrentAssignment + ", fromDate="
+				+ fromDate + ", toDate=" + toDate + ", grade=" + grade + ", govtOrderNumber=" + govtOrderNumber
+				+ ", documents=" + documents + ", createdBy=" + createdBy + ", createdDate=" + createdDate
+				+ ", lastModifiedBy=" + lastModifiedBy + ", lastModifiedDate=" + lastModifiedDate + ", tenantId="
+				+ tenantId + "]";
+	}
 }
