@@ -245,9 +245,9 @@ public class EstateServiceImpl implements EstateService {
         /*
            If allotmentNo is provided in criteria, enrich each allotment with its corresponding asset details
          */
-        if (allotments != null && !allotments.isEmpty() && criteria.getAllotmentNo() != null && !criteria.getAllotmentNo().trim().isEmpty()) {
+        if (allotments != null && !allotments.isEmpty() && StringUtils.hasText(criteria.getAllotmentNo())) {
             for (Allotment allotment : allotments) {
-                if (allotment.getAssetNo() != null && !allotment.getAssetNo().trim().isEmpty()) {
+                if (StringUtils.hasText(allotment.getAssetNo())) {
                     AssetSearchCriteria assetSearchCriteria = new AssetSearchCriteria();
                     assetSearchCriteria.setEstateNo(allotment.getAssetNo());
                     assetSearchCriteria.setTenantId(allotment.getTenantId());

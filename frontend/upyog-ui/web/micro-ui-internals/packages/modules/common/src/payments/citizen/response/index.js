@@ -3,6 +3,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
+import { BUSINESS_SERVICES, RECEIPT_KEYS } from "../../constants";
 
 export const SuccessfulPayment = (props) => {
   const params = new URLSearchParams(window.location.search);
@@ -598,6 +599,17 @@ const WrapPaymentComponent = (props) => {
     window.open(fileStore[fileStoreId], "_blank");
   };
 
+  const printESTReceipt = async () => {
+    let fileStoreId = payments?.Payments?.[0]?.fileStoreId || payments?.fileStoreId;
+    if (!fileStoreId) {
+      let response = { filestoreIds: [payments?.fileStoreId] };
+      response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...paymentData }] }, RECEIPT_KEYS.EST);
+      fileStoreId = response?.filestoreIds[0];
+    }
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+    window.open(fileStore[fileStoreId], "_blank");
+  };
+
   const printNDCReceipt = async () => {
     let fileStoreId = payments?.Payments?.[0]?.fileStoreId || paymentData?.fileStoreId;
     if (!fileStoreId) {
@@ -953,6 +965,17 @@ const WrapPaymentComponent = (props) => {
           {t("GC_FEE_RECEIPT")}
         </div>
       ) : null}
+      {/* Estate Management Fee Receipt Action */}
+      {business_service === BUSINESS_SERVICES.EST ? (
+        <div
+          className="primary-label-btn d-grid"
+          style={{ marginLeft: "unset", marginRight: "20px", marginTop: "15px", marginBottom: "15px" }}
+          onClick={printESTReceipt}
+        >
+          <DownloadPrefixIcon />
+          {t("EST_FEE_RECEIPT")}
+        </div>
+      ) : null}
       {window.location.href.includes("mcollect") ?
          <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px" }} onClick={printReciept}>
          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
@@ -1153,6 +1176,11 @@ const WrapPaymentComponent = (props) => {
         </Link>
       )}
       {business_service == "garbage-service" && (
+        <Link to={`/upyog-ui/citizen`}>
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+        </Link>
+      )}
+      {business_service === BUSINESS_SERVICES.EST && (
         <Link to={`/upyog-ui/citizen`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>

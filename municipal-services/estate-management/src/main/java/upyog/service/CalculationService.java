@@ -29,7 +29,7 @@ public class CalculationService {
     public List<DemandDetail> calculateDemand(BigDecimal amount, Allotment allotment) {
         DemandDetail detail = DemandDetail.builder()
                 .taxHeadMasterCode(ServiceConstants.EST_BOOKING_FEE)
-                .taxAmount(amount)
+                .taxAmount(amount.setScale(0, RoundingMode.HALF_UP))
                 .collectionAmount(BigDecimal.ZERO)
                 .tenantId(allotment.getTenantId())
                 .build();

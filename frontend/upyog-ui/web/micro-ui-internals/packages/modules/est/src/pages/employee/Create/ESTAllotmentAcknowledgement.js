@@ -16,9 +16,7 @@ import {
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
-import getESTAllotmentAcknowledgementData from "../../../utils/getESTAllotmentAcknowledgementData";
-import { ESTDocumnetPreview } from "../../../utils";
-import { fetchAllotmentDocumentPreviews } from "../../../utils/allotmentDocumentUtils";
+import { downloadESTAcknowledgement } from "../../../utils";
 import {
   getEmployeeHomeFromModulePath,
   getCitizenHomeFromModulePath,
@@ -81,9 +79,6 @@ const ESTAllotmentAcknowledgement = ({ onSuccess }) => {
   const storeData = initResponse?.data || initResponse;
   const tenants = storeData?.tenants || [];
 
-  const [previewDocs, setPreviewDocs] = useState([]);
-  const [loadingDocs, setLoadingDocs] = useState(false);
-
   useEffect(() => {
     if (isSuccess && typeof onSuccess === "function") {
       onSuccess(ackData);
@@ -91,47 +86,11 @@ const ESTAllotmentAcknowledgement = ({ onSuccess }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    if (!isSuccess || !ackData?.Allotments?.[0]) {
-      setPreviewDocs([]);
-      return;
-    }
-
-    let mounted = true;
-    setLoadingDocs(true);
-
-    fetchAllotmentDocumentPreviews(ackData.Allotments[0], t)
-      .then((docs) => {
-        if (mounted) setPreviewDocs(docs);
-      })
-      .catch((err) => {
-        console.error("EST ack document preview failed:", err);
-        if (mounted) setPreviewDocs([]);
-      })
-      .finally(() => {
-        if (mounted) setLoadingDocs(false);
-      });
-
-    return () => {
-      mounted = false;
-    };
-  }, [ackData, isSuccess, t]);
-
   if (error) console.error("EST Allotment Acknowledgement — error:", error);
 
   const handleDownloadPdf = async () => {
     try {
-      const allotment = ackData?.Allotments?.[0];
-      if (!allotment) return;
-      const tenantInfo =
-        tenants.find((tn) => tn.code === allotment.tenantId) ||
-        tenants.find((tn) => tn.code === Digit.ULBService.getCurrentTenantId()) ||
-        {};
-      const pdfData = await getESTAllotmentAcknowledgementData(ackData, tenantInfo, t);
-      // Terms & conditions are appended inside Digit.Utils.pdf.generate from
-      // localization keys TERMS_AND_CONDITIONS_OF_LICENSE / TERMS_AND_CONDITIONS1..14
-      // (libraries/src/utils/pdf.js) — not from EST form/MDMS.
-      Digit.Utils.pdf.generate(pdfData);
+      await downloadESTAcknowledgement(ackData, tenants, t);
     } catch (err) {
       console.error("PDF generation error:", err);
     }
@@ -159,19 +118,6 @@ const ESTAllotmentAcknowledgement = ({ onSuccess }) => {
       <StatusTable>
         <Row rowContainerStyle={rowContainerStyle} last />
       </StatusTable>
-
-      {isSuccess && (
-        <>
-          <CardSubHeader>{t("EST_DOCUMENT_PREVIEW")}</CardSubHeader>
-          {loadingDocs ? (
-            <div style={{ padding: "12px 16px" }}>
-              <Loader />
-            </div>
-          ) : (
-            <ESTDocumnetPreview documents={previewDocs} useThumbnails thumbSize={80} />
-          )}
-        </>
-      )}
 
       {isSuccess && (
         <SubmitBar label={t("EST_ALLOTMENT_ACKNOWLEDGEMENT")} onSubmit={handleDownloadPdf} />
