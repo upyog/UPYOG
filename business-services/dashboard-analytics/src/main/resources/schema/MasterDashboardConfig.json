@@ -22,9 +22,7 @@
                   "name": "DSS_TOTAL_COLLECTION_TODAY",
                   "code": "",
                   "chartType": "",
-                  "filter": {
-                    "title": "TODAY"
-                  },
+                  "filter": {"title": "TODAY"},
                   "headers": []
                 },
                 {
@@ -69,8 +67,7 @@
                   "id": "cumulativeCollection",
                   "name": "Weekly",
                   "code": "",
-                  "chartType": "line",
-                  "indexName": "firenoc-national-dashboard",
+                  "chartType": "line","indexName": "firenoc-national-dashboard",
                   "filter": "",
                   "headers": []
                 }
@@ -288,6 +285,7 @@
         }
       ]
     },
+
     {
       "name": "NATIONAL_OVERVIEW_DASHBOARD",
       "id": "national-overview",
@@ -341,9 +339,7 @@
                   "name": "NATIONAL_DSS_TOTAL_COLLECTION_TODAY",
                   "code": "",
                   "chartType": "",
-                  "filter": {
-                    "title": "TODAY"
-                  },
+                  "filter": {"title": "TODAY"},
                   "headers": []
                 },
                 {
@@ -354,6 +350,7 @@
                   "filter": "",
                   "headers": []
                 },
+
                 {
                   "id": "slaComplainceOverview",
                   "name": "DSS_SLA_COMPLAINCE_OVERVIEW",
@@ -646,6 +643,7 @@
         }
       ]
     },
+
     {
       "name": "DSS_PROPERTY_TAX_DASHBOARD",
       "id": "propertyTax",
@@ -668,14 +666,13 @@
               "isCollapsible": false,
               "label": "DSS_OVERVIEW",
               "charts": [
+
                 {
                   "id": "todaysCollection",
                   "name": "DSS_TOTAL_COLLECTION_TODAY",
                   "code": "",
                   "chartType": "metric",
-                  "filter": {
-                    "title": "TODAY"
-                  },
+                  "filter": {"title": "TODAY"},
                   "headers": []
                 },
                 {
@@ -1087,6 +1084,7 @@
                   "filter": "",
                   "headers": []
                 },
+
                 {
                   "id": "totalCollectionv3",
                   "name": "NATIONAL_PT_DSS_TOTAL_COLLECTION",
@@ -1100,9 +1098,7 @@
                   "name": "NATIONAL_DSS_TODAYS_LAST_YEAR_COLLECTION",
                   "code": "",
                   "chartType": "metric",
-                  "filter": {
-                    "title": "TODAY"
-                  },
+                  "filter": {"title": "TODAY"},
                   "headers": []
                 },
                 {
@@ -1110,9 +1106,7 @@
                   "name": "NATIONAL_DSS_TOTAL_COLLECTION_TODAY",
                   "code": "",
                   "chartType": "metric",
-                  "filter": {
-                    "title": "TODAY"
-                  },
+                  "filter": {"title": "TODAY"},
                   "headers": []
                 },
                 {
@@ -1140,6 +1134,7 @@
                   "headers": []
                 },
                 {
+
                   "id": "avgDaysforPropertyTax",
                   "name": "DSS_AVG_DAYS_FOR_PT",
                   "code": "",
@@ -1148,6 +1143,7 @@
                   "headers": []
                 },
                 {
+
                   "id": "StipulatedDaysforPropertyTax",
                   "name": "DSS_STIPULATED_DAYS_FOR_PT",
                   "code": "",
@@ -1156,6 +1152,7 @@
                   "headers": []
                 },
                 {
+
                   "id": "StateGDPwisePTRevenueCollection",
                   "name": "DSS_STATE_GDP_PT_REVENUE_COLLECTION",
                   "code": "",
@@ -1164,6 +1161,7 @@
                   "headers": []
                 },
                 {
+
                   "id": "PropertyTaxRevenuePerHousehold",
                   "name": "DSS_PT_TAX_REVENUE_PER_HOUSEHOLD",
                   "code": "",
@@ -1342,7 +1340,7 @@
                   "chartType": "bar",
                   "filter": "",
                   "headers": [],
-                  "tabName": "GDP"
+                  "tabName":"GDP"
                 }
               ]
             }
@@ -1590,8 +1588,7 @@
                   "headers": []
                 }
               ]
-            }
-          ]
+            }          ]
         },
         {
           "row": 8,
@@ -1610,6 +1607,7 @@
               "isCollapsible": true,
               "charts": [
                 {
+
                   "id": "xptFyByStatesv3",
                   "name": "NATIONAL_DSS_PT_PROPERTIES_BY_FINANCIAL_YEAR",
                   "code": "",
@@ -1624,6 +1622,7 @@
         }
       ]
     },
+
     {
       "name": "DSS_TRADE_LICENSE_DASHBOARD",
       "id": "tradeLicense",
@@ -1651,9 +1650,7 @@
                   "name": "DSS_TOTAL_COLLECTION_TODAY",
                   "code": "",
                   "chartType": "metric",
-                  "filter": {
-                    "title": "TODAY"
-                  },
+                  "filter": {"title": "TODAY"},
                   "headers": []
                 },
                 {
@@ -1992,6 +1989,7 @@
                   "filter": "",
                   "headers": [],
                   "tabName": "Boundary"
+
                 }
               ]
             }
@@ -2228,6 +2226,7 @@
             }
           ]
         },
+
         {
           "row": 5,
           "name": "DSS_SERVICE",
@@ -2609,20 +2608,22 @@
               "label": "",
               "charts": [
                 {
-                  "id": "bpaTotalCollection",
-                  "name": "DSS_BPA_TOTAL_COLLECTIONS",
-                  "code": "",
-                  "chartType": "metric",
-                  "filter": "",
-                  "headers": []
+
+                  "id":"bpaTotalCollection",
+                  "name":"DSS_BPA_TOTAL_COLLECTIONS",
+                  "code":"",
+                  "chartType":"metric",
+                  "filter":"",
+                  "headers":[]
+
                 },
                 {
-                  "id": "bpaTotalPermitsIssued",
-                  "name": "DSS_BPA_TOTAL_PERMITS_ISSUED",
-                  "code": "",
-                  "chartType": "metric",
-                  "filter": "",
-                  "headers": []
+                  "id":"bpaTotalPermitsIssued",
+                  "name":"DSS_BPA_TOTAL_PERMITS_ISSUED",
+                  "code":"",
+                  "chartType":"metric",
+                  "filter":"",
+                  "headers":[]
                 }
               ]
             },
@@ -2660,6 +2661,7 @@
         }
       ]
     },
+
     {
       "name": "DSS_PGR_DASHBOARD",
       "id": "ulb-pgr",
@@ -2860,6 +2862,7 @@
                 }
               ]
             }
+
           ]
         },
         {
@@ -2976,9 +2979,7 @@
                   "name": "DSS_TOTAL_COLLECTION_TODAY",
                   "code": "",
                   "chartType": "metric",
-                  "filter": {
-                    "title": "TODAY"
-                  },
+                  "filter": {"title": "TODAY"},
                   "headers": []
                 },
                 {
@@ -3363,9 +3364,7 @@
                   "name": "DSS_TOTAL_COLLECTION_TODAY",
                   "code": "",
                   "chartType": "metric",
-                  "filter": {
-                    "title": "TODAY"
-                  },
+                  "filter": {"title": "TODAY"},
                   "headers": []
                 },
                 {
@@ -3704,6 +3703,7 @@
                   "filter": "",
                   "headers": [],
                   "tabName": "Boundary"
+
                 }
               ]
             }
@@ -3732,9 +3732,7 @@
                   "name": "DSS_TOTAL_COLLECTION_TODAY",
                   "code": "",
                   "chartType": "",
-                  "filter": {
-                    "title": "TODAY"
-                  },
+                  "filter": {"title": "TODAY"},
                   "headers": []
                 },
                 {
@@ -4157,6 +4155,7 @@
         }
       ]
     },
+
     {
       "name": "DSS_W&S_DASHBOARD",
       "id": "ws",
@@ -4184,9 +4183,7 @@
                   "name": "DSS_W&S_TODAYS_COLLECTION",
                   "code": "",
                   "chartType": "metric",
-                  "filter": {
-                    "title": "TODAY"
-                  },
+                  "filter": {"title": "TODAY"},
                   "headers": []
                 },
                 {
@@ -4579,6 +4576,7 @@
                 }
               ]
             }
+
           ]
         }
       ]
@@ -4610,9 +4608,7 @@
                   "name": "DSS_W&S_TODAYS_COLLECTION",
                   "code": "",
                   "chartType": "metric",
-                  "filter": {
-                    "title": "TODAY"
-                  },
+                  "filter": {"title": "TODAY"},
                   "headers": []
                 },
                 {
@@ -5005,6 +5001,7 @@
                 }
               ]
             }
+
           ]
         }
       ]
@@ -5735,8 +5732,7 @@
                   "code": "",
                   "chartType": "table",
                   "filter": "",
-                  "headers": []
-                }
+                  "headers": []                }
               ]
             }
           ]
@@ -6129,6 +6125,7 @@
                   "filter": "",
                   "headers": []
                 }
+
               ]
             },
             {
@@ -6180,6 +6177,7 @@
                 }
               ]
             }
+
           ]
         },
         {
@@ -6255,6 +6253,7 @@
                   "filter": "",
                   "headers": [],
                   "tabName": "Boundary"
+
                 }
               ]
             }
@@ -6356,6 +6355,7 @@
           "row": 2,
           "name": "DSS_REVENUE",
           "vizArray": [
+
             {
               "id": 234,
               "name": "DSS_MC_RECEIPTS_BY_PAYMENTMODE",
@@ -6405,6 +6405,7 @@
           "row": 3,
           "name": "DSS_REVENUE",
           "vizArray": [
+
             {
               "id": 235,
               "name": "DSS_MC_CHALLAN_COUNT_BY_STATUS",
@@ -6470,10 +6471,12 @@
             }
           ]
         },
+
         {
           "row": 4,
           "name": "DSS_REVENUE",
           "vizArray": [
+
             {
               "id": 123,
               "name": "DSS_MC_COLLECTION_CATEGORY_WISE",
@@ -6522,6 +6525,7 @@
           "row": 5,
           "name": "DSS_REVENUE",
           "vizArray": [
+
             {
               "id": 236,
               "name": "DSS_MC_REPORT_BY_TENANT",
@@ -6797,7 +6801,7 @@
                   "chartType": "bar",
                   "filter": "",
                   "headers": [],
-                  "tabName": "Actual"
+                  "tabName":"Actual"
                 },
                 {
                   "id": "nocProvisionalTopPerformingUlbs",
@@ -6806,7 +6810,7 @@
                   "chartType": "bar",
                   "filter": "",
                   "headers": [],
-                  "tabName": "Provisional"
+                  "tabName":"Provisional"
                 }
               ]
             },
@@ -6829,7 +6833,7 @@
                   "chartType": "bar",
                   "filter": "",
                   "headers": [],
-                  "tabName": "Actual"
+                  "tabName":"Actual"
                 },
                 {
                   "id": "nocProvisionalBottomPerformingUlbs",
@@ -6838,7 +6842,7 @@
                   "chartType": "bar",
                   "filter": "",
                   "headers": [],
-                  "tabName": "Provisional"
+                  "tabName":"Provisional"
                 }
               ]
             }
@@ -6884,11 +6888,11 @@
       ]
     },
     {
-      "name": "DSS_BUILDING_PLANNING_DASHBOARD",
-      "id": "obps",
-      "isActive": "",
-      "style": "linear",
-      "visualizations": [
+      "name":"DSS_BUILDING_PLANNING_DASHBOARD",
+      "id":"obps",
+      "isActive":"",
+      "style":"linear",
+      "visualizations":[
         {
           "row": 1,
           "name": "DSS_BUILDING_PLANNING",
@@ -6922,8 +6926,8 @@
                   "headers": []
                 }
               ]
-            },
-            {
+            }
+          ,{
               "id": 112,
               "name": "DSS_BPA_TOTAL_CUMULATIVE_COLLECTION",
               "dimensions": {
@@ -6947,9 +6951,9 @@
           ]
         },
         {
-          "row": 2,
-          "name": "DSS_BUILDING_PLANNING",
-          "vizArray": [
+          "row":2,
+          "name":"DSS_BUILDING_PLANNING",
+          "vizArray":[
             {
               "id": 210,
               "name": "DSS_OVERVIEW_SERVICES",
@@ -7121,54 +7125,60 @@
                 }
               ]
             }
+
           ]
         },
         {
-          "row": 4,
-          "name": "DSS_BUILDING_PLANNING",
-          "vizArray": [
+          "row":4,
+          "name":"DSS_BUILDING_PLANNING",
+          "vizArray":[
             {
-              "id": 311,
-              "name": "DSS_BPA_PERMIT_ISSUED_BY_RISK_TYPE",
-              "dimensions": {
-                "height": 250,
-                "width": 4
+              "id":311,
+              "name":"DSS_BPA_PERMIT_ISSUED_BY_RISK_TYPE",
+              "dimensions":{
+                "height":250,
+                "width":4
               },
-              "vizType": "chart",
+              "vizType":"chart",
               "noUnit": false,
-              "isCollapsible": false,
-              "charts": [
+              "isCollapsible":false,
+              "charts":[
                 {
-                  "id": "permitIssuedByRiskType",
-                  "name": "DSS_BPA_PERMIT_ISSUED_BY_RISK_TYPE",
-                  "code": "",
-                  "chartType": "donut",
-                  "filter": "",
-                  "headers": []
+                  "id":"permitIssuedByRiskType",
+                  "name":"DSS_BPA_PERMIT_ISSUED_BY_RISK_TYPE",
+                  "code":"",
+                  "chartType":"donut",
+                  "filter":"",
+                  "headers":[
+
+                  ]
                 }
               ]
             },
             {
-              "id": 312,
-              "name": "DSS_BPA_PERMIT_ISSUED_BY_OCCUPANCY_TYPE",
-              "dimensions": {
-                "height": 250,
-                "width": 4
+              "id":312,
+              "name":"DSS_BPA_PERMIT_ISSUED_BY_OCCUPANCY_TYPE",
+              "dimensions":{
+                "height":250,
+                "width":4
               },
-              "vizType": "chart",
+              "vizType":"chart",
               "noUnit": false,
-              "isCollapsible": false,
-              "charts": [
+              "isCollapsible":false,
+              "charts":[
                 {
-                  "id": "permitIssuedByOccupancyType",
-                  "name": "DSS_BPA_PERMIT_ISSUED_BY_OCCUPANCY_TYPE",
-                  "code": "",
-                  "chartType": "donut",
-                  "filter": "",
-                  "headers": []
+                  "id":"permitIssuedByOccupancyType",
+                  "name":"DSS_BPA_PERMIT_ISSUED_BY_OCCUPANCY_TYPE",
+                  "code":"",
+                  "chartType":"donut",
+                  "filter":"",
+                  "headers":[
+
+                  ]
                 }
               ]
             }
+
           ]
         },
         {
@@ -7194,6 +7204,7 @@
                   "filter": "",
                   "headers": []
                 }
+
               ]
             }
           ]
@@ -7625,10 +7636,12 @@
                   "headers": [],
                   "tabName": "SLA"
                 }
+
               ]
             }
           ]
         },
+
         {
           "row": 5,
           "name": "NSS_OBPS_DASHBOARD",
@@ -7676,6 +7689,7 @@
                 }
               ]
             }
+
           ]
         },
         {
@@ -8180,6 +8194,7 @@
                   "headers": [],
                   "tabName": "SLA"
                 }
+
               ]
             }
           ]
@@ -8274,9 +8289,7 @@
                   "name": "NATIONAL_DSS_TODAYS_LAST_YEAR_COLLECTION_WS",
                   "code": "",
                   "chartType": "metric",
-                  "filter": {
-                    "title": "TODAY"
-                  },
+                  "filter": {"title": "TODAY"},
                   "headers": []
                 },
                 {
@@ -8284,9 +8297,7 @@
                   "name": "NSS_WS_TODAYS_COLLECTION",
                   "code": "",
                   "chartType": "metric",
-                  "filter": {
-                    "title": "TODAY"
-                  },
+                  "filter": {"title": "TODAY"},
                   "headers": []
                 },
                 {
@@ -8784,6 +8795,7 @@
                 }
               ]
             }
+
           ]
         }
       ]
@@ -8892,6 +8904,7 @@
           "row": 2,
           "name": "DSS_REVENUE",
           "vizArray": [
+
             {
               "id": 234,
               "name": "DSS_MC_RECEIPTS_BY_PAYMENTMODE",
@@ -8941,6 +8954,7 @@
           "row": 3,
           "name": "DSS_REVENUE",
           "vizArray": [
+
             {
               "id": 235,
               "name": "DSS_MC_CHALLAN_COUNT_BY_STATUS",
@@ -9006,10 +9020,12 @@
             }
           ]
         },
+
         {
           "row": 4,
           "name": "DSS_REVENUE",
           "vizArray": [
+
             {
               "id": 123,
               "name": "DSS_MC_COLLECTION_CATEGORY_WISE",
@@ -9058,6 +9074,7 @@
           "row": 5,
           "name": "DSS_REVENUE",
           "vizArray": [
+
             {
               "id": 236,
               "name": "DSS_MC_REPORT_BY_TENANT",
@@ -9131,6 +9148,7 @@
                   "filter": "",
                   "headers": []
                 },
+
                 {
                   "id": "tradeLicenseTotalCollectionv2",
                   "name": "DSS_TL_TOTAL_COLLECTION",
@@ -9144,9 +9162,7 @@
                   "name": "NATIONAL_DSS_TODAYS_LAST_YEAR_COLLECTION_TL",
                   "code": "",
                   "chartType": "metric",
-                  "filter": {
-                    "title": "TODAY"
-                  },
+                  "filter": {"title": "TODAY"},
                   "headers": []
                 },
                 {
@@ -9154,9 +9170,7 @@
                   "name": "DSS_TODAYS_COLLECTION",
                   "code": "",
                   "chartType": "metric",
-                  "filter": {
-                    "title": "TODAY"
-                  },
+                  "filter": {"title": "TODAY"},
                   "headers": []
                 },
                 {
@@ -9213,6 +9227,7 @@
           "row": 2,
           "name": "DSS_REVENUE",
           "vizArray": [
+
             {
               "id": 127,
               "name": "NATIONAL_DSS_TOP_3_PERFORMING_STATES_SLA_TL",
@@ -9642,6 +9657,7 @@
                   "filter": "",
                   "headers": []
                 },
+
                 {
                   "id": "PropertyTaxRevenuePerHouseholdOverview",
                   "name": "DSS_PT_TAX_REVENUE_PER_HOUSEHOLD_OVERVIEW",
@@ -9666,6 +9682,7 @@
                   "filter": "",
                   "headers": []
                 },
+
                 {
                   "id": "nssPtCitizenServiceDeliveryIndex",
                   "name": "NATIONAL_DSS_PT_CITIZEN_SERVICE_DELIVERY_INDEX",
@@ -9677,10 +9694,9 @@
               ]
             }
           ]
-        },
-        {
+        },{
           "name": "NURT_DASHBOARD",
-          "row": 2,
+          "row":2,
           "vizArray": [
             {
               "id": 1111,
@@ -9702,9 +9718,9 @@
                   "filter": "",
                   "headers": []
                 }
+
               ]
-            },
-            {
+            },{
               "id": 1111,
               "name": "NURT_LIVE_ACTIVE_ULBS",
               "vizType": "collection",
@@ -9715,16 +9731,14 @@
                 "logoUrl": "",
                 "type": "internal"
               },
-              "charts": [
-                {
-                  "id": "nurtliveOnboardedUlbs",
-                  "name": "NURT_LIVE_ACTIVE_ULBS",
-                  "code": "",
-                  "chartType": "bar",
-                  "filter": "",
-                  "headers": []
-                }
-              ]
+              "charts":[{
+                "id": "nurtliveOnboardedUlbs",
+                "name": "NURT_LIVE_ACTIVE_ULBS",
+                "code": "",
+                "chartType": "bar",
+                "filter": "",
+                "headers": []
+              }]
             },
             {
               "id": 1111,
@@ -10211,6 +10225,8 @@
         }
       ]
     },
+
+
     {
       "name": "NATIONAL_DSS_PGR_DASHBOARD",
       "id": "national-pgr",
@@ -10476,6 +10492,7 @@
             }
           ]
         },
+
         {
           "row": 5,
           "name": "NATIONAL_DSS_SERVICE",
@@ -11191,7 +11208,7 @@
       "visualizations": [
         {
           "row": 1,
-          "name": "DSS_REVENUE",
+          "name": "NURT_FINANCE",
           "vizArray": [
             {
               "id": 411,
@@ -11251,11 +11268,11 @@
         },
         {
           "row": 2,
-          "name": "DSS_REVENUE",
+          "name": "NURT_FINANCE_DISTRIBUTIONS",
           "vizArray": [
             {
               "id": 412,
-              "name": "NURT_FINANCE_DISTRIBUTIONS",
+              "name": "Voucher Type Distribution",
               "dimensions": {
                 "height": 350,
                 "width": 6
@@ -11277,7 +11294,7 @@
             },
             {
               "id": 413,
-              "name": "NURT_FINANCE_PAYMENT_MODE",
+              "name": "Payment Mode Distribution",
               "dimensions": {
                 "height": 350,
                 "width": 6
@@ -11301,11 +11318,11 @@
         },
         {
           "row": 3,
-          "name": "DSS_REVENUE",
+          "name": "NURT_FINANCE_TRENDS",
           "vizArray": [
             {
               "id": 414,
-              "name": "NURT_FINANCE_TRENDS",
+              "name": "Monthly Debit vs Credit Trends",
               "dimensions": {
                 "height": 350,
                 "width": 12
@@ -11336,7 +11353,7 @@
       "style": "linear",
       "visualizations": [
         {
-          "row": 1,
+          "row":1,
           "name": "NATIONAL_DSS_REVENUE",
           "vizArray": [
             {
@@ -11410,6 +11427,7 @@
                   "filter": "",
                   "headers": []
                 }
+
               ]
             },
             {
@@ -11435,6 +11453,7 @@
             }
           ]
         },
+
         {
           "row": 2,
           "name": "NATIONAL_DSS_SERVICE",
@@ -11735,6 +11754,7 @@
         }
       ]
     },
+
     {
       "name": "NSS_PTR_DASHBOARD",
       "id": "national-ptr",
@@ -11778,9 +11798,7 @@
                   "name": "NSS_PTR_CURRENT_FY_COLLECTION",
                   "code": "",
                   "chartType": "metric",
-                  "filter": {
-                    "title": "TODAY"
-                  },
+                  "filter": {"title": "TODAY"},
                   "headers": []
                 },
                 {
@@ -12092,9 +12110,7 @@
                   "name": "NSS_ADV_FY_COLLECTION",
                   "code": "",
                   "chartType": "metric",
-                  "filter": {
-                    "title": "TODAY"
-                  },
+                  "filter": {"title": "TODAY"},
                   "headers": []
                 },
                 {
@@ -12110,9 +12126,7 @@
                   "name": "NSS_PREV_YEAR_COLLECTION_TILLDATE_ADV",
                   "code": "",
                   "chartType": "metric",
-                  "filter": {
-                    "title": "TODAY"
-                  },
+                  "filter": {"title": "TODAY"},
                   "headers": []
                 },
                 {
@@ -12244,9 +12258,7 @@
                   "name": "NSS_CHB_APPROVAL_RATE",
                   "code": "",
                   "chartType": "metric",
-                  "filter": {
-                    "title": "TODAY"
-                  },
+                  "filter": {"title": "TODAY"},
                   "headers": []
                 },
                 {
