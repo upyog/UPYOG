@@ -1,7 +1,101 @@
 /* ==========================================================================
-   Noc Module - External Stylesheet (CSP-compliant replacement for inline styles)
+   Noc Module - External Stylesheet
+   CSP-compliant replacement for inline styles
    ========================================================================== */
 
 .noc-subheader-lg {
   font-size: 18px;
+}
+
+/* SearchApplication.jsx ---------------------------------------------------- */
+
+.search-container {
+  width: auto;
+}
+
+.search-container--inbox {
+  margin-left: 24px;
+}
+
+.search-container--form {
+  margin-left: revert;
+}
+
+.search-full-width {
+  width: 100%;
+}
+
+.search-field-error {
+  font-weight: 700;
+  color: rgb(212, 53, 28);
+  padding-left: 8px;
+  margin-top: -20px;
+  font-size: 12px;
+}
+
+.search-submit-wrappers {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding-top: 13%;
+  margin-left: 15px;
+}
+
+.search-clear-all-wrapper {
+  margin-top: 12px;
+  text-align: center;
+  margin-right: 40%;
+}
+
+.clear-all-link {
+  display: inline;
+}
+
+.clear-all-link--mobile {
+  margin: 0;
+}
+
+.action-bar-flex-item {
+  flex: 1;
+}
+
+
+.fn-myapps-container {
+  margin-left: 16px;
+}
+
+
+.fn-myapps-search-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.fn-myapps-field-col {
+  flex: 1;
+}
+
+.fn-myapps-field-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+
+.fn-myapps-text-input {
+  width: 100%;
+  padding: 8px;
+  height: 150%;
+}
+
+
+.fn-myapps-search-btn-wrap {
+  margin-top: 17%;
+}
+
+.fn-myapps-clear-link {
+  margin-left: 30%;
+  margin-top: 10px;
+  display: block;
 }

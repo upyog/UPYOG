@@ -14,6 +14,7 @@ import {
   CardLabelError,
   CardHeader,
   Toast,
+SearchIcon
 } from "@nudmcdgnpm/digit-ui-react-components";
 import GIS from "./GIS";
 import { CurrentLocationIcon, ChooseLocationIcon } from "../utils";
@@ -607,7 +608,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
         isDisabled={false}
       >
         {/* --- SECTION A: Building Specs --- */}
-        <CardHeader style={{ marginBottom: "20px" }}>{t("NOC_PROPERTY_DETAILS_HEADER")}</CardHeader>
+        <CardHeader style={{ marginBottom: "20px" }}>{t("NOC_BUILDINGS_DETAILS_HEADER")}</CardHeader>
         <CardLabel>{t("NOC_NO_OF_BUILDINGS_LABEL")}</CardLabel>
         <RadioButtons
           t={t}
@@ -651,7 +652,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
                 )}
               </div>
 
-              <CardLabel>{t("NOC_PROPERTY_DETAILS_NAME_OF_BUILDING_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+              <CardLabel>{t("NOC_PROPERTY_DETAILS_NAME_OF_BUILDING_LABEL")} <span className="astericColor">*</span></CardLabel>
               <TextInput
                 t={t}
                 type="text"
@@ -667,7 +668,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
               />
               {bldgErrors?.[index] && <CardLabelError>{bldgErrors[index]}</CardLabelError>}
 
-              <CardLabel>{t("NOC_PROPERTY_DETAILS_BUILDING_USAGE_TYPE_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+              <CardLabel>{t("NOC_PROPERTY_DETAILS_BUILDING_USAGE_TYPE_LABEL")} <span className="astericColor">*</span></CardLabel>
               <Dropdown
                 t={t}
                 option={majorCategories}
@@ -676,7 +677,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
                 optionKey="i18nKey"
               />
 
-              <CardLabel>{t("NOC_PROPERTY_DETAILS_BUILDING_USAGE_SUBTYPE_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+              <CardLabel>{t("NOC_PROPERTY_DETAILS_BUILDING_USAGE_SUBTYPE_LABEL")} <span className="astericColor">*</span></CardLabel>
               <Dropdown
                 t={t}
                 option={subUsageOptions}
@@ -686,7 +687,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
                 disabled={!field.buildingUsageType}
               />
 
-              <CardLabel>{t("NOC_PROPERTY_DETAILS_NO_OF_FLOORS_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+              <CardLabel>{t("NOC_PROPERTY_DETAILS_NO_OF_FLOORS_LABEL")} <span className="astericColor">*</span></CardLabel>
               <Dropdown
                 t={t}
                 option={floorsOptions}
@@ -696,7 +697,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
                 placeholder={t("NOC_PROPERTY_DETAILS_NO_OF_FLOORS_PLACEHOLDER")}
               />
 
-              <CardLabel>{t("NOC_PROPERTY_DETAILS_NO_OF_BASEMENTS_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+              <CardLabel>{t("NOC_PROPERTY_DETAILS_NO_OF_BASEMENTS_LABEL")} <span className="astericColor">*</span></CardLabel>
               <Dropdown
                 t={t}
                 option={basementsOptions}
@@ -708,7 +709,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
 
               <CardLabel>
                 {t("NOC_PROPERTY_DETAILS_PLOT_SIZE_LABEL")}
-                {activeUoms.includes("PLOT_SIZE") && <span style={{ color: "red" }}>*</span>}
+                {activeUoms.includes("PLOT_SIZE") && <span className="astericColor">*</span>}
               </CardLabel>
               <TextInput
                 t={t}
@@ -728,7 +729,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
 
               <CardLabel>
                 {t("NOC_PROPERTY_DETAILS_BUILTUP_AREA_LABEL")}
-                {activeUoms.includes("BUILTUP_AREA") && <span style={{ color: "red" }}>*</span>}
+                {activeUoms.includes("BUILTUP_AREA") && <span className="astericColor">*</span>}
               </CardLabel>
               <TextInput
                 t={t}
@@ -748,7 +749,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
 
               <CardLabel>
                 {t("NOC_PROPERTY_DETAILS_HEIGHT_OF_BUILDING_LABEL")}
-                {activeUoms.includes("HEIGHT_OF_BUILDING") && <span style={{ color: "red" }}>*</span>}
+                {activeUoms.includes("HEIGHT_OF_BUILDING") && <span className="astericColor">*</span>}
               </CardLabel>
               <TextInput
                 t={t}
@@ -770,7 +771,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
                 if (!["NO_OF_FLOORS", "NO_OF_BASEMENTS", "PLOT_SIZE", "BUILTUP_AREA", "HEIGHT_OF_BUILDING"].includes(uom)) {
                   return (
                     <React.Fragment key={uom}>
-                      <CardLabel>{t(`NOC_PROPERTY_DETAILS_${uom}_LABEL`)} <span style={{ color: "red" }}>*</span></CardLabel>
+                      <CardLabel>{t(`NOC_PROPERTY_DETAILS_${uom}_LABEL`)} <span className="astericColor">*</span></CardLabel>
                       <TextInput
                         t={t}
                         type="number"
@@ -815,6 +816,15 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
         {/* --- SECTION B: Location Details --- */}
         <CardHeader style={{ marginTop: "30px", marginBottom: "20px" }}>{t("NOC_LOCATION_DETAILS_HEADER")}</CardHeader>
 
+        <CardLabel>{t("NOC_PROPERTY_CITY_LABEL")} <span className="astericColor">*</span></CardLabel>
+        <Dropdown
+          selected={selectedCity}
+          option={allCities}
+          select={handleCityChange}
+          optionKey="code"
+          t={t}
+          placeholder={t("NOC_PROPERTY_CITY_PLACEHOLDER")}
+        />
         <CardLabel>{t("NOC_PROPERTY_ID_LABEL")}</CardLabel>
         <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
           <TextInput
@@ -826,28 +836,11 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
             placeholder={t("NOC_PROPERTY_ID_PLACEHOLDER")}
             style={{ flex: 1 }}
           />
-          <button
-            className="submit-bar"
-            type="button"
-            onClick={handlePropertySearch}
-            style={{ minWidth: "80px", height: "48px", marginTop: "0px" }}
-          >
-            {isSearchingProperty ? t("NOC_SEARCHING") : t("NOC_SEARCH")}
-          </button>
+          <div style={{ position: "relative", right: "45px", marginTop: "12px", cursor:"pointer" }} onClick={handlePropertySearch}> <SearchIcon /> </div>
         </div>
-
-        <CardLabel>{t("NOC_PROPERTY_CITY_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
-        <Dropdown
-          selected={selectedCity}
-          option={allCities}
-          select={handleCityChange}
-          optionKey="code"
-          t={t}
-          placeholder={t("NOC_PROPERTY_CITY_PLACEHOLDER")}
-        />
         {fieldErrors.city && <CardLabelError>{fieldErrors.city}</CardLabelError>}
 
-        <CardLabel>{t("NOC_PROPERTY_DETAILS_MOHALLA_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+        <CardLabel>{t("NOC_PROPERTY_DETAILS_MOHALLA_LABEL")} <span className="astericColor">*</span></CardLabel>
         <Dropdown
           selected={selectedLocality}
           option={fetchedLocalities || []}
@@ -917,31 +910,29 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
             placeholder={t("NOC_PROPERTY_DETAILS_GIS_CORD_PLACEHOLDER")}
             style={{ flex: 1 }}
           />
-          <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+          <div style={{ display: "flex", gap:"10px", transform: "translateY(-18px)" }}>
             <LinkButton
               label={
-                <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                <div>
                   <span>{t("NOC_CURRENT_LOCATION")}</span>
-                  <CurrentLocationIcon />
                 </div>
               }
               onClick={fetchCurrentLocation}
-              style={{ color: "#FE7A51", cursor: "pointer", fontSize: "14px", fontWeight: "bold", padding: "5px 0px" }}
+              style={{ color: "#FE7A51", cursor: "pointer", fontSize: "14px", fontWeight: "bold" }}
             />
             <LinkButton
               label={
-                <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                <div>
                   <span>{t("NOC_CHOOSE_LOCATION")}</span>
-                  <ChooseLocationIcon />
                 </div>
               }
               onClick={() => setIsOpen(true)}
-              style={{ color: "#FE7A51", cursor: "pointer", fontSize: "14px", fontWeight: "bold", padding: "5px 0px" }}
+              style={{ color: "#FE7A51", cursor: "pointer", fontSize: "14px", fontWeight: "bold" }}
             />
           </div>
         </div>
 
-        <CardLabel>{t("NOC_PROPERTY_DETAILS_FIRESTATION_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+        <CardLabel>{t("NOC_PROPERTY_DETAILS_FIRESTATION_LABEL")} <span className="astericColor">*</span></CardLabel>
         <Dropdown
           selected={selectedFireStation}
           option={filteredFirestations}

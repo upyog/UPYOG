@@ -20,7 +20,6 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
-import { convertToFireNOCPayload } from "../../../utils";
 
 const CheckPage = ({ onSubmit, value }) => {
   const { t } = useTranslation();
@@ -31,13 +30,6 @@ const CheckPage = ({ onSubmit, value }) => {
   const navigate = useNavigate();
   const { path: modulePath } = Digit.Hooks.useModuleBasePath();
   const routeLink = `${modulePath}/new-application`;
-
-  useEffect(() => {
-    localStorage.setItem("NocAppSubmitEnabled", "true");
-    return () => {
-      localStorage.setItem("NocAppSubmitEnabled", "false");
-    };
-  }, []);
 
   const routeTo = (jumpTo) => {
     navigate(jumpTo);
@@ -53,7 +45,6 @@ const CheckPage = ({ onSubmit, value }) => {
   const location = property?.location?.property;
   const tenantId = value?.location?.city?.code || Digit.ULBService.getCurrentTenantId();
   const applicationNumber = value?.applicationNumber || value?.existingApplication?.fireNOCDetails?.applicationNumber;
-
   const { data: billData, isLoading: isBillLoading } = Digit.Hooks.useFetchBillsForBuissnessService(
     {
       tenantId,
@@ -64,6 +55,7 @@ const CheckPage = ({ onSubmit, value }) => {
       enabled: !!applicationNumber
     }
   );
+
 
   const bill = billData?.Bill?.[0];
   const taxHeadEstimates = bill?.billDetails?.[0]?.billAccountDetails?.map(acc => ({
@@ -118,7 +110,7 @@ const CheckPage = ({ onSubmit, value }) => {
               label={t("NOC_TYPE_LABEL")}
               text={nocType?.nocType ? t(`NOC_TYPE_${nocType.nocType}`) : t("CS_NA")}
             />
-            {nocType?.nocType === "PROVISIONAL" && (
+            {nocType?.nocType === "NEW" && (
               <Row
                 label={t("NOC_PROVISIONAL_NUMBER_LABEL")}
                 text={nocType?.provisionalNocNumber || t("CS_NA")}
@@ -172,11 +164,9 @@ const CheckPage = ({ onSubmit, value }) => {
                 <Row label={t("NOC_OWNER_NAME_LABEL")} text={owner.name || t("CS_NA")} />
                 <Row label={t("NOC_OWNER_MOBILE_LABEL")} text={owner.mobileNumber || t("CS_NA")} />
                 <Row label={t("NOC_OWNER_FATHER_LABEL")} text={owner.fatherOrHusbandName || t("CS_NA")} />
-                <Row
-                  label={t("NOC_OWNER_RELATIONSHIP_LABEL")}
-                  text={owner.relationship?.label || owner.relationship || t("CS_NA")}
+                <Row label={t("NOC_OWNER_RELATIONSHIP_LABEL")} text={owner.relationship?.label || t("CS_NA")}
                 />
-                <Row label={t("NOC_OWNER_GENDER_LABEL")} text={owner.gender?.label || owner.gender || t("CS_NA")} />
+                <Row label={t("NOC_OWNER_GENDER_LABEL")} text={owner.gender?.label || t("CS_NA")} />
                 <Row label={t("NOC_OWNER_DOB_LABEL")} text={owner.dob || t("CS_NA")} />
                 <Row label={t("NOC_OWNER_CORR_ADDR_LABEL")} text={owner.correspondenceAddress || t("CS_NA")} />
               </StatusTable>
@@ -218,7 +208,7 @@ const CheckPage = ({ onSubmit, value }) => {
                 {Object.keys(building?.uomsMap || {}).map((uomKey) => (
                   <Row
                     key={uomKey}
-                    label={t(`NOC_UOM_${uomKey.toUpperCase()}`)}
+                    label={t(`${uomKey.toUpperCase()}`)}
                     text={building.uomsMap[uomKey] || t("CS_NA")}
                   />
                 ))}
@@ -237,13 +227,13 @@ const CheckPage = ({ onSubmit, value }) => {
             />
           </CardHeader>
           <StatusTable>
-            <Row label={t("NOC_LOCATION_CITY_LABEL")} text={location?.city?.name || t("CS_NA")} />
+            <Row label={t("NOC_LOCATION_CITY_LABEL")} text={location?.city?.name ||location?.city?.code || t("CS_NA")} />
             <Row label={t("NOC_LOCATION_MOHALLA_LABEL")} text={location?.locality?.name || t("CS_NA")} />
             <Row label={t("NOC_LOCATION_PLOT_NO_LABEL")} text={location?.plotNo || t("CS_NA")} />
             <Row label={t("NOC_LOCATION_STREET_LABEL")} text={location?.streetName || t("CS_NA")} />
             <Row label={t("NOC_LOCATION_BUILDING_LABEL")} text={location?.buildingName || t("CS_NA")} />
             <Row label={t("NOC_LOCATION_PINCODE_LABEL")} text={location?.pincode || t("CS_NA")} />
-            <Row label={t("NOC_LOCATION_FIRESTATION_LABEL")} text={location?.fireStation?.name || location?.fireStation || t("CS_NA")} />
+            <Row label={t("NOC_LOCATION_FIRESTATION_LABEL")} text={t(location?.fireStation?.code || location?.fireStation?.name || location?.fireStation) || t("CS_NA")} />
             {location?.propertyId && <Row label={t("NOC_LOCATION_PROPERTY_ID_LABEL")} text={location.propertyId} />}
             {location?.latitude && <Row label={t("NOC_LOCATION_LATITUDE_LABEL")} text={`${location.latitude}`} />}
             {location?.longitude && <Row label={t("NOC_LOCATION_LONGITUDE_LABEL")} text={`${location.longitude}`} />}
@@ -273,11 +263,7 @@ const CheckPage = ({ onSubmit, value }) => {
             ))}
           </StatusTable>
         </div>
-      </Card>
-
-
-
-      <div style={{ marginTop: "24px", marginBottom: "24px" }}>
+        <div style={{ marginTop: "24px", marginBottom: "24px" }}>
         <CheckBox
           label={t("NOC_FINAL_DECLARATION_MESSAGE")}
           onChange={setdeclarationhandler}
@@ -285,8 +271,9 @@ const CheckPage = ({ onSubmit, value }) => {
           styles={{ height: "auto" }}
         />
       </div>
-
       <SubmitBar label={t("CS_COMMON_SUBMIT")} onSubmit={onSubmit} disabled={!agree} />
+      </Card>
+
     </React.Fragment>
   );
 };

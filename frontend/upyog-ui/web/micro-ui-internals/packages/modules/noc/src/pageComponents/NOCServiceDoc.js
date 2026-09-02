@@ -13,6 +13,11 @@ const NOCServiceDoc = ({ t, config, onSelect, userType, formData }) => {
   sessionStorage.removeItem("docReqScreenByBack");
   const stateId = Digit.ULBService.getStateId();
 
+  React.useEffect(() => {
+    Digit.SessionStorage.del("NOC_CREATE_APPLICATION");
+    Digit.SessionStorage.del("NOC_SUCCESSFUL_APPLICATION");
+  }, []);
+
   const { isLoading, data: docs } = Digit.Hooks.useCustomMDMS(
     stateId,
     "FireNoc",
@@ -27,9 +32,9 @@ const NOCServiceDoc = ({ t, config, onSelect, userType, formData }) => {
   return (
     <React.Fragment>
       <Card>
-        <CardHeader>{t("NOC_REQ_DOCS_HEADER", "Required Documents-Fire NOC")}</CardHeader>
+        <CardHeader>{t("NOC_REQ_DOCS_HEADER")}</CardHeader>
         <div>
-          <CardText style={{ color: "red" }}>{t("NOC_PDF_AND_JPG_BOTH_FORMAT_ACCEPTED_IN_DOCUMENT_UPLOAD", "PDF, JPG, PNG formats are accepted")}</CardText>
+          <CardText className="astericColor">{t("NOC_PDF_AND_JPG_BOTH_FORMAT_ACCEPTED_IN_DOCUMENT_UPLOAD")}</CardText>
 
           {isLoading && <Loader />}
           {Array.isArray(docs)

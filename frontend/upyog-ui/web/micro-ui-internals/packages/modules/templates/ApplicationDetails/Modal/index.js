@@ -13,6 +13,7 @@ import EWActionModal from "./EWActionModal";
 import SVActionModal from "./SVActionModal";
 import WTActionModal from "./WTActionModal";
 import GCActionModal from "./GCActionModal";
+import FireNocActionModal from "./FireNocActionModal";
 
 
 
@@ -67,9 +68,11 @@ const ActionModal = (props) => {
   if (props?.businessService.includes("treePruning")) {
     return <WTActionModal {...props} />;
   }
-  
   if (props?.businessService.includes("garbage-service")) {
     return <GCActionModal {...props} />;
+  }
+  if (props?.businessService.includes("FIRENOC")) {
+    return <FireNocActionModal {...props} />;
   }
   
   // return <FSMActionModal {...props} />;

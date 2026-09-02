@@ -241,7 +241,7 @@ const NocLocationDetails = ({ t, config, onSelect, userType, formData }) => {
         </LabelFieldPair>
 
         <LabelFieldPair>
-          <CardLabel className="card-label-smaller">{t("NOC_PROPERTY_CITY_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+          <CardLabel className="card-label-smaller">{t("NOC_PROPERTY_CITY_LABEL")} <span className="astericColor">*</span></CardLabel>
           <Dropdown
             className="form-field"
             selected={selectedCity}
@@ -255,7 +255,7 @@ const NocLocationDetails = ({ t, config, onSelect, userType, formData }) => {
         {fieldErrors.city && <CardLabelError>{fieldErrors.city}</CardLabelError>}
 
         <LabelFieldPair>
-          <CardLabel className="card-label-smaller">{t("NOC_PROPERTY_DETAILS_MOHALLA_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+          <CardLabel className="card-label-smaller">{t("NOC_PROPERTY_DETAILS_MOHALLA_LABEL")} <span className="astericColor">*</span></CardLabel>
           <Dropdown
             className="form-field"
             selected={selectedLocality}
@@ -325,7 +325,7 @@ const NocLocationDetails = ({ t, config, onSelect, userType, formData }) => {
         {fieldErrors.pincode && <CardLabelError>{fieldErrors.pincode}</CardLabelError>}
 
         <LabelFieldPair>
-          <CardLabel className="card-label-smaller">{t("NOC_PROPERTY_DETAILS_FIRESTATION_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+          <CardLabel className="card-label-smaller">{t("NOC_PROPERTY_DETAILS_FIRESTATION_LABEL")} <span className="astericColor">*</span></CardLabel>
           <Dropdown
             className="form-field"
             selected={selectedFireStation}
@@ -379,7 +379,7 @@ const NocLocationDetails = ({ t, config, onSelect, userType, formData }) => {
           </button>
         </div>
 
-        <CardLabel>{t("NOC_PROPERTY_CITY_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+        <CardLabel>{t("NOC_PROPERTY_CITY_LABEL")} <span className="astericColor">*</span></CardLabel>
         <Dropdown
           selected={selectedCity}
           option={allCities}
@@ -390,7 +390,7 @@ const NocLocationDetails = ({ t, config, onSelect, userType, formData }) => {
         />
         {fieldErrors.city && <CardLabelError>{fieldErrors.city}</CardLabelError>}
 
-        <CardLabel>{t("NOC_PROPERTY_DETAILS_MOHALLA_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+        <CardLabel>{t("NOC_PROPERTY_DETAILS_MOHALLA_LABEL")} <span className="astericColor">*</span></CardLabel>
         <Dropdown
           selected={selectedLocality}
           option={fetchedLocalities || []}
@@ -472,7 +472,7 @@ const NocLocationDetails = ({ t, config, onSelect, userType, formData }) => {
           />
         </div>
 
-        <CardLabel>{t("NOC_PROPERTY_DETAILS_FIRESTATION_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+        <CardLabel>{t("NOC_PROPERTY_DETAILS_FIRESTATION_LABEL")} <span className="astericColor">*</span></CardLabel>
         <Dropdown
           selected={selectedFireStation}
           option={filteredFirestations}

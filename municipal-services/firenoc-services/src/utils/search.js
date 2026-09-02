@@ -21,6 +21,7 @@ const fireNOCRowMapper = async (row, mapper = {}, header) => {
   fireNoc.provisionFireNOCNumber = row.provisionfirenocnumber;
   fireNoc.oldFireNOCNumber = row.oldfirenocnumber;
   fireNoc.dateOfApplied = intConversion(row.dateofapplied);
+  fireNoc.applicationNumber = row.applicationnumber;
   let auditDetails = {
     createdBy: row.createdby,
     lastModifiedBy: row.lastmodifiedby,

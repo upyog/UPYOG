@@ -379,6 +379,8 @@ import useGCApplicationDetail from "./gc/useGCApplicationDetail";
 import useTenantsGC from "./gc/useTenants";
 import useGCDocumentSearch from "./gc/useGCDocumentSearch";
 import useGCApplicationAction from "./gc/useGCApplicationAction";
+import useFireNocDetails from "./noc/useFireNocDetails";
+import useFireNocApplicationAction from "./noc/useFireNocApplicationAction";
 
 const pgr = {
   useComplaintDetails,
@@ -605,6 +607,8 @@ const noc = {
   useNOCSearchApplication,
   useFireNOCSearch,
   useFireNOCAPI,
+  useFireNocDetails,
+  useFireNocApplicationAction
 };
 
 const challangeneration = {

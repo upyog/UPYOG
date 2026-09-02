@@ -529,4 +529,40 @@ export const filterFunctions = {
     return { searchFilters, workflowFilters, limit, offset, sortOrder };
 
 },
+
+// payload it will send beloe details in the inbox api whichever condition gets true
+FireNoc: (filtersArg) => {
+
+    let { uuid } = Digit.UserService.getUser()?.info || {};
+
+    const searchFilters = {};
+    const workflowFilters = {};
+
+
+    const { applicationNumber, mobileNumber, limit, offset, total, applicationStatus, services,sortOrder,assignee } = filtersArg || {};
+
+    if (filtersArg?.uuid && filtersArg?.uuid.code === "ASSIGNED_TO_ME") {
+      workflowFilters.assignee = uuid;
+    }
+    if (assignee === "ASSIGNED_TO_ME") {
+    workflowFilters.assignee = uuid;
+  }
+    if (mobileNumber) {
+      searchFilters.mobileNumber = mobileNumber;
+    }
+    if(applicationNumber) {   
+      searchFilters.applicationNumber = applicationNumber;
+    }
+    if (applicationStatus?.length) {
+      workflowFilters.status = applicationStatus;
+    }
+    if (services) {
+      workflowFilters.businessService = services;
+    }
+
+    searchFilters["sortOrder"] = ["DESC"];
+    workflowFilters["moduleName"] = "fireNoc";
+    
+    return { searchFilters, workflowFilters, limit, offset, sortOrder };
+  },
 };

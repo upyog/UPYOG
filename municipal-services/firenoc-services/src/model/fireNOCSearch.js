@@ -18,7 +18,7 @@ const FireNOCSearchRequest = {
     applicationNumber: {
       type: "string",
       minLength: 2,
-      maxLength: 64
+      maxLength: 1024
     },
     fireNOCNumber: {
       type: "string",

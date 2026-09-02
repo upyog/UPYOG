@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import SearchApplication from "./SearchApplication";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Response from "./Response";
+import SearchApp from "./SearchApp";
 
 const NOCBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
@@ -46,9 +47,19 @@ const EmployeeApp = ({ path }) => {
   const { t } = useTranslation();
   const ApplicationOverview = Digit?.ComponentRegistryService?.getComponent("NOCApplicationOverview");
   const Inbox = Digit?.ComponentRegistryService?.getComponent("NOCInbox");
-
+  const FireNocInbox = Digit?.ComponentRegistryService?.getComponent("FireNocInbox");
+  const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
   const isResponse = window.location.href.includes("/response");
   const isMobile = window.Digit.Utils.browser.isMobile();
+  const inboxInitialState = {
+    searchParams: {
+      uuid: { code: "ASSIGNED_TO_ALL", name: "ES_INBOX_ASSIGNED_TO_ALL" },
+      services: ["FIRENOC"],
+      applicationStatus: [],
+      locality: [],
+
+    },
+  };
 
   return (
     <Fragment>
@@ -56,11 +67,28 @@ const EmployeeApp = ({ path }) => {
         <NOCBreadCrumbs location={location} />
       </div> : null} 
       <Routes>
+        <Route
+            path= "firenoc/inbox/*"
+            element={
+              <PrivateRoute>
+                <FireNocInbox
+                  useNewInboxAPI={true}
+                  businessService="FIRENOC"
+                  filterComponent="FIRENOC_INBOX_FILTER"
+                  initialStates={inboxInitialState}
+                  isInbox={true}
+                  parentRoute={path}
+                />
+              </PrivateRoute>
+            }
+          />
         <Route path="inbox/application-overview/:id" element={<PrivateRoute><ApplicationOverview /></PrivateRoute>} />
         <Route path="search/application-overview/:id" element={<PrivateRoute><ApplicationOverview /></PrivateRoute>} />
         <Route path="inbox" element={<PrivateRoute><Inbox parentRoute={path} /></PrivateRoute>} />
         <Route path="search" element={<PrivateRoute><SearchApplication parentRoute={path} /></PrivateRoute>} />
         <Route path="response" element={<PrivateRoute><Response /></PrivateRoute>} />
+        <Route path= "firenoc/application-overview/:id" element={<PrivateRoute><ApplicationDetails /></PrivateRoute>} />
+        <Route path= "firenoc/my-applications/*" element={<PrivateRoute><SearchApp /></PrivateRoute>} />
       </Routes>
     </Fragment>
   );

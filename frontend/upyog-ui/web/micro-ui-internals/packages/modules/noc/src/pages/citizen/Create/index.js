@@ -22,6 +22,14 @@ const CreateNoc = ({ parentRoute }) => {
   const createMutation = Digit.Hooks.noc.useFireNOCAPI(tenantId, true);
   const updateMutation = Digit.Hooks.noc.useFireNOCAPI(tenantId, false);
 
+  React.useEffect(() => {
+    if (pathname.includes("document-required")) {
+      Digit.SessionStorage.del("NOC_CREATE_APPLICATION");
+      Digit.SessionStorage.del("NOC_SUCCESSFUL_APPLICATION");
+      clearParams();
+    }
+  }, [pathname]);
+
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("NOCCheckPage");
   const NocAcknowledgement = Digit?.ComponentRegistryService?.getComponent("NOCAcknowledgement");
 

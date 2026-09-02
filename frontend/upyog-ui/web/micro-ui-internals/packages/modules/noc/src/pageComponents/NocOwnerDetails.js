@@ -14,6 +14,7 @@ import {
   Loader,
   CardLabelError,
   Toast,
+  MobileNumber,
 } from "@nudmcdgnpm/digit-ui-react-components";
 
 const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
@@ -339,7 +340,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
 
   /** Updates text input field in owner reducer and triggers real-time field validation. */
   function handleTextInputField(index, e, key) {
-    const val = e.target.value;
+    const val = typeof e === "object" && e?.target ? e.target.value : e;
     dispatch({
       type: "EDIT_CURRENT_OWNER_PROPERTY",
       payload: {
@@ -468,7 +469,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
     <React.Fragment>
 
       <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={false}>
-        <CardLabel>{t("NOC_APPLICANT_TYPE_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+        <CardLabel>{t("NOC_APPLICANT_TYPE_LABEL")} <span className="astericColor">*</span></CardLabel>
         <Dropdown
           selected={selectedMajorCategory}
           option={ownershipData?.major || []}
@@ -479,7 +480,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
           style={{ marginBottom: "20px" }}
         />
 
-        <CardLabel>{t("NOC_APPLICANT_SUBTYPE_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+        <CardLabel>{t("NOC_APPLICANT_SUBTYPE_LABEL")} <span className="astericColor">*</span></CardLabel>
         <Dropdown
           selected={selectedSubCategory}
           option={filteredSubCategories || []}
@@ -494,7 +495,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
           <div>
             {formState?.map((field, index) => (
               <div key={index}>
-                <CardLabel>{t("NOC_INSTITUTION_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+                <CardLabel>{t("NOC_INSTITUTION_LABEL")} <span className="astericColor">*</span></CardLabel>
                 <TextInput
                   t={t}
                   type="text"
@@ -509,7 +510,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                   }}
                 />
                 {fieldErrors?.[index]?.institutionName && <CardLabelError>{fieldErrors[index].institutionName}</CardLabelError>}
-                <CardLabel>{t("NOC_TELEPHONE_NUMBER_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+                <CardLabel>{t("NOC_TELEPHONE_NUMBER_LABEL")} <span className="astericColor">*</span></CardLabel>
                 <div className="field-container">
                   <span className="employee-card-input employee-card-input--front">+91</span>
                   <TextInput
@@ -528,7 +529,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 </div>
                 {fieldErrors?.[index]?.telephoneNumber && <CardLabelError>{fieldErrors[index].telephoneNumber}</CardLabelError>}
                 <CardHeader style={{ marginTop: "20px" }}>{t("NOC_AUTHORIZED_PERSON_DETAILS")}</CardHeader>
-                <CardLabel>{t("NOC_AUTHORIZED_PERSON_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+                <CardLabel>{t("NOC_AUTHORIZED_PERSON_LABEL")} <span className="astericColor">*</span></CardLabel>
                 <TextInput
                   t={t}
                   type="text"
@@ -543,7 +544,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                   }}
                 />
                 {fieldErrors?.[index]?.name && <CardLabelError>{fieldErrors[index].name}</CardLabelError>}
-                <CardLabel>{t("NOC_INSTITUTION_DESIGNATION_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+                <CardLabel>{t("NOC_INSTITUTION_DESIGNATION_LABEL")} <span className="astericColor">*</span></CardLabel>
                 <TextInput
                   t={t}
                   type="text"
@@ -558,7 +559,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                   }}
                 />
                 {fieldErrors?.[index]?.institutionDesignation && <CardLabelError>{fieldErrors[index].institutionDesignation}</CardLabelError>}
-                <CardLabel>{t("NOC_AUTHORIZED_PERSON_MOBILE_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+                <CardLabel>{t("NOC_AUTHORIZED_PERSON_MOBILE_LABEL")} <span className="astericColor">*</span></CardLabel>
                 <div className="field-container">
                   <span className="employee-card-input employee-card-input--front">+91</span>
                   <TextInput
@@ -576,7 +577,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                   />
                 </div>
                 {fieldErrors?.[index]?.mobileNumber && <CardLabelError>{fieldErrors[index].mobileNumber}</CardLabelError>}
-                <CardLabel>{t("NOC_AUTHORIZED_PERSON_EMAIL_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+                <CardLabel>{t("NOC_AUTHORIZED_PERSON_EMAIL_LABEL")} <span className="astericColor">*</span></CardLabel>
                 <TextInput
                   t={t}
                   type="text"
@@ -591,7 +592,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                   }}
                 />
                 {fieldErrors?.[index]?.emailId && <CardLabelError>{fieldErrors[index].emailId}</CardLabelError>}
-                <CardLabel>{t("NOC_OFFICIAL_CORRESPONDENCE_ADDRESS_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+                <CardLabel>{t("NOC_OFFICIAL_CORRESPONDENCE_ADDRESS_LABEL")} <span className="astericColor">*</span></CardLabel>
                 <TextInput
                   t={t}
                   type="text"
@@ -643,11 +644,8 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                   )}
                 </div>
 
-                <CardLabel>{t("NOC_APPLICANT_MOBILE_NO_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
-                <div className="field-container">
-                  <span className="employee-card-input employee-card-input--front">+91</span>
-                  <TextInput
-                    type="text"
+                <CardLabel>{t("NOC_APPLICANT_MOBILE_NO_LABEL")} <span className="astericColor">*</span></CardLabel>
+                  <MobileNumber
                     t={t}
                     name="mobileNumber"
                     value={field.mobileNumber || ""}
@@ -659,10 +657,9 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                       title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID"),
                     }}
                   />
-                </div>
                 {fieldErrors?.[index]?.mobileNumber && <CardLabelError>{fieldErrors[index].mobileNumber}</CardLabelError>}
 
-                <CardLabel>{t("NOC_APPLICANT_NAME_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+                <CardLabel>{t("NOC_APPLICANT_NAME_LABEL")} <span className="astericColor">*</span></CardLabel>
                 <TextInput
                   t={t}
                   type="text"
@@ -688,7 +685,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                   onSelect={(val) => handleSelectorInput(index, val, "gender")}
                 />
 
-                <CardLabel>{t("NOC_APPLICANT_DOB_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+                <CardLabel>{t("NOC_APPLICANT_DOB_LABEL")} <span className="astericColor">*</span></CardLabel>
                 <TextInput
                   t={t}
                   type="date"
@@ -718,7 +715,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 />
                 {fieldErrors?.[index]?.emailId && <CardLabelError>{fieldErrors[index].emailId}</CardLabelError>}
 
-                <CardLabel>{t("NOC_APPLICANT_FATHER_HUSBAND_NAME_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+                <CardLabel>{t("NOC_APPLICANT_FATHER_HUSBAND_NAME_LABEL")} <span className="astericColor">*</span></CardLabel>
                 <TextInput
                   t={t}
                   type="text"
@@ -734,7 +731,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 />
                 {fieldErrors?.[index]?.fatherOrHusbandName && <CardLabelError>{fieldErrors[index].fatherOrHusbandName}</CardLabelError>}
 
-                <CardLabel>{t("NOC_APPLICANT_RELATIONSHIP_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+                <CardLabel>{t("NOC_APPLICANT_RELATIONSHIP_LABEL")} <span className="astericColor">*</span></CardLabel>
                 <RadioButtons
                   t={t}
                   options={relationshipOptions}
@@ -759,7 +756,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 />
                 {fieldErrors?.[index]?.pan && <CardLabelError>{fieldErrors[index].pan}</CardLabelError>}
 
-                <CardLabel>{t("NOC_APPLICANT_CORRESPONDENCE_ADDRESS_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+                <CardLabel>{t("NOC_APPLICANT_CORRESPONDENCE_ADDRESS_LABEL")} <span className="astericColor">*</span></CardLabel>
                 <TextInput
                   t={t}
                   type="text"
@@ -775,7 +772,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                 />
                 {fieldErrors?.[index]?.correspondenceAddress && <CardLabelError>{fieldErrors[index].correspondenceAddress}</CardLabelError>}
 
-                <CardLabel>{t("NOC_SPECIAL_APPLICANT_CATEGORY_LABEL")} <span style={{ color: "red" }}>*</span></CardLabel>
+                <CardLabel>{t("NOC_SPECIAL_APPLICANT_CATEGORY_LABEL")} <span className="astericColor">*</span></CardLabel>
                 <Dropdown
                   t={t}
                   option={specialCategories}
