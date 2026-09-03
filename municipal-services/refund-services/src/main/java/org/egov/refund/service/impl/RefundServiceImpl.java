@@ -104,7 +104,7 @@ public class RefundServiceImpl implements RefundService {
 		refundRepository.save(refund);
 
 		RefundActionRequest actionRequest = RefundActionRequest.builder().action(RefundConstants.STATUS_INITIATE)
-				.userId(userId).RequestInfo(request.getRequestInfo()).build();
+				.userId(userId).requestInfo(request.getRequestInfo()).build();
 
 		RefundResponse response = processInternal(refundId, actionRequest);
 
@@ -151,7 +151,7 @@ public class RefundServiceImpl implements RefundService {
 				createSystemRequestInfo();
 				RefundActionRequest nextActionRequest = RefundActionRequest.builder()
 						.action(RefundConstants.ACTION_REFUND_INITIATE)
-						.userId(systemRequestInfo.getUserInfo().getUuid()).RequestInfo(request.getRequestInfo())
+						.userId(systemRequestInfo.getUserInfo().getUuid()).requestInfo(request.getRequestInfo())
 						.build();
 
 				RefundResponse response = processInternal(refund.getId(), nextActionRequest);
@@ -318,7 +318,7 @@ public class RefundServiceImpl implements RefundService {
 		if (RefundConstants.ACTION_CREATE_REQUEST.equals(transition.getAction())) {
 
 			RefundRequest refundRequest = RefundRequest.builder().refund(updatedRefund)
-					.RequestInfo(createSystemRequestInfo()).build();
+					.requestInfo(createSystemRequestInfo()).build();
 
 			financeService.processRefund(refundRequest);
 		}
@@ -342,7 +342,7 @@ public class RefundServiceImpl implements RefundService {
 				: RefundConstants.ACTION_REFUND_INITIATE;
 
 		RefundActionRequest nextActionRequest = RefundActionRequest.builder().action(nextAction).userId(userId)
-				.RequestInfo(requestInfo).build();
+				.requestInfo(requestInfo).build();
 
 		return processInternal(refund.getId(), nextActionRequest);
 	}
