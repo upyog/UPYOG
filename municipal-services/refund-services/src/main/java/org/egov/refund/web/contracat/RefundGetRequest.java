@@ -12,7 +12,7 @@ import org.egov.common.contract.request.RequestInfo;
 @AllArgsConstructor
 public class RefundGetRequest {
 
-    private RequestInfo requestInfo;
+    private RequestInfo RequestInfo;
 
     private String tenantId;
 

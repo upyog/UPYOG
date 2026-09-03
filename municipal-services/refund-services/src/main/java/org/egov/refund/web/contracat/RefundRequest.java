@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RefundRequest {
 
-	private RequestInfo requestInfo;
+	private RequestInfo RequestInfo;
 
 	private Refund refund;
 	

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RefundSearchRequest {
 	
-	private RequestInfo requestInfo;
+	private RequestInfo RequestInfo;
 
     private String tenantId;
 
