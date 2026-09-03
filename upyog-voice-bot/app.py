@@ -531,67 +531,37 @@ async def generate_edge_tts(text, voice, output_path):
     communicate = edge_tts.Communicate(text, voice)
     await communicate.save(output_path)
 
+# ── Pre-compiled Pipeline for Fast TTS Text Sanitization ─────────────────────
+_TTS_REGEX_PIPELINE = [
+    (re.compile(r'<ui-[^>]*>'), ''),                                                       # UI tags
+    (re.compile(r'\[(?:CANCEL_DRAFT|RELOAD|CLOSE|SUBMIT|OPTION|seed:\d+)\]', re.I), ''),      # Internal commands
+    (re.compile(r'```[\s\S]*?```'), ''),                                                   # Code blocks
+    (re.compile(r'`([^`]+)`'), r'\1'),                                                     # Inline code
+    (re.compile(r'!\[[^\]]*\]\([^\)]+\)'), ''),                                            # Images
+    (re.compile(r'\[([^\]]+)\]\([^\)]+\)'), r'\1'),                                        # Links
+    (re.compile(r'(?m)^\s*(?:#{1,6}|[-*_]{3,}|>\s*|[-*+]\s+)\s*'), ''),                   # Headers, HRs, quotes, bullets
+    (re.compile(r'[*~_]{1,3}([^*~_]+)[*~_]{1,3}'), r'\1'),                                 # Bold / Italic / Strike
+    (re.compile(r'([A-Za-z0-9]+)[-_]([A-Za-z0-9]+)'), r'\1 \2'),                           # Hyphenated IDs/Dates -> Space (no "dash dash")
+    (re.compile(r'[\U00010000-\U0010ffff\U00002600-\U000027BF\U0000FE00-\U0000FE0F|•–—\-\#\*~]'), ' '), # Emojis, pipes & symbols
+    (re.compile(r'\s+'), ' ')                                                              # Normalize whitespace
+]
+
+_TTS_BRANDING_COMPILED = {
+    "hi": [(re.compile(r'\bUPYOG\b|Upyog', re.I), 'उपयोग'), (re.compile(r'\bNUDM\b'), 'एन.यू.डी.एम.'), (re.compile(r'\bMoHUA\b'), 'मोहुआ')],
+    "en": [(re.compile(r'\bUPYOG\b|Upyog', re.I), 'Oop-yog'), (re.compile(r'\bNUDM\b'), 'N-U-D-M'), (re.compile(r'\bMoHUA\b'), 'Mo-hua')]
+}
+
 def clean_text_for_tts(text: str, language_code: str = "en") -> str:
-    """Strip all markdown formatting, headings, bullet marks, emojis and symbols for natural TTS speech."""
+    """Fast, pre-compiled markdown and symbol sanitizer for natural voice synthesis."""
     if not text:
         return ""
 
-    # 1. Remove code blocks ```...```
-    text = re.sub(r'```[\s\S]*?```', '', text)
-    # 2. Inline code `...`
-    text = re.sub(r'`([^`]+)`', r'\1', text)
-    # 3. Markdown links [text](url) -> text
-    text = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', text)
-    # 4. Markdown images ![alt](url) -> ''
-    text = re.sub(r'\!\[([^\]]*)\]\([^\)]+\)', '', text)
+    for pattern, replacement in _TTS_REGEX_PIPELINE:
+        text = pattern.sub(replacement, text)
 
-    # 5. Remove markdown headings (# Heading, ## Heading, ### Heading...)
-    text = re.sub(r'(?m)^\s*#{1,6}\s*', '', text)
-    # Strip any remaining stray hash characters so TTS never says 'hash'
-    text = text.replace('#', '')
+    for pattern, replacement in _TTS_BRANDING_COMPILED.get(language_code, _TTS_BRANDING_COMPILED["en"]):
+        text = pattern.sub(replacement, text)
 
-    # 6. Remove horizontal rules (---, ***, ___)
-    text = re.sub(r'(?m)^\s*[-*_]{3,}\s*$', '', text)
-
-    # 7. Remove blockquotes (> quote)
-    text = re.sub(r'(?m)^\s*>\s*', '', text)
-
-    # 8. Remove bold / italic / strikethrough (**, *, __, _, ~~)
-    text = re.sub(r'\*{1,3}([^*]+)\*{1,3}', r'\1', text)
-    text = re.sub(r'_{1,3}([^_]+)_{1,3}', r'\1', text)
-    text = re.sub(r'~~([^~]+)~~', r'\1', text)
-    text = text.replace('*', '').replace('~', '')
-
-    # 9. Clean bullet markers at start of lines (- item, * item, + item)
-    text = re.sub(r'(?m)^\s*[-*+]\s+', '', text)
-
-    # 10. Replace table pipes | with a comma/space
-    text = text.replace('|', ', ')
-
-    # 11. Normalize dashes and bullets
-    text = text.replace('•', '').replace('–', '-').replace('—', '-')
-
-    # 12. Strip emojis and special symbols
-    text = re.sub(
-        r'[\U00002600-\U000027BF]|[\U0001F300-\U0001FAFF]|[\U00002702-\U000027B0]|[\U0000FE00-\U0000FE0F]|[\U0001F000-\U0001F9FF]|‍|️',
-        '', text
-    )
-
-    # 13. Branding & Pronunciation fixes
-    if language_code == "hi":
-        text = re.sub(r'\bUPYOG\b', 'उपयोग', text, flags=re.IGNORECASE)
-        text = text.replace('Upyog', 'उपयोग')
-        text = text.replace('NUDM', 'एन.यू.डी.एम.')
-        text = text.replace('MoHUA', 'मोहुआ')
-    else:
-        text = re.sub(r'\bUPYOG\b', 'Oop-yog', text, flags=re.IGNORECASE)
-        text = text.replace('Upyog', 'Oop-yog')
-        text = text.replace('NUDM', 'N-U-D-M')
-        text = text.replace('MoHUA', 'Mo-hua')
-
-    # 14. Normalize whitespace
-    text = re.sub(r'\n{2,}', '\n', text)
-    text = re.sub(r'[ \t]+', ' ', text)
     return text.strip()
 
 
@@ -688,11 +658,6 @@ def get_rag_response(query: str, history: list, lang: str, search_lang: str = No
     # --- Fetch persistent profile values from Redis & in-memory cache ---
     phone_anchor = extract_phone_from_session(session_id)
     user_info = get_user_profile_info(phone_anchor) if phone_anchor != "default" else None
-    if not user_info:
-        for k, v in _USER_PROFILE_CACHE.items():
-            if isinstance(v, dict) and (v.get("mobileNumber") or v.get("name")):
-                user_info = v
-                break
     
     # --- LOAD USER'S LONG-TERM MEMORY (BOOKINGS) ---
     long_term_bookings_str = ""
@@ -722,21 +687,16 @@ def get_rag_response(query: str, history: list, lang: str, search_lang: str = No
         except Exception as e:
             logger.error(f"Error loading chat history or summaries for RAG context: {e}")
     
-    profile_details_str = "NO ACTIVE CITIZEN PROFILE FOUND."
-    profile_name = "User"
-    if user_info:
-        profile_name = user_info.get("name") or user_info.get("userName") or "User"
+    profile_details_str = "CITIZEN STATUS: Guest / Not Logged In."
+    profile_name = None
+    if user_info and phone_anchor != "default":
+        profile_name = user_info.get("name") or user_info.get("userName") or "Citizen"
         profile_details_str = f"""ACTIVE CITIZEN PROFILE:
 - Name: {profile_name}
 - Mobile Number: {user_info.get("mobileNumber") or user_info.get("userName") or "N/A"}
 - Email ID: {user_info.get("emailId") or "N/A"}
 - Roles: {', '.join([r.get('name') for r in user_info.get('roles', [])]) if user_info.get('roles') else 'Citizen'}
 - Tenant ID: {user_info.get("tenantId") or "pg"}"""
-    else:
-        profile_name = get_any_user_profile_name()
-        if profile_name and profile_name != "User":
-            profile_details_str = f"""ACTIVE CITIZEN PROFILE:
-- Name: {profile_name}"""
 
     if long_term_bookings_str:
         profile_details_str += long_term_bookings_str
@@ -814,6 +774,12 @@ Answer from your general knowledge about:
             history_messages.append({"role": turn["role"], "content": content})
 
     # Step 5: System prompt - LLM as the brain
+    guest_instruction = (
+        f"The user is authenticated and logged in as: {profile_name} (Mobile: {user_info.get('mobileNumber', 'N/A')})."
+        if (profile_name and profile_name != "User") else
+        "The user is currently NOT LOGGED IN (GUEST SESSION). DO NOT ever say 'You are now logged in' or assume they are logged in unless active citizen profile details are shown above. If the user claims they logged in without an active session, tell them: 'I do not detect an active logged-in session yet. Please complete the login by clicking Login in the left sidebar.'"
+    )
+
     system = f"""{lang_rule}
 
 You are UPYOG Assistant — expert on:
@@ -821,12 +787,12 @@ You are UPYOG Assistant — expert on:
 - NUDM (National Urban Digital Mission)
 - All ULB services: Property Tax, Trade License, Fire NOC, Water & Sewerage,
   Birth & Death Certificates, Building Plan Approval, Waste Management,
-  GIS Services, Community Hall, Street Vendors, Livelihood, Works Management, etc.
+  GIS Services, Community Hall, Street Vendors, Livelihood, etc.
 - MoU details, NUDM state partnerships, citizen processes
 
 {profile_details_str}
 
-If the user asks "who am I?", "what is my name?", "show my details", "show my profile", or asks for their registered details (mobile number, email address, UUID, or roles), respond by listing their CITIZEN PROFILE details above. Address them warmly by their name ({profile_name}).
+{guest_instruction}
 
 CRITICAL RULES:
 
@@ -837,9 +803,8 @@ Users speak naturally, not in FAQ format.
 Understand MEANING, not literal words.
 
 RULE 2 — ALWAYS TRY TO HELP:
-If you know about the topic, answer it.
+If you know about the topic, answer it concisely.
 NEVER say "जानकारी नहीं है" for UPYOG-related questions.
-If the user asks "what is my name?", "do you remember my name?", or "who am I?", greet them warmly by their name ({profile_name}) stored in your profile system context matrix.
 
 RULE 3 — CONVERSATIONAL SCENARIOS:
 Users describe situations, not textbook questions.
@@ -864,6 +829,7 @@ Format every response using markdown for a clear, professional look:
 - Use bullet points (-) for features, requirements, or multiple items.
 - Use headers (e.g. ### Section Title) with the title text immediately on the same line as the hashes (NEVER leave hashes alone on a line).
 - Keep paragraphs short (2-3 lines max).
+- Always finish every bullet point and sentence completely. Never leave thoughts or sentences unfinished.
 - End with a helpful follow-up question when appropriate.
 - Do NOT use emojis. This is a government services portal.
 
@@ -877,6 +843,12 @@ NEVER invent, guess, or hallucinate complaint IDs, booking numbers, application 
 If the user asks to see their complaints or bookings (e.g. "show my complaints", "my grievances", "my bookings"),
 respond: "To view your registered complaints, please type 'show my complaints' or provide your complaint ID (e.g. PG-PGR-XXXX) and I will look it up for you."
 Do NOT list fake IDs or made-up complaint descriptions.
+
+RULE 10 — DO NOT MENTION LOGIN STEPS UNLESS EXPLICITLY ASKED:
+STRICT RULE: NEVER explain login steps, sidebar navigation, or OTP instructions when answering general questions about services (such as Trade License, Property Tax, Birth Certificate, etc.).
+Answer ONLY what the user asked about the service directly.
+ONLY provide login steps if the user explicitly asks how to log in:
+"In the left sidebar, scroll down and click on **Login**. Enter your registered mobile number and then enter the OTP received on your phone. Once logged in, you will be able to create bookings, register complaints, and check your application status."
 
 {context_section}"""
 
@@ -895,8 +867,8 @@ Do NOT list fake IDs or made-up complaint descriptions.
         response = groq_client.chat.completions.create(
             model=GROQ_MODEL,
             messages=messages,
-            max_tokens=600,
-            temperature=0.3
+            max_tokens=650,
+            temperature=0.1
         )
         ans = response.choices[0].message.content.strip()
         elapsed = time.time() - start_time
@@ -915,8 +887,25 @@ Do NOT list fake IDs or made-up complaint descriptions.
         return ans
 
     except Exception as e:
-        logger.error(f"[GROQ RAG] Groq error: {e}")
-        return "क्षमा करें, तकनीकी समस्या है।" if lang == 'hi' else "Sorry, technical issue."
+        err_str = str(e).lower()
+        logger.error(f"[GROQ RAG] Groq error: {e}", exc_info=True)
+        if any(w in err_str for w in ["rate_limit", "429", "token", "tpm", "quota", "too many requests"]):
+            return (
+                "एआई सहायक की टोकन सीमा कुछ समय के लिए पूरी हो गई है। कृपया थोड़ी देर प्रतीक्षा करें और संक्षिप्त प्रश्न पूछें।"
+                if lang == 'hi' else
+                "The AI assistant has temporarily reached its message token limit. Please wait a moment and try again with a shorter question."
+            )
+        elif any(w in err_str for w in ["context_length", "maximum context"]):
+            return (
+                "यह बातचीत अधिकतम सीमा से अधिक लंबी हो गई है। कृपया एक नया प्रश्न पूछें।"
+                if lang == 'hi' else
+                "This conversation has exceeded the maximum length. Please ask a concise question or start a fresh query."
+            )
+        return (
+            "क्षमा करें, सर्वर से संपर्क नहीं हो पा रहा है। कृपया थोड़ी देर बाद पुनः प्रयास करें।"
+            if lang == 'hi' else
+            "I'm sorry, I am currently unable to process your request. Please try again in a few moments."
+        )
 
 # ============== RETRIEVAL (legacy wrapper) ==============
 
@@ -1035,12 +1024,30 @@ def retrieve_document_stream(query, user_lang, history, phone_anchor="default"):
                     yield f"data: {json.dumps({'type': 'audio', 'audio': audio_output})}\n\n"
 
         except Exception as e:
-            logger.error(f"Streaming error: {e}")
-            yield f"data: {json.dumps({'type': 'error', 'error': str(e)})}\n\n"
+            err_str = str(e).lower()
+            logger.error(f"Streaming error: {e}", exc_info=True)
+            if any(w in err_str for w in ["rate_limit", "429", "token", "tpm", "quota"]):
+                friendly_err = (
+                    "एआई सेवा की टोकन सीमा पूरी हो गई है। कृपया थोड़ी देर प्रतीक्षा करके संक्षिप्त प्रश्न पूछें।"
+                    if user_lang == "hi" else
+                    "The AI token limit has been reached. Please wait a moment and try again with a shorter message."
+                )
+            else:
+                friendly_err = (
+                    "सर्वर समस्या के कारण प्रतिक्रिया पूरी नहीं हो सकी। कृपया पुनः प्रयास करें।"
+                    if user_lang == "hi" else
+                    "Unable to complete the response due to a temporary server issue. Please try again."
+                )
+            yield f"data: {json.dumps({'type': 'text', 'text': friendly_err})}\n\n"
 
     except Exception as e:
-        logger.error(f"Error in retrieve_document_stream: {e}")
-        yield f"data: {json.dumps({'type': 'error', 'error': str(e)})}\n\n"
+        logger.error(f"Error in retrieve_document_stream: {e}", exc_info=True)
+        fallback = (
+            "क्षमा करें, इस समय संपर्क स्थापित नहीं हो सका। कृपया पुनः प्रयास करें।"
+            if user_lang == "hi" else
+            "Sorry, unable to establish connection at this time. Please try again."
+        )
+        yield f"data: {json.dumps({'type': 'text', 'text': fallback})}\n\n"
 
 
 # ==========================================
@@ -1079,18 +1086,27 @@ def process_user_message(user_input: str, phone_number: str, session_id: str,
                          target_workflow: str = "adv_booking") -> Dict[str, Any]:
     intent = target_workflow
     if intent not in workflows:
-        return {"response": f"Service '{intent}' unavailable.", "status": "error"}
+        return {"response": "This service is currently unavailable. Please try again later.", "status": "ok"}
 
     target_graph = workflows[intent]
     thread_key = phone_number if (phone_number and phone_number != "default") else session_id
     config = {"configurable": {"thread_id": thread_key}}
 
-    events = target_graph.stream(
-        {"messages": [HumanMessage(content=user_input)], "phone_number": phone_number,
-         "session_id": session_id, "active_service": intent},
-        config,
-        stream_mode="values"
-    )
+    try:
+        events = target_graph.stream(
+            {"messages": [HumanMessage(content=user_input)], "phone_number": phone_number,
+             "session_id": session_id, "active_service": intent},
+            config,
+            stream_mode="values"
+        )
+    except Exception as stream_err:
+        logger.error(f"[process_user_message] Workflow error in '{intent}': {stream_err}", exc_info=True)
+        return {
+            "response": "I apologize, but I encountered a temporary technical issue while processing this request. Please try again or rephrase your input.",
+            "status": "ok",
+            "input_type": "text",
+            "options": []
+        }
     
     final_message = None
     graph_input_type = "text"
@@ -1421,24 +1437,6 @@ def chat():
             return jsonify({"response": msg, "lang": user_language,
                            "audio": audio_output, "mode": "blocked"})
 
-        # Intercept unsupported transactional requests professionally (Trade License, Property Tax)
-        unsupported_keywords = ["trade license", "property tax", "property text", "व्यापार लाइसेंस", "संपत्ति कर"]
-        action_keywords = ["pay", "book", "apply", "register", "fill", "payment", "details", "भरें", "भुगतान", "आवेदन"]
-        ui_lower = user_input.lower()
-        if any(u in ui_lower for u in unsupported_keywords) and any(a in ui_lower for a in action_keywords):
-            msg = (
-                "वर्तमान में, मैं केवल विज्ञापन बुकिंग में आपकी सहायता कर सकता हूँ। व्यापार लाइसेंस और संपत्ति कर सेवाओं पर काम चल रहा है और वे जल्द ही शुरू की जाएंगी। कृपया मुझे बताएं कि क्या आप विज्ञापन बुकिंग के साथ आगे बढ़ना चाहते हैं!"
-                if user_language == 'hi' else
-                "Currently, I can only assist you with Advertisement Bookings. Support for Trade License and Property Tax services is under development and will be launched soon. Please let me know if you would like to proceed with an advertisement booking!"
-            )
-            audio_output = text_to_speech(msg, user_language)
-            return jsonify({
-                "response": msg,
-                "lang": user_language,
-                "audio": audio_output,
-                "mode": "blocked"
-            })
-
         # ── Direct greeting pre-check (before LLM classifier) ───────────────────
         # Greet keywords are loaded from config.yml `greeting_keywords`; fallback to
         # a minimal built-in list so zero Python code needs updating when config changes.
@@ -1449,9 +1447,11 @@ def chat():
             "hello", "hi", "hey", "namaste", "good morning", "good afternoon",
             "good evening", "hola", "howdy", "greetings", "नमस्ते", "हेलो"
         ])]
+        
+        # Word boundary match to ensure words like "hindi", "hinglish", "this" don't match "hi"
         _is_pure_greeting = (
             user_input.lower().strip() in _greet_kws or
-            (len(user_input.split()) <= 3 and any(w in user_input.lower() for w in _greet_kws))
+            (len(user_input.split()) <= 2 and any(re.search(rf'\b{re.escape(w)}\b', user_input.lower()) for w in _greet_kws) and not any(l in user_input.lower() for l in ["hindi", "hinglish", "english", "translate", "karo", "batao", "status", "bill"]))
         )
         if _is_pure_greeting:
             # Show fresh dynamic greeting
@@ -1461,6 +1461,73 @@ def chat():
             return jsonify({
                 "response": greet_msg, "lang": user_language,
                 "mode": "greeting", "audio": audio_output
+            })
+
+        # ── Direct login guidance check (CHATBOT-02: Portal journey alignment) ───
+        login_kws = [
+            "how to login", "how to log in", "how do i login", "how can i login",
+            "login kaise kare", "login kaise karte hain", "login process",
+            "login process kya hai", "can you login", "log me in", "where is login",
+            "login option", "login button", "login kaise hoga", "login kahan hai",
+            "login kaise karein", "login kaise karey", "login steps", "login karna",
+            "login kaise kiya jata hai", "login karna hai", "can i login without clicking",
+            "login without clicking", "how to sign in", "sign in kaise kare"
+        ]
+        ui_clean = user_input.lower().strip()
+        is_login_query = (
+            any(kw in ui_clean for kw in login_kws) or
+            (("login" in ui_clean or "log in" in ui_clean or "sign in" in ui_clean) and any(w in ui_clean for w in ["how", "kaise", "where", "kahan", "procedure", "karna", "process", "steps", "help", "batao", "bataiye", "can you", "without", "bina"]))
+        )
+        if is_login_query:
+            if user_language == "hi":
+                login_msg = (
+                    "बाईं ओर के साइडबार (Left Sidebar) में नीचे जाएं और **Login** विकल्प पर क्लिक करें। "
+                    "अपना पंजीकृत मोबाइल नंबर भरें और फिर प्राप्त OTP दर्ज करें। "
+                    "लॉगिन करने के बाद, आप बुकिंग बना सकते हैं, शिकायत दर्ज कर सकते हैं और अपने आवेदन की स्थिति देख सकते हैं।"
+                )
+            else:
+                login_msg = (
+                    "In the left sidebar, scroll down and click on **Login**. "
+                    "Enter your registered mobile number and then enter the OTP received on your phone. "
+                    "Once logged in, you will be able to create bookings, register complaints, and check your application status."
+                )
+            audio_output = text_to_speech(login_msg, user_language)
+            logger.info("[Login Guidance] Returned portal left-sidebar login flow instructions")
+            return jsonify({
+                "response": login_msg,
+                "lang": user_language,
+                "mode": "faq",
+                "audio": audio_output
+            })
+
+        # ── Check if user is claiming they have logged in ("logging done", "login ho gaya") ──
+        login_claim_kws = [
+            "logging done", "login done", "logged in", "i have logged in",
+            "i logged in", "done", "login ho gaya", "maine login kar liya",
+            "login complete", "login kar liya", "login hogaya", "signed in",
+            "i have signed in", "now logged in", "login completed", "done login",
+            "login kar chuka hu", "login ho chuka hai"
+        ]
+        is_login_claim = any(ui_clean == kw or ui_clean.startswith(kw) for kw in login_claim_kws)
+        if is_login_claim:
+            if is_authenticated:
+                user_name = (cached_info.get("name") if cached_info else None) or "Citizen"
+                if user_language == "hi":
+                    resp_msg = f"बहुत बढ़िया! आपकी पहचान सत्यापित हो गई है ({user_name})। अब आप विज्ञापन बुकिंग कर सकते हैं या शिकायत दर्ज कर सकते हैं। आप क्या करना चाहते हैं?"
+                else:
+                    resp_msg = f"Great! Your login session is verified ({user_name}). You can now proceed to book an advertisement or register a complaint. How would you like to proceed?"
+            else:
+                if user_language == "hi":
+                    resp_msg = "मुझे अभी आपका सक्रिय लॉगिन सत्र नहीं मिला है। कृपया बाईं ओर के साइडबार में नीचे **Login** विकल्प पर क्लिक करके अपने मोबाइल नंबर और OTP से लॉगिन पूरा करें।"
+                else:
+                    resp_msg = "I do not detect an active logged-in session yet. Please complete the login by clicking **Login** in the left sidebar and entering your mobile number and OTP."
+            audio_output = text_to_speech(resp_msg, user_language)
+            logger.info(f"[Login Claim] is_authenticated={is_authenticated}, returning verified status response")
+            return jsonify({
+                "response": resp_msg,
+                "lang": user_language,
+                "mode": "faq",
+                "audio": audio_output
             })
 
         # ===== EARLY INTERCEPTION: Multi-Draft Selection Menu =====
@@ -1998,10 +2065,9 @@ def chat():
             if not is_authenticated:
                 logger.info(f"[Auth] Action requires authentication but user is not logged in (phone={phone_anchor}). Prompting login in UPYOG.")
                 msg = (
-                    "शिकायत दर्ज करने या विज्ञापन आवेदन करने के लिए, कृपया पहले UPYOG पोर्टल पर लॉगिन करें।"
+                    "शिकायत दर्ज करने या विज्ञापन बुकिंग के लिए, कृपया पहले लॉगिन करें। बाईं ओर के साइडबार में नीचे जाएं और **Login** विकल्प पर क्लिक करें, मोबाइल नंबर भरें और OTP दर्ज करें।"
                     if user_language == 'hi' else
-                    "To file a complaint or create an application for advertisement, please log in to UPYOG first."
-                )
+                    "To file a complaint or create an advertisement booking, please log in first.")
                 audio = text_to_speech(msg, user_language)
                 return jsonify({
                     "response": msg,
@@ -2094,8 +2160,46 @@ def chat():
         }), 200
 
     except Exception as e:
+        err_str = str(e).lower()
         logger.error(f"[ENDPOINT /chat ERROR] Exception: {e}", exc_info=True)
-        return jsonify({"error": str(e)}), 500
+        is_hi = ('user_language' in locals() and user_language == "hi")
+
+        if any(w in err_str for w in ["rate_limit", "429", "token", "tpm", "quota", "too many requests"]):
+            fallback_msg = (
+                "एआई सहायक की टोकन सीमा कुछ समय के लिए पूरी हो गई है। कृपया थोड़ी देर प्रतीक्षा करें और संक्षिप्त प्रश्न पूछें।"
+                if is_hi else
+                "The AI assistant has temporarily reached its message token limit. Please wait a moment and try again with a shorter question."
+            )
+            mode = "rate_limit"
+        elif any(w in err_str for w in ["401", "unauthorized", "session", "permissionerror", "invalid access token", "token expired"]):
+            fallback_msg = (
+                "आपका लॉगिन सत्र समाप्त हो गया है। कृपया जारी रखने के लिए ऊपर दाईं ओर लॉगिन बटन से पुनः लॉगिन करें।"
+                if is_hi else
+                "Your login session has expired. Please log in again using your registered mobile number via the Login button to continue."
+            )
+            mode = "auth_required"
+        elif any(w in err_str for w in ["context_length", "maximum context"]):
+            fallback_msg = (
+                "बातचीत की लंबाई सीमा से अधिक हो गई है। कृपया एक नया प्रश्न पूछें।"
+                if is_hi else
+                "This conversation has exceeded the maximum length. Please ask a concise question or start a fresh query."
+            )
+            mode = "context_limit"
+        else:
+            fallback_msg = (
+                "क्षमा करें, सर्वर से संपर्क नहीं हो पा रहा है। कृपया थोड़ी देर बाद पुनः प्रयास करें या सहायता केंद्र से संपर्क करें।"
+                if is_hi else
+                "I am currently experiencing a temporary server issue. Please try again in a moment or contact the municipal helpdesk."
+            )
+            mode = "error"
+
+        audio_output = text_to_speech(fallback_msg, user_language if 'user_language' in locals() else "en")
+        return jsonify({
+            "response": fallback_msg,
+            "lang": user_language if 'user_language' in locals() else "en",
+            "mode": mode,
+            "audio": audio_output
+        }), 200
 
 import threading
 
@@ -2516,7 +2620,8 @@ def api_verify_otp():
     # 1. Verify OTP
     verify_res = verify_otp_upyog(mobile, otp)
     if "access_token" not in verify_res:
-        return jsonify({"error": "Invalid OTP or verification failed", "details": verify_res}), 400
+        logger.warning(f"[api_verify_otp] Verification failed for mobile={mobile}: {verify_res}")
+        return jsonify({"error": "Invalid OTP. Please check the code sent to your phone and try again."}), 400
     
     # 2. Get user info (either from verify response or search)
     user_info = verify_res.get("UserRequest", verify_res.get("userInfo", {}))

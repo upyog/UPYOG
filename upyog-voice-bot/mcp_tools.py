@@ -503,7 +503,7 @@ def fetch_bill(booking_no: str, mobile_number: str = None) -> str:
         return "Could not find a bill for this booking."
     except Exception as e:
         logger.error(f"[fetch_bill] Error fetching bill for {booking_no}: {e}")
-        return f"Error fetching bill: {e}"
+        return "Unable to fetch the bill details at this moment due to a technical issue. Please try again later."
 
 
 # ------------------------------------------------------------------
@@ -677,20 +677,11 @@ Reply with ONLY the valid JSON object (no markdown, no other text)."""
             return f"Booking successfully created! Application Number: {app_no}"
         return f"Booking creation succeeded but no application number was returned. Raw: {data}"
     except Exception as e:
-        error_details = str(e)
-        if hasattr(e, "response") and e.response is not None:
-            try:
-                resp_json = e.response.json()
-                errs = resp_json.get("Errors", [])
-                if errs and isinstance(errs, list):
-                    messages = [str(err.get("message") or err.get("code")) for err in errs if err]
-                    error_details = f"{e} - Details: {', '.join(messages)}"
-                else:
-                    error_details = f"{e} - Response: {e.response.text}"
-            except Exception:
-                error_details = f"{e} - Response: {e.response.text}"
-        logger.error(f"[create_booking] Error creating booking: {error_details}")
-        return f"Error creating booking: {error_details}"
+        logger.error(f"[create_booking] Error creating booking: {e}", exc_info=True)
+        return (
+            "I apologize, but we could not complete your advertisement booking due to a technical issue with the municipal portal. "
+            "Please verify your booking details and try again, or contact the UPYOG support desk."
+        )
 
 
 # Uploads a document to UPYOG's filestore and returns its unique file ID
@@ -883,11 +874,11 @@ def pgr_create_complaint(complaint_json: str) -> str:
         logger.info(f"=== PGR CREATE RESPONSE ===\n{json.dumps(sanitize_payload_for_logging(data), indent=2)}\n===========================")
 
         if "Errors" in data:
-            err = data.get("Errors")
+            logger.error(f"[pgr_create_complaint] Portal error: {data.get('Errors')}")
             return (
-                "**Submission Error**\n\n"
-                f"The server returned an error while processing your request:\n\n> {err}\n\n"
-                "Please verify your details and try again. If the issue persists, contact the UPYOG helpdesk."
+                "**Submission Notice**\n\n"
+                "We were unable to complete your complaint registration due to a temporary service issue. "
+                "Please verify your details and try again shortly, or contact the UPYOG helpdesk."
             )
 
         sw_list = data.get("ServiceWrappers", [])
@@ -906,11 +897,11 @@ def pgr_create_complaint(complaint_json: str) -> str:
         )
 
     except Exception as e:
-        logger.error(f"pgr_create_complaint error: {e}")
+        logger.error(f"pgr_create_complaint error: {e}", exc_info=True)
         return (
-            "**Submission Failed**\n\n"
-            f"A technical error occurred while submitting your complaint: `{e}`\n\n"
-            "Please try again. If the problem continues, contact the UPYOG helpdesk."
+            "**Submission Notice**\n\n"
+            "We were unable to complete your complaint registration due to a temporary technical issue. "
+            "Please try again shortly, or contact the UPYOG helpdesk."
         )
 
 
