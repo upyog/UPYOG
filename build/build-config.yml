@@ -480,6 +480,14 @@ config:
       - work-dir: "municipal-services/pgr-services/src/main/resources/db"
         image-name: "pgr-services-db"
 
+  - name: "builds/upyog/municipal-services/refund-services"
+    build:
+      - work-dir: "municipal-services/refund-services"
+        image-name: "refund-services"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "municipal-services/refund-services/src/main/resources/db"
+        image-name: "refund-services-db"      
+
   - name: "builds/upyog/municipal-services/tl-calculator"
     build:
       - work-dir: "municipal-services/tl-calculator"
