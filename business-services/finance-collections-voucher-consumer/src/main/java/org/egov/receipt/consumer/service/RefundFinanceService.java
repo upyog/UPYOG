@@ -42,18 +42,23 @@ public class RefundFinanceService {
 
 		final String tenantId = refundRequest.getTenantId();
 
-		final String refundFinanceHost = propertiesManager.getRefundFinanceHost();
+		final String erpHost = propertiesManager.getErpURLBytenantId(tenantId);
 
-		if (!StringUtils.hasText(refundFinanceHost)) {
-			throw new VoucherCustomException(ProcessStatus.FAILED, "Finance refund host is not configured");
+		final String refundCreateUrl = propertiesManager.getRefundCreateUrl();
+
+		if (!StringUtils.hasText(erpHost)) {
+			throw new VoucherCustomException(ProcessStatus.FAILED,
+					"Finance ERP host could not be resolved " + "for tenant: " + tenantId);
 		}
 
-		final String separator = refundFinanceHost.endsWith("/")
-				|| propertiesManager.getRefundCreateUrl().startsWith("/") ? "" : "/";
+		if (!StringUtils.hasText(refundCreateUrl)) {
+			throw new VoucherCustomException(ProcessStatus.FAILED, "Finance refund create URL is not configured");
+		}
 
-		final StringBuilder url = new StringBuilder(refundFinanceHost).append(separator)
-				.append(propertiesManager.getRefundCreateUrl()).append("?tenantId=").append(tenantId);
+		final String separator = erpHost.endsWith("/") || refundCreateUrl.startsWith("/") ? "" : "/";
 
+		final StringBuilder url = new StringBuilder(erpHost).append(separator).append(refundCreateUrl)
+				.append("?tenantId=").append(tenantId);
 		try {
 			LOGGER.info("Calling Finance refund endpoint for " + "refund application: {}, URL: {}",
 					refundRequest.getRefund().getRefundApplicationNumber(), url);

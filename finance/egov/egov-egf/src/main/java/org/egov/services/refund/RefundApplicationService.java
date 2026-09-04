@@ -7,6 +7,7 @@ import org.egov.model.refund.RefundApplication;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Locale;
 
 public class RefundApplicationService extends PersistenceService<RefundApplication, Long> {
 
@@ -65,8 +66,11 @@ public class RefundApplicationService extends PersistenceService<RefundApplicati
 		 * Explicitly populate workflow audit IDs because the new workflow state was
 		 * otherwise inserted with createdby=null.
 		 */
-		refundApplication.transition().start().withOwner(approverPosition).withStateValue("Created")
-				.withNextAction("Refund Approval").withNatureOfTask("Refund Approval")
+		final String senderName = "Refund Service: "
+				+ refundApplication.getModuleName().trim().toUpperCase(Locale.ENGLISH);
+
+		refundApplication.transition().start().withSenderName(senderName).withOwner(approverPosition)
+				.withStateValue("Created").withNextAction("Refund Approval").withNatureOfTask("Refund Approval")
 				.withComments("Refund submitted for Finance approval").withCreatedBy(currentUserId)
 				.withtLastModifiedBy(currentUserId);
 
