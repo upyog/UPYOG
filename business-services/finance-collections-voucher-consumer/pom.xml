@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -11,7 +12,8 @@
 	<artifactId>finance-collections-voucher-consumer</artifactId>
 	<version>1.1.6-SNAPSHOT</version>
 	<name>finance-collections-voucher-consumer</name>
-	<description>Service to create the voucher by consuming receipt data from collection service</description>
+	<description>Service to create the voucher by consuming receipt data from
+		collection service</description>
 
 	<properties>
 		<log4j2.version>2.21.1</log4j2.version>
@@ -68,18 +70,32 @@
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
 		</dependency>
+		
+		<!-- Actuator endpoints: health, info and metrics -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+		<!-- Prometheus metrics endpoint -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+		</dependency>
 	</dependencies>
 
 	<repositories>
 		<repository>
 			<id>repo.egovernments.org</id>
 			<name>eGov Releases Repository</name>
-			<url>https://upyog-nexus.niua.org/nexus/content/repositories/releases/</url>
+			<url>
+				https://upyog-nexus.niua.org/nexus/content/repositories/releases/</url>
 		</repository>
 		<repository>
 			<id>repo.egovernments.org.snapshots</id>
 			<name>eGov Releases Repository</name>
-			<url>https://upyog-nexus.niua.org/nexus/content/repositories/snapshots/</url>
+			<url>
+				https://upyog-nexus.niua.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 	</repositories>
 
