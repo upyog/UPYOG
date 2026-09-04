@@ -38,6 +38,7 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.receipt.consumer.service;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -316,22 +317,28 @@ public class EgfKafkaListener {
 		RefundFinanceRequest financeRequest = null;
 
 		try {
+			LOGGER.info("Received refund message with key {} " + "from topic {}, partition {}, offset {}", record.key(),
+					record.topic(), record.partition(), record.offset());
+
 			final RefundKafkaRequest kafkaRequest = objectMapper.readValue(record.value(), RefundKafkaRequest.class);
 
 			validateRefundKafkaRequest(kafkaRequest);
 
 			final RefundKafkaDetail sourceRefund = kafkaRequest.getRefund();
 
-			final String workflowState = sourceRefund.getProcessInstance().getState().getState();
+			final String refundStatus = sourceRefund.getStatus().trim();
 
-			if (!PENDING_WITH_FINANCE.equalsIgnoreCase(workflowState)) {
+			if (!PENDING_WITH_FINANCE.equalsIgnoreCase(refundStatus)) {
 
-				LOGGER.info("Skipping refund {} because workflow state is {}", sourceRefund.getRefundNo(),
-						workflowState);
+				LOGGER.info("Skipping refund {} because status is {}", sourceRefund.getRefundNo(), refundStatus);
 
 				return;
 			}
 
+			/*
+			 * Map before Finance validation so that the refund details remain available for
+			 * integration logging even when RequestInfo or accounting data is invalid.
+			 */
 			financeRequest = mapToFinanceRequest(kafkaRequest);
 
 			validateRefundFinanceRequest(financeRequest);
@@ -346,20 +353,20 @@ public class EgfKafkaListener {
 			saveRefundIntegrationLog(financeRequest, ProcessStatus.SUCCESS,
 					"Refund application submitted successfully " + "to Finance for approval", "");
 
-			LOGGER.info("Finance refund application created successfully: {}",
+			LOGGER.info("Finance refund application created " + "successfully: {}",
 					financeRefund.getRefundApplicationNumber());
 
 		} catch (VoucherCustomException exception) {
 
 			saveRefundIntegrationLog(financeRequest, exception.getStatus(), exception.getMessage(), "");
 
-			LOGGER.error("Unable to create Finance refund application: {}", exception.getMessage(), exception);
+			LOGGER.error("Unable to create Finance refund " + "application: {}", exception.getMessage(), exception);
 
 		} catch (Exception exception) {
 
 			saveRefundIntegrationLog(financeRequest, ProcessStatus.FAILED, exception.getMessage(), "");
 
-			LOGGER.error("Unexpected error while processing Finance " + "refund application", exception);
+			LOGGER.error("Unexpected error while processing " + "Finance refund application", exception);
 		}
 	}
 
@@ -369,47 +376,47 @@ public class EgfKafkaListener {
 			throw new VoucherCustomException(ProcessStatus.FAILED, "Refund Kafka request is missing");
 		}
 
-		if (kafkaRequest.getRequestInfo() == null) {
-			throw new VoucherCustomException(ProcessStatus.FAILED, "RequestInfo is missing in refund Kafka request");
-		}
-
 		final RefundKafkaDetail refund = kafkaRequest.getRefund();
 
 		if (refund == null) {
 			throw new VoucherCustomException(ProcessStatus.FAILED, "Refund details are missing");
 		}
 
-		if (StringUtils.isEmpty(refund.getTenantId())) {
+		if (!StringUtils.hasText(refund.getTenantId())) {
 			throw new VoucherCustomException(ProcessStatus.FAILED, "Tenant ID is missing");
 		}
 
-		if (StringUtils.isEmpty(refund.getRefundNo())) {
+		if (!StringUtils.hasText(refund.getRefundNo())) {
 			throw new VoucherCustomException(ProcessStatus.FAILED, "Refund number is missing");
 		}
 
-		if (StringUtils.isEmpty(refund.getModuleName())) {
+		if (!StringUtils.hasText(refund.getModuleName())) {
 			throw new VoucherCustomException(ProcessStatus.FAILED, "Module name is missing");
 		}
 
-		if (StringUtils.isEmpty(refund.getBusinessService())) {
+		if (!StringUtils.hasText(refund.getBusinessService())) {
 			throw new VoucherCustomException(ProcessStatus.FAILED, "Business service is missing");
 		}
 
-		if (StringUtils.isEmpty(refund.getConsumerCode())) {
+		if (!StringUtils.hasText(refund.getConsumerCode())) {
 			throw new VoucherCustomException(ProcessStatus.FAILED, "Consumer code is missing");
 		}
 
-		if (StringUtils.isEmpty(refund.getPaymentId())) {
+		if (!StringUtils.hasText(refund.getPaymentId())) {
 			throw new VoucherCustomException(ProcessStatus.FAILED, "Payment ID is missing");
 		}
 
 		if (refund.getRefundAmount() == null || refund.getRefundAmount().compareTo(BigDecimal.ZERO) <= 0) {
+
 			throw new VoucherCustomException(ProcessStatus.FAILED, "Refund amount must be greater than zero");
 		}
 
-		if (refund.getProcessInstance() == null || refund.getProcessInstance().getState() == null
-				|| StringUtils.isEmpty(refund.getProcessInstance().getState().getState())) {
-			throw new VoucherCustomException(ProcessStatus.FAILED, "Refund workflow state is missing");
+		/*
+		 * Refund Service sends the Finance workflow status directly in refund.status.
+		 * processInstance may be null.
+		 */
+		if (!StringUtils.hasText(refund.getStatus())) {
+			throw new VoucherCustomException(ProcessStatus.FAILED, "Refund status is missing");
 		}
 	}
 
@@ -439,7 +446,7 @@ public class EgfKafkaListener {
 				 */
 				.status(null).debitGlCode(refundDebitGlCode).creditGlCode(refundCreditGlCode).fundCode(refundFundCode)
 				.departmentCode(refundDepartmentCode)
-				.functionCode(StringUtils.isEmpty(refundFunctionCode) ? null : refundFunctionCode).build();
+				.functionCode(StringUtils.hasText(refundFunctionCode) ? refundFunctionCode.trim() : null).build();
 
 		return RefundFinanceRequest.builder().requestInfo(kafkaRequest.getRequestInfo())
 				.tenantId(sourceRefund.getTenantId()).refund(financeRefund).build();
