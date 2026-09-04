@@ -173,19 +173,12 @@ public class PropertiesManager {
 	@Value("${egov.finance.refund.create.url}")
 	private String refundCreateUrl;
 
-	@Value("${egov.finance.refund.host}")
-	private String refundFinanceHost;
-
 	public String getRefundFinanceProcessTopic() {
 		return refundFinanceProcessTopic;
 	}
 
 	public String getRefundCreateUrl() {
 		return refundCreateUrl;
-	}
-
-	public String getRefundFinanceHost() {
-		return refundFinanceHost;
 	}
 
 	public String getErpURLBytenantId(String tenantId) throws VoucherCustomException {
