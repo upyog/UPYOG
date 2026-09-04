@@ -47,8 +47,6 @@
  */
 package org.egov.egf.web.actions.voucher;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -60,11 +58,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
@@ -84,14 +83,24 @@ import org.egov.model.bills.EgBillregister;
 import org.egov.services.bills.BillsService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.type.LongType;
+import org.hibernate.query.Query;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.exilant.eGov.src.domain.BillRegisterBean;
 
+/**
+ * LTS Migration Notes:
+ * 1. [Struts 7 & Jakarta EE] Nested form parameter resolution: Struts 7 restricts automatic OGNL nested
+ *    parameter binding ('fund.id', 'deptImpl.code'). Added resolveSearchCriteriaFromRequest() to extract
+ *    parameters from HttpServletRequest.
+ * 2. [Struts 7 Batch Checkbox Binding] Struts 7 restricts dynamic indexed list binding ('billListDisplay[i].isSelected').
+ *    Added bindSelectedBillsFromRequest() to process 'selectedBillIds' array posted from cancelBill-search.jsp.
+ * 3. [Java 17 Null Safety] Reordered validateFund() to check fund.getId() == null before unboxing comparisons
+ *    (fund.getId() == -1), preventing NullPointerExceptions in Java 17.
+ * 4. [Hibernate 6] Migrated bill status updates to billsService.updateBillStatus() and fixed association null comparisons.
+ */
 @Results({ @Result(name = "search", location = "cancelBill-search.jsp") })
 public class CancelBillAction extends BaseFormAction {
 	private static final long serialVersionUID = 1L;
@@ -110,6 +119,7 @@ public class CancelBillAction extends BaseFormAction {
 	private Department deptImpl = new Department();
 	private String expType;
 	private List<BillRegisterBean> billListDisplay = new ArrayList<BillRegisterBean>();
+	private String[] selectedBillIds;
 	private boolean afterSearch = false;
 	Integer loggedInUser = ApplicationThreadLocals.getUserId().intValue();
 	public final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Constants.LOCALE);
@@ -182,9 +192,9 @@ public class CancelBillAction extends BaseFormAction {
 		addDropdownData("fundList",
 				persistenceService.findAllBy("from Fund where isactive=true and isnotleaf=false order by name"));
 		// Important - Remove the like part of the query below to generalize the
-		// bill cancellation screen
+		// LTS Migration Fix: Updated unlabelled '?' to numbered positional parameters '?1', '?2', '?3' for Hibernate 6 HQL compliance
 		addDropdownData("expenditureList", persistenceService.findAllBy(
-				"select distinct bill.expendituretype from EgBillregister bill where bill.expendituretype=? or bill.expendituretype=? or bill.expendituretype=? order by bill.expendituretype", 
+				"select distinct bill.expendituretype from EgBillregister bill where bill.expendituretype=?1 or bill.expendituretype=?2 or bill.expendituretype=?3 order by bill.expendituretype", 
 				FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS, FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE));
 	}
 
@@ -212,7 +222,6 @@ public class CancelBillAction extends BaseFormAction {
 				" select billmis.egBillregister.id, billmis.egBillregister.billnumber, billmis.egBillregister.billdate,")
 						.append(" billmis.egBillregister.billamount, billmis.departmentcode ")
 						.append("  from EgBillregistermis billmis ");
-        // if the logged in user is same as creator or is superruser
         query.append(userCond);
         
         if (fund != null && fund.getId() != null && fund.getId() != -1
@@ -225,7 +234,9 @@ public class CancelBillAction extends BaseFormAction {
             query.append(" and billmis.egBillregister.billnumber =:billNumber");
             params.put("billNumber", billNumber);
         }
-        if (deptImpl != null && deptImpl.getCode() != null && !deptImpl.getCode().equals("-1")) {
+        // Struts 7 posts blank department as "" instead of null
+        if (deptImpl != null && deptImpl.getCode() != null && deptImpl.getCode().length() != 0
+                && !deptImpl.getCode().equals("-1")) {
             query.append(" and billmis.departmentcode =:deptCode");
             params.put("deptCode", deptImpl.getCode());
         }
@@ -237,7 +248,6 @@ public class CancelBillAction extends BaseFormAction {
                 params.put("fromDate", fDate);
             } catch (final ParseException e) {
                 LOGGER.error(" From Date parse error");
-                //
             }
         }
         if (toDate != null && toDate.length() != 0) {
@@ -248,7 +258,6 @@ public class CancelBillAction extends BaseFormAction {
                 params.put("toDate", tDate);
             } catch (final ParseException e) {
                 LOGGER.error(" To Date parse error");
-                //
             }
         }
         
@@ -291,7 +300,7 @@ public class CancelBillAction extends BaseFormAction {
 	public Map<String, Map<String, Object>> query() {
         final Map<String, Map<String, Object>> queries = new HashMap<>();
         final Map.Entry<String, Map<String, Object>> mapQueryEntry = filterQuery().entrySet().iterator().next();
-        String query = mapQueryEntry.getKey() + " and billmis.voucherHeader is null ";
+        String query = mapQueryEntry.getKey() + " and billmis.voucherHeader.id is null ";
         queries.put(query, mapQueryEntry.getValue());
         final Map<String, Object> params = new HashMap<>();
         params.putAll(mapQueryEntry.getValue());
@@ -305,8 +314,67 @@ public class CancelBillAction extends BaseFormAction {
 		billListDisplay.clear();
 	}
 
+	/**
+	 * LTS Migration Fix [Struts 7 Parameter Extraction]:
+	 * In Struts 7, form fields ('fund.id', 'deptImpl.code', 'billNumber', etc.) are not automatically
+	 * injected into nested bean properties. This method reads them directly from HttpServletRequest.
+	 */
+	private void resolveSearchCriteriaFromRequest() {
+		final HttpServletRequest request = ServletActionContext.getRequest();
+		if (request == null) {
+			return;
+		}
+
+		if (fund == null) {
+			fund = new Fund();
+		}
+		if (fund.getId() == null) {
+			final String fundId = firstNonEmpty(request.getParameter("fund.id"), request.getParameter("fund"));
+			if (StringUtils.isNotBlank(fundId) && !"-1".equals(fundId) && !"0".equals(fundId)) {
+				fund.setId(Long.valueOf(fundId.trim()));
+			}
+		}
+
+		if (deptImpl == null) {
+			deptImpl = new Department();
+		}
+		if (StringUtils.isBlank(deptImpl.getCode())) {
+			final String deptCode = firstNonEmpty(request.getParameter("deptImpl.code"),
+					request.getParameter("department.code"), request.getParameter("department"));
+			if (StringUtils.isNotBlank(deptCode) && !"-1".equals(deptCode) && !"0".equals(deptCode)) {
+				deptImpl.setCode(deptCode.trim());
+			}
+		}
+
+		if (StringUtils.isBlank(billNumber)) {
+			billNumber = request.getParameter("billNumber");
+		}
+		if (StringUtils.isBlank(fromDate)) {
+			fromDate = request.getParameter("fromDate");
+		}
+		if (StringUtils.isBlank(toDate)) {
+			toDate = request.getParameter("toDate");
+		}
+		if (StringUtils.isBlank(expType)) {
+			expType = request.getParameter("expType");
+		}
+	}
+
+	private static String firstNonEmpty(final String... values) {
+		if (values == null) {
+			return null;
+		}
+		for (final String value : values) {
+			if (StringUtils.isNotBlank(value)) {
+				return value.trim();
+			}
+		}
+		return null;
+	}
+
     public void validateFund() throws ParseException {
-        if (fund == null || fund.getId() == -1 || fund.getId() == 0 || fund.getId() == null)
+        // Check getId() == null before unboxing comparisons (Struts 7 leaves fund.id unbound)
+        if (fund == null || fund.getId() == null || fund.getId() == -1 || fund.getId() == 0)
             addFieldError("fund.id", getText("voucher.fund.mandatory"));
         if (StringUtils.isNotEmpty(fromDate) || StringUtils.isNotEmpty(toDate)) {
             boolean isDateFrom = false;
@@ -314,8 +382,8 @@ public class CancelBillAction extends BaseFormAction {
             String fromDates = fromDate;
             String toDates = toDate;
             String datePattern = "\\d{1,2}/\\d{1,2}/\\d{4}";
-            isDateFrom = fromDates.matches(datePattern);
-            isDateTo = toDates.matches(datePattern);
+            isDateFrom = fromDates != null && fromDates.matches(datePattern);
+            isDateTo = toDates != null && toDates.matches(datePattern);
             if (!isDateFrom || !isDateTo) {
                 addActionError(getText("msg.please.select.valid.date"));
             }
@@ -333,7 +401,8 @@ public class CancelBillAction extends BaseFormAction {
 
 	@ValidationErrorPage(value = "search")
 	@Action(value = "/voucher/cancelBill-search")
-	public String search() throws ParseException {   
+	public String search() throws ParseException {
+		resolveSearchCriteriaFromRequest();
         validateFund();
         if (!hasErrors()) {
             billListDisplay.clear();
@@ -377,6 +446,8 @@ public class CancelBillAction extends BaseFormAction {
 
 	@Action(value = "/voucher/cancelBill-cancelBill")
 	public String cancelBill() {
+		bindSelectedBillsFromRequest();
+		resolveSearchCriteriaFromRequest();
         final Map<String, Object> map = cancelBills(billListDisplay, expType);
         ((List<String>) map.get("billNumbers")).forEach(rec -> addActionError(getText("msg.bill.cancel.creator", new String[] {rec})));
         if (!((List<Long>) map.get("ids")).isEmpty())
@@ -385,6 +456,71 @@ public class CancelBillAction extends BaseFormAction {
         prepareBeforeSearch();
         return "search";
     }
+
+	/**
+	 * LTS Migration Fix [Struts 7 Batch Checkbox Binding]:
+	 * Struts 7 does not bind dynamic indexed list checkboxes ('billListDisplay[i].isSelected').
+	 * Selected bill ids are posted as an array ('selectedBillIds') from cancelBill-search.jsp.
+	 * This method populates billListDisplay with isSelected=true for the matching bill IDs.
+	 */
+	private void bindSelectedBillsFromRequest() {
+		final HttpServletRequest request = ServletActionContext.getRequest();
+		if (request == null) {
+			return;
+		}
+		String[] ids = request.getParameterValues("selectedBillIds");
+		if (ids == null || ids.length == 0) {
+			ids = selectedBillIds;
+		}
+		if (ids == null || ids.length == 0) {
+			final List<String> collected = new ArrayList<>();
+			for (int i = 0; i < 500; i++) {
+				final String selected = request.getParameter("billListDisplay[" + i + "].isSelected");
+				final String id = request.getParameter("billListDisplay[" + i + "].id");
+				if (id == null && selected == null) {
+					if (i > 0) {
+						break;
+					}
+					continue;
+				}
+				if (id != null && ("true".equalsIgnoreCase(selected) || "on".equalsIgnoreCase(selected)
+						|| "true,false".equalsIgnoreCase(selected))) {
+					collected.add(id);
+				}
+			}
+			if (!collected.isEmpty()) {
+				ids = collected.toArray(new String[0]);
+			}
+		}
+		if (ids == null || ids.length == 0) {
+			return;
+		}
+		selectedBillIds = ids;
+		if (billListDisplay == null) {
+			billListDisplay = new ArrayList<>();
+		}
+		if (billListDisplay.isEmpty()) {
+			for (final String id : ids) {
+				if (StringUtils.isBlank(id)) {
+					continue;
+				}
+				final BillRegisterBean bean = new BillRegisterBean();
+				bean.setId(id.trim());
+				bean.setIsSelected(true);
+				billListDisplay.add(bean);
+			}
+		} else {
+			final java.util.Set<String> selected = new java.util.HashSet<>();
+			for (final String id : ids) {
+				if (StringUtils.isNotBlank(id)) {
+					selected.add(id.trim());
+				}
+			}
+			for (final BillRegisterBean bean : billListDisplay) {
+				bean.setIsSelected(bean.getId() != null && selected.contains(bean.getId()));
+			}
+		}
+	}
 	
 	public Map<String, Object> cancelBills(final List<BillRegisterBean> billListDisplay, final String expType) {
         final Map<String, Object> map = new HashMap<>();
@@ -449,13 +585,9 @@ public class CancelBillAction extends BaseFormAction {
             cancelQuery.append(" where id in (:ids)");
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug(" Cancel Query - " + cancelQuery.toString());
-            final Query totalNativeQuery = persistenceService.getSession()
-                    .createSQLQuery(cancelQuery.toString());
-            totalNativeQuery.setParameter("statusId", Long.valueOf(status.getId()), LongType.INSTANCE);
-            cancelQueryMap.entrySet().forEach(entry -> totalNativeQuery.setParameter(entry.getKey(), entry.getValue()));
-            totalNativeQuery.setParameterList("ids", ids);
             if (!ids.isEmpty())
-                totalNativeQuery.executeUpdate();
+                billsService.updateBillStatus(ids, Long.valueOf(status.getId()),
+                        (String) cancelQueryMap.get(BILL_STATUS));
         }
         map.put("ids", ids);
         map.put("billNumbers", billNumbers);
@@ -476,6 +608,14 @@ public class CancelBillAction extends BaseFormAction {
 
 	public boolean getAfterSearch() {
 		return afterSearch;
+	}
+
+	public String[] getSelectedBillIds() {
+		return selectedBillIds;
+	}
+
+	public void setSelectedBillIds(final String[] selectedBillIds) {
+		this.selectedBillIds = selectedBillIds;
 	}
 
 	public Department getDeptImpl() {

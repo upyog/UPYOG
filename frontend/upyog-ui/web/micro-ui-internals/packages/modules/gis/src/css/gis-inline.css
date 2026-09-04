@@ -474,3 +474,58 @@
   font-size: 24px;
   color: blue;
 }
+
+/* ============================================================
+   DiginpinMapPopup — src/components/DiginpinMapPopup.js
+   ============================================================ */
+
+/* Full-screen semi-transparent overlay */
+.gis-diginpin-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal card containing the header bar and the map */
+.gis-diginpin-popup-card {
+  width: 420px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+/* Header bar: shows the DIGIPIN value and a close button */
+.gis-diginpin-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  background: #a82227;
+}
+
+/* DIGIPIN text */
+.gis-diginpin-popup-title {
+  color: #fff;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* Close button */
+.gis-diginpin-popup-close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* Map container */
+.gis-diginpin-popup-map {
+  height: 300px;
+  width: 100%;
+}

@@ -99,7 +99,8 @@ const WSConnectionHolderDetails = ({
   } = Digit.Hooks.pt.usePropertyMDMS(stateId, "PropertyTax", "OwnerType");
   Menu ? Menu.sort((a, b) => a.name.localeCompare(b.name)) : "";
   useEffect(() => {
-    const data = connectionHolderDetails.map(e => {
+    const data = connectionHolderDetails.map((e, index) => {
+      if (!e.key) e.key = Date.now() + index;
       return e;
     });
     onSelect(config?.key, data);
@@ -154,7 +155,7 @@ const WSConnectionHolderDetails = ({
     Menu
   };
   return <React.Fragment>
-      {connectionHolderDetails.map((connectionHolderDetail, index) => <ConnectionDetails key={connectionHolderDetail.key} index={index} connectionHolderDetail={connectionHolderDetail} {...commonProps} />)}
+      {connectionHolderDetails.map((connectionHolderDetail, index) => <ConnectionDetails key={connectionHolderDetail?.key || `ws-connection-holder-detail-${index}`} index={index} connectionHolderDetail={connectionHolderDetail} {...commonProps} />)}
     </React.Fragment>;
 };
 const ConnectionDetails = _props => {

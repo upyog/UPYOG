@@ -51,14 +51,14 @@ package org.egov.infra.workflow.entity;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.annotations.Proxy;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.SequenceGenerator;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.SequenceGenerator;
 
-import static javax.persistence.InheritanceType.TABLE_PER_CLASS;
+import static jakarta.persistence.InheritanceType.TABLE_PER_CLASS;
 import static org.egov.infra.workflow.entity.OwnerGroup.SEQ_EG_OWNERGROUP;
 
 @Entity

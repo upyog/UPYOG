@@ -1,3 +1,4 @@
+import "../../../../../css/ndc.css";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -81,7 +82,6 @@ export const NewNDCStepForm = () => {
   const setStep = (updatedStepNumber) => {
     dispatch(setNDCStep(updatedStepNumber));
   };
-console.log("formData in step form", formData);
   const handleSubmit = () => {};
 
   useEffect(() => {

@@ -1,188 +1,333 @@
 package org.egov.garbageservice.service;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-
-import org.egov.common.contract.request.User;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.garbageservice.model.UserSearchResponse;
-import org.egov.garbageservice.service.UserService;
-import org.egov.garbageservice.contract.bill.Demand;
-import org.egov.garbageservice.contract.bill.Demand.StatusEnum;
-import org.egov.garbageservice.contract.bill.DemandDetail;
-import org.egov.garbageservice.contract.bill.DemandRepository;
-import org.egov.garbageservice.contract.bill.DemandResponse;
-import org.egov.garbageservice.model.GarbageAccount;
-import org.egov.garbageservice.model.GenerateBillRequest;
-import org.egov.garbageservice.util.GrbgConstants;
-import org.egov.garbageservice.util.RequestInfoWrapper;
-import org.egov.tracer.model.CustomException;
+import org.egov.common.contract.request.User;
+import org.egov.garbageservice.config.GarbageServiceConfig;
+import org.egov.garbageservice.web.models.bill.Demand;
+import org.egov.garbageservice.web.models.bill.DemandDetail;
+import org.egov.garbageservice.web.models.AmountCalculationResult;
+import org.egov.garbageservice.web.models.GarbageAccount;
+import org.egov.garbageservice.web.models.GarbageAccountRequest;
+import org.egov.garbageservice.web.models.SchedulerLog;
+import org.egov.garbageservice.kafka.Producer;
+import org.egov.garbageservice.repository.DemandRepository;
+import org.egov.garbageservice.repository.GarbageAccountRepository;
+import org.egov.garbageservice.util.GrbgUtils;
+import org.egov.garbageservice.util.MdmsUtil;
+import org.egov.garbageservice.util.ServiceConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
-/**
- * Builds and persists revenue demands for garbage accounts through DemandRepository.
- * Creates tax-period demands from MDMS-calculated amounts, adds penalty tax heads, and supports cancel/update.
- */
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.*;
+
 @Service
+@Slf4j
 public class DemandService {
 
-	@Autowired
-	private GrbgConstants grbgConfig;
+    @Autowired
+    private GarbageCalculationService calculationService;
 
-	@Autowired
-	private DemandRepository demandRepository;
-	
-	@Autowired
-	private UserService userService;
+    @Autowired
+    @Qualifier("billDemandRepository")
+    private org.egov.garbageservice.web.models.bill.DemandRepository billDemandRepository;
 
-	public List<Demand> generateDemand(RequestInfo requestInfo, GarbageAccount garbageAccount, String businessService,
-			BigDecimal taxAmount, GenerateBillRequest generateBillRequest) {
+    @Autowired
+    private DemandRepository demandRepository;
 
-		Long taxPeriodFrom = getDateToTimeStamp(generateBillRequest.getFromDate(),generateBillRequest.getType(),"FROM");
-//				null != generateBillRequest.getFromDate() ? generateBillRequest.getFromDate().getTime()
-//				: new Date(Calendar.getInstance().getTimeInMillis()).getTime();
-		Long taxPeriodTo = getDateToTimeStamp(generateBillRequest.getToDate(),generateBillRequest.getType(),"TO");
-//				null != generateBillRequest.getToDate() ? generateBillRequest.getToDate().getTime()
-//				: new Date((Calendar.getInstance().getTimeInMillis() + (long) 30 * 24 * 60 * 60 * 1000)).getTime();
-		DemandDetail demandDetail = DemandDetail.builder().taxHeadMasterCode(GrbgConstants.BILLING_TAX_HEAD_MASTER_CODE)
-				.taxAmount(taxAmount).collectionAmount(BigDecimal.ZERO).build();
-		Calendar cal = Calendar.getInstance();
+    @Autowired
+    private Producer producer;
 
-		cal.add(Calendar.DAY_OF_MONTH, Integer.valueOf(grbgConfig.getGrbgBillExpiryAfter()));
-		cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE), 23, 59, 59);
-		Map<String, Object> additionalDetail = (Map<String, Object>) generateBillRequest.getAdditionalDetail();
+    @Autowired
+    private GarbageServiceConfig config;
 
-		String consumercode = null;
-		if(!businessService.equals("GB"))
-			consumercode = getConsumerCodeBulk(garbageAccount.getGrbgApplicationNumber(),additionalDetail.get("bulkType").toString());
-		else
-			consumercode = garbageAccount.getGrbgApplicationNumber();
-			
-		Demand demandOne = Demand.builder().consumerCode(consumercode)
-				.demandDetails(Arrays.asList(demandDetail)).minimumAmountPayable(taxAmount)
-				.tenantId(garbageAccount.getTenantId()).taxPeriodFrom(taxPeriodFrom).taxPeriodTo(taxPeriodTo)
-				.fixedBillExpiryDate(cal.getTimeInMillis()).consumerType(GrbgConstants.WORKFLOW_MODULE_NAME)
-				.payer(User.builder().uuid(garbageAccount.getUserUuid()).build())
-				.additionalDetails(generateBillRequest.getAdditionalDetail())
-				.businessService(businessService).build();
+    @Autowired
+    private MdmsUtil mdmsUtil;
 
-		List<Demand> demands = Arrays.asList(demandOne);
+    @Autowired
+    private GarbageAccountRepository garbageAccountRepository;
 
-		List<Demand> savedDemands = demandRepository.saveDemand(requestInfo, demands);
+    /**
+     * Generates a monthly billing demand for the specified garbage account.
+     *
+     * <p>The demand generation process follows these steps:
+     * <ol>
+     *   <li>Calculates the billing period for the current month.</li>
+     *   <li>Checks if a demand already exists for the given period to prevent duplicates.</li>
+     *   <li>Calculates the current month's fee, including applicable rebates, via {@link GarbageCalculationService}.</li>
+     *   <li>Retrieves any previous unpaid demands to calculate cumulative rental fees and penalties.</li>
+     *   <li>Assembles the {@link DemandDetail} elements (tax, penalty, and rebate).</li>
+     *   <li>Saves the new demand and optionally updates the history of unpaid demands.</li>
+     *   <li>Logs the generation event to Kafka for asynchronous tracking.</li>
+     * </ol>
+     *
+     * @param requestInfo    the contextual information for the API request
+     * @param garbageAccount the garbage account for which the demand is being generated
+     * @param billingDate    the date for which the billing cycle applies
+     */
 
-		return savedDemands;
-	}
-	
-	public void addPenaltyTaxHead(
-	        Demand demand,
-	        String taxHeadCode,
-	        BigDecimal amount) {
+    public void generateDemand(RequestInfo requestInfo,
+                               GarbageAccount garbageAccount,
+                               LocalDate billingDate) {
 
-	    DemandDetail penaltyDetail = DemandDetail.builder()
-	        .taxHeadMasterCode(taxHeadCode)
-	        .taxAmount(amount)
-	        .collectionAmount(BigDecimal.ZERO)
-	        .build();
+        LocalDate periodFrom = billingDate;
+        LocalDate periodTo = billingDate.plusMonths(1).minusDays(1);
 
-	    demand.getDemandDetails().add(penaltyDetail);
-	}
-	
-	private String getConsumerCodeBulk(String consumerCode, String bulkType) {
-	    // generate random 2-digit number (10–99)
-	    int randomNum = new Random().nextInt(90) + 10;  
-	    return consumerCode + "_" + bulkType + "_" + randomNum;
-	}
-	private Long getDateToTimeStamp(Date date,String type,String FromTo) {
-	
-			if("ON-DEMAND".equals(type)) {
-				if(date !=null) {
-				 	Calendar now = Calendar.getInstance();
-			        int hour = now.get(Calendar.HOUR_OF_DAY);
-			        int minute = now.get(Calendar.MINUTE);
-			        int second = now.get(Calendar.SECOND);
-			        int millis = now.get(Calendar.MILLISECOND);
-			
-			        // Combine original date with current time
-			        Calendar cal = Calendar.getInstance();
-			        cal.setTime(date);
-			        cal.set(Calendar.HOUR_OF_DAY, hour);
-			        cal.set(Calendar.MINUTE, minute);
-			        cal.set(Calendar.SECOND, second);
-			        cal.set(Calendar.MILLISECOND, millis);
-			        return cal.getTimeInMillis();
-				}else 
-					return "FROM".equals(FromTo) ? new Date(Calendar.getInstance().getTimeInMillis()).getTime():new Date((Calendar.getInstance().getTimeInMillis() + (long) 30 * 24 * 60 * 60 * 1000)).getTime();
-			}else {
-				if(date !=null) 
-					return date.getTime();
-				else {
-					return "FROM".equals(FromTo) ? new Date(Calendar.getInstance().getTimeInMillis()).getTime():new Date((Calendar.getInstance().getTimeInMillis() + (long) 30 * 24 * 60 * 60 * 1000)).getTime();
-				}
-			}
-		}
-	
+        String userUuid =
+                requestInfo.getUserInfo() != null
+                        ? requestInfo.getUserInfo().getUuid()
+                        : ServiceConstants.STATUS_SYSTEM;
 
-	List<Demand> searchDemand(String tenantId, Set<String> consumerCodes, RequestInfo requestInfo,
-			String businessService) {
+        long now = System.currentTimeMillis();
 
-		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-		DemandResponse response = demandRepository.search(tenantId, consumerCodes, requestInfoWrapper, businessService);
+        List<Demand> existingDemands =
+                demandRepository.searchAllDemands(
+                        requestInfo,
+                        garbageAccount.getTenantId(),
+                        garbageAccount.getGrbgApplicationNumber(),
+                        config.getBusinessService(),
+                        false);
 
-		if (CollectionUtils.isEmpty(response.getDemands()))
-			return null;
+        boolean alreadyGenerated =
+                existingDemands.stream()
+                        .anyMatch(d ->
+                                d.getTaxPeriodFrom().equals(convertToTimestamp(periodFrom))
+                                        && d.getTaxPeriodTo().equals(convertToTimestamp(periodTo)));
 
-		else
-			return response.getDemands();
+        if (alreadyGenerated) {
+            log.info(
+                    "Demand already exists for garbage account {}, period {} to {}",
+                    garbageAccount.getGrbgApplicationNumber(),
+                    periodFrom,
+                    periodTo);
+            return;
+        }
 
-	}
-	
-	List<Demand> searchDemandId(String tenantId, Set<String> demandIds, RequestInfo requestInfo,
-			String businessService) {
+        AmountCalculationResult currentAmount =
+                calculationService.calculateAmount(garbageAccount);
 
-		RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-		DemandResponse response = demandRepository.searchId(tenantId, demandIds, requestInfoWrapper, businessService);
+        log.info(
+                "Generating demand for garbage account {}, period {} to {}, amount {}",
+                garbageAccount.getGrbgApplicationNumber(),
+                periodFrom,
+                periodTo,
+                currentAmount.getPayableAmount()
+        );
 
-		if (CollectionUtils.isEmpty(response.getDemands()))
-			return null;
+        List<Demand> unpaidDemands =
+                demandRepository.searchAllDemands(
+                        requestInfo,
+                        garbageAccount.getTenantId(),
+                        garbageAccount.getGrbgApplicationNumber(),
+                        config.getBusinessService(),
+                        true);
 
-		else
-			return response.getDemands();
+        BigDecimal rentalFeeAmount;
+        BigDecimal penaltyAmount = BigDecimal.ZERO;
+        BigDecimal finalAmount;
 
-	}
-	
-    public List<Demand> cancelDemand(String tenantId, Set<String> demandIds, RequestInfo requestInfo,
-			String businessService){
-        List<Demand> demands = new LinkedList<>();
-//        for(Calculation calculation : calculations) {
+        List<Demand> demandsToUpdate =
+                Collections.emptyList();
 
-            List<Demand> searchResult = searchDemandId(tenantId,demandIds, requestInfo,businessService);
+        if (!unpaidDemands.isEmpty()) {
 
-            if(CollectionUtils.isEmpty(searchResult))
-                throw new CustomException("INVALID UPDATE","No demand exists for applicationNumber: ");
-            
-            Demand demand = searchResult.get(0);
-            	demand.setStatus(StatusEnum.CANCELLED);
-//            List<DemandDetail> demandDetails = demand.getDemandDetails();
-//            List<DemandDetail> updatedDemandDetails = getUpdatedDemandDetails(calculation,demandDetails);
-//            demand.setDemandDetails(updatedDemandDetails);
-            demands.add(demand);
-//        }
-         return demandRepository.updateDemand(requestInfo,demands);
+            BigDecimal previousUnpaid =
+                    unpaidDemands.stream()
+                            .flatMap(d -> d.getDemandDetails().stream())
+                            .map(DemandDetail::getTaxAmount)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            rentalFeeAmount =
+                    previousUnpaid.add(currentAmount.getPayableAmount());
+
+            BigDecimal penaltyRate = mdmsUtil.getPenaltyRate(requestInfo, garbageAccount.getTenantId());
+            penaltyAmount =
+                    previousUnpaid
+                            .multiply(penaltyRate)
+                            .setScale(0, RoundingMode.HALF_UP);
+
+            finalAmount =
+                    rentalFeeAmount.add(penaltyAmount .setScale(0, RoundingMode.HALF_UP));
+
+            demandsToUpdate = unpaidDemands;
+
+            log.info(
+                    "Penalty applied. Previous unpaid={}, current={}, penalty={}, total={}",
+                    previousUnpaid,
+                    currentAmount,
+                    penaltyAmount,
+                    finalAmount
+            );
+
+        } else {
+            finalAmount = currentAmount.getPayableAmount();
+        }
+
+
+        User payer = User.builder()
+                .name(garbageAccount.getName())
+                .emailId(garbageAccount.getEmailId())
+                .mobileNumber(garbageAccount.getMobileNumber())
+                .tenantId(garbageAccount.getTenantId())
+                .build();
+
+        List<DemandDetail> demandDetails =
+                new LinkedList<>();
+
+        demandDetails.add(
+                DemandDetail.builder()
+                        .taxHeadMasterCode(ServiceConstants.GRBG_TAX_HEAD_CODE)
+                        .taxAmount(currentAmount.getTotalAmount().setScale(0, RoundingMode.HALF_UP))
+                        .collectionAmount(BigDecimal.ZERO)
+                        .tenantId(garbageAccount.getTenantId())
+                        .build()
+        );
+
+        if (penaltyAmount.compareTo(BigDecimal.ZERO) > 0) {
+
+            demandDetails.add(
+                    DemandDetail.builder()
+                            .taxHeadMasterCode(ServiceConstants.GRBG_PENALTY_FEE)
+                            .taxAmount(penaltyAmount.setScale(0, RoundingMode.HALF_UP))
+                            .collectionAmount(BigDecimal.ZERO)
+                            .tenantId(garbageAccount.getTenantId())
+                            .build()
+            );
+        }
+
+        if (currentAmount.getRebateAmount().compareTo(BigDecimal.ZERO) > 0) {
+            demandDetails.add(
+                    DemandDetail.builder()
+                            .taxHeadMasterCode(ServiceConstants.GRBG_REBATE_FEE)
+                            .taxAmount(currentAmount.getRebateAmount().negate().setScale(0, RoundingMode.HALF_UP))
+                            .collectionAmount(BigDecimal.ZERO)
+                            .tenantId(garbageAccount.getTenantId())
+                            .build()
+            );
+        }
+
+        Demand demand = Demand.builder()
+                .consumerCode(garbageAccount.getGrbgApplicationNumber())
+                .demandDetails(demandDetails)
+                .payer(payer)
+                .tenantId(garbageAccount.getTenantId())
+                .taxPeriodFrom(convertToTimestamp(periodFrom))
+                .taxPeriodTo(convertToTimestamp(periodTo))
+                .consumerType(config.getModuleName())
+                .businessService(config.getBusinessService())
+                .build();
+
+        if (!demandsToUpdate.isEmpty()) {
+            billDemandRepository.updateDemand(
+                    requestInfo,
+                    demandsToUpdate);
+        }
+
+        billDemandRepository.saveDemand(
+                requestInfo,
+                Collections.singletonList(demand));
+
+        SchedulerLog schedulerLog =
+                SchedulerLog.builder()
+                        .id(UUID.randomUUID().toString())
+                        .garbageAccountId(garbageAccount.getGrbgApplicationNumber())
+                        .tenantId(garbageAccount.getTenantId())
+                        .billingDate(billingDate)
+                        .billingPeriodFrom(convertToTimestamp(periodFrom))
+                        .billingPeriodTo(convertToTimestamp(periodTo))
+                        .amount(finalAmount)
+                        .penaltyAmount(penaltyAmount)
+                        .paymentType(ServiceConstants.PAYMENT_TYPE_FULL)
+                        .status(ServiceConstants.STATUS_PENDING)
+                        .createdBy(userUuid)
+                        .createdTime(now)
+                        .lastModifiedBy(userUuid)
+                        .lastModifiedTime(now)
+                        .build();
+
+        producer.push(
+                config.getSchedulerLogTopic(),
+                Map.of("schedulerLog", schedulerLog));
+
+        // Update allotment due date and status to PENDING_FOR_PAYMENT
+        try {
+            garbageAccount.setDueDate(periodTo);
+            garbageAccount.setStatus(ServiceConstants.STATUS_PENDING_FOR_PAYMENT);
+            if (garbageAccount.getGrbgApplication() != null) {
+                garbageAccount.getGrbgApplication().setStatus(ServiceConstants.STATUS_PENDING_FOR_PAYMENT);
+            }
+            String updaterUuid = requestInfo.getUserInfo() != null ? requestInfo.getUserInfo().getUuid() : ServiceConstants.STATUS_SYSTEM;
+            if (garbageAccount.getAuditDetails() != null) {
+                garbageAccount.getAuditDetails().setLastModifiedBy(updaterUuid);
+                garbageAccount.getAuditDetails().setLastModifiedTime(Instant.now().toEpochMilli());
+            } else {
+                garbageAccount.setAuditDetails(GrbgUtils.getAuditDetails(updaterUuid, false));
+            }
+            GarbageAccountRequest garbageAccountRequest = new GarbageAccountRequest(requestInfo, List.of(garbageAccount), false, false);
+            garbageAccountRepository.save(config.getUpdateGarbageAccountTopic(), garbageAccountRequest);
+            log.info("Updated Garbage Account due date to {} and status to PENDING_FOR_PAYMENT for Garbage Account Id: {}", periodTo, garbageAccount.getGrbgApplicationNumber());
+        } catch (Exception e) {
+            log.error("Failed to update allotment due date and status on demand generation: {}", e.getMessage(), e);
+        }
+
+        log.info(
+                "Demand generated successfully for garbage account {}",
+                garbageAccount.getGrbgApplicationNumber());
     }
-    
+
+    /**
+     * Appends a penalty tax head to an existing demand.
+     *
+     * @param demand   the {@link Demand} to update with the penalty
+     * @param tenantId the tenant ID under which the penalty is assessed
+     * @param penalty  the {@link BigDecimal} amount of the penalty
+     */
+
+    public void addPenaltyTaxHead(Demand demand, String tenantId, BigDecimal penalty) {
+        demand.getDemandDetails().add(DemandDetail.builder()
+                .taxHeadMasterCode(ServiceConstants.GRBG_PENALTY_FEE)
+                .taxAmount(penalty)
+                .collectionAmount(BigDecimal.ZERO)
+                .tenantId(tenantId)
+                .build());
+    }
+
+    /**
+     * Persists updates to a list of existing demands using the billing repository.
+     *
+     * @param requestInfo the contextual information for the API request
+     * @param demands     the list of {@link Demand} objects to be updated
+     */
+
     public void updateDemand(RequestInfo requestInfo, List<Demand> demands) {
-        demandRepository.updateDemand(requestInfo, demands);
+        billDemandRepository.updateDemand(requestInfo, demands);
     }
 
+    /**
+     * Cancels the specified demands for a given tenant and business service.
+     *
+     * @param tenantId        the tenant ID where the demands exist
+     * @param demandIds       a {@link Set} of unique demand IDs to cancel
+     * @param requestInfo     the contextual information for the API request
+     * @param businessService the associated business service for the demands
+     */
 
+    public void cancelDemand(String tenantId, Set<String> demandIds, RequestInfo requestInfo, String businessService) {
+    }
+
+    /**
+     * Converts a given {@link LocalDate} to its corresponding epoch timestamp in milliseconds.
+     *
+     * @param date the date to convert
+     * @return the epoch timestamp in milliseconds
+     */
+
+    private Long convertToTimestamp(LocalDate date) {
+        return date.atStartOfDay().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli();
+    }
 }

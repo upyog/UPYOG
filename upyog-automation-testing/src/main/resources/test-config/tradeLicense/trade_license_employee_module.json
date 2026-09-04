@@ -58,8 +58,8 @@
       "stepName":"Enter Application Number",
       "locatorStrategy":"CSS",
       "locatorValue":"input.employee-card-input",
-      "action":"TYPE",
-      "inputValue":"${selected.applicationNumber}",
+      "action": "TYPE_FROM_STORE",
+      "inputValue": "APPLICATION_NO",
       "dynamicSleep": 1000
     },
 
@@ -103,7 +103,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"comments",
       "action":"TYPE",
-      "inputValue":"Automated verification comment",
+      "inputValue":"${comment.verify}",
       "dynamicSleep": 1000
     },
 
@@ -142,7 +142,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"comments",
       "action":"TYPE",
-      "inputValue":"Automated verification comment",
+      "inputValue":"${comment.verify}",
       "dynamicSleep": 1000
     },
 
@@ -184,7 +184,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"comments",
       "action":"TYPE",
-      "inputValue":"Automated approval comment",
+      "inputValue":"${comment.approve}",
       "dynamicSleep": 1000
     },
 
@@ -230,7 +230,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"payerMobile",
       "action":"TYPE",
-      "inputValue":"9847584944",
+      "inputValue":"${mobile.number}",
       "dynamicSleep": 1000
     },
     {
@@ -238,7 +238,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"instrumentNumber",
       "action":"TYPE",
-      "inputValue":"GEN123456",
+      "inputValue":"${receipt.number}",
       "dynamicSleep": 1000
     },
     {
@@ -256,33 +256,6 @@
       "locatorValue":"//button[.//header[normalize-space()='Collect Payment']]",
       "action":"CLICK_JS",
       "dynamicSleep": 3000
-    },
-
-
-
-    {
-      "stepName":"Download Receipt 1",
-      "locatorStrategy":"CSS",
-      "locatorValue":"div.primary-label-btn.d-grid",
-      "action":"CLICK_BY_INDEX",
-      "inputValue":"0"
-    },
-
-    {
-      "stepName":"Download Receipt 2",
-      "locatorStrategy":"CSS",
-      "locatorValue":"div.primary-label-btn.d-grid",
-      "action":"CLICK_BY_INDEX",
-      "inputValue":"1"
-    },
-
-    {
-      "stepName":"Download Receipt 3",
-      "locatorStrategy":"CSS",
-      "locatorValue":"div.primary-label-btn.d-grid",
-      "action":"CLICK_BY_INDEX",
-      "inputValue":"2"
     }
-
   ]
 }

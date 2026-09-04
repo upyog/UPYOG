@@ -78,7 +78,7 @@ const iconSelector = (code) => {
       return <OBPSIcon className="fill-path-primary-main" />;
     case "Bills":
       return <BillsIcon className="fill-path-primary-main" />;
-      case "PTR":
+    case "PTR":
       return <PTRIcon className="fill-path-primary-main" />;
     case "CHB":
       return <CHBIcon className="fill-path-primary-main" />;
@@ -101,7 +101,7 @@ const CitizenHome = ({ modules, getCitizenMenu, fetchedCitizen, isLoading }) => 
     <React.Fragment>
       <div className="citizen-all-services-wrapper">
         <BackButton />
-        <div className="citizenAllServiceGrid" style={{display:"flex", flexDirection:"column",justifyContent:"center" }}>
+        <div className="citizenAllServiceGrid" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
           {moduleArray
             .filter((mod) => mod)
             .map(({ code }, index) => {
@@ -110,24 +110,25 @@ const CitizenHome = ({ modules, getCitizenMenu, fetchedCitizen, isLoading }) => 
               if (mdmsDataObj?.links?.length > 0) {
                 return (
                   <CitizenHomeCard
+                    key={code}
                     header={t(mdmsDataObj?.header)}
                     links={mdmsDataObj?.links?.filter((ele) => ele?.link)?.sort((x, y) => x?.orderNumber - y?.orderNumber)}
                     Icon={() => iconSelector(code)}
                     Info={
                       code === "OBPS"
                         ? () => (
-                            <CitizenInfoLabel
-                              style={{ margin: "0px", padding: "10px" }}
-                              info={t("CS_FILE_APPLICATION_INFO_LABEL")}
-                              text={t(`BPA_CITIZEN_HOME_STAKEHOLDER_INCLUDES_INFO_LABEL`)}
-                            />
-                          )
+                          <CitizenInfoLabel
+                            style={{ margin: "0px", padding: "10px" }}
+                            info={t("CS_FILE_APPLICATION_INFO_LABEL")}
+                            text={t(`BPA_CITIZEN_HOME_STAKEHOLDER_INCLUDES_INFO_LABEL`)}
+                          />
+                        )
                         : null
                     }
                     isInfo={code === "OBPS" ? true : false}
                   />
                 );
-              } else return <React.Fragment />;
+              } else return <React.Fragment key={code || index} />;
             })}
         </div>
       </div>
@@ -139,27 +140,27 @@ const CitizenHome = ({ modules, getCitizenMenu, fetchedCitizen, isLoading }) => 
 const EmployeeHome = ({ modules }) => {
   const { t } = useTranslation();
   const navigate = Digit.Hooks.useCustomNavigate();
-  const dashboardCemp = Digit.UserService.hasAccess(["DASHBOARD_EMPLOYEE"])?true:false;
-  if(window.Digit.SessionStorage.get("PT_CREATE_EMP_TRADE_NEW_FORM")) window.Digit.SessionStorage.set("PT_CREATE_EMP_TRADE_NEW_FORM",{})
+  const dashboardCemp = Digit.UserService.hasAccess(["DASHBOARD_EMPLOYEE"]) ? true : false;
+  if (window.Digit.SessionStorage.get("PT_CREATE_EMP_TRADE_NEW_FORM")) window.Digit.SessionStorage.set("PT_CREATE_EMP_TRADE_NEW_FORM", {})
   return (
     <div className="employee-app-container">
       <br />
       {dashboardCemp && (
         <div className="dashboard-btn-wrapper">
-        <button
-          className="view-dashboard-btn"
-          onClick={() => navigate("/upyog-ui/employee/dashboard")}
-        >
-          <span className="dashboard-icon">📊</span>
-          <span className="dashboard-text">{t("VIEW_DASHBOARD")}</span>
-          <span className="dashboard-arrow">→</span>
-        </button>
-      </div>
+          <button
+            className="view-dashboard-btn"
+            onClick={() => navigate("/upyog-ui/employee/dashboard")}
+          >
+            <span className="dashboard-icon">📊</span>
+            <span className="dashboard-text">{t("VIEW_DASHBOARD")}</span>
+            <span className="dashboard-arrow">→</span>
+          </button>
+        </div>
       )}
       <div className="ground-container moduleCardWrapper gridModuleWrapper">
-        {modules.map(({ code }, index) => {
+        {modules.map(({ code }) => {
           const Card = Digit.ComponentRegistryService.getComponent(`${code}Card`) || (() => <React.Fragment />);
-          return <Card key={index} />;
+          return <Card key={code} />;
         })}
       </div>
     </div>

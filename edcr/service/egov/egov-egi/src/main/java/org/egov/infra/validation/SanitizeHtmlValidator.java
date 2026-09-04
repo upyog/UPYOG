@@ -1,7 +1,7 @@
 package org.egov.infra.validation;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.owasp.html.PolicyFactory;
 import org.owasp.html.Sanitizers;
 

@@ -64,10 +64,13 @@ import org.egov.model.budget.Budget;
 import org.egov.model.budget.BudgetReAppropriation;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
-import org.hibernate.FlushMode;
-import org.hibernate.Query;
+
+import org.hibernate.query.Query;
+import jakarta.persistence.FlushModeType;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.BigDecimalType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -136,7 +139,7 @@ public class BudgetAppropriationReportAction extends BaseFormAction {
 	@Override
 	public void prepare() {
 		persistenceService.getSession().setDefaultReadOnly(true);
-		persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+		persistenceService.getSession().setFlushMode(FlushModeType.COMMIT);
 		super.prepare();
 		if (!parameters.containsKey("showDropDown")) {
 			addDropdownData("departmentList",
@@ -237,13 +240,13 @@ public class BudgetAppropriationReportAction extends BaseFormAction {
         final String queryString = queryMapEntry.getKey();
         final Map<String, Object> queryParams = queryMapEntry.getValue();
         final Query query = persistenceService.getSession()
-                .createSQLQuery(queryString)
+                .createNativeQuery(queryString)
                 .addScalar("department").addScalar("function")
                 .addScalar("fund").addScalar("budgetHead")
                 .addScalar("budgetAppropriationNo")
                 .addScalar("appropriationDate").addScalar("actualAmount")
-                .addScalar("additionAmount", BigDecimalType.INSTANCE)
-                .addScalar("deductionAmount", BigDecimalType.INSTANCE);
+                .addScalar("additionAmount", StandardBasicTypes.BIG_DECIMAL)
+                .addScalar("deductionAmount", StandardBasicTypes.BIG_DECIMAL);
         queryParams.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         return query;
 	}
@@ -272,7 +275,7 @@ public class BudgetAppropriationReportAction extends BaseFormAction {
 	 */
 	@SuppressWarnings("unchecked")
 	public String getUlbName() {
-		final Query query = persistenceService.getSession().createSQLQuery(
+		final Query query = persistenceService.getSession().createNativeQuery(
 				"select name from companydetail");
 		final List<String> result = query.list();
 		if (result != null)

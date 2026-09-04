@@ -1,3 +1,7 @@
+/**
+ * Renders the desktop view for employee NOC application search.
+ * Combines SearchForm input fields with paginated search results table.
+ */
 import React, { useCallback, useEffect, useState } from "react";
 import { SearchForm, Table, Card, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import { useFormContext } from "react-hook-form";

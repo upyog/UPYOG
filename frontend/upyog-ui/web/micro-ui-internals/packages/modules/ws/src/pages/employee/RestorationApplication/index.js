@@ -29,14 +29,14 @@ const DisconnectionApplication = () => {
         const Component = Digit.ComponentRegistryService.getComponent("WSRestorationForm");
         return (
           <Route
-            path={basePath}
+            path=""
             key={index}
             element={<Component config={{ texts, inputs, key, isSkipEnabled }} t={t} userType={"employee"} />}
           />
         );
       })}
 
-      <Route path="*" element={<Navigate to={`${modulePath}/${config.indexRoute}`} replace />} />
+      <Route path="*" element={<Navigate to="" replace />} />
     </Routes>
   );
 };

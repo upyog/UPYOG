@@ -55,4 +55,7 @@ public class Mdms {
     @Valid
     private AuditDetails auditDetails = null;
 
+    @JsonProperty("operation")
+     private String operation = null;
+
 }

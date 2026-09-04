@@ -1,18 +1,18 @@
 package org.egov.edcr.config;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Spring configuration for Jackson-related beans.
- * <p>
- * Defines and exposes a shared {@link ObjectMapper} bean that can be
- * injected and reused throughout the application for JSON serialization
- * and deserialization.
- * </p>
+ * Spring configuration for Jackson JSON serialization beans.
+ *
+ * <p>Provides an application-scoped {@link ObjectMapper} bean. WildFly-bundled Jackson
+ * modules are excluded in {@code jboss-deployment-structure.xml} so this bean uses
+ * the application-packaged Jackson 2.13.5 libraries, avoiding version conflicts
+ * with the server's RestEasy Jackson provider.</p>
  */
 @Configuration
 public class JacksonConfig {
@@ -24,10 +24,9 @@ public class JacksonConfig {
      */
     @Bean
     public ObjectMapper objectMapper() {
-        return new ObjectMapper();
-//        mapper.setVisibility(
-//                PropertyAccessor.FIELD,
-//                JsonAutoDetect.Visibility.ANY);
-//        return mapper;
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
+        mapper.setNodeFactory(JsonNodeFactory.withExactBigDecimals(true));
+        return mapper;
     }
 }

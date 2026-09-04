@@ -57,8 +57,8 @@
       "stepName":"Enter Booking Number",
       "locatorStrategy":"XPATH",
       "locatorValue":"//h4[contains(text(),'Booking No.')]/following::input[1]",
-      "action":"TYPE",
-      "inputValue":"${selected.applicationNumber}",
+      "action": "TYPE_FROM_STORE",
+      "inputValue": "APPLICATION_NO",
       "dynamicSleep":1000
     },
 
@@ -104,7 +104,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"comments",
       "action":"TYPE",
-      "inputValue":"Approved",
+      "inputValue":"${comment.approve}",
       "dynamicSleep": 1000
     },
 
@@ -141,7 +141,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"payerMobile",
       "action":"TYPE",
-      "inputValue":"9999999999",
+      "inputValue":"${mobile.number}",
       "dynamicSleep": 1000
     },
 
@@ -150,7 +150,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"instrumentNumber",
       "action":"TYPE",
-      "inputValue":"GEN123456",
+      "inputValue":"${receipt.number}",
       "dynamicSleep": 1000
     },
 
@@ -167,16 +167,6 @@
       "stepName":"Collect Payment",
       "locatorStrategy":"XPATH",
       "locatorValue":"//button[.//header[normalize-space()='Collect Payment']]",
-      "action":"CLICK_JS",
-      "dynamicSleep": 3000
-    },
-
-
-
-    {
-      "stepName":"Go Back To Home",
-      "locatorStrategy":"XPATH",
-      "locatorValue":"//button[contains(.,'Go back to home page')]",
       "action":"CLICK_JS",
       "dynamicSleep": 3000
     }

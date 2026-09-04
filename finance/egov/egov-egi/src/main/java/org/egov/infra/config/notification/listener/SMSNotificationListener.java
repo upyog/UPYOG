@@ -55,9 +55,9 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.support.JmsUtils;
 import org.springframework.stereotype.Component;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.Message;
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
+import jakarta.jms.Message;
 
 import static org.egov.infra.notification.NotificationConstants.MESSAGE;
 import static org.egov.infra.notification.NotificationConstants.MOBILE;

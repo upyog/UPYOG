@@ -1,0 +1,50 @@
+{
+  "moduleName": "DESLUDGING_SERVICE",
+
+  "steps": [
+
+    {
+      "name": "Citizen Application",
+      "type": "CITIZEN",
+      "module": "DESLUDGING_SERVICE"
+    },
+
+    {
+      "name": "Employee Update",
+      "type": "EMPLOYEE",
+      "module": "DESLUDGING_EMPLOYEE_UPDATE",
+      "role": "EDITOR"
+    },
+
+    {
+      "name": "Citizen Payment",
+      "type": "CITIZEN",
+      "module": "DESLUDGING_SERVICE_PAYMENT"
+    },
+
+    {
+      "name": "Employee Assign PSSO",
+      "type": "EMPLOYEE",
+      "module": "DESLUDGING_EMPLOYEE_PSSO",
+      "role": "PSSO"
+    },
+
+    {
+      "name": "Citizen Payment2",
+      "type": "CITIZEN",
+      "module": "DESLUDGING_SERVICE_PAYMENT2"
+    },
+    {
+      "name": "Employee Processing",
+      "type": "EMPLOYEE",
+      "module": "DESLUDGING_EMPLOYEE_COMPLETE",
+      "role": "EDITOR"
+    },
+    {
+      "name": "Employee Processing",
+      "type": "EMPLOYEE",
+      "module": "DESLUDGING_EMPLOYEE_FSTPO",
+      "role": "FSTPO"
+    }
+  ]
+}

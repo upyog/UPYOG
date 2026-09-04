@@ -78,7 +78,7 @@ public class RegionalHeirarchyService {
     
     
     public  RegionalHeirarchy getObjectTypeByName(String code) {
-        return regionalHeirarchyRepository.findByCode(code);
+        return regionalHeirarchyRepository.findByCode(Long.valueOf(code));
     }
 
     public List<RegionalHeirarchy> getActiveRegionalHeirarchyByRegion(RegionalHeirarchyType region) {

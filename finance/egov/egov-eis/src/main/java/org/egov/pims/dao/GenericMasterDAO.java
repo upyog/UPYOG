@@ -49,8 +49,8 @@ package org.egov.pims.dao;
 
 import java.io.Serializable;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.pims.model.GenericMaster;

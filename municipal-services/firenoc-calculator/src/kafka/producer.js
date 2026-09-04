@@ -1,28 +1,40 @@
-var kafka = require("kafka-node");
+import { Kafka, logLevel, Partitioners } from "kafkajs";
 import envVariables from "../envVariables";
 
-const Producer = kafka.Producer;
-let client;
-
-if (process.env.NODE_ENV === "development") {
-  client = new kafka.Client();
-  console.log("local - ");
-} else {
-  client = new kafka.KafkaClient({
-    kafkaHost: envVariables.KAFKA_BOOTSTRAP_SERVER
-  });
-  console.log("cloud - ");
-}
-
-const producer = new Producer(client);
-
-producer.on("ready", function() {
-  console.log("Producer is ready");
+const kafka = new Kafka({
+  logLevel: logLevel.INFO,
+  brokers: [envVariables.KAFKA_BROKER_HOST],
+  clientId: "firenoc-calculator-producer",
 });
 
-producer.on("error", function(err) {
+const producer = kafka.producer({ createPartitioner: Partitioners.LegacyPartitioner });
+
+const connectProducer = async () => {
+  await producer.connect();
+  console.log("Producer is ready");
+};
+
+connectProducer().catch(err => {
   console.log("Producer is in error state");
   console.log(err);
 });
 
-export default producer;
+// Adapter preserves kafka-node send(payloads, callback) signature
+// so create.js and update.js need zero changes
+// callback follows Node.js error-first convention: callback(err) on failure, callback(null, true) on success.
+const send = async (payloads, callback) => {
+  try {
+    for (const payload of payloads) {
+      await producer.send({
+        topic: payload.topic,
+        messages: [{ value: payload.messages }],
+      });
+    }
+    if (callback) callback(null, true);
+  } catch (err) {
+    console.log(err);
+    if (callback) callback(err);
+  }
+};
+
+export default { send };

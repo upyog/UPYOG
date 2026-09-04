@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.egov.tracer.model.CustomException;
 import org.springframework.util.ObjectUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.util.Objects.isNull;
 
@@ -22,6 +24,8 @@ import java.util.*;
 
 @Service
 public class WorkflowService {
+
+    private static final Logger log = LoggerFactory.getLogger(WorkflowService.class);
 
     private WorkflowConfig config;
 
@@ -280,5 +284,63 @@ public class WorkflowService {
         criteria.setIsEscalatedCount(true);
         count = workflowRepository.getEscalatedApplicationsCount(requestInfo,criteria);
         return count;
+    }
+
+    /**
+     * Gets the count of dashboard applications matching the search criteria.
+     *
+     * @param requestInfo request metadata context
+     * @param criteria search criteria filter containing tenantId, status, and createdBy
+     * @return count of matching dashboard applications
+     */
+    public Integer getDashboardApplicationCount(RequestInfo requestInfo, ProcessInstanceSearchCriteria criteria) {
+        log.info("Fetching dashboard applications count for tenant: {}, statusList: {}, createdBy: {}",
+                criteria.getTenantId(), criteria.getStatus(), criteria.getCreatedByUUID());
+        Integer count = workflowRepository.getDashboardApplicationCount(criteria);
+        log.info("Dashboard application count result: {}", count);
+        return count;
+    }
+
+    /**
+     * Retrieves dashboard applications list matching the search criteria and maps
+     * them to the DashboardProcessInstance response contract model.
+     *
+     * @param requestInfo request metadata context
+     * @param criteria search criteria filter with limits and offset
+     * @return List of mapped DashboardProcessInstance objects
+     */
+    public List<DashboardProcessInstance> getDashboardApplications(RequestInfo requestInfo, ProcessInstanceSearchCriteria criteria) {
+        log.info("Fetching dashboard applications list for tenant: {}, statusList: {}, createdBy: {}, limit: {}, offset: {}",
+                criteria.getTenantId(), criteria.getStatus(), criteria.getCreatedByUUID(), criteria.getLimit(), criteria.getOffset());
+        List<ProcessInstance> processInstances = workflowRepository.getDashboardApplications(criteria);
+        
+        List<DashboardProcessInstance> dashboardInstances = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(processInstances)) {
+            for (ProcessInstance pi : processInstances) {
+                dashboardInstances.add(DashboardProcessInstance.builder()
+                        .id(pi.getId())
+                        .tenantId(pi.getTenantId())
+                        .businessService(pi.getBusinessService())
+                        .businessId(pi.getBusinessId())
+                        .action(pi.getAction())
+                        .moduleName(pi.getModuleName())
+                        .build());
+            }
+        }
+        log.info("Successfully fetched and mapped {} dashboard applications", dashboardInstances.size());
+        return dashboardInstances;
+    }
+
+    /**
+     * Fetches a paginated list of dashboard applications along with the total matching count.
+     *
+     * @param requestInfo RequestInfo header from the incoming request envelope
+     * @param criteria    The search criteria mapping filters (tenantId, status, createdBy, etc.)
+     * @return DashboardProcessInstanceResponse containing the paginated list and total count
+     */
+    public DashboardProcessInstanceResponse getDashboardApplicationsWithCount(RequestInfo requestInfo, ProcessInstanceSearchCriteria criteria) {
+        log.info("Fetching dashboard applications list and count for tenant: {}, statusList: {}, createdBy: {}, limit: {}, offset: {}",
+                criteria.getTenantId(), criteria.getStatus(), criteria.getCreatedByUUID(), criteria.getLimit(), criteria.getOffset());
+        return workflowRepository.getDashboardApplicationsWithCount(criteria);
     }
 }

@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from "react-i18next";
 import { CardLabel, SubmitBar, Dropdown, BackButton } from '@nudmcdgnpm/digit-ui-react-components';
 import { MAP_TILE_URL, createMapIcons, LEAFLET_DEFAULT_ICON_OPTIONS } from '../utils';
-import { getDigiPin } from '../../../../libraries/src/utils/digipin';
 import "../css/gis-inline.css";
 
 /**
@@ -269,13 +268,7 @@ const MapView = () => {
       
       const marker = window.L.marker([lat, lng], { icon: markerIcon }).addTo(map);
       
-      // Generate Digipin for this location
-      let digipin = 'N/A';
-      try {
-        digipin = getDigiPin(lat, lng);
-      } catch (error) {
-        console.error('Error generating Digipin:', error);
-      }
+     
       
       const popupContent = businessService === "PT" ? `
         <div>
@@ -286,7 +279,6 @@ const MapView = () => {
             <b>Payment:</b> ${props.paymentStatus || "N/A"}<br>
             <b>Land Area:</b> ${props.landArea || "N/A"}<br>
             <b>Usage:</b> ${props.usageCategory || "N/A"}<br>
-            <b>Digipin:</b> ${digipin}<br>
             <b>Distance:</b> ${distance.toFixed(1)} km<br>
           </div>
         </div>

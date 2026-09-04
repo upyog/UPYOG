@@ -56,16 +56,17 @@ import org.egov.egf.web.actions.masters.JQueryGridActionSupport.MultipleSearchFi
 import org.egov.infra.persistence.utils.Page;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
@@ -109,15 +110,28 @@ public abstract class JQueryGridActionSupport extends BaseFormAction {
      * Internally this method will apply all filtering and ordering according to the value arrived from jqgrid.
      **/
     protected Page getPagedResult(final Class<?> clazz, final String keyFieldName, final Object keyFieldValue) {
-        final Criteria criteria = persistenceService.getSession().createCriteria(clazz);
-        criteria.add(Restrictions.eq(keyFieldName, keyFieldValue));
-        applySearchCriteriaIfAny(criteria);
+        CriteriaBuilder cb = persistenceService.getSession().getCriteriaBuilder();
 
-        final Criteria countCriteria = persistenceService.getSession().createCriteria(clazz);
-        countCriteria.add(Restrictions.eq(keyFieldName, keyFieldValue));
-        countCriteria.setProjection(Projections.rowCount());
-        totalRecords = ((Number) countCriteria.uniqueResult()).intValue();
-        return new Page(criteria, page, rows);
+        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+        Root<?> countRoot = countQuery.from(clazz);
+        countQuery.select(cb.count(countRoot))
+                .where(cb.equal(countRoot.get(keyFieldName), keyFieldValue));
+        totalRecords = persistenceService.getSession().createQuery(countQuery).uniqueResult().intValue();
+
+        CriteriaQuery<Object> dataQuery = cb.createQuery(Object.class);
+        Root<?> root = dataQuery.from(clazz);
+        Predicate keyPredicate = cb.equal(root.get(keyFieldName), keyFieldValue);
+        Predicate searchPredicate = buildSearchPredicate(cb, root);
+        if (searchPredicate != null)
+            dataQuery.where(cb.and(keyPredicate, searchPredicate));
+        else
+            dataQuery.where(keyPredicate);
+        dataQuery.orderBy(buildOrderBy(cb, root));
+
+        jakarta.persistence.Query q = persistenceService.getSession().createQuery(dataQuery);
+        q.setFirstResult((page - 1) * rows);
+        q.setMaxResults(rows);
+        return new Page((org.hibernate.query.Query) q, page, rows, totalRecords);
     }
 
     /**
@@ -125,7 +139,7 @@ public abstract class JQueryGridActionSupport extends BaseFormAction {
      **/
     protected void sendAJAXResponse(final String response) {
         try {
-            HttpServletResponse httpResponse = ServletActionContext.getResponse();
+            HttpServletResponse httpResponse = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
             Writer httpResponseWriter = httpResponse.getWriter();
             IOUtils.write(response, httpResponseWriter);
         } catch (final IOException e) {
@@ -148,33 +162,25 @@ public abstract class JQueryGridActionSupport extends BaseFormAction {
      * This will get invoked only if user uses search on jqgrid. This is capable applying jqgrid single and group filtering
      * searches.
      **/
-    private void applySearchCriteriaIfAny(final Criteria criteria) {
-        if (_search)
-            if (StringUtils.isBlank(filters))
-                criteria.add(applyRestriction());
-            else {
-                final MultipleSearchFilter multipleSearchFilter = getMultiSearchFilter();
-                if ("AND".equals(multipleSearchFilter.getGroupOp()))
-                    applyJunctionCriterion(Restrictions.conjunction(), criteria, multipleSearchFilter);
-                else if ("OR".equals(multipleSearchFilter.getGroupOp()))
-                    applyJunctionCriterion(Restrictions.disjunction(), criteria, multipleSearchFilter);
-            }
-        criteria.addOrder(applyOrderBy());
+    private Predicate buildSearchPredicate(CriteriaBuilder cb, Root<?> root) {
+        if (!_search) return null;
+        if (StringUtils.isBlank(filters))
+            return toPredicate(cb, root, searchField, searchOper, searchString);
+        final MultipleSearchFilter msf = getMultiSearchFilter();
+        List<Predicate> predicates = new java.util.ArrayList<>();
+        for (final Rule rule : msf.getRules()) {
+            Predicate p = toPredicate(cb, root, rule.getField(), rule.getOp(), rule.getData());
+            if (p != null) predicates.add(p);
+        }
+        if (predicates.isEmpty()) return null;
+        Predicate[] arr = predicates.toArray(new Predicate[0]);
+        return "AND".equals(msf.getGroupOp()) ? cb.and(arr) : cb.or(arr);
     }
 
     /**
      * Used when search comes from jqgrid group filtering
      **/
-    private void applyJunctionCriterion(final Junction junction, final Criteria criteria,
-                                        final MultipleSearchFilter multipleSearchFilter) {
-        for (final Rule rule : multipleSearchFilter.getRules()) {
-            searchOper = rule.getOp();
-            searchField = rule.getField();
-            searchString = rule.getData();
-            junction.add(applyRestriction());
-        }
-        criteria.add(junction);
-    }
+
 
     /**
      * Implementing Action need to override this method incase the search criteria contains non string values. eg: <code>
@@ -194,52 +200,40 @@ public abstract class JQueryGridActionSupport extends BaseFormAction {
     /**
      * Used to convert jqgrid search operator to hibernate restriction.
      **/
-    private Criterion applyRestriction() {
-        final Object convertedValue = convertValueType(searchField, searchString);
-
-        if ("eq".equals(searchOper))
-            return Restrictions.eq(searchField, convertedValue);
-        else if ("ne".equals(searchOper))
-            return Restrictions.ne(searchField, convertedValue);
-
-        if (convertedValue instanceof String) {
-            if ("bw".equals(searchOper))
-                return Restrictions.ilike(searchField, searchString + "%");
-            else if ("cn".equals(searchOper))
-                return Restrictions.ilike(searchField, "%" + searchString + "%");
-            else if ("ew".equals(searchOper))
-                return Restrictions.ilike(searchField, "%" + searchString);
-            else if ("bn".equals(searchOper))
-                return Restrictions.not(Restrictions.ilike(searchField, searchString + "%"));
-            else if ("en".equals(searchOper))
-                return Restrictions.not(Restrictions.ilike(searchField, "%" + searchString));
-            else if ("nc".equals(searchOper))
-                return Restrictions.not(Restrictions.ilike(searchField, "%" + searchString + "%"));
-            else if ("in".equals(searchOper))
-                return Restrictions.in(searchField, searchString.split(","));
-            else if ("ni".equals(searchOper))
-                return Restrictions.not(Restrictions.in(searchField, searchString.split(",")));
-        } else if ("lt".equals(searchOper))
-            return Restrictions.lt(searchField, convertedValue);
-        else if ("le".equals(searchOper))
-            return Restrictions.le(searchField, convertedValue);
-        else if ("gt".equals(searchOper))
-            return Restrictions.gt(searchField, convertedValue);
-        else if ("ge".equals(searchOper))
-            return Restrictions.ge(searchField, convertedValue);
+    @SuppressWarnings("unchecked")
+    private Predicate toPredicate(CriteriaBuilder cb, Root<?> root, String field, String oper, String value) {
+        final Object converted = convertValueType(field, value);
+        if ("eq".equals(oper)) return cb.equal(root.get(field), converted);
+        if ("ne".equals(oper)) return cb.notEqual(root.get(field), converted);
+        if (converted instanceof String) {
+            if ("bw".equals(oper)) return cb.like(cb.lower(root.get(field)), value.toLowerCase() + "%");
+            if ("cn".equals(oper)) return cb.like(cb.lower(root.get(field)), "%" + value.toLowerCase() + "%");
+            if ("ew".equals(oper)) return cb.like(cb.lower(root.get(field)), "%" + value.toLowerCase());
+            if ("bn".equals(oper)) return cb.notLike(cb.lower(root.get(field)), value.toLowerCase() + "%");
+            if ("en".equals(oper)) return cb.notLike(cb.lower(root.get(field)), "%" + value.toLowerCase());
+            if ("nc".equals(oper)) return cb.notLike(cb.lower(root.get(field)), "%" + value.toLowerCase() + "%");
+            if ("in".equals(oper)) return root.get(field).in((Object[]) value.split(","));
+            if ("ni".equals(oper)) return cb.not(root.get(field).in((Object[]) value.split(",")));
+        } else {
+            Comparable c = (Comparable) converted;
+            if ("lt".equals(oper)) return cb.lessThan(root.get(field), c);
+            if ("le".equals(oper)) return cb.lessThanOrEqualTo(root.get(field), c);
+            if ("gt".equals(oper)) return cb.greaterThan(root.get(field), c);
+            if ("ge".equals(oper)) return cb.greaterThanOrEqualTo(root.get(field), c);
+        }
         return null;
     }
 
     /**
      * Used to convert jqgrid order by to hibernate Order by
      **/
-    private Order applyOrderBy() {
+    private Order buildOrderBy(CriteriaBuilder cb, Root<?> root) {
         final String orderBy = sord == null ? ord : sord;
         final String orderByField = sidx == null ? searchField : sidx;
         if ("asc".equals(orderBy))
-            return Order.asc(orderByField);
+            return cb.asc(root.get(orderByField));
         else
-            return Order.desc(orderByField);
+            return cb.desc(root.get(orderByField));
     }
 
     public void setId(final Integer id) {

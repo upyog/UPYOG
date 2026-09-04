@@ -72,9 +72,10 @@ import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.Query;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.StringType;
+import org.hibernate.query.Query;
+import org.hibernate.type.StandardBasicTypes;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -188,7 +189,14 @@ public class BillRegisterSearchAction extends BaseFormAction {
         final StringBuilder query = new StringBuilder(
                 "select br.expendituretype , br.billtype ,br.billnumber , br.billdate ,")
                         .append(" br.billamount , br.passedamount ,egwstatus.description,billmis.sourcePath,")
-                        .append(" br.id ,br.status.id,egwstatus.description ,br.state.id,br.lastModifiedBy.id ")
+                        /*
+                         * Hibernate 6 migration note:
+                         * br.lastModifiedBy is mapped as a User association. Selecting
+                         * br.lastModifiedBy.id caused semantic/type issues in this legacy
+                         * projection path, while the downstream code expects the associated
+                         * object from the result row.
+                         */
+                        .append(" br.id ,br.status.id,egwstatus.description ,br.state.id,br.lastModifiedBy ")
                         .append(" from EgBillregister br, EgBillregistermis billmis , EgwStatus egwstatus")
                         .append(" where   billmis.egBillregister.id = br.id and egwstatus.id = br.status.id  ")
                         .append(" and br.expendituretype=:expendituretype");
@@ -306,8 +314,10 @@ public class BillRegisterSearchAction extends BaseFormAction {
     private List<Object[]> getOwnersForWorkFlowState(final List<Long> stateIds)
     {
         List<Object[]> ownerNamesList = new ArrayList<Object[]>();
+        // Hibernate 6: State.ownerPosition is a Long (basic), not a Position association.
+        // Use state.ownerPosition directly — state.ownerPosition.id is an invalid path.
         final String ownerNamesQueryStr = "select a.employee.username,bill.state.id from Assignment a,State state, EgBillregister bill"
-                + " where  bill.state.id=state.id and a.position.id = state.ownerPosition.id and bill.state.id in (:IDS)";
+                + " where  bill.state.id=state.id and a.position.id = state.ownerPosition and bill.state.id in (:IDS)";
         int size = stateIds.size();
         if (size > 999)
         {
@@ -353,8 +363,8 @@ public class BillRegisterSearchAction extends BaseFormAction {
     	StringBuffer statusQuery = new StringBuffer();
         statusQuery.append("from EgwStatus where upper(moduletype)=upper(:moduleType) and id=:statusId");
         final Query query = persistenceService.getSession().createQuery(statusQuery.toString())
-                .setParameter("moduleType", moduleType, StringType.INSTANCE)
-                .setParameter("statusId", statusid, IntegerType.INSTANCE);
+                .setParameter("moduleType", moduleType, StandardBasicTypes.STRING)
+                .setParameter("statusId", statusid, StandardBasicTypes.INTEGER);
         final EgwStatus egwStatus = (EgwStatus) persistenceService.find(query.toString());
         return egwStatus;
 

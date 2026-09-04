@@ -22,7 +22,7 @@ const DisconnectionApplication = () => {
     return <Loader />
   }
 
-  
+
   return (
     <Routes>
       {config.map((routeObj, index) => {
@@ -30,14 +30,14 @@ const DisconnectionApplication = () => {
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
           <Route
-            path={`${basePath}/${routeObj.route}`}
+            path={routeObj.route}
             key={index}
             element={<Component config={{ texts, inputs, key, isSkipEnabled }} t={t} userType={"employee"} />}
           />
         );
       })}
 
-      <Route path="*" element={<Navigate to={`${basePath}/${config.indexRoute}`} replace />} />
+      <Route path="*" element={<Navigate to={config.indexRoute} replace />} />
     </Routes>
   );
 };

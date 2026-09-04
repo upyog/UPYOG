@@ -12,7 +12,7 @@ export const useFetchCitizenBillsForBuissnessService = ({ businessService, ...fi
   /* For these business services, the fetchBill API does not require mobileNumber.
     sriranjan sir has approved these changes
   */
-  const skipBusinessServices = ["adv-services", "chb-services", "pet-services", "sv-services", "request-service.mobile_toilet", "request-service.water_tanker", "request-service.tree_pruning","est-services"];
+  const skipBusinessServices = ["adv-services", "chb-services", "pet-services", "sv-services", "request-service.mobile_toilet", "request-service.water_tanker", "request-service.tree_pruning","est-services","garbage-service"];
   // Early return if businessService is in the skip list
   if (skipBusinessServices.includes(businessService)) {
     return {
@@ -105,7 +105,10 @@ export const useFetchPayment = ({ tenantId, consumerCode, businessService }, con
   };
 
   const retry = (failureCount, error) => {
-    if (error?.response?.data?.Errors?.[0]?.code === "EG_BS_BILL_NO_DEMANDS_FOUND") return false;
+    const code = error?.response?.data?.Errors?.[0]?.code || "";
+    if (code === "EG_BS_BILL_NO_DEMANDS_FOUND" || code === "EMPTY_DEMANDS" || String(code).includes("NO_DEMAND")) {
+      return false;
+    }
     else return failureCount < 3;
   };
 

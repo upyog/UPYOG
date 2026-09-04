@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -25,6 +26,7 @@ import org.egov.filestore.repository.impl.CloudFileMgrUtils;
 import org.egov.filestore.repository.impl.minio.MinioConfig;
 import org.egov.filestore.validator.StorageValidator;
 import org.egov.tracer.model.CustomException;
+import org.egov.filestore.web.contract.ExternalMediaUploadResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -175,4 +177,53 @@ public class StorageService {
 	}
 
 	
+	/**
+	 * Validates and uploads a directly uploaded audio/video file to the configured cloud store
+	 * (Minio/S3/Azure — same path as regular multipart uploads), persists metadata in
+	 * {@code eg_filestoremap}, and returns a {@code fileStoreId}.
+	 */
+	public ExternalMediaUploadResponse saveMediaFile(MultipartFile file, String module, String tag,
+			String tenantId, RequestInfo requestInfo) {
+
+		log.info("Received media upload request: module={}, tenantId={}, file={}",
+				module, tenantId, file != null ? file.getOriginalFilename() : null);
+
+		Artifact validationArtifact = Artifact.builder()
+				.multipartFile(file)
+				.fileLocation(new FileLocation("", module, tag, tenantId, "pending", null))
+				.build();
+		storageValidator.validateMediaFile(validationArtifact);
+
+		String randomString = RandomStringUtils.random(filenameLength, useLetters, useNumbers);
+		String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+		String fileName = getFolderName(module, tenantId) + System.currentTimeMillis() + randomString + "."
+				+ extension;
+		String fileStoreId = this.idGeneratorService.getId();
+		FileLocation fileLocation = new FileLocation(fileStoreId, module, tag, tenantId, fileName, null);
+
+		Artifact artifact = Artifact.builder()
+				.multipartFile(file)
+				.fileLocation(fileLocation)
+				.build();
+
+		List<String> savedIds = artifactRepository.save(Collections.singletonList(artifact), requestInfo);
+		String savedFileStoreId = savedIds.get(0);
+
+		log.info("Media uploaded successfully: fileStoreId={}, size={} bytes",
+				savedFileStoreId, file.getSize());
+
+		return ExternalMediaUploadResponse.builder()
+				.fileStoreId(savedFileStoreId)
+				.tenantId(tenantId)
+				.contentType(file.getContentType())
+				.fileSize(String.valueOf(file.getSize()))
+				.module(module)
+				.tag(tag)
+				.build();
+	}
+
+	@Override
+	public String toString() {
+		return "StorageService{}";
+	}
 }

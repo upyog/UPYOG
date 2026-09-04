@@ -37,7 +37,8 @@ const WSActivationPlumberDetails = ({ config, onSelect, userType, formData, setE
 
 
     useEffect(() => {
-        const data = plumberDetails.map((e) => {
+        const data = plumberDetails.map((e, index) => {
+            if (!e.key) e.key = Date.now() + index;
             return e;
         });
         onSelect(config?.key, data);
@@ -66,7 +67,7 @@ const WSActivationPlumberDetails = ({ config, onSelect, userType, formData, setE
         <React.Fragment>
             {plumberDetails?.map((plumberDetail, index) =>
                  plumberDetail ? (
-                <PlumberDetails key={plumberDetail.key} index={index} plumberDetail={plumberDetail} {...commonProps} />
+                <PlumberDetails key={plumberDetail?.key || `ws-plumber-detail-${index}`} index={index} plumberDetail={plumberDetail} {...commonProps} />
                 ) : null
                 )}
         </React.Fragment>

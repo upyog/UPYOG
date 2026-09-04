@@ -176,7 +176,12 @@ const NOCAccess = () => {
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
 
   const NOC_ROLES = [
-    "FIRE_NOC_APPROVER"
+    "FIRE_NOC_APPROVER",
+    "NOC_CEMP",
+    "NOC_DOC_VERIFIER",
+    "NOC_FIELD_INSPECTOR",
+    "NOC_APPROVER"
+
   ]
 
   const NOC_ACCESS = userRoles?.filter((role) => NOC_ROLES?.includes(role));
@@ -406,6 +411,14 @@ const vendorAccess = () => {
   return VENDOR_ACCESS?.length > 0;
 };
 
+const gcAccess = () => {
+  const userInfo = Digit.UserService.getUser();
+  const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
+  const gcRoles = ["GC_APPROVER","GC_VERIFIER"];
+  const GC_ACCESS = userRoles?.filter((role) => gcRoles?.includes(role));
+  return GC_ACCESS?.length > 0;
+}
+
 export default {
   pdf: PDFUtil,
   downloadReceipt,
@@ -456,5 +469,6 @@ export default {
   tpAccess,
   vendorAccess,
   gisAccess,
+  gcAccess,
   ...privacy,
 };

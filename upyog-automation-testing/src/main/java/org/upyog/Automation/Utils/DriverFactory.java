@@ -10,8 +10,13 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DriverFactory {
+
+    private static final Logger logger =
+            LoggerFactory.getLogger(DriverFactory.class);
 
     public static WebDriver createChromeDriver() {
 
@@ -25,7 +30,12 @@ public class DriverFactory {
                 ConfigReader.get("selenium.grid.url"));
 
         // Execution mode (local / headless / vnc)
-        String executionMode = System.getProperty("executionMode", "local");
+
+        String executionMode = System.getProperty(
+                "executionMode",
+                ConfigReader.get("executionMode")
+        );
+
 
         ChromeOptions options = new ChromeOptions();
 
@@ -67,9 +77,15 @@ public class DriverFactory {
         WebDriver driver;
 
         try {
+            logger.info("=================================");
+            logger.info("Grid Enabled : " + isGrid);
+            logger.info("Grid URL     : " + gridUrl);
+            logger.info("Execution    : " + executionMode);
+            logger.info("Chrome Opts  : " + options.asMap());
+            logger.info("=================================");
             if (isGrid) {
 
-                System.out.println("Running on Selenium Grid: " + gridUrl);
+                logger.info("Running on Selenium Grid: " + gridUrl);
 
                 driver = new RemoteWebDriver(
                         new java.net.URL(gridUrl),
@@ -81,12 +97,15 @@ public class DriverFactory {
 
             } else {
 
-                System.out.println("Running on Local Chrome");
+                logger.info("Running on Local Chrome");
 
                 driver = new ChromeDriver(options);
             }
 
         } catch (Exception e) {
+
+            logger.error("Failed to create ChromeDriver", e);
+
             throw new RuntimeException("Driver initialization failed", e);
         }
 

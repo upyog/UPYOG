@@ -2,14 +2,14 @@ package org.egov.infra.microservice.models;
 
 import java.util.List;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class BusinessService {
-    @SafeHtml
+    @SanitizeHtml
     private String businessService;
-    @SafeHtml
+    @SanitizeHtml
     private String code;
     private List<String> collectionModesNotAllowed;
     private boolean partPaymentAllowed;
@@ -17,7 +17,7 @@ public class BusinessService {
     @JsonProperty("isVoucherCreationEnabled")
     private boolean isVoucherCreationEnabled;
     private boolean isActive;
-    @SafeHtml
+    @SanitizeHtml
     private String type;
 
     public BusinessService() {

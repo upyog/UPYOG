@@ -112,7 +112,7 @@ public class BudgetItemService {
      */
 
     public CFunction validateFunction(Long functionId, final  BindingResult bindingResult) {
-        CFunction function = functionRepository.findOne(functionId);
+        CFunction function = functionRepository.findById(functionId).orElse(null);
         if (function == null) {
             bindingResult.reject("function", "* The selected function is not available or invalid.");
         }
@@ -367,7 +367,7 @@ public class BudgetItemService {
 
 
         // save all budget items
-        budgetItemRepository.save(form.getItems());
+        budgetItemRepository.saveAll(form.getItems());
     }
 
     /**
@@ -463,7 +463,7 @@ public class BudgetItemService {
             BudgetItem opening = form.getOpening();
             if (opening != null) {
 
-                BudgetItem openingBalance = budgetItemRepository.findOne(opening.getId());
+                BudgetItem openingBalance = budgetItemRepository.findById(opening.getId()).orElse(null);
 
                 if (openingBalance == null) {
                     throw new Exception("opening balance is null");
@@ -498,7 +498,7 @@ public class BudgetItemService {
             // ========================================
 
             // Fetch function and financial years ONCE, not for every row
-            CFunction function = functionRepository.findOne(form.getFunctionid());
+            CFunction function = functionRepository.findById(form.getFunctionid()).orElse(null);
             if (function == null) {
                 throw new Exception("The selected function not found !");
             }
@@ -557,7 +557,7 @@ public class BudgetItemService {
                 } else {
 
                     // ---- UPDATE EXISTING RECORD ----
-                    BudgetItem budgetInput = budgetItemRepository.findOne(item.getId());
+                    BudgetItem budgetInput = budgetItemRepository.findById(item.getId()).orElse(null);
 
                     if (budgetInput == null) {
                         // fail-safe: if ID sent but record missing → treat as new
@@ -629,7 +629,7 @@ public class BudgetItemService {
             LOGGER.info("Budget Estimate:{}, Actual:{}, Revised Estimate:{}, Next Budget Estimate:{}",
                     totalBudgetEstimate, totalActual, totalRevisedEstimate, totalNextBudgetEstimate);
 
-            BudgetItem openingBalance = budgetItemRepository.findOne(form.getOpening().getId());
+            BudgetItem openingBalance = budgetItemRepository.findById(form.getOpening().getId()).orElse(null);
 
             // ---------------------------------
             // Closing Balance
@@ -850,7 +850,7 @@ public class BudgetItemService {
 
         // save opening budget
         BudgetItem openingBalance = form.getOpening();
-        BudgetItem openingBalanceDb = budgetItemRepository.findById(openingBalance.getId());
+        BudgetItem openingBalanceDb = budgetItemRepository.findById(openingBalance.getId()).orElse(null);
         openingBalanceDb.setCurrentEstimate(openingBalance.getCurrentEstimate());
         openingBalanceDb.setCurrentActual(openingBalance.getCurrentActual());
         openingBalanceDb.setCurrentRevisedEstimate(openingBalance.getCurrentRevisedEstimate());
@@ -911,7 +911,7 @@ public class BudgetItemService {
 
 
         BudgetItem closingBalance = form.getClosing();
-        BudgetItem closingBalanceDb = budgetItemRepository.findById(closingBalance.getId());
+        BudgetItem closingBalanceDb = budgetItemRepository.findById(closingBalance.getId()).orElse(null);
 
         closingBalanceDb.setCurrentEstimate(openingBalance.getSafeCurrentEstimate().add(totalBudgetEstimate));
         closingBalanceDb.setCurrentActual(openingBalance.getSafeCurrentActual().add(totalActual));
@@ -951,7 +951,7 @@ public class BudgetItemService {
         }
 
         // save all budget items
-        budgetItemRepository.save(budgetItemsDb);
+        budgetItemRepository.saveAll(budgetItemsDb);
     }
 
 }
