@@ -125,6 +125,7 @@ public class RefundServiceImpl implements RefundService {
 		validateUpdateRequest(request.getRefund());
 
 		Refund inputRefund = request.getRefund();
+
 		Refund refund = refundRepository.findById(inputRefund.getId());
 
 		if (refund == null) {
@@ -132,83 +133,86 @@ public class RefundServiceImpl implements RefundService {
 		}
 
 		String userId = getUserId(request.getRequestInfo());
-
 		long currentTime = System.currentTimeMillis();
-		String action = getAction(inputRefund);
 
 		/*
-		 * Finance workflow handling
-		 */
-		if (RefundConstants.STATUS_PENDING_WITH_FINANCE.equalsIgnoreCase(refund.getStatus())) {
-			RequestInfo systemRequestInfo = createSystemRequestInfo();
-
-			if (RefundConstants.ACTION_APPROVE.equalsIgnoreCase(action)) {
-
-				/*
-				 * Finance approved the refund. Continue with the next refund workflow action.
-				 */
-
-				createSystemRequestInfo();
-				RefundActionRequest nextActionRequest = RefundActionRequest.builder()
-						.action(RefundConstants.ACTION_REFUND_INITIATE)
-						.userId(systemRequestInfo.getUserInfo().getUuid()).requestInfo(request.getRequestInfo())
-						.build();
-
-				RefundResponse response = processInternal(refund.getId(), nextActionRequest);
-
-				response.setResponseInfo(
-						ResponseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true));
-
-				return response;
-			}
-
-			if (RefundConstants.ACTION_REJECT.equalsIgnoreCase(action)) {
-
-				/*
-				 * Finance rejected the refund.
-				 */
-				refund.setStatus(RefundConstants.STATUS_REFUND_REJECTED);
-
-				updateAuditDetails(refund, userId, currentTime);
-
-				refundRepository.update(refund);
-
-				refundAuditService.createAudit(refund, RefundConstants.ACTION_REJECT);
-
-				RefundResponse response = toResponse(refund);
-
-				response.setResponseInfo(
-						ResponseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true));
-
-				return response;
-			}
-		}
-
-		/*
-		 * Normal refund update
+		 * Update refund fields received from module.
 		 */
 		updateRefundFields(refund, inputRefund);
 		updateAuditDetails(refund, userId, currentTime);
 
+		/*
+		 * Persist latest refund data including processInstance.
+		 */
 		refundRepository.update(refund);
 
-		RefundResponse response;
+		/*
+		 * Process workflow only when processInstance is provided.
+		 */
+		if (inputRefund.getProcessInstance() != null && !isBlank(inputRefund.getProcessInstance().getAction())) {
 
-		if (isBlank(action)) {
+			String action = inputRefund.getProcessInstance().getAction();
 
-			response = toResponse(refund);
+			/*
+			 * Finance approval/rejection handling.
+			 */
+			if (RefundConstants.STATUS_PENDING_WITH_FINANCE.equalsIgnoreCase(refund.getStatus())) {
 
-		} else if (RefundConstants.ACTION_APPROVE.equalsIgnoreCase(action)) {
-			RequestInfo systemRequestInfo = createSystemRequestInfo();
+				RequestInfo systemRequestInfo = createSystemRequestInfo();
 
-			response = processApproval(refund, systemRequestInfo, systemRequestInfo.getUserInfo().getUuid());
+				if (RefundConstants.ACTION_APPROVE.equalsIgnoreCase(action)) {
 
-		} else {
+					RefundActionRequest nextActionRequest = RefundActionRequest.builder()
+							.action(RefundConstants.ACTION_REFUND_INITIATE)
+							.userId(systemRequestInfo.getUserInfo().getUuid()).requestInfo(systemRequestInfo).build();
 
-			refundAuditService.createAudit(refund, action);
+					RefundResponse response = processInternal(refund.getId(), nextActionRequest);
 
-			response = toResponse(refund);
+					response.setResponseInfo(
+							ResponseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true));
+
+					return response;
+				}
+
+				if (RefundConstants.ACTION_REJECT.equalsIgnoreCase(action)) {
+
+					refund.setStatus(RefundConstants.STATUS_REFUND_REJECTED);
+
+					updateAuditDetails(refund, userId, currentTime);
+
+					refundRepository.update(refund);
+
+					refundAuditService.createAudit(refund, RefundConstants.ACTION_REJECT);
+
+					RefundResponse response = toResponse(refund);
+
+					response.setResponseInfo(
+							ResponseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true));
+
+					return response;
+				}
+			}
+
+			/*
+			 * Normal workflow processing.
+			 *
+			 * processInstance/action from the module is sent to workflow validation.
+			 */
+			RefundActionRequest actionRequest = RefundActionRequest.builder().action(action).userId(userId)
+					.requestInfo(request.getRequestInfo()).build();
+
+			RefundResponse response = processInternal(refund.getId(), actionRequest);
+
+			response.setResponseInfo(
+					ResponseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true));
+
+			return response;
 		}
+
+		/*
+		 * No workflow action. Only refund data was updated.
+		 */
+		RefundResponse response = toResponse(refund);
 
 		response.setResponseInfo(ResponseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true));
 
