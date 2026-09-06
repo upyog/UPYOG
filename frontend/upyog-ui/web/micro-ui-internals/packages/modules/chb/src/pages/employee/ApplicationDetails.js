@@ -15,6 +15,20 @@ import CHBCancelBooking from "../../components/CHBCancelBooking";
     and mutation, and provides a UI for interacting with the application details.
   */
 
+const extractRefundObject = (res) => {
+  if (!res) return null;
+  if (res.id || res.refundNo) return res;
+  if (res.data) return extractRefundObject(res.data);
+  if (Array.isArray(res) && res.length > 0) {
+    return extractRefundObject(res[0]);
+  }
+  if (res.refund) return extractRefundObject(res.refund);
+  if (res.Refund) return extractRefundObject(res.Refund);
+  if (Array.isArray(res.Refunds) && res.Refunds.length > 0) return extractRefundObject(res.Refunds[0]);
+  if (Array.isArray(res.refunds) && res.refunds.length > 0) return extractRefundObject(res.refunds[0]);
+  return null;
+};
+
 const ApplicationDetails = () => {
   const { t } = useTranslation();
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
@@ -31,20 +45,72 @@ const ApplicationDetails = () => {
   sessionStorage.setItem("chb", bookingNo);
   const { isLoading, isError, data: applicationDetails, error, refetch: refetchApplicationDetails } = Digit.Hooks.chb.useChbApplicationDetail(t, tenantId, bookingNo);
 
-  const {
-    isLoading: updatingApplication,
-    isError: updateApplicationError,
-    data: updateResponse,
-    error: updateError,
-    mutate,
-  } = Digit.Hooks.chb.useChbApplicationAction(tenantId);
+  const bookingData = applicationDetails?.applicationData?.applicationData || appDetailsToShow?.applicationData?.applicationData;
+  const bookingStatus = bookingData?.bookingStatus;
+  const isCancelled = bookingStatus === "CANCELLED";
+  const consumerCode = bookingData?.bookingNo || bookingNo;
+
+  const { data: reciept_data, isLoading: recieptDataLoading, refetch: refetchRecieptData } = Digit.Hooks.useRecieptSearch(
+    {
+      tenantId: tenantId,
+      businessService: "chb-services",
+      consumerCodes: consumerCode,
+      isEmployee: false,
+    },
+    { enabled: !!consumerCode }
+  );
+
+  const isOnline = reciept_data?.Payments?.[0]?.paymentMode === "ONLINE";
+  const instrumentStatus = reciept_data?.Payments?.[0]?.instrumentStatus;
+  const isRefunded = instrumentStatus === "REFUNDED";
+  const originalTxnId = reciept_data?.Payments?.[0]?.transactionNumber;
+
+  const { data: refundData, revalidate: refetchRefundData } = Digit.Hooks.useCustomAPIHook(
+    "/refund-services/refund/v1/_search",
+    {},
+    {
+      data: {
+        tenantId: tenantId,
+        moduleName: "CHB",
+        businessService: "CHB.REFUND",
+        consumerCode: consumerCode,
+      },
+    },
+    {},
+    {
+      enabled: !!consumerCode,
+    }
+  );
+
+  const { data: pgRefundData } = Digit.Hooks.useCustomAPIHook(
+    "/pg-service/refund/v1/_search",
+    {
+      originalTxnId: originalTxnId,
+      tenantId: reciept_data?.Payments?.[0]?.tenantId || tenantId,
+    },
+    {},
+    {},
+    {
+      enabled: !!(isOnline && originalTxnId),
+    }
+  );
+
+  const refund = extractRefundObject(refundData) || extractRefundObject(pgRefundData);
+  const hasRefund = !!(refund && (refund?.refundNo || refund?.id || refund?.status));
+
+  const workflowBusinessId = (hasRefund && refund?.refundNo) ? refund.refundNo : (refund?.refundNo || consumerCode);
+  const workflowBusinessService = (hasRefund || isCancelled) ? (refund?.businessService || "CHB.REFUND") : "CHB.REFUND";
+
+  const user = Digit.UserService.getUser();
+  const userRoles = user?.info?.roles?.map((e) => e.code) || ["CHB_CEMP"];
+
   let workflowDetails = Digit.Hooks.useWorkflowDetails({
     tenantId: applicationDetails?.applicationData?.tenantId || tenantId,
-    id: applicationDetails?.applicationData?.applicationData?.bookingNo,
-    moduleCode: businessService,
-    role: ["CHB_CEMP"],
+    id: workflowBusinessId,
+    moduleCode: workflowBusinessService,
+    role: userRoles,
     config: {
-      enabled: !!(applicationDetails?.applicationData?.applicationData?.bookingNo),
+      enabled: !!(workflowBusinessId),
     },
   });
 
@@ -68,47 +134,12 @@ const ApplicationDetails = () => {
     }
   }, [applicationDetails]);
 
-
-
   useEffect(() => {
-
     if (workflowDetails?.data?.applicationBusinessService && !(workflowDetails?.data?.applicationBusinessService === "booking-refund" && businessService === "booking-refund")) {
       setBusinessService(workflowDetails?.data?.applicationBusinessService);
     }
   }, [workflowDetails.data]);
 
-
-  const { data: reciept_data, isLoading: recieptDataLoading, refetch: refetchRecieptData } = Digit.Hooks.useRecieptSearch(
-    {
-      tenantId: tenantId,
-      businessService: "chb-services",
-      consumerCodes: appDetailsToShow?.applicationData?.applicationData?.bookingNo,
-      isEmployee: false,
-    },
-    { enabled: appDetailsToShow?.applicationData?.applicationData?.bookingNo ? true : false }
-  );
-
-  const isCancelled = appDetailsToShow?.applicationData?.applicationData?.bookingStatus === "CANCELLED";
-  const isOnline = reciept_data?.Payments?.[0]?.paymentMode === "ONLINE";
-  // instrumentStatus is the authoritative final state from the payment gateway
-  const instrumentStatus = reciept_data?.Payments?.[0]?.instrumentStatus;
-  const isRefunded = instrumentStatus === "REFUNDED";
-  const originalTxnId = reciept_data?.Payments?.[0]?.transactionNumber;
-
-  const { data: refundData } = Digit.Hooks.useCustomAPIHook(
-    "/pg-service/refund/v1/_search",
-    {
-      originalTxnId: originalTxnId,
-      tenantId: reciept_data?.Payments?.[0]?.tenantId || tenantId,
-    },
-    {},
-    {},
-    {
-      enabled: !!(isCancelled && isOnline && originalTxnId),
-    }
-  );
-
-  const refund = refundData?.Refund?.[0] || refundData?.Refunds?.[0] || refundData?.[0];
   // Show the exact refund pipeline status from the API (INITIATED, SUCCESS, etc.)
   const refundStatus = refund?.status || refund?.refundStatus;
 
@@ -133,7 +164,7 @@ const ApplicationDetails = () => {
         title: "CHB_REFUND_DETAILS",
         asSectionHeader: true,
         values: [
-          { title: t("CHB_REFUND_ID"), value: refund?.refundId || t("CS_NA") },
+          { title: t("CHB_REFUND_ID"), value: refund?.refundNo || refund?.refundId || t("CS_NA") },
           { title: t("CHB_REFUND_AMOUNT"), value: refund?.refundAmount ? `₹${refund.refundAmount}` : t("CS_NA") },
           { title: t("CHB_REFUND_STATUS"), value: refund?.status || t("CS_NA") }
         ],
@@ -159,15 +190,7 @@ const ApplicationDetails = () => {
     if (!fileStoreId) {
       let response = { filestoreIds: [payments?.fileStoreId] };
       response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "chbservice-receipt");
-      const updatedApplication = {
-        ...application,
-        paymentReceiptFilestoreId: response?.filestoreIds[0]
-      };
-      await mutation.mutateAsync({
-        hallsBookingApplication: updatedApplication
-      });
       fileStoreId = response?.filestoreIds[0];
-      refetch();
     }
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
     window.open(fileStore[fileStoreId], "_blank");
@@ -182,15 +205,7 @@ const ApplicationDetails = () => {
         { hallsBookingApplication: [application] },
         "chbpermissionletter"
       );
-      const updatedApplication = {
-        ...application,
-        permissionLetterFilestoreId: response?.filestoreIds[0]
-      };
-      await mutation.mutateAsync({
-        hallsBookingApplication: updatedApplication
-      });
       fileStoreId = response?.filestoreIds[0];
-      refetch();
     }
     const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
     window.open(fileStore[fileStoreId], "_blank");
@@ -199,50 +214,185 @@ const ApplicationDetails = () => {
   const handleCancelBooking = async (data) => {
     setShowCancelModal(false);
     const bookingDetails = appDetailsToShow?.applicationData?.applicationData;
-    const updatedApplication = {
-      ...bookingDetails,
-      bookingStatus: "CANCELLED",
-      additionalDetails: {
-        ...bookingDetails?.additionalDetails,
-        cancellationReason: data?.cancelReason || ""
-      }
-    };
     let refundFailed = false;
     let refundErrorMessage = "";
     try {
-      const paymentDetails = reciept_data?.Payments?.[0];
-      if (paymentDetails && paymentDetails.paymentMode === "ONLINE") {
+      let paymentDetails = reciept_data?.Payments?.[0];
+      if (!paymentDetails && bookingDetails?.bookingNo) {
         try {
-          const refundPayload = {
-            PaymentWorkflows: [
-              {
-                paymentId: paymentDetails.id,
-                action: "REFUND",
-                tenantId: paymentDetails.tenantId || tenantId,
-                reason: data?.cancelReason || "Customer requested refund"
-              }
-            ]
-          };
-          await Digit.ReceiptsService.update(refundPayload, paymentDetails.tenantId || tenantId, "CHB");
-        } catch (refundError) {
-          refundFailed = true;
-          refundErrorMessage = refundError?.response?.data?.Errors?.[0]?.message || refundError?.message || "";
+          const res = await Digit.PaymentService.recieptSearch(
+            bookingDetails?.tenantId || tenantId,
+            "chb-services",
+            { consumerCodes: bookingDetails?.bookingNo }
+          );
+          paymentDetails = res?.Payments?.[0];
+        } catch (paymentErr) {
+          console.error("Failed to fetch payment details for cancellation refund:", paymentErr);
         }
       }
 
-      await mutation.mutateAsync({
-        hallsBookingApplication: updatedApplication
-      });
+      // =========================================================================
+      // [REFUND SERVICE API INTEGRATION: /refund-services/refund/v1/_create]
+      // =========================================================================
+      const amountPaid = Number(
+        paymentDetails?.totalAmountPaid ??
+        (paymentDetails?.paymentDetails?.[0]?.totalAmountPaid ??
+          (bookingDetails?.totalAmountPaid ??
+            (bookingDetails?.totalAmount ?? 0)))
+      );
+
+      const refundPayload = {
+        refund: {
+          tenantId: bookingDetails?.tenantId || paymentDetails?.tenantId || tenantId,
+          moduleName: "CHB",
+          businessService: "CHB.REFUND",
+          consumerCode: bookingDetails?.bookingNo,
+          paymentId: paymentDetails?.id || paymentDetails?.paymentId || paymentDetails?.transactionNumber || "",
+          applicantName: bookingDetails?.applicantDetail?.applicantName || bookingDetails?.applicantName || paymentDetails?.paidBy || "",
+          mobileNumber: bookingDetails?.applicantDetail?.applicantMobileNo || bookingDetails?.applicantDetail?.mobileNumber || bookingDetails?.mobileNumber || paymentDetails?.mobileNumber || "",
+          refundCategory: "CANCELLATION",
+          refundReason: data?.cancelReason || "Community hall booking cancellation",
+          paymentModeOriginal: paymentDetails?.paymentMode || "ONLINE",
+          amountPaid: amountPaid,
+          refundAmount: amountPaid,
+          refundMode: paymentDetails?.paymentMode || "ONLINE",
+          fileStoreId: paymentDetails?.fileStoreId || bookingDetails?.paymentReceiptFilestoreId || bookingDetails?.permissionLetterFilestoreId || null
+        }
+      };
+
+      console.log("REFUND PAYLOAD CREATED:", JSON.stringify(refundPayload, null, 2));
+      console.log("Refund Payload:", refundPayload);
+
+      try {
+        await Digit.RefundService.create(refundPayload);
+      } catch (refundError) {
+        refundFailed = true;
+        refundErrorMessage = refundError?.response?.data?.Errors?.[0]?.message || refundError?.message || "";
+        console.error("Refund API Error:", refundError);
+      }
+
       if (refundFailed) {
         setShowToast({
-          key: "warning",
+          key: "error",
           error: {
-            message: `${t("CHB_CANCELLATION_SUCCESS_BUT_REFUND_FAILED") || "Booking cancelled, but refund initiation failed"}${refundErrorMessage ? `: ${refundErrorMessage}` : ""}`
+            message: `${t("CHB_REFUND_CREATION_FAILED") || "Refund initiation failed"}${refundErrorMessage ? `: ${refundErrorMessage}` : ""}`
+          }
+        });
+      } else {
+        setShowToast({
+          key: "success",
+          action: {
+            action: "REFUND_INITIATED"
           }
         });
       }
+      refetchApplicationDetails?.();
+      refetchRefundData?.();
+      refetchRecieptData?.();
+      workflowDetails?.revalidate?.();
+      refetch?.();
     } catch (error) {
       setShowToast({ key: "error", error: { message: error?.response?.data?.Errors?.[0]?.message || error?.message || "Something went wrong" } });
+    }
+  };
+
+  const handleActionMutate = async (data, callbacks) => {
+    try {
+      const workflow = data?.hallsBookingApplication?.workflow || data?.workflow || {};
+      const action = workflow?.action || sessionStorage.getItem("SELECTED_ACTION");
+      const comment = workflow?.comment || "";
+      const documents = workflow?.documents || [];
+      const assignes = workflow?.assignes || (workflow?.assignee ? [{ uuid: workflow.assignee }] : (data?.hallsBookingApplication?.assignee ? [{ uuid: data.hallsBookingApplication.assignee }] : []));
+
+      let currentRefund = extractRefundObject(refund);
+      try {
+        const searchRes = await Digit.RefundService.search({
+          tenantId: tenantId,
+          moduleName: "CHB",
+          businessService: "CHB.REFUND",
+          consumerCode: consumerCode,
+        });
+        console.log("searchRessearchRes", searchRes)
+        const foundRefund = extractRefundObject(searchRes);
+        if (foundRefund) {
+          currentRefund = foundRefund;
+        }
+      } catch (sErr) {
+        console.error("Failed to search refund before action mutate:", sErr);
+      }
+
+      if (!currentRefund) {
+        currentRefund = extractRefundObject(refundData) || extractRefundObject(pgRefundData);
+      }
+
+      const refundId = currentRefund?.id || refund?.id;
+      const refundNo = currentRefund?.refundNo || refund?.refundNo;
+      const paymentDetails = reciept_data?.Payments?.[0];
+      const amountPaid = Number(
+        currentRefund?.amountPaid ??
+        (paymentDetails?.totalAmountPaid ??
+          (paymentDetails?.paymentDetails?.[0]?.totalAmountPaid ??
+            (bookingData?.totalAmountPaid ??
+              (bookingData?.totalAmount ?? 0))))
+      );
+
+      const latestProcessInstance = workflowDetails?.data?.processInstances?.[0] || currentRefund?.processInstance;
+      const processState = latestProcessInstance?.state || (currentRefund?.status ? { state: currentRefund.status } : undefined);
+
+      const processInstance = {
+        id: latestProcessInstance?.id || currentRefund?.processInstance?.id || undefined,
+        tenantId: currentRefund?.tenantId || bookingData?.tenantId || tenantId,
+        businessService: currentRefund?.businessService || "CHB.REFUND",
+        businessId: refundNo || currentRefund?.consumerCode || bookingNo,
+        action: action,
+        moduleName: currentRefund?.moduleName || "CHB",
+        state: processState,
+        comment: comment,
+        documents: documents,
+        assignes: assignes
+      };
+
+      const updateRefundPayload = {
+        refund: {
+          id: refundId,
+          refundNo: refundNo,
+          tenantId: currentRefund?.tenantId || bookingData?.tenantId || tenantId,
+          moduleName: currentRefund?.moduleName || "CHB",
+          businessService: currentRefund?.businessService || "CHB.REFUND",
+          consumerCode: currentRefund?.consumerCode || bookingData?.bookingNo || bookingNo,
+          paymentId: currentRefund?.paymentId || paymentDetails?.id || paymentDetails?.paymentId || paymentDetails?.transactionNumber || "",
+          applicantName: currentRefund?.applicantName || bookingData?.applicantDetail?.applicantName || bookingData?.applicantName || paymentDetails?.paidBy || "",
+          mobileNumber: currentRefund?.mobileNumber || bookingData?.applicantDetail?.applicantMobileNo || bookingData?.applicantDetail?.mobileNumber || bookingData?.mobileNumber || paymentDetails?.mobileNumber || "",
+          refundCategory: currentRefund?.refundCategory || "CANCELLATION",
+          refundReason: currentRefund?.refundReason || "Community hall booking cancellation",
+          paymentModeOriginal: currentRefund?.paymentModeOriginal || paymentDetails?.paymentMode || "ONLINE",
+          amountPaid: amountPaid,
+          refundAmount: currentRefund?.refundAmount ?? amountPaid,
+          refundMode: currentRefund?.refundMode || paymentDetails?.paymentMode || "ONLINE",
+          status: currentRefund?.status || undefined,
+          sanctionRef: currentRefund?.sanctionRef ?? null,
+          financeApprovalDate: currentRefund?.financeApprovalDate ?? null,
+          gatewayRefundId: currentRefund?.gatewayRefundId ?? null,
+          beneficiaryDetails: currentRefund?.beneficiaryDetails ?? null,
+          additionalDetails: currentRefund?.additionalDetails ?? null,
+          auditDetails: currentRefund?.auditDetails || undefined,
+          fileStoreId: currentRefund?.fileStoreId || paymentDetails?.fileStoreId || bookingData?.paymentReceiptFilestoreId || bookingData?.permissionLetterFilestoreId || null,
+          processInstance: processInstance
+        }
+      };
+
+      console.log("REFUND UPDATE PAYLOAD:", JSON.stringify(updateRefundPayload, null, 2));
+      console.log("Refund Update Payload:", updateRefundPayload);
+
+      const res = await Digit.RefundService.update(updateRefundPayload);
+      refetchApplicationDetails?.();
+      refetchRefundData?.();
+      refetchRecieptData?.();
+      workflowDetails?.revalidate?.();
+      callbacks?.onSuccess?.(res, data);
+    } catch (err) {
+      console.error("Refund Update Error:", err);
+      callbacks?.onError?.(err, data);
     }
   };
 
@@ -288,9 +438,9 @@ const ApplicationDetails = () => {
         isLoading={isLoading}
         isDataLoading={isLoading}
         applicationData={appDetailsToShow?.applicationData?.applicationData}
-        mutate={mutate}
+        mutate={handleActionMutate}
         workflowDetails={workflowDetails}
-        businessService={businessService}
+        businessService={workflowBusinessService}
         moduleCode="chb-services"
         showToast={showToast}
         setShowToast={setShowToast}
@@ -300,11 +450,11 @@ const ApplicationDetails = () => {
         statusAttribute={"state"}
         MenuStyle={{ color: "#FFFFFF", fontSize: "18px" }}
       />
-      {appDetailsToShow?.applicationData?.applicationData?.bookingStatus === "BOOKED" && (
+      {/* {bookingStatus === "BOOKED" && !hasRefund && (
         <ActionBar>
           <SubmitBar label={t("CHB_CANCEL")} onSubmit={() => setShowCancelModal(true)} />
         </ActionBar>
-      )}
+      )} */}
       {showCancelModal && (
         <CHBCancelBooking
           t={t}
