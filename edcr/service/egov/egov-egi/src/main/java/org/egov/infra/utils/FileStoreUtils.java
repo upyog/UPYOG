@@ -133,7 +133,7 @@ public class FileStoreUtils {
                 
                 return ResponseEntity
                         .ok()
-                        .contentType(MediaType.parseMediaType(fileStoreMapper.get().getContentType()))
+                        .contentType(MediaType.parseMediaType(fileStoreMapper.get().getContentType()==null?MediaType.APPLICATION_OCTET_STREAM_VALUE:fileStoreMapper.get().getContentType()))
                         .cacheControl(CacheControl.noCache())
                         .contentLength(fileBytes.length)
                         .header(CONTENT_DISPOSITION, format(toSave ? CONTENT_DISPOSITION_ATTACH : CONTENT_DISPOSITION_INLINE,

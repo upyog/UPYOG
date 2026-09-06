@@ -96,7 +96,6 @@ import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.EdcrApplicationDetail;
 import org.egov.edcr.entity.EdcrIndexData;
 import org.egov.edcr.entity.EdcrPdfDetail;
-import org.egov.edcr.service.EdcrApplicationService.CustomMultipartFile;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
@@ -107,6 +106,7 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.filestore.service.impl.CompressionService;
 import org.egov.infra.microservice.contract.RequestInfoWrapper;
 import org.egov.infra.microservice.contract.ResponseInfo;
+import org.egov.infra.microservice.models.CustomMultipartFile;
 import org.egov.infra.microservice.models.RequestInfo;
 import org.egov.infra.microservice.models.Role;
 import org.egov.infra.microservice.models.UserInfo;
@@ -2194,8 +2194,13 @@ public class EdcrRestService {
 	        throw new IOException("Unable to fetch DXF file from FileStore.");
 	    }
 
-	    MultipartFile multipartFile = edcrApplicationService.new CustomMultipartFile(dxfFile);
-	    String contentType = fileStoreService.getFileContentType(multipartFile.getInputStream());
+	    byte[] fileContent = Files.readAllBytes(dxfFile.toPath());
+	    Files.deleteIfExists(dxfFile.toPath());
+	    
+	    String contentType = fileStoreService.getFileContentType(fileContent);
+	    
+	    MultipartFile multipartFile = new CustomMultipartFile("Drawing.dxf", "Drawing.dxf", contentType, fileContent);
+	    
 	    
 	    LOG.info("File fetched from FileStore. fileId={}, fileName={}, contentType={}, size={}",
 	            dxfFileStoreId,multipartFile.getOriginalFilename(),contentType, multipartFile.getSize());
