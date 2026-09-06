@@ -54,6 +54,9 @@ public class FileStoreConfig {
 	@Value("#{'${image.formats}'.split(',')}") 
 	private List<String> imageFormats;
 	
+	@Value("#{'${allowed.to.make.zip.extensions}'.split(',')}") 
+	private List<String> allowedToMakeZipExtensions;
+	
 	@PostConstruct
 	private void enrichKeysetForFormats() {
 		allowedKeySet = allowedFormatsMap.keySet();

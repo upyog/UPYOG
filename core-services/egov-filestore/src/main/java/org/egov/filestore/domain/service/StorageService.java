@@ -111,11 +111,11 @@ public class StorageService {
 			String extension = FilenameUtils.getExtension(file.getOriginalFilename()).toLowerCase();
 			
 			//Compress DXF file to zip file
-			if("dxf".equalsIgnoreCase(extension)) {
+			if(configs.getAllowedToMakeZipExtensions().contains(extension)) {
 				try {
 					file = compressionService.compressToZip(file);
 				} catch (IOException e) {
-					log.error("Error while compressing dxf file to zip: " + e.getMessage());
+					log.error("Error while compressing file to zip: " + e.getMessage());
 				}
 			}
 			String orignalFileName = file.getOriginalFilename();
