@@ -197,7 +197,7 @@ public class RefundServiceImpl implements RefundService {
 				/*
 				 * Trigger next action after approval.
 				 */
-				response = processApproval(approvedRefund, request.getRequestInfo(), userId);
+				response = processApproval(approvedRefund);
 
 				response.setResponseInfo(
 						ResponseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true));
@@ -352,7 +352,8 @@ public class RefundServiceImpl implements RefundService {
 	// APPROVAL
 	// ============================================================
 
-	private RefundResponse processApproval(Refund refund, RequestInfo requestInfo, String userId) {
+	private RefundResponse processApproval(Refund refund) {
+		RequestInfo requestInfo = createSystemRequestInfo();
 
 		if (refund == null) {
 			throw new IllegalArgumentException("Refund cannot be null for approval processing");
@@ -364,8 +365,8 @@ public class RefundServiceImpl implements RefundService {
 		/*
 		 * Create system/internal workflow action.
 		 */
-		RefundActionRequest nextActionRequest = RefundActionRequest.builder().action(nextAction).userId(userId)
-				.requestInfo(requestInfo).build();
+		RefundActionRequest nextActionRequest = RefundActionRequest.builder().action(nextAction)
+				.userId(requestInfo.getUserInfo().getUuid()).requestInfo(requestInfo).build();
 
 		/*
 		 * Process next workflow action.
