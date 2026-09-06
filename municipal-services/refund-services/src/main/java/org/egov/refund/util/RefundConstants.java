@@ -8,6 +8,12 @@ public final class RefundConstants {
 	public static final String PAYMENT_MODE_ONLINE = "ONLINE";
 	public static final String REFUND_MODE_OFFLINE = "OFFLINE";
 
+	public static final String PAYMENT_MODE_CASH = "CASH";
+	
+	public static final String PAYMENT_MODE_DD = "DD";
+	
+	public static final String PAYMENT_MODE_CHEQUE = "CHEQUE";
+
 	public static final String SUCCESS_GATEWAY_CODE = "OTS0000";
 
 	public static final String STATUS_CREATED = "CREATED";

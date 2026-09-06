@@ -3,6 +3,7 @@ package org.egov.refund.service.impl;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -32,6 +33,7 @@ import org.egov.refund.web.contracat.RefundResponse;
 import org.egov.refund.web.contracat.RefundSearchRequest;
 import org.egov.refund.web.contracat.RefundSearchResponse;
 import org.egov.refund.web.factory.ResponseInfoFactory;
+import org.egov.tracer.model.CustomException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -133,13 +135,11 @@ public class RefundServiceImpl implements RefundService {
 		}
 
 		String userId = getUserId(request.getRequestInfo());
-		long currentTime = System.currentTimeMillis();
 
 		/*
 		 * Update refund fields received from module.
 		 */
 		updateRefundFields(refund, inputRefund);
-		updateAuditDetails(refund, userId, currentTime);
 
 		/*
 		 * Persist latest refund data including processInstance.
@@ -160,37 +160,49 @@ public class RefundServiceImpl implements RefundService {
 
 				RequestInfo systemRequestInfo = createSystemRequestInfo();
 
+				String nextAction;
+
 				if (RefundConstants.ACTION_APPROVE.equalsIgnoreCase(action)) {
-
-					RefundActionRequest nextActionRequest = RefundActionRequest.builder()
-							.action(RefundConstants.ACTION_REFUND_INITIATE)
-							.userId(systemRequestInfo.getUserInfo().getUuid()).requestInfo(systemRequestInfo).build();
-
-					RefundResponse response = processInternal(refund.getId(), nextActionRequest);
-
-					response.setResponseInfo(
-							ResponseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true));
-
-					return response;
+					nextAction = RefundConstants.ACTION_REFUND_INITIATE;
+				} else if (RefundConstants.ACTION_REJECT.equalsIgnoreCase(action)) {
+					nextAction = RefundConstants.ACTION_REJECT;
+				} else {
+					return null; // or continue with existing action validation/handling
 				}
 
-				if (RefundConstants.ACTION_REJECT.equalsIgnoreCase(action)) {
+				RefundActionRequest nextActionRequest = RefundActionRequest.builder().action(nextAction)
+						.userId(systemRequestInfo.getUserInfo().getUuid()).requestInfo(systemRequestInfo).build();
 
-					refund.setStatus(RefundConstants.STATUS_REFUND_REJECTED);
+				RefundResponse response = processInternal(refund.getId(), nextActionRequest);
 
-					updateAuditDetails(refund, userId, currentTime);
+				response.setResponseInfo(
+						ResponseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true));
 
-					refundRepository.update(refund);
+				return response;
+			}
 
-					refundAuditService.createAudit(refund, RefundConstants.ACTION_REJECT);
+			if (RefundConstants.ACTION_APPROVE.equalsIgnoreCase(action)) {
 
-					RefundResponse response = toResponse(refund);
+				RefundActionRequest approveRequest = RefundActionRequest.builder()
+						.action(RefundConstants.ACTION_APPROVE).userId(userId).requestInfo(request.getRequestInfo())
+						.build();
 
-					response.setResponseInfo(
-							ResponseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true));
+				RefundResponse response = processInternal(refund.getId(), approveRequest);
 
-					return response;
-				}
+				/*
+				 * Get latest refund after APPROVE transition.
+				 */
+				Refund approvedRefund = response.getRefund();
+
+				/*
+				 * Trigger next action after approval.
+				 */
+				response = processApproval(approvedRefund, request.getRequestInfo(), userId);
+
+				response.setResponseInfo(
+						ResponseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true));
+
+				return response;
 			}
 
 			/*
@@ -342,12 +354,22 @@ public class RefundServiceImpl implements RefundService {
 
 	private RefundResponse processApproval(Refund refund, RequestInfo requestInfo, String userId) {
 
+		if (refund == null) {
+			throw new IllegalArgumentException("Refund cannot be null for approval processing");
+		}
+
 		String nextAction = applicationProperties.isSendToFinance() ? RefundConstants.ACTION_CREATE_REQUEST
 				: RefundConstants.ACTION_REFUND_INITIATE;
 
+		/*
+		 * Create system/internal workflow action.
+		 */
 		RefundActionRequest nextActionRequest = RefundActionRequest.builder().action(nextAction).userId(userId)
 				.requestInfo(requestInfo).build();
 
+		/*
+		 * Process next workflow action.
+		 */
 		return processInternal(refund.getId(), nextActionRequest);
 	}
 
@@ -627,12 +649,14 @@ public class RefundServiceImpl implements RefundService {
 			return refund.getRefundMode();
 		}
 
-		if (RefundConstants.PAYMENT_MODE_ONLINE.equalsIgnoreCase(refund.getPaymentModeOriginal())) {
+		if (RefundConstants.PAYMENT_MODE_ONLINE
+				.equalsIgnoreCase(checkResolveRefundMode(refund.getPaymentModeOriginal()))) {
 
 			return RefundConstants.PAYMENT_MODE_ONLINE;
 		}
 
-		if (RefundConstants.REFUND_MODE_OFFLINE.equalsIgnoreCase(refund.getPaymentModeOriginal())) {
+		if (RefundConstants.REFUND_MODE_OFFLINE
+				.equalsIgnoreCase(checkResolveRefundMode(refund.getPaymentModeOriginal()))) {
 
 			return RefundConstants.REFUND_MODE_OFFLINE;
 		}
@@ -640,10 +664,10 @@ public class RefundServiceImpl implements RefundService {
 		return null;
 	}
 
-	private String getAction(Refund refund) {
+	private String checkResolveRefundMode(String paymentModeOriginal) {
 
-		if (refund.getProcessInstance() == null) {
-			return null;
+		if (paymentModeOriginal == null) {
+			throw new CustomException("INVALID_PAYMENT_MODE", "Original payment mode is required");
 		}
 
 		return refund.getProcessInstance().getAction();
