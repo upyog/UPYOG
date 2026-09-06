@@ -173,10 +173,28 @@
         let refundFailed = false;
         let refundErrorMessage = "";
         try {
-          const paymentDetails = recieptData?.Payments?.[0];
+          let paymentDetails = recieptData?.Payments?.[0];
+          if (!paymentDetails && bookingData?.bookingNo) {
+            try {
+              const res = await Digit.PaymentService.recieptSearch(
+                bookingData?.tenantId || tenantId,
+                "chb-services",
+                { consumerCodes: bookingData?.bookingNo }
+              );
+              paymentDetails = res?.Payments?.[0];
+            } catch (paymentErr) {
+              console.error("Failed to fetch payment details for cancellation refund:", paymentErr);
+            }
+          }
+
+          // =========================================================================
+          // [PREVIOUS NTT PAYMENT GATEWAY REFUND LOGIC - KEPT FOR REFERENCE]
+          // Commented out as refund is now handled via /refund-services/refund/v1/_create
+          // If NTT payment gateway workflow is required, uncomment the block below.
+          /*
           if (paymentDetails && paymentDetails.paymentMode === "ONLINE") {
             try {
-              const refundPayload = {
+              const refundPayloadNTT = {
                 PaymentWorkflows: [
                   {
                     paymentId: paymentDetails.id,
@@ -186,26 +204,65 @@
                   }
                 ]
               };
-              await Digit.ReceiptsService.update(refundPayload, paymentDetails.tenantId || tenantId, "CHB");
+              await Digit.ReceiptsService.update(refundPayloadNTT, paymentDetails.tenantId || tenantId, "CHB");
             } catch (refundError) {
               refundFailed = true;
               refundErrorMessage = refundError?.response?.data?.Errors?.[0]?.message || refundError?.message || "";
             }
           }
+          */
+          // =========================================================================
 
-          await mutation.mutateAsync({
-            hallsBookingApplication: updatedApplication
-          });
+          // =========================================================================
+          // [NEW REFUND SERVICE API INTEGRATION: /refund-services/refund/v1/_create]
+          // =========================================================================
+          const amountPaid = Number(
+            paymentDetails?.totalAmountPaid ??
+            (paymentDetails?.paymentDetails?.[0]?.totalAmountPaid ??
+            (bookingData?.totalAmountPaid ??
+            (bookingData?.totalAmount ?? 0)))
+          );
+
+          const refundPayload = {
+            refund: {
+              tenantId: bookingData?.tenantId || paymentDetails?.tenantId || tenantId,
+              moduleName: "CHB",
+              businessService: "CHB.REFUND",
+              consumerCode: bookingData?.bookingNo,
+              paymentId: paymentDetails?.id || paymentDetails?.paymentId || paymentDetails?.transactionNumber || "",
+              applicantName: bookingData?.applicantDetail?.applicantName || bookingData?.applicantName || paymentDetails?.paidBy || "",
+              mobileNumber: bookingData?.applicantDetail?.applicantMobileNo || bookingData?.applicantDetail?.mobileNumber || bookingData?.mobileNumber || paymentDetails?.mobileNumber || "",
+              refundCategory: "CANCELLATION",
+              refundReason: data?.cancelReason || "Community hall booking cancellation",
+              paymentModeOriginal: paymentDetails?.paymentMode || "ONLINE",
+              amountPaid: amountPaid,
+              refundAmount: amountPaid,
+              refundMode: paymentDetails?.paymentMode || "ONLINE",
+              fileStoreId: paymentDetails?.fileStoreId || bookingData?.paymentReceiptFilestoreId || bookingData?.permissionLetterFilestoreId || null
+            }
+          };
+
+          // Console the created refund payload as requested for verification
+          console.log("REFUND PAYLOAD CREATED:", JSON.stringify(refundPayload, null, 2));
+          console.log("Refund Payload:", refundPayload);
+
+          try {
+            await Digit.RefundService.create(refundPayload);
+          } catch (refundError) {
+            refundFailed = true;
+            refundErrorMessage = refundError?.response?.data?.Errors?.[0]?.message || refundError?.message || "";
+            console.error("Refund API Error:", refundError);
+          }
 
           if (refundFailed) {
             setShowToast({
-              key: "warning",
+              key: "error",
               error: {
-                message: `${t("CHB_CANCELLATION_SUCCESS_BUT_REFUND_FAILED") || "Booking cancelled, but refund initiation failed"}${refundErrorMessage ? `: ${refundErrorMessage}` : ""}`
+                message: `${t("CHB_REFUND_CREATION_FAILED") || "Refund initiation failed"}${refundErrorMessage ? `: ${refundErrorMessage}` : ""}`
               }
             });
           } else {
-            setShowToast({ key: "success", action: { action: "CANCEL" } });
+            setShowToast({ key: "success", action: { action: "REFUND_INITIATED" } });
           }
           handleSubmit(onSubmit)();
         } catch (err) {

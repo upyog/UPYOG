@@ -255,6 +255,11 @@ const Urls = {
     slot_search: "/chb-services/booking/v1/_slot-search",
     estimateCreate: "/chb-services/booking/v1/_estimate"
   },
+  refund: {
+    create: "/refund-services/refund/v1/_create",
+    update: "/refund-services/refund/v1/_update",
+    search: "/refund-services/refund/v1/_search"
+  },
   ads: {
     create: "/adv-services/booking/v1/_create",
     search: "/adv-services/booking/v1/_search",

@@ -51,7 +51,7 @@ const ActionModal = (props) => {
   if (props?.businessService.includes("ewst")) {
     return <EWActionModal {...props} />;
   }
-  if (props?.businessService.includes("booking-refund")) {
+  if (props?.businessService?.includes("booking-refund") || props?.businessService?.includes("CHB.REFUND") || props?.businessService?.includes("CHB") || props?.moduleCode?.includes("chb")) {
     return <CHBActionModal {...props} />;
   }
   if (props?.businessService.includes("street-vending")) {
