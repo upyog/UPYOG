@@ -670,7 +670,15 @@ public class RefundServiceImpl implements RefundService {
 			throw new CustomException("INVALID_PAYMENT_MODE", "Original payment mode is required");
 		}
 
-		return refund.getProcessInstance().getAction();
+		return switch (paymentModeOriginal.toUpperCase(Locale.ROOT)) {
+		case RefundConstants.PAYMENT_MODE_ONLINE -> RefundConstants.PAYMENT_MODE_ONLINE;
+
+		case RefundConstants.PAYMENT_MODE_CASH, RefundConstants.PAYMENT_MODE_DD, RefundConstants.PAYMENT_MODE_CHEQUE ->
+			RefundConstants.REFUND_MODE_OFFLINE;
+
+		default -> throw new CustomException("INVALID_PAYMENT_MODE",
+				"Unsupported original payment mode: " + paymentModeOriginal);
+		};
 	}
 
 	private String getUserId(RequestInfo requestInfo) {
