@@ -78,7 +78,7 @@ definitions:
           $ref: '#/definitions/DashboardData'
   IngestionResult:
     type: object
-    description: Result of a dashboard ingestion attempt including audit metadata
+    description: Result of a dashboard ingestion attempt including detail metadata
     properties:
       success:
         type: boolean

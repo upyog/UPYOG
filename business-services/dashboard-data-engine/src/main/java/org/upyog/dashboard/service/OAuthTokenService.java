@@ -282,9 +282,10 @@ public class OAuthTokenService {
                         attempt, dashboardProperties.getOauthMaxAttempts(), backoff, exception.getMessage());
                 try {
                     Thread.sleep(backoff);
-                } catch (InterruptedException ie) {
+                } catch (InterruptedException interruptedException) {
                     Thread.currentThread().interrupt();
-                    throw new IllegalStateException("OAuth token refresh retry interrupted", ie);
+                    log.error("OAuth token refresh retry sleep interrupted", interruptedException);
+                    throw new IllegalStateException("OAuth token refresh retry interrupted", interruptedException);
                 }
             }
         }
@@ -356,9 +357,9 @@ public class OAuthTokenService {
                         attempt, dashboardProperties.getOauthMaxAttempts(), backoff, exception.getMessage());
                 try {
                     Thread.sleep(backoff);
-                } catch (InterruptedException ie) {
+                } catch (InterruptedException interruptedException) {
                     Thread.currentThread().interrupt();
-                    log.error("User search retry interrupted", ie);
+                    log.error("User search retry interrupted", interruptedException);
                     break;
                 }
             }

@@ -37,6 +37,12 @@ public class PGRValidator implements ModuleValidator {
         validateRequired(metrics, "todaysResolvedComplaints");
     }
 
+    /**
+     * Validates that a required key exists within the metrics map and has a non-null, non-blank value.
+     *
+     * @param metrics metrics data map
+     * @param key     mandatory metric field name
+     */
     private void validateRequired(Map<String, Object> metrics, String key) {
         if (!metrics.containsKey(key)) {
             throw new ValidationException(key + " is mandatory for PGR module.");

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.upyog.dashboard.config.DashboardProperties;
 import org.upyog.dashboard.service.LegacyIngestionService;
 import jakarta.annotation.PostConstruct;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +47,7 @@ public class LegacyIngestionScheduler {
      * {@code legacy.ingestion.enabled=false}.
      */
     @Scheduled(cron = "${legacy.ingestion.populate.cron}")
+    @SchedulerLock(name = "legacy_populate_jobs_lock", lockAtMostFor = "PT1H", lockAtLeastFor = "PT2M")
     public void populateLegacyJobs() {
         if (!legacyIngestionEnabled) {
             log.debug("Legacy job populator is disabled via legacy.ingestion.enabled=false");
@@ -65,6 +67,7 @@ public class LegacyIngestionScheduler {
      * {@code legacy.ingestion.enabled=false}.
      */
     @Scheduled(cron = "${legacy.ingestion.execute.cron}")
+    @SchedulerLock(name = "legacy_execute_jobs_lock", lockAtMostFor = "PT30M", lockAtLeastFor = "PT1M")
     public void executeLegacyJobs() {
         if (!legacyIngestionEnabled) {
             log.debug("Legacy job executor is disabled via legacy.ingestion.enabled=false");

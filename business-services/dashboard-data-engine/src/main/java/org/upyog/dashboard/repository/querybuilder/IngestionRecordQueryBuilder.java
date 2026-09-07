@@ -2,9 +2,15 @@ package org.upyog.dashboard.repository.querybuilder;
 
 import org.upyog.dashboard.common.constants.DashboardConstants;
 
-public final class AuditQueryBuilder {
+/**
+ * Query constants for persisting ingestion detail records and error logs into database tables.
+ */
+public final class IngestionRecordQueryBuilder {
 
-    private AuditQueryBuilder() {
+    /**
+     * Private constructor to prevent instantiation of static query builder constant class.
+     */
+    private IngestionRecordQueryBuilder() {
         // Prevent instantiation
     }
 

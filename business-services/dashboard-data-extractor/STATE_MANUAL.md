@@ -42,8 +42,8 @@ Both `SUCCESS`, `SUCCESS_ZERO_METRICS`, and `SUCCESS_DUPLICATE` return `isSucces
 | Table | Purpose |
 |-------|---------|
 | `ingestion_module_detail` | ULB-module configuration and schedule metadata |
-| `ingestion_detail` | Daily ingestion audit records per module/date |
-| `legacy_data_ingestion_detail` | Legacy (historical daily) ingestion audit records |
+| `ingestion_detail` | Daily ingestion detail records per module/date |
+| `legacy_data_ingestion_detail` | Legacy (historical daily) ingestion detail records |
 | `ingestion_module_summary` | Tracks last successful and last attempted date per tenant/module |
 | `adapter_ingestion_error_log` | Error log for ingestion pipeline issues |
 
@@ -63,7 +63,7 @@ Both `ingestion_detail` and `legacy_data_ingestion_detail` now carry an `excepti
 - Manages bulk historical ingestion via a **two-phase scheduler** approach:
   1. **Populate phase** (`populateLegacyJobs` / `populateLegacyJobsForRange`): Determines which dates in the given range have not yet been ingested and creates `NOT_STARTED` rows in `legacy_data_ingestion_detail`.
   2. **Execute phase** (`executeLegacyJobs`): Fetches pending/failed legacy job rows and runs them through the extractor + dashboard client pipeline.
-- Extracts logic into private helpers: `processLegacyJob(...)` for ingestion execution, `serializeRequest(...)` for audit JSON, and `sanitizeResponse(...)`/`sanitizeJson(...)` for safe JSONB storage.
+- Extracts logic into private helpers: `processLegacyJob(...)` for ingestion execution, `serializeRequest(...)` for JSON payload, and `sanitizeResponse(...)`/`sanitizeJson(...)` for safe JSONB storage.
 - Uses `@RequiredArgsConstructor` constructor injection instead of `@Autowired` field injection.
 - Removed `DashboardProducer` direct dependency; persistence is now fully delegated to `IngestionPersistenceService`.
 
@@ -79,7 +79,7 @@ Both `ingestion_detail` and `legacy_data_ingestion_detail` now carry an `excepti
 ## Utility Classes
 
 ### `CommonUtils`
-- Provides `getCurrentEpochMillis()` — a single source of truth for audit timestamps across all persistence operations.
+- Provides `getCurrentEpochMillis()` — a single source of truth for timestamps across all persistence operations.
 
 ### `HierarchyParser`
 - Spring component that parses a dot-notation tenant ID (`state.ulb[.region[.ward]]`) into a `Map<String, String>` of hierarchy levels.

@@ -19,6 +19,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Service for streaming large datasets into memory-safe Apache POI SXSSF Excel workbooks.
+ */
 @Slf4j
 @Service
 public class SXSSFExcelGeneratorService {
@@ -40,6 +43,13 @@ public class SXSSFExcelGeneratorService {
         private int rowIndex = 0;
         private java.util.Set<String> columnHeaders;
 
+        /**
+         * Initializes a streaming SXSSF Excel session with a temporary disk file.
+         *
+         * @param moduleName   module short code used in file and sheet naming
+         * @param objectMapper ObjectMapper for serializing nested JSON column data
+         * @throws IOException on temporary file creation failure
+         */
         public StreamingExcelSession(String moduleName, ObjectMapper objectMapper) throws IOException {
             this.moduleName = moduleName;
             this.objectMapper = objectMapper;
@@ -56,6 +66,11 @@ public class SXSSFExcelGeneratorService {
         }
 
         @SuppressWarnings("unchecked")
+        /**
+         * Appends a chunk of extracted records directly to the streaming Excel worksheet.
+         *
+         * @param records batch of record objects to serialize into Excel rows
+         */
         public synchronized void appendBatchRecords(List<Object> records) {
             if (records == null || records.isEmpty()) {
                 return;
@@ -85,8 +100,8 @@ public class SXSSFExcelGeneratorService {
                     if (val != null) {
                         if (val instanceof Number num) {
                             cell.setCellValue(num.doubleValue());
-                        } else if (val instanceof Boolean b) {
-                            cell.setCellValue(b);
+                        } else if (val instanceof Boolean boolVal) {
+                            cell.setCellValue(boolVal);
                         } else if (val instanceof Map || val instanceof List) {
                             try {
                                 String jsonStr = objectMapper.writeValueAsString(val);
@@ -94,7 +109,8 @@ public class SXSSFExcelGeneratorService {
                                     jsonStr = jsonStr.substring(0, 32765);
                                 }
                                 cell.setCellValue(jsonStr);
-                            } catch (Exception e) {
+                            } catch (Exception exception) {
+                                log.error("Failed to serialize complex cell object for column {}: {}", header, exception.getMessage());
                                 cell.setCellValue(val.toString());
                             }
                         } else {
@@ -111,6 +127,12 @@ public class SXSSFExcelGeneratorService {
             }
         }
 
+        /**
+         * Writes buffered rows to the temporary file on disk and closes the stream.
+         *
+         * @return the generated File object
+         * @throws IOException on file write error
+         */
         public File finishWorkbook() throws IOException {
             try (FileOutputStream fos = new FileOutputStream(tempFile)) {
                 workbook.write(fos);
@@ -126,6 +148,13 @@ public class SXSSFExcelGeneratorService {
         }
     }
 
+    /**
+     * Creates an active streaming Excel session for memory-safe chunked record generation.
+     *
+     * @param moduleName module name used in sheet and temp file naming
+     * @return initialized StreamingExcelSession instance
+     * @throws IOException on session creation failure
+     */
     public StreamingExcelSession createStreamingSession(String moduleName) throws IOException {
         return new StreamingExcelSession(moduleName, objectMapper);
     }

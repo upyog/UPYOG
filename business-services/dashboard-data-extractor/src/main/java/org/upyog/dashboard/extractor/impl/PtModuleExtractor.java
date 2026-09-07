@@ -99,20 +99,20 @@ public class PtModuleExtractor implements ModuleExtractor<List<PTDTO>> {
         if (item == null) {
             return true;
         }
-        if (item instanceof PTDTO p) {
-            PTAggregatedData combined = p.getCombinedMetrics();
-            if (combined != null) {
-                if (isPositive(combined.getAssessments())) return false;
-                if (isPositive(combined.getTodaysTotalApplications())) return false;
-                if (isPositive(combined.getTodaysClosedApplications())) return false;
-                if (isPositive(combined.getNoOfPropertiesPaidToday())) return false;
-                if (isPositive(combined.getTodaysApprovedApplications())) return false;
-                if (isPositive(combined.getTodaysApprovedApplicationsWithinSLA())) return false;
+        if (item instanceof PTDTO ptDto) {
+            PTAggregatedData combinedMetrics = ptDto.getCombinedMetrics();
+            if (combinedMetrics != null) {
+                if (isPositive(combinedMetrics.getAssessments())) return false;
+                if (isPositive(combinedMetrics.getTodaysTotalApplications())) return false;
+                if (isPositive(combinedMetrics.getTodaysClosedApplications())) return false;
+                if (isPositive(combinedMetrics.getNoOfPropertiesPaidToday())) return false;
+                if (isPositive(combinedMetrics.getTodaysApprovedApplications())) return false;
+                if (isPositive(combinedMetrics.getTodaysApprovedApplicationsWithinSLA())) return false;
             }
-            List<PTCollectionDTO> collections = p.getCollectionMetrics();
+            List<PTCollectionDTO> collections = ptDto.getCollectionMetrics();
             if (collections != null && !collections.isEmpty()) {
-                for (PTCollectionDTO col : collections) {
-                    if (col.getTaxHeadAmount() != null && col.getTaxHeadAmount() > 0) {
+                for (PTCollectionDTO collectionDto : collections) {
+                    if (collectionDto.getTaxHeadAmount() != null && collectionDto.getTaxHeadAmount() > 0) {
                         return false;
                     }
                 }
@@ -122,51 +122,79 @@ public class PtModuleExtractor implements ModuleExtractor<List<PTDTO>> {
         return false;
     }
 
-    private boolean isPositive(Number num) {
-        return num != null && num.doubleValue() > 0;
+    /**
+     * Checks if a numeric value is non-null and strictly greater than zero.
+     *
+     * @param number the numeric value to evaluate
+     * @return true if number > 0, false otherwise
+     */
+    private boolean isPositive(Number number) {
+        return number != null && number.doubleValue() > 0;
     }
 
+    /**
+     * Transforms raw flat SQL row collections into structured {@link PTDTO} domain models.
+     *
+     * @param combinedRowsRaw   raw combined metric rows from database
+     * @param collectionRowsRaw raw collection payment rows from database
+     * @param dateStr           target business date string
+     * @return list of fully populated PTDTO objects
+     */
     private List<PTDTO> transformToDTO(List<RawPtMetric> combinedRowsRaw, List<RawPtCollection> collectionRowsRaw, String dateStr) {
         Map<String, List<PTCollectionDTO>> collectionsByTenant = groupCollectionsByTenant(collectionRowsRaw);
 
         List<PTDTO> results = new ArrayList<>();
-        for (RawPtMetric row : combinedRowsRaw) {
-            results.add(buildPtDto(row, dateStr, collectionsByTenant));
+        for (RawPtMetric rawMetricRow : combinedRowsRaw) {
+            results.add(buildPtDto(rawMetricRow, dateStr, collectionsByTenant));
         }
         return results;
     }
 
+    /**
+     * Groups raw PT collection rows by tenant ID to enable modular attachment to parent ULB DTOs.
+     *
+     * @param collectionRowsRaw raw collection rows returned by database query
+     * @return map of tenant IDs to their respective list of collection DTOs
+     */
     private Map<String, List<PTCollectionDTO>> groupCollectionsByTenant(List<RawPtCollection> collectionRowsRaw) {
         Map<String, List<PTCollectionDTO>> collectionsByTenant = new HashMap<>();
-        for (RawPtCollection row : collectionRowsRaw) {
-            String currentTenant = row.getTenantid();
-            PTCollectionDTO dto = PTCollectionDTO.builder()
-                    .usageCategory(row.getUsageCategory())
-                    .paymentMode(row.getPaymentMode())
-                    .paymentId(row.getPaymentId())
-                    .taxHeadCode(row.getTaxHeadCode())
-                    .taxHeadAmount(row.getTaxHeadAmount())
+        for (RawPtCollection rawCollectionRow : collectionRowsRaw) {
+            String currentTenant = rawCollectionRow.getTenantid();
+            PTCollectionDTO ptCollectionDto = PTCollectionDTO.builder()
+                    .usageCategory(rawCollectionRow.getUsageCategory())
+                    .paymentMode(rawCollectionRow.getPaymentMode())
+                    .paymentId(rawCollectionRow.getPaymentId())
+                    .taxHeadCode(rawCollectionRow.getTaxHeadCode())
+                    .taxHeadAmount(rawCollectionRow.getTaxHeadAmount())
                     .build();
-            collectionsByTenant.computeIfAbsent(currentTenant, k -> new ArrayList<>()).add(dto);
+            collectionsByTenant.computeIfAbsent(currentTenant, tenantKey -> new ArrayList<>()).add(ptCollectionDto);
         }
         return collectionsByTenant;
     }
 
-    private PTDTO buildPtDto(RawPtMetric row, String dateStr, Map<String, List<PTCollectionDTO>> collectionsByTenant) {
-        String currentTenantId = row.getTenantid();
+    /**
+     * Builds a single {@link PTDTO} domain model from raw metric rows and mapped tenant hierarchy.
+     *
+     * @param rawPtMetric         raw metric row containing application counts and assessments
+     * @param dateStr             target business date string
+     * @param collectionsByTenant grouped collection rows for associating payments
+     * @return constructed and validated PTDTO instance
+     */
+    private PTDTO buildPtDto(RawPtMetric rawPtMetric, String dateStr, Map<String, List<PTCollectionDTO>> collectionsByTenant) {
+        String currentTenantId = rawPtMetric.getTenantid();
         Map<String, String> parsedHierarchy = hierarchyParser.parseTenantId(currentTenantId);
 
         PTAggregatedData combinedData = PTAggregatedData.builder()
-                .assessments(row.getAssessments())
-                .todaysTotalApplications(row.getTodaysTotalApplications())
-                .todaysClosedApplications(row.getTodaysClosedApplications())
-                .noOfPropertiesPaidToday(row.getNoOfPropertiesPaidToday())
-                .todaysApprovedApplications(row.getTodaysApprovedApplications())
-                .todaysApprovedApplicationsWithinSLA(row.getTodaysApprovedApplicationsWithinSLA())
-                .avgDaysForApplicationApproval(row.getAvgDaysForApplicationApproval())
-                .propertiesRegisteredJson(row.getPropertiesRegisteredJson())
-                .assessedPropertiesJson(row.getAssessedPropertiesJson())
-                .movedApplicationsJson(row.getMovedApplicationsJson())
+                .assessments(rawPtMetric.getAssessments())
+                .todaysTotalApplications(rawPtMetric.getTodaysTotalApplications())
+                .todaysClosedApplications(rawPtMetric.getTodaysClosedApplications())
+                .noOfPropertiesPaidToday(rawPtMetric.getNoOfPropertiesPaidToday())
+                .todaysApprovedApplications(rawPtMetric.getTodaysApprovedApplications())
+                .todaysApprovedApplicationsWithinSLA(rawPtMetric.getTodaysApprovedApplicationsWithinSLA())
+                .avgDaysForApplicationApproval(rawPtMetric.getAvgDaysForApplicationApproval())
+                .propertiesRegisteredJson(rawPtMetric.getPropertiesRegisteredJson())
+                .assessedPropertiesJson(rawPtMetric.getAssessedPropertiesJson())
+                .movedApplicationsJson(rawPtMetric.getMovedApplicationsJson())
                 .build();
 
         List<PTCollectionDTO> tenantCollections = collectionsByTenant.getOrDefault(currentTenantId, List.of());

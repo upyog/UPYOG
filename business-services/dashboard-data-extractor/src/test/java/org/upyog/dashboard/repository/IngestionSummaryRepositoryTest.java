@@ -39,13 +39,6 @@ class IngestionSummaryRepositoryTest {
     @InjectMocks
     private IngestionSummaryRepository repository;
 
-    @BeforeEach
-    void setUp() throws Exception {
-        java.lang.reflect.Field field = IngestionSummaryRepository.class.getDeclaredField("queryBuilder");
-        field.setAccessible(true);
-        field.set(repository, new IngestionSummaryQueryBuilder());
-    }
-
     @Test
     @DisplayName("findLastSuccessfulDate returns empty when no row exists")
     void findLastSuccessfulDate_returnsEmptyWhenNotFound() {

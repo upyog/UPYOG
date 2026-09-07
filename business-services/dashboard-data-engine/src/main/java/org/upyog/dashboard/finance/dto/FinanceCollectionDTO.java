@@ -3,6 +3,9 @@ package org.upyog.dashboard.finance.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * DTO holding collection and account detail breakdown for the Finance module.
+ */
 @Getter
 @Setter
 public class FinanceCollectionDTO {

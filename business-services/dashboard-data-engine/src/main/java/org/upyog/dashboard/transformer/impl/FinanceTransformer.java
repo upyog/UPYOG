@@ -11,6 +11,9 @@ import org.upyog.dashboard.model.DashboardData;
 import org.upyog.dashboard.model.DashboardPayload;
 import org.upyog.dashboard.transformer.ModuleTransformer;
 
+/**
+ * Transformer component mapping Finance module DTOs into generic DashboardPayload.
+ */
 @Component
 public class FinanceTransformer implements ModuleTransformer<FinanceDTO> {
 

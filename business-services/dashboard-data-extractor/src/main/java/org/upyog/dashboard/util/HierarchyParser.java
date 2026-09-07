@@ -46,13 +46,22 @@ public class HierarchyParser {
         this.statePrefix = StringUtils.isNotBlank(statePrefix) ? statePrefix : "pg";
     }
 
+    /**
+     * Constructs a {@code HierarchyParser} with default ward and region, defaulting statePrefix to "pg".
+     *
+     * @param defaultWard   default ward name/code fallback
+     * @param defaultRegion default region name/code fallback
+     */
     public HierarchyParser(String defaultWard, String defaultRegion) {
         this(defaultWard, defaultRegion, "pg");
     }
 
     /**
-     * Parses the tenantId dot-notation string and returns a map of hierarchy
-     * levels. Expected format: state.ulb.region.ward
+     * Parses a tenantId dot-notation string into a map containing hierarchy levels
+     * ({@code "state"}, {@code "ulb"}, {@code "region"}, {@code "ward"}).
+     *
+     * @param tenantId the dot-notation tenant identifier string (e.g. {@code "pg.citya.region.ward"} or {@code "pg.citya"})
+     * @return a map containing extracted hierarchy levels keyed by hierarchy level names
      */
     public Map<String, String> parseTenantId(String tenantId) {
         Map<String, String> hierarchy = new HashMap<>();

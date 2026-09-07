@@ -18,14 +18,14 @@ This document contains the complete set of formal **QA Test Cases**, end-to-end 
 - **Suite 3:** Data Extraction, JDBC Query Mapping & Null Handling
 - **Suite 4:** Engine Validation, Invariants & Payload Transformations
 - **Suite 5:** Downstream Delivery, Feign Connection Timeout & Exponential Backoff Retries
-- **Suite 6:** PostgreSQL Database Audit & State Persistence Verification
+- **Suite 6:** PostgreSQL Database State & Persistence Verification
 - **Suite 7:** End-to-End Real-World Multi-Tenant Application Ingestion Flow
 
 ---
 
 ## 2. End-to-End Hands-On Integration Testing & Validation Procedure
 
-This section documents the explicit, real-world verification methodology used to validate multi-tenant data extraction across operational states, database audit tables, gateway logs, Elasticsearch indices, and the National Dashboard UI.
+This section documents the explicit, real-world verification methodology used to validate multi-tenant data extraction across operational states, database detail and log tables, gateway logs, Elasticsearch indices, and the National Dashboard UI.
 
 ```
 +-----------------------------------------------------------------------------------------+
@@ -48,11 +48,11 @@ This section documents the explicit, real-world verification methodology used to
                                              |
                                              v
 +-----------------------------------------------------------------------------------------+
-| STEP 4: Multi-Layer Database & Gateway Log Auditing                                     |
+| STEP 4: Multi-Layer Database & Gateway Log Verification                                     |
 | Verify rows in:                                                                         |
 |  - ingestion_detail (Status = SUCCESS, JSON payloads)                                   |
 |  - ingestion_module_summary (last_successful_date & last_attempted_date updated)        |
-|  - ug_external_api_message_detail (Outbound API audit message detail)                   |
+|  - ug_external_api_message_detail (Outbound API message detail)                   |
 |  - ug_external_api_message_raw_detail (Raw HTTP payload & response body)                |
 +-----------------------------------------------------------------------------------------+
                                              |
@@ -98,8 +98,8 @@ GROUP BY tenantid, status;
         -H "Content-Type: application/json"
    ```
 
-#### Step 4: Multi-Layer Database & Gateway Log Auditing
-Verify data persistence across all audit tables:
+#### Step 4: Multi-Layer Database & Gateway Log Verification
+Verify data persistence across all persistence tables:
 ```sql
 -- 4a. Verify ingestion execution status and JSON request/response
 SELECT module_ingestion_id, tenant_id, module_name, push_date, ingestion_status, exception_code
@@ -112,7 +112,7 @@ SELECT tenant_id, module_name, last_successful_date, last_attempted_date
 FROM ingestion_module_summary
 WHERE last_successful_date = '2026-08-20';
 
--- 4c. Verify external gateway API audit tables
+-- 4c. Verify external gateway API detail tables
 SELECT message_id, tenant_id, module_name, status, created_time
 FROM ug_external_api_message_detail
 ORDER BY created_time DESC LIMIT 5;
@@ -173,7 +173,7 @@ ORDER BY created_time DESC LIMIT 5;
   3. Verify database records for each date.
 - **Expected Results:**
   - Service detects 4-day gap and sequentially ingests `2026-08-16`, `2026-08-17`, `2026-08-18`, `2026-08-19`.
-  - 4 separate audit entries inserted in `ingestion_detail`.
+  - 4 separate detail entries inserted in `ingestion_detail`.
   - `last_successful_date` sequentially advances and finishes at `2026-08-19`.
 
 ---
@@ -218,7 +218,7 @@ ORDER BY created_time DESC LIMIT 5;
 - **Expected Results:**
   - Log records `"All metrics for module PT on date 2026-08-19 are zero. Skipping downstream API push."`
   - Downstream HTTP push is skipped.
-  - Audit log inserted with `ingestion_status = 'SUCCESS_ZERO_METRICS'`.
+  - Ingestion record inserted with `ingestion_status = 'SUCCESS_ZERO_METRICS'`.
   - `last_successful_date` in `ingestion_module_summary` updates to `2026-08-19`.
 
 ---
@@ -266,7 +266,7 @@ ORDER BY created_time DESC LIMIT 5;
        "endDate": "2026-01-31"
      }
      ```
-  2. Check response status and database audit tables.
+  2. Check response status and database detail and log tables.
 - **Expected Results:**
   - Initial rows created in `legacy_data_ingestion_detail` with `ingestion_status = 'NOT_STARTED'`.
   - Service ingests data for each date in range.
@@ -318,9 +318,9 @@ ORDER BY created_time DESC LIMIT 5;
 
 ---
 
-### Suite 4: Database Audit & SQL Assertions
+### Suite 4: Database Detail & SQL Assertions
 
-#### TC-DB-001: Database Ingestion Detail Audit Integrity
+#### TC-DB-001: Database Ingestion Detail Integrity
 - **Priority:** High (P0)
 - **Module:** PostgreSQL Ingestion Tables
 - **Test Query:**
@@ -359,6 +359,6 @@ ORDER BY created_time DESC LIMIT 5;
 | **Suite 1: Daily Ingestion & Catch-Up** | 4 | -- | -- | -- | -- |
 | **Suite 2: Legacy Migration** | 1 | -- | -- | -- | -- |
 | **Suite 3: Engine Validation & Retry** | 3 | -- | -- | -- | -- |
-| **Suite 4: Database Audit Verification** | 2 | -- | -- | -- | -- |
+| **Suite 4: Database Detail Verification** | 2 | -- | -- | -- | -- |
 | **Suite 5: Real-World E2E Validation Flow** | 1 | -- | -- | -- | -- |
 | **TOTAL** | **11** | **--** | **--** | **--** | **--** |

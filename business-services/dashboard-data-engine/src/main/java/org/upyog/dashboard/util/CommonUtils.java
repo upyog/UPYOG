@@ -3,6 +3,9 @@ package org.upyog.dashboard.util;
 import java.time.Instant;
 import java.util.UUID;
 
+/**
+ * Reusable utility methods providing epoch timestamps, UUID generation, and S3 object keys.
+ */
 public class CommonUtils {
 
     /**

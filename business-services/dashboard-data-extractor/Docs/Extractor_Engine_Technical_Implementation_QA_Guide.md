@@ -14,14 +14,14 @@ This document serves as the authoritative, end-to-end technical reference for th
 ### Core Objectives for QA Verification
 1. **Understand Data Lineage:** Map how operational domain records (e.g., Property Tax, PGR complaints, Public Booking/CHB, Finance, Advertisement) are ingested from source DBs, parsed, transformed into unified metrics, validated, and pushed to the National Dashboard Ingestion API.
 2. **Verify Business Logic & Edge Case Handling:** Gain complete visibility into automated catch-up windowing, legacy historical back-fills, token generation, backoff retry policies, and exception handling.
-3. **Database & Schema Auditing:** Inspect table DDLs, indexes, nullability constraints, and primary/foreign keys across all audit logging and tracking tables to formulate SQL-based test assertions.
+3. **Database & Schema Auditing:** Inspect table DDLs, indexes, nullability constraints, and primary/foreign keys across all detail and tracking tables to formulate SQL-based test assertions.
 4. **End-to-End Test Design:** Execute test plans covering happy path runs, partial batch failures, API connection timeouts, payload validation errors, and state summary rollbacks.
 
 ---
 
 ## 2. Architecture & Service Breakdown
 
-The analytics ingestion architecture follows a decoupled **Extractor-Engine** pattern. The pipeline isolates database querying and raw metric assembly (Extractor) from payload transformation, schema validation, security token management, HTTP delivery, and audit logging (Engine).
+The analytics ingestion architecture follows a decoupled **Extractor-Engine** pattern. The pipeline isolates database querying and raw metric assembly (Extractor) from payload transformation, schema validation, security token management, HTTP delivery, and persistence (Engine).
 
 ```
                       +------------------------------------------+
@@ -49,9 +49,9 @@ The analytics ingestion architecture follows a decoupled **Extractor-Engine** pa
                        |  - DashboardDataLoader (Feign + Retry) |
                        +----------------------------------------+
                                   /                  \
-   (HTTP Ingest Metrics Payload) v                    v (Async Audit Event)
+   (HTTP Ingest Metrics Payload) v                    v (Async Persistence Event)
 +------------------------------------+   +------------------------------------+
-|  National Dashboard Ingest API     |   |   Audit Service / Kafka Topic      |
+|  National Dashboard Ingest API     |   |   Ingestion Record Service / Kafka Topic      |
 |  (External Analytics Gateway)      |   |   (ingestion_detail, summary DB)   |
 +------------------------------------+   +------------------------------------+
 ```
@@ -61,7 +61,7 @@ The analytics ingestion architecture follows a decoupled **Extractor-Engine** pa
 | Service | Primary Responsibility | Key Components | Tech Stack / Libraries |
 | :--- | :--- | :--- | :--- |
 | **`dashboard-data-extractor`** | Data Ingestion & Source Querying | Schedulers, `ModuleExtractor` implementations (`PtModuleExtractor`, `PgrModuleExtractor`, `ChbModuleExtractor`), `ExtractorRegistry`, Row Mappers, `IngestionSummaryRepository`. | Java 17, Spring Boot, Spring JDBC / NamedParameterJdbcTemplate, Cron Scheduler, Jackson. |
-| **`dashboard-data-engine`** | Business Logic, Transformation, Validation, Delivery & Auditing | `DashboardClientImpl`, `TransformerRegistry`, `ModuleTransformer` beans (`PTTransformer`, `PGRTransformer`, etc.), `CommonValidator`, `OAuthTokenService`, `DashboardDataLoaderImpl`, `RetryUtil`, `JdbcAuditServiceImpl`. | Java 17, Spring Boot, Spring Cloud OpenFeign, Gson, Jackson, Kafka Producer, PostgreSQL JDBC. |
+| **`dashboard-data-engine`** | Business Logic, Transformation, Validation, Delivery & Persistence | `DashboardClientImpl`, `TransformerRegistry`, `ModuleTransformer` beans (`PTTransformer`, `PGRTransformer`, etc.), `CommonValidator`, `OAuthTokenService`, `DashboardDataLoaderImpl`, `RetryUtil`, `JdbcIngestionRecordPersistenceServiceImpl`. | Java 17, Spring Boot, Spring Cloud OpenFeign, Gson, Jackson, Kafka Producer, PostgreSQL JDBC. |
 
 ---
 
@@ -82,7 +82,7 @@ Data extraction occurs via three trigger mechanisms:
 2. **Legacy Historical Ingestion (`LegacyIngestionScheduler` & `LegacyIngestionController`):**
    - **Trigger:** REST API (`POST /dashboard/v1/legacy/_ingest`) or bulk migration jobs.
    - **Target Window:** Date ranges for historical periods (monthly/daily back-fills).
-   - **Audit Tracking:** Writes initial `NOT_STARTED` rows to `legacy_data_ingestion_detail` before processing.
+   - **Job Tracking:** Writes initial `NOT_STARTED` rows to `legacy_data_ingestion_detail` before processing.
 
 3. **On-Demand Manual Trigger (`IngestionTestController`):**
    - **Trigger:** API invocation for specific dates or modules for QA verification.
@@ -161,7 +161,7 @@ public List<IngestionResult> ingestDailyData() {
 
 ## 4. Engine Service Implementation
 
-The `dashboard-data-engine` service executes business transformations, payload validations, authorization context injection, downstream HTTP posting, retry exponential backoffs, and audit persistence.
+The `dashboard-data-engine` service executes business transformations, payload validations, authorization context injection, downstream HTTP posting, retry exponential backoffs, and event persistence.
 
 ### 4.1 Engine Processing Pipeline Architecture
 
@@ -183,7 +183,7 @@ The main entry point is `DashboardClientImpl.execute(DashboardRequest request)`,
 |     +---> Serializes Request JSON via ObjectMapper                                 |
 |     +---> POST to National Dashboard URL via DashboardFeignClient                  |
 |     +---> Executes Exponential Backoff + Jitter Retry Loop on Error                |
-|     +---> Emits Audit Data to AuditService / Kafka Persistence Topic               |
+|     +---> Emits Ingestion Data to IngestionRecordPersistenceService / Kafka Persistence Topic               |
 +-----------------------------------------------------------------------------------+
 ```
 
@@ -212,7 +212,7 @@ Sends the transformed payload via `DashboardFeignClient`. If downstream calls fa
 2. Checks if retry is enabled (`dashboardProperties.isIngestRetryEnabled()`) and current attempt < max attempts (`dashboardProperties.getIngestMaxAttempts()`).
 3. Calculates backoff with randomized jitter using `RetryUtil.calculateBackoffWithJitter(attempt, baseDelayMs, maxDelayMs)`.
 4. Sleeps thread for calculated backoff time before retrying.
-5. If all retries fail, logs a `FAILURE` status and writes the failure reason and exception stack trace to database audit logs.
+5. If all retries fail, logs a `FAILURE` status and writes the failure reason and exception stack trace to database error logs.
 
 ```java
 // Exponential Backoff with Jitter Calculation (RetryUtil.java)
@@ -234,7 +234,7 @@ This section details all PostgreSQL database tables managed by Flyway migrations
 ```
 +--------------------------+       1:N       +----------------------------+
 |  ingestion_module_detail |<----------------|      ingestion_detail      |
-|  (Configuration & Cron)  |                 |   (Daily Audit Log Runs)   |
+|  (Configuration & Cron)  |                 |   (Daily Ingestion Runs)   |
 +--------------------------+                 +----------------------------+
             |
             | 1:N                            +----------------------------+
@@ -263,9 +263,9 @@ This section details all PostgreSQL database tables managed by Flyway migrations
 | `is_legacy_data_ingested` | `BOOLEAN` | `NOT NULL, DEFAULT FALSE` | Flag indicating whether historical/legacy data back-fill has been completed. |
 | `last_ingested_date` | `DATE` | `NULLABLE` | The most recent calendar date for which daily ingestion successfully finished. |
 | `schedule_cron` | `VARCHAR(128)` | `NULLABLE` | Cron expression for module execution (NULL if manually triggered or default). |
-| `created_by` | `VARCHAR(256)` | `NOT NULL, DEFAULT 'SYSTEM'` | Audit field tracking the creator user ID or system component. |
+| `created_by` | `VARCHAR(256)` | `NOT NULL, DEFAULT 'SYSTEM'` | Metadata field tracking the creator user ID or system component. |
 | `created_time` | `BIGINT` | `NOT NULL` | Epoch timestamp (in milliseconds) when the configuration row was created. |
-| `last_modified_by` | `VARCHAR(256)` | `NOT NULL, DEFAULT 'SYSTEM'` | Audit field tracking who last updated the row configuration. |
+| `last_modified_by` | `VARCHAR(256)` | `NOT NULL, DEFAULT 'SYSTEM'` | Metadata field tracking who last updated the row configuration. |
 | `last_modified_time` | `BIGINT` | `NOT NULL` | Epoch timestamp (in milliseconds) of the most recent modification. |
 
 **Indexes & Constraints:**
@@ -275,7 +275,7 @@ This section details all PostgreSQL database tables managed by Flyway migrations
 ---
 
 ### Table 2: `ingestion_detail`
-**Purpose:** Audit log of every daily ingestion push attempt made to the National Dashboard. Stores full JSON request payloads, response payloads, status outcomes, and error codes.
+**Purpose:** Record log of every daily ingestion push attempt made to the National Dashboard. Stores full JSON request payloads, response payloads, status outcomes, and error codes.
 
 | Column Name | Data Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
@@ -289,9 +289,9 @@ This section details all PostgreSQL database tables managed by Flyway migrations
 | `ingestion_status` | `VARCHAR(32)` | `NULLABLE` | Execution status outcome: `SUCCESS` or `FAILURE`. |
 | `exception_code` | `VARCHAR(128)` | `NULLABLE` | Short exception/error code captured when `ingestion_status = FAILURE`. |
 | `created_by` | `VARCHAR(256)` | `NULLABLE` | Identifier of user/system that triggered the daily ingestion push. |
-| `created_time` | `BIGINT` | `NULLABLE` | Epoch timestamp (ms) when this audit record was inserted. |
+| `created_time` | `BIGINT` | `NULLABLE` | Epoch timestamp (ms) when this record was inserted. |
 | `last_modified_by` | `VARCHAR(256)` | `NULLABLE` | Identifier of user/system that last updated the record status. |
-| `last_modified_time` | `BIGINT` | `NULLABLE` | Epoch timestamp (ms) of the last update to this audit record. |
+| `last_modified_time` | `BIGINT` | `NULLABLE` | Epoch timestamp (ms) of the last update to this record. |
 
 **Indexes & Constraints:**
 - `CONSTRAINT pk_ingestion_detail PRIMARY KEY (module_ingestion_id)`
@@ -302,7 +302,7 @@ This section details all PostgreSQL database tables managed by Flyway migrations
 ---
 
 ### Table 3: `legacy_data_ingestion_detail`
-**Purpose:** Audit log of historical and bulk legacy data ingestion push attempts.
+**Purpose:** Record log of historical and bulk legacy data ingestion push attempts.
 
 | Column Name | Data Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
@@ -317,9 +317,9 @@ This section details all PostgreSQL database tables managed by Flyway migrations
 | `response_data` | `JSONB` | `NULLABLE` | Downstream HTTP response body or exception traceback. |
 | `ingestion_status` | `VARCHAR(32)` | `NOT NULL, DEFAULT 'NOT_STARTED'` | Migration lifecycle state: `NOT_STARTED`, `SUCCESS`, or `FAILURE`. |
 | `exception_code` | `VARCHAR(128)` | `NULLABLE` | Categorized error code if the historical push failed. |
-| `created_by` | `VARCHAR(256)` | `NULLABLE` | Audit user/system creator identifier. |
+| `created_by` | `VARCHAR(256)` | `NULLABLE` | Creator user/system identifier. |
 | `created_time` | `BIGINT` | `NULLABLE` | Epoch timestamp (ms) of creation. |
-| `last_modified_by` | `VARCHAR(256)` | `NULLABLE` | Audit user/system modifier identifier. |
+| `last_modified_by` | `VARCHAR(256)` | `NULLABLE` | Modifier user/system identifier. |
 | `last_modified_time` | `BIGINT` | `NULLABLE` | Epoch timestamp (ms) of last modification. |
 
 **Indexes & Constraints:**
@@ -331,7 +331,7 @@ This section details all PostgreSQL database tables managed by Flyway migrations
 ---
 
 ### Table 4: `ingestion_module_summary`
-**Purpose:** High-performance lookup table tracking the single latest successful date and latest attempted date per tenant and module. Used by `DailyIngestionService` to determine catch-up start dates without querying heavy audit tables.
+**Purpose:** High-performance lookup table tracking the single latest successful date and latest attempted date per tenant and module. Used by `DailyIngestionService` to determine catch-up start dates without querying heavy detail tables.
 
 | Column Name | Data Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
@@ -340,9 +340,9 @@ This section details all PostgreSQL database tables managed by Flyway migrations
 | `module_name` | `VARCHAR(64)` | `NOT NULL` | Short code identifying the module (e.g., `PT`, `PGR`, `CHB`). |
 | `last_successful_date` | `DATE` | `NOT NULL` | Most recent calendar date for which metrics were successfully ingested. |
 | `last_attempted_date` | `DATE` | `NULLABLE` | Most recent calendar date for which metrics ingestion was attempted. |
-| `created_by` | `VARCHAR(256)` | `NOT NULL, DEFAULT 'SYSTEM'` | Audit creator field. |
+| `created_by` | `VARCHAR(256)` | `NOT NULL, DEFAULT 'SYSTEM'` | Creator field. |
 | `created_time` | `BIGINT` | `NOT NULL` | Epoch timestamp (ms) when the summary entry was created. |
-| `last_modified_by` | `VARCHAR(256)` | `NOT NULL, DEFAULT 'SYSTEM'` | Audit modifier field. |
+| `last_modified_by` | `VARCHAR(256)` | `NOT NULL, DEFAULT 'SYSTEM'` | Modifier field. |
 | `last_modified_time` | `BIGINT` | `NOT NULL` | Epoch timestamp (ms) of the last update to the summary entry. |
 
 **Indexes & Constraints:**
@@ -402,8 +402,8 @@ POSTs payload to National Dashboard URL via DashboardFeignClient.
 If HTTP 503 received -> Retries with exponential backoff + jitter (Attempt 1, 2...).
 Receives HTTP 200 OK -> Sets status = 'SUCCESS'.
                     |
-[ Step 8: Audit Persistence & Summary Rollback/Commit ]
-Publishes DailyIngestionData record to AuditService / Kafka topic.
+[ Step 8: Detail Persistence & Summary Rollback/Commit ]
+Publishes DailyIngestionData record to IngestionRecordPersistenceService / Kafka topic.
 Persists row into ingestion_detail (ingestion_status = 'SUCCESS', request_data, response_data).
 Updates ingestion_module_summary.last_successful_date = '2026-08-18'.
 Updates ingestion_module_detail.last_ingested_date = '2026-08-18'.
@@ -418,17 +418,17 @@ The QA team should execute the following test scenarios to ensure complete opera
 | Test Case ID | Scenario Name | Test Steps & Verification Steps | Expected Result |
 | :--- | :--- | :--- | :--- |
 | **TC-ING-01** | Standard Daily Ingestion (Happy Path) | 1. Trigger `DailyIngestionScheduler` or invoke daily ingestion API.<br>2. Inspect database `ingestion_detail`.<br>3. Inspect database `ingestion_module_summary`. | - Row inserted in `ingestion_detail` with status `SUCCESS`.<br>- `request_data` contains valid JSON with OAuth token.<br>- `last_successful_date` updated to yesterday's date. |
-| **TC-ING-02** | Multi-Day Catch-Up Window | 1. Set `last_successful_date` in `ingestion_module_summary` to 3 days prior.<br>2. Run `DailyIngestionService.ingestDailyData()`. | - Engine iteratively processes dates `T-3`, `T-2`, `T-1` in exact chronological sequence.<br>- 3 separate audit rows added to `ingestion_detail`. |
+| **TC-ING-02** | Multi-Day Catch-Up Window | 1. Set `last_successful_date` in `ingestion_module_summary` to 3 days prior.<br>2. Run `DailyIngestionService.ingestDailyData()`. | - Engine iteratively processes dates `T-3`, `T-2`, `T-1` in exact chronological sequence.<br>- 3 separate detail rows added to `ingestion_detail`. |
 | **TC-ING-03** | Catch-Up Limit Exceeded Guard | 1. Set `last_successful_date` to 15 days ago (configured limit = 7 days).<br>2. Run daily ingestion. | - Ingestion halts immediately.<br>- Log reflects limit breach message.<br>- Result status returned as `FAILURE`. No corrupt partial data pushed. |
 | **TC-ING-04** | Sequential Halt on Date Failure | 1. Mock downstream endpoint to fail on date `T-2` during a 3-day catchup.<br>2. Execute catchup run. | - Date `T-3` succeeds and updates `last_successful_date` to `T-3`.<br>- Date `T-2` fails, writes `ingestion_detail` status `FAILURE`.<br>- Processing for `T-1` is skipped. `last_successful_date` remains `T-3`. |
-| **TC-ING-05** | Downstream HTTP Retry Backoff | 1. Configure downstream mock API to return HTTP 500 for initial 2 attempts, then HTTP 200.<br>2. Run ingestion. | - `DashboardDataLoaderImpl` executes retries using `RetryUtil` exponential backoff + jitter.<br>- Retries succeed on 3rd attempt.<br>- Audit row recorded as `SUCCESS` with retry attempt count. |
+| **TC-ING-05** | Downstream HTTP Retry Backoff | 1. Configure downstream mock API to return HTTP 500 for initial 2 attempts, then HTTP 200.<br>2. Run ingestion. | - `DashboardDataLoaderImpl` executes retries using `RetryUtil` exponential backoff + jitter.<br>- Retries succeed on 3rd attempt.<br>- Detail row recorded as `SUCCESS` with retry attempt count. |
 | **TC-ING-06** | Max Retry Exhaustion Logging | 1. Mock downstream API to consistently return HTTP 500 error.<br>2. Run ingestion. | - Service retries up to `ingestMaxAttempts` (e.g., 3 attempts).<br>- Final status logged as `FAILURE`.<br>- Error stack trace and exception code stored in `ingestion_detail` and `adapter_ingestion_error_log`. |
 | **TC-ING-07** | Payload Structural Validation | 1. Pass empty `metrics` list or blank `tenantId` into `CommonValidator`. | - `ValidationException` thrown immediately before network transmission.<br>- Downstream HTTP endpoint is not called. |
-| **TC-ING-08** | Legacy Back-fill Migration Flow | 1. Invoke `POST /dashboard/v1/legacy/_ingest` with target date range.<br>2. Query `legacy_data_ingestion_detail`. | - Audit entries initialized with status `NOT_STARTED`.<br>- Upon execution completion, status transitions to `SUCCESS`.<br>- `is_legacy_data_ingested` updated to `TRUE` in `ingestion_module_detail`. |
+| **TC-ING-08** | Legacy Back-fill Migration Flow | 1. Invoke `POST /dashboard/v1/legacy/_ingest` with target date range.<br>2. Query `legacy_data_ingestion_detail`. | - Job entries initialized with status `NOT_STARTED`.<br>- Upon execution completion, status transitions to `SUCCESS`.<br>- `is_legacy_data_ingested` updated to `TRUE` in `ingestion_module_detail`. |
 
 ---
 
-## 7. Verification Queries for QA Database Auditing
+## 7. Verification Queries for QA Database Verification
 
 QA Engineers can execute the following SQL queries in the PostgreSQL database to verify pipeline runs:
 
@@ -438,13 +438,13 @@ SELECT tenant_id, module_name, last_successful_date, last_attempted_date, last_m
 FROM ingestion_module_summary
 ORDER BY last_modified_time DESC;
 
--- 2. Audit recent daily ingestion execution runs and JSON payloads
+-- 2. Verify recent daily ingestion execution runs and JSON payloads
 SELECT module_ingestion_id, tenant_id, module_name, push_date, ingestion_status, exception_code, request_data, response_data, created_time
 FROM ingestion_detail
 WHERE push_date >= CURRENT_DATE - INTERVAL '7 days'
 ORDER BY created_time DESC;
 
--- 3. Audit failed ingestion runs
+-- 3. Verify failed ingestion runs
 SELECT module_ingestion_id, tenant_id, module_name, push_date, exception_code, response_data
 FROM ingestion_detail
 WHERE ingestion_status = 'FAILURE'
@@ -456,7 +456,7 @@ FROM adapter_ingestion_error_log
 ORDER BY created_time DESC
 LIMIT 20;
 
--- 5. Audit historical legacy migration run progress
+-- 5. Verify historical legacy migration run progress
 SELECT module_ingestion_id, tenant_id, ulb_name, module_name, push_date, ingestion_status, user_id
 FROM legacy_data_ingestion_detail
 ORDER BY created_time DESC;

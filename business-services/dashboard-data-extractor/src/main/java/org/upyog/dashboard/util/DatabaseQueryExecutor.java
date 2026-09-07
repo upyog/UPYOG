@@ -60,15 +60,30 @@ public class DatabaseQueryExecutor {
         }
     }
 
+    /**
+     * Pauses current thread execution for the specified backoff duration while handling
+     * thread interruptions cleanly without swallowing the interrupt flag.
+     *
+     * @param backoff duration in milliseconds to sleep
+     */
     private void sleepWithInterruptHandling(long backoff) {
         try {
             Thread.sleep(backoff);
-        } catch (InterruptedException ie) {
+        } catch (InterruptedException interruptedException) {
             Thread.currentThread().interrupt();
-            throw new IllegalStateException("DB query retry interrupted", ie);
+            throw new IllegalStateException("DB query retry interrupted", interruptedException);
         }
     }
 
+    /**
+     * Computes exponential backoff with randomized jitter to prevent thundering herd
+     * spikes against the database during transient failures.
+     *
+     * @param attempt     current retry attempt index
+     * @param baseDelayMs initial delay interval in milliseconds
+     * @param maxDelayMs  upper cap for retry backoff in milliseconds
+     * @return calculated jittered delay duration in milliseconds
+     */
     private long calculateDbBackoffWithJitter(int attempt, long baseDelayMs, long maxDelayMs) {
         int power = Math.min(attempt - 1, 30);
         long expDelay = baseDelayMs * (1L << power);

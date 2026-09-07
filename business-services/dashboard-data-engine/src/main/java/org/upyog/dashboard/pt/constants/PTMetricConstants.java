@@ -6,6 +6,9 @@ package org.upyog.dashboard.pt.constants;
  */
 public final class PTMetricConstants {
 
+    /**
+     * Private constructor to prevent instantiation of constant class.
+     */
     private PTMetricConstants() {
         // Prevent instantiation
     }

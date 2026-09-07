@@ -1,5 +1,7 @@
 package org.upyog.dashboard.transformer.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * {@link DashboardPayload} by building a type-safe {@link PTMetric} object.
  */
 @Component
+@Slf4j
 public class PTTransformer implements ModuleTransformer<PTDTO> {
 
 	@Autowired
@@ -86,14 +89,14 @@ public class PTTransformer implements ModuleTransformer<PTDTO> {
 		Map<String, Double> channelCollectionMap = new HashMap<>();
 		Map<String, Set<String>> usageTxnMap = new HashMap<>();
 
-		for (PTCollectionDTO row : collectionRows) {
-			String usage = row.getUsageCategory();
+		for (PTCollectionDTO ptCollectionDto : collectionRows) {
+			String usage = ptCollectionDto.getUsageCategory();
 			if (usage == null) usage = "OTHERS";
-			String mode = row.getPaymentMode();
-			String paymentId = row.getPaymentId();
-			String taxHead = row.getTaxHeadCode();
-			Double amtNum = row.getTaxHeadAmount();
-			double amount = amtNum != null ? amtNum : 0.0;
+			String mode = ptCollectionDto.getPaymentMode();
+			String paymentId = ptCollectionDto.getPaymentId();
+			String taxHead = ptCollectionDto.getTaxHeadCode();
+			Double taxHeadAmountValue = ptCollectionDto.getTaxHeadAmount();
+			double amount = taxHeadAmountValue != null ? taxHeadAmountValue : 0.0;
 
 			propTaxMap.putIfAbsent(usage, 0.0);
 			cessMap.putIfAbsent(usage, 0.0);
@@ -179,6 +182,12 @@ public class PTTransformer implements ModuleTransformer<PTDTO> {
 				.build();
 	}
 
+	/**
+	 * Safely deserializes a JSON array string of category bucket maps into a typed List of Maps.
+	 *
+	 * @param jsonStr raw JSON bucket string from database
+	 * @return parsed List of bucket maps or empty list on failure
+	 */
 	private List<Map<String, Object>> parseJsonBuckets(String jsonStr) {
 		if (StringUtils.isBlank(jsonStr) || "[]".equals(jsonStr)) {
 			return List.of();
@@ -186,10 +195,19 @@ public class PTTransformer implements ModuleTransformer<PTDTO> {
 		try {
 			return objectMapper.readValue(jsonStr, new TypeReference<List<Map<String, Object>>>() {});
 		} catch (Exception exception) {
+			log.error("PTTransformer | Failed to parse JSON buckets string: {}", jsonStr, exception);
 			return List.of();
 		}
 	}
 
+	/**
+	 * Deserializes JSON bucket arrays ensuring that all expected bucket category names are present
+	 * with default zero counts if missing from the raw payload.
+	 *
+	 * @param jsonStr       raw JSON bucket string from database
+	 * @param expectedNames expected standard bucket names
+	 * @return formatted bucket list with guaranteed keys
+	 */
 	private List<Map<String, Object>> parseJsonBucketsWithDefaults(String jsonStr, String[] expectedNames) {
 		List<Map<String, Object>> parsed = parseJsonBuckets(jsonStr);
 		Map<String, Object> bucketMap = new LinkedHashMap<>();
@@ -210,6 +228,13 @@ public class PTTransformer implements ModuleTransformer<PTDTO> {
 		return buckets;
 	}
 
+	/**
+	 * Converts an in-memory metric map into the standard name-value bucket format expected downstream.
+	 *
+	 * @param dataMap       aggregated metrics map
+	 * @param expectedNames expected standard bucket names
+	 * @return list of name-value bucket maps
+	 */
 	private List<Map<String, Object>> formatBucketsWithDefaults(Map<String, ? extends Number> dataMap, String[] expectedNames) {
 		List<Map<String, Object>> buckets = new ArrayList<>();
 		for (String name : expectedNames) {

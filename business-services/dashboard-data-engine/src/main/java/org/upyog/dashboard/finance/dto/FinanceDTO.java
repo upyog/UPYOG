@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 
+/**
+ * DTO representing raw extracted Finance metrics for a specific ULB and date.
+ */
 @Getter
 @Setter
 @Builder

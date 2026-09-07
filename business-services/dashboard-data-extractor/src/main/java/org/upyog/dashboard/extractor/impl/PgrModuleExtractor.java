@@ -185,7 +185,7 @@ public class PgrModuleExtractor implements ModuleExtractor<List<DashboardData>> 
 		try {
 			return objectMapper.readValue(jsonStr, new TypeReference<List<Map<String, Object>>>() {});
 		} catch (Exception exception) {
-			log.debug("Failed to parse JSON buckets: {}", exception.getMessage());
+			log.error("PgrModuleExtractor | Failed to parse JSON buckets string: {}", jsonStr, exception);
 			return List.of();
 		}
 	}

@@ -1,5 +1,7 @@
 package org.upyog.dashboard.transformer.impl;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +19,11 @@ import org.upyog.dashboard.transformer.ModuleTransformer;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Transformer component mapping Community Hall Booking (CHB) DTOs into generic DashboardPayload.
+ */
 @Component
+@Slf4j
 public class CHBTransformer implements ModuleTransformer<CHBDTO> {
 
     @Autowired
@@ -68,6 +74,12 @@ public class CHBTransformer implements ModuleTransformer<CHBDTO> {
                 .build();
     }
 
+    /**
+     * Safely deserializes a JSON array string of category bucket maps into a typed List of Maps.
+     *
+     * @param jsonStr raw JSON bucket string from database
+     * @return parsed List of bucket maps or empty list on failure
+     */
     private List<Map<String, Object>> parseJsonBuckets(String jsonStr) {
         if (StringUtils.isBlank(jsonStr) || "[]".equals(jsonStr)) {
             return List.of();
@@ -75,6 +87,7 @@ public class CHBTransformer implements ModuleTransformer<CHBDTO> {
         try {
             return objectMapper.readValue(jsonStr, new TypeReference<List<Map<String, Object>>>() {});
         } catch (Exception exception) {
+            log.error("Failed to parse JSON buckets string: {}", jsonStr, exception);
             return List.of();
         }
     }

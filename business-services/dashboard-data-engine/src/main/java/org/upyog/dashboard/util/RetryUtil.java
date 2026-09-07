@@ -7,6 +7,9 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public final class RetryUtil {
 
+    /**
+     * Private constructor to prevent instantiation of utility class.
+     */
     private RetryUtil() {
         // Prevent instantiation
     }

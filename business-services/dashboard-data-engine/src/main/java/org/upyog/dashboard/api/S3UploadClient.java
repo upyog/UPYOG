@@ -15,6 +15,9 @@ import jakarta.annotation.PostConstruct;
 import java.io.File;
 import org.upyog.dashboard.util.CommonUtils;
 
+/**
+ * Client for uploading legacy batch files and artifacts directly to AWS S3 storage.
+ */
 @Slf4j
 @Component
 public class S3UploadClient {
@@ -22,10 +25,18 @@ public class S3UploadClient {
     private final DashboardProperties properties;
     private S3Client s3Client;
 
+    /**
+     * Constructs an S3UploadClient with injected configuration properties.
+     *
+     * @param properties dashboard configuration properties
+     */
     public S3UploadClient(DashboardProperties properties) {
         this.properties = properties;
     }
 
+    /**
+     * Initializes AWS S3 client credentials and region configuration after bean construction.
+     */
     @PostConstruct
     public void init() {
         if (properties.getAwsS3AccessKey() == null || properties.getAwsS3SecretKey() == null || properties.getAwsS3Region() == null) {
@@ -40,8 +51,8 @@ public class S3UploadClient {
                     .credentialsProvider(StaticCredentialsProvider.create(credentials))
                     .build();
             log.info("S3Client initialized successfully for region: {}", properties.getAwsS3Region());
-        } catch (Exception e) {
-            log.error("Failed to initialize S3Client", e);
+        } catch (Exception exception) {
+            log.error("Failed to initialize S3Client", exception);
         }
     }
 
@@ -52,6 +63,14 @@ public class S3UploadClient {
         return CommonUtils.buildS3Key(properties.getAwsS3Folder(), tenantId, moduleName, fileName);
     }
 
+    /**
+     * Uploads a file to the configured S3 bucket under the tenant and module directory path.
+     *
+     * @param file       local file to upload
+     * @param tenantId   tenant identifier
+     * @param moduleName module short code
+     * @return S3 object key string if successful, or null on failure
+     */
     public String uploadFile(File file, String tenantId, String moduleName) {
         if (s3Client == null) {
             log.error("S3Client is not initialized.");
@@ -71,10 +90,10 @@ public class S3UploadClient {
             log.info("File uploaded successfully to S3: {}", key);
             
             return key;
-        } catch (S3Exception e) {
-            log.error("Error uploading file to S3: {}", e.awsErrorDetails().errorMessage(), e);
-        } catch (Exception e) {
-            log.error("Unexpected error uploading file to S3", e);
+        } catch (S3Exception s3Exception) {
+            log.error("Error uploading file to S3: {}", s3Exception.awsErrorDetails().errorMessage(), s3Exception);
+        } catch (Exception exception) {
+            log.error("Unexpected error uploading file to S3", exception);
         }
         return null;
     }
