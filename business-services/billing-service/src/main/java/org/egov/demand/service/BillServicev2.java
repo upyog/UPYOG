@@ -514,9 +514,15 @@ public Integer cancelBill(UpdateBillRequest updateBillRequest) {
 			return getBillResponse(Collections.emptyList());
 
 		BillRequestV2 billRequest = BillRequestV2.builder().bills(bills).requestInfo(requestInfo).build();
-		String key = billRequest.getBills().get(0).getTenantId() + billRequest.getBills().get(0).getMobileNumber();
-		if (billRequest.getBills().get(0).getBusinessService().equalsIgnoreCase("WS")||billRequest.getBills().get(0).getBusinessService().equalsIgnoreCase("SW"))
-			kafkaTemplate.send(notifTopicName, key, billRequest);
+
+		if (bills != null && !bills.isEmpty()) {
+			BillV2 bill = bills.get(0);
+			if (("WS".equalsIgnoreCase(bill.getBusinessService()) || "SW".equalsIgnoreCase(bill.getBusinessService()))
+					&& bill.getMobileNumber() != null && !bill.getMobileNumber().trim().isEmpty()) {
+				String key = bill.getTenantId() + bill.getMobileNumber();
+				kafkaTemplate.send(notifTopicName, key, billRequest);
+			}
+		}
 		return create(billRequest);
 	}
 
