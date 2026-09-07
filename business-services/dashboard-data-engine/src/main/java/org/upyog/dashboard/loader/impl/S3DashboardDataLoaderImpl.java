@@ -60,11 +60,11 @@ public class S3DashboardDataLoaderImpl implements DashboardDataLoader {
             }
 
             return ingestionClient.uploadToS3(tempFile, moduleName, tenantId);
-        } catch (Exception e) {
-            log.error("S3DashboardDataLoaderImpl | Failed to generate and upload Excel file for module {}", moduleName, e);
+        } catch (Exception exception) {
+            log.error("S3DashboardDataLoaderImpl | Failed to generate and upload Excel file for module {}", moduleName, exception);
             return IngestionResult.builder()
                     .ingestionStatus("FAILURE")
-                    .failureReason("Exception during S3 routing: " + e.getMessage())
+                    .failureReason("Exception during S3 routing: " + exception.getMessage())
                     .build();
         } finally {
             if (tempFile != null && tempFile.exists()) {

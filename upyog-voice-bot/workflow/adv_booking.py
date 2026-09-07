@@ -140,16 +140,6 @@ def intent_and_ui_node(state: AdvBookingState):
     # 3. Extract the very last message sent by the user
     user_msg = messages[-1].content if messages else ""
     
-    # 4. Check if the user is asking for services we don't support yet (like Trade License)
-    unsupported_keywords = ["trade license", "property tax","fire noc"]
-    if any(w in user_msg.lower() for w in unsupported_keywords):
-        # 5. Tell the user we only support Advertisement booking right now
-        resp = "Currently, I can only assist you with Advertisement Bookings. Support for Trade License and Property Tax services is under development and will be launched soon. Please let me know if you would like to proceed with an advertisement booking!"
-        MemoryManager.save_long_term_interaction(phone_number=phone_number, role="user", content=user_msg)
-        MemoryManager.save_long_term_interaction(phone_number=phone_number, role="assistant", content=resp)
-        # 6. Stop further processing and return the response immediately
-        return {"messages": [AIMessage(content=resp)], "draft_booking": draft_booking, "missing_fields": []}
-    
     # 7. Check if the frontend UI sent us a hidden JSON payload containing Slot selections (starts with [ )
     if user_msg.strip().startswith("[") and user_msg.strip().endswith("]"):
         try:
@@ -531,9 +521,19 @@ def slot_search_node(state: AdvBookingState):
     slots = _slot_search(draft_booking, phone_number=phone_number)
     if not slots:
         logger.warning(f"[adv_booking.slot_search_node] No slots found for draft: {draft_booking}")
-        resp = "Sorry, no available advertisement slots were found for your selected location and date range. Please try selecting a different date range or location."
+        # Clear selected dates in draft so the user can easily select a new date range
+        draft_booking["start_date"] = None
+        draft_booking["end_date"] = None
+        resp = "Sorry, no available advertisement slots were found for your selected location and date range. Please select a new start date below:\n<ui-calendar mode=\"single\" minDate=\"tomorrow\" />"
         MemoryManager.save_long_term_interaction(phone_number=phone_number, role="assistant", content=resp)
-        return {"messages": [AIMessage(content=resp)], "missing_fields": ["start_date", "end_date"], "input_type": "text", "options": []}
+        return {
+            "messages": [AIMessage(content=resp)],
+            "draft_booking": draft_booking,
+            "missing_fields": ["start_date", "end_date"],
+            "input_type": "date",
+            "min_date": "tomorrow",
+            "options": []
+        }
 
     slots_json = json.dumps(slots)
     logger.info(f"[adv_booking.slot_search_node] Found {len(slots)} slots. Presenting UI slot table.")

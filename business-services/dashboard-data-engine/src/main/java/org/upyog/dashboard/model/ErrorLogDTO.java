@@ -8,6 +8,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 
+/**
+ * DTO holding error logs for failed adapter ingestion runs.
+ */
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

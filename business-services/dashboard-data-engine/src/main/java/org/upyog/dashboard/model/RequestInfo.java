@@ -12,7 +12,7 @@ import lombok.Setter;
  * <p>The National Dashboard ingest endpoint (and all other /UPYOG APIs)
  * require this envelope in the request body.  It carries authentication context
  * (bearer token and user profile) as well as API metadata used for request
- * tracing and auditing.
+ * tracing and request logging.
  *
  * <h3>Wire format</h3>
  * <pre>{@code
@@ -119,7 +119,7 @@ public class RequestInfo {
      *
      * <p>Obtained from {@link org.upyog.dashboard.service.OAuthTokenService#getUserInfo()}.
      * Contains the user UUID, roles, tenant, and contact details.  Required by
-     * some API implementations for audit trail creation.
+     * some API implementations for request tracking.
      */
     private UserInfo userInfo;
 }

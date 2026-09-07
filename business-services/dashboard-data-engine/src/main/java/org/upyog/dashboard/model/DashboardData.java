@@ -82,7 +82,7 @@ public class DashboardData {
      *
      * <p>Validated as mandatory by {@link org.upyog.dashboard.validator.CommonValidator}.
      * This value is also stored as both {@code tenantId} and {@code ulbName} in
-     * the {@link org.upyog.dashboard.entity.DailyIngestionData} audit record.
+     * the {@link org.upyog.dashboard.entity.DailyIngestionData} record.
      */
     private String ulb;
 

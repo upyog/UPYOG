@@ -84,8 +84,8 @@ public class ChbModuleExtractor implements ModuleExtractor<List<CHBDTO>> {
         }
 
         List<RawChbMetric> combinedResults = queryExecutor.executeQueryWithRetry(chbQueries.getCombinedMetricsQuery(), params, CHBRowMapper.COMBINED_ROW_MAPPER, "ChbModuleExtractor");
-        for (RawChbMetric row : combinedResults) {
-            results.add(buildChbDto(row, dateStr));
+        for (RawChbMetric rawChbMetric : combinedResults) {
+            results.add(buildChbDto(rawChbMetric, dateStr));
         }
         return results;
     }
@@ -93,21 +93,21 @@ public class ChbModuleExtractor implements ModuleExtractor<List<CHBDTO>> {
     /**
      * Converts a single raw row map into a populated {@link CHBDTO}.
      *
-     * @param row the raw column values returned by the database
+     * @param rawChbMetric the raw column values returned by the database
      * @param dateStr the formatted date string (dd-MM-yyyy) for the target date
      * @return a fully populated {@link CHBDTO} instance
      */
-    private CHBDTO buildChbDto(RawChbMetric row, String dateStr) {
-        String currentTenantId = row.getTenantid();
+    private CHBDTO buildChbDto(RawChbMetric rawChbMetric, String dateStr) {
+        String currentTenantId = rawChbMetric.getTenantid();
         Map<String, String> parsedHierarchy = hierarchyParser.parseTenantId(currentTenantId);
 
         CHBAggregatedData combinedData = new CHBAggregatedData();
-        combinedData.setTotalActiveVenueAvailable(row.getTotalActiveVenueAvailable());
-        combinedData.setTotalApplicationReceived(row.getTotalApplicationReceived());
-        combinedData.setTotalCollections(row.getTotalCollections());
-        combinedData.setNoShowBookings(row.getNoShowBookings());
-        combinedData.setBookingsJson(row.getBookingsJson());
-        combinedData.setCreatedByListJson(row.getCreatedByListJson());
+        combinedData.setTotalActiveVenueAvailable(rawChbMetric.getTotalActiveVenueAvailable());
+        combinedData.setTotalApplicationReceived(rawChbMetric.getTotalApplicationReceived());
+        combinedData.setTotalCollections(rawChbMetric.getTotalCollections());
+        combinedData.setNoShowBookings(rawChbMetric.getNoShowBookings());
+        combinedData.setBookingsJson(rawChbMetric.getBookingsJson());
+        combinedData.setCreatedByListJson(rawChbMetric.getCreatedByListJson());
 
         return CHBDTO.builder()
                 .date(dateStr)

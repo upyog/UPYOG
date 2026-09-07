@@ -49,7 +49,7 @@ public interface IngestionPersistenceService {
     void updateLegacyJobStatus(String jobId, String status, String requestData, String responseData);
 
     /**
-     * Persists a batch of daily ingestion detail audit records.
+     * Persists a batch of daily ingestion detail records.
      *
      * @param details list of daily ingestion data objects or rows
      */

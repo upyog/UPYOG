@@ -1,7 +1,14 @@
 package org.upyog.dashboard.common.constants;
 
+/**
+ * Shared constants across dashboard microservices, defining database parameter keys,
+ * status strings, and date formatting patterns.
+ */
 public class DashboardConstants {
-    protected DashboardConstants() {} // Prevent instantiation
+    /**
+     * Protected constructor to prevent direct instantiation of constant class.
+     */
+    protected DashboardConstants() {}
 
     // DB Parameter Keys
     public static final String PARAM_TENANT_ID = "tenantId";

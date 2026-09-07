@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 import org.upyog.dashboard.repository.querybuilder.IngestionSummaryQueryBuilder;
+import org.upyog.dashboard.util.CommonUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,7 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 public class IngestionSummaryRepository {
 
 	private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	private final IngestionSummaryQueryBuilder queryBuilder;
 	private final IngestionPersistenceService persistenceService;
 
 
@@ -46,8 +46,8 @@ public Optional<LocalDate> findLastSuccessfulDate(String tenantId, String module
 			MapSqlParameterSource params = new MapSqlParameterSource()
 					.addValue(DashboardExtractorConstants.PARAM_TENANT_ID, tenantId)
 					.addValue(DashboardExtractorConstants.PARAM_MODULE_NAME, moduleName);
-			List<Date> dates = namedParameterJdbcTemplate.query(queryBuilder.getSelectLastSuccessfulDateQuery(),
-					params, (rs, rowNum) -> rs.getDate("last_successful_date"));
+			List<Date> dates = namedParameterJdbcTemplate.query(IngestionSummaryQueryBuilder.SELECT_LAST_SUCCESSFUL_DATE_QUERY,
+					params, (resultSet, rowNumber) -> resultSet.getDate("last_successful_date"));
 
 			return dates.stream().filter(Objects::nonNull).map(Date::toLocalDate)
 					.filter(date -> !date.equals(LocalDate.EPOCH)) // Ignores 1970-01-01
@@ -77,18 +77,18 @@ public java.util.Set<LocalDate> findSuccessfullyIngestedDates(String tenantId, S
 			LocalDate startDate, LocalDate endDate) {
 		java.util.Set<LocalDate> result = new java.util.HashSet<>();
 		try {
-			Date sDate = Date.valueOf(startDate);
-			Date eDate = Date.valueOf(endDate);
+			Date sqlStartDate = Date.valueOf(startDate);
+			Date sqlEndDate = Date.valueOf(endDate);
 			MapSqlParameterSource params = new MapSqlParameterSource()
 					.addValue(DashboardExtractorConstants.PARAM_TENANT_ID, tenantId)
 					.addValue(DashboardExtractorConstants.PARAM_MODULE_NAME, moduleName)
-					.addValue(DashboardExtractorConstants.PARAM_START_DATE, sDate)
-					.addValue(DashboardExtractorConstants.PARAM_END_DATE, eDate);
-			List<Date> dates = namedParameterJdbcTemplate.query(queryBuilder.getSelectSuccessfulDatesInRangeQuery(),
-					params, (rs, rowNum) -> rs.getDate("push_date"));
-			for (Date d : dates) {
-				if (d != null) {
-					result.add(d.toLocalDate());
+					.addValue(DashboardExtractorConstants.PARAM_START_DATE, sqlStartDate)
+					.addValue(DashboardExtractorConstants.PARAM_END_DATE, sqlEndDate);
+			List<Date> dates = namedParameterJdbcTemplate.query(IngestionSummaryQueryBuilder.SELECT_SUCCESSFUL_DATES_IN_RANGE_QUERY,
+					params, (resultSet, rowNumber) -> resultSet.getDate("push_date"));
+			for (Date sqlDate : dates) {
+				if (sqlDate != null) {
+					result.add(sqlDate.toLocalDate());
 				}
 			}
 		} catch (Exception exception) {
@@ -97,6 +97,51 @@ public java.util.Set<LocalDate> findSuccessfullyIngestedDates(String tenantId, S
 					tenantId, moduleName, startDate, endDate, exception);
 		}
 		return result;
+	}
+
+	/**
+	 * Checks whether the {@code ingestion_module_detail} table has already marked legacy
+	 * ingestion as completed for the given tenant and module.
+	 *
+	 * @param tenantId   the tenant identifier
+	 * @param moduleName the module short code
+	 * @return {@code true} if legacy ingestion has completed, {@code false} otherwise
+	 */
+	public boolean isLegacyIngestionComplete(String tenantId, String moduleName) {
+		try {
+			MapSqlParameterSource params = new MapSqlParameterSource()
+					.addValue(DashboardExtractorConstants.PARAM_TENANT_ID, tenantId)
+					.addValue(DashboardExtractorConstants.PARAM_MODULE_NAME, moduleName);
+			String sql = "SELECT is_legacy_data_ingested FROM ingestion_module_detail WHERE tenant_id = :tenantId AND module_name = :moduleName";
+			List<Boolean> flags = namedParameterJdbcTemplate.query(sql, params, (resultSet, rowNumber) -> resultSet.getBoolean("is_legacy_data_ingested"));
+			return !flags.isEmpty() && Boolean.TRUE.equals(flags.get(0));
+		} catch (Exception exception) {
+			log.error("IngestionSummaryRepository | Failed to check isLegacyIngestionComplete for tenant {} module {}", tenantId, moduleName, exception);
+			return false;
+		}
+	}
+
+	/**
+	 * Updates the {@code ingestion_module_detail} table, marking legacy ingestion as
+	 * completed ({@code is_legacy_data_ingested = TRUE}) and setting the last ingested date.
+	 *
+	 * @param tenantId   the tenant identifier
+	 * @param moduleName the module short code
+	 * @param lastDate   the latest date ingested
+	 */
+	public void markLegacyIngestionComplete(String tenantId, String moduleName, LocalDate lastDate) {
+		try {
+			long now = CommonUtils.getCurrentEpochMillis();
+			MapSqlParameterSource params = new MapSqlParameterSource()
+					.addValue("lastIngestedDate", Date.valueOf(lastDate))
+					.addValue(DashboardExtractorConstants.PARAM_LAST_MODIFIED_TIME, now)
+					.addValue(DashboardExtractorConstants.PARAM_TENANT_ID, tenantId)
+					.addValue(DashboardExtractorConstants.PARAM_MODULE_NAME, moduleName);
+			namedParameterJdbcTemplate.update(IngestionSummaryQueryBuilder.UPDATE_MODULE_DETAIL_TABLE_QUERY, params);
+			log.info("IngestionSummaryRepository | Marked legacy ingestion complete for tenant {} module {} at date {}", tenantId, moduleName, lastDate);
+		} catch (Exception exception) {
+			log.error("IngestionSummaryRepository | Failed to mark legacy ingestion complete for tenant {} module {}", tenantId, moduleName, exception);
+		}
 	}
 
 	/**
@@ -122,7 +167,7 @@ public void saveOrUpdateLastAttemptedDate(String tenantId, String moduleName, Lo
 	}
 
 	/**
-	 * Persists a batch of daily ingestion detail audit records.
+	 * Persists a batch of daily ingestion detail records.
 	 *
 	 * @param details list of daily ingestion data objects or rows
 	 */
@@ -143,11 +188,11 @@ public Set<LocalDate> findRegisteredLegacyJobDates(String tenantId, String modul
 			MapSqlParameterSource params = new MapSqlParameterSource()
 					.addValue(DashboardExtractorConstants.PARAM_TENANT_ID, tenantId)
 					.addValue(DashboardExtractorConstants.PARAM_MODULE_NAME, moduleName);
-			List<Date> results = namedParameterJdbcTemplate.query(queryBuilder.getSelectLegacyJobDatesQuery(),
-					params, (rs, rowNum) -> rs.getDate("push_date"));
-			for (Date d : results) {
-				if (d != null) {
-					dates.add(d.toLocalDate());
+			List<Date> results = namedParameterJdbcTemplate.query(IngestionSummaryQueryBuilder.SELECT_LEGACY_JOB_DATES_QUERY,
+					params, (resultSet, rowNumber) -> resultSet.getDate("push_date"));
+			for (Date resultDate : results) {
+				if (resultDate != null) {
+					dates.add(resultDate.toLocalDate());
 				}
 			}
 		} catch (Exception exception) {
@@ -173,13 +218,13 @@ public Set<LocalDate> findRegisteredLegacyJobDates(String tenantId, String modul
 					.addValue(DashboardExtractorConstants.PARAM_MODULE_NAME, moduleName)
 					.addValue(DashboardExtractorConstants.PARAM_START_DATE, Date.valueOf(startDate))
 					.addValue(DashboardExtractorConstants.PARAM_END_DATE, Date.valueOf(endDate));
-			return namedParameterJdbcTemplate.query(queryBuilder.getSelectOverlappingSuccessfulLegacyJobsQuery(),
-					params, (rs, rowNum) -> {
-						Date sDate = rs.getDate("start_date");
-						Date eDate = rs.getDate("end_date");
-						Date pDate = rs.getDate("push_date");
-						LocalDate start = (sDate != null) ? sDate.toLocalDate() : (pDate != null ? pDate.toLocalDate() : null);
-						return new LegacyJob(rs.getString("module_ingestion_id"), start);
+			return namedParameterJdbcTemplate.query(IngestionSummaryQueryBuilder.SELECT_OVERLAPPING_SUCCESSFUL_LEGACY_JOBS_QUERY,
+					params, (resultSet, rowNumber) -> {
+						Date sqlStartDate = resultSet.getDate("start_date");
+						Date sqlEndDate = resultSet.getDate("end_date");
+						Date sqlPushDate = resultSet.getDate("push_date");
+						LocalDate start = (sqlStartDate != null) ? sqlStartDate.toLocalDate() : (sqlPushDate != null ? sqlPushDate.toLocalDate() : null);
+						return new LegacyJob(resultSet.getString("module_ingestion_id"), start);
 					});
 		} catch (Exception exception) {
 			log.error("IngestionSummaryRepository | Failed to query overlapping legacy jobs for tenant {} module {} range [{} to {}]",
@@ -255,9 +300,9 @@ public List<LegacyJob> findPendingOrFailedLegacyJobs(String tenantId, String mod
 					.addValue(DashboardExtractorConstants.PARAM_TENANT_ID, tenantId)
 					.addValue(DashboardExtractorConstants.PARAM_MODULE_NAME, moduleName)
 					.addValue(DashboardExtractorConstants.PARAM_LIMIT, limit);
-			return namedParameterJdbcTemplate.query(queryBuilder.getSelectPendingOrFailedLegacyJobsQuery(),
-					params, (rs, rowNum) -> new LegacyJob(rs.getString("module_ingestion_id"),
-							rs.getDate("push_date").toLocalDate()));
+			return namedParameterJdbcTemplate.query(IngestionSummaryQueryBuilder.SELECT_PENDING_OR_FAILED_LEGACY_JOBS_QUERY,
+					params, (resultSet, rowNumber) -> new LegacyJob(resultSet.getString("module_ingestion_id"),
+							resultSet.getDate("push_date").toLocalDate()));
 		} catch (Exception exception) {
 			log.error("IngestionSummaryRepository | Failed to fetch pending/failed legacy jobs for tenant {} module {}",
 					tenantId, moduleName, exception);
@@ -289,7 +334,7 @@ public void updateLegacyJobStatus(String jobId, String status, String requestDat
 			MapSqlParameterSource params = new MapSqlParameterSource()
 					.addValue(DashboardExtractorConstants.PARAM_TENANT_ID, tenantId)
 					.addValue(DashboardExtractorConstants.PARAM_MODULE_NAME, moduleName);
-			namedParameterJdbcTemplate.queryForList(queryBuilder.getSelectForUpdateSummaryQuery(), params);
+			namedParameterJdbcTemplate.queryForList(IngestionSummaryQueryBuilder.SELECT_FOR_UPDATE_SUMMARY_QUERY, params);
 			return true;
 		} catch (Exception exception) {
 			log.warn("IngestionSummaryRepository | Failed to acquire lock for tenant {} module {}", tenantId, moduleName, exception);

@@ -6,6 +6,7 @@ import org.upyog.dashboard.util.CommonUtils;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.time.format.DateTimeFormatter;
 
@@ -131,18 +132,18 @@ public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenc
     public void createLegacyJob(String jobId, String tenantId, String moduleName, LocalDate pushDate, LocalDate startDate, LocalDate endDate) {
         try {
             long now = CommonUtils.getCurrentEpochMillis();
-            String id = (jobId != null) ? jobId : CommonUtils.generateUUID();
-            LocalDate pDate = (pushDate != null) ? pushDate : (startDate != null ? startDate : LocalDate.now());
-            LocalDate sDate = (startDate != null) ? startDate : pDate;
-            LocalDate eDate = (endDate != null) ? endDate : pDate;
+            String legacyJobId = (jobId != null) ? jobId : CommonUtils.generateUUID();
+            LocalDate effectivePushDate = (pushDate != null) ? pushDate : (startDate != null ? startDate : LocalDate.now());
+            LocalDate effectiveStartDate = (startDate != null) ? startDate : effectivePushDate;
+            LocalDate effectiveEndDate = (endDate != null) ? endDate : effectivePushDate;
             
             LegacyIngestionData legacyData = LegacyIngestionData.builder()
-                .moduleIngestionId(id)
+                .moduleIngestionId(legacyJobId)
                 .tenantId(tenantId)
                 .moduleName(moduleName)
-                .pushDate(pDate.format(DATE_FORMATTER))
-                .startDate(sDate.format(DATE_FORMATTER))
-                .endDate(eDate.format(DATE_FORMATTER))
+                .pushDate(effectivePushDate.format(DATE_FORMATTER))
+                .startDate(effectiveStartDate.format(DATE_FORMATTER))
+                .endDate(effectiveEndDate.format(DATE_FORMATTER))
                 .ingestionStatus(DashboardExtractorConstants.STATUS_NOT_STARTED)
                 .createdBy(SYSTEM_USER)
                 .createdTime(now)
@@ -154,7 +155,7 @@ public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenc
             message.put("legacyIngestionData", Collections.singletonList(legacyData));
             producer.push(dashboardProperties.getSaveLegacyIngestionDetailTopic(), message);
 
-            log.debug("Pushed legacy job {} for tenant {} module {} range [{} to {}]", id, tenantId, moduleName, sDate, eDate);
+            log.debug("Pushed legacy job {} for tenant {} module {} range [{} to {}]", legacyJobId, tenantId, moduleName, effectiveStartDate, effectiveEndDate);
         } catch (Exception exception) {
             log.error("Failed to push legacy job for tenant {} module {} range [{} to {}]", tenantId, moduleName, startDate, endDate, exception);
         }
@@ -162,7 +163,7 @@ public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenc
 
     /**
      * Builds a {@link org.upyog.dashboard.entity.LegacyIngestionData} payload carrying the
-     * updated status, response data, and audit timestamps, then publishes it to the
+     * updated status, response data, and timestamps, then publishes it to the
      * {@code UPDATE_LEGACY_INGESTION_DETAIL} Kafka topic.
      *
      * @param jobId        the unique identifier of the legacy job
@@ -193,7 +194,9 @@ public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenc
     }
 
     /**
-     * Publishes a batch of daily ingestion detail audit records to the Kafka topic.
+     * Publishes a batch of daily ingestion detail records to the Kafka topic.
+     * Records are chunked into smaller batches (e.g., 50 records per message) to prevent
+     * exceeding Kafka's max.request.size (RecordTooLargeException).
      *
      * @param details list of daily ingestion data objects
      */
@@ -204,14 +207,19 @@ public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenc
                 return;
             }
 
-            Map<String, Object> message = new HashMap<>();
-            message.put("dailyIngestionData", details);
-            producer.push(dashboardProperties.getSaveIngestionDetailTopic(), message);
+            // Chunk large legacy/daily detail lists into safe batches to ensure message size stays well under 1MB
+            int chunkSize = 50;
+            for (int offset = 0; offset < details.size(); offset += chunkSize) {
+                List<?> chunk = details.subList(offset, Math.min(offset + chunkSize, details.size()));
+                Map<String, Object> message = new HashMap<>();
+                message.put("dailyIngestionData", chunk);
+                producer.push(dashboardProperties.getSaveIngestionDetailTopic(), message);
+            }
 
-            log.info("Pushed batch of {} ingestion detail audit records to Kafka topic {}",
-                    details.size(), dashboardProperties.getSaveIngestionDetailTopic());
+            log.info("Pushed batch of {} ingestion detail records to Kafka topic {} in chunks of up to {}",
+                    details.size(), dashboardProperties.getSaveIngestionDetailTopic(), chunkSize);
         } catch (Exception exception) {
-            log.error("Failed to push batch ingestion detail audit records to Kafka", exception);
+            log.error("Failed to push batch ingestion detail records to Kafka", exception);
         }
     }
 }

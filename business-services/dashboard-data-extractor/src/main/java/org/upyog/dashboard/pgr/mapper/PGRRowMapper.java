@@ -12,35 +12,49 @@ import org.upyog.dashboard.pgr.model.RawPgrMetric;
  */
 public final class PGRRowMapper {
 
+    /**
+     * Private constructor to prevent instantiation of utility mapper class.
+     */
     private PGRRowMapper() {}
 
+    /**
+     * RowMapper instance mapping ResultSet rows to {@link RawPgrMetric} instances.
+     */
     public static final RowMapper<RawPgrMetric> COMBINED_ROW_MAPPER = new RowMapper<RawPgrMetric>() {
         @Override
-        public RawPgrMetric mapRow(ResultSet rs, int rowNum) throws SQLException {
+        public RawPgrMetric mapRow(ResultSet resultSet, int rowNumber) throws SQLException {
             return RawPgrMetric.builder()
-                    .tenantid(rs.getString(PGRDatabaseConstants.TENANT_ID))
-                    .slaachievementjson(rs.getString(PGRDatabaseConstants.SLA_ACHIEVEMENT_JSON))
-                    .completionratejson(rs.getString(PGRDatabaseConstants.COMPLETION_RATE_JSON))
-                    .uniquecitizens(getNullableInt(rs, PGRDatabaseConstants.UNIQUE_CITIZENS))
-                    .complaintsbystatusjson(rs.getString(PGRDatabaseConstants.COMPLAINTS_BY_STATUS_JSON))
-                    .complaintsbychanneljson(rs.getString(PGRDatabaseConstants.COMPLAINTS_BY_CHANNEL_JSON))
-                    .complaintsbydepartmentjson(rs.getString(PGRDatabaseConstants.COMPLAINTS_BY_DEPARTMENT_JSON))
-                    .complaintsbycategoryjson(rs.getString(PGRDatabaseConstants.COMPLAINTS_BY_CATEGORY_JSON))
-                    .todaysreopenedcomplaintsjson(rs.getString(PGRDatabaseConstants.TODAYS_REOPENED_COMPLAINTS_JSON))
-                    .todaysopencomplaintsjson(rs.getString(PGRDatabaseConstants.TODAYS_OPEN_COMPLAINTS_JSON))
-                    .todaysassignedcomplaintsjson(rs.getString(PGRDatabaseConstants.TODAYS_ASSIGNED_COMPLAINTS_JSON))
-                    .averagesolutiontimejson(rs.getString(PGRDatabaseConstants.AVERAGE_SOLUTION_TIME_JSON))
-                    .todaysrejectedcomplaintsjson(rs.getString(PGRDatabaseConstants.TODAYS_REJECTED_COMPLAINTS_JSON))
-                    .todaysreassignedcomplaintsjson(rs.getString(PGRDatabaseConstants.TODAYS_REASSIGNED_COMPLAINTS_JSON))
-                    .todaysreassignrequestedcomplaintsjson(rs.getString(PGRDatabaseConstants.TODAYS_REASSIGN_REQUESTED_COMPLAINTS_JSON))
-                    .todaysclosedcomplaintsjson(rs.getString(PGRDatabaseConstants.TODAYS_CLOSED_COMPLAINTS_JSON))
-                    .todaysresolvedcomplaintsjson(rs.getString(PGRDatabaseConstants.TODAYS_RESOLVED_COMPLAINTS_JSON))
+                    .tenantid(resultSet.getString(PGRDatabaseConstants.TENANT_ID))
+                    .slaachievementjson(resultSet.getString(PGRDatabaseConstants.SLA_ACHIEVEMENT_JSON))
+                    .completionratejson(resultSet.getString(PGRDatabaseConstants.COMPLETION_RATE_JSON))
+                    .uniquecitizens(getNullableInt(resultSet, PGRDatabaseConstants.UNIQUE_CITIZENS))
+                    .complaintsbystatusjson(resultSet.getString(PGRDatabaseConstants.COMPLAINTS_BY_STATUS_JSON))
+                    .complaintsbychanneljson(resultSet.getString(PGRDatabaseConstants.COMPLAINTS_BY_CHANNEL_JSON))
+                    .complaintsbydepartmentjson(resultSet.getString(PGRDatabaseConstants.COMPLAINTS_BY_DEPARTMENT_JSON))
+                    .complaintsbycategoryjson(resultSet.getString(PGRDatabaseConstants.COMPLAINTS_BY_CATEGORY_JSON))
+                    .todaysreopenedcomplaintsjson(resultSet.getString(PGRDatabaseConstants.TODAYS_REOPENED_COMPLAINTS_JSON))
+                    .todaysopencomplaintsjson(resultSet.getString(PGRDatabaseConstants.TODAYS_OPEN_COMPLAINTS_JSON))
+                    .todaysassignedcomplaintsjson(resultSet.getString(PGRDatabaseConstants.TODAYS_ASSIGNED_COMPLAINTS_JSON))
+                    .averagesolutiontimejson(resultSet.getString(PGRDatabaseConstants.AVERAGE_SOLUTION_TIME_JSON))
+                    .todaysrejectedcomplaintsjson(resultSet.getString(PGRDatabaseConstants.TODAYS_REJECTED_COMPLAINTS_JSON))
+                    .todaysreassignedcomplaintsjson(resultSet.getString(PGRDatabaseConstants.TODAYS_REASSIGNED_COMPLAINTS_JSON))
+                    .todaysreassignrequestedcomplaintsjson(resultSet.getString(PGRDatabaseConstants.TODAYS_REASSIGN_REQUESTED_COMPLAINTS_JSON))
+                    .todaysclosedcomplaintsjson(resultSet.getString(PGRDatabaseConstants.TODAYS_CLOSED_COMPLAINTS_JSON))
+                    .todaysresolvedcomplaintsjson(resultSet.getString(PGRDatabaseConstants.TODAYS_RESOLVED_COMPLAINTS_JSON))
                     .build();
         }
 
-        private Integer getNullableInt(ResultSet rs, String col) throws SQLException {
-            int val = rs.getInt(col);
-            return rs.wasNull() ? null : val;
+        /**
+         * Reads an integer column value safely, returning {@code null} if the SQL value was NULL.
+         *
+         * @param resultSet   the active JDBC ResultSet
+         * @param columnLabel the column name to extract
+         * @return parsed Integer value or null
+         * @throws SQLException on database column access error
+         */
+        private Integer getNullableInt(ResultSet resultSet, String columnLabel) throws SQLException {
+            int columnValue = resultSet.getInt(columnLabel);
+            return resultSet.wasNull() ? null : columnValue;
         }
     };
 }

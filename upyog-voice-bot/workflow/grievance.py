@@ -336,15 +336,8 @@ def extraction_node(state: GrievanceState):
                 draft["locality"] = matched["name"]
                 draft["locality_code"] = matched["code"]
                 logger.info(f"[grievance extract] locality matched: {matched['name']}")
-            elif (
-                len(cleaned_input) >= 3
-                and not is_question
-                and ui_lower not in meta_commands
-                and cleaned_input.lower() not in ["yes", "no", "ok", "okay", "none", "na", "null", "undefined", "1", "2", "3", "4"]
-            ):
-                draft["locality"] = cleaned_input
-                draft["locality_code"] = loc_ops[0]["code"] if loc_ops else "UNKNOWN"
-                logger.info(f"[grievance extract] locality accepted verbatim: {cleaned_input}")
+            else:
+                logger.info(f"[grievance extract] Unrecognized locality input: '{cleaned_input}', rejecting verbatim acceptance")
 
     # Fallback to LLM multi-field extraction if any missing fields remain and LLM is available
     remaining_missing = [f for f in ALL_FIELDS if not draft.get(f)]
@@ -361,7 +354,7 @@ def extraction_node(state: GrievanceState):
             elif f == "locality":
                 loc_ops = draft.get("_locality_options") or _pgr_localities()
                 loc_names = [l["name"] for l in loc_ops[:25]]
-                schema_hints[f] = f"MUST MATCH one of: {loc_names}" if loc_names else "Area or locality name"
+                schema_hints[f] = f"MUST STRICTLY MATCH one of: {loc_names}" if loc_names else "Area or locality name"
             elif f == "description":
                 schema_hints[f] = "Detailed description of the issue provided by the citizen (e.g. 'i want a refund', 'dirty water from tap', 'pothole on road')"
 
@@ -377,9 +370,10 @@ User's message: "{user_msg}"
 
 Rules:
 1. If the user answered the missing field in their message, extract the exact value.
-2. For 'description', extract the user's description of their problem/request (e.g. 'i want a refund', 'water leakage', 'streetlight damaged').
-3. Return null for any field not answered.
-4. NEVER extract meta or navigation words like 'continue', 'resume', 'draft', 'show drafts', 'my drafts' as any field value.
+2. For 'category', 'sub_category', and 'locality', ONLY extract if it matches one of the valid options. DO NOT invent or accept arbitrary strings for locality.
+3. For 'description', extract the user's description of their problem/request (e.g. 'i want a refund', 'water leakage', 'streetlight damaged').
+4. Return null for any field not answered or not found in options.
+5. NEVER extract meta or navigation words like 'continue', 'resume', 'draft', 'show drafts', 'my drafts' as any field value.
 
 Reply ONLY with valid JSON:
 {{{', '.join(f'"{f}": "extracted value or null"' for f in remaining_missing)}}}"""
@@ -411,13 +405,12 @@ Reply ONLY with valid JSON:
                                 draft["sub_category"] = matched["name"]
                         elif field == "locality" and not draft.get("locality"):
                             loc_ops = draft.get("_locality_options") or _pgr_localities()
-                            matched = next((l for l in loc_ops if l["name"].lower() == val_str.lower()), None)
+                            matched = next((l for l in loc_ops if l["name"].lower() == val_str.lower() or val_str.lower() in l["name"].lower()), None)
                             if matched:
                                 draft["locality"] = matched["name"]
                                 draft["locality_code"] = matched["code"]
-                            elif len(val_str) >= 3 and val_str.lower() not in meta_commands:
-                                draft["locality"] = val_str
-                                draft["locality_code"] = loc_ops[0]["code"] if loc_ops else "UNKNOWN"
+                            else:
+                                logger.info(f"[grievance LLM extract] locality '{val_str}' not found in valid options, keeping as None")
         except Exception as e:
             logger.error(f"[grievance] LLM extraction error: {e}")
 

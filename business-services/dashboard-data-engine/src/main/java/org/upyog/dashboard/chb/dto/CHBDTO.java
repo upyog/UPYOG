@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 
+/**
+ * DTO representing raw extracted Community Hall Booking (CHB) metrics for a specific ULB and date.
+ */
 @Getter
 @Setter
 @Builder

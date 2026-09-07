@@ -13,6 +13,9 @@ import org.upyog.dashboard.pt.constants.PTDatabaseConstants;
  */
 public final class PTRowmapper {
 
+    /**
+     * Private constructor to prevent instantiation of utility mapper class.
+     */
     private PTRowmapper() {
         // Prevent instantiation
     }
@@ -22,19 +25,19 @@ public final class PTRowmapper {
      */
     public static final RowMapper<RawPtMetric> COMBINED_ROW_MAPPER = new RowMapper<RawPtMetric>() {
         @Override
-        public RawPtMetric mapRow(ResultSet rs, int rowNum) throws SQLException {
+        public RawPtMetric mapRow(ResultSet resultSet, int rowNumber) throws SQLException {
             return RawPtMetric.builder()
-                .tenantid(rs.getString(PTDatabaseConstants.TENANT_ID))
-                .assessments(getNullableInt(rs, PTDatabaseConstants.ASSESSMENTS))
-                .todaysTotalApplications(getNullableInt(rs, PTDatabaseConstants.TODAYS_TOTAL_APPLICATIONS))
-                .todaysClosedApplications(getNullableInt(rs, PTDatabaseConstants.TODAYS_CLOSED_APPLICATIONS))
-                .noOfPropertiesPaidToday(getNullableInt(rs, PTDatabaseConstants.NO_OF_PROPERTIES_PAID_TODAY))
-                .todaysApprovedApplications(getNullableInt(rs, PTDatabaseConstants.TODAYS_APPROVED_APPLICATIONS))
-                .todaysApprovedApplicationsWithinSLA(getNullableInt(rs, PTDatabaseConstants.TODAYS_APPROVED_APPLICATIONS_WITHIN_SLA))
-                .avgDaysForApplicationApproval(getNullableInt(rs, PTDatabaseConstants.AVG_DAYS_FOR_APPLICATION_APPROVAL))
-                .propertiesRegisteredJson(rs.getString(PTDatabaseConstants.PROPERTIES_REGISTERED_JSON))
-                .assessedPropertiesJson(rs.getString(PTDatabaseConstants.ASSESSED_PROPERTIES_JSON))
-                .movedApplicationsJson(rs.getString(PTDatabaseConstants.MOVED_APPLICATIONS_JSON))
+                .tenantid(resultSet.getString(PTDatabaseConstants.TENANT_ID))
+                .assessments(getNullableInt(resultSet, PTDatabaseConstants.ASSESSMENTS))
+                .todaysTotalApplications(getNullableInt(resultSet, PTDatabaseConstants.TODAYS_TOTAL_APPLICATIONS))
+                .todaysClosedApplications(getNullableInt(resultSet, PTDatabaseConstants.TODAYS_CLOSED_APPLICATIONS))
+                .noOfPropertiesPaidToday(getNullableInt(resultSet, PTDatabaseConstants.NO_OF_PROPERTIES_PAID_TODAY))
+                .todaysApprovedApplications(getNullableInt(resultSet, PTDatabaseConstants.TODAYS_APPROVED_APPLICATIONS))
+                .todaysApprovedApplicationsWithinSLA(getNullableInt(resultSet, PTDatabaseConstants.TODAYS_APPROVED_APPLICATIONS_WITHIN_SLA))
+                .avgDaysForApplicationApproval(getNullableInt(resultSet, PTDatabaseConstants.AVG_DAYS_FOR_APPLICATION_APPROVAL))
+                .propertiesRegisteredJson(resultSet.getString(PTDatabaseConstants.PROPERTIES_REGISTERED_JSON))
+                .assessedPropertiesJson(resultSet.getString(PTDatabaseConstants.ASSESSED_PROPERTIES_JSON))
+                .movedApplicationsJson(resultSet.getString(PTDatabaseConstants.MOVED_APPLICATIONS_JSON))
                 .build();
         }
     };
@@ -44,25 +47,41 @@ public final class PTRowmapper {
      */
     public static final RowMapper<RawPtCollection> COLLECTION_ROW_MAPPER = new RowMapper<RawPtCollection>() {
         @Override
-        public RawPtCollection mapRow(ResultSet rs, int rowNum) throws SQLException {
+        public RawPtCollection mapRow(ResultSet resultSet, int rowNumber) throws SQLException {
             return RawPtCollection.builder()
-                .tenantid(rs.getString(PTDatabaseConstants.TENANT_ID))
-                .usageCategory(rs.getString(PTDatabaseConstants.USAGE_CATEGORY))
-                .paymentMode(rs.getString(PTDatabaseConstants.PAYMENT_MODE))
-                .paymentId(rs.getString(PTDatabaseConstants.PAYMENT_ID))
-                .taxHeadCode(rs.getString(PTDatabaseConstants.TAX_HEAD_CODE))
-                .taxHeadAmount(getNullableDouble(rs, PTDatabaseConstants.TAX_HEAD_AMOUNT))
+                .tenantid(resultSet.getString(PTDatabaseConstants.TENANT_ID))
+                .usageCategory(resultSet.getString(PTDatabaseConstants.USAGE_CATEGORY))
+                .paymentMode(resultSet.getString(PTDatabaseConstants.PAYMENT_MODE))
+                .paymentId(resultSet.getString(PTDatabaseConstants.PAYMENT_ID))
+                .taxHeadCode(resultSet.getString(PTDatabaseConstants.TAX_HEAD_CODE))
+                .taxHeadAmount(getNullableDouble(resultSet, PTDatabaseConstants.TAX_HEAD_AMOUNT))
                 .build();
         }
     };
 
-    private static Integer getNullableInt(ResultSet rs, String columnLabel) throws SQLException {
-        int value = rs.getInt(columnLabel);
-        return rs.wasNull() ? null : value;
+    /**
+     * Reads an integer column value safely, returning {@code null} if the SQL value was NULL.
+     *
+     * @param resultSet   the active JDBC ResultSet
+     * @param columnLabel the column name to extract
+     * @return parsed Integer value or null
+     * @throws SQLException on database column access error
+     */
+    private static Integer getNullableInt(ResultSet resultSet, String columnLabel) throws SQLException {
+        int value = resultSet.getInt(columnLabel);
+        return resultSet.wasNull() ? null : value;
     }
 
-    private static Double getNullableDouble(ResultSet rs, String columnLabel) throws SQLException {
-        double value = rs.getDouble(columnLabel);
-        return rs.wasNull() ? null : value;
+    /**
+     * Reads a double column value safely, returning {@code null} if the SQL value was NULL.
+     *
+     * @param resultSet   the active JDBC ResultSet
+     * @param columnLabel the column name to extract
+     * @return parsed Double value or null
+     * @throws SQLException on database column access error
+     */
+    private static Double getNullableDouble(ResultSet resultSet, String columnLabel) throws SQLException {
+        double value = resultSet.getDouble(columnLabel);
+        return resultSet.wasNull() ? null : value;
     }
 }

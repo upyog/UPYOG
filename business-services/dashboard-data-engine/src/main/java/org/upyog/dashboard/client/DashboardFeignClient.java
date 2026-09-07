@@ -5,6 +5,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import java.net.URI;
 
+/**
+ * OpenFeign client for communicating with the external National Dashboard ingestion API.
+ */
 @FeignClient(name = "dashboard-feign-client", url = "${national.dashboard.ingest.url}")
 public interface DashboardFeignClient {
 

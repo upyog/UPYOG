@@ -36,10 +36,7 @@ public class TradeLicenseRequest   {
         @Valid
         private List<TradeLicense> licenses = null;
 
-        @JsonProperty("draftId")
-        private String draftId = null;
-
-
+        
         public TradeLicenseRequest addLicensesItem(TradeLicense licensesItem) {
             if (this.licenses == null) {
             this.licenses = new ArrayList<>();

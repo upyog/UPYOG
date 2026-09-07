@@ -22,6 +22,7 @@ import org.upyog.dashboard.model.IngestionResult;
 import org.upyog.dashboard.registry.ExtractorRegistry;
 import org.upyog.dashboard.repository.IngestionSummaryRepository;
 import org.upyog.dashboard.config.DashboardProperties;
+import org.upyog.dashboard.enums.IngestionStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 
@@ -38,8 +39,6 @@ import lombok.extern.slf4j.Slf4j;
  * {@link IngestionSummaryRepository} and builds {@link IngestionResult} objects
  * that are returned to callers.</p>
  */
-import org.upyog.dashboard.enums.IngestionStatus;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -100,15 +99,20 @@ public List<IngestionResult> ingestDailyData() {
 				continue;
 			}
 
+			// Determine start date: resume from the day after the last successful ingestion date,
+			// or fallback to the configured default start date if no previous ingestion record exists.
 			Optional<LocalDate> lastSuccessOpt = summaryRepository.findLastSuccessfulDate(tenantId, module.name());
 			LocalDate startDate = lastSuccessOpt.map(date -> date.plusDays(1)).orElse(defaultStartDate);
 
+			// Check if the module is already completely ingested up to yesterday; skip processing if so
 			if (startDate.isAfter(yesterday)) {
 				log.info("Module {} is already up-to-date up to yesterday ({}). Skipping.", module, yesterday);
 				allResults.add(buildResult("SKIPPED", module, yesterday, "Module " + module.name() + " is already up-to-date up to yesterday (" + yesterday + ")", null));
 				continue;
 			}
 
+			// Calculate catch-up gap; if the missing range exceeds the allowed daily catch-up window,
+			// fail fast and advise operators to trigger the legacy migration pipeline instead.
 			long daysToIngest = java.time.temporal.ChronoUnit.DAYS.between(startDate, yesterday) + 1;
 			int catchUpLimit = dashboardProperties.getDailyCatchUpLimitDays();
 			if (daysToIngest > catchUpLimit) {
@@ -200,6 +204,7 @@ public List<IngestionResult> ingestDailyData(LocalDate targetDate) {
  */
 private IngestionResult ingestModuleForDate(Module module, ModuleExtractor<?> extractor, LocalDate date) {
 		try {
+			log.info("Starting ingestion for module {} on date {}", module, date);
 			Object rawData = extractor.extractData(date);
 			if (rawData instanceof DashboardData) {
 				rawData = List.of((DashboardData) rawData);
@@ -237,15 +242,16 @@ private IngestionResult processDataList(Module module, ModuleExtractor<?> extrac
 		String responseData = null;
 
 		int effectiveBatchSize = (this.batchSize > 0) ? this.batchSize : 10;
-		List<DailyIngestionData> batchAuditRecords = new ArrayList<>();
-		long now = CommonUtils.getCurrentEpochMillis();
+		List<DailyIngestionData> batchDetailRecords = new ArrayList<>();
 		java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern(DashboardExtractorConstants.DATE_FORMAT);
 
-		for (int i = 0; i < dataList.size(); i += effectiveBatchSize) {
-			List<?> batchSubList = dataList.subList(i, Math.min(i + effectiveBatchSize, dataList.size()));
+		for (int batchOffset = 0; batchOffset < dataList.size(); batchOffset += effectiveBatchSize) {
+			List<?> batchSubList = dataList.subList(batchOffset, Math.min(batchOffset + effectiveBatchSize, dataList.size()));
 
 			for (Object item : batchSubList) {
 				IngestionResult result;
+				// Check if the current payload has all metric values equal to zero;
+				// if so, skip external network call and mark detail record as SUCCESS_ZERO_METRICS.
 				if (isAllZeroMetrics(extractor, item)) {
 					log.info("All metrics for module {} on date {} are zero. Skipping downstream API push.", module, date);
 					result = buildResult(STATUS_SUCCESS_ZERO_METRICS, module, date, null, "{\"message\":\"All metrics are zero. Downstream API push skipped.\"}");
@@ -253,6 +259,7 @@ private IngestionResult processDataList(Module module, ModuleExtractor<?> extrac
 					result = executeIngestion(module, item, date);
 				}
 
+				// Check if result status represents a successful outcome
 				if (result != null && IngestionStatus.fromValue(result.getIngestionStatus()).isSuccess()) {
 					if (result.getResponseData() != null) {
 						if (responseData == null || responseData.contains("All metrics are zero")) {
@@ -269,12 +276,13 @@ private IngestionResult processDataList(Module module, ModuleExtractor<?> extrac
 				String itemRequestJson = null;
 				try {
 					itemRequestJson = objectMapper != null ? objectMapper.writeValueAsString(item) : item.toString();
-				} catch (Exception e) {
+				} catch (Exception serializationException) {
+					log.error("Failed to serialize item request payload for module {} on date {}: {}", module, date, serializationException.getMessage());
 					itemRequestJson = item.toString();
 				}
 
 				String itemTenantId = extractTenantId(item);
-				DailyIngestionData auditData = DailyIngestionData.builder()
+				DailyIngestionData detailData = DailyIngestionData.builder()
 						.moduleIngestionId(CommonUtils.generateUUID())
 						.tenantId(itemTenantId)
 						.moduleName(module.name())
@@ -283,16 +291,15 @@ private IngestionResult processDataList(Module module, ModuleExtractor<?> extrac
 						.responseData(result != null ? result.getResponseData() : null)
 						.ingestionStatus(result != null ? result.getIngestionStatus() : STATUS_FAILURE)
 						.createdBy("SYSTEM")
-						.createdTime(now)
 						.lastModifiedBy("SYSTEM")
-						.lastModifiedTime(now)
 						.build();
-				batchAuditRecords.add(auditData);
+				batchDetailRecords.add(detailData);
 			}
 
-			if (!batchAuditRecords.isEmpty()) {
-				summaryRepository.saveIngestionDetailsBatch(batchAuditRecords);
-				batchAuditRecords.clear();
+			// Persist detail records in batch chunks to avoid excessive database connection round-trips
+			if (!batchDetailRecords.isEmpty()) {
+				summaryRepository.saveIngestionDetailsBatch(batchDetailRecords);
+				batchDetailRecords.clear();
 			}
 		}
 
@@ -326,6 +333,8 @@ private IngestionResult executeIngestion(Module module, Object item, LocalDate d
 			}
 			String errorDetails = (result.getFailureReason() != null ? result.getFailureReason() : "")
 					+ (result.getResponseData() != null ? result.getResponseData() : "");
+			// Handle duplicate date errors gracefully: if the upstream service already received this date's data,
+			// treat this as an idempotent success (SUCCESS_DUPLICATE) rather than a hard failure.
 			if (STATUS_FAILURE.equalsIgnoreCase(result.getIngestionStatus()) && isDuplicateDateError(errorDetails)) {
 				log.info("Duplicate date error detected for module {} on date {}. Marking status as SUCCESS_DUPLICATE.", module, date);
 				result.setIngestionStatus(STATUS_SUCCESS_DUPLICATE);
@@ -400,22 +409,22 @@ private IngestionResult buildResult(String status, Module module, LocalDate date
 		if (item == null) {
 			return this.tenantId;
 		}
-		if (item instanceof DashboardData d && StringUtils.isNotBlank(d.getUlb())) {
-			return d.getUlb();
+		if (item instanceof DashboardData dashboardData && StringUtils.isNotBlank(dashboardData.getUlb())) {
+			return dashboardData.getUlb();
 		}
 		try {
 			java.lang.reflect.Method getUlbMethod = item.getClass().getMethod("getUlb");
-			Object val = getUlbMethod.invoke(item);
-			if (val != null && StringUtils.isNotBlank(val.toString())) {
-				return val.toString();
+			Object ulbValue = getUlbMethod.invoke(item);
+			if (ulbValue != null && StringUtils.isNotBlank(ulbValue.toString())) {
+				return ulbValue.toString();
 			}
 		} catch (Exception ignored) {
 		}
 		try {
 			java.lang.reflect.Method getTenantIdMethod = item.getClass().getMethod("getTenantId");
-			Object val = getTenantIdMethod.invoke(item);
-			if (val != null && StringUtils.isNotBlank(val.toString())) {
-				return val.toString();
+			Object tenantIdValue = getTenantIdMethod.invoke(item);
+			if (tenantIdValue != null && StringUtils.isNotBlank(tenantIdValue.toString())) {
+				return tenantIdValue.toString();
 			}
 		} catch (Exception ignored) {
 		}
@@ -435,12 +444,12 @@ private IngestionResult buildResult(String status, Module module, LocalDate date
 		if (item == null) {
 			return true;
 		}
-		if (item instanceof DashboardData d) {
-			if (d.getMetrics() == null || d.getMetrics().isEmpty()) {
+		if (item instanceof DashboardData dashboardData) {
+			if (dashboardData.getMetrics() == null || dashboardData.getMetrics().isEmpty()) {
 				return true;
 			}
-			for (Object val : d.getMetrics().values()) {
-				if (isNonZero(val)) {
+			for (Object metricValue : dashboardData.getMetrics().values()) {
+				if (isNonZero(metricValue)) {
 					return false;
 				}
 			}
@@ -452,30 +461,44 @@ private IngestionResult buildResult(String status, Module module, LocalDate date
 		return false;
 	}
 
-	private boolean isNonZero(Object val) {
-		if (val == null) return false;
-		if (val instanceof Number n) {
-			return n.doubleValue() > 0;
+	/**
+	 * Recursively checks whether a generic object, collection, map, number, or string value
+	 * contains a positive non-zero numeric quantity.
+	 *
+	 * @param value value to inspect
+	 * @return true if positive non-zero, false otherwise
+	 */
+	private boolean isNonZero(Object value) {
+		if (value == null) return false;
+		if (value instanceof Number number) {
+			return number.doubleValue() > 0;
 		}
-		if (val instanceof String s) {
+		if (value instanceof String stringValue) {
 			try {
-				return Double.parseDouble(s) > 0;
+				return Double.parseDouble(stringValue) > 0;
 			} catch (Exception ignored) {
 			}
 		}
-		if (val instanceof java.util.Collection<?> c) {
-			for (Object item : c) {
-				if (isNonZero(item)) return true;
+		if (value instanceof java.util.Collection<?> collection) {
+			for (Object element : collection) {
+				if (isNonZero(element)) return true;
 			}
 		}
-		if (val instanceof java.util.Map<?, ?> m) {
-			for (Object v : m.values()) {
-				if (isNonZero(v)) return true;
+		if (value instanceof java.util.Map<?, ?> map) {
+			for (Object mapEntryValue : map.values()) {
+				if (isNonZero(mapEntryValue)) return true;
 			}
 		}
 		return false;
 	}
 
+	/**
+	 * Checks whether an upstream failure message indicates that data for the target date was
+	 * already received, allowing idempotent handling.
+	 *
+	 * @param message failure error message string
+	 * @return true if error represents duplicate date, false otherwise
+	 */
 	private boolean isDuplicateDateError(String message) {
 		if (StringUtils.isBlank(message)) {
 			return false;

@@ -3,7 +3,7 @@ package org.upyog.dashboard.service.impl;
 import org.upyog.dashboard.common.constants.DashboardConstants;
 import org.upyog.dashboard.model.ErrorLogDTO;
 import org.upyog.dashboard.util.CommonUtils;
-import org.upyog.dashboard.repository.querybuilder.AuditQueryBuilder;
+import org.upyog.dashboard.repository.querybuilder.IngestionRecordQueryBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -16,14 +16,17 @@ import org.springframework.stereotype.Service;
 import org.upyog.dashboard.entity.DailyIngestionData;
 import org.upyog.dashboard.model.DashboardData;
 import org.upyog.dashboard.model.DashboardPayload;
-import org.upyog.dashboard.service.AuditService;
+import org.upyog.dashboard.service.IngestionRecordPersistenceService;
 import org.upyog.dashboard.util.JsonUtil;
 
+/**
+ * JDBC implementation of {@link IngestionRecordPersistenceService} directly persisting ingestion and error records to PostgreSQL tables.
+ */
 @Service
 @ConditionalOnProperty(name = "dashboard-data.persister.enabled", havingValue = "false")
-public class JdbcAuditServiceImpl implements AuditService {
+public class JdbcIngestionRecordPersistenceServiceImpl implements IngestionRecordPersistenceService {
 
-    private static final Logger log = LoggerFactory.getLogger(JdbcAuditServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(JdbcIngestionRecordPersistenceServiceImpl.class);
 
     // Constants to fix Issue 3 (Hardcoded Values)
     private static final String STATUS_FAILURE = DashboardConstants.STATUS_FAILURE;
@@ -65,7 +68,7 @@ public class JdbcAuditServiceImpl implements AuditService {
                     .addValue(DashboardConstants.PARAM_LAST_MODIFIED_BY, record.getLastModifiedBy())
                     .addValue(DashboardConstants.PARAM_LAST_MODIFIED_TIME, record.getLastModifiedTime());
 
-            namedParameterJdbcTemplate.update(AuditQueryBuilder.INSERT_INGESTION_DETAIL, detailParams);
+            namedParameterJdbcTemplate.update(IngestionRecordQueryBuilder.INSERT_INGESTION_DETAIL, detailParams);
 
             if (STATUS_FAILURE.equals(status)) {
                 ErrorLogDTO errorLog = ErrorLogDTO.builder()
@@ -88,10 +91,10 @@ public class JdbcAuditServiceImpl implements AuditService {
                         .addValue(DashboardConstants.PARAM_CREATED_TIME, errorLog.getCreatedTime())
                         .addValue(DashboardConstants.PARAM_CREATED_BY, errorLog.getCreatedBy());
 
-                namedParameterJdbcTemplate.update(AuditQueryBuilder.INSERT_ADAPTER_INGESTION_ERROR_LOG, errorParams);
+                namedParameterJdbcTemplate.update(IngestionRecordQueryBuilder.INSERT_ADAPTER_INGESTION_ERROR_LOG, errorParams);
             }
         } catch (Exception exception) {
-            log.error("JdbcAuditServiceImpl | failed to push ingestion record to Database", exception);
+            log.error("JdbcIngestionRecordPersistenceServiceImpl | failed to push ingestion record to Database", exception);
         }
     }
 }

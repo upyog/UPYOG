@@ -144,10 +144,20 @@ public class DashboardProperties {
     @Value("${dashboard-data.legacy.upload-mode}")
     private String legacyUploadMode;
 
+    /**
+     * Resolves effective daily upload mode (DIRECT_API, S3, or FILESTORE).
+     *
+     * @return normalized mode string
+     */
     public String getEffectiveDailyUploadMode() {
         return (dailyUploadMode != null && !dailyUploadMode.trim().isEmpty()) ? dailyUploadMode.trim() : "API";
     }
 
+    /**
+     * Resolves effective legacy upload mode (DIRECT_API, S3, or FILESTORE).
+     *
+     * @return normalized mode string
+     */
     public String getEffectiveLegacyUploadMode() {
         return (legacyUploadMode != null && !legacyUploadMode.trim().isEmpty()) ? legacyUploadMode.trim() : "S3";
     }

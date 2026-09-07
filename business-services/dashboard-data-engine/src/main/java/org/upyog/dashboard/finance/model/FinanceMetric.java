@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 
+/**
+ * Transformed metrics model for the Finance module formatted for downstream dashboard ingestion.
+ */
 @Getter
 @Setter
 @Builder
@@ -24,6 +27,11 @@ public class FinanceMetric {
     private Integer totalFundBalance;
     private Integer totalFundRequirement;
 
+    /**
+     * Serializes this metric object into a flat key-value Map structure for payload formatting.
+     *
+     * @return map of metric field names to values
+     */
     public Map<String, Object> toMap() {
         Map<String, Object> dataMap = new java.util.LinkedHashMap<>();
         dataMap.put("totalRevenueCollected", totalRevenueCollected != null ? totalRevenueCollected : 0);
