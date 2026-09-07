@@ -47,7 +47,7 @@ import org.upyog.dashboard.producer.DashboardProducer;
 import org.upyog.dashboard.registry.ExtractorRegistry;
 import org.upyog.dashboard.registry.TransformerRegistry;
 import org.upyog.dashboard.repository.IngestionSummaryRepository;
-import org.upyog.dashboard.service.AuditService;
+import org.upyog.dashboard.service.IngestionRecordPersistenceService;
 import org.upyog.dashboard.service.DailyIngestionService;
 import org.upyog.dashboard.service.OAuthTokenService;
 import org.upyog.dashboard.transformer.impl.PTTransformer;
@@ -85,7 +85,7 @@ class DateIngestionFlowIntegrationTest {
     private DashboardProducer producer;
 
     @Mock
-    private AuditService auditService;
+    private IngestionRecordPersistenceService persistenceService;
 
     @Mock
     private IngestionSummaryRepository summaryRepository;
@@ -167,7 +167,7 @@ class DateIngestionFlowIntegrationTest {
         httpLoader = new DashboardDataLoaderImpl();
         TestUtils.setField(httpLoader, "dashboardFeignClient", dashboardFeignClient);
         TestUtils.setField(httpLoader, "oAuthTokenService", oAuthTokenService);
-        TestUtils.setField(httpLoader, "auditService", auditService);
+        TestUtils.setField(httpLoader, "persistenceService", persistenceService);
         TestUtils.setField(httpLoader, "gson", new Gson());
         TestUtils.setField(httpLoader, "objectMapper", objectMapper);
         TestUtils.setField(httpLoader, "dashboardProperties", dashboardProperties);
@@ -268,8 +268,8 @@ class DateIngestionFlowIntegrationTest {
         assertThat(metricsNode.get("assessments").asInt()).isEqualTo(50);
         assertThat(metricsNode.get("todaysTotalApplications").asInt()).isEqualTo(120);
 
-        // Verify Kafka audit record push
-        verify(auditService).pushIngestionRecord(any(DashboardPayload.class), any(String.class), any(String.class), eq(DashboardExtractorConstants.STATUS_SUCCESS));
+        // Verify Kafka ingestion record push
+        verify(persistenceService).pushIngestionRecord(any(DashboardPayload.class), any(String.class), any(String.class), eq(DashboardExtractorConstants.STATUS_SUCCESS));
     }
 
     @Test

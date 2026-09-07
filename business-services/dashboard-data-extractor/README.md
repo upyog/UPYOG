@@ -56,7 +56,7 @@ The service can be configured via `application.properties` (or environment-speci
 
 ## egov-persister Integration Setup
 
-To persist ingestion audit details and summary tracker dates into PostgreSQL via Kafka, ensure `egov-persister` has `dashboard-data-extractor-persister.yml` configured in its `application.properties`:
+To persist ingestion details and summary tracker dates into PostgreSQL via Kafka, ensure `egov-persister` has `dashboard-data-extractor-persister.yml` configured in its `application.properties`:
 
 ```properties
 egov.persist.yml.repo.path=classpath:egov-pg-service-persister.yml,classpath:dashboard-data-extractor-persister.yml

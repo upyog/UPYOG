@@ -3,7 +3,6 @@ package org.upyog.dashboard.service.impl;
 import org.upyog.dashboard.common.constants.DashboardConstants;
 import org.upyog.dashboard.model.ErrorLogDTO;
 
-
 import org.upyog.dashboard.util.CommonUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,17 +19,17 @@ import org.upyog.dashboard.entity.DailyIngestionData;
 import org.upyog.dashboard.model.DashboardData;
 import org.upyog.dashboard.model.DashboardPayload;
 import org.upyog.dashboard.producer.DashboardProducer;
-import org.upyog.dashboard.service.AuditService;
+import org.upyog.dashboard.service.IngestionRecordPersistenceService;
 import org.upyog.dashboard.util.JsonUtil;
 
 /**
- * Kafka implementation of {@link AuditService} publishing ingestion and error audit records to Kafka topics.
+ * Kafka implementation of {@link IngestionRecordPersistenceService} publishing ingestion and error records to Kafka topics.
  */
 @Service
 @ConditionalOnProperty(name = "dashboard-data.persister.enabled", havingValue = "true", matchIfMissing = true)
-public class KafkaAuditServiceImpl implements AuditService {
+public class KafkaIngestionRecordPersistenceServiceImpl implements IngestionRecordPersistenceService {
 
-    private static final Logger log = LoggerFactory.getLogger(KafkaAuditServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(KafkaIngestionRecordPersistenceServiceImpl.class);
 
     @Autowired
     private DashboardProducer producer;
@@ -75,7 +74,7 @@ public class KafkaAuditServiceImpl implements AuditService {
                 producer.push(dashboardProperties.getSaveAdapterErrorLogTopic(), errorKafkaMessage);
             }
         } catch (Exception exception) {
-            log.error("KafkaAuditServiceImpl | failed to push ingestion record to Kafka", exception);
+            log.error("KafkaIngestionRecordPersistenceServiceImpl | failed to push ingestion record to Kafka", exception);
         }
     }
 }

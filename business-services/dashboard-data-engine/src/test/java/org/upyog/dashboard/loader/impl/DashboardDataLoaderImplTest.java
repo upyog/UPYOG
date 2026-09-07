@@ -20,7 +20,7 @@ import org.upyog.dashboard.model.DashboardPayload;
 import org.upyog.dashboard.model.IngestionResult;
 import org.upyog.dashboard.model.UserInfo;
 import org.upyog.dashboard.producer.DashboardProducer;
-import org.upyog.dashboard.service.AuditService;
+import org.upyog.dashboard.service.IngestionRecordPersistenceService;
 import org.upyog.dashboard.service.OAuthTokenService;
 
 import java.util.Collections;
@@ -47,7 +47,7 @@ class DashboardDataLoaderImplTest {
     private DashboardProducer producer;
 
     @Mock
-    private AuditService auditService;
+    private IngestionRecordPersistenceService persistenceService;
 
     @Mock
     private DashboardProperties dashboardProperties;
@@ -65,7 +65,7 @@ class DashboardDataLoaderImplTest {
         loader = new DashboardDataLoaderImpl();
         TestUtils.setField(loader, "dashboardFeignClient", dashboardFeignClient);
         TestUtils.setField(loader, "oAuthTokenService", oAuthTokenService);
-        TestUtils.setField(loader, "auditService", auditService);
+        TestUtils.setField(loader, "persistenceService", persistenceService);
         TestUtils.setField(loader, "gson", gson);
         TestUtils.setField(loader, "objectMapper", objectMapper);
         TestUtils.setField(loader, "dashboardProperties", dashboardProperties);
@@ -97,7 +97,7 @@ class DashboardDataLoaderImplTest {
         assertThat(result.getFailureReason()).isNull();
         assertThat(result.getIngestedAt()).isGreaterThan(0);
 
-        verify(auditService).pushIngestionRecord(eq(payload), anyString(), eq("{\"status\": \"ok\"}"), eq("SUCCESS"));
+        verify(persistenceService).pushIngestionRecord(eq(payload), anyString(), eq("{\"status\": \"ok\"}"), eq("SUCCESS"));
     }
 
     @Test
@@ -116,7 +116,7 @@ class DashboardDataLoaderImplTest {
 
         assertThat(result.getIngestionStatus()).isEqualTo("FAILURE");
         assertThat(result.getFailureReason()).isEqualTo("Connection refused");
-        verify(auditService).pushIngestionRecord(any(DashboardPayload.class), anyString(), anyString(), eq("FAILURE"));
+        verify(persistenceService).pushIngestionRecord(any(DashboardPayload.class), anyString(), anyString(), eq("FAILURE"));
     }
 
     @Test
@@ -130,8 +130,8 @@ class DashboardDataLoaderImplTest {
                 anyString()))
                 .thenReturn("{\"status\": \"ok\"}");
 
-        doThrow(new RuntimeException("Audit unavailable"))
-                .when(auditService).pushIngestionRecord(any(), any(), any(), any());
+        doThrow(new RuntimeException("Persistence unavailable"))
+                .when(persistenceService).pushIngestionRecord(any(), any(), any(), any());
 
         DashboardPayload payload = createValidPayload();
         IngestionResult result = loader.load(payload);

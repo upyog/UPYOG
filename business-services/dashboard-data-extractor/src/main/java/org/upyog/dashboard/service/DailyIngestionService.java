@@ -242,8 +242,7 @@ private IngestionResult processDataList(Module module, ModuleExtractor<?> extrac
 		String responseData = null;
 
 		int effectiveBatchSize = (this.batchSize > 0) ? this.batchSize : 10;
-		List<DailyIngestionData> batchAuditRecords = new ArrayList<>();
-		long now = CommonUtils.getCurrentEpochMillis();
+		List<DailyIngestionData> batchDetailRecords = new ArrayList<>();
 		java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern(DashboardExtractorConstants.DATE_FORMAT);
 
 		for (int batchOffset = 0; batchOffset < dataList.size(); batchOffset += effectiveBatchSize) {
@@ -252,7 +251,7 @@ private IngestionResult processDataList(Module module, ModuleExtractor<?> extrac
 			for (Object item : batchSubList) {
 				IngestionResult result;
 				// Check if the current payload has all metric values equal to zero;
-				// if so, skip external network call and mark audit record as SUCCESS_ZERO_METRICS.
+				// if so, skip external network call and mark detail record as SUCCESS_ZERO_METRICS.
 				if (isAllZeroMetrics(extractor, item)) {
 					log.info("All metrics for module {} on date {} are zero. Skipping downstream API push.", module, date);
 					result = buildResult(STATUS_SUCCESS_ZERO_METRICS, module, date, null, "{\"message\":\"All metrics are zero. Downstream API push skipped.\"}");
@@ -283,7 +282,7 @@ private IngestionResult processDataList(Module module, ModuleExtractor<?> extrac
 				}
 
 				String itemTenantId = extractTenantId(item);
-				DailyIngestionData auditData = DailyIngestionData.builder()
+				DailyIngestionData detailData = DailyIngestionData.builder()
 						.moduleIngestionId(CommonUtils.generateUUID())
 						.tenantId(itemTenantId)
 						.moduleName(module.name())
@@ -292,17 +291,15 @@ private IngestionResult processDataList(Module module, ModuleExtractor<?> extrac
 						.responseData(result != null ? result.getResponseData() : null)
 						.ingestionStatus(result != null ? result.getIngestionStatus() : STATUS_FAILURE)
 						.createdBy("SYSTEM")
-						.createdTime(now)
 						.lastModifiedBy("SYSTEM")
-						.lastModifiedTime(now)
 						.build();
-				batchAuditRecords.add(auditData);
+				batchDetailRecords.add(detailData);
 			}
 
-			// Persist audit records in batch chunks to avoid excessive database connection round-trips
-			if (!batchAuditRecords.isEmpty()) {
-				summaryRepository.saveIngestionDetailsBatch(batchAuditRecords);
-				batchAuditRecords.clear();
+			// Persist detail records in batch chunks to avoid excessive database connection round-trips
+			if (!batchDetailRecords.isEmpty()) {
+				summaryRepository.saveIngestionDetailsBatch(batchDetailRecords);
+				batchDetailRecords.clear();
 			}
 		}
 

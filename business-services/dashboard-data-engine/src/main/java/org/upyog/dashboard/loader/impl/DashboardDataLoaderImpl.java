@@ -20,7 +20,7 @@ import org.upyog.dashboard.model.RequestInfo;
 import org.upyog.dashboard.model.RetryAttempt;
 import org.upyog.dashboard.model.UserInfo;
 import org.upyog.dashboard.producer.DashboardProducer;
-import org.upyog.dashboard.service.AuditService;
+import org.upyog.dashboard.service.IngestionRecordPersistenceService;
 import org.upyog.dashboard.service.OAuthTokenService;
 import org.upyog.dashboard.util.RetryUtil;
 import org.upyog.dashboard.util.CommonUtils;
@@ -44,7 +44,7 @@ import lombok.extern.slf4j.Slf4j;
  * <li>Return an {@link IngestionResult} that describes the outcome (status,
  * response body, or failure reason).</li>
  * <li>Regardless of success or failure, publish a {@link DailyIngestionData}
- * record to the {@code save-dashboard-ingestion-detail} Kafka topic so the * persister can write the audit row to the {@code ingestion_detail} database
+ * record to the {@code save-dashboard-ingestion-detail} Kafka topic so the * persister can write the detail row to the {@code ingestion_detail} database
  * table.</li>
  * </ol>
  *
@@ -87,7 +87,7 @@ public class DashboardDataLoaderImpl implements DashboardDataLoader {
 	 * {@link UserInfo} object required by the national dashboard endpoint.
 	 */
 	@Autowired
-	private AuditService auditService;
+	private IngestionRecordPersistenceService persistenceService;
 
 	@Autowired
 	private OAuthTokenService oAuthTokenService;
@@ -106,7 +106,7 @@ public class DashboardDataLoaderImpl implements DashboardDataLoader {
 	/**
 	 * Jackson object mapper used to serialize the outbound
 	 * {@link NationalDashboardIngestRequest} to a JSON string both for the HTTP
-	 * body and for storing in the audit record.
+	 * body and for storing in the ingestion record.
 	 */
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -117,7 +117,7 @@ public class DashboardDataLoaderImpl implements DashboardDataLoader {
 
 	/**
 	 * Sends the provided module payload to the National Dashboard ingest endpoint
-	 * and publishes the outcome as a Kafka audit record.
+	 * and publishes the outcome as a Kafka ingestion record.
 	 *
 	 * <p>
 	 * The method executes the following steps:
@@ -126,20 +126,20 @@ public class DashboardDataLoaderImpl implements DashboardDataLoader {
 	 * populated {@link NationalDashboardIngestRequest} including the OAuth token
 	 * and user context.</li>
 	 * <li>Serializes the request to JSON via {@link ObjectMapper} so the exact
-	 * bytes sent over the wire are also stored in the audit record.</li>
+	 * bytes sent over the wire are also stored in the ingestion record.</li>
 	 * <li>POSTs the request to {@link #dashboardIngestUrl}.</li>
 	 * <li>On success sets status {@code "SUCCESS"} and stores the response
 	 * body.</li>
 	 * <li>On any exception sets status {@code "FAILURE"} and stores the exception
 	 * message as the response.</li>
 	 * <li>In both cases calls {@link #pushIngestionRecord} to asynchronously
-	 * persist the audit row via Kafka.</li>
+	 * persist the ingestion record via Kafka.</li>
 	 * </ol>
 	 *
 	 * @param data the transformed module data to ingest; must not be {@code null};
 	 *             the {@code Data} dataList should contain at least one
 	 *             {@link DashboardData} entry so that ULB / module / date context
-	 *             can be extracted for the audit record
+	 *             can be extracted for the ingestion record
 	 * @return an {@link IngestionResult} with:
 	 *         <ul>
 	 *         <li>{@code ingestionStatus} — {@code "SUCCESS"} or
@@ -254,7 +254,7 @@ public class DashboardDataLoaderImpl implements DashboardDataLoader {
 
 
 	/**
-	 * Builds a {@link DailyIngestionData} audit record from the current call's
+	 * Builds a {@link DailyIngestionData} record from the current call's
 	 * context and publishes it to the {@code save-dashboard-ingestion-detail} Kafka
 	 * topic via {@link DashboardProducer}.
 	 *
@@ -265,7 +265,7 @@ public class DashboardDataLoaderImpl implements DashboardDataLoader {
 	 *
 	 * <p>Context fields (ULB name, module name, push date) are extracted from the
 	 * first element of {@link DashboardPayload#getData()}. When the dataList is empty
-	 * or {@code null} these fields are left {@code null} in the audit record.
+	 * or {@code null} these fields are left {@code null} in the ingestion record.
 	 *
 	 * <p>The {@code moduleDetailId} and {@code userId} fields are intentionally
 	 * left {@code null}: {@code moduleDetailId} belongs to the higher-level service
@@ -285,9 +285,9 @@ public class DashboardDataLoaderImpl implements DashboardDataLoader {
 	 */
 	private void pushIngestionRecord(DashboardPayload dashboardPayload, String requestPayloadJson, String responseOrErrorMessage, String currentIngestionStatus) {
 		try {
-			auditService.pushIngestionRecord(dashboardPayload, requestPayloadJson, responseOrErrorMessage, currentIngestionStatus);
+			persistenceService.pushIngestionRecord(dashboardPayload, requestPayloadJson, responseOrErrorMessage, currentIngestionStatus);
 		} catch (Exception exception) {
-			log.error("DashboardDataLoaderImpl | failed to push ingestion record to audit service", exception);
+			log.error("DashboardDataLoaderImpl | failed to push ingestion record to persistence service", exception);
 		}
 	}
 

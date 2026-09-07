@@ -11,7 +11,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * 
  * <p>Consolidates daily metrics extraction, state-configurable multi-module schema mapping
  * via YAML, payload transformation, validation, HTTP ingestion posting to the National Dashboard,
- * and Kafka audit logging.
+ * and Kafka event persistence.
  */
 @SpringBootApplication
 @EnableScheduling

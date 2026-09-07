@@ -9,7 +9,7 @@ import org.upyog.dashboard.model.DashboardPayload;
  *
  * <p>Each module has its own data schema and metric derivation rules.
  * Implementations of this interface encapsulate that module-specific knowledge,
- * keeping the rest of the pipeline (validation, loading, auditing) completely
+ * keeping the rest of the pipeline (validation, loading, persistence) completely
  * generic.
  *
  * <h3>Registration</h3>

@@ -3,12 +3,12 @@ package org.upyog.dashboard.service;
 import org.upyog.dashboard.model.DashboardPayload;
 
 /**
- * Service responsible for auditing ingestion details and error logs.
+ * Service responsible for persisting ingestion details and error logs.
  */
-public interface AuditService {
+public interface IngestionRecordPersistenceService {
 
     /**
-     * Pushes an ingestion audit record to the underlying storage mechanism.
+     * Pushes an ingestion record to the underlying storage mechanism.
      *
      * @param data            the original {@link DashboardPayload} passed to the loader
      * @param requestJson     the JSON string that was sent to the national dashboard endpoint

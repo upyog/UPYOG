@@ -167,7 +167,7 @@ public void saveOrUpdateLastAttemptedDate(String tenantId, String moduleName, Lo
 	}
 
 	/**
-	 * Persists a batch of daily ingestion detail audit records.
+	 * Persists a batch of daily ingestion detail records.
 	 *
 	 * @param details list of daily ingestion data objects or rows
 	 */

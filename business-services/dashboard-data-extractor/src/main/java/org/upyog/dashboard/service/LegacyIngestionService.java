@@ -194,7 +194,7 @@ public class LegacyIngestionService {
 
 	/**
 	 * Extracts data for the given module and date and serialises the resulting
-	 * {@link org.upyog.dashboard.model.DashboardRequest} to a JSON string for audit storage.
+	 * {@link org.upyog.dashboard.model.DashboardRequest} to a JSON string for detail storage.
 	 * Returns an empty JSON object string ({@code "{}"}) on any error.
 	 *
 	 * @param module    the module being processed
@@ -217,7 +217,7 @@ public class LegacyIngestionService {
 
 	/**
 	 * Extracts a safe JSON string from an {@link org.upyog.dashboard.model.IngestionResult} for
-	 * storage as the {@code response_data} audit field. Falls back to the failure reason when
+	 * storage as the {@code response_data} detail field. Falls back to the failure reason when
 	 * response data is absent. Returns {@code "{}"} for a {@code null} result.
 	 *
 	 * @param result the ingestion result to sanitise; may be {@code null}

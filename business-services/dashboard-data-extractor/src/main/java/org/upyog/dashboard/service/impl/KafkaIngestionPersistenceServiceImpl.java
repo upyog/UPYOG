@@ -163,7 +163,7 @@ public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenc
 
     /**
      * Builds a {@link org.upyog.dashboard.entity.LegacyIngestionData} payload carrying the
-     * updated status, response data, and audit timestamps, then publishes it to the
+     * updated status, response data, and timestamps, then publishes it to the
      * {@code UPDATE_LEGACY_INGESTION_DETAIL} Kafka topic.
      *
      * @param jobId        the unique identifier of the legacy job
@@ -194,7 +194,7 @@ public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenc
     }
 
     /**
-     * Publishes a batch of daily ingestion detail audit records to the Kafka topic.
+     * Publishes a batch of daily ingestion detail records to the Kafka topic.
      * Records are chunked into smaller batches (e.g., 50 records per message) to prevent
      * exceeding Kafka's max.request.size (RecordTooLargeException).
      *
@@ -207,7 +207,7 @@ public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenc
                 return;
             }
 
-            // Chunk large legacy/daily audit lists into safe batches to ensure message size stays well under 1MB
+            // Chunk large legacy/daily detail lists into safe batches to ensure message size stays well under 1MB
             int chunkSize = 50;
             for (int offset = 0; offset < details.size(); offset += chunkSize) {
                 List<?> chunk = details.subList(offset, Math.min(offset + chunkSize, details.size()));
@@ -216,10 +216,10 @@ public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenc
                 producer.push(dashboardProperties.getSaveIngestionDetailTopic(), message);
             }
 
-            log.info("Pushed batch of {} ingestion detail audit records to Kafka topic {} in chunks of up to {}",
+            log.info("Pushed batch of {} ingestion detail records to Kafka topic {} in chunks of up to {}",
                     details.size(), dashboardProperties.getSaveIngestionDetailTopic(), chunkSize);
         } catch (Exception exception) {
-            log.error("Failed to push batch ingestion detail audit records to Kafka", exception);
+            log.error("Failed to push batch ingestion detail records to Kafka", exception);
         }
     }
 }

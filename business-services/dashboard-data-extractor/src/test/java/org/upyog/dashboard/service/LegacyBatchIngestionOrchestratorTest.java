@@ -149,16 +149,16 @@ class LegacyBatchIngestionOrchestratorTest {
         ArgumentCaptor<List<DailyIngestionData>> captor = ArgumentCaptor.forClass(List.class);
         verify(persistenceService).saveIngestionDetailsBatch(captor.capture());
 
-        List<DailyIngestionData> savedAudits = captor.getValue();
-        assertThat(savedAudits).hasSize(3);
+        List<DailyIngestionData> savedDetails = captor.getValue();
+        assertThat(savedDetails).hasSize(3);
 
-        DailyIngestionData day1 = savedAudits.stream().filter(a -> "01-01-2025".equals(a.getPushDate()) || "2025-01-01".equals(a.getPushDate())).findFirst().orElseThrow();
+        DailyIngestionData day1 = savedDetails.stream().filter(a -> "01-01-2025".equals(a.getPushDate()) || "2025-01-01".equals(a.getPushDate())).findFirst().orElseThrow();
         assertThat(day1.getIngestionStatus()).isEqualTo("SUCCESS");
 
-        DailyIngestionData day2 = savedAudits.stream().filter(a -> "02-01-2025".equals(a.getPushDate()) || "2025-01-02".equals(a.getPushDate())).findFirst().orElseThrow();
+        DailyIngestionData day2 = savedDetails.stream().filter(a -> "02-01-2025".equals(a.getPushDate()) || "2025-01-02".equals(a.getPushDate())).findFirst().orElseThrow();
         assertThat(day2.getIngestionStatus()).isEqualTo("SUCCESS_ZERO_METRICS");
 
-        DailyIngestionData day3 = savedAudits.stream().filter(a -> "03-01-2025".equals(a.getPushDate()) || "2025-01-03".equals(a.getPushDate())).findFirst().orElseThrow();
+        DailyIngestionData day3 = savedDetails.stream().filter(a -> "03-01-2025".equals(a.getPushDate()) || "2025-01-03".equals(a.getPushDate())).findFirst().orElseThrow();
         assertThat(day3.getIngestionStatus()).isEqualTo("MISSED_DATE");
     }
 }

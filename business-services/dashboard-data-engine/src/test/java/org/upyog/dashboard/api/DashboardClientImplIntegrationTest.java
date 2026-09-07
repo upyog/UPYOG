@@ -12,7 +12,7 @@ import org.upyog.dashboard.pt.dto.PTAggregatedData;
 import org.upyog.dashboard.pt.dto.PTDTO;
 import org.upyog.dashboard.transformer.impl.PTTransformer;
 import org.upyog.dashboard.registry.TransformerRegistry;
-import org.upyog.dashboard.service.AuditService;
+import org.upyog.dashboard.service.IngestionRecordPersistenceService;
 import org.upyog.dashboard.service.OAuthTokenService;
 import org.upyog.dashboard.validator.CommonValidator;
 import org.upyog.dashboard.common.constants.Module;
@@ -42,7 +42,7 @@ class DashboardClientSimpleTest {
     private UserFeignClient userFeignClient;
 
     @Mock
-    private AuditService auditService;
+    private IngestionRecordPersistenceService persistenceService;
 
     @Mock
     private DashboardProperties dashboardProperties;
@@ -85,7 +85,7 @@ class DashboardClientSimpleTest {
         DashboardDataLoaderImpl httpLoader = new DashboardDataLoaderImpl();
         setField(httpLoader, "dashboardFeignClient", dashboardFeignClient);
         setField(httpLoader, "oAuthTokenService", oAuthTokenService);
-        setField(httpLoader, "auditService", auditService);
+        setField(httpLoader, "persistenceService", persistenceService);
         setField(httpLoader, "dashboardProperties", dashboardProperties);
         setField(httpLoader, "objectMapper", new ObjectMapper());
         setField(httpLoader, "gson", new com.google.gson.Gson());
