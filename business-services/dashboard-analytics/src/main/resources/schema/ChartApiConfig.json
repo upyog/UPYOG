@@ -24763,7 +24763,7 @@
         "dateRefField": "date",
         "requestQueryMap": "{\"state\":\"state.keyword\",\"ulb\":\"ulb.keyword\"}",
         "indexName": "ptr-national-dashboard",
-        "aggrQuery":"{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{}},\"aggs\":{\"State\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Test\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Vaccinated\":{\"sum\":{\"field\":\"totalVaccinatedPet\"}},\"Registered\":{\"sum\":{\"field\":\"totalPetRegistration\"}}}},\"Vaccinated Pets\":{\"sum_bucket\":{\"buckets_path\":\"Test.Vaccinated\"}},\"Registered Pets\":{\"sum_bucket\":{\"buckets_path\":\"Test.Registered\"}},\"Vaccination Percentage\":{\"bucket_script\":{\"buckets_path\":{\"vaccinated\":\"Vaccinated Pets\",\"registered\":\"Registered Pets\"},\"script\":\"params.registered>0 ? (params.vaccinated/params.registered)*100 : 0\"}}}}}}}}"
+        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{}},\"aggs\":{\"State\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Test\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Vaccinated\":{\"sum\":{\"field\":\"totalVaccinatedPet\"}},\"Registered\":{\"sum\":{\"field\":\"totalPetRegistration\"}}}},\"Vaccinated Pets\":{\"sum_bucket\":{\"buckets_path\":\"Test.Vaccinated\"}},\"Registered Pets\":{\"sum_bucket\":{\"buckets_path\":\"Test.Registered\"}},\"Vaccination Percentage\":{\"bucket_script\":{\"buckets_path\":{\"vaccinated\":\"Vaccinated Pets\",\"registered\":\"Registered Pets\"},\"script\":\"params.registered>0 ? (params.vaccinated/params.registered)*100 : 0\"}}}}}}}}"
       }
     ],
     "chartType": "metric",
@@ -25455,15 +25455,15 @@
     "insight": {},
     "_comment": "ADV Total Cumulative Collection over months"
   },
-  "financeTotalDebit": {
-    "chartName": "FINANCE_TOTAL_DEBIT",
+  "financeTotalRevenueCollected":{
+    "chartName": "FINANCE_TOTAL_REVENUE",
     "queries": [
       {
         "module": "FINANCE",
         "dateRefField": "date",
         "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
         "indexName": "finance-national-dashboard",
-        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Total Debit\":{\"sum\":{\"field\":\"debit\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+        "aggrQuery": "{\"aggs\":{\"Total Revenue Collected\":{\"sum\":{\"field\":\"totalRevenueCollected\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}"
       }
     ],
     "chartType": "metric",
@@ -25472,21 +25472,21 @@
     "documentType": "_doc",
     "action": "",
     "aggregationPaths": [
-      "Total Debit"
+      "Total Revenue Collected"
     ],
     "isRoundOff": false,
     "TodaysCollection": true,
     "postAggregationTheory": "TodaysCollection"
   },
-  "financeTotalCredit": {
-    "chartName": "FINANCE_TOTAL_CREDIT",
+  "financeTotalExpenditures":{
+    "chartName": "FINANCE_TOTAL_EXPENDITURE",
     "queries": [
       {
         "module": "FINANCE",
         "dateRefField": "date",
         "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
         "indexName": "finance-national-dashboard",
-        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Total Credit\":{\"sum\":{\"field\":\"credit\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+        "aggrQuery": "{\"aggs\":{\"Total Expenditure\":{\"sum\":{\"field\":\"totalCurrentExpenditure\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}"
       }
     ],
     "chartType": "metric",
@@ -25495,21 +25495,21 @@
     "documentType": "_doc",
     "action": "",
     "aggregationPaths": [
-      "Total Credit"
+      "Total Expenditure"
     ],
     "isRoundOff": false,
     "TodaysCollection": true,
     "postAggregationTheory": "TodaysCollection"
   },
-  "financeTotalAmount": {
-    "chartName": "FINANCE_TOTAL_AMOUNT",
+  "financePreviousYearRevenueCollected": {
+    "chartName": "FINANCE_PREVIOUS_YEAR_REVENUE",
     "queries": [
       {
         "module": "FINANCE",
-        "dateRefField": "date",
+        "dateRefField": "",
         "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
         "indexName": "finance-national-dashboard",
-        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Total Amount\":{\"sum\":{\"field\":\"amount\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+        "aggrQuery": "{\"aggs\":{\"Previous Year Revenue\":{\"filter\":{\"range\":{\"date\":{\"gte\":\"now-1y/d\",\"lte\":\"now-1y/d\"}}},\"aggs\":{\"Revenue\":{\"sum\":{\"field\":\"totalRevenueCollected\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
       }
     ],
     "chartType": "metric",
@@ -25518,44 +25518,21 @@
     "documentType": "_doc",
     "action": "",
     "aggregationPaths": [
-      "Total Amount"
+      "Revenue"
     ],
     "isRoundOff": false,
     "TodaysCollection": true,
     "postAggregationTheory": "TodaysCollection"
   },
-  "financeTotalVouchers": {
-    "chartName": "FINANCE_TOTAL_VOUCHERS",
+  "financePreviousYearExpenditure": {
+    "chartName": "FINANCE_PREVIOUS_YEAR_EXPENDITURE",
     "queries": [
       {
         "module": "FINANCE",
-        "dateRefField": "date",
+        "dateRefField": "",
         "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
         "indexName": "finance-national-dashboard",
-        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Total Vouchers\":{\"cardinality\":{\"field\":\"voucherId.keyword\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
-      }
-    ],
-    "chartType": "metric",
-    "valueType": "number",
-    "drillChart": "none",
-    "documentType": "_doc",
-    "action": "",
-    "aggregationPaths": [
-      "Total Vouchers"
-    ],
-    "isRoundOff": false,
-    "TodaysCollection": true,
-    "postAggregationTheory": "TodaysCollection"
-  },
-  "financeAverageBalance": {
-    "chartName": "FINANCE_AVERAGE_BALANCE",
-    "queries": [
-      {
-        "module": "FINANCE",
-        "dateRefField": "date",
-        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
-        "indexName": "finance-national-dashboard",
-        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Average Balance\":{\"avg\":{\"field\":\"balance\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+        "aggrQuery": "{\"aggs\":{\"Previous Year Expenditure\":{\"filter\":{\"range\":{\"date\":{\"gte\":\"now-1y/d\",\"lte\":\"now-1y/d\"}}},\"aggs\":{\"Expenditure\":{\"sum\":{\"field\":\"totalCurrentExpenditure\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
       }
     ],
     "chartType": "metric",
@@ -25564,63 +25541,136 @@
     "documentType": "_doc",
     "action": "",
     "aggregationPaths": [
-      "Average Balance"
+      "Expenditure"
     ],
     "isRoundOff": false,
     "TodaysCollection": true,
     "postAggregationTheory": "TodaysCollection"
   },
-  "financeVoucherTypeDistribution": {
-    "chartName": "FINANCE_VOUCHER_TYPE_DISTRIBUTION",
+  "financeOutstandingDebt": {
+    "chartName": "FINANCE_OUTSTANDING_DEBT",
     "queries": [
       {
         "module": "FINANCE",
-        "indexName": "finance-national-dashboard",
-        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
         "dateRefField": "date",
-        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{}},\"aggs\":{\"Voucher Type\":{\"terms\":{\"field\":\"voucherType.keyword\",\"size\":10},\"aggs\":{\"Total Amount\":{\"sum\":{\"field\":\"amount\"}}}}}}}}"
+        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
+        "indexName": "finance-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Total Outstanding Debt\":{\"sum\":{\"field\":\"totalOutstandingDebt\"}},\"Total Revenue\":{\"sum\":{\"field\":\"totalRevenueCollected\"}},\"Outstanding Debt Percentage\":{\"bucket_script\":{\"buckets_path\":{\"debt\":\"Total Outstanding Debt\",\"revenue\":\"Total Revenue\"},\"script\":\"params.revenue > 0 ? (params.debt / params.revenue) * 100 : 0\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
       }
     ],
-    "chartType": "pie",
-    "valueType": "number",
+    "chartType": "metric",
+    "valueType": "percentage",
     "drillChart": "none",
     "documentType": "_doc",
     "action": "",
     "aggregationPaths": [
-      "Voucher Type"
+      "Outstanding Debt Percentage"
     ],
-    "insight": {}
+    "isRoundOff": false,
+    "TodaysCollection": true,
+    "postAggregationTheory": "TodaysCollection"
   },
-  "financePaymentModeDistribution": {
-    "chartName": "FINANCE_PAYMENT_MODE_DISTRIBUTION",
+  "financeAuditCompletionRate": {
+    "chartName": "AUDIT_COMPLETION_RATE",
     "queries": [
       {
         "module": "FINANCE",
-        "indexName": "finance-national-dashboard",
-        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
         "dateRefField": "date",
-        "aggrQuery": "{\"aggs\":{\"AGGR\":{\"filter\":{\"bool\":{}},\"aggs\":{\"Payment Mode\":{\"terms\":{\"field\":\"paymentMode.keyword\",\"size\":10},\"aggs\":{\"Total Amount\":{\"sum\":{\"field\":\"amount\"}}}}}}}}"
+        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
+        "indexName": "finance-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Total Audits Completed\":{\"sum\":{\"field\":\"totalAuditsCompleted\"}},\"Total Audits\":{\"sum\":{\"field\":\"totalAudits\"}},\"Audit Completion Rate\":{\"bucket_script\":{\"buckets_path\":{\"completed\":\"Total Audits Completed\",\"total\":\"Total Audits\"},\"script\":\"params.total > 0 ? (params.completed / params.total) * 100 : 0\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
       }
     ],
-    "chartType": "pie",
-    "valueType": "number",
+    "chartType": "metric",
+    "valueType": "percentage",
     "drillChart": "none",
     "documentType": "_doc",
     "action": "",
     "aggregationPaths": [
-      "Payment Mode"
+      "Audit Completion Rate"
     ],
-    "insight": {}
+    "isRoundOff": false,
+    "TodaysCollection": true,
+    "postAggregationTheory": "TodaysCollection"
   },
-  "financeDebitVsCreditLines": {
-    "chartName": "FINANCE_DEBIT_VS_CREDIT",
+  "financePendingBills": {
+    "chartName": "FINANCE_PENDING_BILLS",
     "queries": [
       {
         "module": "FINANCE",
         "dateRefField": "date",
         "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
         "indexName": "finance-national-dashboard",
-        "aggrQuery": "{\"aggs\":{\"Debit\":{\"date_histogram\":{\"field\":\"date\",\"calendar_interval\":\"month\",\"min_doc_count\":1},\"aggs\":{\"Sum\":{\"sum\":{\"field\":\"debit\"}}}},\"Credit\":{\"date_histogram\":{\"field\":\"date\",\"calendar_interval\":\"month\",\"min_doc_count\":1},\"aggs\":{\"Sum\":{\"sum\":{\"field\":\"credit\"}}}}}}"
+        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Pending Bills\":{\"sum\":{\"field\":\"pendingBills\"}},\"Total Bills\":{\"sum\":{\"field\":\"totalBills\"}},\"Pending Bills Percentage\":{\"bucket_script\":{\"buckets_path\":{\"pending\":\"Pending Bills\",\"total\":\"Total Bills\"},\"script\":\"params.total > 0 ? (params.pending / params.total) * 100 : 0\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "percentage",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Pending Bills Percentage"
+    ],
+    "isRoundOff": true,
+    "TodaysCollection": true,
+    "postAggregationTheory": "TodaysCollection"
+  },
+  "financeFundBalance": {
+    "chartName": "FINANCE_FUND_BALANCE",
+    "queries": [
+      {
+        "module": "FINANCE",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
+        "indexName": "finance-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Fund Balance\":{\"sum\":{\"field\":\"totalFundBalance\"}},\"Fund Requirement\":{\"sum\":{\"field\":\"totalFundRequirement\"}},\"Fund Balance Percentage\":{\"bucket_script\":{\"buckets_path\":{\"balance\":\"Fund Balance\",\"requirement\":\"Fund Requirement\"},\"script\":\"params.requirement > 0 ? (params.balance / params.requirement) * 100 : 0\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "percentage",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Fund Balance Percentage"
+    ],
+    "isRoundOff": true,
+    "TodaysCollection": true,
+    "postAggregationTheory": "TodaysCollection"
+  },
+  "financeRevenueToExpenditureRatio": {
+    "chartName": "FINANCE_REVENUE_TO_EXPENDITURE_RATIO",
+    "queries": [
+      {
+        "module": "FINANCE",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
+        "indexName": "finance-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Total Revenue\":{\"sum\":{\"field\":\"totalRevenueCollected\"}},\"Total Expenditure\":{\"sum\":{\"field\":\"totalCurrentExpenditure\"}},\"Revenue to Expenditure Ratio\":{\"bucket_script\":{\"buckets_path\":{\"revenue\":\"Total Revenue\",\"expenditure\":\"Total Expenditure\"},\"script\":\"params.expenditure > 0 ? (params.revenue * 100.0) / params.expenditure : 0\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "percentage",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Revenue to Expenditure Ratio"
+    ],
+    "isRoundOff": false,
+    "TodaysCollection": true,
+    "postAggregationTheory": "TodaysCollection"
+  },
+  "financeIncomeExpenditureForLines": {
+    "chartName": "NSS_REVENUE_VS_EXPENDITURE",
+    "queries": [
+      {
+        "module": "FINANCE",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
+        "indexName": "finance-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Revenue\":{\"date_histogram\":{\"field\":\"date\",\"calendar_interval\":\"month\",\"min_doc_count\":1},\"aggs\":{\"Sum\":{\"sum\":{\"field\":\"totalRevenueCollected\"}}}},\"Expenditure\":{\"date_histogram\":{\"field\":\"date\",\"calendar_interval\":\"month\",\"min_doc_count\":1},\"aggs\":{\"Sum\":{\"sum\":{\"field\":\"totalCurrentExpenditure\"}}}}}}"
       }
     ],
     "chartType": "line",
@@ -25629,8 +25679,32 @@
     "drillChart": "none",
     "documentType": "_doc",
     "aggregationPaths": [
-      "Debit",
-      "Credit"
+      "Revenue",
+      "Expenditure"
+    ],
+    "isCumulative": false,
+    "interval": "month",
+    "intervalColumn": "date",
+    "insight": {}
+  },
+  "financeTotalCollectionForLines": {
+    "chartName": "DSS_FINANCE_TOTAL_COLLECTION",
+    "queries": [
+      {
+        "module": "FINANCE",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
+        "indexName": "finance-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Collection\":{\"date_histogram\":{\"field\":\"date\",\"calendar_interval\":\"month\",\"min_doc_count\":1},\"aggs\":{\"Sum\":{\"sum\":{\"field\":\"totalRevenueCollected\"}}}}}}"
+      }
+    ],
+    "chartType": "line",
+    "valueType": "amount",
+    "action": "",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "aggregationPaths": [
+      "Collection"
     ],
     "isCumulative": false,
     "interval": "month",
@@ -25691,7 +25765,7 @@
         "dateRefField": "date",
         "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
         "indexName": "chb-national-dashboard",
-        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Approved\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"Approved\"}},\"aggs\":{\"Approved Bookings\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Approved\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"BOOKED\"}},\"aggs\":{\"Approved Bookings\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
       }
     ],
     "chartType": "metric",
@@ -25737,7 +25811,7 @@
         "dateRefField": "date",
         "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
         "indexName": "chb-national-dashboard",
-        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Cancelled\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"Cancelled\"}},\"aggs\":{\"Cancelled Bookings\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Cancelled\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"CANCELLED\"}},\"aggs\":{\"Cancelled Bookings\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
       }
     ],
     "chartType": "metric",
@@ -25760,7 +25834,7 @@
         "dateRefField": "date",
         "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
         "indexName": "chb-national-dashboard",
-        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Approved\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"Approved\"}},\"aggs\":{\"Approved Bookings\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}},\"Total Applications\":{\"sum\":{\"field\":\"totalApplicationReceived\"}},\"Approval Rate\":{\"bucket_script\":{\"buckets_path\":{\"approved\":\"Approved>Approved Bookings\",\"applications\":\"Total Applications\"},\"script\":\"params.applications > 0 ? (params.approved / params.applications) * 100 : 0\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Approved\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"BOOKED\"}},\"aggs\":{\"Approved Bookings\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}},\"Total Applications\":{\"sum\":{\"field\":\"totalApplicationReceived\"}},\"Approval Rate\":{\"bucket_script\":{\"buckets_path\":{\"approved\":\"Approved>Approved Bookings\",\"applications\":\"Total Applications\"},\"script\":\"params.applications > 0 ? (params.approved / params.applications) * 100 : 0\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
       }
     ],
     "chartType": "metric",
@@ -25806,7 +25880,7 @@
         "dateRefField": "date",
         "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
         "indexName": "chb-national-dashboard",
-        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Approved\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"Approved\"}},\"aggs\":{\"Approved Bookings\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}},\"Cancelled\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"Cancelled\"}},\"aggs\":{\"Cancelled Bookings\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}},\"Cancellation Rate\":{\"bucket_script\":{\"buckets_path\":{\"approved\":\"Approved>Approved Bookings\",\"cancelled\":\"Cancelled>Cancelled Bookings\"},\"script\":\"params.approved > 0 ? (params.cancelled / params.approved) * 100 : 0\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Approved\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"BOOKED\"}},\"aggs\":{\"Approved Bookings\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}},\"Cancelled\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"CANCELLED\"}},\"aggs\":{\"Cancelled Bookings\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}},\"Cancellation Rate\":{\"bucket_script\":{\"buckets_path\":{\"approved\":\"Approved>Approved Bookings\",\"cancelled\":\"Cancelled>Cancelled Bookings\"},\"script\":\"params.approved > 0 ? (params.cancelled / params.approved) * 100 : 0\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
       }
     ],
     "chartType": "metric",
@@ -25829,7 +25903,7 @@
         "dateRefField": "date",
         "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
         "indexName": "chb-national-dashboard",
-        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Approved\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"Approved\"}},\"aggs\":{\"Approved Bookings\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}},\"Total Collections\":{\"sum\":{\"field\":\"totalCollections\"}},\"Average Revenue Per Booking\":{\"bucket_script\":{\"buckets_path\":{\"approved\":\"Approved>Approved Bookings\",\"collections\":\"Total Collections\"},\"script\":\"params.approved > 0 ? params.collections / params.approved : 0\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
+        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Approved\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"BOOKED\"}},\"aggs\":{\"Approved Bookings\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}},\"Current FY Collections\":{\"filter\":{\"range\":{\"date\":{\"gte\":\"01-04-2026\",\"lte\":\"now\"}}},\"aggs\":{\"Total Collections\":{\"sum\":{\"field\":\"totalCollections\"}}}},\"Average Revenue Per Booking\":{\"bucket_script\":{\"buckets_path\":{\"approved\":\"Approved>Approved Bookings\",\"collections\":\"Current FY Collections>Total Collections\"},\"script\":\"params.approved > 0 ? params.collections / params.approved : 0\"}},\"todaysDate\":{\"terms\":{\"field\":\"date\",\"order\":{\"_key\":\"desc\"},\"size\":1}},\"lastUpdatedTime\":{\"terms\":{\"field\":\"lastModifiedTime\",\"order\":{\"_key\":\"desc\"},\"size\":1}}}}}}"
       }
     ],
     "chartType": "metric",
@@ -25898,7 +25972,7 @@
         "dateRefField": "date",
         "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
         "indexName": "chb-national-dashboard",
-        "aggrQuery": "{\"aggs\":{\"Bookings\":{\"date_histogram\":{\"field\":\"date\",\"calendar_interval\":\"month\"},\"aggs\":{\"Approved Bookings\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"Approved\"}},\"aggs\":{\"Sum\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}}}}}}"
+        "aggrQuery": "{\"aggs\":{\"Bookings\":{\"date_histogram\":{\"field\":\"date\",\"calendar_interval\":\"month\"},\"aggs\":{\"Approved Bookings\":{\"filter\":{\"term\":{\"bookingStatus.keyword\":\"BOOKED\"}},\"aggs\":{\"Sum\":{\"sum\":{\"field\":\"bookingsForBookingStatus\"}}}}}}}}"
       }
     ],
     "chartType": "line",
@@ -25912,7 +25986,7 @@
     "isCumulative": false,
     "interval": "month",
     "insight": {},
-    "_comment": "Monthly Approved Bookings"
+    "_comment": "Monthly BOOKED bookings"
   },
   "chbTotalCollections": {
     "chartName": "NSS_CHB_TOTAL_COLLECTIONS",
@@ -25959,5 +26033,51 @@
     ],
     "insight": {},
     "_comment": "Booking Status Distribution (Approved, Rejected, Cancelled)"
+  },
+  "financeRevenueSurplusDeficit": {
+    "chartName": "NSS_FIN_REVENUE_SURPLUS_DEFICIT",
+    "queries": [
+      {
+        "module": "FIN",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
+        "indexName": "finance-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Total Revenue Collected\":{\"sum\":{\"field\":\"totalRevenueCollected\"}},\"Total Current Expenditure\":{\"sum\":{\"field\":\"totalCurrentExpenditure\"}},\"Revenue Surplus Deficit\":{\"bucket_script\":{\"buckets_path\":{\"revenue\":\"Total Revenue Collected\",\"expenditure\":\"Total Current Expenditure\"},\"script\":\"params.revenue - params.expenditure\"}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "number",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Revenue Surplus Deficit"
+    ],
+    "isRoundOff": false,
+    "TodaysCollection": false,
+    "postAggregationTheory": "TodaysCollection"
+  },
+  "financeSelfRelianceScore": {
+    "chartName": "NSS_FIN_SELF_RELIANCE_SCORE",
+    "queries": [
+      {
+        "module": "FIN",
+        "dateRefField": "date",
+        "requestQueryMap": "{\"state\":\"state\",\"ulb\":\"ulb\"}",
+        "indexName": "finance-national-dashboard",
+        "aggrQuery": "{\"aggs\":{\"Module\":{\"terms\":{\"field\":\"module\"},\"aggs\":{\"Own Source Revenue\":{\"sum\":{\"field\":\"ownSourceRevenue\"}},\"Total Revenue Collected\":{\"sum\":{\"field\":\"totalRevenueCollected\"}},\"Self Reliance Score\":{\"bucket_script\":{\"buckets_path\":{\"osr\":\"Own Source Revenue\",\"revenue\":\"Total Revenue Collected\"},\"script\":\"params.revenue > 0 ? (params.osr / params.revenue) * 100 : 0\"}}}}}}"
+      }
+    ],
+    "chartType": "metric",
+    "valueType": "percentage",
+    "drillChart": "none",
+    "documentType": "_doc",
+    "action": "",
+    "aggregationPaths": [
+      "Self Reliance Score"
+    ],
+    "isRoundOff": false,
+    "TodaysCollection": false,
+    "postAggregationTheory": "TodaysCollection"
   }
 }
