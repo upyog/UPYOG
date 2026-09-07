@@ -247,7 +247,9 @@
 
         if (errorMsg) {
           errorText.style.display = "block";
-          errorText.textContent = "Failed to send OTP: " + errorMsg;
+          errorText.textContent = (typeof errorMsg === 'string' && errorMsg.length < 70 && !errorMsg.includes('{') && !errorMsg.includes('Exception')) 
+            ? errorMsg 
+            : "Failed to send OTP. Please verify your 10-digit mobile number and try again.";
           return;
         }
 
@@ -281,12 +283,10 @@
           body: JSON.stringify({ mobile: phone, otp: otp })
         });
         if (!response.ok) {
-          const errData = await response.json();
-          let errMsg = "Invalid OTP. Please try again.";
-          if (errData.error) {
-            errMsg = typeof errData.error === 'object' ? (errData.error.message || errData.error.description || JSON.stringify(errData.error)) : errData.error;
-          } else if (errData.Errors && errData.Errors.length > 0) {
-            errMsg = errData.Errors[0].message || errData.Errors[0].code;
+          const errData = await response.json().catch(() => ({}));
+          let errMsg = "Invalid OTP. Please check the 6-digit code and try again.";
+          if (errData && errData.error && typeof errData.error === 'string' && errData.error.length < 70 && !errData.error.includes('{') && !errData.error.includes('Exception')) {
+            errMsg = errData.error;
           }
           errorText.style.display = "block";
           errorText.textContent = errMsg;
@@ -1305,8 +1305,20 @@
         }
 
         if (data.error) {
-          addBotMessage('Sorry, an error occurred.', null, null, null, null);
-          setState(States.LISTENING); onTurnComplete(); return;
+          let errContent = data.response;
+          if (!errContent) {
+            const errLower = String(data.error).toLowerCase();
+            if (errLower.includes('token') || errLower.includes('rate_limit') || errLower.includes('429')) {
+              errContent = "The AI assistant has temporarily reached its token limit. Please wait a moment and try again with a shorter message.";
+            } else if (errLower.includes('401') || errLower.includes('unauthorized') || errLower.includes('session') || errLower.includes('auth')) {
+              errContent = "Your login session has expired. Please log in again using the Login button to continue.";
+            } else {
+              errContent = "I am currently unable to process your request. Please try again in a few moments.";
+            }
+          }
+          addBotMessage(errContent, 'error', null, null, null);
+          if (data.audio) { playAudio(data.audio); } else { setState(States.LISTENING); onTurnComplete(); }
+          return;
         }
 
         const detectedLang = data.lang || 'en';
@@ -1332,7 +1344,7 @@
         if (data.audio) { playAudio(data.audio); } else { setState(States.LISTENING); onTurnComplete(); }
 
       } catch (error) {
-        if (error.name !== 'AbortError') addBotMessage('Sorry, connection failed.', null, null, null, null);
+        if (error.name !== 'AbortError') addBotMessage("I am unable to reach the server at the moment. Please check your internet connection and try again.", null, null, null, null);
         setState(States.LISTENING); currentFetch = null; onTurnComplete();
       }
     }
