@@ -29,4 +29,11 @@ public class MdmsDataRepositoryImpl implements MdmsDataRepository {
         String query = queryBuilder.getMdmsDataSearchAllQuery();
         return jdbcTemplate.query(query, rowMapper);
     }
+
+    @Override
+    public List<Map<String, Object>> search(String tenantId, String schemaCode, String uniqueIdentifier, String id) {
+        java.util.List<Object> preparedStmtList = new java.util.ArrayList<>();
+        String query = queryBuilder.getMdmsDataSearchQuery(tenantId, schemaCode, uniqueIdentifier, id, preparedStmtList);
+        return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+    }
 }

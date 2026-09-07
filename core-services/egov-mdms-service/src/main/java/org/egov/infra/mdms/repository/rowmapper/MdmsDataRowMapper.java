@@ -28,6 +28,11 @@ public class MdmsDataRowMapper implements RowMapper<Map<String, Object>> {
         map.put("schemacode", rs.getString("schemacode"));
         map.put("id", rs.getString("id"));
         map.put("uniqueidentifier", rs.getString("uniqueidentifier"));
+        try {
+            map.put("isactive", rs.getObject("isactive") != null ? rs.getBoolean("isactive") : Boolean.TRUE);
+        } catch (Exception e) {
+            map.put("isactive", Boolean.TRUE);
+        }
         
         Object dataObj = rs.getObject("data");
         try {

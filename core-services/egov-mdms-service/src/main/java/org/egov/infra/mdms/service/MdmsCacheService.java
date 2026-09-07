@@ -205,6 +205,26 @@ public class MdmsCacheService {
 		String effectiveTenantId = getEffectiveTenantId(tenantId, moduleName, masterName);
 		JSONArray masterData = getOrCreateMasterData(effectiveTenantId, moduleName, masterName);
 
+		// If DB loading is enabled, verify persistence in DB before updating in-memory
+		// cache
+		if (dbLoadEnabled && (uniqueIdentifier != null || id != null)) {
+			Map<String, Object> dbRow = fetchRecordFromDbWithRetry(tenantId, schemaCode, uniqueIdentifier, id, data, isActive);
+			if (dbRow == null) {
+				log.error(
+						"Record for tenantId: {}, schemaCode: {}, uniqueIdentifier: {}, id: {} NOT found or data did not reflect update in DB after retries. Persistence failed or pending. Skipping cache update.",
+						tenantId, schemaCode, uniqueIdentifier, id);
+				return;
+			}
+			if (dbRow.get("data") != null) {
+				data = dbRow.get("data");
+			}
+			if (dbRow.get("isactive") != null) {
+				isActive = Boolean.valueOf(String.valueOf(dbRow.get("isactive")));
+			}
+			log.info("Successfully verified updated record in DB for {}.{} under tenant {}. Updating cache.", moduleName,
+					masterName, effectiveTenantId);
+		}
+
 		if (!isActive) {
 			removeKafkaRecord(masterData, id, uniqueIdentifier, moduleName, masterName);
 			MDMSApplicationRunnerImpl.refreshMasterTopLevelIdState(effectiveTenantId, moduleName, masterName,
@@ -221,6 +241,75 @@ public class MdmsCacheService {
 		}
 
 		MDMSApplicationRunnerImpl.refreshMasterTopLevelIdState(effectiveTenantId, moduleName, masterName, masterData);
+	}
+
+	private Map<String, Object> fetchRecordFromDbWithRetry(String tenantId, String schemaCode, String uniqueIdentifier,
+			String id, Object expectedData, Boolean expectedIsActive) {
+		int maxRetries = 5;
+		int retryDelayMs = 250;
+		Map<String, Object> lastFoundDbRow = null;
+
+		for (int attempt = 1; attempt <= maxRetries; attempt++) {
+			try {
+				List<Map<String, Object>> dbRows = mdmsDataRepository.search(tenantId, schemaCode, uniqueIdentifier,
+						id);
+				if (dbRows != null && !dbRows.isEmpty()) {
+					lastFoundDbRow = dbRows.get(0);
+					Object dbData = lastFoundDbRow.get("data");
+					Object dbIsActiveObj = lastFoundDbRow.get("isactive");
+					Boolean dbIsActive = dbIsActiveObj != null ? Boolean.valueOf(String.valueOf(dbIsActiveObj)) : Boolean.TRUE;
+
+					boolean isActiveMatches = (expectedIsActive == null || expectedIsActive.equals(dbIsActive));
+					boolean isDataMatches = isDbDataUpdated(dbData, expectedData);
+
+					if (isActiveMatches && isDataMatches) {
+						log.info("DB record update verified on attempt {}/{} for tenant: {}, schemaCode: {}, uniqueIdentifier: {}",
+								attempt, maxRetries, tenantId, schemaCode, uniqueIdentifier);
+						return lastFoundDbRow;
+					} else {
+						log.info("DB record found for {}.{} (id: {}), but DB data/isActive does not reflect Kafka update yet. Retrying ({}/{})...",
+								schemaCode, uniqueIdentifier, id, attempt, maxRetries);
+					}
+				}
+			} catch (Exception e) {
+				log.error(
+						"Error searching DB for record (tenantId: {}, schemaCode: {}, uniqueIdentifier: {}, id: {}): {}",
+						tenantId, schemaCode, uniqueIdentifier, id, e.getMessage());
+			}
+
+			if (attempt < maxRetries) {
+				try {
+					Thread.sleep(retryDelayMs);
+				} catch (InterruptedException ie) {
+					Thread.currentThread().interrupt();
+					break;
+				}
+			}
+		}
+		return lastFoundDbRow;
+	}
+
+	private boolean isDbDataUpdated(Object dbData, Object kafkaData) {
+		if (dbData == null && kafkaData == null) {
+			return true;
+		}
+		if (dbData == null || kafkaData == null) {
+			return false;
+		}
+		if (kafkaData instanceof Map && dbData instanceof Map) {
+			Map<?, ?> kafkaMap = (Map<?, ?>) kafkaData;
+			Map<?, ?> dbMap = (Map<?, ?>) dbData;
+			for (Map.Entry<?, ?> entry : kafkaMap.entrySet()) {
+				Object key = entry.getKey();
+				Object kafkaVal = entry.getValue();
+				Object dbVal = dbMap.get(key);
+				if (!isDeepEqual(kafkaVal, dbVal)) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return isDeepEqual(dbData, kafkaData);
 	}
 
 	/**
