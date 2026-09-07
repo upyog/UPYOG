@@ -50,7 +50,7 @@ package org.egov.egf.web.controller.purchaseorder;
 import java.io.IOException;
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.commons.service.FundService;
 import org.egov.egf.masters.services.PurchaseOrderService;
@@ -62,7 +62,7 @@ import org.egov.model.bills.EgBillregister;
 import org.egov.model.masters.PurchaseOrder;
 import org.egov.model.masters.PurchaseOrderSearchRequest;
 import org.egov.services.bills.EgBillRegisterService;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -183,7 +183,7 @@ public class PurchaseOrderController {
 	}
 
 	@PostMapping(value = "/search/{mode}")
-	public String search(@PathVariable("mode") @SafeHtml final String mode, final Model model) {
+	public String search(@PathVariable("mode") @SanitizeHtml final String mode, final Model model) {
 		final PurchaseOrderSearchRequest purchaseOrderSearchRequest = new PurchaseOrderSearchRequest();
 		prepareNewForm(model);
 		model.addAttribute(PURCHASE_ORDER_SEARCH_REQUEST, purchaseOrderSearchRequest);
@@ -193,7 +193,7 @@ public class PurchaseOrderController {
 
 	@PostMapping(value = "/ajaxsearch/{mode}", produces = MediaType.TEXT_PLAIN_VALUE)
 	@ResponseBody
-	public String ajaxsearch(@PathVariable("mode") @SafeHtml final String mode, final Model model,
+	public String ajaxsearch(@PathVariable("mode") @SanitizeHtml final String mode, final Model model,
 			@Valid @ModelAttribute final PurchaseOrderSearchRequest purchaseOrderSearchRequest) {
 		final List<PurchaseOrder> searchResultList = purchaseOrderService.search(purchaseOrderSearchRequest);
 		return new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}").toString();
@@ -206,7 +206,7 @@ public class PurchaseOrderController {
 	}
 
 	@GetMapping(value = "/result/{id}/{mode}")
-	public String result(@PathVariable("id") final Long id, @PathVariable("mode") @SafeHtml final String mode,
+	public String result(@PathVariable("id") final Long id, @PathVariable("mode") @SanitizeHtml final String mode,
 			final Model model) {
 		final PurchaseOrder purchaseOrder = purchaseOrderService.getById(id);
 		populateDepartmentName(purchaseOrder);

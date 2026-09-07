@@ -52,8 +52,8 @@ const SelectDocuments = ({
     return <Loader />;
   }
   return <div>
-      {isMutation ? <CardSectionHeader>{t("PT_MUTATION_DOCUMENTS_HEADER")} </CardSectionHeader> : null}
-      {propertyTaxDocuments?.map((document, index) => {
+    {isMutation ? <CardSectionHeader>{t("PT_MUTATION_DOCUMENTS_HEADER")} </CardSectionHeader> : null}
+    {propertyTaxDocuments?.map((document, index) => {
       // if (document.code === "OWNER.SPECIALCATEGORYPROOF") {
       //   if (formData?.owners?.every((user) => user.ownerType.code === "NONE" || !user.ownerType?.code)) {
       //     return null;
@@ -61,8 +61,8 @@ const SelectDocuments = ({
       // }
       return <SelectDocument key={index} document={document} action={action} t={t} id={`pt-document-${index}`} error={error} setError={setError} setDocuments={setDocuments} documents={documents} formData={formData} setFormError={setFormError} clearFormErrors={clearFormErrors} config={config} formState={formState} propertyInitialValues={propertyInitialValues} />;
     })}
-      {error && <Toast label={error} onClose={() => setError(null)} error />}
-    </div>;
+    {error && <Toast label={error} onClose={() => setError(null)} error />}
+  </div>;
 };
 function SelectDocument({
   t,
@@ -161,11 +161,11 @@ function SelectDocument({
         ...e,
         i18nKey: e?.code?.replaceAll(".", "_")
       }))[0];
-      if (!docType) setHidden(true);else {
+      if (!docType) setHidden(true); else {
         setSelectedDocument(docType);
         setUploadedFile(originalDoc?.fileStoreId);
       }
-    } else if (action === "create") {}
+    } else if (action === "create") { }
   }, []);
   useEffect(() => {
     (async () => {
@@ -294,30 +294,30 @@ function SelectDocument({
     dropDownData = dropDownData.filter(e => e.code?.split(".")[2] === formData?.additionalDetails?.reasonForTransfer?.code);
   }
   return <div className="pt-auto-77">
-      {doc?.hasDropdown ? <LabelFieldPair>
-          <CardLabel className="card-label-smaller">
-          <React.Fragment>
-              {t(doc?.code.replaceAll(".", "_"))} <span className="check-page-link-button"> *</span>
-          </React.Fragment>
-          </CardLabel>
-          <Dropdown className="form-field" selected={selectedDocument} disable={dropDownData?.length === 0 || (propertyInitialValues?.documents && propertyInitialValues?.documents.length > 0 && propertyInitialValues?.documents.filter(document => document.documentType.includes(doc?.code)).length > 0 ? enabledActions?.[action].disableDropdown : false)} option={dropDownData.map(e => ({
+    {doc?.hasDropdown ? <LabelFieldPair>
+      <CardLabel className="card-label-smaller">
+        <React.Fragment>
+          {t(doc?.code.replaceAll(".", "_"))} <span className="check-page-link-button"> *</span>
+        </React.Fragment>
+      </CardLabel>
+      <Dropdown className="form-field" selected={selectedDocument} disable={dropDownData?.length === 0 || (propertyInitialValues?.documents && propertyInitialValues?.documents.length > 0 && propertyInitialValues?.documents.filter(document => document.documentType.includes(doc?.code)).length > 0 ? enabledActions?.[action].disableDropdown : false)} option={dropDownData.map(e => ({
         ...e,
         i18nKey: e.code?.replaceAll(".", "_")
       }))} select={handleSelectDocument} optionKey="i18nKey" t={t} />
-        </LabelFieldPair> : null}
-      <LabelFieldPair>
-        <CardLabel className="card-label-smaller"></CardLabel>
-        <div className="field">
-          <UploadFile onUpload={selectfile} onDelete={() => {
+    </LabelFieldPair> : null}
+    <LabelFieldPair>
+      <CardLabel className="card-label-smaller"></CardLabel>
+      <div className="field">
+        <UploadFile onUpload={selectfile} onDelete={() => {
           setUploadedFile(null);
         }} id={id} message={uploadedFile ? `1 ${t(`CS_ACTION_FILEUPLOADED`)}` : t(`CS_ACTION_NO_FILEUPLOADED`)} textStyles={{
           width: "100%"
         }} inputStyles={{
           width: "280px"
         }} disabled={(propertyInitialValues?.documents && propertyInitialValues?.documents.length > 0 && propertyInitialValues?.documents.filter(document => document.documentType.includes(doc?.code)).length > 0 ? enabledActions?.[action].disableUpload : false) || !selectedDocument?.code} buttonType="button" error={!uploadedFile} />
-          <div className="pt-auto-78">{t("CS_FILE_SIZE_RESTRICTIONS_PT")}</div>
-        </div>
-      </LabelFieldPair>
-    </div>;
+        <div className="pt-auto-78">{t("CS_FILE_SIZE_RESTRICTIONS_PT")}</div>
+      </div>
+    </LabelFieldPair>
+  </div>;
 }
 export default SelectDocuments;

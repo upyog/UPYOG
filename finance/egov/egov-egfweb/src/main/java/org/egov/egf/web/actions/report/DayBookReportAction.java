@@ -50,8 +50,8 @@ package org.egov.egf.web.actions.report;
 import com.exilant.GLEngine.DayBook;
 import com.exilant.eGov.src.reports.DayBookReportBean;
 import com.exilant.exility.common.TaskFailedException;
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import org.apache.struts2.validator.annotations.RequiredFieldValidator;
+import org.apache.struts2.validator.annotations.Validations;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -64,10 +64,13 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.FlushMode;
-import org.hibernate.Query;
+
+import org.hibernate.query.Query;
+import jakarta.persistence.FlushModeType;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.StringType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -119,7 +122,7 @@ public class DayBookReportAction extends BaseFormAction {
     public void prepareNewForm() {
         super.prepare();
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setFlushMode(FlushModeType.COMMIT);
         addDropdownData("fundList",
                 persistenceService.findAllBy(" from Fund where isactive=true and isnotleaf=false order by name"));
         currentDate = formatter.format(todayDate);
@@ -153,7 +156,7 @@ public class DayBookReportAction extends BaseFormAction {
         titleName = microserviceUtils.getHeaderNameForTenant().toUpperCase()+" \\n";
         prepareNewForm();
 
-        persistenceService.getSession().setFlushMode(FlushMode.AUTO);
+        persistenceService.getSession().setFlushMode(FlushModeType.AUTO);
         return "result";
     }
 
@@ -191,17 +194,17 @@ public class DayBookReportAction extends BaseFormAction {
     private void prepareResultList() {
     	String voucherDate = "", voucherNumber = "", voucherType = "", narration = "", status = "";
         final Map.Entry<String, Map<String, Object>> queryMapEntry = getQuery().entrySet().iterator().next();
-        final Query query = persistenceService.getSession().createSQLQuery(queryMapEntry.getKey())
-                .addScalar("voucherdate", StringType.INSTANCE)
-                .addScalar("vouchernumber", StringType.INSTANCE)
-                .addScalar("glcode", StringType.INSTANCE)
-                .addScalar("particulars", StringType.INSTANCE)
-                .addScalar("type", StringType.INSTANCE)
-                .addScalar("narration", StringType.INSTANCE)
-                .addScalar("status", StringType.INSTANCE)
-                .addScalar("creditamount", StringType.INSTANCE)
-                .addScalar("debitamount", StringType.INSTANCE)
-                .addScalar("vhId", StringType.INSTANCE)
+        final Query query = persistenceService.getSession().createNativeQuery(queryMapEntry.getKey())
+                .addScalar("voucherdate", StandardBasicTypes.STRING)
+                .addScalar("vouchernumber", StandardBasicTypes.STRING)
+                .addScalar("glcode", StandardBasicTypes.STRING)
+                .addScalar("particulars", StandardBasicTypes.STRING)
+                .addScalar("type", StandardBasicTypes.STRING)
+                .addScalar("narration", StandardBasicTypes.STRING)
+                .addScalar("status", StandardBasicTypes.STRING)
+                .addScalar("creditamount", StandardBasicTypes.STRING)
+                .addScalar("debitamount", StandardBasicTypes.STRING)
+                .addScalar("vhId", StandardBasicTypes.STRING)
                 .setResultTransformer(Transformers.aliasToBean(DayBook.class));
         queryMapEntry.getValue().entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
         dayBookDisplayList = query.list();

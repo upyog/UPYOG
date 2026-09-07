@@ -6,8 +6,8 @@ info:
     APIs available for filestore service
       -  Uploads different kinds of files to server including images and different document types.
   contact:
-    name: eGovernments Foundation
-    email: contacts@egovernments.org
+    name: UPYOG NUDM Team
+    email: cdg-contact@niua.org
 schemes:
   - https
 basePath: /filestore/v1

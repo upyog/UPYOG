@@ -7,10 +7,10 @@ import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -80,12 +80,12 @@ public class BudgetRegister extends StateAware implements java.io.Serializable {
     @GeneratedValue(generator = SEQ_EG_BUDGETREGISTER, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 50)
     @Column(unique = true, updatable = false, name = "budgetregisternumber")
     private String budgetRegisterNumber;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 100)
     @Column(updatable = false, name = "budgetregistername")
     private String budgetRegisterName;
@@ -116,16 +116,16 @@ public class BudgetRegister extends StateAware implements java.io.Serializable {
 
     // --- Transient UI fields ---
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String approvalComent;
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String approvalDesignation;
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String approvalDepartment;
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String workFlowAction;
 
 

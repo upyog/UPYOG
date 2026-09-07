@@ -48,21 +48,31 @@
 
 package org.egov.infra.config.redis;
 
+import jnr.netdb.Protocol;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
-import redis.clients.jedis.Protocol;
+import redis.clients.jedis.ConnectionFactory;
 import redis.embedded.RedisServer;
 
+/**
+ * LTS Migration Fix (JDK 17): in-process Redis for local/dev only
+ * ({@code redis.enable.embedded=true}).
+ * <p>
+ * Uses {@code it.ozimov:embedded-redis} 0.7.3. The previous
+ * {@code redis.embedded} artifact does not run reliably on JDK 17, so this
+ * bean is off by default in deployed environments ({@link RedisServerConfiguration}).
+ * </p>
+ */
 public class EmbeddedRedisServer implements InitializingBean, DisposableBean, BeanDefinitionRegistryPostProcessor {
 
     private RedisServer redisServer;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        redisServer = new RedisServer(Protocol.DEFAULT_PORT);
+        redisServer = new RedisServer(6379);  // Default Redis port
         redisServer.start();
     }
 

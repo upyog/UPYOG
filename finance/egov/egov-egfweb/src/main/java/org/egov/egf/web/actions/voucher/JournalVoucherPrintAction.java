@@ -59,8 +59,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
@@ -90,6 +90,8 @@ import org.egov.utils.ReportHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.sf.jasperreports.engine.JRException;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Results(value = {
         @Result(name = "print", location = "journalVoucherPrint-print.jsp"),
@@ -247,7 +249,7 @@ public class JournalVoucherPrintAction extends BaseFormAction {
         paramMap.put("workFlowHistory", inboxHistory);
         paramMap.put("workFlowJasper",
                 reportHelper.getClass().getResourceAsStream("/reports/templates/workFlowHistoryReport.jasper"));
-        final HttpServletRequest request = ServletActionContext.getRequest();
+        final HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         final HttpSession session = request.getSession();
         final City cityWebsite = cityService.getCityByURL((String) session.getAttribute("cityurl"));
         String billType = billsManager.getBillTypeforVoucher(voucher);

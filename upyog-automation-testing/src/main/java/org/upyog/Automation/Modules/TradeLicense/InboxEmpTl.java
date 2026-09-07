@@ -75,7 +75,7 @@ public class InboxEmpTl {
             
         } catch (Exception e) {
             logger.info("Exception in Trade License Employee Workflow: " + e.getMessage());
-            e.printStackTrace();
+
         } finally {
             if (driver != null) {
                 driver.quit();

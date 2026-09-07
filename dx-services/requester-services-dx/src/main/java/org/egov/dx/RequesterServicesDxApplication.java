@@ -43,7 +43,7 @@ package org.egov.dx;
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+// import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration; Esign functionality is not working, pwc will provide the solution for this. So commenting this line for now.
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 

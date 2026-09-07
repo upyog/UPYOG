@@ -1,8 +1,10 @@
 package org.egov.edcr.service;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.printing.Orientation;
@@ -16,6 +18,9 @@ import org.kabeja.dxf.DXFDocument;
 import org.kabeja.xml.SAXSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+
 import com.aspose.cad.Color;
 import com.aspose.cad.Image;
 import com.aspose.cad.fileformats.cad.CadDrawTypeMode;
@@ -25,11 +30,11 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Rectangle;
 
 /**
- * Single entry point for DXF to PDF: runs either the Kabeja pipeline or Aspose CAD, never both.
+ * Unified entry point for DXF to PDF conversion: runs either the Kabeja pipeline or Aspose CAD, never both.
  * <p>
- * Configure via app config module {@link DcrConstants#APPLICATION_MODULE_TYPE}, key
+ * Configure via application configuration module {@link DcrConstants#APPLICATION_MODULE_TYPE}, key
  * {@link DcrConstants#DXF_TO_PDF_ENGINE}: {@code KABEJA} (default) or {@code ASPOSE}.
- * Aspose reads the original DXF file from disk ({@code dxfSourceFile}); in-memory layer tweaks
+ * Aspose reads the original DXF file from disk ({@code dxfSourceFile}); in-memory layer modifications
  * from the extract step apply only to the Kabeja path.
  */
 @Service
@@ -47,24 +52,23 @@ public class DxfToPdfUnifiedConverter {
     /**
      * Converts a DXF to a PDF using the configured engine.
      * <p>
-     * Call from DxfToPdfConverterExtract (or similar) after the extract has populated the
-     * <code>edcrPdfDetail</code> argument (page size, output layer or sheet name, and optionally
-     * <code>kabejaSinglePageDXFToPdf</code>).
+     * Called after the extract step has populated the {@code edcrPdfDetail} argument (page size,
+     * output layer or sheet name, and optionally {@code kabejaSinglePageDXFToPdf}).
      * <ul>
-     *   <li><b>Aspose</b> &mdash; requires <code>dxfSourceFile</code> on disk; loads the full drawing and does not use
+     *   <li><b>Aspose</b> &mdash; requires {@code dxfSourceFile} on disk; loads the full drawing and does not use
      *       in-memory DXF mutations.</li>
-     *   <li><b>Kabeja</b> &mdash; uses the in-memory <code>dxfDocument</code>; when <code>kabejaSinglePageDXFToPdf</code>
-     *       is true, <code>convertWithKabeja</code> adds extra entries to the Kabeja generator map.</li>
-     *   <li><b>Fallback</b> &mdash; if Aspose is selected but the file is missing or conversion throws, Kabeja is used
-     *       so a PDF is still produced when possible.</li>
+     *   <li><b>Kabeja</b> &mdash; uses the in-memory {@code dxfDocument}; when {@code kabejaSinglePageDXFToPdf}
+     *       is true, {@code convertWithKabeja} adds extra entries to the Kabeja generator map.</li>
+     *   <li><b>Fallback</b> &mdash; if Aspose is selected but the file is missing or conversion throws an exception,
+     *       Kabeja is used as a fallback so a PDF is still produced when possible.</li>
      * </ul>
      *
-     * @param dxfSourceFile DXF on disk for Aspose (may be null when only Kabeja is used)
-     * @param dxfDocument   parsed DXF for Kabeja
-     * @param fileName      logical drawing name for logging
-     * @param layerName     stem for the output PDF file (for example basename without extension in direct mode)
-     * @param edcrPdfDetail settings built by extract (page size, hatch removal, single-PDF flag)
-     * @return generated PDF file, or <code>null</code> on failure
+     * @param dxfSourceFile source DXF file on disk for Aspose (may be {@code null} when only Kabeja is used)
+     * @param dxfDocument   in-memory parsed DXF document for Kabeja
+     * @param fileName      logical drawing name used for logging
+     * @param layerName     stem for the output PDF file (for example, DXF basename without extension in direct mode)
+     * @param edcrPdfDetail PDF configuration details (page size, hatch removal flag, single-PDF flag)
+     * @return the generated PDF {@link File}, or {@code null} on failure
      */
     public File convert(File dxfSourceFile, DXFDocument dxfDocument, String fileName, String layerName,
                         EdcrPdfDetail edcrPdfDetail) {
@@ -84,10 +88,10 @@ public class DxfToPdfUnifiedConverter {
         return convertWithKabeja(dxfDocument, fileName, layerName, edcrPdfDetail);
     }
 
-    /**
-     * Reads DXF_TO_PDF_ENGINE from Digit DCR app config. Any value other than ASPOSE (case-insensitive) means Kabeja,
-     * including when the setting is missing.
-     */
+    public boolean isAsposeEngine() {
+        return resolveEngine() == Engine.ASPOSE;
+    }
+
     private Engine resolveEngine() {
         List<AppConfigValues> vals = appConfigValueService.getConfigValuesByModuleAndKey(
                 DcrConstants.APPLICATION_MODULE_TYPE, DcrConstants.DXF_TO_PDF_ENGINE);
@@ -101,14 +105,14 @@ public class DxfToPdfUnifiedConverter {
     }
 
     /**
-     * Runs Kabeja SVG-to-PDF with a property map whose shape depends on legacy vs single full-DXF mode.
+     * Runs Kabeja SVG-to-PDF conversion with a property map whose configuration depends on legacy vs. single full-DXF mode.
      * <p>
-     * <b>Legacy multi-sheet PDFs</b> (EdcrPdfDetail.getKabejaSinglePageDXFToPdf() not true):
+     * <b>Legacy multi-sheet PDFs</b> (<code>EdcrPdfDetail.getKabejaSinglePageDXFToPdf()</code> not true):
      * <ul>
-     *   <li>Margin <code>0.5</code> and optional hatch stripping only (historical behaviour).</li>
+     *   <li>Margin <code>0.5</code> and optional hatch stripping only (historical behavior).</li>
      * </ul>
      * <p>
-     * <b>Direct single full-DXF PDF</b> (getKabejaSinglePageDXFToPdf() true):
+     * <b>Direct single full-DXF PDF</b> (<code>getKabejaSinglePageDXFToPdf()</code> true):
      * <ul>
      *   <li><code>DcrSvgGenerator.PROPERTY_SINGLE_PDF</code> &mdash; enables DcrSvgGenerator and DcrSvgStyleGenerator
      *       tuning for text, bounds, and fonts without affecting legacy runs.</li>
@@ -131,6 +135,7 @@ public class DxfToPdfUnifiedConverter {
         LOG.info("Converting Dxf to Pdf with Kabeja...");
         File fileOut = new File(layerName + ".pdf");
         try {
+
             if (LOG.isDebugEnabled()) {
                 LOG.debug("---------converting {} - {} to pdf (Kabeja)----------", fileName, layerName);
             }
@@ -154,7 +159,7 @@ public class DxfToPdfUnifiedConverter {
                     map.put("bounds-rule", "Modelspace-Limits");
                     map.put("margin", String.valueOf(0));
                     // Uniform thin linework (dimension ticks, etc.); avoids heavy DXF lineweights in PDF.
-                    map.put("stroke-width", String.valueOf(0.12));
+                    map.put("stroke-width", String.valueOf(0.02));
                     if (Boolean.TRUE.equals(edcrPdfDetail.getPageSize().getRemoveHatch())) {
                         map.put("stroke.width", Double.valueOf(0));
                     }
@@ -165,7 +170,9 @@ public class DxfToPdfUnifiedConverter {
                         map.put("stroke.width", Double.valueOf(0));
                     }
                 }
-                generator.generate(dxfDocument, out, map);
+                ContentHandler sanitizingHandler = new SvgSanitizingHandler(out);
+
+                generator.generate(dxfDocument, sanitizingHandler, map);
                 fout.flush();
             }
             if (LOG.isDebugEnabled()) {
@@ -176,6 +183,9 @@ public class DxfToPdfUnifiedConverter {
             LOG.error("Pdf convertion failed for {} - {} due to {}", fileName, layerName, ep.getMessage());
             ep.printStackTrace();
             edcrPdfDetail.setFailureReasons(ep.getMessage());
+            if (fileOut.exists()) {
+                fileOut.delete();
+            }
         }
         return null;
     }
@@ -263,5 +273,157 @@ public class DxfToPdfUnifiedConverter {
             image.dispose();
         }
         return fileOut.exists() && fileOut.length() > 0 ? fileOut : null;
+    }
+
+    private static class SvgSanitizingHandler implements ContentHandler {
+        private final ContentHandler delegate;
+        private double maxFontSize = -1.0;
+        private int buggedTextCount = 0;
+
+        public SvgSanitizingHandler(ContentHandler delegate) {
+            this.delegate = delegate;
+        }
+
+        private String clean(String val) {
+            if (val == null) return null;
+            val = val.replaceAll("(?i)font-family\\s*:\\s*['\"]?@", "font-family:");
+            if (val.startsWith("@")) {
+                val = val.substring(1);
+            }
+            val = val.replaceAll("(?i)@Arial\\s+Unicode\\s+MS", "Arial Unicode MS");
+            return val;
+        }
+
+        @Override
+        public void setDocumentLocator(org.xml.sax.Locator locator) {
+            delegate.setDocumentLocator(locator);
+        }
+
+        @Override
+        public void startDocument() throws SAXException {
+            delegate.startDocument();
+        }
+
+        @Override
+        public void endDocument() throws SAXException {
+            delegate.endDocument();
+        }
+
+        @Override
+        public void startPrefixMapping(String prefix, String uri) throws SAXException {
+            delegate.startPrefixMapping(prefix, uri);
+        }
+
+        @Override
+        public void endPrefixMapping(String prefix) throws SAXException {
+            delegate.endPrefixMapping(prefix);
+        }
+
+        @Override
+        public void startElement(String uri, String localName, String qName, org.xml.sax.Attributes atts)
+                throws SAXException {
+            
+            if ("svg".equalsIgnoreCase(localName)) {
+                String viewBox = atts.getValue("viewBox");
+                if (viewBox != null) {
+                    String[] parts = viewBox.trim().split("\\s+");
+                    if (parts.length >= 4) {
+                        try {
+                            double w = Double.parseDouble(parts[2]);
+                            double h = Double.parseDouble(parts[3]);
+                            maxFontSize = Math.max(w, h) * 0.004;
+                        } catch (Exception e) {
+                            // ignore parsing errors
+                        }
+                    }
+                }
+            }
+
+            boolean isBuggedText = false;
+            if ("text".equalsIgnoreCase(localName)) {
+                String xVal = atts.getValue("x");
+                String yVal = atts.getValue("y");
+                if (xVal != null && yVal != null) {
+                    try {
+                        double x = Double.parseDouble(xVal);
+                        double y = Double.parseDouble(yVal);
+                        if (x <= 5.0 && y <= 5.0) {
+                            isBuggedText = true;
+                            buggedTextCount++;
+                        }
+                    } catch (Exception e) {
+                        // ignore parsing errors
+                    }
+                }
+            }
+
+            org.xml.sax.helpers.AttributesImpl cleanedAtts = new org.xml.sax.helpers.AttributesImpl();
+            for (int i = 0; i < atts.getLength(); i++) {
+                String name = atts.getQName(i);
+                String value = atts.getValue(i);
+                
+                if ("style".equalsIgnoreCase(name) || "font-family".equalsIgnoreCase(name) || (value != null && value.contains("@"))) {
+                    value = clean(value);
+                } else if ("font-size".equalsIgnoreCase(name) && maxFontSize > 0) {
+                    try {
+                        double fs = Double.parseDouble(value);
+                        if (fs > maxFontSize) {
+                            value = String.valueOf(maxFontSize);
+                        }
+                    } catch (Exception e) {
+                        // ignore parsing errors
+                    }
+                } else if (isBuggedText) {
+                    if ("y".equalsIgnoreCase(name)) {
+                        double spacing = (maxFontSize > 0) ? (maxFontSize * 1.5) : 1.5;
+                        value = String.valueOf(2.0 + buggedTextCount * spacing);
+                    } else if ("x".equalsIgnoreCase(name)) {
+                        value = "2.0";
+                    } else if ("text-anchor".equalsIgnoreCase(name)) {
+                        value = "start";
+                    } else if ("transform".equalsIgnoreCase(name) && value != null) {
+                        int rotateIdx = value.indexOf("rotate(");
+                        if (rotateIdx > 0) {
+                            value = value.substring(0, rotateIdx).trim();
+                        }
+                    }
+                }
+                
+                cleanedAtts.addAttribute(atts.getURI(i), atts.getLocalName(i), name, atts.getType(i), value);
+            }
+            delegate.startElement(uri, localName, qName, cleanedAtts);
+        }
+
+        @Override
+        public void endElement(String uri, String localName, String qName) throws SAXException {
+            delegate.endElement(uri, localName, qName);
+        }
+
+        @Override
+        public void characters(char[] ch, int start, int length) throws SAXException {
+            String str = new String(ch, start, length);
+            if (str.contains("@")) {
+                str = clean(str);
+                char[] cleaned = str.toCharArray();
+                delegate.characters(cleaned, 0, cleaned.length);
+            } else {
+                delegate.characters(ch, start, length);
+            }
+        }
+
+        @Override
+        public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
+            delegate.ignorableWhitespace(ch, start, length);
+        }
+
+        @Override
+        public void processingInstruction(String target, String data) throws SAXException {
+            delegate.processingInstruction(target, data);
+        }
+
+        @Override
+        public void skippedEntity(String name) throws SAXException {
+            delegate.skippedEntity(name);
+        }
     }
 }

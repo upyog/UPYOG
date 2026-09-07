@@ -52,8 +52,10 @@ import org.egov.commons.Functionary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+
 @Repository
 public interface FunctionaryRepository extends JpaRepository<Functionary, Integer> {
-	Functionary findByCode(final String code);
+	Functionary findByCode(final BigDecimal code);
 
 }

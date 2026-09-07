@@ -3,7 +3,9 @@ package org.upyog.Automation.engine;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.upyog.Automation.Reports.ReportManager;
 import org.upyog.Automation.Utils.TestDataStore;
 import org.upyog.Automation.Utils.WorkflowDataStore;
 import org.upyog.Automation.model.TestInstruction;
@@ -207,6 +209,7 @@ public class ActionExecutor {
                         logger.info("Optional dropdown step skipped");
                     }
                     break;
+
                 case "OPTIONAL_TYPE":
                     try {
                         executeType(instruction);
@@ -214,6 +217,32 @@ public class ActionExecutor {
                     } catch (Exception e) {
                         logger.info("Optional type skipped");
                     }
+                    break;
+
+                case "SELECT_BY_VALUE":
+                    executeSelectByValue(instruction);
+                    break;
+
+                case "SCROLL_TO_ELEMENT":
+                    executeScrollToElement(instruction);
+                    break;
+
+                case "WAIT_VISIBLE":
+                    executeWaitVisible(instruction);
+                    break;
+
+                case "SELECT_DATE_RANGE":
+                    executeSelectDateRange();
+                    break;
+
+                case "ACCEPT_ALERT":
+
+                    Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+
+                    logger.info("Alert Message : {}", alert.getText());
+
+                    alert.accept();
+
                     break;
 
 
@@ -228,11 +257,22 @@ public class ActionExecutor {
 
             logger.info("✓ Completed step: {}", stepName);
 
+            ReportManager.logStep(
+                    "PASSED : " + stepName
+            );
+
         } catch (NoSuchElementException e) {
+            ReportManager.logFailure(
+                    "FAILED : " + stepName
+            );
             logger.error("✗ Element not found for step '{}': {}", stepName, e.getMessage());
             throw new RuntimeException("Step failed - element not found: " + stepName, e);
 
+
         } catch (TimeoutException e) {
+            ReportManager.logFailure(
+                    "TIMEOUT : " + stepName
+            );
             logger.error("✗ Timeout waiting for element in step '{}': {}", stepName, e.getMessage());
             throw new RuntimeException("Step failed - timeout: " + stepName, e);
 
@@ -240,7 +280,20 @@ public class ActionExecutor {
             logger.warn("Click intercepted for step '{}', attempting JS click", stepName);
             // Fallback to JS click when standard click is intercepted
             executeJsClick(instruction);
+
+            ReportManager.logStep(
+                    "PASSED (JS CLICK) : " + stepName
+            );
+
             applyDynamicSleep(instruction);
+        }
+        catch (Exception e) {
+
+            ReportManager.logFailure(
+                    "FAILED : " + stepName
+            );
+
+            throw new RuntimeException("Step execution failed", e);
         }
     }
 
@@ -441,32 +494,11 @@ public class ActionExecutor {
 
         String filePath = instruction.getInputValue();
 
-        // Load file from resources
-        java.net.URL resource =
-                getClass()
-                        .getClassLoader()
-                        .getResource(filePath);
+        File file = new File(filePath);
 
-        if (resource == null) {
-
+        if (!file.exists()) {
             throw new IllegalArgumentException(
-                    "Upload file not found in resources: "
-                            + filePath
-            );
-        }
-
-        File file;
-
-        try {
-
-            file = new File(resource.toURI());
-
-        } catch (Exception e) {
-
-            throw new RuntimeException(
-                    "Unable to load upload file: "
-                            + filePath,
-                    e
+                    "Upload file not found: " + filePath
             );
         }
 
@@ -477,16 +509,13 @@ public class ActionExecutor {
                 );
 
         if (fileInputs.isEmpty()) {
-
             throw new NoSuchElementException(
-                    "No file input found with locator: "
-                            + locator
+                    "No file input found with locator: " + locator
             );
         }
 
         WebElement fileInput = fileInputs.get(0);
 
-        // Make hidden input visible
         js.executeScript(
                 "arguments[0].style.opacity='1';" +
                         "arguments[0].style.display='block';",
@@ -497,10 +526,7 @@ public class ActionExecutor {
 
         fileInput.sendKeys(file.getAbsolutePath());
 
-        logger.debug(
-                "Uploaded file: {}",
-                file.getAbsolutePath()
-        );
+        logger.info("Uploaded file: {}", file.getAbsolutePath());
     }
 
     /**
@@ -907,27 +933,46 @@ public class ActionExecutor {
             );
         }
 
-        WorkflowDataStore.put(
-                instruction.getInputValue(),
-                capturedValue
-        );
+        String key = instruction.getInputValue();
 
-        // ADD THIS
-        TestDataStore.PERMIT_NUMBER = capturedValue;
-        TestDataStore.PERMIT_DATE = capturedValue;
+        WorkflowDataStore.put(key, capturedValue);
 
+        if (!"WATER_APPLICATION_NO".equals(key)
+                && !"SEWERAGE_APPLICATION_NO".equals(key)) {
+
+            WorkflowDataStore.put("APPLICATION_NO", capturedValue);
+        }
+
+// Existing logic
+        if ("PERMIT_NUMBER".equals(key)) {
+            TestDataStore.PERMIT_NUMBER = capturedValue;
+        }
+
+        if ("PERMIT_DATE".equals(key)) {
+            TestDataStore.PERMIT_DATE = capturedValue;
+        }
         logger.info(
                 "Captured [{}] = {}",
-                instruction.getInputValue(),
+                key,
                 capturedValue
         );
 
-        Thread.sleep(
-                instruction.getDynamicSleep()
+        Thread.sleep(instruction.getDynamicSleep());
+        logger.info(
+                "Water App No = {}",
+                WorkflowDataStore.get("WATER_APPLICATION_NO")
+        );
 
+        logger.info(
+                "Sewerage App No = {}",
+                WorkflowDataStore.get("SEWERAGE_APPLICATION_NO")
         );
         logger.info(
-                "WorkflowDataStore APPLICATION_NO = {}",
+                "Captured Value = {}",
+                capturedValue
+        );
+        logger.info(
+                "APPLICATION_NO STORED = {}",
                 WorkflowDataStore.get("APPLICATION_NO")
         );
     }
@@ -945,10 +990,19 @@ public class ActionExecutor {
                                 )
                 );
 
+        String key = instruction.getInputValue();
+
         String storedValue =
-                org.upyog.Automation.Utils.WorkflowDataStore.get(
-                        instruction.getInputValue()
-                );
+                WorkflowDataStore.get(key);
+
+        if ((storedValue == null || storedValue.isEmpty())
+                && "APPLICATION_NO".equals(key)) {
+
+            storedValue =
+                    WorkflowDataStore.get(
+                            "selected.applicationNumber"
+                    );
+        }
 
         if (storedValue == null) {
 
@@ -1261,5 +1315,137 @@ public class ActionExecutor {
         logger.debug("Typed '{}' into label '{}'",
                 instruction.getInputValue(),
                 instruction.getLocatorValue());
+    }
+    private void executeSelectByValue(TestInstruction instruction) {
+
+        By locator = locatorResolver.resolveLocator(instruction);
+
+        WebElement element =
+                wait.until(
+                        ExpectedConditions.elementToBeClickable(locator)
+                );
+
+        // Scroll into view
+        js.executeScript(
+                "arguments[0].scrollIntoView({block:'center'});",
+                element
+        );
+
+        Select select =
+                new Select(element);
+
+        select.selectByValue(
+                instruction.getInputValue()
+        );
+
+        logger.debug(
+                "Selected value '{}' from dropdown",
+                instruction.getInputValue()
+        );
+    }
+
+    private void executeScrollToElement(TestInstruction instruction) {
+
+        By locator = locatorResolver.resolveLocator(instruction);
+
+        WebElement element = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(locator)
+        );
+
+        js.executeScript(
+                "arguments[0].scrollIntoView({block:'center', inline:'nearest'});",
+                element
+        );
+
+        logger.info("Scrolled to element");
+    }
+    private void executeWaitVisible(TestInstruction instruction) {
+
+        By locator = locatorResolver.resolveLocator(instruction);
+
+        wait.until(
+                ExpectedConditions.visibilityOfElementLocated(locator)
+        );
+
+        logger.info(
+                "Element is visible: {}",
+                instruction.getLocatorValue()
+        );
+
+        if (instruction.getDynamicSleep() > 0) {
+            try {
+                Thread.sleep(instruction.getDynamicSleep());
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+    private void clickCalendar() {
+
+        WebElement calendar =
+                wait.until(ExpectedConditions.elementToBeClickable(
+                        By.cssSelector("svg.date-range-calendar-icon")));
+
+        calendar.click();
+    }
+    private void clickContinuous() {
+
+        WebElement continuous =
+                wait.until(ExpectedConditions.elementToBeClickable(
+                        By.xpath("//span[contains(@class,'rdrDateDisplayItem')][.//input[@placeholder='Continuous']]")));
+
+        continuous.click();
+    }
+    private void clickDate(int day) {
+
+        By locator = By.xpath(
+                "//button[contains(@class,'rdrDay')][.//span[@class='rdrDayNumber']/span[text()='" + day + "']]"
+        );
+
+        WebElement date = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(locator)
+        );
+
+        actions.moveToElement(date)
+                .click()
+                .perform();
+
+        logger.info("Clicked Date = {}", day);
+    }
+
+    private void executeSelectDateRange() throws InterruptedException {
+
+        LocalDate start = LocalDate.now().plusDays(1);
+        LocalDate end = LocalDate.now().plusDays(3);
+
+        // Calendar already open from JSON step "Open Calendar"
+
+        // First date
+        clickDate(start.getDayOfMonth());
+
+        logger.info("Start Date Selected");
+
+        Thread.sleep(1000);
+
+        // Calendar closed automatically
+
+        // Open calendar again
+        clickCalendar();
+
+        Thread.sleep(800);
+
+        // Click Continuous box
+        clickContinuous();
+
+        logger.info("Clicked Continuous Box");
+
+        Thread.sleep(500);
+
+        // End date
+        clickDate(end.getDayOfMonth());
+
+        logger.info("End Date Selected");
+
+        logger.info("Date Range Selected : {} -> {}", start, end);
     }
 }

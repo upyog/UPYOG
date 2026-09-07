@@ -50,8 +50,8 @@ package org.egov.infra.persistence.validator;
 
 import org.egov.infra.persistence.validator.annotation.Required;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class RequiredValidator implements ConstraintValidator<Required, Object> {
 

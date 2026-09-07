@@ -16,7 +16,7 @@ import { render } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { Link, useParams,  } from "react-router-dom";
 import Timeline from "../components/Timeline";
-import { stringReplaceAll } from "../utils";
+import { stringReplaceAll, scrutinyDetailsData } from "../utils";
 
 const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   const { t } = useTranslation();
@@ -28,9 +28,11 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   //let scrutinyNumber = `DCR82021WY7QW`;
   let user = Digit.UserService.getUser();
   const tenantId = user?.info?.permanentCity || Digit.ULBService.getCurrentTenantId();
+  const scrutinyTenantId = Digit.ULBService.getCitizenCurrentTenant(true);
   const checkingFlow = formData?.uiFlow?.flow ? formData?.uiFlow?.flow : formData?.selectedPlot||formData?.businessService==="BPA-PAP" ? "PRE_APPROVE" : "";
   const [showToast, setShowToast] = useState(null);
   const stateCode = Digit.ULBService.getStateId();
+  const [planLink, setPlanLink] = useState("");
   const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(stateCode, "BPA", ["SubOccupancyType"]);
   const { data, isLoading, refetch } = Digit.Hooks.obps.useScrutinyDetails(tenantId, formData?.data?.scrutinyNumber, {
     enabled: formData?.data?.scrutinyNumber.length!==8 ? true: false,
@@ -140,6 +142,17 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
       //sortType: sortRows,
     }));
   });
+
+
+
+  useEffect(() => {
+    const handleSearch = async () => {
+      const details = await scrutinyDetailsData(formData?.data?.scrutinyNumber?.edcrNumber, scrutinyTenantId);
+      setPlanLink(details?.planPdfs?.[0].split(" - ")[1]);
+    };
+
+    handleSearch()
+  }, [formData?.data?.scrutinyNumber?.edcrNumber]);
 
   const onSkip = () => onSelect();
 
@@ -252,20 +265,20 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
           ></Row>
           </div>
           ):null}
-          {data?.planReport ? (
-            <div>
-            <Row
-            className="border-none"
-            label={t("BPA_UPLOADED_PLAN_DIAGRAM")}
-            text={<ActionButton label={t("Uploaded Plan.pdf")}  jumpTo={data?.planReport}/>}
-          ></Row>
-            <Row
-            className="border-none"
-            label={t("BPA_SCRUNTINY_REPORT_OUTPUT")}
-            text={<ActionButton label={t("BPA_SCRUTINY_REPORT_PDF")} jumpTo={data?.planReport} />}
-          ></Row>
-          </div>
-          ):null}
+          {planLink &&
+              <Row
+                className="border-none"
+                label={t("BPA_UPLOADED_PLAN_DIAGRAM")}
+                text={<ActionButton label={t("Uploaded Plan.pdf")} jumpTo={planLink} />}
+              ></Row>
+          }
+          {data?.planReport != "" ? (
+              <Row
+                className="border-none"
+                label={t("BPA_SCRUNTINY_REPORT_OUTPUT")}
+                text={<ActionButton label={t("BPA_SCRUTINY_REPORT_PDF")} jumpTo={data?.planReport} />}
+              ></Row>
+          ) : null}
           
         </StatusTable>
         <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", height: "2px", marginTop: "20px", marginBottom: "20px" }} />

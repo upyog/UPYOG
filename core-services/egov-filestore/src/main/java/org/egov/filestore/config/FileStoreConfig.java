@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +13,31 @@ import lombok.Getter;
 @Configuration
 @Getter
 public class FileStoreConfig {
+
+	/**
+	 * Comma-separated list of allowed audio/video file extensions for media uploads.
+	 * Example: mp4,mp3,wav,ogg,webm,avi,mov,aac,flac,mkv,m4a,m4v
+	 */
+	@Value("#{'${allowed.audio.video.formats}'.split(',')}")
+	private List<String> allowedAudioVideoFormats;
+
+	/**
+	 * Maximum allowed size (bytes) for direct audio/video uploads. Defaults to 100 MB.
+	 */
+	@Value("${media.upload.max.size.bytes}")
+	private Long mediaUploadMaxSizeBytes;
+
+	/**
+	 * Maximum allowed size (bytes) for DXF files. Defaults to 30 MB.
+	 */
+	@Value("${dxf.upload.max.size.bytes}")
+	private Long dxfUploadMaxSizeBytes;
+
+	/**
+	 * Maximum allowed size (bytes) for images, PDFs, and standard files. Defaults to 5 MB.
+	 */
+	@Value("${file.upload.max.size.bytes}")
+	private Long fileUploadMaxSizeBytes;
 
 	@Value("${image.charset.type}")
 	private String imageCharsetType;
@@ -49,6 +73,51 @@ public class FileStoreConfig {
 	
 	@PostConstruct
 	private void enrichKeysetForFormats() {
-		allowedKeySet = allowedFormatsMap.keySet();
+		if (allowedFormatsMap != null) {
+			allowedKeySet = allowedFormatsMap.keySet();
+		}
+	}
+
+    // -------------------------------------------------------------------------
+	// Explicit getters for new fields – ensures these are accessible even when
+	// Lombok's annotation processor fails on newer JDKs (Java 21/23 + Lombok <1.18.24)
+	// -------------------------------------------------------------------------
+	
+	public List<String> getAllowedAudioVideoFormats() {
+		return allowedAudioVideoFormats;
+	}
+
+	public void setAllowedAudioVideoFormats(List<String> allowedAudioVideoFormats) {
+		this.allowedAudioVideoFormats = allowedAudioVideoFormats;
+	}
+
+	public Long getMediaUploadMaxSizeBytes() {
+		return mediaUploadMaxSizeBytes;
+	}
+
+	public void setMediaUploadMaxSizeBytes(Long mediaUploadMaxSizeBytes) {
+		this.mediaUploadMaxSizeBytes = mediaUploadMaxSizeBytes;
+	}
+
+	public Long getDxfUploadMaxSizeBytes() {
+		return dxfUploadMaxSizeBytes;
+	}
+
+	public void setDxfUploadMaxSizeBytes(Long dxfUploadMaxSizeBytes) {
+		this.dxfUploadMaxSizeBytes = dxfUploadMaxSizeBytes;
+	}
+
+	public Long getFileUploadMaxSizeBytes() {
+		return fileUploadMaxSizeBytes;
+	}
+
+	public void setFileUploadMaxSizeBytes(Long fileUploadMaxSizeBytes) {
+		this.fileUploadMaxSizeBytes = fileUploadMaxSizeBytes;
+	}
+
+	public void setAllowedFormatsMap(Map<String, List<String>> allowedFormatsMap) {
+		this.allowedFormatsMap = allowedFormatsMap;
 	}
 }
+
+

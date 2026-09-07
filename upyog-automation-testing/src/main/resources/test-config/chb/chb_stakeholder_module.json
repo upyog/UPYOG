@@ -1,0 +1,20 @@
+{
+  "moduleName": "COMMUNITY_HALL_BOOKING",
+
+  "citizen": {
+    "mobile": "7906413996",
+    "otp": "123456",
+    "city": "Mohali"
+  },
+
+  "employee": {
+    "username": "CHB_CEMP",
+    "password": "eGov@123",
+    "city": "Mohali"
+  },
+
+  "vendor": {
+    "mobile": "",
+    "otp": ""
+  }
+}

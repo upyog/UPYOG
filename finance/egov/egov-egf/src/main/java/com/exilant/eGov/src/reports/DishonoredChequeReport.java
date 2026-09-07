@@ -65,7 +65,7 @@ import org.apache.log4j.Logger;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -191,7 +191,7 @@ public class DishonoredChequeReport
         final String query = basicquery1.append(wherequery1).append(orderbyquery).toString();
         if (LOGGER.isDebugEnabled())
         	LOGGER.debug("  getDishonoredChequeDetails Query is  " + query);
-        final Query qry = persistenceService.getSession().createSQLQuery(query);
+        final Query qry = persistenceService.getSession().createNativeQuery(query);
         params.entrySet().forEach(rec -> qry.setParameter(rec.getKey(), rec.getValue()));
         rs = qry.list();
         if (LOGGER.isDebugEnabled())
@@ -354,7 +354,7 @@ public class DishonoredChequeReport
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("  getBankEntryDetails Query is  " + query);
 
-            final Query qry = persistenceService.getSession().createSQLQuery(query);
+            final Query qry = persistenceService.getSession().createNativeQuery(query);
             params.entrySet().forEach(rec -> qry.setParameter(rec.getKey(), rec.getValue()));
             rs = qry.list();
 

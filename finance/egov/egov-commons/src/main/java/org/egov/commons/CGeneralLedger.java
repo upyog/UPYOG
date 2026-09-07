@@ -47,13 +47,13 @@
  */
 package org.egov.commons;
 
-import javax.persistence.Transient;
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -70,7 +70,7 @@ public class CGeneralLedger implements Serializable {
     @NotNull
     private CChartOfAccounts glcodeId;
     
-    @SafeHtml
+    @SanitizeHtml
     @NotNull
     @Length(max = 50)
     private String glcode;
@@ -80,7 +80,7 @@ public class CGeneralLedger implements Serializable {
     @NotNull
     @Digits(fraction = 2, integer = 10)
     private Double creditAmount;
-    @SafeHtml
+    @SanitizeHtml
     private String description;
     private CVoucherHeader voucherHeaderId;
     private Integer functionId;

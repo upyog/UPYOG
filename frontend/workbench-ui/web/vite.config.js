@@ -239,6 +239,14 @@ export default defineConfig(({ mode }) => {
       react(),
     ],
 
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: "modern-compiler",
+        },
+      },
+    },
+
     root: __dirname,
 
     cacheDir: path.resolve(__dirname, "../node_modules/.vite"),

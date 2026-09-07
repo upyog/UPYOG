@@ -122,10 +122,10 @@ href="/services/EGF/resources/css/ccMenu.css?rnd=${app_release_no}" />
 								</td>
 								
 								<td style="text-align: center" class="blueborderfortdnew">
-									<s:iterator var="v" value="instrumentVouchers" status="st">
+									<s:iterator var="v" value="#p.instrumentVouchers" status="st">
 										<A href="#"
-											onclick='openDetails(<s:property value="%{voucherHeaderId.id}"/>);'>
-											<s:property value="%{voucherHeaderId.voucherNumber}" />
+											onclick='openDetails(<s:property value="#v.voucherHeaderId.id"/>);'>
+											<s:property value="#v.voucherHeaderId.voucherNumber" />
 										</A>
 									</s:iterator>
 								</td>

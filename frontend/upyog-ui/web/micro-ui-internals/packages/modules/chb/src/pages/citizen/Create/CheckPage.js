@@ -93,9 +93,9 @@ const CheckPage = ({ onSubmit, value = {} }) => {
 
   const typeOfApplication = !isEditCHB && !isUpdateCHB ? `bookHall` : `editbookHall`;
   const columns = [
-    { Header: `${t("CHB_HALL_NAME")}` + "/" + `${t("CHB_PARK")}`, accessor: "name" },
+    { Header: t("CHB_VENUE_NAME_LABEL"), accessor: "name" },
     { Header: `${t("CHB_ADDRESS")}`, accessor: "address" },
-    { Header: `${t("CHB_HALL_CODE")}`, accessor: "hallCode" },
+    { Header: t("CHB_HALL_CODE_LABEL") || t("CHB_HALL_CODE"), accessor: "hallCode" },
     { Header: `${t("CHB_BOOKING_DATE")}`, accessor: "bookingDate" },
     { Header: `${t("CHB_BOOKING_TIME")}`, accessor: "time" }
   ];

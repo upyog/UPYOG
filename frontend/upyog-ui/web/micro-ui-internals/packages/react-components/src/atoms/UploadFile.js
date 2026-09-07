@@ -189,6 +189,19 @@ const UploadFile = (props) => {
 
   useEffect(() => handleChange(), [props.message]);
 
+  // Keep local upload UI in sync when the parent clears the file (e.g. Cancel reset).
+  useEffect(() => {
+    if (props.file?.name) {
+      setHasFile(true);
+      return;
+    }
+    setHasFile(false);
+    setprevSate(null);
+    if (inpRef.current) {
+      inpRef.current.value = "";
+    }
+  }, [props.file]);
+
   const showHint = props?.showHint || false;
 
   return (

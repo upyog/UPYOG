@@ -52,15 +52,15 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.Metamodel;
 
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.service.AccountDetailKeyService;
@@ -116,7 +116,7 @@ public class PurchaseOrderService implements EntityTypeService {
 	}
 
 	public PurchaseOrder getById(final Long id) {
-		return purchaseOrderRepository.findOne(id);
+		return purchaseOrderRepository.findById(id).orElse(null);
 	}
 
 	public List<PurchaseOrder> getBySupplierId(final Long supplierId) {
@@ -189,7 +189,7 @@ public class PurchaseOrderService implements EntityTypeService {
 			}
 			purchaseOrder = purchaseOrderRepository.save(purchaseOrder);
 		} else {
-			PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.findOne(purchaseOrder.getId());
+			PurchaseOrder savedPurchaseOrder = purchaseOrderRepository.findById(purchaseOrder.getId()).orElse(null);
 			savedPurchaseOrder.setName(purchaseOrder.getName());
 			savedPurchaseOrder.setDescription(purchaseOrder.getDescription());
 			savedPurchaseOrder.setActive(purchaseOrder.getActive());

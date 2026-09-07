@@ -51,12 +51,12 @@ package org.egov.common.dao;
 import org.egov.common.entity.UOM;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,7 +81,7 @@ public class UOMDao {
 
 			qry = entityManager.unwrap(Session.class).createQuery(
 							"from org.egov.common.entity.UOM as uoms where uoms.uomCategory.id =(select uom.uomCategory.id  from org.egov.common.entity.UOM uom where uom.id=:uomID)");
-			qry.setInteger("uomID", uomId);
+			qry.setParameter("uomID", uomId);
 			uoms = qry.list();
 		} else
 			throw new ValidationException(Arrays.asList(new ValidationError("uom null", "UomId is null")));
@@ -95,7 +95,7 @@ public class UOMDao {
 
 			qry = entityManager.unwrap(Session.class).createQuery(
 					"select uom.convFactor from org.egov.infstr.commonMasters.EgUom as uom where uom.id=:uomID");
-			qry.setInteger("uomID", uomId);
+			qry.setParameter("uomID", uomId);
 			convFactor = (BigDecimal) qry.uniqueResult();
 
 		} else

@@ -16,6 +16,8 @@ node_modules
 
 # testing
 /coverage
+/.scannerwork/*
+
 
 # production
 /web/build

@@ -1,3 +1,4 @@
+import "../../../../css/ndc.css";
 import {
   Row,
   StatusTable,
@@ -23,7 +24,7 @@ import NDCModal from "../../../pageComponents/NDCModal";
 import { Loader } from "../../../components/Loader";
 import NewApplicationTimeline from "../../../../../templates/ApplicationDetails/components/NewApplicationTimeline";
 import getAcknowledgementData from "../../../getAcknowlegment";
-import { EmployeeData } from "../../../utils";
+import { EmployeeData, downloadNDCAcknowledgement } from "../../../utils";
 const availableOptions = [
   { code: "yes", name: "Yes" },
   { code: "no", name: "No" },
@@ -142,7 +143,7 @@ const ApplicationOverview = () => {
       consumerCodes: id,
       isEmployee: false,
     },
-    { enabled: id ? true : false }
+    { enabled: id ? true : false },
   );
 
   async function getRecieptSearch({ tenantId, payments, ...params }) {
@@ -163,7 +164,7 @@ const ApplicationOverview = () => {
               },
             ],
           },
-          "ndc-receipt"
+          "ndc-receipt",
         );
       }
       const fileStore = await Digit.PaymentService.printReciept(tenantId, {
@@ -178,6 +179,13 @@ const ApplicationOverview = () => {
   }
   const dowloadOptions = [];
 
+  if (applicationDetails?.Applications?.[0]) {
+    dowloadOptions.push({
+      label: t("CS_COMMON_DOWNLOAD_ACKNOWLEDGEMENT"),
+      onClick: () => downloadNDCAcknowledgement(applicationDetails, tenants, t),
+    });
+  }
+
   if (
     applicationDetails?.Applications?.[0]?.applicationStatus === "APPROVED" ||
     applicationDetails?.Applications?.[0]?.applicationStatus === "REJECTED"
@@ -188,7 +196,7 @@ const ApplicationOverview = () => {
     });
     if (reciept_data && reciept_data?.Payments.length > 0 && !recieptDataLoading) {
       dowloadOptions.push({
-        label: t("PTR_FEE_RECIEPT"),
+        label: t("NDC_FEE_RECIEPT"),
         onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
       });
     }
@@ -254,10 +262,10 @@ const ApplicationOverview = () => {
           item?.businessService === "WS"
             ? "NDC_WATER_SERVICE_CONNECTION"
             : item?.businessService === "SW"
-            ? "NDC_SEWERAGE_SERVICE_CONNECTION"
-            : item?.businessService === "PT"
-            ? "NDC_PROPERTY_TAX"
-            : item?.businessService,
+              ? "NDC_SEWERAGE_SERVICE_CONNECTION"
+              : item?.businessService === "PT"
+                ? "NDC_PROPERTY_TAX"
+                : item?.businessService,
         consumerCode: item?.consumerCode || "",
         status: item?.status || "",
         dueAmount: item?.dueAmount || 0,
@@ -309,7 +317,6 @@ const ApplicationOverview = () => {
     const checkactionApp = action?.action == "APPROVE";
 
     if (hasDuePending && checkactionApp) {
-      console.log("alwasy coming appprve");
       setLable("You Can Not Approve This Application, Because It Has Pending Dues. Please Send It To Required Department");
       setError(true);
       setShowToast(true);
@@ -353,8 +360,8 @@ const ApplicationOverview = () => {
             isPending === false
               ? 0 // Force 0 when "No"
               : amounts?.[detail.consumerCode] !== undefined
-              ? Number(amounts[detail.consumerCode]) // from input box
-              : detail?.dueAmount || 0, // fallback to API value
+                ? Number(amounts[detail.consumerCode]) // from input box
+                : detail?.dueAmount || 0, // fallback to API value
         };
       }),
       workflow: {},
@@ -448,14 +455,19 @@ const ApplicationOverview = () => {
     }
   }, [displayData]);
 
-  const { isLoading: checkLoading, isError, error: checkError, data: propertyDetailsFetch } = Digit.Hooks.pt.usePropertySearch(
+  const {
+    isLoading: checkLoading,
+    isError,
+    error: checkError,
+    data: propertyDetailsFetch,
+  } = Digit.Hooks.pt.usePropertySearch(
     { filters: { propertyIds: getPropertyId }, tenantId: tenantId },
     {
       filters: { propertyIds: getPropertyId },
       tenantId: tenantId,
       enabled: getPropertyId ? true : false,
       privacy: Digit.Utils.getPrivacyObject(),
-    }
+    },
   );
 
   useEffect(() => {
@@ -497,20 +509,18 @@ const ApplicationOverview = () => {
       {/* <div>
         <Header styles={{ fontSize: "32px" }}>{t("NDC_APP_OVER_VIEW_HEADER")}</Header>
       </div> */}
-      <div style={{ display: "flex", justifyContent: "end", alignItems: "center", padding: "16px" }}>
-        {isCemp && (
-          <div className="cardHeaderWithOptions ral-app-details-header">
-            {getLoader && <Loader />}
-            {dowloadOptions && dowloadOptions.length > 0 && (
-              <MultiLink
-                className="multilinkWrapper"
-                onHeadClick={() => setShowOptions(!showOptions)}
-                displayOptions={showOptions}
-                options={dowloadOptions}
-              />
-            )}
-          </div>
-        )}
+      <div className="ndc-overview-actions">
+        <div className="cardHeaderWithOptions ral-app-details-header">
+          {getLoader && <Loader />}
+          {dowloadOptions && dowloadOptions.length > 0 && (
+            <MultiLink
+              className="multilinkWrapper"
+              onHeadClick={() => setShowOptions(!showOptions)}
+              displayOptions={showOptions}
+              options={dowloadOptions}
+            />
+          )}
+        </div>
       </div>
       <Card>
         <CardSubHeader>{t("NDC_APPLICATION_DETAILS_OVERVIEW")}</CardSubHeader>
@@ -524,8 +534,8 @@ const ApplicationOverview = () => {
                   Array.isArray(value)
                     ? value.map((item) => (typeof item === "object" ? t(item?.code || "N/A") : t(item || "N/A"))).join(", ")
                     : typeof value === "object"
-                    ? t(value?.code || "N/A")
-                    : t(value || "N/A")
+                      ? t(value?.code || "N/A")
+                      : t(value || "N/A")
                 }
               />
             ))}
@@ -551,14 +561,7 @@ const ApplicationOverview = () => {
                 {/* <Row label={t("NDC_STATUS")} text={t(detail.status) || detail.status} /> */}
 
                 {(!canRaiseFlag || !isMarked) && (
-                  <div
-                    style={{
-                      background: isRed ? "red" : "none",
-                      color: isRed ? "white" : "black",
-                      paddingTop: isRed ? "8px" : "0",
-                      paddingLeft: isRed ? "10px" : "0",
-                    }}
-                  >
+                  <div className="ndc-overview-content">
                     <Row
                       rowContainerStyle={{
                         backgroundColor: isRed ? "red" : "none",
@@ -585,6 +588,7 @@ const ApplicationOverview = () => {
                           defaultValue={markedPending[detail.consumerCode] === false ? 0 : amounts?.[detail.consumerCode] || detail?.dueAmount || 0}
                           render={(props) => (
                             <TextInput
+                              className="ndc-overview-input"
                               type="number"
                               value={props.value}
                               onChange={(e) => {
@@ -595,7 +599,6 @@ const ApplicationOverview = () => {
                                   [detail.consumerCode]: newValue,
                                 }));
                               }}
-                              style={{ maxWidth: "200px" }}
                               onBlur={props.onBlur}
                               disabled={markedPending[detail.consumerCode] === false}
                             />
@@ -612,26 +615,25 @@ const ApplicationOverview = () => {
                     <Row
                       label={t("CHB_DISCOUNT_REASON")}
                       text={t(
-                        `${
-                          applicationDetails?.Applications?.[0]?.reason == "OTHERS"
-                            ? applicationDetails?.Applications?.[0]?.NdcDetails?.find((item) => item?.businessService === "PT")?.additionalDetails
-                                ?.reason
-                            : applicationDetails?.Applications?.[0]?.reason
-                        }`
+                        `${applicationDetails?.Applications?.[0]?.reason == "OTHERS"
+                          ? applicationDetails?.Applications?.[0]?.NdcDetails?.find((item) => item?.businessService === "PT")?.additionalDetails
+                            ?.reason
+                          : applicationDetails?.Applications?.[0]?.reason
+                        }`,
                       )}
                     />
                     <Row label={t("City")} text={propertyDetailsFetch?.Properties?.[0]?.address?.city} />
                     <Row label={t("House No")} text={propertyDetailsFetch?.Properties?.[0]?.address?.doorNo} />
-                    <Row label={t("Colony Name")} text={propertyDetailsFetch?.Properties?.[0]?.address?.buildingName} />
+                    {/* <Row label={t("Colony Name")} text={propertyDetailsFetch?.Properties?.[0]?.address?.buildingName} /> */}
                     <Row label={t("Street Name")} text={propertyDetailsFetch?.Properties?.[0]?.address?.street} />
                     {/* <Row label={t("Mohalla")} text={propertyDetailsFetch?.Properties?.[0]?.address?.city} /> */}
                     <Row label={t("Pincode")} text={propertyDetailsFetch?.Properties?.[0]?.address?.pincode || "N/A"} />
                     {/* <Row label={t("Existing Pid")} text={propertyDetailsFetch?.Properties?.[0]?.address?.city} /> */}
-                    <Row label={t("Survey Id/UID")} text={propertyDetailsFetch?.Properties?.[0]?.surveyId} />
-                    <Row
+                    {/* <Row label={t("Survey Id/UID")} text={propertyDetailsFetch?.Properties?.[0]?.surveyId} /> */}
+                    {/* <Row
                       label={t("Year of creation of Property")}
                       text={propertyDetailsFetch?.Properties?.[0]?.additionalDetails?.yearConstruction}
-                    />
+                    /> */}
                     <Row
                       label={t("Remarks")}
                       text={
@@ -642,31 +644,6 @@ const ApplicationOverview = () => {
                   </>
                 )}
               </StatusTable>
-              {canRaiseFlag && (
-                <div className="mychallan-custom">
-                  <CardLabel className="card-label-smaller ndc_card_labels">
-                    <b> Pending Dues</b>
-                  </CardLabel>
-                  <FilterFormField className="radioButtonSection">
-                    <Controller
-                      name={`assignee${index}`}
-                      control={control}
-                      defaultValue={detail?.isDuePending ? "yes" : "no"}
-                      render={(props) => (
-                        <RadioButtons
-                          onSelect={(e) => {
-                            props.onChange(e.code);
-                            handleMarkPending(detail.consumerCode, e.code, index);
-                          }}
-                          selectedOption={availableOptions.filter((option) => option.code === props.value)[0]}
-                          optionsKey="name"
-                          options={availableOptions}
-                        />
-                      )}
-                    />
-                  </FilterFormField>
-                </div>
-              )}
             </div>
           );
         })}
@@ -693,7 +670,7 @@ const ApplicationOverview = () => {
               optionKey={"action"}
               t={t}
               onSelect={onActionSelect}
-              // style={MenuStyle}
+            // style={MenuStyle}
             />
           ) : null}
           <SubmitBar ref={menuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />

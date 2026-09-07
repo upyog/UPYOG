@@ -86,6 +86,9 @@ export const CollectPayment = (props) => {
   const [selectedPaidBy, setselectedPaidBy] = useState(formState?.paidBy || { code: "OWNER", name: t("COMMON_OWNER") });
 
   const onSubmit = async (data) => {
+    if (data?.paymentMode?.code !== "CARD" && data?.paymentMode?.code !== "CHEQUE") {
+      delete data.paymentModeDetails;
+    }
     bill.totalAmount = Math.round(bill.totalAmount);
     data.paidBy = data.paidBy.code;
 

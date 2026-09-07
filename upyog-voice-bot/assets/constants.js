@@ -53,11 +53,11 @@ const HINT_MESSAGES = {
 
 // Tunable behaviour values — change here to affect the whole app
 const CONFIG = {
-    minWordsToSend:   3,       // ignore speech shorter than this many words
+    minWordsToSend:   1,       // ignore speech shorter than this many words
     silenceWaitMs:    2500,    // ms of silence before auto-sending speech
     forceSendMs:      8000,    // ms cap — send even if silence timer hasn't fired
     maxHistoryMemory: 20,      // max conversation turns kept in browser memory
     historyToBackend: 8,       // how many recent turns are sent with each request
-    bargeInThreshold: 0.02,    // mic RMS level that triggers barge-in
+    bargeInThreshold: 0.03,    // mic RMS level that triggers barge-in (responsive to user speech)
     niuattOrigin:     "https://niuatt.niua.in" // trusted postMessage origin
 };

@@ -52,15 +52,15 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.Metamodel;
 
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.service.AccountDetailKeyService;
@@ -116,7 +116,7 @@ public class WorkOrderService implements EntityTypeService {
 	}
 
 	public WorkOrder getById(final Long id) {
-		return workOrderRepository.findOne(id);
+		return workOrderRepository.findById(id).orElse(null);
 	}
 
 	public List<WorkOrder> getByContractorId(final Long contractorId) {
@@ -189,7 +189,7 @@ public class WorkOrderService implements EntityTypeService {
 			workOrder = workOrderRepository.save(workOrder);
 		} else {
 			setAuditDetails(workOrder);
-			WorkOrder savedWorkOrder = workOrderRepository.findOne(workOrder.getId());
+			WorkOrder savedWorkOrder = workOrderRepository.findById(workOrder.getId()).orElse(null);
 			savedWorkOrder.setName(workOrder.getName());
 			savedWorkOrder.setDescription(workOrder.getDescription());
 			savedWorkOrder.setActive(workOrder.getActive());

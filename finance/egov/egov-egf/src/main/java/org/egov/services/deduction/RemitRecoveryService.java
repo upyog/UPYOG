@@ -75,9 +75,8 @@ import org.egov.model.deduction.RemittanceBean;
 import org.egov.model.recoveries.Recovery;
 import org.egov.utils.Constants;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -441,7 +440,7 @@ public class RemitRecoveryService {
     private void populateDetailsBySQL(final CVoucherHeader voucherHeader, final List<RemittanceBean> listRemitBean,
             final StringBuilder query, Map<String, Object> params) throws NumberFormatException, NoSuchMethodException, SecurityException {
         RemittanceBean remitBean;
-        final SQLQuery searchSQLQuery = persistenceService.getSession().createSQLQuery(query.toString());
+        final NativeQuery searchSQLQuery = persistenceService.getSession().createNativeQuery(query.toString());
         persistenceService.populateQueryWithParams(searchSQLQuery, params);
         final List<Object[]> list = searchSQLQuery.list();
         for (final Object[] element : list) {
@@ -497,7 +496,7 @@ public class RemitRecoveryService {
     private void populateNonConrolledTdsDataBySQL(final CVoucherHeader voucherHeader, final List<RemittanceBean> listRemitBean,
             final StringBuilder query, Map<String, Object> params) {
         RemittanceBean remitBean;
-        final SQLQuery searchSQLQuery = persistenceService.getSession().createSQLQuery(query.toString());
+        final NativeQuery searchSQLQuery = persistenceService.getSession().createNativeQuery(query.toString());
         persistenceService.populateQueryWithParams(searchSQLQuery, params);
         final List<Object[]> list = searchSQLQuery.list();
         for (final Object[] element : list) {
@@ -596,7 +595,7 @@ public class RemitRecoveryService {
 							.append(" GROUP BY  vh.vouchernumber, miscbilldtl.billnumber , remgldtl.remittedamt, remdtl.ID,")
 							.append("  gldtl.detailtypeid , gldtl.detailkeyid,vh.id,gld.voucherheaderid,billmis.BILLID");
 					final Query sqlVoucherQuery = persistenceService.getSession()
-							.createSQLQuery(voucherQueryTwo.toString()).addScalar("remittedAmount")
+							.createNativeQuery(voucherQueryTwo.toString()).addScalar("remittedAmount")
 							.addScalar("billAmount").addScalar("voucherNumber").addScalar("billNumber")
 							.addScalar("remittanceDTId").addScalar("detailKeyTypeId").addScalar("detailKeyId")
 							.addScalar("voucherId").addScalar("billId")
@@ -617,7 +616,7 @@ public class RemitRecoveryService {
 					.append(" GROUP BY  vh.vouchernumber, miscbilldtl.billnumber , remgldtl.remittedamt,   ")
 					.append(" gldtl.detailtypeid , gldtl.detailkeyid,")
 					.append(" remdtl.ID,vh.id,gld.voucherheaderid,billmis.BILLID");
-			final Query sqlVoucherQuery = persistenceService.getSession().createSQLQuery(voucherQueryTwo.toString())
+			final Query sqlVoucherQuery = persistenceService.getSession().createNativeQuery(voucherQueryTwo.toString())
 					.addScalar("remittedAmount").addScalar("billAmount").addScalar("voucherNumber")
 					.addScalar("billNumber").addScalar("remittanceDTId").addScalar("detailKeyTypeId")
 					.addScalar("detailKeyId").addScalar("voucherId").addScalar("billId")
@@ -667,7 +666,9 @@ public class RemitRecoveryService {
     
     public boolean validateRtgsForRemittedBean(RemittanceBean remittedBean){
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        Recovery recovery = (Recovery)persistenceService.getSession().createCriteria(Recovery.class).add(Restrictions.idEq(remittedBean.getRecoveryId())).uniqueResult();
+        Recovery recovery = persistenceService.getSession()
+                .createQuery("from Recovery recovery where recovery.id = :recoveryId", Recovery.class)
+                .setParameter("recoveryId", remittedBean.getRecoveryId()).uniqueResult();
         if(recovery != null){
             if(recovery.getAccountNumber() == null || recovery.getAccountNumber().isEmpty() || recovery.getIfscCode() == null || recovery.getIfscCode().isEmpty()){
                 errors.add(new ValidationError("RTGS not allowed",

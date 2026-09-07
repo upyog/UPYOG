@@ -48,7 +48,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"vendorDateOfBirth",
       "action":"TYPE",
-      "inputValue":"20-05-1990",
+      "inputValue":"${applicant.birth.date}",
       "dynamicSleep": 2000
     },
 
@@ -65,7 +65,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"fatherName",
       "action":"TYPE",
-      "inputValue":"Father Name",
+      "inputValue":"${applicant.guardian}",
       "dynamicSleep": 2000
     },
 
@@ -136,7 +136,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"nameOfAuthority",
       "action":"TYPE",
-      "inputValue":"Local Authority",
+      "inputValue":"${authority.name}",
       "dynamicSleep": 2000
     },
 
@@ -154,7 +154,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"vendingLiscence",
       "action":"TYPE",
-      "inputValue":"VL123456",
+      "inputValue":"${vending.license}",
       "dynamicSleep": 2000
     },
 
@@ -174,7 +174,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"houseNo",
       "action":"TYPE",
-      "inputValue":"123",
+      "inputValue":"${house.number}",
       "dynamicSleep": 2000
     },
 
@@ -183,7 +183,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"addressline1",
       "action":"TYPE",
-      "inputValue":"Main Street",
+      "inputValue":"${address.line1}",
       "dynamicSleep": 2000
     },
 
@@ -192,7 +192,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"addressline2",
       "action":"TYPE",
-      "inputValue":"Near Park",
+      "inputValue":"${address.line2}",
       "dynamicSleep": 2000
     },
 
@@ -201,7 +201,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"landmark",
       "action":"TYPE",
-      "inputValue":"City Mall",
+      "inputValue":"${address.landmark}",
       "dynamicSleep": 2000
     },
 
@@ -228,7 +228,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"pincode",
       "action":"TYPE",
-      "inputValue":"143001",
+      "inputValue":"${address.pincode}",
       "dynamicSleep": 2000
     },
 
@@ -265,7 +265,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"accountNumber",
       "action":"TYPE",
-      "inputValue":"123456789012",
+      "inputValue":"${account.number}",
       "dynamicSleep": 2000
     },
 
@@ -274,7 +274,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"confirmAccountNumber",
       "action":"TYPE",
-      "inputValue":"123456789012",
+      "inputValue":"${account.number}",
       "dynamicSleep": 2000
     },
 
@@ -283,7 +283,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"ifscCode",
       "action":"TYPE",
-      "inputValue":"SBIN0003453",
+      "inputValue":"${ifsc.code}",
       "dynamicSleep": 2000
     },
 
@@ -292,7 +292,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"accountHolderName",
       "action":"TYPE",
-      "inputValue":"Arpit Rao",
+      "inputValue": "${applicant.name}",
       "dynamicSleep": 2000
     },
 
@@ -428,6 +428,14 @@
       "action": "CLICK_JS",
       "inputValue": null,
       "dynamicSleep": 5000
+    },
+    {
+      "stepName":"Capture Application Number",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'Application Id') or contains(text(),'Application Number')]/following-sibling::*[1]",
+      "action":"CAPTURE_TEXT",
+      "inputValue":"APPLICATION_NO",
+      "dynamicSleep":3000
     }
   ]
 }

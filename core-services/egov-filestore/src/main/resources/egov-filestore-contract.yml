@@ -1,0 +1,375 @@
+swagger: '2.0'
+info:
+  version: 2.0.0
+  title: File Store Service
+  description: |
+    This service provides APIs to upload, retrieve, and manage files in the DIGIT platform.
+    It supports multipart file uploads (images, documents, and other allowed formats),
+    presigned URL generation, file retrieval by fileStoreId, metadata lookup, tag-based
+    search, and direct audio/video media uploads to configured object storage (Minio/S3/Azure).
+  contact:
+    name: UPYOG NUDM Team
+    email: cdg-contact@niua.org
+schemes:
+  - https
+basePath: /filestore
+x-api-id: org.egov.filestore
+x-common-path: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml
+paths:
+  /v1/files:
+    post:
+      summary: Upload files to object storage
+      description: |
+        Uploads one or more files to the configured object storage backend. Supports images,
+        PDFs, office documents, and other formats defined in service configuration. Returns
+        a fileStoreId for each uploaded file. Either the whole batch succeeds or fails;
+        there is no partial batch success.
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - in: formData
+          name: file
+          type: file
+          required: true
+          description: One or more files to upload.
+        - in: formData
+          name: tenantId
+          type: string
+          required: true
+          description: Unique identifier of the ULB/tenant.
+          minLength: 2
+          maxLength: 128
+        - in: formData
+          name: module
+          type: string
+          required: true
+          description: Name of the owning module (e.g. PGR, PT, TL).
+          minLength: 1
+          maxLength: 64
+        - in: formData
+          name: tag
+          type: string
+          required: false
+          description: Optional tag to group uploaded files.
+          maxLength: 128
+        - in: formData
+          name: requestInfo
+          type: string
+          required: false
+          description: Optional DIGIT RequestInfo JSON string for audit metadata.
+      responses:
+        '201':
+          description: Files uploaded successfully.
+          schema:
+            $ref: '#/definitions/StorageResponse'
+        '400':
+          description: File upload failed due to invalid input or unsupported format.
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - File Upload
+  /v1/files/external-media:
+    post:
+      summary: Upload audio or video file to object storage
+      description: |
+        Uploads a single audio or video file directly from the client to the configured
+        cloud backend (Minio/S3/Azure). Validates extension, content type, and file size
+        against allowed audio/video formats. Returns a fileStoreId that can be used with
+        GET /v1/files/url to obtain a presigned download URL.
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - in: formData
+          name: file
+          type: file
+          required: true
+          description: The audio or video file to upload.
+        - in: formData
+          name: tenantId
+          type: string
+          required: true
+          description: Unique identifier of the ULB/tenant.
+          minLength: 2
+          maxLength: 128
+        - in: formData
+          name: module
+          type: string
+          required: true
+          description: Name of the owning module.
+          minLength: 1
+          maxLength: 64
+        - in: formData
+          name: tag
+          type: string
+          required: false
+          description: Optional tag to group uploaded files.
+          maxLength: 128
+        - in: formData
+          name: requestInfo
+          type: string
+          required: false
+          description: Optional DIGIT RequestInfo JSON string for audit metadata.
+      responses:
+        '201':
+          description: Media file uploaded successfully.
+          schema:
+            $ref: '#/definitions/ExternalMediaUploadResponse'
+        '400':
+          description: Media upload failed due to invalid file type, size, or content.
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - File Upload
+  /v1/files/id:
+    get:
+      summary: Download file by fileStoreId
+      description: |
+        Retrieves the binary content of a file stored in object storage using its
+        fileStoreId and tenantId. Returns the file as an attachment with appropriate
+        Content-Disposition and Content-Type headers.
+      produces:
+        - application/octet-stream
+      parameters:
+        - $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId
+        - name: fileStoreId
+          in: query
+          description: Unique identifier of the stored file.
+          required: true
+          type: string
+          minLength: 2
+          maxLength: 256
+      responses:
+        '200':
+          description: File binary retrieved successfully.
+          schema:
+            type: file
+        '400':
+          description: Invalid input or file not found.
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - File Retrieval
+  /v1/files/metadata:
+    get:
+      summary: Get file metadata by fileStoreId
+      description: |
+        Returns metadata (file name, content type, tenantId, file size) for a stored file
+        without returning the file binary content.
+      produces:
+        - application/json
+      parameters:
+        - $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId
+        - name: fileStoreId
+          in: query
+          description: Unique identifier of the stored file.
+          required: true
+          type: string
+          minLength: 2
+          maxLength: 256
+      responses:
+        '200':
+          description: File metadata retrieved successfully.
+          schema:
+            $ref: '#/definitions/FileMetadata'
+        '400':
+          description: Invalid input or file not found.
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - File Retrieval
+  /v1/files/url:
+    get:
+      summary: Get presigned URLs for fileStoreIds
+      description: |
+        Returns presigned download URLs for one or more fileStoreIds within a tenant.
+        Response includes a map of fileStoreId-to-URL pairs and a structured fileStoreIds array.
+      produces:
+        - application/json
+      parameters:
+        - $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId
+        - name: fileStoreIds
+          in: query
+          description: List of fileStoreIds to resolve to presigned URLs.
+          required: true
+          type: array
+          collectionFormat: multi
+          items:
+            type: string
+          maxItems: 50
+      responses:
+        '200':
+          description: Presigned URLs retrieved successfully.
+          schema:
+            $ref: '#/definitions/FileUrlResponse'
+        '400':
+          description: Invalid input.
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - File Search
+  /v1/files/tag:
+    get:
+      summary: Get files by tag
+      description: |
+        Retrieves all files associated with a given tag for a tenant. Returns download
+        URLs and content types for each matching file.
+      produces:
+        - application/json
+      parameters:
+        - $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId
+        - name: tag
+          in: query
+          description: Tag name used during file upload.
+          required: true
+          type: string
+          minLength: 1
+          maxLength: 128
+      responses:
+        '200':
+          description: Files retrieved successfully for the given tag.
+          schema:
+            $ref: '#/definitions/GetFilesByTagResponse'
+        '400':
+          description: Invalid input.
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - File Search
+definitions:
+  File:
+    type: object
+    description: Reference to an uploaded file in object storage.
+    properties:
+      fileStoreId:
+        type: string
+        description: Unique identifier assigned to the uploaded file.
+        minLength: 2
+        maxLength: 256
+        readOnly: true
+      tenantId:
+        type: string
+        description: Unique identifier of the ULB/tenant.
+        minLength: 2
+        maxLength: 128
+        readOnly: true
+    required:
+      - fileStoreId
+      - tenantId
+  StorageResponse:
+    type: object
+    description: Response returned after successful file upload.
+    properties:
+      files:
+        type: array
+        description: List of uploaded file references.
+        items:
+          $ref: '#/definitions/File'
+  ExternalMediaUploadResponse:
+    type: object
+    description: Response returned after successful audio/video media upload.
+    properties:
+      fileStoreId:
+        type: string
+        description: Unique identifier assigned to the uploaded media file.
+        minLength: 2
+        maxLength: 256
+        readOnly: true
+      tenantId:
+        type: string
+        description: Unique identifier of the ULB/tenant.
+        minLength: 2
+        maxLength: 128
+        readOnly: true
+      contentType:
+        type: string
+        description: MIME content type of the uploaded media file.
+      fileSize:
+        type: string
+        description: Size of the uploaded file in bytes.
+      module:
+        type: string
+        description: Name of the owning module.
+      tag:
+        type: string
+        description: Optional tag associated with the upload.
+    required:
+      - fileStoreId
+      - tenantId
+      - contentType
+      - fileSize
+      - module
+  FileMetadata:
+    type: object
+    description: Metadata of a stored file without binary content.
+    properties:
+      fileName:
+        type: string
+        description: Name of the stored file.
+      contentType:
+        type: string
+        description: MIME content type of the file.
+      tenantId:
+        type: string
+        description: Unique identifier of the ULB/tenant.
+        minLength: 2
+        maxLength: 128
+      fileSize:
+        type: string
+        description: Size of the file in bytes.
+    required:
+      - fileName
+      - contentType
+      - tenantId
+  FileStoreResponse:
+    type: object
+    description: Presigned URL mapping for a single fileStoreId.
+    properties:
+      id:
+        type: string
+        description: The fileStoreId.
+      url:
+        type: string
+        description: Presigned URL to download the file.
+    required:
+      - id
+      - url
+  FileUrlResponse:
+    type: object
+    description: |
+      Map of fileStoreId to presigned URL pairs, plus a structured fileStoreIds array.
+      Dynamic keys in the response correspond to individual fileStoreIds.
+    properties:
+      fileStoreIds:
+        type: array
+        description: Structured list of fileStoreId and URL pairs.
+        items:
+          $ref: '#/definitions/FileStoreResponse'
+    additionalProperties:
+      type: string
+      description: Presigned URL keyed by fileStoreId.
+  FileRecord:
+    type: object
+    description: File reference returned for tag-based search.
+    properties:
+      url:
+        type: string
+        description: URL to download the file via the filestore service.
+      contentType:
+        type: string
+        description: MIME content type of the file.
+    required:
+      - url
+      - contentType
+  GetFilesByTagResponse:
+    type: object
+    description: Response containing files matching a tag.
+    properties:
+      files:
+        type: array
+        description: List of files associated with the tag.
+        items:
+          $ref: '#/definitions/FileRecord'

@@ -59,8 +59,8 @@
       "stepName":"Enter Booking Number",
       "locatorStrategy":"NAME",
       "locatorValue":"bookingNo",
-      "action":"TYPE",
-      "inputValue":"${selected.applicationNumber}",
+      "action": "TYPE_FROM_STORE",
+      "inputValue": "APPLICATION_NO",
       "dynamicSleep": 1000
     },
 
@@ -104,7 +104,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"comments",
       "action":"TYPE",
-      "inputValue":"Approved",
+      "inputValue":"${comment.approve}",
       "dynamicSleep": 1000
     },
 
@@ -141,7 +141,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"payerMobile",
       "action":"TYPE",
-      "inputValue":"9999999999",
+      "inputValue":"${mobile.number}",
       "dynamicSleep": 1000
     },
 
@@ -150,7 +150,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"instrumentNumber",
       "action":"TYPE",
-      "inputValue":"GEN123456",
+      "inputValue":"${receipt.number}",
       "dynamicSleep": 1000
     },
 
@@ -224,6 +224,29 @@
       "locatorStrategy":"XPATH",
       "locatorValue":"//button[contains(.,'TAKE ACTION')]",
       "action":"CLICK_JS",
+      "dynamicSleep": 5000
+    },
+
+    {
+      "stepName":"Click Assign Vendor",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//p[normalize-space()='Assign Vendor']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 5000
+    },
+    {
+      "stepName": "Cancel Popup",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'selector-button-border')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName":"Take Action Assign Vendor",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'TAKE ACTION')]",
+      "action":"CLICK_JS",
       "dynamicSleep": 3000
     },
 
@@ -234,25 +257,29 @@
       "action":"CLICK_JS",
       "dynamicSleep": 3000
     },
-
-
-
+    {
+      "stepName":"Assign Comment",
+      "locatorStrategy":"NAME",
+      "locatorValue":"comments",
+      "action":"TYPE",
+      "inputValue":"${comment.assign}",
+      "dynamicSleep": 3000
+    },
     {
       "stepName":"Select Vendor",
       "locatorStrategy":"CSS",
       "locatorValue":"div.select svg.cp",
       "action":"SELECT_DROPDOWN_BY_INDEX",
       "inputValue":"0:5",
-      "dynamicSleep": 3000
+      "dynamicSleep": 2000
     },
-
     {
       "stepName":"Assign Comment",
       "locatorStrategy":"NAME",
       "locatorValue":"comments",
       "action":"TYPE",
-      "inputValue":"Assigned",
-      "dynamicSleep": 3000
+      "inputValue":"${comment.assign}",
+      "dynamicSleep": 1000
     },
 
     {

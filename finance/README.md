@@ -39,12 +39,15 @@ $ cd ${HOME}/egovgithub/UPYOG/finance && make deploy
 
 #### Prerequisites
 
-* Install [maven v3.2.x][Maven]
-* Install [PostgreSQL v9.4][PostgreSQL]
-* Install [Elastic Search v2.4.x][Elastic Search]
-* Install [Jboss Wildfly v10.x][Wildfly Customized]
-* Install [Git 2.8.3][Git]
-* Install [JDK 8 update 112 or higher][JDK8 build]
+The finance ERP has been upgraded to **JDK 17**, **Spring Framework 6.1**, **Hibernate 6.4**, and **WildFly 40**. Details: [`egov/README.md`](egov/README.md) and [`egov/CHANGE_ME.md`](egov/CHANGE_ME.md).
+
+* Install [Maven 3.8+][Maven]
+* Install [PostgreSQL][PostgreSQL] (historically 9.4+; JDBC driver in the build is 42.7.13)
+* Install [Elastic Search v2.4.x][Elastic Search] (still the client version in the POM; ES dashboard Java sources are currently excluded from compilation)
+* Install WildFly 40 (Jakarta EE 10). The former WildFly 10.x bundle is not compatible with this stack
+* Install [Git][Git]
+* Install [JDK 17][JDK17]
+* Install standalone [Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) (embedded Redis is disabled by default)
 #### Database Setup
 1. Create a database and user in postgres
 2. Create a schema called `generic`
@@ -71,7 +74,7 @@ $ mkdir egovgithub
 $ cd egovgithub
 $ git clone https://github.com/upyog/UPYOG.git
 ```
-2. Change directory to `<CLONED_REPO_DIR>/egov/egov-config/src/main/resources/config/` and create a file called `egov-erp-<username>.properties` and enter the following values based on your environment config.
+2. Change directory to `<CLONED_REPO_DIR>/finance/egov/egov-egi/src/main/resources/config/` and create a file called `egov-erp-<username>.properties` and enter the following values based on your environment config.
 
  ```properties
  ##comma separated list of host names 
@@ -80,19 +83,21 @@ $ git clone https://github.com/upyog/UPYOG.git
  elasticsearch.cluster.name=elasticsearch-<username>
  
  ```
- If required, you can override any default settings available in `/egov/egov-egi/src/main/resources/config/application-config.properties` by overriding the value in `egov-erp-<username>.properties`.
+ If required, you can override any default settings available in `finance/egov/egov-egi/src/main/resources/config/application-config.properties` by overriding the value in `egov-erp-<username>.properties`.
 
-3. Change directory back to `<CLONED_REPO_DIR>/egov`
+3. Change directory back to `<CLONED_REPO_DIR>/finance/egov`
 
-4. Run the following commands, this will cleans, compiles, tests, migrates database and generates ear artifact along with jars and wars appropriately
+4. Run the following command. This cleans, compiles, and generates the EAR (and module JARs/WARs). Tests run unless you pass `-DskipTests`. Flyway migrations normally run when the application starts, not during this Maven command unless the Flyway plugin is enabled.
 
  ```bash
  mvn clean package -s settings.xml -Ddb.user=<db_username> -Ddb.password=<db_password> -Ddb.driver=org.postgresql.Driver -Ddb.url=<jdbc_url>
  ```
 
+ The compiler uses Java 17 and `-parameters` (required by Spring 6). Nexus credentials are `${nexus.user}` / `${nexus.password}` in `settings.xml`.
+
 #### Redis Server Setup
 
-By default UPYOG uses embedded redis server (work only in Linux & OSx), to make UPYOG works in Windows OS or if you want to run redis server as standalone then follow the installation steps below.
+Embedded Redis is **disabled** after the JDK 17 / Spring 6 upgrade (`redis.enable.embedded=false`). Run a standalone Redis server. On Windows this was already required; it is now required on Linux and macOS as well.
  
 1. Installing redis server on Linux
  
@@ -104,7 +109,7 @@ By default UPYOG uses embedded redis server (work only in Linux & OSx), to make 
 3. Once installed, set the below property in ```egov-erp-override.properties``` or ```egov-erp-<username>.properties```. 
 
  ```properties
- ## true by default
+ ## false after the JDK 17 / Spring 6 upgrade; embedded Redis is not used in LTS deploys
  redis.enable.embedded=false
  ```
  to control the redis server host and port use the following property values (only required if installed with non default).
@@ -169,7 +174,7 @@ By default UPYOG uses embedded redis server (work only in Linux & OSx), to make 
   
   `-b 0.0.0.0` only required if application accessed using IP address or  domain name.
 
-6. Monitor the logs and in case of successful deployment, just hit `http://localhost:<YOUR_HTTP_PORT>/egi` in your favorite browser.
+6. Monitor the logs and in case of successful deployment, open `http://localhost:<YOUR_HTTP_PORT>/services/egi` in your browser (WAR context roots are `/services/egi`, `/services/EGF`, `/services/collection`, `/services/eis`, `/services/common`).
 7. Login using username as `egovernments` and password `demo`
 
 #### Accessing the application using IP address and domain name
@@ -202,12 +207,13 @@ This section gives more details regarding developing and contributing to UPYOG p
 #### Prerequisites
 
 * Install your favorite IDE for java project. Recommended Eclipse or IntelliJ IDEA
-* Install [maven >= v3.2.x][Maven]
-* Install [PostgreSQL >= v9.4 ][PostgreSQL]
-* Install [Elastic Search >= v2.4.x][Elastic Search]
-* Install [Jboss Wildfly v10.x][Wildfly Customized]
-* Install [Git 2.8.3][Git]
-* Install [JDK 8 update 112 or later][JDK8 build]
+* Install [Maven 3.8+][Maven]
+* Install [PostgreSQL][PostgreSQL]
+* Install [Elastic Search 2.4.x][Elastic Search] if you still need the legacy ES client
+* Install WildFly 40 (Jakarta EE 10)
+* Install [Git][Git]
+* Install [JDK 17][JDK17]
+* Install standalone Redis
 
 __Note__: Please check in [eGov Tools Repository] for any of the above software installables before downloading from internet.
 
@@ -221,14 +227,14 @@ __Note__: Please check in [eGov Tools Repository] for any of the above software 
 * Now add your EAR project into the configured Wildfly server.
 * Install the lombok plugin in eclipse.
   Download from this link https://search.maven.org/search?q=g:org.projectlombok%20AND%20a:lombok&core=gav
-  and run the commond java -jar lombok-1.18.4.jar
+  and run the command `java -jar lombok-1.18.30.jar`
 * Start Wildfly in debug mode, this will enable hot deployment.
 
 ##### 2. Intellij Deployment
 
 * Install Intellij
 * Open project
-* In project settings set JDK to 1.8
+* In project settings set JDK to 17
 * Add a run configuration for JBoss and point the JBOSS home to the wildfly unzipped folder
 * Add lombok plugin in Intellij (marketplace -> plugin -> lombok -> install -> restart ide).
 * Run
@@ -264,6 +270,7 @@ Browser:-
 
 [Git]: https://git-scm.com/downloads
 [JDK8 build]: http://www.oracle.com/technetwork/java/javase/downloads
+[JDK17]: https://www.oracle.com/java/technologies/downloads/#java17
 [eGov Coexistence JIRA]: https://digit-discuss.atlassian.net/jira/software/projects/FINANCE/boards/26
 [Wildfly Customized]: http://devops.egovernments.org/downloads/wildfly/wildfly-latest.zip
 [Eclipse Mars]: https://eclipse.org/downloads/packages/release/Mars/M1

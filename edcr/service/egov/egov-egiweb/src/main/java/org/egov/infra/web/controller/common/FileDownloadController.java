@@ -50,7 +50,7 @@ package org.egov.infra.web.controller.common;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.service.ICityService;

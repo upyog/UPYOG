@@ -10,8 +10,8 @@ info:
     . Feedback can be provided by the citizen once the complint is resolved.
     . If not satisfied the citizen can reopen the complaint.
   contact:
-    name: Egovernments Foundation
-    email: contact@egovernments.org
+    name: UPYOG NUDM Team
+    email: cdg-contact@niua.org
 x-module: BPA
 x-common-path: 'https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml'
 paths:

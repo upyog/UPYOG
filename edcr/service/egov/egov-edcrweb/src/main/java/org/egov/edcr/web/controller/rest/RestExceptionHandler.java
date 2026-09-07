@@ -47,8 +47,8 @@
 
 package org.egov.edcr.web.controller.rest;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
@@ -62,6 +62,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * REST error handler for EDCR web endpoints.
+ *
+ * <p>Uses Jsoup {@link Safelist#basic()} to sanitize error messages before
+ * returning them in JSON responses, preventing reflected XSS in error payloads.</p>
+ */
 @Controller
 @RequestMapping(value = "/rest/dcr")
 @Validated
@@ -70,7 +76,7 @@ public class RestExceptionHandler {
     @GetMapping(value = "/error", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> getHandleError(HttpServletRequest request, HttpServletResponse response) {
-    	String requestAttr = String.valueOf(request.getAttribute("javax.servlet.error.exception"));
+    	String requestAttr = String.valueOf(request.getAttribute("jakarta.servlet.error.exception"));
     	boolean isValid = Jsoup.isValid(requestAttr, Safelist.basic());
     	if (isValid)
     		return new ResponseEntity<>(requestAttr, HttpStatus.BAD_REQUEST);
@@ -81,7 +87,7 @@ public class RestExceptionHandler {
     @PostMapping(value = "/error", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> postHandleError(HttpServletRequest request, HttpServletResponse response) {
-    	String requestAttr = String.valueOf(request.getAttribute("javax.servlet.error.exception"));
+    	String requestAttr = String.valueOf(request.getAttribute("jakarta.servlet.error.exception"));
     	boolean isValid = Jsoup.isValid(requestAttr, Safelist.basic());
     	if (isValid)
     		return new ResponseEntity<>(requestAttr, HttpStatus.BAD_REQUEST);

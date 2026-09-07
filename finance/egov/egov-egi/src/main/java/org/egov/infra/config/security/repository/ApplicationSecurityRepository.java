@@ -8,9 +8,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.CustomUserDetails;
@@ -102,13 +102,14 @@ public class ApplicationSecurityRepository implements SecurityContextRepository 
 				curUser = new CurrentUser(this.getUserDetails(request));
 				LOGGER.info(" *** curUser inside loadcontext using getUserDetails : " + curUser);
 				this.microserviceUtils.savetoRedis(session.getId(), "current_user", curUser);
-			  } 
-			//  else {
-		    //      LOGGER.info(" *** getUserId inside loadcontext using readFromRedis : " + (curUser.getUserId()));
-		    //      LOGGER.info(" *** getUsername inside loadcontext using readFromRedis : " + (curUser.getUsername()));
-		    //      // Refresh the session details if curUser is already available in Redis
-		    //      this.refreshUserSessionDetails(request, curUser);  // Call the new method to refresh session
-		    //     }
+			} else {
+				/*
+				 * LTS Migration Note [Spring Security 6 / Redis Session Lifecycle]:
+				 * Automatically refresh Redis session TTL on authenticated requests to prevent premature session timeouts
+				 * when users are actively working on multi-step financial voucher forms.
+				 */
+				this.microserviceUtils.setExpire(session.getId());
+			}
 			String oldToken = (String) session.getAttribute(MS_USER_TOKEN);
 			String newToken = (String) this.microserviceUtils.readFromRedis(session.getId(), AUTH_TOKEN);
 			LOGGER.info(" *** old token:"+oldToken +"*** newtoken:"+newToken);

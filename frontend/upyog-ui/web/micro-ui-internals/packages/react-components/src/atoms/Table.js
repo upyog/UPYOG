@@ -70,9 +70,13 @@ const Table = ({
       disableGlobalFilter: onSearch === false ? true : false,
       globalFilter: globalSearch || "text",
       useControlledState: (state) => {
+        // Manual pagination owns page index AND page size from props.
+        // Without syncing pageSize, the rows-per-page <select> stays on the
+        // initial value (10) even after onPageSizeChange updates pageSizeLimit.
         return React.useMemo(() => ({
           ...state,
           pageIndex: manualPagination ? currentPage : state.pageIndex,
+          pageSize: manualPagination ? pageSizeLimit : state.pageSize,
         }));
       },
     },
@@ -172,13 +176,13 @@ const Table = ({
           {`${t("CS_COMMON_ROWS_PER_PAGE")} :`}
           <select
             className="cp"
-            value={pageSize}
+            value={Number(manualPagination ? pageSizeLimit : pageSize) || 10}
             style={{ marginRight: "15px" }}
             onChange={manualPagination ? onPageSizeChange : (e) => setPageSize(Number(e.target.value))}
           >
-            {[10, 20, 30, 40, 50].map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                {pageSize}
+            {[10, 20, 30, 40, 50].map((size) => (
+              <option key={size} value={size}>
+                {size}
               </option>
             ))}
           </select>

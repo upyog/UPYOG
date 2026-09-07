@@ -43,7 +43,9 @@ const ServiceDetails = ({ config, onSelect, userType, formData, setError, formSt
   const [selectedLocality, setSelectedLocality] = useState("");
   const [TaxHeadMaster, setAPITaxHeadMaster] = useState([]);
 
-  const {Categories : categoires , data: categoriesandTypes} = Digit.Hooks.mcollect.useMCollectCategory(tenantId,"[?(@.type=='Adhoc' && @.isActive==true)]");
+  const queryResult = Digit.Hooks.mcollect.useMCollectCategory(tenantId, "[?(@.type=='Adhoc' && @.isActive==true)]");
+  const categoires = queryResult?.data?.Categories;
+  const categoriesandTypes = queryResult?.data?.data;
 
 
   const { data: fetchedLocalities } = Digit.Hooks.useBoundaryLocalities(
@@ -109,7 +111,7 @@ const ServiceDetails = ({ config, onSelect, userType, formData, setError, formSt
   return (
     <React.Fragment>
       {consumerDetails.map((consumerdetail, index) => (
-        <OwnerForm1 key={consumerdetail.key} index={index} consumerdetail={consumerdetail} {...commonProps} />
+        <OwnerForm1 key={index} index={index} consumerdetail={consumerdetail} {...commonProps} />
       ))}
     </React.Fragment>
   );
@@ -151,7 +153,9 @@ const OwnerForm1 = (_props) => {
 
   const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger, getValues } = useForm();
   const formValue = watch();
-  const { errors } = localFormState;
+  // Destructure touchedFields and touched from formState to register and track field-level interactions
+  // safely, guarding against undefined formState proxy properties.
+  const { errors, touchedFields, touched } = localFormState;
   const isMobile = window.Digit.Utils.browser.isMobile();
 
   
@@ -161,10 +165,13 @@ const OwnerForm1 = (_props) => {
   const TaxHeadMasterFields = Digit.Hooks.mcollect.useMCollectTaxHeads(selectedCategoryType,categoriesandTypes);
   const selectedPincode = useWatch({control: control, name: "pincode", defaultValue:""});
 
+  // Watch the primitive category code instead of the category object to avoid triggering
+  // updates on reference changes. Only update categoryType if it is not already empty,
+  // preventing infinite render loops and the Maximum Update Depth Exceeded error.
   useEffect(() => {
-    if(!isEdit)
-    setValue("categoryType","");
-  },[selectedCategory])
+    if (!isEdit && getValues("categoryType") !== "")
+      setValue("categoryType", "");
+  }, [selectedCategory?.code])
 
   useEffect(() => {
     if(!isEdit){
@@ -252,7 +259,7 @@ const OwnerForm1 = (_props) => {
               rules={{ required: t("REQUIRED_FIELD") }}
               defaultValue={consumerdetail?.city}
               control={control}
-              render={(props) => (
+              render={({ field: props }) => (
                 <Dropdown
                   className="form-field"
                   selected={props.value}
@@ -275,7 +282,7 @@ const OwnerForm1 = (_props) => {
               rules={{ required: t("REQUIRED_FIELD") }}
               defaultValue={consumerdetail?.category}
               control={control}
-              render={(props) => (
+              render={({ field: props }) => (
                 <Dropdown
                   isMandatory
                   className="form-field"
@@ -300,7 +307,7 @@ const OwnerForm1 = (_props) => {
               rules={{ required: t("REQUIRED_FIELD") }}
               defaultValue={consumerdetail?.categoryType}
               control={control}
-              render={(props) => (
+              render={({ field: props }) => (
                 <Dropdown
                   isMandatory
                   className="form-field"
@@ -326,7 +333,7 @@ const OwnerForm1 = (_props) => {
                 isMandatory={true}
                 defaultValue={consumerdetail?.fromDate}
                 control={control}
-                render={(props) => (
+                render={({ field: props }) => (
                   <DatePicker
                     date={props.value}
                     name="fromDate"
@@ -345,7 +352,7 @@ const OwnerForm1 = (_props) => {
                 isMandatory={true}
                 defaultValue={consumerdetail?.toDate}
                 control={control}
-                render={(props) => (
+                render={({ field: props }) => (
                   <DatePicker
                     date={props.value}
                     name="toDate"
@@ -367,7 +374,7 @@ const OwnerForm1 = (_props) => {
                 isMandatory={tax.isRequired}
                 componentInFront={<div className="employee-card-input employee-card-input--front">₹</div>}
                 rules={tax.isRequired?{ required: t("REQUIRED_FIELD")}:"" }
-                render={(props) => (
+                render={({ field: props }) => (
                   <div className="cg-display-flex">
                     <div className="employee-card-input employee-card-input--front">₹</div>
                     <TextInput
@@ -397,11 +404,11 @@ const OwnerForm1 = (_props) => {
                 control={control}
                 name={"Comment"}
                 defaultValue={consumerdetail?.Comment}
-                render={(props) => (
+                render={({ field: props }) => (
                   <TextArea
                     value={props.value}
                     autoFocus={focusIndex.index === consumerdetail?.key && focusIndex.type === "name"}
-                    errorStyle={(localFormState.touched.Comment && errors?.Comment?.message) ? true : false}
+                    errorStyle={((touchedFields?.Comment || touched?.Comment) && errors?.Comment?.message) ? true : false}
                     onChange={(e) => {
                       props.onChange(e.target.value);
                     }}

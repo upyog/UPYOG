@@ -66,7 +66,7 @@
       "locatorStrategy": "XPATH",
       "locatorValue": "//input[contains(@class,'employee-card-input')]",
       "action": "TYPE",
-      "inputValue": "9999999999",
+      "inputValue": "${mobile.number}",
       "dynamicSleep": 1000
     },
 
@@ -135,7 +135,7 @@
       "locatorStrategy": "XPATH",
       "locatorValue": "//input[contains(@name,'pincode')]",
       "action": "TYPE",
-      "inputValue": "143001",
+      "inputValue": "${address.pincode}",
       "dynamicSleep": 1000
     },
     {
@@ -214,7 +214,7 @@
       "locatorStrategy": "XPATH",
       "locatorValue":"//input[@placeholder='Enter road width in meters']",
       "action":"TYPE",
-      "inputValue":"200",
+      "inputValue":"${road.width}",
       "dynamicSleep": 1000
     },
     {
@@ -222,7 +222,7 @@
       "locatorStrategy":"XPATH",
       "locatorValue":"//input[@placeholder='Enter distance of pit from road']",
       "action":"TYPE",
-      "inputValue":"300",
+      "inputValue":"${distance.pit}",
       "dynamicSleep": 1000
     },
     {
@@ -266,12 +266,12 @@
       "dynamicSleep": 5000
     },
     {
-      "stepName": "Capture Application Number",
-      "locatorStrategy": "XPATH",
-      "locatorValue": "//div[contains(text(),'FSM-')]",
-      "action": "CAPTURE_TEXT",
-      "inputValue": "APPLICATION_NO",
-      "dynamicSleep": 1000
+      "stepName":"Capture Application Number",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'Desludging Request Number ') or contains(text(),'Application Number')]/following-sibling::*[1]",
+      "action":"CAPTURE_TEXT",
+      "inputValue":"APPLICATION_NO",
+      "dynamicSleep":3000
     }
   ]
 }

@@ -55,7 +55,7 @@ package com.exilant.eGov.src.reports;
 import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.exility.common.TaskFailedException;
 
-import javassist.tools.rmi.ObjectNotFoundException;
+import org.hibernate.ObjectNotFoundException;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
@@ -63,7 +63,7 @@ import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EGovConfig;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -717,7 +717,7 @@ public class CashBook {
 				.append(" AND vh.id in (").append(queryWithParams.getKey()).append(" )")
 				.append(" AND (gl.debitamount>0 OR gl.creditamount>0)  ")
 				.append(" order by \"vDate\",\"vhid\",\"order\" desc ");
-		Query sqlQuery = persistenceService.getSession().createSQLQuery(query.toString());
+		Query sqlQuery = persistenceService.getSession().createNativeQuery(query.toString());
 		if (!effTime.isEmpty()) {
 			effTime.entrySet().iterator().next().getValue().entrySet()
 					.forEach(entry -> sqlQuery.setParameter(entry.getKey(), entry.getValue()));
@@ -752,13 +752,13 @@ public class CashBook {
 
         int j = 1;
         pstmt = persistenceService.getSession()
-                .createSQLQuery(queryYearOpBal.toString());
+                .createNativeQuery(queryYearOpBal.toString());
         if (!fundId.equalsIgnoreCase(""))
-            pstmt.setString(j++, fundId);
+            pstmt.setParameter(j++, fundId);
         if (!fundSourceId.equalsIgnoreCase(""))
-            pstmt.setString(j++, fundSourceCondition);
-        pstmt.setString(j++, fyId);
-        pstmt.setString(j++, glCode);
+            pstmt.setParameter(j++, fundSourceCondition);
+        pstmt.setParameter(j++, fyId);
+        pstmt.setParameter(j++, glCode);
 
         resultset = null;
         resultset = pstmt.list();
@@ -794,15 +794,15 @@ public class CashBook {
                         + glCode + " is-->: " + queryTillDateOpBal);
 
             int i = 1;
-            pstmt = persistenceService.getSession().createSQLQuery(
+            pstmt = persistenceService.getSession().createNativeQuery(
                     queryTillDateOpBal.toString());
-            pstmt.setString(i++, glCode);
+            pstmt.setParameter(i++, glCode);
             if (!fundId.equalsIgnoreCase(""))
-                pstmt.setString(i++, fundId);
+                pstmt.setParameter(i++, fundId);
             if (!fundSourceId.equalsIgnoreCase(""))
-                pstmt.setString(i++, fundSourceId);
-            pstmt.setString(i++, startDate);
-            pstmt.setString(i++, tillDate);
+                pstmt.setParameter(i++, fundSourceId);
+            pstmt.setParameter(i++, startDate);
+            pstmt.setParameter(i++, tillDate);
             if (!effTime.isEmpty()) {
     			effTime.entrySet().iterator().next().getValue().entrySet()
     					.forEach(entry -> pstmt.setParameter(entry.getKey(), entry.getValue()));
@@ -842,8 +842,8 @@ public class CashBook {
         String minCode = "";
         final StringBuilder query = new StringBuilder("select glcode from chartofaccounts ")
         		.append("where glcode like ?|| '%' and classification = 4 order by glcode asc");
-        pstmt = persistenceService.getSession().createSQLQuery(query.toString());
-        pstmt.setString(0, minGlCode);
+        pstmt = persistenceService.getSession().createNativeQuery(query.toString());
+        pstmt.setParameter(1, minGlCode);
         final List<Object[]> rset = pstmt.list();
         for (final Object[] element : rset)
             minCode = element[0].toString();
@@ -854,8 +854,8 @@ public class CashBook {
         String maxCode = "";
         final StringBuilder query = new StringBuilder("  select glcode from chartofaccounts ")
         		.append("where glcode like ?|| '%' and classification = 4 order by glcode desc");
-        pstmt = persistenceService.getSession().createSQLQuery(query.toString());
-        pstmt.setString(0, maxGlCode);
+        pstmt = persistenceService.getSession().createNativeQuery(query.toString());
+        pstmt.setParameter(1, maxGlCode);
         final List<Object[]> rset = pstmt.list();
         for (final Object[] element : rset)
             maxCode = element[0].toString();
@@ -869,9 +869,9 @@ public class CashBook {
         if (!id.equals(""))
             try {
                 final String queryCgn = "select CGN from VOUCHERHEADER where id=?";
-                pstmt = persistenceService.getSession().createSQLQuery(
+                pstmt = persistenceService.getSession().createNativeQuery(
                         queryCgn);
-                pstmt.setString(0, id);
+                pstmt.setParameter(1, id);
                 rsCgn = pstmt.list();
                 for (final Object[] element : rsCgn)
                     cgn = element[0].toString();
@@ -923,15 +923,15 @@ public class CashBook {
             		.append("where id in (select cashinhand from codemapping where eg_boundaryid=?)");
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(query);
-            pstmt = persistenceService.getSession().createSQLQuery(query.toString());
-            pstmt.setString(0, bId);
+            pstmt = persistenceService.getSession().createNativeQuery(query.toString());
+            pstmt.setParameter(1, bId);
             rs = pstmt.list();
             for (final Object[] element : rs)
                 glcode[0] = element[0].toString();
             final StringBuilder str = new StringBuilder("select glcode from chartofaccounts ")
             		.append("where id in (select chequeinHand from codemapping where eg_boundaryid=?)");
-            pstmt = persistenceService.getSession().createSQLQuery(str.toString());
-            pstmt.setString(0, bId);
+            pstmt = persistenceService.getSession().createNativeQuery(str.toString());
+            pstmt.setParameter(1, bId);
             rs = pstmt.list();
             for (final Object[] element : rs)
                 glcode[1] = element[0].toString();
@@ -948,7 +948,7 @@ public class CashBook {
         String ulbName = "";
         Query pstmt = null;
         final String query = "select name as \"name\" from companydetail";
-        pstmt = persistenceService.getSession().createSQLQuery(query);
+        pstmt = persistenceService.getSession().createNativeQuery(query);
         if (LOGGER.isInfoEnabled())
             LOGGER.info(query);
         rs = pstmt.list();

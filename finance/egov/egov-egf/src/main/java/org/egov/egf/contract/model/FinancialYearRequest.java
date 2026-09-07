@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.egov.infra.microservice.models.RequestInfo;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -15,10 +15,10 @@ public class FinancialYearRequest implements Serializable {
 
     @JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
-    @SafeHtml
+    @SanitizeHtml
     private String teanantId;
     private List<Integer> ids;
-    @SafeHtml
+    @SanitizeHtml
     private String finYearRange;
     private Date startingDate;
     private Date endingDate;
@@ -27,7 +27,7 @@ public class FinancialYearRequest implements Serializable {
 
     private Integer pageSize;
     private Integer offset;
-    @SafeHtml
+    @SanitizeHtml
     private String sortBy;
 
     public FinancialYearRequest() {

@@ -1,0 +1,65 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Weekly Impact Notifier
+  description: |
+    Scheduled utility that aggregates weekly impact metrics and publishes email
+    notification events to Kafka.
+
+    This service is event-driven and does not expose domain REST APIs. It runs as a
+    background utility with `spring.main.web-environment=false`, fetches metrics
+    from searcher, MDMS, and external WS endpoints on a configured interval, and
+    publishes email requests to the `egov.core.notification.email` Kafka topic.
+  contact:
+    name: UPYOG NUDM Team
+    email: cdg-contact@niua.org
+schemes:
+  - https
+basePath: /egov-weekly-impact-notifier
+x-api-id: org.egov.weekly.impact.notifier
+x-common-path: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml
+paths: {}
+definitions:
+  WeeklyImpactEmailEvent:
+    type: object
+    description: |
+      Email notification event published to topic configured by
+      `egov.core.notification.email.topic` (default: egov.core.notification.email).
+    properties:
+      RequestInfo:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo
+      email:
+        type: object
+        description: Email payload consumed by egov-notification-mail
+        properties:
+          emailTo:
+            type: array
+            items:
+              type: string
+          subject:
+            type: string
+            example: Egov's Weekly Impact
+          body:
+            type: string
+          isHTML:
+            type: boolean
+  WeeklyImpactConfig:
+    type: object
+    description: Runtime configuration for the weekly impact emailer utility
+    properties:
+      intervalInSeconds:
+        type: integer
+        description: Scheduler interval in seconds
+        example: 604800
+      emailToAddress:
+        type: string
+        description: Default recipient email address
+      emailSubject:
+        type: string
+        description: Default email subject
+      wsHost:
+        type: string
+        description: External WS metrics provider host
+      wsEndpoint:
+        type: string
+        description: External WS metrics provider endpoint template

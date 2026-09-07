@@ -90,6 +90,7 @@ import org.egov.demand.util.Util;
 import org.egov.demand.web.contract.BillRequestV2;
 import org.egov.demand.web.contract.BillResponseV2;
 import org.egov.demand.web.contract.BusinessServiceDetailCriteria;
+import org.egov.demand.web.contract.ShortBillV2;
 import org.egov.demand.web.contract.RequestInfoWrapper;
 import org.egov.demand.web.contract.User;
 import org.egov.demand.web.contract.UserResponse;
@@ -358,6 +359,17 @@ public class BillServicev2 {
 
 		return BillResponseV2.builder().resposneInfo(responseFactory.getResponseInfo(requestInfo, HttpStatus.OK))
 				.bill(bills).build();
+	}
+	
+	/**
+	 * Delegate method to fetch a compact list of bills (short bill search) matching criteria.
+	 *
+	 * @param billCriteria The search criteria containing filters (tenantId, mobileNumber, etc.)
+	 * @param requestInfo  The request metadata wrapper
+	 * @return List of ShortBillV2 matching bills
+	 */
+	public List<ShortBillV2> searchShortBills(BillSearchCriteria billCriteria, RequestInfo requestInfo) {
+		return billRepository.findShortBills(billCriteria);
 	}
 	
 	/**

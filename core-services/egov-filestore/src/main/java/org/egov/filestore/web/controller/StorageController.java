@@ -13,6 +13,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.filestore.domain.model.FileInfo;
 import org.egov.filestore.domain.service.StorageService;
 import org.egov.filestore.utils.StorageUtil;
+import org.egov.filestore.web.contract.ExternalMediaUploadResponse;
 import org.egov.filestore.web.contract.File;
 import org.egov.filestore.web.contract.FileStoreResponse;
 import org.egov.filestore.web.contract.GetFilesByTagResponse;
@@ -136,5 +137,38 @@ public class StorageController {
 		
 		return new ResponseEntity<>(responseMap, HttpStatus.OK);
 	}
-	
+
+	/**
+	 * Uploads an audio or video file directly from the client, stores it in the configured
+	 * cloud backend (Minio/S3/Azure — same path as regular file uploads), and returns a
+	 * {@code fileStoreId}.
+	 *
+	 * @param file        the audio/video file (multipart)
+	 * @param tenantId    tenant identifier
+	 * @param module      owning module
+	 * @param tag         optional tag
+	 * @param requestInfo optional DIGIT request info JSON string
+	 * @return 201 Created with {@link ExternalMediaUploadResponse}
+	 */
+	@PostMapping(value = "/external-media",
+			consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+			produces = APPLICATION_JSON_UTF8_VALUE)
+	@ResponseStatus(HttpStatus.CREATED)
+	@ResponseBody
+	public ResponseEntity<ExternalMediaUploadResponse> uploadMedia(
+			@RequestParam("file") MultipartFile file,
+			@RequestParam("tenantId") String tenantId,
+			@RequestParam("module") String module,
+			@RequestParam(value = "tag", required = false) String tag,
+			@RequestParam(value = "requestInfo", required = false) String requestInfo) {
+
+		RequestInfo reqInfo = storageUtil.getRequestInfo(requestInfo);
+
+		logger.info("Media upload request received: tenantId={}, module={}, file={}",
+				tenantId, module, file.getOriginalFilename());
+
+		ExternalMediaUploadResponse response = storageService.saveMediaFile(file, module, tag, tenantId, reqInfo);
+
+		return new ResponseEntity<>(response, HttpStatus.CREATED);
+	}
 }

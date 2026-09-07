@@ -1,20 +1,20 @@
 package org.egov.infra.microservice.models;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 public class Designation {
 
     private Long id;
-    @SafeHtml
+    @SanitizeHtml
     private String name;
-    @SafeHtml
+    @SanitizeHtml
     private String code;
-    @SafeHtml
+    @SanitizeHtml
     private String description;
-    @SafeHtml
+    @SanitizeHtml
     private String chartOfAccounts;
     private Boolean active;
-    @SafeHtml
+    @SanitizeHtml
     private String tenantId;
 
     public Designation() {

@@ -47,13 +47,15 @@
  */
 package org.egov.infra.rest.support;
 
+/*
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 
 /**
  *
  * @author subhash
  *
- */
+ *\/
 public interface CustomTokenEnhancer extends TokenEnhancer {
 
 }
+*/

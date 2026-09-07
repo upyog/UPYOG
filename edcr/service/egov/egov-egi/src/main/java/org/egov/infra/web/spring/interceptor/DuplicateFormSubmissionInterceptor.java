@@ -55,12 +55,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.StringUtils;
+//import org.apache.commons.lang.RandomStringUtils;
+//import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.spring.annotation.DuplicateRequestToken;
 import org.egov.infra.web.spring.annotation.ValidateToken;
@@ -71,10 +73,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
+//import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 @Component
-public class DuplicateFormSubmissionInterceptor extends HandlerInterceptorAdapter {
+public class DuplicateFormSubmissionInterceptor implements org.springframework.web.servlet.HandlerInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger(DuplicateFormSubmissionInterceptor.class);
     private static final String TOKEN_NAME = "tokenName";
     private static final String ERROR_PAGE = "/error/409";
@@ -95,7 +96,8 @@ public class DuplicateFormSubmissionInterceptor extends HandlerInterceptorAdapte
                     removeToken(request, session);
                 else {
                     if (Arrays.asList(new String[] { "edcr", "egi" }).contains(request.getContextPath())) {
-                        ESAPI.httpUtilities().sendRedirect(request.getContextPath() + errorPage);
+//                        ESAPI.httpUtilities().sendRedirect(request.getContextPath() + errorPage);
+                        response.sendRedirect(request.getContextPath() + errorPage);
                         return false;
                     } else {
                         throw new ApplicationRuntimeException("Invalid URL!!!");
@@ -103,7 +105,7 @@ public class DuplicateFormSubmissionInterceptor extends HandlerInterceptorAdapte
                 }
             }
         }
-        return super.preHandle(request, response, handler);
+        return true;
     }
 
     @Override

@@ -58,6 +58,7 @@ import org.owasp.validator.html.ScanException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
 /**
@@ -82,7 +83,16 @@ public final class XSSValidator {
     }
 
     private static Policy getPolicy(String name) throws PolicyException {
-        return Policy.getInstance(XSSValidator.class.getResource(name));
+        // LTS Migration Fix: Use getResourceAsStream & Policy.getInstance(InputStream) instead of URL
+        // to support WildFly 40 VFS (vfs:/content/...) protocol without MalformedURLException
+        try (InputStream is = XSSValidator.class.getResourceAsStream(name)) {
+            return Policy.getInstance(is);
+        } catch (Exception e) {
+            if (e instanceof PolicyException) {
+                throw (PolicyException) e;
+            }
+            throw new PolicyException(e);
+        }
     }
 
     public static String validate(String field, String input) {

@@ -176,7 +176,7 @@ export const ExistingBookingDetails = ({ onSubmit,setExistingDataSet,Searchdata 
               >
                 <KeyNote keyValue={t("CHB_BOOKING_NO")} note={application?.bookingNo} />
                 <KeyNote keyValue={t("CHB_APPLICANT_NAME")} note={application?.applicantDetail?.applicantName} />
-                <KeyNote keyValue={t("CHB_COMMUNITY_HALL_NAME")} note={t(`${application?.venueCode}`)} />
+                <KeyNote keyValue={t("CHB_VENUE_NAME_LABEL")} note={t(`${application?.venueCode}`)} />
                 <KeyNote keyValue={t("PT_COMMON_TABLE_COL_STATUS_LABEL")} note={t(`${application?.bookingStatus}`)} />
               </Card>
             </div>

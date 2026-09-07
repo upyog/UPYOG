@@ -52,14 +52,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.Metamodel;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.metamodel.Metamodel;
 
 import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
@@ -73,6 +73,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * LTS Migration Notes:
+ * 1. [Spring Data JPA 3.x] Migrated removed findOne() to findById().orElse(null) and new Sort() to Sort.by().
+ * 2. [Direct Query Optimization] Updated getAllActiveEntities() to query directly by accountDetailTypeId.
+ * 3. [Jakarta EE Persistence] Migrated EntityManager, Metamodel, and Criteria API to jakarta.persistence.*.
+ */
 @Service
 @Transactional(readOnly = true)
 public class AccountEntityService implements EntityTypeService {
@@ -111,7 +117,7 @@ public class AccountEntityService implements EntityTypeService {
 	}
 
 	public List<AccountEntity> findAll() {
-		return accountEntityRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+		return accountEntityRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
 	}
 
 	public AccountEntity findByName(String name) {
@@ -123,7 +129,7 @@ public class AccountEntityService implements EntityTypeService {
 	}
 
 	public AccountEntity findOne(Integer id) {
-		return accountEntityRepository.findOne(id);
+		return accountEntityRepository.findById(id).orElse(null);
 	}
 
 	public List<AccountEntity> search(AccountEntitySearchRequest accountEntitySearchRequest) {
@@ -132,7 +138,7 @@ public class AccountEntityService implements EntityTypeService {
 		Root<AccountEntity> accountEntitys = createQuery.from(AccountEntity.class);
 		createQuery.select(accountEntitys);
 		Metamodel m = entityManager.getMetamodel();
-		javax.persistence.metamodel.EntityType<AccountEntity> accountEntityEntityType = m.entity(AccountEntity.class);
+		jakarta.persistence.metamodel.EntityType<AccountEntity> accountEntityEntityType = m.entity(AccountEntity.class);
 
 		List<Predicate> predicates = new ArrayList<>();
 		if (accountEntitySearchRequest.getName() != null) {
@@ -165,8 +171,10 @@ public class AccountEntityService implements EntityTypeService {
 
 	@Override
 	public List<? extends EntityType> getAllActiveEntities(Integer accountDetailTypeId) {
-		Accountdetailtype accountdetailtype = accountdetailtypeService.findOne(accountDetailTypeId);
-		return accountEntityRepository.findByAccountdetailtypeAndIsactive(accountdetailtype, true);
+		if (accountDetailTypeId != null) {
+			return accountEntityRepository.findByAccountdetailtypeIdAndIsactive(accountDetailTypeId, true);
+		}
+		return Collections.emptyList();
 	}
 
 	@Override

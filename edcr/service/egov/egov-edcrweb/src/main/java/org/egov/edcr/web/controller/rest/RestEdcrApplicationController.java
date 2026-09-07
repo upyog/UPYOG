@@ -54,8 +54,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 import org.egov.common.entity.dcr.helper.ErrorDetail;
 import org.egov.common.entity.edcr.Plan;
@@ -140,10 +140,12 @@ public class RestEdcrApplicationController {
     @Autowired
     private ObjectMapper objectMapper;
 
+    // @RequestPart("planFile") resolves the binary DXF file from multipart/form-data.
+    // @RequestParam("edcrRequest") maps the named JSON metadata form field.
     @PostMapping(value = "/scrutinizeplan", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<?> scrutinizePlan(@RequestBody MultipartFile planFile,
-            @RequestParam String edcrRequest) throws Exception {
+    public ResponseEntity<?> scrutinizePlan(@RequestPart("planFile") MultipartFile planFile,
+            @RequestParam("edcrRequest") String edcrRequest) throws Exception {
         EdcrDetail edcrDetail = new EdcrDetail();
         EdcrRequest edcr = new EdcrRequest();
         boolean isValid = isValidJson(edcrRequest);
@@ -172,10 +174,12 @@ public class RestEdcrApplicationController {
         return getSuccessResponse(Arrays.asList(edcrDetail), edcr.getRequestInfo());
     }
 
+    // @RequestPart("planFile") resolves the binary DXF file from multipart/form-data.
+    // @RequestParam("edcrRequest") maps the named JSON metadata form field.
     @PostMapping(value = "/scrutinizeocplan", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<?> scrutinizeOccupancyPlan(@RequestBody MultipartFile planFile,
-            @RequestParam String edcrRequest) throws Exception {
+    public ResponseEntity<?> scrutinizeOccupancyPlan(@RequestPart("planFile") MultipartFile planFile,
+            @RequestParam("edcrRequest") String edcrRequest) throws Exception {
         EdcrDetail edcrDetail = new EdcrDetail();
         EdcrRequest edcr = new EdcrRequest();
         boolean isValid = isValidJson(edcrRequest);
@@ -436,10 +440,12 @@ public class RestEdcrApplicationController {
         }
     }
 
+    // @RequestPart("planFile") resolves the binary DXF file from multipart/form-data.
+    // @RequestParam("edcrRequest") maps the named JSON metadata form field.
     @PostMapping(value = "/extractplan", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<?> planDetails(@RequestBody MultipartFile planFile,
-            @RequestParam String edcrRequest) {
+    public ResponseEntity<?> planDetails(@RequestPart("planFile") MultipartFile planFile,
+            @RequestParam("edcrRequest") String edcrRequest) {
         Plan plan = new Plan();
         EdcrRequest edcr = new EdcrRequest();
         boolean isValid = isValidJson(edcrRequest);

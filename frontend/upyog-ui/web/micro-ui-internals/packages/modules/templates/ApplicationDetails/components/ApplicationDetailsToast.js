@@ -66,7 +66,7 @@ function ApplicationDetailsToast({ t, showToast, closeToast, businessService }) 
     }
     return <React.Fragment>{showToast && <Toast error={showToast.key === "error"} label={label} onClose={closeToast} />}</React.Fragment>;
   } else {
-    const label = showToast?.key === "error" ? showToast?.error?.message : `ES_${businessService}_${showToast?.action?.action}_UPDATE_SUCCESS`;
+    const label = showToast?.message || (showToast?.key === "error" ? showToast?.error?.message : `ES_${businessService}_${showToast?.action?.action}_UPDATE_SUCCESS`);
     return <React.Fragment>{showToast && <Toast error={showToast.key === "error"} label={t(label)} onClose={closeToast} />}</React.Fragment>;
   }
 }

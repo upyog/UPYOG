@@ -165,11 +165,15 @@
 					<tr>
 						<td>
 							<div class="excelpdf">
+								<%-- LTS Migration Note [Date Formatting & MDMS Department]:
+								     1. Used <s:date format="dd/MM/yyyy"/> instead of <s:property> to prevent Date.toString()
+								        output ("Wed Aug 22...") which causes ParseException in ChequeIssueRegisterReportAction.
+								     2. Aligned department parameter to 'deptImpl.code' for MDMS department integration. --%>
 								<a
-									href='/services/EGF/report/chequeIssueRegisterReport-generateXls.action?fromDate=<s:property value="fromDate"/>&toDate=<s:property value="toDate"/>&accountNumber.id=<s:property value="accountNumber.id"/>&department.id=<s:property value="department.id"/>&function.id=<s:property value="function.id"/>&functionary.id=<s:property value="functionary.id"/>&fund.id=<s:property value="fund.id"/>&field.id=<s:property value="field.id"/>&bank=<s:property value="bank"/>'>Excel</a>
+									href='/services/EGF/report/chequeIssueRegisterReport-generateXls.action?fromDate=<s:date name="fromDate" format="dd/MM/yyyy"/>&toDate=<s:date name="toDate" format="dd/MM/yyyy"/>&accountNumber.id=<s:property value="accountNumber.id"/>&deptImpl.code=<s:property value="deptImpl.code"/>&bank=<s:property value="bank"/>'>Excel</a>
 								<img align="absmiddle"
 									src="/egi/resources/erp2/images/excel.png"> | <a
-									href='/services/EGF/report/chequeIssueRegisterReport-generatePdf.action?fromDate=<s:property value="fromDate"/>&toDate=<s:property value="toDate"/>&accountNumber.id=<s:property value="accountNumber.id"/>&department.id=<s:property value="department.id"/>&function.id=<s:property value="function.id"/>&functionary.id=<s:property value="functionary.id"/>&fund.id=<s:property value="fund.id"/>&field.id=<s:property value="field.id"/>&bank=<s:property value="bank"/>'>PDF</a>
+									href='/services/EGF/report/chequeIssueRegisterReport-generatePdf.action?fromDate=<s:date name="fromDate" format="dd/MM/yyyy"/>&toDate=<s:date name="toDate" format="dd/MM/yyyy"/>&accountNumber.id=<s:property value="accountNumber.id"/>&deptImpl.code=<s:property value="deptImpl.code"/>&bank=<s:property value="bank"/>'>PDF</a>
 								<img align="absmiddle" src="/egi/resources/erp2/images/pdf.png">
 							</div>
 						</td>

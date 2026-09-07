@@ -51,7 +51,7 @@ package org.egov.egf.web.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsDAO;
@@ -63,7 +63,7 @@ import org.egov.model.recoveries.RecoverySearchRequest;
 import org.egov.model.service.RecoveryService;
 import org.egov.services.masters.BankService;
 import org.egov.services.masters.EgPartyTypeService;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -193,7 +193,7 @@ public class RecoveryController {
     }
 
     @GetMapping(value = "/result/{id}/{mode}")
-    public String result(@PathVariable("id") final Long id, @PathVariable("mode") @SafeHtml final String mode,
+    public String result(@PathVariable("id") final Long id, @PathVariable("mode") @SanitizeHtml final String mode,
             final Model model) {
         final Recovery recovery = recoveryService.findOne(id);
         model.addAttribute(RECOVERY, recovery);
@@ -202,7 +202,7 @@ public class RecoveryController {
     }
 
     @PostMapping(value = "/search/{mode}")
-    public String search(@PathVariable("mode") @SafeHtml final String mode, final Model model) {
+    public String search(@PathVariable("mode") @SanitizeHtml final String mode, final Model model) {
         final RecoverySearchRequest recoverySearchRequest = new RecoverySearchRequest();
         prepareNewForm(model);
         model.addAttribute(RECOVERY_SEARCH_REQUEST, recoverySearchRequest);
@@ -212,7 +212,7 @@ public class RecoveryController {
 
 	@SuppressWarnings("deprecation")
 	@PostMapping(value = "/ajaxsearch/{mode}", produces = MediaType.TEXT_PLAIN_VALUE)
-	public @ResponseBody String ajaxsearch(@PathVariable("mode") @SafeHtml final String mode, final Model model,
+	public @ResponseBody String ajaxsearch(@PathVariable("mode") @SanitizeHtml final String mode, final Model model,
 			@Valid @ModelAttribute final RecoverySearchRequest recoverySearchRequest) {
 		CChartOfAccounts chartOfAccounts = null;
 		if (recoverySearchRequest != null && recoverySearchRequest.getChartofaccountsId() != null)
@@ -224,7 +224,7 @@ public class RecoveryController {
 
     @GetMapping(value = "/ajax/getAccountCodes")
     public @ResponseBody List<CChartOfAccounts> getAccountCodes(
-            @RequestParam("subLedgerCode") @SafeHtml final String subLedgerCode) {
+            @RequestParam("subLedgerCode") @SanitizeHtml final String subLedgerCode) {
         List<CChartOfAccounts> accounts = null;
         if (subLedgerCode.equalsIgnoreCase("Select"))
             accounts = chartOfAccountsDAO.getNonControlledGlcode();

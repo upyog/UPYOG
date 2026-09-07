@@ -1,0 +1,85 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Spring Cloud Gateway
+  description: |
+    Spring Cloud Gateway based reactive API gateway for routing, authentication,
+    RBAC enforcement, rate limiting, and observability in the UPYOG platform.
+
+    This infrastructure service does not define domain business APIs. It proxies
+    incoming HTTP requests to downstream UPYOG microservices configured in
+    routes.properties, enriching requests with user and correlation headers and
+    applying auth/RBAC filters before forwarding traffic.
+  contact:
+    name: UPYOG NUDM Team
+    email: cdg-contact@niua.org
+schemes:
+  - https
+basePath: /gateway
+x-api-id: org.egov.gateway
+x-common-path: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Gateway health endpoint used for liveness and readiness probes.
+      responses:
+        '200':
+          description: Gateway is healthy
+          schema:
+            $ref: '#/definitions/HealthResponse'
+      tags:
+        - Health
+  /promethus:
+    get:
+      summary: Prometheus metrics
+      description: Exposes Prometheus metrics for gateway monitoring.
+      produces:
+        - text/plain
+      responses:
+        '200':
+          description: Metrics exported successfully
+      tags:
+        - Observability
+  /info:
+    get:
+      summary: Service info
+      description: Returns build and application metadata from Spring Actuator.
+      responses:
+        '200':
+          description: Service metadata retrieved successfully
+          schema:
+            type: object
+      tags:
+        - Health
+definitions:
+  HealthResponse:
+    type: object
+    description: Standard Spring Actuator health response
+    properties:
+      status:
+        type: string
+        example: UP
+  GatewayRoute:
+    type: object
+    description: |
+      Declarative route definition loaded from routes.properties. Each route maps
+      an incoming path predicate to a downstream service URI with optional filters
+      such as RequestRateLimiter and StripPrefix.
+    properties:
+      id:
+        type: string
+        description: Unique route identifier
+      uri:
+        type: string
+        description: Downstream service URI
+      predicates:
+        type: array
+        description: Route matching predicates
+        items:
+          type: string
+      filters:
+        type: array
+        description: Gateway filters applied to matched requests
+        items:
+          type: string

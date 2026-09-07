@@ -194,7 +194,7 @@
           }
 
           await mutation.mutateAsync({
-            hallsBookingApplication: updatedApplication
+            venueBookingApplication: updatedApplication
           });
 
           if (refundFailed) {

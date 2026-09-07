@@ -1,0 +1,78 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Zuul API Gateway
+  description: |
+    Legacy Netflix Zuul API gateway for routing, authentication pre-checks, RBAC
+    enforcement, rate limiting, and request enrichment in the UPYOG platform.
+
+    This infrastructure service does not define domain business APIs. It acts as
+    the legacy entry point for UPYOG services, forwarding authenticated and
+    authorized requests to downstream microservices while publishing optional
+    event logs to Kafka.
+  contact:
+    name: UPYOG NUDM Team
+    email: cdg-contact@niua.org
+schemes:
+  - https
+basePath: /
+x-api-id: org.egov.zuul
+x-common-path: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Zuul health endpoint enabled via `zuul.health.enabled=true`.
+      responses:
+        '200':
+          description: Gateway is healthy
+          schema:
+            $ref: '#/definitions/HealthResponse'
+      tags:
+        - Health
+  /info:
+    get:
+      summary: Service info
+      description: Returns build and application metadata from Spring Actuator.
+      responses:
+        '200':
+          description: Service metadata retrieved successfully
+          schema:
+            type: object
+      tags:
+        - Health
+  /metrics:
+    get:
+      summary: Actuator metrics
+      description: Exposes Spring Actuator metrics for gateway monitoring.
+      responses:
+        '200':
+          description: Metrics exported successfully
+          schema:
+            type: object
+      tags:
+        - Observability
+definitions:
+  HealthResponse:
+    type: object
+    description: Standard Spring Actuator health response
+    properties:
+      status:
+        type: string
+        example: UP
+  ZuulRoute:
+    type: object
+    description: |
+      Declarative Zuul route definition. Routes are configured through
+      application properties such as `zuul.routes.<service>.path` and
+      `zuul.routes.<service>.url`.
+    properties:
+      path:
+        type: string
+        description: Incoming request path pattern
+      url:
+        type: string
+        description: Downstream service URL
+      stripPrefix:
+        type: boolean
+        description: Whether to strip the matched prefix before forwarding

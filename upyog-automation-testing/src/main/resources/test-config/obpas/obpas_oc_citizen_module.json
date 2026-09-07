@@ -125,7 +125,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "holdingNumber",
       "action": "TYPE",
-      "inputValue": "Test1234",
+      "inputValue": "${holding.number}",
       "dynamicSleep": 1000
     },
 
@@ -136,7 +136,7 @@
       "locatorStrategy": "CSS",
       "locatorValue": "textarea.card-textarea",
       "action": "TYPE",
-      "inputValue": "Test Land Registration",
+      "inputValue": "${land.registration}",
       "dynamicSleep": 1000
     },
 
@@ -405,7 +405,7 @@
       "locatorStrategy": "XPATH",
       "locatorValue": "//textarea",
       "action": "TYPE",
-      "inputValue": "Approved by citizen",
+      "inputValue": "${comment.approve}",
       "dynamicSleep": 1000
     },
     {
@@ -535,7 +535,7 @@
       "locatorStrategy": "XPATH",
       "locatorValue": "//textarea",
       "action": "TYPE",
-      "inputValue": "Approved by citizen",
+      "inputValue": "${comment.approve}",
       "dynamicSleep": 1000
     },
     {
@@ -556,57 +556,76 @@
       "dynamicSleep": 3000
     },
     {
-      "stepName": "Click UPYOG Pay",
+      "stepName": "Click Make Payment",
       "locatorStrategy": "XPATH",
-      "locatorValue": "//button[contains(@class,'submit-bar') and .//header[normalize-space()='Pay']]",
-      "action": "CLICK_JS",
-      "dynamicSleep": 4000
-    },
-    {
-      "stepName": "Switch Window",
-      "locatorStrategy": "TAGNAME",
-      "locatorValue": "body",
-      "action": "SWITCH_WINDOW",
-      "dynamicSleep": 2000
-    },
-
-    {
-      "stepName": "Net Banking",
-      "locatorStrategy": "XPATH",
-      "locatorValue": "//*[contains(text(),'Net Banking')]",
-      "action": "CLICK_JS",
-      "dynamicSleep": 2000
-    },
-    {
-      "stepName": "Select ICICI",
-      "locatorStrategy": "XPATH",
-      "locatorValue": "//*[@id='ICIC']",
+      "locatorValue": "//button[contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'make payment')]",
       "action": "CLICK_JS",
       "inputValue": null,
       "dynamicSleep": 2000
     },
     {
-      "stepName": "Gateway Pay",
+      "stepName": "Click Proceed To Pay",
       "locatorStrategy": "XPATH",
-      "locatorValue": "//button[contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'pay now')]",
+      "locatorValue": "//button[contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'proceed to pay')]",
       "action": "CLICK_JS",
+      "inputValue": null,
       "dynamicSleep": 3000
     },
-
     {
-      "stepName": "Success",
+      "stepName": "Select ICICI",
       "locatorStrategy": "XPATH",
-      "locatorValue": "//button[contains(.,'Success')]",
+      "locatorValue":"//label[normalize-space()='ICICI']/preceding-sibling::span/input[@type='radio']",
       "action": "CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Click UPYOG Pay",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar') and .//header[normalize-space()='Pay']]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 4000
+    },
+    {
+      "stepName": "Open Cards Section",
+      "locatorStrategy": "ID",
+      "locatorValue": "nbAccordionBtn",
+      "action": "CLICK",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Select Test Bank",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//input[@type='radio' and @value='Test Bank']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Click Pay Now",
+      "locatorStrategy": "ID",
+      "locatorValue": "paytBtn1",
+      "action": "CLICK",
       "dynamicSleep": 3000
     },
-
     {
-      "stepName": "Switch Back",
-      "locatorStrategy": "TAGNAME",
-      "locatorValue": "body",
-      "action": "SWITCH_WINDOW",
-      "dynamicSleep": 2000
+      "stepName": "Enter OTP",
+      "locatorStrategy": "ID",
+      "locatorValue": "otp",
+      "action": "TYPE",
+      "inputValue": "123456",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Verify OTP",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[@onclick='cardsubmit()']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 5000
+    },
+    {
+      "stepName": "Accept Transaction Alert",
+      "action": "ACCEPT_ALERT",
+      "dynamicSleep": 1000
     }
 
   ]

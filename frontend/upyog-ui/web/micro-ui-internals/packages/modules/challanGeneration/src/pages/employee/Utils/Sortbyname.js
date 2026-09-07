@@ -1,5 +1,6 @@
 export const sortDropdownNames = (options, optionkey, locilizationkey) => {
-  return options.sort((a, b) => locilizationkey(a[optionkey]).localeCompare(locilizationkey(b[optionkey])));
+  if (!options || !Array.isArray(options)) return [];
+  return [...options].sort((a, b) => locilizationkey(a[optionkey]).localeCompare(locilizationkey(b[optionkey])));
 };
 
 /**

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
+import upyog.config.EstateConfiguration;
 import upyog.config.ServiceConstants;
 
 import java.sql.ResultSet;
@@ -12,6 +13,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.UUID;
 
 public class EstateUtil {
@@ -120,5 +122,45 @@ public class EstateUtil {
         }
 
         return parts[0];
+    }
+
+    private static final String PAGINATION_WRAPPER =
+            "SELECT * FROM (SELECT *, DENSE_RANK() OVER (ORDER BY createdtime DESC) offset_ FROM ({}) result) result_offset WHERE offset_ > ? AND offset_ <= ? ORDER BY createdtime DESC";
+
+    /**
+     * Adds a pagination wrapper to the select query using limit and offset from application.properties via EstateConfiguration.
+     * 
+     * How it works:
+     * 1. Checks if the requested limit and offset are null; if so, returns the original query.
+     * 2. Sets default limit and offset from EstateConfiguration (capped at configured max limit).
+     * 3. Adds the calculated offset and (limit + offset) values to the SQL statement parameters list.
+     * 4. Wraps the original query in a nested select statement using DENSE_RANK() ordered by createdtime descending.
+     */
+    public static String addPaginationWrapper(String query, List<Object> preparedStmtList, Integer limitVal, Integer offsetVal, EstateConfiguration estateConfiguration) {
+        long limit = estateConfiguration.getDefaultLimit();
+        long offset = estateConfiguration.getDefaultOffset();
+
+        if (limitVal == null && offsetVal == null) {
+            limit = -1;
+        }
+
+        if (limitVal != null && limitVal <= estateConfiguration.getMaxSearchLimit())
+            limit = limitVal;
+
+        if (limitVal != null && limitVal > estateConfiguration.getMaxSearchLimit()) {
+            limit = estateConfiguration.getMaxSearchLimit();
+        }
+
+        if (offsetVal != null)
+            offset = offsetVal;
+
+        if (limit == -1) {
+            return query;
+        } else {
+            preparedStmtList.add(offset);
+            preparedStmtList.add(limit + offset);
+        }
+
+        return PAGINATION_WRAPPER.replace("{}", query);
     }
 }

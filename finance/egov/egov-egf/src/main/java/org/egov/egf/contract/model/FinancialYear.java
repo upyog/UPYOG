@@ -3,14 +3,14 @@ package org.egov.egf.contract.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 public class FinancialYear implements Serializable {
 
 	private static final long serialVersionUID = 9192921109551518752L;
 
 	private Long id;
-	@SafeHtml
+	@SanitizeHtml
 	private String finYearRange;
 	private Date startingDate;
 	private Date endingDate;

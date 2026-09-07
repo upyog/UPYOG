@@ -50,11 +50,11 @@ package org.egov.pims.dao;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.pims.model.StatusMaster;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+
 import org.hibernate.Session;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.io.Serializable;
 /**
  * @author deepak
@@ -142,8 +142,8 @@ public class StatusMasterDAO implements Serializable
 		{
 			try
 			{
-				Query qry = getCurrentSession().createQuery("from StatusMaster P where P.name =:name ");
-				qry.setString("name", name);
+				org.hibernate.query.Query qry = getCurrentSession().createQuery("from StatusMaster P where P.name =:name ");
+				qry.setParameter("name", name);
 				return (StatusMaster)qry.uniqueResult();
 			}
 			catch (HibernateException e)

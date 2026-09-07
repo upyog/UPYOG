@@ -1,3 +1,7 @@
+/**
+ * Custom hook to format raw NOC Inbox table data into mobile card data structures
+ * and manage mobile sorting form controls.
+ */
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { SearchField, RadioButtons } from "@nudmcdgnpm/digit-ui-react-components";

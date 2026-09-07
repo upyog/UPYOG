@@ -77,15 +77,14 @@ import org.egov.infra.workflow.service.StateHistoryService;
 import org.egov.infra.workflow.service.StateService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -152,8 +151,13 @@ public class OldEmployeeService implements EntityTypeService {
 
     @SuppressWarnings("unchecked")
     public List<CFunction> getAllFunctions() {
+        /*
+         * LTS Migration Fix (Hibernate 6 Upgrade):
+         * Changed field names from lowercase 'isactive' and 'isnotleaf' to camelCase 'isActive' and 'isNotLeaf' for CFunction HQL.
+         * The CFunction Java entity uses 'isActive' and 'isNotLeaf' property names.
+         */
         return getCurrentSession()
-                .createQuery("from CFunction where isactive = true AND isnotleaf=false order by upper(name)").list();
+                .createQuery("from CFunction where isActive = true AND isNotLeaf=false order by upper(name)").list();
     }
 
     @SuppressWarnings("unchecked")
@@ -163,8 +167,13 @@ public class OldEmployeeService implements EntityTypeService {
 
     @SuppressWarnings("unchecked")
     public List<Fund> getAllFunds() {
+        /*
+         * LTS Migration Fix (Hibernate 6 Upgrade):
+         * Changed field name from camelCase 'isNotLeaf' to lowercase 'isnotleaf' in Fund HQL.
+         * The Fund entity maps database column 'isnotleaf' to Java property 'isnotleaf'.
+         */
         return getCurrentSession()
-                .createQuery("from Fund where isactive = true and isNotLeaf!=true order by upper(name)").list();
+                .createQuery("from Fund where isactive = true and isnotleaf!=true order by upper(name)").list();
     }
 
     @SuppressWarnings("unchecked")
@@ -318,13 +327,13 @@ public class OldEmployeeService implements EntityTypeService {
         if (searchParams.getIsHOD())
             queryString.append(" and assign.id  in (select assignment.id from HeadOfDepartments )");
         queryString.append(" Order by assign.employee.code, assign.employee.name ");
-        Query query = entityManager.unwrap(Session.class).createQuery(queryString.toString());
+        org.hibernate.query.Query query = entityManager.unwrap(Session.class).createQuery(queryString.toString());
         query = setParametersToQuery(searchParams, query);
         final List<Employee> employees = query.list();
         return employees;
     }
 
-    public Query setParametersToQuery(final EmployeeSearchDTO searchParams, final Query query) {
+    public org.hibernate.query.Query setParametersToQuery(final EmployeeSearchDTO searchParams, final org.hibernate.query.Query query) {
         if (StringUtils.isNotBlank(searchParams.getCode()))
             query.setParameter("code", searchParams.getCode());
         if (StringUtils.isNotBlank(searchParams.getName()))
@@ -344,7 +353,7 @@ public class OldEmployeeService implements EntityTypeService {
         return setAssignmentParameter(searchParams, query);
     }
 
-    public Query setAssignmentParameter(final EmployeeSearchDTO searchParams, final Query assignQuery) {
+    public org.hibernate.query.Query setAssignmentParameter(final EmployeeSearchDTO searchParams, final org.hibernate.query.Query assignQuery) {
         if (searchParams.getDepartment() != null)
             assignQuery.setParameter("department", searchParams.getDepartment());
         if (searchParams.getDesignation() != null)
@@ -368,7 +377,7 @@ public class OldEmployeeService implements EntityTypeService {
      * @return Employee Object
      */
     public Employee getEmployeeById(final Long id) {
-        return employeeRepository.findOne(id);
+        return employeeRepository.findById(id).orElse(null);
     }
 
     /**

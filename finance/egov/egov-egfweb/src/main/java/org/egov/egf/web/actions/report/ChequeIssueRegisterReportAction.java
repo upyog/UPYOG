@@ -50,6 +50,7 @@ package org.egov.egf.web.actions.report;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,7 +62,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.persistence.FlushModeType;
+import jakarta.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -87,18 +93,26 @@ import org.egov.services.instrument.InstrumentHeaderService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
-import org.hibernate.FlushMode;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.BigDecimalType;
-import org.hibernate.type.DateType;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.LongType;
+
+
+
+
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.sf.jasperreports.engine.JRException;
 
+/**
+ * LTS Migration Notes:
+ * 1. [Hibernate 6 Native Query & Types] Migrated createSQLQuery() to createNativeQuery(). Replaced removed
+ *    Hibernate 5 Type singletons (BigDecimalType, LongType, DateType, IntegerType) with StandardBasicTypes.
+ * 2. [Jakarta Persistence FlushModeType] Replaced legacy FlushMode.MANUAL with FlushModeType.COMMIT.
+ * 3. [Struts 7 & Jakarta EE Parameter Extraction] Added resolveCriteriaFromRequest() and parseReportDate()
+ *    to extract 'accountNumber.id', 'deptImpl.code', 'bank', and formatted dates ('dd/MM/yyyy') from HttpServletRequest.
+ */
 @Results(value = { @Result(name = "result", location = "chequeIssueRegisterReport-result.jsp"),
 		@Result(name = "PDF", type = "stream", location = Constants.INPUT_STREAM, params = { Constants.INPUT_NAME,
 				Constants.INPUT_STREAM, Constants.CONTENT_TYPE, "application/pdf", Constants.CONTENT_DISPOSITION,
@@ -149,7 +163,7 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
 	@Override
 	public void prepare() {
 		persistenceService.getSession().setDefaultReadOnly(true);
-		persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+		persistenceService.getSession().setFlushMode(FlushModeType.COMMIT);
 		super.prepare();
 		if (!parameters.containsKey("showDropDown")) {
 			addDropdownData("bankList", egovCommon.getBankBranchForActiveBanks());
@@ -170,9 +184,87 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
 		this.reportHelper = reportHelper;
 	}
 
+	/**
+	 * LTS Migration Fix [Struts 7 & Jakarta EE Parameter Extraction]:
+	 * In Struts 7, form/URL parameters ('accountNumber.id', 'deptImpl.code', 'bank', 'fromDate', 'toDate')
+	 * are not automatically bound to nested bean properties. This method reads them directly from
+	 * HttpServletRequest and parses dates using dd/MM/yyyy.
+	 */
+	private void resolveCriteriaFromRequest() {
+		final HttpServletRequest request = ServletActionContext.getRequest();
+		if (request == null) {
+			return;
+		}
+
+		if (accountNumber == null || accountNumber.getId() == null) {
+			final String accountId = firstNonEmpty(request.getParameter("accountNumber.id"),
+					request.getParameter("accountNumber"), request.getParameter("bankAccount"));
+			if (StringUtils.isNotBlank(accountId) && !"-1".equals(accountId) && !"0".equals(accountId)) {
+				accountNumber = new Bankaccount();
+				accountNumber.setId(Long.valueOf(accountId.trim()));
+			}
+		}
+
+		if (deptImpl == null) {
+			deptImpl = new Department();
+		}
+		if (StringUtils.isBlank(deptImpl.getCode())) {
+			/*
+			 * Form listKey is department code; legacy JS still posts department.id with that
+			 * code value.
+			 */
+			final String deptCode = firstNonEmpty(request.getParameter("deptImpl.code"),
+					request.getParameter("department.id"), request.getParameter("department"));
+			if (StringUtils.isNotBlank(deptCode) && !"0".equals(deptCode) && !"-1".equals(deptCode)) {
+				deptImpl.setCode(deptCode.trim());
+			}
+		}
+
+		if (StringUtils.isBlank(bank)) {
+			bank = request.getParameter("bank");
+		}
+
+		if (fromDate == null) {
+			fromDate = parseReportDate(request.getParameter("fromDate"));
+		}
+		if (toDate == null) {
+			toDate = parseReportDate(request.getParameter("toDate"));
+		}
+	}
+
+	private static String firstNonEmpty(final String... values) {
+		if (values == null) {
+			return null;
+		}
+		for (final String value : values) {
+			if (StringUtils.isNotBlank(value)) {
+				return value.trim();
+			}
+		}
+		return null;
+	}
+
+	private static Date parseReportDate(final String value) {
+		if (StringUtils.isBlank(value)) {
+			return null;
+		}
+		try {
+			return Constants.DDMMYYYYFORMAT2.parse(value.trim());
+		} catch (final ParseException e) {
+			LOGGER.warn("Unable to parse report date: " + value);
+			return null;
+		}
+	}
+
 	public void generateReport() throws JRException, IOException {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("----Inside generateReport---- ");
+
+		resolveCriteriaFromRequest();
+		if (accountNumber == null || accountNumber.getId() == null) {
+			throw new ValidationException(Arrays.asList(new ValidationError("accountNumber",
+					"Please select a bank account")));
+		}
 
 		accountNumber = (Bankaccount) persistenceService.find("from Bankaccount where id=?", accountNumber.getId());
 		if (accountNumber.getChequeformat() != null && !accountNumber.getChequeformat().equals("")) {
@@ -209,19 +301,22 @@ public class ChequeIssueRegisterReportAction extends BaseFormAction {
             queryString.append(" and vmis.departmentcode=:deptCode");
         queryString.append(" order by ih.instrumentDate,ih.instrumentNumber ");
         
-        final Query query = persistenceService.getSession().createSQLQuery(queryString.toString())
+        // LTS Migration Fix [Hibernate 6 createNativeQuery & StandardBasicTypes]:
+        // Migrated from createSQLQuery() to createNativeQuery(). Replaced removed Hibernate 5
+        // Type singletons (BigDecimalType, LongType, DateType, IntegerType) with StandardBasicTypes.
+        final Query query = persistenceService.getSession().createNativeQuery(queryString.toString())
                 .addScalar("chequeNumber").addScalar("chequeDate", StandardBasicTypes.DATE)
-                .addScalar("chequeAmount", BigDecimalType.INSTANCE).addScalar("voucherNumber")
+                .addScalar("chequeAmount", StandardBasicTypes.BIG_DECIMAL).addScalar("voucherNumber")
                 .addScalar("voucherDate", StandardBasicTypes.DATE).addScalar("voucherName").addScalar("payTo")
                 .addScalar("billNumber").addScalar("billDate", StandardBasicTypes.DATE).addScalar("type")
-                .addScalar("vhId", BigDecimalType.INSTANCE).addScalar("serialNo", LongType.INSTANCE)
-                .addScalar("chequeStatus").addScalar("instrumentHeaderId", LongType.INSTANCE)
+                .addScalar("vhId", StandardBasicTypes.BIG_DECIMAL).addScalar("serialNo", StandardBasicTypes.LONG)
+                .addScalar("chequeStatus").addScalar("instrumentHeaderId", StandardBasicTypes.LONG)
                 .setResultTransformer(Transformers.aliasToBean(ChequeIssueRegisterDisplay.class));
 
-        query.setParameter("toDate", getNextDate(toDate), DateType.INSTANCE)
-                .setParameter("fromDate", fromDate, DateType.INSTANCE)
-                .setParameterList("voucherStatus", getExcludeVoucherStatues(), IntegerType.INSTANCE)
-                .setParameter("bankAccountId", accountNumber.getId(), LongType.INSTANCE);
+        query.setParameter("toDate", getNextDate(toDate), StandardBasicTypes.DATE)
+                .setParameter("fromDate", fromDate, StandardBasicTypes.DATE)
+                .setParameterList("voucherStatus", getExcludeVoucherStatues(), StandardBasicTypes.INTEGER)
+                .setParameter("bankAccountId", accountNumber.getId(), StandardBasicTypes.LONG);
         if (deptImpl != null && deptImpl.getCode() != null && !deptImpl.getCode().equals("0"))
             query.setParameter("deptCode", deptImpl.getCode());
 		if (LOGGER.isDebugEnabled())

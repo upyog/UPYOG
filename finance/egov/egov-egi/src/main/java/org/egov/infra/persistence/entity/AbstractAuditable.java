@@ -50,10 +50,10 @@ package org.egov.infra.persistence.entity;
 
 import java.util.Date;
 
-import javax.persistence.EntityListeners;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 import org.hibernate.envers.Audited;
 import org.springframework.data.annotation.CreatedDate;

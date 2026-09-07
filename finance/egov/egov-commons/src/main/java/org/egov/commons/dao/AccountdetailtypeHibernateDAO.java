@@ -49,13 +49,13 @@ package org.egov.commons.dao;
 
 import org.egov.commons.Accountdetailtype;
 import org.egov.infra.exception.ApplicationException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -83,7 +83,7 @@ public class AccountdetailtypeHibernateDAO  {
     }
 
     public List<Accountdetailtype> findAll() {
-        return (List<Accountdetailtype>) getCurrentSession().createCriteria(Accountdetailtype.class).list();
+        return getCurrentSession().createQuery("from Accountdetailtype", Accountdetailtype.class).list();
     }
 
     @PersistenceContext
@@ -118,7 +118,7 @@ public class AccountdetailtypeHibernateDAO  {
             tableNameField.setAccessible(true);
             final Query query = getCurrentSession().createQuery(
                     "select adt.id from Accountdetailtype adt where UPPER(tablename)=:tableName");
-            query.setString("tableName", ((String) tableNameField.get(master)).toUpperCase());
+            query.setParameter("tableName", ((String) tableNameField.get(master)).toUpperCase());
             Integer detailtypeid = null;
             if (query.uniqueResult() != null)
                 detailtypeid = (Integer) query.uniqueResult();
@@ -132,7 +132,7 @@ public class AccountdetailtypeHibernateDAO  {
 
     public Accountdetailtype getAccountdetailtypeByName(final String name) {
         final Query qry = getCurrentSession().createQuery("from Accountdetailtype where name =:name");
-        qry.setString("name", name);
+        qry.setParameter("name", name);
         return (Accountdetailtype) qry.uniqueResult();
     }
 

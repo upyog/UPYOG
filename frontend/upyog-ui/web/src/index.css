@@ -19,3 +19,17 @@
     color: #0b0c0c;
     color: rgba(11, 12, 12, var(--text-opacity));
   }
+
+.select-wrap .options-card,
+.employee-select-wrap .options-card,
+.options-card {
+  max-height: 250px !important;
+  overflow-y: auto !important;
+}
+
+.noc-citizen {
+  width: 100% !important;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+  margin-top: 0px !important;
+}

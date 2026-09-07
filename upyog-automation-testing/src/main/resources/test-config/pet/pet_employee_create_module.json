@@ -1,0 +1,438 @@
+{
+  "moduleName":"pet_citizen_module",
+  "description":"Pet citizen create full flow",
+
+  "baseUrl":"${selected.url}",
+
+  "instructions":[
+
+    {
+      "stepName":"Employee Username",
+      "locatorStrategy":"NAME",
+      "locatorValue":"username",
+      "action":"TYPE",
+      "inputValue":"${selected.username}"
+    },
+
+    {
+      "stepName":"Employee Password",
+      "locatorStrategy":"NAME",
+      "locatorValue":"password",
+      "action":"TYPE",
+      "inputValue":"${selected.password}"
+    },
+
+    {
+      "stepName":"Select City",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"0:0"
+    },
+
+    {
+      "stepName":"Continue Login",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'Continue')]",
+      "action":"CLICK_JS"
+    },
+
+
+
+
+    {
+      "stepName":"Open New Pet Registration",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//a[contains(@href,'petservice/new-application')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Click Next",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'Next')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+
+
+
+    {
+      "stepName":"Applicant Name",
+      "locatorStrategy":"NAME",
+      "locatorValue":"applicantName",
+      "action":"TYPE",
+      "inputValue": "${applicant.name}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Mobile Number",
+      "locatorStrategy":"NAME",
+      "locatorValue":"mobileNumber",
+      "action":"TYPE",
+      "inputValue": "${mobile.number}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Father Name",
+      "locatorStrategy":"NAME",
+      "locatorValue":"fatherName",
+      "action":"TYPE",
+      "inputValue":"${applicant.guardian}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Email",
+      "locatorStrategy":"NAME",
+      "locatorValue":"emailId",
+      "action":"TYPE",
+      "inputValue": "${applicant.email}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Owner Details Next",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'Next')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+
+
+
+    {
+      "stepName":"Pet Type",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"0:0",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Breed Type",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"1:0",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Pet Sex",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"2:0",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Pet Color",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"3:0",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Birth Adoption Radio",
+      "locatorStrategy":"NAME",
+      "locatorValue":"selectBirthAdoption",
+      "action":"CLICK_FIRST_RADIO",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Birth Date",
+      "locatorStrategy":"NAME",
+      "locatorValue":"birthDate",
+      "action":"TYPE",
+      "inputValue":"${pet.birth.date}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Pet Name",
+      "locatorStrategy":"NAME",
+      "locatorValue":"petName",
+      "action":"TYPE",
+      "inputValue":"${pet.name}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Identification Mark",
+      "locatorStrategy":"NAME",
+      "locatorValue":"identificationMark",
+      "action":"TYPE",
+      "inputValue":"${pet.identification}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Pet Age",
+      "locatorStrategy":"NAME",
+      "locatorValue":"petAge",
+      "action":"TYPE",
+      "inputValue":"${pet.age}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Doctor Name",
+      "locatorStrategy":"NAME",
+      "locatorValue":"doctorName",
+      "action":"TYPE",
+      "inputValue":"${doctor.name}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Clinic Name",
+      "locatorStrategy":"NAME",
+      "locatorValue":"clinicName",
+      "action":"TYPE",
+      "inputValue":"${clinic.name}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Vaccination Date",
+      "locatorStrategy":"NAME",
+      "locatorValue":"lastVaccineDate",
+      "action":"TYPE",
+      "inputValue":"${vaccination.date}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Vaccination Number",
+      "locatorStrategy":"NAME",
+      "locatorValue":"vaccinationNumber",
+      "action":"TYPE",
+      "inputValue":"${vaccination.number}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Pet Details Next",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'Next')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+
+
+
+    {
+      "stepName":"Property ID",
+      "locatorStrategy":"NAME",
+      "locatorValue":"propertyId",
+      "action":"TYPE",
+      "inputValue":"${property.id}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Building Name",
+      "locatorStrategy":"NAME",
+      "locatorValue":"buildingName",
+      "action":"TYPE",
+      "inputValue":"${house.name}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Door Number",
+      "locatorStrategy":"NAME",
+      "locatorValue":"doorNo",
+      "action":"TYPE",
+      "inputValue":"${house.number}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Street",
+      "locatorStrategy":"NAME",
+      "locatorValue":"street",
+      "action":"TYPE",
+      "inputValue":"${street.name}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"GIS Code",
+      "locatorStrategy":"NAME",
+      "locatorValue":"gisCode",
+      "action":"TYPE",
+      "inputValue":"${gis.code}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Property Details Next",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'Next')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+
+
+
+    {
+      "stepName":"House Number",
+      "locatorStrategy":"NAME",
+      "locatorValue":"houseNo",
+      "action":"TYPE",
+      "inputValue":"${house.number}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"House Name",
+      "locatorStrategy":"NAME",
+      "locatorValue":"houseName",
+      "action":"TYPE",
+      "inputValue":"${house.name}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Street Name",
+      "locatorStrategy":"NAME",
+      "locatorValue":"streetName",
+      "action":"TYPE",
+      "inputValue":"Main Street",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Address Line 1",
+      "locatorStrategy":"NAME",
+      "locatorValue":"addressline1",
+      "action":"TYPE",
+      "inputValue":"${address.line1}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Address Line 2",
+      "locatorStrategy":"NAME",
+      "locatorValue":"addressline2",
+      "action":"TYPE",
+      "inputValue":"${address.line2}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Landmark",
+      "locatorStrategy":"NAME",
+      "locatorValue":"landmark",
+      "action":"TYPE",
+      "inputValue":"${address.landmark}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Address Details Next",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'Next')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+
+
+
+    {
+      "stepName":"Upload Identity Proof",
+      "locatorStrategy":"CSS",
+      "locatorValue":"input[type='file']",
+      "action":"UPLOAD_FILE_BY_INDEX",
+      "inputValue":"0:${document.identity.proof}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Upload Owner Proof",
+      "locatorStrategy":"CSS",
+      "locatorValue":"input[type='file']",
+      "action":"UPLOAD_FILE_BY_INDEX",
+      "inputValue":"1:${document.owner.proof}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Upload Vaccination Certificate",
+      "locatorStrategy":"CSS",
+      "locatorValue":"input[type='file']",
+      "action":"UPLOAD_FILE_BY_INDEX",
+      "inputValue":"2:${document.vaccination.cert}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Upload Fitness Certificate",
+      "locatorStrategy":"CSS",
+      "locatorValue":"input[type='file']",
+      "action":"UPLOAD_FILE_BY_INDEX",
+      "inputValue":"3:${document.fitness.cert}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Upload Pet Photo",
+      "locatorStrategy":"ID",
+      "locatorValue":"upload",
+      "action":"UPLOAD_FILE",
+      "inputValue":"${document.pet.photo}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Documents Next",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'Next')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+
+
+
+    {
+      "stepName":"Accept Declaration",
+      "locatorStrategy":"CSS",
+      "locatorValue":"input[type='checkbox']",
+      "action":"CHECK_LAST_CHECKBOX",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Submit Application",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'Submit')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Go Home",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//a[contains(@href,'employee')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    }
+
+  ]
+}

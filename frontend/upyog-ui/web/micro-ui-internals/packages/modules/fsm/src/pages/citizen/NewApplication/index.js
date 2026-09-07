@@ -105,7 +105,9 @@ const FileComplaint = ({ parentRoute }) => {
             geoLocation: {
               latitude: geoLocation?.latitude,
               longitude: geoLocation?.longitude,
-              additionalDetails: {},
+              additionalDetails: {
+                digipin: address?.digipin || "",
+              },
             },
           },
           pitDetail: {

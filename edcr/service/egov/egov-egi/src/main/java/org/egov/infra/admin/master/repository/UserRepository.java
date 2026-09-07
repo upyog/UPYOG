@@ -53,7 +53,7 @@ import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.QueryHint;
+import jakarta.persistence.QueryHint;
 
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;

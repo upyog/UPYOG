@@ -1,19 +1,16 @@
 <jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2">
 
     <!--
-    Updated deployment structure for WildFly 26 / JDK 17 compatibility.
-
     EAR subdeployment isolation is disabled to allow WAR modules within the EAR
     to share classes and dependencies without requiring explicit Class-Path entries.
 
     Server-provided JPA, Infinispan, Hibernate, Jackson, and related modules are
-    excluded to prevent classloading conflicts between WildFly bundled libraries
+    excluded to prevent classloading conflicts between server bundled libraries
     and application-packaged versions.
 
     This ensures the application consistently uses the dependency versions defined
-    in the project, avoids runtime issues such as ClassNotFoundException,
-    NoSuchMethodError, and serialization incompatibilities, and provides a stable
-    deployment environment after the platform upgrade.
+    in the project and avoids runtime issues such as ClassNotFoundException,
+    NoSuchMethodError, and serialization incompatibilities.
 -->
     <ear-subdeployments-isolated>false</ear-subdeployments-isolated>
 

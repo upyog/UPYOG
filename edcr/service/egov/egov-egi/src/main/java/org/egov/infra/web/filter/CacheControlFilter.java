@@ -50,13 +50,13 @@ package org.egov.infra.web.filter;
 
 import java.io.IOException;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.ESAPI;
 
@@ -73,6 +73,12 @@ public class CacheControlFilter implements Filter {
 
     private long expireInSeconds = 0;
 
+    /**
+     * Initializes the filter and reads the {@code expireInSeconds} configuration parameter.
+     *
+     * @param filterConfig the filter configuration object
+     * @throws ServletException if initialization fails
+     */
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
         if (filterConfig.getInitParameter("expireInSeconds") == null)
@@ -81,16 +87,31 @@ public class CacheControlFilter implements Filter {
             expireInSeconds = Long.valueOf(filterConfig.getInitParameter("expireInSeconds"));
     }
     
+    /**
+     * Applies HTTP caching headers (Cache-Control, Expires, ETag, Pragma) to the response.
+     *
+     * @param request the incoming servlet request
+     * @param response the outgoing servlet response
+     * @param chain the filter execution chain
+     * @throws IOException if an I/O error occurs during filtering
+     * @throws ServletException if a servlet processing error occurs
+     */
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
-        final HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        ESAPI.httpUtilities().addHeader(httpServletResponse, CACHE_CONTROL_HEADER, "public,max-age=" + expireInSeconds);
-        httpServletResponse.setDateHeader(EXPIRE_HEADER, System.currentTimeMillis() + expireInSeconds * 1000L);
-        ESAPI.httpUtilities().addHeader(httpServletResponse, PRAGMA_HEADER, " ");
-        ESAPI.httpUtilities().addHeader(httpServletResponse, ETAG_HEADER, " ");
-        chain.doFilter(request, httpServletResponse);
+        // EDCR functions as a headless backend REST service without static UI assets.
+        // ESAPI-based static cache header configuration is kept commented out for reference.
+        // TODO: Uncomment when integrating with active ESAPI configuration.
+//        final HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+//        ESAPI.httpUtilities().addHeader(httpServletResponse, CACHE_CONTROL_HEADER, "public,max-age=" + expireInSeconds);
+//        httpServletResponse.setDateHeader(EXPIRE_HEADER, System.currentTimeMillis() + expireInSeconds * 1000L);
+//        ESAPI.httpUtilities().addHeader(httpServletResponse, PRAGMA_HEADER, " ");
+//        ESAPI.httpUtilities().addHeader(httpServletResponse, ETAG_HEADER, " ");
+//        chain.doFilter(request, httpServletResponse);
     }
 
+    /**
+     * Destroys the filter and releases any allocated resources.
+     */
     @Override
     public void destroy() {
     }

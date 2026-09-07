@@ -1,0 +1,41 @@
+.estAcknowledgement {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  &__banner {
+    width: 100%;
+  }
+
+  &__status-table {
+    margin-top: 16px;
+  }
+
+  &__row {
+    padding: 4px 0px;
+    justify-content: space-between;
+  }
+
+  &__row-text {
+    white-space: pre;
+    width: 60%;
+  }
+
+  &__action-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+
+    @media (max-width: 480px) {
+      flex-direction: column;
+      gap: 8px;
+    }
+  }
+
+  &__home-link {
+    text-decoration: none;
+  }
+  &__full-width {
+    width:100%;
+  }
+}

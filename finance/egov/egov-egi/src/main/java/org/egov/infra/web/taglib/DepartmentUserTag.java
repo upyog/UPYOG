@@ -53,7 +53,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.springframework.web.servlet.tags.RequestContextAwareTag;
 
-import javax.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.JspWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -108,7 +108,7 @@ public class DepartmentUserTag extends RequestContextAwareTag {
 	}
 
 	@Override
-	public int doStartTagInternal() throws javax.servlet.jsp.JspTagException
+	public int doStartTagInternal() throws jakarta.servlet.jsp.JspTagException
 	{
 		return SKIP_BODY;
 	}
@@ -120,7 +120,7 @@ public class DepartmentUserTag extends RequestContextAwareTag {
 		try
 		{
 
-			final javax.servlet.http.HttpSession session = this.pageContext.getSession();
+			final jakarta.servlet.http.HttpSession session = this.pageContext.getSession();
 			final String cityid = (String) session.getAttribute("org.egov.topBndryID");
 			this.logger.info("cityid from session:::" + cityid);
 			final List deptList = this.getDeptCollection();

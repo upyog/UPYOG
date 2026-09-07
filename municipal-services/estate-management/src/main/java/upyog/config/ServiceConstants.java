@@ -38,6 +38,36 @@ public class ServiceConstants {
     public static final String NOT_FOUND = " is not found";
     public static final String TENANTID = "?tenantId=";
     public static final String BUSINESS_SERVICES = "&businessServices=";
+    public static final String EST_BOOKING_FEE   = "EST_BOOKING_FEE";
+    public static final String EST_PENALTY_FEE   = "EST_PENALTY_FEE";
+
+    // Payment types
+    public static final String PAYMENT_TYPE_MONTHLY_RENT = "MONTHLY_RENT";
+    public static final String PAYMENT_TYPE_PARTIAL = "PARTIAL";
+    public static final String PAYMENT_TYPE_FULL = "FULL";
+
+    // Status
+    public static final String STATUS_PENDING  = "PENDING";
+    public static final String STATUS_PAID     = "PAID";
+    public static final String STATUS_SYSTEM   = "system";
+    public static final String STATUS_PENDING_FOR_PAYMENT = "PENDING_FOR_PAYMENT";
+    public static final String STATUS_PENDING_FOR_ALLOTMENT = "PENDING_FOR_ALLOTMENT";
+    public static final String STATUS_ALLOTTED = "ALLOTTED";
+
+    // MDMS keys
+    public static final String MDMS_RES               = "MdmsRes";
+    public static final String MDMS_MODULE_ESTATE      = "Estate";
+    public static final String MDMS_MASTER_PENALTY     = "Penalty";
+    public static final String MDMS_PENALTY_RATE_KEY   = "rate";
+
+    // Notification action codes (MDMS Notification.notificationConfig)
+    public static final String NOTIFICATION_MODULE = "EstateManagement";
+    public static final String NOTIFICATION_LOCALIZATION_MODULE = "rainmaker-est";
+    public static final String NOTIFICATION_ACTION_ALLOTMENT_CREATED = "ALLOTMENT_CREATED";
+    public static final String NOTIFICATION_ACTION_PAYMENT_SUCCESS = "PAYMENT_SUCCESS";
+
+    // Error codes
+    public static final String PARSING_ERROR_CODE = "PARSING ERROR";
 
     public static final class EstateConstants {
         public static final String INVALID_TENANT = "INVALID TENANT";

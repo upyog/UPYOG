@@ -3,6 +3,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
+import { BUSINESS_SERVICES, RECEIPT_KEYS } from "../../constants";
 
 export const SuccessfulPayment = (props) => {
   const params = new URLSearchParams(window.location.search);
@@ -587,6 +588,58 @@ const WrapPaymentComponent = (props) => {
       window.open(fileStore[fileStoreId], "_blank");
   }
 
+  const printGCReceipt = async () => {
+    let fileStoreId = payments?.Payments?.[0]?.fileStoreId || payments?.fileStoreId;
+    if (!fileStoreId) {
+      let response = { filestoreIds: [payments?.fileStoreId] };
+      response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...paymentData }] }, "garbage-service-receipt");
+      fileStoreId = response?.filestoreIds[0];
+    }
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+    window.open(fileStore[fileStoreId], "_blank");
+  };
+
+  const printESTReceipt = async () => {
+    let fileStoreId = payments?.Payments?.[0]?.fileStoreId || payments?.fileStoreId;
+    if (!fileStoreId) {
+      let response = { filestoreIds: [payments?.fileStoreId] };
+      response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...paymentData }] }, RECEIPT_KEYS.EST);
+      fileStoreId = response?.filestoreIds[0];
+    }
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+    window.open(fileStore[fileStoreId], "_blank");
+  };
+
+  const printNDCReceipt = async () => {
+    let fileStoreId = payments?.Payments?.[0]?.fileStoreId || paymentData?.fileStoreId;
+    if (!fileStoreId) {
+      let response = { filestoreIds: [payments?.fileStoreId] };
+      let ndcApp = {};
+      try {
+        const searchRes = await Digit.NDCService.NDCsearch({ tenantId, filters: { applicationNo: consumerCode } });
+        ndcApp = searchRes?.Applications?.[0] || {};
+      } catch (err) {
+        console.error("Error fetching NDC application for receipt:", err);
+      }
+      response = await Digit.PaymentService.generatePdf(
+        tenantId,
+        {
+          Payments: [
+            {
+              ...(paymentData || {}),
+              ...ndcApp,
+            },
+          ],
+        },
+        "ndc-receipt"
+      );
+      fileStoreId = response?.filestoreIds?.[0];
+    }
+    if (fileStoreId) {
+      const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+      window.open(fileStore[fileStoreId], "_blank");
+    }
+  };
 
 
 
@@ -903,6 +956,26 @@ const WrapPaymentComponent = (props) => {
           {t("PTR_CERTIFICATE")}
         </div>
       ) : null}
+      {business_service == "garbage-service" ? (
+        <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={printGCReceipt}>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
+            <path d="M0 0h24v24H0V0z" fill="none" />
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+          </svg>
+          {t("GC_FEE_RECEIPT")}
+        </div>
+      ) : null}
+      {/* Estate Management Fee Receipt Action */}
+      {business_service === BUSINESS_SERVICES.EST ? (
+        <div
+          className="primary-label-btn d-grid"
+          style={{ marginLeft: "unset", marginRight: "20px", marginTop: "15px", marginBottom: "15px" }}
+          onClick={printESTReceipt}
+        >
+          <DownloadPrefixIcon />
+          {t("EST_FEE_RECEIPT")}
+        </div>
+      ) : null}
       {window.location.href.includes("mcollect") ?
          <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px" }} onClick={printReciept}>
          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
@@ -1028,6 +1101,17 @@ const WrapPaymentComponent = (props) => {
           </div>
         </div>
       ) : null}
+      {business_service == "NDC" ? (
+        <div style={{ display: 'flex', justifyContent: 'flex-start', gap: '20px', marginLeft: "unset", marginRight: "20px", marginTop: "15px", marginBottom: "15px" }}>
+          <div className="primary-label-btn d-grid" onClick={printNDCReceipt}>
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+            </svg>
+            {t("NDC_FEE_RECEIPT")}
+          </div>
+        </div>
+      ) : null}
       {business_service == "sv-services" ? (
         <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={printReciept}>
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
@@ -1053,6 +1137,15 @@ const WrapPaymentComponent = (props) => {
             <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
           </svg>
           {t("SV_ID_CARD")}
+        </div>
+      ) : null}
+      {business_service == "FIRENOC" ? (
+        <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={printReciept}>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
+            <path d="M0 0h24v24H0V0z" fill="none" />
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+          </svg>
+          {t("FN_FEE_RECIEPT")}
         </div>
       ) : null}
       {!(business_service?.includes("TL")) || !(business_service?.includes("PT")) && <SubmitBar onSubmit={printReciept} label={t("COMMON_DOWNLOAD_RECEIPT")} />}
@@ -1081,11 +1174,32 @@ const WrapPaymentComponent = (props) => {
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       )}
+      {business_service == "NDC" && (
+        <Link to={`/upyog-ui/citizen`}>
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+        </Link>
+      )}
       {business_service == "sv-services" && (
         <Link to={`/upyog-ui/citizen`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} style={{marginTop:"15px"}} />
         </Link>
       )}
+      {business_service == "garbage-service" && (
+        <Link to={`/upyog-ui/citizen`}>
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+        </Link>
+      )}
+      {business_service == "FIRENOC" && (
+        <Link to={`/upyog-ui/citizen`}>
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} style={{marginTop:"15px"}} />
+        </Link>
+      )}
+      {business_service === BUSINESS_SERVICES.EST && (
+        <Link to={`/upyog-ui/citizen`}>
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+        </Link>
+      )}
+
     </Card>
   );
 };

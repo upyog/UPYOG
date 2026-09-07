@@ -16,9 +16,12 @@ import org.egov.infra.admin.master.entity.City;
  * </p>
  *
  * <p>
- * Implementations of this interface provide the business logic for city
- * administration and tenant-specific city configuration management.
+ * Exposed as an interface so servlet filters and other components can inject
+ * the city service without Spring proxy type-mismatch errors when
+ * {@code CityService} is wrapped by a JDK dynamic proxy or CGLIB subclass.
  * </p>
+ *
+ * @see org.egov.infra.admin.master.service.CityService
  */
 public interface ICityService {
 

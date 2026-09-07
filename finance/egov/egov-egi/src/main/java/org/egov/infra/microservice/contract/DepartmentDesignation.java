@@ -40,10 +40,10 @@
 
 package org.egov.infra.microservice.contract;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.infra.microservice.models.Designation;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -59,7 +59,7 @@ public class DepartmentDesignation {
     private Designation designation;
 
     @NotNull
-    @SafeHtml
+    @SanitizeHtml
     private String tenantId;
 
     public DepartmentDesignation(final Long id, final Long departmentId, final Designation designation,

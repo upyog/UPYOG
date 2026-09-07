@@ -6,7 +6,7 @@ import org.egov.commons.CFinancialYear;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 
@@ -56,6 +56,7 @@ public class BudgetHeader extends StateAware {
 
 
     @Column(name = "version")
+    @Builder.Default
     private Long version = 0L;          // optimistic locking
 
     @Override

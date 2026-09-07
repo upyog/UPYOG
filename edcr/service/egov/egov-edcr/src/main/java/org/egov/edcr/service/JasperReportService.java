@@ -20,6 +20,14 @@ import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import static org.egov.common.constants.JasperReportConstants.*;
 
+/**
+ * EDCR-specific JasperReports styling and PDF export helper.
+ *
+ * <p>PDF font constants use Helvetica (built-in PDF font) via
+ * {@code JasperReportConstants} instead of file-based Arial lookups.
+ * Custom font extensions are registered in {@code fonts/fonts.xml} for templates
+ * that require embedded fonts.</p>
+ */
 @Service
 public class JasperReportService {
 

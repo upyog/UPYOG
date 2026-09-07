@@ -47,6 +47,7 @@
  */
 package org.egov.egf.web.actions.report;
 
+import jakarta.persistence.FlushModeType;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -70,7 +71,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.FlushMode;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -114,14 +115,19 @@ public class ReportAction extends BaseFormAction {
 	@Override
 	public void prepare() {
 		persistenceService.getSession().setDefaultReadOnly(true);
-		persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+		persistenceService.getSession().setFlushMode(FlushModeType.COMMIT);
 		super.prepare();
 		getHeaderFields();
 		if (headerFields.contains(Constants.DEPARTMENT))
 			addDropdownData("departmentList", masterDataCache.get("egi-department"));
 		if (headerFields.contains(Constants.FUNCTION))
+			/*
+			 * LTS Migration Fix (Hibernate 6 Upgrade):
+			 * Changed field names from lowercase 'isactive' and 'isnotleaf' to camelCase 'isActive' and 'isNotLeaf' for CFunction HQL.
+			 * The CFunction Java entity uses 'isActive' and 'isNotLeaf' property names.
+			 */
 			addDropdownData("functionList", persistenceService
-					.findAllBy("from CFunction where isactive=true and isnotleaf=false  order by name"));
+					.findAllBy("from CFunction where isActive=true and isNotLeaf=false order by name"));
 		if (headerFields.contains(Constants.FUNCTIONARY))
 			addDropdownData("functionaryList",
 					persistenceService.findAllBy(" from Functionary where isactive=true order by name"));

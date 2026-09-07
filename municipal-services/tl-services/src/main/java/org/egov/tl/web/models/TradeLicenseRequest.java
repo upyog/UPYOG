@@ -36,7 +36,7 @@ public class TradeLicenseRequest   {
         @Valid
         private List<TradeLicense> licenses = null;
 
-
+        
         public TradeLicenseRequest addLicensesItem(TradeLicense licensesItem) {
             if (this.licenses == null) {
             this.licenses = new ArrayList<>();

@@ -1,0 +1,19 @@
+{
+  "moduleName": "PET_REGISTRATION",
+
+  "steps": [
+
+    {
+      "name": "Citizen Application",
+      "type": "CITIZEN",
+      "module": "PET_REGISTRATION"
+    },
+
+    {
+      "name": "Employee Verifier",
+      "type": "EMPLOYEE",
+      "module": "PET_REGISTRATION",
+      "role": "PET_CEMP"
+    }
+  ]
+}

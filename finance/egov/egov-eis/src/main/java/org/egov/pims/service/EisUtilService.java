@@ -60,12 +60,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.dao.PersonalInformationDAO;
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -259,35 +254,34 @@ public class EisUtilService implements OwnerGroupService<Position> {
             }
             mainStr += " and ev.userActive='1' "; // getting only active employees
             // for any kind of search
-            Query qry = null;
-            qry = persistenceService.getSession().createQuery(mainStr);
+            org.hibernate.query.Query qry = persistenceService.getSession().createQuery(mainStr);
             LOGGER.info("qryqryqryqry" + qry.toString());
             if (code != null && !code.equals("")) {
-                qry.setString("employeeCode", code);
+                qry.setParameter("employeeCode", code);
             }
             if (departmentId != null && departmentId.intValue() != 0) {
-                qry.setInteger("deptId", departmentId);
+                qry.setParameter("deptId", departmentId);
             }
             if (designationId != null && designationId.intValue() != 0) {
-                qry.setInteger("designationId", designationId);
+                qry.setParameter("designationId", designationId);
             }
             if (functionaryId != null && functionaryId.intValue() != 0) {
-                qry.setInteger("functionaryId", functionaryId);
+                qry.setParameter("functionaryId", functionaryId);
             }
             if (status != null && status.intValue() != 0) {
-                qry.setInteger("employeeStatus", status);
+                qry.setParameter("employeeStatus", status);
             }
             if (boundaryId != null && boundaryId.intValue() != 0 && !userList.isEmpty()) {
                 qry.setParameterList("userObjList", userList);
             }
             if (userId != null && userId.intValue() != 0) {
-                qry.setLong("userId", userId);
+                qry.setParameter("userId", userId);
             }
             if (!roleList.isEmpty()) {
                 qry.setParameterList("roleList", roleList);
             }
             if (empType != null && empType.intValue() != 0) {
-                qry.setInteger("employeeType", empType.intValue());
+                qry.setParameter("employeeType", empType.intValue());
             }
             empInfoList = (List) qry.list();
         }
@@ -315,20 +309,13 @@ public class EisUtilService implements OwnerGroupService<Position> {
     public List<Designation> getAllDesignationByDept(Integer departmentId, Date givenDate) {
         Date userGivenDate = givenDate == null ? new Date() : givenDate;
         Long deptId = departmentId.longValue();
-        Criteria criteria = persistenceService
-                .getSession()
-                .createCriteria(Assignment.class, "assign")
-                .createAlias("assign.department", "department")
-                .add(Restrictions.eq("department.id", deptId))
-                .add(Restrictions.and(Restrictions.le("assign.fromDate", userGivenDate),
-                        Restrictions.ge("assign.toDate", userGivenDate)));
-
-        ProjectionList projections = Projections.projectionList().add(Projections.property("assign.designation"));
-        criteria.setProjection(projections);
-        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-
-        return (List<Designation>) criteria.list();
-
+        return persistenceService.getSession()
+                .createQuery("select distinct assign.designation from Assignment assign" +
+                        " where assign.department.id = :deptId" +
+                        " and assign.fromDate <= :givenDate and assign.toDate >= :givenDate", Designation.class)
+                .setParameter("deptId", deptId)
+                .setParameter("givenDate", userGivenDate)
+                .getResultList();
     }
 
     /*
@@ -338,7 +325,7 @@ public class EisUtilService implements OwnerGroupService<Position> {
      */
     public List<HashMap> getListOfDrawingOfficers(List<Long> desigList, Date assignDate, String codeOrName) {
         ArrayList results = new ArrayList();
-        Query query = getQueryForDrawingOfficer(desigList, null, assignDate == null ? new Date() : assignDate, codeOrName);
+        org.hibernate.query.Query query = getQueryForDrawingOfficer(desigList, null, assignDate == null ? new Date() : assignDate, codeOrName);
         List<Object[]> tmpList = (List<Object[]>) query.list();
         int i = 0;
         for (Object[] objArray : tmpList) {
@@ -356,7 +343,7 @@ public class EisUtilService implements OwnerGroupService<Position> {
         return results;
     }
 
-    private Query getQueryForDrawingOfficer(List<Long> desigList, Integer doId, Date assignDate, String codeOrName) {
+    private org.hibernate.query.Query getQueryForDrawingOfficer(List<Long> desigList, Integer doId, Date assignDate, String codeOrName) {
         StringBuilder qry = new StringBuilder().append("select distinct eee.id as empid,eee.name as empname,eee.code as empcode,")
                 .append(" do.id as doid,do.name as doname,do.code as docode from eg_eis_employeeinfo eee")
                 .append(" inner join eg_position pos on pos.id = eee.pos_id")
@@ -375,16 +362,16 @@ public class EisUtilService implements OwnerGroupService<Position> {
             qry.append(" and do.id=:doId ");
         }
         qry.append(" order by eee.name ");
-        Query query = persistenceService.getSession().createSQLQuery(qry.toString());
-        query.setDate("enteredDate", assignDate);
+        org.hibernate.query.Query query = persistenceService.getSession().createNativeQuery(qry.toString());
+        query.setParameter("enteredDate", assignDate);
         if (null != desigList && !desigList.isEmpty()) {
             query.setParameterList("desList", desigList);
         }
         if (null != doId) {
-            query.setInteger("doId", doId);
+            query.setParameter("doId", doId);
         }
         if (null != codeOrName && !codeOrName.isEmpty()) {
-            query.setString("enteredString", "%" + codeOrName + "%");
+            query.setParameter("enteredString", "%" + codeOrName + "%");
         }
 
         return query;

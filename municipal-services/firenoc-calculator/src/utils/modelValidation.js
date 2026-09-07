@@ -1,11 +1,12 @@
-const Ajv = require("ajv");
-const ajv = new Ajv({ allErrors: true });
+import Ajv from "ajv";
 import {
   BillingSlabReq,
   CalculationReq,
   BillingSlabSearch,
   getBillReq
 } from "../model/validationReq.js";
+
+const ajv = new Ajv({ allErrors: true });
 
 export const validateBillingSlabReq = data => {
   let validate = ajv.compile(BillingSlabReq);

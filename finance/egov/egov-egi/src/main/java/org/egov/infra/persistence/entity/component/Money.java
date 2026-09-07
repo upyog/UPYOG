@@ -48,7 +48,7 @@
 
 package org.egov.infra.persistence.entity.component;
 
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Min;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 

@@ -1,3 +1,7 @@
+/**
+ * Custom hook providing desktop table configuration for the Employee NOC Inbox.
+ * Defines column layout, navigation links, status styling, pagination handlers, and sorting settings.
+ */
 import React, { Fragment, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";

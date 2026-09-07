@@ -15,6 +15,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+/**
+ * Resolves city-specific or district-specific custom implementation beans at runtime.
+ *
+ * <p>Uses {@link ICityService} (interface) instead of the concrete
+ * {@code CityService} class so Spring can apply JDK dynamic proxies or CGLIB
+ * proxies without type-mismatch errors in {@code @Autowired} fields.</p>
+ */
 @Service
 public class CustomImplProvider {
     private static final String COLON = " : ";

@@ -54,8 +54,8 @@ import org.egov.deduction.model.EgRemittanceGldtl;
 import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 /**
@@ -89,7 +89,7 @@ public class EgRemittanceGldtlHibernateDAO {
     }
 
     public List<EgRemittanceGldtl> findAll() {
-        return (List<EgRemittanceGldtl>) getCurrentSession().createCriteria(EgRemittanceGldtl.class).list();
+        return getCurrentSession().createQuery("from EgRemittanceGldtl", EgRemittanceGldtl.class).list();
     }
 
     @PersistenceContext

@@ -48,8 +48,8 @@
 
 package org.egov.infra.web.security.filter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 
 import static org.egov.infra.security.utils.VirtualSanitizer.sanitize;
 

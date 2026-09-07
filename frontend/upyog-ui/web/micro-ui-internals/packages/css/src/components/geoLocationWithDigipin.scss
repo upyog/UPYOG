@@ -1,0 +1,40 @@
+/* =========================================================
+   GeoLocationWithDigipin & DigipinDisplay component styles
+   ========================================================= */
+
+/* DigipinDisplay — chip that shows the generated DIGIPIN */
+.digipin-display {
+  padding: 12px 16px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  border: 1px solid #d4d4d4;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+/* External Mappls link inside the digipin chip */
+.digipin-display__map-link {
+  font-size: 13px;
+  color: #a82227;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+/* Input row: text field + icon button */
+.geo-location-input-row {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+/* Location icon button */
+.geo-location-input-row .butt-icon {
+  cursor: pointer;
+}
+
+/* Spacing when DigipinDisplay appears below the input row */
+.digipin-display--below-input {
+  margin-top: 10px;
+}

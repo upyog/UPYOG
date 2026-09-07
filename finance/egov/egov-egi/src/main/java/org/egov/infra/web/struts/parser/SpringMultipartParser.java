@@ -59,7 +59,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.util.WebUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -74,6 +74,14 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 /**
+ * LTS Migration Fix (Struts 7): bridges Spring {@link MultipartHttpServletRequest} into Struts 7's
+ * {@link MultiPartRequest} SPI.
+ * <p>
+ * Struts 7 change: {@code UploadedFile} is no longer constructed with
+ * {@code new StrutsUploadedFile(file)}. Files must be built with
+ * {@link StrutsUploadedFile.Builder} so original name and content type are kept.
+ * </p>
+ *
  * @author subhash
  */
 public class SpringMultipartParser implements MultiPartRequest {
@@ -132,17 +140,60 @@ public class SpringMultipartParser implements MultiPartRequest {
         return contentTypes;
     }
 
+//    @Override
+//    public UploadedFile[] getFile(String fieldName) {
+//        List<File> files = multiFileMap.get(fieldName);
+//        UploadedFile[] uploadedFiles = null;
+//        if (files != null) {
+//            uploadedFiles = new UploadedFile[files.size()];
+//            int size = 0;
+//            for (File file : files) {
+//                uploadedFiles[size++] = new StrutsUploadedFile(file);
+//            }
+//        }
+//        return uploadedFiles;
+//    }
+
+
+
     @Override
     public UploadedFile[] getFile(String fieldName) {
         List<File> files = multiFileMap.get(fieldName);
-        UploadedFile[] uploadedFiles = null;
-        if (files != null) {
-            uploadedFiles = new UploadedFile[files.size()];
-            int size = 0;
-            for (File file : files) {
-                uploadedFiles[size++] = new StrutsUploadedFile(file);
-            }
+        List<MultipartFile> multipartFiles = multipartMap.get(fieldName);
+
+        if (files == null) {
+            return null;
         }
+
+        UploadedFile[] uploadedFiles = new UploadedFile[files.size()];
+
+        for (int i = 0; i < files.size(); i++) {
+            File file = files.get(i);
+
+            MultipartFile multipartFile =
+                    multipartFiles != null && i < multipartFiles.size()
+                            ? multipartFiles.get(i)
+                            : null;
+
+            String originalName =
+                    multipartFile != null
+                            ? multipartFile.getOriginalFilename()
+                            : file.getName();
+
+            String contentType =
+                    multipartFile != null
+                            ? multipartFile.getContentType()
+                            : null;
+
+            // Struts 7: StrutsUploadedFile(File) constructor was removed; use Builder.
+            uploadedFiles[i] = StrutsUploadedFile.Builder
+                    .create(file)
+                    .withOriginalName(originalName)
+                    .withContentType(contentType)
+                    .withInputName(fieldName)
+                    .build();
+        }
+
         return uploadedFiles;
     }
 

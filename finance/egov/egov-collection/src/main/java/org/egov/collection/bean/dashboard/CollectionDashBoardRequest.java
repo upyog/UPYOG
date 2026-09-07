@@ -50,27 +50,36 @@ package org.egov.collection.bean.dashboard;
 
 import java.util.List;
 
-import org.hibernate.validator.constraints.SafeHtml;
+/*
+ * HTML Sanitization Annotation Migration (Hibernate Validator 7+):
+ * Replaced deprecated org.hibernate.validator.constraints.SafeHtml with custom org.egov.infra.validation.SanitizeHtml
+ * because SafeHtml was decoupled and removed in Hibernate Validator 7+ / Jakarta EE 10.
+ */
+import org.egov.infra.validation.SanitizeHtml;
 
+/**
+ * Request bean for Collection Dashboard search filter parameters.
+ * Uses @SanitizeHtml for input sanitization on string fields.
+ */
 public class CollectionDashBoardRequest {
 
-	@SafeHtml
+	@SanitizeHtml
     private String regionName;
-	@SafeHtml
+	@SanitizeHtml
     private String districtName;
-	@SafeHtml
+	@SanitizeHtml
     private String ulbGrade;
-	@SafeHtml
+	@SanitizeHtml
     private String ulbCode;
-	@SafeHtml
+	@SanitizeHtml
     private String fromDate;
-	@SafeHtml
+	@SanitizeHtml
     private String toDate;
-	@SafeHtml
+	@SanitizeHtml
     private String type;
     private List<String> includeServices;
     private List<String> excludeServices;
-    @SafeHtml
+    @SanitizeHtml
     private String revenueWard;
 
     public String getRegionName() {

@@ -64,7 +64,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"applicantName",
       "action":"TYPE",
-      "inputValue":"Arpit Rao",
+      "inputValue": "${applicant.name}",
       "dynamicSleep": 2000
     },
 
@@ -73,7 +73,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"emailId",
       "action":"TYPE",
-      "inputValue":"arpit@gmail.com",
+      "inputValue": "${applicant.email}",
       "dynamicSleep": 2000
     },
     {
@@ -100,7 +100,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"houseNo",
       "action":"TYPE",
-      "inputValue":"A-12",
+      "inputValue":"${house.number}",
       "dynamicSleep": 2000
     },
 
@@ -109,7 +109,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"streetName",
       "action":"TYPE",
-      "inputValue":"Test Street",
+      "inputValue":"${street.name}",
       "dynamicSleep": 2000
     },
 
@@ -118,7 +118,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"addressLine1",
       "action":"TYPE",
-      "inputValue":"Address Line 1",
+      "inputValue":"${address.line1}",
       "dynamicSleep": 2000
     },
 
@@ -127,7 +127,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"addressLine2",
       "action":"TYPE",
-      "inputValue":"Address Line 2",
+      "inputValue":"${address.line2}",
       "dynamicSleep": 2000
     },
 
@@ -136,7 +136,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"landmark",
       "action":"TYPE",
-      "inputValue":"Near Test Landmark",
+      "inputValue":"${address.landmark}",
       "dynamicSleep": 2000
     },
 
@@ -163,7 +163,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"pincode",
       "action":"TYPE",
-      "inputValue":"143001",
+      "inputValue":"${address.pincode}",
       "dynamicSleep": 2000
     },
 
@@ -235,7 +235,7 @@
       "locatorStrategy":"XPATH",
       "locatorValue":"//textarea[@name='description']",
       "action":"TYPE",
-      "inputValue":"Need Water Tanker urgently",
+      "inputValue":"${water.description}",
       "dynamicSleep":2000
     },
 
@@ -262,6 +262,14 @@
       "locatorStrategy":"XPATH",
       "locatorValue":"//button[@class='submit-bar ' and @type='button'][.//header[text()='Submit']]",
       "action":"CLICK_JS"
+    },
+    {
+      "stepName":"Capture Application Number",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'Booking No.') or contains(text(),'Application Number')]/following-sibling::*[1]",
+      "action":"CAPTURE_TEXT",
+      "inputValue":"APPLICATION_NO",
+      "dynamicSleep":3000
     }
 
   ]

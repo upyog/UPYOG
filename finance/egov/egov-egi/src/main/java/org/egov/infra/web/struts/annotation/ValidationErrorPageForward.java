@@ -48,7 +48,7 @@
 
 package org.egov.infra.web.struts.annotation;
 
-import com.opensymphony.xwork2.validator.ValidationInterceptor;
+import org.apache.struts2.validator.ValidationInterceptor;
 import org.egov.infra.validation.exception.ValidationException;
 
 import java.lang.annotation.ElementType;

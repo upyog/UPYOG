@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.egov.common.entity.dcr.helper.EdcrApplicationInfo;
 import org.egov.common.entity.edcr.Block;
@@ -22,12 +22,22 @@ import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.PlanInformation;
 import org.egov.edcr.entity.EdcrApplicationDetail;
 import org.egov.edcr.repository.EdcrApplicationDetailRepository;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Service class for managing {@link EdcrApplicationDetail} lifecycle and queries.
+ * <p>
+ * Provides database operations for saving application details, querying by DCR numbers,
+ * transaction numbers, and third-party user identifiers, and constructing structural
+ * building models for approved plans.
+ * </p>
+ *
+ * @author eGovernments Foundation
+ */
 @Service
 @Transactional(readOnly = true)
 public class EdcrApplicationDetailService {
@@ -45,38 +55,98 @@ public class EdcrApplicationDetailService {
         return entityManager.unwrap(Session.class);
     }
 
+    /**
+     * Persists an individual {@link EdcrApplicationDetail} entity to the database.
+     *
+     * @param edcrApplicationDetail the application detail entity to persist
+     */
+    @Transactional
     public void save(EdcrApplicationDetail edcrApplicationDetail) {
         edcrApplicationDetailRepository.save(edcrApplicationDetail);
     }
 
+    /**
+     * Persists a collection of {@link EdcrApplicationDetail} entities to the database in batch.
+     *
+     * @param edcrApplicationDetails the list of application detail entities to save
+     */
+    @Transactional
     public void saveAll(List<EdcrApplicationDetail> edcrApplicationDetails) {
         edcrApplicationDetailRepository.saveAll(edcrApplicationDetails);
     }
 
+    /**
+     * Retrieves all application details associated with a given parent application ID.
+     *
+     * @param dcrApplicationId the unique identifier of the parent EDCR application
+     * @return a list of associated {@link EdcrApplicationDetail} entities
+     */
     public List<EdcrApplicationDetail> fingByDcrApplicationId(Long dcrApplicationId) {
         return edcrApplicationDetailRepository.findByApplicationId(dcrApplicationId);
     }
 
+    /**
+     * Retrieves an application detail record by its unique building plan scrutiny (DCR) number.
+     *
+     * @param dcrNumber the unique building plan scrutiny number
+     * @return the matching {@link EdcrApplicationDetail}, or {@code null} if not found
+     */
     public EdcrApplicationDetail findByDcrNumber(final String dcrNumber) {
         return edcrApplicationDetailRepository.findByDcrNumber(dcrNumber);
     }
 
+    /**
+     * Retrieves an application detail by DCR number and third-party user code.
+     *
+     * @param dcrNumber the unique building plan scrutiny number
+     * @param thirdPartyUserCode the user code or UUID of the third-party portal user
+     * @return the matching {@link EdcrApplicationDetail}, or {@code null} if not found
+     */
     public EdcrApplicationDetail findByDcrNumberAndTPUserCode(final String dcrNumber, final String thirdPartyUserCode) {
         return edcrApplicationDetailRepository.findByDcrNumberAndApplication_ThirdPartyUserCode(dcrNumber, thirdPartyUserCode);
     }
 
+    /**
+     * Retrieves an application detail by DCR number and transaction number.
+     *
+     * @param dcrNumber the unique building plan scrutiny number
+     * @param transactionNumber the client-side transaction identifier
+     * @return the matching {@link EdcrApplicationDetail}, or {@code null} if not found
+     */
     public EdcrApplicationDetail findByDcrAndTransactionNumber(final String dcrNumber, final String transactionNumber) {
         return edcrApplicationDetailRepository.findByDcrNumberAndApplication_TransactionNumber(dcrNumber, transactionNumber);
     }
     
+    /**
+     * Retrieves an application detail by DCR number, transaction number, and third-party user code.
+     *
+     * @param dcrNumber the unique building plan scrutiny number
+     * @param transactionNumber the client-side transaction identifier
+     * @param thirdPartyUserCode the user code or UUID of the third-party portal user
+     * @return the matching {@link EdcrApplicationDetail}, or {@code null} if not found
+     */
     public EdcrApplicationDetail findByDcrAndTransactionNumberAndTPUserCode(final String dcrNumber, final String transactionNumber, final String thirdPartyUserCode) {
         return edcrApplicationDetailRepository.findByDcrNumberAndApplication_TransactionNumberAndApplication_ThirdPartyUserCode(dcrNumber, transactionNumber, thirdPartyUserCode);
     }
     
+    /**
+     * Retrieves an application detail by DCR number and third-party user tenant.
+     *
+     * @param dcrNumber the unique building plan scrutiny number
+     * @param thirdPartyUserTenant the tenant ID of the third-party user
+     * @return the matching {@link EdcrApplicationDetail}, or {@code null} if not found
+     */
     public EdcrApplicationDetail findByDcrNumberAndTPUserTenant(final String dcrNumber, final String thirdPartyUserTenant) {
         return edcrApplicationDetailRepository.findByDcrNumberAndApplication_ThirdPartyUserTenant(dcrNumber, thirdPartyUserTenant);
     }
 
+    /**
+     * Constructs and populates building, floor, occupancy, and plan entities for approved plans
+     * and maps them into the provided {@link EdcrApplicationInfo}.
+     *
+     * @param edcrApplicationDetail the persistent application detail record
+     * @param applicationInfo the target application info DTO to populate
+     */
     public void buildBuildingDetailForApprovedPlans(EdcrApplicationDetail edcrApplicationDetail,
             EdcrApplicationInfo applicationInfo) {
         final Map<String, Long> params = new HashMap<>();
@@ -91,7 +161,7 @@ public class EdcrApplicationDetailService {
                         + " where appdtl.id=:applicationDetail");
 
         params.put("applicationDetail", edcrApplicationDetail.getId());
-        final Query query = getCurrentSession().createSQLQuery(queryApplnBldgDtls.toString());
+        final Query query = getCurrentSession().createNativeQuery(queryApplnBldgDtls.toString());
         for (final Map.Entry<String, Long> param : params.entrySet())
             query.setParameter(param.getKey(), param.getValue());
         Object[] applnBldgDtls = (Object[]) query.uniqueResult();
@@ -114,7 +184,7 @@ public class EdcrApplicationDetailService {
                 "select floor.name, meas.area from edcr_floor floor left outer join edcr_measurement meas on floor.id = meas.id "
                         + "  where floor.building=:builing");
         params1.put("builing", Long.valueOf(String.valueOf(applnBldgDtls[8])));
-        final Query query1 = getCurrentSession().createSQLQuery(queryForFloorDtls.toString());
+        final Query query1 = getCurrentSession().createNativeQuery(queryForFloorDtls.toString());
         for (final Map.Entry<String, Long> param : params1.entrySet())
             query1.setParameter(param.getKey(), param.getValue());
         List<Object[]> existFloors = query1.list();

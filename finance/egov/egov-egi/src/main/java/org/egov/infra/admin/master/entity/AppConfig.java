@@ -54,29 +54,29 @@ import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedAttributeNode;
-import javax.persistence.NamedEntityGraph;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.EAGER;
-import static javax.persistence.FetchType.LAZY;
-import static javax.persistence.GenerationType.SEQUENCE;
+import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.FetchType.EAGER;
+import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.SEQUENCE;
 import static org.egov.infra.admin.master.entity.AppConfig.FETCH_WITH_VALUES;
 import static org.egov.infra.admin.master.entity.AppConfig.SEQ_APPCONFIG;
 import static org.hibernate.annotations.FetchMode.JOIN;
@@ -97,7 +97,7 @@ public class AppConfig extends AbstractAuditable {
     private Long id;
 
     @NotBlank
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 250)
     @Column(name = "key_name", updatable = false)
     private String keyName;
@@ -108,7 +108,7 @@ public class AppConfig extends AbstractAuditable {
     private Module module;
 
     @NotBlank
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 250)
     @Column(name = "description")
     private String description;

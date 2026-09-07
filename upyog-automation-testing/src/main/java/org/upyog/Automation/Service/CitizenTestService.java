@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.Automation.Common.CommonCitizenTest;
+import org.upyog.Automation.Reports.ReportManager;
+import org.upyog.Automation.Utils.ConfigReader;
 import org.upyog.Automation.Utils.WorkflowDataStore;
 
 import java.util.Arrays;
@@ -20,13 +22,26 @@ public class CitizenTestService {
     @Autowired
     private CommonCitizenTest commonCitizenTest;
 
-
     public String runCitizenSideTest(String baseUrl,
                                      String moduleName,
                                      String mobileNumber,
                                      String otp,
                                      String cityName,
                                      String permitNumber) {
+
+        boolean standaloneRun = false;
+
+        if (!ReportManager.hasActiveTest()) {
+
+            ReportManager.startTest(
+                    moduleName,
+                    moduleName
+            );
+
+            standaloneRun = true;
+        }
+
+        logger.info("Starting {} citizen test", moduleName);
 
         WorkflowDataStore.put("citizen.mobile.number", mobileNumber);
         WorkflowDataStore.put("selected.mobile", mobileNumber);
@@ -43,16 +58,23 @@ public class CitizenTestService {
 
         WorkflowDataStore.put("base.url", baseUrl);
         WorkflowDataStore.put("selected.url", baseUrl);
+        WorkflowDataStore.put("selected.module", moduleName);
+
         String env = baseUrl.contains("niuatt")
                 ? "NIUATT"
                 : "UPYOG";
 
         WorkflowDataStore.put("selected.env", env);
 
-        logger.info("Selected ENV: {}", env);
+        // Selecting City based on Url
+        if (cityName == null || cityName.isBlank()) {
 
+            String prefix = env.toLowerCase();
 
-        logger.info("Starting citizen test for modules: {}", moduleName);
+            cityName = ConfigReader.get(prefix + ".city");
+        }
+
+        WorkflowDataStore.put("selected.city", cityName);
 
         try {
 
@@ -93,10 +115,15 @@ public class CitizenTestService {
 
         } catch (Exception e) {
 
-            logger.error("Error in citizen test: {}", e.getMessage());
-            e.printStackTrace();
+            logger.error("Error in citizen test", e);
 
-            return "Execution failed: " + e.getMessage();
+            throw new RuntimeException(e);
+        }
+        finally {
+
+            if (standaloneRun) {
+                ReportManager.flush();
+            }
         }
     }
 }

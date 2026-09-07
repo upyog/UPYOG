@@ -4,7 +4,7 @@ info:
   description: |
     APIs available in PDF-Service
   contact:
-    name: eGovernments Foundation
+    name: UPYOG NUDM Team
   version: 1.1.0
 servers:
 - url: /pdf-service/v1/

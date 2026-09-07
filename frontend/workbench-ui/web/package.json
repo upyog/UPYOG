@@ -10,7 +10,8 @@
     "micro-ui-internals/packages/svg-components",
     "micro-ui-internals/packages/modules/core",
     "micro-ui-internals/packages/modules/utilities",
-    "micro-ui-internals/packages/modules/workbench"
+    "micro-ui-internals/packages/modules/workbench",
+    "micro-ui-internals/packages/css"
   ],
   "engines": {
       "node": ">=22"

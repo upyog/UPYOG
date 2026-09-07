@@ -50,8 +50,8 @@ package org.egov.infra.persistence.validator;
 
 import org.egov.infra.persistence.validator.annotation.OptionalPattern;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.regex.Pattern;
 
 public class OptionalPatternValidator implements ConstraintValidator<OptionalPattern, Object> {

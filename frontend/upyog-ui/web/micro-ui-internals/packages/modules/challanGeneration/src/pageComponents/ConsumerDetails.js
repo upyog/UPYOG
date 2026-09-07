@@ -70,7 +70,7 @@ const ConsumerDetails = ({ config, onSelect, userType, formData, setError, formS
   return (
     <React.Fragment>
       {consumerDetails.map((consumerdetail, index) => (
-        <OwnerForm1 key={consumerdetail.key} index={index} consumerdetail={consumerdetail} {...commonProps} />
+        <OwnerForm1 key={index} index={index} consumerdetail={consumerdetail} {...commonProps} />
       ))}
     </React.Fragment>
   );
@@ -98,7 +98,7 @@ const OwnerForm1 = (_props) => {
 
   const { control, formState: localFormState, watch, setError: setLocalError, clearErrors: clearLocalErrors, setValue, trigger, getValues } = useForm();
   const formValue = watch();
-  const { errors } = localFormState;
+  const { errors, touchedFields, touched } = localFormState;
   const isMobile = window.Digit.Utils.browser.isMobile();
 
   
@@ -154,11 +154,11 @@ const OwnerForm1 = (_props) => {
                 name={"ConsumerName"}
                 defaultValue={consumerdetail?.ConsumerName}
                 rules={{ required: t("REQUIRED_FIELD"), validate: { pattern: (val) => (/^[a-zA-Z ]*$/.test(val) ? true : t("CS_ADDCOMPLAINT_NAME_ERROR")) } }}
-                render={(props) => (
+                render={({ field: props }) => (
                   <TextInput
                     value={props.value}
                     autoFocus={focusIndex.index === consumerdetail?.key && focusIndex.type === "name"}
-                    errorStyle={(localFormState.touched.ConsumerName && errors?.ConsumerName?.message) ? true : false}
+                    errorStyle={((touchedFields?.ConsumerName || touched?.ConsumerName) && errors?.ConsumerName?.message) ? true : false}
                     onChange={(e) => {
                       props.onChange(e.target.value);
                     }}
@@ -172,7 +172,7 @@ const OwnerForm1 = (_props) => {
               />
             </div>
           </LabelFieldPair>
-          <CardLabelError className="cg-error-style">{localFormState.touched.ConsumerName ? errors?.ConsumerName?.message : ""}</CardLabelError>
+          <CardLabelError className="cg-error-style">{(touchedFields?.ConsumerName || touched?.ConsumerName) ? errors?.ConsumerName?.message : ""}</CardLabelError>
           <LabelFieldPair>
             <CardLabel className="card-label-smaller cg-cardlabel-pt10">{`${t("UC_MOBILE_NUMBER")}`}</CardLabel>
             <div className="field">
@@ -181,7 +181,7 @@ const OwnerForm1 = (_props) => {
                 name={"mobileNumber"}
                 defaultValue={consumerdetail?.mobileNumber}
                 rules={{ required: t("REQUIRED_FIELD"), validate: (v) => (/^[6789]\d{9}$/.test(v) ? true : t("CORE_COMMON_MOBILE_ERROR")) }}
-                render={(props) => (
+                render={({ field: props }) => (
                   <MobileNumber
                     value={props.value}
                     autoFocus={focusIndex.index === consumerdetail?.key && focusIndex.type === "mobileNumber"}
@@ -191,7 +191,7 @@ const OwnerForm1 = (_props) => {
                     }}
                     labelClassName="cg-mobile-label-style"
                     onBlur={props.onBlur}
-                    errorStyle={(localFormState.touched.mobileNumber && errors?.mobileNumber?.message) ? true : false}
+                    errorStyle={((touchedFields?.mobileNumber || touched?.mobileNumber) && errors?.mobileNumber?.message) ? true : false}
                     disable={isEdit}
                   />
                 )}
@@ -199,7 +199,7 @@ const OwnerForm1 = (_props) => {
 
             </div>
           </LabelFieldPair>  
-          <CardLabelError className="cg-error-style">{localFormState.touched.mobileNumber ? errors?.mobileNumber?.message : ""}</CardLabelError>
+          <CardLabelError className="cg-error-style">{(touchedFields?.mobileNumber || touched?.mobileNumber) ? errors?.mobileNumber?.message : ""}</CardLabelError>
       </div>
       </div>
     </React.Fragment>

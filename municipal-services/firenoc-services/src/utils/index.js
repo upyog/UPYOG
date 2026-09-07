@@ -5,10 +5,8 @@ import findIndex from "lodash/findIndex";
 import isEmpty from "lodash/isEmpty";
 import { httpRequest } from "./api";
 import envVariables from "../envVariables";
-
-export const uuidv1 = () => {
-  return require("uuid/v4")();
-};
+import { v4 as uuidv4 } from "uuid";
+export const uuidv1 = () => uuidv4();
 
 export const requestInfoToResponseInfo = (requestinfo, success) => {
   let ResponseInfo = {

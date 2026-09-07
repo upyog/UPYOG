@@ -56,8 +56,8 @@
       "stepName":"Enter Desludging Request Number",
       "locatorStrategy":"XPATH",
       "locatorValue":"//h4[contains(text(),'Desludging Request Number ')]/following::input[1]",
-      "action":"TYPE",
-      "inputValue":"${selected.applicationNumber}",
+      "action": "TYPE_FROM_STORE",
+      "inputValue": "APPLICATION_NO",
       "dynamicSleep":1000
     },
     {

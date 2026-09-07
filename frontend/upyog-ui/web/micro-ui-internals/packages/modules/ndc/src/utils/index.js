@@ -1,4 +1,5 @@
 import React from "react";
+import getNdcAcknowledgementData from "../getNdcAcknowledgementData";
 
 /* methid to get date from epoch */
 export const convertEpochToDate = (dateEpoch) => {
@@ -91,4 +92,34 @@ export const pdfDownloadLink = (documents = {}, fileStoreId = "", format = "") =
     : null;
 
   return { officer };
+};
+
+export const downloadNDCAcknowledgement = async (application, tenants, t) => {
+  const appData = application?.Applications?.[0] || application?.data?.Applications?.[0] || application;
+  const tenantInfo = tenants?.find((tenant) => tenant.code === appData?.tenantId);
+  const ackData = await getNdcAcknowledgementData(application, tenantInfo, t);
+  Digit.Utils.pdf.generate(ackData);
+};
+
+export const downloadNDCReceipt = async (tenantId, payments, application) => {
+  const paymentList = Array.isArray(payments) ? payments : [payments];
+  let response;
+  if (paymentList[0]?.fileStoreId) {
+    response = { filestoreIds: [paymentList[0].fileStoreId] };
+  } else {
+    response = await Digit.PaymentService.generatePdf(
+      tenantId,
+      {
+        Payments: [
+          {
+            ...(paymentList[0] || {}),
+            ...(application?.Applications?.[0] || application || {}),
+          },
+        ],
+      },
+      "ndc-receipt"
+    );
+  }
+  const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
+  window.open(fileStore[response.filestoreIds[0]], "_blank");
 };

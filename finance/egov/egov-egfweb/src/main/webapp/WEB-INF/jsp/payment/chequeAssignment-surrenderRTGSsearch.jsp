@@ -100,10 +100,13 @@
 					<td class="greybox"></td>
 					<td class="greybox"><s:text name="bank" /><span
 						class="mandatory"></span></td>
+					<%-- LTS Migration Fix (Struts 7 OGNL): use bankBranchMap.
+					     listKey on HashMap/inner-class rows is blocked by the
+					     OGNL allowlist, which left Bank empty. --%>
 					<td class="greybox"><s:select name="bank_branch"
-							id="bank_branch" list="dropdownData.bankbranchList"
-							listKey="bankBranchId" listValue="bankBranchName" headerKey="-1"
-							headerValue="%{getText('lbl.choose.options')}" onchange="loadBankAccount(this)" /></td>
+							id="bank_branch" list="bankBranchMap" headerKey="-1"
+							headerValue="%{getText('lbl.choose.options')}"
+							onchange="loadBankAccount(this)" value="%{bank_branch}" /></td>
 					<egov:ajaxdropdown id="bankaccount" fields="['Text','Value']"
 						dropdownId="bankaccount"
 						url="voucher/common-ajaxLoadBanksAccountsWithAssignedCheques.action" />
@@ -167,9 +170,12 @@
 			var bankId = bankbranchId.substring(0, index);
 			var brId = bankbranchId.substring(index + 1, bankbranchId.length);
 			document.getElementById("bankbranch").value = brId;
+			<%-- LTS Migration Fix (Struts 7): send asOnDate as its own param.
+			     Concatenating '&asOnDate=' into branchId left the AJAX unbound. --%>
 			populatebankaccount({
 				bankId : bankId,
-				branchId : brId + '&asOnDate=' + date,
+				branchId : brId,
+				asOnDate : date,
 				type : 'ADVICE'
 			});
 		}

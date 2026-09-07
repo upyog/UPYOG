@@ -1,0 +1,385 @@
+swagger: 2.0
+info:
+  version: 1.0.0
+  title: PgrAiServices Service
+  description: |
+    AI-assisted grievance classification/search service.
+  contact:
+    name: UPYOG NUDM Team
+    email: "cdg-contact@niua.org"
+schemes:
+  - https
+basePath: /pgr-ai-services
+x-api-id: org.egov.pgr.ai.services
+x-common-path: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml"
+paths:
+  /migration/_transform:
+    post:
+      summary: " Transform"
+      description: " Transform for pgr-ai-services. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response."
+      responses:
+        200:
+          description: " Transform completed successfully"
+          schema:
+            $ref: "#/definitions/Object"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Migration
+      parameters:
+        - name: Object
+          in: body
+          description: Request payload with RequestInfo and domain data for  transform
+          required: True
+          schema:
+            $ref: "#/definitions/Object"
+  /mock/requests/_create:
+    post:
+      summary: Create mock requests
+      description: Create mock requests for pgr-ai-services. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        201:
+          description: Create mock requests completed successfully
+          schema:
+            $ref: "#/definitions/String"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Mock
+      parameters:
+        - name: String
+          in: body
+          description: Request payload with RequestInfo and domain data for create mock requests
+          required: True
+          schema:
+            $ref: "#/definitions/String"
+  /mock/requests/_search:
+    post:
+      summary: Search mock requests
+      description: Search mock requests for pgr-ai-services. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search mock requests completed successfully
+          schema:
+            $ref: "#/definitions/String"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Mock
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/String"
+  /mock/requests/_test:
+    post:
+      summary: Requeststest
+      description: Requeststest for pgr-ai-services. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Requeststest completed successfully
+          schema:
+            $ref: "#/definitions/Object"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Mock
+      parameters:
+        - name: Object
+          in: body
+          description: Request payload with RequestInfo and domain data for requeststest
+          required: True
+          schema:
+            $ref: "#/definitions/Object"
+  /mock/requests/_update:
+    post:
+      summary: Update mock requests
+      description: Update mock requests for pgr-ai-services. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        201:
+          description: Update mock requests completed successfully
+          schema:
+            $ref: "#/definitions/String"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Mock
+      parameters:
+        - name: String
+          in: body
+          description: Request payload with RequestInfo and domain data for update mock requests
+          required: True
+          schema:
+            $ref: "#/definitions/String"
+  /v1/request/_count:
+    post:
+      summary: Count v1 request
+      description: Count v1 request for pgr-ai-services. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Count v1 request completed successfully
+          schema:
+            $ref: "#/definitions/CountResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - V1
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/CountResponse"
+  /v1/request/_create:
+    post:
+      summary: Create v1 request
+      description: Create v1 request for pgr-ai-services. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        201:
+          description: Create v1 request completed successfully
+          schema:
+            $ref: "#/definitions/ServiceResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - V1
+      parameters:
+        - name: ServiceResponse
+          in: body
+          description: Request payload with RequestInfo and domain data for create v1 request
+          required: True
+          schema:
+            $ref: "#/definitions/ServiceResponse"
+  /v1/request/_search:
+    post:
+      summary: Search v1 request
+      description: Search v1 request for pgr-ai-services. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search v1 request completed successfully
+          schema:
+            $ref: "#/definitions/ServiceResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - V1
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/ServiceResponse"
+  /v1/request/_update:
+    post:
+      summary: Update v1 request
+      description: Update v1 request for pgr-ai-services. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        201:
+          description: Update v1 request completed successfully
+          schema:
+            $ref: "#/definitions/ServiceResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - V1
+      parameters:
+        - name: ServiceResponse
+          in: body
+          description: Request payload with RequestInfo and domain data for update v1 request
+          required: True
+          schema:
+            $ref: "#/definitions/ServiceResponse"
+  /v1request/_plainsearch:
+    post:
+      summary: Plain search v1request
+      description: Plain search v1request for pgr-ai-services. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Plain search v1request completed successfully
+          schema:
+            $ref: "#/definitions/ServiceResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - V1Request
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/ServiceResponse"
+definitions:
+  CountResponse:
+    type: object
+    description: Request/Response contract for CountResponse
+    properties:
+      RequestInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo"
+      ResponseInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo"
+      PgrAApplications:
+        type: array
+        description: Domain application objects
+        items:
+          $ref: "#/definitions/PgrAApplication"
+  ServiceResponse:
+    type: object
+    description: Request/Response contract for ServiceResponse
+    properties:
+      RequestInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo"
+      ResponseInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo"
+      PgrAApplications:
+        type: array
+        description: Domain application objects
+        items:
+          $ref: "#/definitions/PgrAApplication"
+  String:
+    type: object
+    description: Request/Response contract for String
+    properties:
+      RequestInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo"
+      ResponseInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo"
+      PgrAApplications:
+        type: array
+        description: Domain application objects
+        items:
+          $ref: "#/definitions/PgrAApplication"
+  Object:
+    type: object
+    description: Request/Response contract for Object
+    properties:
+      RequestInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo"
+      ResponseInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo"
+      PgrAApplications:
+        type: array
+        description: Domain application objects
+        items:
+          $ref: "#/definitions/PgrAApplication"
+  PgrAApplication:
+    type: object
+    description: A domain application object for pgr-ai-services
+    properties:
+      id:
+        type: string
+        description: Unique identifier (UUID)
+        readOnly: true
+      tenantId:
+        type: string
+        description: Unique identifier of ULB
+        maxLength: 128
+        minLength: 2
+      applicationNumber:
+        type: string
+        description: Unique application number
+        readOnly: true
+      status:
+        type: string
+        description: Application status
+      auditDetails:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/AuditDetails"
+    required:
+      - tenantId
+  Workflow:
+    type: object
+    description: Fields related to workflow service
+    properties:
+      action:
+        type: string
+        description: Action on the application
+      status:
+        type: string
+        description: Status of the application
+      comments:
+        type: string
+        description: Comments for the action

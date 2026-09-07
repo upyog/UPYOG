@@ -1,6 +1,6 @@
 <%@ page language="java"%>
 <%@page import="org.egov.utils.FinancialConstants" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 
 
 <%--

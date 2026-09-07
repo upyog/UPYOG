@@ -60,7 +60,7 @@ import java.util.List;
 
 @Repository
 public interface CFinancialYearRepository extends JpaRepository<CFinancialYear, Long> {
-    @Query("from CFinancialYear where endingDate > current_date order by financialyear asc")
+    @Query("from CFinancialYear where endingDate > current_date order by finYearRange asc")
     List<CFinancialYear> getAllFinancialYears();
 
     CFinancialYear findByFinYearRange(String finYearRange);

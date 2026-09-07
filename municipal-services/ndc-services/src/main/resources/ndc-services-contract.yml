@@ -1,0 +1,203 @@
+swagger: 2.0
+info:
+  version: 1.0.0
+  title: NdcServices Service
+  description: |
+    This service provides APIs for the ndc-services module in the UPYOG platform.
+  contact:
+    name: UPYOG NUDM Team
+    email: "cdg-contact@niua.org"
+schemes:
+  - https
+basePath: /ndc-services
+x-api-id: org.egov.ndc.services
+x-common-path: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml"
+paths:
+  /ndc/_create:
+    post:
+      summary: Create ndc
+      description: Create ndc for ndc-services. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        201:
+          description: Create ndc completed successfully
+          schema:
+            $ref: "#/definitions/NdcApplicationResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Ndc
+      parameters:
+        - name: NdcApplicationResponse
+          in: body
+          description: Request payload with RequestInfo and domain data for create ndc
+          required: True
+          schema:
+            $ref: "#/definitions/NdcApplicationResponse"
+  /ndc/_delete:
+    put:
+      summary: Delete ndc
+      description: Delete ndc for ndc-services. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Delete ndc completed successfully
+          schema:
+            $ref: "#/definitions/NdcApplicationResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Ndc
+  /ndc/_search:
+    post:
+      summary: Search ndc
+      description: Search ndc for ndc-services. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search ndc completed successfully
+          schema:
+            $ref: "#/definitions/NdcApplicationSearchResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Ndc
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/NdcApplicationSearchResponse"
+  /ndc/_update:
+    put:
+      summary: Update ndc
+      description: Update ndc for ndc-services. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        201:
+          description: Update ndc completed successfully
+          schema:
+            $ref: "#/definitions/NdcApplicationResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Ndc
+  /ndc/v1/_calculate:
+    post:
+      summary: V1Calculatepost
+      description: V1Calculatepost for ndc-services. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: V1Calculatepost completed successfully
+          schema:
+            $ref: "#/definitions/CalculationRes"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Ndc
+      parameters:
+        - name: CalculationRes
+          in: body
+          description: Request payload with RequestInfo and domain data for v1calculatepost
+          required: True
+          schema:
+            $ref: "#/definitions/CalculationRes"
+definitions:
+  NdcApplicationSearchResponse:
+    type: object
+    description: Request/Response contract for NdcApplicationSearchResponse
+    properties:
+      RequestInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo"
+      ResponseInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo"
+      NdApplications:
+        type: array
+        description: Domain application objects
+        items:
+          $ref: "#/definitions/NdApplication"
+  CalculationRes:
+    type: object
+    description: Request/Response contract for CalculationRes
+    properties:
+      RequestInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo"
+      ResponseInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo"
+      NdApplications:
+        type: array
+        description: Domain application objects
+        items:
+          $ref: "#/definitions/NdApplication"
+  NdcApplicationResponse:
+    type: object
+    description: Request/Response contract for NdcApplicationResponse
+    properties:
+      RequestInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo"
+      ResponseInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo"
+      NdApplications:
+        type: array
+        description: Domain application objects
+        items:
+          $ref: "#/definitions/NdApplication"
+  NdApplication:
+    type: object
+    description: A domain application object for ndc-services
+    properties:
+      id:
+        type: string
+        description: Unique identifier (UUID)
+        readOnly: true
+      tenantId:
+        type: string
+        description: Unique identifier of ULB
+        maxLength: 128
+        minLength: 2
+      applicationNumber:
+        type: string
+        description: Unique application number
+        readOnly: true
+      status:
+        type: string
+        description: Application status
+      auditDetails:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/AuditDetails"
+    required:
+      - tenantId
+  Workflow:
+    type: object
+    description: Fields related to workflow service
+    properties:
+      action:
+        type: string
+        description: Action on the application
+      status:
+        type: string
+        description: Status of the application
+      comments:
+        type: string
+        description: Comments for the action

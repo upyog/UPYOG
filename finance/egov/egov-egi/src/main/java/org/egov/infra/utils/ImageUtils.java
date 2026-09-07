@@ -48,7 +48,6 @@
 
 package org.egov.infra.utils;
 
-import javaxt.io.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
@@ -63,9 +62,9 @@ import javax.imageio.stream.ImageOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.nio.file.Paths;
 import java.util.Iterator;
-import java.util.Optional;
 
 import static javax.imageio.ImageIO.createImageOutputStream;
 import static javax.imageio.ImageIO.getImageWritersByFormatName;
@@ -113,12 +112,11 @@ public final class ImageUtils {
     }
 
     public static double[] findGeoCoordinates(File jpegImage) {
-        Optional<double[]> coordinates = Optional.empty();
         if (JPG_FORMAT_NAME.equalsIgnoreCase(imageFormat(jpegImage))) {
-            Image image = new Image(jpegImage);
-            coordinates = Optional.ofNullable(image.getGPSCoordinate());
+            double[] coordinates = readGpsCoordinates(jpegImage);
+            return coordinates != null ? coordinates : new double[]{0D, 0D};
         }
-        return coordinates.orElse(new double[]{0D, 0D});
+        return new double[]{0D, 0D};
     }
 
     public static String imageFormat(File image) {
@@ -129,5 +127,189 @@ public final class ImageUtils {
             LOG.warn("Could not read image format from file", e);
             return EMPTY;
         }
+    }
+
+    private static double[] readGpsCoordinates(File jpegImage) {
+        try (RandomAccessFile raf = new RandomAccessFile(jpegImage, "r")) {
+            if (raf.readUnsignedShort() != 0xFFD8) {
+                return null;
+            }
+
+            while (true) {
+                int markerPrefix;
+                do {
+                    markerPrefix = raf.readUnsignedByte();
+                } while (markerPrefix != 0xFF);
+
+                int markerType;
+                do {
+                    markerType = raf.readUnsignedByte();
+                } while (markerType == 0xFF);
+
+                if (markerType == 0xD9 || markerType == 0xDA) {
+                    break;
+                }
+
+                int segmentLength = raf.readUnsignedShort();
+                int segmentStart = (int) raf.getFilePointer();
+
+                if (markerType == 0xE1) {
+                    byte[] segment = new byte[segmentLength - 2];
+                    raf.readFully(segment);
+                    return parseExifGps(segment);
+                }
+
+                raf.seek(segmentStart + segmentLength - 2L);
+            }
+        } catch (IOException e) {
+            LOG.warn("Could not read GPS coordinates from image", e);
+        }
+        return null;
+    }
+
+    private static double[] parseExifGps(byte[] segment) {
+        if (segment.length < 14) {
+            return null;
+        }
+        if (segment[0] != 'E' || segment[1] != 'x' || segment[2] != 'i' || segment[3] != 'f') {
+            return null;
+        }
+
+        int tiffStart = 6;
+        boolean littleEndian;
+        if (segment[tiffStart] == 'I' && segment[tiffStart + 1] == 'I') {
+            littleEndian = true;
+        } else if (segment[tiffStart] == 'M' && segment[tiffStart + 1] == 'M') {
+            littleEndian = false;
+        } else {
+            return null;
+        }
+
+        int ifd0Offset = readInt(segment, tiffStart + 4, littleEndian);
+        int gpsIfdOffset = findGpsIfdOffset(segment, tiffStart, ifd0Offset, littleEndian);
+        if (gpsIfdOffset <= 0) {
+            return null;
+        }
+
+        String latRef = null;
+        String lonRef = null;
+        double[] lat = null;
+        double[] lon = null;
+
+        int entries = readShort(segment, tiffStart + gpsIfdOffset, littleEndian);
+        int entryBase = tiffStart + gpsIfdOffset + 2;
+        for (int i = 0; i < entries; i++) {
+            int entryOffset = entryBase + (12 * i);
+            int tag = readShort(segment, entryOffset, littleEndian);
+            int type = readShort(segment, entryOffset + 2, littleEndian);
+            long count = readInt(segment, entryOffset + 4, littleEndian) & 0xFFFFFFFFL;
+            int valueOffset = readInt(segment, entryOffset + 8, littleEndian);
+
+            switch (tag) {
+                case 0x0001:
+                    latRef = readAsciiValue(segment, tiffStart, entryOffset, type, count, valueOffset, littleEndian);
+                    break;
+                case 0x0002:
+                    lat = readRationalTriplet(segment, tiffStart, valueOffset, littleEndian);
+                    break;
+                case 0x0003:
+                    lonRef = readAsciiValue(segment, tiffStart, entryOffset, type, count, valueOffset, littleEndian);
+                    break;
+                case 0x0004:
+                    lon = readRationalTriplet(segment, tiffStart, valueOffset, littleEndian);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if (lat == null || lon == null) {
+            return null;
+        }
+
+        double latitude = toDecimalDegrees(lat);
+        double longitude = toDecimalDegrees(lon);
+        if (latRef != null && "S".equalsIgnoreCase(latRef.trim())) {
+            latitude = -latitude;
+        }
+        if (lonRef != null && "W".equalsIgnoreCase(lonRef.trim())) {
+            longitude = -longitude;
+        }
+        return new double[]{latitude, longitude};
+    }
+
+    private static int findGpsIfdOffset(byte[] segment, int tiffStart, int ifd0Offset, boolean littleEndian) {
+        int ifd0 = tiffStart + ifd0Offset;
+        int entries = readShort(segment, ifd0, littleEndian);
+        int entryBase = ifd0 + 2;
+        for (int i = 0; i < entries; i++) {
+            int entryOffset = entryBase + (12 * i);
+            int tag = readShort(segment, entryOffset, littleEndian);
+            if (tag == 0x8825) {
+                return readInt(segment, entryOffset + 8, littleEndian);
+            }
+        }
+        return -1;
+    }
+
+    private static String readAsciiValue(byte[] segment, int tiffStart, int entryOffset, int type, long count, int valueOffset, boolean littleEndian) {
+        if (type != 2 || count <= 0) {
+            return null;
+        }
+        byte[] value = new byte[(int) count];
+        if (count <= 4) {
+            int offset = entryOffset + 8;
+            for (int i = 0; i < count; i++) {
+                value[i] = segment[offset + i];
+            }
+        } else {
+            int offset = tiffStart + valueOffset;
+            for (int i = 0; i < count; i++) {
+                value[i] = segment[offset + i];
+            }
+        }
+        return new String(value).trim();
+    }
+
+    private static double[] readRationalTriplet(byte[] segment, int tiffStart, int valueOffset, boolean littleEndian) {
+        int offset = tiffStart + valueOffset;
+        return new double[]{
+            readRational(segment, offset, littleEndian),
+            readRational(segment, offset + 8, littleEndian),
+            readRational(segment, offset + 16, littleEndian)
+        };
+    }
+
+    private static double readRational(byte[] segment, int offset, boolean littleEndian) {
+        long numerator = readInt(segment, offset, littleEndian) & 0xFFFFFFFFL;
+        long denominator = readInt(segment, offset + 4, littleEndian) & 0xFFFFFFFFL;
+        if (denominator == 0) {
+            return 0D;
+        }
+        return (double) numerator / (double) denominator;
+    }
+
+    private static double toDecimalDegrees(double[] dms) {
+        return dms[0] + (dms[1] / 60D) + (dms[2] / 3600D);
+    }
+
+    private static int readShort(byte[] data, int offset, boolean littleEndian) {
+        if (littleEndian) {
+            return (data[offset] & 0xFF) | ((data[offset + 1] & 0xFF) << 8);
+        }
+        return ((data[offset] & 0xFF) << 8) | (data[offset + 1] & 0xFF);
+    }
+
+    private static int readInt(byte[] data, int offset, boolean littleEndian) {
+        if (littleEndian) {
+            return (data[offset] & 0xFF)
+                | ((data[offset + 1] & 0xFF) << 8)
+                | ((data[offset + 2] & 0xFF) << 16)
+                | ((data[offset + 3] & 0xFF) << 24);
+        }
+        return ((data[offset] & 0xFF) << 24)
+            | ((data[offset + 1] & 0xFF) << 16)
+            | ((data[offset + 2] & 0xFF) << 8)
+            | (data[offset + 3] & 0xFF);
     }
 }

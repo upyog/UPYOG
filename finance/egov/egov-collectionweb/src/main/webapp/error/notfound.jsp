@@ -46,7 +46,7 @@
   ~
   --%>
 
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="jakarta.tags.core" prefix="c"%>
 <html>
 	<head>
 		<title>eGov - Not Found!</title>

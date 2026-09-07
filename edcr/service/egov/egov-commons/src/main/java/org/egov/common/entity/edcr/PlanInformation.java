@@ -50,9 +50,9 @@ package org.egov.common.entity.edcr;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 //These are the declarations of the applicant in the plan using PLAN_INFO layer.
 public class PlanInformation implements Serializable {

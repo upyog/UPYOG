@@ -70,10 +70,8 @@ import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.opensymphony.xwork2.validator.annotations.Validation;
 
 @ParentPackage("egov")
-@Validation()
 
 @Results({
     @Result(name = PartyTypeAction.NEW, location = "partyType-" + PartyTypeAction.NEW + ".jsp"),

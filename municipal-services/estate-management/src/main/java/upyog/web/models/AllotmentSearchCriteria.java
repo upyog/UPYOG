@@ -13,8 +13,11 @@ public class AllotmentSearchCriteria {
    // private RequestInfo requestInfo;
     
     private String assetNo;
+    private String allotmentNo;
     private String alloteeName;
     private String status;
     private String tenantId;
     private String userUuid;
+    private Integer limit;
+    private Integer offset;
 }

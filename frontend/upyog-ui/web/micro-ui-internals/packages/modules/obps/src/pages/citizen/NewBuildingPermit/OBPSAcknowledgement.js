@@ -1,5 +1,5 @@
 import { Banner, Card, CardText, LinkButton, Loader, Row, StatusTable, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import {convertToNocObject, convertToBPAObject, stringReplaceAll} from "../../../utils/index";
@@ -57,6 +57,7 @@ const BannerPicker = (props) => {
 
 const OBPSAcknowledgement = ({ data, onSuccess }) => {
   const { t } = useTranslation();
+  const [planLink, setPlanLink] = useState("");
   const [mutationHappened, setMutationHappened] = React.useState(false);
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const mutation = Digit.Hooks.obps.useObpsAPI(
@@ -95,6 +96,20 @@ const OBPSAcknowledgement = ({ data, onSuccess }) => {
     }, 0);
     return () => clearTimeout(timer);
   }, []);
+
+  const ActionButton = ({ label, jumpTo }) => {
+      const { t } = useTranslation();
+      const navigate = Digit.Hooks.useCustomNavigate();
+      function routeTo() {
+        location.href = jumpTo;
+      }
+      return <LinkButton label={t(label)} onClick={routeTo} />;
+  };
+
+  useEffect(() => {
+    setPlanLink(data?.data?.edcrDetails?.planPdfs?.[0].split(" - ")[1]);
+  }, [data?.data?.edcrDetails?.planPdfs?.[0]]);
+
   const handleDownloadPdf = async () => {
     const Property = data;
     const tenantInfo  = tenants.find((tenant) => tenant.code === Property.tenantId);
@@ -112,11 +127,17 @@ const OBPSAcknowledgement = ({ data, onSuccess }) => {
       <Link to="/upyog-ui/citizen">
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
+     
       {mutation1.isSuccess &&(
+        <>
         <div style={{marginTop:"10px"}}>
           <SubmitBar label={t("CS_COMMON_DOWNLOAD")} onSubmit={handleDownloadPdf}/>
         </div>
-      )}
+        <div>
+           <ActionButton label={t("CS_DXF_PDF_DOWNLOAD")}  jumpTo={planLink}/>
+        </div>
+        </>
+      )}  
     </Card>
   );
 };

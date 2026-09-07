@@ -34,4 +34,7 @@ public class SchemaDeleteRequest implements Serializable {
     @NotNull
     @Size(min = 2, max = 128)
     private String code;
+
+    @JsonProperty("operation")
+    private String operation;
 }

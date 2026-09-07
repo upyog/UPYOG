@@ -1,10 +1,12 @@
 # Garbage Service
 
-A Spring Boot microservice for managing garbage collection accounts, billing, scheduling, and notifications in the UPYOG/NIUA municipal platform.
+A Spring Boot microservice for managing garbage collection accounts, billing, scheduling, and notifications in the
+UPYOG/NIUA municipal platform.
 
 ## Overview
 
 The Garbage Service handles the full lifecycle of municipal solid waste management:
+
 - Citizen and commercial garbage account registration
 - Workflow-based application processing
 - Monthly/on-demand bill generation and demand management
@@ -14,15 +16,15 @@ The Garbage Service handles the full lifecycle of municipal solid waste manageme
 
 ## Tech Stack
 
-| Component | Version |
-|-----------|---------|
-| Java | 17 |
-| Spring Boot | 3.2.2 |
-| Database | PostgreSQL |
-| Migration | Flyway |
-| Message Broker | Apache Kafka |
-| API Docs | SpringDoc OpenAPI (Swagger UI) |
-| Build Tool | Maven |
+| Component      | Version                        |
+|----------------|--------------------------------|
+| Java           | 17                             |
+| Spring Boot    | 3.2.2                          |
+| Database       | PostgreSQL                     |
+| Migration      | Flyway                         |
+| Message Broker | Apache Kafka                   |
+| API Docs       | SpringDoc OpenAPI (Swagger UI) |
+| Build Tool     | Maven                          |
 
 ## Dependencies
 
@@ -53,7 +55,7 @@ spring.kafka.consumer.group-id=egov-grbg-services
 # Dependent Services
 egov.mdms.host=http://<mdms-host>
 workflow.context.path=http://<workflow-host>
-egov.bill.context.host=http://<billing-host>
+egov.billing.host=http://<billing-host>
 egov.user.host=http://<user-service-host>
 egov.enc.host=http://<enc-service-host>
 egov.sms.host=http://<sms-service-host>
@@ -76,45 +78,45 @@ java -jar target/garbage-service-0.0.1-SNAPSHOT.jar
 
 ### Garbage Accounts — `/garbage-accounts`
 
-| Method | Path | Description |
-|--------|------|-------------|
-| POST | `/_create` | Register a new garbage account |
-| POST | `/_update` | Update account details |
-| POST | `/_update_status` | Workflow status transition |
-| POST | `/_search` | Search accounts (supports index-backed search via `?IsIndex=true`) |
-| POST | `/open/_search` | Citizen open search/pay preview (no auth required; at least one of mobileNumber, applicationNumber, propertyId, oldGarbageIds, or name required) |
-| POST | `/fetch/{CALCULATEFEE\|ACTIONS}` | Get fee calculation or available workflow actions |
-| POST | `/_payNow` | Initiate pay-now for a bill |
-| POST | `/_createUserForGarbage` | Provision a citizen user for an account |
-| POST | `/_counts` | Dashboard aggregate counts |
-| POST | `/_generateGrbgTaxBillReceipt` | Generate PDF tax bill receipt |
-| POST | `/_createArear` | Generate arrear demand |
+| Method | Path                             | Description                                                                                                                                      |
+|--------|----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| POST   | `/_create`                       | Register a new garbage account                                                                                                                   |
+| POST   | `/_update`                       | Update account details                                                                                                                           |
+| POST   | `/_update_status`                | Workflow status transition                                                                                                                       |
+| POST   | `/_search`                       | Search accounts (supports index-backed search via `?IsIndex=true`)                                                                               |
+| POST   | `/open/_search`                  | Citizen open search/pay preview (no auth required; at least one of mobileNumber, applicationNumber, propertyId, oldGarbageIds, or name required) |
+| POST   | `/fetch/{CALCULATEFEE\|ACTIONS}` | Get fee calculation or available workflow actions                                                                                                |
+| POST   | `/_payNow`                       | Initiate pay-now for a bill                                                                                                                      |
+| POST   | `/_createUserForGarbage`         | Provision a citizen user for an account                                                                                                          |
+| POST   | `/_counts`                       | Dashboard aggregate counts                                                                                                                       |
+| POST   | `/_generateGrbgTaxBillReceipt`   | Generate PDF tax bill receipt                                                                                                                    |
+| POST   | `/_createArear`                  | Generate arrear demand                                                                                                                           |
 
 ### Garbage Bills — `/garbage-bills`
 
-| Method | Path | Description |
-|--------|------|-------------|
-| POST | `/_create` | Persist new bill records |
-| POST | `/_update` | Update bill records |
-| POST | `/_search` | Search bills |
-| POST | `_cancelbill` | Cancel a bill |
+| Method | Path          | Description              |
+|--------|---------------|--------------------------|
+| POST   | `/_create`    | Persist new bill records |
+| POST   | `/_update`    | Update bill records      |
+| POST   | `/_search`    | Search bills             |
+| POST   | `_cancelbill` | Cancel a bill            |
 
 ### Scheduler — `/garbage-accounts-scheduler`
 
-| Method | Path | Description |
-|--------|------|-------------|
-| POST | `/bill-generator` | Bulk monthly bill generation |
-| POST | `/on-demand-generation` | On-demand bill generation |
-| POST | `/penalty/_update` | Run penalty processing |
-| POST | `/reverse-rebate-amount` | Reverse applied rebates |
-| POST | `/extract-tracker` | Fetch bill tracker by bill ID |
+| Method | Path                     | Description                   |
+|--------|--------------------------|-------------------------------|
+| POST   | `/bill-generator`        | Bulk monthly bill generation  |
+| POST   | `/on-demand-generation`  | On-demand bill generation     |
+| POST   | `/penalty/_update`       | Run penalty processing        |
+| POST   | `/reverse-rebate-amount` | Reverse applied rebates       |
+| POST   | `/extract-tracker`       | Fetch bill tracker by bill ID |
 
 ### Common — `/garbage-common`
 
-| Method | Path | Description |
-|--------|------|-------------|
-| POST | `/_create` | Create/update common master data |
-| GET | `/getAllCounts` | Aggregate count metrics |
+| Method | Path            | Description                      |
+|--------|-----------------|----------------------------------|
+| POST   | `/_create`      | Create/update common master data |
+| GET    | `/getAllCounts` | Aggregate count metrics          |
 
 ### Excel — `/garbage-excel`
 
@@ -138,48 +140,48 @@ Flyway migrations run automatically on startup from `src/main/resources/db/migra
 
 Key tables:
 
-| Table | Description |
-|-------|-------------|
-| `eg_grbg_account` | Core garbage account records |
-| `eg_grbg_bill` | Bill records linked to accounts |
-| `eg_grbg_application` | Workflow application tracking |
-| `eg_grbg_commercial_details` | Commercial property details |
-| `eg_grbg_collection_unit` | Collection unit configuration |
-| `eg_grbg_collection_staff` | Staff assignments per unit |
-| `eg_grbg_document` | Document attachments |
-| `eg_grbg_charge` | Charge/rate master data |
-| `eg_grbg_collection` | Collection records |
-| `eg_grbg_address` | Account addresses |
-| `eg_grbg_scheduled_requests` | Scheduled billing requests |
-| `eg_grbg_old_details` | Legacy ID mapping |
-| `eg_grbg_declaration` | Declaration statements |
-| `eg_grbg_bill_tracker` | Bill generation tracker with penalty/rebate |
-| `eg_grbg_account_audit` | Account change audit trail |
-| `eg_bill_failure` | Failed bill generation logs |
+| Table                        | Description                                 |
+|------------------------------|---------------------------------------------|
+| `eg_grbg_account`            | Core garbage account records                |
+| `eg_grbg_bill`               | Bill records linked to accounts             |
+| `eg_grbg_application`        | Workflow application tracking               |
+| `eg_grbg_commercial_details` | Commercial property details                 |
+| `eg_grbg_collection_unit`    | Collection unit configuration               |
+| `eg_grbg_collection_staff`   | Staff assignments per unit                  |
+| `eg_grbg_document`           | Document attachments                        |
+| `eg_grbg_charge`             | Charge/rate master data                     |
+| `eg_grbg_collection`         | Collection records                          |
+| `eg_grbg_address`            | Account addresses                           |
+| `eg_grbg_scheduled_requests` | Scheduled billing requests                  |
+| `eg_grbg_old_details`        | Legacy ID mapping                           |
+| `eg_grbg_declaration`        | Declaration statements                      |
+| `eg_grbg_bill_tracker`       | Bill generation tracker with penalty/rebate |
+| `eg_grbg_account_audit`      | Account change audit trail                  |
+| `eg_bill_failure`            | Failed bill generation logs                 |
 
 ## Kafka Topics
 
-| Topic | Purpose |
-|-------|---------|
-| `save-grbg-account` | Persist new garbage accounts |
-| `update-grbg-account` | Update garbage accounts |
-| `egov.collection.payment-create` | Bill tracker status updates |
-| `egov.core.notification.sms` | SMS notifications |
-| `sanatize.failure` | Sanitization failure logging |
+| Topic                            | Purpose                      |
+|----------------------------------|------------------------------|
+| `save-grbg-account`              | Persist new garbage accounts |
+| `update-grbg-account`            | Update garbage accounts      |
+| `egov.collection.payment-create` | Bill tracker status updates  |
+| `egov.core.notification.sms`     | SMS notifications            |
+| `sanatize.failure`               | Sanitization failure logging |
 
 ## Integrated Services
 
-| Service | Purpose |
-|---------|---------|
-| egov-workflow-v2 | Application lifecycle workflow |
-| billing-service | Demand and bill management |
+| Service                     | Purpose                         |
+|-----------------------------|---------------------------------|
+| egov-workflow-v2            | Application lifecycle workflow  |
+| billing-service             | Demand and bill management      |
 | egov-mdms-service / mdms-v2 | Master data (rates, categories) |
-| user-service | Citizen user provisioning |
-| egov-enc-service | PII field encryption/decryption |
-| pdf-service | Bill receipt PDF generation |
-| hpud-dms-service (Alfresco) | Document storage |
-| notification-sms | SMS delivery |
-| egov-url-shortening | Short URLs for payment links |
+| user-service                | Citizen user provisioning       |
+| egov-enc-service            | PII field encryption/decryption |
+| pdf-service                 | Bill receipt PDF generation     |
+| hpud-dms-service (Alfresco) | Document storage                |
+| notification-sms            | SMS delivery                    |
+| egov-url-shortening         | Short URLs for payment links    |
 
 ## Project Structure
 

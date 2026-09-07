@@ -119,10 +119,12 @@ function populateAvailableBalance(accnumObj) {
 	if (accnumObj.options[accnumObj.selectedIndex].value == -1)
 		document.getElementById('availableBalance').value = '';
 	else
+		// LTS Migration Fix (Struts 7): do not append '&date=' onto voucherDate.
+		// Struts 7 will not bind that concatenated query string; send only
+		// bankaccount and voucherDate as separate params.
 		populateavailableBalance({
 			bankaccount : accnumObj.options[accnumObj.selectedIndex].value,
 			voucherDate : document.getElementById('voucherDate').value
-					+ '&date=' + new Date()
 		});
 
 }

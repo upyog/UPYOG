@@ -3,7 +3,7 @@ package org.egov.egf.contract.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 public class AuditDetails implements Serializable {
 
@@ -11,7 +11,7 @@ public class AuditDetails implements Serializable {
      *
      */
     private static final long serialVersionUID = -6546672411255429027L;
-    @SafeHtml
+    @SanitizeHtml
     private String tenantId;
     private Long createBy;
     private Long lastModifiedBy;

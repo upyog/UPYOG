@@ -2,7 +2,7 @@ package org.egov.egf.contract.model;
 
 import java.io.Serializable;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 public class Bank implements Serializable {
 
@@ -11,14 +11,14 @@ public class Bank implements Serializable {
      */
     private static final long serialVersionUID = -8344176995296804471L;
     private Integer id;
-    @SafeHtml
+    @SanitizeHtml
     private String code;
-    @SafeHtml
+    @SanitizeHtml
     private String name;
-    @SafeHtml
+    @SanitizeHtml
     private String description;
     private Boolean active;
-    @SafeHtml
+    @SanitizeHtml
     private String type;
     private AuditDetails auditDetails;
 

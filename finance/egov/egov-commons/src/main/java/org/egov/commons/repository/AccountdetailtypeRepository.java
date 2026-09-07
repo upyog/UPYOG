@@ -69,6 +69,10 @@ public interface AccountdetailtypeRepository extends JpaRepository<Accountdetail
 
 	public List<Accountdetailtype> findByFullQualifiedName(String fullQualifiedName);
 
-	@Query("select distinct(adt) from Accountdetailtype adt where adt.id in (select coad.detailTypeId from CChartOfAccountDetail coad where coad.glCodeId in (select coa.id from CChartOfAccounts coa where  coa.id =:glcodeId))")
-	public List<Accountdetailtype> findByGlcodeId(@Param("glcodeId") Long glcodeId);
+//	@Query("select distinct(adt) from Accountdetailtype adt where adt.id in (select coad.detailTypeId from CChartOfAccountDetail coad where coad.glCodeId in (select coa.id from CChartOfAccounts coa where  coa.id =:glcodeId))")
+@Query("select distinct adt from Accountdetailtype adt " +
+		"where adt.id in " +
+		"(select coad.detailTypeId.id from CChartOfAccountDetail coad " +
+		"where coad.glCodeId.id = :glcodeId)")
+    public List<Accountdetailtype> findByGlcodeId(@Param("glcodeId") Long glcodeId);
 }

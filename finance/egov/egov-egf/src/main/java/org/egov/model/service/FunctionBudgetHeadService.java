@@ -40,7 +40,7 @@ public class FunctionBudgetHeadService {
     }
 
     public List<FunctionBudgetHead> findAll() {
-        return functionBudgetHeadRepository.findAll(new Sort(
+        return functionBudgetHeadRepository.findAll(Sort.by(
                 Sort.Direction.ASC, "function.code"));
     }
 

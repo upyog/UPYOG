@@ -1,0 +1,38 @@
+/* EST employee pages — align content to top like other modules (asset, ads). */
+.estEmployeeLayout {
+  :global(.employeeCard) {
+    margin-top: 0;
+
+    > :global(header.h1) {
+      margin-left: 0;
+      margin-top: 0;
+    }
+  }
+}
+
+.estFormStep {
+  composes: estEmployeeLayout;
+
+  :global {
+    .dynamic-form-action {
+      display: flex !important;
+      justify-content: flex-end !important;
+      align-items: center !important;
+      gap: 16px !important;
+
+      .dynamic-form-action-primary {
+        display: flex !important;
+        gap: 16px !important;
+        order: 2 !important;
+      }
+
+      button, .submit-bar, .selector-button-border {
+        margin: 0 !important;
+      }
+
+      > button.selector-button-border {
+        order: 1 !important;
+      }
+    }
+  }
+}

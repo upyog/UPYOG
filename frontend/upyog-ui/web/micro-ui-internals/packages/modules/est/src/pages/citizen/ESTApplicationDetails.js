@@ -1,237 +1,401 @@
-import { Card, CardSubHeader, Header, Loader, Row, StatusTable, SubmitBar, ActionBar } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
-import ViewTimeline from "../../components/ViewTimeline";
+import { useLocation, useParams } from "react-router-dom";
+import {
+  DynamicCheckPage,
+  Header,
+  Loader,
+  MultiLink,
+  formatCheckPageDate,
+  mergeRouteConfig,
+} from "@nudmcdgnpm/digit-ui-react-components";
+import estateAllotmentFormOverrides from "../../config/Create/estateAllotmentFormOverrides";
+import { EST_CHECK_FLOWS } from "../../config/estCheckPageConfig";
+import { checkForNA, ESTDocumnetPreview, downloadESTAcknowledgement, downloadESTReceipt } from "../../utils";
+import { buildAllotmentAckFormValues } from "../../utils/acknowledgementUtils";
+import {
+  buildAllotmentAssetDisplay,
+  resolveAllotmentAsset,
+} from "../../utils/estMdmsUtils";
+import styles from "../../styles/ESTApplicationDetails.module.scss";
 
-// EST Application Details Component
-// This component displays detailed information about a specific EST application, including allotment details, asset information, payment status, and a timeline of the application process. It also provides action options for employees.
+const getAllotmentNo = (item = {}) =>
+  String(
+    item?.allotmentNo ?? item?.additionalDetails?.allotmentNo ?? ""
+  ).trim();
 
+const ALLOTMENT_NUMBER_FIELD = {
+  order: -1,
+  key: "EST_ALLOTMENT_NUMBER",
+  field: {
+    code: "EST_ALLOTMENT_NUMBER",
+    name: "allotmentNo",
+    type: "text",
+  },
+  validation: {
+    required: false,
+    disabled: true,
+    readOnly: true,
+  },
+  excludeFromPayload: true,
+};
+
+/**
+ * Application / allotment summary — same config-driven layout as the check page (view-only).
+ * Citizen View Summary uses allotmentNo in the URL:
+ *   /upyog-ui/citizen/est/application-details/EST-AL-1013-000008
+ * Employee links may still pass estateNo / assetNo.
+ */
 const ESTApplicationDetails = () => {
   const { t } = useTranslation();
-  const navigate = Digit.Hooks.useCustomNavigate();
-  const { assetNo, tenantId } = useParams();
-  const [allotmentData, setAllotmentData] = useState(null);
-  const passedData = navigate.location?.state?.applicationData;
-  const [data, setData] = useState(passedData || null);
-  const [isLoading, setIsLoading] = useState(!passedData);
-  const [billData, setBillData] = useState(null);
-  const [paymentStatus, setPaymentStatus] = useState("CHECKING");
-  const isMountedRef = React.useRef(true);
+  const location = useLocation();
+  const { assetNo, tenantId: tenantIdParam } = useParams();
+  const decodedId = decodeURIComponent(assetNo || "");
 
-  const [userType, setUserType] = useState("citizen");
+  const passedAllotment =
+    location?.state?.allotmentData ||
+    (location?.state?.applicationData?.allotmentNo
+      ? location.state.applicationData
+      : null);
+  const passedAsset = location?.state?.applicationData || null;
+
+  const tenantId =
+    tenantIdParam ||
+    passedAllotment?.tenantId ||
+    passedAsset?.tenantId ||
+    Digit.ULBService.getCitizenCurrentTenant?.(true) ||
+    Digit.ULBService.getCurrentTenantId();
+
+  const [asset, setAsset] = useState(null);
+  const [allotment, setAllotment] = useState(passedAllotment || null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const { data: assignAssetMdms, isLoading: mdmsLoading } = Digit.Hooks.useEnabledMDMS(
+    Digit.ULBService.getStateId(),
+    "Estate",
+    [{ name: "AssignAssetConfig" }],
+    {
+      select: (data) => data?.Estate?.AssignAssetConfig,
+    }
+  );
 
   useEffect(() => {
-  const currentPath = navigate.location.pathname;
-  if (currentPath.includes('/employee/')) {
-    setUserType("employee");
-  } else {
-    setUserType("citizen");
-  }
-}, [navigate.location.pathname]);
+    let mounted = true;
 
-  useEffect(() => {
-  const fetchData = async () => {
-    if (!passedData && isMountedRef.current) {
-      await fetchAssetDetails();
-    }
-    if (isMountedRef.current) {
-      await fetchBillData();
-      await fetchAllotmentDetails();
-    }
-  };
-  
-  fetchData();
-  
-  return () => {
-    isMountedRef.current = false;
-  };
-}, [assetNo, tenantId, passedData]);
+    const load = async () => {
+      setIsLoading(true);
+      try {
+        let nextAllotment = null;
+        let nextAsset = null;
+        const isAllotmentNo = /^EST-AL-/i.test(decodedId);
+        const passedMatches =
+          passedAllotment &&
+          (getAllotmentNo(passedAllotment) === decodedId ||
+            !getAllotmentNo(passedAllotment))
+            ? passedAllotment
+            : null;
 
+        // Citizen View Summary: always search by allotmentNo
+        // POST /estate-management/estate/allotment/v1/_search
+        // body: { AllotmentSearchCriteria: { tenantId, allotmentNo } }
+        if (decodedId && isAllotmentNo) {
+          try {
+            const allotRes = await Digit.ESTService.allotmentSearch({
+              tenantId,
+              filters: {
+                tenantId,
+                allotmentNo: decodedId,
+              },
+            });
+            const list = allotRes?.Allotments || allotRes?.allotments || [];
+            const fromApi =
+              list.find((item) => getAllotmentNo(item) === decodedId) ||
+              (passedMatches
+                ? list.find(
+                    (item) =>
+                      (item?.allotmentId &&
+                        item.allotmentId === passedMatches.allotmentId) ||
+                      (item?.assetNo &&
+                        item.assetNo ===
+                          (passedMatches.assetNo || passedMatches.estateNo))
+                  )
+                : null) ||
+              (list.length === 1 ? list[0] : null);
 
- const fetchAssetDetails = async () => {
-  if (!isMountedRef.current) return;
-  setIsLoading(true);
-  try {
-    const response = await Digit.ESTService.assetSearch({
-      tenantId,
-      filters: {
-        AssetSearchCriteria: {
-          tenantId,
-          estateNo: assetNo
+            // Prefer API row; keep list-card fields as fallback (e.g. allotmentNo).
+            if (fromApi) {
+              nextAllotment = {
+                ...(passedMatches || {}),
+                ...fromApi,
+                allotmentNo:
+                  getAllotmentNo(fromApi) ||
+                  getAllotmentNo(passedMatches) ||
+                  decodedId,
+              };
+              // Allotment _search embeds asset — never call asset/_search here.
+              nextAsset =
+                fromApi.asset ||
+                fromApi.Asset ||
+                passedMatches?.asset ||
+                passedMatches?.Asset ||
+                null;
+            }
+          } catch (err) {
+            console.warn("EST application details: allotment search failed", err);
+          }
+
+          if (!nextAllotment && passedMatches) {
+            nextAllotment = {
+              ...passedMatches,
+              allotmentNo: getAllotmentNo(passedMatches) || decodedId,
+            };
+            nextAsset =
+              passedMatches.asset || passedMatches.Asset || null;
+          }
+        } else if (decodedId) {
+          // Legacy employee flow: URL id is estateNo / assetNo.
+          const estateNo =
+            passedAsset?.estateNo ||
+            passedAsset?.assetNo ||
+            decodedId ||
+            "";
+
+          if (estateNo) {
+            try {
+              const assetRes = await Digit.ESTService.assetSearch({
+                tenantId,
+                filters: {
+                  AssetSearchCriteria: {
+                    tenantId,
+                    estateNo,
+                  },
+                },
+              });
+              nextAsset = assetRes?.Assets?.[0] || null;
+            } catch (err) {
+              console.warn("EST application details: asset search failed", err);
+            }
+          }
+
+          if (!nextAllotment && estateNo) {
+            try {
+              const allotRes = await Digit.ESTService.allotmentSearch({
+                tenantId,
+                filters: {
+                  tenantId,
+                  assetNo: estateNo,
+                },
+              });
+              nextAllotment = allotRes?.Allotments?.[0] || null;
+            } catch (err) {
+              console.warn("EST application details: allotment-by-asset search failed", err);
+            }
+          }
+
+          // Prefer asset/_search; fall back to navigation state. Keep refAssetNo.
+          if (!nextAsset && passedAsset) {
+            nextAsset = passedAsset;
+          } else if (
+            nextAsset &&
+            !nextAsset.refAssetNo &&
+            (passedAsset?.refAssetNo || passedAsset?.assetRef)
+          ) {
+            nextAsset = {
+              ...nextAsset,
+              refAssetNo: passedAsset.refAssetNo || passedAsset.assetRef,
+            };
+          }
         }
-      }
-    });
-    if (isMountedRef.current) {
-      setData(response?.Assets?.[0] || null);
-    }
-  } catch (error) {
-    console.error("Error fetching asset details:", error);
-  } finally {
-    if (isMountedRef.current) {
-      setIsLoading(false);
-    }
-  }
-};
 
-const fetchAllotmentDetails = async () => {
-  if (!isMountedRef.current) return;
-  try {
-    const response = await Digit.ESTService.allotmentSearch({
+        if (nextAllotment && !getAllotmentNo(nextAllotment) && isAllotmentNo) {
+          nextAllotment = { ...nextAllotment, allotmentNo: decodedId };
+        }
+
+        // Allotment _search embeds asset on the row — use it (no asset/_search).
+        if (!nextAsset && nextAllotment) {
+          nextAsset =
+            nextAllotment.asset ||
+            nextAllotment.Asset ||
+            passedMatches?.asset ||
+            null;
+        }
+
+        if (mounted) {
+          setAllotment(nextAllotment);
+          setAsset(nextAsset);
+        }
+      } catch (err) {
+        console.error("EST application details load failed:", err);
+        if (mounted) {
+          setAllotment(passedAllotment || null);
+          setAsset(passedAsset || null);
+        }
+      } finally {
+        if (mounted) setIsLoading(false);
+      }
+    };
+
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, [decodedId, tenantId, passedAllotment, passedAsset]);
+
+  const routeConfig = useMemo(() => {
+    const steps = Array.isArray(assignAssetMdms) ? assignAssetMdms : [];
+    const body = steps[0]?.body || [];
+    const mdmsStep =
+      body.find((s) => s.key === "Allotments" || s.route === "assign-assets") || {};
+    const merged = mergeRouteConfig(mdmsStep, estateAllotmentFormOverrides);
+    const form = Array.isArray(merged.form) ? [...merged.form] : [];
+    const hasAllotmentNo = form.some(
+      (f) => f.key === "EST_ALLOTMENT_NUMBER" || f.field?.name === "allotmentNo"
+    );
+    if (!hasAllotmentNo) {
+      form.unshift(ALLOTMENT_NUMBER_FIELD);
+    }
+    return { ...merged, form };
+  }, [assignAssetMdms]);
+
+  const flow = EST_CHECK_FLOWS.allotment;
+
+  const sessionValue = useMemo(() => {
+    const resolvedAsset = resolveAllotmentAsset(asset, allotment || {});
+    const formValues = buildAllotmentAckFormValues(
+      allotment || {},
+      resolvedAsset,
+      routeConfig
+    );
+    if (!formValues.allotmentNo && /^EST-AL-/i.test(decodedId)) {
+      formValues.allotmentNo = decodedId;
+    }
+    return {
+      Allotments: { Allotments: [formValues] },
+      assetData: resolvedAsset,
+    };
+  }, [allotment, asset, routeConfig, decodedId]);
+
+  const extraData = useMemo(() => {
+    const resolvedAsset = resolveAllotmentAsset(asset, allotment || {});
+    const display = buildAllotmentAssetDisplay(resolvedAsset, allotment || {}, t);
+    if (!display.allotmentNo && /^EST-AL-/i.test(decodedId)) {
+      display.allotmentNo = decodedId;
+    }
+    return display;
+  }, [asset, allotment, t, decodedId]);
+
+  // Controls visibility of the top-right download options dropdown menu (Acknowledgement & Fee Receipt)
+  const [showOptions, setShowOptions] = useState(false);
+
+  // Retrieve global ULB tenant metadata to supply ULB name, logo, and contact info for generated PDFs
+  const { data: storeData } = Digit.Hooks.useStore.getInitData();
+  const { tenants } = storeData || {};
+
+  const allotmentNo = getAllotmentNo(allotment);
+  const isEmployee = !window.location.href.includes("/citizen/");
+
+  // Fetches receipt payment records for this allotment to determine if a fee receipt is available for download
+  const { data: reciept_data, isLoading: recieptDataLoading } = Digit.Hooks.useRecieptSearch(
+    {
       tenantId,
-      filters: {
-        tenantId,
-        assetNo: assetNo
-      }
-    });
-    if (isMountedRef.current) {
-      setAllotmentData(response?.Allotments?.[0] || null);
+      businessService: "est-services",
+      consumerCodes: allotmentNo,
+      isEmployee,
+    },
+    { enabled: !!allotmentNo }
+  );
+
+  // Populates download actions for the multi-link button (Acknowledgement & Fee Receipt)
+  const downloadOptions = useMemo(() => {
+    const options = [];
+    if (allotment || asset) {
+      options.push({
+        label: t("EST_DOWNLOAD_ACKNOWLEDGEMENT"),
+        onClick: () =>
+          downloadESTAcknowledgement(
+            {
+              Allotments: sessionValue?.Allotments?.Allotments,
+              assetData: sessionValue?.assetData || asset,
+              routeConfig,
+              routeConfigs: { Allotments: routeConfig },
+            },
+            tenants,
+            t
+          ),
+      });
     }
-  } catch (error) {
-    console.error("Error fetching allotment details:", error);
-  }
-};
-
-const fetchBillData = async () => {
-  if (!isMountedRef.current) return;
-  try {
-    const result = await Digit.PaymentService.fetchBill(tenantId, { 
-      businessService: "est-services", 
-      consumerCode: assetNo 
-    });
-    if (isMountedRef.current) {
-      setBillData(result);
-      if (result?.Bill?.[0]?.totalAmount > 0) {
-        setPaymentStatus("PENDING");
-      } else {
-        setPaymentStatus("PAID");
-      }
+    if (reciept_data?.Payments?.length > 0 && !recieptDataLoading) {
+      options.push({
+        label: t("EST_FEE_RECEIPT"),
+        onClick: () => downloadESTReceipt(reciept_data.Payments[0].tenantId, reciept_data.Payments),
+      });
     }
-  } catch (error) {
-    console.error("Error fetching bill data:", error);
-    if (isMountedRef.current) {
-      setPaymentStatus("UNKNOWN");
-    }
-  }
-};
+    return options;
+  }, [allotment, asset, sessionValue, routeConfig, tenants, t, reciept_data, recieptDataLoading]);
 
+  if (isLoading || mdmsLoading) return <Loader />;
 
-  const handleMakePayment = () => {
-    navigate({
-      pathname: `/upyog-ui/citizen/payment/my-bills/est-services/${data?.estateNo}`,
-    });
-  };
-  const handleTakeAction = () => {
-  console.log("Take action clicked for asset:", assetNo);
-};
-
-
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  if (!data) {
+  if (!asset && !allotment) {
     return <div>{t("EST_APPLICATION_NOT_FOUND")}</div>;
   }
 
-  // Create application object for ViewTimeline
-  const applicationForTimeline = {
-    tenantId: data?.tenantId || tenantId,
-    applicationNo: data?.estateNo,
-    workflow: {
-      businessService: "EST"
-    },
-    channel: "CITIZEN",
-    auditDetails: data?.auditDetails
-  };
+  if (!routeConfig?.form?.length) {
+    return <div>{t("EST_APPLICATION_NOT_FOUND")}</div>;
+  }
 
   return (
-    <React.Fragment>
-      <div>
-        <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
-          <Header styles={{ fontSize: "32px" }}>{t("EST_ALLOTMENT_DETAILS")}</Header>
-        </div>
-        
-        <Card>
-  <CardSubHeader style={{ fontSize: "24px" }}>{t("EST_ALLOTMENT_DETAILS")}</CardSubHeader>
-  <StatusTable>
-    <Row className="border-none" label={t("EST_ALLOTTEE_NAME")} text={allotmentData?.alloteeName || t("CS_NA")} />
-    <Row className="border-none" label={t("EST_PHONE_NUMBER")} text={allotmentData?.mobileNo || t("CS_NA")} />
-    <Row className="border-none" label={t("EST_MONTHLY_RENT")} text={
-      allotmentData?.monthlyRent ? `₹${allotmentData.monthlyRent}` : t("CS_NA")
-    } />
-    <Row className="border-none" label={t("EST_STATUS")} text={allotmentData?.status || "ACTIVE"} />
-  </StatusTable>
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("EST_BASIC_DETAILS")}</CardSubHeader>
-          <StatusTable>
-            <Row className="border-none" label={t("EST_ASSET_ID")} text={data?.assetId} />
-            <Row className="border-none" label={t("EST_ESTATE_NUMBER")} text={data?.estateNo} />
-            <Row className="border-none" label={t("EST_ASSET_STATUS")} text={data?.assetStatus || "PENDING"} />
-          </StatusTable>
-
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("EST_ASSET_DETAILS")}</CardSubHeader>
-          <StatusTable>
-            <Row className="border-none" label={t("EST_ASSET_NAME")} text={data?.assetName || t("CS_NA")} />
-            <Row className="border-none" label={t("EST_BUILDING_NAME")} text={data?.buildingName || t("CS_NA")} />
-            <Row className="border-none" label={t("EST_ASSET_TYPE")} text={data?.assetType || t("CS_NA")} />
-            <Row className="border-none" label={t("EST_LOCALITY")} text={data?.locality || t("CS_NA")} />
-            <Row className="border-none" label={t("EST_FLOOR")} text={data?.floor || t("CS_NA")} />
-          </StatusTable>
-
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("EST_PAYMENT_DETAILS")}</CardSubHeader>
-          <StatusTable>
-            <Row className="border-none" label={t("EST_RATE")} text={`₹${data?.rate || 0}`} />
-            <Row 
-              className="border-none" 
-              label={t("EST_TOTAL_AMOUNT")} 
-              text={
-                paymentStatus === "PENDING"
-                  ? (
-                      <span>
-                       ₹ {billData?.Bill?.[0]?.totalAmount || t("CS_NA")}  <strong style={{ color: '#a82227' }}>({t("PENDING_PAYMENT")})</strong>
-                      </span>
-                    )
-                  : paymentStatus === "PAID"
-                  ? (
-                      <span style={{ color: 'green' }}>
-                        <strong>({t("PAYMENT_PAID")})</strong>
-                      </span>
-                    )
-                  : t("CS_NA")
+    <div>
+      <div
+        className={
+          isEmployee
+            ? `employee-application-details ${styles["estAppDetails__header-employee"]}`
+            : `cardHeaderWithOptions ${styles["estAppDetails__header-citizen"]}`
+        }
+      >
+        <Header className={styles["estAppDetails__title"]}>
+          {t("EST_APPLICATION_DETAILS")}
+        </Header>
+        <div
+          className={
+            isEmployee
+              ? styles["estAppDetails__multilink-employee"]
+              : styles["estAppDetails__multilink-citizen"]
+          }
+        >
+          {downloadOptions && downloadOptions.length > 0 && (
+            <MultiLink
+              className={
+                isEmployee
+                  ? "multilinkWrapper employee-mulitlink-main-div"
+                  : "multilinkWrapper"
+              }
+              onHeadClick={() => setShowOptions(!showOptions)}
+              displayOptions={showOptions}
+              options={downloadOptions}
+              downloadBtnClassName={
+                isEmployee ? "employee-download-btn-className" : undefined
+              }
+              optionsClassName={
+                isEmployee ? "employee-options-btn-className" : undefined
               }
             />
-          </StatusTable>
-
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("EST_ADDITIONAL_INFO")}</CardSubHeader>
-          <StatusTable>
-            <Row className="border-none" label={t("EST_AREA")} text={`${data?.additionalDetails?.area || 0} sq ft`} />
-            <Row className="border-none" label={t("EST_CREATED_DATE")} text={
-              data?.auditDetails?.createdTime 
-                ? new Date(data.auditDetails.createdTime).toLocaleDateString("en-GB")
-                : t("CS_NA")
-            } />
-          </StatusTable>
-          
-        </Card>
-
-        {/* ViewTimeline Component */}
-        <Card>
-          <ViewTimeline
-            application={applicationForTimeline}
-            id={data?.estateNo}
-            userType="citizen"
-          />
-        </Card>
-        {userType === "employee" && (
-  <ActionBar>
-    <SubmitBar 
-      label={t("ES_COMMON_TAKE_ACTION")} 
-      onSubmit={handleTakeAction}
-    />
-  </ActionBar>
-)}
+          )}
+        </div>
       </div>
-    </React.Fragment>
+    <DynamicCheckPage
+      routeConfig={routeConfig}
+      config={{ key: flow.stepKey }}
+      value={sessionValue}
+      extraData={extraData}
+      summaryHeaderCode="EST_APPLICATION_DETAILS"
+      defaultSectionHeaderCode={flow.defaultSectionHeaderCode || "EST_ASSET_DETAILS"}
+      t={t}
+      formatDate={formatCheckPageDate}
+      checkNA={checkForNA}
+      DocumentPreview={ESTDocumnetPreview}
+      viewOnly
+    />
+    </div>
   );
 };
 

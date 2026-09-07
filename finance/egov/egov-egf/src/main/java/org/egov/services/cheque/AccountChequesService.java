@@ -58,7 +58,7 @@ import org.egov.model.cheque.AccountCheques;
 import org.egov.model.cheque.ChequeDeptMapping;
 import org.egov.model.masters.ChequeDetail;
 import org.egov.utils.Constants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -151,7 +151,7 @@ public class AccountChequesService extends PersistenceService<AccountCheques, Lo
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("AccountChequeAction | save | accChqDelquery " + accChqDelquery.toString());
 		final Query delqry = session.createQuery(accChqDelquery.toString());
-		delqry.setLong("bankAccId", bankaccount.getId());
+		delqry.setParameter("bankAccId", bankaccount.getId());
 		delqry.executeUpdate();
 
 	}
@@ -166,7 +166,7 @@ public class AccountChequesService extends PersistenceService<AccountCheques, Lo
 		final Query qry = session
 				.createQuery(new StringBuilder("delete from ChequeDeptMapping where accountCheque.id in")
 						.append(" (select id from AccountCheques where bankAccountId.id=:bankAccId)").toString());
-		qry.setLong("bankAccId", bankaccount.getId());
+		qry.setParameter("bankAccId", bankaccount.getId());
 		qry.executeUpdate();
 
 		// delete the cheque leafs that are not mapped to any department.
@@ -175,7 +175,7 @@ public class AccountChequesService extends PersistenceService<AccountCheques, Lo
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("AccountChequeAction | save | accChqDelquery " + accChqDelquery.toString());
 		final Query delqry = session.createQuery(accChqDelquery.toString());
-		delqry.setLong("bankAccId", bankaccount.getId());
+		delqry.setParameter("bankAccId", bankaccount.getId());
 		delqry.executeUpdate();
 
     }

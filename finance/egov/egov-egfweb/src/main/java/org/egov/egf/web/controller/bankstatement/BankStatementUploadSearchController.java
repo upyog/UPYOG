@@ -57,10 +57,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 
 import org.egov.egf.commons.bank.service.CreateBankService;
 import org.egov.egf.commons.bankbranch.service.CreateBankBranchService;
@@ -70,8 +70,6 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.model.bills.DocumentUpload;
 import org.egov.model.brs.BankStatementUploadFile;
 import org.egov.utils.FinancialConstants;
-import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.HTTPUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -158,15 +156,13 @@ public class BankStatementUploadSearchController {
 				mimeType = "application/octet-stream";
 
 			// set content attributes for the response
-			HTTPUtilities httpUtilities = ESAPI.httpUtilities();
-			httpUtilities.setCurrentHTTP(request, response);
-			httpUtilities.setHeader("Content-Type", mimeType);
+			response.setHeader("Content-Type", mimeType);
 			response.setContentLength((int) downloadFile.length());
 
 			// set headers for the response
 			final String headerKey = "Content-Disposition";
 			final String headerValue = String.format("attachment; filename=\"%s\"", fileName);
-			httpUtilities.setHeader(headerKey, headerValue);
+			response.setHeader(headerKey, headerValue);
 
 			final byte[] buffer = new byte[BUFFER_SIZE];
 			int bytesRead = -1;

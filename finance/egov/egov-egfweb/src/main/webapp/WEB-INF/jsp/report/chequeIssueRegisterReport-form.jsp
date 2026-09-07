@@ -80,7 +80,7 @@ function generateReport(){
 	if(isValid == false)
 		return false;
 	doLoadingMask();
-	var url = '../report/chequeIssueRegisterReport-ajaxPrint.action?fromDate='+fromDate+'&toDate='+toDate+'&_csrf='+csrfValue+'&accountNumber.id='+bankAccount+'&department.id='+department+'&bank='+bank+'&showDropDown=false';
+	var url = '../report/chequeIssueRegisterReport-ajaxPrint.action?fromDate='+fromDate+'&toDate='+toDate+'&_csrf='+csrfValue+'&accountNumber.id='+bankAccount+'&deptImpl.code='+department+'&bank='+bank+'&showDropDown=false';
 	YAHOO.util.Connect.asyncRequest('POST', url, callback, null);
 }
 

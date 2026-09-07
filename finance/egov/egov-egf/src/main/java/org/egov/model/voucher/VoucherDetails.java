@@ -53,7 +53,7 @@ package org.egov.model.voucher;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.utils.StringUtils;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 import java.math.BigDecimal;
 
@@ -66,28 +66,28 @@ public class VoucherDetails {
     private Long functionIdDetail;
     private String functionDetail;
     private Long glcodeIdDetail;
-    @SafeHtml
+    @SanitizeHtml
     private String glcodeDetail;
-    @SafeHtml
+    @SanitizeHtml
     private String accounthead;
     private BigDecimal debitAmountDetail = BigDecimal.ZERO;
     private BigDecimal creditAmountDetail = BigDecimal.ZERO;
 
     private CChartOfAccounts glcode;
     private Accountdetailtype detailType;
-    @SafeHtml
+    @SanitizeHtml
     private String detailTypeName;
     private Integer detailKeyId;
-    @SafeHtml
+    @SanitizeHtml
     private String detailKey;
-    @SafeHtml
+    @SanitizeHtml
     private String detailCode;
-    @SafeHtml
+    @SanitizeHtml
     private String detailName;
     private BigDecimal amount = BigDecimal.ZERO;
-    @SafeHtml
+    @SanitizeHtml
     private String subledgerCode;
-    @SafeHtml
+    @SanitizeHtml
     private String isSubledger;
 
     public String getIsSubledger() {
