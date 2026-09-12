@@ -57,6 +57,15 @@ public class ApplicationProperties {
 	private String collectionSearch;
 	
 	
+	@Value("${egov.persister.save.refund.topic}")
+	private String saveRefundTopic;
+	
+	@Value("${egov.persister.update.refund.topic}")
+	private String updateRefundTopic;
+	
+	@Value("${egov.persister.audit.refund.topic}")
+	private String saveAuditRefundTopic;
+	
 
 
 }

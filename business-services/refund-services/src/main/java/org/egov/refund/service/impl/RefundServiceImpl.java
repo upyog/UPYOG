@@ -121,8 +121,9 @@ public class RefundServiceImpl implements RefundService {
 		}
 
 		RefundActionRequest actionRequest = refundEnrichmentService.enrichWorkflowAction(request, action);
-
-		return processInternal(refund, actionRequest);
+		refund = processInternal(refund, actionRequest);
+		refundRepository.update(refund);
+		return refund;
 	}
 
 	// ============================================================
