@@ -42,7 +42,7 @@ public class RefundQueryBuilder {
 		return """
 				SELECT
 				    %s
-				FROM eg_refund
+				FROM eg_rs_refund
 				WHERE id = ?
 				""".formatted(REFUND_COLUMNS);
 	}
@@ -51,14 +51,14 @@ public class RefundQueryBuilder {
 		return """
 				SELECT
 				    %s
-				FROM eg_refund
+				FROM eg_rs_refund
 				WHERE refund_no = ?
 				""".formatted(REFUND_COLUMNS);
 	}
 
 	public String getUpdateStatusQuery() {
 		return """
-				UPDATE eg_refund
+				UPDATE eg_rs_refund
 				SET
 				    status = ?,
 				    last_modified_by = ?,
@@ -69,7 +69,7 @@ public class RefundQueryBuilder {
 
 	public String getFinanceApprovalQuery() {
 		return """
-				UPDATE eg_refund
+				UPDATE eg_rs_refund
 				SET
 				    status = ?,
 				    sanction_ref = ?,
@@ -82,7 +82,7 @@ public class RefundQueryBuilder {
 
 	public String getGatewayRefundUpdateQuery() {
 		return """
-				UPDATE eg_refund
+				UPDATE eg_rs_refund
 				SET
 				    gateway_refund_id = ?,
 				    status = ?,
@@ -97,7 +97,7 @@ public class RefundQueryBuilder {
 		StringBuilder query = new StringBuilder("""
 				SELECT
 				    %s
-				FROM eg_refund
+				FROM eg_rs_refund
 				WHERE 1 = 1
 				""".formatted(REFUND_COLUMNS));
 
