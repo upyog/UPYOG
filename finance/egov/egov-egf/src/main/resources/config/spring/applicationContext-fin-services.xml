@@ -219,6 +219,12 @@
 			ref="refundApplicationService" />
 	</bean>
 
+	<bean id="refundServiceCallbackService"
+		class="org.egov.services.refund.RefundServiceCallbackService" />
+
+	<bean id="refundPaymentVoucherService"
+		class="org.egov.services.refund.RefundPaymentVoucherService" />
+
 	<bean id="budgetDetailService"
 		class="org.egov.services.budget.BudgetDetailService">
 		<constructor-arg name="type"
