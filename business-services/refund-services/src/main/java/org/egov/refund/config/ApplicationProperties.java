@@ -65,7 +65,8 @@ public class ApplicationProperties {
 	
 	@Value("${egov.persister.audit.refund.topic}")
 	private String saveAuditRefundTopic;
+		
+	@Value("${egov.refund.finance.payment.topic}")
+	private String egovRefundFinancePaymentTopic;
 	
-
-
 }

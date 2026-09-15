@@ -59,4 +59,13 @@ public class RefundRepository {
 		return jdbcTemplate.query(searchQuery.getQuery(), refundRowMapper, searchQuery.getParams());
 	}
 
+	public Refund findByGatwayRefundId(String refundId,String tenentId) {
+
+		return jdbcTemplate.query(refundQueryBuilder.getFindByGatwayRefundIdQuery(), refundRowMapper, refundId,tenentId).stream()
+				.findFirst().orElse(null);
+	}
+	
+	public void sendToFinanceComplete(Refund refund) {
+		producer.push(properties.getEgovRefundFinancePaymentTopic(), refund);
+	}
 }

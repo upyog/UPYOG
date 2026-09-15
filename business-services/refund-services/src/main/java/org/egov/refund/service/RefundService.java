@@ -2,6 +2,7 @@ package org.egov.refund.service;
 
 import java.util.List;
 
+import org.egov.refund.model.PaymentRefund;
 import org.egov.refund.model.Refund;
 import org.egov.refund.web.contracat.RefundActionRequest;
 import org.egov.refund.web.contracat.RefundGetRequest;
@@ -19,5 +20,7 @@ public interface RefundService {
 	Refund process(RefundActionRequest request);
 	
 	Refund update(RefundRequest request);
+	
+	void processPaymentRefund(PaymentRefund paymentRefund);
 
 }

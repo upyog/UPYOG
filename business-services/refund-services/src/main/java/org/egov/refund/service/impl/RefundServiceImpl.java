@@ -9,6 +9,7 @@ import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.refund.Repository.RefundRepository;
 import org.egov.refund.config.ApplicationProperties;
+import org.egov.refund.model.PaymentRefund;
 import org.egov.refund.model.Refund;
 import org.egov.refund.model.WorkflowTransition;
 import org.egov.refund.querybuilder.RefundSearchCriteria;
@@ -335,6 +336,62 @@ public class RefundServiceImpl implements RefundService {
 		}
 
 		throw new IllegalArgumentException("Invalid refund mode: " + refundMode);
+	}
+
+	@Override
+	public void processPaymentRefund(PaymentRefund paymentRefund) {
+
+		// refundId from PaymentRefund represents gateway refund ID
+		Refund refund = refundRepository.findByGatwayRefundId(paymentRefund.getRefundId(), paymentRefund.getTenantId());
+
+		if (refund == null) {
+			throw new IllegalStateException("Refund not found for gatewayRefundId: " + paymentRefund.getRefundId());
+		}
+
+		String status = paymentRefund.getRefundStatus();
+
+		// PENDING / INITIATED
+		// Only update gateway response. Do not process workflow.
+		if (!isFinalPaymentRefundStatus(status)) {
+
+			refundRepository.update(refund);
+
+			refundAuditService.createAudit(refund, RefundConstants.AUDIT_PAYMENT_REFUND_RESPONSE);
+
+			return;
+		}
+
+		RequestInfo systemRequestInfo = createSystemRequestInfo();
+
+		String action;
+
+		if (RefundConstants.PAYMENT_REFUND_STATUS_SUCCESS.equalsIgnoreCase(status)) {
+
+			action = RefundConstants.ACTION_REFUND_COMPLETED;
+
+		} else {
+
+			action = RefundConstants.ACTION_REJECT;
+		}
+
+		RefundActionRequest actionRequest = RefundActionRequest.builder().id(refund.getId()).action(action)
+				.userId(systemRequestInfo.getUserInfo().getUuid()).requestInfo(systemRequestInfo).build();
+
+		// Process workflow only for SUCCESS / FAILURE
+		refund = processInternal(refund, actionRequest);
+
+		// Save gateway response + final workflow status
+		refundRepository.update(refund);
+		
+	}
+
+	private boolean isFinalPaymentRefundStatus(String status) {
+
+		return RefundConstants.PAYMENT_REFUND_STATUS_SUCCESS.equalsIgnoreCase(status)
+
+				|| RefundConstants.PAYMENT_REFUND_STATUS_FAILURE.equalsIgnoreCase(status)
+
+				|| RefundConstants.PAYMENT_REFUND_STATUS_FAILED.equalsIgnoreCase(status);
 	}
 
 	// ============================================================
