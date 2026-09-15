@@ -10,7 +10,7 @@ const setEmployeeDetail = (userObject, token) => {
   let locale = JSON.parse(sessionStorage.getItem("Digit.locale"))?.value || "en_IN";
   localStorage.setItem("Employee.tenant-id", userObject?.tenantId);
   localStorage.setItem("tenant-id", userObject?.tenantId);
-  localStorage.setItem("citizen.userRequestObject", JSON.stringify(userObject));
+  localStorage.setItem("citizen.userRequestObject", JSON.stringify(Digit.SessionStorage.get("citizen.userRequestObject")?.info));
   localStorage.setItem("locale", locale);
   localStorage.setItem("Employee.locale", locale);
   localStorage.setItem("token", token);
@@ -29,9 +29,9 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
 
   const history = useHistory();
   // const getUserType = () => "EMPLOYEE" || Digit.UserService.getType();
-  let   sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
+  let sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
   const pdfUrl = "https://pg-egov-assets.s3.ap-south-1.amazonaws.com/Upyog+Code+and+Copyright+License_v1.pdf";
-  
+
   useEffect(() => {
     if (!user) {
       return;
@@ -49,7 +49,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
     }
 
     /*  RAIN-6489 Logic to navigate to National DSS home incase user has only one role [NATADMIN]*/
-    if (user?.info?.roles && user?.info?.roles?.length > 0 &&  user?.info?.roles?.every((e) => e.code === "NATADMIN")) {
+    if (user?.info?.roles && user?.info?.roles?.length > 0 && user?.info?.roles?.every((e) => e.code === "NATADMIN")) {
       redirectPath = "/upyog-ui/employee/dss/landing/NURT_DASHBOARD";
     }
     /*  RAIN-6489 Logic to navigate to National DSS home incase user has only one role [NATADMIN]*/
@@ -160,26 +160,26 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
         headingStyle={{ textAlign: "center" }}
         cardStyle={{ margin: "auto", minWidth: "408px" }}
         className="loginFormStyleEmployee"
-        buttonStyle={{ maxWidth: "100%", width: "100%" ,backgroundColor:"#5a1166"}}
+        buttonStyle={{ maxWidth: "100%", width: "100%", backgroundColor: "#5a1166" }}
       >
         {/* <Header /> */}
       </FormComposer>
       {showToast && <Toast error={true} label={t(showToast)} onClose={closeToast} />}
-      <div style={{ width: '100%', position: 'fixed', bottom: 0,backgroundColor:"white",textAlign:"center" }}>
-        <div style={{ display: 'flex', justifyContent: 'center', color:"black" }}>
+      <div style={{ width: '100%', position: 'fixed', bottom: 0, backgroundColor: "white", textAlign: "center" }}>
+        <div style={{ display: 'flex', justifyContent: 'center', color: "black" }}>
           {/* <span style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('https://www.digit.org/', '_blank').focus();}} >Powered by DIGIT</span>
           <span style={{ margin: "0 10px" ,fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px"}}>|</span> */}
-          <a style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a>
+          <a style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile() ? "12px" : "12px", fontWeight: "400" }} href="#" target='_blank'>UPYOG License</a>
 
-          <span  className="upyog-copyright-footer" style={{ margin: "0 10px",fontSize:"12px" }} >|</span>
-          <span  className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
-          
+          <span className="upyog-copyright-footer" style={{ margin: "0 10px", fontSize: "12px" }} >|</span>
+          <span className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile() ? "12px" : "12px", fontWeight: "400" }} onClick={() => { window.open('https://niua.in/', '_blank').focus(); }} >Copyright © 2022 National Institute of Urban Affairs</span>
+
           {/* <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a> */}
 
         </div>
         <div className="upyog-copyright-footer-web">
-          <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"14px":"16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
-          </div>
+          <span className="" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile() ? "14px" : "16px", fontWeight: "400" }} onClick={() => { window.open('https://niua.in/', '_blank').focus(); }} >Copyright © 2022 National Institute of Urban Affairs</span>
+        </div>
       </div>
     </Background>
   );
