@@ -21,16 +21,24 @@ const ChangeCity = (prop) => {
 
   const handleChangeCity = (city) => {
     const loggedInData = Digit.SessionStorage.get("citizen.userRequestObject");
-    const filteredRoles = Digit.SessionStorage.get("citizen.userRequestObject")?.info?.roles?.filter(role => role.tenantId === city.value);
+    const filteredRoles = Digit.SessionStorage.get("citizen.userRequestObject")?.info?.roles?.filter((role) => role.tenantId === city.value);
     if (filteredRoles?.length > 0) {
       loggedInData.info.roles = filteredRoles;
       loggedInData.info.tenantId = city?.value;
     }
     Digit.SessionStorage.set("Employee.tenantId", city?.value);
     Digit.UserService.setUser(loggedInData);
+    if (city?.value) {
+      localStorage.setItem("Employee.tenant-id", city.value);
+      localStorage.setItem("tenant-id", city.value);
+    }
+    if (loggedInData?.info) {
+      localStorage.setItem("user-info", JSON.stringify(loggedInData.info));
+      localStorage.setItem("Employee.user-info", JSON.stringify(loggedInData.info));
+    }
     setDropDownData(city);
     if (window.location.href.includes("/upyog-ui/employee/")) {
-      const redirectPath = location.state?.from || "/upyog-ui/employee";
+      const redirectPath = history.location?.state?.from || "/upyog-ui/employee";
       history.replace(redirectPath);
     }
     window.location.reload();
