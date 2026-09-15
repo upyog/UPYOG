@@ -51,18 +51,30 @@ import org.egov.receipt.consumer.model.TaxHeadMaster;
 import org.egov.receipt.consumer.model.Tenant;
 import org.egov.receipt.custom.exception.VoucherCustomException;
 import org.egov.tracer.model.CustomException;
+import org.egov.receipt.consumer.model.RefundPaymentMapping;
 
 public interface MicroServiceUtil {
-	public List<TaxHeadMaster> getTaxHeadMasters(String tenantId, String code, RequestInfo requestInfo, FinanceMdmsModel finSerMdms) throws CustomException, VoucherCustomException;
-	public List<BusinessService> getBusinessService(String tenantId, String code, RequestInfo requestInfo, FinanceMdmsModel finSerMdms)  throws CustomException, VoucherCustomException;
+	public List<TaxHeadMaster> getTaxHeadMasters(String tenantId, String code, RequestInfo requestInfo,
+			FinanceMdmsModel finSerMdms) throws CustomException, VoucherCustomException;
+
+	public List<BusinessService> getBusinessService(String tenantId, String code, RequestInfo requestInfo,
+			FinanceMdmsModel finSerMdms) throws CustomException, VoucherCustomException;
+
 	String getBusinessServiceName(String tenantId, String code, RequestInfo requestInfo, FinanceMdmsModel finSerMdms)
 			throws VoucherCustomException;
+
 	String getGlcodeByInstrumentType(String tenantId, String businessCode, RequestInfo requestInfo,
 			FinanceMdmsModel finSerMdms, String instrumentType) throws VoucherCustomException;
+
 	FinancialStatus getFinancialStatusByCode(String tenantId, RequestInfo requestInfo, FinanceMdmsModel finSerMdms,
 			String statusCode) throws VoucherCustomException;
-	List<Tenant> getFinanceTenantList(String tenantId, String businessCode, RequestInfo requestInfo, FinanceMdmsModel finSerMdms)
-			throws VoucherCustomException;
+
+	List<Tenant> getFinanceTenantList(String tenantId, String businessCode, RequestInfo requestInfo,
+			FinanceMdmsModel finSerMdms) throws VoucherCustomException;
+
 	List<InstrumentContract> getInstruments(InstrumentSearchContract instrumentSearchContract, RequestInfo requestInfo,
 			String tenantId) throws VoucherCustomException;
+
+	RefundPaymentMapping getRefundPaymentMapping(String tenantId, String businessService, String refundMode,
+			RequestInfo requestInfo) throws VoucherCustomException;
 }

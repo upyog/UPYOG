@@ -173,6 +173,18 @@ public class PropertiesManager {
 	@Value("${egov.finance.refund.create.url}")
 	private String refundCreateUrl;
 
+	@Value("${egov.finance.refund.payment.create.url}")
+	private String refundPaymentCreateUrl;
+
+	@Value("${egov.refund.payment.success.status:REFUND_COMPLETED}")
+	private String refundPaymentSuccessStatus;
+
+	@Value("${egov.refund.payment.mdms.module:FinanceModule}")
+	private String refundPaymentMdmsModule;
+
+	@Value("${egov.refund.payment.mdms.master:RefundPaymentMapping}")
+	private String refundPaymentMdmsMaster;
+
 	public String getRefundFinanceProcessTopic() {
 		return refundFinanceProcessTopic;
 	}
@@ -197,6 +209,22 @@ public class PropertiesManager {
 			throw new VoucherCustomException(ProcessStatus.FAILED,
 					"ERROR occured while generating ERP url to interact with the finance coexistence. Please check the configuration in properties file.");
 		}
+	}
+
+	public String getRefundPaymentCreateUrl() {
+		return refundPaymentCreateUrl;
+	}
+
+	public String getRefundPaymentSuccessStatus() {
+		return refundPaymentSuccessStatus;
+	}
+
+	public String getRefundPaymentMdmsModule() {
+		return refundPaymentMdmsModule;
+	}
+
+	public String getRefundPaymentMdmsMaster() {
+		return refundPaymentMdmsMaster;
 	}
 
 }

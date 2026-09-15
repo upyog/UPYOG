@@ -47,6 +47,20 @@ public class RefundApplication extends StateAware implements Auditable {
 
 	private String functionCode;
 
+	private String gatewayRefundId;
+
+	private String gatewayTransactionId;
+
+	private Long gatewayTransactionDate;
+
+	private String refundPaymentMode;
+
+	private String refundPaymentStatus;
+
+	private String paymentVoucherNumber;
+
+	private Long paymentProcessedDate;
+
 	@Override
 	public String getStateDetails() {
 		return refundApplicationNumber;
@@ -214,5 +228,67 @@ public class RefundApplication extends StateAware implements Auditable {
 
 	public void setFunctionCode(final String functionCode) {
 		this.functionCode = functionCode;
+	}
+
+	public String getGatewayRefundId() {
+		return gatewayRefundId;
+	}
+
+	public void setGatewayRefundId(final String gatewayRefundId) {
+		this.gatewayRefundId = gatewayRefundId;
+	}
+
+	public String getGatewayTransactionId() {
+		return gatewayTransactionId;
+	}
+
+	public void setGatewayTransactionId(final String gatewayTransactionId) {
+
+		this.gatewayTransactionId = gatewayTransactionId;
+	}
+
+	public Long getGatewayTransactionDate() {
+		return gatewayTransactionDate;
+	}
+
+	public void setGatewayTransactionDate(final Long gatewayTransactionDate) {
+
+		this.gatewayTransactionDate = gatewayTransactionDate;
+	}
+
+	public String getRefundPaymentMode() {
+		return refundPaymentMode;
+	}
+
+	public void setRefundPaymentMode(final String refundPaymentMode) {
+
+		this.refundPaymentMode = refundPaymentMode;
+	}
+
+	public String getRefundPaymentStatus() {
+		return refundPaymentStatus;
+	}
+
+	public void setRefundPaymentStatus(final String refundPaymentStatus) {
+
+		this.refundPaymentStatus = refundPaymentStatus;
+	}
+
+	public String getPaymentVoucherNumber() {
+		return paymentVoucherNumber;
+	}
+
+	public void setPaymentVoucherNumber(final String paymentVoucherNumber) {
+
+		this.paymentVoucherNumber = paymentVoucherNumber;
+	}
+
+	public Long getPaymentProcessedDate() {
+		return paymentProcessedDate;
+	}
+
+	public void setPaymentProcessedDate(final Long paymentProcessedDate) {
+
+		this.paymentProcessedDate = paymentProcessedDate;
 	}
 }

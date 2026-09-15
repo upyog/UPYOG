@@ -81,6 +81,8 @@ import org.egov.receipt.consumer.model.RefundDetail;
 import org.egov.receipt.consumer.model.RefundFinanceRequest;
 import org.egov.receipt.consumer.model.RefundKafkaDetail;
 import org.egov.receipt.consumer.model.RefundKafkaRequest;
+import org.egov.mdms.service.MicroServiceUtil;
+import org.egov.receipt.consumer.model.RefundPaymentMapping;
 
 @Service
 public class EgfKafkaListener {
@@ -100,27 +102,17 @@ public class EgfKafkaListener {
 	private PaymentUtils payUtils;
 	@Autowired
 	private RefundFinanceService refundFinanceService;
+	@Autowired
+	private RefundPaymentFinanceService refundPaymentFinanceService;
+	@Autowired
+	private MicroServiceUtil microServiceUtil;
 
 	private static final String PENDING_WITH_FINANCE = "PENDING_WITH_FINANCE";
-
-	@Value("${refund.finance.debit.glcode}")
-	private String refundDebitGlCode;
-
-	@Value("${refund.finance.credit.glcode}")
-	private String refundCreditGlCode;
-
-	@Value("${refund.finance.fund.code}")
-	private String refundFundCode;
-
-	@Value("${refund.finance.department.code}")
-	private String refundDepartmentCode;
-
-	@Value("${refund.finance.function.code:}")
-	private String refundFunctionCode;
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(EgfKafkaListener.class);
 	private static final String RECEIPT_TYPE = "Receipt";
 	private static final String REFUND_TYPE = "Refund";
+	private static final String REFUND_PAYMENT_TYPE = "Refund Payment";
 	@Value("${}")
 	private static final String COLLECTION_VERSION = "V2";
 
@@ -370,6 +362,54 @@ public class EgfKafkaListener {
 		}
 	}
 
+	/**
+	 * Consumes completed refund-payment events and forwards them to Finance for
+	 * directly approved Payment Voucher creation.
+	 */
+	@KafkaListener(topics = "${egov.refund.finance.payment.topic}", groupId = "${egov.refund.finance.payment.group}")
+	public void processRefundPayment(final ConsumerRecord<String, String> record) {
+
+		RefundKafkaRequest kafkaRequest = null;
+
+		try {
+			LOGGER.info("Received refund payment message with key {} " + "from topic {}, partition {}, offset {}",
+					record.key(), record.topic(), record.partition(), record.offset());
+
+			kafkaRequest = objectMapper.readValue(record.value(), RefundKafkaRequest.class);
+
+			/*
+			 * RefundPaymentFinanceService performs complete validation, resolves accounting
+			 * configuration from MDMS and calls Finance.
+			 */
+			final Map<String, Object> financeResponse = refundPaymentFinanceService
+					.createRefundPaymentVoucher(kafkaRequest);
+
+			final String paymentVoucherNumber = extractPaymentVoucherNumber(financeResponse);
+
+			saveRefundPaymentIntegrationLog(kafkaRequest, ProcessStatus.SUCCESS,
+					"Refund Payment Voucher created successfully" + (StringUtils.hasText(paymentVoucherNumber)
+							? " with voucher number: " + paymentVoucherNumber
+							: ""),
+					paymentVoucherNumber);
+
+			LOGGER.info("Refund Payment Voucher processed successfully " + "for refund: {}, voucher number: {}",
+					kafkaRequest.getRefund().getRefundNo(), paymentVoucherNumber);
+
+		} catch (VoucherCustomException exception) {
+
+			saveRefundPaymentIntegrationLog(kafkaRequest, exception.getStatus(), exception.getMessage(), "");
+
+			LOGGER.error("Unable to create Finance Payment Voucher " + "for completed refund: {}",
+					exception.getMessage(), exception);
+
+		} catch (Exception exception) {
+
+			saveRefundPaymentIntegrationLog(kafkaRequest, ProcessStatus.FAILED, exception.getMessage(), "");
+
+			LOGGER.error("Unexpected error while processing completed " + "refund payment", exception);
+		}
+	}
+
 	private void validateRefundKafkaRequest(final RefundKafkaRequest kafkaRequest) throws VoucherCustomException {
 
 		if (kafkaRequest == null) {
@@ -420,33 +460,37 @@ public class EgfKafkaListener {
 		}
 	}
 
-	private RefundFinanceRequest mapToFinanceRequest(final RefundKafkaRequest kafkaRequest) {
+	private RefundFinanceRequest mapToFinanceRequest(final RefundKafkaRequest kafkaRequest)
+			throws VoucherCustomException {
 
 		final RefundKafkaDetail sourceRefund = kafkaRequest.getRefund();
+
+		final RefundPaymentMapping accountingMapping = microServiceUtil.getRefundPaymentMapping(
+				sourceRefund.getTenantId(), sourceRefund.getBusinessService(), sourceRefund.getRefundMode(),
+				kafkaRequest.getRequestInfo());
 
 		final String moduleName = sourceRefund.getModuleName() == null ? null
 				: sourceRefund.getModuleName().trim().toUpperCase();
 
 		final RefundDetail financeRefund = RefundDetail.builder()
 				/*
-				 * Do not map sourceRefund.id. Finance has its own application ID.
+				 * Finance generates and owns its application ID.
 				 */
 				.tenantId(sourceRefund.getTenantId()).moduleName(moduleName)
 				.businessService(sourceRefund.getBusinessService()).refundApplicationNumber(sourceRefund.getRefundNo())
 				.referenceNumber(sourceRefund.getConsumerCode()).paymentId(sourceRefund.getPaymentId())
 				.receiptNumber(null).refundAmount(sourceRefund.getRefundAmount())
-				.refundReason(sourceRefund.getRefundReason())
+				.refundReason(sourceRefund.getRefundReason()).refundDate(null)
 				/*
-				 * Refund Service does not send a refund date. Finance will use the current date
-				 * while creating the JV.
+				 * Finance manages the application status.
 				 */
-				.refundDate(null)
-				/*
-				 * Do not forward INITIATE. Finance owns its own processing status.
-				 */
-				.status(null).debitGlCode(refundDebitGlCode).creditGlCode(refundCreditGlCode).fundCode(refundFundCode)
-				.departmentCode(refundDepartmentCode)
-				.functionCode(StringUtils.hasText(refundFunctionCode) ? refundFunctionCode.trim() : null).build();
+				.status(null).debitGlCode(accountingMapping.getDebitGlCode())
+				.creditGlCode(accountingMapping.getPayableGlCode()).fundCode(accountingMapping.getFund())
+				.departmentCode(accountingMapping.getDepartment())
+				.functionCode(
+						StringUtils.hasText(accountingMapping.getFunction()) ? accountingMapping.getFunction().trim()
+								: null)
+				.build();
 
 		return RefundFinanceRequest.builder().requestInfo(kafkaRequest.getRequestInfo())
 				.tenantId(sourceRefund.getTenantId()).refund(financeRefund).build();
@@ -608,4 +652,70 @@ public class EgfKafkaListener {
 		voucherIntegrationLog.setType(RECEIPT_TYPE);
 		voucherIntegrationLog.setCreatedDate(new Date());
 	}
+
+	private String extractPaymentVoucherNumber(final Map<String, Object> financeResponse) {
+
+		if (financeResponse == null) {
+			return "";
+		}
+
+		final Object refundPayment = financeResponse.get("RefundPayment");
+
+		if (refundPayment == null) {
+			return "";
+		}
+
+		try {
+			final Map<String, Object> paymentDetails = objectMapper.convertValue(refundPayment,
+					new com.fasterxml.jackson.core.type.TypeReference<Map<String, Object>>() {
+					});
+
+			final Object voucherNumber = paymentDetails.get("paymentVoucherNumber");
+
+			return voucherNumber == null ? "" : voucherNumber.toString();
+
+		} catch (Exception exception) {
+			LOGGER.warn("Unable to read Payment Voucher number " + "from Finance response", exception);
+
+			return "";
+		}
+	}
+
+	/**
+	 * Stores the Finance integration result for a refund-payment event.
+	 */
+	private void saveRefundPaymentIntegrationLog(final RefundKafkaRequest kafkaRequest, final ProcessStatus status,
+			final String description, final String paymentVoucherNumber) {
+
+		if (kafkaRequest == null || kafkaRequest.getRefund() == null) {
+
+			LOGGER.error("Unable to save refund payment integration log " + "because the Kafka request is unavailable");
+
+			return;
+		}
+
+		try {
+			final RefundKafkaDetail refund = kafkaRequest.getRefund();
+
+			final VoucherIntegrationLog integrationLog = new VoucherIntegrationLog();
+
+			integrationLog.setStatus(status.name());
+			integrationLog.setDescription(description);
+			integrationLog.setReferenceNumber(refund.getRefundNo());
+			integrationLog.setTenantId(refund.getTenantId());
+			integrationLog.setVoucherNumber(StringUtils.hasText(paymentVoucherNumber) ? paymentVoucherNumber : "");
+			integrationLog.setType(REFUND_PAYMENT_TYPE);
+			integrationLog.setRequestJson(objectMapper.writeValueAsString(kafkaRequest));
+			integrationLog.setCreatedDate(new Date());
+
+			voucherIntegartionLogRepository.saveVoucherIntegrationLog(integrationLog);
+
+			LOGGER.debug("Refund payment integration status: {}, message: {}", status, description);
+
+		} catch (Exception exception) {
+			LOGGER.error("Error while saving refund payment " + "integration log: {}", exception.getMessage(),
+					exception);
+		}
+	}
+
 }

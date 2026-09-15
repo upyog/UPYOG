@@ -226,4 +226,13 @@ public class RefundApplicationService extends PersistenceService<RefundApplicati
 
 		return currentUserId;
 	}
+
+	public RefundApplication findByVoucherNumber(final String voucherNumber) {
+
+		if (voucherNumber == null || voucherNumber.trim().isEmpty()) {
+			return null;
+		}
+
+		return find("from RefundApplication " + "where voucherNumber=?", voucherNumber.trim());
+	}
 }

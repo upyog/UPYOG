@@ -63,6 +63,27 @@
 		<property name="voucherNumber" column="VOUCHERNUMBER"
 			type="string" />
 
+		<property name="gatewayRefundId" column="GATEWAYREFUNDID"
+			type="string" />
+
+		<property name="gatewayTransactionId"
+			column="GATEWAYTRANSACTIONID" type="string" />
+
+		<property name="gatewayTransactionDate"
+			column="GATEWAYTRANSACTIONDATE" type="long" />
+
+		<property name="refundPaymentMode" column="REFUNDPAYMENTMODE"
+			type="string" />
+
+		<property name="refundPaymentStatus"
+			column="REFUNDPAYMENTSTATUS" type="string" />
+
+		<property name="paymentVoucherNumber"
+			column="PAYMENTVOUCHERNUMBER" type="string" />
+
+		<property name="paymentProcessedDate"
+			column="PAYMENTPROCESSEDDATE" type="long" />
+
 		<property name="rejectionReason" column="REJECTIONREASON"
 			type="string" />
 

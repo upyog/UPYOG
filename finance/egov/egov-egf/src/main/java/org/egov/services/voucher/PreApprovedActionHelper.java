@@ -47,123 +47,187 @@
  */
 package org.egov.services.voucher;
 
-import com.exilant.exility.common.TaskFailedException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.commons.CVoucherHeader;
-import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.microservice.models.EmployeeInfo;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
 import org.egov.model.voucher.WorkflowBean;
-import org.egov.pims.commons.Position;
+import org.egov.services.refund.RefundServiceCallbackService;
 import org.egov.utils.FinancialConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 @Transactional(readOnly = true)
 @Service
 public class PreApprovedActionHelper {
-    @Autowired
-    @Qualifier("journalVoucherActionHelper")
-    private JournalVoucherActionHelper journalVoucherActionHelper;
-    @Autowired
-    @Qualifier("voucherService")
-    private VoucherService voucherService;
-    @Autowired
-    @Qualifier("createVoucher")
-    private CreateVoucher createVoucher;
 
-//    @Autowired
-//    PositionMasterService positionMasterService;
+	private static final Logger LOG = LoggerFactory.getLogger(PreApprovedActionHelper.class);
 
-    @Autowired
-    private MicroserviceUtils microserviceUtils;
-    
-    @Autowired
-    SecurityUtils securityUtils;
-    @Transactional
-    public CVoucherHeader createVoucherFromBill(CVoucherHeader voucherHeader, WorkflowBean workflowBean, Long billId,
-            String voucherNumber, Date voucherDate) {
-        try {
-            Long voucherHeaderId = createVoucher.createVoucherFromBill(billId.intValue(), null,
-                    voucherNumber, voucherDate);
-            voucherHeader = voucherService.findById(voucherHeaderId, false);
-            voucherHeader = sendForApproval(voucherHeader, workflowBean);
-        }catch (final ValidationException e) {
-            if (e.getErrors().get(0).getMessage() != null && !e.getErrors().get(0).getMessage().equals(StringUtils.EMPTY))
-                throw new ValidationException(e.getErrors().get(0).getMessage(), e.getErrors().get(0).getMessage());
-            else
-                throw new ValidationException("Voucher creation failed", "Voucher creation failed");
+	@Autowired
+	@Qualifier("journalVoucherActionHelper")
+	private JournalVoucherActionHelper journalVoucherActionHelper;
 
-        }
-        return voucherHeader;
-    }
+	@Autowired
+	@Qualifier("voucherService")
+	private VoucherService voucherService;
 
-    @Transactional
-    public CVoucherHeader sendForApproval(CVoucherHeader voucherHeader, WorkflowBean workflowBean)
-    {
-        try {
+	@Autowired
+	@Qualifier("createVoucher")
+	private CreateVoucher createVoucher;
 
-            if (FinancialConstants.CREATEANDAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())
-                    && voucherHeader.getState() == null)
-            {
-                voucherHeader.setStatus(FinancialConstants.CREATEDVOUCHERSTATUS);
-            }
-            else
-            {
-                voucherHeader = journalVoucherActionHelper.transitionWorkFlow(voucherHeader, workflowBean);
-                voucherService.applyAuditing(voucherHeader.getState());
-            }
-            voucherService.persist(voucherHeader);
+	@Autowired
+	private MicroserviceUtils microserviceUtils;
 
-        } catch (final ValidationException e) {
+	@Autowired
+	private RefundServiceCallbackService refundServiceCallbackService;
 
-            final List<ValidationError> errors = new ArrayList<>();
-            errors.add(new ValidationError("exp", e.getErrors().get(0).getMessage()));
-            throw new ValidationException(errors);
-        } /*
-           * catch (final Exception e) { final List<ValidationError> errors =
-           * new ArrayList<>(); errors.add(new ValidationError("exp",
-           * e.getMessage())); throw new ValidationException(errors); }
-           */
-        return voucherHeader;
-    }
+	@Transactional
+	public CVoucherHeader createVoucherFromBill(CVoucherHeader voucherHeader, final WorkflowBean workflowBean,
+			final Long billId, final String voucherNumber, final Date voucherDate) {
 
-    private Boolean validateOwner(State state) {
-//        List<Position> positionsForUser = positionMasterService.getPositionsForEmployee(securityUtils.getCurrentUser().getId());
-//        return positionsForUser.contains(state.getOwnerPosition());
-        Boolean check = false;
-//        
-        List<Long> positions = new ArrayList();
-        Long empId = ApplicationThreadLocals.getUserId();
-        List<EmployeeInfo> employs = microserviceUtils.getEmployee(empId, null,null, null);
-        
-        if(null !=employs && employs.size()>0 )
-                
-        employs.get(0).getAssignments().forEach(assignment->{
-                positions.add(assignment.getPosition());
-        });
-        
-        for (final Long pos : positions)
-            if (state.getOwnerPosition()==pos) {
-                check = true;
-            }
-        return check;
+		try {
+			final Long voucherHeaderId = createVoucher.createVoucherFromBill(billId.intValue(), null, voucherNumber,
+					voucherDate);
 
-    }
+			voucherHeader = voucherService.findById(voucherHeaderId, false);
 
+			voucherHeader = sendForApproval(voucherHeader, workflowBean);
 
+		} catch (final ValidationException exception) {
+
+			if (exception.getErrors().get(0).getMessage() != null
+					&& !exception.getErrors().get(0).getMessage().equals(StringUtils.EMPTY)) {
+
+				throw new ValidationException(exception.getErrors().get(0).getMessage(),
+						exception.getErrors().get(0).getMessage());
+			}
+
+			throw new ValidationException("Voucher creation failed", "Voucher creation failed");
+		}
+
+		return voucherHeader;
+	}
+
+	@Transactional
+	public CVoucherHeader sendForApproval(CVoucherHeader voucherHeader, final WorkflowBean workflowBean) {
+
+		try {
+			if (FinancialConstants.CREATEANDAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())
+					&& voucherHeader.getState() == null) {
+
+				voucherHeader.setStatus(FinancialConstants.CREATEDVOUCHERSTATUS);
+
+			} else {
+				voucherHeader = journalVoucherActionHelper.transitionWorkFlow(voucherHeader, workflowBean);
+
+				voucherService.applyAuditing(voucherHeader.getState());
+			}
+
+			/*
+			 * Preserve the existing voucher persistence flow.
+			 */
+			voucherService.persist(voucherHeader);
+
+			/*
+			 * The callback service first checks whether this voucher belongs to a refund
+			 * application. For ordinary JVs, the callback is skipped.
+			 */
+			registerRefundCallback(voucherHeader, workflowBean);
+
+		} catch (final ValidationException exception) {
+
+			final List<ValidationError> errors = new ArrayList<>();
+
+			errors.add(new ValidationError("exp", exception.getErrors().get(0).getMessage()));
+
+			throw new ValidationException(errors);
+		}
+
+		return voucherHeader;
+	}
+
+	/**
+	 * Registers a refund-service callback only for JV approval and rejection. Any
+	 * callback preparation problem is logged without interrupting the existing
+	 * voucher workflow.
+	 */
+	private void registerRefundCallback(final CVoucherHeader voucherHeader, final WorkflowBean workflowBean) {
+
+		if (voucherHeader == null || workflowBean == null || workflowBean.getWorkFlowAction() == null) {
+			return;
+		}
+
+		final String workflowAction = workflowBean.getWorkFlowAction();
+
+		String financeStatus = null;
+
+		if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowAction)) {
+
+			financeStatus = RefundServiceCallbackService.FINANCE_APPROVED;
+
+		} else if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowAction)) {
+
+			financeStatus = RefundServiceCallbackService.FINANCE_REJECTED;
+		}
+
+		/*
+		 * Forward, cancel, create-and-approve and other workflow actions do not produce
+		 * this refund callback.
+		 */
+		if (financeStatus == null) {
+			return;
+		}
+
+		try {
+			refundServiceCallbackService.notifyRefundStatusAfterCommit(voucherHeader.getVoucherNumber(), financeStatus,
+					workflowBean.getApproverComments());
+
+		} catch (final Exception exception) {
+			/*
+			 * Callback preparation must never break the existing normal JV approval or
+			 * rejection flow.
+			 */
+			LOG.error("Unable to register refund-service callback " + "for voucher {}",
+					voucherHeader.getVoucherNumber(), exception);
+		}
+	}
+
+	private Boolean validateOwner(final State state) {
+
+		boolean ownerMatched = false;
+
+		final List<Long> positions = new ArrayList<>();
+
+		final Long employeeId = ApplicationThreadLocals.getUserId();
+
+		final List<EmployeeInfo> employees = microserviceUtils.getEmployee(employeeId, null, null, null);
+
+		if (employees != null && !employees.isEmpty()) {
+			employees.get(0).getAssignments().forEach(assignment -> positions.add(assignment.getPosition()));
+		}
+
+		for (final Long position : positions) {
+			if (Objects.equals(state.getOwnerPosition(), position)) {
+
+				ownerMatched = true;
+				break;
+			}
+		}
+
+		return ownerMatched;
+	}
 }
