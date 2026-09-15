@@ -91,6 +91,15 @@ public class RefundQueryBuilder {
 				WHERE id = ?
 				""";
 	}
+	
+	public String getFindByGatwayRefundIdQuery() {
+		return """
+				SELECT
+				    %s
+				FROM eg_rs_refund
+				WHERE gateway_refund_id = ? and tenant_id=?
+				""".formatted(REFUND_COLUMNS);
+	}
 
 	public RefundSearchQuery buildSearchQuery(RefundSearchCriteria criteria) {
 
