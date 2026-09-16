@@ -28,8 +28,10 @@ import org.egov.refund.web.contracat.RefundRequest;
 import org.egov.refund.web.contracat.RefundSearchRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class RefundServiceImpl implements RefundService {
 
@@ -62,21 +64,25 @@ public class RefundServiceImpl implements RefundService {
 	// ============================================================
 
 	@Override
-	@Transactional
 	public Refund create(RefundRequest request) {
 
+		log.info("Refund create request received");
 		refundValidator.validateRequestInfo(request);
 		refundValidator.validateCreateRequest(request.getRefund());
 		refundEnrichmentService.enrichRefundPostValidate(request);
 		Refund refund = request.getRefund();
-
+		log.info("Creating refund. id={}, tenantId={}, consumerCode={}, paymentId={}", refund.getId(),
+				refund.getTenantId(), refund.getConsumerCode(), refund.getPaymentId());
 		RefundActionRequest actionRequest = refundEnrichmentService.enrichWorkflowAction(request,
 				refund.getProcessInstance().getAction());
 
+		log.info("Processing refund workflow. id={}, action={}, status={}", refund.getId(), actionRequest.getAction(),
+				refund.getStatus());
 		Refund processedRefund = processInternal(refund, actionRequest);
 
 		refundRepository.save(processedRefund);
-
+		log.info("Refund created successfully. id={}, refundNo={}, status={}", processedRefund.getId(),
+				processedRefund.getRefundNo(), processedRefund.getStatus());
 		return processedRefund;
 	}
 
@@ -85,13 +91,16 @@ public class RefundServiceImpl implements RefundService {
 	// ============================================================
 
 	@Override
-	@Transactional
 	public Refund update(RefundRequest request) {
+
+		log.info("Refund update request received");
 
 		refundValidator.validateRequestInfo(request);
 		refundValidator.validateUpdateRequest(request.getRefund());
 
 		Refund inputRefund = request.getRefund();
+		log.info("Updating refund. refundId={}, tenantId={}, refundNo={}", inputRefund.getId(),
+				inputRefund.getTenantId(), inputRefund.getRefundNo());
 
 		Refund refund = refundRepository.findById(inputRefund.getId());
 
@@ -99,10 +108,14 @@ public class RefundServiceImpl implements RefundService {
 			throw new IllegalArgumentException("Refund not found for id: " + inputRefund.getId());
 		}
 
+		log.info("Existing refund found. refundId={}, currentStatus={}", refund.getId(), refund.getStatus());
+
 		/*
 		 * Normal refund data update without workflow action.
 		 */
+
 		if (inputRefund.getProcessInstance() == null || isBlank(inputRefund.getProcessInstance().getAction())) {
+			log.info("Processing normal refund data update. refundId={}", refund.getId());
 
 			refundEnrichmentService.enrichRefundUpdate(refund, inputRefund);
 
@@ -111,10 +124,14 @@ public class RefundServiceImpl implements RefundService {
 
 			refundRepository.update(refund);
 
+			log.info("Refund data updated successfully. refundId={}, status={}", refund.getId(), refund.getStatus());
 			return refund;
 		}
 
 		String action = inputRefund.getProcessInstance().getAction();
+
+		log.info("Workflow update requested. refundId={}, currentStatus={}, action={}", refund.getId(),
+				refund.getStatus(), action);
 
 		if (RefundConstants.STATUS_PENDING_WITH_FINANCE.equalsIgnoreCase(refund.getStatus())) {
 
@@ -122,8 +139,14 @@ public class RefundServiceImpl implements RefundService {
 		}
 
 		RefundActionRequest actionRequest = refundEnrichmentService.enrichWorkflowAction(request, action);
+
+		log.info("Processing workflow action. refundId={}, action={}", refund.getId(), action);
+
 		refund = processInternal(refund, actionRequest);
 		refundRepository.update(refund);
+
+		log.info("Refund workflow update completed. refundId={}, action={}, finalStatus={}", refund.getId(), action,
+				refund.getStatus());
 		return refund;
 	}
 
@@ -177,7 +200,6 @@ public class RefundServiceImpl implements RefundService {
 	// ============================================================
 
 	@Override
-	@Transactional
 	public Refund process(RefundActionRequest request) {
 
 		refundValidator.validateActionRequest(request);
@@ -197,6 +219,9 @@ public class RefundServiceImpl implements RefundService {
 
 	private Refund processInternal(Refund refund, RefundActionRequest request) {
 
+		log.info("Workflow processing started. refundId={}, action={}, currentStatus={}", refund.getId(),
+				request.getAction(), refund.getStatus());
+
 		refundValidator.validateActionRequest(request);
 
 		if (refund == null) {
@@ -207,9 +232,15 @@ public class RefundServiceImpl implements RefundService {
 
 		if (transition == null || !transition.isValid()) {
 
+			log.error("Invalid refund workflow transition. refundId={}, action={}, status={}", refund.getId(),
+					request.getAction(), refund.getStatus());
+
 			throw new CustomException("INVALID_WORKFLOW",
 					"Action " + request.getAction() + " is not allowed from status " + refund.getStatus());
 		}
+
+		log.info("Workflow transition successful. refundId={}, action={}, oldStatus={}, newStatus={}", refund.getId(),
+				transition.getAction(), refund.getStatus(), transition.getApplicationStatus());
 
 		refund.setStatus(transition.getApplicationStatus());
 
@@ -217,6 +248,10 @@ public class RefundServiceImpl implements RefundService {
 
 		Refund processedRefund = processWorkflowAction(refund, transition, request);
 		refundAuditService.createAudit(processedRefund, transition.getAction());
+
+		log.info("Workflow processing completed. refundId={}, status={}", processedRefund.getId(),
+				processedRefund.getStatus());
+
 		return processedRefund;
 	}
 
@@ -341,6 +376,9 @@ public class RefundServiceImpl implements RefundService {
 	@Override
 	public void processPaymentRefund(PaymentRefund paymentRefund) {
 
+		log.info("Payment refund response received. gatewayRefundId={}, tenantId={}, status={}",
+				paymentRefund.getRefundId(), paymentRefund.getTenantId(), paymentRefund.getRefundStatus());
+
 		// refundId from PaymentRefund represents gateway refund ID
 		Refund refund = refundRepository.findByGatwayRefundId(paymentRefund.getRefundId(), paymentRefund.getTenantId());
 
@@ -374,6 +412,9 @@ public class RefundServiceImpl implements RefundService {
 			action = RefundConstants.ACTION_REJECT;
 		}
 
+		log.info("Final payment refund response. refundId={}, paymentStatus={}, workflowAction={}", refund.getId(),
+				status, action);
+
 		RefundActionRequest actionRequest = RefundActionRequest.builder().id(refund.getId()).action(action)
 				.userId(systemRequestInfo.getUserInfo().getUuid()).requestInfo(systemRequestInfo).build();
 
@@ -382,7 +423,10 @@ public class RefundServiceImpl implements RefundService {
 
 		// Save gateway response + final workflow status
 		refundRepository.update(refund);
-		
+
+		log.info("Payment refund processing completed. refundId={}, finalStatus={}", refund.getId(),
+				refund.getStatus());
+
 	}
 
 	private boolean isFinalPaymentRefundStatus(String status) {

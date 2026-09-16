@@ -1,7 +1,10 @@
 package org.egov.refund.kafka.consumer;
 
+import java.util.HashMap;
+
 import org.egov.refund.model.PaymentRefund;
 import org.egov.refund.service.RefundService;
+import org.egov.refund.web.contracat.PaymentRefundRequest;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -26,14 +29,14 @@ public class PaymentRefundConsumer {
 
 
 	@KafkaListener(topics = "${refund.kafka.payment-refund-topic}")
-	public void consume(String message) {
+	public void consume(final HashMap<String, Object> message) {
 
 		log.info("Payment refund response received from Kafka. message={}", message);
 
 		try {
 
-			PaymentRefund paymentRefund = objectMapper.readValue(message, PaymentRefund.class);
-
+			PaymentRefundRequest paymentRefundRequest = objectMapper.convertValue(message, PaymentRefundRequest.class);
+			PaymentRefund paymentRefund  = paymentRefundRequest.getRefund();
 			validate(paymentRefund);
 
 			log.info("Processing payment refund response. " + "refundId={}, tenantId={}, status={}",
