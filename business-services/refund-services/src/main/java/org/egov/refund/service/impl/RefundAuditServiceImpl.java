@@ -24,7 +24,7 @@ public class RefundAuditServiceImpl implements RefundAuditService {
 			return;
 		}
 
-		RefundAudit audit = RefundAudit.builder().auditId(UUID.randomUUID()).id(refund.getId())
+		RefundAudit audit = RefundAudit.builder().id(UUID.randomUUID()).refundId(refund.getId())
 				.refundNo(refund.getRefundNo()).tenantId(refund.getTenantId()).moduleName(refund.getModuleName())
 				.businessService(refund.getBusinessService()).consumerCode(refund.getConsumerCode())
 				.paymentId(refund.getPaymentId()).applicantName(refund.getApplicantName())

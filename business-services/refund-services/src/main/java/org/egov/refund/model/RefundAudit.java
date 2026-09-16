@@ -15,10 +15,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RefundAudit {
+	private UUID id;
+    private UUID refundId;
 
-    private UUID auditId;
-
-    private UUID id;
+    
     private String refundNo;
 
     private String tenantId;

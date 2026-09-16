@@ -10,6 +10,7 @@ import org.egov.refund.querybuilder.RefundQueryBuilder;
 import org.egov.refund.querybuilder.RefundSearchCriteria;
 import org.egov.refund.querybuilder.RefundSearchQuery;
 import org.egov.refund.rowmapper.RefundRowMapper;
+import org.egov.refund.web.contracat.RefundRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -39,7 +40,8 @@ public class RefundRepository {
 		log.info("Publishing refund save request. refundId={}, refundNo={}, tenantId={}", refund.getId(),
 				refund.getRefundNo(), refund.getTenantId());
 
-		producer.push(properties.getSaveRefundTopic(), refund);
+		RefundRequest request = RefundRequest.builder().refund(refund).build();
+		producer.push(properties.getSaveRefundTopic(), request);
 		log.info("Refund save request published successfully. refundId={}, topic={}", refund.getId(),
 				properties.getSaveRefundTopic());
 	}
@@ -47,8 +49,8 @@ public class RefundRepository {
 	public void update(Refund refund) {
 		log.info("Publishing refund update request. refundId={}, refundNo={}, status={}", refund.getId(),
 				refund.getRefundNo(), refund.getStatus());
-
-		producer.push(properties.getUpdateRefundTopic(), refund);
+		RefundRequest request = RefundRequest.builder().refund(refund).build();
+		producer.push(properties.getUpdateRefundTopic(), request);
 		log.info("Refund update request published successfully. refundId={}, topic={}", refund.getId(),
 				properties.getUpdateRefundTopic());
 	}
