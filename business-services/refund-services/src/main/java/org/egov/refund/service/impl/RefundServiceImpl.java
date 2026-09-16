@@ -247,7 +247,12 @@ public class RefundServiceImpl implements RefundService {
 		refundEnrichmentService.updateAuditDetails(refund, request.getUserId(), System.currentTimeMillis());
 
 		Refund processedRefund = processWorkflowAction(refund, transition, request);
-		refundAuditService.createAudit(processedRefund, transition.getAction());
+		
+		if (!RefundConstants.ACTION_INITIATE.equalsIgnoreCase(transition.getAction())) {
+
+			refundAuditService.createAudit(processedRefund, transition.getAction());
+		}
+		
 
 		log.info("Workflow processing completed. refundId={}, status={}", processedRefund.getId(),
 				processedRefund.getStatus());
