@@ -18,7 +18,7 @@ public final class RefundConstants {
 
 	public static final String STATUS_CREATED = "CREATED";
 
-	public static final String STATUS_INITIATE = "INITIATE";
+	public static final String ACTION_INITIATE = "INITIATE";
 
 	public static final String ACTION_SUBMITTED = "SUBMITTED";
 
