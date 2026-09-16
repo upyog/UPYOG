@@ -27,7 +27,7 @@ public class RefundActionRequest {
 
 	private String remarks;
 	
-	private UUID id;
+	private String id;
 
 	private Map<String, Object> additionalDetails;
 }

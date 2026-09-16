@@ -16,7 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Refund {
 
-    private UUID id;
+    private String id;
     private String refundNo;
 
     private String tenantId;

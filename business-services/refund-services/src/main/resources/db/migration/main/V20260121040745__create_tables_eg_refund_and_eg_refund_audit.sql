@@ -4,7 +4,7 @@
 
 CREATE TABLE IF NOT EXISTS eg_rs_refund
 (
-    id                    UUID PRIMARY KEY,
+    id                    VARCHAR(64) PRIMARY KEY,
     refund_no             VARCHAR(100) NOT NULL UNIQUE,
     tenant_id             VARCHAR(256) NOT NULL,
     module_name           VARCHAR(100) NOT NULL,
@@ -84,8 +84,8 @@ CREATE INDEX idx_eg_rs_refund_tenant_payment
 
 CREATE TABLE IF NOT EXISTS eg_rs_refund_audit
 (
-    id                    UUID PRIMARY KEY,
-    refund_id             UUID NOT NULL,
+    id                    VARCHAR(64) PRIMARY KEY,
+    refund_id             VARCHAR(64) NOT NULL,
     refund_no             VARCHAR(100),
 
     tenant_id             VARCHAR(100) NOT NULL,

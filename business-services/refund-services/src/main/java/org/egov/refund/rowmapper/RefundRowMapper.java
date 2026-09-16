@@ -1,17 +1,17 @@
 package org.egov.refund.rowmapper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Map;
+
 import org.egov.refund.model.AuditDetails;
 import org.egov.refund.model.Refund;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.Map;
-import java.util.UUID;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class RefundRowMapper implements RowMapper<Refund> {
@@ -27,7 +27,7 @@ public class RefundRowMapper implements RowMapper<Refund> {
 
 		Refund refund = new Refund();
 
-		refund.setId(UUID.fromString(rs.getString("id")));
+		refund.setId(rs.getString("id"));
 
 		refund.setRefundNo(rs.getString("refund_no"));
 

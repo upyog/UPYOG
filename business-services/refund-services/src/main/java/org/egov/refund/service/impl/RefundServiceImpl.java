@@ -163,7 +163,7 @@ public class RefundServiceImpl implements RefundService {
 
 		if (!isBlank(request.getId())) {
 
-			refund = refundRepository.findById(UUID.fromString(request.getId()));
+			refund = refundRepository.findById(request.getId());
 
 		} else {
 

@@ -59,7 +59,7 @@ public class RefundEnrichmentServiceImpl implements RefundEnrichmentService {
 
 		long currentTime = System.currentTimeMillis();
 
-		refund.setId(UUID.randomUUID());
+		refund.setId(UUID.randomUUID().toString());
 
 		String refundNo = getId(requestInfo, refund.getTenantId(), idKey, idformat);
 
