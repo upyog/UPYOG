@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CVoucherHeader;
+import org.egov.commons.EgModules;
 import org.egov.egf.contract.model.RefundPaymentCreateRequest;
 import org.egov.egf.contract.model.RefundPaymentDetail;
 import org.egov.infstr.services.PersistenceService;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
+import org.egov.services.voucher.VoucherService;
 
 public class RefundPaymentVoucherService {
 
@@ -32,11 +34,17 @@ public class RefundPaymentVoucherService {
 
 	private static final String PAYMENT_VOUCHER_CREATED = "PAYMENT_VOUCHER_CREATED";
 
+	private static final String REFUND_FINANCE_MODULE = "Refund";
+
 	@PersistenceContext
 	private EntityManager entityManager;
 
 	@Autowired
 	private PaymentService paymentService;
+
+	@Autowired
+	@Qualifier("voucherService")
+	private VoucherService voucherService;
 
 	@Autowired
 	@Qualifier("persistenceService")
@@ -269,15 +277,23 @@ public class RefundPaymentVoucherService {
 
 		final HashMap<String, Object> headerDetails = new HashMap<>();
 
+		/*
+		 * Module ID allows the common Finance code to generate the Payment Voucher
+		 * number automatically.
+		 */
+		final EgModules financeModule = getRefundFinanceModule(refundApplication);
+
 		final Date paymentDate = payment.getGatewayTransactionDate() != null && payment.getGatewayTransactionDate() > 0
 				? new Date(payment.getGatewayTransactionDate())
 				: new Date();
 
-		headerDetails.put(VoucherConstant.VOUCHERDATE, paymentDate);
+		headerDetails.put(VoucherConstant.MODULEID, financeModule.getId());
+
+		headerDetails.put(VoucherConstant.VOUCHERNAME, FinancialConstants.PAYMENTVOUCHER_NAME_DIRECTBANK);
 
 		headerDetails.put(VoucherConstant.VOUCHERTYPE, FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
 
-		headerDetails.put(VoucherConstant.VOUCHERDATE, new Date(payment.getGatewayTransactionDate()));
+		headerDetails.put(VoucherConstant.VOUCHERDATE, paymentDate);
 
 		headerDetails.put(VoucherConstant.DESCRIPTION,
 				"Refund payment for application " + refundApplication.getRefundApplicationNumber());
@@ -287,7 +303,6 @@ public class RefundPaymentVoucherService {
 		headerDetails.put(VoucherConstant.DEPARTMENTCODE, payment.getDepartmentCode());
 
 		if (StringUtils.isNotBlank(payment.getFunctionCode())) {
-
 			headerDetails.put(VoucherConstant.FUNCTIONCODE, payment.getFunctionCode());
 		}
 
@@ -342,5 +357,26 @@ public class RefundPaymentVoucherService {
 		entityManager.flush();
 
 		return paymentHeader;
+	}
+
+	/**
+	 * Resolves the generic Finance module used for refund Payment Vouchers. The
+	 * original source module remains unchanged on the refund application.
+	 */
+	private EgModules getRefundFinanceModule(final RefundApplication refundApplication) {
+
+		if (refundApplication == null) {
+			throw new IllegalArgumentException("Refund application is mandatory while resolving Finance module");
+		}
+
+		final EgModules financeModule = voucherService.getModulesIdByName(REFUND_FINANCE_MODULE);
+
+		if (financeModule == null || financeModule.getId() == null) {
+
+			throw new IllegalArgumentException(
+					"Finance module configuration was not found for module: " + REFUND_FINANCE_MODULE);
+		}
+
+		return financeModule;
 	}
 }

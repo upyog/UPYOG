@@ -140,6 +140,8 @@ public class RefundServiceCallbackService {
 
 		requestInfo.setAuthToken(serviceAuthToken);
 
+		requestInfo.setUserInfo(microserviceUtils.getServiceUserInfo(serviceAuthToken));
+
 		final RefundStatusProcessInstance processInstance = new RefundStatusProcessInstance();
 
 		processInstance.setTenantId(refundApplication.getTenantId());
