@@ -15,7 +15,6 @@ import org.egov.commons.CVoucherHeader;
 import org.egov.commons.Fund;
 import org.egov.commons.Vouchermis;
 import org.egov.egf.voucher.service.JournalVoucherService;
-import org.egov.infra.admin.master.entity.Department;
 import org.egov.model.refund.RefundApplication;
 import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,17 +167,28 @@ public class RefundJournalVoucherService {
 		return funds.get(0);
 	}
 
-	private Department findDepartment(final String departmentCode) {
+	private void findDepartment(final String departmentCode) {
 
-		final List<Department> departments = entityManager
-				.createQuery("from Department " + "where code = :departmentCode", Department.class)
-				.setParameter("departmentCode", departmentCode.trim()).setMaxResults(1).getResultList();
-
-		if (departments.isEmpty()) {
-			throw new IllegalArgumentException("Invalid department code: " + departmentCode);
+		if (departmentCode == null || departmentCode.trim().isEmpty()) {
+			throw new IllegalArgumentException("Department code is mandatory");
 		}
 
-		return departments.get(0);
+		final String code = departmentCode.trim();
+
+		final List<org.egov.infra.microservice.models.Department> departments = microserviceUtils.getDepartments(code);
+
+		if (departments == null) {
+			throw new IllegalStateException("Unable to retrieve departments from MDMS");
+		}
+
+		for (final org.egov.infra.microservice.models.Department department : departments) {
+
+			if (department != null && code.equals(department.getCode())) {
+				return;
+			}
+		}
+
+		throw new IllegalArgumentException("Department code was not found in MDMS: " + code);
 	}
 
 	private CFunction findFunction(final String functionCode) {
