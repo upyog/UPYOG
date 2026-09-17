@@ -21,6 +21,9 @@
 				</param>
 
 			</generator>
+
+			<property name="refundServiceId" column="REFUNDSERVICEID"
+				type="string" length="128" />
 		</id>
 
 		<property name="tenantId" column="TENANTID" type="string"

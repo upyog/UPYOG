@@ -151,7 +151,14 @@ public class RefundServiceCallbackService {
 		processInstance.setModuleName(refundApplication.getModuleName());
 		processInstance.setComment(resolveComment(financeStatus, approvalComments));
 
+		if (StringUtils.isBlank(refundApplication.getRefundServiceId())) {
+			throw new IllegalStateException("Refund-service ID is missing for refund application: "
+					+ refundApplication.getRefundApplicationNumber());
+		}
+
 		final RefundStatusUpdate refundStatusUpdate = new RefundStatusUpdate();
+
+		refundStatusUpdate.setId(refundApplication.getRefundServiceId());
 
 		refundStatusUpdate.setRefundNo(refundApplication.getRefundApplicationNumber());
 		refundStatusUpdate.setTenantId(refundApplication.getTenantId());
