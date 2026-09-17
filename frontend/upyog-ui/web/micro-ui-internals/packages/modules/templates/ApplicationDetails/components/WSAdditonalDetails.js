@@ -12,8 +12,8 @@ const WSAdditonalDetails = ({ wsAdditionalDetails, oldValue }) => {
   let filters = getQueryStringParams(location.search);
   const isModify = filters?.mode;
 
-  var { connectionDetails, plumberDetails, roadCuttingDetails, activationDetails } = wsAdditionalDetails?.additionalDetails || {connectionDetails:[], plumberDetails: []};
-    
+  var { connectionDetails, plumberDetails, roadCuttingDetails, activationDetails } = wsAdditionalDetails?.additionalDetails || { connectionDetails: [], plumberDetails: [] };
+
   return (
     <Fragment>
       <div style={{ lineHeight: "19px", maxWidth: "950px", minWidth: "280px" }}>
@@ -24,8 +24,8 @@ const WSAdditonalDetails = ({ wsAdditionalDetails, oldValue }) => {
               <div className="connection-details-new-value-wrapper">
                 {connectionDetails?.map((value, index) => {
                   return (
-                    <div>
-                      <Row className="border-none" key={`${value.title}`} label={`${t(`${value.title}`)}`} text={value?.oldValue ? value?.oldValue: value?.value ? value?.value : ""} />
+                    <div key={`connection-detail-${value.title || index}`}>
+                      <Row className="border-none" key={`${value.title}`} label={`${t(`${value.title}`)}`} text={value?.oldValue ? value?.oldValue : value?.value ? value?.value : ""} />
                     </div>
                   );
                 })}
@@ -40,7 +40,7 @@ const WSAdditonalDetails = ({ wsAdditionalDetails, oldValue }) => {
               <div className="plumber-details-new-value-wrapper">
 
                 {plumberDetails?.map((value, index) => {
-                  return <Row className="border-none" key={`${value.title}`} label={`${t(`${value.title}`)}`} text={value?.oldValue ? value?.oldValue: value?.value ? value?.value : ""} privacy={value.privacy} />;
+                  return <Row className="border-none" key={`${value.title}`} label={`${t(`${value.title}`)}`} text={value?.oldValue ? value?.oldValue : value?.value ? value?.value : ""} privacy={value.privacy} />;
                 })}
               </div>
             </div>
@@ -51,18 +51,19 @@ const WSAdditonalDetails = ({ wsAdditionalDetails, oldValue }) => {
             <CardSubHeader style={cardSubHeaderStyles()}>{t("WS_ROAD_CUTTING_DETAILS")}</CardSubHeader>
             <div>
               <div className="plumber-details-new-value-wrapper">
-                {roadCuttingDetails?.map((value) => {
+                {roadCuttingDetails?.map((value, index) => {
                   return (
                     <div
-                      style={ roadCuttingDetails?.length > 1
-                          ? {
-                              border: "1px solid #D6D5D4",
-                              background: "#FAFAFA",
-                              borderRadius: "4px",
-                              padding: "10px 10px 0px 10px",
-                              margin: "5px 0px",
-                            }
-                          : {}
+                      key={`road-cutting-${value?.title || value?.values?.[0]?.value || index}`}
+                      style={roadCuttingDetails?.length > 1
+                        ? {
+                          border: "1px solid #D6D5D4",
+                          background: "#FAFAFA",
+                          borderRadius: "4px",
+                          padding: "10px 10px 0px 10px",
+                          margin: "5px 0px",
+                        }
+                        : {}
                       }
                     >
                       {value?.values?.map((roadValue) => (
@@ -70,13 +71,13 @@ const WSAdditonalDetails = ({ wsAdditionalDetails, oldValue }) => {
                           className="border-none"
                           key={`${roadValue.title}`}
                           label={`${t(`${roadValue.title}`)}`}
-                          text={roadValue?.oldValue ? roadValue?.oldValue: roadValue?.value ? roadValue?.value : ""}
+                          text={roadValue?.oldValue ? roadValue?.oldValue : roadValue?.value ? roadValue?.value : ""}
                         />
                       ))}
                     </div>
                   );
                 })}
-              </div>             
+              </div>
             </div>
           </StatusTable>
         )}
@@ -87,10 +88,10 @@ const WSAdditonalDetails = ({ wsAdditionalDetails, oldValue }) => {
               <div className="plumber-details-new-value-wrapper">
                 {activationDetails?.map((value, index) => {
                   return (
-                    <Row className="border-none" key={`${value.title}`} label={`${t(`${value.title}`)}`} text={value?.oldValue ? value?.oldValue: value?.value ? value?.value : ""} />
+                    <Row className="border-none" key={`${value.title}`} label={`${t(`${value.title}`)}`} text={value?.oldValue ? value?.oldValue : value?.value ? value?.value : ""} />
                   );
                 })}
-              </div>              
+              </div>
             </div>
           </StatusTable>
         )}

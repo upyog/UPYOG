@@ -47,8 +47,8 @@
  */
 package org.egov.commons.dao;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.egov.commons.Bank;
 import org.egov.infra.exception.ApplicationRuntimeException;

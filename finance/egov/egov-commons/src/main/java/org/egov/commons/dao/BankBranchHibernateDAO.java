@@ -48,18 +48,28 @@
 package org.egov.commons.dao;
 
 import org.egov.commons.Bankbranch;
-import org.hibernate.Query;
+import org.egov.commons.utils.BankAccountType;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * LTS Migration Notes:
+ * 1. [Hibernate 6 Strict SQM Enums] Replaced raw string literals in HQL ('RECEIPTS_PAYMENTS') with typed
+ *    BankAccountType enum parameter lists to prevent SemanticException during enum-to-string comparisons.
+ * 2. [Hibernate 6 Criteria Removal] Replaced removed session.createCriteria() with session.createQuery("from Bankbranch", Bankbranch.class).
+ * 3. [Hibernate 6 Query API] Replaced deprecated setInteger() with setParameter().
+ * 4. [Jakarta EE Persistence] Migrated EntityManager and PersistenceContext from javax.persistence to jakarta.persistence.
+ */
 @Repository
 public class BankBranchHibernateDAO {
     @Transactional
@@ -84,7 +94,7 @@ public class BankBranchHibernateDAO {
     }
 
     public List<Bankbranch> findAll() {
-        return (List<Bankbranch>) getCurrentSession().createCriteria(Bankbranch.class).list();
+        return getCurrentSession().createQuery("from Bankbranch", Bankbranch.class).list();
     }
 
     @PersistenceContext
@@ -99,15 +109,22 @@ public class BankBranchHibernateDAO {
     }
 
     public List<Bankbranch> getAllBankBranchsByBank(Integer bankId) {
+        if (bankId == null) {
+            return new ArrayList<Bankbranch>();
+        }
         Set<Bankbranch> ss = new LinkedHashSet<Bankbranch>();
         List<Bankbranch> bankBranchList = new ArrayList<Bankbranch>();
 
-        Query createQuery = getCurrentSession()
+        // LTS Migration Note [Hibernate 6 Strict SQM Enums]:
+        // In Hibernate 6, comparing an enum property (ba.type) against String literals throws SemanticException.
+        // Passed typed BankAccountType enum constants via setParameterList().
+        Query<Bankbranch> createQuery = getCurrentSession()
                 .createQuery(
-                        "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.bank.id=:bankId and bb.isactive=true")
-                .setInteger("bankId", bankId);
+                        "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in (:accTypes) and bb.bank.id=:bankId and bb.isactive=true", Bankbranch.class)
+                .setParameterList("accTypes", Arrays.asList(BankAccountType.RECEIPTS_PAYMENTS, BankAccountType.PAYMENTS))
+                .setParameter("bankId", bankId);
         if (bankId != null) {
-            List<Bankbranch> list = (List<Bankbranch>) createQuery.list();
+            List<Bankbranch> list = createQuery.list();
             if (list != null && !list.isEmpty())
             {
                 ss.addAll(list);
@@ -122,15 +139,19 @@ public class BankBranchHibernateDAO {
      * @return BankBranch for type "RECEIPTS_PAYMENTS" 
      */
     public List<Bankbranch> getAllBankBranchsByBankForReceiptPayments(Integer bankId) {
+        if (bankId == null) {
+            return new ArrayList<Bankbranch>();
+        }
         Set<Bankbranch> ss = new LinkedHashSet<Bankbranch>();
         List<Bankbranch> bankBranchList = new ArrayList<Bankbranch>();
 
-        Query createQuery = getCurrentSession()
+        Query<Bankbranch> createQuery = getCurrentSession()
                 .createQuery(
-                        "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS','RECEIPTS') and bb.bank.id=:bankId and bb.isactive=true")
-                .setInteger("bankId", bankId);
+                        "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in (:accTypes) and bb.bank.id=:bankId and bb.isactive=true", Bankbranch.class)
+                .setParameterList("accTypes", Arrays.asList(BankAccountType.RECEIPTS_PAYMENTS, BankAccountType.RECEIPTS))
+                .setParameter("bankId", bankId);
         if (bankId != null) {
-            List<Bankbranch> list = (List<Bankbranch>) createQuery.list();
+            List<Bankbranch> list = createQuery.list();
             if (list != null && !list.isEmpty())
             {
                 ss.addAll(list);

@@ -290,7 +290,7 @@ const ConnectionDetails = (_props) => {
                                     rules={{ validate: (e) => ((e && getPattern("WSOnlyNumbers").test(e)) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")), required: t("REQUIRED_FIELD") }}
                                     type="number"
                                     isMandatory={true}
-                                    render={(props) => (
+                                    render={({ field: props }) => (
                                         <TextInput
                                             type="number"
                                             value={props.value}

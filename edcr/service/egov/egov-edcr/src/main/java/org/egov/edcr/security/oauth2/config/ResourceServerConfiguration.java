@@ -1,5 +1,7 @@
 package org.egov.edcr.security.oauth2.config;
 
+// TODO: DEAD CODE - NOT USED IN UPYOG (ResourceServerConfigurerAdapter removed in Spring Security 6)
+/*
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -23,12 +25,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-/**
- * Configuration to protect the Api resources with Oauth2 Security
- *
- * @author subhash
- *
- */
 @Configuration
 @EnableResourceServer
 public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
@@ -99,3 +95,4 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     }
 
 }
+*/

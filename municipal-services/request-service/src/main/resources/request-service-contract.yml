@@ -1,0 +1,267 @@
+swagger: 2.0
+info:
+  version: 1.0.0
+  title: RequestService Service
+  description: |
+    UPYOG generic request service.
+  contact:
+    name: UPYOG NUDM Team
+    email: "cdg-contact@niua.org"
+schemes:
+  - https
+basePath: /request-service
+x-api-id: org.egov.request.service
+x-common-path: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml"
+paths:
+  /mobile-toilet/v1/_create:
+    post:
+      summary: Create mobile-toilet v1
+      description: Create mobile-toilet v1 for request-service. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        201:
+          description: Create mobile-toilet v1 completed successfully
+          schema:
+            $ref: "#/definitions/MobileToiletBookingResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Mobile Toilet
+      parameters:
+        - name: MobileToiletBookingResponse
+          in: body
+          description: Request payload with RequestInfo and domain data for create mobile-toilet v1
+          required: True
+          schema:
+            $ref: "#/definitions/MobileToiletBookingResponse"
+  /mobile-toilet/v1/_search:
+    post:
+      summary: Search mobile-toilet v1
+      description: Search mobile-toilet v1 for request-service. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search mobile-toilet v1 completed successfully
+          schema:
+            $ref: "#/definitions/MobileToiletBookingSearchResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Mobile Toilet
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/MobileToiletBookingSearchResponse"
+  /mobile-toilet/v1/_update:
+    post:
+      summary: Update mobile-toilet v1
+      description: Update mobile-toilet v1 for request-service. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        201:
+          description: Update mobile-toilet v1 completed successfully
+          schema:
+            $ref: "#/definitions/MobileToiletBookingResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Mobile Toilet
+      parameters:
+        - name: MobileToiletBookingResponse
+          in: body
+          description: Request payload with RequestInfo and domain data for update mobile-toilet v1
+          required: True
+          schema:
+            $ref: "#/definitions/MobileToiletBookingResponse"
+  /water-tanker/v1/_create:
+    post:
+      summary: Create water-tanker v1
+      description: Create water-tanker v1 for request-service. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        201:
+          description: Create water-tanker v1 completed successfully
+          schema:
+            $ref: "#/definitions/WaterTankerBookingResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Water Tanker
+      parameters:
+        - name: WaterTankerBookingResponse
+          in: body
+          description: Request payload with RequestInfo and domain data for create water-tanker v1
+          required: True
+          schema:
+            $ref: "#/definitions/WaterTankerBookingResponse"
+  /water-tanker/v1/_search:
+    post:
+      summary: Search water-tanker v1
+      description: Search water-tanker v1 for request-service. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search water-tanker v1 completed successfully
+          schema:
+            $ref: "#/definitions/WaterTankerBookingSearchResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Water Tanker
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/WaterTankerBookingSearchResponse"
+  /water-tanker/v1/_update:
+    post:
+      summary: Update water-tanker v1
+      description: Update water-tanker v1 for request-service. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        201:
+          description: Update water-tanker v1 completed successfully
+          schema:
+            $ref: "#/definitions/WaterTankerBookingResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Water Tanker
+      parameters:
+        - name: WaterTankerBookingResponse
+          in: body
+          description: Request payload with RequestInfo and domain data for update water-tanker v1
+          required: True
+          schema:
+            $ref: "#/definitions/WaterTankerBookingResponse"
+definitions:
+  WaterTankerBookingSearchResponse:
+    type: object
+    description: Request/Response contract for WaterTankerBookingSearchResponse
+    properties:
+      RequestInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo"
+      ResponseInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo"
+      RequestApplications:
+        type: array
+        description: Domain application objects
+        items:
+          $ref: "#/definitions/RequestApplication"
+  MobileToiletBookingResponse:
+    type: object
+    description: Request/Response contract for MobileToiletBookingResponse
+    properties:
+      RequestInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo"
+      ResponseInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo"
+      RequestApplications:
+        type: array
+        description: Domain application objects
+        items:
+          $ref: "#/definitions/RequestApplication"
+  MobileToiletBookingSearchResponse:
+    type: object
+    description: Request/Response contract for MobileToiletBookingSearchResponse
+    properties:
+      RequestInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo"
+      ResponseInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo"
+      RequestApplications:
+        type: array
+        description: Domain application objects
+        items:
+          $ref: "#/definitions/RequestApplication"
+  WaterTankerBookingResponse:
+    type: object
+    description: Request/Response contract for WaterTankerBookingResponse
+    properties:
+      RequestInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo"
+      ResponseInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo"
+      RequestApplications:
+        type: array
+        description: Domain application objects
+        items:
+          $ref: "#/definitions/RequestApplication"
+  RequestApplication:
+    type: object
+    description: A domain application object for request-service
+    properties:
+      id:
+        type: string
+        description: Unique identifier (UUID)
+        readOnly: true
+      tenantId:
+        type: string
+        description: Unique identifier of ULB
+        maxLength: 128
+        minLength: 2
+      applicationNumber:
+        type: string
+        description: Unique application number
+        readOnly: true
+      status:
+        type: string
+        description: Application status
+      auditDetails:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/AuditDetails"
+    required:
+      - tenantId
+  Workflow:
+    type: object
+    description: Fields related to workflow service
+    properties:
+      action:
+        type: string
+        description: Action on the application
+      status:
+        type: string
+        description: Status of the application
+      comments:
+        type: string
+        description: Comments for the action

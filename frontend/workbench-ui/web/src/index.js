@@ -11,14 +11,15 @@ window.Digit.Customizations = {};
 
 const user = window.Digit.SessionStorage.get("User");
 
-if (!user || !user.access_token || !user.info) {
+if (!user?.access_token || !user?.info) {
   // login detection
 
   const parseValue = (value) => {
     try {
       return JSON.parse(value)
-    } catch (e) {
-      return value
+    } catch (error) {
+      console.warn("Failed to parse JSON value, returning raw string:", error);
+      return value;
     }
   }
 

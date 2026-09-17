@@ -155,7 +155,7 @@ const ApplicationDetails = () => {
 
   async function getRecieptSearch({ tenantId, payments, ...params }) {
     let application = data?.hallsBookingApplication?.[0];
-    let fileStoreId = application?.paymentReceiptFilestoreId
+    let fileStoreId = application?.paymentReceiptFilestoreId;
     if (!fileStoreId) {
       let response = { filestoreIds: [payments?.fileStoreId] };
       response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "chbservice-receipt");
@@ -164,7 +164,7 @@ const ApplicationDetails = () => {
         paymentReceiptFilestoreId: response?.filestoreIds[0]
       };
       await mutation.mutateAsync({
-        hallsBookingApplication: updatedApplication
+        venueBookingApplication: updatedApplication
       });
       fileStoreId = response?.filestoreIds[0];
       refetch();
@@ -187,7 +187,7 @@ const ApplicationDetails = () => {
         permissionLetterFilestoreId: response?.filestoreIds[0]
       };
       await mutation.mutateAsync({
-        hallsBookingApplication: updatedApplication
+        venueBookingApplication: updatedApplication
       });
       fileStoreId = response?.filestoreIds[0];
       refetch();
@@ -231,7 +231,7 @@ const ApplicationDetails = () => {
       }
 
       await mutation.mutateAsync({
-        hallsBookingApplication: updatedApplication
+        venueBookingApplication: updatedApplication
       });
       if (refundFailed) {
         setShowToast({

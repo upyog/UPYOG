@@ -63,7 +63,8 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -165,7 +166,7 @@ public class ConcurrenceReportAction extends BaseFormAction {
                 && parameters.get("asOnDate")[0] != null) {
             setDateData(parameters.get("asOnDate")[0], " ");
             final Query query = generateQuery();
-            query.setDate("date", asOnDate).setResultTransformer(
+            query.setParameter("date", asOnDate).setResultTransformer(
                     Transformers.aliasToBean(ConcurrenceReportData.class));
             paymentHeaderList.addAll(query.list());
         } else if (parameters.containsKey("fromDate")
@@ -175,7 +176,7 @@ public class ConcurrenceReportAction extends BaseFormAction {
             setDateData(parameters.get("fromDate")[0],
                     parameters.get("toDate")[0]);
             final Query query = generateQuery();
-            query.setDate("fromDate", fromDate).setDate("toDate", toDate)
+            query.setParameter("fromDate", fromDate).setParameter("toDate", toDate)
             .setResultTransformer(
                     Transformers
                     .aliasToBean(ConcurrenceReportData.class));
@@ -242,7 +243,7 @@ public class ConcurrenceReportAction extends BaseFormAction {
     	final Map.Entry<String, Map<String, Object>> queryMapEntry = getQueryString().entrySet().iterator().next();
         final String queryString = queryMapEntry.getKey();
         final Map<String, Object> queryParams = queryMapEntry.getValue();
-        final Query query = persistenceService.getSession().createSQLQuery(queryString)
+        final Query query = persistenceService.getSession().createNativeQuery(queryString)
                 .addScalar("bankName")
                 .addScalar("bankAccountNumber")
                 .addScalar("fundId")
@@ -372,7 +373,7 @@ public class ConcurrenceReportAction extends BaseFormAction {
     }
 
     public String getUlbName() {
-        final Query query = persistenceService.getSession().createSQLQuery(
+        final Query query = persistenceService.getSession().createNativeQuery(
                 "select name from companydetail");
         final List<String> result = query.list();
         if (result != null)

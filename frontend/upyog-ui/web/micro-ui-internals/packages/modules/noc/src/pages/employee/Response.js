@@ -1,3 +1,7 @@
+/**
+ * Renders the Employee workflow action response screen.
+ * Displays application approval/rejection banner, NOC reference number, and a return to home action.
+ */
 import { Banner, Card, CardText, ActionBar, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";

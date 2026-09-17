@@ -69,10 +69,14 @@ export const Request = async ({
   reqTimestamp = false,
   plainAccessRequest = null
 }) => {
-  if (method.toUpperCase() === "POST","PUT") {
+  if (method.toUpperCase() === "POST" || method.toUpperCase() === "PUT") {
     const ts = new Date().getTime();
+    // Merge — do not wipe caller-supplied RequestInfo (apiId/ver/ts/msgId/…).
+    const existingRequestInfo =
+      data?.RequestInfo && typeof data.RequestInfo === "object" ? data.RequestInfo : {};
     data.RequestInfo = {
       apiId: "Rainmaker",
+      ...existingRequestInfo,
     };
     if (auth || !!Digit.UserService.getUser()?.access_token) {
       data.RequestInfo = { ...data.RequestInfo, ...requestInfo() };
@@ -81,7 +85,12 @@ export const Request = async ({
       data.RequestInfo = { ...data.RequestInfo, ...userServiceData() };
     }
     if (locale) {
-      data.RequestInfo = { ...data.RequestInfo, msgId: `${ts}|${Digit.StoreData.getCurrentLanguage()}` };
+      data.RequestInfo = {
+        ...data.RequestInfo,
+        msgId:
+          existingRequestInfo.msgId ||
+          `${ts}|${Digit.StoreData.getCurrentLanguage()}`,
+      };
     }
     if (noRequestInfo) {
       delete data.RequestInfo;

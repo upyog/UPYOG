@@ -48,7 +48,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "applicantName",
       "action": "TYPE",
-      "inputValue": "Arpit Rao",
+      "inputValue": "${applicant.name}",
       "dynamicSleep": 1000
     },
 
@@ -102,7 +102,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "holdingNumber",
       "action": "TYPE",
-      "inputValue": "Test1234",
+      "inputValue": "${holding.number}",
       "dynamicSleep": 1000
     },
     {
@@ -110,7 +110,7 @@
       "locatorStrategy": "CSS",
       "locatorValue": "textarea.card-textarea",
       "action": "TYPE",
-      "inputValue": "Test Land Registration",
+      "inputValue": "${land.registration}",
       "dynamicSleep": 1000
     },
     {
@@ -140,7 +140,7 @@
       "locatorStrategy": "XPATH",
       "locatorValue": "//h2[contains(.,\"Owner's mobile number\")]/following::input[1]",
       "action": "TYPE",
-      "inputValue": "9999999999",
+      "inputValue": "${mobile.number}",
       "dynamicSleep": 1000
     },
 
@@ -155,7 +155,7 @@
     {
       "stepName": "Select Property",
       "locatorStrategy": "XPATH",
-      "locatorValue": "(//button[normalize-space()='Select'])[3]",
+      "locatorValue": "(//button[normalize-space()='Select'])[1]",
       "action": "CLICK_JS",
       "dynamicSleep": 3000
     },
@@ -411,7 +411,7 @@
       "locatorStrategy": "XPATH",
       "locatorValue": "//textarea",
       "action": "TYPE",
-      "inputValue": "Approved by citizen",
+      "inputValue": "${comment.approve}",
       "dynamicSleep": 1000
     },
     {
@@ -447,7 +447,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "mobileNumber",
       "action": "TYPE",
-      "inputValue": "${selected.mobile}",
+      "inputValue": "${niuatt.architect.mobile}",
       "dynamicSleep": 1000
     },
     {
@@ -541,7 +541,7 @@
       "locatorStrategy": "XPATH",
       "locatorValue": "//textarea",
       "action": "TYPE",
-      "inputValue": "Approved by citizen",
+      "inputValue": "${comment.approve}",
       "dynamicSleep": 1000
     },
     {
@@ -552,6 +552,14 @@
       "dynamicSleep": 3000
     },
     {
+      "stepName":"Capture Application Number",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'New Building Plan Permit Application') or contains(text(),'Application Number')]/following-sibling::*[1]",
+      "action":"CAPTURE_TEXT",
+      "inputValue":"APPLICATION_NO",
+      "dynamicSleep":3000
+    },
+    {
       "stepName": "Click Pay Button",
       "locatorStrategy": "XPATH",
       "locatorValue": "//button[contains(@class,'submit-bar') and contains(.,'PAY')]",
@@ -559,42 +567,60 @@
       "dynamicSleep": 3000
     },
     {
+      "stepName": "Select ICICI",
+      "locatorStrategy": "XPATH",
+      "locatorValue":"//label[normalize-space()='ICICI']/preceding-sibling::span/input[@type='radio']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
       "stepName": "Click UPYOG Pay",
       "locatorStrategy": "XPATH",
       "locatorValue": "//button[contains(@class,'submit-bar') and .//header[normalize-space()='Pay']]",
       "action": "CLICK_JS",
+      "inputValue": null,
       "dynamicSleep": 4000
     },
     {
-      "stepName": "Net Banking",
-      "locatorStrategy": "XPATH",
-      "locatorValue": "//*[contains(text(),'Net Banking')]",
-      "action": "CLICK_JS",
-      "dynamicSleep": 2000
+      "stepName": "Open Cards Section",
+      "locatorStrategy": "ID",
+      "locatorValue": "nbAccordionBtn",
+      "action": "CLICK",
+      "dynamicSleep": 1000
     },
     {
-      "stepName": "Select ICICI",
+      "stepName": "Select Test Bank",
       "locatorStrategy": "XPATH",
-      "locatorValue": "//*[@id='ICIC']",
+      "locatorValue": "//input[@type='radio' and @value='Test Bank']",
       "action": "CLICK_JS",
-      "inputValue": null,
-      "dynamicSleep": 2000
+      "dynamicSleep": 1000
     },
     {
-      "stepName": "Gateway Pay",
-      "locatorStrategy": "XPATH",
-      "locatorValue": "//button[contains(translate(.,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'pay now')]",
-      "action": "CLICK_JS",
+      "stepName": "Click Pay Now",
+      "locatorStrategy": "ID",
+      "locatorValue": "paytBtn1",
+      "action": "CLICK",
       "dynamicSleep": 3000
     },
-
     {
-      "stepName": "Success",
+      "stepName": "Enter OTP",
+      "locatorStrategy": "ID",
+      "locatorValue": "otp",
+      "action": "TYPE",
+      "inputValue": "123456",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Verify OTP",
       "locatorStrategy": "XPATH",
-      "locatorValue": "//button[contains(.,'Success')]",
+      "locatorValue": "//button[@onclick='cardsubmit()']",
       "action": "CLICK_JS",
-      "dynamicSleep": 3000
+      "dynamicSleep": 5000
+    },
+    {
+      "stepName": "Accept Transaction Alert",
+      "action": "ACCEPT_ALERT",
+      "dynamicSleep": 1000
     }
-
   ]
 }

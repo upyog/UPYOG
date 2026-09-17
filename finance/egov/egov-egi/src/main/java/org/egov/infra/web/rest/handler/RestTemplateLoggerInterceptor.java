@@ -17,7 +17,8 @@ public class RestTemplateLoggerInterceptor implements ClientHttpRequestIntercept
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
             throws IOException {
-        System.out.println("**************** recieved request***********");
+        // LTS Migration Fix (WildFly 40): System.out is discarded; use LOGGER.
+        LOGGER.info("received request");
         logRequest(request, body);
         ClientHttpResponse response = execution.execute(request, body);
         logResponse(response);

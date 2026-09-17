@@ -70,6 +70,16 @@ import java.util.List;
 
 import static java.lang.String.format;
 
+/**
+ * LTS Migration Fix (Flyway 9 / JDK 17): schema migration bootstrap.
+ * <p>
+ * Runs after the datasource is available and before the JPA
+ * {@code EntityManagerFactory} is created. Tenant schemas listed in
+ * {@code tenant.schemas} (preferred) or legacy {@code tenant.*} properties
+ * each receive the same migration set. Sample data scripts run only when
+ * {@code dev.mode=true}.
+ * </p>
+ */
 @Configuration
 public class DBMigrationConfiguration {
 
@@ -149,7 +159,8 @@ public class DBMigrationConfiguration {
         flyway.migrate();
     }
 
-    @Bean(name = "tenants", autowire = Autowire.BY_NAME)
+    @Bean(name = "tenants")
+    @Autowired
     public List<String> tenants() {
         List<String> tenants = new ArrayList<>();
 

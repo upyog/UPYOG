@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.egov.commons.CFunction;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 
 /**

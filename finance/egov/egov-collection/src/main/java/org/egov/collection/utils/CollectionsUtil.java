@@ -124,9 +124,16 @@ import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.SearchPositionService;
 import org.egov.pims.utils.EisManagersUtill;
-import org.elasticsearch.index.IndexNotFoundException;
+/*
+ * Elasticsearch 8.x Exception Handling:
+ * Replaced legacy org.elasticsearch.index.IndexNotFoundException with generic Exception to handle ES 8.x client exceptions cleanly.
+ */
 import org.hibernate.ObjectNotFoundException;
-import org.hibernate.Query;
+/*
+ * Hibernate 6 Query Interface Migration:
+ * Replaced legacy org.hibernate.Query with org.hibernate.query.Query for Hibernate 6 query execution.
+ */
+import org.hibernate.query.Query;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -483,7 +490,8 @@ public class CollectionsUtil {
                 .createQuery(
                         "from CFinancialYear cfinancialyear where ? between "
                                 + "cfinancialyear.startingDate and cfinancialyear.endingDate")
-                .setDate(0, date).list()
+                // Replaced deprecated setDate(int, Date) with setParameter(int, Date) for Hibernate 6
+                .setParameter(0, date).list()
                 .get(0);
     }
 
@@ -753,7 +761,7 @@ public class CollectionsUtil {
     public List<OnlinePayment> getOnlineTransactionHistory(final String consumerCode) {
         final StringBuilder hql = new StringBuilder("select online from ReceiptHeader rh, org.egov.collection.entity.OnlinePayment online where rh.id = online.receiptHeader.id and rh.consumerCode =:consumercode  order by online.id desc");
         final Query query = persistenceService.getSession().createQuery(hql.toString());
-        query.setString("consumercode", consumerCode);
+        query.setParameter("consumercode", consumerCode);
         query.setMaxResults(3);
         return query.list();
     }
@@ -832,7 +840,14 @@ public class CollectionsUtil {
                             receiptHeader.getService() + CollectionConstants.COLLECTIONS_INTERFACE_SUFFIX);
                     receiptAmountInfo = billingServiceBean.receiptAmountBifurcation(billReceipt);
                 }
-            } catch (final IndexNotFoundException e) {
+            } catch (final Exception e) {
+                // TODO(JDK17 Migration):
+                // org.elasticsearch.index.IndexNotFoundException no longer exists after the
+                // Spring Data Elasticsearch 5.x upgrade.
+                // Temporarily catching Exception because the Elasticsearch integration is
+                // excluded from compilation.
+                // When Elasticsearch support is migrated, replace this with the appropriate
+                // Elasticsearch 8.x exception.
                 final String errMsg = "Exception while constructing collection index for receipt number ["
                         + receiptHeader.getReceiptnumber() + "]!";
                 LOGGER.error(errMsg, e);
@@ -1051,7 +1066,7 @@ public class CollectionsUtil {
         StringBuilder queryString = new StringBuilder(
                 "select distinct(bb.id) as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from BANK b,BANKBRANCH bb,"
                         + " EGCL_COLLECTIONMIS cmis where bb.BANKID=b.ID  and bb.id=cmis.depositedBranch ");
-        final Query query = persistenceService.getSession().createSQLQuery(queryString.toString());
+        final Query query = persistenceService.getSession().createNativeQuery(queryString.toString());
         List<Object[]> queryResult = query.list();
         for (int i = 0; i < queryResult.size(); i++) {
             final Object[] arrayObjectInitialIndex = queryResult.get(i);

@@ -42,6 +42,10 @@
     <bean id="conversionService"
           class="org.springframework.core.convert.support.DefaultConversionService"/>
 
+    <!-- Spring 6 resolver; upload limits are configured in web.xml multipart-config. -->
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.support.StandardServletMultipartResolver"/>
+
     <bean id="validator"
           class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
         <property name="validationMessageSource" ref="messageSource"/>

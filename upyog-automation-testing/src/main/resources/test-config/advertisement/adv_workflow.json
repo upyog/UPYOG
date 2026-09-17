@@ -1,0 +1,19 @@
+{
+  "moduleName": "ADVERTISEMENT",
+
+  "steps": [
+
+    {
+      "name": "Citizen Application",
+      "type": "CITIZEN",
+      "module": "ADVERTISEMENT"
+    },
+
+    {
+      "name": "Employee Flow",
+      "type": "EMPLOYEE",
+      "module": "ADVERTISEMENT",
+      "role": "ADS_CEMP"
+    }
+  ]
+}

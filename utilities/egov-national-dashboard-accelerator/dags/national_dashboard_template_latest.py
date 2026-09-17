@@ -1,3 +1,21 @@
+"""
+Manual-trigger Airflow DAG for the UPYOG National Dashboard accelerator.
+
+Pipeline per module:
+  extract (Elasticsearch) -> transform (placeholder) -> load (UPYOG ingest API)
+
+Flow:
+  1. dump_kibana() runs ES queries for the module/date and builds ward-level payloads.
+  2. Payload is pushed to XCom under key payload_{MODULE} from the extract task.
+  3. load() pulls that XCom from the extract task (not transform) and posts to ingest API.
+
+Trigger with optional conf: {"date": "DD-MM-YYYY"}. Defaults to yesterday (IST) if omitted.
+
+Required Airflow config:
+  Connections: es_conn, digit-auth
+  Variables: username, password, tenantid, usertype, token, totalulb_url, upyogurl
+"""
+
 import sys
 from pathlib import Path
 
@@ -17,9 +35,7 @@ from datetime import datetime, timedelta
 from pytz import timezone
 import logging
 import json
-import uuid
 import requests
-from elasticsearch import Elasticsearch, helpers
 from hooks.elastic_hook import ElasticHook
 from queries.tl import *
 from queries.pgr import *
@@ -38,6 +54,8 @@ default_args = {
     'start_date': airflow_tz.utcnow() - timedelta(days=1),
 }
 
+# Maps each service module to its ES query list and empty payload template function.
+# Only PT is active here; uncomment others to enable additional modules.
 module_map = {
     # 'TL' : (tl_queries, empty_tl_payload),
     # 'PGR' : (pgr_queries, empty_pgr_payload),
@@ -53,14 +71,23 @@ module_map = {
 # Manual trigger only; pass conf e.g. {"date": "06-02-2026"} when triggering.
 dag = DAG('national_dashboard_template_manual', default_args=default_args, schedule=None)
 log_endpoint = 'kibana/api/console/proxy'
-batch_size = 50
+batch_size = 50  # Number of ward payloads sent per ingest API call
 
+# Shared state used while building COMMON module metrics (ULB liveness, SLA totals).
 ulbs = {}
 modules = {}
 total_ulbs = 0
 totalApplications = 0
 totalApplicationWithinSLA = 0
 
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+def _extract_task_id(module):
+    """Return the Airflow task_id of the extract step for a given module."""
+    return 'elastic_search_extract_{0}'.format(module.lower())
 
 
 def _get_run_date_str(kwargs):
@@ -81,19 +108,37 @@ def _get_run_date_str(kwargs):
     return date
 
 
+# ---------------------------------------------------------------------------
+# Extract: query Elasticsearch and build payloads
+# ---------------------------------------------------------------------------
+
 def dump_kibana(**kwargs):
+    """
+    Extract task entry point.
+
+    For the given module and date:
+      - Computes IST day window as epoch milliseconds for ES range queries.
+      - Runs all module queries against Elasticsearch via es_conn.
+      - Transforms aggregation results into ward-level (or state-level for COMMON) payloads.
+      - Pushes serialized payload to XCom as payload_{MODULE} for the load task.
+    """
     hook = ElasticHook('GET', 'es_conn')
     module = kwargs['module']
     module_config = module_map.get(module)
+    if not module_config:
+        raise ValueError("Unknown module '{0}'. Available modules: {1}".format(module, list(module_map.keys())))
     queries = module_config[0]
     date = _get_run_date_str(kwargs)
+    logging.info("Starting extract for module=%s, date=%s", module, date)
     localtz = timezone('Asia/Kolkata')
     dt_aware = localtz.localize(datetime.strptime(date, "%d-%m-%Y"))
+    # ES queries filter on epoch_millis; start = 00:00:00 IST, end = 23:59:59.999 IST
     start = int(dt_aware.timestamp() * 1000)
     end = start + (24 * 60 * 60 * 1000) - 1000
     logging.info(start)
     logging.info(end)
     logging.info("start the DAGS")
+    # COMMON module aggregates across all time for ULB liveness; other modules use the day window.
     if module == 'COMMON':
         actualstart = int(localtz.localize(datetime.strptime('01-01-1970', "%d-%m-%Y")).timestamp() * 1000)
         end = start + (24 * 60 * 60 * 1000) - 1000
@@ -103,6 +148,7 @@ def dump_kibana(**kwargs):
     live_ulbs = 0
 
     isStateLive = "N/A"
+    # Run each ES query defined in queries/{module}.py and collect raw aggregation responses.
     for query in queries:
         q = query.get('query').format(start,end)
         logging.info(q)
@@ -114,6 +160,7 @@ def dump_kibana(**kwargs):
 
 
     if module == 'COMMON':
+        # Build a single state-level payload with ULB liveness, citizen count, and SLA metrics.
         present = datetime.strptime(date,"%d-%m-%Y")
         logging.info(present.strftime("%Y-%m-%d %H:%M:%S"))
         citizen_count = get_citizen_count(present.strftime("%Y-%m-%d %H:%M:%S"))
@@ -149,42 +196,59 @@ def dump_kibana(**kwargs):
         common_payload = empty_lambda('N/A', 'pb.amritsar', 'N/A', date)
         common_payload['metrics'] = common_metrics
         common_list.append(common_payload)
-        kwargs['ti'].xcom_push(key='payload_{0}'.format(module), value=json.dumps(common_list))
-        return json.dumps(common_list)
+        payload_json = json.dumps(common_list)
+        logging.info("Pushing XCom payload_%s with %d record(s) from extract task", module, len(common_list))
+        kwargs['ti'].xcom_push(key='payload_{0}'.format(module), value=payload_json)
+        return payload_json
     else:
+        # Build one payload per ward|ulb combination and store in XCom for load().
         ward_list = transform_response_sample(merged_document, date, module)
-        kwargs['ti'].xcom_push(key='payload_{0}'.format(module), value=json.dumps(ward_list))
-        return json.dumps(ward_list)
+        payload_json = json.dumps(ward_list)
+        logging.info("Pushing XCom payload_%s with %d ward record(s) from extract task", module, len(ward_list))
+        kwargs['ti'].xcom_push(key='payload_{0}'.format(module), value=payload_json)
+        return payload_json
 
 
 def readulb(**kwargs):
+    """Fetch total onboarded ULB count from MDMS tenants JSON (totalulb_url Variable)."""
     ulbs = []
     url = Variable.get('totalulb_url')
-    url = 'https://raw.githubusercontent.com/egovernments/punjab-mdms-data/master/data/pb/tenant/tenants.json'
-    json_data = requests.get(url)
-    json_data = json.loads(json_data.text)
-    tenants_array=json_data["tenants"]
+    logging.info("Fetching ULB list from %s", url)
+    response = requests.get(url)
+    response.raise_for_status()
+    json_data = json.loads(response.text)
+    tenants_array = json_data["tenants"]
     for tenant in tenants_array:
         ulbs.append(tenant["code"])
     total_ulbs = len(ulbs)
+    logging.info("Fetched %d ULBs", total_ulbs)
     return total_ulbs
 
 def get_citizen_count(startdate):
-    logging.info('http://mseva.lgpunjab.gov.in/egov-searcher/unique-citizen-count?date={0}'.format(startdate))
-    response = requests.get('http://mseva.lgpunjab.gov.in/egov-searcher/unique-citizen-count?date={0}'.format(startdate))
+    """Fetch unique citizen count from UPYOG for the COMMON module metrics."""
+    upyogurl = Variable.get('upyogurl').rstrip('/')
+    url = '{0}/egov-searcher/unique-citizen-count?date={1}'.format(upyogurl, startdate)
+    logging.info("Fetching citizen count from %s", url)
+    response = requests.get(url)
     if response.status_code == 200:
-        logging.info("sucessfully fetched the data")
+        logging.info("Successfully fetched citizen count data")
         return response.json()
-    else:
-        logging.info("There is an error {0} error with your request".format(response.status_code))
+    logging.error("Citizen count request failed with status %s: %s", response.status_code, response.text)
+    return None
 
+
+# ---------------------------------------------------------------------------
+# Transform: ES aggregation buckets -> dashboard payload structure
+# ---------------------------------------------------------------------------
 
 def transform_response_common(merged_document,query_name,query_module):
+    """Accumulate SLA and ULB-module mappings from a single COMMON module ES response."""
     single_document = merged_document[query_name]
     single_document = single_document.get('aggregations')
     transform_single_common(single_document,query_module)
 
 def transform_single_common(single_document,query_module):
+    """Update global SLA counters and track which modules each ULB is active on."""
     global totalApplicationWithinSLA,totalApplications
     sla =  single_document.get('applicationsIssuedWithinSLA').get('withinsla').get('value')
     total =  single_document.get('totalApplications').get('value')
@@ -204,6 +268,11 @@ def transform_single_common(single_document,query_module):
 
 
 def transform_response_sample(merged_document, date, module):
+    """
+    Merge all ES query results for a module into ward-level payloads.
+
+    Each query contributes metrics via its lambda function; results are keyed by ward|ulb.
+    """
     module_config = module_map.get(module)
     queries = module_config[0]
     ward_map = {}
@@ -217,9 +286,15 @@ def transform_response_sample(merged_document, date, module):
     return ward_list
 
 def get_key(ward, ulb):
+    """Composite key to deduplicate payloads for the same ward within a ULB."""
     return '{0}|{1}'.format(ward, ulb)
 
 def transform_single(single_document, ward_map, date, lambda_function, module):
+    """
+    Walk ward -> ulb -> region aggregation buckets and populate metrics on each payload.
+
+    Uses empty_{module}_payload() as the base structure for new ward|ulb entries.
+    """
     module_config = module_map.get(module)
     empty_lambda = module_config[1]
     ward_agg = single_document.get('ward')
@@ -246,6 +321,7 @@ def transform_single(single_document, ward_map, date, lambda_function, module):
 
 
 def dump(**kwargs):
+    """Legacy/debug helper — not used in the active PT pipeline."""
     ds = kwargs['ds']
     hook = ElasticHook('GET', 'test-es')
     resp = hook.search('/dss-collection_v2', {
@@ -258,9 +334,15 @@ def dump(**kwargs):
     })
     return resp['hits']['hits']
 
+# ---------------------------------------------------------------------------
+# Load: authenticate and push payloads to UPYOG National Dashboard ingest API
+# ---------------------------------------------------------------------------
+
 def get_auth_token(connection):
+    """Obtain OAuth access token from UPYOG using digit-auth connection and Airflow Variables."""
     endpoint = 'user/oauth/token'
     url = '{0}://{1}/{2}'.format('https', connection.host, endpoint)
+    logging.info("Requesting auth token from %s", url)
     data = {
         'grant_type' : 'password',
         'scope' : 'read',
@@ -272,11 +354,41 @@ def get_auth_token(connection):
 
     r = requests.post(url, data=data, headers={'Authorization' : 'Basic {0}'.format(Variable.get('token')), 'Content-Type' : 'application/x-www-form-urlencoded'})
     response = r.json()
-    logging.info(response)
+    if not response.get('access_token'):
+        logging.error("Failed to obtain auth token: %s", response)
+        raise ValueError("Auth token request failed; check digit-auth connection and Airflow Variables")
+    logging.info("Auth token obtained successfully")
     return (response.get('access_token'), response.get('refresh_token'), response.get('UserRequest'))
 
 
+def _write_adaptor_log(module, startdate, response):
+    """Write ingest response to adaptor_logs index using es_conn over HTTP."""
+    # Local import avoids shadowing: queries.pgr used to define uuid=[] via wildcard import.
+    from uuid import uuid4
+    try:
+        conn = BaseHook.get_connection('es_conn')
+        scheme = conn.schema or 'https'
+        host = '{0}:{1}'.format(conn.host, conn.port) if conn.port else conn.host
+        url = '{0}://{1}/adaptor_logs/_doc/{2}'.format(scheme, host, uuid4())
+        doc = {
+            'timestamp': startdate,
+            'module': module,
+            'severity': 'Info',
+            'state': 'Punjab',
+            'message': json.dumps(response),
+        }
+        auth = (conn.login, conn.password) if conn.login else None
+        logging.info("Writing adaptor log to %s", url)
+        r = requests.post(url, json=doc, auth=auth, verify=False)
+        r.raise_for_status()
+        logging.info("Adaptor log written successfully")
+    except Exception as exc:
+        # Ingest already succeeded; do not fail the task if audit logging fails.
+        logging.warning("Failed to write adaptor log (ingest succeeded): %s", exc)
+
+
 def call_ingest_api(connection, access_token, user_info, payload, module,startdate):
+    """POST a batch of ward payloads to national-dashboard/metric/_ingest and log the response."""
     endpoint = 'national-dashboard/metric/_ingest'
     url = '{0}://{1}/{2}'.format('https', connection.host, endpoint)
     data = {
@@ -301,37 +413,36 @@ def call_ingest_api(connection, access_token, user_info, payload, module,startda
     logging.info(json.dumps(data))
     logging.info(response)
 
-    #logging to the index adaptor_logs
-    q = {
-        'timestamp' : startdate,
-        'module' : module,
-        'severity' : 'Info',
-        'state' : 'Punjab',
-        'message' : json.dumps(response)
-    }
-    es = Elasticsearch(host = "elasticsearch-data-v1.es-cluster", port = 9200)
-    actions = [
-        {
-            '_index':'adaptor_logs',
-            '_type': '_doc',
-            '_id': str(uuid.uuid1()),
-            '_source': json.dumps(q),
-        }
-    ]
-    helpers.bulk(es, actions)
+    _write_adaptor_log(module, startdate, response)
     return response
 
 
 
 def load(**kwargs):
-    connection = BaseHook.get_connection('digit-auth')
-    (access_token, refresh_token, user_info) = get_auth_token(connection)
-    module = kwargs['module']
+    """
+    Load task entry point.
 
-    payload = kwargs['ti'].xcom_pull(key='payload_{0}'.format(module))
-    logging.info(payload)
+    Pulls payload_{MODULE} from the extract task (not transform — transform is a no-op),
+    authenticates with UPYOG, and sends payloads in batches to the ingest API.
+    """
+    connection = BaseHook.get_connection('digit-auth')
+    module = kwargs['module']
+    extract_task_id = _extract_task_id(module)
+    xcom_key = 'payload_{0}'.format(module)
+    logging.info("Starting load for module=%s, pulling XCom key=%s from task=%s", module, xcom_key, extract_task_id)
+
+    (access_token, refresh_token, user_info) = get_auth_token(connection)
+
+    # Must pull from extract task explicitly; immediate upstream (transform) does not push this key.
+    payload = kwargs['ti'].xcom_pull(key=xcom_key, task_ids=extract_task_id)
+    if payload is None:
+        raise ValueError(
+            "No XCom payload found for key '{0}' from task '{1}'. "
+            "Ensure the extract task completed successfully before load runs.".format(xcom_key, extract_task_id)
+        )
+    logging.info("Retrieved XCom payload for module=%s (length=%d chars)", module, len(payload))
     payload_obj = json.loads(payload)
-    logging.info("payload length {0} {1}".format(len(payload_obj), module))
+    logging.info("Payload contains %d record(s) for module=%s", len(payload_obj), module)
     localtz = timezone('Asia/Kolkata')
     date = _get_run_date_str(kwargs)
     dt_aware = localtz.localize(datetime.strptime(date, "%d-%m-%Y"))
@@ -344,9 +455,16 @@ def load(**kwargs):
     return None
 
 def transform(**kwargs):
+    """Placeholder transform step — add custom post-processing here if needed."""
     logging.info('Your transformations go here')
     return 'Post Transformed Data'
 
+
+# ---------------------------------------------------------------------------
+# Airflow task definitions and dependencies
+# ---------------------------------------------------------------------------
+# Each active module follows: extract >> transform >> load
+# Only PT is enabled; other modules are commented out below.
 
 # Disabled TL tasks (kept for reference)
 # extract_tl = PythonOperator(
@@ -404,6 +522,7 @@ def transform(**kwargs):
 #     dag=dag)
 
 
+# Active PT pipeline: extract ES data -> transform (no-op) -> ingest to National Dashboard
 extract_pt = PythonOperator(
     task_id='elastic_search_extract_pt',
     python_callable=dump_kibana,

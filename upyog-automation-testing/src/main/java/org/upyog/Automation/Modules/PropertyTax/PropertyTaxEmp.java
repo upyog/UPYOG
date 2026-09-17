@@ -126,7 +126,7 @@ public class PropertyTaxEmp {
 //
 //        } catch (Exception e) {
 //            logger.info("Exception in Property Tax Application Employee Workflow: " + e.getMessage());
-//            e.printStackTrace();
+//
 //        }finally {
 //            if (driver != null) {
 //                driver.quit();

@@ -58,8 +58,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.EgPartytype;
@@ -68,7 +68,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.recoveries.Recovery;
 import org.hibernate.LockMode;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -107,7 +107,7 @@ public class TdsHibernateDAO {
     }
 
     public List<Recovery> findAll() {
-        return (List<Recovery>) getCurrentSession().createCriteria(Recovery.class).list();
+        return (List<Recovery>) getCurrentSession().createQuery("from Recovery", Recovery.class).list();
     }
 
     @PersistenceContext
@@ -130,7 +130,7 @@ public class TdsHibernateDAO {
         session = getCurrentSession();
         Recovery recovery;
         if (lock)
-            recovery = (Recovery) session.load(Recovery.class, id, LockMode.UPGRADE);
+            recovery = (Recovery) session.load(Recovery.class, id, LockMode.PESSIMISTIC_WRITE);
         else
             recovery = (Recovery) session.load(Recovery.class, id);
         return recovery;
@@ -140,14 +140,14 @@ public class TdsHibernateDAO {
         session = getCurrentSession();
         final Query qry = session
                 .createQuery("from Recovery tds where tds.isactive=true and tds.effectivefrom<=:estimateDate order by upper(type)");
-        qry.setString("estimateDate", estimateDate);
+        qry.setParameter("estimateDate", estimateDate);
         return qry.list();
     }
 
     public Recovery getTdsByType(final String type) {
         session = getCurrentSession();
         final Query qry = session.createQuery("from Recovery tds where upper(tds.type) =:type");
-        qry.setString("type", type.toUpperCase().trim());
+        qry.setParameter("type", type.toUpperCase().trim());
         return (Recovery) qry.uniqueResult();
     }
 
@@ -214,15 +214,15 @@ public class TdsHibernateDAO {
 		qry = session.createQuery(qryStr.toString());
 
 		if (estimateDate != null && !estimateDate.equals(""))
-			qry.setString("estimateDate", estimateDate);
+			qry.setParameter("estimateDate", estimateDate);
 		if (estCost != null)
-			qry.setBigDecimal("estCost", estCost);
+			qry.setParameter("estCost", estCost);
 		if (egPartytype != null)
-			qry.setEntity("egPartytype", egPartytype);
+			qry.setParameter("egPartytype", egPartytype);
 		if (egwTypeOfWork != null)
-			qry.setEntity("egwTypeOfWork", egwTypeOfWork);
+			qry.setParameter("egwTypeOfWork", egwTypeOfWork);
 		if (egwSubTypeOfWork != null)
-			qry.setEntity("egwSubTypeOfWork", egwSubTypeOfWork);
+			qry.setParameter("egwSubTypeOfWork", egwSubTypeOfWork);
 
 		tdsList = qry.list();
 		return tdsList;
@@ -232,7 +232,7 @@ public class TdsHibernateDAO {
         List<Recovery> tdses;
         session = getCurrentSession();
         final Query qry = session.createQuery("from Recovery tds where upper(tds.egPartytype.code) =:partyType");
-        qry.setString("partyType", partyType.toUpperCase().trim());
+        qry.setParameter("partyType", partyType.toUpperCase().trim());
         tdses = qry.list();
         return tdses;
     }
@@ -278,21 +278,21 @@ public class TdsHibernateDAO {
     public EgPartytype getPartytypeByCode(final String code) {
         session = getCurrentSession();
         final Query qry = session.createQuery("from EgPartytype where code=:code");
-        qry.setString("code", code.trim());
+        qry.setParameter("code", code.trim());
         return (EgPartytype) qry.uniqueResult();
     }
 
     public EgwTypeOfWork getTypeOfWorkByCode(final String code) {
         session = getCurrentSession();
         final Query qry = session.createQuery("from EgwTypeOfWork where code=:code");
-        qry.setString("code", code.trim());
+        qry.setParameter("code", code.trim());
         return (EgwTypeOfWork) qry.uniqueResult();
     }
 
     public EgPartytype getSubPartytypeByCode(final String code) {
         session = getCurrentSession();
         final Query qry = session.createQuery("from EgPartytype where code=:code and parentid is not null");
-        qry.setString("code", code.trim());
+        qry.setParameter("code", code.trim());
         return (EgPartytype) qry.uniqueResult();
 
     }
@@ -301,8 +301,8 @@ public class TdsHibernateDAO {
         session = getCurrentSession();
         final Query qry = session
                 .createQuery("from Recovery tds where upper(tds.type) =:type and tds.egPartytype =:egPartytype");
-        qry.setString("type", type.toUpperCase().trim());
-        qry.setEntity("egPartytype", egPartytype);
+        qry.setParameter("type", type.toUpperCase().trim());
+        qry.setParameter("egPartytype", egPartytype);
         return (Recovery) qry.uniqueResult();
     }
 

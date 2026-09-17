@@ -51,12 +51,12 @@ package org.egov.commons.web.controller;
 import java.util.List;
 import java.util.Locale;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.common.entity.UOMCategory;
 import org.egov.commons.service.UOMCategoryService;
 import org.egov.commons.web.adaptor.UOMCategoryJsonAdaptor;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -149,7 +149,7 @@ public class UOMCategoryController {
     }
 
     @GetMapping(value = "/search/{mode}")
-    public String search(@PathVariable("mode") @SafeHtml final String mode, final Model model) {
+    public String search(@PathVariable("mode") @SanitizeHtml final String mode, final Model model) {
         final UOMCategory uomCategory = new UOMCategory();
         model.addAttribute("categories", uomCategoryService.findAll());
         prepareNewForm(model);

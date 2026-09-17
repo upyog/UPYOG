@@ -1,3 +1,4 @@
+import "../../../../css/ndc.css";
 import React, { Fragment, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
@@ -23,7 +24,6 @@ const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCo
         accessor: "uuid",
         disableSortBy: true,
         Cell: ({ row }) => {
-          console.log("row", row);
           return (
             <div>
               <Link to={`${parentRoute}/inbox/application-overview/${row.original?.applicationId}`}>

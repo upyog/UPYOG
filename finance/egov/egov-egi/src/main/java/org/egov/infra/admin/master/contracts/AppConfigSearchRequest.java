@@ -49,11 +49,11 @@
 package org.egov.infra.admin.master.contracts;
 
 import org.egov.infra.web.support.search.DataTableSearchRequest;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 public class AppConfigSearchRequest extends DataTableSearchRequest {
 
-	@SafeHtml
+	@SanitizeHtml
     private String moduleName;
 
     public String getModuleName() {

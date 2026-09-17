@@ -16,6 +16,11 @@ const nationalScreenURLs = {
   faqs: {key:"national-faqs",stateKey:"national-faqs",label:"DSS_FAQS",active:false,nActive:true,others:true},
   finance: {key:"national-finance",stateKey:"finance",label:"DSS_FINANCE",active:true,nActive:false},
   sv: {key:"national-sv",stateKey:"streetVending",label:"DSS_STREET_VENDING",active:true,nActive:false},
+  ptr: {key:"national-ptr",stateKey:"petRegistration",label:"DSS_PET_REGISTRATION",active:true,nActive:false},
+  ewaste: {key:"national-ewaste",stateKey:"ewaste",label:"DSS_EWASTE_MANAGEMENT",active:true,nActive:false},
+  echallan: {key:"national-echallan",stateKey:"echallan",label:"DSS_ECHALLAN",active:true,nActive:false},
+  adv: {key:"national-adv",stateKey:"adv",label:"DSS_ADV",active:true,nActive:false},
+  chb: {key:"national-chb",stateKey:"chb",label:"DSS_CHB",active:true,nActive:false},
   about: {key:"national-about",stateKey:"national-about",label:"DSS_ABOUT_DASHBOARD",active:false,nActive:true,others:true},
 };
 

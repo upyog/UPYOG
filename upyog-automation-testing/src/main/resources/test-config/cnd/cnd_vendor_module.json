@@ -7,66 +7,6 @@
   "instructions": [
 
     {
-      "stepName": "Enter Mobile",
-      "locatorStrategy": "NAME",
-      "locatorValue": "mobileNumber",
-      "action": "TYPE",
-      "inputValue": "${selected.number}",
-      "dynamicSleep": 1000
-    },
-
-    {
-      "stepName": "Accept Terms",
-      "locatorStrategy": "CSS",
-      "locatorValue": "input[type='checkbox'].form-field",
-      "action": "CLICK_JS",
-      "inputValue": null,
-      "dynamicSleep": 500
-    },
-
-    {
-      "stepName": "Click Next",
-      "locatorStrategy": "XPATH",
-      "locatorValue": "//button[@type='submit']",
-      "action": "CLICK_JS",
-      "inputValue": null,
-      "dynamicSleep": 1000
-    },
-
-    {
-      "stepName": "Enter OTP",
-      "locatorStrategy": "CSS",
-      "locatorValue": "input.input-otp",
-      "action": "TYPE_OTP",
-      "inputValue": "${selected.otp}",
-      "dynamicSleep": 1000
-    },
-
-    {
-      "stepName": "Submit OTP",
-      "locatorStrategy": "XPATH",
-      "locatorValue": "//button[@type='submit']",
-      "action": "CLICK_JS",
-      "inputValue": null,
-      "dynamicSleep": 2000
-    },
-    {
-      "stepName": "Select City",
-      "locatorStrategy": "CSS",
-      "locatorValue": "div.radio-wrap.reverse-radio-selection-wrapper div",
-      "action": "SELECT_RADIO_BY_TEXT",
-      "inputValue": "${selected.city}",
-      "dynamicSleep": 1000
-    },
-    {
-      "stepName": "Continue",
-      "locatorStrategy": "XPATH",
-      "locatorValue": "//button[contains(.,'Continue')]",
-      "action": "CLICK_JS",
-      "inputValue": null,
-      "dynamicSleep": 3000
-    },
-    {
       "stepName": "Open CnD Module",
       "locatorStrategy": "XPATH",
       "locatorValue": "//a[@href='/cnd-ui/citizen/cnd-home']",
@@ -74,6 +14,7 @@
       "inputValue": null,
       "dynamicSleep": 2000
     },
+
     {
       "stepName": "Open Vendor Module",
       "locatorStrategy": "XPATH",
@@ -92,16 +33,12 @@
       "dynamicSleep": 3000
     },
 
-
-
-
-
     {
       "stepName": "Enter Application Number",
       "locatorStrategy": "XPATH",
       "locatorValue": "(//input[@type='text'])[1]",
       "action": "TYPE_FROM_STORE",
-      "inputValue": "application.number",
+      "inputValue": "APPLICATION_NO",
       "dynamicSleep": 1000
     },
 
@@ -122,10 +59,6 @@
       "inputValue": null,
       "dynamicSleep": 3000
     },
-
-
-
-
 
     {
       "stepName": "Take Action First",
@@ -154,10 +87,6 @@
       "dynamicSleep": 2000
     },
 
-
-
-
-
     {
       "stepName": "Take Action Second",
       "locatorStrategy": "XPATH",
@@ -176,10 +105,6 @@
       "dynamicSleep": 1000
     },
 
-
-
-
-
     {
       "stepName": "Select Vehicle",
       "locatorStrategy": "CSS",
@@ -194,7 +119,7 @@
       "locatorStrategy": "XPATH",
       "locatorValue": "//input[@type='text']",
       "action": "TYPE",
-      "inputValue": "PN 45 HU 8485",
+      "inputValue": "${vehicle.number}",
       "dynamicSleep": 1000
     },
 
@@ -203,7 +128,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "comments",
       "action": "TYPE",
-      "inputValue": "Assigned",
+      "inputValue": "${comment.assign}",
       "dynamicSleep": 1000
     },
 

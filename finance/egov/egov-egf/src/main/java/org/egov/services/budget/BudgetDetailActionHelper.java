@@ -62,7 +62,6 @@ import org.egov.model.service.BudgetDefinitionService;
 import org.egov.model.voucher.WorkflowBean;
 import org.egov.pims.commons.Position;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -193,14 +192,14 @@ public class BudgetDetailActionHelper {
         if (searchbudgetGroupid != null && searchbudgetGroupid != 0)
             addlCondtion.append("and budgetGroup.id=:budgetGroupid");
         new ArrayList<BudgetDetail>();
-        final Query qry = persistenceService.getSession().createSQLQuery(addlCondtion.toString());
-        qry.setLong("budgetid", budget.getId());
+        final org.hibernate.query.Query qry = persistenceService.getSession().createNativeQuery(addlCondtion.toString());
+        qry.setParameter("budgetid", budget.getId());
         if (referenceBudgetFor != null)
-            qry.setLong("referenceBudget", referenceBudgetFor.getId());
+            qry.setParameter("referenceBudget", referenceBudgetFor.getId());
         if (searchfunctionid != null && searchfunctionid != 0)
-            qry.setLong("functionid", searchfunctionid);
+            qry.setParameter("functionid", searchfunctionid);
         if (searchbudgetGroupid != null && searchbudgetGroupid != 0)
-            qry.setLong("budgetGroupid", searchbudgetGroupid);
+            qry.setParameter("budgetGroupid", searchbudgetGroupid);
         qry.executeUpdate();
     }
 

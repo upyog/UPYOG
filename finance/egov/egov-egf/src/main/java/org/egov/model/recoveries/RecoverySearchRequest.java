@@ -47,7 +47,7 @@
  */
 package org.egov.model.recoveries;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 /**
  * 
@@ -58,10 +58,10 @@ public class RecoverySearchRequest {
 
 	private Long chartofaccountsId;
 
-	@SafeHtml
+	@SanitizeHtml
 	private String type;
 
-	@SafeHtml
+	@SanitizeHtml
 	private String recoveryName;
 
 	public Long getChartofaccountsId() {

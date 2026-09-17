@@ -47,6 +47,7 @@
  */
 package org.egov.egf.web.actions.payment;
 
+import jakarta.persistence.FlushModeType;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -59,7 +60,7 @@ import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.services.voucher.VoucherService;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.FlushMode;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -163,7 +164,7 @@ public class SearchAdvanceRequisitionForPaymentAction extends SearchFormAction {
 
     public String searchList() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setFlushMode(FlushModeType.COMMIT);
         boolean isError = false;
         if (fromDate != null && toDate == null) {
             addFieldError("toDate", getText("search.toDate.null"));

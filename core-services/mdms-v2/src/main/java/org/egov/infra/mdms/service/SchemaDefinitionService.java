@@ -2,7 +2,6 @@ package org.egov.infra.mdms.service;
 
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.infra.mdms.config.ApplicationConfig;
 import org.egov.infra.mdms.model.*;
 import org.egov.infra.mdms.repository.SchemaDefinitionRepository;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -27,16 +25,15 @@ public class SchemaDefinitionService {
     private ApplicationConfig applicationConfig;
     private SchemaDefinitionEnricher schemaDefinitionEnricher;
     private SchemaDefinitionValidator schemaDefinitionValidator;
-    private MultiStateInstanceUtil multiStateInstanceUtil;
 
     @Autowired
     public SchemaDefinitionService(SchemaDefinitionRepository schemaDefinitionRepository, ApplicationConfig applicationConfig,
-                                   SchemaDefinitionEnricher schemaDefinitionEnricher, SchemaDefinitionValidator schemaDefinitionValidator, MultiStateInstanceUtil multiStateInstanceUtil){
+                                   SchemaDefinitionEnricher schemaDefinitionEnricher, SchemaDefinitionValidator schemaDefinitionValidator){
         this.schemaDefinitionRepository = schemaDefinitionRepository;
         this.applicationConfig = applicationConfig;
         this.schemaDefinitionEnricher = schemaDefinitionEnricher;
         this.schemaDefinitionValidator = schemaDefinitionValidator;
-        this.multiStateInstanceUtil = multiStateInstanceUtil;
+        
     }
 
     /**
@@ -48,34 +45,64 @@ public class SchemaDefinitionService {
 
         // Set incoming tenantId as state level tenantId as schema is always created at state level
         String tenantId = schemaDefinitionRequest.getSchemaDefinition().getTenantId();
-        schemaDefinitionRequest.getSchemaDefinition().setTenantId(multiStateInstanceUtil.getStateLevelTenant(tenantId));
 
+
+        schemaDefinitionRequest.getSchemaDefinition().setTenantId(tenantId);
         // Validate schema create request
         schemaDefinitionValidator.validateCreateRequest(schemaDefinitionRequest);
 
         // Enrich schema create request
         schemaDefinitionEnricher.enrichCreateRequest(schemaDefinitionRequest);
 
+        // Mark operation for audit tracking.
+        schemaDefinitionRequest.getSchemaDefinition()
+        .setOperation(Operation.CREATE.name());
         // Invoke repository method to emit schema creation event
         schemaDefinitionRepository.create(schemaDefinitionRequest);
 
         return Arrays.asList(schemaDefinitionRequest.getSchemaDefinition());
     }
 
-    public List<SchemaDefinition> delete(SchemaDeleteRequest request) {
+    /**
+ * This method processes schema definition delete requests.
+ *
+ * It validates that the requested schema exists, marks the
+ * operation as DELETE and publishes the delete request to Kafka.
+ * Audit logging and deletion are handled by Persister.
+ *
+ * @param request Schema delete request
+ * @return Deleted schema details
+ */
+public List<SchemaDefinition> delete(SchemaDeleteRequest request) {
 
-        String tenantId =
-                multiStateInstanceUtil.getStateLevelTenant(request.getTenantId());
+    String tenantId = request.getTenantId();
 
-        schemaDefinitionRepository.delete(tenantId, request.getCode());
+    SchemaDefCriteria criteria = SchemaDefCriteria.builder()
+            .tenantId(tenantId)
+            .codes(Arrays.asList(request.getCode()))
+            .build();
 
-        return Arrays.asList(
-                SchemaDefinition.builder()
-                        .tenantId(tenantId)
-                        .code(request.getCode())
-                        .build()
-        );
-    }
+   List<SchemaDefinition> schemaDefinitions =
+        schemaDefinitionRepository.search(criteria);
+
+if (schemaDefinitions.isEmpty()) {
+    throw new RuntimeException("Schema definition not found");
+}
+
+// Mark operation for audit tracking before publishing delete event.
+request.setOperation(Operation.DELETE.name());
+
+// Publish delete request to Kafka.
+// Persister will handle audit logging and schema deletion.
+schemaDefinitionRepository.delete(request);
+
+    return Arrays.asList(
+            SchemaDefinition.builder()
+                    .tenantId(tenantId)
+                    .code(request.getCode())
+                    .build()
+    );
+}
 
     /**
      * This method processes the requests for schema definition search.
@@ -86,8 +113,8 @@ public class SchemaDefinitionService {
 
         // Set incoming tenantId as state level tenantId as schema is created at state level
         String tenantId = schemaDefSearchRequest.getSchemaDefCriteria().getTenantId();
-        schemaDefSearchRequest.getSchemaDefCriteria().setTenantId(multiStateInstanceUtil.getStateLevelTenant(tenantId));
 
+        schemaDefSearchRequest.getSchemaDefCriteria().setTenantId(tenantId); 
         // Fetch schema definitions based on the given criteria
        List<SchemaDefinition> schemaDefinitions =
                 schemaDefinitionRepository.search(schemaDefSearchRequest.getSchemaDefCriteria());

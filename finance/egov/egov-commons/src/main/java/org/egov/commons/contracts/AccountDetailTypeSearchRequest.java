@@ -49,7 +49,7 @@
 package org.egov.commons.contracts;
 
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 /**
  * 
@@ -59,11 +59,11 @@ import org.hibernate.validator.constraints.SafeHtml;
 public class AccountDetailTypeSearchRequest {
 
 	@Length(max = 50)
-	@SafeHtml
+	@SanitizeHtml
 	private String name;
 
 	@Length(max = 50)
-	@SafeHtml
+	@SanitizeHtml
 	private String description;
 
 	public String getName() {

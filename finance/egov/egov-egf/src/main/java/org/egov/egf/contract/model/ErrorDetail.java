@@ -50,12 +50,12 @@ package org.egov.egf.contract.model;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 public class ErrorDetail {
-    @SafeHtml
+    @SanitizeHtml
     private String errorCode;
-    @SafeHtml
+    @SanitizeHtml
     private String errorMessage;
 
     public ErrorDetail() {

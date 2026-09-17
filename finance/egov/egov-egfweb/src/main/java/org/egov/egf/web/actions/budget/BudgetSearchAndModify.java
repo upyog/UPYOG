@@ -208,10 +208,14 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
             } else
                 for (int i = 0; i < savedbudgetDetailList.size(); i++)
                     savedbudgetDetailList.set(i, budgetDetailService.findById(savedbudgetDetailList.get(i).getId(), false));
+        // LTS Migration Fix (Struts 7 OGNL / Hibernate 6): wrap Budget entities
+        // as id/name maps so the Search Budget dropdown is not blank/scattered.
         if (isApproveMode())
-            dropdownData.put("budgetList", budgetDetailService.findBudgetsForFY(getFinancialYear()));
+            dropdownData.put("budgetList",
+                    toBudgetDropdownItems(budgetDetailService.findBudgetsForFY(getFinancialYear())));
         else
-            dropdownData.put("budgetList", budgetDetailService.findBudgetsForFYWithNewState(getFinancialYear()));
+            dropdownData.put("budgetList",
+                    toBudgetDropdownItems(budgetDetailService.findBudgetsForFYWithNewState(getFinancialYear())));
         addDropdownData("departmentList", masterDataCache.get("egi-department"));
         addDropdownData("designationList", Collections.EMPTY_LIST);
         addDropdownData("userList", Collections.EMPTY_LIST);
@@ -289,8 +293,11 @@ public class BudgetSearchAndModify extends BudgetSearchAction {
     public String setUpDataForList() {
         if (financialYear == null && getSession().get(Constants.FINANCIALYEARID) != null)
             financialYear = (Long) getSession().get(Constants.FINANCIALYEARID);
+        // LTS Migration Fix (Struts 7 OGNL / Hibernate 6): same id/name maps as
+        // BudgetSearchAction so Modify Budget dropdown is not blank/scattered.
         dropdownData.put("budgetList",
-                budgetDetailService.findBudgetsForFYWithNewState(financialYear == null ? getFinancialYear() : financialYear));
+                toBudgetDropdownItems(budgetDetailService.findBudgetsForFYWithNewState(
+                        financialYear == null ? getFinancialYear() : financialYear)));
         return Constants.LIST;
     }
 

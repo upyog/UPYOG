@@ -50,6 +50,7 @@ package org.egov.egf.web.actions.pea;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -67,6 +68,13 @@ import org.egov.services.pea.TransferClosingBalanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+/**
+ * LTS Migration Notes:
+ * 1. [Java 17 Auto-Unboxing Null Safety] Fixed financialYear evaluation in transfer() to check for null
+ *    before comparing sentinel values (-1L, 0L), preventing fatal NullPointerException during unboxing.
+ * 2. [Struts 7 & Jakarta EE Parameter Extraction] Added resolveFinancialYearFromRequest() to extract
+ *    'financialYear' parameter directly from HttpServletRequest when not populated by Struts 7 OGNL binding.
+ */
 @ParentPackage("egov")
 @Results({ @Result(name = TransferClosingBalanceAction.NEW, location = "transferClosingBalance-new.jsp") })
 public class TransferClosingBalanceAction extends BaseFormAction {
@@ -114,8 +122,16 @@ public class TransferClosingBalanceAction extends BaseFormAction {
     @ValidationErrorPage(value = NEW)
     @Action(value = "/pea/transferClosingBalance-transfer")
     public String transfer() {
+        // LTS: Struts 7 often does not bind financialYear from the select; read from request
+        resolveFinancialYearFromRequest();
         try {
-            if (financialYear == -1 || financialYear == null || financialYear==0) {
+            /*
+             * Java 17 migration note:
+             * financialYear is a Long wrapper. Check null before comparing sentinel
+             * values to avoid unboxing/null pointer failures under stricter runtime
+             * behavior.
+             */
+            if (financialYear == null || financialYear.equals(-1L) || financialYear.equals(0L)) {
                 addFieldError("searchCriteria", "Please select FinancialYear");
                 return NEW;
              }
@@ -177,6 +193,22 @@ public class TransferClosingBalanceAction extends BaseFormAction {
            * ValidationException(errors); }
            */
         return NEW;
+    }
+
+    /**
+     * LTS: form posts {@code financialYear}; Struts 7 leaves the Long null, so
+     * transfer() always showed "Please select FinancialYear".
+     */
+    private void resolveFinancialYearFromRequest() {
+        if (financialYear != null && !financialYear.equals(-1L) && !financialYear.equals(0L)) {
+            return;
+        }
+        final jakarta.servlet.http.HttpServletRequest request = ServletActionContext.getRequest();
+        final String fyParam = request.getParameter("financialYear");
+        if (fyParam == null || fyParam.trim().isEmpty() || "-1".equals(fyParam.trim())) {
+            return;
+        }
+        financialYear = Long.valueOf(fyParam.trim());
     }
 
     private boolean validatePreviousFinancialYear() {

@@ -22,11 +22,13 @@ const BasicDetails = ({ formData, onSelect, config }) => {
   const [showToast, setShowToast] = useState(null);
   const [basicData, setBasicData] = useState(formData?.selectedPlot||formData?.data?.edcrDetails);
   const checkingFlow = formData?.uiFlow?.flow ? formData?.uiFlow?.flow :formData?.selectedPlot ? "PRE_APPROVE":"";
-  
+
   const [scrutinyNumber, setScrutinyNumber] = useState(formData?.data?.scrutinyNumber || formData?.selectedPlot?.drawingNo);
   const [isDisabled, setIsDisabled] = useState(formData?.data?.scrutinyNumber || formData?.selectedPlot?.drawingNo ? true : false);
   const { t } = useTranslation();
   const stateCode = Digit.ULBService.getStateId();
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant(true);
+
   const isMobile = window.Digit.Utils.browser.isMobile();
   const { isMdmsLoading, data: mdmsData } = Digit.Hooks.obps.useMDMS(stateCode, "BPA", ["RiskTypeComputation"]);
   const riskType = Digit.Utils.obps.calculateRiskType(
@@ -35,12 +37,12 @@ const BasicDetails = ({ formData, onSelect, config }) => {
     basicData?.planDetail?.blocks
   ) || "LOW";
   let user = Digit.SessionStorage.get("User")?.info?.name;
-  
+
 
   const handleKeyPress = async (event) => {
     if (event.key === "Enter") {
       if (!scrutinyNumber?.edcrNumber) return;
-      const details = await scrutinyDetailsData(scrutinyNumber?.edcrNumber, stateCode);
+      const details = await scrutinyDetailsData(scrutinyNumber?.edcrNumber, tenantId);
       if (details?.type == "ERROR") {
         setShowToast({ message: details?.message });
         setBasicData(null);
@@ -57,7 +59,7 @@ const BasicDetails = ({ formData, onSelect, config }) => {
   };
 
   const handleSearch = async (event) => {
-    const details = await scrutinyDetailsData(scrutinyNumber?.edcrNumber, stateCode);
+    const details = await scrutinyDetailsData(scrutinyNumber?.edcrNumber, tenantId);
     if (details?.type == "ERROR") {
       setShowToast({ message: details?.message });
       setBasicData(null);
@@ -89,7 +91,7 @@ const BasicDetails = ({ formData, onSelect, config }) => {
   disableVlaue = disableVlaue?JSON.parse(disableVlaue):true;
 
   const getDetails = async () => {
-    const details = await scrutinyDetailsData(scrutinyNumber?.edcrNumber||scrutinyNumber, stateCode);
+    const details = await scrutinyDetailsData(scrutinyNumber?.edcrNumber||scrutinyNumber, tenantId);
     if (details?.type == "ERROR") {
       setShowToast({ message: details?.message });
       setBasicData(null);
@@ -119,8 +121,8 @@ const BasicDetails = ({ formData, onSelect, config }) => {
           className="searchInput"
           onKeyPress={handleKeyPress}
           onChange={event => setScrutinyNumber({ edcrNumber: event.target.value||formData?.selectedPlot?.drawingNo })} 
-          value={scrutinyNumber?.edcrNumber || scrutinyNumber} 
-          signature={true} 
+          value={scrutinyNumber?.edcrNumber || scrutinyNumber}
+          signature={true}
           signatureImg={!disableVlaue && !formData?.selectedPlot && <SearchIconSvg className="signature-img" onClick={!disableVlaue && scrutinyNumber?.edcrNumber ? () => handleSearch() : null} />}
           disable={disableVlaue}
           style={{ marginBottom: "10px" }}

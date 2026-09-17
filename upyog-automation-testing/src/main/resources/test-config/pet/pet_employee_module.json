@@ -46,8 +46,8 @@
       "stepName": "Enter Application Number",
       "locatorStrategy": "XPATH",
       "locatorValue": "(//input[@type='text'])[3]",
-      "action": "TYPE",
-      "inputValue": "${selected.applicationNumber}",
+      "action": "TYPE_FROM_STORE",
+      "inputValue": "APPLICATION_NO",
       "dynamicSleep": 1000
     },
     {
@@ -87,7 +87,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"comments",
       "action":"TYPE",
-      "inputValue":"Automated verification comment.",
+      "inputValue":"${comment.verify}",
       "dynamicSleep": 1000
     },
     {
@@ -118,7 +118,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"comments",
       "action":"TYPE",
-      "inputValue":"Automated approval comment.",
+      "inputValue":"${comment.approve}",
       "dynamicSleep": 1000
     },
     {
@@ -148,7 +148,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"payerMobile",
       "action":"TYPE",
-      "inputValue":"9999999999",
+      "inputValue":"${mobile.number}",
       "dynamicSleep": 1000
     },
 

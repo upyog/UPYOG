@@ -1,139 +1,83 @@
-import React, { useEffect } from "react";
+import React from "react";
+
 import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
+
 import { useTranslation } from "react-i18next";
+
 import { useQueryClient } from "@tanstack/react-query";
-import { Route, useLocation, Routes } from "react-router-dom";
 
-import CreatePropertyForm from '../../pageComponents/createForm';
-import PTAcknowledgement from '../../pageComponents/PTAcknowledgement';
-import { convertToPropertyLightWeight, convertToUpdatePropertyLightWeight } from "../../utils";
+import {
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+  useMatch,
+} from "react-router-dom";
 
-const SaveProperty = ({ onSuccess, redirectUrl, userType }) => {
-  const location = useLocation();
-  const navigate = Digit.Hooks.useCustomNavigate();
-  const stateId = Digit.ULBService.getStateId();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+import CreatePropertyForm from "../../pageComponents/createForm";
+import PTAcknowledgement from "../../pageComponents/PTAcknowledgement";
 
-  let data = location?.state?.data;
-
-  let createNUpdate = false;
-  let { data: mdmsConfig, isLoading: mdmsLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "PTWorkflow");
-  (mdmsConfig?.PropertyTax?.PTWorkfow || []).forEach((data) => {
-    if (data.enable) {
-      if (data.businessService.includes("WNS")) {
-        createNUpdate = true;
-      }
-    }
-  });
-
-  const mutation = Digit.Hooks.pt.usePropertyAPI(
-    data?.locationDet?.city?.code || data?.locationDet?.cityCode?.code || tenantId,
-    true // create
-  );
-
-  const mutationForUpdate = Digit.Hooks.pt.usePropertyAPI(
-    data?.locationDet?.city?.code || data?.locationDet?.cityCode?.code || tenantId,
-    false // update
-  );
-
-  useEffect(() => {
-    if (data) {
-      try {
-        let tenant = userType === "employee" ? tenantId : (data?.locationDet?.cityCode?.code || data?.locationDet?.city?.code);
-        data.tenantId = tenant;
-
-        let formdata = convertToPropertyLightWeight(data);
-        formdata.Property.tenantId = formdata?.Property?.tenantId || tenant;
-
-        mutation.mutate(formdata, {
-          onSuccess: (createData) => {
-            if (onSuccess) onSuccess();
-            if (!createNUpdate) {
-              navigate("../acknowledgement", {
-                replace: true,
-                state: {
-                  isSuccess: true,
-                  data: createData,
-                  createNUpdate: false,
-                }
-              });
-            } else {
-              let updateFormdata = convertToUpdatePropertyLightWeight(data);
-              updateFormdata.Property.tenantId = updateFormdata?.Property?.tenantId || tenant;
-              mutationForUpdate.mutate(updateFormdata, {
-                onSuccess: (updateData) => {
-                  navigate("../acknowledgement", {
-                    replace: true,
-                    state: {
-                      isSuccess: true,
-                      data: updateData,
-                      createNUpdate: true,
-                    }
-                  });
-                },
-                onError: (error) => {
-                  navigate("../acknowledgement", {
-                    replace: true,
-                    state: {
-                      isSuccess: false,
-                      error,
-                      createNUpdate: true,
-                    }
-                  });
-                }
-              });
-            }
-          },
-          onError: (error) => {
-            navigate("../acknowledgement", {
-              replace: true,
-              state: {
-                isSuccess: false,
-                error,
-                createNUpdate: false,
-              }
-            });
-          }
-        });
-      } catch (err) {
-        navigate("../acknowledgement", {
-          replace: true,
-          state: {
-            isSuccess: false,
-            error: err.message || err,
-            createNUpdate,
-          }
-        });
-      }
-    }
-  }, [data]);
-
-  return <Loader />;
-};
-
-const NewApplication = ({ path }) => {
-  let config = [];
-  const { t } = useTranslation();
-  
+const NewApplication = () => {
   const queryClient = useQueryClient();
-  const match = Digit.Hooks.useModuleBasePath();
-  const { pathname } = useLocation();
-  const navigate = Digit.Hooks.useCustomNavigate();
-  const stateId = Digit.ULBService.getStateId();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PT_CREATE_PROPERTY", {});
-  let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig");
-  
-  const search = useLocation().search;
-  const redirectUrl = new URLSearchParams(search).get('redirectToUrl');
 
-  const createProperty = async () => {
-    navigate(`acknowledgement`);
+  const navigate = useNavigate();
+
+  const location = useLocation();
+
+  const stateId = Digit.ULBService.getStateId();
+
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+
+  /*
+   * Store partially completed property creation form data in session storage.
+   * This allows users to retain entered values while navigating between
+   * property creation steps (for example, create form -> acknowledgement).
+   */
+
+  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage(
+    "PT_CREATE_PROPERTY",
+    {},
+  );
+
+  /*
+   * Fetch common property form configurations from MDMS.
+   * These configurations decide the dynamic fields displayed during
+   * property creation.
+   */
+
+  const { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(
+    stateId,
+    "PropertyTax",
+    "CommonFieldsConfig",
+  );
+
+  /*
+   * Fetch redirect URL if the property creation flow was initiated
+   * from another module/page.
+   */
+
+  const redirectUrl = new URLSearchParams(location.search).get("redirectToUrl");
+
+  /*
+   * Navigate to acknowledgement page after successful property creation.
+   * The acknowledgement component will handle final submission status.
+   */
+
+  const createProperty = () => {
+    navigate("acknowledgement");
   };
+  /*
+   * Clear temporary session data after successful acknowledgement
+   * and invalidate related queries so stale property creation data
+   * is not reused.
+   */
 
   const onSuccess = () => {
     clearParams();
-    queryClient.invalidateQueries({ queryKey: ["PT_CREATE_PROPERTY"] });
+
+    queryClient.invalidateQueries({
+      queryKey: ["PT_CREATE_PROPERTY"],
+    });
   };
 
   if (isLoading) {
@@ -142,9 +86,40 @@ const NewApplication = ({ path }) => {
 
   return (
     <Routes>
-      <Route path="" element={<CreatePropertyForm onSubmit={createProperty} value={params} redirectUrl={redirectUrl} userType={"employee"} />} />
-      <Route path={`save-property`} element={<SaveProperty onSuccess={onSuccess} redirectUrl={redirectUrl} userType={"employee"} />} />
-      <Route path={`acknowledgement`} element={<PTAcknowledgement onSuccess={onSuccess} redirectUrl={redirectUrl} userType={"employee"} />} />
+      {/*
+        Default route renders the property creation form.
+        Saved form values are passed from session storage so users
+        can continue their unfinished application.
+      */}
+
+      <Route
+        path="*"
+        element={
+          <CreatePropertyForm
+            onSubmit={createProperty}
+            value={params}
+            redirectUrl={redirectUrl}
+            userType="employee"
+          />
+        }
+      />
+
+      {/*
+        After property creation, show acknowledgement page.
+        onSuccess removes temporary stored data after completion.
+      */}
+
+      <Route
+        path="save-property"
+        element={
+          <PTAcknowledgement
+            data={params}
+            onSuccess={onSuccess}
+            redirectUrl={redirectUrl}
+            userType="employee"
+          />
+        }
+      />
     </Routes>
   );
 };

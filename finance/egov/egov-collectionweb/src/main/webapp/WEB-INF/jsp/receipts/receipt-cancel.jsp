@@ -48,7 +48,7 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>

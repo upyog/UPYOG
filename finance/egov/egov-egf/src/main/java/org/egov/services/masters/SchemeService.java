@@ -49,7 +49,7 @@ package org.egov.services.masters;
 
 import org.egov.commons.Scheme;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 
 import java.util.List;
 
@@ -64,21 +64,22 @@ public class SchemeService extends PersistenceService<Scheme, Integer> {
     }
 
     public List<Scheme> getByFundId(final Integer fundId) {
-        final Query query = getSession().createQuery(" from Scheme where isactive = true and fund.id=:fundId");
+        final Query<Scheme> query = getSession().createQuery(" from Scheme where isactive = true and fund.id=:fundId",
+                Scheme.class);
 
-        query.setInteger("fundId", fundId);
+        query.setParameter("fundId", fundId);
         return query.list();
     }
 
     public Scheme findByCode(final String code) {
-        final Query query = getSession().createQuery(" from Scheme where code = :code ");
+        final Query<Scheme> query = getSession().createQuery(" from Scheme where code = :code ", Scheme.class);
 
-        query.setString("code", code);
-        return (Scheme) query.uniqueResult();
+        query.setParameter("code", code);
+        return query.uniqueResult();
     }
     
     public List<Scheme> getByIsActive() {
-        final Query query = getSession().createQuery(" from Scheme where isactive = true");
+        final Query<Scheme> query = getSession().createQuery(" from Scheme where isactive = true", Scheme.class);
         return query.list();
     }
 
@@ -96,7 +97,8 @@ public class SchemeService extends PersistenceService<Scheme, Integer> {
 
 
     public List<Scheme> getBySchemeCode() {
-        final Query query = getSession().createQuery(" from Scheme where isactive = true and stateCode is not null");
+        final Query<Scheme> query = getSession().createQuery(
+                " from Scheme where isactive = true and stateCode is not null", Scheme.class);
         return query.list();
     }
 }

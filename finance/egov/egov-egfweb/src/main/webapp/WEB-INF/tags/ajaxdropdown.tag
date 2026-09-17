@@ -96,6 +96,10 @@ function populate${dropdownId}(params){
    <% } else  {%>
    		<c:set var="contextRoot" value="${pageContext.request.contextPath}" />
    <% } %>
-   makeJSONCall(${fields},'${contextRoot}/${url}',params,${id}SuccessHandler,${id}FailureHandler) ;
+   <%-- LTS Migration Fix (Struts 7 / WildFly 40): collapse a leading slash on
+        url so contextPath + url does not become //voucher/... (YUI DataSource
+        then fails the dropdown). --%>
+   var ajaxUrl = '${contextRoot}/${url}'.replace(/([^:]\/)\/+/g, '$1');
+   makeJSONCall(${fields},ajaxUrl,params,${id}SuccessHandler,${id}FailureHandler) ;
 }
 </script>

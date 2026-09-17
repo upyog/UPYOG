@@ -56,7 +56,7 @@ import static org.egov.infra.security.utils.SecurityConstants.MAX_LOGIN_ATTEMPT_
 import java.util.HashMap;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.egov.infra.security.audit.entity.LoginAttempt;
 import org.egov.infra.security.audit.service.LoginAttemptService;

@@ -1,0 +1,30 @@
+{
+  "moduleName": "DESLUDGING_SERVICE",
+
+  "citizen": {
+    "mobile": "7906413996",
+    "otp": "123456",
+    "city": "City A"
+  },
+
+  "employees": {
+
+    "EDITOR": {
+      "username": "QAEE",
+      "password": "eGov@123",
+      "city": "City A"
+    },
+
+    "FSTPO": {
+      "username": "QAFSTPO",
+      "password": "eGov@123",
+      "city": "City A"
+    },
+
+    "PSSO": {
+      "username": "QAEE",
+      "password": "eGov@123",
+      "city": "City A"
+    }
+  }
+}

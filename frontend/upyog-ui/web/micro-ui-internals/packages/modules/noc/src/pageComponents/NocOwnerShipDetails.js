@@ -1,0 +1,63 @@
+/**
+ * Allows the applicant to select the ownership category type (e.g. Individual, Institutional, Joint)
+ * dynamically loaded from MDMS common-masters.OwnerShipCategory.
+ */
+import React, { useState } from "react";
+import { FormStep, RadioButtons, Loader } from "@nudmcdgnpm/digit-ui-react-components";
+
+const NocOwnerShipDetails = ({ t, config, onSelect, userType, formData }) => {
+  const stateId = Digit.ULBService.getStateId();
+
+  const [ownershipCategory, setOwnershipCategory] = useState(formData?.ownershipCategory);
+
+  const { data: ownershipCategories, isLoading } = Digit.Hooks.useCustomMDMS(
+    stateId,
+    "common-masters",
+    [{ name: "OwnerShipCategory" }],
+    {
+      select: (data) => {
+        const categoryData = data?.["common-masters"]?.["OwnerShipCategory"] || [];
+        return categoryData
+          .filter((cat) => cat.active && cat.code.split(".").length === 2)
+          .map((cat) => ({
+            code: cat.code,
+            i18nKey: `COMMON_MASTERS_OWNERSHIPCATEGORY_${cat.code.replaceAll(".", "_")}`,
+          }));
+      },
+    }
+  );
+
+  /** Skips the ownership category selection step. */
+  const onSkip = () => onSelect();
+
+  /** Submits the selected ownership category option to wizard onSelect callback. */
+  function goNext() {
+    onSelect(config.key, ownershipCategory);
+  }
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  return (
+    <React.Fragment>
+
+      <FormStep
+        t={t}
+        config={config}
+        onSelect={goNext}
+        onSkip={onSkip}
+        isDisabled={!ownershipCategory}
+      >
+        <RadioButtons
+          options={ownershipCategories || []}
+          selectedOption={ownershipCategory}
+          optionsKey="i18nKey"
+          onSelect={setOwnershipCategory}
+        />
+      </FormStep>
+    </React.Fragment>
+  );
+};
+
+export default NocOwnerShipDetails;

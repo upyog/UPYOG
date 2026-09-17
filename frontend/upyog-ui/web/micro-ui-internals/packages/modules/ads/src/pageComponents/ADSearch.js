@@ -400,7 +400,7 @@ const ADSSearch = ({
     // Check if all required fields are filled
     if (formData?.adType && formData?.faceArea && formData?.fromDate && formData?.toDate && formData?.nightLight && formData?.location && CalculationTypeData) {
       let unitPrice;
-      let location = formData?.location?.value;
+      let location = formData?.location?.code;
       const item = CalculationTypeData?.find(item => item?.location === location);
       if (item) {
         const calculationTypeKey = `CalculationType_${formData?.faceArea?.code}`;
@@ -427,7 +427,7 @@ const ADSSearch = ({
     const startDate = fromDate;
     const endDate = toDate;
     const faceArea = selectedFace?.code;
-    const location = selectedLocation?.value;
+    const location = selectedLocation?.code;
     const nightLight = selectNight?.value;
     let unitPrice;
     const item = CalculationTypeData?.find(item => item?.location === location);
@@ -621,7 +621,7 @@ const ADSSearch = ({
         <div>
           <SubmitBar label={t("ADS_VIEW_CART")} onSubmit={handleViewCart} />
         </div>
-        <div class="container" className="ads-auto-66">
+        <div>
           <div className="ads-auto-67">
             <div className="ads-auto-68">
               <div> {cartDetails.length}</div>

@@ -49,19 +49,19 @@ package org.egov.model.recoveries;
 
 import java.math.BigDecimal;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.commons.Bank;
 import org.egov.commons.CChartOfAccounts;
@@ -72,7 +72,7 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.regex.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 @Entity
 @Table(name = "TDS")
@@ -92,7 +92,7 @@ public class Recovery extends AbstractAuditable {
 	private CChartOfAccounts chartofaccounts;
 
 	@Length(max = 20)
-	@SafeHtml
+	@SanitizeHtml
 	@NotNull
 	private String type;
 
@@ -101,12 +101,12 @@ public class Recovery extends AbstractAuditable {
 	private BigDecimal rate;
 
 	@Length(max = 100)
-	@SafeHtml
+	@SanitizeHtml
 	@NotNull
 	private String remitted;
 
 	@Length(max = 200)
-	@SafeHtml
+	@SanitizeHtml
 	private String description;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -120,21 +120,21 @@ public class Recovery extends AbstractAuditable {
 	private BigDecimal caplimit;
 
 	@Length(max = 50)
-	@SafeHtml
+	@SanitizeHtml
 	@NotNull
 	private String recoveryName;
 
 	@Length(max = 50)
-	@SafeHtml
+	@SanitizeHtml
 	private String calculationType;
 
-	@SafeHtml
+	@SanitizeHtml
 	@Length(min = 11, max = 11, message = "Maximum of 11 Characters allowed for IFSC Code")
 	@OptionalPattern(regex = Constants.ALPHANUMERIC, message = "Special Characters are not allowed in IFSC Code")
 	private String ifscCode;
 
 	@Length(max = 32)
-	@SafeHtml
+	@SanitizeHtml
 	@OptionalPattern(regex = FinancialConstants.numericwithoutspecialchar, message = "Special Characters are not allowed in accountNumber")
 	private String accountNumber;
 
@@ -282,6 +282,20 @@ public class Recovery extends AbstractAuditable {
 
 	public void setBankLoan(Boolean bankLoan) {
 		this.bankLoan = bankLoan;
+	}
+
+	/**
+	 * LTS Migration Fix (Struts 7): Deduction Payments Recovery Code used
+	 * {@code listValue="chartofaccounts.glcode+'-'+type+'-'+recoveryName"}.
+	 * Nested Hibernate proxies and OGNL {@code +} fail silently, so the
+	 * dropdown showed only Choose. Build the same label in Java.
+	 */
+	public String getDropdownLabel() {
+		final String glcode = chartofaccounts != null && chartofaccounts.getGlcode() != null
+				? chartofaccounts.getGlcode() : "";
+		final String recoveryType = type != null ? type : "";
+		final String name = recoveryName != null ? recoveryName : "";
+		return glcode + "-" + recoveryType + "-" + name;
 	}
 
 }

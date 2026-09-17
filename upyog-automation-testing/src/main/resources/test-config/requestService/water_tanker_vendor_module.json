@@ -38,8 +38,8 @@
       "stepName":"Enter Booking Number",
       "locatorStrategy":"NAME",
       "locatorValue":"bookingNo",
-      "action":"TYPE",
-      "inputValue":"${selected.applicationNumber}",
+      "action": "TYPE_FROM_STORE",
+      "inputValue": "APPLICATION_NO",
       "dynamicSleep": 500
     },
 
@@ -94,7 +94,7 @@
       "locatorStrategy":"XPATH",
       "locatorValue":"//input[@type='text']",
       "action":"TYPE",
-      "inputValue":"PN 45 HU 8485",
+      "inputValue":"${vehicle.number}",
       "dynamicSleep": 2000
     },
 
@@ -103,7 +103,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"comments",
       "action":"TYPE",
-      "inputValue":"Assigned",
+      "inputValue":"${comment.assign}",
       "dynamicSleep": 2000
     },
 
@@ -133,7 +133,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"comments",
       "action":"TYPE",
-      "inputValue":"Completed",
+      "inputValue":"${comment.complete}",
       "dynamicSleep": 2000
     },
     {

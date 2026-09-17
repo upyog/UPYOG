@@ -10,9 +10,14 @@ import org.springframework.stereotype.Component;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class WebDriverFactory {
+
+    private static final Logger logger =
+            LoggerFactory.getLogger(WebDriverFactory.class);
 
     @Value("${selenium.grid.url:http://selenium-chrome:4444}")
     private String gridUrl;
@@ -58,7 +63,7 @@ public class WebDriverFactory {
 
             if (isGrid) {
 
-                System.out.println(
+                logger.info(
                         "Running on GRID: " + url
                 );
 
@@ -75,7 +80,7 @@ public class WebDriverFactory {
 
             } else {
 
-                System.out.println(
+                logger.info(
                         "Running on LOCAL Chrome"
                 );
 

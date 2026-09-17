@@ -50,7 +50,7 @@ package org.egov.collection.web.actions.citizen.reports;
 import org.apache.commons.io.IOUtils;
 import org.egov.collection.entity.OnlinePaymentResult;
 import org.egov.collection.service.CollectionReportService;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -62,8 +62,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -104,7 +104,7 @@ public class OnlinePaymentReportController {
         final String fromdate = request.getParameter("fromdate");
         final String todate = request.getParameter("todate");
         final String transid = request.getParameter("transid");
-        final SQLQuery query = reportService.getOnlinePaymentReportData(districtname, ulbname, fromdate, todate,
+        final NativeQuery query = reportService.getOnlinePaymentReportData(districtname, ulbname, fromdate, todate,
                 transid);
         List<OnlinePaymentResult> onlinePaymentList = query.list();
         final String result = new StringBuilder("{ \"data\":")

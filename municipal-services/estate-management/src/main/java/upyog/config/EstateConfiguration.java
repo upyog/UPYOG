@@ -82,11 +82,28 @@ public class EstateConfiguration {
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
 
+    @Value("${kafka.topics.notification.email:egov.core.notification.email}")
+    private String emailNotificationTopic;
+
+    @Value("${kafka.topics.notification.event:persist-user-events-async}")
+    private String eventNotificationTopic;
+
+    @Value("${upyog.notification.enabled:true}")
+    private Boolean notificationEnabled;
+
+    @Value("${upyog.notification.localization.module:rainmaker-est}")
+    private String notificationLocalizationModule;
+
 
     @Value("${idgen.estate.management.asset.id.name}")
     private String estateAssetIdName;
     @Value("${idgen.estate.management.asset.id.format}")
     private String estateAssetIdFormat;
+
+    @Value("${idgen.estate.management.allotment.no.name}")
+    private String estateAllotmentNoName;
+    @Value("${idgen.estate.management.allotment.no.format}")
+    private String estateAllotmentNoFormat;
 
     @Value("${save-estate-management-asset-topic}")
     private String estateAssetSaveTopic;
@@ -97,6 +114,22 @@ public class EstateConfiguration {
     // save allotment topic
     @Value("${save-estate-management-allotment-topic}")
     private String estateAllotmentSaveTopic;
+
+    // update allotment topic
+    @Value("${update-estate-management-allotment-topic}")
+    private String estateAllotmentUpdateTopic;
+
+    // save monthly rent payment topic
+    @Value("${save-monthly-rent-payment}")
+    private String monthlyRentPaymentSaveTopic;
+
+    // save scheduler log topic
+    @Value("${save-scheduler-log-topic}")
+    private String schedulerLogTopic;
+
+    // update scheduler log topic
+    @Value("${update-scheduler-log-topic}")
+    private String schedulerLogUpdateTopic;
 
 
     // EST Business Service Config
@@ -123,4 +156,19 @@ public class EstateConfiguration {
 
     @Value("${egov.demand.update.endpoint}")
     private String demandUpdateEndpoint;
+
+    // Demand Search Endpoint
+    @Value("${egov.demand.search.endpoint}")
+    private String demandSearchEndpoint;
+
+    // Pagination Config
+    @Value("${est.search.pagination.default.limit}")
+    private Long defaultLimit;
+
+    @Value("${est.search.pagination.default.offset}")
+    private Long defaultOffset;
+
+    @Value("${est.search.pagination.max.search.limit}")
+    private Long maxSearchLimit;
 }
+

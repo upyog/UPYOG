@@ -51,14 +51,14 @@ package org.egov.egf.web.controller;
 import java.util.Date;
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.commons.Relation;
 import org.egov.commons.service.RelationJpaService;
 import org.egov.egf.web.adaptor.RelationJsonAdaptor;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.services.masters.BankService;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -170,7 +170,7 @@ public class RelationController {
 	}
 
 	@GetMapping(value = "/search/{mode}")
-	public String search(@PathVariable("mode") @SafeHtml final String mode, Model model) {
+	public String search(@PathVariable("mode") @SanitizeHtml final String mode, Model model) {
 		Relation relation = new Relation();
 		prepareNewForm(model);
 		model.addAttribute(RELATION, relation);
@@ -179,7 +179,7 @@ public class RelationController {
 	}
 
 	@PostMapping(value = "/ajaxsearch/{mode}", produces = MediaType.TEXT_PLAIN_VALUE)
-	public @ResponseBody String ajaxsearch(@PathVariable("mode") @SafeHtml final String mode, Model model,
+	public @ResponseBody String ajaxsearch(@PathVariable("mode") @SanitizeHtml final String mode, Model model,
 		@Valid @ModelAttribute final Relation relation) {
 		List<Relation> searchResultList = relationJpaService.search(relation);
 		return new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}")

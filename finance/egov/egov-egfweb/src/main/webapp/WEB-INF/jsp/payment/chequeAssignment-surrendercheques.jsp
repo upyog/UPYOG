@@ -122,7 +122,7 @@
 							<s:property value="#stat.index+1" />
 							</td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:property
-									value="%{serialNo.finYearRange}" /></td>
+									value="#p.serialNo.finYearRange" /></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:property
 									value="%{instrumentNumber}" /><s:hidden name="instrumentHeaderList[%{#stat.index}].instrumentNumber"
 								value="%{instrumentNumber}" /></td>
@@ -142,10 +142,10 @@
 								value="%{payTo}" /></td>
 
 							<td style="text-align: center" class="blueborderfortdnew"><s:iterator
-									var="v" value="instrumentVouchers" status="st">
+									var="v" value="#p.instrumentVouchers" status="st">
 									<A href="#"
-										onclick='openDetails(<s:property value="%{voucherHeaderId.id}"/>);'>
-										<s:property value="%{voucherHeaderId.voucherNumber}" />
+										onclick='openDetails(<s:property value="#v.voucherHeaderId.id"/>);'>
+										<s:property value="#v.voucherHeaderId.voucherNumber" />
 									</A>
 								</s:iterator></td>
 							<td style="text-align: center" class="blueborderfortdnew">

@@ -71,8 +71,8 @@ import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import org.apache.struts2.validator.annotations.RequiredFieldValidator;
+import org.apache.struts2.validator.annotations.Validations;
 
 @SuppressWarnings("deprecation")
 @ParentPackage("egov")
@@ -100,10 +100,16 @@ public class SchemeAction extends BaseFormAction {
 	@Autowired
 	private transient EgovMasterDataCaching masterDataCache;
 
+	/**
+	 * Java 17 / Hibernate 6 LTS Migration Fix:
+	 * Added 'left join fetch s.fund' to eagerly load the associated Fund entity reference.
+	 * Prevents uninitialized lazy proxy evaluation issue in Struts/OGNL tag %{scheme.fund.name}
+	 * on View Scheme page (scheme-beforeView.action).
+	 */
 	@Override
 	public Object getModel() {
 		if (schemeId != null)
-			scheme = (Scheme) persistenceService.find("from Scheme where id=?", schemeId);	
+			scheme = (Scheme) persistenceService.find("from Scheme s left join fetch s.fund where s.id=?", schemeId);
 		return scheme;
 	}
 
@@ -120,6 +126,11 @@ public class SchemeAction extends BaseFormAction {
 
 	}
 
+	/**
+	 * Java 17 / Struts 7 LTS Migration Fix:
+	 * Sets default scheme.setIsactive(true) when initializing a new Scheme form.
+	 * Ensures the Active checkbox is checked by default on Create Scheme UI.
+	 */
 	@SkipValidation
 	@Action(value = "/masters/scheme-newForm")
 	public String newForm() {
@@ -329,6 +340,20 @@ public class SchemeAction extends BaseFormAction {
 
 	public void setSchemeId(Integer schemeId) {
 		this.schemeId = schemeId;
+	}
+
+	/**
+	 * Java 17 / Struts 7 LTS Migration Fix:
+	 * Property getters and setters for form field 'isactive' checkbox binding.
+	 */
+	public boolean getIsactive() {
+		return scheme != null && Boolean.TRUE.equals(scheme.getIsactive());
+	}
+
+	public void setIsactive(boolean isactive) {
+		if (scheme != null) {
+			scheme.setIsactive(isactive);
+		}
 	}
 
 }

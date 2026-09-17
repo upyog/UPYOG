@@ -49,13 +49,23 @@
 package org.egov.infra.web.support.json.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 
+/**
+ * LTS Migration Fix (Hibernate 6 / Jackson): ObjectMapper that skips uninitialized
+ * Hibernate 6 lazy proxies during JSON serialization.
+ * <p>
+ * Spring 6 / Hibernate 6 change: {@code jackson-datatype-hibernate} (Hibernate 4/5)
+ * was replaced with {@code jackson-datatype-hibernate6}. Without this module,
+ * serializing a lazy association throws {@code LazyInitializationException}.
+ * </p>
+ */
 public class HibernateAwareObjectMapper extends ObjectMapper {
 
     private static final long serialVersionUID = -634721091120261971L;
 
     public HibernateAwareObjectMapper() {
-        registerModule(new Hibernate5Module());
+        // Hibernate6Module (jackson-datatype-hibernate6) — not Hibernate4Module / Hibernate5Module
+        registerModule(new Hibernate6Module());
     }
 }

@@ -105,7 +105,7 @@ const ServiceDetails = ({ config, onSelect, userType, formData, setError, formSt
   return (
     <React.Fragment>
       {consumerDetails.map((consumerdetail, index) => (
-        <OwnerForm1 key={consumerdetail.key} index={index} consumerdetail={consumerdetail} {...commonProps} />
+        <OwnerForm1 key={consumerdetail.key || index} index={index} consumerdetail={consumerdetail} {...commonProps} />
       ))}
     </React.Fragment>
   );
@@ -352,37 +352,37 @@ const OwnerForm1 = (_props) => {
           {TaxHeadMasterFields && TaxHeadMasterFields.length > 0 && TaxHeadMasterFields.map((tax) => {
             const safeName = tax?.code?.replace(/\./g, "_");
             return (
-            <div key={tax?.code}>
-              <LabelFieldPair>
-                <CardLabel className={isMobile ? "card-label-APK" : "card-label-smaller"}>{`${t(stringReplaceAll(tax?.name, ".", "_"))} * `}</CardLabel>
-                <div className="field">
-                  <Controller
-                    control={control}
-                    name={safeName}
-                    defaultValue={consumerdetail[safeName] || consumerdetail[tax?.code]}
-                    isMandatory={tax.isRequired}
-                    rules={tax.isRequired ? { required: t("REQUIRED_FIELD") } : ""}
-                    render={({ field }) => (
-                      <div style={{ display: "flex" }}>
-                        <div className="employee-card-input employee-card-input--front">₹</div>
-                        <TextInput
-                          value={field.value}
-                          autoFocus={focusIndex.index === consumerdetail?.key && focusIndex.type === "name"}
-                          onChange={(e) => {
-                            field.onChange(e.target.value);
-                            setFocusIndex({ index: consumerdetail.key, type: tax?.code });
-                          }}
-                          onBlur={(e) => {
-                            setFocusIndex({ index: -1 });
-                            field.onBlur(e);
-                          }}
-                        />
-                      </div>
-                    )}
-                  />
-                </div>
-              </LabelFieldPair>
-            </div>);
+              <div key={tax?.code}>
+                <LabelFieldPair>
+                  <CardLabel className={isMobile ? "card-label-APK" : "card-label-smaller"}>{`${t(stringReplaceAll(tax?.name, ".", "_"))} * `}</CardLabel>
+                  <div className="field">
+                    <Controller
+                      control={control}
+                      name={safeName}
+                      defaultValue={consumerdetail[safeName] || consumerdetail[tax?.code]}
+                      isMandatory={tax.isRequired}
+                      rules={tax.isRequired ? { required: t("REQUIRED_FIELD") } : ""}
+                      render={({ field }) => (
+                        <div style={{ display: "flex" }}>
+                          <div className="employee-card-input employee-card-input--front">₹</div>
+                          <TextInput
+                            value={field.value}
+                            autoFocus={focusIndex.index === consumerdetail?.key && focusIndex.type === "name"}
+                            onChange={(e) => {
+                              field.onChange(e.target.value);
+                              setFocusIndex({ index: consumerdetail.key, type: tax?.code });
+                            }}
+                            onBlur={(e) => {
+                              setFocusIndex({ index: -1 });
+                              field.onBlur(e);
+                            }}
+                          />
+                        </div>
+                      )}
+                    />
+                  </div>
+                </LabelFieldPair>
+              </div>);
           })}
         </div>
       </div>

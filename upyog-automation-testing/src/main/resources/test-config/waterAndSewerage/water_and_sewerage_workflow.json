@@ -1,0 +1,26 @@
+{
+  "moduleName": "WATER_AND_SEWERAGE",
+
+  "steps": [
+
+    {
+      "name": "Citizen Application",
+      "type": "CITIZEN",
+      "module": "WATER_AND_SEWERAGE"
+    },
+    {
+      "name": "Employee Sewerage Flow",
+      "type": "EMPLOYEE",
+      "module": "SEWERAGE_EMP",
+      "role": "SEWERAGE"
+    },
+    {
+      "name": "Employee Water Flow",
+      "type": "EMPLOYEE",
+      "module": "WATER_EMP",
+      "role": "WATER"
+    }
+
+
+  ]
+}

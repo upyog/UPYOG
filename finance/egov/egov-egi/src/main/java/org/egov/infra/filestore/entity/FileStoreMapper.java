@@ -53,20 +53,20 @@ import static org.egov.infra.filestore.entity.FileStoreMapper.SEQ_FILESTOREMAPPE
 import java.util.Date;
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 @Table(name = "eg_filestoremap")
 @Entity
@@ -85,11 +85,11 @@ public class FileStoreMapper extends AbstractPersistable<Long> {
 
     @NotBlank
     @Length(max = 100)
-    @SafeHtml
+    @SanitizeHtml
     private String fileName;
 
     @Length(max = 100)
-    @SafeHtml
+    @SanitizeHtml
     private String contentType;
 
     @Temporal(TemporalType.TIMESTAMP)

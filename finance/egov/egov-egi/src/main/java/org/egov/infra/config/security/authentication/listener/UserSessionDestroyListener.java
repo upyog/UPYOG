@@ -52,15 +52,19 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.audit.entity.LoginAudit;
 import org.egov.infra.security.audit.service.LoginAuditService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationListener;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.session.Session;
+import org.springframework.session.events.AbstractSessionEvent;
+import org.springframework.session.events.SessionDestroyedEvent;
+import org.springframework.session.events.SessionExpiredEvent;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
 import java.util.Date;
 
 import static org.egov.infra.security.utils.SecurityConstants.IP_ADDRESS;
@@ -69,7 +73,21 @@ import static org.egov.infra.security.utils.SecurityConstants.USER_AGENT;
 import static org.egov.infra.utils.ApplicationConstant.TENANTID_KEY;
 import static org.egov.infra.utils.ApplicationConstant.USERID_KEY;
 
-public class UserSessionDestroyListener implements HttpSessionListener {
+/**
+ * LTS Migration Fix (Spring Session 3): closes login-audit records and Redis
+ * session keys when a Spring Session is
+ * destroyed or expires.
+ * <p>
+ * Spring Session 3.x no longer delivers servlet {@code HttpSessionListener}
+ * events for Redis-backed sessions. This listener therefore handles
+ * {@link SessionDestroyedEvent} and {@link SessionExpiredEvent} instead.
+ * Business behaviour (token cleanup, login audit on the master server,
+ * {@link org.egov.infra.config.core.ApplicationThreadLocals} cleanup) is unchanged.
+ * </p>
+ */
+public class UserSessionDestroyListener implements ApplicationListener<AbstractSessionEvent> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserSessionDestroyListener.class);
 
     @Autowired
     private LoginAuditService loginAuditService;
@@ -88,27 +106,34 @@ public class UserSessionDestroyListener implements HttpSessionListener {
     private boolean masterServer;
 
     @Override
-    public void sessionCreated(HttpSessionEvent se) {
-        //do nothing
-    }
+    public void onApplicationEvent(AbstractSessionEvent event) {
+        if (event instanceof SessionDestroyedEvent || event instanceof SessionExpiredEvent) {
+            Session session = event.getSession();
+            if (session == null) {
+                return;
+            }
 
-    @Override
-    public void sessionDestroyed(HttpSessionEvent event) {
-        String sessionId = event.getSession().getId();
-        System.out.println("***********sessionDestroyed Event****** "+sessionId);
-        if (redisTemplate.hasKey(sessionId)) {
-            Object auth_token = redisTemplate.opsForHash().get(sessionId, "auth_token");
-            if (auth_token != null) {
-                redisTemplate.delete(event.getSession().getId());
-                redisTemplate.delete(auth_token);
+            String sessionId = session.getId();
+            LOGGER.info("Session Destroyed/Expired Event received for session: {}", sessionId);
+            try {
+                if (redisTemplate != null && redisTemplate.hasKey(sessionId)) {
+                    Object authToken = redisTemplate.opsForHash().get(sessionId, "auth_token");
+                    if (authToken != null) {
+                        redisTemplate.delete(sessionId);
+                        redisTemplate.delete(authToken);
+                    }
+                }
+            } catch (Exception e) {
+                LOGGER.warn("Failed to cleanup Redis token for session {}: {}", sessionId, e.getMessage());
+            }
+                    
+            if (masterServer) {
+                auditUserLogin(session);
             }
         }
-                
-        if (masterServer)
-            auditUserLogin(event.getSession());
     }
 
-    private void auditUserLogin(final HttpSession session) {
+    private void auditUserLogin(final Session session) {
         if (session != null && session.getAttribute(LOGIN_TIME) != null) {
             try {
                 ApplicationThreadLocals.setTenantID((String) session.getAttribute(TENANTID_KEY));
@@ -118,8 +143,10 @@ public class UserSessionDestroyListener implements HttpSessionListener {
                 loginAudit.setIpAddress((String) session.getAttribute(IP_ADDRESS));
                 loginAudit.setUserAgent((String) session.getAttribute(USER_AGENT));
                 loginAudit.setLogoutTime(new Date());
-                if (entityValidator.validate(loginAudit).isEmpty())
+
+                if (entityValidator.validate(loginAudit).isEmpty()) {
                     loginAuditService.auditLogin(loginAudit);
+                }
             } finally {
                 ApplicationThreadLocals.clearValues();
             }

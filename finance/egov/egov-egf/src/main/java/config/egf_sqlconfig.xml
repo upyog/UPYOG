@@ -53,7 +53,13 @@
 
 <egf-budgetGroup>
 	<type>hql</type>
-	<query>from BudgetGroup BG where isactive = '1' order by BG.id</query>
+	<!-- 
+		LTS Migration Fix (Hibernate 6 Upgrade):
+		Changed 'isactive = '1'' to 'isActive = true'.
+		In Hibernate 6, HQL strict property checking requires matching the exact Java entity property name 'isActive' (boolean).
+		String comparison ('1') on a boolean property throws org.hibernate.query.SemanticException.
+	-->
+	<query>from BudgetGroup BG where isActive = true order by BG.id</query>
 </egf-budgetGroup> 
 </sql>
 </properties>

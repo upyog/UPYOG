@@ -59,7 +59,10 @@ public interface EmployeeViewRepository extends Repository<EmployeeView, Long> {
 
     EmployeeView findByAssignment_Id(final Long id);
 
-    @Query("select empview from EmployeeView empview where userActive='t' and upper(name) like :userName or upper(code) " +
+    // Refactored for Hibernate 6 / JDK 17 compatibility:
+    // Replaced legacy char literal 'userActive=\'t\'' with JPQL boolean literal 'userActive=true'.
+    // In Hibernate 6 strict HQL parsing, comparing a Boolean property against a String literal throws a type mismatch QueryException.
+    @Query("select empview from EmployeeView empview where userActive=true and upper(name) like :userName or upper(code) " +
             "like :code or upper(position.name) like :positionName and :currentDate between fromDate and toDate")
     List<EmployeeView> findEmployeeByNameOrCodeOrPositionLike(@Param("userName") String userName,
                                                               @Param("code") String code,

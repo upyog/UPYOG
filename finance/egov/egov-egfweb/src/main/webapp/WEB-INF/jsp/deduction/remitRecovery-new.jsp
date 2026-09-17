@@ -90,7 +90,11 @@
 					<td class="greybox"><s:text name="remit.recovery.search.code" /><span
 						class="mandatory"></span></td>
 					<td class="greybox">
-						<s:select name="remittanceBean.recoveryId" id="recoveryId" list="dropdownData.recoveryList" listKey="id" listValue="chartofaccounts.glcode+'-'+type+'-'+recoveryName" headerKey="-1" headerValue="%{getText('lbl.choose.options')}" value="%{remittanceBean.recoveryId}" />
+						<%-- LTS Migration Fix (Struts 7 OGNL): do not concatenate
+						     chartofaccounts.glcode+type+recoveryName here. Nested
+						     Hibernate proxies fail silently and Recovery Code shows
+						     only Choose. Use Recovery.dropdownLabel instead. --%>
+						<s:select name="remittanceBean.recoveryId" id="recoveryId" list="dropdownData.recoveryList" listKey="id" listValue="dropdownLabel" headerKey="-1" headerValue="%{getText('lbl.choose.options')}" value="%{remittanceBean.recoveryId}" />
 					</td>
 					<td class="greybox" width="10%">
 					<td class="greybox">

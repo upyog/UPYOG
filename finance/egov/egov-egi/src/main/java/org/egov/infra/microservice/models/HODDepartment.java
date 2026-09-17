@@ -40,9 +40,9 @@
 
 package org.egov.infra.microservice.models;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 public class HODDepartment {
 
@@ -50,7 +50,7 @@ public class HODDepartment {
 
     @NotNull
     private Long department;
-    @SafeHtml
+    @SanitizeHtml
     private String tenantId;
 
     public HODDepartment(Long id, Long department, String tenantId) {

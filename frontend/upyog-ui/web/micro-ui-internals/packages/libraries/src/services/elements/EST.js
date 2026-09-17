@@ -23,17 +23,18 @@ export const ESTService = {
     // Create allotment
     // This method creates a new allotment in the EST system.
 
-    allotmentcreate: (details, tenantId) =>
-  Request({
-    url: Urls.est.allotment,
-    data: details,
-    useCache: false,
-    setTimeParam: false,
-    userService: true,
-    method: "POST",
-    params: {},
-    auth: true,
-  }),
+  allotmentcreate: (details, tenantId) =>
+    Request({
+      url: Urls.est.allotment,
+      data: details,
+      useCache: false,
+      setTimeParam: false,
+      userService: true,
+      method: "POST",
+      params: { tenantId },
+      auth: true,
+      reqTimestamp: true,
+    }),
 
   // Search EST Assets
   // This method searches for EST assets based on provided filters.
@@ -94,16 +95,20 @@ export const ESTService = {
 // Allotment Search API Call
 // This method searches for EST allotments based on provided filters.
 
-    allotmentSearch: ({ tenantId, filters }) =>
-  Request({
-    url: Urls.est.allotmentSearch,
-    useCache: false,
-    method: "POST",
-    auth: true,
-    userService: true,
-    params: { tenantId },
-    data: filters,
-  }),
+    allotmentSearch: ({ tenantId, filters }) => {
+      const criteria = filters?.AllotmentSearchCriteria || filters || {};
+      return Request({
+        url: Urls.est.allotmentSearch,
+        useCache: false,
+        method: "POST",
+        auth: true,
+        userService: true,
+        params: { tenantId },
+        data: {
+          AllotmentSearchCriteria: criteria,
+        },
+      });
+    },
 
 
 };

@@ -65,6 +65,11 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.infra.utils.ApplicationConstant.NO_ROLE_NAME;
 import static org.egov.infra.utils.ApplicationConstant.SLASH;
 
+/**
+ * LTS Migration Fix (Spring Security 6): URL-to-role metadata source for the
+ * filter security interceptor. FilterInvocation APIs are unchanged; comments
+ * document the Jakarta / Spring Security 6 stack.
+ */
 public class ApplicationAuthorizationMetadataSource implements FilterInvocationSecurityMetadataSource {
 
     private List<String> excludePatterns = new ArrayList<>();
@@ -99,7 +104,7 @@ public class ApplicationAuthorizationMetadataSource implements FilterInvocationS
 //            Action action = actionService.getActionByUrlAndContextRoot(url, contextRoot);
 //            if (action != null) {
 //                action.getRoles().forEach((role) ->{ configAttributes.add(new SecurityConfig(role.getName()));
-//                	System.out.println("****************"+url+" : role "+role.getName());
+//                	log.info("{} : role {}", url, role.getName());
 //                });
 //            }
 //        }

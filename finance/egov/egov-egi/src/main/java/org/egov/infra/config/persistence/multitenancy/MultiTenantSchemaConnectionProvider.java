@@ -60,6 +60,15 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * Hibernate SCHEMA multi-tenancy connection provider.
+ * <p>
+ * Each tenant is a PostgreSQL schema. On borrow, the JDBC connection search
+ * path is switched with {@link Connection#setSchema(String)}. On release,
+ * schema reset is best-effort: WildFly 40's IronJacamar pool can already have
+ * committed or closed the handle, which must not fail request completion.
+ * </p>
+ */
 public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectionProvider {
     private static final long serialVersionUID = -6022082859572861041L;
     private static final Logger LOG = LoggerFactory.getLogger(MultiTenantSchemaConnectionProvider.class);
@@ -77,11 +86,18 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
         connection.close();
     }
 
+    /**
+     * Returns a connection whose current schema is the requested tenant.
+     *
+     * @param tenantId schema name for the current request
+     * @return a connection switched to that schema
+     * @throws HibernateException if the schema cannot be set
+     */
     @Override
-    public Connection getConnection(String tenantId) {
+    public Connection getConnection(Object tenantId) {
         try {
             Connection connection = getAnyConnection();
-            connection.setSchema(tenantId);
+            connection.setSchema((String) tenantId);
             return connection;
         } catch (SQLException e) {
             LOG.error("Error occurred while switching tenant schema upon getting connection", e);
@@ -89,14 +105,30 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
         }
     }
 
+    /**
+     * Attempts to restore the tenant schema then returns the connection to the pool.
+     * Failures during schema reset are logged and ignored because the server may
+     * already have released the physical connection.
+     *
+     * @param tenantId   schema name associated with the borrowed connection
+     * @param connection connection to release
+     * @throws SQLException if returning the connection to the pool fails
+     */
     @Override
-    public void releaseConnection(String tenantId, Connection connection) throws SQLException {
+    public void releaseConnection(Object tenantId, Connection connection) throws SQLException {
         try {
-            connection.setSchema(tenantId);
-        } catch (SQLException e) {
-            LOG.warn("Error occurred while switching schema upon release connection", e);
+            // LTS Migration Fix: Verify connection is non-null and active before attempting setSchema
+            if (connection != null && !connection.isClosed()) {
+                connection.setSchema((String) tenantId);
+            }
+        } catch (Throwable t) {
+            // LTS Migration Fix: Catch Throwable to handle JCA wrapper exceptions (e.g. IJ031070 STATUS_COMMITTED)
+            // when connections are already released/committed by WildFly 40 IronJacamar pool
+            LOG.debug("Could not switch schema upon release connection: {}", t.getMessage());
         }
-        releaseAnyConnection(connection);
+        if (connection != null) {
+            releaseAnyConnection(connection);
+        }
     }
 
     @Override

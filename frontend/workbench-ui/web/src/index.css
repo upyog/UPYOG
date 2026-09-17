@@ -77,7 +77,7 @@
   left: 10px;
   top: 50%;
   transform: translateY(-50%);
-  color: #aaa;
+  color: #AAAAAA;
   font-size: 14px;
   pointer-events: none;
 }
@@ -106,7 +106,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: #aaa;
+  color: #AAAAAA;
   font-size: 16px;
   line-height: 1;
   padding: 0;
@@ -218,7 +218,7 @@
 .pagination-btn.active {
   border-color: #e07b39;
   background: #e07b39;
-  color: #fff;
+  color: #FFFFFF;
   font-weight: 600;
 }
 
@@ -226,7 +226,7 @@
 .pagination-btn.disabled {
   border-color: #f0f0f0;
   background: #f9f9f9;
-  color: #ccc;
+  color: #767676;
   cursor: not-allowed;
 }
 
@@ -243,7 +243,7 @@
 .info-icon {
   cursor: pointer;
   border: 1px solid #d6d5d4;
-  background: #fff;
+  background: #FFFFFF;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -257,7 +257,7 @@
   transform: translateX(-50%);
   white-space: nowrap;
   background: #333;
-  color: #fff;
+  color: #FFFFFF;
   font-size: 11px;
   padding: 4px 10px;
   border-radius: 4px;

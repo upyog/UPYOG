@@ -1,0 +1,19 @@
+{
+  "moduleName": "TRADE_LICENSE",
+
+  "steps": [
+
+    {
+      "name": "Citizen Application",
+      "type": "CITIZEN",
+      "module": "TRADE_LICENSE"
+    },
+
+    {
+      "name": "Employee Flow",
+      "type": "EMPLOYEE",
+      "module": "TRADE_LICENSE",
+      "role": "TLEMP"
+    }
+  ]
+}

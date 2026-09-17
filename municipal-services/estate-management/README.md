@@ -1,86 +1,78 @@
 # Estate Management Service
 
-## Overview
-Estate Management Service is a Spring Boot microservice that manages government estate assets and their allotments. It provides APIs for creating, updating, and searching estate assets and allotments within the UPYOG platform.
+The **Estate Management Service** is a Spring Boot municipal service module in UPYOG. It enables urban local bodies (ULBs) to manage municipal assets, handle rent allotments, auto-generate billing demands periodically, and process monthly, quarterly, and yearly rent payments.
 
-## Features
-- **Asset Management**: Create, update, and search estate assets
-- **Allotment Management**: Create and search asset allotments
-- **Integration**: Seamless integration with UPYOG ecosystem services
-- **Workflow Support**: Built-in workflow management for asset lifecycle
-- **Audit Trail**: Complete audit logging for all operations
+---
 
-## Technology Stack
-- **Framework**: Spring Boot 3.2.2
-- **Java Version**: 17
-- **Database**: PostgreSQL
-- **Message Queue**: Apache Kafka
-- **Documentation**: OpenAPI 3.0 (Swagger)
+## 🛠️ Technology Stack
+- **Core**: Java 17, Spring Boot 3.2.2
+- **Database**: PostgreSQL with Flyway DB Migrations
+- **Queue**: Apache Kafka for asynchronous persistence and event-driven updates (e.g. payment collection)
+- **Build Tool**: Maven
 
-## API Endpoints
+---
 
-### Asset Management
-- `POST /estate/asset/v1/_create` - Create new asset
-- `POST /estate/asset/v1/_update` - Update existing asset
-- `POST /estate/asset/v1/_search` - Search assets
+## 🏗️ Core Workflow
 
-### Allotment Management
-- `POST /estate/allotment/v1/_create` - Create new allotment
-- `POST /estate/allotment/v1/_search` - Search allotments
+1. **Asset Creation**: Municipal assets (shops, community halls, lands) are registered and assigned unique estate numbers (`estateNo`).
+2. **Allotment Registration**: Assets are leased/allotted to citizens. This generates a unique `allotmentNo` via IDGen, assigns the initial lease `dueDate`, sets default status to `PENDING_FOR_PAYMENT`, and updates the asset status to `ALLOTTED`.
+3. **Periodic Billing (Scheduler)**: Scheduled jobs periodically run to generate demand bills for leased allotments and update their statuses to `PENDING_FOR_PAYMENT`. 
+   - Supports **monthly**, **quarterly**, and **yearly** cycles.
+   - Can be triggered asynchronously via the **`trigger-estate-demand`** Kafka topic.
+4. **Payment Processing**: Receipt events from `collection-services` are consumed via Kafka (or REST trigger), which updates the allotment status to `PAID` and saves payment details for all billing cycles.
 
-## Quick Start
+---
+
+## 🔌 API Documentation
+
+### Asset Endpoints
+| HTTP Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/estate/asset/v1/_create` | Creates a new asset and generates an `estateNo`. |
+| `POST` | `/estate/asset/v1/_update` | Updates asset details (area, category, structure, etc.). |
+| `POST` | `/estate/asset/v1/_search` | Searches assets with pagination (`limit`, `offset`) and sorts by creation time (latest first). |
+
+### Allotment & Payment Endpoints
+| HTTP Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/estate/allotment/v1/_create` | Creates an allotment, validates asset existence, creates initial demand, and sets status to `PENDING_FOR_PAYMENT`. |
+| `POST` | `/estate/allotment/v1/_search` | Searches allotments with pagination (`limit`, `offset`) and filters (allotmentNo, mobileNumber, etc.). |
+| `POST` | `/estate/payment/v1/_update` | REST endpoint to manually trigger payment update processing locally (useful for local testing without Kafka). |
+| `POST` | `/estate/scheduler/v1/_trigger` | Manually triggers the periodic billing cycle demand generator. |
+
+---
+
+## 🗃️ Database Tables
+- **`ug_em_asset_details`**: Stores asset structural profiles, classification, types, and allotment states.
+- **`ug_em_allotment_details`**: Stores lease agreements, allottee contact details, rental rates, allotment numbers, and statuses.
+- **`ug_em_monthly_rent_payment`**: Stores billing history, due dates, paid amounts, and payment statuses for monthly, quarterly, and yearly rent payments.
+- **`eg_est_scheduler_log`**: Logs database of scheduler actions, billing dates, time spans, and generation outcomes.
+
+---
+
+## 📡 Kafka Topics & Consumers
+
+### Listeners
+- **`egov.collection.payment-create`** (Property: `kafka.topics.receipt.create`): Listens for successful billing transaction events from `collection-services` to mark the corresponding allotment as `PAID`.
+- **`trigger-estate-demand`** (Property: `trigger-estate-demand-topic`): Listens for requests to execute monthly, quarterly, and yearly billing demand generation asynchronously.
+
+### Publishers
+- **`save-asset-details`** / **`update-asset-details`**: Saves or updates asset entries.
+- **`save-allotment-details`** / **`update-allotment-details`**: Saves or updates lease allotment entries.
+- **`save-monthly-rent-payment`**: Saves payment collection logs for all monthly, quarterly, and yearly billing cycles.
+- **`save-est-scheduler-log`** (Property: `save-scheduler-log-topic`): Saves demand generation scheduler execution logs.
+
+---
+
+## 🚀 Running Locally
 
 ### Prerequisites
-- Java 17+
-- PostgreSQL 12+
-- Apache Kafka
-- Maven 3.6+
+- JDK 17
+- Apache Maven 3.6+
+- PostgreSQL instance running locally
 
-### Configuration
-Update `application.properties`:
-```properties
-server.port=8585
-server.servlet.context-path=/estate-management
-spring.datasource.url=jdbc:postgresql://localhost:5432/postgres
-spring.datasource.username=postgres
-spring.datasource.password=root
-```
-
-### Running the Service
+### Execution Command
+Run the Spring Boot application from the `estate-management` directory:
 ```bash
-mvn clean install
 mvn spring-boot:run
 ```
-
-### API Documentation
-Access Swagger UI at: `http://localhost:8585/estate-management/swagger-ui/index.html`
-
-## Dependencies
-- MDMS Service (Master Data)
-- ID Generation Service
-- User Service
-- Workflow Service
-- Asset Service
-- Billing Service
-
-## Kafka Topics
-- `save-asset-details` - Asset creation events
-- `update-asset-details` - Asset update events
-- `save-allotment-details` - Allotment creation events
-
-## Database
-Uses PostgreSQL with Flyway migrations located in `src/main/resources/db/migration/main/`
-
-## Environment Variables
-Key configuration properties:
-- `server.port` - Service port (default: 8585)
-- `spring.datasource.url` - Database connection URL
-- `kafka.config.bootstrap_server_config` - Kafka broker URL
-- `egov.mdms.host` - MDMS service host
-
-## Development
-1. Clone the repository
-2. Configure database and Kafka connections
-3. Run `mvn clean install`
-4. Start the service with `mvn spring-boot:run`
-

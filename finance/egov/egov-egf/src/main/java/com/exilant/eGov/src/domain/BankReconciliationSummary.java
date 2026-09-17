@@ -59,8 +59,8 @@ import org.egov.model.brs.BrsEntries;
 import org.egov.model.instrument.InstrumentHeader;
 import org.hibernate.HibernateException;
 import org.hibernate.ObjectNotFoundException;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -141,10 +141,10 @@ public class BankReconciliationSummary {
 		
 		try
 		{
-			SQLQuery totalSQLQuery =  persistenceService.getSession().createSQLQuery(totalQuery.toString());
-			totalSQLQuery.setInteger("bankAccountId",bankAccId);
-			totalSQLQuery.setDate("fromDate",fromDate);
-			totalSQLQuery.setDate("toDate",toDate);
+			NativeQuery totalSQLQuery =  persistenceService.getSession().createNativeQuery(totalQuery.toString());
+			totalSQLQuery.setParameter("bankAccountId",bankAccId);
+			totalSQLQuery.setParameter("fromDate",fromDate);
+			totalSQLQuery.setParameter("toDate",toDate);
 			
 			List list = totalSQLQuery.list();
 			if (list.size()>0)
@@ -155,10 +155,10 @@ public class BankReconciliationSummary {
 				debitTotal=my[1]!=null?my[1].toString():null;
 			}
 
-			totalSQLQuery = persistenceService.getSession().createSQLQuery(otherTotalQuery.toString());
-			totalSQLQuery.setInteger("bankAccountId",bankAccId);
-			totalSQLQuery.setDate("fromDate",fromDate);
-			totalSQLQuery.setDate("toDate",toDate);
+			totalSQLQuery = persistenceService.getSession().createNativeQuery(otherTotalQuery.toString());
+			totalSQLQuery.setParameter("bankAccountId",bankAccId);
+			totalSQLQuery.setParameter("fromDate",fromDate);
+			totalSQLQuery.setParameter("toDate",toDate);
 			list = totalSQLQuery.list();
 			if (list.size()>0)
 			{
@@ -168,10 +168,10 @@ public class BankReconciliationSummary {
 				debitOtherTotal=my[1]!=null?my[1].toString():null;
 			}
 
-			totalSQLQuery = persistenceService.getSession().createSQLQuery(brsEntryQuery.toString());
-			totalSQLQuery.setInteger("bankAccountId",bankAccId);
-			totalSQLQuery.setDate("fromDate",fromDate);
-			totalSQLQuery.setDate("toDate",toDate);
+			totalSQLQuery = persistenceService.getSession().createNativeQuery(brsEntryQuery.toString());
+			totalSQLQuery.setParameter("bankAccountId",bankAccId);
+			totalSQLQuery.setParameter("fromDate",fromDate);
+			totalSQLQuery.setParameter("toDate",toDate);
 			list = totalSQLQuery.list();
 			if (list.size()>0)
 			{
@@ -228,7 +228,7 @@ public class BankReconciliationSummary {
 	private String getBankAccountNumberById(Integer bankAccId) {
 	    final StringBuilder query = new StringBuilder("from Bankaccount ba where ba.id=:bankAccountId and isactive=true");
 	    Query createSQLQuery = persistenceService.getSession().createQuery(query.toString());
-	    List<Bankaccount> bankAccount = createSQLQuery.setLong("bankAccountId", bankAccId).list();
+	    List<Bankaccount> bankAccount = createSQLQuery.setParameter("bankAccountId", bankAccId).list();
 	    return !bankAccount.isEmpty() && bankAccount.get(0) != null ? bankAccount.get(0).getAccountnumber() : null;
 	}
 	
@@ -245,10 +245,10 @@ public class BankReconciliationSummary {
 					" and ih.transactiondate >= :fromDate  and ih.transactiondate <= :toDate   and ih.transactionnumber is not null");
 		}
 		try {
-			SQLQuery sqlQuery = persistenceService.getSession().createSQLQuery(query.toString());
-			sqlQuery.setLong("bankAccountId", bankAccountId);
-			sqlQuery.setDate("fromDate", fromDate);
-			sqlQuery.setDate("toDate", toDate);
+			NativeQuery sqlQuery = persistenceService.getSession().createNativeQuery(query.toString());
+			sqlQuery.setParameter("bankAccountId", bankAccountId);
+			sqlQuery.setParameter("fromDate", fromDate);
+			sqlQuery.setParameter("toDate", toDate);
 			sqlQuery.addEntity(InstrumentHeader.class);
 			return sqlQuery.list();
 		} catch (HibernateException e) {
@@ -262,11 +262,11 @@ public class BankReconciliationSummary {
 				"select * FROM  bankentries be WHERE   be.bankAccountId = :bankAccountId").append(
 						" and be.voucherheaderid is null AND be.txndate >=:fromDate   AND be.txndate <= :toDate and be.type=:type");
 		try {
-			SQLQuery sqlQuery = persistenceService.getSession().createSQLQuery(query.toString());
-			sqlQuery.setLong("bankAccountId", bankAccountId);
-			sqlQuery.setDate("fromDate", fromDate);
-			sqlQuery.setDate("toDate", toDate);
-			sqlQuery.setString("type", type);
+			NativeQuery sqlQuery = persistenceService.getSession().createNativeQuery(query.toString());
+			sqlQuery.setParameter("bankAccountId", bankAccountId);
+			sqlQuery.setParameter("fromDate", fromDate);
+			sqlQuery.setParameter("toDate", toDate);
+			sqlQuery.setParameter("type", type);
 			sqlQuery.addEntity(BrsEntries.class);
 			return sqlQuery.list();
 		} catch (HibernateException e) {

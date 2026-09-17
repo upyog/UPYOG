@@ -64,16 +64,36 @@ public class MdmsDataRepositoryImpl implements MdmsDataRepository {
         producer.push(applicationConfig.getUpdateMdmsDataTopicName(), mdmsRequest);
     }
 
-    @Override
-    public void delete(String tenantId, String schemaCode) {
 
-    String sql = "DELETE FROM eg_mdms_data WHERE tenantid = ? AND schemacode = ?";
+   @Override
+public Mdms getById(String tenantId, String id) {
 
-    int deletedRows = jdbcTemplate.update(sql, tenantId, schemaCode);
+    MdmsCriteriaV2 criteria = MdmsCriteriaV2.builder()
+            .tenantId(tenantId)
+            .ids(java.util.Collections.singleton(id))
+            .build();
 
-    log.info("Deleted {} MDMS data record(s) for tenantId={}, schemaCode={}",
-            deletedRows, tenantId, schemaCode);
+    List<Mdms> mdmsList = searchV2(criteria);
+
+    if (mdmsList == null || mdmsList.isEmpty()) {
+        return null;
     }
+
+    return mdmsList.get(0);
+}
+
+/**
+ * Publishes MDMS delete request to Kafka.
+ * Persister is responsible for audit logging
+ * and deleting the master data.
+ */
+@Override
+public void delete(MdmsRequest mdmsRequest) {
+    producer.push(applicationConfig.getDeleteMdmsDataTopicName(), mdmsRequest);
+}
+    
+
+ 
     /**
      * @param mdmsCriteriaV2
      * @return

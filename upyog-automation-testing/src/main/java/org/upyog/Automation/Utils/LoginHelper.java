@@ -12,16 +12,34 @@ public class LoginHelper {
     private static final Logger logger =
             LoggerFactory.getLogger(LoginHelper.class);
 
-    public static void citizenLogin(WebDriver driver,
-                                    WebDriverWait wait,
-                                    JavascriptExecutor js,
-                                    String baseUrl,
-                                    String mobile,
-                                    String otp,
-                                    String city)
+    public static void login(WebDriver driver,
+                             WebDriverWait wait,
+                             JavascriptExecutor js,
+                             String baseUrl,
+                             String mobile,
+                             String otp,
+                             String city,
+                             String moduleName)
             throws InterruptedException {
 
         driver.get(baseUrl);
+
+        String loginMobile = mobile;
+
+        String env = WorkflowDataStore.get("selected.env");
+
+        if ("ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM"
+                .equalsIgnoreCase(moduleName)) {
+
+            if ("NIUATT".equalsIgnoreCase(env)) {
+                loginMobile =
+                        ConfigReader.get("niuatt.architect.mobile");
+            }
+            else {
+                loginMobile =
+                        ConfigReader.get("upyog.architect.mobile");
+            }
+        }
 
         // ==========================
         // MOBILE
@@ -29,9 +47,8 @@ public class LoginHelper {
         CommonActions.fillInput(
                 wait,
                 "mobileNumber",
-                mobile
+                loginMobile
         );
-
 
         // ==========================
         // CHECKBOX
@@ -127,82 +144,5 @@ public class LoginHelper {
                 "Citizen Login Completed"
         );
 
-
-        //Thread.sleep(5000);
-
-        // ==========================
-// LANGUAGE (optional)
-// ==========================
-//        try {
-//
-//            WebElement languageOption = wait.until(
-//                    ExpectedConditions.elementToBeClickable(
-//                            By.xpath(
-//                                    "//*[contains(text(),'English')]"
-//                            )
-//                    )
-//            );
-//
-//            js.executeScript(
-//                    "arguments[0].scrollIntoView({block:'center'});",
-//                    languageOption
-//            );
-//
-//            new org.openqa.selenium.interactions.Actions(driver)
-//                    .moveToElement(languageOption)
-//                    .click()
-//                    .perform();
-//
-//            CommonActions.clickButtonByText(
-//                    driver,
-//                    wait,
-//                    js,
-//                    "Continue"
-//            );
-//
-//            System.out.println("Language selected");
-//
-//        } catch (Exception e) {
-//
-//            System.out.println("Language screen not shown");
-//        }
-
-    // ==========================
-    // CITY
-    // ==========================
-//    WebElement city1Option = wait.until(
-//            ExpectedConditions.elementToBeClickable(
-//                    By.xpath(
-//                            "//*[contains(text(),'" + city + "')]/ancestor::*[contains(@class,'radio-wrap')]"
-//                    )
-//            )
-//    );
-//
-//        js.executeScript(
-//                "arguments[0].scrollIntoView({block:'center'});",
-//                city1Option
-//        );
-//
-//        js.executeScript(
-//                "arguments[0].click();",
-//                city1Option
-//        );
-//
-//        System.out.println("City selected properly");
-//
-//
-//    // ==========================
-//    // CONTINUE
-//    // ==========================
-//        CommonActions.clickButtonByText(
-//    driver,
-//    wait,
-//    js,
-//            "Continue"
-//            );
-//
-//        System.out.println(
-//                "Citizen Login Completed"
-//                );
        }
 }

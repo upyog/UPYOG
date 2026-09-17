@@ -59,7 +59,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "applicantName",
       "action": "TYPE",
-      "inputValue": "Arpit Rao",
+      "inputValue": "${applicant.name}",
       "dynamicSleep": 500
     },
 
@@ -68,7 +68,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "emailId",
       "action": "TYPE",
-      "inputValue": "Asdj@gmail.com",
+      "inputValue": "${applicant.email}",
       "dynamicSleep": 500
     },
 
@@ -77,7 +77,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "mobileNumber",
       "action": "TYPE",
-      "inputValue": "9999999999",
+      "inputValue": "${mobile.number}",
       "dynamicSleep": 500
     },
 
@@ -103,7 +103,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "houseArea",
       "action": "TYPE",
-      "inputValue": "1600",
+      "inputValue": "${plot.area}",
       "dynamicSleep": 500
     },
 
@@ -166,7 +166,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "wasteQuantity",
       "action": "TYPE",
-      "inputValue": "10",
+      "inputValue": "${waste.quantity}",
       "dynamicSleep": 500
     },
     {
@@ -202,11 +202,75 @@
       "dynamicSleep": 2000
     },
     {
-      "stepName": "Select First Address Card",
+      "stepName": "Click Add New Address",
       "locatorStrategy": "XPATH",
-      "locatorValue": "(//div[contains(@class,'card') and contains(@style,'cursor: pointer')])[1]",
-      "action": "CLICK_JS",
+      "locatorValue": "//a[contains(@href,'address-details')]",
+      "action": "CLICK",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Select Address Type",
+      "locatorStrategy": "CSS",
+      "locatorValue": "div.select svg.cp",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "0:1",
       "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Enter House Number",
+      "locatorStrategy": "XPATH",
+      "locatorValue":"//h2[contains(text(),'House No. *')]/following::input[1]",
+      "action": "TYPE",
+      "inputValue": "${house.number}",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Enter Street Name",
+      "locatorStrategy": "XPATH",
+      "locatorValue":"//h2[contains(text(),'Street Name *')]/following::input[1]",
+      "action": "TYPE",
+      "inputValue": "${street.name}",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Enter Address Line 1",
+      "locatorStrategy": "XPATH",
+      "locatorValue":"//h2[contains(text(),'Address Line 1 *')]/following::input[1]",
+      "action": "TYPE",
+      "inputValue": "${address.line1}",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Enter Address Line 2",
+      "locatorStrategy": "XPATH",
+      "locatorValue":"//h2[contains(text(),'Address Line 2 *')]/following::input[1]",
+      "action": "TYPE",
+      "inputValue": "${address.line2}",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Select City",
+      "locatorStrategy": "CSS",
+      "locatorValue": "div.select svg.cp",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "1:0",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Select Locality",
+      "locatorStrategy": "CSS",
+      "locatorValue": "div.select svg.cp",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "2:1",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Enter Pincode",
+      "locatorStrategy": "XPATH",
+      "locatorValue":"//h2[contains(text(),'Pincode *')]/following::input[1]",
+      "action": "TYPE",
+      "inputValue": "${address.pincode}",
+      "dynamicSleep": 2000
     },
 
     {
@@ -218,12 +282,11 @@
       "dynamicSleep": 2000
     },
     {
-      "stepName": "Accept Declaration",
-      "locatorStrategy": "CSS",
-      "locatorValue": "input[type='checkbox']",
-      "action": "CHECK_LAST_CHECKBOX",
-      "inputValue": null,
-      "dynamicSleep": 1000
+      "stepName":"Accept Declaration",
+      "locatorStrategy":"CSS",
+      "locatorValue":"input[type='checkbox'][value^='I hereby']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
     },
     {
       "stepName": "Submit Application",
@@ -234,12 +297,12 @@
       "dynamicSleep": 5000
     },
     {
-      "stepName": "Capture Application Number",
-      "locatorStrategy": "XPATH",
-      "locatorValue": "//div[contains(@class,'application-number')]",
-      "action": "CAPTURE_TEXT",
-      "inputValue": "APPLICATION_NO",
-      "dynamicSleep": 500
+      "stepName":"Capture Application Number",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'Application No') or contains(text(),'Application Number')]/following-sibling::*[1]",
+      "action":"CAPTURE_TEXT",
+      "inputValue":"APPLICATION_NO",
+      "dynamicSleep":3000
     }
 
   ]

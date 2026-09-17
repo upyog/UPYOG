@@ -49,19 +49,19 @@ package org.egov.eis.entity;
 
 import static org.egov.eis.entity.EmployeeGrievanceType.SEQ_EMPLOYEEGRIEVANCETYPE;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 @Entity
 @Unique(fields = { "name", "code" }, enableDfltMsg = true)
@@ -79,22 +79,22 @@ public class EmployeeGrievanceType extends AbstractAuditable {
 
     @NotBlank
     @Length(max = 50)
-    @SafeHtml
+    @SanitizeHtml
     @Column(name = "code", unique = true)
     private String code;
 
     @NotBlank
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 100)
     @Column(name = "name", unique = true)
     private String name;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 200)
     private String localName;
 
     @Length(max = 256)
-    @SafeHtml
+    @SanitizeHtml
     private String description;
 
     private boolean active;

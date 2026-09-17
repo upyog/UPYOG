@@ -36,7 +36,7 @@
       "dynamicSleep": 3000
     },
     {
-      "stepName": "Open Register Asset",
+      "stepName": "Open Inbox",
       "locatorStrategy": "XPATH",
       "locatorValue": "//a[contains(@href,'/assetv2/assetservice/inbox')]",
       "action": "CLICK_JS",
@@ -46,8 +46,8 @@
       "stepName": "Enter Asset Unique ID",
       "locatorStrategy": "XPATH",
       "locatorValue": "//h4[contains(text(),'Asset Unique ID')]/following::input[1]",
-      "action": "TYPE",
-      "inputValue": "${selected.applicationNumber}",
+      "action": "TYPE_FROM_STORE",
+      "inputValue": "APPLICATION_NO",
       "dynamicSleep": 1000
     },
     {
@@ -83,7 +83,7 @@
       "locatorStrategy": "NAME",
       "locatorValue": "comments",
       "action": "TYPE",
-      "inputValue": "Approved",
+      "inputValue": "${comment.approve}",
       "dynamicSleep": 500
     },
     {

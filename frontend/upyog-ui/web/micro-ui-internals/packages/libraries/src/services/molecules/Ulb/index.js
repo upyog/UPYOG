@@ -67,7 +67,7 @@ export const ULBService = {
   getCurrentUlb: () => {
     const initData = StoreService.getInitData();
     const tenantId = ULBService.getCurrentTenantId();
-    return initData.tenants.find((tenant) => tenant.code === tenantId);
+    return initData?.tenants?.find((tenant) => tenant.code === tenantId);
   },
   
 

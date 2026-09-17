@@ -70,6 +70,11 @@ import java.util.Set;
 
 import static org.egov.infra.config.core.ApplicationThreadLocals.getMunicipalityName;
 
+/**
+ * LTS Migration Fix (Spring Data 3 / Spring 6): user master service.
+ * {@code findOne} was replaced with {@code findById().orElse(null)}.
+ * Password hashing still uses the shared {@link PasswordEncoder} (BCrypt).
+ */
 @Service
 @Transactional(readOnly = true)
 public class UserService {
@@ -98,6 +103,13 @@ public class UserService {
         return userRepository.saveAndFlush(user);
     }
 
+    /**
+     * Persists a user and also creates the corresponding identity in the UPYOG
+     * user microservice when that integration is enabled.
+     *
+     * @param user user to create
+     * @return saved user
+     */
     @Transactional
     public User createUser(User user) {
         User savedUser = userRepository.save(user);
@@ -105,6 +117,14 @@ public class UserService {
         return savedUser;
     }
 
+    /**
+     * Encodes and stores a new password, then notifies the user when an administrator
+     * performed the reset (not a self-change).
+     *
+     * @param user        account whose password is changing
+     * @param newPassword plain-text password; stored only after BCrypt encoding
+     * @return updated user
+     */
     @Transactional
     public User updateUserPassword(User user, String newPassword) {
         user.setPassword(passwordEncoder.encode(newPassword));
@@ -125,11 +145,16 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
-        return userRepository.findOne(id);
+        // LTS Migration Fix (Spring Data 3): CrudRepository.findOne(id) was removed.
+        return userRepository.findById(id).orElse(null);
     }
 
+    /**
+     * @return the user bound to this request thread, or {@code null} if none
+     */
     public User getCurrentUser() {
-        return userRepository.findOne(ApplicationThreadLocals.getUserId());
+        // LTS Migration Fix (Spring Data 3): findById returns Optional; orElse(null) keeps the previous nullable contract.
+        return userRepository.findById(ApplicationThreadLocals.getUserId()).orElse(null);
     }
 
     public User getUserByUsername(String userName) {

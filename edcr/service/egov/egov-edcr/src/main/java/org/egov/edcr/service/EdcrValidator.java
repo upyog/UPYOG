@@ -17,8 +17,11 @@ import org.jsoup.safety.Safelist;
 import org.springframework.stereotype.Service;
 
 /**
- * @author vinoth
+ * Validates EDCR REST API request payloads for allowed characters and HTML safety.
  *
+ * <p>Uses Log4j 2 for logging, Jsoup {@link Safelist#basic()} for HTML sanitization
+ * checks on string fields, and {@link org.egov.infra.utils.StringUtils} from the
+ * infra module for string utilities.</p>
  */
 @Service
 public class EdcrValidator {

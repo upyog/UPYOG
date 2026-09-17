@@ -64,6 +64,7 @@ import ar.com.fdvs.dj.domain.constants.Transparency;
 import ar.com.fdvs.dj.domain.constants.VerticalAlign;
 import ar.com.fdvs.dj.domain.entities.Subreport;
 import com.exilant.eGov.src.reports.TrialBalanceBean;
+import net.sf.jasperreports.engine.DefaultJasperReportsContext;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -108,6 +109,35 @@ public class ReportHelper {
     private InputStream reportStream;
     private static final Logger LOGGER = Logger.getLogger(ReportHelper.class);
     private static SimpleDateFormat FORMATDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+    /*
+     * LTS Migration Fix (Jasper / Linux JVM) — why this is needed after LTS:
+     * Jasper was not upgraded (still 6.1.0) and styles already used Verdana.
+     * Pre-LTS JDK 8 on the old WildFly image used fontconfig, so a missing
+     * Verdana was aliased to DejaVu/Liberation and Excel/PDF still filled.
+     * After LTS we run JDK 17 on finance-wildfly40: Verdana is not installed
+     * and JDK 17 does not alias it, so fill throws JRFontNotFoundException
+     * (local macOS still works because Verdana is present). SansSerif is a
+     * JVM logical font on every JDK, so reports do not need OS fonts.
+     */
+    private static final String REPORT_FONT = "SansSerif";
+
+    /*
+     * LTS Migration Fix (JDK 17): DynamicJasper Excel/PDF compile uses JRJdtCompiler.
+     * tomcat:jasper-compiler-jdt:5.5.23 cannot read JDK 17 class files
+     * (ClassFormatException → "java.lang.String cannot be resolved"). Point Jasper
+     * at JRJdtCompiler so the Java 17-capable Eclipse ECJ on the EAR classpath is used.
+     *
+     * After LTS, ignore missing AWT fonts (Arial/Verdana in other styles/.jrxml):
+     * JDK 17 + finance-wildfly40 no longer aliases those names, so fill would 500.
+     */
+    static {
+        final DefaultJasperReportsContext jasperContext = DefaultJasperReportsContext.getInstance();
+        jasperContext.setProperty(
+                "net.sf.jasperreports.compiler.class",
+                "net.sf.jasperreports.engine.design.JRJdtCompiler");
+        jasperContext.setProperty("net.sf.jasperreports.awt.ignore.missing.font", "true");
+        jasperContext.setProperty("net.sf.jasperreports.default.font.name", REPORT_FONT);
+    }
 
     public OutputStream getOutputBytes() {
         return outputBytes;
@@ -182,8 +212,48 @@ public class ReportHelper {
     protected JasperPrint setUpAndGetJasperPrint(final String jasperPath,
             final Map<String, Object> paramMap, final List<Object> dataSource)
                     throws JRException {
-        reportStream = this.getClass().getResourceAsStream(jasperPath);
+        /*
+         * =========================================================================================
+         * LTS Migration Fix [Java 17 & JasperReports Bean Introspection Compatibility]:
+         * =========================================================================================
+         * 1. Problem:
+         *    Legacy pre-compiled `.jasper` binary files were generated with older Java (Java 8) byte-code.
+         *    Under Java 17 LTS, stricter JVM reflection, encapsulation, and Java Bean property introspection 
+         *    cause pre-compiled Jasper binary files to fail at runtime with `NoSuchMethodException: Unknown 
+         *    property '...'` or deserialization class incompatibilities when evaluating report field expressions.
+         *
+         * 2. Solution:
+         *    Check if the corresponding `.jrxml` source template exists in the classpath. If present, 
+         *    compile the template on-the-fly via `JasperCompileManager.compileReport(...)`. This ensures 
+         *    that the generated JasperReport bytecode strictly matches Java 17 runtime bean getters, 
+         *    method descriptors, and reflection rules.
+         *
+         * 3. Fallback & Safety:
+         *    If the `.jrxml` source file is not found or fails to compile for any reason, the system 
+         *    gracefully falls back to reading the pre-compiled `.jasper` file stream, ensuring 100% 
+         *    backward compatibility and zero breaking changes across other reporting modules.
+         * =========================================================================================
+         */
+        net.sf.jasperreports.engine.JasperReport jasperReport = null;
+        String jrxmlPath = jasperPath.endsWith(".jasper") ? jasperPath.substring(0, jasperPath.length() - 7) + ".jrxml" : jasperPath;
+        InputStream jrxmlStream = this.getClass().getResourceAsStream(jrxmlPath);
+        if (jrxmlStream != null) {
+            try {
+                jasperReport = net.sf.jasperreports.engine.JasperCompileManager.compileReport(jrxmlStream);
+            } catch (Exception e) {
+                if (LOGGER.isDebugEnabled())
+                    LOGGER.debug("Failed to compile jrxml template from " + jrxmlPath + ", falling back to jasper stream", e);
+            } finally {
+                try { jrxmlStream.close(); } catch (Exception ignored) {}
+            }
+        }
         outputBytes = new ByteArrayOutputStream(1 * MB);
+        if (jasperReport != null) {
+            if (dataSource.size() > 0)
+                return JasperFillManager.fillReport(jasperReport, paramMap, new JRBeanCollectionDataSource(dataSource));
+            return JasperFillManager.fillReport(jasperReport, paramMap, new JREmptyDataSource());
+        }
+        reportStream = this.getClass().getResourceAsStream(jasperPath);
         if (dataSource.size() > 0)
             return JasperFillManager.fillReport(reportStream, paramMap, new JRBeanCollectionDataSource(dataSource));
         return JasperFillManager.fillReport(reportStream, paramMap, new JREmptyDataSource());
@@ -790,7 +860,7 @@ public class ReportHelper {
 
     private Style getSubTitleStyle() {
         final Style subTitleStyle = new Style("titleStyle");
-        subTitleStyle.setFont(new Font(6, Font._FONT_VERDANA, true));
+        subTitleStyle.setFont(new Font(6, REPORT_FONT, true));
         subTitleStyle.setHorizontalAlign(HorizontalAlign.CENTER);
 
         return subTitleStyle;
@@ -798,7 +868,7 @@ public class ReportHelper {
 
     private Style getBudgetSubTitleStyle() {
         final Style subTitleStyle = new Style("titleStyle");
-        subTitleStyle.setFont(new Font(6, Font._FONT_VERDANA, true));
+        subTitleStyle.setFont(new Font(6, REPORT_FONT, true));
         subTitleStyle.setHorizontalAlign(HorizontalAlign.RIGHT);
         subTitleStyle.setStretchWithOverflow(true);
         return subTitleStyle;
@@ -814,7 +884,7 @@ public class ReportHelper {
 
     private Style getAmountSubTitleStyle() {
         final Style subTitleStyle = new Style("SubAmountStyle");
-        subTitleStyle.setFont(new Font(8, Font._FONT_VERDANA, true));
+        subTitleStyle.setFont(new Font(8, REPORT_FONT, true));
         subTitleStyle.setHorizontalAlign(HorizontalAlign.CENTER);
         subTitleStyle.setStretchWithOverflow(true);
         return subTitleStyle;
@@ -822,7 +892,7 @@ public class ReportHelper {
 
     private Style getTitleStyle() {
         final Style titleStyle = new Style("titleStyle");
-        titleStyle.setFont(new Font(9, Font._FONT_VERDANA, true));
+        titleStyle.setFont(new Font(9, REPORT_FONT, true));
         titleStyle.setHorizontalAlign(HorizontalAlign.CENTER);
         return titleStyle;
     }
@@ -843,7 +913,7 @@ public class ReportHelper {
         headerStyle.setHorizontalAlign(HorizontalAlign.CENTER);
         headerStyle.setVerticalAlign(VerticalAlign.MIDDLE);
         headerStyle.setTransparency(Transparency.OPAQUE);
-        headerStyle.setFont(new Font(8, Font._FONT_VERDANA, true));
+        headerStyle.setFont(new Font(8, REPORT_FONT, true));
         headerStyle.setStretchWithOverflow(true);
         return headerStyle;
     }
@@ -868,7 +938,7 @@ public class ReportHelper {
         detailAmountStyle.setBorderRight(Border.THIN());
         detailAmountStyle.setTextColor(Color.blue);
         detailAmountStyle.setHorizontalAlign(HorizontalAlign.RIGHT);
-        detailAmountStyle.setFont(new Font(6, Font._FONT_VERDANA, true));
+        detailAmountStyle.setFont(new Font(6, REPORT_FONT, true));
         detailAmountStyle.setPaddingRight(2);
         detailAmountStyle.setTransparency(Transparency.OPAQUE);
         detailAmountStyle.setBorderBottom(Border.THIN());
@@ -895,7 +965,7 @@ public class ReportHelper {
 
         columnStyle.setTextColor(Color.blue);
         columnStyle.setHorizontalAlign(HorizontalAlign.CENTER);
-        columnStyle.setFont(new Font(6, Font._FONT_VERDANA, true));
+        columnStyle.setFont(new Font(6, REPORT_FONT, true));
         columnStyle.setTransparency(Transparency.OPAQUE);
         columnStyle.setBorderBottom(Border.THIN());
         // detailAmountStyle.s
@@ -953,7 +1023,7 @@ public class ReportHelper {
         detailAmountStyle.setBorderBottom(Border.THIN());
         detailAmountStyle.setTextColor(Color.black);
         detailAmountStyle.setHorizontalAlign(HorizontalAlign.RIGHT);
-        detailAmountStyle.setFont(new Font(8, Font._FONT_VERDANA, true));
+        detailAmountStyle.setFont(new Font(8, REPORT_FONT, true));
         detailAmountStyle.setTransparency(Transparency.OPAQUE);
         return detailAmountStyle;
     }
@@ -967,7 +1037,7 @@ public class ReportHelper {
         headerStyle.setHorizontalAlign(HorizontalAlign.CENTER);
         headerStyle.setVerticalAlign(VerticalAlign.MIDDLE);
         headerStyle.setTransparency(Transparency.OPAQUE);
-        headerStyle.setFont(new Font(7, Font._FONT_VERDANA, true));
+        headerStyle.setFont(new Font(7, REPORT_FONT, true));
         return headerStyle;
     }
 
@@ -979,7 +1049,7 @@ public class ReportHelper {
         detailAmountStyle.setBorderBottom(Border.THIN());
         detailAmountStyle.setTextColor(Color.black);
         detailAmountStyle.setHorizontalAlign(HorizontalAlign.RIGHT);
-        detailAmountStyle.setFont(new Font(6, Font._FONT_VERDANA, true));
+        detailAmountStyle.setFont(new Font(6, REPORT_FONT, true));
         detailAmountStyle.setBlankWhenNull(true);
         detailAmountStyle.setPaddingRight(2);
         detailAmountStyle.setPattern("0.00");
@@ -995,7 +1065,7 @@ public class ReportHelper {
         detailAmountStyle.setBorderBottom(Border.THIN());
         detailAmountStyle.setTextColor(Color.black);
         detailAmountStyle.setHorizontalAlign(HorizontalAlign.LEFT);
-        detailAmountStyle.setFont(new Font(6, Font._FONT_VERDANA, true));
+        detailAmountStyle.setFont(new Font(6, REPORT_FONT, true));
         detailAmountStyle.setBlankWhenNull(true);
         detailAmountStyle.setPaddingLeft(2);
         detailAmountStyle.setTransparency(Transparency.OPAQUE);
@@ -1010,7 +1080,7 @@ public class ReportHelper {
         detailAmountStyle.setBorderBottom(Border.THIN());
         detailAmountStyle.setTextColor(Color.black);
         detailAmountStyle.setHorizontalAlign(HorizontalAlign.RIGHT);
-        detailAmountStyle.setFont(new Font(6, Font._FONT_VERDANA, true));
+        detailAmountStyle.setFont(new Font(6, REPORT_FONT, true));
         detailAmountStyle.setPaddingRight(2);
         detailAmountStyle.setPattern("0.00");
         detailAmountStyle.setTransparency(Transparency.OPAQUE);
@@ -1025,7 +1095,7 @@ public class ReportHelper {
         detailAmountStyle.setBorderBottom(Border.THIN());
         detailAmountStyle.setTextColor(Color.black);
         detailAmountStyle.setHorizontalAlign(HorizontalAlign.LEFT);
-        detailAmountStyle.setFont(new Font(6, Font._FONT_VERDANA, false));
+        detailAmountStyle.setFont(new Font(6, REPORT_FONT, false));
         detailAmountStyle.setBlankWhenNull(true);
         detailAmountStyle.setPaddingLeft(2);
         detailAmountStyle.setTransparency(Transparency.OPAQUE);
@@ -1037,7 +1107,7 @@ public class ReportHelper {
         detailStyle.setBorderLeft(Border.THIN());
         detailStyle.setBorderRight(Border.THIN());
         detailStyle.setTextColor(Color.blue);
-        detailStyle.setFont(new Font(8, Font._FONT_VERDANA, true));
+        detailStyle.setFont(new Font(8, REPORT_FONT, true));
         detailStyle.setTransparency(Transparency.OPAQUE);
         return detailStyle;
     }
@@ -1059,7 +1129,7 @@ public class ReportHelper {
         detailStyle.setBorderTop(Border.THIN());
         detailStyle.setBorderBottom(Border.THIN());
         detailStyle.setTextColor(Color.black);
-        detailStyle.setFont(new Font(8, Font._FONT_VERDANA, true));
+        detailStyle.setFont(new Font(8, REPORT_FONT, true));
         detailStyle.setTransparency(Transparency.OPAQUE);
         return detailStyle;
     }

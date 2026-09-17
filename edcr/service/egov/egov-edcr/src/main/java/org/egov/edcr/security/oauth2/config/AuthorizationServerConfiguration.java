@@ -1,5 +1,7 @@
 package org.egov.edcr.security.oauth2.config;
 
+// TODO: DEAD CODE - NOT USED IN UPYOG (AuthorizationServerConfigurerAdapter removed in Spring Security 6)
+/*
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -25,12 +27,6 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
-/**
- * OAuth2 authorization server configuration
- *
- * @author subhash
- *
- */
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
@@ -110,3 +106,4 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     }
 
 }
+*/

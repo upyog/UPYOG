@@ -66,7 +66,7 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.utils.BankAccountType;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
@@ -225,8 +225,8 @@ public class BankAccountService extends PersistenceService<Bankaccount, Long> {
 				.append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid=:branchId")
 				.append("  and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :asOnDate")
 				.append(" and ph.bankaccountnumberid=bankaccount.id  order by vh.voucherdate desc");
-		return getSession().createSQLQuery(queryString.toString()).setDate("asOnDate", asOnDate)
-				.setInteger(BRANCH_ID, branchId).list();
+		return getSession().createNativeQuery(queryString.toString()).setParameter("asOnDate", asOnDate)
+				.setParameter(BRANCH_ID, branchId).list();
 	}
 
 	private List<Object[]> fetchBankaccountsWithAssignedCheques(final Integer branchId, String chequeType,
@@ -246,8 +246,8 @@ public class BankAccountService extends PersistenceService<Bankaccount, Long> {
 				.append(" and bankaccount.branchid=:branchId")
 				.append("  and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :asOnDate")
 				.append(" and ph.bankaccountnumberid=bankaccount.id  order by vh.voucherdate desc");
-		return getSession().createSQLQuery(queryString.toString()).setDate("asOnDate", asOnDate)
-				.setInteger(BRANCH_ID, branchId).setString("type", isBlank(chequeType) ? "CHEQUE" : chequeType).list();
+		return getSession().createNativeQuery(queryString.toString()).setParameter("asOnDate", asOnDate)
+				.setParameter(BRANCH_ID, branchId).setParameter("type", isBlank(chequeType) ? "CHEQUE" : chequeType).list();
 	}
 
 	private List<Object[]> fetchBanAccountNoAndBankNameForApprovedPayment(final Long fundId,
@@ -287,12 +287,12 @@ public class BankAccountService extends PersistenceService<Bankaccount, Long> {
 		if (fundId != null && fundId > 0)
 			queryString.append(" and bankaccount.fundid=:fundId");
 
-		final Query query = getSession().createSQLQuery(queryString.toString())
+		final Query query = getSession().createNativeQuery(queryString.toString())
 				.setParameter("vhType", STANDARD_VOUCHER_TYPE_PAYMENT)
 				.setParameterList("vhName", Arrays.asList(PAYMENTVOUCHER_NAME_REMITTANCE, PAYMENTVOUCHER_NAME_SALARY))
-				.setInteger(BRANCH_ID, branchId);
+				.setParameter(BRANCH_ID, branchId);
 		if (fundId != null && fundId > 0)
-			query.setLong("fundId", fundId);
+			query.setParameter("fundId", fundId);
 
 		return query.list();
 	}
@@ -308,7 +308,7 @@ public class BankAccountService extends PersistenceService<Bankaccount, Long> {
 						.append(" where bankaccount.branchid=bankbranch.id and bankbranch.bankid=bank.id");
 		String query1 = query.toString();
 		query1 = StringUtils.replace(query1, "tenantId", tenantId);
-		return getSession().createSQLQuery(query1).list();
+		return getSession().createNativeQuery(query1).list();
 	}
 
 }

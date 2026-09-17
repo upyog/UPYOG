@@ -49,8 +49,8 @@
       "stepName":"Enter Booking Number",
       "locatorStrategy":"NAME",
       "locatorValue":"bookingNo",
-      "action":"TYPE",
-      "inputValue":"${selected.applicationNumber}"
+      "action": "TYPE_FROM_STORE",
+      "inputValue": "APPLICATION_NO"
     },
 
     {
@@ -90,7 +90,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"comments",
       "action":"TYPE",
-      "inputValue":"Verified"
+      "inputValue":"${comment.verify}"
     },
 
     {
@@ -123,7 +123,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"comments",
       "action":"TYPE",
-      "inputValue":"Executed"
+      "inputValue":"${comment.execute}"
     },
 
     {

@@ -1,0 +1,20 @@
+{
+  "moduleName": "PROPERTY_TAX",
+
+  "citizen": {
+    "mobile": "7906413996",
+    "otp": "123456",
+    "city": "City A"
+  },
+
+  "employee": {
+    "username": "PTEMP",
+    "password": "eGov@123",
+    "city": "City A"
+  },
+
+  "vendor": {
+    "mobile": "",
+    "otp": ""
+  }
+}

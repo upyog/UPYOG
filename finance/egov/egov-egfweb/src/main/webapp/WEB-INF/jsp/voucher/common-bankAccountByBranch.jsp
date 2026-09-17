@@ -44,4 +44,9 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
-  --%>{ "ResultSet": { "Result":[<s:iterator var="s" value="accNumList" status="status">{"Text":"<s:property	value="%{chartofaccounts.glcode+'--'+accountnumber}" />","Value":"<s:property value="%{id}" />"}<s:if test="!#status.last">,</s:if></s:iterator>] } }
+  --%><%--
+  LTS Migration Fix (Struts 7 OGNL): read #s.chartofaccounts.glcode, #s.accountnumber
+  and #s.id as separate properties. Concatenation inside one %{...} fails silently
+  when a nested association is missing, which left Account Number as Choose only
+  on Bank Entries Not In Bank Book and Manual BRS.
+  --%>{ "ResultSet": { "Result":[<s:iterator var="s" value="accNumList" status="status">{"Text":"<s:property value="%{#s.chartofaccounts.glcode}" />--<s:property value="%{#s.accountnumber}" />","Value":"<s:property value="%{#s.id}" />"}<s:if test="!#status.last">,</s:if></s:iterator>] } }

@@ -215,6 +215,8 @@ import useUpdateSurvey from "./surveys/useSurveyUpdate";
 import useNOCDetails from "./noc/useNOCDetails";
 import useNOCInbox from "./noc/useInbox";
 import useNOCSearchApplication from "./noc/useSearchApplications";
+import useFireNOCSearch from "./noc/useFireNOCSearch";
+import useFireNOCAPI from "./noc/useFireNOCAPI";
 
 import WSSearchMdmsTypes from "./ws/WSSearchMdmsTypes";
 import usewsTenants from "./ws/useTenants";
@@ -362,10 +364,7 @@ import { useCustomBackNavigation } from "./UseCustomBackNavigationProps";
 import useESTCreateAPI from "./estate/useESTCreateAPI";
 import useESTAssetSearch from "./estate/useESTAssetSearch";
 import useESTApplicationSearch from "./estate/useESTApplicationSearch";
-import useTenantsEST from "./estate/useTenants";
-import useESTAllotAsset from "./estate/useESTAllotAsset";
 import useESTAssetsAllotment from "./estate/useESTAssetsAllotment";
-import useESTBillSearch from "./estate/useESTBillSearch";
 import { useNDCSearchApplication, useNDCSearchApplicationEmployee } from "./ndc/useNDCSearchApplication";
 import useNDCDocumentSearch from "./ndc/useNDCDocumentSearch";
 import useNDCInbox from "./ndc/useInbox";
@@ -373,6 +372,16 @@ import useNDCDoc from "./ndc/useNDCDoc";
 
 import useModuleBasePath from "./useModuleBasePath";
 import useCustomNavigate from "./useCustomNavigate";
+
+import useGCCreateAPI from "./gc/useGCCreateAPI";
+import useGCSearch from "./gc/useGCSearch";
+import useGCApplicationDetail from "./gc/useGCApplicationDetail";
+import useTenantsGC from "./gc/useTenants";
+import useGCDocumentSearch from "./gc/useGCDocumentSearch";
+import useGCApplicationAction from "./gc/useGCApplicationAction";
+import useFireNocDetails from "./noc/useFireNocDetails";
+import useFireNocApplicationAction from "./noc/useFireNocApplicationAction";
+
 const pgr = {
   useComplaintDetails,
   useComplaintsList,
@@ -596,6 +605,10 @@ const noc = {
   useNOCApplicationActions,
   useInbox: useNOCInbox,
   useNOCSearchApplication,
+  useFireNOCSearch,
+  useFireNOCAPI,
+  useFireNocDetails,
+  useFireNocApplicationAction
 };
 
 const challangeneration = {
@@ -739,10 +752,7 @@ const estate = {
   useESTCreateAPI,
   useESTAssetSearch,
   useESTApplicationSearch,
-  useESTAllotAsset,
   useESTAssetsAllotment,
-  useESTBillSearch,
-  useTenants: useTenantsEST
 };
 const ndc = {
   useInbox: useNDCInbox,
@@ -751,6 +761,15 @@ const ndc = {
   useNDCDocumentSearch,
   useNDCDoc
 };
+
+const gc = {
+  useGCCreateAPI,
+  useGCSearch,
+  useGCApplicationDetail,
+  useTenants: useTenantsGC,
+  useGCDocumentSearch,
+  useGCApplicationAction,
+}
 
 const Hooks = {
   useSessionStorage,
@@ -826,6 +845,7 @@ const Hooks = {
   cm,
   wt,
   vendor,
+  gc,
   estate,
   useEnabledMDMS,
   useSelectedMDMS,
@@ -838,5 +858,6 @@ const Hooks = {
   useCustomNavigate,
   useModuleBasePath
 };
+
 
 export default Hooks;

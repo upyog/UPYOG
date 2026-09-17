@@ -52,8 +52,8 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
@@ -80,7 +80,7 @@ public class AccountdetailkeyHibernateDAO  {
     }
 
     public List<Accountdetailkey> findAll() {
-        return (List<Accountdetailkey>) getCurrentSession().createCriteria(Accountdetailkey.class).list();
+        return getCurrentSession().createQuery("from Accountdetailkey", Accountdetailkey.class).list();
     }
 
     @PersistenceContext

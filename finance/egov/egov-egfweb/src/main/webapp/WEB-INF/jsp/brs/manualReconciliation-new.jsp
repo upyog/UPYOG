@@ -114,18 +114,22 @@
 					<td class="greybox"></td>
 					<td class="greybox"><s:text name="bank" /> <span
 						class="greybox"><span class="mandatory1">*</span></span></td>
+					<%-- LTS Migration Fix (Struts 7 / WildFly 40): no leading slash on
+					     url so contextPath + url does not become //voucher/... --%>
 					<egov:ajaxdropdown id="branchId" fields="['Text','Value']"
 						dropdownId="branchId"
-						url="/voucher/common-ajaxLoadBankBranchesByBank.action" />
+						url="voucher/common-ajaxLoadBankBranchesByBank.action" />
 					<td class="greybox"><s:select name="reconcileBean.bankId" id="bankId"
 							list="dropdownData.bankList" listKey="id" listValue="name"
 							headerKey="" headerValue="%{getText('lbl.choose.options')}"
 							onchange="populatebranch(this);" value="%{bankId}" /></td>
 					<td class="greybox"><s:text name="bankbranch" /> <span
 						class="greybox"><span class="mandatory1">*</span></span></td>
+					<%-- LTS Migration Fix (Struts 7 / WildFly 40): Branch → Account AJAX
+					     URL without a leading slash. --%>
 					<egov:ajaxdropdown id="accountId" fields="['Text','Value']"
 						dropdownId="accountId"
-						url="/voucher/common-ajaxLoadBankAccountsByBranch.action" />
+						url="voucher/common-ajaxLoadBankAccountsByBranch.action" />
 					<td class="greybox"><s:select name="reconcileBean.branchId" id="branchId"
 							list="dropdownData.branchList" listKey="id" listValue="name"
 							headerKey="" headerValue="%{getText('lbl.choose.options')}"

@@ -48,84 +48,84 @@
 package org.egov.model.voucher;
 
 import org.egov.utils.FinancialConstants;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 
 public class CommonBean {
-    @SafeHtml
+    @SanitizeHtml
     private String chequeInHand;
-    @SafeHtml
+    @SanitizeHtml
     private String cashInHand;
-    @SafeHtml
+    @SanitizeHtml
     private String bankBranchId;
-    @SafeHtml
+    @SanitizeHtml
     private String accountNumberId;
-    @SafeHtml
+    @SanitizeHtml
     private String fromBankAccountId;
-    @SafeHtml
+    @SanitizeHtml
     private String chequeNumber;
-    @SafeHtml
+    @SanitizeHtml
     private String chequeDate;
-    @SafeHtml
+    @SanitizeHtml
     private String fromBankId;
-    @SafeHtml
+    @SanitizeHtml
     private String bankId;
-    @SafeHtml
+    @SanitizeHtml
     private String toBankId;
     private BigDecimal amount;
-    @SafeHtml
+    @SanitizeHtml
     private String boundaryLevel;
-    @SafeHtml
+    @SanitizeHtml
     private String accnumnar;
     private BigDecimal availableBalance;
-    @SafeHtml
+    @SanitizeHtml
     private String fromBankBranchId;
-    @SafeHtml
+    @SanitizeHtml
     private String toBankBranchId;
-    @SafeHtml
+    @SanitizeHtml
     private String result;
-    @SafeHtml
+    @SanitizeHtml
     private String mode;
     private BigDecimal accountBalance;
-    @SafeHtml
+    @SanitizeHtml
     private String saveMode;
-    @SafeHtml
+    @SanitizeHtml
     private String modeOfCollection;
-    @SafeHtml
+    @SanitizeHtml
     private String fromBankBalance;
-    @SafeHtml
+    @SanitizeHtml
     private String toBankBalance;
-    @SafeHtml
+    @SanitizeHtml
     private String modeOfPayment;
-    @SafeHtml
+    @SanitizeHtml
     private String documentNumber;
     private Date documentDate;
     private Long documentId;
-    @SafeHtml
+    @SanitizeHtml
     private String linkReferenceNumber;
-    @SafeHtml
+    @SanitizeHtml
     private String paidTo;
-    @SafeHtml
+    @SanitizeHtml
     private String billNumber;
     private Integer subledgerType;
     private Date billDate;
     private Integer billSubType;
-    @SafeHtml
+    @SanitizeHtml
     private String inwardSerialNumber;
-    @SafeHtml
+    @SanitizeHtml
     private String partyBillNumber;
     private Date partyBillDate;
     private Map checkListValuesMap;
-    @SafeHtml
+    @SanitizeHtml
     private String functionName;
     private Integer functionId;
-    @SafeHtml
+    @SanitizeHtml
     private String payto;
     private Long stateId;
-    @SafeHtml
+    @SanitizeHtml
     private String budgetReappNo;
 
     public Long getRecoveryId() {

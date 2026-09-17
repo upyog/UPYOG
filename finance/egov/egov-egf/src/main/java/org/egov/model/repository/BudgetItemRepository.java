@@ -90,8 +90,6 @@ public interface BudgetItemRepository extends JpaRepository<BudgetItem, Long> {
     boolean existsFunctionWiseBudget(@Param("functionId") Long functionId, @Param("budgetRegisterId") Long budgetRegisterId);
 
 
-    BudgetItem findById(Long id);
-
     BudgetItem findByFunctionAndBudgetGroup(CFunction function, String budgetGroup);
 
     @Query("select count(b) > 0 from BudgetItem b " +

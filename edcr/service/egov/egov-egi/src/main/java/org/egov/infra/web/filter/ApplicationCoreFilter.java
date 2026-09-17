@@ -62,15 +62,15 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-//import javax.annotation.Resource;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+//import jakarta.annotation.Resource;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.CityPreferences;
@@ -85,6 +85,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 
+/**
+ * Core servlet filter that initializes per-request thread-local context (city, user, locale).
+ *
+ * <p>Updated for Spring 5.3 proxy compatibility: injects {@link ICityService}
+ * instead of the concrete {@code CityService} to avoid proxy type mismatches
+ * when Spring creates JDK or CGLIB proxies for the service bean.</p>
+ */
 public class ApplicationCoreFilter implements Filter {
 
     @Autowired

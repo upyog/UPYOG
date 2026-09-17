@@ -1,0 +1,423 @@
+import { mergeRouteConfig } from "@nudmcdgnpm/digit-ui-react-components";
+
+/** Offline fallback when Estate.SearchApplicationConfig MDMS is empty. */
+const LOCAL_SEARCH_CONFIG = {
+  header: "EST_SEARCH_APPLICATIONS",
+  sessionKey: "EST_ASSIGN_ASSETS",
+  assignRoute: "assignassets",
+  emptyState: {
+    actionLabel: "EST_CREATE_ASSET",
+  },
+  table: {
+    showAssetRef: true,
+    actions: "allot",
+  },
+  paginationDefaults: {
+    offset: 0,
+    limit: 10,
+    sortBy: "createdDate",
+    sortOrder: "DESC",
+  },
+  routeConfig: {
+    key: "SearchFilters",
+    payloadKey: "Filters",
+    searchLayout: "inline",
+    actionButton: {
+      text: {
+        create: "ES_COMMON_SEARCH",
+        clear: "ES_COMMON_CLEAR_ALL",
+      },
+    },
+    form: [
+      {
+        order: 1,
+        key: "EST_ESTATE_NUMBER",
+        field: {
+          code: "EST_ESTATE_NUMBER",
+          name: "estateNo",
+          type: "text",
+          placeholder: "EST_ENTER_ESTATE_NUMBER",
+        },
+        validation: { required: false },
+      },
+      {
+        order: 2,
+        key: "EST_LOCALITY",
+        apiFieldName: "localityCode",
+        field: {
+          code: "EST_LOCALITY",
+          name: "locality",
+          type: "dropdown",
+          placeholder: "EST_SELECT_LOCALITY",
+          dataSource: {
+            type: "MDMS",
+            moduleName: "egov-location",
+            masterName: "TenantBoundary",
+            customiztionRequired: true,
+          },
+          optionCardStyles: { overflowY: "auto", maxHeight: "300px" },
+        },
+        validation: { required: false },
+      },
+      {
+        order: 3,
+        key: "EST_ASSET_TYPE",
+        apiFieldName: "assetParentCategory",
+        field: {
+          code: "EST_ASSET_TYPE",
+          name: "assetType",
+          type: "dropdown",
+          placeholder: "EST_SELECT_ASSET_TYPE",
+          dataSource: {
+            type: "MDMS",
+            moduleName: "ASSET",
+            masterName: "assetParentCategory",
+            filter: {
+              assetClassification: "IMMOVABLE",
+            },
+          },
+        },
+        validation: { required: false },
+      },
+    ],
+  },
+};
+
+/** Offline fallback when Estate.CitizenMyApplicationsConfig MDMS is empty. */
+const LOCAL_CITIZEN_MY_APPLICATIONS_CONFIG = {
+  header: "EST_MY_APPLICATIONS",
+  resultMode: "cards",
+  autoSearch: true,
+  emptyState: {
+    message: "EST_NO_APPLICATION_FOUND_MSG",
+    showCreateAction: false,
+  },
+  paginationDefaults: {
+    offset: 0,
+    limit: 50,
+    sortBy: "createdDate",
+    sortOrder: "DESC",
+  },
+  filters: [
+    {
+      order: 1,
+      key: "EST_ALLOTMENT_NUMBER",
+      name: "allotmentNo",
+      type: "text",
+      placeholder: "EST_ENTER_ALLOTMENT_NUMBER",
+    },
+    {
+      order: 2,
+      key: "PT_COMMON_TABLE_COL_STATUS_LABEL",
+      name: "paymentStatus",
+      type: "dropdown",
+      placeholder: "EST_SELECT_STATUS",
+      dataSource: {
+        type: "MDMS",
+        moduleName: "Estate",
+        masterName: "PaymentStatus",
+      },
+    },
+  ],
+  actionButton: {
+    search: "ES_COMMON_SEARCH",
+    clear: "ES_COMMON_CLEAR_ALL",
+  },
+};
+
+/** Offline fallback when Estate.PaymentHistoryConfig MDMS is empty. */
+const LOCAL_PAYMENT_HISTORY_CONFIG = {
+  header: "EST_PAYMENT_HISTORY",
+  emptyState: {
+    message: "EST_NO_APPLICATION_FOUND_MSG",
+  },
+  businessService: "est-services",
+  resultMode: "cards",
+  autoSearch: true,
+  filters: [
+    {
+      order: 1,
+      key: "EST_ALLOTMENT_NUMBER",
+      name: "allotmentNo",
+      type: "text",
+      placeholder: "EST_ENTER_ALLOTMENT_NUMBER",
+    },
+    {
+      order: 2,
+      key: "CS_COMMON_FROM_DATE",
+      name: "fromDate",
+      type: "date",
+    },
+    {
+      order: 3,
+      key: "CS_COMMON_TO_DATE",
+      name: "toDate",
+      type: "date",
+    },
+  ],
+  resultFields: [
+    {
+      order: 1,
+      key: "EST_ALLOTMENT_NUMBER",
+      accessor: "allotmentNo",
+    },
+    {
+      order: 2,
+      key: "EST_ESTATE_NUMBER",
+      accessor: "assetNo",
+    },
+    {
+      order: 3,
+      key: "EST_BUILDING_NAME",
+      accessor: "buildingName",
+    },
+    {
+      order: 4,
+      key: "EST_BILLING_CYCLE",
+      accessor: "billingCycle",
+    },
+    {
+      order: 5,
+      key: "CS_PAYMENT_AMOUNT_PAID_WITHOUT_SYMBOL",
+      accessor: "amountPaid",
+      format: "currency",
+      emphasize: true,
+    },
+    {
+      order: 6,
+      key: "PT_RECEIPT_DATE_LABEL",
+      accessor: "receiptDateLabel",
+    },
+    {
+      order: 7,
+      key: "PT_RECEIPT_NO_LABEL",
+      accessor: "receiptNumber",
+    },
+    {
+      order: 8,
+      key: "CS_COMMON_PAYMENT_MODE",
+      accessor: "paymentMode",
+    },
+  ],
+  actionButton: {
+    search: "ES_COMMON_SEARCH",
+    clear: "ES_COMMON_CLEAR_ALL",
+  },
+};
+
+export const pickFirstMdmsEntry = (data) => {
+  if (!data) return null;
+  if (Array.isArray(data)) return data[0] || null;
+  if (Array.isArray(data.body)) return data.body[0] || null;
+  return data;
+};
+
+/**
+ * Build search page config from MDMS Estate.SearchApplicationConfig,
+ * falling back to local defaults when MDMS is empty.
+ * Accepts legacy `searchApplicationConfig` key for older MDMS payloads.
+ */
+export const resolveSearchApplicationConfig = (mdmsData, override = {}) => {
+  const entry = pickFirstMdmsEntry(mdmsData);
+  const local = { ...LOCAL_SEARCH_CONFIG, ...override };
+
+  if (!entry) return local;
+
+  const mdmsRoute =
+    entry.routeConfig ||
+    (Array.isArray(entry.form) ? entry : null);
+
+  const routeConfig = mdmsRoute
+    ? mergeRouteConfig(mdmsRoute, local.routeConfig || {})
+    : local.routeConfig;
+
+  return {
+    header: entry.header || local.header,
+    sessionKey: entry.sessionKey || local.sessionKey,
+    assignRoute: entry.assignRoute || local.assignRoute,
+    emptyState: { ...local.emptyState, ...(entry.emptyState || {}) },
+    table: { ...local.table, ...(entry.table || {}) },
+    paginationDefaults: {
+      ...local.paginationDefaults,
+      ...(entry.paginationDefaults || {}),
+    },
+    routeConfig,
+  };
+};
+
+/**
+ * Build citizen my-applications config from MDMS Estate.CitizenMyApplicationsConfig.
+ */
+export const resolveCitizenMyApplicationsConfig = (mdmsData) => {
+  const entry = pickFirstMdmsEntry(mdmsData);
+  if (!entry || typeof entry !== "object") return LOCAL_CITIZEN_MY_APPLICATIONS_CONFIG;
+  return {
+    ...LOCAL_CITIZEN_MY_APPLICATIONS_CONFIG,
+    ...entry,
+    emptyState: {
+      ...LOCAL_CITIZEN_MY_APPLICATIONS_CONFIG.emptyState,
+      ...(entry.emptyState || {}),
+    },
+    paginationDefaults: {
+      ...LOCAL_CITIZEN_MY_APPLICATIONS_CONFIG.paginationDefaults,
+      ...(entry.paginationDefaults || {}),
+    },
+    filters:
+      Array.isArray(entry.filters) && entry.filters.length > 0
+        ? entry.filters
+        : LOCAL_CITIZEN_MY_APPLICATIONS_CONFIG.filters,
+    actionButton: {
+      ...LOCAL_CITIZEN_MY_APPLICATIONS_CONFIG.actionButton,
+      ...(entry.actionButton || {}),
+    },
+  };
+};
+
+/**
+ * Build payment-history config from MDMS Estate.PaymentHistoryConfig,
+ * falling back to local defaults when MDMS is empty.
+ * filters / resultFields always use local definitions until remote MDMS
+ * is refreshed with allotment-number search and field order.
+ */
+export const resolvePaymentHistoryConfig = (mdmsData) => {
+  const entry = pickFirstMdmsEntry(mdmsData);
+  if (!entry || typeof entry !== "object") return LOCAL_PAYMENT_HISTORY_CONFIG;
+  return {
+    ...LOCAL_PAYMENT_HISTORY_CONFIG,
+    ...entry,
+    emptyState: {
+      ...LOCAL_PAYMENT_HISTORY_CONFIG.emptyState,
+      ...(entry.emptyState || {}),
+    },
+    filters: LOCAL_PAYMENT_HISTORY_CONFIG.filters,
+    resultFields: LOCAL_PAYMENT_HISTORY_CONFIG.resultFields,
+    actionButton: {
+      ...LOCAL_PAYMENT_HISTORY_CONFIG.actionButton,
+      ...(entry.actionButton || {}),
+    },
+  };
+};
+
+/** Resolve locality label from asset row (MDMS codes, objects, or plain strings). */
+export const resolveLocalityDisplay = (asset, t = (k) => k) => {
+  if (!asset) return "";
+  const locObj = asset.locality || asset.address?.locality;
+  if (typeof locObj === "string") {
+    if (locObj.startsWith("TENANT_") || locObj.startsWith("EST_")) return t(locObj);
+    return locObj;
+  }
+  if (locObj && typeof locObj === "object") {
+    if (locObj.i18nKey) return t(locObj.i18nKey);
+    return locObj.label || locObj.name || locObj.code || "";
+  }
+  const candidates = [asset.localityName, asset.localityCode, asset.serviceType];
+  const raw = candidates.find((v) => v !== undefined && v !== null && v !== "");
+  if (!raw) return "";
+  if (typeof raw === "string" && (raw.startsWith("TENANT_") || raw.startsWith("EST_"))) {
+    return t(raw);
+  }
+  return raw;
+};
+
+const pickValue = (...values) =>
+  values.find((v) => v !== null && v !== undefined && v !== "");
+
+/** Parse additionalDetails whether API returns object or JSON string. */
+export const parseAdditionalDetails = (raw) => {
+  if (!raw) return {};
+  if (typeof raw === "object" && !Array.isArray(raw)) return raw;
+  if (typeof raw === "string") {
+    try {
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+        ? parsed
+        : {};
+    } catch (e) {
+      return {};
+    }
+  }
+  return {};
+};
+
+/**
+ * fileReferenceNumber lives in Allotment.additionalDetails (not eofficeFileNo).
+ * UI form field name is always fileReferenceNumber.
+ */
+export const getFileReferenceNumber = (allotment = {}, asset = {}) => {
+  const allotmentDetails = parseAdditionalDetails(allotment.additionalDetails);
+  const assetDetails = parseAdditionalDetails(asset.additionalDetails);
+  return (
+    pickValue(
+      allotmentDetails.fileReferenceNumber,
+      allotment.fileReferenceNumber,
+      // Legacy uppercase key — read-only fallback for older records.
+      allotmentDetails.FILE_REFERENCE_NUMBER,
+      assetDetails.fileReferenceNumber,
+      assetDetails.FILE_REFERENCE_NUMBER
+    ) || ""
+  );
+};
+
+export const getAllotmentNo = (item = {}) =>
+  String(item?.allotmentNo ?? item?.additionalDetails?.allotmentNo ?? "").trim();
+
+/** Prefer explicit asset; fall back to nested Allotments[].asset from _search. */
+export const resolveAllotmentAsset = (asset = {}, allotment = {}) => {
+  if (asset && Object.keys(asset).length > 0) return asset;
+  return allotment?.asset || allotment?.Asset || {};
+};
+
+/** Shared asset summary fields for assign-assets form, check page, and ack PDF. */
+export const buildAllotmentAssetDisplay = (asset = {}, allotment = {}, t = (k) => k) => {
+  const resolvedAsset = resolveAllotmentAsset(asset, allotment);
+  const localityLabel = resolveLocalityDisplay(resolvedAsset, t);
+  const floor = pickValue(
+    allotment.buildingFloor,
+    resolvedAsset.buildingFloor,
+    resolvedAsset.floor
+  );
+  // Prefer Asset.refAssetNo from asset/_search (employee application-details).
+  const assetRefNumber = pickValue(
+    resolvedAsset.refAssetNo,
+    resolvedAsset.assetRef,
+    allotment.assetReferenceNo,
+    allotment.assetRefNumber
+  );
+  const fileReferenceNumber = getFileReferenceNumber(allotment, resolvedAsset);
+
+  return {
+    allotmentNo: pickValue(
+      allotment.allotmentNo,
+      allotment.additionalDetails?.allotmentNo
+    ),
+    // Estate number (form EST_ESTATE_NUMBER) — distinct from asset-services assetNo.
+    estateNo: pickValue(
+      allotment.estateNo,
+      resolvedAsset.estateNo,
+      // Legacy allotments stored estate identity under assetNo.
+      allotment.assetNo
+    ),
+    // Actual asset API number when present (not used as estate number label).
+    assetNo: pickValue(resolvedAsset.assetNo, allotment.assetNo),
+    assetRefNumber,
+    // Aliases used by MDMS / registration / allotment form field names.
+    assetReferenceNo: assetRefNumber,
+    refAssetNo: assetRefNumber,
+    assetRef: assetRefNumber,
+    buildingName: pickValue(
+      allotment.buildingName,
+      resolvedAsset.buildingName,
+      resolvedAsset.assetName
+    ),
+    localityDisplay: localityLabel,
+    locality: localityLabel || resolvedAsset.locality || "",
+    totalFloorArea: pickValue(
+      allotment.totalFloorArea,
+      resolvedAsset.totalFloorArea
+    ),
+    buildingFloor: floor,
+    floor,
+    assetRate: pickValue(allotment.rentRate, allotment.rate, resolvedAsset.rate),
+    fileReferenceNumber,
+  };
+};

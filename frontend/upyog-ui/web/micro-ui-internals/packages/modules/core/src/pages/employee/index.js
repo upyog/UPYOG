@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Navigate, Route, Routes, useLocation,  } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation, } from "react-router-dom";
 import { AppModules } from "../../components/AppModules";
 import ErrorBoundary from "../../components/ErrorBoundaries";
 import TopBarSideBar from "../../components/TopBarSideBar";
@@ -38,7 +38,6 @@ const EmployeeApp = ({
   const showLanguageChange = location?.pathname?.includes("language-selection");
   const isUserProfile = userScreensExempted.some((url) => location?.pathname?.includes(url));
   useEffect(() => {
-    console.log("isMobile", window.Digit.Utils.browser.isMobile(),window.innerWidth)
     Digit.UserService.setType("employee");
   }, []);
   sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
@@ -81,12 +80,12 @@ const EmployeeApp = ({
                     <source
                       id="backgroung-login"
                       media="(min-width: 950px)"
-                      srcset="https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+(1920x1080).jpg"
+                      srcSet="https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+(1920x1080).jpg"
                       style={{ position: "absolute", height: "100%", width: "100%" }}
                     />
                     <source
                       media="(min-width: 250px)"
-                      srcset="https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%28500x900%29.jpg"
+                      srcSet="https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%28500x900%29.jpg"
                     />
                     <img
                       src="https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+(1920x1080).jpg"
@@ -150,14 +149,14 @@ const EmployeeApp = ({
                 <div className="employee-app-wrapper">
                   <ErrorBoundary initData={initData}>
                     <Routes>
-                    <Route path="dashboard" element={
+                      <Route path="dashboard" element={
                         <PrivateRoute>
                           <EmployeeDashboard />
                         </PrivateRoute>
                       } />
-                    <Route path="*" element= {<AppModules stateCode={stateCode} userType="employee" modules={modules} appTenants={appTenants} />} />  
-                    
-                    </Routes> 
+                      <Route path="*" element={<AppModules stateCode={stateCode} userType="employee" modules={modules} appTenants={appTenants} />} />
+
+                    </Routes>
                   </ErrorBoundary>
                 </div>
                 <div style={{ width: "100%", position: "fixed", bottom: 0, backgroundColor: "white", textAlign: "center" }}>

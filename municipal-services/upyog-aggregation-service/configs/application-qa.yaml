@@ -1,0 +1,177 @@
+# =============================================================================
+# UPYOG Aggregation Service - QA / niuatt Environment Configuration
+#
+# This profile targets the UPYOG DevOps "qa" environment
+# (config-as-code/helm/environments/qa.yaml — domain niuatt.niua.in).
+# Service hostnames refer to in-cluster Kubernetes services in the
+# `egov` namespace; Redis runs in the `backbone` namespace.
+# =============================================================================
+
+server:
+  port: 8080
+  # The UPYOG API gateway routes /upyog-aggregation-service/** to this pod
+  # WITHOUT stripping the prefix, so all routes are served under it.
+  contextPath: /upyog-aggregation-service
+  readTimeout: 30s
+  writeTimeout: 30s
+  idleTimeout: 120s
+  shutdownTimeout: 15s
+  maxRequestBodyMB: 5
+  enableCompression: true
+
+redis:
+  host: redis.backbone
+  port: 6379
+  password: ""
+  db: 0
+  poolSize: 20
+  minIdleConns: 5
+  dialTimeout: 5s
+  readTimeout: 3s
+  writeTimeout: 3s
+  enabled: true
+
+auth:
+  # Authentication is enforced by the UPYOG API gateway (zuul/gateway) in
+  # front of this service. DIGIT access tokens are opaque UUIDs — not JWTs —
+  # so in-service JWT validation must stay disabled here. The bearer token
+  # is still captured (TokenPassthrough middleware) and forwarded to every
+  # backend call, both as the Authorization header and RequestInfo.authToken.
+  enabled: false
+  jwksUrl: ""
+  issuer: ""
+  audience: ""
+  tokenExpLeeway: 60
+  publicPaths:
+    - /health
+    - /readiness
+    - /liveness
+    - /metrics
+    - /upyog-aggregation-service/health
+    - /upyog-aggregation-service/readiness
+    - /upyog-aggregation-service/liveness
+    - /upyog-aggregation-service/metrics
+
+observability:
+  metrics:
+    enabled: true
+    path: /metrics
+    namespace: upyog
+    subsystem: aggregation
+  tracing:
+    # The niuatt cluster runs Jaeger via the operator (UDP agent for Java
+    # services); no OTLP gRPC collector endpoint is guaranteed. Keep OTel
+    # tracing disabled until one is available, then set the endpoint below.
+    enabled: false
+    endpoint: ""
+    serviceName: upyog-aggregation-service
+    samplingRate: 0.25
+
+providers:
+  defaultTimeout: 10s
+  maxRetries: 2
+  cacheTTL: 5m
+  recentApplicationsSinceDays: 7
+  completedServiceStatuses:
+    - "APPROVE"
+    - "APPROVED"
+    - "AUTO_APPROVED"
+    - "CANCELED"
+    - "CANCELLED"
+    - "CLOSEDAFTERREJECTION"
+    - "CLOSEDAFTERRESOLUTION"
+    - "CLOSURE"
+    - "COMPLETED"
+    - "CONNECTION_ACTIVATED"
+    - "DELIVERED"
+    - "DISCONNECTION_EXECUTED"
+    - "DISPOSED"
+    - "EXPIRED"
+    - "MANUALEXPIRED"
+    - "REFUNDAPPROVED"
+    - "REGISTRATIONCOMPLETED"
+    - "REJECTED"
+    - "REQUESTCOMPLETED"
+    - "REQUESTREJECTED"
+    - "RESOLVED"
+    - "REVOCATED"
+    - "TREE_PRUNING_SERVICE_COMPLETED"
+    - "VOIDED"
+    - "COMPLETE_REQUEST"
+    - "COMPLETEREQUEST"
+    - "SETTLED"
+  custom:
+    quick-summary:
+      timeout: 15s
+      cacheTTL: 2m
+      retries: 3
+    notifications:
+      timeout: 5s
+      cacheTTL: 1m
+      retries: 1
+    new-applications:
+      timeout: 8s
+      cacheTTL: 1m
+      retries: 2
+
+rateLimit:
+  enabled: true
+  requestsPerSecond: 200
+  burst: 400
+
+backend:
+  services:
+    inbox:
+      baseUrl: "http://inbox.egov:8080"
+      timeout: 10s
+      maxConns: 50
+      circuitThreshold: 5
+      circuitTimeout: 30s
+    billing:
+      baseUrl: "http://billing-service.egov:8080"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s
+    property:
+      baseUrl: "http://property-services.egov:8080"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s
+    workflow:
+      baseUrl: "http://egov-workflow-v2.egov:8080"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s
+    tl-services:
+      baseUrl: "http://tl-services.egov:8080"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s
+    user-event:
+      baseUrl: "http://egov-user-event.egov:8080"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s
+    advertisement:
+      baseUrl: "http://adv-services.egov:8080"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s
+    draft:
+      baseUrl: "http://upyog-draft-service.egov:8080"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s
+    chb:
+      baseUrl: "http://chb-services.egov:8080"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s

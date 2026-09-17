@@ -1,9 +1,9 @@
 FROM node:22.0.0-alpine AS build
 RUN apk update && apk upgrade
-RUN apk add --no-cache git>2.30.0
+RUN apk add --no-cache "git>2.30.0"
 ARG WORK_DIR
 WORKDIR /app
-ENV NODE_OPTIONS "--max-old-space-size=8168"
+ENV NODE_OPTIONS "--max-old-space-size=1792"
 ENV GENERATE_SOURCEMAP "false"
 
 

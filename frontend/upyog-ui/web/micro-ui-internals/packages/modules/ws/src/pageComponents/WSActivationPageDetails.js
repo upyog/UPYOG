@@ -32,7 +32,8 @@ const WSActivationPageDetails = ({
   });
   const [isErrors, setIsErrors] = useState(false);
   useEffect(() => {
-    const data = activationDetails.map(e => {
+    const data = activationDetails.map((e, index) => {
+      if (!e.key) e.key = Date.now() + index; // Ensure each item has a key
       return e;
     });
     onSelect(config?.key, data);
@@ -64,7 +65,7 @@ const WSActivationPageDetails = ({
     filters
   };
   return <React.Fragment>
-            {activationDetails.map((activationDetail, index) => <ConnectionDetails key={activationDetail.key} index={index} activationDetail={activationDetail} {...commonProps} />)}
+            {activationDetails.map((activationDetail, index) => <ConnectionDetails key={activationDetail?.key || `ws-activation-detail-${index}`} index={index} activationDetail={activationDetail} {...commonProps} />)}
         </React.Fragment>;
 };
 const ConnectionDetails = _props => {

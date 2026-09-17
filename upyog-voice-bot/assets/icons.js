@@ -31,6 +31,38 @@ const ICONS = {
     avatar: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="8" r="4"/>
         <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+    </svg>`,
+
+    // End session icon (phone call off / end session)
+    endCall: `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-1.32.66-2.49 1.54-3.47 2.61-.22.24-.54.37-.87.37-.34 0-.66-.13-.9-.37L.37 15.11c-.48-.48-.48-1.28 0-1.76C3.59 10.12 7.58 8 12 8s8.41 2.12 11.63 5.35c.48.48.48 1.28 0 1.76l-1.23 1.23c-.24.24-.56.37-.9.37-.33 0-.65-.13-.87-.37-.98-1.07-2.15-1.95-3.47-2.61-.33-.16-.56-.51-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/>
+    </svg>`,
+
+    // Square stop icon — shown in send button while bot is speaking to stop voice & end session
+    stop: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <rect x="5" y="5" width="14" height="14" rx="2.5"/>
+    </svg>`,
+
+    // Pause icon — shown in mic button while bot is speaking to interrupt & ask next question
+    pause: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <rect x="5" y="4" width="4.5" height="16" rx="1.5"/>
+        <rect x="14.5" y="4" width="4.5" height="16" rx="1.5"/>
+    </svg>`,
+
+    // End session icon (phone call off / end session)
+    endCall: `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-1.32.66-2.49 1.54-3.47 2.61-.22.24-.54.37-.87.37-.34 0-.66-.13-.9-.37L.37 15.11c-.48-.48-.48-1.28 0-1.76C3.59 10.12 7.58 8 12 8s8.41 2.12 11.63 5.35c.48.48.48 1.28 0 1.76l-1.23 1.23c-.24.24-.56.37-.9.37-.33 0-.65-.13-.87-.37-.98-1.07-2.15-1.95-3.47-2.61-.33-.16-.56-.51-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/>
+    </svg>`,
+
+    // Square stop icon — shown in send button while bot is speaking to stop voice & end session
+    stop: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <rect x="5" y="5" width="14" height="14" rx="2.5"/>
+    </svg>`,
+
+    // Pause icon — shown in mic button while bot is speaking to interrupt & ask next question
+    pause: `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <rect x="5" y="4" width="4.5" height="16" rx="1.5"/>
+        <rect x="14.5" y="4" width="4.5" height="16" rx="1.5"/>
     </svg>`
 };
 
@@ -38,24 +70,32 @@ const ICONS = {
 // so every DOM element already exists by the time these lines execute.
 
 // Inject animated background divs (ambient blobs, grain overlay)
-document.getElementById('bg-layers').innerHTML =
-    BG_LAYERS.map(cls => `<div class="${cls}"></div>`).join('');
+if (document.getElementById('bg-layers')) {
+    document.getElementById('bg-layers').innerHTML =
+        BG_LAYERS.map(cls => `<div class="${cls}"></div>`).join('');
+}
 
-// Render EN / HI / Auto language toggle buttons in the header
-document.getElementById('lang-toggle').innerHTML =
-    LANG_OPTIONS.map(opt =>
-        `<button class="lang-btn${opt.active ? ' active' : ''}" data-lang="${opt.value}">${opt.label}</button>`
-    ).join('');
+// Render EN / HI / Auto language toggle buttons in the header if container exists
+if (document.getElementById('lang-toggle')) {
+    document.getElementById('lang-toggle').innerHTML =
+        LANG_OPTIONS.map(opt =>
+            `<button class="lang-btn${opt.active ? ' active' : ''}" data-lang="${opt.value}">${opt.label}</button>`
+        ).join('');
+}
 
 // Populate the language preference dropdown in the settings panel
-document.getElementById('lang-preference').innerHTML =
-    LANG_PREFERENCES.map(opt =>
-        `<option value="${opt.value}">${opt.label}</option>`
-    ).join('');
+if (document.getElementById('lang-preference')) {
+    document.getElementById('lang-preference').innerHTML =
+        LANG_PREFERENCES.map(opt =>
+            `<option value="${opt.value}">${opt.label}</option>`
+        ).join('');
+}
 
 // Inject SVG icons into their placeholder elements
-document.getElementById('speech-preview-icon').innerHTML = ICONS.mic;
-document.getElementById('logo-icon').innerHTML = ICONS.logo;
-document.getElementById('settings-toggle').innerHTML = ICONS.settings;
-document.getElementById('session-toggle-btn').innerHTML = ICONS.mic;
-document.getElementById('send-text-btn').innerHTML = ICONS.send;
+if (document.getElementById('speech-preview-icon')) document.getElementById('speech-preview-icon').innerHTML = ICONS.mic;
+if (document.getElementById('logo-icon')) document.getElementById('logo-icon').innerHTML = ICONS.logo;
+if (document.getElementById('settings-toggle')) document.getElementById('settings-toggle').innerHTML = ICONS.settings;
+if (document.getElementById('session-toggle-btn')) document.getElementById('session-toggle-btn').innerHTML = ICONS.mic;
+if (document.getElementById('send-text-btn')) document.getElementById('send-text-btn').innerHTML = ICONS.send;
+if (document.getElementById('stop-voice-icon')) document.getElementById('stop-voice-icon').innerHTML = ICONS.stop;
+if (document.getElementById('interrupt-mic-icon')) document.getElementById('interrupt-mic-icon').innerHTML = ICONS.pause;

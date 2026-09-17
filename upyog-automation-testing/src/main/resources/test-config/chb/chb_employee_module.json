@@ -53,8 +53,8 @@
       "stepName": "Enter Booking Number",
       "locatorStrategy": "NAME",
       "locatorValue": "bookingNo",
-      "action": "TYPE",
-      "inputValue":  "${selected.applicationNumber}",
+      "action": "TYPE_FROM_STORE",
+      "inputValue": "APPLICATION_NO",
       "dynamicSleep": 1000
     },
     {

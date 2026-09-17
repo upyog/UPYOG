@@ -59,14 +59,14 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -95,8 +95,8 @@ public class PersonalInformationHibernateDAO implements PersonalInformationDAO
 
 	public PersonalInformation getPersonalInformationByID(Integer idPersonalInformation)
 	{
-		Query qry = getCurrentSession().createQuery("from PersonalInformation P where P.idPersonalInformation =:idPersonalInformation ");
-		qry.setInteger("idPersonalInformation", idPersonalInformation);
+		org.hibernate.query.Query qry = getCurrentSession().createQuery("from PersonalInformation P where P.idPersonalInformation =:idPersonalInformation ");
+		qry.setParameter("idPersonalInformation", idPersonalInformation);
 		return (PersonalInformation)qry.uniqueResult();
 	}
 
@@ -104,9 +104,9 @@ public class PersonalInformationHibernateDAO implements PersonalInformationDAO
 	{
 		try
 		{
-			Query qry = getCurrentSession().createQuery("from PersonalInformation P order by P.idPersonalInformation");
+			org.hibernate.query.Query qry = getCurrentSession().createQuery("from PersonalInformation P order by P.idPersonalInformation");
 			Map<Integer,String> retMap = new LinkedHashMap<Integer,String>();
-			for (Iterator iter = qry.iterate(); iter.hasNext();)
+			for (Iterator iter = qry.list().iterator(); iter.hasNext();)
 			{
 				PersonalInformation egpimsPersonalInformation = (PersonalInformation)iter.next();
 				retMap.put(egpimsPersonalInformation.getIdPersonalInformation(),egpimsPersonalInformation.getEmployeeCode());
@@ -122,16 +122,16 @@ public class PersonalInformationHibernateDAO implements PersonalInformationDAO
 
 	public PersonalInformation getPersonalInformationByUserId(Long userId) 
 	{
-		Query qry = getCurrentSession().createQuery("from PersonalInformation P where P.userMaster.id =:userId ");
-		qry.setLong("userId", userId);
+		org.hibernate.query.Query qry = getCurrentSession().createQuery("from PersonalInformation P where P.userMaster.id =:userId ");
+		qry.setParameter("userId", userId);
 		return (PersonalInformation)qry.uniqueResult();
 		
 	}
 	
 	public void deleteLangKnownForEmp(PersonalInformation personalInformation)
 	{
-		Query qry = getCurrentSession().createSQLQuery("delete  from EGEIS_LANG_KNOWN B where B.id = :id ");
-		qry.setInteger("id", personalInformation.getIdPersonalInformation());
+		org.hibernate.query.Query qry = getCurrentSession().createNativeQuery("delete  from EGEIS_LANG_KNOWN B where B.id = :id ");
+		qry.setParameter("id", personalInformation.getIdPersonalInformation());
 		
 	}
 	public List getListOfPersonalInformationByEmpIdsList(List empIdsList)
@@ -139,7 +139,7 @@ public class PersonalInformationHibernateDAO implements PersonalInformationDAO
 		List <PersonalInformation> list = null;
 		if(empIdsList!=null && !empIdsList.isEmpty())
 		{			
-			Query qry = getCurrentSession().createQuery("from PersonalInformation per where per.idPersonalInformation in (:empIdsList) order by per.employeeCode");
+			org.hibernate.query.Query qry = getCurrentSession().createQuery("from PersonalInformation per where per.idPersonalInformation in (:empIdsList) order by per.employeeCode");
 			if(empIdsList.size() <= 1000)
 			{
 				qry.setParameterList("empIdsList", empIdsList);		
@@ -180,16 +180,16 @@ public class PersonalInformationHibernateDAO implements PersonalInformationDAO
 		Date currDate =new Date();
 		if(!bndryObjList.isEmpty())
 		{
-			Query qry = getCurrentSession().createQuery("select J FROM JurisdictionValues JurVal, Jurisdiction J  where " +
+			org.hibernate.query.Query qry = getCurrentSession().createQuery("select J FROM JurisdictionValues JurVal, Jurisdiction J  where " +
 						"JurVal.boundary in (:bndryObjList) and JurVal.userJurLevel.id=J.id and JurVal.isHistory='N' and J.user.active=true and "+
 						"(" +
 						"(JurVal.toDate IS NULL and JurVal.fromDate <= :currDate) " +
 						"OR " +
 						"(JurVal.fromDate <= :currDate and JurVal.toDate >= :currDate)) ");
 			qry.setParameterList("bndryObjList",bndryObjList);
-			qry.setDate(STR_CURRDATE,currDate);
+			qry.setParameter(STR_CURRDATE,currDate);
 
-			for (Iterator iter = qry.iterate(); iter.hasNext();)
+			for (Iterator iter = qry.list().iterator(); iter.hasNext();)
 			{
 				Jurisdiction jurObj = (Jurisdiction)iter.next();
 				//userObjList.add(jurObj.getUser());
@@ -219,16 +219,16 @@ public class PersonalInformationHibernateDAO implements PersonalInformationDAO
 		Date currDate =new Date();
 		if(!bndryObjList.isEmpty())
 		{
-			Query qry = getCurrentSession().createQuery("select J FROM JurisdictionValues JurVal, Jurisdiction J  where " +
+			org.hibernate.query.Query qry = getCurrentSession().createQuery("select J FROM JurisdictionValues JurVal, Jurisdiction J  where " +
 						"JurVal.boundary in (:bndryObjList) and JurVal.userJurLevel.id=J.id and JurVal.isHistory='N' and J.user.active=true and "+
 						"(" +
 						"(JurVal.toDate IS NULL and JurVal.fromDate <= :currDate) " +
 						"OR " +
 						"(JurVal.fromDate <= :currDate and JurVal.toDate >= :currDate)) ");
 			qry.setParameterList("bndryObjList",bndryObjList);
-			qry.setDate(STR_CURRDATE,currDate);
+			qry.setParameter(STR_CURRDATE,currDate);
 
-			for (Iterator iter = qry.iterate(); iter.hasNext();)
+			for (Iterator iter = qry.list().iterator(); iter.hasNext();)
 			{
 				Jurisdiction jurObj = (Jurisdiction)iter.next();
 				//userObjList.add(jurObj.getUser());
@@ -250,7 +250,7 @@ public class PersonalInformationHibernateDAO implements PersonalInformationDAO
 	public PersonalInformation getEmployee(Integer deptId, Integer designationId, Long boundaryId)throws TooManyValuesException, NoSuchObjectException
 	{
 		PersonalInformation personalInformation= null;
-		Query qry1=null;
+		org.hibernate.query.Query qry1=null;
 		try
 		{
 			List userList = new ArrayList();
@@ -277,10 +277,10 @@ public class PersonalInformationHibernateDAO implements PersonalInformationDAO
 						"(A.toDate IS NULL and A.fromDate <= :currDate) " +
 						"OR " +
 						"(A.fromDate <= :currDate and A.toDate >= :currDate))");  
-		qry1.setInteger("deptId",deptId);
-		qry1.setInteger("designationId", designationId);
+		qry1.setParameter("deptId",deptId);
+		qry1.setParameter("designationId", designationId);
 		qry1.setParameterList("userObjList",userList);
-		qry1.setDate(STR_CURRDATE,currDate);
+		qry1.setParameter(STR_CURRDATE,currDate);
 		empList = qry1.list();
 		if(empList.size()==0){
 				qry1 = getCurrentSession().createQuery("select P from PersonalInformation P, Assignment A where" +
@@ -292,10 +292,10 @@ public class PersonalInformationHibernateDAO implements PersonalInformationDAO
 						"(A.toDate IS NULL and A.fromDate <= :currDate) " +
 						"OR " +
 						"(A.fromDate <= :currDate and A.toDate >= :currDate))");  
-				qry1.setInteger("deptId",deptId);
-				qry1.setInteger("designationId", designationId);
+				qry1.setParameter("deptId",deptId);
+				qry1.setParameter("designationId", designationId);
 				qry1.setParameterList("userObjList",userList);
-				qry1.setDate(STR_CURRDATE,currDate);
+				qry1.setParameter(STR_CURRDATE,currDate);
 				empList = qry1.list();
 				if(empList.isEmpty()){
 					throw new NoSuchObjectException("personalinformation.object.notFound");
@@ -343,7 +343,7 @@ public class PersonalInformationHibernateDAO implements PersonalInformationDAO
 	public PersonalInformation getEmployeeByFunctionary(Long deptId, Long designationId, Long boundaryId,Integer functionaryId)throws TooManyValuesException, NoSuchObjectException
 	{
 		PersonalInformation personalInformation= null;
-		Query qry1=null;
+		org.hibernate.query.Query qry1=null;
 		try
 		{
 			List userList = new ArrayList();
@@ -372,11 +372,11 @@ public class PersonalInformationHibernateDAO implements PersonalInformationDAO
 						"(A.toDate IS NULL and A.fromDate <= :currDate) " +
 						"OR " +
 						"(A.fromDate <= :currDate and A.toDate >= :currDate))");  
-		qry1.setLong("deptId",deptId);
-		qry1.setLong("designationId", designationId);
-		qry1.setInteger("functionaryId", functionaryId);
+		qry1.setParameter("deptId",deptId);
+		qry1.setParameter("designationId", designationId);
+		qry1.setParameter("functionaryId", functionaryId);
 		qry1.setParameterList("userObjList",userList);
-		qry1.setDate(STR_CURRDATE,currDate);
+		qry1.setParameter(STR_CURRDATE,currDate);
 		empList = qry1.list();
 		if(empList.size()==0){
 			qry1 = getCurrentSession().createQuery("select P from PersonalInformation P, Assignment A where" +
@@ -389,11 +389,11 @@ public class PersonalInformationHibernateDAO implements PersonalInformationDAO
 					"(A.toDate IS NULL and A.fromDate <= :currDate) " +
 					"OR " +
 					"(A.fromDate <= :currDate and A.toDate >= :currDate))");  
-			qry1.setLong("deptId",deptId);
-			qry1.setLong("designationId", designationId);
-			qry1.setInteger("functionaryId", functionaryId);
+			qry1.setParameter("deptId",deptId);
+			qry1.setParameter("designationId", designationId);
+			qry1.setParameter("functionaryId", functionaryId);
 			qry1.setParameterList("userObjList",userList);
-			qry1.setDate(STR_CURRDATE,currDate);
+			qry1.setParameter(STR_CURRDATE,currDate);
 			empList = qry1.list();
 			if(empList.size() == 0){
 				throw new NoSuchObjectException("personalinformation.object.notFound");
@@ -446,17 +446,17 @@ public class PersonalInformationHibernateDAO implements PersonalInformationDAO
 		 PersonalInformation tempAssignedEemployee = null;
 		 LOGGER.info("Inside temp assigned emp API-----------");
 		 List<PersonalInformation> listEmployee = null;
-		 Query qry = getCurrentSession().createQuery("select A.employee from Assignment A where " +
+		 org.hibernate.query.Query qry = getCurrentSession().createQuery("select A.employee from Assignment A where " +
 								"A.deptId.id=:deptId and " +
 								"A.desigId.designationId=:desigId and " +
 								"A.functionary.id=:functionaryId and " +
 								"A.isPrimary = 'N' and " +
 								"((A.toDate IS NULL and A.fromDate <= :onDate) OR " +
 								"(A.fromDate <= :onDate and A.toDate >= :onDate))");
-		qry.setInteger("deptId",deptId);
-		qry.setInteger("desigId", desigId);
-		qry.setInteger("functionaryId", functionaryId);
-		qry.setDate("onDate",onDate);
+		qry.setParameter("deptId",deptId);
+		qry.setParameter("desigId", desigId);
+		qry.setParameter("functionaryId", functionaryId);
+		qry.setParameter("onDate",onDate);
 		LOGGER.info("Inside temp assigned emp API query-----------"+qry.getQueryString());
 		listEmployee = qry.list();
 		if(listEmployee.size()==0){
@@ -478,8 +478,8 @@ public class PersonalInformationHibernateDAO implements PersonalInformationDAO
 			{
 				
 				
-					Query qry = getCurrentSession().createQuery("from Designation dm where dm.deptId =:deptId");
-					qry.setInteger("deptId",deptId);
+					org.hibernate.query.Query qry = getCurrentSession().createQuery("from Designation dm where dm.deptId =:deptId");
+					qry.setParameter("deptId",deptId);
 					LOGGER.info("QUERY TEST-----------"+qry.getQueryString());
 					desgMstr = qry.list();
 				
@@ -502,8 +502,8 @@ public class PersonalInformationHibernateDAO implements PersonalInformationDAO
 		 List<User> userList = null; 
 			
 			try {					
-						Query qry = getCurrentSession().createQuery("from User u where u.id in (select ev.userMaster.id from EmployeeView ev where ev.desigId.designationId =:desgId) and u.active=true ");
-						qry.setInteger("desgId",desgId);					
+						org.hibernate.query.Query qry = getCurrentSession().createQuery("from User u where u.id in (select ev.userMaster.id from EmployeeView ev where ev.desigId.designationId =:desgId) and u.active=true ");
+						qry.setParameter("desgId",desgId);					
 						userList = qry.list();
 						
 					
@@ -519,9 +519,9 @@ public class PersonalInformationHibernateDAO implements PersonalInformationDAO
 	 public List<PersonalInformation> getAllEmpByGrade(Integer gradeId)
 	 {
 		 List<PersonalInformation> listEmployee = null;
-		 Query qry = getCurrentSession().createQuery("select distinct A.employee from Assignment A where A.gradeId.id=:gradeId ");
+		 org.hibernate.query.Query qry = getCurrentSession().createQuery("select distinct A.employee from Assignment A where A.gradeId.id=:gradeId ");
 
-		qry.setInteger("gradeId",gradeId);
+		qry.setParameter("gradeId",gradeId);
 		listEmployee = qry.list();
 		return listEmployee;
 	 }
@@ -531,7 +531,7 @@ public class PersonalInformationHibernateDAO implements PersonalInformationDAO
 	  */	 
 	 public  List getListOfUsersNotMappedToEmp()
 	 {
-		 Query qry = getCurrentSession().createQuery("from User UI where id not in("+
+		 org.hibernate.query.Query qry = getCurrentSession().createQuery("from User UI where id not in("+
 			"select userMaster.id from PersonalInformation  where  userMaster.id is not null) order by UI.userName");
 		 
 		 return qry.list();

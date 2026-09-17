@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.egov.infra.microservice.models.RequestInfo;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 
 /**
@@ -33,32 +33,32 @@ public class AccountEntityRequest {
 
     @NotNull
     @JsonProperty("tenantId")
-    @SafeHtml
+    @SanitizeHtml
     private String tenantId;
 
     @NotNull
     @JsonProperty("accountDetailType")
-    @SafeHtml
+    @SanitizeHtml
     private Integer accountDetailType;
 
     @NotNull
     @JsonProperty("name")
-    @SafeHtml
+    @SanitizeHtml
     private String name;
 
     @NotNull
     @JsonProperty("code")
-    @SafeHtml
+    @SanitizeHtml
     private String code;
 
     @NotNull
     @JsonProperty("narration")
-    @SafeHtml
+    @SanitizeHtml
     private String narration;
 
     @NotNull
     @JsonProperty("isActive")
-    @SafeHtml
+    @SanitizeHtml
     private Boolean isActive;
 
 

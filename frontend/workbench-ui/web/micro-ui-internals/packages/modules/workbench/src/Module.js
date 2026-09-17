@@ -1,5 +1,6 @@
 import { Loader } from "@upyog/workbench-ui-react-components";
 import React from "react";
+import "./styles/index.scss";
 import EmployeeApp from "./pages/employee";
 import { CustomisedHooks } from "./hooks";
 import { UICustomizations } from "./configs/UICustomizations";

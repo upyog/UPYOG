@@ -83,7 +83,7 @@
       "locatorStrategy": "XPATH",
       "locatorValue": "//input[@name='AssetName']",
       "action": "TYPE",
-      "inputValue": "MacBook",
+      "inputValue": "${asset.name}",
       "dynamicSleep": 1000
     },
     {
@@ -99,7 +99,7 @@
       "locatorStrategy": "XPATH",
       "locatorValue": "//input[contains(@placeholder,'Enter Manually')]",
       "action": "TYPE",
-      "inputValue": "28.590086610421395,77.2256714858255",
+      "inputValue": "${coordinates.value}",
       "dynamicSleep": 1000
     },
     {
@@ -107,7 +107,7 @@
       "locatorStrategy": "LABEL",
       "locatorValue": "Plot No.",
       "action": "TYPE_BY_LABEL",
-      "inputValue": "21",
+      "inputValue": "${house.number}",
       "dynamicSleep": 500
     },
     {
@@ -115,7 +115,7 @@
       "locatorStrategy": "LABEL",
       "locatorValue": "Address Line 1",
       "action": "TYPE_BY_LABEL",
-      "inputValue": "Test Address Line 1",
+      "inputValue": "${address.line1}",
       "dynamicSleep": 500
     },
     {
@@ -123,7 +123,7 @@
       "locatorStrategy": "LABEL",
       "locatorValue": "Address Line 2",
       "action": "TYPE_BY_LABEL",
-      "inputValue": "Test Address Line 2",
+      "inputValue": "${address.line2}",
       "dynamicSleep": 500
     },
     {
@@ -131,7 +131,7 @@
       "locatorStrategy": "LABEL",
       "locatorValue": "Pincode",
       "action": "TYPE_BY_LABEL",
-      "inputValue": "143001",
+      "inputValue": "${address.pincode}",
       "dynamicSleep": 500
     },
     {
@@ -155,7 +155,7 @@
       "locatorStrategy": "LABEL",
       "locatorValue": "Purchase Order Number",
       "action": "TYPE_BY_LABEL",
-      "inputValue": "PO123",
+      "inputValue": "${purchase.number}",
       "dynamicSleep": 500
     },
     {
@@ -171,7 +171,7 @@
       "locatorStrategy": "LABEL",
       "locatorValue": "Purchase Cost",
       "action": "TYPE_BY_LABEL",
-      "inputValue": "400000",
+      "inputValue": "${purchase.cost}",
       "dynamicSleep": 500
     },
     {
@@ -179,7 +179,7 @@
       "locatorStrategy": "LABEL",
       "locatorValue": "Acquisition Cost",
       "action": "TYPE_BY_LABEL",
-      "inputValue": "400000",
+      "inputValue": "${purchase.cost}",
       "dynamicSleep": 500
     },
     {
@@ -187,7 +187,7 @@
       "locatorStrategy": "LABEL",
       "locatorValue": "Market value as per the Evaluation",
       "action": "TYPE_BY_LABEL",
-      "inputValue": "300000",
+      "inputValue": "${market.value}",
       "dynamicSleep": 500
     },
     {
@@ -195,7 +195,7 @@
       "locatorStrategy": "LABEL",
       "locatorValue": "Market value as per the Circle rate",
       "action": "TYPE_BY_LABEL",
-      "inputValue": "300000",
+      "inputValue": "${market.value}",
       "dynamicSleep": 500
     },
     {
@@ -210,7 +210,7 @@
       "locatorStrategy": "LABEL",
       "locatorValue": "Invoice Number",
       "action": "TYPE_BY_LABEL",
-      "inputValue": "INV123",
+      "inputValue": "${invoice.number}",
       "dynamicSleep": 500
     },
     {
@@ -218,7 +218,7 @@
       "locatorStrategy": "LABEL",
       "locatorValue": "Life of Asset",
       "action": "TYPE_BY_LABEL",
-      "inputValue": "10",
+      "inputValue": "${random.number}",
       "dynamicSleep": 500
     },
     {
@@ -264,10 +264,18 @@
     {
       "stepName": "Submit Asset Application",
       "locatorStrategy": "XPATH",
-      "locatorValue": "//button[.//header[text()='Submit']]",
+      "locatorValue": "//button[.//header[text()='Submit Grievance'] or .//header[text()='Submit']]",
       "action": "CLICK_JS",
       "inputValue": null,
       "dynamicSleep": 5000
+    },
+    {
+      "stepName":"Capture Application Number",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'Asset Unique ID') or contains(text(),'Application Number')]/following-sibling::*[1]",
+      "action":"CAPTURE_TEXT",
+      "inputValue":"APPLICATION_NO",
+      "dynamicSleep":3000
     }
 
   ]

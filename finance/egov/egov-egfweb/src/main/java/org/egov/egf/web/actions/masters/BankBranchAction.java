@@ -52,7 +52,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -65,6 +65,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.gson.GsonBuilder;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @ParentPackage("egov")
 public class BankBranchAction extends JQueryGridActionSupport {
@@ -121,7 +123,7 @@ public class BankBranchAction extends JQueryGridActionSupport {
 	}
 
 	private void populateBankBranchDetail(final Bankbranch bankBranch) {
-		final HttpServletRequest request = ServletActionContext.getRequest();
+		final HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 		bankBranch.setLastModifiedDate(new Date());
 		bankBranch.setLastModifiedBy(ApplicationThreadLocals.getUserId());
 		bankBranch.setBranchcode(request.getParameter("branchcode"));
@@ -174,7 +176,7 @@ public class BankBranchAction extends JQueryGridActionSupport {
 
 	private boolean checkIsUniqueMicr() {
 		boolean isUnique = true;
-		final String branchMICR = ServletActionContext.getRequest().getParameter("branchMICR");
+		final String branchMICR = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getParameter("branchMICR");
 		if (branchMICR != null && id != null)
 			isUnique = null == bankBranchService.find("from Bankbranch where branchMICR=? and id!=?", branchMICR, id);
 		else if (branchMICR != null)

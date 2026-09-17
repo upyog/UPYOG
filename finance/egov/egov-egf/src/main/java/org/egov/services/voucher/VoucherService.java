@@ -131,11 +131,9 @@ import org.egov.services.bills.EgBillRegisterService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.ObjectNotFoundException;
-import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -147,6 +145,13 @@ import com.exilant.eGov.src.common.EGovernCommon;
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 import com.exilant.exility.common.TaskFailedException;
 
+/**
+ * LTS Migration Notes:
+ * 1. [Hibernate 6 Criteria Removal] Migrated findVouchersByCriteria() from removed org.hibernate.Criteria
+ *    and Restrictions API to dynamic type-safe HQL queries.
+ * 2. [Transactional Encapsulation] Added cancelVoucherHeaderById() and cancelVoucherHeaderByRefVhId()
+ *    annotated with @Transactional and StandardBasicTypes for Hibernate 6 executeUpdate() compliance.
+ */
 @Service
 public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
 	private static final Logger LOGGER = Logger.getLogger(VoucherService.class);
@@ -1545,36 +1550,47 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
         }
 
     public VoucherResponse findVouchersByCriteria(VoucherSearchCriteria criteria, VoucherSearchRequest voucherSearchRequest) {
-        Criteria createCriteria = persistenceService.getSession().createCriteria(CVoucherHeader.class, "voucherHeader")
-                .createAlias("voucherHeader.fundId", "fund")
-                .createAlias("voucherHeader.vouchermis", "voucherMis");
+        final StringBuilder query = new StringBuilder("select voucherHeader from CVoucherHeader voucherHeader ")
+                .append("join voucherHeader.fundId fund join voucherHeader.vouchermis voucherMis where 1=1");
+        final Map<String, Object> params = new HashMap<>();
         if(criteria.getIds() != null && !criteria.getIds().isEmpty()){
-            createCriteria.add(Restrictions.in("voucherHeader.id", criteria.getIds()));
+            query.append(" and voucherHeader.id in (:ids)");
+            params.put("ids", criteria.getIds());
         }
         if(criteria.getVoucherNumbers() != null && !criteria.getVoucherNumbers().isEmpty()){
-            createCriteria.add(Restrictions.in("voucherHeader.voucherNumber", criteria.getVoucherNumbers()));
+            query.append(" and voucherHeader.voucherNumber in (:voucherNumbers)");
+            params.put("voucherNumbers", criteria.getVoucherNumbers());
         }
         if(criteria.getVoucherFromDate() != null && criteria.getVoucherFromDate() != 0){
-            createCriteria.add(Restrictions.ge("voucherHeader.voucherDate", criteria.getVoucherFromDate()));
+            query.append(" and voucherHeader.voucherDate >= :voucherFromDate");
+            params.put("voucherFromDate", criteria.getVoucherFromDate());
         }
         if(criteria.getVoucherToDate() != null && criteria.getVoucherToDate() != 0){
-            createCriteria.add(Restrictions.le("voucherHeader.voucherDate", criteria.getVoucherToDate()));
+            query.append(" and voucherHeader.voucherDate <= :voucherToDate");
+            params.put("voucherToDate", criteria.getVoucherToDate());
         }
         if(StringUtils.isNotBlank(criteria.getVoucherName())){
-            createCriteria.add(Restrictions.eq("voucherHeader.name", criteria.getVoucherName()));
+            query.append(" and voucherHeader.name = :voucherName");
+            params.put("voucherName", criteria.getVoucherName());
         }
         if(StringUtils.isNotBlank(criteria.getVoucherType())){
-            createCriteria.add(Restrictions.eq("voucherHeader.type", criteria.getVoucherType()));
+            query.append(" and voucherHeader.type = :voucherType");
+            params.put("voucherType", criteria.getVoucherType());
         }
         if(StringUtils.isNotBlank(criteria.getFundId())){
-            createCriteria.add(Restrictions.eq("fund.code", criteria.getFundId()));
+            query.append(" and fund.code = :fundId");
+            params.put("fundId", criteria.getFundId());
         }
         if(StringUtils.isNotBlank(criteria.getDeptCode())){
-            createCriteria.add(Restrictions.eq("voucherMis.departmentcode", criteria.getDeptCode()));
+            query.append(" and voucherMis.departmentcode = :deptCode");
+            params.put("deptCode", criteria.getDeptCode());
         }
-        
-        createCriteria.setMaxResults(criteria.getPageSize() != null && criteria.getPageSize() != 0 ? criteria.getPageSize() : DEAFULT_PAGE_SIZE);
-        List<CVoucherHeader> list = createCriteria.list();
+
+        final Query<CVoucherHeader> createQuery = persistenceService.getSession()
+                .createQuery(query.toString(), CVoucherHeader.class);
+        params.entrySet().forEach(entry -> createQuery.setParameter(entry.getKey(), entry.getValue()));
+        createQuery.setMaxResults(criteria.getPageSize() != null && criteria.getPageSize() != 0 ? criteria.getPageSize() : DEAFULT_PAGE_SIZE);
+        List<CVoucherHeader> list = createQuery.list();
         List<Voucher> returnList = new ArrayList<>();
         for(CVoucherHeader header : list){
             Voucher voucher = new Voucher(header);
@@ -1585,5 +1601,33 @@ public class VoucherService extends PersistenceService<CVoucherHeader, Long> {
         voucherResponse.setVouchers(returnList);
         return voucherResponse;
     }
+
+	/**
+	 * Hibernate 6 requires an active transaction for {@code executeUpdate()}.
+	 * Same cancel fields/status as CancelVoucherAction historically used.
+	 */
+	@Transactional
+	public int cancelVoucherHeaderById(final Long vhId, final Integer modifiedBy, final Date modifiedDate) {
+		final Query query = getSession().createQuery(
+				"Update CVoucherHeader vh set vh.status=:vhStatus, vh.lastModifiedBy=:modifiedby, vh.lastModifiedDate=:modifiedDate where vh.id=:vhId");
+		query.setParameter("modifiedby", modifiedBy, org.hibernate.type.StandardBasicTypes.INTEGER)
+				.setParameter("modifiedDate", modifiedDate, org.hibernate.type.StandardBasicTypes.TIMESTAMP)
+				.setParameter("vhId", vhId, org.hibernate.type.StandardBasicTypes.LONG)
+				.setParameter("vhStatus", FinancialConstants.CANCELLEDVOUCHERSTATUS,
+						org.hibernate.type.StandardBasicTypes.INTEGER);
+		return query.executeUpdate();
+	}
+
+	@Transactional
+	public int cancelVoucherHeaderByRefVhId(final Long vhId, final Integer modifiedBy, final Date modifiedDate) {
+		final Query query = getSession().createQuery(
+				"Update CVoucherHeader vh set vh.status=:vhStatus, vh.lastModifiedBy=:modifiedby, vh.lastModifiedDate=:modifiedDate where vh.refvhId=:vhId");
+		query.setParameter("vhId", vhId, org.hibernate.type.StandardBasicTypes.LONG)
+				.setParameter("modifiedby", modifiedBy, org.hibernate.type.StandardBasicTypes.INTEGER)
+				.setParameter("modifiedDate", modifiedDate, org.hibernate.type.StandardBasicTypes.DATE)
+				.setParameter("vhStatus", FinancialConstants.CANCELLEDVOUCHERSTATUS,
+						org.hibernate.type.StandardBasicTypes.INTEGER);
+		return query.executeUpdate();
+	}
 
 }

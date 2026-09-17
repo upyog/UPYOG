@@ -48,21 +48,39 @@
 
 package org.egov.infra.persistence.validator;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
-import org.hibernate.Criteria;
+// Old imports for the broken hibernate
+//import org.hibernate.Criteria;
+//import org.hibernate.criterion.Conjunction;
+//import org.hibernate.criterion.Projections;
+//import org.hibernate.criterion.Restrictions;
 import org.hibernate.Session;
-import org.hibernate.criterion.Conjunction;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Jakarta Bean Validation {@link ConstraintValidator} implementation for {@link CompositeUnique}.
+ * <p>
+ * Validates that a combination of multiple entity fields is unique in the database
+ * using Jakarta Persistence {@link CriteriaBuilder}. Supports case-insensitive string matching,
+ * null handling, and update-time self-ID exclusion.
+ * </p>
+ *
+ * @author eGovernments Foundation
+ * @see CompositeUnique
+ */
 public class CompositeUniqueCheckValidator implements ConstraintValidator<CompositeUnique, Object> {
 
     private static final Logger LOG = LogManager.getLogger(CompositeUniqueCheckValidator.class);
@@ -72,11 +90,23 @@ public class CompositeUniqueCheckValidator implements ConstraintValidator<Compos
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     * Initializes the validator with the metadata from the {@link CompositeUnique} annotation.
+     *
+     * @param unique the annotation instance
+     */
     @Override
     public void initialize(final CompositeUnique unique) {
         this.unique = unique;
     }
 
+    /**
+     * Validates that the composite field combination of the target object is unique.
+     *
+     * @param arg0 the target entity instance being validated
+     * @param constraintValidatorContext the validation execution context
+     * @return {@code true} if the composite field values are unique, {@code false} otherwise
+     */
     @Override
     public boolean isValid(final Object arg0, final ConstraintValidatorContext constraintValidatorContext) {
         try {
@@ -95,21 +125,47 @@ public class CompositeUniqueCheckValidator implements ConstraintValidator<Compos
     }
 
     private boolean checkCompositeUniqueKey(final Object arg0, final Number id) throws IllegalAccessException {
-        final Criteria criteria = entityManager.unwrap(Session.class)
-                .createCriteria(unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass()).setReadOnly(true);
-        final Conjunction conjunction = Restrictions.conjunction();
+        // Get the correct entity target class based on whether it's a superclass
+        Class<?> targetClass = unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass();
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        // Build a query selecting only the ID property to match Projections.id()
+        CriteriaQuery<Object> criteriaQuery = criteriaBuilder.createQuery();
+        // In JPA Criteria API, 'Root' represents the FROM clause entity (like 'FROM Entity e' in SQL).
+        // It provides the base object from which entity properties (root.get(fieldName)) are referenced.
+        Root<?> root = criteriaQuery.from(targetClass);
+
+        // Select the ID attribute of the entity dynamically
+        criteriaQuery.select(root.get(unique.id()));
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        // Replicate the conjunction/Restrictions logic
         for (final String fieldName : unique.fields()) {
             final Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
-            if (unique.checkForNull() && fieldValue == null)
-                conjunction.add(Restrictions.isNull(fieldName));
-            else if (fieldValue instanceof String)
-                conjunction.add(Restrictions.eq(fieldName, fieldValue).ignoreCase());
-            else
-                conjunction.add(Restrictions.eq(fieldName, fieldValue));
-        }
-        if (id != null)
-            conjunction.add(Restrictions.ne(unique.id(), id));
-        return criteria.add(conjunction).setProjection(Projections.id()).setMaxResults(1).uniqueResult() == null;
-    }
 
+            if (unique.checkForNull() && fieldValue == null) {
+                predicates.add(criteriaBuilder.isNull(root.get(fieldName)));
+            } else if (fieldValue instanceof String) {
+                // Replicates Restrictions.eq(fieldName, fieldValue).ignoreCase()
+                predicates.add(criteriaBuilder.equal(criteriaBuilder.lower(root.get(fieldName)), ((String) fieldValue).toLowerCase()));
+            } else {
+                predicates.add(criteriaBuilder.equal(root.get(fieldName), fieldValue));
+            }
+        }
+
+        // Exclude current record if updating (Restrictions.ne)
+        if (id != null) {
+            predicates.add(criteriaBuilder.notEqual(root.get(unique.id()), id));
+        }
+
+        criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[0])));
+
+        // Execute the query using MaxResults(1)
+        List<?> result = entityManager.createQuery(criteriaQuery)
+                .setMaxResults(1)
+                .getResultList();
+
+        return result.isEmpty(); // Replaces "== null" uniqueResult check
+    }
 }

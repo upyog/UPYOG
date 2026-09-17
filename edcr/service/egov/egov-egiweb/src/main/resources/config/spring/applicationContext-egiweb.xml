@@ -24,10 +24,11 @@
     <!-- web.xml must use DelegatingFilterProxy for these so @Autowired / @Resource are applied -->
     <bean id="applicationCoreFilter" class="org.egov.infra.web.filter.ApplicationCoreFilter"/>
     <bean id="applicationTenantResolverFilter" class="org.egov.infra.web.filter.ApplicationTenantResolverFilter"/>
-
-    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-        <property name="maxUploadSize" value="${max.file.upload.size}"/>
-        <property name="maxInMemorySize" value="${max.file.inmemory.size}"/>
-    </bean>
-
+ 
+    <!--
+        Note on multipartResolver (Spring 6 Upgrade):
+        CommonsMultipartResolver was removed in Spring 6. StandardServletMultipartResolver is now configured
+        in egiweb-servlet.xml (DispatcherServlet context) and upload limits (max 100MB, threshold 1MB)
+        are configured in web.xml under <multipart-config>.
+    -->
 </beans>

@@ -73,7 +73,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -236,7 +236,7 @@ public class GeneralLedgerReport {
         try {
 
 		try {
-			pstmt = persistenceService.getSession().createSQLQuery(entry.getKey());
+			pstmt = persistenceService.getSession().createNativeQuery(entry.getKey());
 			persistenceService.populateQueryWithParams(pstmt, entry.getValue());
 		} catch (final HibernateException e) {
 			LOGGER.error("Exception in creating statement:" + pstmt, e);
@@ -282,8 +282,8 @@ public class GeneralLedgerReport {
                     LOGGER.info("openingBalance--------------->" + openingBalance);
 
                 final String sqlString = "select name as \"glname\" from chartofaccounts where glcode=?";
-                pstmt = persistenceService.getSession().createSQLQuery(sqlString);
-                pstmt.setString(0, glCode1);
+                pstmt = persistenceService.getSession().createNativeQuery(sqlString);
+                pstmt.setParameter(1, glCode1);
                 final List res = pstmt.list();
                 String aName = "";
                 if (res != null && !res.isEmpty())
@@ -370,8 +370,9 @@ public class GeneralLedgerReport {
                         if (element[13].toString() != null)
                             fundName = element[13].toString();
                         final String sqlString1 = "select name as \"glname\" from chartofaccounts where glcode=?";
-                        pstmt = persistenceService.getSession().createSQLQuery(sqlString1);
-                        pstmt.setString(0, code);
+                        pstmt = persistenceService.getSession().createNativeQuery(sqlString1);
+                        // Hibernate 6: ordinal parameters are 1-based.
+                        pstmt.setParameter(1, code);
                         final List res = pstmt.list();
                         String aName = "";
                         if (res != null)
@@ -1000,7 +1001,7 @@ public class GeneralLedgerReport {
         if (LOGGER.isInfoEnabled())
             LOGGER.info("**********************: OPBAL: " + queryYearOpBal);
         int i = 0;
-        pstmt = persistenceService.getSession().createSQLQuery(queryYearOpBal.toString());
+        pstmt = persistenceService.getSession().createNativeQuery(queryYearOpBal.toString());
         persistenceService.populateQueryWithParams(pstmt, params);
         resultset = pstmt.list();
         for (final Object[] element : resultset) {
@@ -1087,7 +1088,7 @@ public class GeneralLedgerReport {
         params.put("glcode", Arrays.asList(glCode.split(",")));
         if (LOGGER.isInfoEnabled())
             LOGGER.info("***********: OPBAL: " + queryTillDateOpBal);
-        pstmt = persistenceService.getSession().createSQLQuery(queryTillDateOpBal.toString());
+        pstmt = persistenceService.getSession().createNativeQuery(queryTillDateOpBal.toString());
         persistenceService.populateQueryWithParams(pstmt, params);
         
         resultset = pstmt.list();
@@ -1116,8 +1117,9 @@ public class GeneralLedgerReport {
 		String accountName = "";
 		Query pst = null;
 		final String query = "select name as \"name\" from  CHARTOFACCOUNTS where GLCODE=?";
-        pst = persistenceService.getSession().createSQLQuery(query);
-        pst.setString(0, glCode);
+        pst = persistenceService.getSession().createNativeQuery(query);
+        // Hibernate 6: native SQL ? placeholders are 1-based (was 0-based in Hibernate 5).
+        pst.setParameter(1, glCode);
         final List list = pst.list();
         if (list != null && !list.isEmpty()) {
         	final Object[] objects = list.toArray();
@@ -1130,17 +1132,17 @@ public class GeneralLedgerReport {
         String fundName = "";
         Query pst = null;
         final String query = "select name  as \"name\" from fund where id=?";
-        pst = persistenceService.getSession().createSQLQuery(query);
+        pst = persistenceService.getSession().createNativeQuery(query);
+        // Hibernate 6: ordinal parameters are 1-based.
         if (fundId.isEmpty())
-            pst.setInteger(0, 0);
+            pst.setParameter(1, 0L);
         else
-            pst.setInteger(0, Integer.valueOf(fundId));
-        final List<Object[]> list = pst.list();
-        final Object[] objects = list.toArray();
-        if (objects.length == 0)
+            pst.setParameter(1, Long.valueOf(fundId));
+        final List list = pst.list();
+        if (list == null || list.isEmpty())
             fundName = "";
         else
-            fundName = objects[0].toString();
+            fundName = list.get(0).toString();
         return fundName;
     }
 

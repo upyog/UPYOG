@@ -196,7 +196,7 @@ const CHBApplicationDetails = () => {
 
   async function getRecieptSearch({ tenantId, payments, ...params }) {
     let application = data?.hallsBookingApplication?.[0];
-    let fileStoreId = application?.paymentReceiptFilestoreId
+    let fileStoreId = application?.paymentReceiptFilestoreId;
     if (!fileStoreId) {
       let response = { filestoreIds: [payments?.fileStoreId] };
       response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "chbservice-receipt");
@@ -205,7 +205,7 @@ const CHBApplicationDetails = () => {
         paymentReceiptFilestoreId: response?.filestoreIds[0]
       };
       await mutation.mutateAsync({
-        hallsBookingApplication: updatedApplication
+        venueBookingApplication: updatedApplication
       });
       fileStoreId = response?.filestoreIds[0];
       refetch();
@@ -227,7 +227,7 @@ const CHBApplicationDetails = () => {
         permissionLetterFilestoreId: response?.filestoreIds[0]
       };
       await mutation.mutateAsync({
-        hallsBookingApplication: updatedApplication
+        venueBookingApplication: updatedApplication
       });
       fileStoreId = response?.filestoreIds[0];
       refetch();
@@ -300,17 +300,19 @@ const CHBApplicationDetails = () => {
   //     return startTime ? `${startTime} - ${defaultEndTime}` : t("CS_NA");
   //   };
   const columns = [
-    { Header: `${t("CHB_HALL_NAME")}` + "/" + `${t("CHB_PARK")}`, accessor: "venueCode" },
-    { Header: `${t("CHB_HALL_CODE")}`, accessor: "unitCode" },
-    { Header: `${t("CHB_BOOKING_DATE")}`, accessor: "bookingDate" },
-    { Header: `${t("PT_COMMON_TABLE_COL_STATUS_LABEL")}`, accessor: "bookingStatus" }
+    { Header: t("CHB_VENUE_NAME_LABEL"), accessor: "venueCode" },
+    { Header: t("CHB_HALL_CODE_LABEL"), accessor: "unitCode" },
+    { Header: t("CHB_BOOKING_DATE"), accessor: "bookingDate" },
+    { Header: t("CHB_BOOKING_TIME"), accessor: "bookingTime" },
+    { Header: t("PT_COMMON_TABLE_COL_STATUS_LABEL"), accessor: "bookingStatus" }
   ];
 
   const slotlistRows = chb_details?.bookingSlotDetails?.map((slot) => (
     {
       venueCode: `${t(chb_details?.venueCode)}`,
       unitCode: slot.unitCode,
-      bookingDate: slot.bookingDate + " (" + slot.bookingFromTime + " - " + slot.bookingToTime + ")",
+      bookingDate: slot.bookingDate,
+      bookingTime: slot.bookingFromTime && slot.bookingToTime ? `${slot.bookingFromTime} - ${slot.bookingToTime}` : (slot.bookingFromTime || t("CS_NA")),
       bookingStatus: `${t(slot.status)}`
     }
   )) || [];

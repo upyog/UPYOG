@@ -40,7 +40,7 @@ public class BudgetInputService {
     @Transactional
     public void createFunctionWiseBudget(final List<BudgetItem> budgetItems) {
 
-        budgetItemRepository.save(budgetItems);
+        budgetItemRepository.saveAll(budgetItems);
 
 
     }

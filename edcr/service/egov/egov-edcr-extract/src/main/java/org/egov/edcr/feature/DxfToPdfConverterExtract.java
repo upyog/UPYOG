@@ -687,6 +687,9 @@ public class DxfToPdfConverterExtract extends FeatureExtract {
      * NO or NULL value means direct single full-DXF PDF.
      */
     private boolean useLegacyLayerSheetPdfMode() {
+        if (dxfToPdfUnifiedConverter.isAsposeEngine()) {
+            return false;
+        }
         List<AppConfigValues> vals = appConfigValueService.getConfigValuesByModuleAndKey(
                 DcrConstants.APPLICATION_MODULE_TYPE, DcrConstants.DXF_TO_PDF_USE_LEGACY_LAYER_SHEETS);
         return vals != null && !vals.isEmpty() && "YES".equalsIgnoreCase(vals.get(0).getValue().trim());

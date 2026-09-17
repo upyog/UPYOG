@@ -48,9 +48,9 @@
 
 package org.egov.commons.contracts;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 /**
  * 
@@ -60,16 +60,16 @@ import org.hibernate.validator.constraints.SafeHtml;
 public class BankSearchRequest {
 
 	@Length(max = 50)
-	@SafeHtml
+	@SanitizeHtml
 	private String code;
 
 	@Length(max = 100)
-	@SafeHtml
+	@SanitizeHtml
 	private String name;
 
 	@JsonIgnore
 	@Length(max = 250)
-	@SafeHtml
+	@SanitizeHtml
 	private String narration;
 
 	@JsonIgnore

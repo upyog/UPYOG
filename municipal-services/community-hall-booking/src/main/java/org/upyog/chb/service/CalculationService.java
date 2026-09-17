@@ -101,7 +101,7 @@ public class CalculationService {
 				multiplier = BigDecimal.ONE;
 			}
 
-			return DemandDetail.builder().taxAmount(data.getAmount().multiply(multiplier))
+			return DemandDetail.builder().taxAmount((data.getAmount().multiply(multiplier)).abs())
 					.taxHeadMasterCode(data.getFeeType()).tenantId(tenantId).build();
 		}).toList();
 		
@@ -111,7 +111,7 @@ public class CalculationService {
 		demandDetails.addAll(taxableDemands);
 		
 		BigDecimal totalTaxableAmount = taxableDemands.stream()
-				.map(DemandDetail::getTaxAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+				.map(DemandDetail::getTaxAmount).reduce(BigDecimal.ZERO, BigDecimal::add).abs();
 
 		log.info("Total Taxable amount for the booking : " + totalTaxableAmount);
 		
@@ -133,7 +133,7 @@ public class CalculationService {
 	}
 
 	private BigDecimal calculateAmount(BigDecimal amount, BigDecimal tax) {
-		return amount.multiply(tax).divide(CommunityHallBookingConstants.ONE_HUNDRED, RoundingMode.FLOOR);
+		return amount.multiply(tax).divide(CommunityHallBookingConstants.ONE_HUNDRED,0, RoundingMode.FLOOR).abs();
 	}
 
 	private BigDecimal calculateHours(BookingSlotDetail bookingSlotDetail) {

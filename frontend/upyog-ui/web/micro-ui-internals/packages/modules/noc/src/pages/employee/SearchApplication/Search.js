@@ -1,3 +1,7 @@
+/**
+ * Controller component for NOC application search.
+ * Configures search form methods, table structures, and switches between desktop and mobile search views.
+ */
 import React, { Fragment, useCallback, useMemo, useEffect, useState, useReducer } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import SearchFormFieldsComponent from "./SearchFormFieldsComponent";

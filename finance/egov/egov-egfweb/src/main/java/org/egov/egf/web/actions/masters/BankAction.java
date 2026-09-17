@@ -71,8 +71,12 @@ import org.egov.utils.Constants;
 import org.hibernate.exception.ConstraintViolationException;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletResponse;
+
+
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
@@ -240,7 +244,7 @@ public class BankAction extends BaseFormAction {
 
     private void writeToAjaxResponse(final String response) {
         try {
-            final HttpServletResponse httpResponse = ServletActionContext.getResponse();
+            final HttpServletResponse httpResponse = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
             final Writer httpResponseWriter = httpResponse.getWriter();
             IOUtils.write(response, httpResponseWriter);
             IOUtils.closeQuietly(httpResponseWriter);

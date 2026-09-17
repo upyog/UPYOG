@@ -78,8 +78,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import com.exilant.eGov.src.reports.GeneralLedgerReport;
 import com.exilant.eGov.src.reports.GeneralLedgerReportBean;
 import com.exilant.exility.common.TaskFailedException;
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import org.apache.struts2.validator.annotations.RequiredFieldValidator;
+import org.apache.struts2.validator.annotations.Validations;
 
 @ParentPackage("egov")
 @Results({ @Result(name = "search", location = "subLedgerReport-search.jsp") })
