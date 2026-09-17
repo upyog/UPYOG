@@ -21,6 +21,10 @@ public class RefundStatusUpdate {
 
 	private BigDecimal refundAmount;
 
+	private String refundCategory;
+
+	private String refundReason;
+
 	private String status;
 
 	private String sanctionRef;
@@ -123,5 +127,21 @@ public class RefundStatusUpdate {
 
 	public void setId(final String id) {
 		this.id = id;
+	}
+
+	public String getRefundCategory() {
+		return refundCategory;
+	}
+
+	public void setRefundCategory(final String refundCategory) {
+		this.refundCategory = refundCategory;
+	}
+
+	public String getRefundReason() {
+		return refundReason;
+	}
+
+	public void setRefundReason(final String refundReason) {
+		this.refundReason = refundReason;
 	}
 }

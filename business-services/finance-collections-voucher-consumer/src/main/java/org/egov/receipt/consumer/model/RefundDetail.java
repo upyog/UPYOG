@@ -50,12 +50,9 @@ public class RefundDetail {
 	 */
 	private String paymentId;
 
-	/*
-	 * Original receipt reference, when available.
-	 */
-	private String receiptNumber;
-
 	private BigDecimal refundAmount;
+	
+	private String refundCategory;
 
 	private String refundReason;
 
