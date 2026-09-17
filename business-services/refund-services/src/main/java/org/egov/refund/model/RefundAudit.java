@@ -3,7 +3,6 @@ package org.egov.refund.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,7 +44,7 @@ public class RefundAudit {
 
     private String sanctionRef;
 
-    private LocalDateTime financeApprovalDate;
+    private Long financeApprovalDate;
 
     private String gatewayRefundId;
     
@@ -56,10 +55,10 @@ public class RefundAudit {
     private Map<String, Object> additionalDetails;
 
     private AuditDetails auditDetails;
-
+    
     private Long auditCreatedTime;
     
-    private String action;
+    private String workflowAction;
     
 
 }

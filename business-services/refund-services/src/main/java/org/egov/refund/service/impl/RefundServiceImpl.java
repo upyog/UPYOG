@@ -119,8 +119,7 @@ public class RefundServiceImpl implements RefundService {
 
 			refundEnrichmentService.enrichRefundUpdate(refund, inputRefund);
 
-			refundEnrichmentService.updateAuditDetails(refund, request.getRequestInfo().getUserInfo().getUuid(),
-					System.currentTimeMillis());
+			refundEnrichmentService.updateAuditDetails(refund, request.getRequestInfo().getUserInfo().getUuid());
 
 			refundRepository.update(refund);
 
@@ -244,7 +243,7 @@ public class RefundServiceImpl implements RefundService {
 
 		refund.setStatus(transition.getApplicationStatus());
 
-		refundEnrichmentService.updateAuditDetails(refund, request.getUserId(), System.currentTimeMillis());
+		refundEnrichmentService.updateAuditDetails(refund, request.getUserId());
 
 		Refund processedRefund = processWorkflowAction(refund, transition, request);
 		
@@ -360,7 +359,7 @@ public class RefundServiceImpl implements RefundService {
 
 		if (RefundConstants.PAYMENT_MODE_ONLINE.equalsIgnoreCase(refundMode)) {
 
-			refundEnrichmentService.updateAuditDetails(refund, request.getUserId(), System.currentTimeMillis());
+			refundEnrichmentService.updateAuditDetails(refund, request.getUserId());
 
 			RefundPaymentResponse refundResponse = paymentRefundService.initiateRefund(refund,
 					request.getRequestInfo());
@@ -370,7 +369,7 @@ public class RefundServiceImpl implements RefundService {
 
 		if (RefundConstants.REFUND_MODE_OFFLINE.equalsIgnoreCase(refundMode)) {
 
-			refundEnrichmentService.updateAuditDetails(refund, request.getUserId(), System.currentTimeMillis());
+			refundEnrichmentService.updateAuditDetails(refund, request.getUserId());
 
 			return refund;
 		}

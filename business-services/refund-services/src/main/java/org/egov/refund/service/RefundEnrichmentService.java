@@ -10,7 +10,7 @@ public interface RefundEnrichmentService {
 
 	void enrichRefundUpdate(Refund existingRefund, Refund inputRefund);
 
-	void updateAuditDetails(Refund refund, String userId, long currentTime);
+	void updateAuditDetails(Refund refund, String userId);
 
 	RefundActionRequest enrichWorkflowAction(RefundRequest request, String action);
 }

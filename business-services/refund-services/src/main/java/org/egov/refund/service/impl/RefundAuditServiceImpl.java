@@ -35,7 +35,7 @@ public class RefundAuditServiceImpl implements RefundAuditService {
 				.financeApprovalDate(refund.getFinanceApprovalDate()).gatewayRefundId(refund.getGatewayRefundId())
 				.fileStoreId(refund.getFileStoreId()).beneficiaryDetails(refund.getBeneficiaryDetails())
 				.additionalDetails(refund.getAdditionalDetails()).auditDetails(refund.getAuditDetails())
-				.auditCreatedTime(System.currentTimeMillis()).action(action).build();
+				.auditCreatedTime(System.currentTimeMillis()).workflowAction(action).build();
 
 		refundAuditRepository.create(audit);
 	}
