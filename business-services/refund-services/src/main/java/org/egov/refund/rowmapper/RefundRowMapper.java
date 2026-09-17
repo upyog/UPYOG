@@ -61,12 +61,7 @@ public class RefundRowMapper implements RowMapper<Refund> {
 
 		refund.setSanctionRef(rs.getString("sanction_ref"));
 
-		Timestamp financeApprovalDate = rs.getTimestamp("finance_approval_date");
-
-		if (financeApprovalDate != null) {
-
-			refund.setFinanceApprovalDate(financeApprovalDate.toLocalDateTime());
-		}
+		refund.setFinanceApprovalDate(getNullableLong(rs,"finance_approval_date"));
 
 		refund.setFileStoreId(rs.getString("file_store_id"));
 		refund.setGatewayRefundId(rs.getString("gateway_refund_id"));
