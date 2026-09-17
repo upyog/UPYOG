@@ -11,6 +11,9 @@ public class RefundApplication extends StateAware implements Auditable {
 
 	private Long id;
 
+	// Original refund-service UUID used in approval/rejection callbacks.
+	private String refundServiceId;
+
 	private String tenantId;
 
 	private String refundApplicationNumber;
@@ -290,5 +293,13 @@ public class RefundApplication extends StateAware implements Auditable {
 	public void setPaymentProcessedDate(final Long paymentProcessedDate) {
 
 		this.paymentProcessedDate = paymentProcessedDate;
+	}
+
+	public String getRefundServiceId() {
+		return refundServiceId;
+	}
+
+	public void setRefundServiceId(final String refundServiceId) {
+		this.refundServiceId = refundServiceId;
 	}
 }

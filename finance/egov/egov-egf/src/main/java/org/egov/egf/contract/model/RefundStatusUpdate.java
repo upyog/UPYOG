@@ -6,6 +6,9 @@ public class RefundStatusUpdate {
 
 	private String refundNo;
 
+	// Original refund-service UUID required by the update API.
+	private String id;
+
 	private String tenantId;
 
 	private String moduleName;
@@ -112,5 +115,13 @@ public class RefundStatusUpdate {
 
 	public void setProcessInstance(final RefundStatusProcessInstance processInstance) {
 		this.processInstance = processInstance;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(final String id) {
+		this.id = id;
 	}
 }
