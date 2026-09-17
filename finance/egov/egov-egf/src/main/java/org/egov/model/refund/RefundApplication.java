@@ -26,9 +26,9 @@ public class RefundApplication extends StateAware implements Auditable {
 
 	private String paymentId;
 
-	private String receiptNumber;
-
 	private BigDecimal refundAmount;
+
+	private String refundCategory;
 
 	private String refundReason;
 
@@ -128,15 +128,6 @@ public class RefundApplication extends StateAware implements Auditable {
 
 	public void setPaymentId(final String paymentId) {
 		this.paymentId = paymentId;
-	}
-
-	public String getReceiptNumber() {
-		return receiptNumber;
-	}
-
-	public void setReceiptNumber(final String receiptNumber) {
-
-		this.receiptNumber = receiptNumber;
 	}
 
 	public BigDecimal getRefundAmount() {
@@ -301,5 +292,13 @@ public class RefundApplication extends StateAware implements Auditable {
 
 	public void setRefundServiceId(final String refundServiceId) {
 		this.refundServiceId = refundServiceId;
+	}
+
+	public String getRefundCategory() {
+		return refundCategory;
+	}
+
+	public void setRefundCategory(final String refundCategory) {
+		this.refundCategory = refundCategory;
 	}
 }

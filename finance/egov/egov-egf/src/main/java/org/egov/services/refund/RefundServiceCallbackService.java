@@ -167,6 +167,8 @@ public class RefundServiceCallbackService {
 		refundStatusUpdate.setConsumerCode(refundApplication.getReferenceNumber());
 		refundStatusUpdate.setPaymentId(refundApplication.getPaymentId());
 		refundStatusUpdate.setRefundAmount(refundApplication.getRefundAmount());
+		refundStatusUpdate.setRefundCategory(refundApplication.getRefundCategory());
+		refundStatusUpdate.setRefundReason(refundApplication.getRefundReason());
 		refundStatusUpdate.setStatus(financeStatus);
 		refundStatusUpdate.setSanctionRef(refundApplication.getVoucherNumber());
 		refundStatusUpdate.setFinanceApprovalDate(eventTime);

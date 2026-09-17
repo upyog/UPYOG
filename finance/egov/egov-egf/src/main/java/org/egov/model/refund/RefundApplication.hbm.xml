@@ -10,21 +10,17 @@
 		table="EGF_REFUND_APPLICATION">
 
 		<id name="id" type="long" unsaved-value="null">
-
 			<column name="ID" not-null="true" />
-
 			<generator
 				class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-
 				<param name="sequence_name">
 					SEQ_EGF_REFUND_APPLICATION
 				</param>
-
 			</generator>
-
-			<property name="refundServiceId" column="REFUNDSERVICEID"
-				type="string" length="128" />
 		</id>
+
+		<property name="refundServiceId" column="REFUNDSERVICEID"
+			type="string" length="128" />
 
 		<property name="tenantId" column="TENANTID" type="string"
 			not-null="true" />
@@ -43,14 +39,15 @@
 
 		<property name="paymentId" column="PAYMENTID" type="string" />
 
-		<property name="receiptNumber" column="RECEIPTNUMBER"
-			type="string" />
 
 		<property name="refundAmount" column="REFUNDAMOUNT"
 			type="big_decimal" not-null="true" />
 
 		<property name="refundReason" column="REFUNDREASON"
 			type="string" />
+
+		<property name="refundCategory" column="REFUNDCATEGORY"
+			type="string" length="128" />
 
 		<property name="refundDate" column="REFUNDDATE" type="long" />
 

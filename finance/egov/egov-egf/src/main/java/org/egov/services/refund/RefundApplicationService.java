@@ -83,6 +83,18 @@ public class RefundApplicationService extends PersistenceService<RefundApplicati
 			throw new IllegalArgumentException("Refund application is mandatory");
 		}
 
+		if (refundApplication.getRefundCategory() == null || refundApplication.getRefundCategory().trim().isEmpty()) {
+			throw new IllegalArgumentException("Refund category is mandatory");
+		}
+
+		if (refundApplication.getRefundReason() == null || refundApplication.getRefundReason().trim().isEmpty()) {
+			throw new IllegalArgumentException("Refund reason is mandatory");
+		}
+
+		refundApplication.setRefundCategory(refundApplication.getRefundCategory().trim());
+
+		refundApplication.setRefundReason(refundApplication.getRefundReason().trim());
+
 		if (refundApplication.getRefundServiceId() == null || refundApplication.getRefundServiceId().trim().isEmpty()) {
 			throw new IllegalArgumentException("Refund-service ID is mandatory");
 		}

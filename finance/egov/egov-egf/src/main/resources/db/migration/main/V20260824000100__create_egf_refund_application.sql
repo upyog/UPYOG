@@ -7,7 +7,6 @@ CREATE TABLE egf_refund_application
     businessservice             CHARACTER VARYING(128) NOT NULL,
     referencenumber             CHARACTER VARYING(128),
     paymentid                   CHARACTER VARYING(128),
-    receiptnumber               CHARACTER VARYING(128),
     refundamount                NUMERIC(12, 2) NOT NULL,
     refundreason                CHARACTER VARYING(1000),
     refunddate                  BIGINT,
@@ -57,3 +56,9 @@ CREATE INDEX indx_egf_refund_state
 CREATE INDEX indx_egf_refund_payment
     ON egf_refund_application
     USING btree (tenantid, paymentid);
+    
+ALTER TABLE egf_refund_application
+    ADD COLUMN IF NOT EXISTS refundcategory VARCHAR(128);
+    
+ALTER TABLE egf_refund_application
+    ADD COLUMN IF NOT EXISTS refundcategory VARCHAR(128);
