@@ -474,9 +474,10 @@ public class EgfKafkaListener {
 
 		final RefundDetail financeRefund = RefundDetail.builder()
 				/*
-				 * Finance generates and owns its application ID.
+				 * Preserve the original refund-service UUID for callbacks. Finance generates
+				 * its own application ID separately.
 				 */
-				.tenantId(sourceRefund.getTenantId()).moduleName(moduleName)
+				.refundServiceId(sourceRefund.getId()).tenantId(sourceRefund.getTenantId()).moduleName(moduleName)
 				.businessService(sourceRefund.getBusinessService()).refundApplicationNumber(sourceRefund.getRefundNo())
 				.referenceNumber(sourceRefund.getConsumerCode()).paymentId(sourceRefund.getPaymentId())
 				.receiptNumber(null).refundAmount(sourceRefund.getRefundAmount())

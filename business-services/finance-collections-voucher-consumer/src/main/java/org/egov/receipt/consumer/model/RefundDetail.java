@@ -15,6 +15,11 @@ public class RefundDetail {
 
 	private String id;
 
+	/*
+	 * Original refund-service UUID, returned in approval/rejection callbacks.
+	 */
+	private String refundServiceId;
+
 	private String tenantId;
 
 	/*

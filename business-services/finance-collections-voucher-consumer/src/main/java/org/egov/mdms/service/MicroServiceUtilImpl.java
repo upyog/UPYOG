@@ -378,10 +378,12 @@ public class MicroServiceUtilImpl implements MicroServiceUtil {
 		moduleDetails.add(new ModuleDetail(FIN_MODULE_NAME, masterDetails));
 
 		/*
-		 * Use the complete tenant ID. This permits ULB-specific bank-account
-		 * configuration and follows the existing MDMS calling convention.
+		 * The MDMS master is stored under the state tenant, such as "pg". Individual
+		 * mapping records contain the full tenant, such as "pg.citya".
 		 */
-		mdmscriteria.setTenantId(tenantId);
+		final String mdmsTenantId = tenantId.trim().split("\\.", 2)[0];
+
+		mdmscriteria.setTenantId(mdmsTenantId);
 		mdmscriteria.setModuleDetails(moduleDetails);
 
 		mdmsrequest.setRequestInfo(requestInfo);
