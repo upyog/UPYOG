@@ -69,4 +69,8 @@ public class ApplicationProperties {
 	@Value("${egov.refund.finance.payment.topic}")
 	private String egovRefundFinancePaymentTopic;
 	
+	@Value("${statelevel.tenant.id}")
+	private String stateLevelTenantId;
+	
+	
 }

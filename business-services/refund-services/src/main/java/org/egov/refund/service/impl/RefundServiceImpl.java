@@ -297,7 +297,7 @@ public class RefundServiceImpl implements RefundService {
 			throw new IllegalArgumentException("Refund cannot be null for approval processing");
 		}
 
-		RequestInfo systemRequestInfo = createSystemRequestInfo(refund);
+		RequestInfo systemRequestInfo = createSystemRequestInfo();
 
 		String nextAction = applicationProperties.isSendToFinance() ? RefundConstants.ACTION_CREATE_REQUEST
 				: RefundConstants.ACTION_REFUND_INITIATE;
@@ -314,7 +314,7 @@ public class RefundServiceImpl implements RefundService {
 
 	private Refund processFinanceRequest(Refund refund) {
 
-		RefundRequest refundRequest = RefundRequest.builder().refund(refund).requestInfo(createSystemRequestInfo(refund))
+		RefundRequest refundRequest = RefundRequest.builder().refund(refund).requestInfo(createSystemRequestInfo())
 				.build();
 
 		financeService.processRefund(refundRequest);
@@ -342,7 +342,7 @@ public class RefundServiceImpl implements RefundService {
 			throw new IllegalArgumentException("Unsupported finance action: " + action);
 		}
 
-		RequestInfo systemRequestInfo = createSystemRequestInfo(refund);
+		RequestInfo systemRequestInfo = createSystemRequestInfo();
 
 		RefundActionRequest actionRequest = RefundActionRequest.builder().id(refund.getId()).action(action)
 				.userId(systemRequestInfo.getUserInfo().getUuid()).requestInfo(systemRequestInfo).build();
@@ -404,7 +404,7 @@ public class RefundServiceImpl implements RefundService {
 			return;
 		}
 
-		RequestInfo systemRequestInfo = createSystemRequestInfo(refund);
+		RequestInfo systemRequestInfo = createSystemRequestInfo();
 
 		String action;
 
@@ -447,10 +447,10 @@ public class RefundServiceImpl implements RefundService {
 	// SYSTEM REQUEST INFO
 	// ============================================================
 
-	private RequestInfo createSystemRequestInfo(Refund refund) {
+	private RequestInfo createSystemRequestInfo() {
 
 		User systemUser = User.builder().uuid(applicationProperties.getSystemUUid()).type("SYSTEM")
-				.roles(Collections.singletonList(Role.builder().code("SYSTEM").name("SYSTEM").tenantId(refund.getTenantId()).build())).build();
+				.roles(Collections.singletonList(Role.builder().code("SYSTEM").name("SYSTEM").tenantId(applicationProperties.getStateLevelTenantId()).build())).build();
 
 		return RequestInfo.builder().apiId("refund-service").ver("1.0").ts(System.currentTimeMillis())
 				.msgId(UUID.randomUUID().toString()).userInfo(systemUser).build();
