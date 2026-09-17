@@ -450,7 +450,7 @@ public class RefundServiceImpl implements RefundService {
 	private RequestInfo createSystemRequestInfo() {
 
 		User systemUser = User.builder().uuid(applicationProperties.getSystemUUid()).type("SYSTEM")
-				.roles(Collections.singletonList(Role.builder().code("SYSTEM").name("SYSTEM").build())).build();
+				.roles(Collections.singletonList(Role.builder().code("SYSTEM").name("SYSTEM").tenantId(applicationProperties.getStateLevelTenantId()).build())).build();
 
 		return RequestInfo.builder().apiId("refund-service").ver("1.0").ts(System.currentTimeMillis())
 				.msgId(UUID.randomUUID().toString()).userInfo(systemUser).build();
