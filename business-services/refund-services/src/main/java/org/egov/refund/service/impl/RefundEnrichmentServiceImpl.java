@@ -1,6 +1,7 @@
 package org.egov.refund.service.impl;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -57,8 +58,6 @@ public class RefundEnrichmentServiceImpl implements RefundEnrichmentService {
 
 		String userId = requestInfo.getUserInfo().getUuid();
 
-		long currentTime = System.currentTimeMillis();
-
 		refund.setId(UUID.randomUUID().toString());
 
 		String refundNo = getId(requestInfo, refund.getTenantId(), idKey, idformat);
@@ -71,7 +70,7 @@ public class RefundEnrichmentServiceImpl implements RefundEnrichmentService {
 
 		refund.setRefundMode(resolveRefundMode(refund));
 
-		refund.setAuditDetails(buildAuditDetails(userId, currentTime));
+		refund.setAuditDetails(buildAuditDetails(userId));
 	}
 
 	// ============================================================
@@ -182,7 +181,7 @@ public class RefundEnrichmentServiceImpl implements RefundEnrichmentService {
 	// ============================================================
 
 	@Override
-	public void updateAuditDetails(Refund refund, String userId, long currentTime) {
+	public void updateAuditDetails(Refund refund, String userId) {
 
 		if (refund == null) {
 			throw new IllegalArgumentException("Refund cannot be null");
@@ -194,24 +193,23 @@ public class RefundEnrichmentServiceImpl implements RefundEnrichmentService {
 
 		if (refund.getAuditDetails() == null) {
 
-			refund.setAuditDetails(buildAuditDetails(userId, currentTime));
+			refund.setAuditDetails(buildAuditDetails(userId));
 
 			return;
 		}
 
 		refund.getAuditDetails().setLastModifiedBy(userId);
 
-		refund.getAuditDetails().setLastModifiedTime(currentTime);
+		refund.getAuditDetails().setLastModifiedTime(getCurrentTimestamp());
 	}
 
 	// ============================================================
 	// BUILD AUDIT DETAILS
 	// ============================================================
 
-	private AuditDetails buildAuditDetails(String userId, long currentTime) {
-
-		return AuditDetails.builder().createdBy(userId).createdTime(currentTime).lastModifiedBy(userId)
-				.lastModifiedTime(currentTime).build();
+	private AuditDetails buildAuditDetails(String userId) {
+		return AuditDetails.builder().createdBy(userId).createdTime(getCurrentTimestamp()).lastModifiedBy(userId)
+				.lastModifiedTime(getCurrentTimestamp()).build();
 	}
 
 	// ============================================================
@@ -294,4 +292,9 @@ public class RefundEnrichmentServiceImpl implements RefundEnrichmentService {
 
 		return idResponses.get(0).getId();
 	}
+	
+	public static Long getCurrentTimestamp() {
+		return Instant.now().toEpochMilli();
+	}
+
 }

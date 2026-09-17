@@ -43,7 +43,7 @@ public class Refund {
 
     private String sanctionRef;
 
-    private LocalDateTime financeApprovalDate;
+    private Long financeApprovalDate;
 
     private String gatewayRefundId;
 

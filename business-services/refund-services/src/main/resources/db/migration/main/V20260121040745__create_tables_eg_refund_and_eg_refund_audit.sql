@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS eg_rs_refund
     refund_mode           VARCHAR(32),
     status                VARCHAR(64) NOT NULL,
     sanction_ref          VARCHAR(128),
-    finance_approval_date TIMESTAMP,
+    finance_approval_date BIGINT,
     gateway_refund_id     VARCHAR(128),
     beneficiary_details   JSONB,
     additional_details    JSONB,
@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS eg_rs_refund_audit
     status                VARCHAR(50),
 
     sanction_ref          VARCHAR(100),
-    finance_approval_date TIMESTAMP,
+    finance_approval_date BIGINT,
 
     gateway_refund_id     VARCHAR(100),
     file_store_id         VARCHAR(100),
