@@ -111,9 +111,9 @@
 				</tr>
 
 				<tr>
-					<td class="bluebox"><b>Receipt Number</b></td>
+					<td class="bluebox"><b>Refund Category</b></td>
 					<td class="bluebox"><s:property
-							value="%{refundApplication.receiptNumber}" /></td>
+							value="%{refundApplication.refundCategory}" /></td>
 					<td class="bluebox"><b>Refund Amount</b></td>
 					<td class="bluebox"><s:property
 							value="%{refundApplication.refundAmount}" /></td>
@@ -135,7 +135,8 @@
 				</tr>
 
 				<tr>
-					<td class="greybox"><b>Comments</b></td>
+					<td class="greybox"><b>Comments <span style="color: red;">*</span></b>
+						<br /> <small>Required for rejection</small></td>
 					<td colspan="3" class="greybox"><s:textarea name="comments"
 							id="comments" cols="80" rows="4" maxlength="1000" /></td>
 				</tr>
