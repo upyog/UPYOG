@@ -55,7 +55,7 @@ public class RefundRepository {
 				properties.getUpdateRefundTopic());
 	}
 
-	public Refund findById(UUID id) {
+	public Refund findById(String id) {
 		log.debug("Fetching refund by id. refundId={}", id);
 		return jdbcTemplate.query(refundQueryBuilder.getFindByIdQuery(), refundRowMapper, id).stream().findFirst()
 				.orElse(null);
