@@ -244,13 +244,11 @@ public class RefundServiceImpl implements RefundService {
 		refund.setStatus(transition.getApplicationStatus());
 
 		refundEnrichmentService.updateAuditDetails(refund, request.getUserId());
-
-		Refund processedRefund = processWorkflowAction(refund, transition, request);
-
 		if (!RefundConstants.ACTION_INITIATE.equalsIgnoreCase(transition.getAction())) {
 
-			refundAuditService.createAudit(processedRefund, transition.getAction());
+			refundAuditService.createAudit(refund, transition.getAction());
 		}
+		Refund processedRefund = processWorkflowAction(refund, transition, request);
 
 		log.info("Workflow processing completed. refundId={}, status={}", processedRefund.getId(),
 				processedRefund.getStatus());
@@ -265,7 +263,7 @@ public class RefundServiceImpl implements RefundService {
 	private Refund processWorkflowAction(Refund refund, WorkflowTransition transition, RefundActionRequest request) {
 
 		String action = transition.getAction();
-		 String applicationStatus = transition.getApplicationStatus();
+		String applicationStatus = transition.getApplicationStatus();
 
 		if (RefundConstants.ACTION_APPROVE.equalsIgnoreCase(action)
 				&& RefundConstants.STATUS_APPROVED.equalsIgnoreCase(transition.getApplicationStatus())) {
@@ -278,7 +276,8 @@ public class RefundServiceImpl implements RefundService {
 			return processFinanceRequest(refund);
 		}
 
-		if (RefundConstants.ACTION_REFUND_INITIATE.equalsIgnoreCase(action) || RefundConstants.ACTION_REFUND_INITIATE.equalsIgnoreCase(applicationStatus) ) {
+		if (RefundConstants.ACTION_REFUND_INITIATE.equalsIgnoreCase(action)
+				|| RefundConstants.STATUS_REFUND_INITIATED.equalsIgnoreCase(applicationStatus)) {
 
 			return processRefundBasedOnMode(refund, request);
 		}
@@ -348,7 +347,6 @@ public class RefundServiceImpl implements RefundService {
 
 		Refund processedRefund = processInternal(refund, actionRequest);
 
-		
 		return processedRefund;
 	}
 
@@ -397,43 +395,38 @@ public class RefundServiceImpl implements RefundService {
 
 		// PENDING / INITIATED
 		// Only update gateway response. Do not process workflow.
-		if (!isFinalPaymentRefundStatus(status)) {
+		if (isFinalPaymentRefundStatus(status)) {
 
 			refundRepository.update(refund);
 
-			refundAuditService.createAudit(refund, RefundConstants.AUDIT_PAYMENT_REFUND_RESPONSE);
+			RequestInfo systemRequestInfo = createSystemRequestInfo();
 
-			return;
+			String action;
+
+			if (RefundConstants.PAYMENT_REFUND_STATUS_SUCCESS.equalsIgnoreCase(status)) {
+
+				action = RefundConstants.ACTION_REFUND_COMPLETED;
+
+			} else {
+
+				action = RefundConstants.ACTION_REJECT;
+			}
+
+			log.info("Final payment refund response. refundId={}, paymentStatus={}, workflowAction={}", refund.getId(),
+					status, action);
+
+			RefundActionRequest actionRequest = RefundActionRequest.builder().id(refund.getId()).action(action)
+					.userId(systemRequestInfo.getUserInfo().getUuid()).requestInfo(systemRequestInfo).build();
+
+			// Process workflow only for SUCCESS / FAILURE
+			refund = processInternal(refund, actionRequest);
+
+			// Save gateway response + final workflow status
+			refundRepository.update(refund);
+
+			log.info("Payment refund processing completed. refundId={}, finalStatus={}", refund.getId(),
+					refund.getStatus());
 		}
-
-		RequestInfo systemRequestInfo = createSystemRequestInfo();
-
-		String action;
-
-		if (RefundConstants.PAYMENT_REFUND_STATUS_SUCCESS.equalsIgnoreCase(status)) {
-
-			action = RefundConstants.ACTION_REFUND_COMPLETED;
-
-		} else {
-
-			action = RefundConstants.ACTION_REJECT;
-		}
-
-		log.info("Final payment refund response. refundId={}, paymentStatus={}, workflowAction={}", refund.getId(),
-				status, action);
-
-		RefundActionRequest actionRequest = RefundActionRequest.builder().id(refund.getId()).action(action)
-				.userId(systemRequestInfo.getUserInfo().getUuid()).requestInfo(systemRequestInfo).build();
-
-		// Process workflow only for SUCCESS / FAILURE
-		refund = processInternal(refund, actionRequest);
-
-		// Save gateway response + final workflow status
-		refundRepository.update(refund);
-
-		log.info("Payment refund processing completed. refundId={}, finalStatus={}", refund.getId(),
-				refund.getStatus());
-
 	}
 
 	private boolean isFinalPaymentRefundStatus(String status) {

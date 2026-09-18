@@ -33,6 +33,7 @@ public final class RefundConstants {
 	public static final String ACTION_REFUND_COMPLETED = "REFUND_COMPLETED";
 	
 	public static final String ACTION_REFUND_INITIATE = "REFUND_INITIATE";
+	public static final String STATUS_REFUND_INITIATED = "REFUND_INITIATED";
 
 	public static final String STATUS_PENDING_WITH_FINANCE = "PENDING_WITH_FINANCE";
 
@@ -43,7 +44,6 @@ public final class RefundConstants {
 	public static final String PAYMENT_REFUND_STATUS_SUCCESS = "SUCCESS";
     public static final String PAYMENT_REFUND_STATUS_FAILURE = "FAILURE";
     public static final String PAYMENT_REFUND_STATUS_FAILED = "FAILED";
-    public static final String AUDIT_PAYMENT_REFUND_RESPONSE = "AUDIT_PAYMENT_REFUND_RESPONSE";
     
     
 
