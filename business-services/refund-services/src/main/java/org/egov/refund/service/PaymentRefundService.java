@@ -61,8 +61,7 @@ public class PaymentRefundService {
 
 
 	private Payment getLatestPayment(Refund refund, RequestInfo requestInfo) {
-		StringBuilder url = new StringBuilder(config.getCollectionHost()).append(config.getCollectionSearch())
-				.append("/").append(refund.getModuleName()).append("/_search").append("?tenantId=")
+		StringBuilder url = new StringBuilder(config.getCollectionHost()).append(config.getCollectionSearch()).append("_search").append("?tenantId=")
 				.append(refund.getTenantId()).append("&ids=").append(refund.getPaymentId());
 
 		Object responseObject = serviceRequestRepository.fetchResult(url, requestInfo);
