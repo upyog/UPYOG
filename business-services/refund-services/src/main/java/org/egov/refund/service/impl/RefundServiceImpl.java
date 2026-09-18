@@ -78,7 +78,7 @@ public class RefundServiceImpl implements RefundService {
 
 		log.info("Processing refund workflow. id={}, action={}, status={}", refund.getId(), actionRequest.getAction(),
 				refund.getStatus());
-		Refund processedRefund = processInternal(refund, actionRequest);
+		Refund processedRefund = processInternal(refund, actionRequest, request);
 
 		refundRepository.save(processedRefund);
 		log.info("Refund created successfully. id={}, refundNo={}, status={}", processedRefund.getId(),
@@ -134,14 +134,14 @@ public class RefundServiceImpl implements RefundService {
 
 		if (RefundConstants.STATUS_PENDING_WITH_FINANCE.equalsIgnoreCase(refund.getStatus())) {
 
-			return processFinanceAction(refund, action);
+			return processFinanceAction(refund, action,request);
 		}
 
 		RefundActionRequest actionRequest = refundEnrichmentService.enrichWorkflowAction(request, action);
 
 		log.info("Processing workflow action. refundId={}, action={}", refund.getId(), action);
 
-		refund = processInternal(refund, actionRequest);
+		refund = processInternal(refund, actionRequest,request);
 		refundRepository.update(refund);
 
 		log.info("Refund workflow update completed. refundId={}, action={}, finalStatus={}", refund.getId(), action,
@@ -194,29 +194,12 @@ public class RefundServiceImpl implements RefundService {
 		return refundRepository.search(criteria);
 	}
 
-	// ============================================================
-	// PROCESS
-	// ============================================================
-
-	@Override
-	public Refund process(RefundActionRequest request) {
-
-		refundValidator.validateActionRequest(request);
-
-		Refund refund = refundRepository.findById(request.getId());
-
-		if (refund == null) {
-			throw new IllegalArgumentException("Refund not found for id: " + request.getId());
-		}
-
-		return processInternal(refund, request);
-	}
 
 	// ============================================================
 	// MAIN WORKFLOW PROCESSING
 	// ============================================================
 
-	private Refund processInternal(Refund refund, RefundActionRequest request) {
+	private Refund processInternal(Refund refund, RefundActionRequest request,RefundRequest refundRequest) {
 
 		log.info("Workflow processing started. refundId={}, action={}, currentStatus={}", refund.getId(),
 				request.getAction(), refund.getStatus());
@@ -248,7 +231,7 @@ public class RefundServiceImpl implements RefundService {
 
 			refundAuditService.createAudit(refund, transition.getAction());
 		}
-		Refund processedRefund = processWorkflowAction(refund, transition, request);
+		Refund processedRefund = processWorkflowAction(refund, transition, request,refundRequest);
 
 		log.info("Workflow processing completed. refundId={}, status={}", processedRefund.getId(),
 				processedRefund.getStatus());
@@ -260,7 +243,7 @@ public class RefundServiceImpl implements RefundService {
 	// WORKFLOW ACTION HANDLER
 	// ============================================================
 
-	private Refund processWorkflowAction(Refund refund, WorkflowTransition transition, RefundActionRequest request) {
+	private Refund processWorkflowAction(Refund refund, WorkflowTransition transition, RefundActionRequest request,RefundRequest refundRequest) {
 
 		String action = transition.getAction();
 		String applicationStatus = transition.getApplicationStatus();
@@ -268,7 +251,7 @@ public class RefundServiceImpl implements RefundService {
 		if (RefundConstants.ACTION_APPROVE.equalsIgnoreCase(action)
 				&& RefundConstants.STATUS_APPROVED.equalsIgnoreCase(transition.getApplicationStatus())) {
 
-			return processApproval(refund);
+			return processApproval(refund,refundRequest);
 		}
 
 		if (RefundConstants.ACTION_CREATE_REQUEST.equalsIgnoreCase(action)) {
@@ -279,7 +262,7 @@ public class RefundServiceImpl implements RefundService {
 		if (RefundConstants.ACTION_REFUND_INITIATE.equalsIgnoreCase(action)
 				|| RefundConstants.STATUS_REFUND_INITIATED.equalsIgnoreCase(applicationStatus)) {
 
-			return processRefundBasedOnMode(refund, request);
+			return processRefundBasedOnMode(refund, request,refundRequest);
 		}
 
 		return refund;
@@ -289,7 +272,7 @@ public class RefundServiceImpl implements RefundService {
 	// APPROVAL PROCESSING
 	// ============================================================
 
-	private Refund processApproval(Refund refund) {
+	private Refund processApproval(Refund refund,RefundRequest refundRequest) {
 
 		if (refund == null) {
 			throw new IllegalArgumentException("Refund cannot be null for approval processing");
@@ -303,7 +286,7 @@ public class RefundServiceImpl implements RefundService {
 		RefundActionRequest nextActionRequest = RefundActionRequest.builder().id(refund.getId()).action(nextAction)
 				.userId(systemRequestInfo.getUserInfo().getUuid()).requestInfo(systemRequestInfo).build();
 
-		return processInternal(refund, nextActionRequest);
+		return processInternal(refund, nextActionRequest,refundRequest);
 	}
 
 	// ============================================================
@@ -324,7 +307,7 @@ public class RefundServiceImpl implements RefundService {
 	// FINANCE APPROVE / REJECT
 	// ============================================================
 
-	private Refund processFinanceAction(Refund refund, String action) {
+	private Refund processFinanceAction(Refund refund, String action,RefundRequest request) {
 
 		if (refund == null) {
 			throw new IllegalArgumentException("Refund cannot be null");
@@ -342,10 +325,11 @@ public class RefundServiceImpl implements RefundService {
 
 		RequestInfo systemRequestInfo = createSystemRequestInfo();
 
+		
 		RefundActionRequest actionRequest = RefundActionRequest.builder().id(refund.getId()).action(action)
 				.userId(systemRequestInfo.getUserInfo().getUuid()).requestInfo(systemRequestInfo).build();
 
-		Refund processedRefund = processInternal(refund, actionRequest);
+		Refund processedRefund = processInternal(refund, actionRequest,request);
 
 		return processedRefund;
 	}
@@ -354,7 +338,7 @@ public class RefundServiceImpl implements RefundService {
 	// REFUND PROCESSING
 	// ============================================================
 
-	private Refund processRefundBasedOnMode(Refund refund, RefundActionRequest request) {
+	private Refund processRefundBasedOnMode(Refund refund, RefundActionRequest request,RefundRequest refundRequest) {
 
 		String refundMode = refund.getRefundMode();
 
@@ -363,7 +347,7 @@ public class RefundServiceImpl implements RefundService {
 			refundEnrichmentService.updateAuditDetails(refund, request.getUserId());
 
 			RefundPaymentResponse refundResponse = paymentRefundService.initiateRefund(refund,
-					request.getRequestInfo());
+					refundRequest.getRequestInfo());
 			refund.setGatewayRefundId(refundResponse.getPaymentRefund().getRefundId());
 			return refund;
 		}
@@ -419,7 +403,7 @@ public class RefundServiceImpl implements RefundService {
 					.userId(systemRequestInfo.getUserInfo().getUuid()).requestInfo(systemRequestInfo).build();
 
 			// Process workflow only for SUCCESS / FAILURE
-			refund = processInternal(refund, actionRequest);
+			refund = processInternal(refund, actionRequest,null);
 
 			// Save gateway response + final workflow status
 			refundRepository.update(refund);
