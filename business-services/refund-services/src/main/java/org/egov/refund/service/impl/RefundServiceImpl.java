@@ -246,12 +246,11 @@ public class RefundServiceImpl implements RefundService {
 		refundEnrichmentService.updateAuditDetails(refund, request.getUserId());
 
 		Refund processedRefund = processWorkflowAction(refund, transition, request);
-		
+
 		if (!RefundConstants.ACTION_INITIATE.equalsIgnoreCase(transition.getAction())) {
 
 			refundAuditService.createAudit(processedRefund, transition.getAction());
 		}
-		
 
 		log.info("Workflow processing completed. refundId={}, status={}", processedRefund.getId(),
 				processedRefund.getStatus());
@@ -266,6 +265,7 @@ public class RefundServiceImpl implements RefundService {
 	private Refund processWorkflowAction(Refund refund, WorkflowTransition transition, RefundActionRequest request) {
 
 		String action = transition.getAction();
+		 String applicationStatus = transition.getApplicationStatus();
 
 		if (RefundConstants.ACTION_APPROVE.equalsIgnoreCase(action)
 				&& RefundConstants.STATUS_APPROVED.equalsIgnoreCase(transition.getApplicationStatus())) {
@@ -278,7 +278,7 @@ public class RefundServiceImpl implements RefundService {
 			return processFinanceRequest(refund);
 		}
 
-		if (RefundConstants.ACTION_REFUND_INITIATE.equalsIgnoreCase(action)) {
+		if (RefundConstants.ACTION_REFUND_INITIATE.equalsIgnoreCase(action) || RefundConstants.ACTION_REFUND_INITIATE.equalsIgnoreCase(applicationStatus) ) {
 
 			return processRefundBasedOnMode(refund, request);
 		}
@@ -346,7 +346,10 @@ public class RefundServiceImpl implements RefundService {
 		RefundActionRequest actionRequest = RefundActionRequest.builder().id(refund.getId()).action(action)
 				.userId(systemRequestInfo.getUserInfo().getUuid()).requestInfo(systemRequestInfo).build();
 
-		return processInternal(refund, actionRequest);
+		Refund processedRefund = processInternal(refund, actionRequest);
+
+		
+		return processedRefund;
 	}
 
 	// ============================================================
@@ -449,7 +452,9 @@ public class RefundServiceImpl implements RefundService {
 	private RequestInfo createSystemRequestInfo() {
 
 		User systemUser = User.builder().uuid(applicationProperties.getSystemUUid()).type("SYSTEM")
-				.roles(Collections.singletonList(Role.builder().code("SYSTEM").name("SYSTEM").tenantId(applicationProperties.getStateLevelTenantId()).build())).build();
+				.roles(Collections.singletonList(Role.builder().code("SYSTEM").name("SYSTEM")
+						.tenantId(applicationProperties.getStateLevelTenantId()).build()))
+				.build();
 
 		return RequestInfo.builder().apiId("refund-service").ver("1.0").ts(System.currentTimeMillis())
 				.msgId(UUID.randomUUID().toString()).userInfo(systemUser).build();
