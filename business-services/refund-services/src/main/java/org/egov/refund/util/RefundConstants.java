@@ -45,6 +45,9 @@ public final class RefundConstants {
     public static final String PAYMENT_REFUND_STATUS_FAILED = "FAILED";
     public static final String AUDIT_PAYMENT_REFUND_RESPONSE = "AUDIT_PAYMENT_REFUND_RESPONSE";
     
+    public static final String STATUS_FINANCE_APPROVED = "FINANCE_APPROVED";
+
+    public static final String ACTION_PROCESS_PAYMENT = "PROCESS_PAYMENT";
     
 
 }
