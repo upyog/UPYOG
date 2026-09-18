@@ -2,6 +2,7 @@ package org.egov.refund.service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
@@ -63,8 +64,8 @@ public class PaymentRefundService {
 	private Payment getLatestPayment(Refund refund, RequestInfo requestInfo) {
 		StringBuilder url = new StringBuilder(config.getCollectionHost()).append(config.getCollectionSearch()).append("_search").append("?tenantId=")
 				.append(refund.getTenantId()).append("&ids=").append(refund.getPaymentId());
-
-		Object responseObject = serviceRequestRepository.fetchResult(url, requestInfo);
+		
+		Object responseObject = serviceRequestRepository.fetchResult(url,  Map.of("RequestInfo", requestInfo));
 
 		if (responseObject == null) {
 			throw new CustomException("INVALID_WORKFLOW", "Empty workflow response received.");
