@@ -1,5 +1,6 @@
 package org.egov.refund.service;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.refund.model.Refund;
 import org.egov.refund.web.contracat.RefundActionRequest;
 import org.egov.refund.web.contracat.RefundRequest;
@@ -12,5 +13,5 @@ public interface RefundEnrichmentService {
 
 	void updateAuditDetails(Refund refund, String userId);
 
-	RefundActionRequest enrichWorkflowAction(RefundRequest request, String action);
+	RefundActionRequest enrichWorkflowAction(Refund refund, RequestInfo requestInfo, String action);
 }

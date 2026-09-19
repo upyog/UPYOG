@@ -45,6 +45,8 @@ public final class RefundConstants {
     public static final String PAYMENT_REFUND_STATUS_FAILURE = "FAILURE";
     public static final String PAYMENT_REFUND_STATUS_FAILED = "FAILED";
     
+    public static final String SYSTEM = "SYSTEM";
+    
     
 
 }
