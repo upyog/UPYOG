@@ -134,7 +134,9 @@ public class RefundServiceImpl implements RefundService {
 
 		if (RefundConstants.STATUS_PENDING_WITH_FINANCE.equalsIgnoreCase(refund.getStatus())) {
 
-			return processFinanceAction(refund, action,request);
+			refund = processFinanceAction(refund, action,request);
+			refundRepository.update(refund);
+			return refund;
 		}
 
 		RefundActionRequest actionRequest = refundEnrichmentService.enrichWorkflowAction(request, action);
@@ -366,7 +368,7 @@ public class RefundServiceImpl implements RefundService {
 	public void processPaymentRefund(PaymentRefund paymentRefund) {
 
 		log.info("Payment refund response received. gatewayRefundId={}, tenantId={}, status={}",
-				paymentRefund.getRefundId(), paymentRefund.getTenantId(), paymentRefund.getRefundStatus());
+				paymentRefund.getRefundId(), paymentRefund.getTenantId(), paymentRefund.getStatus());
 
 		// refundId from PaymentRefund represents gateway refund ID
 		Refund refund = refundRepository.findByGatwayRefundId(paymentRefund.getRefundId(), paymentRefund.getTenantId());
@@ -375,11 +377,11 @@ public class RefundServiceImpl implements RefundService {
 			throw new IllegalStateException("Refund not found for gatewayRefundId: " + paymentRefund.getRefundId());
 		}
 
-		String status = paymentRefund.getRefundStatus();
+		String status = paymentRefund.getStatus();
+		String message = paymentRefund.getGatewayStatusMsg();
 
 		// PENDING / INITIATED
-		// Only update gateway response. Do not process workflow.
-		if (isFinalPaymentRefundStatus(status)) {
+		if (isFinalPaymentRefundStatus(status,message)) {
 
 			refundRepository.update(refund);
 
@@ -413,9 +415,9 @@ public class RefundServiceImpl implements RefundService {
 		}
 	}
 
-	private boolean isFinalPaymentRefundStatus(String status) {
+	private boolean isFinalPaymentRefundStatus(String status,String message) {
 
-		return RefundConstants.PAYMENT_REFUND_STATUS_SUCCESS.equalsIgnoreCase(status)
+		return (RefundConstants.PAYMENT_REFUND_STATUS_SUCCESS.equalsIgnoreCase(status) && RefundConstants.PAYMENT_REFUND_STATUS_SUCCESS.equalsIgnoreCase(message)) 
 
 				|| RefundConstants.PAYMENT_REFUND_STATUS_FAILURE.equalsIgnoreCase(status)
 
