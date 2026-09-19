@@ -19,9 +19,9 @@ public class PaymentRefund {
 
 	private String transactionId;
 
-	private String refundStatus;
+	private String status;
 	
-	private String gatewayStausMsg;
+	private String gatewayStatusMsg;
 	
 	private String gatewayStatusCode;
 }

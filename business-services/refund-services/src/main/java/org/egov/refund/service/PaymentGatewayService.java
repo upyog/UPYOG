@@ -62,7 +62,7 @@ public class PaymentGatewayService {
 
 		if (!SUCCESS_CODE.equalsIgnoreCase(response.getPaymentRefund().getGatewayStatusCode())) {
 
-			throw new CustomException("REFUND_FAILED", response.getPaymentRefund().getGatewayStausMsg());
+			throw new CustomException("REFUND_FAILED", response.getPaymentRefund().getGatewayStatusMsg());
 		}
 	}
 }

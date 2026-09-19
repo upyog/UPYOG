@@ -17,16 +17,13 @@ import lombok.extern.slf4j.Slf4j;
 public class PaymentRefundConsumer {
 
 	private final ObjectMapper objectMapper;
-    private final RefundService refundService;
+	private final RefundService refundService;
 
-    public PaymentRefundConsumer(
-            ObjectMapper objectMapper,
-            RefundService refundService) {
+	public PaymentRefundConsumer(ObjectMapper objectMapper, RefundService refundService) {
 
-        this.objectMapper = objectMapper;
-        this.refundService = refundService;
-    }
-
+		this.objectMapper = objectMapper;
+		this.refundService = refundService;
+	}
 
 	@KafkaListener(topics = "${refund.kafka.payment-refund-topic}")
 	public void consume(final HashMap<String, Object> message) {
@@ -36,11 +33,11 @@ public class PaymentRefundConsumer {
 		try {
 
 			PaymentRefundRequest paymentRefundRequest = objectMapper.convertValue(message, PaymentRefundRequest.class);
-			PaymentRefund paymentRefund  = paymentRefundRequest.getRefund();
+			PaymentRefund paymentRefund = paymentRefundRequest.getRefund();
 			validate(paymentRefund);
 
-			log.info("Processing payment refund response. " + "refundId={}, tenantId={}, status={}",
-					paymentRefund.getRefundId(), paymentRefund.getTenantId(), paymentRefund.getRefundStatus());
+			log.info("Processing payment refund response. " + "refundId={}, status={}",
+					paymentRefund.getRefundId(), paymentRefund.getStatus());
 
 			refundService.processPaymentRefund(paymentRefund);
 
@@ -54,26 +51,16 @@ public class PaymentRefundConsumer {
 
 	private void validate(PaymentRefund paymentRefund) {
 
-        if (paymentRefund == null) {
-            throw new IllegalArgumentException(
-                    "Payment refund cannot be null"
-            );
-        }
+		if (paymentRefund == null) {
+			throw new IllegalArgumentException("Payment refund cannot be null");
+		}
 
-        if (paymentRefund.getRefundId() == null
-                || paymentRefund.getRefundId().isBlank()) {
+		if (paymentRefund.getRefundId() == null || paymentRefund.getRefundId().isBlank()) {
+			throw new IllegalArgumentException("Payment refund ID cannot be null or empty");
+		}
 
-            throw new IllegalArgumentException(
-                    "Payment refund ID cannot be null or empty"
-            );
-        }
-
-        if (paymentRefund.getTenantId() == null
-                || paymentRefund.getTenantId().isBlank()) {
-
-            throw new IllegalArgumentException(
-                    "Payment refund tenantId cannot be null or empty"
-            );
-        }
-    }
+		if (paymentRefund.getStatus() == null || paymentRefund.getStatus().isBlank()) {
+			throw new IllegalArgumentException("Payment refund status cannot be null or empty");
+		}
+	}
 }
