@@ -30,7 +30,7 @@ public final class RefundConstants {
 	public static final String STATUS_APPROVED = "APPROVED";
 	
 	public static final String ACTION_CREATE_REQUEST = "CREATE_REQUEST";
-	public static final String ACTION_REFUND_COMPLETED = "REFUND_COMPLETED";
+	public static final String ACTION_REFUND_COMPLETED = "COMPLETE_REFUND";
 	
 	public static final String ACTION_REFUND_INITIATE = "REFUND_INITIATE";
 	public static final String STATUS_REFUND_INITIATED = "REFUND_INITIATED";
