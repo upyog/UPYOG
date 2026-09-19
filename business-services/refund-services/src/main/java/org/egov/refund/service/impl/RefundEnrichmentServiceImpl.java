@@ -155,13 +155,9 @@ public class RefundEnrichmentServiceImpl implements RefundEnrichmentService {
 	// ============================================================
 
 	@Override
-	public RefundActionRequest enrichWorkflowAction(RefundRequest request, String action) {
+	public RefundActionRequest enrichWorkflowAction(Refund refund, RequestInfo requestInfo, String action) {
 
-		if (request == null) {
-			throw new IllegalArgumentException("Refund request cannot be null");
-		}
-
-		if (request.getRequestInfo() == null || request.getRequestInfo().getUserInfo() == null) {
+		if (requestInfo == null || requestInfo.getUserInfo() == null) {
 
 			throw new IllegalArgumentException("RequestInfo/UserInfo is mandatory");
 		}
@@ -170,10 +166,10 @@ public class RefundEnrichmentServiceImpl implements RefundEnrichmentService {
 			throw new IllegalArgumentException("Workflow action is mandatory");
 		}
 
-		String userId = request.getRequestInfo().getUserInfo().getUuid();
+		String userId = requestInfo.getUserInfo().getUuid();
 
-		return RefundActionRequest.builder().id(request.getRefund() != null ? request.getRefund().getId() : null)
-				.action(action).userId(userId).requestInfo(request.getRequestInfo()).build();
+		return RefundActionRequest.builder().id(refund != null ? refund.getId() : null).action(action).userId(userId)
+				.requestInfo(requestInfo).build();
 	}
 
 	// ============================================================
@@ -292,7 +288,7 @@ public class RefundEnrichmentServiceImpl implements RefundEnrichmentService {
 
 		return idResponses.get(0).getId();
 	}
-	
+
 	public static Long getCurrentTimestamp() {
 		return Instant.now().toEpochMilli();
 	}

@@ -72,5 +72,8 @@ public class ApplicationProperties {
 	@Value("${statelevel.tenant.id}")
 	private String stateLevelTenantId;
 	
+	@Value("${spring.application.name}")
+	private String applicationName ;
+	
 	
 }
