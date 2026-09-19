@@ -379,8 +379,6 @@ public class RefundServiceImpl implements RefundService {
 				throw new IllegalStateException("Refund not found for gatewayRefundId: " + paymentRefund.getRefundId());
 			}
 
-			refundRepository.update(refund);
-
 			String action;
 
 			if (RefundConstants.PAYMENT_REFUND_STATUS_SUCCESS.equalsIgnoreCase(status)) {
@@ -404,6 +402,9 @@ public class RefundServiceImpl implements RefundService {
 			// Save gateway response + final workflow status
 			refundRepository.update(refund);
 
+			if (RefundConstants.PAYMENT_REFUND_STATUS_SUCCESS.equalsIgnoreCase(status)) {
+				refundRepository.sendToFinanceComplete(refund);
+			}
 			log.info("Payment refund processing completed. refundId={}, finalStatus={}", refund.getId(),
 					refund.getStatus());
 		}
