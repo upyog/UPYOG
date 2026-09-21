@@ -6,4 +6,6 @@ import org.egov.refund.web.contracat.RefundRequest;
 public interface FinanceService {
 
     void processRefund(RefundRequest refund);
+
+	void sendToFinanceComplete(RefundRequest request);
 }
