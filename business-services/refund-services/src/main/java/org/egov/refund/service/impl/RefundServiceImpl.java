@@ -399,11 +399,13 @@ public class RefundServiceImpl implements RefundService {
 			// Process workflow only for SUCCESS / FAILURE
 			refund = processInternal(refund, actionRequest);
 
-			// Save gateway response + final workflow status
+			// final workflow status
 			refundRepository.update(refund);
 
 			if (RefundConstants.PAYMENT_REFUND_STATUS_SUCCESS.equalsIgnoreCase(status)) {
-				refundRepository.sendToFinanceComplete(refund);
+				RefundRequest refundRequest = RefundRequest.builder().refund(refund)
+						.requestInfo(createSystemRequestInfo()).build();
+				financeService.sendToFinanceComplete(refundRequest);
 			}
 			log.info("Payment refund processing completed. refundId={}, finalStatus={}", refund.getId(),
 					refund.getStatus());

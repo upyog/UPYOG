@@ -79,10 +79,4 @@ public class RefundRepository {
 				.query(refundQueryBuilder.getFindByGatwayRefundIdQuery(), refundRowMapper, refundId, tenentId).stream()
 				.findFirst().orElse(null);
 	}
-
-	public void sendToFinanceComplete(Refund refund) {
-		producer.push(properties.getEgovRefundFinancePaymentTopic(), refund);
-		log.info("Refund published to finance successfully. refundId={}, topic={}", refund.getId(),
-				properties.getEgovRefundFinancePaymentTopic());
-	}
 }
