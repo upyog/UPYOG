@@ -111,7 +111,7 @@ public class RefundServiceImpl implements RefundService {
 		if (refund == null) {
 			throw new IllegalArgumentException("Refund not found for id: " + inputRefund.getId());
 		}
-
+		refundEnrichmentService.enrichRefundUpdate(refund, inputRefund);
 		log.info("Existing refund found. refundId={}, currentStatus={}", refund.getId(), refund.getStatus());
 
 		/*
@@ -121,7 +121,6 @@ public class RefundServiceImpl implements RefundService {
 		if (inputRefund.getProcessInstance() == null || isBlank(inputRefund.getProcessInstance().getAction())) {
 			log.info("Processing normal refund data update. refundId={}", refund.getId());
 
-			refundEnrichmentService.enrichRefundUpdate(refund, inputRefund);
 
 			refundEnrichmentService.updateAuditDetails(refund, request.getRequestInfo().getUserInfo().getUuid());
 
