@@ -143,11 +143,12 @@ public class ReportEngine {
                 firstParam = andParam;
             }
             if (checkNullandEmpty(reBean.getToDate())) {
-                reportEngineQry.append(firstParam + " voucher.voucherDate<=to_date(:voucherToDate,'dd/MM/yyyy')");
+                reportEngineQry.append(firstParam)
+                        .append(" voucher.voucherDate < ")
+                        .append("(to_date(:voucherToDate,'dd/MM/yyyy') + INTERVAL '1 day')");
                 params.put("voucherToDate", reBean.getToDate());
                 firstParam = andParam;
             }
-
             if (checkNullandEmpty(reBean.getFromVoucherNumber())) {
                 reportEngineQry.append(firstParam).append(" voucher.fromVouchernumber>=:fromVouchernumber");
                 params.put("fromVouchernumber", reBean.getFromVoucherNumber());

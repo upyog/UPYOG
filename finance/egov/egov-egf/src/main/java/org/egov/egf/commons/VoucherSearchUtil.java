@@ -69,6 +69,7 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Calendar;
 
 @Transactional(readOnly = true)
 public class VoucherSearchUtil {
@@ -323,8 +324,15 @@ public class VoucherSearchUtil {
 			params.put("voucherFromDate", fromDate);
 		}
 		if (toDate != null) {
-			sql.append(" and vh.voucherDate<=:voucherToDate");
-			params.put("voucherToDate", toDate);
+			final Calendar endDateExclusive = Calendar.getInstance();
+			endDateExclusive.setTime(toDate);
+			endDateExclusive.set(Calendar.HOUR_OF_DAY, 0);
+			endDateExclusive.set(Calendar.MINUTE, 0);
+			endDateExclusive.set(Calendar.SECOND, 0);
+			endDateExclusive.set(Calendar.MILLISECOND, 0);
+			endDateExclusive.add(Calendar.DATE, 1);
+			sql.append(" and vh.voucherDate < :voucherToDate");
+			params.put("voucherToDate", endDateExclusive.getTime());
 		}
 		if (voucherHeader.getFundId() != null) {
 			sql.append(" and vh.fundId.id=:fundId");
