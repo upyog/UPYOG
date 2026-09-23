@@ -25,6 +25,10 @@ public class RefundApplication extends StateAware implements Auditable {
 	private String referenceNumber;
 
 	private String paymentId;
+	
+	private BigDecimal amountPaid;
+
+	private String refundServiceStatus;
 
 	private BigDecimal refundAmount;
 
@@ -300,5 +304,21 @@ public class RefundApplication extends StateAware implements Auditable {
 
 	public void setRefundCategory(final String refundCategory) {
 		this.refundCategory = refundCategory;
+	}
+	
+	public BigDecimal getAmountPaid() {
+	    return amountPaid;
+	}
+
+	public void setAmountPaid(final BigDecimal amountPaid) {
+	    this.amountPaid = amountPaid;
+	}
+
+	public String getRefundServiceStatus() {
+	    return refundServiceStatus;
+	}
+
+	public void setRefundServiceStatus(final String refundServiceStatus) {
+	    this.refundServiceStatus = refundServiceStatus;
 	}
 }

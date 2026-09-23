@@ -480,6 +480,8 @@ public class EgfKafkaListener {
 				.refundServiceId(sourceRefund.getId()).tenantId(sourceRefund.getTenantId()).moduleName(moduleName)
 				.businessService(sourceRefund.getBusinessService()).refundApplicationNumber(sourceRefund.getRefundNo())
 				.referenceNumber(sourceRefund.getConsumerCode()).paymentId(sourceRefund.getPaymentId())
+				.amountPaid(sourceRefund.getAmountPaid())
+				.refundServiceStatus(sourceRefund.getStatus().trim())
 				.refundAmount(sourceRefund.getRefundAmount())
 				.refundCategory(sourceRefund.getRefundCategory())
 				.refundReason(sourceRefund.getRefundReason())

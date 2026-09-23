@@ -35,8 +35,6 @@ public class RefundServiceCallbackService {
 
 	private static final String ACTION_REJECT = "REJECT";
 
-	private static final String STATUS_PENDING_WITH_FINANCE = "PENDING_WITH_FINANCE";
-
 	@PersistenceContext
 	private EntityManager entityManager;
 
@@ -171,8 +169,11 @@ public class RefundServiceCallbackService {
 		refundStatusUpdate.setRefundAmount(refundApplication.getRefundAmount());
 		refundStatusUpdate.setRefundCategory(refundApplication.getRefundCategory());
 		refundStatusUpdate.setRefundReason(refundApplication.getRefundReason());
-		// Refund-service determines the next status from the workflow action.
-		refundStatusUpdate.setStatus(STATUS_PENDING_WITH_FINANCE);
+		if (StringUtils.isBlank(refundApplication.getRefundServiceStatus())) {
+			throw new IllegalStateException("Original refund-service status is missing for refund application: "
+					+ refundApplication.getRefundApplicationNumber());
+		}
+		refundStatusUpdate.setStatus(refundApplication.getRefundServiceStatus());
 		refundStatusUpdate.setSanctionRef(refundApplication.getVoucherNumber());
 		refundStatusUpdate.setFinanceApprovalDate(eventTime);
 		refundStatusUpdate.setProcessInstance(processInstance);
