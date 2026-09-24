@@ -105,9 +105,9 @@
 					<td class="greybox"><b>Reference Number</b></td>
 					<td class="greybox"><s:property
 							value="%{refundApplication.referenceNumber}" /></td>
-					<td class="greybox"><b>Payment ID</b></td>
+					<td class="greybox"><b>Amount Paid</b></td>
 					<td class="greybox"><s:property
-							value="%{refundApplication.paymentId}" /></td>
+							value="%{refundApplication.amountPaid}" /></td>
 				</tr>
 
 				<tr>

@@ -7,6 +7,8 @@ CREATE TABLE egf_refund_application
     businessservice             CHARACTER VARYING(128) NOT NULL,
     referencenumber             CHARACTER VARYING(128),
     paymentid                   CHARACTER VARYING(128),
+    amountpaid           		NUMERIC(12, 2),
+	refundservicestatus   		CHARACTER VARYING(64),
     refundamount                NUMERIC(12, 2) NOT NULL,
     refundreason                CHARACTER VARYING(1000),
     refunddate                  BIGINT,
@@ -60,5 +62,3 @@ CREATE INDEX indx_egf_refund_payment
 ALTER TABLE egf_refund_application
     ADD COLUMN IF NOT EXISTS refundcategory VARCHAR(128);
     
-ALTER TABLE egf_refund_application
-    ADD COLUMN IF NOT EXISTS refundcategory VARCHAR(128);
