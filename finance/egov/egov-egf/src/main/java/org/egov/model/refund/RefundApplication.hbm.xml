@@ -39,6 +39,11 @@
 
 		<property name="paymentId" column="PAYMENTID" type="string" />
 
+		<property name="amountPaid" column="AMOUNTPAID"
+			type="big_decimal" />
+
+		<property name="refundServiceStatus"
+			column="REFUNDSERVICESTATUS" type="string" length="64" />
 
 		<property name="refundAmount" column="REFUNDAMOUNT"
 			type="big_decimal" not-null="true" />

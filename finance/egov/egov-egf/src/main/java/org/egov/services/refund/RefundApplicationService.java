@@ -17,6 +17,8 @@ public class RefundApplicationService extends PersistenceService<RefundApplicati
 
 	@Autowired
 	private RefundJournalVoucherService refundJournalVoucherService;
+	@Autowired
+	private RefundServiceCallbackService refundServiceCallbackService;
 
 	public RefundApplicationService() {
 		super(RefundApplication.class);
@@ -141,6 +143,18 @@ public class RefundApplicationService extends PersistenceService<RefundApplicati
 		if (approverPosition == null || approverPosition.getId() == null || approverPosition.getId() <= 0) {
 			throw new IllegalArgumentException("Valid Finance approver position is mandatory");
 		}
+
+		if (refundApplication.getAmountPaid() == null || refundApplication.getAmountPaid().signum() <= 0) {
+			throw new IllegalArgumentException("Amount paid must be greater than zero");
+		}
+
+		if (refundApplication.getRefundServiceStatus() == null
+				|| refundApplication.getRefundServiceStatus().trim().isEmpty()) {
+			throw new IllegalArgumentException("Original refund-service status is mandatory");
+		}
+
+		refundApplication.setRefundServiceStatus(refundApplication.getRefundServiceStatus().trim());
+
 	}
 
 	@Transactional
@@ -166,7 +180,11 @@ public class RefundApplicationService extends PersistenceService<RefundApplicati
 		refundApplication.setStatus(STATUS_REJECTED);
 		refundApplication.setRejectionReason(normalizedComments);
 
-		return persist(refundApplication);
+		final RefundApplication savedApplication = persist(refundApplication);
+
+		refundServiceCallbackService.notifyInboxRejectionAfterCommit(savedApplication, normalizedComments);
+
+		return savedApplication;
 	}
 
 	@Transactional

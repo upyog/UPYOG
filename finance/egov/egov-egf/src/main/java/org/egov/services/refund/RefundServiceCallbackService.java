@@ -35,8 +35,6 @@ public class RefundServiceCallbackService {
 
 	private static final String ACTION_REJECT = "REJECT";
 
-	private static final String STATUS_PENDING_WITH_FINANCE = "PENDING_WITH_FINANCE";
-
 	@PersistenceContext
 	private EntityManager entityManager;
 
@@ -85,7 +83,7 @@ public class RefundServiceCallbackService {
 		 * authentication thread-locals are still available.
 		 */
 		final RefundStatusUpdateRequest callbackRequest = buildCallbackRequest(refundApplication, financeStatus,
-				approvalComments);
+				approvalComments, "JV");
 
 		final String callbackUrl = buildCallbackUrl();
 
@@ -110,6 +108,35 @@ public class RefundServiceCallbackService {
 		LOG.info("Refund callback registered for voucher {} with status {}", voucherNumber, financeStatus);
 	}
 
+	public void notifyInboxRejectionAfterCommit(final RefundApplication refundApplication,
+			final String rejectionComments) {
+
+		if (refundApplication == null) {
+			throw new IllegalArgumentException("Refund application is required");
+		}
+
+		validateConfiguration();
+
+		// Prepare the request while Finance's authentication context is available.
+		final RefundStatusUpdateRequest callbackRequest = buildCallbackRequest(refundApplication, FINANCE_REJECTED,
+				rejectionComments, "INBOX");
+		final String callbackUrl = buildCallbackUrl();
+		final String refundNumber = refundApplication.getRefundApplicationNumber();
+
+		if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+			throw new IllegalStateException("No active transaction for refund inbox rejection callback");
+		}
+
+		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+			@Override
+			public void afterCommit() {
+				sendCallbackSafely(callbackUrl, callbackRequest, refundNumber, FINANCE_REJECTED);
+			}
+		});
+
+		LOG.info("Inbox rejection callback registered for refund {}", refundNumber);
+	}
+
 	private RefundApplication findByVoucherNumber(final String voucherNumber) {
 
 		final List<RefundApplication> applications = entityManager
@@ -121,7 +148,7 @@ public class RefundServiceCallbackService {
 	}
 
 	private RefundStatusUpdateRequest buildCallbackRequest(final RefundApplication refundApplication,
-			final String financeStatus, final String approvalComments) {
+			final String financeStatus, final String approvalComments, final String source) {
 
 		final long eventTime = new Date().getTime();
 
@@ -130,9 +157,9 @@ public class RefundServiceCallbackService {
 		final RequestInfo requestInfo = new RequestInfo();
 		requestInfo.setApiId("Rainmaker");
 		requestInfo.setVer("1.0");
-		requestInfo.setAction("UPDATE");
+		// requestInfo.setAction("UPDATE");
 		requestInfo.setTs(eventTime);
-		requestInfo.setMsgId(refundApplication.getRefundApplicationNumber() + "-JV-" + financeStatus);
+		requestInfo.setMsgId(refundApplication.getRefundApplicationNumber() + "-" + source + "-" + financeStatus);
 
 		final String serviceAuthToken = microserviceUtils.generateAdminToken(refundApplication.getTenantId());
 
@@ -171,10 +198,13 @@ public class RefundServiceCallbackService {
 		refundStatusUpdate.setRefundAmount(refundApplication.getRefundAmount());
 		refundStatusUpdate.setRefundCategory(refundApplication.getRefundCategory());
 		refundStatusUpdate.setRefundReason(refundApplication.getRefundReason());
-		// Refund-service determines the next status from the workflow action.
-		refundStatusUpdate.setStatus(STATUS_PENDING_WITH_FINANCE);
+		if (StringUtils.isBlank(refundApplication.getRefundServiceStatus())) {
+			throw new IllegalStateException("Original refund-service status is missing for refund application: "
+					+ refundApplication.getRefundApplicationNumber());
+		}
+		refundStatusUpdate.setStatus(refundApplication.getRefundServiceStatus());
 		refundStatusUpdate.setSanctionRef(refundApplication.getVoucherNumber());
-		refundStatusUpdate.setFinanceApprovalDate(eventTime);
+		refundStatusUpdate.setFinanceApprovalDate(FINANCE_APPROVED.equals(financeStatus) ? eventTime : null);
 		refundStatusUpdate.setProcessInstance(processInstance);
 
 		final RefundStatusUpdateRequest callbackRequest = new RefundStatusUpdateRequest();

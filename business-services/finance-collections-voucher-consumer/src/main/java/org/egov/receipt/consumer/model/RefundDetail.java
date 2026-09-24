@@ -49,6 +49,11 @@ public class RefundDetail {
 	 * Original payment reference.
 	 */
 	private String paymentId;
+	
+	private BigDecimal amountPaid;
+
+	/** Status received from refund-service, kept for the callback. */
+	private String refundServiceStatus;
 
 	private BigDecimal refundAmount;
 	
