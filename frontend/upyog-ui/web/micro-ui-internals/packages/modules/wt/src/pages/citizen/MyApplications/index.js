@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Header, Loader, TextInput, Dropdown, SubmitBar, CardLabel, Card } from "@upyog/digit-ui-react-components";
+import { Header, Loader, TextInput, Dropdown, SubmitBar, CardLabel, Card } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import WTApplication from "./wt-application";
@@ -128,38 +128,31 @@ export const WTMyApplications = () => {
   if (isLoading) {
     return <Loader />;
   }
-  const serviceOptions = [{
-    label: t("MOBILE_TOILET"),
-    code: "mobileToilet"
-  }, {
-    label: t("WATER_TANKER"),
-    code: "watertanker"
-  }, {
-    label: t("TREE_PRUNING"),
-    code: "treePruning"
-  }];
-  const statusOptions = [{
-    i18nKey: "Booking Created",
-    code: "BOOKING_CREATED",
-    value: t("WT_BOOKING_CREATED")
-  }, {
-    i18nKey: "Booking Approved",
-    code: "APPROVED",
-    value: t("WT_BOOKING_APPROVED")
-  }, {
-    i18nKey: "Tanker Delivered",
-    code: "TANKER_DELIVERED",
-    value: t("WT_TANKER_DELIVERED")
-  }, {
-    i18nKey: "Vendor Assigned",
-    code: "ASSIGN_VENDOR",
-    value: t("WT_ASSIGN_VENDOR")
-  }, {
-    i18nKey: "Rejected",
-    code: "REJECT",
-    value: t("WT_BOOKING_REJECTED")
-  }];
-  const statusOptionForTreePruning = [{
+
+  const serviceOptions = [
+    { label: t("MOBILE_TOILET"), code: "mobileToilet" },
+    { label: t("WATER_TANKER"), code: "watertanker" },
+    { label: t("TREE_PRUNING"), code: "treePruning" }
+  ];
+
+  const statusOptionForWaterTanker = [
+    { i18nKey: "Booking Created", code: "BOOKING_CREATED", value: t("WT_BOOKING_CREATED") },
+    { i18nKey: "Booking Approved", code: "APPROVED", value: t("WT_BOOKING_APPROVED") },
+    { i18nKey: "Tanker Delivered", code: "TANKER_DELIVERED", value: t("WT_TANKER_DELIVERED") },
+    { i18nKey: "Vendor Assigned", code: "ASSIGN_VENDOR", value: t("WT_ASSIGN_VENDOR") },
+    { i18nKey: "Rejected", code: "REJECT", value: t("WT_BOOKING_REJECTED") }
+  ];
+
+  const statusOptionForMobileToilet = [
+    { i18nKey: "Booking Created", code: "BOOKING_CREATED", value: t("WT_BOOKING_CREATED") },
+    { i18nKey: "Booking Approved", code: "APPROVED", value: t("WT_BOOKING_APPROVED") },
+    { i18nKey: "Mobile Toilet Delivered", code: "MOBILE_TOILET_DELIVERED", value: t("MOBILE_TOILET_DELIVERED") },
+    { i18nKey: "Vendor Assigned", code: "ASSIGN_VENDOR", value: t("WT_ASSIGN_VENDOR") },
+    { i18nKey: "Rejected", code: "REJECT", value: t("WT_BOOKING_REJECTED") }
+  ];
+
+  const statusOptionForTreePruning = [
+  {
     i18nKey: "BOOKING_CREATED",
     code: "BOOKING_CREATED",
     value: t("TP_BOOKING_CREATED")
@@ -203,7 +196,23 @@ export const WTMyApplications = () => {
             <div className="wt-auto-53">
               <div className="wt-auto-54">
                 <CardLabel>{t("PT_COMMON_TABLE_COL_STATUS_LABEL")}</CardLabel>
-                <Dropdown className="form-field wt-auto-55" selected={status} select={setStatus} option={tempServiceType === 'treePruning' ? statusOptionForTreePruning : statusOptions} placeholder={t("Select Status")} optionKey="value" t={t} />
+                <Dropdown
+                  className="form-field wt-auto-55"
+                  selected={status}
+                  select={setStatus}
+                  option={
+                    tempServiceType === 'treePruning'
+                      ? statusOptionForTreePruning
+                      : tempServiceType === 'watertanker'
+                      ? statusOptionForWaterTanker
+                      : tempServiceType === 'mobileToilet'
+                      ? statusOptionForMobileToilet
+                      : []
+                  }
+                  placeholder={t("Select Status")}
+                  optionKey="value"
+                  t={t}
+                />
               </div>
             </div>
             <div>
@@ -216,7 +225,7 @@ export const WTMyApplications = () => {
               </div>
             </div>
           </div>
-            <Link to={`request-service/service-type`}>
+            <Link to={`${APPLICATION_PATH}/citizen/wt/request-service/service-type`}>
               <SubmitBar label={t("NEW_REQUEST") + " +"} className="wt-auto-58" />
             </Link>
         </div>

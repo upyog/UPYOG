@@ -1,3 +1,7 @@
+/**
+ * Controller component for NOC application search.
+ * Configures search form methods, table structures, and switches between desktop and mobile search views.
+ */
 import React, { Fragment, useCallback, useMemo, useEffect, useState, useReducer } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import SearchFormFieldsComponent from "./SearchFormFieldsComponent";
@@ -32,10 +36,10 @@ const SearchApplication = ({ tenantId, t, onSubmit, data, error, isLoading, Coun
   });
 
   useEffect(() => {
-    methods.register("offset", 0);
-    methods.register("limit", 10);
-    methods.register("sortBy", "commencementDate");
-    methods.register("sortOrder", "DESC");
+    methods.register("offset");
+    methods.register("limit");
+    methods.register("sortBy");
+    methods.register("sortOrder");
   }, [methods.register]);
 
   const columns = useSearchApplicationTableConfig();

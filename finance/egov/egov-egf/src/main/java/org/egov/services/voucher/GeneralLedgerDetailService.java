@@ -50,7 +50,7 @@ package org.egov.services.voucher;
 
 import org.egov.commons.CGeneralLedgerDetail;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -69,7 +69,7 @@ public class GeneralLedgerDetailService extends PersistenceService<CGeneralLedge
     public List<CGeneralLedgerDetail> findCGeneralLedgerDetailByLedgerId(final Long genralLedgerId) {
         final Query qry = getSession().createQuery(
                 "from CGeneralLedgerDetail ledgerDetail where ledgerDetail.generalLedgerId.id = :genralLedgerId");
-        qry.setLong("genralLedgerId", genralLedgerId);
+        qry.setParameter("genralLedgerId", genralLedgerId);
         return qry.list();
     }
 }

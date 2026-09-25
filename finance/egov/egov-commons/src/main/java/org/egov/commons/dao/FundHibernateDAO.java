@@ -48,13 +48,13 @@
 package org.egov.commons.dao;
 
 import org.egov.commons.Fund;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
@@ -78,7 +78,7 @@ public class FundHibernateDAO {
 
 
     public List<Fund> findAll() {
-        return (List<Fund>) getCurrentSession().createCriteria(Fund.class).list();
+        return getCurrentSession().createQuery("from Fund", Fund.class).list();
     }
 
     @PersistenceContext
@@ -109,7 +109,7 @@ public class FundHibernateDAO {
 
     public Fund fundByCode(final String fundCode) {
         final Query qry = getCurrentSession().createQuery("FROM Fund f WHERE f.code =:fundCode");
-        qry.setString("fundCode", fundCode);
+        qry.setParameter("fundCode", fundCode);
         return (Fund) qry.uniqueResult();
     }
 

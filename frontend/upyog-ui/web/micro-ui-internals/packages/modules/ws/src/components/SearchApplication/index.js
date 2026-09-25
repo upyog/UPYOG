@@ -1,5 +1,5 @@
-import React, { Fragment, useEffect, useCallback, useMemo } from "react";
-import { SearchForm, Table, Card, Loader, Header } from "@upyog/digit-ui-react-components";
+import React, { Fragment, useEffect, useCallback, useMemo, useState } from "react";
+import { SearchForm, Table, Card, Loader, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import SearchFields from "./SearchFields";
 import { useTranslation } from "react-i18next";
@@ -33,21 +33,24 @@ const SearchApplication = ({
     reset
   } = useForm({
     defaultValues: {
+      applicationNumber: "",
+      connectionNumber: "",
+      mobileNumber: "",
+      applicationType: "",
+      applicationStatus: "",
+      fromDate: "",
+      toDate: "",
+      tradeName: "",
       offset: 0,
       limit: 10,
       sortBy: "commencementDate",
       sortOrder: "DESC",
-      isConnectionSearch: true
-    }
+      isConnectionSearch: false,
+    },
   });
-  useEffect(() => {
-    register("offset", 0);
-    register("limit", 10);
-    register("sortBy", "commencementDate");
-    register("sortOrder", "DESC");
-    register("sortOrder", "DESC");
-    register("isConnectionSearch", true);
-  }, [register]);
+
+
+
   useEffect(() => {
     clearSessionFormData();
     setSessionFormData({});
@@ -59,33 +62,34 @@ const SearchApplication = ({
     setValue("sortBy", args.id);
     setValue("sortOrder", args.desc ? "DESC" : "ASC");
   }, []);
+
+  const [isClearSearch, setIsClearSearch] = useState(false);
+
+  const handleSearchSubmit = (d) => {
+    setIsClearSearch(false);
+    onSubmit(d);
+  };
+
+  const handleClearSearch = () => {
+    setIsClearSearch(true);
+    onSubmit({});
+  };
+
   function onPageSizeChange(e) {
     setValue("limit", Number(e.target.value));
-    handleSubmit(onSubmit)();
+    handleSubmit(handleSearchSubmit)();
   }
   function nextPage() {
     setValue("offset", getValues("offset") + getValues("limit"));
-    handleSubmit(onSubmit)();
+    handleSubmit(handleSearchSubmit)();
   }
   function previousPage() {
     setValue("offset", getValues("offset") - getValues("limit"));
-    handleSubmit(onSubmit)();
+    handleSubmit(handleSearchSubmit)();
   }
   const isMobile = window.Digit.Utils.browser.isMobile();
   if (isMobile) {
-    return <MobileSearchApplication {...{
-      Controller,
-      register,
-      control,
-      t,
-      reset,
-      previousPage,
-      handleSubmit,
-      tenantId,
-      data,
-      onSubmit,
-      businessService
-    }} />;
+    return <MobileSearchApplication {...{ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit: handleSearchSubmit, businessService, isClearSearch, onClearSearch: handleClearSearch }} />;
   }
 
   //need to get from workflow
@@ -182,22 +186,15 @@ const SearchApplication = ({
       <Card className={"card-search-heading"}>
         <span className="ws-auto-8">{t("WS_INFO_VALIDATION")}</span>
       </Card>
-      <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
-        <SearchFields {...{
-        register,
-        control,
-        reset,
-        tenantId,
-        t,
-        businessService
-      }} />
+      <SearchForm onSubmit={handleSearchSubmit} handleSubmit={handleSubmit} >
+        <SearchFields {...{ register, control, reset, tenantId, t, businessService, onSubmit: handleSearchSubmit, onClearSearch: handleClearSearch }} />
       </SearchForm>
       {isLoading ? <Loader /> : null} 
-      {data?.display && !resultOk ? <Card className="ws-auto-9">
+      {isClearSearch ? null : data?.display && !resultOk ? <Card className="ws-auto-9">
           {t(data?.display).split("\\n").map((text, index) => <p key={index} className="ws-auto-10">
                 {text}
               </p>)}
-        </Card> : resultOk ? <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {
+        </Card> : resultOk && !isClearSearch ? <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {
       return {
         style: {
           minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",

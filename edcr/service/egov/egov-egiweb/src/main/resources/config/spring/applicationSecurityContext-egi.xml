@@ -55,7 +55,22 @@
 	   http://www.springframework.org/schema/security
 	   http://www.springframework.org/schema/security/spring-security.xsd" default-lazy-init="true">
 
-	<bean id="securityFilterChain" name="securityFilterChain" class="org.springframework.security.web.FilterChainProxy">
+	<!-- 
+	  HandlerMappingIntrospector is mandatory in Spring Security 6:
+	  When Spring MVC is on the classpath, XML <security:filter-chain pattern="..."> elements 
+	  default to using MvcRequestMatcher internally. MvcRequestMatcher requires an 
+	  'mvcHandlerMappingIntrospector' bean in the ApplicationContext to introspect Spring MVC 
+	  handler mappings. Without this bean, a NoSuchBeanDefinitionException is thrown at runtime.
+	-->
+	<bean id="mvcHandlerMappingIntrospector" name="mvcHandlerMappingIntrospector"
+		  class="org.springframework.web.servlet.handler.HandlerMappingIntrospector"/>
+
+	<!-- 
+	  FilterChainProxy bean:
+	  Aliased to both 'securityFilterChain' (internal/legacy reference) and 
+	  'springSecurityFilterChain' (standard name looked up by DelegatingFilterProxy in web.xml).
+	-->
+	<bean id="securityFilterChain" name="securityFilterChain,springSecurityFilterChain" class="org.springframework.security.web.FilterChainProxy">
 		<constructor-arg>
 			<list>
 				<security:filter-chain pattern="/resources/**" filters="none" />

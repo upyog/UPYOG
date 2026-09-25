@@ -4,9 +4,9 @@ import {
     Toast,
     Loader,
     CardText
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
-import { useLocation, useHistory } from "react-router-dom";
+import { useLocation,  } from "react-router-dom";
 
 const OCUploadPlanDiagram = ({ t, config, onSelect, userType, formData, ownerIndex = 0, addNewOwner, isShowToast, isSubmitBtnDisable, setIsShowToast }) => {
     const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -14,7 +14,7 @@ const OCUploadPlanDiagram = ({ t, config, onSelect, userType, formData, ownerInd
     const [uploadedFile, setUploadedFile] = useState(() => formData?.uploadData?.file || null);
     const [file, setFile] = useState(formData?.uploadData?.file);
     const [uploadMessage, setUploadMessage] = useState("");
-    const history = useHistory();
+    const navigate = Digit.Hooks.useCustomNavigate();
 
     function selectfile(e) {
         setUploadedFile(e.target.files[0]);
@@ -30,7 +30,7 @@ const OCUploadPlanDiagram = ({ t, config, onSelect, userType, formData, ownerInd
             setUploadMessage("");
         }
         if (isShowToast) {
-            history.push(
+            navigate(
                 `/upyog-ui/citizen/obps/edcrscrutiny/oc-apply/acknowledgement`,
                 { data: isShowToast?.label ? isShowToast?.label : "BPA_INTERNAL_SERVER_ERROR", type: "ERROR"}
               );

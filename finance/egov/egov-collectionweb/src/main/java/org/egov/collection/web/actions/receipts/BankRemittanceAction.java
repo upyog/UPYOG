@@ -91,7 +91,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.utils.Constants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({
@@ -215,8 +215,8 @@ public class BankRemittanceAction extends BaseFormAction {
         remitAccountNumber = "";
         if (accountNumberId != null) {
 
-            final Query bankAccountQry = persistenceService.getSession().createSQLQuery(BANK_ACCOUNT_NUMBER_QUERY);
-            bankAccountQry.setString("accountNumberId", accountNumberId);
+            final Query bankAccountQry = persistenceService.getSession().createNativeQuery(BANK_ACCOUNT_NUMBER_QUERY);
+            bankAccountQry.setParameter("accountNumberId", accountNumberId);
             final Object bankAccountResult = bankAccountQry.uniqueResult();
             remitAccountNumber = (String) bankAccountResult;
         }

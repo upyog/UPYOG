@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Loader, Modal, FormComposer, ButtonSelector, ActionBar,ApplyFilterBar  } from "@upyog/digit-ui-react-components";
+import { Loader, Modal, FormComposer, ButtonSelector, ActionBar,ApplyFilterBar  } from "@nudmcdgnpm/digit-ui-react-components";
 import { configAcceptApplication } from "../config/Approve";
 import { configTermsAndConditions } from "../config/TermsAndConditions";
 
@@ -38,13 +38,13 @@ const ActionModal = ({ t, closeModal, submitAction, actionData, action, applicat
     switch (action) {
       case "APPROVE": {
         setConfig(
-          configAcceptApplication({ t, action, selectFile, uploadedFile, error, isCommentRequired: false, setUploadedFile,file, error })
+          configAcceptApplication({ t, action, selectFile, uploadedFile, isCommentRequired: false, setUploadedFile,file, error })
         )
         break;
       }
       case "SEND_TO_ARCHITECT":
         setConfig(
-          configAcceptApplication({ t, action, selectFile, uploadedFile, error, setUploadedFile,file, error })
+          configAcceptApplication({ t, action, selectFile, uploadedFile, setUploadedFile,file, error })
         );
         break;
       case "TERMS_AND_CONDITIONS":
@@ -53,7 +53,7 @@ const ActionModal = ({ t, closeModal, submitAction, actionData, action, applicat
         break;  
       default:
         setConfig(
-          configAcceptApplication({ t, action, selectFile, uploadedFile, error, isCommentRequired: false , setUploadedFile,file, error})
+          configAcceptApplication({ t, action, selectFile, uploadedFile, isCommentRequired: false , setUploadedFile,file, error})
         )
     }
   }, [action, uploadedFile, error]);

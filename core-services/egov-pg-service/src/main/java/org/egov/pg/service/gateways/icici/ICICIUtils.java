@@ -16,90 +16,127 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Utility class providing helper methods for the ICICI payment gateway integration.
+ * <p>
+ * Includes methods for generating transaction timestamps and for computing the
+ * secure hash (HMAC SHA256) required to authenticate requests sent to and
+ * responses received from the ICICI payment gateway.
+ * </p>
+ */
+
 @Slf4j
 class ICICIUtils {
 
-	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-	public static String getCurrentTxnDate() {
+    public static String getCurrentTxnDate() {
 
-		return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-	}
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+    }
 
-	/*============================================ GENERATE PLAIN HASH TEXT==============*/
-	public static  String generatePlainHashText(Object request) {
+    /*============================================ GENERATE PLAIN HASH TEXT==============*/
+    /**
+     * Generates the plain (unhashed) text used as input for secure hash computation.
+     * <p>
+     * Converts the given request object into a sorted map (alphabetical by key), removes
+     * any existing {@code secureHash} field, and concatenates the non-null values of all
+     * remaining fields in key-sorted order.
+     * </p>
+     *
+     * @param request the request object (or map) to be converted into plain hash text
+     * @return the concatenated string of field values used for hash generation
+     * @throws RuntimeException if the request cannot be converted or processed
+     */
+    public static  String generatePlainHashText(Object request) {
 
-		try {
+        try {
 
-			Map<String, Object> map = OBJECT_MAPPER.convertValue(request, TreeMap.class);
+            Map<String, Object> map = OBJECT_MAPPER.convertValue(request, TreeMap.class);
 
-			map.remove("secureHash");
+            map.remove("secureHash");
 
-			StringBuilder plainHash = new StringBuilder();
+            StringBuilder plainHash = new StringBuilder();
 
-			for (Map.Entry<String, Object> entry : map.entrySet()) {
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
 
-				Object value = entry.getValue();
+                Object value = entry.getValue();
 
-				if (value != null) {
-					plainHash.append(value);
-				}
-			}
+                if (value != null) {
+                    plainHash.append(value);
+                }
+            }
 
-			return plainHash.toString();
+            return plainHash.toString();
 
-		} catch (Exception ex) {
+        } catch (Exception ex) {
 
-			throw new RuntimeException("Failed to generate plain hash text", ex);
-		}
-	}
+            throw new RuntimeException("Failed to generate plain hash text", ex);
+        }
+    }
 
-	
-	/*============================================ HMAC SHA256==============*/
-	public static String generateSecureHash(Object request, String secretKey) {
 
-		try {
+    /*============================================ HMAC SHA256==============*/
+    /**
+     * Generates the secure hash for a given request using HMAC SHA256.
+     * <p>
+     * Converts the request object into a sorted map (alphabetical by key), removes any
+     * existing {@code secureHash} field, concatenates the non-null values of the
+     * remaining fields in key-sorted order to form the plain hash text, and computes
+     * the HMAC SHA256 of that text using the provided secret key. The resulting hash
+     * bytes are returned as a lowercase hexadecimal string.
+     * </p>
+     *
+     * @param request   the request object (or map) for which the secure hash is to be generated
+     * @param secretKey the merchant secret key used as the HMAC key
+     * @return the hexadecimal string representation of the computed HMAC SHA256 hash
+     * @throws RuntimeException if hash generation fails due to an invalid algorithm,
+     *                           key, or any other processing error
+     */
+    public static String generateSecureHash(Object request, String secretKey) {
 
-			// Convert request object to map
-			Map<String, Object> requestMap = OBJECT_MAPPER.convertValue(request, TreeMap.class);
+        try {
 
-			// Remove secureHash field if already present
-			requestMap.remove("secureHash");
+            // Convert request object to map
+            Map<String, Object> requestMap = OBJECT_MAPPER.convertValue(request, TreeMap.class);
 
-			// Create plain hash text
-			StringBuilder plainHashText = new StringBuilder();
+            // Remove secureHash field if already present
+            requestMap.remove("secureHash");
 
-			for (Map.Entry<String, Object> entry : requestMap.entrySet()) {
+            // Create plain hash text
+            StringBuilder plainHashText = new StringBuilder();
 
-				Object value = entry.getValue();
+            for (Map.Entry<String, Object> entry : requestMap.entrySet()) {
 
-				if (value != null) {
-					plainHashText.append(value);
-				}
-			}
+                Object value = entry.getValue();
 
-			log.info("ICICI Plain Hash Text : {}", plainHashText);
+                if (value != null) {
+                    plainHashText.append(value);
+                }
+            }
 
-			// Generate HMAC SHA256
-			Mac mac = Mac.getInstance(PgConstants.HMAC_SHA256);
+            log.info("ICICI Plain Hash Text : {}", plainHashText);
 
-			SecretKeySpec keySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), PgConstants.HMAC_SHA256);
+            // Generate HMAC SHA256
+            Mac mac = Mac.getInstance(PgConstants.HMAC_SHA256);
 
-			mac.init(keySpec);
+            SecretKeySpec keySpec = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), PgConstants.HMAC_SHA256);
 
-			byte[] hashBytes = mac.doFinal(plainHashText.toString().getBytes(StandardCharsets.UTF_8));
+            mac.init(keySpec);
 
-			String secureHash = HexFormat.of().formatHex(hashBytes);
+            byte[] hashBytes = mac.doFinal(plainHashText.toString().getBytes(StandardCharsets.UTF_8));
 
-			log.info("ICICI Secure Hash : {}", secureHash);
+            String secureHash = HexFormat.of().formatHex(hashBytes);
 
-			return secureHash;
+            log.info("ICICI Secure Hash : {}", secureHash);
 
-		} catch (Exception ex) {
+            return secureHash;
 
-			log.error("Failed to generate secure hash", ex);
+        } catch (Exception ex) {
 
-			throw new RuntimeException("Failed to generate secure hash", ex);
-		}
-	}
+            log.error("Failed to generate secure hash", ex);
+
+            throw new RuntimeException("Failed to generate secure hash", ex);
+        }
+    }
 }

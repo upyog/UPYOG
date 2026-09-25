@@ -1,15 +1,18 @@
-import { Banner, Card, CardText, Loader, Row, StatusTable, SubmitBar, DownloadPrefixIcon } from "@upyog/digit-ui-react-components";
-import React, { useEffect, useState } from "react";
+import { Banner, Card, CardText, Loader, Row, StatusTable, SubmitBar, DownloadPrefixIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useEffect, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
+import { BUSINESS_SERVICES, RECEIPT_KEYS } from "../../constants";
 
-export const SuccessfulPayment = (props)=>{
-  if(localStorage.getItem("BillPaymentEnabled")!=="true"){
+export const SuccessfulPayment = (props) => {
+  const params = new URLSearchParams(window.location.search);
+  const hasTxnId = params.get("eg_pg_txnid");
+  if (localStorage.getItem("BillPaymentEnabled") !== "true" && !hasTxnId) {
     window.history.forward();
-   return null;
- }
- return <WrapPaymentComponent {...props}/>
+    return null;
+  }
+  return <WrapPaymentComponent {...props} />
 }
 
 export const convertEpochToDate = (dateEpoch) => {
@@ -26,24 +29,34 @@ export const convertEpochToDate = (dateEpoch) => {
     return "NA";
   }
 };
- const WrapPaymentComponent = (props) => {
+const WrapPaymentComponent = (props) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { eg_pg_txnid: egId, workflow: workflw, propertyId } = Digit.Hooks.useQueryParams();
   const [printing, setPrinting] = useState(false);
   const [allowFetchBill, setallowFetchBill] = useState(false);
   const { businessService: business_service, consumerCode, tenantId } = useParams();
-  const { data: bpaData = {}, isLoading: isBpaSearchLoading, isSuccess: isBpaSuccess, error: bpaerror } = Digit.Hooks.obps.useOBPSSearch(
-    "", {}, tenantId, { applicationNo: consumerCode }, {}, {enabled:(window.location.href.includes("bpa") || window.location.href.includes("BPA"))}
-  );
   
-  const { isLoading, data, isError } = Digit.Hooks.usePaymentUpdate({ egId }, business_service, {
-    
+  // Memoize payment update parameters to prevent unnecessary re-renders
+  const paymentUpdateParams = useMemo(() => ({ egId }), [egId]);
+  
+  // Memoize business service to keep it stable
+  const memoizedBusinessService = useMemo(() => business_service, [business_service]);
+  
+  // Memoize payment update options to prevent unnecessary re-renders
+  const paymentUpdateOptions = useMemo(() => ({
     retry: false,
     staleTime: Infinity,
     refetchOnWindowFocus: false,
-  });
-  console.log("datatatataty",data)
+    enabled: !!egId,  // Only run hook when egId is present
+  }), [egId]);
+
+  const { data: bpaData = {}, isLoading: isBpaSearchLoading, isSuccess: isBpaSuccess, error: bpaerror } = Digit.Hooks.obps.useOBPSSearch(
+    "", {}, tenantId, { applicationNo: consumerCode }, {}, { enabled: (window.location.href.includes("bpa") || window.location.href.includes("BPA")) }
+  );
+
+  const { isLoading, data, isError } = Digit.Hooks.usePaymentUpdate(paymentUpdateParams, memoizedBusinessService, paymentUpdateOptions);
+  console.log("API Call - egId:", egId, "data:", data, "isLoading:", isLoading);
 
   const { label } = Digit.Hooks.useApplicationsForBusinessServiceSearch({ businessService: business_service }, { enabled: false });
 
@@ -91,16 +104,16 @@ export const convertEpochToDate = (dateEpoch) => {
 
   useEffect(() => {
     return () => {
-      localStorage.setItem("BillPaymentEnabled","false")
-      queryClient.clear();
+      localStorage.setItem("BillPaymentEnabled", "false")
+      // queryClient.clear();
     };
-  }, []);
+  }, [queryClient]);
 
   useEffect(() => {
     if (data && data.txnStatus && data.txnStatus !== "FAILURE") {
       setallowFetchBill(true);
     }
-  }, [data]);
+  }, [data?.txnStatus]);
 
   if (isLoading || recieptDataLoading) {
     return <Loader />;
@@ -316,7 +329,6 @@ export const convertEpochToDate = (dateEpoch) => {
       currentDate.getFullYear() + "-" + (currentDate.getMonth() + 1) + "-" + currentDate.getDate()
     );
     let reqData = { ...bpaDataDetails, edcrDetail: [{ ...edcrData }] };
-    console.log("reqData",reqData)
     let response = await Digit.PaymentService.generatePdf(bpaDataDetails?.tenantId, { Bpa: [reqData] }, order);
     const fileStore = await Digit.PaymentService.printReciept(bpaDataDetails?.tenantId, { fileStoreIds: response.filestoreIds[0] });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
@@ -412,7 +424,7 @@ export const convertEpochToDate = (dateEpoch) => {
         permissionLetterFilestoreId: response?.filestoreIds[0]
       };
       await mutation.mutateAsync({
-        hallsBookingApplication: updatedApplication
+        venueBookingApplication: updatedApplication
       });
       fileStoreId = response?.filestoreIds[0];
     }
@@ -568,7 +580,7 @@ export const convertEpochToDate = (dateEpoch) => {
           paymentReceiptFilestoreId: response?.filestoreIds[0]
         };
         await mutation.mutateAsync({
-          hallsBookingApplication: updatedApplication
+          venueBookingApplication: updatedApplication
         });
         fileStoreId = response?.filestoreIds[0];
       }
@@ -576,6 +588,58 @@ export const convertEpochToDate = (dateEpoch) => {
       window.open(fileStore[fileStoreId], "_blank");
   }
 
+  const printGCReceipt = async () => {
+    let fileStoreId = payments?.Payments?.[0]?.fileStoreId || payments?.fileStoreId;
+    if (!fileStoreId) {
+      let response = { filestoreIds: [payments?.fileStoreId] };
+      response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...paymentData }] }, "garbage-service-receipt");
+      fileStoreId = response?.filestoreIds[0];
+    }
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+    window.open(fileStore[fileStoreId], "_blank");
+  };
+
+  const printESTReceipt = async () => {
+    let fileStoreId = payments?.Payments?.[0]?.fileStoreId || payments?.fileStoreId;
+    if (!fileStoreId) {
+      let response = { filestoreIds: [payments?.fileStoreId] };
+      response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...paymentData }] }, RECEIPT_KEYS.EST);
+      fileStoreId = response?.filestoreIds[0];
+    }
+    const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+    window.open(fileStore[fileStoreId], "_blank");
+  };
+
+  const printNDCReceipt = async () => {
+    let fileStoreId = payments?.Payments?.[0]?.fileStoreId || paymentData?.fileStoreId;
+    if (!fileStoreId) {
+      let response = { filestoreIds: [payments?.fileStoreId] };
+      let ndcApp = {};
+      try {
+        const searchRes = await Digit.NDCService.NDCsearch({ tenantId, filters: { applicationNo: consumerCode } });
+        ndcApp = searchRes?.Applications?.[0] || {};
+      } catch (err) {
+        console.error("Error fetching NDC application for receipt:", err);
+      }
+      response = await Digit.PaymentService.generatePdf(
+        tenantId,
+        {
+          Payments: [
+            {
+              ...(paymentData || {}),
+              ...ndcApp,
+            },
+          ],
+        },
+        "ndc-receipt"
+      );
+      fileStoreId = response?.filestoreIds?.[0];
+    }
+    if (fileStoreId) {
+      const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+      window.open(fileStore[fileStoreId], "_blank");
+    }
+  };
 
 
 
@@ -584,7 +648,6 @@ export const convertEpochToDate = (dateEpoch) => {
   //New Payment Reciept For PT module with year bifurcations
 
   const printRecieptNew = async (payment) => {
-    console.log("paymentpayment",payment,payment.Payments[0].paymentDetails[0].receiptNumber,payment.Payments[0])
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const state = Digit.ULBService.getStateId();
     let paymentArray=[];
@@ -893,6 +956,26 @@ export const convertEpochToDate = (dateEpoch) => {
           {t("PTR_CERTIFICATE")}
         </div>
       ) : null}
+      {business_service == "garbage-service" ? (
+        <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={printGCReceipt}>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
+            <path d="M0 0h24v24H0V0z" fill="none" />
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+          </svg>
+          {t("GC_FEE_RECEIPT")}
+        </div>
+      ) : null}
+      {/* Estate Management Fee Receipt Action */}
+      {business_service === BUSINESS_SERVICES.EST ? (
+        <div
+          className="primary-label-btn d-grid"
+          style={{ marginLeft: "unset", marginRight: "20px", marginTop: "15px", marginBottom: "15px" }}
+          onClick={printESTReceipt}
+        >
+          <DownloadPrefixIcon />
+          {t("EST_FEE_RECEIPT")}
+        </div>
+      ) : null}
       {window.location.href.includes("mcollect") ?
          <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px" }} onClick={printReciept}>
          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
@@ -957,11 +1040,11 @@ export const convertEpochToDate = (dateEpoch) => {
       {business_service?.includes("PT") &&<div style={{marginTop:"10px"}}><Link to={`/upyog-ui/citizen/feedback?redirectedFrom=${"upyog-ui/citizen/payment/success"}&propertyId=${consumerCode? consumerCode : ""}&acknowldgementNumber=${egId ? egId : ""}&tenantId=${tenantId}&creationReason=${business_service?.split(".")?.[1]}`}>
           <SubmitBar label={t("CS_REVIEW_AND_FEEDBACK")} />
       </Link></div>}
-      {business_service?.includes("PT") ? (
+      {/* {business_service?.includes("PT") ? (
         <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }} onClick={printReciept}>
             {t("CS_DOWNLOAD_RECEIPT")}
           </div>
-      ) : null}
+      ) : null} */}
       {business_service?.includes("WS") ? (
         <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }} onClick={printReciept}>
             {t("CS_DOWNLOAD_RECEIPT")}
@@ -1018,6 +1101,17 @@ export const convertEpochToDate = (dateEpoch) => {
           </div>
         </div>
       ) : null}
+      {business_service == "NDC" ? (
+        <div style={{ display: 'flex', justifyContent: 'flex-start', gap: '20px', marginLeft: "unset", marginRight: "20px", marginTop: "15px", marginBottom: "15px" }}>
+          <div className="primary-label-btn d-grid" onClick={printNDCReceipt}>
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
+              <path d="M0 0h24v24H0V0z" fill="none" />
+              <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+            </svg>
+            {t("NDC_FEE_RECEIPT")}
+          </div>
+        </div>
+      ) : null}
       {business_service == "sv-services" ? (
         <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={printReciept}>
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
@@ -1043,6 +1137,15 @@ export const convertEpochToDate = (dateEpoch) => {
             <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
           </svg>
           {t("SV_ID_CARD")}
+        </div>
+      ) : null}
+      {business_service == "FIRENOC" ? (
+        <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px", marginTop:"15px",marginBottom:"15px" }} onClick={printReciept}>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#a82227">
+            <path d="M0 0h24v24H0V0z" fill="none" />
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5z" />
+          </svg>
+          {t("FN_FEE_RECIEPT")}
         </div>
       ) : null}
       {!(business_service?.includes("TL")) || !(business_service?.includes("PT")) && <SubmitBar onSubmit={printReciept} label={t("COMMON_DOWNLOAD_RECEIPT")} />}
@@ -1071,11 +1174,32 @@ export const convertEpochToDate = (dateEpoch) => {
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       )}
+      {business_service == "NDC" && (
+        <Link to={`/upyog-ui/citizen`}>
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+        </Link>
+      )}
       {business_service == "sv-services" && (
         <Link to={`/upyog-ui/citizen`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} style={{marginTop:"15px"}} />
         </Link>
       )}
+      {business_service == "garbage-service" && (
+        <Link to={`/upyog-ui/citizen`}>
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+        </Link>
+      )}
+      {business_service == "FIRENOC" && (
+        <Link to={`/upyog-ui/citizen`}>
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} style={{marginTop:"15px"}} />
+        </Link>
+      )}
+      {business_service === BUSINESS_SERVICES.EST && (
+        <Link to={`/upyog-ui/citizen`}>
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+        </Link>
+      )}
+
     </Card>
   );
 };

@@ -1,8 +1,13 @@
+import { mutationTemplate } from "../../common/mutationTemplate";
 import { FileDesludging } from "../../services/molecules/FSM/FileDesludging";
-import { useQuery, useMutation } from "react-query";
 
-const useDesludging = (tenantId, config = {}) => {
-  return useMutation((data) => FileDesludging.create(tenantId, data));
+const useDesludging = (tenantId) => {
+  const mutationFn = (data) =>
+    FileDesludging.create(tenantId, data);
+
+  return mutationTemplate({
+    mutationFn,
+  });
 };
 
 export default useDesludging;

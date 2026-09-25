@@ -1,0 +1,101 @@
+{
+	"info": {
+		"_postman_id": "gis-dx-service-collection",
+		"name": "GIS DX Service",
+		"description": "Postman collection for GIS DX Service API endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Search GeoJSON Data",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"tenantId\": \"pg.citya\",\n    \"businessService\": \"ASSET\",\n    \"geometryType\": \"polygon\",\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"e1f12033-9d3f-4100-b1b4-c49a0ff9c0f3\",\n        \"userInfo\": {\n            \"id\": 4928,\n            \"uuid\": \"83aa57ec-c5f5-4590-988a-da48e37eb62b\",\n            \"userName\": \"GIS_CEMP\",\n            \"name\": \"GIS\",\n            \"mobileNumber\": \"9283743717\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"GIS Role for employees\",\n                    \"code\": \"GIS_CEMP\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1765952490964|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/gis-dx/v1/_search",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"gis-dx",
+						"v1",
+						"_search"
+					]
+				},
+				"description": "Generate GeoJSON data for any municipal service"
+			},
+			"response": []
+		},
+		{
+			"name": "Search GeoJSON Data - Points",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"tenantId\": \"pg.citya\",\n    \"businessService\": \"ASSET\",\n    \"geometryType\": \"point\",\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"your-auth-token\",\n        \"userInfo\": {\n            \"id\": 4928,\n            \"uuid\": \"83aa57ec-c5f5-4590-988a-da48e37eb62b\",\n            \"userName\": \"GIS_CEMP\",\n            \"name\": \"GIS\",\n            \"mobileNumber\": \"9283743717\",\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"GIS Role for employees\",\n                    \"code\": \"GIS_CEMP\",\n                    \"tenantId\": \"pg.citya\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg.citya\"\n        },\n        \"msgId\": \"1765952490964|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/gis-dx/v1/_search",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"gis-dx",
+						"v1",
+						"_search"
+					]
+				},
+				"description": "Generate GeoJSON point data for municipal services"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8290/gis-dx-service",
+			"type": "string"
+		}
+	]
+}

@@ -331,15 +331,31 @@ public class AdvancePaymentAction extends BasePaymentAction {
                 FinancialConstants.TYPEOFACCOUNT_PAYMENTS, FinancialConstants.TYPEOFACCOUNT_RECEIPTS_PAYMENTS));
     }
 
+    /**
+     * LTS Migration Fix (Struts 7 / Hibernate 6): same as Cheque Assignment —
+     * do not {@code .get(0)} an empty Script.findByName result when switching
+     * to this page.
+     */
     @SuppressWarnings("unchecked")
     @SkipValidation
     public boolean validateUser(final String purpose) {
-        final Script validScript = (Script) getPersistenceService().findAllByNamedQuery(Script.BY_NAME,
-                "Paymentheader.show.bankbalance").get(0);
+        List<?> scripts = null;
+        try {
+            scripts = getPersistenceService().findAllByNamedQuery(Script.BY_NAME, "Paymentheader.show.bankbalance");
+        } catch (final Exception e) {
+            LOGGER.warn("Named query Script.findByName failed: " + e.getMessage());
+        }
+        if (scripts == null || scripts.isEmpty())
+            scripts = getPersistenceService().findAllBy("from Script s where s.name=?", "Paymentheader.show.bankbalance");
+        if (scripts == null || scripts.isEmpty()) {
+            LOGGER.warn("Script Paymentheader.show.bankbalance not found; allowing " + purpose);
+            return true;
+        }
+        final Script validScript = (Script) scripts.get(0);
         final List<String> list = (List<String>) scriptService.executeScript(validScript,
                 ScriptService.createContext("persistenceService", paymentService, "purpose", purpose));
 
-        if (list.get(0).equals("true"))
+        if (list != null && !list.isEmpty() && list.get(0).equals("true"))
             try {
                 canCheckBalance = true;
                 commonBean.setAvailableBalance(egovCommon.getAccountBalance(new Date(), paymentheader.getBankaccount()

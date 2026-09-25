@@ -12,7 +12,7 @@ import {
     StatusTable,
     Row,
     PDFSvg
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { getPattern, convertDateToEpoch, convertEpochToDate } from "../utils";
 
 const OCeDCRScrutiny = ({ t, config, onSelect, userType, formData, ownerIndex = 0, addNewOwner, isShowToast }) => {
@@ -186,13 +186,13 @@ const OCeDCRScrutiny = ({ t, config, onSelect, userType, formData, ownerIndex = 
                     <a target="_" href={permitEdcrData?.updatedDxfFile} style={{ minWidth: "160px", marginRight: "20px" }} key={permitEdcrData?.updatedDxfFile}>
                         {/**TODO : refactor it to send height,weight as part of styles object instead of passing seperately */}
                         <PDFSvg />
-                        <p style={{ marginTop: "8px", fontWeight: "bold", fontSize: "14px", lineHeight: "19px", color: "#505A5F", fontWeight: "400" }}>{t("BPA_UPLOADED_PLAN_DXF")}</p>
+                        <p style={{ marginTop: "8px", fontSize: "14px", lineHeight: "19px", color: "#505A5F", fontWeight: "400" }}>{t("BPA_UPLOADED_PLAN_DXF")}</p>
                     </a>
                     <h1 style={{ fontSize: "18px", lineHeight: "21px", fontWeight: "700", padding: "0px 0px 16px 0px" }}>{`${t("BPA_SCRUTINY_REPORT_OUTPUT_LABEL")}`}</h1>
                     <a target="_" href={permitEdcrData?.planReport} style={{ minWidth: "160px", marginRight: "20px" }} key={permitEdcrData?.planReport}>
                         {/**TODO : refactor it to send height,weight as part of styles object instead of passing seperately */}
                         <PDFSvg />
-                        <p style={{ marginTop: "8px", fontWeight: "bold", fontSize: "14px", lineHeight: "19px", color: "#505A5F", fontWeight: "400" }}>{t("BPA_SCRUTINY_REPORT_PDF")}</p>
+                        <p style={{ marginTop: "8px", fontSize: "14px", lineHeight: "19px", color: "#505A5F", fontWeight: "400" }}>{t("BPA_SCRUTINY_REPORT_PDF")}</p>
                     </a>
                     <div onClick={routeToNextPage}>
                         <SubmitBar label={t("BPA_PROCEED_OC_SCRUTINY_LABEL")} />

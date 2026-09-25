@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { TelePhone, DisplayPhotos } from "@nudmcdgnpm/digit-ui-react-components";
+import { TelePhone, DisplayPhotos } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 
 /**
  * Caption Component
@@ -37,8 +37,8 @@ const Caption = ({ data,OpenImage }) => {
       {data.mobileNumber && <TelePhone mobile={data.mobileNumber} />}
       {data.source && <p>{t("ES_APPLICATION_DETAILS_APPLICATION_CHANNEL_" + data.source.toUpperCase())}</p>}
       {data.comment && <Reason otherComment={data?.otherComment} headComment={data?.comment}></Reason>}
-      {data?.wfComment ? <div>{data?.wfComment?.map( e => 
-      <div className="TLComments">
+      {data?.wfComment ? <div>{data?.wfComment?.map((e, index) => 
+      <div key={index} className="TLComments">
         <h3>{t("WF_COMMON_COMMENTS")}</h3>
         <p style={{overflowX:"scroll"}}>{e}</p>
       </div>

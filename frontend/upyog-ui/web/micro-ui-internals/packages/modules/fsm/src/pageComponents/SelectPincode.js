@@ -1,4 +1,4 @@
-import { FormStep, TextInput, CardLabel, LabelFieldPair, CardLabelError } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, LabelFieldPair, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect, Fragment } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimelineInFSM";
@@ -64,7 +64,7 @@ const SelectPincode = ({ t, config, onSelect, formData = {}, userType, register,
   const goNext = async (data) => {
     const foundValue = tenants?.find((obj) => obj.pincode?.find((item) => item == data?.pincode));
     if (foundValue) {
-      onSelect(config.key, { pincode });
+      onSelect(config.key, { ...formData.address, pincode });
     } else {
       setPincodeServicability("CS_COMMON_PINCODE_NOT_SERVICABLE");
     }

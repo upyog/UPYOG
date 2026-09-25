@@ -1,7 +1,8 @@
-import { Card, KeyNote, SubmitBar, Toast, CardSubHeader } from "@upyog/digit-ui-react-components";
+import { Card, KeyNote, SubmitBar, Toast,CardSubHeader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useHistory } from "react-router-dom";
+import { Link,  } from "react-router-dom";
+import { getSlotSearchCriteria } from "../../../utils";
 
 /*
  * AdsApplication component displays the details of a specific advertisement application.
@@ -9,16 +10,10 @@ import { Link, useHistory } from "react-router-dom";
  * booking dates, and application status. The component also includes functionality for 
  * making payments and navigating to the application details page.
  */
-import "../../../css/ads-inline-auto.css";
-const AdsApplication = ({
-  application,
-  tenantId,
-  buttonLabel
-}) => {
-  const {
-    t
-  } = useTranslation();
-  const history = useHistory();
+
+const AdsApplication = ({ application, tenantId, buttonLabel }) => {
+  const { t } = useTranslation();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [showToast, setShowToast] = useState(null);
 
   /*
@@ -43,20 +38,11 @@ const AdsApplication = ({
   };
   */
   const slotSearchData = Digit.Hooks.ads.useADSSlotSearch();
-  let formdata = {
-    advertisementSlotSearchCriteria: application?.cartDetails.map(item => ({
-      bookingId: application?.bookingId,
-      addType: item?.addType,
-      bookingStartDate: item?.bookingDate,
-      bookingEndDate: item?.bookingDate,
-      faceArea: item?.faceArea,
-      tenantId: tenantId,
-      location: item?.location,
-      nightLight: item?.nightLight,
-      isTimerRequired: true
-    }))
-  };
-  const getBookingDateRange = bookingSlotDetails => {
+    let formdata = {
+      advertisementSlotSearchCriteria: getSlotSearchCriteria(application?.cartDetails, tenantId, {}, undefined, application?.bookingId)
+    };
+   
+  const getBookingDateRange = (bookingSlotDetails) => {
     if (!bookingSlotDetails || bookingSlotDetails.length === 0) {
       return t("CS_NA");
     }
@@ -69,40 +55,31 @@ const AdsApplication = ({
       return startDate && endDate ? `${startDate}  -  ${endDate}` : t("CS_NA");
     }
   };
-  const handleMakePayment = async () => {
-    try {
-      // Await the mutation and capture the result directly
-      const result = await slotSearchData.mutateAsync(formdata);
-      let SlotSearchData = {
-        bookingId: application?.bookingId,
-        tenantId: tenantId,
-        cartDetails: application?.cartDetails
-      };
-      const isSlotBooked = result?.advertisementSlotAvailabiltityDetails?.some(slot => slot.slotStaus === "BOOKED");
-      const timerValue = result?.advertisementSlotAvailabiltityDetails[0].timerValue;
-      if (isSlotBooked) {
-        setShowToast({
-          error: true,
-          label: t("ADS_ADVERTISEMENT_ALREADY_BOOKED")
-        });
-      } else {
-        history.push({
-          pathname: `/upyog-ui/citizen/payment/my-bills/${"adv-services"}/${application?.bookingNo}`,
-          state: {
-            tenantId: application?.tenantId,
-            bookingNo: application?.bookingNo,
-            timerValue: timerValue,
-            SlotSearchData: SlotSearchData
+
+      const handleMakePayment = async () => {
+        try {
+          /* Await the mutation and capture the result directly */
+          const result = await slotSearchData.mutateAsync(formdata);
+          let SlotSearchData={
+            bookingId:application?.bookingId,
+            tenantId: tenantId,
+            cartDetails:application?.cartDetails,
+          };
+          const isSlotBooked = result?.advertisementSlotAvailabiltityDetails?.some((slot) => slot.slotStaus === "BOOKED");
+          /* timerValue is resolved directly from top-level of response payload per backend contract */
+          const timerValue = result?.timerValue;
+          if (isSlotBooked) {
+            setShowToast({ error: true, label: t("ADS_ADVERTISEMENT_ALREADY_BOOKED") });
+          } else {
+            navigate(
+              `/upyog-ui/citizen/payment/my-bills/${"adv-services"}/${application?.bookingNo}`,
+              { state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo, timerValue:timerValue, SlotSearchData:SlotSearchData } }
+            );
           }
-        });
+      } catch (error) {
+        setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
       }
-    } catch (error) {
-      setShowToast({
-        error: true,
-        label: t("CS_SOMETHING_WENT_WRONG")
-      });
-    }
-  };
+      };
   useEffect(() => {
     if (showToast) {
       const timer = setTimeout(() => {

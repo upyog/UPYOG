@@ -47,11 +47,12 @@
  */
 package org.egov.egf.web.actions.budget;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.util.ValueStack;
+import org.apache.struts2.ActionContext;
+import org.apache.struts2.util.ValueStack;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -71,6 +72,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.microservice.models.Department;
+import org.egov.infra.persistence.utils.PersistenceUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -89,7 +91,7 @@ import org.egov.services.budget.BudgetService;
 import org.egov.utils.BudgetDetailConfig;
 import org.egov.utils.BudgetDetailHelper;
 import org.egov.utils.Constants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -103,6 +105,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * LTS Migration Notes:
+ * 1. [Hibernate 6 HQL & SQM Strictness] Corrected subquery in getApprovedBudgetsForFY() from
+ *    'where id not in (select parent from Budget)' to 'where id not in (select parent.id from Budget)'.
+ *    Hibernate 6 SQM enforces strict type comparison (scalar ID vs scalar ID). Corrected HQL property
+ *    casing ('isActiveBudget', 'isactive', 'isnotleaf').
+ * 2. [Hibernate 6 Proxies & Struts 7 OGNL] Transformed Financial Year and Budget entities to Map items
+ *    via PersistenceUtils.unproxy() in toFinancialYearDropdownItems() and toBudgetDropdownItems().
+ *    This avoids silent OGNL evaluation failures on Hibernate 6 ByteBuddy proxies in <s:select>.
+ * 3. [Struts 7 Parameter Extraction] Added resolveBudgetReAppCriteriaFromRequest() to extract
+ *    'financialYear.id' and 'budgetDetail.executingDepartment' from Jakarta HttpServletRequest.
+ * 4. [Java 17 Null Safety] Added defensive null checks in validateBudgetReAppropriation() and
+ *    validateCreate() to prevent NullPointerExceptions during dynamic grid validation.
+ */
 @ParentPackage("egov")
 @Results({
         @Result(name = "new", location = "budgetReAppropriation-new.jsp"),
@@ -117,7 +133,7 @@ public class BudgetReAppropriationAction extends BaseFormAction {
     private List<BudgetReAppropriationView> newBudgetReAppropriationList = new ArrayList<BudgetReAppropriationView>();
     @Autowired
     protected BudgetDetailConfig budgetDetailConfig;
-    private BudgetDetail budgetDetail;
+    private BudgetDetail budgetDetail = new BudgetDetail();
     protected Budget budget;
     protected List<String> headerFields = new ArrayList<String>();
     protected List<String> gridFields = new ArrayList<String>();
@@ -250,17 +266,28 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         if (shouldShowField(Constants.FUNCTION))
             dropdownData.put("functionList", masterDataCache.get("egi-function"));
         if (shouldShowField(Constants.SCHEME))
-            dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isActive=true order by name"));
+            /*
+             * LTS Migration Fix (Hibernate 6 Upgrade):
+             * Changed field name from camelCase 'isActive=true' to lowercase 'isactive=true' in Scheme HQL.
+             * The Scheme entity maps database column 'isactive' to Java property 'isactive'.
+             */
+            dropdownData.put("schemeList", persistenceService.findAllBy("from Scheme where isactive=true order by name"));
         if (shouldShowField(Constants.EXECUTING_DEPARTMENT))
             dropdownData.put("executingDepartmentList", masterDataCache.get("egi-department"));
         if (shouldShowField(Constants.FUND))
             dropdownData
                     .put("fundList",
-                            persistenceService.findAllBy("from Fund where isNotLeaf=false and isActive=true order by name"));
+                            /*
+                             * LTS Migration Fix (Hibernate 6 Upgrade):
+                             * Changed field names to lowercase 'isnotleaf=false and isactive=true' in Fund HQL.
+                             * The Fund entity maps database columns to Java properties 'isnotleaf' and 'isactive'.
+                             */
+                            persistenceService.findAllBy("from Fund where isnotleaf=false and isactive=true order by name"));
         if (shouldShowField(Constants.BOUNDARY))
             dropdownData.put("boundaryList", persistenceService.findAllBy("from Boundary order by name"));
         dropdownData.put("finYearList",
-                getPersistenceService().findAllBy("from CFinancialYear where isActive=true order by finYearRange desc "));
+                toFinancialYearDropdownItems(getPersistenceService()
+                        .findAllBy("from CFinancialYear where isActive=true order by finYearRange desc ")));
     }
 
     public final boolean shouldShowField(final String fieldName) {
@@ -286,6 +313,8 @@ public class BudgetReAppropriationAction extends BaseFormAction {
     @Override
     public void prepare() {
         super.prepare();
+        // LTS: Struts 7 does not bind nested/header form fields onto action beans
+        resolveBudgetReAppCriteriaFromRequest();
         headerFields = budgetDetailConfig.getHeaderFields();
         gridFields = budgetDetailConfig.getGridFields();
         mandatoryFields = budgetDetailConfig.getMandatoryFields();
@@ -313,6 +342,34 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         dropdownData.put("departmentList", masterDataCache.get("egi-department"));
         dropdownData.put("designationList", Collections.EMPTY_LIST);
         dropdownData.put("userList", Collections.EMPTY_LIST);
+    }
+
+    /**
+     * LTS: form posts {@code financialYear.id} and {@code budgetDetail.executingDepartment};
+     * Struts 7 often leaves nested beans null / unbound, so validateLoadActuals NPEd.
+     * Read criteria from the request.
+     */
+    private void resolveBudgetReAppCriteriaFromRequest() {
+        final jakarta.servlet.http.HttpServletRequest request = ServletActionContext.getRequest();
+        final String fyIdParam = request.getParameter("financialYear.id");
+        if (fyIdParam != null && !fyIdParam.trim().isEmpty() && !"0".equals(fyIdParam.trim())) {
+            if (financialYear == null) {
+                financialYear = new CFinancialYear();
+            }
+            financialYear.setId(Long.valueOf(fyIdParam.trim()));
+        }
+        if (budgetDetail == null) {
+            budgetDetail = new BudgetDetail();
+        }
+        final String executingDepartment = request.getParameter("budgetDetail.executingDepartment");
+        if (executingDepartment != null && !executingDepartment.trim().isEmpty()
+                && !"0".equals(executingDepartment.trim())) {
+            budgetDetail.setExecutingDepartment(executingDepartment.trim());
+        }
+        final String beReParam = request.getParameter("beRe");
+        if (beReParam != null && !beReParam.trim().isEmpty()) {
+            beRe = beReParam.trim();
+        }
     }
 
     @Override
@@ -442,6 +499,7 @@ public class BudgetReAppropriationAction extends BaseFormAction {
     @ValidationErrorPage(value = NEW)
     @Action(value = "/budget/budgetReAppropriation-loadActuals")
     public String loadActuals() {
+        resolveBudgetReAppCriteriaFromRequest();
         removeEmptyReAppropriation(budgetReAppropriationList);
         removeEmptyReAppropriation(newBudgetReAppropriationList);
         //Updating the ExecutingDepartment in BudgetReAppropriation
@@ -456,35 +514,53 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         return NEW;
     }
     
+    /**
+     * LTS Migration Note [Java 17 & Struts 7 Null Safety]:
+     * In Struts 7, unbound nested beans in dynamic table rows caused NullPointerExceptions in Java 17
+     * when accessing sub-properties (e.g. .getBudgetDetail().getBudgetGroup().getId()).
+     * Added defensive null checks to safely iterate and validate submitted grid rows.
+     */
 	public void validateLoadActuals() {
-		if (financialYear.getId() == null || financialYear.getId() == 0) {
+		resolveBudgetReAppCriteriaFromRequest();
+		if (financialYear == null || financialYear.getId() == null || financialYear.getId() == 0) {
 			addActionError(getText("msg.please.select.financial.year"));
 		}
-		if (StringUtils.isEmpty(budgetDetail.getExecutingDepartment())) {
+		if (budgetDetail == null || StringUtils.isEmpty(budgetDetail.getExecutingDepartment())) {
 			addActionError(getText("msg.please.select.executing.department"));
 		}
+		if (budgetReAppropriationList == null) {
+			return;
+		}
 		for (BudgetReAppropriationView budgetReAppropriationView : budgetReAppropriationList) {
-			if (budgetReAppropriationView.getBudgetDetail().getBudgetGroup().getId() == null
+			if (budgetReAppropriationView == null || budgetReAppropriationView.getBudgetDetail() == null) {
+				continue;
+			}
+			if (budgetReAppropriationView.getBudgetDetail().getBudgetGroup() == null
+					|| budgetReAppropriationView.getBudgetDetail().getBudgetGroup().getId() == null
 					|| budgetReAppropriationView.getBudgetDetail().getBudgetGroup().getId() == 0) {
 				addActionError(getText("msg.please.budget.group"));
 			}
 			if (shouldShowField("function")
-					&& (budgetReAppropriationView.getBudgetDetail().getFunction().getId() == null
+					&& (budgetReAppropriationView.getBudgetDetail().getFunction() == null
+							|| budgetReAppropriationView.getBudgetDetail().getFunction().getId() == null
 							|| budgetReAppropriationView.getBudgetDetail().getFunction().getId() == 0)) {
 				addActionError(getText("msg.please.select.function"));
 			}
-			if (shouldShowField("fund") && (budgetReAppropriationView.getBudgetDetail().getFund().getId() == null
-					|| budgetReAppropriationView.getBudgetDetail().getFund().getId() == 0)) {
+			if (shouldShowField("fund")
+					&& (budgetReAppropriationView.getBudgetDetail().getFund() == null
+							|| budgetReAppropriationView.getBudgetDetail().getFund().getId() == null
+							|| budgetReAppropriationView.getBudgetDetail().getFund().getId() == 0)) {
 				addActionError(getText("msg.please.select.fund"));
 			}
 		}
 	}
 	
 	public void validateCreate() {
-		if (financialYear.getId() == null || financialYear.getId() == 0) {
+		resolveBudgetReAppCriteriaFromRequest();
+		if (financialYear == null || financialYear.getId() == null || financialYear.getId() == 0) {
 			addActionError(getText("msg.please.select.financial.year"));
 		}
-		if (StringUtils.isEmpty(budgetDetail.getExecutingDepartment())) {
+		if (budgetDetail == null || StringUtils.isEmpty(budgetDetail.getExecutingDepartment())) {
 			addActionError(getText("msg.please.select.executing.department"));
 		}
 		validateBudgetReAppropriation();
@@ -575,10 +651,25 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         }
     }
 
+    /**
+     * LTS: FY change AJAX. Read {@code id} from request if needed; return Budget
+     * id/name maps so beRe.jsp OGNL does not blank out on Hibernate 6 proxies.
+     * Also fix HQL property {@code isActiveBudget} (was {@code isactivebudget}).
+     */
+    @SkipValidation
     @Action(value = "/budget/budgetReAppropriation-ajaxLoadBeRe")
     public String ajaxLoadBeRe() {
-        if (parameters.get("id") != null) {
-            final Long id = Long.valueOf(parameters.get("id")[0]);
+        Long id = null;
+        if (parameters != null && parameters.get("id") != null && parameters.get("id").length > 0
+                && parameters.get("id")[0] != null && !parameters.get("id")[0].isEmpty()) {
+            id = Long.valueOf(parameters.get("id")[0]);
+        } else {
+            final String idParam = ServletActionContext.getRequest().getParameter("id");
+            if (idParam != null && !idParam.trim().isEmpty()) {
+                id = Long.valueOf(idParam.trim());
+            }
+        }
+        if (id != null) {
             if (id != 0L && budgetService.hasApprovedReForYear(id))
                 beRe = Constants.RE;
             else
@@ -592,28 +683,84 @@ public class BudgetReAppropriationAction extends BaseFormAction {
         return ActionContext.getContext().getValueStack();
     }
 
+    /**
+     * LTS Migration Fix (Struts 7 OGNL / Hibernate 6): Financial Year on Additional
+     * Appropriation used {@code listValue="finYearRange"} on CFinancialYear entities
+     * from session.createQuery. Hibernate 6 ByteBuddy proxies make Struts 7 OGNL
+     * fail silently → only "---- Choose ----". Same pattern as BudgetSearchAction:
+     * unproxy in Java and expose id/finYearRange maps for s:select.
+     */
     List getFinancialYearDropDown() {
-        List<Long> ids = new ArrayList<Long>();
-        ids = (List<Long>) persistenceService
-                .findAllBy(
-                        "select distinct financialYear.id from Budget where isActiveBudget=true and isPrimaryBudget=true and status.code='Approved'");
-        Query query;
-        if (!ids.isEmpty()) {
-            query = persistenceService.getSession()
-                    .createQuery("from CFinancialYear where id in (:ids) order by finYearRange desc")
-                    .setParameterList("ids", ids);
-            return query.list();
+        final List<?> idRows = persistenceService.getSession()
+                .createQuery(
+                        "select distinct b.financialYear.id from Budget b where b.isActiveBudget = true "
+                                + "and b.isPrimaryBudget = true and b.status.code = 'Approved'")
+                .list();
+        final List<Long> ids = new ArrayList<>();
+        if (idRows != null) {
+            for (final Object idRow : idRows) {
+                if (idRow instanceof Number) {
+                    ids.add(((Number) idRow).longValue());
+                }
+            }
         }
-        return new ArrayList();
+        if (ids.isEmpty()) {
+            return new ArrayList();
+        }
+        final List<?> years = persistenceService.getSession()
+                .createQuery("from CFinancialYear where id in (:ids) order by finYearRange desc")
+                .setParameter("ids", ids)
+                .list();
+        return toFinancialYearDropdownItems(years);
+    }
+
+    private List<Map<String, String>> toFinancialYearDropdownItems(final List<?> years) {
+        final List<Map<String, String>> items = new ArrayList<>();
+        if (years == null) {
+            return items;
+        }
+        for (Object yearObj : years) {
+            final CFinancialYear fy = PersistenceUtils.unproxy((CFinancialYear) yearObj);
+            if (fy == null || fy.getId() == null) {
+                continue;
+            }
+            final Map<String, String> item = new HashMap<>();
+            item.put("id", String.valueOf(fy.getId()));
+            item.put("finYearRange", fy.getFinYearRange() == null ? "" : fy.getFinYearRange());
+            items.add(item);
+        }
+        return items;
     }
 
     protected List getApprovedBudgetsForFY(final Long id, final String finalStatus) {
-        StringBuilder queryString = new StringBuilder("from Budget where id not in (select parent from Budget where parent is not null) and isactivebudget = true")
-                .append(" and status.moduletype='BUDGET' and status.code=? and financialYear.id=? and isbere=? order by name");
-        if (id != null && id != 0L)
-            return budgetService.findAllBy(queryString.toString(), finalStatus, id, beRe);
-        
-        return new ArrayList();
+        if (id == null || id == 0L) {
+            return new ArrayList();
+        }
+        // LTS: isActiveBudget (not isactivebudget); parent.id in subquery for Hibernate 6
+        final String queryString = "from Budget where id not in (select parent.id from Budget where parent is not null) "
+                + "and isActiveBudget = true and status.moduletype='BUDGET' and status.code=? "
+                + "and financialYear.id=? and isbere=? order by name";
+        return toBudgetDropdownItems(budgetService.findAllBy(queryString, finalStatus, id, beRe));
+    }
+
+    private List<Map<String, String>> toBudgetDropdownItems(final List<?> budgetEntities) {
+        final List<Map<String, String>> items = new ArrayList<>();
+        if (budgetEntities == null) {
+            return items;
+        }
+        for (Object budgetObj : budgetEntities) {
+            Budget budget = PersistenceUtils.unproxy((Budget) budgetObj);
+            if (budget == null || budget.getId() == null) {
+                continue;
+            }
+            final Map<String, String> item = new HashMap<>();
+            final String name = budget.getName() == null ? "" : budget.getName();
+            final String budgetId = String.valueOf(budget.getId());
+            item.put("id", budgetId);
+            item.put("name", name);
+            items.add(item);
+        }
+        return items;
     }
 
     public boolean isFieldMandatory(final String field) {

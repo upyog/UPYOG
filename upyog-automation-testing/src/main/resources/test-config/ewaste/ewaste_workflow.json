@@ -1,0 +1,19 @@
+{
+  "moduleName": "EWASTE_MANAGEMENT_SYSTEM",
+
+  "steps": [
+
+    {
+      "name": "Citizen Application",
+      "type": "CITIZEN",
+      "module": "EWASTE_MANAGEMENT_SYSTEM"
+    },
+
+    {
+      "name": "Employee Verifier",
+      "type": "EMPLOYEE",
+      "module": "EWASTE_MANAGEMENT_SYSTEM",
+      "role": "EW_CEMP1"
+    }
+  ]
+}

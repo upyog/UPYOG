@@ -48,15 +48,15 @@
 
 package org.egov.egf.budget.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 @Entity
 @Table(name = "EGF_BudgetControlType")
@@ -74,7 +74,7 @@ public class BudgetControlType extends AbstractAuditable {
     @GeneratedValue(generator = BudgetControlType.SEQ, strategy = GenerationType.SEQUENCE)
     private Long id;
     // @Audited
-    @SafeHtml
+    @SanitizeHtml
     private String value;
 
     @Override

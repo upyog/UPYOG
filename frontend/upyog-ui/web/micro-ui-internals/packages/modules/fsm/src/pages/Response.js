@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Card, Banner, CardText, SubmitBar, Loader, LinkButton, Toast, ActionBar, Menu } from "@upyog/digit-ui-react-components";
-import { Link, useHistory } from "react-router-dom";
+import { Card, Banner, CardText, SubmitBar, Loader, LinkButton, Toast, ActionBar, Menu } from "@nudmcdgnpm/digit-ui-react-components";
+import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import getPDFData from "../getPDFData";
 import { getVehicleType } from "../utils";
 
@@ -46,19 +46,31 @@ const BannerPicker = (props) => {
 };
 
 const Response = (props) => {
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [showToast, setShowToast] = useState(null);
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const location = useLocation();
+  const { state } = location;
 
   const paymentAccess = Digit.UserService.hasAccess("FSM_COLLECTOR");
   const FSM_EDITOR = Digit.UserService.hasAccess("FSM_EDITOR_EMP") || false;
   const isCitizen = Digit.UserService.hasAccess("CITIZEN") || window.location.pathname.includes("citizen") || false;
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
-  const { state } = props.location;
 
-  const mutation = state.key === "update" ? Digit.Hooks.fsm.useApplicationActions(tenantId) : Digit.Hooks.fsm.useDesludging(tenantId);
+  // Check if this is a new application (from employee form) or update action
+  // New applications will have state.data, update actions will have state.key
+  const isNewApplication = (state?.data && !state?.key) || (props?.location?.state?.data && !props?.location?.state?.key);
+  
+  // For new applications, use state data directly. For updates, use the old pattern
+  const Data = isNewApplication ? (state?.data || props?.location?.state?.data) : null;
+  const isSuccess = isNewApplication ? (state?.isSuccess ?? props?.location?.state?.isSuccess) : null;
+  
+  // Only use mutation for update actions, not for new applications
+  const mutation = !isNewApplication ? 
+    ((state?.key || props?.location?.state?.key) === "update" ? Digit.Hooks.fsm.useApplicationActions(tenantId) : Digit.Hooks.fsm.useDesludging(tenantId)) : 
+    null;
 
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
@@ -68,29 +80,39 @@ const Response = (props) => {
   const [displayMenu, setDisplayMenu] = useState(false);
   const [selectedAction, setSelectedAction] = useState(null);
   sessionStorage.removeItem("Digit_FSM_PT")
+  
+  // For new applications, return early if no state
+  if (isNewApplication && !state) {
+    return <Loader />;
+  }
   const onError = (error, variables) => {
     setErrorInfo(error?.response?.data?.Errors[0]?.code || error?.message || "ERROR");
     setMutationHappened(true);
   };
+  
   useEffect(() => {
-    if (mutation.data) setsuccessData(mutation.data);
-  }, [mutation.data]);
-  const localityCode = mutation?.data?.fsm?.[0].address?.locality?.code;
-  const slumCode = mutation?.data?.fsm?.[0].address?.slumName;
-  const slum = Digit.Hooks.fsm.useSlum(mutation?.data?.fsm?.[0]?.tenantId, slumCode, localityCode, {
+    if (mutation?.data) setsuccessData(mutation.data);
+  }, [mutation?.data]);
+  
+  // Use different data sources based on application type
+  const finalData = isNewApplication ? Data : (mutation?.data || successData);
+  const finalIsSuccess = isNewApplication ? isSuccess : (!successData ? mutation?.isSuccess : true);
+  
+  const localityCode = finalData?.fsm?.[0]?.address?.locality?.code;
+  const slumCode = finalData?.fsm?.[0]?.address?.slumName;
+  const slum = Digit.Hooks.fsm.useSlum(finalData?.fsm?.[0]?.tenantId, slumCode, localityCode, {
     enabled: slumCode ? true : false,
     retry: slumCode ? true : false,
   });
   const { data: vehicleMenu } = Digit.Hooks.fsm.useMDMS(stateId, "Vehicle", "VehicleType", { staleTime: Infinity });
-  const Data = mutation?.data || successData;
-  const vehicle = vehicleMenu?.find((vehicle) => Data?.fsm?.[0]?.vehicleType === vehicle?.code);
+  const vehicle = vehicleMenu?.find((vehicle) => finalData?.fsm?.[0]?.vehicleType === vehicle?.code);
   const pdfVehicleType = getVehicleType(vehicle, t);
-  let getApplicationNo = Data.fsm?.[0].applicationNo;
+  let getApplicationNo = finalData?.fsm?.[0]?.applicationNo;
 
   const { data: paymentsHistory } = Digit.Hooks.fsm.usePaymentHistory(tenantId, getApplicationNo);
 
   const handleDownloadPdf = () => {
-    const { fsm } = mutation.data || successData;
+    const { fsm } = finalData;
     const [applicationDetails, ...rest] = fsm;
     const tenantInfo = tenants.find((tenant) => tenant.code === applicationDetails.tenantId);
 
@@ -114,13 +136,14 @@ const Response = (props) => {
   };
 
   const handleResponse = () => {
-    if (Data?.fsm?.[0].paymentPreference === "POST_PAY") {
+    const stateData = state || props?.location?.state;
+    if (finalData?.fsm?.[0].paymentPreference === "POST_PAY") {
       setShowToast({ key: "error", action: `ES_FSM_PAYMENT_BEFORE_SCHEDULE_FAILURE` });
       setTimeout(() => {
         closeToast();
       }, 5000);
     } else {
-      history.push(`/upyog-ui/employee/payment/collect/FSM.TRIP_CHARGES/${state?.applicationData?.applicationNo || Data?.fsm?.[0].applicationNo}`);
+      navigate(`/upyog-ui/employee/payment/collect/FSM.TRIP_CHARGES/${stateData?.applicationData?.applicationNo || finalData?.fsm?.[0].applicationNo}`);
     }
   };
 
@@ -128,30 +151,42 @@ const Response = (props) => {
     setShowToast(null);
   };
 
+  const [apiCallInitiated, setApiCallInitiated] = useState(false);
+  
   useEffect(() => {
     const onSuccess = () => {
       queryClient.clear();
       setMutationHappened(true);
       window.history.replaceState({}, "FSM_CREATE_RESPONSE");
     };
-    if (!mutationHappened && !errorInfo) {
-      if (state.key === "update") {
+    
+    // Only run mutation for update actions, not for new applications
+    if (!isNewApplication && !mutationHappened && !errorInfo && mutation && !apiCallInitiated) {
+      setApiCallInitiated(true);
+      const stateData = state || props?.location?.state;
+      if (stateData?.key === "update") {
         mutation.mutate(
           {
-            fsm: state.applicationData,
+            fsm: stateData.applicationData,
             workflow: {
-              action: state.action,
-              ...state.actionData,
+              action: stateData.action,
+              ...stateData.actionData,
             },
           },
           {
-            onError,
+            onError: (error, variables) => {
+              setApiCallInitiated(false);
+              onError(error, variables);
+            },
             onSuccess,
           }
         );
       } else {
-        mutation.mutate(state, {
-          onError,
+        mutation.mutate(stateData, {
+          onError: (error, variables) => {
+            setApiCallInitiated(false);
+            onError(error, variables);
+          },
           onSuccess,
         });
       }
@@ -164,14 +199,14 @@ const Response = (props) => {
   }
 
   const handleGeneratePdf = () => {
-    if (Data?.fsm?.[0].applicationStatus === "COMPLETED" && Data?.fsm?.[0].advanceAmount !== null) {
+    if (finalData?.fsm?.[0].applicationStatus === "COMPLETED" && finalData?.fsm?.[0].advanceAmount !== null) {
       return downloadPaymentReceipt;
     }
     return handleDownloadPdf;
   };
 
   const generatePdfLabel = () => {
-    if (Data?.fsm?.[0].applicationStatus === "COMPLETED" && Data?.fsm?.[0].advanceAmount !== null) {
+    if (finalData?.fsm?.[0].applicationStatus === "COMPLETED" && finalData?.fsm?.[0].advanceAmount !== null) {
       return t("CS_COMMON_PAYMENT_RECEIPT");
     }
     return t("CS_COMMON_DOWNLOAD");
@@ -180,38 +215,43 @@ const Response = (props) => {
   useEffect(() => {
     switch (selectedAction) {
       case "GO_TO_HOME":
-        return isCitizen ? history.push("/upyog-ui/citizen") : history.push("/upyog-ui/employee");
+        return isCitizen ? navigate("/upyog-ui/citizen") : navigate("/upyog-ui/employee");
       case "ASSIGN_TO_DSO":
-        return history.push(`/upyog-ui/employee/fsm/application-details/${getApplicationNo}`);
+        return navigate(`/upyog-ui/employee/fsm/application-details/${getApplicationNo}`);
       case "PAY":
         return handleResponse();
     }
   }, [selectedAction]);
 
-  if (mutation.isLoading || (mutation.isIdle && !mutationHappened)) {
-    return <Loader />;
+  // Handle loading state
+  if (isNewApplication) {
+    if (!state) return <Loader />;
+  } else {
+    if (mutation?.isPending || (mutation?.isIdle && !mutationHappened)) {
+      return <Loader />;
+    }
   }
+  
   let ACTIONS = ["GO_TO_HOME"];
-  if (Data?.fsm?.[0].applicationStatus === "PENDING_APPL_FEE_PAYMENT" && paymentAccess) {
+  if (finalData?.fsm?.[0].applicationStatus === "PENDING_APPL_FEE_PAYMENT" && paymentAccess) {
     ACTIONS = [...ACTIONS, "PAY"];
-  } else if (Data?.fsm?.[0].applicationStatus === "ASSING_DSO" && FSM_EDITOR) {
+  } else if (finalData?.fsm?.[0].applicationStatus === "ASSING_DSO" && FSM_EDITOR) {
     ACTIONS = [...ACTIONS, "ASSIGN_TO_DSO"];
   }
 
-  const isSuccess = !successData ? mutation?.isSuccess : true;
   return (
     <Card>
       <BannerPicker
         t={t}
-        data={Data}
-        action={state.action}
-        isSuccess={isSuccess}
-        isLoading={(mutation.isIdle && !mutationHappened) || mutation?.isLoading}
-        isEmployee={props.parentRoute.includes("employee")}
+        data={finalData}
+        action={(state || props?.location?.state)?.action}
+        isSuccess={finalIsSuccess}
+        isLoading={isNewApplication ? false : ((mutation?.isIdle && !mutationHappened) || mutation?.isLoading)}
+        isEmployee={props?.parentRoute?.includes("employee") || true}
         errorInfo={errorInfo}
       />
-      <CardText>{DisplayText(state.action, isSuccess, props.parentRoute.includes("employee"), t, Data?.fsm?.[0])}</CardText>
-      {isSuccess && (
+      <CardText>{DisplayText((state || props?.location?.state)?.action, finalIsSuccess, props?.parentRoute?.includes("employee") || true, t, finalData?.fsm?.[0])}</CardText>
+      {finalIsSuccess && (
         <LinkButton
           label={
             <div className="response-download-button">

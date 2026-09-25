@@ -23,9 +23,9 @@ public class IdGenRepository {
 
 
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    private RequestServiceConfiguration config;
+    private final RequestServiceConfiguration config;
 
    
     public IdGenRepository(RestTemplate restTemplate, RequestServiceConfiguration config) {

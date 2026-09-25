@@ -3,7 +3,7 @@
  * Returning the Header ad lable of the card as well as the comment box
  * 
  */
-import { Dropdown, UploadFile } from "@nudmcdgnpm/digit-ui-react-components";
+import { Dropdown, UploadFile } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { Fragment } from "react";
 
 export const configSVApproverApplication = ({ t, action, selectFile, uploadedFile, setUploadedFile, approvers, selectedApprover, setSelectedApprover, isUploading, geoLocationData, vending_Zone, vendingZones, setvendingZones, UserVendingZone, selectApprover }) => {
@@ -64,7 +64,7 @@ export const configSVApproverApplication = ({ t, action, selectFile, uploadedFil
           {
             label: `${t("SV_ATTATCH_FILE")}${action.docUploadRequired ? " *" : ""}`,
             populators: (
-              <>
+              <Fragment>
                 <UploadFile
                   id={"workflow-doc-sv"}
                   onUpload={selectFile}
@@ -81,7 +81,7 @@ export const configSVApproverApplication = ({ t, action, selectFile, uploadedFil
                 {(selectApprover || []).some((item) => item.code === "INSPECTIONOFFICER") && geoLocationData && (
                   <div><strong> Location: {geoLocationData} </strong></div>
                 )}
-              </>
+              </Fragment>
             ),
           }
         ],

@@ -6,7 +6,6 @@ import static com.jayway.jsonpath.Filter.filter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,6 @@ import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 import org.egov.tracer.model.CustomException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
@@ -47,15 +45,21 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class NotificationUtil {
 
-	private ServiceRequestRepository serviceRequestRepository;
+	private static final String REQUEST_INFO_KEY = "RequestInfo";
+	private static final String TENANT_ID_KEY = "tenantId";
+	private static final String USER_TYPE_KEY = "userType";
+	private static final String USER_NAME_KEY = "userName";
+	private static final String USER_FETCH_ERROR_MSG = "Exception while fetching user for username - ";
+	private static final String EXCEPTION_TRACE_MSG = "Exception trace: ";
 
-	private StreetVendingConfiguration config;
+	private final ServiceRequestRepository serviceRequestRepository;
 
-	private Producer producer;
+	private final StreetVendingConfiguration config;
 
-	private RestTemplate restTemplate;
+	private final Producer producer;
 
-	@Autowired
+	private final RestTemplate restTemplate;
+
 	public NotificationUtil(ServiceRequestRepository serviceRequestRepository, StreetVendingConfiguration config,
 			Producer producer, RestTemplate restTemplate) {
 		this.serviceRequestRepository = serviceRequestRepository;
@@ -95,22 +99,22 @@ public class NotificationUtil {
 	public String getLocalizationMessages(String tenantId, RequestInfo requestInfo) {
 
 		String locale = StreetVendingConstants.NOTIFICATION_LOCALE;
-		Boolean isRetryNeeded = false;
-		String jsonString = null;
-		LinkedHashMap responseMap = null;
+		boolean isRetryNeeded = false;
+		String jsonString;
+		Map<String, Object> responseMap;
 
 		if (!StringUtils.isEmpty(requestInfo.getMsgId()) && requestInfo.getMsgId().split("\\|").length >= 2) {
 			locale = requestInfo.getMsgId().split("\\|")[1];
 			isRetryNeeded = true;
 		}
 
-		responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(getUri(tenantId, requestInfo, locale),
+		responseMap = serviceRequestRepository.fetchResult(getUri(tenantId, requestInfo, locale),
 				requestInfo);
 		jsonString = new JSONObject(responseMap).toString();
 
 		if (StringUtils.isEmpty(jsonString) && isRetryNeeded) {
 
-			responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(
+			responseMap = serviceRequestRepository.fetchResult(
 					getUri(tenantId, requestInfo, StreetVendingConstants.NOTIFICATION_LOCALE), requestInfo);
 			jsonString = new JSONObject(responseMap).toString();
 			if (StringUtils.isEmpty(jsonString))
@@ -125,9 +129,10 @@ public class NotificationUtil {
 	 *
 	 * @return The uri for localization search call
 	 */
+	@SuppressWarnings("java:S1172")
 	public StringBuilder getUri(String tenantId, RequestInfo requestInfo, String locale) {
 
-		if (config.getIsLocalizationStateLevel())
+		if (Boolean.TRUE.equals(config.getIsLocalizationStateLevel()))
 			tenantId = tenantId.split("\\.")[0];
 
 		StringBuilder uri = new StringBuilder();
@@ -177,24 +182,24 @@ public class NotificationUtil {
 		Map<String, String> mapOfPhoneNoAndUUIDs = new HashMap<>();
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
-	    mobileNumber =  requestDetail.getVendorDetail().get(0).getMobileNo();
+	    String userMobileNumber = requestDetail.getVendorDetail().get(0).getMobileNo();
 		Map<String, Object> userSearchRequest = new HashMap<>();
-		userSearchRequest.put("RequestInfo", requestInfo);
-		userSearchRequest.put("tenantId", tenantId);
-		userSearchRequest.put("userType", "CITIZEN");
-		userSearchRequest.put("userName", mobileNumber);
+		userSearchRequest.put(REQUEST_INFO_KEY, requestInfo);
+		userSearchRequest.put(TENANT_ID_KEY, tenantId);
+		userSearchRequest.put(USER_TYPE_KEY, StreetVendingConstants.CITIZEN);
+		userSearchRequest.put(USER_NAME_KEY, userMobileNumber);
 		try {
 
 			Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
 			log.info("User fetched in fetUserUUID method of StreetVending notfication consumer" + user.toString());
 			if (user != null) {
 				String uuid = JsonPath.read(user, "$.user[0].uuid");
-				mapOfPhoneNoAndUUIDs.put(mobileNumber, uuid);
+				mapOfPhoneNoAndUUIDs.put(userMobileNumber, uuid);
 				log.info("mapOfPhoneNoAndUUIDs : " + mapOfPhoneNoAndUUIDs);
 			}
 		} catch (Exception e) {
-			log.error("Exception while fetching user for username - " + mobileNumber);
-			log.error("Exception trace: ", e);
+			log.error(USER_FETCH_ERROR_MSG + userMobileNumber);
+			log.error(EXCEPTION_TRACE_MSG, e);
 		}
 
 		return mapOfPhoneNoAndUUIDs;
@@ -225,7 +230,7 @@ public class NotificationUtil {
 	 */
 	public void sendSMS(List<SMSRequest> smsRequestList) {
 
-		if (config.getIsSMSNotificationEnabled()) {
+		if (Boolean.TRUE.equals(config.getIsSMSNotificationEnabled())) {
 			if (CollectionUtils.isEmpty(smsRequestList))
 				log.info("Messages from localization couldn't be fetched!");
 			for (SMSRequest smsRequest : smsRequestList) {
@@ -239,10 +244,10 @@ public class NotificationUtil {
 	/**
 	 * Fetches UUIDs of CITIZENs based on the phone number.
 	 *
-	 * @param mobileNumbers
-	 * @param requestInfo
-	 * @param tenantId
-	 * @return
+	 * @param mobileNumbers mobile numbers to search
+	 * @param requestInfo request information
+	 * @param tenantId tenant identifier
+	 * @return map of phone numbers to UUIDs
 	 */
 	public Map<String, String> fetchUserUUIDs(Set<String> mobileNumbers, RequestInfo requestInfo, String tenantId) {
 
@@ -250,11 +255,11 @@ public class NotificationUtil {
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
 		Map<String, Object> userSearchRequest = new HashMap<>();
-		userSearchRequest.put("RequestInfo", requestInfo);
-		userSearchRequest.put("tenantId", tenantId);
-		userSearchRequest.put("userType", "CITIZEN");
+		userSearchRequest.put(REQUEST_INFO_KEY, requestInfo);
+		userSearchRequest.put(TENANT_ID_KEY, tenantId);
+		userSearchRequest.put(USER_TYPE_KEY, StreetVendingConstants.CITIZEN);
 		for (String mobileNo : mobileNumbers) {
-			userSearchRequest.put("userName", mobileNo);
+			userSearchRequest.put(USER_NAME_KEY, mobileNo);
 			try {
 				Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
 				if (null != user) {
@@ -264,9 +269,8 @@ public class NotificationUtil {
 					log.error("Service returned null while fetching user for username - " + mobileNo);
 				}
 			} catch (Exception e) {
-				log.error("Exception while fetching user for username - " + mobileNo);
-				log.error("Exception trace: ", e);
-				continue;
+				log.error(USER_FETCH_ERROR_MSG + mobileNo);
+				log.error(EXCEPTION_TRACE_MSG, e);
 			}
 		}
 		return mapOfPhnoAndUUIDs;
@@ -275,7 +279,7 @@ public class NotificationUtil {
 	/**
 	 * Pushes the event request to Kafka Queue.
 	 *
-	 * @param request
+	 * @param request event request to publish
 	 */
 	public void sendEventNotification(EventRequest request) {
 		log.info("EVENT notification sent!" + request);
@@ -315,7 +319,7 @@ public class NotificationUtil {
 	 */
 	public void sendEmail(List<EmailRequest> emailRequestList) {
 
-		if (config.getIsEmailNotificationEnabled()) {
+		if (Boolean.TRUE.equals(config.getIsEmailNotificationEnabled())) {
 			if (CollectionUtils.isEmpty(emailRequestList))
 				log.info("Messages from localization couldn't be fetched!");
 			for (EmailRequest emailRequest : emailRequestList) {
@@ -334,10 +338,10 @@ public class NotificationUtil {
 	/**
 	 * Fetches email ids of CITIZENs based on the phone number.
 	 *
-	 * @param mobileNumbers
-	 * @param requestInfo
-	 * @param tenantId
-	 * @return
+	 * @param mobileNumbers mobile numbers to search
+	 * @param requestInfo request information
+	 * @param tenantId tenant identifier
+	 * @return map of phone numbers to email IDs
 	 */
 
 	public Map<String, String> fetchUserEmailIds(Set<String> mobileNumbers, RequestInfo requestInfo, String tenantId) {
@@ -345,11 +349,11 @@ public class NotificationUtil {
 		StringBuilder uri = new StringBuilder();
 		uri.append(config.getUserHost()).append(config.getUserSearchEndpoint());
 		Map<String, Object> userSearchRequest = new HashMap<>();
-		userSearchRequest.put("RequestInfo", requestInfo);
-		userSearchRequest.put("tenantId", tenantId);
-		userSearchRequest.put("userType", "CITIZEN");
+		userSearchRequest.put(REQUEST_INFO_KEY, requestInfo);
+		userSearchRequest.put(TENANT_ID_KEY, tenantId);
+		userSearchRequest.put(USER_TYPE_KEY, StreetVendingConstants.CITIZEN);
 		for (String mobileNo : mobileNumbers) {
-			userSearchRequest.put("userName", mobileNo);
+			userSearchRequest.put(USER_NAME_KEY, mobileNo);
 			try {
 				Object user = serviceRequestRepository.fetchResult(uri, userSearchRequest);
 				if (null != user) {
@@ -361,9 +365,8 @@ public class NotificationUtil {
 					log.error("Service returned null while fetching user for username - " + mobileNo);
 				}
 			} catch (Exception e) {
-				log.error("Exception while fetching user for username - " + mobileNo);
-				log.error("Exception trace: ", e);
-				continue;
+				log.error(USER_FETCH_ERROR_MSG + mobileNo);
+				log.error(EXCEPTION_TRACE_MSG, e);
 			}
 		}
 		return mapOfPhnoAndEmailIds;
@@ -374,10 +377,11 @@ public class NotificationUtil {
 	 * configd from mdms configs returns the message minus some lines to match In
 	 * App Templates
 	 * 
-	 * @param requestInfo
-	 * @param tenantId
-	 * @param moduleName
-	 * @param action
+	 * @param requestInfo request information
+	 * @param tenantId tenant identifier
+	 * @param moduleName module name
+	 * @param action workflow action
+	 * @return list of channel names
 	 */
 	public List<String> fetchChannelList(RequestInfo requestInfo, String tenantId, String moduleName, String action) {
 		List<String> masterData = new ArrayList<>();
@@ -444,10 +448,11 @@ public class NotificationUtil {
 
 	public Map<String, String> getCustomizedMsg(RequestInfo requestInfo, StreetVendingDetail streetVendingDetail,
 			String localizationMessage) {
-		String message = null, messageTemplate;
+		String message = null;
+		String messageTemplate;
 		String link = null;
-		String ACTION_STATUS = streetVendingDetail.getWorkflow().getAction();
-		switch (ACTION_STATUS) {
+		String actionStatus = streetVendingDetail.getWorkflow().getAction();
+		switch (actionStatus) {
 
 		case StreetVendingConstants.ACTION_STATUS_APPLY:
 			messageTemplate = getMessageTemplate(StreetVendingConstants.NOTIFICATION_SUBMIT, localizationMessage);
@@ -499,6 +504,8 @@ public class NotificationUtil {
 		    messageTemplate = getMessageTemplate(StreetVendingConstants.NOTIFICATION_SCHEDULEPAYMENT, localizationMessage);
 		    message = getMessageWithNumberAndFinalDetails(streetVendingDetail, messageTemplate);
 		    break;
+		default:
+			break;
 	
 		}
 		
@@ -554,12 +561,8 @@ public class NotificationUtil {
 	
 	/**
 	 * Generates a shortened payment URL for the citizen to make payment based on the application details.
-	 * <p>
-	 * The final URL is built using a URL template from configuration (`payLinkTemplate`) and fills in dynamic values 
-	 * like business service name, application number, tenant ID, and mobile number. The constructed URL is then 
-	 * prefixed with the UI host and passed through a shortening service.
 	 *
-	 * @param cndApplicationDetail The application detail object containing applicant and application metadata.
+	 * @param streetVendingDetail The application detail object containing applicant and application metadata.
 	 * @param message              The notification message (not used in this method, but kept for signature consistency).
 	 * @return A shortened payment URL pointing to the citizen's "Pay Now" page.
 	 */
@@ -568,7 +571,6 @@ public class NotificationUtil {
 	    String actionLink = String.format(payLinkTemplate,
 	            config.getModuleName(),
 	            streetVendingDetail.getApplicationNo()
-	           // streetVendingDetail.getTenantId()
 	            );
 	    
 	    String finalUrl = config.getUiAppHost() + actionLink;
@@ -580,10 +582,6 @@ public class NotificationUtil {
 	
 	/**
 	 * Generates a downloadable receipt link for the given {@link StreetVendingDetail}.
-	 * <p>
-	 * This method builds the receipt download URL using the configured link template,
-	 * filling in the application number and tenant ID from the provided {@code StreetVendingDetail} object.
-	 * The constructed URL is then appended to the UI host and passed through a URL shortener before being returned.
 	 *
 	 * @param streetVendingDetail the street vending detail object containing the application number and tenant ID
 	 * @return a shortened URL string for downloading the receipt
@@ -607,10 +605,6 @@ public class NotificationUtil {
 	
 	/**
 	 * Shortens a given URL using the configured URL shortening service.
-	 * <p>
-	 * This method sends a POST request with the original URL to the shortening service
-	 * and returns the shortened URL. If the shortening service fails or returns an empty response,
-	 * the original URL is returned as a fallback.
 	 *
 	 * @param url The original long URL to be shortened.
 	 * @return The shortened URL returned by the shortening service, or the original URL if shortening fails.
@@ -631,27 +625,17 @@ public class NotificationUtil {
 		if (StringUtils.isEmpty(res)) {
 			log.error("URL_SHORTENING_ERROR", "Unable to shorten url: " + url);
 			return url;
-		} else {
-			return res;
 		}
+		return res;
 	}
 	
 	/**
 	 * Generates an {@link Action} object based on specific placeholders found in the input message.
-	 * <p>
-	 * This method checks if the provided message contains the {@code NOTIFICATION_ACTION} and 
-	 * {@code NOTIFICATION_ACTION_BUTTON} placeholders. If present, it extracts the action code 
-	 * between these placeholders and validates it against known constants like 
-	 * {@code NOTIFICATION_PAY_NOW} or {@code NOTIFICATION_DOWNLOAD_RECEIPT}.
-	 * If the code is valid, it constructs an {@link ActionItem} with the provided action URL and tenant ID,
-	 * wraps it in an {@link Action} object, and returns it.
 	 *
 	 * @param message    The notification message which may contain action placeholders.
 	 * @param actionLink The URL to be used for the action (e.g., pay now or download receipt).
 	 * @param tenantId   The tenant ID to associate with the generated action.
 	 * @return An {@link Action} object if the message contains a recognized action code, otherwise {@code null}.
-	 * ex-  Dear Shivank, You have successfully completed your street vending registration under application number: SV-1013-000163. Your certificate id: 234567 and can be downloaded from your account. Thank you. {Action Button}Download Receipt{/Action Button}
-
 	 */
 	
 	public Action getActionLinkAndCode(String message, String actionLink, String tenantId) {

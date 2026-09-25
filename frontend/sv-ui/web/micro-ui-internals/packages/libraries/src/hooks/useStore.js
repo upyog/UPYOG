@@ -1,9 +1,11 @@
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import StoreData from "../services/molecules/StoreData";
 
 const useStore = {
   getInitData: () =>
-    useQuery(["STORE_DATA"], () => StoreData.getInitData(), {
+    useQuery({
+      queryKey: ["STORE_DATA"],
+      queryFn: () => StoreData.getInitData(),
       staleTime: Infinity,
     }),
 };

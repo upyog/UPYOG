@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useLocation } from "react-router-dom";
 // Importing required components and hooks from React and digit-ui
-import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair, ImageUploadHandler } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair, ImageUploadHandler } from "@nudmcdgnpm/digit-ui-react-components";
 // Importing Timeline component
 import Timeline from "../components/PTRTimeline";
 

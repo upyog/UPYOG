@@ -1,4 +1,4 @@
-import { ActionLinks, CardSectionHeader, CheckPoint, CloseSvg, ConnectingCheckPoints, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
+import { ActionLinks, CardSectionHeader, CheckPoint, CloseSvg, ConnectingCheckPoints, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -76,43 +76,43 @@ const EWASTEWFApplicationTimeline = (props) => {
    * @param {Array} nextActions List of possible next actions
    * @returns {JSX.Element|null} Action buttons or null if no actions available
    */
-  const showNextActions = (nextActions) => {
-    let nextAction = nextActions[0];
-    const next = nextActions.map((action) => action.action);
-    if (next.includes("PAY") || next.includes("EDIT")) {
-      let currentIndex = next.indexOf("EDIT") || next.indexOf("PAY");
-      currentIndex = currentIndex !== -1 ? currentIndex : next.indexOf("PAY");
-      nextAction = nextActions[currentIndex];
-    }
-    switch (nextAction?.action) {
-      case "PAY":
-        return (
-          props?.userType === "citizen" ? (
-            <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
-              <Link
-                to={{
-                  pathname: `/upyog-ui/citizen/payment/my-bills/${businessService}/${props?.application?.applicationNumber}`,
-                  state: { tenantId: props.application.tenantId, applicationNumber: props?.application?.applicationNumber },
-                }}
-              >
-                <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
-              </Link>
-            </div>
-          ) : null
-        );
+  // const showNextActions = (nextActions) => {
+  //   let nextAction = nextActions[0];
+  //   const next = nextActions.map((action) => action.action);
+  //   if (next.includes("PAY") || next.includes("EDIT")) {
+  //     let currentIndex = next.indexOf("EDIT") || next.indexOf("PAY");
+  //     currentIndex = currentIndex !== -1 ? currentIndex : next.indexOf("PAY");
+  //     nextAction = nextActions[currentIndex];
+  //   }
+  //   switch (nextAction?.action) {
+  //     case "PAY":
+  //       return (
+  //         props?.userType === "citizen" ? (
+  //           <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
+  //             <Link
+  //               to={{
+  //                 pathname: `/upyog-ui/citizen/payment/my-bills/${businessService}/${props?.application?.applicationNumber}`,
+  //                 state: { tenantId: props.application.tenantId, applicationNumber: props?.application?.applicationNumber },
+  //               }}
+  //             >
+  //               <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
+  //             </Link>
+  //           </div>
+  //         ) : null
+  //       );
 
-      case "SUBMIT_FEEDBACK":
-        return (
-          <div style={{ marginTop: "24px" }}>
-            <Link to={`/upyog-ui/citizen/fsm/rate/${props.id}`}>
-              <SubmitBar label={t("CS_APPLICATION_DETAILS_RATE")} />
-            </Link>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
+  //     case "SUBMIT_FEEDBACK":
+  //       return (
+  //         <div style={{ marginTop: "24px" }}>
+  //           <Link to={`/upyog-ui/citizen/fsm/rate/${props.id}`}>
+  //             <SubmitBar label={t("CS_APPLICATION_DETAILS_RATE")} />
+  //           </Link>
+  //         </div>
+  //       );
+  //     default:
+  //       return null;
+  //   }
+  // };
 
   if (isLoading) {
     return <Loader />;
@@ -130,7 +130,7 @@ const EWASTEWFApplicationTimeline = (props) => {
           {data?.timeline && data?.timeline?.length === 1 ? (
             <CheckPoint
               isCompleted={true}
-              label={t((data?.timeline[0]?.state && `WF_${businessService}_${data.timeline[0].state}`) || "NA")}
+              label={t((data?.timeline[0]?.state && `WF_${data.timeline[0].state}`) || "NA")}
               customChild={getTimelineCaptions(data?.timeline[0])}
             />
           ) : (
@@ -150,7 +150,7 @@ const EWASTEWFApplicationTimeline = (props) => {
           )}
         </Fragment>
       )}
-      {data && showNextActions(data?.nextActions)}
+      {/* {data && showNextActions(data?.nextActions)} */}
     </React.Fragment>
   );
 };

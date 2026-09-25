@@ -1,9 +1,9 @@
-import { CardLabel, Dropdown, FormStep, LinkButton, Loader, RadioButtons, TextInput } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, FormStep, LinkButton, Loader, RadioButtons, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
 import { sortDropdownNames } from "../utils/index";
-import "../css/tl-inline-auto.css";
+
 const SelectTradeUnitsInitial = ({
   t,
   config,

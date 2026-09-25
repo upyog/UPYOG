@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, CardLabelError, MobileNumber, DatePicker, Loader } from "@upyog/digit-ui-react-components";
+import React, { useState, useEffect } from "react";
+import { CardLabel, LabelFieldPair, Dropdown, TextInput, CardLabelError, DatePicker } from "@nudmcdgnpm/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
 import { useLocation } from "react-router-dom";
 import isUndefined from "lodash/isUndefined";
-import { getUniqueItemsFromArray, commonTransform, stringReplaceAll, getPattern, convertEpochToDate } from "../utils";
-import "../css/tl-inline-auto.css";
+import { getUniqueItemsFromArray, stringReplaceAll,getPattern, convertEpochToDate } from "../utils";
+
 const defaultFinancialYear = () => {
   const data = convertEpochToDate(Date.now());
   const splitData = data.split("-")[0];
@@ -262,6 +262,9 @@ const OwnerForm1 = _props => {
   }
   let isRenewal = window.location.href.includes("renew-application-details");
   if (window.location.href.includes("edit-application-details")) isRenewal = true;
+  let isFieldsDisabled = false;
+
+
   useEffect(() => {
     if (isRenewal && structureTypeOptions?.length > 0 && !menuLoading) {
       let selectedOption = tradedetail?.structureType?.code?.split('.')[0];
@@ -327,134 +330,238 @@ const OwnerForm1 = _props => {
         <div>
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{`${t("TL_FINANCIAL_YEAR_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
-            <Controller name="financialYear" rules={{
-            required: t("REQUIRED_FIELD")
-          }} defaultValue={tradedetail?.financialYear} control={control} render={props => <Dropdown className="form-field" selected={props.value} errorStyle={localFormState.touched.financialYear && errors?.financialYear?.message ? true : false}
-          // disable={financialYearOptions?.length === 1}
-          option={financialYearOptions} select={props.onChange} optionKey="i18nKey" onBlur={props.onBlur} disable={isRenewal} t={t} />} />
+            <Controller
+              name="financialYear"
+              rules={{ required: t("REQUIRED_FIELD") }}
+              defaultValue={tradedetail?.financialYear}
+              control={control}
+              render={({ field }) => (
+                <Dropdown
+                  className="form-field"
+                  selected={field.value}
+                  errorStyle={(localFormState.touchedFields.financialYear && errors?.financialYear?.message) ? true : false}
+                  // disable={financialYearOptions?.length === 1}
+                  option={financialYearOptions}
+                  select={field.onChange}
+                  optionKey="i18nKey"
+                  onBlur={field.onBlur}
+                  disable={isFieldsDisabled}
+                  t={t}
+                />
+              )}
+            />
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.financialYear ? errors?.financialYear?.message : ""}</CardLabelError>
+          <CardLabelError style={errorStyle}>{localFormState.touchedFields.financialYear ? errors?.financialYear?.message : ""}</CardLabelError>
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{`${t("TL_NEW_TRADE_DETAILS_LIC_TYPE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
-            <Controller name="licenseType" defaultValue={tradedetail?.licenseType} control={control} render={props => <Dropdown className="form-field" selected={licenseTypeValue} //{licenseTypeList[1]}
-          disable={true} option={licenseTypeList} select={props.onChange} optionKey="i18nKey" onBlur={props.onBlur} t={t} errorStyle={localFormState.touched.licenseType && errors?.licenseType?.message ? true : false} />} />
+            <Controller
+              name="licenseType"
+              defaultValue={tradedetail?.licenseType}
+              control={control}
+              render={({ field }) => (
+                <Dropdown
+                  className="form-field"
+                  selected={licenseTypeValue} //{licenseTypeList[1]}
+                  disable={true}
+                  option={licenseTypeList}
+                  select={field.onChange}
+                  optionKey="i18nKey"
+                  onBlur={field.onBlur}
+                  t={t}
+                  errorStyle={(localFormState.touchedFields.licenseType && errors?.licenseType?.message) ? true : false}
+                />
+              )}
+            />
           </LabelFieldPair>
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{`${t("TL_COMMON_TABLE_COL_TRD_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
-              <Controller control={control} name={"tradeName"} defaultValue={tradedetail?.tradeName} rules={{
-              required: t("REQUIRED_FIELD"),
-              validate: {
-                pattern: val => /.*$/.test(val) ? true : t("INVALID_NAME")
-              }
-            }} render={props => <TextInput value={props.value} autoFocus={focusIndex.index === tradedetail?.key && focusIndex.type === "name"} errorStyle={localFormState.touched.tradeName && errors?.tradeName?.message ? true : false} onChange={e => {
-              props.onChange(e.target.value);
-              setFocusIndex({
-                index: tradedetail.key,
-                type: "tradeName"
-              });
-            }} onBlur={e => {
-              setFocusIndex({
-                index: -1
-              });
-              props.onBlur(e);
-            }} disable={isRenewal} />} />
+              <Controller
+                control={control}
+                name={"tradeName"}
+                defaultValue={tradedetail?.tradeName}
+                rules={{ required: t("REQUIRED_FIELD"), validate: {pattern: (val) => (/.*$/.test(val) ? true : t("INVALID_NAME")) } }}
+                render={({ field }) => (
+                  <TextInput
+                    value={field.value}
+                    autoFocus={focusIndex.index === tradedetail?.key && focusIndex.type === "name"}
+                    errorStyle={(localFormState.touchedFields.tradeName && errors?.tradeName?.message) ? true : false}
+                    onChange={(e) => {
+                      field.onChange(e.target.value);
+                      setFocusIndex({ index: tradedetail.key, type: "tradeName" });
+                    }}
+                    onBlur={(e) => {
+                      setFocusIndex({ index: -1 });
+                      field.onBlur(e);
+                    }}
+                    disable={isFieldsDisabled}
+                  />
+                )}
+              />
             </div>
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.tradeName ? errors?.tradeName?.message : ""}</CardLabelError>
+          <CardLabelError style={errorStyle}>{localFormState.touchedFields.tradeName ? errors?.tradeName?.message : ""}</CardLabelError>
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{`${t("TL_NEW_TRADE_DETAILS_STRUCT_TYPE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
-            <Controller name="structureType" rules={{
-            required: t("REQUIRED_FIELD")
-          }} defaultValue={tradedetail?.structureType} control={control} render={props => <Dropdown className="form-field" selected={props.value} disable={isRenewal} option={selectedStructureTypeOptions} errorStyle={localFormState.touched.structureType && errors?.structureType?.message ? true : false} select={e => {
-            let selectedOption = e?.code?.split('.')[0];
-            let structureSubTypeOption = [];
-            structureTypeOptions?.map(data => {
-              if (selectedOption === data?.code?.split('.')[0]) {
-                structureSubTypeOption.push({
-                  code: data?.code,
-                  i18nKey: t(`COMMON_MASTERS_STRUCTURETYPE_${stringReplaceAll(data?.code?.toUpperCase(), ".", "_")}`)
-                });
-              }
-            });
-            setValue("structureSubType", "");
-            setStructureSubTypeOptions(structureSubTypeOption);
-            props.onChange(e);
-          }} optionKey="i18nKey" onBlur={props.onBlur} t={t} />} />
+            <Controller
+              name="structureType"
+              rules={{ required: t("REQUIRED_FIELD") }}
+              defaultValue={tradedetail?.structureType}
+              control={control}
+              render={({ field }) => (
+                <Dropdown
+                  className="form-field"
+                  selected={field.value}
+                  disable={isFieldsDisabled}
+                  option={selectedStructureTypeOptions}
+                  errorStyle={(localFormState.touchedFields.structureType && errors?.structureType?.message) ? true : false}
+                  select={(e) => {
+                    let selectedOption = e?.code?.split('.')[0];
+                    let structureSubTypeOption = [];
+                    structureTypeOptions?.map(data => {
+                      if (selectedOption === data?.code?.split('.')[0]) {
+                        structureSubTypeOption.push({
+                          code: data?.code,
+                          i18nKey: t(`COMMON_MASTERS_STRUCTURETYPE_${stringReplaceAll(data?.code?.toUpperCase(), ".", "_")}`),
+                        })
+                      }
+                    });
+                    setValue("structureSubType", "");
+                    setStructureSubTypeOptions(structureSubTypeOption);
+                    field.onChange(e);
+                  }}
+                  optionKey="i18nKey"
+                  onBlur={field.onBlur}
+                  t={t}
+                />
+              )}
+            />
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.structureType ? errors?.structureType?.message : ""}</CardLabelError>
+          <CardLabelError style={errorStyle}>{localFormState.touchedFields.structureType ? errors?.structureType?.message : ""}</CardLabelError>
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{`${t("TL_NEW_TRADE_DETAILS_STRUCT_SUB_TYPE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
-            <Controller name="structureSubType" rules={{
-            required: t("REQUIRED_FIELD")
-          }} defaultValue={tradedetail?.structureSubType} control={control} render={props => <Dropdown className="form-field" selected={getValues("structureSubType")} disable={false} option={structureSubTypeOptions} select={e => {
-            if (e?.code != tradedetail?.structureSubType?.code && isRenewal) setPreviousLicenseDetails({
-              ...previousLicenseDetails,
-              checkForRenewal: true
-            });
-            props.onChange(e);
-          }} optionKey="i18nKey" onBlur={props.onBlur} t={t} errorStyle={localFormState.touched.structureSubType && errors?.structureSubType?.message ? true : false} />} />
+            <Controller
+              name="structureSubType"
+              rules={{ required: t("REQUIRED_FIELD") }}
+              defaultValue={tradedetail?.structureSubType}
+              control={control}
+              render={({ field }) => (
+                <Dropdown
+                  className="form-field"
+                  selected={getValues("structureSubType")}
+                  disable={false}
+                  option={structureSubTypeOptions}
+                  select={(e) => {
+                    if(e?.code != tradedetail?.structureSubType?.code && isRenewal) setPreviousLicenseDetails({ ...previousLicenseDetails, checkForRenewal: true});
+                    field.onChange(e)
+                  }}
+                  optionKey="i18nKey"
+                  onBlur={field.onBlur}
+                  t={t}
+                  errorStyle={(localFormState.touchedFields.structureSubType && errors?.structureSubType?.message) ? true : false}
+                />
+              )}
+            />
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.structureSubType ? errors?.structureSubType?.message : ""}</CardLabelError>
+          <CardLabelError style={errorStyle}>{localFormState.touchedFields.structureSubType ? errors?.structureSubType?.message : ""}</CardLabelError>
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{`${t("TL_NEW_TRADE_DETAILS_TRADE_COMM_DATE_LABEL")} `}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
-              <Controller name="commencementDate" rules={{
-              required: t("REQUIRED_FIELD")
-            }} defaultValue={tradedetail?.commencementDate} control={control} render={props => <DatePicker date={props.value}
-            // date={CommencementDate} 
-            name="CommencementDate" onChange={props.onChange} disabled={isRenewal} />} />
+              <Controller
+                name="commencementDate"
+                rules={{ required: t("REQUIRED_FIELD") }}
+                defaultValue={tradedetail?.commencementDate}
+                control={control}
+                render={({ field }) => (
+                  <DatePicker
+                    date={field.value}
+                    // date={CommencementDate} 
+                    name="CommencementDate"
+                    onChange={field.onChange}
+                    disabled={isFieldsDisabled}
+                  />
+                )}
+              />
             </div>
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.commencementDate ? errors?.commencementDate?.message : ""}</CardLabelError>
+          <CardLabelError style={errorStyle}>{localFormState.touchedFields.commencementDate ? errors?.commencementDate?.message : ""}</CardLabelError>
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{`${t("TL_NEW_GST_NUMBER_LABEL")} `}</CardLabel>
             <div className="field">
-              <Controller control={control} name="gstNo" defaultValue={tradedetail?.gstNo} rules={{
-              validate: e => e && getPattern("GSTNo").test(e) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")
-            }} render={props => <TextInput value={props.value} autoFocus={focusIndex.index === tradedetail?.key && focusIndex.type === "gstNo"} errorStyle={localFormState.touched.gstNo && errors?.gstNo?.message ? true : false} onChange={e => {
-              props.onChange(e.target.value);
-              setFocusIndex({
-                index: tradedetail?.key,
-                type: "gstNo"
-              });
-            }} labelStyle={{
-              marginTop: "unset"
-            }} onBlur={props.onBlur} disable={isRenewal} />} />
+              <Controller
+                control={control}
+                name="gstNo"
+                defaultValue={tradedetail?.gstNo}
+                rules={{ validate: (e) => ((e && getPattern("GSTNo").test(e)) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) }}
+                render={({ field }) => (
+                  <TextInput
+                    value={field.value}
+                    autoFocus={focusIndex.index === tradedetail?.key && focusIndex.type === "gstNo"}
+                    errorStyle={(localFormState.touchedFields.gstNo && errors?.gstNo?.message) ? true : false}
+                    onChange={(e) => {
+                      field.onChange(e.target.value);
+                      setFocusIndex({ index: tradedetail?.key, type: "gstNo" });
+                    }}
+                    labelStyle={{ marginTop: "unset" }}
+                    onBlur={field.onBlur}
+                    disable={isFieldsDisabled}
+                  />
+                )}
+              />
             </div>
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.gstNo ? errors?.gstNo?.message ? t("GST_PATTERN_ERROR") : "" : ""}</CardLabelError>
+          <CardLabelError style={errorStyle}>{localFormState.touchedFields.gstNo ? errors?.gstNo?.message ? t("GST_PATTERN_ERROR") : "": ""}</CardLabelError>
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{`${t("TL_NEW_OPERATIONAL_SQ_FT_AREA_LABEL")} `}</CardLabel>
             <div className="field">
-              <Controller name="operationalArea" rules={{
-              validate: e => e && getPattern("OperationalArea").test(e) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")
-            }} defaultValue={tradedetail?.operationalArea} control={control} render={props => <TextInput onChange={e => {
-              props.onChange(e.target.value);
-              setFocusIndex({
-                index: tradedetail?.key,
-                type: "operationalArea"
-              });
-            }} value={props.value} autoFocus={focusIndex.index === tradedetail?.key && focusIndex.type === "operationalArea"} errorStyle={localFormState.touched.operationalArea && errors?.operationalArea?.message ? true : false} onBlur={props.onBlur} disable={isRenewal} />} />
+              <Controller
+                name="operationalArea"
+                rules={{ validate: (e) => ((e && getPattern("OperationalArea").test(e)) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) }}
+                defaultValue={tradedetail?.operationalArea}
+                control={control}
+                render={({ field }) => (
+                  <TextInput
+                    onChange={(e) => {
+                      field.onChange(e.target.value);
+                      setFocusIndex({ index: tradedetail?.key, type: "operationalArea" });
+                    }}
+                    value={field.value}
+                    autoFocus={focusIndex.index === tradedetail?.key && focusIndex.type === "operationalArea"}
+                    errorStyle={(localFormState.touchedFields.operationalArea && errors?.operationalArea?.message) ? true : false}
+                    onBlur={field.onBlur}
+                    disable={isFieldsDisabled}
+                  />
+                )}
+              />
             </div>
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.operationalArea ? errors?.operationalArea?.message : ""}</CardLabelError>
+          <CardLabelError style={errorStyle}>{localFormState.touchedFields.operationalArea ? errors?.operationalArea?.message : ""}</CardLabelError>
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{`${t("TL_NEW_NUMBER_OF_EMPLOYEES_LABEL")} `}</CardLabel>
             <div className="field">
-              <Controller name="noOfEmployees" rules={{
-              validate: e => e && getPattern("NoOfEmp").test(e) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")
-            }} defaultValue={tradedetail?.noOfEmployees} control={control} render={props => <TextInput onChange={e => {
-              props.onChange(e.target.value);
-              setFocusIndex({
-                index: tradedetail?.key,
-                type: "noOfEmployees"
-              });
-            }} value={props.value} autoFocus={focusIndex.index === tradedetail?.key && focusIndex.type === "noOfEmployees"} errorStyle={localFormState.touched.noOfEmployees && errors?.noOfEmployees?.message ? true : false} onBlur={props.onBlur} disable={isRenewal} />} />
+              <Controller
+                name="noOfEmployees"
+                rules={{ validate: (e) => ((e && getPattern("NoOfEmp").test(e)) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) }}
+                defaultValue={tradedetail?.noOfEmployees}
+                control={control}
+                render={({ field }) => (
+                  <TextInput
+                    onChange={(e) => {
+                      field.onChange(e.target.value);
+                      setFocusIndex({ index: tradedetail?.key, type: "noOfEmployees" });
+                    }}
+                    value={field.value}
+                    autoFocus={focusIndex.index === tradedetail?.key && focusIndex.type === "noOfEmployees"}
+                    errorStyle={(localFormState.touchedFields.noOfEmployees && errors?.noOfEmployees?.message) ? true : false}
+                    onBlur={field.onBlur}
+                    disable={isFieldsDisabled}
+                  />
+                )}
+              />
             </div>
           </LabelFieldPair>
-          <CardLabelError style={errorStyle}>{localFormState.touched.noOfEmployees ? errors?.noOfEmployees?.message : ""}</CardLabelError>
+          <CardLabelError style={errorStyle}>{localFormState.touchedFields.noOfEmployees ? errors?.noOfEmployees?.message : ""}</CardLabelError>
         </div>
       </div>
     </React.Fragment>;

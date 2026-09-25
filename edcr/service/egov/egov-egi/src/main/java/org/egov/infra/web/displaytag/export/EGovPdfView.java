@@ -84,7 +84,7 @@ import org.displaytag.model.TableModel;
 import org.displaytag.util.TagConstants;
 import org.egov.infra.exception.ApplicationRuntimeException;
 
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspException;
 import java.awt.*;
 import java.io.IOException;
 import java.io.OutputStream;

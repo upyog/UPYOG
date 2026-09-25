@@ -2,7 +2,6 @@ package org.egov.asset.repository.querybuilder;
 
 import org.egov.asset.config.AssetConfiguration;
 import org.egov.asset.web.models.maintenance.AssetMaintenanceSearchCriteria;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -11,8 +10,11 @@ import java.util.List;
 @Component
 public class AssetMaintenanceQueryBuilder {
 
-    @Autowired
-    private AssetConfiguration config;
+    private final AssetConfiguration config;
+
+    public AssetMaintenanceQueryBuilder(AssetConfiguration config) {
+        this.config = config;
+    }
 
     private static final String LEFT_OUTER_JOIN_STRING = " LEFT OUTER JOIN ";
 
@@ -49,9 +51,8 @@ public class AssetMaintenanceQueryBuilder {
                     + "doc.docdetails "
                     + "FROM eg_asset_maintenance maintenance "
                     + LEFT_OUTER_JOIN_STRING + " eg_asset_maintenance_documents doc ON maintenance.maintenance_id = doc.maintenanceid ";
-                    //+ " AND doc.documenttype IN ('ASSET.MAINTENANCE.DOC1', 'ASSET.MAINTENANCE.DOC2', 'ASSET.MAINTENANCE.DOC3')";
 
-    private final String paginationWrapper = "SELECT * FROM " +
+    private static final String PAGINATION_WRAPPER = "SELECT * FROM " +
             "(SELECT result.*, DENSE_RANK() OVER (ORDER BY result.created_time DESC) AS offset_ FROM " +
             "({}) result) result_offset WHERE offset_ > ? AND offset_ <= ?";
 
@@ -155,7 +156,7 @@ public class AssetMaintenanceQueryBuilder {
     private String addPaginationWrapper(String query, List<Object> preparedStmtList, AssetMaintenanceSearchCriteria criteria) {
         int limit = config.getDefaultLimit();
         int offset = config.getDefaultOffset();
-        String finalQuery = paginationWrapper.replace("{}", query);
+        String finalQuery = PAGINATION_WRAPPER.replace("{}", query);
 
         if (criteria.getLimit() == null && criteria.getOffset() == null) {
             limit = config.getMaxSearchLimit();

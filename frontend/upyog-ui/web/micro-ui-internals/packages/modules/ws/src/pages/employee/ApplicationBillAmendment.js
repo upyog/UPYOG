@@ -1,9 +1,32 @@
-import { Card, CardLabel, CardSectionHeader, CardText, Header, LabelFieldPair, LastRow, CardSectionSubText, CheckBox, Loader, TextInput, Dropdown, DatePicker, UploadFile, ActionBar, SubmitBar, CardLabelError, InfoBannerIcon, Toast, Table } from "@upyog/digit-ui-react-components";
+import {
+  Card,
+  CardLabel,
+  CardSectionHeader,
+  CardText,
+  Header,
+  LabelFieldPair,
+  LastRow,
+  CardSectionSubText,
+  CheckBox,
+  Loader,
+  TextInput,
+  Dropdown,
+  DatePicker,
+  UploadFile,
+  ActionBar,
+  SubmitBar,
+  CardLabelError,
+  InfoBannerIcon,
+  Toast,
+  Table
+} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment, useEffect, useMemo, useReducer, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useHistory, useLocation } from "react-router-dom";
-import "../../css/ws-inline-auto.css";
+import { useLocation,  } from "react-router-dom";
+
+
+
 const ApplicationBillAmendment = () => {
   const [showToast, setShowToast] = useState(null);
   //connectionNumber=WS/107/2021-22/227166&tenantId=pb.amritsar&service=WATER&connectionType=Metered
@@ -85,7 +108,7 @@ const ApplicationBillAmendment = () => {
   const WS_ADDITIONAL_AMOUNT = watch("WS_ADDITIONAL_AMOUNT");
   const SW_REDUCED_AMOUNT = watch("SW_REDUCED_AMOUNT");
   const SW_ADDITIONAL_AMOUNT = watch("SW_ADDITIONAL_AMOUNT");
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const uploadFile = async (data, fname, props) => {
     setUploadError("");
     try {
@@ -324,7 +347,8 @@ const ApplicationBillAmendment = () => {
       });
       return;
     }
-    history.push("/upyog-ui/employee/ws/response", data);
+
+    navigate("/upyog-ui/employee/ws/response", data);
   };
   const isValidToDate = enteredValue => {
     const enteredTs = new Date(enteredValue).getTime();

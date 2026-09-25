@@ -1,20 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { TextInput, CheckBox, CardLabel, LabelFieldPair, TextArea } from "@upyog/digit-ui-react-components";
+import { TextInput, CheckBox, CardLabel, LabelFieldPair, TextArea } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
-import FormStep from "../../../../react-components/src/molecules/FormStep";
-import "../css/pt-inline-auto.css";
-const SelectOwnerAddress = ({
-  t,
-  config,
-  onSelect,
-  userType,
-  formData,
-  ownerIndex = 0
-}) => {
-  const {
-    pathname: url
-  } = useLocation();
+import {FormStep} from "@nudmcdgnpm/digit-ui-react-components"
+
+const SelectOwnerAddress = ({ t, config, onSelect, userType, formData, ownerIndex = 0 }) => {
+  const { pathname: url } = useLocation();
   const editScreen = url.includes("/modify-application/");
   const isMutation = url.includes("property-mutation");
   let index = isMutation ? ownerIndex : window.location.href.charAt(window.location.href.length - 1);
@@ -75,7 +66,7 @@ const SelectOwnerAddress = ({
       goNext();
     }
   }, [permanentAddress]);
-  console.log("permanentAddresspermanentAddress", permanentAddress);
+
   if (userType === "employee") {
     return <LabelFieldPair key={index}>
         <CardLabel className="card-label-smaller" style={editScreen ? {

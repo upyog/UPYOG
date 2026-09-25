@@ -49,7 +49,7 @@ package org.egov.eis;
 
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
-import org.kubek2k.springockito.annotations.SpringockitoContextLoader;
+//import org.kubek2k.springockito.annotations.SpringockitoContextLoader;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -66,7 +66,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Rollback
 @ActiveProfiles("test")
 @ContextConfiguration(
-        loader = SpringockitoContextLoader.class,
+        //loader = SpringockitoContextLoader.class,
         locations = {
                 "classpath*:config/spring/applicationContext-properties.xml",
                 "classpath*:config/spring/test-applicationContext-hibernate.xml",

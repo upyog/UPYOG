@@ -1,5 +1,5 @@
-
-import { useQuery, useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 
 /**
  * useServiceSearchCHB Hook
@@ -24,26 +24,42 @@ import { useQuery, useQueryClient } from "react-query";
  *    - `data`: The fetched service data.
  *    - `revalidate`: Function to invalidate and refetch the query.
  */
-const useServiceSearchCHB = ({ tenantId, filters }, config = {}) => {
+
+const useServiceSearchCHB = (
+  { tenantId, filters },
+  config = {}
+) => {
   const client = useQueryClient();
-  //removing servicedefids from search call as it's not required anymore
-  // const searchargs = { filters : { ServiceDefinitionCriteria : {tenantId : filters?.serviceSearchArgs?.tenantId, module:filters?.serviceSearchArgs?.module, code:filters?.serviceSearchArgs?.code  }}};
 
+  const serviceSearchArg = {
+    filters: {
+      ServiceCriteria: {
+        tenantId: filters?.serviceSearchArgs?.tenantId,
+        referenceIds: filters?.serviceSearchArgs?.referenceIds,
+      },
+    },
+  };
 
-  // const { isLoading, error, data } = useQuery(["ServiceDefinitionSearch", tenantId, filters], () => Digit.PTService.cfdefinitionsearch(searchargs), {
-  //   ...config,
-  //   });
+  const queryKey = [
+    "CHB_SERVICE_SEARCH",
+    tenantId,
+    JSON.stringify(filters),
+  ];
 
-let serviceSearchArg = {filters : {ServiceCriteria : {tenantId:filters?.serviceSearchArgs?.tenantId, /*serviceDefIds: [data?.ServiceDefinition?.[0]?.id]["ca134821-97f0-42b7-a53d-f6cd2796e4b9"],attributes:filters?.serviceSearchArgs?.attributes*/ referenceIds:filters?.serviceSearchArgs?.referenceIds}}}
-let serviceconfig = {/*enabled : data?.ServiceDefinition?.[0]?.id ? true : false,*/...config, cacheTime: 0}
+  const queryFn = () =>
+    Digit.PTService.cfsearch(serviceSearchArg);
 
-const { isLoading : serviceLoading, error : serviceerror, data :servicedata} = useQuery(["ServiceSearch", tenantId, filters], () => Digit.PTService.cfsearch(serviceSearchArg), {
-    ...serviceconfig,
-    });
+  const query = queryTemplate({
+    queryKey,
+    queryFn,
+    config: { ...config, cacheTime: 0 },
+  });
 
-
-return {isLoading: serviceLoading, error : serviceerror, data : servicedata, revalidate: () => client.invalidateQueries(["ServiceSearch", tenantId, filters]) };
-
+  return {
+    ...query,
+    revalidate: () =>
+      client.invalidateQueries({ queryKey }),
+  };
 };
 
 export default useServiceSearchCHB;

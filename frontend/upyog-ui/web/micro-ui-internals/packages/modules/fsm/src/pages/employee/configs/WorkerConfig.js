@@ -1,5 +1,5 @@
 import React from "react";
-import { DatePicker, InfoIcon } from "@upyog/digit-ui-react-components";
+import { DatePicker, InfoIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import { convertEpochToDate } from "../../../utils";
 
 const WorkerConfig = ({ t, disabled = false, skillsOption = [], defaultSkill = [], employer = [] }) => {

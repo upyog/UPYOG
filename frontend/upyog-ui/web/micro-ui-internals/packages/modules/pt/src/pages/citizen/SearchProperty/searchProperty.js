@@ -1,10 +1,10 @@
-import { Dropdown, FormComposer, InfoBannerIcon, Loader, Localities, RadioButtons, Toast } from "@upyog/digit-ui-react-components";
+import { Dropdown, FormComposer, InfoBannerIcon, Loader, Localities, RadioButtons, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, Link } from "react-router-dom";
-import "../../../css/pt-inline-auto.css";
+import { Link,  } from "react-router-dom";
+
 const description = {
   description: "PT_SEARCH_OR_DESC",
   descriptionStyles: {
@@ -16,17 +16,11 @@ const description = {
     maxWidth: "540px"
   }
 };
-const SearchProperty = ({
-  config: propsConfig,
-  onSelect
-}) => {
-  const {
-    t
-  } = useTranslation();
-  const history = useHistory();
-  const {
-    action = 0
-  } = Digit.Hooks.useQueryParams();
+
+const SearchProperty = ({ config: propsConfig, onSelect }) => {
+  const { t } = useTranslation();
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const { action = 0 } = Digit.Hooks.useQueryParams();
   const [searchData, setSearchData] = useState({});
   const [showToast, setShowToast] = useState(null);
   const allCities = Digit.Hooks.pt.useTenants()?.sort((a, b) => a?.i18nKey?.localeCompare?.(b?.i18nKey));
@@ -119,7 +113,7 @@ const SearchProperty = ({
           props?.setValue("doorNo", "");
           props?.setValue("oldPropertyId", "");
           props?.setValue("name", "");
-          history.replace(`${history.location.pathname}?action=${action == 0 ? 1 : 0}`);
+          navigate(`${location.pathname}?action=${action == 0 ? 1 : 0}`, { replace: true });
         }} />
       }
     }, {
@@ -224,7 +218,7 @@ const SearchProperty = ({
           props?.setValue("doorNo", "");
           props?.setValue("oldPropertyId", "");
           props?.setValue("name", "");
-          history.replace(`${history.location.pathname}?action=${action == 0 ? 1 : 0}`);
+          navigate(`${location.pathname}?action=${action == 0 ? 1 : 0}`, { replace: true });
         }} />
       }
     }, {
@@ -434,7 +428,11 @@ const SearchProperty = ({
         }
       });
     } else {
-      history.push(`/upyog-ui/citizen/pt/property/search-results?${Object.keys(qs).map(key => `${key}=${qs[key]}`).join("&")}`);
+      navigate(
+        `/upyog-ui/citizen/pt/property/search-results?${Object.keys(qs)
+          .map((key) => `${key}=${qs[key]}`)
+          .join("&")}`
+      );
     }
   }
   if (error) {

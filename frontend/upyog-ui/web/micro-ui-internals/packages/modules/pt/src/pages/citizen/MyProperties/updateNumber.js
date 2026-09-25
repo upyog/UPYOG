@@ -1,7 +1,17 @@
-import { CardLabel, CardLabelError, CloseSvg, Header, MobileNumber, Row, SearchForm, StatusTable, SubmitBar, Toast } from "@upyog/digit-ui-react-components";
+import {
+  CardLabel,
+  CardLabelError,
+  CloseSvg,
+  Header,
+  MobileNumber,
+  Row,
+  SearchForm,
+  StatusTable,
+  SubmitBar,
+  Toast
+} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useCallback, useReducer } from "react";
 import { Controller, useForm } from "react-hook-form";
-import "../../../css/pt-inline-auto.css";
 const TYPE_REGISTER = {
   type: "register"
 };
@@ -274,40 +284,57 @@ const UpdateNumber = ({
           <Row label={t("PTUPNO_OWNER_NAME")} text={`${compState?.name || t("CS_NA")}`} />
           <Row label={t("PTUPNO_CURR_NO")} text={`${compState?.mobileNumber || t("CS_NA")}`} />
           <CardLabel className="pt-auto-133">{t("PT_UPDATE_NEWNO")}</CardLabel>
-          <MobileNumber className="field pt-update-no-field" name="mobileNumber" inputRef={register({
-          value: getValues("mobileNumber"),
-          shouldUnregister: true,
-          ...{
-            required: "MANDATORY_MOBILE",
-            minLength: {
-              value: 10,
-              message: "CORE_COMMON_MOBILE_ERROR"
-            },
-            maxLength: {
-              value: 10,
-              message: "CORE_COMMON_MOBILE_ERROR"
-            },
-            pattern: {
-              value: /[6789][0-9]{9}/,
-              message: "CORE_COMMON_MOBILE_ERROR"
-            }
-          }
-        })} disable={compState?.otpSentTo && true} />
-          <CardLabelError className="pt-auto-134">{t(formState?.errors?.mobileNumber?.message)}</CardLabelError>
-          {compState?.otpSentTo && <Controller control={control} name="otp" rules={{
-          required: "MANDATORY_OTP",
-          minLength: {
-            value: 6,
-            message: "CORE_COMMON_OTP_ERROR"
-          }
-        }} render={(props, customProps) => <SelectOtp userType="employee" config={{
-          header: "OTPVERIFICATION",
-          cardText: "ENTEROTP",
-          nextText: "Next",
-          submitBarLabel: "Next"
-        }} onOtpChange={d => {
-          props.onChange(d);
-        }} onResend={resendOtp} error={!compState.invalid} t={t} otp={props.value} />} />}
+          <MobileNumber
+            className="field pt-update-no-field"
+            name="mobileNumber"
+          {...register("mobileNumber", {
+              value: getValues("mobileNumber"),
+              shouldUnregister: true,
+              ...{
+                required: "MANDATORY_MOBILE",
+                minLength: {
+                  value: 10,
+                  message: "CORE_COMMON_MOBILE_ERROR",
+                },
+                maxLength: {
+                  value: 10,
+                  message: "CORE_COMMON_MOBILE_ERROR",
+                },
+                pattern: {
+                  value: /[6789][0-9]{9}/,
+                  message: "CORE_COMMON_MOBILE_ERROR",
+                },
+              },
+            })}
+            disable={compState?.otpSentTo && true}
+          />
+          <CardLabelError style={{ marginTop: "-10px" }}>{t(formState?.errors?.mobileNumber?.message)}</CardLabelError>
+          {compState?.otpSentTo && (
+            <Controller
+              control={control}
+              name="otp"
+              rules={{
+                required: "MANDATORY_OTP",
+                minLength: {
+                  value: 6,
+                  message: "CORE_COMMON_OTP_ERROR",
+                },
+              }}
+              render={({ field }, customProps) => (
+                <SelectOtp
+                  userType="employee"
+                  config={{ header: "OTPVERIFICATION", cardText: "ENTEROTP", nextText: "Next", submitBarLabel: "Next" }}
+                  onOtpChange={(d) => {
+                    field.onChange(d);
+                  }}
+                  onResend={resendOtp}
+                  error={!compState.invalid}
+                  t={t}
+                  otp={field.value}
+                />
+              )}
+            />
+          )}
         </StatusTable>
         {compState.showToast && <Toast error={compState.error} warning={compState.warning} label={t(compState.message)} onClose={() => {
         compStateDispatch({

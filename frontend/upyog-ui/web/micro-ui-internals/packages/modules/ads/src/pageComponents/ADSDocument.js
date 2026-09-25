@@ -1,4 +1,4 @@
-import { Loader, PDFSvg } from "@upyog/digit-ui-react-components";
+import { Loader, PDFSvg } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { pdfDownloadLink } from "../utils";
@@ -9,46 +9,36 @@ import { pdfDownloadLink } from "../utils";
   This component is used for uploading and displaying documents.
   It fetches documents based on the provided type.
 */
-import "../css/ads-inline-auto.css";
-function ADSDocument({
-  value = {},
-  Code,
-  index,
-  showFileName = false
-}) {
-  const {
-    t
-  } = useTranslation();
-  const {
-    isLoading,
-    isError,
-    error,
-    data
-  } = Digit.Hooks.ads.useADSDocumentSearch({
-    value
-  }, {
-    value
-  }, Code, index);
-  const PDFSvg = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="24" height="24" rx="4" fill="#D32F2F" />
-      <text x="0" y="16" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#FFFFFF">PDF</text>
-    </svg>;
-  const documents = value?.documents ? value.documents.documents.filter(doc => doc.documentType === Code).map(doc => ({
-    ...doc,
-    documentType: doc.documentType.replace(/\./g, '_')
-  })) : value.filter(doc => doc.documentType === Code).map(doc => ({
-    ...doc,
-    documentType: doc.documentType.replace(/\./g, '_')
-  }));
+
+
+
+function ADSDocument({ value = {}, Code, index,showFileName= false }) {
+  const { t } = useTranslation();
+  const { isLoading, isError, error, data } = Digit.Hooks.ads.useADSDocumentSearch(
+    { value, },
+    { value },
+    Code,
+    index
+  );
+  const PDFSvg = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="24" height="24" rx="4" fill="#D32F2F"/>
+      <text x="0" y="16" fontFamily="Arial, sans-serif" fontSize="12" fontWeight="bold" fill="#FFFFFF">PDF</text>
+    </svg>
+  );
+
+  const documents = value?.documents
+    ? value.documents.documents.filter(doc => doc.documentType === Code).map(doc => ({ ...doc, documentType: doc.documentType.replace(/\./g, '_') }))
+    : value.filter(doc => doc.documentType === Code).map(doc => ({ ...doc, documentType: doc.documentType.replace(/\./g, '_') }));
   if (isLoading) {
     return <Loader />;
   }
   return <div>
       <React.Fragment>
         <div>
-          {documents.map((document, index) => {
+          {documents?.map((document, index) => {
           let documentLink = pdfDownloadLink(data.pdfFiles, document.fileStoreId);
-          return <a target="_" href={documentLink} key={index} className="ads-auto-56">
+          return <a target="_" href={documentLink} key={document?.fileStoreId || index} className="ads-auto-56">
               {/* Text first */}
               <p className="ads-auto-57">
                 {t("ADS_" + Code?.split('.').slice(0, 4).join('_'))}

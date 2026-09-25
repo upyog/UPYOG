@@ -1,13 +1,13 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { Card, CardHeader, CardLabel, CardText, CitizenInfoLabel, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Card, CardHeader, CardLabel, CardText, CitizenInfoLabel, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams,  } from "react-router-dom";
 
 const DocsRequired = ({ onSelect, onSkip, config }) => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateCode = Digit.ULBService.getStateId();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { applicationType: applicationType, serviceType: serviceType } = useParams();
   const [docsList, setDocsList] = useState([]);
   const [uiFlow, setUiFlow] = useState([]);

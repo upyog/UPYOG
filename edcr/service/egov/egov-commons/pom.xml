@@ -62,13 +62,13 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.hibernate</groupId>-->
+<!--			<artifactId>hibernate-entitymanager</artifactId>-->
+<!--		</dependency>-->
 
 		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
 		</dependency>
 
@@ -78,22 +78,35 @@
 		</dependency>
 
 		<dependency>
-			<groupId>ar.com.fdvs</groupId>
-			<artifactId>DynamicJasper</artifactId>
-			<version>5.0.2</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>jasperreports</artifactId>
-					<groupId>net.sf.jasperreports</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+    <groupId>ar.com.fdvs</groupId>
+    <artifactId>DynamicJasper</artifactId>
+    <version>5.3.8</version>
+    <exclusions>
+        <exclusion>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports-functions</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports-fonts</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
 
 <dependency>
     <groupId>com.jayway.jsonpath</groupId>
     <artifactId>json-path</artifactId>
-    <version>2.2.0</version>
+    <version>3.0.0</version>
 </dependency>
+		<dependency>
+			<groupId>net.minidev</groupId>
+			<artifactId>json-smart</artifactId>
+			<version>2.6.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<resources>

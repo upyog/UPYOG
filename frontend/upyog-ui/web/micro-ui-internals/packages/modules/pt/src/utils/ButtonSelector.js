@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import "../css/pt-inline.css";
 
 const ButtonSelector = (props) => {
   let theme = "selector-button-primary";

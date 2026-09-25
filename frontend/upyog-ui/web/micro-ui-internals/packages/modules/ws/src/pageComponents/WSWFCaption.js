@@ -1,8 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { TelePhone, DisplayPhotos } from "@upyog/digit-ui-react-components";
+import { TelePhone, DisplayPhotos } from "@nudmcdgnpm/digit-ui-react-components";
 import WSWFReason from "./WSWFReason";
-import "../css/ws-inline-auto.css";
+
 const WSWFCaption = ({
   data,
   OpenImage

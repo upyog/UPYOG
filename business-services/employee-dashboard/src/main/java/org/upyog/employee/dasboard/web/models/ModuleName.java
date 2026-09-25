@@ -13,6 +13,11 @@ public enum ModuleName {
 	  PT,
 	  SEWERAGE,
 	  SV,
+	  TP,
+	  WT,
+	  MT,
+	  CND,
+	  ADS,
 	  ALL
 
 }

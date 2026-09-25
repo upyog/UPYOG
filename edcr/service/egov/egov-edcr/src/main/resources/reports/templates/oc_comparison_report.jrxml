@@ -64,7 +64,7 @@
 					<printWhenExpression><![CDATA[$P{ulbName} != null]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center">
-					<font fontName="SansSerif" size="12" isBold="true" isUnderline="false"/>
+					<font fontName="Helvetica" size="12" isBold="true" isUnderline="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
 			</textField>

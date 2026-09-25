@@ -11,7 +11,7 @@ import {
   Row,
   StatusTable,
   Table,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/workbench-ui-react-components";
 import { values } from "lodash";
 import React, { Fragment, useCallback, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -266,29 +266,7 @@ function ApplicationDetailsContent({
               </React.Fragment>
             )}
             {/* TODO, Later will move to classes */}
-            {/* Here Render the table for adjustment amount details detail.isTable is true for that table*/}
-            {/* {detail?.isTable && (
-              <table style={{ tableLayout: "fixed", width: "100%", borderCollapse: "collapse" }}>
-                <tr style={{ textAlign: "left" }}>
-                  {detail?.headers.map((header) => (
-                    <th style={{ padding: "10px" }}>{t(header)}</th>
-                  ))}
-                </tr>
-
-                {detail?.tableRows.map((row,index)=>{
-                if(index===detail?.tableRows.length - 1){
-                  return <>
-                    <hr style={{ width: "370%",marginTop:"15px" }} className="underline" />
-                    <tr>
-                      {row.map(element => <td style={{ textAlign: "left" }}>{t(element)}</td>)}
-                    </tr>
-                    </>
-                }
-                return <tr>
-                  {row.map(element => <td style={{ paddingTop:"20px",textAlign:"left" }}>{t(element)}</td>)}
-                </tr>})}
-              </table>
-            )} */}
+            
             {detail?.isTable && <SubWorkTableDetails data={detail} />}
 
             <StatusTable style={getTableStyles()}>
@@ -372,17 +350,7 @@ function ApplicationDetailsContent({
           {applicationDetails?.applicationData?.additionalDetails?.fieldinspection_pending?.length > 0 && detail?.additionalDetails?.fiReport && (
             <InspectionReport fiReport={applicationDetails?.applicationData?.additionalDetails?.fieldinspection_pending} />
           )}
-          {/* {detail?.additionalDetails?.FIdocuments && detail?.additionalDetails?.values?.map((doc,index) => (
-            <div key={index}>
-            {doc.isNotDuplicate && <div> 
-             <StatusTable>
-             <Row label={t(doc?.documentType)}></Row>
-             <OBPSDocument value={detail?.additionalDetails?.values} Code={doc?.documentType} index={index}/> 
-             <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
-             </StatusTable>
-             </div>}
-             </div>
-          )) } */}
+         
           {detail?.additionalDetails?.floors && <PropertyFloors floors={detail?.additionalDetails?.floors} />}
           {detail?.additionalDetails?.owners && <PropertyOwners owners={detail?.additionalDetails?.owners} />}
           {detail?.additionalDetails?.units && <TLTradeUnits units={detail?.additionalDetails?.units} />}

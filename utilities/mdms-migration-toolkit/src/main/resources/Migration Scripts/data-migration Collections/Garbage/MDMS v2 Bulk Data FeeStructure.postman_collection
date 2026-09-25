@@ -1,0 +1,112 @@
+{
+	"info": {
+		"_postman_id": "auto-Garbage.FeeStructure",
+		"name": "MDMS v2 Bulk Data",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25737272"
+	},
+	"item": [
+		{
+			"name": "MDMS v2 CreateData",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var data=[{\"id\": \"1\", \"categories\": \"Residential\", \"subcategories\": \"Household\", \"subcategorytype\": \"Area less than 2000 Sq. Feet\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"2\", \"categories\": \"Residential\", \"subcategories\": \"Household\", \"subcategorytype\": \"Area more than 2000 Sq. Feet\", \"fee\": \"160.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"3\", \"categories\": \"Commercial\", \"subcategories\": \"Shops\", \"subcategorytype\": \"Pan Shop\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"4\", \"categories\": \"Commercial\", \"subcategories\": \"Shops\", \"subcategorytype\": \"Tea Shop\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"5\", \"categories\": \"Commercial\", \"subcategories\": \"Shops\", \"subcategorytype\": \"Confectionery & Veg Shop  \", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"6\", \"categories\": \"Commercial\", \"subcategories\": \"Shops\", \"subcategorytype\": \"Vegetable & Fruit Shops (Wholesale)\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"7\", \"categories\": \"Commercial\", \"subcategories\": \"Shops\", \"subcategorytype\": \"Vegetable & Fruit Shops (Retail)\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"8\", \"categories\": \"Commercial\", \"subcategories\": \"Shops\", \"subcategorytype\": \"Groceries & Daily Needs Shop\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"9\", \"categories\": \"Commercial\", \"subcategories\": \"Shops\", \"subcategorytype\": \"Clothes Shop\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"10\", \"categories\": \"Commercial\", \"subcategories\": \"Shops\", \"subcategorytype\": \"Eateries (Food Production & Distribution)\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"11\", \"categories\": \"Commercial\", \"subcategories\": \"Shops\", \"subcategorytype\": \"Eateries (Food Distribution Only)\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"12\", \"categories\": \"Commercial\", \"subcategories\": \"Shops\", \"subcategorytype\": \"Meat & Fish Shops\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"13\", \"categories\": \"Commercial\", \"subcategories\": \"Super Stores\", \"subcategorytype\": \"Super Stores\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"14\", \"categories\": \"Commercial\", \"subcategories\": \"Malls\", \"subcategorytype\": \"Malls\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"15\", \"categories\": \"Commercial\", \"subcategories\": \"Private Restaurants\", \"subcategorytype\": \"Private Restaurants\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"16\", \"categories\": \"Commercial\", \"subcategories\": \"Private Hotels\", \"subcategorytype\": \"Upto 10 Rooms\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"17\", \"categories\": \"Commercial\", \"subcategories\": \"Private Hotels\", \"subcategorytype\": \"11 - 20 Rooms\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"18\", \"categories\": \"Commercial\", \"subcategories\": \"Private Hotels\", \"subcategorytype\": \"21 - 30 Rooms\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"19\", \"categories\": \"Commercial\", \"subcategories\": \"Private Hotels\", \"subcategorytype\": \"More than 30 Rooms\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"20\", \"categories\": \"Commercial\", \"subcategories\": \"Homestays / Bread n Breakfasts / Paying Guest Facility / Hostels\", \"subcategorytype\": \"Upto 10 Rooms\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"21\", \"categories\": \"Commercial\", \"subcategories\": \"Homestays / Bread n Breakfasts / Paying Guest Facility / Hostels\", \"subcategorytype\": \"11 - 20 Rooms\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"22\", \"categories\": \"Commercial\", \"subcategories\": \"Homestays / Bread n Breakfasts / Paying Guest Facility / Hostels\", \"subcategorytype\": \"21 - 30 Rooms\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"23\", \"categories\": \"Commercial\", \"subcategories\": \"Homestays / Bread n Breakfasts / Paying Guest Facility / Hostels\", \"subcategorytype\": \"More than 30 Rooms\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"24\", \"categories\": \"Commercial\", \"subcategories\": \"Clubs\", \"subcategorytype\": \"Clubs\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"25\", \"categories\": \"Commercial\", \"subcategories\": \"Private Offices\", \"subcategorytype\": \"2 Rooms\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"26\", \"categories\": \"Commercial\", \"subcategories\": \"Private Offices\", \"subcategorytype\": \"3-5 Rooms\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"27\", \"categories\": \"Commercial\", \"subcategories\": \"Private Offices\", \"subcategorytype\": \"6-10 Rooms\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"28\", \"categories\": \"Commercial\", \"subcategories\": \"Private Offices\", \"subcategorytype\": \"11-20 Rooms\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"29\", \"categories\": \"Commercial\", \"subcategories\": \"Private Offices\", \"subcategorytype\": \"More than 20 Rooms\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"30\", \"categories\": \"Commercial\", \"subcategories\": \"Private Schools/ Institutions\", \"subcategorytype\": \"Upto 100 Students\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"31\", \"categories\": \"Commercial\", \"subcategories\": \"Private Schools/ Institutions\", \"subcategorytype\": \"More than 100 Students\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"32\", \"categories\": \"Commercial\", \"subcategories\": \"Private Colleges / University\", \"subcategorytype\": \"Upto 1000 Students\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"33\", \"categories\": \"Commercial\", \"subcategories\": \"Private Colleges / University\", \"subcategorytype\": \"More than 1000 Students\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"34\", \"categories\": \"Commercial\", \"subcategories\": \"Private Kindergarten / Day Cares\", \"subcategorytype\": \"Upto 100 Students\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"35\", \"categories\": \"Commercial\", \"subcategories\": \"Private Kindergarten / Day Cares\", \"subcategorytype\": \"More than 100 Students\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"36\", \"categories\": \"Commercial\", \"subcategories\": \"Workshops & Garages\", \"subcategorytype\": \"Only Tyre Puncture Repair\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"37\", \"categories\": \"Commercial\", \"subcategories\": \"Workshops & Garages\", \"subcategorytype\": \"Vehicle Repair\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"38\", \"categories\": \"Commercial\", \"subcategories\": \"Workshops & Garages\", \"subcategorytype\": \"Vehicle Repair & Spare Part Retail\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"39\", \"categories\": \"Commercial\", \"subcategories\": \"Workshops & Garages\", \"subcategorytype\": \"Vehicle Show Room & Vehicle Repair & Spare Part Retail\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"40\", \"categories\": \"Commercial\", \"subcategories\": \"Street Vendors \", \"subcategorytype\": \"Street Vendors \", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"41\", \"categories\": \"Commercial\", \"subcategories\": \"Street Hawkers\", \"subcategorytype\": \"Street Hawkers\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"42\", \"categories\": \"Commercial\", \"subcategories\": \"Private Marriage Halls\", \"subcategorytype\": \"Private Marriage Halls\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"43\", \"categories\": \"Commercial\", \"subcategories\": \"Cinema Halls (Theatre & Multiplexes)\", \"subcategorytype\": \"Cinema Halls (Theatre & Multiplexes)\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"44\", \"categories\": \"Commercial\", \"subcategories\": \"Slaughterhouse\", \"subcategorytype\": \"Slaughterhouse\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"45\", \"categories\": \"Commercial\", \"subcategories\": \"Others\", \"subcategorytype\": \"Others\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"46\", \"categories\": \"Industries\", \"subcategories\": \"Micro Industry\", \"subcategorytype\": \"Micro Industry\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"47\", \"categories\": \"Industries\", \"subcategories\": \"Small Industry\", \"subcategorytype\": \"Small Industry\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"48\", \"categories\": \"Industries\", \"subcategories\": \"Medium Industry\", \"subcategorytype\": \"Medium Industry\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"49\", \"categories\": \"Industries\", \"subcategories\": \"Large Industry\", \"subcategorytype\": \"Large Industry\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"50\", \"categories\": \"Hospitals & Health Care\", \"subcategories\": \"Nursing Homes\", \"subcategorytype\": \"Upto 50 Beds\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"51\", \"categories\": \"Hospitals & Health Care\", \"subcategories\": \"Nursing Homes\", \"subcategorytype\": \"51 to 100 Beds\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"52\", \"categories\": \"Hospitals & Health Care\", \"subcategories\": \"Nursing Homes\", \"subcategorytype\": \"More than 100 Beds\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"53\", \"categories\": \"Hospitals & Health Care\", \"subcategories\": \"Rehabilitation Center\", \"subcategorytype\": \"Upto 50 Beds\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"54\", \"categories\": \"Hospitals & Health Care\", \"subcategories\": \"Rehabilitation Center\", \"subcategorytype\": \"51 to 100 Beds\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"55\", \"categories\": \"Hospitals & Health Care\", \"subcategories\": \"Rehabilitation Center\", \"subcategorytype\": \"More than 100 Beds\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"56\", \"categories\": \"Hospitals & Health Care\", \"subcategories\": \"Old Age Homes\", \"subcategorytype\": \"Upto 50 Beds\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"57\", \"categories\": \"Hospitals & Health Care\", \"subcategories\": \"Old Age Homes\", \"subcategorytype\": \"51 to 100 Beds\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"58\", \"categories\": \"Hospitals & Health Care\", \"subcategories\": \"Old Age Homes\", \"subcategorytype\": \"More than 100 Beds\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"59\", \"categories\": \"Hospitals & Health Care\", \"subcategories\": \"Private Hospital\", \"subcategorytype\": \"Upto 50 Beds\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"60\", \"categories\": \"Hospitals & Health Care\", \"subcategories\": \"Private Hospital\", \"subcategorytype\": \"51 to 100 Beds\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"61\", \"categories\": \"Hospitals & Health Care\", \"subcategories\": \"Private Hospital\", \"subcategorytype\": \"More than 100 Beds\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"62\", \"categories\": \"Hospitals & Health Care\", \"subcategories\": \"Laboratories\", \"subcategorytype\": \"Laboratories\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"63\", \"categories\": \"Hospitals & Health Care\", \"subcategories\": \"Private Clinics\", \"subcategorytype\": \"Private Clinics\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"64\", \"categories\": \"Hospitals & Health Care\", \"subcategories\": \"Chemists\", \"subcategorytype\": \"Chemists\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"65\", \"categories\": \"Hospitals & Health Care\", \"subcategories\": \"Others\", \"subcategorytype\": \"Others\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"66\", \"categories\": \"Govt Establishments\", \"subcategories\": \"Govt Primary School\", \"subcategorytype\": \"Govt Primary School\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"67\", \"categories\": \"Govt Establishments\", \"subcategories\": \"Govt Middle School\", \"subcategorytype\": \"Govt Middle School\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"68\", \"categories\": \"Govt Establishments\", \"subcategories\": \"Govt Senior/ Senior Secondary School\", \"subcategorytype\": \"Govt Senior/ Senior Secondary School\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"69\", \"categories\": \"Govt Establishments\", \"subcategories\": \"Govt Angan Wadi\", \"subcategorytype\": \"Govt Angan Wadi\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"70\", \"categories\": \"Govt Establishments\", \"subcategories\": \"Govt College\", \"subcategorytype\": \"Govt College\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"71\", \"categories\": \"Govt Establishments\", \"subcategories\": \"Govt University\", \"subcategorytype\": \"Govt University\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"72\", \"categories\": \"Govt Establishments\", \"subcategories\": \"State Govt Office\", \"subcategorytype\": \"State Govt Office\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"73\", \"categories\": \"Govt Establishments\", \"subcategories\": \"Central Govt Office\", \"subcategorytype\": \"Central Govt Office\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"74\", \"categories\": \"Govt Establishments\", \"subcategories\": \"ULB Office\", \"subcategorytype\": \"ULB Office\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"75\", \"categories\": \"Govt Establishments\", \"subcategories\": \"Govt. Garden\", \"subcategorytype\": \"Govt. Garden\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"76\", \"categories\": \"Govt Establishments\", \"subcategories\": \"Govt Hospitals\", \"subcategorytype\": \"Govt Hospitals\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"77\", \"categories\": \"Govt Establishments\", \"subcategories\": \"Govt Dispensary\", \"subcategorytype\": \"Govt Dispensary\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"78\", \"categories\": \"Govt Establishments\", \"subcategories\": \"Govt Restaurants\", \"subcategorytype\": \"Govt Restaurants\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"79\", \"categories\": \"Govt Establishments\", \"subcategories\": \"Govt Hotel\", \"subcategorytype\": \"Govt Hotel\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"80\", \"categories\": \"Govt Establishments\", \"subcategories\": \"Govt Marriage Halls/ Community Centers\", \"subcategorytype\": \"Govt Marriage Halls/ Community Centers\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"81\", \"categories\": \"Govt Establishments\", \"subcategories\": \"Others\", \"subcategorytype\": \"Others\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"82\", \"categories\": \"Others\", \"subcategories\": \"Charitable Trust / NGO / any other Registered Group\", \"subcategorytype\": \"Charitable Trust / NGO / any other Registered Group\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"83\", \"categories\": \"Others\", \"subcategories\": \"Private Garden\", \"subcategorytype\": \"Private Garden\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"84\", \"categories\": \"Others\", \"subcategories\": \"Orphanages\", \"subcategorytype\": \"Orphanages\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"85\", \"categories\": \"Others\", \"subcategories\": \"Heritage Site\", \"subcategorytype\": \"Heritage Site\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"86\", \"categories\": \"Others\", \"subcategories\": \"Religious Site\", \"subcategorytype\": \"Religious Site\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"87\", \"categories\": \"Others\", \"subcategories\": \"Dairy Cattle and Animal Sheds\", \"subcategorytype\": \"Dairy Cattle and Animal Sheds\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"88\", \"categories\": \"Others\", \"subcategories\": \"Pet Shops\", \"subcategorytype\": \"Pet Shops\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"89\", \"categories\": \"Others\", \"subcategories\": \"Scrap Dealers\", \"subcategorytype\": \"Scrap Dealers\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"90\", \"categories\": \"Others\", \"subcategories\": \"Construction & Demolition Waste Site\", \"subcategorytype\": \"Construction & Demolition Waste Site\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}, {\"id\": \"91\", \"categories\": \"Others\", \"subcategories\": \"Any Other establishment not mentioned above\", \"subcategorytype\": \"Any Other establishment not mentioned above\", \"fee\": \"60.00\", \"tenantId\": \"pg.Shimla\", \"active\": \"true\"}]",
+							"",
+							"pm.collectionVariables.set(\"raw\", data);",
+							"",
+							"var obj = pm.collectionVariables.get(\"raw\");",
+							"",
+							"if(pm.globals.get(\"i\") === undefined || pm.globals.get(\"i\") === null || pm.globals.get(\"i\") === \"\") {",
+							"    pm.globals.set(\"i\", 0);",
+							"}",
+							"",
+							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.globals.get(\"i\")]))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.collectionVariables.get(\"raw\");\r",
+							"\r",
+							"var items = pm.globals.get(\"i\");\r",
+							"\r",
+							"if (items < data.length){\r",
+							"\r",
+							"    pm.globals.set(\"i\", Number(items) + 1);\r",
+							"\r",
+							"    postman.setNextRequest(\"MDMS v2 CreateData\");\r",
+							"}else{\r",
+							"    pm.globals.set(\"i\", 0);\r",
+							"    postman.setNextRequest(null)\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"RequestInfo\": {\"apiId\": \"asset-services\", \"ver\": null, \"ts\": null, \"action\": null, \"did\": null, \"key\": null, \"msgId\": \"search with from and to values\", \"authToken\": \"{{authToken}}\", \"correlationId\": null, \"userInfo\": {\"id\": \"1\", \"userName\": null, \"name\": null, \"type\": null, \"mobileNumber\": null, \"emailId\": null, \"roles\": null, \"uuid\": \"40dceade-992d-4a8f-8243-19dda76a4171\"}}, \"Mdms\": {\"tenantId\": \"pg\", \"schemaCode\": \"Garbage.FeeStructure\", \"data\": {{req}}, \"isActive\": true}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8055/mdms-v2/v2/_create/Garbage.FeeStructure",
+					"host": [
+						"localhost"
+					],
+					"port": "8055",
+					"path": [
+						"mdms-v2",
+						"v2",
+						"_create",
+						"Garbage.FeeStructure"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "raw",
+			"value": ""
+		},
+		{
+			"key": "req",
+			"value": ""
+		}
+	]
+}

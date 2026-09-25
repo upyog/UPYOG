@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, LabelFieldPair, Dropdown, UploadFile, Toast, Loader } from "@upyog/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, Dropdown, UploadFile, Toast, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
-import "../css/tl-inline-auto.css";
+
 const TLDocumentsEmployee = ({
   t,
   config,
@@ -72,7 +72,6 @@ function SelectDocument({
   config,
   formState,
   fromRawData,
-  key,
   id
 }) {
   const filteredDocument = documents?.filter(item => item?.documentType);

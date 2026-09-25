@@ -1,16 +1,14 @@
-import { Banner, Card, CardText, SubmitBar, ActionBar } from "@upyog/digit-ui-react-components";
+import { Banner, Card, CardText, SubmitBar, ActionBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
-import * as func from "../../../utils";
-import getWSDisconectionAcknowledgementData from "../../../utils/getWSDisconnectionAcknowledgementData";
-import "../../../css/ws-inline-auto.css";
-const WSDisconnectionResponse = props => {
-  const {
-    t
-  } = useTranslation();
+
+import * as func from "../../../utils"
+import getWSDisconectionAcknowledgementData from "../../../utils/getWSDisconnectionAcknowledgementData"
+
+const WSDisconnectionResponse = (props) => {
+  const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   let filters = func.getQueryStringParams(location.search);
   const disconnectionData = Digit.SessionStorage.get("WS_DISCONNECTION");
   const handleDownloadPdf = () => {
@@ -19,9 +17,11 @@ const WSDisconnectionResponse = props => {
     PDFdata.then(res => Digit.Utils.pdf.generatev1(res));
   };
   const onSubmit = () => {
-    history.push(`/upyog-ui/employee`);
-  };
-  return <div>
+    navigate(`/upyog-ui/employee`);
+  }
+
+  return (
+    <div>
       <Card>
         <Banner message={t("WS_APPLICATION_SUBMITTED_SUCCESSFULLY_LABEL")} applicationNumber={filters?.applicationNumber} info={filters?.applicationNumber?.includes("WS") ? t("WS_WATER_APPLICATION_NUMBER_LABEL") : t("WS_SEWERAGE_APPLICATION_NUMBER_LABEL")} successful={true} headerStyles={{
         fontSize: "32px"
@@ -42,6 +42,7 @@ const WSDisconnectionResponse = props => {
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} onSubmit={onSubmit} className="ws-auto-310" />
         </ActionBar>
       </Card>
-    </div>;
+    </div>
+  );
 };
 export default WSDisconnectionResponse;

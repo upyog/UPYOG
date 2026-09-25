@@ -1,5 +1,5 @@
 import React from "react";
-import { Dropdown, Loader } from "@upyog/digit-ui-react-components";
+import { Dropdown, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 
 const DropdownStatus = ({ onAssignmentChange, value, applicationStatuses, areApplicationStatus }) => {
   return areApplicationStatus ? (

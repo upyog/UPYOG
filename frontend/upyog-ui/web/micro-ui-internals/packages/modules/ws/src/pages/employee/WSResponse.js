@@ -1,9 +1,9 @@
-import { Banner, Card, CardText, SubmitBar, ActionBar } from "@upyog/digit-ui-react-components";
+import { Banner, Card, CardText, SubmitBar, ActionBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import getPDFData from "../../utils/getWSAcknowledgementData";
-import getModifyPDFData from "../../utils/getWsAckDataForModifyPdfs";
-import { useHistory } from "react-router-dom";
+import getModifyPDFData from "../../utils/getWsAckDataForModifyPdfs"
+
 import * as func from "../../utils";
 import "../../css/ws-inline-auto.css";
 const WSResponse = props => {
@@ -11,31 +11,20 @@ const WSResponse = props => {
     t
   } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   let filters = func.getQueryStringParams(location.search);
   const [waterApplicationData, setWaterApplicationData] = useState({});
   const [sewerageApplicationData, setSewerageApplicationData] = useState({});
-  const {
-    isLoading: waterLoading,
-    isError: waterError,
-    data: waterApplicationDetails
-  } = Digit.Hooks.ws.useWSDetailsPage(t, tenantId, filters?.applicationNumber, "WATER", {
-    enabled: filters?.applicationNumber ? true : false
-  });
-  const {
-    isLoading: sewerageLoading,
-    isError: sewerageError,
-    data: sewerageApplicationDetails
-  } = Digit.Hooks.ws.useWSDetailsPage(t, tenantId, filters?.applicationNumber1, "SEWERAGE", {
-    enabled: filters?.applicationNumber1 ? true : false
-  });
-  useEffect(async () => {
+
+  const { isLoading: waterLoading, isError: waterError, data: waterApplicationDetails } = Digit.Hooks.ws.useWSDetailsPage(t, tenantId, filters?.applicationNumber, "WATER", { enabled: filters?.applicationNumber ? true : false });
+  const { isLoading: sewerageLoading, isError: sewerageError, data: sewerageApplicationDetails } = Digit.Hooks.ws.useWSDetailsPage(t, tenantId, filters?.applicationNumber1, "SEWERAGE", { enabled: filters?.applicationNumber1 ? true : false });
+
+  useEffect(() => {
     setWaterApplicationData(waterApplicationDetails);
     setSewerageApplicationData(sewerageApplicationDetails);
   }, [waterApplicationDetails, sewerageApplicationDetails]);
-  const {
-    data: oldDataWater
-  } = Digit.Hooks.ws.useOldValue({
+
+  const { data: oldDataWater } = Digit.Hooks.ws.useOldValue({
     tenantId,
     filters: {
       connectionNumber: waterApplicationData?.applicationData?.connectionNo,
@@ -57,8 +46,12 @@ const WSResponse = props => {
   }, {
     enabled: sewerageApplicationData?.applicationData?.applicationType?.includes("MODIFY_") ? true : false
   });
-  const oldApplicationWater = oldDataWater?.WaterConnection?.[oldDataWater?.WaterConnection?.length - 1];
-  const oldApplicationSew = oldDataSew?.SewerageConnections?.[oldDataSew?.SewerageConnections?.length - 1];
+
+  const oldApplicationWater = oldDataWater?.WaterConnection?.[oldDataWater?.WaterConnection?.length - 1]
+
+  const oldApplicationSew = oldDataSew?.SewerageConnections?.[oldDataSew?.SewerageConnections?.length - 1]
+
+
   const handleAckPdfDownloadWater = async () => {
     const tenantInfo = waterApplicationData?.applicationData?.tenantId;
     let result = waterApplicationData?.applicationData;
@@ -120,9 +113,11 @@ const WSResponse = props => {
     PDFdata.then(ress => Digit.Utils.pdf.generate(ress));
   };
   const onSubmit = () => {
-    history.push(`/upyog-ui/employee`);
-  };
-  return <div>
+    navigate(`/upyog-ui/employee`);
+  }
+
+  return (
+    <div>
       <Card>
         <Banner message={t("WS_APPLICATION_SUBMITTED_SUCCESSFULLY_LABEL")} applicationNumber={filters?.applicationNumber} applicationNumberOne={filters?.applicationNumber1} info={filters?.applicationNumber ? t("WS_WATER_APPLICATION_NUMBER_LABEL") : ""} infoOne={filters?.applicationNumber1 ? t("WS_SEWERAGE_APPLICATION_NUMBER_LABEL") : ""} successful={true} headerStyles={{
         fontSize: "32px"
@@ -148,6 +143,7 @@ const WSResponse = props => {
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} onSubmit={onSubmit} className="ws-auto-347" />
         </ActionBar>
       </Card>
-    </div>;
+    </div>
+  );
 };
 export default WSResponse;

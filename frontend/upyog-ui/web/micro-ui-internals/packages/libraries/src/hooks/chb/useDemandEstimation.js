@@ -1,6 +1,5 @@
-import { useQuery, useMutation } from "react-query";
-
-import { CHBServices } from "../../services/elements/CHB"
+import { mutationTemplate } from "../../common/mutationTemplate";
+import { CHBServices } from "../../services/elements/CHB";
 
 /**
  * useDemandEstimation Hook
@@ -19,16 +18,13 @@ import { CHBServices } from "../../services/elements/CHB"
  * Returns:
  * - A mutation object from `react-query` for performing the create or update operation.
  */
-const useDemandEstimation =  (tenantId, type = true) => {
-  
-  if (type) {
-   
-    return useMutation((data) => 
-      CHBServices.estimateCreate(data, tenantId));
-    
-  } 
-  else {
-    return useMutation((data) => CHBServices.update(data, tenantId));
-  }
+const useDemandEstimation = (tenantId, type = true) => {
+  const mutationFn = (data) =>
+    type
+      ? CHBServices.estimateCreate(data, tenantId)
+      : CHBServices.update(data, tenantId);
+
+  return mutationTemplate({ mutationFn });
 };
+
 export default useDemandEstimation;

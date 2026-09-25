@@ -1,4 +1,4 @@
-import { Dropdown, FilterFormField, Loader, RadioButtons } from "@upyog/digit-ui-react-components";
+import { Dropdown, FilterFormField, Loader, RadioButtons } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment } from "react";
 import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -19,7 +19,7 @@ const FilterFormFieldsComponent = ({ controlFilterForm }) => {
         <Controller
           name="status"
           control={controlFilterForm}
-          render={(props) => {
+          render={({ field }) => {
             return (
               <>
                 <div className="filter-label sub-filter-label" style={{ fontWeight: "400", fontSize: "16px" }}>
@@ -27,10 +27,10 @@ const FilterFormFieldsComponent = ({ controlFilterForm }) => {
                 </div>
                 <RadioButtons
                   onSelect={(e) => {
-                    props.onChange(e.code);
+                    field.onChange(e.code);
                     Digit.SessionStorage.set("EDCR_BACK", "");
                   }}
-                  selectedOption={availableOptions.filter((option) => option.code === props.value)[0]}
+                  selectedOption={availableOptions.filter((option) => option.code === field.value)[0]}
                   optionsKey="name"
                   name="status"
                   options={availableOptions}
@@ -44,7 +44,7 @@ const FilterFormFieldsComponent = ({ controlFilterForm }) => {
         <Controller
           name="appliactionType"
           control={controlFilterForm}
-          render={(props) => {
+          render={({ field }) => {
             return loadingApplicationTypesOfBPA ? (
               <Loader />
             ) : (
@@ -55,10 +55,10 @@ const FilterFormFieldsComponent = ({ controlFilterForm }) => {
                 <Dropdown
                   t={t}
                   option={applicationTypesOfBPA}
-                  selected={applicationTypesOfBPA.filter((option) => option.code === props.value)[0]}
+                  selected={applicationTypesOfBPA.filter((option) => option.code === field.value)[0]}
                   optionKey={"i18nKey"}
                   select={(e) => {
-                    props.onChange(e.code);
+                    field.onChange(e.code);
                     Digit.SessionStorage.set("EDCR_BACK", "");
                   }}
                 />

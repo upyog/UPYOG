@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 
 /**
  * useChbDocumentsMDMS Hook
@@ -19,13 +19,31 @@ import { useQuery } from "react-query";
  * Returns:
  * - A query object from `react-query` containing the fetched MDMS data, loading state, and error state.
  */
-const useChbDocumentsMDMS = (tenantId, moduleCode, type, config = {}) => {
+const useChbDocumentsMDMS = (
+  tenantId,
+  moduleCode,
+  type,
+  config = {}
+) => {
+  const queryKey = [
+    "CHB_MDMS_DOCUMENTS",
+    tenantId,
+    moduleCode,
+    type,
+  ];
 
-  const useChbDocumentsRequiredScreen = () => {
-    return useQuery("CHB_DOCUMENT_REQ_SCREEN", () => Digit.Hooks.useSelectedMDMS(moduleCode).getMasterData(tenantId, moduleCode, type), config);
-  };
+  const queryFn = () =>
+    Digit.Hooks.useSelectedMDMS(moduleCode).getMasterData(
+      tenantId,
+      moduleCode,
+      type
+    );
 
-  return useChbDocumentsRequiredScreen();
+  return queryTemplate({
+    queryKey,
+    queryFn,
+    config,
+  });
 };
 
 export default useChbDocumentsMDMS;

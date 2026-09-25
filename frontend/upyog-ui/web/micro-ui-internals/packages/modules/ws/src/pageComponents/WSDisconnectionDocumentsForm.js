@@ -1,23 +1,27 @@
 import React, { useEffect, useState } from "react";
 // import { pdfDocumentName, pdfDownloadLink, getDocumentsName,stringReplaceAll } from "../utils";
 import DisconnectTimeline from "../components/DisconnectTimeline";
-import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, CardHeader, SubmitBar } from "@upyog/digit-ui-react-components";
-import { useHistory, useRouteMatch } from "react-router-dom";
-import "../css/ws-inline-auto.css";
-function WSDisconnectionDocumentsForm({
-  t,
-  config,
-  onSelect,
-  userType,
-  formData
-}) {
+import {
+  CardLabel,
+  Dropdown,
+  UploadFile,
+  Toast,
+  Loader,
+  FormStep,
+  CardHeader,
+  SubmitBar
+} from "@nudmcdgnpm/digit-ui-react-components";
+import {  useLocation } from "react-router-dom";
+
+function WSDisconnectionDocumentsForm({ t, config, onSelect, userType, formData  }) { 
   const tenantId = Digit.ULBService.getStateId();
   const storedData = Digit.SessionStorage.get("WS_DISCONNECTION");
   const [documents, setDocuments] = useState(storedData.WSDisconnectionForm.documents ? storedData.WSDisconnectionForm.documents : []);
   const [error, setError] = useState(null);
   const [checkRequiredFields, setCheckRequiredFields] = useState(false);
-  const history = useHistory();
-  const match = useRouteMatch();
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const { pathname } = useLocation();
+
   const handleSubmit = () => {
     onSelect(config.key, {
       WSDisconnectionDocumentsForm: documents
@@ -45,13 +49,28 @@ function WSDisconnectionDocumentsForm({
     // isDisabled={enableSubmit}
     >
         <CardHeader>{t(`WS_DISCONNECTION_UPLOAD_DOCUMENTS`)}</CardHeader>
-        {wsDocs?.DisconnectionDocuments?.map((document, index) => {
-        return <SelectDocument key={index} document={document} t={t} error={error} setError={setError} setDocuments={setDocuments} documents={documents} setCheckRequiredFields={setCheckRequiredFields} />;
-      })}
-        <SubmitBar label={t("CS_COMMON_NEXT")} onSubmit={() => {
-        history.push(match.path.replace("documents-upload", "check"));
-      }} disabled={documents.length < 2 ? true : false} />
-        {error && <Toast error={error?.key === "error" ? true : false} label={t(error?.message)} onClose={() => setError(null)} />}
+        {wsDocs?.DisconnectionDocuments?.map((document, index) => { 
+          return (
+            <SelectDocument
+              key={index}
+              document={document}
+              t={t}
+              error={error}
+              setError={setError}
+              setDocuments={setDocuments}
+              documents={documents}
+              setCheckRequiredFields={setCheckRequiredFields}
+            />
+          );
+        })}
+        <SubmitBar 
+          label={t("CS_COMMON_NEXT")}
+          onSubmit={() => {
+            navigate(pathname.replace("documents-upload", "check"));
+          }}
+          disabled={documents.length < 2 ? true : false}
+         />
+        {error && <Toast error={error?.key === "error" ? true : false} label={t(error?.message)} onClose={() => setError(null)}  />}
       </FormStep> 
     </div>;
 }

@@ -1,5 +1,5 @@
 import React, { Fragment, useMemo } from "react"
-import { FilterFormField, Loader, Dropdown} from "@nudmcdgnpm/digit-ui-react-components";
+import { FilterFormField, Loader, Dropdown} from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -9,23 +9,28 @@ const FilterFormFieldsComponent = ({statuses, isInboxLoading, registerRef, contr
      * ToDo how to display default value correctly ask @egov-saurabh
      */
   
-  return <>
+  return <Fragment>
     <FilterFormField>
       <Controller
           name="status"
           control={controlFilterForm}
-          render={({ref, onChange, value}) => {
-            return <>
+          render={({ field }) => {
+            return <Fragment>
               <div className="filter-label">{t("CS_SURVEY_STATUS")}</div>
-              <Dropdown inputRef={ref} option={statuses} optionKey="code" t={t} select={onChange}
-                selected={value}
+              <Dropdown
+                inputRef={field.ref}
+                option={statuses}
+                optionKey="code"
+                t={t}
+                select={field.onChange}
+                selected={field.value}
                 />
-            </>
+            </Fragment>
           }
         }
         />
     </FilterFormField>
-  </>
+  </Fragment>
 }
 
 export default FilterFormFieldsComponent

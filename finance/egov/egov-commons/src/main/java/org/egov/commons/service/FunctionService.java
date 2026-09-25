@@ -51,14 +51,14 @@ package org.egov.commons.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.Metamodel;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.metamodel.Metamodel;
 
 import org.egov.commons.CFunction;
 import org.egov.commons.contracts.FunctionSearchRequest;
@@ -96,7 +96,7 @@ public class FunctionService {
 	}
 
 	public List<CFunction> findAll() {
-		return functionRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+		return functionRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
 	}
 
 	public CFunction findByName(final String name) {
@@ -108,7 +108,7 @@ public class FunctionService {
 	}
 
 	public CFunction findOne(final Long id) {
-		return functionRepository.findOne(id);
+		return functionRepository.findById(id).orElse(null);
 	}
 
 	public List<CFunction> findAllIsNotLeafTrue() {
@@ -126,7 +126,7 @@ public class FunctionService {
 		final Root<CFunction> functions = createQuery.from(CFunction.class);
 		createQuery.select(functions);
 		final Metamodel m = entityManager.getMetamodel();
-		final javax.persistence.metamodel.EntityType<CFunction> tempFunction = m.entity(CFunction.class);
+		final jakarta.persistence.metamodel.EntityType<CFunction> tempFunction = m.entity(CFunction.class);
 
 		final List<Predicate> predicates = new ArrayList<>();
 		if (functionSearchRequest.getName() != null) {
@@ -162,7 +162,7 @@ public class FunctionService {
 		final Root<CFunction> functions = createQuery.from(CFunction.class);
 		createQuery.select(functions);
 		final Metamodel m = entityManager.getMetamodel();
-		final javax.persistence.metamodel.EntityType<CFunction> tempFunction = m.entity(CFunction.class);
+		final jakarta.persistence.metamodel.EntityType<CFunction> tempFunction = m.entity(CFunction.class);
 
 		final List<Predicate> predicates = new ArrayList<>();
 		if (function.getName() != null) {

@@ -1,0 +1,120 @@
+# =============================================================================
+# Docker Compose for local development
+# Starts the aggregation service with Redis, Jaeger, Prometheus, and Grafana
+# =============================================================================
+
+version: "3.9"
+
+services:
+  # --------------------------------------------------------------------------
+  # UPYOG Aggregation Service
+  # --------------------------------------------------------------------------
+  aggregation-service:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: upyog-aggregation-service
+    ports:
+      - "8080:8080"
+    environment:
+      APP_ENV: local
+      UPYOG_REDIS_HOST: redis
+      UPYOG_REDIS_PORT: 6379
+      UPYOG_OBSERVABILITY_TRACING_ENDPOINT: "jaeger:4317"
+      UPYOG_OBSERVABILITY_TRACING_ENABLED: "true"
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - upyog-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # --------------------------------------------------------------------------
+  # Redis
+  # --------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: upyog-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    networks:
+      - upyog-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # --------------------------------------------------------------------------
+  # Jaeger (Distributed Tracing)
+  # --------------------------------------------------------------------------
+  jaeger:
+    image: jaegertracing/all-in-one:1.57
+    container_name: upyog-jaeger
+    ports:
+      - "16686:16686"  # Jaeger UI
+      - "4317:4317"    # OTLP gRPC
+      - "4318:4318"    # OTLP HTTP
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    networks:
+      - upyog-net
+    restart: unless-stopped
+
+  # --------------------------------------------------------------------------
+  # Prometheus
+  # --------------------------------------------------------------------------
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    container_name: upyog-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=7d"
+    networks:
+      - upyog-net
+    restart: unless-stopped
+
+  # --------------------------------------------------------------------------
+  # Grafana
+  # --------------------------------------------------------------------------
+  grafana:
+    image: grafana/grafana:11.1.0
+    container_name: upyog-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - upyog-net
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  upyog-net:
+    driver: bridge

@@ -1,6 +1,6 @@
 import React from "react"
-import { Switch } from "react-router-dom"
-import { PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components"
+import { Routes, Route } from "react-router-dom"
+import { PrivateRoute } from "@nudmcdgnpm/upyog-ui-react-components-lts"
 import Inbox from "./Inbox"
 import NewMessage from "./NewMessage"
 import Response from "./NewMessage/Response"
@@ -8,16 +8,65 @@ import EditMessage from "./EditMessage"
 import MessageDetails from "./MessageDetails"
 import DocumentDetails from "../../../components/Messages/DocumentDetails"
 
-const Messages = ({match:{path} = {}, tenants, parentRoute}) => {
-    return <Switch>
-        <PrivateRoute path={`${path}/create`} component={props => <NewMessage {...props} />} />
-        <PrivateRoute path={`${path}/inbox/create`} component={props => <NewMessage {...props} />} />
-        <PrivateRoute path={`${path}/inbox/details/:id`} component={props => <DocumentDetails {...props} />} />
-        <PrivateRoute path={`${path}/inbox/edit/:id`} component={props => <EditMessage {...props} />} />
-        <PrivateRoute path={`${path}/inbox`} component={props => <Inbox {...props} tenants={tenants} parentRoute={parentRoute} />} />
-        <PrivateRoute path={`${path}/response`} component={(props) => <Response {...props} />} />
-
-    </Switch>
+const Messages = ({ match, tenants, parentRoute }) => { 
+    // match.path destructuring (not needed in v6)
+    return (
+        <Routes>
+        <Route 
+            path="create" 
+            element={
+            <PrivateRoute>
+                <NewMessage />
+            </PrivateRoute>
+            } 
+        />
+        
+        <Route 
+            path="inbox/create" 
+            element={
+            <PrivateRoute>
+                <NewMessage />
+            </PrivateRoute>
+            } 
+        />
+        
+        <Route 
+            path="inbox/details/:id" 
+            element={
+            <PrivateRoute>
+                <DocumentDetails />
+            </PrivateRoute>
+            } 
+        />
+        
+        <Route 
+            path="inbox/edit/:id" 
+            element={
+            <PrivateRoute>
+                <EditMessage />
+            </PrivateRoute>
+            } 
+        />
+        
+        <Route 
+            path="inbox" 
+            element={
+            <PrivateRoute>
+                <Inbox tenants={tenants} parentRoute={parentRoute} />
+            </PrivateRoute>
+            } 
+        />
+        
+        <Route 
+            path="response" 
+            element={
+            <PrivateRoute>
+                <Response />
+            </PrivateRoute>
+            } 
+        />
+    </Routes>
+    )
 }
 
 export default Messages

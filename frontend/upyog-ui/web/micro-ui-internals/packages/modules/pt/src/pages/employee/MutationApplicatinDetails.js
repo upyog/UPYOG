@@ -1,7 +1,7 @@
-import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink } from "@upyog/digit-ui-react-components";
+import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+
 import getPTAcknowledgementData from "../../getPTAcknowledgementData";
 import PropertyDocument from "../../pageComponents/PropertyDocument";
 import PTWFApplicationTimeline from "../../pageComponents/PTWFApplicationTimeline";
@@ -12,7 +12,7 @@ import { newConfigMutate } from "../../config/Mutate/config";
 import _ from "lodash";
 import get from "lodash/get";
 import { pdfDownloadLink } from "../../utils";
-import { useQuery, useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import ApplicationDetailsToast from "../../../../templates/ApplicationDetails/components/ApplicationDetailsToast";
 import "../../css/pt-inline-auto.css";
 const MutationApplicationDetails = ({
@@ -38,7 +38,7 @@ const MutationApplicationDetails = ({
     tenants
   } = storeData || {};
   const [businessService, setBusinessService] = useState("PT.MUTATION");
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [isEnableLoader, setIsEnableLoader] = useState(false);
   const {
     isLoading,
@@ -94,30 +94,25 @@ const MutationApplicationDetails = ({
   const [appDetailsToShow, setAppDetailsToShow] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [selectedAction, setSelectedAction] = useState(null);
-  const {
-    isLoading: isLoadingApplicationDetails,
-    isError: isErrorApplicationDetails,
-    data: applicationDetails,
-    error: errorApplicationDetails
-  } = Digit.Hooks.pt.useApplicationDetail(t, tenantId, propertyId);
-  useEffect(async () => {
-    if (acknowledgementIds) {
-      const res = await Digit.PaymentService.searchBill(tenantId, {
-        Service: businessService,
-        consumerCode: acknowledgementIds
-      });
-      if (!res.Bill.length) {
-        const res1 = await Digit.PTService.ptCalculateMutation({
-          Property: applicationDetails?.applicationData
-        }, tenantId);
-        setBillAmount(res1?.[acknowledgementIds]?.totalAmount || t("CS_NA"));
-        setBillStatus(t(`PT_MUT_BILL_ACTIVE`));
-      } else {
-        setBillAmount(res?.Bill[0]?.totalAmount || t("CS_NA"));
-        setBillStatus(t(`PT_MUT_BILL_${res?.Bill[0]?.status?.toUpperCase()}`));
+  const { isLoading: isLoadingApplicationDetails, isError: isErrorApplicationDetails, data: applicationDetails, error: errorApplicationDetails } = Digit.Hooks.pt.useApplicationDetail(t, tenantId, propertyId);
+
+  useEffect(() => {
+    const fetchBillDetails = async () => {
+      if(acknowledgementIds){
+        const res = await Digit.PaymentService.searchBill(tenantId, {Service: businessService, consumerCode: acknowledgementIds});
+        if(! res.Bill.length) {
+          const res1 = await Digit.PTService.ptCalculateMutation({Property: applicationDetails?.applicationData}, tenantId);
+          setBillAmount(res1?.[acknowledgementIds]?.totalAmount || t("CS_NA"))
+          setBillStatus(t(`PT_MUT_BILL_ACTIVE`))
+        } else {
+          setBillAmount(res?.Bill[0]?.totalAmount || t("CS_NA"))
+          setBillStatus(t(`PT_MUT_BILL_${res?.Bill[0]?.status?.toUpperCase()}`))
+        }
       }
-    }
-  }, [tenantId, acknowledgementIds, businessService]);
+    };
+    fetchBillDetails();
+  },[tenantId, acknowledgementIds, businessService, applicationDetails])
+
   useEffect(() => {
     showTransfererDetails();
   }, [auditResponse, applicationDetails, appDetailsToShow]);
@@ -193,20 +188,14 @@ const MutationApplicationDetails = ({
           setIsEnableLoader(false);
           if (isOBPS?.bpa) {
             data.selectedAction = selectedAction;
-            history.replace(`/upyog-ui/employee/obps/response`, {
-              data: data
-            });
+            navigate(`/upyog-ui/employee/obps/response`, { replace: true, state: { data: data } });
           }
           if (isOBPS?.isStakeholder) {
             data.selectedAction = selectedAction;
-            history.push(`/upyog-ui/employee/obps/stakeholder-response`, {
-              data: data
-            });
+            navigate(`/upyog-ui/employee/obps/stakeholder-response`, { data: data });
           }
           if (isOBPS?.isNoc) {
-            history.push(`/upyog-ui/employee/noc/response`, {
-              data: data
-            });
+            navigate(`/upyog-ui/employee/noc/response`, { data: data });
           }
           setShowToast({
             key: "success",
@@ -269,7 +258,7 @@ const MutationApplicationDetails = ({
       } else if (!action?.redirectionUrl) {
         setShowModal(true);
       } else {
-        history.push({
+        navigate({
           pathname: action.redirectionUrl?.pathname,
           state: {
             ...action.redirectionUrl?.state

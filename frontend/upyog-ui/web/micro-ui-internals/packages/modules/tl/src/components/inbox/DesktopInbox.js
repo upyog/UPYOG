@@ -1,28 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, Loader } from "@upyog/digit-ui-react-components";
+import { Card, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import InboxLinks from "./ApplicationLinks";
 import ApplicationTable from "./ApplicationTable";
 import SearchLicenseApplication from "./search";
 import { Link } from "react-router-dom";
 import { convertEpochToDateDMY } from "../../utils";
-// import { getActionButton } from "../../utils";
-import "../../css/tl-inline-auto.css";
-const DesktopInbox = ({
-  tableConfig,
-  filterComponent,
-  columns,
-  isLoading,
-  setSearchFieldsBackToOriginalState,
-  setSetSearchFieldsBackToOriginalState,
-  ...props
-}) => {
-  const {
-    data
-  } = props;
-  const {
-    t
-  } = useTranslation();
+// 
+
+const DesktopInbox = ({ tableConfig, filterComponent,columns, isLoading, setSearchFieldsBackToOriginalState, setSetSearchFieldsBackToOriginalState, ...props }) => {
+  const { data } = props;
+  const { t } = useTranslation();
   const [FilterComponent, setComp] = useState(() => Digit.ComponentRegistryService?.getComponent(filterComponent));
   const GetCell = value => <span className="cell-text">{value}</span>;
   const GetSlaCell = value => {

@@ -1,15 +1,15 @@
 package org.upyog.adv.service;
 
-import jakarta.validation.*;
-import jakarta.validation.constraints.*;
-
 import java.util.Set;
-
 
 import org.springframework.stereotype.Service;
 import org.upyog.adv.validator.CreateApplicationGroup;
 import org.upyog.adv.validator.CreateDraftGroup;
 import org.upyog.adv.web.models.BookingRequest;
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ValidationException;
+import jakarta.validation.Validator;
 /**
  * Service class for validating advertisement booking requests.
  * 
@@ -39,11 +39,15 @@ public class AdvertisementValidationService {
 		this.validator = validator;
 	}
 
+	/**
+	 * Validates the booking request using the draft or application validation group.
+	 *
+	 * @param request booking request to validate
+	 * @throws ValidationException when one or more constraint violations are found
+	 */
 	public void validateRequest(BookingRequest request) {
-		// Choose validation group dynamically based on isDraftApplication
 		Class<?> validationGroup = request.isDraftApplication() ? CreateDraftGroup.class : CreateApplicationGroup.class;
 
-		// Validate the request based on the selected group
 		Set<ConstraintViolation<BookingRequest>> violations = validator.validate(request, validationGroup);
 
 		if (!violations.isEmpty()) {

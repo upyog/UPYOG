@@ -58,7 +58,7 @@ import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -100,7 +100,7 @@ public class TransferClosingBalanceService extends PersistenceService {
 		Map<String, Map<String, Object>> queryMap = getQueryForNonControlCodesAndMisMatchsInControlCodes(financialYear,
 				fyStartingDate, fyEndingDate, nextFinancialYear);
 		Entry<String, Map<String, Object>> queryEntry = queryMap.entrySet().iterator().next();
-		final Query nonControCodesQuery = getSession().createSQLQuery(queryEntry.getKey());
+		final Query nonControCodesQuery = getSession().createNativeQuery(queryEntry.getKey());
 		queryEntry.getValue().entrySet()
 				.forEach(entry -> nonControCodesQuery.setParameter(entry.getKey(), entry.getValue()));
 		nonControCodesQuery.executeUpdate();
@@ -111,7 +111,7 @@ public class TransferClosingBalanceService extends PersistenceService {
 		 */
 		queryMap = getQueryForControlCodes(financialYear, fyStartingDate, fyEndingDate, nextFinancialYear);
 		queryEntry = queryMap.entrySet().iterator().next();
-		final Query controlCodesQuery = getSession().createSQLQuery(queryEntry.getKey());
+		final Query controlCodesQuery = getSession().createNativeQuery(queryEntry.getKey());
 		queryEntry.getValue().entrySet()
 				.forEach(entry -> controlCodesQuery.setParameter(entry.getKey(), entry.getValue()));
 		controlCodesQuery.executeUpdate();
@@ -123,7 +123,7 @@ public class TransferClosingBalanceService extends PersistenceService {
 		queryMap = getQueryForIncomeOverExpense(financialYear, fyStartingDate, fyEndingDate, nextFinancialYear);
 		queryEntry = queryMap.entrySet().iterator().next();
 
-		final Query query = getSession().createSQLQuery(queryEntry.getKey());
+		final Query query = getSession().createNativeQuery(queryEntry.getKey());
 		queryEntry.getValue().entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
 		query.executeUpdate();
 
@@ -133,7 +133,7 @@ public class TransferClosingBalanceService extends PersistenceService {
 	@Transactional
 	public void deleteNextFYTransactionSummary(CFinancialYear nextFinancialYear) {
 		Query query = null;
-		query = getSession().createSQLQuery("delete from TransactionSummary where financialyearid = :financialyearid")
+		query = getSession().createNativeQuery("delete from TransactionSummary where financialyearid = :financialyearid")
 				.setParameter("financialyearid", nextFinancialYear.getId());
 		query.executeUpdate();
 	}

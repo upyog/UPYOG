@@ -1,7 +1,7 @@
-import { Card, CardSubHeader, Header, Loader, Row, StatusTable, Toast } from "@upyog/digit-ui-react-components";
+import { Card, CardSubHeader, Header, Loader, Row, StatusTable, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams,  } from "react-router-dom";
 import WFApplicationTimeline from "../../pageComponents/WFApplicationTimeline";
 
 /**
@@ -11,7 +11,7 @@ import WFApplicationTimeline from "../../pageComponents/WFApplicationTimeline";
  */
 const PGRApplicationDetails = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { acknowledgementIds, tenantId } = useParams();
   // Using the PGR AI hook to fetch data for application details
   const { isLoading, isError, error, data } = Digit.Hooks.pgrAi.useSearchPGRAI({

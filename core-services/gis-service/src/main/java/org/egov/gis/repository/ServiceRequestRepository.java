@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -13,17 +12,17 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Repository
 @Slf4j
+@RequiredArgsConstructor
 public class ServiceRequestRepository {
 
-	@Autowired
-	private RestTemplate restTemplate;
+	private final RestTemplate restTemplate;
 
-	@Autowired
-	private ObjectMapper mapper;
+	private final ObjectMapper mapper;
 
 	/**
 	 * Fetches results from a REST service using the uri and object
@@ -49,4 +48,3 @@ public class ServiceRequestRepository {
 		return Optional.ofNullable(response);
 	}
 }
-

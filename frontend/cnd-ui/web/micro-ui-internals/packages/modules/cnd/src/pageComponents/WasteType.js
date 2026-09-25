@@ -304,7 +304,7 @@ const WasteType = ({ t, config, onSelect, formData }) => {
             {`${t("CND_WASTE_QUANTITY")}`}<span className="astericColor">*</span>
           </CardLabel>
          { isEmployee? 
-         <span style={cndStyles.employeeSideWasteTypeFont}>{wasteQuantity}</span>
+         <span className="cnd-waste-type-employee-font">{wasteQuantity}</span>
          :
           <TextInput
             t={t}
@@ -357,7 +357,7 @@ const WasteType = ({ t, config, onSelect, formData }) => {
               id={"CND"}
               message={
                 isUploadingMedia ? (
-                  <div style={cndStyles.loaderAlignment}>
+                  <div className="cnd-waste-type-loader-container">
                     <LoadingSpinner />
                     <span>Uploading...</span>
                   </div>
@@ -387,7 +387,7 @@ const WasteType = ({ t, config, onSelect, formData }) => {
             id={"CND"}
             message={
               isUploadingStack ? (
-                <div style={cndStyles.loaderAlignment}>
+                <div className="cnd-waste-type-loader-container">
                   <LoadingSpinner />
                   <span>Uploading...</span>
                 </div>

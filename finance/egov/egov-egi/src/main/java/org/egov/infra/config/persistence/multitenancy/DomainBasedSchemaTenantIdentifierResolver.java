@@ -54,16 +54,30 @@ import org.springframework.beans.factory.annotation.Value;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
+/**
+ * LTS Migration Fix (Hibernate 6 SCHEMA multi-tenancy): resolves the tenant
+ * identifier from {@link ApplicationThreadLocals}.
+ * Falls back to {@code default.schema.name} when no tenant is bound to the thread
+ * (background jobs, startup).
+ */
 public class DomainBasedSchemaTenantIdentifierResolver implements CurrentTenantIdentifierResolver {
 
     @Value("${default.schema.name}")
     private String defaultSchema;
 
+    /**
+     * @return current tenant schema, or the configured default schema
+     */
     @Override
     public String resolveCurrentTenantIdentifier() {
         return defaultIfBlank(ApplicationThreadLocals.getTenantID(), defaultSchema);
     }
 
+    /**
+     * Existing sessions are always treated as valid; tenant switches happen per request.
+     *
+     * @return {@code true}
+     */
     @Override
     public boolean validateExistingCurrentSessions() {
         return true;

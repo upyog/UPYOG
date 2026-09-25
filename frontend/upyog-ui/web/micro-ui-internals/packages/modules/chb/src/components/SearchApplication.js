@@ -1,7 +1,7 @@
   import React, { useCallback, useMemo, useEffect,useRef,useState } from "react"
   import { useForm, Controller } from "react-hook-form";
-  import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@upyog/digit-ui-react-components";
-  import { Link,useHistory} from "react-router-dom";
+  import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@nudmcdgnpm/digit-ui-react-components";
+  import { Link,  } from "react-router-dom";
   import CHBCancelBooking from "./CHBCancelBooking";
 
   /**
@@ -46,26 +46,64 @@
  * - Displays search results in a table format with pagination and sorting options.
  * - Includes a modal for viewing or managing booking details.
  */
-  const CHBSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
-    
+  const CHBSearchApplication = ({tenantId, isLoading, t, onSubmit, onClear, data, count, setShowToast }) => {
+      const [venueTypes, setVenueTypes] = useState("");
+      const [venueCode, setVenueCode] = useState("");
       const isMobile = window.Digit.Utils.browser.isMobile();
+
+      const { data: venueLists } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "Venues" }],
+      {
+        select: (data) => {
+          const formattedData = data?.["CHB"]?.["Venues"]
+          return formattedData;
+        },
+      });
+
+      const { data: venueNames } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: `${venueTypes?.parentMasterType}` }],
+      {
+        select: (data) => {
+          const formattedData = data?.["CHB"]?.[`${venueTypes?.parentMasterType}`]
+          return formattedData;
+        },
+      });
+
+
+      let venues = [];
+      venueLists && venueLists.map((venue) => {
+          venues.push({i18nKey: `${venue.code}`, code: `${venue.code}`, value: `${venue.name}`, parentMasterType:venue.parentMasterType});
+      });
+
+      let venuenames = [];
+      venueNames && venueNames.map((venuename) => {
+          venuenames.push({
+            i18nKey: `${venuename.code}`, 
+            code: `${venuename.code}`, 
+            value: `${venuename.venueName}`, 
+            venueId: `${venuename.venueId}`
+          });
+      });
+
+
       const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
           defaultValues: {
+              bookingNo: "",
+              venueType: "",
+              venueCode: "",
+              status: undefined,
+              mobileNumber: "",
+              fromDate: "",
+              toDate: "",
               offset: 0,
               limit: !isMobile && 10,
               sortBy: "commencementDate",
-              sortOrder: "DESC",
-              fromDate: new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString().split('T')[0], // Default to one month ago
-              toDate: new Date().toISOString().split('T')[0], // Default to today's date
-              status: { i18nKey: "Booked", code: "BOOKED", value: t("CHB_BOOKED") }
+              sortOrder: "DESC"
           }
       })
       useEffect(() => {
-        register("offset", 0)
-        register("limit", 10)
-        register("sortBy", "commencementDate")
-        register("sortOrder", "DESC")
-        handleSubmit(onSubmit)();
+        register("offset")
+        register("limit")
+        register("sortBy")
+        register("sortOrder")
       },[register])
       const [bookingDetails,setBookingDetails]=useState("");
       const [showModal,setShowModal] = useState(false)
@@ -119,24 +157,7 @@
         ? { bg: "#FFF3CD", border: "#FFEBAA", text: "#856404" }
         : { bg: "#E2E3E5", border: "#D6D8DB", text: "#383D41" };
 
-      // const { data: Menu } = Digit.Hooks.chb.useChbCommunityHalls(tenantId, "CHB", "CommunityHalls");
-
-    const { data: Menu } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "CommunityHalls" }],
-    {
-      select: (data) => {
-        const formattedData = data?.["CHB"]?.["CommunityHalls"]
-        return formattedData;
-      },
-    });
-    
-      let menu = [];
-
       
-
-      Menu &&
-    Menu.map((one) => {
-      menu.push({ i18nKey: `${one.code}`, code: `${one.code}`, value: `${one.name}` });
-    });
       const GetCell = (value) => <span className="cell-text">{value}</span>;
       const handleCancelBooking = async (data) => {
         setShowModal(false);
@@ -173,7 +194,7 @@
           }
 
           await mutation.mutateAsync({
-            hallsBookingApplication: updatedApplication
+            venueBookingApplication: updatedApplication
           });
 
           if (refundFailed) {
@@ -224,9 +245,17 @@
               disableSortBy: true,
             },
             {
-              Header: t("CHB_COMMUNITY_HALL_NAME"),
+              Header: t("CHB_VENUE_TYPE_LABEL"),
               Cell: ({ row }) => {
-                return GetCell(`${t(row.original["communityHallCode"])}`)
+                return GetCell(`${t(row.original["venueType"])}`)
+              },
+              disableSortBy: true,
+            
+            },
+            {
+              Header: t("CHB_VENUE_NAME_LABEL"),
+              Cell: ({ row }) => {
+                return GetCell(`${t(row.original["venueCode"])}`)
               },
               disableSortBy: true,
             
@@ -281,7 +310,7 @@
               Cell: ({ row }) => {
                 const [isMenuOpen, setIsMenuOpen] = useState(false);
                 const menuRef = useRef();
-                const history = useHistory(); // Initialize history
+                const navigate = Digit.Hooks.useCustomNavigate(); // Initialize history
 
                 const toggleMenu = () => {
                   setIsMenuOpen(!isMenuOpen);
@@ -310,10 +339,10 @@
                   tenantId: application?.tenantId,
                   filters: {
                     bookingId:application?.bookingId,
-                    communityHallCode: application?.communityHallCode,
+                    venueType: application?.venueType,
                     bookingStartDate: application?.bookingSlotDetails?.[0]?.bookingDate,
                     bookingEndDate: application?.bookingSlotDetails?.[application.bookingSlotDetails.length - 1]?.bookingDate,
-                    hallCode: application?.bookingSlotDetails?.[0]?.hallCode,
+                    venueCode: application?.venueType,
                     isTimerRequired:true
                   },
                   enabled: false, // Disable automatic refetch
@@ -324,10 +353,10 @@
                   let SlotSearchData={
                     tenantId: application?.tenantId,
                     bookingId:application?.bookingId,
-                    communityHallCode: application?.communityHallCode,
+                    venueType: application?.venueType,
+                    venueCode: application?.venueType,
                     bookingStartDate: application?.bookingSlotDetails?.[0]?.bookingDate,
                     bookingEndDate: application?.bookingSlotDetails?.[application.bookingSlotDetails.length - 1]?.bookingDate,
-                    hallCode: application?.bookingSlotDetails?.[0]?.hallCode,
                     isTimerRequired:true
               
                   }
@@ -338,8 +367,9 @@
                   if (isSlotBooked) {
                     setShowToast({ error: true, label: t("CHB_COMMUNITY_HALL_ALREADY_BOOKED") });
                   } else {
-                    history.push({
-                      pathname: `/upyog-ui/employee/payment/collect/${"chb-services"}/${application?.bookingNo}`,
+                    navigate(
+                      `/upyog-ui/employee/payment/collect/${"chb-services"}/${application?.bookingNo}`,
+                      {
                       state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo,timerValue:result?.data.timerValue ,SlotSearchData:SlotSearchData },
                     });
                   }
@@ -431,8 +461,10 @@
           setValue("offset", getValues("offset") + getValues("limit"))
           handleSubmit(onSubmit)()
       }
-      function previousPage () {
-          setValue("offset", getValues("offset") - getValues("limit") )
+     function previousPage () {
+          const currentOffset = getValues("offset");
+          const limit = getValues("limit");
+          setValue("offset", Math.max(0, currentOffset - limit)); // Prevent negative
           handleSubmit(onSubmit)()
       }
       let validation={}
@@ -447,20 +479,55 @@
                   <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                   <SearchField>
                       <label>{t("CHB_BOOKING_NO")}</label>
-                      <TextInput name="bookingNo" inputRef={register({})} />
+                      <Controller
+                        control={control}
+                        name="bookingNo"
+                        render={({ field }) => (
+                            <TextInput
+                                name={field.name}
+                                value={field.value}
+                                onChange={field.onChange}
+                                onBlur={field.onBlur}
+                                inputRef={field.ref}
+                            />
+                        )}
+                    />
                   </SearchField>
                   <SearchField>
-                      <label>{t("CHB_COMMUNITY_HALL_NAME")}</label>
+                      <label>{t("CHB_VENUE_TYPE_LABEL")}</label>
                       <Controller
                               control={control}
-                              name="communityHallCode"
-                              render={(props) => (
-
+                              name="venueType"
+                              render={({ field }) => (
                                   <Dropdown
-                                  selected={props.value}
-                                  select={props.onChange}
-                                  onBlur={props.onBlur}
-                                  option={menu}
+                                  selected={field.value}
+                                  select={(value) => {
+                                    field.onChange(value);
+                                    setVenueTypes(value);
+                                  }}
+                                  onBlur={field.onBlur}
+                                  option={venues}
+                                  optionKey="i18nKey"
+                                  t={t}
+                                  disable={false}
+                                  />
+                              )}
+                              />
+                  </SearchField>
+                  <SearchField>
+                      <label>{t("CHB_VENUE_NAME_LABEL")}</label>
+                      <Controller
+                              control={control}
+                              name="venueCode"
+                              render={({ field }) => (
+                                  <Dropdown
+                                  selected={field.value}
+                                  select={(value) => {
+                                    field.onChange(value);
+                                    setVenueCode(value);
+                                  }}
+                                  onBlur={field.onBlur}
+                                  option={venuenames}
                                   optionKey="i18nKey"
                                   t={t}
                                   disable={false}
@@ -474,11 +541,11 @@
                       <Controller
                               control={control}
                               name="status"
-                              render={(props) => (
+                              render={({ field }) => (
                                   <Dropdown
-                                  selected={props.value}
-                                  select={props.onChange}
-                                  onBlur={props.onBlur}
+                                  selected={field.value}
+                                  select={field.onChange}
+                                  onBlur={field.onBlur}
                                   option={statusOptions}
                                   optionKey="i18nKey"
                                   t={t}
@@ -490,33 +557,39 @@
                   </SearchField>
                   <SearchField>
                   <label>{t("CHB_MOBILE_NUMBER")}</label>
-                  <MobileNumber
-                      name="mobileNumber"
-                      inputRef={register({
-                      minLength: {
-                          value: 10,
-                          message: t("CORE_COMMON_MOBILE_ERROR"),
-                      },
-                      maxLength: {
-                          value: 10,
-                          message: t("CORE_COMMON_MOBILE_ERROR"),
-                      },
-                      pattern: {
-                      value: /[6789][0-9]{9}/,
-                      //type: "tel",
-                      message: t("CORE_COMMON_MOBILE_ERROR"),
-                      },
-                  })}
-                  type="number"
-                  componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
-                  //maxlength={10}
-                  />
+                  <Controller
+                    control={control}
+                    name="mobileNumber"
+                    rules={{
+                        minLength: {
+                            value: 10,
+                            message: t("CORE_COMMON_MOBILE_ERROR"),
+                        },
+                        maxLength: {
+                            value: 10,
+                            message: t("CORE_COMMON_MOBILE_ERROR"),
+                        },
+                        pattern: {
+                            value: /[6789][0-9]{9}/,
+                            message: t("CORE_COMMON_MOBILE_ERROR"),
+                        },
+                    }}
+                    render={({ field }) => (
+                        <MobileNumber
+                            name={field.name}
+                            value={field.value}
+                            onChange={field.onChange}
+                            onBlur={field.onBlur}
+                            inputRef={field.ref}
+                        />
+                    )}
+                />
                   <CardLabelError>{formState?.errors?.["mobileNumber"]?.message}</CardLabelError>
                   </SearchField> 
                   <SearchField>
                       <label>{t("FROM_DATE")}</label>
                       <Controller
-                          render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange}  max={new Date().toISOString().split('T')[0]}/>}
+                          render={({ field }) => <DatePicker date={field.value} disabled={false} onChange={field.onChange}  max={new Date().toISOString().split('T')[0]}/>}
                           name="fromDate"
                           control={control}
                           />
@@ -524,7 +597,7 @@
                   <SearchField>
                       <label>{t("TO_DATE")}</label>
                       <Controller
-                          render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
+                          render={({ field }) => <DatePicker date={field.value} disabled={false} onChange={field.onChange} />}
                           name="toDate"
                           control={control}
                           />
@@ -536,7 +609,8 @@
                       onClick={() => {
                           reset({ 
                               bookingNo: "", 
-                              communityHallCode: "",
+                              venueType: "",
+                              venueCode: "",
                               fromDate: "", 
                               toDate: "",
                               mobileNumber:"",
@@ -544,10 +618,12 @@
                               offset: 0,
                               limit: 10,
                               sortBy: "commencementDate",
-                              sortOrder: "DESC"
+                              sortOrder: "DESC",
                           });
                           setShowToast(null);
-                          previousPage();
+                          setVenueTypes(""); // setting local state empty when click on clear
+                          setVenueCode("");  
+                          onClear();
                       }}>{t(`ES_COMMON_CLEAR_ALL`)}</p>
                   </SearchField>
               </SearchForm>

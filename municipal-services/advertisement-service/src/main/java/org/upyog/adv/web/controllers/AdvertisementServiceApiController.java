@@ -4,10 +4,8 @@ import java.util.List;
 
 import jakarta.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,18 +43,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AdvertisementServiceApiController {
 
+	private final AdvertisementValidationService validationService;
+	private final BookingService bookingService;
+	private final DemandService demandService;
 
-	
-	@Autowired
-	private AdvertisementValidationService validationService;
-
-	@Autowired
-	private BookingService bookingService;
-	
-	@Autowired
-	private DemandService demandService;
-	
-	
+	public AdvertisementServiceApiController(AdvertisementValidationService validationService,
+			BookingService bookingService, DemandService demandService) {
+		this.validationService = validationService;
+		this.bookingService = bookingService;
+		this.demandService = demandService;
+	}
 
 	@Operation(summary = "Create Advertisement Booking", description = "Creates a new advertisement booking with all the required details")
 	@RequestMapping(value = "/v1/_create", method = RequestMethod.POST)
@@ -76,7 +72,7 @@ public class AdvertisementServiceApiController {
 				BookingConstants.BOOKING_CREATED, StatusEnum.SUCCESSFUL);
 		AdvertisementResponse response = AdvertisementResponse.builder().responseInfo(info).build();
 		response.addNewBookingApplication(bookingDetail);
-		return new ResponseEntity<AdvertisementResponse>(response, HttpStatus.OK);
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 	
 	@Operation(summary = "Search Advertisement Bookings", description = "Searches for bookings based on parameters like application number, status, booking dates, and applicant details")
@@ -84,21 +80,13 @@ public class AdvertisementServiceApiController {
 	public ResponseEntity<AdvertisementSlotAvailabilityResponse> v1GetAdvertisementSlotAvailablity(
 			@Valid @RequestBody SlotSearchRequest slotSearchRequest) {
 
-		List<AdvertisementSlotAvailabilityDetail> applications = bookingService
+		AdvertisementSlotAvailabilityResponse response = bookingService
 				.getAdvertisementSlotAvailability(slotSearchRequest.getCriteria(), slotSearchRequest.getRequestInfo());
-
-		boolean isSlotBooked = bookingService.setSlotBookedFlag(applications);
-
-		String draftId = bookingService.getDraftId(applications,
-	    slotSearchRequest.getRequestInfo());
 
 		ResponseInfo info = BookingUtil.createReponseInfo(slotSearchRequest.getRequestInfo(),
 				BookingConstants.ADVERTISEMENT_AVAILABILITY_SEARCH, StatusEnum.SUCCESSFUL);
 
-		AdvertisementSlotAvailabilityResponse response = AdvertisementSlotAvailabilityResponse.builder()
-				.advertisementSlotAvailabiltityDetails(applications).responseInfo(info)
-			    .draftId(draftId)
-				.slotBooked(isSlotBooked).build();
+		response.setResponseInfo(info);
 
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
@@ -124,7 +112,7 @@ public class AdvertisementServiceApiController {
 	        AdvertisementResponse advResponse = AdvertisementResponse.builder().responseInfo(info)
 	                .build();
 	        advResponse.addNewBookingApplication(bookingDetail);
-	        return new ResponseEntity<AdvertisementResponse>(advResponse, HttpStatus.OK);
+	        return new ResponseEntity<>(advResponse, HttpStatus.OK);
 	    }
 
 	@RequestMapping(value = "/v1/_search", method = RequestMethod.POST)
@@ -173,7 +161,7 @@ public class AdvertisementServiceApiController {
 			ResponseInfo responseInfo = BookingUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(),
 					draftDiscardResponse, StatusEnum.SUCCESSFUL);
 			AdvertisementResponse response = AdvertisementResponse.builder().responseInfo(responseInfo).build();
-			return new ResponseEntity<AdvertisementResponse>(response, HttpStatus.OK);
+			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	 
 	

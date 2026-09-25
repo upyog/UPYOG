@@ -1,33 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- ~ eGov SmartCity eGovernance suite aims to improve the internal efficiency,transparency, 
-	~ accountability and the service delivery of the government organizations. 
-	~ ~ Copyright (C) 2017 eGovernments Foundation ~ ~ The updated version of 
-	eGov suite of products as by eGovernments Foundation ~ is available at http://www.egovernments.org 
-	~ ~ This program is free software: you can redistribute it and/or modify 
-	~ it under the terms of the GNU General Public License as published by ~ 
-	the Free Software Foundation, either version 3 of the License, or ~ any later 
-	version. ~ ~ This program is distributed in the hope that it will be useful, 
-	~ but WITHOUT ANY WARRANTY; without even the implied warranty of ~ MERCHANTABILITY 
-	or FITNESS FOR A PARTICULAR PURPOSE. See the ~ GNU General Public License 
-	for more details. ~ ~ You should have received a copy of the GNU General 
-	Public License ~ along with this program. If not, see http://www.gnu.org/licenses/ 
-	or ~ http://www.gnu.org/licenses/gpl.html . ~ ~ In addition to the terms 
-	of the GPL license to be adhered to in using this ~ program, the following 
-	additional terms are to be complied with: ~ ~ 1) All versions of this program, 
-	verbatim or modified must carry this ~ Legal Notice. ~ Further, all user 
-	interfaces, including but not limited to citizen facing interfaces, ~ Urban 
-	Local Bodies interfaces, dashboards, mobile applications, of the program 
-	and any ~ derived works should carry eGovernments Foundation logo on the 
-	top right corner. ~ ~ For the logo, please refer http://egovernments.org/html/logo/egov_logo.png. 
-	~ For any further queries on attribution, including queries on brand guidelines, 
-	~ please contact contact@egovernments.org ~ ~ 2) Any misrepresentation of 
-	the origin of the material is prohibited. It ~ is required that all modified 
-	versions of this material be marked in ~ reasonable ways as different from 
-	the original version. ~ ~ 3) This license does not grant any rights to any 
-	user of the program ~ with regards to rights under trademark law for use 
-	of the trade names ~ or trademarks of eGovernments Foundation. ~ ~ In case 
-	of any queries, you can reach eGovernments Foundation at contact@egovernments.org. 
-	~ -->
+
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="http://maven.apache.org/POM/4.0.0"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -52,6 +24,7 @@
 			<name>eGov ERP Releases Repository</name>
 			<url>https://upyog-nexus.niua.org/nexus/content/repositories/releases/</url>
 		</repository>
+		
 		<snapshotRepository>
 			<id>repo.egovernments.org</id>
 			<name>eGov ERP Snapshots Repository</name>
@@ -59,6 +32,11 @@
 		</snapshotRepository>
 	</distributionManagement>
 	<repositories>
+		<repository>
+    <id>central</id>
+    <name>Maven Central</name>
+    <url>https://repo.maven.apache.org/maven2</url>
+</repository>
 		<repository>
 			<id>repo.egovernments.org</id>
 			<name>eGov Public Repository Group</name>
@@ -73,12 +51,9 @@
 		</repository>
 		<repository>
 			<id>JBoss Repository</id>
-			<url>https://repository.jboss.org/nexus/content/groups/public/</url>
+			<url>https://upyog-nexus.niua.org/nexus/content/groups/public/</url>
 		</repository>
-		<repository>
-			<id>JSPRESSO</id>
-			<url>http://repository.jspresso.org/maven2/</url>
-		</repository>
+		
 		<!-- Customized In Project Repository -->
 		<!-- <repository>
 			<id>in-project</id>
@@ -143,13 +118,47 @@
 			<version>2.1.1-SNAPSHOT</version>
 		</dependency>
 
-
+<dependency>
+    <groupId>net.sf.jasperreports</groupId>
+    <artifactId>jasperreports</artifactId>
+    <version>6.20.0</version>
+    <exclusions>
+        <exclusion>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports-javaflow</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>commons-javaflow</groupId>
+            <artifactId>commons-javaflow</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+<dependency>
+    <groupId>org.eclipse.jdt</groupId>
+    <artifactId>ecj</artifactId>
+    <version>3.33.0</version>
+</dependency>
+<dependency>
+    <groupId>net.sf.jasperreports</groupId>
+    <artifactId>jasperreports-functions</artifactId>
+    <exclusions>
+        <exclusion>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports-javaflow</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>commons-javaflow</groupId>
+            <artifactId>commons-javaflow</artifactId>
+        </exclusion>
+    </exclusions>
+   
+</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.hibernate</groupId>-->
+<!--			<artifactId>hibernate-entitymanager</artifactId>-->
+<!--		</dependency>-->
 		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
 		</dependency>
 		<dependency>
@@ -184,25 +193,36 @@
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports-fonts</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.jasperreports</groupId>
-			<artifactId>jasperreports-functions</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.jasperreports</groupId>
-			<artifactId>jasperreports-javaflow</artifactId>
+			<exclusions>
+        <exclusion>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports-javaflow</artifactId>
+        </exclusion>
+    </exclusions>
 		</dependency>
 		<dependency>
 			<groupId>ar.com.fdvs</groupId>
 			<artifactId>DynamicJasper</artifactId>
-			<version>5.0.2</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>jasperreports</artifactId>
-					<groupId>net.sf.jasperreports</groupId>
-				</exclusion>
-			</exclusions>
+			<version>5.3.8</version>
+			 
+    <exclusions>
+        <exclusion>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports-javaflow</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>commons-javaflow</groupId>
+            <artifactId>commons-javaflow</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-javaflow</artifactId>
+        </exclusion>
+         </exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>

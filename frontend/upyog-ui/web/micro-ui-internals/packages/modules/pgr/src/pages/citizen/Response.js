@@ -1,6 +1,6 @@
 import React ,{useState}from "react";
-import { Card, Banner, CardText, SubmitBar } from "@upyog/digit-ui-react-components";
-import { Link } from "react-router-dom";
+import { Card, Banner, CardText, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import { Link, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { PgrRoutes, getRoute } from "../../constants/Routes";
 import { useTranslation } from "react-i18next";
@@ -44,12 +44,13 @@ const TextPicker = ({ response }) => {
 
 const Response = (props) => {
   const { t } = useTranslation();
+  const { id: urlId } = useParams();
   const appState = useSelector((state) => state)["pgr"];
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { tenants } = storeData || {};
   const [enable, setEnable] = useState(false)
-  let id= appState?.complaints?.response?.ServiceWrappers?.[0]?.service?.serviceRequestId
-  const { isLoading, error, isError, complaintDetails, revalidate } = Digit.Hooks.pgr.useComplaintDetails({ tenantId:"pg.citya", id },{ enabled: enable ? true : false});
+  let id = urlId || appState?.complaints?.response?.ServiceWrappers?.[0]?.service?.serviceRequestId;
+  const { isLoading, error, isError, data: complaintDetails, refetch: revalidate } = Digit.Hooks.pgr.useComplaintDetails({ tenantId:"pg.citya", id },{ enabled: enable ? true : false});
 console.log("appStateappState",appState)
   const handleDownloadPdf = async (e) => {
     const tenantInfo = tenants.find((tenant) => tenant.code === "pg.citya");

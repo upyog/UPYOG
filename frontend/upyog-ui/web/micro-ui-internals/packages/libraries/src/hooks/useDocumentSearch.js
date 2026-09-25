@@ -1,4 +1,5 @@
-import { useQuery, useQueryClient } from "react-query";
+import { queryTemplate } from "../common/queryTemplate";
+import { useQueryClient } from "../common/queryClientTemplate";
 import PropTypes from "prop-types";
 
 
@@ -7,7 +8,7 @@ const useDocumentSearch = (documents=[], config = {}) => {
   const tenant = Digit.ULBService.getStateId();
   const filesArray = documents?.map((value) => value?.fileStoreId);
 
-  const { isLoading, error, data } = useQuery([filesArray.join('')], () => Digit.UploadServices.Filefetch(filesArray, tenant),{enabled:filesArray&&filesArray.length>0,
+  const { isLoading, error, data } = queryTemplate({ queryKey: [filesArray.join('')], queryFn: () => Digit.UploadServices.Filefetch(filesArray, tenant), config: {enabled:filesArray&&filesArray.length>0,
   /* It will return back the same document object with fileUrl link and response */
     select: (data) => {
       return documents.map(document=>{
@@ -19,8 +20,8 @@ const useDocumentSearch = (documents=[], config = {}) => {
         }
       })
     }, 
-  ...config});
-  return { isLoading, error, data: { pdfFiles: data }, revalidate: () => client.invalidateQueries([filesArray.join('')]) };
+  ...config} });
+  return { isLoading, error, data: { pdfFiles: data }, revalidate: () => client.invalidateQueries({ queryKey: [filesArray.join('')] }) };
 };
 
 /**

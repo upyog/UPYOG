@@ -50,11 +50,7 @@ package org.egov.commons.service;
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-import org.python.bouncycastle.asn1.isismtt.x509.Restriction;
+import org.hibernate.query.Query;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -86,8 +82,8 @@ public class FinancialYearService extends PersistenceService<CFinancialYear, Lon
         Query query = getSession()
                 .createQuery(
                         " from CFinancialYear cfinancialyear where cfinancialyear.startingDate <=:sDate and cfinancialyear.endingDate >=:eDate");
-        query.setDate("sDate", date);
-        query.setDate("eDate", date);
+        query.setParameter("sDate", date);
+        query.setParameter("eDate", date);
         ArrayList list = (ArrayList) query.list();
         if (list.size() > 0)
             cFinancialYear = (CFinancialYear) list.get(0);
@@ -96,20 +92,24 @@ public class FinancialYearService extends PersistenceService<CFinancialYear, Lon
         return cFinancialYear;
     }
     
-   public List<CFinancialYear> Search(CFinancialYear finYear,List<Integer> ids,String sortBy,int pageSize,int offset){
-	   
-	   Criteria criteria = getSession().createCriteria(CFinancialYear.class);
-	   criteria.add(Restrictions.eq("financialyear", finYear.getFinYearRange()));
-	   criteria.add(Restrictions.eq("startingDate", finYear.getStartingDate()));
-	   criteria.add(Restrictions.eq("endingDate",finYear.getEndingDate()));
-	   criteria.add(Restrictions.eq("isActive",finYear.getIsActive()));
-	   criteria.add(Restrictions.eq("isACtiveForPosting",finYear.getIsActiveForPosting()));
-	   if(ids.size()>0)
-	   criteria.add(Restrictions.in("id", ids));
-	   
-	   criteria.setFirstResult(offset);
-	   criteria.setMaxResults(pageSize);
-	   criteria.addOrder(Order.asc(sortBy));
-	   return criteria.list();
+   public List<CFinancialYear> Search(CFinancialYear finYear, List<Integer> ids, String sortBy, int pageSize, int offset) {
+       StringBuilder hql = new StringBuilder("from CFinancialYear where 1=1");
+       if (finYear.getFinYearRange() != null) hql.append(" and finYearRange = :finYearRange");
+       if (finYear.getStartingDate() != null) hql.append(" and startingDate = :startingDate");
+       if (finYear.getEndingDate() != null) hql.append(" and endingDate = :endingDate");
+       if (finYear.getIsActive() != null) hql.append(" and isActive = :isActive");
+       if (finYear.getIsActiveForPosting() != null) hql.append(" and isActiveForPosting = :isACtiveForPosting");
+       if (!ids.isEmpty()) hql.append(" and id in (:ids)");
+       hql.append(" order by ").append(sortBy).append(" asc");
+       Query<CFinancialYear> query = getSession().createQuery(hql.toString(), CFinancialYear.class);
+       if (finYear.getFinYearRange() != null) query.setParameter("finYearRange", finYear.getFinYearRange());
+       if (finYear.getStartingDate() != null) query.setParameter("startingDate", finYear.getStartingDate());
+       if (finYear.getEndingDate() != null) query.setParameter("endingDate", finYear.getEndingDate());
+       if (finYear.getIsActive() != null) query.setParameter("isActive", finYear.getIsActive());
+       if (finYear.getIsActiveForPosting() != null) query.setParameter("isACtiveForPosting", finYear.getIsActiveForPosting());
+       if (!ids.isEmpty()) query.setParameterList("ids", ids);
+       query.setFirstResult(offset);
+       query.setMaxResults(pageSize);
+       return query.list();
    }
 }

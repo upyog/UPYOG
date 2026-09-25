@@ -1,24 +1,45 @@
-import { useQuery, useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 
-const useASSETSearch = ({ tenantId, filters, auth,searchedFrom="" }, config = {}) => {
+const useASSETSearch = (
+  { tenantId, filters, auth },
+  config = {}
+) => {
   const client = useQueryClient();
 
-  const args = tenantId ? { tenantId, filters, auth } : { filters, auth };
+  const args = tenantId
+    ? { tenantId, filters, auth }
+    : { filters, auth };
 
-  const defaultSelect = (data) => {
-    console.log("assethook", data)
-    if(data.Assets.length > 0)  data.Assets[0].applicationNo = data.Assets[0].applicationNo || [];
-      
+  const queryKey = [
+    "ASSET_SEARCH",
+    tenantId,
+    JSON.stringify(filters),
+    auth,
+  ];
+
+  const queryFn = () => Digit.ASSETService.search(args);
+
+  const select = (data) => {
+    if (data?.Assets?.length > 0) {
+      data.Assets[0].applicationNo =
+        data.Assets[0].applicationNo || [];
+    }
     return data;
   };
 
-  const { isLoading, error, data, isSuccess } = useQuery(["assetSearchList", tenantId, filters, auth, config], () => Digit.ASSETService.search(args), {
-    
-    select: defaultSelect,
-    ...config,
+  const query = queryTemplate({
+    queryKey,
+    queryFn,
+    select,
+    config,
   });
 
-  return { isLoading, error, data, isSuccess, revalidate: () => client.invalidateQueries(["assetSearchList", tenantId, filters, auth]) };
+  return {
+    ...query,
+    revalidate: () =>
+      client.invalidateQueries({ queryKey }),
+  };
 };
 
 export default useASSETSearch;

@@ -55,7 +55,7 @@ export const filterFunctions = {
     return { searchFilters, workflowFilters };
   },
   PTR: (filtersArg) => {
-    console.log("filer",filtersArg )
+
     let { uuid } = Digit.UserService.getUser()?.info || {};
 
     const searchFilters = {};
@@ -158,14 +158,14 @@ export const filterFunctions = {
   },
 
   ASSET: (filtersArg) => {
-    console.log("filtersArg",filtersArg);
+
     let { uuid } = Digit.UserService.getUser()?.info || {};
 
     const searchFilters = {};
     const workflowFilters = {};
 
     const { applicationNo, mobileNumber,assetclassification, assetParentCategory, limit, offset, sortBy, sortOrder, total, applicationStatus, services } = filtersArg || {};
-    console.log("filtersArg",applicationNo,assetclassification,assetParentCategory);
+
     if (filtersArg?.applicationNo) {
       searchFilters.applicationNo = filtersArg?.applicationNo;
     }
@@ -219,17 +219,19 @@ export const filterFunctions = {
 
     return { searchFilters, workflowFilters };
   },
+  
 
-  SV: (filtersArg) => {
-    console.log("filtersArg",filtersArg);
+  
+  EST: (filtersArg) => {
+
     let { uuid } = Digit.UserService.getUser()?.info || {};
 
     const searchFilters = {};
     const workflowFilters = {};
 
-    const { applicationNumber, mobileNumber,limit, offset, sortBy, sortOrder, total, applicationStatus, vendingType, vendingZone, status, services } = filtersArg || {};
-    if (filtersArg?.applicationNumber) {
-      searchFilters.applicationNumber = filtersArg?.applicationNumber;
+    const { assetNo, mobileNumber,limit, offset, sortBy, sortOrder, total, applicationStatus, vendingType, vendingZone, status, services } = filtersArg || {};
+    if (filtersArg?.assetNo) {
+      searchFilters.assetNo = filtersArg?.assetNo;
     }
     if (applicationStatus && applicationStatus?.[0]) {
       workflowFilters.applicationStatus = applicationStatus.map((status) => status.code).join(",");
@@ -251,14 +253,8 @@ export const filterFunctions = {
     if (mobileNumber) {
       searchFilters.mobileNumber = mobileNumber;
     }
-    if (vendingType) {
-      searchFilters.vendingType = vendingType;
-    }    
-    if (vendingZone) {
-      searchFilters.vendingZone = vendingZone;
-    }
-    if (applicationNumber) {
-      searchFilters.applicationNumber = applicationNumber;
+    if (applicationNo) {
+      searchFilters.applicationNo = applicationNo;
     }
     if (sortBy) {
       searchFilters.sortBy = sortBy;
@@ -278,8 +274,9 @@ export const filterFunctions = {
 
     return { searchFilters, workflowFilters };
   },
+  
   EW: (filtersArg) => {
-    console.log("filer",filtersArg )
+
     let { uuid } = Digit.UserService.getUser()?.info || {};
 
     const searchFilters = {};
@@ -331,7 +328,7 @@ export const filterFunctions = {
   },
   
   CHB: (filtersArg) => {
-    console.log("filer",filtersArg )
+
     let { uuid } = Digit.UserService.getUser()?.info || {};
 
     const searchFilters = {};

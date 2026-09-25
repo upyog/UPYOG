@@ -1,7 +1,7 @@
-import { BackButton, PrivateRoute } from "@upyog/digit-ui-react-components";
+import { BackButton, PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Redirect, Switch, useLocation } from "react-router-dom";
+import { useLocation, Routes, Route, Navigate } from "react-router-dom";
 
 const CitizenApp = ({ path }) => {
   const location = useLocation();
@@ -26,31 +26,40 @@ const CitizenApp = ({ path }) => {
         ) : (
           <BackButton>{t("CS_COMMON_BACK")}</BackButton>
         )}
-        <Switch>
-          <PrivateRoute
-            path={`${path}/inbox`}
-            component={() =>
-              Digit.UserService.hasAccess(["FSM_DSO"]) ? <Inbox parentRoute={path} isInbox={true} /> : <Redirect to="/upyog-ui/citizen" />
+        <Routes>
+          <Route
+            path="inbox"
+            element={
+              Digit.UserService.hasAccess(["FSM_DSO"]) ? (
+                <PrivateRoute>
+                  <Inbox parentRoute={path} isInbox={true} />
+                </PrivateRoute>
+              ) : (
+                <Navigate to="/upyog-ui/citizen" replace />
+              )
             }
           />
-          <PrivateRoute
-            path={`${path}/search`}
-            component={() =>
-              Digit.UserService.hasAccess(["FSM_DSO"]) ? <Inbox parentRoute={path} isSearch={true} /> : <Redirect to="/upyog-ui/citizen" />
+          <Route
+            path="search"
+            element={
+              Digit.UserService.hasAccess(["FSM_DSO"]) ? (
+                <PrivateRoute>
+                  <Inbox parentRoute={path} isSearch={true} />
+                </PrivateRoute>
+              ) : (
+                <Navigate to="/upyog-ui/citizen" replace />
+              )
             }
           />
-          <PrivateRoute path={`${path}/new-application`} component={() => <NewApplicationCitizen parentRoute={path} />} />
-          <PrivateRoute path={`${path}/my-applications`} component={MyApplications} />
-          <PrivateRoute
-            path={`${path}/dso-application-details/:id`}
-            component={() => <EmployeeApplicationDetails parentRoute={path} userType="DSO" />}
-          />
-          <PrivateRoute path={`${path}/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
-          <PrivateRoute path={`${path}/rate/:id`} component={() => <SelectRating parentRoute={path} />} />
-          <PrivateRoute path={`${path}/rate-view/:id`} component={() => <RateView parentRoute={path} />} />
-          <PrivateRoute path={`${path}/response`} component={(props) => <Response parentRoute={path} {...props} />} />
-          <PrivateRoute path={`${path}/dso-dashboard`} component={() => <DsoDashboard parentRoute={path} />} />
-        </Switch>
+          <Route path="new-application/*" element={<PrivateRoute><NewApplicationCitizen parentRoute={path} /></PrivateRoute>} />
+          <Route path="my-applications/*" element={<PrivateRoute><MyApplications /></PrivateRoute>} />
+          <Route path="dso-application-details/:id" element={<PrivateRoute><EmployeeApplicationDetails parentRoute={path} userType="DSO" /></PrivateRoute>}/>
+          <Route path="application-details/:id" element={<PrivateRoute><ApplicationDetails parentRoute={path} /></PrivateRoute>} />
+          <Route path="rate/:id" element={<PrivateRoute><SelectRating parentRoute={path} /></PrivateRoute>} />
+          <Route path="rate-view/:id" element={<PrivateRoute><RateView parentRoute={path} /></PrivateRoute>} />
+          <Route path="response" element={<PrivateRoute><Response parentRoute={path}  /></PrivateRoute>} />
+          <Route path="dso-dashboard" element={<PrivateRoute><DsoDashboard parentRoute={path} /></PrivateRoute>} />
+        </Routes>
       </div>
     </React.Fragment>
   );

@@ -50,18 +50,18 @@ package org.egov.model.bills;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
@@ -74,7 +74,7 @@ import org.egov.commons.SubScheme;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 @Entity
 @Table(name = "EG_BILLREGISTERMIS")
@@ -111,23 +111,23 @@ public class EgBillregistermis extends AbstractPersistable<Integer> implements j
     private Functionary functionaryid;
 
     @Length(max = 30)
-    @SafeHtml
+    @SanitizeHtml
     private String sanctionedby;
 
     private Date sanctiondate;
 
     @Length(max = 200)
-    @SafeHtml
+    @SanitizeHtml
     private String sanctiondetail;
 
     @Length(max = 1024)
-    @SafeHtml
+    @SanitizeHtml
     private String narration;
 
     private Date lastupdatedtime;
 
     @Length(max = 30)
-    @SafeHtml
+    @SanitizeHtml
     private String disbursementtype;
     @Min(1)
     private BigDecimal escalation;
@@ -139,12 +139,12 @@ public class EgBillregistermis extends AbstractPersistable<Integer> implements j
     private BigDecimal deductamountwitheld;
     @Min(1)
     private BigDecimal month;
-    @SafeHtml
+    @SanitizeHtml
     @Column(updatable = false)
     private String departmentcode;
 
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String departmentName;
 
     @ManyToOne
@@ -164,9 +164,9 @@ public class EgBillregistermis extends AbstractPersistable<Integer> implements j
     private EgBillSubType egBillSubType;
 
     @Length(max = 350)
-    @SafeHtml
+    @SanitizeHtml
     private String payto;
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 200)
     private String mbRefNo;
 
@@ -187,21 +187,21 @@ public class EgBillregistermis extends AbstractPersistable<Integer> implements j
     private CVoucherHeader voucherHeader;
 
     @Length(max = 150)
-    @SafeHtml
+    @SanitizeHtml
     private String sourcePath;
 
     @Length(max = 50)
-    @SafeHtml
+    @SanitizeHtml
     private String partyBillNumber;
 
     private Date partyBillDate;
 
     @Length(max = 50)
-    @SafeHtml
+    @SanitizeHtml
     private String inwardSerialNumber;
 
     @Length(max = 30)
-    @SafeHtml
+    @SanitizeHtml
     @Column(name = "budgetary_appnumber")
     private String budgetaryAppnumber;
 

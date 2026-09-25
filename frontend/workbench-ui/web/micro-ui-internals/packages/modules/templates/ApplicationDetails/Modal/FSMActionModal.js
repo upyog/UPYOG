@@ -1,6 +1,6 @@
-import { Loader, Modal, FormComposer, Toast } from "@egovernments/digit-ui-react-components";
+import { Loader, Modal, FormComposer, Toast } from "@upyog/workbench-ui-react-components";
 import React, { useState, useEffect } from "react";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { configAssignDso, configCompleteApplication, configReassignDSO, configAcceptDso, configRejectApplication } from "../config";
 

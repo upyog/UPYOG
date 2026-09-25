@@ -73,7 +73,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -110,7 +110,7 @@ public class BalanceSheetService extends ReportService {
     public void addCurrentOpeningBalancePerFund(final Statement balanceSheet, final List<Fund> fundList,
             final String transactionQuery, Map<String, Object> params) {
         final BigDecimal divisor = balanceSheet.getDivisor();
-		final Query query = persistenceService.getSession().createSQLQuery(
+		final Query query = persistenceService.getSession().createNativeQuery(
 				new StringBuilder("select sum(openingdebitbalance)- sum(openingcreditbalance),ts.fundid,coa.majorcode,")
 						.append("coa.type FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID ")
 						.append(" AND ts.financialyearid = :financialyearid").append(transactionQuery)
@@ -149,7 +149,7 @@ public class BalanceSheetService extends ReportService {
            final CFinancialYear prevFinancialYr = financialYearDAO.getPreviousFinancialYearByDate(fromDate);
             final String prevFinancialYearId = prevFinancialYr.getId().toString();
 			final Query query = persistenceService.getSession()
-					.createSQLQuery(new StringBuilder("select sum(openingdebitbalance)- sum(openingcreditbalance),")
+					.createNativeQuery(new StringBuilder("select sum(openingdebitbalance)- sum(openingcreditbalance),")
 							.append("coa.majorcode,coa.type FROM transactionsummary ts,chartofaccounts coa ")
 							.append(" WHERE ts.glcodeid = coa.ID  AND ts.financialyearid=:financialyearid")
 							.append(transactionQuery).append(" GROUP BY coa.majorcode,coa.type").toString());
@@ -195,7 +195,7 @@ public class BalanceSheetService extends ReportService {
 		}
 		qry.append(" and coa.ID=g.glcodeid and coa.type in ('I','E') ").append(filterQuery)
 				.append(" group by v.fundid");
-		final Query query = persistenceService.getSession().createSQLQuery(qry.toString());
+		final Query query = persistenceService.getSession().createNativeQuery(qry.toString());
 		query.setParameterList("voucherStatusToExclude", financialUtils.getStatuses(voucherStatusToExclude))
 				.setParameter("vFromDate", fromDate).setParameter("vToDate", toDate);
 		sqlParams.putAll(params);
@@ -244,7 +244,7 @@ public class BalanceSheetService extends ReportService {
 			qry.append(" and v.id= mis.voucherheaderid");
 
 		qry.append(" and coa.type in ('I','E') ").append(filterQuery).append(" group by v.fundid,g.functionid");
-		final Query query = persistenceService.getSession().createSQLQuery(qry.toString());
+		final Query query = persistenceService.getSession().createNativeQuery(qry.toString());
 		query.setParameterList("voucherStatusToExclude", financialUtils.getStatuses(voucherStatusToExclude))
 				.setParameter("vFromDate", getPreviousYearFor(fromDate))
 				.setParameter("vToDate", formattedToDate);

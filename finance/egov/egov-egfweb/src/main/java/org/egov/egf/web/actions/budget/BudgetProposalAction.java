@@ -89,8 +89,10 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.type.LongType;
+import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.type.StandardBasicTypes;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -363,10 +365,10 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
             if (LOGGER.isInfoEnabled())
                 LOGGER.info(query);
 
-            final Query updateQuery = persistenceService.getSession().createSQLQuery(query)
-                    .setBigDecimal("amount", amount).setLong("detailId", detailId)
-                    .setDate("modifiedate", new java.sql.Date(new Date().getTime()))
-                    .setInteger("modifiedby", ApplicationThreadLocals.getUserId().intValue());
+            final Query updateQuery = persistenceService.getSession().createNativeQuery(query)
+                    .setParameter("amount", amount).setParameter("detailId", detailId)
+                    .setParameter("modifiedate", new java.sql.Date(new Date().getTime()))
+                    .setParameter("modifiedby", ApplicationThreadLocals.getUserId().intValue());
             final int executeUpdate = updateQuery.executeUpdate();
             if (executeUpdate == 1)
                 return SUCCESSFUL;
@@ -383,8 +385,8 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
         try {
             if (bpBean.getId() != null && bpBean.getNextYrId() != null) {
             	
-            	persistenceService.getSession().createSQLQuery("delete from egf_budgetdetail where id in (:ids)")
-                	.setParameterList("ids", Arrays.asList(bpBean.getId(), bpBean.getNextYrId()), LongType.INSTANCE)
+            	persistenceService.getSession().createNativeQuery("delete from egf_budgetdetail where id in (:ids)")
+                	.setParameterList("ids", Arrays.asList(bpBean.getId(), bpBean.getNextYrId()), StandardBasicTypes.LONG)
                 	.executeUpdate();
                 persistenceService.getSession().flush();
             }
@@ -994,7 +996,7 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
 //                + " select distinct(f.name) as functionid from egf_budgetdetail bd,eg_wf_states s,function f where bd.budget="
 //                + topBudget.getId() + " and bd.state_id=s.id and s.owner_pos=" + position.getId()
 //                + " and bd.function=f.id order by functionid";
-//        final Query functionsNotUsed = persistenceService.getSession().createSQLQuery(Query);
+//        final Query functionsNotUsed = persistenceService.getSession().createNativeQuery(Query);
 //        final List<String> notUsedList = functionsNotUsed.list();
 //
 //        if (notUsedList.size() > 0) {
@@ -1015,7 +1017,7 @@ public class BudgetProposalAction extends GenericWorkFlowAction {
 
     @SuppressWarnings("unchecked")
     public String getUlbName() {
-        final Query query = persistenceService.getSession().createSQLQuery("select name from companydetail");
+        final Query query = persistenceService.getSession().createNativeQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);

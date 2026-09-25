@@ -1,14 +1,24 @@
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 import { Search } from "../../services/molecules/FSM/Search";
 
-const useVehicleSearch = (args) => {
-  const { tenantId, filters, config, options } = args;
-  const searchWithDSO = options?.searchWithDSO;
-  return useQuery(
-    ["FSM_VEHICLE_DATA", args],
-    () => (searchWithDSO ? Search.allVehiclesWithDSO(tenantId, filters) : Search.allVehicles(tenantId, filters)),
-    config
-  );
+const useVehicleSearch = ({ tenantId, filters, config = {}, options }) => {
+  const queryKey = [
+    "FSM_VEHICLE_SEARCH",
+    tenantId,
+    JSON.stringify(filters),
+    options?.searchWithDSO,
+  ];
+
+  const queryFn = () =>
+    options?.searchWithDSO
+      ? Search.allVehiclesWithDSO(tenantId, filters)
+      : Search.allVehicles(tenantId, filters);
+
+  return queryTemplate({
+    queryKey,
+    queryFn,
+    config,
+  });
 };
 
 export default useVehicleSearch;

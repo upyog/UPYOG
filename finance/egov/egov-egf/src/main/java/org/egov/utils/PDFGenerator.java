@@ -57,8 +57,8 @@ import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.util.JRLoader;
 import org.apache.log4j.Logger;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -94,7 +94,7 @@ public class PDFGenerator
         final List<JasperPrint> jasperPrintList = new ArrayList<JasperPrint>();
         jasperPrintList.add(jasperPrint);
         pdfExporter.setParameter(JRExporterParameter.JASPER_PRINT_LIST, jasperPrintList);
-        pdfExporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, req.getRealPath("") + "/temp/" + jasperName + ".pdf");
+        pdfExporter.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, req.getServletContext().getRealPath("") + "/temp/" + jasperName + ".pdf");
         pdfExporter.exportReport();
     }
 

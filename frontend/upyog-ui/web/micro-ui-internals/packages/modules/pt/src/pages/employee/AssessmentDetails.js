@@ -1,13 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
-import { useParams, useLocation, useHistory } from "react-router-dom";
-import { ActionBar, Header, Loader, SubmitBar, Card, CardSubHeader, CardSectionHeader, LinkLabel, CardLabel, CardHeader, CardText } from "@upyog/digit-ui-react-components";
-import { useQueryClient } from "react-query";
+
+import { useParams, useLocation,  } from "react-router-dom";
+import { ActionBar, Header, Loader, SubmitBar,Card,CardSubHeader,CardSectionHeader,LinkLabel, CardLabel, CardHeader, CardText} from "@nudmcdgnpm/digit-ui-react-components";
+import { useQueryClient } from "@tanstack/react-query";
 import _, { first, update } from "lodash";
-import { Modal, Dropdown, Row, StatusTable } from "@upyog/digit-ui-react-components";
-import { convertEpochToDate } from "../../utils/index";
-import "../../css/pt-inline-auto.css";
+import { Modal,Dropdown, Row, StatusTable } from "@nudmcdgnpm/digit-ui-react-components";
+import {convertEpochToDate} from "../../utils/index";
+
+
 const AssessmentDetails = () => {
   const {
     t
@@ -23,7 +25,7 @@ const AssessmentDetails = () => {
   const AssessmentData = location?.state?.Assessment;
   const [showToast, setShowToast] = useState(null);
   const queryClient = useQueryClient();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [appDetailsToShow, setAppDetailsToShow] = useState({});
   const isMobile = window.Digit.Utils.browser.isMobile();
   const [popup, showPopUp] = useState(false);
@@ -108,44 +110,36 @@ const AssessmentDetails = () => {
   };
   const handleAssessment = () => {
     if (!queryClient.getQueryData(["PT_ASSESSMENT", propertyId, location?.state?.Assessment?.financialYear])) {
-      assessmentMutate({
-        Assessment: AssessmentData
-      }, {
-        onError: (error, variables) => {
-          setShowToast({
-            key: "error",
-            action: error?.response?.data?.Errors[0]?.message || error.message,
-            error: {
-              message: error?.response?.data?.Errors[0]?.code || error.message
+      assessmentMutate(
+        { Assessment:AssessmentData},
+        {
+          onError: (error, variables) => {
+            setShowToast({ key: "error", action: error?.response?.data?.Errors[0]?.message || error.message, error : {  message:error?.response?.data?.Errors[0]?.code || error.message } });
+            setTimeout(closeToast, 5000);
+          },
+          onSuccess: (data, variables) => {
+            sessionStorage.setItem("IsPTAccessDone", data?.Assessments?.[0]?.auditDetails?.lastModifiedTime);
+            let user = sessionStorage.getItem("Digit.User")
+            let userType = JSON.parse(user)
+            setShowToast({ key: "success", action: { action: "ASSESSMENT" } });
+            setTimeout(closeToast, 5000);
+            console.log("useType.value.info.type",userType,typeof(userType))
+            // queryClient.clear();
+            // queryClient.setQueryData(["PT_ASSESSMENT", propertyId, location?.state?.Assessment?.financialYear], true);
+            if(userType?.value?.info?.type == "CITIZEN")
+            {
+              navigate(`/upyog-ui/citizen/payment/my-bills/PT/${propertyId}`);
             }
-          });
-          setTimeout(closeToast, 5000);
-        },
-        onSuccess: (data, variables) => {
-          sessionStorage.setItem("IsPTAccessDone", data?.Assessments?.[0]?.auditDetails?.lastModifiedTime);
-          let user = sessionStorage.getItem("Digit.User");
-          let userType = JSON.parse(user);
-          setShowToast({
-            key: "success",
-            action: {
-              action: "ASSESSMENT"
+            else{
+              proceeedToPay()
             }
-          });
-          setTimeout(closeToast, 5000);
-          console.log("useType.value.info.type", userType, typeof userType);
-          // queryClient.clear();
-          // queryClient.setQueryData(["PT_ASSESSMENT", propertyId, location?.state?.Assessment?.financialYear], true);
-          if (userType?.value?.info?.type == "CITIZEN") {
-            history.push(`/upyog-ui/citizen/payment/my-bills/PT/${propertyId}`);
-          } else {
-            proceeedToPay();
-          }
-        }
-      });
+            
+          },
+        });
     }
   };
   const proceeedToPay = () => {
-    history.push(`/upyog-ui/employee/payment/collect/PT/${propertyId}`);
+    navigate(`/upyog-ui/employee/payment/collect/PT/${propertyId}`);
   };
   if (ptCalculationEstimateLoading || assessmentLoading || !applicationDetails?.applicationDetails) {
     return <Loader />;

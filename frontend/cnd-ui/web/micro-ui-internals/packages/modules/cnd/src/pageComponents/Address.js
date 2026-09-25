@@ -54,7 +54,7 @@ const Address = ({t, config, formData, onSelect}) => {
   return (
     <React.Fragment>
       <FormStep t={t} config={config} onSelect={goNext} isDisabled={!selectedAddressStatement}>
-        <div style={cndStyles.addButtonMargin}>
+        <div className="cnd-address-add-btn-wrapper">
         <Link
           to={{
             pathname: `/cnd-ui/${userType === "EMPLOYEE" ? "employee" : "citizen"}/cnd/apply/address-details`,
@@ -89,8 +89,8 @@ const Address = ({t, config, formData, onSelect}) => {
                       setSelectedAddressStatement(address);
                     }}
                   >
-                    {selected && <div style={cndStyles.checkmarkStyle}>✓</div>}
-                    <div style={cndStyles.addressGrid}>
+                    {selected && <div className="cnd-address-card-checkmark">✓</div>}
+                    <div className="cnd-address-card-grid">
                     <KeyNote keyValue={t("CND_ADDRESS_TYPE")} note={address?.type} />
                     <KeyNote keyValue={t("HOUSE_NO")} note={address?.houseNumber} />
                     <KeyNote keyValue={t("ADDRESS_LINE1")} note={address?.address} />

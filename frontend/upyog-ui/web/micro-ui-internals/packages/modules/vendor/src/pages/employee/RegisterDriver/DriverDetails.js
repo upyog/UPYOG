@@ -18,11 +18,11 @@ import {
   CardText,
   Dropdown,
   AddIcon,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { useHistory, useParams } from "react-router-dom";
+import { useParams,  } from "react-router-dom";
 import ConfirmationBox from "../../../components/Confirmation";
 
 const Heading = (props) => {
@@ -47,7 +47,7 @@ const DriverDetails = (props) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const state = Digit.ULBService.getStateId();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const queryClient = useQueryClient();
   let { id: dsoId } = useParams();
   const [displayMenu, setDisplayMenu] = useState(false);
@@ -56,7 +56,7 @@ const DriverDetails = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [showToast, setShowToast] = useState(null);
   const [vendors, setVendors] = useState([]);
-
+console.log('modify-drivermodify-driver',dsoId);
   const [selectedOption, setSelectedOption] = useState({});
 
   const { data: driverData, isLoading: isLoading, isSuccess: isDsoSuccess, error: dsoError, refetch } = Digit.Hooks.fsm.useDriverDetails(
@@ -110,9 +110,9 @@ const DriverDetails = (props) => {
       case "DELETE_VENDOR":
         return setShowModal(true);
       case "EDIT":
-        return history.push("/upyog-ui/employee/fsm/registry/modify-driver/" + dsoId);
+        return navigate("/upyog-ui/employee/fsm/registry/modify-driver/" + dsoId);
       case "HOME":
-        return history.push("/upyog-ui/employee/fsm/registry?selectedTabs=DRIVER");
+        return navigate("/upyog-ui/employee/fsm/registry?selectedTabs=DRIVER");
       default:
         break;
     }
@@ -156,7 +156,7 @@ const DriverDetails = (props) => {
         queryClient.invalidateQueries("DSO_SEARCH");
 
         setTimeout(() => {
-          closeToast, history.push(`/upyog-ui/employee/fsm/registry`);
+          closeToast, navigate(`/upyog-ui/employee/fsm/registry`);
         }, 5000);
       },
     });

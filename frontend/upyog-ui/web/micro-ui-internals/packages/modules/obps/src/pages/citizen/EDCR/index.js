@@ -1,17 +1,15 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
-import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { Navigate, Route, Routes,  } from "react-router-dom";
 import { newConfig as newConfigEDCR } from "../../../config/edcrConfig";
 import { uuidv4 } from "../../../utils";
 // import EDCRAcknowledgement from "./EDCRAcknowledgement";
 
 const CreateEDCR = ({ parentRoute }) => {
   const queryClient = useQueryClient();
-  const match = useRouteMatch();
   const { t } = useTranslation();
-  const { pathname } = useLocation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("EDCR_CREATE", {});
   const [isShowToast, setIsShowToast] = useState(null);
@@ -66,9 +64,9 @@ const CreateEDCR = ({ parentRoute }) => {
         setIsSubmitBtnDisable(false);
         if (result?.data?.edcrDetail) {
           setParams(result?.data?.edcrDetail);
-          history.replace(
+          navigate(
             `/upyog-ui/citizen/obps/edcrscrutiny/apply/acknowledgement`, ///${result?.data?.edcrDetail?.[0]?.edcrNumber}
-            { data: result?.data?.edcrDetail }
+            { replace: true, state: { data: result?.data?.edcrDetail } }
           );
         }
       })
@@ -85,7 +83,7 @@ const CreateEDCR = ({ parentRoute }) => {
 
   const onSuccess = () => {
     sessionStorage.removeItem("CurrentFinancialYear");
-    queryClient.invalidateQueries("TL_CREATE_TRADE");
+    queryClient.invalidateQueries({ queryKey: ["TL_CREATE_TRADE"] });
   };
   newConfig = newConfig?.EdcrConfig ? newConfig?.EdcrConfig : newConfigEDCR;
   newConfig.forEach((obj) => {
@@ -96,23 +94,33 @@ const CreateEDCR = ({ parentRoute }) => {
   const EDCRAcknowledgement = Digit?.ComponentRegistryService?.getComponent('EDCRAcknowledgement') ;
 
   return (
-    <Switch>
+    <Routes>
+      <Route index element={<Navigate to="home" replace />} />
       {config.map((routeObj, index) => {
         const { component, texts, inputs, key } = routeObj;
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
-          <Route path={`${match.path}/${routeObj.route}`} key={index}>
-            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} isShowToast={isShowToast} isSubmitBtnDisable={isSubmitBtnDisable} setIsShowToast={setIsShowToast}/>
-          </Route>
+          <Route
+            path={`${routeObj.route}`}
+            key={index}
+            element={
+              <Component
+                config={{ texts, inputs, key }}
+                onSelect={handleSelect}
+                onSkip={handleSkip}
+                t={t}
+                formData={params}
+                onAdd={handleMultiple}
+                isShowToast={isShowToast}
+                isSubmitBtnDisable={isSubmitBtnDisable}
+                setIsShowToast={setIsShowToast}
+              />
+            }
+          />
         );
       })}
-      <Route path={`${match.path}/acknowledgement`}>
-        <EDCRAcknowledgement data={params} onSuccess={onSuccess} />
-      </Route>
-      <Route>
-        <Redirect to={`${match.path}/${config.indexRoute}`} />
-      </Route>
-    </Switch>
+      <Route path="acknowledgement" element={<EDCRAcknowledgement data={params} onSuccess={onSuccess} />} />
+    </Routes>
   );
 };
 

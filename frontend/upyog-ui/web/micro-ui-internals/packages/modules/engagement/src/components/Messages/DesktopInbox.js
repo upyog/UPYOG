@@ -1,7 +1,7 @@
 import React from "react";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
-import { Loader } from "@upyog/digit-ui-react-components";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import ApplicationTable from "./ApplicationTable";
 import Search from "./Search";
 import EventLink from "./EventLink";
@@ -9,7 +9,7 @@ import Filter from "./Filter";
 
 const GetCell = (value) => <span className="">{value}</span>;
 
-const GetStatusCell = (value) => value === "Active" ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span> 
+const GetStatusCell = (value) => value === "Active" ? <span className="sla-cell-success">{value}</span> : <span className="sla-cell-error">{value}</span>
 
 const DesktopInbox = ({ isLoading, data, t, onSearch, parentRoute, title, iconName, links, globalSearch, searchFields, searchParams, onFilterChange, pageSizeLimit, totalRecords, currentPage, onNextPage, onPrevPage, onPageSizeChange }) => {
   const columns = React.useMemo(() => {
@@ -18,11 +18,11 @@ const DesktopInbox = ({ isLoading, data, t, onSearch, parentRoute, title, iconNa
         Header: t("EVENTS_MESSAGE_LABEL"),
         accessor: "name",
         Cell: ({ row }) => {
-         
+
           return (
             <div>
               <span className="link">
-                <Link to={`${parentRoute}/messages/inbox/details/${row.original.id}`}>{row.original["name"]}</Link>
+                <Link to={`details/${row.original.id}`}>{row.original["name"]}</Link>
               </span>
             </div>
           );
@@ -52,7 +52,7 @@ const DesktopInbox = ({ isLoading, data, t, onSearch, parentRoute, title, iconNa
   })
 
   let result;
- 
+
   if (isLoading) {
     result = <Loader />
   } else if (data?.length > 0) {
@@ -83,7 +83,7 @@ const DesktopInbox = ({ isLoading, data, t, onSearch, parentRoute, title, iconNa
   return (
     <div className="inbox-container">
       <div className="filters-container">
-      <EventLink title={title} icon={iconName} links={links} />
+        <EventLink title={title} icon={iconName} links={links} />
         <div>
           <Filter onFilterChange={onFilterChange} searchParams={searchParams} />
         </div>

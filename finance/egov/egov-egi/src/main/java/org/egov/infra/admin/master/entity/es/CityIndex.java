@@ -51,32 +51,31 @@ package org.egov.infra.admin.master.entity.es;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldIndex;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-@Document(indexName = "city", type = "city")
+@Document(indexName = "city")
 public class CityIndex {
 
-	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+	@Field(type = FieldType.Keyword)
 	private String regionname;
 	
-	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+	@Field(type = FieldType.Keyword)
 	private String districtcode;
 	
-	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+	@Field(type = FieldType.Keyword)
 	private String districtname;
 	
 	@Id
-	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+	@Field(type = FieldType.Keyword)
 	private String citycode;
 	
-	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+	@Field(type = FieldType.Keyword)
 	private String name;
 	
-	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+	@Field(type = FieldType.Keyword)
 	private String citygrade;
 	
-	@Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+	@Field(type = FieldType.Keyword)
 	private String domainurl;
 	
 	@Field(type = FieldType.Double)

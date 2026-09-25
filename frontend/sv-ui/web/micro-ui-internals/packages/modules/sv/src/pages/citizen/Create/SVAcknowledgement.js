@@ -1,4 +1,4 @@
-import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -30,7 +30,7 @@ const GetActionMessage = (props) => {
     if (props.isSuccess) {
       return currentUrl.includes("edit") ? t("SV_UPDATE_SUCCESSFULL"): currentUrl.includes("renew") ? t("SV_RENEW_SUCCESSFULL") : t("SV_SUBMIT_SUCCESSFULL");
     }
-    else if (props.isLoading){
+    else if (props.isPending){
       return t("SV_APPLICATION_PENDING");
     }
     else if (!props.isSuccess)
@@ -89,11 +89,11 @@ const SVAcknowledgement = ({ data, onSuccess }) => {
     Digit.Utils.pdf.generate(data);
   };
 
-  return mutation.isLoading || mutation.isIdle ? (
+  return mutation.isPending ? (
     <Loader />
   ) : (
     <Card>
-      <BannerPicker t={t} data={mutation.data} isSuccess={mutation.isSuccess} isLoading={mutation.isIdle || mutation.isLoading} />
+      <BannerPicker t={t} data={mutation.data} isSuccess={mutation.isSuccess} isLoading={mutation.isPending} />
       <StatusTable>
         {mutation.isSuccess && (
           <Row

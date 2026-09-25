@@ -1,8 +1,8 @@
-import { useMutation } from "react-query"
+import { mutationTemplate } from "../../common/mutationTemplate"
 import Create from "../../services/molecules/WS/Create"
 
 const useCreateBillAmendment = () => {
-    return useMutation((data) => Create.BillAmendment(data))
+    return mutationTemplate({ mutationFn: (data) => Create.BillAmendment(data) })
 }
 
 export default useCreateBillAmendment

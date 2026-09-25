@@ -1,11 +1,11 @@
-import { CardLabel, FormStep, LinkButton, Loader, RadioOrSelect, TextInput } from "@upyog/digit-ui-react-components";
+import { CardLabel, FormStep, LinkButton, Loader, RadioOrSelect, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
 import isUndefined from "lodash/isUndefined";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
 import { commonTransform, getUniqueItemsFromArray, stringReplaceAll } from "../utils";
 import { sortDropdownNames } from "../utils/index";
-import "../css/tl-inline-auto.css";
+
 const SelectAccessoriesDetails = ({
   t,
   config,

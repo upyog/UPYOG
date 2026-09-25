@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, LabelFieldPair, Dropdown, UploadFile, Toast, Loader, CardHeader, CardSectionHeader } from "@upyog/digit-ui-react-components";
+import {
+  CardLabel,
+  LabelFieldPair,
+  Dropdown,
+  UploadFile,
+  Toast,
+  Loader,
+  CardHeader,
+  CardSectionHeader,
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
-import "../css/ws-inline-auto.css";
+
 const WSDocumentsEmployee = ({
   t,
   config,

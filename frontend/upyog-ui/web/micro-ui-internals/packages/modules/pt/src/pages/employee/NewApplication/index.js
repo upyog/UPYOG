@@ -1,7 +1,7 @@
-import { FormComposer, Loader,Modal ,Card , CardHeader, StatusTable,Row } from "@upyog/digit-ui-react-components";
+import { FormComposer, Loader,Modal ,Card , CardHeader, StatusTable,Row } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+
 import { newConfig } from "../../../config/Create/config";
 
 const NewApplication = () => {
@@ -10,20 +10,155 @@ const NewApplication = () => {
   const { t } = useTranslation();
   const [canSubmit, setSubmitValve] = useState(false);
   const defaultValues = { };
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   // delete
   // const [_formData, setFormData,_clear] = Digit.Hooks.useSessionStorage("store-data",null);
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", { });
   const { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(Digit.ULBService.getStateId(), "PropertyTax", "CommonFieldsConfig");
+  const mutation = Digit.Hooks.pt.usePropertyAPI(tenantId, true);
   useEffect(() => {
     setMutationHappened(false);
     clearSuccessData();
+    sessionStorage.removeItem("EMPLOYEE_MUTATION_TRIGGERED");
   }, []);
+
+  const areOwnersValid = (owners, ownershipCategory) => {
+    if (!owners || !Array.isArray(owners) || owners.length === 0) return false;
+    const isIndividual = ownershipCategory?.code?.includes("INDIVIDUAL");
+    return owners.every(owner => {
+      if (isIndividual) {
+        const basicValid = owner?.name && owner?.gender?.code && owner?.mobileNumber && 
+                           owner?.fatherOrHusbandName && owner?.relationship?.code && owner?.ownerType?.code;
+        if (!basicValid) return false;
+        if (owner?.ownerType?.code !== "NONE") {
+          return owner?.documents?.documentType?.code && owner?.documents?.documentUid;
+        }
+        return true;
+      } else {
+        return owner?.institution?.name && owner?.institution?.type?.code && 
+               owner?.name && owner?.altContactNumber && owner?.mobileNumber && 
+               owner?.designation && owner?.correspondenceAddress;
+      }
+    });
+  };
 
   const unitValues=[];
   const onFormValueChange = (setValue, formData, formState) => {
-    console.log("formData, formState",formData, formState)
+    console.log("=== Form Value Change ===");
+    console.log("formData:", formData);
+    console.log("formState.errors:", formState.errors);
+    console.log("Number of errors:", Object.keys(formState.errors).length);
+    
+    // Check if all required fields have values
+    const hasAllRequiredFields = formData?.address?.city && formData?.address?.locality && 
+                                  formData?.usageCategoryMajor && formData?.PropertyType && 
+                                  formData?.landarea && formData?.electricity && formData?.uid &&
+                                  formData?.propertyStructureDetails && formData?.ownershipCategory && 
+                                  areOwnersValid(formData?.owners, formData?.ownershipCategory);
+    
+    console.log("hasAllRequiredFields:", hasAllRequiredFields);
+    
+    // Check for real validation errors (not just empty required fields)
+    let hasRealErrors = false;
+    
+    Object.keys(formState.errors).forEach(key => {
+      const error = formState.errors[key];
+      const fieldValue = formData?.[key];
+      console.log(`Checking error for key: ${key}`, error, "fieldValue:", fieldValue);
+      
+      // Skip if field has a value - required error is irrelevant
+      if (fieldValue && error?.type === 'required') {
+        console.log(`  Field ${key} has value, ignoring required error`);
+        return;
+      }
+      
+      // If error is a complex object with nested errors (like from arrays or components)
+      if (error && typeof error === 'object') {
+        // Special handling for owners array - it's a complex nested structure
+        if (key === 'owners') {
+          const nestedErrorsObj = error.type || error;
+          if (nestedErrorsObj && typeof nestedErrorsObj === 'object') {
+            Object.values(nestedErrorsObj).forEach(nestedError => {
+              if (nestedError && typeof nestedError === 'object') {
+                // Only count non-required errors as real validation errors
+                if (nestedError.type && nestedError.type !== 'required') {
+                  console.log(`  Found real validation error in owners: ${nestedError.type}`, nestedError);
+                  hasRealErrors = true;
+                }
+              }
+            });
+          }
+          return;
+        }
+
+        // Special handling for documents - error.type is an array of missing document codes
+        if (key === 'documents') {
+          if (Array.isArray(error?.type) && error.type.length > 0) {
+            console.log(`  Found missing documents error:`, error.type);
+            hasRealErrors = true;
+          }
+          return;
+        }
+
+        // If error is a complex object with nested errors (like from arrays)
+        if (!error?.type) {
+          console.log(`  Checking nested errors in ${key}`);
+          let hasOnlyRequiredErrors = true;
+          
+          Object.values(error).forEach(nestedError => {
+            if (nestedError && typeof nestedError === 'object') {
+              // Check each nested error
+              Object.values(nestedError).forEach(itemError => {
+                if (itemError && typeof itemError === 'object') {
+                  // Only count non-required errors as real errors
+                  if (itemError.type && itemError.type !== 'required') {
+                    console.log(`  Found real validation error: ${itemError.type}`, itemError);
+                    hasOnlyRequiredErrors = false;
+                    hasRealErrors = true;
+                  }
+                }
+              });
+            }
+          });
+          
+          if (hasOnlyRequiredErrors && fieldValue) {
+            console.log(`  All errors in ${key} are required errors and field has data, ignoring`);
+            return;
+          }
+        }
+        
+        // If error.type is an object (nested errors from components)
+        if (error?.type && typeof error.type === 'object') {
+          const nestedErrors = Object.values(error.type);
+          console.log(`  Nested errors for ${key}:`, nestedErrors);
+          
+          // Check if any nested error is NOT just a required error on empty field
+          nestedErrors.forEach(nestedError => {
+            if (nestedError && typeof nestedError === 'object') {
+              // Ignore required errors on fields that have values
+              if (nestedError.type === 'required' && fieldValue) {
+                console.log(`  Field ${key} has value, ignoring nested required error`);
+                return;
+              }
+              // Check if this is a real validation error (has message and it's not just required)
+              if (nestedError.message && nestedError.type !== 'required') {
+                console.log(`  Found real error in ${key}:`, nestedError);
+                hasRealErrors = true;
+              }
+            }
+          });
+        } else if (error?.type && error.type !== 'required') {
+          // Simple error that's not a required error
+          console.log(`  Found simple real error for ${key}:`, error);
+          hasRealErrors = true;
+        }
+      }
+    });
+    
+    console.log("hasRealErrors:", hasRealErrors);
+    console.log("canSubmit will be:", hasAllRequiredFields && !hasRealErrors);
+    
     unitValues.length=0;
     if(formData?.units && formData?.units.length!==0 && Array.isArray(formData.units)){
         formData.units.forEach((unit)=>{
@@ -33,13 +168,12 @@ const NewApplication = () => {
                 floorNo: unit?.floorNo?.code || null,
 
             };
-            //if(unitDetails.RentedMonths!==null && unitDetails.NonRentedMonthsUsage!==null){
-                unitValues.push(unitDetails)
-            //}
-            
+            unitValues.push(unitDetails)
         })
     }
-    setSubmitValve(!Object.keys(formState.errors).length);
+    
+    setSubmitValve(hasAllRequiredFields && !hasRealErrors);
+    
     if (Object.keys(formState.errors).length === 1 && formState.errors?.units?.message === "arv") {
       setSubmitValve(!formData?.units.some((unit) => unit.occupancyType === "RENTED" && !unit.arv));
     }
@@ -149,10 +283,39 @@ const NewApplication = () => {
       };
     }
 
-    history.replace("/upyog-ui/employee/pt/response", { Property: formData }); //current wala
+    mutation.mutate(
+      { Property: formData },
+      {
+        onSuccess: (responseData) => {
+          navigate("/upyog-ui/employee/pt/response", {
+            replace: true,
+            state: {
+              Property: formData,
+              responseData,
+              isSuccess: true,
+              action: "CREATE",
+              key: "CREATE"
+            }
+          });
+        },
+        onError: (error) => {
+          navigate("/upyog-ui/employee/pt/response", {
+            replace: true,
+            state: {
+              Property: formData,
+              responseData: null,
+              isSuccess: false,
+              error: error?.response?.data?.Errors?.[0]?.message || error?.message || "Error creating property",
+              action: "CREATE",
+              key: "CREATE"
+            }
+          });
+        }
+      }
+    );
 
   };
-  if (isLoading) {
+  if (isLoading || mutation.isPending) {
     return <Loader />;
   }
 
@@ -170,7 +333,7 @@ const NewApplication = () => {
   }
   const setModal=()=>{
       setShowToast(false)   
-      history.replace("/upyog-ui/employee/pt/response", { Property: formData })
+      navigate("/upyog-ui/employee/pt/response", { replace: true, state: { Property: formData } })
     }
 let conf =[
   {

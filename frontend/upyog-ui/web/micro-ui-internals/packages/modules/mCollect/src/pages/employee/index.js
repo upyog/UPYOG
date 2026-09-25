@@ -1,8 +1,8 @@
 import React from "react";
 import { MCollectLinks } from "../../Module";
 import Inbox from "./Inbox";
-import { Switch, useLocation, Link } from "react-router-dom";
-import { PrivateRoute } from "@upyog/digit-ui-react-components";
+import { useLocation, Link, Routes, Route } from "react-router-dom";
+import { PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 // import EmployeeChallan from "../../EmployeeChallan";
 // import CreateChallen from "../employee/CreateChallan";
@@ -53,42 +53,46 @@ const EmployeeApp = ({ path, url, userType }) => {
   const NewChallan = Digit?.ComponentRegistryService?.getComponent('MCollectNewChallan');
 
   return (
-    <Switch>
-      <React.Fragment>
-        <div className="ground-container" /* style={{ padding: "10px 0px 0px 30px" }} */>
-          <p className="breadcrumb employee-main-application-details"  style={{ marginLeft: mobileView ? "2vw" : "revert" }}>
-            <Link to="/upyog-ui/employee" style={{ cursor: "pointer", color: "#666" }}>
-              {t("ES_COMMON_HOME")}
-            </Link>{" "}
-            / <span>{location.pathname === "/upyog-ui/employee/mcollect/inbox" ? t("UC_SEARCH_HEADER") : t("UC_COMMON_HEADER_SEARCH")}</span>
-          </p>
-          <PrivateRoute exact path={`${path}/`} component={() => <MCollectLinks matchPath={path} userType={userType} />} />
-          <PrivateRoute
-            path={`${path}/inbox`}
-            component={() => (
-              <Inbox
-                parentRoute={path}
-                businessService="PT"
-                filterComponent="MCOLLECT_INBOX_FILTER"
-                initialStates={inboxInitialState}
-                isInbox={true}
-              />
-            )}
+    <React.Fragment>
+      <div className="ground-container">
+        <p className="breadcrumb employee-main-application-details" style={{ marginLeft: mobileView ? "2vw" : "revert" }}>
+          <Link to="/upyog-ui/employee" style={{ cursor: "pointer", color: "#666" }}>
+            {t("ES_COMMON_HOME")}
+          </Link>{" "}
+          / <span>{location.pathname === "/upyog-ui/employee/mcollect/inbox" ? t("UC_SEARCH_HEADER") : t("UC_COMMON_HEADER_SEARCH")}</span>
+        </p>
+        <Routes>
+          <Route path={`/`} element={<PrivateRoute><MCollectLinks matchPath={path} userType={userType} /></PrivateRoute>} />
+          <Route
+            path={`/inbox`}
+            element={
+              <PrivateRoute>
+                <Inbox
+                  parentRoute={path}
+                  businessService="PT"
+                  filterComponent="MCOLLECT_INBOX_FILTER"
+                  initialStates={inboxInitialState}
+                  isInbox={true}
+                />
+              </PrivateRoute>
+            }
           />
-{/*           <PrivateRoute path={`${path}/new-application`} component={() => <CreateChallen />} />
- */}          <PrivateRoute path={`${path}/new-application`} component={() => <NewChallan parentUrl={url} />} />
-          <PrivateRoute
-            path={`${path}/search`}
-            component={() => (
-              <Inbox parentRoute={path} businessService="PT" middlewareSearch={searchMW} initialStates={inboxInitialState} isInbox={false} />
-            )}
+          {/* <Route path={`new-application`} element={<PrivateRoute><CreateChallen /></PrivateRoute>} /> */}
+          <Route path={`new-application`} element={<PrivateRoute><NewChallan parentUrl={url} /></PrivateRoute>} />
+          <Route
+            path={`/search`}
+            element={
+              <PrivateRoute>
+                <Inbox parentRoute={path} businessService="PT" middlewareSearch={searchMW} initialStates={inboxInitialState} isInbox={false} />
+              </PrivateRoute>
+            }
           />
-          <PrivateRoute path={`${path}/acknowledgement`} component={() => <MCollectAcknowledgement />} />
-          <PrivateRoute path={`${path}/challansearch/:challanno`} component={() => <EmployeeChallan />} />
-          <PrivateRoute path={`${path}/modify-challan/:challanNo`} component={() => <EditChallan />} />{" "}
-        </div>
-      </React.Fragment>
-    </Switch>
+          <Route path={`acknowledgement`} element={<PrivateRoute><MCollectAcknowledgement /></PrivateRoute>} />
+          <Route path={`challansearch/:challanno`} element={<PrivateRoute><EmployeeChallan /></PrivateRoute>} />
+          <Route path={`modify-challan/:challanNo`} element={<PrivateRoute><EditChallan /></PrivateRoute>} />
+        </Routes>
+      </div>
+    </React.Fragment>
   );
 };
 

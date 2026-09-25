@@ -1,7 +1,10 @@
-import { useMutation } from "react-query";
+import { mutationTemplate } from "../../common/mutationTemplate";
 
 const useCreateEvent = () => {
-  return useMutation(eventData => Digit.EventsServices.Create(eventData))
-}
+  const mutationFn = (eventData) =>
+    Digit.EventsServices.Create(eventData);
 
-export default useCreateEvent; 
+  return mutationTemplate({ mutationFn });
+};
+
+export default useCreateEvent;

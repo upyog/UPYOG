@@ -1,4 +1,5 @@
-import { useQuery, useQueryClient } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
+import { useQueryClient } from "../../common/queryClientTemplate";
 import { WSService } from "../../services/elements/WS";
 import { PTService } from "../../services/elements/PT";
 import _ from "lodash";
@@ -54,8 +55,7 @@ const combineResponse = (WaterConnections, properties, billData, t) => {
 
 const useMyBillsWaterSearch = ({tenantId, filters = {}, BusinessService="WS", t }, config = {}) => {
   const client = useQueryClient();
-  const { isLoading, error, data, isSuccess } = useQuery(['WS_SEARCH', tenantId, filters, BusinessService, config], async () => await WSService.search({tenantId, filters: { ...filters }, businessService:BusinessService})
-  , config)
+  const { isLoading, error, data, isSuccess } = queryTemplate({ queryKey: ['WS_SEARCH', tenantId, filters, BusinessService, config], queryFn: async () => await WSService.search({tenantId, filters: { ...filters }, businessService:BusinessService}), config })
     let propertyids = "";
     let consumercodes = "";
     if(BusinessService === "WS")
@@ -71,20 +71,18 @@ const useMyBillsWaterSearch = ({tenantId, filters = {}, BusinessService="WS", t 
     let propertyfilter = { propertyIds : propertyids.substring(0, propertyids.length-1),}
     if(propertyids !== "" && filters?.locality) propertyfilter.locality = filters?.locality;
     config={...config, enabled:propertyids!==""?true:false}
-  const { isLoading : isPropertyLoading, error : isPropertyError, data: propertyData , isSuccess : isPropertySuccess } = useQuery(['WSP_SEARCH', tenantId, propertyfilter,BusinessService, config], async () => await PTService.search({ tenantId: null , filters:propertyfilter, auth:filters?.locality?false:true })
-  , config)
-  const { isLoading : isBillLoading, error : isBillError, data: bill , isSuccess : isBillSuccess } = useQuery(['BILL_SEARCH', tenantId, consumercodes,BusinessService, config ], async () => await Digit.PaymentService.fetchBill(tenantId, {
+  const { isLoading : isPropertyLoading, error : isPropertyError, data: propertyData , isSuccess : isPropertySuccess } = queryTemplate({ queryKey: ['WSP_SEARCH', tenantId, propertyfilter,BusinessService, config], queryFn: async () => await PTService.search({ tenantId: null , filters:propertyfilter, auth:filters?.locality?false:true }), config })
+  const { isLoading : isBillLoading, error : isBillError, data: bill , isSuccess : isBillSuccess } = queryTemplate({ queryKey: ['BILL_SEARCH', tenantId, consumercodes,BusinessService, config ], queryFn: async () => await Digit.PaymentService.fetchBill(tenantId, {
     businessService: BusinessService,
     consumerCode: consumercodes.substring(0, consumercodes.length-1),
-  })
-  , config)
+  }), config })
 
   const response = {
     isLoading, 
     error,
     data,
     isSuccess,
-    revalidate: () => client.invalidateQueries(["WS_SEARCH", tenantId, filters, BusinessService]),
+    revalidate: () => client.invalidateQueries({ queryKey: ["WS_SEARCH", tenantId, filters, BusinessService] }),
   } ;
 
   const properties =  {
@@ -92,7 +90,7 @@ const useMyBillsWaterSearch = ({tenantId, filters = {}, BusinessService="WS", t 
     isPropertyError,
     propertyData,
     isPropertySuccess,
-    revalidate: () => client.invalidateQueries(["WSP_SEARCH", tenantId, propertyfilter,BusinessService]),
+    revalidate: () => client.invalidateQueries({ queryKey: ["WSP_SEARCH", tenantId, propertyfilter,BusinessService] }),
   } ;
 
   const billData = {
@@ -100,7 +98,7 @@ const useMyBillsWaterSearch = ({tenantId, filters = {}, BusinessService="WS", t 
     isBillError,
     bill,
     isBillSuccess,
-    revalidate: () => client.invalidateQueries(["BILL_SEARCH", tenantId, consumercodes,BusinessService]),
+    revalidate: () => client.invalidateQueries({ queryKey: ["BILL_SEARCH", tenantId, consumercodes,BusinessService] }),
   } ;
 
 

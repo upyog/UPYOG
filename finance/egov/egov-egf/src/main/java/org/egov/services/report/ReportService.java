@@ -76,13 +76,10 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.BigDecimalType;
-import org.hibernate.type.LongType;
+import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -114,20 +111,18 @@ public abstract class ReportService {
     }
 
     public List<Fund> getFunds() {
-        final Criteria voucherHeaderCriteria = persistenceService.getSession().createCriteria(
-                CVoucherHeader.class);
-        final List fundIdList = voucherHeaderCriteria.setProjection(
-                Projections.distinct(Projections.property("fundId.id"))).list();
+        final List fundIdList = persistenceService.getSession()
+                .createQuery("select distinct vh.fundId.id from CVoucherHeader vh").list();
         if (!fundIdList.isEmpty())
-            return persistenceService.getSession().createCriteria(Fund.class).add(
-                    Restrictions.in("id", fundIdList)).list();
+            return persistenceService.getSession().createQuery("from Fund f where f.id in (:fundIds)", Fund.class)
+                    .setParameter("fundIds", fundIdList).list();
         return new ArrayList<Fund>();
     }
 
     //TODO- find the api for this in COA hibernate dao
 	public String getGlcodeForPurposeCode(final Integer purposeId) {
 		final Query query = persistenceService.getSession()
-				.createSQLQuery("select majorcode from chartofaccounts where purposeid=:purposeId");
+				.createNativeQuery("select majorcode from chartofaccounts where purposeid=:purposeId");
 		final List list = query.setParameter("purposeId", purposeId).list();
 		String glCode = "";
 		if (list.get(0) != null)
@@ -254,7 +249,7 @@ public abstract class ReportService {
             Statement assets, Statement liabilities);
 
 	protected List<StatementResultObject> getAllGlCodesFor(final String scheduleReportType) {
-		final Query query = persistenceService.getSession().createSQLQuery(
+		final Query query = persistenceService.getSession().createNativeQuery(
 				new StringBuilder("select distinct coa.majorcode as glCode,s.schedule as scheduleNumber,").append(
 						"s.schedulename as scheduleName,coa.type as type from chartofaccounts coa, schedulemapping s ")
 						.append("where s.id=coa.scheduleid and coa.classification=2 and s.reporttype = :reporttype")
@@ -268,7 +263,7 @@ public abstract class ReportService {
 			final String coaType, final String subReportType, Map<String, Object> params) {
 		String voucherStatusToExclude = getAppConfigValueFor("EGF", "statusexcludeReport");
 		final Map<String, Object> sqlParams = new HashMap<>();
-		final Query query = persistenceService.getSession().createSQLQuery(new StringBuilder(
+		final Query query = persistenceService.getSession().createNativeQuery(new StringBuilder(
 				"select c.majorcode as glCode,v.fundid as fundId,c.type as type,sum(debitamount)-sum(creditamount) as amount")
 						.append(" from generalledger g,chartofaccounts c,voucherheader v ,vouchermis mis")
 						.append(" where v.id=mis.voucherheaderid and ")
@@ -280,8 +275,8 @@ public abstract class ReportService {
 						.append(" where s.id=coa2.scheduleid and ")
 						.append("coa2.classification=2 and s.reporttype = :reporttype) ").append(filterQuery)
 						.append(" group by c.majorcode,v.fundid,c.type order by c.majorcode").toString())
-				.addScalar("glCode").addScalar("fundId",LongType.INSTANCE).addScalar("type")
-				.addScalar("amount", BigDecimalType.INSTANCE)
+				.addScalar("glCode").addScalar("fundId",StandardBasicTypes.LONG).addScalar("type")
+				.addScalar("amount", StandardBasicTypes.BIG_DECIMAL)
 				.setResultTransformer(Transformers.aliasToBean(StatementResultObject.class));
 		sqlParams.put("coaType", financialUtils.getCoaTypes(coaType));
 		sqlParams.put("voucherStatusToExclude", financialUtils.getStatuses(voucherStatusToExclude));
@@ -297,7 +292,7 @@ public abstract class ReportService {
 	protected Map<String, String> getSubSchedule(final String subReportType) {
 		final Map<String, String> scheduleNumberToName = new HashMap<String, String>();
 		final List<Object[]> rows = persistenceService.getSession()
-				.createSQLQuery(new StringBuilder("select s.schedule,sub.subschedulename")
+				.createNativeQuery(new StringBuilder("select s.schedule,sub.subschedulename")
 						.append(" from egf_subschedule sub,schedulemapping s ")
 						.append("where sub.reporttype=:reporttype and sub.SUBSCHNAME=s.REPSUBTYPE")
 						.toString())
@@ -398,7 +393,7 @@ public abstract class ReportService {
 
 	protected void populateSchedule(final Statement statement, final String reportSubType) {
 		// TODO change the query parameter
-		final Query query = persistenceService.getSession().createSQLQuery(new StringBuilder(
+		final Query query = persistenceService.getSession().createNativeQuery(new StringBuilder(
 				"select c.majorcode,s.schedulename,s.schedule from chartofaccounts c,schedulemapping s ")
 						.append("where s.id=c.scheduleid and s.reporttype = :reporttype")
 						.append(" and c.type in('A','L') group by c.majorcode,s.schedulename,s.schedule ORDER BY c.majorcode")

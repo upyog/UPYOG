@@ -80,7 +80,8 @@ public class BoundaryTypeService {
     }
 
     public BoundaryType getBoundaryTypeById(final Long id) {
-        return boundaryTypeRepository.findOne(id);
+        // LTS Migration Fix (Spring Data 3): findOne(id) was removed; findById returns Optional.
+        return boundaryTypeRepository.findById(id).orElse(null);
     }
 
     public BoundaryType getBoundaryTypeByName(final String name) {

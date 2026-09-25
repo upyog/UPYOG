@@ -1,9 +1,8 @@
-import { CardLabel, LabelFieldPair, TextInput, CardLabelError } from "@upyog/digit-ui-react-components";
-import FormStep from "../../../../react-components/src/molecules/FormStep";
+import { CardLabel,LabelFieldPair, TextInput, CardLabelError, FormStep } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
-import "../css/pt-inline-auto.css";
+
 const Electricity = ({
   t,
   config,
@@ -94,8 +93,8 @@ const Electricity = ({
   };
   if (userType === "employee") {
     return inputs?.map((input, index) => {
-      return <React.Fragment>
-          <LabelFieldPair key={index}>
+      return <React.Fragment key={input.name || index}>
+          <LabelFieldPair key={input.name ? `field-${input.name}` : index}>
             <CardLabel className="card-label-smaller">{t(input.label)}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
 
@@ -110,7 +109,7 @@ const Electricity = ({
 
             </div>
           </LabelFieldPair>
-          {formState.touched[config.key] ? <CardLabelError className="pt-auto-37">
+          {(formState?.touched?.[config.key] || formState?.touchedFields?.[config.key]) ? <CardLabelError className="pt-auto-37">
               {formState.errors?.[config.key]?.message}
             </CardLabelError> : null}
         </React.Fragment>;

@@ -1,4 +1,4 @@
-import { CardSectionHeader, Loader, RadioButtons, Row, StatusTable, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
+import { CardSectionHeader, Loader, RadioButtons, Row, StatusTable, TextInput } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { useEffect, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 

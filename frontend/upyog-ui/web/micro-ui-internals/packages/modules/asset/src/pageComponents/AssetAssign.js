@@ -1,11 +1,20 @@
-import { CardLabel, CardLabelError, LabelFieldPair, TextInput, Toast, Row, StatusTable, Dropdown } from "@upyog/digit-ui-react-components";
+import {
+    CardLabel,
+    CardLabelError,
+    LabelFieldPair,
+    TextInput,
+    Toast,
+    Row,
+    StatusTable,
+    Dropdown
+} from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { checkForNA } from "../utils";
-import "../css/asset-inline-auto.css";
+
 const createAssetcommonforAll = () => ({
   department: "",
   assignedUser: "",
@@ -147,12 +156,7 @@ const OwnerForm = _props => {
       type: errors
     });else if (!Object.keys(errors).length && formState.errors[config.key]) clearErrors(config.key);
   }, [errors]);
-  const errorStyle = {
-    width: "70%",
-    marginLeft: "30%",
-    fontSize: "12px",
-    marginTop: "-21px"
-  };
+
   return <React.Fragment>
             <div className="asset-auto-39">
                 <div className="asset-auto-40">
@@ -169,86 +173,136 @@ const OwnerForm = _props => {
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_ASSIGNED_USER")}</CardLabel>
                         <div className="field">
-                            <Controller control={control} name={"assignedUser"} defaultValue={assigndetails?.assignedUser} rules={{
-              required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-              validate: {
-                pattern: val => /^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")
-              }
-            }} render={props => <TextInput value={props.value} autoFocus={focusIndex.index === assigndetails?.key && focusIndex.type === "assignedUser"} onChange={e => {
-              props.onChange(e.target.value);
-              setFocusIndex({
-                index: assigndetails.key,
-                type: "assignedUser"
-              });
-            }} onBlur={e => {
-              setFocusIndex({
-                index: -1
-              });
-              props.onBlur(e);
-            }} />} />
+                            <Controller
+                                control={control}
+                                name={"assignedUser"}
+                                defaultValue={assigndetails?.assignedUser}
+                                rules={{
+                                    required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                                    validate: { pattern: (val) => (/^[a-zA-Z\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
+                                }}
+                                render={({field}) => (
+                                    <TextInput
+                                        value={field.value}
+                                        autoFocus={focusIndex.index === assigndetails?.key && focusIndex.type === "assignedUser"}
+                                        onChange={(e) => {
+                                            field.onChange(e.target.value);
+                                            setFocusIndex({ index: assigndetails.key, type: "assignedUser" });
+                                        }}
+                                        onBlur={(e) => {
+                                            setFocusIndex({ index: -1 });
+                                            field.onBlur(e);
+                                        }}
+                                    />
+                                )}
+                            />
                         </div>
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.assignedUser ? errors?.assignedUser?.message : ""}</CardLabelError>
+                    <CardLabelError className="error-message" >{localFormState?.touched?.assignedUser ? errors?.assignedUser?.message : ""}</CardLabelError>
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_EMP_CODE")}</CardLabel>
                         <div className="field">
-                            <Controller control={control} name={"employeeCode"} defaultValue={assigndetails?.employeeCode} rules={{
-              required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-              validate: {
-                pattern: val => /^[a-zA-Z0-9\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG")
-              }
-            }} render={props => <TextInput value={props.value}
-            // disable={isEditScreen}
-            autoFocus={focusIndex.index === assigndetails?.key && focusIndex.type === "employeeCode"} onChange={e => {
-              props.onChange(e.target.value);
-              setFocusIndex({
-                index: assigndetails.key,
-                type: "employeeCode"
-              });
-            }} onBlur={e => {
-              setFocusIndex({
-                index: -1
-              });
-              props.onBlur(e);
-            }} />} />
+                            <Controller
+                                control={control}
+                                name={"employeeCode"}
+                                defaultValue={assigndetails?.employeeCode}
+                                rules={{
+                                    required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                                    validate: {
+                                        pattern: (val) =>
+                                            /^[a-zA-Z0-9\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG")
+                                    },
+                                }}
+                                render={({field}) => (
+                                    <TextInput
+                                        value={field.value}
+                                        // disable={isEditScreen}
+                                        autoFocus={focusIndex.index === assigndetails?.key && focusIndex.type === "employeeCode"}
+                                        onChange={(e) => {
+                                            field.onChange(e.target.value);
+                                            setFocusIndex({ index: assigndetails.key, type: "employeeCode" });
+                                        }}
+                                        onBlur={(e) => {
+                                            setFocusIndex({ index: -1 });
+                                            field.onBlur(e);
+                                        }}
+                                    />
+                                )}
+                            />
                         </div>
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.employeeCode ? errors?.employeeCode?.message : ""}</CardLabelError>
+                    <CardLabelError className="error-message"> {localFormState?.touched?.employeeCode ? errors?.employeeCode?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_DESIGNATION")}</CardLabel>
 
-                        <Controller control={control} name={"designation"} defaultValue={assigndetails?.designation} render={props => <Dropdown className="form-field" selected={props.value} select={props.onChange} onBlur={props.onBlur} option={designationNamefromMDMS} optionKey="i18nKey" t={t} />} />
+                        <Controller
+                            control={control}
+                            name={"designation"}
+                            defaultValue={assigndetails?.designation}
+                            render={({field}) => (
+                                <Dropdown
+                                    className="form-field"
+                                    selected={field.value}
+                                    select={field.onChange}
+                                    onBlur={field.onBlur}
+                                    option={designationNamefromMDMS}
+                                    optionKey="i18nKey"
+                                    t={t}
+                                />
+                            )}
+                        />
                     </LabelFieldPair>
 
-                    <CardLabelError style={errorStyle}>{localFormState.touched.designation ? errors?.designation?.message : ""}</CardLabelError>
+                    <CardLabelError className="error-message">{localFormState?.touched?.designation ? errors?.designation?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_ALLOCATED_DEPARTMENT")}</CardLabel>
-                        <Controller control={control} name={"allocatedDepartment"} defaultValue={assigndetails?.allocatedDepartment} render={props => <Dropdown className="form-field" selected={props.value} select={props.onChange} onBlur={props.onBlur} option={departNamefromMDMS} optionKey="i18nKey" t={t} />} />
+                        <Controller
+                            control={control}
+                            name={"allocatedDepartment"}
+                            defaultValue={assigndetails?.allocatedDepartment}
+
+                            render={({field}) => (
+                                <Dropdown
+                                    className="form-field"
+                                    selected={field.value}
+                                    select={field.onChange}
+                                    onBlur={field.onBlur}
+                                    option={departNamefromMDMS}
+                                    optionKey="i18nKey"
+                                    t={t}
+                                />
+                            )}
+                        />
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.allocatedDepartment ? errors?.allocatedDepartment?.message : ""}</CardLabelError>
+                    <CardLabelError className="error-message"> {localFormState?.touched?.allocatedDepartment ? errors?.allocatedDepartment?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_TRANSFER_DATE")}</CardLabel>
                         <div className="field">
-                            <Controller control={control} name={"transferDate"} defaultValue={assigndetails?.transferDate} rules={{
-              required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-              validDate: val => /^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")
-            }} render={props => <TextInput type="date" value={props.value} onChange={e => {
-              props.onChange(e.target.value);
-            }} max={new Date().toISOString().split('T')[0]} />} />
+                            <Controller
+                                control={control}
+                                name={"transferDate"}
+                                defaultValue={assigndetails?.transferDate}
+                                rules={{
+                                    required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                                    validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                                }}
+                                render={({field}) => (
+                                    <TextInput
+                                        type="date"
+                                        value={field.value}
+                                        onChange={(e) => {
+                                            field.onChange(e.target.value);
+                                        }}
+                                        max={new Date().toISOString().split('T')[0]}
+                                    />
+                                )}
+                            />
                         </div>
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.employeeCode ? errors?.employeeCode?.message : ""}</CardLabelError>
-
-
-
-
-
-
-
-
+                    <CardLabelError className="error-message"> {localFormState?.touched?.employeeCode ? errors?.employeeCode?.message : ""} </CardLabelError>
                 </div>
             </div>
             {showToast?.label && <Toast label={showToast?.label} onClose={w => {

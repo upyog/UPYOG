@@ -1,4 +1,4 @@
-import { ActionBar, Card, SubmitBar, Menu } from "@nudmcdgnpm/digit-ui-react-components";
+import { ActionBar, Card, SubmitBar, Menu } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { useEffect, useState } from "react";
 import { useForm,FormProvider } from "react-hook-form";
 import SurveyInfoLabel from "../../../utils/SurveyInfoLabel";

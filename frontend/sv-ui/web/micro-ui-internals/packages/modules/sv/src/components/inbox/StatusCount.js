@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { CheckBox } from "@nudmcdgnpm/digit-ui-react-components";
+import { CheckBox } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 /**
  * Component Developed in such a way that it will render Checkbox to show the Number of Status so that employee can filter the data as per
  * the Application Status

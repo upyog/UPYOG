@@ -16,7 +16,7 @@ import {
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
-import { useParams, useHistory, useLocation, Redirect } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import $ from "jquery";
 import { makePayment } from "./payGov";
 
@@ -28,7 +28,6 @@ export const SelectPaymentType = (props) => {
   const { tenantId: __tenantId, authorization, workflow: wrkflow , consumerCode : connectionNo } = Digit.Hooks.useQueryParams();
   const paymentAmount = state?.paymentAmount;
   const { t } = useTranslation();
-  const history = useHistory();
   const { pathname, search } = useLocation();
   // const menu = ["AXIS"];
   let { consumerCode, businessService } = useParams();

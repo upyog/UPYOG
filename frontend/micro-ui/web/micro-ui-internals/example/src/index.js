@@ -77,9 +77,6 @@ const enabledModules = [
   "BillAmendment",
   "FireNoc",
   "Birth",
-<<<<<<< HEAD
-  "Death"
-=======
   "Death",
   "PTR",
   "ASSET",
@@ -92,7 +89,6 @@ const enabledModules = [
   "MT",
   "PGRAI",
   "TP"
->>>>>>> master-LTS
 ];
 
 const initTokens = (stateCode) => {
@@ -136,15 +132,9 @@ const initDigitUI = () => {
     HRMSModule,
     ReceiptsModule,
     BillsModule,
-<<<<<<< HEAD
-    // PTRModule, 
-    // PTRLinks, 
-    // ...PTRComponents
-=======
     PTRModule,
     PTRLinks,
     ...PTRComponents,
->>>>>>> master-LTS
     // TLModule,
     // TLLinks,
     ASSETModule,

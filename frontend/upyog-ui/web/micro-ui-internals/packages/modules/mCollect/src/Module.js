@@ -1,7 +1,6 @@
-import { CitizenHomeCard, Loader, PTIcon } from "@upyog/digit-ui-react-components";
+import { CitizenHomeCard, Loader, PTIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useRouteMatch } from "react-router-dom";
 import InboxFilter from "./components/inbox/NewInboxFilter";
 import MCollectCard from "./components/MCollectCard";
 import EmployeeChallan from "./EmployeeChallan";
@@ -21,15 +20,16 @@ export const MCollectModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = "UC";
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
+  const { path, url } = Digit.Hooks.useModuleBasePath();
   Digit.SessionStorage.set("MCollect_TENANTS", tenants);
+
   if (isLoading) {
     return <Loader />;
   }
-  const { path, url } = useRouteMatch();
-
   if (userType === "employee") {
     return <EmployeeApp path={path} url={url} userType={userType} />;
-  } else return <CitizenApp />;
+  }
+  return <CitizenApp />;
 };
 
 export const MCollectLinks = ({ matchPath, userType }) => {
@@ -42,11 +42,11 @@ export const MCollectLinks = ({ matchPath, userType }) => {
 
   const links = [
     {
-      link: `${matchPath}/search`,
+      link: `/search`,
       i18nKey: t("UC_SEARCH_AND_PAY"),
     },
     {
-      link: `${matchPath}/My-Challans`,
+      link: `/My-Challans`,
       i18nKey: t("UC_MY_CHALLANS"),
     },
   ];

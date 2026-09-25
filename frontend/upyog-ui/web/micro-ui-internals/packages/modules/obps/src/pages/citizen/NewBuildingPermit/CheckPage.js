@@ -1,10 +1,10 @@
 import {
     Card, CardHeader, CardSubHeader, CardText,
     CitizenInfoLabel, Header, LinkButton, Row, StatusTable, SubmitBar, Table, CardSectionHeader, EditIcon, PDFSvg, Loader
-  } from "@upyog/digit-ui-react-components";
+  } from "@nudmcdgnpm/digit-ui-react-components";
   import React,{ useMemo, useEffect }  from "react";
   import { useTranslation } from "react-i18next";
-  import { useHistory, useRouteMatch } from "react-router-dom";
+  
   import Timeline from "../../../components/Timeline";
   import { convertEpochToDateDMY, stringReplaceAll, getOrderDocuments } from "../../../utils";
   import DocumentsPreview from "../../../../../templates/ApplicationDetails/components/DocumentsPreview";
@@ -15,8 +15,8 @@ import {
 
   const CheckPage = ({ onSubmit, value }) => {
     const { t } = useTranslation();
-    const history = useHistory();
-    const match = useRouteMatch();
+    const navigate = Digit.Hooks.useCustomNavigate();
+    const match = Digit.Hooks.useModuleBasePath();
     let user = Digit.UserService.getUser();
     const tenantId = Digit.ULBService.getCurrentTenantId() || user?.info?.permanentCity || value?.tenantId;
   
@@ -67,7 +67,7 @@ import {
 
     const ActionButton = ({ label, jumpTo }) => {
       const { t } = useTranslation();
-      const history = useHistory();
+      const navigate = Digit.Hooks.useCustomNavigate();
       function routeTo() {
         location.href = jumpTo;
       }

@@ -64,6 +64,36 @@ public class MdmsDataRepositoryImpl implements MdmsDataRepository {
         producer.push(applicationConfig.getUpdateMdmsDataTopicName(), mdmsRequest);
     }
 
+
+   @Override
+public Mdms getById(String tenantId, String id) {
+
+    MdmsCriteriaV2 criteria = MdmsCriteriaV2.builder()
+            .tenantId(tenantId)
+            .ids(java.util.Collections.singleton(id))
+            .build();
+
+    List<Mdms> mdmsList = searchV2(criteria);
+
+    if (mdmsList == null || mdmsList.isEmpty()) {
+        return null;
+    }
+
+    return mdmsList.get(0);
+}
+
+/**
+ * Publishes MDMS delete request to Kafka.
+ * Persister is responsible for audit logging
+ * and deleting the master data.
+ */
+@Override
+public void delete(MdmsRequest mdmsRequest) {
+    producer.push(applicationConfig.getDeleteMdmsDataTopicName(), mdmsRequest);
+}
+    
+
+ 
     /**
      * @param mdmsCriteriaV2
      * @return

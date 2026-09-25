@@ -1,7 +1,12 @@
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 
-const useBPADetailsPage = (tenantId, filters, config) => {
-  return useQuery(['BPA_DETAILS_PAGE', filters, tenantId], () => Digit.OBPSService.BPADetailsPage(tenantId, filters), config);
-}
+const useBPADetailsPage = (tenantId, filters, config = {}) => {
+  return queryTemplate({
+    queryKey: ["OBPS_BPA_DETAILS_PAGE", tenantId, JSON.stringify(filters)],
+    queryFn: () =>
+      Digit.OBPSService.BPADetailsPage(tenantId, filters),
+    config,
+  });
+};
 
 export default useBPADetailsPage;

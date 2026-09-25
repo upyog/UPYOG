@@ -1,10 +1,32 @@
-import { CardLabel, FormStep, Loader, RadioButtons, TextInput, UploadFile, LabelFieldPair, TextArea, SubmitBar, CitizenInfoLabel, CardHeader, Toast, DatePicker, Header, CardSectionHeader, StatusTable, Row, InfoBannerIcon, ActionBar, Dropdown, InfoIcon } from "@upyog/digit-ui-react-components";
+import { 
+  CardLabel, 
+  FormStep, 
+  Loader, 
+  RadioButtons, 
+  TextInput, 
+  UploadFile,
+  LabelFieldPair,
+  TextArea,
+  SubmitBar, 
+  CitizenInfoLabel,
+  CardHeader ,
+  Toast,
+  DatePicker,
+  Header,
+  CardSectionHeader,
+  StatusTable, 
+  Row,
+  InfoBannerIcon,
+  ActionBar,
+  Dropdown,
+  InfoIcon
+} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
-import { useHistory, useRouteMatch } from "react-router-dom";
+import {  useLocation } from "react-router-dom";
 import DisconnectTimeline from "../components/DisconnectTimeline";
 import { stringReplaceAll, createPayloadOfWSDisconnection, updatePayloadOfWSDisconnection, convertDateToEpoch, updatePayloadOfWSRestoration, createPayloadOfWSReconnection } from "../utils";
 import { addDays, format } from "date-fns";
-import "../css/ws-inline-auto.css";
+
 const WSRestorationForm = ({
   t,
   config,
@@ -16,8 +38,9 @@ const WSRestorationForm = ({
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const isMobile = window.Digit.Utils.browser.isMobile();
   const applicationData = Digit.SessionStorage.get("WS_DISCONNECTION");
-  const history = useHistory();
-  const match = useRouteMatch();
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const { pathname } = useLocation();
+  
   const [disconnectionData, setDisconnectionData] = useState({
     type: applicationData.WSDisconnectionForm ? applicationData.WSDisconnectionForm.type : "",
     date: applicationData.WSDisconnectionForm ? applicationData.WSDisconnectionForm.date : "",
@@ -173,14 +196,11 @@ const WSRestorationForm = ({
                   setTimeout(closeToastOfError, 5000);
                 },
                 onSuccess: (data, variables) => {
-                  Digit.SessionStorage.set("WS_DISCONNECTION", {
-                    ...applicationData,
-                    DisconnectionResponse: data?.WaterConnection?.[0]
-                  });
-                  history.push(`/upyog-ui/employee/ws/ws-restoration-response?applicationNumber=${data?.WaterConnection?.[0]?.applicationNo}`);
-                }
-              });
-            }
+                  Digit.SessionStorage.set("WS_DISCONNECTION", {...applicationData, DisconnectionResponse: data?.WaterConnection?.[0]});
+                  navigate(`/upyog-ui/employee/ws/ws-restoration-response?applicationNumber=${data?.WaterConnection?.[0]?.applicationNo}`);                
+                },
+              })
+            },
           });
         }
       } else if (payload?.SewerageConnection?.sewerage) {
@@ -221,14 +241,11 @@ const WSRestorationForm = ({
                   setTimeout(closeToastOfError, 5000);
                 },
                 onSuccess: (data, variables) => {
-                  Digit.SessionStorage.set("WS_DISCONNECTION", {
-                    ...applicationData,
-                    DisconnectionResponse: data?.SewerageConnections?.[0]
-                  });
-                  history.push(`/upyog-ui/employee/ws/ws-restoration-response?applicationNumber=${data?.SewerageConnections?.[0]?.applicationNo}`);
-                }
-              });
-            }
+                  Digit.SessionStorage.set("WS_DISCONNECTION", {...applicationData, DisconnectionResponse: data?.SewerageConnections?.[0]});
+                  navigate(`/upyog-ui/employee/ws/ws-restoration-response?applicationNumber=${data?.SewerageConnections?.[0]?.applicationNo}`);              
+                },
+              })
+            },
           });
         }
       }
@@ -272,11 +289,19 @@ const WSRestorationForm = ({
               value: e.target.value
             })} />              
             </LabelFieldPair>
-            <SubmitBar label={t("CS_COMMON_NEXT")} onSubmit={() => {
-            const appDate = new Date();
-            const proposedDate = format(addDays(appDate, slaData?.slaDays), 'yyyy-MM-dd').toString();
-            history.push(match.path.replace("restoration-application", "check"));
-          }} disabled={disconnectionData?.reason?.value === "" || disconnectionData?.reason === "" || disconnectionData?.date === "" ? true : false} />
+            <SubmitBar
+              label={t("CS_COMMON_NEXT")}
+              onSubmit={() => {
+                const appDate= new Date();
+                const proposedDate= format(addDays(appDate, slaData?.slaDays), 'yyyy-MM-dd').toString();
+                navigate(pathname.replace("restoration-application", "check"));
+                
+              }}
+              disabled={
+                disconnectionData?.reason?.value === "" || disconnectionData?.reason === "" || disconnectionData?.date === ""
+                ? true 
+                : false}
+             />
              {error && <Toast error={error?.key === "error" ? true : false} label={t(error?.message)} onClose={() => setError(null)} />}
           </div>
         </FormStep>

@@ -1,4 +1,4 @@
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 import { SVService } from "../../services/elements/SV";
 
 /**
@@ -18,7 +18,10 @@ import { SVService } from "../../services/elements/SV";
  */
 
 export const useCreateDemand = () => {
-    return useMutation((data) => SVService.update(data));
+    // Updated: TanStack Query v5 requires useMutation to accept an object with mutationFn key instead of a direct function
+    return useMutation({
+        mutationFn: (data) => SVService.update(data)
+    });
 };
 
 export default useCreateDemand;

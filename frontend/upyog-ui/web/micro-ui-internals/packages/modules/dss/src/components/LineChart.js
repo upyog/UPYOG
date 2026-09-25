@@ -244,8 +244,8 @@ const LineChartWithData = () => {
           <Tooltip
             labelFormatter={(label) => `Month: ${label}`}
             formatter={(value, name, props) => [
-              `${value}`,
-              'noOfTransactions',
+              `${value.toLocaleString('en-IN')}`,
+              'No of Transactions',
             ]}
           />
           <Legend

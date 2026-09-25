@@ -1,0 +1,151 @@
+{
+  "info": {
+    "_postman_id": "gis-service-collection-2024",
+    "name": "GIS Service API Collection",
+    "description": "Postman collection for GIS Service APIs - Municipal services spatial data operations",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Available Business Services",
+      "request": {
+        "method": "GET",
+        "header": [
+          {"key": "accept", "value": "*/*"},
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "url": {
+          "raw": "{{base_url}}/gis/v1/business-services",
+          "host": ["{{base_url}}"],
+          "path": ["gis", "v1", "business-services"]
+        },
+        "description": "Retrieves list of available business services supported by GIS service"
+      }
+    },
+    {
+      "name": "Search ASSET Points",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "accept", "value": "*/*"},
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"tenantId\": \"{{tenant_id}}\",\n    \"businessService\": \"ASSET\",\n    \"requestInfo\": {\n        \"apiId\": \"gis-service\",\n        \"ver\": \"1.0\",\n        \"ts\": 1734516543000,\n        \"action\": \"search\",\n        \"userInfo\": {\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [{\"code\": \"SUPERUSER\", \"tenantId\": \"{{tenant_id}}\"}]\n        }\n    },\n    \"searchCriteria\": {}\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/gis/v1/ASSET/points/_search",
+          "host": ["{{base_url}}"],
+          "path": ["gis", "v1", "ASSET", "points", "_search"]
+        },
+        "description": "Search for asset entities with point geometry data"
+      }
+    },
+    {
+      "name": "Search ASSET Polygons",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "accept", "value": "*/*"},
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"tenantId\": \"{{tenant_id}}\",\n    \"businessService\": \"ASSET\",\n    \"requestInfo\": {\n        \"apiId\": \"gis-service\",\n        \"ver\": \"1.0\",\n        \"ts\": 1734516543000,\n        \"action\": \"search\",\n        \"userInfo\": {\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [{\"code\": \"SUPERUSER\", \"tenantId\": \"{{tenant_id}}\"}]\n        }\n    },\n    \"searchCriteria\": {}\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/gis/v1/ASSET/polygons/_search",
+          "host": ["{{base_url}}"],
+          "path": ["gis", "v1", "ASSET", "polygons", "_search"]
+        },
+        "description": "Search for asset entities with polygon geometry data"
+      }
+    },
+    {
+      "name": "Search Property (PT) Points",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "accept", "value": "*/*"},
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"tenantId\": \"{{tenant_id}}\",\n    \"businessService\": \"PT\",\n    \"requestInfo\": {\n        \"apiId\": \"gis-service\",\n        \"ver\": \"1.0\",\n        \"ts\": 1734516543000,\n        \"action\": \"search\",\n        \"userInfo\": {\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [{\"code\": \"SUPERUSER\", \"tenantId\": \"{{tenant_id}}\"}]\n        }\n    },\n    \"searchCriteria\": {\n        \"propertyType\": \"RESIDENTIAL\"\n    }\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/gis/v1/PT/points/_search",
+          "host": ["{{base_url}}"],
+          "path": ["gis", "v1", "PT", "points", "_search"]
+        },
+        "description": "Search for property entities with point geometry data"
+      }
+    },
+    {
+      "name": "Search Property (PT) Polygons",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "accept", "value": "*/*"},
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"tenantId\": \"{{tenant_id}}\",\n    \"businessService\": \"PT\",\n    \"requestInfo\": {\n        \"apiId\": \"gis-service\",\n        \"ver\": \"1.0\",\n        \"ts\": 1734516543000,\n        \"action\": \"search\",\n        \"userInfo\": {\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [{\"code\": \"SUPERUSER\", \"tenantId\": \"{{tenant_id}}\"}]\n        }\n    },\n    \"searchCriteria\": {\n        \"propertyType\": \"COMMERCIAL\"\n    },\n    \"fromDate\": 1609459200000,\n    \"toDate\": 1640995200000\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/gis/v1/PT/polygons/_search",
+          "host": ["{{base_url}}"],
+          "path": ["gis", "v1", "PT", "polygons", "_search"]
+        },
+        "description": "Search for property entities with polygon geometry data and date range filter"
+      }
+    },
+    {
+      "name": "Search Trade License (TL) Points",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "accept", "value": "*/*"},
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"tenantId\": \"{{tenant_id}}\",\n    \"businessService\": \"TL\",\n    \"requestInfo\": {\n        \"apiId\": \"gis-service\",\n        \"ver\": \"1.0\",\n        \"ts\": 1734516543000,\n        \"action\": \"search\",\n        \"userInfo\": {\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [{\"code\": \"SUPERUSER\", \"tenantId\": \"{{tenant_id}}\"}]\n        }\n    },\n    \"searchCriteria\": {\n        \"licenseType\": \"PERMANENT\"\n    }\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/gis/v1/TL/points/_search",
+          "host": ["{{base_url}}"],
+          "path": ["gis", "v1", "TL", "points", "_search"]
+        },
+        "description": "Search for trade license entities with point geometry data"
+      }
+    },
+    {
+      "name": "Search with Entity IDs",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key": "accept", "value": "*/*"},
+          {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"tenantId\": \"{{tenant_id}}\",\n    \"businessService\": \"ASSET\",\n    \"entityIds\": [\"ASSET001\", \"ASSET002\"],\n    \"requestInfo\": {\n        \"apiId\": \"gis-service\",\n        \"ver\": \"1.0\",\n        \"ts\": 1734516543000,\n        \"action\": \"search\",\n        \"userInfo\": {\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [{\"code\": \"SUPERUSER\", \"tenantId\": \"{{tenant_id}}\"}]\n        }\n    }\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/gis/v1/ASSET/points/_search",
+          "host": ["{{base_url}}"],
+          "path": ["gis", "v1", "ASSET", "points", "_search"]
+        },
+        "description": "Search for specific entities using entity IDs"
+      }
+    }
+  ],
+  "variable": [
+    {"key": "base_url", "value": "http://localhost:8292/gis-service"},
+    {"key": "tenant_id", "value": "pg.citya"},
+    {"key": "auth_token", "value": ""}
+  ]
+}

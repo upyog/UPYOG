@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import lombok.Data;
 import org.egov.common.contract.request.Role;
@@ -60,7 +60,7 @@ public class OwnerInfo {
 
 	@CustomSafeHtml
 	@JsonProperty("correspondenceAddress")
-	private String correspondenceAddress = null;
+	private Address correspondenceAddress = null;
 
 	@JsonProperty("isPrimaryOwner")
 	private Boolean isPrimaryOwner = null;
@@ -134,7 +134,7 @@ public class OwnerInfo {
     @Size(max=300)
 	@CustomSafeHtml
     @JsonProperty("permanentAddress")
-    private String permanentAddress;
+    private Address permanentAddress;
 
     @Size(max=300)
 	@CustomSafeHtml
@@ -354,7 +354,7 @@ public class OwnerInfo {
 		this.fatherOrHusbandName = fatherOrHusbandName;
 	}
 
-	public OwnerInfo correspondenceAddress(String correspondenceAddress) {
+	public OwnerInfo correspondenceAddress(Address correspondenceAddress) {
 		this.correspondenceAddress = correspondenceAddress;
 		return this;
 	}
@@ -367,11 +367,11 @@ public class OwnerInfo {
 	@ApiModelProperty(value = "The current address of the owner for correspondence.")
 
 	@Size(max = 1024)
-	public String getCorrespondenceAddress() {
+	public Address getCorrespondenceAddress() {
 		return correspondenceAddress;
 	}
 
-	public void setCorrespondenceAddress(String correspondenceAddress) {
+	public void setCorrespondenceAddress(Address correspondenceAddress) {
 		this.correspondenceAddress = correspondenceAddress;
 	}
 
@@ -718,7 +718,7 @@ public class OwnerInfo {
 		this.aadhaarNumber = aadhaarNumber;
 	}
 
-	public OwnerInfo permanentAddress(String permanentAddress) {
+	public OwnerInfo permanentAddress(Address permanentAddress) {
 		this.permanentAddress = permanentAddress;
 		return this;
 	}
@@ -731,11 +731,11 @@ public class OwnerInfo {
 	 **/
 	@ApiModelProperty(value = "Json object to capture any extra information which is not accommodated of model")
 
-	public String getPermanentAddress() {
+	public Address getPermanentAddress() {
 		return permanentAddress;
 	}
 
-	public void setPermanentAddress(String permanentAddress) {
+	public void setPermanentAddress(Address permanentAddress) {
 		this.permanentAddress = permanentAddress;
 	}
 
@@ -1198,20 +1198,20 @@ public class OwnerInfo {
 		this.additionalDetails = additionalDetails;
 //		this.auditDetails = auditDetails;
 	}*/
-	
-	 public org.egov.common.contract.request.User toCommonUser(){
-         org.egov.common.contract.request.User commonUser = new org.egov.common.contract.request.User();
-         commonUser.setId(this.getId());
-         commonUser.setUserName(this.getUserName());
-         commonUser.setName(this.getName());
-         commonUser.setType(this.getType());
-         commonUser.setMobileNumber(this.getMobileNumber());
-         commonUser.setEmailId(this.getEmailId());
+
+	public org.egov.common.contract.request.User toCommonUser(){
+		org.egov.common.contract.request.User commonUser = new org.egov.common.contract.request.User();
+		commonUser.setId(this.getId());
+		commonUser.setUserName(this.getUserName());
+		commonUser.setName(this.getName());
+		commonUser.setType(this.getType());
+		commonUser.setMobileNumber(this.getMobileNumber());
+		commonUser.setEmailId(this.getEmailId());
 //         commonUser.setRoles((List<org.egov.common.contract.request.Role>)this.getRoles());
-         commonUser.setTenantId(this.getTenantId());
-         commonUser.setUuid(this.getUuid());
-         return commonUser;
- }
+		commonUser.setTenantId(this.getTenantId());
+		commonUser.setUuid(this.getUuid());
+		return commonUser;
+	}
 
 	public Boolean getStatus() {
 		return status;

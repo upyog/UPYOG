@@ -41,7 +41,7 @@ package org.egov.noc.web.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.noc.config.ResponseInfoFactory;
 import org.egov.noc.service.NOCService;

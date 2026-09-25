@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Import;
 public class CNDCalculator {
 
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         SpringApplication.run(CNDCalculator.class, args);
     }
 

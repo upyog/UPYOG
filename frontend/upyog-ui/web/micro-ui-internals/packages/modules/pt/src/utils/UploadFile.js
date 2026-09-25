@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, Fragment } from "react";
 import ButtonSelector from "./ButtonSelector";
 import { useTranslation } from "react-i18next";
 import RemoveableTag from "./RemoveableTag";
-import "../css/pt-inline-auto.css";
+
 const getRandomId = () => {
   return Math.floor((Math.random() || 1) * 139);
 };
@@ -12,7 +12,6 @@ const getCitizenStyles = value => {
     citizenStyles = {
       textStyles: {
         whiteSpace: "nowrap",
-        width: "100%",
         overflow: "hidden",
         textOverflow: "ellipsis",
         width: "80%"
@@ -81,9 +80,8 @@ const getCitizenStyles = value => {
         width: "46%"
       },
       tagStyles: {
-        height: "auto",
-        padding: "5px",
-        margin: 0,
+        height: "auto", 
+        padding: "5px", 
         width: "100%",
         margin: "5px"
       },

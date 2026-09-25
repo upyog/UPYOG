@@ -5,7 +5,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -13,66 +15,144 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ReadListener;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.ReadListener;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.Part;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.security.web.savedrequest.Enumerator;
 
+/**
+ * HttpServletRequest wrapper that allows the request body to be read
+ * multiple times by caching the request payload in memory.
+ *
+ * <p>
+ * The standard HttpServletRequest input stream can be consumed only once.
+ * This wrapper reads and stores the request body during construction and
+ * provides fresh input streams/readers backed by the cached content for
+ * subsequent reads.
+ * </p>
+ *
+ * <p>
+ * For multipart/form-data requests, the stream is intentionally left unread
+ * so the servlet container can parse parts and files via {@link #getParts()}.
+ * </p>
+ *
+ * <p>
+ * It also supports adding and retrieving custom request headers.
+ * </p>
+ */
 public class MultiReadRequestWrapper extends HttpServletRequestWrapper {
-    
+
     private static final Logger LOG = LogManager.getLogger(MultiReadRequestWrapper.class);
-    
-    private ByteArrayOutputStream cachedBytes;
+
+    private final byte[] cachedBody;
+    private final boolean multipart;
     private final Map<String, String> customHeaders;
 
-    public MultiReadRequestWrapper(HttpServletRequest request) {
+    /**
+     * Creates a request wrapper and caches the request body in memory.
+     * 
+     * @param request the original HTTP request
+     * @throws IOException if an error occurs while reading the request body
+     */
+    public MultiReadRequestWrapper(HttpServletRequest request) throws IOException {
         super(request);
         this.customHeaders = new HashMap<>();
-    }
-
-    @Override
-    public ServletInputStream getInputStream() {
-        if (cachedBytes == null)
-            cacheInputStream();
-
-        return new CachedServletInputStream();
-    }
-
-    @Override
-    public BufferedReader getReader() {
-        return new BufferedReader(new InputStreamReader(getInputStream()));
-    }
-
-    private void cacheInputStream() {
-        cachedBytes = new ByteArrayOutputStream();
-        try {
-            IOUtils.copy(super.getInputStream(), cachedBytes);
-        } catch (IOException e) {
-            LOG.error("Error occurred when caching", e);
+        String contentType = request.getContentType();
+        this.multipart = (contentType != null && contentType.toLowerCase().startsWith("multipart/"));
+        if (!this.multipart) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            IOUtils.copy(request.getInputStream(), baos);
+            this.cachedBody = baos.toByteArray();
+            LOG.debug("Cached request body size: {} bytes", cachedBody.length);
+        } else {
+            this.cachedBody = null;
+            LOG.debug("Multipart request — body NOT cached; getParts() will delegate to container.");
         }
     }
 
-    public class CachedServletInputStream extends ServletInputStream {
-        private ByteArrayInputStream input;
+    /**
+     * Returns a new ServletInputStream backed by the cached request body.
+     * 
+     * @return cached request body input stream
+     */
+    @Override
+    public ServletInputStream getInputStream() throws IOException {
+        if (!multipart) {
+            return new CachedServletInputStream(this.cachedBody);
+        }
+        return super.getInputStream();
+    }
 
-        public CachedServletInputStream() {
-            input = new ByteArrayInputStream(cachedBytes.toByteArray());
+    /**
+     * Returns a BufferedReader for reading the cached request body.
+     * 
+     * @return reader for the cached request content
+     */
+    @Override
+    public BufferedReader getReader() throws IOException {
+        return new BufferedReader(new InputStreamReader(getInputStream(), StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Gets all the {@link Part} components of this request, provided that
+     * the request is of type {@code multipart/form-data}.
+     *
+     * @return a collection of all the Part components for this request
+     * @throws IOException if an I/O error occurs during retrieval
+     * @throws ServletException if the request is not of type {@code multipart/form-data} or parsing fails
+     */
+    @Override
+    public Collection<Part> getParts() throws IOException, ServletException {
+        return ((HttpServletRequest) getRequest()).getParts();
+    }
+
+    /**
+     * Gets the {@link Part} with the specified name from this request.
+     *
+     * @param name the name of the requested Part
+     * @return the Part with the given name, or {@code null} if no such Part exists
+     * @throws IOException if an I/O error occurs during retrieval
+     * @throws ServletException if the request is not of type {@code multipart/form-data} or parsing fails
+     */
+    @Override
+    public Part getPart(String name) throws IOException, ServletException {
+        return ((HttpServletRequest) getRequest()).getPart(name);
+    }
+
+    /**
+     * {@link ServletInputStream} implementation backed by a cached in-memory byte array.
+     * <p>
+     * Provides repeated, non-destructive access to the request body without consuming
+     * or locking the underlying container servlet stream.
+     * </p>
+     */
+    public class CachedServletInputStream extends ServletInputStream {
+        private final ByteArrayInputStream input;
+
+        /**
+         * Constructs a new cached servlet input stream wrapping the specified byte buffer.
+         *
+         * @param cachedBody the cached raw request body byte array
+         */
+        public CachedServletInputStream(byte[] cachedBody) {
+            this.input = new ByteArrayInputStream(cachedBody);
         }
 
         @Override
         public int read() {
-            
             return input.read();
         }
 
         @Override
         public boolean isFinished() {
-            return false;
+            return input.available() == 0;
         }
 
         @Override
@@ -82,52 +162,75 @@ public class MultiReadRequestWrapper extends HttpServletRequestWrapper {
 
         @Override
         public void setReadListener(ReadListener readListener) {
-            // Nothing
+            // No-op for synchronous in-memory stream
         }
     }
 
+    /**
+     * Sets a custom header name-value pair on this request wrapper.
+     *
+     * @param name the name of the custom header to add or overwrite
+     * @param value the header value associated with the specified name
+     */
     public void putHeader(String name, String value) {
         this.customHeaders.put(name, value);
     }
 
+    /**
+     * Returns the value of the specified request header, checking custom headers
+     * first before falling back to the wrapped request.
+     *
+     * @param name the name of the requested header
+     * @return the header value, or {@code null} if not found
+     */
     @Override
     public String getHeader(String name) {
-        // check the custom headers first
         String headerValue = customHeaders.get(name);
-
         if (headerValue != null) {
             return headerValue;
         }
-        // else return from into the original wrapped object
         return ((HttpServletRequest) getRequest()).getHeader(name);
     }
 
+    /**
+     * Returns an enumeration of all the header names this request contains,
+     * including custom headers injected into this wrapper.
+     *
+     * @return an {@link Enumeration} of all available header names
+     */
     @Override
     public Enumeration<String> getHeaderNames() {
-        // create a set of the custom header names
         Set<String> set = new HashSet<>(customHeaders.keySet());
-
-        // now add the headers from the wrapped request object
         Enumeration<String> e = ((HttpServletRequest) getRequest()).getHeaderNames();
         while (e.hasMoreElements()) {
-            // add the names of the request headers into the list
-            String n = e.nextElement();
-            set.add(n);
+            set.add(e.nextElement());
         }
-
-        // create an enumeration from the set and return
         return Collections.enumeration(set);
     }
-    
+
+    /**
+     * Returns all the values of the specified request header as an {@link Enumeration}
+     * of {@link String} objects.
+     *
+     * @param name the name of the requested header
+     * @return an {@link Enumeration} containing the header values, or empty if none
+     */
     @Override
     public Enumeration<String> getHeaders(String name) {
-        // check the custom headers first
         String headerValue = customHeaders.get(name);
-
         if (headerValue != null) {
             return new Enumerator<>(Arrays.asList(headerValue));
-        } else {
-            return super.getHeaders(name);
         }
+        return super.getHeaders(name);
+    }
+
+    /**
+     * Checks whether the current request is a {@code multipart/form-data} upload.
+     *
+     * @return {@code true} if the request Content-Type starts with {@code multipart/}, {@code false} otherwise
+     */
+    public boolean isMultipart() {
+        String contentType = getContentType();
+        return contentType != null && contentType.toLowerCase().startsWith("multipart/");
     }
 }

@@ -156,10 +156,27 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
     @Action(value = "/receipts/ajaxReceiptCreate-getDetailCode")
     public String getDetailCode() throws ApplicationException {
         value = "";
-        final String accountCodes = parameters.get("accountCodes")[0];
+        /*
+         * Java 17 / Struts 7 migration note:
+         * AJAX parameters are not consistently present in BaseFormAction.parameters
+         * after the interceptor upgrade. Resolve accountCodes from the legacy map first
+         * and then from the servlet request to avoid missing-parameter failures.
+         */
+        String accountCodes = null;
+        if (parameters != null && parameters.containsKey("accountCodes") && parameters.get("accountCodes") != null && parameters.get("accountCodes").length > 0) {
+            accountCodes = parameters.get("accountCodes")[0];
+        }
+        if (StringUtils.isBlank(accountCodes) && ServletActionContext.getRequest() != null) {
+            accountCodes = ServletActionContext.getRequest().getParameter("accountCodes");
+        }
+        if (StringUtils.isBlank(accountCodes)) {
+            return RESULT;
+        }
         final String arr[] = accountCodes.split(",");
 
         for (final String element : arr) {
+            if (StringUtils.isBlank(element))
+                continue;
             final CChartOfAccountDetail chartOfAccountDetail = (CChartOfAccountDetail) getPersistenceService().find(
                     " from CChartOfAccountDetail" + " where glCodeId=(select id from CChartOfAccounts where glcode=?)",
                     element);
@@ -175,16 +192,53 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
     @Action(value = "/receipts/ajaxReceiptCreate-getDetailType")
     public String getDetailType() throws ApplicationException {
         value = "";
-        final String accountCode = parameters.get("accountCode")[0];
-        final String index = parameters.get(INDEX)[0];
-        final String selectedDetailType = parameters.get("selectedDetailType")[0];
-        final String onload = parameters.get("onload")[0];
+        /*
+         * Java 17 / Struts 7 migration note:
+         * The stricter parameter interceptor can leave optional AJAX values unbound.
+         * The old code assumed all keys were available and indexed directly into the
+         * map, which caused null/array errors. Each value is now resolved defensively
+         * and the old error response is returned if the mandatory accountCode is absent.
+         */
+        String accountCode = null;
+        if (parameters != null && parameters.containsKey("accountCode") && parameters.get("accountCode") != null && parameters.get("accountCode").length > 0) {
+            accountCode = parameters.get("accountCode")[0];
+        }
+        if (StringUtils.isBlank(accountCode) && ServletActionContext.getRequest() != null) {
+            accountCode = ServletActionContext.getRequest().getParameter("accountCode");
+        }
+        String index = null;
+        if (parameters != null && parameters.containsKey(INDEX) && parameters.get(INDEX) != null && parameters.get(INDEX).length > 0) {
+            index = parameters.get(INDEX)[0];
+        }
+        if (StringUtils.isBlank(index) && ServletActionContext.getRequest() != null) {
+            index = ServletActionContext.getRequest().getParameter(INDEX);
+        }
+        String selectedDetailType = null;
+        if (parameters != null && parameters.containsKey("selectedDetailType") && parameters.get("selectedDetailType") != null && parameters.get("selectedDetailType").length > 0) {
+            selectedDetailType = parameters.get("selectedDetailType")[0];
+        }
+        if (StringUtils.isBlank(selectedDetailType) && ServletActionContext.getRequest() != null) {
+            selectedDetailType = ServletActionContext.getRequest().getParameter("selectedDetailType");
+        }
+        String onload = null;
+        if (parameters != null && parameters.containsKey("onload") && parameters.get("onload") != null && parameters.get("onload").length > 0) {
+            onload = parameters.get("onload")[0];
+        }
+        if (StringUtils.isBlank(onload) && ServletActionContext.getRequest() != null) {
+            onload = ServletActionContext.getRequest().getParameter("onload");
+        }
+
+        if (StringUtils.isBlank(accountCode)) {
+            value = (index != null ? index : "0") + "~" + ERROR + "#";
+            return RESULT;
+        }
+
         final List<Accountdetailtype> list = getPersistenceService().findAllBy(
                 " from Accountdetailtype"
                         + " where id in (select detailTypeId from CChartOfAccountDetail where glCodeId=(select id from CChartOfAccounts where glcode=?))  ",
                 accountCode);
         if (list == null || list.isEmpty())
-            value = index + "~" + ERROR + "#";
+            value = (index != null ? index : "0") + "~" + ERROR + "#";
         else
             for (final Accountdetailtype accountdetailtype : list)
                 value = value + index + "~" + selectedDetailType + "~" + onload + "~" + accountdetailtype.getName()
@@ -397,8 +451,13 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
     public String ajaxLoadSubSchemes() {
         final Integer schemeId = Integer.valueOf(parameters.get("schemeId")[0]);
         if (null != schemeId && schemeId != -1)
+            /*
+             * LTS Migration Note [Hibernate 6 HQL Strict Property Casing]:
+             * In Hibernate 6 SQM, property names in HQL must strictly match the entity field name casing.
+             * SubScheme entity defines field 'isactive', so 'isActive=true' was corrected to 'isactive=true'.
+             */
             subSchemes = getPersistenceService()
-                    .findAllBy("from SubScheme where scheme.id=? and isActive=true order by name", schemeId);
+                    .findAllBy("from SubScheme where scheme.id=? and isactive=true order by name", schemeId);
         else
             subSchemes = Collections.emptyList();
 

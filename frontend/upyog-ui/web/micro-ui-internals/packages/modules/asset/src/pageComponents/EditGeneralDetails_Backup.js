@@ -1,76 +1,75 @@
-import { CardLabel, CardLabelError, LabelFieldPair, TextInput, Toast, Dropdown } from "@upyog/digit-ui-react-components";
-import _ from "lodash";
-import React, { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
-import "../css/asset-inline-auto.css";
-const editAssetDetails = () => ({
-  financialYear: "",
-  assetclassification: "",
-  assettype: "",
-  assetparentsubCategory: "",
-  BookPagereference: "",
-  AssetName: "",
-  assetsubtype: "",
-  Assetdescription: "",
-  Department: "",
-  sourceOfFinance: "",
-  assetclassification: "",
-  key: Date.now()
-});
-const EditGeneralDetails = ({
-  config,
-  onSelect,
-  formData,
-  setError,
-  clearErrors
-}) => {
-  const {
-    t
-  } = useTranslation();
-  const stateId = Digit.ULBService.getStateId();
-  const [editAssignDetails, seteditAssignDetails] = useState(formData?.editAssignDetails || [editAssetDetails()]);
-  const {
-    id: applicationNo
-  } = useParams();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const {
-    data: applicationDetails
-  } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
-  let comingDataFromAPI = applicationDetails?.applicationData?.applicationData;
-  const [focusIndex, setFocusIndex] = useState({
-    index: -1,
-    type: ""
-  });
-  useEffect(() => {
-    onSelect(config?.key, editAssignDetails);
-  }, [editAssignDetails]);
-  const {
-    data: Menu_Asset
-  } = Digit.Hooks.asset.useAssetClassification(stateId, "ASSET", "assetClassification"); // hook for asset classification Type
+  import {
+      CardLabel,
+      CardLabelError,
+      LabelFieldPair,
+      TextInput,
+      Toast,
+      Dropdown
+      } from "@nudmcdgnpm/digit-ui-react-components";
+      import _ from "lodash";
+      import React, { useEffect, useState } from "react";
+      import { Controller, useForm } from "react-hook-form";
+      import { useTranslation } from "react-i18next";
+      import { useParams } from "react-router-dom";
+    
 
-  const {
-    data: Asset_Type
-  } = Digit.Hooks.asset.useAssetType(stateId, "ASSET", "assetParentCategory");
-  const {
-    data: Asset_Sub_Type
-  } = Digit.Hooks.asset.useAssetSubType(stateId, "ASSET", "assetCategory"); // hooks for Asset Parent Category
 
-  const {
-    data: Asset_Parent_Sub_Type
-  } = Digit.Hooks.asset.useAssetparentSubType(stateId, "ASSET", "assetSubCategory");
-  const {
-    data: sourceofFinanceMDMS
-  } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{
-    name: "SourceFinance"
-  }], {
-    select: data => {
-      const formattedData = data?.["ASSET"]?.["SourceFinance"];
-      const activeData = formattedData?.filter(item => item.active === true);
-      return activeData;
-    }
-  }); // Note : used direct custom MDMS to get the Data ,Do not copy and paste without understanding the Context
+      const editAssetDetails = () => ({
+          financialYear:"",
+          assetclassification:"",
+          assettype:"",
+          assetparentsubCategory:"",
+          BookPagereference:"",
+          AssetName:"",
+          assetsubtype:"",
+          Assetdescription:"",
+          Department:"",
+          sourceOfFinance:"",
+          assetclassification:"",
+          key: Date.now(),
+      });
+
+    
+
+      const EditGeneralDetails = ({ config, onSelect, formData, setError, clearErrors }) => {
+      const { t } = useTranslation();
+      const stateId = Digit.ULBService.getStateId();
+      const [editAssignDetails, seteditAssignDetails] = useState(formData?.editAssignDetails || [editAssetDetails()]);
+      const { id:applicationNo } = useParams();
+      const tenantId = Digit.ULBService.getCurrentTenantId();
+      const { data: applicationDetails } = Digit.Hooks.asset.useAssetApplicationDetail(t,tenantId, applicationNo);
+      let comingDataFromAPI = applicationDetails?.applicationData?.applicationData
+
+      const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
+      useEffect(() => {
+      onSelect(config?.key, editAssignDetails);
+      }, [editAssignDetails]);
+
+
+    
+
+      
+
+
+      const { data: Menu_Asset } = Digit.Hooks.asset.useAssetClassification(stateId, "ASSET", "assetClassification"); // hook for asset classification Type
+      
+      const { data: Asset_Type } = Digit.Hooks.asset.useAssetType(stateId, "ASSET", "assetParentCategory"); 
+
+      const { data: Asset_Sub_Type } = Digit.Hooks.asset.useAssetSubType(stateId, "ASSET", "assetCategory");  // hooks for Asset Parent Category
+      
+      const { data: Asset_Parent_Sub_Type } = Digit.Hooks.asset.useAssetparentSubType(stateId, "ASSET", "assetSubCategory");
+
+
+
+
+        const { data: sourceofFinanceMDMS } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "SourceFinance" }],
+        {
+          select: (data) => {
+              const formattedData = data?.["ASSET"]?.["SourceFinance"]
+              const activeData = formattedData?.filter(item => item.active === true);
+              return activeData;
+          },
+      });   // Note : used direct custom MDMS to get the Data ,Do not copy and paste without understanding the Context
 
   let sourcefinance = [];
   sourceofFinanceMDMS && sourceofFinanceMDMS.map(finance => {

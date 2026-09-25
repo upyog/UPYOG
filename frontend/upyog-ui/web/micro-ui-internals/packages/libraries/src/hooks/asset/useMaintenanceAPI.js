@@ -1,20 +1,15 @@
-import { useQuery, useMutation } from "react-query";
-import { ASSETService } from"../../services/elements/ASSET"
-
-
+import { mutationTemplate } from "../../common/mutationTemplate";
+import { ASSETService } from "../../services/elements/ASSET";
 
 export const useMaintenanceAPI = (tenantId, type = true) => {
-  if (type) {
-    return useMutation((data)  => { 
-      console.log('true -->' , data)
-      return ASSETService.maintenance(data, tenantId)
-    });
-  } 
-  else {
-    return useMutation((data)  => {
-      return ASSETService.edit_maintenance(data, tenantId)
-    });
-  }
+  const mutationFn = (data) => {
+    if (type) {
+      return ASSETService.maintenance(data, tenantId);
+    }
+    return ASSETService.edit_maintenance(data, tenantId);
+  };
+
+  return mutationTemplate({ mutationFn });
 };
 
 export default useMaintenanceAPI;

@@ -1,15 +1,43 @@
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 import { MdmsService } from "../../services/elements/MDMS";
 
 const useMCollectCategory = (tenantId, filter, config = {}) => {
-  const {data} =  useQuery("MCOLLECT_CATEGORY_SERVICE", () => MdmsService.getPaymentRules(tenantId, filter), config);
-let Categories = [];
-data?.MdmsRes?.BillingService?.BusinessService.map((ob) => {
-  let found = Categories.length>0? Categories?.some(el => el?.code.split(".")[0] === ob.code.split(".")[0]) : false;  
-  if(!found) Categories.push({...ob, i18nkey:`BILLINGSERVICE_BUSINESSSERVICE_${(ob.code.split(".")[0]).toUpperCase()}`})
-})
+  const queryKey = [
+    "MCOLLECT_CATEGORY",
+    tenantId,
+    JSON.stringify(filter),
+  ];
 
-return {Categories, data};
+  const select = (data) => {
+    const Categories = [];
+
+    data?.MdmsRes?.BillingService?.BusinessService?.forEach((ob) => {
+      const exists = Categories.some(
+        (el) => el?.code.split(".")[0] === ob.code.split(".")[0]
+      );
+
+      if (!exists) {
+        Categories.push({
+          ...ob,
+          i18nkey: `BILLINGSERVICE_BUSINESSSERVICE_${ob.code
+            .split(".")[0]
+            .toUpperCase()}`,
+        });
+      }
+    });
+
+    return {
+      Categories,
+      data,
+    };
+  };
+
+  return queryTemplate({
+    queryKey,
+    queryFn: () => MdmsService.getPaymentRules(tenantId, filter),
+    select,
+    config,
+  });
 };
 
 export default useMCollectCategory;

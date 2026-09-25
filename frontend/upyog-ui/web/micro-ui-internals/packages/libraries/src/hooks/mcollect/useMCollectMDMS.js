@@ -1,19 +1,34 @@
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 import { MdmsService } from "../../services/elements/MDMS";
 
 const useMCollectMDMS = (tenantId, moduleCode, type, filter, config = {}) => {
-  const useMCollectBillingService = () => {
-    return useQuery("MCOLLECT_BILLING_SERVICE", () => MdmsService.getMCollectBillingService(tenantId, moduleCode, type, filter), config);
-  };
-  const useMCollectApplcationStatus = () => {
-    return useQuery("MCOLLECT_APPLICATION_STATUS", () => MdmsService.getMCollectApplcationStatus(tenantId, moduleCode, type, filter), config);
-  };
-
   switch (type) {
     case "BusinessService":
-      return useMCollectBillingService();
+      return queryTemplate({
+        queryKey: ["MCOLLECT_BILLING_SERVICE", tenantId],
+        queryFn: () =>
+          MdmsService.getMCollectBillingService(
+            tenantId,
+            moduleCode,
+            type,
+            filter
+          ),
+        config,
+      });
+
     case "applicationStatus":
-      return useMCollectApplcationStatus();
+      return queryTemplate({
+        queryKey: ["MCOLLECT_APPLICATION_STATUS", tenantId],
+        queryFn: () =>
+          MdmsService.getMCollectApplcationStatus(
+            tenantId,
+            moduleCode,
+            type,
+            filter
+          ),
+        config,
+      });
+
     default:
       return null;
   }

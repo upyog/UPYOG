@@ -1,7 +1,7 @@
-import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams,  } from "react-router-dom";
 import getPTAcknowledgementData from "../../getPTAcknowledgementData";
 import PropertyDocument from "../../pageComponents/PropertyDocument";
 import PTWFApplicationTimeline from "../../pageComponents/PTWFApplicationTimeline";
@@ -15,7 +15,7 @@ import "../../css/pt-inline.css";
 
 const PTApplicationDetails = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { acknowledgementIds, tenantId } = useParams();
   const [acknowldgementData, setAcknowldgementData] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
@@ -58,18 +58,21 @@ const PTApplicationDetails = () => {
       setpopup(true);
   },[data,servicedata])
 
-  useEffect(async () => {
-    if (acknowledgementIds && tenantId && property) {
-      const res = await Digit.PaymentService.searchBill(tenantId, { Service: "PT.MUTATION", consumerCode: acknowledgementIds });
-      if (!res.Bill.length) {
-        const res1 = await Digit.PTService.ptCalculateMutation({ Property: property }, tenantId);
-        setBillAmount(res1?.[acknowledgementIds]?.totalAmount || t("CS_NA"));
-        setBillStatus(t(`PT_MUT_BILL_ACTIVE`));
-      } else {
-        setBillAmount(res?.Bill[0]?.totalAmount || t("CS_NA"));
-        setBillStatus(t(`PT_MUT_BILL_${res?.Bill[0]?.status?.toUpperCase()}`));
+  useEffect(() => {
+    const fetchBillDetails = async () => {
+      if (acknowledgementIds && tenantId && property) {
+        const res = await Digit.PaymentService.searchBill(tenantId, { Service: "PT.MUTATION", consumerCode: acknowledgementIds });
+        if (!res.Bill.length) {
+          const res1 = await Digit.PTService.ptCalculateMutation({ Property: property }, tenantId);
+          setBillAmount(res1?.[acknowledgementIds]?.totalAmount || t("CS_NA"));
+          setBillStatus(t(`PT_MUT_BILL_ACTIVE`));
+        } else {
+          setBillAmount(res?.Bill[0]?.totalAmount || t("CS_NA"));
+          setBillStatus(t(`PT_MUT_BILL_${res?.Bill[0]?.status?.toUpperCase()}`));
+        }
       }
-    }
+    };
+    fetchBillDetails();
   }, [tenantId, acknowledgementIds, property]);
 
   const { isLoading: auditDataLoading, isError: isAuditError, data: auditResponse } = Digit.Hooks.pt.usePropertySearch(

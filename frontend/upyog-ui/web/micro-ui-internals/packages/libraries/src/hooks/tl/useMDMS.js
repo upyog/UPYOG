@@ -1,66 +1,46 @@
-import React from "react";
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 import { MdmsServiceV2 } from "../../services/elements/MDMSV2";
 import { MdmsService } from "../../services/elements/MDMS";
 
 const useMDMS = {
   applicationTypes: (tenantId) =>
-    useQuery(
-      [tenantId, "TL_MDMS_APPLICATION_STATUS"],
-      () =>
-      MdmsServiceV2.getDataByCriteria(
+    queryTemplate({
+      queryKey: [tenantId, "TL_MDMS_APPLICATION_STATUS"],
+      queryFn: () =>
+        MdmsServiceV2.getDataByCriteria(
           tenantId,
           {
             details: {
-              tenantId: tenantId,
-              moduleDetails: [
-                {
-                  moduleName: "TradeLicense",
-                  masterDetails: [
-                    {
-                      name: "ApplicationType",
-                    },
-                  ],
-                },
-              ],
+              tenantId,
+              moduleDetails: [{ moduleName: "TradeLicense", masterDetails: [{ name: "ApplicationType" }] }],
             },
           },
           "TL"
         ),
-      {
-        select: (data) =>
-          data.TradeLicense.ApplicationType?.map((type) => ({
-            code: type.code.split(".")[1],
-            i18nKey: `TL_APPLICATIONTYPE.${type.code.split(".")[1]}`,
-          })),
-      }
-    ),
+      select: (data) =>
+        data.TradeLicense.ApplicationType?.map((type) => ({
+          code: type.code.split(".")[1],
+          i18nKey: `TL_APPLICATIONTYPE.${type.code.split(".")[1]}`,
+        })),
+    }),
 
   getFormConfig: (tenantId, config) =>
-    useQuery(
-      [tenantId, "FORM_CONFIG"],
-      () =>
-      MdmsService.getDataByCriteria(
+    queryTemplate({
+      queryKey: [tenantId, "FORM_CONFIG"],
+      queryFn: () =>
+        MdmsService.getDataByCriteria(
           tenantId,
           {
             details: {
-              tenantId: tenantId,
-              moduleDetails: [
-                {
-                  moduleName: "TradeLicense",
-                  masterDetails: [
-                    {
-                      name: "CommonFieldsConfig",
-                    },
-                  ],
-                },
-              ],
+              tenantId,
+              moduleDetails: [{ moduleName: "TradeLicense", masterDetails: [{ name: "CommonFieldsConfig" }] }],
             },
           },
           "TL"
         ),
-      { select: (d) => d?.TradeLicense?.CommonFieldsConfig, ...config }
-    ),
+      select: (d) => d.TradeLicense.CommonFieldsConfig,
+      config,
+    }),
 };
 
 export default useMDMS;

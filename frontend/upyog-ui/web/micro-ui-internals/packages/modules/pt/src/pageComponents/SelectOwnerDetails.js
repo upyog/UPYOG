@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, FormStep, Menu, MobileNumber } from "@upyog/digit-ui-react-components";
+import { TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, FormStep, Menu, MobileNumber } from "@nudmcdgnpm/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
-import { useLocation, useRouteMatch } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
-import "../css/pt-inline-auto.css";
+
 const SelectOwnerDetails = ({
   t,
   config,

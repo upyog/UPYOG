@@ -1,6 +1,6 @@
 package org.egov.egf.web.controller.microservice;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.egov.infra.microservice.models.RequestInfoWrapper;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.session.data.redis.RedisOperationsSessionRepository;
+import org.springframework.session.data.redis.RedisIndexedSessionRepository;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -22,7 +22,7 @@ public class MSLogoutController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MSLogoutController.class);
 
 	@Autowired
-	RedisOperationsSessionRepository redisRepository;
+	RedisIndexedSessionRepository redisRepository;
 
 	@Autowired
 	MicroserviceUtils microserviceUtils;

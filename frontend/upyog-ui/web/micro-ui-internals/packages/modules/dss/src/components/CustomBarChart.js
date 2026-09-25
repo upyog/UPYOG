@@ -1,7 +1,7 @@
-import { Loader } from "@upyog/digit-ui-react-components";
-import React, { Fragment, useContext, useMemo, useState } from "react";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { Fragment, useContext, useMemo, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import FilterContext from "./FilterContext";
 import NoData from "./NoData";
@@ -152,7 +152,7 @@ const CustomBarChart = ({
 }) => {
   const { id } = data;
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { value } = useContext(FilterContext);
   const [maxValue, setMaxValue] = useState({});
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -168,7 +168,6 @@ const CustomBarChart = ({
     if (!response) return null;
     let possibleValues = ["pttopPerformingStatesRevenue","ptbottomPerformingStatesRevenue","tltopPerformingStatesRevenue","tlbottomPerformingStatesRevenue","obpstopPerformingStatesRevenue","obpsbottomPerformingStatesRevenue","noctopPerformingStatesRevenue","nocbottomPerformingStatesRevenue","wstopPerformingStatesRevenue","wsbottomPerformingStatesRevenue","OverviewtopPerformingStates","OverviewbottomPerformingStates"]
    
-    setChartDenomination("number");
     const dd = response?.responseData?.data?.map((bar) => {
       let plotValue = bar?.plots?.[0].value || 0;
       let type =""
@@ -207,10 +206,14 @@ const CustomBarChart = ({
     });
     setMaxValue(newObj);
     return newReturn;
-  }, [response]);
+  }, [response, data, t]);
+
+  useEffect(() => {
+    setChartDenomination("number");
+  }, [setChartDenomination]);
 
   const goToDrillDownCharts = () => {
-    history.push(
+    navigate(
       `/upyog-ui/employee/dss/drilldown?chart=${response?.responseData?.visualizationCode}&ulb=${
         value?.filters?.tenantId
       }&title=${title}&fromModule=${Digit.Utils.dss.getCurrentModuleName()}&type=performing-metric&fillColor=${fillColor}&isNational=${

@@ -1,7 +1,7 @@
-import { BackButton, Dropdown, FormComposer, Loader, Toast } from "@upyog/digit-ui-react-components";
+import { BackButton, Dropdown, FormComposer, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { Controller } from "react-hook-form";
 import Background from "../../../components/Background";
 import Header from "../../../components/Header";
 
@@ -27,7 +27,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   const [showToast, setShowToast] = useState(null);
   const [disable, setDisable] = useState(false);
 
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   // const getUserType = () => "EMPLOYEE" || Digit.UserService.getType();
   let   sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
   const pdfUrl = "https://pg-egov-assets.s3.ap-south-1.amazonaws.com/Upyog+Code+and+Copyright+License_v1.pdf";
@@ -57,7 +57,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
       redirectPath = "/upyog-ui/employee/dss/landing/home";
     }
 
-    history.replace(redirectPath);
+    navigate(redirectPath, { replace: true });
   }, [user]);
 
   const onLogin = async (data) => {
@@ -66,7 +66,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
       return;
     }
     setDisable(true);
-
+console.log("data",data)
     const requestData = {
       ...data,
       userType: "EMPLOYEE",
@@ -90,7 +90,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
 
   const onForgotPassword = () => {
     sessionStorage.getItem("User") && sessionStorage.removeItem("User")
-    history.push("/upyog-ui/employee/user/forgot-password");
+    navigate("/upyog-ui/employee/user/forgot-password");
   };
 
   const [userId, password, city] = propsConfig.inputs;
@@ -113,27 +113,24 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
           },
           isMandatory: true,
         },
-        {
-          label: t(city.label),
-          type: city.type,
-          populators: {
-            name: city.name,
-            customProps: {},
-            component: (props, customProps) => (
-              <Dropdown
-                option={cities}
-                className="login-city-dd"
-                optionKey="i18nKey"
-                select={(d) => {
-                  props.onChange(d);
-                }}
-                t={t}
-                {...customProps}
-              />
-            ),
-          },
-          isMandatory: true,
-        },
+{
+  label: t(city.label),
+  type: city.type,
+  populators: {
+    name: city.name,
+    component: ({ onChange, value }) => (
+      <Dropdown
+        option={cities}
+        className="login-city-dd"
+        optionKey="i18nKey"
+        select={(d) => onChange(d)}   
+        value={value}                
+        t={t}
+      />
+    ),
+  },
+  isMandatory: true,
+}
       ],
     },
   ];

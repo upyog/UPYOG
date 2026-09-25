@@ -1,7 +1,7 @@
-import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useRouteMatch } from "react-router-dom";
+import { Link } from "react-router-dom";
 import getAssetAcknowledgementData from "../../../../getAssetAcknowledgementData";
 import { Assetdata } from "../../../../utils";
 import "../../../../css/asset-inline-auto.css";
@@ -24,32 +24,39 @@ const rowContainerStyle = {
 const BannerPicker = props => {
   return <Banner message={GetActionMessage(props)} applicationNumber={props.data?.Assets?.[0].applicationNo} info={props.isSuccess ? props.t("ES_ASSET_RESPONSE_CREATE_LABEL") : ""} successful={props.isSuccess} className="asset-auto-223" />;
 };
-const NewResponse = ({
-  data,
-  onSuccess
-}) => {
-  const {
-    t
-  } = useTranslation();
+
+const NewResponse = ({ data, onSuccess, mutation }) => {
+
+
+  
+  const { t } = useTranslation();
+  
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.asset.useAssetCreateAPI(data?.address?.city?.code);
-  const {
-    data: storeData
-  } = Digit.Hooks.useStore.getInitData();
-  const match = useRouteMatch();
-  const {
-    tenants
-  } = storeData || {};
-  useEffect(() => {
-    try {
-      data.tenantId = data.address?.city?.code;
-      let formdata = Assetdata(data);
-      console.log("formdata in acknowejkfdlgi ::: ", formdata);
-      mutation.mutate(formdata, {
-        onSuccess
-      });
-    } catch (err) {}
-  }, []);
+  // const mutation = Digit.Hooks.asset.useAssetCreateAPI(data?.address?.city?.code); 
+  const { data: storeData } = Digit.Hooks.useStore.getInitData();
+  const match = Digit.Hooks.useModuleBasePath();
+  const { tenants } = storeData || {};
+
+
+  // useEffect(() => {
+  //   try {
+      
+  //     data.tenantId = data.address?.city?.code;
+  //     let formdata = Assetdata(data)
+  //     console.log("formdata in acknowejkfdlgi ::: ", formdata);
+
+      
+
+
+  //     mutation.mutate(formdata, {
+  //       onSuccess,
+  //     });
+  //   } catch (err) {
+  //   }
+  // }, []);
+
+  
+
   const handleDownloadPdf = async () => {
     const {
       Asset = []
@@ -62,7 +69,11 @@ const NewResponse = ({
     }, tenantInfo, t);
     Digit.Utils.pdf.generate(data);
   };
-  return mutation.isLoading || mutation.isIdle ? <Loader /> : <Card>
+
+  return mutation.isPending || mutation.isIdle ? (
+    <Loader />
+  ) : (
+    <Card>
       <BannerPicker t={t} data={mutation.data} isSuccess={mutation.isSuccess} isLoading={mutation.isIdle || mutation.isLoading} />
       <StatusTable>
         {mutation.isSuccess && <Row rowContainerStyle={rowContainerStyle} last textStyle={{
@@ -74,6 +85,7 @@ const NewResponse = ({
       <Link to={`/upyog-ui/employee`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
-    </Card>;
+    </Card>
+  );
 };
 export default NewResponse;

@@ -1,9 +1,8 @@
-import { Header, Loader } from "@upyog/digit-ui-react-components";
+import { Header, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import WSApplication from "./ws-application";
-import { propertyCardBodyStyle } from "../../../utils";
 import WSInfoLabel from "../../../pageComponents/WSInfoLabel";
 import "../../../css/ws-inline-auto.css";
 export const WSMyApplications = () => {

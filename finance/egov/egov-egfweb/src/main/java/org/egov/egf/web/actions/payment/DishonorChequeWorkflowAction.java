@@ -104,13 +104,18 @@ import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.VoucherHelper;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import jakarta.servlet.ServletContext;
 
 //import com.exilant.eGov.src.domain.BankEntries;
 import com.exilant.exility.common.TaskFailedException;
+
+import static org.apache.struts2.ServletActionContext.getServletContext;
 
 
 @Results({
@@ -312,11 +317,11 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
                 +
                 " iod.instrumentHeaderId=:instrumentHeaderId ";
         final Query instOtherDetailUpdateQuery = persistenceService.getSession().createQuery(instOtherDetailUpdate.toString());
-        instOtherDetailUpdateQuery.setString("refNo", dishonorChequeView.getBankReferenceNumber());
-        instOtherDetailUpdateQuery.setLong("modifiedby", ApplicationThreadLocals.getUserId().intValue());
-        instOtherDetailUpdateQuery.setDate("modifiedDate", new Date());
-        instOtherDetailUpdateQuery.setDate("InstrumentUpdatedDate", dishonorChequeView.getTransactionDate());
-        instOtherDetailUpdateQuery.setLong("instrumentHeaderId", dishonorChequeView.getInstrumentHeader().getId());
+        instOtherDetailUpdateQuery.setParameter("refNo", dishonorChequeView.getBankReferenceNumber());
+        instOtherDetailUpdateQuery.setParameter("modifiedby", ApplicationThreadLocals.getUserId().intValue());
+        instOtherDetailUpdateQuery.setParameter("modifiedDate", new Date());
+        instOtherDetailUpdateQuery.setParameter("InstrumentUpdatedDate", dishonorChequeView.getTransactionDate());
+        instOtherDetailUpdateQuery.setParameter("instrumentHeaderId", dishonorChequeView.getInstrumentHeader().getId());
 
         instOtherDetailUpdateQuery.executeUpdate();
     }
@@ -337,8 +342,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
             dishonorChequeView.setBankchargesVoucherHeader(bankChargesReversalVoucher);
             dishonorChequeView.setReversalVoucherHeader(paymentVoucher);
             startChequeWorkflow(dishonorChequeView, actionNm, null);
-            final WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(ServletActionContext
-                    .getServletContext());
+            final WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getServletContext());
             final FinancialIntegrationService financialService = (FinancialIntegrationService) wac
                     .getBean("financialIntegrationService");
             try {
@@ -395,8 +399,7 @@ public class DishonorChequeWorkflowAction extends BaseFormAction {
             // set the instrument status of deposited on cancel
             instHeader.setStatusId(getDepositedStatus());
             instrumentHeaderService.persist(instHeader);
-            final WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(ServletActionContext
-                    .getServletContext());
+            final WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
             final FinancialIntegrationService financialService = (FinancialIntegrationService) wac
                     .getBean("financialIntegrationService");
             if (null != financialService)

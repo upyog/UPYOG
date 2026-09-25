@@ -1,4 +1,4 @@
-import { DownwardArrow, Loader, Rating, RemoveableTag,  UpwardArrow, Table } from "@upyog/digit-ui-react-components";
+import { DownwardArrow, Loader, Rating, RemoveableTag,  UpwardArrow, Table } from "@nudmcdgnpm/digit-ui-react-components";
 import { differenceInCalendarDays, subYears } from "date-fns";
 import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -158,7 +158,7 @@ const CustomTable = ({ data = {}, onSearch, setChartData, setChartDenomination, 
       {
         const updatedData = addMissingFinancialYears(tableData);
 
-        console.log("updatedData",updatedData)
+
         const result = updatedData?.map((row) => {
           console.log("tableDatatableData",tableData)
           return Object.keys(row).reduce((acc, key) => {
@@ -171,7 +171,7 @@ const CustomTable = ({ data = {}, onSearch, setChartData, setChartDenomination, 
       }
       else {
         const result = tableData?.map((row) => {
-          console.log("tableDatatableData",tableData)
+
           return Object.keys(row).reduce((acc, key) => {
             if (key === "key") return acc;
             acc[key] = typeof row?.[key] === "object" ? row?.[key]?.value : row?.[key];
@@ -478,30 +478,12 @@ else {
       ?.filter((plot) => plot?.name !== "TankCapacity")
       .map((plot, index) => ({
         Header: (
-          <span className="tooltip" data-tip="React-tooltip" data-for={`jk-table-${index}`}>
+          <span className="tooltip" data-tip data-for={`jk-table-${index}`}>
             {renderHeader(plot)}
 
-            <ReactTooltip textColor="#fff" backgroundColor="#555" place="bottom" type="info" effect="solid" id={`jk-table-${index}`}>
+            <ReactTooltip id={`jk-table-${index}`} place="bottom" effect="solid">
               {t(`TIP_DSS_HEADER_${Digit.Utils.locale.getTransformedLocale(plot?.name)}`)}
             </ReactTooltip>
-            {/* <span
-              className="tooltiptext"
-              style={{
-                fontSize: "14px",
-                marginLeft:
-                  t(`TIP_DSS_HEADER_${Digit.Utils.locale.getTransformedLocale(plot?.name)}`).length < 10 ? -40 : tableData?.length > 2 ? -100 : -160,
-                height: "35px",
-                bottom: "0%",
-                top: "100%",
-                background: "none",
-                width:
-                  tableData?.length > 2 || t(`TIP_DSS_HEADER_${Digit.Utils.locale.getTransformedLocale(plot?.name)}`).length < 42 ? "150px" : "250px",
-              }}
-            >
-              <div style={getTooltipStyles(t(`TIP_DSS_HEADER_${Digit.Utils.locale.getTransformedLocale(plot?.name)}`))}>
-                {t(`TIP_DSS_HEADER_${Digit.Utils.locale.getTransformedLocale(plot?.name)}`)}
-              </div>
-            </span> **/}
           </span>
         ),
         accessor: accessData(plot),

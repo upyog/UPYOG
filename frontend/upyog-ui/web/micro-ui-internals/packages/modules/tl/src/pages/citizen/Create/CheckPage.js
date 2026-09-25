@@ -1,7 +1,20 @@
-import { Card, CardHeader, Header, CardSubHeader, CardText, CitizenInfoLabel, EditIcon, LinkButton, Row, StatusTable, SubmitBar, Toast } from "@upyog/digit-ui-react-components";
-import React, { useEffect, useState } from "react";
+import {
+  Card,
+  CardHeader,
+  Header,
+  CardSubHeader,
+  CardText,
+  CitizenInfoLabel,
+  EditIcon,
+  LinkButton,
+  Row,
+  StatusTable,
+  SubmitBar,
+  Toast,
+} from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useRouteMatch, Link } from "react-router-dom";
+import { Link,  useParams, useLocation } from "react-router-dom";
 import TLDocument from "../../../pageComponents/TLDocumets";
 import Timeline from "../../../components/TLTimeline";
 import "../../../css/tl-inline-auto.css";
@@ -24,11 +37,17 @@ const WrapCheckPage = ({
   value
 }) => {
   let isEdit = window.location.href.includes("renew-trade");
-  const {
-    t
-  } = useTranslation();
-  const history = useHistory();
-  const match = useRouteMatch();
+  const { t } = useTranslation();
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const routeParams = useParams();
+  const { pathname } = useLocation();
+  const { path: modulePath } = Digit.Hooks.useModuleBasePath();
+  const basePath = useMemo(() => {
+    const pattern = pathname.includes("/renew-trade/")
+      ? `${modulePath}/tradelicence/renew-trade/:id/:tenantId`
+      : `${modulePath}/tradelicence/edit-application/:id/:tenantId`;
+    return getPath(pattern, routeParams);
+  }, [modulePath, routeParams, pathname]);
   const [toast, setToast] = useState(null);
   const {
     TradeDetails,
@@ -64,15 +83,19 @@ const WrapCheckPage = ({
   }, []);
   function routeTo(jumpTo) {
     sessionStorage.getItem("isDirectRenewal") ? sessionStorage.removeItem("isDirectRenewal") : "";
-    history.push(jumpTo);
+    navigate(jumpTo);
     //location.href = jumpTo;
   }
   useEffect(() => {
     if (sessionStorage.getItem("isCreateEnabledEmployee") === "true") {
       sessionStorage.removeItem("isCreateEnabledEmployee");
-      history.replace("/employee");
-    } else sessionStorage.removeItem("isCreateEnabledEmployee");
-  });
+      navigate("/employee", { replace: true });
+    }
+    else
+    sessionStorage.removeItem("isCreateEnabledEmployee");
+
+  })
+
   const CheckForBillingSlab = () => {
     if (window.location.href.includes("renew-trade") && value) {
       let flag = true;
@@ -91,7 +114,7 @@ const WrapCheckPage = ({
   const typeOfApplication = !isEditProperty ? `new-application` : `renew-trade`;
   let routeLink = `/upyog-ui/citizen/tl/tradelicence/${typeOfApplication}`;
   if (window.location.href.includes("edit-application") || window.location.href.includes("renew-trade")) {
-    routeLink = `${getPath(match.path, match.params)}`;
+    routeLink = `${basePath}`;
     routeLink = routeLink.replace("/check", "");
   }
   return <React.Fragment>

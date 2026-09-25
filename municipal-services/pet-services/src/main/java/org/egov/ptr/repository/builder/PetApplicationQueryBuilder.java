@@ -72,6 +72,14 @@ public class PetApplicationQueryBuilder {
 			query.append(" ptr.applicationnumber = ? ");
 			preparedStmtList.add(criteria.getApplicationNumber());
 		}
+		if (!ObjectUtils.isEmpty(criteria.getListOfApplicationNumbers())) {
+			List<String> applicationNumbers = criteria.getListOfApplicationNumbers();
+			addClauseIfRequired(query,preparedStmtList);
+			query.append(" ptr.applicationnumber IN (")
+					.append(createQuery(applicationNumbers))
+					.append(")");
+			addToPreparedStatement(preparedStmtList, applicationNumbers);
+		}
 		if (!ObjectUtils.isEmpty(criteria.getMobileNumber())) {
 			addClauseIfRequired(query, preparedStmtList);
 			query.append(" ptr.mobilenumber = ? ");

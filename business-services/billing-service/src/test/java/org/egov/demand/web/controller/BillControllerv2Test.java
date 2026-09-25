@@ -243,5 +243,29 @@ class BillControllerv2Test {
                 .perform(requestBuilder);
         actualPerformResult.andExpect(MockMvcResultMatchers.status().is(400));
     }
+
+    @Test
+    void testSearchBillSummary() throws Exception {
+        doNothing().when(this.billValidator).validateBillSearchCriteria((org.egov.demand.model.BillSearchCriteria) any(), (RequestInfo) any());
+        when(this.billServicev2.searchShortBills((org.egov.demand.model.BillSearchCriteria) any(), (RequestInfo) any()))
+                .thenReturn(new ArrayList<>());
+
+        RequestInfoWrapper requestInfoWrapper = new RequestInfoWrapper();
+        requestInfoWrapper.setRequestInfo(new RequestInfo());
+        String content = (new ObjectMapper()).writeValueAsString(requestInfoWrapper);
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.post("/bill/v2/_searchsummary")
+                .param("tenantId", "pb.amritsar")
+                .param("mobileNumber", "9999999999")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content);
+
+        MockMvcBuilders.standaloneSetup(this.billControllerv2)
+                .build()
+                .perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.Bill").isArray());
+    }
 }
 

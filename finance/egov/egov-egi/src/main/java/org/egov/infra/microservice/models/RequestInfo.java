@@ -47,30 +47,30 @@
  */
 package org.egov.infra.microservice.models;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RequestInfo {
 
-    @SafeHtml
+    @SanitizeHtml
     private String apiId;
-    @SafeHtml
+    @SanitizeHtml
     private String ver;
 
     private Long ts;
-    @SafeHtml
+    @SanitizeHtml
     private String action;
-    @SafeHtml
+    @SanitizeHtml
     private String did;
-    @SafeHtml
+    @SanitizeHtml
     private String key;
-    @SafeHtml
+    @SanitizeHtml
     private String msgId;
-    @SafeHtml
+    @SanitizeHtml
     private String authToken;
-    @SafeHtml
+    @SanitizeHtml
     private String correlationId;
 
     private UserInfo userInfo;

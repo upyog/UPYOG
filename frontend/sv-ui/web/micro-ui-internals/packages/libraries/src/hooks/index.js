@@ -32,6 +32,7 @@ import useStore from "./useStore";
 import { useTenants } from "./useTenants";
 import { useEvents, useClearNotifications, useNotificationCount } from "./events";
 import useCreateEvent from "./events/useCreateEvent";
+import useReportMeta from "./reports/useReport";
 import useUpdateEvent from "./events/useUpdateEvent";
 import useEventInbox from "./events/useEventInbox";
 import useEventDetails from "./events/useEventDetails";
@@ -48,6 +49,7 @@ import useStaticData from "./useStaticData";
 import useBillAmendmentInbox from "./billAmendment/useInbox";
 import { usePrivacyContext } from "./usePrivacyContext";
 import createTokenAPI from "./digiLockerApi/createTokenAPI";
+import useCustomNavigate from "./useCustomNavigate";
 
 import { useCustomBackNavigation } from "./UseCustomBackNavigationProps";
 import useSelectedMDMS from "./useSelectedMDMS";
@@ -76,6 +78,10 @@ const events = {
   useCreateEvent,
   useEventDetails,
   useUpdateEvent,
+};
+
+const reports = {
+  useReportMeta,
 };
 
 const Hooks = {
@@ -126,9 +132,11 @@ const Hooks = {
   useAudit,
   createTokenAPI,
   useCustomBackNavigation,
+  useCustomNavigate,
   useRouteSubscription,
   sv,
-  events
+  events,
+  reports
 };
 
 export default Hooks;

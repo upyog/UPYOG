@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import BillingService from "../../services/elements/Bill";
 
 const useBillSearch = ({ filters, config = {} }) => {
@@ -11,8 +11,11 @@ const useBillSearch = ({ filters, config = {} }) => {
   filters.url = filters.url?.replace("egov-searcher", "");
 
   const args = tenantId ? { tenantId, filters } : { filters };
-
-  const { isLoading, error, data } = useQuery(["BILL_INBOX", tenantId, filters], async () => await BillingService.search_bill(args), {
+  // Updated: TanStack Query v5 requires useQuery to accept a single object instead of positional arguments.
+  // Updated: queryKey and queryFn are now explicit keys inside the object — positional args removed.
+  const { isLoading, error, data } = useQuery({
+    queryKey: ["BILL_INBOX", tenantId, filters],
+    queryFn: async () => await BillingService.search_bill(args),
     ...config,
     enabled: filters?.businesService ? true : false,
   });

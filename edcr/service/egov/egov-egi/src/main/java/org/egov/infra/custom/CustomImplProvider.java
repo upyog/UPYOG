@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.egov.infra.admin.master.entity.City;
-import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.admin.master.service.ICityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +15,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+/**
+ * Resolves city-specific or district-specific custom implementation beans at runtime.
+ *
+ * <p>Uses {@link ICityService} (interface) instead of the concrete
+ * {@code CityService} class so Spring can apply JDK dynamic proxies or CGLIB
+ * proxies without type-mismatch errors in {@code @Autowired} fields.</p>
+ */
 @Service
 public class CustomImplProvider {
     private static final String COLON = " : ";
@@ -32,7 +39,7 @@ public class CustomImplProvider {
     @Autowired
     private ApplicationContext applicationContext;
     @Autowired
-    private CityService cityService;
+    private ICityService cityService;
 
     @Deprecated()
     public Map<String, String> getCityDetails() {

@@ -1,21 +1,15 @@
 import React from "react";
-import { Header, ResponseComposer, Loader } from "@upyog/digit-ui-react-components";
+import { Header, ResponseComposer, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import PropTypes from "prop-types";
 import Axios from "axios";
-import { useHistory, Link, useLocation } from "react-router-dom";
+import { Link, useLocation,  } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { stringReplaceAll } from "../../../utils/index";
 import WSInfoLabel from "../../../pageComponents/WSInfoLabel";
-import "../../../css/ws-inline-auto.css";
-const WNSMyBills = ({
-  template,
-  header,
-  actionButtonLabel
-}) => {
-  const {
-    t
-  } = useTranslation();
-  const history = useHistory();
+
+const WNSMyBills = ({ template, header, actionButtonLabel }) => {
+  const { t } = useTranslation();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const location = useLocation();
   const {
     tenantId: _tenantId
@@ -27,9 +21,7 @@ const WNSMyBills = ({
   } || {};
   tenantId = Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code || Digit.UserService.getUser()?.info?.permanentCity || tenantId;
   if (!tenantId && !location?.state?.fromSearchResults) {
-    history.replace(`/upyog-ui/citizen/login`, {
-      from: url
-    });
+    navigate(`/upyog-ui/citizen/login`, { replace: true, state: { from: url } });
   }
   let filters = {};
   const {
@@ -66,8 +58,9 @@ const WNSMyBills = ({
   if (Waterresult?.isLoading || Sewarageresult?.isLoading || Waterresult == undefined || Sewarageresult == undefined) {
     return <Loader />;
   }
-  const onSubmit = data => {
-    history.push(`/upyog-ui/citizen/payment/my-bills/${data?.ConsumerNumber.split("/")[0]}/${stringReplaceAll(data?.ConsumerNumber, "/", "+")}?workflow=WNS&tenantId=${tenantId}&ConsumerName=${data?.ConsumerName}`);
+
+  const onSubmit = (data) => {
+    navigate(`/upyog-ui/citizen/payment/my-bills/${data?.ConsumerNumber.split("/")[0]}/${stringReplaceAll(data?.ConsumerNumber,"/","+")}?workflow=WNS&tenantId=${tenantId}&ConsumerName=${data?.ConsumerName}`);
   };
   const payment = {};
   let searchResults = Waterresult && Sewarageresult ? Waterresult.concat(Sewarageresult) : [];

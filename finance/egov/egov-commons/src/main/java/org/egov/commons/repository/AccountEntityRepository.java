@@ -65,9 +65,14 @@ import java.util.List;
 public interface AccountEntityRepository extends JpaRepository<AccountEntity,Integer> {
 	AccountEntity findByName(String name);
 	AccountEntity findByCode(String Code);
-	List<AccountEntity> findByAccountdetailtype(Accountdetailtype accountdetailtype);
-	List<AccountEntity> findByAccountdetailtypeAndIsactive(Accountdetailtype accountdetailtype,boolean isactive);
-	Page<AccountEntity> findByAccountdetailtypeAndNameContainingIgnoreCaseOrCodeContainingIgnoreCase(Accountdetailtype accountdetailtype, String name,String code,Pageable pageable);
+
+	/**
+	 * LTS Migration Note [Spring Data JPA 3.x / Hibernate 6]:
+	 * Replaced ambiguous derived method name with an explicit, indexed JPQL query matching detailTypeId
+	 * directly and ordering by code, name.
+	 */
+	@Query("from AccountEntity where accountdetailtype.id=:detailTypeId and isactive=:isactive order by code,name")
+	List<AccountEntity> findByAccountdetailtypeIdAndIsactive(@Param("detailTypeId") Integer detailTypeId, @Param("isactive") boolean isactive);
 
 	@Query("from AccountEntity  where accountdetailtype.id=:detailTypeId and ((upper(code) like upper(:filterkey) or upper(name) like upper(:filterkey))  and isactive=true)   order by code,name")
 	List<AccountEntity> findBy20(@Param("detailTypeId") Integer typeId,@Param("filterkey")  String key);

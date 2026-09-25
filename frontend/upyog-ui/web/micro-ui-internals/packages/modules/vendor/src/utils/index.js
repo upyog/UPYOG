@@ -2,11 +2,11 @@ export const checkForNotNull = (value = "") => {
   return value && value != null && value != undefined && value != "" ? true : false;
 };
 
-export const convertDotValues = (value = "") => {
-  return (
-    (checkForNotNull(value) && ((value.replaceAll && value.replaceAll(".", "_")) || (value.replace && stringReplaceAll(value, ".", "_")))) || "NA"
-  );
-};
+// export const convertDotValues = (value = "") => {
+//   return (
+//     (checkForNotNull(value) && ((value.replaceAll && value.replaceAll(".", "_")) || (value.replace && stringReplaceAll(value, ".", "_")))) || "NA"
+//   );
+// };
 
 
 

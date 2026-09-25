@@ -47,18 +47,18 @@
  */
 package org.egov.model.masters;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.commons.Bank;
 import org.egov.commons.EgwStatus;
@@ -71,7 +71,7 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.validation.regex.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 @Entity
 @Table(name = "EGF_CONTRACTOR")
@@ -89,54 +89,54 @@ public class Contractor extends AbstractAuditable implements EntityType {
     private Long id;
 
     @NotNull
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 50, message = "Maximum of 50 Characters allowed for Code")
     @OptionalPattern(regex = FinancialConstants.alphaNumericwithspecialchar, message = "Special Characters are not allowed in Code")
     @Column(updatable = false)
     private String code;
 
     @NotNull
-    @SafeHtml
+    @SanitizeHtml
     @Required(message = "Please Enter the Name")
     @OptionalPattern(regex = FinancialConstants.alphaNumericwithspecialcharForContraWOAndSupplierName, message = "Special Characters are not allowed in Name")
     @Length(max = 100, message = "Maximum of 100 Characters allowed for Name")
     private String name;
 
     @NotNull
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 250, message = "Maximum of 250 Characters allowed for Correspondence Address")
     @OptionalPattern(regex = FinancialConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "Special characters are not allowed in correspondence address")
     private String correspondenceAddress;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 250, message = "Maximum of 250 Characters allowed for Payment Address")
     @OptionalPattern(regex = FinancialConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "Special characters are not allowed in payment address")
     private String paymentAddress;
 
     @NotNull
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 100, message = "Maximum of 100 Characters allowed for Contact Person")
     @OptionalPattern(regex = Constants.ALPHANUMERIC_WITHSPACE, message = "Special Characters are not allowed in Contact Person")
     private String contactPerson;
 
-    @SafeHtml
+    @SanitizeHtml
     @OptionalPattern(regex = Constants.EMAIL, message = "Invalid Email")
     @Length(max = 100, message = "Maximum of 100 Characters allowed for Email")
     private String email;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 1024, message = "Maximum of 1024 Characters allowed for Narration")
     @OptionalPattern(regex = FinancialConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "Special Characters are not allowed in narration")
     private String narration;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 10, message = "PAN No Field length should be 10 and it should be in the format XXXXX1234X")
     @OptionalPattern(regex = Constants.PANNUMBER, message = "Enter the PAN No in correct format - XXXXX1234X")
     @Column(updatable = false)
     private String panNumber;
 
     @NotNull
-    @SafeHtml
+    @SanitizeHtml
     @Length(min = 15, max = 15, message = "Maximum of 15 Characters allowed for TIN/GST No")
     @OptionalPattern(regex = Constants.ALPHANUMERIC, message = "Special Characters are not allowed in TIN/GST No")
     @Column(updatable = false)
@@ -146,38 +146,38 @@ public class Contractor extends AbstractAuditable implements EntityType {
     @JoinColumn(name = "bank")
     private Bank bank;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(min = 11, max = 11, message = "Maximum of 11 Characters allowed for IFSC Code")
     @OptionalPattern(regex = Constants.ALPHANUMERIC, message = "Special Characters are not allowed in IFSC Code")
     private String ifscCode;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 22, message = "Maximum of 22 Characters allowed for Bank Account")
     @OptionalPattern(regex = FinancialConstants.numericwithoutspecialchar, message = "Only allowed numeric in account No")
     private String bankAccount;
 
-    @SafeHtml
+    @SanitizeHtml
     @NotNull
     @Length(max = 10)
     @OptionalPattern(regex = Constants.MOBILE_NUM, message = "Please enter valid mobile number")
     private String mobileNumber;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 21, message = "Maximum of 21 Characters allowed for Registration No")
     @OptionalPattern(regex = FinancialConstants.alphaNumericwithoutspecialchar, message = "Special Characters are not allowed in Registration No")
     private String registrationNumber;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 24, message = "Maximum of 20 Characters allowed for EPF No")
     @OptionalPattern(regex = FinancialConstants.alphaNumericwithoutspecialchar, message = "Special Characters are not allowed in EPF No")
     private String epfNumber;
 
-    @SafeHtml
+    @SanitizeHtml
     @Length(max = 21, message = "Maximum of 17 Characters allowed for ESI No")
     @OptionalPattern(regex = FinancialConstants.numericwithoutspecialchar, message = "Special Characters are not allowed in ESI No")
     private String esiNumber;
 
-    @SafeHtml
+    @SanitizeHtml
     @NotNull
     @Length(max = 250, message = "Maximum of 250 Characters allowed for GST Registered State")
     private String gstRegisteredState;

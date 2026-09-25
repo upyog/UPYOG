@@ -52,7 +52,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.proxy.HibernateProxy;
 
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 public final class PersistenceUtils {
 

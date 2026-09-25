@@ -1,21 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
-import { useRouteMatch, useLocation, useHistory, Switch, Route, Redirect } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { newConfig as newConfigWS } from "../../../config/wsDisconnectionConfig";
-
-const getPath = (path, params) => {
-  params && Object.keys(params).map(key => {
-    path = path.replace(`:${key}`, params[key]);
-  })
-  return path;
-}
-
 
 const WSDisconnection = () => {
   const queryClient = useQueryClient();
   const { t } = useTranslation();
-  const match = useRouteMatch();
+  const { path: modulePath } = Digit.Hooks.useModuleBasePath();
+  const basePath = useMemo(() => `${modulePath}/disconnect-application`, [modulePath]);
   const stateId = Digit.ULBService.getStateId();
 
   let config = [];
@@ -28,20 +21,20 @@ const WSDisconnection = () => {
   config.indexRoute = "docsrequired";
 
   return (
-    <Switch>
+    <Routes>
       {config.map((routeObj, index) => {
         const { component, texts, inputs, key, isSkipEnabled } = routeObj;
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
-          <Route path={`${getPath(match.path, match.params)}/${routeObj.route}`} key={index}>
-            <Component config={{ texts, inputs, key, isSkipEnabled }} t={t} userType={"citizen"} />
-          </Route>
+          <Route
+            path={`${basePath}/${routeObj.route}`}
+            key={index}
+            element={<Component config={{ texts, inputs, key, isSkipEnabled }} t={t} userType={"citizen"} />}
+          />
         );
       })}
-      <Route>
-        <Redirect to={`${getPath(match.path, match.params)}/${config.indexRoute}`} />
-      </Route>
-    </Switch>
+      <Route path="*" element={<Navigate to={`${basePath}/${config.indexRoute}`} replace />} />
+    </Routes>
   );
 };
 

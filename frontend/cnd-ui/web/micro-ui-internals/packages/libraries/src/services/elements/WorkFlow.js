@@ -113,7 +113,7 @@ export const WorkflowService = {
             }, []);
             return { ...actionResultantState, assigneeRoles: assignees, action: ac.action, roles: ac.roles };
           });
-          return { ...state, nextActions: _nextActions, roles: state?.action, roles: state?.actions?.reduce((acc, el) => [...acc, ...el.roles], []) };
+          return { ...state, nextActions: _nextActions, roles: state?.actions?.reduce((acc, el) => [...acc, ...el.roles], []) };
         })?.[0];
 
       if (processInstances.length > 0) {

@@ -18,10 +18,10 @@
  */
 
 
-import { PrivateRoute,BreadCrumb } from "@upyog/digit-ui-react-components";
+import { PrivateRoute,BreadCrumb } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link, Switch, useLocation } from "react-router-dom";
+import { Link, useLocation, Routes, Route } from "react-router-dom";
 import { PTRLinks } from "../../Module";
 import Inbox from "./Inbox";
 // import PaymentDetails from "./PaymentDetails";
@@ -45,7 +45,8 @@ const EmployeeApp = ({ path, url, userType }) => {
     },
   };
 
- 
+  const searchMW = [];
+
 
   const PETBreadCrumbs = ({ location }) => {
     const { t } = useTranslation();
@@ -73,52 +74,61 @@ const EmployeeApp = ({ path, url, userType }) => {
     return <BreadCrumb style={isMobile?{display:"flex"}:{}}  spanStyle={{maxWidth:"min-content"}} crumbs={crumbs} />;
   }
 
-  const NewApplication = Digit?.ComponentRegistryService?.getComponent("PTRNewApplication");
+  const NewApplication = Digit?.ComponentRegistryService?.getComponent("PTRCreatePet");
+  const EnhancedReport = Digit?.ComponentRegistryService?.getComponent("EnhancedReport");
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
   const isRes = window.location.href.includes("ptr/response");
   const isNewRegistration = window.location.href.includes("new-application") || window.location.href.includes("modify-application") || window.location.href.includes("ptr/application-details");
   return (
-    <Switch>
-      <React.Fragment>
-        <div className="ground-container">
+    <React.Fragment>
+      <div className="ground-container">
+        {!isRes ? (
+          <div style={isNewRegistration ? { marginLeft: "12px" } : { marginLeft: "-4px" }}>
+            <PETBreadCrumbs location={location} />
+          </div>
+        ) : null}
+        <Routes>
+          <Route path={`/*`} element={<PrivateRoute><PTRLinks userType={userType} /></PrivateRoute>} />
+          <Route
+            path= "petservice/inbox/*"
+            element={
+              <PrivateRoute>
+                <Inbox
+                  useNewInboxAPI={true}
+                  businessService="ptr"
+                  filterComponent="PTR_INBOX_FILTER"
+                  initialStates={inboxInitialState}
+                  isInbox={true}
+                  parentRoute={path}
+                />
+              </PrivateRoute>
+            }
+          />
+          <Route path= "petservice/new-application/*" element={<PrivateRoute><NewApplication /></PrivateRoute>} />
+          <Route path= "petservice/revised-application/*" element={<PrivateRoute><NewApplication /></PrivateRoute>} />
+          <Route path= "petservice/application-details/:id" element={<PrivateRoute><ApplicationDetails /></PrivateRoute>} />
+          <Route path= "petservice/applicationsearch/application-details/:id" element={<PrivateRoute><ApplicationDetails /></PrivateRoute>} />
+          <Route path= "petservice/search/*" element={<PrivateRoute><SearchApp /></PrivateRoute>} />
+          <Route
+            path= "searchold/*"
+            element={
+              <PrivateRoute>
+                <Inbox
+                  businessService="ptr"
+                  middlewareSearch={searchMW}
+                  initialStates={inboxInitialState}
+                  isInbox={false}
+                  EmptyResultInboxComp={"PTEmptyResultInbox"}
+                />
+              </PrivateRoute>
+            }
+          />
+          <Route path= "petservice/my-applications/*" element={<PrivateRoute><SearchApp /></PrivateRoute>} />
+          <Route path="PetReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-pet" reportName="PetReport" /></PrivateRoute>} />
           
-          {!isRes ? <div style={isNewRegistration ? {marginLeft: "12px" } : {marginLeft:"-4px"}}><PETBreadCrumbs location={location} /></div> : null}
-          <PrivateRoute exact path={`${path}/`} component={() => <PTRLinks matchPath={path} userType={userType} />} />
-          <PrivateRoute
-            path={`${path}/petservice/inbox`}
-            component={() => (
-              <Inbox
-                useNewInboxAPI={true}
-                parentRoute={path}
-                businessService="ptr"
-                filterComponent="PTR_INBOX_FILTER"
-                initialStates={inboxInitialState}
-                isInbox={true}
-              />
-            )}
-          />
-          <PrivateRoute path={`${path}/petservice/new-application`} component={NewApplication} />
-          <PrivateRoute path={`${path}/petservice/revised-application`} component={NewApplication} />
-          <PrivateRoute path={`${path}/petservice/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
-          <PrivateRoute path={`${path}/petservice/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
-          <PrivateRoute path={`${path}/petservice/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} />
-          <PrivateRoute
-            path={`${path}/searchold`}
-            component={() => (
-              <Inbox
-                parentRoute={path}
-                businessService="ptr"
-                middlewareSearch={searchMW}
-                initialStates={inboxInitialState}
-                isInbox={false}
-                EmptyResultInboxComp={"PTEmptyResultInbox"}
-              />
-            )}
-          />
-          <PrivateRoute path={`${path}/petservice/my-applications`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
-        </div>
-      </React.Fragment>
-    </Switch>
+        </Routes>
+      </div>
+    </React.Fragment>
   );
 };
 

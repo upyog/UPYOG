@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from 'react-router-dom'
+import { Link } from "react-router-dom"
 import ApplicationCard from "./ApplicationCard";
 import EventLink from "../Events/EventLink";
 import { openDocumentLink, openUploadedDocument } from "../../utils";

@@ -1,10 +1,18 @@
-import { CardLabel, CardLabelError, CitizenInfoLabel, Dropdown, LabelFieldPair, Loader, RadioButtons } from "@upyog/digit-ui-react-components";
-import FormStep from "../../../../react-components/src/molecules/FormStep";
+import {
+  CardLabel,
+  CardLabelError,
+  CitizenInfoLabel,
+  Dropdown,
+  LabelFieldPair,
+  Loader,
+  RadioButtons,
+  FormStep
+} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { stringReplaceAll } from "../utils";
 import Timeline from "../components/TLTimeline";
-import "../css/pt-inline-auto.css";
+
 const PropertyType = ({
   t,
   config,
@@ -90,7 +98,7 @@ const PropertyType = ({
             <CardLabel className="card-label-smaller">{t(input.label)}<span className="check-page-link-button"> *</span></CardLabel>
             <Dropdown className="form-field" selected={getPropertyTypeMenu(proptype)?.length === 1 ? getPropertyTypeMenu(proptype)[0] : BuildingType} disable={getPropertyTypeMenu(proptype)?.length === 1} option={getPropertyTypeMenu(proptype)} select={selectBuildingType} optionKey="i18nKey" onBlur={onBlur} t={t} />
           </LabelFieldPair>
-          {formState.touched[config.key] ? <CardLabelError className="pt-auto-75">
+          {formState.touchedFields?.[config.key] ? <CardLabelError className="pt-auto-75">
               {formState.errors?.[config.key]?.message}
             </CardLabelError> : null}
         </React.Fragment>;

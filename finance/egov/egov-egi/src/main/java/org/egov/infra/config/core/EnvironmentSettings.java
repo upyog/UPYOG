@@ -55,6 +55,10 @@ import org.springframework.stereotype.Component;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 
+/**
+ * LTS Migration Fix (Spring 6): typed access to {@code application-config.properties}
+ * and environment overrides such as {@code egov-erp-<username>.properties}.
+ */
 @Component
 public class EnvironmentSettings {
 
@@ -70,10 +74,24 @@ public class EnvironmentSettings {
     @Autowired
     private Environment environment;
 
+    /**
+     * Looks up a string property, returning empty string when unset.
+     *
+     * @param propKey property key
+     * @return configured value or empty string
+     */
     public String getProperty(String propKey) {
         return this.environment.getProperty(propKey, EMPTY);
     }
 
+    /**
+     * Looks up a property converted to {@code type}.
+     *
+     * @param propKey property key
+     * @param type    target type
+     * @param <T>     conversion type
+     * @return converted value, or {@code null} when unset
+     */
     public <T> T getProperty(String propKey, Class<T> type) {
         return this.environment.getProperty(propKey, type);
     }

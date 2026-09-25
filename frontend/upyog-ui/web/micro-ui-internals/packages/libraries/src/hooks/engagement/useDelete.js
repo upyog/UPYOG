@@ -1,8 +1,14 @@
+import { mutationTemplate } from "../../common/mutationTemplate";
 import { Engagement } from "../../services/elements/Engagement";
-import { useMutation } from "react-query";
 
-const useDelteDocument = (filters, config) => {
-  return useMutation((filters) => Engagement.delete(filters));
+/**
+ * Delete engagement document.
+ */
+const useDeleteDocument = () => {
+  const mutationFn = (filters) =>
+    Engagement.delete(filters);
+
+  return mutationTemplate({ mutationFn });
 };
 
-export default useDelteDocument;
+export default useDeleteDocument;

@@ -1,10 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Link, useHistory } from "react-router-dom";
 import LinkButton from "../atoms/LinkButton";
+import { Link } from "react-router-dom";
 
 const Breadcrumb = (props) => {
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   function isLast(index) {
     return index === props.crumbs.length - 1;
   }
@@ -25,7 +25,7 @@ const Breadcrumb = (props) => {
             {isLast(ci) || !crumb?.path || crumb?.isclickable == false ? (
               <span style={props?.spanStyle ? { ...props?.spanStyle, color: "#0B0C0C" } : { color: "#0B0C0C" }}>{crumb.content}</span>
             ) : (
-            (crumb?.isredirected ? <span onClick={() => {history.push(`${crumb?.path?.pathname}`, { ...crumb?.path?.state })}}>
+            (crumb?.isredirected ? <span onClick={() => {navigate(`${crumb?.path?.pathname}`, { ...crumb?.path?.state })}}>
               <LinkButton label={crumb.content} />
             </span> : 
             <Link to={crumb.path}>{crumb.content}</Link>)

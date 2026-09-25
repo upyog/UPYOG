@@ -1,10 +1,21 @@
-import { CardLabel, DatePicker, LabelFieldPair, CardLabelError, CardSubHeader, RadioButtons, TextArea, TextInput } from "@upyog/digit-ui-react-components";
+
+import {
+  CardLabel,
+  DatePicker,
+  LabelFieldPair,
+  CardLabelError,
+  CardSubHeader,
+  RadioButtons,
+  TextArea,
+  TextInput
+} from "@nudmcdgnpm/digit-ui-react-components";
+import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { stringReplaceAll } from "../utils";
 import { useForm, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import * as func from "../utils/";
-import "../css/ws-inline-auto.css";
+
 const createDisConnectionAppDetails = () => [{
   consumerNumber: "",
   disConnectionType: "",
@@ -159,43 +170,65 @@ const PlumberDetails = _props => {
           fontWeight: "700"
         }} className="card-label-smaller">{`${t("WS_ACK_COMMON_APP_NO_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
           <div className="field">
-            <Controller control={control} name="consumerNumber" defaultValue={disConnectionDetail?.consumerNumber} rules={{
-            required: t("REQUIRED_FIELD")
-          }} isMandatory={true} render={props => <TextInput value={props.value} autoFocus={focusIndex.index === disConnectionDetail?.key && focusIndex.type === "consumerNumber"} errorStyle={localFormState.touched.consumerNumber && errors?.consumerNumber?.message ? true : false} onChange={e => {
-            props.onChange(e.target.value);
-            setFocusIndex({
-              index: disConnectionDetail?.key,
-              type: "consumerNumber"
-            });
-          }} labelStyle={{
-            marginTop: "unset"
-          }} onBlur={props.onBlur} className="ws-auto-61" />} />
+            <Controller
+              control={control}
+              name="consumerNumber"
+              defaultValue={disConnectionDetail?.consumerNumber}
+              rules={{ required: t("REQUIRED_FIELD") }}
+              isMandatory={true}
+              render={({ field }) => (
+                <TextInput
+                  value={field.value}
+                  autoFocus={focusIndex.index === disConnectionDetail?.key && focusIndex.type === "consumerNumber"}
+                  errorStyle={(localFormState.touchedFields.consumerNumber && errors?.consumerNumber?.message) ? true : false}
+                  onChange={(e) => {
+                    field.onChange(e.target.value);
+                    setFocusIndex({ index: disConnectionDetail?.key, type: "consumerNumber" });
+                  }}
+                  labelStyle={{ marginTop: "unset" }}
+                  onBlur={field.onBlur}
+                  className="ws-auto-61"
+                />
+              )}
+            />
           </div>
         </LabelFieldPair>
-        <CardLabel style={isMobile && isEmployee ? {
-        fontWeight: "700",
-        width: "100%"
-      } : {
-        marginTop: "-5px",
-        fontWeight: "700"
-      }} className="card-label-smaller">{`${t("WS_DISCONNECTION_TYPE")}`}</CardLabel>
-        <Controller control={control} name="disConnectionType" defaultValue={disConnectionDetail?.disConnectionType} rules={{
-        required: t("REQUIRED_FIELD")
-      }} isMandatory={true} render={props => <RadioButtons t={t} options={disconnectionTypeList} optionsKey="i18nKey" value={{
-        name: disConnectionDetail?.disConnectionType,
-        value: disConnectionDetail?.disConnectionType,
-        code: disConnectionDetail?.disConnectionType,
-        i18nKey: `WS_DISCONNECTIONTYPE_${stringReplaceAll(disConnectionDetail?.disConnectionType, " ", "_")}`
-      }} selectedOption={{
-        name: disConnectionDetail?.disConnectionType,
-        value: disConnectionDetail?.disConnectionType,
-        code: disConnectionDetail?.disConnectionType,
-        i18nKey: `WS_DISCONNECTIONTYPE_${stringReplaceAll(disConnectionDetail?.disConnectionType, " ", "_")}`
-      }}
-      // onSelect={(e) => onDisconnectionChange(e)}
-      onSelect={e => {
-        props.onChange(e.code);
-      }} labelKey="WS_DISCONNECTIONTYPE" errorStyle={localFormState.touched.disConnectionType && errors?.disConnectionType?.message ? true : false} autoFocus={focusIndex.index === disConnectionDetail?.key && focusIndex.type === "disConnectionType"} isDependent={true} className="ws-auto-62" />} />
+        <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t("WS_DISCONNECTION_TYPE")}`}</CardLabel>
+            <Controller
+          control={control}
+          name="disConnectionType"
+          defaultValue={disConnectionDetail?.disConnectionType}
+          rules={{ required: t("REQUIRED_FIELD") }}
+          isMandatory={true}
+          render={({ field }) => (
+            <RadioButtons
+              t={t}
+              options={disconnectionTypeList}
+              optionsKey="i18nKey"
+              value={{
+                name: disConnectionDetail?.disConnectionType,
+                value: disConnectionDetail?.disConnectionType,
+                code: disConnectionDetail?.disConnectionType,
+                i18nKey: `WS_DISCONNECTIONTYPE_${stringReplaceAll(disConnectionDetail?.disConnectionType, " ", "_")}`
+              }}
+              selectedOption={{
+                name: disConnectionDetail?.disConnectionType,
+                value: disConnectionDetail?.disConnectionType,
+                code: disConnectionDetail?.disConnectionType,
+                i18nKey: `WS_DISCONNECTIONTYPE_${stringReplaceAll(disConnectionDetail?.disConnectionType, " ", "_")}`
+              }}
+              // onSelect={(e) => onDisconnectionChange(e)}
+              onSelect={(e) => {
+                field.onChange(e.code)
+              }}
+              labelKey="WS_DISCONNECTIONTYPE"
+              errorStyle={localFormState.touchedFields.disConnectionType && errors?.disConnectionType?.message ? true : false}
+              autoFocus={focusIndex.index === disConnectionDetail?.key && focusIndex.type === "disConnectionType"}
+               className="ws-auto-62"
+              isDependent={true}
+            />
+          )}
+        />
         <LabelFieldPair>
           <CardLabel style={isMobile && isEmployee ? {
           fontWeight: "700",
@@ -205,14 +238,23 @@ const PlumberDetails = _props => {
           fontWeight: "700"
         }} className="card-label-smaller">{`${t("WS_DISCONNECTION_PROPOSED_DATE")}`}<span className="check-page-link-button"> *</span></CardLabel>
           <div className="field">
-            <Controller name="disConnectionProposeDate" rules={{
-            required: t("REQUIRED_FIELD")
-          }}
-          // isMandatory={true}
-          defaultValue={disConnectionDetail?.disConnectionProposeDate} control={control} render={props => <DatePicker date={props.value} name="disConnectionProposeDate" onChange={props.onChange} />} />
+            <Controller
+              name="disConnectionProposeDate"
+              rules={{ required: t("REQUIRED_FIELD") }}
+              // isMandatory={true}
+              defaultValue={disConnectionDetail?.disConnectionProposeDate}
+              control={control}
+              render={({ field }) => (
+                <DatePicker
+                  date={field.value}
+                  name="disConnectionProposeDate"
+                  onChange={field.onChange}
+                />
+              )}
+            />
           </div>
         </LabelFieldPair>
-        <CardLabelError style={errorStyle}>{localFormState.touched.disConnectionProposeDate ? errors?.disConnectionProposeDate?.message : ""}</CardLabelError>
+        <CardLabelError style={errorStyle}>{localFormState.touchedFields.disConnectionProposeDate ? errors?.disConnectionProposeDate?.message : ""}</CardLabelError>
         <LabelFieldPair>
           <CardLabel style={isMobile && isEmployee ? {
           fontWeight: "700",
@@ -222,18 +264,31 @@ const PlumberDetails = _props => {
           fontWeight: "700"
         }} className="card-label-smaller">{`${t("WS_DISCONNECTION_REASON")}`}<span className="check-page-link-button"> *</span></CardLabel>
           <div className="field">
-            <Controller control={control} defaultValue={disConnectionDetail?.disConnectionReason} name={"disConnectionReason"} rules={{
-            required: t("REQUIRED_FIELD")
-          }} render={props => <TextArea t={t} type={"text"} isMandatory={false} name={"disConnectionReason"} value={props.value} errorStyle={localFormState.touched.disConnectionReason && errors?.disConnectionReason?.message ? true : false} autoFocus={focusIndex.index === disConnectionDetail?.key && focusIndex.type === "disConnectionReason"} onChange={e => {
-            props.onChange(e);
-            setFocusIndex({
-              index: disConnectionDetail.key,
-              type: "disConnectionReason"
-            });
-          }} onBlur={props.onBlur} />}></Controller>
+            <Controller
+              control={control}
+              defaultValue={disConnectionDetail?.disConnectionReason}
+              name={"disConnectionReason"}
+              rules={{ required: t("REQUIRED_FIELD") }}
+              render={({ field }) => (
+                <TextArea
+                  t={t}
+                  type={"text"}
+                  isMandatory={false}
+                  name={"disConnectionReason"}
+                  value={field.value}
+                  errorStyle={localFormState.touchedFields.disConnectionReason && errors?.disConnectionReason?.message ? true : false}
+                  autoFocus={focusIndex.index === disConnectionDetail?.key && focusIndex.type === "disConnectionReason"}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    setFocusIndex({ index: disConnectionDetail.key, type: "disConnectionReason" });
+                  }}
+                  onBlur={field.onBlur}
+                />
+              )}
+            ></Controller>
           </div>
         </LabelFieldPair>
-        <CardLabelError style={errorStyle}>{localFormState.touched.disConnectionReason ? errors?.disConnectionReason?.message : ""}</CardLabelError>
+        <CardLabelError style={errorStyle}>{localFormState.touchedFields.disConnectionReason ? errors?.disConnectionReason?.message : ""}</CardLabelError>
       </div>
     </div>;
 };

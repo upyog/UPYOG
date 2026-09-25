@@ -1,4 +1,4 @@
-import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { useEffect, useMemo, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -202,8 +202,8 @@ const SvApplicationDetails = () => {
           <CardSubHeader style={{ fontSize: "24px" }}>{t("SV_ADDITIONAL_DETAILS")}</CardSubHeader>
           <StatusTable>
             {streetVendingDetails?.benificiaryOfSocialSchemes[0]?.schemeName ?
-              streetVendingDetails?.benificiaryOfSocialSchemes.map((item) => (
-                <>
+              streetVendingDetails?.benificiaryOfSocialSchemes.map((item, index) => (
+                <Fragment key={index}>
                   <Row
                     className="border-none"
                     label={t("SV_BENEFICIARY_SCHEMES")}
@@ -215,7 +215,7 @@ const SvApplicationDetails = () => {
                     label={t("SV_ENROLLMENT_APPLICATION_NUMBER")}
                     text={`${t(checkForNA(item?.enrollmentId))}`}
                   />
-                </>
+                </Fragment>
               ))
               : null}
           </StatusTable>

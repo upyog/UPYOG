@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import { Banner, Card, CardSectionHeader, CardText, LinkButton, SubmitBar, successSvg } from "@upyog/digit-ui-react-components";
+import { Banner, Card, CardSectionHeader, CardText, LinkButton, SubmitBar, SuccessSvg } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { pdfDocumentName, pdfDownloadLink } from "../utils";
 import getWSDisconectionAcknowledgementData from "../utils/getWSDisconnectionAcknowledgementData";
-import "../css/ws-inline-auto.css";
+
 const BannerPicker = props => {
   return <Banner message={props.message} applicationNumber={props?.applicationNumber} successful={props.isSuccess} headerStyles={{
     fontSize: "32px"
@@ -25,7 +25,7 @@ const WSDisconnectAcknowledgement = () => {
   };
   return <Card className="ws-auto-58">
       <CardSectionHeader>
-        <BannerPicker isSuccess={true} message={t("WS_APPLICATION_COMPLETED_SUCCESSFULLY_LABEL")} applicationNumber={disconnectionData?.DisconnectionResponse?.applicationNo} /> <successSvg />
+        <BannerPicker isSuccess={true} message={t("WS_APPLICATION_COMPLETED_SUCCESSFULLY_LABEL")} applicationNumber={disconnectionData?.DisconnectionResponse?.applicationNo}/> <SuccessSvg />
       </CardSectionHeader>
       <CardText>
         {t('WS_DISCONNECTION_APPLICATION_SUCC_MSG')}

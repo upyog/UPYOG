@@ -1,36 +1,29 @@
-import { Card, CardHeader, CardSubHeader, CardText, CitizenInfoLabel, LinkButton, Row, StatusTable, SubmitBar, EditIcon, Header, CardSectionHeader } from "@upyog/digit-ui-react-components";
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { useHistory, useRouteMatch, Link } from "react-router-dom";
-import Timeline from "../../../components/Timeline";
-import WSDocument from "../../../pageComponents/WSDocument";
-import "../../../css/ws-inline-auto.css";
-const CheckPage = ({
-  onSubmit,
-  value
-}) => {
-  const {
-    t
-  } = useTranslation();
-  const history = useHistory();
-  const match = useRouteMatch();
-  let isMobile = window.Digit.Utils.browser.isMobile();
-  const {
-    ConnectionHolderDetails,
-    plumberPreference,
-    serviceName,
-    waterConectionDetails,
-    sewerageConnectionDetails,
-    documents,
-    cpt
-  } = value;
-  let routeLink = `/upyog-ui/citizen/ws/create-application`;
-  if (window.location.href.includes("/edit-application/")) routeLink = `/upyog-ui/citizen/ws/edit-application/${value?.tenantId}`;
-  function routeTo(jumpTo) {
-    location.href = jumpTo;
-  }
-  let propAddArr = [];
-  if (cpt && cpt?.details && Object.keys(cpt?.details).length > 0) {
+import {
+    Card, CardHeader, CardSubHeader, CardText,
+    CitizenInfoLabel, LinkButton, Row, StatusTable, SubmitBar, EditIcon, Header, CardSectionHeader
+  } from "@nudmcdgnpm/digit-ui-react-components";
+  import React from "react";
+  import { useTranslation } from "react-i18next";
+  import { Link,  } from "react-router-dom";
+  import Timeline from "../../../components/Timeline";
+  import WSDocument from "../../../pageComponents/WSDocument";
+  
+  const CheckPage = ({ onSubmit, value }) => {
+    const { t } = useTranslation();
+    const navigate = Digit.Hooks.useCustomNavigate();
+    const match = Digit.Hooks.useModuleBasePath();
+    let isMobile = window.Digit.Utils.browser.isMobile();
+    const { ConnectionHolderDetails, plumberPreference, serviceName, waterConectionDetails, sewerageConnectionDetails, documents, cpt } = value;
+    let routeLink = `/upyog-ui/citizen/ws/create-application`;
+    if(window.location.href.includes("/edit-application/"))
+    routeLink=`/upyog-ui/citizen/ws/edit-application/${value?.tenantId}`
+
+    function routeTo(jumpTo) {
+        location.href=jumpTo;
+    }
+   
+    let propAddArr = [];
+  if (cpt && cpt?.details && Object.keys(cpt?.details).length>0) {
     if (cpt?.details?.address?.doorNo) {
       propAddArr.push(cpt?.details?.address?.doorNo);
     }

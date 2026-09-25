@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FormComposer, Loader, Toast, Header } from "@upyog/digit-ui-react-components";
-import { useHistory, useParams } from "react-router-dom";
+import { FormComposer, Loader, Toast, Header } from "@nudmcdgnpm/digit-ui-react-components";
+import { useParams,  } from "react-router-dom";
 import VendorConfig from "../../configs/VendorConfig";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 const EditVendor = ({ parentUrl, heading }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -71,7 +71,7 @@ const EditVendor = ({ parentUrl, heading }) => {
   }, [dsoData]);
 
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   const Config = VendorConfig(t, true);
 
@@ -162,7 +162,7 @@ const EditVendor = ({ parentUrl, heading }) => {
         queryClient.invalidateQueries("DSO_SEARCH");
         setTimeout(() => {
           closeToast();
-          history.push(`/upyog-ui/employee/fsm/registry/vendor-details/${dsoId}`);
+          navigate(`/upyog-ui/employee/fsm/registry/vendor-details/${dsoId}`);
         }, 5000);
       },
     });

@@ -95,7 +95,11 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
-import org.hibernate.Query;
+/*
+ * Hibernate 6 Query API Migration:
+ * Replaced legacy org.hibernate.Query with org.hibernate.query.Query for Hibernate 6 query execution.
+ */
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
@@ -508,12 +512,17 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
                         + " where receipt_date>=:fromDate and receipt_date<=:toDate and service=:serviceCode "
                         + " and source=:source and ulb=:ulbCode  group by ulb,service  ");
 
-        final Query query = getSession().createSQLQuery(queryBuilder.toString());
-        query.setDate("fromDate", aggrReq.getFromdate());
-        query.setDate("toDate", aggrReq.getTodate());
-        query.setString("serviceCode", aggrReq.getServicecode());
-        query.setString("source", aggrReq.getSource());
-        query.setString("ulbCode", aggrReq.getUlbCode());
+        /*
+         * Native Query Execution & Parameter Binding (Hibernate 6 Upgrade):
+         * Replaced legacy session.createSQLQuery() with createNativeQuery() and query.setDate/setString
+         * with query.setParameter() for Hibernate 6 native SQL query execution.
+         */
+        final Query query = getSession().createNativeQuery(queryBuilder.toString());
+        query.setParameter("fromDate", aggrReq.getFromdate());
+        query.setParameter("toDate", aggrReq.getTodate());
+        query.setParameter("serviceCode", aggrReq.getServicecode());
+        query.setParameter("source", aggrReq.getSource());
+        query.setParameter("ulbCode", aggrReq.getUlbCode());
 
         LOGGER.debug(aggrReq.getSource());
 
@@ -730,13 +739,18 @@ public class CollectionIntegrationServiceImpl extends PersistenceService<Receipt
             queryString.append(" and rh.service.name = :serviceName");
         if (!paymentInfoRequest.getConsumerCode().isEmpty())
             queryString.append(" and rh.consumerCode = :consumerCode");
+        /*
+         * Query Parameter Binding Migration (Hibernate 6 Upgrade):
+         * Replaced type-specific listQuery.setString() calls with generic listQuery.setParameter()
+         * per Hibernate 6 HQL parameter binding standards.
+         */
         final Query listQuery = getSession().createQuery(queryString.toString());
         if (!paymentInfoRequest.getUserName().isEmpty())
-            listQuery.setString("userName", paymentInfoRequest.getUserName().toUpperCase());
+            listQuery.setParameter("userName", paymentInfoRequest.getUserName().toUpperCase());
         if (!paymentInfoRequest.getServiceName().isEmpty())
-            listQuery.setString("serviceName", paymentInfoRequest.getServiceName());
+            listQuery.setParameter("serviceName", paymentInfoRequest.getServiceName());
         if (!paymentInfoRequest.getConsumerCode().isEmpty())
-            listQuery.setString("consumerCode", paymentInfoRequest.getConsumerCode());
+            listQuery.setParameter("consumerCode", paymentInfoRequest.getConsumerCode());
         receiptHeaders = listQuery.list();
         if (receiptHeaders == null || receiptHeaders.isEmpty()) {
             receipts.add(new RestReceiptInfo());

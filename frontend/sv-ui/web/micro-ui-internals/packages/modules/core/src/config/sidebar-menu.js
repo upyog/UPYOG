@@ -1,5 +1,5 @@
 import React from "react";
-import { HomeIcon, LanguageIcon, LogoutIcon, AddressBookIcon, LocationIcon, LoginIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { HomeIcon, LanguageIcon, LogoutIcon, AddressBookIcon, LocationIcon, LoginIcon } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import ChangeLanguage from "../components/ChangeLanguage";
 
 const SideBarMenu = (t, closeSidebar, redirectToLoginPage, isEmployee, storeData, tenantId) => {

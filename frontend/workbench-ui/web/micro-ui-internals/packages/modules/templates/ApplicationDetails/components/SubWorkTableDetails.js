@@ -1,11 +1,10 @@
-import { EditIcon } from '@egovernments/digit-ui-react-components';
+import { EditIcon } from '@upyog/workbench-ui-react-components';
 import React from 'react'
 import { useTranslation } from "react-i18next";
-import { useHistory } from 'react-router-dom';
 
 const SubWorkTableDetails = ({data}) => {
     const { t } = useTranslation();
-    const history = useHistory();
+    const navigate = Digit.Hooks.useCustomNavigate();
     const getStyles = (index) => {
         let obj = {}
         switch (index) {
@@ -42,7 +41,7 @@ const SubWorkTableDetails = ({data}) => {
                     ?  <td style={{ "width": "15vw" }}><div style={{"float":"right", "fontWeight":"bold"}}>{row[2]}</div></td>
                     :  <td style={{ "width": "15vw" }}><div style={{"float":"right"}}>{row[2]}</div></td>}
                 {row[3] && <td style={getStyles(3)}>
-                    <div style={{display:"flex",flexDirection:"row",cursor:"pointer",color:"#F47738"}} onClick={() => history.push(
+                    <div style={{display:"flex",flexDirection:"row",cursor:"pointer",color:"#F47738"}} onClick={() => navigate(
                         {
                             pathname: `/digit-ui/employee/contracts/create-contract?estimateNumber=${data?.state?.estimateNumber}&task=${data?.state?.estimateDetails[index]?.name}&subEstimate=${data?.state?.estimateDetails[index]?.estimateDetailNumber}`,
                             state:{index, data}

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, CardLabelError, Loader, DeleteIcon } from "@upyog/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, CardLabelError, Loader, DeleteIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import { stringReplaceAll } from "../utils";
 import { useForm, Controller } from "react-hook-form";
 import _ from "lodash";
 import { useLocation } from "react-router-dom";
-import "../css/pt-inline-auto.css";
+
 const Units = ({
   t,
   config,
@@ -473,21 +473,12 @@ function Unit({
       clearErrors("units");
     }
   }, [formValue]);
-  const {
-    errors
-  } = localFormState;
-  const errorStyle = isMobile ? {
-    width: "70%",
-    marginLeft: "4%",
-    fontSize: "12px"
-  } : {
-    width: "70%",
-    marginLeft: "30%",
-    fontSize: "12px",
-    marginTop: "-21px"
-  };
-  console.log("formValueformValue", formValue, unit);
-  return <div className="pt-auto-97">
+
+  const { errors } = localFormState;
+  const errorStyle = isMobile ? {width: "70%", marginLeft: "4%", fontSize: "12px"} : { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
+
+  return (
+    <div className="pt-auto-97">
       <div className="label-field-pair">
         <h2 className="card-label card-label-smaller pt-auto-98">
           Unit {unit?.order}
@@ -502,9 +493,25 @@ function Unit({
         <div className="pt-auto-102">
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t("PT_FORM2_SELECT_FLOOR") + " *"}</CardLabel>
-          <Controller name="floorNo" defaultValue={unit.floorNo} control={control} render={props => <Dropdown className="form-field" selected={props.value} disable={false} option={getfloorlistdata(floorlist) || []} select={props.onChange} optionKey="i18nKey" onBlur={props.onBlur} t={t} />} />
+          <Controller
+            name="floorNo"
+            defaultValue={unit.floorNo}
+            control={control}
+            render={({ field }) => (
+              <Dropdown
+                className="form-field"
+                selected={field.value}
+                disable={false}
+                option={getfloorlistdata(floorlist) || []}
+                select={field.onChange}
+                optionKey="i18nKey"
+                onBlur={field.onBlur}
+                t={t}
+              />
+            )}
+          />
         </LabelFieldPair>
-        <CardLabelError style={errorStyle}>{localFormState.touched.floorNo ? errors?.floorNo?.message : ""}</CardLabelError>
+        <CardLabelError style={errorStyle}>{localFormState.touchedFields?.floorNo ? errors?.floorNo?.message : ""}</CardLabelError>
         </div>
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t("PT_PROPERTY_DETAILS_USAGE_TYPE_HEADER") + " *"}</CardLabel>
@@ -515,61 +522,151 @@ function Unit({
         display: "none"
       } : {}}>
           <CardLabel className="card-label-smaller">{t("PT_FORM2_USAGE_TYPE") + " *"}</CardLabel>
-          <Controller name="usageCategory" defaultValue={subUsageCategoryMenu(usageType)?.filter(e => e?.code === unit.existingUsageCategory)[0]} control={control} render={props => <Dropdown className="form-field" selected={props.value} disable={!usageType?.code} option={subUsageCategoryMenu(usageType)} select={props.onChange} optionKey="i18nKey" onBlur={props.onBlur} t={t} />} />
+          <Controller
+            name="usageCategory"
+            defaultValue={subUsageCategoryMenu(usageType)?.filter((e) => e?.code === unit.existingUsageCategory)[0]}
+            control={control}
+            render={({ field }) => (
+              <Dropdown
+                className="form-field"
+                selected={field.value}
+                disable={!usageType?.code}
+                option={subUsageCategoryMenu(usageType)}
+                select={field.onChange}
+                optionKey="i18nKey"
+                onBlur={field.onBlur}
+                t={t}
+              />
+            )}
+          />
         </LabelFieldPair>
-        {!["RESIDENTIAL"].includes(usageType?.code) ? <CardLabelError style={errorStyle}>{localFormState.touched.usageCategory ? errors?.usageCategory?.message : ""}</CardLabelError> : null}
+        {!["RESIDENTIAL"].includes(usageType?.code) ? (
+          <CardLabelError style={errorStyle}>{localFormState.touchedFields?.usageCategory ? errors?.usageCategory?.message : ""}</CardLabelError>
+        ) : null}
 
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t("PT_FORM2_OCCUPANCY") + " *"}</CardLabel>
-          <Controller name="occupancyType" defaultValue={unit?.occupancyType} control={control} render={props => <Dropdown className="form-field" selected={props.value} disable={occupencyOptions?.length === 1} option={occupencyOptions}
-        // select={selectSelfOccupied}
-        select={props.onChange} optionKey="i18nKey" onBlur={props.onBlur} t={t} />} />
+          <Controller
+            name="occupancyType"
+            defaultValue={unit?.occupancyType}
+            control={control}
+            render={({ field }) => (
+              <Dropdown
+                className="form-field"
+                selected={field.value}
+                disable={occupencyOptions?.length === 1}
+                option={occupencyOptions}
+                select={field.onChange}
+                optionKey="i18nKey"
+                onBlur={field.onBlur}
+                t={t}
+              />
+            )}
+          />
         </LabelFieldPair>
-        <CardLabelError style={errorStyle}>{localFormState.touched.occupancyType ? errors?.occupancyType?.message : ""}</CardLabelError>
-        {formValue.occupancyType?.code === "RENTED" ? <React.Fragment>
+        <CardLabelError style={errorStyle}>{localFormState.touchedFields?.occupancyType ? errors?.occupancyType?.message : ""}</CardLabelError>
+        {formValue.occupancyType?.code === "RENTED" ? (
+          <React.Fragment>
             <LabelFieldPair>
               <CardLabel className="card-label-smaller">{t("PT_FORM2_TOTAL_ANNUAL_RENT") + " *"}</CardLabel>
               <div className="field">
-                <Controller name="arv" defaultValue={unit.arv} control={control} render={props => <TextInput type="text" name="unit-area" onChange={e => {
-              props.onChange(e.target.value);
-              setFocusIndex({
-                index,
-                type: "arv"
-              });
-            }} value={props.value} autoFocus={focusIndex.index === index && focusIndex.type === "arv"} onBlur={props.onBlur} />} />
+                <Controller
+                  name="arv"
+                  defaultValue={unit.arv}
+                  control={control}
+                  render={({ field }) => (
+                    <TextInput
+                      type="text"
+                      name="unit-area"
+                      onChange={(e) => {
+                        field.onChange(e.target.value);
+                        setFocusIndex({ index, type: "arv" });
+                      }}
+                      value={field.value}
+                      autoFocus={focusIndex.index === index && focusIndex.type === "arv"}
+                      onBlur={field.onBlur}
+                    />
+                  )}
+                />
               </div>
             </LabelFieldPair>
-            <CardLabelError style={errorStyle}>{localFormState.touched.arv ? errors?.arv?.message : ""}</CardLabelError>
+            <CardLabelError style={errorStyle}>{localFormState.touchedFields?.arv ? errors?.arv?.message : ""}</CardLabelError>
             
           <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t("PT_FORM2_RENTED_MONTHS") + " *"}</CardLabel>
-          <Controller name="RentedMonths" defaultValue={unit.RentedMonths} control={control} render={props => <Dropdown className="form-field" selected={props.value} disable={rentedmonths?.length === 1} option={rentedmonths} select={props.onChange} optionKey="i18nKey" onBlur={props.onBlur} t={t} />} />
+          <Controller
+            name="RentedMonths"
+            defaultValue={unit.RentedMonths}
+            control={control}
+            render={({ field }) => (
+              <Dropdown
+                className="form-field"
+                selected={field.value}
+                disable={rentedmonths?.length === 1}
+                option={rentedmonths}
+                select={field.onChange}
+                optionKey="i18nKey"
+                onBlur={field.onBlur}
+                t={t}
+              />
+            )}
+          />
         </LabelFieldPair>
-        <CardLabelError style={errorStyle}>{localFormState.touched.Rentedmonths ? errors?.Rentedmonths?.message : ""}</CardLabelError>
-        {formValue?.RentedMonths?.code === "1" || formValue?.RentedMonths?.code === "2" || formValue?.RentedMonths?.code === "3" || formValue?.RentedMonths?.code === "4" || formValue?.RentedMonths?.code === "5" || formValue?.RentedMonths?.code === "6" || formValue?.RentedMonths?.code === "7" || formValue?.RentedMonths?.code === "8" || formValue?.RentedMonths?.code === "9" || formValue?.RentedMonths?.code === "10" || formValue?.RentedMonths?.code === "11" ? <React.Fragment>
+        <CardLabelError style={errorStyle}>{localFormState.touchedFields?.Rentedmonths ? errors?.Rentedmonths?.message : ""}</CardLabelError>
+        {formValue?.RentedMonths?.code === "1" || formValue?.RentedMonths?.code === "2" || formValue?.RentedMonths?.code === "3" || formValue?.RentedMonths?.code === "4" || formValue?.RentedMonths?.code === "5" || formValue?.RentedMonths?.code === "6" || formValue?.RentedMonths?.code === "7" || formValue?.RentedMonths?.code === "8" || formValue?.RentedMonths?.code === "9" || formValue?.RentedMonths?.code === "10" || formValue?.RentedMonths?.code === "11" ? (
+          <React.Fragment>
             <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("PT_FORM2_NONRENTED_MONTHS_USAGE") + " *"}</CardLabel>
-            <Controller name="NonRentedMonthsUsage" defaultValue={unit.NonRentedMonthsUsage} control={control} render={props => <Dropdown className="form-field" selected={props.value} disable={nonrentedusage?.length === 1} option={nonrentedusage} select={props.onChange} optionKey="i18nKey" onBlur={props.onBlur} t={t} />} />
+            <Controller
+              name="NonRentedMonthsUsage"
+              defaultValue={unit.NonRentedMonthsUsage}
+              control={control}
+              render={({ field }) => (
+                <Dropdown
+                  className="form-field"
+                  selected={field.value}
+                  disable={nonrentedusage?.length === 1}
+                  option={nonrentedusage}
+                  select={field.onChange}
+                  optionKey="i18nKey"
+                  onBlur={field.onBlur}
+                  t={t}
+                />
+              )}
+            />
             </LabelFieldPair> 
-            </React.Fragment> : null}     
-        </React.Fragment> : null}         
+            </React.Fragment>
+            ) : null}     
+        </React.Fragment>
+        ) : null}         
 
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t("PT_FORM2_BUILT_AREA") + " *"}</CardLabel>
           <div className="field">
-            <Controller name="builtUpArea" defaultValue={unit?.builtUpArea}
-          // rules={}
-          control={control} render={props => <TextInput type="text" name="unit-area" onChange={e => {
-            props.onChange(e.target.value);
-            setFocusIndex({
-              index,
-              type: "builtUpArea"
-            });
-          }} value={props.value} autoFocus={focusIndex.index === index && focusIndex.type === "builtUpArea"} onBlur={props.onBlur} />} />
+            <Controller
+              name="builtUpArea"
+              defaultValue={unit?.builtUpArea}
+              // rules={}
+              control={control}
+              render={({ field }) => (
+                <TextInput
+                  type="text"
+                  name="unit-area"
+                  onChange={(e) => {
+                    field.onChange(e.target.value);
+                    setFocusIndex({ index, type: "builtUpArea" });
+                  }}
+                  value={field.value}
+                  autoFocus={focusIndex.index === index && focusIndex.type === "builtUpArea"}
+                  onBlur={field.onBlur}
+                />
+              )}
+            />
           </div>
         </LabelFieldPair>
-        <CardLabelError style={errorStyle}>{localFormState.touched.builtUpArea ? errors?.builtUpArea?.message : ""}</CardLabelError>
+        <CardLabelError style={errorStyle}>{localFormState.touchedFields?.builtUpArea ? errors?.builtUpArea?.message : ""}</CardLabelError>
       </div>
-    </div>;
+    </div>
+  );
 }
 export default Units;

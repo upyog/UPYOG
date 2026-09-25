@@ -1,10 +1,10 @@
-import { CardLabel, FormStep, Dropdown, TextInput, Toast, SearchIcon, Row, ImageViewer, StatusTable, LinkButton, Header, SubmitBar, CardHeader } from "@upyog/digit-ui-react-components";
-import DisplayPhotosnew from "../../../../react-components/src/atoms/DisplayPhotosnew";
+import { CardLabel, FormStep, Dropdown, TextInput, Toast, SearchIcon,  Row, ImageViewer, StatusTable, LinkButton, Header, SubmitBar, CardHeader } from "@nudmcdgnpm/digit-ui-react-components";
+import {DisplayPhotos} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { PreApprovedPlanService } from "../../../../libraries/src/services/elements/PREAPPROVEDPLAN";
 import  usePreApprovedSearch  from "../../../../libraries/src/hooks/obps/usePreApprovedSearch";
 import { useTranslation } from "react-i18next";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { Link, useParams,  } from "react-router-dom";
 import useEstimateDetails from "../../../../libraries/src/hooks/obps/useEstimateDetails";
 import Timeline from "../components/Timeline";
 const BuildingPlanScrutiny = ({ t, config, onSelect, formData, isShowToast, isSubmitBtnDisable, setIsShowToast }) => {
@@ -61,18 +61,21 @@ const BuildingPlanScrutiny = ({ t, config, onSelect, formData, isShowToast, isSu
         setMandatoryFiledsError("");
     }
   };
-  useEffect(async () => {
-    if (preApprovedResponse?.data!==undefined) {
-      const fileStoreIds = preApprovedResponse?.data.flatMap(item =>
-        item.documents
-          .filter(doc => doc?.additionalDetails?.fileName?.includes(".jpg"))
-          .map(doc => doc?.fileStoreId)
-      );
-       const thumbnails = fileStoreIds ? await getThumbnails(fileStoreIds, tenantId) : null;
-       
-      setImagesToShowBelowComplaintDetails(thumbnails);
-    }
-  }, [preApprovedResponse]);
+  useEffect(() => {
+    const fetchThumbnails = async () => {
+      if (preApprovedResponse?.data!==undefined) {
+        const fileStoreIds = preApprovedResponse?.data.flatMap(item =>
+          item.documents
+            .filter(doc => doc?.additionalDetails?.fileName?.includes(".jpg"))
+            .map(doc => doc?.fileStoreId)
+        );
+         const thumbnails = fileStoreIds && fileStoreIds.length > 0 ? await getThumbnails(fileStoreIds, tenantId) : null;
+         
+        setImagesToShowBelowComplaintDetails(thumbnails);
+      }
+    };
+    fetchThumbnails();
+  }, [preApprovedResponse?.data]);
 
   const clearForm = () => {
     setIsPlanApproved(null);
@@ -181,7 +184,7 @@ const getDetailsRow = (estimateDetails) => {
   }
   const ActionButton = ({ label, jumpTo }) => {
     const { t } = useTranslation();
-    const history = useHistory();
+    const navigate = Digit.Hooks.useCustomNavigate();
     function routeTo() {
       location.href = jumpTo;
     }
@@ -324,7 +327,7 @@ const getDetailsRow = (estimateDetails) => {
           {imagesToShowBelowComplaintDetails?.thumbs ? (
             <div>
               <CardLabel style={{ marginTop: '18px', fontWeight: 'bolder', marginBottom: "15px" }}>{t("")}</CardLabel>
-              <DisplayPhotosnew srcs={imagesToShowBelowComplaintDetails} onClick={(source, index) => zoomImageWrapper(source, index)} />
+              <DisplayPhotos srcs={imagesToShowBelowComplaintDetails.thumbs} drawingNos={imagesToShowBelowComplaintDetails.drawingNo} onClick={(source, index) => zoomImageWrapper(source, index)} />
             </div>
           ) : null}
           {preApprovedResponse?.data && preApprovedResponse?.data.length===0 ? (

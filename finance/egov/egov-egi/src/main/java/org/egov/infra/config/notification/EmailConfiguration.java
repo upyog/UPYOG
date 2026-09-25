@@ -55,6 +55,16 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.Properties;
 
+/**
+ * LTS Migration Fix (Spring 6 / JDK 17): SMTP sender used by
+ * {@link org.egov.infra.notification.service.EmailService}.
+ * <p>
+ * {@code javax.mail} was replaced with
+ * {@code jakarta.mail:jakarta.mail-api} plus the Angus Mail implementation.
+ * {@link JavaMailSenderImpl} still uses the same property keys; only the
+ * mail runtime on the classpath changed.
+ * </p>
+ */
 @Configuration
 public class EmailConfiguration {
 

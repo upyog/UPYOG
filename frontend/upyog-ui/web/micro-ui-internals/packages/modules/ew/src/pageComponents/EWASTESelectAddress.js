@@ -1,4 +1,4 @@
-import { CardLabel, CardLabelError, Dropdown, FormStep, LabelFieldPair, RadioOrSelect } from "@upyog/digit-ui-react-components";
+import { CardLabel, CardLabelError, Dropdown, FormStep, LabelFieldPair, RadioOrSelect } from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -165,15 +165,15 @@ const EWASTESelectAddress = ({ t, config, onSelect, userType, formData, setError
             name={"city"}
             defaultValue={cities?.length === 1 ? cities[0] : selectedCity}
             control={control}
-            render={(props) => (
+            render={({ field }) => (
               <Dropdown
                 className="form-field"
-                selected={props.value}
+                selected={field.value}
                 disable={isEditAddress ? isEditAddress : cities?.length === 1}
                 option={cities}
-                select={props.onChange}
+                select={field.onChange}
                 optionKey="code"
-                onBlur={props.onBlur}
+                onBlur={field.onBlur}
                 t={t}
               />
             )}
@@ -186,13 +186,13 @@ const EWASTESelectAddress = ({ t, config, onSelect, userType, formData, setError
             name="locality"
             defaultValue={null}
             control={control}
-            render={(props) => (
+            render={({ field }) => (
               <Dropdown
                 className="form-field"
-                selected={props.value}
+                selected={field.value}
                 option={localities}
-                select={props.onChange}
-                onBlur={props.onBlur}
+                select={field.onChange}
+                onBlur={field.onBlur}
                 optionKey="i18nkey"
                 t={t}
                 disable={isEditAddress ? isEditAddress : false}

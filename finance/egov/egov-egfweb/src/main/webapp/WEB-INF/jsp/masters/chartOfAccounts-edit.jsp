@@ -152,34 +152,28 @@
 					<td width="20%" class="bluebox">&nbsp;</td>
 					<td width="10%" class="bluebox"><strong><s:text
 								name="chartOfAccount.functionRequired" />:</strong></td>
-					<td width="22%" class="bluebox"><s:if
-							test="%{getFunctionReqd() == true}">
-							<s:checkbox name="functionRequired" value="functionReqd"
-								checked="checked"></s:checkbox>
-						</s:if> <s:else>
-							<s:checkbox name="functionRequired" value="functionReqd"></s:checkbox>
-						</s:else></td>
+					<td width="22%" class="bluebox">
+						<%-- LTS Migration Fix (Struts 7): use fieldValue="true" and action
+						     boolean for checked state. Old value="functionReqd" broke submit/bind. --%>
+						<s:checkbox name="functionRequired" fieldValue="true"
+							value="%{functionRequired}" />
+					</td>
 					<td width="10%" class="bluebox"><strong><s:text
 								name="chartOfAccount.budgetRequired" />:</strong></td>
-					<td class="bluebox"><s:if test="%{budgetCheckReq() == true}">
-							<s:checkbox name="budgetCheckRequired" value="budgetCheckReq"
-								checked="checked"></s:checkbox>
-						</s:if> <s:else>
-							<s:checkbox name="budgetCheckRequired" value="budgetCheckReq"></s:checkbox>
-						</s:else></td>
+					<td class="bluebox">
+						<s:checkbox name="budgetCheckRequired" fieldValue="true"
+							value="%{budgetCheckRequired}" />
+					</td>
 				</tr>
 				<tr>
 					<td width="20%" class="greybox">&nbsp;</td>
 
 					<td width="10%" class="greybox"><strong><s:text
 								name="chartOfAccount.activeForPosting" />:</strong></td>
-					<td class="greybox"><s:if
-							test="%{getIsActiveForPosting() == true}">
-							<s:checkbox name="activeForPosting" value="isActiveForPosting"
-								checked="checked"></s:checkbox>
-						</s:if> <s:else>
-							<s:checkbox name="activeForPosting" value="isActiveForPosting"></s:checkbox>
-						</s:else></td>
+					<td class="greybox">
+						<s:checkbox name="activeForPosting" fieldValue="true"
+							value="%{activeForPosting}" />
+					</td>
 
 				</tr>
 			</table>

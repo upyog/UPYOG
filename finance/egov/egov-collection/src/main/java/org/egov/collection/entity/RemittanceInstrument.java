@@ -47,7 +47,8 @@
  */
 package org.egov.collection.entity;
 
-import javax.persistence.Transient;
+// Migrated javax.persistence.Transient annotation to jakarta.persistence namespace
+import jakarta.persistence.Transient;
 
 import org.egov.infra.microservice.models.Instrument;
 import org.egov.infstr.models.BaseModel;

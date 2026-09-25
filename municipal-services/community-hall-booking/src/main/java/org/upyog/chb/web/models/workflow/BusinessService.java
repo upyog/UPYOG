@@ -35,7 +35,6 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 @ToString
-//@EqualsAndHashCode(of = {"tenantId","businessService"})
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BusinessService   {

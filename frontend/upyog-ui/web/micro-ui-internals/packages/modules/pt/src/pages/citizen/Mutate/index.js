@@ -1,20 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
+import { Route, useLocation,  Routes, Navigate } from "react-router-dom";
 import { newConfigMutate } from "../../../config/Mutate/config";
+import { useQueryClient } from "@tanstack/react-query";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 
 import { useTranslation } from "react-i18next";
 import CheckPage from "./CheckPage";
 
 const MutationCitizen = (props) => {
   const { t } = useTranslation();
-  const match = useRouteMatch();
+  const match = Digit.Hooks.useModuleBasePath();
   const { pathname } = useLocation();
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PT_MUTATE_PROPERTY", {});
-  const history = useHistory();
+  const [ackData, setAckData, clearAckData] = Digit.Hooks.useSessionStorage("PT_MUTATE_PROPERTY_RESPONSE", null);
+  const [ackError, setAckError, clearAckError] = Digit.Hooks.useSessionStorage("PT_MUTATE_PROPERTY_RESPONSE_ERROR", null);
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [submit, setSubmit] = useState(false);
   const [formData, setFormData] = useState(null);
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
+  const queryClient = useQueryClient();
+  const mutation = Digit.Hooks.pt.usePropertyAPI(tenantId, false);
 
   const { data: mutationDocs, isLoading } = Digit.Hooks.pt.useMDMS(Digit.ULBService.getStateId(), "PropertyTax", "MutationDocuments");
 
@@ -48,12 +54,12 @@ const MutationCitizen = (props) => {
     if (!activeRouteObj.nextStep) {
       setSubmit(true);
     } else if (typeof activeRouteObj.nextStep === "string") {
-      if (skipStep) history.replace(`${pathArray.join("/")}/${activeRouteObj.nextStep}${queryString}`);
-      else history.push(`${pathArray.join("/")}/${activeRouteObj.nextStep}${queryString}`);
+      if (skipStep) navigate(`${pathArray.join("/")}/${activeRouteObj.nextStep}${queryString}`, { replace: true });
+      else navigate(`${pathArray.join("/")}/${activeRouteObj.nextStep}${queryString}`);
     } else if (typeof activeRouteObj.nextStep === "object") {
       let nextStep = activeRouteObj.nextStep[configObj?.routeKey];
-      if (skipStep) history.replace(`${pathArray.join("/")}/${nextStep}${queryString}`);
-      else history.push(`${pathArray.join("/")}/${nextStep}${queryString}`);
+      if (skipStep) navigate(`${pathArray.join("/")}/${nextStep}${queryString}`, { replace: true });
+      else navigate(`${pathArray.join("/")}/${nextStep}${queryString}`);
     }
   }
 
@@ -63,7 +69,7 @@ const MutationCitizen = (props) => {
     }
   }, [submit]);
 
-  const handleSubmit = () => {
+  const buildMutationPayload = (params, mutationDocs) => {
     const originalProperty = params.searchResult.property;
     const { additionalDetails, ownershipCategory, addressProof, transferReasonProof } = params;
     const ownersArray = ownershipCategory?.code.includes("INDIVIDUAL") ? params.Owners : params.owners;
@@ -157,52 +163,89 @@ const MutationCitizen = (props) => {
     } else {
       data.Property.institution=null;
     }
+    return data;
+  };
+
+  const handleSubmit = () => {
+    const data = buildMutationPayload(params, mutationDocs);
     setFormData(data);
   };
 
   useEffect(() => {
-    if (formData) history.push(`${match.path}/check`);
+    if (formData) navigate(`check`);
   }, [formData]);
 
   const mutateProperty = () => {
-    history.push(`${match.path}/acknowledgement`);
+    if (mutation.isPending) return;
+    let payload = formData;
+    if (!payload) {
+      payload = buildMutationPayload(params, mutationDocs);
+    }
+    mutation.mutate(payload, {
+      onSuccess: (responseData) => {
+        setAckData(responseData);
+        setAckError(null);
+        navigate(`acknowledgement`);
+      },
+      onError: (err) => {
+        setAckData(null);
+        setAckError(err);
+        navigate(`acknowledgement`);
+      }
+    });
   };
 
   const handleSkip = () => {};
   config.indexRoute = "search-property";
+
+  const onSuccess = () => {
+    clearParams();
+    clearAckData();
+    clearAckError();
+    queryClient.invalidateQueries("PT_MUTATE_PROPERTY");
+    sessionStorage.setItem("propertyInitialObject", JSON.stringify({}));
+    sessionStorage.setItem("pt-property", JSON.stringify({}));
+  };
+
+  if (isLoading || mutation.isPending) {
+    return <Loader />;
+  }
+
   const PTAcknowledgement = Digit?.ComponentRegistryService?.getComponent("PTAcknowledgement");
   return (
     <React.Fragment>
-      <Switch>
+      <Routes>
         {config.map((routeObj, index) => {
           const { component } = routeObj;
           const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
           return (
-            <Route path={`${match.path}/${routeObj.route}`} key={index}>
-              {Component ? (
-                <Component config={routeObj} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} clearParams={() => clearParams()} />
-              ) : (
-                <div>Component not found</div>
-              )}
-            </Route>
+            <Route
+              path={`${routeObj.route}/*`}
+              key={index}
+              element={
+                Component ? (
+                  <Component config={routeObj} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} clearParams={() => clearParams()} />
+                ) : (
+                  <div>Component not found</div>
+                )
+              }
+            />
           );
         })}
-        <Route path={`${match.path}/check`}>
-          <CheckPage onSubmit={mutateProperty} value={params} />
-        </Route>
-        <Route path={`${match.path}/acknowledgement`}>
-          <PTAcknowledgement
-            data={formData}
-            onSuccess={() => {
-              clearParams();
-              setFormData(null);
-            }}
-          />
-        </Route>
-        <Route>
-          <Redirect to={`${match.path}/${config.indexRoute}`} />
-        </Route>
-      </Switch>
+        <Route path={`check/*`} element={<CheckPage onSubmit={mutateProperty} value={params} />} />
+        <Route
+          path={`acknowledgement/*`}
+          element={
+            <PTAcknowledgement
+              ackData={ackData}
+              isPending={mutation.isPending}
+              error={ackError}
+              onSuccess={onSuccess}
+            />
+          }
+        />
+        <Route path="*" element={<Navigate to={`${config.indexRoute}`} replace />} />
+      </Routes>
     </React.Fragment>
   );
 };

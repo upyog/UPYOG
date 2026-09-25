@@ -1338,4 +1338,40 @@
   margin: 0 5px 16px;
   display: inline-block;
 }
+/* Parvesh  */
 
+.registration-form {
+  align-items: center ;
+  display: flex;
+}
+
+.registration-form.default {
+  margin-left: 12px;
+}
+
+.registration-form.compact {
+  margin-left: -4px;
+}
+
+.bread-crumb {
+  display: flex;
+}
+.bread-crumb-compact {
+  margin: 0 0 4px;
+  color: #000000;
+}
+/* End pages/employee/index */
+
+/* pagesComponents/NewAsset */
+.location-icon {
+  width: 16px;
+  border: none;
+}
+/* END pagesComponents/NewAsset */
+
+.error-message {
+  width: 70%;
+  margin-left: 30%;
+  font-size: 12px;
+  margin-top: -21px;
+}

@@ -1,0 +1,57 @@
+curl --location 'http://localhost:8055/mdms-v2/schema/v1/_create' \
+--header 'Content-Type: application/json' \
+--data '{
+  "RequestInfo": {
+    "apiId": "Rainmaker",
+    "ver": ".01",
+    "ts": "",
+    "action": "_create",
+    "did": "1",
+    "key": "",
+    "msgId": "20170310130900|en_IN",
+    "authToken": "{{authToken}}",
+    "userInfo": {
+      "id": 2038,
+      "uuid": "677300e7-2ff3-4216-a3dc-c2cbb0d63d31",
+      "userName": "MCS1",
+      "name": "Vishal",
+      "mobileNumber": "7895875858",
+      "emailId": "",
+      "locale": null,
+      "type": "EMPLOYEE",
+      "active": true,
+      "tenantId": "pg.citya",
+      "permanentCity": null
+    }
+  },
+  "SchemaDefinition": {
+    "tenantId": "pg",
+    "code": "Estate.AssetType",
+    "description": "Estate Asset Type Master",
+    "isActive": true,
+    "definition": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "x-unique": [
+        "code"
+      ],
+      "required": [
+        "code",
+        "name",
+        "active"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}'

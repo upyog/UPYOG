@@ -1,8 +1,8 @@
-import { Loader } from "@upyog/digit-ui-react-components";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { pdfDocumentName, pdfDownloadLink } from "../utils";
-import "../css/tl-inline-auto.css";
+
 const PDFSvg = ({
   width = 20,
   height = 20,

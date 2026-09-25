@@ -41,12 +41,12 @@ public class CndDetails implements CommonDetailsMapper {
 
         // Extract address
         JsonNode address = cndDetailNode.path("addressDetail");
-        String fullAddress = String.format("%s, %s, %s, %s",
+        String fullAddress = CommonDetailUtil.normalizeCommaSeparatedAddress(String.format("%s, %s, %s, %s",
                 address.path("addressLine1").asText(""),
                 address.path("locality").asText(""),
                 address.path("city").asText(""),
                 address.path("pinCode").asText("")
-        ).replaceAll("^,\\s*|,\\s*$", "").replaceAll(",\\s*,", ",");
+        ));
 
 
         if (!"APPROVED".equalsIgnoreCase(status)) {

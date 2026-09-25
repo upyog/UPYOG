@@ -1,4 +1,7 @@
-import { FormComposer, Row, StatusTable, Toast, UploadFile } from "@upyog/digit-ui-react-components";
+import {
+  FormComposer, Row, StatusTable, Toast,
+  UploadFile
+} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import { useForm } from "react-hook-form";
 import "../../css/pt-inline-auto.css";

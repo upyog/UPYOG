@@ -48,10 +48,8 @@
   ~
   --%>
 
-{ "ResultSet": { "Result":[
-<s:iterator var="s" value="budgets" status="status">
-    {"Text":"<s:property value="%{name}" />",
-    "Value":"<s:property value="%{id}" />"
-    }<s:if test="!#status.last">,</s:if>
-</s:iterator>
-] } }
+<%--
+  LTS Migration Fix (Struts 7 OGNL / Hibernate 6): do not read Budget.name via
+  OGNL. ajaxLoadBudget copies id/name into maps; use #s['Text'] / #s['Value']
+  like common-bank.jsp so blank scattered <option> rows are not rendered.
+--%>{ "ResultSet": { "Result":[<s:iterator var="s" value="budgetDropdownItems" status="status">{"Text":"<s:property value="%{#s['Text']}" />","Value":"<s:property value="%{#s['Value']}" />"}<s:if test="!#status.last">,</s:if></s:iterator>] } }

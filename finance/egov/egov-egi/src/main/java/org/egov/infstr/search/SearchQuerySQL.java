@@ -50,7 +50,8 @@ package org.egov.infstr.search;
 
 import org.egov.infra.persistence.utils.Page;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Query;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.query.Query;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -110,11 +111,11 @@ public class SearchQuerySQL implements SearchQuery {
      * @return The created Query object
      */
     private Query getSQLQueryWithParams(final PersistenceService persistenceService, final String query) {
-        final Query q = persistenceService.getSession().createSQLQuery(query);
+        final NativeQuery<?> q = persistenceService.getSession().createNativeQuery(query,Object[].class);
 
         if (this.params != null && this.params.length > 0) {
             for (int index = 0; index < this.params.length; index++) {
-                q.setParameter(index, this.params[index]);
+                q.setParameter(index + 1, this.params[index]); //index+1 — Native SQL 1-based hai
             }
         }
         return q;

@@ -1,5 +1,5 @@
 import React from "react";
-import "../css/pt-inline-auto.css";
+
 const ArrowLeft = ({
   className
 }) => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" className={className} width="19px">

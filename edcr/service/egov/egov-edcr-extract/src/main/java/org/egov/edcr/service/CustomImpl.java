@@ -24,7 +24,7 @@ public class CustomImpl {
     @Autowired
     private ApplicationContext applicationContext;
     /*
-     * @Autowired private CityService cityService;
+     * @Autowired private ICityService cityService;
      */
 
     public Map<String, String> getCityDetails() {

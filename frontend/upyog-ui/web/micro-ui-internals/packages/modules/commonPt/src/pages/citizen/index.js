@@ -1,6 +1,6 @@
-import { AppContainer, BackButton, PrivateRoute } from "@upyog/digit-ui-react-components";
+import { AppContainer, BackButton, PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
-import { Route, Switch, useRouteMatch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import CreateProperty from "./Create";
 import SearchPropertyComponent from "./SearchProperty";
 import SearchResultsComponent from "./SearchResults";
@@ -9,24 +9,20 @@ import CitizenOtp from "./Otp";
 import ViewProperty from "../pageComponents/ViewProperty";
 
 const App = ({ stateCode }) => {
-  const { path, url, ...match } = useRouteMatch();
+  const { path, url, ...match } = Digit.Hooks.useModuleBasePath();
   return (
-    <span className={"pt-citizen"} style={{width:"100%"}}>
-      <Switch>
-        <AppContainer>
-          <BackButton>Back</BackButton>
-          <Route path={`${path}/property/citizen-search`} component={SearchPropertyComponent} />
-          <Route path={`${path}/property/search-results`}>
-            <SearchResultsComponent stateCode={stateCode} />
-          </Route>
-          <Route path={`${path}/property/citizen-otp`}>
-            <CitizenOtp stateCode={stateCode} />{" "}
-          </Route>
-          <PrivateRoute path={`${path}/property/link-success/:propertyIds`} component={PropertyLinkSuccess}></PrivateRoute>
-          <PrivateRoute path={`${path}/property/new-application`} component={CreateProperty} />
-          <PrivateRoute path={`${path}/view-property`} component={() => <ViewProperty />} />
-        </AppContainer>
-      </Switch>
+    <span className={"pt-citizen"} style={{ width: "100%" }}>
+      <AppContainer>
+        <BackButton>Back</BackButton>
+        <Routes>
+          <Route path="property/citizen-search" element={<SearchPropertyComponent />} />
+          <Route path="property/search-results" element={<SearchResultsComponent stateCode={stateCode} />} />
+          <Route path="property/citizen-otp" element={<CitizenOtp stateCode={stateCode} />} />
+          <Route path="property/link-success/:propertyIds" element={<PrivateRoute><PropertyLinkSuccess /></PrivateRoute>} />
+          <Route path="property/new-application/*" element={<PrivateRoute><CreateProperty /></PrivateRoute>} />
+          <Route path="view-property" element={<PrivateRoute><ViewProperty /></PrivateRoute>} />
+        </Routes>
+      </AppContainer>
     </span>
   );
 };

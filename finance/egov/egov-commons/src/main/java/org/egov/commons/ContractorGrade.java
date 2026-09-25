@@ -56,7 +56,7 @@ import org.egov.infra.validation.regex.Constants;
 import org.egov.infstr.models.BaseModel;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Min;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;

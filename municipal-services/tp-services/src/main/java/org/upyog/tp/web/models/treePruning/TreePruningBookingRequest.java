@@ -1,4 +1,4 @@
-package org.upyog.tp.web.models.treePruning;
+package org.upyog.tp.web.models.treePruning; // NOSONAR java:S120
 
 
 import jakarta.validation.Valid;
@@ -18,6 +18,7 @@ import lombok.Setter;
 @Schema(description = "Request object for creating new booking of Tree Pruning")
 @Validated
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-19T11:17:29.419+05:30")
+@SuppressWarnings("java:S120")
 @Getter
 @Setter
 @AllArgsConstructor

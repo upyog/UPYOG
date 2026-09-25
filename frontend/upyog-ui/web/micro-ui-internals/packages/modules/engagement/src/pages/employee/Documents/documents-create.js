@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { FormComposer, Header } from "@upyog/digit-ui-react-components";
+import { FormComposer, Header, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
+import { useQueryClient } from "@tanstack/react-query";
 import { documentsFormConfig } from "../../../config/doc-create";
-import { useHistory } from "react-router-dom";
 
 const Documents = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const queryClient = useQueryClient();
+  const mutation = Digit.Hooks.engagement.useDocCreate();
   const [canSubmit, setSubmitValve] = useState(false);
 
   const onFormValueChange = (setValue, formData, formState) => {
@@ -34,8 +36,24 @@ const Documents = () => {
       tenantIds: data.ULB.map((e) => e.code),
     };
 
-    history.push("/upyog-ui/employee/engagement/documents/response", { DocumentEntity });
+    mutation.mutate(DocumentEntity, {
+      onSuccess: (responseData) => {
+        queryClient.clear();
+        navigate("/upyog-ui/employee/engagement/documents/response", {
+          state: { isSuccess: true, data: responseData },
+        });
+      },
+      onError: (error) => {
+        navigate("/upyog-ui/employee/engagement/documents/response", {
+          state: { isSuccess: false, error },
+        });
+      },
+    });
   };
+
+  if (mutation.isPending) {
+    return <Loader />;
+  }
 
   return (
     <div>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, KeyNote, Loader, SubmitBar, Header } from "@upyog/digit-ui-react-components";
+import { Card, KeyNote, Loader, SubmitBar, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import { Fragment } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link,  } from "react-router-dom";
 import { getBPAFormData } from "../../../utils/index";
 
 const getServiceType = () => {
@@ -11,7 +11,7 @@ const getServiceType = () => {
 
 const MyApplication = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [finalData, setFinalData] = useState([]);
   const [labelMessage, setLableMessage] = useState(false);
   const tenantId = Digit.ULBService.getCitizenCurrentTenant();
@@ -24,7 +24,7 @@ const MyApplication = () => {
   const requestor = userInfo?.info?.mobileNumber;
 
 
-  const { data, isLoading, revalidate } = Digit.Hooks.obps.useBPAREGSearch(Digit.ULBService.getStateId(), {}, {mobileNumber: requestor}, {cacheTime : 0});
+  const { data, isLoading, revalidate } = Digit.Hooks.obps.useBPAREGSearch(tenantId, {}, {mobileNumber: requestor}, {cacheTime : 0});
   const { data: bpaData, isLoading: isBpaSearchLoading, revalidate: bpaRevalidate } = Digit.Hooks.obps.useBPASearch(tenantId, {
     requestor,
     mobileNumber: requestor,
@@ -76,7 +76,7 @@ const MyApplication = () => {
     };
 
     sessionStorage.setItem("BPAREGintermediateValue", JSON.stringify(intermediateData));
-    history.push("/upyog-ui/citizen/obps/stakeholder/apply/stakeholder-docs-required");
+    navigate("/upyog-ui/citizen/obps/stakeholder/apply/stakeholder-docs-required");
   };
   useEffect(() => {
     return () => {
@@ -180,7 +180,7 @@ const MyApplication = () => {
                   {labelMessage ?
                     <Link to={{ pathname: `/upyog-ui/citizen/obps/bpa/${application?.applicationNo}`, state: { tenantId: '' } }}>
                       <SubmitBar label={t("TL_VIEW_DETAILS")} />
-                    </Link> : <SubmitBar label={t("BPA_COMP_WORKFLOW")} onSubmit={() => getBPAFormData(application, mdmsData, history, t)} />}
+                    </Link> : <SubmitBar label={t("BPA_COMP_WORKFLOW")} onSubmit={() => getBPAFormData(application, mdmsData, navigate, t)} />}
                 </div>
               }
               {application.status==="PENDINGPAYMENT" ? (

@@ -66,8 +66,10 @@ import org.egov.model.payment.Paymentheader;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
-import org.hibernate.Query;
-import org.hibernate.type.StringType;
+import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.type.StandardBasicTypes;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -227,9 +229,9 @@ public class OutstandingPaymentAction extends BaseFormAction {
                 .append(" and empinfo.isactive=true ")
                 .append(" and desg.DESIGNATION_NAME like :designationName")
                 .append(" and func.NAME like :functionaryName");
-        final Query query = persistenceService.getSession().createSQLQuery(qrySQL.toString())
-                .setParameter("designationName", designationName, StringType.INSTANCE)
-                .setParameter("functionaryName", functionaryName, StringType.INSTANCE);
+        final Query query = persistenceService.getSession().createNativeQuery(qrySQL.toString())
+                .setParameter("designationName", designationName, StandardBasicTypes.STRING)
+                .setParameter("functionaryName", functionaryName, StandardBasicTypes.STRING);
         final List<BigDecimal> result = query.list();
         if (result == null || result.isEmpty())
             throw new ValidationException("", "No employee with functionary -" + functionaryName + " and designation - "
@@ -245,7 +247,7 @@ public class OutstandingPaymentAction extends BaseFormAction {
     }
 
     public String getUlbName() {
-        final Query query = persistenceService.getSession().createSQLQuery("select name from companydetail");
+        final Query query = persistenceService.getSession().createNativeQuery("select name from companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);

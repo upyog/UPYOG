@@ -1,5 +1,6 @@
-
 # sv-ui-module-common
+
+This module contains shared components, hooks, and utilities used across all other modules in the SV-UI project.
 
 ## Install
 
@@ -7,62 +8,46 @@
 npm install --save @upyog/digit-ui-module-common
 ```
 
-## Limitation
+## Add as a dependency
 
-```bash
-This Package is more specific to SV-UI's can be used across mission's
+In your `frontend/sv-ui/web/package.json`, add:
+
+```json
+"@upyog/digit-ui-module-common": "^1.8.12"
 ```
 
 ## Usage
 
-After adding the dependency make sure you have this dependency in
+Navigate to your `App.js`:
 
 ```bash
-frontend/micro-ui/web/package.json
+frontend/sv-ui/web/src/App.js
 ```
-
-```json
-"@upyog/digit-ui-module-common":"^1.5.0",
-```
-
-then navigate to App.js
-
-```bash
- frontend/micro-ui/web/src/App.js
-```
-
 
 ```jsx
-/** add this import **/
-
 import { initcommonComponents } from "@upyog/digit-ui-module-common";
 
-/** inside enabledModules add this new module key **/
-
-const enabledModules = ["Payment"];
-
-/** inside init Function call this function **/
-
+// Call this during app initialization to register all common components
 const initSVUI = () => {
   initcommonComponents();
 };
 ```
 
+## Key Dependencies
 
+| Package | Version |
+|---|---|
+| react-router-dom | 6.28.0 |
+| react-redux | 7.2.8 |
+| redux | 4.1.2 |
+| react-i18next | ^14.0.0 |
+| @tanstack/react-query | ^5.0.0 |
+| react-hook-form | ^7.51.0 |
 
+## Changelog
 
-### Changelog
+See [CHANGELOG.md](./CHANGELOG.md)
 
-```bash
-1.7.1 UPYOG Base version
-```
+## Published from UPYOG Frontend
 
-
-## Maintainer
-
-- [Shivank-NIUA](https://github.com/ShivankShuklaa)
-
-
-### Published from UPYOG Frontend 
-UPYOG Frontend Repo (https://github.com/upyog/UPYOG/tree/develop)
-
+[UPYOG Frontend Repo](https://github.com/upyog/UPYOG/tree/develop)

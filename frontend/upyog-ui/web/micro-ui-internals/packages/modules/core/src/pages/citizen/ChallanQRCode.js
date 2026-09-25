@@ -1,7 +1,7 @@
 import React from "react";
-import { Card, Row, CardHeader, StatusTable } from "@upyog/digit-ui-react-components";
+import { Card, Row, CardHeader, StatusTable } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-import { useParams, useHistory, useRouteMatch } from "react-router-dom";
+import { useParams,  } from "react-router-dom";
 const ChallanQRCode = ({ path }) => {
     const { t } = useTranslation();
     const convertEpochToDate = (dateEpoch) => {

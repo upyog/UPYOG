@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { TextInput, CardLabel, LabelFieldPair, Dropdown, Loader, LocationSearch, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
+import { TextInput, CardLabel, LabelFieldPair, Dropdown, Loader, LocationSearch, CardLabelError } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { isValid, format, startOfToday } from 'date-fns';
@@ -25,7 +25,7 @@ const SelectToDate = ({ onSelect, config, formData, register, control, errors, s
             name="toDate"
             defaultValue={formData?.toDate}
             rules={{ required: true, validate: { isValidDate: isValidDate }}}
-            render={({ onChange, value }) => <TextInput type="date" isRequired={true} onChange={onChange} defaultValue={value} />}
+            render={({ field }) => <TextInput type="date" isRequired={true} onChange={field.onChange} defaultValue={field.value} />}
           />
           {errors && errors?.toDate && errors?.toDate?.type === "required" && <CardLabelError>{t(`EVENTS_TO_DATE_ERROR_REQUIRED`)}</CardLabelError>}
           {errors && errors?.toDate && errors?.toDate?.type === "isValidDate" && <CardLabelError>{t(`EVENTS_TO_DATE_ERROR_INVALID`)}</CardLabelError>}

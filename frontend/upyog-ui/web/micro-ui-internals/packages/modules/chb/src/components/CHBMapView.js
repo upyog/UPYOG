@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from "react-i18next";
-import { useHistory } from 'react-router-dom';
-import { CardLabel,SubmitBar, Dropdown } from '@upyog/digit-ui-react-components';
+
+import { CardLabel,SubmitBar, Dropdown } from '@nudmcdgnpm/digit-ui-react-components';
 
 
 const CHBMapView = () => {
@@ -10,7 +10,7 @@ const CHBMapView = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [inputValue, setInputValue] = useState('');
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   const geoJsonData = {
     "type": "FeatureCollection",
@@ -279,11 +279,23 @@ const CHBMapView = () => {
     // Store markers in a map for searching later
     const markerMap = new Map();
 
+    const hallIcon = window.L.icon({
+      iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+      iconRetinaUrl:
+        "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+      shadowUrl:
+        "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+    });
+
     geoJsonData.features.forEach(feature => {
       const [lng, lat] = feature.geometry.coordinates;
       const props = feature.properties;
       const distance = calculateDistance(userLocation.lat, userLocation.lng, lat, lng);
-      const marker = window.L.marker([lat, lng]).addTo(map);
+      const marker = window.L.marker([lat, lng], {
+        icon: hallIcon,
+      }).addTo(map);
 
       const popupContent = `
         <div style="position: relative; width: 300px;">
@@ -364,8 +376,15 @@ const CHBMapView = () => {
           marker.openPopup();
           break;
         }
-      }
+        }
+    } 
+    window.selectHall = (hallCode,hallId) => {
+      navigate({
+        pathname: `/upyog-ui/citizen/chb/bookHall/searchhall`,
+        selectedCommunityHall: {code: hallCode, value: hallCode, i18nKey: hallCode, communityHallId:hallId}
+      });
     }
+      
   };
 
   return (

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useRouteMatch, Switch, Route, Link } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 import { CollectPayment } from "./payment-collect";
 import { SuccessfulPayment, FailedPayment } from "./response";
 import { testForm } from "../../hoc/testForm-config";
@@ -10,7 +10,7 @@ subFormRegistry?.addSubForm("testForm", testForm);
 
 const EmployeePayment = ({ stateCode, cityCode, moduleCode }) => {
   const userType = "employee";
-  const { path: currentPath } = useRouteMatch();
+  
 
   const { t } = useTranslation();
 
@@ -23,17 +23,20 @@ const EmployeePayment = ({ stateCode, cityCode, moduleCode }) => {
       <p className="breadcrumb" style={{ marginLeft: "15px" }}>
         <Link to={`/sv-ui/employee`}>{t("ES_COMMON_HOME")}</Link>
       </p>
-      <Switch>
-        <Route path={`${currentPath}/collect/:businessService/:consumerCode`}>
-          <CollectPayment {...commonProps} basePath={currentPath} />
-        </Route>
-        <Route path={`${currentPath}/success/:businessService/:receiptNumber/:consumerCode`}>
-          <SuccessfulPayment {...commonProps} />
-        </Route>
-        <Route path={`${currentPath}/failure`}>
-          <FailedPayment {...commonProps} />
-        </Route>
-      </Switch>
+      <Routes>
+        <Route
+          path="collect/:businessService/:consumerCode"
+          element={<CollectPayment {...commonProps} basePath="/sv-ui/employee/payment" />}
+        />
+        <Route
+          path="success/:businessService/:receiptNumber/:consumerCode"
+          element={<SuccessfulPayment {...commonProps} />}
+        />
+        <Route
+          path="failure"
+          element={<FailedPayment {...commonProps} />}
+        />
+      </Routes>
     </React.Fragment>
   );
 };

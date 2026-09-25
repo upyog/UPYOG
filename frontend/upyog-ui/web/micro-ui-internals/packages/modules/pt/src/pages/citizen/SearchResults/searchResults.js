@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Header, ResponseComposer, Loader, Modal, Card, KeyNote, SubmitBar, CitizenInfoLabel } from "@upyog/digit-ui-react-components";
+import { Header, ResponseComposer, Loader, Modal, Card, KeyNote, SubmitBar, CitizenInfoLabel} from "@nudmcdgnpm/digit-ui-react-components";
 import PropTypes from "prop-types";
-import { useHistory, Link, useLocation } from "react-router-dom";
+import { Link, useLocation,  } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "../../../css/pt-inline-auto.css";
 const PropertySearchResults = ({
@@ -87,29 +87,24 @@ const PropertySearchResults = ({
     auth
   };
   const result = Digit.Hooks.pt.usePropertySearch(searchArgs);
-  const consumerCode = result?.data?.Properties?.map(a => a.propertyId).join(",");
-  let fetchBillParams = mobileNumber ? {
-    mobileNumber,
-    consumerCode
-  } : {
-    consumerCode
-  };
-  if (window.location.href.includes("/search-results")) fetchBillParams = {
-    consumerCode
-  };
-  const paymentDetails = Digit.Hooks.useFetchBillsForBuissnessService({
-    businessService: "PT",
-    ...fetchBillParams,
-    tenantId: city
-  }, {
-    enabled: consumerCode ? true : false,
-    retry: false
-  });
-  const history = useHistory();
-  const proceedToPay = data => {
-    history.push(`/upyog-ui/citizen/payment/my-bills/PT/${data.property_id}`, {
-      tenantId
-    });
+  const consumerCode = result?.data?.Properties?.map((a) => a.propertyId).join(",");
+
+  let fetchBillParams = mobileNumber ? { mobileNumber, consumerCode } : { consumerCode };
+
+  if (window.location.href.includes("/search-results")) fetchBillParams = { consumerCode };
+
+  const paymentDetails = Digit.Hooks.useFetchBillsForBuissnessService(
+    { businessService: "PT", ...fetchBillParams, tenantId: city },
+    {
+      enabled: consumerCode ? true : false,
+      retry: false,
+    }
+  );
+
+  const navigate = Digit.Hooks.useCustomNavigate();
+
+  const proceedToPay = (data) => {
+    navigate(`/upyog-ui/citizen/payment/my-bills/PT/${data.property_id}`, { tenantId });
   };
   if (paymentDetails.isLoading || result.isLoading) {
     return <Loader />;
@@ -124,13 +119,8 @@ const PropertySearchResults = ({
       let property = result?.data?.Properties?.filter?.(e => e.propertyId === data.property_id)[0];
       if (Number(data.total_due) > 0) {
         setShowModal(data);
-      } else onSelect(config.key, {
-        data,
-        property
-      });
-    } else history.push(`/upyog-ui/citizen/payment/my-bills/PT/${data.property_id}`, {
-      tenantId
-    });
+      } else onSelect(config.key, { data, property });
+    } else navigate(`/upyog-ui/citizen/payment/my-bills/PT/${data.property_id}`, { tenantId });
   };
   const payment = {};
   paymentDetails?.data?.Bill?.forEach(element => {

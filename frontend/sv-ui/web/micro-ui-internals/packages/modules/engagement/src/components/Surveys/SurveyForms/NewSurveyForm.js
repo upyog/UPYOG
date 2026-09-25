@@ -1,5 +1,4 @@
-import { DatePicker, Dropdown, CheckBox, TextArea, TextInput, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
-import { DustbinIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { DatePicker, Dropdown, CheckBox, TextArea, TextInput, CardLabelError, DustbinIcon} from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import TimePicker from "react-time-picker";
@@ -105,7 +104,7 @@ const NewSurveyForm = ({ t, index, questionStatement, type, uuid, qorder, requir
             placeholder={t("LONG_ANSWER_TYPE")}
             disabled={isInputDisabled}
             name={"longAnsDescription"}
-            inputRef={register({
+            {...register("longAnsDescription",{
               maxLength: {
                 value: 500,
                 message: t("EXCEEDS_500_CHAR_LIMIT"),
@@ -167,7 +166,7 @@ const NewSurveyForm = ({ t, index, questionStatement, type, uuid, qorder, requir
                 placeholder={t("SHORT_ANSWER_TYPE")} 
                 name={"shortAnsDescription"}
                 disabled={isInputDisabled}
-                inputRef={register({
+                {...register("shortAnsDescription",{
                   maxLength: {
                     value: 200,
                     message: t("EXCEEDS_200_CHAR_LIMIT"),
@@ -187,7 +186,6 @@ const NewSurveyForm = ({ t, index, questionStatement, type, uuid, qorder, requir
           <div style={{width: "75%"}}>
             <TextInput
               placeholder={t("CS_COMMON_TYPE_QUESTION")}
-              //value={t(Digit.Utils.locale.getTransformedLocale(surveyQuestionConfig.questionStatement))}
               value={surveyQuestionConfig.questionStatement}
               onChange={(ev) => {
                 setSurveyQuestionConfig((prevState) => ({ ...prevState, questionStatement: ev.target.value }));
@@ -195,7 +193,8 @@ const NewSurveyForm = ({ t, index, questionStatement, type, uuid, qorder, requir
               textInputStyle={{width: "100%"}}
               name={`QUESTION_SURVEY_${index}`}
               disable={disableInputs}
-              inputRef={register({
+
+              {...register(`QUESTION_SURVEY_${index}`,{
                 required: t("ES_ERROR_REQUIRED"),
                 maxLength: {
                   value: 100,

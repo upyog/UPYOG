@@ -1,0 +1,112 @@
+{
+	"info": {
+		"_postman_id": "auto-ws-services-calculation.WCBillingSlab",
+		"name": "MDMS v2 Bulk Data",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25737272"
+	},
+	"item": [
+		{
+			"name": "MDMS v2 CreateData",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var data=[{\"id\": \"1\", \"buildingType\": \"RESIDENTIAL\", \"connectionType\": \"Metered\", \"calculationAttribute\": \"Water consumption\", \"minimumCharge\": 100, \"slabs\": [{\"from\": 0, \"to\": 10, \"charge\": 2, \"meterCharge\": 50}, {\"from\": 10, \"to\": 20, \"charge\": 2.5, \"meterCharge\": 50}, {\"from\": 20, \"to\": 30, \"charge\": 8, \"meterCharge\": 150}, {\"from\": 30, \"to\": 40, \"charge\": 12, \"meterCharge\": 150}, {\"from\": 40, \"to\": 1000000000, \"charge\": 15, \"meterCharge\": 150}]}, {\"id\": 2, \"buildingType\": \"NONRESIDENTIAL\", \"calculationAttribute\": \"Water consumption\", \"connectionType\": \"Metered\", \"minimumCharge\": 200, \"slabs\": [{\"from\": 0, \"to\": 10, \"charge\": 13.31, \"meterCharge\": 532.4}, {\"from\": 10, \"to\": 25, \"charge\": 26.62, \"meterCharge\": 798.6}, {\"from\": 25, \"to\": 50, \"charge\": 66.55, \"meterCharge\": 931.7}, {\"from\": 50, \"to\": 100, \"charge\": 106.48, \"meterCharge\": 1064.8}, {\"from\": 100, \"to\": 1000000000, \"charge\": 133.1, \"meterCharge\": 1197.9}]}, {\"id\": 3, \"buildingType\": \"Commercial and Government\", \"calculationAttribute\": \"Water consumption\", \"connectionType\": \"Metered\", \"minimumCharge\": 200, \"slabs\": [{\"from\": 0, \"to\": 10, \"charge\": 13.31, \"meterCharge\": 532.4}, {\"from\": 10, \"to\": 25, \"charge\": 26.62, \"meterCharge\": 798.6}, {\"from\": 25, \"to\": 50, \"charge\": 66.55, \"meterCharge\": 931.7}, {\"from\": 50, \"to\": 100, \"charge\": 106.48, \"meterCharge\": 1064.8}, {\"from\": 100, \"to\": 1000000000, \"charge\": 133.1, \"meterCharge\": 1197.9}]}, {\"id\": \"4\", \"buildingType\": \"Partly Commercial\", \"calculationAttribute\": \"Water consumption\", \"connectionType\": \"Metered\", \"minimumCharge\": 150, \"slabs\": [{\"from\": 0, \"to\": 10, \"charge\": 8, \"meterCharge\": 250}, {\"from\": 10, \"to\": 15, \"charge\": 25, \"meterCharge\": 250}, {\"from\": 15, \"to\": 1000000000, \"charge\": 40, \"meterCharge\": 250}]}, {\"id\": \"5\", \"buildingType\": \"RESIDENTIAL\", \"calculationAttribute\": \"No. of taps\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 100, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 100}]}, {\"id\": \"6\", \"buildingType\": \"RESIDENTIAL\", \"calculationAttribute\": \"Pipe Size\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 100, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 150}]}, {\"id\": \"7\", \"buildingType\": \"NONRESIDENTIAL\", \"calculationAttribute\": \"Pipe Size\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 200, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 250}]}, {\"id\": \"8\", \"buildingType\": \"NONRESIDENTIAL\", \"calculationAttribute\": \"No. of taps\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 200, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 300}]}, {\"id\": \"9\", \"buildingType\": \"Commercial\", \"calculationAttribute\": \"Pipe Size\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 200, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 250}]}, {\"id\": \"10\", \"buildingType\": \"Commercial\", \"calculationAttribute\": \"No. of taps\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 200, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 300}]}, {\"id\": \"11\", \"buildingType\": \"Government\", \"calculationAttribute\": \"No. of taps\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 300, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 350}]}, {\"id\": \"12\", \"buildingType\": \"Government\", \"calculationAttribute\": \"Pipe Size\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 300, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 250}]}, {\"id\": \"13\", \"buildingType\": \"Partly Commercial\", \"calculationAttribute\": \"No. of taps\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 150, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 200}]}, {\"id\": \"14\", \"buildingType\": \"Partly Commercial\", \"calculationAttribute\": \"Pipe Size\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 150, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 150}]}, {\"id\": \"15\", \"buildingType\": \"RESIDENTIAL\", \"calculationAttribute\": \"Flat\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 250, \"slabs\": []}, {\"id\": \"16\", \"buildingType\": \"NONRESIDENTIAL\", \"calculationAttribute\": \"Flat\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 550, \"slabs\": []}, {\"id\": \"17\", \"buildingType\": \"Commercial\", \"calculationAttribute\": \"Flat\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 550, \"slabs\": []}, {\"id\": \"18\", \"buildingType\": \"Government\", \"calculationAttribute\": \"Flat\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 650, \"slabs\": []}, {\"id\": \"19\", \"buildingType\": \"Partly commercial\", \"calculationAttribute\": \"Flat\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 350, \"slabs\": []}, {\"id\": \"20\", \"buildingType\": \"MIXED\", \"connectionType\": \"Metered\", \"calculationAttribute\": \"Water consumption\", \"minimumCharge\": 100, \"slabs\": [{\"from\": 0, \"to\": 10, \"charge\": 2, \"meterCharge\": 50}, {\"from\": 10, \"to\": 20, \"charge\": 2.5, \"meterCharge\": 50}, {\"from\": 20, \"to\": 30, \"charge\": 8, \"meterCharge\": 150}, {\"from\": 30, \"to\": 40, \"charge\": 12, \"meterCharge\": 150}, {\"from\": 40, \"to\": 1000000000, \"charge\": 15, \"meterCharge\": 150}]}, {\"id\": \"21\", \"buildingType\": \"MIXED\", \"calculationAttribute\": \"No. of taps\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 100, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 100}]}, {\"id\": \"22\", \"buildingType\": \"MIXED\", \"calculationAttribute\": \"Pipe Size\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 100, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 150}]}, {\"id\": \"23\", \"buildingType\": \"MIXED\", \"calculationAttribute\": \"Flat\", \"connectionType\": \"Non Metered\", \"minimumCharge\": 250, \"slabs\": []}, {\"id\": \"24\", \"buildingType\": \"RESIDENTIAL\", \"calculationAttribute\": \"No. of taps\", \"connectionType\": \"Bulk-supply\", \"minimumCharge\": 0, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 0}]}, {\"id\": \"25\", \"buildingType\": \"RESIDENTIAL\", \"calculationAttribute\": \"Pipe Size\", \"connectionType\": \"Bulk-supply\", \"minimumCharge\": 0, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 0}]}, {\"id\": \"26\", \"buildingType\": \"NONRESIDENTIAL\", \"calculationAttribute\": \"Pipe Size\", \"connectionType\": \"Bulk-supply\", \"minimumCharge\": 0, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 0}]}, {\"id\": \"27\", \"buildingType\": \"NONRESIDENTIAL\", \"calculationAttribute\": \"No. of taps\", \"connectionType\": \"Bulk-supply\", \"minimumCharge\": 0, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 0}]}, {\"id\": \"28\", \"buildingType\": \"Commercial\", \"calculationAttribute\": \"Pipe Size\", \"connectionType\": \"Bulk-supply\", \"minimumCharge\": 0, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 0}]}, {\"id\": \"29\", \"buildingType\": \"Commercial\", \"calculationAttribute\": \"No. of taps\", \"connectionType\": \"Bulk-supply\", \"minimumCharge\": 0, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 0}]}, {\"id\": \"30\", \"buildingType\": \"Government\", \"calculationAttribute\": \"No. of taps\", \"connectionType\": \"Bulk-supply\", \"minimumCharge\": 0, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 0}]}, {\"id\": \"31\", \"buildingType\": \"Government\", \"calculationAttribute\": \"Pipe Size\", \"connectionType\": \"Bulk-supply\", \"minimumCharge\": 0, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 0}]}, {\"id\": \"32\", \"buildingType\": \"Partly Commercial\", \"calculationAttribute\": \"No. of taps\", \"connectionType\": \"Bulk-supply\", \"minimumCharge\": 0, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 0}]}, {\"id\": \"33\", \"buildingType\": \"Partly Commercial\", \"calculationAttribute\": \"Pipe Size\", \"connectionType\": \"Bulk-supply\", \"minimumCharge\": 0, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 0}]}, {\"id\": \"34\", \"buildingType\": \"RESIDENTIAL\", \"calculationAttribute\": \"Flat\", \"connectionType\": \"Bulk-supply\", \"minimumCharge\": 0, \"slabs\": []}, {\"id\": \"35\", \"buildingType\": \"NONRESIDENTIAL\", \"calculationAttribute\": \"Flat\", \"connectionType\": \"Bulk-supply\", \"minimumCharge\": 0, \"slabs\": []}, {\"id\": \"36\", \"buildingType\": \"Commercial\", \"calculationAttribute\": \"Flat\", \"connectionType\": \"Bulk-supply\", \"minimumCharge\": 0, \"slabs\": []}, {\"id\": \"37\", \"buildingType\": \"Government\", \"calculationAttribute\": \"Flat\", \"connectionType\": \"Bulk-supply\", \"minimumCharge\": 0, \"slabs\": []}, {\"id\": \"38\", \"buildingType\": \"Partly commercial\", \"calculationAttribute\": \"Flat\", \"connectionType\": \"Bulk-supply\", \"minimumCharge\": 0, \"slabs\": []}, {\"id\": \"39\", \"buildingType\": \"MIXED\", \"calculationAttribute\": \"No. of taps\", \"connectionType\": \"Bulk-supply\", \"minimumCharge\": 0, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 100}]}, {\"id\": \"40\", \"buildingType\": \"MIXED\", \"calculationAttribute\": \"Pipe Size\", \"connectionType\": \"Bulk-supply\", \"minimumCharge\": 0, \"slabs\": [{\"from\": 0, \"to\": 1000000000, \"charge\": 150}]}, {\"id\": \"41\", \"buildingType\": \"MIXED\", \"calculationAttribute\": \"Flat\", \"connectionType\": \"Bulk-supply\", \"minimumCharge\": 0, \"slabs\": []}]",
+							"",
+							"pm.collectionVariables.set(\"raw\", data);",
+							"",
+							"var obj = pm.collectionVariables.get(\"raw\");",
+							"",
+							"if(pm.globals.get(\"i\") === undefined || pm.globals.get(\"i\") === null || pm.globals.get(\"i\") === \"\") {",
+							"    pm.globals.set(\"i\", 0);",
+							"}",
+							"",
+							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.globals.get(\"i\")]))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.collectionVariables.get(\"raw\");\r",
+							"\r",
+							"var items = pm.globals.get(\"i\");\r",
+							"\r",
+							"if (items < data.length){\r",
+							"\r",
+							"    pm.globals.set(\"i\", Number(items) + 1);\r",
+							"\r",
+							"    postman.setNextRequest(\"MDMS v2 CreateData\");\r",
+							"}else{\r",
+							"    pm.globals.set(\"i\", 0);\r",
+							"    postman.setNextRequest(null)\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"RequestInfo\": {\"apiId\": \"asset-services\", \"ver\": null, \"ts\": null, \"action\": null, \"did\": null, \"key\": null, \"msgId\": \"search with from and to values\", \"authToken\": \"{{authToken}}\", \"correlationId\": null, \"userInfo\": {\"id\": \"1\", \"userName\": null, \"name\": null, \"type\": null, \"mobileNumber\": null, \"emailId\": null, \"roles\": null, \"uuid\": \"40dceade-992d-4a8f-8243-19dda76a4171\"}}, \"Mdms\": {\"tenantId\": \"pg\", \"schemaCode\": \"ws-services-calculation.WCBillingSlab\", \"data\": {{req}}, \"isActive\": true}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8055/mdms-v2/v2/_create/ws-services-calculation.WCBillingSlab",
+					"host": [
+						"localhost"
+					],
+					"port": "8055",
+					"path": [
+						"mdms-v2",
+						"v2",
+						"_create",
+						"ws-services-calculation.WCBillingSlab"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "raw",
+			"value": ""
+		},
+		{
+			"key": "req",
+			"value": ""
+		}
+	]
+}

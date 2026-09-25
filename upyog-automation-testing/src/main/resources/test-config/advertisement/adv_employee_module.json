@@ -1,0 +1,106 @@
+{
+  "moduleName": "advertisement_employee_module",
+  "description": "Advertisement employee full workflow",
+
+  "baseUrl": "${selected.url}",
+
+  "instructions": [
+
+    {
+      "stepName": "Enter Username",
+      "locatorStrategy": "NAME",
+      "locatorValue": "username",
+      "action": "TYPE",
+      "inputValue": "${selected.username}",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Enter Password",
+      "locatorStrategy": "NAME",
+      "locatorValue": "password",
+      "action": "TYPE",
+      "inputValue":"${selected.password}",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Select Employee City",
+      "locatorStrategy": "CSS",
+      "locatorValue": "div.select svg",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "0:0",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Click Continue",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Open Advertisement Search Booking",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//span[text()='Advertisement']/ancestor::div[contains(@class,'employeeCustomCard')]//*[normalize-space()='Search Bookings']",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Enter Booking Number",
+      "locatorStrategy": "NAME",
+      "locatorValue": "bookingNo",
+      "action": "TYPE_FROM_STORE",
+      "inputValue":  "APPLICATION_NO",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Click Search",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[normalize-space()='Search']",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Click TAKE ACTION",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[normalize-space()='TAKE ACTION']",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Click Cancel Advertisement Booking",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//*[contains(text(),'Cancel Advertisement Booking')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Accept Declaration Checkbox",
+      "locatorStrategy": "CSS",
+      "locatorValue": "input[type='checkbox']",
+      "action": "CHECK_LAST_CHECKBOX",
+      "inputValue": null,
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Click Final Cancel",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[normalize-space()='Cancel Advertisement Booking']",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Refresh Page",
+      "locatorStrategy": "TAGNAME",
+      "locatorValue": "body",
+      "action": "REFRESH_PAGE",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    }
+  ]
+}

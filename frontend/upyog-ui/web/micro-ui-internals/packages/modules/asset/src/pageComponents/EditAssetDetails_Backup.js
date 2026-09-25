@@ -1,38 +1,35 @@
-import { CardLabel, CardLabelError, LabelFieldPair, TextInput, Toast, Dropdown } from "@upyog/digit-ui-react-components";
-import _ from "lodash";
-import React, { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
-import "../css/asset-inline-auto.css";
-const editnewDetails = () => ({
-  key: Date.now()
-});
-const EditAssetDetails = ({
-  config,
-  onSelect,
-  formData,
-  setError,
-  clearErrors
-}) => {
-  console.log('HELLO :- ', formData);
-  const {
-    t
-  } = useTranslation();
-  const [editNewAssetDetails, seteditAssignDetails] = useState(formData?.editNewAssetDetails || [editnewDetails()]);
-  const {
-    id: applicationNo
-  } = useParams();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const {
-    data: applicationDetails
-  } = Digit.Hooks.asset.useAssetApplicationDetail(t, tenantId, applicationNo);
-  let comingDataFromAPI = applicationDetails?.applicationData?.applicationData;
-  const [focusIndex, setFocusIndex] = useState({
-    index: -1,
-    type: ""
-  });
-  useEffect(() => {
+import {
+    CardLabel,
+    CardLabelError,
+    LabelFieldPair,
+    TextInput,
+    Toast,
+    Dropdown
+    } from "@nudmcdgnpm/digit-ui-react-components";
+    import _ from "lodash";
+    import React, { useEffect, useState } from "react";
+    import { Controller, useForm } from "react-hook-form";
+    import { useTranslation } from "react-i18next";
+    import { useParams } from "react-router-dom";
+  
+    const editnewDetails = () => ({
+        
+        key: Date.now(),
+    });
+
+    const EditAssetDetails = ({ config, onSelect, formData, setError, clearErrors }) => {
+        console.log('HELLO :- ',formData);
+    const { t } = useTranslation();
+    const [editNewAssetDetails, seteditAssignDetails] = useState(formData?.editNewAssetDetails || [editnewDetails()]);
+    const { id:applicationNo } = useParams();
+    const tenantId = Digit.ULBService.getCurrentTenantId();
+    const { data: applicationDetails } = Digit.Hooks.asset.useAssetApplicationDetail(t,tenantId, applicationNo);
+    let comingDataFromAPI = applicationDetails?.applicationData?.applicationData
+
+    const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
+
+
+    useEffect(() => {
     onSelect(config?.key, editNewAssetDetails);
   }, [editNewAssetDetails]);
   const {

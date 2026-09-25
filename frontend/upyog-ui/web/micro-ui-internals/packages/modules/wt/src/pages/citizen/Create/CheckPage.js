@@ -1,23 +1,30 @@
-import { Card, CardHeader, CardSubHeader, CheckBox, LinkButton, Row, StatusTable, SubmitBar, EditIcon, GenericFileIcon } from "@upyog/digit-ui-react-components";
+import {
+  Card,
+  CardHeader,
+  CardSubHeader,
+  CheckBox,
+  LinkButton,
+  Row,
+  StatusTable,
+  SubmitBar,
+  EditIcon,
+  GenericFileIcon,
+} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+
 import { checkForNA } from "../../../utils";
 import { convertTo12HourFormat, formatDate, APPLICATION_PATH } from "../../../utils";
 
 /* Custom Component to to show all the form details filled by user. All the details are coming through the value, 
 In Parent Component,  we are passing the data as a props coming through params (data in params comes through session storage) into the value.
 */
-import "../../../css/wt-inline-auto.css";
-const ActionButton = ({
-  jumpTo
-}) => {
-  const {
-    t
-  } = useTranslation();
-  const history = useHistory();
+
+const ActionButton = ({ jumpTo }) => {
+  const { t } = useTranslation();
+  const navigate = Digit.Hooks.useCustomNavigate();
   function routeTo() {
-    history.push(jumpTo);
+    navigate(jumpTo);
   }
   return <LinkButton label={<EditIcon className="wt-auto-34" />} className="check-page-link-button" onClick={routeTo} />;
 };

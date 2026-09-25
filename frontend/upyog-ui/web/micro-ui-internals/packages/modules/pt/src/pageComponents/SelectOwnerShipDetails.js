@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { RadioOrSelect, RadioButtons, LabelFieldPair, Dropdown, CardLabel, CardLabelError, Loader } from "@upyog/digit-ui-react-components";
+import {
+  RadioOrSelect,
+  RadioButtons,
+  LabelFieldPair,
+  Dropdown,
+  CardLabel,
+  CardLabelError,
+  Loader,
+  FormStep
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
-import FormStep from "../../../../react-components/src/molecules/FormStep";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
-import "../css/pt-inline-auto.css";
+
 const SelectOwnerShipDetails = ({
   t,
   config,
@@ -130,7 +138,7 @@ const SelectOwnerShipDetails = ({
           </CardLabel>
           <Dropdown className="form-field" selected={getDropdwonForProperty(ownerShipdropDown)?.length === 1 ? getDropdwonForProperty(ownerShipdropDown)[0] : ownershipCategory} disable={getDropdwonForProperty(ownerShipdropDown)?.length === 1 || editScreen} option={getDropdwonForProperty(ownerShipdropDown)} select={selectedValue} optionKey="i18nKey" onBlur={onBlur} t={t} />
         </LabelFieldPair>
-        {formState.touched?.[config.key] ? <CardLabelError className="pt-auto-82">
+        {formState.touchedFields?.[config.key] ? <CardLabelError className="pt-auto-82">
             {formState.errors[config.key]?.message}
           </CardLabelError> : null}
       </React.Fragment>;

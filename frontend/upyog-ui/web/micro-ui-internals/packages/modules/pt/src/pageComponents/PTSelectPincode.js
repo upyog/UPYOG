@@ -1,20 +1,9 @@
-import { CardLabel, CardLabelError, FormStep, LabelFieldPair, TextInput } from "@upyog/digit-ui-react-components";
+import { CardLabel, CardLabelError, FormStep, LabelFieldPair, TextInput, GeoLocationWithDigipin } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
-import "../css/pt-inline-auto.css";
-const PTSelectPincode = ({
-  t,
-  config,
-  onSelect,
-  formData = {},
-  userType,
-  register,
-  errors,
-  setError,
-  formState,
-  clearErrors
-}) => {
+
+const PTSelectPincode = ({ t, config, onSelect, formData = {}, userType, register, errors, setError, formState, clearErrors }) => {
   const tenants = Digit.Hooks.pt.useTenants();
   const {
     pathname
@@ -24,6 +13,11 @@ const PTSelectPincode = ({
     if (presentInModifyApplication && userType === "employee") return formData?.originalData?.address?.pincode || "";
     return formData?.address?.pincode || "";
   });
+  // location and geolocation states
+  const [locationText, setLocationText] = useState("");
+  const [geoLocation, setGeoLocation] = useState(formData?.address?.geoLocation || {});
+  const [digipin, setDigipin] = useState(formData?.address?.digipin || "");
+
   let isEditProperty = formData?.isEditProperty || false;
   if (formData?.isUpdateProperty) isEditProperty = true;
   const inputs = [{
@@ -41,6 +35,25 @@ const PTSelectPincode = ({
   }];
   const [pincodeServicability, setPincodeServicability] = useState(null);
   const [error, setLocalError] = useState("");
+
+  // Generate Digipin via GeoLocationWithDigipin onChange
+  const handleGeoChange = ({ geoTagLocation, latitude, longitude, digipin: pin }) => {
+    const locationString = `${latitude}, ${longitude}`;
+    setLocationText(locationString);
+    setGeoLocation({ latitude, longitude });
+    setDigipin(pin);
+  };
+
+  const handleFetchDigipin = async (latitude, longitude) => {
+    try {
+      const res = await Digit.TPService.generateDigipin(latitude, longitude);
+      return res?.digipin || "";
+    } catch (e) {
+      console.error("Error fetching digipin in PTSelectPincode:", e);
+      return "";
+    }
+  };
+
   useEffect(() => {
     if (formData?.address?.pincode) {
       setPincode(formData.address.pincode);
@@ -63,20 +76,19 @@ const PTSelectPincode = ({
       });
     }
   }
-  const goNext = async data => {
-    const foundValue = tenants?.find(obj => obj.pincode?.find(item => item == data?.pincode));
-    if (foundValue) {
-      onSelect(config.key, {
-        pincode
-      });
+
+  const goNext = async (data) => {
+    const foundValue = tenants?.find((obj) => obj.pincode?.find((item) => item == data?.pincode));
+    if (foundValue || locationText) {
+      onSelect(config.key, { pincode, geoLocation, digipin });
     } else {
       setPincodeServicability("PT_COMMON_PINCODE_NOT_SERVICABLE");
     }
   };
   if (userType === "employee") {
     return inputs?.map((input, index) => {
-      return <React.Fragment>
-          <LabelFieldPair key={index}>
+      return <React.Fragment key={input.name || index}>
+          <LabelFieldPair key={input.name ? `field-${input.name}` : index}>
             <CardLabel className="card-label-smaller">{t(input.label)}</CardLabel>
             <div className="field">
               <TextInput key={input.name} value={pincode} onChange={onChange} {...input.validation} disable={presentInModifyApplication} autoFocus={presentInModifyApplication} />
@@ -87,14 +99,33 @@ const PTSelectPincode = ({
     });
   }
   const onSkip = () => onSelect();
-  return <React.Fragment>
-    {window.location.href.includes("/citizen") ? <Timeline currentStep={1} /> : null}
-    <FormStep t={t} config={{
-      ...config,
-      inputs
-    }} onSelect={goNext} _defaultValues={{
-      pincode
-    }} onChange={onChange} onSkip={onSkip} forcedError={t(pincodeServicability)} isDisabled={!pincode || isEditProperty}></FormStep>
-            </React.Fragment>;
+  return (
+    <React.Fragment>
+    {window.location.href.includes("/citizen") ? <Timeline currentStep={1}/> : null}
+    
+    <FormStep
+      t={t}
+      config={{ ...config, inputs }}
+      onSelect={goNext}
+      _defaultValues={{ pincode }}
+      onChange={onChange}
+      onSkip={onSkip}
+      forcedError={t(pincodeServicability)}
+      isDisabled={!pincode && !locationText || isEditProperty}
+    >
+      {/* Location Input with Fetch Button */}
+      <div style={{ marginBottom: "20px" }}>
+        <GeoLocationWithDigipin
+          t={t}
+          value={locationText}
+          onChange={handleGeoChange}
+          onFetchDigipin={handleFetchDigipin}
+          showDigipin
+          showMapLink={true}
+        />
+      </div>
+    </FormStep>
+            </React.Fragment>
+  );
 };
 export default PTSelectPincode;

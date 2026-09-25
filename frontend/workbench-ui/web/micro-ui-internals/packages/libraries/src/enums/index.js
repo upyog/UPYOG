@@ -1,7 +1,6 @@
-import Pages from "./Pages";
 import ConfigActionTypes from "./ConfigActionTypes";
 // import FormFields from "./FormFields;"
 
-const Enums = { Pages, ConfigActionTypes };
+const Enums = {  ConfigActionTypes };
 
 export default Enums;

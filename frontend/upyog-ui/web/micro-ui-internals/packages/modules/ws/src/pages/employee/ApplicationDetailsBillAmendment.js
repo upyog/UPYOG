@@ -1,4 +1,4 @@
-import { Header, MultiLink, Toast } from "@upyog/digit-ui-react-components";
+import { Header, MultiLink, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
@@ -29,6 +29,7 @@ const ApplicationDetailsBillAmendment = () => {
       enabled: applicationDetails?.processInstancesDetails?.[0]?.businessService ? true : false
     }
   });
+  const { applicationDetails: _, ...serializableDetails } = applicationDetails || {};
   workflowDetails?.data?.actionState?.nextActions?.forEach(action => {
     if (action?.action === "RE-SUBMIT") {
       let pathName = `/upyog-ui/employee/ws/bill-amendment?connectionNumber=${applicationDetails?.applicationData?.connectionNo}&tenantId=${tenantId}&isEdit=true`;
@@ -36,7 +37,7 @@ const ApplicationDetailsBillAmendment = () => {
         action: "RE-SUBMIT-APPLICATION",
         pathname: pathName,
         state: {
-          applicationDetails: applicationDetails,
+          applicationDetails: serializableDetails,
           action: "RE-SUBMIT-APPLICATION"
         }
       };

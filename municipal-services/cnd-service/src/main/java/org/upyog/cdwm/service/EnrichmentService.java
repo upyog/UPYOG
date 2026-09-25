@@ -1,12 +1,10 @@
 package org.upyog.cdwm.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.cdwm.config.CNDConfiguration;
@@ -32,14 +30,15 @@ import org.upyog.cdwm.web.models.user.User;
 @Slf4j
 public class EnrichmentService {
 
-    @Autowired
-    private CNDConfiguration config;
+    private final CNDConfiguration config;
+    private final IdGenRepository idGenRepository;
+    private final UserService userService;
 
-    @Autowired
-    private IdGenRepository idGenRepository;
-
-    @Autowired
-    private UserService userService;
+    public EnrichmentService(CNDConfiguration config, IdGenRepository idGenRepository, UserService userService) {
+        this.config = config;
+        this.idGenRepository = idGenRepository;
+        this.userService = userService;
+    }
 
     /**
      * Enriches the CND application request with necessary details such as application ID,
@@ -56,89 +55,98 @@ public class EnrichmentService {
         String userUuid = requestInfo.getUserInfo().getUuid();
         AuditDetails auditDetails = CNDServiceUtil.getAuditDetails(userUuid, true);
 
-        if(config.getIsUserProfileEnabled()) {
-            // If the mobile number in the request matches the applicant's mobile number, then set the applicantDetailId as userUuid
-            if (CNDServiceUtil.isCurrentUserApplicant(cndApplicationRequest)) {
-                cndApplicationDetails.setApplicantDetailId(userUuid);
-            } else { // If the mobile number does not match, set the applicantDetailId to null and addressDetailId to null
-                cndApplicationDetails.setApplicantDetailId(null);
-                cndApplicationDetails.setAddressDetailId(null);
-            }
-
-            String applicantDetailId = cndApplicationDetails.getApplicantDetailId();
-
-            if (StringUtils.isBlank(applicantDetailId)) {
-                // Enrich user details for existing user or user details with address for new user
-                enrichUserDetails(cndApplicationRequest);
-            }
-            String addressDetailId = cndApplicationDetails.getAddressDetailId();
-            if (StringUtils.isBlank(addressDetailId)) {
-                // Enrich address details only
-                enrichAddressDetails(cndApplicationRequest, cndApplicationDetails);
-            }
+        if (config.getIsUserProfileEnabled()) {
+            enrichWhenUserProfileEnabled(cndApplicationRequest, cndApplicationDetails, userUuid);
+        } else {
+            enrichWhenUserProfileDisabled(cndApplicationRequest, cndApplicationDetails);
         }
-        else{
-            /*
-             * If the currently logged-in user is not the same as the applicant mobile number entered in the form is different from the login mobile number,
-             * then we proceed to enrich user details, which will create a new user with the provided details.
-             * If the currently logged-in user is the same as the applicant mobile number, we do not enrich user details
-             * user profile is not enabled for this service, we explicitly set `applicantDetailId` and `addressDetailId` to null in the application details
-             */
-            if (!CNDServiceUtil.isCurrentUserApplicant(cndApplicationRequest)) {
-                enrichUserDetails(cndApplicationRequest);
-            }
+
+        setCoreApplicationDetails(cndApplicationDetails, applicationId, auditDetails, requestInfo);
+        enrichWasteTypeDetails(cndApplicationDetails, applicationId);
+        enrichFacilityCenterDetail(cndApplicationDetails, applicationId);
+        enrichDocumentDetails(cndApplicationDetails, applicationId);
+        assignApplicationNumber(cndApplicationDetails, requestInfo);
+    }
+
+    private void enrichWhenUserProfileEnabled(CNDApplicationRequest cndApplicationRequest,
+            CNDApplicationDetail cndApplicationDetails, String userUuid) {
+        if (CNDServiceUtil.isCurrentUserApplicant(cndApplicationRequest)) {
+            cndApplicationDetails.setApplicantDetailId(userUuid);
+        } else {
             cndApplicationDetails.setApplicantDetailId(null);
             cndApplicationDetails.setAddressDetailId(null);
-            log.info("User profile is not enabled, setting applicantDetailId and addressDetailId to null");
         }
 
-        // Set application details
+        if (StringUtils.isBlank(cndApplicationDetails.getApplicantDetailId())) {
+            enrichUserDetails(cndApplicationRequest);
+        }
+        if (StringUtils.isBlank(cndApplicationDetails.getAddressDetailId())) {
+            enrichAddressDetails(cndApplicationRequest, cndApplicationDetails);
+        }
+    }
+
+    private void enrichWhenUserProfileDisabled(CNDApplicationRequest cndApplicationRequest,
+            CNDApplicationDetail cndApplicationDetails) {
+        if (!CNDServiceUtil.isCurrentUserApplicant(cndApplicationRequest)) {
+            enrichUserDetails(cndApplicationRequest);
+        }
+        cndApplicationDetails.setApplicantDetailId(null);
+        cndApplicationDetails.setAddressDetailId(null);
+        log.info("User profile is not enabled, setting applicantDetailId and addressDetailId to null");
+    }
+
+    private void setCoreApplicationDetails(CNDApplicationDetail cndApplicationDetails, String applicationId,
+            AuditDetails auditDetails, RequestInfo requestInfo) {
         cndApplicationDetails.setApplicationId(applicationId);
-        cndApplicationDetails.setApplicationStatus(CNDStatus.valueOf(cndApplicationDetails.getApplicationStatus()).toString());
+        cndApplicationDetails.setApplicationStatus(
+                CNDStatus.valueOf(cndApplicationDetails.getApplicationStatus()).name());
         cndApplicationDetails.setAuditDetails(auditDetails);
         cndApplicationDetails.setTenantId(cndApplicationDetails.getTenantId());
         cndApplicationDetails.getApplicantDetail().setApplicationId(applicationId);
         cndApplicationDetails.getApplicantDetail().setAuditDetails(auditDetails);
         cndApplicationDetails.getAddressDetail().setApplicationId(applicationId);
         cndApplicationDetails.setLocality(cndApplicationDetails.getAddressDetail().getLocality());
-        // Copy mobile number from applicant details to a separate field to save in application table
         cndApplicationDetails.setApplicantMobileNumber(cndApplicationDetails.getApplicantDetail().getMobileNumber());
-        cndApplicationDetails.setCreatedByUserType(requestInfo.getUserInfo().getType().toString());
+        cndApplicationDetails.setCreatedByUserType(requestInfo.getUserInfo().getType());
+    }
 
+    private void enrichWasteTypeDetails(CNDApplicationDetail cndApplicationDetails, String applicationId) {
         List<WasteTypeDetail> wasteTypeDetails = cndApplicationDetails.getWasteTypeDetails();
-        if (wasteTypeDetails != null) {
-            for (WasteTypeDetail wasteTypeDetail : wasteTypeDetails) {
-                String wasteTypeId = CNDServiceUtil.getRandomUUID();
-                wasteTypeDetail.setWasteTypeId(wasteTypeId);
-                wasteTypeDetail.setApplicationId(applicationId);
-            }
+        if (wasteTypeDetails == null) {
+            return;
         }
+        for (WasteTypeDetail wasteTypeDetail : wasteTypeDetails) {
+            wasteTypeDetail.setWasteTypeId(CNDServiceUtil.getRandomUUID());
+            wasteTypeDetail.setApplicationId(applicationId);
+        }
+    }
 
+    private void enrichFacilityCenterDetail(CNDApplicationDetail cndApplicationDetails, String applicationId) {
         FacilityCenterDetail facilityCentreDetail = cndApplicationDetails.getFacilityCenterDetail();
-        if (facilityCentreDetail != null) {
-            String disposalId = CNDServiceUtil.getRandomUUID();
-            facilityCentreDetail.setDisposalId(disposalId);
-            facilityCentreDetail.setApplicationId(applicationId);
-
+        if (facilityCentreDetail == null) {
+            return;
         }
+        facilityCentreDetail.setDisposalId(CNDServiceUtil.getRandomUUID());
+        facilityCentreDetail.setApplicationId(applicationId);
+    }
 
-
+    private void enrichDocumentDetails(CNDApplicationDetail cndApplicationDetails, String applicationId) {
         List<DocumentDetail> documentDetails = cndApplicationDetails.getDocumentDetails();
-        if (documentDetails != null) {
-            for (DocumentDetail documentDetail : documentDetails) {
-                String documentId = CNDServiceUtil.getRandomUUID();
-                documentDetail.setDocumentDetailId(documentId);
-                documentDetail.setApplicationId(applicationId);
-            }
+        if (documentDetails == null) {
+            return;
         }
+        for (DocumentDetail documentDetail : documentDetails) {
+            documentDetail.setDocumentDetailId(CNDServiceUtil.getRandomUUID());
+            documentDetail.setApplicationId(applicationId);
+        }
+    }
+
+    private void assignApplicationNumber(CNDApplicationDetail cndApplicationDetails, RequestInfo requestInfo) {
         List<String> customIds = getIdList(requestInfo, cndApplicationDetails.getTenantId(),
-                config.getCNDApplicationKey(), config.getCNDApplicationFormat(), 1);
-
-
+                config.getCndApplicationKey(), config.getCndApplicationFormat(), 1);
         String applicationNumber = customIds.get(0);
         log.info("Generated Application Number: {}", applicationNumber);
         cndApplicationDetails.setApplicationNumber(applicationNumber);
-
     }
 
     /**
@@ -155,14 +163,14 @@ public class EnrichmentService {
         if (StringUtils.isBlank(cndApplicationRequest.getCndApplication().getApplicantDetailId())) {
             throw new CustomException("APPLICANTID_IS_BLANK", "Applicant Detail ID is blank");
         }
-            // Fetch the new address associated with the user's UUID
-            AddressV2 address = userService.createNewAddressV2ByUserUuid(cndApplicationRequest);
+        // Fetch the new address associated with the user's UUID
+        AddressV2 address = userService.createNewAddressV2ByUserUuid(cndApplicationRequest);
 
-            if (address != null) {
-                // Set the address detail ID in the application details object
-                cndApplicationDetails.setAddressDetailId(String.valueOf(address.getId()));
-                log.info("Address details successfully enriched with ID: {}", address.getId());
-            }
+        if (address != null) {
+            // Set the address detail ID in the application details object
+            cndApplicationDetails.setAddressDetailId(String.valueOf(address.getId()));
+            log.info("Address details successfully enriched with ID: {}", address.getId());
+        }
 
     }
 
@@ -220,7 +228,7 @@ public class EnrichmentService {
             throw new CustomException("IDGEN_ERROR", "No IDs returned from ID generation service");
         }
 
-        return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
+        return idResponses.stream().map(IdResponse::getId).toList();
     }
 
     /**

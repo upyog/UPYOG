@@ -1,7 +1,7 @@
-import { Card, Loader, SVG } from "@egovernments/digit-ui-react-components";
-import React, { useState, useEffect } from "react";
+import { Card, Loader, SVG } from "@upyog/workbench-ui-react-components";
+import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+
 import { DigitJSONForm } from "../../Module";
 import _ from "lodash";
 import { DigitLoader } from "../../components/DigitLoader";
@@ -38,7 +38,7 @@ const MDMSAdd = ({ defaultFormData, updatesToUISchema, screenType = "add", onVie
   }, [defaultFormData]);
 
   const { t } = useTranslation();
-  const history = useHistory();
+  
   const reqCriteria = {
     url: `/${Digit.Hooks.workbench.getMDMSContextPath()}/schema/v1/_search`,
     params: {},
@@ -135,6 +135,17 @@ const MDMSAdd = ({ defaultFormData, updatesToUISchema, screenType = "add", onVie
     /* localise */
     if (schema && schema?.definition) {
       Digit.Utils.workbench.updateTitleToLocalisationCodeForObject(schema?.definition, schema?.code);
+      // Due to schema merging/mutation in dynamic MDMS processing, some fields may end up with an array of types,
+      // which breaks widget resolution ("No widget for type number,string").
+      // As a safeguard, we normalize such fields to a single type by picking the first declared type.
+      const properties = schema?.definition?.properties;
+        if (properties) {
+          Object.keys(properties).forEach(key => {
+            if (Array.isArray(properties[key].type)) {
+              properties[key].type = properties[key].type[0]; // Use first type
+            }
+          });
+        }
       setFormSchema(schema);
       /* logic to search for the reference data from the mdms data api */
 
@@ -161,7 +172,7 @@ const MDMSAdd = ({ defaultFormData, updatesToUISchema, screenType = "add", onVie
         });
       }
     }
-  }, [schema]);
+  }, [schema?.code]);
 
   useEffect(() => {
     if (!_.isEqual(sessionFormData, session)) {

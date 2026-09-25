@@ -1,5 +1,9 @@
+/**
+ * Main Employee NOC Inbox page component.
+ * Integrates InboxComposer with table configs, mobile cards data, search/filter fields, and session storage persistence.
+ */
 import React, {Fragment, useCallback, useMemo, useReducer} from "react"
-import { InboxComposer, ComplaintIcon, Header } from "@upyog/digit-ui-react-components";
+import { InboxComposer, ComplaintIcon, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import SearchFormFieldsComponents from "./SearchFormFieldsComponent";
 import FilterFormFieldsComponent from "./FilterFormFieldsComponent";
@@ -33,7 +37,11 @@ const Inbox = ({parentRoute}) => {
       sortOrder: "DESC"
     }
 
-    function formReducer(state, payload) {
+    /**
+   * Reducer function that updates inbox search, filter, and table pagination state,
+   * automatically persisting state updates to SessionStorage (NOC.INBOX) to preserve view state on navigation.
+   */
+  function formReducer(state, payload) {
       switch(payload.action){
         case "mutateSearchForm":
           Digit.SessionStorage.set("NOC.INBOX", {...state, searchForm: payload.data})

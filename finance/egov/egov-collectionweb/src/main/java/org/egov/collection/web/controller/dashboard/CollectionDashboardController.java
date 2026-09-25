@@ -51,7 +51,7 @@ package org.egov.collection.web.controller.dashboard;
 import java.io.IOException;
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.collection.bean.dashboard.CollectionDashBoardRequest;
 import org.egov.collection.bean.dashboard.TaxPayerDashBoardResponseDetails;

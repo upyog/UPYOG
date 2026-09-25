@@ -48,13 +48,13 @@
 package org.egov.commons.dao;
 
 import org.egov.commons.CVoucherHeader;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
@@ -81,7 +81,7 @@ public class VoucherHeaderHibernateDAO  implements VoucherHeaderDAO {
     }
 
     public List<CVoucherHeader> findAll() {
-        return (List<CVoucherHeader>) getCurrentSession().createCriteria(CVoucherHeader.class).list();
+        return getCurrentSession().createQuery("from CVoucherHeader", CVoucherHeader.class).list();
     }
 
     @PersistenceContext
@@ -96,7 +96,7 @@ public class VoucherHeaderHibernateDAO  implements VoucherHeaderDAO {
     @Override
     public List<CVoucherHeader> getVoucherHeadersByStatus(final Integer status) {
         final Query qry = getCurrentSession().createQuery("from CVoucherHeader vh where vh.status=:status");
-        qry.setInteger("status", status);
+        qry.setParameter("status", status);
         return qry.list();
     }
 
@@ -104,15 +104,15 @@ public class VoucherHeaderHibernateDAO  implements VoucherHeaderDAO {
     public List<CVoucherHeader> getVoucherHeadersByStatusAndType(final Integer status, final String type) {
         final Query qry = getCurrentSession().createQuery(
                 "from CVoucherHeader vh where vh.status=:status and vh.type=:type");
-        qry.setInteger("status", status);
-        qry.setString("type", type);
+        qry.setParameter("status", status);
+        qry.setParameter("type", type);
         return qry.list();
     }
 
     @Override
     public CVoucherHeader getVoucherHeadersByCGN(final String cgn) {
         final Query qry = getCurrentSession().createQuery(" from CVoucherHeader where cgn =:cgn");
-        qry.setString("cgn", cgn);
+        qry.setParameter("cgn", cgn);
         return (CVoucherHeader) qry.uniqueResult();
     }
 }

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { RadioButtons, FormComposer, Dropdown, CardSectionHeader, Loader, Toast, Card, Header } from "@upyog/digit-ui-react-components";
+import { RadioButtons, FormComposer, Dropdown, CardSectionHeader, Loader, Toast, Card, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-import { useHistory, useParams, useRouteMatch, useLocation } from "react-router-dom";
-import { useQueryClient } from "react-query";
+import { useParams, useLocation,  } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { useCashPaymentDetails } from "./ManualReciept";
 import { useCardPaymentDetails } from "./card";
 import { useChequeDetails } from "./cheque";
@@ -15,10 +15,11 @@ export const CollectPayment = (props) => {
   // const { formData, addParams } = props;
   const { workflow: ModuleWorkflow, IsDisconnectionFlow } = Digit.Hooks.useQueryParams();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const queryClient = useQueryClient();
   const {state,search}=useLocation();
-  const { path: currentPath } = useRouteMatch();
+  console.log("statestatestate",state);
+  const { path: currentPath } = Digit.Hooks.useModuleBasePath();
   let { consumerCode, businessService } = useParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [Time, setTime ] = useState(0);
@@ -85,6 +86,9 @@ export const CollectPayment = (props) => {
   const [selectedPaidBy, setselectedPaidBy] = useState(formState?.paidBy || { code: "OWNER", name: t("COMMON_OWNER") });
 
   const onSubmit = async (data) => {
+    if (data?.paymentMode?.code !== "CARD" && data?.paymentMode?.code !== "CHEQUE") {
+      delete data.paymentModeDetails;
+    }
     bill.totalAmount = Math.round(bill.totalAmount);
     data.paidBy = data.paidBy.code;
 
@@ -185,7 +189,7 @@ export const CollectPayment = (props) => {
     try {
       const resposne = await Digit.PaymentService.createReciept(tenantId, recieptRequest);
       queryClient.invalidateQueries();
-      history.push(
+      navigate(
         IsDisconnectionFlow ? `${props.basePath}/success/${businessService}/${resposne?.Payments[0]?.paymentDetails[0]?.receiptNumber.replace(/\//g, "%2F")}/${
           resposne?.Payments[0]?.paymentDetails[0]?.bill?.consumerCode
         }?IsDisconnectionFlow=${IsDisconnectionFlow}` : 

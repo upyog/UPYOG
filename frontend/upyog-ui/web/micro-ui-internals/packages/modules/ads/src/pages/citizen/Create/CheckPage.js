@@ -1,12 +1,26 @@
-import { Card, CardHeader, CardSectionHeader, CardSubHeader, CardText, CheckBox, LinkButton, Row, StatusTable, SubmitBar, DeleteIcon } from "@upyog/digit-ui-react-components";
-import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
-import { checkForNA } from "../../../utils";
-import Timeline from "../../../components/ADSTimeline";
-import ADSDocument from "../../../pageComponents/ADSDocument";
-import ApplicationTable from "../../../components/ApplicationTable";
-import { TimerValues } from "../../../components/TimerValues";
+import {
+    Card,
+    CardHeader,
+    CardSectionHeader,
+    CardSubHeader,
+    CardText,
+    CheckBox,
+    LinkButton,
+    Row,
+    StatusTable,
+    SubmitBar,
+    DeleteIcon
+  } from "@nudmcdgnpm/digit-ui-react-components";
+  import React, { useState } from "react";
+  import { useTranslation } from "react-i18next";
+  
+  import {
+    checkForNA
+  } from "../../../utils";
+  import Timeline from "../../../components/ADSTimeline";
+  import ADSDocument from "../../../pageComponents/ADSDocument";
+  import ApplicationTable from "../../../components/ApplicationTable";
+  import { TimerValues } from "../../../components/TimerValues";
 
 /**
  * CheckPage component displays a summary of the applicant's details,
@@ -14,89 +28,82 @@ import { TimerValues } from "../../../components/TimerValues";
  * Users can review their inputs and confirm their declaration before 
  * submitting the application. Navigation buttons allow editing of any section.
  */
-import "../../../css/ads-inline-auto.css";
-const ActionButton = ({
-  jumpTo
-}) => {
-  const {
-    t
-  } = useTranslation();
-  const history = useHistory();
-  function routeTo() {
-    history.push(jumpTo);
-  }
-  return <LinkButton label={t("CS_COMMON_EDIT")} className="check-page-link-button" onClick={routeTo} />;
-};
-const CheckPage = ({
-  onSubmit,
-  value = {}
-}) => {
-  const {
-    t
-  } = useTranslation();
-  const history = useHistory();
-  const [params, setParams] = Digit.Hooks.useSessionStorage("ADS_CREATE", {});
-  const {
-    applicant,
-    adslist,
-    index,
-    isEditADS,
-    isUpdateADS,
-    documents,
-    address
-  } = value;
-  const typeOfApplication = !isEditADS && !isUpdateADS ? `bookad` : `editbookad`;
-  const columns = [{
-    Header: `${t("ADS_TYPE")}`,
-    accessor: "addType"
-  }, {
-    Header: `${t("ADS_FACE_AREA")}`,
-    accessor: "faceArea"
-  }, {
-    Header: t("ADS_NIGHT_LIGHT"),
-    accessor: "nightLight",
-    Cell: ({
-      value
-    }) => <div>{value ? t("Yes") : t("No")}</div>
-  }, {
-    Header: `${t("ADS_DATE")}`,
-    accessor: "bookingDate"
-  }, {
-    Header: t("DELETE_KEY"),
-    accessor: "delete",
-    Cell: ({
-      row
-    }) => <button onClick={() => handleDelete(row.index)}>
+
+
+  const ActionButton = ({ jumpTo }) => {
+    const { t } = useTranslation();
+    const navigate = Digit.Hooks.useCustomNavigate();
+    function routeTo() {
+      navigate(jumpTo);
+    }
+  
+    return <LinkButton label={t("CS_COMMON_EDIT")} className="check-page-link-button" onClick={routeTo} />;
+  };
+  
+  const CheckPage = ({ onSubmit, value = {} }) => {
+    const { t } = useTranslation();
+    const navigate = Digit.Hooks.useCustomNavigate();
+    const [params, setParams] = Digit.Hooks.useSessionStorage("ADS_CREATE", {});
+    const {
+      applicant,
+      adslist,
+      index,    
+      isEditADS,
+      isUpdateADS,
+      documents,
+      address,
+     
+    } = value;
+  
+    const typeOfApplication = !isEditADS && !isUpdateADS ? `bookad` : `editbookad`;
+    const columns = [
+      { Header: `${t("ADS_TYPE")}`, accessor: "addType" },
+      { Header: `${t("ADS_FACE_AREA")}`, accessor: "faceArea" },
+      {
+        Header: t("ADS_NIGHT_LIGHT"),
+        accessor: "nightLight",
+        Cell: ({ value }) => (
+          <div>{value ? t("Yes") : t("No")}</div>
+        ),
+      },
+      { Header: `${t("ADS_DATE")}`, accessor: "bookingDate" },
+      {
+        Header: t("DELETE_KEY"),
+        accessor: "delete",
+        Cell: ({ row }) => (
+          <button onClick={() => handleDelete(row.index)}>
             <DeleteIcon className="delete ads-auto-95" fill="#a82227" />
           </button>
-  }];
-  const handleDelete = index => {
-    // Make a shallow copy of the current params state to ensure immutability
-    const updatedParams = {
-      ...params
+        ),
+      },
+    ];
+    const handleDelete = (index) => {
+      // Make a shallow copy of the current params state to ensure immutability
+      const updatedParams = { ...params };
+    
+      // Check if adslist exists and if cartDetails is an array
+      if (updatedParams?.adslist?.cartDetails) {
+        // Create a new array with the item at the given index removed
+        updatedParams.adslist.cartDetails = updatedParams.adslist.cartDetails.filter((_, idx) => idx !== index);
+      }
+    
+      // Update the state with the modified params
+      setParams(updatedParams);
+    };
+    const adslistRows = params?.adslist?.cartDetails?.map((slot) => ({
+      addType: slot.addType,
+      faceArea: slot.faceArea,
+      nightLight: slot.nightLight,
+      bookingDate: slot.bookingDate,
+    })) || [];
+    const [agree, setAgree] = useState(false);
+    const setdeclarationhandler = () => {
+      setAgree(!agree);
     };
 
-    // Check if adslist exists and if cartDetails is an array
-    if (updatedParams?.adslist?.cartDetails) {
-      // Create a new array with the item at the given index removed
-      updatedParams.adslist.cartDetails = updatedParams.adslist.cartDetails.filter((_, idx) => idx !== index);
-    }
-
-    // Update the state with the modified params
-    setParams(updatedParams);
-  };
-  const adslistRows = params?.adslist?.cartDetails.map(slot => ({
-    addType: slot.addType,
-    faceArea: slot.faceArea,
-    nightLight: slot.nightLight,
-    bookingDate: slot.bookingDate
-  })) || [];
-  const [agree, setAgree] = useState(false);
-  const setdeclarationhandler = () => {
-    setAgree(!agree);
-  };
-  return <React.Fragment>
-       {window.location.href.includes("/citizen") ? <Timeline currentStep={4} /> : null}
+    return (
+      <React.Fragment>
+       {window.location.href.includes("/citizen") ? <Timeline currentStep={4}/> : null}
       <Card>
         <div className="ads-auto-96">
               <CardHeader>{t("ADS_SUMMARY")}</CardHeader>
@@ -129,18 +136,27 @@ const CheckPage = ({
           <Row label={t("ADS_ADDRESS_PINCODE")} text={`${t(checkForNA(address?.pincode))}`} actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ads/${typeOfApplication}/address-details`} />} />
           </StatusTable>
           <CardSubHeader className="ads-auto-99">{t("ADS_CART_DETAILS")}</CardSubHeader>
-          <ApplicationTable t={t} data={adslistRows} columns={columns} getCellProps={cellInfo => ({
-          style: {
-            minWidth: "150px",
-            padding: "10px",
-            fontSize: "16px",
-            paddingLeft: "20px"
-          }
-        })} isPaginationRequired={false} totalRecords={params?.adslist?.cartDetails.length} />
+          <ApplicationTable
+                t={t}
+                data={adslistRows}
+                columns={columns}
+                getCellProps={(cellInfo) => ({
+                  style: {
+                    minWidth: "150px",
+                    padding: "10px",
+                    fontSize: "16px",
+                    paddingLeft: "20px",
+                  },
+                })}
+                isPaginationRequired={false}
+                totalRecords={params?.adslist?.cartDetails?.length || 0}
+              />
           <CardSubHeader className="ads-auto-100">{t("ADS_DOCUMENTS_DETAILS")}</CardSubHeader>
           <StatusTable>
           <Card>
-            {documents && documents?.documents.map((doc, index) => <ADSDocument value={value} Code={doc?.documentType} index={index} />)}
+            {documents?.documents?.map((doc, index) => (
+            <ADSDocument value={value} Code={doc?.documentType} index={index}  key={doc?.documentType || index} />
+            ))}
           </Card>
           </StatusTable>
          
@@ -152,6 +168,7 @@ const CheckPage = ({
         </div>
         <SubmitBar label={t("ADS_COMMON_BUTTON_SUBMIT")} onSubmit={onSubmit} disabled={!agree} />
       </Card>
-     </React.Fragment>;
+     </React.Fragment>
+    );
 };
 export default CheckPage;

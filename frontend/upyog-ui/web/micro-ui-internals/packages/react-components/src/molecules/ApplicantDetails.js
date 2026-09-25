@@ -22,18 +22,18 @@
 
 
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, MobileNumber, RadioButtons, Dropdown } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, MobileNumber, RadioButtons, Dropdown } from "../index";
 
-const ApplicantDetails = ({ t, config, onSelect, formData }) => {
+const ApplicantDetails = ({ t, config, onSelect, formData, renewApplication = {} }) => {
   const user = Digit.UserService.getUser().info;
   const inputStyles = { width: user.type === "EMPLOYEE" ? "50%" : "86%" };
   let validation = {};
-  const [applicantName, setName] = useState((user.type === "EMPLOYEE" ?"":user?.name) || formData?.owner?.applicantName || formData?.infodetails?.existingDataSet?.owner?.applicantName || "");
-  const [mobileNumber, setMobileNumber] = useState((user.type === "EMPLOYEE" ?"":user?.mobileNumber) ||formData?.owner?.mobileNumber || formData?.infodetails?.existingDataSet?.owner?.mobileNumber || "");
+  const [applicantName, setName] = useState((user.type === "EMPLOYEE" ?"":user?.name) || formData?.owner?.applicantName || formData?.infodetails?.existingDataSet?.owner?.applicantName || renewApplication?.additionalDetail?.applicantDetails?.[0]?.applicantName || "");
+  const [mobileNumber, setMobileNumber] = useState((user.type === "EMPLOYEE" ?"":user?.mobileNumber) ||formData?.owner?.mobileNumber || formData?.infodetails?.existingDataSet?.owner?.mobileNumber || renewApplication?.additionalDetail?.applicantDetails?.[0]?.mobileNumber || "");
   const [gender, setGender]=useState(formData?.owner?.gender||"");
   const [dateOfBirth, setDateofBirth] = useState(formData?.owner?.dateOfBirth|| formData?.owner?.requestDetails?.applicantName || "");
-  const [emailId, setEmail] = useState((user.type === "EMPLOYEE" ?"":user?.emailId)||formData?.owner?.emailId ||  formData?.infodetails?.existingDataSet?.owner?.emailId || "");
-  const [alternateNumber, setAltMobileNumber] = useState(formData?.owner?.alternateNumber ||  formData?.infodetails?.existingDataSet?.owner?.alternateNumber || "");
+  const [emailId, setEmail] = useState((user.type === "EMPLOYEE" ?"":user?.emailId)||formData?.owner?.emailId ||  formData?.infodetails?.existingDataSet?.owner?.emailId || renewApplication?.additionalDetail?.applicantDetails?.[0]?.emailId || "");
+  const [alternateNumber, setAltMobileNumber] = useState(formData?.owner?.alternateNumber ||  formData?.infodetails?.existingDataSet?.owner?.alternateNumber || renewApplication?.additionalDetail?.applicantDetails?.[0]?.alternateNumber || "");
   const [guardianName, setGuardian] = useState(formData?.owner?.guardianName || "");
   const [relationShipType, setRelationShipType] = useState(formData?.owner?.relationShipType || "");
 
@@ -113,7 +113,6 @@ const ApplicantDetails = ({ t, config, onSelect, formData }) => {
           {...(validation = {
             isRequired: true,
             pattern: "^[a-zA-Z ]+$",
-            type: "tel",
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
         />
@@ -141,7 +140,7 @@ const ApplicantDetails = ({ t, config, onSelect, formData }) => {
           name="mobileNumber"
           onChange={(value) => setMobileNo({ target: { value } })}
           style={ {width: user.type === "EMPLOYEE" ? "49%" : "86%"}}
-          {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
+          {...{ required: true, pattern: "[6-9]{1}[0-9]{9}",  title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
         />
 
         <CardLabel>{`${t("COMMON_ALT_MOBILE_NUMBER")}`}</CardLabel>
@@ -150,7 +149,7 @@ const ApplicantDetails = ({ t, config, onSelect, formData }) => {
             name="alternateNumber"
             onChange={(value) => setAltMobileNo({ target: { value } })}
             style={ {width: user.type === "EMPLOYEE" ? "49%" : "86%"}}
-            {...{ required: false, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
+            {...{ required: false, pattern: "[6-9]{1}[0-9]{9}", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
           />
         {(config?.additionaFields?.dateofBirth)?
         <React.Fragment>
@@ -188,7 +187,6 @@ const ApplicantDetails = ({ t, config, onSelect, formData }) => {
           {...(validation = {
             isRequired: true,
             pattern: "^[a-zA-Z ]+$",
-            type: "tel",
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
         />
@@ -223,7 +221,6 @@ const ApplicantDetails = ({ t, config, onSelect, formData }) => {
         {...(validation = {
           isRequired: true,
           pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z]+\\.[a-zA-Z]{3,4}$",
-          type: "email",
           title: t("PT_NAME_ERROR_MESSAGE"),
         })}
       />

@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { FormStep, RadioButtons, CitizenInfoLabel, LabelFieldPair, CardLabel, Dropdown, CardLabelError } from "@upyog/digit-ui-react-components";
+import {
+  FormStep,
+  RadioButtons,
+  CitizenInfoLabel,
+  LabelFieldPair,
+  CardLabel,
+  Dropdown,
+  CardLabelError,
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
 import { useLocation } from "react-router-dom";
-import "../css/pt-inline-auto.css";
+
 const PropertyUsageType = ({
   t,
   config,
@@ -96,8 +104,8 @@ const PropertyUsageType = ({
         });
       } else {
         clearErrors(config.key);
+        goNext();
       }
-      goNext();
     }
   }, [usageCategoryMajor]);
   if (userType === "employee") {
@@ -108,7 +116,7 @@ const PropertyUsageType = ({
           selectPropertyPurpose(e);
         }} optionKey="i18nKey" onBlur={onBlur} t={t} />
         </LabelFieldPair>
-        {formState.touched[config.key] ? <CardLabelError className="pt-auto-76">
+        {formState.touchedFields?.[config.key] ? <CardLabelError className="pt-auto-76">
             {formState.errors?.[config.key]?.message}
           </CardLabelError> : null}
       </React.Fragment>;

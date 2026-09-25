@@ -1,8 +1,8 @@
 import { Surveys } from "../../services/elements/Surveys";
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 
 const useCfdefinitionsearch = (filters, config) => {
-  return useQuery([`search_surveys`,filters.Pagination,filters.ServiceDefinitionCriteria], () => Surveys.cfdefinitionsearch(filters), { ...config });
+  return queryTemplate({ queryKey: ["search_surveys", filters.Pagination, filters.ServiceDefinitionCriteria], queryFn: () => Surveys.cfdefinitionsearch(filters), config });
 };
 
 export default useCfdefinitionsearch;

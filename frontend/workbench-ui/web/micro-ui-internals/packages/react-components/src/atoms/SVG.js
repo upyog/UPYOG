@@ -776,7 +776,7 @@ import {
     ZoomIn,
     ZoomOut,
     ZoomOutMap,
-  } from "@egovernments/digit-ui-svg-components";
+  } from "@nudmcdgnpm/workbench-ui-svg-components";
 
 
 

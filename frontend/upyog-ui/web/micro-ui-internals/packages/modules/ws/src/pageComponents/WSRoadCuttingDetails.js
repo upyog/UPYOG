@@ -1,11 +1,11 @@
-import { CardLabel, Dropdown, LabelFieldPair, LinkButton, TextInput, CardLabelError, DeleteIcon } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, LabelFieldPair, LinkButton, TextInput, CardLabelError, DeleteIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import _, { filter } from "lodash";
 import React, { useState, useEffect, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { stringReplaceAll } from "../utils";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
-import "../css/ws-inline-auto.css";
+
 const createRoadCuttingDetails = () => ({
   roadType: {
     code: "",
@@ -169,11 +169,28 @@ const RoadCuttForm = _props => {
         }}>
             <LabelFieldPair>
               <CardLabel className="card-label-smaller">{t("WS_ROAD_TYPE") + " *"}</CardLabel>
-              <Controller control={control} name={"roadType"} defaultValue={roadCutt?.roadType} rules={{
-              required: t("REQUIRED_FIELD")
-            }} isMandatory={true} render={props => <Dropdown className="form-field" selected={getValues("roadType")} errorStyle={localFormState.touched.roadType && errors?.roadType?.message ? true : false} select={e => {
-              props.onChange(e);
-            }} option={roadCuttingTypeMenu} onBlur={props.onBlur} optionKey="i18nKey" disable={false} t={t} />} />
+              <Controller
+                control={control}
+                name={"roadType"}
+                defaultValue={roadCutt?.roadType}
+                rules={{ required: t("REQUIRED_FIELD") }}
+                isMandatory={true}
+                render={({ field }) => (
+                    <Dropdown
+                        className="form-field"
+                        selected={field.value}
+                        errorStyle={(localFormState.touchedFields.roadType && errors?.roadType?.message) ? true : false}
+                        select={(e) => {
+                          field.onChange(e);
+                        }}
+                        option={roadCuttingTypeMenu}
+                        onBlur={field.onBlur}
+                        optionKey="i18nKey"
+                        disable={false}
+                        t={t}
+                    />
+                )}
+            />
             </LabelFieldPair>
             <CardLabelError style={errorStyle}>
               {localFormState.touched?.roadType ? errors?.roadType?.message : ""}
@@ -181,23 +198,32 @@ const RoadCuttForm = _props => {
             <LabelFieldPair>
               <CardLabel className="card-label-smaller">{t("WS_AREA_SQ_FT") + " *"}</CardLabel>
               <div className="field">
-                <Controller control={control} name={"area"} defaultValue={roadCutt?.area} rules={{
-                required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-                validate: {
-                  pattern: e => /^[0-9]{1,10}$/i.test(e) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")
-                }
-              }} render={props => <TextInput value={props.value} disable={isEditScreen} autoFocus={focusIndex.index === roadCutt.key && focusIndex.type === "area"} onChange={e => {
-                props.onChange(e.target.value);
-                setFocusIndex({
-                  index: roadCutt.key,
-                  type: "area"
-                });
-              }} onBlur={e => {
-                setFocusIndex({
-                  index: -1
-                });
-                props.onBlur(e);
-              }} />} />
+                <Controller
+                  control={control}
+                  name={"area"}
+                  defaultValue={roadCutt?.area}
+                  rules={{
+                    required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                    validate: {
+                      pattern: (e) => (/^[0-9]{1,10}$/i.test(e) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                    },
+                  }}
+                  render={({ field }) => (
+                    <TextInput
+                      value={field.value}
+                      disable={isEditScreen}
+                      autoFocus={focusIndex.index === roadCutt.key && focusIndex.type === "area"}
+                      onChange={(e) => {
+                        field.onChange(e.target.value);
+                        setFocusIndex({ index: roadCutt.key, type: "area"});
+                      }}
+                      onBlur={(e) => {
+                        setFocusIndex({ index: -1 });
+                        field.onBlur(e);
+                      }}
+                    />
+                  )}
+                />
               </div>
             </LabelFieldPair>
             <CardLabelError style={errorStyle}>

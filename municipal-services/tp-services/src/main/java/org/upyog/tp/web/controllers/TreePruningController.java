@@ -3,7 +3,6 @@ package org.upyog.tp.web.controllers;
 import java.util.List;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -35,11 +34,13 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "Tree Pruning", description = "APIs for Tree Pruning")
 public class TreePruningController {
 
-    @Autowired
-    private TreePruningService treePruningService;
+    private final TreePruningService treePruningService;
+    private final ValidatorService validatorService;
 
-    @Autowired
-    private ValidatorService validatorService;
+    public TreePruningController(TreePruningService treePruningService, ValidatorService validatorService) {
+        this.treePruningService = treePruningService;
+        this.validatorService = validatorService;
+    }
 
     @PostMapping("/tree-pruning/v1/_create")
     @Operation(summary = "Create application details", description = "Create application details")

@@ -1,0 +1,27 @@
+{
+  "moduleName": "WATER_AND_SEWERAGE",
+
+  "citizen": {
+    "mobile": "7906413996",
+    "otp": "123456",
+    "city": "City A"
+  },
+
+  "employees": {
+    "WATER": {
+      "username": "UPYOGADMIN",
+      "password": "eGov@123",
+      "city": "City A"
+    },
+    "SEWERAGE": {
+      "username": "UPYOGADMIN",
+      "password": "eGov@123",
+      "city": "City A"
+    }
+  },
+
+  "vendor": {
+    "mobile": "",
+    "otp": ""
+  }
+}

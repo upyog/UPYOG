@@ -1,18 +1,13 @@
-import { DetailsCard, Loader, Table, Modal } from "@upyog/digit-ui-react-components";
+import { DetailsCard, Loader, Table, Modal } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { memo, useMemo, useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link,  } from "react-router-dom";
 import PropertyInvalidMobileNumber from "../../pages/citizen/MyProperties/PropertyInvalidMobileNumber";
-import "../../css/pt-inline-auto.css";
-const GetCell = value => <span className="cell-text">{value}</span>;
-const SearchPTID = ({
-  tenantId,
-  t,
-  payload,
-  showToast,
-  setShowToast,
-  ptSearchConfig
-}) => {
-  const history = useHistory();
+
+const GetCell = (value) => <span className="cell-text">{value}</span>;
+
+const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast,ptSearchConfig }) => {
+  const navigate = Digit.Hooks.useCustomNavigate();
+  
   const [searchQuery, setSearchQuery] = useState({
     /* ...defaultValues,   to enable pagination */
     ...payload
@@ -67,7 +62,7 @@ const SearchPTID = ({
       setSelectedProperty(val);
     } else {
       revalidate();
-      history.push(`/upyog-ui/employee/payment/collect/PT/${val?.["propertyId"]}`);
+      navigate(`/upyog-ui/employee/payment/collect/PT/${val?.["propertyId"]}`)
     }
   };
   const Close = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
@@ -80,8 +75,9 @@ const SearchPTID = ({
       </div>;
   };
   const skipNContinue = () => {
-    history.push(`/upyog-ui/employee/payment/collect/PT/${selectedProperty?.['propertyId']}`);
-  };
+    navigate(`/upyog-ui/employee/payment/collect/PT/${selectedProperty?.['propertyId']}`)
+  }
+
   const updateMobileNumber = () => {
     const ind = ownerInvalidMobileNumberIndex;
     setShowModal(true);

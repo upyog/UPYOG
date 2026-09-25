@@ -1,9 +1,9 @@
 import {
   Loader, NavBar
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+
 import SideBarMenu from "../../../config/sidebar-menu";
 import ChangeCity from "../../ChangeCity";
 import StaticCitizenSideBar from "./StaticCitizenSideBar";
@@ -33,18 +33,20 @@ const defaultImage =
   "L+RGKCddCGmatiPyPB/+ekO/M/q/7uvbt22kTt3zEnXPzCV13T3Gel4/6NduDu66xRvlPNkM1RjjxUdv+4WhGx6TftD19Q/dfzpwcHO+rE3fAAAAAElFTkSuQmCC";
 const Profile = ({ info, stateName, t }) => {
   const [profilePic, setProfilePic] = React.useState(null);
-  React.useEffect(async () => {
-    const tenant = Digit.ULBService.getCurrentTenantId();
-    const uuid = info?.uuid;
-    if (uuid) {
-      const usersResponse = await Digit.UserService.userSearch(tenant, { uuid: [uuid] }, {});
-
-      if (usersResponse && usersResponse.user && usersResponse.user.length) {
-        const userDetails = usersResponse.user[0];
-        const thumbs = userDetails?.photo?.split(",");
-        setProfilePic(thumbs?.at(0));
+  React.useEffect(() => {
+    const fetchProfilePic = async () => {
+      const tenant = Digit.ULBService.getCurrentTenantId();
+      const uuid = info?.uuid;
+      if (uuid) {
+        const usersResponse = await Digit.UserService.userSearch(tenant, { uuid: [uuid] }, {});
+        if (usersResponse && usersResponse.user && usersResponse.user.length) {
+          const userDetails = usersResponse.user[0];
+          const thumbs = userDetails?.photo?.split(",");
+          setProfilePic(thumbs?.at(0));
+        }
       }
-    }
+    };
+    fetchProfilePic();
   }, [profilePic !== null]);
   return (
     <div className="profile-section">
@@ -88,7 +90,7 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
   const [search, setSearch] = useState("");
 
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const closeSidebar = () => {
     Digit.clikOusideFired = true;
     toggleSidebar(false);
@@ -98,20 +100,20 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
   const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const showProfilePage = () => {
     const redirectUrl = isEmployee ? `${APPLICATION_PATH}/employee/user/profile` : `${APPLICATION_PATH}/citizen/user/profile`;
-    history.push(redirectUrl);
+    navigate(redirectUrl);
     closeSidebar();
   };
   const redirectToLoginPage = () => {
     // localStorage.clear();
     // sessionStorage.clear();
-    history.push(`${APPLICATION_PATH}/citizen/login`);
+    navigate(`${APPLICATION_PATH}/citizen/login`);
     closeSidebar();
   };
   // Function to redirect the user to the EDCR scrutiny page
   const redirectToScrutinyPage = () => {
     // localStorage.clear();
     // sessionStorage.clear();
-    history.push(`${APPLICATION_PATH}/citizen/core/edcr/scrutiny`);
+    navigate(`${APPLICATION_PATH}/citizen/core/edcr/scrutiny`);
 };
   if (islinkDataLoading || isLoading || !isFetched) {
     return <Loader />;
@@ -168,7 +170,7 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
       })
       linkData.FSM = FSM;
     }
-    Object.keys(linkData)
+    Object.keys(linkData || {})
       ?.sort((x, y) => y.localeCompare(x))
       ?.map((key) => {
         if (linkData[key][0]?.sidebar === "digit-ui-links")
@@ -215,7 +217,7 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
           icon: configEmployeeSideBar[keys[i]][0]?.leftIcon?.split?.(":")[1],
           populators: {
             onClick: () => {
-              history.push(configEmployeeSideBar[keys[i]][0]?.navigationURL);
+              navigate(configEmployeeSideBar[keys[i]][0]?.navigationURL);
               closeSidebar();
             },
           },
@@ -243,7 +245,7 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
   }
 
   /*  URL with openlink wont have sidebar and actions    */
-  if (history.location.pathname.includes("/openlink")) {
+  if (location.pathname.includes("/openlink")) {
     profileItem = <span></span>;
     menuItems = menuItems.filter((ele) => ele.element === "LANGUAGE");
   }

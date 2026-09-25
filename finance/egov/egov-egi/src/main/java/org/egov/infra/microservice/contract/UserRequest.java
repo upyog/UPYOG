@@ -49,7 +49,7 @@ package org.egov.infra.microservice.contract;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.egov.infra.persistence.entity.enums.UserType;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,58 +60,58 @@ import java.util.stream.Collectors;
 public class UserRequest {
 
     private Long id;
-    @SafeHtml
+    @SanitizeHtml
     private String userName;
-    @SafeHtml
+    @SanitizeHtml
     private String salutation;
-    @SafeHtml
+    @SanitizeHtml
     private String name;
-    @SafeHtml
+    @SanitizeHtml
     private String gender;
-    @SafeHtml
+    @SanitizeHtml
     private String mobileNumber;
-    @SafeHtml
+    @SanitizeHtml
     private String emailId;
-    @SafeHtml
+    @SanitizeHtml
     private String altContactNumber;
-    @SafeHtml
+    @SanitizeHtml
     private String pan;
-    @SafeHtml
+    @SanitizeHtml
     private String aadhaarNumber;
-    @SafeHtml
+    @SanitizeHtml
     private String permanentAddress;
-    @SafeHtml
+    @SanitizeHtml
     private String permanentCity;
-    @SafeHtml
+    @SanitizeHtml
     private String permanentPinCode;
-    @SafeHtml
+    @SanitizeHtml
     private String correspondenceAddress;
-    @SafeHtml
+    @SanitizeHtml
     private String correspondenceCity;
-    @SafeHtml
+    @SanitizeHtml
     private String correspondencePinCode;
     private Boolean active;
-    @SafeHtml
+    @SanitizeHtml
     private String locale;
     private UserType type;
     private Boolean accountLocked;
-    @SafeHtml
+    @SanitizeHtml
     private String fatherOrHusbandName;
-    @SafeHtml
+    @SanitizeHtml
     private String signature;
-    @SafeHtml
+    @SanitizeHtml
     private String bloodGroup;
-    @SafeHtml
+    @SanitizeHtml
     private String photo;
-    @SafeHtml
+    @SanitizeHtml
     private String identificationMark;
     private Long createdBy;
-    @SafeHtml
+    @SanitizeHtml
     private String password;
-    @SafeHtml
+    @SanitizeHtml
     private String otpReference;
     private Long lastModifiedBy;
-    @SafeHtml
+    @SanitizeHtml
     private String tenantId;
     private List<RoleRequest> roles;
 

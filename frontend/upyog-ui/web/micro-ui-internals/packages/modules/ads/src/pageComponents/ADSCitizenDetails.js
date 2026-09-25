@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, MobileNumber, Card, CardSubHeader } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, MobileNumber, Card, CardSubHeader } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/ADSTimeline";
 import ADSCartAndCancellationPolicyDetails from "../components/ADSCartAndCancellationPolicyDetails";
@@ -10,7 +10,7 @@ import { TimerValues } from "../components/TimerValues";
  * applicant information, including name, mobile number, alternate number, 
  * and email address. It provides a structured form step for user input.
  */
-import "../css/ads-inline-auto.css";
+
 const ADSCitizenDetails = ({
   t,
   config,
@@ -47,13 +47,13 @@ const ADSCitizenDetails = ({
   const goNext = () => {
     let applicantData = formData.applicant && formData.applicant[index];
     // Create the formdata object
-    let cartDetails = value?.cartDetails.map(slot => {
-      return {
-        addType: slot.addTypeCode,
-        faceArea: slot.faceAreaCode,
-        location: slot.locationCode,
-        nightLight: slot.nightLight === "Yes" ? true : false,
-        bookingDate: slot.bookingDate,
+    let cartDetails = value?.cartDetails?.map((slot) => {
+      return { 
+        addType:slot.addTypeCode,
+        faceArea:slot.faceAreaCode,
+        location:slot.locationCode,
+        nightLight:slot.nightLight==="Yes"? true : false,
+        bookingDate:slot.bookingDate,
         bookingFromTime: "06:00",
         bookingToTime: "05:59",
         status: "BOOKING_CREATED"
@@ -169,14 +169,24 @@ const ADSCitizenDetails = ({
           <CardLabel>
             {`${t("ADS_EMAIL_ID")}`} <span className="check-page-link-button">*</span>
           </CardLabel>
-          <TextInput t={t} type={"email"} isMandatory={false} optionKey="i18nKey" name="emailId" value={emailId} placeholder={"Enter Applicant Email Id"} style={{
-          width: user.type === "EMPLOYEE" ? "51.6%" : null
-        }} onChange={setApplicantEmail} ValidationRequired={true} {...validation = {
-          required: true,
-          pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}$",
-          type: "email",
-          title: t("CHB_NAME_ERROR_MESSAGE")
-        }} />
+          <TextInput
+            t={t}
+            type={"email"}
+            isMandatory={false}
+            optionKey="i18nKey"
+            name="emailId"
+            value={emailId}
+            placeholder={"Enter Applicant Email Id"}
+            style={{ width: user.type === "EMPLOYEE" ? "51.6%" : null }}
+            onChange={setApplicantEmail}
+            ValidationRequired={true}
+            {...(validation = {
+              required: true,
+              pattern: "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+              type: "email",
+              title: t("CHB_NAME_ERROR_MESSAGE"),
+            })}
+          />
         </div>
       </FormStep>
     </React.Fragment>;

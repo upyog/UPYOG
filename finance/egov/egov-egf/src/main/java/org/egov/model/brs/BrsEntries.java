@@ -53,22 +53,22 @@ import org.egov.commons.CVoucherHeader;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.model.instrument.InstrumentHeader;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -89,12 +89,12 @@ public class BrsEntries extends AbstractPersistable<Long>
     private Long id;
 
     @Length(max = 20)
-    @SafeHtml
+    @SanitizeHtml
     @NotNull
     private String refNo;
 
     @Length(max = 20)
-    @SafeHtml
+    @SanitizeHtml
     @NotNull
     private String type;
 
@@ -105,7 +105,7 @@ public class BrsEntries extends AbstractPersistable<Long>
     private BigDecimal txnAmount;
 
     @Length(max = 100)
-    @SafeHtml
+    @SanitizeHtml
     private String remarks;
     
     @ManyToOne
@@ -133,64 +133,64 @@ public class BrsEntries extends AbstractPersistable<Long>
 
     // added for DishonoredCheque
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String voucherNumber = "";
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String cgnum = "";
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String payinSlipVHeaderId = "";
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String fundId = "";
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String fundSourceId = "";
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String chequeNumber = "";
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String chequeDate = "";
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String amount = "";
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String lotNumber = "";
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String lotType = "";
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String field = "";
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String voucherType = "";
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String bankName = "";
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String accNumber = "";
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String accIdParam = "";
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String payTo = "";
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String payCheque = "";
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String departmentId;
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String functionaryId;
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String functionId = "";
 
     public Long getId() {

@@ -1,32 +1,34 @@
-import { CardLabel, CardLabelError, LabelFieldPair, TextInput, Toast, Row, StatusTable } from "@upyog/digit-ui-react-components";
-import _ from "lodash";
-import React, { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
-import { checkForNA } from "../utils";
-import "../css/asset-inline-auto.css";
-const createAssetcommonforAll = () => ({
-  returnDate: "",
-  key: Date.now()
-});
-const ReturnAssignedAsset = ({
-  config,
-  onSelect,
-  formData,
-  setError,
-  formState,
-  clearErrors
-}) => {
-  const {
-    t
-  } = useTranslation();
-  const [returndetails, setreturndetails] = useState(formData?.returndetails || [createAssetcommonforAll()]);
-  const [focusIndex, setFocusIndex] = useState({
-    index: -1,
-    type: ""
-  });
-  useEffect(() => {
+import {
+    CardLabel,
+    CardLabelError,
+    LabelFieldPair,
+    TextInput,
+    Toast,
+    Row,
+    StatusTable
+    } from "@nudmcdgnpm/digit-ui-react-components";
+    import _ from "lodash";
+    import React, { useEffect, useState } from "react";
+    import { Controller, useForm } from "react-hook-form";
+    import { useTranslation } from "react-i18next";
+    import { useParams } from "react-router-dom";
+    import { checkForNA } from "../utils";
+
+
+    const createAssetcommonforAll = () => ({
+        returnDate: "",
+        key: Date.now(),
+    });
+
+    const ReturnAssignedAsset = ({ config, onSelect, formData, setError, formState, clearErrors }) => {
+    const { t } = useTranslation();
+
+
+    const [returndetails, setreturndetails] = useState(formData?.returndetails || [createAssetcommonforAll()]);
+    
+
+    const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
+    useEffect(() => {
     onSelect(config?.key, returndetails);
   }, [returndetails]);
   const commonProps = {
@@ -139,15 +141,28 @@ const OwnerForm = _props => {
                 <LabelFieldPair>
                     <CardLabel className="card-label-smaller">{t("AST_RETURN_DATE")}</CardLabel>
                     <div className="field">
-                    <Controller control={control} name={"returnDate"} defaultValue={returndetails?.returnDate} rules={{
-              required: t("CORE_COMMON_REQUIRED_ERRMSG"),
-              validDate: val => /^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")
-            }} render={props => <TextInput type="date" value={props.value} onChange={e => {
-              props.onChange(e.target.value);
-            }} max={new Date().toISOString().split('T')[0]} />} />
+                    <Controller
+                        control={control}
+                        name={"returnDate"}
+                        defaultValue={returndetails?.returnDate}
+                        rules={{
+                        required: t("CORE_COMMON_REQUIRED_ERRMSG"),
+                        validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
+                        }}
+                        render={({field}) => (
+                        <TextInput
+                            type="date"
+                            value={field.value}
+                            onChange={(e) => {
+                            field.onChange(e.target.value);
+                            }}
+                            max={new Date().toISOString().split('T')[0]}
+                        />
+                        )}
+                    />
                     </div>
                 </LabelFieldPair>
-                <CardLabelError style={errorStyle}>{localFormState.touched.employeeCode ? errors?.employeeCode?.message : ""}</CardLabelError>
+                <CardLabelError style={errorStyle}>{localFormState?.touched?.employeeCode ? errors?.employeeCode?.message : ""}</CardLabelError>
                
 
                

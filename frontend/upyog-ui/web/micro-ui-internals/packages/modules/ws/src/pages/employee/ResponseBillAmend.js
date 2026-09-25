@@ -1,8 +1,8 @@
-import { ActionBar, Banner, Card, CardText, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
-import React, { useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import { Link, useLocation } from "react-router-dom";
-import "../../css/ws-inline-auto.css";
+import { ActionBar, Banner, Card, CardText, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components"
+import React, { useEffect } from "react"
+import { useTranslation } from "react-i18next"
+import { Link, useLocation } from "react-router-dom"
+
 const ResponseBillAmend = () => {
   const {
     state

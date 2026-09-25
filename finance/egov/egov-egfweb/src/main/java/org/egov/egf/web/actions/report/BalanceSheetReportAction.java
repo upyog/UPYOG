@@ -48,6 +48,7 @@
 package org.egov.egf.web.actions.report;
 
 
+import jakarta.persistence.FlushModeType;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
 
@@ -73,7 +74,7 @@ import org.egov.services.report.BalanceSheetScheduleService;
 import org.egov.services.report.BalanceSheetService;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
-import org.hibernate.FlushMode;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -212,7 +213,7 @@ public class BalanceSheetReportAction extends BaseFormAction {
     @Override
     public void prepare() {
         persistenceService.getSession().setDefaultReadOnly(true);
-        persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
+        persistenceService.getSession().setFlushMode(FlushModeType.COMMIT);
         super.prepare();
         if (!parameters.containsKey("showDropDown")) {
             addDropdownData("departmentList", masterDataCache.get("egi-department"));

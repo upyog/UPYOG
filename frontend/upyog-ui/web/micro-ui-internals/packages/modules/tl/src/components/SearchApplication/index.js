@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { SearchForm, Table, Card, Header } from "@upyog/digit-ui-react-components";
+import { SearchForm, Table, Card, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link } from "react-router-dom";
 import { convertEpochToDateDMY } from "../../utils";
 import SearchFields from "./SearchFields";
@@ -24,55 +24,43 @@ const SearchLicenseApplication = ({
     limit: 10,
     sortBy: "commencementDate",
     sortOrder: "DESC"
-  };
-  const {
-    register,
-    control,
-    handleSubmit,
-    setValue,
-    getValues,
-    reset
-  } = useForm({
-    defaultValues: initialValues
-  });
-  useEffect(() => {
-    register("offset", 0);
-    register("limit", 10);
-    register("sortBy", "commencementDate");
-    register("sortOrder", "DESC");
-  }, [register]);
-  const onSort = useCallback(args => {
-    if (args.length === 0) return;
-    setValue("sortBy", args.id);
-    setValue("sortOrder", args.desc ? "DESC" : "ASC");
-  }, []);
-  function onPageSizeChange(e) {
-    setValue("limit", Number(e.target.value));
-    handleSubmit(onSubmit)();
-  }
-  function nextPage() {
-    setValue("offset", getValues("offset") + getValues("limit"));
-    handleSubmit(onSubmit)();
-  }
-  function previousPage() {
-    setValue("offset", getValues("offset") - getValues("limit"));
-    handleSubmit(onSubmit)();
-  }
-  const isMobile = window.Digit.Utils.browser.isMobile();
-  if (isMobile) {
-    return <MobileSearchApplication {...{
-      Controller,
-      register,
-      control,
-      t,
-      reset,
-      previousPage,
-      handleSubmit,
-      tenantId,
-      data,
-      onSubmit
-    }} />;
-  }
+};
+    const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
+        defaultValues: initialValues
+    })
+
+    useEffect(() => {
+      register("offset")
+      register("limit")
+      register("sortBy")
+      register("sortOrder")
+    },[register])
+
+    const onSort = useCallback((args) => {
+      if (args.length === 0) return
+      setValue("sortBy", args.id)
+      setValue("sortOrder", args.desc ? "DESC" : "ASC")
+    }, [])
+
+    function onPageSizeChange(e){
+        setValue("limit",Number(e.target.value))
+        handleSubmit(onSubmit)()
+    }
+
+    function nextPage () {
+        setValue("offset", getValues("offset") + getValues("limit"))
+        handleSubmit(onSubmit)()
+    }
+    function previousPage () {
+        setValue("offset", Math.max(0, getValues("offset") - getValues("limit")))
+        handleSubmit(onSubmit)()
+    }
+
+    const isMobile = window.Digit.Utils.browser.isMobile();
+
+    if (isMobile) {
+      return <MobileSearchApplication {...{ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit }}/>
+    }
 
   //need to get from workflow
   const GetCell = value => <span className="cell-text">{value}</span>;

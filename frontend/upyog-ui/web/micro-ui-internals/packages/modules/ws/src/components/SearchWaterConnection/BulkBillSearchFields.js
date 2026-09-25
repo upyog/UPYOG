@@ -1,15 +1,8 @@
 import React, { Fragment, useState, useEffect } from "react";
 import { Controller, useWatch } from "react-hook-form";
-import { TextInput, SubmitBar, SearchField, Localities } from "@upyog/digit-ui-react-components";
-import "../../css/ws-inline-auto.css";
-const BulkBillSearchFields = ({
-  register,
-  control,
-  reset,
-  tenantId,
-  t,
-  setValue
-}) => {
+import { TextInput, SubmitBar, SearchField, Localities } from "@nudmcdgnpm/digit-ui-react-components";
+
+const BulkBillSearchFields = ({ register, control, reset, tenantId, t, setValue }) => {
   const [locality, setLocality] = useState("");
   const tenant = Digit.ULBService.getCurrentTenantId();
   function selectLocality(value) {
@@ -21,18 +14,28 @@ const BulkBillSearchFields = ({
   return <>
       <SearchField>
         <label>{t("WS_SEARCH_CONNNECTION_CITY")}</label>
-        <TextInput name="city" disable={true} value={t(tenant)} inputRef={register({})} />
+        <TextInput name="city" disable={true} value={t(tenant)} {...register("city")} />
       </SearchField>
       <SearchField>
         <label>{t("WS_SEARCH_LOCALITY_LABEL")}</label>
-        <Controller name="locality" defaultValue={null} control={control} inputRef={register({})} render={props => <Localities selectLocality={selectLocality} tenantId={tenant} boundaryType="revenue" keepNull={false} optionCardStyles={{
-        height: "600px",
-        overflow: "auto",
-        zIndex: "10"
-      }} selected={locality}
+        <Controller
+          name="locality"
+          defaultValue={null}
+          control={control}
+          render={({ field }) => (
+            <Localities
+              selectLocality={(value) => {
+                field.onChange(value);
+                selectLocality(value);
+              }}
+              tenantId={tenant}
+              boundaryType="revenue"
+              keepNull={false}
+              optionCardStyles={{ height: "600px", overflow: "auto", zIndex: "10" }}
+              selected={field.value || locality}
 
       //disable={!city?.code}
-      disableLoader={false} />} />
+      disableLoader={false} />)} />
 
       </SearchField>
       <SearchField className="ws-auto-23">

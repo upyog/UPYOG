@@ -1,8 +1,8 @@
-import { CardLabel, CardLabelDesc, UploadFile, FormStep } from "@upyog/digit-ui-react-components";
+import { CardLabel, CardLabelDesc, UploadFile, FormStep } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import Timeline from "../components/TLTimeline";
 import { getOwnersfromProperty } from "../utils";
-import "../css/tl-inline-auto.css";
+
 const TLSelectProofIdentity = ({
   t,
   config,

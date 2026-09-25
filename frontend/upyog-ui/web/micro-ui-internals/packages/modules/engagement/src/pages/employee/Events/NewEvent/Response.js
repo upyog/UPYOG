@@ -1,9 +1,8 @@
-import { ActionBar, Banner, Card, CardText, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
+import { ActionBar, Banner, Card, CardText, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import { format } from "date-fns";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const BannerPicker = (props) => {
   const { t } = useTranslation();
@@ -17,73 +16,39 @@ const BannerPicker = (props) => {
   )
 }
 
-const Response = (props) => {
-  const queryClient = useQueryClient();
+const Response = () => {
   const { t } = useTranslation();
   const searchParams = Digit.Hooks.useQueryParams();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.events.useCreateEvent();
-  const updateEventMutation = Digit.Hooks.events.useUpdateEvent();
-  const [isSuccess, setIsSuccess] = useState(false)
-  const { state } = props.location;
+  const { state } = useLocation();
 
-  const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_EVENT_MUTATION_HAPPENED", false);
-  const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_EVENT_MUTATION_SUCCESS_DATA", false);
-  const [errorInfo, setErrorInfo, clearError] = Digit.Hooks.useSessionStorage("EMPLOYEE_EVENT_ERROR_DATA", false);
-
-
-  const onError = (error, variables) => {
-    setErrorInfo(error?.response?.data?.Errors[0]?.code || 'ERROR');
-    setMutationHappened(true);
-  };
-
-  useEffect(() => {
-    if (mutation.data) setsuccessData(mutation.data);
-  }, [mutation.data]);
-  useEffect(() => {
-    if (updateEventMutation.data) setsuccessData(updateEventMutation.data);
-  }, [updateEventMutation.data]);
-
-  useEffect(() => {
-    const onSuccess = () => {
-      setMutationHappened(true);
-      queryClient.clear();
-    }
-    if (!mutationHappened) {
-      if (Boolean(searchParams?.delete) || Boolean(searchParams?.update)) {
-        updateEventMutation.mutate(state, {
-          onError,
-          onSuccess,
-        });
-        return;
-      }
-      mutation.mutate(state, {
-        onError,
-        onSuccess,
-      })
-      return;
-    }
-    return () => {
-      queryClient.clear();
-    };
-  }, []);
+  const isSuccess = state?.isSuccess;
+  const data = state?.data;
 
   if (searchParams?.delete || searchParams?.update) {
-    if (updateEventMutation.isLoading || (updateEventMutation.isIdle && !mutationHappened)) {
-      return <Loader />
-    }
-
     return (
       <Card>
         <BannerPicker
           t={t}
-          message={searchParams?.update ? (updateEventMutation.isSuccess || successData) ? 'ENGAGEMENT_EVENT_UPDATED' : `ENGAGEMENT_EVENT_UPDATED_FAILED` : (updateEventMutation.isSuccess || successData) ? 'ENGAGEMENT_EVENT_DELETED' : 'ENGAGEMENT_EVENT_DELETED_FAILED'}
-          data={updateEventMutation.data || successData}
-          isSuccess={updateEventMutation?.isSuccess || successData}
-          isLoading={(updateEventMutation.isIdle && !mutationHappened) || updateEventMutation.isLoading}
+          message={
+            searchParams?.update
+              ? isSuccess
+                ? 'ENGAGEMENT_EVENT_UPDATED'
+                : 'ENGAGEMENT_EVENT_UPDATED_FAILED'
+              : isSuccess
+              ? 'ENGAGEMENT_EVENT_DELETED'
+              : 'ENGAGEMENT_EVENT_DELETED_FAILED'
+          }
+          data={data}
+          isSuccess={isSuccess}
         />
         <CardText>
-        {searchParams?.update ? (updateEventMutation.isSuccess || successData) ? t('ENGAGEMENT_EVENT_UPDATED') : t(`ENGAGEMENT_EVENT_UPDATED_FAILED`) : (updateEventMutation.isSuccess || successData) ? t('ENGAGEMENT_EVENT_DELETED') : t('ENGAGEMENT_EVENT_DELETED_FAILED')}
+          {searchParams?.update
+            ? isSuccess
+              ? t('ENGAGEMENT_EVENT_UPDATED')
+              : t('ENGAGEMENT_EVENT_UPDATED_FAILED')
+            : isSuccess
+            ? t('ENGAGEMENT_EVENT_DELETED')
+            : t('ENGAGEMENT_EVENT_DELETED_FAILED')}
         </CardText>
         <ActionBar>
           <Link to={"/upyog-ui/employee"}>
@@ -91,31 +56,25 @@ const Response = (props) => {
           </Link>
         </ActionBar>
       </Card>
-    )
+    );
   }
 
-  if (mutation.isLoading || (mutation.isIdle && !mutationHappened)) {
-    return <Loader />
-  }
-
-
-  const event = mutation?.data?.events?.[0] || successData?.events?.[0] || {};
+  const event = data?.events?.[0] || {};
   return (
     <Card>
       <BannerPicker
         t={t}
-        message={mutation.isSuccess || successData ? `ENGAGEMENT_EVENT_CREATED_MESSAGE` : `ENGAGEMENT_EVENT_FAILED_MESSAGES`}
-        data={mutation.data || successData}
-        isSuccess={mutation.isSuccess || successData}
-        isLoading={(mutation.isIdle && !mutationHappened) || mutation.isLoading}
+        message={isSuccess ? `ENGAGEMENT_EVENT_CREATED_MESSAGE` : `ENGAGEMENT_EVENT_FAILED_MESSAGES`}
+        data={data}
+        isSuccess={isSuccess}
       />
       <CardText>
-        {mutation.isSuccess || successData ? t(`ENGAGEMENT_EVENT_CREATED_MESSAGES`, {
+        {isSuccess ? t(`ENGAGEMENT_EVENT_CREATED_MESSAGES`, {
           eventName: event?.name,
           fromDate: Digit.DateUtils.ConvertTimestampToDate(event?.eventDetails?.fromDate),
           toDate: Digit.DateUtils.ConvertTimestampToDate(event?.eventDetails?.toDate),
-          fromTime: mutation.isSuccess ? format(new Date(event?.eventDetails?.fromDate), 'HH:mm') : null,
-          toTime: mutation.isSuccess ? format(new Date(event?.eventDetails?.toDate), 'HH:mm') : null,
+          fromTime: format(new Date(event?.eventDetails?.fromDate), 'HH:mm'),
+          toTime: format(new Date(event?.eventDetails?.toDate), 'HH:mm'),
         }) : null}
       </CardText>
       <ActionBar>
@@ -124,7 +83,7 @@ const Response = (props) => {
         </Link>
       </ActionBar>
     </Card>
-  )
+  );
 }
 
 export default Response;

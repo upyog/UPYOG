@@ -1,5 +1,4 @@
-import { DatePicker, Dropdown, CheckBox, TextArea, TextInput, CardLabelError } from "@upyog/digit-ui-react-components";
-import { DustbinIcon } from "@upyog/digit-ui-react-components";
+import { DatePicker, Dropdown, CheckBox, TextArea, TextInput, CardLabelError, DustbinIcon} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import TimePicker from "react-time-picker";
@@ -101,17 +100,23 @@ const NewSurveyForm = ({ t, index, questionStatement, type, uuid, qorder, requir
     switch (type?.value) {
       case "LONG_ANSWER_TYPE":
         return <div>
-          <TextArea 
-            placeholder={t("LONG_ANSWER_TYPE")}
-            disabled={isInputDisabled}
-            name={"longAnsDescription"}
-            inputRef={register({
+          {(() => {
+            const { ref: longAnsRef, ...longAnsRest } = register("longAnsDescription", {
               maxLength: {
                 value: 500,
                 message: t("EXCEEDS_500_CHAR_LIMIT"),
               }
-            })}
+            });
+            return (
+              <TextArea
+                placeholder={t("LONG_ANSWER_TYPE")}
+                disabled={isInputDisabled}
+                name="longAnsDescription"
+                inputRef={longAnsRef}
+                {...longAnsRest}
               />
+            );
+          })()}
           {formState?.errors && <CardLabelError>{formState?.errors?.longAnsDescription?.message}</CardLabelError>}
               </div>;
       case "DATE_ANSWER_TYPE":
@@ -163,17 +168,23 @@ const NewSurveyForm = ({ t, index, questionStatement, type, uuid, qorder, requir
         );
       default:
         return<div> 
-                <TextInput 
-                placeholder={t("SHORT_ANSWER_TYPE")} 
-                name={"shortAnsDescription"}
-                disabled={isInputDisabled}
-                inputRef={register({
-                  maxLength: {
-                    value: 200,
-                    message: t("EXCEEDS_200_CHAR_LIMIT"),
-                  }
-                })}
-                />
+                {(() => {
+                  const { ref: shortAnsRef, ...shortAnsRest } = register("shortAnsDescription", {
+                    maxLength: {
+                      value: 200,
+                      message: t("EXCEEDS_200_CHAR_LIMIT"),
+                    }
+                  });
+                  return (
+                    <TextInput
+                      placeholder={t("SHORT_ANSWER_TYPE")}
+                      name="shortAnsDescription"
+                      disabled={isInputDisabled}
+                      inputRef={shortAnsRef}
+                      {...shortAnsRest}
+                    />
+                  );
+                })()}
                 {formState?.errors && <CardLabelError>{formState?.errors?.shortAnsDescription?.message}</CardLabelError>}
               </div>;
     }
@@ -185,28 +196,34 @@ const NewSurveyForm = ({ t, index, questionStatement, type, uuid, qorder, requir
       <span className="newSurveyForm_mainsection">
         <div className="newSurveyForm_questions">
           <div style={{width: "75%"}}>
-            <TextInput
-              placeholder={t("CS_COMMON_TYPE_QUESTION")}
-              //value={t(Digit.Utils.locale.getTransformedLocale(surveyQuestionConfig.questionStatement))}
-              value={surveyQuestionConfig.questionStatement}
-              onChange={(ev) => {
-                setSurveyQuestionConfig((prevState) => ({ ...prevState, questionStatement: ev.target.value }));
-              }}
-              textInputStyle={{width: "100%"}}
-              name={`QUESTION_SURVEY_${index}`}
-              disable={disableInputs}
-              inputRef={register({
+            {(() => {
+              const { ref: questionRef, onChange: questionOnChange, ...questionRest } = register(`QUESTION_SURVEY_${index}`, {
                 required: t("ES_ERROR_REQUIRED"),
                 maxLength: {
                   value: 100,
                   message: t("EXCEEDS_100_CHAR_LIMIT"),
                 },
-                pattern:{
+                pattern: {
                   value: /^[A-Za-z_-][A-Za-z0-9_\ -?]*$/,
                   message: t("ES_SURVEY_DONT_START_WITH_NUMBER")
                 }
-              })}
-            />
+              });
+              return (
+                <TextInput
+                  placeholder={t("CS_COMMON_TYPE_QUESTION")}
+                  value={surveyQuestionConfig.questionStatement}
+                  textInputStyle={{width: "100%"}}
+                  name={`QUESTION_SURVEY_${index}`}
+                  disable={disableInputs}
+                  inputRef={questionRef}
+                  {...questionRest}
+                  onChange={(ev) => {
+                    questionOnChange(ev);
+                    setSurveyQuestionConfig((prevState) => ({ ...prevState, questionStatement: ev.target.value }));
+                  }}
+                />
+              );
+            })()}
             {formState?.errors && <CardLabelError>{formState?.errors?.[`QUESTION_SURVEY_${index}`]?.message}</CardLabelError>}
           </div>
           <Dropdown

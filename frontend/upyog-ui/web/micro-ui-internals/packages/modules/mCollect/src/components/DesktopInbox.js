@@ -1,4 +1,4 @@
-import { Card, Loader } from "@upyog/digit-ui-react-components";
+import { Card, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -116,7 +116,8 @@ const DesktopInbox = ({ tableConfig, filterComponent, columns, ...props }) => {
               <span className="link">
                 <Link
                   to={{
-                    pathname: `/upyog-ui/employee/payment/collect/${row.original?.["businessService"]}/${row.original?.["challanNo"]}/tenantId=${row.original?.["tenantId"]}?workflow=mcollect`,
+                    pathname: `/upyog-ui/employee/payment/collect/${row.original?.["businessService"]}/${row.original?.["challanNo"]}/${row.original?.["tenantId"]}`,
+                    search: `?workflow=mcollect`,
                   }}
                 >
                   {t(`UC_${action}`)}

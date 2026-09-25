@@ -1,13 +1,10 @@
 package org.egov.asset.web.models.disposal;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.egov.asset.web.models.AuditDetails;
 import org.egov.asset.web.models.Document;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.validation.Valid;
 import java.util.List;

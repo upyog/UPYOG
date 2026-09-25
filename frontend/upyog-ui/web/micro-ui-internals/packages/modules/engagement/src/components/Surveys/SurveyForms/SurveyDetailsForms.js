@@ -1,4 +1,4 @@
-import { CardLabelError, Dropdown, RemoveableTag, TextInput, MultiSelectDropdown } from "@upyog/digit-ui-react-components";
+import { CardLabelError, Dropdown, RemoveableTag, TextInput, MultiSelectDropdown } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment, useMemo } from "react";
 import { Controller } from "react-hook-form";
 
@@ -37,22 +37,22 @@ const SurveyDetailsForms = ({ t, registerRef, controlSurveyForm, surveyFormState
           control={controlSurveyForm}
           defaultValue={selectedTenat}
           rules={{ required: true }}
-          render={(props) => {
+          render={({ field }) => {
             const renderRemovableTokens = useMemo(
               () =>
-                props?.value?.map((ulb, index) => {
+                field?.value?.map((ulb, index) => {
                   return (
                     <RemoveableTag
                       key={index}
                       text={ulb.name}
                       disabled = {checkRemovableTagDisabled(disableInputs,enableDescriptionOnly)}
                       onClick={() => {
-                        props.onChange(props?.value?.filter((loc) => loc.code !== ulb.code));
+                        field.onChange(field?.value?.filter((loc) => loc.code !== ulb.code));
                       }}
                     />
                   );
                 }),
-              [props?.value]
+              [field?.value]
             );
             return (
               <div style={{ display: "grid", gridAutoFlow: "row" }}>
@@ -62,9 +62,9 @@ const SurveyDetailsForms = ({ t, registerRef, controlSurveyForm, surveyFormState
                   option={userUlbs}
                   placeholder={t("ES_COMMON_USER_ULBS")}
                   select={(e) => {
-                    props.onChange([...(surveyFormData("tenantIds")?.filter?.((f) => e.code !== f?.code) || []), e]);
+                    field.onChange([...(surveyFormData("tenantIds")?.filter?.((f) => e.code !== f?.code) || []), e]);
                   }}
-                  selected={props?.value}
+                  selected={field?.value}
                   keepNull={true}
                   disable={disableInputs}
                   t={t}
@@ -73,12 +73,12 @@ const SurveyDetailsForms = ({ t, registerRef, controlSurveyForm, surveyFormState
                   options={userUlbs}
                   isSurvey={true}
                   optionsKey="i18nKey"
-                  props={props}
+                  props={field}
                   isPropsNeeded={true}
                   onSelect={(e) => {
-                    props.onChange([...(surveyFormData("tenantIds")?.filter?.((f) => e.code !== f?.code) || []), e]);
+                    field.onChange([...(surveyFormData("tenantIds")?.filter?.((f) => e.code !== f?.code) || []), e]);
                   }}
-                  selected={props?.value}
+                  selected={field?.value}
                   defaultLabel={t("ES_COMMON_USER_ULBS")}
                   defaultUnit={t("CS_SELECTED_TEXT")}
                 />
@@ -92,42 +92,54 @@ const SurveyDetailsForms = ({ t, registerRef, controlSurveyForm, surveyFormState
 
       <span className="surveyformfield">
         <label>{`${t("CS_SURVEY_NAME")} * `}</label>
-        <TextInput
-          name="title"
-          type="text"
-          inputRef={registerRef({
+        {(() => {
+          const { ref: titleRef, ...titleRest } = registerRef("title", {
             required: t("ES_ERROR_REQUIRED"),
             maxLength: {
               value: 60,
               message: t("EXCEEDS_60_CHAR_LIMIT"),
             },
-            pattern:{
+            pattern: {
               value: /^[A-Za-z_-][A-Za-z0-9_\ -]*$/,
               message: t("ES_SURVEY_DONT_START_WITH_NUMBER")
             }
-          })}
-          disable={disableInputs}
-        />
+          });
+          return (
+            <TextInput
+              name="title"
+              type="text"
+              inputRef={titleRef}
+              {...titleRest}
+              disable={disableInputs}
+            />
+          );
+        })()}
         {surveyFormState?.errors?.title && <CardLabelError>{surveyFormState?.errors?.["title"]?.message}</CardLabelError>}
       </span>
+
       <span className="surveyformfield">
         <label>{`${t("CS_SURVEY_DESCRIPTION")} `}</label>
-        <TextInput
-          name="description"
-          type="text"
-          inputRef={registerRef({
-            //required: t("ES_ERROR_REQUIRED"),
+        {(() => {
+          const { ref: descRef, ...descRest } = registerRef("description", {
             maxLength: {
               value: 140,
               message: t("EXCEEDS_140_CHAR_LIMIT"),
             },
-            pattern:{
+            pattern: {
               value: /^[A-Za-z_-][A-Za-z0-9_\ -]*$/,
               message: t("ES_SURVEY_DONT_START_WITH_NUMBER")
             }
-          })}
-          disable={enableDescriptionOnly ?  !enableDescriptionOnly : disableInputs}
-        />
+          });
+          return (
+            <TextInput
+              name="description"
+              type="text"
+              inputRef={descRef}
+              {...descRest}
+              disable={enableDescriptionOnly ? !enableDescriptionOnly : disableInputs}
+            />
+          );
+        })()}
         {surveyFormState?.errors?.description && <CardLabelError>{surveyFormState?.errors?.["description"]?.message}</CardLabelError>}
       </span>
     </div>

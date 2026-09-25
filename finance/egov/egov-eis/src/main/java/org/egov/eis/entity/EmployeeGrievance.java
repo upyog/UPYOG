@@ -54,22 +54,22 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.eis.entity.enums.EmployeeGrievanceStatus;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -78,7 +78,7 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 @Entity
 @Unique(fields = { "grievanceNumber" }, enableDfltMsg = true)
@@ -96,7 +96,7 @@ public class EmployeeGrievance extends StateAware {
 
     @NotBlank
     @Length(max = 50)
-    @SafeHtml
+    @SanitizeHtml
     @Column(name = "grievanceNumber", unique = true)
     private String grievanceNumber;
 
@@ -116,12 +116,12 @@ public class EmployeeGrievance extends StateAware {
     private EmployeeGrievanceStatus status;
 
     @Length(min = 10, max = 500)
-    @SafeHtml
+    @SanitizeHtml
     @NotNull
     private String details;
 
     @Length(max = 500)
-    @SafeHtml
+    @SanitizeHtml
     private String grievanceResolution;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)

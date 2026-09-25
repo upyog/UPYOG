@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 // import { useTranslation } from "react-i18next";
-import { useRouteMatch, Switch, Route, Link } from "react-router-dom";
+import { Route, Link, Routes } from "react-router-dom";
 import { CollectPayment } from "./payment-collect";
 import { SuccessfulPayment, FailedPayment } from "./response";
 // import { SubformComposer } from "../../hoc";
@@ -14,7 +14,7 @@ subFormRegistry?.addSubForm("testForm", testForm);
 
 const EmployeePayment = ({ stateCode, cityCode, moduleCode }) => {
   const userType = "employee";
-  const { path: currentPath } = useRouteMatch();
+  const { path: currentPath } = Digit.Hooks.useModuleBasePath();
 
   const { t } = useTranslation();
 
@@ -27,24 +27,16 @@ const EmployeePayment = ({ stateCode, cityCode, moduleCode }) => {
   return (
     <React.Fragment>
       <p className="breadcrumb" style={{ marginLeft: "15px" }}>
-        <Link to={`/upyog-ui/employee`}>{t("ES_COMMON_HOME")}</Link>
-        {isFsm ? <Link to={`/upyog-ui/employee/fsm/home`}>/ {t("ES_TITLE_FSM")} </Link> : null}
-        {isFsm ? <Link to={`/upyog-ui/employee/fsm/inbox`}>/ {t("ES_TITLE_INBOX")}</Link> : null}/ {link}
+        <Link to={"/upyog-ui/employee"}>{t("ES_COMMON_HOME")}</Link>
+        {isFsm ? <Link to={"/upyog-ui/employee/fsm/home"}>/ {t("ES_TITLE_FSM")} </Link> : null}
+        {isFsm ? <Link to={"/upyog-ui/employee/fsm/inbox"}>/ {t("ES_TITLE_INBOX")}</Link> : null}/ {link}
       </p>
-      <Switch>
-        <Route path={`${currentPath}/collect/:businessService/:consumerCode`}>
-          <CollectPayment {...commonProps} basePath={currentPath} />
-        </Route>
-        <Route path={`${currentPath}/success/:businessService/:receiptNumber/:consumerCode`}>
-          <SuccessfulPayment {...commonProps} />
-        </Route>
-        <Route path={`${currentPath}/integration/:moduleName/:pageName`}>
-          <IFrameInterface {...commonProps} />
-        </Route>
-        <Route path={`${currentPath}/failure`}>
-          <FailedPayment {...commonProps} />
-        </Route>
-      </Switch>
+      <Routes>
+        <Route path="collect/:businessService/:consumerCode/*" element={<CollectPayment {...commonProps} basePath={currentPath} />} />
+        <Route path="success/:businessService/:receiptNumber/:consumerCode/*" element={<SuccessfulPayment {...commonProps} />} />
+        <Route path="integration/:moduleName/:pageName" element={<IFrameInterface {...commonProps} />} />
+        <Route path="failure" element={<FailedPayment {...commonProps} />} />
+      </Routes>
     </React.Fragment>
   );
 };

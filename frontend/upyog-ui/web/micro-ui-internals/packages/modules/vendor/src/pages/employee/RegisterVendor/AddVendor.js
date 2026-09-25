@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FormComposer, Toast, Header } from "@upyog/digit-ui-react-components";
-import { useHistory } from "react-router-dom";
+import { FormComposer, Toast, Header } from "@nudmcdgnpm/digit-ui-react-components";
+
 //import VendorConfig from "../../configs/VendorConfig";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import VendorConfig from "../../../config/VendorConfig";
 
 const AddVendor = ({ parentUrl, heading }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const [showToast, setShowToast] = useState(null);
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const queryClient = useQueryClient();
 
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("FSM_MUTATION_HAPPENED", false);
@@ -135,7 +135,7 @@ const AddVendor = ({ parentUrl, heading }) => {
         queryClient.invalidateQueries("DSO_SEARCH");
         setTimeout(() => {
           closeToast();
-          history.push("/upyog-ui/employee/vendor/search-vendor?selectedTabs=VENDOR");
+          navigate("/upyog-ui/employee/vendor/search-vendor?selectedTabs=VENDOR");
         }, 5000);
                        
       },

@@ -54,8 +54,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.CChartOfAccountDetail;
@@ -71,7 +71,7 @@ import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.model.contra.TransactionSummary;
 import org.egov.model.contra.TransactionSummaryDto;
 import org.egov.model.service.TransactionSummaryService;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -91,8 +91,15 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @SuppressWarnings("deprecation")
+/**
+ * LTS Migration Notes:
+ * 1. [Hibernate Validator & Jakarta EE] Replaced removed @SafeHtml with @SanitizeHtml and migrated to jakarta.validation.*.
+ * 2. [Spring 6 Strict @RequestParam] In Spring 6, @RequestParam defaults to strictly required. Added 'required = false'
+ *    and empty collection guards across cascading AJAX endpoints (getMajorHeads, getMinorHeads, searchTransactionSummaries)
+ *    to prevent HTTP 400 Bad Request errors during UI initialization.
+ */
 @Controller
-@RequestMapping("/transactionsummary")
+@RequestMapping(value = "/transactionsummary")
 @Validated
 public class TransactionSummaryController {
 
@@ -245,19 +252,37 @@ public class TransactionSummaryController {
 	}
 
 	@GetMapping(value = "/ajax/getMajorHeads")
-	public @ResponseBody List<CChartOfAccounts> getMajorHeads(@RequestParam("type") Character type) {
+	public @ResponseBody List<CChartOfAccounts> getMajorHeads(@RequestParam(value = "type", required = false) Character type) {
+		/*
+		 * Spring 6 migration note:
+		 * @RequestParam is required unless explicitly marked optional. This endpoint is
+		 * called while cascading dropdowns initialize, so missing type should mean "no
+		 * options yet" instead of an HTTP 400 response.
+		 */
+		if (type == null) {
+			return new ArrayList<>();
+		}
 		return chartOfAccountsDAO.findByType(type); 
 	}
 
 	@GetMapping(value = "/ajax/getMinorHeads")
-	public @ResponseBody List<CChartOfAccounts> getMinorHeads(@RequestParam("majorCode") @SafeHtml String majorCode,
-			@RequestParam("classification") Long classification) {
+	public @ResponseBody List<CChartOfAccounts> getMinorHeads(@RequestParam(value = "majorCode", required = false) @SanitizeHtml String majorCode,
+			@RequestParam(value = "classification", required = false) Long classification) {
+		/*
+		 * Spring 6 migration note:
+		 * The UI can call this before a major head is selected. Treat blank majorCode
+		 * as an empty result set to preserve the legacy AJAX behavior under stricter
+		 * request parameter validation.
+		 */
+		if (majorCode == null || majorCode.trim().isEmpty()) {
+			return new ArrayList<>();
+		}
 		return chartOfAccountsDAO.findByMajorCodeAndClassification(majorCode, classification);
 	}
 
 	@GetMapping(value = "/ajax/getAccounts")
-	public @ResponseBody List<CChartOfAccounts> getAccounts(@RequestParam("term") @SafeHtml String glcode,
-			@RequestParam("majorCode") @SafeHtml String majorCode, @RequestParam("classification") Long classification) {
+	public @ResponseBody List<CChartOfAccounts> getAccounts(@RequestParam("term") @SanitizeHtml String glcode,
+			@RequestParam("majorCode") @SanitizeHtml String majorCode, @RequestParam("classification") Long classification) {
 		List<CChartOfAccounts> accounts = null;
 		if (majorCode != null) {
 			accounts = chartOfAccountsDAO.findByGlcodeLikeIgnoreCaseAndClassificationAndMajorCode(glcode + "%",
@@ -282,8 +307,13 @@ public class TransactionSummaryController {
 	@GetMapping(value = "/ajax/searchTransactionSummariesForNonSubledger")
 	public @ResponseBody List<Map<String, String>> searchTransactionSummariesForNonSubledger(
 			@RequestParam("finYear") Long finYear, @RequestParam("fund") Long fund, @RequestParam("functn") Long functn,
-			@RequestParam("department") @SafeHtml String department, @RequestParam("glcodeId") Long glcodeId) {
+			@RequestParam("department") @SanitizeHtml String department,
+			// LTS Spring 6: blank glcodeId is "present but converted to null" if required
+			@RequestParam(value = "glcodeId", required = false) Long glcodeId) {
 		List<Map<String, String>> result = new ArrayList<>();
+		if (glcodeId == null) {
+			return result;
+		}
 		Map<String, String> amountsMap = new HashMap<>();
 
 		List<TransactionSummary> transactionSummaries = transactionSummaryService
@@ -305,10 +335,14 @@ public class TransactionSummaryController {
 	@GetMapping(value = "/ajax/searchTransactionSummariesForSubledger")
 	public @ResponseBody List<Map<String, String>> searchTransactionSummariesForSubledger(
 			@RequestParam("finYear") Long finYear, @RequestParam("fund") Long fund, @RequestParam("functn") Long functn,
-			@RequestParam("department") @SafeHtml String department, @RequestParam("glcodeId") Long glcodeId,
-			@RequestParam("accountDetailTypeId") Integer accountDetailTypeId,
-			@RequestParam("accountDetailKeyId") Integer accountDetailKeyId) {
+			@RequestParam("department") @SanitizeHtml String department,
+			@RequestParam(value = "glcodeId", required = false) Long glcodeId,
+			@RequestParam(value = "accountDetailTypeId", required = false) Integer accountDetailTypeId,
+			@RequestParam(value = "accountDetailKeyId", required = false) Integer accountDetailKeyId) {
 		List<Map<String, String>> result = new ArrayList<>();
+		if (glcodeId == null || accountDetailTypeId == null || accountDetailKeyId == null) {
+			return result;
+		}
 		Map<String, String> amountsMap = new HashMap<>();
 
 		List<TransactionSummary> transactionSummaries = transactionSummaryService.searchTransactionsForSubledger(

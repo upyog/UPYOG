@@ -81,7 +81,11 @@ import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.collection.utils.CollectionsNumberGenerator;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.utils.FinancialsUtil;
-import org.egov.collection.utils.es.CollectionIndexUtils;
+/*
+ * Elasticsearch Integration Refactoring:
+ * Commented out CollectionIndexUtils import as legacy Elasticsearch 2.x indexer was decommissioned during JDK 17 upgrade.
+ */
+//import org.egov.collection.utils.es.CollectionIndexUtils;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CVoucherHeader;
@@ -137,7 +141,11 @@ import org.egov.model.instrument.InstrumentType;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.hibernate.ObjectNotFoundException;
-import org.hibernate.Query;
+/*
+ * Hibernate 6 Query Interface Migration:
+ * Replaced legacy org.hibernate.Query with org.hibernate.query.Query for Hibernate 6 query execution.
+ */
+import org.hibernate.query.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -174,11 +182,11 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
     private ChallanService challanService;
 
-    @Autowired
-    private CollectionIndexService collectionIndexService;
+//    @Autowired
+//    private CollectionIndexService collectionIndexService;
 
-    @Autowired
-    private CollectionIndexUtils collectionIndexUtils;
+//    @Autowired
+//    private CollectionIndexUtils collectionIndexUtils;
 
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
@@ -273,7 +281,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         if (!allUserName)
             query.append(" and receipt.createdBy.username = :userName");
         if (!allDate)
-            query.append(" and (cast(receipt.receiptdate as date)) = :rcptDate");
+            query.append(" a`nd (cast(receipt.receiptdate as date)) = :rcptDate");
         if (receiptType.equals(CollectionConstants.SERVICE_TYPE_BILLING))
             query.append(" and receipt.receipttype = :receiptType");
         else
@@ -286,23 +294,23 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         final Query listQuery = getSession().createQuery(query.toString());
 
         // if (!allPositions)
-        listQuery.setParameterList("positionIds", positionIds);
+        listQuery.setParameter("positionIds", positionIds);
         if (!allCounters)
-            listQuery.setInteger("counterId", counterId);
+            listQuery.setParameter("counterId", counterId);
         if (!allServices && receiptType.equals(CollectionConstants.SERVICE_TYPE_BILLING))
-            listQuery.setString("serviceCode", serviceCode);
+            listQuery.setParameter("serviceCode", serviceCode);
         if (!allWfAction)
-            listQuery.setString("wfAction", wfAction);
+            listQuery.setParameter("wfAction", wfAction);
         if (!allUserName)
-            listQuery.setString("userName", userName);
+            listQuery.setParameter("userName", userName);
         if (!allDate)
-            listQuery.setDate("rcptDate", rcptDate);
+            listQuery.setParameter("rcptDate", rcptDate);
         if (receiptType.equals(CollectionConstants.SERVICE_TYPE_BILLING))
-            listQuery.setCharacter("receiptType", receiptType.charAt(0));
+            listQuery.setParameter("receiptType", receiptType.charAt(0));
         if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CASH))
-            listQuery.setString("paymentMode", paymentMode);
+            listQuery.setParameter("paymentMode", paymentMode);
         else if (paymentMode.equals(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD))
-            listQuery.setParameterList("paymentMode", new ArrayList<>(Arrays.asList("cheque", "dd")));
+            listQuery.setParameter("paymentMode", new ArrayList<>(Arrays.asList("cheque", "dd")));
         return listQuery.list();
     }
 
@@ -1235,7 +1243,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         } catch (JsonProcessingException e) {
             LOGGER.error("json processing ", e);
         }
-        System.out.println(jsonInString);
+        // LTS Migration Fix (WildFly 40): System.out is discarded; use LOGGER.
+        LOGGER.info(jsonInString);
         return restTemplate.postForObject(url, request, DemandResponse.class);
     }
 
@@ -1255,7 +1264,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         } catch (JsonProcessingException e) {
            LOGGER.error("Json processing", e);
         }
-        System.out.println(jsonInString);
+        LOGGER.info(jsonInString);
         Map postForObject = restTemplate.postForObject(url, reqWrapper, Map.class);
         switch (ApplicationThreadLocals.getCollectionVersion().toUpperCase()) {
         case "V2":
@@ -1431,15 +1440,15 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                                 && receiptHeader.getStatus().getCode()
                                         .equals(CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED)))
             pushMail(receiptHeader);
-        CollectionIndex collectionIndexObj = collectionIndexUtils.findByReceiptNumber(receiptHeader.getReceiptnumber());
-        if (collectionIndexObj != null) {
-            collectionIndexObj.setStatus(receiptHeader.getStatus().getDescription());
-            collectionIndexService.persistCollectionIndex(collectionIndexObj);
-
-        } else {
-            collectionIndexObj = collectionsUtil.constructCollectionIndex(receiptHeader);
-            collectionIndexService.pushCollectionIndex(collectionIndexObj);
-        }
+//        CollectionIndex collectionIndexObj = collectionIndexUtils.findByReceiptNumber(receiptHeader.getReceiptnumber());
+//        if (collectionIndexObj != null) {
+//            collectionIndexObj.setStatus(receiptHeader.getStatus().getDescription());
+//            collectionIndexService.persistCollectionIndex(collectionIndexObj);
+//
+//        } else {
+//            collectionIndexObj = collectionsUtil.constructCollectionIndex(receiptHeader);
+//            collectionIndexService.pushCollectionIndex(collectionIndexObj);
+//        }
     }
 
     private void pushMail(final ReceiptHeader receiptHeader) {

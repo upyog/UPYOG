@@ -3,31 +3,31 @@ package org.egov.infra.microservice.models;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 public class Remittance {
 
-    @SafeHtml
+    @SanitizeHtml
     private String tenantId;
-    @SafeHtml
+    @SanitizeHtml
     private String id;
-    @SafeHtml
+    @SanitizeHtml
     private String referenceNumber;
 
     private Long referenceDate;
-    @SafeHtml
+    @SanitizeHtml
     private String voucherHeader;
-    @SafeHtml
+    @SanitizeHtml
     private String function;
-    @SafeHtml
+    @SanitizeHtml
     private String fund;
-    @SafeHtml
+    @SanitizeHtml
     private String remarks;
-    @SafeHtml
+    @SanitizeHtml
     private String reasonForDelay;
-    @SafeHtml
+    @SanitizeHtml
     private String status;
-    @SafeHtml
+    @SanitizeHtml
     private String bankaccount;
 
     private Set<RemittanceDetail> remittanceDetails = new HashSet<>();

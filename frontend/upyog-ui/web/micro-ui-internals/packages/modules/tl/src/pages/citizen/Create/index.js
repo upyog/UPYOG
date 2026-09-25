@@ -1,22 +1,21 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
-import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { newConfig as newConfigTL } from "../../../config/config";
 // import CheckPage from "./CheckPage";
 // import TLAcknowledgement from "./TLAcknowledgement";
 
 const CreateTradeLicence = ({ parentRoute }) => {
   const queryClient = useQueryClient();
-  const match = useRouteMatch();
   const { t } = useTranslation();
   const { pathname } = useLocation();
-  const history = useHistory();
-  let config = [];
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("TL_CREATE_TRADE", {});
   let isReneworEditTrade = window.location.href.includes("/renew-trade/") || window.location.href.includes("/edit-application/")
 
   const stateId = Digit.ULBService.getStateId();
+  let config = [];
   let { data: newConfig, isLoading } = Digit.Hooks.tl.useMDMS.getFormConfig(stateId, {});
 
   const goNext = (skipStep, index, isAddMultiple, key, isPTCreateSkip) => {
@@ -73,27 +72,27 @@ const CreateTradeLicence = ({ parentRoute }) => {
     { 
       nextStep = "property-details";
     }
-    let redirectWithHistory = history.push;
+    let redirectWithHistory = (to, state) => navigate(to, state != null ? { state } : undefined);
     if (skipStep) {
-      redirectWithHistory = history.replace;
+      redirectWithHistory = (to, state) => navigate(to, state != null ? { replace: true, state } : { replace: true });
     }
     if (isAddMultiple) {
       nextStep = key;
     }
     if (nextStep === null) {
-      return redirectWithHistory(`${match.path}/check`);
+      return redirectWithHistory(`check`);
     }
     if(isPTCreateSkip && nextStep === "acknowledge-create-property")
     {
       nextStep = "map";
     }
-    nextPage = `${match.path}/${nextStep}`;
+    nextPage = `${nextStep}`;
     redirectWithHistory(nextPage);
   };
 
   const createProperty = async () => {
-    sessionStorage.setItem("isCreateEnabled","true");
-    history.push(`${match.path}/acknowledgement`);
+    sessionStorage.setItem("isCreateEnabled", "true");
+    navigate(`acknowledgement`);
   };
 
   function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
@@ -117,14 +116,14 @@ const CreateTradeLicence = ({ parentRoute }) => {
 
   const onSuccess = () => {
     sessionStorage.removeItem("CurrentFinancialYear");
-    queryClient.invalidateQueries("TL_CREATE_TRADE");
+    queryClient.invalidateQueries({ queryKey: ["TL_CREATE_TRADE"] });
   };
 
   const onUpdateSuccess = () => {
     sessionStorage.removeItem("CurrentFinancialYear");
     clearParams();
-    queryClient.invalidateQueries("TL_CREATE_TRADE");
-  }
+    queryClient.invalidateQueries({ queryKey: ["TL_CREATE_TRADE"] });
+  };
   newConfig = newConfig ? newConfig : newConfigTL;
   newConfig?.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
@@ -133,38 +132,35 @@ const CreateTradeLicence = ({ parentRoute }) => {
   let skipenabled = skipenanbledOb?.body?.filter((ob) => ob?.component === "CPTCreateProperty")?.[0]?.isSkipEnabled;
   sessionStorage.setItem("skipenabled",skipenabled);
   config.indexRoute = "info";
-
   const CheckPage = Digit?.ComponentRegistryService?.getComponent("TLCheckPage");
   const TLAcknowledgement = Digit?.ComponentRegistryService?.getComponent("TLAcknowledgement");
   return (
-    <Switch>
+    <Routes>
       {config?.map((routeObj, index) => {
         const { component, texts, inputs, key, isSkipEnabled, isMandatory } = routeObj;
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
-          <Route path={`${match.path}/${routeObj.route}`} key={index}>
-            <Component
-              config={{ texts, inputs, key, isSkipEnabled, isMandatory }}
-              onSelect={handleSelect}
-              onSkip={handleSkip}
-              t={t}
-              formData={params}
-              onAdd={handleMultiple}
-              userType="citizen"
-            />
-          </Route>
+          <Route
+            path={`${routeObj.route}`}
+            key={index}
+            element={
+              <Component
+                config={{ texts, inputs, key, isSkipEnabled, isMandatory }}
+                onSelect={handleSelect}
+                onSkip={handleSkip}
+                t={t}
+                formData={params}
+                onAdd={handleMultiple}
+                userType="citizen"
+              />
+            }
+          />
         );
       })}
-      <Route path={`${match.path}/check`}>
-        <CheckPage onSubmit={createProperty} value={params} />
-      </Route>
-      <Route path={`${match.path}/acknowledgement`}>
-        <TLAcknowledgement data={params} onSuccess={onSuccess} onUpdateSuccess={onUpdateSuccess} />
-      </Route>
-      <Route>
-        <Redirect to={`${match.path}/${config.indexRoute}`} />
-      </Route>
-    </Switch>
+      <Route path={`check`} element={<CheckPage onSubmit={createProperty} value={params} />} />
+      <Route path={`acknowledgement`} element={<TLAcknowledgement data={params} onSuccess={onSuccess} onUpdateSuccess={onUpdateSuccess} />} />
+      <Route path="*" element={<Navigate to={`${config.indexRoute}`} />} />
+    </Routes>
   );
 };
 
