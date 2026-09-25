@@ -1,26 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, RadioButtons, LabelFieldPair, CardLabel, TextInput, CheckBox } from "@upyog/digit-ui-react-components";
+import { FormStep, RadioButtons, LabelFieldPair, CardLabel, TextInput, CheckBox } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../../components/TLTimeline";
-import "../../css/pt-inline-auto.css";
-const PTPropertyUnderStateAquire = ({
-  ...props
-}) => {
-  const {
-    t,
-    config,
-    onSelect,
-    userType,
-    formData,
-    setError,
-    clearErrors,
-    errors
-  } = props;
-  const menu = [{
-    code: "YES"
-  }, {
-    code: "NO"
-  }];
-  const [isPropertyUnderGovtPossession, setSelected] = useState(formData?.[config.key]?.isPropertyUnderGovtPossession);
+
+const PTPropertyUnderStateAquire = ({ ...props }) => {
+  const { t, config, onSelect, userType, formData, setError, clearErrors, errors } = props;
+
+  const menu = [{ code: "YES" }, { code: "NO" }];
+
+  const [isPropertyUnderGovtPossession, setSelected] = useState(formData?.[config.key]?.isPropertyUnderGovtPossession || { code: "NO" });
   const [govtAcquisitionDetails, setReason] = useState(formData?.[config.key]?.govtAcquisitionDetails);
   useEffect(() => {
     if (isPropertyUnderGovtPossession?.code === "NO" && govtAcquisitionDetails?.length) setReason("");

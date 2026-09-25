@@ -33,8 +33,13 @@ public class EwasteApplicationSearchCriteria {
 	@JsonProperty("ids")
 	private List<String> ids;
 
+	// filter based on single requestId
 	@JsonProperty("requestId")
 	private String requestId;
+
+	// filter based on multiple requestIds
+	@JsonProperty("listOfRequestIds")
+	private List<String> listOfRequestIds;
 
 	@JsonProperty("mobileNumber")
 	private String mobileNumber;
@@ -44,5 +49,11 @@ public class EwasteApplicationSearchCriteria {
 
 	@JsonProperty("toDate")
 	private String toDate;
+
+	@JsonProperty("offset")
+	private Integer offset;
+
+	@JsonProperty("limit")
+	private Integer limit;
 
 }

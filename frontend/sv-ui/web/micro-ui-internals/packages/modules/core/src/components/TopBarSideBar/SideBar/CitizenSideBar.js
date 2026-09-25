@@ -1,9 +1,9 @@
 import {
   Loader, NavBar
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import SideBarMenu from "../../../config/sidebar-menu";
 import ChangeCity from "../../ChangeCity";
 import StaticCitizenSideBar from "./StaticCitizenSideBar";
@@ -32,19 +32,29 @@ const defaultImage =
   "L+RGKCddCGmatiPyPB/+ekO/M/q/7uvbt22kTt3zEnXPzCV13T3Gel4/6NduDu66xRvlPNkM1RjjxUdv+4WhGx6TftD19Q/dfzpwcHO+rE3fAAAAAElFTkSuQmCC";
 const Profile = ({ info, stateName, t }) => {
   const [profilePic, setProfilePic] = React.useState(null);
-  React.useEffect(async () => {
+  React.useEffect(() => {
+  async function fetchUserProfile() {
     const tenant = Digit.ULBService.getCurrentTenantId();
     const uuid = info?.uuid;
-    if (uuid) {
-      const usersResponse = await Digit.UserService.userSearch(tenant, { uuid: [uuid] }, {});
 
-      if (usersResponse && usersResponse.user && usersResponse.user.length) {
+    if (uuid) {
+      const usersResponse = await Digit.UserService.userSearch(
+        tenant,
+        { uuid: [uuid] },
+        {}
+      );
+
+      if (usersResponse?.user?.length) {
         const userDetails = usersResponse.user[0];
         const thumbs = userDetails?.photo?.split(",");
         setProfilePic(thumbs?.at(0));
       }
     }
-  }, [profilePic !== null]);
+  }
+
+  fetchUserProfile();
+}, [info?.uuid]);
+
   return (
     <div className="profile-section">
       <div className="imageloader imageloader-loaded">
@@ -87,7 +97,8 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
   const [search, setSearch] = useState("");
 
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const location = useLocation(); 
   const closeSidebar = () => {
     Digit.clikOusideFired = true;
     toggleSidebar(false);
@@ -97,13 +108,13 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
   const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const showProfilePage = () => {
     const redirectUrl = isEmployee ? "/sv-ui/employee/user/profile" : "/sv-ui/citizen/user/profile";
-    history.push(redirectUrl);
+    navigate(redirectUrl);
     closeSidebar();
   };
   const redirectToLoginPage = () => {
     // localStorage.clear();
     // sessionStorage.clear();
-    history.push("/sv-ui/citizen/login");
+    navigate("/sv-ui/citizen/login");
     closeSidebar();
   };
   if (islinkDataLoading || isLoading || !isFetched) {
@@ -208,7 +219,7 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
           icon: configEmployeeSideBar[keys[i]][0]?.leftIcon?.split?.(":")[1],
           populators: {
             onClick: () => {
-              history.push(configEmployeeSideBar[keys[i]][0]?.navigationURL);
+              navigate(configEmployeeSideBar[keys[i]][0]?.navigationURL);
               closeSidebar();
             },
           },
@@ -236,7 +247,7 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
   }
 
   /*  URL with openlink wont have sidebar and actions    */
-  if (history.location.pathname.includes("/openlink")) {
+  if (location.pathname.includes("/openlink")) {
     profileItem = <span></span>;
     menuItems = menuItems.filter((ele) => ele.element === "LANGUAGE");
   }

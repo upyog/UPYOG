@@ -67,7 +67,7 @@ public class RequestsApiController{
      * @return ResponseEntity containing the created service request.
      * @throws IOException If an error occurs during processing.
      */
-    @RequestMapping(value="/request/_create", method = RequestMethod.POST)
+    @PostMapping("/request/_create")
     public ResponseEntity<ServiceResponse> requestsCreatePost(@Valid @RequestBody ServiceRequest request) throws IOException {
         ServiceRequest enrichedReq = pgrService.create(request);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
@@ -84,7 +84,7 @@ public class RequestsApiController{
      * @param criteria           Search criteria for service requests.
      * @return ResponseEntity containing the search results.
      */
-    @RequestMapping(value="/request/_search", method = RequestMethod.POST)
+    @PostMapping("/request/_search")
     public ResponseEntity<ServiceResponse> requestsSearchPost(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                               @Valid @ModelAttribute RequestSearchCriteria criteria) {
     	
@@ -110,7 +110,7 @@ public class RequestsApiController{
      * @param requestSearchCriteria Search criteria for service requests.
      * @return ResponseEntity containing the search results.
      */
-    @RequestMapping(value = "request/_plainsearch", method = RequestMethod.POST)
+    @PostMapping("request/_plainsearch")
     public ResponseEntity<ServiceResponse> requestsPlainSearchPost(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper, @Valid @ModelAttribute RequestSearchCriteria requestSearchCriteria) {
         List<ServiceWrapper> serviceWrappers = pgrService.plainSearch(requestInfoWrapper.getRequestInfo(), requestSearchCriteria);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
@@ -126,7 +126,7 @@ public class RequestsApiController{
      * @return ResponseEntity containing the updated service request.
      * @throws IOException If an error occurs during processing.
      */
-    @RequestMapping(value="/request/_update", method = RequestMethod.POST)
+    @PostMapping("/request/_update")
     public ResponseEntity<ServiceResponse> requestsUpdatePost(@Valid @RequestBody ServiceRequest request) throws IOException {
         ServiceRequest enrichedReq = pgrService.update(request);
         ServiceWrapper serviceWrapper = ServiceWrapper.builder().service(enrichedReq.getService()).workflow(enrichedReq.getWorkflow()).build();
@@ -142,7 +142,7 @@ public class RequestsApiController{
      * @param criteria           Search criteria for counting service requests.
      * @return ResponseEntity containing the count of service requests.
      */
-    @RequestMapping(value="/request/_count", method = RequestMethod.POST)
+    @PostMapping("/request/_count")
     public ResponseEntity<CountResponse> requestsCountPost(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
                                                            @Valid @ModelAttribute RequestSearchCriteria criteria) {
         Integer count = pgrService.count(requestInfoWrapper.getRequestInfo(), criteria);

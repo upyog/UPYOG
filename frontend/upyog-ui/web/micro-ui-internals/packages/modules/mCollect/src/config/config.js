@@ -17,7 +17,7 @@ export const newConfig = [
         {
           type: "component",
           component: "AddressDetails",
-          key: "consomerDetails1",
+          key: "addressDetails",
           withoutLabel: true,
           hideInCitizen: true,
         }
@@ -29,7 +29,7 @@ export const newConfig = [
         {
           type: "component",
           component: "ServiceDetails",
-          key: "consomerDetails1",
+          key: "serviceDetails",
           withoutLabel: true,
           hideInCitizen: true,
         }

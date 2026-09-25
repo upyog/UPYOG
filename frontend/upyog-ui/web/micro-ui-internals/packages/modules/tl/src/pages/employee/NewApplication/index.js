@@ -1,8 +1,8 @@
-import { FormComposer, Header, Toast } from "@upyog/digit-ui-react-components";
+import { FormComposer, Header, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useLocation } from "react-router-dom";
+import { useLocation,  } from "react-router-dom";
 import { newConfig as newConfigTL } from "../../../config/config";
 import { convertDateToEpoch } from "../../../utils";
 import "../../../css/tl-inline-auto.css";
@@ -13,7 +13,7 @@ const NewApplication = () => {
     t
   } = useTranslation();
   const [canSubmit, setSubmitValve] = useState(false);
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   // delete
   const [propertyId, setPropertyId] = useState(new URLSearchParams(useLocation().search).get("propertyId"));
   const isEmpNewApplication = window.location.href.includes("/employee/tl/new-application");
@@ -52,9 +52,13 @@ const NewApplication = () => {
   useEffect(() => {
     if (sessionStorage.getItem("isCreateEnabledEmployee") === "true") {
       sessionStorage.removeItem("isCreateEnabledEmployee");
-      history.replace("/employee");
-    } else sessionStorage.removeItem("isCreateEnabledEmployee");
-  });
+      navigate("/employee", { replace: true });
+    }
+    else
+    sessionStorage.removeItem("isCreateEnabledEmployee");
+
+  })
+
   useEffect(() => {
     setMutationHappened(false);
     clearSuccessData();
@@ -239,42 +243,36 @@ const NewApplication = () => {
     // setFormData(formData)
     /* use customiseCreateFormData hook to make some chnages to the licence object */
     formData = Digit?.Customizations?.TL?.customiseCreateFormData ? Digit?.Customizations?.TL?.customiseCreateFormData(data, formData) : formData;
-    Digit.TLService.create({
-      Licenses: [formData]
-    }, tenantId).then((result, err) => {
-      if (result?.Licenses?.length > 0) {
-        let licenses = result?.Licenses?.[0];
-        licenses.tradeLicenseDetail.applicationDocuments = applicationDocuments;
-        licenses.wfDocuments = [];
-        licenses.action = "APPLY";
-        Digit.TLService.update({
-          Licenses: [licenses]
-        }, tenantId).then(response => {
-          if (response?.Licenses?.length > 0) {
-            // setTimeout(() => window.location.reload());
-            sessionStorage.setItem("isCreateEnabledEmployee", "true");
-            history.replace(`/upyog-ui/employee/tl/response`, {
-              data: response?.Licenses
+    Digit.TLService.create({ Licenses: [formData] }, tenantId)
+      .then((result, err) => {
+        if (result?.Licenses?.length > 0) {
+          let licenses = result?.Licenses?.[0];
+          licenses.tradeLicenseDetail.applicationDocuments = applicationDocuments;
+          licenses.wfDocuments = [];
+          licenses.action = "APPLY";
+          Digit.TLService.update({ Licenses: [licenses] }, tenantId)
+            .then((response) => {
+              if (response?.Licenses?.length > 0) {
+                // setTimeout(() => window.location.reload());
+                sessionStorage.setItem("isCreateEnabledEmployee","true");
+                navigate(`/upyog-ui/employee/tl/response`, { replace: true, state: { data: response?.Licenses } });
+                clearSessionFormData();
+              }
+            })
+            .catch((e) => {
+              setShowToast({ key: "error" });
+              setError(e?.response?.data?.Errors[0]?.message || null);
             });
-            clearSessionFormData();
-          }
-        }).catch(e => {
-          setShowToast({
-            key: "error"
-          });
-          setError(e?.response?.data?.Errors[0]?.message || null);
-        });
-      }
-    }).catch(e => {
-      setShowToast({
-        key: "error"
+        }
+      })
+      .catch((e) => {
+        setShowToast({ key: "error" });
+        setError(e?.response?.data?.Errors[0]?.message || null);
       });
-      setError(e?.response?.data?.Errors[0]?.message || null);
-    });
 
-    // history.replace("/upyog-ui/employee/tl/response", { Licenses: [formData], documents: applicationDocuments });
-    // history.push("/upyog-ui/employee/pt/response", { Property: formData });
-    // history.push("/upyog-ui/employee/pt/response", { Property: _formData });
+    // navigate("/upyog-ui/employee/tl/response", { replace: true, state: { Licenses: [formData], documents: applicationDocuments } });
+    // navigate("/upyog-ui/employee/pt/response", { Property: formData });
+    // navigate("/upyog-ui/employee/pt/response", { Property: _formData });
   };
   // let configs = newConfig;
   let configs = [];

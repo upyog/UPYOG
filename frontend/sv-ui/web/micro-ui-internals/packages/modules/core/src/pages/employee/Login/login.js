@@ -1,7 +1,6 @@
-import { BackButton, Dropdown, FormComposer, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { BackButton, Dropdown, FormComposer, Loader, Toast } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
 import Background from "../../../components/Background";
 import Header from "../../../components/Header";
 
@@ -27,7 +26,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   const [showToast, setShowToast] = useState(null);
   const [disable, setDisable] = useState(false);
 
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   
   useEffect(() => {
     if (!user) {
@@ -54,7 +53,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
       redirectPath = "/sv-ui/employee/dss/landing/home";
     }
 
-    history.replace(redirectPath);
+    navigate(redirectPath, { replace: true });
   }, [user]);
 
   const onLogin = async (data) => {
@@ -87,7 +86,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
 
   const onForgotPassword = () => {
     sessionStorage.getItem("User") && sessionStorage.removeItem("User")
-    history.push("/sv-ui/employee/user/forgot-password");
+    navigate("/sv-ui/employee/user/forgot-password");
   };
 
   const [userId, password, city] = propsConfig.inputs;

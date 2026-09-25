@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Toast, Header, Loader,FormComposer } from "@upyog/digit-ui-react-components";
-//import { FormComposerV2 } from "../../../../../../../react-components/src";
+import { Toast, Header, Loader,FormComposer } from "@nudmcdgnpm/digit-ui-react-components";
 
-import { useHistory } from "react-router-dom";
+
 import WorkerConfig from "../../../employee/configs/WorkerConfig";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 // IND-2023-11-24-010875
 const EditWorker = ({ parentUrl, heading }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const [showToast, setShowToast] = useState(null);
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const queryClient = useQueryClient();
   const { t } = useTranslation();
   const [canSubmit, setSubmitValve] = useState(false);
@@ -475,7 +474,7 @@ const EditWorker = ({ parentUrl, heading }) => {
         setTimeout(() => {
           closeToast();
           queryClient.invalidateQueries("FSM_WORKER_SEARCH");
-          history.push(`/upyog-ui/employee/fsm/registry/worker-details?id=${id}`);
+          navigate(`/upyog-ui/employee/fsm/registry/worker-details?id=${id}`);
         }, 5000);
       },
     });

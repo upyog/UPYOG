@@ -1,10 +1,9 @@
 import { Surveys } from "../../services/elements/Surveys";
-import { useMutation } from "react-query";
+import { mutationTemplate } from "../../common/mutationTemplate";
 
 const useCreateSurveysDef = (filters, config) => {
-  console.log("useCreateSurveysDef");
 
-  return useMutation((filters) => Surveys.createSurvey(filters));
+  return mutationTemplate({ mutationFn: (filters) => Surveys.createSurvey(filters) });
 };
 
 export default useCreateSurveysDef;

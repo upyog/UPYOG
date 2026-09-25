@@ -17,11 +17,11 @@ import {
   Modal,
   CardText,
   Dropdown,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { useHistory, useParams } from "react-router-dom";
+import { useParams,  } from "react-router-dom";
 import ConfirmationBox from "../../../../components/Confirmation";
 
 const Heading = (props) => {
@@ -46,7 +46,7 @@ const VendorDetails = (props) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const state = Digit.ULBService.getStateId();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const queryClient = useQueryClient();
   let { id: dsoId } = useParams();
   const [displayMenu, setDisplayMenu] = useState(false);
@@ -116,9 +116,9 @@ const VendorDetails = (props) => {
       case "ADD_DRIVER":
         return setShowModal(true);
       case "EDIT":
-        return history.push("/upyog-ui/employee/fsm/registry/modify-vendor/" + dsoId);
+        return navigate("/upyog-ui/employee/fsm/registry/modify-vendor/" + dsoId);
       case "HOME":
-        return history.push("/upyog-ui/employee/fsm/registry?selectedTabs=VENDOR");
+        return navigate("/upyog-ui/employee/fsm/registry?selectedTabs=VENDOR");
       default:
         break;
     }
@@ -187,7 +187,7 @@ const VendorDetails = (props) => {
         refetchDriver();
         setTimeout(() => {
           closeToast();
-          if (selectedAction === "DELETE") history.push(`/upyog-ui/employee/fsm/registry`);
+          if (selectedAction === "DELETE") navigate(`/upyog-ui/employee/fsm/registry`);
         }, 5000);
       },
     });
@@ -197,10 +197,10 @@ const VendorDetails = (props) => {
 
   const onEdit = (details, type, id) => {
     if (type === "ES_FSM_REGISTRY_DETAILS_TYPE_DRIVER") {
-      history.push("/upyog-ui/employee/fsm/registry/modify-driver/" + id);
+      navigate("/upyog-ui/employee/fsm/registry/modify-driver/" + id);
     } else {
       let registrationNumber = details?.values?.find((ele) => ele.title === "ES_FSM_REGISTRY_VEHICLE_NUMBER")?.value;
-      history.push("/upyog-ui/employee/fsm/registry/modify-vehicle/" + registrationNumber);
+      navigate("/upyog-ui/employee/fsm/registry/modify-vehicle/" + registrationNumber);
     }
   };
 

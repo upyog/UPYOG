@@ -6,12 +6,12 @@
 
 import React, { useCallback, useMemo, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { SubmitBar, DatePicker, SearchForm, SearchField, Dropdown, Table, Card, Loader, Header } from "@upyog/digit-ui-react-components";
+import {SubmitBar, DatePicker, SearchForm, SearchField, Dropdown, Table, Card, Loader, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import QRCode from 'qrcode';
-import "../css/asset-inline-auto.css";
+
 const ASSETReportApplication = ({
   tenantId,
   isLoading,

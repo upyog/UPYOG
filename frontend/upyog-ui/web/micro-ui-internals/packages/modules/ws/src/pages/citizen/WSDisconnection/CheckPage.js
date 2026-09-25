@@ -1,150 +1,130 @@
-import { Card, CardHeader, CardSubHeader, CardText, CitizenInfoLabel, LinkButton, Row, StatusTable, SubmitBar, EditIcon, Header, CardSectionHeader, Loader } from "@upyog/digit-ui-react-components";
-import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useHistory, useRouteMatch, Link } from "react-router-dom";
-import DisconnectTimeline from "../../../components/DisconnectTimeline";
-import WSDocument from "../../../pageComponents/WSDocument";
+import {
+    Card, CardHeader, CardSubHeader, CardText,
+    CitizenInfoLabel, LinkButton, Row, StatusTable, SubmitBar, EditIcon, Header, CardSectionHeader, Loader
+  } from "@nudmcdgnpm/digit-ui-react-components";
+  import React, { useState } from "react";
+  import { useTranslation } from "react-i18next";
+  import { Link,  } from "react-router-dom";
+  import DisconnectTimeline from "../../../components/DisconnectTimeline";
+  import WSDocument from "../../../pageComponents/WSDocument";
 import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSDisconnection, updatePayloadOfWSDisconnection } from "../../../utils";
-import "../../../css/ws-inline-auto.css";
-const CheckPage = () => {
-  const {
-    t
-  } = useTranslation();
-  const history = useHistory();
-  const match = useRouteMatch();
-  const value = Digit.SessionStorage.get("WS_DISCONNECTION");
-  const [documents, setDocuments] = useState(value.WSDisconnectionForm.documents || []);
-  let routeLink = `/upyog-ui/citizen/ws/disconnect-application`;
-  if (window.location.href.includes("/edit-application/")) routeLink = `/upyog-ui/citizen/ws/edit-disconnect-application`;
-  function routeTo(jumpTo) {
-    location.href = jumpTo;
-  }
-  const [isEnableLoader, setIsEnableLoader] = useState(false);
-  const {
-    isLoading: creatingWaterApplicationLoading,
-    isError: createWaterApplicationError,
-    data: createWaterResponse,
-    error: createWaterError,
-    mutate: waterMutation
-  } = Digit.Hooks.ws.useWaterCreateAPI("WATER");
-  const {
-    isLoading: updatingWaterApplicationLoading,
-    isError: updateWaterApplicationError,
-    data: updateWaterResponse,
-    error: updateWaterError,
-    mutate: waterUpdateMutation
-  } = Digit.Hooks.ws.useWSApplicationActions("WATER");
-  const {
-    isLoading: creatingSewerageApplicationLoading,
-    isError: createSewerageApplicationError,
-    data: createSewerageResponse,
-    error: createSewerageError,
-    mutate: sewerageMutation
-  } = Digit.Hooks.ws.useWaterCreateAPI("SEWERAGE");
-  const {
-    isLoading: updatingSewerageApplicationLoading,
-    isError: updateSewerageApplicationError,
-    data: updateSewerageResponse,
-    error: updateSewerageError,
-    mutate: sewerageUpdateMutation
-  } = Digit.Hooks.ws.useWSApplicationActions("SEWERAGE");
-  const closeToastOfError = () => {
-    setShowToast(null);
-  };
-  const onSubmit = async data => {
-    const payload = await createPayloadOfWSDisconnection(data, {
-      applicationData: value
-    }, value.serviceType);
-    if (payload?.WaterConnection?.water) {
-      payload.WaterConnection?.isDisconnectionTemporary ? payload.WaterConnection["endDate"] = convertDateToEpoch(value.WSDisconnectionForm.endDate) || "" : "";
-      if (waterMutation) {
-        setIsEnableLoader(true);
-        await waterMutation(payload, {
-          onError: (error, variables) => {
-            setIsEnableLoader(false);
-            setError({
-              key: "error",
-              message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error
-            });
-            setTimeout(closeToastOfError, 5000);
-          },
-          onSuccess: async (data, variables) => {
-            let response = await updatePayloadOfWSDisconnection(data?.WaterConnection?.[0], "WATER");
-            let waterConnectionUpdate = {
-              WaterConnection: response
-            };
-            waterConnectionUpdate = {
-              ...waterConnectionUpdate,
-              disconnectRequest: true
-            };
-            await waterUpdateMutation(waterConnectionUpdate, {
-              onError: (error, variables) => {
-                setIsEnableLoader(false);
-                setError({
-                  key: "error",
-                  message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error
-                });
-                setTimeout(closeToastOfError, 5000);
-              },
-              onSuccess: (data, variables) => {
-                Digit.SessionStorage.set("WS_DISCONNECTION", {
-                  ...value,
-                  DisconnectionResponse: data?.WaterConnection?.[0]
-                });
-                history.push(`/upyog-ui/citizen/ws/disconnect-acknowledge`);
-              }
-            });
-          }
-        });
+  
+  const CheckPage = () => {
+    const { t } = useTranslation();
+    const navigate = Digit.Hooks.useCustomNavigate();
+    const match = Digit.Hooks.useModuleBasePath();
+    const value = Digit.SessionStorage.get("WS_DISCONNECTION");
+    const [documents, setDocuments] = useState( value.WSDisconnectionForm.documents || []);
+    let routeLink = `/upyog-ui/citizen/ws/disconnect-application`;
+    if(window.location.href.includes("/edit-application/"))
+    routeLink=`/upyog-ui/citizen/ws/edit-disconnect-application`
+
+    function routeTo(jumpTo) {
+        location.href=jumpTo;
+    }
+    const [isEnableLoader, setIsEnableLoader] = useState(false);
+
+    const {
+      isLoading: creatingWaterApplicationLoading,
+      isError: createWaterApplicationError,
+      data: createWaterResponse,
+      error: createWaterError,
+      mutate: waterMutation,
+    } = Digit.Hooks.ws.useWaterCreateAPI("WATER");
+  
+    const {
+      isLoading: updatingWaterApplicationLoading,
+      isError: updateWaterApplicationError,
+      data: updateWaterResponse,
+      error: updateWaterError,
+      mutate: waterUpdateMutation,
+    } = Digit.Hooks.ws.useWSApplicationActions("WATER");
+  
+  
+    const {
+      isLoading: creatingSewerageApplicationLoading,
+      isError: createSewerageApplicationError,
+      data: createSewerageResponse,
+      error: createSewerageError,
+      mutate: sewerageMutation,
+    } = Digit.Hooks.ws.useWaterCreateAPI("SEWERAGE");
+  
+    const {
+      isLoading: updatingSewerageApplicationLoading,
+      isError: updateSewerageApplicationError,
+      data: updateSewerageResponse,
+      error: updateSewerageError,
+      mutate: sewerageUpdateMutation,
+    } = Digit.Hooks.ws.useWSApplicationActions("SEWERAGE");
+    
+    const closeToastOfError = () => { setShowToast(null); };
+
+    const onSubmit = async (data) => {
+      const payload = await createPayloadOfWSDisconnection(data, {applicationData: value}, value.serviceType);
+      if(payload?.WaterConnection?.water){
+        payload.WaterConnection?.isDisconnectionTemporary ? payload.WaterConnection["endDate"]=convertDateToEpoch(value.WSDisconnectionForm.endDate) || "":"";
+        if (waterMutation) {
+          setIsEnableLoader(true);
+          await waterMutation(payload, {
+            onError: (error, variables) => {
+              setIsEnableLoader(false);
+              setError({ key: "error", message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
+              setTimeout(closeToastOfError, 5000);
+            },
+            onSuccess: async (data, variables) => {
+              let response = await updatePayloadOfWSDisconnection(data?.WaterConnection?.[0], "WATER");
+              let waterConnectionUpdate = { WaterConnection: response };
+              waterConnectionUpdate = {...waterConnectionUpdate, disconnectRequest: true}
+              await waterUpdateMutation(waterConnectionUpdate, {
+                onError: (error, variables) => {
+                  setIsEnableLoader(false);
+                  setError({ key: "error", message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
+                  setTimeout(closeToastOfError, 5000);
+                },
+                onSuccess: (data, variables) => {
+                  Digit.SessionStorage.set("WS_DISCONNECTION", {...value, DisconnectionResponse: data?.WaterConnection?.[0]});
+                  navigate(`/upyog-ui/citizen/ws/disconnect-acknowledge`);
+                },
+              })
+            },
+          });
+        }
       }
-    } else if (payload?.SewerageConnection?.sewerage) {
-      payload.SewerageConnection.isDisconnectionTemporary ? payload.SewerageConnection["endDate"] = convertDateToEpoch(value.WSDisconnectionForm.endDate) || "" : "";
-      if (sewerageMutation) {
-        setIsEnableLoader(true);
-        await sewerageMutation(payload, {
-          onError: (error, variables) => {
-            setIsEnableLoader(false);
-            setError({
-              key: "error",
-              message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error
-            });
-            setTimeout(closeToastOfError, 5000);
-          },
-          onSuccess: async (data, variables) => {
-            let response = await updatePayloadOfWSDisconnection(data?.SewerageConnections?.[0], "SEWERAGE");
-            let sewerageConnectionUpdate = {
-              SewerageConnection: response
-            };
-            sewerageConnectionUpdate = {
-              ...sewerageConnectionUpdate,
-              disconnectRequest: true
-            };
-            await sewerageUpdateMutation(sewerageConnectionUpdate, {
-              onError: (error, variables) => {
-                setIsEnableLoader(false);
-                setError({
-                  key: "error",
-                  message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error
-                });
-                setTimeout(closeToastOfError, 5000);
-              },
-              onSuccess: (data, variables) => {
-                Digit.SessionStorage.set("WS_DISCONNECTION", {
-                  ...value,
-                  DisconnectionResponse: data?.SewerageConnections?.[0]
-                });
-                history.push(`/upyog-ui/citizen/ws/disconnect-acknowledge`);
-              }
-            });
-          }
-        });
-      }
+      else if(payload?.SewerageConnection?.sewerage){
+        payload.SewerageConnection.isDisconnectionTemporary? payload.SewerageConnection["endDate"]=convertDateToEpoch(value.WSDisconnectionForm.endDate) || "" :"";
+        if (sewerageMutation) {
+          setIsEnableLoader(true);
+          await sewerageMutation(payload, {
+            onError: (error, variables) => {
+              setIsEnableLoader(false);
+              setError({ key: "error", message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
+              setTimeout(closeToastOfError, 5000);
+            },
+            onSuccess: async (data, variables) => {
+              let response = await updatePayloadOfWSDisconnection(data?.SewerageConnections?.[0], "SEWERAGE");
+              let sewerageConnectionUpdate = { SewerageConnection: response };
+              sewerageConnectionUpdate = {...sewerageConnectionUpdate, disconnectRequest: true};
+              await sewerageUpdateMutation(sewerageConnectionUpdate, {
+                onError: (error, variables) => {
+                  setIsEnableLoader(false);
+                  setError({ key: "error", message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
+                  setTimeout(closeToastOfError, 5000);
+                },
+                onSuccess: (data, variables) => {
+                  Digit.SessionStorage.set("WS_DISCONNECTION", {...value, DisconnectionResponse: data?.SewerageConnections?.[0]});
+                  navigate(`/upyog-ui/citizen/ws/disconnect-acknowledge`);
+                },
+              })
+            },
+          });
+        }
     }
   };
   if (isEnableLoader) {
     return <Loader />;
   }
-  return <React.Fragment>
+  return (
+    <React.Fragment>
     <Header styles={{
       fontSize: "32px"
     }}>{t("WS_COMMON_SUMMARY")}</Header>
@@ -185,6 +165,7 @@ const CheckPage = () => {
           </div>)}
         <SubmitBar label={t("CS_COMMON_SUBMIT")} onSubmit={() => onSubmit(value?.WSDisconnectionForm)} />
       </Card>
-    </React.Fragment>;
+    </React.Fragment>
+  );
 };
 export default CheckPage;

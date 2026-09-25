@@ -1,10 +1,10 @@
-import { Loader } from "@upyog/digit-ui-react-components";
-import React, { useEffect } from "react";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
-import { Redirect, Route, Switch, useHistory, useLocation, useParams, useRouteMatch } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { Navigate, Route, Routes, useLocation, useParams,  } from "react-router-dom";
 import { newConfig as newConfigWS } from "../../../config/wsCreateConfig";
-import { getCommencementDataFormat, stringReplaceAll } from "../../../utils/index";
+import { stringReplaceAll } from "../../../utils/index";
 
 const getPath = (path, params) => {
   params &&
@@ -105,11 +105,18 @@ else
 
 const EditApplication = ({ parentRoute }) => {
   const queryClient = useQueryClient();
-  let match = useRouteMatch();
   const { t } = useTranslation();
-  let {  tenantId } = useParams();
+  const routeParams = useParams();
+  let { tenantId } = routeParams;
   const { pathname, state } = useLocation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const { path: modulePath } = Digit.Hooks.useModuleBasePath();
+  const basePath = useMemo(() => {
+    const pattern = pathname.includes("/modify-connection/")
+      ? `${modulePath}/modify-connection/:tenantId`
+      : `${modulePath}/edit-application/:tenantId`;
+    return getPath(pattern, routeParams);
+  }, [modulePath, routeParams, pathname]);
   let applicationNumber = state?.id || sessionStorage.getItem("ApplicationNoState");
   let config = [];
   let waterapplication = {};
@@ -191,17 +198,17 @@ const EditApplication = ({ parentRoute }) => {
     {
       nextStep = "property-details";
     }
-    let redirectWithHistory = history.push;
+    let redirectWithHistory = navigate;
     if (nextStep === null) {
-      return redirectWithHistory(`${getPath(match.path, match.params)}/check`);
+      return redirectWithHistory(`${basePath}/check`);
     }
-    redirectWithHistory(`${getPath(match.path, match.params)}/${nextStep}`);
+    redirectWithHistory(`${basePath}/${nextStep}`);
   }
   const onSuccess = () => {
-    queryClient.invalidateQueries("WS_CREATE");
+    queryClient.invalidateQueries({ queryKey: ["WS_CREATE"] });
   };
   const createApplication = async () => {
-    history.push(`${getPath(match.path, match.params)}/acknowledgement`);
+    navigate(`${basePath}/acknowledgement`);
   };
 
   const handleSelect = (key, data, skipStep, isFromCreateApi) => {
@@ -224,26 +231,31 @@ const EditApplication = ({ parentRoute }) => {
   //const CheckPage = Digit?.ComponentRegistryService?.getComponent('TLCheckPage') ;
   //const TLAcknowledgement = Digit?.ComponentRegistryService?.getComponent('TLAcknowledgement');
   return (
-    <Switch>
+    <Routes>
       {config.map((routeObj, index) => {
         const { component, texts, inputs, key, isSkipEnabled } = routeObj;
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
-          <Route path={`${getPath(match.path, match.params)}/${routeObj.route}`} key={index}>
-            <Component config={{ texts, inputs, key, isSkipEnabled }}  onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} userType={"citizen"} />
-          </Route>
+          <Route
+            path={routeObj.route}
+            key={index}
+            element={
+              <Component
+                config={{ texts, inputs, key, isSkipEnabled }}
+                onSelect={handleSelect}
+                onSkip={handleSkip}
+                t={t}
+                formData={params}
+                userType={"citizen"}
+              />
+            }
+          />
         );
       })}
-      <Route path={`${getPath(match.path, match.params)}/check`}>
-        <CheckPage onSubmit={createApplication} value={params} />
-      </Route>
-      <Route path={`${getPath(match.path, match.params)}/acknowledgement`}>
-        <Acknowledgement data={params} onSuccess={onSuccess} clearParams={clearParams} />
-      </Route>
-      <Route>
-        <Redirect to={`${getPath(match.path, match.params)}/${config.indexRoute}`} />
-      </Route>
-    </Switch>
+      <Route path="check" element={<CheckPage onSubmit={createApplication} value={params} />} />
+      <Route path="acknowledgement" element={<Acknowledgement data={params} onSuccess={onSuccess} clearParams={clearParams} />} />
+      <Route path="*" element={<Navigate to={`${basePath}/${config.indexRoute}`} replace />} />
+    </Routes>
   );
 };
 

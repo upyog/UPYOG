@@ -1,14 +1,9 @@
 package org.upyog.adv.repository;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 
 import org.egov.common.contract.request.RequestInfo;
@@ -17,6 +12,7 @@ import org.upyog.adv.web.models.AdvertisementSearchCriteria;
 import org.upyog.adv.web.models.AdvertisementSlotAvailabilityDetail;
 import org.upyog.adv.web.models.AdvertisementSlotSearchCriteria;
 import org.upyog.adv.web.models.BookingDetail;
+import org.upyog.adv.web.models.BookingPaymentTimerDetails;
 import org.upyog.adv.web.models.BookingRequest;
 
 import digit.models.coremodels.PaymentDetail;
@@ -60,10 +56,14 @@ public interface BookingRepository {
 	
 	void deleteBookingIdForTimer(String bookingId);
 
-	//Map<String, Long> getRemainingTimerValues(List<BookingDetail> bookingDetails);
-	
-	void insertBookingIdForTimer(List<AdvertisementSlotSearchCriteria> criteria, RequestInfo requestInfo,
-			AdvertisementSlotAvailabilityDetail availabiltityDetailsResponse);
+	long insertBookingIdForTimer(List<AdvertisementSlotSearchCriteria> criteria, RequestInfo requestInfo,
+			String preGeneratedDraftId);
+
+	String fetchDraftIdForTimer(List<AdvertisementSlotSearchCriteria> criteriaList, String uuid, String tenantId);
+
+	List<BookingPaymentTimerDetails> getPaymentTimerByBookingId(String bookingId);
+
+	List<BookingPaymentTimerDetails> getPaymentTimerByCreatedBy(String uuid);
 	
 	Map<String, Long> getRemainingTimerValues(String bookingId);
 	
@@ -92,14 +92,6 @@ public interface BookingRepository {
 
 	List<AdvertisementSlotAvailabilityDetail> getBookedSlots(AdvertisementSlotSearchCriteria criteria,
 			RequestInfo requestInfo);
-
-	void getTimerData(String draftId, AdvertisementSlotSearchCriteria criteria, RequestInfo requestInfo,
-			AdvertisementSlotAvailabilityDetail detail,  List<AdvertisementSlotSearchCriteria> criteriaList);
-	
-	void getAndInsertTimerData(String draftId, 
-            List<AdvertisementSlotSearchCriteria> criteriaList, 
-            RequestInfo requestInfo, 
-            AdvertisementSlotAvailabilityDetail availabilityDetailsResponse);
 
 	void deleteDataFromTimerAndDraft(String uuid, String draftId, String bookingId);
 	

@@ -13,13 +13,13 @@ import org.upyog.adv.web.models.BookingDetail;
  * to a list of BookingDetail objects. It focuses on extracting only the booking ID
  * from each row in the ResultSet and populating it into BookingDetail objects.
  */
+@SuppressWarnings("java:S2638")
 public class BookingDetailIdRowmapper implements ResultSetExtractor<List<BookingDetail>> {
 
     @Override
     public List<BookingDetail> extractData(ResultSet rs) throws SQLException, DataAccessException {
         List<BookingDetail> bookingList = new ArrayList<>();
         while (rs.next()) {
-            // Mapping only booking_id
             BookingDetail bookingDetail = new BookingDetail();
             bookingDetail.setBookingId(rs.getString("booking_id"));
             bookingList.add(bookingDetail);

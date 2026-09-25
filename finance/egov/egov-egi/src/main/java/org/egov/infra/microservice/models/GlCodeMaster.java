@@ -1,17 +1,17 @@
 package org.egov.infra.microservice.models;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 public class GlCodeMaster {
-    @SafeHtml
+    @SanitizeHtml
     private String id;
-    @SafeHtml
+    @SanitizeHtml
     private String tenantId;
-    @SafeHtml
+    @SanitizeHtml
     private String taxHead;
-    @SafeHtml
+    @SanitizeHtml
     private String service;
-    @SafeHtml
+    @SanitizeHtml
     private String glCode;
     private Long fromDate;
     private Long toDate;

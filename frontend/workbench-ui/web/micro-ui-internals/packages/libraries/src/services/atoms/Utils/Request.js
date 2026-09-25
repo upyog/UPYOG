@@ -3,7 +3,7 @@ import Axios from "axios";
 /**
  * Custom Request to make all api calls
  *
- * @author jagankumar-egov
+ * @author NUMD Team
  *
  */
 
@@ -17,19 +17,19 @@ Axios.interceptors.response.use(
           localStorage.clear();
           sessionStorage.clear();
           window.location.href =
-          (isEmployee ? `/${window?.contextPath}/employee/user/login` : `/${window?.contextPath}/citizen/login`) +
+            (isEmployee ? `/${window?.contextPath}/employee/user/login`  : `/${window?.contextPath}/citizen/login`) +
             `?from=${encodeURIComponent(window.location.pathname + window.location.search)}`;
         } else if (
           error?.message?.toLowerCase()?.includes("internal server error") ||
           error?.message?.toLowerCase()?.includes("some error occured")
         ) {
           window.location.href =
-          (isEmployee ? `/${window?.contextPath}/employee/user/error` : `/${window?.contextPath}/citizen/error`) +
-                      `?type=maintenance&from=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+            (isEmployee ? `/${window?.contextPath}/employee/user/error` : `/${window?.contextPath}/citizen/error`) +
+            `?type=maintenance&from=${encodeURIComponent(window.location.pathname + window.location.search)}`;
         } else if (error.message.includes("ZuulRuntimeException")) {
           window.location.href =
-          (isEmployee ? `/${window?.contextPath}/employee/user/error` : `/${window?.contextPath}/citizen/error`) +
-                      `?type=notfound&from=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+            (isEmployee ? `/${window?.contextPath}/employee/user/error` : `/${window?.contextPath}/citizen/error`) +
+            `?type=notfound&from=${encodeURIComponent(window.location.pathname + window.location.search)}`;
         }
       }
     }
@@ -67,12 +67,13 @@ export const Request = async ({
   multipartFormData = false,
   multipartData = {},
   reqTimestamp = false,
+  plainAccessRequest = null
 }) => {
-  const ts = new Date().getTime();
-  if (method.toUpperCase() === "POST") {
-   
+  if (method.toUpperCase() === "POST" || method.toUpperCase() === "PUT") {
+    const ts = new Date().getTime();
     data.RequestInfo = {
       apiId: "Rainmaker",
+      ts: Number(ts),
     };
     if (auth || !!Digit.UserService.getUser()?.access_token) {
       data.RequestInfo = { ...data.RequestInfo, ...requestInfo() };
@@ -83,9 +84,11 @@ export const Request = async ({
     if (locale) {
       data.RequestInfo = { ...data.RequestInfo, msgId: `${ts}|${Digit.StoreData.getCurrentLanguage()}` };
     }
-    
     if (noRequestInfo) {
       delete data.RequestInfo;
+    }
+    if (reqTimestamp) {
+      data.RequestInfo = { ...data.RequestInfo, ts: Number(ts) };
     }
 
     /* 
@@ -94,11 +97,14 @@ export const Request = async ({
     Desc :: To send additional field in HTTP Requests inside RequestInfo Object as plainAccessRequest
     */
     const privacy = Digit.Utils.getPrivacyObject();
-    if (privacy && !url.includes("/edcr/rest/dcr/")) {
-      if(!noRequestInfo){
+    if (privacy && !url.includes("/edcr/rest/dcr/") && !noRequestInfo) {
       data.RequestInfo = { ...data.RequestInfo, plainAccessRequest: { ...privacy } };
-      }
     }
+
+    if(plainAccessRequest){
+      data.RequestInfo = { ...data.RequestInfo, plainAccessRequest };
+    }
+
   }
 
   const headers1 = {
@@ -119,9 +125,6 @@ export const Request = async ({
     }
   } else if (setTimeParam) {
     params._ = Date.now();
-  }
-  if (reqTimestamp) {
-    data.RequestInfo = { ...data.RequestInfo, ts: Number(ts) };
   }
 
   let _url = url
@@ -189,7 +192,6 @@ export const ServiceRequest = async ({
   useCache = false,
   params = {},
   auth,
-  reqTimestamp,
   userService,
 }) => {
   const preHookName = `${serviceName}Pre`;
@@ -202,7 +204,7 @@ export const ServiceRequest = async ({
     reqParams = preHookRes.params;
     reqData = preHookRes.data;
   }
-  const resData = await Request({ method, url, data: reqData, headers, useCache, params: reqParams, auth, userService,reqTimestamp });
+  const resData = await Request({ method, url, data: reqData, headers, useCache, params: reqParams, auth, userService });
 
   if (window[postHookName] && typeof window[postHookName] === "function") {
     return await window[postHookName](resData);

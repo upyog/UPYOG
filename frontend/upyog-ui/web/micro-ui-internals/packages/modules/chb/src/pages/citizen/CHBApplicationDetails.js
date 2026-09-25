@@ -12,12 +12,12 @@ import {
   Toast,
   SubmitBar,
   CardHeader,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 
-import { useHistory, useParams, Link } from "react-router-dom";
+import { useParams, Link,  } from "react-router-dom";
 import getChbAcknowledgementData from "../../getChbAcknowledgementData";
 import CHBWFApplicationTimeline from "../../pageComponents/CHBWFApplicationTimeline";
 import CHBDocument from "../../pageComponents/CHBDocument";
@@ -58,7 +58,7 @@ import "../../css/chb-inline.css";
  */
 const CHBApplicationDetails = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { acknowledgementIds, tenantId } = useParams();
   const [acknowldgementData, setAcknowldgementData] = useState([]);
   const [showOptions, setShowOptions] = useState(false);
@@ -196,7 +196,7 @@ const CHBApplicationDetails = () => {
 
   async function getRecieptSearch({ tenantId, payments, ...params }) {
     let application = data?.hallsBookingApplication?.[0];
-    let fileStoreId = application?.paymentReceiptFilestoreId
+    let fileStoreId = application?.paymentReceiptFilestoreId;
     if (!fileStoreId) {
       let response = { filestoreIds: [payments?.fileStoreId] };
       response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "chbservice-receipt");
@@ -205,7 +205,7 @@ const CHBApplicationDetails = () => {
         paymentReceiptFilestoreId: response?.filestoreIds[0]
       };
       await mutation.mutateAsync({
-        hallsBookingApplication: updatedApplication
+        venueBookingApplication: updatedApplication
       });
       fileStoreId = response?.filestoreIds[0];
       refetch();
@@ -227,7 +227,7 @@ const CHBApplicationDetails = () => {
         permissionLetterFilestoreId: response?.filestoreIds[0]
       };
       await mutation.mutateAsync({
-        hallsBookingApplication: updatedApplication
+        venueBookingApplication: updatedApplication
       });
       fileStoreId = response?.filestoreIds[0];
       refetch();
@@ -300,16 +300,19 @@ const CHBApplicationDetails = () => {
   //     return startTime ? `${startTime} - ${defaultEndTime}` : t("CS_NA");
   //   };
   const columns = [
-    { Header: `${t("CHB_HALL_NAME")}` + "/" + `${t("CHB_PARK")}`, accessor: "communityHallCode" },
-    { Header: `${t("CHB_HALL_CODE")}`, accessor: "hallCode" },
-    { Header: `${t("CHB_BOOKING_DATE")}`, accessor: "bookingDate" },
-    { Header: `${t("PT_COMMON_TABLE_COL_STATUS_LABEL")}`, accessor: "bookingStatus" }
+    { Header: t("CHB_VENUE_NAME_LABEL"), accessor: "venueCode" },
+    { Header: t("CHB_HALL_CODE_LABEL"), accessor: "unitCode" },
+    { Header: t("CHB_BOOKING_DATE"), accessor: "bookingDate" },
+    { Header: t("CHB_BOOKING_TIME"), accessor: "bookingTime" },
+    { Header: t("PT_COMMON_TABLE_COL_STATUS_LABEL"), accessor: "bookingStatus" }
   ];
+
   const slotlistRows = chb_details?.bookingSlotDetails?.map((slot) => (
     {
-      communityHallCode: `${t(chb_details?.communityHallCode)}`,
-      hallCode: slot.hallCode + " - " + slot.capacity,
-      bookingDate: slot.bookingDate + " (" + slot.bookingFromTime + " - " + slot.bookingToTime + ")",
+      venueCode: `${t(chb_details?.venueCode)}`,
+      unitCode: slot.unitCode,
+      bookingDate: slot.bookingDate,
+      bookingTime: slot.bookingFromTime && slot.bookingToTime ? `${slot.bookingFromTime} - ${slot.bookingToTime}` : (slot.bookingFromTime || t("CS_NA")),
       bookingStatus: `${t(slot.status)}`
     }
   )) || [];

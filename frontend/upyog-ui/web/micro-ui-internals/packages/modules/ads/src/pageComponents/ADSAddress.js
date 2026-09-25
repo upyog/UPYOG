@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, CardSubHeader, Dropdown, TextArea, Card } from "@upyog/digit-ui-react-components";
+import React, { useEffect, useState} from "react";
+import { FormStep, TextInput, CardLabel,CardSubHeader, Dropdown, TextArea,Card } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import Timeline from "../components/ADSTimeline";
@@ -10,7 +10,7 @@ import { TimerValues } from "../components/TimerValues";
  * ADSAddress component for capturing address details.
  * Integrates with hooks for fetching cities and localities.
  */
-import "../css/ads-inline-auto.css";
+
 const ADSAddress = ({
   t,
   config,
@@ -82,13 +82,13 @@ const ADSAddress = ({
     setAddressline2(e.target.value);
   };
   const goNext = () => {
-    let cartDetails = value?.cartDetails.map(slot => {
-      return {
-        addType: slot.addTypeCode,
-        faceArea: slot.faceAreaCode,
-        location: slot.locationCode,
-        nightLight: slot.nightLight === "Yes" ? true : false,
-        bookingDate: slot.bookingDate,
+    let cartDetails = value?.cartDetails?.map((slot) => {
+      return { 
+        addType:slot.addTypeCode,
+        faceArea:slot.faceAreaCode,
+        location:slot.locationCode,
+        nightLight:slot.nightLight==="Yes"? true : false,
+        bookingDate:slot.bookingDate,
         bookingFromTime: "06:00",
         bookingToTime: "05:59",
         status: "BOOKING_CREATED"
@@ -206,16 +206,42 @@ const ADSAddress = ({
         }} className="ads-auto-53" />
 
           <CardLabel>{`${t("ADS_CITY")}`} <span className="check-page-link-button">*</span></CardLabel>
-          <Controller control={control} name={"city"} defaultValue={city} rules={{
-          required: t("CORE_COMMON_REQUIRED_ERRMSG")
-        }} render={props => <Dropdown className="form-field" selected={city} select={setCity} option={allCities} optionKey="i18nKey" t={t} placeholder={"Select"} />} />
+          <Controller
+            control={control}
+            name={"city"}
+            defaultValue={city}
+            rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+            render={({ field }) => (
+              <Dropdown
+                className="form-field"
+                selected={city}
+                select={setCity}
+                option={allCities}
+                optionKey="i18nKey"
+                t={t}
+                placeholder={"Select"}
+              />
+            )}
+          />
           <CardLabel>{`${t("ADS_LOCALITY")}`} <span className="check-page-link-button">*</span></CardLabel>
-          <Controller control={control} name={"locality"} defaultValue={locality} rules={{
-          required: t("CORE_COMMON_REQUIRED_ERRMSG")
-        }} render={props => <Dropdown className="form-field" selected={locality} select={setLocality} option={structuredLocality} optionCardStyles={{
-          overflowY: "auto",
-          maxHeight: "300px"
-        }} optionKey="i18nKey" t={t} placeholder={"Select"} />} />
+          <Controller
+            control={control}
+            name={"locality"}
+            defaultValue={locality}
+            rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+            render={({ field }) => (
+              <Dropdown
+                className="form-field"
+                selected={locality}
+                select={setLocality}
+                option={structuredLocality}
+                optionCardStyles={{ overflowY: "auto", maxHeight: "300px" }}
+                optionKey="i18nKey"
+                t={t}
+                placeholder={"Select"}
+              />
+            )}
+          />
 
           <CardLabel>{`${t("ADS_ADDRESS_PINCODE")}`} <span className="check-page-link-button">*</span></CardLabel>
           <TextInput t={t} type="text" isMandatory={false} optionKey="i18nKey" name="pincode" value={pincode} onChange={setAddressPincode} placeholder="Enter Pincode" style={{

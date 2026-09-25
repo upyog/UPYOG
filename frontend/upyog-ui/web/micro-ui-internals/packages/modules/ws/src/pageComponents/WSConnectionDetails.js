@@ -1,4 +1,4 @@
-import { CardLabel, Dropdown, LabelFieldPair, Loader, TextInput, CardLabelError, CheckBox } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, LabelFieldPair, Loader, TextInput, CardLabelError, CheckBox } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { getPattern } from "../utils";
 import { useForm, Controller } from "react-hook-form";
@@ -6,8 +6,10 @@ import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import _, { keys } from "lodash";
 import * as func from "../utils";
-import "../css/ws-inline-auto.css";
+
 const createConnectionDetails = () => ({
+  key: Date.now(),
+
   water: true,
   sewerage: false,
   proposedPipeSize: "",
@@ -83,7 +85,6 @@ const WSConnectionDetails = ({
     focusIndex,
     connectionDetails,
     setFocusIndex,
-    formData,
     formState,
     t,
     setError,
@@ -97,9 +98,21 @@ const WSConnectionDetails = ({
     waterSewarageSelection,
     formData
   };
-  return <React.Fragment>
-      {connectionDetails.map((connectionDetail, index) => <ConnectionDetails key={connectionDetail.key} index={index} connectionDetail={connectionDetail} {...commonProps} />)}
-    </React.Fragment>;
+
+  return (
+    <React.Fragment>
+      {connectionDetails?.map((connectionDetail, index) =>
+        connectionDetail ? (
+          <ConnectionDetails
+            key={connectionDetail.key || index}
+            index={index}
+            connectionDetail={connectionDetail}
+            {...commonProps}
+          />
+        ) : null
+      )}
+    </React.Fragment>
+  );
 };
 const ConnectionDetails = _props => {
   const {
@@ -153,6 +166,7 @@ const ConnectionDetails = _props => {
         });
         if (isErrorsFound) setIsErrors(true);
         let ob = [{
+          ...connectionDetail,
           ...formValue
         }];
         setConnectionDetails(ob);
@@ -220,24 +234,53 @@ const ConnectionDetails = _props => {
       <div className="ws-auto-43">
         <CardLabel className="ws-auto-44">{`${t("WS_APPLY_FOR")}`}<span className="check-page-link-button"> *</span></CardLabel>
         <div className="ws-auto-45">
-          <Controller control={control} name="water" defaultValue={connectionDetail?.water} isMandatory={true} render={props => <CheckBox label={t("WATER_CONNECTION")} name={"water"} autoFocus={focusIndex.index === connectionDetail?.key && focusIndex.type === "water"} errorStyle={localFormState.touched.water && errors?.water?.message ? true : false} onChange={e => {
-          if (e.target.checked || connectionDetail?.sewerage) {
-            props.onChange(e.target.checked);
-            setFocusIndex({
-              index: connectionDetail?.key,
-              type: "water"
-            });
-          }
-        }} checked={connectionDetail?.water} onBlur={props.onBlur} className="ws-auto-46" />} />
-          <Controller control={control} name="sewerage" defaultValue={connectionDetail?.sewerage} type="number" isMandatory={true} render={props => <CheckBox label={t("SEWERAGE_CONNECTION")} name={"sewerage"} autoFocus={focusIndex.index === connectionDetail?.key && focusIndex.type === "sewerage"} errorStyle={localFormState.touched.sewerage && errors?.sewerage?.message ? true : false} onChange={e => {
-          if (e.target.checked || connectionDetail?.water) {
-            props.onChange(e.target.checked);
-            setFocusIndex({
-              index: connectionDetail?.key,
-              type: "sewerage"
-            });
-          }
-        }} checked={connectionDetail?.sewerage} onBlur={props.onBlur} className="ws-auto-47" />} />
+          <Controller
+            control={control}
+            name="water"
+            defaultValue={connectionDetail?.water}
+            isMandatory={true}
+                render={({ field }) => (
+              <CheckBox
+                label={t("WATER_CONNECTION")}
+                name={"water"}
+                autoFocus={focusIndex.index === connectionDetail?.key && focusIndex.type === "water"}
+                errorStyle={(localFormState.touchedFields.water && errors?.water?.message) ? true : false}
+                onChange={(e) => {
+                  if (e.target.checked || connectionDetail?.sewerage) {
+                    field.onChange(e.target.checked);
+                    setFocusIndex({ index: connectionDetail?.key, type: "water" });
+                  }
+                }}
+                checked={connectionDetail?.water}
+                className="ws-auto-46"
+                onBlur={field.onBlur}
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="sewerage"
+            defaultValue={connectionDetail?.sewerage}
+            type="number"
+            isMandatory={true}
+            render={({ field }) => (
+              <CheckBox
+                label={t("SEWERAGE_CONNECTION")}
+                name={"sewerage"}
+                autoFocus={focusIndex.index === connectionDetail?.key && focusIndex.type === "sewerage"}
+                errorStyle={(localFormState.touchedFields.sewerage && errors?.sewerage?.message) ? true : false}
+                onChange={(e) => {
+                  if (e.target.checked || connectionDetail?.water) {
+                    field.onChange(e.target.checked);
+                    setFocusIndex({ index: connectionDetail?.key, type: "sewerage" });
+                  }
+                }}
+                checked={connectionDetail?.sewerage}
+               className="ws-auto-47"
+                onBlur={field.onBlur}
+              />
+            )}
+          />
 
         </div>
         {connectionDetail?.water && <div>
@@ -250,39 +293,61 @@ const ConnectionDetails = _props => {
             fontWeight: "700"
           }} className="card-label-smaller">{`${t("WS_NO_OF_PROPOSED_TAPS_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
               <div className="field">
-                <Controller control={control} name="proposedTaps" defaultValue={connectionDetail?.proposedTaps} rules={{
-              validate: e => parseInt(e) > 0 && e && getPattern("WSOnlyNumbers").test(e) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG"),
-              required: t("REQUIRED_FIELD")
-            }} type="number" isMandatory={true} render={props => <TextInput type="number" value={props.value} autoFocus={focusIndex.index === connectionDetail?.key && focusIndex.type === "proposedTaps"} errorStyle={localFormState.touched.proposedTaps && errors?.proposedTaps?.message ? true : false} onChange={e => {
-              props.onChange(e.target.value);
-              setFocusIndex({
-                index: connectionDetail?.key,
-                type: "proposedTaps"
-              });
-            }} labelStyle={{
-              marginTop: "unset"
-            }} onBlur={props.onBlur} />} />
+                <Controller
+                  control={control}
+                  name="proposedTaps"
+                  defaultValue={connectionDetail?.proposedTaps}
+                  rules={{ validate: (e) => ((parseInt(e)>0 && e && getPattern("WSOnlyNumbers").test(e)) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")), required: t("REQUIRED_FIELD") }}
+                  type="number"
+                  isMandatory={true}
+                  render={({ field }) => (
+                    <TextInput
+                      type="number"
+                      value={field.value}
+                      autoFocus={focusIndex.index === connectionDetail?.key && focusIndex.type === "proposedTaps"}
+errorStyle={(localFormState.touchedFields.proposedTaps && errors?.proposedTaps?.message) ? true : false}
+                      onChange={(e) => {
+                        field.onChange(e.target.value);
+                        setFocusIndex({ index: connectionDetail?.key, type: "proposedTaps" });
+                      }}
+                      labelStyle={{ marginTop: "unset" }}
+                      onBlur={field.onBlur}
+                    />
+                  )}
+                />
               </div>
             </LabelFieldPair>
-            <CardLabelError style={errorStyle}>{localFormState.touched.proposedTaps ? errors?.proposedTaps?.message : ""}</CardLabelError>
+            <CardLabelError style={errorStyle}>{localFormState.touchedFields.proposedTaps ? errors?.proposedTaps?.message : ""}</CardLabelError>
             <LabelFieldPair>
-              <CardLabel style={isMobile && isEmployee ? {
-            fontWeight: "700",
-            width: "100%",
-            paddingTop: "10px"
-          } : {
-            marginTop: "-5px",
-            fontWeight: "700"
-          }} className="card-label-smaller">{`${t("WS_PROPOSED_PIPE_SIZE_IN_INCHES_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
-              <Controller control={control} name={"proposedPipeSize"} defaultValue={connectionDetail?.proposedPipeSize} rules={{
-            required: t("REQUIRED_FIELD")
-          }} isMandatory={true} render={props => <Dropdown className="form-field" selected={getValues("proposedPipeSize")} disable={false} option={pipeSizeList} errorStyle={localFormState.touched.proposedPipeSize && errors?.proposedPipeSize?.message ? true : false} select={e => {
-            props.onChange(e);
-          }} optionKey="i18nKey" onBlur={props.onBlur} t={t} />} />
+              <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%", paddingTop:"10px"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t("WS_PROPOSED_PIPE_SIZE_IN_INCHES_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
+              <Controller
+                control={control}
+                name={"proposedPipeSize"}
+                defaultValue={connectionDetail?.proposedPipeSize}
+                rules={{ required: t("REQUIRED_FIELD") }}
+                isMandatory={true}
+                render={({ field }) => (
+                  <Dropdown
+                    className="form-field"
+                    selected={getValues("proposedPipeSize")}
+                    disable={false}
+                    option={pipeSizeList}
+errorStyle={(localFormState.touchedFields.proposedPipeSize && errors?.proposedPipeSize?.message) ? true : false}
+                    select={(e) => {
+                      field.onChange(e);
+                    }}
+                    optionKey="i18nKey"
+                    onBlur={field.onBlur}
+                    t={t}
+                  />
+                )}
+              />
             </LabelFieldPair>
-            <CardLabelError style={errorStyle}>{localFormState.touched.proposedPipeSize ? errors?.proposedPipeSize?.message : ""}</CardLabelError>
-          </div>}
-        {connectionDetail?.sewerage && <div>
+            <CardLabelError style={errorStyle}>{localFormState.touchedFields.proposedPipeSize ? errors?.proposedPipeSize?.message : ""}</CardLabelError>
+          </div>
+        }
+        {connectionDetail?.sewerage && (
+          <div>
             <LabelFieldPair>
               <CardLabel style={isMobile && isEmployee ? {
             fontWeight: "700",
@@ -292,21 +357,31 @@ const ConnectionDetails = _props => {
             fontWeight: "700"
           }} className="card-label-smaller">{`${t("WS_PROPOSED_WATER_CLOSETS_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
               <div className="field">
-                <Controller control={control} name="proposedWaterClosets" defaultValue={connectionDetail?.proposedWaterClosets} rules={{
-              validate: e => parseInt(e) > 0 && e && getPattern("WSOnlyNumbers").test(e) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG"),
-              required: t("REQUIRED_FIELD")
-            }} type="number" isMandatory={true} render={props => <TextInput type="number" value={props.value} autoFocus={focusIndex.index === connectionDetail?.key && focusIndex.type === "proposedWaterClosets"} errorStyle={localFormState.touched.proposedWaterClosets && errors?.proposedWaterClosets?.message ? true : false} onChange={e => {
-              props.onChange(e.target.value);
-              setFocusIndex({
-                index: connectionDetail?.key,
-                type: "proposedWaterClosets"
-              });
-            }} labelStyle={{
-              marginTop: "unset"
-            }} onBlur={props.onBlur} />} />
+                <Controller
+                  control={control}
+                  name="proposedWaterClosets"
+                  defaultValue={connectionDetail?.proposedWaterClosets}
+                  rules={{ validate: (e) => ((parseInt(e)>0 && e && getPattern("WSOnlyNumbers").test(e)) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")), required: t("REQUIRED_FIELD") }}
+                  type="number"
+                  isMandatory={true}
+                  render={({ field }) => (
+                    <TextInput
+                      type="number"
+                      value={field.value}
+                      autoFocus={focusIndex.index === connectionDetail?.key && focusIndex.type === "proposedWaterClosets"}
+                      errorStyle={(localFormState.touchedFields.proposedWaterClosets && errors?.proposedWaterClosets?.message) ? true : false}
+                      onChange={(e) => {
+                        field.onChange(e.target.value);
+                        setFocusIndex({ index: connectionDetail?.key, type: "proposedWaterClosets" });
+                      }}
+                      labelStyle={{ marginTop: "unset" }}
+                      onBlur={field.onBlur}
+                    />
+                  )}
+                />
               </div>
             </LabelFieldPair>
-            <CardLabelError style={errorStyle}>{localFormState.touched.proposedWaterClosets ? errors?.proposedWaterClosets?.message : ""}</CardLabelError>
+            <CardLabelError style={errorStyle}>{localFormState.touchedFields.proposedWaterClosets ? errors?.proposedWaterClosets?.message : ""}</CardLabelError>
             <LabelFieldPair>
               <CardLabel style={isMobile && isEmployee ? {
             fontWeight: "700",
@@ -316,22 +391,33 @@ const ConnectionDetails = _props => {
             fontWeight: "700"
           }} className="card-label-smaller">{`${t("WS_PROPOSED_WATER_TOILETS_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
               <div className="field">
-                <Controller control={control} name="proposedToilets" defaultValue={connectionDetail?.proposedToilets} rules={{
-              validate: e => parseInt(e) > 0 && e && getPattern("WSOnlyNumbers").test(e) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG"),
-              required: t("REQUIRED_FIELD")
-            }} type="number" isMandatory={true} render={props => <TextInput type="number" value={props.value} autoFocus={focusIndex.index === connectionDetail?.key && focusIndex.type === "proposedToilets"} errorStyle={localFormState.touched.proposedToilets && errors?.proposedToilets?.message ? true : false} onChange={e => {
-              props.onChange(e.target.value);
-              setFocusIndex({
-                index: connectionDetail?.key,
-                type: "proposedToilets"
-              });
-            }} labelStyle={{
-              marginTop: "unset"
-            }} onBlur={props.onBlur} />} />
+                <Controller
+                  control={control}
+                  name="proposedToilets"
+                  defaultValue={connectionDetail?.proposedToilets}
+                  rules={{ validate: (e) => ((parseInt(e)>0 && e && getPattern("WSOnlyNumbers").test(e)) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")), required: t("REQUIRED_FIELD") }}
+                  type="number"
+                  isMandatory={true}
+                  render={({ field }) => (
+                    <TextInput
+                      type="number"
+                      value={field.value}
+                      autoFocus={focusIndex.index === connectionDetail?.key && focusIndex.type === "proposedToilets"}
+                      errorStyle={(localFormState.touchedFields.proposedToilets && errors?.proposedToilets?.message) ? true : false}
+                      onChange={(e) => {
+                        field.onChange(e.target.value);
+                        setFocusIndex({ index: connectionDetail?.key, type: "proposedToilets" });
+                      }}
+                      labelStyle={{ marginTop: "unset" }}
+                      onBlur={field.onBlur}
+                    />
+                  )}
+                />
               </div>
             </LabelFieldPair>
-            <CardLabelError style={errorStyle}>{localFormState.touched.proposedToilets ? errors?.proposedToilets?.message : ""}</CardLabelError>
-          </div>}
+            <CardLabelError style={errorStyle}>{localFormState.touchedFields.proposedToilets ? errors?.proposedToilets?.message : ""}</CardLabelError>
+          </div>
+        )}
       </div>
     </div>;
 };

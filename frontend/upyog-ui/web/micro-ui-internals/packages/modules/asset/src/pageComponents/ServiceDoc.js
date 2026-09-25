@@ -1,8 +1,8 @@
-import { Card, CardHeader, CardSubHeader, CardSectionHeader, CardText, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Card, CardHeader, CardSubHeader,CardSectionHeader, CardText, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
-import { cardBodyStyle, stringReplaceAll } from "../utils";
+import { stringReplaceAll } from "../utils";
 //import { map } from "lodash-es";
-import "../css/asset-inline-auto.css";
+
 const ServiceDoc = ({
   t,
   config,
@@ -48,9 +48,11 @@ const ServiceDoc = ({
                       <CardText className={"primaryColor"}>
                         {index + 1}. {t(stringReplaceAll(code, ".", "_"))}
                       </CardText>
-                      {dropdownData.map((dropdownData, dropdownIndex) => <CardText className={"primaryColor"}>
+                      {dropdownData.map((dropdownData, dropdownIndex) => (
+                        <CardText key={dropdownData?.code || dropdownIndex} className={"primaryColor"}>
                           {/* {`${dropdownIndex + 1}`}. {t(stringReplaceAll(dropdownData?.code, ".", "_"))} */}
-                        </CardText>)}
+                        </CardText>
+                      ))}
                     </div>) : null}
           </div>
         </div>

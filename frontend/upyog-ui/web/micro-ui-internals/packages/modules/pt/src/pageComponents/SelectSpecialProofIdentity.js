@@ -1,9 +1,9 @@
-import { CardLabel, CardLabelDesc, Dropdown, FormStep, UploadFile } from "@upyog/digit-ui-react-components";
+import { CardLabel, CardLabelDesc, Dropdown, FormStep, UploadFile } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { stringReplaceAll } from "../utils";
 import Timeline from "../components/TLTimeline";
-import "../css/pt-inline-auto.css";
+
 const SelectSpecialProofIdentity = ({
   t,
   config,

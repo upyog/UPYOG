@@ -1,0 +1,69 @@
+curl --location 'http://localhost:8055/mdms-v2/schema/v1/_create' \
+--header 'Content-Type: application/json' \
+--data '{
+  "RequestInfo": {
+    "apiId": "Rainmaker",
+    "ver": ".01",
+    "ts": "",
+    "action": "_create",
+    "did": "1",
+    "key": "",
+    "msgId": "20170310130900|en_IN",
+    "authToken": "{{authToken}}",
+    "userInfo": {
+      "id": 2038,
+      "uuid": "677300e7-2ff3-4216-a3dc-c2cbb0d63d31",
+      "userName": "MCS1",
+      "name": "Vishal",
+      "mobileNumber": "7895875858",
+      "emailId": "",
+      "locale": null,
+      "type": "EMPLOYEE",
+      "active": true,
+      "tenantId": "pg.citya",
+      "permanentCity": null
+    }
+  },
+  "SchemaDefinition": {
+    "tenantId": "pg",
+    "code": "Garbage.Categories",
+    "description": "Garbage Categories Master",
+    "isActive": true,
+    "definition": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "x-unique": [
+        "id"
+      ],
+      "required": [
+        "id",
+        "categories",
+        "subcategories",
+        "subcategorytype",
+        "fee",
+        "active"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "categories": {
+          "type": "string"
+        },
+        "subcategories": {
+          "type": "string"
+        },
+        "subcategorytype": {
+          "type": "string"
+        },
+        "fee": {
+          "type": "string"
+        },
+        "active": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}'

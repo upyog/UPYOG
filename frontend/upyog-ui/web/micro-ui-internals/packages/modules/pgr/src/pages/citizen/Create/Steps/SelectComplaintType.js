@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { TypeSelectCard } from "@upyog/digit-ui-react-components";
-import { Dropdown } from "@upyog/digit-ui-react-components";
-import { useRouteMatch, useHistory } from "react-router-dom";
-import { useQueryClient } from "react-query";
+import { TypeSelectCard } from "@nudmcdgnpm/digit-ui-react-components";
+import { Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
+
+import { useQueryClient } from "@tanstack/react-query";
 import { FormComposer } from "../../../../components/FormComposer";
 
 //import { createComplaint } from "../../../../redux/actions";
@@ -126,7 +125,11 @@ const SelectComplaintType = ({ t, config, onSelect, value }) => {
     heading={t("ES_CREATECOMPLAINT_NEW_COMPLAINT")}
     config={config1}
     onSubmit={goNext}
-    isDisabled={Object.keys(complaintType).length === 0 || complaintType === null ? true : false}
+    isDisabled={
+      !complaintType || Object.keys(complaintType).length === 0 ||
+      !subType || !subType.name || subType.name === "" ||
+      !priorityLevel || Object.keys(priorityLevel).length === 0
+    }
     label={"NEXT"}
   />
   );

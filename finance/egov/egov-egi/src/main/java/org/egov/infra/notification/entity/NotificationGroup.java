@@ -51,16 +51,16 @@ package org.egov.infra.notification.entity;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.workflow.entity.OwnerGroup;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Set;
 
@@ -78,11 +78,11 @@ public class NotificationGroup extends AbstractAuditable {
     private Long id;
 
     @Length(min = 1, max = 100)
-    @SafeHtml
+    @SanitizeHtml
     private String name;
 
     @Length(max = 250)
-    @SafeHtml
+    @SanitizeHtml
     private String description;
 
     @NotNull

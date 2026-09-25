@@ -1,8 +1,8 @@
 import React, { Fragment } from "react";
-import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, CardLabelError, MobileNumber } from "@upyog/digit-ui-react-components";
+import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, CardLabelError, MobileNumber } from "@nudmcdgnpm/digit-ui-react-components";
 import { useWatch } from "react-hook-form";
 
-const SearchFormFieldsComponent = ({ formState, Controller, register, control, t, reset, previousPage }) => {
+const SearchFormFieldsComponent = ({ formState, Controller, register, control, t, reset, previousPage, setValue }) => {
   const stateTenantId = Digit.ULBService.getStateId();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   // const userInformation = Digit.UserService.getUser()?.info;
@@ -14,7 +14,7 @@ const SearchFormFieldsComponent = ({ formState, Controller, register, control, t
   const applicationType = useWatch({ control, name: "applicationType" });
   const oldApplicationType = sessionStorage.getItem("search_application") || "";
   if (oldApplicationType && oldApplicationType != "undefined" && JSON.parse(oldApplicationType)?.code !== applicationType?.code)
-    control.setValue("status", "");
+    setValue("status", "");
   sessionStorage.setItem("search_application", JSON.stringify(applicationType));
   const { applicationTypes, ServiceTypes } = Digit.Hooks.obps.useServiceTypeFromApplicationType({
     Applicationtype: applicationType?.code || (userInformation?.roles?.filter((ob) => ob.code.includes("BPAREG_") ).length>0 &&  userInformation?.roles?.filter((ob) => ob.code.includes("BPA_") || ob.code.includes("CITIZEN") ).length<=0 ?"BPA_STAKEHOLDER_REGISTRATION" :"BUILDING_PLAN_SCRUTINY"),
@@ -110,33 +110,38 @@ const SearchFormFieldsComponent = ({ formState, Controller, register, control, t
     <>
       <SearchField>
         <label>{t("BPA_SEARCH_APPLICATION_NO_LABEL")}</label>
-        <TextInput name="applicationNo" inputRef={register({})} />
+        <Controller
+          control={control}
+          name="applicationNo"
+          render={({ field }) => (
+            <TextInput inputRef={field.ref} value={field.value || ""} onChange={(e) => field.onChange(e.target.value)} onBlur={field.onBlur} />
+          )}
+        />
       </SearchField>
       {
         !window.location.href.includes("citizen/obps/search/application") &&
         <SearchField>
           <label>{t("BPA_APP_MOBILE_NO_SEARCH_PARAM")}</label>
-          <MobileNumber
+          <Controller
+            control={control}
             name="mobileNumber"
-            disable={window.location.href.includes("obps/search/obps-application") ? true : false}
-            inputRef={register({
-              minLength: {
-                value: 10,
-                message: t("CORE_COMMON_MOBILE_ERROR"),
-              },
-              maxLength: {
-                value: 10,
-                message: t("CORE_COMMON_MOBILE_ERROR"),
-              },
-              pattern: {
-                value: /[6789][0-9]{9}/,
-                //type: "tel",
-                message: t("CORE_COMMON_MOBILE_ERROR"),
-              },
-            })}
-            type="number"
-            componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
-          //maxlength={10}
+            rules={{
+              minLength: { value: 10, message: t("CORE_COMMON_MOBILE_ERROR") },
+              maxLength: { value: 10, message: t("CORE_COMMON_MOBILE_ERROR") },
+              pattern: { value: /[6789][0-9]{9}/, message: t("CORE_COMMON_MOBILE_ERROR") },
+            }}
+            render={({ field }) => (
+              <MobileNumber
+                name="mobileNumber"
+                inputRef={field.ref}
+                value={field.value || ""}
+                onChange={(val) => field.onChange(val)}
+                onBlur={field.onBlur}
+                disable={window.location.href.includes("obps/search/obps-application")}
+                type="number"
+                componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
+              />
+            )}
           />
           <CardLabelError>{formState?.errors?.["mobileNumber"]?.message}</CardLabelError>
         </SearchField>
@@ -147,8 +152,8 @@ const SearchFormFieldsComponent = ({ formState, Controller, register, control, t
         <Controller
           control={control}
           name="applicationType"
-          render={(props) => (
-            <Dropdown selected={props.value} select={props.onChange} onBlur={props.onBlur} option={applicationTypes} optionKey="i18nKey" t={t} />
+          render={({ field }) => (
+            <Dropdown selected={field.value} select={field.onChange} onBlur={field.onBlur} option={applicationTypes} optionKey="i18nKey" t={t} />
           )}
         />
       </SearchField>
@@ -157,26 +162,26 @@ const SearchFormFieldsComponent = ({ formState, Controller, register, control, t
         <Controller
           control={control}
           name="serviceType"
-          render={(props) => (
-            <Dropdown selected={ServiceTypes && ServiceTypes?.length > 0 ? props.value : ServiceTypes[0]} select={props.onChange} onBlur={props.onBlur} option={ServiceTypes} optionKey="i18nKey" t={t} isBPAREG={ServiceTypes && ServiceTypes?.length > 0? true : false} />
+          render={({ field }) => (
+            <Dropdown selected={ServiceTypes && ServiceTypes?.length > 0 ? field.value : ServiceTypes[0]} select={field.onChange} onBlur={field.onBlur} option={ServiceTypes} optionKey="i18nKey" t={t} isBPAREG={ServiceTypes && ServiceTypes?.length > 0? true : false} />
           )}
         />
       </SearchField>
       <SearchField>
         <label>{t("BPA_APP_FROM_DATE_SEARCH_PARAM")}</label>
-        <Controller render={(props) => <DatePicker date={props.value} onChange={props.onChange} />} name="fromDate" control={control} />
+        <Controller render={({ field }) => <DatePicker date={field.value} onChange={field.onChange} />} name="fromDate" control={control} />
       </SearchField>
       <SearchField>
         <label>{t("BPA_APP_TO_DATE_SEARCH_PARAM")}</label>
-        <Controller render={(props) => <DatePicker date={props.value} onChange={props.onChange} />} name="toDate" control={control} />
+        <Controller render={({ field }) => <DatePicker date={field.value} onChange={field.onChange} />} name="toDate" control={control} />
       </SearchField>
       <SearchField>
         <label>{t("BPA_SEARCH_APPLICATION_STATUS_LABEL")}</label>
         <Controller
           control={control}
           name="status"
-          render={(props) => (
-            <Dropdown selected={props.value} select={props.onChange} onBlur={props.onBlur} option={applicationStatuses} optionKey="i18nKey" t={t} />
+          render={({ field }) => (
+            <Dropdown selected={field.value} select={field.onChange} onBlur={field.onBlur} option={applicationStatuses} optionKey="i18nKey" t={t} />
           )}
         />
       </SearchField>

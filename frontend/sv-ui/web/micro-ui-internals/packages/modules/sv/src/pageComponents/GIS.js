@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { LocationSearchCard, LinkButton, Card } from "@nudmcdgnpm/digit-ui-react-components";
+import { LocationSearchCard, LinkButton, Card } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 /**
  * GIS Component
  * 

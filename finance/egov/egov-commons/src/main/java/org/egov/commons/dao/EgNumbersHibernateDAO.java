@@ -48,11 +48,11 @@
 package org.egov.commons.dao;
 
 import org.egov.commons.EgNumbers;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 public class EgNumbersHibernateDAO  {
 	
@@ -65,8 +65,8 @@ public class EgNumbersHibernateDAO  {
 
 	public EgNumbers getEgNumberByFiscalPeriodAndVouchertype(final String fiscialperiodid, final String vouchertype) {
 		final Query qry = getCurrentSession().createQuery("from EgNumbers egnum where egnum.fiscialperiodid=:fiscialperiodid and vouchertype=:vouchertype");
-		qry.setString("fiscialperiodid", fiscialperiodid);
-		qry.setString("vouchertype", vouchertype);
+		qry.setParameter("fiscialperiodid", fiscialperiodid);
+		qry.setParameter("vouchertype", vouchertype);
 		return (EgNumbers) qry.uniqueResult();
 	}
 }

@@ -1,13 +1,14 @@
 import React, { useEffect } from "react";
-import { Redirect, Route, Switch, useHistory, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import EmployeeApp from "./pages/employee";
 import CitizenApp from "./pages/citizen";
 
 export const SVApp = ({ stateCode, modules, appTenants, logoUrl, initData }) => {
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { pathname } = useLocation();
+
   const innerWidth = window.innerWidth;
-  const cityDetails = Digit.ULBService.getCurrentUlb();
+  const cityDetails = Digit.ULBService.getCurrentUlb() || {};
   const userDetails = Digit.UserService.getUser();
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { stateInfo } = storeData || {};
@@ -15,11 +16,11 @@ export const SVApp = ({ stateCode, modules, appTenants, logoUrl, initData }) => 
 
   if (window.location.pathname.split("/").includes("employee")) CITIZEN = false;
 
- 
 
-  history.listen(() => {
+ useEffect(() => {
     window?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-  });
+  }, [pathname]);
+
 
   const handleUserDropdownSelection = (option) => {
     option.func();
@@ -43,16 +44,10 @@ export const SVApp = ({ stateCode, modules, appTenants, logoUrl, initData }) => 
     initData,
   };
   return (
-    <Switch>
-      <Route path="/sv-ui/employee">
-        <EmployeeApp {...commonProps} />
-      </Route>
-      <Route path="/sv-ui/citizen">
-        <CitizenApp {...commonProps} />
-      </Route>
-      <Route>
-        <Redirect to="/upyog-ui/citizen" />
-      </Route>
-    </Switch>
+    <Routes>
+      <Route path="/sv-ui/employee/*" element={<EmployeeApp {...commonProps} />} />
+      <Route path="/sv-ui/citizen/*" element={<CitizenApp {...commonProps} />} />
+      <Route path="*" element={<Navigate to="/sv-ui/citizen" replace />} />
+    </Routes>
   );
 };

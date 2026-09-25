@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -18,13 +18,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 
 public class Error {
-    @SafeHtml
+    @SanitizeHtml
     @JsonProperty("code")
     private String code = null;
-    @SafeHtml
+    @SanitizeHtml
     @JsonProperty("message")
     private String message = null;
-    @SafeHtml
+    @SanitizeHtml
     @JsonProperty("description")
     private String description = null;
 

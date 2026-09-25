@@ -1,10 +1,10 @@
-import { ActionLinks, CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar, LinkButton } from "@upyog/digit-ui-react-components";
+import { ActionLinks, CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar, LinkButton } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 //TODO : make it a react component
 import TLWFCaption from "./TLWFCaption";
-import "../css/tl-inline-auto.css";
+
 const TLWFApplicationTimeline = props => {
   const {
     t

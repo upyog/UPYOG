@@ -12,23 +12,25 @@ import org.egov.telemetry.utils.ValidationUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 @Slf4j
 public class TelemetryFormatChecker {
 
+    /** try-with-resources + UTF-8: safe on JDK 17; avoids deprecated IOUtils closeQuietly patterns. */
     private boolean isValid(String jsonData) {
-        InputStream inputStream = null;
-        try {
-            inputStream = getClass().getClassLoader().getResourceAsStream("telemetryMessageSchema.json");
-            String schema = IOUtils.toString(inputStream);
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("telemetryMessageSchema.json")) {
+            if (inputStream == null) {
+                log.error("Telemetry Message Schema resource not found");
+                return false;
+            }
+            String schema = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
             return ValidationUtils.isJsonValid(schema, jsonData);
         } catch (IOException e) {
             log.error("Not able to read Telemetry Message Schema");
         } catch (ProcessingException e) {
             log.error("Not able to validate JSON Schema");
-        } finally {
-            IOUtils.closeQuietly(inputStream);
         }
         return false;
     }

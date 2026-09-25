@@ -1,7 +1,7 @@
 import { FormComposer, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+
 import { useParams } from "react-router-dom";
 import { FacilityCentreConfig } from "../../../config/facilityCentreConfig";
 import { ApplicationProvider } from "../Edit/ApplicationContext";
@@ -23,7 +23,7 @@ const FacilityCentreCreationDetails = () => {
   const { t } = useTranslation();
   const [canSubmit, setSubmitValve] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { data: applicationDetails } = Digit.Hooks.cnd.useCndApplicationDetails(t, tenantId, applicationNumber,isUserDetailRequired);
   const [_formData, setFormData,_clear] = Digit.Hooks.useSessionStorage("store-data",null);
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
@@ -138,7 +138,7 @@ const FacilityCentreCreationDetails = () => {
         }
     };
 
-    history.replace("/cnd-ui/employee/cnd/facility-response", { cndApplication: formData }); 
+    navigate("/cnd-ui/employee/cnd/facility-response", { state: { cndApplication: formData }, replace: true }); 
     
   };
 

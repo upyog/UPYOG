@@ -1,7 +1,18 @@
-import { Card, CardSubHeader, Header, Loader, Row, StatusTable, MultiLink, Toast } from "@upyog/digit-ui-react-components";
-import React, { useState } from "react";
+import {
+  Card,
+  CardSubHeader,
+  Header,
+  Loader,
+  Row,
+  StatusTable,
+  MultiLink,
+  Toast
+} from "@nudmcdgnpm/digit-ui-react-components";
+import React, {useState } from "react";
 import { useTranslation } from "react-i18next";
+
 import { useParams } from "react-router-dom";
+
 import get from "lodash/get";
 import { size } from "lodash";
 import WFApplicationTimeline from "../../pageComponents/WFApplicationTimeline";

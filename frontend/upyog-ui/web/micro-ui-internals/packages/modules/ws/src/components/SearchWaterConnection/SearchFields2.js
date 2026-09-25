@@ -1,14 +1,8 @@
 import React, { Fragment } from "react";
 import { Controller, useWatch } from "react-hook-form";
-import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, Loader, MobileNumber } from "@upyog/digit-ui-react-components";
-import "../../css/ws-inline-auto.css";
-const SearchFields = ({
-  register,
-  control,
-  reset,
-  tenantId,
-  t
-}) => {
+import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, Loader, MobileNumber } from "@nudmcdgnpm/digit-ui-react-components";
+
+const SearchFields = ({ register, control, reset, tenantId, t }) => {
   const propsForMobileNumber = {
     maxlength: 10,
     pattern: "[6-9][0-9]{9}",
@@ -24,7 +18,7 @@ const SearchFields = ({
   return <>
       <SearchField className="ws-auto-26">
         <label>{t("WS_PROPERTY_ID_LABEL")}</label>
-        <TextInput name="propertyId" inputRef={register({})} />
+        <TextInput name="propertyId" {...register("propertyId")} />
       </SearchField>
 
       <SearchField className="submit">

@@ -6,22 +6,22 @@ import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.rs.constant.RequestServiceConstants;
 import org.upyog.rs.util.MdmsUtil;
 import org.upyog.rs.util.RequestServiceUtil;
 import org.upyog.rs.web.models.billing.CalculationType;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.upyog.rs.web.models.billing.TankerDeliveryTimeCalculationType;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class CalculationService {
 
-	@Autowired
-	private MdmsUtil mdmsUtil;
+	private final MdmsUtil mdmsUtil;
 
 	public BigDecimal calculateFee(int tankerQuantity, String tankerType, RequestInfo requestInfo, String tenantId) {
 		List<CalculationType> calculationTypes = mdmsUtil.getCalculationType(requestInfo,RequestServiceUtil.extractTenantId(tenantId),
@@ -98,7 +98,7 @@ public class CalculationService {
 		}
 
 		log.info("calculationTypes for mobile Toilet booking : {}", calculationTypes);
-		long numberOfDays = deliveryFromDate.until(deliveryToDate).getDays() + 1; // Including both start and end date
+		long numberOfDays = (long) deliveryFromDate.until(deliveryToDate).getDays() + 1; // Including both start and end date
 		log.info("Number of days for mobile Toilet booking : {}", numberOfDays);
 		log.info("Number of mobile toilets : {}", noOfMobileToilet);
 		BigDecimal feePerToilet = calculationTypes.get(0).getAmount();

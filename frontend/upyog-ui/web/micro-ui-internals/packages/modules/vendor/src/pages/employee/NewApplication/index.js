@@ -1,16 +1,16 @@
-import { Loader } from "@upyog/digit-ui-react-components";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React ,{Fragment}from "react";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
-import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { Route, useLocation,  Routes, Navigate } from "react-router-dom";
 import { createConfig } from "../../../config/Create/createConfig";
 
 const VENDOREMPCreate = ({ parentRoute }) => {
   const queryClient = useQueryClient();
-  const match = useRouteMatch();
+  const match = Digit.Hooks.useModuleBasePath();
   const { t } = useTranslation();
   const { pathname } = useLocation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const stateId = Digit.ULBService.getStateId();
   let config = [];
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("VENDOR_Test", {});
@@ -43,9 +43,9 @@ const VENDOREMPCreate = ({ parentRoute }) => {
 
 
     
-    let redirectWithHistory = history.push;
+    let redirectWithHistory = (to, state) => navigate(to, state != null ? { state } : undefined);
     if (skipStep) {
-      redirectWithHistory = history.replace;
+      redirectWithHistory = (to, state) => navigate(to, state != null ? { replace: true, state } : { replace: true });
     }
     if (isAddMultiple) {
       nextStep = key;
@@ -71,7 +71,7 @@ const VENDOREMPCreate = ({ parentRoute }) => {
     }
 
   const astcreate = async () => {
-    history.push(`${match.path}/acknowledgement`);
+    navigate(`${match.path}/acknowledgement`);
   };
 
   function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
@@ -118,28 +118,25 @@ const VENDOREMPCreate = ({ parentRoute }) => {
 //   const NewResponse = Digit?.ComponentRegistryService?.getComponent("NewResponse");
   
   return (
-    <Switch>
+    <Routes>
       {config.map((routeObj, index) => {
         const { component, texts, inputs, key } = routeObj;
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
-          <Route path={`${match.path}/${routeObj.route}`} key={index}>
-            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} />
-          </Route>
+          <Route
+            path={`${match.path}/${routeObj.route}`}
+            key={index}
+            element={
+              <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} />
+            }
+          />
         );
       })}
 
-      
-      {/* <Route path={`${match.path}/check`}>
-        <CheckPage onSubmit={astcreate} value={params} />
-      </Route>
-      <Route path={`${match.path}/acknowledgement`}>
-        <NewResponse data={params} onSuccess={onSuccess} />
-      </Route> */}
-      <Route>
-        <Redirect to={`${match.path}/${config.indexRoute}`} />
-      </Route>
-    </Switch>
+      {/* <Route path={`${match.path}/check`} element={<CheckPage onSubmit={astcreate} value={params} />} />
+      <Route path={`${match.path}/acknowledgement`} element={<NewResponse data={params} onSuccess={onSuccess} />} /> */}
+      <Route path="*" element={<Navigate to={`${match.path}/${config.indexRoute}`} replace />} />
+    </Routes>
   );
 };
 

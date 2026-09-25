@@ -73,10 +73,12 @@ public class WorkflowTypeService {
     }
 
     public List<WorkflowTypes> getAllWorkflowTypes() {
-        return workflowTypeRepository.findAll(new Sort(Sort.Direction.ASC, "type"));
+        // LTS Migration Fix (Spring Data 3): new Sort(...) constructor was removed; use Sort.by(...).
+        return workflowTypeRepository.findAll(Sort.by(Sort.Direction.ASC, "type"));
     }
 
     public WorkflowTypes getWorkflowTypeById(Long id) {
-        return workflowTypeRepository.findOne(id);
+        // LTS Migration Fix (Spring Data 3): findOne(id) was removed; findById returns Optional.
+        return workflowTypeRepository.findById(id).orElse(null);
     }
 }

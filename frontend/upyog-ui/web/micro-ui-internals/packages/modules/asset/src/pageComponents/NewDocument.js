@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair, CardSubHeader, CardLabelDesc, InfoBannerIcon } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair, CardSubHeader,CardLabelDesc, InfoBannerIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/ASTTimeline";
-import EXIF from 'exif-js';
-import "../css/asset-inline-auto.css";
-const NewDocument = ({
-  t,
-  config,
-  onSelect,
-  formData
-}) => {
+import exifr from "exifr";
+
+const NewDocument = ({ t, config, onSelect, formData }) => {
   const [documents, setDocuments] = useState(formData?.documents?.documents || []);
   const [error, setError] = useState(null);
   const [enableSubmit, setEnableSubmit] = useState(true);
@@ -64,78 +59,75 @@ function ASSETSelectDocument({
   const [latitude, setLatitude] = useState(formData?.latitude || null);
   const [longitude, setLongitude] = useState(formData?.longitude || null);
   const [isUploading, setIsUploading] = useState(false);
-  const handleASSETSelectDocument = value => setSelectedDocument(value);
-  const LoadingSpinner = () => <div className="loading-spinner" />;
-  const extractGeoLocation = file => {
-    return new Promise(resolve => {
-      EXIF.getData(file, function () {
-        const lat = EXIF.getTag(this, 'GPSLatitude');
-        const lon = EXIF.getTag(this, 'GPSLongitude');
-        if (lat && lon) {
-          const latDecimal = convertToDecimal(lat);
-          const lonDecimal = convertToDecimal(lon);
-          resolve({
-            latitude: latDecimal,
-            longitude: lonDecimal
-          });
-        } else {
-          resolve({
-            latitude: null,
-            longitude: null
-          });
-          // if (doc?.code === "OWNER.ASSETPHOTO") {
-          //   alert("Please upload a photo with location details");
-          // }
-        }
-      });
-    });
-  };
-  const convertToDecimal = coordinate => {
-    const degrees = coordinate[0];
-    const minutes = coordinate[1];
-    const seconds = coordinate[2];
-    return degrees + minutes / 60 + seconds / 3600;
-  };
-  const handleFileUpload = e => {
-    const file = e.target.files[0];
-    setFile(file);
-    extractGeoLocation(file).then(({
-      latitude,
-      longitude
-    }) => {
-      setLatitude(latitude);
-      setLongitude(longitude);
-      if (doc?.code === "OWNER.ASSETPHOTO" && (!latitude || !longitude)) {
-        setError("Please upload a photo with location details");
-      }
-    });
-  };
-  useEffect(() => {
-    (async () => {
-      setError(null);
-      if (file) {
-        if (file.size >= 5242880) {
-          setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
-          // if (!formState.errors[config.key]) setFormError(config.key, { type: doc?.code });
-        } else {
-          try {
-            setUploadedFile(null);
-            setIsUploading(true);
-            const response = await Digit.UploadServices.Filestorage("ASSET", file, Digit.ULBService.getStateId());
-            if (response?.data?.files?.length > 0) {
-              setUploadedFile(response?.data?.files[0]?.fileStoreId);
-            } else {
+
+  const handleASSETSelectDocument = (value) => setSelectedDocument(value);
+
+  const LoadingSpinner = () => (
+    <div className="loading-spinner"
+    />
+  );
+
+  const extractGeoLocation = async (file) => {
+  try {
+    const gpsData = await exifr.gps(file);
+
+    if (gpsData?.latitude && gpsData?.longitude) {
+      return {
+        latitude: gpsData.latitude,
+        longitude: gpsData.longitude,
+      };
+    }
+
+    return { latitude: null, longitude: null };
+  } catch (error) {
+    console.warn("EXIF extraction failed:", error);
+    return { latitude: null, longitude: null };
+  }
+};
+
+
+  const handleFileUpload = async (e) => {
+  const file = e.target.files[0];
+  setFile(file);
+
+  const { latitude, longitude } = await extractGeoLocation(file);
+
+  setLatitude(latitude);
+  setLongitude(longitude);
+
+  if (doc?.code === "OWNER.ASSETPHOTO" && (!latitude || !longitude)) {
+    setError("Please upload a photo with location details");
+  }
+};
+
+   useEffect(() => {
+      (async () => {
+        setError(null);
+        if (file) {
+          if (file.size >= 5242880) {
+            setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
+            // if (!formState.errors[config.key]) setFormError(config.key, { type: doc?.code });
+          } else {
+            try {
+              setUploadedFile(null);
+              setIsUploading(true);
+              const response = await Digit.UploadServices.Filestorage("ASSET", file, Digit.ULBService.getStateId());
+              if (response?.data?.files?.length > 0) {
+                setUploadedFile(response?.data?.files[0]?.fileStoreId);
+              } else {
+                setError(t("CS_FILE_UPLOAD_ERROR"));
+              }
+            } catch (err) {
               setError(t("CS_FILE_UPLOAD_ERROR"));
             }
-          } catch (err) {
-            setError(t("CS_FILE_UPLOAD_ERROR"));
-          } finally {
-            setIsUploading(false);
+            finally{
+              setIsUploading(false);
+            }
           }
         }
-      }
-    })();
-  }, [file]);
+      })();
+    }, [file]);
+
   useEffect(() => {
     if (selectedDocument?.code) {
       setDocuments(prev => {

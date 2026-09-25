@@ -1,0 +1,435 @@
+{
+  "moduleName":"obpas_oc_employee",
+  "description": "Obpas OC employee full workflow",
+
+  "baseUrl": "${selected.url}",
+
+  "instructions":[
+
+    {
+      "stepName":"Employee Username",
+      "locatorStrategy":"NAME",
+      "locatorValue":"username",
+      "action":"TYPE",
+      "inputValue":"${selected.username}"
+    },
+
+    {
+      "stepName":"Employee Password",
+      "locatorStrategy":"NAME",
+      "locatorValue":"password",
+      "action":"TYPE",
+      "inputValue":"${selected.password}"
+    },
+
+    {
+      "stepName":"Select City",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"0:0"
+    },
+
+    {
+      "stepName":"Continue Login",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'Continue')]",
+      "action":"CLICK_JS"
+    },
+
+
+
+    {
+      "stepName": "Open OBPS Inbox",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[contains(@href,'/employee/obps/inbox')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName":"Search Application",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"(//input[@type='text'])[1]",
+      "action": "TYPE_FROM_STORE",
+      "inputValue": "APPLICATION_NO",
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName":"Click Search",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[normalize-space()='Search']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName": "Open First Application",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[contains(@href,'/bpa/PG-BP-')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 5000
+    },
+
+
+
+    {
+      "stepName":"Take Action Document Verifier",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'TAKE ACTION')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName":"Select Forward",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//p[normalize-space()='FORWARD']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName":"Comment Document Verifier",
+      "locatorStrategy":"NAME",
+      "locatorValue":"comments",
+      "action":"TYPE",
+      "inputValue":"${comment.verify}",
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName":"Verify Forward",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'VERIFY AND FORWARD')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName":"Go Home",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'Go back to home page')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName":"Open OBPS Inbox Again",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[contains(@href,'/employee/obps/inbox')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName":"Search Again",
+      "locatorStrategy":"NAME",
+      "locatorValue":"applicationNo",
+      "action":"TYPE",
+      "inputValue":"${selected.applicationNumber}",
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName":"Search Again Button",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[normalize-space()='Search']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName": "Open First Application",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[contains(@href,'/bpa/PG-BP-')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 5000
+    },
+
+
+
+    {
+      "stepName":"Inspection Dropdown 1",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg.cp",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"0:1"
+    },
+
+
+
+    {
+      "stepName":"Inspection Dropdown 2",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg.cp",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"1:1"
+    },
+
+
+
+    {
+      "stepName":"Inspection Dropdown 3",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg.cp",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"2:0"
+    },
+
+
+
+    {
+      "stepName":"Inspection Dropdown 4",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg.cp",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"3:0"
+    },
+
+
+
+    {
+      "stepName":"Inspection Photo 1",
+      "locatorStrategy":"CSS",
+      "locatorValue":"input[type='file']",
+      "action":"UPLOAD_FILE_BY_INDEX",
+      "inputValue":"0:${document.iDentity.proof}"
+    },
+
+
+
+    {
+      "stepName":"Inspection Photo 2",
+      "locatorStrategy":"CSS",
+      "locatorValue":"input[type='file']",
+      "action":"UPLOAD_FILE_BY_INDEX",
+      "inputValue":"1:${document.iDentity.proof}"
+    },
+
+
+
+    {
+      "stepName":"Inspection Photo 3",
+      "locatorStrategy":"CSS",
+      "locatorValue":"input[type='file']",
+      "action":"UPLOAD_FILE_BY_INDEX",
+      "inputValue":"2:${document.iDentity.proof}"
+    },
+
+
+
+    {
+      "stepName":"Inspection Date",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//input[@type='date']",
+      "action":"SET_DATE_TODAY"
+    },
+
+
+
+    {
+      "stepName":"Inspection Time",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//input[@type='time']",
+      "action":"SET_TIME_NOW"
+    },
+
+
+
+    {
+      "stepName":"Take Action Field Inspector",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'TAKE ACTION')]",
+      "action":"CLICK_JS"
+    },
+
+
+
+    {
+      "stepName":"Forward Field Inspector",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'FORWARD')]",
+      "action":"CLICK_JS"
+    },
+
+
+
+    {
+      "stepName":"Comment Field Inspector",
+      "locatorStrategy":"NAME",
+      "locatorValue":"comments",
+      "action":"TYPE",
+      "inputValue":"${comment.forward}"
+    },
+
+
+
+    {
+      "stepName":"Verify Field Inspector",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'VERIFY AND FORWARD')]",
+      "action":"CLICK_JS"
+    },
+
+
+
+    {
+      "stepName":"Go Home 2",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'Go back to home page')]",
+      "action":"CLICK_JS"
+    },
+
+
+
+    {
+      "stepName":"Open Noc Inbox",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[contains(@href,'/employee/noc/inbox')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName":"Search BPA Application Number",
+      "locatorStrategy":"NAME",
+      "locatorValue":"applicationNo",
+      "action":"TYPE",
+      "inputValue":"${selected.applicationNumber}",
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName":"Upload Fire NOC",
+      "locatorStrategy":"CSS",
+      "locatorValue":"input[type='file']",
+      "action":"UPLOAD_FILE",
+      "inputValue":"${document.common.proof}",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName":"Approve Fire",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//p[normalize-space()='Approve']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+
+    {
+      "stepName":"Take Action Fire",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'TAKE ACTION')]",
+      "action":"CLICK_JS"
+    },
+
+
+
+    {
+      "stepName":"Approve Fire",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'Approve')]",
+      "action":"CLICK_JS"
+    },
+
+
+
+    {
+      "stepName":"Comment Fire",
+      "locatorStrategy":"NAME",
+      "locatorValue":"comments",
+      "action":"TYPE",
+      "inputValue":"${comment.approve}"
+    },
+
+
+
+    {
+      "stepName":"Final Fire Approve",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'Approve')]",
+      "action":"CLICK_JS"
+    },
+
+
+
+    {
+      "stepName":"Go Home 3",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'Go back to home page')]",
+      "action":"CLICK_JS"
+    },
+
+
+
+    {
+      "stepName":"Open OBPS Inbox Final",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'OBPS Inbox')]",
+      "action":"CLICK_JS"
+    },
+
+
+
+    {
+      "stepName":"Take Action Final",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'TAKE ACTION')]",
+      "action":"CLICK_JS"
+    },
+
+
+
+    {
+      "stepName":"Approve Final",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'APPROVE')]",
+      "action":"CLICK_JS"
+    },
+
+
+
+    {
+      "stepName":"Final Approver Comment",
+      "locatorStrategy":"NAME",
+      "locatorValue":"comments",
+      "action":"TYPE",
+      "inputValue":"${comment.approve}"
+    },
+
+
+
+    {
+      "stepName":"Final Approver Submit",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'APPROVE')]",
+      "action":"CLICK_JS"
+    }
+
+  ]
+}

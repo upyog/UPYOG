@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useCallback, useMemo } from "react";
-import { SearchForm, Table, Card, Loader, Header } from "@upyog/digit-ui-react-components";
+import { SearchForm, Table, Card, Loader, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import SearchFields from "../../components/SearchWaterConnection/SearchFields2";
 import { useTranslation } from "react-i18next";
@@ -50,15 +50,10 @@ const SearchWaterConnectionIntegrated = ({
       searchType: "CONNECTION"
     }
   });
-  useEffect(() => {
-    register("offset", 0);
-    register("limit", 10);
-    register("sortBy", "commencementDate");
-    register("searchType", "CONNECTION");
-    register("sortOrder", "DESC");
-    register("propertyId", "");
-  }, [register]);
-  const onSort = useCallback(args => {
+
+// Removed v6 useEffect register calls - use defaultValues in useForm instead
+
+  const onSort = useCallback((args) => {
     if (args.length === 0) return;
     setValue("sortBy", args.id);
     setValue("sortOrder", args.desc ? "DESC" : "ASC");

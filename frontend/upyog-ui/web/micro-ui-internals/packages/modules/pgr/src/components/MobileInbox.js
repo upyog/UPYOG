@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Loader, Card } from "@upyog/digit-ui-react-components";
+import { Loader, Card } from "@nudmcdgnpm/digit-ui-react-components";
 import { ComplaintCard } from "./inbox/ComplaintCard";
 import ComplaintsLink from "./inbox/ComplaintLinks";
 import { LOCALE } from "../constants/Localization";

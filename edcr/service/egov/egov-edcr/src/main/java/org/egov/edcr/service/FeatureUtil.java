@@ -62,4 +62,22 @@ public class FeatureUtil {
         plan.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }
 
+    /**
+     * Extracts the tenant identifier from the given tenant code.
+     * <p>
+     * Tenant codes may be provided either as a single value (e.g. {@code "pb"})
+     * or in a hierarchical format separated by a dot
+     * (e.g. {@code "in.pb"}). For hierarchical tenant codes, the method returns
+     * the child tenant identifier (the portion after the dot).
+     * </p>
+     *
+     * @param tenantCode the tenant code from which the tenant identifier is to be extracted
+     * @return the extracted tenant identifier; returns the original value if the
+     *         tenant code does not contain a dot separator
+     */
+    public static String getTenantId(String tenantCode) {
+        String[] tenantArr = tenantCode.split("\\.");
+        return tenantArr.length == 1 ? tenantArr[0] : tenantArr[1];
+    }
+
 }

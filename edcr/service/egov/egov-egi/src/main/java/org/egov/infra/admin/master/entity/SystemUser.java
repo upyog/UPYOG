@@ -50,8 +50,8 @@ package org.egov.infra.admin.master.entity;
 
 import org.egov.infra.persistence.entity.enums.UserType;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "eg_systemuser")

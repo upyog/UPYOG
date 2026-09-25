@@ -1,89 +1,79 @@
 import React, { useCallback, useMemo, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, Header, SearchField, Dropdown, Table, Card } from "@upyog/digit-ui-react-components";
+import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, Header, SearchField, Dropdown, Table, Card } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link } from "react-router-dom";
 import { convertEpochToDateDMY, stringReplaceAll } from "../../utils";
 import SearchFields from "./SearchFields";
 import MobileSearchApplication from "./MobileSearchApplication";
-import "../../css/tl-inline-auto.css";
-const SearchLicense = ({
-  tenantId,
-  t,
-  onSubmit,
-  data,
-  count
-}) => {
-  const initialValues = Digit.SessionStorage.get("SEARCH_APPLICATION_DETAIL") || {
+
+const SearchLicense = ({tenantId, t, onSubmit, data, count }) => {
+
+  const initialValues = Digit.SessionStorage.get("SEARCH_APPLICATION_DETAIL")|| {
+    licenseNumbers: "",
+    mobileNumber: "",
+    fromDate: null,   
+    toDate: null,    
+    tradeName: "",
     offset: 0,
     limit: 10,
     sortBy: "commencementDate",
-    sortOrder: "DESC"
+    sortOrder: "DESC",
+    status: "",
   };
-  const {
-    register,
-    control,
-    handleSubmit,
-    setValue,
-    getValues,
-    reset
-  } = useForm({
+  const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
     defaultValues: initialValues
-  });
-  useEffect(() => {
-    register("offset", 0);
-    register("limit", 10);
-    register("sortBy", "commencementDate");
-    register("sortOrder", "DESC");
-    register("status", "");
-    //register("RenewalPending", true)
-  }, [register]);
-  const onSort = useCallback(args => {
-    if (args.length === 0) return;
-    setValue("sortBy", args.id);
-    setValue("sortOrder", args.desc ? "DESC" : "ASC");
-  }, []);
-  function onPageSizeChange(e) {
-    setValue("limit", Number(e.target.value));
-    handleSubmit(onSubmit)();
-  }
-  function nextPage() {
-    setValue("offset", getValues("offset") + getValues("limit"));
-    handleSubmit(onSubmit)();
-  }
-  function previousPage() {
-    setValue("offset", getValues("offset") - getValues("limit"));
-    handleSubmit(onSubmit)();
-  }
-  const isMobile = window.Digit.Utils.browser.isMobile();
-  if (isMobile) {
-    return <MobileSearchApplication {...{
-      Controller,
-      register,
-      control,
-      t,
-      reset,
-      previousPage,
-      handleSubmit,
-      tenantId,
-      data,
-      onSubmit
-    }} />;
-  }
-  const GetCell = value => <span className="cell-text">{value}</span>;
-  const columns = useMemo(() => [{
-    Header: t("TL_TRADE_LICENSE_LABEL"),
-    accessor: "licenseNumber",
-    disableSortBy: true,
-    Cell: ({
-      row
-    }) => {
-      return <div>
+  })
+  // useEffect(() => {
+  //   register("offset")
+  //   register("limit")
+  //   register("sortBy")
+  //   register("sortOrder")
+  //   register("status")
+  //   //register("RenewalPending")
+  // },[register])
+
+    const onSort = useCallback((args) => {
+      if (args.length === 0) return
+      setValue("sortBy", args.id)
+      setValue("sortOrder", args.desc ? "DESC" : "ASC")
+    }, [])
+
+
+    function onPageSizeChange(e){
+      setValue("limit",Number(e.target.value))
+      handleSubmit(onSubmit)()
+    }
+
+    function nextPage () {
+        setValue("offset", getValues("offset") + getValues("limit"))
+        handleSubmit(onSubmit)()
+    }
+    function previousPage () {
+        setValue("offset", getValues("offset") - getValues("limit") )
+        handleSubmit(onSubmit)()
+    }
+
+    const isMobile = window.Digit.Utils.browser.isMobile();
+
+    if (isMobile) {
+      return <MobileSearchApplication {...{ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit }}/>
+    }
+
+    const GetCell = (value) => <span className="cell-text">{value}</span>;
+    const columns = useMemo( () => ([
+        {
+          Header: t("TL_TRADE_LICENSE_LABEL"),
+          accessor: "licenseNumber",
+          disableSortBy: true,
+          Cell: ({ row }) => {
+            return (
+              <div>
                 <span className="link">
                   <a href={`/upyog-ui/employee/tl/application-details/${row.original["applicationNumber"]}`}>
                     {row.original["licenseNumber"]}
                   </a>
                 </span>
-              </div>;
+              </div>);
     }
   }, {
     Header: t("TL_LOCALIZATION_TRADE_NAME"),
@@ -106,7 +96,8 @@ const SearchLicense = ({
     Header: t("TL_COMMON_TABLE_COL_STATUS"),
     accessor: row => GetCell(t(row?.workflowCode && row?.status && `WF_${row?.workflowCode?.toUpperCase()}_${row.status}` || "NA")),
     disableSortBy: true
-  }], []);
+    }
+  ]), []);
   return <React.Fragment>
         <Header>{t("TL_SEARCH_LICENSE")}</Header>
         <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>

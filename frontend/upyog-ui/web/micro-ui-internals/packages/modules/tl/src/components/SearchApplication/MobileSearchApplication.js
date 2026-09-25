@@ -1,5 +1,5 @@
 import React, { Fragment, useCallback, useMemo, useReducer } from "react";
-import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast } from "@upyog/digit-ui-react-components";
+import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import SearchFormFields from "./SearchFields";
 import { convertEpochToDateDMY } from "../../utils";
 import "../../css/tl-inline-auto.css";

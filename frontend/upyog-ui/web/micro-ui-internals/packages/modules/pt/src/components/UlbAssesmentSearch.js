@@ -1,88 +1,81 @@
 import React, { useCallback, useMemo, useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@upyog/digit-ui-react-components";
+import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link } from "react-router-dom";
 import MobileSearchApplication from "./MobileSearchApplication";
-import "../css/pt-inline-auto.css";
-const UlbAssesmentSearch = ({
-  tenantId,
-  isLoading,
-  t,
-  onSubmit,
-  data,
-  count,
-  setShowToast,
-  financialYearsData
-}) => {
-  const isMobile = window.Digit.Utils.browser.isMobile();
-  const [financialYears, setFinancialYears] = useState([]);
-  const {
-    register,
-    control,
-    handleSubmit,
-    setValue,
-    getValues,
-    reset,
-    formState
-  } = useForm({
-    defaultValues: {
-      offset: 0,
-      limit: !isMobile && 10,
-      sortBy: "commencementDate",
-      sortOrder: "DESC"
+
+const UlbAssesmentSearch = ({tenantId, isLoading, t, onSubmit, data, count, setShowToast, financialYearsData }) => {
+    const isMobile = window.Digit.Utils.browser.isMobile();
+    const [financialYears, setFinancialYears] = useState([]);
+    const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
+        defaultValues: {
+            offset: 0,
+            limit: !isMobile ? 10 : 0,
+            sortBy: "commencementDate",
+            sortOrder: "DESC"
+        }
+    });
+
+    // Destructure errors to subscribe to formState Proxy for React Hook Form v7 compatibility
+    const { errors } = formState;
+
+    useEffect(() => {
+      register("offset");
+      register("limit");
+      register("sortBy");
+      register("sortOrder");
+    }, [register]);
+
+    useEffect(() => {
+        if (financialYearsData && financialYearsData["egf-master"]) {
+          setFinancialYears(financialYearsData["egf-master"]?.["FinancialYear"]);
+        }
+      }, [financialYearsData]);
+    //need to get from workflow
+    const tenantType = [
+        {
+            code: "pg.citya",
+            i18nKey: "City A"
+        },
+        {
+            code: "pg.cityb",
+            i18nKey: "City B"
+        },
+        {
+            code: "pg.cityc",
+            i18nKey: "City C"
+        },
+    ]
+    const financialYearDropdown = financialYears?.map((year) =>{
+        return {code:year.code ,i18nKey:year.name}
+    })
+    const getaddress = (address) => {
+        let newaddr = `${address?.doorNo ? `${address?.doorNo}, ` : ""} ${address?.street ? `${address?.street}, ` : ""}${
+            address?.landmark ? `${address?.landmark}, ` : ""
+          }${t(address?.locality.code)}, ${t(address?.city)},${t(address?.pincode) ? `${address.pincode}` : " "}`
+        return newaddr;
     }
-  });
-  useEffect(() => {
-    register("offset", 0);
-    register("limit", 10);
-    register("sortBy", "commencementDate");
-    register("sortOrder", "DESC");
-  }, [register]);
-  useEffect(() => {
-    if (financialYearsData && financialYearsData["egf-master"]) {
-      setFinancialYears(financialYearsData["egf-master"]?.["FinancialYear"]);
-    }
-  }, [financialYearsData]);
-  //need to get from workflow
-  const tenantType = [{
-    code: "pg.citya",
-    i18nKey: "City A"
-  }, {
-    code: "pg.cityb",
-    i18nKey: "City B"
-  }, {
-    code: "pg.cityc",
-    i18nKey: "City C"
-  }];
-  const financialYearDropdown = financialYears?.map(year => {
-    return {
-      code: year.code,
-      i18nKey: year.name
-    };
-  });
-  const getaddress = address => {
-    let newaddr = `${address?.doorNo ? `${address?.doorNo}, ` : ""} ${address?.street ? `${address?.street}, ` : ""}${address?.landmark ? `${address?.landmark}, ` : ""}${t(address?.locality.code)}, ${t(address?.city)},${t(address?.pincode) ? `${address.pincode}` : " "}`;
-    return newaddr;
-  };
-  const GetCell = value => <span className="cell-text">{value}</span>;
-  const columns = useMemo(() => [{
-    Header: t("PT_SEARCHPROPERTY_TABEL_PID"),
-    disableSortBy: true,
-    accessor: row => GetCell(row.propertyId || "")
-  }, {
-    Header: t("PT_APPLICATION_NO_LABEL"),
-    accessor: "acknowldgementNumber",
-    disableSortBy: true,
-    Cell: ({
-      row
-    }) => {
-      return <div>
+    const GetCell = (value) => <span className="cell-text">{value}</span>;
+    const columns = useMemo( () => ([
+        {
+            Header: t("PT_SEARCHPROPERTY_TABEL_PID"),
+            disableSortBy: true,
+            accessor: (row) => GetCell(row.propertyId || ""),
+        },
+        {
+            Header: t("PT_APPLICATION_NO_LABEL"),
+            accessor: "acknowldgementNumber",
+            disableSortBy: true,
+            Cell: ({ row }) => {
+              return (
+                <div>
                   <span className="link">
                     <Link to={`/upyog-ui/employee/pt/applicationsearch/application-details/${row.original["propertyId"]}`}>
                       {row.original["acknowldgementNumber"]}
                     </Link>
                   </span>
-                </div>;
+                </div>
+              );
     }
   }, {
     Header: t("PT_SEARCHPROPERTY_TABEL_APPLICATIONTYPE"),
@@ -100,7 +93,7 @@ const UlbAssesmentSearch = ({
     Header: t("PT_ADDRESS_LABEL"),
     disableSortBy: true,
     accessor: row => GetCell(getaddress(row.address) || "")
-  }], []);
+  }]), []);
   const onSort = useCallback(args => {
     if (args.length === 0) return;
     setValue("sortBy", args.id);
@@ -139,11 +132,39 @@ const UlbAssesmentSearch = ({
 
                 <SearchField>
                     <label>{t("PT_SEARCH_TENANT_ID")}</label>
-                    <Controller control={control} name="creationReason" render={props => <Dropdown selected={props.value} select={props.onChange} onBlur={props.onBlur} option={tenantType} optionKey="i18nKey" t={t} disable={false} />} />
+                    <Controller
+                            control={control}
+                            name="creationReason"
+                            render={({ field }) => (
+                                <Dropdown
+                                selected={field.value}
+                                select={field.onChange}
+                                onBlur={field.onBlur}
+                                option={tenantType}
+                                optionKey="i18nKey"
+                                t={t}
+                                disable={false}
+                                />
+                            )}
+                            />
                 </SearchField>
                 <SearchField>
                     <label>{t("ES_SEARCH_FINANCIAL_YEAR")}</label>
-                    <Controller control={control} name="status" render={props => <Dropdown selected={props.value} select={props.onChange} onBlur={props.onBlur} option={financialYearDropdown} optionKey="i18nKey" t={t} disable={false} />} />
+                    <Controller
+                            control={control}
+                            name="status"
+                            render={({ field }) => (
+                                <Dropdown
+                                selected={field.value}
+                                select={field.onChange}
+                                onBlur={field.onBlur}
+                                option={financialYearDropdown}
+                                optionKey="i18nKey"
+                                t={t}
+                                disable={false}
+                                />
+                            )}
+                            />
                 </SearchField>
                 <SearchField className="submit">
                     <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
@@ -169,19 +190,33 @@ const UlbAssesmentSearch = ({
             {!isLoading && data?.display ? <Card className="pt-auto-13">
                 {t(data.display).split("\\n").map((text, index) => <p key={index} className="pt-auto-14">
                         {text}
-                    </p>)}
-            </Card> : !isLoading && data !== "" ? <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {
-        return {
-          style: {
-            minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
-            padding: "20px 18px",
-            fontSize: "16px"
-          }
-        };
-      }} onPageSizeChange={onPageSizeChange} currentPage={getValues("offset") / getValues("limit")} onNextPage={nextPage} onPrevPage={previousPage} pageSizeLimit={getValues("limit")} onSort={onSort} disableSort={false} sortParams={[{
-        id: getValues("sortBy"),
-        desc: getValues("sortOrder") === "DESC" ? true : false
-      }]} /> : data !== "" || isLoading && <Loader />}
+                    </p>
+                    )
+                }
+            </Card>
+            :(!isLoading && data !== ""? <Table
+                t={t}
+                data={data}
+                totalRecords={count}
+                columns={columns}
+                getCellProps={(cellInfo) => {
+                return {
+                    style: {
+                    minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
+                    padding: "20px 18px",
+                    fontSize: "16px"
+                  },
+                };
+                }}
+                onPageSizeChange={onPageSizeChange}
+                currentPage={Math.floor((Number(getValues("offset")) || 0) / (Number(getValues("limit")) || 10))}
+                onNextPage={nextPage}
+                onPrevPage={previousPage}
+                pageSizeLimit={Number(getValues("limit")) || 10}
+                onSort={onSort}
+                disableSort={false}
+                sortParams={[{id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false}]}
+            />: data !== "" || isLoading && <Loader/>)}
             </div>}
         </React.Fragment>;
 };

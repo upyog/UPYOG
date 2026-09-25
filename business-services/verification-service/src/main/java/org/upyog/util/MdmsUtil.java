@@ -8,7 +8,6 @@ import org.egov.mdms.model.MdmsCriteria;
 import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.mdms.model.ModuleDetail;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -22,58 +21,59 @@ import java.util.Map;
 @Component
 public class MdmsUtil {
 
-    @Autowired
-    private RestTemplate restTemplate;
+	private final RestTemplate restTemplate;
 
-    @Value("${egov.mdms.host}")
-    private String mdmsHost;
+	@Value("${egov.mdms.host}")
+	private String mdmsHost;
 
-    @Value("${egov.mdms.search.endpoint}")
-    private String mdmsUrl;
+	@Value("${egov.mdms.search.endpoint}")
+	private String mdmsUrl;
 
-    @Value("${egov.mdms.master.name}")
-    private String masterName;
+	@Value("${egov.mdms.master.name}")
+	private String masterName;
 
-    @Value("${egov.mdms.module.name}")
-    private String moduleName;
+	@Value("${egov.mdms.module.name}")
+	private String moduleName;
 
+	public MdmsUtil(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
+	}
 
-    public Integer fetchRegistrationChargesFromMdms(RequestInfo requestInfo, String tenantId) {
-        StringBuilder uri = new StringBuilder();
-        uri.append(mdmsHost).append(mdmsUrl);
-        MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForCategoryList(requestInfo, tenantId);
-        Object response = new HashMap<>();
-        Integer rate = 0;
-        try {
-            response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
-            rate = JsonPath.read(response, "$.MdmsRes.VTR.RegistrationCharges.[0].amount");
-        }catch(Exception e) {
-            log.error("Exception occurred while fetching category lists from mdms: ",e);
-        }
-        //log.info(ulbToCategoryListMap.toString());
-        return rate;
-    }
+	public Integer fetchRegistrationChargesFromMdms(RequestInfo requestInfo, String tenantId) {
+		StringBuilder uri = new StringBuilder();
+		uri.append(mdmsHost).append(mdmsUrl);
+		MdmsCriteriaReq mdmsCriteriaReq = getMdmsRequestForCategoryList(requestInfo, tenantId);
+		Object response = new HashMap<>();
+		Integer rate = 0;
+		try {
+			response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
+			rate = JsonPath.read(response, "$.MdmsRes.VTR.RegistrationCharges.[0].amount");
+		} catch (Exception e) {
+			log.error("Exception occurred while fetching category lists from mdms: ", e);
+		}
+		return rate;
+	}
 
-    private MdmsCriteriaReq getMdmsRequestForCategoryList(RequestInfo requestInfo, String tenantId) {
-        MasterDetail masterDetail = new MasterDetail();
-        masterDetail.setName(masterName);
-        List<MasterDetail> masterDetailList = new ArrayList<>();
-        masterDetailList.add(masterDetail);
+	private MdmsCriteriaReq getMdmsRequestForCategoryList(RequestInfo requestInfo, String tenantId) {
+		MasterDetail masterDetail = new MasterDetail();
+		masterDetail.setName(masterName);
+		List<MasterDetail> masterDetailList = new ArrayList<>();
+		masterDetailList.add(masterDetail);
 
-        ModuleDetail moduleDetail = new ModuleDetail();
-        moduleDetail.setMasterDetails(masterDetailList);
-        moduleDetail.setModuleName(moduleName);
-        List<ModuleDetail> moduleDetailList = new ArrayList<>();
-        moduleDetailList.add(moduleDetail);
+		ModuleDetail moduleDetail = new ModuleDetail();
+		moduleDetail.setMasterDetails(masterDetailList);
+		moduleDetail.setModuleName(moduleName);
+		List<ModuleDetail> moduleDetailList = new ArrayList<>();
+		moduleDetailList.add(moduleDetail);
 
-        MdmsCriteria mdmsCriteria = new MdmsCriteria();
-        mdmsCriteria.setTenantId(tenantId.split("\\.")[0]);
-        mdmsCriteria.setModuleDetails(moduleDetailList);
+		MdmsCriteria mdmsCriteria = new MdmsCriteria();
+		mdmsCriteria.setTenantId(tenantId.split("\\.")[0]);
+		mdmsCriteria.setModuleDetails(moduleDetailList);
 
-        MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
-        mdmsCriteriaReq.setMdmsCriteria(mdmsCriteria);
-        mdmsCriteriaReq.setRequestInfo(requestInfo);
+		MdmsCriteriaReq mdmsCriteriaReq = new MdmsCriteriaReq();
+		mdmsCriteriaReq.setMdmsCriteria(mdmsCriteria);
+		mdmsCriteriaReq.setRequestInfo(requestInfo);
 
-        return mdmsCriteriaReq;
-    }
+		return mdmsCriteriaReq;
+	}
 }

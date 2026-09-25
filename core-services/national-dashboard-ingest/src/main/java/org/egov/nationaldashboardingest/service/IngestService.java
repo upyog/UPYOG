@@ -55,6 +55,8 @@ public class IngestService {
         String uuid = ingestRequest.getRequestInfo().getUserInfo().getUuid();
         
         Map<String,String> userUUID=applicationProperties.getNationalDashboardUser();
+        log.info("Configured SUPERUUID: {}", userUUID.get("SUPERUUID"));
+        log.info("Incoming UUID: {}", uuid);
         if(!userUUID.get("SUPERUUID").equalsIgnoreCase(uuid)) {
         Boolean isUlbValid=ingestValidator.verifyTenant(ingestRequest.getRequestInfo(),ingestRequest.getIngestData());
         if(!isUlbValid)

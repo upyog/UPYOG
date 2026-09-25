@@ -1,7 +1,7 @@
-import { AppContainer, BreadCrumb } from "@egovernments/digit-ui-react-components";
+import { AppContainer, BreadCrumb } from "@upyog/workbench-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Route, Switch } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import DynamicSearchComponent from "./DynamicSearchComponent";
 import IFrameInterface from "./IFrameInterface";
 import WorkflowCompTest from "./WorkflowComponentTest";
@@ -24,22 +24,36 @@ const ProjectBreadCrumb = ({ location }) => {
 };
 
 const App = ({ path, stateCode, userType, tenants }) => {
+  const location = useLocation();
   const commonProps = { stateCode, userType, tenants, path };
 
   return (
-    <Switch>
-      <AppContainer className="ground-container">
+    <AppContainer className="ground-container">
         <React.Fragment>
           <ProjectBreadCrumb location={location} />
         </React.Fragment>
-        <Route path={`${path}/search/:moduleName/:masterName`} component={() => <DynamicSearchComponent parentRoute={path} />} />
-        <Route path={`${path}/create/:moduleName/:masterName`} component={() => <DynamicCreateComponent parentRoute={path} />} />
-        <Route path={`${path}/iframe/:moduleName/:pageName`}>
-          <IFrameInterface {...commonProps} />
-        </Route>
-        <Route path={`${path}/workflow`} component={() => <WorkflowCompTest parentRoute={path} />} />
+        <Routes>
+            <Route
+          path={`${path}/search/:moduleName/:masterName`}
+          element={<DynamicSearchComponent parentRoute={path} />}
+        />
+
+        <Route
+          path={`${path}/create/:moduleName/:masterName`}
+          element={<DynamicCreateComponent parentRoute={path} />}
+        />
+
+        <Route
+          path={`${path}/iframe/:moduleName/:pageName`}
+          element={<IFrameInterface {...commonProps} />}
+        />
+
+        <Route
+          path={`${path}/workflow`}
+          element={<WorkflowCompTest parentRoute={path} />}
+        />
+        </Routes>
       </AppContainer>
-    </Switch>
   );
 };
 

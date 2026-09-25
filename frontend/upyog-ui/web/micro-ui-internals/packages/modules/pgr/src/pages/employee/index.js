@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Switch, Route, useRouteMatch, useLocation } from "react-router-dom";
-import { ActionBar, Menu, SubmitBar, BreadCrumb } from "@upyog/digit-ui-react-components";
+import { Route, useLocation, Routes } from "react-router-dom";
+import { ActionBar, Menu, SubmitBar, BreadCrumb } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 // import { ComplaintDetails } from "./ComplaintDetails";
 // import { CreateComplaint } from "./CreateComplaint";
@@ -11,7 +11,7 @@ import { Employee } from "../../constants/Routes";
 const Complaint = () => {
   const [displayMenu, setDisplayMenu] = useState(false);
   const [popup, setPopup] = useState(false);
-  const match = useRouteMatch();
+  const match = Digit.Hooks.useModuleBasePath();
   const { t } = useTranslation();
 
   const breadcrumConfig = {
@@ -21,23 +21,23 @@ const Complaint = () => {
     },
     inbox: {
       content: t("CS_COMMON_INBOX"),
-      path: match.url + Employee.Inbox,
+      path:  Employee.Inbox,
     },
     createComplaint: {
       content: t("CS_PGR_CREATE_COMPLAINT"),
-      path: match.url + Employee.CreateComplaint,
+      path:  Employee.CreateComplaint,
     },
     complaintDetails: {
       content: t("CS_PGR_COMPLAINT_DETAILS"),
-      path: match.url + Employee.ComplaintDetails + ":id",
+      path:  Employee.ComplaintDetails + ":id",
     },
     response: {
       content: t("CS_PGR_RESPONSE"),
-      path: match.url + Employee.Response,
+      path:  Employee.Response,
     },
     editApplication: {
       content: t("CS_PGR_EDIT_APPLICATION"),
-      path: match.url + Employee.EditApplication,
+      path:  Employee.EditApplication,
     },    
   };
   function popupCall(option) {
@@ -56,36 +56,36 @@ const Complaint = () => {
     <React.Fragment>
       <div className="ground-container">
         {!location.includes(Employee.Response) && (
-          <Switch>
+          <Routes>
             <Route
-              path={match.url + Employee.CreateComplaint}
-              component={() => <BreadCrumb crumbs={[breadcrumConfig.home, breadcrumConfig.createComplaint]}></BreadCrumb>}
+              path={ Employee.CreateComplaint}
+              element={<BreadCrumb crumbs={[breadcrumConfig.home, breadcrumConfig.createComplaint]}></BreadCrumb>}
             />
             <Route
-              path={match.url + Employee.ComplaintDetails + ":id"}
-              component={() => <BreadCrumb crumbs={[breadcrumConfig.home, breadcrumConfig.inbox, breadcrumConfig.complaintDetails]}></BreadCrumb>}
+              path={ Employee.ComplaintDetails + ":id"}
+              element={<BreadCrumb crumbs={[breadcrumConfig.home, breadcrumConfig.inbox, breadcrumConfig.complaintDetails]}></BreadCrumb>}
             />
             <Route
-              path={match.url + Employee.Inbox}
-              component={() => <BreadCrumb crumbs={[breadcrumConfig.home, breadcrumConfig.inbox]}></BreadCrumb>}
+              path={ Employee.Inbox}
+              element={<BreadCrumb crumbs={[breadcrumConfig.home, breadcrumConfig.inbox]}></BreadCrumb>}
             />
             <Route
-              path={match.url + Employee.Response}
-              component={<BreadCrumb crumbs={[breadcrumConfig.home, breadcrumConfig.response]}></BreadCrumb>}
+              path={ Employee.Response}
+              element={<BreadCrumb crumbs={[breadcrumConfig.home, breadcrumConfig.response]}></BreadCrumb>}
             />
             <Route
-              path={match.url + Employee.EditApplication + ":id"}
-              component={<BreadCrumb crumbs={[breadcrumConfig.home, breadcrumConfig.editApplication]}></BreadCrumb>}
+              path={ Employee.EditApplication + ":id"}
+              element={<BreadCrumb crumbs={[breadcrumConfig.home, breadcrumConfig.editApplication]}></BreadCrumb>}
             />
-          </Switch>
+          </Routes>
         )}
-        <Switch>
-          <Route path={match.url + Employee.CreateComplaint} component={() => <CreateComplaint parentUrl={match.url} />} />
-          <Route path={match.url + Employee.ComplaintDetails + ":id*"} component={() => <ComplaintDetails />} />
-          <Route path={match.url + Employee.Inbox} component={Inbox} />
-          <Route path={match.url + Employee.Response} component={Response} />
-          <Route path={match.url +Employee.EditApplication +":id*"} component={EditApplication} />
-        </Switch>
+        <Routes>
+          <Route path={ Employee.CreateComplaint} element={<CreateComplaint parentUrl={match.url} />} />
+          <Route path={ Employee.ComplaintDetails + ":id/*"} element={<ComplaintDetails />} />
+          <Route path={ Employee.Inbox} element={<Inbox />} />
+          <Route path={ Employee.Response} element={<Response />} />
+          <Route path={ Employee.EditApplication + ":id/*"} element={<EditApplication />} />
+        </Routes>
       </div>
       {/* <ActionBar>
         {displayMenu ? <Menu options={["Assign Complaint", "Reject Complaint"]} onSelect={popupCall} /> : null}

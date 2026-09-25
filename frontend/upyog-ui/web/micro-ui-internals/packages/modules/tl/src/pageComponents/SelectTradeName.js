@@ -1,8 +1,8 @@
-import { CardLabel, CitizenInfoLabel, FormStep, Loader, TextInput } from "@upyog/digit-ui-react-components";
+import { CardLabel, CitizenInfoLabel, FormStep, Loader, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import Timeline from "../components/TLTimeline";
 import { currentFinancialYear } from "../utils";
-import "../css/tl-inline-auto.css";
+
 const SelectTradeName = ({
   t,
   config,

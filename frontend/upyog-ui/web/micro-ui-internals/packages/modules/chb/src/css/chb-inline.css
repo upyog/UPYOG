@@ -172,3 +172,60 @@
 .chb-status-count-checkbox {
   height: unset;
 }
+
+
+
+
+
+
+
+
+/* VenueDetails.css */
+
+.venue-modal-popup {
+  background-color: #fff;
+  position: relative;
+  width: 90%;
+  max-width: 1200px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.venue-modal-header-bar {
+  position: sticky;
+  top: 0;
+  background-color: #f5f5f5;
+}
+
+.venue-modal-header-title {
+  color: #a82227;
+  margin: 35px;
+}
+
+.venue-modal-body {
+  padding: 15px;
+  padding-top: 1px;
+}
+
+.venue-fields-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.venue-field-item {
+  flex: 1 1 45%;
+}
+
+.venue-field-label {
+  font-size: 20px;
+}
+
+.venue-tc-label {
+  font-size: 20px;
+  margin-top: 10px;
+}
+
+.venue-tc-item {
+  margin-bottom: 10px;
+}

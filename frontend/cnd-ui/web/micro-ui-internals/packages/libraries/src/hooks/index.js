@@ -39,6 +39,7 @@ import useCancelBill from "./bills/useCancelBill";
 import useTenantsBills from "./bills/useTenants";
 import useGetHowItWorksJSON from "./useHowItWorksJSON";
 import useGetFAQsJSON from "./useGetFAQsJSON";
+import useReportMeta from "./reports/useReport";
 
 import useStaticData from "./useStaticData";
 import useBillAmendmentInbox from "./billAmendment/useInbox";
@@ -50,6 +51,8 @@ import useSelectedMDMS from "./useSelectedMDMS";
 import useEmployeeSearch from "./useEmployeeSearch";
 import useRouteSubscription from "./useRouteSubscription";
 import useCndCreateApi from "./cnd/useCndCreateApi";
+import useCustomNavigate from "./useCustomNavigate";
+import useModuleBasePath from "./useModuleBasePath";
 import useCndSearchApplication from "./cnd/useCndSearchApplication";
 import useCndApplicationDetails from "./cnd/useCndApplicationDetails";
 import useCndApplicationAction from "./cnd/useCndApplicationAction";
@@ -63,7 +66,13 @@ const cnd ={
   useCndApplicationAction,
   useVendorSearch,
   useVehiclesSearch
-}
+};
+
+const reports = {
+  useReportMeta,
+};
+
+
 
 const Hooks = {
   useSessionStorage,
@@ -114,7 +123,12 @@ const Hooks = {
   createTokenAPI,
   useCustomBackNavigation,
   useRouteSubscription,
-  cnd
+  cnd,
+  reports,
+  useCustomNavigate,
+  useModuleBasePath
 };
+
+
 
 export default Hooks;

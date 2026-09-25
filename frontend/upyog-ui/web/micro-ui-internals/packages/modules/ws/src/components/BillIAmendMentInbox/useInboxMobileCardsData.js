@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { SearchField, RadioButtons } from "@upyog/digit-ui-react-components";
+import { SearchField, RadioButtons } from "@nudmcdgnpm/digit-ui-react-components";
 import { Controller, useFormContext } from "react-hook-form";
 import { Link } from "react-router-dom";
 import "../../css/ws-inline-auto.css";
@@ -38,24 +38,36 @@ const useInboxMobileCardsData = ({
     [t("WS_COMMON_TABLE_COL_TASK_OWNER")]: taskOwner
   }));
   const MobileSortFormValues = () => {
-    const sortOrderOptions = [{
-      code: "DESC",
-      i18nKey: "ES_COMMON_SORT_BY_DESC"
-    }, {
-      code: "ASC",
-      i18nKey: "ES_COMMON_SORT_BY_ASC"
-    }];
-    const {
-      control: controlSortForm
-    } = useFormContext();
-    return <SearchField>
-        <Controller name="sortOrder" control={controlSortForm} render={({
-        onChange,
-        value
-      }) => <RadioButtons onSelect={e => {
-        onChange(e.code);
-      }} selectedOption={sortOrderOptions.filter(option => option.code === value)[0]} optionsKey="i18nKey" name="sortOrder" options={sortOrderOptions} />} />
-      </SearchField>;
+    const sortOrderOptions = [
+      {
+        code: "DESC",
+        i18nKey: "ES_COMMON_SORT_BY_DESC",
+      },
+      {
+        code: "ASC",
+        i18nKey: "ES_COMMON_SORT_BY_ASC",
+      },
+    ];
+    const { control: controlSortForm } = useFormContext();
+    return (
+      <SearchField>
+        <Controller
+          name="sortOrder"
+          control={controlSortForm}
+          render={({ field }) => (
+            <RadioButtons
+              onSelect={(e) => {
+                field.onChange(e.code);
+              }}
+              selectedOption={sortOrderOptions.filter((option) => option.code === field.value)[0]}
+              optionsKey="i18nKey"
+              name="sortOrder"
+              options={sortOrderOptions}
+            />
+          )}
+        />
+      </SearchField>
+    );
   };
   return {
     data: dataForMobileInboxCards,

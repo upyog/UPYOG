@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, LabelFieldPair, CardLabel, WrapUnMaskComponent } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, LabelFieldPair, CardLabel, WrapUnMaskComponent } from "@nudmcdgnpm/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import _ from "lodash";
 import Timeline from "../components/TLTimelineInFSM";
-import "../css/tl-inline-auto.css";
+
 const TLSelectStreet = ({
   t,
   config,
@@ -138,35 +138,48 @@ const TLSelectStreet = ({
             {config.isMandatory ? " * " : null}
           </CardLabel>
           <div className="field">
-            <Controller control={control} defaultValue={formData?.cpt?.details?.address?.[input.name] || formData?.address?.[input.name]} name={input.name} rules={{
-            validate: convertValidationToRules(input)
-          }} render={_props => <div className="tl-auto-63">
-                <TextInput id={input.name} key={input.name} value={_props.value} onChange={e => {
-              setFocusIndex({
-                index
-              });
-              _props.onChange(e.target.value);
-            }} onBlur={_props.onBlur}
-            // disable={isRenewal}
-            disable={formData?.cpt?.details?.address?.[input.name] ? true : false} autoFocus={focusIndex?.index == index} {...input?.validation} />
+            <Controller
+              control={control}
+              defaultValue={formData?.cpt?.details?.address?.[input.name] || formData?.address?.[input.name]}
+              name={input.name}
+              rules={{ validate: convertValidationToRules(input) }}
+              render={({ field }) => (
+                <div className="tl-auto-63">
+                <TextInput
+                  id={input.name}
+                  key={input.name}
+                  value={field.value}
+                  onChange={(e) => {
+                    setFocusIndex({ index });
+                    field.onChange(e.target.value);
+                  }}
+                  onBlur={field.onBlur}
+                  // disable={isRenewal}
+                  disable={formData?.cpt?.details?.address?.[input.name] ? true : false}
+                  autoFocus={focusIndex?.index == index}
+                  {...input?.validation}
+                />
                 <div className="tl-auto-64">
-                    <WrapUnMaskComponent unmaskField={e => {
-                _props.onChange(e);
-              }} iseyevisible={(_props.value ? _props.value?.includes("*") : formData?.cpt?.details?.address?.[input.name]?.includes("*")) ? true : false} privacy={{
-                uuid: formData?.cpt?.details?.owners?.[0]?.uuid,
-                fieldName: [input.name],
-                model: "Property",
-                loadData: {
-                  serviceName: "/property-services/property/_search",
-                  requestBody: {},
-                  requestParam: {
-                    tenantId: formData?.cpt?.details?.tenantId,
-                    propertyIds: formData?.cpt?.details?.propertyId
-                  },
-                  jsonPath: `Properties[0].address.${input.name}`,
-                  isArray: false
-                }
-              }}>
+                    <WrapUnMaskComponent
+                      unmaskField={(e) => {
+                        field.onChange(e);
+                      }}
+                      iseyevisible={(field.value ? field.value?.includes("*") :  formData?.cpt?.details?.address?.[input.name]?.includes("*")) ? true : false}
+                      privacy={{
+                          uuid: formData?.cpt?.details?.owners?.[0]?.uuid,
+                          fieldName: [input.name],
+                          model: "Property",
+                          loadData: {
+                              serviceName: "/property-services/property/_search",
+                              requestBody: {},
+                              requestParam: {
+                                  tenantId: formData?.cpt?.details?.tenantId,
+                                  propertyIds: formData?.cpt?.details?.propertyId,
+                                },
+                              jsonPath: `Properties[0].address.${input.name}`,
+                              isArray: false,
+                                    },
+                                }}>
                       </WrapUnMaskComponent>
                       </div>
                     </div>} />

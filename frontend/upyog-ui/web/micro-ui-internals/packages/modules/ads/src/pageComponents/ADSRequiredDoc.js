@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardSubHeader, CardText, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Card, CardHeader, CardSubHeader, CardText, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { stringReplaceAll } from "../utils";
 import { TimerValues } from "../components/TimerValues";
@@ -7,7 +7,7 @@ import { TimerValues } from "../components/TimerValues";
   ADSRequiredDoc  displays the info page for  required documents for an advertisement to book
    and it also shows upload restrictions and document requirements.
 */
-import "../css/ads-inline-auto.css";
+
 const ADSRequiredDoc = ({
   t,
   config,
@@ -46,17 +46,23 @@ const ADSRequiredDoc = ({
           <CardText className={"primaryColor"}>{t('ADS_UPLOAD_RESTRICTIONS_SIZE')}</CardText>
           <div>
             {isLoading && <Loader />}
-            {Array.isArray(docs) ? docs.map(({
-            code,
-            dropdownData
-          }, index) => <div key={index}>
+            {Array.isArray(docs)
+              ? 
+                docs.map(({ code, dropdownData }, index) => ( 
+                    <div key={code}>
                       <CardSubHeader>
                         {index + 1}. {t("ADS_" + stringReplaceAll(code, ".", "_"))}
                       </CardSubHeader>
-                      {dropdownData.map((dropdownData, dropdownIndex) => <CardText className={"primaryColor"}>
+                      {dropdownData.map((dropdownData, dropdownIndex) => (
+                        <CardText 
+                        key={dropdownData?.code || dropdownIndex}
+                        className={"primaryColor"}>
                           {`${dropdownIndex + 1}`}. {t("ADS_" + stringReplaceAll(dropdownData?.code, ".", "_"))}
-                        </CardText>)}
-                    </div>) : null}
+                        </CardText>
+                      ))}
+                    </div>
+                  ))
+              : null}
           </div>
         </div>
         <span>

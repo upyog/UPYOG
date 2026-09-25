@@ -9,6 +9,11 @@ package org.upyog.adv.constants;
 import java.math.BigDecimal;
 
 public class BookingConstants {
+
+	private BookingConstants() {
+		throw new IllegalStateException("Utility class");
+	}
+
 	public static final String BOOKING_CREATED = "Your advertisement booking created successfully";
 	public static final String ADVERTISEMENT_BOOKING_LIST = "Your advertisement booking list fetched successfully";
 

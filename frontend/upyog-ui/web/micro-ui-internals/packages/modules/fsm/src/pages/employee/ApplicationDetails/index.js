@@ -21,14 +21,14 @@ import {
   Header,
   ImageViewer,
   MultiLink,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 
 import ActionModal from "./Modal";
 import TLCaption from "../../../components/TLCaption";
 
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { Link, useHistory, useParams } from "react-router-dom";
+import { Link, useParams,  } from "react-router-dom";
 import { ViewImages } from "../../../components/ViewImages";
 import getPDFData from "../../../getPDFData";
 
@@ -36,7 +36,7 @@ const ApplicationDetails = (props) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const state = Digit.ULBService.getStateId();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const queryClient = useQueryClient();
   let { id: applicationNumber } = useParams();
   const [displayMenu, setDisplayMenu] = useState(false);
@@ -132,11 +132,11 @@ const ApplicationDetails = (props) => {
       case "SUBMIT":
       case "FSM_SUBMIT":
         // case !DSO && "SCHEDULE":
-        return history.push("/upyog-ui/employee/fsm/modify-application/" + applicationNumber);
+        return navigate("/upyog-ui/employee/fsm/modify-application/" + applicationNumber);
       case "PAY":
       case "FSM_PAY":
       case "ADDITIONAL_PAY_REQUEST":
-        return history.push(`/upyog-ui/employee/payment/collect/FSM.TRIP_CHARGES/${applicationNumber}?workflow=FSM`);
+        return navigate(`/upyog-ui/employee/payment/collect/FSM.TRIP_CHARGES/${applicationNumber}?workflow=FSM`);
       default:
         break;
     }
@@ -392,7 +392,7 @@ const ApplicationDetails = (props) => {
                 label={<span style={{ color: "#f47738", marginLeft: "8px" }}>{t("ES_APPLICATION_DETAILS_VIEW_AUDIT_TRAIL")}</span>}
                 style={{ position: "absolute", top: 0, right: 20 }}
                 onClick={() => {
-                  history.push(props.parentRoute + "/application-audit/" + applicationNumber);
+                  navigate(props.parentRoute + "/application-audit/" + applicationNumber);
                 }}
               />
             )} */}

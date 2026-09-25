@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Card, CardText, TextInput, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
+import { Modal, Card, CardText, TextInput, CardLabelError } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import { Controller, useForm } from "react-hook-form";
 
 const Heading = (props) => {
@@ -68,9 +68,8 @@ const MarkActiveModal = ({
             <Controller
               control={controlSurveyForm}
               name="fromDate"
-              defaultValue={surveyFormState?.fromDate}
               rules={{ required: true, validate: { isValidFromDate } }}
-              render={({ onChange, value }) => <TextInput type="date" isRequired={true} onChange={onChange} defaultValue={value} />}
+              render={({ field }) => <TextInput type="date" isRequired={true} onChange={field.onChange} value={field.value} />}
             />
             {formErrors && formErrors?.fromDate && formErrors?.fromDate?.type === "required" && (
               <CardLabelError>{t(`EVENTS_TO_DATE_ERROR_REQUIRED`)}</CardLabelError>
@@ -85,9 +84,8 @@ const MarkActiveModal = ({
             <Controller
               control={controlSurveyForm}
               name="fromTime"
-              defaultValue={surveyFormState?.fromTime}
               rules={{ required: true, validate: { isValidFromTime } }}
-              render={({ onChange, value }) => <TextInput type="time" isRequired={true} onChange={onChange} defaultValue={value} />}
+              render={({ field }) => <TextInput type="time" isRequired={true} onChange={field.onChange} value={field.value} />}
             />
             {formErrors && formErrors?.fromTime && formErrors?.fromTime?.type === "required" && (
               <CardLabelError>{t(`EVENTS_TO_DATE_ERROR_REQUIRED`)}</CardLabelError>
@@ -102,9 +100,8 @@ const MarkActiveModal = ({
             <Controller
               control={controlSurveyForm}
               name="toDate"
-              defaultValue={surveyFormState?.toDate}
               rules={{ required: true, validate: { isValidToDate } }}
-              render={({ onChange, value }) => <TextInput type="date" isRequired={true} onChange={onChange} defaultValue={value} />}
+              render={({ field }) => <TextInput type="date" isRequired={true} onChange={field.onChange} value={field.value} />}
             />
             {formErrors && formErrors?.toDate && formErrors?.toDate?.type === "required" && (
               <CardLabelError>{t(`EVENTS_TO_DATE_ERROR_REQUIRED`)}</CardLabelError>
@@ -120,9 +117,8 @@ const MarkActiveModal = ({
             <Controller
               control={controlSurveyForm}
               name="toTime"
-              defaultValue={surveyFormState?.toTime}
               rules={{ required: true, validate: { isValidToTime } }}
-              render={({ onChange, value }) => <TextInput type="time" isRequired={true} onChange={onChange} defaultValue={value} />}
+              render={({ field }) => <TextInput type="time" isRequired={true} onChange={field.onChange} value={field.value} />}
             />
             {formErrors && formErrors?.toTime && formErrors?.toTime?.type === "required" && (
               <CardLabelError>{t(`EVENTS_TO_DATE_ERROR_REQUIRED`)}</CardLabelError>

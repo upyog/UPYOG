@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { FormComposer, CardLabelDesc, Loader, Menu, CardText } from "@upyog/digit-ui-react-components";
-import { FormStep, CardLabel, RadioButtons, RadioOrSelect, Localities, InfoBannerIcon } from "@upyog/digit-ui-react-components";
-import { TextInput, LabelFieldPair, Dropdown, Toast } from "@upyog/digit-ui-react-components";
+import { FormComposer, CardLabelDesc, Loader, Menu, CardText } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormStep, CardLabel, RadioButtons, RadioOrSelect, Localities, InfoBannerIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { TextInput, LabelFieldPair, Dropdown, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import PropTypes from "prop-types";
-import { useHistory } from "react-router-dom";
+
 import { useTranslation } from "react-i18next";
 import "../../../css/ws-inline-auto.css";
 const SearchConnection = ({
@@ -14,7 +14,7 @@ const SearchConnection = ({
     t
   } = useTranslation();
   let validation = {};
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const logginedUser = Digit.UserService.getUser();
   const [mobileNumber, setMobileNumber] = useState(formData?.mobileNumber || "");
@@ -59,12 +59,12 @@ const SearchConnection = ({
       // else if(logginedUser == null && !locality)
       // setShowToast({ key: true, label: "WS_PLEASE_PROVIDE_LOCALITY" });
       else if (!mobileNumber && !consumerNumber && !oldconsumerNumber && !propertyId) {
-        setShowToast({
-          key: true,
-          label: "WS_HOME_SEARCH_CONN_RESULTS_DESC"
-        });
-      } else {
-        history.push(`/upyog-ui/citizen/ws/search-results?mobileNumber=${mobileNumber}&consumerNumber=${consumerNumber}&oldconsumerNumber=${oldconsumerNumber}&propertyId=${propertyId}&tenantId=${city.code}&locality=${undefined}`);
+      setShowToast({ key: true, label: "WS_HOME_SEARCH_CONN_RESULTS_DESC" });
+      }
+      else {
+        navigate(
+          `/upyog-ui/citizen/ws/search-results?mobileNumber=${mobileNumber}&consumerNumber=${consumerNumber}&oldconsumerNumber=${oldconsumerNumber}&propertyId=${propertyId}&tenantId=${city.code}&locality=${undefined}`
+        );
       }
     } else {
       if (!city.code) setShowToast({
@@ -99,12 +99,14 @@ const SearchConnection = ({
           businessService: "SW"
         });
         let totalResponse = response?.TotalCount + SWresponse?.TotalCount;
-        if (ptSearchConfig?.maxResultValidation && totalResponse > ptSearchConfig?.maxPropertyResult) setShowToast({
-          key: true,
-          label: "Refine your search"
-        });else history.push(`/upyog-ui/citizen/ws/search-results?doorNumber=${doorNumber}&consumerName=${consumerName}&tenantId=${city.code}&locality=${locality.code}`);
-      }
-    }
+        if(ptSearchConfig?.maxResultValidation && totalResponse > ptSearchConfig?.maxPropertyResult)
+        setShowToast({ key: true, label: "Refine your search" });
+        else
+        navigate(
+          `/upyog-ui/citizen/ws/search-results?doorNumber=${doorNumber}&consumerName=${consumerName}&tenantId=${city.code}&locality=${locality.code}`
+        );
+        }
+    } 
   };
   let SCMenu = [];
   let SearchTypes = [{

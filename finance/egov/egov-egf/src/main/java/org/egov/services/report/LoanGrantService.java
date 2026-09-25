@@ -62,12 +62,12 @@ import org.egov.commons.Accountdetailtype;
 import org.egov.egf.masters.model.LoanGrantBean;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.BigDecimalType;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
+import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.type.StandardBasicTypes;
 
 /**
  * @author mani
@@ -149,9 +149,9 @@ public class LoanGrantService extends PersistenceService {
 			schemeUtilSql.append(" ORDER by ss.name, pc.code,vh.voucherdate ");
 		}
 		final String schemeUtilSqlQry = schemeUtilSql.toString();
-		final SQLQuery schemeUtilQry = getSession().createSQLQuery(schemeUtilSqlQry);
+		final NativeQuery schemeUtilQry = getSession().createNativeQuery(schemeUtilSqlQry);
 		schemeUtilQry.addScalar("subScheme").addScalar("code").addScalar("voucherNumber").addScalar("voucherDate")
-				.addScalar("amount", BigDecimalType.INSTANCE).addScalar("id", LongType.INSTANCE)
+				.addScalar("amount", StandardBasicTypes.BIG_DECIMAL).addScalar("id", StandardBasicTypes.LONG)
 				.setResultTransformer(Transformers.aliasToBean(LoanGrantBean.class));
 
 		params.entrySet().forEach(entry -> schemeUtilQry.setParameter(entry.getKey(), entry.getValue()));
@@ -179,9 +179,9 @@ public class LoanGrantService extends PersistenceService {
 			sql.append(" and lgh.subSchemeId=:subSchemeId");
 		sql.append(" group by");
 		sql.append(" ss.name , fa.name order by ss.name,fa.name");
-		final SQLQuery patternSql = getSession().createSQLQuery(sql.toString());
-		patternSql.addScalar("subScheme", StringType.INSTANCE).addScalar("name", StringType.INSTANCE)
-				.addScalar("amount", BigDecimalType.INSTANCE)
+		final NativeQuery patternSql = getSession().createNativeQuery(sql.toString());
+		patternSql.addScalar("subScheme", StandardBasicTypes.STRING).addScalar("name", StandardBasicTypes.STRING)
+				.addScalar("amount", StandardBasicTypes.BIG_DECIMAL)
 				.setResultTransformer(Transformers.aliasToBean(LoanGrantBean.class));
 		if (schemeId != null && subSchemeId == null)
 			patternSql.setParameter("schemeId", schemeId);
@@ -347,12 +347,12 @@ public class LoanGrantService extends PersistenceService {
 			params.put("lgdAgencyId", agencyId);
 		}
 		sql.append(" ) order by  voucherNumber,detailType desc,detailKey");
-		final SQLQuery gcSql = getSession().createSQLQuery(sql.toString());
+		final NativeQuery gcSql = getSession().createNativeQuery(sql.toString());
 		if (LOGGER.isInfoEnabled())
 			LOGGER.info("sql:  " + sql.toString());
-		gcSql.addScalar("voucherNumber").addScalar("code").addScalar("amount", BigDecimalType.INSTANCE)
-				.addScalar("agencyAmount", BigDecimalType.INSTANCE).addScalar("detailKey", IntegerType.INSTANCE)
-				.addScalar("detailType", IntegerType.INSTANCE)
+		gcSql.addScalar("voucherNumber").addScalar("code").addScalar("amount", StandardBasicTypes.BIG_DECIMAL)
+				.addScalar("agencyAmount", StandardBasicTypes.BIG_DECIMAL).addScalar("detailKey", StandardBasicTypes.INTEGER)
+				.addScalar("detailType", StandardBasicTypes.INTEGER)
 				.setResultTransformer(Transformers.aliasToBean(LoanGrantBean.class));
 		params.entrySet().forEach(entry -> gcSql.setParameter(entry.getKey(), entry.getValue()));
 		// Grant Contribution List
@@ -406,8 +406,8 @@ public class LoanGrantService extends PersistenceService {
 		if (LOGGER.isInfoEnabled())
 			LOGGER.info("GrantAmoountSql for Schemeid" + schemeId + " SubSchemeId " + subSchemeId + "  agencyId"
 					+ agencyId + ":" + gaSql.toString());
-		final SQLQuery gaSQLQuery = getSession().createSQLQuery(gaSql.toString());
-		gaSQLQuery.addScalar("agencyName").addScalar("grantAmount", BigDecimalType.INSTANCE)
+		final NativeQuery gaSQLQuery = getSession().createNativeQuery(gaSql.toString());
+		gaSQLQuery.addScalar("agencyName").addScalar("grantAmount", StandardBasicTypes.BIG_DECIMAL)
 				.setResultTransformer(Transformers.aliasToBean(LoanGrantBean.class));
 		if (subSchemeId == null)
 			gaSQLQuery.setParameter("schemeId", schemeId);
@@ -458,7 +458,7 @@ public class LoanGrantService extends PersistenceService {
 		if (agencyId != null && agencyId != -1)
 			sql.append(" and  gld.detailkeyid =:agencyId");
 		sql.append(" order by vh.voucherdate ");
-		final SQLQuery loanSql = getSession().createSQLQuery(sql.toString());
+		final NativeQuery loanSql = getSession().createNativeQuery(sql.toString());
 		loanSql.setParameter("faTypeId", faTypeId);
 		loanSql.setParameter("schemeId", schemeId);
 		loanSql.setParameter("fundId", fundId);
@@ -467,8 +467,8 @@ public class LoanGrantService extends PersistenceService {
 
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("getLoanByAgency sql:" + sql.toString());
-		loanSql.addScalar("voucherNumber").addScalar("amount", BigDecimalType.INSTANCE)
-				.addScalar("detailKey", IntegerType.INSTANCE).addScalar("detailType", IntegerType.INSTANCE)
+		loanSql.addScalar("voucherNumber").addScalar("amount", StandardBasicTypes.BIG_DECIMAL)
+				.addScalar("detailKey", StandardBasicTypes.INTEGER).addScalar("detailType", StandardBasicTypes.INTEGER)
 				.setResultTransformer(Transformers.aliasToBean(LoanGrantBean.class));
 		final List<Object> repayedList = loanSql.list();
 
@@ -494,9 +494,9 @@ public class LoanGrantService extends PersistenceService {
      */
 	private BigDecimal getLoanPaidSoFar(final Integer schemeId, final Long agencyId) {
 		BigDecimal amount = BigDecimal.ZERO;
-		final SQLQuery query = getSession().createSQLQuery(
+		final NativeQuery query = getSession().createNativeQuery(
 				"select amount as amount from egf_loan_paid where schemeid=:schemeId and agencyid=:agencyId");
-		query.addScalar("amount", BigDecimalType.INSTANCE)
+		query.addScalar("amount", StandardBasicTypes.BIG_DECIMAL)
 				.setResultTransformer(Transformers.aliasToBean(LoanGrantBean.class));
 		query.setParameter("schemeId", schemeId).setParameter("agencyId", agencyId);
 		final List<LoanGrantBean> list = query.list();
@@ -524,8 +524,8 @@ public class LoanGrantService extends PersistenceService {
 				.append(" group by fa.name");
 		if (LOGGER.isInfoEnabled())
 			LOGGER.info("GrantAmoountSql for Schemeid" + schemeId + "  agencyId" + agencyId + ":" + loanSql.toString());
-		final SQLQuery gaSQLQuery = getSession().createSQLQuery(loanSql.toString());
-		gaSQLQuery.addScalar("agencyName").addScalar("loanAmount", BigDecimalType.INSTANCE)
+		final NativeQuery gaSQLQuery = getSession().createNativeQuery(loanSql.toString());
+		gaSQLQuery.addScalar("agencyName").addScalar("loanAmount", StandardBasicTypes.BIG_DECIMAL)
 				.setResultTransformer(Transformers.aliasToBean(LoanGrantBean.class));
 		gaSQLQuery.setParameter("agencyId", agencyId).setParameter("schemeId", schemeId);
 		final List<LoanGrantBean> galist = gaSQLQuery.list();

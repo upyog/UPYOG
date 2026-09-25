@@ -78,10 +78,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -105,63 +105,16 @@ import org.egov.infra.microservice.contract.UserDetailResponse;
 import org.egov.infra.microservice.contract.UserRequest;
 import org.egov.infra.microservice.contract.UserSearchRequest;
 import org.egov.infra.microservice.contract.UserSearchResponse;
-import org.egov.infra.microservice.models.Assignment;
-import org.egov.infra.microservice.models.BankAccount;
-import org.egov.infra.microservice.models.BankAccountServiceMapping;
-import org.egov.infra.microservice.models.BankAccountServiceMappingReq;
-import org.egov.infra.microservice.models.BankAccountServiceMappingResponse;
-import org.egov.infra.microservice.models.BusinessService;
-import org.egov.infra.microservice.models.BusinessServiceCriteria;
-import org.egov.infra.microservice.models.BusinessServiceMapping;
-import org.egov.infra.microservice.models.Department;
-import org.egov.infra.microservice.models.Designation;
-import org.egov.infra.microservice.models.EmployeeInfo;
-import org.egov.infra.microservice.models.EmployeeInfoResponse;
-import org.egov.infra.microservice.models.EmployeeSearchCriteria;
-import org.egov.infra.microservice.models.FinancialStatus;
-import org.egov.infra.microservice.models.FinancialStatusResponse;
-import org.egov.infra.microservice.models.GlCodeMaster;
-import org.egov.infra.microservice.models.GlCodeMasterResponse;
-import org.egov.infra.microservice.models.Instrument;
-import org.egov.infra.microservice.models.InstrumentAccountCode;
-import org.egov.infra.microservice.models.InstrumentRequest;
-import org.egov.infra.microservice.models.InstrumentResponse;
-import org.egov.infra.microservice.models.InstrumentSearchContract;
-import org.egov.infra.microservice.models.MasterDetail;
-import org.egov.infra.microservice.models.MdmsCriteria;
-import org.egov.infra.microservice.models.MdmsCriteriaReq;
-import org.egov.infra.microservice.models.MdmsResponse;
-import org.egov.infra.microservice.models.ModuleDetail;
-import org.egov.infra.microservice.models.Payment;
-import org.egov.infra.microservice.models.PaymentRequest;
-import org.egov.infra.microservice.models.PaymentResponse;
-import org.egov.infra.microservice.models.PaymentWorkflow;
+import org.egov.infra.microservice.models.*;
 import org.egov.infra.microservice.models.PaymentWorkflow.PaymentAction;
-import org.egov.infra.microservice.models.PaymentWorkflowRequest;
-import org.egov.infra.microservice.models.Receipt;
-import org.egov.infra.microservice.models.ReceiptRequest;
-import org.egov.infra.microservice.models.ReceiptResponse;
-import org.egov.infra.microservice.models.ReceiptSearchCriteria;
-import org.egov.infra.microservice.models.Remittance;
-import org.egov.infra.microservice.models.RemittanceRequest;
-import org.egov.infra.microservice.models.RemittanceResponse;
-import org.egov.infra.microservice.models.RemittanceSearcCriteria;
-import org.egov.infra.microservice.models.RequestInfo;
-import org.egov.infra.microservice.models.ResponseInfo;
-import org.egov.infra.microservice.models.StorageResponse;
-import org.egov.infra.microservice.models.TaxHeadMaster;
-import org.egov.infra.microservice.models.TaxHeadMasterResponse;
-import org.egov.infra.microservice.models.TaxPeriod;
-import org.egov.infra.microservice.models.TaxPeriodResponse;
-import org.egov.infra.microservice.models.TransactionType;
-import org.egov.infra.microservice.models.UserInfo;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.support.ui.Inbox;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.jfree.util.Log;
-import org.json.simple.JSONArray;
+//import org.json.simple.JSONArray;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -517,7 +470,7 @@ public class MicroserviceUtils {
         return null;
     }
 
-    public JSONArray getFinanceMdmsByModuleNameAndMasterDetails(String moduleName, String name, FilterRequest filter) {
+    public List<Object> getFinanceMdmsByModuleNameAndMasterDetails(String moduleName, String name, FilterRequest filter) {
         String mdmsUrl = appConfigManager.getEgovMdmsSerHost() + this.mdmsSearchUrl;
         RequestInfo requestInfo = new RequestInfo();
         requestInfo.setAuthToken(getUserToken());
@@ -559,7 +512,7 @@ public class MicroserviceUtils {
         mdmsrequest.setMdmsCriteria(mdmscriteria);
         try {
             MdmsResponse response = restTemplate.postForObject(mdmsUrl, mdmsrequest, MdmsResponse.class);
-            Map<String, JSONArray> mdmsmap = response.getMdmsRes().get(moduleName);
+            Map<String, List<Object>> mdmsmap = response.getMdmsRes().get(moduleName);
             if (null != mdmsmap && mdmsmap.size() > 0) {
                 return mdmsmap.get(name);
             }
@@ -634,15 +587,16 @@ public class MicroserviceUtils {
         }
     }
 
+
     public EmployeeInfo getEmployeeByPositionId(Long positionId) {
         List<EmployeeInfo> list = this.getEmployeeBySearchCriteria(
                 new EmployeeSearchCriteria().builder().positions(Collections.singletonList(positionId)).build());
         return list.isEmpty() ? null : list.get(0);
     }
 
-    public CustomUserDetails getUserDetails(String user_token, String admin_token) {
+    public CustomUserDetails getUserDetails(String user_token, String admin_token, String tenant_id) {
         final RestTemplate restT = createRestTemplate();
-        final String authurl = appConfigManager.getEgovUserSerHost() + authSrvcUrl + "?access_token=" + user_token;
+        final String authurl = appConfigManager.getEgovUserSerHost() + authSrvcUrl + "?access_token=" + user_token  + "&tenantId=" + tenant_id;
         RequestInfo reqInfo = new RequestInfo();
         RequestInfoWrapper reqWrapper = new RequestInfoWrapper();
         reqInfo.setAuthToken(admin_token);

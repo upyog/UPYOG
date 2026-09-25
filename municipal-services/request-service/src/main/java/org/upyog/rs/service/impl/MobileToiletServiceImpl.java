@@ -1,13 +1,13 @@
 package org.upyog.rs.service.impl;
 
 import digit.models.coremodels.PaymentRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.rs.config.RequestServiceConfiguration;
@@ -26,27 +26,23 @@ import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class MobileToiletServiceImpl implements MobileToiletService{
 
-    @Autowired
-    EnrichmentService enrichmentService;
+    private final EnrichmentService enrichmentService;
 
-    @Autowired
-    RequestServiceRepository requestServiceRepository;
+    private final RequestServiceRepository requestServiceRepository;
 
-    @Autowired
-    WorkflowService workflowService;
+    private final WorkflowService workflowService;
 
-    @Autowired
-    DemandService demandService;
+    private final DemandService demandService;
 
-    @Autowired
-    RequestServiceConfiguration config;
+    private final RequestServiceConfiguration config;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @Override
+    @SuppressWarnings({ "java:S112", "java:S5411" })
     public MobileToiletBookingDetail createNewMobileToiletBookingRequest(MobileToiletBookingRequest mobileToiletRequest) {
 
         log.info("Create Mobile Toilet booking for user : " + mobileToiletRequest.getRequestInfo().getUserInfo().getUuid()
@@ -79,14 +75,13 @@ public class MobileToiletServiceImpl implements MobileToiletService{
             throw new RuntimeException("Failed to fetch/create user: " + e.getMessage(), e);
         }
 
-        requestServiceRepository.saveMobileToiletBooking(mobileToiletRequest);
+		requestServiceRepository.saveMobileToiletBooking(mobileToiletRequest);
 
-        MobileToiletBookingDetail mobileToiletDetail = mobileToiletRequest.getMobileToiletBookingDetail();
-
-        return mobileToiletDetail;
+        return mobileToiletRequest.getMobileToiletBookingDetail();
     }
 
     @Override
+    @SuppressWarnings("java:S5411")
     public List<MobileToiletBookingDetail> getMobileToiletBookingDetails(RequestInfo requestInfo,
                                                                        MobileToiletBookingSearchCriteria mobileToiletBookingSearchCriteria) {
         /*

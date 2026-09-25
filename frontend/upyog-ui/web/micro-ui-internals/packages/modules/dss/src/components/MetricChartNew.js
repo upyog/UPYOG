@@ -1,8 +1,7 @@
-import { DownwardArrow, Rating, UpwardArrow } from "@upyog/digit-ui-react-components";
+import { DownwardArrow, Rating, UpwardArrow } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import FilterContext from "./FilterContext";
-//import {ReactComponent as Arrow_Downward} from "../images/Arrow_Downward.svg";
 import { ArrowDownwardElement } from "./ArrowDownward";
 import { ArrowUpwardElement } from "./ArrowUpward";
 

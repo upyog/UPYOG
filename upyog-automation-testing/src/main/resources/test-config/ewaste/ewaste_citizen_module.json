@@ -1,0 +1,217 @@
+{
+  "moduleName": "citizen_module",
+  "description": "E-Waste citizen registration workflow",
+  "baseUrl": "${selected.url}",
+  "instructions": [
+
+
+    {
+      "stepName": "Navigate to E-Waste module",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[@href='${module.ewaste.url}']",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Click Create E-Waste Request",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//*[contains(text(),'Create Ewaste')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 1500
+    },
+    {
+      "stepName": "Select product from dropdown",
+      "locatorStrategy": "CSS",
+      "locatorValue": "input.employee-select-wrap--elipses",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "0:0",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Enter product quantity",
+      "locatorStrategy": "NAME",
+      "locatorValue": "productQuantity",
+      "action": "TYPE",
+      "inputValue": "${product.quantity}",
+      "dynamicSleep": 300
+    },
+    {
+      "stepName": "Click Add Product button",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[.//*[contains(text(),'Add Product')]]",
+      "action": "CLICK",
+      "inputValue": null,
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Click Next button",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar') and .//header[text()='Next']]",
+      "action": "CLICK",
+      "inputValue": null,
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Upload E-Waste image",
+      "locatorStrategy": "CSS",
+      "locatorValue": "input[type='file'].input-mirror-selector-button",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.proof}",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Click Next after upload",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar') and .//header[text()='Next']]",
+      "action": "CLICK",
+      "inputValue": null,
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Enter applicant name",
+      "locatorStrategy": "NAME",
+      "locatorValue": "applicantName",
+      "action": "TYPE",
+      "inputValue": "${applicant.name}",
+      "dynamicSleep": 300
+    },
+    {
+      "stepName": "Enter email ID",
+      "locatorStrategy": "NAME",
+      "locatorValue": "emailId",
+      "action": "TYPE",
+      "inputValue": "${applicant.email}",
+      "dynamicSleep": 300
+    },
+    {
+      "stepName": "Click Next after applicant details",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar') and .//header[text()='Next']]",
+      "action": "CLICK",
+      "inputValue": null,
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Enter pincode",
+      "locatorStrategy": "NAME",
+      "locatorValue": "pincode",
+      "action": "TYPE",
+      "inputValue": "${address.pincode}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Click Next after pincode",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar') and .//header[text()='Next']]",
+      "action": "CLICK",
+      "inputValue": null,
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Select city radio button",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//*[normalize-space()='${selected.city}']",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Select locality radio button",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//*[normalize-space()='${locality.name}']",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Click Next after city selection",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar') and .//header[text()='Next']]",
+      "action": "CLICK",
+      "inputValue": null,
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Enter street",
+      "locatorStrategy": "NAME",
+      "locatorValue": "street",
+      "action": "TYPE",
+      "inputValue": "${address.street}",
+      "dynamicSleep": 300
+    },
+    {
+      "stepName": "Enter door number",
+      "locatorStrategy": "NAME",
+      "locatorValue": "doorNo",
+      "action": "TYPE",
+      "inputValue": "${address.doorNo}",
+      "dynamicSleep": 300
+    },
+    {
+      "stepName": "Enter building name",
+      "locatorStrategy": "NAME",
+      "locatorValue": "buildingName",
+      "action": "TYPE",
+      "inputValue": "${address.building}",
+      "dynamicSleep": 300
+    },
+    {
+      "stepName": "Enter address line 1",
+      "locatorStrategy": "NAME",
+      "locatorValue": "addressLine1",
+      "action": "TYPE",
+      "inputValue": "${address.line1}",
+      "dynamicSleep": 300
+    },
+    {
+      "stepName": "Enter address line 2",
+      "locatorStrategy": "NAME",
+      "locatorValue": "addressLine2",
+      "action": "TYPE",
+      "inputValue": "${address.line2}",
+      "dynamicSleep": 300
+    },
+    {
+      "stepName": "Enter landmark",
+      "locatorStrategy": "NAME",
+      "locatorValue": "landmark",
+      "action": "TYPE",
+      "inputValue": "${address.landmark}",
+      "dynamicSleep": 300
+    },
+    {
+      "stepName": "Click Next after address",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class,'submit-bar') and .//header[text()='Next']]",
+      "action": "CLICK",
+      "inputValue": null,
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Check declaration checkbox",
+      "locatorStrategy": "CSS",
+      "locatorValue": "input[type='checkbox']",
+      "action": "CHECK_LAST_CHECKBOX",
+      "inputValue": null,
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Submit application",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[@class='submit-bar ' and @type='button'][.//header[text()='Submit']]",
+      "action": "CLICK",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName":"Capture Application Number",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'Application No') or contains(text(),'Application Number')]/following-sibling::*[1]",
+      "action":"CAPTURE_TEXT",
+      "inputValue":"APPLICATION_NO",
+      "dynamicSleep":3000
+    }
+  ]
+}

@@ -10,8 +10,6 @@ import org.springframework.validation.annotation.Validated;
 
 import jakarta.persistence.*;
 
-import java.time.Instant;
-
 /**
  * An object representing an asset
  */

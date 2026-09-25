@@ -1,0 +1,412 @@
+{
+  "RequestInfo": {
+    "apiId": "Rainmaker",
+    "action": "",
+    "did": 1,
+    "key": "",
+    "msgId": "20170310130900|en_IN",
+    "requesterId": "",
+    "ts": 1513579888683,
+    "ver": ".01",
+    "authToken": "{{devAuth}}",
+    "userInfo": {
+      "id": 73,
+      "userName": null,
+      "name": null,
+      "type": "EMPLOYEE",
+      "mobileNumber": null,
+      "emailId": null,
+      "roles": [
+        {
+          "id": 2,
+          "name": "Customer Support Representative",
+          "code": null,
+          "tenantId": null
+        }
+      ],
+      "tenantId": null,
+      "uuid": "uuid"
+    }
+  },
+  "BusinessServices": [
+    {
+      "tenantId": "pg",
+      "businessService": "ndc-services",
+      "business": "NDC",
+      "businessServiceSla": 2764800000,
+      "states": [
+        {
+          "state": null,
+          "sla": 0,
+          "actions": [
+            {
+              "roles": [
+                "CITIZEN",
+                "NDCCEMP"
+              ],
+              "action": "INITIATE",
+              "active": true,
+              "nextState": "INITIATED"
+            }
+          ],
+          "isStartState": true
+        },
+        {
+          "state": "INITIATED",
+          "applicationStatus": "INITIATED",
+          "sla": 86400000,
+          "actions": [
+            {
+              "roles": [
+                "CITIZEN",
+                "NDCCEMP"
+              ],
+              "action": "DRAFT",
+              "active": true,
+              "nextState": "INITIATED"
+            },
+            {
+              "roles": [
+                "CITIZEN",
+                "NDCCEMP"
+              ],
+              "action": "APPLY",
+              "active": true,
+              "nextState": "PENDINGPAYMENT"
+            },
+            {
+              "roles": [
+                "CITIZEN",
+                "NDCCEMP"
+              ],
+              "action": "CANCEL",
+              "active": true,
+              "nextState": "CANCELLED"
+            }
+          ]
+        },
+        {
+          "state": "PENDINGPAYMENT",
+          "applicationStatus": "PENDINGPAYMENT",
+          "sla": 86400000,
+          "actions": [
+            {
+              "roles": [
+                "CITIZEN",
+                "NDCCEMP",
+                "SYSTEM_PAYMENT"
+              ],
+              "action": "PAY",
+              "active": true,
+              "nextState": "DOCUMENTVERIFY"
+            },
+            {
+              "roles": [
+                "CITIZEN",
+                "NDCCEMP"
+              ],
+              "action": "CANCEL",
+              "active": true,
+              "nextState": "CANCELLED"
+            }
+          ]
+        },
+        {
+          "state": "DOCUMENTVERIFY",
+          "applicationStatus": "DOCUMENTVERIFY",
+          "sla": 86400000,
+          "actions": [
+            {
+              "roles": [
+                "NDC_DOC_VERIFIER"
+              ],
+              "action": "FORWARD",
+              "active": true,
+              "nextState": "PT-VERIFICATION"
+            },
+            {
+              "roles": [
+                "NDC_DOC_VERIFIER"
+              ],
+              "action": "SENDBACKTOCITIZEN",
+              "active": true,
+              "nextState": "CITIZENACTIONREQUIRED"
+            }
+          ]
+        },
+        {
+          "state": "CITIZENACTIONREQUIRED",
+          "applicationStatus": "CITIZENACTIONREQUIRED",
+          "sla": 172800000,
+          "actions": [
+            {
+              "roles": [
+                "CITIZEN",
+                "NDCCEMP"
+              ],
+              "action": "DRAFT",
+              "active": true,
+              "nextState": "CITIZENACTIONREQUIRED"
+            },
+            {
+              "roles": [
+                "CITIZEN",
+                "NDCCEMP"
+              ],
+              "action": "SUBMIT",
+              "active": true,
+              "nextState": "DOCUMENTVERIFY"
+            },
+            {
+              "roles": [
+                "CITIZEN",
+                "NDCCEMP"
+              ],
+              "action": "CANCEL",
+              "active": true,
+              "nextState": "CANCELLED"
+            }
+          ]
+        },
+        {
+          "sla": 43200000,
+          "state": "PENDINGAPPROVAL",
+          "applicationStatus": "PENDINGAPPROVAL",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": false,
+          "actions": [
+            {
+              "action": "APPROVE",
+              "nextState": "APPROVED",
+              "roles": [
+                "NDC_APPROVER"
+              ],
+              "active": true
+            },
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "NDC_APPROVER"
+              ],
+              "active": true
+            },
+            {
+              "action": "FORWARD_TL",
+              "nextState": "TL-VERIFICATION",
+              "roles": [
+                "NDC_APPROVER"
+              ],
+              "active": true
+            },
+            {
+              "action": "FORWARD_BPA",
+              "nextState": "BPA-VERIFICATION",
+              "roles": [
+                "NDC_APPROVER"
+              ],
+              "active": true
+            },
+            {
+              "action": "FORWARD_WS_SW",
+              "nextState": "WS-SW-VERIFICATION",
+              "roles": [
+                "NDC_APPROVER"
+              ],
+              "active": true
+            },
+            {
+              "action": "FORWARD_PT",
+              "nextState": "PT-VERIFICATION",
+              "roles": [
+                "NDC_APPROVER"
+              ],
+              "active": true
+            },
+            {
+              "action": "SENDBACKTOCITIZEN",
+              "nextState": "CITIZENACTIONREQUIRED",
+              "roles": [
+                "NDC_APPROVER"
+              ],
+              "active": true
+            }
+          ]
+        },
+        {
+          "state": "PT-VERIFICATION",
+          "applicationStatus": "PT-VERIFICATION",
+          "sla": 43200000,
+          "actions": [
+            {
+              "roles": [
+                "NDC_PT_VERIFIER"
+              ],
+              "action": "FORWARD_TL",
+              "active": true,
+              "nextState": "TL-VERIFICATION"
+            },
+            {
+              "roles": [
+                "NDC_PT_VERIFIER"
+              ],
+              "action": "FORWARD_BPA",
+              "active": true,
+              "nextState": "BPA-VERIFICATION"
+            },
+            {
+              "roles": [
+                "NDC_PT_VERIFIER"
+              ],
+              "action": "FORWARD_WS_SW",
+              "active": true,
+              "nextState": "WS-SW-VERIFICATION"
+            },
+            {
+              "roles": [
+                "NDC_PT_VERIFIER"
+              ],
+              "action": "FORWARD_APPROVER",
+              "active": true,
+              "nextState": "PENDINGAPPROVAL"
+            }
+          ]
+        },
+        {
+          "state": "TL-VERIFICATION",
+          "applicationStatus": "TL-VERIFICATION",
+          "sla": 43200000,
+          "actions": [
+            {
+              "roles": [
+                "NDC_TL_VERIFIER"
+              ],
+              "action": "FORWARD_PT",
+              "active": true,
+              "nextState": "PT-VERIFICATION"
+            },
+            {
+              "roles": [
+                "NDC_TL_VERIFIER"
+              ],
+              "action": "FORWARD_BPA",
+              "active": true,
+              "nextState": "BPA-VERIFICATION"
+            },
+            {
+              "roles": [
+                "NDC_TL_VERIFIER"
+              ],
+              "action": "FORWARD_WS_SW",
+              "active": true,
+              "nextState": "WS-SW-VERIFICATION"
+            },
+            {
+              "roles": [
+                "NDC_TL_VERIFIER"
+              ],
+              "action": "FORWARD_APPROVER",
+              "active": true,
+              "nextState": "PENDINGAPPROVAL"
+            }
+          ]
+        },
+        {
+          "state": "BPA-VERIFICATION",
+          "applicationStatus": "BPA-VERIFICATION",
+          "sla": 43200000,
+          "actions": [
+            {
+              "roles": [
+                "NDC_BPA_VERIFIER"
+              ],
+              "action": "FORWARD_PT",
+              "active": true,
+              "nextState": "PT-VERIFICATION"
+            },
+            {
+              "roles": [
+                "NDC_BPA_VERIFIER"
+              ],
+              "action": "FORWARD_TL",
+              "active": true,
+              "nextState": "TL-VERIFICATION"
+            },
+            {
+              "roles": [
+                "NDC_BPA_VERIFIER"
+              ],
+              "action": "FORWARD_WS_SW",
+              "active": true,
+              "nextState": "WS-SW-VERIFICATION"
+            },
+            {
+              "roles": [
+                "NDC_BPA_VERIFIER"
+              ],
+              "action": "FORWARD_APPROVER",
+              "active": true,
+              "nextState": "PENDINGAPPROVAL"
+            }
+          ]
+        },
+        {
+          "state": "WS-SW-VERIFICATION",
+          "applicationStatus": "WS-SW-VERIFICATION",
+          "sla": 43200000,
+          "actions": [
+            {
+              "roles": [
+                "NDC_WS_SW_VERIFIER"
+              ],
+              "action": "FORWARD_PT",
+              "active": true,
+              "nextState": "PT-VERIFICATION"
+            },
+            {
+              "roles": [
+                "NDC_WS_SW_VERIFIER"
+              ],
+              "action": "FORWARD_TL",
+              "active": true,
+              "nextState": "TL-VERIFICATION"
+            },
+            {
+              "roles": [
+                "NDC_WS_SW_VERIFIER"
+              ],
+              "action": "FORWARD_BPA",
+              "active": true,
+              "nextState": "BPA-VERIFICATION"
+            },
+            {
+              "roles": [
+                "NDC_WS_SW_VERIFIER"
+              ],
+              "action": "FORWARD_APPROVER",
+              "active": true,
+              "nextState": "PENDINGAPPROVAL"
+            }
+          ]
+        },
+        {
+          "state": "APPROVED",
+          "applicationStatus": "APPROVED",
+          "isTerminateState": true
+        },
+        {
+          "state": "REJECTED",
+          "applicationStatus": "REJECTED",
+          "isTerminateState": true
+        },
+        {
+          "state": "CANCELLED",
+          "applicationStatus": "CANCELLED",
+          "isTerminateState": true
+        }
+      ]
+    }
+  ]
+}

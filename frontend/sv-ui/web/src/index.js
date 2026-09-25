@@ -1,9 +1,18 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import { initLibraries } from "@nudmcdgnpm/digit-ui-libraries";
 // import "@upyog/sv-ui-css/dist/index.css";
 import "./index.css";
 import App from './App';
+
+// Suppress React 19 useEffect warnings for UPYOG libraries
+const originalConsoleError = console.error;
+console.error = (...args) => {
+  if (args[0]?.includes?.('useEffect must not return anything')) {
+    return; // Ignore useEffect warnings
+  }
+  originalConsoleError.apply(console, args);
+};
 
 
 initLibraries();
@@ -11,6 +20,10 @@ initLibraries();
 
 // window.Digit.Customizations = { PGR: {} ,TL:TLCustomisations};
 
+/**
+ * Checks if user data is already stored in session storage.
+ * If not, retrieves user details from local storage and saves them in session storage.
+ */
 const user = window.Digit.SessionStorage.get("User");
 
 if (!user || !user.access_token || !user.info) {
@@ -38,6 +51,10 @@ if (!user || !user.access_token || !user.info) {
   const employeeInfo = getFromStorage("Employee.user-info")
   const employeeTenantId = getFromStorage("Employee.tenant-id")
 
+  /**
+   * Determines if the user is a citizen or an employee based on the token.
+   * Saves the user type in session storage.
+   */
   const userType = token === citizenToken ? "citizen" : "employee";
   window.Digit.SessionStorage.set("user_type", userType);
   window.Digit.SessionStorage.set("userType", userType);
@@ -52,10 +69,5 @@ if (!user || !user.access_token || !user.info) {
   // end
 }
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
-
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);

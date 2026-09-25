@@ -62,7 +62,7 @@ public class eSignService {
 	private Producer producer;
 	@Autowired
 	private TransactionRepository transactionRepository;
-	private final RestTemplate restTemplate = new RestTemplate();
+	
 
 	private byte[] readInputStreamToByteArray(InputStream inputStream) throws IOException {
 		try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
@@ -87,9 +87,6 @@ public class eSignService {
 	}
 
 	String generateTxnId(RequestInfoWrapper requestInfoWrapper) {
-
-		Transaction transaction = requestInfoWrapper.getTransaction();
-		RequestInfo requestInfo = requestInfoWrapper.getRequestInfo();
 
 //        
 //        IdGenerationResponse response = idGenRepository.getId(requestInfo, transaction.getTenantId(),

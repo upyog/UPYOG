@@ -1,5 +1,5 @@
 import React from "react";
-import { CardLabel, TextInput, CheckBox, Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
+import { CardLabel, TextInput, CheckBox, Dropdown } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 
 /**
  * Component for selecting day and time slots

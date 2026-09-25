@@ -1,8 +1,16 @@
-import React from "react";
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 
-const useLicenseDetails = (tenantId, filters, config) => {
-  return useQuery(['LICENSE_DETAIL', filters, tenantId], () => Digit.OBPSService.LicenseDetails(tenantId, filters), config)
+const useLicenseDetails = (tenantId, filters, config = {}) => {
+  return queryTemplate({
+    queryKey: [
+      "OBPS_LICENSE_DETAIL",
+      tenantId,
+      JSON.stringify(filters),
+    ],
+    queryFn: () =>
+      Digit.OBPSService.LicenseDetails(tenantId, filters),
+    config,
+  });
 };
 
 export default useLicenseDetails;

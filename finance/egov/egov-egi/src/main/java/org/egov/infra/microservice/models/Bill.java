@@ -1,33 +1,33 @@
 package org.egov.infra.microservice.models;
 
 import java.util.List;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Bill {
     @JsonProperty("id")
-    @SafeHtml
+    @SanitizeHtml
     private String id = null;
-    @SafeHtml
+    @SanitizeHtml
     @JsonProperty("mobileNumber")
     private String mobileNumber = null;
-    @SafeHtml
+    @SanitizeHtml
     @JsonProperty("paidBy")
     private String paidBy = null;
-    @SafeHtml
+    @SanitizeHtml
     @JsonProperty("payerName")
     private String payerName = null;
-    @SafeHtml
+    @SanitizeHtml
     @JsonProperty("payerAddress")
     private String payerAddress = null;
-    @SafeHtml
+    @SanitizeHtml
     @JsonProperty("payerEmail")
     private String payerEmail = null;
-    @SafeHtml
+    @SanitizeHtml
     @JsonProperty("payerId")
     private String payerId = null;
 
@@ -48,7 +48,7 @@ public class Bill {
     @JsonProperty("billDetails")
     @Valid
     private List<BillDetail> billDetails = null;
-    @SafeHtml
+    @SanitizeHtml
     @JsonProperty("tenantId")
     private String tenantId = null;
 

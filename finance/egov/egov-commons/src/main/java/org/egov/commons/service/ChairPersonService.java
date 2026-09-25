@@ -72,11 +72,11 @@ public class ChairPersonService {
     }
 
     public ChairPerson findById(final Long id) {
-        return chairPersonRepository.findOne(id);
+        return chairPersonRepository.findById(id).orElse(null);
     }
 
     public List<ChairPerson> findAll() {
-        return chairPersonRepository.findAll(new Sort(Sort.Direction.DESC, "id"));
+        return chairPersonRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
     }
 
     public ChairPerson load(final Long id) {
@@ -96,7 +96,7 @@ public class ChairPersonService {
     }
 
     public Page<ChairPerson> getListOfChairPersons(final Integer pageNumber, final Integer pageSize) {
-        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.DESC, "id");
+        final Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, Sort.by(Sort.Direction.DESC, "id"));
         return chairPersonRepository.findAll(pageable);
     }
 

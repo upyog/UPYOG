@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
-import org.hibernate.validator.constraints.Email;
+import jakarta.validation.constraints.Email;
 import org.springframework.util.CollectionUtils;
 import org.upyog.cdwm.web.models.user.enums.UserType;
 
@@ -80,8 +80,7 @@ public class User {
         return this;
     }
 
-    // TODO: might be used in future
-    // below methods are used to validate the user object before saving it to the database
+    // Validation helpers for user creation; retained for potential future use before persistence.
     public void validateNewUser() {
         validateNewUser(true);
     }

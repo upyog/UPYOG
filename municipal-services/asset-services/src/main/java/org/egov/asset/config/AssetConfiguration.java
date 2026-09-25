@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 import org.egov.tracer.config.TracerConfiguration;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -116,13 +115,6 @@ public class AssetConfiguration {
     public void initialize() {
         TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
     }
-
-//    @Bean
-//    public ObjectMapper objectMapper() {
-//        return new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).setTimeZone(TimeZone.getTimeZone(timeZone));
-//    }
-
-
 
     @Bean
     public ObjectMapper objectMapper() {

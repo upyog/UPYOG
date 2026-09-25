@@ -1,27 +1,18 @@
 import React, { useCallback, useMemo, useEffect, useState, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { TextInput, SubmitBar, ActionBar, DatePicker, SearchForm, Dropdown, SearchField, Table, Card, Loader, Header, Toast } from "@upyog/digit-ui-react-components";
-import { useRouteMatch, Link, useHistory } from "react-router-dom";
+import { TextInput, SubmitBar, ActionBar, DatePicker, SearchForm, Dropdown, SearchField, Table, Card, Loader, Header,Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { Link,  } from "react-router-dom";
 import jsPDF from 'jspdf';
 import QRCode from 'qrcode';
 import * as XLSX from 'xlsx';
-import "../css/asset-inline-auto.css";
-const ASSETSearchApplication = ({
-  isLoading,
-  t,
-  onSubmit,
-  data,
-  count,
-  setShowToast,
-  ActionBarStyle = {},
-  MenuStyle = {},
-  parentRoute,
-  tenantId
-}) => {
+import { toDateString } from "../utils";
+
+
+const ASSETSearchApplication = ({ isLoading, t, onSubmit, onClear, data, count, setShowToast, ActionBarStyle = {}, MenuStyle = {}, parentRoute, tenantId }) => {
   const isMobile = window.Digit.Utils.browser.isMobile();
   const todaydate = new Date();
   const today = todaydate.toISOString().split("T")[0];
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   // Calculate the date 7 days ago
   const fromDate = new Date(todaydate);
   fromDate.setDate(todaydate.getDate() - 7); // Subtract 7 days from today
@@ -38,12 +29,14 @@ const ASSETSearchApplication = ({
     formState
   } = useForm({
     defaultValues: {
+      applicationNo: "",
+      fromDate: "",
+      toDate: "",
+      status: "",
       offset: 0,
       limit: !isMobile && 10,
       sortBy: "commencementDate",
       sortOrder: "DESC",
-      fromDate: fromDateFormatted,
-      toDate: today
     }
   });
   useEffect(() => {
@@ -69,25 +62,27 @@ const ASSETSearchApplication = ({
     }
   });
   let action = [];
-  actionState && actionState.map(actionstate => {
-    action.push({
-      i18nKey: `${actionstate.name}`,
-      code: `${actionstate.code}`,
-      value: `${actionstate.name}`
-    });
-  });
-  const {
-    data: actionDetail
-  } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "ASSET", [{
-    name: "ActionOption"
-  }], {
-    select: data => {
+
+  actionState && actionState.map((actionstate) => {
+    action.push({ i18nKey: `${actionstate.name}`, code: `${actionstate.code}`, value: `${actionstate.name}` })
+  })
+
+
+
+  const { data: actionDetail } = Digit.Hooks.useEnabledMDMS(Digit.ULBService.getStateId(), "ASSET", [{ name: "ActionOption" }], {
+    select: (data) => {
       const formattedData = data?.["ASSET"]?.["ActionOption"];
       const activeData = formattedData?.filter(item => item.active === true);
       return activeData;
     }
   });
-  const printReport = async applicationNo => {
+
+  console.log("actionDetailactionDetail",actionDetail);
+
+ 
+
+  const printReport = async (applicationNo) => {
+
     const applicationDetails = await Digit.ASSETService.search({
       tenantId,
       filters: {
@@ -102,27 +97,41 @@ const ASSETSearchApplication = ({
     });
     window.open(fileStore[response?.filestoreIds[0]], "_blank");
   };
-  const collectAction = row => {
-    const actionMdms = [];
-    actionDetail && actionDetail.map(opt => {
-      // this condition use for if asset asign then show return asset if asset not assign then show asset Assign
-      if (row?.original?.assetAssignment?.isAssigned && opt.code === "AST_RETURN" || !row?.original?.assetAssignment?.isAssigned && opt.code === "AST_ASSIGN") {
-        actionMdms.push({
-          label: t(opt.code),
-          link: `${opt.url}${row?.original?.["applicationNo"]}`,
-          code: opt.code
-        });
-      } else if (opt.code !== "AST_RETURN" && opt.code !== "AST_ASSIGN") {
-        // Push other options unconditionally
-        actionMdms.push({
-          label: t(opt.code),
-          link: `${opt.url}${row?.original?.["applicationNo"]}`,
-          code: opt.code
-        });
-      }
-    });
-    return actionMdms;
-  };
+
+  const collectAction = (row) => {
+  if (!actionDetail) {
+    console.log("actionDetail not loaded yet");
+    return [];
+  }
+
+  console.log("Action actionDetail:", actionDetail);
+
+  const actionMdms = [];
+
+  actionDetail.map((opt) => {
+    if (
+      (row?.original?.assetAssignment?.isAssigned && opt.code === "AST_RETURN") ||
+      (!row?.original?.assetAssignment?.isAssigned && opt.code === "AST_ASSIGN")
+    ) {
+      actionMdms.push({
+        label: t(opt.code),
+        link: `${opt.url}${row?.original?.["applicationNo"]}`,
+        code: opt.code
+      });
+    } else if (opt.code !== "AST_RETURN" && opt.code !== "AST_ASSIGN") {
+      actionMdms.push({
+        label: t(opt.code),
+        link: `${opt.url}${row?.original?.["applicationNo"]}`,
+        code: opt.code
+      });
+    }
+  });
+
+  console.log("Action Options:", actionMdms);
+
+  return actionMdms;
+};
+
   const processDepreciation = async (applicationNo, assetId) => {
     try {
       const applicationDetails = await Digit.ASSETService.depriciationProcess({
@@ -132,10 +141,8 @@ const ASSETSearchApplication = ({
           accountId: ""
         }
       });
-      if (applicationDetails) history.replace("/upyog-ui/employee/asset/assetservice/asset-process-depreciation-response", {
-        ProcessDepreciation: applicationDetails,
-        applicationNo
-      });
+      if(applicationDetails)
+      navigate("/upyog-ui/employee/asset/assetservice/asset-process-depreciation-response", { replace: true, state: { ProcessDepreciation: applicationDetails,  applicationNo} });
     } catch (error) {
       setShowToast({
         error: true,
@@ -240,8 +247,10 @@ const ASSETSearchApplication = ({
       //   },
       // ];
 
-      return <div ref={menuRef}>
-            {row?.original?.status === "APPROVED" ? <React.Fragment>
+      return (
+        <div ref={menuRef}>
+            {row?.original?.status === "APPROVED" ? (
+              <React.Fragment>
                 <SubmitBar label={t("WF_TAKE_ACTION")} onSubmit={toggleMenu} />
                 {isMenuOpen && <div className="asset-auto-7">
                     {actionOptions.filter(option => {
@@ -261,18 +270,27 @@ const ASSETSearchApplication = ({
                         </div> : <Link key={index} // Add key for the Link element as well
             to={option.link} className="asset-auto-10">
                             {option.label}
-                          </Link>)}
-                  </div>}
-              </React.Fragment> : t("AST_SHOULD_BE_APPROVED_FIRST")}
-          </div>;
+                          </Link>
+                    )}
+                  </div>
+                }
+              </React.Fragment>
+            ) : (
+              t("AST_SHOULD_BE_APPROVED_FIRST")
+            )}
+          </div>
+        );
+      },
+      mobileCell: (original) => GetMobCell(original?.searchData?.["applicationNo"]),
     },
-    mobileCell: original => GetMobCell(original?.searchData?.["applicationNo"])
-  }], []);
-  const onSort = useCallback(args => {
-    if (args.length === 0) return;
-    setValue("sortBy", args.id);
-    setValue("sortOrder", args.desc ? "DESC" : "ASC");
-  }, [setValue]);
+  ], [actionDetail]);
+
+  const onSort = useCallback((args) => {
+    if (args.length === 0) return
+    setValue("sortBy", args.id)
+    setValue("sortOrder", args.desc ? "DESC" : "ASC")
+  }, [setValue])
+
   function onPageSizeChange(e) {
     setValue("limit", Number(e.target.value));
     handleSubmit(onSubmit)();
@@ -351,28 +369,62 @@ const ASSETSearchApplication = ({
       <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
         <SearchField>
           <label>{t("AST_STATUS")}</label>
-          <Controller control={control} name="status" render={props => <Dropdown selected={props.value} select={props.onChange} onBlur={props.onBlur} option={action} optionKey="i18nKey" t={t} disable={false} />} />
+          <Controller
+            control={control}
+            name="status"
+            render={({field}) => (
+              <Dropdown
+                selected={field.value}
+                select={field.onChange}
+                onBlur={field.onBlur}
+                option={action}
+                optionKey="i18nKey"
+                t={t}
+                disable={false}
+              />
+            )}
+          />
         </SearchField>
         <SearchField>
           <label>{t("AST_APPLICATION_ID")}</label>
-          <TextInput name="applicationNo" inputRef={register({})} />
-        </SearchField>
+          <Controller
+            control={control}
+            name="applicationNo"
+            render={({ field }) => (
+                <TextInput
+                    name={field.name}
+                    value={field.value}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                    inputRef={field.ref}
+                />
+            )}
+            />
+          </SearchField>
 
         <SearchField>
           <label>{t("AST_FROM_DATE")}</label>
-          <Controller render={props => <DatePicker date={props.value} disabled={false} onChange={props.onChange} max={today} />} name="fromDate" control={control} />
+          <Controller
+            render={({field}) => <DatePicker date={toDateString(field.value)} disabled={false} onChange={(val) => field.onChange(toDateString(val))} max={today} />}
+            name="fromDate"
+            control={control}
+          />
         </SearchField>
         <SearchField>
           <label>{t("AST_TO_DATE")}</label>
-          <Controller render={props => <DatePicker date={props.value} disabled={false} onChange={props.onChange} max={today} />} name="toDate" control={control} />
+          <Controller
+            render={({field}) => <DatePicker date={toDateString(field.value)} disabled={false} onChange={(val) => field.onChange(toDateString(val))} max={today} />}
+            name="toDate"
+            control={control}
+          />
         </SearchField>
         <SearchField className="submit">
           <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
           <p onClick={() => {
             reset({
               applicationNo: "",
-              fromDate: fromDateFormatted,
-              toDate: today,
+              fromDate: "",
+              toDate: "",
               status: "",
               offset: 0,
               limit: 10,
@@ -380,7 +432,7 @@ const ASSETSearchApplication = ({
               sortOrder: "DESC"
             });
             setShowToast(null);
-            previousPage();
+            onClear();
           }} className="asset-auto-12">{t(`ES_COMMON_CLEAR_ALL`)}</p>
         </SearchField>
       </SearchForm>

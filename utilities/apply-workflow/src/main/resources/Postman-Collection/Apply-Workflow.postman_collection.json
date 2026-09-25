@@ -1,0 +1,187 @@
+{
+  "info": {
+    "_postman_id": "9b866ed1-ed93-49e0-9a34-160c1e403ec5",
+    "name": "Apply-Workflow",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "33443245",
+    "_collection_link": "https://go.postman.co/collection/33443245-9b866ed1-ed93-49e0-9a34-160c1e403ec5?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Create-Workflow",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "accept",
+            "value": "application/json, text/plain, */*"
+          },
+          {
+            "key": "accept-language",
+            "value": "en-GB,en-US;q=0.9,en;q=0.8"
+          },
+          {
+            "key": "content-type",
+            "value": "application/json;charset=UTF-8"
+          },
+          {
+            "key": "origin",
+            "value": "https://niuatt.niua.in"
+          },
+          {
+            "key": "priority",
+            "value": "u=1, i"
+          },
+          {
+            "key": "referer",
+            "value": "https://niuatt.niua.in/workbench-ui/employee/workbench/apply-workflow"
+          },
+          {
+            "key": "sec-ch-ua",
+            "value": "\"Google Chrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\""
+          },
+          {
+            "key": "sec-ch-ua-mobile",
+            "value": "?0"
+          },
+          {
+            "key": "sec-ch-ua-platform",
+            "value": "\"macOS\""
+          },
+          {
+            "key": "sec-fetch-dest",
+            "value": "empty"
+          },
+          {
+            "key": "sec-fetch-mode",
+            "value": "cors"
+          },
+          {
+            "key": "sec-fetch-site",
+            "value": "same-origin"
+          },
+          {
+            "key": "user-agent",
+            "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36"
+          },
+          {
+            "key": "Cookie",
+            "value": "_ga=GA1.1.1498208436.1748421576; _clck=tkuuq4%5E2%5Efyr%5E0%5E1974; _ga_VZ9TNBTB3X=GS2.1.s1756106917$o5$g0$t1756106920$j57$l0$h0"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"BusinessService\": {\n        \"tenantId\": \"pg\",\n        \"uniqueIdentifier\": \"test-evidence.test-evidence\",\n        \"applyType\": \"create\"\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"f403d674-2cf0-499b-9d4a-18cb62bcec84\",\n        \"userInfo\": {\n            \"id\": 928,\n            \"uuid\": \"d2b0f355-f405-40c3-82f4-beac9574369d\",\n            \"userName\": \"MDMSV2PG1\",\n            \"name\": \"shiva\",\n            \"mobileNumber\": \"7272727212\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Localisation admin\",\n                    \"code\": \"LOC_ADMIN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"MDMS ADMIN\",\n                    \"code\": \"MDMS_ADMIN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1778222952164|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8095/apply-workflow/api/v1/_process",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8095",
+          "path": [
+            "apply-workflow",
+            "api",
+            "v1",
+            "_process"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update-Workflow",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "accept",
+            "value": "application/json, text/plain, */*"
+          },
+          {
+            "key": "accept-language",
+            "value": "en-GB,en-US;q=0.9,en;q=0.8"
+          },
+          {
+            "key": "content-type",
+            "value": "application/json;charset=UTF-8"
+          },
+          {
+            "key": "origin",
+            "value": "https://niuatt.niua.in"
+          },
+          {
+            "key": "priority",
+            "value": "u=1, i"
+          },
+          {
+            "key": "referer",
+            "value": "https://niuatt.niua.in/workbench-ui/employee/workbench/apply-workflow"
+          },
+          {
+            "key": "sec-ch-ua",
+            "value": "\"Google Chrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\""
+          },
+          {
+            "key": "sec-ch-ua-mobile",
+            "value": "?0"
+          },
+          {
+            "key": "sec-ch-ua-platform",
+            "value": "\"macOS\""
+          },
+          {
+            "key": "sec-fetch-dest",
+            "value": "empty"
+          },
+          {
+            "key": "sec-fetch-mode",
+            "value": "cors"
+          },
+          {
+            "key": "sec-fetch-site",
+            "value": "same-origin"
+          },
+          {
+            "key": "user-agent",
+            "value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36"
+          },
+          {
+            "key": "Cookie",
+            "value": "_ga=GA1.1.1498208436.1748421576; _clck=tkuuq4%5E2%5Efyr%5E0%5E1974; _ga_VZ9TNBTB3X=GS2.1.s1756106917$o5$g0$t1756106920$j57$l0$h0"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"BusinessService\": {\n        \"tenantId\": \"pg\",\n        \"uniqueIdentifier\": \"test-evidence.test-evidence\",\n        \"applyType\": \"update\"\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"0e952949-a9b7-46a1-9bf4-cfe3d375a228\",\n        \"userInfo\": {\n            \"id\": 928,\n            \"uuid\": \"d2b0f355-f405-40c3-82f4-beac9574369d\",\n            \"userName\": \"MDMSV2PG1\",\n            \"name\": \"shiva\",\n            \"mobileNumber\": \"7272727212\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"Localisation admin\",\n                    \"code\": \"LOC_ADMIN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"MDMS ADMIN\",\n                    \"code\": \"MDMS_ADMIN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1778229497133|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8095/apply-workflow/api/v1/_process",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8095",
+          "path": [
+            "apply-workflow",
+            "api",
+            "v1",
+            "_process"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

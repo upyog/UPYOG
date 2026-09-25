@@ -1,5 +1,5 @@
 import { CHBSearch } from "../../services/molecules/CHB/Search";
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 
 
 /**
@@ -38,26 +38,36 @@ import { useQuery } from "react-query";
  * - Example:
  *    const { data, isLoading, isError } = useChbApplicationDetail(t, tenantId, applicationNo, config, userType, args);
  */
-const useChbApplicationDetail = (t, tenantId, applicationNo, config = {}, userType, args) => {
-    
-  
-  const defaultSelect = (data) => {
-     let applicationDetails = data.applicationDetails.map((obj) => {
-      return obj;
-    });
-    
-    return {
-      applicationData : data,
-      applicationDetails
-    }
-  };
+const useChbApplicationDetail = (
+  t,
+  tenantId,
+  applicationNo,
+  config = {},
+  userType,
+  args
+) => {
+  const queryKey = [
+    "CHB_APPLICATION_DETAIL",
+    tenantId,
+    applicationNo,
+    userType,
+    JSON.stringify(args),
+  ];
 
-  return useQuery(
-    ["APPLICATION_SEARCH", "CHB_SEARCH", applicationNo, userType, args],
-    () => CHBSearch.applicationDetails(t, tenantId, applicationNo, userType, args),
-    { select: defaultSelect, ...config }
- 
-  );
+  const queryFn = () =>
+    CHBSearch.applicationDetails(t, tenantId, applicationNo, userType, args);
+
+  const select = (data) => ({
+    applicationData: data,
+    applicationDetails: data?.applicationDetails?.map((obj) => obj),
+  });
+
+  return queryTemplate({
+    queryKey,
+    queryFn,
+    select,
+    config,
+  });
 };
 
 export default useChbApplicationDetail;

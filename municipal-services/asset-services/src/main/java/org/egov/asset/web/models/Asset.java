@@ -1,6 +1,5 @@
 package org.egov.asset.web.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -165,9 +164,6 @@ public class Asset implements AssetDTO {
     private String accumulatedDepreciartion;
 
     private boolean assetAssignable;
-
-//      @JsonProperty("parentAssetSpecificDetails")
-//      private AssetParentAssetSpecificDetails parentAssetSpecificDetails = null;
 
     public Asset(String type, Object additionalInformation) {
         this.assetParentCategory = type;

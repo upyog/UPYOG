@@ -1,0 +1,709 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Birth and Death Registration Service
+  description: |
+    This service provides APIs to register births and deaths, search certificate applications,
+    download certificates, and manage hospital master data and legacy imports in the UPYOG platform.
+  contact:
+    name: UPYOG NUDM Team
+    email: cdg-contact@niua.org
+schemes:
+  - https
+basePath: /birth-death-services
+x-api-id: org.egov.birth.death.services
+x-common-path: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml
+paths:
+  /birth/_search:
+    post:
+      summary: Search birth certificate records
+      description: |
+        Search and retrieve birth certificate record(s) based on defined search criteria.
+        When multiple parameters are passed, results are filtered as an AND combination of all parameters.
+      parameters:
+        - $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo
+        - $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId
+        - name: tenantId
+          in: query
+          type: string
+          description: Unique identifier of ULB
+        - name: registrationNo
+          in: query
+          type: string
+          description: Birth registration number
+        - name: birthcertificateno
+          in: query
+          type: string
+          description: Birth certificate number
+        - name: consumerCode
+          in: query
+          type: string
+          description: Billing consumer code for certificate download
+        - name: fromDate
+          in: query
+          type: string
+          description: Search from date (epoch or date string)
+        - name: toDate
+          in: query
+          type: string
+          description: Search to date (epoch or date string)
+        - name: offset
+          in: query
+          type: integer
+          format: int32
+          description: Pagination offset
+        - name: limit
+          in: query
+          type: integer
+          format: int32
+          description: Pagination limit
+        - name: RequestInfoWrapper
+          in: body
+          required: true
+          description: RequestInfo metadata and search criteria
+          schema:
+            $ref: '#/definitions/RequestInfoWrapper'
+      responses:
+        '200':
+          description: Birth certificate record(s) retrieved successfully
+          schema:
+            $ref: '#/definitions/BirthResponse'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - Birth Certificate
+  /birth/_plainsearch:
+    post:
+      summary: Plain search birth certificates
+      description: Search birth certificates without citizen access restrictions.
+      parameters:
+        - name: RequestInfoWrapper
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RequestInfoWrapper'
+      responses:
+        '200':
+          description: Birth certificate(s) retrieved successfully
+          schema:
+            $ref: '#/definitions/BirthCertResponse'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - Birth Certificate
+  /birth/_download:
+    post:
+      summary: Download birth certificate
+      description: Initiate birth certificate download or return billing consumer code if payment is pending.
+      parameters:
+        - name: RequestInfoWrapper
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RequestInfoWrapper'
+      responses:
+        '200':
+          description: Download initiated successfully
+          schema:
+            $ref: '#/definitions/BirthCertResponse'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - Birth Certificate
+  /birth/_getfilestoreid:
+    post:
+      summary: Get filestore ID for birth certificate
+      description: Retrieve filestore ID for an approved birth certificate and update download status.
+      parameters:
+        - name: RequestInfoWrapper
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RequestInfoWrapper'
+      responses:
+        '200':
+          description: Filestore ID retrieved successfully
+          schema:
+            $ref: '#/definitions/BirthCertResponse'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - Birth Certificate
+  /birth/_searchapplications:
+    post:
+      summary: Search birth certificate applications
+      description: Search birth certificate application requests submitted by citizens or employees.
+      parameters:
+        - name: RequestInfoWrapper
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RequestInfoWrapper'
+      responses:
+        '200':
+          description: Birth certificate application(s) retrieved successfully
+          schema:
+            $ref: '#/definitions/BirthCertApplnResponse'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - Birth Certificate Application
+  /birth/_viewcertdata:
+    post:
+      summary: View birth certificate data for PDF generation
+      description: Returns birth certificate master data required for certificate PDF rendering.
+      parameters:
+        - name: RequestInfoWrapper
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RequestInfoWrapper'
+      responses:
+        '200':
+          description: Certificate data retrieved successfully
+          schema:
+            $ref: '#/definitions/BirthPdfApplicationRequest'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - Birth Certificate
+  /birth/_viewfullcertdata:
+    post:
+      summary: View full birth certificate master data
+      description: Returns complete birth certificate data including all related entities for PDF generation.
+      parameters:
+        - name: RequestInfoWrapper
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RequestInfoWrapper'
+      responses:
+        '200':
+          description: Full certificate data retrieved successfully
+          schema:
+            $ref: '#/definitions/BirthPdfApplicationRequest'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - Birth Certificate
+  /death/_search:
+    post:
+      summary: Search death certificate records
+      description: |
+        Search and retrieve death certificate record(s) based on defined search criteria.
+        When multiple parameters are passed, results are filtered as an AND combination of all parameters.
+      parameters:
+        - $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo
+        - $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId
+        - name: tenantId
+          in: query
+          type: string
+          description: Unique identifier of ULB
+        - name: registrationNo
+          in: query
+          type: string
+          description: Death registration number
+        - name: deathcertificateno
+          in: query
+          type: string
+          description: Death certificate number
+        - name: consumerCode
+          in: query
+          type: string
+          description: Billing consumer code for certificate download
+        - name: RequestInfoWrapper
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RequestInfoWrapper'
+      responses:
+        '200':
+          description: Death certificate record(s) retrieved successfully
+          schema:
+            $ref: '#/definitions/DeathResponse'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - Death Certificate
+  /death/_plainsearch:
+    post:
+      summary: Plain search death certificates
+      description: Search death certificates without citizen access restrictions.
+      parameters:
+        - name: RequestInfoWrapper
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RequestInfoWrapper'
+      responses:
+        '200':
+          description: Death certificate(s) retrieved successfully
+          schema:
+            $ref: '#/definitions/DeathCertResponse'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - Death Certificate
+  /death/_download:
+    post:
+      summary: Download death certificate
+      description: Initiate death certificate download or return billing consumer code if payment is pending.
+      parameters:
+        - name: RequestInfoWrapper
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RequestInfoWrapper'
+      responses:
+        '200':
+          description: Download initiated successfully
+          schema:
+            $ref: '#/definitions/DeathCertResponse'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - Death Certificate
+  /death/_getfilestoreid:
+    post:
+      summary: Get filestore ID for death certificate
+      description: Retrieve filestore ID for an approved death certificate and update download status.
+      parameters:
+        - name: RequestInfoWrapper
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RequestInfoWrapper'
+      responses:
+        '200':
+          description: Filestore ID retrieved successfully
+          schema:
+            $ref: '#/definitions/DeathCertResponse'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - Death Certificate
+  /death/_searchapplications:
+    post:
+      summary: Search death certificate applications
+      description: Search death certificate application requests submitted by citizens or employees.
+      parameters:
+        - name: RequestInfoWrapper
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RequestInfoWrapper'
+      responses:
+        '200':
+          description: Death certificate application(s) retrieved successfully
+          schema:
+            $ref: '#/definitions/DeathCertApplnResponse'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - Death Certificate Application
+  /death/_viewcertdata:
+    post:
+      summary: View death certificate data for PDF generation
+      description: Returns death certificate master data required for certificate PDF rendering.
+      parameters:
+        - name: RequestInfoWrapper
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RequestInfoWrapper'
+      responses:
+        '200':
+          description: Certificate data retrieved successfully
+          schema:
+            $ref: '#/definitions/DeathPdfApplicationRequest'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - Death Certificate
+  /death/_viewfullcertdata:
+    post:
+      summary: View full death certificate master data
+      description: Returns complete death certificate data including all related entities for PDF generation.
+      parameters:
+        - name: RequestInfoWrapper
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RequestInfoWrapper'
+      responses:
+        '200':
+          description: Full certificate data retrieved successfully
+          schema:
+            $ref: '#/definitions/DeathPdfApplicationRequest'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - Death Certificate
+  /common/gethospitals:
+    post:
+      summary: Get registered hospitals
+      description: Retrieve the list of hospitals registered for birth/death registration for a tenant.
+      parameters:
+        - name: RequestInfoWrapper
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RequestInfoWrapper'
+      responses:
+        '200':
+          description: Hospital list retrieved successfully
+          schema:
+            $ref: '#/definitions/HospitalResponse'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - Common
+  /common/savebirthimport:
+    post:
+      summary: Save legacy birth import data
+      description: Import legacy birth registration records into the system.
+      parameters:
+        - name: BirthResponse
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/BirthResponse'
+      responses:
+        '200':
+          description: Birth import saved successfully
+          schema:
+            $ref: '#/definitions/ImportBirthWrapper'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - Common
+  /common/savedeathimport:
+    post:
+      summary: Save legacy death import data
+      description: Import legacy death registration records into the system.
+      parameters:
+        - name: DeathResponse
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DeathResponse'
+      responses:
+        '200':
+          description: Death import saved successfully
+          schema:
+            $ref: '#/definitions/ImportDeathWrapper'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - Common
+  /common/updatebirthimport:
+    post:
+      summary: Update legacy birth import data
+      description: Update previously imported legacy birth registration records.
+      parameters:
+        - name: BirthResponse
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/BirthResponse'
+      responses:
+        '200':
+          description: Birth import updated successfully
+          schema:
+            $ref: '#/definitions/ImportBirthWrapper'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - Common
+  /common/updatedeathimport:
+    post:
+      summary: Update legacy death import data
+      description: Update previously imported legacy death registration records.
+      parameters:
+        - name: DeathResponse
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DeathResponse'
+      responses:
+        '200':
+          description: Death import updated successfully
+          schema:
+            $ref: '#/definitions/ImportDeathWrapper'
+        '400':
+          description: Invalid input
+          schema:
+            $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes
+      tags:
+        - Common
+definitions:
+  RequestInfoWrapper:
+    type: object
+    description: Wrapper containing DIGIT RequestInfo and optional search criteria
+    properties:
+      RequestInfo:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo
+  BirthResponse:
+    type: object
+    description: Response containing birth certificate records
+    properties:
+      ResponseInfo:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo
+      birthCerts:
+        type: array
+        items:
+          $ref: '#/definitions/BirthCertificateRecord'
+  BirthCertResponse:
+    type: object
+    description: Response for birth certificate download and filestore operations
+    properties:
+      ResponseInfo:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo
+      filestoreId:
+        type: string
+        description: Filestore ID of the generated certificate PDF
+      consumerCode:
+        type: string
+        description: Billing consumer code when payment is pending
+      tenantId:
+        type: string
+        description: Tenant identifier
+  BirthCertApplnResponse:
+    type: object
+    description: Response containing birth certificate applications
+    properties:
+      ResponseInfo:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo
+      applications:
+        type: array
+        items:
+          $ref: '#/definitions/BirthCertApplication'
+  BirthPdfApplicationRequest:
+    type: object
+    description: Birth certificate data for PDF generation
+    properties:
+      RequestInfo:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo
+      birthCertificate:
+        type: array
+        items:
+          $ref: '#/definitions/BirthCertificateRecord'
+  DeathResponse:
+    type: object
+    description: Response containing death certificate records
+    properties:
+      ResponseInfo:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo
+      deathCerts:
+        type: array
+        items:
+          $ref: '#/definitions/DeathCertificateRecord'
+  DeathCertResponse:
+    type: object
+    description: Response for death certificate download and filestore operations
+    properties:
+      ResponseInfo:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo
+      filestoreId:
+        type: string
+      consumerCode:
+        type: string
+      tenantId:
+        type: string
+  DeathCertApplnResponse:
+    type: object
+    description: Response containing death certificate applications
+    properties:
+      ResponseInfo:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo
+      applications:
+        type: array
+        items:
+          $ref: '#/definitions/DeathCertApplication'
+  DeathPdfApplicationRequest:
+    type: object
+    description: Death certificate data for PDF generation
+    properties:
+      RequestInfo:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo
+      deathCertificate:
+        type: array
+        items:
+          $ref: '#/definitions/DeathCertificateRecord'
+  HospitalResponse:
+    type: object
+    description: Response containing registered hospital master data
+    properties:
+      ResponseInfo:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo
+      hospitalDtls:
+        type: array
+        items:
+          $ref: '#/definitions/HospitalDetail'
+  ImportBirthWrapper:
+    type: object
+    description: Response for legacy birth import operations
+    properties:
+      ResponseInfo:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo
+  ImportDeathWrapper:
+    type: object
+    description: Response for legacy death import operations
+    properties:
+      ResponseInfo:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo
+  BirthCertificateRecord:
+    type: object
+    description: Birth certificate registration record
+    properties:
+      id:
+        type: string
+        readOnly: true
+      tenantId:
+        type: string
+        minLength: 2
+        maxLength: 128
+      registrationNo:
+        type: string
+      dateofbirth:
+        type: integer
+        format: int64
+        description: Date of birth epoch
+      gender:
+        type: integer
+      hospitalName:
+        type: string
+      placeofbirth:
+        type: string
+      fatherName:
+        type: string
+      motherName:
+        type: string
+      auditDetails:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/AuditDetails
+    required:
+      - tenantId
+  DeathCertificateRecord:
+    type: object
+    description: Death certificate registration record
+    properties:
+      id:
+        type: string
+        readOnly: true
+      tenantId:
+        type: string
+        minLength: 2
+        maxLength: 128
+      registrationNo:
+        type: string
+      dateofdeath:
+        type: integer
+        format: int64
+        description: Date of death epoch
+      gender:
+        type: integer
+      hospitalName:
+        type: string
+      placeofdeath:
+        type: string
+      auditDetails:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/AuditDetails
+    required:
+      - tenantId
+  BirthCertApplication:
+    type: object
+    description: Birth certificate application request
+    properties:
+      id:
+        type: string
+        readOnly: true
+      tenantId:
+        type: string
+      applicationNumber:
+        type: string
+        readOnly: true
+      status:
+        type: string
+      workflow:
+        $ref: '#/definitions/Workflow'
+  DeathCertApplication:
+    type: object
+    description: Death certificate application request
+    properties:
+      id:
+        type: string
+        readOnly: true
+      tenantId:
+        type: string
+      applicationNumber:
+        type: string
+        readOnly: true
+      status:
+        type: string
+      workflow:
+        $ref: '#/definitions/Workflow'
+  HospitalDetail:
+    type: object
+    description: Registered hospital for birth/death registration
+    properties:
+      id:
+        type: string
+      tenantId:
+        type: string
+      name:
+        type: string
+      address:
+        type: string
+  Workflow:
+    type: object
+    description: Fields related to workflow service
+    properties:
+      action:
+        type: string
+        description: Action on the application
+        minLength: 1
+        maxLength: 64
+      status:
+        type: string
+        description: Status of the application
+      comments:
+        type: string
+        description: Comments for the workflow action
+        minLength: 1
+        maxLength: 256

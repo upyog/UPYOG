@@ -1,4 +1,4 @@
-import { Card, KeyNote, SubmitBar, Loader } from "@upyog/digit-ui-react-components";
+import { Card, KeyNote, SubmitBar, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -60,7 +60,8 @@ const WSApplication = ({
   if (isLoading) {
     return <Loader />;
   }
-  return <Card>
+  return (
+    <Card>
     <KeyNote keyValue={t("WS_MYCONNECTIONS_APPLICATION_NO")} note={application?.applicationNo} />
     <KeyNote keyValue={t("WS_SERVICE_NAME")} note={t(`WS_APPLICATION_TYPE_${application?.applicationType}`)} />
     <KeyNote keyValue={t("WS_CONSUMER_NAME")} note={application?.connectionHolders?.map(owner => owner.name).join(",") || application?.property?.owners?.sort((a, b) => a?.additionalDetails?.ownerSequence - b?.additionalDetails?.ownerSequence).map(owner => owner.name).join(",") || t("CS_NA")} />
@@ -90,14 +91,31 @@ const WSApplication = ({
       <Link to={`/upyog-ui/citizen/ws/connection/application/${encodeApplicationNo}`}>
         <SubmitBar label={t("WS_VIEW_DETAILS_LABEL")} />
       </Link>
-      {application?.applicationStatus === "PENDING_FOR_PAYMENT" ? <Link to={{
-      pathname: `/upyog-ui/citizen/payment/my-bills/${businessService}/${application?.applicationNo?.includes("DC") ? stringReplaceAll(application?.connectionNo, "/", "+") || stringReplaceAll(application?.connectionNo, "/", "+") : stringReplaceAll(application?.applicationNo, "/", "+") || stringReplaceAll(application?.applicationNo, "/", "+")}?workflow=WNS&tenantId=${application?.tenantId}&ConsumerName=${application?.connectionHolders?.map(owner => owner.name).join(",") || application?.connectionHolders?.map(owner => owner.name).join(",") || PTData?.Properties?.[0]?.owners?.map(owner => owner.name).join(",")}&isDisoconnectFlow=${application?.applicationNo?.includes("DC") ? true : false}`,
-      state: {}
-    }}>
-              <div className="ws-auto-246">
-              <SubmitBar label={t("MAKE_PAYMENT")} />
-              </div>
-            </Link> : null}
-    </Card>;
+      {application?.applicationStatus === "PENDING_FOR_PAYMENT"  ? (
+            <Link
+                to={`/upyog-ui/citizen/payment/my-bills/${
+                  businessService
+                }/${
+                  application?.applicationNo?.includes("DC")
+                    ? (
+                        stringReplaceAll(application?.connectionNo, "/", "+") ||
+                        stringReplaceAll(application?.connectionNo, "/", "+")
+                      )
+                    : (
+                        stringReplaceAll(application?.applicationNo, "/", "+") ||
+                        stringReplaceAll(application?.applicationNo, "/", "+")
+                      )
+                }?workflow=WNS&tenantId=${application?.tenantId}&ConsumerName=${
+                  application?.connectionHolders?.map((owner) => owner.name).join(",") ||
+                  PTData?.Properties?.[0]?.owners?.map((owner) => owner.name).join(",")
+                }&isDisoconnectFlow=${application?.applicationNo?.includes("DC")}`}
+              >
+                <div style={{ marginTop: "10px" }}>
+                  <SubmitBar label={t("MAKE_PAYMENT")} />
+                </div>
+              </Link>
+          ) : null}
+    </Card>
+  );
 };
 export default WSApplication;

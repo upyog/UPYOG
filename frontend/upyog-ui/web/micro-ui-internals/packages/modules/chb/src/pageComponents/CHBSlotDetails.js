@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, CardLabel, TextInput,Dropdown, TextArea,Card,CardSubHeader} from "@upyog/digit-ui-react-components";
-import { useLocation} from "react-router-dom";
+import { FormStep, CardLabel, TextInput,Dropdown, TextArea,Card,CardSubHeader} from "@nudmcdgnpm/digit-ui-react-components";
+import { useLocation } from "react-router-dom";
 import Timeline from "../components/CHBTimeline";
 import { Controller, useForm } from "react-hook-form";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
-// import { TimerValues } from "../components/TimerValues";
+import { TimerValues } from "../components/TimerValues";
 
 
 /**
@@ -103,7 +103,7 @@ const CHBSlotDetails
         ownerStep = { ...owner,specialCategory,purpose,purposeDescription};
         onSelect(config.key, ownerStep, false, index);
       }
-      console.log(ownerStep);
+
     };
 
     const onSkip = () => onSelect();
@@ -141,10 +141,10 @@ const CHBSlotDetails
           {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
-           {/* <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.Searchdata} /> */}
+           <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.searchData} draftId={value?.existingDataSet?.draftId} />
           </div>
         </CardSubHeader>
-        <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails}/>
+        <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails} SlotSearchData={value}/>
       </Card>
         <FormStep
           config={config}
@@ -161,9 +161,8 @@ const CHBSlotDetails
               name={"specialCategory"}
               defaultValue={specialCategory}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
-
                   className="form-field"
                   selected={specialCategory}
                   select={setspecialcategory}
@@ -172,7 +171,6 @@ const CHBSlotDetails
                   optionKey="i18nKey"
                   t={t}
                 />
-
               )}
 
             />
@@ -183,9 +181,8 @@ const CHBSlotDetails
               name={"purpose"}
               defaultValue={purpose}
               rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
-              render={(props) => (
+              render={({ field }) => (
                 <Dropdown
-
                   className="form-field"
                   selected={purpose}
                   placeholder={"Select Purpose"}
@@ -194,7 +191,6 @@ const CHBSlotDetails
                   optionKey="i18nKey"
                   t={t}
                 />
-
               )}
                 />
 

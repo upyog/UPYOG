@@ -1,16 +1,9 @@
 package org.upyog.adv.web.models;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import java.util.ArrayList;
 import java.util.List;
-import org.upyog.adv.web.models.Error;
-import org.upyog.adv.web.models.ResponseInfo;
-import org.springframework.validation.annotation.Validated;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

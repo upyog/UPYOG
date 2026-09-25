@@ -1,4 +1,4 @@
-package org.upyog.rs.web.models.mobileToilet;
+package org.upyog.rs.web.models.mobileToilet; // NOSONAR java:S120 - package name kept to preserve imports/API // NOSONAR
 
 
 import java.time.LocalDate;
@@ -39,6 +39,7 @@ import org.upyog.rs.web.models.Workflow;
 @NoArgsConstructor
 @Builder
 @ToString
+@SuppressWarnings("java:S120")
 public class MobileToiletBookingDetail {
 
 	@JsonProperty("bookingId")

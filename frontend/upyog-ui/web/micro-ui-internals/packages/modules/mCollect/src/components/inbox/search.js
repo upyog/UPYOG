@@ -1,6 +1,6 @@
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
-import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker } from "@upyog/digit-ui-react-components";
+import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 // import _ from "lodash";
 
@@ -76,11 +76,26 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                             {input?.componentInFront}
                           </span>
                         ) : null}
-                        <TextInput {...input} inputRef={register} watch={watch} shouldUpdate={true} />
+                        <Controller
+                          name={input.name}
+                          control={control}
+                          defaultValue={""}
+                          render={({ field }) => (
+                            <TextInput
+                              {...input}
+                              inputRef={field.ref}
+                              value={field.value}
+                              onChange={(e) => field.onChange(e.target.value)}
+                              onBlur={field.onBlur}
+                              watch={watch}
+                              shouldUpdate={true}
+                            />
+                          )}
+                        />
                       </div>
                     ) : (
                       <Controller
-                        render={(props) => <DatePicker date={props.value} onChange={props.onChange} />}
+                        render={({ field }) => <DatePicker date={field.value} onChange={field.onChange} />}
                         name={input.name}
                         control={control}
                         defaultValue={null}

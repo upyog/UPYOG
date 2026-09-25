@@ -26,7 +26,7 @@ import ApplicationLinks from "./inbox/ApplicationLinks";
  * @param {Object} props.tableConfig - Configuration object for table columns.
  * @param {React.Component} props.filterComponent - Custom filter component.
  */
-import "../css/wt-inline-auto.css";
+
 const MobileInbox = ({
   data,
   isLoading,

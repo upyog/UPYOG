@@ -1,15 +1,12 @@
 package org.upyog.tp.util;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.upyog.tp.config.TreePruningConfiguration;
 import org.upyog.tp.repository.ServiceRequestRepository;
@@ -22,18 +19,18 @@ import org.upyog.tp.web.models.treePruning.TreePruningBookingRequest;
 @Component
 public class UserUtil {
 
+    private static final String LAST_MODIFIED_DATE = "lastModifiedDate";
+    private static final String PWD_EXPIRY_DATE = "pwdExpiryDate";
 
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
+    private final ServiceRequestRepository serviceRequestRepository;
+    private final TreePruningConfiguration config;
 
-    private ServiceRequestRepository serviceRequestRepository;
-
-    @Autowired
-    private TreePruningConfiguration config;
-
-    @Autowired
-    public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {
+    public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository,
+                    TreePruningConfiguration config) {
         this.mapper = mapper;
         this.serviceRequestRepository = serviceRequestRepository;
+        this.config = config;
     }
 
     /**
@@ -50,10 +47,9 @@ public class UserUtil {
         else if(uri.toString().contains(config.getUserCreateEndpoint()))
             dobFormat = "dd/MM/yyyy";
         try{
-            LinkedHashMap responseMap = (LinkedHashMap)serviceRequestRepository.fetchResult(uri, userRequest);
+            LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(uri, userRequest);
             parseResponse(responseMap,dobFormat);
-            UserDetailResponse userDetailResponse = mapper.convertValue(responseMap,UserDetailResponse.class);
-            return userDetailResponse;
+            return mapper.convertValue(responseMap,UserDetailResponse.class);
         }
         catch(IllegalArgumentException  e)
         {
@@ -67,18 +63,19 @@ public class UserUtil {
      * @param responeMap LinkedHashMap got from user api response
      */
 
-    public void parseResponse(LinkedHashMap responeMap, String dobFormat){
-        List<LinkedHashMap> users = (List<LinkedHashMap>)responeMap.get("user");
+    public void parseResponse(Map<String, Object> responeMap, String dobFormat){
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> users = (List<Map<String, Object>>) responeMap.get("user");
         String format1 = "dd-MM-yyyy HH:mm:ss";
         if(users!=null){
             users.forEach( map -> {
                         map.put("createdDate",dateTolong((String)map.get("createdDate"),format1));
-                        if((String)map.get("lastModifiedDate")!=null)
-                            map.put("lastModifiedDate",dateTolong((String)map.get("lastModifiedDate"),format1));
+                        if((String)map.get(LAST_MODIFIED_DATE)!=null)
+                            map.put(LAST_MODIFIED_DATE,dateTolong((String)map.get(LAST_MODIFIED_DATE),format1));
                         if((String)map.get("dob")!=null)
                             map.put("dob",dateTolong((String)map.get("dob"),dobFormat));
-                        if((String)map.get("pwdExpiryDate")!=null)
-                            map.put("pwdExpiryDate",dateTolong((String)map.get("pwdExpiryDate"),format1));
+                        if((String)map.get(PWD_EXPIRY_DATE)!=null)
+                            map.put(PWD_EXPIRY_DATE,dateTolong((String)map.get(PWD_EXPIRY_DATE),format1));
                     }
             );
         }
@@ -91,41 +88,32 @@ public class UserUtil {
      * @return Long value of date
      */
     private Long dateTolong(String date,String format){
-        SimpleDateFormat f = new SimpleDateFormat(format);
-        Date d = null;
         try {
-            d = f.parse(date);
-        } catch (ParseException e) {
+            return TreePruningUtil.dateTolong(date, format);
+        } catch (Exception e) {
             throw new CustomException("INVALID_DATE_FORMAT","Failed to parse date format in user");
         }
-        return  d.getTime();
     }
 
     /**
      * enriches the userInfo with statelevel tenantId and other fields
      * @param mobileNumber
-     * @param tenantId
      * @param userInfo
      */
-    public void addUserDefaultFields(String mobileNumber,String tenantId, User userInfo){
-        Role role = getCitizenRole(tenantId);
+    public void addUserDefaultFields(String mobileNumber, User userInfo){
+        Role role = getCitizenRole();
         userInfo.setRoles(Collections.singletonList(role));
         userInfo.setType("CITIZEN");
         userInfo.setUserName(mobileNumber);
-//        userInfo.setTenantId(getStateLevelTenant(tenantId));
-//        userInfo.setActive(true);
     }
 
     /**
      * Returns role object for citizen
-     * @param tenantId
      * @return
      */
-    private Role getCitizenRole(String tenantId){
+    private Role getCitizenRole(){
         Role role = new Role();
-        // role.setCode("CITIZEN");
         role.setName("Citizen");
-        // role.setTenantId(getStateLevelTenant(tenantId));
         return role;
     }
 
@@ -135,9 +123,6 @@ public class UserUtil {
 
     /**
      * Checks whether the logged-in user is the same as the applicant in the given application request.
-     * <p>
-     * This is done by comparing the mobile number from the user info in the request with
-     * the mobile number provided in the applicant details of the application.
      *
      * @param treePruningRequest The application request containing user and applicant details.
      * @return true if the mobile numbers match (case-insensitive), false otherwise.
@@ -145,10 +130,6 @@ public class UserUtil {
     public static boolean isCurrentUserApplicant(TreePruningBookingRequest treePruningRequest){
         String userMobileNumber = treePruningRequest.getRequestInfo().getUserInfo().getMobileNumber();
         String applicationMobileNumber = treePruningRequest.getTreePruningBookingDetail().getApplicantDetail().getMobileNumber();
-        if (userMobileNumber.equals(applicationMobileNumber)) {
-            return true;
-        } else {
-            return false;
-        }
+        return userMobileNumber.equals(applicationMobileNumber);
     }
 }

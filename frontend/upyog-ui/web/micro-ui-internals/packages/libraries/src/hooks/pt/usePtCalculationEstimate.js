@@ -1,8 +1,8 @@
 import { PTService } from "../../services/elements/PT";
-import { useMutation } from "react-query";
+import { mutationTemplate } from "../../common/mutationTemplate";
 
 const usePtCalculationEstimate = (tenantId, config = {}) => {
-  return useMutation((data) => PTService.ptCalculationEstimate(data, tenantId));
+  return mutationTemplate({ mutationFn: (data) => PTService.ptCalculationEstimate(data, tenantId) });
 };
 
 export default usePtCalculationEstimate;

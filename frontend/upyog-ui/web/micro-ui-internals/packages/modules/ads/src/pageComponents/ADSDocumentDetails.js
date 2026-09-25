@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair, Card, CardSubHeader, CardLabelDesc } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, UploadFile, Toast, Loader, FormStep, LabelFieldPair,Card,CardSubHeader,CardLabelDesc} from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/ADSTimeline";
 import ADSCartAndCancellationPolicyDetails from "../components/ADSCartAndCancellationPolicyDetails";
 import { TimerValues } from "../components/TimerValues";
@@ -8,7 +8,7 @@ import { TimerValues } from "../components/TimerValues";
  * for the ADS application. It manages document state, validates uploads,
  * and integrates with a document selection dropdown.
  */
-import "../css/ads-inline-auto.css";
+
 const ADSDocumentDetails = ({
   t,
   config,
@@ -32,13 +32,13 @@ const ADSDocumentDetails = ({
     data
   } = Digit.Hooks.ads.useADSDocumentsMDMS(stateId, "Advertisement", "Documents");
   const handleSubmit = () => {
-    let cartDetails = value?.cartDetails.map(slot => {
-      return {
-        addType: slot.addTypeCode,
-        faceArea: slot.faceAreaCode,
-        location: slot.locationCode,
-        nightLight: slot.nightLight === "Yes" ? true : false,
-        bookingDate: slot.bookingDate,
+    let cartDetails = value?.cartDetails?.map((slot) => {
+      return { 
+        addType:slot.addTypeCode,
+        faceArea:slot.faceAreaCode,
+        location:slot.locationCode,
+        nightLight:slot.nightLight==="Yes"? true : false,
+        bookingDate:slot.bookingDate,
         bookingFromTime: "06:00",
         bookingToTime: "05:59",
         status: "BOOKING_CREATED"
@@ -90,7 +90,7 @@ const ADSDocumentDetails = ({
     data?.Advertisement?.Documents.map(doc => {
       doc.hasDropdown = true;
       let isRequired = false;
-      documents.map(data => {
+      documents?.map((data) => {
         if (doc.required && data?.documentType.includes(doc.code)) isRequired = true;
       });
       if (!isRequired && doc.required) count = count + 1;

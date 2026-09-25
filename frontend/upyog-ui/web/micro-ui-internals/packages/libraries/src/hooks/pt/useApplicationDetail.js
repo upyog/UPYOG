@@ -1,5 +1,5 @@
 import { PTSearch } from "../../services/molecules/PT/Search";
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 
 const useApplicationDetail = (t, tenantId, propertyIds, config = {}, userType, args) => {
   const defaultSelect = (data) => {
@@ -17,12 +17,19 @@ const useApplicationDetail = (t, tenantId, propertyIds, config = {}, userType, a
     return { ...data, applicationDetails };
   };
 
-  return useQuery(
-    ["APPLICATION_SEARCH", "PT_SEARCH", propertyIds, userType, args],
-    () => PTSearch.applicationDetails(t, tenantId, propertyIds, userType, args),
-    { select: defaultSelect, ...config }
-    // config
-  );
+  const queryKey = ["APPLICATION_SEARCH", "PT_SEARCH", propertyIds, userType, args];
+
+  const queryFn = () => PTSearch.applicationDetails(t, tenantId, propertyIds, userType, args);
+
+  const select = defaultSelect;
+
+  return queryTemplate({
+    queryKey,
+    queryFn,
+    select,
+    config,
+  });
+  // config
 };
 
 export default useApplicationDetail;

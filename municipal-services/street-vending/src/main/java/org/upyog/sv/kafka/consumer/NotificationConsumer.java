@@ -1,8 +1,7 @@
 package org.upyog.sv.kafka.consumer;
 
-import java.util.HashMap;
+import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
@@ -24,28 +23,33 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NotificationConsumer {
 
-	@Autowired
-	private StreetyVendingNotificationService notificationService;
+	private static final String PENDING_FOR_PAYMENT_STATUS = "PENDING_FOR_PAYMENT";
 
-	@Autowired
-	private ObjectMapper mapper;
+	private final StreetyVendingNotificationService notificationService;
+
+	private final ObjectMapper mapper;
+
+	public NotificationConsumer(StreetyVendingNotificationService notificationService, ObjectMapper mapper) {
+		this.notificationService = notificationService;
+		this.mapper = mapper;
+	}
 
     /**
      * Listens to Kafka topics related to street vending updates and processes
      * notifications accordingly.
      *
-     * @param record the message payload received from Kafka
-     * @param topic  the name of the Kafka topic from which the message was received
+     * @param messagePayload the message payload received from Kafka
+     * @param topic          the name of the Kafka topic from which the message was received
      */
 	@KafkaListener(topics = { "${persister.update.street-vending.topic}", "${persister.create.street-vending.topic}"})
-	public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+	public void listen(final Map<String, Object> messagePayload, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
 		StreetVendingRequest vendingRequest = new StreetVendingRequest();
 		try {
 
-			vendingRequest = mapper.convertValue(record, StreetVendingRequest.class);
+			vendingRequest = mapper.convertValue(messagePayload, StreetVendingRequest.class);
 		} catch (final Exception e) {
-			log.error("Error while processing SV notification to value: " + record + " on topic: " + topic + ": " + e);
+			log.error("Error while processing SV notification to value: " + messagePayload + " on topic: " + topic + ": " + e);
 		}
 
 		String applicationStatus = vendingRequest.getStreetVendingDetail().getApplicationStatus();
@@ -53,7 +57,7 @@ public class NotificationConsumer {
 				+ vendingRequest.getStreetVendingDetail().getApplicationNo() + " and for status : " +  applicationStatus);
 		
 		//Send notification to user except PENDING_FOR_PAYMENT status
-		if (!applicationStatus.equals("PENDING_FOR_PAYMENT")) {
+		if (!applicationStatus.equals(PENDING_FOR_PAYMENT_STATUS)) {
 			StreetVendingDetail applicationDetail = vendingRequest.getStreetVendingDetail();
 			if (applicationDetail.getWorkflow() == null || applicationDetail.getWorkflow().getAction() == null) {
 				applicationStatus = applicationDetail.getApplicationStatus();

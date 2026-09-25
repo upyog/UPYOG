@@ -49,9 +49,9 @@ import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.egov.common.constants.JasperReportConstants.*;
 
 import ar.com.fdvs.dj.core.DJConstants;
 import ar.com.fdvs.dj.core.DynamicJasperHelper;
@@ -86,17 +86,19 @@ public class OcComparisonReportService {
     @Autowired
     private FileStoreService fileStoreService;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     public InputStream generateOcComparisonReport(EdcrApplicationDetail ocDcr,
             EdcrApplicationDetail permitDcr, OcComparisonDetail comparisonDetail) {
 
         FileStoreMapper ocPlanFileMapper = ocDcr.getPlanDetailFileStore();
         File ocFile = ocPlanFileMapper != null ? fileStoreService.fetch(
                 ocPlanFileMapper.getFileStoreId(), DcrConstants.APPLICATION_MODULE_TYPE) : null;
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         Plan ocPlan = null;
         try {
-            ocPlan = mapper.readValue(ocFile, Plan.class);
+            ocPlan = objectMapper.readValue(ocFile, Plan.class);
         } catch (IOException e) {
             LOG.log(Level.ERROR, e);
         }
@@ -104,11 +106,10 @@ public class OcComparisonReportService {
         FileStoreMapper permitFileMapper = permitDcr.getPlanDetailFileStore();
         File permitFile = permitFileMapper != null ? fileStoreService.fetch(
                 permitFileMapper.getFileStoreId(), DcrConstants.APPLICATION_MODULE_TYPE) : null;
-        ObjectMapper permitMapper = new ObjectMapper();
-        permitMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         Plan permitPlan = null;
         try {
-            permitPlan = permitMapper.readValue(permitFile, Plan.class);
+            permitPlan = objectMapper.readValue(permitFile, Plan.class);
         } catch (IOException e) {
             LOG.log(Level.ERROR, e);
         }
@@ -120,10 +121,14 @@ public class OcComparisonReportService {
         FastReportBuilder drb = new FastReportBuilder();
 
         final Style titleStyle = new Style("titleStyle");
-        titleStyle.setFont(new Font(50, Font._FONT_TIMES_NEW_ROMAN, true));
+        titleStyle.setFont(
+                new Font(FONT_SIZE_NORMAL,
+                        FONT_FAMILY,
+                        PDF_FONT_NAME,
+                        FONT_ENCODING,
+                        false));
         titleStyle.setHorizontalAlign(HorizontalAlign.CENTER);
 
-        titleStyle.setFont(new Font(2, Font._FONT_TIMES_NEW_ROMAN, false));
         String applicationNumber = StringUtils.isNotBlank(ocDcr.getApplication().getApplicationNumber())
                 ? ocDcr.getApplication().getApplicationNumber()
                 : "NA";
@@ -256,11 +261,10 @@ public class OcComparisonReportService {
         FileStoreMapper permitFileMapper = permitDcr.getPlanDetailFileStore();
         File permitFile = permitFileMapper != null ? fileStoreService.fetch(
                 permitFileMapper.getFileStoreId(), DcrConstants.APPLICATION_MODULE_TYPE) : null;
-        ObjectMapper permitMapper = new ObjectMapper();
-        permitMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         Plan permitPlan = null;
         try {
-            permitPlan = permitMapper.readValue(permitFile, Plan.class);
+            permitPlan = objectMapper.readValue(permitFile, Plan.class);
         } catch (IOException e) {
             LOG.log(Level.ERROR, e);
         }
@@ -271,10 +275,14 @@ public class OcComparisonReportService {
         FastReportBuilder drb = new FastReportBuilder();
 
         final Style titleStyle = new Style("titleStyle");
-        titleStyle.setFont(new Font(50, Font._FONT_TIMES_NEW_ROMAN, true));
+        titleStyle.setFont(
+                new Font(FONT_SIZE_NORMAL,
+                        FONT_FAMILY,
+                        PDF_FONT_NAME,
+                        FONT_ENCODING,
+                        false));
         titleStyle.setHorizontalAlign(HorizontalAlign.CENTER);
 
-        titleStyle.setFont(new Font(2, Font._FONT_TIMES_NEW_ROMAN, false));
         String applicationNumber = StringUtils.isNotBlank(ocDcr.getApplication().getApplicationNumber())
                 ? ocDcr.getApplication().getApplicationNumber()
                 : "NA";
@@ -407,11 +415,10 @@ public class OcComparisonReportService {
         FileStoreMapper permitFileMapper = permitDcr.getPlanDetailFileStore();
         File permitFile = permitFileMapper != null ? fileStoreService.fetch(
                 permitFileMapper.getFileStoreId(), DcrConstants.APPLICATION_MODULE_TYPE) : null;
-        ObjectMapper permitMapper = new ObjectMapper();
-        permitMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         Plan permitPlan = null;
         try {
-            permitPlan = permitMapper.readValue(permitFile, Plan.class);
+            permitPlan = objectMapper.readValue(permitFile, Plan.class);
         } catch (IOException e) {
             LOG.log(Level.ERROR, e);
         }

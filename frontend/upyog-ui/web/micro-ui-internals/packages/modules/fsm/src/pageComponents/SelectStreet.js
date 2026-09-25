@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, LabelFieldPair, CardLabel, WrapUnMaskComponent } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, LabelFieldPair, CardLabel, WrapUnMaskComponent } from "@nudmcdgnpm/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import _ from "lodash";
 import Timeline from "../components/TLTimelineInFSM";
@@ -162,17 +162,17 @@ const SelectStreet = ({ t, config, onSelect, userType, formData, formState, setE
               defaultValue={formData?.cpt?.details?.address?.[input?.name] || formData?.address?.[input.name]}
               name={input.name}
               rules={{ validate: convertValidationToRules(input) }}
-              render={(_props) => (
+              render={({ field }) => (
                 <div style={{ display: "flex", alignItems: "baseline", marginRight: "unset" }}>
                   <TextInput
                     id={input.name}
                     key={input.name}
-                    value={_props.value}
+                    value={field.value}
                     onChange={(e) => {
                       setFocusIndex({ index });
-                      _props.onChange(e.target.value);
+                      field.onChange(e.target.value);
                     }}
-                    onBlur={_props.onBlur}
+                    onBlur={field.onBlur}
                     // disable={isRenewal}
                     disable={formData?.cpt?.details?.address?.[input.name] ? true : false}
                     autoFocus={focusIndex?.index == index}
@@ -181,10 +181,10 @@ const SelectStreet = ({ t, config, onSelect, userType, formData, formState, setE
                   <div style={{ marginRight: "-50px", marginLeft: "10px" }}>
                     <WrapUnMaskComponent
                       unmaskField={(e) => {
-                        _props.onChange(e);
+                        field.onChange(e);
                       }}
                       iseyevisible={
-                        (_props.value ? _props.value?.includes("*") : formData?.cpt?.details?.address?.[input.name]?.includes("*")) ? true : false
+                        (field.value ? field.value?.includes("*") : formData?.cpt?.details?.address?.[input.name]?.includes("*")) ? true : false
                       }
                       privacy={{
                         uuid: formData?.cpt?.details?.owners?.[0]?.uuid,

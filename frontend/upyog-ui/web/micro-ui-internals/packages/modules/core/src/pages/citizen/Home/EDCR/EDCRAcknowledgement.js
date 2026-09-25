@@ -1,6 +1,6 @@
-import { Banner, Card, CardText, LinkButton, SubmitBar, Toast } from "@upyog/digit-ui-react-components";
+import { Banner, Card, CardText, LinkButton, SubmitBar, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link,  } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { APPLICATION_PATH } from "./utils";
 
@@ -10,7 +10,7 @@ import { APPLICATION_PATH } from "./utils";
 */
 const EDCRAcknowledgement = (props) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
@@ -77,7 +77,7 @@ const EDCRAcknowledgement = (props) => {
   };
 
   const routeToBPAScreen = async () => {
-    history.push(
+    navigate(
       `${APPLICATION_PATH}/citizen/obps/bpa/${edcrData?.appliactionType?.toLowerCase()}/${edcrData?.applicationSubType?.toLowerCase()}/docs-required`,
       { edcrNumber: edcrData?.edcrNumber }
     );

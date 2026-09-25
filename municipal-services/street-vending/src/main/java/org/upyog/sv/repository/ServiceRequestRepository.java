@@ -15,9 +15,9 @@ import java.util.Map;
 @Slf4j
 public class ServiceRequestRepository {
 
-	private ObjectMapper mapper;
+	private final ObjectMapper mapper;
 
-	private RestTemplate restTemplate;
+	private final RestTemplate restTemplate;
 
 	@Autowired
 	public ServiceRequestRepository(ObjectMapper mapper, RestTemplate restTemplate) {
@@ -25,9 +25,10 @@ public class ServiceRequestRepository {
 		this.restTemplate = restTemplate;
 	}
 
-	public Object fetchResult(StringBuilder uri, Object request) {
+	@SuppressWarnings("unchecked")
+	public Map<String, Object> fetchResult(StringBuilder uri, Object request) {
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-		Object response = null;
+		Map<String, Object> response = null;
 		try {
 			log.info("URI : {} and Request object : {}", uri, request);
 			response = restTemplate.postForObject(uri.toString(), request, Map.class);
@@ -45,14 +46,7 @@ public class ServiceRequestRepository {
 	public String getShorteningURL(StringBuilder uri, Object request) {
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		String response = null;
-		/*
-		 * StringBuilder strq = new
-		 * StringBuilder(this.getClass().getCanonicalName()).append(".fetchResult:")
-		 * .append(System.lineSeparator());
-		 * str.append("URI: ").append(uri.toString()).append(System.lineSeparator());
-		 */
 		try {
-			// log.info("Url shortener url : " + str.toString());
 			log.info("request info : " + request + " uri : " + uri);
 			response = restTemplate.postForObject(uri.toString(), request, String.class);
 			log.info("response info : " + response);

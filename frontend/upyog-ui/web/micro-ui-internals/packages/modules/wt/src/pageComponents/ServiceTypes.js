@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { FormStep, CardLabel, Dropdown , Modal} from "@upyog/digit-ui-react-components";
+import { FormStep, CardLabel, Dropdown , Modal} from "@nudmcdgnpm/digit-ui-react-components";
 
 /* This file is made for choosing the particular request type.  
     It provides a dropdown menu that allows users to select a service type, such as  
@@ -24,9 +24,9 @@ import { FormStep, CardLabel, Dropdown , Modal} from "@upyog/digit-ui-react-comp
 const ServiceTypes = ({ t, config, onSelect, userType, formData }) => {
 const tenantId=Digit.ULBService.getStateId();
 //Fetching service type data from MDMS
-    const { data: serviceTypeData} = Digit.Hooks.useCustomMDMS(tenantId, "request-service", [{ name: "ServiceType" }], {
+    const { data: serviceTypeData} = Digit.Hooks.useCustomMDMS(tenantId, "Request-Service", [{ name: "ServiceType" }], {
     select: (data) => {
-      const formattedData = data?.["request-service"]?.["ServiceType"];
+      const formattedData = data?.["Request-Service"]?.["ServiceType"];
       return formattedData;
     },
   });

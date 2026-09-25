@@ -1,4 +1,5 @@
-import { useQuery, useQueryClient, useMutation } from "react-query";
+import { mutationTemplate } from "../../common/mutationTemplate";
+import { CMServices } from "../../services/elements/CM";
 
 /**
  * Custom React Hook for performing a search mutation using the React Query library.
@@ -20,11 +21,10 @@ import { useQuery, useQueryClient, useMutation } from "react-query";
   onError: (error) => {  handle error }
  * });
  */
-
-import { CMServices } from "../../services/elements/CM";
-
 const useCMSearch = () => {
-  return useMutation((data) => CMServices.search(data));
+  const mutationFn = (data) => CMServices.search(data);
+
+  return mutationTemplate({ mutationFn });
 };
 
 export default useCMSearch;

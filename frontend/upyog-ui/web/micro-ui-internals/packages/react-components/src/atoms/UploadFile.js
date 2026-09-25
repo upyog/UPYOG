@@ -17,7 +17,7 @@ const getCitizenStyles = (value) => {
         width: "100%",
         overflow: "hidden",
         textOverflow: "ellipsis",
-        width: "80%"
+        // width: "80%"  why width is written twice please check and remove the duplicate one
       },
       tagStyles: {
         width: "90%",
@@ -88,7 +88,7 @@ const getCitizenStyles = (value) => {
         padding: "5px", 
         margin: 0,
         width: "100%",
-        margin: "5px"
+        // margin: "5px" why margin is written twice please check and remove the duplicate one
       },
       textStyles: {
         wordBreak: "break-word",
@@ -188,6 +188,19 @@ const UploadFile = (props) => {
   useEffect(() => handleEmpty(), [inpRef?.current?.files])
 
   useEffect(() => handleChange(), [props.message]);
+
+  // Keep local upload UI in sync when the parent clears the file (e.g. Cancel reset).
+  useEffect(() => {
+    if (props.file?.name) {
+      setHasFile(true);
+      return;
+    }
+    setHasFile(false);
+    setprevSate(null);
+    if (inpRef.current) {
+      inpRef.current.value = "";
+    }
+  }, [props.file]);
 
   const showHint = props?.showHint || false;
 

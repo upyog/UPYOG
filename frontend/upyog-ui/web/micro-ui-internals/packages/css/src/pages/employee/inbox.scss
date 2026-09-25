@@ -97,7 +97,8 @@
     }
 
     .filter-label {
-      @apply font-bold text-heading-l flex gap-3;
+      @apply font-bold text-heading-l flex;
+      gap: 12px;
       padding-bottom: 6px;
       svg {
         fill: #0b0c0c;
@@ -133,7 +134,8 @@
         }
 
         .filter-label {
-          @apply text-heading-m block flex gap-3 items-center;
+          @apply text-heading-m block flex items-center;
+          gap: 12px;
           padding-bottom: 6px;
           svg {
             fill: #0b0c0c;

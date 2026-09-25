@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, DatePicker, CardSectionHeader, DeleteIcon } from "@upyog/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, DatePicker, CardSectionHeader, DeleteIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
@@ -231,11 +231,11 @@ const InspectionReportForm = (_props) => {
                                 name="InspectionDate"
                                 rules={{ required: t("REQUIRED_FIELD") }}
                                 control={control}
-                                render={(props) => (
+                                render={({ field }) => (
                                     <DatePicker
-                                        date={props.value}
+                                        date={field.value}
                                         name="InspectionDate"
-                                        onChange={props.onChange}
+                                        onChange={field.onChange}
                                     />
                                 )}
                             />
@@ -248,12 +248,12 @@ const InspectionReportForm = (_props) => {
                                 name="InspectionTime"
                                 rules={{ required: t("REQUIRED_FIELD") }}
                                 control={control}
-                                render={(props) => (
+                                render={({ field }) => (
                                     <TextInput
                                         name="InspectionTime"
                                         type="time"
-                                        value={props.value}
-                                        onChange={props.onChange}
+                                        value={field.value}
+                                        onChange={field.onChange}
                                     />
                                 )}
                             />
@@ -269,7 +269,7 @@ const InspectionReportForm = (_props) => {
                                         control={control}
                                         name={`question_${ind}`}
                                         rules={{ required: t("REQUIRED_FIELD") }}
-                                        render={(props) => (
+                                        render={({ field }) => (
                                             <Dropdown
                                                 className="form-field"
                                                 style={{ width: "100%", maxWidth: "100%" }}
@@ -277,11 +277,11 @@ const InspectionReportForm = (_props) => {
                                                 disable={false}
                                                 option={getOptions(ob.fieldType)}
                                                 select={(e) => {
-                                                    if (props?.value?.code == e?.code) return true;
-                                                    props.onChange(e);
+                                                    if (field?.value?.code == e?.code) return true;
+                                                    field.onChange(e);
                                                 }}
                                                 optionKey="i18nKey"
-                                                onBlur={props.onBlur}
+                                                onBlur={field.onBlur}
                                                 t={t}
                                             />
                                         )}
@@ -295,13 +295,13 @@ const InspectionReportForm = (_props) => {
                                         control={control}
                                         name={`Remarks_${ind}`}
                                         defaultValue={unit?.uomValue}
-                                        render={(props) => (
+                                        render={({ field }) => (
                                             <TextInput
                                                 value={getValues(`Remarks${ind}`)}
                                                 onChange={(e) => {
-                                                    props.onChange(e);
+                                                    field.onChange(e);
                                                 }}
-                                                onBlur={props.onBlur}
+                                                onBlur={field.onBlur}
                                             />
                                         )}
                                     />

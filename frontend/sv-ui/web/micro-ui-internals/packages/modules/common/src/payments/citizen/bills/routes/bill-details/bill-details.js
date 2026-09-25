@@ -1,11 +1,11 @@
-import { Card, Header, KeyNote, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, Header, KeyNote, Loader, SubmitBar } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 const BillDetails = ({ businessService }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { state, pathname, search } = useLocation();
   const userInfo = Digit.UserService.getUser();
   let { consumerCode } = useParams();
@@ -57,7 +57,16 @@ const BillDetails = ({ businessService }) => {
   
   const onSubmit = () => {
     let paymentAmount = paymentType === t("CS_PAYMENT_FULL_AMOUNT") ? getTotal() : amount;
-      history.push(`/sv-ui/citizen/payment/collect/${businessService}/${consumerCode}`, { paymentAmount, tenantId: billDetails.tenantId});
+      // navigate(`/sv-ui/citizen/payment/collect/${businessService}/${consumerCode}`, { paymentAmount, tenantId: billDetails.tenantId});
+      navigate(`/sv-ui/citizen/payment/collect/${businessService}/${consumerCode}`,
+            {
+              state: {
+                paymentAmount,
+                tenantId: billDetails?.tenantId,
+              },
+            }
+          );
+
     
   };
   

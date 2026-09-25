@@ -56,8 +56,8 @@ const Table = ({
     state: { pageIndex, pageSize, sortBy, globalFilter },
   } = useTable(
     {
-      columns,
-      data,
+      columns: columns || [],
+      data: data || [],
       initialState: { pageIndex: currentPage, pageSize: pageSizeLimit, sortBy: autoSort ? [{ id: initSortId, desc: false }] : sortParams },
       pageCount: totalRecords > 0 ? Math.ceil(totalRecords / pageSizeLimit) : -1,
       manualPagination: manualPagination,
@@ -70,9 +70,13 @@ const Table = ({
       disableGlobalFilter: onSearch === false ? true : false,
       globalFilter: globalSearch || "text",
       useControlledState: (state) => {
+        // Manual pagination owns page index AND page size from props.
+        // Without syncing pageSize, the rows-per-page <select> stays on the
+        // initial value (10) even after onPageSizeChange updates pageSizeLimit.
         return React.useMemo(() => ({
           ...state,
           pageIndex: manualPagination ? currentPage : state.pageIndex,
+          pageSize: manualPagination ? pageSizeLimit : state.pageSize,
         }));
       },
     },
@@ -89,8 +93,20 @@ const Table = ({
   useEffect(() => setGlobalFilter(onSearch), [onSearch, setGlobalFilter]);
 
   const tref = useRef();
-  
-  return (
+/*
+  React Table prop getter functions (like getHeaderGroupProps, getRowProps, getCellProps)
+  return objects that include a special `key` property.
+
+  In React, `key` is reserved for internal reconciliation and should NOT be passed
+  via object spreading (e.g., {...props}), as it can cause warnings and unexpected behavior.
+
+  To handle this correctly, we extract `key` from the props object and pass it explicitly
+  as `key={key}`, while spreading the remaining props separately.
+
+  This ensures proper rendering and avoids React warnings, especially in dynamic tables
+  with sorting, pagination, and filtering.
+*/ 
+ return (
     <React.Fragment>
     <div ref={tref} style={tref.current && tref.current.offsetWidth < tref.current.scrollWidth ? {...inboxStyles}: {}}>
     <span className={customTableWrapperClassName}>
@@ -98,42 +114,46 @@ const Table = ({
       <table className={className} {...getTableProps()} style={styles} ref={tableRef}>
          
         <thead>
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-             {showAutoSerialNo&& <th style={{  verticalAlign: "top"}}>
-              {showAutoSerialNo&& typeof showAutoSerialNo =="string"?t(showAutoSerialNo):t("TB_SNO")}
-              </th>}
-              {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())} style={{ verticalAlign: "top" }}>
-                  {column.render("Header")}
-                  <span>{column.isSorted ? column.isSortedDesc ? <SortDown /> : <SortUp /> : ""}</span>
-                </th>
-              ))}
-            </tr>
-          ))}
+          {headerGroups.map((headerGroup) => {
+            const headerProps = headerGroup.getHeaderGroupProps();
+            const { key, ...restHeaderProps } = headerProps;
+            return (
+              <tr key={key} {...restHeaderProps}>
+               {showAutoSerialNo&& <th style={{  verticalAlign: "top"}}>
+                {showAutoSerialNo&& typeof showAutoSerialNo =="string"?t(showAutoSerialNo):t("TB_SNO")}
+                </th>}
+                {headerGroup.headers.map((column) => {
+                  const thProps = column.getHeaderProps(column.getSortByToggleProps());
+                  const { key, ...restThProps } = thProps;
+                  return (
+                    <th key={key} {...restThProps} style={{ verticalAlign: "top" }}>
+                      {column.render("Header")}
+                      <span>{column.isSorted ? column.isSortedDesc ? <SortDown /> : <SortUp /> : ""}</span>
+                    </th>
+                  );
+                })}
+              </tr>
+            );
+          })}
         </thead>
         <tbody {...getTableBodyProps()}>
           {page.map((row, i) => {
             // rows.slice(0, 10).map((row, i) => {
             prepareRow(row);
+            const rowProps = row.getRowProps();
+            const { key: rowKey, ...restRowProps } = rowProps;
             return (
-              <tr {...row.getRowProps()}>
+              <tr key={rowKey} {...restRowProps}>
               {showAutoSerialNo&&  <td >
               {i+1}
               </td>}
                 {row.cells.map((cell) => {
+                  const cellProps = cell.getCellProps([
+                    getCellProps(cell),
+                  ]);
+                  const { key: cellKey, ...restCellProps } = cellProps;
                   return (
-                    <td
-                      // style={{ padding: "20px 18px", fontSize: "16px", borderTop: "1px solid grey", textAlign: "left", verticalAlign: "middle" }}
-                      {...cell.getCellProps([
-                        // {
-                        //   className: cell.column.className,
-                        //   style: cell.column.style,
-                        // },
-                        // getColumnProps(cell.column),
-                        getCellProps(cell),
-                      ])}
-                    >
+                    <td key={cellKey} {...restCellProps}>
                       {cell.attachment_link ? (
                         <a style={{ color: "#1D70B8" }} href={cell.attachment_link}>
                           {cell.render("Cell")}
@@ -156,13 +176,13 @@ const Table = ({
           {`${t("CS_COMMON_ROWS_PER_PAGE")} :`}
           <select
             className="cp"
-            value={pageSize}
+            value={Number(manualPagination ? pageSizeLimit : pageSize) || 10}
             style={{ marginRight: "15px" }}
             onChange={manualPagination ? onPageSizeChange : (e) => setPageSize(Number(e.target.value))}
           >
-            {[10, 20, 30, 40, 50].map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                {pageSize}
+            {[10, 20, 30, 40, 50].map((size) => (
+              <option key={size} value={size}>
+                {size}
               </option>
             ))}
           </select>

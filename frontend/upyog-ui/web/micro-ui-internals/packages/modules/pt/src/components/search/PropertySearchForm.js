@@ -1,7 +1,6 @@
-import { CardLabelError, SearchField, SearchForm, SubmitBar, TextInput, Localities, MobileNumber, Dropdown } from "@upyog/digit-ui-react-components";
+import { CardLabelError, SearchField, SearchForm, SubmitBar, TextInput,Localities,MobileNumber, Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import "../../css/pt-inline-auto.css";
 const SwitchComponent = props => {
   let searchBy = props.searchBy;
   return <div className="w-fullwidth PropertySearchFormSwitcher">
@@ -97,34 +96,85 @@ const SearchPTID = ({
   return <div className="PropertySearchForm">
       <SearchForm onSubmit={onSubmit} className={"pt-property-search"} handleSubmit={handleSubmit}>
         <SwitchComponent keys={Object.keys(PTSearchFields || {})} searchBy={searchBy} onReset={onReset} t={t} onSwitch={setSearchBy} />
-        {fields && Object.keys(fields).map(key => {
-        let field = fields[key];
-        let validation = field?.validation || {};
-        return <SearchField key={key} className={"pt-form-field"}>
-                <label>{t(field?.label)}{`${field?.validation?.required ? "*" : ""}`}</label>
-                {field?.type === "custom" ? <Controller name={key} defaultValue={formValue?.[key]} rules={field.validation} control={control} render={(props, customProps) => <field.customComponent selectLocality={d => {
-            props.onChange(d);
-          }} tenantId={tenantId} selected={formValue?.[key]} {...field.customCompProps} />} /> : field?.type === "number" ? <div>
-            <MobileNumber name="mobileNumber" inputRef={register({
-              value: getValues(key),
-              shouldUnregister: true,
-              ...validation
-            })} type="number" componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
-            //maxlength={10}
+        {fields &&
+          Object.keys(fields).map((key) => {
+            let field = fields[key];
+            let validation = field?.validation || {};
+            return (
+              <SearchField key={key} className={"pt-form-field"}>
+                <label>{t(field?.label)}{`${field?.validation?.required?"*":""}`}</label>
+                {field?.type==="custom"? 
+                <Controller
+                  name={key}
+                  defaultValue={formValue?.[key]}
+                  rules={field.validation}
+                  control={control}
+                  render={({ field: controllerField }) => {
+                    const CustomComponent = field?.customComponent;
+
+                    return CustomComponent ? (
+                      <CustomComponent
+                        selectLocality={(d) => {
+                          controllerField.onChange(d);
+                        }}
+                        tenantId={tenantId}
+                        selected={formValue?.[key]}
+                        {...field.customCompProps}
+                      />
+                    ) : null;
+                  }}
+                />
+            :field?.type === "number"?
+            <div>
+            <Controller
+              control={control}
+              name={key}
+              rules={validation}
+              render={({ field: controllerField }) => (
+                <MobileNumber
+                  name={key}
+                  value={controllerField.value}
+                  onChange={controllerField.onChange}
+                  onBlur={controllerField.onBlur}
+                  inputRef={controllerField.ref}
+                  type="number"
+                  componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
+                  //maxlength={10}
+                />
+              )}
             />
-        </div> : field.type === "propertyType" ? <div>
-        <Dropdown className="form-field" selected={usageType} disable={false} defaultValue={formValue?.[key]} name={key} option={usageCategoryMajorMenu()} select={e => setProptype(e)} inputRef={register({
-              value: getValues(key),
-              shouldUnregister: true
-            })} optionKey="i18nKey" t={t} />
-         </div> : <TextInput name={key} type={field?.type} inputRef={register({
-            value: getValues(key),
+            </div>
+        :field.type === "propertyType"?
+        <div>
+        <Dropdown
+          className="form-field"
+          selected={usageType}
+          disable={false}
+          defaultValue={formValue?.[key]}
+          name={key}
+          option={usageCategoryMajorMenu()}
+          select={(e) => setProptype(e)}
+          {...register(key, {
             shouldUnregister: true,
-            ...validation
-          })} />}
+          })}
+          
+          optionKey="i18nKey"
+          t={t}
+        />
+         </div>
+        :
+            <TextInput
+                  name={key}
+                  type={field?.type}
+                  {...register(key, {
+                  shouldUnregister: true,
+                  ...validation,
+                })}
+                />}
                 <CardLabelError className="pt-auto-26">{t(formState?.errors?.[key]?.message)}</CardLabelError>
-              </SearchField>;
-      })}
+              </SearchField>
+            );
+          })}
 
        <div className="pt-search-action">
          <SearchField className="pt-search-action-reset">

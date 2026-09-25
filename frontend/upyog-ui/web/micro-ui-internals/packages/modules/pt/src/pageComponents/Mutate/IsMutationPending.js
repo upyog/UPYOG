@@ -1,24 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, RadioButtons, LabelFieldPair, CardLabel, Dropdown, Loader, TextInput, CheckBox } from "@upyog/digit-ui-react-components";
+import { FormStep, RadioButtons, LabelFieldPair, CardLabel, Dropdown, Loader, TextInput, CheckBox } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../../components/TLTimeline";
-import "../../css/pt-inline-auto.css";
-const IsMutationPending = props => {
-  const {
-    t,
-    config,
-    onSelect,
-    userType,
-    formData,
-    setError,
-    clearErrors,
-    errors
-  } = props;
-  const menu = [{
-    code: "YES"
-  }, {
-    code: "NO"
-  }];
-  const [isMutationInCourt, setMutationInCourt] = useState(formData?.[config.key]?.isMutationInCourt);
+
+const IsMutationPending = (props) => {
+  const { t, config, onSelect, userType, formData, setError, clearErrors, errors } = props;
+
+  const menu = [{ code: "YES" }, { code: "NO" }];
+
+  const [isMutationInCourt, setMutationInCourt] = useState(formData?.[config.key]?.isMutationInCourt || { code: "NO" });
   const [caseDetails, setCaseDetails] = useState(formData?.[config.key]?.caseDetails || "");
   const goNext = () => {
     onSelect(config.key, {

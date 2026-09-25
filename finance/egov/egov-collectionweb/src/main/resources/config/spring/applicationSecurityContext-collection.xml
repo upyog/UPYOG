@@ -54,31 +54,102 @@
 	   http://www.springframework.org/schema/security
 	   http://www.springframework.org/schema/security/spring-security.xsd" default-lazy-init="true">
 
+	<!-- 
+		LTS Migration Fix (Spring Security 6 Upgrade):
+		Defined explicit AntPathRequestMatcher beans and used request-matcher-ref in security:filter-chain tags.
+		In Spring Security 6, using inline pattern="..." attributes in filter chains defaults to MvcRequestMatcher, 
+		which throws NoSuchBeanDefinitionException (No bean named 'mvcHandlerMappingIntrospector' available) 
+		in non-Spring-MVC (Struts 7) web applications. Defining AntPathRequestMatcher beans directly bypasses 
+		mvcHandlerMappingIntrospector and satisfies XML schema validation.
+	-->
+	<bean id="commonjsMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/commonjs/**" />
+	</bean>
+	<bean id="jsMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/js/**" />
+	</bean>
+	<bean id="commonsMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/commons/**" />
+	</bean>
+	<bean id="commonyuiMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/commonyui/**" />
+	</bean>
+	<bean id="cssMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/css/**" />
+	</bean>
+	<bean id="imagesMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/images/**" />
+	</bean>
+	<bean id="imageMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/image/**" />
+	</bean>
+	<bean id="javascriptMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/javascript/**" />
+	</bean>
+	<bean id="resourcesMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/resources/**" />
+	</bean>
+	<bean id="errorMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/error/**" />
+	</bean>
+	<bean id="indexMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/index.jsp" />
+	</bean>
+	<bean id="onlineReceiptNewFormMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/citizen/onlineReceipt-newform.action" />
+	</bean>
+	<bean id="onlineReceiptSaveNewMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/citizen/onlineReceipt-saveNew.action" />
+	</bean>
+	<bean id="onlineReceiptAcceptPgMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/citizen/onlineReceipt-acceptMessageFromPaymentGateway.action" />
+	</bean>
+	<bean id="onlineReceiptViewMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/citizen/onlineReceipt-view.action" />
+	</bean>
+	<bean id="publicMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/public/**" />
+	</bean>
+	<bean id="reportViewerMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/reportViewer/**" />
+	</bean>
+	<bean id="collectionSummaryCriteriaMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/reports/collectionSummary-criteria.action" />
+	</bean>
+	<bean id="collectionSummaryReportMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/reports/collectionSummary-report.action" />
+	</bean>
+	<bean id="ajaxLoadServiceByClassificationMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/receipts/ajaxReceiptCreate-ajaxLoadServiceByClassification.action" />
+	</bean>
+	<bean id="allMatcher" class="org.springframework.security.web.util.matcher.AntPathRequestMatcher">
+		<constructor-arg value="/**" />
+	</bean>
+
 	<bean id="securityFilterChain" name="securityFilterChain" class="org.springframework.security.web.FilterChainProxy">
 		<constructor-arg>
 			<list>
-				<security:filter-chain pattern="/commonjs/**" filters="none" />
-				<security:filter-chain pattern="/js/**" filters="none" />
-				<security:filter-chain pattern="/commons/**" filters="none" />
-				<security:filter-chain pattern="/commonyui/**" filters="none" />
-				<security:filter-chain pattern="/css/**" filters="none" />
-				<security:filter-chain pattern="/images/**" filters="none" />
-				<security:filter-chain pattern="/image/**" filters="none" />
-				<security:filter-chain pattern="/javascript/**" filters="none" />
-				<security:filter-chain pattern="/resources/**" filters="none" />
-				<security:filter-chain pattern="/error/**" filters="none" />
-				<security:filter-chain pattern="/index.jsp" filters="none" />
-				<security:filter-chain pattern="/image/**" filters="none" />
-				<security:filter-chain pattern="/citizen/onlineReceipt-newform.action" filters="none" />
-				<security:filter-chain pattern="/citizen/onlineReceipt-saveNew.action" filters="none" />
-				<security:filter-chain pattern="/citizen/onlineReceipt-acceptMessageFromPaymentGateway.action" filters="none" />
-				<security:filter-chain pattern="/citizen/onlineReceipt-view.action" filters="none" />
-				<security:filter-chain pattern="/public/**" filters="none"/>
-				<security:filter-chain pattern="/reportViewer/**" filters="none" />
-				<security:filter-chain pattern="/reports/collectionSummary-criteria.action" filters="none" />
-				<security:filter-chain pattern="/reports/collectionSummary-report.action" filters="none" />
-				<security:filter-chain pattern="/receipts/ajaxReceiptCreate-ajaxLoadServiceByClassification.action" filters="none" />
-				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,headerWriterFilter,csrfFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
+				<security:filter-chain request-matcher-ref="commonjsMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="jsMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="commonsMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="commonyuiMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="cssMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="imagesMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="imageMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="javascriptMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="resourcesMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="errorMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="indexMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="onlineReceiptNewFormMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="onlineReceiptSaveNewMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="onlineReceiptAcceptPgMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="onlineReceiptViewMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="publicMatcher" filters="none"/>
+				<security:filter-chain request-matcher-ref="reportViewerMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="collectionSummaryCriteriaMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="collectionSummaryReportMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="ajaxLoadServiceByClassificationMatcher" filters="none" />
+				<security:filter-chain request-matcher-ref="allMatcher" filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,headerWriterFilter,csrfFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list>
 		</constructor-arg>
 	</bean>	

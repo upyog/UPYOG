@@ -1,17 +1,17 @@
 package org.egov.infra.microservice.models;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 public class Department {
 
     private Long id;
-    @SafeHtml
+    @SanitizeHtml
     private String name;
-    @SafeHtml
+    @SanitizeHtml
     private String code;
 
     private Boolean active;
-    @SafeHtml
+    @SanitizeHtml
     private String tenantId;
 
     public Department(Long id, String name, String code, Boolean active, String tenantId) {

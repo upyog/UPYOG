@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Card, Banner, SubmitBar, Toast, ActionBar, Loader } from "@upyog/digit-ui-react-components";
+import { Card, Banner, SubmitBar, Toast, ActionBar, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import "../css/asset-inline-auto.css";
+
 const ProcessDepreciationResponse = props => {
   const location = useLocation();
   const {
@@ -16,6 +16,10 @@ const ProcessDepreciationResponse = props => {
   const [applicationDetail, setApplicationDetail] = useState(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true); // Loader state
+  const moduleBasePath = Digit.Hooks.useModuleBasePath();
+
+
+
 
   useEffect(() => {
     if (ProcessDepreciation) {
@@ -45,20 +49,29 @@ const ProcessDepreciationResponse = props => {
   return <div>
       <Card>
         {/* Show Loader while waiting for response */}
-        {loading ? <Loader /> : message && !error ? <div> 
-            <Banner message={GetBannerMessage(true, t)} applicationNumber={applicationDetail} info={GetBannerLabel(true, t)} successful={true} />
+        {loading ? (
+          <Loader />
+        ) : message && !error ? (
+          <div> 
+            <Banner
+              message={GetBannerMessage(true, t)}
+              applicationNumber={applicationDetail}
+              info={GetBannerLabel(true, t)}
+              successful={true}
+            />
             <div className="asset-auto-222">
-              <Link to={`${props.parentRoute}/assetservice/applicationsearch/application-details/${applicationDetail}`}>
+              <Link to={`${moduleBasePath?.path}/assetservice/applicationsearch/application-details/${applicationDetail}`} >
                 <SubmitBar label={t("AST_DEPRECIATION_LIST")} />
               </Link>
             </div>
-          </div> : <Banner message="Processing..." successful={false} />}
+          </div>
+        ) : <Banner message="Processing..." successful={false} />}
       </Card>
 
       {error && message && <Toast error={true} label={message} onClose={closeToast} />}
 
       <ActionBar>
-        <Link to={`${props.parentRoute.includes("employee") ? "/upyog-ui/employee" : "/upyog-ui/citizen"}`}>
+        <Link to={"/upyog-ui/employee"}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       </ActionBar>

@@ -140,6 +140,9 @@ export const waterTankerPayload = (data) =>{
                 fileStoreId: data?.treePruningRequestDetails?.supportingDocumentFile,
             }
         ],
+        additionalDetails: {
+            digipin: data?.treePruningRequestDetails?.digipin || "",
+        },
         address: {
             addressType:data?.address?.addressType?.code,
             pincode: data?.address?.pincode,

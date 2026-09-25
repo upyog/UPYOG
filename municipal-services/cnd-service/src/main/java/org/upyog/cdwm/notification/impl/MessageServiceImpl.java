@@ -9,9 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.upyog.cdwm.config.CNDConfiguration;
 import org.upyog.cdwm.notification.MessageService;
 import org.upyog.cdwm.notification.constants.NotificationConstants;
 import org.upyog.cdwm.notification.util.NotificationUtil;
@@ -26,11 +24,14 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class MessageServiceImpl implements MessageService{
 
-	@Autowired
-	private ServiceRequestRepository serviceRequestRepository;
+	private final ServiceRequestRepository serviceRequestRepository;
 	
-	@Autowired
-	private NotificationUtil util;
+	private final NotificationUtil util;
+
+	public MessageServiceImpl(ServiceRequestRepository serviceRequestRepository, NotificationUtil util) {
+		this.serviceRequestRepository = serviceRequestRepository;
+		this.util = util;
+	}
 
 	/**
 	 * Generates a customized notification message based on the action status of a 
@@ -60,10 +61,11 @@ public class MessageServiceImpl implements MessageService{
 	@Override
 	public Map<String, String> getCustomizedMsg(RequestInfo requestInfo, CNDApplicationDetail cndApplicationDetail,
 			String localizationMessage) {
-		String message = null, messageTemplate;
+		String message = null;
+		String messageTemplate;
 		String link = null;
-		String ACTION_STATUS = cndApplicationDetail.getWorkflow().getAction();
-		switch (ACTION_STATUS) {
+		String actionStatus = cndApplicationDetail.getWorkflow().getAction();
+		switch (actionStatus) {
 
 		case NotificationConstants.ACTION_STATUS_APPLY:
 			messageTemplate = getMessageTemplate(NotificationConstants.NOTIFICATION_APPLY, localizationMessage);
@@ -99,6 +101,11 @@ public class MessageServiceImpl implements MessageService{
 			messageTemplate = getMessageTemplate(NotificationConstants.NOTIFICATION_APPLICATIONSUBMITTED,
 					localizationMessage);
 			message = getMessageWithNumberAndFinalDetails(cndApplicationDetail, messageTemplate);
+			break;
+
+		default:
+			log.warn("Unsupported action status for notification: {}", actionStatus);
+			message = "";
 			break;
 		}
 		
@@ -161,23 +168,23 @@ public class MessageServiceImpl implements MessageService{
 	public String getLocalizationMessages(String tenantId, RequestInfo requestInfo) {
 
 		String locale = NotificationConstants.NOTIFICATION_LOCALE;
-		Boolean isRetryNeeded = false;
+		boolean isRetryNeeded = false;
 		String jsonString = null;
-		LinkedHashMap responseMap = null;
+		LinkedHashMap<String, Object> responseMap = null;
 
 		if (!StringUtils.isEmpty(requestInfo.getMsgId()) && requestInfo.getMsgId().split("\\|").length >= 2) {
 			locale = requestInfo.getMsgId().split("\\|")[1];
 			isRetryNeeded = true;
 		}
 
-		responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(util.getUri(tenantId, requestInfo, locale),
+		responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(util.getUri(tenantId, locale),
 				requestInfo);
 		jsonString = new JSONObject(responseMap).toString();
 
 		if (StringUtils.isEmpty(jsonString) && isRetryNeeded) {
 
-			responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(
-					util.getUri(tenantId, requestInfo, NotificationConstants.NOTIFICATION_LOCALE), requestInfo);
+			responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(
+					util.getUri(tenantId, NotificationConstants.NOTIFICATION_LOCALE), requestInfo);
 			jsonString = new JSONObject(responseMap).toString();
 			if (StringUtils.isEmpty(jsonString))
 				throw new CustomException("UG_RS_LOCALE_ERROR",

@@ -9,7 +9,7 @@ import React, { useEffect } from 'react';
  * - `handleViewAvailability`: Sets session storage with ad details and redirects to the search page.
  * - `useEffect`: Clears session storage on component mount to prevent stale data.
  */
-import "../css/ads-inline-auto.css";
+
 const AdvertisementModuleCard = ({
   imageSrc,
   title,
@@ -49,7 +49,7 @@ const AdvertisementModuleCard = ({
         value: "true"
       }
     });
-    window.location.href = `${path}bookad/searchads`;
+    window.location.href = `bookad/searchads`;
   };
   useEffect(() => {
     clearParams();
@@ -77,7 +77,7 @@ const AdvertisementModuleCard = ({
         value: "true"
       }
     });
-    window.location.href = `${path}bookad/searchads`;
+    window.location.href = `bookad/searchads`;
   };
   return <div className="ads-auto-30">
       <div className="ads-auto-31">

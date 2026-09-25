@@ -1,16 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { TextInput, CheckBox, CardLabel, LabelFieldPair, TextArea, CitizenInfoLabel } from "@upyog/digit-ui-react-components";
+import { TextInput, CheckBox, CardLabel, LabelFieldPair, TextArea, CitizenInfoLabel, FormStep } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimeline";
-import FormStep from "../../../../react-components/src/molecules/FormStep";
-import "../css/tl-inline-auto.css";
-const SelectOwnerAddress = ({
-  t,
-  config,
-  onSelect,
-  userType,
-  formData
-}) => {
+const SelectOwnerAddress = ({ t, config, onSelect, userType, formData }) => {
   const [permanentAddress, setPermanentAddress] = useState(formData?.owners?.permanentAddress || "");
   const [isCorrespondenceAddress, setIsCorrespondenceAddress] = useState(formData?.owners?.isCorrespondenceAddress);
   let isedittrade = window.location.href.includes("edit-application");

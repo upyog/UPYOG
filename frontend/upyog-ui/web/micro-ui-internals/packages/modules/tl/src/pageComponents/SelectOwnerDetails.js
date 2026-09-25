@@ -1,7 +1,19 @@
 import React, { useEffect, useState, useMemo, useReducer } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, CheckBox, LinkButton, CardHeader, Loader } from "@upyog/digit-ui-react-components";
+import {
+  FormStep,
+  TextInput,
+  CardLabel,
+  RadioButtons,
+  LabelFieldPair,
+  Dropdown,
+  CheckBox,
+  LinkButton,
+  CardHeader,
+  Loader,
+} from "@nudmcdgnpm/digit-ui-react-components";
+
 import Timeline from "../components/TLTimeline";
-import "../css/tl-inline-auto.css";
+
 const SelectOwnerDetails = ({
   t,
   config,

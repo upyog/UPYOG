@@ -1,13 +1,11 @@
 package org.upyog.adv.kafka.consumer;
 
-import java.util.HashMap;
+import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 import org.upyog.adv.service.ADVNotificationService;
-import org.upyog.adv.web.models.BookingDetail;
 import org.upyog.adv.web.models.BookingRequest;
 import org.springframework.kafka.support.KafkaHeaders;
 
@@ -34,23 +32,26 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class NotificationConsumer {
 
-	@Autowired
-	private ADVNotificationService notificationService;
+	private final ADVNotificationService notificationService;
 
-	@Autowired
-	private ObjectMapper mapper;
+	private final ObjectMapper mapper;
+
+	public NotificationConsumer(ADVNotificationService notificationService, ObjectMapper mapper) {
+		this.notificationService = notificationService;
+		this.mapper = mapper;
+	}
 
 	@KafkaListener(topics = { "${persister.save.advertisement.booking.topic}",
 			"${persister.update.advertisement.booking.topic}" })
-	public void listen(final HashMap<String, Object> record, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+	public void listen(final Map<String, Object> messagePayload, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
 		BookingRequest bookingRequest = new BookingRequest();
 		try {
 
-			log.info("Consuming record in ADV for notification: " + record.toString() + " from topic: " + topic);
-			bookingRequest = mapper.convertValue(record, BookingRequest.class);
+			log.info("Consuming record in ADV for notification: " + messagePayload.toString() + " from topic: " + topic);
+			bookingRequest = mapper.convertValue(messagePayload, BookingRequest.class);
 		} catch (final Exception e) {
-			log.error("Error while processing CHB notification to value: " + record + " on topic: " + topic + ": " + e);
+			log.error("Error while processing CHB notification to value: " + messagePayload + " on topic: " + topic + ": " + e);
 		}
 
 		String bookingStatus = bookingRequest.getBookingApplication().getBookingStatus();

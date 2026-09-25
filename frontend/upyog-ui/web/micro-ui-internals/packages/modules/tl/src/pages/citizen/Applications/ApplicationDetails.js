@@ -1,7 +1,20 @@
-import { Card, CardHeader, Loader, MultiLink, Row, SubmitBar, Header, CardSubHeader, CardSectionHeader, LinkLabel, LinkButton, StatusTable } from "@upyog/digit-ui-react-components";
+import {
+  Card,
+  CardHeader,
+  Loader,
+  MultiLink,
+  Row,
+  SubmitBar,
+  Header,
+  CardSubHeader,
+  CardSectionHeader,
+  LinkLabel,
+  LinkButton,
+  StatusTable,
+} from  "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { Link, useParams,  } from "react-router-dom";
 import getPDFData from "../../../utils/getTLAcknowledgementData";
 import TLWFApplicationTimeline from "../../../pageComponents/TLWFApplicationTimeline";
 import TLDocument from "../../../pageComponents/TLDocumets";
@@ -10,16 +23,10 @@ const getAddress = (address, t) => {
   return `${address?.doorNo ? `${address?.doorNo}, ` : ""} ${address?.street ? `${address?.street}, ` : ""}${address?.landmark ? `${address?.landmark}, ` : ""}${t(address?.locality?.code)}, ${t(address?.city?.code)},${t(address?.pincode) ? `${address?.pincode}` : " "}`;
 };
 const TLApplicationDetails = () => {
-  const {
-    t
-  } = useTranslation();
-  const {
-    id
-  } = useParams();
-  const {
-    tenantId
-  } = useParams();
-  const history = useHistory();
+  const { t } = useTranslation();
+  const { id } = useParams();
+  const { tenantId } = useParams();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [bill, setBill] = useState(null);
   const {
     data: storeData
@@ -118,7 +125,7 @@ const TLApplicationDetails = () => {
     return <Loader />;
   }
   if (application?.applicationDetails?.length === 0) {
-    history.goBack();
+    navigate(-1);
   }
   const handleDownloadPdf = async () => {
     const tenantInfo = tenants.find(tenant => tenant.code === application[0]?.tenantId);
@@ -383,7 +390,7 @@ const TLApplicationDetails = () => {
             }} />
                   <Row className="border-none" label={t("PROPERTY_ADDRESS")} text={propertyAddress} />
                   <LinkButton label={t("TL_VIEW_PROPERTY_DETAIL")} onClick={() => {
-              history.push(`/upyog-ui/citizen/commonpt/view-property?propertyId=${PTData?.Properties?.[0]?.propertyId}&tenantId=${PTData?.Properties?.[0]?.tenantId}`);
+              navigate(`/upyog-ui/citizen/commonpt/view-property?propertyId=${PTData?.Properties?.[0]?.propertyId}&tenantId=${PTData?.Properties?.[0]?.tenantId}`);
             }} className="tl-auto-154"></LinkButton>
                 </div>}
               <Row label="" />

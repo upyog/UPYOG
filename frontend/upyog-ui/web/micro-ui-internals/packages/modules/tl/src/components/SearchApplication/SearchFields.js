@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { Controller, useWatch } from "react-hook-form";
-import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, Loader } from "@upyog/digit-ui-react-components";
+import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 
 const SearchFields = ({ register, control, reset, tenantId, t, previousPage }) => {
   const { data: applicationTypes, isLoading: applicationTypesLoading } = Digit.Hooks.tl.useMDMS.applicationTypes(tenantId);
@@ -31,7 +31,7 @@ const SearchFields = ({ register, control, reset, tenantId, t, previousPage }) =
     <>
       <SearchField>
         <label>{t("TL_HOME_SEARCH_RESULTS_APP_NO_LABEL")}</label>
-        <TextInput name="applicationNumber" inputRef={register({})} />
+        <TextInput name="applicationNumber" {...register("applicationNumber")} />
       </SearchField>
       {applicationTypesLoading ? (
         <Loader />
@@ -41,23 +41,23 @@ const SearchFields = ({ register, control, reset, tenantId, t, previousPage }) =
           <Controller
             control={control}
             name="applicationType"
-            render={(props) => (
-              <Dropdown selected={props.value} select={props.onChange} onBlur={props.onBlur} option={applicationTypes} optionKey="i18nKey" t={t} />
+            render={({ field }) => (
+              <Dropdown selected={field.value} select={field.onChange} onBlur={field.onBlur} option={applicationTypes} optionKey="i18nKey" t={t} />
             )}
           />
         </SearchField>
       )}
       <SearchField>
         <label>{t("TL_APPLICATION_FROM_DATE")}</label>
-        <Controller render={(props) => <DatePicker date={props.value} onChange={props.onChange} />} name="fromDate" control={control} />
+        <Controller render={({ field }) => <DatePicker date={field.value} onChange={field.onChange} />} name="fromDate" control={control} />
       </SearchField>
       <SearchField>
         <label>{t("TL_APPLICATION_TO_DATE")}</label>
-        <Controller render={(props) => <DatePicker date={props.value} onChange={props.onChange} />} name="toDate" control={control} />
+        <Controller render={({ field }) => <DatePicker date={field.value} onChange={field.onChange} />} name="toDate" control={control} />
       </SearchField>
       <SearchField>
         <label>{t("TL_TRADE_LICENSE_LABEL")}</label>
-        <TextInput name="licenseNumbers" inputRef={register({})} />
+        <TextInput name="licenseNumbers" {...register("licenseNumbers")} />
       </SearchField>
       {isLoading ? (
         <Loader />
@@ -67,15 +67,15 @@ const SearchFields = ({ register, control, reset, tenantId, t, previousPage }) =
           <Controller
             control={control}
             name="status"
-            render={(props) => (
-              <Dropdown selected={props.value} select={props.onChange} onBlur={props.onBlur} option={applicationStatuses} optionKey="i18nKey" t={t} />
+            render={({ field }) => (
+              <Dropdown selected={field.value} select={field.onChange} onBlur={field.onBlur} option={applicationStatuses} optionKey="i18nKey" t={t} />
             )}
           />
         </SearchField>
       )}
       <SearchField>
         <label>{t("TL_LOCALIZATION_TRADE_NAME")}</label>
-        <TextInput name="tradeName" inputRef={register({})} />
+        <TextInput name="tradeName" {...register("tradeName")} />
       </SearchField>
       <SearchField className="submit">
         <SubmitBar label={t("ES_COMMON_SEARCH")} submit />

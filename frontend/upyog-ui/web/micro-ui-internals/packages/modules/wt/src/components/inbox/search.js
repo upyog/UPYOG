@@ -1,6 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, MobileNumber, Dropdown } from "@upyog/digit-ui-react-components";
+import {
+  TextInput,
+  Label,
+  SubmitBar,
+  LinkLabel,
+  ActionBar,
+  CloseSvg,
+  DatePicker,
+  MobileNumber,
+  Dropdown,
+} from "@nudmcdgnpm/digit-ui-react-components";
+
 import { useTranslation } from "react-i18next";
 import "../../css/wt-inline-auto.css";
 const fieldComponents = {
@@ -116,12 +127,26 @@ const SearchApplication = ({
                     {/* <span className={index === 0 ? "complaint-input" : "mobile-input"}> */}
                     <span className={"mobile-input"}>
                       <Label>{t(input.label) + ` ${input.isMendatory ? "*" : ""}`}</Label>
-                      {!input.type ? <Controller render={props => {
-                  return <TextInput onChange={props.onChange} value={props.value} />;
-                }} name={input.name} control={control} defaultValue={""} /> : <Controller render={props => {
-                  const Comp = fieldComponents?.[input.type];
-                  return <Comp formValue={form} setValue={setValue} onChange={props.onChange} value={props.value} />;
-                }} name={input.name} control={control} defaultValue={""} />}
+                      {!input.type ? (
+                        <Controller
+                          render={({ field }) => {
+                            return <TextInput onChange={field.onChange} value={field.value} />;
+                          }}
+                          name={input.name}
+                          control={control}
+                          defaultValue={""}
+                        />
+                      ) : (
+                        <Controller
+                          render={({ field }) => {
+                            const Comp = fieldComponents?.[input.type];
+                            return <Comp formValue={form} setValue={setValue} onChange={field.onChange} value={field.value} />;
+                          }}
+                          name={input.name}
+                          control={control}
+                          defaultValue={""}
+                        />
+                      )}
                     </span>
                     {formState?.dirtyFields?.[input.name] ? <span className="inbox-search-form-error wt-auto-22">
                         {formState?.errors?.[input.name]?.message}

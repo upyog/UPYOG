@@ -18,11 +18,11 @@
 */
 
 
-import { AppContainer, BackButton, PrivateRoute } from "@upyog/digit-ui-react-components";
+import { AppContainer, BackButton, PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
-import { Route, Switch, useRouteMatch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { shouldHideBackButton } from "../../utils";
-import { useTranslation } from "react-i18next";
+import SearchApp from "../employee/SearchApp";
 
 
 const hideBackButtonConfig = [
@@ -32,29 +32,25 @@ const hideBackButtonConfig = [
 ];
 
 const App = () => {
-  const { path, url, ...match } = useRouteMatch();
-  const { t } = useTranslation();
-  const inboxInitialState = {
-    searchParams: {},
-  };
+  const { path, url, ...match } = Digit.Hooks.useModuleBasePath();
 
   const PTRCreate = Digit?.ComponentRegistryService?.getComponent("PTRCreatePet");
   const PTRApplicationDetails = Digit?.ComponentRegistryService?.getComponent("PTRApplicationDetails");
   const PTRMyApplications = Digit?.ComponentRegistryService?.getComponent("PTRMyApplications");
  
   return (
-    <span className={"pet-citizen"}style={{width:"100%"}}>
-      <Switch>
-        <AppContainer>
-          {!shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
-          <PrivateRoute path={`${path}/petservice/new-application`} component={PTRCreate} />
+    <span className={"pet-citizen"} style={{ width: "100%" }}>
+      <AppContainer>
+        {!shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
+        <Routes>
+          <Route path= "petservice/new-application/*" element={<PrivateRoute><PTRCreate /></PrivateRoute>} />
           {/* path added for renew application */}
-          <PrivateRoute path={`${path}/petservice/revised-application`} component={PTRCreate} />
-          <PrivateRoute path={`${path}/petservice/application/:acknowledgementIds/:tenantId`} component={PTRApplicationDetails}></PrivateRoute>
-          <PrivateRoute path={`${path}/petservice/my-applications`} component={PTRMyApplications}></PrivateRoute>
-          <PrivateRoute path={`${path}/petservice/search`} component={(props) => <Search {...props} t={t} parentRoute={path} />} />
-        </AppContainer>
-      </Switch>
+          <Route path= "petservice/revised-application/*" element={<PrivateRoute><PTRCreate /></PrivateRoute>} />
+          <Route path= "petservice/application/:acknowledgementIds/:tenantId" element={<PrivateRoute><PTRApplicationDetails /></PrivateRoute>} />
+          <Route path= "petservice/my-applications/*" element={<PrivateRoute><PTRMyApplications /></PrivateRoute>} />
+          <Route path= "petservice/search/*" element={<PrivateRoute><SearchApp path={`/petservice/search`} /></PrivateRoute>} />
+        </Routes>
+      </AppContainer>
     </span>
   );
 };

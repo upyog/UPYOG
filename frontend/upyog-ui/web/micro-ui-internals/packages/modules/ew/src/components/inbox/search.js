@@ -9,7 +9,7 @@ import {
   CloseSvg,
   DatePicker,
   MobileNumber
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
 /**
@@ -137,8 +137,8 @@ const SearchApplication = ({
                       <Label>{t(input.label) + ` ${input.isMendatory ? "*" : ""}`}</Label> {/* Render the field label */}
                       {!input.type ? (
                         <Controller
-                          render={(props) => {
-                            return <TextInput onChange={props.onChange} value={props.value} />; // Render a text input
+                          render={({ field }) => {
+                            return <TextInput onChange={field.onChange} value={field.value} />;
                           }}
                           name={input.name}
                           control={control}
@@ -146,9 +146,9 @@ const SearchApplication = ({
                         />
                       ) : (
                         <Controller
-                          render={(props) => {
-                            const Comp = fieldComponents?.[input.type]; // Get the component for the field type
-                            return <Comp formValue={form} setValue={setValue} onChange={props.onChange} value={props.value} />; // Render the component
+                          render={({ field }) => {
+                            const Comp = fieldComponents?.[input.type];
+                            return <Comp formValue={form} setValue={setValue} onChange={field.onChange} value={field.value} />;
                           }}
                           name={input.name}
                           control={control}

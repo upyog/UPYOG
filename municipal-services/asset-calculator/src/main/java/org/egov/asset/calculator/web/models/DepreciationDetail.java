@@ -1,12 +1,9 @@
 package org.egov.asset.calculator.web.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import jakarta.persistence.*;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 
 @Entity

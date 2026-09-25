@@ -1,13 +1,13 @@
-import { Banner, Card, CardText, ActionBar, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Banner, Card, CardText, ActionBar, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+
 
 
 const StakeholderResponse = (props) => {
   const { state } = props.location;
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const bparegData = state?.data?.Licenses?.[0];
   const typeofStakeholder = bparegData?.tradeLicenseDetail?.tradeUnits?.[0]?.tradeType?.split('.')[0]
 
@@ -20,7 +20,7 @@ const StakeholderResponse = (props) => {
   }
 
   const onSubmit = () => {
-    history.push(`/upyog-ui/employee`);
+    navigate(`/upyog-ui/employee`);
   }
 
   return (

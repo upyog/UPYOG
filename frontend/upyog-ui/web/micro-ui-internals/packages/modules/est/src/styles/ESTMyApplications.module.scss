@@ -1,0 +1,62 @@
+.est-myapps {
+  &__container {
+    margin-left: 16px;
+  }
+
+  &__search-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+
+  &__field-col {
+    flex: 1;
+  }
+
+  &__field-inner {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__text-input {
+    width: 100%;
+    padding: 8px;
+  }
+
+  &__dropdown {
+    width: 100%;
+  }
+
+  &__search-btn-wrap {
+    margin-top: 17%;
+  }
+
+  &__clear-link {
+    margin-left: 30%;
+    margin-top: 10px;
+    display: block;
+    cursor: pointer;
+  }
+
+  &__msg {
+    margin-left: 16px;
+    margin-top: 16px;
+  }
+
+  &__card {
+    margin-top: 16px;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  // Match the two-button row width even when Make Payment is hidden.
+  &__action-btn {
+    flex: 1;
+    max-width: calc(50% - 6px);
+  }
+}

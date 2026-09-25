@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, CardLabelError, MobileNumber } from "@upyog/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, Dropdown, TextInput, LinkButton, CardLabelError, MobileNumber } from "@nudmcdgnpm/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
@@ -7,7 +7,7 @@ import { useLocation } from "react-router-dom";
 import { getUniqueItemsFromArray, commonTransform, stringReplaceAll, getPattern } from "../utils";
 import isUndefined from "lodash/isUndefined";
 import { sortDropdownNames } from "../utils/index";
-import "../css/tl-inline-auto.css";
+
 const createAccessoriesDetails = () => ({
   accessoryCategory: "",
   count: "",
@@ -296,77 +296,117 @@ const AccessoriersForm = _props => {
                         </div> : null}
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{`${t("TL_NEW_TRADE_DETAILS_ACC_LABEL")} `}</CardLabel>
-                        <Controller control={control} name={"accessoryCategory"} defaultValue={accessor?.accessoryCategory}
-          // rules={{ required: "NAME_REQUIRED", validate: { pattern: (val) => (/^\w+( +\w+)*$/.test(val) ? true : t("INVALID_NAME")) } }}
-          render={props => <Dropdown className="form-field" selected={props.value} select={e => {
-            setValue("uom", e?.uom ? e?.uom : "");
-            if (e?.uom !== accessor?.accessoryCategory?.uom) setValue("uomValue", "");
-            props.onChange(e);
-            setUomvalues(accessor?.accessoryCategory?.uom);
-            setenableUOM(true);
-            setValue("uomValue", "");
-            setValue("count", "");
-          }} onBlur={props.onBlur} option={sortDropdownNames(accessories, "i18nKey", t) || []} optionKey="i18nKey" t={t} />} />
+                        <Controller
+                            control={control}
+                            name={"accessoryCategory"}
+                            defaultValue={accessor?.accessoryCategory}
+                            // rules={{ required: "NAME_REQUIRED", validate: { pattern: (val) => (/^\w+( +\w+)*$/.test(val) ? true : t("INVALID_NAME")) } }}
+                            render={({ field }) => (
+                                <Dropdown
+                                    className="form-field"
+                                    selected={field.value}
+                                    select={(e) => {
+                                        setValue("uom", e?.uom ? e?.uom : "");
+                                        if (e?.uom !== accessor?.accessoryCategory?.uom) setValue("uomValue", "");
+                                        field.onChange(e);
+                                        setUomvalues(accessor?.accessoryCategory?.uom);
+                                        setenableUOM(true);
+                                        setValue("uomValue","");
+                                        setValue("count","");
+                                    }}
+                                    onBlur={field.onBlur}
+                                    option={sortDropdownNames(accessories,"i18nKey",t) || []}
+                                    optionKey="i18nKey"
+                                    t={t}
+                                  
+                                />
+                            )}
+                        />
                     </LabelFieldPair>
                     {/* <CardLabelError style={errorStyle}>{localFormState.touched.accessoryCategory ? errors?.name?.message : ""}</CardLabelError> */}
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{`${t("TL_NEW_TRADE_DETAILS_UOM_UOM_PLACEHOLDER")}`}{getValues("uom") ? <span className="check-page-link-button"> *</span> : ""}</CardLabel>
                         <div className="field">
-                            <Controller control={control} name={"uom"} defaultValue={accessor?.accessoryCategory?.uom}
-            // rules={accessor?.accessoryCategory?.uom ? { required: "Required" } : {}}
-            render={props => <TextInput value={getValues("uom")}
-            // value={uomvalues}
-            // value={accessor?.accessoryCategory?.uom || ""}
-            autoFocus={focusIndex.index === accessor?.key && focusIndex.type === "uom"} onChange={e => {
-              props.onChange(e.target.value);
-              setFocusIndex({
-                index: accessor.key,
-                type: "uom"
-              });
-            }} disable={true} onBlur={props.onBlur} className="tl-auto-86" />} />
+                            <Controller
+                                control={control}
+                                name={"uom"}
+                                defaultValue={accessor?.accessoryCategory?.uom}
+                                // rules={accessor?.accessoryCategory?.uom ? { required: "Required" } : {}}
+                                render={({ field }) => (
+                                    <TextInput
+                                        value={getValues("uom")}
+                                        // value={uomvalues}
+                                        // value={accessor?.accessoryCategory?.uom || ""}
+                                        autoFocus={focusIndex.index === accessor?.key && focusIndex.type === "uom"}
+                                        onChange={(e) => {
+                                            field.onChange(e.target.value);
+                                            setFocusIndex({ index: accessor.key, type: "uom" });
+                                        }}
+                                        disable={true}
+                                        onBlur={field.onBlur}
+                                        className="tl-auto-86" 
+                                    />
+                                )}
+                            />
                         </div>
                     </LabelFieldPair>
                     {/* <CardLabelError style={errorStyle}>{localFormState.touched.uom ? errors?.uom?.message : ""}</CardLabelError> */}
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{`${t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL")}`}{accessor?.accessoryCategory?.uom ? <span className="check-page-link-button"> *</span> : ""}</CardLabel>
                         <div className="field">
-                            <Controller control={control} name={"uomValue"} defaultValue={accessor?.uomValue} rules={accessor?.accessoryCategory?.uom && {
-              required: t("REQUIRED_FIELD"),
-              validate: e => (/*(e && getPattern("UOMValue").test(e))*/e > 0 && e < 99999 ? checkRangeForUomValue(e, accessor?.accessoryCategory?.fromUom, accessor?.accessoryCategory?.toUom) ? true : `${t("ERR_WRONG_UOM_VALUE")} ${accessor?.accessoryCategory?.fromUom} - ${accessor?.accessoryCategory?.toUom}` : t("ERR_DEFAULT_INPUT_FIELD_MSG"))
-            }} render={props => <TextInput value={getValues("uomValue")}
-            // value={accessor?.accessoryCategory?.uom ? props.value : ""}
-            autoFocus={focusIndex.index === accessor?.key && focusIndex.type === "uomValue"} errorStyle={localFormState.touched.uomValue && errors?.uomValue?.message ? true : false} onChange={e => {
-              props.onChange(e.target.value);
-              setFocusIndex({
-                index: accessor.key,
-                type: "uomValue"
-              });
-            }}
-            // disable={/*getValues("uomValue")?!(accessor?.accessoryCategory?.uom) || accessor?.id:*/!(accessor?.accessoryCategory?.uom) }
-            disable={isRenewal ? !enableUOM : false} onBlur={props.onBlur} className="tl-auto-87" />} />
+                            <Controller
+                                control={control}
+                                name={"uomValue"}
+                                defaultValue={accessor?.uomValue}
+                                rules={accessor?.accessoryCategory?.uom && { required: t("REQUIRED_FIELD"), validate: (e) => (/*(e && getPattern("UOMValue").test(e))*/ e > 0 && e < 99999 ? (checkRangeForUomValue(e,accessor?.accessoryCategory?.fromUom,accessor?.accessoryCategory?.toUom) ? true : `${t("ERR_WRONG_UOM_VALUE")} ${accessor?.accessoryCategory?.fromUom || ''} - ${accessor?.accessoryCategory?.toUom || ''}`) : t("ERR_DEFAULT_INPUT_FIELD_MSG")) }}
+                                render={({ field }) => (
+                                    <TextInput
+                                        value={getValues("uomValue")}
+                                        // value={accessor?.accessoryCategory?.uom ? field.value : ""}
+                                        autoFocus={focusIndex.index === accessor?.key && focusIndex.type === "uomValue"}
+                                        errorStyle={(localFormState.touchedFields?.uomValue && errors?.uomValue?.message) ? true : false}
+                                        onChange={(e) => {
+                                            field.onChange(e.target.value);
+                                            setFocusIndex({ index: accessor.key, type: "uomValue" });
+                                        }}
+                                       // disable={/*getValues("uomValue")?!(accessor?.accessoryCategory?.uom) || accessor?.id:*/!(accessor?.accessoryCategory?.uom) }
+                                        disable={isRenewal ? !enableUOM : false}
+                                        onBlur={field.onBlur}
+                                       className="tl-auto-87"
+                                    />
+                                )}
+                            />
                         </div>
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.uomValue ? errors?.uomValue?.message : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState.touchedFields?.uomValue ? errors?.uomValue?.message : ""}</CardLabelError>
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{`${t("TL_ACCESSORY_COUNT_LABEL")}`}{accessor?.accessoryCategory?.code ? <span className="check-page-link-button"> *</span> : ""}</CardLabel>
                         <div className="field">
-                            <Controller control={control} name={"count"} defaultValue={accessor?.count} rules={accessor?.accessoryCategory?.code && {
-              required: t("REQUIRED_FIELD"),
-              validate: e => e && getPattern("NoOfEmp").test(e) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")
-            }}
-            // rules={accessor?.accessoryCategory?.code ? { required: "ERR_DEFAULT_INPUT_FIELD_MSG" } : {}}
-            render={props => <TextInput value={props.value} autoFocus={focusIndex.index === accessor?.key && focusIndex.type === "count"} errorStyle={localFormState.touched.count && errors?.count?.message ? true : false} onChange={e => {
-              props.onChange(e.target.value);
-              setFocusIndex({
-                index: accessor.key,
-                type: "count"
-              });
-            }} onBlur={props.onBlur} disable={isRenewal ? !enableUOM : false}
-            //disable={accessor?.id}
-            className="tl-auto-88" />} />
+                            <Controller
+                                control={control}
+                                name={"count"}
+                                defaultValue={accessor?.count}
+                                rules={accessor?.accessoryCategory?.code && { required: t("REQUIRED_FIELD"), validate: (e) => ((e && getPattern("NoOfEmp").test(e)) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) }}
+                                // rules={accessor?.accessoryCategory?.code ? { required: "ERR_DEFAULT_INPUT_FIELD_MSG" } : {}}
+                                render={({ field }) => (
+                                    <TextInput
+                                        value={field.value}
+                                        autoFocus={focusIndex.index === accessor?.key && focusIndex.type === "count"}
+                                        errorStyle={(localFormState.touchedFields?.count && errors?.count?.message) ? true : false}
+                                        onChange={(e) => {
+                                            field.onChange(e.target.value);
+                                            setFocusIndex({ index: accessor.key, type: "count" });
+                                        }}
+                                        onBlur={field.onBlur}
+                                        disable={isRenewal ? !enableUOM : false}
+                                        //disable={accessor?.id}
+                                       className="tl-auto-88"
+                                    />
+                                )}
+                            />
                         </div>
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.count ? errors?.count?.message : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState.touchedFields?.count ? errors?.count?.message : ""}</CardLabelError>
                 </div>
             </div>
         </React.Fragment>;

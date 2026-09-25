@@ -1,4 +1,4 @@
-import { Dropdown, UploadFile } from "@upyog/digit-ui-react-components";
+import { Dropdown, UploadFile } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 
 export const configNOCApproverApplication = ({

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ApplicationCard } from "./inbox/ApplicationCard";
 import InboxLinks from "./inbox/InboxLink";
-import "../css/asset-inline-auto.css";
+
 const MobileInbox = ({
   data,
   isLoading,

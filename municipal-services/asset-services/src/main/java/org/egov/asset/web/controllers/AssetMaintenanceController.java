@@ -4,18 +4,12 @@ import digit.models.coremodels.RequestInfoWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.asset.service.AssetMaintenanceService;
 import org.egov.asset.util.ResponseInfoFactory;
-import org.egov.asset.web.models.disposal.AssetDisposal;
-import org.egov.asset.web.models.disposal.AssetDisposalResponse;
-import org.egov.asset.web.models.disposal.AssetDisposalSearchCriteria;
 import org.egov.asset.web.models.maintenance.*;
-import org.egov.common.contract.request.RequestInfo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,11 +18,14 @@ import java.util.List;
 @RequestMapping("/maintenance/v1")
 public class AssetMaintenanceController {
 
-    @Autowired
-    private AssetMaintenanceService assetMaintenanceService;
+    private final AssetMaintenanceService assetMaintenanceService;
+    private final ResponseInfoFactory responseInfoFactory;
 
-    @Autowired
-    private ResponseInfoFactory responseInfoFactory;
+    public AssetMaintenanceController(AssetMaintenanceService assetMaintenanceService,
+                                      ResponseInfoFactory responseInfoFactory) {
+        this.assetMaintenanceService = assetMaintenanceService;
+        this.responseInfoFactory = responseInfoFactory;
+    }
 
     /**
      * Endpoint to create an asset maintenance record.
@@ -41,7 +38,7 @@ public class AssetMaintenanceController {
         log.info("Received request to create Asset Maintenance: {}", request);
         AssetMaintenance assetMaintenance = assetMaintenanceService.createMaintenance(request);
 
-        List<AssetMaintenance> assetMaintenanceList = new ArrayList<>(Collections.singletonList(assetMaintenance));
+        List<AssetMaintenance> assetMaintenanceList = Collections.singletonList(assetMaintenance);
         AssetMaintenanceResponse response = AssetMaintenanceResponse.builder()
                 .assetMaintenance(assetMaintenanceList)
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true))
@@ -61,7 +58,7 @@ public class AssetMaintenanceController {
 
         AssetMaintenance assetMaintenance = assetMaintenanceService.updateMaintenance(request);
 
-        List<AssetMaintenance> assetMaintenanceList = new ArrayList<>(Collections.singletonList(assetMaintenance));
+        List<AssetMaintenance> assetMaintenanceList = Collections.singletonList(assetMaintenance);
         AssetMaintenanceResponse response = AssetMaintenanceResponse.builder()
                 .assetMaintenance(assetMaintenanceList)
                 .responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true))
@@ -77,9 +74,7 @@ public class AssetMaintenanceController {
      */
     @PostMapping("/_search")
     public ResponseEntity<AssetMaintenanceResponse> searchDisposals(
-            @RequestBody AssetMaintenanceSearchRequest searchRequest ) {
-
-        // Extract the search criteria and request info
+            @RequestBody AssetMaintenanceSearchRequest searchRequest) {
         AssetMaintenanceSearchCriteria searchCriteria = searchRequest.getAssetMaintenanceSearchCriteria();
         RequestInfoWrapper requestInfoWrapper = searchRequest.getRequestInfoWrapper();
 

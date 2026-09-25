@@ -1,7 +1,6 @@
-import { Header, CitizenHomeCard, PTIcon } from "@upyog/digit-ui-react-components";
+import { Header, CitizenHomeCard, PTIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useRouteMatch } from "react-router-dom";
 import Area from "./pageComponents/Area";
 import Electricity from "./pageComponents/Electricity";
 import UID from "./pageComponents/UID";
@@ -73,8 +72,8 @@ import UpdateNumber from "./pages/citizen/MyProperties/updateNumber";
 import EmployeeUpdateOwnerNumber from "./pages/employee/updateNumber";
 //import PTCitizenFeedback from "@upyog/digit-ui-module-core/src/components/PTCitizenFeedback";
 import PTSelectLandmark from "./pageComponents/PTSelectLandmark";
-import PropertyStructureDetails from "./pageComponents/PropertyStructureDetails";
 //import PTCitizenFeedback from "@upyog/digit-ui-module-core/src/components/PTCitizenFeedback";
+import PropertyStructureDetails from "./pageComponents/PropertyStructureDetails";
 
 import EmployeeApp from "./pages/employee";
 import PTCard from "./components/PTCard";
@@ -92,6 +91,7 @@ import DocsRequired from "./pages/employee/PropertyMutation/docsRequired";
 import SelectOtp from "../../core/src/pages/citizen/Login/SelectOtp";
 import CitizenFeedback from "../../core/src/components/CitizenFeedback";
 import AcknowledgementCF from "../../core/src/components/AcknowledgementCF";
+import { ReportSearchApplication, EnhancedReport } from "@nudmcdgnpm/digit-ui-module-reports";
 // PTAcknowledgementCF from "@upyog/digit-ui-module-core/src/components/PTAcknowledgementCF";
 //import PTCitizenFeedbackPopUp from "./pageComponents/PTCitizenFeedbackPopUp";
 
@@ -155,6 +155,8 @@ const componentsToRegister = {
   PropertySearchForm,
   PropertySearchResults,
   PTMyPayments,
+  EnhancedReport,
+  ReportSearchApplication,
   SelectPTUnits,
   PTNewApplication: NewApplication,
   ApplicationDetails: ApplicationDetails,
@@ -189,7 +191,7 @@ const addComponentsToRegistry = () => {
 };
 
 export const PTModule = ({ stateCode, userType, tenants }) => {
-  const { path, url } = useRouteMatch();
+  const { path, url } = Digit.Hooks.useModuleBasePath();
 
   const moduleCode = "PT";
   const language = Digit.StoreData.getCurrentLanguage();
@@ -198,16 +200,15 @@ export const PTModule = ({ stateCode, userType, tenants }) => {
   addComponentsToRegistry();
 
   Digit.SessionStorage.set("PT_TENANTS", tenants);
-  useEffect(
-    () =>
-      userType === "employee" &&
+  useEffect(() => {
+    if (userType === "employee") {
       Digit.LocalizationService.getLocale({
         modules: [`rainmaker-${Digit.ULBService.getCurrentTenantId()}`],
         locale: Digit.StoreData.getCurrentLanguage(),
         tenantId: Digit.ULBService.getCurrentTenantId(),
-      }),
-    []
-  );
+      });
+    }
+  }, []);
 
   if (userType === "employee") {
     return <EmployeeApp path={path} url={url} userType={userType} />;
@@ -224,7 +225,7 @@ export const PTLinks = ({ matchPath, userType }) => {
 
   const links = [
     {
-      link: `${matchPath}/property/citizen-search`,
+      link: `/property/citizen-search`,
       i18nKey: t("PT_SEARCH_AND_PAY"),
     },
     {
@@ -232,31 +233,31 @@ export const PTLinks = ({ matchPath, userType }) => {
       i18nKey: t("CS_TITLE_MY_BILLS"),
     },
     {
-      link: `${matchPath}/property/my-payments`,
+      link: `/property/my-payments`,
       i18nKey: t("PT_MY_PAYMENTS_HEADER"),
     },
     {
-      link: `${matchPath}/property/new-application`,
+      link: `/property/new-application`,
       i18nKey: t("PT_CREATE_PROPERTY"),
     },
     {
-      link: `${matchPath}/property/my-properties`,
+      link: `/property/my-properties`,
       i18nKey: t("PT_MY_PROPERTIES"),
     },
     {
-      link: `${matchPath}/property/my-applications`,
+      link: `/property/my-applications`,
       i18nKey: t("PT_MY_APPLICATION"),
     },
     {
-      link: `${matchPath}/property/property-mutation`,
+      link: `/property/property-mutation`,
       i18nKey: t("PT_PROPERTY_MUTATION"),
     },
     {
-      link: `${matchPath}/howItWorks`,
+      link: `/howItWorks`,
       i18nKey: t("PT_HOW_IT_WORKS"),
     },
     {
-      link: `${matchPath}/faqs`,
+      link: `/faqs`,
       i18nKey: t("PT_FAQ_S"),
     },
   ];

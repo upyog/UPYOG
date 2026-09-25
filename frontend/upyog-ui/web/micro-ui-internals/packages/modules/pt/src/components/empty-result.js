@@ -1,15 +1,14 @@
-import { SubmitBar } from "@upyog/digit-ui-react-components";
+import { SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
-import "../css/pt-inline-auto.css";
-const EmptyResultInbox = props => {
-  const {
-    t
-  } = useTranslation();
-  const history = useHistory();
+
+
+const EmptyResultInbox = (props) => {
+  const { t } = useTranslation();
+  const navigate = Digit.Hooks.useCustomNavigate();
+
   const addNewProprty = () => {
-    history.push("/upyog-ui/employee/pt/new-application");
+    navigate("/upyog-ui/employee/pt/new-application");
   };
   return <React.Fragment>
       {props.data ? <React.Fragment>

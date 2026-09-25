@@ -1,4 +1,4 @@
-import { Header, Dropdown, LabelFieldPair, CardLabel, Card, Button,Toast,TextInput,Modal } from "@egovernments/digit-ui-react-components";
+import { Header, Dropdown, LabelFieldPair, CardLabel, Card, Button,Toast,TextInput,Modal } from "@upyog/workbench-ui-react-components";
 import React, { useState, useEffect} from "react";
 import { useTranslation } from "react-i18next";
 import { Controller, useForm } from "react-hook-form";
@@ -34,7 +34,7 @@ function ApplyWorkflow() {
   const [businessService, setBusinessService] = useState("");
   const [selectedUniqueIdentifier, setSelectedUniqueIdentifier] = useState(null);
   const [jsonData, setJsonData] = useState({});
-  const [workflowOperationData, setWorkflowOperationData] = useState("");
+
   const schemaCodePayload = "WORKFLOW.BusinessServices";
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [isModalOpen, setModalOpen] = useState(false); // State to track modal visibility.
@@ -103,24 +103,24 @@ function ApplyWorkflow() {
 
   console.log("Unique Identifier Data:", data?.uniqueIdentifierData);
 
-  const { dataVal } = Digit.Hooks.useCustomAPIHook({
+  const { data: workflowMdmsResponse } = Digit.Hooks.useCustomAPIHook({
     url: `/${Digit.Hooks.workbench.getMDMSContextPath()}/v1/_search`,
     body: { MdmsCriteria },
     config: {
       select: (dataVal) => {
         console.log("Fetched MDMS Data for Workflow operation:", dataVal);
-        const mappedData = dataVal?.MdmsRes?.["common-masters"]?.WorkbenchWorkflowOperation.map((item) => ({
+        const mappedData = dataVal?.MdmsRes?.["common-masters"]?.WorkbenchWorkflowOperation?.map((item) => ({
           i18nKey: item?.code,
           code: item?.code,
         }));
-        setWorkflowOperationData(mappedData);
+        
         return {
           workflowOperationData: mappedData,
         };
       },
     },
   });
-
+const workflowOperationData = workflowMdmsResponse?.workflowOperationData || [];
   const { isLoading: isApplying } = Digit.Hooks.useCustomAPIHook({
     url: "/apply-workflow/api/v1/_process",
     body: shouldCallApi ? {
@@ -167,9 +167,6 @@ function ApplyWorkflow() {
     setShouldCallApi(true);
   };
 
- useEffect(() => {
-    console.log("workflowOperationData updated:", workflowOperationData);
-  }, [workflowOperationData]);
 
   useEffect(() => {
     if (selectedUniqueIdentifier) {
@@ -204,14 +201,13 @@ function ApplyWorkflow() {
               <Controller
                 control={control}
                 name="tenant"
-                render={(props) => (
+                render={({ field }) => (
                   <Dropdown
                     className="form-field"
-                    //selected={tenantOptions}
                     selected={selectedUniqueIdentifier}
                     select={(value) => {
                       setSelectedUniqueIdentifier(value);
-                      props.onChange(value);
+                      field.onChange(value);
                     }}
                     option={data?.uniqueIdentifierData}
                     optionKey="i18nKey"
@@ -231,7 +227,7 @@ function ApplyWorkflow() {
                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                     validate: { pattern: (val) => (/^[a-zA-Z0-9/-\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
                   }}
-                  render={(props) => <TextInput value={tenant} style={{ marginTop: "20px" }} />}
+                  render={({ field }) => <TextInput value={tenant} style={{ marginTop: "20px" }} />}
                 />
               </div>
             </LabelFieldPair>
@@ -246,7 +242,7 @@ function ApplyWorkflow() {
                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                     validate: { pattern: (val) => (/^[a-zA-Z0-9/-\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
                   }}
-                  render={(props) => <TextInput value={schemaCode} />}
+                  render={({ field }) => <TextInput value={schemaCode} />}
                 />
               </div>
             </LabelFieldPair>
@@ -261,7 +257,7 @@ function ApplyWorkflow() {
                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                     validate: { pattern: (val) => (/^[a-zA-Z0-9/-\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
                   }}
-                  render={(props) => <TextInput value={business} />}
+                  render={({ field }) => <TextInput value={business} />}
                 />
               </div>
             </LabelFieldPair>
@@ -277,11 +273,9 @@ function ApplyWorkflow() {
                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                     validate: { pattern: (val) => (/^[a-zA-Z0-9/-\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
                   }}
-                  render={(props) => (
+                  render={({ field }) => (
                     <TextInput
                       value={businessService}
-                      // disable={false}
-                      // autoFocus={focusIndex.index === editAssignDetails?.key && focusIndex.type === "BookPagereference"}
                     />
                   )}
                 />
@@ -329,17 +323,17 @@ function ApplyWorkflow() {
       <Controller
         control={control}
         name="selectoperation"
-        render={(props) => (
+        render={({ field }) => (
           <Dropdown
             className="form-field"
             placeholder={t("WBH_SELECT_OPERATION")}
-            selected={props.value}
-            select={(value) => {props.onChange(value)
-              setSelectedOperation(value); // Update local state for selected operation
-            }
-          }
-            option={workflowOperationData} // Options for dropdown
-            optionKey="i18nKey" // Use the `i18nKey` for the dropdown options
+            selected={field.value}
+            select={(value) => {
+              field.onChange(value)
+              setSelectedOperation(value);
+            }}
+            option={workflowOperationData}
+            optionKey="i18nKey"
             t={t}
           />
         )}

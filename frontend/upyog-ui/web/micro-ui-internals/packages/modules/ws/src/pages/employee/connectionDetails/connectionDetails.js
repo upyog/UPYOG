@@ -1,8 +1,8 @@
 import React, { useEffect, useState, Fragment, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import ApplicationDetailsTemplate from "../../../../../templates/ApplicationDetails";
-import { useHistory } from "react-router-dom";
-import { Header, ActionBar, MultiLink, SubmitBar, Menu, Modal, ButtonSelector, Toast } from "@upyog/digit-ui-react-components";
+
+import { Header, ActionBar, MultiLink, SubmitBar, Menu, Modal, ButtonSelector, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import * as func from "../../../utils";
 import { ifUserRoleExists, downloadPdf, downloadAndOpenPdf } from "../../../utils";
 import WSInfoLabel from "../../../pageComponents/WSInfoLabel";
@@ -14,7 +14,7 @@ const GetConnectionDetails = () => {
     t
   } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [displayMenu, setDisplayMenu] = useState(false);
   const [showToast, setShowToast] = useState(null);
   let filters = func.getQueryStringParams(location.search);
@@ -136,9 +136,8 @@ const GetConnectionDetails = () => {
     //here check if this connection have any active bills(don't allow to modify in this case)
 
     let pathname = `/upyog-ui/employee/ws/modify-application?applicationNumber=${applicationDetails?.applicationData?.connectionNo}&service=${serviceType}&propertyId=${applicationDetails?.propertyDetails?.propertyId}&from=WS_COMMON_CONNECTION_DETAIL`;
-    history.push(`${pathname}`, JSON.stringify({
-      data: applicationDetails
-    }));
+
+    navigate(`${pathname}`, JSON.stringify({ data: applicationDetails }));
   };
   const getBillAmendmentButton = () => {
     //redirect to documents required screen here instead of this screen
@@ -163,9 +162,11 @@ const GetConnectionDetails = () => {
       });
       return;
     }
-    history.push(`/upyog-ui/employee/ws/required-documents?connectionNumber=${applicationDetails?.applicationData?.connectionNo}&tenantId=${getTenantId}&service=${serviceType}`, JSON.stringify({
-      data: applicationDetails
-    }));
+
+    navigate(
+      `/upyog-ui/employee/ws/required-documents?connectionNumber=${applicationDetails?.applicationData?.connectionNo}&tenantId=${getTenantId}&service=${serviceType}`,
+      JSON.stringify({ data: applicationDetails })
+    );
   };
   const closeMenu = () => {
     setShowOptions(false);
@@ -182,14 +183,17 @@ const GetConnectionDetails = () => {
         key: "error",
         label: "WORKFLOW_IN_PROGRESS"
       });
-    } else {
-      console.log("due", due, applicationDetails);
-      if (billData[0]?.status === "ACTIVE" || applicationDetails?.fetchBillsData?.length <= 0 || due == "0" || due < 0) {
-        Digit.SessionStorage.set("WS_DISCONNECTION", applicationDetails);
-        history.push(`${pathname}`);
-      } else {
-        setshowModal(true);
-      }
+    }
+    else{
+      console.log("due",due,applicationDetails)
+        if (billData[0]?.status === "ACTIVE" || applicationDetails?.fetchBillsData?.length <=0 || due == "0" || due < 0) {
+          Digit.SessionStorage.set("WS_DISCONNECTION", applicationDetails);
+          navigate(`${pathname}`);
+        } 
+       
+        else {
+          setshowModal(true);
+        }
     }
   };
   const getRestorationButton = () => {
@@ -199,13 +203,14 @@ const GetConnectionDetails = () => {
         key: "error",
         label: "WORKFLOW_IN_PROGRESS"
       });
-    } else {
-      if (billData[0]?.status === "ACTIVE" || applicationDetails?.fetchBillsData?.length <= 0 || due === "0") {
-        Digit.SessionStorage.set("WS_DISCONNECTION", applicationDetails);
-        history.push(`${pathname}`);
-      } else {
-        setshowModal(true);
-      }
+    }
+    else{
+        if (billData[0]?.status === "ACTIVE" || applicationDetails?.fetchBillsData?.length <=0 || due === "0") {
+          Digit.SessionStorage.set("WS_DISCONNECTION", applicationDetails);
+          navigate(`${pathname}`);
+        } else {
+          setshowModal(true);
+        }
     }
   };
   function onActionSelect(action) {
@@ -272,7 +277,8 @@ const GetConnectionDetails = () => {
         <Close />
       </div>;
   };
-  return <Fragment>
+  return (
+    <Fragment>
       <div>
         <div className="employee-application-details ws-connection-details-root">
 <div className="ws-connection-details-header-row">
@@ -303,33 +309,43 @@ const GetConnectionDetails = () => {
             <SubmitBar ref={actionMenuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
           </ActionBar>}
        
-        {showModal ? <Modal open={showModal} headerBarMain={<Heading label={t("WS_PENDING_DUES_LABEL")} />} headerBarEnd={<CloseBtn onClick={() => setshowModal(false)} />} center formId="modal-action" actionCancelOnSubmit={() => setshowModal(false)} actionCancelLabel={t(`${"CS_COMMON_CANCEL"}`)} actionSaveLabel={t(`${"WS_COMMON_COLLECT_LABEL"}`)} actionSaveOnSubmit={() => {
-        history.push(`/upyog-ui/employee/payment/collect/${serviceType === "WATER" ? "WS" : "SW"}/${encodeURIComponent(applicationNumber)}/${getTenantId}?tenantId=${getTenantId}&ISWSCON`);
-        setshowModal(false);
-      }} popupStyles={mobileView ? {
-        width: "720px"
-      } : {}} style={!mobileView ? {
-        minHeight: "45px",
-        height: "auto",
-        width: "107px",
-        paddingLeft: "0px",
-        paddingRight: "0px"
-      } : {
-        minHeight: "45px",
-        height: "auto",
-        width: "44%"
-      }} popupModuleMianStyles={mobileView ? {
-        paddingLeft: "5px"
-      } : {}}>
+        {showModal ? (
+          <Modal
+            open={showModal}
+            headerBarMain={<Heading label={t("WS_PENDING_DUES_LABEL")} />}
+            headerBarEnd={<CloseBtn onClick={() => setshowModal(false)} />}
+            center
+            formId="modal-action"
+            actionCancelOnSubmit={() => setshowModal(false)}
+            actionCancelLabel={t(`${"CS_COMMON_CANCEL"}`)}
+            actionSaveLabel={t(`${"WS_COMMON_COLLECT_LABEL"}`)}
+            actionSaveOnSubmit={() => {
+              navigate(
+                `/upyog-ui/employee/payment/collect/${serviceType === "WATER" ? "WS" : "SW"}/${encodeURIComponent(
+                  applicationNumber
+                )}/${getTenantId}?tenantId=${getTenantId}&ISWSCON`
+              );
+              setshowModal(false);
+            }}
+            popupStyles={mobileView ? { width: "720px" } : {}}
+            style={
+              !mobileView
+                ? { minHeight: "45px", height: "auto", width: "107px", paddingLeft: "0px", paddingRight: "0px" }
+                : { minHeight: "45px", height: "auto", width: "44%" }
+            }
+            popupModuleMianStyles={mobileView ? { paddingLeft: "5px" } : {}}
+          >
             <div className="modal-header-ws">{t("WS_CLEAR_DUES_DISCONNECTION_SUB_HEADER_LABEL")} </div>
             <div className="modal-body-ws">
               <span>
                 {t("WS_COMMON_TABLE_COL_AMT_DUE_LABEL")}: ₹{due ? due : applicationDetails?.fetchBillsData?.[0]?.totalAmount}
               </span>
             </div>
-          </Modal> : null}
+          </Modal>
+        ) : null}
         {showActionToast && <Toast error={showActionToast.key} label={t(`${showActionToast.label}`)} onClose={closeBillToast} />}
       </div>
-    </Fragment>;
+    </Fragment>
+  );
 };
 export default GetConnectionDetails;

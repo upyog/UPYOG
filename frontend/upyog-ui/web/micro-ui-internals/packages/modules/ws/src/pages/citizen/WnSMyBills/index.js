@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Route, Switch, useRouteMatch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { config } from "./config";
 import WNSMyBillsComponent from "./wnsMyBills";
 
 const BillSearchResults = () => {
   const { t } = useTranslation();
-  const { path } = useRouteMatch();
+  const { path } = Digit.Hooks.useModuleBasePath();
 
   const params = useMemo(() =>
     config.map(
@@ -22,16 +22,19 @@ const BillSearchResults = () => {
   );
 
   return (
-    <Switch>
-      <Route path={`${path}`} exact>
-        <WNSMyBillsComponent
-          template={params[0].labels}
-          header={params[0].texts.header}
-          actionButtonLabel={params[0].texts.actionButtonLabel}
-          t={t}
-        />
-      </Route>
-    </Switch>
+    <Routes>
+      <Route
+        path="*"
+        element={
+          <WNSMyBillsComponent
+            template={params[0].labels}
+            header={params[0].texts.header}
+            actionButtonLabel={params[0].texts.actionButtonLabel}
+            t={t}
+          />
+        }
+      />
+    </Routes>
   );
 };
 

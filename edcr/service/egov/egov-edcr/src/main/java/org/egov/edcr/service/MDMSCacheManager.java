@@ -37,6 +37,9 @@ public class MDMSCacheManager {
 	@Autowired
 	FetchEdcrRulesMdms fetchEdcrRulesMdms;
 
+	@Autowired
+	private ObjectMapper objectMapper;
+
 	private static final Logger LOG = LogManager.getLogger(MDMSCacheManager.class);
 	/**
 	 * Cache to store MDMS rules for different features and cities. The key is the
@@ -108,10 +111,9 @@ public class MDMSCacheManager {
 	 * @param mdmsCityData Raw response from MDMS containing rules
 	 */
 	private void transformCityRules(Object mdmsCityData) {
-		ObjectMapper mapper = new ObjectMapper();
 
 		// Convert generic response to domain-specific MdmsResponse
-		MdmsResponse mdmsResponse = mapper.convertValue(mdmsCityData, MdmsResponse.class);
+		MdmsResponse mdmsResponse = objectMapper.convertValue(mdmsCityData, MdmsResponse.class);
 		Map<String, JSONArray> bpaModuleMap = mdmsResponse.getMdmsRes().getOrDefault(EdcrRulesMdmsConstants.BPA,
 				Collections.emptyMap());
 
@@ -134,7 +136,7 @@ public class MDMSCacheManager {
 
 	        for (int i = 0; i < ruleArray.size(); i++) {
 	            try {
-	                JsonNode jsonNode = mapper.valueToTree(ruleArray.get(i));
+	                JsonNode jsonNode = objectMapper.valueToTree(ruleArray.get(i));
 	                if (jsonNode instanceof ObjectNode) {
 						/* We add the feature name and default state explicitly to each rule's JSON node before deserialization
 						 to ensure that these important contextual fields are always present in the MdmsFeatureRule object.
@@ -145,7 +147,7 @@ public class MDMSCacheManager {
 	                    ((ObjectNode) jsonNode).put(FEATURE_NAME_STRING, featureName);
 	                    ((ObjectNode) jsonNode).put(STATE_STRING, edcrConfigProperties.getDefaultState());
 
-	                    MdmsFeatureRule rule = mapper.treeToValue(jsonNode, ruleClass);
+	                    MdmsFeatureRule rule = objectMapper.treeToValue(jsonNode, ruleClass);
 	  
 	                    LOG.info("Parsed rule: {}, State: {}", rule, rule.getState());
 
@@ -214,7 +216,6 @@ public class MDMSCacheManager {
 	    String subZone = plan.getPlanInformation().getSubZone() != null
 	            ? plan.getPlanInformation().getSubZone().toLowerCase()
 	            : null;
-
 		String riskType = includeRiskType ? fetchEdcrRulesMdms.getRiskType(plan).toLowerCase() : null;
 
 		String checkedTenantId = edcrConfigProperties.getIsStateWise() ? null : tenantId;

@@ -1,0 +1,21 @@
+{
+  "moduleName": "CONSTRUCTION_AND_DEMOLITION",
+
+  "citizen": {
+    "mobile": "7906413996",
+    "otp": "123456",
+    "city": "City A"
+  },
+
+  "employee": {
+    "username": "CND_SUPERUSER",
+    "password": "eGov@123",
+    "city": "City A"
+  },
+
+  "vendor": {
+    "mobile": "9000000001",
+    "otp": "123456",
+    "city": "City A"
+  }
+}

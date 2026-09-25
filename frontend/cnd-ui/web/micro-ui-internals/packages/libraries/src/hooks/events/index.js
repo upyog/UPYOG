@@ -1,4 +1,5 @@
-import { useQuery, useMutation } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
+import { mutationTemplate } from "../../common/mutationTemplate";
 
 const tsToDate = (ts) => {
     const plus0 = num => `0${num.toString()}`.slice(-2)
@@ -37,7 +38,7 @@ const fetchImageLinksFromFilestoreIds = async (filesArray, tenantId) => {
           code: "VIEW_ATTACHMENT"
         }));
     } else {
-      return [];
+        return [];
     }
   };
 
@@ -124,8 +125,6 @@ const getEventSLA = (item) => {
     };
   };
 
-
-
 const filterAllEvents = async(data, variant) => {
     const filteredEvents = data.filter(e => e.status === "ACTIVE")
     const events = []
@@ -136,7 +135,6 @@ const filterAllEvents = async(data, variant) => {
             ...e,
             timePastAfterEventCreation: slaDetails.time,
             timeApproxiamationInUnits: slaDetails.unit,
-            //todo
             eventNotificationText: e?.description,
             header: e?.eventType === "SYSTEMGENERATED" ? getTransformedLocale(e?.name) : e?.name,
             eventType: e?.eventType,
@@ -166,20 +164,28 @@ const getEventsData = async (variant, tenantId) => {
     return allEventsData
 }
 
-const useEvents = ({tenantId, variant, config={}}) => useQuery(
-    ["EVENTS_SEARCH", tenantId, variant],
-    () => getEventsData(variant, tenantId),
-    { 
-        ...config
-    } )
+const useEvents = ({ tenantId, variant, config = {} }) => {
+  return queryTemplate({
+    queryKey: ["EVENTS_SEARCH", tenantId, variant],
+    queryFn: () => getEventsData(variant, tenantId),
+    config,
+  });
+};
 
-const useClearNotifications = () => useMutation(({tenantId}) => Digit.EventsServices.ClearNotification({tenantId}))
+const useClearNotifications = () => {
+  return mutationTemplate({
+    mutationFn: ({ tenantId }) =>
+      Digit.EventsServices.ClearNotification({ tenantId }),
+  });
+};
 
-const useNotificationCount = ({tenantId, config={}}) => useQuery(
-    ["NOTIFICATION_COUNT", tenantId],
-    () => Digit.EventsServices.NotificationCount({tenantId}),
-    {
-        ...config
-    })
+const useNotificationCount = ({ tenantId, config = {} }) => {
+  return queryTemplate({
+    queryKey: ["NOTIFICATION_COUNT", tenantId],
+    queryFn: () =>
+      Digit.EventsServices.NotificationCount({ tenantId }),
+    config,
+  });
+};
 
 export { useEvents, useClearNotifications, useNotificationCount }

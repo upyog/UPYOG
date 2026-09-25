@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, InfoBannerIcon, Dropdown, TextArea } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, InfoBannerIcon, Dropdown, TextArea } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/ASTTimeline";
 import { Controller, useForm } from "react-hook-form";
-import "../css/asset-inline-auto.css";
+
 const NewAssetClassification = ({
   t,
   config,
@@ -159,33 +159,50 @@ const NewAssetClassification = ({
       value: `${asset_mdms.name}`
     });
   });
-  Asset_Type && Asset_Type.map(asset_type_mdms => {
-    if (asset_type_mdms.assetClassification == assetclassification?.code) {
-      asset_type.push({
-        i18nKey: `${asset_type_mdms.name}`,
-        code: `${asset_type_mdms.code}`,
-        value: `${asset_type_mdms.name}`
-      });
-    }
-  });
-  Asset_Sub_Type && Asset_Sub_Type.map(asset_sub_type_mdms => {
-    if (asset_sub_type_mdms.assetParentCategory == assettype?.code) {
-      asset_sub_type.push({
-        i18nKey: `${asset_sub_type_mdms.name}`,
-        code: `${asset_sub_type_mdms.code}`,
-        value: `${asset_sub_type_mdms.name}`
-      });
-    }
-  });
-  Asset_Parent_Sub_Type && Asset_Parent_Sub_Type.map(asset_parent_mdms => {
-    if (asset_parent_mdms.assetCategory == assetsubtype?.code) {
-      asset_parent_sub_category.push({
-        i18nKey: `${asset_parent_mdms.name}`,
-        code: `${asset_parent_mdms.code}`,
-        value: `${asset_parent_mdms.name}`
-      });
-    }
-  });
+
+  Asset_Type &&
+    Asset_Type.map((asset_type_mdms) => {
+      if (asset_type_mdms.assetClassification == assetclassification?.code) {
+        const minorcodeAndAssetType = (asset_type_mdms.minorCode && asset_type_mdms.minorCode !== "undefined")
+          ? `${asset_type_mdms.minorCode} - ${asset_type_mdms.name}` 
+          : asset_type_mdms.name;
+        asset_type.push({
+          i18nKey: `${asset_type_mdms.name}`,
+          code: `${asset_type_mdms.code}`,
+          value: minorcodeAndAssetType,
+          minorCode: asset_type_mdms.minorCode,
+          name: `${asset_type_mdms.name}`
+        });
+      }
+    });
+
+  Asset_Sub_Type &&
+    Asset_Sub_Type.map((asset_sub_type_mdms) => {
+      if (asset_sub_type_mdms.assetParentCategory == assettype?.code) {
+        const glcodeAndAssetsubType = (asset_sub_type_mdms.glcode && asset_sub_type_mdms.glcode !== "undefined")
+          ? `${asset_sub_type_mdms.glcode} - ${asset_sub_type_mdms.name}` 
+          : asset_sub_type_mdms.name;
+        asset_sub_type.push({
+          i18nKey: `${asset_sub_type_mdms.name}`,
+          code: `${asset_sub_type_mdms.code}`,
+          value: glcodeAndAssetsubType,
+          glcode: asset_sub_type_mdms.glcode,
+          name: `${asset_sub_type_mdms.name}`
+        });
+      }
+    });
+
+  Asset_Parent_Sub_Type &&
+    Asset_Parent_Sub_Type.map((asset_parent_mdms) => {
+      if (asset_parent_mdms.assetCategory == assetsubtype?.code) {
+        asset_parent_sub_category.push({
+          i18nKey: `${asset_parent_mdms.name}`,
+          code: `${asset_parent_mdms.code}`,
+          value: `${asset_parent_mdms.name}`,
+        });
+      }
+    });
+
   function setAssetClassification(e) {
     setassetclassification(e.target.value);
   }
@@ -299,7 +316,8 @@ const NewAssetClassification = ({
     code: 'false',
     value: 'NO'
   }];
-  return <React.Fragment>
+  return (
+    <React.Fragment>
       {window.location.href.includes("/employee") ? <Timeline currentStep={1} /> : null}
 
       <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={!assetclassification || !assetsubtype || !BookPagereference}>
@@ -342,17 +360,59 @@ const NewAssetClassification = ({
               </span>
             </div>
           </div>
-          <Controller control={control} name={"assetclassification"} defaultValue={assetclassification} rules={{
-          required: t("CORE_COMMON_REQUIRED_ERRMSG")
-        }} render={props => <Dropdown className="form-field" selected={assetclassification} select={setassetclassification} option={menu_Asset} optionKey="i18nKey" placeholder={"Select"} t={t} />} />
+          <Controller
+            control={control}
+            name={"assetclassification"}
+            defaultValue={assetclassification}
+            rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+            render={(props) => (
+              <Dropdown
+                className="form-field"
+                selected={assetclassification}
+                select={setassetclassification}
+                option={menu_Asset}
+                optionKey="i18nKey"
+                placeholder={"Select"}
+                t={t}
+              />
+            )}
+          />
           <div>{`${t("AST_PARENT_CATEGORY")}`} <span className="asset-auto-193">*</span></div>
-          <Controller control={control} name={"assettype"} defaultValue={assettype} rules={{
-          required: t("CORE_COMMON_REQUIRED_ERRMSG")
-        }} render={props => <Dropdown className="form-field" selected={assettype} select={setassettype} option={asset_type} optionKey="i18nKey" placeholder={"Select"} t={t} />} />
+          <Controller
+            control={control}
+            name={"assettype"}
+            defaultValue={assettype}
+            rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+            render={(props) => (
+              <Dropdown
+                className="form-field"
+                selected={assettype}
+                select={setassettype}
+                option={asset_type}
+                optionKey="value"
+                placeholder={"Select"}
+                t={t}
+              />
+            )}
+          />
           <div>{`${t("AST_SUB_CATEGORY")}`} <span className="asset-auto-194">*</span></div>
-          <Controller control={control} name={"assetsubtype"} defaultValue={assetsubtype} rules={{
-          required: t("CORE_COMMON_REQUIRED_ERRMSG")
-        }} render={props => <Dropdown className="form-field" selected={assetsubtype} select={setassetsubtype} option={asset_sub_type} optionKey="i18nKey" placeholder={"Select"} t={t} />} />
+          <Controller
+            control={control}
+            name={"assetsubtype"}
+            defaultValue={assetsubtype}
+            rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
+            render={(props) => (
+              <Dropdown
+                className="form-field"
+                selected={assetsubtype}
+                select={setassetsubtype}
+                option={asset_sub_type}
+                optionKey="value"
+                placeholder={"Select"}
+                t={t}
+              />
+            )}
+          />
 
           <div>{`${t("AST_CATEGORY_SUB_CATEGORY")}`}</div>
           <Controller control={control} name={"assetparentsubCategory"} defaultValue={assetparentsubCategory} rules={{
@@ -444,6 +504,7 @@ const NewAssetClassification = ({
         }} render={props => <Dropdown className="form-field" selected={assetAssignable} select={setAssetAssignable} option={assetAssignableMenu} optionKey="code" placeholder={"Select"} t={t} />} />
         </div>
       </FormStep>
-    </React.Fragment>;
+    </React.Fragment>
+  );
 };
 export default NewAssetClassification;

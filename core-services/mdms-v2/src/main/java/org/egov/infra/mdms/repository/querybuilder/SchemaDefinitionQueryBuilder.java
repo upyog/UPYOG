@@ -28,6 +28,38 @@ public class SchemaDefinitionQueryBuilder {
      * @return
      */
     public String getSchemaSearchQuery(SchemaDefCriteria schemaDefCriteria, List<Object> preparedStmtList) {
+        if (Boolean.TRUE.equals(schemaDefCriteria.getIsGetAllCodes())) {
+
+    	    StringBuilder query = new StringBuilder(
+    	        "SELECT * " +
+    	        "FROM ( " +
+    	        "    SELECT DISTINCT ON (split_part(code,'.',1)) " +
+    	        "           id, " +
+    	        "           tenantid, " +
+    	        "           split_part(code,'.',1) as code, " +
+    	        "           description, " +
+    	        "           definition, " +
+    	        "           isactive, " +
+    	        "           createdby, " +
+    	        "           lastmodifiedby, " +
+    	        "           createdtime, " +
+    	        "           lastmodifiedtime " +
+    	        "    FROM eg_mdms_schema_definition "
+    	    );
+
+    	    if (!Objects.isNull(schemaDefCriteria.getTenantId())) {
+    	        query.append(" WHERE tenantid = ? ");
+    	        preparedStmtList.add(schemaDefCriteria.getTenantId());
+    	    }
+
+    	    query.append(
+    	        " ORDER BY split_part(code,'.',1), createdtime DESC " +
+    	        ") t ORDER BY code "
+    	    );
+
+    	    return getPaginatedQuery(query.toString(), schemaDefCriteria, preparedStmtList);
+    	
+        }
         String query = buildQuery(schemaDefCriteria, preparedStmtList);
         query = QueryUtil.addOrderByClause(query, SEARCH_SCHEMA_DEF_ORDER_BY_CLAUSE);
         query = getPaginatedQuery(query, schemaDefCriteria, preparedStmtList);
@@ -52,6 +84,20 @@ public class SchemaDefinitionQueryBuilder {
             QueryUtil.addClauseIfRequired(builder, preparedStmtList);
             builder.append(" schema.code IN ( ").append(QueryUtil.createQuery(schemaDefCriteria.getCodes().size())).append(" )");
             QueryUtil.addToPreparedStatement(preparedStmtList, new HashSet<>(schemaDefCriteria.getCodes()));
+        }
+        if (!Objects.isNull(schemaDefCriteria.getModuleName())) {
+
+            String moduleName = schemaDefCriteria.getModuleName().trim();
+
+            if (moduleName.length() < 3) {
+                throw new IllegalArgumentException(
+                    "Minimum 3 characters are required for module search."
+                );
+            }
+
+            QueryUtil.addClauseIfRequired(builder, preparedStmtList);
+            builder.append(" schema.code ILIKE ? ");
+            preparedStmtList.add(moduleName + "%.%");
         }
 
         return builder.toString();

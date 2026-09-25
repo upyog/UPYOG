@@ -1,92 +1,85 @@
-import { Card, CardHeader, CardSubHeader, CardText, CitizenInfoLabel, LinkButton, Row, StatusTable, SubmitBar, EditIcon, Header, CardSectionHeader, Loader } from "@upyog/digit-ui-react-components";
-import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useHistory, useRouteMatch, Link } from "react-router-dom";
-import DisconnectTimeline from "../../../components/DisconnectTimeline";
-import WSDocument from "../../../pageComponents/WSDocument";
-import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSReSubmitDisconnection } from "../../../utils";
-import "../../../css/ws-inline-auto.css";
-const CheckPage = () => {
-  const {
-    t
-  } = useTranslation();
-  const history = useHistory();
-  const match = useRouteMatch();
-  const value = Digit.SessionStorage.get("WS_DISCONNECTION");
-  const [documents, setDocuments] = useState(value.WSDisconnectionForm.documents || []);
-  let routeLink = `/upyog-ui/citizen/ws/resubmit-disconnect-application`;
-  if (window.location.href.includes("/resubmit")) routeLink = `/upyog-ui/citizen/ws/resubmit-disconnect-application`;
-  function routeTo(jumpTo) {
-    location.href = jumpTo;
-  }
-  const [isEnableLoader, setIsEnableLoader] = useState(false);
-  const {
-    isLoading: updatingWaterApplicationLoading,
-    isError: updateWaterApplicationError,
-    data: updateWaterResponse,
-    error: updateWaterError,
-    mutate: waterUpdateMutation
-  } = Digit.Hooks.ws.useWSApplicationActions("WATER");
-  const {
-    isLoading: updatingSewerageApplicationLoading,
-    isError: updateSewerageApplicationError,
-    data: updateSewerageResponse,
-    error: updateSewerageError,
-    mutate: sewerageUpdateMutation
-  } = Digit.Hooks.ws.useWSApplicationActions("SEWERAGE");
-  const closeToastOfError = () => {
-    setShowToast(null);
-  };
-  const onSubmit = async data => {
-    const payload = await createPayloadOfWSReSubmitDisconnection(data, value, value.serviceType);
-    if (payload?.WaterConnection?.water) {
-      if (waterUpdateMutation) {
-        setIsEnableLoader(true);
-        await waterUpdateMutation(payload, {
-          onError: (error, variables) => {
-            setIsEnableLoader(false);
-            setError({
-              key: "error",
-              message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error
-            });
-            setTimeout(closeToastOfError, 5000);
-          },
-          onSuccess: async (data, variables) => {
-            Digit.SessionStorage.set("WS_DISCONNECTION", {
-              ...value?.applicationData,
-              ...value?.WSDisconnectionForm,
-              DisconnectionResponse: data?.WaterConnection?.[0]
-            });
-            history.push(`/upyog-ui/citizen/ws/disconnect-acknowledge?applicationNumber=${data?.WaterConnection?.[0]?.applicationNo}`);
-          }
-        });
-      }
-    } else if (payload?.SewerageConnection?.sewerage) {
-      if (sewerageUpdateMutation) {
-        setIsEnableLoader(true);
-        await sewerageUpdateMutation(payload, {
-          onError: (error, variables) => {
-            setIsEnableLoader(false);
-            setError({
-              key: "error",
-              message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error
-            });
-            setTimeout(closeToastOfError, 5000);
-          },
-          onSuccess: async (data, variables) => {
-            Digit.SessionStorage.set("WS_DISCONNECTION", {
-              ...value?.applicationData,
-              ...value?.WSDisconnectionForm,
-              DisconnectionResponse: data?.SewerageConnections?.[0]
-            });
-            history.push(`/upyog-ui/citizen/ws/disconnect-acknowledge?applicationNumber=${data?.SewerageConnections?.[0]?.applicationNo}`);
-          }
-        });
-      }
+import {
+    Card, CardHeader, CardSubHeader, CardText,
+    CitizenInfoLabel, LinkButton, Row, StatusTable, SubmitBar, EditIcon, Header, CardSectionHeader, Loader
+  } from "@nudmcdgnpm/digit-ui-react-components";
+  import React, { useState } from "react";
+  import { useTranslation } from "react-i18next";
+  import { Link,  } from "react-router-dom";
+  import DisconnectTimeline from "../../../components/DisconnectTimeline";
+  import WSDocument from "../../../pageComponents/WSDocument";
+import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSReSubmitDisconnection,  } from "../../../utils";
+  
+  const CheckPage = () => {
+    const { t } = useTranslation();
+    const navigate = Digit.Hooks.useCustomNavigate();
+    const match = Digit.Hooks.useModuleBasePath();
+    const value = Digit.SessionStorage.get("WS_DISCONNECTION");
+    const [documents, setDocuments] = useState( value.WSDisconnectionForm.documents || []);
+    let routeLink = `/upyog-ui/citizen/ws/resubmit-disconnect-application`;
+    if(window.location.href.includes("/resubmit"))
+    routeLink=`/upyog-ui/citizen/ws/resubmit-disconnect-application`
+
+    function routeTo(jumpTo) {
+        location.href=jumpTo;
     }
-  };
-  if (isEnableLoader) {
-    return <Loader />;
+    const [isEnableLoader, setIsEnableLoader] = useState(false);
+  
+    const {
+      isLoading: updatingWaterApplicationLoading,
+      isError: updateWaterApplicationError,
+      data: updateWaterResponse,
+      error: updateWaterError,
+      mutate: waterUpdateMutation,
+    } = Digit.Hooks.ws.useWSApplicationActions("WATER");
+  
+    const {
+      isLoading: updatingSewerageApplicationLoading,
+      isError: updateSewerageApplicationError,
+      data: updateSewerageResponse,
+      error: updateSewerageError,
+      mutate: sewerageUpdateMutation,
+    } = Digit.Hooks.ws.useWSApplicationActions("SEWERAGE");
+    
+    const closeToastOfError = () => { setShowToast(null); };
+
+    const onSubmit = async (data) => {
+      const payload = await createPayloadOfWSReSubmitDisconnection(data, value, value.serviceType);
+      if(payload?.WaterConnection?.water){
+        if (waterUpdateMutation) {
+          setIsEnableLoader(true);
+          await waterUpdateMutation(payload, {
+            onError: (error, variables) => {
+              setIsEnableLoader(false);
+              setError({ key: "error", message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
+              setTimeout(closeToastOfError, 5000);
+            },
+            onSuccess: async (data, variables) => {
+                Digit.SessionStorage.set("WS_DISCONNECTION", { ...value?.applicationData, ...value?.WSDisconnectionForm , DisconnectionResponse: data?.WaterConnection?.[0]});
+                navigate(`/upyog-ui/citizen/ws/disconnect-acknowledge?applicationNumber=${data?.WaterConnection?.[0]?.applicationNo}`);
+            },
+          });
+        }
+      }
+      else if(payload?.SewerageConnection?.sewerage){
+        if (sewerageUpdateMutation) {
+          setIsEnableLoader(true);
+          await sewerageUpdateMutation(payload, {
+            onError: (error, variables) => {
+              setIsEnableLoader(false);
+              setError({ key: "error", message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
+              setTimeout(closeToastOfError, 5000);
+            },
+            onSuccess: async (data, variables) => {
+                Digit.SessionStorage.set("WS_DISCONNECTION", {...value?.applicationData, ...value?.WSDisconnectionForm , DisconnectionResponse: data?.SewerageConnections?.[0]});
+                navigate(`/upyog-ui/citizen/ws/disconnect-acknowledge?applicationNumber=${data?.SewerageConnections?.[0]?.applicationNo}`);
+            },
+          });
+        }
+      }
+    } ;
+
+  if(isEnableLoader) {
+    return <Loader/>
   }
   return <React.Fragment>
     <Header styles={{

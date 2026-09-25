@@ -1,6 +1,10 @@
+/**
+ * Renders the detailed overview of an NOC application for employee workflow processing.
+ * Displays application parameters, uploaded verification documents, building details, timeline history, and action workflow bar.
+ */
 import {
   CardSectionHeader, Header, MultiUploadWrapper, PDFSvg, Row, StatusTable, LabelFieldPair, CardLabel, Loader
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -236,6 +240,11 @@ const ApplicationOverview = () => {
   )
 }
 
+/**
+ * Handles uploading additional verification documents in employee overview screen.
+ * Validates file size (max 5MB), uploads file via Filestorage API, updates document type mapping,
+ * and maintains NOC documents state for workflow action processing.
+ */
 function SelectDocument({
   t,
   document: doc,

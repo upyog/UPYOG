@@ -50,14 +50,14 @@ package org.egov.model.payment;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CVoucherHeader;
 import org.egov.eis.entity.DrawingOfficer;
 import org.egov.infra.workflow.entity.StateAware;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 public class Paymentheader extends StateAware {
 
@@ -65,10 +65,10 @@ public class Paymentheader extends StateAware {
 	private Long id;
 	@NotNull
 	private CVoucherHeader voucherheader;
-	@SafeHtml
+	@SanitizeHtml
 	private String isSelected;
 	@NotNull
-	@SafeHtml
+	@SanitizeHtml
 	@Length(max = 50)
 	private String type;
 	private Date concurrenceDate;

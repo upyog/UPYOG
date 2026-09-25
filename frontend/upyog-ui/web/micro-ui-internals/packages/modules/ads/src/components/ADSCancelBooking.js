@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { Modal, Card, CheckBox } from "@upyog/digit-ui-react-components";
-import { useForm } from "react-hook-form";
-import "../css/ads-inline-auto.css";
-const Heading = props => {
-  return <h1 className="heading-m">{props.t("CHB_CANCEL")}</h1>;
+import React,{useState} from "react";
+import { Modal, Card,CheckBox} from "@nudmcdgnpm/digit-ui-react-components";
+import {useForm } from "react-hook-form";
+
+const Heading = (props) => {
+    return <h1 className="heading-m">{props.t("CHB_CANCEL")}</h1>;
 };
 const Close = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
         <path d="M0 0h24v24H0V0z" fill="none" />

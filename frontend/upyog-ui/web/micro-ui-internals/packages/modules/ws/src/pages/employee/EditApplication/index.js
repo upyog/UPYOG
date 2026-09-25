@@ -1,7 +1,7 @@
-import { FormComposer, Header, Loader, Toast } from "@upyog/digit-ui-react-components";
+import { FormComposer, Header, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation, useHistory } from "react-router-dom";
+import { useLocation,  } from "react-router-dom";
 import * as func from "../../../utils";
 import _ from "lodash";
 import { newConfig as newConfigLocal } from "../../../config/wsCreateConfig";
@@ -9,14 +9,10 @@ import { convertApplicationData, convertEditApplicationDetails } from "../../../
 import cloneDeep from "lodash/cloneDeep";
 import "../../../css/ws-inline-auto.css";
 const EditApplication = () => {
-  const {
-    t
-  } = useTranslation();
-  let {
-    state
-  } = useLocation();
-  state = state ? typeof state === "string" ? JSON.parse(state) : state : {};
-  const history = useHistory();
+  const { t } = useTranslation();
+  let { state } = useLocation();
+  state = state  ? (typeof(state) === "string" ? JSON.parse(state) : state) : {};
+  const navigate = Digit.Hooks.useCustomNavigate();
   let filters = func.getQueryStringParams(location.search);
   const [canSubmit, setSubmitValve] = useState(false);
   const [showToast, setShowToast] = useState(null);
@@ -81,8 +77,10 @@ const EditApplication = () => {
   useEffect(() => {
     !propertyId && sessionFormData?.cpt?.details?.propertyId && setPropertyId(sessionFormData?.cpt?.details?.propertyId);
   }, [sessionFormData?.cpt]);
-  useEffect(async () => {
-    const IsDetailsExists = sessionStorage.getItem("IsDetailsExists") ? JSON.parse(sessionStorage.getItem("IsDetailsExists")) : false;
+
+  useEffect(() => {
+  const loadData = async () => {
+    const IsDetailsExists = sessionStorage.getItem("IsDetailsExists") ? JSON.parse(sessionStorage.getItem("IsDetailsExists")) : false
     if (details?.applicationData?.id && !IsDetailsExists) {
       sessionStorage.setItem("appData", JSON.stringify(appData));
       const convertAppData = await convertApplicationData(details, serviceType, false, false, t);
@@ -95,7 +93,10 @@ const EditApplication = () => {
       });
       sessionStorage.setItem("IsDetailsExists", JSON.stringify(true));
     }
-  }, [details, applicationDetails, sessionFormData?.cpt, sessionFormData, propertyDetails]);
+  };
+    loadData();
+  }, [details,applicationDetails,sessionFormData?.cpt, sessionFormData, propertyDetails]);
+
   useEffect(() => {
     setSessionFormData({
       ...sessionFormData,

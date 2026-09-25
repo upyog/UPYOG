@@ -1,8 +1,8 @@
-import { EditIcon, Header, LinkLabel, Loader, Modal } from "@upyog/digit-ui-react-components";
+import { EditIcon, Header, LinkLabel, Loader, Modal } from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams,  } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 import OwnerHistory from "./PropertyMutation/ownerHistory";
 import usePropertyAPI from "../../../../../libraries/src/hooks/pt/usePropertyAPI";
@@ -31,7 +31,7 @@ const PropertyDetails = () => {
   const [showUpdateNo, setShowUpdateNo] = useState(false);
   const PT_CEMP = Digit.UserService.hasAccess(["PT_CEMP"]) || false;
   const [businessService, setBusinessService] = useState("PT.CREATE");
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   sessionStorage.setItem("propertyIdinPropertyDetail", applicationNumber);
   // const isMobile = window.Digit.Utils.browser.isMobile();
   const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 780);
@@ -186,16 +186,14 @@ const PropertyDetails = () => {
       appDetailsToShow?.applicationDetails?.unshift({
         title: " ",
         asSectionHeader: true,
-        belowComponent: () => <LinkLabel onClick={() => history.push({
-          pathname: `/upyog-ui/employee/pt/payment-details/${applicationNumber}`
-        })} style={isMobile ? {
-          marginTop: "15px",
-          marginLeft: "0px"
-        } : {
-          marginTop: "15px"
-        }}>
+        belowComponent: () => (
+          <LinkLabel
+            onClick={() => navigate({ pathname: `/upyog-ui/employee/pt/payment-details/${applicationNumber}`})}
+            style={isMobile ? { marginTop: "15px", marginLeft: "0px" } : { marginTop: "15px" }}
+          >
             {t("PT_VIEW_PAYMENT")}
-          </LinkLabel>,
+          </LinkLabel>
+        ),
         values: [{
           title: "PT_PROPERTY_PTUID",
           value: applicationNumber
@@ -219,59 +217,89 @@ const PropertyDetails = () => {
       data: {
         ...workflowDetails?.data,
         actionState: {
-          nextActions: PT_CEMP ? [{
-            action: "ASSESS_PROPERTY",
-            forcedName: "PT_ASSESS",
-            showFinancialYearsModal: true,
-            customFunctionToExecute: data => {
-              delete data.customFunctionToExecute;
-              history.replace({
-                pathname: `/upyog-ui/employee/pt/ptsearch/assessment-details/${applicationNumber}`,
-                state: {
-                  ...data
-                }
-              });
-            },
-            tenantId: Digit.ULBService.getStateId()
-          }, {
-            action: !fetchBillData?.Bill[0]?.totalAmount ? "MUTATE_PROPERTY" : "PT_TOTALDUES_PAY",
-            forcedName: "PT_OWNERSHIP_TRANSFER",
-            AmountDueForPay: fetchBillData?.Bill[0]?.totalAmount,
-            isWarningPopUp: !fetchBillData?.Bill[0]?.totalAmount ? false : true,
-            redirectionUrl: {
-              pathname: !fetchBillData?.Bill[0]?.totalAmount ? `/upyog-ui/employee/pt/property-mutate-docs-required/${applicationNumber}` : `/upyog-ui/employee/payment/collect/PT/${applicationNumber}`,
-              // state: { workflow: { action: "OPEN", moduleName: "PT", businessService } },
-              state: null
-            },
-            tenantId: Digit.ULBService.getStateId()
-          }, {
-            action: "INACTIVE_PROPERTY",
-            forcedName: "PT_INACTIVE_PROPERTY",
-            showInactiveYearModel: true,
-            customFunctionToExecute: data => {
-              history.push("/upyog-ui/employee/pt/response", {
-                Property: data.Property,
-                key: "UPDATE",
-                action: "SUBMIT"
-              });
-            },
-            // redirectionUrl: {
-
-            //   state: { workflow: { action: "OPEN", moduleName: "PT", businessService: "PT.CREATE" } },
-            // },
-            // AmountDueForPay: fetchBillData?.Bill[0]?.totalAmount,
-            //isWarningPopUp: !fetchBillData?.Bill[0]?.totalAmount ? true : true,
-            // redirectionUrl: {
-            //   pathname: !fetchBillData?.Bill[0]?.totalAmount
-            //     ? `/upyog-ui/employee/pt/property-mutate-docs-required/${applicationNumber}`
-            //     : `/upyog-ui/employee/payment/collect/PT/${applicationNumber}`,
-            //   // state: { workflow: { action: "OPEN", moduleName: "PT", businessService } },
-            //   state: null,
-            // },
-            tenantId: Digit.ULBService.getStateId()
-          }] : []
-        }
-      }
+          nextActions: PT_CEMP
+            ? [
+              {
+                action: "ASSESS_PROPERTY",
+                forcedName: "PT_ASSESS",
+                showFinancialYearsModal: true,
+                customFunctionToExecute: (data) => {
+                  delete data.customFunctionToExecute;
+                  navigate(`/upyog-ui/employee/pt/ptsearch/assessment-details/${applicationNumber}`, { replace: true, state: { ...data } });
+                },
+                tenantId: Digit.ULBService.getStateId(),
+              },
+              {
+                action: !fetchBillData?.Bill[0]?.totalAmount ? "MUTATE_PROPERTY" : "PT_TOTALDUES_PAY",
+                forcedName: "PT_OWNERSHIP_TRANSFER",
+                AmountDueForPay: fetchBillData?.Bill[0]?.totalAmount,
+                isWarningPopUp: !fetchBillData?.Bill[0]?.totalAmount ? false : true,
+                redirectionUrl: {
+                  pathname: !fetchBillData?.Bill[0]?.totalAmount
+                    ? `/upyog-ui/employee/pt/property-mutate-docs-required/${applicationNumber}`
+                    : `/upyog-ui/employee/payment/collect/PT/${applicationNumber}`,
+                  // state: { workflow: { action: "OPEN", moduleName: "PT", businessService } },
+                  state: null,
+                },
+                tenantId: Digit.ULBService.getStateId(),
+              },
+              {
+                action: "INACTIVE_PROPERTY",
+                forcedName: "PT_INACTIVE_PROPERTY",
+                showInactiveYearModel: true,
+                customFunctionToExecute: (data) => {
+                  mutation.mutate(
+                    {
+                      Property: data.Property,
+                    },
+                    {
+                      onError: (error) => {
+                        navigate("/upyog-ui/employee/pt/response", {
+                          replace: true,
+                          state: {
+                            Property: data.Property,
+                            responseData: null,
+                            isSuccess: false,
+                            error: error?.response?.data?.Errors?.[0]?.message || error?.message || "Error updating property",
+                            action: "SUBMIT",
+                            key: "UPDATE",
+                          },
+                        });
+                      },
+                      onSuccess: (responseData) => {
+                        navigate("/upyog-ui/employee/pt/response", {
+                          replace: true,
+                          state: {
+                            Property: data.Property,
+                            responseData,
+                            isSuccess: true,
+                            action: "SUBMIT",
+                            key: "UPDATE",
+                          },
+                        });
+                      },
+                    }
+                  );
+                },
+                // redirectionUrl: {
+                 
+                //   state: { workflow: { action: "OPEN", moduleName: "PT", businessService: "PT.CREATE" } },
+                // },
+               // AmountDueForPay: fetchBillData?.Bill[0]?.totalAmount,
+                //isWarningPopUp: !fetchBillData?.Bill[0]?.totalAmount ? true : true,
+                // redirectionUrl: {
+                //   pathname: !fetchBillData?.Bill[0]?.totalAmount
+                //     ? `/upyog-ui/employee/pt/property-mutate-docs-required/${applicationNumber}`
+                //     : `/upyog-ui/employee/payment/collect/PT/${applicationNumber}`,
+                //   // state: { workflow: { action: "OPEN", moduleName: "PT", businessService } },
+                //   state: null,
+                // },
+                tenantId: Digit.ULBService.getStateId(),
+              },
+            ]
+            : [],
+        },
+      },
     };
   }
   if (appDetailsToShow?.applicationData?.status === "ACTIVE" && PT_CEMP) {
@@ -293,7 +321,8 @@ const PropertyDetails = () => {
       });
     }
   }
-  if (fetchBillLoading) {
+
+  if (fetchBillLoading || mutation.isPending) {
     return <Loader />;
   }
   const UpdatePropertyNumberComponent = Digit?.ComponentRegistryService?.getComponent("EmployeeUpdateOwnerNumber");

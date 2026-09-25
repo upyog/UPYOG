@@ -1,11 +1,11 @@
-import { CardLabel, LabelFieldPair, TextInput, CardLabelError, DatePicker } from "@upyog/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, TextInput, CardLabelError, DatePicker } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { getPattern } from "../utils";
 import * as func from "../utils";
 import { useForm, Controller } from "react-hook-form";
 import _ from "lodash";
 import { useTranslation } from "react-i18next";
-import "../css/ws-inline-auto.css";
+
 const createActivationDetails = () => ({
   meterId: "",
   meterInstallationDate: null,
@@ -32,7 +32,8 @@ const WSActivationPageDetails = ({
   });
   const [isErrors, setIsErrors] = useState(false);
   useEffect(() => {
-    const data = activationDetails.map(e => {
+    const data = activationDetails.map((e, index) => {
+      if (!e.key) e.key = Date.now() + index; // Ensure each item has a key
       return e;
     });
     onSelect(config?.key, data);
@@ -64,7 +65,7 @@ const WSActivationPageDetails = ({
     filters
   };
   return <React.Fragment>
-            {activationDetails.map((activationDetail, index) => <ConnectionDetails key={activationDetail.key} index={index} activationDetail={activationDetail} {...commonProps} />)}
+            {activationDetails.map((activationDetail, index) => <ConnectionDetails key={activationDetail?.key || `ws-activation-detail-${index}`} index={index} activationDetail={activationDetail} {...commonProps} />)}
         </React.Fragment>;
 };
 const ConnectionDetails = _props => {
@@ -162,21 +163,31 @@ const ConnectionDetails = _props => {
             fontWeight: "700"
           }} className="card-label-smaller">{`${t("WS_SERV_DETAIL_METER_ID")}`}<span className="check-page-link-button"> *</span></CardLabel>
                         <div className="field">
-                            <Controller control={control} name="meterId" defaultValue={activationDetail?.meterId} type="number" rules={{
-              validate: e => e && getPattern("WSOnlyNumbers").test(e) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG"),
-              required: t("REQUIRED_FIELD")
-            }} isMandatory={true} render={props => <TextInput type="number" value={props.value} autoFocus={focusIndex.index === activationDetail?.key && focusIndex.type === "meterId"} errorStyle={localFormState.touched.meterId && errors?.meterId?.message ? true : false} onChange={e => {
-              props.onChange(e.target.value);
-              setFocusIndex({
-                index: activationDetail?.key,
-                type: "meterId"
-              });
-            }} labelStyle={{
-              marginTop: "unset"
-            }} onBlur={props.onBlur} />} />
+                            <Controller
+                                control={control}
+                                name="meterId"
+                                defaultValue={activationDetail?.meterId}
+                                type="number"
+                                rules={{ validate: (e) => ((e && getPattern("WSOnlyNumbers").test(e)) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")), required: t("REQUIRED_FIELD") }}
+                                isMandatory={true}
+                                render={({ field }) => (
+                                    <TextInput
+                                        type="number"
+                                        value={field.value}
+                                        autoFocus={focusIndex.index === activationDetail?.key && focusIndex.type === "meterId"}
+                                        errorStyle={(localFormState.touchedFields.meterId && errors?.meterId?.message) ? true : false}
+                                        onChange={(e) => {
+                                            field.onChange(e.target.value);
+                                            setFocusIndex({ index: activationDetail?.key, type: "meterId" });
+                                        }}
+                                        labelStyle={{ marginTop: "unset" }}
+                                        onBlur={field.onBlur}
+                                    />
+                                )}
+                            />
                         </div>
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.meterId ? errors?.meterId?.message : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState?.touched?.meterId ? errors?.meterId?.message : ""}</CardLabelError>
                     <LabelFieldPair>
                         <CardLabel style={isMobile && isEmployee ? {
             fontWeight: "700",
@@ -186,14 +197,23 @@ const ConnectionDetails = _props => {
             fontWeight: "700"
           }} className="card-label-smaller">{`${t("WS_ADDN_DETAIL_METER_INSTALL_DATE")}`}<span className="check-page-link-button"> *</span></CardLabel>
                         <div className="field">
-                            <Controller name="meterInstallationDate" rules={{
-              required: t("REQUIRED_FIELD")
-            }}
-            // isMandatory={true}
-            defaultValue={activationDetail?.meterInstallationDate} control={control} render={props => <DatePicker date={props.value} name="meterInstallationDate" onChange={props.onChange} />} />
+                            <Controller
+                                name="meterInstallationDate"
+                                rules={{ required: t("REQUIRED_FIELD") }}
+                                // isMandatory={true}
+                                defaultValue={activationDetail?.meterInstallationDate}
+                                control={control}
+                                render={({ field }) => (
+                                    <DatePicker
+                                        date={field.value}
+                                        name="meterInstallationDate"
+                                        onChange={field.onChange}
+                                    />
+                                )}
+                            />
                         </div>
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.meterInstallationDate ? errors?.meterInstallationDate?.message : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState?.touched?.meterInstallationDate ? errors?.meterInstallationDate?.message : ""}</CardLabelError>
                     <LabelFieldPair>
                         <CardLabel style={isMobile && isEmployee ? {
             fontWeight: "700",
@@ -203,21 +223,31 @@ const ConnectionDetails = _props => {
             fontWeight: "700"
           }} className="card-label-smaller">{`${t("WS_INITIAL_METER_READING_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                         <div className="field">
-                            <Controller type="number" control={control} name="meterInitialReading" rules={{
-              validate: e => e && getPattern("WSOnlyNumbers").test(e) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG"),
-              required: t("REQUIRED_FIELD")
-            }} defaultValue={activationDetail?.meterInitialReading} isMandatory={true} render={props => <TextInput type="number" value={props.value} autoFocus={focusIndex.index === activationDetail?.key && focusIndex.type === "meterInitialReading"} errorStyle={localFormState.touched.meterInitialReading && errors?.meterInitialReading?.message ? true : false} onChange={e => {
-              props.onChange(e.target.value);
-              setFocusIndex({
-                index: activationDetail?.key,
-                type: "meterInitialReading"
-              });
-            }} labelStyle={{
-              marginTop: "unset"
-            }} onBlur={props.onBlur} />} />
+                            <Controller
+                                type="number"
+                                control={control}
+                                name="meterInitialReading"
+                                rules={{ validate: (e) => ((e && getPattern("WSOnlyNumbers").test(e)) || !e ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")), required: t("REQUIRED_FIELD") }}
+                                defaultValue={activationDetail?.meterInitialReading}
+                                isMandatory={true}
+                                render={({ field }) => (
+                                    <TextInput
+                                        type="number"
+                                        value={field.value}
+                                        autoFocus={focusIndex.index === activationDetail?.key && focusIndex.type === "meterInitialReading"}
+                                        errorStyle={(localFormState.touchedFields.meterInitialReading && errors?.meterInitialReading?.message) ? true : false}
+                                        onChange={(e) => {
+                                            field.onChange(e.target.value);
+                                            setFocusIndex({ index: activationDetail?.key, type: "meterInitialReading" });
+                                        }}
+                                        labelStyle={{ marginTop: "unset" }}
+                                        onBlur={field.onBlur}
+                                    />
+                                )}
+                            />
                         </div>
                     </LabelFieldPair>
-                    <CardLabelError style={errorStyle}>{localFormState.touched.meterInitialReading ? errors?.meterInitialReading?.message : ""}</CardLabelError>
+                    <CardLabelError style={errorStyle}>{localFormState?.touched?.meterInitialReading ? errors?.meterInitialReading?.message : ""}</CardLabelError>
                 </div> : null}
                 <LabelFieldPair>
                     <CardLabel style={isMobile && isEmployee ? {
@@ -228,14 +258,25 @@ const ConnectionDetails = _props => {
           fontWeight: "700"
         }} className="card-label-smaller">{`${t("WS_SERV_DETAIL_CONN_EXECUTION_DATE")}`}<span className="check-page-link-button"> *</span></CardLabel>
                     <div className="field">
-                        <Controller name="connectionExecutionDate" rules={{
-            required: t("REQUIRED_FIELD")
-          }}
-          // isMandatory={true}
-          defaultValue={activationDetail?.connectionExecutionDate} control={control} render={props => <DatePicker date={props.value} name="connectionExecutionDate" onChange={props.onChange} autoFocus={focusIndex.index === activationDetail?.key && focusIndex.type === "connectionExecutionDate"} errorStyle={localFormState.touched.connectionExecutionDate && errors?.connectionExecutionDate?.message ? true : false} />} />
+                        <Controller
+                            name="connectionExecutionDate"
+                            rules={{ required: t("REQUIRED_FIELD") }}
+                            // isMandatory={true}
+                            defaultValue={activationDetail?.connectionExecutionDate}
+                            control={control}
+                            render={({ field }) => (
+                                <DatePicker
+                                    date={field.value}
+                                    name="connectionExecutionDate"
+                                    onChange={field.onChange}
+                                    autoFocus={focusIndex.index === activationDetail?.key && focusIndex.type === "connectionExecutionDate"}
+                                    errorStyle={(localFormState.touchedFields.connectionExecutionDate && errors?.connectionExecutionDate?.message) ? true : false}
+                                />
+                            )}
+                        />
                     </div>
                 </LabelFieldPair>
-                <CardLabelError style={errorStyle}>{localFormState.touched.connectionExecutionDate ? errors?.connectionExecutionDate?.message : ""}</CardLabelError>
+                <CardLabelError style={errorStyle}>{localFormState?.touched?.connectionExecutionDate ? errors?.connectionExecutionDate?.message : ""}</CardLabelError>
                 {window.location.href.includes("modify") ? <div>
                 <LabelFieldPair>
                     <CardLabel style={isMobile && isEmployee ? {
@@ -246,12 +287,25 @@ const ConnectionDetails = _props => {
             fontWeight: "700"
           }} className="card-label-smaller">{`${t("WS_MODIFICATIONS_EFFECTIVE_FROM")}`}<span className="check-page-link-button"> *</span></CardLabel>
                     <div className="field">
-                        <Controller name="dateEffectiveFrom" rules={{
-              required: t("REQUIRED_FIELD")
-            }} isMandatory={true} defaultValue={activationDetail?.dateEffectiveFrom} control={control} render={props => <DatePicker date={props.value} name="dateEffectiveFrom" onChange={props.onChange} autoFocus={focusIndex.index === activationDetail?.key && focusIndex.type === "dateEffectiveFrom"} errorStyle={localFormState.touched.dateEffectiveFrom && errors?.dateEffectiveFrom?.message ? true : false} />} />
+                        <Controller
+                            name="dateEffectiveFrom"
+                            rules={{ required: t("REQUIRED_FIELD") }}
+                            isMandatory={true}
+                            defaultValue={activationDetail?.dateEffectiveFrom}
+                            control={control}
+                            render={({ field }) => (
+                                <DatePicker
+                                    date={field.value}
+                                    name="dateEffectiveFrom"
+                                    onChange={field.onChange}
+                                    autoFocus={focusIndex.index === activationDetail?.key && focusIndex.type === "dateEffectiveFrom"}
+                                    errorStyle={(localFormState.touchedFields.dateEffectiveFrom && errors?.dateEffectiveFrom?.message) ? true : false}
+                                />
+                            )}
+                        />
                     </div>
                 </LabelFieldPair>
-                <CardLabelError style={errorStyle}>{localFormState.touched.dateEffectiveFrom ? errors?.dateEffectiveFrom?.message : ""}</CardLabelError>
+                <CardLabelError style={errorStyle}>{localFormState?.touched?.dateEffectiveFrom ? errors?.dateEffectiveFrom?.message : ""}</CardLabelError>
                 </div> : null}
             </div>
         </div>;

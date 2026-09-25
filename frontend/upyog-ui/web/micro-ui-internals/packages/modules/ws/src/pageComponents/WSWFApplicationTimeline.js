@@ -1,9 +1,9 @@
-import { ActionLinks, CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar, LinkButton } from "@upyog/digit-ui-react-components";
-import React, { Fragment, useState } from "react";
+import { ActionLinks, CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar, LinkButton } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { Fragment, useState} from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import WSWFCaption from "./WSWFCaption";
-import "../css/ws-inline-auto.css";
+
 const WSWFApplicationTimeline = props => {
   const {
     t
@@ -67,17 +67,15 @@ const WSWFApplicationTimeline = props => {
     }
     switch (nextAction?.action) {
       case "PAY":
-        {
-          if (props?.paymentbuttonenabled !== false) return <div className="ws-auto-160">
-            <Link to={{
-              pathname: `/upyog-ui/citizen/payment/collect/${businessService}/${props.id}?consumerCode=${props.id}&&workflow=WNS`,
-              state: {
-                tenantId: props.application.tenantId
-              }
-            }}>
+      { if(props?.paymentbuttonenabled !== false)  return (
+          <div className="ws-auto-160">
+            <Link to={`/upyog-ui/citizen/payment/collect/${businessService}/${props.id}?consumerCode=${props.id}&workflow=WNS`}
+              state={{ tenantId: props.application.tenantId }}
+            >
               <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
             </Link>
-          </div>;
+          </div>
+        );
           break;
         }
       case "EDIT":

@@ -1,8 +1,9 @@
-import { CardLabel, CheckBox, Dropdown, FormStep, Loader, MobileNumber, RadioButtons, TextInput, UploadFile } from "@upyog/digit-ui-react-components";
+
+import { CardLabel, CheckBox, Dropdown, FormStep, Loader, MobileNumber, RadioButtons, TextInput, UploadFile } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import Timeline from "../components/Timeline";
 import { stringReplaceAll } from "../utils";
-import "../css/ws-inline-auto.css";
+
 const WSConnectionHolder = ({
   t,
   config,

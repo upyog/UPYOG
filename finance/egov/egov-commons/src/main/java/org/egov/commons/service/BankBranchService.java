@@ -50,14 +50,11 @@ package org.egov.commons.service;
 import org.egov.commons.Bank;
 import org.egov.commons.Bankbranch;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -87,7 +84,7 @@ public class BankBranchService extends PersistenceService<Bankbranch, Integer> {
         Query createQuery = getCurrentSession()
                 .createQuery(
                         "select distinct bb from Bankbranch bb , Bankaccount ba  where ba.bankbranch =bb and ba.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and bb.bank.id=:bankId and bb.isactive=true")
-                .setInteger("bankId", bankId);
+                .setParameter("bankId", bankId);
         if (bankId != null) {
             List<Bankbranch> list = (List<Bankbranch>) createQuery.list();
             if (list != null && !list.isEmpty()) {
@@ -98,25 +95,22 @@ public class BankBranchService extends PersistenceService<Bankbranch, Integer> {
         return bankBranchList;
     }
     
-    public List<Bankbranch> search(Bankbranch bb,List<Long> ids,Long bankId,String sortBy,Integer offset,Integer pageSize){
-    	
-    	
-    	Criteria bankCriteria = getSession().createCriteria(Bank.class);
-    	
-    	Criteria bbCriteria = bankCriteria.createCriteria("bankbranch");
-    	
-    	bbCriteria.add(Restrictions.eq("bankid", bankId));
-    	
-    	bbCriteria.add(Restrictions.eq("code", bb.getBranchcode()));
-    	bbCriteria.add(Restrictions.eq("name", bb.getBranchname()));
-    	bbCriteria.add(Restrictions.eq("isactive", bb.getIsactive()));
-    	
-    	bbCriteria.add(Restrictions.in("id", ids));
-    	
-    	bbCriteria.setFirstResult(offset);
-    	bbCriteria.setMaxResults(pageSize);
-    	bbCriteria.addOrder(Order.asc(sortBy));
-    	return bbCriteria.list();
+    public List<Bankbranch> search(Bankbranch bb, List<Long> ids, Long bankId, String sortBy, Integer offset, Integer pageSize) {
+        StringBuilder hql = new StringBuilder("from Bankbranch bb where bb.bank.id = :bankId");
+        if (bb.getBranchcode() != null) hql.append(" and bb.branchcode = :branchcode");
+        if (bb.getBranchname() != null) hql.append(" and bb.branchname = :branchname");
+        if (bb.getIsactive() != null) hql.append(" and bb.isactive = :isactive");
+        if (!ids.isEmpty()) hql.append(" and bb.id in (:ids)");
+        hql.append(" order by bb.").append(sortBy).append(" asc");
+        Query<Bankbranch> query = getCurrentSession().createQuery(hql.toString(), Bankbranch.class);
+        query.setParameter("bankId", bankId);
+        if (bb.getBranchcode() != null) query.setParameter("branchcode", bb.getBranchcode());
+        if (bb.getBranchname() != null) query.setParameter("branchname", bb.getBranchname());
+        if (bb.getIsactive() != null) query.setParameter("isactive", bb.getIsactive());
+        if (!ids.isEmpty()) query.setParameterList("ids", ids);
+        query.setFirstResult(offset);
+        query.setMaxResults(pageSize);
+        return query.list();
     }
 
 }

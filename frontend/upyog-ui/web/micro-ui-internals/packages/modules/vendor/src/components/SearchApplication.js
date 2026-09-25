@@ -17,7 +17,7 @@ import {
   Loader,
   CardText,
   Header,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import { Link } from "react-router-dom";
 
 const VendorSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, setShowToast, vendorData }) => {
@@ -144,7 +144,7 @@ const VendorSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count
             <Controller
               control={control}
               name="vendorName"
-              render={(field) => (
+              render={({ field }) => (
 
                   <Dropdown
                     selected={field.value || ""}
@@ -168,8 +168,7 @@ const VendorSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count
           <SearchField>
             <label>{t("VENDOR_MOBILE_NO")}</label>
             <MobileNumber
-              name="mobileNumber"
-              inputRef={register({
+              {...register("mobileNumber", {
                 minLength: {
                   value: 10,
                   message: t("CORE_COMMON_MOBILE_ERROR"),
@@ -191,7 +190,7 @@ const VendorSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count
           <SearchField>
             <label>{t("VENDOR_FROM_DATE")}</label>
             <Controller
-              render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
+              render={({ field }) => <DatePicker date={field.value} disabled={false} onChange={field.onChange} />}
               name="fromDate"
               control={control}
             />
@@ -199,7 +198,7 @@ const VendorSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count
           <SearchField>
             <label>{t("VENDOR_TO_DATE")}</label>
             <Controller
-              render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
+              render={({ field }) => <DatePicker date={field.value} disabled={false} onChange={field.onChange} />}
               name="toDate"
               control={control}
             />

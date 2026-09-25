@@ -1,7 +1,6 @@
 package org.egov.ewst.producer;
 
 import org.egov.tracer.kafka.CustomKafkaTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -11,9 +10,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class Producer {
 
-	// Custom Kafka template for sending messages
-	@Autowired
-	private CustomKafkaTemplate<String, Object> kafkaTemplate;
+	private final CustomKafkaTemplate<String, Object> kafkaTemplate;
+
+	public Producer(CustomKafkaTemplate<String, Object> kafkaTemplate) {
+		this.kafkaTemplate = kafkaTemplate;
+	}
 
 	/**
 	 * Pushes a message to the specified Kafka topic.

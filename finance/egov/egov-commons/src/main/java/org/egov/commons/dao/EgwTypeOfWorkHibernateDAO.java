@@ -48,12 +48,12 @@
 package org.egov.commons.dao;
 
 import org.egov.commons.EgwTypeOfWork;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
@@ -76,20 +76,20 @@ public class EgwTypeOfWorkHibernateDAO {
 
     public EgwTypeOfWork getTypeOfWorkById(final Long id) {
         final Query qry = getCurrentSession().createQuery("from EgwTypeOfWork typeOfWork where typeOfWork.id =:id");
-        qry.setLong("id", id);
+        qry.setParameter("id", id);
         return (EgwTypeOfWork) qry.uniqueResult();
     }
 
     public List getSubTypeOfWorkByParentId(final Long id) {
         final Query query = getCurrentSession().createQuery(
                 "from EgwTypeOfWork typeOfWork where typeOfWork.parentid =:id and egPartytype.description='Contractor' order by upper(description)");
-        query.setLong("id", id);
+        query.setParameter("id", id);
         return query.list();
     }
 
     public EgwTypeOfWork findByCode(final String code) {
         final Query qry = getCurrentSession().createQuery("from EgwTypeOfWork typeOfWork where upper(typeOfWork.code) =:code");
-        qry.setString("code", code.toUpperCase().trim());
+        qry.setParameter("code", code.toUpperCase().trim());
         return (EgwTypeOfWork) qry.uniqueResult();
     }
 
@@ -110,11 +110,11 @@ public class EgwTypeOfWorkHibernateDAO {
             qryStr.append(" and (upper(typeOfWork.description) like :description)");
         final Query qry = getCurrentSession().createQuery(qryStr.toString());
         if (code != null && !code.equals(""))
-            qry.setString("code", "%" + code.toUpperCase().trim() + "%");
+            qry.setParameter("code", "%" + code.toUpperCase().trim() + "%");
         if (parentCode != null && !parentCode.equals(""))
-            qry.setString("parentCode", "%" + parentCode.toUpperCase().trim() + "%");
+            qry.setParameter("parentCode", "%" + parentCode.toUpperCase().trim() + "%");
         if (description != null && !description.equals(""))
-            qry.setString("description", "%" + description.toUpperCase().trim() + "%");
+            qry.setParameter("description", "%" + description.toUpperCase().trim() + "%");
 
         return qry.list();
     }
@@ -141,13 +141,13 @@ public class EgwTypeOfWorkHibernateDAO {
             qryStr.append(" and (upper(typeOfWork.egPartytype.code) like :partyTypeCode)");
         final Query qry = getCurrentSession().createQuery(qryStr.toString());
         if (code != null && !code.equals(""))
-            qry.setString("code", "%" + code.toUpperCase().trim() + "%");
+            qry.setParameter("code", "%" + code.toUpperCase().trim() + "%");
         if (parentCode != null && !parentCode.equals(""))
-            qry.setString("parentCode", "%" + parentCode.toUpperCase().trim() + "%");
+            qry.setParameter("parentCode", "%" + parentCode.toUpperCase().trim() + "%");
         if (description != null && !description.equals(""))
-            qry.setString("description", "%" + description.toUpperCase().trim() + "%");
+            qry.setParameter("description", "%" + description.toUpperCase().trim() + "%");
         if (partyTypeCode != null && !partyTypeCode.equals(""))
-            qry.setString("partyTypeCode", "%" + partyTypeCode.toUpperCase().trim() + "%");
+            qry.setParameter("partyTypeCode", "%" + partyTypeCode.toUpperCase().trim() + "%");
 
         return qry.list();
     }

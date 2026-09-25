@@ -56,14 +56,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.Metamodel;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.metamodel.Metamodel;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
@@ -112,11 +112,11 @@ public class ClosedPeriodService {
 	}
 
 	public List<ClosedPeriod> findAll() {
-		return closedPeriodRepository.findAll(new Sort(Sort.Direction.ASC, "financialYear"));
+		return closedPeriodRepository.findAll(Sort.by(Sort.Direction.ASC, "financialYear"));
 	}
 
 	public ClosedPeriod findOne(final Long id) {
-		return closedPeriodRepository.findOne(id);
+		return closedPeriodRepository.findById(id).orElse(null);
 
 	}
 
@@ -130,11 +130,22 @@ public class ClosedPeriodService {
 		m.entity(ClosedPeriod.class);
 
 		final List<Predicate> predicates = new ArrayList<>();
+		/*
+		 * Hibernate 6 migration note:
+		 * financialYear is an entity association, while financialYearId is a Long from
+		 * the request. Compare against financialYear.id to satisfy strict Criteria API
+		 * type checking.
+		 */
 		if (closedPeriodSearchRequest.getFinancialYearId() != null)
 			predicates
-					.add(cb.equal(closedPeriods.get("financialYear"), closedPeriodSearchRequest.getFinancialYearId()));
+					.add(cb.equal(closedPeriods.get("financialYear").get("id"), closedPeriodSearchRequest.getFinancialYearId()));
 
-		if (closedPeriodSearchRequest.getIsClosed().booleanValue())
+		/*
+		 * Spring 6 / Java 17 migration note:
+		 * The binder can leave wrapper Boolean values null. Boolean.TRUE.equals keeps
+		 * the predicate conditional null-safe and avoids an unboxing NPE.
+		 */
+		if (Boolean.TRUE.equals(closedPeriodSearchRequest.getIsClosed()))
 			predicates.add(cb.equal(closedPeriods.get("isClosed"), true));
 
 		if (closedPeriodSearchRequest.getCloseType() != null) {

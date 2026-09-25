@@ -1,13 +1,12 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { AppContainer } from "@nudmcdgnpm/digit-ui-react-components";
-import { Route, Switch, useRouteMatch } from "react-router-dom";
+import { AppContainer } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+import { Route, Routes } from "react-router-dom";
 import { config } from "./config";
 import ChangePasswordComponent from "./changePassword";
 
 const EmployeeChangePassword = () => {
   const { t } = useTranslation();
-  const { path } = useRouteMatch();
 
   const params = useMemo(() =>
     config.map(
@@ -23,11 +22,9 @@ const EmployeeChangePassword = () => {
   );
 
   return (
-    <Switch>
-      <Route path={`${path}`} exact>
-        <ChangePasswordComponent config={params[0]} t={t} />
-      </Route>
-    </Switch>
+    <Routes>
+      <Route index element={<ChangePasswordComponent config={params[0]} t={t} />} />
+    </Routes>
   );
 };
 

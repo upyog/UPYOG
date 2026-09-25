@@ -1,0 +1,112 @@
+{
+	"info": {
+		"_postman_id": "auto-FinanceService.AccountheadMapping",
+		"name": "MDMS v2 Bulk Data",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25737272"
+	},
+	"item": [
+		{
+			"name": "MDMS v2 CreateData",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var data=[{\"billingservicecode\": \"PT\", \"taxhead\": \"PT_ADHOC_REBATE\", \"glcode\": \"2716003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"PT\", \"taxhead\": \"PT_ADVANCE_CARRYFORWARD\", \"glcode\": \"1100101\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"PT\", \"taxhead\": \"PT_OWNER_EXEMPTION\", \"glcode\": \"2716003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"PT\", \"taxhead\": \"PT_TIME_REBATE\", \"glcode\": \"2716003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"PT\", \"taxhead\": \"PT_UNIT_USAGE_EXEMPTION\", \"glcode\": \"2716003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"PT\", \"taxhead\": \"PT_ADHOC_PENALTY\", \"glcode\": \"1100107\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"PT\", \"taxhead\": \"PT_TAX\", \"glcode\": \"1100101\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"PT\", \"taxhead\": \"PT_FIRE_CESS\", \"glcode\": \"3502021\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"PT\", \"taxhead\": \"PT_CANCER_CESS\", \"glcode\": \"3502022\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"PT\", \"taxhead\": \"PT_TIME_PENALTY\", \"glcode\": \"1100107\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"PT\", \"taxhead\": \"PT_TIME_INTEREST\", \"glcode\": \"1100107\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"PT\", \"taxhead\": \"PT_DECIMAL_CEILING_DEBIT\", \"glcode\": \"1808003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"PT\", \"taxhead\": \"PT_DECIMAL_CEILING_CREDIT\", \"glcode\": \"1808003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"PT\", \"taxhead\": \"PT_ROUNDOFF\", \"glcode\": \"1808003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"FIRENOC\", \"taxhead\": \"FIRENOC_ADHOC_REBATE\", \"glcode\": \"2716004\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"FIRENOC\", \"taxhead\": \"FIRENOC_ADHOC_PENALTY\", \"glcode\": \"1808003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"FIRENOC\", \"taxhead\": \"FIRENOC_FEES\", \"glcode\": \"1900113\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"FIRENOC\", \"taxhead\": \"FIRENOC_TAXES\", \"glcode\": \"1900113\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"FIRENOC\", \"taxhead\": \"FIRENOC_ROUNDOFF\", \"glcode\": \"1808003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"TL\", \"taxhead\": \"TL_TAX\", \"glcode\": \"1401101\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"TL\", \"taxhead\": \"TL_ROUNDOFF\", \"glcode\": \"1808003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"TL\", \"taxhead\": \"TL_ADHOC_REBATE\", \"glcode\": \"2717003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"TL\", \"taxhead\": \"TL_ADHOC_PENALTY\", \"glcode\": \"1808003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"REV_GRANTS\", \"taxhead\": \"REV_GRANTS_EDU_CESS_GRANTS\", \"glcode\": \"1601001\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"REV_GRANTS\", \"taxhead\": \"REV_GRANTS_GOVT_AID_PRIM_EDU\", \"glcode\": \"1601002\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"REV_GRANTS\", \"taxhead\": \"REV_GRANTS_FAM_WF_GRANT\", \"glcode\": \"1601003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"REV_GRANTS\", \"taxhead\": \"REV_GRANTS_FAM_PLANNIG_AID_CENT_GOVT\", \"glcode\": \"1601004\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"REV_GRANTS\", \"taxhead\": \"REV_GRANTS_SJSRY_SAL_GRANT\", \"glcode\": \"1601005\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"DISP_FIXED_ASSET.LAND\", \"taxhead\": \"DISP_FIXED_ASSET_LAND_FEE\", \"glcode\": \"1803001\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"DISP_FIXED_ASSET.LAND\", \"taxhead\": \"DISP_FIXED_ASSET_LAND_GST\", \"glcode\": \"3502019\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"DISP_FIXED_ASSET.LAND\", \"taxhead\": \"DISP_FIXED_ASSET_LAND_REBATE\", \"glcode\": \"1803001\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"DISP_FIXED_ASSET.BUILDING\", \"taxhead\": \"DISP_FIXED_ASSET_BUILDING_FEE\", \"glcode\": \"1803002\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"DISP_FIXED_ASSET.BUILDING\", \"taxhead\": \"DISP_FIXED_ASSET_BUILDING_GST\", \"glcode\": \"3502019\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"DISP_FIXED_ASSET.BUILDING\", \"taxhead\": \"DISP_FIXED_ASSET_BUILDING_REBATE\", \"glcode\": \"1803002\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"DISP_FIXED_ASSET.MOTOR_VEHICLE\", \"taxhead\": \"DISP_FIXED_ASSET_VEHICLE_FEE\", \"glcode\": \"1803004\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"DISP_FIXED_ASSET.MOTOR_VEHICLE\", \"taxhead\": \"DISP_FIXED_ASSET_VEHICLE_GST\", \"glcode\": \"3502019\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"DISP_FIXED_ASSET.MOTOR_VEHICLE\", \"taxhead\": \"DISP_FIXED_ASSET_VEHICLE_REBATE\", \"glcode\": \"1803004\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"chb-services\", \"taxhead\": \"RENT\", \"glcode\": \"1301003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"chb-services\", \"taxhead\": \"CGST\", \"glcode\": \"2201002\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"chb-services\", \"taxhead\": \"SGST\", \"glcode\": \"2201002\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"chb-services\", \"taxhead\": \"SECURITY_DEPOSIT\", \"glcode\": \"1801001\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"chb-services\", \"taxhead\": \"WATER_CHARGES\", \"glcode\": \"1405013\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"chb-services\", \"taxhead\": \"ELECTRICITY_CHARGES\", \"glcode\": \"1405014\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"chb-services\", \"taxhead\": \"CONSERVATION_FEE\", \"glcode\": \"1100401\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"adv-services\", \"taxhead\": \"ADV_BOOKING_FEES\", \"glcode\": \"1301014\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"adv-services\", \"taxhead\": \"ADV_CGST\", \"glcode\": \"2201002\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"adv-services\", \"taxhead\": \"ADV_SGST\", \"glcode\": \"2201002\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"WS\", \"taxhead\": \"WS_TIME_REBATE\", \"glcode\": \"2716003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"WS\", \"taxhead\": \"WS_WATER_CESS\", \"glcode\": \"2716003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"WS\", \"taxhead\": \"WS_CHARGE\", \"glcode\": \"2716003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"WS\", \"taxhead\": \"WS_TIME_INTEREST\", \"glcode\": \"2716003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"WS\", \"taxhead\": \"WS_TIME_PENALTY\", \"glcode\": \"2716003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"WS\", \"taxhead\": \"WS_Round_Off\", \"glcode\": \"2716003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"WS\", \"taxhead\": \"WS_TIME_ADHOC_REBATE\", \"glcode\": \"2716003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"WS\", \"taxhead\": \"WS_TIME_ADHOC_PENALTY\", \"glcode\": \"2716003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}, {\"billingservicecode\": \"WS\", \"taxhead\": \"WS_ADVANCE_CARRYFORWARD\", \"glcode\": \"2716003\", \"validFrom\": 1234567890, \"validTo\": 2345678901}]",
+							"",
+							"pm.collectionVariables.set(\"raw\", data);",
+							"",
+							"var obj = pm.collectionVariables.get(\"raw\");",
+							"",
+							"if(pm.globals.get(\"i\") === undefined || pm.globals.get(\"i\") === null || pm.globals.get(\"i\") === \"\") {",
+							"    pm.globals.set(\"i\", 0);",
+							"}",
+							"",
+							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.globals.get(\"i\")]))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.collectionVariables.get(\"raw\");\r",
+							"\r",
+							"var items = pm.globals.get(\"i\");\r",
+							"\r",
+							"if (items < data.length){\r",
+							"\r",
+							"    pm.globals.set(\"i\", Number(items) + 1);\r",
+							"\r",
+							"    postman.setNextRequest(\"MDMS v2 CreateData\");\r",
+							"}else{\r",
+							"    pm.globals.set(\"i\", 0);\r",
+							"    postman.setNextRequest(null)\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"RequestInfo\": {\"apiId\": \"asset-services\", \"ver\": null, \"ts\": null, \"action\": null, \"did\": null, \"key\": null, \"msgId\": \"search with from and to values\", \"authToken\": \"{{authToken}}\", \"correlationId\": null, \"userInfo\": {\"id\": \"1\", \"userName\": null, \"name\": null, \"type\": null, \"mobileNumber\": null, \"emailId\": null, \"roles\": null, \"uuid\": \"40dceade-992d-4a8f-8243-19dda76a4171\"}}, \"Mdms\": {\"tenantId\": \"pg\", \"schemaCode\": \"FinanceService.AccountheadMapping\", \"data\": {{req}}, \"isActive\": true}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8055/mdms-v2/v2/_create/FinanceService.AccountheadMapping",
+					"host": [
+						"localhost"
+					],
+					"port": "8055",
+					"path": [
+						"mdms-v2",
+						"v2",
+						"_create",
+						"FinanceService.AccountheadMapping"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "raw",
+			"value": ""
+		},
+		{
+			"key": "req",
+			"value": ""
+		}
+	]
+}

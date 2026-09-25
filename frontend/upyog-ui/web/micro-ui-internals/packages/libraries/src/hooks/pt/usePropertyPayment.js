@@ -1,13 +1,13 @@
-import { useQuery, useQueryClient } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
+import { useQueryClient } from "../../common/queryClientTemplate";
 
 const usePropertyPayment = ({ tenantId, consumerCodes }) => {
   const client = useQueryClient();
-  const { isLoading, error, data } = useQuery(
-    ["propertyPaymentList", tenantId, consumerCodes],
-    () => Digit.PTService.fetchPaymentDetails({ tenantId, consumerCodes }),
-    {}
-  );
-  return { isLoading, error, data, revalidate: () => client.invalidateQueries(["propertyPaymentList", tenantId, consumerCodes]) };
+  const { isLoading, error, data } = queryTemplate({
+    queryKey: ["propertyPaymentList", tenantId, consumerCodes],
+    queryFn: () => Digit.PTService.fetchPaymentDetails({ tenantId, consumerCodes }),
+  });
+  return { isLoading, error, data, revalidate: () => client.invalidateQueries({ queryKey: ["propertyPaymentList", tenantId, consumerCodes] }) };
 };
 
 export default usePropertyPayment;

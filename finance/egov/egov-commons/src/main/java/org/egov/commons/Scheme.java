@@ -88,6 +88,8 @@ public class Scheme implements java.io.Serializable {
 
 	private Date lastModifiedDate;
 
+	private String stateCode;
+
 	public Scheme() {
 	}
 
@@ -99,8 +101,11 @@ public class Scheme implements java.io.Serializable {
 		return id;
 	}
 
+	/** * Sets the scheme id. Made public (not private) for framework compatibility:
+	 * * Spring form binding, JSP/EL property resolution, and Hibernate require public setters.
+	 * * Note: Intended for framework use only; application code should not mutate id after entity creation. */
 	@SuppressWarnings("unused")
-	private void setId(final Integer id) {
+	public void setId(final Integer id) {
 		this.id = id;
 	}
 
@@ -169,8 +174,8 @@ public class Scheme implements java.io.Serializable {
 	}
 
 	public Scheme(final Integer id, final Fund fund, final String code, final String name, final Date validfrom,
-			final Date validto, final boolean isactive, final String description, final BigDecimal sectorid,
-			final BigDecimal aaes, final BigDecimal fieldid, final Set<SubScheme> subSchemes) {
+	              final Date validto, final boolean isactive, final String description, final BigDecimal sectorid,
+	              final BigDecimal aaes, final BigDecimal fieldid, final Set<SubScheme> subSchemes, final String stateCode) {
 		this.id = id;
 		this.fund = fund;
 		this.code = code;
@@ -183,6 +188,7 @@ public class Scheme implements java.io.Serializable {
 		this.aaes = aaes;
 		this.fieldid = fieldid;
 		this.subSchemes = subSchemes;
+		this.stateCode = stateCode;
 	}
 
 	public void reset() {
@@ -194,6 +200,7 @@ public class Scheme implements java.io.Serializable {
 		fund = null;
 		validfrom = null;
 		validto = null;
+		stateCode = null;
 
 	}
 
@@ -253,10 +260,40 @@ public class Scheme implements java.io.Serializable {
 		this.lastModifiedDate = lastModifiedDate;
 	}
 
+	/**	 * Returns the state code indicating government level (Central/State) and jurisdiction.	 *
+	 <p>
+	 <p><strong>Business Importance:</strong> Only schemes with a non-null stateCode are eligible 	 * for state-level budget operations. This field is essential for the federalism model 	 * (segregating central vs. state budgets).</p>
+	 * @return the state code, or {@code null} if not assigned or unclassified	 */
+
+	public String getStateCode() {
+		return stateCode;
+	}
+
+	public void setStateCode(String stateCode) {
+		this.stateCode = stateCode;
+	}
+
 	@Override
 	public String toString() {
 
 		return "id:" + id + ",Code:" + code + "," + "isActive:" + isactive;
+	}
+
+	/** * Scheme ka id set karta hai. Public rakha gaya (private nahi) kyunki frameworks ko chahiye: * Spring form binding, JSP/EL, aur Hibernate ko id set karne ke liye public setter chahiye. * Note: Sirf framework use ke liye hai; app code ko id change nahi karna chahiye entity load hone ke baad. */
+
+	/**	 * Returns a formatted display string combining scheme code and name.	 * <p>Used in JSP dropdowns and UI displays to show both identifiers in a human-readable format.	 * Handles null/empty values gracefully:	 * <ul>	 *     <li>If both code and name exist: returns {@code "CODE - NAME"} (e.g., {@code "PMAY-U - Pradhan Mantri Awas Yojana"})</li>	 *     <li>If only code exists: returns {@code "CODE"}</li>	 *     <li>If only name exists: returns {@code "NAME"}</li>	 *     <li>If both are null/empty: returns empty string {@code ""}</li>	 * </ul>	 * </p>	 *
+	 * @return formatted code and name string, or empty string if both are null/empty	 * @see "#budgetitem-form.jsp" showing usage: {@code value="${scheme.codeAndNameForShow}"}	 */
+
+	public String getCodeAndNameForShow() {
+		StringBuilder stringBuilder = new StringBuilder();
+		if (code != null && !code.isEmpty()) {
+			stringBuilder.append(code);
+			stringBuilder.append(" - ");
+		}
+		if (name != null && !name.isEmpty()) {
+			stringBuilder.append(name);
+		}
+		return stringBuilder.toString();
 	}
 
 }

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
@@ -23,11 +22,15 @@ import java.util.Map;
  * Implements the `ResultSetExtractor` interface to extract data from a `ResultSet`.
  */
 @Repository
+@SuppressWarnings("java:S2638")
 public class PGRRowMapper implements ResultSetExtractor<List<Service>> {
 
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
+
+    public PGRRowMapper(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
 
     /**

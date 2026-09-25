@@ -1,5 +1,5 @@
 import React, {Fragment, useCallback, useMemo, useReducer} from "react"
-import { InboxComposer, CaseIcon, SearchField, TextInput, FilterFormField, Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import { InboxComposer, CaseIcon, SearchField, TextInput, FilterFormField, Loader } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
@@ -51,7 +51,7 @@ const Inbox = () => {
     }
 
     const SearchFormFields = useCallback(({registerRef}) => {
-        return <>
+        return <Fragment>
             <SearchField>
                 <label>{t("EVENTS_ULB_LABEL")}</label>
                 <TextInput name="ulb" inputRef={registerRef({})} />
@@ -64,11 +64,11 @@ const Inbox = () => {
                 <label>{t("EVENTS_MESSAGE_LABEL")}</label>
                 <TextInput name="message" inputRef={registerRef({})} />
             </SearchField>
-        </>
+        </Fragment>
     })
 
     const FilterFormFields = useCallback(({registerRef}) => {
-        return <>
+        return <Fragment>
             <FilterFormField>
                 <p>{t("ES_COMMON_SEARCH")}</p>
             </FilterFormField>
@@ -79,7 +79,7 @@ const Inbox = () => {
                 checked={checked}
                 onChange={(event) => onServiceSelect(event, e.statusid)}
             /> */}
-        </>
+        </Fragment>
     })
 
 

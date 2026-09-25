@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 
 import ActionModal from "./Modal";
 
-import { useHistory, useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import ApplicationDetailsContent from "./components/ApplicationDetailsContent";
 import ApplicationDetailsToast from "./components/ApplicationDetailsToast";
 import ApplicationDetailsActionBar from "./components/ApplicationDetailsActionBar";
@@ -18,7 +18,8 @@ const ApplicationDetails = (props) => {
     const tenantId = Digit.ULBService.getCurrentTenantId();
   const state = Digit.ULBService.getStateId();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const location = useLocation();
   let { id: applicationNumber } = useParams();
   const [displayMenu, setDisplayMenu] = useState(false);
   const [selectedAction, setSelectedAction] = useState(null);
@@ -72,10 +73,10 @@ const ApplicationDetails = (props) => {
         if (action?.redirectionUrll?.action === "ACTIVATE_CONNECTION") {
           // window.location.assign(`${window.location.origin}cnd-ui/employee/ws/${action?.redirectionUrll?.pathname}`, { data: action?.redirectionUrll?.state });
 
-          history.push(`${action?.redirectionUrll?.pathname}`, JSON.stringify({ data: action?.redirectionUrll?.state, url: `${location?.pathname}${location.search}` }));
+          navigate(`${action?.redirectionUrll?.pathname}`, { state: JSON.stringify({ data: action?.redirectionUrll?.state, url: `${location?.pathname}${location.search}` }) });
         }
         else if (action?.redirectionUrll?.action === "RE-SUBMIT-APPLICATION"){
-          history.push(`${action?.redirectionUrll?.pathname}`, { data: action?.redirectionUrll?.state });
+          navigate(`${action?.redirectionUrll?.pathname}`, { state: { data: action?.redirectionUrll?.state } });
         }
         else {
           window.location.assign(`${window.location.origin}/cnd-ui/employee/payment/collect/${action?.redirectionUrll?.pathname}`);
@@ -83,8 +84,7 @@ const ApplicationDetails = (props) => {
       } else if (!action?.redirectionUrl) {
         setShowModal(true);
       } else {
-        history.push({
-          pathname: action.redirectionUrl?.pathname,
+        navigate(action.redirectionUrl?.pathname, {
           state: { ...action.redirectionUrl?.state },
         });
       }

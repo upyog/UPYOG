@@ -4,7 +4,7 @@
  * The returned object includes the fetched applications and metadata like `key` and `label` for bill generation reference.
  * 
 */
-import { useQuery } from "react-query";
+import { queryTemplate } from "../common/queryTemplate";
 import { CNDService } from "../services/elements/CND";
 
 const cndApplications = async (tenantId, filters) => {
@@ -32,8 +32,10 @@ export const useApplicationsForBusinessServiceSearch = ({ tenantId, businessServ
   
   /* key from application ie being used as consumer code in bill */
   const { searchFn, key, label } = referenceObject(tenantId, filters)[_key];
-  const applications = useQuery(["applicationsForBillDetails", { tenantId, businessService, filters, searchFn }], searchFn, {
-    ...config,
+  const applications = queryTemplate({
+    queryKey: ["applicationsForBillDetails", { tenantId, businessService, filters, searchFn }],
+    queryFn: searchFn,
+    config
   });
 
   return { ...applications, key, label };

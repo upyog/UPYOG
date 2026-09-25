@@ -1,7 +1,7 @@
-import { PrivateRoute,BreadCrumb } from "@upyog/digit-ui-react-components";
+import { PrivateRoute,BreadCrumb } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Switch, useLocation } from "react-router-dom";
+import { useLocation, Routes, Route } from "react-router-dom";
 import Inbox from "./Inbox";
 import SearchApp from "./SearchApp";
 
@@ -70,49 +70,53 @@ const EmployeeApp = ({ path }) => {
   };
 
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("EWApplicationDetails");
+  const EnhancedReport = Digit?.ComponentRegistryService?.getComponent("EnhancedReport");
 
   return (
-    <Switch>
-      <React.Fragment>
-        <div className="ground-container">
-          <div style={{ marginLeft: "12px" }}><EWBreadCrumbs location={location} /></div>
-
-          <PrivateRoute
-            path={`${path}/inbox`}
-            component={() => (
-              <Inbox
-                useNewInboxAPI={true}
-                parentRoute={path}
-                businessService="ewst"
-                filterComponent="EW_INBOX_FILTER"
-                initialStates={inboxInitialState}
-                isInbox={true}
-              />
-            )}
-          />
-
-          <PrivateRoute 
-            path={`${path}/application-details/:id`} 
-            component={() => <ApplicationDetails parentRoute={path} />} 
-          />
-
-          <PrivateRoute 
-            path={`${path}/applicationsearch/application-details/:id`} 
-            component={() => <ApplicationDetails parentRoute={path} />} 
-          />
-
-          <PrivateRoute 
-            path={`${path}/search`} 
-            component={(props) => <Search {...props} t={t} parentRoute={path} />} 
-          />
-
-          <PrivateRoute 
-            path={`${path}/my-applications`} 
-            component={(props) => <SearchApp {...props} parentRoute={path} />} 
-          />
+    <React.Fragment>
+      <div className="ground-container">
+        <div style={{ marginLeft: "12px" }}>
+          <EWBreadCrumbs location={location} />
         </div>
-      </React.Fragment>
-    </Switch>
+        <Routes>
+          <Route
+            path="inbox"
+            element={
+              <PrivateRoute>
+                <Inbox
+                  useNewInboxAPI={true}
+                  parentRoute={path}
+                  businessService="ewst"
+                  filterComponent="EW_INBOX_FILTER"
+                  initialStates={inboxInitialState}
+                  isInbox={true}
+                />
+              </PrivateRoute>
+            }
+          />
+          <Route path="application-details/:id" element={<PrivateRoute><ApplicationDetails parentRoute={path} /></PrivateRoute>} />
+          <Route path="my-applications/applicationsearch/application-details/:id" element={<PrivateRoute><ApplicationDetails parentRoute={path} /></PrivateRoute>} />
+          <Route path="search" element={<PrivateRoute><SearchApp path={`/search`} /></PrivateRoute>} />
+          <Route
+            path="searchold"
+            element={
+              <PrivateRoute>
+                <Inbox
+                  parentRoute={path}
+                  businessService="ewst"
+                  initialStates={inboxInitialState}
+                  isInbox={false}
+                  EmptyResultInboxComp={"PTEmptyResultInbox"}
+                />
+              </PrivateRoute>
+            }
+          />
+          <Route path="my-applications" element={<PrivateRoute><SearchApp path={`/my-applications`} /></PrivateRoute>} />
+          <Route path="DemandCollectionBalancedRegister" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-ws" reportName="DemandCollectionBalancedRegister" /></PrivateRoute>} />
+          <Route path="eWasteRegisterReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-ew" reportName="eWasteRegisterReport" /></PrivateRoute>} />
+        </Routes>
+      </div>
+    </React.Fragment>
   );
 };
 

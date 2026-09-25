@@ -1,11 +1,12 @@
 import React, { Fragment, useCallback, useMemo, useReducer } from "react";
-import { InboxComposer, CaseIcon, Header } from "@upyog/digit-ui-react-components";
+import { CaseIcon, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import FilterFormFieldsComponent from "./FilterFormFieldsComponent";
 import SearchFormFieldsComponents from "./SearchFormFieldsComponent";
 import useInboxTableConfig from "./useInboxTableConfig";
 import useInboxMobileCardsData from "./useInboxMobileCardsData";
 import { Link } from "react-router-dom";
+import InboxComposer from "../../../../../../react-components/src/hoc/InboxComposer";
 import useBPAInbox from "../../../../../../libraries/src/hooks/obps/useBPAInbox";
 
 const Inbox = ({ parentRoute }) => {
@@ -121,7 +122,7 @@ const Inbox = ({ parentRoute }) => {
     tenantId,
     filters: { ...formState },
   });
-
+  console.log("Step 1111", table)
   const PropsForInboxLinks = {
     logoIcon: <CaseIcon />,
     headerText: "CS_COMMON_OBPS",
@@ -136,8 +137,8 @@ const Inbox = ({ parentRoute }) => {
   };
 
   const SearchFormFields = useCallback(
-    ({ registerRef, searchFormState, searchFieldComponents }) => (
-      <SearchFormFieldsComponents {...{ registerRef, searchFormState, searchFieldComponents }} />
+    ({ registerRef, searchFormState, searchFieldComponents, controlSearchForm }) => (
+      <SearchFormFieldsComponents {...{ registerRef, searchFormState, searchFieldComponents, controlSearchForm }} />
     ),
     []
   );
@@ -162,13 +163,13 @@ const Inbox = ({ parentRoute }) => {
   );
 
   const onSearchFormSubmit = (data) => {
-    data.hasOwnProperty("") && delete data?.[""] ;
+    data.hasOwnProperty("") && delete data?.[""];
     dispatch({ action: "mutateTableForm", data: { ...tableOrderFormDefaultValues } });
     dispatch({ action: "mutateSearchForm", data });
   };
 
   const onFilterFormSubmit = (data) => {
-    data.hasOwnProperty("") && delete data?.[""] ;
+    data.hasOwnProperty("") && delete data?.[""];
     dispatch({ action: "mutateTableForm", data: { ...tableOrderFormDefaultValues } });
     dispatch({ action: "mutateFilterForm", data });
   };
@@ -194,15 +195,15 @@ const Inbox = ({ parentRoute }) => {
   const propsForInboxMobileCards = useInboxMobileCardsData({ parentRoute, table, getRedirectionLink });
 
   const propsForMobileSortForm = { onMobileSortOrderData, sortFormDefaultValues: formState?.tableForm, onSortFormReset };
-
+  console.log("propsForInboxTablepropsForInboxTable", propsForInboxTable)
   return (
-    <>
+    <React.Fragment>
       <Header>
         {t("ES_COMMON_INBOX")}
         {totalCount ? <p className="inbox-count">{totalCount}</p> : null}
       </Header>
       {Digit.Utils.browser.isMobile() &&
-        <div style={{marginLeft: "12px"}}>
+        <div style={{ marginLeft: "12px" }}>
           <Link to={window.location.href.includes("/citizen") ? "/upyog-ui/citizen/obps/search/application" : "/upyog-ui/employee/obps/search/application"}>
             <span className="link">{t("BPA_SEARCH_PAGE_TITLE")}</span>
           </Link>
@@ -220,7 +221,7 @@ const Inbox = ({ parentRoute }) => {
           formState,
         }}
       ></InboxComposer>
-    </>
+    </React.Fragment>
   );
 };
 

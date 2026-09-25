@@ -48,12 +48,16 @@
 
 package org.egov.infra.workflow.inbox;
 
+import jakarta.persistence.criteria.*;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+//import org.hibernate.FlushMode;
+import jakarta.persistence.FlushModeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -64,30 +68,22 @@ import static org.hibernate.FetchMode.JOIN;
 import static org.hibernate.FlushMode.MANUAL;
 
 /**
- * Every module which is having StateAware should initialize this with their own
- * StateAware persistence service<br/>
- * eg:
+ * LTS Migration Fix (Hibernate 6): renders inbox / draft workflow items for a {@link StateAware} type.
  * <p>
- * <pre>
- *      &lt;bean id="myStateAwarePersistenceService" parent="persistenceService"&gt;
- *                 &lt;property name="type" value="org.egov.infra.web.struts.actions.common.MyStateAware" /&gt;
- *         &lt;/bean>
- *
- *         &lt;bean id="MyStateAwareInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl"&gt;
- *                 &lt;constructor-arg index="0" ref="myStateAwarePersistenceService"/&gt;
- *         &lt;/bean&gt;
- * </pre>
- * <p>
- * <br/>
- * id or name attribute value of the workflowTypeService bean definition should
- * follow a strict naming convention as follows<br/>
- * <code>
- * <YourStateAwareClassName>InboxRenderService
- * </code> This is how, {@link InboxRenderServiceDelegate} will detect the
- * appropriate {@link InboxRenderService} and render the inbox items.
- **/
+ * Hibernate 6 removed {@code Session.createCriteria()}. The previous Hibernate
+ * Criteria API (commented in {@link #getAssignedWorkflowItems}) was replaced with
+ * JPA {@link CriteriaBuilder} / {@link CriteriaQuery}. Query semantics (owner,
+ * status, createdDate order) are unchanged.
+ * </p>
+ * Every module which has StateAware should initialize this with their own
+ * StateAware persistence service. The bean id must follow
+ * {@code <YourStateAwareClassName>InboxRenderService} so
+ * {@link InboxRenderServiceDelegate} can discover it.
+ */
 @SuppressWarnings("all")
 public class DefaultInboxRenderServiceImpl<T extends StateAware> implements InboxRenderService<T> {
+
+    private static final Logger log = LoggerFactory.getLogger(DefaultInboxRenderServiceImpl.class);
 
     private final Class<T> stateAwareType;
     private final PersistenceService<T, Long> stateAwarePersistenceService;
@@ -109,29 +105,89 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
 //                .addOrder(Order.desc("state.createdDate"))
 //                .list();
     	
-    	Criteria criteria =  this.stateAwarePersistenceService.getSession().createCriteria(this.stateAwareType)
-              .setFetchMode("state", JOIN).createAlias("state", "state")
-              .setFlushMode(MANUAL).setReadOnly(true).setCacheable(true)
-              .add(Restrictions.eq("state.type", this.stateAwareType.getSimpleName()))
-              .add(Restrictions.in("state.ownerPosition", owners))
-              .add(Restrictions.in("state.status", Arrays.asList(INPROGRESS, STARTED)))
-              .addOrder(Order.desc("state.createdDate"));
-    	
-    	List list = criteria.list();
-    	System.out.println("#################### inbox list size"+list.size());
-    	return list;
+//    	Criteria criteria =  this.stateAwarePersistenceService.getSession().createCriteria(this.stateAwareType)
+//              .setFetchMode("state", JOIN).createAlias("state", "state")
+//              .setFlushMode(MANUAL).setReadOnly(true).setCacheable(true)
+//              .add(Restrictions.eq("state.type", this.stateAwareType.getSimpleName()))
+//              .add(Restrictions.in("state.ownerPosition", owners))
+//              .add(Restrictions.in("state.status", Arrays.asList(INPROGRESS, STARTED)))
+//              .addOrder(Order.desc("state.createdDate"));
+//
+//    	List list = criteria.list();
+//    	log.info("inbox list size {}", list.size());
+//    	return list;
+
+        // Hibernate 6: Session.createCriteria() (commented above) was removed.
+        // Equivalent query using JPA CriteriaBuilder; list() became getResultList().
+        CriteriaBuilder cb = this.stateAwarePersistenceService
+                .getSession()
+                .getCriteriaBuilder();
+
+        CriteriaQuery<T> cq = cb.createQuery(this.stateAwareType);
+        Root<T> root = cq.from(this.stateAwareType);
+
+
+        Join<T, ?> stateJoin = root.join("state", JoinType.INNER);
+        List<Predicate> predicates = new ArrayList<>();
+
+        predicates.add(cb.equal(stateJoin.get("type"),
+                this.stateAwareType.getSimpleName()));
+        predicates.add(stateJoin.get("ownerPosition").in(owners));
+        predicates.add(stateJoin.get("status").in(Arrays.asList(INPROGRESS, STARTED)));
+        cq.where(cb.and(predicates.toArray(new Predicate[0])));
+        cq.orderBy(cb.desc(stateJoin.get("createdDate")));
+
+        List<T> list = this.stateAwarePersistenceService
+                .getSession()
+                .createQuery(cq)
+                .setFlushMode(FlushModeType.COMMIT)
+                .setReadOnly(true)
+                .setCacheable(true)
+                .getResultList();
+
+        log.info("inbox list size {}", list.size());
+        return list;
+
+
     }
 
-    @Override
     public List<T> getDraftWorkflowItems(List<Long> owners) {
-        return this.stateAwarePersistenceService.getSession().createCriteria(this.stateAwareType)
-                .setFetchMode("state", JOIN).createAlias("state", "state")
-                .setFlushMode(MANUAL).setReadOnly(true).setCacheable(true)
-                .add(Restrictions.eq("state.type", this.stateAwareType.getSimpleName()))
-                .add(Restrictions.in("state.ownerPosition.id", owners))
-                .add(Restrictions.eq("state.status", STARTED))
-                .add(Restrictions.eq("state.createdBy.id", getUserId()))
-                .addOrder(Order.asc("state.createdDate"))
-                .list();
+
+        CriteriaBuilder cb = this.stateAwarePersistenceService
+                .getSession()
+                .getCriteriaBuilder();
+
+        CriteriaQuery<T> cq = cb.createQuery(this.stateAwareType);
+        Root<T> root = cq.from(this.stateAwareType);
+
+        Join<T, ?> stateJoin = root.join("state", JoinType.INNER);
+
+        Join<?, ?> ownerPositionJoin = stateJoin.join("ownerPosition", JoinType.INNER);
+
+        Join<?, ?> createdByJoin = stateJoin.join("createdBy", JoinType.INNER);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        // Restrictions.eq("state.type", ...)
+        predicates.add(cb.equal(stateJoin.get("type"),
+                this.stateAwareType.getSimpleName()));
+
+        predicates.add(ownerPositionJoin.get("id").in(owners));
+
+        predicates.add(cb.equal(stateJoin.get("status"), STARTED));
+
+        predicates.add(cb.equal(createdByJoin.get("id"), getUserId()));
+
+        cq.where(cb.and(predicates.toArray(new Predicate[0])));
+
+        cq.orderBy(cb.asc(stateJoin.get("createdDate")));
+
+        return this.stateAwarePersistenceService
+                .getSession()
+                .createQuery(cq)
+                .setFlushMode(FlushModeType.COMMIT)
+                .setReadOnly(true)
+                .setCacheable(true)
+                .getResultList();
     }
 }

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { CardLabel, CardLabelDesc, CardSubHeader, Modal, CardText, DeleteIcon } from "@upyog/digit-ui-react-components";
+import { CardLabel, CardLabelDesc, CardSubHeader, Modal,CardText,DeleteIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import ApplicationTable from "./ApplicationTable";
 
 // Close button component
-import "../css/ads-inline-auto.css";
+
 const Close = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
     <path d="M0 0h24v24H0V0z" fill="none" />
     <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
@@ -90,13 +90,13 @@ const ADSCartAndCancellationPolicyDetails = () => {
   }
   // { Header: t("TOTAL_PRICE"), accessor: "price" },
   ];
-  let cartDetails = params?.adslist?.cartDetails.map(details => {
-    return {
-      addType: details.addTypeCode,
-      faceArea: details.faceAreaCode,
-      location: details.locationCode,
-      nightLight: details.nightLight,
-      bookingDate: details.bookingDate,
+  let cartDetails = params?.adslist?.cartDetails?.map((details) => {
+    return { 
+      addType:details.addTypeCode,
+      faceArea:details.faceAreaCode,
+      location:details.locationCode,
+      nightLight:details.nightLight,
+      bookingDate:details.bookingDate,
       bookingFromTime: "06:00",
       bookingToTime: "05:59",
       status: "BOOKING_CREATED"
@@ -107,10 +107,14 @@ const ADSCartAndCancellationPolicyDetails = () => {
     cartDetails: cartDetails
   };
   let mutation = Digit.Hooks.ads.useADSDemandEstimation();
-  if (showdemandEstimation === false) {
-    mutation.mutate(formdata);
-    setShowDemandEstimation(true);
-  }
+
+  React.useEffect(() => {
+    if (showdemandEstimation === false && cartDetails?.length > 0) {
+      mutation.mutate(formdata);
+      setShowDemandEstimation(true);
+    }
+  }, [showdemandEstimation]);
+
   const handleCartClick = () => {
     setShowViewCart(prev => !prev);
   };
@@ -159,52 +163,80 @@ const ADSCartAndCancellationPolicyDetails = () => {
           Total Booking Amount: <strong>{totalBookingAmount} INR</strong>
         </div>
       </div>
-      {showCancellationPolicy && <Modal headerBarMain={<CardSubHeader className="ads-auto-17">Terms and Conditions</CardSubHeader>} headerBarEnd={<CloseBtn onClick={handleCancellationPolicyClick} />} popupStyles={{
-      backgroundColor: "#fff",
-      position: "relative",
-      maxHeight: "90vh",
-      width: "80%",
-      overflowY: "auto"
-    }} children={<div>
-              {cancelpolicyData.length > 0 ? renderCancellationPolicy(cancelpolicyData[0].termsAndCondition) : <CardLabel className="ads-auto-18">Loading...</CardLabel>}
-            </div>} actionCancelLabel={null} actionCancelOnSubmit={null} actionSaveLabel={null} actionSaveOnSubmit={null} actionSingleLabel={null} actionSingleSubmit={null} error={null} setError={() => {}} formId="modalForm" isDisabled={false} hideSubmit={true} popupModuleMianStyles={{
-      padding: "10px"
-    }} headerBarMainStyle={{
-      position: "sticky",
-      top: 0,
-      backgroundColor: "#f5f5f5"
-    }} isOBPSFlow={false} popupModuleActionBarStyles={{
-      display: "none"
-    }} isOpen={showCancellationPolicy} onClose={handleCancellationPolicyClick} className="ads-auto-16" />}
-      {showViewCart && <Modal headerBarMain={<CardSubHeader className="ads-auto-19">My Cart</CardSubHeader>} headerBarEnd={<CloseBtn onClick={handleCartClick} />} popupStyles={{
-      backgroundColor: "#fff",
-      position: "relative",
-      maxHeight: "80vh",
-      width: "80%",
-      overflowY: "auto"
-    }} popupModuleMianStyles={{
-      padding: "10px"
-    }} hideSubmit={true} headerBarMainStyle={{
-      position: "sticky",
-      top: 0,
-      backgroundColor: "#f5f5f5"
-    }} formId="modal-action">
-          <ApplicationTable t={t} data={params?.adslist?.cartDetails} columns={columns} getCellProps={cellInfo => ({
-        style: {
-          minWidth: "150px",
-          padding: "20px",
-          fontSize: "16px"
-        }
-      })} isPaginationRequired={false} totalRecords={params?.adslist?.cartDetails.length} />
-        </Modal>}
-      {showPriceBreakup && <Modal headerBarMain={<CardSubHeader className="ads-auto-21">Price Breakup</CardSubHeader>} headerBarEnd={<CloseBtn onClick={handlePriceBreakupClick} />} popupStyles={{
-      backgroundColor: "#fff",
-      position: 'relative',
-      maxHeight: '90vh',
-      width: '60%',
-      overflowY: 'auto'
-    }} children={<div>
-              <CardLabelDesc className="ads-auto-22">Estimate Price Details</CardLabelDesc>
+      {showCancellationPolicy && (
+        <Modal
+          headerBarMain={<CardSubHeader style={{ color: "#a82227", margin: "25px" }}>Terms and Conditions</CardSubHeader>}
+          headerBarEnd={<CloseBtn onClick={handleCancellationPolicyClick} />}
+          popupStyles={{
+            backgroundColor: "#fff",
+            position: "relative",
+            maxHeight: "90vh",
+            width: "80%",
+            overflowY: "auto",
+          }}
+          children={
+            <div>
+              {cancelpolicyData?.length > 0 ? (
+                renderCancellationPolicy(cancelpolicyData[0].termsAndCondition)
+              ) : (
+                <CardLabel style={{ fontSize: "20px" }}>Loading...</CardLabel>
+              )}
+            </div>
+          }
+          actionCancelLabel={null}
+          actionCancelOnSubmit={null}
+          actionSaveLabel={null}
+          actionSaveOnSubmit={null}
+          actionSingleLabel={null}
+          actionSingleSubmit={null}
+          error={null}
+          setError={() => {}}
+          formId="modalForm"
+          isDisabled={false}
+          hideSubmit={true}
+          style={{}}
+          popupModuleMianStyles={{ padding: "10px" }}
+          headerBarMainStyle={{ position: "sticky", top: 0, backgroundColor: "#f5f5f5" }}
+          isOBPSFlow={false}
+          popupModuleActionBarStyles={{ display: "none" }}
+          isOpen={showCancellationPolicy}
+          onClose={handleCancellationPolicyClick}
+        />
+      )}
+      {showViewCart && (
+        <Modal
+          headerBarMain={<CardSubHeader style={{ color: "#a82227", margin: "25px" }}>My Cart</CardSubHeader>}
+          headerBarEnd={<CloseBtn onClick={handleCartClick} />}
+          popupStyles={{ backgroundColor: "#fff", position: "relative", maxHeight: "80vh", width: "80%", overflowY: "auto" }}
+          popupModuleMianStyles={{ padding: "10px" }}
+          hideSubmit={true}
+          headerBarMainStyle={{ position: "sticky", top: 0, backgroundColor: "#f5f5f5" }}
+          formId="modal-action"
+        >
+          <ApplicationTable
+            t={t}
+            data={params?.adslist?.cartDetails}
+            columns={columns}
+            getCellProps={(cellInfo) => ({
+              style: {
+                minWidth: "150px",
+                padding: "20px",
+                fontSize: "16px",
+              },
+            })}
+            isPaginationRequired={false}
+            totalRecords={params?.adslist?.cartDetails?.length || 0}
+          />
+        </Modal>
+      )}
+      {showPriceBreakup && (
+        <Modal
+          headerBarMain={<CardSubHeader style={{ color: '#a82227', margin: '25px' }}>Price Breakup</CardSubHeader>}
+          headerBarEnd={<CloseBtn onClick={handlePriceBreakupClick} />}
+          popupStyles={{ backgroundColor: "#fff", position: 'relative', maxHeight: '90vh', width: '60%', overflowY: 'auto' }}
+          children={
+            <div>
+              <CardLabelDesc style={{ marginBottom: '15px' }}>Estimate Price Details</CardLabelDesc>
               <ul>
                 {mutation.data?.demands[0]?.demandDetails && mutation.data?.demands[0]?.demandDetails.map((demands, index) => <li key={index} className="ads-auto-23">
                     <CardText>{t(`${demands.taxHeadMasterCode}`)}</CardText>
@@ -233,7 +265,7 @@ const ADSCartAndCancellationPolicyDetails = () => {
     }} // Hide Action Bar
     isOpen={showPriceBreakup} // Pass isOpen prop
     onClose={handlePriceBreakupClick} // Pass onClose prop
-    className="ads-auto-20" />}
+    className="ads-auto-20" />)}
     </div>;
 };
 export default ADSCartAndCancellationPolicyDetails;

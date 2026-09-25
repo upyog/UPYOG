@@ -93,7 +93,7 @@ import org.egov.services.voucher.ContraJournalVoucherService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.HibernateException;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
@@ -634,12 +634,12 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 		final StringBuilder brsSql = new StringBuilder(
 				"Insert into bankreconciliation (ID,BANKACCOUNTID,AMOUNT,TRANSACTIONTYPE,").append(
 						"INSTRUMENTHEADERID) values (nextVal('seq_bankreconciliation'),:bankAccId,:amount,:trType,:ihId)");
-		final SQLQuery brsSQLQuery = getSession().createSQLQuery(brsSql.toString());
+		final NativeQuery brsSQLQuery = getSession().createNativeQuery(brsSql.toString());
 
-        brsSQLQuery.setLong("bankAccId", (Long) instrumentDetailsMap.get("bankaccountid"))
-                .setBigDecimal("amount", (BigDecimal) instrumentDetailsMap.get("instrumentamount"))
-                .setString("trType", "1".equalsIgnoreCase((String) instrumentDetailsMap.get("ispaycheque")) ? "Cr" : "Dr")
-                .setString("ihId", (String) instrumentDetailsMap.get("instrumentheader"));
+        brsSQLQuery.setParameter("bankAccId", (Long) instrumentDetailsMap.get("bankaccountid"))
+                .setParameter("amount", (BigDecimal) instrumentDetailsMap.get("instrumentamount"))
+                .setParameter("trType", "1".equalsIgnoreCase((String) instrumentDetailsMap.get("ispaycheque")) ? "Cr" : "Dr")
+                .setParameter("ihId", (String) instrumentDetailsMap.get("instrumentheader"));
         brsSQLQuery.executeUpdate();
 
         if (FinancialConstants.INSTRUMENT_TYPE_CASH.equalsIgnoreCase((String) instrumentDetailsMap.get("instrumenttype"))
@@ -669,11 +669,11 @@ public class ContraService extends PersistenceService<ContraJournalVoucher, Long
 				"Insert into contrajournalvoucher (ID,VOUCHERHEADERID,FROMBANKACCOUNTID,")
 						.append("TOBANKACCOUNTID,INSTRUMENTHEADERID,STATE_ID,CREATEDBY,LASTMODIFIEDBY) values ")
 						.append(" (nextVal('seq_contrajournalvoucher'),:vhId,null,:depositedBankId,:ihId,null,:createdBy,:createdBy)");
-		final SQLQuery ioSQLQuery = getSession().createSQLQuery(ioSql.toString());
-        ioSQLQuery.setLong("vhId", (Long) instrumentDetailsMap.get("payinid"))
-                .setLong("ihId", (Long) instrumentDetailsMap.get("instrumentheader"))
-                .setLong("depositedBankId", (Long) instrumentDetailsMap.get("bankaccountid"))
-                .setLong("createdBy", (Long) instrumentDetailsMap.get("createdby"));
+		final NativeQuery ioSQLQuery = getSession().createNativeQuery(ioSql.toString());
+        ioSQLQuery.setParameter("vhId", (Long) instrumentDetailsMap.get("payinid"))
+                .setParameter("ihId", (Long) instrumentDetailsMap.get("instrumentheader"))
+                .setParameter("depositedBankId", (Long) instrumentDetailsMap.get("bankaccountid"))
+                .setParameter("createdBy", (Long) instrumentDetailsMap.get("createdby"));
         ioSQLQuery.executeUpdate();
 
     }

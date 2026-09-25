@@ -75,8 +75,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -85,7 +85,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.HTTPUtilities;
 import org.slf4j.Logger;
@@ -119,8 +119,8 @@ public class FileStoreUtils {
 		return Optional.ofNullable(this.fileStoreMapperRepository.findByFileStoreId(fileStoreId));
 	}
 
-	public ResponseEntity<InputStreamResource> fileAsResponseEntity(@SafeHtml String fileStoreId,
-			@SafeHtml String moduleName, boolean toSave) {
+	public ResponseEntity<InputStreamResource> fileAsResponseEntity(@SanitizeHtml String fileStoreId,
+			@SanitizeHtml String moduleName, boolean toSave) {
 		try {
 			Optional<FileStoreMapper> fileStoreMapper = getFileStoreMapper(fileStoreId);
 			if (fileStoreMapper.isPresent()) {

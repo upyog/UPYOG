@@ -1,21 +1,9 @@
 import React, { Fragment, useCallback, useMemo, useReducer } from "react";
 import { Link } from "react-router-dom";
-import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast } from "@upyog/digit-ui-react-components";
+import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import SearchFormFields from "./SearchFields";
-import "../../css/ws-inline-auto.css";
-const MobileSearchApplication = ({
-  Controller,
-  register,
-  control,
-  t,
-  reset,
-  previousPage,
-  handleSubmit,
-  tenantId,
-  data,
-  onSubmit,
-  businessService
-}) => {
+
+const MobileSearchApplication = ({ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit, businessService, isClearSearch, onClearSearch }) => {
   function activateModal(state, action) {
     switch (action.type) {
       case "set":
@@ -42,7 +30,7 @@ const MobileSearchApplication = ({
     t,
     reset,
     previousPage,
-    businessService
+    businessService, onSubmit, onClearSearch
   };
   const MobileComponentDirectory = ({
     currentlyActiveMobileModal,
@@ -157,7 +145,7 @@ const MobileSearchApplication = ({
         tenantId
       }} />
         </PopUp> : null}
-      {data?.display ? <Card className="ws-auto-6">
+      {isClearSearch ? null : data?.display ? <Card className="ws-auto-6">
           {t(data?.display).split("\\n").map((text, index) => <p key={index} className="ws-auto-7">
                 {text}
               </p>)}

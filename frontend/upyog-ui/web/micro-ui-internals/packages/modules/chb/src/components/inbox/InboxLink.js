@@ -1,4 +1,4 @@
-import { Card, CHBIcon } from "@upyog/digit-ui-react-components";
+import { Card, CHBIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -43,7 +43,7 @@ const InboxLinks = ({ parentRoute, businessService }) => {
       <span className="logo">
         <CHBIcon />
       </span>{" "}
-      <span className="text">{t("CHB_SERVICE")}</span>
+      <span className="text">{t("ACTION_TEST_CHB")}</span>
     </div>
   );
 

@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useHistory } from "react-router-dom";
-import { Card, Dropdown, Loader, Menu, SubmitBar, Toast } from "@upyog/digit-ui-react-components";
+import { Link,  } from "react-router-dom";
+import { Card, Dropdown, Loader, Menu, SubmitBar, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import FSMLink from "./inbox/FSMLink";
 import ApplicationTable from "./inbox/ApplicationTable";
 import Filter from "./inbox/Filter";
-import { ToggleSwitch } from "@upyog/digit-ui-react-components";
+import { ToggleSwitch } from "@nudmcdgnpm/digit-ui-react-components";
 import RegistrySearch from "./RegistrySearch";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 const RegisryInbox = (props) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const DSO = Digit.UserService.hasAccess(["FSM_DSO"]) || false;
   const GetCell = (value) => <span className="cell-text">{value}</span>;
   const FSTP = Digit.UserService.hasAccess("FSM_EMP_FSTPO") || false;
@@ -264,21 +264,21 @@ const RegisryInbox = (props) => {
 
   const onActionSelect = (action, type, data) => {
     if (type === "VEHICLE") {
-      history.push("/upyog-ui/employee/fsm/registry/vehicle-details/" + action);
+      navigate("/upyog-ui/employee/fsm/registry/vehicle-details/" + action);
     } else {
       let driver = data.find((ele) => ele.name === action);
-      history.push("/upyog-ui/employee/fsm/registry/driver-details/" + driver?.id);
+      navigate("/upyog-ui/employee/fsm/registry/driver-details/" + driver?.id);
     }
   };
 
   const onSelectAdd = () => {
     switch (props.selectedTab) {
       case "VENDOR":
-        return history.push("/upyog-ui/employee/fsm/registry/new-vendor");
+        return navigate("/upyog-ui/employee/fsm/registry/new-vendor");
       case "VEHICLE":
-        return history.push("/upyog-ui/employee/fsm/registry/new-vehicle");
+        return navigate("/upyog-ui/employee/fsm/registry/new-vehicle");
       case "DRIVER":
-        return history.push("/upyog-ui/employee/fsm/registry/new-driver");
+        return navigate("/upyog-ui/employee/fsm/registry/new-driver");
       default:
         break;
     }

@@ -1,7 +1,6 @@
-import { CitizenHomeCard, PTIcon,ApplicantDetails, AddressDetails } from "@upyog/digit-ui-react-components";
+import { CitizenHomeCard, PTIcon,ApplicantDetails, AddressDetails } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useRouteMatch } from "react-router-dom";
 import WTCreate from "./pages/citizen/Create";
 import CitizenApp from "./pages/citizen";
 import InfoPage from "./pageComponents/InfoPage";
@@ -29,7 +28,7 @@ import TPAcknowledgement from "./pages/citizen/Create/TPAcknowledgement";
 import MTApplicationDetails from "./pages/citizen/MTApplicationDetails";
 import TPApplicationDetails from "./pages/citizen/TPApplicationDetails";
 import MTCitizenCard from "./components/MTCitizenCard";
-
+import { ReportSearchApplication, EnhancedReport } from "@nudmcdgnpm/digit-ui-module-reports";
 const componentsToRegister = {
     ApplicantDetails,
     AddressDetails,
@@ -52,6 +51,8 @@ const componentsToRegister = {
     TreePruningRequestDetails,
     MTAcknowledgement,
     TPAcknowledgement,
+    EnhancedReport,
+    ReportSearchApplication,
     MTCitizenCard: MTCitizenCard,
   };
   
@@ -64,21 +65,23 @@ const componentsToRegister = {
 
   // Parent component of module
   export const WTModule = ({ stateCode, userType, tenants }) => {
-    const { path, url } = useRouteMatch();
+    const { path, url } = Digit.Hooks.useModuleBasePath();
     const moduleCode = "WT";
     const language = Digit.StoreData.getCurrentLanguage();
     const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
     addComponentsToRegistry();
     Digit.SessionStorage.set("WT_TENANTS", tenants);
-    useEffect(() =>
-        userType === "employee" &&
+
+// Fetch localization data if the user is an employee if the user type is employee, fetch localization data for the current tenant and saved in db
+    useEffect(() => {
+      if (userType === "employee") {
         Digit.LocalizationService.getLocale({
           modules: [`rainmaker-${Digit.ULBService.getCurrentTenantId()}`],
           locale: Digit.StoreData.getCurrentLanguage(),
           tenantId: Digit.ULBService.getCurrentTenantId(),
-        }),
-      []
-    );
+        });
+      }
+    }, [userType]);
   
     if (userType === "employee") {
       return <EmployeeApp path={path} url={url} userType={userType} />;
@@ -96,11 +99,11 @@ const componentsToRegister = {
     const links = [ // need to check the links, will be removed later if not needed
       
       {
-        link: `${matchPath}/wt`,
+        link: `/wt`,
         i18nKey: t("WT_REAQUEST_TANKER"),
       },
       {
-        link: `${matchPath}/wt/status`,
+        link: `/wt/status`,
         i18nKey: t("WT_VIEW_APPLICATIONS"),
       },
     ];

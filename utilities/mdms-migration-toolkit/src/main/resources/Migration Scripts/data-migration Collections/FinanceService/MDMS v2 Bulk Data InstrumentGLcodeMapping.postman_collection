@@ -1,0 +1,137 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "MDMS v2 Bulk Data InstrumentGLcodeMapping",
+    "version": "1.0.0",
+    "description": ""
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8055"
+    }
+  ],
+  "paths": {
+    "/mdms-v2/v2/_create/FinanceModule.InstrumentGLcodeMapping": {
+      "post": {
+        "summary": "http://localhost:8055/mdms-v2/v2/_create/FinanceModule.InstrumentGLcodeMapping",
+        "responses": {},
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "RequestInfo": {
+                    "type": "object",
+                    "properties": {
+                      "apiId": {
+                        "type": "string"
+                      },
+                      "ver": {
+                        "type": "string"
+                      },
+                      "ts": {
+                        "type": "string"
+                      },
+                      "action": {
+                        "type": "string"
+                      },
+                      "did": {
+                        "type": "string",
+                        "format": "utc-millisec"
+                      },
+                      "key": {
+                        "type": "string"
+                      },
+                      "msgId": {
+                        "type": "string"
+                      },
+                      "authToken": {
+                        "type": "string"
+                      },
+                      "userInfo": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "uuid": {
+                            "type": "string"
+                          },
+                          "userName": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "mobileNumber": {
+                            "type": "string",
+                            "format": "utc-millisec"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "active": {
+                            "type": "boolean"
+                          },
+                          "tenantId": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "Mdms": {
+                    "type": "object",
+                    "properties": {
+                      "tenantId": {
+                        "type": "string"
+                      },
+                      "schemaCode": {
+                        "type": "string"
+                      },
+                      "data": {
+                        "type": "string"
+                      },
+                      "isActive": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "RequestInfo": {
+                  "apiId": "Rainmaker",
+                  "ver": ".01",
+                  "ts": "",
+                  "action": "_create",
+                  "did": "1",
+                  "key": "",
+                  "msgId": "20170310130900|en_IN",
+                  "authToken": "{{authToken}}",
+                  "userInfo": {
+                    "id": 2038,
+                    "uuid": "677300e7-2ff3-4216-a3dc-c2cbb0d63d31",
+                    "userName": "MCS1",
+                    "name": "Vishal",
+                    "mobileNumber": "7895875858",
+                    "type": "EMPLOYEE",
+                    "active": true,
+                    "tenantId": "pg.citya"
+                  }
+                },
+                "Mdms": {
+                  "tenantId": "pg",
+                  "schemaCode": "FinanceModule.InstrumentGLcodeMapping",
+                  "data": "{{req}}",
+                  "isActive": true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

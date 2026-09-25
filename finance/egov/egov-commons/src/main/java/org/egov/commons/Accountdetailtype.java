@@ -53,20 +53,20 @@ import static org.egov.commons.Accountdetailtype.SEQ_ACCOUNTDETAILTYPE;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractPersistable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.envers.Audited;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 @Entity
 @Table(name = "ACCOUNTDETAILTYPE")
@@ -84,26 +84,26 @@ public class Accountdetailtype extends AbstractPersistable<Integer> {
 
     @Column(nullable = false, unique = true)
     @Length(max = 50)
-    @SafeHtml
+    @SanitizeHtml
     @NotNull
     private String name;
 
     @NotNull
     @Length(max = 50)
-    @SafeHtml
+    @SanitizeHtml
     private String description;
 
     @Length(max = 25)
-    @SafeHtml
+    @SanitizeHtml
     private String tablename;
 
     @Length(max = 25)
-    @SafeHtml
+    @SanitizeHtml
     private String columnname;
 
     @Column(nullable = false, unique = true)
     @Length(max = 50)
-    @SafeHtml
+    @SanitizeHtml
     private String attributename;
 
     @NotNull

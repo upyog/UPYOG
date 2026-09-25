@@ -2,7 +2,7 @@ package digit.models.coremodels.mdms;
 
 import lombok.*;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 
 @Setter
 @Getter

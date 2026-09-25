@@ -71,7 +71,7 @@ export const convertToNocObject = (data, datafromflow) => {
   return formData;
 };
 
-export const getBPAFormData = async (data, mdmsData, history, t) => {
+export const getBPAFormData = async (data, mdmsData, navigate, t) => {
   const edcrResponse = await Digit.OBPSService.scrutinyDetails(data?.tenantId, { edcrNumber: data?.edcrNumber });
   const APIScrutinyDetails = edcrResponse?.edcrDetail[0];
   const getBlockIds = (unit) => {
@@ -156,12 +156,12 @@ export const getBPAFormData = async (data, mdmsData, history, t) => {
 
   if (data?.businessService.includes("OC")) {
     sessionStorage.setItem("BPAintermediateValue", JSON.stringify({ ...data }));
-    history.push(
+    navigate(
       `/upyog-ui/citizen/obps/ocbpa/${data?.additionalDetails?.applicationType.toLowerCase()}/${data?.additionalDetails?.serviceType.toLowerCase()}`
     );
   } else {
     sessionStorage.setItem("BPAintermediateValue", JSON.stringify({ ...data }));
-    history.push(
+    navigate(
       `/upyog-ui/citizen/obps/bpa/${data?.additionalDetails?.applicationType.toLowerCase()}/${data?.additionalDetails?.serviceType.toLowerCase()}`
     );
   }

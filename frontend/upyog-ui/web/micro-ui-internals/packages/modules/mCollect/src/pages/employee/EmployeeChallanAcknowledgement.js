@@ -1,4 +1,4 @@
-import { Banner, Card, CardText, LinkButton, ActionBar, Row, StatusTable, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Banner, Card, CardText, LinkButton, ActionBar, Row, StatusTable, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useLocation, Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -69,13 +69,16 @@ const MCollectAcknowledgement = () => {
               <LinkButton style={{ color: "#FF8C00" }} label={t("CORE_COMMON_GO_TO_HOME")} />
             </Link>
 
+            {params?.challanNumber && params?.serviceCategory && params?.tenantId && (
             <Link
               to={{
-                pathname: `/upyog-ui/employee/payment/collect/${params?.serviceCategory}/${params?.challanNumber}/tenantId=${params?.tenantId}?workflow=mcollect`,
+                pathname: `/upyog-ui/employee/payment/collect/${params?.serviceCategory}/${params?.challanNumber}/${params?.tenantId}`,
+                search: `?workflow=mcollect`,
               }}
             >
               <SubmitBar label={t("UC_BUTTON_PAY")} />
             </Link>
+            )}
           </ActionBar>
         </Card>
       )}

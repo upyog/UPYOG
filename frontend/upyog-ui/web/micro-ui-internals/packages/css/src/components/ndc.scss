@@ -1,0 +1,198 @@
+.ndc-loader-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 9999
+}
+
+.ndc-loader-module {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100px;
+    width: 100%;
+    position: relative
+}
+
+.ndc-loader-spinner {
+    width: 64px;
+    height: 64px;
+    border: 8px solid #1976d2;
+    border-top: 8px solid transparent;
+    border-radius: 50%;
+    animation: ndc-spin 1.2s linear infinite
+}
+
+@keyframes ndc-spin {
+    0% {
+        transform: rotate(0deg)
+    }
+
+    100% {
+        transform: rotate(360deg)
+    }
+}
+
+.ndc-margin-bottom-16 {
+    margin-bottom: 16px
+}
+
+.ndc-label-width-100 {
+    width: 100%
+}
+
+.ndc-flex-end {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 16px
+}
+
+.ndc-row-padding {
+    padding: 16px
+}
+
+.ndc-row-container {
+    max-width: 960px;
+    min-width: 640px;
+    margin-right: auto
+}
+
+.ndc-cursor-not-allowed {
+    cursor: not-allowed
+}
+
+.ndc-display-block {
+    display: block
+}
+
+.ndc-width-100-pad {
+    width: 100%;
+    padding-right: 25px;
+    padding-left: 25px
+}
+
+.ndc-margin-left-10 {
+    margin-left: 10px
+}
+
+.ndc-margin-bottom-8 {
+    margin-bottom: 8px
+}
+
+.ndc-block-display {
+    display: block
+}
+
+.ndc-strong-label {
+    font-weight: 700
+}
+
+/* Banner defaults for NDC response */
+.ndc-banner-padding {
+    padding: 10px
+}
+
+.ndc-banner-header {
+    font-size: 32px;
+    word-break: break-word
+}
+
+.ndc-cursor-pointer {
+    cursor: pointer
+}
+
+.ndc-due-red {
+    background: red;
+    color: white;
+    padding-top: 8px;
+    padding-left: 10px
+}
+
+.ndc-due-default {
+    background: none;
+    color: black;
+    padding: 0
+}
+
+.ndc-search-container-wide {
+    width: 200%;
+    margin-left: 24px
+}
+
+.ndc-text-start {
+    text-align: start
+}
+
+.ndc-search-action-width {
+    width: 100%
+}
+
+.ndc-card-margin-top-20 {
+    margin-top: 20px
+}
+
+.ndc-text-center {
+    text-align: center
+}
+
+.ndc-margin-top-40 {
+    margin-top: 40px
+}
+
+.ndc-form-field-column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%
+}
+
+.ndc-flex-row-center-gap {
+    display: flex;
+    align-items: center;
+    gap: 12px
+}
+
+.ndc-btn-small-white {
+    color: white;
+    font-size: 13px
+}
+
+.ndc-white-text {
+    color: white
+}
+
+.ndc-green-text {
+    color: green
+}
+
+.ndc-delete-icon {
+    cursor: pointer;
+    margin-left: 20px
+}
+
+.ndc-margin-top-24 {
+    margin-top: 24px
+}
+
+.ndc-btn-smaller {
+    color: white;
+    font-size: 12px
+}
+
+.ndc-margin-bottom-20 {
+    margin-bottom: 20px
+}
+
+.ndc-info-text {
+    color: green;
+    font-size: 14px;
+    padding-bottom: 10px
+}

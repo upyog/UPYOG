@@ -1,16 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, LabelFieldPair, Dropdown, UploadFile, Toast, Loader } from "@upyog/digit-ui-react-components";
-import "../css/tl-inline-auto.css";
-const TLSelectDocuments = ({
-  t,
-  config,
-  onSelect,
-  userType,
-  formData,
-  setError: setFormError,
-  clearErrors: clearFormErrors,
-  formState
-}) => {
+import { CardLabel, LabelFieldPair, Dropdown, UploadFile, Toast, Loader } from "@nudmcdgnpm/digit-ui-react-components";
+
+const TLSelectDocuments = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const [documents, setDocuments] = useState(formData?.documents?.documents || []);

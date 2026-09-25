@@ -1,7 +1,7 @@
-import { Loader, BreadCrumb } from "@nudmcdgnpm/digit-ui-react-components";
+import { Loader, BreadCrumb } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, {Fragment} from "react";
 import { useTranslation } from "react-i18next";
-import { Switch, useLocation, useRouteMatch, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 
 import EngagementCard from "./components/EngagementCard";
@@ -188,47 +188,37 @@ const EmployeeApp = ({ path, url, userType, tenants }) => {
 
   return (
     // <div className="ground-container">
-    <>
+    <Fragment>
       <EventsBreadCrumb location={location} />
-      <Switch>
-       
-        <Route path={`${path}/event/inbox`} exact>
-          <Inbox tenants={tenants} parentRoute={path} />
-        </Route>
-        <Route path={`${path}/event/response`} component={(props) => <Response {...props} />} />
-        <Route path={`${path}/event/inbox/new-event`}>
-          <NewEvent />
-        </Route>
-        <Route path={`${path}/event/new-event`}>
-          <NewEvent />
-        </Route>
-        <Route path={`${path}/event/edit-event/:id`}>
-          <EditEvent />
-        </Route>
-        <Route path={`${path}/event/inbox/event-details/:id`}>
-          <EmployeeEventDetails />
-        </Route>
-        <Route exact path={`${path}/documents/inbox/update`} component={(props) => <DocumentUpdate {...props} />} />
-        <Route exact path={`${path}/documents/inbox/new-doc`} component={() => <DocumenetCreate {...{ path }} />} />
-        <Route exact path={`${path}/documents/new-doc`} component={() => <DocumenetCreate {...{ path }} />} />
-        <Route path={`${path}/documents/inbox/details/:id`} component={(props) => <DocumentDetails {...props} />} />
-        <Route path={`${path}/documents/response`} component={(props) => <DocumentResponse {...props} />} />
-        <Route path={`${path}/documents/update-response`} component={(props) => <DocUpdateResponse {...props} />} />
-        <Route path={`${path}/documents/delete-response`} component={(props) => <DocDeleteResponse {...props} />} />
-        <Route path={`${path}/documents/inbox`} component={(props) => <DocumentNotification tenants={tenants} />} />
-        <Route path={`${path}/messages`} component={(props) => <Messages {...props} tenants={tenants} parentRoute={path} />} />
-        <Route path={`${path}/surveys`} component={(props)=><Surveys {...props} tenants={tenants} parentRoute={path} />} />
-        {/* documents/update-response */}
-        {/* <Redirect to={`${path}/docs`} /> */}
-      </Switch>
-      </>
+       {/* <Route> must be a direct child of <Routes></Routes> Normal components (like <div>, <Layout>) not allowed directly */}
+      <Routes>
+        <Route path="event/inbox" element={<Inbox tenants={tenants} parentRoute={path} />} />
+        <Route path="event/response" element={<Response />} />
+        <Route path="event/inbox/new-event" element={<NewEvent />} />
+        <Route path="event/new-event" element={<NewEvent />} />
+        <Route path="event/edit-event/:id" element={<EditEvent />} />
+        <Route path="event/inbox/event-details/:id" element={<EmployeeEventDetails />} />
+        <Route path="documents/inbox/update" element={<DocumentUpdate />} />
+        <Route path="documents/inbox/new-doc" element={<DocumenetCreate />} />
+        <Route path="documents/new-doc" element={<DocumenetCreate />} />
+        <Route path="documents/inbox/details/:id" element={<DocumentDetails />} />
+        <Route path="documents/response" element={<DocumentResponse />} />
+        <Route path="documents/update-response" element={<DocUpdateResponse />} />
+        <Route path="documents/delete-response" element={<DocDeleteResponse />} />
+        <Route path="documents/inbox" element={<DocumentNotification tenants={tenants} />} />
+        <Route path="messages/*" element={<Messages tenants={tenants} parentRoute={path} />} />
+        <Route path="surveys/*" element={<Surveys tenants={tenants} parentRoute={path} />} />
+      </Routes>
+      </Fragment>
     // </div>
   );
 };
 
 const EngagementModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = "Engagement";
-  const { path, url } = useRouteMatch();
+ const location = useLocation();
+  const path = location.pathname;
+  const url = location.pathname;
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
 

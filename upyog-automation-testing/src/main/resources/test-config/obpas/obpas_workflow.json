@@ -1,0 +1,32 @@
+{
+  "moduleName": "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM",
+
+  "steps": [
+
+    {
+      "name": "Citizen Application",
+      "type": "CITIZEN",
+      "module": "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM"
+    },
+
+    {
+      "name": "Employee OC",
+      "type": "EMPLOYEE",
+      "module": "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM",
+      "role": "EMPLOYEE"
+    },
+
+    {
+      "name": "Citizen Payment",
+      "type": "CITIZEN",
+      "module": "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_OC"
+    },
+
+    {
+      "name": "Employee OC",
+      "type": "EMPLOYEE",
+      "module": "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_OC",
+      "role": "EMPLOYEE"
+    }
+  ]
+}

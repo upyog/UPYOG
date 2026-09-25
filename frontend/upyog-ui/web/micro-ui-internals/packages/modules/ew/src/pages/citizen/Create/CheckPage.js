@@ -2,16 +2,18 @@ import {
   Card,
   CardHeader,
   CardSubHeader,
+  CardSectionHeader,
+  CardText,
   CheckBox,
   LinkButton,
   Row,
   StatusTable,
   SubmitBar,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
-import { checkForNA } from "../../../utils";
+
+import { checkForNA, getFixedFilename } from "../../../utils";
 import Timeline from "../../../components/EWASTETimeline";
 import ApplicationTable from "../../../components/inbox/ApplicationTable";
 
@@ -24,9 +26,9 @@ import ApplicationTable from "../../../components/inbox/ApplicationTable";
  */
 const ActionButton = ({ jumpTo }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   function routeTo() {
-    history.push(jumpTo);
+    navigate(jumpTo);
   }
 
   return <LinkButton label={t("CS_COMMON_CHANGE")} className="check-page-link-button" onClick={routeTo} />;
@@ -44,7 +46,7 @@ const ActionButton = ({ jumpTo }) => {
  */
 const CheckPage = ({ onSubmit, value = {} }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   const { address, ownerKey, ewdet } = value;
 

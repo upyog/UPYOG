@@ -1,8 +1,8 @@
 import { Surveys } from "../../services/elements/Surveys";
-import { useMutation } from "react-query";
+import { mutationTemplate } from "../../common/mutationTemplate";
 
 const useDeleteSurveys = (filters, config) => {
-  return useMutation((filters) => Surveys.delete(filters));
+  return mutationTemplate({ mutationFn: (filters) => Surveys.delete(filters) });
 };
 
 export default useDeleteSurveys;

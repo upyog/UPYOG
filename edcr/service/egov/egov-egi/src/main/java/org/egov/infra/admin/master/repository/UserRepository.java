@@ -53,7 +53,7 @@ import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.QueryHint;
+import jakarta.persistence.QueryHint;
 
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
@@ -67,7 +67,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long>, RevisionRepository<User, Long, Integer> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
     User findByUsername(String userName);

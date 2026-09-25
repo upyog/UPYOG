@@ -1,13 +1,13 @@
-import { Card, CardCaption, Header, Loader, OnGroundEventCard, WhatsNewCard } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, CardCaption, Header, Loader, OnGroundEventCard, WhatsNewCard } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Redirect, useHistory, useLocation } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import BroadcastWhatsNewCard from "../../components/Messages/BroadcastWhatsNewCard";
 
 const NotificationsAndWhatsNew = ({ variant, parentRoute }) => {
   const { t } = useTranslation();
   const location = useLocation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const {
@@ -23,11 +23,20 @@ const NotificationsAndWhatsNew = ({ variant, parentRoute }) => {
 
   const { mutate, isSuccess } = Digit.Hooks.useClearNotifications();
 
-  useEffect(() => {
-    isSuccess ? refetch() : false;
-  }, [isSuccess]);
+  // CORRECT Way to refetch on isSuccess change
+    useEffect(() => {
+      if (isSuccess) {
+        refetch();
+      }
+    }, [isSuccess]);
 
-  useEffect(() => (preVisitUnseenNotificationCount && tenantId ? mutate({ tenantId }) : null), [tenantId, preVisitUnseenNotificationCount]);
+// In useEffect, only return a cleanup function or nothing. Returning null or other values will cause errors in React 19.
+useEffect(() => {
+  if (preVisitUnseenNotificationCount && tenantId) {
+    mutate({ tenantId });
+  }
+}, [tenantId, preVisitUnseenNotificationCount]);
+
 
   const { data: EventsData, isLoading: EventsDataLoading } = Digit.Hooks.useEvents({ tenantId, variant });
 
@@ -55,27 +64,37 @@ const NotificationsAndWhatsNew = ({ variant, parentRoute }) => {
         return <Header>{t("CS_HEADER_WHATSNEW")}</Header>;
 
       default:
-        return <Redirect to={{ pathname: `/sv-ui/citizen`, state: { from: location.pathname + location.search } }} />;
+     //old:   return <Redirect to={{ pathname: `/sv-ui/citizen`, state: { from: location.pathname + location.search } }} />;
+     return <Navigate to="/sv-ui/citizen" state={{ from: location.pathname + location.search }} replace />;
+
     }
   };
 
   function onEventCardClick(id) {
-    history.push(parentRoute + "/events/details/" + id);
+    navigate(parentRoute + "/events/details/" + id);
   }
 
   return (
     <div className="CitizenEngagementNotificationWrapper">
       <VariantWiseRender />
+      {/* The key prop was missing; it was optional in React 17 (warning only), but is required for proper list rendering in React 19 */}
       {EventsData?.length ? (
-        EventsData.map((DataParamsInEvent) =>
-          DataParamsInEvent?.eventType === "EVENTSONGROUND" ? (
-            <OnGroundEventCard onClick={onEventCardClick} {...DataParamsInEvent} />
-          ) : DataParamsInEvent?.eventType === "BROADCAST" ? (
-            <BroadcastWhatsNewCard {...DataParamsInEvent} />
-          ) : (
-            <WhatsNewCard {...DataParamsInEvent} />
-          )
-        )
+        EventsData.map((DataParamsInEvent, index) => {
+          const key = DataParamsInEvent.uuid || DataParamsInEvent.id || index;
+          if (DataParamsInEvent?.eventType === "EVENTSONGROUND") {
+            return (
+              <OnGroundEventCard 
+                key={key} 
+                onClick={onEventCardClick} 
+                {...DataParamsInEvent} 
+              />
+            );
+          } else if (DataParamsInEvent?.eventType === "BROADCAST") {
+            return <BroadcastWhatsNewCard key={key} {...DataParamsInEvent} />;
+          } else {
+            return <WhatsNewCard key={key} {...DataParamsInEvent} />;
+          }
+        })
       ) : (
         <Card>
           <CardCaption>{t("COMMON_INBOX_NO_DATA")}</CardCaption>

@@ -1,8 +1,8 @@
-import { StatusTable, Header, Card, CardHeader, Row, PDFSvg, CardSectionHeader, MultiLink, Loader, LinkButton } from "@upyog/digit-ui-react-components";
+import { StatusTable, Header, Card, CardHeader, Row, PDFSvg, CardSectionHeader, MultiLink, Loader, LinkButton } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { pdfDocumentName, pdfDownloadLink, stringReplaceAll } from "../../../utils";
+import { pdfDownloadLink, stringReplaceAll } from "../../../utils";
 import ApplicationTimeline from "../../../components/ApplicationTimeline";
 import { downloadAndPrintReciept } from "../../../utils";
 const ApplicationDetails = () => {
@@ -162,7 +162,7 @@ const ApplicationDetails = () => {
                     <a target="_blank" href={documents[document.fileStoreId]?.split(",")[0]}>
                       <PDFSvg />
                     </a>
-                    <p style={{ marginTop: "8px", fontWeight: "bold", fontSize: "16px", lineHeight: "19px", color: "#505A5F", fontWeight: "400" }}>
+                    <p style={{ marginTop: "8px", fontSize: "16px", lineHeight: "19px", color: "#505A5F", fontWeight: "400" }}>
                       {t(`BPAREG_HEADER_${stringReplaceAll(document?.documentType?.toUpperCase(), ".", "_")}`)}
                     </p>
                     {/* <p style={{ marginTop: "8px", fontWeight: "bold", fontSize: "16px", lineHeight: "19px", color: "#505A5F", fontWeight: "400" }}>{decodeURIComponent( documents[document.fileStoreId]?.split(",")[0]?.split("?")[0]?.split("/")?.pop()?.slice(13))}</p> */}

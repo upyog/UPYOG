@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -20,42 +19,41 @@ import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 @Slf4j
 @Service
 public class SchedulerService {
-	@Autowired
-	private StreetVendingRepository streetVendingRepository;
 
-	@Autowired
-	private UserService userService;
-	
-	@Autowired
-	private PaymentService service;
-
-
-	@Autowired
-	private StreetyVendingNotificationService notificationService;
-	
+	private final StreetVendingRepository streetVendingRepository;
+	private final UserService userService;
+	private final PaymentService service;
+	private final StreetyVendingNotificationService notificationService;
 
 	@Value("${scheduler.sv.expiry.enabled:false}")
 	private boolean isSchedulerEnabled;
 
-	/** SCHEDLOCK USE: All pods load the scheduler and attempt to run the scheduled job at the same time.
-	* Each pod first attempts to acquire a lock in the shared database (usually in a shedlock table) using an atomic SQL update:
-	* UPDATE shedlock
-	* SET lock_until = :futureTime, locked_by = :podName
-	* WHERE name = :jobName AND lock_until <= NOW()
-	* Only one pod can successfully execute this SQL query and get the lock:
-	* The first pod that reaches the DB and finds the lock expired will update the row and acquire the lock.
-	* Other pods will fail because the lock_until value is now in the future, and the WHERE condition doesn’t match.
-	* The pod that acquired the lock proceeds with job execution.
-	* Other pods skip execution silently since they couldn’t obtain the lock.
-    * The database ensures atomicity and concurrency control.
-	* Even if multiple pods send the SQL query simultaneously, only one will succeed due to the transactional guarantees of RDBMS.
-	* ShedLock checks the number of affected rows — if it's zero, the job is skipped. **/
-	
+	public SchedulerService(StreetVendingRepository streetVendingRepository, UserService userService,
+			PaymentService service, StreetyVendingNotificationService notificationService) {
+		this.streetVendingRepository = streetVendingRepository;
+		this.userService = userService;
+		this.service = service;
+		this.notificationService = notificationService;
+	}
+
+	// SCHEDLOCK USE: All pods load the scheduler and attempt to run the scheduled job at the same time.
+	// Each pod first attempts to acquire a lock in the shared database (usually in a shedlock table) using an atomic SQL update:
+	// UPDATE shedlock
+	// SET lock_until = :futureTime, locked_by = :podName
+	// WHERE name = :jobName AND lock_until <= NOW()
+	// Only one pod can successfully execute this SQL query and get the lock:
+	// The first pod that reaches the DB and finds the lock expired will update the row and acquire the lock.
+	// Other pods will fail because the lock_until value is now in the future, and the WHERE condition doesn't match.
+	// The pod that acquired the lock proceeds with job execution.
+	// Other pods skip execution silently since they couldn't obtain the lock.
+	// The database ensures atomicity and concurrency control.
+	// Even if multiple pods send the SQL query simultaneously, only one will succeed due to the transactional guarantees of RDBMS.
+	// ShedLock checks the number of affected rows — if it's zero, the job is skipped.
+
 	/**
 	 * Scheduled job to handle street vending applications. Runs daily at 1 AM if
 	 * enabled via configuration.
 	 */
-
 	// @Scheduled(cron = "0 0 1 * * *")
 	@Scheduled(cron = "0 */5 * * * *") // runs every 5 min
 	@SchedulerLock(name = "streetVendingPaymentSchedulerJob",
@@ -164,4 +162,3 @@ public class SchedulerService {
 	}
 	
 }
-

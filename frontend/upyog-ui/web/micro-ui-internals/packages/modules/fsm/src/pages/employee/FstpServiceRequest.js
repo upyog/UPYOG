@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { CardHeader, Header, Loader } from "@upyog/digit-ui-react-components";
+import { CardHeader, Header, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import DesktopInbox from "../../components/DesktopInbox";
 import MobileInbox from "../../components/MobileInbox";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, useLocation,  } from "react-router-dom";
 
 const config = {
   select: (response) => {
@@ -20,7 +20,7 @@ const config = {
 };
 
 const FstpServiceRequest = () => {
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { t } = useTranslation();
   const location = useLocation();
   const vehicleNumber = location.pathname.split("/").at(-1);
@@ -129,7 +129,7 @@ const FstpServiceRequest = () => {
   }, []);
 
   // if (isSuccess && totalCount === 0 && !isLoading) {
-  //     history.push('/upyog-ui/employee/fsm/fstp/new-vehicle-entry/')
+  //     navigate('/upyog-ui/employee/fsm/fstp/new-vehicle-entry/')
   // }
 
   if (isLoading && !isSuccess && isSearchLoading && isVehiclesLoading && !isIdle && !isVehicleSearchCompleted) {
@@ -137,7 +137,7 @@ const FstpServiceRequest = () => {
   }
 
   if (vehicleLog?.length === 0 && tripDetails?.length === 0 && isSuccess && !isSearchLoading && tripDetail?.length === 0 && !isVehiclesLoading) {
-    history.push(`/upyog-ui/employee/fsm/fstp/new-vehicle-entry/${vehicleNumber}`);
+    navigate(`/upyog-ui/employee/fsm/fstp/new-vehicle-entry/${vehicleNumber}`);
   }
 
   let citizenInfo = [];

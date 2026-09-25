@@ -1,8 +1,16 @@
-import React from "react";
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 
-const useBusinessServiceData = (tenantId, businessServices, config) => {
-  return useQuery(['BUSSRVICEDATA_DETAIL', businessServices, tenantId], () => Digit.WorkflowService.init(tenantId, businessServices), config)
+const useBusinessServiceData = (tenantId, businessServices, config = {}) => {
+  return queryTemplate({
+    queryKey: [
+      "OBPS_BUSINESS_SERVICE",
+      tenantId,
+      businessServices,
+    ],
+    queryFn: () =>
+      Digit.WorkflowService.init(tenantId, businessServices),
+    config,
+  });
 };
 
 export default useBusinessServiceData;

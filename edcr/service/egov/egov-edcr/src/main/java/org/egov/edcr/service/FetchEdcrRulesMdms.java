@@ -40,6 +40,9 @@ public class FetchEdcrRulesMdms {
 	@Autowired
 	private EdcrConfigProperties edcrConfigProperties;
 
+	@Autowired
+	private ObjectMapper objectMapper;
+
 	private static Logger LOG = LogManager.getLogger(EdcrApplicationService.class);
 	private List<Map<String, Object>> riskTypeRules = new ArrayList<>();
 
@@ -77,10 +80,9 @@ public class FetchEdcrRulesMdms {
 
 	public String getRiskType(Plan pl) {
 	    if (riskTypeRules.isEmpty()) {
-	        ObjectMapper mapper = new ObjectMapper();
 
 	        Object mdmsData = bpaMdmsUtil.mDMSCall(new RequestInfo(), edcrConfigProperties.getDefaultState());
-	        MdmsResponse mdmsResponse = mapper.convertValue(mdmsData, MdmsResponse.class);
+	        MdmsResponse mdmsResponse = objectMapper.convertValue(mdmsData, MdmsResponse.class);
 	        JSONArray jsonArray = mdmsResponse.getMdmsRes().get(EdcrRulesMdmsConstants.BPA).get(EdcrRulesMdmsConstants.RISK_TYPE_COMPUTATION);
 
 	        for (int i = 0; i < jsonArray.size(); i++) {

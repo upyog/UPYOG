@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.cdwm.calculator.util.CalculatorConstants;
 import org.upyog.cdwm.calculator.util.MdmsUtil;
@@ -24,8 +23,11 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class CalculationService {
 
-	@Autowired
-	private MdmsUtil mdmsUtil;
+	private final MdmsUtil mdmsUtil;
+
+	public CalculationService(MdmsUtil mdmsUtil) {
+		this.mdmsUtil = mdmsUtil;
+	}
 
 	/**
      * Calculates the fee for the given CND request based on the waste quantity and predefined fee structure.

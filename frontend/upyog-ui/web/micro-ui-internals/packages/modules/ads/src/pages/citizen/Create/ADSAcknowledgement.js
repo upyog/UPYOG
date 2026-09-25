@@ -1,8 +1,8 @@
-import { Banner, Card, Loader, Row, StatusTable, SubmitBar, Toast } from "@upyog/digit-ui-react-components";
+import { Banner, Card, Loader, Row, StatusTable, SubmitBar, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useRouteMatch, useHistory } from "react-router-dom";
-import { ADSDataConvert } from "../../../utils";
+import { Link, } from "react-router-dom";
+import { ADSDataConvert, getSlotSearchCriteria } from "../../../utils";
 import "../../../css/ads-inline-auto.css";
 const GetActionMessage = props => {
   const {
@@ -30,75 +30,55 @@ const BannerPicker = props => {
  * success or failure messages.The component handles the mutation of 
  * booking data and manages loading states effectively.
  */
-const ADSAcknowledgement = ({
-  data,
-  onSuccess
-}) => {
-  const {
-    t
-  } = useTranslation();
+const ADSAcknowledgement = ({ data, onSuccess, mutation }) => {
+  const { t } = useTranslation();
+
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.ads.useADSCreateAPI(tenantId);
-  const {
-    data: storeData
-  } = Digit.Hooks.useStore.getInitData();
-  const match = useRouteMatch();
-  const {
-    tenants
-  } = storeData || {};
-  const history = useHistory();
+  // const mutation = Digit.Hooks.ads.useADSCreateAPI(tenantId);
+  const { data: storeData } = Digit.Hooks.useStore.getInitData();
+  const match = Digit.Hooks.useModuleBasePath();
+  const { tenants } = storeData || {};
+  const navigate = Digit.Hooks.useCustomNavigate();
   const user = Digit.UserService.getUser().info;
   const [showToast, setShowToast] = useState(null);
   const slotSearchData = Digit.Hooks.ads.useADSSlotSearch();
   let formdata = {
-    advertisementSlotSearchCriteria: mutation.data?.bookingApplication[0]?.cartDetails.map(item => ({
-      bookingId: mutation.data?.bookingApplication[0].bookingId,
-      addType: item?.addType,
-      bookingStartDate: item?.bookingDate,
-      bookingEndDate: item?.bookingDate,
-      faceArea: item?.faceArea,
-      tenantId: tenantId,
-      location: item?.location,
-      nightLight: item?.nightLight,
-      isTimerRequired: true
-    }))
+    advertisementSlotSearchCriteria: getSlotSearchCriteria(
+      mutation.data?.bookingApplication[0]?.cartDetails,
+      tenantId,
+      {},
+      undefined,
+      mutation.data?.bookingApplication[0].bookingId
+    )
   };
+
   const handleMakePayment = async () => {
     try {
-      // Await the mutation and capture the result directly
+      /* Await the mutation and capture the result directly */
       const result = await slotSearchData.mutateAsync(formdata);
       let SlotSearchData = {
         bookingId: mutation.data?.bookingApplication[0].bookingId,
         tenantId: tenantId,
-        cartDetails: mutation.data?.bookingApplication[0]?.cartDetails
+        cartDetails: mutation.data?.bookingApplication[0]?.cartDetails,
       };
-      const isSlotBooked = result?.advertisementSlotAvailabiltityDetails?.some(slot => slot.slotStaus === "BOOKED");
-      const timerValue = result?.advertisementSlotAvailabiltityDetails[0].timerValue;
+      const isSlotBooked = result?.advertisementSlotAvailabiltityDetails?.some((slot) => slot.slotStaus === "BOOKED");
+      /* timerValue is resolved directly from top-level of response payload per backend contract */
+      const timerValue = result?.timerValue;
       if (isSlotBooked) {
-        setShowToast({
-          error: true,
-          label: t("ADS_ADVERTISEMENT_ALREADY_BOOKED")
-        });
+        setShowToast({ error: true, label: t("ADS_ADVERTISEMENT_ALREADY_BOOKED") });
       } else if (user.type === "CITIZEN") {
-        history.push({
-          pathname: `/upyog-ui/citizen/payment/my-bills/${"adv-services"}/${mutation.data?.bookingApplication[0]?.bookingNo}`,
-          state: {
-            tenantId: tenantId,
-            bookingNo: mutation.data?.bookingApplication[0]?.bookingNo,
-            timerValue: timerValue,
-            SlotSearchData: SlotSearchData
-          }
-        });
-      } else if (user.type === "EMPLOYEE") {
-        history.push({
-          pathname: `/upyog-ui/employee/payment/collect/${"adv-services"}/${mutation.data?.bookingApplication[0]?.bookingNo}`,
-          state: {
-            tenantId: tenantId,
-            bookingNo: mutation.data?.bookingApplication[0]?.bookingNo,
-            timerValue: timerValue,
-            SlotSearchData: SlotSearchData
-          }
-        });
+        navigate(
+          `/upyog-ui/citizen/payment/my-bills/${"adv-services"}/${mutation.data?.bookingApplication[0]?.bookingNo}`,
+          {
+            state: { tenantId: tenantId, bookingNo: mutation.data?.bookingApplication[0]?.bookingNo, timerValue: timerValue, SlotSearchData: SlotSearchData },
+          });
+      }
+      else if (user.type === "EMPLOYEE") {
+        navigate(
+          `/upyog-ui/employee/payment/collect/${"adv-services"}/${mutation.data?.bookingApplication[0]?.bookingNo}`,
+          {
+            state: { tenantId: tenantId, bookingNo: mutation.data?.bookingApplication[0]?.bookingNo, timerValue: timerValue, SlotSearchData: SlotSearchData },
+          });
       }
     } catch (error) {
       setShowToast({
@@ -107,15 +87,17 @@ const ADSAcknowledgement = ({
       });
     }
   };
-  useEffect(() => {
-    try {
-      data.tenantId = tenantId;
-      let formdata = ADSDataConvert(data);
-      mutation.mutate(formdata, {
-        onSuccess
-      });
-    } catch (err) {}
-  }, []);
+  // useEffect(() => {
+  //   try {
+  //     data.tenantId = tenantId;
+  //     let formdata = ADSDataConvert(data);
+  //     mutation.mutate(formdata, {
+  //       onSuccess,
+  //     });
+  //   } catch (err) {}
+  // }, []);
+
+
   useEffect(() => {
     if (showToast) {
       const timer = setTimeout(() => {
@@ -124,32 +106,35 @@ const ADSAcknowledgement = ({
       return () => clearTimeout(timer); // Clear timer on cleanup
     }
   }, [showToast]);
-  return mutation.isLoading || mutation.isIdle ? <Loader /> : <Card>
+  return mutation.isPending || mutation.isIdle ? (
+    <Loader />
+  ) : (
+    <Card>
       <BannerPicker t={t} data={mutation.data} isSuccess={mutation.isSuccess} isLoading={mutation.isIdle || mutation.isLoading} />
       <StatusTable>
         {mutation.isSuccess && <Row rowContainerStyle={rowContainerStyle} last textStyle={{
-        whiteSpace: "pre",
-        width: "60%"
-      }} />}
+          whiteSpace: "pre",
+          width: "60%"
+        }} />}
       </StatusTable>
       {mutation.isSuccess && <div className="ads-auto-94">
         {user.type === "EMPLOYEE" && <Link to={`/upyog-ui/employee`}>
-        <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
-         </Link>}
-         {user.type === "CITIZEN" && <Link to={`/upyog-ui/citizen`}>
-        <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
-         </Link>}
-          <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment} />
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+        </Link>}
+        {user.type === "CITIZEN" && <Link to={`/upyog-ui/citizen`}>
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+        </Link>}
+        <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment} />
       </div>}
-    {!mutation.isSuccess && user.type === "CITIZEN" && <Link to={`/upyog-ui/citizen`}>
-      <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
-       </Link>}
-     {!mutation.isSuccess && user.type === "EMPLOYEE" && <Link to={`/upyog-ui/employee`}>
-      <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
-       </Link>}
-     {showToast && <Toast error={showToast.error} warning={showToast.warning} label={t(showToast.label)} onClose={() => {
-      setShowToast(null);
-    }} />}
-    </Card>;
+      {!mutation.isSuccess && user.type === "CITIZEN" && <Link to={`/upyog-ui/citizen`}>
+        <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+      </Link>}
+      {!mutation.isSuccess && user.type === "EMPLOYEE" && <Link to={`/upyog-ui/employee`}>
+        <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+      </Link>}
+      {showToast && <Toast error={showToast.error} warning={showToast.warning} label={t(showToast.label)} onClose={() => {
+        setShowToast(null);
+      }} />}
+    </Card>);
 };
 export default ADSAcknowledgement;

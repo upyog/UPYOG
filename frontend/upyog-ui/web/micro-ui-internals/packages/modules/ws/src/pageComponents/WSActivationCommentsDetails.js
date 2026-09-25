@@ -1,6 +1,6 @@
-import { CardLabel, LabelFieldPair, TextInput } from "@upyog/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
-import "../css/ws-inline-auto.css";
+
 const WSActivationCommentsDetails = ({
   t,
   config,

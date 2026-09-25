@@ -1,0 +1,348 @@
+{
+  "moduleName":"obpas_employee_module",
+  "description": "Obpas employee full workflow",
+
+  "baseUrl": "${selected.url}",
+
+  "instructions":[
+
+
+    {
+      "stepName":"Employee Username",
+      "locatorStrategy":"NAME",
+      "locatorValue":"username",
+      "action":"TYPE",
+      "inputValue":"${selected.username}",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName":"Employee Password",
+      "locatorStrategy":"NAME",
+      "locatorValue":"password",
+      "action":"TYPE",
+      "inputValue":"${selected.password}",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName":"Select City",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"0:0"
+    },
+    {
+      "stepName":"Continue",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'Continue')]",
+      "action":"CLICK_JS"
+    },
+    {
+      "stepName": "Open OBPS Inbox",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[contains(@href,'/employee/obps/inbox')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName":"Search Application",
+      "locatorStrategy":"NAME",
+      "locatorValue":"applicationNo",
+      "action": "TYPE_FROM_STORE",
+      "inputValue": "APPLICATION_NO",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName":"Click Search",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[normalize-space()='Search']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Open First Application",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[contains(@href,'/bpa/PG-BP-')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 5000
+    },
+    {
+      "stepName":"Take Action",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'TAKE ACTION')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+    {
+      "stepName":"Forward",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//p[normalize-space()='FORWARD']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+    {
+      "stepName":"Comment",
+      "locatorStrategy":"NAME",
+      "locatorValue":"comments",
+      "action":"TYPE",
+      "inputValue":"${comment.forward}",
+      "dynamicSleep": 3000
+    },
+
+    {
+      "stepName":"Verify Forward",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'VERIFY AND FORWARD')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName":"Go Home",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'Go back to home page')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName":"Open OBPS Inbox Again",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[contains(@href,'/employee/obps/inbox')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName":"Search Again",
+      "locatorStrategy":"NAME",
+      "locatorValue":"applicationNo",
+      "action":"TYPE",
+      "inputValue":"${selected.applicationNumber}",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName":"Search Again Button",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[normalize-space()='Search']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Open First Application",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[contains(@href,'/bpa/PG-BP-')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 5000
+    },
+    {
+      "stepName": "Inspection Date",
+      "locatorStrategy": "CSS",
+      "locatorValue": "input[type='date']",
+      "action": "SET_DATE_TODAY",
+      "inputValue": "0",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Inspection Time",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//input[@type='time']",
+      "action": "SET_CURRENT_TIME",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName":"Inspection Dropdown 1",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"0:1",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName":"Inspection Dropdown 2",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"1:1",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName":"Inspection Dropdown 3",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"2:1",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName":"Inspection Dropdown 4",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"3:1",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName":"Upload Doc 1",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//input[@type='file'])[1]",
+      "action":"UPLOAD_FILE",
+      "inputValue":"${document.common.proof}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Upload Doc 2",
+      "locatorStrategy":"XPATH",
+      "locatorValue": "(//input[@type='file'])[2]",
+      "action":"UPLOAD_FILE",
+      "inputValue":"${document.common.proof}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Upload Doc 3",
+      "locatorStrategy":"XPATH",
+      "locatorValue": "(//input[@type='file'])[3]",
+      "action":"UPLOAD_FILE",
+      "inputValue":"${document.common.proof}",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName":"Upload Doc 4",
+      "locatorStrategy":"XPATH",
+      "locatorValue": "(//input[@type='file'])[4]",
+      "action":"UPLOAD_FILE",
+      "inputValue":"${document.common.proof}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Upload Doc 5",
+      "locatorStrategy":"XPATH",
+      "locatorValue": "(//input[@type='file'])[5]",
+      "action":"UPLOAD_FILE",
+      "inputValue":"${document.common.proof}",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName":"Take Action Inspector",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'TAKE ACTION')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName":"Forward Inspector",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//p[normalize-space()='FORWARD']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName":"Comment Inspector",
+      "locatorStrategy":"NAME",
+      "locatorValue":"comments",
+      "action":"TYPE",
+      "inputValue":"${comment.forward}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Submit Inspector",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'FORWARD')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName":"Go Home 2",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'Go back to home page')]",
+      "action":"CLICK_JS"
+    },
+    {
+      "stepName":"Open Noc Inbox",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[contains(@href,'/employee/noc/inbox')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName":"Search BPA Application Number",
+      "locatorStrategy":"NAME",
+      "locatorValue":"applicationNo",
+      "action":"TYPE",
+      "inputValue":"${selected.applicationNumber}",
+      "dynamicSleep": 3000
+    },
+
+    {
+      "stepName":"Upload Fire NOC",
+      "locatorStrategy":"CSS",
+      "locatorValue":"input[type='file']",
+      "action":"UPLOAD_FILE",
+      "inputValue":"${document.common.proof}",
+      "dynamicSleep": 2000
+    },
+
+
+
+    {
+      "stepName":"Approve Fire",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//p[normalize-space()='Approve']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+
+
+    {
+      "stepName":"PAY",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'PAY')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+
+
+    {
+      "stepName":"Payer Mobile",
+      "locatorStrategy":"NAME",
+      "locatorValue":"payerMobile",
+      "action":"TYPE",
+      "inputValue":"${mobile.number}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Receipt Number",
+      "locatorStrategy":"NAME",
+      "locatorValue":"instrumentNumber",
+      "action":"TYPE",
+      "inputValue":"${receipt.number}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Receipt Date",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//input[@type='date']",
+      "action":"SET_DATE_TODAY",
+      "inputValue": "0",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Collect Payment",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//*[contains(text(),'Collect Payment')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    }
+
+  ]
+}

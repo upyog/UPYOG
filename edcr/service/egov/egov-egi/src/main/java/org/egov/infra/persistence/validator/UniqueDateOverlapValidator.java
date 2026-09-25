@@ -53,35 +53,81 @@ import static org.egov.infra.utils.DateUtils.startOfDay;
 
 import java.util.Date;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.egov.infra.persistence.validator.annotation.UniqueDateOverlap;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Conjunction;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * JSR-380 / Jakarta Bean Validation {@link ConstraintValidator} implementation for the {@link UniqueDateOverlap} annotation.
+ * <p>
+ * This validator ensures that an entity's effective date range (defined by {@link UniqueDateOverlap#fromField()}
+ * and {@link UniqueDateOverlap#toField()}) does not overlap with any existing persistent entity sharing
+ * the same set of unique attribute values (defined by {@link UniqueDateOverlap#uniqueFields()}).
+ * </p>
+ *
+ * <p><b>Validation Logic:</b></p>
+ * An overlap is detected if any existing entity matches all {@code uniqueFields} (case-insensitive for string values)
+ * and satisfies any of the following date boundary conditions:
+ * <ol>
+ *     <li>The existing entity's period encompasses the target's start date:
+ *         <br>{@code existing.fromField <= target.fromDate AND existing.toField >= target.fromDate}</li>
+ *     <li>The existing entity's period encompasses the target's end date:
+ *         <br>{@code existing.fromField <= target.toDate AND existing.toField >= target.toDate}</li>
+ *     <li>The existing entity's period is entirely contained within the target's date range:
+ *         <br>{@code existing.fromField >= target.fromDate AND existing.toField <= target.toDate}</li>
+ * </ol>
+ *
+ * <p><b>Update Handling:</b></p>
+ * During update operations, the current entity's primary key (defined by {@link UniqueDateOverlap#id()}) is
+ * excluded from the database count query to prevent false-positive self-collision.
+ *
+ * @author eGovernments Foundation
+ * @see UniqueDateOverlap
+ */
 public class UniqueDateOverlapValidator implements ConstraintValidator<UniqueDateOverlap, Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(UniqueDateOverlapValidator.class);
 
+    /**
+     * The constraint annotation instance containing configuration metadata (field names, message template, etc.).
+     */
     private UniqueDateOverlap uniqueDateOverlap;
 
+    /**
+     * JPA {@link EntityManager} used to build and execute the criteria query against the database.
+     */
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     * Initializes the validator with the metadata specified in the {@link UniqueDateOverlap} annotation.
+     *
+     * @param uniqueDateOverlap the annotation instance applied on the target class
+     */
     @Override
     public void initialize(final UniqueDateOverlap uniqueDateOverlap) {
         this.uniqueDateOverlap = uniqueDateOverlap;
     }
 
+    /**
+     * Validates whether the given object's date interval does not overlap with existing records in the database.
+     * <p>
+     * If validation fails, adds a property-level constraint violation bound to the {@link UniqueDateOverlap#fromField()}.
+     *
+     * @param object the entity instance being validated
+     * @param context the constraint validator context
+     * @return {@code true} if no date overlap exists; {@code false} if an overlap is found or reflection fails
+     */
     @Override
     public boolean isValid(Object object, ConstraintValidatorContext context) {
         try {
@@ -97,33 +143,57 @@ public class UniqueDateOverlapValidator implements ConstraintValidator<UniqueDat
 
     }
 
+    /**
+     * Performs reflective field extraction and executes a JPA {@link CriteriaQuery} count query to verify uniqueness.
+     *
+     * @param object the entity instance to inspect
+     * @return {@code true} if the count of overlapping existing records is 0; {@code false} otherwise
+     * @throws IllegalAccessException if any annotated field cannot be accessed reflectively
+     */
     private boolean checkUnique(Object object) throws IllegalAccessException {
         Number id = (Number) FieldUtils.readField(object, uniqueDateOverlap.id(), true);
-        Criteria uniqueDateOverlapChecker = entityManager.unwrap(Session.class).createCriteria(object.getClass()).setReadOnly(true);
-        Conjunction uniqueCheck = Restrictions.conjunction();
+
+        final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+        // 'Root' represents the query's FROM entity, allowing access to its fields (root.get(fieldName))
+        final Root root = criteriaQuery.from(object.getClass());
+
+        // Build unique-field predicates (AND)
+        java.util.List<Predicate> uniquePredicates = new java.util.ArrayList<>();
         for (String fieldName : uniqueDateOverlap.uniqueFields()) {
             Object fieldValue = FieldUtils.readField(object, fieldName, true);
             if (fieldValue instanceof String)
-                uniqueCheck.add(Restrictions.eq(fieldName, fieldValue).ignoreCase());
+                uniquePredicates.add(criteriaBuilder.equal(criteriaBuilder.lower(root.get(fieldName)), ((String) fieldValue).toLowerCase()));
             else
-                uniqueCheck.add(Restrictions.eq(fieldName, fieldValue));
+                uniquePredicates.add(criteriaBuilder.equal(root.get(fieldName), fieldValue));
         }
+
         Date fromDate = startOfDay((Date) FieldUtils.readField(object, uniqueDateOverlap.fromField(), true));
         Date toDate = endOfDay((Date) FieldUtils.readField(object, uniqueDateOverlap.toField(), true));
-        Conjunction checkFromDate = Restrictions.conjunction();
-        checkFromDate.add(Restrictions.le(uniqueDateOverlap.fromField(), fromDate));
-        checkFromDate.add(Restrictions.ge(uniqueDateOverlap.toField(), fromDate));
-        Conjunction checkToDate = Restrictions.conjunction();
-        checkToDate.add(Restrictions.le(uniqueDateOverlap.fromField(), toDate));
-        checkToDate.add(Restrictions.ge(uniqueDateOverlap.toField(), toDate));
-        Conjunction checkFromAndToDate = Restrictions.conjunction();
-        checkFromAndToDate.add(Restrictions.ge(uniqueDateOverlap.fromField(), fromDate));
-        checkFromAndToDate.add(Restrictions.le(uniqueDateOverlap.toField(), toDate));
-        Disjunction dateRangeChecker = Restrictions.disjunction();
-        dateRangeChecker.add(checkFromDate).add(checkToDate).add(checkFromAndToDate);
-        uniqueCheck.add(dateRangeChecker);
+
+        // existing.fromField <= fromDate AND existing.toField >= fromDate
+        Predicate checkFromDate = criteriaBuilder.and(
+                criteriaBuilder.lessThanOrEqualTo(root.get(uniqueDateOverlap.fromField()), fromDate),
+                criteriaBuilder.greaterThanOrEqualTo(root.get(uniqueDateOverlap.toField()), fromDate));
+
+        // existing.fromField <= toDate AND existing.toField >= toDate
+        Predicate checkToDate = criteriaBuilder.and(
+                criteriaBuilder.lessThanOrEqualTo(root.get(uniqueDateOverlap.fromField()), toDate),
+                criteriaBuilder.greaterThanOrEqualTo(root.get(uniqueDateOverlap.toField()), toDate));
+
+        // existing.fromField >= fromDate AND existing.toField <= toDate
+        Predicate checkFromAndToDate = criteriaBuilder.and(
+                criteriaBuilder.greaterThanOrEqualTo(root.get(uniqueDateOverlap.fromField()), fromDate),
+                criteriaBuilder.lessThanOrEqualTo(root.get(uniqueDateOverlap.toField()), toDate));
+
+        // Date overlap = any of the three cases above
+        uniquePredicates.add(criteriaBuilder.or(checkFromDate, checkToDate, checkFromAndToDate));
+
+        // Exclude current record when updating
         if (id != null)
-            uniqueCheck.add(Restrictions.ne(uniqueDateOverlap.id(), id));
-        return uniqueDateOverlapChecker.add(uniqueCheck).setProjection(Projections.id()).setMaxResults(1).uniqueResult() == null;
+            uniquePredicates.add(criteriaBuilder.notEqual(root.get(uniqueDateOverlap.id()), id));
+
+        criteriaQuery.select(criteriaBuilder.count(root)).where(criteriaBuilder.and(uniquePredicates.toArray(new Predicate[0])));
+        return entityManager.createQuery(criteriaQuery).getSingleResult() == 0L;
     }
 }

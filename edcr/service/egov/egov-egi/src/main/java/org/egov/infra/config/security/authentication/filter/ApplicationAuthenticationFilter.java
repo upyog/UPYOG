@@ -57,11 +57,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
@@ -70,11 +70,17 @@ import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityConstants;
 import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Custom Spring Security authentication filter for ERP login.
+ *
+ * <p>Uses Log4j 2 for logging, Commons Lang3 for string utilities, and Jsoup
+ * {@link Safelist#basic()} to sanitize location and credential fields.</p>
+ */
 public class ApplicationAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private static final Logger LOG = LogManager.getLogger(ApplicationAuthenticationFilter.class);
@@ -96,7 +102,7 @@ public class ApplicationAuthenticationFilter extends UsernamePasswordAuthenticat
         try {
             String location = request.getParameter(SecurityConstants.LOCATION_FIELD);
             HttpSession session = request.getSession();
-            boolean isValid = Jsoup.isValid(location, Whitelist.basic());
+            boolean isValid = Jsoup.isValid(location, Safelist.basic());
             if (!isValid)
                 throw new ApplicationRuntimeException("Invalid location");
             if (StringUtils.isNotBlank(location))
@@ -121,7 +127,7 @@ public class ApplicationAuthenticationFilter extends UsernamePasswordAuthenticat
             credentials.put(credential, field);
         }
         String username = request.getParameter(SecurityConstants.USERNAME_FIELD);
-        boolean isValid = Jsoup.isValid(username, Whitelist.basic());
+        boolean isValid = Jsoup.isValid(username, Safelist.basic());
         if (!isValid)
             throw new ApplicationRuntimeException("Invalid username");
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, credentials);

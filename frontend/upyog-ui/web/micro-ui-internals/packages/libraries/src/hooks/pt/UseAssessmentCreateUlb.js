@@ -1,9 +1,9 @@
 import { PTService } from "../../services/elements/PT";
-import { useMutation } from "react-query";
+import { mutationTemplate } from "../../common/mutationTemplate";
 
 const UseAssessmentCreateUlb = (tenantId, config = {}) => {
-  console.log("Using AssessmentCreateUlb",tenantId)
-  return useMutation((data) => PTService.assessmentCreateUlb(data, tenantId));
+  const mutationFn = (data) => PTService.assessmentCreateUlb(data, tenantId);
+  return mutationTemplate({ mutationFn });
 };
 
 export default UseAssessmentCreateUlb;

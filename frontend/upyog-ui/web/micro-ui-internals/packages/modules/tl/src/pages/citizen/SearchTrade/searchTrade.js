@@ -1,17 +1,12 @@
-import { FormComposer, Dropdown } from "@upyog/digit-ui-react-components";
+import { FormComposer, Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
 import PropTypes from "prop-types";
 import React, { useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
-import "../../../css/tl-inline-auto.css";
-const SearchTrade = ({
-  config: propsConfig,
-  onSelect
-}) => {
-  const {
-    t
-  } = useTranslation();
-  const history = useHistory();
+
+
+const SearchTrade = ({ config: propsConfig, onSelect }) => {
+  const { t } = useTranslation();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [canSubmit, setCanSubmit] = useState(false);
   const userInfo = Digit.UserService.getUser();
   let user = userInfo?.info;
@@ -37,8 +32,11 @@ const SearchTrade = ({
   const onTradeSearch = async data => {
     if (!data.mobileNumber && !data.LicenseNum) {
       alert(t("TL_ERROR_NEED_ONE_PARAM"));
-    } else {
-      history.push(`/upyog-ui/citizen/tl/tradelicence/renewal-list?mobileNumber=${data?.mobileNumber ? data?.mobileNumber : ``}&LicenseNumber=${data?.LicenseNum ? data?.LicenseNum : ``}&tenantId=${cityCode ? cityCode : ``}`);
+    }
+    else {
+      navigate(
+        `/upyog-ui/citizen/tl/tradelicence/renewal-list?mobileNumber=${data?.mobileNumber ? data?.mobileNumber : ``}&LicenseNumber=${data?.LicenseNum ? data?.LicenseNum : ``}&tenantId=${cityCode?cityCode:``}`
+      );
     }
   };
   const [mobileNumber, tradelicense] = propsConfig.inputs;

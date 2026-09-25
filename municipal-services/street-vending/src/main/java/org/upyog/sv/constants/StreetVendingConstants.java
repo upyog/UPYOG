@@ -2,6 +2,9 @@ package org.upyog.sv.constants;
 
 public class StreetVendingConstants {
 
+	private StreetVendingConstants() {
+	}
+
 	public static final String EMPLOYEE = "EMPLOYEE";
 	public static final String CITIZEN = "CITIZEN";
 	public static final String APPLICATION_CREATED = "Application Created";

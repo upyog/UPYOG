@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import {
     RadioOrSelect,
     CardLabel
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/Timeline";
-import FormStep from "../../../../react-components/src/molecules/FormStep"
+import {FormStep} from "@nudmcdgnpm/digit-ui-react-components"
 const WSServiceName = ({ t, config, onSelect, userType, formData }) => {
     const [serviceName, setServiceName] = useState(formData?.serviceName || "");
     const [formDetails, setFormDetails] = useState(formData || {});

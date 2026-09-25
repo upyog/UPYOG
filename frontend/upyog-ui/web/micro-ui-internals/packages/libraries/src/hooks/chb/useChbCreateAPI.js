@@ -1,7 +1,5 @@
-import { useQuery, useMutation } from "react-query";
-
-import { CHBServices } from "../../services/elements/CHB"
-
+import { mutationTemplate } from "../../common/mutationTemplate";
+import { CHBServices } from "../../services/elements/CHB";
 
 /**
  * useChbCreateAPI Hook
@@ -21,16 +19,12 @@ import { CHBServices } from "../../services/elements/CHB"
  * - A mutation object from `react-query` for performing the create or update operation.
  */
 export const useChbCreateAPI = (tenantId, type = true) => {
-  
-  if (type) {
-   
-    return useMutation((data) => 
-      CHBServices.create(data, tenantId));
-    
-  } 
-  else {
-    return useMutation((data) => CHBServices.update(data, tenantId));
-  }
+  const mutationFn = (data) =>
+    type
+      ? CHBServices.create(data, tenantId)
+      : CHBServices.update(data, tenantId);
+
+  return mutationTemplate({ mutationFn });
 };
 
 export default useChbCreateAPI;

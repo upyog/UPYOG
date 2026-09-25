@@ -1,14 +1,11 @@
-import { useMutation } from "react-query";
+import { mutationTemplate } from "../../common/mutationTemplate";
 import { WTService } from "../../services/elements/WT";
 
-
 export const useTankerCreateAPI = (tenantId, type = true) => {
- 
   if (type) {
-    return useMutation((data) => WTService.create(data, tenantId));
-  } 
-  else {
-    return useMutation((data) => WTService.update(data, tenantId));
+    return mutationTemplate({ mutationFn: (data) => WTService.create(data, tenantId) });
+  } else {
+    return mutationTemplate({ mutationFn: (data) => WTService.update(data, tenantId) });
   }
 };
 

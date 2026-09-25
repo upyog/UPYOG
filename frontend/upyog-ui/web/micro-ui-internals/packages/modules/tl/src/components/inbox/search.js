@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, MobileNumber } from "@upyog/digit-ui-react-components";
+import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, MobileNumber } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-// import MobileNumber from "@upyog/digit-ui-react-components/src/atoms/MobileNumber";
+// import MobileNumber from "@nudmcdgnpm/digit-ui-react-components/src/atoms/MobileNumber";
 // import _ from "lodash";
 import "../../css/tl-inline-auto.css";
 const fieldComponents = {
@@ -171,12 +171,26 @@ const SearchLicenseApplication = ({
               {searchFields?.filter(e => true)?.map((input, index) => <div key={input.name} className="input-fields">
                     <span className={"complaint-input"}>
                       <Label>{t(input.label)}</Label>
-                      {!input.type ? <Controller render={props => {
-                  return <TextInput onChange={props.onChange} value={props.value} />;
-                }} name={input.name} control={control} defaultValue={""} /> : <Controller render={props => {
-                  const Comp = fieldComponents?.[input.type];
-                  return <Comp onChange={props.onChange} value={props.value} />;
-                }} name={input.name} control={control} defaultValue={""} />}
+                      {!input.type ? (
+                        <Controller
+                          render={({ field }) => {
+                            return <TextInput onChange={field.onChange} value={field.value} />;
+                          }}
+                          name={input.name}
+                          control={control}
+                          defaultValue={""}
+                        />
+                      ) : (
+                        <Controller
+                          render={({ field }) => {
+                            const Comp = fieldComponents?.[input.type];
+                            return <Comp onChange={field.onChange} value={field.value} />;
+                          }}
+                          name={input.name}
+                          control={control}
+                          defaultValue={""}
+                        />
+                      )}
                     </span>
                     {formState?.dirtyFields?.[input.name] ? <span className="inbox-search-form-error tl-auto-22">
                         {formState?.errors?.[input.name]?.message}

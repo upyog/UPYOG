@@ -47,10 +47,6 @@ public class MDMSValidator {
 	public void validateMdmsData(BookingRequest bookingRequest, Object mdmsData) {
 
 		Map<String, List<String>> masterData = getAttributeValues(mdmsData);
-		/*
-		 * if(MdmsUtil.getMDMSDataMap().isEmpty()) {
-		 * MdmsUtil.setMDMSDataMap(masterData); }
-		 */
 		String[] masterArray = { BookingConstants.ADD_TYPE,
 				BookingConstants.DOCUMENTS,
 				BookingConstants.FACE_AREA, BookingConstants.LOCATION};
@@ -81,7 +77,6 @@ public class MDMSValidator {
 				);
 		final Map<String, List<String>> mdmsResMap = new HashMap<>();
 		modulepaths.forEach(modulepath -> {
-			mdmsResMap.putAll(JsonPath.read(mdmsData, modulepath));
 			try {
 				mdmsResMap.putAll(JsonPath.read(mdmsData, modulepath));
 			}

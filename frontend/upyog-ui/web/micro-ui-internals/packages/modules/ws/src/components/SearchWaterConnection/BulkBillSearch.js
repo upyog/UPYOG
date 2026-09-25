@@ -1,12 +1,12 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo } from "react";
-import { SearchForm, Table, Card, CardText, Loader, Header, Toast, DownloadBtnCommon, UploadFile, SubmitBar, Modal } from "@upyog/digit-ui-react-components";
+import { SearchForm, Table, Card, CardText, Loader, Header, Toast, DownloadBtnCommon, UploadFile, SubmitBar, Modal} from "@nudmcdgnpm/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import BulkBillSearchFields from "./BulkBillSearchFields";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import MobileSearchWater from "./MobileSearchWater";
-import { useHistory } from "react-router-dom";
-import { convertDateToEpoch } from "../../utils/index";
+
+import { convertDateToEpoch } from "../../utils/index"
 import * as XLSX from "xlsx";
 import "../../css/ws-inline-auto.css";
 const BulkBillSearch = ({
@@ -180,16 +180,9 @@ const BulkBillSearch = ({
         <DownloadBtnCommon />
       </div>;
   };
-  useEffect(() => {
-    register("offset", 0);
-    register("limit", 10);
-    register("sortBy", "commencementDate");
-    register("searchType", "CONNECTION");
-    register("sortOrder", "DESC");
-    register("locality", "");
-    register("tenantId", "");
-  }, [register]);
-  const onSort = useCallback(args => {
+  // Removed v6 useEffect register calls - use defaultValues in useForm instead
+
+  const onSort = useCallback((args) => {
     if (args.length === 0) return;
     setValue("sortBy", args.id);
     setValue("sortOrder", args.desc ? "DESC" : "ASC");

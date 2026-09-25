@@ -1,9 +1,8 @@
-import { Link,useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import _ from "lodash";
 import React from 'react';
 
 //create functions here based on module name set in mdms(eg->SearchProjectConfig)
-//how to call these -> Digit?.Customizations?.[masterName]?.[moduleName]
 // these functions will act as middlewares
 var Digit = window.Digit || {};
 
@@ -252,7 +251,7 @@ export const UICustomizations = {
           <span className="link">
             <Link
               to={`/${
-                window.contextPath
+                "workbench-ui"
               }/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId()}&musterRollNumber=${value}`}
             >
               {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
@@ -271,7 +270,7 @@ export const UICustomizations = {
         return <div>{value?.length}</div>;
       }
       if (key === "ATM_AMOUNT_IN_RS") {
-        return <span>{value ? Digit.Utils.dss.formatterWithoutRound(value, "number") : t("ES_COMMON_NA")}</span>;
+        return <span>{value ? Number(value).toLocaleString('en-IN') : t("ES_COMMON_NA")}</span>;
       }
       if (key === "ATM_SLA") {
         return parseInt(value) > 0 ? (
@@ -290,7 +289,7 @@ export const UICustomizations = {
       let link;
       Object.keys(row).map((key) => {
         if (key === "ATM_MUSTER_ROLL_ID")
-          link = `/${window.contextPath}/employee/attendencemgmt/view-attendance?tenantId=${tenantId}&musterRollNumber=${row[key]}`;
+          link = `/${"workbench-ui"}/employee/attendencemgmt/view-attendance?tenantId=${tenantId}&musterRollNumber=${row[key]}`;
       });
       return link;
     },
@@ -375,7 +374,7 @@ export const UICustomizations = {
         case "MASTERS_WAGESEEKER_ID":
           return (
             <span className="link">
-              <Link to={`/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${row?.tenantId}&individualId=${value}`}>
+              <Link to={`/${"workbench-ui"}/employee/masters/view-wageseeker?tenantId=${row?.tenantId}&individualId=${value}`}>
                 {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
               </Link>
             </span>
@@ -408,7 +407,7 @@ export const UICustomizations = {
       let link;
       Object.keys(row).map((key) => {
         if (key === "MASTERS_WAGESEEKER_ID")
-          link = `/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${tenantId}&wageseekerId=${row[key]}`;
+          link = `/${"workbench-ui"}/employee/masters/view-wageseeker?tenantId=${tenantId}&wageseekerId=${row[key]}`;
       });
       return link;
     },
@@ -440,7 +439,9 @@ export const UICustomizations = {
       const filters = {}
       const custom = data.body.MdmsCriteria.custom
       const {field,value,isActive} = custom || {}
-      filters[field?.code] = value
+      if(field?.code && value) {
+        filters[field.code] = value
+      }
       if(isActive){
         if(isActive.value==="all") delete data.body.MdmsCriteria.isActive
         else data.body.MdmsCriteria.isActive = isActive?.value
@@ -450,6 +451,7 @@ export const UICustomizations = {
       data.body.MdmsCriteria.filters = filters
       data.body.MdmsCriteria.schemaCode = additionalDetails?.currentSchemaCode
       delete data.body.MdmsCriteria.custom
+      
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
@@ -458,10 +460,10 @@ export const UICustomizations = {
       //first we can identify which column it belongs to then we can return relevant result
       switch (key) {
         case "WBH_UNIQUE_IDENTIFIER":
-          const [moduleName,masterName] = row.schemaCode.split(".")
+          const [moduleName, masterName] = row.schemaCode.split(".");
           return (
             <span className="link">
-              <Link to={`/${window.contextPath}/employee/workbench/mdms-view?moduleName=${moduleName}&masterName=${masterName}&uniqueIdentifier=${row.uniqueIdentifier}`}>
+              <Link to={`/${"workbench-ui"}/employee/workbench/mdms-view?moduleName=${moduleName}&masterName=${masterName}&uniqueIdentifier=${row.uniqueIdentifier}`}>
                 {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
               </Link>
             </span>
@@ -496,7 +498,7 @@ export const UICustomizations = {
       let link;
       Object.keys(row).map((key) => {
         if (key === "MASTERS_WAGESEEKER_ID")
-          link = `/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${tenantId}&wageseekerId=${row[key]}`;
+          link = `/${"workbench-ui"}/employee/masters/view-wageseeker?tenantId=${tenantId}&wageseekerId=${row[key]}`;
       });
       return link;
     },
@@ -541,15 +543,17 @@ export const UICustomizations = {
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
-      //here we can add multiple conditions
-      //like if a cell is link then we return link
-      //first we can identify which column it belongs to then we can return relevant result
+      /*
+      here we can add multiple conditions
+      like if a cell is link then we return link
+      first we can identify which column it belongs to then we can return relevant result
+     */
       switch (key) {
         case "Unique Identifier":
           const [moduleName,masterName] = row.schemaCode.split(".")
           return (
             <span className="link">
-              <Link to={`/${window.contextPath}/employee/workbench/mdms-view?moduleName=${moduleName}&masterName=${masterName}&uniqueIdentifier=${row.uniqueIdentifier}`}>
+              <Link to={`/${"workbench-ui"}/employee/workbench/mdms-view?moduleName=${moduleName}&masterName=${masterName}&uniqueIdentifier=${row.uniqueIdentifier}`}>
                 {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
               </Link>
             </span>
@@ -582,7 +586,7 @@ export const UICustomizations = {
       let link;
       Object.keys(row).map((key) => {
         if (key === "MASTERS_WAGESEEKER_ID")
-          link = `/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${tenantId}&wageseekerId=${row[key]}`;
+          link = `/${"workbench-ui"}/employee/masters/view-wageseeker?tenantId=${tenantId}&wageseekerId=${row[key]}`;
       });
       return link;
     },
@@ -592,16 +596,6 @@ export const UICustomizations = {
       }
     },
     combineData : ({isLoading,isFetching,data,defaultData,refetch,refetchDefault}) => {
-      //for every message in data we need to query defaultData , if same code is there then populate a field in data and return data
-      // data?.messages?.forEach((message,idx) => {
-      //   message.defaultMessage = ""
-      //   defaultData?.messages?.forEach((defaultMessage,defaultIdx)=> {
-      //     if(message.code === defaultMessage.code){
-      //       message.defaultMessage = defaultMessage.message
-      //     }
-      //   })
-      // })
-      // return data
       //TODO: Revisit this logic
       defaultData?.messages?.forEach((message,idx) => {
         message.defaultMessage = ""

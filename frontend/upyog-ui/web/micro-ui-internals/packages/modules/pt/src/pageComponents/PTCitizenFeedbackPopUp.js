@@ -1,6 +1,6 @@
-import { PopUp } from "@upyog/digit-ui-react-components";
+import { PopUp } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
-import "../css/pt-inline-auto.css";
+
 const PTCitizenFeedbackPopUp = ({
   setpopup,
   setShowToast,

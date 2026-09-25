@@ -1,13 +1,15 @@
 package org.egov.noc.web.model.bpa;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
+import lombok.Getter;
 import org.egov.noc.web.model.AuditDetails;
 import org.egov.tracer.annotations.CustomSafeHtml;
 import org.springframework.validation.annotation.Validated;
@@ -27,6 +29,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
 public class LandInfo   {
   @CustomSafeHtml
   @JsonProperty("id")
@@ -80,6 +83,12 @@ public class LandInfo   {
 
   @JsonProperty("auditDetails")
   private AuditDetails auditDetails = null;
+
+  /** Unit details of the plot */
+  @Valid
+  private List<Unit> units;
+
+  private BigDecimal totalPlotArea;
 
   public LandInfo id(String id) {
     this.id = id;

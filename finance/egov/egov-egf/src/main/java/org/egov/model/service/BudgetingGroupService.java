@@ -51,8 +51,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -101,11 +101,11 @@ public class BudgetingGroupService {
 	}
 
 	public List<BudgetGroup> findAll() {
-		return budgetGroupRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+		return budgetGroupRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
 	}
 
 	public BudgetGroup findOne(final Long id) {
-		return budgetGroupRepository.findOne(id);
+		return budgetGroupRepository.findById(id).orElse(null);
 	}
 
 	public int getMajorCodeLength() {
@@ -147,7 +147,7 @@ public class BudgetingGroupService {
 		if ((budgetGroup.getMajorCode() != null) && (budgetGroup.getId() == null))
 			bg = budgetGroupRepository.findByMajorCode_Id(budgetGroup.getMajorCode().getId());
 		else if ((budgetGroup.getMajorCode() != null) && (budgetGroup.getId() != null))
-			bg = budgetGroupRepository.findByMajorCode_IdAndIdNotIn(budgetGroup.getMajorCode().getId(),
+			bg = budgetGroupRepository.findByMajorCode_IdAndIdNot(budgetGroup.getMajorCode().getId(),
 					budgetGroup.getId());
 		if (bg != null)
 			validationMessage = messageSource.getMessage("budgetgroup.invalid.majorcode", new String[] { bg.getName() },
@@ -158,7 +158,7 @@ public class BudgetingGroupService {
 					budgetGroup.getMaxCode().getGlcode(), budgetGroup.getMinCode().getGlcode());
 		else if ((budgetGroup.getMinCode() != null) && (budgetGroup.getMaxCode() != null)
 				&& (budgetGroup.getId() != null))
-			bgCode = budgetGroupRepository.findByMinCodeGlcodeLessThanEqualAndMaxCodeGlcodeGreaterThanEqualAndIdNotIn(
+			bgCode = budgetGroupRepository.findByMinCodeGlcodeLessThanEqualAndMaxCodeGlcodeGreaterThanEqualAndIdNot(
 					budgetGroup.getMinCode().getGlcode(), budgetGroup.getMinCode().getGlcode(), budgetGroup.getId());
 		else
 			bgCode = Collections.emptyList();

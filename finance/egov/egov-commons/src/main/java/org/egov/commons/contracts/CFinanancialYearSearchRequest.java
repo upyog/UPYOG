@@ -49,7 +49,7 @@
 package org.egov.commons.contracts;
 
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 /**
  * 
@@ -59,7 +59,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 public class CFinanancialYearSearchRequest {
 
 	@Length(min = 1, max = 25)
-	@SafeHtml
+	@SanitizeHtml
 	private String finYearRange;
 
 	public String getFinYearRange() {

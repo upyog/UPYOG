@@ -48,7 +48,7 @@
 
 package org.egov.infra.persistence.utils;
 
-import org.hibernate.exception.SQLGrammarException;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,13 +58,29 @@ import java.io.Serializable;
 import static org.egov.infra.utils.ApplicationConstant.UNDERSCORE;
 
 /**
- * Generic db sequence number generator class, this class first try to return the next val
- * for the given DB sequenceName, if sequence does not exist then it creates a new DB sequence
- * with the given sequenceName and return the next val for the DB sequence.
+ * Generic PostgreSQL sequence helper used by voucher / bill / application
+ * number generation.
+ * <p>
+ * <b>LTS Migration Fix (Hibernate 6 + WildFly JTA):</b> the pre-LTS flow was
+ * {@code NEXTVAL} → catch {@code SQLGrammarException} → {@code CREATE SEQUENCE}
+ * → {@code NEXTVAL} again. That worked on Hibernate 5 because a missing
+ * sequence did not mark the JTA transaction rollback-only.
+ * <p>
+ * On Hibernate 6, {@code SELECT NEXTVAL('sq_1_csl_202122')} for a missing
+ * sequence throws {@code SQLGrammarException} and Hibernate immediately calls
+ * {@code setRollbackOnly}. Spring then wraps the failure as
+ * {@code UnexpectedRollbackException} ("Application exception overridden by
+ * commit exception"). The catch never created the sequence, so Bank to Bank
+ * Transfer (and any first voucher in a fund/year) failed.
+ * <p>
+ * Fix: check {@code information_schema} first, create with
+ * {@code IF NOT EXISTS} in a {@code REQUIRES_NEW} transaction, then
+ * {@code NEXTVAL}. Do not use the exception path to detect a missing sequence.
  */
 @Service
 public class GenericSequenceNumberGenerator {
 
+    private static final Logger LOGGER = Logger.getLogger(GenericSequenceNumberGenerator.class);
     private static final String DISALLOWED_CHARACTERS = "[\\/ -]";
 
     @Autowired
@@ -73,12 +89,18 @@ public class GenericSequenceNumberGenerator {
     @Autowired
     private DatabaseSequenceProvider databaseSequenceProvider;
 
+    /**
+     * LTS Migration Fix (Hibernate 6 + JTA): create the sequence if it is
+     * missing <em>before</em> {@code NEXTVAL}. Catching
+     * {@code SQLGrammarException} after a failed {@code NEXTVAL} is no longer
+     * safe — Hibernate 6 has already marked the JTA transaction rollback-only
+     * (seen on contra BTB as {@code relation "sq_*_*_*" does not exist}).
+     */
     @Transactional
     public Serializable getNextSequence(String sequenceName) {
         String normalizedSequenceName = sequenceName.replaceAll(DISALLOWED_CHARACTERS, UNDERSCORE);
-        try {
-            return this.databaseSequenceProvider.getNextSequence(normalizedSequenceName);
-        } catch (SQLGrammarException e) {
+        if (!this.databaseSequenceProvider.sequenceExists(normalizedSequenceName)) {
+            LOGGER.info("Creating missing voucher/application sequence " + normalizedSequenceName);
             this.databaseSequenceCreator.createSequence(normalizedSequenceName);
         }
         return this.databaseSequenceProvider.getNextSequence(normalizedSequenceName);

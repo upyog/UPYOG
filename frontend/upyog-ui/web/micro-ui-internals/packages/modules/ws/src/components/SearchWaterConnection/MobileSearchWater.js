@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useMemo, useReducer } from "react";
 import { Link } from "react-router-dom";
-import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast } from "@upyog/digit-ui-react-components";
+import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import SearchFormFields from "./SearchFields";
 import "../../css/ws-inline-auto.css";
 const MobileSearchWater = ({
@@ -13,7 +13,7 @@ const MobileSearchWater = ({
   handleSubmit,
   tenantId,
   data,
-  onSubmit
+  onSubmit, isClearSearch, onClearSearch
 }) => {
   function activateModal(state, action) {
     switch (action.type) {
@@ -40,7 +40,7 @@ const MobileSearchWater = ({
     control,
     t,
     reset,
-    previousPage
+    previousPage, onSubmit, onClearSearch
   };
   const MobileComponentDirectory = ({
     currentlyActiveMobileModal,
@@ -153,7 +153,7 @@ const MobileSearchWater = ({
         tenantId
       }} />
         </PopUp> : null}
-      {data?.display ? <Card className="ws-auto-24">
+      {isClearSearch ? null : data?.display ? <Card className="ws-auto-24">
           {t(data?.display).split("\\n").map((text, index) => <p key={index} className="ws-auto-25">
                 {text}
               </p>)}

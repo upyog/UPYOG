@@ -1,16 +1,21 @@
-import { FormComposer, Header, Toast, Loader } from "@upyog/digit-ui-react-components";
+import { FormComposer, Header, Toast, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import cloneDeep from "lodash/cloneDeep";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useLocation } from "react-router-dom";
+import { useLocation, } from "react-router-dom";
 import { convertDateToEpoch, convertEpochToDate, stringReplaceAll } from "../../../utils";
 import { newConfig as newConfigTL } from "../../../config/config";
-import "../../../css/tl-inline-auto.css";
-const ReNewApplication = props => {
-  const applicationData = cloneDeep(props?.location?.state?.applicationData) || {};
-  const stateCode = Digit.ULBService.getStateId();
+
+const ReNewApplication = (props) => {
+  console.log("props", props);
   const loc = useLocation();
-  const propertyId = new URLSearchParams(loc.search).get("propertyId") || loc?.state?.applicationDetails.find(details => details?.title === "PT_DETAILS")?.values.find(value => value?.title === "TL_PROPERTY_ID")?.value;
+  const applicationData = cloneDeep(loc?.state?.applicationData) || {};
+  const stateCode = Digit.ULBService.getStateId();
+
+  console.log("loc", loc)
+  const propertyId = new URLSearchParams(loc.search).get("propertyId") || loc?.state?.applicationDetails
+    .find((details) => details?.title === "PT_DETAILS")?.values
+    .find((value) => value?.title === "TL_PROPERTY_ID")?.value;
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const {
     t
@@ -24,15 +29,11 @@ const ReNewApplication = props => {
   if (applicationData?.tradeLicenseDetail?.structureType.split('.')[0] === "IMMOVABLE") {
     const {
       data: propertydetails
-    } = Digit.Hooks.pt.usePropertySearch({
-      filters: {
-        propertyIds: propertyId
-      },
-      tenantId: tenantId
-    });
+    } = Digit.Hooks.pt.usePropertySearch({ filters: { propertyIds: propertyId }, tenantId: tenantId });
     propertyDetails = propertydetails;
   }
-  const history = useHistory();
+
+  const navigate = Digit.Hooks.useCustomNavigate();
   // delete
   const [_formData, setFormData, _clear] = Digit.Hooks.useSessionStorage("store-data", null);
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
@@ -140,7 +141,8 @@ const ReNewApplication = props => {
       data.key = Date.now() + (index + 1) * 20;
     });
   }
-  let clonedData = cloneDeep(props?.location?.state?.applicationData) || {};
+
+  let clonedData = cloneDeep(loc?.state?.applicationData) || {};
   clonedData.checkForRenewal = false;
   const getOwners = application => {
     if (application?.tradeLicenseDetail?.subOwnerShipCategory?.includes("INSTITUTIONAL")) {
@@ -167,17 +169,11 @@ const ReNewApplication = props => {
     accessories: applicationData?.tradeLicenseDetail?.accessories,
     address: applicationData?.tradeLicenseDetail?.address || {},
     ownershipCategory: ownershipCategory,
-    owners: getOwners(applicationData) || [],
-    documents: {
-      documents: applicationData?.tradeLicenseDetail?.applicationDocuments || []
-    },
-    cptId: {
-      id: applicationData?.tradeLicenseDetail?.structureType.split('.')[0] === "IMMOVABLE" ? propertyId : ""
-    },
-    cpt: {
-      details: applicationData?.tradeLicenseDetail?.structureType.split('.')[0] === "IMMOVABLE" ? propertyDetails?.Properties?.[0] : ""
-    },
-    applicationData: cloneDeep(props?.location?.state?.applicationData)
+    owners:  getOwners(applicationData)|| [],
+    documents: { documents: applicationData?.tradeLicenseDetail?.applicationDocuments || [] },
+    cptId: { id: applicationData?.tradeLicenseDetail?.structureType.split('.')[0] === "IMMOVABLE" ? propertyId : "" },
+    cpt: { details: applicationData?.tradeLicenseDetail?.structureType.split('.')[0] === "IMMOVABLE" ? propertyDetails?.Properties?.[0] : "" },
+    applicationData: cloneDeep(loc?.state?.applicationData)
   };
   const closeToast = () => {
     setShowToast(null);
@@ -323,9 +319,9 @@ const ReNewApplication = props => {
       }, tenantId).then((result, err) => {
         if (result?.Licenses?.length > 0) {
           if (result?.Licenses?.length > 0) {
-            history.replace(`/upyog-ui/employee/tl/response`, {
-              data: result?.Licenses
-            });
+            if (result?.Licenses?.length > 0) {
+              navigate(`/upyog-ui/employee/tl/response`, { replace: true, state: { data: result?.Licenses } });
+            }
           }
         }
       }).catch(e => {
@@ -383,34 +379,28 @@ const ReNewApplication = props => {
 
       /* use customiseCreateFormData hook to make some chnages to the licence object */
       formData = Digit?.Customizations?.TL?.customiseRenewalCreateFormData ? Digit?.Customizations?.TL?.customiseRenewalCreateFormData(data, formData) : formData;
-      Digit.TLService.update({
-        Licenses: [formData]
-      }, tenantId).then((result, err) => {
-        if (result?.Licenses?.length > 0) {
-          let licenses = result?.Licenses?.[0];
-          licenses.action = "APPLY";
-          Digit.TLService.update({
-            Licenses: [licenses]
-          }, tenantId).then(response => {
-            Digit.SessionStorage.set("EditRenewalApplastModifiedTime", response?.Licenses[0]?.auditDetails?.lastModifiedTime);
-            if (response?.Licenses?.length > 0) {
-              history.replace(`/upyog-ui/employee/tl/response`, {
-                data: response?.Licenses
+      Digit.TLService.update({ Licenses: [formData] }, tenantId)
+        .then((result, err) => {
+          if (result?.Licenses?.length > 0) {
+            let licenses = result?.Licenses?.[0];
+            licenses.action = "APPLY";
+            Digit.TLService.update({ Licenses: [licenses] }, tenantId)
+              .then((response) => {
+                Digit.SessionStorage.set("EditRenewalApplastModifiedTime", response?.Licenses[0]?.auditDetails?.lastModifiedTime);
+                if (response?.Licenses?.length > 0) {
+                  navigate(`/upyog-ui/employee/tl/response`, { replace: true, state: { data: response?.Licenses } });
+                }
+              })
+              .catch((e) => {
+                setShowToast({ key: "error" });
+                setError(e?.response?.data?.Errors[0]?.message || null);
               });
-            }
-          }).catch(e => {
-            setShowToast({
-              key: "error"
-            });
-            setError(e?.response?.data?.Errors[0]?.message || null);
-          });
-        }
-      }).catch(e => {
-        setShowToast({
-          key: "error"
+          }
+        })
+        .catch((e) => {
+          setShowToast({ key: "error" });
+          setError(e?.response?.data?.Errors[0]?.message || null);
         });
-        setError(e?.response?.data?.Errors[0]?.message || null);
-      });
     }
   };
   if (isLoading) {

@@ -1,7 +1,7 @@
 package org.egov.applyworkflow.web.controller;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.egov.applyworkflow.web.model.WorkflowApplyRequest;
 import org.egov.applyworkflow.service.WorkflowApplyService;
 import org.slf4j.Logger;
@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 
 @RestController
@@ -28,8 +28,8 @@ public class WorkflowController {
 
     //@PostMapping("/_process")
     @RequestMapping(value = "/_process", method = RequestMethod.POST)
-    @ApiOperation(value = "Process Workflow", notes = "Handles create or update workflow operations based on the payload")
-    public ResponseEntity<Object> processWorkflow(@ApiParam(value = "Workflow payload", required = true)
+    @Operation(summary = "Process Workflow", description = "Handles create or update workflow operations based on the payload")
+    public ResponseEntity<Object> processWorkflow(@Parameter(description = "Workflow payload", required = true)
                                                   @Valid @RequestBody WorkflowApplyRequest payload) {
         log.info("Received workflow process request: {}", payload);
 

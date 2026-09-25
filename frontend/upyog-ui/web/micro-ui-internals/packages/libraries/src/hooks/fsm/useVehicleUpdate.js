@@ -1,8 +1,10 @@
-import { useMutation } from "react-query";
+import { mutationTemplate } from "../../common/mutationTemplate";
 import { FSMService } from "../../services/elements/FSM";
 
 const useVehicleUpdate = () => {
-  return useMutation((details) => FSMService.vehicleUpdate(details));
+  return mutationTemplate({
+    mutationFn: (details) => FSMService.vehicleUpdate(details),
+  });
 };
 
 export default useVehicleUpdate;

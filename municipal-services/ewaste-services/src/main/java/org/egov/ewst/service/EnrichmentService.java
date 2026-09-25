@@ -9,7 +9,6 @@ import org.egov.ewst.models.EwasteDetails;
 import org.egov.ewst.models.EwasteRegistrationRequest;
 import org.egov.ewst.models.enums.Status;
 import org.egov.ewst.util.EwasteUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -21,14 +20,13 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class EnrichmentService {
 
-	@Autowired
-	private EwasteConfiguration config;
+	private final EwasteConfiguration config;
+	private final EwasteUtil ewasteUtil;
 
-	@Autowired
-	private UserService userService;
-
-	@Autowired
-	private EwasteUtil ewasteUtil;
+	public EnrichmentService(EwasteConfiguration config, EwasteUtil ewasteUtil) {
+		this.config = config;
+		this.ewasteUtil = ewasteUtil;
+	}
 
 	/**
 	 * Enriches the Ewaste application with necessary details.
@@ -54,11 +52,9 @@ public class EnrichmentService {
 		eApplication.getApplicant().setEwId(eApplication.getId());
 		eApplication.getApplicant().setId(UUID.randomUUID().toString());
 		eApplication.setRequestId(customIds.get(0));
-//		eApplication.setRequestId("ABC-1");
 		eApplication.setRequestStatus(Status.NEWREQUEST.toString());
-		// Enrich each ewasteDetails object
 		for (EwasteDetails detail : eApplication.getEwasteDetails()) {
-			detail.setId(UUID.randomUUID().toString()); // Set a unique ID for each ewasteDetail
+			detail.setId(UUID.randomUUID().toString());
 		}
 		if (!CollectionUtils.isEmpty(eApplication.getDocuments()))
 			eApplication.getDocuments().forEach(doc -> {
@@ -79,7 +75,6 @@ public class EnrichmentService {
 	 * @param ewasteRegistrationRequest The Ewaste registration request containing the application details.
 	 */
 	public void enrichEwasteApplicationUponUpdate(EwasteRegistrationRequest ewasteRegistrationRequest) {
-		// TODO Auto-generated method stub
 		ewasteRegistrationRequest.getEwasteApplication().get(0).getAuditDetails()
 				.setLastModifiedTime(System.currentTimeMillis());
 		ewasteRegistrationRequest.getEwasteApplication().get(0).getAuditDetails()

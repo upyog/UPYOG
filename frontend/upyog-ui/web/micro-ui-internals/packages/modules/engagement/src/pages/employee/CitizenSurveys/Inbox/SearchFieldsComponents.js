@@ -1,5 +1,5 @@
 import React, { Fragment, useMemo  } from "react"
-import { CardLabelError, Dropdown, SearchField, TextInput } from "@upyog/digit-ui-react-components";
+import { CardLabelError, Dropdown, SearchField, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import {Controller } from "react-hook-form";
 import { alphabeticalSortFunctionForTenantsBasedOnName } from "../../../../utils";
@@ -19,19 +19,19 @@ const SearchFormFieldsComponents = ({ registerRef, controlSearchForm, searchForm
      * ToDo how to display default value correctly ask @egov-saurabh
      */
     
-    return <>
+    return <Fragment>
         <SearchField>
             <label>{t("LABEL_FOR_ULB")}</label>
             
             <Controller
                 rules={{ required: true }}
                 defaultValue={selectedTenat?.[0]}
-                render={props => (
+                render={({ field }) => (
                     <Dropdown
                         option={userUlbs}
                         optionKey={"i18nKey"}
-                        selected={props.value}
-                        select={(e) => props.onChange(e)}
+                        selected={field.value}
+                        select={(e) => field.onChange(e)}
                         t={t}
                     />
                 )}
@@ -43,7 +43,7 @@ const SearchFormFieldsComponents = ({ registerRef, controlSearchForm, searchForm
         </SearchField>
         <SearchField>
             <label>{t("CS_SURVEY_NAME")}</label>
-            <TextInput name="title" type="text" inputRef={registerRef({
+            <TextInput name="title" type="text" {...registerRef("title", {
                 maxLength: {
                     value: 60,
                     message: t("EXCEEDS_60_CHAR_LIMIT")
@@ -55,7 +55,7 @@ const SearchFormFieldsComponents = ({ registerRef, controlSearchForm, searchForm
         </SearchField>
         <SearchField>
             <label>{t("EVENTS_POSTEDBY_LABEL")}</label>
-            <TextInput name="postedBy" type="text" inputRef={registerRef({
+            <TextInput name="postedBy" type="text" {...registerRef("postedBy", {
                 maxLength: {
                     value: 30,
                     message: t("EXCEEDS_30_CHAR_LIMIT")
@@ -65,7 +65,7 @@ const SearchFormFieldsComponents = ({ registerRef, controlSearchForm, searchForm
                 {searchFormState?.errors?.["postedBy"]?.message}
             </CardLabelError>
         </SearchField>
-    </>
+    </Fragment>
 }
 
 export default SearchFormFieldsComponents

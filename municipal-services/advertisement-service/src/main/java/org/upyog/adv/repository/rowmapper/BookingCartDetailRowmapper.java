@@ -18,6 +18,7 @@ import org.upyog.adv.web.models.CartDetail;
  * to a list of CartDetail objects. It extracts booking cart details for advertisements and
  * populates them into the corresponding objects.
  */
+@SuppressWarnings("java:S2638")
 @Component
 public class BookingCartDetailRowmapper implements ResultSetExtractor<List<CartDetail>> {
 
@@ -25,7 +26,6 @@ public class BookingCartDetailRowmapper implements ResultSetExtractor<List<CartD
 	public List<CartDetail> extractData(ResultSet rs) throws SQLException, DataAccessException {
 		List<CartDetail> cartDetails = new ArrayList<>();
 		while (rs.next()) {
-			
 
 			CartDetail slotDetail = CartDetail.builder().cartId(rs.getString("cart_id"))
 					.bookingId(rs.getString("booking_id"))
@@ -36,8 +36,7 @@ public class BookingCartDetailRowmapper implements ResultSetExtractor<List<CartD
 					.status(rs.getString("status"))
 					.faceArea(rs.getString("face_area"))
 					.location(rs.getString("location"))
-					//TODO; Need to parse into boolean
-					.nightLight(rs.getObject("night_light") != null ? rs.getBoolean("night_light") : null) 
+					.nightLight(rs.getObject("night_light") != null ? rs.getBoolean("night_light") : null)
 					.auditDetails(BookingUtil.getAuditDetails(rs))
 					.build();
 

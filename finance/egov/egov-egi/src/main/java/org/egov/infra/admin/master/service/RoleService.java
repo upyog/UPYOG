@@ -84,15 +84,17 @@ public class RoleService {
     }
 
     public List<Role> getAllRoles() {
-        return roleRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+        // LTS Migration Fix (Spring Data 3): new Sort(...) constructor was removed; use Sort.by(...).
+        return roleRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
     }
 
     public List<Role> getNonInternalRoles() {
-        return roleRepository.findByInternalIsFalse(new Sort(Sort.Direction.ASC, "name"));
+        return roleRepository.findByInternalIsFalse(Sort.by(Sort.Direction.ASC, "name"));
     }
 
     public Role getRoleById(final Long roleID) {
-        return roleRepository.findOne(roleID);
+        // LTS Migration Fix (Spring Data 3): findOne(id) was removed; findById returns Optional.
+        return roleRepository.findById(roleID).orElse(null);
     }
 
     public Role getRoleByName(final String name) {

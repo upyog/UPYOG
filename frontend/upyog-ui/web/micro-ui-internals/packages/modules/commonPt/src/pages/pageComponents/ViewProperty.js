@@ -1,7 +1,7 @@
-import { Header, ActionBar, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Header, ActionBar, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, {useEffect} from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+
 import { useLocation, Link } from "react-router-dom";
 import ApplicationDetails from "../../../../templates/ApplicationDetails";
 
@@ -25,20 +25,20 @@ const ViewProperty = () => {
   const { propertyId, tenantId, redirectToUrl } = Digit.Hooks.useQueryParams();
   const { isLoading, data: applicationDetails } = Digit.Hooks.pt.useGenericViewProperty(t, tenantId, propertyId, {});
   const { state } = useLocation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   let workflowDetails = {};
 
   const onSubmit = () => {
     const scrollConst = redirectToUrl?.includes("employee/tl") ? 1600 : 300;
     setTimeout(() => window.scrollTo(0, scrollConst), 400);
-    return history.push(`${redirectToUrl}?propertyId=${propertyId}&tenantId=${applicationDetails?.tenantId || tenantId}${state?.data?.applicationDetails?.applicationStatus === "PENDING_FOR_FIELD_INSPECTION" ? `&applicationNumber=${state?.data?.applicationDetails?.applicationNo}&service=${state?.data?.applicationDetails?.applicationData?.serviceType}`:``}`, { ...state });
+    return navigate(`${redirectToUrl}?propertyId=${propertyId}&tenantId=${applicationDetails?.tenantId || tenantId}${state?.data?.applicationDetails?.applicationStatus === "PENDING_FOR_FIELD_INSPECTION" ? `&applicationNumber=${state?.data?.applicationDetails?.applicationNo}&service=${state?.data?.applicationDetails?.applicationData?.serviceType}`:``}`, { ...state });
   };
 
   useEffect(() => {
     if(sessionStorage.getItem("isCreateEnabledEmployee") === "true")
     {
       sessionStorage.removeItem("isCreateEnabledEmployee");
-      history.replace("/upyog-ui/employee");
+      navigate("/upyog-ui/employee", { replace: true });
     }
     else
     sessionStorage.removeItem("isCreateEnabledEmployee");

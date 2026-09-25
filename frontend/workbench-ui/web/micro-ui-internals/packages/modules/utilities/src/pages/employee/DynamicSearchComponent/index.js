@@ -1,12 +1,12 @@
-import { AddFilled, Button, Header, InboxSearchComposer, Loader } from "@egovernments/digit-ui-react-components";
+import { AddFilled, Button, Header, InboxSearchComposer, Loader } from "@upyog/workbench-ui-react-components";
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 // works-ui/employee/dss/search/commonMuktaUiConfig/SearchEstimateConfig
 const DynamicSearchComponent = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { moduleName, masterName } = useParams();
   const [pageConfig, setPageConfig] = useState(null);
   const tenant = Digit.ULBService.getStateId();
@@ -46,7 +46,7 @@ const DynamicSearchComponent = () => {
             variation="secondary"
             icon={<AddFilled style={{ height: "20px", width: "20px" }} />}
             onButtonClick={() => {
-              history.push(`/${window?.contextPath}/employee/${updatedConfig?.actionLink}`);
+              navigate(`/${window?.contextPath}/employee/${updatedConfig?.actionLink}`);
             }}
             type="button"
           />
