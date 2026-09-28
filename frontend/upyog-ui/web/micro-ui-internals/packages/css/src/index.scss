@@ -649,7 +649,8 @@ input[type="number"] {
   }
 }
 .employee-app-wrapper {
-  min-height: calc(100vh - 8em);
+  height: calc(100vh - 96px);
+  overflow: hidden;
 }
 
 .ws-custom-wrapper {
@@ -736,7 +737,7 @@ input[type="number"] {
 }
 
 .employee-app-wrapper{
-min-height: calc(100vh - 8em);
+  margin-top: 95px;
 }
 .submit-bar header{
   line-height: 2.0rem !important;

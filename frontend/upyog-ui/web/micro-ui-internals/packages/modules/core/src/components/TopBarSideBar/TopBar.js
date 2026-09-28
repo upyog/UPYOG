@@ -83,7 +83,7 @@ const TopBar = ({
       ? false
       : ["/upyog-ui/citizen/select-language", "/upyog-ui/citizen/select-location"].includes(pathname);
 
-  if (CITIZEN) {
+  if (true) {
     return (
       <div>
         <TopBarComponent

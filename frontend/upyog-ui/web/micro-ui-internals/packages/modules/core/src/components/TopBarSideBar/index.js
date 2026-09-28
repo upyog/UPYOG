@@ -66,7 +66,7 @@ const TopBarSideBar = ({
       {showDialog && (
         <LogoutDialog onSelect={handleOnSubmit} onCancel={handleOnCancel} onDismiss={handleOnCancel}></LogoutDialog>
       )}
-      {showSidebar && (
+      {false && (
         <SideBar
           t={t}
           CITIZEN={CITIZEN}

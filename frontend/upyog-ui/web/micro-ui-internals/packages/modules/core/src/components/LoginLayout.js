@@ -1,8 +1,9 @@
 import React from "react";
 
 const LoginLayout = ({ children, heroContent, footer, layout }) => {
-	const { backgroundUrl = "", mainlogo = {}, headers = {}, pointers = {}, eGovLogos = {}, CFooter = {} } = layout?.loginUI || {};
+	const { backgroundUrl = "", mainlogo = {}, headers = {}, pointers = {}, eGovLogos = {}, CFooter = {}, isEmployeeV2 = false } = layout?.loginUI || {};
 	const { isFormCentered = false, isTopIconReq = false } = layout?.loginForm || {};
+	const isEmployeeNew = isEmployeeV2;
 	const footerItems = [
 		"Property tax",
 		"Trade Licence",
@@ -17,13 +18,41 @@ const LoginLayout = ({ children, heroContent, footer, layout }) => {
 
 	return (
 		<>
-			<div className="login-shell" style={shellStyle}>
+			{isEmployeeNew && <div className="login-navbar">
+				<div className="login-navbar-card">
+					<div className="cards card1">
+					<img src="/images/logo-secondary.png"/>
+					</div>
+					<div className="cards card2">
+					<img src="/images/circular.png"/>
+					</div>
+				</div>
+				<div className="login-navbar-card">
+					<div  className="cards card3">
+					<img src="/images/yogi.png"/>
+					<div className="guest-label">
+						<p>Yogi Adityanath</p>
+						<p>Honorable Chief Minister</p>
+						<p>Uttar Pradesh</p>
+					</div>
+					</div>
+					<div  className="cards card4">
+					<img src="/images/modi.png"/>
+					<div className="guest-label">
+						<p>Narendra Modi</p>
+						<p>Honorable Prime Minister</p>
+						<p>Government of India</p>
+					</div>
+					</div>
+				</div>
+				</div>}
+			<div className={`login-shell ${isEmployeeNew ? "login-shell-employeeV2" : ""} `} style={shellStyle}>
 				<aside className="login-hero" style={innerShellStyle}>
 					<div className="login-hero__content">
-						<a className="login-brand" style={dualVerticalView || dualImageView} href="/upyog-ui/citizen" title="Urban Platform for deliverY of Online Governance">
+						{!isEmployeeNew && <a className="login-brand" style={dualVerticalView || dualImageView} href="/upyog-ui/citizen" title="Urban Platform for deliverY of Online Governance">
 							{<img className={mainlogo.verticalView ? "verticalView" : ""} src={mainlogo.url} alt="UPYOG Logo" />}
 							{mainlogo?.dualLogo && <div className="dualImages"><img style={mainlogo?.url2Styles ? { ...mainlogo?.url2Styles } : {}} src={mainlogo.url2} alt="secondary Logo" /></div>}
-						</a>
+						</a>}
 
 						<h1 className="login-title" style={{ ...headers?.H1Styles }}>
 							{headers?.H1} <span style={{ ...headers?.H2Styles }}>{headers?.H2}</span>
@@ -35,7 +64,7 @@ const LoginLayout = ({ children, heroContent, footer, layout }) => {
 
 						{headers?.secondaryHeader && <p className="secondaryHead">{headers?.secondaryHeader}</p>}
 
-						{pointers?.isReq && <ul className="login-features">
+						{pointers?.isReq && <ul className={`login-features ${isEmployeeNew ? "login-features-emp" : ""} `}>
 							{pointers?.data?.map((pointer, idx) => (
 								<li key={idx} className={`login-feature ${!(pointers?.isbackground) ? "noBackground" : ""}`}>
 									{pointers?.isIcon && <div className="login-feature__icon">

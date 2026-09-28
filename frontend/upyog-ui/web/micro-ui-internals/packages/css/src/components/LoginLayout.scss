@@ -660,3 +660,57 @@
 		}
 	}
 }
+
+.login-navbar{
+	height: 84px;
+	background: #fff;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	.login-navbar-card{
+		display: flex;
+		.cards{
+			display: flex;
+			align-items: center;
+			margin: 0px 20px;
+			img{
+				height: 50px;
+			}
+			.guest-label{
+				margin-left: 10px;
+				p{
+					font-size: 14px;
+				}
+				& p:first-child{
+					font-weight: 600;
+				}
+				& p:last-child{
+					font-size: 12px;
+				}
+			}
+		}
+		.card1{
+			img{
+				height: 30px;
+			}
+		}
+	}
+}
+
+.login-shell-employeeV2{
+	.login-hero{
+		height: calc(100vh - 84px);
+		.login-features-emp{
+			background: #FFFFFFE5;
+			padding: 20px 30px;
+			width: 60%;
+			border-radius: 8px;
+		}
+	}
+
+	.login-app-container{
+		height: calc(100vh - 84px);
+		margin-right: 0px;
+		background-color: #fff;
+	}
+}

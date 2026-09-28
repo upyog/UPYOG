@@ -65,7 +65,7 @@ const TopBar = ({
         <div className="hambuger-back-wrapper" style={{display:"flex"}}>
           <Hamburger handleClick={toggleSidebar} />
           <div className="location-button">
-            <img src="/images/location.svg" alt="location"/><span>{cityName}</span>
+            <img src="/images/location.svg" alt="location"/><span>{cityName || "City A"}</span>
           </div>
         </div>
 

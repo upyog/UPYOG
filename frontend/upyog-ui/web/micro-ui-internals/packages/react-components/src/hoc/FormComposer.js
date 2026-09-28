@@ -40,6 +40,7 @@ const FormComposer = (props) => {
   });
   const { t } = useTranslation();
   const formData = watch();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   useEffect(() => {
     const iseyeIconClicked = sessionStorage.getItem("eyeIconClicked");
@@ -263,7 +264,7 @@ const FormComposer = (props) => {
     if (isEmployeeLoginCard) {
       const { header, subHeader } = getEmployeeHeaderContent();
       return (
-        <div className="citizen-login-form-header">
+        <div className="login-form-header">
           <h2>{header}</h2>
           <p>{subHeader}</p>
         </div>
@@ -284,7 +285,7 @@ const FormComposer = (props) => {
                     <div style={field.isInsideBox ? getCombinedStyle(field?.placementinbox) : {}}>
                       {!field.withoutLabel && (
                         <CardLabel
-                          style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "8px" : "revert" }}
+                          style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "14px" : "revert" }}
                           className={field?.disable ? "disabled" : ""}
                         >
                           {t(field.label)}
@@ -367,7 +368,7 @@ const FormComposer = (props) => {
         {formFields}
         {props.childrenAtTheBottom && props.children}
         {props.submitInForm && (
-          <SubmitBar label={t(props.label)} style={{ ...props?.buttonStyle }} submit="submit" disabled={isDisabled} className="w-full" />
+          <SubmitBar label={t(props.label)} style={{ ...props?.buttonStyle, color: "#fff" }} submit="submit" disabled={isDisabled} className="w-full" />
         )}
         {props.secondaryActionLabel && (
           <div className="primary-label-btn" style={{ margin: "20px auto 0 auto" }} onClick={onSecondayActionClick}>

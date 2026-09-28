@@ -210,6 +210,8 @@ const Home = (props) => {
     const { commonConfig = {} } = layout
     const vars = {
       "--app-btn-primary-gradient": commonConfig?.gradient,
+      "--app-layout-primary-background": commonConfig?.commonBackground,
+      "--app-layout-primary-color": commonConfig?.commonColor,
     };
 
     Object.entries(vars).forEach(([k, v]) => {

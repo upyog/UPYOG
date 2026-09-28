@@ -31,20 +31,14 @@
 }
 
 .employeeForgotPassword .employeeCard .field .field-container .component-in-front {
-  border: 1px solid;
   border-right: none;
-  height: 32px !important;
-  margin-top: -16px !important;
   z-index: 999;
   background-color: #ffffffeb;
 }
 
 @screen dt {
   .employeeForgotPassword .employeeCard .field .field-container .component-in-front {
-    border: 1px solid black;
     border-right: none;
-    height: 32px !important;
-    margin-top: -16px !important;
     z-index: 999;
     background-color: #ffffffeb;
   }
@@ -110,7 +104,7 @@
 .loginFormStyleEmployee .card-label,
 .employeeForgotPassword .employeeCard .card-label {
   font-weight: 600 !important;
-  font-size: 14px !important;
+  font-size: 18px !important;
   line-height: 10px !important;
   color: #0b0c0c;
   z-index: 10 !important;
@@ -151,9 +145,10 @@
 
 .employeeCard .card-label {
   font-weight: 600 !important;
-  font-size: 14px !important;
+  font-size: 18px !important;
   line-height: 10px !important;
   color: #0b0c0c;
+  margin-bottom: 6px;
 }
 
 @media screen and (max-width: 768px) {
@@ -201,6 +196,7 @@
 
 @media screen and (max-width: 768px) {
   .employee {
+
     .employeeForgotPassword .employeeCard .employee-card-sub-header,
     .employeeChangePassword .employeeCard .employee-card-sub-header,
     .loginFormStyleEmployee .employee-card-sub-header {
@@ -227,7 +223,7 @@
   }
 }
 
-.employee{  
+.employee {
   .employeeChangePassword .employeeCard .card-text {
     margin-top: 18px !important;
     margin-bottom: 20px !important;
@@ -240,7 +236,8 @@
   .employee-select-wrap .select {
     height: 2rem !important;
     background-color: white !important;
-    svg{
+
+    svg {
       top: 12px;
     }
   }
@@ -249,8 +246,18 @@
     .options-card {
       max-height: 150px;
     }
-    .select-active{
-      border: none
+
+    .select-active {
+      border: none;
+      height: 52px !important;
+
+      input {
+        left: 38px;
+      }
+
+      svg {
+        bottom: 16px;
+      }
     }
   }
 }
@@ -270,7 +277,7 @@
 
   .banner {
     padding-bottom: 40px;
-    height: 100vh !important;
+    // height: 100vh !important;
     z-index: 1;
   }
 
@@ -367,7 +374,7 @@
   border: 1px solid #dfe3ea;
   border-radius: 10px;
 
-  .employee-card-input{
+  .employee-card-input {
     border: 1px solid #dfe3ea;
     border-radius: 8px;
     margin-bottom: 0px !important;
@@ -419,7 +426,7 @@
 .employee-login-language-list li {
   flex: 1;
   min-height: 44px;
-  padding: 0 16px;
+  padding: 6px 16px;
   border: 1px solid #dfe3ea;
   border-radius: 8px;
   background: #ffffff;
@@ -486,6 +493,7 @@
 }
 
 @media screen and (max-width: 768px) {
+
   .loginFormStyleEmployee .card-sub-header,
   .employeeForgotPassword .employeeCard .card-sub-header,
   .employeeChangePassword .employeeCard .card-sub-header {
@@ -503,5 +511,96 @@
 
   .employee-login-language-list .employee-login-language-search {
     flex: 0 0 44px;
+  }
+}
+
+.employee {
+  .login-hero {
+    .banner {
+      height: auto !important;
+      display: block;
+    }
+  }
+  .dashboard-body{
+    display: flex;
+
+    .employee-select-wrap {
+      margin-bottom: 0px;
+    }
+  }
+  .dropDown-v2 {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    margin-bottom: 100px;
+
+    .innder-dropdowwn {
+      display: flex;
+      width: 170px;
+      height: 25px;
+
+      .login-city-dd-v2 {
+        width: 100px;
+        margin: 0px 10px;
+
+        .select {
+          height: 25px !important;
+          border: 1px solid #4a4a4a;
+          border-radius: 8px;
+
+          svg {
+            top: -2px;
+            right: -7px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.employeeForgotPassword {
+  .forgetPassword {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border: 1px solid #dfe3ea;
+    border-radius: 8px;
+
+    .component-in-front {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border: none !important;
+      border-radius: 8px;
+      height: 52px !important;
+      margin-top: 0px !important;
+    }
+
+    .text-input {
+      border: none !important;
+
+      input {
+        border: none !important;
+      }
+    }
+  }
+
+  .forgetPasswordDropdown {
+    border-radius: 8px;
+    height: 52px;
+    background: #fff;
+    border: 1px solid #dfe3ea;
+
+    .select {
+      border: none;
+      height: 52px !important;
+    }
+
+    .select-active {
+      left: 0;
+      height: 52px;
+    }
   }
 }

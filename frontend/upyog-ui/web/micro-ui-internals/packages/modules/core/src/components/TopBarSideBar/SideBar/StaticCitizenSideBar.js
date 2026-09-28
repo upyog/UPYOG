@@ -76,7 +76,7 @@ const Profile = ({ info, stateName, t, profilePhotoUrl, isSidebarCollapsed }) =>
       </div>
     )}
     <div className="profile-divider"></div>
-    {window.location.href.includes("/employee") &&
+    { false && window.location.href.includes("/employee") &&
       !window.location.href.includes("/employee/user/login") &&
       !window.location.href.includes("employee/user/language-selection") && <ChangeCity t={t} mobileView={true} />}
   </div>
@@ -109,7 +109,13 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed 
   const { pathname } = location;
   const { data: storeData, isFetched } = Digit.Hooks.useStore.getInitData();
   const { stateInfo } = storeData || {};
-  const user = Digit.UserService.getUser();
+  const user = Digit.UserService.getUser().token !== null ? Digit.UserService.getUser() : {access_token: "asdf", info: {
+    tanentID: "pg",
+    uuid: "asdf",
+    name: "Shubham Singh",
+    "mobileNumber": 1231231231,
+    emailId: "ss@gmail.com"
+  }};
   let isMobile = window.Digit.Utils.browser.isMobile();
 
   const [isEmployee, setisEmployee] = useState(false);
@@ -205,8 +211,8 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed 
   };
   let profileItem;
 
-  if (isFetched && user && user.access_token) {
-    profileItem = <Profile info={user?.info} stateName={stateInfo?.name} t={t} profilePhotoUrl={profilePhotoUrl} isSidebarCollapsed={isSidebarCollapsed}/>;
+  if (true && user && user.access_token) {
+    profileItem = <Profile info={user?.info} stateName={stateInfo?.name || "City A"} t={t} profilePhotoUrl={profilePhotoUrl} isSidebarCollapsed={isSidebarCollapsed}/>;
     menuItems = menuItems.filter((item) => item?.id !== "login-btn" && item?.id !== "help-line");
     menuItems = [
       ...menuItems,

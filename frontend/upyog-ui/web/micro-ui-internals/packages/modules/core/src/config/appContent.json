@@ -50,8 +50,8 @@
 			},
 			"loginForm": {},
 			"commonConfig": {
-        "gradient": "linear-gradient(90deg, #6a4a91 0%, #3e285f 100%)"
-      },
+				"gradient": "linear-gradient(90deg, #6a4a91 0%, #3e285f 100%)"
+			},
 			"dashboard": {
 				"isV1": true,
 				"isV2": false,
@@ -121,14 +121,14 @@
 				}
 			},
 			"loginForm": {
-        "isFormCentered": true,
-        "isTopIconReq": true
-      },
+				"isFormCentered": true,
+				"isTopIconReq": true
+			},
 			"commonConfig": {
-        "gradient": "linear-gradient(90deg, #6a4a91 0%, #3e285f 100%)",
+				"gradient": "linear-gradient(90deg, #6a4a91 0%, #3e285f 100%)",
 				"commonBackground": "#F3F2FA",
 				"commonColor": "#7F7797"
-      },
+			},
 			"dashboard": {
 				"isV1": false,
 				"isV2": true,
@@ -199,12 +199,12 @@
 				}
 			},
 			"loginForm": {
-        "isFormCentered": true,
-        "isTopIconReq": true
-      },
+				"isFormCentered": true,
+				"isTopIconReq": true
+			},
 			"commonConfig": {
-        "gradient": "linear-gradient(90deg, #6a4a91 0%, #3e285f 100%)"
-      },
+				"gradient": "linear-gradient(90deg, #6a4a91 0%, #3e285f 100%)"
+			},
 			"dashboard": {
 				"isV1": false,
 				"isV2": true,
@@ -273,12 +273,12 @@
 				}
 			},
 			"loginForm": {
-        "isFormCentered": true,
-        "isTopIconReq": true
-      },
+				"isFormCentered": true,
+				"isTopIconReq": true
+			},
 			"commonConfig": {
-        "gradient": "linear-gradient(90deg, #6a4a91 0%, #3e285f 100%)"
-      },
+				"gradient": "linear-gradient(90deg, #6a4a91 0%, #3e285f 100%)"
+			},
 			"dashboard": {
 				"isV1": false,
 				"isV2": true,
@@ -349,12 +349,12 @@
 				}
 			},
 			"loginForm": {
-        "isFormCentered": true,
-        "isTopIconReq": true
-      },
+				"isFormCentered": true,
+				"isTopIconReq": true
+			},
 			"commonConfig": {
-        "gradient": "linear-gradient(90deg, #6a4a91 0%, #3e285f 100%)"
-      },
+				"gradient": "linear-gradient(90deg, #6a4a91 0%, #3e285f 100%)"
+			},
 			"dashboard": {
 				"isV1": false,
 				"isV2": true,
@@ -411,12 +411,12 @@
 				}
 			},
 			"loginForm": {
-        "isFormCentered": true,
-        "isTopIconReq": true
-      },
+				"isFormCentered": true,
+				"isTopIconReq": true
+			},
 			"commonConfig": {
-        "gradient": "linear-gradient(90deg, #EB874A 0%, #873508 100%)"
-      },
+				"gradient": "linear-gradient(90deg, #EB874A 0%, #873508 100%)"
+			},
 			"dashboard": {
 				"isV1": false,
 				"isV2": true,
@@ -468,16 +468,142 @@
 				}
 			},
 			"loginForm": {
-        "isFormCentered": true,
-        "isTopIconReq": true
-      },
+				"isFormCentered": true,
+				"isTopIconReq": true
+			},
 			"commonConfig": {
-        "gradient": "linear-gradient(90deg, #EB874A 0%, #873508 100%)"
-      },
+				"gradient": "linear-gradient(90deg, #EB874A 0%, #873508 100%)"
+			},
 			"dashboard": {
 				"isV1": false,
 				"isV2": true,
 				"isOldView": false
+			}
+		}
+	},
+	"employee1": {
+		"layout": {
+			"loginUI": {
+				"backgroundUrl": "/images/onboarding-bg.jpg",
+				"mainlogo": {
+					"dualLogo": false,
+					"url": "/images/Logo.png"
+				},
+				"headers": {
+					"H1": "One Platform",
+					"H2": "Many Services",
+					"H1Styles": {
+						"color": "#0f172a"
+					},
+					"H2Styles": {
+						"color": "#584f74"
+					},
+					"sH1": "Choose your details to",
+					"sH2": "get started"
+				},
+				"pointers": {
+					"isReq": true,
+					"isIcon": true,
+					"data": [
+						{
+							"key1": "Easy Access",
+							"key2": "All your services in one place",
+							"iconURL": "/images/login-1.svg",
+							"iconAlt": "logo-1"
+						},
+						{
+							"key1": "Secure & Trusted",
+							"key2": "Your data is safe with us",
+							"iconURL": "/images/login-2.svg",
+							"iconAlt": "logo-2"
+						},
+						{
+							"key1": "Quick & Simple",
+							"key2": "Login in minutes",
+							"iconURL": "/images/login-3.svg",
+							"iconAlt": "logo-3"
+						}
+					],
+					"isbackground": true
+				},
+				"CFooter": {
+					"isFooter": false
+				}
+			},
+			"loginForm": {},
+			"commonConfig": {
+				"gradient": "linear-gradient(90deg, #6a4a91 0%, #3e285f 100%)"
+			},
+			"dashboard": {
+				"isV1": true,
+				"isV2": false,
+				"isOldView": true
+			}
+		}
+	},
+	"employee2": {
+		"layout": {
+			"loginUI": {
+				"backgroundUrl": "/images/empbg.png",
+				"mainlogo": {
+					"dualLogo": false,
+					"url": "/images/Logo.png"
+				},
+				"headers": {
+					"H1": "One Platform",
+					"H2": "Many Services",
+					"H1Styles": {
+						"color": "#0f172a"
+					},
+					"H2Styles": {
+						"color": "#584f74"
+					},
+					"sH1": "Smart City • Better Services • Digital Tomorrow"
+				},
+				"pointers": {
+					"isReq": true,
+					"isIcon": true,
+					"data": [
+						{
+							"key1": "Apply for Services",
+							"key2": "Access a wide range of employee services",
+							"iconURL": "/images/login-1.svg",
+							"iconAlt": "logo-1"
+						},
+						{
+							"key1": "Track your Requests",
+							"key2": "Track the status of your applications",
+							"iconURL": "/images/login-2.svg",
+							"iconAlt": "logo-2"
+						},
+						{
+							"key1": "Get instant Notifications",
+							"key2": "Stay updated with real-time alerts",
+							"iconURL": "/images/login-3.svg",
+							"iconAlt": "logo-3"
+						},
+						{
+							"key1": "Secure and Trusted",
+							"key2": "Your data is safe with us",
+							"iconURL": "/images/login-1.svg",
+							"iconAlt": "logo-1"
+						}
+					],
+					"isbackground": true
+				},
+				"CFooter": {
+					"isFooter": false
+				},
+				"isEmployeeV2": true
+			},
+			"loginForm": {},
+			"commonConfig": {
+				"gradient": "linear-gradient(90deg, #6a4a91 0%, #3e285f 100%)"
+			},
+			"dashboard": {
+				"isV1": true,
+				"isV2": false,
+				"isOldView": true
 			}
 		}
 	}
