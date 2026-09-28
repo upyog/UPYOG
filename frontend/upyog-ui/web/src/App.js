@@ -163,10 +163,10 @@ window.Digit.ComponentRegistryService.setupRegistry({
     ESTModule,
     ESTLinks,
     ...ESTComponents,
-    // ...GCComponents,
-    // GCModule,
-    // FinanceModule,
-    // ...FinanceComponents,
+    ...GCComponents,
+    GCModule,
+    FinanceModule,
+    ...FinanceComponents,
 });
 
 initPGRComponents();
@@ -184,8 +184,8 @@ initWSComponents();
 initCommonPTComponents();
 initBillsComponents();
 initNDCComponents();
-// initReportsComponents();
-// initCustomisationComponents();
+initReportsComponents();
+initCustomisationComponents();
 
 const moduleReducers = (initData) => ({
   pgr: PGRReducers(initData),
