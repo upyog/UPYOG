@@ -39,6 +39,36 @@
     talking:   'Speaking…',
   };
 
+  // ── Video source resolution (Blob URL from Base64 or direct asset path) ───
+  function base64ToBlobUrl(base64Data, mimeType = 'video/mp4') {
+    try {
+      const byteChars = atob(base64Data);
+      const sliceSize = 8192;
+      const byteArrays = [];
+      for (let offset = 0; offset < byteChars.length; offset += sliceSize) {
+        const slice = byteChars.slice(offset, offset + sliceSize);
+        const byteNumbers = new Uint8Array(slice.length);
+        for (let i = 0; i < slice.length; i++) {
+          byteNumbers[i] = slice.charCodeAt(i);
+        }
+        byteArrays.push(byteNumbers);
+      }
+      const blob = new Blob(byteArrays, { type: mimeType });
+      return URL.createObjectURL(blob);
+    } catch (e) {
+      console.warn('[Avatar] Failed to create blob URL from base64:', e);
+      return null;
+    }
+  }
+
+  function resolveVideoSrc(emotion) {
+    if (window.AVATAR_VIDEO_BASE64 && window.AVATAR_VIDEO_BASE64[emotion]) {
+      const blobUrl = base64ToBlobUrl(window.AVATAR_VIDEO_BASE64[emotion]);
+      if (blobUrl) return blobUrl;
+    }
+    return AVATAR_VIDEOS[emotion] || '';
+  }
+
   // ── Build the avatar DOM ───────────────────────────────────────────────────
   function buildAvatarDOM() {
     // Outer wrapper — sits between header and #chat-container
@@ -50,19 +80,25 @@
     stage.className = 'avatar-stage';
 
     // Create one <video> per emotion, stacked on top of each other
-    Object.entries(AVATAR_VIDEOS).forEach(([emotion, src]) => {
+    Object.entries(AVATAR_VIDEOS).forEach(([emotion, fallbackSrc]) => {
       const vid = document.createElement('video');
-      vid.src         = src;
+      vid.src         = resolveVideoSrc(emotion);
       vid.loop        = true;
       vid.muted       = true;
       vid.playsInline = true;
       vid.preload     = 'auto';
       vid.className   = 'avatar-video';
       vid.dataset.emotion = emotion;
+      vid.setAttribute('muted', '');
+      vid.setAttribute('playsinline', '');
 
       // Start invisible
       vid.style.opacity = '0';
       vid.style.zIndex  = '0';
+
+      vid.addEventListener('error', (e) => {
+        console.warn(`[Avatar] Video error for emotion '${emotion}':`, e);
+      });
 
       // Load the video silently; handle play errors gracefully
       vid.load();
