@@ -2,7 +2,6 @@ package org.egov.refund.rowmapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Map;
 
 import org.egov.refund.model.AuditDetails;
