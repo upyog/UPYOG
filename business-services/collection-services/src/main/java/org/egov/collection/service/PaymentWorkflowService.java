@@ -132,53 +132,14 @@ public class PaymentWorkflowService {
         case REMIT:
             processedPayments = remit(workflowRequestByPaymentId, consumerCodes,
                     paymentWorkflowRequest.getRequestInfo(), tenantId);
-            break;
-        case REFUND:
-        	return refund(workflowRequestByPaymentId, consumerCodes,
-        			paymentWorkflowRequest.getRequestInfo(), tenantId);
+            break;       
     }
 
         return processedPayments;
     }
 
 
-    private PaymentRefundResponse refund(Map<String, PaymentWorkflow> workflowRequestByPaymentId, Set<String> consumerCodes,
-			RequestInfo requestInfo, String tenantId) {
-         PaymentSearchCriteria paymentSearchCriteria = PaymentSearchCriteria
-                  .builder()
-                  .consumerCodes(consumerCodes)
-                  .tenantId(tenantId)
-                  .build();
-         PaymentRefundResponse paymentResponse = null;
-         List<Payment> payments = paymentRepository.fetchPayments(paymentSearchCriteria);
-         payments.sort(reverseOrder(Comparator.comparingLong(Payment::getTransactionDate)));
-          Payment latestPayment = payments.stream()
-                  .max(Comparator.comparingLong(Payment::getTransactionDate))
-                  .orElseThrow(() -> new CustomException("PAYMENT_NOT_FOUND", "No payments found for given consumer codes"));
-          
-          paymentWorkflowValidator.validateForRefund(new ArrayList<>(workflowRequestByPaymentId.values()), latestPayment);
-        
-         if("ONLINE".equalsIgnoreCase(latestPayment.getPaymentMode().toString())) {
-//          collectionProducer.producer(applicationProperties.getInitiateRefundTopic(),new PaymentRequest(requestInfo, latestPayment));
-        	 StringBuilder uri = new StringBuilder();
-        	 uri.append(applicationProperties.getPgServiceHost()).append(applicationProperties.getInitiateRefundEndPoint());
-        	 PaymentRequest paymentRequest = PaymentRequest.builder().payment(latestPayment).requestInfo(requestInfo).build();
-        	 String errorResponse = null;
-        	 String refundStatusCode = "OTS0000";
-        	 try {
-        		 paymentResponse = restTemplate.postForObject(uri.toString(), paymentRequest,PaymentRefundResponse.class);
-        		 if(!refundStatusCode.equalsIgnoreCase(paymentResponse.getPaymentRefund().getGatewayStatusCode())){
-        			 errorResponse = paymentResponse.getPaymentRefund().getGatewayStausMsg();
-          			throw new CustomException("INITIATE_REFUND_CODE","Error while initiating Refund");
-        		 }
-        		 
-        	 }catch(Exception ex) {
-        		 log.error("Error while initiating refund call: ", ex);
-     			throw new CustomException("INITIATE_REFUND_CODE", errorResponse != null ? errorResponse : "Error while initiating refund" );
-        	 }
-         }
-		return paymentResponse;
-	}	
+   
     
     private List<Payment> cancel(Map<String, PaymentWorkflow> workflowRequestByPaymentId, Set<String> consumerCodes,
                                  RequestInfo requestInfo, String tenantId){
@@ -301,8 +262,6 @@ public class PaymentWorkflowService {
             payment.setPaymentStatus(PaymentStatusEnum.DEPOSITED);
             payment.setInstrumentStatus(InstrumentStatusEnum.REMITTED);
 
-            JsonNode additionalDetails = workflowRequestByPaymentId.get(payment.getId())
-                    .getAdditionalDetails();
 
             payment.getPaymentDetails().forEach(paymentDetail -> {
                 paymentDetail.getBill().setAdditionalDetails(jsonMerge(paymentDetail.getBill().getAdditionalDetails(),
