@@ -30,4 +30,6 @@ public class RefundSearchCriteria {
     private String gatewayRefundId;
     
     private String sanctionRef;
+    
+    private String refundMode;
 }

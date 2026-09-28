@@ -38,4 +38,6 @@ public class RefundSearchRequest {
     private String gatewayRefundId;
 
     private String sanctionRef;
+    
+    private String refundMode;
 }

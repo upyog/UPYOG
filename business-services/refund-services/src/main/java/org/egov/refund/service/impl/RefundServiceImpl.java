@@ -195,7 +195,7 @@ public class RefundServiceImpl implements RefundService {
 				.moduleName(request.getModuleName()).businessService(request.getBusinessService())
 				.consumerCode(request.getConsumerCode()).paymentId(request.getPaymentId())
 				.refundNo(request.getRefundNo()).status(request.getStatus()).refundCategory(request.getRefundCategory())
-				.gatewayRefundId(request.getGatewayRefundId()).sanctionRef(request.getSanctionRef()).build();
+				.gatewayRefundId(request.getGatewayRefundId()).sanctionRef(request.getSanctionRef()).refundMode(request.getRefundMode()).build();
 
 		return refundRepository.search(criteria);
 	}
@@ -257,6 +257,9 @@ public class RefundServiceImpl implements RefundService {
 
 		if (RefundConstants.ACTION_CREATE_REQUEST.equalsIgnoreCase(action)) {
 
+			// Delegate refund processing to the configured finance implementation.
+			// If another finance provider/corporate integration is required,
+			// implement it through FinanceService and invoke it from here.
 			return processFinanceRequest(refund);
 		}
 
