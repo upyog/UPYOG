@@ -176,6 +176,11 @@ document.getElementById('moduleForm').addEventListener('submit', async (e) => {
 
     let result = null;
 
+    // Clean up old artifacts before starting a fresh run
+    try {
+        await fetch("/api/report/cleanup-all", { method: "POST" });
+    } catch (ignored) {}
+
     // Instantly query test plan so total test cases and mode are visible immediately
     let testPlan = null;
     try {
@@ -253,6 +258,11 @@ document.getElementById('moduleForm').addEventListener('submit', async (e) => {
         });
 
         result = await response.json();
+
+        if (!response.ok || !Array.isArray(result)) {
+            const errorMsg = result && (result.message || result.error) ? (result.message || result.error) : `Execution failed with status ${response.status}`;
+            throw new Error(errorMsg);
+        }
 
         let html = `
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -362,12 +372,16 @@ document.getElementById('moduleForm').addEventListener('submit', async (e) => {
     } catch (error) {
 
         // Failure
-
         statusText.innerHTML =
             "Test Failed";
 
         statusSubText.innerHTML =
-            error.message;
+            error.message || "An error occurred during test execution.";
+
+        const reportBtns = document.getElementById("moduleReportButtons");
+        if (reportBtns) {
+            reportBtns.style.display = "block";
+        }
 
     } finally {
 
@@ -1434,4 +1448,9 @@ document.addEventListener("click", function(e) {
     if (!e.target.closest(".dropdown-wrapper")) {
         closeAllDownloadDropdowns();
     }
+});
+
+// Automatically clean up previous temporary test artifacts on page load / refresh
+window.addEventListener("DOMContentLoaded", function () {
+    fetch("/api/report/cleanup-all", { method: "POST" }).catch(() => {});
 });

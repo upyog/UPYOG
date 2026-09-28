@@ -3,6 +3,7 @@ package org.upyog.Automation.Controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -19,6 +20,7 @@ import org.upyog.Automation.model.ModuleExecutionResult;
 import org.upyog.Automation.model.ModuleRequest;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -176,17 +178,31 @@ public class ModuleTestController {
     public ResponseEntity<Resource> downloadTemplate() {
         logger.info("Request received to download test data template: [{}]", TEST_DATA_FILE);
 
-        ClassPathResource resource = new ClassPathResource(TEST_DATA_FILE);
+        try {
+            ClassPathResource resource = new ClassPathResource(TEST_DATA_FILE);
+            if (!resource.exists()) {
+                logger.error("Test data template file not found on classpath: [{}]", TEST_DATA_FILE);
+                return ResponseEntity.notFound().build();
+            }
 
-        return ResponseEntity.ok()
-                .header(
-                        HttpHeaders.CONTENT_DISPOSITION,
-                        TEST_DATA_CONTENT_DISPOSITION
-                )
-                .contentType(
-                        MediaType.parseMediaType(EXCEL_CONTENT_TYPE)
-                )
-                .body(resource);
+            byte[] bytes = resource.getInputStream().readAllBytes();
+            ByteArrayResource byteArrayResource = new ByteArrayResource(bytes);
+
+            return ResponseEntity.ok()
+                    .header(
+                            HttpHeaders.CONTENT_DISPOSITION,
+                            TEST_DATA_CONTENT_DISPOSITION
+                    )
+                    .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(bytes.length))
+                    .contentType(
+                            MediaType.parseMediaType(EXCEL_CONTENT_TYPE)
+                    )
+                    .body(byteArrayResource);
+
+        } catch (Exception e) {
+            logger.error("Failed to read template file [{}]: {}", TEST_DATA_FILE, e.getMessage(), e);
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     /**
@@ -203,18 +219,26 @@ public class ModuleTestController {
             return ResponseEntity.notFound().build();
         }
 
-        Resource resource = new FileSystemResource(latestResultFile);
-        logger.info("Serving test result file: [{}]", latestResultFile.getName());
+        try {
+            byte[] bytes = Files.readAllBytes(latestResultFile.toPath());
+            ByteArrayResource byteArrayResource = new ByteArrayResource(bytes);
+            logger.info("Serving test result file: [{}] (Size: {} bytes)", latestResultFile.getName(), bytes.length);
 
-        return ResponseEntity.ok()
-                .header(
-                        HttpHeaders.CONTENT_DISPOSITION,
-                        TEST_RESULT_CONTENT_DISPOSITION
-                )
-                .contentType(
-                        MediaType.parseMediaType(EXCEL_CONTENT_TYPE)
-                )
-                .body(resource);
+            return ResponseEntity.ok()
+                    .header(
+                            HttpHeaders.CONTENT_DISPOSITION,
+                            TEST_RESULT_CONTENT_DISPOSITION
+                    )
+                    .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(bytes.length))
+                    .contentType(
+                            MediaType.parseMediaType(EXCEL_CONTENT_TYPE)
+                    )
+                    .body(byteArrayResource);
+
+        } catch (Exception e) {
+            logger.error("Failed to read test result file: {}", e.getMessage(), e);
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     /**

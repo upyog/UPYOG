@@ -91,14 +91,6 @@ public class CommonActions {
         String selectedUrl = WorkflowDataStore.get(AutomationConstants.KEY_SELECTED_URL);
         String selectedModule = WorkflowDataStore.get(AutomationConstants.KEY_SELECTED_MODULE);
 
-        if (selectedModule != null) {
-            if ("COMMUNITY_HALL_BOOKING".equalsIgnoreCase(selectedModule) || "CHB".equalsIgnoreCase(selectedModule)) {
-                cityName = "Mohali";
-            } else if ("STREET_VENDING".equalsIgnoreCase(selectedModule) || "SV".equalsIgnoreCase(selectedModule)) {
-                cityName = "Kurali";
-            }
-        }
-
         if (cityName == null || cityName.isBlank() || "Select City".equalsIgnoreCase(cityName)) {
             if (selectedUrl != null && selectedUrl.toLowerCase().contains("sandbox")) {
                 cityName = "City A Muncipal Corporation";

@@ -47,7 +47,8 @@ public class ScreenRecorder {
             });
 
     private static ScheduledFuture<?> recordingTask;
-    private static final List<BufferedImage> capturedFrames = Collections.synchronizedList(new ArrayList<>());
+    private static final List<File> capturedFrameFiles = Collections.synchronizedList(new ArrayList<>());
+    private static File tempFramesDir = null;
     private static final AtomicBoolean isRecording = new AtomicBoolean(false);
     private static WebDriver currentDriver;
     private static String currentModule = "MODULE";
@@ -76,7 +77,16 @@ public class ScreenRecorder {
         currentDriver = driver;
         currentModule = moduleName != null && !moduleName.isBlank() ? moduleName : "MODULE";
         currentTestCase = testCaseName != null && !testCaseName.isBlank() ? testCaseName : "TEST";
-        capturedFrames.clear();
+        capturedFrameFiles.clear();
+
+        try {
+            tempFramesDir = Files.createTempDirectory("upyog_rec_").toFile();
+        } catch (Exception e) {
+            logger.warn("Could not create temp frames directory, using fallback temp dir: {}", e.getMessage());
+            tempFramesDir = new File(System.getProperty("java.io.tmpdir"), "upyog_rec_" + System.currentTimeMillis());
+            tempFramesDir.mkdirs();
+        }
+
         isRecording.set(true);
         recordingStartTime = System.currentTimeMillis();
 
@@ -110,10 +120,11 @@ public class ScreenRecorder {
     }
 
     /**
-     * Captures the current browser state and adds it to the frame buffer.
+     * Captures the current browser state, saves it to a temp JPEG frame on disk,
+     * freeing memory immediately to prevent JVM heap exhaustion.
      */
     private static void captureCurrentFrame() {
-        if (currentDriver == null) return;
+        if (currentDriver == null || tempFramesDir == null) return;
 
         try {
             byte[] screenshotBytes = ((TakesScreenshot) currentDriver).getScreenshotAs(OutputType.BYTES);
@@ -124,7 +135,10 @@ public class ScreenRecorder {
 
             // Normalize image for video encoding (dimensions must be even numbers and RGB type)
             BufferedImage normalized = normalizeImage(rawImage);
-            capturedFrames.add(normalized);
+            
+            File frameFile = new File(tempFramesDir, String.format("frame_%06d.jpg", capturedFrameFiles.size()));
+            ImageIO.write(normalized, "jpg", frameFile);
+            capturedFrameFiles.add(frameFile);
 
         } catch (Exception e) {
             logger.debug("Frame capture skipped: {}", e.getMessage());
@@ -142,7 +156,7 @@ public class ScreenRecorder {
         int targetW = (w % 2 == 0) ? w : w - 1;
         int targetH = (h % 2 == 0) ? h : h - 1;
 
-        // Target standard 720p or 1080p dimensions if larger, keeping aspect ratio
+        // Target standard 720p dimensions if larger, keeping aspect ratio
         if (targetW > 1280) {
             double scale = 1280.0 / targetW;
             targetW = 1280;
@@ -161,7 +175,7 @@ public class ScreenRecorder {
     }
 
     /**
-     * Stops screen recording and encodes captured frames to an MP4 video file.
+     * Stops screen recording and encodes captured frames from disk to an MP4 video file.
      *
      * @return the generated MP4 File, or null if recording failed or no frames were captured
      */
@@ -178,8 +192,9 @@ public class ScreenRecorder {
         // Capture one final closing frame
         captureCurrentFrame();
 
-        if (capturedFrames.isEmpty()) {
+        if (capturedFrameFiles.isEmpty()) {
             logger.warn("No frames captured during screen recording for [{}]", currentModule);
+            cleanupTempFrames();
             currentDriver = null;
             return null;
         }
@@ -199,17 +214,26 @@ public class ScreenRecorder {
             String fileName = safeModule + "_" + safeTest + "_" + timestamp + ".mp4";
             videoFile = recDir.resolve(fileName).toFile();
 
-            logger.info("Encoding {} frames to MP4: {}", capturedFrames.size(), videoFile.getAbsolutePath());
+            logger.info("Encoding {} frames to MP4: {}", capturedFrameFiles.size(), videoFile.getAbsolutePath());
 
-            // Encode frames to MP4 using JCodec
+            // Encode frames to MP4 using JCodec by reading one temp frame at a time
             AWTSequenceEncoder encoder = AWTSequenceEncoder.createSequenceEncoder(videoFile, DEFAULT_FPS);
-            List<BufferedImage> framesCopy;
-            synchronized (capturedFrames) {
-                framesCopy = new ArrayList<>(capturedFrames);
+            List<File> framesCopy;
+            synchronized (capturedFrameFiles) {
+                framesCopy = new ArrayList<>(capturedFrameFiles);
             }
 
-            for (BufferedImage frame : framesCopy) {
-                encoder.encodeImage(frame);
+            for (File frameFile : framesCopy) {
+                if (frameFile != null && frameFile.exists()) {
+                    try {
+                        BufferedImage frame = ImageIO.read(frameFile);
+                        if (frame != null) {
+                            encoder.encodeImage(frame);
+                        }
+                    } catch (Exception ex) {
+                        logger.debug("Could not encode frame {}: {}", frameFile.getName(), ex.getMessage());
+                    }
+                }
             }
             encoder.finish();
 
@@ -219,11 +243,35 @@ public class ScreenRecorder {
         } catch (Exception e) {
             logger.error("Failed to encode screen recording video: {}", e.getMessage(), e);
         } finally {
-            capturedFrames.clear();
+            cleanupTempFrames();
             currentDriver = null;
         }
 
         return videoFile;
+    }
+
+    /**
+     * Cleans up temporary frame files created during recording.
+     */
+    private static void cleanupTempFrames() {
+        try {
+            capturedFrameFiles.clear();
+            if (tempFramesDir != null && tempFramesDir.exists()) {
+                File[] files = tempFramesDir.listFiles();
+                if (files != null) {
+                    for (File f : files) {
+                        try {
+                            f.delete();
+                        } catch (Exception ignored) {}
+                    }
+                }
+                tempFramesDir.delete();
+            }
+        } catch (Exception e) {
+            logger.debug("Temp frames cleanup: {}", e.getMessage());
+        } finally {
+            tempFramesDir = null;
+        }
     }
 
     /**
