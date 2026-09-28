@@ -6,7 +6,7 @@ The Ingestion Pipeline is responsible for extracting, transforming, validating, 
 
 1. **`dashboard-data-extractor` (Spring Boot Service)**:
    - Houses module-specific extractor logic that queries state databases (PT, PGR, CHB) using high-performance multi-tenant batch SQL.
-   - Generates memory-safe streaming Excel workbooks (`.xlsx`) via Apache POI `SXSSFWorkbook`.
+   - Generates memory-safe streaming Excel workbooks (`.xlsx`) or generic flat delimited dataset files (`.psv`, `.csv`, `.txt`) via `DelimitedFileGeneratorService` in a mutually exclusive manner based on configuration properties.
    - Stages datasets to Amazon S3 / FileStore under structured folder hierarchies.
    - Coordinates daily incremental schedulers (`DailyIngestionScheduler`) and historical bulk runs (`LegacyBatchIngestionOrchestrator`, `LegacyIngestionScheduler`) with distributed ShedLock synchronization.
    - Synchronizes active city/ULB tenant registries from eGov MDMS into `ug_ingestion_module_detail`.
@@ -154,19 +154,56 @@ The folder structure is organized as follows:
 
 ---
 
-## Excel Generation & Column Specifications
+## Dataset File Generation & Formats
 
-When Excel workbooks are generated (via `SXSSFExcelGeneratorService`), columns and sheets follow standardized conventions:
-- **Clean Column Ordering:**
+The pipeline supports two high-performance streaming dataset generation formats that operate in a **mutually exclusive** manner based on system configuration:
+
+- **When `dashboard-data.delimited-file.enabled=true`**: Bypasses Excel workbook creation and generates **only** a flat delimited dataset file (e.g. `.psv`).
+- **When `dashboard-data.delimited-file.enabled=false`**: Generates **only** an Apache POI SXSSF Excel workbook (`.xlsx`).
+
+### 1. SXSSF Excel Workbooks (`.xlsx`)
+- **Generator**: `SXSSFExcelGeneratorService`
+- **Memory Safety**: Uses Apache POI `SXSSFWorkbook` with periodic row flushing (window size 100) to disk.
+- **Cell Size Limits**: Enforces `EXCEL_MAX_CELL_CHAR_LIMIT` (32,767 characters) for cell contents, ensuring `payload_json` strings do not breach Excel specifications.
+- **Column Order**:
   1. `date` — Calendar date (`YYYY-MM-DD`)
   2. `module` — Business module code (`PT`, `PGR`, `CHB`)
   3. `state` — State identifier (e.g. `PG`)
   4. `Tenant` — ULB identifier (e.g. `pg.citya`, renamed from `ulb` for national consistency)
   5. `ward` — Ward name or identifier
   6. `region` — Region name or identifier
-  7. `payload_json` — Exact serialized `NationalDashboardIngestRequest` JSON payload for the row
-- **Filtered Composite Objects:** Internal composite metrics objects (`combinedMetrics`, `collectionMetrics`) are strictly excluded from Excel headers and rows to prevent data redundancy and column bloat.
-- **Memory-Safe Streaming:** Uses Apache POI `SXSSFWorkbook` with periodic row flushing to disk to handle millions of historical records without heap exhaustion.
+  7. `payload_json` — Serialized `NationalDashboardIngestRequest` JSON payload for the row
+- **Filtered Composite Objects**: Internal composite metrics objects (`combinedMetrics`, `collectionMetrics`) are strictly excluded from Excel headers and rows to prevent data redundancy and column bloat.
+
+### 2. Flat Delimited Dataset Files (`.psv`, `.csv`, `.txt`)
+- **Generator**: `DelimitedFileGeneratorService`
+- **System User UUID**: The first column (`uuid`) in delimited files is populated with the authenticated System User UUID (retrieved via `OAuthTokenService.getUserInfo().getUuid()`, matching system credentials in `application.properties`, e.g. `b3177c56-a9f2-4b59-a00c-9e9c38b5f28f`). If `OAuthTokenService` is unavailable, it falls back to `CommonUtils.generateUUID()`.
+- **Configurable Delimiters**: Supports state-chosen delimiter characters (e.g. `|`, `,`, `\t`) and file extensions (`.psv`, `.csv`, `.txt`).
+- **Dynamic Metric Flattening**: Recursively flattens complex nested KPI metric structures into dot-notation column headers across all business modules:
+  - Header structure: `uuid|date|module|state|ulb|ward|region|<metric.path...>`
+  - Examples:
+    - `cess.usageCategory.RESIDENTIAL`
+    - `rebate.usageCategory.COMMERCIAL`
+    - `penalty.usageCategory.INDUSTRIAL`
+    - `interest.usageCategory.RESIDENTIAL`
+    - `propertyTax.usageCategory.COMMERCIAL`
+    - `transactions.usageCategory.INDUSTRIAL`
+    - `todaysCollection.usageCategory.RESIDENTIAL`
+
+#### Flat Delimited Configuration Options
+```properties
+# Toggle to enable generic flat delimited dataset file generation (mutually exclusive with Excel)
+dashboard-data.delimited-file.enabled=true
+
+# Custom delimiter symbol (e.g. |, ,, \t)
+dashboard-data.delimited-file.delimiter=|
+
+# Custom file extension suffix
+dashboard-data.delimited-file.file-extension=.psv
+
+# Option to retain generated local files on disk after S3 upload (default: false)
+dashboard-data.delimited-file.keep-file=false
+```
 
 ---
 
