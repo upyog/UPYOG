@@ -299,6 +299,11 @@ function logoutSession() {
 // ============== STATE ==============
 let currentState = (typeof States !== 'undefined') ? States.IDLE : "IDLE";
 let sessionActive = false;
+window.isMicActive = function () {
+  const sessionBtn = document.getElementById('session-toggle-btn');
+  const btnActive = sessionBtn ? sessionBtn.classList.contains('active') : false;
+  return Boolean((typeof sessionActive !== 'undefined' && sessionActive) || btnActive);
+};
 let currentLang = 'auto';
 let currentFetch = null;
 
@@ -1082,8 +1087,12 @@ async function sendQuery(transcript, file_name = null, file_data = null, display
       if (data.audio && typeof playAudio === 'function') {
         playAudio(data.audio);
       } else {
-        setState(States.LISTENING);
-        if (typeof onTurnComplete === 'function') onTurnComplete();
+        if (sessionActive) {
+          setState(States.LISTENING);
+          if (typeof onTurnComplete === 'function') onTurnComplete();
+        } else {
+          setState(States.IDLE);
+        }
       }
       return;
     }
@@ -1111,17 +1120,25 @@ async function sendQuery(transcript, file_name = null, file_data = null, display
     if (data.audio && typeof playAudio === 'function') {
       playAudio(data.audio);
     } else {
-      setState(States.LISTENING);
-      if (typeof onTurnComplete === 'function') onTurnComplete();
+      if (sessionActive) {
+        setState(States.LISTENING);
+        if (typeof onTurnComplete === 'function') onTurnComplete();
+      } else {
+        setState(States.IDLE);
+      }
     }
 
   } catch (error) {
     if (error.name !== 'AbortError') {
       addBotMessage("I am unable to reach the server at the moment. Please check your internet connection and try again.", null, null, null, null);
     }
-    setState(States.LISTENING);
     currentFetch = null;
-    if (typeof onTurnComplete === 'function') onTurnComplete();
+    if (sessionActive) {
+      setState(States.LISTENING);
+      if (typeof onTurnComplete === 'function') onTurnComplete();
+    } else {
+      setState(States.IDLE);
+    }
   }
 }
 
