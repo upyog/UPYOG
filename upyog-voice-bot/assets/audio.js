@@ -97,9 +97,18 @@ function createRecognition(lang) {
     if (sessionActive && currentState === States.LISTENING) {
       setTimeout(() => {
         if (sessionActive && recognition) {
-          try { recognition.start(); } catch (e) { }
+          try {
+            recognition.start();
+          } catch (e) {
+            console.warn('[UPYOG SPEECH] Recognition restart failed, resetting to idle:', e);
+            sessionActive = false;
+            updateSessionBtnIcon(false);
+            setState(States.IDLE);
+          }
         }
       }, 100);
+    } else if (!sessionActive && currentState === States.LISTENING) {
+      setState(States.IDLE);
     }
   };
   recognition.onerror = function onRecognitionError(e) {
@@ -195,7 +204,10 @@ function onTurnComplete() {
   clearTimeout(forceTimer);
   silenceTimer = null;
   forceTimer = null;
-  if (!sessionActive) return;
+  if (!sessionActive) {
+    setState(States.IDLE);
+    return;
+  }
 
   destroyRecognition();
   createRecognition(lastDetectedLang);
@@ -428,8 +440,12 @@ async function playAudio(base64) {
       URL.revokeObjectURL(url);
       currentAudio = null;
       hideInterruptBtn();
-      setState(States.LISTENING);
-      onTurnComplete();
+      if (sessionActive) {
+        setState(States.LISTENING);
+        onTurnComplete();
+      } else {
+        setState(States.IDLE);
+      }
     }
 
     audio.onended = afterAudioDone;
@@ -438,8 +454,12 @@ async function playAudio(base64) {
     await currentAudio.play();
   } catch (e) {
     hideInterruptBtn();
-    setState(States.LISTENING);
-    onTurnComplete();
+    if (sessionActive) {
+      setState(States.LISTENING);
+      onTurnComplete();
+    } else {
+      setState(States.IDLE);
+    }
   }
 }
 

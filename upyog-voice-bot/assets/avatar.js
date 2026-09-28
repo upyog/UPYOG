@@ -201,6 +201,17 @@
     }
   }
 
+  // ── Helper to check if microphone is currently active ─────────────────────
+  function isMicActive() {
+    if (typeof window.isMicActive === 'function') {
+      return window.isMicActive();
+    }
+    const sessionBtn = document.getElementById('session-toggle-btn');
+    if (sessionBtn && sessionBtn.classList.contains('active')) return true;
+    if (typeof sessionActive !== 'undefined') return Boolean(sessionActive);
+    return false;
+  }
+
   // ── Patch setState ─────────────────────────────────────────────────────────
   // We wrap the global setState so avatar always stays in sync.
   function patchSetState() {
@@ -210,10 +221,51 @@
     window.setState = function (newState) {
       originalSetState.call(this, newState);
       const stateKey = typeof newState === 'string' ? newState : String(newState);
-      const emotion  = STATE_TO_EMOTION[stateKey] || 'idle';
+      let emotion  = STATE_TO_EMOTION[stateKey] || 'idle';
+
+      // If state is LISTENING but microphone is OFF -> avatar must be idle
+      if (emotion === 'listening' && !isMicActive()) {
+        emotion = 'idle';
+      }
+
       switchEmotion(emotion, false);
     };
     return true;
+  }
+
+  // ── Mic status watcher & watchdog ───────────────────────────────────────────
+  function bindMicWatcher() {
+    const sessionBtn = document.getElementById('session-toggle-btn');
+    if (sessionBtn) {
+      const observer = new MutationObserver(() => {
+        if (!isMicActive() && currentEmotion === 'listening') {
+          switchEmotion('idle', false);
+        }
+      });
+      observer.observe(sessionBtn, { attributes: true, attributeFilter: ['class'] });
+
+      sessionBtn.addEventListener('click', () => {
+        setTimeout(() => {
+          if (!isMicActive() && currentEmotion === 'listening') {
+            switchEmotion('idle', false);
+          }
+        }, 50);
+      });
+    }
+
+    const stopBtn = document.getElementById('stop-voice-btn');
+    if (stopBtn) {
+      stopBtn.addEventListener('click', () => {
+        switchEmotion('idle', false);
+      });
+    }
+
+    // Watchdog: ensures avatar immediately drops to idle if mic turns off
+    setInterval(() => {
+      if (currentEmotion === 'listening' && !isMicActive()) {
+        switchEmotion('idle', false);
+      }
+    }, 500);
   }
 
   // ── Initialisation ─────────────────────────────────────────────────────────
@@ -225,6 +277,8 @@
       // Retry once after a short delay in case scripts loaded out-of-order
       setTimeout(patchSetState, 200);
     }
+
+    bindMicWatcher();
 
     // Handle autoplay policy
     document.addEventListener('click',      onFirstGesture, true);
