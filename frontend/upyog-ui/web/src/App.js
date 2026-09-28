@@ -184,8 +184,8 @@ initWSComponents();
 initCommonPTComponents();
 initBillsComponents();
 initNDCComponents();
-// initReportsComponents();
-// initCustomisationComponents();
+initReportsComponents();
+initCustomisationComponents();
 
 const moduleReducers = (initData) => ({
   pgr: PGRReducers(initData),

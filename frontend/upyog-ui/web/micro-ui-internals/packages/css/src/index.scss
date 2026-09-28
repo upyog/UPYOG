@@ -117,6 +117,7 @@
 @import "./common/newApplicationTimeline.scss";
 @import "./components/challanGeneration.scss";
 @import "./components/ndc.scss";
+@import "./components/LoginLayout.scss";
 @import "./components/geoLocationWithDigipin.scss";
 @import "./components/applicationDetailsContent.scss";
 
@@ -648,7 +649,8 @@ input[type="number"] {
   }
 }
 .employee-app-wrapper {
-  min-height: calc(100vh - 8em);
+  height: calc(100vh - 96px);
+  overflow: hidden;
 }
 
 .ws-custom-wrapper {
@@ -735,7 +737,7 @@ input[type="number"] {
 }
 
 .employee-app-wrapper{
-min-height: calc(100vh - 8em);
+  margin-top: 95px;
 }
 .submit-bar header{
   line-height: 2.0rem !important;

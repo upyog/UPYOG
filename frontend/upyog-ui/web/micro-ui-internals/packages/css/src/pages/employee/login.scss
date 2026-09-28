@@ -1,51 +1,57 @@
 .loginFormStyleEmployee {
+  width: 100%;
+  max-width: 450px;
+  margin: 0 auto;
   z-index: 10;
-  margin-top: 15px;
-  .employeeCard {
-    .submit-bar {
-      @apply w-full;
-      height: 2rem !important;
-    }
-    .employeeCard 
-      .submit-bar .submit-bar header
-      {
-        line-height: 2rem !important;
-        font-size: 16px;
-        
-      }
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+
+  .card-header,
+  .employee-card-sub-header,
+  .card-label,
+  .card-sub-header {
+    text-align: left;
+  }
+
+  .submit-bar {
+    @apply w-full;
+    height: 2rem !important;
+  }
+
+  .submit-bar header {
+    line-height: 2rem !important;
+    font-size: 16px;
   }
 }
-.banner .bannerCard{
+
+.banner .bannerCard {
   min-width: 420px !important;
   background-color: transparent;
 }
+
 .employeeForgotPassword .employeeCard .field .field-container .component-in-front {
-  border: 1px solid;
   border-right: none;
-  height: 32px !important;
-  margin-top: -16px !important;
   z-index: 999;
-  background-color:#ffffffeb;
+  background-color: #ffffffeb;
 }
+
 @screen dt {
   .employeeForgotPassword .employeeCard .field .field-container .component-in-front {
-    border: 1px solid black;
     border-right: none;
-    height: 32px !important;
-    margin-top: -16px !important;
     z-index: 999;
     background-color: #ffffffeb;
+  }
 
-  }
- .loginFormStyleEmployee .employeeCard, .banner .bannerCard{
+  .loginFormStyleEmployee,
+  .banner .bannerCard {
     min-width: 270px !important;
-   
-    background-color: #ffffffd6 !important
   }
-  .employeeForgotPassword .employeeCard, .employeeChangePassword .employeeCard{
-    max-width: 270px !important;
+
+  .employeeForgotPassword .employeeCard,
+  .employeeChangePassword .employeeCard {
     min-width: 270px !important;
-    background-color: #ffffffeb
+    background-color: #ffffffeb;
   }
 }
 
@@ -57,56 +63,72 @@
 .employeeForgotPassword .field-container {
   margin: 10px 0;
 }
+
 .employeeForgotPassword {
   .submit-bar {
     @apply w-full;
     background-color: #5a1166 !important;
   }
 }
+
 .employeeChangePassword .submit-bar {
   width: 100% !important;
 }
+
 .employeeChangePassword .card-text {
   text-align: center;
 }
+
 .employeeChangePassword .input-otp-wrap {
   text-align: center;
+  width: 100%;
+  display: flex;
 }
+
 .submit-bar {
   .submit-bar {
     @apply w-full;
   }
 }
+
 .loginFormStyleEmployee .bannerHeader p,
 .employeeForgotPassword .bannerHeader p,
 .employeeChangePassword .bannerHeader p {
   font-size: 19px;
 }
+
 .employeeCard .card-sub-header {
   font-size: 24px;
 }
-.loginFormStyleEmployee .employeeCard .card-label, .employeeForgotPassword .employeeCard .card-label{
+
+.loginFormStyleEmployee .card-label,
+.employeeForgotPassword .employeeCard .card-label {
   font-weight: 600 !important;
-  font-size: 14px !important;
+  font-size: 18px !important;
   line-height: 10px !important;
-  color: #0B0C0C;
+  color: #0b0c0c;
   z-index: 10 !important;
 }
+
 .banner .bannerHeader {
   margin-bottom: 20px;
 }
-.employeeCard .card-label{
+
+.employeeCard .card-label {
   font-weight: normal;
   font-size: 16px;
   line-height: 19px;
-  color: #0B0C0C;
+  color: #0b0c0c;
 }
-.profile-label-margin{
-   margin-top: 10px;
+
+.profile-label-margin {
+  margin-top: 10px;
 }
-.loginFormStyleEmployee .primary-label-btn{
+
+.loginFormStyleEmployee .primary-label-btn {
   font-size: 12px;
 }
+
 .employeeForgotPassword .employeeCard .card-label-desc {
   font-weight: normal;
   font-size: 16px;
@@ -114,147 +136,471 @@
   color: #505a5f;
   margin-top: 15px;
 }
+
 .employeeChangePassword .employeeCard .card-text {
   margin-bottom: 15px;
   font-size: 16px;
   color: #505a5f;
 }
-.employeeCard .card-label{
+
+.employeeCard .card-label {
   font-weight: 600 !important;
-  font-size: 14px !important;
+  font-size: 18px !important;
   line-height: 10px !important;
   color: #0b0c0c;
-  
+  margin-bottom: 6px;
 }
+
 @media screen and (max-width: 768px) {
   .employeeChangePassword .employeeCard .card-text {
     margin-top: 7px;
   }
+
   .employeeCard .card-sub-header {
     font-size: 18px;
   }
 }
+
 .employeeChangePassword .employeeCard .card-text-button {
   text-align: center !important;
   margin-bottom: 12px !important;
 }
+
 .employeeChangePassword .employeeCard .input-otp-wrap {
   margin-bottom: 10px;
 }
+
 .employee .loginContainer {
   padding-top: 0px !important;
 }
+
 .banner {
-  height: calc(100vh ) !important;
+  height: calc(100vh) !important;
 }
 
-.employeeChangePassword .employeeCard .field .field-container{
+.employeeChangePassword .employeeCard .field .field-container {
   margin-bottom: 24px;
 }
-.upyog-copyright-footer-web
-{
+
+.upyog-copyright-footer-web {
   display: none;
 }
-.employeeForgotPassword .employeeCard  .employee-card-sub-header, .employeeChangePassword .employeeCard  .employee-card-sub-header, .loginFormStyleEmployee .employeeCard .employee-card-sub-header{
+
+.employeeForgotPassword .employeeCard .employee-card-sub-header,
+.employeeChangePassword .employeeCard .employee-card-sub-header,
+.loginFormStyleEmployee .employee-card-sub-header {
   font-size: 24px !important;
   line-height: 28px !important;
   margin-bottom: 0px !important;
 }
-@media screen and (max-width : 768px){
-  .employeeForgotPassword .employeeCard  .employee-card-sub-header, .employeeChangePassword .employeeCard  .employee-card-sub-header, .loginFormStyleEmployee .employeeCard .employee-card-sub-header{
-    font-size: 18px !important;
-    line-height: 21px !important;
-    margin-bottom: 0px !important;
-    z-index: 10 !important;
-  }
-  .loginFormStyleEmployee .employeeCard, .banner .bannerCard{
-    min-width: 270px !important;
-    z-index: 10 !important;
-    background-color: #ffffffd6 !important;
-    margin-top: 0 !important;
-  }
-  .employeeForgotPassword .employeeCard, .employeeChangePassword .employeeCard{
-    max-width: 250px !important;
-    min-width: 250px !important;
-    margin-top: -50% !important;
-    background-color: #ffffffeb;
-  }
-}
-.employeeChangePassword .employeeCard .card-text{
-  margin-top: 18px !important;
-  margin-bottom: 20px !important;
-}
-.employeeBackbuttonAlign{
-  display: none;
-}
-.employee-select-wrap .select{
-height: 2.0rem !important;
-background-color: white !important;
 
-}
-.employee-select-wrap.login-city-dd {
-  .options-card{
-  max-height: 150px;
+@media screen and (max-width: 768px) {
+  .employee {
+
+    .employeeForgotPassword .employeeCard .employee-card-sub-header,
+    .employeeChangePassword .employeeCard .employee-card-sub-header,
+    .loginFormStyleEmployee .employee-card-sub-header {
+      font-size: 18px !important;
+      line-height: 21px !important;
+      margin-bottom: 0px !important;
+      z-index: 10 !important;
+    }
+
+    .loginFormStyleEmployee,
+    .banner .bannerCard {
+      min-width: 270px !important;
+      z-index: 10 !important;
+      margin-top: 0 !important;
+    }
+
+    .employeeForgotPassword .employeeCard,
+    .employeeChangePassword .employeeCard {
+      max-width: 250px !important;
+      min-width: 250px !important;
+      margin-top: -50% !important;
+      background-color: #ffffffeb;
+    }
   }
 }
-.banner .bannerCard, .loginFormStyleEmployee .employeeCard{
+
+.employee {
+  .employeeChangePassword .employeeCard .card-text {
+    margin-top: 18px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .employeeBackbuttonAlign {
+    display: none;
+  }
+
+  .employee-select-wrap .select {
+    height: 2rem !important;
+    background-color: white !important;
+
+    svg {
+      top: 12px;
+    }
+  }
+
+  .employee-select-wrap.login-city-dd {
+    .options-card {
+      max-height: 150px;
+    }
+
+    .select-active {
+      border: none;
+      height: 52px !important;
+
+      input {
+        left: 38px;
+      }
+
+      svg {
+        bottom: 16px;
+      }
+    }
+  }
+}
+
+.banner .bannerCard,
+.loginFormStyleEmployee {
   background-color: transparent;
 }
 
-@media screen and (max-width: 768px){
-  .employeeBackbuttonAlign{
+@media screen and (max-width: 768px) {
+  .employeeBackbuttonAlign {
     display: block;
     position: absolute;
     top: 20px;
     left: 20px;
   }
-  .banner{
+
+  .banner {
     padding-bottom: 40px;
-    height: 100vh !important;
+    // height: 100vh !important;
     z-index: 1;
   }
-  .topbar{
+
+  .topbar {
     background: white;
   }
-  .employee .loginContainer{
+
+  .employee .loginContainer {
     padding-top: 0px !important;
   }
-  .removeBottomMargin{
+
+  .removeBottomMargin {
     margin-bottom: 0px !important;
   }
+
   .employee-select-wrap.login-city-dd {
-    .options-card{
-    max-height: 160px;
+    .options-card {
+      max-height: 160px;
     }
   }
-  .banner .upyog-copyright-footer
-  {
+
+  .banner .upyog-copyright-footer {
     display: none;
   }
-  .banner .upyog-copyright-footer-web
-  {
+
+  .banner .upyog-copyright-footer-web {
     display: block;
   }
 }
-@media screen and (max-width:900px) {
 
-  .loginFormStyleEmployee .employeeForgotPassword
-  {
+@media screen and (max-width: 900px) {
+  .loginFormStyleEmployee .employeeForgotPassword {
     margin-top: -50% !important;
     background-color: #ffffffeb !important;
     z-index: 2;
   }
-  .psuedo-banner{
+
+  .psuedo-banner {
     font-size: 20px;
   }
-  .banner-slogan{
+
+  .banner-slogan {
     font-size: 14px;
   }
-  .loginFormStyleEmployee, .employeeForgotPassword{
+
+  .loginFormStyleEmployee,
+  .employeeForgotPassword {
     margin-top: -30% !important;
-   
   }
 }
-.employeeForgotPassword{
+
+.employeeForgotPassword {
   z-index: 2;
+}
+
+.citizen-login-panel__content .employeeForgotPassword,
+.citizen-login-panel__content .employeeChangePassword {
+  margin-top: 0 !important;
+  max-width: auto;
+}
+
+.citizen-login-panel__content .employeeForgotPassword .employeeCard,
+.citizen-login-panel__content .employeeChangePassword .employeeCard {
+  margin-top: 0 !important;
+  min-width: auto !important;
+}
+
+.citizen-login-panel__content .loginFormStyleEmployee,
+.citizen-login-panel__content .employeeForgotPassword .employeeCard,
+.citizen-login-panel__content .employeeChangePassword .employeeCard {
+  width: 100%;
+}
+
+.loginFormStyleEmployee .card-sub-header,
+.employeeForgotPassword .employeeCard .card-sub-header,
+.employeeChangePassword .employeeCard .card-sub-header {
+  font-size: 36px;
+  line-height: 44px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 10px;
+}
+
+.loginFormStyleEmployee .field .field-container,
+.employeeForgotPassword .employeeCard .field .field-container,
+.employeeChangePassword .employeeCard .field .field-container {
+  margin-bottom: 16px;
+}
+
+.loginFormStyleEmployee .field .field-container .text-input,
+.employeeForgotPassword .employeeCard .field .field-container .text-input,
+.employeeChangePassword .employeeCard .field .field-container .text-input {
+  min-height: 52px;
+  border: 1px solid #dfe3ea;
+  border-radius: 10px;
+
+  .employee-card-input {
+    border: 1px solid #dfe3ea;
+    border-radius: 8px;
+    margin-bottom: 0px !important;
+    height: 52px !important;
+  }
+}
+
+.loginFormStyleEmployee .submit-bar,
+.employeeForgotPassword .submit-bar,
+.employeeChangePassword .submit-bar {
+  min-height: 44px !important;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #6a4a91 0%, #3e285f 100%) !important;
+}
+
+.loginFormStyleEmployee .submit-bar header,
+.employeeForgotPassword .submit-bar header,
+.employeeChangePassword .submit-bar header {
+  line-height: 44px !important;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.loginFormStyleEmployee .primary-label-btn,
+.employeeForgotPassword .primary-label-btn,
+.employeeChangePassword .primary-label-btn {
+  margin-top: 14px !important;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 600;
+  color: #1f2a44;
+}
+
+.employee-login-language {
+  width: 100%;
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.employee-login-language-list {
+  list-style: none;
+  display: flex;
+  flex: 1;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+}
+
+.employee-login-language-list li {
+  flex: 1;
+  min-height: 44px;
+  padding: 6px 16px;
+  border: 1px solid #dfe3ea;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+}
+
+.employee-login-language-list li.is-selected {
+  color: #ffffff;
+  border-color: transparent;
+  background: linear-gradient(135deg, #6a4a91 0%, #3e285f 100%);
+}
+
+.employee-login-language-list li.is-selected img {
+  width: 14px;
+  height: 14px;
+}
+
+.employee-login-language-list .employee-login-language-search {
+  width: 44px;
+  min-width: 44px;
+  padding: 0;
+}
+
+.employee-login-language-list .employee-login-language-search img {
+  width: 18px;
+  height: 18px;
+}
+
+.employee-city-selection {
+  position: relative;
+}
+
+.employee-city-selection .employee-city-selection-icon {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.employee-city-selection .employee-city-selection-icon img {
+  width: 16px;
+  height: 16px;
+}
+
+.employee-city-selection .employee-select-wrap.login-city-dd .select {
+  min-height: 52px !important;
+  border: 1px solid #dfe3ea;
+  border-radius: 10px;
+  padding-left: 40px !important;
+}
+
+@media screen and (max-width: 768px) {
+
+  .loginFormStyleEmployee .card-sub-header,
+  .employeeForgotPassword .employeeCard .card-sub-header,
+  .employeeChangePassword .employeeCard .card-sub-header {
+    font-size: 28px;
+    line-height: 34px;
+  }
+
+  .employee-login-language-list {
+    flex-wrap: wrap;
+  }
+
+  .employee-login-language-list li {
+    flex: 1 1 110px;
+  }
+
+  .employee-login-language-list .employee-login-language-search {
+    flex: 0 0 44px;
+  }
+}
+
+.employee {
+  .login-hero {
+    .banner {
+      height: auto !important;
+      display: block;
+    }
+  }
+  .dashboard-body{
+    display: flex;
+
+    .employee-select-wrap {
+      margin-bottom: 0px;
+    }
+  }
+  .dropDown-v2 {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    margin-bottom: 100px;
+
+    .innder-dropdowwn {
+      display: flex;
+      width: 170px;
+      height: 25px;
+
+      .login-city-dd-v2 {
+        width: 100px;
+        margin: 0px 10px;
+
+        .select {
+          height: 25px !important;
+          border: 1px solid #4a4a4a;
+          border-radius: 8px;
+
+          svg {
+            top: -2px;
+            right: -7px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.employeeForgotPassword {
+  .forgetPassword {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border: 1px solid #dfe3ea;
+    border-radius: 8px;
+
+    .component-in-front {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border: none !important;
+      border-radius: 8px;
+      height: 52px !important;
+      margin-top: 0px !important;
+    }
+
+    .text-input {
+      border: none !important;
+
+      input {
+        border: none !important;
+      }
+    }
+  }
+
+  .forgetPasswordDropdown {
+    border-radius: 8px;
+    height: 52px;
+    background: #fff;
+    border: 1px solid #dfe3ea;
+
+    .select {
+      border: none;
+      height: 52px !important;
+    }
+
+    .select-active {
+      left: 0;
+      height: 52px;
+    }
+  }
 }

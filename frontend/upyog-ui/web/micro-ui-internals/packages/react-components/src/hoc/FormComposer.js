@@ -40,6 +40,7 @@ const FormComposer = (props) => {
   });
   const { t } = useTranslation();
   const formData = watch();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   useEffect(() => {
     const iseyeIconClicked = sessionStorage.getItem("eyeIconClicked");
@@ -75,12 +76,12 @@ const FormComposer = (props) => {
       case "time":
         // if (populators.defaultValue) setTimeout(setValue(populators?.name, populators.defaultValue));
         return (
-          <div className="field-container">
+          <div className={!populators?.customProps?.classes ? "field-container" : `field-container ${populators.customProps.classes}`}>
             {populators?.componentInFront ? (
               <span className={`component-in-front ${disable && "disabled"}`}>{populators.componentInFront}</span>
             ) : null}
             {(() => {
-              const { ref, ...rest } = register(populators.name, populators.validation);
+              const { ref = {}, ...rest } = register(populators.name, populators.validation) || {};
               return (
                 <TextInput
                   className="field"
@@ -225,30 +226,49 @@ const FormComposer = (props) => {
     }
   };
 
-  const titleStyle = { color: "#505A5F", fontWeight: "700", fontSize: "16px" };
+  const isEmployeeLoginCard = props?.cardClassName === "loginFormStyleEmployee";
+
+  const pathname = typeof window !== "undefined" ? window.location.pathname || "" : "";
+  const search = typeof window !== "undefined" ? window.location.search || "" : "";
+
+  const maskEmployeeMobileNumber = (mobileNumber) => {
+    const cleanedMobileNumber = (mobileNumber || "").replace(/\D/g, "");
+    if (!cleanedMobileNumber) return "XXXXXX0000";
+    const maskedLastFour = cleanedMobileNumber.slice(-4).padStart(4, "0");
+    return `XXXXXX${maskedLastFour}`;
+  };
+
+  const getEmployeeHeaderContent = () => {
+    if (pathname.includes("employee/user/forgot-password")) {
+      return {
+        header: "Forgot Password?",
+        subHeader: "All the communications regarding the application will be sent to this mobile number.",
+      };
+    }
+
+    if (pathname.includes("employee/user/change-password")) {
+      const mobileNumber = new URLSearchParams(search).get("mobile_number");
+      return {
+        header: "Reset Password",
+        subHeader: `Enter the OTP sent to ${maskEmployeeMobileNumber(mobileNumber)}`,
+      };
+    }
+
+    return {
+      header: "Login to UPYOG",
+      subHeader: "Use your registered details to continue.",
+    };
+  };
 
   const getCombinedComponent = (section) => {
-    if (section.head && section.subHead) {
+    if (isEmployeeLoginCard) {
+      const { header, subHeader } = getEmployeeHeaderContent();
       return (
-        <>
-          <CardSectionHeader style={props?.sectionHeadStyle ? props?.sectionHeadStyle : { margin: "5px 0px" }} id={section.headId}>
-            {t(section.head)}
-          </CardSectionHeader>
-          <CardSectionHeader style={titleStyle} id={`${section.headId}_DES`}>
-            {t(section.subHead)}
-          </CardSectionHeader>
-        </>
+        <div className="login-form-header">
+          <h2>{header}</h2>
+          <p>{subHeader}</p>
+        </div>
       );
-    } else if (section.head) {
-      return (
-        <>
-          <CardSectionHeader style={props?.sectionHeadStyle ? props?.sectionHeadStyle : {}} id={section.headId}>
-            {t(section.head)}
-          </CardSectionHeader>
-        </>
-      );
-    } else {
-      return <div></div>;
     }
   };
 
@@ -265,7 +285,7 @@ const FormComposer = (props) => {
                     <div style={field.isInsideBox ? getCombinedStyle(field?.placementinbox) : {}}>
                       {!field.withoutLabel && (
                         <CardLabel
-                          style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "8px" : "revert" }}
+                          style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "14px" : "revert" }}
                           className={field?.disable ? "disabled" : ""}
                         >
                           {t(field.label)}
@@ -342,13 +362,13 @@ const FormComposer = (props) => {
     <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)} id={props.formId} className={props.className}>
       <Card style={getCardStyles()} className={props?.cardClassName ? props.cardClassName : ""}>
         {!props.childrenAtTheBottom && props.children}
-        {props.heading && <CardSubHeader style={{ ...props.headingStyle }}> {props.heading} </CardSubHeader>}
-        {props.description && <CardLabelDesc className={"repos"}> {props.description} </CardLabelDesc>}
+        {!isEmployeeLoginCard && props.heading && <CardSubHeader style={{ ...props.headingStyle }}> {props.heading} </CardSubHeader>}
+        {/* {props.description && <CardLabelDesc className={"repos"}> {props.description} </CardLabelDesc>} */}
         {props.text && <CardText>{props.text}</CardText>}
         {formFields}
         {props.childrenAtTheBottom && props.children}
         {props.submitInForm && (
-          <SubmitBar label={t(props.label)} style={{ ...props?.buttonStyle }} submit="submit" disabled={isDisabled} className="w-full" />
+          <SubmitBar label={t(props.label)} style={{ ...props?.buttonStyle, color: "#fff" }} submit="submit" disabled={isDisabled} className="w-full" />
         )}
         {props.secondaryActionLabel && (
           <div className="primary-label-btn" style={{ margin: "20px auto 0 auto" }} onClick={onSecondayActionClick}>

@@ -2,7 +2,6 @@
   margin-top: -25px;
 
   .BannerWithSearch {
-    margin-bottom: 40px;
     width: 100%;
     @apply relative;
     .Search {
@@ -11,21 +10,22 @@
       @apply mx-md absolute;
     }
     img {
-      height: 33vw;
-      @apply w-full object-cover;
+      // height: 33vw;
+      // @apply w-full object-cover;
     }
   }
 
   .ServicesSection {
     @apply flex flex-wrap;
-    padding: 40px 15px 0 15px;
+    // padding: 40px 15px 0 15px;
   }
 
   @screen dt {
     .ServicesSection {
       @apply flex flex-wrap;
-      padding: 40px 15px 0 15px;
+      padding: 20px 0px 0 0px;
       width: 100%;
+      justify-content: space-between;
     }
   }
 
@@ -55,21 +55,184 @@
       width: 100%;
     }
   }
+
+  .headerBoxSection{
+    width: 100%;
+    margin-bottom: 28px;
+    .sectionTitle{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      h3{
+        margin: 0;
+        font-size: 20px;
+        line-height: 1.2;
+        font-weight: 600;
+        color: #1f1b2d;
+      }
+
+      button{
+        background: #fff;
+        border: none;
+        border-bottom: 2px solid #2b2b2b;
+        padding: 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: #2c2f36;
+        cursor: pointer;
+      }
+    }
+    .sectionBody{
+      display: grid;
+      gap: 16px;
+      width: 100%;
+
+      .buttonCard{
+        background: #ffffff;
+        border: 1px solid #D6CDE4;
+        border-radius: 6px;
+        padding: 18px 16px 14px;
+        cursor: pointer;
+        width: 100%;
+        min-height: 140px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: all 0.2s ease;
+
+        .serviceVarientIcon{
+          width: 44px;
+          height: 44px;
+          border-radius: 12px;
+          background: #efeaf7;
+          color: #4e3d77;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          font-size: 14px;
+          margin-bottom: 12px;
+        }
+        .serviceVarientsubTitle{
+          font-size: 15px;
+          font-weight: 700;
+          color: #1f1b2d;
+          line-height: 1.4;
+          margin-bottom: 4px;
+        }
+        .serviceVarientTitle{
+          font-size: 14px;
+          font-weight: 600;
+          color: #4e4a5d;
+          margin-bottom: 8px;
+        }
+      }
+    }
+  }
 }
 
 @media (min-width: 780px) {
   .SideBarStatic {
-    width: 219px;
+    width: 240px;
     background: #ffffff;
-    margin-top: -24px;
+    margin-top: 0px;
+    height: 100vh;
+    overflow-y: hidden;
+    flex-shrink: 0;
+    transition: width 0.3s ease-in-out;
+    .logo-design{
+      width: 150px;
+      margin: auto;
+      margin-Top: 20px;
+      transition: all 0.3s ease-in-out;
+    }
+    .drawer-desktop{
+      height: calc(100vh - 350px);
+      overflow-y: scroll;
+      transition: all 0.3s ease-in-out;
+      
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      .sidebar-list{
+        transition: width 0.3s ease-in-out;
+      }
+      .menu-label{
+        visibility: visible;
+        transition: width 0.3s ease-in-out;
+
+      }
+    }
+    .citizen-logout{
+      display: flex;
+      height: 50px;
+      width: 80%;
+      margin: auto;
+      border: 1px solid #DCD3EA;
+      border-radius: 10px;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease-in-out;
+      
+      &>button{
+        display: flex;
+        align-items: center;
+        &>span{
+          display: block;
+        }
+        &>span:first-child{
+          width: 18px;
+        }
+      }
+    }
+
+    &.SideBarStatic--collapsed {
+      width: 80px;
+      .logo-design{
+        width: inherit
+      }
+      .drawer-desktop {
+        height: calc(100vh - 250px);
+        overflow: hidden;
+        .sidebar-list{
+          padding-left: 25px;
+          width: 100%;
+        }
+        .sidebar-list.active{
+          border-radius: 0px
+        }
+        .menu-item .icon + .menu-label{
+          visibility: hidden;
+        }
+      }
+      .profile-section img{
+        width: 60px;
+        height: 60px;
+      }
+
+      .citizen-logout {
+        width: 70%;
+        
+        &>button {
+          &>span:not(:first-child) {
+            display: none;
+          }
+        }
+      }
+    }
   }
+
 }
 @media (max-width: 780px) {
   .SideBarStatic {
-    width: 219px;
+    width: 250px;
     background: #ffffff;
-    margin-top: -24px;
+    margin-top: 0px;
     display: none;
+    height: 100vh;
+    overflow-y: hidden;
   }
 }
 
@@ -83,9 +246,10 @@
 
 .moduleLinkHomePage {
   @media (min-width: 780px) {
-    width: calc(100% - 219px);
+    width: 96%;
+    margin: auto;
   }
-  margin-top: -25px;
+  margin-top: 15px;
   img {
     height: 33vw;
     background: linear-gradient(#000000,#000000);
@@ -119,17 +283,101 @@
 @screen dt {
   .HomePageWrapper {
     width: 100%;
+    margin: 25px;
     .BannerWithSearch {
-      margin-bottom: 56px;
       width: 100% !important;
+      .BannerBoard{
+        background-image: url(/images/dashboard-banner.jpg);
+        background-size: cover;
+        background-position: center;
+        width: 100%;
+        height: 325px;
+        padding: 20px 40px;
+        color: #fff;
+        border-radius: 10px;
+        h1{
+          font-size: 64px;
+          font-weight: 800;
+        }
+        .BannerSubheader{
+          font-size: 24px;
+          font-weight: 400;
+        }
+        span{
+          color: #fedd15;
+        }
+        .hero-stats{
+          display: inline-flex;
+          flex-direction: row;
+          width: 532px;
+          height: 72px;
+          background: #fff;
+          margin-top: 20px;
+          article{
+            align-items: center;
+            display: flex;
+            color: black;
+            flex-grow: 1;
+            border-radius: 10px;
+            color: rgba(95, 88, 117, 1);
+            .hero-stats__content .hero-stats__label{
+              font-size: 13px;
+            }
+            .hero-stats__content .hero-stats__count{
+              font-size: 22px;
+            }
+          }
+          .hero-stats__icon{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            margin: 0px 10px;
+            img{
+              width: 24px;
+            }
+          }
+          article:nth-child(1){
+            border-right: 1px solid rgba(240, 233, 247, 1);
+            .hero-stats__icon{
+              background: rgba(240, 233, 247, 1);
+            }
+            .hero-stats__count{
+              color: rgba(88, 79, 116, 1);
+            }
+          } 
+          article:nth-child(3){
+            border-right: 1px solid rgba(240, 233, 247, 1);
+            border-left: 1px solid rgba(240, 233, 247, 1);
+            .hero-stats__icon{
+              background: rgba(255, 241, 232, 1);
+            }
+            .hero-stats__count{
+              color: rgba(242, 138, 61, 1);
+            }
+          } 
+          article:nth-child(5){
+            border-right: 1px solid rgba(240, 233, 247, 1);
+            .hero-stats__icon{
+              background: rgba(253, 236, 236, 1);
+            }
+            .hero-stats__count{
+              color: rgba(216, 90, 90, 1);
+            }
+          } 
+            
+        }
+      }
       .Search {
         width: 100%;
         margin: 0;
         padding: 0 15px 0 15px;
       }
-      img {
-        height: 20vw;
-      }
+      // img {
+      //   height: 20vw;
+      // }
     }
 
     .WhatsAppBanner {
@@ -143,15 +391,16 @@
   }
   .moduleLinkHomePage {
     img {
-      min-width: 100vw;
+      width: 100%;
       height: 20vw;
     }
     h1 {
-      top: calc(10vw + 40px);
-      left: 15.8rem;
+      top: calc(8vw + 36px);
+      left: 280px;
     }
     .moduleLinkHomePageBackButton {
-      top: calc(10vw + 16px);
+      top: calc(7vw + 20px);
+      margin-left: 5px;
       @apply ml-md;
     }
   }

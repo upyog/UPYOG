@@ -13,7 +13,7 @@ const getTenants = (codes, tenants) => {
   return tenants.filter((tenant) => codes?.map?.((item) => item.code).includes(tenant.code));
 };
 
-export const AppModules = ({ stateCode, userType, modules, appTenants }) => {
+export const AppModules = ({ stateCode, userType, modules, appTenants, emp, setEmp }) => {
   const ComponentProvider = Digit.Contexts.ComponentProvider;
   const { path } = Digit.Hooks.useModuleBasePath();
   const location = useLocation();
@@ -90,8 +90,8 @@ return (
     <Routes>
       {appRoutes}
       <Route path="login" element={<Navigate to="/upyog-ui/employee/user/login" state={{ from: location.pathname + location.search }} replace />} />
-      <Route path="forgot-password" element={<ForgotPassword />} />
-      <Route path="change-password" element={<ChangePassword />} />
+      <Route path="forgot-password" element={<ForgotPassword  emp={emp} setEmp={setEmp}  />} />
+      <Route path="change-password" element={<ChangePassword  emp={emp} setEmp={setEmp}  />} />
       <Route path="*" element={<AppHome userType={userType} modules={modules} />} />
     </Routes>
   </div>

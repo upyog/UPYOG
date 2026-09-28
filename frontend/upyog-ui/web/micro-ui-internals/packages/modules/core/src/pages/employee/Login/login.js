@@ -1,9 +1,6 @@
-import { BackButton, Dropdown, FormComposer, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { Dropdown, FormComposer, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { Controller } from "react-hook-form";
-import Background from "../../../components/Background";
-import Header from "../../../components/Header";
 
 /* set employee details to enable backward compatiable */
 const setEmployeeDetail = (userObject, token) => {
@@ -19,19 +16,25 @@ const setEmployeeDetail = (userObject, token) => {
   localStorage.setItem("Employee.user-info", JSON.stringify(userObject));
 };
 
-const Login = ({ config: propsConfig, t, isDisabled }) => {
+const Login = ({ layout, config: propsConfig, t, isDisabled, emp, setEmp }) => {
   const { data: cities, isLoading } = Digit.Hooks.useTenants();
   const { data: storeData, isLoading: isStoreLoading } = Digit.Hooks.useStore.getInitData();
-  const { stateInfo } = storeData || {};
+  const { stateInfo, languages } = storeData || {};
   const [user, setUser] = useState(null);
   const [showToast, setShowToast] = useState(null);
   const [disable, setDisable] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState(Digit.StoreData.getCurrentLanguage() || "en_IN");
+  const { isEmployeeV2 = false } = layout?.loginUI
 
   const navigate = Digit.Hooks.useCustomNavigate();
   // const getUserType = () => "EMPLOYEE" || Digit.UserService.getType();
-  let   sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
-  const pdfUrl = "https://pg-egov-assets.s3.ap-south-1.amazonaws.com/Upyog+Code+and+Copyright+License_v1.pdf";
-  
+
+  const handleLanguageSelection = (language) => {
+    Digit.LocalizationService.changeLanguage(language.value, stateInfo?.code);
+    setSelectedLanguage(language.value);
+    setEmp({ ...emp, language: language })
+  };
+
   useEffect(() => {
     if (!user) {
       return;
@@ -49,7 +52,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
     }
 
     /*  RAIN-6489 Logic to navigate to National DSS home incase user has only one role [NATADMIN]*/
-    if (user?.info?.roles && user?.info?.roles?.length > 0 &&  user?.info?.roles?.every((e) => e.code === "NATADMIN")) {
+    if (user?.info?.roles && user?.info?.roles?.length > 0 && user?.info?.roles?.every((e) => e.code === "NATADMIN")) {
       redirectPath = "/upyog-ui/employee/dss/landing/NURT_DASHBOARD";
     }
     /*  RAIN-6489 Logic to navigate to National DSS home incase user has only one role [NATADMIN]*/
@@ -61,27 +64,30 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   }, [user]);
 
   const onLogin = async (data) => {
-    if (!data.city) {
-      alert("Please Select City!");
-      return;
-    }
-    setDisable(true);
-console.log("data",data)
-    const requestData = {
-      ...data,
-      userType: "EMPLOYEE",
-    };
-    requestData.tenantId = data.city.code;
-    delete requestData.city;
-    try {
-      const { UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
-      Digit.SessionStorage.set("Employee.tenantId", info?.tenantId);
-      setUser({ info, ...tokens });
-    } catch (err) {
-      setShowToast(err?.response?.data?.error_description || "Invalid login credentials!");
-      setTimeout(closeToast, 5000);
-    }
-    setDisable(false);
+    data = emp
+    navigate("/upyog-ui/employee/dashboard");
+
+    // if (!data.city) {
+    //   alert("Please Select City!");
+    //   return;
+    // }
+    // setDisable(true);
+    // const requestData = {
+    //   ...data,
+    //   userType: "EMPLOYEE",
+    // };
+    // requestData.tenantId = data.city.code;
+    // requestData.language = data?.language?.value || languages[0]?.value;
+    // delete requestData.city;
+    // try {
+    //   const { UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
+    //   Digit.SessionStorage.set("Employee.tenantId", info?.tenantId);
+    //   setUser({ info, ...tokens });
+    // } catch (err) {
+    //   setShowToast(err?.response?.data?.error_description || "Invalid login credentials!");
+    //   setTimeout(closeToast, 5000);
+    // }
+    // setDisable(false);
   };
 
   const closeToast = () => {
@@ -94,55 +100,122 @@ console.log("data",data)
   };
 
   const [userId, password, city] = propsConfig.inputs;
-  const config = [
+  let config = [
     {
       body: [
         {
-          label: t(userId.label),
-          type: userId.type,
+          label: t(city.label),
+          type: city.type,
           populators: {
-            name: userId.name,
+            name: city.name,
+            component: ({ onChange, value, setValue }) => (
+              <div className="employee-city-selection">
+                <span className="employee-city-selection-icon" aria-hidden="true">
+                  <img src={"/images/search.svg"} alt="search icon" />
+                </span>
+                <Dropdown
+                  option={cities}
+                  className="login-city-dd"
+                  optionKey="i18nKey"
+                  select={(d) => {
+                    setEmp({ ...emp, city: d })
+                    if (typeof onChange === "function") {
+                      onChange(d);
+                      return;
+                    }
+                    setValue?.(city.name, d);
+                  }}
+                  selected={value}
+                  t={t}
+                  placeholder={"Search your city"}
+                />
+              </div>
+            ),
           },
           isMandatory: true,
         },
-        {
-          label: t(password.label),
-          type: password.type,
-          populators: {
-            name: password.name,
-          },
-          isMandatory: true,
-        },
-{
-  label: t(city.label),
-  type: city.type,
-  populators: {
-    name: city.name,
-    component: ({ onChange, value }) => (
-      <Dropdown
-        option={cities}
-        className="login-city-dd"
-        optionKey="i18nKey"
-        select={(d) => onChange(d)}   
-        value={value}                
-        t={t}
-      />
-    ),
-  },
-  isMandatory: true,
-}
       ],
     },
   ];
+  if (!isEmployeeV2) {
+    config = config.map(item => ({
+      ...item, body: [...item.body,
+
+      {
+        label: "Select Language",
+        type: "custom",
+        populators: {
+          name: "language",
+          component: () => (
+            <div className="employee-login-language">
+              <ul className="employee-login-language-list">
+                {languages?.map((language) => (
+                  <li
+                    key={language.label}
+                    className={selectedLanguage === language.value ? "is-selected" : ""}
+                    onClick={() => handleLanguageSelection(language)}
+                  >
+                    {selectedLanguage === language.value ? <img src={"/images/check.svg"} alt="check icon" /> : null}
+                    <span>{language.label}</span>
+                  </li>
+                ))}
+                <li className="employee-login-language-search">
+                  <img src={"/images/search.svg"} alt="search icon" />
+                </li>
+              </ul>
+            </div>
+          ),
+        },
+      }
+      ]
+    }));
+  }
+  config = config.map(item => ({
+    ...item, body: [...item.body,
+    {
+      label: t(userId.label),
+      type: userId.type,
+      populators: {
+        name: userId.name,
+        onChange: (e) => setEmp({ ...emp, [userId.name]: e.target.value })
+      },
+      isMandatory: true,
+    },
+    {
+      label: t(password.label),
+      type: password.type,
+      populators: {
+        name: password.name,
+        onChange: (e) => setEmp({ ...emp, [password.name]: e.target.value })
+      },
+      isMandatory: true,
+    }]
+  }))
+  const footer = showToast && <Toast error={true} label={showToast} onClose={closeToast} />;
 
   return isLoading || isStoreLoading ? (
     <Loader />
   ) : (
-    <Background>
-      <div className="employeeBackbuttonAlign">
-        <BackButton variant="white" style={{ borderBottom: "none" }} />
-      </div>
-
+    <>
+      {footer}
+      {isEmployeeV2 && <div className="dropDown-v2">
+        <div className="innder-dropdowwn">
+          <Dropdown
+            option={languages}
+            className="login-city-dd-v2"
+            optionKey="label"
+            select={(d) => {
+              setEmp({ ...emp, language: d })
+            }}
+            // selected={value}
+            t={t}
+            placeholder={"language"}
+            selected={languages[0]}
+            icon={"🌎"}
+          />
+          🌎<button>Help</button>
+        </div>
+      </div>}
       <FormComposer
         onSubmit={onLogin}
         isDisabled={isDisabled || disable}
@@ -155,30 +228,13 @@ console.log("data",data)
         onSecondayActionClick={onForgotPassword}
         heading={propsConfig.texts.header}
         headingStyle={{ textAlign: "center" }}
-        cardStyle={{ margin: "auto", minWidth: "408px" }}
-        className="loginFormStyleEmployee"
-        buttonStyle={{ maxWidth: "100%", width: "100%" ,backgroundColor:"#5a1166"}}
-      >
-        {/* <Header /> */}
-      </FormComposer>
-      {showToast && <Toast error={true} label={t(showToast)} onClose={closeToast} />}
-      <div style={{ width: '100%', position: 'fixed', bottom: 0,backgroundColor:"white",textAlign:"center" }}>
-        <div style={{ display: 'flex', justifyContent: 'center', color:"black" }}>
-          {/* <span style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('https://www.digit.org/', '_blank').focus();}} >Powered by DIGIT</span>
-          <span style={{ margin: "0 10px" ,fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px"}}>|</span> */}
-          <a style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a>
-
-          <span  className="upyog-copyright-footer" style={{ margin: "0 10px",fontSize:"12px" }} >|</span>
-          <span  className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
-          
-          {/* <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a> */}
-
-        </div>
-        <div className="upyog-copyright-footer-web">
-          <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"14px":"16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
-          </div>
-      </div>
-    </Background>
+        cardStyle={{ margin: "0 auto", width: "100%" }}
+        cardClassName="loginFormStyleEmployee"
+        buttonStyle={{ maxWidth: "100%", width: "100%", backgroundColor: "#5a1166" }}
+        enp={emp}
+        setEmp={setEmp}
+      />
+    </>
   );
 };
 

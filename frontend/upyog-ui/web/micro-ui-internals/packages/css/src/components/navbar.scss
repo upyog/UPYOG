@@ -1,12 +1,105 @@
 .navbar {
-  @apply text-white bg-secondary p-md w-full;
+  width: calc(100vw - 240px);
+  height: 84px;
   position: fixed;
   z-index: 9999;
+  background-color: #ffffff;
+  margin-left: 1px;
+  transition: width 0.3s ease-in-out;
+  .center-container.back-wrapper{
+    display: flex;
+    align-items: center;
+    height: inherit;
+    justify-content: space-between;
+    gap: 25px;
+  }
+  .hamburger-span{
+    margin-top: 3px;
+    svg{
+      width: 32px;
+      height: 32px;
+      margin-left: 20px;
+      path{
+        fill: #000
+      }
+    } 
+  }
+  .location-button{
+    margin-left: 10px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    border: 1.5px solid rgba(220, 211, 234, 1);
+    border-radius: 10px;
 
-  img {
-    display: inline-block;
-    min-width: 78px;
-    height: 24px;
+    img{
+      margin-left: 10px;
+      height: 14px;
+    }
+    span{
+      margin-left: 15px;
+      margin-right: 15px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+  }
+  .searchbar-wrapper{
+    min-width: 43%;
+    .search-box{
+      display: flex;
+      align-items: center;
+      height: 40px;
+      width: auto;
+      border: 1.5px solid rgba(220, 211, 234, 1);  
+      border-radius: 8px;
+    }
+    .search-box img{
+      width: 16px;
+      margin: 0px 5px;
+      cursor: pointer;
+    }
+    .search-box input{
+      flex: 1;    
+      padding: 8px 12px;
+      outline: none;
+      font-size: 14px;
+    }
+  }
+  .nav-lang-change{
+    min-width: 90px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid rgba(220, 211, 234, 1);
+    border-radius: 8px;
+    font-size: 14px;
+  }
+  .userDropdown{
+    display: flex;
+    align-items: center;
+    max-width: 210px;
+    min-width: 140px;
+    margin: 0px 10px;
+    img{
+      height: 40px;
+      width: 40px;
+      margin:  0px 5px;
+      border-radius: 50%;
+    }
+    svg{
+      fill: #000;
+    }
+  }
+  .EventNotificationWrapper{
+    display: flex;
+    align-items: center;
+    
+    p{
+      font-size: 10px;
+      color: #fff;
+      font-weight: 700;
+    }
   }
   .nav {
     display: flex;
@@ -26,6 +119,10 @@
   }
 }
 
+.navbar-expanded {
+  width: calc(100vw - 80px);
+}
+
 .img-circle {
   border-radius: 50%;
 }
@@ -35,12 +132,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 30px;
+  padding-top: 15px;
   background-color: #ffffff;
 
   img {
-    width: 89px;
-    height: 88px;
+    width: 80px;
+    height: 80px;
     margin: 0px auto 16px;
   }
 
@@ -52,15 +149,19 @@
       .label-text {
         letter-spacing: 0.6px;
         font-weight: 700;
-        font-size: 18px;
+        font-size: 16px;
         color: #0b0c0c;
+      }
+    }
+    &.loc-Profile {
+      .label-text {
+        font-size: 13px;
+        font-weight: 400px;
+        color: #5f5c62;
       }
     }
   }
   .profile-divider {
-    border-top: 1px solid #d6d5d4;
-    margin-left: 20px;
-    margin-right: 20px;
     width: 90%;
     margin-top: 1rem;
   }
@@ -79,7 +180,7 @@
     margin: 0px;
     padding: 0px;
     outline: none;
-    font-size: 16px;
+    font-size: 13px;
     position: relative;
     color: rgb(95, 92, 98);
     line-height: 48px;
@@ -111,7 +212,7 @@
     padding-right: 16px;
     padding-left: 16px;
     &.active {
-      border-left: 5px solid #a82227;
+      background: #F0E9F7;
       .menu-label {
         color: #a82227;
       }
@@ -185,7 +286,7 @@
     margin: 0px;
     padding: 0px;
     outline: none;
-    font-size: 16px;
+    font-size: 13px;
     position: relative;
     color: rgb(95, 92, 98);
     line-height: 48px;
@@ -216,16 +317,20 @@
   }
   @media (min-width: 780px) {
     .sidebar-list {
+      height: 42px;
       padding-right: 16px;
       padding-left: 16px;
+      width: 90%;
+      margin: auto;
       &.active {
-        border-left: 5px solid #a82227;
-        padding-left: 11px;
+        background: #F0E9F7;
+        border-radius: 5px;
+        border-left: 3px solid #584F74;
         .menu-label {
-          color: #a82227;
+          color: #584F74;
         }
         .icon {
-          fill: #a82227;
+          fill: #584F74;
         }
       }
 
