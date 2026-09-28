@@ -87,10 +87,17 @@ async function handlePhoneLogin() {
   if (errorText) errorText.style.display = "none";
 
   try {
+    const activeBaseUrl = getActiveBaseUrl();
     const response = await fetch(`${API_URL}/api/send-otp`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ mobile: phone })
+      headers: {
+        "Content-Type": "application/json",
+        ...(activeBaseUrl ? { "X-UPYOG-Base-Url": activeBaseUrl } : {})
+      },
+      body: JSON.stringify({
+        mobile: phone,
+        base_url: activeBaseUrl || undefined
+      })
     });
     const data = await response.json();
     let errorMsg = null;
@@ -147,10 +154,18 @@ async function handleOtpVerify() {
   if (errorText) errorText.style.display = "none";
 
   try {
+    const activeBaseUrl = getActiveBaseUrl();
     const response = await fetch(`${API_URL}/api/verify-otp`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ mobile: phone, otp: otp })
+      headers: {
+        "Content-Type": "application/json",
+        ...(activeBaseUrl ? { "X-UPYOG-Base-Url": activeBaseUrl } : {})
+      },
+      body: JSON.stringify({
+        mobile: phone,
+        otp: otp,
+        base_url: activeBaseUrl || undefined
+      })
     });
     if (!response.ok) {
       const errData = await response.json().catch(() => ({}));
@@ -298,8 +313,62 @@ if (window.location.pathname.includes('/upyog-voice-bot')) {
 }
 
 let NIAUTT_REQUEST_INFO = {};
+
+function getActiveBaseUrl() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const customBaseUrl = params.get("base_url") || params.get("baseUrl");
+    if (customBaseUrl) {
+      sessionStorage.setItem("upyog_base_url", customBaseUrl);
+      return customBaseUrl;
+    }
+    const envParam = (params.get("env") || "").toLowerCase().trim();
+    if (envParam === "sandbox") {
+      sessionStorage.setItem("upyog_base_url", "https://upyog-sandbox.niua.org");
+      return "https://upyog-sandbox.niua.org";
+    }
+    if (envParam === "production" || envParam === "prod") {
+      sessionStorage.setItem("upyog_base_url", "https://upyog.niua.org");
+      return "https://upyog.niua.org";
+    }
+    if (envParam === "niuatt" || envParam === "test") {
+      sessionStorage.setItem("upyog_base_url", "https://niuatt.niua.in");
+      return "https://niuatt.niua.in";
+    }
+    if (envParam === "local" || envParam === "localhost") {
+      sessionStorage.setItem("upyog_base_url", "http://localhost:8080");
+      return "http://localhost:8080";
+    }
+  } catch (e) {
+    // Ignore URL parameter parsing errors
+  }
+
+  let b = sessionStorage.getItem("upyog_base_url") || sessionStorage.getItem("upyog_parent_origin");
+  if (!b) {
+    const origin = window.location.origin;
+    if (origin.includes("niuatt.niua.in")) b = "https://niuatt.niua.in";
+    else if (origin.includes("upyog-sandbox.niua.org")) b = "https://upyog-sandbox.niua.org";
+    else if (origin.includes("upyog.niua.org")) b = "https://upyog.niua.org";
+    else if (document.referrer) {
+      if (document.referrer.includes("niuatt.niua.in")) b = "https://niuatt.niua.in";
+      else if (document.referrer.includes("upyog-sandbox.niua.org")) b = "https://upyog-sandbox.niua.org";
+      else if (document.referrer.includes("upyog.niua.org")) b = "https://upyog.niua.org";
+    }
+  }
+  return b || "";
+}
+
 function handleNiuattMessage(event) {
   console.log('[UPYOG POST_MESSAGE] Received window postMessage', { data: event.data, origin: event.origin });
+
+  // Store parent origin / base_url dynamically if from a valid web origin
+  if (event.origin && (event.origin.startsWith("http://") || event.origin.startsWith("https://"))) {
+    sessionStorage.setItem("upyog_parent_origin", event.origin);
+  }
+  const detectedUrl = event.data?.baseUrl || event.data?.RequestInfo?.baseUrl || event.data?.base_url || event.data?.RequestInfo?.base_url;
+  if (detectedUrl) {
+    sessionStorage.setItem("upyog_base_url", detectedUrl);
+  }
 
   const payload = event.data?.RequestInfo || event.data?.requestInfo || event.data;
   if (payload && (payload.authToken || payload.userInfo || event.data?.type === "INIT_DATA")) {
@@ -344,6 +413,10 @@ window.addEventListener("message", handleNiuattMessage);
 
 const getRequestInfo = () => {
   const info = { ...NIAUTT_REQUEST_INFO, msgId: `${Date.now()}|en_IN` };
+  const activeBaseUrl = getActiveBaseUrl();
+  if (activeBaseUrl) {
+    info.baseUrl = activeBaseUrl;
+  }
   const savedToken = localStorage.getItem("upyog_auth_token");
   if (savedToken) {
     info.authToken = savedToken;
@@ -965,16 +1038,21 @@ async function sendQuery(transcript, file_name = null, file_data = null, display
   currentFetch = new AbortController();
 
   try {
+    const activeBaseUrl = getActiveBaseUrl();
     const response = await fetch(`${API_URL}/chat`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(activeBaseUrl ? { 'X-UPYOG-Base-Url': activeBaseUrl } : {})
+      },
       body: JSON.stringify({
         RequestInfo: getRequestInfo(),
         query: transcript || '',
         session_id: activeSessionId,
         auth_token: localStorage.getItem("upyog_auth_token"),
         file_name: file_name,
-        file_data: file_data
+        file_data: file_data,
+        base_url: activeBaseUrl || undefined
       }),
       signal: currentFetch.signal
     });

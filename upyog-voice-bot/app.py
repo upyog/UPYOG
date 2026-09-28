@@ -25,6 +25,13 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 CORS(app)
 
+from clients.upyog_client import resolve_and_set_request_environment
+
+@app.before_request
+def setup_request_environment():
+    """Dynamically detects the parent UPYOG environment from request headers/origin/payload."""
+    resolve_and_set_request_environment()
+
 # Register Route Blueprints
 from routes.static_routes import static_bp
 app.register_blueprint(static_bp)

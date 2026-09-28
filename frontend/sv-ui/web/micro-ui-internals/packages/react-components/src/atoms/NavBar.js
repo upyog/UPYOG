@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import SubMenu from "./SubMenu";
@@ -72,10 +72,15 @@ const NavBar = ({ open, toggleSidebar, profileItem, menuItems, onClose, Footer, 
   const { t } = useTranslation();
   Digit.Hooks.useClickOutside(node, open ? onClose : null, open);
 
-  if(isSideBarScroll &&  !Digit.clikOusideFired)
-  {
-    document.getElementById("sideBarMenu").scrollTo(0,0);
-  }
+  /**
+   * Safely scroll sideBarMenu to top after render when isSideBarScroll changes
+   * without causing null reference errors.
+   */
+  useEffect(() => {
+    if (isSideBarScroll && !Digit.clikOusideFired) {
+      document.getElementById("sideBarMenu")?.scrollTo?.(0, 0);
+    }
+  }, [isSideBarScroll, open]);
 
   const MenuItem = ({ item }) => {
     let itemComponent;

@@ -163,3 +163,10 @@ backend:
       maxConns: 30
       circuitThreshold: 5
       circuitTimeout: 30s
+    employee-dashboard:
+      baseUrl: "http://localhost:8088"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s
+

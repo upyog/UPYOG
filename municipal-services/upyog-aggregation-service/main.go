@@ -93,13 +93,14 @@ func main() {
 
 	// One client per backend service, matching the entries in
 	// backend.services in the application config.
-	inboxClient       := newServiceClient("inbox", "inbox")
-	billingClient     := newServiceClient("billing", "billing")
-	userEventClient   := newServiceClient("user-event", "egov-user-event")
-	advertisementClient := newServiceClient("advertisement", "advertisement-service")
-	draftClient       := newServiceClient("draft", "upyog-draft-service")
-	workflowClient    := newServiceClient("workflow", "egov-workflow-v2")
-	chbClient         := newServiceClient("chb", "chb-services")
+	inboxClient             := newServiceClient("inbox", "inbox")
+	billingClient           := newServiceClient("billing", "billing")
+	userEventClient         := newServiceClient("user-event", "egov-user-event")
+	advertisementClient     := newServiceClient("advertisement", "advertisement-service")
+	draftClient             := newServiceClient("draft", "upyog-draft-service")
+	workflowClient          := newServiceClient("workflow", "egov-workflow-v2")
+	chbClient               := newServiceClient("chb", "chb-services")
+	employeeDashboardClient := newServiceClient("employee-dashboard", "employee-dashboard")
 
 	cacheTTL := cfg.Providers.CacheTTL
 	reg.Register(providers.NewQuickSummaryProvider(inboxClient, billingClient, draftClient, workflowClient, advertisementClient, chbClient, c, log, m, cacheTTL, cfg.Providers.CompletedServiceStatuses))
@@ -122,6 +123,7 @@ func main() {
 
 	exec := executor.NewExecutor(reg, log, m, cfg.Providers.DefaultTimeout, providerTimeouts)
 	eng := engine.NewEngine(exec, reg, log, m)
+	empEng := engine.NewEmployeeEngine(inboxClient, employeeDashboardClient, workflowClient, log, m)
 
 	// Auth.
 	jwtValidator := auth.NewJWTValidator(cfg.Auth.Issuer, cfg.Auth.Audience, cfg.Auth.TokenExpLeeway)
@@ -129,14 +131,16 @@ func main() {
 
 	// Router.
 	router := api.SetupRouter(api.RouterConfig{
-		Engine:       eng,
-		Logger:       log,
-		Metrics:      m,
-		JWTValidator: jwtValidator,
-		Authorizer:   authorizer,
-		Config:       cfg,
-		Cache:        c,
+		Engine:         eng,
+		EmployeeEngine: empEng,
+		Logger:         log,
+		Metrics:        m,
+		JWTValidator:   jwtValidator,
+		Authorizer:     authorizer,
+		Config:         cfg,
+		Cache:          c,
 	})
+
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", cfg.Server.Port),

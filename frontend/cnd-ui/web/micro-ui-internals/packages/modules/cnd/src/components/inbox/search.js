@@ -8,8 +8,7 @@ import {
   ActionBar,
   CloseSvg,
   DatePicker,
-  MobileNumber,
-  CardLabelError
+  MobileNumber
 } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { cndStyles } from "../../utils/cndStyles";
@@ -137,18 +136,19 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                 ))}
 
               {type === "desktop" && !mobileView && (
-                <div className="search-submit-wrapper cnd-search-wrapper">
+                <div style={cndStyles.searchWrapper} className="search-submit-wrapper">
                   <SubmitBar
-                    className="submit-bar-search cnd-search-submit-bar"
+                    className="submit-bar-search"
                     label={t("ES_COMMON_SEARCH")}
                     disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
+                    style={cndStyles.searchSubmitBar}
                     submit
                   />
                   {!isInboxPage && <div>{clearAll()}</div>}
                 </div>
               )}
-              {isInboxPage && (
-                <div className="input-fields cnd-inbox-clear-btn">
+            {isInboxPage && (
+                <div style={cndStyles.inboxClearButton} className="input-fields">
                   <div>{clearAll()}</div>
                 </div>
               )}
@@ -157,10 +157,10 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
         </div>
         {(type === "mobile" || mobileView) && (
           <ActionBar className="clear-search-container">
-            <button className="clear-search cnd-submit-bar-flex">
+            <button className="clear-search" style={cndStyles.submitBarFlex}>
               {clearAll(mobileView)}
             </button>
-            <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} className="cnd-submit-bar-flex" submit={true} />
+            <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} style={cndStyles.submitBarFlex} submit={true} />
           </ActionBar>
         )}
       </React.Fragment>

@@ -30,6 +30,9 @@ from clients.upyog_client import (
     pgr_create_complaint,
     pgr_search_complaints_raw,
     pgr_search_complaints,
+    get_current_base_url,
+    get_current_environment_config,
+    resolve_environment,
     llm,
 )
 
@@ -58,6 +61,9 @@ __all__ = [
     "pgr_create_complaint",
     "pgr_search_complaints_raw",
     "pgr_search_complaints",
+    "get_current_base_url",
+    "get_current_environment_config",
+    "resolve_environment",
     "llm",
 ]
 

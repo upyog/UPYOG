@@ -1065,7 +1065,7 @@ def chat():
 
 @chat_bp.after_app_request
 def log_chat_to_redis(response):
-    if request.path not in ["/chat", "/upyog-voice-bot/chat"]:
+    if not request.path.endswith("/chat"):
         return response
         
     try:
@@ -1113,6 +1113,7 @@ GET requests return a health check response for Kubernetes liveness probes.
 """
 @chat_bp.route("/stream", methods=["GET", "POST"])
 @chat_bp.route("/upyog-voice-bot/stream", methods=["GET", "POST"])
+@chat_bp.route("/upyog-voice/stream", methods=["GET", "POST"])
 def stream():
     if request.method == "GET":
         logger.info("[ENDPOINT /stream GET] Health check ping")
@@ -1157,6 +1158,7 @@ Two route aliases:
 """
 @chat_bp.route("/stop", methods=["POST"])
 @chat_bp.route("/upyog-voice-bot/stop", methods=["POST"])
+@chat_bp.route("/upyog-voice/stop", methods=["POST"])
 def stop():
     """Stop endpoint - called when user barges in."""
     from services.voice_service import stop_generation

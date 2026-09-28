@@ -175,3 +175,10 @@ backend:
       maxConns: 30
       circuitThreshold: 5
       circuitTimeout: 30s
+    employee-dashboard:
+      baseUrl: "http://employee-dashboard.egov:8080"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s
+

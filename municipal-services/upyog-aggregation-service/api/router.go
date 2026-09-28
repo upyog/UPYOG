@@ -19,8 +19,11 @@ import (
 type RouterConfig struct {
 	// Engine is the aggregation engine that orchestrates provider execution.
 	Engine *engine.Engine
+	// EmployeeEngine orchestrates employee aggregation requests.
+	EmployeeEngine *engine.EmployeeEngine
 	// Logger is the structured logger instance.
 	Logger *logger.Logger
+
 	// Metrics holds the registered Prometheus metrics.
 	Metrics *metrics.Metrics
 	// JWTValidator validates and parses JWT tokens.
@@ -98,7 +101,13 @@ func SetupRouter(cfg RouterConfig) *gin.Engine {
 	{
 		aggregateHandler := NewAggregateHandler(cfg.Engine, cfg.Logger)
 		v1.POST("/aggregate", aggregateHandler.Handle)
+
+		if cfg.EmployeeEngine != nil {
+			empHandler := NewEmployeeAggregateHandler(cfg.EmployeeEngine, cfg.Logger)
+			v1.POST("/employee/aggregate", empHandler.Handle)
+		}
 	}
+
 
 	return r
 }
