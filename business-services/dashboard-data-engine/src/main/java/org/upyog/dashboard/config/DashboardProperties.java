@@ -153,6 +153,37 @@ public class DashboardProperties {
     @Value("${dashboard-data.legacy.upload-mode}")
     private String legacyUploadMode;
 
+    // Generic delimited file configuration (e.g. .psv, .csv, .txt)
+    @Value("${dashboard-data.delimited-file.enabled:${dashboard-data.pipe-file.enabled:false}}")
+    private boolean delimitedFileEnabled;
+
+    @Value("${dashboard-data.delimited-file.delimiter:${dashboard-data.pipe-file.delimiter:|}}")
+    private String fileDelimiter;
+
+    @Value("${dashboard-data.delimited-file.file-extension:.psv}")
+    private String delimitedFileExtension;
+
+    @Value("${dashboard-data.delimited-file.keep-file:${dashboard-data.pipe-file.keep-file:false}}")
+    private boolean delimitedKeepFile;
+
+    /**
+     * Legacy alias getter returning whether flat delimited file generation is enabled.
+     *
+     * @return true if delimited file generation is enabled
+     */
+    public boolean isPipeFileEnabled() {
+        return delimitedFileEnabled;
+    }
+
+    /**
+     * Legacy alias getter returning the configured dataset field delimiter.
+     *
+     * @return delimiter character string
+     */
+    public String getPipeFileDelimiter() {
+        return fileDelimiter;
+    }
+
     /**
      * Resolves the effective upload mode strategy for daily incremental ingestion batches.
      * <p>

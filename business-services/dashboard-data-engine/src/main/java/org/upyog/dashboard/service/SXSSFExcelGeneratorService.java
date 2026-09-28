@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.upyog.dashboard.common.constants.DashboardConstants;
 import org.upyog.dashboard.common.constants.Module;
+import org.upyog.dashboard.config.DashboardProperties;
 import org.upyog.dashboard.exception.ValidationException;
 import org.upyog.dashboard.model.DashboardData;
 import org.upyog.dashboard.model.DashboardPayload;
@@ -50,12 +51,42 @@ public class SXSSFExcelGeneratorService {
     @Autowired(required = false)
     private OAuthTokenService oAuthTokenService;
 
+    @Autowired(required = false)
+    private DelimitedFileGeneratorService delimitedFileGeneratorService;
+
+    @Autowired(required = false)
+    private DashboardProperties dashboardProperties;
+
+    /**
+     * Default no-argument constructor for Spring instantiation.
+     */
     public SXSSFExcelGeneratorService() {
     }
 
+    /**
+     * Constructor initializing transformer registry and OAuth token service dependencies.
+     *
+     * @param transformerRegistry registry for looking up module-specific DTO transformers
+     * @param oAuthTokenService   service for providing system user OAuth access tokens
+     */
     public SXSSFExcelGeneratorService(TransformerRegistry transformerRegistry, OAuthTokenService oAuthTokenService) {
+        this(transformerRegistry, oAuthTokenService, null, null);
+    }
+
+    /**
+     * Fully parameterized constructor initializing transformer registry, OAuth token service, delimited file generator, and system properties.
+     *
+     * @param transformerRegistry           registry for looking up module-specific DTO transformers
+     * @param oAuthTokenService             service for providing system user OAuth access tokens
+     * @param delimitedFileGeneratorService service for parallel delimited file generation
+     * @param dashboardProperties           centralized configuration properties
+     */
+    public SXSSFExcelGeneratorService(TransformerRegistry transformerRegistry, OAuthTokenService oAuthTokenService,
+            DelimitedFileGeneratorService delimitedFileGeneratorService, DashboardProperties dashboardProperties) {
         this.transformerRegistry = transformerRegistry;
         this.oAuthTokenService = oAuthTokenService;
+        this.delimitedFileGeneratorService = delimitedFileGeneratorService;
+        this.dashboardProperties = dashboardProperties;
     }
 
     /**
@@ -72,6 +103,7 @@ public class SXSSFExcelGeneratorService {
         private final ObjectMapper objectMapper;
         private final TransformerRegistry transformerRegistry;
         private final OAuthTokenService oAuthTokenService;
+        private final DelimitedFileGeneratorService.StreamingDelimitedSession delimitedSession;
 
         private int rowIndex = 0;
         private List<String> columnHeaders;
@@ -86,12 +118,43 @@ public class SXSSFExcelGeneratorService {
          * @throws IOException on temporary file creation failure
          */
         public StreamingExcelSession(String moduleName, ObjectMapper objectMapper) throws IOException {
-            this(moduleName, objectMapper, null, null, DashboardConstants.LEGACY);
+            this(moduleName, objectMapper, null, null, null, null, DashboardConstants.LEGACY);
         }
 
+        /**
+         * Initializes a streaming SXSSF Excel session with transformer registry and OAuth token service dependencies.
+         *
+         * @param moduleName          module short code
+         * @param objectMapper        Jackson ObjectMapper
+         * @param transformerRegistry registry of module transformers
+         * @param oAuthTokenService   OAuth token provider
+         * @param ingestionType       DAILY or LEGACY
+         * @throws IOException on file creation error
+         */
         public StreamingExcelSession(String moduleName, ObjectMapper objectMapper,
                 TransformerRegistry transformerRegistry,
                 OAuthTokenService oAuthTokenService,
+                String ingestionType) throws IOException {
+            this(moduleName, objectMapper, transformerRegistry, oAuthTokenService, null, null, ingestionType);
+        }
+
+        /**
+         * Fully parameterized constructor initializing both Excel streaming and optional delimited session streaming.
+         *
+         * @param moduleName                    module short code
+         * @param objectMapper                  Jackson ObjectMapper
+         * @param transformerRegistry           registry of module transformers
+         * @param oAuthTokenService             OAuth token provider
+         * @param delimitedFileGeneratorService service for generating flat delimited files
+         * @param dashboardProperties           centralized system configuration properties
+         * @param ingestionType                 DAILY or LEGACY
+         * @throws IOException on file creation error
+         */
+        public StreamingExcelSession(String moduleName, ObjectMapper objectMapper,
+                TransformerRegistry transformerRegistry,
+                OAuthTokenService oAuthTokenService,
+                DelimitedFileGeneratorService delimitedFileGeneratorService,
+                DashboardProperties dashboardProperties,
                 String ingestionType) throws IOException {
             this.moduleName = moduleName;
             this.objectMapper = objectMapper;
@@ -99,18 +162,48 @@ public class SXSSFExcelGeneratorService {
             this.oAuthTokenService = oAuthTokenService;
             String type = (ingestionType != null && ingestionType.equalsIgnoreCase(DashboardConstants.DAILY)) ? DashboardConstants.DAILY : DashboardConstants.LEGACY;
             this.ingestionType = type;
-            this.workbook = new SXSSFWorkbook(MEMORY_ROW_WINDOW_SIZE);
-            this.workbook.setCompressTempFiles(true);
-            this.sheet = workbook.createSheet(moduleName + "_" + type);
+            boolean isDelimitedEnabled = (dashboardProperties != null) ? (dashboardProperties.isDelimitedFileEnabled() || dashboardProperties.isPipeFileEnabled()) : (delimitedFileGeneratorService != null);
 
-            this.headerStyle = workbook.createCellStyle();
-            Font headerFont = workbook.createFont();
-            headerFont.setBold(true);
-            this.headerStyle.setFont(headerFont);
+            if (isDelimitedEnabled) {
+                DelimitedFileGeneratorService fileService = (delimitedFileGeneratorService != null)
+                        ? delimitedFileGeneratorService
+                        : new DelimitedFileGeneratorService(transformerRegistry, dashboardProperties, oAuthTokenService);
+                this.delimitedSession = fileService.createStreamingSession(moduleName, ingestionType);
+                this.workbook = null;
+                this.sheet = null;
+                this.headerStyle = null;
+                this.tempFile = null;
+            } else {
+                this.delimitedSession = null;
+                this.workbook = new SXSSFWorkbook(MEMORY_ROW_WINDOW_SIZE);
+                this.workbook.setCompressTempFiles(true);
+                this.sheet = workbook.createSheet(moduleName + "_" + type);
 
-            this.tempFile = Files.createTempFile(type + "_" + moduleName + "_", ".xlsx").toFile();
+                this.headerStyle = workbook.createCellStyle();
+                Font headerFont = workbook.createFont();
+                headerFont.setBold(true);
+                this.headerStyle.setFont(headerFont);
+
+                this.tempFile = Files.createTempFile(type + "_" + moduleName + "_", ".xlsx").toFile();
+            }
         }
 
+        /**
+         * Returns the active streaming session for parallel flat delimited file generation, or {@code null} if disabled.
+         *
+         * @return StreamingDelimitedSession handle or null
+         */
+        public DelimitedFileGeneratorService.StreamingDelimitedSession getDelimitedSession() {
+            return delimitedSession;
+        }
+
+        /**
+         * Prepares an ordered Map representation of the record for Excel column writing.
+         * Extracts tenant context and formats columns in standard order: date, module, state, Tenant, ward, region, payload_json.
+         *
+         * @param recordObj raw DTO or map record
+         * @return LinkedHashMap of ordered header-value pairs
+         */
         @SuppressWarnings("unchecked")
         private Map<String, Object> prepareRecordMap(Object recordObj) {
             Map<String, Object> rawMap = (recordObj instanceof Map<?, ?> map)
@@ -159,6 +252,13 @@ public class SXSSFExcelGeneratorService {
             return formattedMap;
         }
 
+        /**
+         * Generates the serialized payload_json string containing RequestInfo and transformed DashboardData.
+         * Validates that payload_json does not exceed the Excel cell character limit.
+         *
+         * @param recordObj record object to transform into NationalDashboardIngestRequest JSON
+         * @return JSON string or empty string if transformation yields no data
+         */
         @SuppressWarnings("unchecked")
         private String generatePayloadJson(Object recordObj) {
             try {
@@ -236,6 +336,15 @@ public class SXSSFExcelGeneratorService {
                 return;
             }
 
+            if (delimitedSession != null) {
+                try {
+                    delimitedSession.appendBatchRecords(records);
+                } catch (IOException e) {
+                    log.error("Failed to append batch records to delimited session for module {}: {}", moduleName, e.getMessage());
+                }
+                return;
+            }
+
             if (columnHeaders == null) {
                 Map<String, Object> sampleMap = prepareRecordMap(records.get(0));
                 columnHeaders = new ArrayList<>(sampleMap.keySet());
@@ -295,17 +404,28 @@ public class SXSSFExcelGeneratorService {
          * @throws IOException on file write error
          */
         public File finishWorkbook() throws IOException {
-            try (FileOutputStream fos = new FileOutputStream(tempFile)) {
-                workbook.write(fos);
+            if (delimitedSession != null) {
+                return delimitedSession.finishFile();
             }
-            log.info("Finalized streaming Excel file: {} (total rows written: {}, file size: {} bytes)",
-                    tempFile.getAbsolutePath(), rowIndex, tempFile.length());
-            return tempFile;
+            if (workbook != null && tempFile != null) {
+                try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+                    workbook.write(fos);
+                }
+                log.info("Finalized streaming Excel file: {} (total rows written: {}, file size: {} bytes)",
+                        tempFile.getAbsolutePath(), rowIndex, tempFile.length());
+                return tempFile;
+            }
+            return null;
         }
 
         @Override
         public void close() {
-            workbook.dispose();
+            if (workbook != null) {
+                workbook.dispose();
+            }
+            if (delimitedSession != null) {
+                delimitedSession.close();
+            }
         }
     }
 
@@ -321,22 +441,39 @@ public class SXSSFExcelGeneratorService {
         return createStreamingSession(moduleName, DashboardConstants.LEGACY);
     }
 
+    /**
+     * Creates an active streaming Excel session with an explicit ingestion type.
+     *
+     * @param moduleName    module name used in sheet and temp file naming
+     * @param ingestionType DAILY or LEGACY ingestion mode
+     * @return initialized StreamingExcelSession instance
+     * @throws IOException on session creation failure
+     */
     public StreamingExcelSession createStreamingSession(String moduleName, String ingestionType) throws IOException {
-        return new StreamingExcelSession(moduleName, objectMapper, transformerRegistry, oAuthTokenService, ingestionType);
+        return new StreamingExcelSession(moduleName, objectMapper, transformerRegistry, oAuthTokenService, delimitedFileGeneratorService, dashboardProperties, ingestionType);
     }
 
     /**
      * Helper method to generate an Excel file directly from a list of records.
      *
-     * @param moduleName a {@link java.lang.String} object
-     * @param records a {@link java.util.List} object
-     * @return a {@link java.io.File} object
-     * @throws java.io.IOException if any.
+     * @param moduleName target module name
+     * @param records    records to serialize
+     * @return generated File handle
+     * @throws IOException on file writing failure
      */
     public File generateExcelFile(String moduleName, List<Object> records) throws IOException {
         return generateExcelFile(moduleName, records, DashboardConstants.DAILY);
     }
 
+    /**
+     * Helper method to generate an Excel file directly from a list of records with specified ingestion type.
+     *
+     * @param moduleName    target module name
+     * @param records       records to serialize
+     * @param ingestionType DAILY or LEGACY ingestion mode
+     * @return generated File handle
+     * @throws IOException on file writing failure
+     */
     public File generateExcelFile(String moduleName, List<Object> records, String ingestionType) throws IOException {
         try (StreamingExcelSession session = createStreamingSession(moduleName, ingestionType)) {
             session.appendBatchRecords(records);

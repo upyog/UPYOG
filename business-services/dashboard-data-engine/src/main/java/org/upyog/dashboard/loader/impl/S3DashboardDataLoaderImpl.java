@@ -23,18 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Strategy implementation of {@link DashboardDataLoader} that aggregates normalized
- * dashboard payload records into an Excel spreadsheet, uploads the file to AWS S3 storage,
+ * dashboard payload records into a dataset file (Excel or Delimited), uploads the file to AWS S3 storage,
  * and persists the ingestion audit records via {@link IngestionRecordPersistenceService}.
- * <p>
- * Key operations:
- * <ul>
- *   <li>Converts raw {@link DashboardPayload} domain records into Apache POI SXSSF streaming workbook format.</li>
- *   <li>Derives state/tenant codes dynamically from ULB identifiers or fallback configurations.</li>
- *   <li>Invokes {@link DashboardIngestionClient#uploadToS3} to store the file and trigger downstream bulk init.</li>
- *   <li>Persists execution logs (payload JSON, S3 key / error stack, status) via {@link IngestionRecordPersistenceService}.</li>
- *   <li>Guarantees deletion of local temporary spreadsheet files in a {@code finally} block.</li>
- * </ul>
- * </p>
  */
 @Slf4j
 @Component("s3DataLoader")
@@ -47,23 +37,6 @@ public class S3DashboardDataLoaderImpl implements DashboardDataLoader {
     private final IngestionRecordPersistenceService persistenceService;
     private final ObjectMapper objectMapper;
 
-    /**
-     * Executes the loading pipeline for a dashboard payload by exporting data to Excel and uploading to S3.
-     * <p>
-     * Steps:
-     * <ol>
-     *   <li>Extracts module name and ingestion date from the first record of {@code payload.getData()}.</li>
-     *   <li>Streams data rows into a temporary {@code .xlsx} file via {@link SXSSFExcelGeneratorService#generateExcelFile}.</li>
-     *   <li>Resolves the tenant ID from the payload ULB or falls back to system configuration.</li>
-     *   <li>Serializes the payload to JSON for audit trail tracking.</li>
-     *   <li>Dispatches the file to S3 via {@link DashboardIngestionClient#uploadToS3}.</li>
-     *   <li>Persists the audit record and returns the finalized {@link IngestionResult}.</li>
-     * </ol>
-     * </p>
-     *
-     * @param payload the collected and normalized metric records to load
-     * @return {@link IngestionResult} detailing the outcome (SUCCESS or FAILURE), S3 keys, and error diagnostics
-     */
     @Override
     public IngestionResult load(DashboardPayload payload) {
         String moduleName = "DASHBOARD";
@@ -76,7 +49,7 @@ public class S3DashboardDataLoaderImpl implements DashboardDataLoader {
         String ingestionDateString = firstElement != null ? firstElement.getDate() : null;
 
         log.info("S3DashboardDataLoaderImpl | Executing S3 upload routing for module: {}", moduleName);
-        File tempFile = null;
+        File generatedFile = null;
         String requestJson = null;
         try {
             List<Object> records = new ArrayList<>();
@@ -86,7 +59,10 @@ public class S3DashboardDataLoaderImpl implements DashboardDataLoader {
                 }
             }
 
-            tempFile = excelGeneratorService.generateExcelFile(moduleName, records, DashboardConstants.DAILY);
+            try (SXSSFExcelGeneratorService.StreamingExcelSession session = excelGeneratorService.createStreamingSession(moduleName, DashboardConstants.DAILY)) {
+                session.appendBatchRecords(records);
+                generatedFile = session.finishWorkbook();
+            }
 
             String tenantId = properties.getTenantId();
             if (payload.getData() != null && !payload.getData().isEmpty()) {
@@ -104,7 +80,11 @@ public class S3DashboardDataLoaderImpl implements DashboardDataLoader {
                 requestJson = "{\"moduleName\":\"" + moduleName + "\",\"tenantId\":\"" + tenantId + "\"}";
             }
 
-            IngestionResult clientResult = ingestionClient.uploadToS3(tempFile, moduleName, tenantId);
+            String delimiter = (properties != null && (properties.isDelimitedFileEnabled() || properties.isPipeFileEnabled()))
+                    ? properties.getPipeFileDelimiter()
+                    : null;
+
+            IngestionResult clientResult = ingestionClient.uploadToS3(generatedFile, moduleName, tenantId, delimiter);
 
             IngestionResult finalResult = IngestionResult.builder()
                     .ingestionStatus(clientResult.getIngestionStatus())
@@ -121,7 +101,7 @@ public class S3DashboardDataLoaderImpl implements DashboardDataLoader {
 
             return finalResult;
         } catch (Exception exception) {
-            log.error("S3DashboardDataLoaderImpl | Failed to generate and upload Excel file for module {}", moduleName, exception);
+            log.error("S3DashboardDataLoaderImpl | Failed to generate and upload dataset file for module {}", moduleName, exception);
             String failureReason = "Exception during S3 routing: " + exception.getMessage();
             IngestionResult failureResult = IngestionResult.builder()
                     .ingestionStatus(DashboardConstants.STATUS_FAILURE)
@@ -134,23 +114,17 @@ public class S3DashboardDataLoaderImpl implements DashboardDataLoader {
             pushIngestionRecord(payload, requestJson, failureReason, DashboardConstants.STATUS_FAILURE);
             return failureResult;
         } finally {
-            if (tempFile != null && tempFile.exists()) {
-                tempFile.delete();
+            if (generatedFile != null && generatedFile.exists()) {
+                boolean keepFile = (properties != null && (properties.isDelimitedFileEnabled() || properties.isPipeFileEnabled()))
+                        ? properties.isDelimitedKeepFile()
+                        : false;
+                if (!keepFile) {
+                    generatedFile.delete();
+                }
             }
         }
     }
 
-    /**
-     * Safely pushes ingestion run details to the configured persistence service (JDBC or Kafka).
-     * <p>
-     * Catches and logs any persistence exceptions to prevent logging failures from aborting the primary workflow.
-     * </p>
-     *
-     * @param payload        the original dashboard metrics payload
-     * @param requestJson    serialized JSON string of the request payload
-     * @param responseOrError response JSON string or failure error message
-     * @param status         final ingestion status string (SUCCESS or FAILURE)
-     */
     private void pushIngestionRecord(DashboardPayload payload, String requestJson, String responseOrError, String status) {
         try {
             persistenceService.pushIngestionRecord(payload, requestJson, responseOrError, status);
