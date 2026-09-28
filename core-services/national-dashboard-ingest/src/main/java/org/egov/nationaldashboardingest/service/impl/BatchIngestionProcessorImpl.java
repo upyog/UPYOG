@@ -29,14 +29,19 @@ import java.util.UUID;
  * <p>
  * Processes streaming Excel rows sequentially:
  * <ul>
- *   <li>Wraps individual {@link Data} records into single-item {@link IngestRequest} payloads.</li>
- *   <li>Resolves authentication credentials, preferring row-level {@link RequestInfo} extracted from
- *       the first row of the Excel file, falling back to method defaults or a system-generated header.</li>
- *   <li>Generates unique UUID correlation identifiers for each row to record granular inbound API audits
- *       in {@code ug_external_api_audit_request} and {@code ug_external_api_audit_response} tables.</li>
- *   <li>Calls {@link IngestService#ingestData} within {@link ExternalApiAuditLogger#logInboundApi} wrapper lambda.</li>
- *   <li>Catches row-level failures to prevent any single corrupted row from aborting the remaining batch,
- *       logging the error and registering failure diagnostics in {@code failedDatesList}.</li>
+ * <li>Wraps individual {@link Data} records into single-item
+ * {@link IngestRequest} payloads.</li>
+ * <li>Resolves authentication credentials, preferring row-level
+ * {@link RequestInfo} extracted from the first row of the Excel file, falling
+ * back to method defaults or a system-generated header.</li>
+ * <li>Generates unique UUID correlation identifiers for each row to record
+ * granular inbound API audits in {@code ug_external_api_audit_request} and
+ * {@code ug_external_api_audit_response} tables.</li>
+ * <li>Calls {@link IngestService#ingestData} within
+ * {@link ExternalApiAuditLogger#logInboundApi} wrapper lambda.</li>
+ * <li>Catches row-level failures to prevent any single corrupted row from
+ * aborting the remaining batch, logging the error and registering failure
+ * diagnostics in {@code failedDatesList}.</li>
  * </ul>
  * </p>
  */
@@ -50,22 +55,31 @@ public class BatchIngestionProcessorImpl implements BatchIngestionProcessor {
     @Autowired
     private ExternalApiAuditLogger integrationAuditLogger;
 
+    @Autowired
+    private org.egov.nationaldashboardingest.config.ApplicationProperties applicationProperties;
+
     /**
-     * Iterates through a streaming batch of parsed Excel row objects, executing per-row ingestion and audit logging.
+     * Iterates through a streaming batch of parsed Excel row objects, executing
+     * per-row ingestion and audit logging.
      * <p>
      * For each valid {@link IngestRowData}:
      * <ol>
-     *   <li>Derives tenant identifier from ULB or state field.</li>
-     *   <li>Constructs effective {@link RequestInfo}.</li>
-     *   <li>Executes {@link ExternalApiAuditLogger#logInboundApi} to log the API call, ingest the metric into Elasticsearch,
-     *       and capture the generated hash response.</li>
-     *   <li>Captures any thrown {@link Exception} into the provided {@code failedDatesList} with row metadata.</li>
+     * <li>Derives tenant identifier from ULB or state field.</li>
+     * <li>Constructs effective {@link RequestInfo}.</li>
+     * <li>Executes {@link ExternalApiAuditLogger#logInboundApi} to log the API
+     * call, ingest the metric into Elasticsearch, and capture the generated
+     * hash response.</li>
+     * <li>Captures any thrown {@link Exception} into the provided
+     * {@code failedDatesList} with row metadata.</li>
      * </ol>
      * </p>
      *
-     * @param batchRowList       batch list of row wrapper objects containing row data and optional request info
-     * @param defaultRequestInfo default request info fallback if row does not supply custom credentials
-     * @param failedDatesList    mutable list collecting structured error maps for any row execution failures
+     * @param batchRowList batch list of row wrapper objects containing row data
+     * and optional request info
+     * @param defaultRequestInfo default request info fallback if row does not
+     * supply custom credentials
+     * @param failedDatesList mutable list collecting structured error maps for
+     * any row execution failures
      */
     @Override
     public void processBatchWithFallback(List<IngestRowData> batchRowList, RequestInfo defaultRequestInfo, List<Map<String, Object>> failedDatesList) {
@@ -101,7 +115,7 @@ public class BatchIngestionProcessorImpl implements BatchIngestionProcessor {
                         () -> {
                             List<Integer> responseHash = ingestService.ingestData(singleRequest);
                             ResponseInfo responseInfo = ResponseInfoFactory.createResponseInfoFromRequestInfo(
-                                     singleRequest.getRequestInfo(), true);
+                                    singleRequest.getRequestInfo(), true);
                             IngestResponse response = IngestResponse.builder()
                                     .responseInfo(responseInfo)
                                     .responseHash(responseHash)
@@ -128,17 +142,27 @@ public class BatchIngestionProcessorImpl implements BatchIngestionProcessor {
     }
 
     /**
-     * Constructs a fallback UPYOG {@link RequestInfo} carrying automated SYSTEM credentials and tenant context.
+     * Constructs a fallback UPYOG {@link RequestInfo} carrying automated SYSTEM
+     * credentials and tenant context.
      * <p>
-     * Used when neither the Excel row nor the caller supplied an explicit {@link RequestInfo}.
+     * Used when neither the Excel row nor the caller supplied an explicit
+     * {@link RequestInfo}.
      * </p>
      *
-     * @param tenantId tenant identifier (ULB or state code) to assign to the fallback system user
-     * @return constructed {@link RequestInfo} with SYSTEM user credentials and generated message UUID
+     * @param tenantId tenant identifier (ULB or state code) to assign to the
+     * fallback system user
+     * @return constructed {@link RequestInfo} with SYSTEM user credentials and
+     * generated message UUID
      */
     private RequestInfo createFallbackSystemRequestInfo(String tenantId) {
+        String systemUuid = "b3177c56-a9f2-4b59-a00c-9e9c38b5f28f";
+        if (applicationProperties != null && applicationProperties.getNationalDashboardUser() != null
+                && applicationProperties.getNationalDashboardUser().containsKey("SUPERUUID")) {
+            systemUuid = applicationProperties.getNationalDashboardUser().get("SUPERUUID");
+        }
+
         User userInfo = User.builder()
-                .uuid("SYSTEM")
+                .uuid(systemUuid)
                 .tenantId(tenantId)
                 .roles(Collections.emptyList())
                 .build();

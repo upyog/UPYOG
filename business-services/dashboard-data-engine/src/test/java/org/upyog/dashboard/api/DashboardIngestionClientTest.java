@@ -1,6 +1,7 @@
 package org.upyog.dashboard.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -65,7 +66,7 @@ class DashboardIngestionClientTest {
 
         when(s3UploadClient.uploadFile(file, "pg", "DASHBOARD"))
                 .thenReturn("UPYOG/pg/DASHBOARD/test_upload.xlsx");
-        when(bulkIngestionInitService.initializeBulkIngestion("UPYOG/pg/DASHBOARD/test_upload.xlsx"))
+        when(bulkIngestionInitService.initializeBulkIngestion(anyString(), any()))
                 .thenReturn("{\"status\":\"INITIATED\", \"jobId\":\"12345\"}");
 
         IngestionResult result = client.uploadToS3(file, "DASHBOARD", "pg");
@@ -74,7 +75,7 @@ class DashboardIngestionClientTest {
         assertThat(result.getResponseData()).contains("UPYOG/pg/DASHBOARD/test_upload.xlsx");
         assertThat(result.getResponseData()).contains("INITIATED");
 
-        verify(bulkIngestionInitService).initializeBulkIngestion("UPYOG/pg/DASHBOARD/test_upload.xlsx");
+        verify(bulkIngestionInitService).initializeBulkIngestion(anyString(), any());
     }
 
     /**
@@ -92,6 +93,23 @@ class DashboardIngestionClientTest {
         IngestionResult result = client.uploadToS3(file, "DASHBOARD", "pg");
 
         assertThat(result.getIngestionStatus()).isEqualTo("FAILURE");
-        verify(bulkIngestionInitService, never()).initializeBulkIngestion(anyString());
+        verify(bulkIngestionInitService, never()).initializeBulkIngestion(anyString(), any());
+    }
+
+    @Test
+    @DisplayName("uploadToS3 passes explicit delimiter to bulkIngestionInitService for flat dataset files")
+    void uploadToS3_withDelimiter_passesDelimiterToBulkInitService() throws Exception {
+        File file = File.createTempFile("test_pt_bulk", ".psv");
+        file.deleteOnExit();
+
+        when(s3UploadClient.uploadFile(file, "pg", "PT"))
+                .thenReturn("niuatt-internaltech/pg/PT/test_pt_bulk.psv");
+        when(bulkIngestionInitService.initializeBulkIngestion("niuatt-internaltech/pg/PT/test_pt_bulk.psv", "|"))
+                .thenReturn("{\"status\":\"INITIATED\"}");
+
+        IngestionResult result = client.uploadToS3(file, "PT", "pg", "|");
+
+        assertThat(result.getIngestionStatus()).isEqualTo("SUCCESS");
+        verify(bulkIngestionInitService).initializeBulkIngestion("niuatt-internaltech/pg/PT/test_pt_bulk.psv", "|");
     }
 }

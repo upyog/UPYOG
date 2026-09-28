@@ -1,5 +1,6 @@
 package org.upyog.dashboard.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -11,13 +12,14 @@ import lombok.NoArgsConstructor;
  * Data transfer object encapsulating the metadata required to initialize a bulk data ingestion process.
  * <p>
  * Transferred within {@link BulkIngestRequest} to inform the downstream national dashboard
- * ingestion engine of the newly uploaded spreadsheet location in AWS S3 and its associated tenant jurisdiction.
+ * ingestion engine of the newly uploaded spreadsheet or delimited dataset location in AWS S3 and its associated tenant jurisdiction.
  * </p>
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BulkIngestDetails {
 
     /**
@@ -31,4 +33,11 @@ public class BulkIngestDetails {
      */
     @JsonProperty("stateCode")
     private String stateCode;
+
+    /**
+     * Optional delimiter character used in flat dataset files (e.g. {@code "|"}, {@code ","}).
+     * Omitted from serialized JSON when {@code null}.
+     */
+    @JsonProperty("delimiter")
+    private String delimiter;
 }

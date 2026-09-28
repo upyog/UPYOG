@@ -220,7 +220,7 @@ public class LegacyBatchIngestionOrchestrator {
                 .build();
         summaryRepository.createSchedulerRun(schedulerDetail);
 
-        File generatedExcelFile = null;
+        File generatedFile = null;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DashboardExtractorConstants.DATE_FORMAT);
 
         // Map tracking per-date and per-tenant candidate status and sample request data across the requested date range
@@ -323,12 +323,18 @@ public class LegacyBatchIngestionOrchestrator {
                         .build();
             }
 
-            // Step 2: Finalize single combined Excel file
-            generatedExcelFile = session.finishWorkbook();
+            // Step 2: Finalize dataset file (either .psv or .xlsx)
+            generatedFile = session.finishWorkbook();
 
-            // Step 3: Send generated Excel file to appropriate endpoint via unified ingestion client
+            String delimiter = (dashboardProperties.isDelimitedFileEnabled() || dashboardProperties.isPipeFileEnabled())
+                    ? dashboardProperties.getPipeFileDelimiter()
+                    : null;
+
+            // Step 3: Send generated dataset file to appropriate endpoint via unified ingestion client
             String legacyMode = dashboardProperties.getEffectiveLegacyUploadMode();
-            IngestionResult ingestionResult = ingestionClient.ingest(generatedExcelFile, moduleName, jobTenantId, legacyMode);
+            IngestionResult ingestionResult = (delimiter != null)
+                    ? ingestionClient.ingest(generatedFile, moduleName, jobTenantId, legacyMode, delimiter)
+                    : ingestionClient.ingest(generatedFile, moduleName, jobTenantId, legacyMode);
 
             boolean isSuccess = DashboardExtractorConstants.STATUS_SUCCESS.equalsIgnoreCase(ingestionResult.getIngestionStatus());
             String responseJson = ingestionResult.getResponseData() != null
@@ -369,12 +375,14 @@ public class LegacyBatchIngestionOrchestrator {
                             .build()))
                     .build();
         } finally {
-            if (generatedExcelFile != null && generatedExcelFile.exists()) {
-                if (dashboardProperties.isLegacyKeepExcelFile()) {
-                    log.info("PRESERVED single legacy Excel file at: {}", generatedExcelFile.getAbsolutePath());
+            if (generatedFile != null && generatedFile.exists()) {
+                boolean isDelimited = (dashboardProperties.isDelimitedFileEnabled() || dashboardProperties.isPipeFileEnabled());
+                boolean keep = isDelimited ? dashboardProperties.isDelimitedKeepFile() : dashboardProperties.isLegacyKeepExcelFile();
+                if (keep) {
+                    log.info("PRESERVED legacy dataset file at: {}", generatedFile.getAbsolutePath());
                 } else {
-                    boolean deleted = generatedExcelFile.delete();
-                    log.info("Temporary Excel file deletion status for job {}: {}", jobId, deleted);
+                    boolean deleted = generatedFile.delete();
+                    log.info("Temporary dataset file deletion status for job {}: {}", jobId, deleted);
                 }
             }
             lock.get().unlock();

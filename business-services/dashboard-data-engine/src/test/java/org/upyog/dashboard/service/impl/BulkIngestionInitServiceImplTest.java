@@ -92,4 +92,35 @@ class BulkIngestionInitServiceImplTest {
         assertThat(bodyCaptor.getValue()).contains("\"stateCode\":\"pg\"");
         assertThat(bodyCaptor.getValue()).contains("mock-token");
     }
+
+    @Test
+    @DisplayName("initializeBulkIngestion with explicit delimiter includes delimiter field in details payload")
+    void initializeBulkIngestion_withDelimiter_success() {
+        when(dashboardProperties.getBulkInitUrl())
+                .thenReturn("http://localhost:8280/national-dashboard/bulk/v1/_init");
+        when(dashboardProperties.getTenantId())
+                .thenReturn("pg");
+        when(oAuthTokenService.getToken())
+                .thenReturn("mock-token");
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUuid("uuid-123");
+        when(oAuthTokenService.getUserInfo())
+                .thenReturn(userInfo);
+        when(dashboardFeignClient.ingestMetrics(any(URI.class), any(String.class)))
+                .thenReturn("{\"status\":\"SUCCESS\"}");
+
+        String response = service.initializeBulkIngestion("niuatt-internaltech/pg/PT/test_pt_bulk.psv", "|");
+
+        assertThat(response).isEqualTo("{\"status\":\"SUCCESS\"}");
+
+        ArgumentCaptor<URI> uriCaptor = ArgumentCaptor.forClass(URI.class);
+        ArgumentCaptor<String> bodyCaptor = ArgumentCaptor.forClass(String.class);
+
+        verify(dashboardFeignClient).ingestMetrics(uriCaptor.capture(), bodyCaptor.capture());
+
+        String jsonPayload = bodyCaptor.getValue();
+        assertThat(jsonPayload).contains("niuatt-internaltech/pg/PT/test_pt_bulk.psv");
+        assertThat(jsonPayload).contains("\"stateCode\":\"pg\"");
+        assertThat(jsonPayload).contains("\"delimiter\":\"|\"");
+    }
 }

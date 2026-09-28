@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
  * <ol>
  *   <li>Retrieves active OAuth authentication credentials and system user metadata from {@link OAuthTokenService}.</li>
  *   <li>Assembles standard UPYOG {@link RequestInfo} with API ID, auth token, and epoch message ID.</li>
- *   <li>Constructs {@link BulkIngestDetails} linking the S3 file key with the state tenant code.</li>
+ *   <li>Constructs {@link BulkIngestDetails} linking the S3 file key with the state tenant code and optional delimiter.</li>
  *   <li>Wraps both in a {@link BulkIngestRequest} envelope and serializes the JSON body via {@link ObjectMapper}.</li>
  *   <li>Dispatches the HTTP POST request to the national dashboard endpoint using {@link DashboardFeignClient#ingestMetrics}.</li>
  * </ol>
@@ -42,23 +42,21 @@ public class BulkIngestionInitServiceImpl implements BulkIngestionInitService {
     private final DashboardProperties dashboardProperties;
     private final ObjectMapper objectMapper;
 
-    /**
-     * Dispatches the bulk ingestion initialization request to the downstream national dashboard ingest engine.
-     * <p>
-     * Fetches current OAuth credentials, builds the UPYOG request body containing the S3 key,
-     * serializes the request to JSON, and sends an HTTP POST request to {@code dashboardProperties.getBulkInitUrl()}.
-     * Handles exceptions gracefully and logs diagnostics.
-     * </p>
-     *
-     * @param fileStoreId complete S3 key/path of the uploaded dataset file
-     * @return downstream API response body as JSON string, or {@code null} if an exception occurs
-     */
     @Override
     public String initializeBulkIngestion(String fileStoreId) {
+        String defaultDelimiter = null;
+        if (dashboardProperties != null && (dashboardProperties.isDelimitedFileEnabled() || dashboardProperties.isPipeFileEnabled())) {
+            defaultDelimiter = dashboardProperties.getPipeFileDelimiter();
+        }
+        return initializeBulkIngestion(fileStoreId, defaultDelimiter);
+    }
+
+    @Override
+    public String initializeBulkIngestion(String fileStoreId, String delimiter) {
         String bulkInitUrl = dashboardProperties.getBulkInitUrl();
         String stateCode = dashboardProperties.getTenantId();
-        log.info("BulkIngestionInitServiceImpl | Initializing bulk ingestion at: {} for fileName: {} and stateCode: {}",
-                bulkInitUrl, fileStoreId, stateCode);
+        log.info("BulkIngestionInitServiceImpl | Initializing bulk ingestion at: {} for fileName: {}, stateCode: {}, delimiter: {}",
+                bulkInitUrl, fileStoreId, stateCode, delimiter);
 
         try {
             String oauthToken = oAuthTokenService != null ? oAuthTokenService.getToken() : null;
@@ -74,6 +72,7 @@ public class BulkIngestionInitServiceImpl implements BulkIngestionInitService {
             BulkIngestDetails details = BulkIngestDetails.builder()
                     .fileName(fileStoreId)
                     .stateCode(stateCode)
+                    .delimiter(delimiter)
                     .build();
 
             BulkIngestRequest requestPayload = BulkIngestRequest.builder()

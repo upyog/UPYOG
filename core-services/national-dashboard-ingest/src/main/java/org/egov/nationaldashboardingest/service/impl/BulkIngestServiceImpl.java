@@ -16,9 +16,12 @@ import org.springframework.stereotype.Service;
  * <p>
  * Implements the synchronous intake stage of bulk data ingestion:
  * <ol>
- *   <li>Validates that {@link BulkIngestInitRequest} contains mandatory attributes (file name and state code).</li>
- *   <li>Publishes the file event payload to the configured Kafka topic via {@link Producer#push}.</li>
- *   <li>Maps potential failures or duplicate file errors to standard integer status codes.</li>
+ * <li>Validates that {@link BulkIngestInitRequest} contains mandatory
+ * attributes (file name and state code).</li>
+ * <li>Publishes the file event payload to the configured Kafka topic via
+ * {@link Producer#push}.</li>
+ * <li>Maps potential failures or duplicate file errors to standard integer
+ * status codes.</li>
  * </ol>
  * </p>
  */
@@ -33,19 +36,24 @@ public class BulkIngestServiceImpl implements BulkIngestService {
     private ApplicationProperties applicationProperties;
 
     /**
-     * Validates and initializes a bulk ingestion job by publishing the request details to Kafka.
+     * Validates and initializes a bulk ingestion job by publishing the request
+     * details to Kafka.
      * <p>
      * Enforces non-blank validation on S3 file path and state tenant code.
      * Dispatches the event using the S3 file name as the message partition key.
      * </p>
      *
-     * @param bulkIngestInitRequest bulk ingestion initialization request envelope
+     * @param bulkIngestInitRequest bulk ingestion initialization request
+     * envelope
      * @return integer status code:
-     *         <ul>
-     *           <li>{@link BulkIngestConstants#STATUS_CODE_SUCCESS} (1) on successful enqueue</li>
-     *           <li>{@link BulkIngestConstants#STATUS_CODE_ALREADY_PRESENT} (2) if the file is already being processed</li>
-     *           <li>{@link BulkIngestConstants#STATUS_CODE_FAILED} (3) on internal or messaging error</li>
-     *         </ul>
+     * <ul>
+     * <li>{@link BulkIngestConstants#STATUS_CODE_SUCCESS} (1) on successful
+     * enqueue</li>
+     * <li>{@link BulkIngestConstants#STATUS_CODE_ALREADY_PRESENT} (2) if the
+     * file is already being processed</li>
+     * <li>{@link BulkIngestConstants#STATUS_CODE_FAILED} (3) on internal or
+     * messaging error</li>
+     * </ul>
      * @throws CustomException if validation fails or parameters are blank
      */
     @Override
@@ -81,10 +89,12 @@ public class BulkIngestServiceImpl implements BulkIngestService {
     }
 
     /**
-     * Validates that the initialization request payload contains all non-null, non-blank required fields.
+     * Validates that the initialization request payload contains all non-null,
+     * non-blank required fields.
      *
      * @param bulkIngestInitRequest the request object to validate
-     * @return {@code true} if request and nested details (fileName and stateCode) are valid and non-blank; {@code false} otherwise
+     * @return {@code true} if request and nested details (fileName and
+     * stateCode) are valid and non-blank; {@code false} otherwise
      */
     private Boolean isInitRequestValid(BulkIngestInitRequest bulkIngestInitRequest) {
         // Ensure request object and details object are not null

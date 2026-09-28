@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Unified client component for uploading Excel datasets to downstream ingestion systems.
+ * Unified client component for uploading dataset files to downstream ingestion systems.
  * <p>
  * Supports multiple ingestion strategies:
  * <ul>
@@ -50,37 +50,36 @@ public class DashboardIngestionClient {
     /**
      * Ingests the given dataset file by dynamically routing to AWS S3 or HTTP multipart REST
      * based on the supplied upload/ingestion mode.
-     * <p>
-     * When {@code uploadMode} is {@link DashboardConstants#UPLOAD_MODE_S3} or
-     * {@link DashboardConstants#UPLOAD_MODE_FILESTORE}, the file is uploaded to AWS S3 and downstream
-     * bulk initialization is triggered. Otherwise, it falls back to direct HTTP multipart transmission.
-     * </p>
      *
-     * @param file       the local file on disk containing the generated Excel dataset
+     * @param file       the local file on disk containing the generated dataset
      * @param moduleName target business module name (e.g. PGR, PT, TL, WS)
      * @param tenantId   state or ULB tenant identifier (e.g. "pg", "pb.amritsar")
      * @param uploadMode upload/ingest mode strategy string (e.g. "S3", "FILESTORE", "API")
      * @return normalized {@link IngestionResult} containing execution status, response data, or error details
      */
     public IngestionResult ingest(File file, String moduleName, String tenantId, String uploadMode) {
+        return ingest(file, moduleName, tenantId, uploadMode, null);
+    }
+
+    /**
+     * Ingests the given dataset file with explicit delimiter metadata for flat files.
+     *
+     * @param file       the local file on disk containing the generated dataset
+     * @param moduleName target business module name (e.g. PGR, PT, TL, WS)
+     * @param tenantId   state or ULB tenant identifier (e.g. "pg", "pb.amritsar")
+     * @param uploadMode upload/ingest mode strategy string (e.g. "S3", "FILESTORE", "API")
+     * @param delimiter  flat file delimiter string (e.g. "|", ",") or null for Excel files
+     * @return normalized {@link IngestionResult} containing execution status, response data, or error details
+     */
+    public IngestionResult ingest(File file, String moduleName, String tenantId, String uploadMode, String delimiter) {
         if (DashboardConstants.UPLOAD_MODE_S3.equalsIgnoreCase(uploadMode) || DashboardConstants.UPLOAD_MODE_FILESTORE.equalsIgnoreCase(uploadMode)) {
-            return uploadToS3(file, moduleName, tenantId);
+            return uploadToS3(file, moduleName, tenantId, delimiter);
         }
         return uploadViaHttp(file, moduleName, tenantId);
     }
 
     /**
      * Uploads the generated dataset file to AWS S3 storage and triggers downstream bulk ingestion initialization.
-     * <p>
-     * Workflow:
-     * <ol>
-     *   <li>Uploads {@code file} to AWS S3 bucket under the module/tenant folder using {@link S3UploadClient#uploadFile}.</li>
-     *   <li>If upload succeeds and returns a valid S3 fileStoreId/key, invokes {@link BulkIngestionInitService#initializeBulkIngestion}
-     *       to notify the national dashboard ingest service.</li>
-     *   <li>Constructs a SUCCESS {@link IngestionResult} containing the fileStoreId and bulkInitResponse.</li>
-     *   <li>If upload returns null or an exception occurs, constructs a FAILURE {@link IngestionResult} with details.</li>
-     * </ol>
-     * </p>
      *
      * @param file       the temporary dataset file on local disk
      * @param moduleName target module name
@@ -88,11 +87,24 @@ public class DashboardIngestionClient {
      * @return normalized {@link IngestionResult} indicating SUCCESS or FAILURE
      */
     public IngestionResult uploadToS3(File file, String moduleName, String tenantId) {
+        return uploadToS3(file, moduleName, tenantId, null);
+    }
+
+    /**
+     * Uploads the generated dataset file to AWS S3 storage with optional delimiter metadata for bulk initialization.
+     *
+     * @param file       the temporary dataset file on local disk
+     * @param moduleName target module name
+     * @param tenantId   state tenant identifier
+     * @param delimiter  flat file delimiter string (e.g. "|", ",") or null for Excel files
+     * @return normalized {@link IngestionResult} indicating SUCCESS or FAILURE
+     */
+    public IngestionResult uploadToS3(File file, String moduleName, String tenantId, String delimiter) {
         try {
             String fileStoreId = s3UploadClient.uploadFile(file, tenantId, moduleName);
             if (fileStoreId != null) {
-                log.info("File uploaded to S3 successfully with key: {}. Triggering bulk ingest init API...", fileStoreId);
-                String initResponse = bulkIngestionInitService.initializeBulkIngestion(fileStoreId);
+                log.info("File uploaded to S3 successfully with key: {}. Triggering bulk ingest init API with delimiter: {}...", fileStoreId, delimiter);
+                String initResponse = bulkIngestionInitService.initializeBulkIngestion(fileStoreId, delimiter);
                 return IngestionResult.builder()
                         .ingestionStatus(DashboardConstants.STATUS_SUCCESS)
                         .responseData("{\"fileStoreId\": \"" + fileStoreId + "\", \"bulkInitResponse\": " + (initResponse != null ? initResponse : "null") + "}")
@@ -113,15 +125,6 @@ public class DashboardIngestionClient {
 
     /**
      * Uploads the generated dataset binary file directly to the downstream dashboard ingestion engine over HTTP multipart POST.
-     * <p>
-     * Constructs a multipart form data request containing:
-     * <ul>
-     *   <li>{@code file} - {@link FileSystemResource} pointing to the local binary file</li>
-     *   <li>{@code moduleName} - string identifier of the business module</li>
-     *   <li>{@code tenantId} - tenant identifier string</li>
-     * </ul>
-     * Dispatches the request via {@link RestTemplate#exchange} to {@code engineIngestUrl}.
-     * </p>
      *
      * @param file       temporary dataset file on local disk
      * @param moduleName target module name
