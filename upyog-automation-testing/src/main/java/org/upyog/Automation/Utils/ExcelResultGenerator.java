@@ -190,16 +190,44 @@ public class ExcelResultGenerator {
 
 
             // Make result columns readable
-            sheet.autoSizeColumn(statusColumn);
-            sheet.autoSizeColumn(remarkColumn);
-            sheet.autoSizeColumn(failedStepColumn);
+            try {
+                sheet.autoSizeColumn(statusColumn);
+                sheet.autoSizeColumn(remarkColumn);
+                sheet.autoSizeColumn(failedStepColumn);
+            } catch (Exception ignored) {}
 
+            // Synchronize Excel Table (XSSFTable) dimensions if present to prevent Excel recovery warning
+            if (sheet instanceof org.apache.poi.xssf.usermodel.XSSFSheet) {
+                try {
+                    org.apache.poi.xssf.usermodel.XSSFSheet xssfSheet = (org.apache.poi.xssf.usermodel.XSSFSheet) sheet;
+                    List<org.apache.poi.xssf.usermodel.XSSFTable> tables = xssfSheet.getTables();
+                    if (tables != null && !tables.isEmpty()) {
+                        for (org.apache.poi.xssf.usermodel.XSSFTable table : tables) {
+                            org.apache.poi.ss.util.AreaReference currentArea = table.getArea();
+                            if (currentArea != null) {
+                                org.apache.poi.ss.util.CellReference firstCell = currentArea.getFirstCell();
+                                org.apache.poi.ss.util.CellReference lastCell = currentArea.getLastCell();
+                                int maxCol = Math.max((int) lastCell.getCol(), headerRow.getLastCellNum() - 1);
+                                int maxRow = Math.max((int) lastCell.getRow(), sheet.getLastRowNum());
+                                org.apache.poi.ss.util.AreaReference newArea = new org.apache.poi.ss.util.AreaReference(
+                                        firstCell,
+                                        new org.apache.poi.ss.util.CellReference(maxRow, maxCol),
+                                        org.apache.poi.ss.SpreadsheetVersion.EXCEL2007
+                                );
+                                table.setArea(newArea);
+                                table.updateHeaders();
+                            }
+                        }
+                    }
+                } catch (Throwable t) {
+                    // Ignore table sync failure if not supported
+                }
+            }
 
             // Write result workbook
-            try (FileOutputStream outputStream =
-                         new FileOutputStream(outputFile)) {
-
+            try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
                 workbook.write(outputStream);
+                outputStream.flush();
             }
 
             return outputFile;

@@ -21,6 +21,9 @@ import org.slf4j.LoggerFactory;
 import org.upyog.Automation.Reports.UserManualGenerator;
 import org.upyog.Automation.Utils.ScreenRecorder;
 
+import org.upyog.Automation.Utils.ExcelDataReader;
+import java.util.Map;
+import java.util.HashMap;
 import java.io.File;
 import java.util.Arrays;
 
@@ -553,5 +556,47 @@ public class ReportController {
         resp.put("success", deleted);
         resp.put("message", deleted ? "Screenshot deleted successfully" : "Screenshot not found or could not be removed");
         return ResponseEntity.ok(resp);
+    }
+
+    /**
+     * Cleans up all session artifacts (recordings, screenshots, reports, manuals, uploaded excel).
+     * Called on page refresh, page reload, or when explicitly resetting.
+     */
+    @RequestMapping(value = "/cleanup-all", method = {RequestMethod.GET, RequestMethod.POST})
+    public ResponseEntity<Map<String, Object>> cleanupAllSessionFiles() {
+        Map<String, Object> resp = new HashMap<>();
+        try {
+            logger.info("Cleaning up all session test artifacts...");
+            cleanupDirectory(new File(AutomationConstants.RECORDINGS_DIR));
+            cleanupDirectory(new File(AutomationConstants.SCREENSHOTS_DIR));
+            cleanupDirectory(new File(AutomationConstants.REPORTS_DIR));
+            cleanupDirectory(new File(AutomationConstants.MANUALS_DIR));
+            ExcelDataReader.clearUploadedExcelFile();
+
+            resp.put("success", true);
+            resp.put("message", "All temporary test data, screenshots, and screen recordings deleted successfully.");
+            logger.info("Session artifacts cleaned up successfully.");
+            return ResponseEntity.ok(resp);
+        } catch (Exception e) {
+            logger.error("Failed to clean up session test artifacts: {}", e.getMessage(), e);
+            resp.put("success", false);
+            resp.put("message", "Cleanup failed: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(resp);
+        }
+    }
+
+    private static void cleanupDirectory(File dir) {
+        if (dir == null || !dir.exists()) return;
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    cleanupDirectory(file);
+                }
+                try {
+                    file.delete();
+                } catch (Exception ignored) {}
+            }
+        }
     }
 }

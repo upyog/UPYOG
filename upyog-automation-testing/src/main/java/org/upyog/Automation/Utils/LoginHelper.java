@@ -57,16 +57,6 @@ public class LoginHelper {
                     loginMobile = ConfigReader.get("upyog.architect.mobile");
                 }
             }
-
-            // Determine specific city and mobile based on module
-            if (upperMod.contains("COMMUNITY_HALL_BOOKING") || upperMod.contains("CHB") || upperMod.contains("COMMUNITY_HALL")) {
-                loginCity = "Mohali";
-            } else if (upperMod.contains("STREET_VENDING") || upperMod.contains("SV")) {
-                loginCity = "Kurali";
-                if (baseUrl != null && baseUrl.contains("sv-ui")) {
-                    loginMobile = "8010012414";
-                }
-            }
         }
 
         if (loginCity != null && !loginCity.isBlank()) {

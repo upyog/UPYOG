@@ -57,13 +57,7 @@ public class BaseTest {
             otp = ConfigReader.get("user.otp");
 
         if (city == null || city.isBlank()) {
-            if ("COMMUNITY_HALL_BOOKING".equalsIgnoreCase(moduleName) || "CHB".equalsIgnoreCase(moduleName)) {
-                city = "Mohali";
-            } else if ("STREET_VENDING".equalsIgnoreCase(moduleName) || "SV".equalsIgnoreCase(moduleName)) {
-                city = "Kurali";
-            } else {
-                city = ConfigReader.get("city.name");
-            }
+            city = ConfigReader.get("city.name");
         }
 
         if (moduleName == null)
