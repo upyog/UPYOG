@@ -85,6 +85,33 @@ $(document).ready(function () {
 //    });
 
     worklist();
+	
+	$('#taskFilter').on('change', function () {
+	    var selectedTask = $(this).val();
+	    var allItems = JSON.parse(response_json);
+
+	    $('#sourceModuleFilter').val('');
+	    $('#sourceModuleFilterContainer').toggle(selectedTask === 'Refund Approval');
+
+	    var filteredItems = allItems.filter(function (item) {
+	        return !selectedTask || item.task === selectedTask;
+	    });
+
+	    worklistwrtnow(filteredItems);
+	});
+	
+	$('#sourceModuleFilter').on('change', function () {
+	    var selectedTask = $('#taskFilter').val();
+	    var selectedModule = $(this).val();
+	    var allItems = JSON.parse(response_json);
+
+	    var filteredItems = allItems.filter(function (item) {
+	        return item.task === selectedTask &&
+	                (!selectedModule || item.sourceModule === selectedModule);
+	    });
+
+	    worklistwrtnow(filteredItems);
+	});
 
     $("#official_inbox").on('click', 'tbody tr td i.inbox-history', function (e) {
         $('.history-inbox').modal('show');
@@ -434,6 +461,40 @@ function worklist() {
         ],
         "fnInitComplete": function (oSettings, json) {
             response_json = JSON.stringify(json);
+			var taskNames = [];
+
+			$.each(json, function (index, item) {
+			    if (item.task && $.inArray(item.task, taskNames) === -1) {
+			        taskNames.push(item.task);
+			    }
+			});
+
+			taskNames.sort();
+
+			var taskFilter = $('#taskFilter');
+			taskFilter.find('option:not(:first)').remove();
+
+			$.each(taskNames, function (index, taskName) {
+			    $('<option>').val(taskName).text(taskName).appendTo(taskFilter);
+			});
+			var sourceModules = [];
+
+			$.each(json, function (index, item) {
+			    if (item.task === 'Refund Approval' &&
+			            item.sourceModule &&
+			            $.inArray(item.sourceModule, sourceModules) === -1) {
+			        sourceModules.push(item.sourceModule);
+			    }
+			});
+
+			sourceModules.sort();
+
+			var sourceModuleFilter = $('#sourceModuleFilter');
+			sourceModuleFilter.find('option:not(:first)').remove();
+
+			$.each(sourceModules, function (index, moduleName) {
+			    $('<option>').val(moduleName).text(moduleName).appendTo(sourceModuleFilter);
+			});s
             if (JSON.parse(response_json).length != 0) {
 
                 var groupByModule = JSON.parse(response_json).reduce(function (obj, item) {

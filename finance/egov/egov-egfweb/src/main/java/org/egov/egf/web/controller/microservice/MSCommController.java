@@ -37,6 +37,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.HttpClientErrorException;
+import java.util.HashMap;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 @Controller
 @Validated
@@ -57,6 +60,9 @@ public class MSCommController {
 
     @Autowired
     private InboxRenderServiceDelegate<StateAware> inboxRenderServiceDelegate;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @GetMapping(value = "/depratments")
     @ResponseBody
@@ -126,11 +132,71 @@ public class MSCommController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+//    @GetMapping(value = "inbox/items", produces = APPLICATION_JSON_UTF8_VALUE)
+//    @ResponseBody
+//    public List<Inbox> showInbox() {
+//
+//        return inboxRenderServiceDelegate.getCurrentUserInboxItems();
+//    }
+    
     @GetMapping(value = "inbox/items", produces = APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public List<Inbox> showInbox() {
+        final List<Inbox> items = inboxRenderServiceDelegate.getCurrentUserInboxItems();
+        final List<Long> stateIds = new ArrayList<>();
 
-        return inboxRenderServiceDelegate.getCurrentUserInboxItems();
+        for (final Inbox item : items) {
+            if (item.getId() == null) {
+                continue;
+            }
+
+            final int separator = item.getId().indexOf('#');
+            if (separator <= 0) {
+                continue;
+            }
+
+            try {
+                stateIds.add(Long.valueOf(item.getId().substring(0, separator)));
+            } catch (final NumberFormatException ignored) {
+                // External inbox items may use a different ID format.
+            }
+        }
+
+        if (stateIds.isEmpty()) {
+            return items;
+        }
+
+        final List<Object[]> refunds = entityManager.createQuery(
+                "select r.state.id, r.moduleName from RefundApplication r "
+                        + "where r.state.id in :stateIds",
+                Object[].class)
+                .setParameter("stateIds", stateIds)
+                .getResultList();
+
+        final Map<Long, String> sourceModuleByStateId = new HashMap<>();
+        for (final Object[] refund : refunds) {
+            sourceModuleByStateId.put((Long) refund[0], (String) refund[1]);
+        }
+
+        for (final Inbox item : items) {
+            if (item.getId() == null) {
+                continue;
+            }
+
+            final int separator = item.getId().indexOf('#');
+            if (separator <= 0) {
+                continue;
+            }
+
+            try {
+                final Long stateId = Long.valueOf(item.getId().substring(0, separator));
+                item.setSourceModule(sourceModuleByStateId.get(stateId));
+            } catch (final NumberFormatException ignored) {
+                // Leave sourceModule empty for external inbox items.
+            }
+        }
+
+        return items;
     }
 
     @GetMapping(value = "inbox/history", produces = APPLICATION_JSON_UTF8_VALUE)

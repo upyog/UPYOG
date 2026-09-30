@@ -72,6 +72,7 @@ public class Inbox {
     private String details;
     private String link;
     private String moduleName;
+    private String sourceModule;
     private Date createdDate;
     private boolean draft;
 
@@ -195,5 +196,13 @@ public class Inbox {
 
     public void setDraft(final boolean draft) {
         this.draft = draft;
+    }
+    
+    public String getSourceModule() {
+        return sourceModule;
+    }
+
+    public void setSourceModule(final String sourceModule) {
+        this.sourceModule = sourceModule;
     }
 }
