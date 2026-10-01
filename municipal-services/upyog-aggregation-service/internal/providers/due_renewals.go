@@ -27,6 +27,7 @@ const dueRenewalsProviderName = "due-renewals"
 // DueRenewalsProvider fetches licences and registrations nearing expiry.
 type DueRenewalsProvider struct {
 	BaseProvider
+	paymentRedirectURLBase string
 }
 
 // NewDueRenewalsProvider creates a new DueRenewalsProvider.
@@ -36,9 +37,14 @@ func NewDueRenewalsProvider(
 	log *logger.Logger,
 	m *metrics.Metrics,
 	ttl time.Duration,
+	paymentRedirectURLBase string,
 ) *DueRenewalsProvider {
+	if paymentRedirectURLBase == "" {
+		paymentRedirectURLBase = "/upyog-ui/citizen/payment/my-bills"
+	}
 	return &DueRenewalsProvider{
-		BaseProvider: NewBaseProvider(dueRenewalsProviderName, client, c, log, m, ttl),
+		BaseProvider:           NewBaseProvider(dueRenewalsProviderName, client, c, log, m, ttl),
+		paymentRedirectURLBase: strings.TrimRight(paymentRedirectURLBase, "/"),
 	}
 }
 
@@ -99,7 +105,7 @@ func (p *DueRenewalsProvider) Execute(
 		if billMap, ok := billRaw.(map[string]interface{}); ok {
 			consumerCode, _ := billMap["consumerCode"].(string)
 			businessService, _ := billMap["businessService"].(string)
-			billMap["redirectUrl"] = fmt.Sprintf("/upyog-ui/citizen/payment/my-bills/%s/%s", businessService, consumerCode)
+			billMap["redirectUrl"] = fmt.Sprintf("%s/%s/%s", p.paymentRedirectURLBase, businessService, consumerCode)
 			allBills[i] = billMap
 		}
 	}

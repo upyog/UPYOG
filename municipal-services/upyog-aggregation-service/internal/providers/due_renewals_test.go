@@ -40,6 +40,10 @@ const sampleBillsResponse = `{
 }`
 
 func newTestDueRenewalsProvider(t *testing.T, backendURL string) *DueRenewalsProvider {
+	return newTestDueRenewalsProviderWithBase(t, backendURL, "/upyog-ui/citizen/payment/my-bills")
+}
+
+func newTestDueRenewalsProviderWithBase(t *testing.T, backendURL, base string) *DueRenewalsProvider {
 	t.Helper()
 	testLogger := logger.New("test")
 	client := clients.NewClient(clients.ClientConfig{
@@ -47,7 +51,7 @@ func newTestDueRenewalsProvider(t *testing.T, backendURL string) *DueRenewalsPro
 		BaseURL:     backendURL,
 		Timeout:     5 * time.Second,
 	}, testLogger, nil)
-	return NewDueRenewalsProvider(client, nil, testLogger, nil, 0)
+	return NewDueRenewalsProvider(client, nil, testLogger, nil, 0, base)
 }
 
 func TestDueRenewals_OrderByDueDate_DefaultAscending(t *testing.T) {
@@ -139,5 +143,41 @@ func TestDueRenewals_OrderByDueDate_Descending(t *testing.T) {
 		if result.Bills[i].ID != expID {
 			t.Errorf("expected bill at index %d to be %s, got %s", i, expID, result.Bills[i].ID)
 		}
+	}
+}
+
+func TestDueRenewals_CustomRedirectURLBase(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(sampleBillsResponse))
+	}))
+	defer server.Close()
+
+	customBase := "/custom-portal/citizen/pay"
+	p := newTestDueRenewalsProviderWithBase(t, server.URL, customBase)
+	resp, err := p.Execute(context.Background(), dto.ProviderRequest{
+		Provider: "due-renewals",
+	}, dto.AggregateRequest{
+		TenantID:    "pg.citya",
+		RequestInfo: json.RawMessage(`{"userInfo": {"mobileNumber": "9999999999"}}`),
+	})
+
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	dataBytes, _ := json.Marshal(resp.Data)
+	var result struct {
+		Bills []struct {
+			ID          string `json:"id"`
+			RedirectURL string `json:"redirectUrl"`
+		} `json:"bills"`
+	}
+	_ = json.Unmarshal(dataBytes, &result)
+
+	expectedRedirect := "/custom-portal/citizen/pay/chb-services/CHB-001"
+	if result.Bills[0].RedirectURL != expectedRedirect {
+		t.Errorf("expected redirectUrl %s, got %s", expectedRedirect, result.Bills[0].RedirectURL)
 	}
 }
