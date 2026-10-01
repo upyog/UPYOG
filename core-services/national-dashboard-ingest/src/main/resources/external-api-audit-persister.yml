@@ -2,65 +2,47 @@ serviceMaps:
   serviceName: National Dashboard Integration Audit
   mappings:
     - version: 1.0
-      name: external-api-request-initiated
-      description: Persists external api request audit records
-      fromTopic: external-api-request-initiated
+      name: external-api-audit-persister
+      description: Persists external api request and response audit records via single topic upserts
+      fromTopic: external-api-audit-details
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO ug_external_api_message_detail(id, correlation_id, tenant_id, external_api_name, direction, request_time, status, retry_count, created_time, last_modified_time) VALUES (cast(? as uuid), ?, ?, ?, ?, ?, ?, ?, ?, ?);
-          basePath: apiRequestEvent
+        - query: INSERT INTO ug_external_api_message_detail(id, correlation_id, tenant_id, external_api_name, direction, request_time, status, http_status_code, response_time, duration_ms, retry_count, created_time, last_modified_time) VALUES (COALESCE(cast(? as uuid), gen_random_uuid()), ?, ?, ?, ?, ?, ?, ?, ?, ?, COALESCE(?, 0), COALESCE(?, 0), ?) ON CONFLICT (correlation_id) DO UPDATE SET tenant_id = COALESCE(EXCLUDED.tenant_id, ug_external_api_message_detail.tenant_id), external_api_name = COALESCE(EXCLUDED.external_api_name, ug_external_api_message_detail.external_api_name), direction = COALESCE(EXCLUDED.direction, ug_external_api_message_detail.direction), request_time = COALESCE(EXCLUDED.request_time, ug_external_api_message_detail.request_time), status = CASE WHEN ug_external_api_message_detail.status IN ('SUCCESS', 'FAILED') THEN ug_external_api_message_detail.status ELSE EXCLUDED.status END, http_status_code = COALESCE(EXCLUDED.http_status_code, ug_external_api_message_detail.http_status_code), response_time = COALESCE(EXCLUDED.response_time, ug_external_api_message_detail.response_time), duration_ms = COALESCE(EXCLUDED.duration_ms, ug_external_api_message_detail.duration_ms), retry_count = COALESCE(EXCLUDED.retry_count, ug_external_api_message_detail.retry_count), last_modified_time = EXCLUDED.last_modified_time;
+          basePath: $.apiAuditDetail
           jsonMaps:
-            - jsonPath: $.apiRequestEvent.id
-            - jsonPath: $.apiRequestEvent.correlationId
-            - jsonPath: $.apiRequestEvent.tenantId
-            - jsonPath: $.apiRequestEvent.externalApiName
-            - jsonPath: $.apiRequestEvent.direction
-            - jsonPath: $.apiRequestEvent.requestTime
-            - jsonPath: $.apiRequestEvent.status
-            - jsonPath: $.apiRequestEvent.retryCount
-            - jsonPath: $.apiRequestEvent.createdTime
-            - jsonPath: $.apiRequestEvent.lastModifiedTime
-        - query: INSERT INTO ug_external_api_message_raw_detail(id, correlation_id, request_payload, payload_size_bytes, created_time, last_modified_time) VALUES (cast(? as uuid), ?, cast(? as jsonb), ?, ?, ?);
-          basePath: apiRequestEvent
+            - jsonPath: $.apiAuditDetail.id
+            - jsonPath: $.apiAuditDetail.correlationId
+            - jsonPath: $.apiAuditDetail.tenantId
+            - jsonPath: $.apiAuditDetail.externalApiName
+            - jsonPath: $.apiAuditDetail.direction
+            - jsonPath: $.apiAuditDetail.requestTime
+            - jsonPath: $.apiAuditDetail.status
+            - jsonPath: $.apiAuditDetail.httpStatusCode
+            - jsonPath: $.apiAuditDetail.responseTime
+            - jsonPath: $.apiAuditDetail.durationMs
+            - jsonPath: $.apiAuditDetail.retryCount
+            - jsonPath: $.apiAuditDetail.createdTime
+            - jsonPath: $.apiAuditDetail.lastModifiedTime
+        - query: INSERT INTO ug_external_api_message_raw_detail(id, correlation_id, request_payload, response_payload, payload_size_bytes, created_time, last_modified_time) VALUES (COALESCE(cast(? as uuid), gen_random_uuid()), ?, cast(? as jsonb), cast(? as jsonb), ?, COALESCE(?, 0), ?) ON CONFLICT (correlation_id) DO UPDATE SET request_payload = COALESCE(EXCLUDED.request_payload, ug_external_api_message_raw_detail.request_payload), response_payload = COALESCE(EXCLUDED.response_payload, ug_external_api_message_raw_detail.response_payload), payload_size_bytes = COALESCE(EXCLUDED.payload_size_bytes, ug_external_api_message_raw_detail.payload_size_bytes), last_modified_time = EXCLUDED.last_modified_time;
+          basePath: $.apiAuditDetail
           jsonMaps:
-            - jsonPath: $.apiRequestEvent.rawDetailId
-            - jsonPath: $.apiRequestEvent.correlationId
-            - jsonPath: $.apiRequestEvent.requestPayload
+            - jsonPath: $.apiAuditDetail.rawDetailId
+            - jsonPath: $.apiAuditDetail.correlationId
+            - jsonPath: $.apiAuditDetail.requestPayload
               type: JSON
               dbType: JSONB
-            - jsonPath: $.apiRequestEvent.payloadSizeBytes
-            - jsonPath: $.apiRequestEvent.createdTime
-            - jsonPath: $.apiRequestEvent.lastModifiedTime
-    - version: 1.0
-      name: external-api-response-received
-      description: Updates external api audit records with response details
-      fromTopic: external-api-response-received
-      isTransaction: true
-      queryMaps:
-        - query: UPDATE ug_external_api_message_detail SET status = ?, http_status_code = ?, response_time = ?, duration_ms = ?, last_modified_time = ? WHERE correlation_id = ?;
-          basePath: apiResponseEvent
-          jsonMaps:
-            - jsonPath: $.apiResponseEvent.status
-            - jsonPath: $.apiResponseEvent.httpStatusCode
-            - jsonPath: $.apiResponseEvent.responseTime
-            - jsonPath: $.apiResponseEvent.durationMs
-            - jsonPath: $.apiResponseEvent.lastModifiedTime
-            - jsonPath: $.apiResponseEvent.correlationId
-        - query: UPDATE ug_external_api_message_raw_detail SET response_payload = cast(? as jsonb), payload_size_bytes = ?, last_modified_time = ? WHERE correlation_id = ?;
-          basePath: apiResponseEvent
-          jsonMaps:
-            - jsonPath: $.apiResponseEvent.responsePayload
+            - jsonPath: $.apiAuditDetail.responsePayload
               type: JSON
               dbType: JSONB
-            - jsonPath: $.apiResponseEvent.payloadSizeBytes
-            - jsonPath: $.apiResponseEvent.lastModifiedTime
-            - jsonPath: $.apiResponseEvent.correlationId
+            - jsonPath: $.apiAuditDetail.payloadSizeBytes
+            - jsonPath: $.apiAuditDetail.createdTime
+            - jsonPath: $.apiAuditDetail.lastModifiedTime
         - query: INSERT INTO ug_external_api_error_detail(id, correlation_id, error_code, error_type, error_message, created_time) VALUES (cast(? as uuid), ?, ?, ?, ?, ?);
-          basePath: "$.*[?(@.errorDetails)]"
+          basePath: $.apiAuditDetail.errorDetails
           jsonMaps:
-            - jsonPath: $.apiResponseEvent.errorDetails.id
-            - jsonPath: $.apiResponseEvent.errorDetails.correlationId
-            - jsonPath: $.apiResponseEvent.errorDetails.errorCode
-            - jsonPath: $.apiResponseEvent.errorDetails.errorType
-            - jsonPath: $.apiResponseEvent.errorDetails.errorMessage
-            - jsonPath: $.apiResponseEvent.errorDetails.createdTime
+            - jsonPath: $.apiAuditDetail.errorDetails.id
+            - jsonPath: $.apiAuditDetail.errorDetails.correlationId
+            - jsonPath: $.apiAuditDetail.errorDetails.errorCode
+            - jsonPath: $.apiAuditDetail.errorDetails.errorType
+            - jsonPath: $.apiAuditDetail.errorDetails.errorMessage
+            - jsonPath: $.apiAuditDetail.errorDetails.createdTime

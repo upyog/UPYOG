@@ -86,6 +86,7 @@ type ProvidersConfig struct {
 	CacheTTL         time.Duration                   `mapstructure:"cacheTTL"`
 	CompletedServiceStatuses   []string                        `mapstructure:"completedServiceStatuses"`
 	RecentApplicationsSinceDays int                             `mapstructure:"recentApplicationsSinceDays"`
+	PaymentRedirectURLBase      string                          `mapstructure:"paymentRedirectUrlBase"`
 	Custom                     map[string]ProviderCustomConfig `mapstructure:"custom"`
 }
 

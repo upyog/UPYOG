@@ -2,13 +2,11 @@ package org.upyog.dashboard.extractor.impl;
 
 import org.upyog.dashboard.constants.DashboardExtractorConstants;
 import org.apache.commons.lang3.StringUtils;
-import org.upyog.dashboard.config.DashboardProperties;
 import org.upyog.dashboard.util.HierarchyParser;
 import org.upyog.dashboard.util.DatabaseQueryExecutor;
+import org.upyog.dashboard.util.ExtractorUtil;
 
 import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -46,19 +44,7 @@ public class PgrModuleExtractor implements ModuleExtractor<List<DashboardData>> 
 	private final DatabaseQueryExecutor queryExecutor;
 	private final SchemaMappingConfig schemaMappingConfig;
 	private final ObjectMapper objectMapper;
-	private final DashboardProperties dashboardProperties;
 	private final HierarchyParser hierarchyParser;
-
-	private String dbTenantId;
-
-	/**
-	 * Initialises the database tenant ID from {@link DashboardProperties} after bean construction.
-	 */
-	@jakarta.annotation.PostConstruct
-	public void init() {
-		String state = dashboardProperties.getMetricState();
-		this.dbTenantId = (StringUtils.isNotBlank(state)) ? state : dashboardProperties.getTenantId();
-	}
 
 	@Override
 	public Module getModule() {
@@ -76,15 +62,11 @@ public class PgrModuleExtractor implements ModuleExtractor<List<DashboardData>> 
 	 *         returns an empty list when no query config is found or a database error occurs
 	 */
 	@Override
-	public List<DashboardData> extractData(LocalDate targetDate) {
-		String dateStr = targetDate.format(DateTimeFormatter.ofPattern(DashboardExtractorConstants.DATE_FORMAT));
-		long startTime = targetDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli();
-		long endTime = targetDate.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli() - 1;
+	public List<DashboardData> extractData(List<String> tenantIds, LocalDate targetDate) {
+		String effectiveTenantId = ExtractorUtil.resolveEffectiveTenantId(tenantIds, getModule());
+		String dateStr = ExtractorUtil.formatDate(targetDate);
 
-		MapSqlParameterSource params = new MapSqlParameterSource()
-				.addValue(DashboardExtractorConstants.PARAM_START_TIME, startTime)
-				.addValue(DashboardExtractorConstants.PARAM_END_TIME, endTime)
-				.addValue(DashboardExtractorConstants.PARAM_TENANT_ID, dbTenantId);
+		MapSqlParameterSource params = ExtractorUtil.buildStandardQueryParams(effectiveTenantId, targetDate);
 		List<DashboardData> results = new ArrayList<>();
 
 		SchemaMappingConfig.ModuleQueries pgrQueries = schemaMappingConfig.getQueriesForModule(Module.PGR);
@@ -98,11 +80,13 @@ public class PgrModuleExtractor implements ModuleExtractor<List<DashboardData>> 
 				results.add(buildDashboardData(combinedResult, dateStr));
 			}
 		} catch (Exception exception) {
-			log.warn("Exception during DB metrics extraction, utilizing empty defaults: {}", exception.getMessage());
+			log.warn("Exception during DB metrics extraction for tenants [{}], utilizing empty defaults: {}", effectiveTenantId, exception.getMessage());
 		}
 
 		return results;
 	}
+
+
 
 	/**
 	 * Builds a {@link org.upyog.dashboard.model.DashboardData} from a raw combined-metrics result-set row.

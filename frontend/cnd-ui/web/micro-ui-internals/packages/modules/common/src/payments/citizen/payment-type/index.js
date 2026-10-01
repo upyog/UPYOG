@@ -19,10 +19,11 @@ import { useForm, Controller } from "react-hook-form";
 import { useParams, useLocation } from "react-router-dom";
 import $ from "jquery";
 import { makePayment } from "./payGov";
-
+import { startHdfcPayment } from "./hdfcCollectNow";
 
 export const SelectPaymentType = (props) => {
-  const { state = {} } = useLocation();
+  const { state: rawState } = useLocation();
+  const state = rawState || {};
   const userInfo = Digit.UserService.getUser();
   const [showToast, setShowToast] = useState(null);
   const { tenantId: __tenantId, authorization, workflow: wrkflow , consumerCode : connectionNo } = Digit.Hooks.useQueryParams();
@@ -32,10 +33,8 @@ export const SelectPaymentType = (props) => {
   // const menu = ["AXIS"];
   let { consumerCode, businessService } = useParams();
   const tenantId = state?.tenantId || __tenantId || Digit.ULBService.getCurrentTenantId();
-  const propertyId = state?.propertyId;
   const stateTenant = Digit.ULBService.getStateId();
   const { control, handleSubmit } = useForm();
-  const [Time, setTime ] = useState(0);
   const { data: menu, isLoading } = Digit.Hooks.useCommonMDMS(stateTenant, "DIGIT-UI", "PaymentGateway");
   const { data: paymentdetails, isLoading: paymentLoading } = Digit.Hooks.useFetchPayment(
     { tenantId: tenantId, consumerCode: consumerCode, businessService },
@@ -52,6 +51,7 @@ export const SelectPaymentType = (props) => {
   const { name, mobileNumber } = state;
 
   const billDetails = paymentdetails?.Bill ? paymentdetails?.Bill[0] : {};
+  sessionStorage.setItem("payerName", billDetails?.payerName)
 
   const onSubmit = async (d) => {
     const filterData = {
@@ -87,7 +87,7 @@ export const SelectPaymentType = (props) => {
     try {
       const data = await Digit.PaymentService.createCitizenReciept(billDetails?.tenantId, filterData);
       const redirectUrl = data?.Transaction?.redirectUrl;
-      if (d?.paymentType == "AXIS") {
+      if (d?.paymentType == "AXIS"|| d?.paymentType === "ICICI") {
         window.location = redirectUrl;
       }
       else if (d?.paymentType == "NTTDATA") {
@@ -101,6 +101,13 @@ export const SelectPaymentType = (props) => {
           "returnUrl": redirect[1]
         }
         let atom = new AtomPaynetz(options, 'uat');
+      } else if (d?.paymentType === "RAZORPAY") {
+        try {
+          startHdfcPayment(data);
+        } catch (e) {
+          console.log("Error in HDFC Payment Redirect ", e);
+          setShowToast({ key: true, label: "CS_PAYMENT_INIT_FAILED" });
+        }
       }
       else {
         try {
@@ -201,10 +208,10 @@ export const SelectPaymentType = (props) => {
               name="paymentType"
               defaultValue={menu[0]}
               control={control}
-              render={(props) => <RadioButtons selectedOption={props.value} options={menu} onSelect={props.onChange} />}
+              render={({ field }) => <RadioButtons selectedOption={field.value} options={menu} onSelect={field.onChange} />}
             />
           )}
-          {!showToast && <SubmitBar label={t("PAYMENT_CS_BUTTON_LABEL")} submit={true} /*disabled={timerEnabledForBusinessService(businessService)? Time ===0:null}*/ />}       
+          {!showToast && <SubmitBar label={t("PAYMENT_CS_BUTTON_LABEL")} submit={true}/>}       
         </Card>
       </form>
       <InfoBanner label={t("CS_COMMON_INFO")} text={t("CND_PAYMENT_REDIRECT_NOTICE")} />

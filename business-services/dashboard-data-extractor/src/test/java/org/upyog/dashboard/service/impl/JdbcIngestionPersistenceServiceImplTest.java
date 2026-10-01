@@ -18,6 +18,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.upyog.dashboard.repository.querybuilder.IngestionSummaryQueryBuilder;
 
+/**
+ * Unit tests for {@link JdbcIngestionPersistenceServiceImpl} validating direct database persistence of ingestion records.
+ */
 @ExtendWith(MockitoExtension.class)
 class JdbcIngestionPersistenceServiceImplTest {
 
@@ -37,12 +40,21 @@ class JdbcIngestionPersistenceServiceImplTest {
     }
 
     @Test
-    @DisplayName("saveOrUpdateLastAttemptedDate uses JdbcTemplate update")
+    @DisplayName("saveOrUpdateLastAttemptedDate uses JdbcTemplate batchUpdate")
     void saveOrUpdateLastAttemptedDate_usesJdbcTemplate() {
         LocalDate targetDate = LocalDate.of(2026, 7, 1);
         service.saveOrUpdateLastAttemptedDate("pg", "PT", targetDate);
 
-        verify(namedParameterJdbcTemplate).update(eq(IngestionSummaryQueryBuilder.UPSERT_LAST_ATTEMPTED_DATE_QUERY), any(SqlParameterSource.class));
+        verify(namedParameterJdbcTemplate).batchUpdate(eq(IngestionSummaryQueryBuilder.UPSERT_LAST_ATTEMPTED_DATE_QUERY), any(SqlParameterSource[].class));
+    }
+
+    @Test
+    @DisplayName("saveOrUpdateLastAttemptedDatesBatch uses JdbcTemplate batchUpdate for multiple tenants")
+    void saveOrUpdateLastAttemptedDatesBatch_usesJdbcTemplate() {
+        LocalDate targetDate = LocalDate.of(2026, 7, 1);
+        service.saveOrUpdateLastAttemptedDatesBatch(java.util.List.of("pg.citya", "pg.cityb"), "PT", targetDate);
+
+        verify(namedParameterJdbcTemplate).batchUpdate(eq(IngestionSummaryQueryBuilder.UPSERT_LAST_ATTEMPTED_DATE_QUERY), any(SqlParameterSource[].class));
     }
 
     @Test

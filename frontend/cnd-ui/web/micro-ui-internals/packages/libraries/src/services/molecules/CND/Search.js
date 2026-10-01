@@ -58,9 +58,7 @@ export const CNDSearch = {
             asSectionHeader: true,
             values: [
               { title: "CND_DISPOSE_DATE", value: response?.facilityCenterDetail?.disposalDate?.split(" ")[0]},
-              { title: "CND_DISPOSE_TYPE", value: response?.facilityCenterDetail?.disposalType },
               { title: "CND_DUMPING_STATION", value: response?.facilityCenterDetail?.dumpingStationName},
-              { title: "CND_DISPOSAL_SITE_NAME", value: response?.facilityCenterDetail?.nameOfDisposalSite},
               { title: "CND_GROSS_WEIGHT", value: response?.facilityCenterDetail?.grossWeight + " Ton"},
               { title: "CND_NET_WEIGHT", value: response?.facilityCenterDetail?.netWeight + " Ton"},
             ],

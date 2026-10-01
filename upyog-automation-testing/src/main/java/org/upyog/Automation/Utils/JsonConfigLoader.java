@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.upyog.Automation.Utils.TestDataStore;
 
 /**
  * Loads JSON configuration files and resolves placeholder variables.
@@ -130,7 +131,17 @@ public class JsonConfigLoader {
             return value;
         }
 
-        // Priority 2: System property
+        // Priority 2: Excel test data
+        value =
+                TestDataStore.get(
+                        propertyName
+                );
+
+        if (value != null && !value.trim().isEmpty()) {
+            return value;
+        }
+
+        // Priority 3: System property
         value =
                 System.getProperty(
                         propertyName
@@ -140,7 +151,7 @@ public class JsonConfigLoader {
             return value;
         }
 
-        // Priority 3: Properties file
+        // Priority 4: Properties file
         value =
                 testProperties.getProperty(
                         propertyName
@@ -150,7 +161,7 @@ public class JsonConfigLoader {
             return value;
         }
 
-        // Priority 4: Environment variable
+        // Priority 5: Environment variable
         String envName =
                 propertyName
                         .replace('.', '_')

@@ -1,41 +1,42 @@
 package org.upyog.Automation.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+/**
+ * Represents an individual step within a multi-stakeholder workflow configuration.
+ *
+ * <p>Specifies the step name, stakeholder type (e.g., "CITIZEN", "EMPLOYEE", "VENDOR"),
+ * module identifier, and stakeholder role (e.g., "INITIATOR", "APPROVER", "VERIFIER").</p>
+ */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class WorkflowStep {
 
+    /**
+     * Display name of the workflow step.
+     */
     private String name;
+
+    /**
+     * Stakeholder type executing this step (e.g., "CITIZEN", "EMPLOYEE", "VENDOR").
+     */
     private String type;
+
+    /**
+     * Target module identifier to run for this step.
+     */
     private String module;
+
+    /**
+     * Stakeholder role required to perform this step (e.g., "INITIATOR", "VERIFIER", "APPROVER").
+     */
     private String role;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getModule() {
-        return module;
-    }
-
-    public void setModule(String module) {
-        this.module = module;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
 }

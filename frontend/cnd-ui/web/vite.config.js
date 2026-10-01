@@ -72,7 +72,7 @@
  *
  * Why this matters:
  * - Allows importing internal packages like:
- *      import Something from "@upyog/digit-ui-react-components";
+ *      import Something from "@nudmcdgnpm/digit-ui-react-components";
  * - Prevents Vite from resolving them from node_modules.
  * - Ensures local development uses latest source/build.
  *
@@ -241,27 +241,27 @@ export default defineConfig(({ mode }) => {
       }
     }
 
-    /**
-     * Scan all feature modules under packages/modules/*.
-     * Each subdirectory is treated as a potential workspace package.
-     */
-    const modulesDir = path.join(packagesRoot, "modules");
-    if (fs.existsSync(modulesDir)) {
-      fs.readdirSync(modulesDir).forEach((pkg) => {
-        const pkgDir = path.join(modulesDir, pkg);
-        if (fs.statSync(pkgDir).isDirectory()) register(pkgDir);
-      });
-    }
+  /**
+   * Scan all feature modules under packages/modules/*.
+   * Each subdirectory is treated as a potential workspace package.
+   */
+  const modulesDir = path.join(packagesRoot, "modules");
+  if (fs.existsSync(modulesDir)) {
+    fs.readdirSync(modulesDir)
+      .map(pkg => path.join(modulesDir, pkg))
+      .filter(pkgDir => fs.statSync(pkgDir).isDirectory())
+      .forEach(register);
+  }
 
-    /**
-     * Shared infrastructure packages — libraries and react-components.
-     * These follow the exact same workspace rule as feature modules.
-     * Add to workspaces[] to develop locally, remove to consume from NPM.
-     */
-    const sharedPackages = [
-      path.join(packagesRoot, "libraries"),
-      // path.join(packagesRoot, "react-components"),
-    ];
+  /**
+   * Shared infrastructure packages — libraries and react-components.
+   * These follow the exact same workspace rule as feature modules.
+   * Add to workspaces[] to develop locally, remove to consume from NPM.
+   */
+  const sharedPackages = [
+    path.join(packagesRoot, "libraries"),
+    path.join(packagesRoot, "react-components"),
+  ];
 
     sharedPackages.filter(pkgDir => fs.existsSync(pkgDir)).forEach(register);
 
@@ -278,7 +278,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
-      react(),
+      react()
     ],
 
     root: __dirname,
@@ -296,7 +296,8 @@ export default defineConfig(({ mode }) => {
 
     resolve: {
       alias: moduleAliases,
-      dedupe: ["react", "react-dom", "@tanstack/react-query", "react-router-dom", "i18next", "react-i18next"],
+      preserveSymlinks: true,
+      dedupe: ["react", "react-dom", "@tanstack/react-query", "react-router-dom", "i18next", "react-i18next", "@nudmcdgnpm/digit-ui-react-components"],
     },
 
     esbuild: {

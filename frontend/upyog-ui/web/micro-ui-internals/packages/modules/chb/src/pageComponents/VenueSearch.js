@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from "react";
 import { FormStep, CardHeader, CardLabel, Dropdown, SubmitBar, Calender, Toast, InfoIcon, Card} from "@nudmcdgnpm/digit-ui-react-components";
-import { Controller, useForm } from "react-hook-form";
 import BookingPopup from "../components/BookingPopup";
 import VenueDetails from "../components/VenueDetails";
 import DateRangeFilter from "../components/DateRangeFilter";
 import {format} from "date-fns";
 import ApplicationTable from "../components/inbox/ApplicationTable";
+import { useLocation } from "react-router-dom";
+
 
 /**
  * VenueSearch Component
@@ -46,11 +47,12 @@ import ApplicationTable from "../components/inbox/ApplicationTable";
  */
 
 const VenueSearch = ({ t, config, onSelect, userType, formData }) => {
-    const { control } = useForm();
+    const location = useLocation();
+    const { selectedVenueType, selectedCommunityHall } = location.state || {};
     const isMobile = window.Digit.Utils.browser.isMobile();
     const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
-    const [venueTypes, setVenueTypes] = useState(formData?.slotlist?.venueTypes || "");
-    const [venueName, setVenueNames] = useState(formData?.slotlist?.venueName || "");
+    const [venueTypes, setVenueTypes] = useState(selectedVenueType || formData?.slotlist?.venueTypes || "");
+    const [venueName, setVenueNames] = useState(selectedCommunityHall || formData?.slotlist?.venueName || "");
     const [venueCode, setVenueCode] = useState(formData?.slotlist?.venueCode || "");
     const [bookingDate, setBookingDate] = useState(formData?.slotlist?.bookingDate || null);
     const [searchData, setSearchData] = useState(formData?.slotlist?.searchData || {})

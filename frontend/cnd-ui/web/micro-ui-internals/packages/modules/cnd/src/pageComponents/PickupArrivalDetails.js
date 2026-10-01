@@ -165,25 +165,25 @@ const OwnerForm = (_props) => {
                   required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                   validate: { pattern: (val) => (/^[a-zA-Z0-9/-\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
                 }}
-                render={(props) => (
+                render={({ field }) => (
                   <TextInput
-                    value={props.value}
+                    value={field.value}
                     disable={false}
                     autoFocus={focusIndex.index === pickup?.key && focusIndex.type === "vehicleNumber"}
                     onChange={(e) => {
-                      props.onChange(e.target.value);
+                      field.onChange(e.target.value);
                       setFocusIndex({ index: pickup.key, type: "vehicleNumber" });
                     }}
                     onBlur={(e) => {
                       setFocusIndex({ index: -1 });
-                      props.onBlur(e);
+                      field.onBlur(e);
                     }}
                   />
                 )}
               />
             </div>
           </LabelFieldPair>
-          <CardLabelError className="cnd-pickup-arrival-error">{localFormState.touched.vehicleNumber ? errors?.vehicleNumber?.message : ""}</CardLabelError>
+          <CardLabelError className="cnd-pickup-arrival-error">{localFormState?.touched?.vehicleNumber ? errors?.vehicleNumber?.message : ""}</CardLabelError>
  
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("CND_VEHICLE_DEPO")} <span className="astericColor">*</span></CardLabel>
@@ -196,25 +196,25 @@ const OwnerForm = (_props) => {
                   validate: { pattern: (val) => (/^[a-zA-Z0-9/-\s]*$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")) },
 
                 }}
-                render={(props) => (
+                render={({ field }) => (
                   <TextInput
-                    value={props.value}
+                    value={field.value}
                     disable={false}
                     autoFocus={focusIndex.index === pickup?.key && focusIndex.type === "vehicleDepoNumber"}
                     onChange={(e) => {
-                      props.onChange(e.target.value);
+                      field.onChange(e.target.value);
                       setFocusIndex({ index: pickup.key, type: "vehicleDepoNumber" });
                     }}
                     onBlur={(e) => {
                       setFocusIndex({ index: -1 });
-                      props.onBlur(e);
+                      field.onBlur(e);
                     }}
                   />
                 )}
               />
             </div>
           </LabelFieldPair>
-          <CardLabelError className="cnd-pickup-arrival-error">{localFormState.touched.vehicleDepoNumber ? errors?.vehicleDepoNumber?.message : ""}</CardLabelError>
+          <CardLabelError className="cnd-pickup-arrival-error">{localFormState?.touched?.vehicleDepoNumber ? errors?.vehicleDepoNumber?.message : ""}</CardLabelError>
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("CND_DRIVER_NAME")} <span className="astericColor">*</span></CardLabel>
@@ -228,25 +228,25 @@ const OwnerForm = (_props) => {
                     pattern: (val) => /^[a-zA-Z\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"),
                   },
                 }}
-                render={(props) => (
+                render={({ field }) => (
                   <TextInput
-                    value={props.value}
+                    value={field.value}
                     disable={false}
                     autoFocus={focusIndex.index === pickup?.key && focusIndex.type === "driverName"}
                     onChange={(e) => {
-                      props.onChange(e.target.value);
+                      field.onChange(e.target.value);
                       setFocusIndex({ index: pickup.key, type: "driverName" });
                     }}
                     onBlur={(e) => {
                       setFocusIndex({ index: -1 });
-                      props.onBlur(e);
+                      field.onBlur(e);
                     }}
                   />
                 )}
               />
             </div>
           </LabelFieldPair>
-          <CardLabelError className="cnd-pickup-arrival-error">{localFormState.touched.driverName ? errors?.driverName?.message : ""}</CardLabelError>
+          <CardLabelError className="cnd-pickup-arrival-error">{localFormState?.touched?.driverName ? errors?.driverName?.message : ""}</CardLabelError>
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("CND_GROSS_WEIGHT")} <span className="astericColor">*</span></CardLabel>
@@ -260,25 +260,25 @@ const OwnerForm = (_props) => {
                     pattern: (val) => /^\d{1,5}$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG")
                   },
                 }}
-                render={(props) => (
+                render={({ field }) => (
                   <TextInput
-                    value={props.value}
+                    value={field.value}
                     disable={false}
                     autoFocus={focusIndex.index === pickup?.key && focusIndex.type === "grossWeight"}
                     onChange={(e) => {
-                      props.onChange(e.target.value);
+                      field.onChange(e.target.value);
                       setFocusIndex({ index: pickup.key, type: "grossWeight" });
                     }}
                     onBlur={(e) => {
                       setFocusIndex({ index: -1 });
-                      props.onBlur(e);
+                      field.onBlur(e);
                     }}
                   />
                 )}
               />
             </div>
           </LabelFieldPair>
-          <CardLabelError className="cnd-pickup-arrival-error">{localFormState.touched.grossWeight ? errors?.grossWeight?.message : ""}</CardLabelError>
+          <CardLabelError className="cnd-pickup-arrival-error">{localFormState?.touched?.grossWeight ? errors?.grossWeight?.message : ""}</CardLabelError>
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("CND_NET_WEIGHT")} <span className="astericColor">*</span></CardLabel>
@@ -292,25 +292,25 @@ const OwnerForm = (_props) => {
                     pattern: (val) => /^\d{1,5}$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG")
                   },
                 }}
-                render={(props) => (
+                render={({ field }) => (
                   <TextInput
-                    value={props.value}
+                    value={field.value}
                     disable={false}
                     autoFocus={focusIndex.index === pickup?.key && focusIndex.type === "netWeight"}
                     onChange={(e) => {
-                      props.onChange(e.target.value);
+                      field.onChange(e.target.value);
                       setFocusIndex({ index: pickup.key, type: "netWeight" });
                     }}
                     onBlur={(e) => {
                       setFocusIndex({ index: -1 });
-                      props.onBlur(e);
+                      field.onBlur(e);
                     }}
                   />
                 )}
               />
             </div>
           </LabelFieldPair>
-          <CardLabelError className="cnd-pickup-arrival-error">{localFormState.touched.netWeight ? errors?.netWeight?.message : ""}</CardLabelError>
+          <CardLabelError className="cnd-pickup-arrival-error">{localFormState?.touched?.netWeight ? errors?.netWeight?.message : ""}</CardLabelError>
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("CND_DUMPING_STATION")} <span className="astericColor">*</span></CardLabel>
@@ -324,25 +324,25 @@ const OwnerForm = (_props) => {
                     pattern: (val) => /^[a-zA-Z\s\-/]+$/.test(val) || t("ERR_DEFAULT_INPUT_FIELD_MSG"),
                   },
                 }}
-                render={(props) => (
+                render={({ field }) => (
                   <TextInput
-                    value={props.value}
+                    value={field.value}
                     disable={false}
                     autoFocus={focusIndex.index === pickup?.key && focusIndex.type === "dumpingStation"}
                     onChange={(e) => {
-                      props.onChange(e.target.value);
+                      field.onChange(e.target.value);
                       setFocusIndex({ index: pickup.key, type: "dumpingStation" });
                     }}
                     onBlur={(e) => {
                       setFocusIndex({ index: -1 });
-                      props.onBlur(e);
+                      field.onBlur(e);
                     }}
                   />
                 )}
               />
             </div>
           </LabelFieldPair>
-          <CardLabelError className="cnd-pickup-arrival-error">{localFormState.touched.dumpingStation ? errors?.dumpingStation?.message : ""}</CardLabelError>
+          <CardLabelError className="cnd-pickup-arrival-error">{localFormState?.touched?.dumpingStation ? errors?.dumpingStation?.message : ""}</CardLabelError>
 
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("CND_DISPOSE_DATE")} <span className="astericColor">*</span></CardLabel>
@@ -354,26 +354,26 @@ const OwnerForm = (_props) => {
                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                     validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
                   }}
-                render={(props) => (
+                render={({ field }) => (
                   <TextInput
                     type={"date"}
-                    value={props.value}
+                    value={field.value}
                     disable={false}
                     autoFocus={focusIndex.index === pickup?.key && focusIndex.type === "disposeDate"}
                     onChange={(e) => {
-                      props.onChange(e.target.value);
+                      field.onChange(e.target.value);
                       setFocusIndex({ index: pickup.key, type: "disposeDate" });
                     }}
                     onBlur={(e) => {
                       setFocusIndex({ index: -1 });
-                      props.onBlur(e);
+                      field.onBlur(e);
                     }}
                   />
                 )}
               />
             </div>
           </LabelFieldPair>
-          <CardLabelError className="cnd-pickup-arrival-error">{localFormState.touched.disposeDate ? errors?.disposeDate?.message : ""}</CardLabelError>
+          <CardLabelError className="cnd-pickup-arrival-error">{localFormState?.touched?.disposeDate ? errors?.disposeDate?.message : ""}</CardLabelError>
         </div>
       </div>
       {showToast?.label && (

@@ -127,7 +127,7 @@ public class VoucherSearchUtil {
 			jvmModifyParams.put("vhStatus", FinancialConstants.CREATEDVOUCHERSTATUS);
 			// editModeQuery1 :Get all vouchers created from JV screen and
 			// payments are not done
-			editModeQuery1 = " from CVoucherHeader vh where vh not in ( select billVoucherHeader from Miscbilldetail) "
+			editModeQuery1 = " from CVoucherHeader vh where vh not in ( select billVoucherHeader from Miscbilldetail where billVoucherHeader is not null) "
 					+ jvModifyCondition;
 
 			// editModeQuery2 :-check for voucher for which payments are in
@@ -179,11 +179,11 @@ public class VoucherSearchUtil {
 
 			final List<CVoucherHeader> vchList = voucherList;
 			final StringBuilder uncancelledRemittances = new StringBuilder(
-					" SELECT distinct(vh.id) FROM EgRemittanceDetail r, EgRemittanceGldtl rgd, Generalledgerdetail gld,")
+					" SELECT distinct(vh.id) FROM EgRemittanceDetail r, EgRemittanceGldtl rgd, CGeneralLedgerDetail gld,")
 							.append(" CGeneralLedger gl, EgRemittance rd,")
 							.append(" CVoucherHeader vh ,Vouchermis billmis, CVoucherHeader remittedvh ")
 							.append(" WHERE r.egRemittanceGldtl=rgd AND rgd.generalledgerdetail=gld")
-							.append(" AND gld.generalledger=gl AND r.egRemittance=rd AND rd.voucherheader=remittedvh")
+							.append(" AND gld.generalLedgerId=gl AND r.egRemittance=rd AND rd.voucherheader=remittedvh")
 							.append(" AND gl.voucherHeaderId =vh")
 							.append(" AND remittedvh =billmis.voucherheaderid and remittedvh.status!=:remittedvhStatus");
 			final Query ucrQuery = persistenceService.getSession()

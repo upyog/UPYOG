@@ -3,6 +3,8 @@ import logging
 from typing import List, Dict, Any, Optional
 from datetime import datetime, timedelta
 import uuid
+import os
+from dotenv import load_dotenv
 
 # We will use Qdrant for both vector-based RAG and persistent sliding window memory.
 from qdrant_client import QdrantClient
@@ -14,7 +16,32 @@ logger = logging.getLogger(__name__)
 # Global Short-Term Memory Checkpointer (RAM based, temporary during a chat)
 shared_memory = MemorySaver()
 
-# Initialize local filesystem Qdrant database with fallback for concurrent access
+
+load_dotenv(override=True)
+# QDRANT_HOST = os.getenv("QDRANT_HOST", "localhost")
+# QDRANT_PORT = int(os.getenv("QDRANT_PORT", 6333))
+# QDRANT_GRPC_PORT = int(os.getenv("QDRANT_GRPC_PORT", 6334))
+# QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", None)
+
+# try:
+#     # Connect to the standalone Qdrant server via high-speed gRPC
+#     client = QdrantClient(
+#         host=QDRANT_HOST,
+#         port=QDRANT_PORT,
+#         grpc_port=QDRANT_GRPC_PORT,
+#         api_key=QDRANT_API_KEY,
+#         prefer_grpc=True,
+#         timeout=5.0
+#     )
+#     # Test connection
+#     client.get_collections()
+#     logger.info(f"[Qdrant] Connected successfully to standalone server at {QDRANT_HOST}:{QDRANT_PORT}")
+# except Exception as e:
+#     logger.warning(f"[Qdrant] Could not connect to {QDRANT_HOST}:{QDRANT_PORT} ({e}), falling back to in-memory.")
+#     client = QdrantClient(":memory:")
+    
+
+# # Initialize local filesystem Qdrant database with fallback for concurrent access
 try:
     client = QdrantClient(path="./qdrant_storage")
 except Exception as e:

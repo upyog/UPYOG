@@ -271,7 +271,7 @@ ORDER BY created_time DESC LIMIT 5;
   - Initial rows created in `legacy_data_ingestion_detail` with `ingestion_status = 'NOT_STARTED'`.
   - Service ingests data for each date in range.
   - `ingestion_status` updated to `'SUCCESS'`.
-  - `is_legacy_data_ingested` set to `TRUE` in `ingestion_module_detail`.
+  - `legacy_data_ingestion_detail` rows marked as `'SUCCESS'` and `ingestion_module_summary` updated.
 
 ---
 

@@ -19,6 +19,9 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.mockito.Mockito.when;
 import org.upyog.dashboard.producer.DashboardProducer;
 
+/**
+ * Unit tests for {@link KafkaIngestionPersistenceServiceImpl} validating Kafka topic publishing of ingestion audit records.
+ */
 @ExtendWith(MockitoExtension.class)
 class KafkaIngestionPersistenceServiceImplTest {
 
@@ -57,6 +60,18 @@ class KafkaIngestionPersistenceServiceImplTest {
     void saveOrUpdateLastAttemptedDate_pushesToKafka() {
         LocalDate targetDate = LocalDate.of(2026, 7, 1);
         service.saveOrUpdateLastAttemptedDate("pg", "PT", targetDate);
+
+        verify(producer).push(
+                eq("update-dashboard-module-summary"),
+                any(Map.class)
+        );
+    }
+
+    @Test
+    @DisplayName("saveOrUpdateLastAttemptedDatesBatch pushes to Kafka topic for batch of tenants")
+    void saveOrUpdateLastAttemptedDatesBatch_pushesToKafka() {
+        LocalDate targetDate = LocalDate.of(2026, 7, 1);
+        service.saveOrUpdateLastAttemptedDatesBatch(java.util.List.of("pg.citya", "pg.cityb"), "PT", targetDate);
 
         verify(producer).push(
                 eq("update-dashboard-module-summary"),

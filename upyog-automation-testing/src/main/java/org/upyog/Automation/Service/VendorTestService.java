@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.upyog.Automation.Common.CommonVendorTest;
 import org.upyog.Automation.Reports.ExtentManager;
 import org.upyog.Automation.Reports.ReportManager;
+import org.upyog.Automation.Utils.AutomationConstants;
 import org.upyog.Automation.Utils.WorkflowDataStore;
 
 @Service
@@ -37,19 +38,24 @@ public class VendorTestService {
             );
         }
 
-        WorkflowDataStore.put("selected.mobile", mobileNumber);
-        WorkflowDataStore.put("selected.otp", otp);
-        WorkflowDataStore.put("selected.city", cityName);
-        WorkflowDataStore.put("selected.applicationNumber", applicationNumber);
+        WorkflowDataStore.put(AutomationConstants.KEY_SELECTED_MOBILE, mobileNumber);
+        WorkflowDataStore.put(AutomationConstants.KEY_SELECTED_OTP, otp);
+        WorkflowDataStore.put(AutomationConstants.KEY_SELECTED_CITY, cityName);
+        WorkflowDataStore.put(AutomationConstants.KEY_SELECTED_APPLICATION_NO, applicationNumber);
         logger.info("BASE URL RECEIVED = " + baseUrl);
-        WorkflowDataStore.put("selected.url", baseUrl);
-        WorkflowDataStore.put("selected.module", moduleName);
+        WorkflowDataStore.put(AutomationConstants.KEY_SELECTED_URL, baseUrl);
+        WorkflowDataStore.put(AutomationConstants.KEY_SELECTED_MODULE, moduleName);
 
-        String env = baseUrl.contains("niuatt")
-                ? "NIUATT"
-                : "UPYOG";
+        String env;
+        if (baseUrl.toLowerCase().contains("sandbox")) {
+            env = AutomationConstants.ENV_SANDBOX;
+        } else if (baseUrl.toLowerCase().contains(AutomationConstants.ENV_NIUATT.toLowerCase())) {
+            env = AutomationConstants.ENV_NIUATT;
+        } else {
+            env = AutomationConstants.ENV_UPYOG;
+        }
 
-        WorkflowDataStore.put("selected.env", env);
+        WorkflowDataStore.put(AutomationConstants.KEY_SELECTED_ENV, env);
 
         logger.info("Selected ENV: {}", env);
 

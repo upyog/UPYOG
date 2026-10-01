@@ -2,13 +2,11 @@ package org.upyog.dashboard.extractor.impl;
 
 import org.upyog.dashboard.constants.DashboardExtractorConstants;
 import org.apache.commons.lang3.StringUtils;
-import org.upyog.dashboard.config.DashboardProperties;
 import org.upyog.dashboard.util.HierarchyParser;
 import org.upyog.dashboard.util.DatabaseQueryExecutor;
+import org.upyog.dashboard.util.ExtractorUtil;
 
 import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,19 +38,7 @@ public class PtModuleExtractor implements ModuleExtractor<List<PTDTO>> {
 
     private final DatabaseQueryExecutor queryExecutor;
     private final SchemaMappingConfig schemaMappingConfig;
-    private final DashboardProperties dashboardProperties;
     private final HierarchyParser hierarchyParser;
-
-    private String dbTenantId;
-
-    /**
-     * Initialises the database tenant ID from {@link DashboardProperties} after bean construction.
-     */
-    @jakarta.annotation.PostConstruct
-    public void init() {
-        String state = dashboardProperties.getMetricState();
-        this.dbTenantId = (StringUtils.isNotBlank(state)) ? state : dashboardProperties.getTenantId();
-    }
 
     @Override
     public Module getModule() {
@@ -70,12 +56,10 @@ public class PtModuleExtractor implements ModuleExtractor<List<PTDTO>> {
      * @return the extracted metrics payload wrapped in a {@link PTDTO} list
      */
     @Override
-    public List<PTDTO> extractData(LocalDate targetDate) {
-        String dateStr = targetDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-        log.info("Starting Property Tax (PT) metrics extraction for date: {}", dateStr);
-
-        long startTime = targetDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli();
-        long endTime = targetDate.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli() - 1;
+    public List<PTDTO> extractData(List<String> tenantIds, LocalDate targetDate) {
+        String effectiveTenantId = ExtractorUtil.resolveEffectiveTenantId(tenantIds, getModule());
+        String dateStr = ExtractorUtil.formatDate(targetDate);
+        log.info("Starting Property Tax (PT) metrics extraction for tenants [{}] date: {}", effectiveTenantId, dateStr);
 
         SchemaMappingConfig.ModuleQueries ptQueries = schemaMappingConfig.getQueriesForModule(Module.PT);
         if (ptQueries == null || StringUtils.isAnyBlank(ptQueries.getCombinedMetricsQuery(), ptQueries.getCollectionMetricsQuery())) {
@@ -83,16 +67,14 @@ public class PtModuleExtractor implements ModuleExtractor<List<PTDTO>> {
             throw new IllegalArgumentException("SQL queries not configured for module " + getModule());
         }
 
-        MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue(DashboardExtractorConstants.PARAM_START_TIME, startTime)
-                .addValue(DashboardExtractorConstants.PARAM_END_TIME, endTime)
-                .addValue(DashboardExtractorConstants.PARAM_TENANT_ID, dbTenantId);
+        MapSqlParameterSource params = ExtractorUtil.buildStandardQueryParams(effectiveTenantId, targetDate);
 
         List<RawPtMetric> combinedRowsRaw = queryExecutor.executeQueryWithRetry(ptQueries.getCombinedMetricsQuery(), params, PTRowmapper.COMBINED_ROW_MAPPER, "PtModuleExtractor");
         List<RawPtCollection> collectionRowsRaw = queryExecutor.executeQueryWithRetry(ptQueries.getCollectionMetricsQuery(), params, PTRowmapper.COLLECTION_ROW_MAPPER, "PtModuleExtractor");
 
         return transformToDTO(combinedRowsRaw, collectionRowsRaw, dateStr);
     }
+
 
     @Override
     public boolean isZeroMetrics(Object item) {

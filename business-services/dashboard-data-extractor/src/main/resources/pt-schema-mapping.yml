@@ -24,7 +24,7 @@ combinedMetricsQuery: |
         SELECT action AS name, COUNT(*) AS value FROM eg_wf_processinstance_v2 pi WHERE pi.tenantid = main.tenantid AND createdtime >= :startTime AND createdtime <= :endTime AND modulename = 'PT' GROUP BY name
     ) ma) AS movedApplicationsJson
   FROM (
-    SELECT DISTINCT tenantid FROM eg_pt_property WHERE tenantid LIKE CONCAT(:tenantId, '%')
+    SELECT UNNEST(string_to_array(:tenantId, ',')) AS tenantid
   ) main
 
 collectionMetricsQuery: |
@@ -49,4 +49,6 @@ collectionMetricsQuery: |
   WHERE ep.transactiondate >= :startTime AND ep.transactiondate <= :endTime
     AND epd.businessservice = 'PT'
     AND ep.paymentstatus <> 'CANCELLED'
-    AND ep.tenantid LIKE CONCAT(:tenantId, '%')
+    AND ep.tenantid = ANY(string_to_array(:tenantId, ','))
+
+

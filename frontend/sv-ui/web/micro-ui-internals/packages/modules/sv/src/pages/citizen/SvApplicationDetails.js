@@ -159,7 +159,7 @@ const SvApplicationDetails = () => {
             <Row
               className="border-none"
               label={t("SV_VALIDITY_DATE")}
-              text={streetVendingDetails?.validityDate}
+              text={streetVendingDetails?.validityDate || streetVendingDetails?.validTo}
             />
             <Row
               className="border-none"

@@ -1,7 +1,7 @@
 import { FormComposer, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-
+import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { FacilityCentreConfig } from "../../../config/facilityCentreConfig";
 import { ApplicationProvider } from "../Edit/ApplicationContext";
@@ -18,6 +18,7 @@ import { cndStyles } from "../../../utils/cndStyles";
 
 const FacilityCentreCreationDetails = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
+  const queryClient = useQueryClient();
   const isUserDetailRequired=true;
   const { id: applicationNumber } = useParams();
   const { t } = useTranslation();
@@ -28,6 +29,7 @@ const FacilityCentreCreationDetails = () => {
   const [_formData, setFormData,_clear] = Digit.Hooks.useSessionStorage("store-data",null);
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", { });
+  const mutation = Digit.Hooks.cnd.useCndCreateApi(tenantId,false); 
 
 
   useEffect(() => {
@@ -58,6 +60,37 @@ const FacilityCentreCreationDetails = () => {
       const match = quantityString.toString().match(/(\d+(\.\d+)?)/);
       return match ? match[0] : "";
     };
+
+  const handleSubmit = (formData) => {
+    mutation.mutate(
+      {
+        cndApplication: formData,
+      },
+      {
+        onSuccess: (response) => {
+          queryClient.clear();
+          navigate("/cnd-ui/employee/cnd/facility-response", { 
+            replace: true, 
+            state: { 
+              cndApplication: formData,
+              isSuccess: true,
+              response: response
+            } 
+          });
+        },
+        onError: (error) => {
+          navigate("/cnd-ui/employee/cnd/facility-response", { 
+            replace: true, 
+            state: { 
+              cndApplication: formData,
+              isSuccess: false,
+              error: error
+            } 
+          });
+        }
+      }
+    );
+  };
   
 
 
@@ -138,7 +171,7 @@ const FacilityCentreCreationDetails = () => {
         }
     };
 
-    navigate("/cnd-ui/employee/cnd/facility-response", { state: { cndApplication: formData }, replace: true }); 
+   handleSubmit(formData);  
     
   };
 

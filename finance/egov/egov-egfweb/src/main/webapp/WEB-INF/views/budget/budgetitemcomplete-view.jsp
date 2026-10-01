@@ -80,6 +80,28 @@
     th:nth-child(6), td:nth-child(6) { width: 12%; }
     th:nth-child(7), td:nth-child(7) { width: 12%; }
 
+    /* Unified Back Button styling matching design system across budget views */
+    .btn-budget-back {
+        background-color: #fe7a51 !important;
+        border: 1px solid #fe7a51 !important;
+        color: #ffffff !important;
+        padding: 8px 22px !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        border-radius: 4px !important;
+        display: inline-block !important;
+        text-decoration: none !important;
+        cursor: pointer;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .btn-budget-back:hover, .btn-budget-back:focus {
+        background-color: #e5673e !important;
+        border-color: #e5673e !important;
+        color: #ffffff !important;
+        text-decoration: none !important;
+    }
+
 </style>
 
 
@@ -306,5 +328,10 @@
         </tbody>
     </table>
 
-</div>
+    <div style="text-align: center; margin-top: 25px; margin-bottom: 25px;">
+        <a href="${pageContext.request.contextPath}/budget/register/workflow/view/${budgetRegister.budgetRegisterNumber}" class="btn btn-budget-back">
+            <i class="fa fa-arrow-left"></i> Back
+        </a>
+    </div>
 
+</div>

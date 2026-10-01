@@ -11,10 +11,5 @@
     "username": "TPCEMP",
     "password": "eGov@123",
     "city": "City A"
-  },
-
-  "vendor": {
-    "mobile": "",
-    "otp": ""
   }
 }

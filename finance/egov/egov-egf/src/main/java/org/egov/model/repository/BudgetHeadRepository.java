@@ -41,12 +41,26 @@ public interface BudgetHeadRepository extends JpaRepository<BudgetHead, Long> {
 
     List<BudgetHead> findByCodeContainingIgnoreCaseOrNameContainingIgnoreCase(String code, String name);
 
+    List<BudgetHead> findByAccountTypeCodeIgnoreCaseOrCodeStartingWithIgnoreCase(String accountTypeCode, String codePrefix);
 
     @Query(value = "SELECT bh.* FROM egf_budgethead bh " +
             "JOIN function_budget_head fbh ON bh.id = fbh.budget_head_id " +
             "WHERE fbh.function_id = :functionId " +
-            "AND (LOWER(bh.code) LIKE LOWER(CONCAT('%', :query, '%')) " +
-            "OR LOWER(bh.name) LIKE LOWER(CONCAT('%', :query, '%')))",
+            "AND (UPPER(bh.accountTypeCode) = UPPER(:query) " +
+            "OR UPPER(bh.code) LIKE CONCAT(UPPER(:query), '%')) " +
+            "ORDER BY bh.code ASC",
+            nativeQuery = true)
+    List<BudgetHead> searchBudgetHeadsByAccountTypeOrCodePrefix(
+            @Param("functionId") Long functionId,
+            @Param("query") String query);
+
+    @Query(value = "SELECT bh.* FROM egf_budgethead bh " +
+            "JOIN function_budget_head fbh ON bh.id = fbh.budget_head_id " +
+            "WHERE fbh.function_id = :functionId " +
+            "AND (LOWER(bh.code) LIKE LOWER(CONCAT(:query, '%')) " +
+            "OR LOWER(bh.name) LIKE LOWER(CONCAT(:query, '%')) " +
+            "OR (LENGTH(:query) > 2 AND LOWER(bh.name) LIKE LOWER(CONCAT('%', :query, '%')))) " +
+            "ORDER BY bh.code ASC",
             nativeQuery = true)
     List<BudgetHead> searchBudgetHeadsByFunctionNative(
             @Param("functionId") Long functionId,
@@ -57,8 +71,5 @@ public interface BudgetHeadRepository extends JpaRepository<BudgetHead, Long> {
             "WHERE fbh.function_id = :functionId ",
             nativeQuery = true)
     List<BudgetHead> getBudgetHeadByFunction(@Param("functionId") Long functionId);
-
-
-
 
 }

@@ -4,7 +4,7 @@ import { Dropdown, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 const SelectServiceType = ({ config, onSelect, t, userType, formData }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
-  const [serviceTypes, setserviceTypes] = useState(formData?.serviceType);
+  const [serviceTypes, setserviceTypes] = useState(formData?.[config?.key] || formData?.serviceType);
   const [formattedServiceTypes, setFormattedServiceTypes] = useState([]);
 
   const { data: ServiceType, isLoading } = Digit.Hooks.useCustomMDMS(tenantId, "tenant", [{ name: "citymodule" }], {
@@ -22,6 +22,19 @@ const SelectServiceType = ({ config, onSelect, t, userType, formData }) => {
       setFormattedServiceTypes(transformedData);
     }
   }, [ServiceType]);
+
+  useEffect(() => {
+    if (formattedServiceTypes?.length > 0) {
+      const currentVal = formData?.[config?.key] || formData?.serviceType;
+      if (currentVal) {
+        const code = currentVal?.code || currentVal;
+        const matched = formattedServiceTypes.find((s) => s.code === code);
+        if (matched) {
+          setserviceTypes(matched);
+        }
+      }
+    }
+  }, [formattedServiceTypes, formData]);
 
   const selectServiceType = (value) => {
     setserviceTypes(value);

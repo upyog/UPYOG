@@ -30,7 +30,7 @@
 import { build } from 'vite';
 import react from '@vitejs/plugin-react';
 import { join, basename } from "path";
-import sass from "sass";
+import sass from "sass-embedded";
 import postcss from "postcss";
 import postcssrc from "postcss-load-config";
 import {

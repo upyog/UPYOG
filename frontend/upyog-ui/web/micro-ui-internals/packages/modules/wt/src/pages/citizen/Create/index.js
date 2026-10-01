@@ -246,7 +246,7 @@ const WTCreate = () => {
         <Route path="wt-acknowledgement/*" element={<WTAcknowledgement />} />
         <Route path="mt-acknowledgement/*" element={<MTAcknowledgement />} />
         <Route path="tp-acknowledgement/*" element={<TPAcknowledgement />} />
-        <Route path="/*" element={<Navigate to={`${config.indexRoute}`} />} />
+        <Route path="/*" element={<Navigate to={`${config.indexRoute}`} replace />} />
       </Routes>
     </React.Fragment>
   );

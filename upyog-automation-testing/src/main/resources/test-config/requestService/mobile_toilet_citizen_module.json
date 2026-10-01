@@ -16,7 +16,7 @@
     {
       "stepName":"Click Select Request Service",
       "locatorStrategy":"XPATH",
-      "locatorValue":"//div[contains(@class,'CitizenHomeCard')]//a[text()='Select Request Service']",
+      "locatorValue":"//div[contains(@class,'CitizenHomeCard')]//a[text()='Request Service']",
       "action":"CLICK_JS",
       "dynamicSleep": 2000
     },

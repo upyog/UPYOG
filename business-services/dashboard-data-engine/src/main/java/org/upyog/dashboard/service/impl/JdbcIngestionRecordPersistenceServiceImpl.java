@@ -45,7 +45,9 @@ public class JdbcIngestionRecordPersistenceServiceImpl implements IngestionRecor
             long now = CommonUtils.getCurrentEpochMillis();
 
             DailyIngestionData record = DailyIngestionData.builder().moduleIngestionId(CommonUtils.generateUUID())
-                    .moduleDetailId(null).tenantId(first != null ? first.getUlb() : null)
+                    .moduleDetailId(data != null ? data.getModuleDetailId() : null)
+                    .schedulerId(data != null ? data.getSchedulerId() : null)
+                    .tenantId(first != null ? first.getUlb() : null)
                     .moduleName(first != null ? first.getModule() : null)
                     .pushDate(first != null ? first.getDate() : null)
                     .requestData(JsonUtil.toJsonString(requestJson, objectMapper))
@@ -56,6 +58,8 @@ public class JdbcIngestionRecordPersistenceServiceImpl implements IngestionRecor
             // Fix Issue 2: Using MapSqlParameterSource instead of positional params
             MapSqlParameterSource detailParams = new MapSqlParameterSource()
                     .addValue(DashboardConstants.PARAM_MODULE_INGESTION_ID, record.getModuleIngestionId())
+                    .addValue(DashboardConstants.PARAM_MODULE_DETAIL_ID, record.getModuleDetailId())
+                    .addValue(DashboardConstants.PARAM_SCHEDULER_ID, record.getSchedulerId())
                     .addValue(DashboardConstants.PARAM_TENANT_ID, record.getTenantId())
                     .addValue(DashboardConstants.PARAM_MODULE_NAME, record.getModuleName())
                     .addValue(DashboardConstants.PARAM_PUSH_DATE, record.getPushDate())

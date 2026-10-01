@@ -59,5 +59,18 @@ const CONFIG = {
     maxHistoryMemory: 20,      // max conversation turns kept in browser memory
     historyToBackend: 8,       // how many recent turns are sent with each request
     bargeInThreshold: 0.03,    // mic RMS level that triggers barge-in (responsive to user speech)
-    niuattOrigin:     "https://niuatt.niua.in" // trusted postMessage origin
+    niuattOrigin:     "https://niuatt.niua.in", // legacy trusted postMessage origin
+    trustedOrigins: [
+        "https://niuatt.niua.in",
+        "https://upyog-sandbox.niua.org",
+        "https://upyog.niua.org",
+        "http://localhost:8090",
+        "http://localhost:5000",
+        "http://localhost:3000",
+        "http://localhost:8080",
+        "http://127.0.0.1:8090",
+        "http://127.0.0.1:5000",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:8080"
+    ]
 };

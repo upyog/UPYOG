@@ -34,17 +34,35 @@ public class InboxEmpTl {
     private WebDriverFactory webDriverFactory;
 
     /**
-     * Main test method for trade license employee workflow
-     * Runs automatically when Spring context is initialized
+     * Executes the Trade License employee inbox workflow using default configuration values.
+     *
+     * <p>Reads employee portal base URL, username, password, and TL application number
+     * from {@link ConfigReader} configuration properties.</p>
      */
-    //@PostConstruct
-
     public void inboxEmpTl() {
         inboxEmpTl(ConfigReader.get("employee.base.url"),
                 ConfigReader.get("app.login.username"),
                 ConfigReader.get("app.login.password"),
                 ConfigReader.get("tl.application.number"));
     }
+
+    /**
+     * Executes the complete Trade License employee inbox workflow with specified parameters.
+     *
+     * <p>The flow comprises:</p>
+     * <ol>
+     *     <li>Employee login and city selection</li>
+     *     <li>Navigating to the TL Inbox</li>
+     *     <li>Searching and selecting the target application number</li>
+     *     <li>Executing action steps (Verify &amp; Forward, Approve, Pay)</li>
+     *     <li>Collecting the payment</li>
+     * </ol>
+     *
+     * @param baseUrl the employee portal base URL
+     * @param username the employee username for login
+     * @param password the employee password for login
+     * @param applicationNumber the Trade License application number to process
+     */
     public void inboxEmpTl(String baseUrl, String username, String password, String applicationNumber) {
         logger.info("Trade License Employee Inbox Workflow");
         

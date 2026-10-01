@@ -2,6 +2,7 @@ package org.upyog.dashboard;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.cloud.openfeign.EnableFeignClients;
@@ -14,6 +15,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * and Kafka event persistence.
  */
 @SpringBootApplication
+@EnableCaching
 @EnableScheduling
 @EnableFeignClients(basePackages = { "org.upyog.dashboard" })
 @ComponentScan(basePackages = { "org.upyog.dashboard", "org.egov.tracer" })

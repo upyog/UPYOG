@@ -1,11 +1,13 @@
 import { Banner, Card, CardText, Loader, Row, StatusTable, SubmitBar, DownloadPrefixIcon } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 
-export const SuccessfulPayment = (props)=>{
-  if(localStorage.getItem("BillPaymentEnabled")!=="true"){
+export const SuccessfulPayment = (props) => {
+  const params = new URLSearchParams(window.location.search);
+  const hasTxnId = params.get("eg_pg_txnid");
+  if (localStorage.getItem("BillPaymentEnabled") !== "true" && !hasTxnId) {
     window.history.forward();
    return null;
  }
@@ -33,11 +35,22 @@ export const convertEpochToDate = (dateEpoch) => {
   const [allowFetchBill, setallowFetchBill] = useState(false);
   const { businessService: business_service, consumerCode, tenantId } = useParams();
   
-  const { isLoading, data, isError } = Digit.Hooks.usePaymentUpdate({ egId }, business_service, {
+  // Memoize payment update parameters to prevent unnecessary re-renders
+  const paymentUpdateParams = useMemo(() => ({ egId }), [egId]);
+  
+  // Memoize business service to keep it stable
+  const memoizedBusinessService = useMemo(() => business_service, [business_service]);
+  
+  // Memoize payment update options to prevent unnecessary re-renders
+  const paymentUpdateOptions = useMemo(() => ({
     retry: false,
     staleTime: Infinity,
     refetchOnWindowFocus: false,
-  });
+    enabled: !!egId,  // Only run hook when egId is present
+  }), [egId]);
+
+  const { isLoading, data, isError } = Digit.Hooks.usePaymentUpdate(paymentUpdateParams, memoizedBusinessService, paymentUpdateOptions);
+  console.log("API Call - egId:", egId, "data:", data, "isLoading:", isLoading);
 
   const { label } = Digit.Hooks.useApplicationsForBusinessServiceSearch({ businessService: business_service }, { enabled: false });
   const newTenantId=tenantId;
@@ -70,16 +83,16 @@ export const convertEpochToDate = (dateEpoch) => {
 
   useEffect(() => {
     return () => {
-      localStorage.setItem("BillPaymentEnabled","false")
-      queryClient.clear();
+      localStorage.setItem("BillPaymentEnabled", "false")
+      // queryClient.clear();
     };
-  }, []);
+  }, [queryClient]);
 
   useEffect(() => {
     if (data && data.txnStatus && data.txnStatus !== "FAILURE") {
       setallowFetchBill(true);
     }
-  }, [data]);
+  }, [data?.txnStatus]);
 
   if (isLoading || recieptDataLoading) {
     return <Loader />;

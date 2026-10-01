@@ -2,367 +2,174 @@ package org.upyog.Automation.Common;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.upyog.Automation.Base.BaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.upyog.Automation.Modules.Adv.AdvBookingCreate;
-import org.upyog.Automation.Modules.CHB.chbCreate;
-import org.upyog.Automation.Modules.CnD.CnDRequest;
-import org.upyog.Automation.Modules.DesludgingService.DesludgingCitizenPayment;
-import org.upyog.Automation.Modules.DesludgingService.DesludgingCitizenPayment2;
-import org.upyog.Automation.Modules.DesludgingService.DesludgingCreate;
-import org.upyog.Automation.Modules.EWaste.EWasteCreate;
-import org.upyog.Automation.Modules.OBPAS.OBPASCreate;
-import org.upyog.Automation.Modules.OBPAS.OBPASOcCreate;
-import org.upyog.Automation.Modules.Pet.PetCreateApplication;
-import org.upyog.Automation.Modules.PublicGrievanceRedressal.PgrCreate;
-import org.upyog.Automation.Modules.PropertyTax.PropertyTaxCreate;
-import org.upyog.Automation.Modules.StreetVending.SvCreateApplication;
-import org.upyog.Automation.Modules.TradeLicense.TradeLicenseCreate;
-import org.upyog.Automation.Modules.RequestService.TreePruningCitizen;
-import org.upyog.Automation.Modules.RequestService.WaterTankerCitizen;
-import org.upyog.Automation.Modules.RequestService.MobileToiletCitizen;
-import org.upyog.Automation.Modules.WaterAndSewerage.WAndSCreate;
-import org.upyog.Automation.Utils.ModuleWrapper;
+import org.upyog.Automation.Base.BaseTest;
+import org.upyog.Automation.Utils.AutomationConstants;
+import org.upyog.Automation.Utils.CommonModuleExecutor;
 import org.upyog.Automation.Utils.ModuleTask;
-import java.util.List;
-import java.util.ArrayList;
+import org.upyog.Automation.Utils.ModuleWrapper;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Common entry point for all citizen module tests
- * Routes to appropriate module based on moduleName
+ * Common entry point for all UPYOG citizen module tests.
+ *
+ * <p>This class routes incoming test requests to their corresponding JSON configuration files
+ * and executes them via {@link CommonModuleExecutor}, eliminating the need for individual
+ * duplicate module wrapper classes.</p>
  */
-
 @Component
 public class CommonCitizenTest extends BaseTest {
 
     private static final Logger logger = LoggerFactory.getLogger(CommonCitizenTest.class);
 
-    @Autowired
-    private SvCreateApplication svCreateApplication;
+    /**
+     * Immutable mapping of citizen module identifiers to their respective JSON configuration file paths.
+     */
+    private static final Map<String, String> MODULE_CONFIG_MAP;
+
+    static {
+        Map<String, String> map = new HashMap<>();
+
+        // Street Vending
+        map.put(AutomationConstants.MODULE_STREET_VENDING, AutomationConstants.CONFIG_STREET_VENDING_CITIZEN);
+        map.put(AutomationConstants.MODULE_SV, AutomationConstants.CONFIG_STREET_VENDING_CITIZEN);
+
+        // Trade License
+        map.put(AutomationConstants.MODULE_TRADE_LICENSE, AutomationConstants.CONFIG_TRADE_LICENSE_CITIZEN);
+        map.put(AutomationConstants.MODULE_TL, AutomationConstants.CONFIG_TRADE_LICENSE_CITIZEN);
+
+        // Pet Registration
+        map.put(AutomationConstants.MODULE_PET_REGISTRATION, AutomationConstants.CONFIG_PET_CITIZEN);
+        map.put(AutomationConstants.MODULE_PET, AutomationConstants.CONFIG_PET_CITIZEN);
+        map.put(AutomationConstants.MODULE_PET_CEMP, AutomationConstants.CONFIG_PET_CEMP);
+
+        // Advertisement
+        map.put(AutomationConstants.MODULE_ADVERTISEMENT, AutomationConstants.CONFIG_ADVERTISEMENT_CITIZEN);
+        map.put(AutomationConstants.MODULE_ADV, AutomationConstants.CONFIG_ADVERTISEMENT_CITIZEN);
+
+        // Request Services
+        map.put(AutomationConstants.MODULE_TREE_PRUNING, AutomationConstants.CONFIG_TREE_PRUNING_CITIZEN);
+        map.put(AutomationConstants.MODULE_WATER_TANKER, AutomationConstants.CONFIG_WATER_TANKER_CITIZEN);
+        map.put(AutomationConstants.MODULE_MOBILE_TOILET, AutomationConstants.CONFIG_MOBILE_TOILET_CITIZEN);
+
+        // Property Tax
+        map.put(AutomationConstants.MODULE_PROPERTY_TAX, AutomationConstants.CONFIG_PROPERTY_TAX_CITIZEN);
+        map.put(AutomationConstants.MODULE_PT, AutomationConstants.CONFIG_PROPERTY_TAX_CITIZEN);
+
+        // Public Grievance Redressal
+        map.put(AutomationConstants.MODULE_PUBLIC_GRIEVANCE_REDRESSAL, AutomationConstants.CONFIG_PGR_CITIZEN);
+        map.put(AutomationConstants.MODULE_PGR, AutomationConstants.CONFIG_PGR_CITIZEN);
+
+        // Online Building Plan Approval System
+        map.put(AutomationConstants.MODULE_OBPAS, AutomationConstants.CONFIG_OBPAS_CITIZEN);
+        map.put(AutomationConstants.MODULE_OBPAS_OC, AutomationConstants.CONFIG_OBPAS_OC_CITIZEN);
+        map.put(AutomationConstants.MODULE_ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM, AutomationConstants.CONFIG_OBPAS_CITIZEN);
+
+        // E-Waste Management System
+        map.put(AutomationConstants.MODULE_EWASTE, AutomationConstants.CONFIG_EWASTE_CITIZEN);
+        map.put(AutomationConstants.MODULE_EWASTE_MANAGEMENT_SYSTEM, AutomationConstants.CONFIG_EWASTE_CITIZEN);
+
+        // Community Hall Booking
+        map.put(AutomationConstants.MODULE_CHB, AutomationConstants.CONFIG_CHB_CITIZEN);
+        map.put(AutomationConstants.MODULE_COMMUNITY_HALL_BOOKING, AutomationConstants.CONFIG_CHB_CITIZEN);
+
+        // Construction and Demolition
+        map.put(AutomationConstants.MODULE_CND, AutomationConstants.CONFIG_CND_CITIZEN);
+        map.put(AutomationConstants.MODULE_CONSTRUCTION_AND_DEMOLITION, AutomationConstants.CONFIG_CND_CITIZEN);
+
+        // Desludging Services
+        map.put(AutomationConstants.MODULE_DESLUDGING, AutomationConstants.CONFIG_DESLUDGING_CITIZEN);
+        map.put(AutomationConstants.MODULE_DESLUDGING_SERVICE, AutomationConstants.CONFIG_DESLUDGING_CITIZEN);
+        map.put(AutomationConstants.MODULE_DESLUDGING_PAYMENT, AutomationConstants.CONFIG_DESLUDGING_CITIZEN_PAYMENT);
+        map.put(AutomationConstants.MODULE_DESLUDGING_SERVICE_PAYMENT, AutomationConstants.CONFIG_DESLUDGING_CITIZEN_PAYMENT);
+        map.put(AutomationConstants.MODULE_DESLUDGING_PAYMENT2, AutomationConstants.CONFIG_DESLUDGING_CITIZEN_PAYMENT2);
+        map.put(AutomationConstants.MODULE_DESLUDGING_SERVICE_PAYMENT2, AutomationConstants.CONFIG_DESLUDGING_CITIZEN_PAYMENT2);
+
+        // Water and Sewerage
+        map.put(AutomationConstants.MODULE_WATER_AND_SEWERAGE, AutomationConstants.CONFIG_WATER_AND_SEWERAGE_CITIZEN);
+        map.put(AutomationConstants.MODULE_WS, AutomationConstants.CONFIG_WATER_AND_SEWERAGE_CITIZEN);
+
+        // Garbage Collection
+        map.put(AutomationConstants.MODULE_GARBAGE_COLLECTION, AutomationConstants.CONFIG_GARBAGE_COLLECTION_CITIZEN);
+        map.put(AutomationConstants.MODULE_GARBAGE_COLLECTION_PAYMENT, AutomationConstants.CONFIG_GARBAGE_COLLECTION_PAYMENT);
+
+        // Estate Management
+        map.put(AutomationConstants.MODULE_ESTATE_MANAGEMENT, AutomationConstants.CONFIG_ESTATE_MANAGEMENT_CITIZEN);
+
+        // No Due Certificate
+        map.put(AutomationConstants.MODULE_NO_DUE_CERTIFICATE, AutomationConstants.CONFIG_NDC_CITIZEN);
+        map.put(AutomationConstants.MODULE_NDC, AutomationConstants.CONFIG_NDC_CITIZEN);
+
+        MODULE_CONFIG_MAP = Collections.unmodifiableMap(map);
+    }
 
     @Autowired
-    private TradeLicenseCreate tradeLicenseCreate;
+    private CommonModuleExecutor commonModuleExecutor;
 
-    @Autowired
-    private PetCreateApplication petCreateApplication;
+    /**
+     * Executes a single citizen module test flow.
+     *
+     * @param baseUrl the citizen portal login base URL
+     * @param moduleName the name of the module to execute (e.g. "PET_REGISTRATION", "PROPERTY_TAX")
+     * @param mobileNumber citizen mobile number for authentication
+     * @param otp one-time password for citizen authentication
+     * @param cityName selected city/municipality name
+     * @param permitNumber permit number (applicable for OBPAS / specific modules)
+     * @throws InterruptedException if browser automation thread sleep is interrupted
+     */
+    public void runCitizenTest(String baseUrl,
+                               String moduleName,
+                               String mobileNumber,
+                               String otp,
+                               String cityName,
+                               String permitNumber) throws InterruptedException {
 
-    @Autowired
-    private AdvBookingCreate advBookingCreate;
-
-    @Autowired
-    private TreePruningCitizen treePruningCitizen;
-
-    @Autowired
-    private WaterTankerCitizen waterTankerCitizen;
-
-    @Autowired
-    private MobileToiletCitizen mobileToiletCitizen;
-
-    @Autowired
-    private PropertyTaxCreate propertyTaxCreate;
-
-    @Autowired
-    private PgrCreate pgrCreate;
-
-    @Autowired
-    private OBPASCreate obpasCreate;
-
-    @Autowired
-    private EWasteCreate eWasteCreate;
-
-    @Autowired
-    private chbCreate chbCreate;
-
-    @Autowired
-    private CnDRequest cndRequest;
-
-    @Autowired
-    private OBPASOcCreate obpasOCCreate;
-
-    @Autowired
-    private DesludgingCreate desludgingCreate;
-
-    @Autowired
-    private DesludgingCitizenPayment desludgingCitizenPayment;
-
-    @Autowired
-    private DesludgingCitizenPayment2 desludgingCitizenPayment2;
-
-    @Autowired
-    private WAndSCreate wAndSCreate;
-
-    public void runCitizenTest(String baseUrl, String moduleName, String mobileNumber, String otp, String cityName, String permitNumber) throws InterruptedException {
+        // Initialize browser and login session
         setUp();
         logger.info("Starting {} citizen test", moduleName);
 
         try {
-            switch (moduleName.toUpperCase()) {
-
-
-
-                case "STREET_VENDING":
-
-                    ModuleWrapper.execute(
-                            "STREET_VENDING",
-                            () -> svCreateApplication.svCreateReg(
-                                    driver,
-                                    wait,
-                                    js
-                            )
-                    );
-
-                    break;
-
-
-                case "TRADE_LICENSE":
-
-                    ModuleWrapper.execute(
-                            "TRADE_LICENSE",
-                            () -> tradeLicenseCreate.tradeLicenceCitizenReg(
-                                    driver,
-                                    wait,
-                                    js
-                            )
-                    );
-
-                    break;
-
-                case "PET_REGISTRATION":
-                    ModuleWrapper.execute(
-                            "PET_REGISTRATION",
-                            () -> petCreateApplication.petApptest(
-                                    driver,
-                                    wait,
-                                    js
-                            )
-                    );
-
-                    break;
-
-
-                case "ADVERTISEMENT":
-
-                    ModuleWrapper.execute(
-                            "ADVERTISEMENT",
-                            () -> advBookingCreate.advBookingReg(
-                                    driver,
-                                    wait,
-                                    js
-                            )
-                    );
-
-                    break;
-
-
-
-                case "TREE_PRUNING":
-
-                    ModuleWrapper.execute(
-                            "TREE_PRUNING",
-                            () -> treePruningCitizen.treePruningCreate(
-                                    driver,
-                                    wait,
-                                    js
-                            )
-                    );
-
-                    break;
-
-
-
-                case "WATER_TANKER":
-
-                    ModuleWrapper.execute(
-                            "WATER_TANKER",
-                            () -> waterTankerCitizen.waterTankerCreate(
-                                    driver,
-                                    wait,
-                                    js
-                            )
-                    );
-
-                    break;
-
-
-
-                case "MOBILE_TOILET":
-
-                    ModuleWrapper.execute(
-                            "MOBILE_TOILET",
-                            () -> mobileToiletCitizen.mobileToiletCreate(
-                                    driver,
-                                    wait,
-                                    js
-                            )
-                    );
-
-                    break;
-
-
-
-                case "PROPERTY_TAX":
-
-                    ModuleWrapper.execute(
-                            "PROPERTY_TAX",
-                            () -> propertyTaxCreate.newPropertyReg(
-                                    driver,
-                                    wait,
-                                    js
-                            )
-                    );
-
-                    break;
-
-
-
-                case "PUBLIC_GRIEVANCE_REDRESSAL":
-
-                    ModuleWrapper.execute(
-                            "PUBLIC_GRIEVANCE_REDRESSAL",
-                            () -> pgrCreate.pgrReg(
-                                    driver,
-                                    wait,
-                                    js
-                            )
-                    );
-
-                    break;
-
-
-                case "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM":
-
-                    ModuleWrapper.execute(
-                            "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM",
-                            () -> obpasCreate.obpasReg(
-                                    driver,
-                                    wait,
-                                    js
-                            )
-                    );
-
-                    break;
-
-
-                case "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_OC":
-
-                    ModuleWrapper.execute(
-                            "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_OC",
-                            () -> obpasOCCreate.obpasOCReg(
-                                    driver,
-                                    wait,
-                                    js
-                            )
-                    );
-
-                    break;
-
-
-                case "EWASTE_MANAGEMENT_SYSTEM":
-                    ModuleWrapper.execute(
-                            "EWASTE_MANAGEMENT_SYSTEM",
-                            () -> eWasteCreate.eWasteReg(driver, wait, js)
-                    );
-                    break;
-
-                case "COMMUNITY_HALL_BOOKING":
-
-                    ModuleWrapper.execute(
-                            "COMMUNITY_HALL_BOOKING",
-                            () -> chbCreate.chbReg(
-                                    driver,
-                                    wait,
-                                    js
-                            )
-                    );
-
-                    break;
-
-
-                case "CONSTRUCTION_AND_DEMOLITION":
-
-                    ModuleWrapper.execute(
-                            "CONSTRUCTION_AND_DEMOLITION",
-                            () -> cndRequest.cndReg(
-                                    driver,
-                                    wait,
-                                    js
-                            )
-                    );
-
-                    break;
-
-
-                case "DESLUDGING_SERVICE":
-
-                    ModuleWrapper.execute(
-                            "DESLUDGING_SERVICE",
-                            () -> desludgingCreate.desludgingReg(
-                                    driver,
-                                    wait,
-                                    js
-                            )
-                    );
-
-                    break;
-
-                case "DESLUDGING_SERVICE_PAYMENT":
-
-                    ModuleWrapper.execute(
-                            "DESLUDGING_SERVICE",
-                            () -> desludgingCitizenPayment.desludgingPaymentReg(
-                                    driver,
-                                    wait,
-                                    js
-                            )
-                    );
-
-                    break;
-
-                case "DESLUDGING_SERVICE_PAYMENT2":
-
-                    ModuleWrapper.execute(
-                            "DESLUDGING_SERVICE",
-                            () -> desludgingCitizenPayment2.desludgingPayment2Reg(
-                                    driver,
-                                    wait,
-                                    js
-                            )
-                    );
-
-                    break;
-
-
-                case "WATER_AND_SEWERAGE":
-
-                    ModuleWrapper.execute(
-                            "WATER_AND_SEWERAGE",
-                            () -> wAndSCreate.wandSReg(
-                                    driver,
-                                    wait,
-                                    js
-                            )
-                    );
-
-                    break;
-
-                default:
-                    logger.error("Unknown module: {}", moduleName);
-                    throw new RuntimeException("Unknown module: " + moduleName);
-
+            // Resolve the JSON module configuration path
+            String configPath = MODULE_CONFIG_MAP.get(moduleName.toUpperCase());
+            if (configPath == null) {
+                logger.error("Unknown module: {}", moduleName);
+                throw new RuntimeException("Unknown module: " + moduleName);
             }
-            logger.info("{} test completed", moduleName);
+
+            // Execute test through CommonModuleExecutor
+            ModuleWrapper.execute(
+                    moduleName.toUpperCase(),
+                    () -> commonModuleExecutor.execute(driver, wait, js, configPath)
+            );
+
+            logger.info("{} test completed successfully", moduleName);
 
         } catch (Exception e) {
-            logger.error("Error in {} test: {}", moduleName, e.getMessage());
+            logger.error("Error in {} citizen test: {}", moduleName, e.getMessage(), e);
             throw new RuntimeException(e);
-        }finally {
-
+        } finally {
+            // Ensure browser driver is closed and resources are released
             tearDown();
         }
     }
 
+    /**
+     * Executes multiple citizen module test flows sequentially in a single session.
+     *
+     * @param baseUrl the citizen portal login base URL
+     * @param selectedModules list of module names to execute sequentially
+     * @param mobileNumber citizen mobile number for authentication
+     * @param otp one-time password for citizen authentication
+     * @param cityName selected city/municipality name
+     * @param permitNumber permit number (applicable for OBPAS / specific modules)
+     * @throws InterruptedException if browser automation thread sleep is interrupted
+     */
     public void runMultipleModules(String baseUrl,
                                    List<String> selectedModules,
                                    String mobileNumber,
@@ -370,303 +177,34 @@ public class CommonCitizenTest extends BaseTest {
                                    String cityName,
                                    String permitNumber) throws InterruptedException {
 
+        // Initialize browser and login session
         setUp();
-
-        logger.info("Starting multiple citizen modules: {}", selectedModules);
+        logger.info("Starting multiple citizen modules execution: {}", selectedModules);
 
         try {
-
             List<ModuleTask> modules = new ArrayList<>();
 
+            // Build task list for each selected module
             for (String moduleName : selectedModules) {
-
-                switch (moduleName.toUpperCase()) {
-
-
-
-                    case "STREET_VENDING":
-
-                        modules.add(
-                                new ModuleTask(
-                                "STREET_VENDING",
-                                () -> svCreateApplication.svCreateReg(
-                                        driver,
-                                        wait,
-                                        js
-                                ))
-                        );
-
-                        break;
-
-
-
-                    case "TRADE_LICENSE":
-
-                        modules.add(
-                                new ModuleTask(
-                                "TRADE_LICENSE",
-                                () -> tradeLicenseCreate.tradeLicenceCitizenReg(
-                                        driver,
-                                        wait,
-                                        js
-                                ))
-                        );
-
-                        break;
-
-
-
-                    case "PET_REGISTRATION":
-
-                        modules.add(
-                                new ModuleTask(
-                                        "PET_REGISTRATION",
-                                        () -> petCreateApplication.petApptest(driver, wait, js)
-                                )
-                        );
-
-                        break;
-
-
-
-                    case "ADVERTISEMENT":
-
-                        modules.add(
-                                new ModuleTask(
-                                "ADVERTISEMENT",
-                                () -> advBookingCreate.advBookingReg(
-                                        driver,
-                                        wait,
-                                        js
-                                ))
-                        );
-
-                        break;
-
-
-
-
-                    case "TREE_PRUNING":
-
-                        modules.add(
-                                new ModuleTask(
-                                "TREE_PRUNING",
-                                () -> treePruningCitizen.treePruningCreate(
-                                        driver,
-                                        wait,
-                                        js
-                                ))
-                        );
-
-                        break;
-
-
-
-                    case "WATER_TANKER":
-
-                        modules.add(
-                                new ModuleTask(
-                                "WATER_TANKER",
-                                () -> waterTankerCitizen.waterTankerCreate(
-                                        driver,
-                                        wait,
-                                        js
-                                ))
-                        );
-
-                        break;
-
-
-
-                    case "MOBILE_TOILET":
-
-                        modules.add(
-                                new ModuleTask(
-                                "MOBILE_TOILET",
-                                () -> mobileToiletCitizen.mobileToiletCreate(
-                                        driver,
-                                        wait,
-                                        js
-                                ))
-                        );
-
-                        break;
-
-
-
-                    case "PROPERTY_TAX":
-
-                        modules.add(
-                                new ModuleTask(
-                                "PROPERTY_TAX",
-                                () -> propertyTaxCreate.newPropertyReg(
-                                        driver,
-                                        wait,
-                                        js
-                                ))
-                        );
-
-                        break;
-
-
-
-                    case "PUBLIC_GRIEVANCE_REDRESSAL":
-
-                        modules.add(
-                                new ModuleTask(
-                                "PUBLIC_GRIEVANCE_REDRESSAL",
-                                () -> pgrCreate.pgrReg(
-                                        driver,
-                                        wait,
-                                        js
-                                ))
-                        );
-
-                        break;
-
-
-                    case "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM":
-
-                        modules.add(
-                                new ModuleTask(
-                                "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM",
-                                () -> obpasCreate.obpasReg(
-                                        driver,
-                                        wait,
-                                        js
-                                ))
-                        );
-
-                        break;
-
-
-
-                    case "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_OC":
-
-                        modules.add(
-                                new ModuleTask(
-                                "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_OC",
-                                () -> obpasOCCreate.obpasOCReg(
-                                        driver,
-                                        wait,
-                                        js
-                                ))
-                        );
-
-                        break;
-
-                    case "EWASTE_MANAGEMENT_SYSTEM":
-
-                        modules.add(
-                                new ModuleTask(
-                                "EWASTE_MANAGEMENT_SYSTEM",
-                                () -> eWasteCreate.eWasteReg(
-                                        driver,
-                                        wait,
-                                        js
-                                ))
-                        );
-
-                        break;
-
-
-                    case "COMMUNITY_HALL_BOOKING":
-
-                        modules.add(
-                                new ModuleTask(
-                                "COMMUNITY_HALL_BOOKING",
-                                () -> chbCreate.chbReg(
-                                        driver,
-                                        wait,
-                                        js
-                                ))
-                        );
-
-                        break;
-
-
-                    case "CONSTRUCTION_AND_DEMOLITION":
-
-                        modules.add(
-                                new ModuleTask(
-                                "CONSTRUCTION_AND_DEMOLITION",
-                                () -> cndRequest.cndReg(
-                                        driver,
-                                        wait,
-                                        js
-                                ))
-                        );
-
-                        break;
-
-
-                    case "DESLUDGING_SERVICE":
-
-                        modules.add(
-                                new ModuleTask(
-                                "DESLUDGING_SERVICE",
-                                () -> desludgingCreate.desludgingReg(
-                                        driver,
-                                        wait,
-                                        js
-                                ))
-                        );
-
-                        break;
-
-                    case "DESLUDGING_SERVICE_PAYMENT":
-
-                        modules.add(
-                                new ModuleTask(
-                                "DESLUDGING_SERVICE_PAYMENT",
-                                () -> desludgingCitizenPayment.desludgingPaymentReg(
-                                        driver,
-                                        wait,
-                                        js
-                                ))
-                        );
-
-                        break;
-
-                    case "DESLUDGING_SERVICE_PAYMENT2":
-
-                        modules.add(
-                                new ModuleTask(
-                                "DESLUDGING_SERVICE_PAYMENT2",
-                                () -> desludgingCitizenPayment2.desludgingPayment2Reg(
-                                        driver,
-                                        wait,
-                                        js
-                                ))
-                        );
-
-                        break;
-
-
-
-                    case "WATER_AND_SEWERAGE":
-
-                        modules.add(
-                                new ModuleTask(
-                                "WATER_AND_SEWERAGE",
-                                () -> wAndSCreate.wandSReg(
-                                        driver,
-                                        wait,
-                                        js
-                                ))
-                        );
-
-                        break;
-
-                    default:
-                        logger.warn("Skipping unknown module: {}", moduleName);
+                String configPath = MODULE_CONFIG_MAP.get(moduleName.toUpperCase());
+                if (configPath != null) {
+                    modules.add(
+                            new ModuleTask(
+                                    moduleName.toUpperCase(),
+                                    () -> commonModuleExecutor.execute(driver, wait, js, configPath)
+                            )
+                    );
+                } else {
+                    logger.warn("Skipping unknown module: {}", moduleName);
                 }
             }
 
+            // Execute tasks in batch
             ModuleWrapper.executeBatch(modules);
+            logger.info("Multiple citizen modules batch execution completed.");
 
         } finally {
-
+            // Ensure browser driver is closed and resources are released
             tearDown();
         }
     }

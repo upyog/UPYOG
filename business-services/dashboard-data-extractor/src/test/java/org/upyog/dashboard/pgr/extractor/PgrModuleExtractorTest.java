@@ -49,31 +49,10 @@ class PgrModuleExtractorTest {
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@BeforeEach
-	void setUp() throws Exception {
+	void setUp() {
 		MockitoAnnotations.openMocks(this);
-		
-		// Inject ObjectMapper manually into private field
-		java.lang.reflect.Field field = PgrModuleExtractor.class.getDeclaredField("objectMapper");
-		field.setAccessible(true);
-		field.set(extractor, objectMapper);
-
-		// Mock and inject DashboardProperties
-		DashboardProperties dashboardProperties = mock(DashboardProperties.class);
-		when(dashboardProperties.getMetricUlb()).thenReturn("PG.citya.City A.Ward 1");
-		when(dashboardProperties.getMetricWard()).thenReturn("Ward 1");
-		when(dashboardProperties.getMetricRegion()).thenReturn("City A");
-		when(dashboardProperties.getMetricState()).thenReturn("PG");
-		when(dashboardProperties.getDbMaxAttempts()).thenReturn(3);
-		when(dashboardProperties.getDbBaseDelayMs()).thenReturn(1L);
-		when(dashboardProperties.getDbMaxDelayMs()).thenReturn(2L);
-
-		java.lang.reflect.Field propsField = PgrModuleExtractor.class.getDeclaredField("dashboardProperties");
-		propsField.setAccessible(true);
-		propsField.set(extractor, dashboardProperties);
-
+		extractor = new PgrModuleExtractor(queryExecutor, schemaMappingConfig, objectMapper, hierarchyParser);
 		when(hierarchyParser.parseTenantId(anyString())).thenReturn(java.util.Map.of("state", "PG", "ulb", "citya", "region", "City A", "ward", "Ward 1"));
-
-		extractor.init();
 	}
 
 	@Test
@@ -111,7 +90,7 @@ class PgrModuleExtractorTest {
 		when(queryExecutor.executeQueryWithRetry(anyString(), any(), any(), anyString())).thenReturn(List.of(mockDbResult));
 
 		LocalDate testDate = LocalDate.of(2022, 6, 1);
-		List<DashboardData> dataList = extractor.extractData(testDate);
+		List<DashboardData> dataList = extractor.extractData(List.of("PG.citya.City A.Ward 1"), testDate);
 
 		assertThat(dataList).isNotNull().hasSize(1);
 		DashboardData data = dataList.get(0);
@@ -153,7 +132,7 @@ class PgrModuleExtractorTest {
 				.thenReturn(List.of(mockDbResult));
 
 		LocalDate testDate = LocalDate.of(2022, 6, 1);
-		List<DashboardData> dataList = extractor.extractData(testDate);
+		List<DashboardData> dataList = extractor.extractData(List.of("PG.citya.City A.Ward 1"), testDate);
 
 		assertThat(dataList).isNotNull().hasSize(1);
 		assertThat(dataList.get(0).getMetrics()).containsEntry("uniqueCitizens", 5);
@@ -172,7 +151,7 @@ class PgrModuleExtractorTest {
 				.thenThrow(new RuntimeException("Persistent DB disconnect"));
 
 		LocalDate testDate = LocalDate.of(2022, 6, 1);
-		List<DashboardData> dataList = extractor.extractData(testDate);
+		List<DashboardData> dataList = extractor.extractData(List.of("PG.citya.City A.Ward 1"), testDate);
 
 		assertThat(dataList).isNotNull().isEmpty(); // Empty default
 		verify(queryExecutor).executeQueryWithRetry(anyString(), any(), any(), anyString());
