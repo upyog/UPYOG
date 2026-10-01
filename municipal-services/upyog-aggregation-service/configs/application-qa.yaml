@@ -72,6 +72,7 @@ providers:
   maxRetries: 2
   cacheTTL: 5m
   recentApplicationsSinceDays: 7
+  paymentRedirectUrlBase: "/upyog-ui/citizen/payment/my-bills"
   completedServiceStatuses:
     - "APPROVE"
     - "APPROVED"

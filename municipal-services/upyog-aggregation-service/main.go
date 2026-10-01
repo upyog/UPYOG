@@ -108,7 +108,7 @@ func main() {
 	reg.Register(providers.NewNotificationsProvider(userEventClient, c, log, m, cacheTTL))
 	reg.Register(providers.NewDraftApplicationsProvider(draftClient, c, log, m, cacheTTL))
 	// Replaced tlServicesClient with billingClient to fetch due renewals from billing-service
-	reg.Register(providers.NewDueRenewalsProvider(billingClient, c, log, m, cacheTTL))
+	reg.Register(providers.NewDueRenewalsProvider(billingClient, c, log, m, cacheTTL, cfg.Providers.PaymentRedirectURLBase))
 	reg.Register(providers.NewUpcomingEventsProvider(userEventClient, c, log, m, cacheTTL))
 	reg.Register(providers.NewAdvertisementBannersProvider(advertisementClient, c, log, m, cacheTTL))
 	reg.Register(providers.NewNewApplicationsProvider(workflowClient, c, log, m, cacheTTL))
