@@ -8,6 +8,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"sort"
+	"strings"
 	"time"
 
 	"go.uber.org/zap"
@@ -92,15 +94,56 @@ func (p *DueRenewalsProvider) Execute(
 	allBills := searchResult.Bill
 	totalCount := len(allBills)
 
-	// Enrich each bill with a dummy payment redirectUrl
+	// Enrich each bill with payment redirectUrl
 	for i, billRaw := range allBills {
 		if billMap, ok := billRaw.(map[string]interface{}); ok {
 			consumerCode, _ := billMap["consumerCode"].(string)
 			businessService, _ := billMap["businessService"].(string)
-			billMap["redirectUrl"] = fmt.Sprintf("/upyog-ui/citizen/payment/pay?consumerCode=%s&tenantId=%s&businessService=%s", consumerCode, aggReq.TenantID, businessService)
+			billMap["redirectUrl"] = fmt.Sprintf("/upyog-ui/citizen/payment/my-bills/%s/%s", businessService, consumerCode)
 			allBills[i] = billMap
 		}
 	}
+
+	// Sort bills by dueDate
+	sortAsc := true // Default: ascending (earliest due date / imminent deadline first)
+	if request.Sort != nil && strings.EqualFold(request.Sort.Order, "DESC") {
+		sortAsc = false
+	}
+
+	getDueDate := func(billRaw interface{}) int64 {
+		if billMap, ok := billRaw.(map[string]interface{}); ok {
+			switch v := billMap["dueDate"].(type) {
+			case float64:
+				return int64(v)
+			case int64:
+				return v
+			case int:
+				return int64(v)
+			case json.Number:
+				n, _ := v.Int64()
+				return n
+			}
+		}
+		return 0
+	}
+
+	sort.SliceStable(allBills, func(i, j int) bool {
+		d1 := getDueDate(allBills[i])
+		d2 := getDueDate(allBills[j])
+		if d1 == d2 {
+			return false
+		}
+		if d1 == 0 {
+			return false // Push items without due date to the bottom
+		}
+		if d2 == 0 {
+			return true
+		}
+		if sortAsc {
+			return d1 < d2
+		}
+		return d1 > d2
+	})
 
 	// Apply pagination if specified in request
 	finalBills := allBills
