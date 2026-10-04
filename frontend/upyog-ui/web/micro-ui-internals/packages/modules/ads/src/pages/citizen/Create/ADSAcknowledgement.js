@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, } from "react-router-dom";
 import { ADSDataConvert, getSlotSearchCriteria } from "../../../utils";
-import "../../../css/ads-inline-auto.css";
+
 const GetActionMessage = props => {
   const {
     t
@@ -21,7 +21,7 @@ const rowContainerStyle = {
   justifyContent: "space-between"
 };
 const BannerPicker = props => {
-  return <Banner message={GetActionMessage(props)} applicationNumber={props.data?.bookingApplication[0].bookingNo} info={props.isSuccess ? props.t("ADS_BOOKING_NO") : ""} successful={props.isSuccess} className="ads-auto-93" />;
+  return <Banner message={GetActionMessage(props)} applicationNumber={props.data?.bookingApplication[0].bookingNo} info={props.isSuccess ? props.t("ADS_BOOKING_NO") : ""} successful={props.isSuccess} className="ads-acknowledgement-link-full-width" />;
 };
 
 /**
@@ -117,7 +117,7 @@ const ADSAcknowledgement = ({ data, onSuccess, mutation }) => {
           width: "60%"
         }} />}
       </StatusTable>
-      {mutation.isSuccess && <div className="ads-auto-94">
+      {mutation.isSuccess && <div className="ads-acknowledgement-flex">
         {user.type === "EMPLOYEE" && <Link to={`/upyog-ui/employee`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>}

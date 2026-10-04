@@ -16,7 +16,7 @@ const MobileNumber = (props) => {
     <React.Fragment>
       <div className="field-container">
         {!props.hideSpan ? (
-          <span style={{ maxWidth: "50px", marginTop: "unset", ...props.labelStyle }} className="citizen-card-input citizen-card-input--front">
+          <span className="max-width-50" style={props.labelStyle} className="citizen-card-input citizen-card-input--front">
             +91
           </span>
         ) : null}
@@ -30,7 +30,7 @@ const MobileNumber = (props) => {
             onChange={onChange}
             ref={props.inputRef}
             value={props.value}
-            style={{ ...props.style }}
+            style={props?.style}
             // defaultValue={props.defaultValue || ""}
             minLength={props.minlength}
             maxLength={props.maxlength}

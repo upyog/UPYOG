@@ -144,7 +144,7 @@ const TLSelectStreet = ({
               name={input.name}
               rules={{ validate: convertValidationToRules(input) }}
               render={({ field }) => (
-                <div className="tl-auto-63">
+                <div className="tl-select-street-flex">
                 <TextInput
                   id={input.name}
                   key={input.name}
@@ -159,7 +159,7 @@ const TLSelectStreet = ({
                   autoFocus={focusIndex?.index == index}
                   {...input?.validation}
                 />
-                <div className="tl-auto-64">
+                <div className="tl-select-street-item">
                     <WrapUnMaskComponent
                       unmaskField={(e) => {
                         field.onChange(e);
@@ -181,8 +181,10 @@ const TLSelectStreet = ({
                                     },
                                 }}>
                       </WrapUnMaskComponent>
-                      </div>
-                    </div>} />
+                    </div>
+                  </div>
+                )}
+              />
           </div>
         </LabelFieldPair>;
     });

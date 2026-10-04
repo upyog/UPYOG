@@ -64,7 +64,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
   const clearAll = (mobileView) => {
     const mobileViewStyles = mobileView ? { margin: 0 } : {};
     return (
-      <LinkLabel style={{ display: "inline", ...mobileViewStyles }} onClick={clearSearch}>
+      <LinkLabel className="search-clear-link" style={mobileViewStyles} onClick={clearSearch}>
         {t("ES_COMMON_CLEAR_SEARCH")}
       </LinkLabel>
     );
@@ -72,7 +72,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
 
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
-      <div className="search-container" style={{ width: "auto", marginLeft: isInboxPage ? "24px" : "revert" }}>
+      <div className="search-container" className={isInboxPage ? "search-container-auto-margin" : "search-container-auto"}>
           <div className="search-complaint-container">
             {(type === "mobile" || mobileView) && (
               <div className="complaint-header">
@@ -82,7 +82,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
                 </span>
               </div>
             )}
-            <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%",display:"grid" }}>
+            <div className={`${"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} eng-search-fullwidth`}>
               {searchFields
                 ?.map((input, index) => (
                   <div key={input.name} className="input-fields">
@@ -93,8 +93,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
                     </span>
                     {formState?.dirtyFields?.[input.name] ? (
                       <span
-                        style={{ fontWeight: "700", color: "rgba(212, 53, 28)", paddingLeft: "8px", marginTop: "-20px", fontSize: "12px" }}
-                        className="inbox-search-form-error"
+                        className="inbox-search-form-error eng-search-top-spacing"
                       >
                         {formState?.errors?.[input.name]?.message}
                       </span>
@@ -103,20 +102,20 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
                 ))}
 
               {/* {isInboxPage && ( */}
-                {/* // <div style={{ gridColumn: "2/3", textAlign: "right", paddingTop: "10px" }} className="input-fields"> */}
+                {/* // <div className="custom-style" className="input-fields"> */}
                   {/* <div>{clearAll()}</div> */}
                 {/* // </div> */}
               {/* )} */}
 
               {type === "desktop" && !mobileView && (
-                <div style={{ maxWidth: "unset", marginLeft: "unset", marginTop: "55px"}} className="search-submit-wrapper">
+                <div className="search-submit-wrapper eng-search-top-spacing-2">
                   <SubmitBar
                     className="submit-bar-search"
                     label={t("ES_COMMON_SEARCH")}
                     // disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
                     submit
                   />
-                  {/* style={{ paddingTop: "16px", textAlign: "center" }} className="clear-search" */}
+                  
                   <div>{clearAll()}</div>
                 </div>
               )}
@@ -125,10 +124,10 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
         </div>
         {(type === "mobile" || mobileView) && (
           <ActionBar className="clear-search-container">
-            <button className="clear-search" style={{ flex: 1 }}>
+            <button className="clear-search eng-desktop-inbox-wrapper">
               {clearAll(mobileView)}
             </button>
-            <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} style={{ flex: 1 }} submit={true} />
+            <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} className="eng-desktop-inbox-wrapper" submit={true} />
           </ActionBar>
         )}
     </form>

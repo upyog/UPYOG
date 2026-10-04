@@ -75,7 +75,7 @@ const EmployeeApp = ({ path }) => {
   return (
     <React.Fragment>
       <div className="ground-container">
-        <div style={{ marginLeft: "12px" }}>
+        <div className="ew-index-spacing">
           <EWBreadCrumbs location={location} />
         </div>
         <Routes>

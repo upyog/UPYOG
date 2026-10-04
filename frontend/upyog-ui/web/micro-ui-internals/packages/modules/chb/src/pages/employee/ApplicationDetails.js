@@ -262,9 +262,9 @@ const ApplicationDetails = () => {
 
   return (
     <div>
-      <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
+      <div className={`${"employee-application-details"} chb-chb-cancellation-policy-card-2`}>
         <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("CHB_BOOKING_DETAILS")}</Header>
-        <div style={{ zIndex: "10", display: "flex", flexDirection: "row-reverse", alignItems: "center", marginTop: "-25px" }}>
+        <div className="chb-application-details-flex-row">
           {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper employee-mulitlink-main-div"
@@ -279,7 +279,7 @@ const ApplicationDetails = () => {
         </div>
       </div>
       {(isRefundInProgress || refundStatus || isRefunded) && (
-        <div style={{ padding: "10px 16px", borderRadius: "4px", marginBottom: "16px", fontWeight: "bold", fontSize: "16px", ...refundBannerStyle }}>
+        <div className="chb-refund-status-banner" style={refundBannerStyle}>
           {t("CHB_REFUND_STATUS") || "Refund Status"} &mdash; {refundStatus || (isRefunded ? "REFUNDED" : "")}
         </div>
       )}

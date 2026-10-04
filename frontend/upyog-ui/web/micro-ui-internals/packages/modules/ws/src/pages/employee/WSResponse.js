@@ -5,7 +5,7 @@ import getPDFData from "../../utils/getWSAcknowledgementData";
 import getModifyPDFData from "../../utils/getWsAckDataForModifyPdfs"
 
 import * as func from "../../utils";
-import "../../css/ws-inline-auto.css";
+
 const WSResponse = props => {
   const {
     t
@@ -120,27 +120,27 @@ const WSResponse = props => {
     <div>
       <Card>
         <Banner message={t("WS_APPLICATION_SUBMITTED_SUCCESSFULLY_LABEL")} applicationNumber={filters?.applicationNumber} applicationNumberOne={filters?.applicationNumber1} info={filters?.applicationNumber ? t("WS_WATER_APPLICATION_NUMBER_LABEL") : ""} infoOne={filters?.applicationNumber1 ? t("WS_SEWERAGE_APPLICATION_NUMBER_LABEL") : ""} successful={true} headerStyles={{
-        fontSize: "32px"
-      }} infoOneStyles={{
-        paddingTop: "20px"
-      }} className="ws-auto-341" />
-        <CardText className="ws-auto-342">{t("WS_MESSAGE_SUB_DESCRIPTION_LABEL")}</CardText>
-        <div className="ws-auto-343">
-          {filters?.applicationNumber && <div className="primary-label-btn d-grid ws-auto-344" onClick={handleAckPdfDownloadWater}>
+          fontSize: "32px"
+        }} infoOneStyles={{
+          paddingTop: "20px"
+        }} className="ws-response-label" />
+        <CardText className="ws-response-label-mb-sm">{t("WS_MESSAGE_SUB_DESCRIPTION_LABEL")}</CardText>
+        <div className="ws-response-label-flex">
+          {filters?.applicationNumber && <div className="primary-label-btn d-grid ws-response-btn-no-pad-mb-sm" onClick={handleAckPdfDownloadWater}>
             <svg width="20" height="23" viewBox="0 0 20 23" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M19.3334 8H14V0H6.00002V8H0.666687L10 17.3333L19.3334 8ZM0.666687 20V22.6667H19.3334V20H0.666687Z" fill="#a82227" />
             </svg>
             {t("WS_PRINT_WATER_APPLICATION_LABEL")}
           </div>}
-          {filters?.applicationNumber1 && <div className="primary-label-btn d-grid ws-auto-345" onClick={handleAckPdfDownloadSew}>
+          {filters?.applicationNumber1 && <div className="primary-label-btn d-grid ws-response-btn-no-pad-mb-sm" onClick={handleAckPdfDownloadSew}>
             <svg width="20" height="23" viewBox="0 0 20 23" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M19.3334 8H14V0H6.00002V8H0.666687L10 17.3333L19.3334 8ZM0.666687 20V22.6667H19.3334V20H0.666687Z" fill="#a82227" />
             </svg>
             {t("WS_PRINT_SEWERAGE_APPLICATION_LABEL")}
           </div>}
         </div>
-        <ActionBar className="ws-auto-346">
-          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} onSubmit={onSubmit} className="ws-auto-347" />
+        <ActionBar className="ws-response-link-flex">
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} onSubmit={onSubmit} className="ws-response-link-2" />
         </ActionBar>
       </Card>
     </div>

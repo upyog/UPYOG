@@ -172,7 +172,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
     }) => {
       return <div>
               {Digit.Utils.didEmployeeHasRole("PT_CEMP") ? <span className="link">
-                  <a onClick={() => downloadNotice(row.original)} className="pt-auto-29">{t("ES_PT_COLLECT_TAX")}</a>
+                  <a onClick={() => downloadNotice(row.original)} className="pt-search-defaulter-link">{t("ES_PT_COLLECT_TAX")}</a>
                 </span> : null}
             </div>;
     }
@@ -262,7 +262,7 @@ const onViewDownload =async () =>{
   const tableData2 = Object.values(groupBillrecords || {}) || [];
   return <React.Fragment>
       {data?.Properties?.length === 0 ? <PTEmptyResultInbox data={true}></PTEmptyResultInbox> : isMobile ? <DetailsCard data={getData(tableData)} t={t} /> : <div>
-          {jobStatus.running && <Card className="pt-auto-30">
+          {jobStatus.running && <Card className="pt-search-defaulter-card">
               <CardText>
                 {jobStatus.message}
                 <br />
@@ -270,8 +270,8 @@ const onViewDownload =async () =>{
               </CardText>
             </Card>}
 
-          {!jobStatus.running && jobStatus.done === jobStatus.total && jobStatus.total > 0 && <Card className="pt-auto-31">
-              <CardText className="pt-auto-32">
+          {!jobStatus.running && jobStatus.done === jobStatus.total && jobStatus.total > 0 && <Card className="pt-search-defaulter-card-green">
+              <CardText className="pt-search-defaulter-card-bold">
                 All notice generation jobs completed successfully.
               </CardText>
             </Card>}
@@ -286,13 +286,13 @@ const onViewDownload =async () =>{
         };
       }} manualPagination={false} disableSort={true} />
           {/* <SearchForm onSubmit={onSubmit} className={"pt-property-search"} handleSubmit={onSubmit}> */}
-          <div className="pt-auto-33">
-            <div className="pt-auto-34">
+          <div className="pt-search-defaulter-link-row-reverse-flex">
+            <div className="pt-search-defaulter-link-2">
               <SearchField className="pt-search-action-submit">
                 <SubmitBar label={t("CS_COMMON_GENERATE_NOTICE")} onSubmit={onSubmit} />
               </SearchField>
             </div>
-            <div className="pt-auto-35">
+            <div className="pt-search-defaulter-link-2">
               <SearchField className="pt-search-action-submit">
                 {/* <SubmitBar label={t("ES_COMMON_SEARCH")} submit /> */}
                 <SubmitBar label={t("CS_COMMON_DOWNLOADS")} onSubmit={onViewDownload} />

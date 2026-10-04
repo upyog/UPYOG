@@ -121,7 +121,7 @@ const TLTradeUnitsEmployee = ({
   }
   return <React.Fragment>
             {units?.map((unit, index) => <TradeUnitForm key={unit.key} index={index} unit={unit} {...commonProps} />)}
-            <LinkButton label={t("TL_ADD_TRADE_UNIT")} onClick={addNewUnits} className="tl-auto-128" />
+            <LinkButton label={t("TL_ADD_TRADE_UNIT")} onClick={addNewUnits} className="tl-trade-units-employee-btn-red" />
         </React.Fragment>;
 };
 const TradeUnitForm = _props => {
@@ -301,12 +301,12 @@ const TradeUnitForm = _props => {
     marginTop: "-21px"
   };
   return <React.Fragment>
-            <div className="tl-auto-129">
-                <div className="tl-auto-130">
-                    {allUnits?.length > 1 ? <div className="tl-auto-131">
-                            <div onClick={() => removeUnit(unit)} className="tl-auto-132">
+            <div className="tl-trade-units-employee-item">
+                <div className="tl-trade-units-employee-bordered">
+                    {allUnits?.length > 1 ? <div className="tl-trade-units-employee-flex">
+                            <div onClick={() => removeUnit(unit)} className="tl-trade-units-employee-btn-right-text-action">
                                 <span>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="tl-auto-133">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="tl-trade-units-employee-icon-relative">
                                         <path d="M1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM14 1H10.5L9.5 0H4.5L3.5 1H0V3H14V1Z" fill="#494848" />
                                     </svg>
                                 </span>
@@ -452,7 +452,7 @@ const TradeUnitForm = _props => {
                                         }}
                                         disable={true}
                                         onBlur={field.onBlur}
-                                        className="tl-auto-134"
+                                        className="tl-trade-units-employee-item-2"
                                     />
                                 )}
                             />
@@ -479,7 +479,7 @@ const TradeUnitForm = _props => {
                                         }}
                                         disable={!(unit?.tradeSubType?.uom)}
                                         onBlur={field.onBlur}
-                                       className="tl-auto-135"
+                                       className="tl-trade-units-employee-item-2"
                                     />
                                 )}
                             />

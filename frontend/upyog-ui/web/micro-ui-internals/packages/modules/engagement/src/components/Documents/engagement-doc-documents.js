@@ -82,7 +82,7 @@ const EngagementDocUploadDocument = ({ userType, t, onSelect, setValue, config, 
   return (
     <React.Fragment>
       <LabelFieldPair>
-        <CardLabel style={{ fontWeight: "bold" }}>{t("ES_COMMON_DOC_DOCUMENT") + "*"}</CardLabel>
+        <CardLabel className="eng-engagement-docs-ulb-card">{t("ES_COMMON_DOC_DOCUMENT") + "*"}</CardLabel>
         <div className="field">
           <Controller
             name={config.key + ".filestoreId"}
@@ -109,17 +109,17 @@ const EngagementDocUploadDocument = ({ userType, t, onSelect, setValue, config, 
         </div>
       </LabelFieldPair>
 
-      {/* <LabelFieldPair style={{ margin: "25px" }}>
+      {/* <LabelFieldPair className="custom-style">
         <CardLabel></CardLabel>
-        <div style={{ textAlign: "center" }} className="field links-wrapper">
-          <span style={{ color: "#505a5f", fontWeight: "bold" }} className="cell-text">
+        <div className="custom-style" className="field links-wrapper">
+          <span className="custom-style" className="cell-text">
             {"(" + t("CS_COMMON_OR") + ")"}
           </span>
         </div>
       </LabelFieldPair>
 
       <LabelFieldPair>
-        <CardLabel style={{ fontWeight: "bold" }}>{t("ES_COMMON_LINK_LABEL") + "*"}</CardLabel>
+        <CardLabel className="custom-style">{t("ES_COMMON_LINK_LABEL") + "*"}</CardLabel>
         <div className="field">
           <TextInput name={config.key + ".documentLink"} inputRef={register()} disable={urlDisabled} />
         </div>

@@ -44,7 +44,7 @@ const CitizenSubMenuSideBar = ({ item }) => {
   const leftIcon = leftIconArray ? IconsObject[leftIconArray] : IconsObject.BillsIcon;
   return (
     <React.Fragment>
-      <div className="submenu-container" style={{"position":"relative"}}>
+      <div className="submenu-container core-citizen-sub-menu-side-bar-wrapper">
         <div onClick={item.links && showSubnav} className={`sidebar-link ${subnav === true ? "active" : ""}`}>
           <div className="actions">
             {leftIcon}

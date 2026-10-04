@@ -119,7 +119,7 @@ const Assignments = ({ t, config, onSelect, userType, formData }) => {
           currentassignemtDate={currentassignemtDate}
         />
       ))}
-      <label onClick={handleAddUnit} className="link-label" style={{ width: "12rem" }}>
+      <label onClick={handleAddUnit} className="link-label hrms-assignment-wrapper">
         {t("HR_ADD_ASSIGNMENT")}
       </label>
     </div>
@@ -181,16 +181,16 @@ function Assignment({
     assignments;
   };
   return (
-    <div key={index + 1} style={{ marginBottom: "16px" }}>
-      <div style={{ border: "1px solid #E3E3E3", padding: "16px", marginTop: "8px" }}>
+    <div key={index + 1} className="hrms-assignment-bottom-spacing">
+      <div className="hrms-assignment-top-spacing">
         <LabelFieldPair>
-          <div className="label-field-pair" style={{ width: "100%" }}>
-            <h2 className="card-label card-label-smaller" style={{ color: "#505A5F" }}>
+          <div className="label-field-pair hrms-search-fullwidth">
+            <h2 className="card-label card-label-smaller hrms-assignment-header">
               {t("HR_ASSIGNMENT")} {index + 1}
             </h2>
           </div>
           {assignments.length > 1 && !assignment?.id && !assignment?.isCurrentAssignment ? (
-            <div onClick={() => handleRemoveUnit(assignment)} style={{ marginBottom: "16px", padding: "5px", cursor: "pointer", textAlign: "right" }}>
+            <div onClick={() => handleRemoveUnit(assignment)} className="hrms-assignment-clickable">
               X
             </div>
           ) : null}
@@ -237,7 +237,7 @@ function Assignment({
         </LabelFieldPair>
 
         <LabelFieldPair>
-          <CardLabel className="card-label-smaller" style={{ color: "white" }}>
+          <CardLabel className="card-label-smaller hrms-banner-card">
             .
           </CardLabel>
           <div className="field">

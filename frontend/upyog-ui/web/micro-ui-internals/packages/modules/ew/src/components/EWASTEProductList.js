@@ -68,34 +68,16 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
       Header: t("PRODUCT_QUANTITY"),
       accessor: "quantity",
       Cell: ({ row }) => (
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <div className="ew-ewasteproduct-list-flex-row">
           <button
-            style={{
-              marginRight: "5px",
-              borderRadius: "50%",
-              paddingLeft: "11px",
-              paddingRight: "11px",
-              background: "#a82227",
-              cursor: "pointer",
-              fontSize: "18px",
-              color: "white",
-            }}
+            className="ew-ewasteproduct-list-clickable"
             onClick={() => handleDecrement(row.index)}
           >
             -
           </button>
           {row.original.quantity}
           <button
-            style={{
-              marginLeft: "5px",
-              borderRadius: "50%",
-              paddingLeft: "9px",
-              paddingRight: "9px",
-              background: "#a82227",
-              fontSize: "18px",
-              cursor: "pointer",
-              color: "white",
-            }}
+            className="ew-ewasteproduct-list-clickable-2"
             onClick={() => handleIncrement(row.index)}
           >
             +
@@ -110,7 +92,7 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
       accessor: "delete",
       Cell: ({ row }) => (
         <button onClick={() => handleDelete(row.index)}>
-          <DeleteIcon className="delete" fill="#a82227" style={{ cursor: "pointer", marginLeft: "20px" }} />
+          <DeleteIcon className="delete ew-ewasteproduct-list-clickable-3" fill="#a82227" />
         </button>
       ),
     },
@@ -152,10 +134,10 @@ const ProductList = ({ t, prlistName, setPrlistName, prlistQuantity, setPrlistQu
           totalRecords={productRows.length}
         />
         <br />
-        <StatusTable style={{ marginLeft: "20px" }}>
+        <StatusTable className="ew-ewasteproduct-list-table-cell">
           <Row
             label={t("EWASTE_NET_PRICE")}
-            text={<div style={{ marginLeft: "37%" }}>{"₹ " + calculatedAmount}</div>}
+            text={<div className="ew-ewasteproduct-list-spacing">{"₹ " + calculatedAmount}</div>}
           />
         </StatusTable>
       </div>

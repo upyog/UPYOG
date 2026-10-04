@@ -287,16 +287,7 @@
                 }
                 const isSelected = bookingDetails?.bookingNo === row?.original?.bookingNo;
                 return (
-                  <span
-                    onClick={() => handleViewRefundStatus(row?.original)}
-                    style={{
-                      color: "#a82227",
-                      cursor: "pointer",
-                      fontWeight: isSelected ? "700" : "500",
-                      textDecoration: "underline",
-                      fontSize: "14px",
-                    }}
-                  >
+                  <span onClick={() => handleViewRefundStatus(row?.original)} className={`chb-refund-status-cell ${isSelected ? "selected" : "not-selected"}`}>
                     {isSelected && refundStatus
                       ? refundStatus
                       : t("CHB_VIEW_REFUND_STATUS") || "View Refund Status"}
@@ -389,26 +380,13 @@
                       />
                       {isMenuOpen && (
                         <div
-                          style={{
-                            position: 'absolute',
-                            backgroundColor: 'white',
-                            border: '1px solid #ccc',
-                            borderRadius: '4px',
-                            padding: '8px',
-                            zIndex: 1000,
-                          }}
+                          className="chb-search-application-container-padding"
                         >
                           {/* Action for Cancel */}
                           {application?.bookingStatus === "BOOKED" && (
                             <div
                               onClick={handleCancel}
-                              style={{
-                                display: 'block',
-                                padding: '8px',
-                                textDecoration: 'none',
-                                color: 'black',
-                                cursor: 'pointer',
-                              }}
+                              className="chb-search-application-clickable"
                             >
                               {t("CHB_CANCEL")}
                             </div>
@@ -418,13 +396,7 @@
                           {(application.bookingStatus === "BOOKING_CREATED" || application.bookingStatus === "PAYMENT_FAILED" || application.bookingStatus === "PENDING_FOR_PAYMENT") && (
                             <div
                               onClick={() => handleMakePayment()}
-                              style={{
-                                display: 'block',
-                                padding: '8px',
-                                textDecoration: 'none',
-                                color: 'black',
-                                cursor: 'pointer',
-                              }}
+                              className="chb-search-application-clickable"
                             >
                               {t("CHB_COLLECT_PAYMENT")}
                             </div>
@@ -474,7 +446,7 @@
                   <div>
                   <Header>{t("CHB_SEARCH_BOOKINGS")}</Header>
                   < Card className={"card-search-heading"}>
-                      <span style={{color:"#505A5F"}}>{t("Provide at least one parameter to search for an application")}</span>
+                      <span className="chb-search-application-wrapper">{t("Provide at least one parameter to search for an application")}</span>
                   </Card>
                   <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                   <SearchField>
@@ -605,7 +577,7 @@
                   <SearchField></SearchField>
                   <SearchField className="submit">
                       <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
-                      <p style={{marginTop:"10px"}}
+                      <p className="chb-search-application-top-spacing"
                       onClick={() => {
                           reset({ 
                               bookingNo: "", 
@@ -627,12 +599,12 @@
                       }}>{t(`ES_COMMON_CLEAR_ALL`)}</p>
                   </SearchField>
               </SearchForm>
-              {!isLoading && data?.display ? <Card style={{ marginTop: 20 }}>
+              {!isLoading && data?.display ? <Card className="chb-chbdesktop-inbox-card">
                   {
                   t(data.display)
                       .split("\\n")
                       .map((text, index) => (
-                      <p key={index} style={{ textAlign: "center" }}>
+                      <p key={index} className="chb-chbdesktop-inbox-centered">
                           {text}
                       </p>
                       ))
@@ -664,46 +636,23 @@
               </div>
               {/* Refund status banner for selected cancelled bookings */}
               {isCancelledBooking && bookingDetails?.bookingNo && (
-                <div
-                  style={{
-                    margin: "16px 0",
-                    padding: "14px 20px",
-                    backgroundColor: refundStatus ? refundStatusColor.bg : "#F8F9FA",
-                    border: `1px solid ${refundStatus ? refundStatusColor.border : "#DEE2E6"}`,
-                    borderRadius: "6px",
-                    color: refundStatus ? refundStatusColor.text : "#6C757D",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    flexWrap: "wrap",
-                    gap: "8px",
-                  }}
-                >
-                  <div style={{ fontWeight: "600", fontSize: "15px" }}>
+                <div className="chb-refund-banner" style={refundStatus ? { backgroundColor: refundStatusColor.bg, borderColor: refundStatusColor.border, color: refundStatusColor.text } : { backgroundColor: "#F8F9FA", borderColor: "#DEE2E6", color: "#6C757D" }}>
+                  <div className="chb-search-application-text-style">
                     {t("CHB_REFUND_STATUS_FOR") || "Refund Status for"}{" "}
-                    <span style={{ fontWeight: "700" }}>{bookingDetails.bookingNo}</span>
+                    <span className="chb-search-application-text-style-2">{bookingDetails.bookingNo}</span>
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
+                  <div className="chb-search-application-flex-row">
                     {refund?.refundId && (
-                      <span style={{ fontSize: "14px" }}>
+                      <span className="chb-search-application-text-style-3">
                         <strong>{t("CHB_REFUND_ID") || "Refund ID"}:</strong>{" "}{refund.refundId}
                       </span>
                     )}
                     {refund?.refundAmount && (
-                      <span style={{ fontSize: "14px" }}>
+                      <span className="chb-search-application-text-style-3">
                         <strong>{t("CHB_REFUND_AMOUNT") || "Amount"}:</strong>{" "}₹{refund.refundAmount}
                       </span>
                     )}
-                    <span
-                      style={{
-                        fontSize: "14px",
-                        fontWeight: "700",
-                        padding: "3px 12px",
-                        borderRadius: "12px",
-                        backgroundColor: refundStatus ? refundStatusColor.border : "#DEE2E6",
-                        color: refundStatus ? refundStatusColor.text : "#6C757D",
-                      }}
-                    >
+                    <span className="chb-refund-tag" style={refundStatus ? { backgroundColor: refundStatusColor.border, color: refundStatusColor.text } : { backgroundColor: "#DEE2E6", color: "#6C757D" }}>
                       {refundStatus
                         ? `${t("CHB_REFUND_STATUS") || "Refund Status"}: ${refundStatus}`
                         : isOnlinePayment
@@ -712,7 +661,7 @@
                     </span>
                     <span
                       onClick={() => setBookingDetails("")}
-                      style={{ cursor: "pointer", fontWeight: "600", fontSize: "18px", lineHeight: 1, opacity: 0.6 }}
+                      className="chb-search-application-clickable-2"
                       title="Dismiss"
                     >
                       ✕

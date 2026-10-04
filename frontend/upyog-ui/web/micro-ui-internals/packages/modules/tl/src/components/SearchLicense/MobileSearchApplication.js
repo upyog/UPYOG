@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useMemo, useReducer } from "react";
 import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import SearchFormFields from "./SearchFields";
 import { convertEpochToDateDMY, stringReplaceAll } from "../../utils";
-import "../../css/tl-inline-auto.css";
+
 const MobileSearchApplication = ({
   Controller,
   register,
@@ -32,8 +32,8 @@ const MobileSearchApplication = ({
     });
   };
   const MobilePopUpCloseButton = () => <div className="InboxMobilePopupCloseButtonWrapper" onClick={closeMobilePopupModal}>
-      <CloseSvg />
-    </div>;
+    <CloseSvg />
+  </div>;
   const searchFormFieldsComponentProps = {
     Controller,
     register,
@@ -54,20 +54,20 @@ const MobileSearchApplication = ({
     switch (currentlyActiveMobileModal) {
       case "SearchFormComponent":
         return <SearchForm {...props}>
-            <MobilePopUpCloseButton />
-            <div className="MobilePopupHeadingWrapper">
-              <h2>{t("ES_COMMON_SEARCH")}:</h2>
-            </div>
-            <SearchFormFields {...searchFormFieldsComponentProps} {...{
+          <MobilePopUpCloseButton />
+          <div className="MobilePopupHeadingWrapper">
+            <h2>{t("ES_COMMON_SEARCH")}:</h2>
+          </div>
+          <SearchFormFields {...searchFormFieldsComponentProps} {...{
             closeMobilePopupModal,
             tenantId,
             t
           }} />
-            {/* <SearchField className="submit">
+          {/* <SearchField className="submit">
                       <SubmitBar label={t("ES_COMMON_SEARCH")} submit form="search-form"/>
                       <p onClick={onResetSearchForm}>{t(`ES_COMMON_CLEAR_ALL`)}</p>
                   </SearchField> */}
-          </SearchForm>;
+        </SearchForm>;
       default:
         return <span></span>;
     }
@@ -101,19 +101,19 @@ const MobileSearchApplication = ({
     }));
   }, [data]);
   return <React.Fragment>
-      <div className="searchBox">
-        <SearchAction text={t("ES_COMMON_SEARCH")} handleActionClick={() => setActiveMobileModal({
+    <div className="searchBox">
+      <SearchAction text={t("ES_COMMON_SEARCH")} handleActionClick={() => setActiveMobileModal({
         type: "set",
         payload: "SearchFormComponent"
       })} {...{
         tenantId,
         t
       }} />
-        {/* {isInboxLoading ? <Loader /> : <FilterAction text={t("ES_COMMON_FILTER")} handleActionClick={() => setActiveMobileModal({type:"set", payload:"FilterFormComponent"})}/>} */}
-        {/* <SortAction text={t("ES_COMMON_SORT")} handleActionClick={() => setActiveMobileModal({type:"set", payload:"SortComponent"})}/> */}
-      </div>
-      {currentlyActiveMobileModal ? <PopUp>
-          <CurrentMobileModalComponent onSubmit={data => {
+      {/* {isInboxLoading ? <Loader /> : <FilterAction text={t("ES_COMMON_FILTER")} handleActionClick={() => setActiveMobileModal({type:"set", payload:"FilterFormComponent"})}/>} */}
+      {/* <SortAction text={t("ES_COMMON_SORT")} handleActionClick={() => setActiveMobileModal({type:"set", payload:"SortComponent"})}/> */}
+    </div>
+    {currentlyActiveMobileModal ? <PopUp>
+      <CurrentMobileModalComponent onSubmit={data => {
         setActiveMobileModal({
           type: "remove"
         });
@@ -124,16 +124,16 @@ const MobileSearchApplication = ({
         closeMobilePopupModal,
         tenantId
       }} />
-        </PopUp> : null}
-      {data?.display ? <Card className="tl-auto-5">
-          {t(data?.display).split("\\n")?.map((text, index) => <p key={index} className="tl-auto-6">
-                {text}
-              </p>)}
-        </Card> : <DetailsCard {...{
+    </PopUp> : null}
+    {data?.display ? <Card className="tl-mobile-search-application-card-mt-md">
+      {t(data?.display).split("\\n")?.map((text, index) => <p key={index} className="tl-mobile-search-application-card-center-text">
+        {text}
+      </p>)}
+    </Card> : <DetailsCard {...{
       data: propsMobileInboxCards,
       linkPrefix: `/upyog-ui/employee/tl/application-details/`,
       serviceRequestIdKey: t("TL_COMMON_TABLE_COL_APP_NO")
     }} />}
-    </React.Fragment>;
+  </React.Fragment>;
 };
 export default MobileSearchApplication;

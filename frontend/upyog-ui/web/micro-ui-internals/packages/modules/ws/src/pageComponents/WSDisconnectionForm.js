@@ -277,20 +277,20 @@ const WSDisconnectionForm = ({
         {userType === "citizen" && <DisconnectTimeline currentStep={1} />}
         <FormStep config={config} onSelect={handleSubmit} onSkip={onSkip} t={t}>
           
-          <div className="ws-auto-83">
+          <div className="ws-disconnection-form-no-pad">
           <CardHeader>{isReSubmit ? t("RESUBMIT_DISCONNECTION_FORM") : t("WS_APPLICATION_FORM")}</CardHeader>
           <StatusTable>
             <Row key={t("PDF_STATIC_LABEL_CONSUMER_NUMBER_LABEL")} label={`${t("PDF_STATIC_LABEL_CONSUMER_NUMBER_LABEL")}`} text={applicationData?.connectionNo} className="border-none" />
           </StatusTable> 
           
-          <CardLabel className="card-label-smaller ws-auto-84">{t("WS_DISCONNECTION_TYPE") + "*"}</CardLabel>
+          <CardLabel className="card-label-smaller ws-disconnection-form-item">{t("WS_DISCONNECTION_TYPE") + "*"}</CardLabel>
           <RadioButtons t={t} options={disconnectionTypeList} optionsKey="i18nKey" value={disconnectionData.type?.value?.code} selectedOption={disconnectionData.type?.value} isMandatory={false} onSelect={val => filedChange({
             code: "type",
             value: val
           })} labelKey="WS_DISCONNECTION_TYPE" inputStyle={isMobile ? {
             marginLeft: "unset"
           } : {}} />
-            <CardLabel className="card-label-smaller ws-auto-85">
+            <CardLabel className="card-label-smaller ws-disconnection-form-item">
             {t("WS_DISCONNECTION_PROPOSED_DATE") + "*"}
             <div className={`tooltip`}>
             <InfoIcon />
@@ -308,7 +308,7 @@ const WSDisconnectionForm = ({
             }}></DatePicker>
           </div>
           {disconnectionData.type?.value?.code === "Temporary" ? <div>
-          <CardLabel className="card-label-smaller ws-auto-87">
+          <CardLabel className="card-label-smaller ws-disconnection-form-item">
             {t("WS_DISCONNECTION_PROPOSED_END_DATE") + "*"}
             <div className={`tooltip`}>
             <InfoIcon />
@@ -327,7 +327,7 @@ const WSDisconnectionForm = ({
           </div>
           </div> : ""}
             <LabelFieldPair>
-              <CardLabel className="card-label-smaller ws-auto-89">{t("WS_DISCONNECTION_REASON") + "*"}</CardLabel>              
+              <CardLabel className="card-label-smaller ws-disconnection-form-item">{t("WS_DISCONNECTION_REASON") + "*"}</CardLabel>              
                 <Dropdown option={disconnectionReasonList} isMandatory={false} optionKey="i18nKey" t={t} name={"reason"} value={disconnectionData.reason?.value?.code} selectedOption={disconnectionData.reason?.value} labelKey="WS_DISCONNECTION_REASON" select={e => filedChange({
               code: "reason",
               value: e
@@ -365,16 +365,16 @@ const WSDisconnectionForm = ({
              {error && <Toast error={error?.key === "error" ? true : false} label={t(error?.message)} onClose={() => setError(null)} />}
           </div>
         </FormStep>
-        <CitizenInfoLabel textStyle={citizenInfoLabelTextStyle} text={t(`WS_DISONNECT_APPL_INFO`)} info={t("CS_COMMON_INFO")} className="ws-auto-90" />
+        <CitizenInfoLabel textStyle={citizenInfoLabelTextStyle} text={t(`WS_DISONNECT_APPL_INFO`)} info={t("CS_COMMON_INFO")} className="ws-disconnection-form-link" />
       </div>;
   }
-  return <div className="ws-auto-91">
+  return <div className="ws-disconnection-form-link-2">
     <Header styles={{
       fontSize: "32px",
       marginLeft: "18px"
     }}>{t("WS_WATER_AND_SEWERAGE_DISCONNECTION")}</Header>
     <FormStep config={config} onSelect={handleEmployeeSubmit} onSkip={onSkip} t={t}>
-      <div className="ws-auto-92">
+      <div className="ws-disconnection-form-mt-sm">
       <CardSectionHeader>{t("CS_TITLE_APPLICATION_DETAILS")}</CardSectionHeader>
       <StatusTable>
         <Row key={t("PDF_STATIC_LABEL_CONSUMER_NUMBER_LABEL")} label={`${t("PDF_STATIC_LABEL_CONSUMER_NUMBER_LABEL")}`} text={applicationData?.applicationData?.connectionNo} className="border-none" />
@@ -395,10 +395,10 @@ const WSDisconnectionForm = ({
           value: val
         })} labelKey="WS_DISCONNECTION_TYPE" inputStyle={isMobile ? {
           marginLeft: "unset"
-        } : {}} className="ws-auto-94" />
+        } : {}} className="ws-disconnection-form-label-flex" />
           
           <LabelFieldPair>
-          <CardLabel className="card-label-smaller ws-auto-95">
+          <CardLabel className="card-label-smaller ws-disconnection-form-label-bold-mt-neg">
             {t("WS_DISCONNECTION_PROPOSED_DATE") + "*"} 
             <div className={`tooltip`}>
             <InfoIcon />
@@ -419,7 +419,7 @@ const WSDisconnectionForm = ({
           </LabelFieldPair>
           {disconnectionData.type?.value?.code === "Temporary" ? <LabelFieldPair>
           
-          <CardLabel className="card-label-smaller ws-auto-97">
+          <CardLabel className="card-label-smaller ws-disconnection-form-label-bold-mt-neg">
             {t("WS_DISCONNECTION_PROPOSED_END_DATE") + "*"} 
             <div className={`tooltip`}>
             <InfoIcon />
@@ -438,7 +438,7 @@ const WSDisconnectionForm = ({
           </div>
           </LabelFieldPair> : ""}
           <LabelFieldPair>
-              <CardLabel className="card-label-smaller ws-auto-99">{t("WS_DISCONNECTION_REASON") + "*"}</CardLabel>              
+              <CardLabel className="card-label-smaller ws-disconnection-form-label-bold-mt-neg">{t("WS_DISCONNECTION_REASON") + "*"}</CardLabel>              
               <div className="field">
                 <Dropdown option={disconnectionReasonList} isMandatory={false} optionKey="i18nKey" t={t} name={"reason"} value={disconnectionData.reason?.value?.code} selectedOption={disconnectionData.reason?.value} select={e => filedChange({
               code: "reason",
@@ -446,7 +446,7 @@ const WSDisconnectionForm = ({
             })} labelKey="WS_DISCONNECTION_REASON" />  
                 </div>            
           </LabelFieldPair>
-          <CardSectionHeader className="ws-auto-100">{t("WS_DISCONNECTION_DOCUMENTS") + "*"}</CardSectionHeader>
+          <CardSectionHeader className="ws-disconnection-form-card">{t("WS_DISCONNECTION_DOCUMENTS") + "*"}</CardSectionHeader>
           {wsDocs?.DisconnectionDocuments?.map((document, index) => {
           return <SelectDocument key={index} document={document} t={t} error={error} setError={setError} setDocuments={setDocuments} documents={documents} setCheckRequiredFields={setCheckRequiredFields} />;
         })}
@@ -455,8 +455,8 @@ const WSDisconnectionForm = ({
 
 
     </FormStep>
-    <ActionBar className="ws-auto-101">
-          {<SubmitBar label={t("ACTION_TEST_SUBMIT")} onSubmit={() => onSubmit(disconnectionData)} className="ws-auto-102" />}
+    <ActionBar className="ws-disconnection-form-link-flex">
+          {<SubmitBar label={t("ACTION_TEST_SUBMIT")} onSubmit={() => onSubmit(disconnectionData)} className="ws-disconnection-form-link-3" />}
      </ActionBar>
     </div>;
 };
@@ -530,9 +530,9 @@ function SelectDocument({
       }
     })();
   }, [file]);
-  return <div className="ws-auto-103">
+  return <div className="ws-disconnection-form-mb-md">
           <LabelFieldPair>
-          <CardLabel className="card-label-smaller ws-auto-104">{t(doc?.i18nKey) + "*"}</CardLabel>
+          <CardLabel className="card-label-smaller ws-disconnection-form-label-bold-mt-neg">{t(doc?.i18nKey) + "*"}</CardLabel>
           <div className="field">
           <Dropdown t={t} isMandatory={false} option={doc?.dropdownData} selected={selectedDocument} optionKey="i18nKey" select={handleSelectDocument} />
 

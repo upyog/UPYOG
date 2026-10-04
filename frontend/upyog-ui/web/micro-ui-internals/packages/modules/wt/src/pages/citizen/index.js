@@ -5,7 +5,7 @@ import { APPLICATION_PATH } from "../../utils";
 import SearchApp from "../employee/SearchApp";
 
 // Main Routing Page used for routing accorss the Water Tanker Module
-import "../../css/wt-inline-auto.css";
+
 const App = () => {
   const { path, url, ...match } = Digit.Hooks.useModuleBasePath();
   const WTCreate = Digit?.ComponentRegistryService?.getComponent("WTCreate");
@@ -33,7 +33,7 @@ const App = () => {
   const inboxInitialStateMT = getInboxInitialState("mobileToilet");
 
   return (
-    <span className="wt-auto-71">
+    <span className="wt-index-full-width">
       <AppContainer>
         <BackButton>Back</BackButton>
         <Routes>
@@ -58,7 +58,7 @@ const App = () => {
             element={
               <PrivateRoute>
                 <Inbox
-                // Inbox component for mobileToilet
+                  // Inbox component for mobileToilet
                   useNewInboxAPI={true}
                   parentRoute={path}
                   businessService="mobileToilet"

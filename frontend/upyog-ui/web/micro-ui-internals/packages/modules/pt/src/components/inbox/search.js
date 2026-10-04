@@ -14,7 +14,7 @@ import {
 } from "@nudmcdgnpm/digit-ui-react-components";
 
 import { useTranslation } from "react-i18next";
-import "../../css/pt-inline.css";
+
 
 const fieldComponents = {
   date: DatePicker,

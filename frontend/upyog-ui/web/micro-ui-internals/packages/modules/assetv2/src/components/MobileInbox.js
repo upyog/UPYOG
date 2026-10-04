@@ -31,7 +31,7 @@ const MobileInbox = ({
   };
 
   return (
-    <div style={{ padding: 0 }}>
+    <div className="assetv2-mobile-inbox-container-padding">
       <div className="inbox-container">
         <div className="filters-container">
           {!isSearch && <InboxLinks classNameForMobileView="linksWrapperForMobileInbox" linkPrefix={parentRoute} isMobile={true} />}

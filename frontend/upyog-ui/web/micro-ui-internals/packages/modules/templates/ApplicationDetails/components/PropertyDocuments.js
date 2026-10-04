@@ -41,18 +41,18 @@ function PropertyDocuments({ documents, svgStyles = {}, isSendBackFlow=false }) 
   const isStakeholderApplication = window.location.href.includes("stakeholder");
 
   return (
-    <div style={{ marginTop: "19px" }}>
+    <div className="tmpl-documents-preview-top-spacing">
       {!isStakeholderApplication && documents?.map((document, index) => (
         <React.Fragment key={index}>
           {document?.title ? <CardSubHeader style={checkLocation ? { marginTop: "32px", marginBottom: "18px", color: "#0B0C0C, 100%", fontSize: "24px", lineHeight: "30px" } : { marginTop: "32px", marginBottom: "8px", color: "#505A5F", fontSize: "24px" }}>{t(document?.title)}</CardSubHeader>: null}
-          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-start" }}>
+          <div className="tmpl-documents-preview-flex-row">
             {document?.values && document?.values.length>0 ? document?.values?.map((value, index) => (
-              <a target="_" href={pdfFiles[value.fileStoreId]?.split(",")[0]} style={{ minWidth: "80px", marginRight: "10px", maxWidth: "100px", height: "auto" }} key={index}>
-                <div style={{ display: "flex", justifyContent: "center" }}>
+              <a target="_" href={pdfFiles[value.fileStoreId]?.split(",")[0]} className="tmpl-property-documents-spacing" key={index}>
+                <div className="tmpl-documents-preview-flex-row-2">
                   <PDFSvg />
                 </div>
                 <p style={checkLocation ? { marginTop: "8px", fontWeight: "bold", fontSize: "16px", lineHeight: "19px", color: "#505A5F", textAlign: "center" } : { marginTop: "8px", fontWeight: "bold" }}>{t(value?.title)}</p>
-               {isSendBackFlow? value?.documentType?.includes("NOC")?<p style={{textAlign:"center"}}>{t(value?.documentType.split(".")[1])}</p> :<p style={{textAlign:"center"}}>{t(value?.documentType)}</p>:""}
+               {isSendBackFlow? value?.documentType?.includes("NOC")?<p className="tmpl-documents-preview-centered-2">{t(value?.documentType.split(".")[1])}</p> :<p className="tmpl-documents-preview-centered-2">{t(value?.documentType)}</p>:""}
               </a>
             )):!(window.location.href.includes("citizen"))&& <div><p>{t("BPA_NO_DOCUMENTS_UPLOADED_LABEL")}</p></div>}
           </div>
@@ -60,16 +60,16 @@ function PropertyDocuments({ documents, svgStyles = {}, isSendBackFlow=false }) 
       ))}
       {isStakeholderApplication && documents?.map((document, index) => (
         <React.Fragment key={index}>
-          {document?.title ? <CardSubHeader style={{ marginTop: "32px", marginBottom: "8px", color: "#505A5F", fontSize: "24px" }}>{t(document?.title)}</CardSubHeader> : null} 
+          {document?.title ? <CardSubHeader className="tmpl-documents-preview-header">{t(document?.title)}</CardSubHeader> : null} 
           <div>
             {document?.values && document?.values.length>0 ? document?.values?.map((value, index) => (
-              <a target="_" href={pdfFiles[value.fileStoreId]?.split(",")[0]} style={{ minWidth: svgStyles?.minWidth ? svgStyles?.minWidth : "160px", marginRight: "20px" }} key={index}>
-                <div  style={{maxWidth: "940px", padding: "8px", borderRadius: "4px", border: "1px solid #D6D5D4", background: "#FAFAFA"}}>
-                  <p style={{ marginTop: "8px", fontWeight: "bold", marginBottom: "10px" }}>{t(value?.title)}</p>
-                  {value?.docInfo ? <div style={{fontSize: "12px", color: "#505A5F", fontWeight: 400, lineHeight: "15px", marginBottom: "10px"}}>{`${t(value?.docInfo)}`}</div> : null}
+              <a target="_" href={pdfFiles[value.fileStoreId]?.split(",")[0]} className="min-width-160" key={index}>
+                <div  className="tmpl-documents-preview-container-padding">
+                  <p className="tmpl-documents-preview-top-spacing-3">{t(value?.title)}</p>
+                  {value?.docInfo ? <div className="tmpl-documents-preview-bottom-spacing">{`${t(value?.docInfo)}`}</div> : null}
                   <PDFSvg />
                   {/* <div>{decodeURIComponent(pdfFiles[value.fileStoreId]?.split(",")[0].split("?")[0].split("/").pop().slice(13))}</div> */}
-                  <p style={{ marginTop: "8px", fontSize: "16px", lineHeight: "19px", color: "#505A5F", fontWeight: "400" }}>{`${t(value?.title)}`}</p> 
+                  <p className="tmpl-property-documents-top-spacing">{`${t(value?.title)}`}</p> 
                 </div>
               </a>
             )):!(window.location.href.includes("citizen"))&& <div><p>{t("BPA_NO_DOCUMENTS_UPLOADED_LABEL")}</p></div>}

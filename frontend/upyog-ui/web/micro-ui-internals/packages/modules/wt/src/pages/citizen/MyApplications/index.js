@@ -28,7 +28,7 @@ import { APPLICATION_PATH } from "../../../utils";
  * 
  * @returns {JSX.Element} A list of filtered water tanker applications with search and filter options.
  */
-import "../../../css/wt-inline-auto.css";
+
 export const WTMyApplications = () => {
   const {
     t
@@ -152,100 +152,100 @@ export const WTMyApplications = () => {
   ];
 
   const statusOptionForTreePruning = [
-  {
-    i18nKey: "BOOKING_CREATED",
-    code: "BOOKING_CREATED",
-    value: t("TP_BOOKING_CREATED")
-  }, {
-    i18nKey: "PENDING_FOR_APPROVAL",
-    code: "PENDING_FOR_APPROVAL",
-    value: t("TP_PENDING_FOR_APPROVAL")
-  }, {
-    i18nKey: "PAYMENT_PENDING",
-    code: "PAYMENT_PENDING",
-    value: t("TP_PAYMENT_PENDING")
-  }, {
-    i18nKey: "TEAM_ASSIGNMENT_FOR_VERIFICATION",
-    code: "TEAM_ASSIGNMENT_FOR_VERIFICATION",
-    value: t("TP_TEAM_ASSIGNMENT_FOR_VERIFICATION")
-  }, {
-    i18nKey: "TEAM_ASSIGNMENT_FOR_EXECUTION",
-    code: "TEAM_ASSIGNMENT_FOR_EXECUTION",
-    value: t("TP_TEAM_ASSIGNMENT_FOR_EXECUTION")
-  }, {
-    i18nKey: "TREE_PRUNING_SERVICE_COMPLETED",
-    code: "TREE_PRUNING_SERVICE_COMPLETED",
-    value: t("TP_TREE_PRUNING_SERVICE_COMPLETED")
-  }];
+    {
+      i18nKey: "BOOKING_CREATED",
+      code: "BOOKING_CREATED",
+      value: t("TP_BOOKING_CREATED")
+    }, {
+      i18nKey: "PENDING_FOR_APPROVAL",
+      code: "PENDING_FOR_APPROVAL",
+      value: t("TP_PENDING_FOR_APPROVAL")
+    }, {
+      i18nKey: "PAYMENT_PENDING",
+      code: "PAYMENT_PENDING",
+      value: t("TP_PAYMENT_PENDING")
+    }, {
+      i18nKey: "TEAM_ASSIGNMENT_FOR_VERIFICATION",
+      code: "TEAM_ASSIGNMENT_FOR_VERIFICATION",
+      value: t("TP_TEAM_ASSIGNMENT_FOR_VERIFICATION")
+    }, {
+      i18nKey: "TEAM_ASSIGNMENT_FOR_EXECUTION",
+      code: "TEAM_ASSIGNMENT_FOR_EXECUTION",
+      value: t("TP_TEAM_ASSIGNMENT_FOR_EXECUTION")
+    }, {
+      i18nKey: "TREE_PRUNING_SERVICE_COMPLETED",
+      code: "TREE_PRUNING_SERVICE_COMPLETED",
+      value: t("TP_TREE_PRUNING_SERVICE_COMPLETED")
+    }];
   return <React.Fragment>
-      <Header>{`${t("MY_BOOKINGS")} (${filteredData.length})`}</Header>
-      <Card>
-        <div className="wt-auto-49">
-          <div className="wt-auto-50">
-            <div className="wt-auto-51">
-              <CardLabel>{t("SERVICE_TYPE")}</CardLabel>
-              <Dropdown selected={serviceOptions.find(option => option.code === tempServiceType)} select={option => {
+    <Header>{`${t("MY_BOOKINGS")} (${filteredData.length})`}</Header>
+    <Card>
+      <div className="wt-index-ml-md">
+        <div className="wt-index-row-center-flex">
+          <div className="wt-index-flex-1">
+            <CardLabel>{t("SERVICE_TYPE")}</CardLabel>
+            <Dropdown selected={serviceOptions.find(option => option.code === tempServiceType)} select={option => {
               setTempServiceType(option.code);
               setStatus("");
             }} option={serviceOptions} placeholder={t("Select Service Type")} optionKey="label" t={t} />
-            </div>
-            <div className="wt-auto-52">
-              <CardLabel>{t("BOOKING_NO")}</CardLabel>
-              <TextInput placeholder={t("Enter Booking No.")} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
-            </div>
-            <div className="wt-auto-53">
-              <div className="wt-auto-54">
-                <CardLabel>{t("PT_COMMON_TABLE_COL_STATUS_LABEL")}</CardLabel>
-                <Dropdown
-                  className="form-field wt-auto-55"
-                  selected={status}
-                  select={setStatus}
-                  option={
-                    tempServiceType === 'treePruning'
-                      ? statusOptionForTreePruning
-                      : tempServiceType === 'watertanker'
+          </div>
+          <div className="wt-index-flex-1">
+            <CardLabel>{t("BOOKING_NO")}</CardLabel>
+            <TextInput placeholder={t("Enter Booking No.")} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+          </div>
+          <div className="wt-index-flex-1">
+            <div className="wt-index-col-flex">
+              <CardLabel>{t("PT_COMMON_TABLE_COL_STATUS_LABEL")}</CardLabel>
+              <Dropdown
+                className="form-field wt-index-full-width"
+                selected={status}
+                select={setStatus}
+                option={
+                  tempServiceType === 'treePruning'
+                    ? statusOptionForTreePruning
+                    : tempServiceType === 'watertanker'
                       ? statusOptionForWaterTanker
                       : tempServiceType === 'mobileToilet'
-                      ? statusOptionForMobileToilet
-                      : []
-                  }
-                  placeholder={t("Select Status")}
-                  optionKey="value"
-                  t={t}
-                />
-              </div>
-            </div>
-            <div>
-              <div className="wt-auto-56">
-              <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
-              <p className="link wt-auto-57" onClick={() => {
-                setSearchTerm(""), setStatus("");
-              }}>{t(`ES_COMMON_CLEAR_ALL`)}
-                </p>
-              </div>
+                        ? statusOptionForMobileToilet
+                        : []
+                }
+                placeholder={t("Select Status")}
+                optionKey="value"
+                t={t}
+              />
             </div>
           </div>
-            <Link to={`${APPLICATION_PATH}/citizen/wt/request-service/service-type`}>
-              <SubmitBar label={t("NEW_REQUEST") + " +"} className="wt-auto-58" />
-            </Link>
+          <div>
+            <div className="wt-index-item">
+              <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
+              <p className="link wt-index-btn-block-mt-sm" onClick={() => {
+                setSearchTerm(""), setStatus("");
+              }}>{t(`ES_COMMON_CLEAR_ALL`)}
+              </p>
+            </div>
+          </div>
         </div>
-      </Card>
-      <div>
-        {filteredData.length > 0 && filteredData.map((application, index) => <div key={index}>
-              <WTApplication application={application} tenantId={tenantId} buttonLabel={t("SUMMARY")} />
-            </div>)}
-        {filteredData.length === 0 && !isLoading && <p className="wt-auto-59">
-            {t("NO_APPLICATION_FOUND_MSG")}
-          </p>}
-        {filteredData.length !== 0 && (dataToilet?.count || 0) + (dataTanker?.count || 0) + (dataTreePruning?.count || 0) > t1 && <div>
-            <p className="wt-auto-60">
-              <span className="link">
-                <Link to={`${APPLICATION_PATH}/citizen/wt/status/${t1}`}>
-                  {t("LOAD_MORE_MSG")}
-                </Link>
-              </span>
-            </p>
-          </div>}
+        <Link to={`${APPLICATION_PATH}/citizen/wt/request-service/service-type`}>
+          <SubmitBar label={t("NEW_REQUEST") + " +"} className="wt-index-btn-rounded" />
+        </Link>
       </div>
-    </React.Fragment>;
+    </Card>
+    <div>
+      {filteredData.length > 0 && filteredData.map((application, index) => <div key={index}>
+        <WTApplication application={application} tenantId={tenantId} buttonLabel={t("SUMMARY")} />
+      </div>)}
+      {filteredData.length === 0 && !isLoading && <p className="wt-index-mt-md-ml-md">
+        {t("NO_APPLICATION_FOUND_MSG")}
+      </p>}
+      {filteredData.length !== 0 && (dataToilet?.count || 0) + (dataTanker?.count || 0) + (dataTreePruning?.count || 0) > t1 && <div>
+        <p className="wt-index-mt-md-ml-md">
+          <span className="link">
+            <Link to={`${APPLICATION_PATH}/citizen/wt/status/${t1}`}>
+              {t("LOAD_MORE_MSG")}
+            </Link>
+          </span>
+        </p>
+      </div>}
+    </div>
+  </React.Fragment>;
 };

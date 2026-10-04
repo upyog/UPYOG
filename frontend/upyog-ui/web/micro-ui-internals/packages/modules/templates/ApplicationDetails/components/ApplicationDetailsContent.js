@@ -334,7 +334,7 @@ function ApplicationDetailsContent({
   };
 
   return (
-    <Card style={{ position: "relative" }} className={"employeeCard-override"}>
+    <Card className={`${"employeeCard-override"} tmpl-application-details-content-card`}>
       {/* For UM-4418 changes */}
       {isInfoLabel ? (
         <InfoDetails
@@ -351,7 +351,7 @@ function ApplicationDetailsContent({
         <React.Fragment key={detail.title || index}>
           <div style={getMainDivStyles()}>
             {index === 0 && !detail.asSectionHeader ? (
-              <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t(detail.title)}</CardSubHeader>
+              <CardSubHeader className="tmpl-application-details-content-header">{t(detail.title)}</CardSubHeader>
             ) : (
               <React.Fragment>
                 <CardSectionHeader
@@ -371,20 +371,20 @@ function ApplicationDetailsContent({
 
             {detail?.isTable && (
               <table
-                style={{ tableLayout: "fixed", width: "100%", borderCollapse: "collapse", border: "1px solid black" }}
+                className="tmpl-application-details-content-fullwidth"
               >
-                <tr style={{ textAlign: "left" }}>
+                <tr className="tmpl-application-details-content-table-cell">
                   {detail?.headers.map((header) => (
-                    <th style={{ padding: "10px", paddingLeft: "5px", border: "1px solid black" }}>{t(header)}</th>
+                    <th className="tmpl-application-details-content-table-cell-2">{t(header)}</th>
                   ))}
                 </tr>
 
                 {detail?.tableRows.map((row, index) => {
                   // if (index === detail?.tableRows.length - 1) {
                   //   return <>
-                  //     <hr style={{ width: "1200px", marginTop: "15px" }} className="underline" />
+                  //     <hr className="custom-style" className="underline" />
                   //     <tr>
-                  //       {row.map(element => <td style={{ textAlign: "left" }}>{t(element)}</td>)}
+                  //       {row.map(element => <td className="custom-style">{t(element)}</td>)}
                   //     </tr>
                   //   </>
                   // }
@@ -392,24 +392,24 @@ function ApplicationDetailsContent({
                     <tr>
                       {row.map((element, idx) =>
                         Array.isArray(element) && element.length > 1 && detail.isMaintenance === true ? (
-                          <td style={{ paddingTop: "20px", textAlign: "left", border: "1px solid black", verticalAlign: "middle" }} key={idx}>
-                            <div style={{ display: "flex", flexWrap: "nowrap", gap: "5px" }}>
+                          <td className="tmpl-application-details-content-table-cell-3" key={idx}>
+                            <div className="tmpl-application-details-content-flex-container">
                               {element.map((file, fileIndex) => (
                                 <a
                                   key={fileIndex} // Ensure each <a> tag has a unique key
                                   onClick={() => openFilePDF(file.fileStoreId)}
                                   rel="noopener noreferrer"
-                                  style={{ marginRight: "5px", display: "inline-block", cursor: "pointer" }}
+                                  className="tmpl-application-details-content-clickable"
                                 >
-                                  <PDFSvg style={{ width: "25px", height: "25px" }} />
+                                  <PDFSvg className="tmpl-application-details-content-icon" />
                                 </a>
                               ))}
                             </div>
                           </td>
                         ) : (
-                          <td key={idx} style={{ paddingTop: "20px", textAlign: "left", border: "1px solid black", verticalAlign: "middle" }}>
+                          <td key={idx} className="tmpl-application-details-content-table-cell-3">
                             {element && element.editButton === true ? (
-                              <span style={{ display: "inline-flex", gap: "10px", alignItems: "center" }}>
+                              <span className="tmpl-application-details-content-wrapper">
                                 <Link
                                   to={{
                                     pathname: `/upyog-ui/employee/asset/assetservice/maintenance-edit/${applicationNo}`,
@@ -478,21 +478,13 @@ function ApplicationDetailsContent({
                         key={t(value.title)}
                         label={t(value.title)}
                         text={
-                          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                          <div className="tmpl-application-details-content-flex-row">
                             {/* Show the original value */}
                             <span>{getTextValue(value)}</span>
                             {isAssetModule && (
                               applicationDetailsofAsset?.applicationData?.applicationData?.additionalDetails?.geometry ? (
                                 <button
-                                  style={{
-                                    backgroundColor: "#a82227",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: "4px",
-                                    padding: "4px 10px",
-                                    cursor: "pointer",
-                                    fontSize: "0.85rem",
-                                  }}
+                                  className="tmpl-application-details-content-clickable-2"
                                   onClick={() =>
                                     handleOpenMap(applicationDetailsofAsset?.applicationData?.applicationData?.additionalDetails?.geometry)
                                   }
@@ -501,15 +493,7 @@ function ApplicationDetailsContent({
                                 </button>
                               ) : (
                                 <button
-                                  style={{
-                                    backgroundColor: "#a82227",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: "4px",
-                                    padding: "4px 10px",
-                                    cursor: "pointer",
-                                    fontSize: "0.85rem",
-                                  }}
+                                  className="tmpl-application-details-content-clickable-2"
                                   onClick={() => setShowMap(true)}
                                 >
                                   {t("Mark on Map")}
@@ -541,9 +525,9 @@ function ApplicationDetailsContent({
                         key={t(value.title)}
                         label={
                           window.location.href.includes("tl") || window.location.href.includes("ws") ? (
-                            <div style={{ width: "200%" }}>
+                            <div className="tmpl-application-details-content-wrapper-2">
                               <Link to={value?.to}>
-                                <span className="link" style={{ color: "#a82227" }}>
+                                <span className="link tmpl-application-details-content-wrapper-3">
                                   {t(value?.title)}
                                 </span>
                               </Link>
@@ -557,7 +541,7 @@ function ApplicationDetailsContent({
                         text={
                           <div>
                             <Link to={value?.to}>
-                              <span className="link" style={{ color: "#a82227" }}>
+                              <span className="link tmpl-application-details-content-wrapper-3">
                                 {value?.value}
                               </span>
                             </Link>
@@ -629,7 +613,7 @@ function ApplicationDetailsContent({
              <StatusTable>
              <Row label={t(doc?.documentType)}></Row>
              <OBPSDocument value={detail?.additionalDetails?.values} Code={doc?.documentType} index={index}/> 
-             <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
+             <hr className="custom-style"/>
              </StatusTable>
              </div>}
              </div>
@@ -673,9 +657,9 @@ function ApplicationDetailsContent({
           {detail?.isWaterConnectionDetails && <WSAdditonalDetails wsAdditionalDetails={detail} oldValue={oldValue} />}
           {/* {detail?.isLabelShow ? <WSInfoLabel t={t} /> : null} */}
           {detail?.additionalDetails?.redirectUrl && (
-            <div style={{ fontSize: "16px", lineHeight: "24px", fontWeight: "400", padding: "10px 0px" }}>
+            <div className="tmpl-application-details-content-container-padding">
               <Link to={detail?.additionalDetails?.redirectUrl?.url}>
-                <span className="link" style={{ color: "#a82227" }}>
+                <span className="link tmpl-application-details-content-wrapper-3">
                   {detail?.additionalDetails?.redirectUrl?.title}
                 </span>
               </Link>
@@ -692,7 +676,7 @@ function ApplicationDetailsContent({
           {!workflowDetails?.isLoading && !isDataLoading && (
             <Fragment>
               <div id="timeline">
-                <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
+                <CardSectionHeader className="tmpl-application-details-content-header-2">
                   {t("ES_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
                 </CardSectionHeader>
                 {workflowDetails?.data?.timeline && workflowDetails?.data?.timeline?.length === 1 ? (

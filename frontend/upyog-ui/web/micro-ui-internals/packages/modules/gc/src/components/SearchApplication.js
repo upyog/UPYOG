@@ -119,15 +119,15 @@ const GCSearchApplication = ({ tenantId, isLoading, t, onSubmit, onClear, data, 
 
   return (
     <React.Fragment>
-      <div style={{ padding: user?.type === "CITIZEN" ? "0 24px 0 24px" : "" }}>
+      <div className={user?.type === "CITIZEN" ? "citizen-container-padding-24" : ""}>
         <Header>{t("GC_SEARCH_APPLICATION")}</Header>
         {user?.type === "EMPLOYEE" && (
           <Card className={"card-search-heading"}>
-            <span style={{ color: "#505A5F" }}>{t("PROVIDE_ATLEAST_ONE_PARAMETERS")}</span>
+            <span className="gc-search-application-wrapper">{t("PROVIDE_ATLEAST_ONE_PARAMETERS")}</span>
           </Card>
         )}
         {user?.type === "CITIZEN" && (
-          <span style={{ color: "#505A5F", marginBottom: "10px" }}>{t("PROVIDE_ATLEAST_ONE_PARAMETERS")}</span>
+          <span className="gc-search-application-bottom-spacing">{t("PROVIDE_ATLEAST_ONE_PARAMETERS")}</span>
         )}
 
         <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
@@ -155,12 +155,12 @@ const GCSearchApplication = ({ tenantId, isLoading, t, onSubmit, onClear, data, 
           <SearchField></SearchField>
           <SearchField className="submit">
             <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
-            <p style={{ marginTop: "10px", cursor: "pointer" }} onClick={() => { reset({ applicationNo: "", fromDate: "", toDate: "", mobileNumber: "", status: undefined, offset: 0, limit: 10 }); setShowToast(null); onClear(); }}>
+            <p className="gc-search-application-clickable" onClick={() => { reset({ applicationNo: "", fromDate: "", toDate: "", mobileNumber: "", status: undefined, offset: 0, limit: 10 }); setShowToast(null); onClear(); }}>
               {t(`ES_COMMON_CLEAR_ALL`)}
             </p>
           </SearchField>
         </SearchForm>
-        {!isLoading && data?.display ? <Card style={{ marginTop: 20 }}>{t(data.display).split("\\n").map((text, index) => (<p key={index} style={{ textAlign: "center" }}>{text}</p>))}</Card> : !isLoading && data !== "" ? <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={(cellInfo) => { return { style: { minWidth: cellInfo.column.Header === t("GC_APPLICATION_NUMBER_LABEL") ? "240px" : "", padding: "20px 18px", fontSize: "16px" } }; }} onPageSizeChange={onPageSizeChange} currentPage={getValues("offset") / getValues("limit")} onNextPage={nextPage} onPrevPage={previousPage} pageSizeLimit={getValues("limit")} disableSort={true} /> : data !== "" || (isLoading && <Loader />)}
+        {!isLoading && data?.display ? <Card className="gc-gcdesktop-inbox-card">{t(data.display).split("\\n").map((text, index) => (<p key={index} className="gc-gcdesktop-inbox-centered">{text}</p>))}</Card> : !isLoading && data !== "" ? <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={(cellInfo) => { return { style: { minWidth: cellInfo.column.Header === t("GC_APPLICATION_NUMBER_LABEL") ? "240px" : "", padding: "20px 18px", fontSize: "16px" } }; }} onPageSizeChange={onPageSizeChange} currentPage={getValues("offset") / getValues("limit")} onNextPage={nextPage} onPrevPage={previousPage} pageSizeLimit={getValues("limit")} disableSort={true} /> : data !== "" || (isLoading && <Loader />)}
       </div>
     </React.Fragment>
   );

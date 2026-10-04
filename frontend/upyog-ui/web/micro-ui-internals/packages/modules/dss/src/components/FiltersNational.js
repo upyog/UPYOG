@@ -101,7 +101,7 @@ const Filters = ({
       </div>
 
       {showDenomination && (
-        <div className="filters-input" style={{ flexBasis: "16%" }}>
+        <div className="filters-input dss-filters-wrapper">
           <Switch onSelect={handleFilterChange} t={t} />
         </div>
       )}

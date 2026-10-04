@@ -69,10 +69,10 @@ const MyChallanResult = ({ template, header, actionButtonLabel }) => {
   if (result?.isLoading) return <Loader />;
 
   return (
-    <div style={{ marginTop: "16px" }}>
+    <div className="mc-my-challan-top-spacing">
       <div >
         {header && (
-          <Header style={{ marginLeft: "8px" }}>
+          <Header className="mc-my-challan-header">
             {t(header)} ({searchResults?.length})
           </Header>
         )}
@@ -81,7 +81,7 @@ const MyChallanResult = ({ template, header, actionButtonLabel }) => {
         </div>
       </div>
 
-      <div style={{ marginLeft: "16px", marginTop: "16px", marginBottom: "46px" }}>
+      <div className="mc-my-challan-top-spacing-2">
         <p>{t("UC_NOT_ABLE_TO_FIND_BILL_MSG")} </p>
         <p className="link">
           <Link to="/upyog-ui/citizen/mcollect/search">{t("UC_CLICK_HERE_TO_SEARCH_LINK")}</Link>

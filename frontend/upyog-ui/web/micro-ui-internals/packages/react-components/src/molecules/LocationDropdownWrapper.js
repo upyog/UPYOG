@@ -55,7 +55,7 @@ const LocationDropdownWrapper = ({ populators, formData, props, inputRef, errors
   return (
     <Fragment>
       {populators.allowMultiSelect && (
-        <div style={{ display: "grid", gridAutoFlow: "row" }}>
+        <div className="rc-api-dropdown-grid-container">
           <MultiSelectDropdown
             options={options}
             optionsKey={populators?.optionsKey}
@@ -83,7 +83,7 @@ const LocationDropdownWrapper = ({ populators, formData, props, inputRef, errors
       {!populators.allowMultiSelect && (
         <Dropdown
           inputRef={inputRef}
-          style={{ display: "flex", justifyContent: "space-between" }}
+          className="rc-advertisement-module-card-flex-row"
           option={options}
           key={populators.name}
           optionKey={populators?.optionsKey}

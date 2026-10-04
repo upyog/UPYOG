@@ -150,7 +150,7 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
   return (
     <React.Fragment>
       <BackButton />
-      <div className="sideContent" style={{ marginLeft:"65%", marginTop:"-12%"}}>
+      <div className="sideContent core-mobile-search-application-top-spacing">
                   <DownloadBtn className="mrlg cursorPointer"  onClick={() => handleExcelDownload(tabledata)}/>
       </div>
       <Header>{t("PRIVACY_AUDIT_REPORT")}:</Header>

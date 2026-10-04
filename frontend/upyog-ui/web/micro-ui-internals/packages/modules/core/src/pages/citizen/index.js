@@ -155,7 +155,7 @@ const Home = (props) => {
           <div className="moduleLinkHomePage">
             <img src={"https://nugp-assets.s3.ap-south-1.amazonaws.com/nugp+asset/Banner+UPYOG+%281920x500%29B+%282%29.jpg" || bannerImage || stateInfo?.bannerUrl} alt="noimagefound" />
             <BackButton className="moduleLinkHomePageBackButton" />
-            {isMobile ? <h4 style={{top:"calc(16vw + 40px)",left:"1.5rem",position:"absolute",color:"white"}}>{t("MODULE_" + code.toUpperCase())}</h4> : <h1>{t("MODULE_" + code.toUpperCase())}</h1>}
+            {isMobile ? <h4 className="core-index-wrapper-2">{t("MODULE_" + code.toUpperCase())}</h4> : <h1>{t("MODULE_" + code.toUpperCase())}</h1>}
             <div className="moduleLinkHomePageModuleLinks">
               {mdmsDataObj && (
                 <CitizenHomeCard
@@ -164,7 +164,7 @@ const Home = (props) => {
                   Icon={() => <span />}
                   Info={code === "OBPS" ? () => (
                     <CitizenInfoLabel
-                      style={{ margin: "0px", padding: "10px" }}
+                      className="core-home-container-padding"
                       info={t("CS_FILE_APPLICATION_INFO_LABEL")}
                       text={t(`BPA_CITIZEN_HOME_STAKEHOLDER_INCLUDES_INFO_LABEL`)}
                     />
@@ -174,7 +174,7 @@ const Home = (props) => {
               )}
             </div>
             {code?.toUpperCase() === "ADS" && (
-              <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between" }}>
+              <div className="core-index-flex-row">
                 {Advertisement.map((ad, index) => (
   <AdvertisementModuleCard
     key={ad?.poleNo || ad?.title || index}

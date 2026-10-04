@@ -157,9 +157,9 @@ const WorkerConfig = ({ t, disabled = false, skillsOption = [], defaultSkill = [
           optionsDisable: disabled,
           label: "FSM_REGISTRY_WORKER_SKILLS",
           labelChildren: (
-            <div className="tooltip" style={{ paddingLeft: "10px", marginBottom: "-3px" }}>
+            <div className="tooltip fsm-add-vehicle-bottom-spacing">
               <InfoIcon />
-              <span className="tooltiptext" style={{ width: "150px", left: "230%", fontSize: "14px" }}>
+              <span className="tooltiptext fsm-add-vehicle-text-style">
                 {t("ES_FSM_SW_SKILLS_INFO_TIP")}
               </span>
             </div>

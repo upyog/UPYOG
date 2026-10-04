@@ -1,4 +1,4 @@
-import { PrivateRoute,BreadCrumb } from "@nudmcdgnpm/digit-ui-react-components";
+import { PrivateRoute, BreadCrumb } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation, Routes, Route } from "react-router-dom";
@@ -8,7 +8,6 @@ import PaymentDetails from "./PaymentDetails";
 import Search from "./Search";
 import SearchApp from "./SearchApp";
 import UlbAssesment from "./UlbAssesment";
-import "../../css/pt-inline.css";
 
 
 const EmployeeApp = ({ path, url, userType }) => {
@@ -73,7 +72,7 @@ const EmployeeApp = ({ path, url, userType }) => {
     const { t } = useTranslation();
     const search = useLocation().search;
     const fromScreen = new URLSearchParams(search).get("from") || null;
-    const { from : fromScreen2 } = Digit.Hooks.useQueryParams();
+    const { from: fromScreen2 } = Digit.Hooks.useQueryParams();
     const crumbs = [
       {
         path: "/upyog-ui/employee",
@@ -117,15 +116,15 @@ const EmployeeApp = ({ path, url, userType }) => {
       },
       {
         path: `${path}/ptsearch/property-details/${sessionStorage.getItem("propertyIdinPropertyDetail")}`,
-        content: fromScreen || fromScreen2 ? `${t(fromScreen || fromScreen2)} / ${t("PT_PROPERTY_INFORMATION")}`:t("PT_PROPERTY_INFORMATION"),
-        show:  location.pathname.includes("/pt/ptsearch/property-details/") || location.pathname.includes("/pt/ptsearch/payment-details/") || location.pathname.includes("/pt/ptsearch/assessment-details/")  ? true : false,
-        isBack:fromScreen && true,
+        content: fromScreen || fromScreen2 ? `${t(fromScreen || fromScreen2)} / ${t("PT_PROPERTY_INFORMATION")}` : t("PT_PROPERTY_INFORMATION"),
+        show: location.pathname.includes("/pt/ptsearch/property-details/") || location.pathname.includes("/pt/ptsearch/payment-details/") || location.pathname.includes("/pt/ptsearch/assessment-details/") ? true : false,
+        isBack: fromScreen && true,
       },
       {
-        path: `${path}/property-details/${sessionStorage.getItem("propertyIdinPropertyDetail")}?${fromScreen2?`from=${fromScreen2}` : ''}`,
-        content: fromScreen || fromScreen2 ? `${t(fromScreen || fromScreen2)} / ${t("PT_PROPERTY_INFORMATION")}`:t("PT_PROPERTY_INFORMATION"),
+        path: `${path}/property-details/${sessionStorage.getItem("propertyIdinPropertyDetail")}?${fromScreen2 ? `from=${fromScreen2}` : ''}`,
+        content: fromScreen || fromScreen2 ? `${t(fromScreen || fromScreen2)} / ${t("PT_PROPERTY_INFORMATION")}` : t("PT_PROPERTY_INFORMATION"),
         show: location.pathname.includes("/pt/property-details/") || location.pathname.includes("/pt/payment-details/") ? true : false,
-        isBack:true,
+        isBack: true,
       },
       {
         path: `${path}/applicationsearch/application-details/${sessionStorage.getItem("applicationNoinAppDetails")}`,
@@ -135,9 +134,9 @@ const EmployeeApp = ({ path, url, userType }) => {
       {
         path: `${path}/payment-details/`,
         content: fromScreen ? `${t(fromScreen)} / ${t("PT_PAYMENT_HISTORY")
-} `: t("PT_PAYMENT_HISTORY"),
+          } ` : t("PT_PAYMENT_HISTORY"),
         show: location.pathname.includes("/pt/ptsearch/payment-details") || location.pathname.includes("/pt/payment-details") ? true : false,
-        isBack:fromScreen && true,
+        isBack: fromScreen && true,
       },
       {
         path: `${path}/assessment-details/`,
@@ -145,8 +144,8 @@ const EmployeeApp = ({ path, url, userType }) => {
         show: location.pathname.includes("pt/ptsearch/assessment-details") ? true : false,
       },
     ];
-  
-    return <BreadCrumb className={`${isMobile ? "pt-employee-breadcrumb-mobile" : ""}`} spanStyle={{maxWidth:"min-content"}} crumbs={crumbs} />;
+
+    return <BreadCrumb className={`${isMobile ? "pt-employee-breadcrumb-mobile" : ""}`} spanStyle={{ maxWidth: "min-content" }} crumbs={crumbs} />;
   }
 
   const NewApplication = Digit?.ComponentRegistryService?.getComponent("PTNewApplication");

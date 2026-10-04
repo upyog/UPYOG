@@ -71,7 +71,7 @@ const EmployeeApp = ({ path, url, userType }) => {
   return (
     <AppContainer>
       <div className="ground-container">
-        <div style={{ marginLeft: "-4px" }}>
+        <div className="vnd-index-spacing">
           <VendorBreadCrumb location={location} />
         </div>
         <Routes>

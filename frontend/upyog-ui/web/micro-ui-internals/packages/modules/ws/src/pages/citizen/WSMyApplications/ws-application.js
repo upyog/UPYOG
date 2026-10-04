@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { getAddress } from "../../../utils/index";
 import _ from "lodash";
 import { stringReplaceAll, convertEpochToDate } from "../../../utils";
-import "../../../css/ws-inline-auto.css";
+
 const WSApplication = ({
   application
 }) => {
@@ -62,59 +62,56 @@ const WSApplication = ({
   }
   return (
     <Card>
-    <KeyNote keyValue={t("WS_MYCONNECTIONS_APPLICATION_NO")} note={application?.applicationNo} />
-    <KeyNote keyValue={t("WS_SERVICE_NAME")} note={t(`WS_APPLICATION_TYPE_${application?.applicationType}`)} />
-    <KeyNote keyValue={t("WS_CONSUMER_NAME")} note={application?.connectionHolders?.map(owner => owner.name).join(",") || application?.property?.owners?.sort((a, b) => a?.additionalDetails?.ownerSequence - b?.additionalDetails?.ownerSequence).map(owner => owner.name).join(",") || t("CS_NA")} />
-    <KeyNote keyValue={t("WS_PROPERTY_ID")} note={application?.propertyId || t("CS_NA")} />
-    <KeyNote keyValue={t("WS_STATUS")} note={t(`CS_${application?.applicationStatus}`) || t("CS_NA")} />
-    <KeyNote keyValue={t("WS_SLA")} note={Math.round(application?.sla / (24 * 60 * 60 * 1000)) ? `${Math.round(application?.sla / (24 * 60 * 60 * 1000))} Days` : t("CS_NA")} /> 
-    <KeyNote keyValue={t("WS_PROPERTY_ADDRESS")} note={getAddress(application?.property?.address, t)} privacy={{
-      uuid: application?.property?.owners?.[0]?.uuid,
-      fieldName: ["doorNo", "street", "landmark"],
-      model: "Property",
-      showValue: true,
-      loadData: {
-        serviceName: "/property-services/property/_search",
-        requestBody: {},
-        requestParam: {
-          tenantId: application?.tenantId,
-          propertyIds: application?.propertyId
-        },
-        jsonPath: "Properties[0].address.street",
-        isArray: false,
-        d: res => {
-          let resultString = (_.get(res, "Properties[0].address.doorNo") ? `${_.get(res, "Properties[0].address.doorNo")}, ` : "") + (_.get(res, "Properties[0].address.street") ? `${_.get(res, "Properties[0].address.street")}, ` : "") + (_.get(res, "Properties[0].address.landmark") ? `${_.get(res, "Properties[0].address.landmark")}` : "");
-          return resultString;
+      <KeyNote keyValue={t("WS_MYCONNECTIONS_APPLICATION_NO")} note={application?.applicationNo} />
+      <KeyNote keyValue={t("WS_SERVICE_NAME")} note={t(`WS_APPLICATION_TYPE_${application?.applicationType}`)} />
+      <KeyNote keyValue={t("WS_CONSUMER_NAME")} note={application?.connectionHolders?.map(owner => owner.name).join(",") || application?.property?.owners?.sort((a, b) => a?.additionalDetails?.ownerSequence - b?.additionalDetails?.ownerSequence).map(owner => owner.name).join(",") || t("CS_NA")} />
+      <KeyNote keyValue={t("WS_PROPERTY_ID")} note={application?.propertyId || t("CS_NA")} />
+      <KeyNote keyValue={t("WS_STATUS")} note={t(`CS_${application?.applicationStatus}`) || t("CS_NA")} />
+      <KeyNote keyValue={t("WS_SLA")} note={Math.round(application?.sla / (24 * 60 * 60 * 1000)) ? `${Math.round(application?.sla / (24 * 60 * 60 * 1000))} Days` : t("CS_NA")} />
+      <KeyNote keyValue={t("WS_PROPERTY_ADDRESS")} note={getAddress(application?.property?.address, t)} privacy={{
+        uuid: application?.property?.owners?.[0]?.uuid,
+        fieldName: ["doorNo", "street", "landmark"],
+        model: "Property",
+        showValue: true,
+        loadData: {
+          serviceName: "/property-services/property/_search",
+          requestBody: {},
+          requestParam: {
+            tenantId: application?.tenantId,
+            propertyIds: application?.propertyId
+          },
+          jsonPath: "Properties[0].address.street",
+          isArray: false,
+          d: res => {
+            let resultString = (_.get(res, "Properties[0].address.doorNo") ? `${_.get(res, "Properties[0].address.doorNo")}, ` : "") + (_.get(res, "Properties[0].address.street") ? `${_.get(res, "Properties[0].address.street")}, ` : "") + (_.get(res, "Properties[0].address.landmark") ? `${_.get(res, "Properties[0].address.landmark")}` : "");
+            return resultString;
+          }
         }
-      }
-    }} /> 
+      }} />
       <Link to={`/upyog-ui/citizen/ws/connection/application/${encodeApplicationNo}`}>
         <SubmitBar label={t("WS_VIEW_DETAILS_LABEL")} />
       </Link>
-      {application?.applicationStatus === "PENDING_FOR_PAYMENT"  ? (
-            <Link
-                to={`/upyog-ui/citizen/payment/my-bills/${
-                  businessService
-                }/${
-                  application?.applicationNo?.includes("DC")
-                    ? (
-                        stringReplaceAll(application?.connectionNo, "/", "+") ||
-                        stringReplaceAll(application?.connectionNo, "/", "+")
-                      )
-                    : (
-                        stringReplaceAll(application?.applicationNo, "/", "+") ||
-                        stringReplaceAll(application?.applicationNo, "/", "+")
-                      )
-                }?workflow=WNS&tenantId=${application?.tenantId}&ConsumerName=${
-                  application?.connectionHolders?.map((owner) => owner.name).join(",") ||
-                  PTData?.Properties?.[0]?.owners?.map((owner) => owner.name).join(",")
-                }&isDisoconnectFlow=${application?.applicationNo?.includes("DC")}`}
-              >
-                <div style={{ marginTop: "10px" }}>
-                  <SubmitBar label={t("MAKE_PAYMENT")} />
-                </div>
-              </Link>
-          ) : null}
+      {application?.applicationStatus === "PENDING_FOR_PAYMENT" ? (
+        <Link
+          to={`/upyog-ui/citizen/payment/my-bills/${businessService
+            }/${application?.applicationNo?.includes("DC")
+              ? (
+                stringReplaceAll(application?.connectionNo, "/", "+") ||
+                stringReplaceAll(application?.connectionNo, "/", "+")
+              )
+              : (
+                stringReplaceAll(application?.applicationNo, "/", "+") ||
+                stringReplaceAll(application?.applicationNo, "/", "+")
+              )
+            }?workflow=WNS&tenantId=${application?.tenantId}&ConsumerName=${application?.connectionHolders?.map((owner) => owner.name).join(",") ||
+            PTData?.Properties?.[0]?.owners?.map((owner) => owner.name).join(",")
+            }&isDisoconnectFlow=${application?.applicationNo?.includes("DC")}`}
+        >
+          <div className="ws-ws-application-top-spacing">
+            <SubmitBar label={t("MAKE_PAYMENT")} />
+          </div>
+        </Link>
+      ) : null}
     </Card>
   );
 };

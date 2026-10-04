@@ -12,7 +12,7 @@ import {
   Dropdown,
   Localities,
 } from "@nudmcdgnpm/digit-ui-react-components";
-import "../../css/noc-inline.css";
+
 import { useTranslation } from "react-i18next";
 
 const fieldComponents = {
@@ -99,7 +99,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
       <React.Fragment>
-        <div className="search-container" style={{ width: "auto", marginLeft: isInboxPage ? "24px" : "revert" }}>
+        <div className="search-container" className={isInboxPage ? "search-container-auto-margin" : "search-container-auto"}>
           <div className="search-complaint-container">
             {(type === "mobile" || mobileView) && (
               <div className="complaint-header">
@@ -109,7 +109,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                 </span>
               </div>
             )}
-            <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%" }}>
+            <div className={`${"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} noc-search-fullwidth`}>
               {searchFields
                 ?.filter((e) => true)
                 ?.map((input, index) => (
@@ -145,19 +145,19 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                   </div>
                 ))}
 
-             {type === "desktop" && !mobileView && (
-              <div className="search-submit-wrappers">
-                <SubmitBar
-                  label={t("ES_COMMON_SEARCH")}
-                  disabled={!!Object.keys(formState.errors).length}
-                  submit
-                />
+              {type === "desktop" && !mobileView && (
+                <div className="search-submit-wrappers">
+                  <SubmitBar
+                    label={t("ES_COMMON_SEARCH")}
+                    disabled={!!Object.keys(formState.errors).length}
+                    submit
+                  />
 
-                <div className="search-clear-all-wrapper">
-                  {clearAll()}
+                  <div className="search-clear-all-wrapper">
+                    {clearAll()}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
             </div>
           </div>
         </div>

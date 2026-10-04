@@ -82,7 +82,7 @@ const EmployeeApp = ({ path, url, userType }) => {
   return (
     <React.Fragment>
       <div className="ground-container">
-        <p className="breadcrumb" style={{ marginLeft: mobileView ? "2vw" : "revert" }}>
+        <p className="breadcrumb" className={mobileView ? "breadcrumb-margin-mobile" : ""}>
           <BILLSBreadCrumbs location={location} />
         </p>
         <Routes>

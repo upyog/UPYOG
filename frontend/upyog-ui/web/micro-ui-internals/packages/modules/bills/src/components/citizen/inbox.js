@@ -131,11 +131,11 @@ const CitizenInbox = ({ tableConfig, filterComponent, ...props }) => {
     result = <Loader />;
   } else if (data?.length === 0) {
     result = (
-      <Card style={{ marginTop: 20 }}>
+      <Card className="bills-application-citizen-card-card">
         {t("CS_MYAPPLICATIONS_NO_APPLICATION")
           .split("\\n")
           .map((text, index) => (
-            <p key={index} style={{ textAlign: "center" }}>
+            <p key={index} className="bills-application-citizen-card-centered">
               {text}
             </p>
           ))}
@@ -188,7 +188,7 @@ const CitizenInbox = ({ tableConfig, filterComponent, ...props }) => {
           </div>
         </div>
       )}
-      <div style={{ flex: 1 }}>
+      <div className="bills-search-citizen-action-btn">
         <SearchCitizen
           defaultSearchParams={props.defaultSearchParams}
           onSearch={props.onSearch}
@@ -198,7 +198,7 @@ const CitizenInbox = ({ tableConfig, filterComponent, ...props }) => {
           isInboxPage={!props?.isSearch}
           searchParams={props.searchParams}
         />
-        <div className="result" style={{ marginLeft: !props?.isSearch ? "24px" : "", flex: 1 }}>
+        <div className="result" className={!props?.isSearch ? "inbox-result--with-margin" : "inbox-result--no-margin"}>
           {result}
         </div>
       </div>

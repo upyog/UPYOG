@@ -283,7 +283,7 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
             value={VendorId}
             //placeholder={"Enter IFSC Code"}
             onChange={setvendorid}
-            style={{ width: "50%" }}
+            className="vnd-vendor-details-wrapper"
             maxLength={11}
             ValidationRequired={false}
             {...(validation = {
@@ -304,7 +304,7 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
             value={IFSC}
             placeholder={"Enter IFSC Code"}
             onChange={setvendorifsc}
-            style={{ width: "50%" }}
+            className="vnd-vendor-details-wrapper"
             maxLength={11}
             ValidationRequired={true}
             {...(validation = {
@@ -325,7 +325,7 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
             optionKey="i18nKey"
             name="bankName"
             placeholder={"Bank Name Auto Select"}
-            style={{ width: "50%" }}
+            className="vnd-vendor-details-wrapper"
             value={Bank}
             onChange={setvendorbank}
             disabled={true}
@@ -341,7 +341,7 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
             optionKey="i18nKey"
             name="BankbranchName"
             value={BankbranchName}
-            style={{ width: "50%" }}
+            className="vnd-vendor-details-wrapper"
             placeholder={"Bank Branch Name Auto Select"}
             onChange={setBankbranch}
             disabled={false}
@@ -357,7 +357,7 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
             optionKey="i18nKey"
             name="MicrNo"
             value={micrNo}
-            style={{ width: "50%" }}
+            className="vnd-vendor-details-wrapper"
             placeholder={"MICR No"}
             onChange={setmicrNo}
             disabled={false}
@@ -372,7 +372,7 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
             name="AccountNo"
             value={AccountNo}
             onChange={setvendoraccountno}
-            style={{ width: "50%" }}
+            className="vnd-vendor-details-wrapper"
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,
@@ -391,7 +391,7 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
             name="PhoneNo"
             value={PhoneNo}
             onChange={setphoneno}
-            style={{ width: "50%" }}
+            className="vnd-vendor-details-wrapper"
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,
@@ -410,7 +410,7 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
             name="ContactPerson"
             value={ContactPerson}
             onChange={setcontactperson}
-            style={{ width: "50%" }}
+            className="vnd-vendor-details-wrapper"
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,
@@ -429,7 +429,7 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
             name="Company"
             value={Company}
             onChange={setcompanyname}
-            style={{ width: "50%" }}
+            className="vnd-vendor-details-wrapper"
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,
@@ -448,7 +448,7 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
             name="PanNo"
             value={PanNo}
             onChange={setpanno}
-            style={{ width: "50%" }}
+            className="vnd-vendor-details-wrapper"
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,
@@ -467,7 +467,7 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
             name="GstNo"
             value={GstNo}
             onChange={setgstno}
-            style={{ width: "50%" }}
+            className="vnd-vendor-details-wrapper"
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,
@@ -486,7 +486,7 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
             name="GstState"
             value={GstState}
             onChange={setgststate}
-            style={{ width: "50%" }}
+            className="vnd-vendor-details-wrapper"
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,
@@ -505,7 +505,7 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
             name="RegistrationNo"
             value={RegistrationNo}
             onChange={setregistrationno}
-            style={{ width: "50%" }}
+            className="vnd-vendor-details-wrapper"
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,
@@ -524,7 +524,7 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
             name="EpfNo"
             value={EpfNo}
             onChange={setepfno}
-            style={{ width: "50%" }}
+            className="vnd-vendor-details-wrapper"
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,
@@ -543,7 +543,7 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
             name="EsiNo"
             value={EsiNo}
             onChange={setesino}
-            style={{ width: "50%" }}
+            className="vnd-vendor-details-wrapper"
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,
@@ -555,17 +555,9 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
 
           <div>
             {t("VENDOR_TYPE")}
-            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+            <div className="tooltip vnd-vendor-details-spacing">
               <span
-                className="tooltiptext"
-                style={{
-                  whiteSpace: "pre-wrap",
-                  fontSize: "small",
-                  wordWrap: "break-word",
-                  width: "300px",
-                  marginLeft: "15px",
-                  marginBottom: "-10px",
-                }}
+                className="tooltiptext vnd-vendor-details-bottom-spacing"
               >
                 {`${t(`AST_CLASSIFICATION_ASSET`)}`}
               </span>
@@ -595,17 +587,9 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
           {/* dropdown for vendor category  */}
           <div>
             {t("VENOR_CATEGORY")}
-            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+            <div className="tooltip vnd-vendor-details-spacing">
               <span
-                className="tooltiptext"
-                style={{
-                  whiteSpace: "pre-wrap",
-                  fontSize: "small",
-                  wordWrap: "break-word",
-                  width: "300px",
-                  marginLeft: "15px",
-                  marginBottom: "-10px",
-                }}
+                className="tooltiptext vnd-vendor-details-bottom-spacing"
               >
                 {/* {`${t(`AST_SOURCE_OF_FUNDING`)}`} */}
               </span>
@@ -636,25 +620,10 @@ const VendorDetails = ({ t, config, onSelect, userType, formData, ownerIndex }) 
           <div>
             {t("STATUS")}
             <div
-              className="tooltip"
-              style={{
-                width: "12px",
-                height: "5px",
-                marginLeft: "10px",
-                display: "inline-flex",
-                alignItems: "center",
-              }}
+              className="tooltip vnd-vendor-details-spacing"
             >
               <span
-                className="tooltiptext"
-                style={{
-                  whiteSpace: "pre-wrap",
-                  fontSize: "small",
-                  wordWrap: "break-word",
-                  width: "300px",
-                  marginLeft: "15px",
-                  marginBottom: "-10px",
-                }}
+                className="tooltiptext vnd-vendor-details-bottom-spacing"
               >
                 {`${t(`AST_CLASSIFICATION_ASSET`)}`}
               </span>

@@ -42,9 +42,9 @@ const AcknowledgementCF = ({ data, onSuccess }) => {
     <form>
     <Card style={isMobile ? {padding:"unset"} : {}}>
       <BannerPicker t={t} data={location.state} isSuccess={location.state?.result?.Service?.[0]?true : false} isMobile={isMobile} isLoading={/*mutation.isIdle || mutation.isLoading*/ false} />
-      {location.state?.result?.Service?.[0] && <CardText style={{padding:"0px 10px 0px 10px"}}>{t("CS_CF_FEEDBACK_RESPONSE")}</CardText>}
+      {location.state?.result?.Service?.[0] && <CardText className="core-acknowledgement-cf-card">{t("CS_CF_FEEDBACK_RESPONSE")}</CardText>}
       {!(location.state?.result?.Service?.[0]) && <CardText>{t("CS_FILE_PROPERTY_FAILED_RESPONSE")}</CardText>}
-      <div style={{padding:"0px 10px 20px 10px"}}>
+      <div className="core-acknowledgement-cf-container-padding">
       <Link to={`/upyog-ui/citizen`}>
         <SubmitBar label={t("CS_COMMON_GO_BACK_TO_HOME")} />
       </Link>

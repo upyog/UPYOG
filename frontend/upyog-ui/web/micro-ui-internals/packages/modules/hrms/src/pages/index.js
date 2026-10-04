@@ -22,8 +22,8 @@ const EmployeeApp = ({ path, url, userType }) => {
   return (
     <React.Fragment>
       <div className="ground-container">
-        <p className="breadcrumb" style={{ marginLeft: mobileView ? "1vw" : "15px" }}>
-          <Link to="/upyog-ui/employee" style={{ cursor: "pointer", color: "#666" }}>
+        <p className="breadcrumb" className={mobileView ? "breadcrumb-margin-mobile" : "breadcrumb-margin-desktop"}>
+          <Link to="/upyog-ui/employee" className="hrms-index-clickable">
             {t("HR_COMMON_BUTTON_HOME")}
           </Link>{" "}
           / <span>{location.pathname === "/upyog-ui/employee/hrms/inbox" ? t("HR_COMMON_HEADER") : t("HR_COMMON_HEADER")}</span>

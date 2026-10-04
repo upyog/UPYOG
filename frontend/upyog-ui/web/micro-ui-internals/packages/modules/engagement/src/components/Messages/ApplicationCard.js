@@ -42,11 +42,11 @@ const ApplicationCard = ({
   let result;
   if (data?.length === 0) {
     result = (
-      <Card style={{ marginTop: 20 }}>
+      <Card className="eng-application-card-card">
         {t("ES_NO_PUBLIC_MESSAGES")
           .split("\\n")
           .map((text, index) => (
-            <p key={index} style={{ textAlign: "center" }}>
+            <p key={index} className="eng-application-card-centered">
               {text}
             </p>
           ))}

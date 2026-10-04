@@ -49,7 +49,7 @@ import {
     <Header styles={{
       fontSize: "32px"
     }}>{t("WS_COMMON_SUMMARY")}</Header>
-    <Card className="ws-auto-219">
+    <Card className="ws-check-page-card">
     <CardHeader styles={{
         fontSize: "28px"
       }}>{t(`WS_BASIC_DETAILS_HEADER`)}</CardHeader>
@@ -59,18 +59,18 @@ import {
           <Row className="border-none" label={t("WS_COMMON_TABLE_COL_ADDRESS")} text={propAddArr.join(', ')} />
           <Row className="border-none" label={t("WS_CONNECTION_DETAILS_STATUS_LABEL")} text={t(cpt?.details?.status)} />
         </StatusTable>
-        <div className="ws-auto-220">
+        <div className="ws-check-page-item">
           <Link to={`/upyog-ui/citizen/commonpt/view-property?propertyId=${cpt?.details?.propertyId}&tenantId=${cpt?.details?.tenantId}`}>
-            <LinkButton label={t("PT_VIEW_PROPERTY")} className="ws-auto-221" />
+            <LinkButton label={t("PT_VIEW_PROPERTY")} className="ws-check-page-item" />
           </Link>
         </div>
     </Card>
-    <Card className="ws-auto-222">
-    <div className="ws-auto-223">
+    <Card className="ws-check-page-card">
+    <div className="ws-check-page-card-relative">
     <CardHeader styles={{
           fontSize: "28px"
         }}>{t("WS_COMMON_CONNECTION_HOLDER_DETAILS_HEADER")}</CardHeader>
-    <LinkButton label={<EditIcon className="ws-auto-225" />} onClick={() => routeTo(`${routeLink}/connection-holder`)} className="ws-auto-224" />
+    <LinkButton label={<EditIcon className="ws-check-page-btn-relative-mt-neg-2" />} onClick={() => routeTo(`${routeLink}/connection-holder`)} className="ws-check-page-btn" />
       </div>
         <StatusTable>
           <Row className="border-none" textStyle={isMobile ? {
@@ -85,12 +85,12 @@ import {
           <Row className="border-none" label={t("WS_EMAIL_ID")} text={ConnectionHolderDetails?.emailId || t("CS_NA")} />
     </StatusTable>
     </Card>
-    <Card className="ws-auto-226">
-    <div className="ws-auto-227">
+    <Card className="ws-check-page-card">
+    <div className="ws-check-page-card-relative">
     <CardHeader styles={{
           fontSize: "28px"
         }}>{t("WS_COMMON_CONNECTION_DETAIL")}</CardHeader>
-    <LinkButton label={<EditIcon className="ws-auto-229" />} onClick={() => routeTo(`${routeLink}/service-name`)} className="ws-auto-228" />
+    <LinkButton label={<EditIcon className="ws-check-page-btn-relative-mt-neg-3" />} onClick={() => routeTo(`${routeLink}/service-name`)} className="ws-check-page-btn" />
       </div>
         <StatusTable>
           <Row className="border-none" textStyle={isMobile ? {
@@ -106,23 +106,23 @@ import {
           </div>}
         </StatusTable>
     </Card>
-    <Card className="ws-auto-230">
-      <div className="ws-auto-231">
+    <Card className="ws-check-page-card">
+      <div className="ws-check-page-card-relative">
         <CardHeader styles={{
           fontSize: "28px"
         }}>{t("WS_COMMON_DOCUMENT_DETAILS")}</CardHeader>
-          <LinkButton label={<EditIcon className="ws-auto-233" />} onClick={() => routeTo(`${routeLink}/document-details`)} className="ws-auto-232" />
+          <LinkButton label={<EditIcon className="ws-check-page-btn-relative-mt-neg-3" />} onClick={() => routeTo(`${routeLink}/document-details`)} className="ws-check-page-btn" />
         </div>
         {documents && documents?.documents.map((doc, index) => <div key={`doc-${index}`}>
          {<div><CardSectionHeader>{t(doc?.documentType?.split('.').slice(0, 2).join('_'))}</CardSectionHeader>
           <StatusTable>
           {<WSDocument value={value} Code={doc?.documentType} index={index} />}
-          {documents?.documents.length != index + 1 ? <hr className="ws-auto-234" /> : null}
+          {documents?.documents.length != index + 1 ? <hr className="ws-check-page-mt-md-mb-md-2" /> : null}
           </StatusTable>
           </div>}
           </div>)}
       </Card>
-      <SubmitBar label={t("CS_COMMON_SUBMIT")} onSubmit={onSubmit} className="ws-auto-235" />
+      <SubmitBar label={t("CS_COMMON_SUBMIT")} onSubmit={onSubmit} className="ws-check-page-btn-2" />
     </React.Fragment>;
 };
 export default CheckPage;

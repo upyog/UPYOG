@@ -174,7 +174,7 @@ const CHBBankDetails
     }
    <Card>
         <CardSubHeader>
-        <div style={{display:"flex", justifyContent: "space-between", width: "100%" }}>
+        <div className="chb-chbaddress-details-fullwidth">
           {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
@@ -205,7 +205,7 @@ const CHBBankDetails
           onChange={setApplicantAccountNumber}
           minLength={8}
           maxLength={16}
-          style={{width:user.type==="EMPLOYEE"?"50%":null}}
+          className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : ""}
           placeholder={"Enter Account Number"}
           ValidationRequired = {true}
           {...(validation = {
@@ -226,7 +226,7 @@ const CHBBankDetails
           optionKey="i18nKey"
           name="confirmAccountNumber"
           value={confirmAccountNumber}
-          style={{width:user.type==="EMPLOYEE"?"50%":null}}
+          className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : ""}
           placeholder={"Enter Confirm Account Number"}
           onChange={setApplicantConfirmAccountNumber}
           minLength={8}
@@ -251,7 +251,7 @@ const CHBBankDetails
             name="ifscCode"
             value={ifscCode}
             placeholder={"Enter IFSC Code"}
-            style={{width:user.type==="EMPLOYEE"?"50%":null}}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : ""}
             onChange={setApplicantIfscCode}
             maxLength={11}
             ValidationRequired={true}
@@ -270,7 +270,7 @@ const CHBBankDetails
             optionKey="i18nKey"
             name="bankName"
             placeholder={"Bank Name Auto Select"}
-            style={{width:user.type==="EMPLOYEE"?"50%":null}}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : ""}
             value={bankName}
             onChange={setApplicantBankName}
             disabled={true}
@@ -284,7 +284,7 @@ const CHBBankDetails
             optionKey="i18nKey"
             name="bankBranchName"
             value={bankBranchName}
-            style={{width:user.type==="EMPLOYEE"?"50%":null}}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : ""}
             placeholder={"Bank Branch Name Auto Select"}
             onChange={setApplicantBankBranchName}
             disabled={true}
@@ -297,7 +297,7 @@ const CHBBankDetails
           optionKey="i18nKey"
           name="accountHolderName"
           value={accountHolderName}
-          style={{width:user.type==="EMPLOYEE"?"50%":null}}
+          className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : ""}
           placeholder={"Enter Account Holder Name"}
           onChange={setApplicantAccountHolderName}
           ValidationRequired = {true}

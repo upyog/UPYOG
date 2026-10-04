@@ -166,7 +166,7 @@ function AssetSelectDocument({
   useEffect(() => {
     if (isHidden) setUploadedFile(null);
   }, [isHidden]);
-  return <div className="asset-auto-51">
+  return <div className="asset-documents-mb-md">
       {doc?.hasDropdown ? <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t(doc?.code.replaceAll(".", "_")) + "  *"}</CardLabel>
           {/* <Dropdown

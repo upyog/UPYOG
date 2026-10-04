@@ -99,27 +99,10 @@ function ChatBot() {
 
 
   return (
-    <div style={{ textAlign: "start" }}>
+    <div className="core-chat-bot-wrapper">
       {!isOpen && (
         <button
-          style={{
-            position: "fixed",
-            bottom: "30px",
-            right: "20px",
-            padding: "10px",
-            fontSize: "16px",
-            cursor: "pointer",
-            backgroundColor: "#162f6a",
-            color: "white",
-            border: "none",
-            borderRadius: "50%",
-            width: "60px",
-            height: "60px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-          }}
+          className="core-chat-bot-clickable"
           onClick={toggleChatbot}
         >
           <svg xmlns="
@@ -131,40 +114,15 @@ function ChatBot() {
       )}
       {isOpen && (
         <div
-          style={{
-            position: "fixed",
-            bottom: "20px",
-            right: "20px",
-            width: "400px",
-            maxHeight: "400px",
-            height: "500px",
-            backgroundColor: "white",
-            borderRadius: "8px",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-            display: "flex",
-            flexDirection: "column",
-            overflow: "hidden",
-          }}
+          className="core-chat-bot-flex-container"
         >
           <div
-            style={{
-              backgroundColor: "#162f6a",
-              color: "white",
-              padding: "10px",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
+            className="core-chat-bot-flex-row"
           >
             <span>Connect With Us</span>
             <button
               onClick={handleChatbotClose}
-              style={{
-                background: "none",
-                border: "none",
-                color: "white",
-                cursor: "pointer",
-              }}
+              className="core-chat-bot-clickable-2"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -182,35 +140,11 @@ function ChatBot() {
             </button>
           </div>
           <div
-            style={{
-              flex: 1,
-              padding: "10px",
-              overflowY: "auto",
-              backgroundColor: "#f1f1f1",
-            }}
+            className="core-chat-bot-container-padding"
           >
             {messages.map((message, index) => (
-              <div
-                key={index}
-                style={{
-                  display: "flex",
-                  justifyContent:
-                    message.sender === "user" ? "flex-end" : "flex-start",
-                  marginBottom: "10px",
-                }}
-              >
-                <div
-                  style={{
-                    maxWidth: "70%",
-                    padding: "10px",
-                    borderRadius: "10px",
-                    backgroundColor:
-                      message.sender === "user" ? "#162f6a" : "#e4e6eb",
-                    color: message.sender === "user" ? "white" : "black",
-                    whiteSpace: "pre-wrap",
-                    wordWrap: "break-word",
-                  }}
-                >
+              <div key={index} className={`chatbot-msg-row ${message.sender === "user" ? "user-msg" : "bot-msg"}`}>
+                <div className={`chatbot-msg-bubble ${message.sender === "user" ? "user-bubble" : "bot-bubble"}`}>
                   <div
                     dangerouslySetInnerHTML={{
                       __html: ReplaceURL(message.text),
@@ -224,15 +158,9 @@ function ChatBot() {
             - Uses CSS modules for styling
             - Appears in same style as bot messages for consistency */}
             {isLoading && (
-              <div style={{ display: "flex", justifyContent: "flex-start", marginBottom: "10px" }}>
+              <div className="core-chat-bot-flex-row-2">
                 <div
-                  style={{
-                    maxWidth: "70%",
-                    padding: "10px",
-                    borderRadius: "10px",
-                    backgroundColor: "#e4e6eb",
-                    color: "black",
-                  }}
+                  className="core-chat-bot-container-padding-2"
                 >{/**
                 Each span tag represents one of the three animated dots (...) in the loading indicator. 
                 We use three separate spans because each dot needs to animate independently to 
@@ -252,11 +180,7 @@ function ChatBot() {
             <div ref={messagesEndRef} />
           </div>
           <div
-            style={{
-              display: "flex",
-              padding: "10px",
-              borderTop: "1px solid #ddd",
-            }}
+            className="core-chat-bot-flex-container-2"
           >
             <input
               type="text"
@@ -268,28 +192,11 @@ function ChatBot() {
                 }
               }}
               placeholder="Type your message..."
-              style={{
-                flex: 1,
-                padding: "10px",
-                borderRadius: "20px",
-                border: "1px solid #ddd",
-                outline: "none",
-              }}
+              className="core-chat-bot-container-padding-3"
             />
             <button
               onClick={handleMessageSend}
-              style={{
-                marginLeft: "10px",
-                padding: "15px",
-                backgroundColor: "#162f6a",
-                color: "white",
-                border: "none",
-                borderRadius: "50%",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              className="core-chat-bot-clickable-3"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

@@ -50,7 +50,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
   const clearAll = (mobileView) => {
     const mobileViewStyles = mobileView ? { margin: 0 } : {};
     return (
-      <LinkLabel style={{ display: "inline", ...mobileViewStyles }} onClick={clearSearch}>
+      <LinkLabel className="search-clear-link" style={mobileViewStyles} onClick={clearSearch}>
         {t("ES_COMMON_CLEAR_SEARCH")}
       </LinkLabel>
     );
@@ -58,18 +58,18 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
 
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
-      <div className="search-container" style={{ width: "auto", marginLeft: isInboxPage ? "24px" : "revert" }}>
+      <div className="search-container" className={isInboxPage ? "search-container-auto-margin" : "search-container-auto"}>
         <div className="search-complaint-container">
           {(type === "mobile" || mobileView) && (
             <div className="complaint-header">
-              <h2 style={{fontWeight:"700", fontSize:"24px", marginTop:"30px", lineHeight: "28px"}}>{t("BPA_SEARCH_BY_LABEL")}:</h2>
-              <span onClick={onClose} style={{position:"relative",float:"right",marginTop:"-60px"}}>
+              <h2 className="obps-search-header">{t("BPA_SEARCH_BY_LABEL")}:</h2>
+              <span onClick={onClose} className="obps-search-top-spacing">
                 <CloseSvg />
               </span>
 
             </div>
           )}
-          <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%",display:"grid" }}>
+          <div className={`${"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} obps-search-fullwidth`}>
             {searchFields?.map((input, index) => (
               <div key={input.name} className="input-fields" style={mobileView?{marginTop:"30px"}:{}}>
                 {/* <span className={index === 0 ? "complaint-input" : "mobile-input"}> */}
@@ -79,17 +79,16 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
                 </span>
                 {formState?.dirtyFields?.[input.name] ? (
                   <span
-                    style={{ fontWeight: "700", color: "rgba(212, 53, 28)", paddingLeft: "8px", marginTop: "-20px", fontSize: "12px" }}
-                    className="inbox-search-form-error"
+                    className="inbox-search-form-error obps-search-top-spacing-2"
                   >
                     {formState?.errors?.[input.name]?.message}
                   </span>
                 ) : null}
               </div>
             ))}
-            {type === "desktop" && <SubmitBar style={{ marginTop: "56px" }} className="submit-bar-search" label={t("ES_COMMON_SEARCH")} submit />}
+            {type === "desktop" && <SubmitBar className="submit-bar-search obps-search-top-spacing-3" label={t("ES_COMMON_SEARCH")} submit />}
             {type === "desktop" && !mobileView && (
-                  <span style={{ paddingTop: "65px",marginLeft:"-75px" }} className="clear-search">
+                  <span className="clear-search obps-search-spacing">
                     {clearAll()}
                   </span>
                 )}
@@ -98,10 +97,10 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
       </div>
       {(type === "mobile" || mobileView) && (
         <ActionBar className="clear-search-container">
-          <button className="clear-search" style={{ flex: 1 }}>
+          <button className="clear-search obps-building-plan-scrutiny-wrapper">
             {clearAll(mobileView)}
           </button>
-          <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} style={{ flex: 1 }} submit={true} />
+          <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} className="obps-building-plan-scrutiny-wrapper" submit={true} />
         </ActionBar>
       )}
     </form>

@@ -39,9 +39,9 @@ const SelectEmployeePhoneNumber = ({ t, config, onSelect, formData = {}, userTyp
               {t(input.label)}
               {input.isMandatory ? " * " : null}
             </CardLabel>
-            <div className="field-container" style={{ width:isMobile? "100%":"50%", display: "block" }}>
+            <div className="field-container" className={`field-container display-block ${isMobile ? "width-full" : "width-half"}`}>
               <div>
-                <div style={{ display: "flex" }}>
+                <div className="hrms-employee-phone-number-flex-container">
                   <div className="employee-card-input employee-card-input--front">+91</div>
                   <TextInput
                     className="field desktop-w-full"
@@ -54,11 +54,7 @@ const SelectEmployeePhoneNumber = ({ t, config, onSelect, formData = {}, userTyp
                     {...input.validation}
                   />
                 </div>
-                <div>{iserror ? <CardLabelError style={{ width: "100%" }}>{t(input.populators.error)}</CardLabelError> : <span style={{
-                  color: "gray", width: "100%", border: "none",
-                  background: "none",
-                  justifyContent: "start"
-                }}>
+                <div>{iserror ? <CardLabelError className="hrms-search-fullwidth">{t(input.populators.error)}</CardLabelError> : <span className="hrms-employee-phone-number-fullwidth">
                   {t("HR_MOBILE_NO_CHECK")}
                 </span>}</div>
               </div>

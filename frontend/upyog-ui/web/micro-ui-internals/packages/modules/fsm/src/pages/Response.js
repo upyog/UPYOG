@@ -263,7 +263,7 @@ const Response = (props) => {
               <span className="download-button">{generatePdfLabel()} </span>
             </div>
           }
-          style={{ width: "100px" }}
+          className="fsm-response-action-btn"
           onClick={handleGeneratePdf()}
         />
       )}

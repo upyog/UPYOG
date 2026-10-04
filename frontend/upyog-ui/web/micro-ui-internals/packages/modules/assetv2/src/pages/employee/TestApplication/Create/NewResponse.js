@@ -29,7 +29,7 @@ const BannerPicker = (props) => {
       applicationNumber={props.data?.Assets?.[0].applicationNo}
       info={props.isSuccess ? props.t("ES_ASSET_RESPONSE_CREATE_LABEL") : ""}
       successful={props.isSuccess}
-      style={{width: "100%"}}
+      className="assetv2-new-asset-fullwidth"
     />
   );
 };

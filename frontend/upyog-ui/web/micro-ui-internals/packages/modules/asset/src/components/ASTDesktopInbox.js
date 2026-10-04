@@ -30,8 +30,8 @@ const ASTDesktopInbox = ({
   } else if (clearSearchCalled) {
     result = null;
   } else if (!data || data?.length === 0 || useNewInboxAPI && data?.[0].dataEmpty) {
-    result = EmptyInboxComp && <EmptyInboxComp data={data} /> || (data?.length === 0 || useNewInboxAPI && data?.[0].dataEmpty ? <Card className="asset-auto-1">
-          {t("CS_MYAPPLICATIONS_NO_APPLICATION").split("\\n").map((text, index) => <p key={index} className="asset-auto-2">
+    result = EmptyInboxComp && <EmptyInboxComp data={data} /> || (data?.length === 0 || useNewInboxAPI && data?.[0].dataEmpty ? <Card className="asset-desktop-inbox-card-mt-md">
+          {t("CS_MYAPPLICATIONS_NO_APPLICATION").split("\\n").map((text, index) => <p key={index} className="asset-desktop-inbox-card-center-text">
                 {text}
               </p>)}
         </Card> : <Loader />);
@@ -53,15 +53,12 @@ const ASTDesktopInbox = ({
             {<FilterComponent defaultSearchParams={props.defaultSearchParams} onFilterChange={props.onFilterChange} searchParams={props.searchParams} type="desktop" useNewInboxAPI={useNewInboxAPI} statusMap={useNewInboxAPI ? data?.[0].statusMap : null} moduleCode={props.moduleCode} />}
           </div>
         </div>}
-      <div className="asset-auto-3">
+      <div className="asset-desktop-inbox-flex-1">
         <SearchApplication defaultSearchParams={props.defaultSearchParams} onSearch={d => {
         props.onSearch(d);
         setClearSearchCalled(false);
       }} type="desktop" searchFields={props.searchFields} isInboxPage={!props?.isSearch} searchParams={props.searchParams} clearSearch={() => setClearSearchCalled(true)} />
-        <div className="result" style={{
-        marginLeft: !props?.isSearch ? "24px" : "",
-        flex: 1
-      }}>
+        <div className="result" className={!props?.isSearch ? "inbox-result--with-margin" : "inbox-result--no-margin"}>
           {result}
         </div>
       </div>

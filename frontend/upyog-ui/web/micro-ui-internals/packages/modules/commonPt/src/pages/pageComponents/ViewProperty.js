@@ -59,7 +59,7 @@ const ViewProperty = () => {
         moduleCode="PT"
       />
       {window.location.href.includes("redirectToUrl") && applicationDetails?.applicationData?.status !== "INACTIVE" && (
-        <ActionBar style={{ display: "flex", justifyContent: "flex-end", alignItems: "baseline" }}>
+        <ActionBar className="cmnpt-view-property-flex-row">
           <div>
             <SubmitBar label={t("PT_ADD_PROPERTY_TO_APP")} onSubmit={() => onSubmit()} />
           </div>

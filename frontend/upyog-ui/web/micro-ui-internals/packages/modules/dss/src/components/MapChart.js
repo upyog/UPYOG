@@ -166,7 +166,7 @@ const MapChart = ({
       height={220}
       
     >
-      <div style={{ position: "relative" }}>
+      <div className="dss-map-chart-wrapper">
         <ReactTooltip>{tooltipContent}</ReactTooltip>
         <ComposableMap
           projectionConfig={PROJECTION_CONFIG}
@@ -208,7 +208,7 @@ const MapChart = ({
               <span className="map-row">
                 <span
                   className="map-box"
-                  style={{ background: getColor({ status: sta }) }}
+                  style={getColor({ status: sta }) ? { background: getColor({ status: sta }) } : undefined}
                 ></span>
                 <span className="map-text">
                   {t(`DSS_${sta.toUpperCase()}`)}

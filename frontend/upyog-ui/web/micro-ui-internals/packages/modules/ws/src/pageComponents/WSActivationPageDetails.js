@@ -152,7 +152,7 @@ const ConnectionDetails = _props => {
     marginTop: "-21px"
   };
   return <div>
-            <div className="ws-auto-37">
+            <div className="ws-activation-page-details-item">
                 {filters?.service === "WATER" && formData?.connectionDetails?.[0]?.connectionType?.code?.toUpperCase() === "METERED" && formData2?.connectionDetails?.[0]?.formDetails?.applicationData?.applicationType !== "WATER_RECONNECTION" ? <div>
                     <LabelFieldPair>
                         <CardLabel style={isMobile && isEmployee ? {

@@ -291,17 +291,17 @@ const OwnerForm = _props => {
       const tooltip = e.currentTarget.querySelector(".tooltiptext");
       tooltip.style.visibility = "hidden";
       tooltip.style.opacity = 0;
-    }} className="asset-auto-42">
+    }} className="asset-dispose-link-relative">
                 {children}
-                <span className="tooltiptext asset-auto-43">
+                <span className="tooltiptext asset-dispose-link-absolute-center-text">
                     {message}
                 </span>
             </div>;
   };
   return <React.Fragment>
-            <div className="asset-auto-44">
-                <div className="asset-auto-45">
-                    {allAssets?.length > 2 ? <div className="asset-auto-46">
+            <div className="asset-dispose-item">
+                <div className="asset-dispose-bordered">
+                    {allAssets?.length > 2 ? <div className="asset-dispose-right-text-action">
                             X
                         </div> : null}
 
@@ -350,8 +350,8 @@ const OwnerForm = _props => {
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_REASON_DISPOSAL")}
                         <Tooltip message={t("TOOLTIP_AST_REASON_DISPOSAL")}>
-                            <div className="asset-auto-47">
-                                <InfoBannerIcon className="asset-auto-48" />
+                            <div className="asset-dispose-label">
+                                <InfoBannerIcon className="asset-dispose-label-action" />
                             </div>
                             </Tooltip>
                             </CardLabel>
@@ -441,7 +441,7 @@ const OwnerForm = _props => {
                         <CardLabel className="card-label-smaller">{t("AST_DISPOSAL_CODE")}
                       
                         </CardLabel>
-                        <div className="field" style={{ marginTop: "20px", marginBottom: "20px" }}>
+                        <div className="field asset-asset-dispose-top-spacing">
                             <Controller
                                 control={control}
                                 name={"isAssetDisposedInFacility"}
@@ -493,7 +493,7 @@ const OwnerForm = _props => {
                         </div>
                     </LabelFieldPair>
 
-                    {isDisposed && <div className="asset-auto-50">
+                    {isDisposed && <div className="asset-dispose-mt-md">
                             <LabelFieldPair>
                                 <CardLabel className="card-label-smaller">{t("AST_PURCHASER_NAME")}</CardLabel>
                                 <div className="field">

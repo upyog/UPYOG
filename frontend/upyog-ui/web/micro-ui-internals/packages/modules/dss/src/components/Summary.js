@@ -10,19 +10,15 @@ const MetricData = ({ t, data }) => {
   const insight = data?.insight?.value?.replace(/[+-]/g, "")?.split("%");
   return (
     <div>
-      <p className="heading-m" style={{ paddingTop: "0px", whiteSpace: "nowrap", marginLeft: "0px" }}>
+      <p className="heading-m dss-summary-spacing">
         {`${Digit.Utils.dss.formatter(data?.headerValue, data?.headerSymbol, value?.denomination, true, t)}`}
       </p>
       {data?.insight && (
         <div
-          style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "end",
-          }}
+          className="dss-summary-fullwidth"
         >
           {data?.insight?.indicator === "upper_green" ? ArrowUpwardElement("10px") : ArrowDownwardElement("10px")}
-          <p className={`${data?.insight.colorCode}`} style={{ whiteSpace: "pre" }}>
+          <p className={`${data?.insight.colorCode} dss-generic-chart-wrapper-2`}>
             {insight?.[0] &&
               `${Digit.Utils.dss.formatter(insight[0], "number", value?.denomination, true, t)}% ${t(
                 Digit.Utils.locale.getTransformedLocale("DSS" + insight?.[1] || "")
@@ -63,25 +59,17 @@ const Chart = ({ data }) => {
     else return 50;
   };
   return (
-    <div className="blocks cursorPointer" style={{ flexDirection: "column" }}>
+    <div className="blocks cursorPointer dss-generic-chart-wrapper">
       <div className={`tooltip`}>
         {typeof name == "string" && name}
-        {Array.isArray(name) && name?.filter((ele) => ele)?.map((ele) => <div style={{ whiteSpace: "pre" }}>{ele}</div>)}
-        <span className="dss-white-pre" style={{ display: "block" }}>
+        {Array.isArray(name) && name?.filter((ele) => ele)?.map((ele) => <div className="dss-generic-chart-wrapper-2">{ele}</div>)}
+        <span className="dss-white-pre dss-metric-chart-wrapper">
           {" "}
           {showDate?.[id]?.todaysDate}
         </span>
-        <span
-          className="tooltiptext"
-          style={{
-            fontSize: "medium",
-            width: getWidth(data),
-            height: getHeight(data),
-            whiteSpace: "normal",
-          }}
-        >
-          <span style={{ fontWeight: "500", color: "white" }}>{t(`TIP_${data.name}`)}</span>
-          <span style={{ color: "white" }}> {showDate?.[id]?.lastUpdatedTime}</span>
+        <span className={`tooltiptext dss-tooltip-metric-box ${t(`TIP_${data.name}`).length < 30 ? "width-fit-content" : "width-400"}`}>
+          <span className="dss-metric-chart-text-style">{t(`TIP_${data.name}`)}</span>
+          <span className="dss-metric-chart-wrapper-2"> {showDate?.[id]?.lastUpdatedTime}</span>
         </span>
       </div>
       <MetricData t={t} data={response?.responseData?.data?.[0]}></MetricData>
@@ -92,16 +80,16 @@ const Summary = ({ data }) => {
   const { t } = useTranslation();
   const { value } = useContext(FilterContext);
   return (
-    <Card style={{ flexBasis: "100%" }} className="summary-card-margin">
+    <Card className="summary-card-margin dss-summary-card">
       <div className="summary-wrapper">
         <div className="wrapper-child fullWidth">
           <div className="blocks">
             <p>
               {t(data?.name)}{" "}
-              {<span style={{ whiteSpace: "pre" }}> ({t(`DSS_${Digit.Utils.locale.getTransformedLocale(value?.denomination)}`)})</span>}
+              {<span className="dss-generic-chart-wrapper-2"> ({t(`DSS_${Digit.Utils.locale.getTransformedLocale(value?.denomination)}`)})</span>}
             </p>
           </div>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div className="dss-summary-flex-row">
             {data.charts.map((chart, key) => (
               <Chart data={chart} key={key} url={data?.ref?.url} />
             ))}

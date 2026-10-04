@@ -52,7 +52,7 @@ const ServiceCategory = ({ onAssignmentChange, searchParams, selectedCategory,se
   // translateState(option)
   return (
     <div className="status-container">
-      <div className="filter-label" style={{ fontWeight: "normal" }}>
+      <div className="filter-label mc-service-category-text-style">
         {t("UC_SERVICE_CATEGORY_LABEL")}
       </div>
       <MultiSelectDropdown

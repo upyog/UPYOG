@@ -12,9 +12,9 @@ const SearchFormFieldsComponents = ({registerRef, searchFormState, searchFieldCo
 
     if (!isMobile) {
         return <React.Fragment>
-            <div className="search-container" style={{ width: "auto", marginLeft: "24px" }}>
+            <div className="search-container noc-search-form-fields-component-spacing">
                 <div className="search-complaint-container">
-                    <div className="complaint-input-container" style={{ textAlign: "start" }}>
+                    <div className="complaint-input-container noc-search-form-fields-component-wrapper">
                         <SearchField>
                             <label>{t("NOC_APPLICATION_NUMBER_LABEL")}</label>
                             <TextInput name="applicationNo" inputRef={registerRef("applicationNo").ref} {...registerRef("applicationNo")} />
@@ -23,7 +23,7 @@ const SearchFormFieldsComponents = ({registerRef, searchFormState, searchFieldCo
                             <label>{t("NOC_BPA_APPLICATION_NUMBER_LABEL")}</label>
                             <TextInput name="sourceRefId" inputRef={registerRef("sourceRefId").ref} {...registerRef("sourceRefId")} />
                         </SearchField>
-                        <div className="search-action-wrapper" style={{ width: "100%" }}>
+                        <div className="search-action-wrapper noc-search-fullwidth">
                             {searchFieldComponents}
                         </div>
                     </div>

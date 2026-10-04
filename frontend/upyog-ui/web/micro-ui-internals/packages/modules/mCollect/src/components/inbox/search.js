@@ -43,7 +43,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   const clearAll = (mobileView) => {
     const mobileViewStyles = mobileView ? { margin: 0 } : {};
     return (
-      <LinkLabel style={{ display: "inline", ...mobileViewStyles }} onClick={clearSearch}>
+      <LinkLabel className="search-clear-link" style={mobileViewStyles} onClick={clearSearch}>
         {t("UC_CLEAR_SEARCH_LABEL")}
       </LinkLabel>
     );
@@ -52,7 +52,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
       <React.Fragment>
-        <div className="search-container" style={{ width: "auto", marginLeft: isInboxPage ? "24px" : "revert" }}>
+        <div className="search-container" className={isInboxPage ? "search-container-auto-margin" : "search-container-auto"}>
           <div className="search-complaint-container">
             {(type === "mobile" || mobileView) && (
               <div className="complaint-header">
@@ -62,7 +62,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                 </span>
               </div>
             )}
-            <div className={"complaint-input-container for-pt " + (!(type === "desktop" && !mobileView ) ? "for-search" : "")} style={{ width: "100%",display:"grid" }}>
+            <div className={`${"complaint-input-container for-pt " + (!(type === "desktop" && !mobileView ) ? "for-search" : "")} mc-search-fullwidth`}>
               {searchFields
                 ?.filter((e) => true)
                 ?.map((input, index) => (
@@ -72,7 +72,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                     {input.type !== "date" ? (
                       <div className="field-container">
                         {input?.componentInFront ? (
-                          <span className="citizen-card-input citizen-card-input--front" style={{ flex: "none" }}>
+                          <span className="citizen-card-input citizen-card-input--front mc-search-wrapper">
                             {input?.componentInFront}
                           </span>
                         ) : null}
@@ -105,12 +105,12 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                   </div>
                 ))}
                 {type === "desktop" && !mobileView && (
-                  <div style={{ gridColumn: "2/3", textAlign: "right", paddingTop: "10px" }} className="input-fields">
+                  <div className="input-fields mc-search-spacing">
                   <div>{clearAll()}</div>
                   </div>
                 )}
                 {type === "desktop" && !mobileView &&
-              <div style={{ maxWidth: "unset", marginLeft: "unset" }} className="search-submit-wrapper">
+              <div className="search-submit-wrapper mc-search-spacing-2">
                 <SubmitBar
                   className="submit-bar-search"
                   label={t("UC_SEARCH_LABEL")}
@@ -123,10 +123,10 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
         </div>
         {(type === "mobile" || mobileView) && (
           <ActionBar className="clear-search-container">
-            <button className="clear-search" style={{ flex: 1 }}>
+            <button className="clear-search mc-desktop-inbox-wrapper-2">
               {clearAll(mobileView)}
             </button>
-            <SubmitBar label={t("UC_SEARCH_LABEL")} style={{ flex: 1 }} submit={true} />
+            <SubmitBar label={t("UC_SEARCH_LABEL")} className="mc-desktop-inbox-wrapper-2" submit={true} />
           </ActionBar>
         )}
       </React.Fragment>

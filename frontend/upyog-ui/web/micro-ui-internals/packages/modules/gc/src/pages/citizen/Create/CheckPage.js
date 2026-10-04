@@ -89,8 +89,8 @@ const GCCheckPage = ({ onSubmit, value = {}, renewApplication }) => {
       {/* Applicant Details */}
       {owners && owners.length > 0 && (
         <>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <CardSubHeader style={{ fontSize: "24px" }}>
+          <div className="gc-check-page-flex-row">
+            <CardSubHeader className="gc-check-page-header">
               {t("ES_APPLICANT_DETAILS")}
             </CardSubHeader>
             <ActionButton jumpTo="applicant-details" />
@@ -110,8 +110,8 @@ const GCCheckPage = ({ onSubmit, value = {}, renewApplication }) => {
       )}
 
       {/* Property Location Details */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <CardSubHeader style={{ fontSize: "24px" }}>
+      <div className="gc-check-page-flex-row">
+        <CardSubHeader className="gc-check-page-header">
           {t("GC_PROPERTY_LOCATION_DETAILS")}
         </CardSubHeader>
         <ActionButton jumpTo="garbage-propertyLocation" />
@@ -170,8 +170,8 @@ const GCCheckPage = ({ onSubmit, value = {}, renewApplication }) => {
       </StatusTable>
 
       {/* Garbage Specifications */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <CardSubHeader style={{ fontSize: "24px" }}>
+      <div className="gc-check-page-flex-row">
+        <CardSubHeader className="gc-check-page-header">
           {t("GC_GARBAGE_SPECIFICATIONS")}
         </CardSubHeader>
         <ActionButton jumpTo="garbage-specifications" />
@@ -269,8 +269,8 @@ const GCCheckPage = ({ onSubmit, value = {}, renewApplication }) => {
       </StatusTable>
 
       {/* Garbage Documents */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <CardSubHeader style={{ fontSize: "24px" }}>
+      <div className="gc-check-page-flex-row">
+        <CardSubHeader className="gc-check-page-header">
           {t("GC_GARBAGE_DOCUMENTS")}
         </CardSubHeader>
         <ActionButton jumpTo="garbage-documents" />

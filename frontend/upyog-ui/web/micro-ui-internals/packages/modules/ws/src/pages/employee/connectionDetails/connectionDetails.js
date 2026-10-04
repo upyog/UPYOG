@@ -8,7 +8,7 @@ import { ifUserRoleExists, downloadPdf, downloadAndOpenPdf } from "../../../util
 import WSInfoLabel from "../../../pageComponents/WSInfoLabel";
 import getConnectionDetailsPDF from "../../../utils/getConnectionDetails";
 import "./connectionDetails.css";
-import "../../../css/ws-inline-auto.css";
+
 const GetConnectionDetails = () => {
   const {
     t
@@ -75,7 +75,7 @@ const GetConnectionDetails = () => {
     return item.code == "WS.ONE_TIME_FEE";
   });
   let commonPayInfo = "";
-  if (index > -1) commonPayInfo = commonPayDetails[index];else commonPayInfo = commonPayDetails && commonPayDetails.filter(item => item.code === "DEFAULT");
+  if (index > -1) commonPayInfo = commonPayDetails[index]; else commonPayInfo = commonPayDetails && commonPayDetails.filter(item => item.code === "DEFAULT");
   const receiptKey = commonPayInfo?.receiptKey || "consolidatedreceipt";
   useEffect(async () => {
     let businessService = serviceType === "WATER" ? "WS" : "SW";
@@ -184,16 +184,16 @@ const GetConnectionDetails = () => {
         label: "WORKFLOW_IN_PROGRESS"
       });
     }
-    else{
-      console.log("due",due,applicationDetails)
-        if (billData[0]?.status === "ACTIVE" || applicationDetails?.fetchBillsData?.length <=0 || due == "0" || due < 0) {
-          Digit.SessionStorage.set("WS_DISCONNECTION", applicationDetails);
-          navigate(`${pathname}`);
-        } 
-       
-        else {
-          setshowModal(true);
-        }
+    else {
+      console.log("due", due, applicationDetails)
+      if (billData[0]?.status === "ACTIVE" || applicationDetails?.fetchBillsData?.length <= 0 || due == "0" || due < 0) {
+        Digit.SessionStorage.set("WS_DISCONNECTION", applicationDetails);
+        navigate(`${pathname}`);
+      }
+
+      else {
+        setshowModal(true);
+      }
     }
   };
   const getRestorationButton = () => {
@@ -204,13 +204,13 @@ const GetConnectionDetails = () => {
         label: "WORKFLOW_IN_PROGRESS"
       });
     }
-    else{
-        if (billData[0]?.status === "ACTIVE" || applicationDetails?.fetchBillsData?.length <=0 || due === "0") {
-          Digit.SessionStorage.set("WS_DISCONNECTION", applicationDetails);
-          navigate(`${pathname}`);
-        } else {
-          setshowModal(true);
-        }
+    else {
+      if (billData[0]?.status === "ACTIVE" || applicationDetails?.fetchBillsData?.length <= 0 || due === "0") {
+        Digit.SessionStorage.set("WS_DISCONNECTION", applicationDetails);
+        navigate(`${pathname}`);
+      } else {
+        setshowModal(true);
+      }
     }
   };
   function onActionSelect(action) {
@@ -262,53 +262,53 @@ const GetConnectionDetails = () => {
     label: t("WS_CONNECTION_DETAILS"),
     onClick: () => downloadConnectionDetails()
   };
-  if (applicationDetails?.fetchBillsData?.length > 0) dowloadOptions = [appFeeDownloadReceipt, connectionDetailsReceipt];else dowloadOptions = [connectionDetailsReceipt];
+  if (applicationDetails?.fetchBillsData?.length > 0) dowloadOptions = [appFeeDownloadReceipt, connectionDetailsReceipt]; else dowloadOptions = [connectionDetailsReceipt];
   const Close = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
-      <path d="M0 0h24v24H0V0z" fill="none" />
-      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
-    </svg>;
+    <path d="M0 0h24v24H0V0z" fill="none" />
+    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+  </svg>;
   const Heading = props => {
-    return <h1 className="heading-m BPAheading-m ws-auto-350">
-        {props.label}
-      </h1>;
+    return <h1 className="heading-m BPAheading-m ws-connection-details-header">
+      {props.label}
+    </h1>;
   };
   const CloseBtn = props => {
     return <div className="icon-bg-secondary" onClick={props.onClick}>
-        <Close />
-      </div>;
+      <Close />
+    </div>;
   };
   return (
     <Fragment>
       <div>
         <div className="employee-application-details ws-connection-details-root">
-<div className="ws-connection-details-header-row">
-  <div className="ws-connection-details-title">
-          <Header styles={{
-              marginLeft: "0px",
-              paddingTop: "10px",
-              fontSize: "32px"
-            }}>{t("WS_CONNECTION_DETAILS")}</Header>
-          </div>
-          {dowloadOptions && dowloadOptions.length > 0 && <div className="ws-connection-details-download-wrap">
-            <MultiLink className="multilinkWrapper employee-mulitlink-main-divNew ws-auto-351" onHeadClick={() => setShowOptions(!showOptions)} displayOptions={showOptions} options={dowloadOptions} downloadBtnClassName={"employee-download-btn-className"} optionsClassName={"employee-options-btn-className"} ref={menuRef} />
+          <div className="ws-connection-details-header-row">
+            <div className="ws-connection-details-title">
+              <Header styles={{
+                marginLeft: "0px",
+                paddingTop: "10px",
+                fontSize: "32px"
+              }}>{t("WS_CONNECTION_DETAILS")}</Header>
+            </div>
+            {dowloadOptions && dowloadOptions.length > 0 && <div className="ws-connection-details-download-wrap">
+              <MultiLink className="multilinkWrapper employee-mulitlink-main-divNew ws-connection-details-btn-full-width" onHeadClick={() => setShowOptions(!showOptions)} displayOptions={showOptions} options={dowloadOptions} downloadBtnClassName={"employee-download-btn-className"} optionsClassName={"employee-options-btn-className"} ref={menuRef} />
             </div>}
           </div>
         </div>
         <ApplicationDetailsTemplate applicationDetails={applicationDetails} isLoading={isLoading} isDataLoading={isLoading} applicationData={applicationDetails?.applicationData} mutate={mutate} businessService={applicationDetails?.processInstancesDetails?.[0]?.businessService} moduleCode="WS" showToast={showToast} setShowToast={setShowToast} closeToast={closeToast} isInfoLabel={checkifPrivacyenabled} labelComponent={<WSInfoLabel t={t} />} />
         {ifUserRoleExists("WS_CEMP") && checkApplicationStatus && !applicationDetails?.isDisconnectionDone ? <ActionBar>
-            {displayMenu ? <Menu options={showAction} localeKeyPrefix={"WS"} t={t} onSelect={onActionSelect} /> : null}
+          {displayMenu ? <Menu options={showAction} localeKeyPrefix={"WS"} t={t} onSelect={onActionSelect} /> : null}
 
-            <SubmitBar ref={actionMenuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
-          </ActionBar> : applicationDetails?.applicationData?.isDisconnectionTemporary && applicationDetails?.applicationData?.status !== "Active" && applicationDetails?.applicationData?.applicationStatus == "DISCONNECTION_EXECUTED" ? <ActionBar>
-            {displayMenu ? <Menu options={showActionRestoration} localeKeyPrefix={"WS"} t={t} onSelect={onActionSelect} /> : null}
+          <SubmitBar ref={actionMenuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
+        </ActionBar> : applicationDetails?.applicationData?.isDisconnectionTemporary && applicationDetails?.applicationData?.status !== "Active" && applicationDetails?.applicationData?.applicationStatus == "DISCONNECTION_EXECUTED" ? <ActionBar>
+          {displayMenu ? <Menu options={showActionRestoration} localeKeyPrefix={"WS"} t={t} onSelect={onActionSelect} /> : null}
 
-            <SubmitBar ref={actionMenuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
-          </ActionBar> : <ActionBar>
-            {displayMenu ? <Menu options={showAction} localeKeyPrefix={"WS"} t={t} onSelect={onActionSelect} /> : null}
+          <SubmitBar ref={actionMenuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
+        </ActionBar> : <ActionBar>
+          {displayMenu ? <Menu options={showAction} localeKeyPrefix={"WS"} t={t} onSelect={onActionSelect} /> : null}
 
-            <SubmitBar ref={actionMenuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
-          </ActionBar>}
-       
+          <SubmitBar ref={actionMenuRef} label={t("WF_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
+        </ActionBar>}
+
         {showModal ? (
           <Modal
             open={showModal}

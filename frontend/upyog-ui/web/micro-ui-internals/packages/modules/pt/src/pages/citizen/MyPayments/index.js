@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import PTPayments from "./PTPayments";
 import { propertyCardBodyStyle } from "../../../utils";
-import "../../../css/pt-inline-auto.css";
 export const PTMyPayments = () => {
   const {
     t
@@ -31,18 +30,18 @@ export const PTMyPayments = () => {
   }
   const applicationsList = data && data?.Payments || [];
   return <React.Fragment>
-      <Header>{`${t("PT_MY_PAYMENTS_HEADER")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
-      <div>
-        {applicationsList?.length > 0 && applicationsList.map((application, index) => <div key={index}>
-              <PTPayments application={application} />
-            </div>)}
-        {!applicationsList?.length > 0 && <p className="pt-auto-113">{t("PT_NO_APPLICATION_FOUND_MSG")}</p>}
-      </div>
-     {/*  <p>
+    <Header>{`${t("PT_MY_PAYMENTS_HEADER")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
+    <div>
+      {applicationsList?.length > 0 && applicationsList.map((application, index) => <div key={index}>
+        <PTPayments application={application} />
+      </div>)}
+      {!applicationsList?.length > 0 && <p className="pt-index-mt-md-ml-md">{t("PT_NO_APPLICATION_FOUND_MSG")}</p>}
+    </div>
+    {/*  <p>
         {t("PT_TEXT_NOT_ABLE_TO_FIND_THE_PROPERTY")}{" "}
         <span className="link">
           <Link to="/upyog-ui/citizen/pt/property/citizen-search">{t("PT_COMMON_CLICK_HERE_TO_SEARCH_THE_PROPERTY")}</Link>
         </span>
       </p> */}
-    </React.Fragment>;
+  </React.Fragment>;
 };

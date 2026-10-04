@@ -86,8 +86,8 @@ const DesktopInbox = ({ tableConfig, filterComponent,columns, isLoading, setSear
   if (props.isLoading) {
     result = <Loader />;
   } else if (data?.table?.length === 0) {
-    result = <Card className="tl-auto-11">
-        {t("CS_MYAPPLICATIONS_NO_APPLICATION").split("\\n")?.map((text, index) => <p key={index} className="tl-auto-12">
+    result = <Card className="tl-desktop-inbox-card-mt-md">
+        {t("CS_MYAPPLICATIONS_NO_APPLICATION").split("\\n")?.map((text, index) => <p key={index} className="tl-desktop-inbox-card-center-text">
               {text}
             </p>)}
       </Card>;
@@ -134,15 +134,12 @@ const DesktopInbox = ({ tableConfig, filterComponent,columns, isLoading, setSear
             {isLoading ? <Loader /> : <FilterComponent defaultSearchParams={props.defaultSearchParams} statuses={data?.statuses} onFilterChange={props.onFilterChange} searchParams={props.searchParams} type="desktop" />}
           </div>
         </div>}
-      <div className="tl-auto-13">
+      <div className="tl-desktop-inbox-flex-1">
         <SearchLicenseApplication defaultSearchParams={props.defaultSearchParams} onSearch={props.onSearch} type="desktop" searchFields={props.searchFields} isInboxPage={!props?.isSearch} searchParams={props.searchParams} {...{
         setSearchFieldsBackToOriginalState,
         setSetSearchFieldsBackToOriginalState
       }} />
-        <div className="result" style={{
-        marginLeft: !props?.isSearch ? "24px" : "",
-        flex: 1
-      }}>
+        <div className="result" className={!props?.isSearch ? "inbox-result--with-margin" : "inbox-result--no-margin"}>
           {result}
         </div>
       </div>

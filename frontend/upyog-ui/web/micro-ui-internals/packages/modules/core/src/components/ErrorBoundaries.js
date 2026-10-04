@@ -46,7 +46,7 @@ class ErrorBoundary extends React.Component {
           <ErrorComponent initData={this.props.initData} />
 
           {/* <summary>Something went wrong</summary>
-          <details style={{ whiteSpace: "pre-wrap" }}>
+          <details className="custom-style">
             {this.state?.errorStack && this.state.errorStack.toString().substring(0, 600)}
             {this.state?.error}
           </details> */}

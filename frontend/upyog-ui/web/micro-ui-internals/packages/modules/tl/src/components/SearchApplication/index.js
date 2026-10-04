@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { convertEpochToDateDMY } from "../../utils";
 import SearchFields from "./SearchFields";
 import MobileSearchApplication from "./MobileSearchApplication";
-import "../../css/tl-inline-auto.css";
+
 const SearchLicenseApplication = ({
   tenantId,
   t,
@@ -24,43 +24,43 @@ const SearchLicenseApplication = ({
     limit: 10,
     sortBy: "commencementDate",
     sortOrder: "DESC"
-};
-    const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
-        defaultValues: initialValues
-    })
+  };
+  const { register, control, handleSubmit, setValue, getValues, reset } = useForm({
+    defaultValues: initialValues
+  })
 
-    useEffect(() => {
-      register("offset")
-      register("limit")
-      register("sortBy")
-      register("sortOrder")
-    },[register])
+  useEffect(() => {
+    register("offset")
+    register("limit")
+    register("sortBy")
+    register("sortOrder")
+  }, [register])
 
-    const onSort = useCallback((args) => {
-      if (args.length === 0) return
-      setValue("sortBy", args.id)
-      setValue("sortOrder", args.desc ? "DESC" : "ASC")
-    }, [])
+  const onSort = useCallback((args) => {
+    if (args.length === 0) return
+    setValue("sortBy", args.id)
+    setValue("sortOrder", args.desc ? "DESC" : "ASC")
+  }, [])
 
-    function onPageSizeChange(e){
-        setValue("limit",Number(e.target.value))
-        handleSubmit(onSubmit)()
-    }
+  function onPageSizeChange(e) {
+    setValue("limit", Number(e.target.value))
+    handleSubmit(onSubmit)()
+  }
 
-    function nextPage () {
-        setValue("offset", getValues("offset") + getValues("limit"))
-        handleSubmit(onSubmit)()
-    }
-    function previousPage () {
-        setValue("offset", Math.max(0, getValues("offset") - getValues("limit")))
-        handleSubmit(onSubmit)()
-    }
+  function nextPage() {
+    setValue("offset", getValues("offset") + getValues("limit"))
+    handleSubmit(onSubmit)()
+  }
+  function previousPage() {
+    setValue("offset", Math.max(0, getValues("offset") - getValues("limit")))
+    handleSubmit(onSubmit)()
+  }
 
-    const isMobile = window.Digit.Utils.browser.isMobile();
+  const isMobile = window.Digit.Utils.browser.isMobile();
 
-    if (isMobile) {
-      return <MobileSearchApplication {...{ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit }}/>
-    }
+  if (isMobile) {
+    return <MobileSearchApplication {...{ Controller, register, control, t, reset, previousPage, handleSubmit, tenantId, data, onSubmit }} />
+  }
 
   //need to get from workflow
   const GetCell = value => <span className="cell-text">{value}</span>;
@@ -72,12 +72,12 @@ const SearchLicenseApplication = ({
       row
     }) => {
       return <div>
-                <span className="link">
-                  <Link to={`/upyog-ui/employee/tl/application-details/${row.original["applicationNumber"]}`}>
-                    {row.original["applicationNumber"]}
-                  </Link>
-                </span>
-              </div>;
+        <span className="link">
+          <Link to={`/upyog-ui/employee/tl/application-details/${row.original["applicationNumber"]}`}>
+            {row.original["applicationNumber"]}
+          </Link>
+        </span>
+      </div>;
     }
   }, {
     Header: t("TL_COMMON_TABLE_COL_APP_DATE"),
@@ -113,9 +113,9 @@ const SearchLicenseApplication = ({
     disableSortBy: true
   }], []);
   return <React.Fragment>
-                <Header>{t("TL_SEARCH_APPLICATIONS")}</Header>
-                <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
-                  <SearchFields {...{
+    <Header>{t("TL_SEARCH_APPLICATIONS")}</Header>
+    <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
+      <SearchFields {...{
         register,
         control,
         reset,
@@ -123,12 +123,12 @@ const SearchLicenseApplication = ({
         t,
         previousPage
       }} />
-                </SearchForm>
-            {data?.display ? <Card className="tl-auto-3">
-                {t(data.display).split("\\n")?.map((text, index) => <p key={index} className="tl-auto-4">
-                        {text}
-                    </p>)}
-            </Card> : data !== "" && <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {
+    </SearchForm>
+    {data?.display ? <Card className="tl-index-card-mt-md">
+      {t(data.display).split("\\n")?.map((text, index) => <p key={index} className="tl-index-card-center-text">
+        {text}
+      </p>)}
+    </Card> : data !== "" && <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {
       return {
         style: {
           minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
@@ -140,6 +140,6 @@ const SearchLicenseApplication = ({
       id: getValues("sortBy"),
       desc: getValues("sortOrder") === "DESC" ? true : false
     }]} />}
-        </React.Fragment>;
+  </React.Fragment>;
 };
 export default SearchLicenseApplication;

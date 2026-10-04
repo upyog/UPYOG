@@ -45,11 +45,11 @@ const ArrearTable = ({ className = "table", headers = [], values = [], arrears =
         <table className={"table-fixed-column-common-pay"} style={styles.table}>
           <thead>
             <tr>
-              <th style={{ ...styles.cell, ...styles.cellLeft, ...styles.cellHeader }}>{t("CS_BILL_PERIOD")}</th>
+              <th className="arrear-table-cell arrear-table-cell--left arrear-table-cell--header">{t("CS_BILL_PERIOD")}</th>
               {headers.map((header, ind) => {
                 let styleRight = headers.length == ind + 1 ? styles.cellRight : {};
                 return (
-                  <th style={{ ...styles.cell, ...styleRight, ...styles.cellHeader }} key={ind}>
+                  <th className="arrear-table-cell arrear-table-cell--right arrear-table-cell--header" key={ind}>
                     {t(header)}
                   </th>
                 );
@@ -59,13 +59,13 @@ const ArrearTable = ({ className = "table", headers = [], values = [], arrears =
           <tbody>
             {Object.values(values).map((row, ind) => (
               <tr key={ind}>
-                <td style={{ ...styles.cell, ...styles.cellLeft }} component="th" scope="row">
+                <td className="arrear-table-cell arrear-table-cell--left" component="th" scope="row">
                   {Object.keys(values)[ind]}
                 </td>
                 {headers.map((header, i) => {
                   let styleRight = headers.length == i + 1 ? styles.cellRight : {};
                   return (
-                    <td style={{ ...styles.cell, textAlign: "left", ...styleRight, whiteSpace: "pre" }} key={i} numeric>
+                    <td className="arrear-table-cell arrear-table-cell--left" key={i} numeric>
                       {i > 1 && "₹"}
                       {(row[header] && row[header]["value"]) || "0"}
                     </td>
@@ -74,17 +74,17 @@ const ArrearTable = ({ className = "table", headers = [], values = [], arrears =
               </tr>
             ))}
             <tr>
-              <td style={{ ...styles.cell, ...styles.cellLeft }}></td>
+              <td className="arrear-table-cell arrear-table-cell--left"></td>
               {headers.map((header, ind) => {
                 if (ind == headers.length - 1) {
                   return (
-                    <td style={{ ...styles.cell, ...styles.cellRight, textAlign: "left", fontWeight: "700", whiteSpace: "pre" }} key={ind} numeric>
+                    <td className="arrear-table-cell arrear-table-cell--left font-bold" key={ind} numeric>
                       {arrears}
                     </td>
                   );
                 } else if (ind == headers.length - 2) {
                   return (
-                    <td style={{ ...styles.cell, textAlign: "left" }} key={ind} numeric>
+                    <td className="arrear-table-cell arrear-table-cell--left" key={ind} numeric>
                       {t("COMMON_ARREARS_TOTAL")}
                     </td>
                   );

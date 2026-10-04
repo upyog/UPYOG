@@ -53,9 +53,9 @@ const SearchComplaint = ({ onSearch, type, onClose, searchParams }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmitInput)} style={{ marginLeft: "24px" }}>
+    <form onSubmit={handleSubmit(onSubmitInput)} className="pgr-search-spacing">
       <React.Fragment>
-        <div className="search-container" style={{ width: "auto" }}>
+        <div className="search-container pgr-search-wrapper">
           <div className="search-complaint-container">
             {type === "mobile" && (
               <div className="complaint-header">
@@ -65,13 +65,13 @@ const SearchComplaint = ({ onSearch, type, onClose, searchParams }) => {
                 </span>
               </div>
             )}
-            <div className="complaint-input-container" style={{ display: "grid" }}>
+            <div className="complaint-input-container pgr-search-grid-container">
               <span className="complaint-input">
                 <Label>{t("CS_COMMON_COMPLAINT_NO")}.</Label>
                 <TextInput
                   inputRef={serviceRequestIdRef}
                   {...serviceRequestIdRegister}
-                  style={{ marginBottom: "8px" }}
+                  className="pgr-search-bottom-spacing"
                 ></TextInput>
               </span>
               <span className="mobile-input">
@@ -83,7 +83,7 @@ const SearchComplaint = ({ onSearch, type, onClose, searchParams }) => {
               </span>
               {type === "desktop" && (
                 <SubmitBar
-                  style={{ marginTop: 32, marginLeft: "16px", width: "calc( 100% - 16px )" }}
+                  className="pgr-search-top-spacing"
                   label={t("ES_COMMON_SEARCH")}
                   submit={true}
                   disabled={Object.keys(errors).filter((i) => errors[i]).length}

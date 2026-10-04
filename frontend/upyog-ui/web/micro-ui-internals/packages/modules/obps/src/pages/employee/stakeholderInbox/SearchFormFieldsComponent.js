@@ -8,9 +8,9 @@ const SearchFormFieldsComponents = ({registerRef, searchFormState, searchFieldCo
 
     if (!isMobile) {
         return <React.Fragment>
-            <div className="search-container" style={{ width: "auto", marginLeft: "24px" }}>
+            <div className="search-container obps-search-form-fields-component-spacing">
                 <div className="search-complaint-container">
-                    <div className="complaint-input-container" style={{ textAlign: "start" }}>
+                    <div className="complaint-input-container obps-search-form-fields-component-wrapper">
                         <SearchField>
                             <label>{t("BPA_APPLICATION_NUMBER_LABEL")}</label>
                             <TextInput name="applicationNo" inputRef={registerRef({})} />
@@ -35,7 +35,7 @@ const SearchFormFieldsComponents = ({registerRef, searchFormState, searchFieldCo
                                 {searchFormState?.errors?.["mobileNumber"]?.message}
                             </CardLabelError> : null}
                         </SearchField>
-                        <div className="search-action-wrapper" style={{ width: "100%" }}>
+                        <div className="search-action-wrapper obps-inspection-report-fullwidth">
                             {searchFieldComponents}
                         </div>
                     </div>

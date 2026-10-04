@@ -77,19 +77,19 @@ export const PTRMyApplications = () => {
               <PetApplication application={application} tenantId={user?.permanentCity} buttonLabel={getLabelValue(application)}/>
             </div>
           ))}
-        {!applicationsList?.length > 0 && <p style={{ marginLeft: "16px", marginTop: "16px" }}>{t("PTR_NO_APPLICATION_FOUND_MSG")}</p>}
+        {!applicationsList?.length > 0 && <p className="ptr-index-top-spacing">{t("PTR_NO_APPLICATION_FOUND_MSG")}</p>}
 
         {applicationsList?.length !== 0 && (
           <div>
-            <p style={{ marginLeft: "16px", marginTop: "16px" }}>
+            <p className="ptr-index-top-spacing">
               <span className="link">{<Link to={`/upyog-ui/citizen/ptr/petservice/my-application/${t1}`}>{t("PTR_LOAD_MORE_MSG")}</Link>}</span>
             </p>
           </div>
         )}
       </div>
 
-      <p style={{ marginLeft: "16px", marginTop: "16px" }}>
-        <span className="link" style={{ display: "block" }}>
+      <p className="ptr-index-top-spacing">
+        <span className="link ptr-index-wrapper">
           <Link to="/upyog-ui/citizen/ptr/petservice/new-application/info">{t("PTR_COMMON_CLICK_HERE_TO_REGISTER_NEW_PET")}</Link>
         </span>
       </p>

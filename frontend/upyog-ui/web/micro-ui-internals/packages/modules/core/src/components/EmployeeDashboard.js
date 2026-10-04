@@ -56,7 +56,7 @@ const formatNumbers = (amount) => {
   if (amount === null || amount === undefined) return '';
   const num = Number(amount);
   const numStr = num.toString();
-  
+
   if (numStr.length <= 5) {
     const lastThree = numStr.substring(numStr.length - 3);
     const otherNums = numStr.substring(0, numStr.length - 3);
@@ -113,24 +113,24 @@ const EmployeeDashboard = () => {
   const [modulesData, setModulesData] = useState({});
   const [loading, setLoading] = useState(true);
   const user = Digit.UserService.getUser();
-  const tenantId=user.info.tenantId;
+  const tenantId = user.info.tenantId;
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const response = await Digit.EmployeeDashboardService.roleBaseSearch({tenantId});
-        
+        const response = await Digit.EmployeeDashboardService.roleBaseSearch({ tenantId });
+
         if (response?.dashboardData) {
           setModulesData(response.dashboardData);
         }
-        
+
         setLoading(false);
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
         setLoading(false);
       }
     };
-    
+
     fetchDashboardData();
   }, []);
 
@@ -139,28 +139,18 @@ const EmployeeDashboard = () => {
   }
 
   return (
-    <div className="employee-app-container" style={{ padding: "20px" }}>
-      <div style={{ 
-        textAlign: "center", 
-        fontWeight: "bold", 
-        fontSize: "24px", 
-        marginBottom: "30px" 
-      }}>
+    <div className="employee-app-container core-employee-dashboard-container-padding">
+      <div className="core-employee-dashboard-centered">
         {t("COMMON_ULB_DASHBOARD")}
       </div>
-      
+
       {Object.keys(modulesData).length === 0 ? (
-        <div style={{ 
-          textAlign: "center", 
-          padding: "40px", 
-          color: "#505A5F",
-          fontSize: "16px" 
-        }}>
+        <div className="core-employee-dashboard-centered-2">
           {t("NO_DASHBOARD_ACCESS")}
         </div>
       ) : (
         Object.entries(modulesData).map(([moduleName, data]) => (
-          <ModuleDashboardSection 
+          <ModuleDashboardSection
             key={moduleName}
             moduleName={moduleName}
             data={data}

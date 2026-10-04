@@ -67,7 +67,7 @@ const Filter = ({ searchParams, onFilterChange, onSearch, removeParam, ...props 
               if (props.type === "mobile") onSearch({ delete: ["applicationNos"] });
               else onSearch();
             }}
-            style={{ flex: 1 }}
+            className="mc-desktop-inbox-wrapper-2"
           />
         </ActionBar>
       )}

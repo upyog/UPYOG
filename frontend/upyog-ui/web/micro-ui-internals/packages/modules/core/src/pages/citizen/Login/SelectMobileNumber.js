@@ -39,7 +39,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
         return <span key={data?.linkId || index}>
           {/* {index == 0 && "CCF"} */}
           {data?.linkPrefix && <span>{t(`${data?.linkPrefix}_`)}</span>}
-          {data?.link && <span id={data?.linkId} onClick={(e) => { onLinkClick(e) }} style={{ color: "#a82227", cursor: "pointer" }}>{t(`${data?.link}_`)}</span>}
+          {data?.link && <span id={data?.linkId} onClick={(e) => { onLinkClick(e) }} className="core-select-mobile-number-clickable">{t(`${data?.link}_`)}</span>}
           {data?.linkPostfix && <span>{t(`${data?.linkPostfix}_`)}</span>}
           {(index == isCCFEnabled?.checkBoxLabels?.length - 1) && t("LABEL")}
         </span>
@@ -110,15 +110,14 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
       onChange={handleMobileChange}
       value={mobileNumber}
     >
-      {error && <p style={{color:"red"}}>{error}</p>}
+      {error && <p className="core-select-mobile-number-required-asterisk">{error}</p>}
       {isCCFEnabled?.isCitizenConsentFormEnabled && (
       <div>
         <CheckBox
-          className="form-field"
+          className="form-field core-select-mobile-number-top-spacing"
           label={checkLabels()}
           value={isCheckBox}
           checked={isCheckBox}
-          style={{ marginTop: "5px", marginLeft: "55px" }}
           styles={{marginBottom: "30px"}}
           onChange={setTermsAndPolicyDetails}
         />
@@ -132,7 +131,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
           setMdmsConfig={setMdmsConfig}
         />
       </div>)}
-      <div className="col col-md-4  text-md-center p-0" style={{width:"40%", marginTop:"5px"}}>
+      <div className="col col-md-4  text-md-center p-0 core-select-mobile-number-top-spacing-2">
         <button
           className="digilocker-btn"
           type="button"
@@ -140,8 +139,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
         >
           <img
           src="https://meripehchaan.gov.in/assets/img/icon/digi.png"
-          className="mr-2"
-          style={{ width: "12%" }}
+          className="mr-2 core-select-mobile-number-wrapper"
           />
           {t("CORE_COMMON_DGILOCKER_REGISTER")}
         </button>
@@ -153,7 +151,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
       actionSaveLabel={"Ok"}
       actionSaveOnSubmit={(e)=>setModal(e)}
       formId="modal-action"
-    > <div style={{ width: "100%" }}>
+    > <div className="core-assets-qrcode-fullwidth">
     <Card>
       <p>By selecting this option, I am providing my consent to associate my Upyog account with my DigiLocker ID</p>
     </Card>

@@ -31,7 +31,7 @@ const HorizontalNav = ({
     return <Item />;
   };
   return (
-    <div className={navClassName} style={{ ...navStyles }}>
+    <div className={navClassName} style={navStyles}>
       {showNav && (
         <div
           className={`horizontal-nav ${customClassName}`}

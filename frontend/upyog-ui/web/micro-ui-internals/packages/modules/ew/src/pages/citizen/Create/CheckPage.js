@@ -88,7 +88,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <div>
           {/* Section for product details */}
           <CardSubHeader>{t("EWASTE_TITLE_PRODUCT_DETAILS")}</CardSubHeader>
-          <div style={{ border: "2px solid #ccc", borderRadius: "8px", padding: "20px", margin: "20px 0" }}>
+          <div className="ew-check-page-container-padding">
             <ApplicationTable
               t={t}
               data={productRows}
@@ -106,10 +106,10 @@ const CheckPage = ({ onSubmit, value = {} }) => {
             />
             <br />
             {/* Displaying the net price */}
-            <StatusTable style={{ marginLeft: "20px" }}>
+            <StatusTable className="ew-ewasteproduct-list-table-cell">
               <Row
                 label={t("EWASTE_NET_PRICE")}
-                text={<div style={{ marginLeft: "295px" }}>{"₹ " + ewdet?.calculatedAmount}</div>}
+                text={<div className="ew-check-page-spacing">{"₹ " + ewdet?.calculatedAmount}</div>}
                 actionButton={<ActionButton jumpTo={`${`/upyog-ui/citizen/ew/raiseRequest/productdetails`}`} />}
               />
             </StatusTable>

@@ -50,7 +50,7 @@ const ChallanQRCode = ({ path }) => {
       });
     return (
         <React.Fragment>
-            <div style={{ width: "100%" }}>
+            <div className="core-assets-qrcode-fullwidth">
                 <Card>
                     <CardHeader>Challan summary</CardHeader>
                     {!isLoading?

@@ -364,8 +364,8 @@ const Units = ({
       usageCategoryMajorMenu,
       subUsageCategoryMenu
     }} />)}
-      <LinkButton label={t("PT_ADD_UNIT")} onClick={handleAddUnit} className="pt-auto-95"></LinkButton>
-      {["units_missing", "landArea extended"].includes(formState.errors?.[config.key]?.type) ? <CardLabelError className="pt-auto-96">
+      <LinkButton label={t("PT_ADD_UNIT")} onClick={handleAddUnit} className="pt-units-btn"></LinkButton>
+      {["units_missing", "landArea extended"].includes(formState.errors?.[config.key]?.type) ? <CardLabelError className="pt-units-btn-text-sm-mt-neg">
           {`${t(formState.errors?.[config.key].message.split(".")[0])}` + `-
            ${formState.errors?.[config.key].message.split(".")[1] || " "}`}
         </CardLabelError> : null}
@@ -478,19 +478,19 @@ function Unit({
   const errorStyle = isMobile ? {width: "70%", marginLeft: "4%", fontSize: "12px"} : { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
 
   return (
-    <div className="pt-auto-97">
+    <div className="pt-units-item">
       <div className="label-field-pair">
-        <h2 className="card-label card-label-smaller pt-auto-98">
+        <h2 className="card-label card-label-smaller pt-units-grey-text">
           Unit {unit?.order}
         </h2>
       </div>
-      <div className="pt-auto-99">
-        {allUnits.length > 1 ? <LinkButton label={<DeleteIcon fill={!(allUnits.length == 1) ? "#494848" : "#FAFAFA"} className="pt-auto-101" />} onClick={e => handleRemoveUnit(unit)} className="pt-auto-100" />
+      <div className="pt-units-bordered">
+        {allUnits.length > 1 ? <LinkButton label={<DeleteIcon fill={!(allUnits.length == 1) ? "#494848" : "#FAFAFA"} className="pt-units-btn-relative" />} onClick={e => handleRemoveUnit(unit)} className="pt-units-btn-right-text-action" />
       // <div onClick={() => handleRemoveUnit(unit)}>
       //   X
       // </div>
       : null}
-        <div className="pt-auto-102">
+        <div className="pt-units-item-2">
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t("PT_FORM2_SELECT_FLOOR") + " *"}</CardLabel>
           <Controller

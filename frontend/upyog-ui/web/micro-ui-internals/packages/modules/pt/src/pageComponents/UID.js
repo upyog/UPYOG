@@ -106,7 +106,7 @@ const UID = ({
 
             </div>
           </LabelFieldPair>
-          {(formState?.touchedFields?.[config.key] || formState?.touched?.[config.key]) ? <CardLabelError className="pt-auto-94">
+          {(formState?.touchedFields?.[config.key] || formState?.touched?.[config.key]) ? <CardLabelError className="pt-uid-label-text-sm-mt-neg">
               {formState.errors?.[config.key]?.message}
             </CardLabelError> : null}
         </React.Fragment>;

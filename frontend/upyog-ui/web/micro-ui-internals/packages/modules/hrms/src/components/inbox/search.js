@@ -37,7 +37,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   const clearAll = (mobileView) => {
     const mobileViewStyles = mobileView ? { margin: 0 } : {};
     return (
-      <LinkLabel style={{ display: "inline", ...mobileViewStyles }} onClick={clearSearch}>
+      <LinkLabel className="search-clear-link" style={mobileViewStyles} onClick={clearSearch}>
         {t("HR_COMMON_CLEAR_SEARCH")}
       </LinkLabel>
     );
@@ -46,17 +46,17 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
       <React.Fragment>
-        <div className="search-container" style={{ width: "auto", marginLeft: isInboxPage ? "24px" : "revert" }}>
+        <div className="search-container" className={isInboxPage ? "search-container-auto-margin" : "search-container-auto"}>
           <div className="search-complaint-container">
             {(type === "mobile" || mobileView) && (
-              <div className="complaint-header" style={{ display: 'flex', justifyContent: "space-between" }}>
+              <div className="complaint-header hrms-search-flex-row">
                 <h2>{t("ES_COMMON_SEARCH_BY")}</h2>
                 <span onClick={onClose}>
                   <CloseSvg />
                 </span>
               </div>
             )}
-            <div className="complaint-input-container" style={{ width: "100%" }}>
+            <div className="complaint-input-container hrms-search-fullwidth">
               {searchFields
                 ?.filter((e) => true)
                 ?.map((input, index) => (
@@ -66,7 +66,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                       {input.type !== "date" ? (
                         <div className="field-container">
                           {input?.componentInFront ? (
-                            <span className="citizen-card-input citizen-card-input--front" style={{ flex: "none" }}>
+                            <span className="citizen-card-input citizen-card-input--front hrms-search-wrapper">
                               {input?.componentInFront}
                             </span>
                           ) : null}
@@ -86,14 +86,13 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
             </div>
             <div className="inbox-action-container">
               {type === "desktop" && !mobileView && (
-                <span style={{ paddingTop: "9px" }} className="clear-search">
+                <span className="clear-search hrms-search-spacing">
                   {clearAll()}
                 </span>
               )}
               {type === "desktop" && !mobileView && (
                 <SubmitBar
-                  style={{ marginTop: "unset" }}
-                  className="submit-bar-search"
+                  className="submit-bar-search hrms-search-top-spacing"
                   label={t("ES_COMMON_SEARCH")}
                   submit
                 />
@@ -103,10 +102,10 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
         </div>
         {(type === "mobile" || mobileView) && (
           <ActionBar className="clear-search-container">
-            <button className="clear-search" style={{ flex: 1 }}>
+            <button className="clear-search hrms-inbox-filter-wrapper">
               {clearAll(mobileView)}
             </button>
-            <SubmitBar label={t("HR_COMMON_SEARCH")} style={{ flex: 1 }} submit={true} />
+            <SubmitBar label={t("HR_COMMON_SEARCH")} className="hrms-inbox-filter-wrapper" submit={true} />
           </ActionBar>
         )}
       </React.Fragment>

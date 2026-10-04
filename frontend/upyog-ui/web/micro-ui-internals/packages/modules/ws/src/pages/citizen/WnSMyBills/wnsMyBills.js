@@ -65,15 +65,15 @@ const WNSMyBills = ({ template, header, actionButtonLabel }) => {
   const payment = {};
   let searchResults = Waterresult && Sewarageresult ? Waterresult.concat(Sewarageresult) : [];
   searchResults = searchResults?.filter(ob => ob?.AmountDue && ob?.AmountDue !== "0");
-  return <div className="ws-auto-252">
+  return <div className="ws-wns-my-bills-mt-md">
       <div>
-        {header && <Header className="ws-auto-253">
+        {header && <Header className="ws-wns-my-bills-mt-sm">
             {t(header)} ({searchResults?.length})
           </Header>}
          <WSInfoLabel t={t} /> 
         <ResponseComposer data={searchResults} template={template} actionButtonLabel={actionButtonLabel} onSubmit={onSubmit} />
       </div>
-      {!searchResults?.length > 0 && <p className="ws-auto-254">{t("CS_BILLS_TEXT_NO_BILLS_FOUND")}</p>}
+      {!searchResults?.length > 0 && <p className="ws-wns-my-bills-item">{t("CS_BILLS_TEXT_NO_BILLS_FOUND")}</p>}
     </div>;
 };
 WNSMyBills.propTypes = {

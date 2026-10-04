@@ -214,17 +214,14 @@ const BillDetails = ({ paymentRules, businessService }) => {
       <Header>{t("CS_PAYMENT_BILL_DETAILS")}</Header>
       <Card>
         <div>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div className="cmn-bill-details-flex-row">
           <KeyNote
             keyValue={t(businessService == "PT.MUTATION" ? "PDF_STATIC_LABEL_MUATATION_NUMBER_LABEL" : label)}
             note={wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode}
           />
           {timerEnabledForBusinessService(businessService) && (
             <CardSubHeader 
-              style={{ 
-                textAlign: 'right', 
-                fontSize: "24px"
-              }}
+              className="cmn-bill-details-header"
             >
             <TimerServices businessService={businessService} setTime={setTime} timerValues={state?.timerValue} t={t} SlotSearchData={state?.SlotSearchData}/>
             </CardSubHeader>
@@ -270,10 +267,10 @@ const BillDetails = ({ paymentRules, businessService }) => {
             />
           )}
 
-          <div style={{ position: "relative" }}>
+          <div className="cmn-bill-details-wrapper">
             <span
               className="payment-amount-front"
-              style={{ border: `1px solid ${paymentType === t("CS_PAYMENT_FULL_AMOUNT") ? "#9a9a9a" : "#9a9a9a"}` }}
+              className="bill-details-border-gray"
             >
               ₹
             </span>

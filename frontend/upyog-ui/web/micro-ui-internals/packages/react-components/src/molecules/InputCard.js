@@ -40,7 +40,7 @@ const InputCard = ({
       {texts?.cardText && <CardText>{t(texts.cardText)}</CardText>}
       {children}
       {texts.submitBarLabel ? <SubmitBar disabled={isDisable} submit={submit} label={t(texts.submitBarLabel)} onSubmit={onNext} /> : null}
-      {texts.skipLabel ? <CardText style={{ marginTop: "10px", textAlign: isMobile ? "center" : "left" }}> {t(texts.skipLabel)} </CardText> : null}
+      {texts.skipLabel ? <CardText className={isMobile ? "input-card-skip-text--mobile" : "input-card-skip-text--desktop"}> {t(texts.skipLabel)} </CardText> : null}
       {texts.skipText ? <LinkButton label={t(texts.skipText)} onClick={onSkip} /> : null}
       {isMultipleAllow && texts.addMultipleText ? <LinkButton label={t(texts.addMultipleText)} onClick={onAdd} /> : null}
     </Card>

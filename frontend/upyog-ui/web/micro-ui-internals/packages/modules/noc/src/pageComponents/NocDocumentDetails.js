@@ -75,14 +75,14 @@ const DocumentRow = ({ t, config, initialDoc, onChange }) => {
   };
 
   return (
-    <div style={{ marginBottom: "15px" }}>
-      <CardLabel style={{ fontWeight: "bold" }}>
+    <div className="noc-noc-document-details-bottom-spacing">
+      <CardLabel className="noc-noc-document-details-card">
         {t(config.code.replaceAll(".", "_"), config.name)} {config.required && <span className="astericColor">*</span>}
       </CardLabel>
 
       {config.hasDropdown && (
         <Dropdown
-          style={{ marginBottom: "10px" }}
+          className="noc-noc-document-details-bottom-spacing-2"
           selected={selectedDropdown}
           option={config.dropdownData?.map(opt => ({
             ...opt,
@@ -108,7 +108,7 @@ const DocumentRow = ({ t, config, initialDoc, onChange }) => {
         accept="image/*, .pdf, .png, .jpeg"
         error={uploadError}
       />
-      {fileName && <div style={{ fontSize: "0.9rem", color: "#555", marginTop: "5px" }}>{fileName}</div>}
+      {fileName && <div className="noc-noc-document-details-top-spacing">{fileName}</div>}
       {uploadError && <CardLabelError>{uploadError}</CardLabelError>}
     </div>
   );
@@ -217,8 +217,8 @@ const NocDocumentDetails = ({ t, config, onSelect, userType, formData }) => {
 
   if (userType === "employee") {
     return (
-      <div style={{ padding: "10px" }}>
-        <div style={{ marginBottom: "20px" }}>
+      <div className="noc-noc-document-details-container-padding">
+        <div className="noc-noc-document-details-bottom-spacing-3">
           <CardHeader>{t("NOC_OWNER_DOCUMENTS_HEADER")}</CardHeader>
           {ownerDocConfigs.map((docConfig) => {
             const initialDoc = documents.find((d) => d.categoryCode === docConfig.code);
@@ -237,8 +237,8 @@ const NocDocumentDetails = ({ t, config, onSelect, userType, formData }) => {
         </div>
 
         {buildings.map((building, bIdx) => (
-          <div key={bIdx} style={{ marginBottom: "20px", borderTop: "1px solid #ccc", paddingTop: "20px" }}>
-            <CardHeader style={{ fontSize: "1.2rem" }}>
+          <div key={bIdx} className="noc-noc-document-details-bottom-spacing-4">
+            <CardHeader className="noc-noc-document-details-header">
               {t("NOC_BUILDING_DOCUMENTS_HEADER")}
             </CardHeader>
             {buildingDocConfigs.map((docConfig) => {
@@ -259,7 +259,7 @@ const NocDocumentDetails = ({ t, config, onSelect, userType, formData }) => {
             })}
           </div>
         ))}
-        {error && <CardLabelError style={{ marginTop: "15px" }}>{error}</CardLabelError>}
+        {error && <CardLabelError className="noc-noc-document-details-card-2">{error}</CardLabelError>}
       </div>
     );
   }
@@ -268,7 +268,7 @@ const NocDocumentDetails = ({ t, config, onSelect, userType, formData }) => {
     <React.Fragment>
 
       <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} forcedError={null}>
-        <div style={{ marginBottom: "20px" }}>
+        <div className="noc-noc-document-details-bottom-spacing-3">
           <CardHeader>{t("NOC_OWNER_DOCUMENTS_HEADER")}</CardHeader>
           {ownerDocConfigs.map((docConfig) => {
             const initialDoc = documents.find((d) => d.categoryCode === docConfig.code);
@@ -287,8 +287,8 @@ const NocDocumentDetails = ({ t, config, onSelect, userType, formData }) => {
         </div>
 
         {buildings.map((building, bIdx) => (
-          <div key={bIdx} style={{ marginBottom: "20px", borderTop: "1px solid #ccc", paddingTop: "20px" }}>
-            <CardHeader style={{ fontSize: "1.2rem" }}>
+          <div key={bIdx} className="noc-noc-document-details-bottom-spacing-4">
+            <CardHeader className="noc-noc-document-details-header">
               {t("NOC_BUILDING_DOCUMENTS_HEADER")}
             </CardHeader>
             {buildingDocConfigs.map((docConfig) => {

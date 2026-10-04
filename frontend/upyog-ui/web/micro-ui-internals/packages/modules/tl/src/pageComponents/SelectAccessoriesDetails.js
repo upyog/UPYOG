@@ -228,15 +228,15 @@ const SelectAccessoriesDetails = ({
       {isLoading ? <Loader /> : <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} forcedError={t(AccCountError) || t(AccUOMError)} isDisabled={canMoveNext()}>
           {fields.map((field, index) => {
         return <div key={`${field}-${index}`}>
-                <div className="tl-auto-32">
+                <div className="tl-select-accessories-details-mt-sm">
                   <CardLabel>{`${t("TL_ACCESSORY_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <LinkButton label={<div>
                         <span>
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="tl-auto-34">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="tl-select-accessories-details-link-relative">
                             <path d="M1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM14 1H10.5L9.5 0H4.5L3.5 1H0V3H14V1Z" fill={!(fields.length == 1) ? "#494848" : "#FAFAFA"} />
                           </svg>
                         </span>
-                      </div>} onClick={e => handleRemove(index)} className="tl-auto-33" />
+                      </div>} onClick={e => handleRemove(index)} className="tl-select-accessories-details-link" />
                   {!isLoading ? <RadioOrSelect t={t} optionKey="i18nKey" isMandatory={config.isMandatory}
             //options={[{ i18nKey: "a" }, { i18nKey: "a" }, { i18nKey: "a" }, { i18nKey: "a" }, { i18nKey: "a" }, { i18nKey: "a" }]}
             options={sortDropdownNames(accessories, "i18nKey", t) || []} selectedOption={field.accessory} onSelect={e => selectAccessory(index, e)} isPTFlow={true} /> : <Loader />}
@@ -248,7 +248,7 @@ const SelectAccessoriesDetails = ({
               pattern: "[0-9]+",
               type: "text",
               title: t("TL_WRONG_UOM_COUNT_ERROR")
-            }} className="tl-auto-35" />
+            }} className="tl-select-accessories-details-label" />
                   <CardLabel>{`${t("TL_UNIT_OF_MEASURE_LABEL")}`}</CardLabel>
                   <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="UnitOfMeasure" value={field.unit} onChange={e => selectUnitOfMeasure(index, e)} disable={true}
             /* {...(validation = {
@@ -256,7 +256,7 @@ const SelectAccessoriesDetails = ({
             pattern: "^[a-zA-Z-.`' ]*$",
             type: "text",
             title: t("PT_NAME_ERROR_MESSAGE"),
-            })} */ className="tl-auto-36" />
+            })} */ className="tl-select-accessories-details-label" />
                   <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="UomValue" value={field.uom} onChange={e => selectUomValue(index, e)}
             // disable={
@@ -270,13 +270,13 @@ const SelectAccessoriesDetails = ({
               pattern: "[0-9]+",
               type: "text",
               title: t("TL_WRONG_UOM_VALUE_ERROR")
-            }} className="tl-auto-37" />
+            }} className="tl-select-accessories-details-label" />
                 </div>
               </div>;
       })}
           {/* <hr color="#d6d5d4" className="break-line"></hr> */}
-          <div className="tl-auto-38">
-            <button type="button" onClick={() => handleAdd()} className="tl-auto-39">
+          <div className="tl-select-accessories-details-flex">
+            <button type="button" onClick={() => handleAdd()} className="tl-select-accessories-details-btn">
               {`${t("TL_ADD_MORE_TRADE_ACC")}`}
             </button>
           </div>

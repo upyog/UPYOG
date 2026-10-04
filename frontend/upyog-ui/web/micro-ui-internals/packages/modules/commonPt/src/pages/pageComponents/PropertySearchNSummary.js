@@ -108,7 +108,7 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
      {(window.location.href.includes("/tl/") ? (!(formData?.tradedetils?.[0]?.structureType?.code === "MOVABLE") && (isEmpNewApplication || isEmpRenewLicense) ) : true) && <div>
       <LabelFieldPair>
         <CardLabel className="card-label-smaller" style={getInputStyles()}>{`${t(`PROPERTY_ID`)}`}</CardLabel>
-        <div className="field" style={{ marginTop: "20px", display: "flex" }}>
+        <div className="field cmnpt-property-search-nsummary-flex-container">
           <TextInput
             key={config.key}
             value={propertyId}
@@ -117,23 +117,23 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
               setPropertyId(e.target.value);
               onSelect(config.key, { id: e.target.value });
             }}
-            style={{ width: "80%", float: "left", marginRight: "20px" }}
+            className="cmnpt-property-search-nsummary-spacing"
           />
-          <button className="submit-bar" type="button" style={{ color: "white" }} onClick={searchProperty}>
+          <button className="submit-bar cmnpt-property-search-nsummary-action-btn" type="button" onClick={searchProperty}>
             {`${t("PT_SEARCH")}`}
           </button>
         </div>
       </LabelFieldPair>
       <span onClick={() => navigate(`/upyog-ui/employee/commonpt/search?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
-        <LinkButton label={t("CPT_SEARCH_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
+        <LinkButton label={t("CPT_SEARCH_PROPERTY")} className="cmnpt-property-search-nsummary-action-btn-2" />
       </span>
       &nbsp; | &nbsp;
       <span onClick={() => navigate(`/upyog-ui/employee/commonpt/new-application?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
-        <LinkButton label={t("CPT_CREATE_PROPERTY")} style={{ color: "#a82227", display: "inline-block" }} />
+        <LinkButton label={t("CPT_CREATE_PROPERTY")} className="cmnpt-property-search-nsummary-action-btn-2" />
       </span>
       {propertyDetails && propertyDetails?.Properties.length ? (
         <React.Fragment>
-          <header className="card-section-header" style={{ marginBottom: "5px", marginTop: "20px" }}>
+          <header className="card-section-header cmnpt-property-search-nsummary-header">
             {t("PT_DETAILS")}
           </header>
           <StatusTable>
@@ -150,7 +150,7 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
                 label={t(`OWNER_NAME`)}
                 text={getOwnerNames(propertyDetails?.Properties[0])}
               />
-               {/* <span style={{ display: "inline-flex", width: "fit-content"}}> */}
+               {/* <span className="custom-style"> */}
               <Row
                 className="border-none"
                 labelStyle={isMobile ? { width: "40%" } : {}}
@@ -181,14 +181,14 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
             <Link to={`/upyog-ui/employee/commonpt/view-property?propertyId=${propertyId}&tenantId=${tenantId}&from=${window.location.pathname?.includes("employee/ws/new-application") ? "ES_COMMON_WS_NEW_CONNECTION" : window.location.pathname?.includes("employee/ws/modify-application") ?"WS_MODIFY_CONNECTION_BUTTON": window.location.pathname?.includes("employee/tl/new-application")
         ?"ES_TITLE_NEW_TRADE_LICESE_APPLICATION"
         :"WF_EMPLOYEE_NEWTL_RENEWAL_SUBMIT_BUTTON"}`}>
-            <LinkButton label={t("CPT_COMPLETE_PROPERTY_DETAILS")} style={{ color: "#a82227", textAlign: "Left" }} />
+            <LinkButton label={t("CPT_COMPLETE_PROPERTY_DETAILS")} className="cmnpt-property-search-nsummary-action-btn-3" />
           </Link>
         </React.Fragment>
       ) : null}
       {showToast && (
         <Toast
           isDleteBtn={true}
-          labelstyle={{ width: "100%" }}
+          labelclassName="width-full"
           error={showToast.error}
           warning={showToast.warning}
           label={t(showToast.label)}

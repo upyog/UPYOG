@@ -70,10 +70,10 @@ const NavItemHeader = props => {
         onClick={onExpandChange}
         style={item?.elementStyle ? {...item?.elementStyle,display:"flex"}:{display:"flex"}}
       >
-         <div className={`sidebar-link ${expanded ? "active": ""}`} style={{width:item?.nested ?"240px":"260px",overflow:"auto"}}>{!item?.nested && leftIcon}
-         <div className='actions' style={{padding:"0px",marginRight:"auto"}}>
+         <div className={`sidebar-link ${expanded ? "active": ""}`} className={`sidebar-link ${expanded ? "active" : ""} ${item?.nested ? "sidebar-link-nested" : "sidebar-link-root"}`}>{!item?.nested && leftIcon}
+         <div className="actions core-nav-item-header-container-padding">
          <div data-tip="React-tooltip" data-for={`jk-side-${getModuleName}`}>
-        <span style={{color:expanded ? "#a82227":""}}>{trimModuleName}</span>
+        <span className={expanded ? "text-crimson" : ""}>{trimModuleName}</span>
         {trimModuleName?.includes("...") && <ReactTooltip textColor="white" backgroundColor="grey" place="right" type="info" effect="solid" id={`jk-side-${getModuleName}`}>
                     {t(`ACTION_TEST_${getModuleName}`)}
                   </ReactTooltip>}
@@ -114,12 +114,11 @@ const NavItemHeader = props => {
               <NavLink
                 key={key}
                 to={item?.to?.includes("upyog-ui") ? item?.to : "/employee/" + item?.to}
-                className="custom-link"
+                className="custom-link core-nav-item-header-top-spacing"
                 activeClassName="actions"
-                style={{marginLeft:"40px", marginTop:"10px"}}
               >
                 <div data-tip="React-tooltip" data-for={`jk-side-${getModuleName}`}>
-                <span style={{fontSize:"14px"}}>{trimModuleName}</span>
+                <span className="core-nav-item-text-style">{trimModuleName}</span>
                 {trimModuleName?.includes("...") && <ReactTooltip textColor="white" backgroundColor="grey" place="right" type="info" effect="solid" id={`jk-side-${getModuleName}`}>
                     {t(`ACTION_TEST_${getModuleName}`)}
                   </ReactTooltip>}

@@ -220,7 +220,7 @@ const SelectOwnerDetails = ({
             <TextInput t={t} type="email" isMandatory={false} optionKey="i18nKey" name="email" value={email} onChange={handleEmailChange} disable={editScreen} />
           </div>
         </LabelFieldPair>
-        {error && <span className="pt-auto-80">{error}</span>}
+        {error && <span className="pt-select-owner-details-link-red">{error}</span>}
         </div>
       </div>;
   }
@@ -265,7 +265,7 @@ const SelectOwnerDetails = ({
             // {...{ required: true, pattern: "[A-Za-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$", type: "email", title: t("CORE_COMMON_APPLICANT_EMAILI_ID_INVALID") }}
             disable={isUpdateProperty || isEditProperty} />
           </LabelFieldPair>
-          {error && <span className="pt-auto-81">{error}</span>}
+          {error && <span className="pt-select-owner-details-link-red">{error}</span>}
         </div>
         </div>
     </FormStep>

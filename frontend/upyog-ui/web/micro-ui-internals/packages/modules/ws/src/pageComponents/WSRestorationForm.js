@@ -264,13 +264,13 @@ const WSRestorationForm = ({
         {userType === "citizen" && <DisconnectTimeline currentStep={1} />}
         <FormStep config={config} onSelect={handleSubmit} onSkip={onSkip} t={t}>
           
-          <div className="ws-auto-143">
+          <div className="ws-restoration-form-no-pad">
           <CardHeader>{isReSubmit ? t("RESUBMIT_RESTORATION_FORM") : t("WS_APPLICATION_FORM")}</CardHeader>
           <StatusTable>
             <Row key={t("PDF_STATIC_LABEL_CONSUMER_NUMBER_LABEL")} label={`${t("PDF_STATIC_LABEL_CONSUMER_NUMBER_LABEL")}`} text={applicationData?.connectionNo} className="border-none" />
           </StatusTable> 
      
-            <CardLabel className="card-label-smaller ws-auto-144">
+            <CardLabel className="card-label-smaller ws-restoration-form-item">
             {t("WS_RESTORATION_PROPOSED_DATE") + "*"}
           </CardLabel>
           <div className="field">
@@ -283,7 +283,7 @@ const WSRestorationForm = ({
           </div>
 
             <LabelFieldPair>
-              <CardLabel className="card-label-smaller ws-auto-145">{t("WS_DISCONNECTION_REASON") + "*"}</CardLabel>              
+              <CardLabel className="card-label-smaller ws-restoration-form-item">{t("WS_DISCONNECTION_REASON") + "*"}</CardLabel>              
                 <TextArea isMandatory={false} optionKey="i18nKey" t={t} name={"reason"} value={disconnectionData.reason?.value} onChange={e => filedChange({
               code: "reason",
               value: e.target.value
@@ -305,17 +305,17 @@ const WSRestorationForm = ({
              {error && <Toast error={error?.key === "error" ? true : false} label={t(error?.message)} onClose={() => setError(null)} />}
           </div>
         </FormStep>
-        <CitizenInfoLabel textStyle={infoLabelTextStyle} text={t(`WS_DISONNECT_APPL_INFO`)} info={t("CS_COMMON_INFO")} className="ws-auto-146" />
+        <CitizenInfoLabel textStyle={infoLabelTextStyle} text={t(`WS_DISONNECT_APPL_INFO`)} info={t("CS_COMMON_INFO")} className="ws-restoration-form-link" />
       </div>;
   }
   console.log("applicationData", applicationData);
-  return <div className="ws-auto-147">
+  return <div className="ws-restoration-form-item-2">
     <Header styles={{
       fontSize: "32px",
       marginLeft: "18px"
     }}>{t("WS_WATER_AND_SEWERAGE_RESTORATION")}</Header>
     <FormStep config={config} onSelect={handleEmployeeSubmit} onSkip={onSkip} t={t}>
-      <div className="ws-auto-148">
+      <div className="ws-restoration-form-mt-sm">
       <CardSectionHeader>{t("CS_TITLE_APPLICATION_DETAILS")}</CardSectionHeader>
       <StatusTable>
         <Row key={t("PDF_STATIC_LABEL_CONSUMER_NUMBER_LABEL")} label={`${t("PDF_STATIC_LABEL_CONSUMER_NUMBER_LABEL")}`} text={applicationData?.applicationData?.connectionNo} className="border-none" />
@@ -325,7 +325,7 @@ const WSRestorationForm = ({
      
           
           <LabelFieldPair>
-          <CardLabel className="card-label-smaller ws-auto-149">
+          <CardLabel className="card-label-smaller ws-restoration-form-label-bold-mt-neg">
             {t("WS_RESTORATION_PROPOSED_DATE") + "*"} 
             <div className={`tooltip`}>
             <InfoIcon />
@@ -345,7 +345,7 @@ const WSRestorationForm = ({
           
           </LabelFieldPair>
           <LabelFieldPair>
-              <CardLabel className="card-label-smaller ws-auto-151">{t("WS_RESTORATION_REASON") + "*"}</CardLabel>              
+              <CardLabel className="card-label-smaller ws-restoration-form-label-bold-mt-neg">{t("WS_RESTORATION_REASON") + "*"}</CardLabel>              
               <div className="field">
                 <TextArea isMandatory={false} optionKey="i18nKey" t={t} name={"reason"} value={disconnectionData.reason?.value} onChange={e => filedChange({
               code: "reason",
@@ -358,8 +358,8 @@ const WSRestorationForm = ({
 
 
     </FormStep>
-    <ActionBar className="ws-auto-152">
-          {<SubmitBar label={t("ACTION_TEST_SUBMIT")} onSubmit={() => onSubmit(disconnectionData)} className="ws-auto-153" />}
+    <ActionBar className="ws-restoration-form-link-flex">
+          {<SubmitBar label={t("ACTION_TEST_SUBMIT")} onSubmit={() => onSubmit(disconnectionData)} className="ws-restoration-form-link-2" />}
      </ActionBar>
     </div>;
 };

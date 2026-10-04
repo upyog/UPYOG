@@ -51,7 +51,7 @@ const SearchFormFieldsComponents = ({ registerRef, searchFormState, searchFieldC
   if (!isMobile) {
     return (
       <React.Fragment>
-        <div className="search-container" style={{ width: "auto", marginLeft: "24px" }}>
+        <div className="search-container obps-search-form-fields-component-spacing">
           <div className="search-complaint-container">
             <div
               className="complaint-input-container"
@@ -70,7 +70,7 @@ const SearchFormFieldsComponents = ({ registerRef, searchFormState, searchFieldC
                   )}
                 </SearchField>
               )}
-              <div className="search-action-wrapper" style={{ width: "100%" }}>
+              <div className="search-action-wrapper obps-inspection-report-fullwidth">
                 {searchFieldComponents}
               </div>
             </div>

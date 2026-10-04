@@ -1,195 +1,195 @@
 /* components/BillIAmendMentInbox/useInboxMobileCardsData.js */
-.ws-auto-1 {
+.ws-use-inbox-mobile-cards-data-link-col-flex {
   display: flex;
   flex-direction: column;
 }
 
 
 /* components/BillIAmendMentInbox/useInboxTableConfig.js */
-.ws-auto-2 {
+.ws-use-inbox-table-config-link-green {
   color: #00703C;
 }
 
-.ws-auto-3 {
+.ws-use-inbox-table-config-link {
   color: #0B0C0C;
 }
 
-.ws-auto-4 {
+.ws-use-inbox-table-config-link-red {
   color: #E50000;
 }
 
-.ws-auto-5 {
+.ws-use-inbox-table-config-col-flex {
   display: flex;
   flex-direction: column;
 }
 
 
 /* components/SearchApplication/MobileSearchApplication.js */
-.ws-auto-6 {
+.ws-mobile-search-application-card-mt-md {
   margin-top: 20px;
 }
 
-.ws-auto-7 {
+.ws-mobile-search-application-card-center-text {
   text-align: center;
 }
 
 
 /* components/SearchApplication/index.js */
-.ws-auto-8 {
+.ws-index-card-grey-text {
   color: #505A5F;
 }
 
-.ws-auto-9 {
+.ws-index-card-mt-md {
   margin-top: 20px;
 }
 
-.ws-auto-10 {
+.ws-index-card-center-text {
   text-align: center;
 }
 
 
 /* components/SearchWaterConnection/BulkBillSearch.js */
-.ws-auto-11 {
+.ws-bulk-bill-search-card-mt-md {
   margin-top: 20px;
 }
 
-.ws-auto-12 {
+.ws-bulk-bill-search-card-center-text {
   text-align: center;
 }
 
-.ws-auto-13 {
+.ws-bulk-bill-search-item {
   background-color: white;
 }
 
-.ws-auto-14 {
+.ws-bulk-bill-search-item-2 {
   float: right;
   padding: 10px 30px;
 }
 
-.ws-auto-15 {
+.ws-bulk-bill-search-action {
   cursor: pointer;
 }
 
-.ws-auto-16 {
+.ws-bulk-bill-search-link-flex {
   display: flex;
 }
 
-.ws-auto-17 {
+.ws-bulk-bill-search-item-3 {
   width: 70%;
 }
 
-.ws-auto-18 {
+.ws-bulk-bill-search-relative {
   top: 5px;
   left: 10px;
   position: relative;
 }
 
-.ws-auto-19 {
+.ws-bulk-bill-search-full-width {
   width: 100%;
 }
 
-.ws-auto-20 {
+.ws-bulk-bill-search-full-width {
   width: 100%;
 }
 
-.ws-auto-21 {
+.ws-bulk-bill-search-item-2 {
   float: right;
   padding: 10px 30px;
 }
 
-.ws-auto-22 {
+.ws-bulk-bill-search-action {
   cursor: pointer;
 }
 
 
 /* components/SearchWaterConnection/BulkBillSearchFields.js */
-.ws-auto-23 {
+.ws-bulk-bill-search-fields-link-mt-md {
   margin-top: 16px !important;
 }
 
 
 /* components/SearchWaterConnection/MobileSearchWater.js */
-.ws-auto-24 {
+.ws-mobile-search-water-card-mt-md {
   margin-top: 20px;
 }
 
-.ws-auto-25 {
+.ws-mobile-search-water-card-center-text {
   text-align: center;
 }
 
 
 /* components/SearchWaterConnection/SearchFields2.js */
-.ws-auto-26 {
+.ws-search-fields2-link-full-width {
   width: 100%;
 }
 
 
 /* components/SearchWaterConnection/index.js */
-.ws-auto-27 {
+.ws-index-card-mt-md {
   margin-top: 20px;
 }
 
-.ws-auto-28 {
+.ws-index-card-center-text {
   text-align: center;
 }
 
-.ws-auto-29 {
+.ws-index-card-mt-md {
   margin-top: 20px;
 }
 
-.ws-auto-30 {
+.ws-index-card-center-text {
   text-align: center;
 }
 
 
 /* pageComponents/WSActivationCommentsDetails.js */
-.ws-auto-31 {
+.ws-activation-comments-details-label-bold {
   font-weight: 700;
 }
 
 
 /* pageComponents/WSActivationConnectionDetails.js */
-.ws-auto-32 {
+.ws-activation-connection-details-item {
   margin-bottom: 16px;
 }
 
 
 /* pageComponents/WSActivationDetails.js */
-.ws-auto-33 {
+.ws-activation-details-label-bold {
   font-weight: 700;
 }
 
-.ws-auto-34 {
+.ws-activation-details-label-bold {
   font-weight: 700;
 }
 
-.ws-auto-35 {
+.ws-activation-details-label-bold {
   font-weight: 700;
 }
 
-.ws-auto-36 {
+.ws-activation-details-label-bold {
   font-weight: 700;
 }
 
 
 /* pageComponents/WSActivationPageDetails.js */
-.ws-auto-37 {
+.ws-activation-page-details-item {
   margin-bottom: 16px;
 }
 
 
 /* pageComponents/WSActivationPlumberDetails.js */
-.ws-auto-38 {
+.ws-activation-plumber-details-item {
   margin-bottom: 16px;
 }
 
-.ws-auto-39 {
+.ws-activation-plumber-details-flex {
   display: flex;
   align-items: baseline;
   margin-right: unset;
 }
 
-.ws-auto-40 {
+.ws-activation-plumber-details-relative-mt-neg {
   position: relative;
   z-index: 1;
   left: 35px;
@@ -197,50 +197,50 @@
   margin-left: -26px;
 }
 
-.ws-auto-41 {
+.ws-activation-plumber-details-no-pad {
   background: #FAFAFA;
   padding: 0px 35px;
 }
 
 
 /* pageComponents/WSActivationSupportingDocuments.js */
-.ws-auto-42 {
+.ws-activation-supporting-documents-label-bold {
   font-weight: 700;
 }
 
 
 /* pageComponents/WSConnectionDetails.js */
-.ws-auto-43 {
+.ws-connection-details-item {
   margin-bottom: 16px;
 }
 
-.ws-auto-44 {
+.ws-connection-details-link-bold {
   font-weight: 700;
 }
 
-.ws-auto-45 {
+.ws-connection-details-flex {
   display: flex;
   gap: 0 3rem;
 }
 
-.ws-auto-46 {
+.ws-connection-details-item-2 {
   padding-bottom: 10px;
   padding-top: 3px;
 }
 
-.ws-auto-47 {
+.ws-connection-details-item-2 {
   padding-bottom: 10px;
   padding-top: 3px;
 }
 
 
 /* pageComponents/WSConnectionHolder.js */
-.ws-auto-48 {
+.ws-connection-holder-item {
   padding-bottom: 10px;
   padding-top: 3px;
 }
 
-.ws-auto-49 {
+.ws-connection-holder-mt-sm {
   border: solid;
   border-radius: 5px;
   padding: 10px;
@@ -250,269 +250,254 @@
   background: #FAFAFA;
 }
 
-.ws-auto-50 {
+.ws-connection-holder-link {
   background: #FAFAFA;
 }
 
-.ws-auto-51 {
+.ws-connection-holder-link {
   background: #FAFAFA;
 }
 
-.ws-auto-52 {
+.ws-connection-holder-link {
   background: #FAFAFA;
 }
 
-.ws-auto-53 {
+.ws-connection-holder-link {
   background: #FAFAFA;
 }
 
-.ws-auto-54 {
+.ws-connection-holder-link-red {
   color: red;
 }
 
 
 /* pageComponents/WSConnectionHolderDetails.js */
-.ws-auto-55 {
+.ws-connection-holder-details-item {
   padding-bottom: 10px;
   padding-top: 3px;
 }
 
-.ws-auto-56 {
-  position: relative;
-  margin-top: 4px;
-}
+
 
 
 /* pageComponents/WSDisconnectAcknowledgement.js */
-.ws-auto-57 {
+.ws-disconnect-acknowledgement-item {
   padding: 10px;
 }
 
-.ws-auto-58 {
+.ws-disconnect-acknowledgement-item {
   padding: 10px;
 }
 
 
 /* pageComponents/WSDisconnectionAppDetails.js */
-.ws-auto-59 {
+.ws-disconnection-app-details-item {
   margin-bottom: 16px;
 }
 
-.ws-auto-60 {
+.ws-disconnection-app-details-title-lg {
   margin-bottom: 40px;
   font-size: 24px;
   line-height: 32px;
 }
 
-.ws-auto-61 {
+.ws-disconnection-app-details-item-2 {
   border: none;
   color: #0b0c0c !important;
   pointer-events: none;
 }
 
-.ws-auto-62 {
+.ws-disconnection-app-details-flex {
   display: flex;
   gap: 0px 3rem;
 }
 
 
 /* pageComponents/WSDisconnectionDocsRequired.js */
-.ws-auto-63 {
+.ws-disconnection-docs-required-label {
   margin: 0px;
 }
 
-.ws-auto-64 {
+.ws-disconnection-docs-required-label-2 {
   color: #0B0C0C;
   margin-top: 12px;
 }
 
-.ws-auto-65 {
+.ws-disconnection-docs-required-label-2 {
   color: #0B0C0C;
   margin-top: 12px;
 }
 
-.ws-auto-66 {
+.ws-disconnection-docs-required-label-2 {
   color: #0B0C0C;
   margin-top: 12px;
 }
 
-.ws-auto-67 {
+.ws-disconnection-docs-required-label-bold {
   font-weight: 700px;
   margin-bottom: 8px;
 }
 
-.ws-auto-68 {
+.ws-disconnection-docs-required-flex {
   display: flex;
 }
 
-.ws-auto-69 {
+.ws-disconnection-docs-required-grey-text {
   margin-bottom: 16px;
   margin-left: 18px;
   color: gray;
 }
 
-.ws-auto-70 {
+.ws-disconnection-docs-required-grey-text-2 {
   color: gray;
 }
 
-.ws-auto-71 {
+.ws-disconnection-docs-required-grey-text-2 {
   color: gray;
 }
 
-.ws-auto-72 {
+.ws-disconnection-docs-required-item {
   margin: 16px;
 }
 
-.ws-auto-73 {
+.ws-disconnection-docs-required-mt-md {
   margin-top: 16px;
 }
 
-.ws-auto-74 {
+.ws-disconnection-docs-required-title-lg {
   margin-bottom: 16px;
   line-height: 28px;
   font-size: 24px;
 }
 
-.ws-auto-75 {
+.ws-disconnection-docs-required-item-2 {
   line-height: 24px;
   font-size: 16px;
 }
 
-.ws-auto-76 {
+.ws-disconnection-docs-required-item-3 {
   margin: 16px 0;
   line-height: 18px;
   font-size: 16px;
 }
 
-.ws-auto-77 {
+.ws-disconnection-docs-required-card-bold {
   font-weight: bold;
   line-height: 32px;
 }
 
-.ws-auto-78 {
+.ws-disconnection-docs-required-item-4 {
   font-size: 16px;
 }
 
-.ws-auto-79 {
+.ws-disconnection-docs-required-flex-2 {
   display: flex;
   justify-content: flex-end;
   align-items: baseline;
 }
 
-.ws-auto-80 {
+.ws-disconnection-docs-required-link {
   margin: 10px 10px 0px 0px;
 }
 
 
 /* pageComponents/WSDisconnectionDocumentsForm.js */
-.ws-auto-81 {
+.ws-disconnection-documents-form-item {
   margin-top: 19px;
 }
 
-.ws-auto-82 {
+.ws-disconnection-documents-form-mb-md {
   margin-bottom: 24px;
 }
 
 
 /* pageComponents/WSDisconnectionForm.js */
-.ws-auto-83 {
+.ws-disconnection-form-no-pad {
   padding: 0px 10px 10px 10px;
 }
 
-.ws-auto-84 {
+.ws-disconnection-form-item {
   display: inline;
 }
 
-.ws-auto-85 {
+.ws-disconnection-form-item {
   display: inline;
 }
 
-.ws-auto-86 {
-  position: absolute;
-}
 
-.ws-auto-87 {
+
+.ws-disconnection-form-item {
   display: inline;
 }
 
-.ws-auto-88 {
-  position: absolute;
-}
 
-.ws-auto-89 {
+
+.ws-disconnection-form-item {
   display: inline;
 }
 
-.ws-auto-90 {
+.ws-disconnection-form-link {
   margin: 0px;
 }
 
-.ws-auto-91 {
+.ws-disconnection-form-link-2 {
   margin: 16px;
 }
 
-.ws-auto-92 {
+.ws-disconnection-form-mt-sm {
   padding: 10px;
   padding-top: 20px;
   margin-top: 10px;
 }
 
-.ws-auto-93 {
-  margin-left: 8px;
-}
 
-.ws-auto-94 {
+
+.ws-disconnection-form-label-flex {
   display: flex;
   gap: 0px 3rem;
 }
 
-.ws-auto-95 {
+.ws-disconnection-form-label-bold-mt-neg {
   margin-top: -5px;
   font-weight: 700;
   display: inline;
 }
 
-.ws-auto-96 {
-  position: absolute;
-  margin-left: 4px;
-}
 
-.ws-auto-97 {
+
+.ws-disconnection-form-label-bold-mt-neg {
   margin-top: -5px;
   font-weight: 700;
   display: inline;
 }
 
-.ws-auto-98 {
-  position: absolute;
-  margin-left: 4px;
-}
 
-.ws-auto-99 {
+
+.ws-disconnection-form-label-bold-mt-neg {
   margin-top: -5px;
   font-weight: 700;
   display: inline;
 }
 
-.ws-auto-100 {
+.ws-disconnection-form-card {
   margin-bottom: 8px;
 }
 
-.ws-auto-101 {
+.ws-disconnection-form-link-flex {
   display: flex;
   justify-content: flex-end;
   align-items: baseline;
 }
 
-.ws-auto-102 {
+.ws-disconnection-form-link-3 {
   margin: 10px 10px 0px 0px;
 }
 
-.ws-auto-103 {
+.ws-disconnection-form-mb-md {
   margin-bottom: 24px;
 }
 
-.ws-auto-104 {
+.ws-disconnection-form-label-bold-mt-neg {
   margin-top: -5px;
   font-weight: 700;
   display: inline;
@@ -520,280 +505,277 @@
 
 
 /* pageComponents/WSDocsRequired.js */
-.ws-auto-105 {
+.ws-docs-required-link-center-text {
   margin: 0px;
   text-align: center;
 }
 
-.ws-auto-106 {
+.ws-docs-required-link {
   color: #0B0C0C;
   margin-top: 12px;
 }
 
-.ws-auto-107 {
+.ws-docs-required-link {
   color: #0B0C0C;
   margin-top: 12px;
 }
 
-.ws-auto-108 {
+.ws-docs-required-link {
   color: #0B0C0C;
   margin-top: 12px;
 }
 
-.ws-auto-109 {
+.ws-docs-required-label-bold {
   font-weight: 700px;
   margin-bottom: 8px;
 }
 
-.ws-auto-110 {
+.ws-docs-required-flex {
   display: flex;
 }
 
-.ws-auto-111 {
+.ws-docs-required-item {
   margin-bottom: 16px;
   margin-left: 18px;
 }
 
-.ws-auto-112 {
+.ws-docs-required-item-2 {
   margin: 16px;
 }
 
-.ws-auto-113 {
+.ws-docs-required-btn-flex-action {
   cursor: pointer;
   display: flex;
 }
 
-.ws-auto-114 {
+.ws-docs-required-btn-title-lg {
   font-size: 24px;
   font-weight: 400;
   color: #0B0C0C;
 }
 
-.ws-auto-115 {
+.ws-docs-required-mt-md {
   margin-top: 16px;
 }
 
-.ws-auto-116 {
+.ws-docs-required-title-lg {
   margin-bottom: 16px;
   line-height: 28px;
   font-size: 24px;
 }
 
-.ws-auto-117 {
+.ws-docs-required-item-3 {
   line-height: 24px;
   font-size: 16px;
 }
 
-.ws-auto-118 {
+.ws-docs-required-item-4 {
   margin: 16px 0;
   line-height: 18px;
   font-size: 16px;
 }
 
-.ws-auto-119 {
+.ws-docs-required-card-bold {
   font-weight: bold;
   line-height: 32px;
 }
 
-.ws-auto-120 {
+.ws-docs-required-item-5 {
   font-size: 16px;
 }
 
-.ws-auto-121 {
+.ws-docs-required-flex-2 {
   display: flex;
   justify-content: flex-end;
   align-items: baseline;
 }
 
-.ws-auto-122 {
+.ws-docs-required-link-2 {
   margin: 10px 10px 0px 0px;
 }
 
 
 /* pageComponents/WSDocument.js */
-.ws-auto-123 {
+.ws-document-item {
   margin-top: 19px;
 }
 
-.ws-auto-124 {
+.ws-document-flex {
   display: flex;
   flex-wrap: wrap;
 }
 
-.ws-auto-125 {
+.ws-document-link {
   min-width: 160px;
 }
 
-.ws-auto-126 {
+.ws-document-link-2 {
   margin-top: 8px;
 }
 
 
 /* pageComponents/WSDocumentDetails.js */
-.ws-auto-127 {
+.ws-document-details-mb-md {
   margin-bottom: 24px;
 }
 
-.ws-auto-128 {
+.ws-document-details-bold {
   font-weight: 700;
 }
 
 
 /* pageComponents/WSDocumentsEmployee.js */
-.ws-auto-129 {
+.ws-documents-employee-mb-md {
   margin-bottom: 24px;
 }
 
-.ws-auto-130 {
+.ws-documents-employee-bold {
   font-weight: 700;
 }
 
-.ws-auto-131 {
+.ws-documents-employee-text-sm-mt-sm {
   margin-top: 10px;
   font-size: 12px;
 }
 
 
 /* pageComponents/WSEditConnectionDetails.js */
-.ws-auto-132 {
+.ws-edit-connection-details-item {
   margin-bottom: 16px;
 }
 
 
 /* pageComponents/WSInfoLabel.js */
-.ws-auto-133 {
+.ws-info-label-item {
   color: #3498DB;
 }
 
-.ws-auto-134 {
+.ws-info-label-header {
   display: inline;
   margin-bottom: 5px;
 }
 
 
 /* pageComponents/WSPropertyDetails.js */
-.ws-auto-135 {
+.ws-property-details-label-mt-md {
   margin-top: 20px;
 }
 
-.ws-auto-136 {
+.ws-property-details-btn {
   width: 65%;
   float: left;
   margin-right: 20px;
 }
 
-.ws-auto-137 {
+.ws-property-details-btn-red {
   color: #a82227;
   display: inline-block;
 }
 
-.ws-auto-138 {
+.ws-property-details-btn-red {
   color: #a82227;
   display: inline-block;
 }
 
-.ws-auto-139 {
+.ws-property-details-btn-mt-md {
   margin-bottom: 0px;
   margin-top: 20px;
 }
 
-.ws-auto-140 {
+.ws-property-details-btn-red-2 {
   color: #a82227;
 }
 
 
 /* pageComponents/WSRestorationAcknowledgement.js */
-.ws-auto-141 {
+.ws-restoration-acknowledgement-item {
   padding: 10px;
 }
 
-.ws-auto-142 {
+.ws-restoration-acknowledgement-item {
   padding: 10px;
 }
 
 
 /* pageComponents/WSRestorationForm.js */
-.ws-auto-143 {
+.ws-restoration-form-no-pad {
   padding: 0px 10px 10px 10px;
 }
 
-.ws-auto-144 {
+.ws-restoration-form-item {
   display: inline;
 }
 
-.ws-auto-145 {
+.ws-restoration-form-item {
   display: inline;
 }
 
-.ws-auto-146 {
+.ws-restoration-form-link {
   margin: 0px;
 }
 
-.ws-auto-147 {
+.ws-restoration-form-item-2 {
   margin: 16px;
 }
 
-.ws-auto-148 {
+.ws-restoration-form-mt-sm {
   padding: 10px;
   padding-top: 20px;
   margin-top: 10px;
 }
 
-.ws-auto-149 {
+.ws-restoration-form-label-bold-mt-neg {
   margin-top: -5px;
   font-weight: 700;
   display: inline;
 }
 
-.ws-auto-150 {
-  position: absolute;
-  margin-left: 4px;
-}
 
-.ws-auto-151 {
+
+.ws-restoration-form-label-bold-mt-neg {
   margin-top: -5px;
   font-weight: 700;
   display: inline;
 }
 
-.ws-auto-152 {
+.ws-restoration-form-link-flex {
   display: flex;
   justify-content: flex-end;
   align-items: baseline;
 }
 
-.ws-auto-153 {
+.ws-restoration-form-link-2 {
   margin: 10px 10px 0px 0px;
 }
 
 
 /* pageComponents/WSRoadCuttingDetails.js */
-.ws-auto-154 {
+.ws-road-cutting-details-btn {
   color: orange;
   display: inline-block;
 }
 
-.ws-auto-155 {
+.ws-road-cutting-details-item {
   margin-bottom: 16px;
 }
 
-.ws-auto-156 {
+.ws-road-cutting-details-grey-text {
   color: #505A5F;
 }
 
-.ws-auto-157 {
+.ws-road-cutting-details-bordered {
   border: 1px solid #E3E3E3;
   padding: 16px;
   margin-top: 8px;
 }
 
-.ws-auto-158 {
+.ws-road-cutting-details-btn-2 {
   width: 100px;
   display: inline;
   background: black;
 }
 
-.ws-auto-159 {
+.ws-road-cutting-details-btn-relative {
   float: right;
   position: relative;
   bottom: -6px;
@@ -801,58 +783,58 @@
 
 
 /* pageComponents/WSWFApplicationTimeline.js */
-.ws-auto-160 {
+.ws-wswf-application-timeline-full-width {
   margin-top: 1em;
   bottom: 0px;
   width: 100%;
   margin-bottom: 1.2em;
 }
 
-.ws-auto-161 {
+.ws-wswf-application-timeline-full-width {
   margin-top: 1em;
   bottom: 0px;
   width: 100%;
   margin-bottom: 1.2em;
 }
 
-.ws-auto-162 {
+.ws-wswf-application-timeline-item {
   margin-top: 24px;
 }
 
-.ws-auto-163 {
+.ws-wswf-application-timeline-card {
   margin-bottom: 16px;
 }
 
 
 /* pageComponents/WSWFCaption.js */
-.ws-auto-164 {
+.ws-wswf-caption-item {
   overflow-x: scroll;
 }
 
 
 /* pages/citizen/MyConnection/ConnectionDetails.js */
-.ws-auto-165 {
+.ws-connection-details-header {
   margin-left: 22px;
 }
 
-.ws-auto-166 {
+.ws-connection-details-item-3 {
   margin-right: auto;
   max-width: 960px;
 }
 
-.ws-auto-167 {
+.ws-connection-details-btn-mb-sm {
   text-align: left;
   margin-bottom: 10px;
   margin-top: 5px;
 }
 
-.ws-auto-168 {
+.ws-connection-details-btn-mb-sm {
   text-align: left;
   margin-bottom: 10px;
   margin-top: 5px;
 }
 
-.ws-auto-169 {
+.ws-connection-details-link-no-shadow-relative {
   position: relative;
   box-shadow: none;
   min-width: 240px;
@@ -861,15 +843,15 @@
   margin-top: 15px;
 }
 
-.ws-auto-170 {
+.ws-connection-details-link-full-width {
   width: 100%;
 }
 
-.ws-auto-171 {
+.ws-connection-details-link-full-width {
   width: 100%;
 }
 
-.ws-auto-172 {
+.ws-connection-details-link-no-shadow-relative {
   position: relative;
   box-shadow: none;
   min-width: 240px;
@@ -878,82 +860,82 @@
   margin-top: 15px;
 }
 
-.ws-auto-173 {
+.ws-connection-details-link-full-width {
   width: 100%;
 }
 
-.ws-auto-174 {
+.ws-connection-details-link-full-width {
   width: 100%;
 }
 
-.ws-auto-175 {
+.ws-connection-details-link {
   bottom: 150px;
 }
 
 
 /* pages/citizen/MyConnection/ConsumptionDetails.js */
-.ws-auto-176 {
+.ws-consumption-details-mt-md-ml-md {
   margin-left: 16px;
   margin-top: 16px;
 }
 
 
 /* pages/citizen/MyConnection/index.js */
-.ws-auto-177 {
+.ws-index-mt-md-ml-md {
   margin-left: 16px;
   margin-top: 16px;
 }
 
 
 /* pages/citizen/MyPayment/index.js */
-.ws-auto-178 {
+.ws-index-mt-md-ml-md {
   margin-left: 16px;
   margin-top: 16px;
 }
 
 
 /* pages/citizen/ReSubmitDisconnection/CheckPage.js */
-.ws-auto-179 {
+.ws-check-page-card {
   padding-right: 16px;
 }
 
-.ws-auto-180 {
+.ws-check-page-card-2 {
   display: inline;
 }
 
-.ws-auto-181 {
+.ws-check-page-btn {
   width: 100px;
   display: inline;
 }
 
-.ws-auto-182 {
+.ws-check-page-btn-relative-mt-neg {
   margin-top: -20px;
   float: right;
   position: relative;
   bottom: 32px;
 }
 
-.ws-auto-183 {
+.ws-check-page-card {
   padding-right: 16px;
 }
 
-.ws-auto-184 {
+.ws-check-page-card-2 {
   display: inline;
 }
 
-.ws-auto-185 {
+.ws-check-page-btn {
   width: 100px;
   display: inline;
 }
 
-.ws-auto-186 {
+.ws-check-page-btn-relative-mt-neg {
   margin-top: -20px;
   float: right;
   position: relative;
   bottom: 32px;
 }
 
-.ws-auto-187 {
+.ws-check-page-mt-md-mb-md {
   color: #cccccc;
   background-color: #cccccc;
   height: 2px;
@@ -963,11 +945,11 @@
 
 
 /* pages/citizen/SearchConnection/searchConnection.js */
-.ws-auto-188 {
+.ws-search-connection-mt-md {
   margin-top: 16px;
 }
 
-.ws-auto-189 {
+.ws-search-connection-mt-sm-mb-md {
   border: solid;
   border-radius: 5px;
   padding: 10px;
@@ -978,67 +960,67 @@
   margin-bottom: 20px;
 }
 
-.ws-auto-190 {
+.ws-search-connection-input-mt-neg {
   margin-top: -1px;
 }
 
-.ws-auto-191 {
+.ws-search-connection-label {
   background: #FAFAFA;
   max-width: 500px;
 }
 
-.ws-auto-192 {
+.ws-search-connection-label-center-text-grey-text {
   text-align: center;
   color: #505A5F;
 }
 
-.ws-auto-193 {
+.ws-search-connection-label-flex {
   display: flex;
   gap: 0 4px;
 }
 
-.ws-auto-194 {
+.ws-search-connection-absolute {
   position: absolute;
   width: 70%;
   margin-left: 50%;
   font-size: medium;
 }
 
-.ws-auto-195 {
+.ws-search-connection-label-2 {
   background: #FAFAFA;
 }
 
-.ws-auto-196 {
+.ws-search-connection-label-center-text-grey-text {
   text-align: center;
   color: #505A5F;
 }
 
-.ws-auto-197 {
+.ws-search-connection-label-flex {
   display: flex;
   gap: 0 4px;
 }
 
-.ws-auto-198 {
+.ws-search-connection-absolute-2 {
   position: absolute;
   width: 55%;
   margin-left: 50%;
   font-size: medium;
 }
 
-.ws-auto-199 {
+.ws-search-connection-label-2 {
   background: #FAFAFA;
 }
 
-.ws-auto-200 {
+.ws-search-connection-label-center-text-grey-text {
   text-align: center;
   color: #505A5F;
 }
 
-.ws-auto-201 {
+.ws-search-connection-label-2 {
   background: #FAFAFA;
 }
 
-.ws-auto-202 {
+.ws-search-connection-mt-sm-mb-md {
   border: solid;
   border-radius: 5px;
   padding: 10px;
@@ -1049,51 +1031,51 @@
   margin-bottom: 20px;
 }
 
-.ws-auto-203 {
+.ws-search-connection-label-2 {
   background: #FAFAFA;
 }
 
-.ws-auto-204 {
+.ws-search-connection-label-2 {
   background: #FAFAFA;
 }
 
 
 /* pages/citizen/SearchResults/searchResults.js */
-.ws-auto-205 {
+.ws-search-results-mt-md {
   margin-top: 16px;
 }
 
-.ws-auto-206 {
+.ws-search-results-item {
   margin-left: 8px;
 }
 
-.ws-auto-207 {
+.ws-search-results-mt-md-ml-md {
   margin-left: 16px;
   margin-top: 16px;
 }
 
-.ws-auto-208 {
+.ws-search-results-mt-md-ml-md {
   margin-left: 16px;
   margin-top: 16px;
 }
 
-.ws-auto-209 {
+.ws-search-results-mt-md-ml-md {
   margin-left: 16px;
   margin-top: 16px;
 }
 
-.ws-auto-210 {
+.ws-search-results-link-block {
   display: block;
 }
 
 
 /* pages/citizen/WSApplicationDetails.js */
-.ws-auto-211 {
+.ws-application-details-item {
   margin-right: auto;
   max-width: 960px;
 }
 
-.ws-auto-212 {
+.ws-application-details-row-reverse-row-center {
   z-index: 10;
   display: flex;
   flex-direction: row-reverse;
@@ -1101,23 +1083,23 @@
   margin-top: -25px;
 }
 
-.ws-auto-213 {
+.ws-application-details-btn {
   color: #A52A2A;
 }
 
-.ws-auto-214 {
+.ws-application-details-btn-2 {
   text-align: left;
 }
 
-.ws-auto-215 {
+.ws-application-details-btn-2 {
   text-align: left;
 }
 
-.ws-auto-216 {
+.ws-application-details-btn-2 {
   text-align: left;
 }
 
-.ws-auto-217 {
+.ws-application-details-mt-md-mb-md {
   color: #cccccc;
   background-color: #cccccc;
   height: 2px;
@@ -1125,7 +1107,7 @@
   margin-bottom: 20px;
 }
 
-.ws-auto-218 {
+.ws-application-details-mt-md-mb-md-2 {
   color: white;
   background-color: white;
   height: 2px;
@@ -1135,32 +1117,32 @@
 
 
 /* pages/citizen/WSCreate/CheckPage.js */
-.ws-auto-219 {
+.ws-check-page-card {
   padding-right: 16px;
 }
 
-.ws-auto-220 {
+.ws-check-page-item {
   text-align: left;
 }
 
-.ws-auto-221 {
+.ws-check-page-item {
   text-align: left;
 }
 
-.ws-auto-222 {
+.ws-check-page-card {
   padding-right: 16px;
 }
 
-.ws-auto-223 {
+.ws-check-page-card-relative {
   position: relative;
 }
 
-.ws-auto-224 {
+.ws-check-page-btn {
   width: 100px;
   display: inline;
 }
 
-.ws-auto-225 {
+.ws-check-page-btn-relative-mt-neg-2 {
   margin-top: -10px;
   float: right;
   position: relative;
@@ -1168,47 +1150,47 @@
   margin-right: -10px;
 }
 
-.ws-auto-226 {
+.ws-check-page-card {
   padding-right: 16px;
 }
 
-.ws-auto-227 {
+.ws-check-page-card-relative {
   position: relative;
 }
 
-.ws-auto-228 {
+.ws-check-page-btn {
   width: 100px;
   display: inline;
 }
 
-.ws-auto-229 {
+.ws-check-page-btn-relative-mt-neg-3 {
   margin-top: -10px;
   float: right;
   position: relative;
   bottom: 32px;
 }
 
-.ws-auto-230 {
+.ws-check-page-card {
   padding-right: 16px;
 }
 
-.ws-auto-231 {
+.ws-check-page-card-relative {
   position: relative;
 }
 
-.ws-auto-232 {
+.ws-check-page-btn {
   width: 100px;
   display: inline;
 }
 
-.ws-auto-233 {
+.ws-check-page-btn-relative-mt-neg-3 {
   margin-top: -10px;
   float: right;
   position: relative;
   bottom: 32px;
 }
 
-.ws-auto-234 {
+.ws-check-page-mt-md-mb-md-2 {
   color: white;
   background-color: white;
   height: 2px;
@@ -1216,54 +1198,54 @@
   margin-bottom: 20px;
 }
 
-.ws-auto-235 {
+.ws-check-page-btn-2 {
   margin-left: 10px;
   max-width: 95%;
 }
 
 
 /* pages/citizen/WSDisconnection/CheckPage.js */
-.ws-auto-236 {
+.ws-check-page-card {
   padding-right: 16px;
 }
 
-.ws-auto-237 {
+.ws-check-page-card-2 {
   display: inline;
 }
 
-.ws-auto-238 {
+.ws-check-page-btn {
   width: 100px;
   display: inline;
 }
 
-.ws-auto-239 {
+.ws-check-page-btn-relative-mt-neg {
   margin-top: -20px;
   float: right;
   position: relative;
   bottom: 32px;
 }
 
-.ws-auto-240 {
+.ws-check-page-card {
   padding-right: 16px;
 }
 
-.ws-auto-241 {
+.ws-check-page-card-2 {
   display: inline;
 }
 
-.ws-auto-242 {
+.ws-check-page-btn {
   width: 100px;
   display: inline;
 }
 
-.ws-auto-243 {
+.ws-check-page-btn-relative-mt-neg {
   margin-top: -20px;
   float: right;
   position: relative;
   bottom: 32px;
 }
 
-.ws-auto-244 {
+.ws-check-page-mt-md-mb-md {
   color: #cccccc;
   background-color: #cccccc;
   height: 2px;
@@ -1273,262 +1255,260 @@
 
 
 /* pages/citizen/WSMyApplications/index.js */
-.ws-auto-245 {
+.ws-index-mt-md-ml-md {
   margin-left: 16px;
   margin-top: 16px;
 }
 
 
 /* pages/citizen/WSMyApplications/ws-application.js */
-.ws-auto-246 {
-  margin-top: 10px;
-}
+
 
 
 /* pages/citizen/WSRestoration/CheckPage.js */
-.ws-auto-247 {
+.ws-check-page-card {
   padding-right: 16px;
 }
 
-.ws-auto-248 {
+.ws-check-page-card-2 {
   display: inline;
 }
 
-.ws-auto-249 {
+.ws-check-page-btn {
   width: 100px;
   display: inline;
 }
 
-.ws-auto-250 {
+.ws-check-page-btn-relative-mt-neg {
   margin-top: -20px;
   float: right;
   position: relative;
   bottom: 32px;
 }
 
-.ws-auto-251 {
+.ws-check-page-card {
   padding-right: 16px;
 }
 
 
 /* pages/citizen/WnSMyBills/wnsMyBills.js */
-.ws-auto-252 {
+.ws-wns-my-bills-mt-md {
   margin-top: 16px;
 }
 
-.ws-auto-253 {
+.ws-wns-my-bills-mt-sm {
   margin-left: 10px;
   margin-top: 10px;
 }
 
-.ws-auto-254 {
+.ws-wns-my-bills-item {
   padding-left: 16px;
 }
 
 
 /* pages/citizen/index.js */
-.ws-auto-255 {
+.ws-index-item {
   border: none;
 }
 
 
 /* pages/employee/ActivateConnection/index.js */
-.ws-auto-256 {
+.ws-index-ml-md {
   margin-left: 15px;
 }
 
 
 /* pages/employee/ApplicationBillAmendment.js */
-.ws-auto-257 {
+.ws-application-bill-amendment-ml-md {
   margin-left: 20px;
 }
 
-.ws-auto-258 {
+.ws-application-bill-amendment-mb-md {
   margin-bottom: 20px;
 }
 
-.ws-auto-259 {
+.ws-application-bill-amendment-item {
   font-weight: 500;
 }
 
-.ws-auto-260 {
+.ws-application-bill-amendment-link {
   margin-bottom: 0px;
 }
 
-.ws-auto-261 {
+.ws-application-bill-amendment-label {
   margin-bottom: 16px;
 }
 
-.ws-auto-262 {
+.ws-application-bill-amendment-label {
   margin-bottom: 16px;
 }
 
-.ws-auto-263 {
+.ws-application-bill-amendment-item-2 {
   text-align: left;
 }
 
-.ws-auto-264 {
+.ws-application-bill-amendment-right-text {
   text-align: right;
 }
 
-.ws-auto-265 {
+.ws-application-bill-amendment-item-3 {
   padding-left: 150px;
 }
 
-.ws-auto-266 {
+.ws-application-bill-amendment-item-4 {
   padding-top: 20px;
 }
 
-.ws-auto-267 {
+.ws-application-bill-amendment-label-2 {
   margin-left: 35px;
 }
 
-.ws-auto-268 {
+.ws-application-bill-amendment-item-5 {
   padding-top: 17px;
 }
 
-.ws-auto-269 {
+.ws-application-bill-amendment-label-2 {
   margin-left: 35px;
 }
 
-.ws-auto-270 {
+.ws-application-bill-amendment-bold {
   padding-right: 60px;
   font-weight: 700;
 }
 
-.ws-auto-271 {
+.ws-application-bill-amendment-item-6 {
   text-align: end;
 }
 
-.ws-auto-272 {
+.ws-application-bill-amendment-item-7 {
   padding-right: 60px;
   padding-left: 150px;
 }
 
-.ws-auto-273 {
+.ws-application-bill-amendment-label-mt-neg {
   margin-bottom: -20px;
   margin-top: -30px;
   margin-left: 150px;
 }
 
-.ws-auto-274 {
+.ws-application-bill-amendment-label-mt-neg {
   margin-bottom: -20px;
   margin-top: -30px;
   margin-left: 150px;
 }
 
-.ws-auto-275 {
+.ws-application-bill-amendment-label-3 {
   padding-right: 60px;
 }
 
-.ws-auto-276 {
+.ws-application-bill-amendment-label-mt-neg-2 {
   margin-top: -19px;
 }
 
-.ws-auto-277 {
+.ws-application-bill-amendment-label-mt-neg-2 {
   margin-top: -19px;
 }
 
-.ws-auto-278 {
+.ws-application-bill-amendment-bold {
   padding-right: 60px;
   font-weight: 700;
 }
 
-.ws-auto-279 {
+.ws-application-bill-amendment-item-8 {
   margin-left: 10px;
   margin-bottom: -4px;
 }
 
-.ws-auto-280 {
+.ws-application-bill-amendment-item-9 {
   white-space: nowrap;
   font-size: medium;
 }
 
-.ws-auto-281 {
+.ws-application-bill-amendment-item-6 {
   text-align: end;
 }
 
-.ws-auto-282 {
+.ws-application-bill-amendment-item-7 {
   padding-right: 60px;
   padding-left: 150px;
 }
 
-.ws-auto-283 {
+.ws-application-bill-amendment-label-3 {
   padding-right: 60px;
 }
 
-.ws-auto-284 {
+.ws-application-bill-amendment-label {
   margin-bottom: 16px;
 }
 
-.ws-auto-285 {
+.ws-application-bill-amendment-label {
   margin-bottom: 16px;
 }
 
-.ws-auto-286 {
+.ws-application-bill-amendment-item {
   font-weight: 500;
 }
 
-.ws-auto-287 {
+.ws-application-bill-amendment-label-text-sm-mt-neg {
   width: 70%;
   margin-left: 30%;
   font-size: 12px;
   margin-top: -21px;
 }
 
-.ws-auto-288 {
+.ws-application-bill-amendment-item {
   font-weight: 500;
 }
 
-.ws-auto-289 {
+.ws-application-bill-amendment-label-text-sm-mt-neg {
   width: 70%;
   margin-left: 30%;
   font-size: 12px;
   margin-top: -21px;
 }
 
-.ws-auto-290 {
+.ws-application-bill-amendment-item {
   font-weight: 500;
 }
 
-.ws-auto-291 {
+.ws-application-bill-amendment-label-text-sm-mt-neg {
   width: 70%;
   margin-left: 30%;
   font-size: 12px;
   margin-top: -21px;
 }
 
-.ws-auto-292 {
+.ws-application-bill-amendment-item {
   font-weight: 500;
 }
 
-.ws-auto-293 {
+.ws-application-bill-amendment-label-text-sm-mt-neg {
   width: 70%;
   margin-left: 30%;
   font-size: 12px;
   margin-top: -21px;
 }
 
-.ws-auto-294 {
+.ws-application-bill-amendment-label-text-sm-mt-neg {
   width: 70%;
   margin-left: 30%;
   font-size: 12px;
   margin-top: -21px;
 }
 
-.ws-auto-295 {
+.ws-application-bill-amendment-label {
   margin-bottom: 16px;
 }
 
-.ws-auto-296 {
+.ws-application-bill-amendment-card {
   margin-bottom: 25px;
 }
 
-.ws-auto-297 {
+.ws-application-bill-amendment-item {
   font-weight: 500;
 }
 
-.ws-auto-298 {
+.ws-application-bill-amendment-label-text-sm {
   width: 70%;
   margin-left: 30%;
   font-size: 12px;
@@ -1536,11 +1516,11 @@
 
 
 /* pages/employee/ApplicationDetails.js */
-.ws-auto-299 {
+.ws-application-details-mb-md {
   margin-bottom: 15px;
 }
 
-.ws-auto-300 {
+.ws-application-details-row-reverse-row-center {
   z-index: 10;
   display: flex;
   flex-direction: row-reverse;
@@ -1548,216 +1528,214 @@
   margin-top: -25px;
 }
 
-.ws-auto-301 {
+.ws-application-details-full-width-relative {
   z-index: 10;
   position: relative;
   max-width: 100% !important;
 }
 
-.ws-auto-302 {
+.ws-application-details-btn {
   color: #A52A2A;
 }
 
-.ws-auto-303 {
+.ws-application-details-link-layered {
   z-index: 10000;
 }
 
 
 /* pages/employee/ApplicationDetailsBillAmendment.js */
-.ws-auto-304 {
+.ws-application-details-bill-amendment-mb-md {
   margin-bottom: 15px;
 }
 
 
 /* pages/employee/DisconnectionApplication/WSDisconnectionResponse.js */
-.ws-auto-305 {
+.ws-disconnection-response-label {
   padding: 10px;
 }
 
-.ws-auto-306 {
+.ws-disconnection-response-label-mb-sm {
   padding-bottom: 10px;
   margin-bottom: 10px;
 }
 
-.ws-auto-307 {
+.ws-disconnection-response-label-flex {
   display: flex;
 }
 
-.ws-auto-308 {
+.ws-disconnection-response-label-no-pad-mb-sm {
   margin-left: unset;
   margin-bottom: 10px;
   padding: 0px 8px;
 }
 
-.ws-auto-309 {
+.ws-disconnection-response-link-flex {
   display: flex;
   justify-content: flex-end;
   align-items: baseline;
 }
 
-.ws-auto-310 {
+.ws-disconnection-response-link {
   margin: 10px 10px 0px 0px;
 }
 
 
 /* pages/employee/DisconnectionDetails.js */
-.ws-auto-311 {
+.ws-disconnection-details-mb-md {
   margin-bottom: 15px;
 }
 
-.ws-auto-312 {
+.ws-disconnection-details-flex {
   display: flex;
 }
 
-.ws-auto-313 {
+.ws-disconnection-details-item {
   width: 70%;
 }
 
-.ws-auto-314 {
+.ws-disconnection-details-layered {
   width: 30%;
   z-index: 10;
 }
 
 
 /* pages/employee/EditApplication/WSEditApplicationByConfig.js */
-.ws-auto-315 {
-  margin-left: 15px;
-}
+
 
 
 /* pages/employee/EditApplication/index.js */
-.ws-auto-316 {
+.ws-index-ml-md {
   margin-left: 15px;
 }
 
 
 /* pages/employee/EditDisconnectionApplication/EditDisconnectionByConfig.js */
-.ws-auto-317 {
+.ws-edit-disconnection-by-config-ml-md {
   margin-left: 15px;
 }
 
 
 /* pages/employee/EditDisconnectionApplication/ResubmitDisconnection.js */
-.ws-auto-318 {
+.ws-resubmit-disconnection-ml-md {
   margin-left: 15px;
 }
 
 
 /* pages/employee/EditDisconnectionApplication/index.js */
-.ws-auto-319 {
+.ws-index-ml-md {
   margin-left: 15px;
 }
 
 
 /* pages/employee/EditModifyApplication/index.js */
-.ws-auto-320 {
+.ws-index-ml-md {
   margin-left: 15px;
 }
 
 
 /* pages/employee/ModifyApplication/index.js */
-.ws-auto-321 {
+.ws-index-ml-md {
   margin-left: 15px;
 }
 
 
 /* pages/employee/ModifyApplicationDetails.js */
-.ws-auto-322 {
+.ws-modify-application-details-mb-md {
   margin-bottom: 15px;
 }
 
 
 /* pages/employee/NewApplication/index.js */
-.ws-auto-323 {
+.ws-index-ml-md {
   margin-left: 15px;
 }
 
 
 /* pages/employee/RequiredDocuments.js */
-.ws-auto-324 {
+.ws-required-documents-btn {
   margin-right: 35px;
 }
 
-.ws-auto-325 {
+.ws-required-documents-card-relative {
   position: relative;
 }
 
 
 /* pages/employee/Response.js */
-.ws-auto-326 {
+.ws-response-btn-no-pad-mb-sm {
   margin-left: unset;
   margin-bottom: 10px;
   padding: 0px 8px;
 }
 
-.ws-auto-327 {
+.ws-response-icon {
   margin-top: 3px;
 }
 
-.ws-auto-328 {
+.ws-response-link-flex {
   display: flex;
   justify-content: flex-end;
   align-items: baseline;
 }
 
-.ws-auto-329 {
+.ws-response-link {
   margin-right: 1rem;
 }
 
 
 /* pages/employee/ResponseBillAmend.js */
-.ws-auto-330 {
+.ws-response-bill-amend-link-flex {
   display: flex;
   justify-content: flex-end;
   align-items: baseline;
 }
 
-.ws-auto-331 {
+.ws-response-bill-amend-link {
   margin-right: 1rem;
 }
 
 
 /* pages/employee/RestorationApplication/WSRestorationResponse.js */
-.ws-auto-332 {
+.ws-restoration-response-label {
   padding: 10px;
 }
 
-.ws-auto-333 {
+.ws-restoration-response-label-mb-sm {
   padding-bottom: 10px;
   margin-bottom: 10px;
 }
 
-.ws-auto-334 {
+.ws-restoration-response-label-flex {
   display: flex;
 }
 
-.ws-auto-335 {
+.ws-restoration-response-label-no-pad-mb-sm {
   margin-left: unset;
   margin-bottom: 10px;
   padding: 0px 8px;
 }
 
-.ws-auto-336 {
+.ws-restoration-response-link-flex {
   display: flex;
   justify-content: flex-end;
   align-items: baseline;
 }
 
-.ws-auto-337 {
+.ws-restoration-response-link {
   margin: 10px 10px 0px 0px;
 }
 
 
 /* pages/employee/SearchWaterConnectionIntegrated.js */
-.ws-auto-338 {
+.ws-search-water-connection-integrated-card-mt-md {
   margin-top: 20px;
 }
 
-.ws-auto-339 {
+.ws-search-water-connection-integrated-card-center-text {
   text-align: center;
 }
 
-.ws-auto-340 {
+.ws-search-water-connection-integrated-btn-mt-sm {
   font-family: sans-serif;
   color: white;
   font-size: 19px;
@@ -1767,59 +1745,59 @@
 
 
 /* pages/employee/WSResponse.js */
-.ws-auto-341 {
+.ws-response-label {
   padding: 10px;
 }
 
-.ws-auto-342 {
+.ws-response-label-mb-sm {
   padding-bottom: 10px;
   margin-bottom: 10px;
 }
 
-.ws-auto-343 {
+.ws-response-label-flex {
   display: flex;
 }
 
-.ws-auto-344 {
+.ws-response-btn-no-pad-mb-sm {
   margin-left: unset;
   margin-bottom: 10px;
   padding: 0px 8px;
 }
 
-.ws-auto-345 {
+.ws-response-btn-no-pad-mb-sm {
   margin-left: unset;
   margin-bottom: 10px;
   padding: 0px 8px;
 }
 
-.ws-auto-346 {
+.ws-response-link-flex {
   display: flex;
   justify-content: flex-end;
   align-items: baseline;
 }
 
-.ws-auto-347 {
+.ws-response-link-2 {
   margin: 10px 10px 0px 0px;
 }
 
 
 /* pages/employee/connectionDetails/ConsumptionDetails.js */
-.ws-auto-348 {
+.ws-consumption-details-mt-md-ml-md {
   margin-left: 16px;
   margin-top: 16px;
 }
 
-.ws-auto-349 {
+.ws-consumption-details-link-layered {
   z-index: 10000;
 }
 
 
 /* pages/employee/connectionDetails/connectionDetails.js */
-.ws-auto-350 {
+.ws-connection-details-header {
   margin-left: 22px;
 }
 
-.ws-auto-351 {
+.ws-connection-details-btn-full-width {
   max-width: 100%;
 }
 

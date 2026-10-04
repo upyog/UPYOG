@@ -38,9 +38,9 @@ function ADSDocument({ value = {}, Code, index,showFileName= false }) {
         <div>
           {documents?.map((document, index) => {
           let documentLink = pdfDownloadLink(data.pdfFiles, document.fileStoreId);
-          return <a target="_" href={documentLink} key={document?.fileStoreId || index} className="ads-auto-56">
+          return <a target="_" href={documentLink} key={document?.fileStoreId || index} className="ads-document-link-row-center-flex">
               {/* Text first */}
-              <p className="ads-auto-57">
+              <p className="ads-document-link-bold">
                 {t("ADS_" + Code?.split('.').slice(0, 4).join('_'))}
               </p>
       

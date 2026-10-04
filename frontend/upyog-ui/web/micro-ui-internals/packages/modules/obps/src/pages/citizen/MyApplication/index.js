@@ -157,7 +157,7 @@ const MyApplication = () => {
                 to={{
                   pathname : `/upyog-ui/citizen/payment/collect/${application?.businessService}/${application?.applicationNumber}`,
                 }}>
-              <div style={{marginTop:"10px"}}>
+              <div className="obps-building-plan-scrutiny-top-spacing">
                 <SubmitBar label ={t("COMMON_MAKE_PAYMENT")}/>
               </div>
               </Link>
@@ -189,7 +189,7 @@ const MyApplication = () => {
                   pathname : `/upyog-ui/citizen/payment/collect/${application?.businessService}/${application?.applicationNumber}`,
 
                 }}>
-              <div style={{marginTop:"10px"}}>
+              <div className="obps-building-plan-scrutiny-top-spacing">
                 <SubmitBar label ={t("COMMON_MAKE_PAYMENT")}/>
               </div>
               </Link>
@@ -199,7 +199,7 @@ const MyApplication = () => {
         }
       })}
 
-      <div style={{ marginLeft: "16px", marginTop: "16px", marginBottom: "46px" }}>
+      <div className="obps-index-top-spacing-5">
         <span>{`${t("BPA_NOT_ABLE_TO_FIND_APP_MSG")} `} </span>
         <span className="link">
           <Link to="/upyog-ui/citizen/obps/search/obps-application">{t("BPA_CLICK_HERE_TO_SEARCH_LINK")}</Link>

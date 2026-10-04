@@ -41,7 +41,7 @@ const rowContainerStyle = {
 const BannerPicker = props => {
   console.log("BannerPicker", props);
 
-  return <Banner message={GetActionMessage(props)} applicationNumber={props?.data?.mobileToiletBookingDetail?.bookingNo} info={props?.isSuccess ? props.t("MT_BOOKING_NO") : ""} successful={props?.isSuccess} className="wt-auto-41" />;
+  return <Banner message={GetActionMessage(props)} applicationNumber={props?.data?.mobileToiletBookingDetail?.bookingNo} info={props?.isSuccess ? props.t("MT_BOOKING_NO") : ""} successful={props?.isSuccess} className="wt-mt-acknowledgement-link-full-width" />;
 };
 
 const MTAcknowledgement = () => {

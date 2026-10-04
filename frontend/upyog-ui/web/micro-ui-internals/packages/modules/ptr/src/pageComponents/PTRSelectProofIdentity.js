@@ -81,8 +81,8 @@ const PTRSelectProofIdentity = ({ t, config, onSelect, formData, renewApplicatio
             if (document?.code === "PET.PETPHOTO" && !pathname.includes("revised-application")) {
               return (
                 <div key={index}>
-                  <CardLabel className="card-label-smaller" style={{display: "inline"}}>{t("PET_PETPHOTO")}<span style={{color: "#b0242c"}}>{t("PET_ONLY_PNG_ALLOWED")} </span></CardLabel>
-                  <div style={{marginLeft: user?.type==="EMPLOYEE"?"37%":""}}>
+                  <CardLabel className="card-label-smaller ptr-ptrselect-proof-identity-card">{t("PET_PETPHOTO")}<span className="ptr-ptrselect-proof-identity-wrapper">{t("PET_ONLY_PNG_ALLOWED")} </span></CardLabel>
+                  <div className={user?.type === "EMPLOYEE" ? "margin-left-37" : ""}>
                   <ImageUploadHandler
                     tenantId={stateId}
                     uploadedImages={documents.filter((doc) => doc.documentType === "PET.PETPHOTO").map((doc) => doc.filestoreId)}
@@ -268,7 +268,7 @@ function PTRSelectDocument({
   }, [isHidden]);
 
   return (
-    <div style={{ marginBottom: "24px" }}>
+    <div className="ptr-ptrselect-proof-identity-bottom-spacing">
       {/* Render document dropdown if the document has dropdown */}
       {doc?.hasDropdown ? (
         <LabelFieldPair>
@@ -276,7 +276,7 @@ function PTRSelectDocument({
           <Dropdown
             className="form-field"
             selected={selectedDocument}
-            style={{width: user?.type==="EMPLOYEE"?"50%":"100%"}}
+            className={user?.type === "EMPLOYEE" ? "field-width--employee-50" : "field-width--full"}
             option={dropDownData.map((e) => ({ ...e, i18nKey: e.code?.replaceAll(".", "_") }))}
             select={handlePTRSelectDocument}
             optionKey="i18nKey"
@@ -300,7 +300,7 @@ function PTRSelectDocument({
             }}
             id={id}
             message={isUploading ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div className="ptr-ptrselect-proof-identity-flex-row">
                 <LoadingSpinner />
                 <span>Uploading...</span>
               </div>

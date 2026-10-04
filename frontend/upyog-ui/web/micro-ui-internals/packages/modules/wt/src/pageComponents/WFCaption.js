@@ -22,7 +22,7 @@ const WFCaption = ({
       {data?.wfComment ? <div>{data?.wfComment?.map((e, index) => 
       <div className="TLComments" key={index}>
         <h3>{t("WF_COMMON_COMMENTS")}</h3>
-        <p className="wt-auto-33">{e}</p>
+        <p className="wt-wf-caption-item">{e}</p>
       </div>)}</div> : null}
       {data?.thumbnailsToShow?.thumbs?.length > 0 ? <div className="TLComments">
       <h3>{t("CS_COMMON_ATTACHMENTS")}</h3>

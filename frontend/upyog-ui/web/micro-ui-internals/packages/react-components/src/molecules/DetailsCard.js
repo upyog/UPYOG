@@ -8,7 +8,7 @@ const Details = ({ label, name, onClick }) => {
       <span className="label">
         <h2>{label}</h2>
       </span>
-      <span className="name" style={{overflowWrap:"break-word"}}>{name}</span>
+      <span className="name rc-details-card-wrapper">{name}</span>
     </div>
   );
 };
@@ -55,7 +55,7 @@ const DetailsCard = ({ data, serviceRequestIdKey, linkPrefix, handleSelect, sele
         return (
           <div
             key={itemIndex}
-            style={{ border: selectedItems?.includes(object[keyForSelected]) ? "2px solid #a82227" : "2px solid #fff" }}
+            className={`details-container ${selectedItems?.includes(object[keyForSelected]) ? "details-card-selected-border" : "details-card-unselected-border"}`}
             className="details-container"
             onClick={() =>handleClickEnabled && handleSelect(object)}
           >

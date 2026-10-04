@@ -118,23 +118,12 @@ const UploadPitPhoto = (props) => {
     // and can view preview in pop down
     return (
         <div>
-            <div className="imageUploadWrapper" style={{ display: !imageFile ? "none" : "block", marginTop: "8px" }}>
+            <div className="imageUploadWrapper" className={`imageUploadWrapper ${!imageFile ? "image-upload-wrapper--hidden" : "image-upload-wrapper--visible"}`}>
                 <UploadImages onUpload={getImage} onDelete={deleteImage} thumbnails={uploadedImagesThumbs ? uploadedImagesThumbs.map((o) => o.image) : []} />
             </div>
-            <button onClick={handleUpload} style={{
-                width: "100%",
-                backgroundColor: "#d6d5d4",
-                borderStyle: "solid",
-                borderBottom: "1px solid #464646",
-                padding: "4px 40px",
-                margin: "8px 0px",
-                cursor: "pointer",
-                outline: "none",
-                display: "flex",
-                justifyContent: "center",
-            }}>
+            <button onClick={handleUpload} className="rc-upload-pit-photo-clickable">
                 <input
-                    style={{ display: "none" }}
+                    className="rc-upload-pit-photo-hidden"
                     type="file"
                     accept="image/*"
                     ref={hiddenFileInput}

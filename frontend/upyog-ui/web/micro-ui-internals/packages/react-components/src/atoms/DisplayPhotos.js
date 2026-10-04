@@ -9,15 +9,15 @@ const ImageOrPDFIcon = ({ source, index, last = false, onClick, selectedIndex, d
 
   if (isPDF) {
     return (
-      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-start", alignContent: "center" }}>
+      <div className="rc-display-photos-flex-row">
         <a
           target="_blank"
           rel="noopener noreferrer"
           href={source}
-          style={{ minWidth: "100px", marginRight: "10px", maxWidth: "100px", height: "auto" }}
+          className="rc-display-photos-spacing"
         >
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <PDFSvg style={{ background: "#f6f6f6", padding: "8px", width: "100px" }} width="100px" height="100px" />
+          <div className="rc-display-photos-flex-row-2">
+            <PDFSvg className="rc-display-photos-icon" width="100px" height="100px" />
           </div>
         </a>
       </div>
@@ -26,21 +26,14 @@ const ImageOrPDFIcon = ({ source, index, last = false, onClick, selectedIndex, d
 
   return (
     <div>
-      <img
-        style={{
-          width: "200px",
-          padding: "3px",
-          height: "200px",
-          margin: "8px",
-          border: isSelected ? "4px solid black" : "none",
-        }}
+      <img className={`display-photo-item ${isSelected ? "border-selected-black" : "border-none"}`}
         src={source}
         alt="issue thumbnail"
         onClick={() => onClick(source, index)}
         className={last ? "last" : ""}
       />
       {drawingNo && (
-        <div style={{ marginTop: "12px", marginLeft: "12px", marginBottom: "5px", fontSize: "14px" }}>
+        <div className="rc-display-photos-top-spacing">
           {drawingNo}
         </div>
       )}
@@ -58,8 +51,7 @@ const DisplayPhotos = ({ srcs, drawingNos = [], onClick }) => {
 
   return (
     <div
-      className="photos-wrap"
-      style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))" }}
+      className="photos-wrap rc-display-photos-grid-container"
     >
       {srcs.map((source, index) => (
         <ImageOrPDFIcon

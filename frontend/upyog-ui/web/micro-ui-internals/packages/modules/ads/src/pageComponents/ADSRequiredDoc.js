@@ -30,7 +30,7 @@ const ADSRequiredDoc = ({
   }
   return <React.Fragment>
       <Card>
-      <div className="ads-auto-62">
+      <div className="ads-required-doc-full-width-row-between">
       <CardHeader>{t("MODULE_ADS")}</CardHeader>
       <CardSubHeader>
         <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.cartDetails} draftId={value?.existingDataSet?.draftId} />

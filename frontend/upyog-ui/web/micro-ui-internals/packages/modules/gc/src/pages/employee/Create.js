@@ -160,10 +160,10 @@ const CreateApplication = () => {
 
   return (
     <React.Fragment>
-      <div style={{ marginLeft: "15px", marginBottom: "20px" }}>
+      <div className="gc-create-bottom-spacing">
         <Timeline config={config} />
       </div>
-      <div style={{ padding: "0 15px" }}>
+      <div className="gc-create-container-padding">
         <Routes>
           {config.map((routeObj, index) => {
             const { component, texts, inputs, key, additionaFields } = routeObj;

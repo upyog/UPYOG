@@ -105,7 +105,7 @@ export const FormComposer = forwardRef((props, ref) => {
                     <div className="field">{fieldSelector(field.type, field.populators)}</div>
                   )}
                    {props.errors[field.populators.name] && (field.populators?.validate ? errors[field.populators.validate] : true) && (
-                    <CardLabelError style={{ width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" }}>{field.populators.error}</CardLabelError>
+                    <CardLabelError className="mc-form-composer-card">{field.populators.error}</CardLabelError>
                   )}
                 </React.Fragment>
               );

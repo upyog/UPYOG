@@ -30,8 +30,8 @@ const DesktopInbox = ({
   } else if (clearSearchCalled) {
     result = null;
   } else if (!data || data?.length === 0 || useNewInboxAPI && data?.[0].dataEmpty) {
-    result = EmptyInboxComp && <EmptyInboxComp data={data} /> || (data?.length === 0 || useNewInboxAPI && data?.[0].dataEmpty ? <Card className="pt-auto-1">
-          {t("CS_MYAPPLICATIONS_NO_APPLICATION").split("\\n").map((text, index) => <p key={index} className="pt-auto-2">
+    result = EmptyInboxComp && <EmptyInboxComp data={data} /> || (data?.length === 0 || useNewInboxAPI && data?.[0].dataEmpty ? <Card className="pt-desktop-inbox-card-mt-md">
+          {t("CS_MYAPPLICATIONS_NO_APPLICATION").split("\\n").map((text, index) => <p key={index} className="pt-desktop-inbox-card-center-text">
                 {text}
               </p>)}
         </Card> : <Loader />);
@@ -53,7 +53,7 @@ const DesktopInbox = ({
             {<FilterComponent defaultSearchParams={props.defaultSearchParams} onFilterChange={props.onFilterChange} searchParams={props.searchParams} type="desktop" useNewInboxAPI={useNewInboxAPI} statusMap={useNewInboxAPI ? data?.[0].statusMap : null} moduleCode={props.moduleCode} />}
           </div>
         </div>}
-      <div className="pt-auto-3">
+      <div className="pt-desktop-inbox-flex-1">
         <SearchApplication defaultSearchParams={props.defaultSearchParams} onSearch={d => {
         props.onSearch(d);
         setClearSearchCalled(false);

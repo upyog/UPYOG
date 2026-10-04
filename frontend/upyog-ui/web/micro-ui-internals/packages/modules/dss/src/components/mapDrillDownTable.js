@@ -97,11 +97,11 @@ const MapDrillChart = ({
     >
         <div>
           {" "}
-          <div style={{ float: "left" }}>
+          <div className="dss-map-drill-down-table-wrapper">
             <Backsvg onClick={onBack} />
           </div>
           {data2 && data2.length == 0 && (
-            <div style={{ paddingTop: "60px" }}>
+            <div className="dss-map-drill-down-table-spacing">
               {t("DSS_NO_DATA")}
             </div>
           )}
@@ -115,9 +115,7 @@ const MapDrillChart = ({
             return (
               <span
                 className={"tab-rows"}
-                style={{
-                  background: i % 2 == 0 ? "none" : "#EEEEEE",
-                }}
+                className={`tab-rows ${i % 2 !== 0 ? "bg-table-alt" : ""}`}
               >
                 <span>{t(`DSS_${dat.plots[1].label}`)}</span>
                 <span>{dat.plots[2].value}</span>

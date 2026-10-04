@@ -59,7 +59,7 @@ const AssetsQRCode = ({ path }) => {
     console.log('PaymentReceipt:- ', PaymentReceipt);
     return (
         <React.Fragment>
-            <div style={{ width: "100%" }}>
+            <div className="core-assets-qrcode-fullwidth">
                 <Card>
                     <CardHeader>Assets Summary </CardHeader>
                     {!recieptDataLoading ?
@@ -77,7 +77,7 @@ const AssetsQRCode = ({ path }) => {
                                         href={`https://www.google.com/maps/search/${PaymentReceipt.Assets[0].location}`} 
                                         target="_blank" 
                                         rel="noopener noreferrer"
-                                        style={{ textDecoration: "none", color: "blue" }}
+                                        className="core-assets-qrcode-wrapper"
                                     >
                                         Track Location
                                     </a>

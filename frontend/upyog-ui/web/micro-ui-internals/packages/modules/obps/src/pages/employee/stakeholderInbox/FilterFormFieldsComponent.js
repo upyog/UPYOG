@@ -49,7 +49,7 @@ const FilterFormFieldsComponent = ({ statuses, isInboxLoading, registerRef, cont
           control={controlFilterForm}
           render={({ field }) => {
             return stakeholderServiceTypesLoading ? <Loader/> : <>
-              <div className="filter-label sub-filter-label" style={{fontSize: "18px", fontWeight: "600"}}>{t("BPA_LICENSE_TYPE")}</div>
+              <div className="filter-label sub-filter-label obps-filter-form-fields-component-text-style">{t("BPA_LICENSE_TYPE")}</div>
                 <RadioButtons
                   onSelect={(e) => {
                     setFilterFormValue("applicationStatus",[]);
@@ -64,7 +64,7 @@ const FilterFormFieldsComponent = ({ statuses, isInboxLoading, registerRef, cont
       />
     </FilterFormField>
     {selectedBusinessService ? <FilterFormField>
-      <div className="filter-label" style={{fontSize: "18px", fontWeight: "600"}}>{t("ACTION_TEST_APPLICATION_STATUS")}</div>
+      <div className="filter-label obps-filter-form-fields-component-text-style">{t("ACTION_TEST_APPLICATION_STATUS")}</div>
       <Controller
         name="applicationStatus"
         control={controlFilterForm}

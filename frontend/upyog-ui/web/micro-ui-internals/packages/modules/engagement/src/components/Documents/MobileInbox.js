@@ -31,7 +31,7 @@ const MobileInbox = ({ data, t, title, iconName, links, searchFields, searchPara
 
 
   return (
-    <div style={{ padding: 0 }}>
+    <div className="eng-mobile-inbox-container-padding">
       <div className="inbox-container">
         <div className="filters-container">
           {/* {!isFstpOperator && !isSearch && <ApplicationLinks linkPrefix={parentRoute} isMobile={true} />} */}

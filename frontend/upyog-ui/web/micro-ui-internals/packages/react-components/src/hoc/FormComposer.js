@@ -265,7 +265,7 @@ const FormComposer = (props) => {
                     <div style={field.isInsideBox ? getCombinedStyle(field?.placementinbox) : {}}>
                       {!field.withoutLabel && (
                         <CardLabel
-                          style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "8px" : "revert" }}
+                          className={`${field.isSectionText ? "card-label-section-text" : ""} ${props.inline ? "card-label-tight-bottom" : ""}`}
                           className={field?.disable ? "disabled" : ""}
                         >
                           {t(field.label)}
@@ -279,15 +279,7 @@ const FormComposer = (props) => {
                       <div style={field.withoutLabel ? { width: "100%" } : {}} className="field">
                         {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field)}
                         {field?.description && (
-                          <CardLabel
-                            style={{
-                              marginTop: "-24px",
-                              fontSize: "16px",
-                              fontWeight: "bold",
-                              color: "#505A5F",
-                              ...field?.descriptionStyles,
-                            }}
-                          >
+                          <CardLabel className="form-composer-field-description" style={field?.descriptionStyles}>
                             {t(field.description)}
                           </CardLabel>
                         )}
@@ -299,7 +291,7 @@ const FormComposer = (props) => {
               <Fragment key={field?.populators?.name || field?.label || index}>
                   <LabelFieldPair>
                     {!field.withoutLabel && (
-                      <CardLabel style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "8px" : "revert" }}>
+                      <CardLabel className={`${field.isSectionText ? "card-label-section-text" : ""} ${props.inline ? "card-label-tight-bottom" : ""}`}>
                         {t(field.label)}
                         {field.isMandatory ? " * " : null}
                         {field.labelChildren && field.labelChildren}
@@ -307,11 +299,11 @@ const FormComposer = (props) => {
                     )}
                     <div style={field.withoutLabel ? { width: "100%", ...props?.fieldStyle } : {}} className="field">
                       {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field)}
-                      {field?.description && <CardText style={{ fontSize: "14px", marginTop: "-24px" }}>{t(field?.description)}</CardText>}
+                      {field?.description && <CardText className="rc-form-composer-card">{t(field?.description)}</CardText>}
                     </div>
                   </LabelFieldPair>
                   {field?.populators?.name && errors && errors[field?.populators?.name] && Object.keys(errors[field?.populators?.name]).length ? (
-                    <CardLabelError style={{ width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" }}>
+                    <CardLabelError className="rc-form-composer-card-2">
                       {t(field?.populators?.error)}
                     </CardLabelError>
                   ) : null}
@@ -342,16 +334,16 @@ const FormComposer = (props) => {
     <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)} id={props.formId} className={props.className}>
       <Card style={getCardStyles()} className={props?.cardClassName ? props.cardClassName : ""}>
         {!props.childrenAtTheBottom && props.children}
-        {props.heading && <CardSubHeader style={{ ...props.headingStyle }}> {props.heading} </CardSubHeader>}
+        {props.heading && <CardSubHeader style={props?.headingStyle}> {props.heading} </CardSubHeader>}
         {props.description && <CardLabelDesc className={"repos"}> {props.description} </CardLabelDesc>}
         {props.text && <CardText>{props.text}</CardText>}
         {formFields}
         {props.childrenAtTheBottom && props.children}
         {props.submitInForm && (
-          <SubmitBar label={t(props.label)} style={{ ...props?.buttonStyle }} submit="submit" disabled={isDisabled} className="w-full" />
+          <SubmitBar label={t(props.label)} style={props?.buttonStyle} submit="submit" disabled={isDisabled} className="w-full" />
         )}
         {props.secondaryActionLabel && (
-          <div className="primary-label-btn" style={{ margin: "20px auto 0 auto" }} onClick={onSecondayActionClick}>
+          <div className="primary-label-btn rc-form-composer-spacing" onClick={onSecondayActionClick}>
             {props.secondaryActionLabel}
           </div>
         )}

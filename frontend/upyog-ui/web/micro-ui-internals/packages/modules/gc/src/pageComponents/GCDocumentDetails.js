@@ -198,14 +198,14 @@ function GCSelectDocument({
     }, [file]);
 
     return (
-        <div style={{ marginBottom: "24px" }}>
+        <div className="gc-gcdocument-details-bottom-spacing">
             {doc?.hasDropdown ? (
                 <LabelFieldPair>
                     <CardLabel className="card-label-smaller">{t("GC_" + (doc?.code.replaceAll(".", "_")))} {doc?.required ? <span className="check-page-link-button">*</span> : null}</CardLabel>
                     <Dropdown
                         className="form-field"
                         selected={selectedDocument}
-                        style={{ width: user?.type === "EMPLOYEE" ? "50%" : "100%" }}
+                        className={user?.type === "EMPLOYEE" ? "field-width--employee-50" : "field-width--full"}
                         placeholder={"Select " + t("GC_" + (doc?.code.replaceAll(".", "_")))}
                         option={dropDownData}
                         select={handleGCSelectDocument}
@@ -228,7 +228,7 @@ function GCSelectDocument({
                         }}
                         id={id}
                         message={isUploading ? (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div className="gc-gcdocument-details-flex-row">
                                 <LoadingSpinner />
                                 <span>Uploading...</span>
                             </div>

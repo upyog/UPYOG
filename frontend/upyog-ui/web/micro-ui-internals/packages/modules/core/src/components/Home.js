@@ -101,7 +101,7 @@ const CitizenHome = ({ modules, getCitizenMenu, fetchedCitizen, isLoading }) => 
     <React.Fragment>
       <div className="citizen-all-services-wrapper">
         <BackButton />
-        <div className="citizenAllServiceGrid" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+        <div className="citizenAllServiceGrid core-home-flex-row">
           {moduleArray
             .filter((mod) => mod)
             .map(({ code }, index) => {
@@ -118,7 +118,7 @@ const CitizenHome = ({ modules, getCitizenMenu, fetchedCitizen, isLoading }) => 
                       code === "OBPS"
                         ? () => (
                           <CitizenInfoLabel
-                            style={{ margin: "0px", padding: "10px" }}
+                            className="core-home-container-padding"
                             info={t("CS_FILE_APPLICATION_INFO_LABEL")}
                             text={t(`BPA_CITIZEN_HOME_STAKEHOLDER_INCLUDES_INFO_LABEL`)}
                           />

@@ -19,23 +19,23 @@ const YearWiseBilltable = ({ bill, ...props }) => {
     <React.Fragment>
       {showDetails ? (
         <div>
-          <div style={{ backgroundColor: "#EEEEEE" }} className="scroll-table-wrapper">
+          <div className="scroll-table-wrapper cmn-yearwise-bills-wrapper">
             <div className="scroll-table-width-wrapper">
-              <table style={{ borderCollapse: "separate" }}>
+              <table className="cmn-yearwise-bills-table-cell">
                 {
                   <thead>
                     <tr>
-                      <th style={{ ...thStyle, paddingTop: "14px" }} className="first-col">
+                      <th className="bill-details-th-cell" style={thStyle} className="first-col">
                         {t("ES_FINANCIAL_YEAR")}
                       </th>
                       {yearWiseBills?.[0]?.billAccountDetails
                         ?.sort((a, b) => a.order - b.order)
                         ?.map((head, index) => (
-                          <th style={{ ...thStyle, borderBottom: "#D6D5D4 1px solid", padding: "0 5px" }} key={index}>
+                          <th className="bill-details-th-border" style={thStyle} key={index}>
                             {t(head.taxHeadCode)}
                           </th>
                         ))}
-                      <th style={{ ...thStyle, paddingTop: "14px", whiteSpace: "break-spaces" }} className="last-col">
+                      <th className="bill-details-th-break" style={thStyle} className="last-col">
                         {t("ES_TOTAL_TAX").split(" ")[0] + "\n" + t("ES_TOTAL_TAX").split(" ")[1]}
                       </th>
                     </tr>
@@ -58,12 +58,12 @@ const YearWiseBilltable = ({ bill, ...props }) => {
               </table>
             </div>
           </div>
-          <div style={{ textAlign: "right" }} onClick={() => setShowDetails(false)} className="filter-button">
+          <div onClick={() => setShowDetails(false)} className="filter-button cmn-yearwise-bills-wrapper-2">
             {t("ES_COMMON_HIDE_DETAILS")}
           </div>
         </div>
       ) : (
-        <div style={{ textAlign: "right" }} onClick={() => setShowDetails(true)} className="filter-button">
+        <div onClick={() => setShowDetails(true)} className="filter-button cmn-yearwise-bills-wrapper-2">
           {t("ES_COMMON_VIEW_DETAILS")}
         </div>
       )}

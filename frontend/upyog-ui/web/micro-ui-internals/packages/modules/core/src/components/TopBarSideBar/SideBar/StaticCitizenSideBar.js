@@ -222,7 +222,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
         text: (
           <React.Fragment>
             {t("CS_COMMON_HELPLINE")}
-            <div className="telephone" style={{ marginTop: "-10%" }}>
+            <div className="telephone core-citizen-side-bar-top-spacing">
               <div className="link">
                 <a href={`tel:${filteredTenantContact}`}>{filteredTenantContact}</a>
               </div>
@@ -252,24 +252,11 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
     <React.Fragment>
       <div>
         <div
-          style={{
-            height: "100%",
-            width: "100%",
-            top: "0px",
-            backgroundColor: "rgba(0, 0, 0, 0.54)",
-            pointerzevents: "auto",
-          }}
+          className="core-static-citizen-side-bar-fullwidth"
         ></div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            height: isMobile ? "calc(100vh - 56px)" : "auto",
-            zIndex: "99",
-          }}
-        >
+        <div className={`static-sidebar-container ${isMobile ? "mobile-height" : ""}`}>
           {profileItem}
-          <div className="drawer-desktop" style={{"backgroundColor":"white"}}>
+          <div className="drawer-desktop core-static-citizen-side-bar-wrapper">
             {menuItems?.map((item, index) => (
               <div className={`sidebar-list ${pathname === item?.link || pathname === item?.sidebarURL ? "active" : ""}`} key={index}>
                 <MenuItem item={item} />

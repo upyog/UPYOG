@@ -389,24 +389,22 @@ const CHBMapView = () => {
 
   return (
     <div>
-      <div style={{ marginLeft: "10px", marginRight: "10px"}}>
+      <div className="chb-chbmap-view-spacing">
       <CardLabel>{t("CHB_SEARCH_COMMUNITY_HALL")}</CardLabel>
-        <div style={{ display: "flex", flexDirection: "row", alignItems: "flex-start", gap: "16px", position: "relative", zIndex: 2000 }}>
+        <div className="chb-chbmap-view-flex-row">
             <Dropdown
-            className="form-field"
+            className="form-field chb-chbmap-view-fullwidth"
             selected={inputValue}
             select={setInputValue}
             option={statusOptions}
             placeholder={t("Select Community Hall")}
             optionKey="i18nKey"
-            style={{ width: "100%", position: "relative", zIndex: 2001 }}
             t={t}
           />
-            <div style={{marginTop:"5px", display: "flex", gap: "16px"}}>
+            <div className="chb-chbmap-view-flex-container">
               <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
               <p
-                className="link"
-                style={{ cursor: "pointer" }}
+                className="link chb-chbmap-view-clickable"
                 onClick={() => {
                   setSearchTerm("");
                   setInputValue("");
@@ -417,7 +415,7 @@ const CHBMapView = () => {
             </div>
         </div>
 
-        <div ref={mapRef} style={{ height: '86vh', width: '100%', border: '1px solid #ccc', marginTop: "0px" }} />
+        <div ref={mapRef} className="chb-chbmap-view-fullwidth-2" />
       </div>
     </div>
   );

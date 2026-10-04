@@ -55,7 +55,7 @@ const SearchApplication = ({ onSearch, type, onClose, onTabChange, isFstpOperato
   const clearAll = (mobileView) => {
     const mobileViewStyles = mobileView ? { margin: 0, display: "inline" } : { marginTop: "40px", marginLeft: "16px" };
     return (
-      <LinkLabel style={{ ...mobileViewStyles }} onClick={clearSearch}>
+      <LinkLabel style={mobileViewStyles} onClick={clearSearch}>
         {t("ES_COMMON_CLEAR_SEARCH")}
       </LinkLabel>
     );
@@ -141,17 +141,13 @@ const SearchApplication = ({ onSearch, type, onClose, onTabChange, isFstpOperato
   return (
     
     <React.Fragment>
-      <div className="search-container" style={{ width: "auto" }}>
+      <div className="search-container vnd-registered-vendor-search-wrapper">
         <div className="search-complaint-container">
           {(type === "mobile" || mobileView) && (
             <div className="complaint-header">
               <h2>{t("ES_COMMON_SEARCH_BY")}</h2>
               <span
-                style={{
-                  position: "absolute",
-                  top: "2%",
-                  right: "8px",
-                }}
+                className="vnd-registered-vendor-search-wrapper-2"
                 onClick={onClose}
               >
                 <CloseSvg />
@@ -206,8 +202,7 @@ const SearchApplication = ({ onSearch, type, onClose, onTabChange, isFstpOperato
 
           <form onSubmit={handleSubmit(onSubmitInput)}>
             <div
-              className={FSTP ? "complaint-input-container for-pt for-search" : "complaint-input-container"}
-              style={{ display:"grid",width: "100%", gridTemplateColumns: "33.33% 66.66% 0%" }}
+              className={`${FSTP ? "complaint-input-container for-pt for-search" : "complaint-input-container"} vnd-registered-vendor-search-fullwidth`}
             >
               {searchFields?.map((input, index) => (
                 <span key={index} className={index === 0 ? "complaint-input" : "mobile-input"}>
@@ -215,7 +210,7 @@ const SearchApplication = ({ onSearch, type, onClose, onTabChange, isFstpOperato
                   {getFields(input)}{" "}
                 </span>
               ))}
-              <div style={{ display: "flex" }}>
+              <div className="vnd-registered-vendor-search-flex-container">
                 {type === "desktop" && !mobileView && <SubmitBar className="submit-bar-search" label={t("ES_COMMON_SEARCH")} submit />}
                 {type === "desktop" && !mobileView && <span className="clear-search">{clearAll()}</span>}
               </div>

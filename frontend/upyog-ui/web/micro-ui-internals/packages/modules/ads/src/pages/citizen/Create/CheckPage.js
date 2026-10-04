@@ -72,7 +72,7 @@ import {
         accessor: "delete",
         Cell: ({ row }) => (
           <button onClick={() => handleDelete(row.index)}>
-            <DeleteIcon className="delete ads-auto-95" fill="#a82227" />
+            <DeleteIcon className="delete ads-check-page-icon-action-ml-md" fill="#a82227" />
           </button>
         ),
       },
@@ -105,7 +105,7 @@ import {
       <React.Fragment>
        {window.location.href.includes("/citizen") ? <Timeline currentStep={4}/> : null}
       <Card>
-        <div className="ads-auto-96">
+        <div className="ads-check-page-full-width-row-between">
               <CardHeader>{t("ADS_SUMMARY")}</CardHeader>
               <CardSubHeader>
                 <TimerValues timerValues={params?.adslist?.existingDataSet?.timervalue?.timervalue} SlotSearchData={params?.adslist?.cartDetails} draftId={params?.adslist?.existingDataSet?.draftId} />
@@ -113,7 +113,7 @@ import {
               </div>
         <div>
         <CardText>{t("ADS_CHECK_CHECK_YOUR_ANSWERS_TEXT")}</CardText>
-          <CardSubHeader className="ads-auto-97">{t("ADS_APPLICANT_DETAILS")}</CardSubHeader>
+          <CardSubHeader className="ads-check-page-subheader-title-lg">{t("ADS_APPLICANT_DETAILS")}</CardSubHeader>
           <StatusTable>
           <Row label={t("ADS_APPLICANT_NAME")} text={`${t(checkForNA(applicant?.applicantName))}`} actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ads/${typeOfApplication}/applicant-details`} />} />
   
@@ -123,7 +123,7 @@ import {
           <Row label={t("ADS_EMAIL_ID")} text={`${t(checkForNA(applicant?.emailId))}`} actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ads/${typeOfApplication}/applicant-details`} />} />
           </StatusTable>
           
-          <CardSubHeader className="ads-auto-98">{t("ADS_ADDRESS_DETAILS")}</CardSubHeader>
+          <CardSubHeader className="ads-check-page-subheader-title-lg">{t("ADS_ADDRESS_DETAILS")}</CardSubHeader>
           <StatusTable>
           <Row label={t("ADS_HOUSE_NO")} text={`${t(checkForNA(address?.houseNo))}`} actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ads/${typeOfApplication}/address-details`} />} />
           <Row label={t("ADS_HOUSE_NAME")} text={`${t(checkForNA(address?.houseName))}`} actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ads/${typeOfApplication}/address-details`} />} />
@@ -135,7 +135,7 @@ import {
            <Row label={t("ADS_LOCALITY")} text={`${t(checkForNA(address?.locality?.i18nKey))}`} actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ads/${typeOfApplication}/address-details`} />} />
           <Row label={t("ADS_ADDRESS_PINCODE")} text={`${t(checkForNA(address?.pincode))}`} actionButton={<ActionButton jumpTo={`/upyog-ui/citizen/ads/${typeOfApplication}/address-details`} />} />
           </StatusTable>
-          <CardSubHeader className="ads-auto-99">{t("ADS_CART_DETAILS")}</CardSubHeader>
+          <CardSubHeader className="ads-check-page-subheader-title-lg">{t("ADS_CART_DETAILS")}</CardSubHeader>
           <ApplicationTable
                 t={t}
                 data={adslistRows}
@@ -151,7 +151,7 @@ import {
                 isPaginationRequired={false}
                 totalRecords={params?.adslist?.cartDetails?.length || 0}
               />
-          <CardSubHeader className="ads-auto-100">{t("ADS_DOCUMENTS_DETAILS")}</CardSubHeader>
+          <CardSubHeader className="ads-check-page-subheader-title-lg">{t("ADS_DOCUMENTS_DETAILS")}</CardSubHeader>
           <StatusTable>
           <Card>
             {documents?.documents?.map((doc, index) => (

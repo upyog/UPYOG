@@ -358,10 +358,10 @@ const ApplicationDetails = (props) => {
       {!isLoading ? (
         <React.Fragment>
         <div className="cardHeaderWithOptions" style={isMobile ? {} : {width:"100%", display:"flex", alignItems:"center"}}>
-        <div  style={{flexGrow:1, textAlign:"left"}}>
+        <div  className="fsm-application-details-wrapper">
         <Header>{t("CS_FSM_APPLICATION_DETAIL_TITLE_APPLICATION_DETAILS")}</Header>
         </div>
-        <div style={{display:"flex",flexDirection:"row-reverse",alignItems:"center", marginTop:"-25px", justifyContent:"flex-end",gap:"10px"}}>
+        <div className="fsm-application-details-flex-row">
         {dowloadOptions && dowloadOptions.length > 0 && !showReceiptOptions && (
           <MultiLink
             className="multilinkWrapper"
@@ -371,10 +371,10 @@ const ApplicationDetails = (props) => {
           />
         )}
         
-          <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+          <LinkButton label={t("VIEW_TIMELINE")} className="fsm-application-details-action-btn" onClick={handleViewTimeline}></LinkButton>
 
         </div> 
-        <div style={{display:"flex",flexDirection:"row-reverse",alignItems:"center",gap:"10px", marginTop:"-25px", zIndex:"10"}}>
+        <div className="fsm-application-details-flex-row-2">
         {receiptOptions && receiptOptions.length > 0 && showReceiptOptions && (
           <MultiLink
             className="multilinkWrapper"
@@ -386,11 +386,11 @@ const ApplicationDetails = (props) => {
         )}   
         </div>    
       </div>
-          <Card className="fsm" style={{ position: "relative" }}>
+          <Card className="fsm fsm-registry-inbox-wrapper">
             {/* {!DSO && (
               <LinkButton
-                label={<span style={{ color: "#f47738", marginLeft: "8px" }}>{t("ES_APPLICATION_DETAILS_VIEW_AUDIT_TRAIL")}</span>}
-                style={{ position: "absolute", top: 0, right: 20 }}
+                label={<span className="custom-style">{t("ES_APPLICATION_DETAILS_VIEW_AUDIT_TRAIL")}</span>}
+                className="custom-style"
                 onClick={() => {
                   navigate(props.parentRoute + "/application-audit/" + applicationNumber);
                 }}
@@ -398,8 +398,8 @@ const ApplicationDetails = (props) => {
             )} */}
             {applicationDetails?.applicationDetails.map((detail, index) => (
               <React.Fragment key={index}>
-                {index === 0 ? null : ( // <CardSubHeader style={{ marginBottom: "16px" }}>{t(detail.title)}</CardSubHeader>
-                  <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>{t(detail.title)}</CardSectionHeader>
+                {index === 0 ? null : ( // <CardSubHeader className="custom-style">{t(detail.title)}</CardSubHeader>
+                  <CardSectionHeader className="fsm-application-timeline-header">{t(detail.title)}</CardSectionHeader>
                 )}
                 <StatusTable>
                   {detail?.values?.map((value, index) => {
@@ -423,7 +423,7 @@ const ApplicationDetails = (props) => {
             ))}
             {applicationData?.pitDetail?.additionalDetails?.fileStoreId?.CITIZEN?.length && (
               <>
-                <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>{t("ES_FSM_SUB_HEADING_CITIZEN_UPLOADS")}</CardSectionHeader>
+                <CardSectionHeader className="fsm-application-timeline-header">{t("ES_FSM_SUB_HEADING_CITIZEN_UPLOADS")}</CardSectionHeader>
                 <ViewImages
                   fileStoreIds={applicationData?.pitDetail?.additionalDetails?.fileStoreId?.CITIZEN}
                   tenantId={state}
@@ -433,7 +433,7 @@ const ApplicationDetails = (props) => {
             )}
             {applicationData?.pitDetail?.additionalDetails?.fileStoreId?.FSM_DSO?.length && (
               <>
-                <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>{t("ES_FSM_SUB_HEADING_DSO_UPLOADS")}</CardSectionHeader>
+                <CardSectionHeader className="fsm-application-timeline-header">{t("ES_FSM_SUB_HEADING_DSO_UPLOADS")}</CardSectionHeader>
                 <ViewImages
                   fileStoreIds={applicationData?.pitDetail?.additionalDetails?.fileStoreId?.FSM_DSO}
                   tenantId={tenantId}
@@ -448,7 +448,7 @@ const ApplicationDetails = (props) => {
             {!workflowDetails?.isLoading && !isDataLoading && (
               <Fragment>
                 <div id="timeline">
-                  <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
+                  <CardSectionHeader className="fsm-application-timeline-header">
                     {t("ES_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
                   </CardSectionHeader>
                   {workflowDetails?.data?.timeline && workflowDetails?.data?.timeline?.length === 1 ? (
@@ -504,7 +504,7 @@ const ApplicationDetails = (props) => {
             />
           )}
           {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length === 1 && workflowDetails?.data?.nextActions?.[0]?.action !== "RATE" && (
-            <ActionBar style={{ zIndex: "19" }}>
+            <ActionBar className="fsm-index-wrapper">
               <SubmitBar
                 label={t(`ES_FSM_${workflowDetails?.data?.nextActions[0].action}`)}
                 onSubmit={() => onActionSelect(workflowDetails?.data?.nextActions[0].action)}
@@ -512,7 +512,7 @@ const ApplicationDetails = (props) => {
             </ActionBar>
           )}
           {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length > 1 && (
-            <ActionBar style={{ zIndex: "19" }}>
+            <ActionBar className="fsm-index-wrapper">
               {displayMenu && workflowDetails?.data?.nextActions ? (
                 <Menu
                   localeKeyPrefix={"ES_FSM"}

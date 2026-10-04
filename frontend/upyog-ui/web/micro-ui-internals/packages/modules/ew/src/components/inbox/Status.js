@@ -51,7 +51,7 @@ const Status = ({ onAssignmentChange, searchParams, businessServices, statusMap,
   // Only render if there are non-terminated states
   return userRoleStates?.filter((e) => !e.isTerminateState).length ? (
     <div className="status-container">
-      <div className="filter-label" style={{ fontWeight: "normal" }}>
+      <div className="filter-label ew-new-inbox-filter-text-style">
         {t("ES_INBOX_STATUS")}
       </div>
       {/* Display first 4 status options */}

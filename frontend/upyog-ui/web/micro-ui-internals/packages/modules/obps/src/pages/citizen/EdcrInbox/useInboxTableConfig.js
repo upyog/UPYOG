@@ -9,12 +9,11 @@ const Download = ({ dowloadOptions }) => {
   return (
     <div>
       <MultiLink
-        className="multilinkWrapper"
+        className="multilinkWrapper obps-use-inbox-table-config-spacing"
         onHeadClick={() => setShowOptions(!showOptions)}
         displayOptions={showOptions}
         // showOptions={setShowOptions}
         options={dowloadOptions}
-        style={{ right: "0", position: "unset", top: "0px", margin: "0px" }}
         optionsStyle={{ right: "10px", top: "unset", margin: "0px", position: "absolute" }}
       />
     </div>
@@ -23,7 +22,7 @@ const Download = ({ dowloadOptions }) => {
 
 const useInboxTableConfig = ({ onPageSizeChange, formState, totalCount, table, dispatch, onSortingByData }) => {
   const GetCell = (value) => <span className="cell-text styled-cell">{value}</span>;
-  const GetStatusCell = (value) =>  value === "Accepted" ? <span className="sla-cell-success " style={{background:"none",padding:"unset"}}>{value}</span> : <span className="sla-cell-error" style={{background:"none",padding:"unset"}}>{value}</span>;
+  const GetStatusCell = (value) =>  value === "Accepted" ? <span className="sla-cell-success obps-use-inbox-table-config-container-padding">{value}</span> : <span className="sla-cell-error obps-use-inbox-table-config-container-padding">{value}</span>;
   const { t } = useTranslation();
 
   const tableColumnConfig = useMemo(() => {

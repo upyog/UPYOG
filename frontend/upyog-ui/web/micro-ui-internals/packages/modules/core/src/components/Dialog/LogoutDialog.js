@@ -17,7 +17,7 @@ const CloseBtn = (props) => {
       {
         props?.isMobileView
           ? (<CloseSvg />)
-          : (<div className={"icon-bg-secondary"} style={{ backgroundColor: '#505A5F'}}> <Close /> </div>)
+          : (<div className={`${"icon-bg-secondary"} core-logout-dialog-wrapper`}> <Close /> </div>)
       }
     </div>
   )
@@ -69,9 +69,7 @@ const LogoutDialog = ({ onSelect, onCancel, onDismiss }) => {
           bottom: 0,
           padding: "18px",
         }}
-        style={{
-          flex: 1,
-        }}
+        className="core-logout-dialog-wrapper-2"
         popupModuleMianStyles={{
           padding: "18px",
         }}
@@ -83,7 +81,7 @@ const LogoutDialog = ({ onSelect, onCancel, onDismiss }) => {
         actionSaveOnSubmit={onSelect}
         formId="modal-action">
         <div>
-          <CardText style={{ margin: 0 }}>
+          <CardText className="core-logout-dialog-card">
             {t("CORE_LOGOUT_MOBILE_CONFIRMATION_MESSAGE") + " "}
           </CardText>
         </div>
@@ -100,7 +98,7 @@ const LogoutDialog = ({ onSelect, onCancel, onDismiss }) => {
         actionSaveOnSubmit={onSelect}
         formId="modal-action">
         <div>
-          <CardText style={{ marginBottom: "54px", marginLeft: "8px", marginRight: "8px" }}>
+          <CardText className="core-logout-dialog-card-2">
             {t("CORE_LOGOUT_WEB_CONFIRMATION_MESSAGE") + " "}
             <strong>{t("CORE_LOGOUT_MESSAGE")}?</strong>
           </CardText>

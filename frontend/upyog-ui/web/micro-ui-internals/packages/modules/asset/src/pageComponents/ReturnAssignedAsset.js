@@ -117,9 +117,9 @@ const OwnerForm = _props => {
     marginTop: "-21px"
   };
   return <React.Fragment>
-        <div className="asset-auto-215">
-            <div className="asset-auto-216">
-            {allAssets?.length > 2 ? <div className="asset-auto-217">
+        <div className="asset-return-assigned-item">
+            <div className="asset-return-assigned-bordered">
+            {allAssets?.length > 2 ? <div className="asset-return-assigned-right-text-action">
                 X
                 </div> : null}
 

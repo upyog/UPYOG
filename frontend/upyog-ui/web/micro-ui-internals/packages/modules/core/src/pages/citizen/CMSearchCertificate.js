@@ -178,11 +178,11 @@ const VSearchCertificate = () => {
 
     return (
         <React.Fragment>
-            <div style={{ width: "100%", height: "200px", marginLeft: "2%", marginRight: "2%", marginTop: "20px", marginBottom: "20px" }}>
-                <div className="h1" style={{ fontSize: "40px", fontFamily: "Roboto Condensed", color: "#582766" }}>{t("SEARCH_CERTIFICATE")}</div>
+            <div className="core-cmsearch-certificate-fullwidth">
+                <div className="h1 core-cmsearch-certificate-text-style">{t("SEARCH_CERTIFICATE")}</div>
                 <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit} className="verification-search-form">
                     <SearchField>
-                        <label className="astericColor" style={{ fontSize: "19px" }} >{t("CERTIFICATE_TYPE")}</label>
+                        <label className="astericColor core-cmsearch-certificate-text-style-2" >{t("CERTIFICATE_TYPE")}</label>
                         <Controller
                             control={control}
                             name="certificateType"
@@ -204,7 +204,7 @@ const VSearchCertificate = () => {
                     </SearchField>
                     {!user?.info && (
                         <SearchField>
-                            <label className="astericColor" style={{ fontSize: "19px" }}>
+                            <label className="astericColor core-cmsearch-certificate-text-style-2">
                                 {t("CITY")}
                             </label>
                             <Controller
@@ -230,7 +230,7 @@ const VSearchCertificate = () => {
                         </SearchField>
                     )}
                     <SearchField>
-                        <label className="astericColor" style={{ fontSize: "19px" }}>{t("CERTIFICATE_NUMBER")}</label>
+                        <label className="astericColor core-cmsearch-certificate-text-style-2">{t("CERTIFICATE_NUMBER")}</label>
                         <TextInput
                             name="certificateNo"
                             t={t}
@@ -239,8 +239,7 @@ const VSearchCertificate = () => {
                             placeholder={"Please enter unique certificate number"}
                             value={certificate_No}
                             onChange={setcertificate_No}
-                            style={{ width: "100%" }}
-                            className = "verificationInput"
+                            className="verificationInput core-assets-qrcode-fullwidth"
                         />
                     </SearchField>
                     <SearchField>
@@ -258,7 +257,7 @@ const VSearchCertificate = () => {
                             disabled={!ishuman || !certificate_name || !certificate_No || (!user?.info && !selectedCity)}
                         />
                         <p
-                            style={{ marginTop: "10px" }}
+                            className="core-cmsearch-certificate-top-spacing"
                             onClick={() => {
                                 reset({
                                     applicationNo: "",

@@ -107,7 +107,7 @@ const SearchApplication = ({
   const clearAll = (mobileView) => {
     const mobileViewStyles = mobileView ? { margin: 0 } : {};
     return (
-      <LinkLabel style={{ display: "inline", margin: "10px", ...mobileViewStyles }} onClick={clearSearch}>
+      <LinkLabel className="display-inline margin-10" style={mobileViewStyles} onClick={clearSearch}>
         {t("ES_COMMON_CLEAR_SEARCH")}
       </LinkLabel>
     );
@@ -116,7 +116,7 @@ const SearchApplication = ({
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}> 
       <React.Fragment>
-        <div className="search-container" style={{ width: "auto", marginLeft: isInboxPage ? "24px" : "revert" }}>
+        <div className="search-container" className={isInboxPage ? "search-container-auto-margin" : "search-container-auto"}>
           <div className="search-complaint-container">
             {/* Render the header for mobile view */}
             {(type === "mobile" || mobileView) && (
@@ -127,7 +127,7 @@ const SearchApplication = ({
                 </span>
               </div>
             )}
-            <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%", display: "grid" }}>
+            <div className={`${"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} ew-search-fullwidth`}>
               {/* Render the search fields */}
               {searchFields
                 ?.filter((e) => true)
@@ -159,8 +159,7 @@ const SearchApplication = ({
                     {/* Render validation errors */}
                     {formState?.dirtyFields?.[input.name] ? (
                       <span
-                        style={{ fontWeight: "700", color: "rgba(212, 53, 28)", paddingLeft: "8px", marginTop: "-20px", fontSize: "12px" }}
-                        className="inbox-search-form-error"
+                        className="inbox-search-form-error ew-search-top-spacing"
                       >
                         {formState?.errors?.[input.name]?.message}
                       </span>
@@ -170,14 +169,14 @@ const SearchApplication = ({
 
               {/* Render the "Clear All" link for inbox pages */}
               {isInboxPage && (
-                <div style={{ gridColumn: "2/3", textAlign: "right", paddingTop: "10px" }} className="input-fields">
+                <div className="input-fields ew-search-spacing">
                   <div>{clearAll()}</div>
                 </div>
               )}
 
               {/* Render the submit button for desktop view */}
               {type === "desktop" && !mobileView && (
-                <div style={{ maxWidth: "unset", marginLeft: "unset" }} className="search-submit-wrapper">
+                <div className="search-submit-wrapper ew-search-spacing-2">
                   <SubmitBar
                     className="submit-bar-search"
                     label={t("ES_COMMON_SEARCH")} // Translated text for "Search"
@@ -193,10 +192,10 @@ const SearchApplication = ({
         {/* Render the action bar for mobile view */}
         {(type === "mobile" || mobileView) && (
           <ActionBar className="clear-search-container">
-            <button className="clear-search" style={{ flex: 1 }}>
+            <button className="clear-search ew-ewdesktop-inbox-wrapper">
               {clearAll(mobileView)}
             </button>
-            <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} style={{ flex: 1 }} submit={true} />
+            <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} className="ew-ewdesktop-inbox-wrapper" submit={true} />
           </ActionBar>
         )}
       </React.Fragment>

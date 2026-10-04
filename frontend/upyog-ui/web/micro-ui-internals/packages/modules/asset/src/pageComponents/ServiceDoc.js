@@ -29,7 +29,7 @@ const ServiceDoc = ({
          
           <CardSectionHeader>{t("AST_REQ_SCREEN_LABEL")}</CardSectionHeader>
           
-          <CardText className="asset-auto-218">{t('AST_DOCUMENT_ACCEPTED_PDF_JPG_PNG')}</CardText>
+          <CardText className="asset-service-doc-label-red">{t('AST_DOCUMENT_ACCEPTED_PDF_JPG_PNG')}</CardText>
 
           <div>
             {isLoading && <Loader />}

@@ -56,12 +56,12 @@ const ADSCartAndCancellationPolicyDetails = () => {
     setParams(updatedParams);
   };
   const columns = [{
-    Header: () => <div className="ads-auto-3">{t("S_NO")}</div>,
+    Header: () => <div className="ads-cart-and-cancellation-policy-details-indent-50">{t("S_NO")}</div>,
     // Use a function to render header with padding
     accessor: "sNo",
     Cell: ({
       row
-    }) => <div className="ads-auto-4">
+    }) => <div className="ads-cart-and-cancellation-policy-details-indent-50">
           {row.index + 1} {/* Display the row index + 1 for S.No */}
         </div>
   }, {
@@ -85,7 +85,7 @@ const ADSCartAndCancellationPolicyDetails = () => {
     Cell: ({
       row
     }) => <button onClick={() => handleDelete(row.index)}>
-          <DeleteIcon className="delete ads-auto-5" fill="#a82227" />
+          <DeleteIcon className="delete ads-cart-and-cancellation-policy-details-icon-action-ml-md" fill="#a82227" />
         </button>
   }
   // { Header: t("TOTAL_PRICE"), accessor: "price" },
@@ -125,8 +125,8 @@ const ADSCartAndCancellationPolicyDetails = () => {
     setShowCancellationPolicy(prev => !prev);
   };
   const renderCancellationPolicy = policy => {
-    return <ol className="ads-auto-6">
-        {policy.split("\n").filter(line => line.trim() !== "").map((line, index) => <li key={index} className="ads-auto-7">
+    return <ol className="ads-cart-and-cancellation-policy-details-indent-20">
+        {policy.split("\n").filter(line => line.trim() !== "").map((line, index) => <li key={index} className="ads-cart-and-cancellation-policy-details-mb-sm">
               <CardLabelDesc>{line.trim()}</CardLabelDesc>
             </li>)}
       </ol>;
@@ -139,13 +139,13 @@ const ADSCartAndCancellationPolicyDetails = () => {
   const totalBookingAmount = mutation.data?.demands[0] && mutation.data?.demands[0]?.additionalDetails; // Replace with actual amount
 
   return <div>
-      <CardSubHeader className="ads-auto-8">Cart Details</CardSubHeader>
+      <CardSubHeader className="ads-cart-and-cancellation-policy-details-subheader-red">Cart Details</CardSubHeader>
 
-      <div className="ads-auto-9">
+      <div className="ads-cart-and-cancellation-policy-details-subheader-full-width-row-between">
         <div>
-          <div onClick={handleCartClick} className="ads-auto-10">
-            <div class="container" className="ads-auto-11">            <div className="ads-auto-12">
-              <div className="ads-auto-13">
+          <div onClick={handleCartClick} className="ads-cart-and-cancellation-policy-details-btn-title-md-red">
+            <div class="container" className="ads-cart-and-cancellation-policy-details-item">            <div className="ads-cart-and-cancellation-policy-details-relative">
+              <div className="ads-cart-and-cancellation-policy-details-absolute-center-text">
               <div> {params?.adslist?.cartDetails.length}</div>
 
               </div>
@@ -155,17 +155,17 @@ const ADSCartAndCancellationPolicyDetails = () => {
             
           </div>
            
-                  <div onClick={handleCancellationPolicyClick} className="ads-auto-14">
+                  <div onClick={handleCancellationPolicyClick} className="ads-cart-and-cancellation-policy-details-btn-title-md-red">
             Terms and Conditions
           </div>
         </div>
-        <div onClick={handlePriceBreakupClick} className="ads-auto-15">
+        <div onClick={handlePriceBreakupClick} className="ads-cart-and-cancellation-policy-details-btn-title-md-red-2">
           Total Booking Amount: <strong>{totalBookingAmount} INR</strong>
         </div>
       </div>
       {showCancellationPolicy && (
         <Modal
-          headerBarMain={<CardSubHeader style={{ color: "#a82227", margin: "25px" }}>Terms and Conditions</CardSubHeader>}
+          headerBarMain={<CardSubHeader className="ads-adscart-and-cancellation-policy-details-header">Terms and Conditions</CardSubHeader>}
           headerBarEnd={<CloseBtn onClick={handleCancellationPolicyClick} />}
           popupStyles={{
             backgroundColor: "#fff",
@@ -179,7 +179,7 @@ const ADSCartAndCancellationPolicyDetails = () => {
               {cancelpolicyData?.length > 0 ? (
                 renderCancellationPolicy(cancelpolicyData[0].termsAndCondition)
               ) : (
-                <CardLabel style={{ fontSize: "20px" }}>Loading...</CardLabel>
+                <CardLabel className="ads-adscart-and-cancellation-policy-details-card">Loading...</CardLabel>
               )}
             </div>
           }
@@ -194,7 +194,6 @@ const ADSCartAndCancellationPolicyDetails = () => {
           formId="modalForm"
           isDisabled={false}
           hideSubmit={true}
-          style={{}}
           popupModuleMianStyles={{ padding: "10px" }}
           headerBarMainStyle={{ position: "sticky", top: 0, backgroundColor: "#f5f5f5" }}
           isOBPSFlow={false}
@@ -205,7 +204,7 @@ const ADSCartAndCancellationPolicyDetails = () => {
       )}
       {showViewCart && (
         <Modal
-          headerBarMain={<CardSubHeader style={{ color: "#a82227", margin: "25px" }}>My Cart</CardSubHeader>}
+          headerBarMain={<CardSubHeader className="ads-adscart-and-cancellation-policy-details-header">My Cart</CardSubHeader>}
           headerBarEnd={<CloseBtn onClick={handleCartClick} />}
           popupStyles={{ backgroundColor: "#fff", position: "relative", maxHeight: "80vh", width: "80%", overflowY: "auto" }}
           popupModuleMianStyles={{ padding: "10px" }}
@@ -231,20 +230,20 @@ const ADSCartAndCancellationPolicyDetails = () => {
       )}
       {showPriceBreakup && (
         <Modal
-          headerBarMain={<CardSubHeader style={{ color: '#a82227', margin: '25px' }}>Price Breakup</CardSubHeader>}
+          headerBarMain={<CardSubHeader className="ads-adscart-and-cancellation-policy-details-header">Price Breakup</CardSubHeader>}
           headerBarEnd={<CloseBtn onClick={handlePriceBreakupClick} />}
           popupStyles={{ backgroundColor: "#fff", position: 'relative', maxHeight: '90vh', width: '60%', overflowY: 'auto' }}
           children={
             <div>
-              <CardLabelDesc style={{ marginBottom: '15px' }}>Estimate Price Details</CardLabelDesc>
+              <CardLabelDesc className="ads-adscart-and-cancellation-policy-details-card-2">Estimate Price Details</CardLabelDesc>
               <ul>
-                {mutation.data?.demands[0]?.demandDetails && mutation.data?.demands[0]?.demandDetails.map((demands, index) => <li key={index} className="ads-auto-23">
+                {mutation.data?.demands[0]?.demandDetails && mutation.data?.demands[0]?.demandDetails.map((demands, index) => <li key={index} className="ads-cart-and-cancellation-policy-details-label-row-between-flex">
                     <CardText>{t(`${demands.taxHeadMasterCode}`)}</CardText>
                     <CardText>Rs {demands.taxAmount}</CardText>
                   </li>)}
               </ul>
               <hr />
-              <div className="ads-auto-24">
+              <div className="ads-cart-and-cancellation-policy-details-row-between-flex">
                 <CardLabelDesc>Total</CardLabelDesc>
                 <CardLabelDesc>Rs {mutation.data?.demands[0]?.demandDetails && calculateTotalAmount(mutation.data?.demands[0]?.demandDetails)}</CardLabelDesc>
               </div>
@@ -265,7 +264,7 @@ const ADSCartAndCancellationPolicyDetails = () => {
     }} // Hide Action Bar
     isOpen={showPriceBreakup} // Pass isOpen prop
     onClose={handlePriceBreakupClick} // Pass onClose prop
-    className="ads-auto-20" />)}
+    className="" />)}
     </div>;
 };
 export default ADSCartAndCancellationPolicyDetails;

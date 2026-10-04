@@ -1,4 +1,4 @@
-import { PrivateRoute,BreadCrumb,AppContainer,BackButton } from "@nudmcdgnpm/digit-ui-react-components";
+import { PrivateRoute, BreadCrumb, AppContainer, BackButton } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation, Routes, Route } from "react-router-dom";
@@ -6,7 +6,6 @@ import { ASSETLinks } from "../../Module";
 import SearchApp from "./SearchApp";
 import SearchReport from "./SearchReport";
 import Inbox from "./Inbox";
-import "../../css/asset-inline-auto.css";
 const EmployeeApp = ({
   path,
   url,
@@ -50,7 +49,7 @@ const EmployeeApp = ({
       content: t("ES_TITLE_INBOX"),
       show: location.pathname.includes("asset/assetservice/inbox") ? false : false
     }];
-    return <BreadCrumb style={isMobile ? { display: "flex"} : { margin: "0 0 4px", color: "#000000" }} spanStyle={{ maxWidth: "min-content" }} crumbs={crumbs} />;
+    return <BreadCrumb style={isMobile ? { display: "flex" } : { margin: "0 0 4px", color: "#000000" }} spanStyle={{ maxWidth: "min-content" }} crumbs={crumbs} />;
   };
   const NewAssetAssignApplication = Digit?.ComponentRegistryService?.getComponent("AssignAssetApplication");
   const DisposeApplication = Digit?.ComponentRegistryService?.getComponent("DisposeApplication");
@@ -76,16 +75,16 @@ const EmployeeApp = ({
       <React.Fragment>
         <div className="ground-container">
           {!isRes ? (
-            <div className={`registration-form ${isNewRegistration ?  "default" : "compact"}`}>
+            <div className={`registration-form ${isNewRegistration ? "default" : "compact"}`}>
               <BackButton location={location} />
-              <span className="asset-auto-224">|</span>
+              <span className="asset-index-item">|</span>
               <AssetBreadCrumbs location={location} />
             </div>
           ) : null}
           <Routes>
             <Route path="/*" element={<PrivateRoute><ASSETLinks userType={userType} /></PrivateRoute>} />
             <Route
-              path= "assetservice/inbox/*"
+              path="assetservice/inbox/*"
               element={
                 <PrivateRoute>
                   <Inbox
@@ -99,106 +98,106 @@ const EmployeeApp = ({
                 </PrivateRoute>
               }
             />
-            <Route path= "assetservice/assign-assets/:id" element={<PrivateRoute><NewAssetAssignApplication /></PrivateRoute>} />
-            <Route path= "assetservice/maintenance-assets/:id" element={<PrivateRoute><MaintenanceApplication /></PrivateRoute>} />
-            <Route path= "assetservice/dispose-assets/:id" element={<PrivateRoute><DisposeApplication /></PrivateRoute>} />
-            <Route path= "assetservice/return-assets/:id" element={<PrivateRoute><NewAssetReturnApplication  /></PrivateRoute>} />
-            <Route path= "assetservice/edit/:id" element={<PrivateRoute><EditAsset /></PrivateRoute>} />
-            <Route path= "assetservice/new-assets/*" element={<PrivateRoute><ASSETCreate /></PrivateRoute>} />
-            <Route path= "assetservice/application-details/:id" element={<PrivateRoute><ApplicationDetails /></PrivateRoute>} />
-            <Route path= "assetservice/applicationsearch/application-details/:id" element={<PrivateRoute><ApplicationDetails /></PrivateRoute>} />
-            <Route path= "assetservice/assign-response/*" element={<PrivateRoute><Response  /></PrivateRoute>} />
-            <Route path= "assetservice/maintenance/*" element={<PrivateRoute><Maintenance  /></PrivateRoute>} />
-            <Route path= "assetservice/edit-maintenance/*" element={<PrivateRoute><EditMaintenance  /></PrivateRoute>} />
-            <Route path= "assetservice/maintenance-edit/:id" element={<PrivateRoute><EditAssetMaintenance /></PrivateRoute>} />
-            <Route path= "assetservice/asset-dispose-response/*" element={<PrivateRoute><DisposeResponse  /></PrivateRoute>} />
-            <Route path= "assetservice/asset-process-depreciation-response/*" element={<PrivateRoute><ProcessDepreciationResponse  /></PrivateRoute>} />
-            <Route path= "assetservice/return-response/*" element={<PrivateRoute><ReturnResponse  /></PrivateRoute>} />
+            <Route path="assetservice/assign-assets/:id" element={<PrivateRoute><NewAssetAssignApplication /></PrivateRoute>} />
+            <Route path="assetservice/maintenance-assets/:id" element={<PrivateRoute><MaintenanceApplication /></PrivateRoute>} />
+            <Route path="assetservice/dispose-assets/:id" element={<PrivateRoute><DisposeApplication /></PrivateRoute>} />
+            <Route path="assetservice/return-assets/:id" element={<PrivateRoute><NewAssetReturnApplication /></PrivateRoute>} />
+            <Route path="assetservice/edit/:id" element={<PrivateRoute><EditAsset /></PrivateRoute>} />
+            <Route path="assetservice/new-assets/*" element={<PrivateRoute><ASSETCreate /></PrivateRoute>} />
+            <Route path="assetservice/application-details/:id" element={<PrivateRoute><ApplicationDetails /></PrivateRoute>} />
+            <Route path="assetservice/applicationsearch/application-details/:id" element={<PrivateRoute><ApplicationDetails /></PrivateRoute>} />
+            <Route path="assetservice/assign-response/*" element={<PrivateRoute><Response /></PrivateRoute>} />
+            <Route path="assetservice/maintenance/*" element={<PrivateRoute><Maintenance /></PrivateRoute>} />
+            <Route path="assetservice/edit-maintenance/*" element={<PrivateRoute><EditMaintenance /></PrivateRoute>} />
+            <Route path="assetservice/maintenance-edit/:id" element={<PrivateRoute><EditAssetMaintenance /></PrivateRoute>} />
+            <Route path="assetservice/asset-dispose-response/*" element={<PrivateRoute><DisposeResponse /></PrivateRoute>} />
+            <Route path="assetservice/asset-process-depreciation-response/*" element={<PrivateRoute><ProcessDepreciationResponse /></PrivateRoute>} />
+            <Route path="assetservice/return-response/*" element={<PrivateRoute><ReturnResponse /></PrivateRoute>} />
             {/* <Route path= "assetservice/search/*" element={<PrivateRoute><Search /></PrivateRoute>} /> */}
-            <Route path= "assetservice/my-asset/*" element={<PrivateRoute><SearchApp  /></PrivateRoute>} />
-            <Route path= "assetservice/report/*" element={<PrivateRoute><SearchReport  /></PrivateRoute>} />
-            <Route path= "assetservice/edit-response/*" element={<PrivateRoute><EditResponse /></PrivateRoute>} />
-            
+            <Route path="assetservice/my-asset/*" element={<PrivateRoute><SearchApp /></PrivateRoute>} />
+            <Route path="assetservice/report/*" element={<PrivateRoute><SearchReport /></PrivateRoute>} />
+            <Route path="assetservice/edit-response/*" element={<PrivateRoute><EditResponse /></PrivateRoute>} />
+
             <Route path="AssetapplicationReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetapplicationReport" /></PrivateRoute>} />
             <Route path="LandReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="LandReport" /></PrivateRoute>} />
             <Route path="AssetapplicationReportULBwise/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetapplicationReportULBwise" /></PrivateRoute>} />
             <Route path="AssetCountReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetCountReport" /></PrivateRoute>} />
-<Route path="AssetMaintenanceReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetMaintenanceReport" /></PrivateRoute>} />
-<Route path="AssetDisposalReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetDisposalReport" /></PrivateRoute>} />
-<Route path="AssetAssignmentReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetAssignmentReport" /></PrivateRoute>} />
-<Route path="DetailedBuildingAssetsReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="DetailedBuildingAssetsReport" /></PrivateRoute>} />
-<Route path="PlantsMachineryReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="PlantsMachineryReport" /></PrivateRoute>} />  
-              <Route
-                path="LandReport"
-                element={
-                  <PrivateRoute>
-                    <EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="LandReport" />
-                  </PrivateRoute>
-                }
-              />
+            <Route path="AssetMaintenanceReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetMaintenanceReport" /></PrivateRoute>} />
+            <Route path="AssetDisposalReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetDisposalReport" /></PrivateRoute>} />
+            <Route path="AssetAssignmentReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetAssignmentReport" /></PrivateRoute>} />
+            <Route path="DetailedBuildingAssetsReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="DetailedBuildingAssetsReport" /></PrivateRoute>} />
+            <Route path="PlantsMachineryReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="PlantsMachineryReport" /></PrivateRoute>} />
+            <Route
+              path="LandReport"
+              element={
+                <PrivateRoute>
+                  <EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="LandReport" />
+                </PrivateRoute>
+              }
+            />
 
-              <Route
-                path="AssetapplicationReportULBwise"
-                element={
-                  <PrivateRoute>
-                    <EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetapplicationReportULBwise" />
-                  </PrivateRoute>
-                }
-              />
+            <Route
+              path="AssetapplicationReportULBwise"
+              element={
+                <PrivateRoute>
+                  <EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetapplicationReportULBwise" />
+                </PrivateRoute>
+              }
+            />
 
-              <Route
-                path="AssetCountReport"
-                element={
-                  <PrivateRoute>
-                    <EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetCountReport" />
-                  </PrivateRoute>
-                }
-              />
+            <Route
+              path="AssetCountReport"
+              element={
+                <PrivateRoute>
+                  <EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetCountReport" />
+                </PrivateRoute>
+              }
+            />
 
-              <Route
-                path="AssetMaintenanceReport"
-                element={
-                  <PrivateRoute>
-                    <EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetMaintenanceReport" />
-                  </PrivateRoute>
-                }
-              />
+            <Route
+              path="AssetMaintenanceReport"
+              element={
+                <PrivateRoute>
+                  <EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetMaintenanceReport" />
+                </PrivateRoute>
+              }
+            />
 
-              <Route
-                path="AssetDisposalReport"
-                element={
-                  <PrivateRoute>
-                    <EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetDisposalReport" />
-                  </PrivateRoute>
-                }
-              />
+            <Route
+              path="AssetDisposalReport"
+              element={
+                <PrivateRoute>
+                  <EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetDisposalReport" />
+                </PrivateRoute>
+              }
+            />
 
-              <Route
-                path="AssetAssignmentReport"
-                element={
-                  <PrivateRoute>
-                    <EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetAssignmentReport" />
-                  </PrivateRoute>
-                }
-              />
+            <Route
+              path="AssetAssignmentReport"
+              element={
+                <PrivateRoute>
+                  <EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="AssetAssignmentReport" />
+                </PrivateRoute>
+              }
+            />
 
-              <Route
-                path="DetailedBuildingAssetsReport"
-                element={
-                  <PrivateRoute>
-                    <EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="DetailedBuildingAssetsReport" />
-                  </PrivateRoute>
-                }
-              />
+            <Route
+              path="DetailedBuildingAssetsReport"
+              element={
+                <PrivateRoute>
+                  <EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="DetailedBuildingAssetsReport" />
+                </PrivateRoute>
+              }
+            />
 
-              <Route
-                path="PlantsMachineryReport"
-                element={
-                  <PrivateRoute>
-                    <EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="PlantsMachineryReport" />
-                  </PrivateRoute>
-                }
-              />
+            <Route
+              path="PlantsMachineryReport"
+              element={
+                <PrivateRoute>
+                  <EnhancedReport parentRoute={path} moduleName="rainmaker-asset" reportName="PlantsMachineryReport" />
+                </PrivateRoute>
+              }
+            />
           </Routes>
         </div>
       </React.Fragment>

@@ -61,9 +61,9 @@ const WrapUnMaskComponent = React.memo(({ privacy = {}, value, unmaskField, ...r
     return !unmaskField ? (
       <Loader />
     ) : (
-      <span style={{ display: "inline-flex", width: "fit-content", marginLeft: isMobile && isEmployee ?"":"10px" }}>
+      <span className={isMobile && isEmployee ? "unmask-container--mobile" : "unmask-container--desktop"}>
         <div className={`tooltip`}>
-          <PrivacyMaskIcon className="privacy-icon-2" style={{ ...rem?.style, cursor: "default" }}></PrivacyMaskIcon>
+          <PrivacyMaskIcon className="privacy-icon-2" style={rem?.style} className="cursor-pointer-default"></PrivacyMaskIcon>
         </div>
       </span>
     );
@@ -79,7 +79,7 @@ const WrapUnMaskComponent = React.memo(({ privacy = {}, value, unmaskField, ...r
     <React.Fragment>
       {!unmaskField && value}
       {privacy && (
-        <span style={{ display: "inline-flex", width: "fit-content", marginLeft: "10px" }}>
+        <span className="rc-status-table-spacing">
           <UnMaskComponent
             privacy={privacy}
             unmaskData={() => {

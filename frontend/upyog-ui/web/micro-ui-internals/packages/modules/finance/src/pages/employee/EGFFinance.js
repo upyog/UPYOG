@@ -142,7 +142,7 @@ const EGFFinance = () => {
         id="erp_iframe"
         height={winheight}
         width="100%"
-        style={{ display: "none", border: "none" }}
+        className="fin-egffinance-hidden"
         title="EGF Finance"
       />
 

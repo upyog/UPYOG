@@ -67,8 +67,8 @@ const ChangeCity = (prop) => {
   // } else {
   //   return (
   //     <React.Fragment>
-  //       <div style={{ marginBottom: "5px" }}>City</div>
-  //       <div className="language-selector" style={{display: "flex", flexWrap: "wrap"}}>
+  //       <div className="custom-style">City</div>
+  //       <div className="language-selector" className="custom-style">
   //         {selectCityData?.map((city, index) => (
   //           <div className="language-button-container" key={index}>
   //             <CustomButton

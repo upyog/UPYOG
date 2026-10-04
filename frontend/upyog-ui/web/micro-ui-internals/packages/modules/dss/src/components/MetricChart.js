@@ -11,7 +11,7 @@ const MetricData = ({ t, data, code, indexValuesWithStar }) => {
   const insight = data?.insight?.value?.replace(/[+-]/g, "")?.split("%");
   return (
     <div>
-      <div className="heading-m" style={{ textAlign: "right", paddingTop: "0px", whiteSpace: "nowrap" }}>
+      <div className="heading-m dss-metric-chart-spacing">
         {indexValuesWithStar?.includes(code) ? (
           <Rating toolTipText={t("COMMON_RATING_LABEL")} currentRating={Math.round(data?.headerValue * 10) / 10} styles={{ width: "unset", marginBottom:"unset" }} starStyles={{ width: "25px" }} />
         ) : data?.headerName.includes("AVG") ? (
@@ -38,14 +38,10 @@ const MetricData = ({ t, data, code, indexValuesWithStar }) => {
       </div>
       {/* {data?.insight && (
         <div
-          style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "end",
-          }}
+          className="custom-style"
         >
           {data?.insight?.indicator === "upper_green" ? ArrowUpwardElement("10px") : ArrowDownwardElement("10px")}
-          <p className={`${data?.insight.colorCode}`} style={{ whiteSpace: "pre" }}>
+          <p className={`${data?.insight.colorCode}`} className="custom-style">
             {insight?.[0] &&
               `${Digit.Utils.dss.formatter(insight[0], "number", value?.denomination, true, t)}% ${t(
                 Digit.Utils.locale.getTransformedLocale("DSS" + insight?.[1] || "")
@@ -113,19 +109,11 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
       <div className="row">
         <div className={`tooltip`}>
           {t(data.name)}
-          <span
-            className="tooltiptext"
-            style={{
-              fontSize: "medium",
-              width : t(`TIP_${data.name}`).length < 50 ? 200 : 400,
-              height: 50,
-              whiteSpace: "normal",
-            }}
-          >
-            <span style={{ fontWeight: "500", color: "white" }}>{t(`TIP_${data.name}`)}</span>
+          <span className={`tooltiptext dss-tooltip-metric-box ${t(`TIP_${data.name}`).length < 50 ? "width-200" : "width-400"}`}>
+            <span className="dss-metric-chart-text-style">{t(`TIP_${data.name}`)}</span>
           </span>
         </div>
-        <span style={{ whiteSpace: "pre" }}>{t("DSS_NO_DATA")}</span>
+        <span className="dss-generic-chart-wrapper-2">{t("DSS_NO_DATA")}</span>
       </div>
     );
   }
@@ -149,22 +137,14 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
     <div className="row">
       <div className={`tooltip`}>
         {typeof name == "string" && name}
-        {Array.isArray(name) && name?.filter((ele) => ele)?.map((ele) => <div style={{ whiteSpace: "pre" }}>{ele}</div>)}
-        <span className="dss-white-pre" style={{ display: "block" }}>
+        {Array.isArray(name) && name?.filter((ele) => ele)?.map((ele) => <div className="dss-generic-chart-wrapper-2">{ele}</div>)}
+        <span className="dss-white-pre dss-metric-chart-wrapper">
           {" "}
           {showDate?.[id]?.todaysDate}
         </span>
-        <span
-          className="tooltiptext"
-          style={{
-            fontSize: "medium",
-            width: getWidth(data),
-            height: getHeight(data),
-            whiteSpace: "normal",
-          }}
-        >
-          <span style={{ fontWeight: "500", color: "white" }}>{t(`TIP_${data.name}`)}</span>
-          <span style={{ color: "white" }}> {showDate?.[id]?.lastUpdatedTime}</span>
+        <span className={`tooltiptext dss-tooltip-metric-box ${isMobile ? "width-auto height-auto" : t(`TIP_${data.name}`).length < 50 ? "width-200" : "width-400"}`}>
+          <span className="dss-metric-chart-text-style">{t(`TIP_${data.name}`)}</span>
+          <span className="dss-metric-chart-wrapper-2"> {showDate?.[id]?.lastUpdatedTime}</span>
         </span>
       </div>
       <MetricData t={t} data={response?.responseData?.data?.[0]} code={response?.responseData?.visualizationCode} indexValuesWithStar={indexValuesWithStar} />
