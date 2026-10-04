@@ -263,7 +263,7 @@ const ApplicationDetails = () => {
       pdfUrl: file,
       tenantId: "pg.citya",
       module: "TL",
-      redirectUrl: "",
+      redirectUrl: "https://upyog-test.niua.org/requester-services-dx/eSign/redirect?module=TL",
       "fileStoreId": id,
       "consumerCode": res?.Licenses?.[0]?.licenseNumber
     };
@@ -323,6 +323,7 @@ const ApplicationDetails = () => {
           window.open(receiptFile[TLcertificatefile.filestoreIds[0]], "_blank");
         }
         setIsDisplayDownloadMenu(false);
+        await fetchDigiLockerDocuments(receiptFile[TLcertificatefile.filestoreIds[0]], TLcertificatefile.filestoreIds[0], res);
       }
     } catch (err) {
       console.error("Certificate download failed completely", err);

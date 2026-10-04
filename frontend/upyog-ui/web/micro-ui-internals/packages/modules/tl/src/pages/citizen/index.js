@@ -23,16 +23,16 @@ const App = () => {
   const TLList = Digit?.ComponentRegistryService?.getComponent('TLList');
   const SearchTradeComponent = Digit?.ComponentRegistryService?.getComponent('TLSearchTradeComponent');
   const TLMyApplications = Digit?.ComponentRegistryService?.getComponent('TLMyApplications');
+  const CommonRedirect = Digit?.ComponentRegistryService?.getComponent('CommonRedirect');
 
   const getBackPageNumber = () => {
     let goBacktoFromProperty = -1;
-  if(sessionStorage.getItem("VisitedCommonPTSearch") === "true" && (sessionStorage.getItem("VisitedAccessoriesDetails") === "true" || sessionStorage.getItem("VisitedisAccessories") === "true") && isCommonPTPropertyScreen)
-  {
-    goBacktoFromProperty = -4;
-    sessionStorage.removeItem("VisitedCommonPTSearch");
+    if (sessionStorage.getItem("VisitedCommonPTSearch") === "true" && (sessionStorage.getItem("VisitedAccessoriesDetails") === "true" || sessionStorage.getItem("VisitedisAccessories") === "true") && isCommonPTPropertyScreen) {
+      goBacktoFromProperty = -4;
+      sessionStorage.removeItem("VisitedCommonPTSearch");
+      return goBacktoFromProperty;
+    }
     return goBacktoFromProperty;
-  }
-  return goBacktoFromProperty;
   }
 
   return (
