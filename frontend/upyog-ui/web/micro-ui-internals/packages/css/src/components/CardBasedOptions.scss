@@ -1,7 +1,5 @@
 .CardBasedOptions{
-  box-shadow: #32325d14 0px 50px 100px -20px, rgb(0 0 0 / 18%) 0px 30px 60px -30px, #0a254038 0px -2px 6px 0px inset;
-  border-radius: 12px;
-  padding: 0px !important;
+  border-radius: 10px;
   @apply bg-white mb-md px-sm py-md mx-sm rounded w-full;
   .headContent{
       @apply flex justify-between mb-lg;
@@ -44,47 +42,57 @@
 
 @screen dt{
   .CardBasedOptions{
-      width: calc( 50% - 16px );
+    width: calc( 50% - 10px );
     padding: 0px !important;
-    height: 250px !important;
+    height: 210px !important;
+    margin: 0px;
   }
 }
 .citizen .ServicesSection .CardBasedOptions:nth-child(odd){
   .employeeCustomCard{
-    background-image: url("https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-red-card.png");
-    background-size: cover
+    background: linear-gradient(98.58deg, #6A4A91 0%, #BCA8D8 100.61%);
+    background-size: cover;
+    .ChildOptionImageWrapper{
+      background: rgba(240, 233, 247, 1);
+      svg{
+        fill: rgba(88, 79, 116, 1);
+        path{
+        fill: rgba(88, 79, 116, 1);
+        }
+      }
+    }
   }
 }
 .citizen .ServicesSection .CardBasedOptions:nth-child(even){
   .employeeCustomCard{
-background-image: url("https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-green-card.png");
-background-size: cover
+    background: linear-gradient(98.58deg, #D85A5A 0%, #F5B2B2 100.61%);
+    background-size: cover
   }
 }
 .citizen .employeeCustomCard {
   border-radius: 10px;
-  background-image: url(https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-red-card.png);
-      background-size: cover;
-    .employeeCustomCard {
-      border-radius: 10px;
-      background-image: url(https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/top-red-card.png);
-      background-size: cover;
+  .inboxButton{
+    padding: 20px 15px 0 0;
+    text-decoration: underline;
+    font-size: 12px;
+    font-weight: 600;
   }
 }
 .employee-card-banner{
     background-color: white;
-    width: 88%;
+    width: 90%;
     height: 60%;
     bottom: 0px;
     position: absolute;
     margin-bottom: -10%;
-    left: 6%;
-    box-shadow: 1px 5px 6px 0px #e3e4e3;
+    left: 5%;
     border-radius: 10px;
+    box-shadow: none;
 }
 .citizen .employee-card-banner{
-  margin-bottom: -5% !important;
-  height: 65% !important;
+  margin-bottom: 4% !important;
+  height: 120px !important;
+  box-shadow: none;
 }
 .text-employee-card{
   font-size: 1.5rem;

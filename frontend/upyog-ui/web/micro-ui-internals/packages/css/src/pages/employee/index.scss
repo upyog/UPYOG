@@ -178,9 +178,7 @@
 }
 .citizen {
   .main {
-    padding-top: 82px;
     min-height: calc(100vh - 48px);
-    display: flex !important;
   }
 }
 .citizen,
@@ -433,10 +431,11 @@
   @apply flex float-right;
   display: flex;
   .EventNotificationWrapper{
+    margin: 0px 30px;
     @apply relative cursor-pointer;
     span{
-      top: -10px;
-      right: -10px;
+      top: -6px;
+      right: -8px;
       @apply absolute bg-error h-5 w-5 rounded-full text-center;
       p {
         line-height: 20px;
@@ -446,7 +445,7 @@
   .select-wrap {
     margin-bottom: unset;
     svg {
-      fill: #ffffff;
+      fill: #000;
     }
   }
 }
@@ -515,7 +514,6 @@
     .main {
       display: flex;
       flex-direction: column;
-      padding-top: 80px;
       margin-left: 64px;
       width: calc(100% - 83px);
     }
@@ -533,14 +531,25 @@
   .citizen {
     .main {
       width: 100%;
-      padding-top: 80px;
       min-height: calc(100vh - 48px);
-      margin-bottom: 18px !important;
+      margin-bottom: 0px !important;
       display: flex !important;
+
+      .main-body{
+        margin-top: 84px;
+        width: 100%;
+        height: calc(100vh - 84px);
+        overflow-y: scroll;
+        overflow-x: hidden;
+        background: #F7F5FA;
+      }
+      .body-topBar{
+        margin-top: 0px;
+        height: 100vh;
+        overflow-y: hidden;
+      }
     }
 
-    .center-container {
-    }
   }
  
 }
@@ -622,4 +631,11 @@ height: 220px;
 box-shadow: #32325d14 0px 50px 100px -20px, rgb(0 0 0 / 18%) 0px 30px 60px -30px, #0a254038 0px -2px 6px 0px inset;
 border-radius: 12px;
 }
+}
+
+.employee{
+  .main{
+    padding-top: 0px;
+    margin-left: 0px;
+  }
 }

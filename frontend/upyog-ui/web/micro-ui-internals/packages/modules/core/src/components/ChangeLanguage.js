@@ -17,7 +17,7 @@ const ChangeLanguage = (prop) => {
 
   if (isDropdown) {
     return (
-      <div>
+      <div className={prop.classes || ""}>
         <Dropdown
           option={languages}
           selected={languages.find((language) => language.value === selectedLanguage)}

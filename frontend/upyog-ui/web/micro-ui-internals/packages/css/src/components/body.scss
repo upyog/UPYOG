@@ -13,8 +13,6 @@ body,
   @apply bg-grey-bg;
 }
 .navbar {
-  @apply text-white bg-secondary p-md w-full mb-md;
-  background: linear-gradient(to right, #feeee7, #a82227,#feeee7) !important;
   img {
     height: 24px;
   }
@@ -115,6 +113,7 @@ body,
         .input-otp-wrap,
         .card-text-button {
           text-align: left;
+          display: flex; 
         }
       }
     }
