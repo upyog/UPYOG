@@ -274,9 +274,8 @@ function PTRSelectDocument({
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t(doc?.code.replaceAll(".", "_"))} <span className="astericColor">*</span></CardLabel>
           <Dropdown
-            className="form-field"
+            className={`form-field ${user?.type === "EMPLOYEE" ? "field-width--employee-50" : "field-width--full"}`}
             selected={selectedDocument}
-            className={user?.type === "EMPLOYEE" ? "field-width--employee-50" : "field-width--full"}
             option={dropDownData.map((e) => ({ ...e, i18nKey: e.code?.replaceAll(".", "_") }))}
             select={handlePTRSelectDocument}
             optionKey="i18nKey"

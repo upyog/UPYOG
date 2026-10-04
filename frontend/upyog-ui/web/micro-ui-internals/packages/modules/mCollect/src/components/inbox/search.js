@@ -52,7 +52,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
       <React.Fragment>
-        <div className="search-container" className={isInboxPage ? "search-container-auto-margin" : "search-container-auto"}>
+        <div className={`search-container ${isInboxPage ? "search-container-auto-margin" : "search-container-auto"}`}>
           <div className="search-complaint-container">
             {(type === "mobile" || mobileView) && (
               <div className="complaint-header">
@@ -62,62 +62,62 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                 </span>
               </div>
             )}
-            <div className={`${"complaint-input-container for-pt " + (!(type === "desktop" && !mobileView ) ? "for-search" : "")} mc-search-fullwidth`}>
+            <div className={`${"complaint-input-container for-pt " + (!(type === "desktop" && !mobileView) ? "for-search" : "")} mc-search-fullwidth`}>
               {searchFields
                 ?.filter((e) => true)
                 ?.map((input, index) => (
                   <div key={input.name} className="input-fields">
-                  <span key={index} className={"complaint-input"}>  {/* //{index === 0 ? "complaint-input" : "mobile-input"} */}
-                    <Label>{input.label}</Label>
-                    {input.type !== "date" ? (
-                      <div className="field-container">
-                        {input?.componentInFront ? (
-                          <span className="citizen-card-input citizen-card-input--front mc-search-wrapper">
-                            {input?.componentInFront}
-                          </span>
-                        ) : null}
+                    <span key={index} className={"complaint-input"}>  {/* //{index === 0 ? "complaint-input" : "mobile-input"} */}
+                      <Label>{input.label}</Label>
+                      {input.type !== "date" ? (
+                        <div className="field-container">
+                          {input?.componentInFront ? (
+                            <span className="citizen-card-input citizen-card-input--front mc-search-wrapper">
+                              {input?.componentInFront}
+                            </span>
+                          ) : null}
+                          <Controller
+                            name={input.name}
+                            control={control}
+                            defaultValue={""}
+                            render={({ field }) => (
+                              <TextInput
+                                {...input}
+                                inputRef={field.ref}
+                                value={field.value}
+                                onChange={(e) => field.onChange(e.target.value)}
+                                onBlur={field.onBlur}
+                                watch={watch}
+                                shouldUpdate={true}
+                              />
+                            )}
+                          />
+                        </div>
+                      ) : (
                         <Controller
+                          render={({ field }) => <DatePicker date={field.value} onChange={field.onChange} />}
                           name={input.name}
                           control={control}
-                          defaultValue={""}
-                          render={({ field }) => (
-                            <TextInput
-                              {...input}
-                              inputRef={field.ref}
-                              value={field.value}
-                              onChange={(e) => field.onChange(e.target.value)}
-                              onBlur={field.onBlur}
-                              watch={watch}
-                              shouldUpdate={true}
-                            />
-                          )}
+                          defaultValue={null}
                         />
-                      </div>
-                    ) : (
-                      <Controller
-                        render={({ field }) => <DatePicker date={field.value} onChange={field.onChange} />}
-                        name={input.name}
-                        control={control}
-                        defaultValue={null}
-                      />
-                    )}{" "}
-                  </span>
+                      )}{" "}
+                    </span>
                   </div>
                 ))}
-                {type === "desktop" && !mobileView && (
-                  <div className="input-fields mc-search-spacing">
+              {type === "desktop" && !mobileView && (
+                <div className="input-fields mc-search-spacing">
                   <div>{clearAll()}</div>
-                  </div>
-                )}
-                {type === "desktop" && !mobileView &&
-              <div className="search-submit-wrapper mc-search-spacing-2">
-                <SubmitBar
-                  className="submit-bar-search"
-                  label={t("UC_SEARCH_LABEL")}
-                  submit
-                />
-                {!isInboxPage && <div>{clearAll()}</div>}
-              </div>}
+                </div>
+              )}
+              {type === "desktop" && !mobileView &&
+                <div className="search-submit-wrapper mc-search-spacing-2">
+                  <SubmitBar
+                    className="submit-bar-search"
+                    label={t("UC_SEARCH_LABEL")}
+                    submit
+                  />
+                  {!isInboxPage && <div>{clearAll()}</div>}
+                </div>}
             </div>
           </div>
         </div>

@@ -177,7 +177,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
           isInboxPage={!props?.isSearch}
           searchParams={props.searchParams}
         />
-        <div className="result" className={!props?.isSearch ? "inbox-result--with-margin" : "inbox-result--no-margin"}>
+        <div className={`result ${!props?.isSearch ? "inbox-result--with-margin" : "inbox-result--no-margin"}`}>
           {result}
         </div>
       </div>

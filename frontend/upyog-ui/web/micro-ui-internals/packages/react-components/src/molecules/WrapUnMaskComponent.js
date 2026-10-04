@@ -2,7 +2,7 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Loader, UnMaskComponent,PrivacyMaskIcon} from "..";
+import { Loader, UnMaskComponent, PrivacyMaskIcon } from "..";
 
 /**
  * Custom Component to demask the masked values.
@@ -26,7 +26,7 @@ const formatValue = (showValue) => {
 const WrapUnMaskComponent = React.memo(({ privacy = {}, value, unmaskField, ...rem }) => {
   const [privacyState, setPrivacyState] = useState(false);
   const { loadData = {} } = privacy;
-  const { t } = useTranslation(); 
+  const { t } = useTranslation();
   const isMobile = window.Digit.Utils.browser.isMobile();
   const isEmployee = window.location.href.includes("/employee")
 
@@ -41,7 +41,7 @@ const WrapUnMaskComponent = React.memo(({ privacy = {}, value, unmaskField, ...r
       select: (data) => {
         if (loadData?.d) {
           let unmaskeddata = loadData?.d(data, value);
-          if(rem?.setunmaskedNumber)
+          if (rem?.setunmaskedNumber)
             rem?.setunmaskedNumber(unmaskeddata);
           return unmaskeddata;
         }
@@ -50,7 +50,7 @@ const WrapUnMaskComponent = React.memo(({ privacy = {}, value, unmaskField, ...r
     },
   ];
   const { isLoading, data, revalidate } = Digit.Hooks.useCustomAPIHook(...requestCriteria);
-  
+
   useEffect(() => {
     return () => {
       revalidate();
@@ -63,7 +63,7 @@ const WrapUnMaskComponent = React.memo(({ privacy = {}, value, unmaskField, ...r
     ) : (
       <span className={isMobile && isEmployee ? "unmask-container--mobile" : "unmask-container--desktop"}>
         <div className={`tooltip`}>
-          <PrivacyMaskIcon className="privacy-icon-2" style={rem?.style} className="cursor-pointer-default"></PrivacyMaskIcon>
+          <PrivacyMaskIcon className="cursor-pointer-default" style={rem?.style}></PrivacyMaskIcon>
         </div>
       </span>
     );

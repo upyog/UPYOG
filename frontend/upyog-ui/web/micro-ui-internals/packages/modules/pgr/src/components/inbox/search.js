@@ -82,15 +82,17 @@ const SearchComplaint = ({ onSearch, type, onClose, searchParams }) => {
                 ></TextInput>
               </span>
               {type === "desktop" && (
-                <SubmitBar
-                  className="pgr-search-top-spacing"
-                  label={t("ES_COMMON_SEARCH")}
-                  submit={true}
-                  disabled={Object.keys(errors).filter((i) => errors[i]).length}
-                />
+                <div className="search-action-wrapper">
+                  <SubmitBar
+                    className="submit-bar-search pgr-search-top-spacing"
+                    label={t("ES_COMMON_SEARCH")}
+                    submit={true}
+                    disabled={Object.keys(errors).filter((i) => errors[i]).length}
+                  />
+                  <div className="search-clear-all-wrapper">{clearAll()}</div>
+                </div>
               )}
             </div>
-            {type === "desktop" && <span className="clear-search">{clearAll()}</span>}
           </div>
         </div>
         {type === "mobile" && (

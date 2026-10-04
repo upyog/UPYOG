@@ -546,8 +546,7 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
           />
           <div className="cmn-bill-details-wrapper">
             <span
-              className="payment-amount-front"
-              className={paymentType === t("CS_PAYMENT_FULL_AMOUNT") ? "bill-details-border-gray" : "border-black"}
+              className={`payment-amount-front ${paymentType === t("CS_PAYMENT_FULL_AMOUNT") ? "bill-details-border-gray" : "border-black"}`}
             >
               ₹
             </span>

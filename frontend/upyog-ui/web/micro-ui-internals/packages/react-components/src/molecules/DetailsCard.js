@@ -56,7 +56,6 @@ const DetailsCard = ({ data, serviceRequestIdKey, linkPrefix, handleSelect, sele
           <div
             key={itemIndex}
             className={`details-container ${selectedItems?.includes(object[keyForSelected]) ? "details-card-selected-border" : "details-card-unselected-border"}`}
-            className="details-container"
             onClick={() =>handleClickEnabled && handleSelect(object)}
           >
             {Object.keys(object).filter(rowEle => !(typeof object[rowEle] == "object" && object[rowEle]?.hidden == true)).map((name, index) => {

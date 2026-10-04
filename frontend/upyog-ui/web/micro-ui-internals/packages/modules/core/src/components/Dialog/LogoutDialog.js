@@ -13,7 +13,7 @@ const Close = () => (
 );
 const CloseBtn = (props) => {
   return (
-    <div onClick={props?.onClick} style={ props?.isMobileView ? { padding: 5} : null}>
+    <div onClick={props?.onClick} style={props?.isMobileView ? { padding: 5 } : null}>
       {
         props?.isMobileView
           ? (<CloseSvg />)

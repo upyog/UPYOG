@@ -1,14 +1,11 @@
 import {
-  BackButton, CardSubHeader, CardText, FormComposer, Toast
+  FormComposer, Toast
 } from "@nudmcdgnpm/digit-ui-react-components";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-
-import Background from "../../../components/Background";
-import Header from "../../../components/Header";
 import SelectOtp from "../../citizen/Login/SelectOtp";
 
-const ChangePasswordComponent = ({ config: propsConfig, t }) => {
+const ChangePasswordComponent = ({ layout, config: propsConfig, t }) => {
   const [user, setUser] = useState(null);
   const { mobile_number: mobileNumber, tenantId } = Digit.Hooks.useQueryParams();
   const navigate = Digit.Hooks.useCustomNavigate();
@@ -16,8 +13,7 @@ const ChangePasswordComponent = ({ config: propsConfig, t }) => {
   const [isOtpValid, setIsOtpValid] = useState(true);
   const [showToast, setShowToast] = useState(null);
   const getUserType = () => Digit.UserService.getType();
-  let sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
-  const pdfUrl = "https://pg-egov-assets.s3.ap-south-1.amazonaws.com/Upyog+Code+and+Copyright+License_v1.pdf";
+  const { isEmployeeV2 = false} = layout?.loginUI
   
   useEffect(() => {
     if (!user) {
@@ -64,7 +60,7 @@ const ChangePasswordComponent = ({ config: propsConfig, t }) => {
         type: getUserType().toUpperCase(),
       };
 
-      const response = await Digit.UserService.changePassword(requestData, tenantId);
+      await Digit.UserService.changePassword(requestData, tenantId);
       navigateToLogin();
     } catch (err) {
       setShowToast(err?.response?.data?.error?.fields?.[0]?.message || t("ES_SOMETHING_WRONG"));
@@ -89,6 +85,17 @@ const ChangePasswordComponent = ({ config: propsConfig, t }) => {
           isMandatory: true,
         },
         {
+          label: "Enter OTP",
+          type: "custom",
+          populators: {
+            name: "Enter OTP",
+            component: () => (
+              <SelectOtp t={t} userType="employee" otp={otp} onOtpChange={setOtp} error={isOtpValid} onResend={onResendOTP} />
+            ),
+          },
+          isMandatory: true,
+        },
+        {
           label: t(password.label),
           type: password.type,
           populators: {
@@ -108,11 +115,11 @@ const ChangePasswordComponent = ({ config: propsConfig, t }) => {
     },
   ];
 
+  const footer = showToast && <Toast error={true} label={t(showToast)} onClose={closeToast} />;
+
   return (
-    <Background>
-      <div className="employeeBackbuttonAlign">
-        <BackButton variant="white" className="core-change-password-action-btn" />
-      </div>
+    <>
+      {footer}
       <FormComposer
         onSubmit={onChangePassword}
         noBoxShadow
@@ -120,51 +127,11 @@ const ChangePasswordComponent = ({ config: propsConfig, t }) => {
         submitInForm
         config={config}
         label={propsConfig.texts.submitButtonLabel}
-        cardStyle={{ maxWidth: "408px", margin: "auto" }}
+        cardClassName="loginFormStyleEmployee"
         className="employeeChangePassword"
       >
-        <Header />
-        <CardSubHeader className="core-change-password-centered"> {propsConfig.texts.header} </CardSubHeader>
-        <CardText>
-          {`${t(`CS_LOGIN_OTP_TEXT`)} `}
-          <b>
-            {" "}
-            {`${t(`+ 91 - `)}`} {mobileNumber}
-          </b>
-        </CardText>
-        <SelectOtp t={t} userType="employee" otp={otp} onOtpChange={setOtp} error={isOtpValid} onResend={onResendOTP} />
-        {/* <div>
-          <CardLabel className="custom-style">{t("CORE_OTP_SENT_MESSAGE")}</CardLabel>
-          <CardLabelDesc className="custom-style"> {mobileNumber} </CardLabelDesc>
-          <CardLabelDesc className="custom-style"> {t("CORE_EMPLOYEE_OTP_CHECK_MESSAGE")}</CardLabelDesc>
-        </div>
-        <CardLabel className="custom-style">{t("CORE_OTP_OTP")} *</CardLabel>
-        <TextInput className="field" name={otpReference} isRequired={true} onChange={updateOtp} type={"text"} className="custom-style" />
-        <div className="flex-right">
-          <div className="primary-label-btn" onClick={onResendOTP}>
-            {t("CORE_OTP_RESEND")}
-          </div>
-        </div> */}
       </FormComposer>
-      {showToast && <Toast error={true} label={t(showToast)} onClose={closeToast} />}
-
-      <div className="core-change-password-centered-2">
-        <div className="core-change-password-flex-row">
-          {/* <span className="custom-style" onClick={() => { window.open('https://www.digit.org/', '_blank').focus();}} >Powered by DIGIT</span>
-          <span className="custom-style">|</span> */}
-          <a className="footer-legal-link--mobile" href="#" target='_blank'>UPYOG License</a>
-
-          <span  className="upyog-copyright-footer core-change-password-spacing" >|</span>
-          <span  className="upyog-copyright-footer" className="footer-legal-link--mobile" onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
-          
-          {/* <a className="custom-style" href="#" target='_blank'>UPYOG License</a> */}
-
-        </div>
-        <div className="upyog-copyright-footer-web">
-          <span className="" className="footer-legal-link" onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
-          </div>
-      </div>
-    </Background>
+    </>
   );
 };
 

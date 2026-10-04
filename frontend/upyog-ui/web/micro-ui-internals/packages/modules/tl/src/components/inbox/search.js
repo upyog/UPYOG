@@ -153,7 +153,7 @@ const SearchLicenseApplication = ({
   };
   return <form onSubmit={handleSubmit(onSubmitInput)}>
     <React.Fragment>
-      <div className="search-container" className={isInboxPage ? "search-container-auto-margin" : "search-container-auto"}>
+      <div className={`search-container ${isInboxPage ? "search-container-auto-margin" : "search-container-auto"}`}>
         <div className="search-complaint-container">
           {(type === "mobile" || mobileView) && <div className="complaint-header">
             <h2>{t("ES_COMMON_SEARCH_BY")}</h2>
@@ -192,7 +192,7 @@ const SearchLicenseApplication = ({
             </div>)}
             {type === "desktop" && !mobileView && !isInboxPage && <div className="search-action-wrapper">
               <SubmitBar className="submit-bar-search" label={t("ES_COMMON_SEARCH")} disabled={!!Object.keys(formState.errors).length || Object.keys(form).every(key => !form?.[key])} submit />
-              
+
               <div className="tl-search-full-width-right-text">
                 {clearAll()}
               </div>

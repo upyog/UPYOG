@@ -24,7 +24,7 @@ const EmployeeApp = ({ path, url, userType }) => {
   return (
     <React.Fragment>
       <div className="ground-container">
-        <p className="breadcrumb" className={mobileView ? "breadcrumb-margin-mobile" : ""}>
+        <p className={`breadcrumb ${mobileView ? "breadcrumb-margin-mobile" : ""}`}>
           <Link to="/upyog-ui/employee" className="rcpt-index-clickable">
             {t("ES_COMMON_HOME")}
           </Link>{" "}

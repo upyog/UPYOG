@@ -330,7 +330,12 @@ const FinanceEmployeeSideBar = ({ microUiModuleEnable, isFinanceEnabled }) => {
   };
 
   return (
-    <div className="sidebar" ref={sidebarRef} onMouseOver={expandNav} onMouseLeave={collapseNav} className={`sidebar ${window.location.href.includes("main-dashboard-landing") ? "sidebar-landing-hidden" : ""}`}>
+    <div
+      className={`sidebar ${window.location.href.includes("main-dashboard-landing") ? "display-none" : ""}`}
+      ref={sidebarRef}
+      onMouseOver={expandNav}
+      onMouseLeave={collapseNav}
+    >
       {renderSearch()}
       {isFinanceEnabled && activePath ? (
         <FinanceSideBar

@@ -25,7 +25,6 @@
           Assetdescription:"",
           Department:"",
           sourceOfFinance:"",
-          assetclassification:"",
           key: Date.now(),
       });
 

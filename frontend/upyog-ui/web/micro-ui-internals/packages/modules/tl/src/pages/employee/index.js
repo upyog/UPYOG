@@ -9,6 +9,7 @@ import CommonRedirect from "../../pageComponents/CommonRedirect"
 // import Search from "./Search";
 // import Response from "../Response";
 import ApplicationDetails from "./ApplicationDetails";
+import Switch from "@upyog/digit-ui-module-dss/src/components/Switch";
 //import ReNewApplication from "./ReNewApplication";
 
 const TLBreadCrumb = ({ location }) => {
@@ -159,13 +160,13 @@ const EmployeeApp = ({ path, url, userType }) => {
   const Response = Digit?.ComponentRegistryService?.getComponent('TLResponse');
   const Search = Digit?.ComponentRegistryService?.getComponent('TLSearch');
   const EnhancedReport = Digit?.ComponentRegistryService?.getComponent("EnhancedReport");
-  
+
 
   return (
     <Switch>
       <React.Fragment>
         <div className="ground-container" style={locationCheck ? { width: "100%", marginLeft: "0px" } : { marginLeft: "0px" }}>
-          <div style={locationCheck ? { marginLeft: "15px" } : {}}>
+          <div className={`tl-breadcrumb-bar ${locationCheck ? "tl-breadcrumb-bar--active" : ""}`}>
             <TLBreadCrumb location={location} />
           </div>
           {/* <p className="breadcrumb" style={{ marginLeft: mobileView ? "2vw" : !locationCheck ? "revert": "15px" }}>
@@ -231,8 +232,9 @@ const EmployeeApp = ({ path, url, userType }) => {
           <Route path={`/TLRenewalPendingReport`} element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-tl" reportName="TLRenewalPendingReport" /></PrivateRoute>} />
           <Route path={`/TradeLicenseDefaulterReport`} element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-tl" reportName="TradeLicenseDefaulterReport" /></PrivateRoute>} />
         </Routes>
-      </div>
-    </React.Fragment>
+
+      </React.Fragment>
+    </Switch>
   );
 };
 

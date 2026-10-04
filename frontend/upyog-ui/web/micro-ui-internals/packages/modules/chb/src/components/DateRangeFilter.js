@@ -117,7 +117,6 @@ const DateRangeFilter = ({
         onClick={() => setOpen(!open)}
         >
         <span
-            className="employee-select-wrap--elipses"
             className={`employee-select-wrap--elipses ${value?.title ? "text-dark" : "text-muted"}`}
         >
             {value?.title || t("CHB_SELECT_DATES")}

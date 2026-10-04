@@ -336,7 +336,7 @@ const DesktopInbox = (props) => {
           isInboxPage={!props?.isSearch}
           searchParams={props.searchParams}
         />
-        <div className="result" className={!props?.isSearch && !FSTP ? "inbox-result--with-margin" : "inbox-result--no-margin"}>
+        <div className={`result ${!props?.isSearch && !FSTP ? "inbox-result--with-margin" : "inbox-result--no-margin"}`}>
           {result}
         </div>
       </div>

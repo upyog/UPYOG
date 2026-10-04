@@ -39,7 +39,7 @@ function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSel
   return (
     <React.Fragment>
       {!workflowDetails?.isLoading && isMenuBotton && !isSingleButton && !isAction && (
-        <ActionBar style={ActionBarStyle}>
+        <ActionBar style={ActionBarStyle} className="app-details-action-bar-override">
           {displayMenu && (workflowDetails?.data?.actionState?.nextActions || workflowDetails?.data?.nextActions) ? (
             <Menu
               localeKeyPrefix={forcedActionPrefix || `WF_EMPLOYEE_${businessService?.toUpperCase()}`}
@@ -63,7 +63,7 @@ function ApplicationDetailsActionBar({ workflowDetails, displayMenu, onActionSel
         </ActionBar>
       )}
       {!workflowDetails?.isLoading && !isMenuBotton && isSingleButton && !isAction && (
-        <ActionBar style={ActionBarStyle}>
+        <ActionBar style={ActionBarStyle} className="app-details-action-bar-override">
           <button
               className={`${"submit-bar"} tmpl-application-details-action-bar-action-btn`}
               name={actions?.[0]?.action}

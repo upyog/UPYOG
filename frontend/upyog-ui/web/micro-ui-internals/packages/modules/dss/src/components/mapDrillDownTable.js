@@ -114,7 +114,6 @@ const MapDrillChart = ({
           {data2.map((dat, i) => {
             return (
               <span
-                className={"tab-rows"}
                 className={`tab-rows ${i % 2 !== 0 ? "bg-table-alt" : ""}`}
               >
                 <span>{t(`DSS_${dat.plots[1].label}`)}</span>

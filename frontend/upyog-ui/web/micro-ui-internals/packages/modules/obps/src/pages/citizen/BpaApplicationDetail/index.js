@@ -568,8 +568,7 @@ const BpaApplicationDetail = () => {
                     <ActionBar /*className="custom-style"*/>
                       <div className="obps-inspection-report-fullwidth">
                         <button 
-                        className={`text-white ${isMobile ? "font-size-19" : ""}`}
-                        className={`${checkForSubmitDisable(isFromSendBack, isTocAccepted) ? "submit-bar-disabled" : "submit-bar"}`}
+                        className={`text-white ${isMobile ? "font-size-19" : ""} ${checkForSubmitDisable(isFromSendBack, isTocAccepted) ? "submit-bar-disabled" : "submit-bar"}`}
                         disabled={checkForSubmitDisable(isFromSendBack, isTocAccepted)} 
                         name={workflowDetails?.data?.nextActions?.[0]?.action} 
                         value={workflowDetails?.data?.nextActions?.[0]?.action}

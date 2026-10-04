@@ -17,7 +17,7 @@ import { useTranslation } from "react-i18next";
 
 const fieldComponents = {
   mobileNumber: MobileNumber,
-  Dropdown:(props) => (
+  Dropdown: (props) => (
     <Dropdown
       selected={props.value}
       select={props.onChange}
@@ -51,10 +51,10 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
     });
 
   let venues = [];
-    venueLists && venueLists.map((venue) => {
-        venues.push({i18nKey: `${venue.code}`, code: `${venue.code}`, value: `${venue.name}`, timeSlots: venue.timeSlot, parentMasterType:venue.parentMasterType});
-    });
-  
+  venueLists && venueLists.map((venue) => {
+    venues.push({ i18nKey: `${venue.code}`, code: `${venue.code}`, value: `${venue.name}`, timeSlots: venue.timeSlot, parentMasterType: venue.parentMasterType });
+  });
+
 
   const form = watch();
 
@@ -111,11 +111,11 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
       </LinkLabel>
     );
   };
-  
+
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
       <React.Fragment>
-        <div className="search-container" className={isInboxPage ? "search-container-auto-margin" : "search-container-auto"}>
+        <div className={`search-container ${isInboxPage ? "search-container-auto-margin" : "search-container-auto"}`}>
           <div className="search-complaint-container">
             {(type === "mobile" || mobileView) && (
               <div className="complaint-header">
@@ -146,7 +146,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                         <Controller
                           render={({ field }) => {
                             const Comp = fieldComponents?.[input.type];
-                            return <Comp formValue={form} setValue={setValue} onChange={field.onChange} value={field.value} options={venues} t={t}/>;
+                            return <Comp formValue={form} setValue={setValue} onChange={field.onChange} value={field.value} options={venues} t={t} />;
                           }}
                           name={input.name}
                           control={control}
@@ -178,7 +178,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                     disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
                     submit
                   />
-                  
+
                   {!isInboxPage && <div>{clearAll()}</div>}
                 </div>
               )}

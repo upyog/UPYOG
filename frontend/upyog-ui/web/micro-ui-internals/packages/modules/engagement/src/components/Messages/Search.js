@@ -1,4 +1,4 @@
-import React, {useCallback} from "react";
+import React, { useCallback } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, DateRange } from "@nudmcdgnpm/digit-ui-react-components";
 import DropdownUlb from "./DropdownUlb";
@@ -19,7 +19,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
         return (
           <Controller
             rules={{ required: true }}
-            render={({field}) => (
+            render={({ field }) => (
               <DropdownUlb
                 onAssignmentChange={field.onChange}
                 value={field.value}
@@ -36,8 +36,8 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
       case "range":
         return (
           <Controller
-            render={({field}) =>{             
-              return <DateRange t={t} values={field.value} onFilterChange={(value)=> field.onChange(value.range)} labelClass="filter-label" />
+            render={({ field }) => {
+              return <DateRange t={t} values={field.value} onFilterChange={(value) => field.onChange(value.range)} labelClass="filter-label" />
             }}
             name={input.name}
             control={control}
@@ -49,7 +49,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
       default:
         return (
           <Controller
-            render={({field}) => <TextInput onChange={field.onChange} value={field.value} />}
+            render={({ field }) => <TextInput onChange={field.onChange} value={field.value} />}
             name={input.name}
             control={control}
             defaultValue={null}
@@ -85,7 +85,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
 
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
-      <div className="search-container" className={isInboxPage ? "search-container-auto-margin" : "search-container-auto"}>
+      <div className={`search-container ${isInboxPage ? "search-container-auto-margin" : "search-container-auto"}`}>
         <div className="search-complaint-container">
           {(type === "mobile" || mobileView) && (
             <div className="complaint-header">
@@ -121,17 +121,17 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
             {/* )} */}
 
             {type === "desktop" && !mobileView && (
-                <div className="search-submit-wrapper eng-search-top-spacing-2">
-                  <SubmitBar
-                    className="submit-bar-search"
-                    label={t("ES_COMMON_SEARCH")}
-                    // disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
-                    submit
-                  />
-                  
-                  <div>{clearAll()}</div>
-                </div>
-              )}
+              <div className="search-submit-wrapper eng-search-top-spacing-2">
+                <SubmitBar
+                  className="submit-bar-search"
+                  label={t("ES_COMMON_SEARCH")}
+                  // disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
+                  submit
+                />
+
+                <div>{clearAll()}</div>
+              </div>
+            )}
           </div>
         </div>
       </div>

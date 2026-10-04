@@ -19,7 +19,7 @@ import {
     Header,
 } from "@nudmcdgnpm/digit-ui-react-components";
 const SearchFields = ({ register, control, reset, tenantId, t, previousPage, formState, isLoading }) => {
-const isMobile = window.Digit.Utils.browser.isMobile();
+    const isMobile = window.Digit.Utils.browser.isMobile();
 
     return (
         <>

@@ -39,7 +39,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   };
 
   const mobileView = innerWidth <= 640;
-  const assetClassification=[
+  const assetClassification = [
     {
       code: "MOVABLE",
       i18nKey: "MOVABLE",
@@ -96,7 +96,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
       <React.Fragment>
-        <div className="search-container" className={isInboxPage ? "search-container-auto-margin" : "search-container-auto"}>
+        <div className={`search-container ${isInboxPage ? "search-container-auto-margin" : "search-container-auto"}`}>
           <div className="search-complaint-container">
             {(type === "mobile" || mobileView) && (
               <div className="complaint-header">
@@ -127,12 +127,12 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                         <Controller
                           render={({ field }) => {
                             const Comp = fieldComponents?.[input.type];
-                            return <Comp 
-                              onChange={field.onChange} 
-                              value={field.value} 
+                            return <Comp
+                              onChange={field.onChange}
+                              value={field.value}
                               select={field.onChange}  // For Dropdown component
                               selected={field.value}   // For Dropdown component
-                              option={assetClassification} 
+                              option={assetClassification}
                               optionKey="i18nKey"
                               t={t}
                             />;
@@ -167,7 +167,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                     disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
                     submit
                   />
-                  
+
                   {!isInboxPage && <div>{clearAll()}</div>}
                 </div>
               )}

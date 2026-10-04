@@ -182,7 +182,6 @@ const UploadFile = (props) => {
       <div className={`upload-file ${user_type === "employee" ? "pgrai-upload-file-wrapper emp-45" : "upload-file-max-width pgrai-upload-file-wrapper cit-86"} ${props.disabled ? " disabled" : ""}`} style={extraStyles?.uploadFile}>
         <div className="pgrai-upload-inner-container" style={extraStyles?.containerStyles}>
           <div 
-            className="upload-button-container"
             className={`upload-button-container pgrai-upload-btn-container ${props.disabled ? "display-none" : ""}`} style={extraStyles?.buttonStyles}
             onClick={() => inpRef.current.click()}
           >

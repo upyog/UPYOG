@@ -248,8 +248,7 @@ const Dropdown = (props) => {
           </div>
         ) : (
           <div
-            className="options-card"
-            className="options-card--scrollable" style={props?.optionCardStyles}
+            className="options-card options-card--scrollable" style={props?.optionCardStyles}
             id="jk-dropdown-unique"
             ref={optionRef}
           >

@@ -38,8 +38,8 @@ const UploadPitPhoto = (props) => {
             setError("FSM_MAXIMUM_PIT_UPLOAD_SIZE_EXCEEDED");
             setTimeout(() => {
                 setError(null);
-              }, 3000);
-            
+            }, 3000);
+
         } else {
             setImage(imageFile);
         }
@@ -66,7 +66,7 @@ const UploadPitPhoto = (props) => {
         if (uploadedImagesIds === null || uploadedImagesIds.length < 3) {
             const response = await Digit.UploadServices.Filestorage("FSM", image, props.tenantId);
             setUploadedImagesIds(addUploadedImageIds(response));
-        } 
+        }
     }, [addUploadedImageIds, image]);
 
     function addImageThumbnails(thumbnailsData) {
@@ -110,7 +110,7 @@ const UploadPitPhoto = (props) => {
     const handleUpload = (event) => {
         if (uploadedImagesIds === null || uploadedImagesIds.length < 3) {
             hiddenFileInput.current.click();
-        } 
+        }
     }
     const hiddenFileInput = React.useRef(null);
 
@@ -118,7 +118,7 @@ const UploadPitPhoto = (props) => {
     // and can view preview in pop down
     return (
         <div>
-            <div className="imageUploadWrapper" className={`imageUploadWrapper ${!imageFile ? "image-upload-wrapper--hidden" : "image-upload-wrapper--visible"}`}>
+            <div className={`${!imageFile ? "image-upload-wrapper--hidden" : "image-upload-wrapper--visible"}`}>
                 <UploadImages onUpload={getImage} onDelete={deleteImage} thumbnails={uploadedImagesThumbs ? uploadedImagesThumbs.map((o) => o.image) : []} />
             </div>
             <button onClick={handleUpload} className="rc-upload-pit-photo-clickable">

@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, Row, CardHeader, StatusTable } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-import { useParams,  } from "react-router-dom";
+import { useParams, } from "react-router-dom";
 const ChallanQRCode = ({ path }) => {
     const { t } = useTranslation();
     const convertEpochToDate = (dateEpoch) => {
@@ -44,20 +44,20 @@ const ChallanQRCode = ({ path }) => {
     };
     const city = window.location.href.split("/challan/details?")?.[1].split("&")?.[0].split("=")[1]
     const challan = window.location.href.split("challan/details?")?.[1].split("&")?.[1].split("=")[1]
-    const {isLoading , data, ...rest }= Digit.Hooks.mcollect.useMCollectSearch({
-        tenantId:city,
+    const { isLoading, data, ...rest } = Digit.Hooks.mcollect.useMCollectSearch({
+        tenantId: city,
         filters: { challanNo: challan },
-      });
+    });
     return (
         <React.Fragment>
             <div className="core-assets-qrcode-fullwidth">
                 <Card>
                     <CardHeader>Challan summary</CardHeader>
-                    {!isLoading?
-                    <StatusTable>
-                        <Row label={t("CHALLAN_NUMBER")} text={data?.challans?.[0]?.challanNo|| "NA"} textStyle={{ whiteSpace: "pre" }} />
-                        <Row label={t("CHALLAN_SERVICE_TYPE")} text={ t(convertToLocale(data?.challans?.[0]?.businessService))|| "NA"} textStyle={{ whiteSpace: "pre" }} />
-                        <Row
+                    {!isLoading ?
+                        <StatusTable>
+                            <Row label={t("CHALLAN_NUMBER")} text={data?.challans?.[0]?.challanNo || "NA"} textStyle={{ whiteSpace: "pre" }} />
+                            <Row label={t("CHALLAN_SERVICE_TYPE")} text={t(convertToLocale(data?.challans?.[0]?.businessService)) || "NA"} textStyle={{ whiteSpace: "pre" }} />
+                            <Row
                                 label={t("CHALLAN_BILL_PERIOD")}
                                 text={
                                     getFinancialYears(
@@ -65,15 +65,15 @@ const ChallanQRCode = ({ path }) => {
                                         data?.challans?.[0]?.taxPeriodTo
                                     ) || "NA"
                                 }
-                        />
-                        <Row label ={t("CHALLAN_OWNER_NAME")} text={data?.challans?.[0]?.citizen?.name}/>
-                        <Row label ={t("CHALLAN_OWNER_MOBILE_NUMBER")} text={data?.challans?.[0]?.citizen?.mobileNumber}/>
-                        <Row label ={t("CHALLAN_OWNER_LOCALITY")} text={data?.challans?.[0]?.address?.locality?.code}/>
-                    </StatusTable>:null}
-                    
-                   
-                    
-                    
+                            />
+                            <Row label={t("CHALLAN_OWNER_NAME")} text={data?.challans?.[0]?.citizen?.name} />
+                            <Row label={t("CHALLAN_OWNER_MOBILE_NUMBER")} text={data?.challans?.[0]?.citizen?.mobileNumber} />
+                            <Row label={t("CHALLAN_OWNER_LOCALITY")} text={data?.challans?.[0]?.address?.locality?.code} />
+                        </StatusTable> : null}
+
+
+
+
                 </Card>
             </div>
         </React.Fragment>

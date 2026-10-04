@@ -52,7 +52,7 @@ const Filter = ({ searchParams, paginationParms, onFilterChange, onSearch, remov
 
   return (
     <React.Fragment>
-      {((!DSO && !isFstpOperator && searchParams) || (mergedRoleDetails?.statuses?.length > 0) || (isFstpOperatorRequest)) && <div className="filter" className={isFstpOperator ? "filter-margin-fstp" : ""}>
+      {((!DSO && !isFstpOperator && searchParams) || (mergedRoleDetails?.statuses?.length > 0) || (isFstpOperatorRequest)) && <div className={`filter ${isFstpOperator ? "filter-margin-fstp" : ""}`}>
           <div className="filter-card">
             <div className="heading">
               <div className="filter-label">{t("ES_COMMON_FILTER_BY")}:</div>

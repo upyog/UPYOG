@@ -111,7 +111,7 @@ const SearchApplication = ({
   };
   return <form onSubmit={handleSubmit(onSubmitInput)}>
     <React.Fragment>
-      <div className="search-container" className={isInboxPage ? "search-container-auto-margin" : "search-container-auto"}>
+      <div className={`search-container ${isInboxPage ? "search-container-auto-margin" : "search-container-auto"}`}>
         <div className="search-complaint-container">
           {(type === "mobile" || mobileView) && <div className="complaint-header">
             <h2>{t("ES_COMMON_SEARCH_BY")}</h2>
@@ -164,7 +164,7 @@ const SearchApplication = ({
 
             {type === "desktop" && !mobileView && <div className="search-submit-wrapper asset-search-item">
               <SubmitBar className="submit-bar-search" label={t("ES_COMMON_SEARCH")} disabled={!!Object.keys(formState.errors).length || formValueEmpty()} submit />
-              
+
               {!isInboxPage && <div>{clearAll()}</div>}
             </div>}
           </div>

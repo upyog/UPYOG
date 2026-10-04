@@ -93,10 +93,9 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
         label={propsConfig.texts.submitButtonLabel}
         heading={propsConfig.texts.header}
         text={propsConfig.texts.text}
-        cardStyle={{ margin: "auto",maxWidth:"960px" }}
+        cardStyle={{ maxWidth: "960px" }}
         headingStyle={{ fontSize: "32px", marginBottom: "16px" }}
         onSelect={onChallanSearch}
-        componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
         isDisabled={!Servicecateogry || !city.code}
         forcedError={t(mobileNumberError)}
         //onSkip={onSkip}
@@ -137,7 +136,7 @@ const SearchChallan = ({ config: propsConfig, formData }) => {
         )}
         <CardLabel>{`${t("UC_SEARCH_MOBILE_NO_LABEL")}`}</CardLabel>
         <div className="field-container">
-          <span className="employee-card-input employee-card-input--front mc-search-challan-top-spacing">
+          <span className="citizen-card-input citizen-card-input--front mc-search-challan-top-spacing">
             +91
           </span>
           <TextInput

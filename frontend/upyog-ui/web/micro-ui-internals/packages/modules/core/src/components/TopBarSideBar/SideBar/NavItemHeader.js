@@ -70,7 +70,7 @@ const NavItemHeader = props => {
         onClick={onExpandChange}
         style={item?.elementStyle ? {...item?.elementStyle,display:"flex"}:{display:"flex"}}
       >
-         <div className={`sidebar-link ${expanded ? "active": ""}`} className={`sidebar-link ${expanded ? "active" : ""} ${item?.nested ? "sidebar-link-nested" : "sidebar-link-root"}`}>{!item?.nested && leftIcon}
+         <div className={`sidebar-link ${expanded ? "active" : ""} ${item?.nested ? "sidebar-link-nested" : "sidebar-link-root"}`}>{!item?.nested && leftIcon}
          <div className="actions core-nav-item-header-container-padding">
          <div data-tip="React-tooltip" data-for={`jk-side-${getModuleName}`}>
         <span className={expanded ? "text-crimson" : ""}>{trimModuleName}</span>

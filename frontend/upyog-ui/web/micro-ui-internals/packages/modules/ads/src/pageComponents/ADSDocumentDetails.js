@@ -211,7 +211,7 @@ function ADSSelectDocument({
   return <div className="ads-document-details-mb-md">
       {doc?.hasDropdown ? <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t("ADS_" + doc?.code.replaceAll(".", "_"))} <span className="check-page-link-button">*</span></CardLabel>
-          <Dropdown className="form-field" selected={selectedDocument} className={user?.type === "EMPLOYEE" ? "field-width--employee-50" : "field-width--full"} placeholder={"Select " + t("ADS_" + doc?.code.replaceAll(".", "_"))} option={dropDownData.map(e => ({
+          <Dropdown className={`form-field ${user?.type === "EMPLOYEE" ? "field-width--employee-50" : "field-width--full"}`} selected={selectedDocument} placeholder={"Select " + t("ADS_" + doc?.code.replaceAll(".", "_"))} option={dropDownData.map(e => ({
         ...e,
         i18nKey: "ADS_" + e.code?.replaceAll(".", "_")
       }))} select={handleADSSelectDocument} optionKey="i18nKey" t={t} />

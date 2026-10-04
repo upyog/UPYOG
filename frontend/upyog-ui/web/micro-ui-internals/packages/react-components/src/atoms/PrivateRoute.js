@@ -23,7 +23,7 @@ export const PrivateRoute = ({ children }) => {
    */
   const getLoginRedirectionLink = () => {
     if (userType === "employee") {
-      return "/upyog-ui/employee/user/language-selection";
+      return "/upyog-ui/employee/user/login";
     } else {
       return "/upyog-ui/citizen/login";
     }

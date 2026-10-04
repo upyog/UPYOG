@@ -225,6 +225,7 @@ import WrapUnMaskComponent from "./molecules/WrapUnMaskComponent";
 import DynamicObjectRenderer from "./molecules/DynamicObjectRenderer"
 import DynamicCheckPage from "./molecules/DynamicCheckPage";
 import DynamicFormStep from "./molecules/DynamicFormStep";
+import UserActionCard from "./molecules/UserActionCard";
 
 import OpenLinkContainer from "./atoms/OpenLinkContainer";
 import UploadPitPhoto from "./molecules/UploadPitPhoto";
@@ -534,5 +535,6 @@ export {
   DynamicFormStep,
   DynamicObjectRenderer,
   DynamicCheckPage,
-  GeoLocationWithDigipin
+  GeoLocationWithDigipin,
+  UserActionCard
 };

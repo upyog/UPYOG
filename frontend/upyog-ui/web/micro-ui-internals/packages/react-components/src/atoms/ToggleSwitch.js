@@ -13,10 +13,9 @@ const ToggleSwitch = ({ value, onChange, label, name, ref, style, ...props }) =>
       />
       <label
         className={`react-switch-label ${value ? "react-switch-label-active" : ""}`}
-        className="react-switch-label"
         htmlFor={name}
       >
-        <span className={`react-switch-button`} className={`react-switch-button ${!value ? "react-switch-btn-inactive" : ""}`} />
+        <span className={`react-switch-button ${!value ? "react-switch-btn-inactive" : ""}`} />
       </label>
     </div>
   );

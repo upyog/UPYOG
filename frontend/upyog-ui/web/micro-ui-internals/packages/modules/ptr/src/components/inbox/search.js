@@ -19,17 +19,17 @@ const fieldComponents = {
   date: DatePicker,
   mobileNumber: MobileNumber,
   dropdown: Dropdown
-//   Locality: (props) => (
-//     <Localities
-//       tenantId={Digit.ULBService.getCurrentTenantId()}
-//       selectLocality={props.onChange}
-//       keepNull={false}
-//       boundaryType="revenue"
-//       selected={props.value}
-//       disableLoader={true}
-//       sortFn={(a, b) => (a.i18nkey < b.i18nkey ? -1 : 1)}
-//     />
-//   ),
+  //   Locality: (props) => (
+  //     <Localities
+  //       tenantId={Digit.ULBService.getCurrentTenantId()}
+  //       selectLocality={props.onChange}
+  //       keepNull={false}
+  //       boundaryType="revenue"
+  //       selected={props.value}
+  //       disableLoader={true}
+  //       sortFn={(a, b) => (a.i18nkey < b.i18nkey ? -1 : 1)}
+  //     />
+  //   ),
 };
 
 const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams, isInboxPage, defaultSearchParams, clearSearch: _clearSearch }) => {
@@ -86,9 +86,9 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   //   });
   // }, [form, formState, setError, clearErrors]);
 
-  
 
-  
+
+
   const onSubmitInput = (data) => {
     if (!data.mobileNumber) {
       delete data.mobileNumber;
@@ -140,7 +140,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
       <React.Fragment>
-        <div className="search-container" className={isInboxPage ? "search-container-auto-margin" : "search-container-auto"}>
+        <div className={`search-container ${isInboxPage ? "search-container-auto-margin" : "search-container-auto"}`}>
           <div className="search-complaint-container">
             {(type === "mobile" || mobileView) && (
               <div className="complaint-header">

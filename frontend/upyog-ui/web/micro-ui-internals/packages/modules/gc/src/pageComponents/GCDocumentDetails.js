@@ -203,9 +203,8 @@ function GCSelectDocument({
                 <LabelFieldPair>
                     <CardLabel className="card-label-smaller">{t("GC_" + (doc?.code.replaceAll(".", "_")))} {doc?.required ? <span className="check-page-link-button">*</span> : null}</CardLabel>
                     <Dropdown
-                        className="form-field"
+                        className={`form-field ${user?.type === "EMPLOYEE" ? "field-width--employee-50" : "field-width--full"}`}
                         selected={selectedDocument}
-                        className={user?.type === "EMPLOYEE" ? "field-width--employee-50" : "field-width--full"}
                         placeholder={"Select " + t("GC_" + (doc?.code.replaceAll(".", "_")))}
                         option={dropDownData}
                         select={handleGCSelectDocument}

@@ -253,9 +253,8 @@ function CHBSelectDocument({
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t("CHB_"+(doc?.code.replaceAll(".", "_"))) } <span className="check-page-link-button">*</span></CardLabel>
           <Dropdown
-            className="form-field"
+            className={`form-field ${user?.type === "EMPLOYEE" ? "field-width--employee-50" : "field-width--full"}`}
             selected={selectedDocument}
-            className={user?.type === "EMPLOYEE" ? "field-width--employee-50" : "field-width--full"}
             placeholder={"Select " + t("CHB_"+(doc?.code.replaceAll(".", "_"))) }
             option={dropDownData.map((e) => ({ ...e, i18nKey:"CHB_" + e.code?.replaceAll(".", "_") }))}
             select={handleCHBSelectDocument}

@@ -1,3 +1,9 @@
+/* ==========================================================================
+   UPYOG Common Application Details Page - Enterprise Redesign Styles
+   Module-agnostic, responsive, and consistent with UPYOG Design System
+   ========================================================================== */
+
+/* Map & Digipin legacy styles preserved */
 .application-details-map-btn {
   background-color: #a82227;
   color: white;
@@ -7,10 +13,754 @@
   cursor: pointer;
   font-size: 0.85rem;
   align-self: flex-start;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #8c1b20;
+  }
 }
 
 .application-details-digipin-wrapper {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+/* ==========================================================================
+   1. Application Details Container & Outer Card
+   ========================================================================== */
+.tmpl-application-details-content-card {
+  position: relative;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 0 32px 0 !important;
+}
+
+/* ==========================================================================
+   2. Hero / Header Summary Card
+   ========================================================================== */
+.app-details-header-card {
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  border-top: 4px solid #a82227;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.app-details-header-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.app-details-service-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #f8fafc;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.app-details-header-quick-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.app-details-quick-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: #a82227;
+  border: 1px solid #fecaca;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #fef2f2;
+    border-color: #a82227;
+    color: #8c1b20;
+  }
+}
+
+.app-details-header-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.app-details-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.app-details-header-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+}
+
+.app-details-header-app-no-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.app-details-header-app-no {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.app-details-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+
+  &:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+  }
+
+  &.copied {
+    background: #dcfce7;
+    border-color: #bbf7d0;
+    color: #15803d;
+  }
+}
+
+.app-details-copy-tooltip {
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0f172a;
+  color: #ffffff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: fadeInOut 1.5s forwards;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translate(-50%, 4px); }
+  20% { opacity: 1; transform: translate(-50%, 0); }
+  80% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -4px); }
+}
+
+.app-details-header-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+  font-size: 13px;
+  color: #64748b;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+}
+
+/* ==========================================================================
+   3. Status Badges
+   ========================================================================== */
+.app-details-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+}
+
+.app-details-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Success / Approved / Active */
+.status-badge-success {
+  background-color: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+
+  .app-details-status-dot {
+    background-color: #10b981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+  }
+}
+
+/* Info / In Progress / Pending Verification */
+.status-badge-info {
+  background-color: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+
+  .app-details-status-dot {
+    background-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  }
+}
+
+/* Warning / Initiated / Pending Payment / Submitted */
+.status-badge-warning {
+  background-color: #fffbeb;
+  color: #92400e;
+  border: 1px solid #fde68a;
+
+  .app-details-status-dot {
+    background-color: #f59e0b;
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+  }
+}
+
+/* Danger / Rejected / Cancelled / Expired */
+.status-badge-danger {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+
+  .app-details-status-dot {
+    background-color: #ef4444;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+  }
+}
+
+/* Neutral / Default */
+.status-badge-neutral {
+  background-color: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+
+  .app-details-status-dot {
+    background-color: #64748b;
+  }
+}
+
+/* ==========================================================================
+   4. Section Cards
+   ========================================================================== */
+.app-details-section-card {
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  }
+}
+
+.app-details-section-header-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #f1f5f9;
+
+  .card-section-header,
+  header.card-section-header,
+  header {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 18px !important;
+    line-height: 22px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    letter-spacing: -0.01em;
+    display: inline-flex !important;
+    align-items: center !important;
+  }
+}
+
+.app-details-section-title-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 22px;
+
+  .card-section-header,
+  header.card-section-header,
+  header {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 18px !important;
+    line-height: 22px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    display: inline-flex !important;
+    align-items: center !important;
+  }
+}
+
+.app-details-section-accent-bar {
+  width: 4px;
+  height: 18px;
+  min-height: 18px;
+  max-height: 18px;
+  background-color: #a82227;
+  border-radius: 2px;
+  flex-shrink: 0;
+  display: inline-block;
+  margin: 0 !important;
+  align-self: center;
+}
+
+.app-details-section-title {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  letter-spacing: -0.01em;
+  line-height: 22px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.app-details-section-card,
+.app-details-timeline-card {
+  .card-section-header,
+  header.card-section-header,
+  header {
+    margin: 0 !important;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+  }
+}
+
+/* ==========================================================================
+   5. Key-Value Responsive Grid
+   ========================================================================== */
+.app-details-kv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px 24px;
+  padding: 4px 0;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
+
+.app-details-kv-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+
+  &.full-width {
+    grid-column: 1 / -1;
+  }
+}
+
+.app-details-kv-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.app-details-kv-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+  line-height: 1.4;
+  word-break: break-word;
+
+  &.bold-italic {
+    font-weight: 700;
+    font-style: italic;
+  }
+
+  &.muted {
+    color: #94a3b8;
+    font-weight: 500;
+  }
+
+  a {
+    color: #a82227;
+    text-decoration: none;
+    font-weight: 600;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    margin-top: 6px;
+  }
+}
+
+.app-details-kv-caption {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   6. Modern Data Tables
+   ========================================================================== */
+.app-details-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 16px;
+}
+
+.app-details-modern-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  text-align: left;
+
+  thead tr {
+    background-color: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+
+    th {
+      padding: 12px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #475569;
+      white-space: nowrap;
+    }
+  }
+
+  tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+    transition: background-color 0.15s ease;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background-color: #f8fafc;
+    }
+
+    td {
+      padding: 12px 16px;
+      color: #1e293b;
+      vertical-align: middle;
+      font-size: 14px;
+    }
+  }
+}
+
+/* ==========================================================================
+   7. Documents Grid & Cards
+   ========================================================================== */
+.app-details-doc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.app-details-doc-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  position: relative;
+
+  &:hover {
+    background-color: #ffffff;
+    border-color: #cbd5e1;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px);
+  }
+}
+
+.app-details-doc-icon-wrap {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background-color: #fee2e2;
+  color: #dc2626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+  }
+}
+
+.app-details-doc-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+
+.app-details-doc-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-details-doc-type-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 500;
+  color: #64748b;
+  background: #e2e8f0;
+  padding: 1px 6px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.app-details-doc-action {
+  color: #a82227;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.app-details-no-doc-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* ==========================================================================
+   8. Timeline / Workflow History Card
+   ========================================================================== */
+.app-details-timeline-card {
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  padding: 20px 24px;
+  margin-top: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+}
+
+.app-details-timeline-header-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #f1f5f9;
+
+  .card-section-header,
+  header.card-section-header,
+  header {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 18px !important;
+    line-height: 22px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    letter-spacing: -0.01em;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+.app-details-timeline-count-badge {
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.app-details-timeline-comments-bubble {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-top: 8px;
+  font-size: 13px;
+  color: #334155;
+  line-height: 1.4;
+
+  h3 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #64748b;
+    margin: 0 0 4px 0;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.app-details-timeline-toggle-btn {
+  margin-top: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  color: #a82227;
+  border: 1px solid #e2e8f0;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+  }
+}
+
+/* ==========================================================================
+   9. Action Bar Enhancements
+   ========================================================================== */
+.app-details-action-bar-override {
+  box-shadow: 0 -4px 16px 0 rgba(0, 0, 0, 0.08) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(8px) !important;
+  border-top: 1px solid #e5e7eb !important;
+  padding: 12px 24px !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  z-index: 100 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .app-details-header-card {
+    padding: 16px;
+  }
+
+  .app-details-header-app-no {
+    font-size: 18px;
+  }
+
+  .app-details-section-card {
+    padding: 16px;
+  }
+
+  .app-details-timeline-card {
+    padding: 16px;
+  }
+}
+
+.app-details-doc-header-wrap {
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.app-details-doc-subheader {
+  margin: 0 !important;
+  color: #0B0C0C !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
 }

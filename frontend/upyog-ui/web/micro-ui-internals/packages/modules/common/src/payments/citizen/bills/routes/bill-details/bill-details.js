@@ -269,8 +269,7 @@ const BillDetails = ({ paymentRules, businessService }) => {
 
           <div className="cmn-bill-details-wrapper">
             <span
-              className="payment-amount-front"
-              className="bill-details-border-gray"
+              className="payment-amount-front bill-details-border-gray"
             >
               ₹
             </span>

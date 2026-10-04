@@ -14,30 +14,44 @@ const MobileNumber = (props) => {
 
   return (
     <React.Fragment>
-      <div className="field-container">
-        {!props.hideSpan ? (
-          <span className="max-width-50" style={props.labelStyle} className="citizen-card-input citizen-card-input--front">
+      <div className={`field-container ${props.className || ""}`} style={props?.style}>
+        {props.componentInFront ? (
+          typeof props.componentInFront === "string" ? (
+            <span
+              style={props.labelStyle}
+              className={`${user_type ? "employee-card-input employee-card-input--front" : "citizen-card-input citizen-card-input--front"}`}
+            >
+              {props.componentInFront}
+            </span>
+          ) : (
+            props.componentInFront
+          )
+        ) : !props.hideSpan ? (
+          <span
+            style={props.labelStyle}
+            className={`${user_type ? "employee-card-input employee-card-input--front" : "citizen-card-input citizen-card-input--front"}`}
+          >
             +91
           </span>
         ) : null}
-        <div className={`text-input ${user_type === "employee"? "" : "text-mobile-input-width"} ${props.className}`}>
+        <div className={`text-input ${user_type === "employee" ? "" : "text-mobile-input-width"}`}>
           <input
-            type={"text"}
+            type={props.type || "text"}
             name={props.name}
             id={props.id}
-            className={`${user_type ? "employee-card-input" : "citizen-card-input"} ${props.disable && "disabled"} focus-visible ${props.errorStyle && "employee-card-input-error"}`}
+            className={`${user_type ? "employee-card-input" : "citizen-card-input"} ${(props.disable || props.disabled) && "disabled"} focus-visible ${props.errorStyle && "employee-card-input-error"}`}
             placeholder={props.placeholder}
             onChange={onChange}
             ref={props.inputRef}
             value={props.value}
-            style={props?.style}
             // defaultValue={props.defaultValue || ""}
             minLength={props.minlength}
             maxLength={props.maxlength}
             max={props.max}
             pattern={props.pattern}
             min={props.min}
-            readOnly={props.disable}
+            readOnly={props.disable || props.disabled}
+            disabled={props.disable || props.disabled}
             title={props.title}
             step={props.step}
             autoFocus={props.autoFocus}

@@ -122,7 +122,13 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
   }
 
   return (
-    <FormStep onSelect={onSelect} config={config} t={t} isDisabled={!(otp?.length === 6 && canSubmit)}>
+    <>
+    <div className="login-form-header">
+      <h2>{"OTP Verification"}</h2>
+      <p>
+        {config?.texts?.cardText}
+      </p>
+    </div>
       <OTPInput length={6} onChange={onOtpChange} value={otp} />
       {timeLeft > 0 ? (
         <CardText>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</CardText>
@@ -133,7 +139,25 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
       )}
       {!error && <CardLabelError>{t("CS_INVALID_OTP")}</CardLabelError>}
       {errorRegister && <CardLabelError>{t("CS_ALREADY_REGISTERED")}</CardLabelError>}
-    </FormStep>)
+      <div className="login-actions login-actions-spacer">
+        <button
+          type="button"
+          className="login-primary-button"
+          // disabled={checkDisbaled()}
+          disabled={false}
+          onClick={() => onSelect()}
+        >
+          {"Submit"}
+        </button>
+      </div>
+
+      <p className="login-security">
+        <span className="login-security-icon" aria-hidden="true">
+          <img src={"/images/secure.svg"} alt="secure"/>
+        </span>
+        {"Your information is safe and secure with us."}
+      </p>
+    </>)
 };
 
 export default SelectOtp;

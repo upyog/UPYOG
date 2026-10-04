@@ -59,7 +59,7 @@ const TextField = (props) => {
   return (
     <input
       ref={props.inputRef}
-      className={`employee-select-wrap--elipses ${props.disable && "disabled"}`}
+      className={`employee-select-wrap--elipses ${props.disable ? "disabled" : ""} pgrai-dropdown-input`}
       type="text"
       value={value}
       onChange={inputChange}
@@ -78,7 +78,7 @@ const TextField = (props) => {
       readOnly={props.disable}
       autoFocus={props.autoFocus}
       placeholder={props.placeholder}
-      autoComplete={"off"} className="pgrai-dropdown-input" style={props.style}
+      autoComplete={"off"} style={props.style}
     />
   );
 };
@@ -251,8 +251,7 @@ const Dropdown = (props) => {
           </div>
         ) : (
           <div
-            className="options-card"
-            className="options-card--scrollable" style={props?.optionCardStyles}
+            className="options-card options-card--scrollable" style={props?.optionCardStyles}
             id="jk-dropdown-unique"
             ref={optionRef}
           >

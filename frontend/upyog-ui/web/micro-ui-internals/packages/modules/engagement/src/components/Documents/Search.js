@@ -25,9 +25,9 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
             case "ulb":
                 return (
                     <Controller
-                    rules={{ required: true }}
+                        rules={{ required: true }}
                         defaultValue={selectedTenat?.[0]}
-                        render={({field}) => (
+                        render={({ field }) => (
                             <Dropdown
                                 option={userUlbs}
                                 optionKey={"i18nKey"}
@@ -44,7 +44,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
             default:
                 return (
                     <Controller
-                        render={({field}) => <TextInput onChange={field.onChange} value={field.value} />}
+                        render={({ field }) => <TextInput onChange={field.onChange} value={field.value} />}
                         name={input.name}
                         control={control}
                         defaultValue={null}
@@ -80,7 +80,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
 
     return (
         <form onSubmit={handleSubmit(onSubmitInput)}>
-            <div className="search-container" className={isInboxPage ? "search-container-auto-margin" : "search-container-auto"}>
+            <div className={`search-container ${isInboxPage ? "search-container-auto-margin" : "search-container-auto"}`}>
                 <div className="search-complaint-container">
                     {(type === "mobile" || mobileView) && (
                         <div className="complaint-header">

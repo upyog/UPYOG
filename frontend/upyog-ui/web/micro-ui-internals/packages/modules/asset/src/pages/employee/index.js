@@ -1,4 +1,4 @@
-import { PrivateRoute, BreadCrumb, AppContainer, BackButton } from "@nudmcdgnpm/digit-ui-react-components";
+import { PrivateRoute, BreadCrumb, BackButton } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation, Routes, Route } from "react-router-dom";
@@ -40,6 +40,9 @@ const EmployeeApp = ({
     const {
       from: fromScreen2
     } = Digit.Hooks.useQueryParams();
+    const isInbox = location.pathname.includes("asset/assetservice/inbox");
+    const isNew = location.pathname.includes("new-assets");
+    const isDetails = location.pathname.includes("application-details");
     const crumbs = [{
       path: "/upyog-ui/employee",
       content: t("ES_COMMON_HOME"),
@@ -47,9 +50,17 @@ const EmployeeApp = ({
     }, {
       path: "/upyog-ui/employee/asset/assetservice/inbox",
       content: t("ES_TITLE_INBOX"),
-      show: location.pathname.includes("asset/assetservice/inbox") ? false : false
+      show: isInbox ? true : false
+    }, {
+      path: "/upyog-ui/employee/asset/assetservice/new-assets",
+      content: t("ES_TITLE_NEW_ASSET_APPLICATION"),
+      show: isNew ? true : false
+    }, {
+      path: location.pathname,
+      content: t("ES_TITLE_APPLICATION_DETAILS"),
+      show: isDetails ? true : false
     }];
-    return <BreadCrumb style={isMobile ? { display: "flex" } : { margin: "0 0 4px", color: "#000000" }} spanStyle={{ maxWidth: "min-content" }} crumbs={crumbs} />;
+    return <BreadCrumb style={isMobile ? { display: "flex" } : { margin: 0, color: "#000000" }} spanStyle={{ maxWidth: "min-content" }} crumbs={crumbs} />;
   };
   const NewAssetAssignApplication = Digit?.ComponentRegistryService?.getComponent("AssignAssetApplication");
   const DisposeApplication = Digit?.ComponentRegistryService?.getComponent("DisposeApplication");
@@ -71,17 +82,16 @@ const EmployeeApp = ({
   const EnhancedReport = Digit?.ComponentRegistryService?.getComponent("EnhancedReport");
 
   return (
-    <AppContainer>
-      <React.Fragment>
-        <div className="ground-container">
-          {!isRes ? (
-            <div className={`registration-form ${isNewRegistration ? "default" : "compact"}`}>
-              <BackButton location={location} />
-              <span className="asset-index-item">|</span>
-              <AssetBreadCrumbs location={location} />
-            </div>
-          ) : null}
-          <Routes>
+    <React.Fragment>
+      <div className="ground-container">
+        {!isRes ? (
+          <div className={`emp-breadcrumb-bar ${isNewRegistration ? "emp-breadcrumb-bar--new-reg" : ""}`}>
+            <BackButton location={location} className="emp-back-btn" />
+            <span className="emp-breadcrumb-divider">|</span>
+            <AssetBreadCrumbs location={location} />
+          </div>
+        ) : null}
+        <Routes>
             <Route path="/*" element={<PrivateRoute><ASSETLinks userType={userType} /></PrivateRoute>} />
             <Route
               path="assetservice/inbox/*"
@@ -201,7 +211,6 @@ const EmployeeApp = ({
           </Routes>
         </div>
       </React.Fragment>
-    </AppContainer>
   );
 };
 export default EmployeeApp;

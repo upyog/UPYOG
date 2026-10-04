@@ -39,7 +39,7 @@ const SelectEmployeePhoneNumber = ({ t, config, onSelect, formData = {}, userTyp
               {t(input.label)}
               {input.isMandatory ? " * " : null}
             </CardLabel>
-            <div className="field-container" className={`field-container display-block ${isMobile ? "width-full" : "width-half"}`}>
+            <div className={`field-container display-block ${isMobile ? "width-full" : "width-half"}`}>
               <div>
                 <div className="hrms-employee-phone-number-flex-container">
                   <div className="employee-card-input employee-card-input--front">+91</div>

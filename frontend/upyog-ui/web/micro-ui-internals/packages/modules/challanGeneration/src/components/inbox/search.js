@@ -67,7 +67,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
       <React.Fragment>
-        <div className={`search-container ${isInboxPage ? "cg-result-margin-left" : ""}`}>
+        <div className={`${isInboxPage ? "cg-result-margin-left" : ""}`}>
           <div className="search-complaint-container">
             {(type === "mobile" || mobileView) && (
               <div className="complaint-header">

@@ -26,11 +26,11 @@ const ImageOrPDFIcon = ({ source, index, last = false, onClick, selectedIndex, d
 
   return (
     <div>
-      <img className={`display-photo-item ${isSelected ? "border-selected-black" : "border-none"}`}
+      <img
+        className={`display-photo-item ${isSelected ? "border-selected-black" : "border-none"} ${last ? "last" : ""}`}
         src={source}
         alt="issue thumbnail"
         onClick={() => onClick(source, index)}
-        className={last ? "last" : ""}
       />
       {drawingNo && (
         <div className="rc-display-photos-top-spacing">

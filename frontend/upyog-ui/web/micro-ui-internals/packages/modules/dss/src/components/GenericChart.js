@@ -79,7 +79,7 @@ const GenericChart = ({
   let headerName = t(Digit.Utils.locale.getTransformedLocale(header));
   if(window.location.href.includes("main-dashboard-landing"))
   {  return ( 
-    <Card className={`chart-item ${className}`} ReactRef={chart} className={`chart-item ${className} max-width-60 ${className === "metricsTable" ? "width-full bg-gray-table" : "bg-white"}`}>
+    <Card ReactRef={chart} className={`chart-item ${className} max-width-60 ${className === "metricsTable" ? "width-full bg-gray-table" : "bg-white"}`}>
       
       {caption && <CardCaption>{caption}
       </CardCaption>}

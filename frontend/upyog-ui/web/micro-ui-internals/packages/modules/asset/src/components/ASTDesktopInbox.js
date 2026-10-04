@@ -58,7 +58,7 @@ const ASTDesktopInbox = ({
         props.onSearch(d);
         setClearSearchCalled(false);
       }} type="desktop" searchFields={props.searchFields} isInboxPage={!props?.isSearch} searchParams={props.searchParams} clearSearch={() => setClearSearchCalled(true)} />
-        <div className="result" className={!props?.isSearch ? "inbox-result--with-margin" : "inbox-result--no-margin"}>
+        <div className={`result ${!props?.isSearch ? "inbox-result--with-margin" : "inbox-result--no-margin"}`}>
           {result}
         </div>
       </div>

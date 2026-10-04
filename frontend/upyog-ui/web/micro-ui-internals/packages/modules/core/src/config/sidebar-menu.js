@@ -48,7 +48,7 @@ return [
     text: (
       <React.Fragment>
         {t("CS_COMMON_HELPLINE")}
-        <div className="telephone core-citizen-side-bar-top-spacing">
+        <div className="telephone sidebar-helpline-telephone">
           <div className="link">
             <a href={`tel:${filteredTenantData}`}>{filteredTenantData}</a>
           </div>

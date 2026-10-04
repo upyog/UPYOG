@@ -9,7 +9,7 @@ const FAQComponent = props => {
   const selectedLanguage = Digit.StoreData.getCurrentLanguage();
   return (
     <div className="faqs border-none" onClick={() => toggleOpen(!isOpen)}>
-          <div className="faq-question" className={`faq-question ${t(question).length > 30 && isOpen ? (Digit.Utils.browser.isMobile() ? "display-block" : "justify-revert") : "display-flex"}`}>
+          <div className={`faq-question ${t(question).length > 30 && isOpen ? (Digit.Utils.browser.isMobile() ? "display-block" : "justify-revert") : "display-flex"}`}>
         <span className="dss-faqcomponent-text-style">
         {`${index}. `+ t(question)}
         </span>

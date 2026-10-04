@@ -6,7 +6,7 @@ import ChangeLanguage from "../ChangeLanguage";
 
 const TextToImg = (props) => (
   <span className="user-img-txt" onClick={props.toggleMenu} title={props.name}>
-    {props?.name?.[0]?.toUpperCase()}
+    {props?.name}
   </span>
 );
 const TopBar = ({
@@ -24,6 +24,8 @@ const TopBar = ({
   logoUrl,
   showLanguageChange = true,
   setSideBarScrollTop,
+  toggleSidebarWidth,
+  isSidebarCollapsed
 }) => {
   const [profilePic, setProfilePic] = React.useState(null);
 
@@ -71,14 +73,6 @@ const TopBar = ({
     },
   });
 
-  const updateSidebar = () => {
-    if (!Digit.clikOusideFired) {
-      toggleSidebar(true);
-      setSideBarScrollTop(true);
-    } else {
-      Digit.clikOusideFired = false;
-    }
-  };
 
   function onNotificationIconClick() {
     navigate("/upyog-ui/citizen/engagement/notifications");
@@ -89,13 +83,18 @@ const TopBar = ({
       ? false
       : ["/upyog-ui/citizen/select-language", "/upyog-ui/citizen/select-location"].includes(pathname);
 
-  if (CITIZEN) {
+  if (true) {
+    const isEmployee = Digit.UserService?.getType?.() === "employee" || window.location.href.includes("/employee");
     return (
       <div>
         <TopBarComponent
           img={stateInfo?.logoUrlWhite}
           isMobile={true}
-          toggleSidebar={updateSidebar}
+          toggleSidebar={toggleSidebarWidth}
+          isSidebarCollapsed={isSidebarCollapsed}
+          userOptions={userOptions}
+          profilePic={profilePic}
+          TextToImg={TextToImg}
           logoUrl={stateInfo?.logoUrlWhite}
           onLogout={handleLogout}
           userDetails={userDetails}
@@ -104,7 +103,10 @@ const TopBar = ({
           cityOfCitizenShownBesideLogo={t(CitizenHomePageTenantId)}
           onNotificationIconClick={onNotificationIconClick}
           hideNotificationIconOnSomeUrlsWhenNotLoggedIn={urlsToDisableNotificationIcon(pathname)}
-          changeLanguage={!mobileView ? <ChangeLanguage dropdown={true} /> : null}
+          changeLanguage={!mobileView ? <ChangeLanguage dropdown={true} classes={"nav-lang-change"} /> : null}
+          changeCity={!mobileView && isEmployee ? <ChangeCity dropdown={true} t={t} classes={"nav-city-change"} /> : null}
+          handleUserDropdownSelection={handleUserDropdownSelection}
+          isEmployee={isEmployee}
         />
       </div>
     );

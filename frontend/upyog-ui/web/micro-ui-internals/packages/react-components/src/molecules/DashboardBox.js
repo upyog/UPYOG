@@ -21,7 +21,7 @@ const DashboardBox = ({ t = (val) => val, svgIcon, header, info, subHeader, link
         width: "328px",
       };
   return (
-    <div className="employeeCard card-home" className="employeeCard card-home p-0" style={employeeCardStyles}>
+    <div className="employeeCard card-home p-0" style={employeeCardStyles}>
       <div className="complaint-links-container">
         <div className="header">
           <span className="logo">

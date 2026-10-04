@@ -103,7 +103,7 @@ const SearchApplication = ({
    * @param {boolean} mobileView - Flag indicating if rendering for mobile view
    * @returns {JSX.Element} Clear all link component
    */
-   const mobileView = innerWidth<=640;
+  const mobileView = innerWidth <= 640;
   const clearAll = (mobileView) => {
     const mobileViewStyles = mobileView ? { margin: 0 } : {};
     return (
@@ -114,9 +114,9 @@ const SearchApplication = ({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmitInput)}> 
+    <form onSubmit={handleSubmit(onSubmitInput)}>
       <React.Fragment>
-        <div className="search-container" className={isInboxPage ? "search-container-auto-margin" : "search-container-auto"}>
+        <div className={`search-container ${isInboxPage ? "search-container-auto-margin" : "search-container-auto"}`}>
           <div className="search-complaint-container">
             {/* Render the header for mobile view */}
             {(type === "mobile" || mobileView) && (

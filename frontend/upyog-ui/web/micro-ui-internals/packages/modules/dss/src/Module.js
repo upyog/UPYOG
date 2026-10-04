@@ -61,7 +61,7 @@ const Routes = ({ path, stateCode }) => {
   }
   return (
     <div className="dss-module-flex-container">
-      <div className="chart-sidebar" className={`chart-sidebar dss-chart-sidebar ${!window.location.href.includes("main-dashboard-landing") ? "display-none" : ""}`}>
+      <div className={`chart-sidebar dss-chart-sidebar ${!window.location.href.includes("main-dashboard-landing") ? "display-none" : ""}`}>
         <div  onClick = {(e)=>handClick(e,"home")}className="dashBoard dss-module-clickable">View dashboard</div>
         <div className="dashBoard dss-module-clickable-2" onClick = {(e)=>handClick(e,"national-propertytax")}>
 Property Tax Assessment and Payment</div>

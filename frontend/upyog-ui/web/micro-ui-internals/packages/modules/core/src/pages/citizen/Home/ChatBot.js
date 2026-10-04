@@ -99,10 +99,10 @@ function ChatBot() {
 
 
   return (
-    <div className="core-chat-bot-wrapper">
+    <div className="chatbot-root">
       {!isOpen && (
         <button
-          className="core-chat-bot-clickable"
+          className="chatbot-toggle-btn"
           onClick={toggleChatbot}
         >
           <svg xmlns="
@@ -113,16 +113,12 @@ function ChatBot() {
         </button>
       )}
       {isOpen && (
-        <div
-          className="core-chat-bot-flex-container"
-        >
-          <div
-            className="core-chat-bot-flex-row"
-          >
+        <div className="chatbot-window">
+          <div className="chatbot-header">
             <span>Connect With Us</span>
             <button
               onClick={handleChatbotClose}
-              className="core-chat-bot-clickable-2"
+              className="chatbot-close-btn"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -139,12 +135,15 @@ function ChatBot() {
               </svg>
             </button>
           </div>
-          <div
-            className="core-chat-bot-container-padding"
-          >
+          <div className="chatbot-body">
             {messages.map((message, index) => (
-              <div key={index} className={`chatbot-msg-row ${message.sender === "user" ? "user-msg" : "bot-msg"}`}>
-                <div className={`chatbot-msg-bubble ${message.sender === "user" ? "user-bubble" : "bot-bubble"}`}>
+              <div
+                key={index}
+                className={`chatbot-msg-row ${message.sender === "user" ? "chatbot-msg-row--user" : "chatbot-msg-row--bot"}`}
+              >
+                <div
+                  className={`chatbot-bubble ${message.sender === "user" ? "chatbot-bubble--user" : "chatbot-bubble--bot"}`}
+                >
                   <div
                     dangerouslySetInnerHTML={{
                       __html: ReplaceURL(message.text),
@@ -158,13 +157,8 @@ function ChatBot() {
             - Uses CSS modules for styling
             - Appears in same style as bot messages for consistency */}
             {isLoading && (
-              <div className="core-chat-bot-flex-row-2">
-                <div
-                  className="core-chat-bot-container-padding-2"
-                >{/**
-                Each span tag represents one of the three animated dots (...) in the loading indicator. 
-                We use three separate spans because each dot needs to animate independently to 
-                create that nice wave-like motion effect. */}
+              <div className="chatbot-msg-row chatbot-msg-row--bot">
+                <div className="chatbot-bubble chatbot-bubble--bot">
                   <div className="typing_indicator">
                     <span></span>
                     <span></span>
@@ -179,9 +173,7 @@ function ChatBot() {
             - Placed at bottom of message container */}
             <div ref={messagesEndRef} />
           </div>
-          <div
-            className="core-chat-bot-flex-container-2"
-          >
+          <div className="chatbot-footer">
             <input
               type="text"
               value={input}
@@ -192,11 +184,11 @@ function ChatBot() {
                 }
               }}
               placeholder="Type your message..."
-              className="core-chat-bot-container-padding-3"
+              className="chatbot-input"
             />
             <button
               onClick={handleMessageSend}
-              className="core-chat-bot-clickable-3"
+              className="chatbot-send-btn"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

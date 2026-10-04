@@ -10,7 +10,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
   const getFields = (input) => {
-    switch(input.type) {
+    switch (input.type) {
       default:
         return (
           <Controller
@@ -43,8 +43,8 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
     searchFields.forEach((e) => {
       _newParams.delete.push(e?.name);
     });
-    onSubmitInput({applicationNo:null});
-    
+    onSubmitInput({ applicationNo: null });
+
   }
 
   const clearAll = (mobileView) => {
@@ -58,7 +58,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
 
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
-      <div className="search-container" className={isInboxPage ? "search-container-auto-margin" : "search-container-auto"}>
+      <div className={`search-container ${isInboxPage ? "search-container-auto-margin" : "search-container-auto"}`}>
         <div className="search-complaint-container">
           {(type === "mobile" || mobileView) && (
             <div className="complaint-header">
@@ -71,7 +71,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
           )}
           <div className={`${"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} obps-search-fullwidth`}>
             {searchFields?.map((input, index) => (
-              <div key={input.name} className="input-fields" style={mobileView?{marginTop:"30px"}:{}}>
+              <div key={input.name} className="input-fields" style={mobileView ? { marginTop: "30px" } : {}}>
                 {/* <span className={index === 0 ? "complaint-input" : "mobile-input"}> */}
                 <span className={"mobile-input"}>
                   <Label>{t(input.label) + ` ${input.isMendatory ? "*" : ""}`}</Label>
@@ -88,10 +88,10 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
             ))}
             {type === "desktop" && <SubmitBar className="submit-bar-search obps-search-top-spacing-3" label={t("ES_COMMON_SEARCH")} submit />}
             {type === "desktop" && !mobileView && (
-                  <span className="clear-search obps-search-spacing">
-                    {clearAll()}
-                  </span>
-                )}
+              <span className="clear-search obps-search-spacing">
+                {clearAll()}
+              </span>
+            )}
           </div>
         </div>
       </div>

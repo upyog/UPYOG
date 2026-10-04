@@ -248,7 +248,7 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
           }
         }
         dispayRange.push(
-          <div className={`range-box ${className} ${monthCurrentYear}-${ele}`} onClick={(e)=>{onMonthSelect(e)}} className={`range-box ${className} ${className === "selected" ? "dss-range-box--selected" : "dss-range-box--unselected"} dss-range-box-base`}>
+          <div onClick={(e)=>{onMonthSelect(e)}} className={`range-box ${className} ${monthCurrentYear}-${ele} ${className === "selected" ? "dss-range-box--selected" : "dss-range-box--unselected"} dss-range-box-base`}>
             {ele}
           </div>
         )
@@ -265,7 +265,7 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
           className = "selected";
         }
         dispayRange.push(
-          <div className={`range-box ${className} ${year}`} onClick={(e)=>{onYearsSelect(e,year)}} className={`range-box ${className} ${className === "selected" ? "dss-range-box--selected" : "dss-range-box--unselected"} dss-range-box-base`}>
+          <div onClick={(e)=>{onYearsSelect(e,year)}} className={`range-box ${className} ${year} ${className === "selected" ? "dss-range-box--selected" : "dss-range-box--unselected"} dss-range-box-base`}>
             {year}
           </div>
         )
@@ -293,13 +293,13 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
           <div className="options-card dss-custom-date-range-wrapper">
             <div className="rdrDateRangePickerWrapper pickerShadow">
               <div className="rdrDefinedRangesWrapper dss-custom-date-range-wrapper-2">
-                <button type="button" className="rdrStaticRange" className={`rdrStaticRange ${rangeType === "week" ? "font-weight-bold" : "font-weight-normal"}`} onClick={() => { selectRangeType("week") }}>
+                <button type="button" className={`rdrStaticRange ${rangeType === "week" ? "font-weight-bold" : "font-weight-normal"}`} onClick={() => { selectRangeType("week") }}>
                   <span tabindex="-1" className="rdrStaticRangeLabel">By Weeks</span>
                 </button>
-                <button type="button" className="rdrStaticRange" className={`rdrStaticRange ${rangeType === "month" ? "font-weight-bold" : "font-weight-normal"}`} onClick={() => { selectRangeType("month") }}>
+                <button type="button" className={`rdrStaticRange ${rangeType === "month" ? "font-weight-bold" : "font-weight-normal"}`} onClick={() => { selectRangeType("month") }}>
                   <span tabindex="-1" className="rdrStaticRangeLabel">By Months</span>
                 </button>
-                <button type="button" className="rdrStaticRange" className={`rdrStaticRange ${rangeType === "year" ? "font-weight-bold" : "font-weight-normal"}`} onClick={() => { selectRangeType("year") }}>
+                <button type="button" className={`rdrStaticRange ${rangeType === "year" ? "font-weight-bold" : "font-weight-normal"}`} onClick={() => { selectRangeType("year") }}>
                   <span tabindex="-1" className="rdrStaticRangeLabel">By Years</span>
                 </button>
               </div>

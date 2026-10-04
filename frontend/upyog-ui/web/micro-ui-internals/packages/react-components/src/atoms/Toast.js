@@ -6,7 +6,7 @@ import ButtonSelector from "./ButtonSelector";
 const Toast = (props) => {
   if (props.error) {
     return (
-      <div className="toast-success" className="toast-bg-red" style={props.style}>
+      <div className="toast-success toast-bg-red" style={props.style}>
         <ErrorIcon />
         <h2 style={props.labelstyle}>{props.label}</h2>
         { props.isDleteBtn ? <DeleteBtn fill="none" className="toast-close-btn" onClick={props.onClose} /> : null }
@@ -19,7 +19,7 @@ const Toast = (props) => {
       <div>
         <div className="toast-success" style={props?.isWarningButtons ? { backgroundColor: "#EA8A3B", display: "block", ...props.style } : { backgroundColor: "#EA8A3B", ...props.style }}>
           {!props?.isWarningButtons ?
-            <div className="toast-success" className="toast-bg-orange" style={props.style}>
+            <div className="toast-success toast-bg-orange" style={props.style}>
               <ErrorIcon />
               <h2 className="rc-employee-module-card-spacing">{props.label}</h2>
               {props.isDleteBtn ? <DeleteBtn fill="none" className="toast-close-btn" onClick={props.onClose} /> : null}

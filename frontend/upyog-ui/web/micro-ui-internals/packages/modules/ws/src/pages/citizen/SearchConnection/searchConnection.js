@@ -156,7 +156,7 @@ const SearchConnection = ({
     }} headingStyle={{
       fontSize: "32px",
       marginBottom: "16px"
-    }} onSelect={onConnectionSearch} componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>} isDisabled={false} forcedError={t(mobileNumberError)}
+    }} onSelect={onConnectionSearch} isDisabled={false} forcedError={t(mobileNumberError)}
       //onSkip={onSkip}
       t={t}>
       <RadioOrSelect className="form-field" isMandatory={true} t={t} optionKey="code" name="SearchType" options={SearchTypes} value={searchType} selectedOption={searchType} onSelect={selectSearchType} {...validation = {
@@ -180,7 +180,7 @@ const SearchConnection = ({
         <CardText>{t("WS_SEARCH_TEXT")}</CardText>
         <CardLabel>{`${t("WS_CONSUMER_NUMBER_LABEL")}`}</CardLabel>
         <div className="field-container">
-          <span className="employee-card-input employee-card-input--front ws-search-connection-input-mt-neg">
+          <span className="citizen-card-input citizen-card-input--front">
             +91
           </span>
           <TextInput type={"mobileNumber"} t={t} isMandatory={false} optionKey="i18nKey" name="mobileNumber" value={mobileNumber} onChange={setMobileNo} {...validation = {

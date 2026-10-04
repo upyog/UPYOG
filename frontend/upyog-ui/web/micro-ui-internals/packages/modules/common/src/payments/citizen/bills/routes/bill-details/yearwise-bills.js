@@ -25,7 +25,7 @@ const YearWiseBilltable = ({ bill, ...props }) => {
                 {
                   <thead>
                     <tr>
-                      <th className="bill-details-th-cell" style={thStyle} className="first-col">
+                      <th className="bill-details-th-cell first-col" style={thStyle}>
                         {t("ES_FINANCIAL_YEAR")}
                       </th>
                       {yearWiseBills?.[0]?.billAccountDetails
@@ -35,7 +35,7 @@ const YearWiseBilltable = ({ bill, ...props }) => {
                             {t(head.taxHeadCode)}
                           </th>
                         ))}
-                      <th className="bill-details-th-break" style={thStyle} className="last-col">
+                      <th className="bill-details-th-break last-col" style={thStyle}>
                         {t("ES_TOTAL_TAX").split(" ")[0] + "\n" + t("ES_TOTAL_TAX").split(" ")[1]}
                       </th>
                     </tr>

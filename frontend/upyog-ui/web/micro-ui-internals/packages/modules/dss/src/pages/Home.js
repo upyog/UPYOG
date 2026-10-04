@@ -595,7 +595,7 @@ const Home = ({ stateCode }) => {
                         ) : null}
                       </div>
 
-                      <div className="dss-card-body" className={`dss-card-body ${isLandingPage ? "dss-card-body-landing" : ""}`}>
+                      <div className={`dss-card-body ${isLandingPage ? "dss-card-body-landing" : ""}`}>
                         {item.charts.map((chart, key) => (
                           <div style={item.vizType == "collection" ? { width: Digit.Utils.browser.isMobile() ? "50%" : "25%" } : { width: "50%" }}>
                             <Chart data={chart} key={key} moduleLevel={item.moduleLevel} overview={item.vizType === "collection"} />

@@ -4,7 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import { config } from "./config";
 import ChangePasswordComponent from "./changePassword";
 
-const EmployeeChangePassword = () => {
+const EmployeeChangePassword = ({layout}) => {
   const { t } = useTranslation();
 
   const params = useMemo(() =>
@@ -22,7 +22,7 @@ const EmployeeChangePassword = () => {
 
   return (
     <Routes>
-      <Route path={`*`} element={<ChangePasswordComponent config={params[0]} t={t} />} />
+      <Route path={`*`} element={<ChangePasswordComponent layout={layout}  config={params[0]} t={t} />} />
     </Routes>
   );
 };

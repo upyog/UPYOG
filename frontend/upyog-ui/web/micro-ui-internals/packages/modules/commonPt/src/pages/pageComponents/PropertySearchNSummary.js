@@ -124,13 +124,15 @@ const PropertySearchNSummary = ({ config, onSelect, userType, formData, setError
           </button>
         </div>
       </LabelFieldPair>
-      <span onClick={() => navigate(`/upyog-ui/employee/commonpt/search?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
-        <LinkButton label={t("CPT_SEARCH_PROPERTY")} className="cmnpt-property-search-nsummary-action-btn-2" />
-      </span>
-      &nbsp; | &nbsp;
-      <span onClick={() => navigate(`/upyog-ui/employee/commonpt/new-application?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
-        <LinkButton label={t("CPT_CREATE_PROPERTY")} className="cmnpt-property-search-nsummary-action-btn-2" />
-      </span>
+      <div className="cmnpt-property-search-links-wrapper">
+        <span onClick={() => navigate(`/upyog-ui/employee/commonpt/search?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
+          <LinkButton label={t("CPT_SEARCH_PROPERTY")} className="cmnpt-property-search-nsummary-action-btn-2" />
+        </span>
+        <span className="cmnpt-link-separator">|</span>
+        <span onClick={() => navigate(`/upyog-ui/employee/commonpt/new-application?redirectToUrl=${redirectBackUrl}&${serachParams}`, { ...state })}>
+          <LinkButton label={t("CPT_CREATE_PROPERTY")} className="cmnpt-property-search-nsummary-action-btn-2" />
+        </span>
+      </div>
       {propertyDetails && propertyDetails?.Properties.length ? (
         <React.Fragment>
           <header className="card-section-header cmnpt-property-search-nsummary-header">

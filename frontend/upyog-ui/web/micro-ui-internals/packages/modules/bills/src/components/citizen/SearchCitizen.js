@@ -109,7 +109,7 @@ const SearchCitizen = ({ onSearch, type, onClose, searchFields, searchParams, is
   return (
     <React.Fragment>
       <form onSubmit={handleSubmit(onSubmitInput)}>
-        <div className="search-container" className={isInboxPage ? "search-container-auto-margin" : "search-container-auto"}>
+        <div className={`search-container ${isInboxPage ? "search-container-auto-margin" : "search-container-auto"}`}>
           <div className="search-complaint-container">
             {(type === "mobile" || mobileView) && (
               <div className="complaint-header bills-search-citizen-flex-row">
