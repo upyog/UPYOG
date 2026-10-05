@@ -1,11 +1,12 @@
 .navbar {
-  width: calc(100vw - 240px);
+  width: calc(100% - 240px);
   height: 84px;
   position: fixed;
+  top: 0;
+  left: 240px;
   z-index: 9999;
   background-color: #ffffff;
-  margin-left: 1px;
-  transition: width 0.3s ease-in-out;
+  transition: left 0.3s ease-in-out, width 0.3s ease-in-out;
 
   .center-container.back-wrapper {
     display: flex;
@@ -439,7 +440,8 @@
 }
 
 .navbar-expanded {
-  width: calc(100vw - 80px);
+  left: 80px !important;
+  width: calc(100% - 80px) !important;
 }
 
 .img-circle {
@@ -874,5 +876,21 @@
         }
       }
     }
+  }
+}
+
+.SideBarStatic--collapsed ~ div .navbar,
+.SideBarStatic--collapsed ~ .citizen-main-content-area .navbar,
+.SideBarStatic--collapsed ~ .main .navbar,
+.SideBarStatic--collapsed ~ .dashboard-main .navbar {
+  left: 80px !important;
+  width: calc(100% - 80px) !important;
+}
+
+@media (max-width: 780px) {
+  .navbar,
+  .navbar-expanded {
+    left: 0 !important;
+    width: 100% !important;
   }
 }

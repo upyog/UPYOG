@@ -67,19 +67,22 @@ const EditModifyApplication = () => {
   useEffect(() => {
     !propertyId && sessionFormData?.cpt?.details?.propertyId && setPropertyId(sessionFormData?.cpt?.details?.propertyId);
   }, [sessionFormData?.cpt]);
-  useEffect(async () => {
-    const IsDetailsExists = sessionStorage.getItem("IsDetailsExists") ? JSON.parse(sessionStorage.getItem("IsDetailsExists")) : false;
-    if (details?.applicationData?.id && !IsDetailsExists) {
-      const convertAppData = await convertApplicationData(details, serviceType, true, false, t);
-      setSessionFormData({
-        ...sessionFormData,
-        ...convertAppData
-      });
-      setAppData({
-        ...convertAppData
-      });
-      sessionStorage.setItem("IsDetailsExists", JSON.stringify(true));
-    }
+  useEffect(() => {
+    const loadAppData = async () => {
+      const IsDetailsExists = sessionStorage.getItem("IsDetailsExists") ? JSON.parse(sessionStorage.getItem("IsDetailsExists")) : false;
+      if (details?.applicationData?.id && !IsDetailsExists) {
+        const convertAppData = await convertApplicationData(details, serviceType, true, false, t);
+        setSessionFormData({
+          ...sessionFormData,
+          ...convertAppData
+        });
+        setAppData({
+          ...convertAppData
+        });
+        sessionStorage.setItem("IsDetailsExists", JSON.stringify(true));
+      }
+    };
+    loadAppData();
   }, [propertyDetails, sessionFormData, sessionFormData?.cpt]);
   useEffect(() => {
     setSessionFormData({

@@ -125,13 +125,20 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
     Header: t("PT_COMMON_TABLE_COL_STATUS_LABEL"),
     Cell: ({
       row
-    }) => GetCell(t(row?.original?.status || "NA")),
+    }) => {
+      const status = row?.original?.status || "NA";
+      const statusClass = status.toLowerCase();
+      return <span className={`pt-status-badge pt-status-${statusClass}`}>{t(status)}</span>;
+    },
     disableSortBy: true
   }, {
     Header: t("PT_AMOUNT_DUE"),
     Cell: ({
       row
-    }) => GetCell(row?.original?.dueAmount ? `₹ ${row?.original?.dueAmount}` : t("PT_NA")),
+    }) => {
+      const due = row?.original?.dueAmount;
+      return <span className="pt-due-amount-cell">{due ? `₹ ${due}` : t("PT_NA")}</span>;
+    },
     disableSortBy: true
   }, {
     Header: t("PT_AMOUNT_YEAR"),
@@ -172,7 +179,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast, ptSearchCon
     }) => {
       return <div>
               {Digit.Utils.didEmployeeHasRole("PT_CEMP") ? <span className="link">
-                  <a onClick={() => downloadNotice(row.original)} className="pt-search-defaulter-link">{t("ES_PT_COLLECT_TAX")}</a>
+                  <a onClick={() => downloadNotice(row.original)} className="pt-collect-tax-btn">{t("ES_PT_COLLECT_TAX")}</a>
                 </span> : null}
             </div>;
     }
@@ -260,7 +267,7 @@ const onViewDownload =async () =>{
     return null;
   }
   const tableData2 = Object.values(groupBillrecords || {}) || [];
-  return <React.Fragment>
+  return <div className="pt-search-results-container">
       {data?.Properties?.length === 0 ? <PTEmptyResultInbox data={true}></PTEmptyResultInbox> : isMobile ? <DetailsCard data={getData(tableData)} t={t} /> : <div>
           {jobStatus.running && <Card className="pt-search-defaulter-card">
               <CardText>
@@ -277,14 +284,7 @@ const onViewDownload =async () =>{
             </Card>}
 
 
-          <Table t={t} data={tableData} totalRecords={data?.Properties?.length} columns={columns} getCellProps={cellInfo => {
-        return {
-          style: {
-            padding: "20px 18px",
-            fontSize: "16px"
-          }
-        };
-      }} manualPagination={false} disableSort={true} />
+          <Table t={t} data={tableData} totalRecords={data?.Properties?.length} columns={columns} getCellProps={() => ({})} manualPagination={false} disableSort={true} />
           {/* <SearchForm onSubmit={onSubmit} className={"pt-property-search"} handleSubmit={onSubmit}> */}
           <div className="pt-search-defaulter-link-row-reverse-flex">
             <div className="pt-search-defaulter-link-2">
@@ -298,16 +298,9 @@ const onViewDownload =async () =>{
                 <SubmitBar label={t("CS_COMMON_DOWNLOADS")} onSubmit={onViewDownload} />
               </SearchField></div></div>
 
-          {showDownloads && <Table t={t} data={tableData2} totalRecords={groupBillrecords?.length} columns={columns2} getCellProps={cellInfo => {
-        return {
-          style: {
-            padding: "20px 18px",
-            fontSize: "16px"
-          }
-        };
-      }} manualPagination={false} disableSort={true} />}
+          {showDownloads && <Table t={t} data={tableData2} totalRecords={groupBillrecords?.length} columns={columns2} getCellProps={() => ({})} manualPagination={false} disableSort={true} />}
         </div>}
 
-    </React.Fragment>;
+    </div>;
 };
 export default SearchPTID;

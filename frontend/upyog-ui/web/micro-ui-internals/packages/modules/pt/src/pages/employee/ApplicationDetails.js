@@ -141,6 +141,7 @@ const ApplicationDetails = () => {
   }
   if (!(appDetailsToShow?.applicationDetails?.[0]?.values?.[0].title === "PT_PROPERTY_APPLICATION_NO")) {
     appDetailsToShow?.applicationDetails?.unshift({
+      title: "PT_DETAILS_SUB_HEADER",
       values: [{
         title: "PT_PROPERTY_APPLICATION_NO",
         value: appDetailsToShow?.applicationData?.acknowldgementNumber

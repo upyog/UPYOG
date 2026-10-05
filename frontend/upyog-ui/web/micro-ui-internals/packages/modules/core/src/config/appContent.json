@@ -524,6 +524,7 @@
         "isFormOnLeft": false,
         "isSplitBg": true,
         "hasHeroCard": true,
+        "isHeaderReq": true,
         "mainlogo": {
           "dualLogo": false,
           "url": "/images/Logo.png"

@@ -9,12 +9,16 @@ const LoginLayout = ({ children, heroContent, footer, layout }) => {
 		eGovLogos = {},
 		CFooter = {},
 		isEmployeeV2 = false,
+		isHeaderReq = false,
+		showHeader = false,
+		hasHeader = false,
 		isFormOnLeft = false,
 		isSplitBg = false,
 		hasHeroCard = false,
 	} = layout?.loginUI || {};
 	const { isFormCentered = false, isTopIconReq = false } = layout?.loginForm || {};
-	const isEmployeeNew = isEmployeeV2;
+	const hasNavbar = isEmployeeV2 || isHeaderReq || showHeader || hasHeader;
+	const isEmployeeNew = hasNavbar;
 	const footerItems = [
 		"Property tax",
 		"Trade Licence",
@@ -31,14 +35,14 @@ const LoginLayout = ({ children, heroContent, footer, layout }) => {
 
 	return (
 		<>
-			{isEmployeeNew && (
+			{hasNavbar && (
 				<div className="login-navbar">
 					<div className="login-navbar-card">
 						<div className="cards card1">
-							<img src="/images/logo-secondary.png" alt="Secondary Logo" />
+							<img src={mainlogo?.secondaryLogoUrl || mainlogo?.url2 || "/images/logo-secondary.png"} alt="Secondary Logo" />
 						</div>
 					</div>
-					<a className="login-nav-logo-link" href="/">
+					<a className="login-nav-logo-link" href={isEmployeeV2 ? "/" : "/upyog-ui/citizen"}>
 						<div className="login-nav-logo-inner">
 							<svg
 								x="0px"

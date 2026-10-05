@@ -68,7 +68,17 @@ const PTSearchApplication = ({tenantId, isLoading, t, onSubmit, onClear, data, c
         {
             Header: t("PT_SEARCHPROPERTY_TABEL_PID"),
             disableSortBy: true,
-            accessor: (row) => GetCell(row.propertyId || ""),
+            Cell: ({ row }) => {
+              return (
+                <div>
+                  <span className="link">
+                    <Link to={`/upyog-ui/employee/pt/ptsearch/property-details/${row.original["propertyId"]}`}>
+                      {row.original["propertyId"] || ""}
+                    </Link>
+                  </span>
+                </div>
+              );
+            },
         },
         {
             Header: t("PT_APPLICATION_NO_LABEL"),
@@ -83,24 +93,29 @@ const PTSearchApplication = ({tenantId, isLoading, t, onSubmit, onClear, data, c
                     </Link>
                   </span>
                 </div>);
-    }
-  }, {
-    Header: t("PT_SEARCHPROPERTY_TABEL_APPLICATIONTYPE"),
-    disableSortBy: true,
-    accessor: row => GetCell(row.creationReason || "")
-  }, {
-    Header: t("PT_COMMON_TABLE_COL_OWNER_NAME"),
-    accessor: row => GetCell(row.owners?.[0]?.additionalDetails?.ownerSequence ? row.owners.sort((a, b) => a.additionalDetails.ownerSequence - b.additionalDetails.ownerSequence).map(o => o.name).join(",") || "" : row.owners.map(o => o.name).join(",") || ""),
-    disableSortBy: true
-  }, {
-    Header: t("ES_SEARCH_PROPERTY_STATUS"),
-    accessor: row => GetCell(t(row?.status && `WF_PT_${row.status}` || "NA")),
-    disableSortBy: true
-  }, {
-    Header: t("PT_ADDRESS_LABEL"),
-    disableSortBy: true,
-    accessor: row => GetCell(getaddress(row.address) || "")
-  }]), []);
+            }
+        }, {
+            Header: t("PT_SEARCHPROPERTY_TABEL_APPLICATIONTYPE"),
+            disableSortBy: true,
+            accessor: row => GetCell(t(row.creationReason) || "")
+        }, {
+            Header: t("PT_COMMON_TABLE_COL_OWNER_NAME"),
+            accessor: row => GetCell(row.owners?.[0]?.additionalDetails?.ownerSequence ? row.owners.sort((a, b) => a.additionalDetails.ownerSequence - b.additionalDetails.ownerSequence).map(o => o.name).join(", ") || "" : row.owners ? row.owners.map(o => o.name).join(", ") : ""),
+            disableSortBy: true
+        }, {
+            Header: t("ES_SEARCH_PROPERTY_STATUS"),
+            Cell: ({ row }) => {
+              const status = row?.original?.status || "NA";
+              const statusClass = status.toLowerCase();
+              return <span className={`pt-status-badge pt-status-${statusClass}`}>{t(row?.original?.status ? `WF_PT_${row.original.status}` : "NA")}</span>;
+            },
+            disableSortBy: true
+        }, {
+            Header: t("PT_ADDRESS_LABEL"),
+            disableSortBy: true,
+            accessor: row => GetCell(getaddress(row.address) || "")
+        }
+    ]), []);
   const onSort = useCallback(args => {
     if (args.length === 0) return;
     setValue("sortBy", args.id);
@@ -132,14 +147,14 @@ const PTSearchApplication = ({tenantId, isLoading, t, onSubmit, onClear, data, c
       data,
       onSubmit,
       formState,
-      setShowToast
-    }} /> : <div>
-                <Header>{t("PT_SEARCH_PROP_APP")}</Header>
+    }} /> : <div className="pt-search-page-wrapper pt-search-app-page-wrapper">
+                <Header className="pt-search-header">{t("PT_SEARCH_PROP_APP")}</Header>
                 <Card className={"card-search-heading"}>
-                    <span className="pt-search-application-card-grey-text">{t("Provide at least one parameter to search for an application")}</span>
+                    <span className="pt-search-application-card-grey-text">{t("PT_PROVIDE_ONE_PARAM_TO_SEARCH_APP", "Provide at least one parameter to search for an application")}</span>
                 </Card>
-                <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
-                <SearchField>
+                <div className="PropertySearchForm">
+                <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit} className="pt-property-search">
+                <SearchField className="pt-form-field">
                     <label>{t("PT_APPLICATION_NO_LABEL")}</label>
                     <Controller
                         control={control}
@@ -155,7 +170,7 @@ const PTSearchApplication = ({tenantId, isLoading, t, onSubmit, onClear, data, c
                         )}
                     />
                 </SearchField>
-                <SearchField>
+                <SearchField className="pt-form-field">
                     <label>{t("PT_SEARCHPROPERTY_TABEL_PID")}</label>
                     <Controller
                         control={control}
@@ -171,7 +186,7 @@ const PTSearchApplication = ({tenantId, isLoading, t, onSubmit, onClear, data, c
                         )}
                     />
                 </SearchField>
-                <SearchField>
+                <SearchField className="pt-form-field">
                 <label>{t("PT_OWNER_MOBILE_NO")}</label>
                 <Controller
                     control={control}
@@ -197,12 +212,14 @@ const PTSearchApplication = ({tenantId, isLoading, t, onSubmit, onClear, data, c
                             onChange={field.onChange}
                             onBlur={field.onBlur}
                             inputRef={field.ref}
+                            type="number"
+                            componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
                         />
                     )}
                 />
-                 <CardLabelError>{formState?.errors?.["mobileNumber"]?.message}</CardLabelError>
+                 <CardLabelError className="pt-property-search-form-label-mt-neg">{formState?.errors?.["mobileNumber"]?.message}</CardLabelError>
                 </SearchField>
-                <SearchField>
+                <SearchField className="pt-form-field">
                     <label>{t("PT_SEARCHPROPERTY_TABEL_APPLICATIONTYPE")}</label>
                     <Controller
                             control={control}
@@ -220,7 +237,7 @@ const PTSearchApplication = ({tenantId, isLoading, t, onSubmit, onClear, data, c
                             )}
                             />
                 </SearchField>
-                <SearchField>
+                <SearchField className="pt-form-field">
                     <label>{t("ES_SEARCH_PROPERTY_STATUS")}</label>
                     <Controller
                             control={control}
@@ -238,7 +255,7 @@ const PTSearchApplication = ({tenantId, isLoading, t, onSubmit, onClear, data, c
                             )}
                             />
                 </SearchField>
-                <SearchField>
+                <SearchField className="pt-form-field">
                     <label>{t("PT_FROM_DATE")}</label>
                     <Controller
                         render={({ field }) => <DatePicker date={field.value} disabled={false} onChange={field.onChange} />}
@@ -246,7 +263,7 @@ const PTSearchApplication = ({tenantId, isLoading, t, onSubmit, onClear, data, c
                         control={control}
                         />
                 </SearchField>
-                <SearchField>
+                <SearchField className="pt-form-field">
                     <label>{t("PT_TO_DATE")}</label>
                     <Controller
                         render={({ field }) => <DatePicker date={field.value} disabled={false} onChange={field.onChange} />}
@@ -254,43 +271,50 @@ const PTSearchApplication = ({tenantId, isLoading, t, onSubmit, onClear, data, c
                         control={control}
                         />
                 </SearchField>
-                <SearchField className="submit">
-                    <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
+                <div className="pt-search-action">
+                  <SearchField className="pt-search-action-reset">
                     <p onClick={() => {
-            reset({
-              acknowledgementIds: "",
-              fromDate: "",
-              toDate: "",
-              propertyIds: "",
-              mobileNumber: "",
-              status: "",
-              creationReason: "",
-              offset: 0,
-              limit: 10,
-              sortBy: "commencementDate",
-              sortOrder: "DESC"
-            });
-            setShowToast(null);
-            onClear();
-          }} className="pt-search-application-card-mt-sm">{t(`ES_COMMON_CLEAR_ALL`)}</p>
-                </SearchField>
+                      reset({
+                        acknowledgementIds: "",
+                        fromDate: "",
+                        toDate: "",
+                        propertyIds: "",
+                        mobileNumber: "",
+                        status: "",
+                        creationReason: "",
+                        offset: 0,
+                        limit: 10,
+                        sortBy: "commencementDate",
+                        sortOrder: "DESC"
+                      });
+                      setShowToast(null);
+                      onClear();
+                    }} className="pt-property-search-form-link-red">{t(`ES_COMMON_CLEAR_ALL`)}</p>
+                  </SearchField>
+                  <SearchField className="pt-search-action-submit">
+                    <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
+                  </SearchField>
+                </div>
             </SearchForm>
+            </div>
             {!isLoading && data?.display ? <Card className="pt-search-application-card-mt-md">
                 {t(data.display).split("\\n").map((text, index) => <p key={index} className="pt-search-application-card-center-text">
                         {text}
                     </p>)}
-            </Card> : !isLoading && data !== "" ? <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {
+            </Card> : !isLoading && data !== "" ? <div className="pt-search-results-container">
+              <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {
         return {
           style: {
             minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
-            padding: "20px 18px",
-            fontSize: "16px"
+            padding: "16px 18px",
+            fontSize: "14px"
           }
         };
       }} onPageSizeChange={onPageSizeChange} currentPage={getValues("offset") / getValues("limit")} onNextPage={nextPage} onPrevPage={previousPage} pageSizeLimit={getValues("limit")} onSort={onSort} disableSort={false} sortParams={[{
         id: getValues("sortBy"),
         desc: getValues("sortOrder") === "DESC" ? true : false
-      }]} /> : data !== "" || isLoading && <Loader />}
+      }]} />
+            </div> : (data !== "" || isLoading) && <Loader />}
             </div>}
         </React.Fragment>;
 };

@@ -576,89 +576,237 @@
       margin-left: 64px;
       width: calc(100% - 83px);
     }
-
-    .citizen-home-container {
-      display: flex !important;
-      flex-direction: row !important;
-      width: 100% !important;
-      margin-left: 0 !important;
-      padding-top: 0px !important;
-      min-height: 100vh;
-      background-color: #f8f7fa !important;
-      flex: 1 !important;
-    }
   }
 
-  .employee .main.citizen-home-container {
-    background-color: #f8f7fa !important;
-    min-height: 100vh !important;
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: row !important;
-    padding-top: 0px !important;
-    margin-left: 0px !important;
-  }
+}
 
-  @media (min-width: 640px) {
-    .employee .citizen-home-container {
-      display: flex !important;
-      flex-direction: row !important;
-      width: 100% !important;
-      margin-left: 0 !important;
-      padding-top: 0px !important;
-      min-height: 100vh;
-    }
-  }
+.citizen,
+.employee {
+  @media (min-width: 781px) {
+    .SideBarStatic {
+      width: 240px !important;
+      height: 100vh !important;
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      z-index: 1000 !important;
+      background: #ffffff !important;
+      flex-shrink: 0 !important;
+      overflow-y: hidden !important;
+      transition: width 0.3s ease-in-out !important;
 
-  #main-img {
-    content: url("https://in-egov-assets.s3.ap-south-1.amazonaws.com/images/employee-login.png");
-  }
-
-  .citizen-main-content-area {
-    width: 100%;
-  }
-
-  .citizen {
-    .main {
-      width: 100%;
-      min-height: 100vh;
-      margin-bottom: 0px !important;
-      display: flex !important;
-      flex-direction: row !important;
-
-      .citizen-main-content-area {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        min-width: 0;
-        width: 100%;
-        min-height: 100vh;
-        background: #F7F5FA;
-        position: relative;
+      &.SideBarStatic--collapsed {
+        width: 80px !important;
       }
+    }
+  }
+
+  .main.citizen-home-container {
+    margin-left: 240px !important;
+    margin-top: 84px !important;
+    width: calc(100% - 240px) !important;
+    max-width: calc(100% - 240px) !important;
+    min-height: calc(100vh - 84px) !important;
+    padding: 0 !important;
+    display: block !important;
+    background-color: #f8f7fa !important;
+    box-sizing: border-box !important;
+    transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out, max-width 0.3s ease-in-out !important;
+
+    &.citizen-home-container--collapsed {
+      margin-left: 80px !important;
+      width: calc(100% - 80px) !important;
+      max-width: calc(100% - 80px) !important;
+    }
+
+    &.citizen-home-container--no-sidebar {
+      margin-left: 0 !important;
+      margin-top: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
+    .main-body {
+      width: 100% !important;
+      min-height: calc(100vh - 84px) !important;
+      background: #F7F5FA !important;
+      display: block !important;
+      box-sizing: border-box !important;
+      padding-bottom: 60px !important;
+    }
+
+    .body-topBar {
+      margin-top: 0px !important;
+      min-height: 100vh !important;
+    }
+  }
+}
+
+@media (max-width: 780px) {
+
+  .citizen,
+  .employee {
+    .SideBarStatic {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 280px !important;
+      max-width: 85vw !important;
+      height: 100vh !important;
+      background: #ffffff !important;
+      z-index: 10001 !important;
+      transform: translateX(-100%) !important;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow-y: auto !important;
+
+      &.SideBarStatic--mobile-open {
+        transform: translateX(0) !important;
+      }
+
+      .sidebar-logo-header {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 14px 16px 8px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+
+        .logo-design {
+          margin: 0 !important;
+          width: auto !important;
+
+          img {
+            height: 32px !important;
+            width: auto !important;
+            object-fit: contain !important;
+          }
+        }
+
+        .sidebar-mobile-close-btn {
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          width: 32px !important;
+          height: 32px !important;
+          border-radius: 50% !important;
+          background: #F1F5F9 !important;
+          border: 1px solid #E2E8F0 !important;
+          color: #475569 !important;
+          font-size: 15px !important;
+          font-weight: 700 !important;
+          cursor: pointer !important;
+          line-height: 1 !important;
+          flex-shrink: 0 !important;
+
+          &:hover {
+            background: #E2E8F0 !important;
+            color: #1E293B !important;
+          }
+        }
+      }
+
+      .drawer-desktop {
+        height: auto !important;
+        max-height: calc(100vh - 240px) !important;
+        overflow-y: auto !important;
+        flex: 1 !important;
+      }
+
+      .citizen-logout {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 88% !important;
+        height: 46px !important;
+        margin-top: auto !important;
+        margin-bottom: 20px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        border: 1.5px solid #DCD3EA !important;
+        border-radius: 8px !important;
+        background: #ffffff !important;
+        box-sizing: border-box !important;
+        flex-shrink: 0 !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease-in-out !important;
+
+        &:hover {
+          background: #FAF8FD !important;
+          border-color: #584F74 !important;
+
+          button {
+            color: #584F74 !important;
+
+            .icon,
+            .sidebar-icon,
+            svg {
+              fill: #584F74 !important;
+              path {
+                fill: #584F74 !important;
+              }
+            }
+          }
+        }
+
+        button {
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          gap: 10px !important;
+          width: 100% !important;
+          height: 100% !important;
+          background: transparent !important;
+          border: none !important;
+          outline: none !important;
+          padding: 0 14px !important;
+          margin: 0 !important;
+          cursor: pointer !important;
+          font-size: 14.5px !important;
+          font-weight: 600 !important;
+          color: #505A5F !important;
+          box-sizing: border-box !important;
+
+          span {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            line-height: 1 !important;
+          }
+
+          .icon,
+          .sidebar-icon,
+          svg {
+            width: 18px !important;
+            height: 18px !important;
+            fill: #505A5F !important;
+            margin: 0 !important;
+            flex-shrink: 0 !important;
+
+            path {
+              fill: #505A5F !important;
+            }
+          }
+        }
+      }
+    }
+
+    .main.citizen-home-container {
+      margin-left: 0 !important;
+      margin-top: 60px !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      min-height: calc(100vh - 60px) !important;
+      padding: 0 !important;
 
       .main-body {
-        margin-top: 100px !important;
-        width: 100%;
-        flex: 1 0 auto;
-        min-height: 100vh;
-        overflow-y: auto;
-        overflow-x: hidden;
-        background: #F7F5FA;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-      }
-
-      .body-topBar {
-        margin-top: 0px !important;
-        min-height: 100vh;
-        overflow-y: auto;
+        min-height: calc(100vh - 60px) !important;
+        padding-bottom: 24px !important;
       }
     }
-
   }
-
 }
 
 @media only screen and (max-width:950px) {
@@ -1491,6 +1639,8 @@
       padding: 12px 10px 40px !important;
       box-sizing: border-box !important;
       margin-top: 60px !important;
+      margin-left: 240px !important;
+
     }
 
     .ground-container {
@@ -1534,5 +1684,146 @@
 
   &.tl-breadcrumb-bar--active {
     margin-left: 12px;
+  }
+}
+
+.tl-cert-page-wrapper {
+  padding: 40px 16px;
+  max-width: 680px;
+  margin: 0 auto;
+
+  .tl-cert-header {
+    text-align: center;
+  }
+
+  .tl-cert-card {
+    padding: 36px 28px;
+    margin-top: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  }
+
+  .tl-cert-error-box {
+    text-align: center;
+    padding: 20px 16px;
+
+    .tl-cert-error-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background-color: #fbebe8;
+      color: #d32f2f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px auto;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .tl-cert-error-title {
+      font-size: 18px;
+      color: #d32f2f;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .tl-cert-error-msg {
+      color: #505a5f;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    .tl-cert-retry-btn {
+      background-color: #f47738;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  }
+
+  .tl-cert-content-box {
+    text-align: center;
+
+    .tl-cert-preview-card {
+      background-color: #f8f9fa;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 32px 24px;
+      margin-bottom: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .tl-cert-pdf-icon {
+        margin-bottom: 16px;
+        display: inline-block;
+        width: 80px;
+        height: 80px;
+      }
+
+      .tl-cert-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0b0c0c;
+        margin-bottom: 8px;
+      }
+
+      .tl-cert-desc {
+        font-size: 14px;
+        color: #505a5f;
+        max-width: 480px;
+        line-height: 1.6;
+        margin-bottom: 16px;
+      }
+
+      .tl-cert-filestore-pill {
+        display: inline-block;
+        background-color: #e5edf5;
+        color: #1d70b8;
+        padding: 6px 14px;
+        border-radius: 16px;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+      }
+    }
+
+    .tl-cert-btn-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .tl-cert-download-btn {
+        background-color: #f47738;
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        padding: 16px 32px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: 0 4px 10px rgba(244, 119, 56, 0.3);
+        transition: all 0.2s ease-in-out;
+
+        &.is-loading {
+          background-color: #f8a57c;
+          cursor: not-allowed;
+        }
+
+        .tl-cert-loader {
+          width: 20px;
+          height: 20px;
+          margin: 0;
+        }
+      }
+    }
   }
 }

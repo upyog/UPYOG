@@ -60,59 +60,131 @@ const WSApplication = ({
   if (isLoading) {
     return <Loader />;
   }
+
+  const getStatusClass = (status = "") => {
+    const s = (status || "").toUpperCase();
+    if (s.includes("ACTIVE") || s.includes("CONNECTED") || s.includes("APPROVED") || s.includes("PAID")) {
+      return "status-active";
+    }
+    if (s.includes("PENDING") || s.includes("INITIATED") || s.includes("SUBMITTED") || s.includes("PROGRESS") || s.includes("INSPECTION") || s.includes("APPROVAL")) {
+      return "status-pending";
+    }
+    if (s.includes("REJECT") || s.includes("DISCONNECT") || s.includes("INACTIVE")) {
+      return "status-rejected";
+    }
+    return "status-default";
+  };
+
+  const statusClass = getStatusClass(application?.applicationStatus || "");
+
   return (
-    <Card>
-      <KeyNote keyValue={t("WS_MYCONNECTIONS_APPLICATION_NO")} note={application?.applicationNo} />
-      <KeyNote keyValue={t("WS_SERVICE_NAME")} note={t(`WS_APPLICATION_TYPE_${application?.applicationType}`)} />
-      <KeyNote keyValue={t("WS_CONSUMER_NAME")} note={application?.connectionHolders?.map(owner => owner.name).join(",") || application?.property?.owners?.sort((a, b) => a?.additionalDetails?.ownerSequence - b?.additionalDetails?.ownerSequence).map(owner => owner.name).join(",") || t("CS_NA")} />
-      <KeyNote keyValue={t("WS_PROPERTY_ID")} note={application?.propertyId || t("CS_NA")} />
-      <KeyNote keyValue={t("WS_STATUS")} note={t(`CS_${application?.applicationStatus}`) || t("CS_NA")} />
-      <KeyNote keyValue={t("WS_SLA")} note={Math.round(application?.sla / (24 * 60 * 60 * 1000)) ? `${Math.round(application?.sla / (24 * 60 * 60 * 1000))} Days` : t("CS_NA")} />
-      <KeyNote keyValue={t("WS_PROPERTY_ADDRESS")} note={getAddress(application?.property?.address, t)} privacy={{
-        uuid: application?.property?.owners?.[0]?.uuid,
-        fieldName: ["doorNo", "street", "landmark"],
-        model: "Property",
-        showValue: true,
-        loadData: {
-          serviceName: "/property-services/property/_search",
-          requestBody: {},
-          requestParam: {
-            tenantId: application?.tenantId,
-            propertyIds: application?.propertyId
-          },
-          jsonPath: "Properties[0].address.street",
-          isArray: false,
-          d: res => {
-            let resultString = (_.get(res, "Properties[0].address.doorNo") ? `${_.get(res, "Properties[0].address.doorNo")}, ` : "") + (_.get(res, "Properties[0].address.street") ? `${_.get(res, "Properties[0].address.street")}, ` : "") + (_.get(res, "Properties[0].address.landmark") ? `${_.get(res, "Properties[0].address.landmark")}` : "");
-            return resultString;
-          }
-        }
-      }} />
-      <Link to={`/upyog-ui/citizen/ws/connection/application/${encodeApplicationNo}`}>
-        <SubmitBar label={t("WS_VIEW_DETAILS_LABEL")} />
-      </Link>
-      {application?.applicationStatus === "PENDING_FOR_PAYMENT" ? (
-        <Link
-          to={`/upyog-ui/citizen/payment/my-bills/${businessService
-            }/${application?.applicationNo?.includes("DC")
-              ? (
-                stringReplaceAll(application?.connectionNo, "/", "+") ||
-                stringReplaceAll(application?.connectionNo, "/", "+")
-              )
-              : (
-                stringReplaceAll(application?.applicationNo, "/", "+") ||
-                stringReplaceAll(application?.applicationNo, "/", "+")
-              )
-            }?workflow=WNS&tenantId=${application?.tenantId}&ConsumerName=${application?.connectionHolders?.map((owner) => owner.name).join(",") ||
-            PTData?.Properties?.[0]?.owners?.map((owner) => owner.name).join(",")
-            }&isDisoconnectFlow=${application?.applicationNo?.includes("DC")}`}
-        >
-          <div className="ws-ws-application-top-spacing">
-            <SubmitBar label={t("MAKE_PAYMENT")} />
+    <div className="ws-citizen-card">
+      <div>
+        <div className="ws-card-header">
+          <div className="ws-card-id-wrap">
+            <span className="ws-card-id-label">{t("WS_MYCONNECTIONS_APPLICATION_NO")}</span>
+            <span className="ws-card-id-value">{application?.applicationNo || "N/A"}</span>
           </div>
+          <span className={`ws-status-badge ${statusClass}`}>
+            {t(`CS_${application?.applicationStatus}`) || t(application?.applicationStatus) || t("CS_NA")}
+          </span>
+        </div>
+
+        <div className="ws-card-body">
+          <div className="ws-card-field">
+            <span className="ws-field-label">{t("WS_SERVICE_NAME")}</span>
+            <span className="ws-field-value">{t(`WS_APPLICATION_TYPE_${application?.applicationType}`) || t("CS_NA")}</span>
+          </div>
+
+          <div className="ws-card-field">
+            <span className="ws-field-label">{t("WS_CONSUMER_NAME")}</span>
+            <span className="ws-field-value">
+              {application?.connectionHolders?.map((owner) => owner.name).join(",") ||
+                application?.property?.owners?.sort((a, b) => a?.additionalDetails?.ownerSequence - b?.additionalDetails?.ownerSequence)?.map((owner) => owner.name).join(",") ||
+                t("CS_NA")}
+            </span>
+          </div>
+
+          <div className="ws-card-field">
+            <span className="ws-field-label">{t("WS_PROPERTY_ID")}</span>
+            <span className="ws-field-value">{application?.propertyId || t("CS_NA")}</span>
+          </div>
+
+          <div className="ws-card-field">
+            <span className="ws-field-label">{t("WS_SLA")}</span>
+            <span className="ws-field-value">
+              {Math.round(application?.sla / (24 * 60 * 60 * 1000)) ? `${Math.round(application?.sla / (24 * 60 * 60 * 1000))} Days` : t("CS_NA")}
+            </span>
+          </div>
+
+          <div className="ws-card-field full-width">
+            <span className="ws-field-label">{t("WS_PROPERTY_ADDRESS")}</span>
+            <div className="ws-field-value">
+              <KeyNote
+                keyValue=""
+                note={getAddress(application?.property?.address, t)}
+                privacy={{
+                  uuid: application?.property?.owners?.[0]?.uuid,
+                  fieldName: ["doorNo", "street", "landmark"],
+                  model: "Property",
+                  showValue: true,
+                  loadData: {
+                    serviceName: "/property-services/property/_search",
+                    requestBody: {},
+                    requestParam: {
+                      tenantId: application?.tenantId,
+                      propertyIds: application?.propertyId,
+                    },
+                    jsonPath: "Properties[0].address.street",
+                    isArray: false,
+                    d: (res) => {
+                      let resultString =
+                        (_.get(res, "Properties[0].address.doorNo") ? `${_.get(res, "Properties[0].address.doorNo")}, ` : "") +
+                        (_.get(res, "Properties[0].address.street") ? `${_.get(res, "Properties[0].address.street")}, ` : "") +
+                        (_.get(res, "Properties[0].address.landmark") ? `${_.get(res, "Properties[0].address.landmark")}` : "");
+                      return resultString;
+                    },
+                  },
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="ws-card-actions">
+        <Link to={`/upyog-ui/citizen/ws/connection/application/${encodeApplicationNo}`}>
+          <button type="button" className="ws-btn-view-details">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            {t("WS_VIEW_DETAILS_LABEL")}
+          </button>
         </Link>
-      ) : null}
-    </Card>
+        {application?.applicationStatus === "PENDING_FOR_PAYMENT" ? (
+          <Link
+            to={`/upyog-ui/citizen/payment/my-bills/${businessService}/${
+              application?.applicationNo?.includes("DC")
+                ? stringReplaceAll(application?.connectionNo, "/", "+")
+                : stringReplaceAll(application?.applicationNo, "/", "+")
+            }?workflow=WNS&tenantId=${application?.tenantId}&ConsumerName=${
+              application?.connectionHolders?.map((owner) => owner.name).join(",") ||
+              PTData?.Properties?.[0]?.owners?.map((owner) => owner.name).join(",")
+            }&isDisoconnectFlow=${application?.applicationNo?.includes("DC")}`}
+          >
+            <button type="button" className="ws-btn-pay-now">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+                <line x1="1" y1="10" x2="23" y2="10" />
+              </svg>
+              {t("MAKE_PAYMENT")}
+            </button>
+          </Link>
+        ) : null}
+      </div>
+    </div>
   );
 };
 export default WSApplication;
+

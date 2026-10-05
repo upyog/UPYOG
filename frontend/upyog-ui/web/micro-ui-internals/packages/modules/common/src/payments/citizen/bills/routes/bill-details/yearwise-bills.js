@@ -13,8 +13,6 @@ const YearWiseBilltable = ({ bill, ...props }) => {
     return from + "-" + to.slice(-2);
   };
 
-  const thStyle = { whiteSpace: "break-spaces", paddingBottom: "13px" };
-
   return (
     <React.Fragment>
       {showDetails ? (
@@ -25,17 +23,17 @@ const YearWiseBilltable = ({ bill, ...props }) => {
                 {
                   <thead>
                     <tr>
-                      <th className="bill-details-th-cell first-col" style={thStyle}>
+                      <th className="bill-details-th-cell first-col cmn-yearwise-th">
                         {t("ES_FINANCIAL_YEAR")}
                       </th>
                       {yearWiseBills?.[0]?.billAccountDetails
                         ?.sort((a, b) => a.order - b.order)
                         ?.map((head, index) => (
-                          <th className="bill-details-th-border" style={thStyle} key={index}>
+                          <th className="bill-details-th-border cmn-yearwise-th" key={index}>
                             {t(head.taxHeadCode)}
                           </th>
                         ))}
-                      <th className="bill-details-th-break last-col" style={thStyle}>
+                      <th className="bill-details-th-break last-col cmn-yearwise-th">
                         {t("ES_TOTAL_TAX").split(" ")[0] + "\n" + t("ES_TOTAL_TAX").split(" ")[1]}
                       </th>
                     </tr>

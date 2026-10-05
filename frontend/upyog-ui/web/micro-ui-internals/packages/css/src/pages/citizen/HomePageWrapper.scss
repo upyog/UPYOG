@@ -1,5 +1,14 @@
 .HomePageWrapper {
-  margin-top: -25px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 14px 14px 28px;
+  overflow-x: hidden;
+
+  @media (min-width: 780px) {
+    padding: 20px 24px 40px;
+  }
 
   .BannerWithSearch {
     width: 100%;
@@ -65,13 +74,13 @@
 
   .headerBoxSection {
     width: 100%;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
 
     .sectionTitle {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
 
       h3 {
         margin: 0;
@@ -82,11 +91,11 @@
       }
 
       button {
-        background: #fff;
+        background: transparent;
         border: none;
         border-bottom: 2px solid #2b2b2b;
         padding: 0;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 600;
         color: #2c2f36;
         cursor: pointer;
@@ -103,16 +112,17 @@
       .buttonCard {
         background: #ffffff;
         border: 1px solid #D6CDE4;
-        border-radius: 6px;
+        border-radius: 8px;
         padding: 18px 16px 14px;
         cursor: pointer;
         width: 100%;
-        min-height: 140px;
+        min-height: 130px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         transition: all 0.2s ease;
         text-align: left;
+        box-sizing: border-box;
 
         &.buttonCard--center {
           align-items: center;
@@ -155,14 +165,14 @@
         }
 
         .statCardValue {
-          font-size: 32px;
+          font-size: 30px;
           font-weight: 800;
           line-height: 1;
           color: #1f1b2d;
         }
 
         .statCardAction {
-          margin-top: 18px;
+          margin-top: 14px;
           font-size: 13px;
           font-weight: 600;
           color: #1f1b2d;
@@ -171,11 +181,75 @@
         }
 
         .statCardNoTask {
-          margin-top: 18px;
+          margin-top: 14px;
           font-size: 13px;
           font-weight: 600;
           color: #7F7797;
         }
+      }
+    }
+
+    @media (max-width: 640px) {
+      margin-bottom: 18px;
+
+      .sectionTitle {
+        margin-bottom: 10px;
+
+        h3 {
+          font-size: 17px;
+        }
+
+        button {
+          font-size: 14px;
+        }
+      }
+
+      .sectionBody {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+
+        .buttonCard {
+          padding: 12px 10px 10px;
+          min-height: 105px;
+
+          .serviceVarientIcon {
+            width: 34px;
+            height: 34px;
+            font-size: 12px;
+            margin-bottom: 6px;
+          }
+
+          .serviceVarientsubTitle {
+            font-size: 13px;
+            margin-bottom: 2px;
+          }
+
+          .serviceVarientText {
+            font-size: 11px;
+            line-height: 1.3;
+          }
+
+          .serviceVarientTitle {
+            font-size: 12px;
+            margin-bottom: 4px;
+          }
+
+          .statCardValue {
+            font-size: 22px;
+          }
+
+          .statCardAction,
+          .statCardNoTask {
+            margin-top: 8px;
+            font-size: 11.5px;
+          }
+        }
+      }
+    }
+
+    @media (max-width: 380px) {
+      .sectionBody {
+        grid-template-columns: 1fr;
       }
     }
   }
@@ -425,25 +499,76 @@
 
     .citizen-logout {
       display: flex;
-      height: 50px;
-      width: 80%;
-      margin: auto;
-      border: 1px solid #DCD3EA;
-      border-radius: 10px;
+      height: 44px;
+      width: 88%;
+      margin: 16px auto;
+      border: 1.5px solid #DCD3EA;
+      border-radius: 8px;
       align-items: center;
       justify-content: center;
-      transition: all 0.3s ease-in-out;
+      background: #ffffff;
+      box-sizing: border-box;
+      transition: all 0.2s ease-in-out;
+      cursor: pointer;
+
+      &:hover {
+        background: #FAF8FD;
+        border-color: #584F74;
+
+        button {
+          color: #584F74;
+
+          .icon,
+          .sidebar-icon,
+          svg {
+            fill: #584F74;
+            path {
+              fill: #584F74;
+            }
+          }
+        }
+      }
 
       &>button {
         display: flex;
         align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: 100%;
+        height: 100%;
+        background: transparent;
+        border: none;
+        outline: none;
+        padding: 0 14px;
+        margin: 0;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        color: #505A5F;
+        box-sizing: border-box;
+        transition: color 0.2s ease;
 
         &>span {
-          display: block;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 1;
         }
 
-        &>span:first-child {
-          width: 18px;
+        .icon,
+        .sidebar-icon,
+        svg {
+          width: 18px !important;
+          height: 18px !important;
+          fill: #505A5F;
+          margin: 0 !important;
+          flex-shrink: 0;
+          transition: fill 0.2s ease;
+
+          path {
+            fill: #505A5F;
+            transition: fill 0.2s ease;
+          }
         }
       }
     }
@@ -451,8 +576,28 @@
     &.SideBarStatic--collapsed {
       width: 80px;
 
+      .sidebar-logo-header {
+        justify-content: center;
+        padding: 16px 0 8px;
+        width: 100%;
+
+        .sidebar-mobile-close-btn {
+          display: none !important;
+        }
+      }
+
       .logo-design {
-        width: inherit
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+
+        img {
+          width: 38px;
+          height: 38px;
+          object-fit: contain;
+        }
       }
 
       .drawer-desktop {
@@ -465,7 +610,7 @@
         }
 
         .sidebar-list.active {
-          border-radius: 0px
+          border-radius: 0px;
         }
 
         .menu-item .icon+.menu-label {
@@ -479,9 +624,14 @@
       }
 
       .citizen-logout {
-        width: 70%;
+        width: 44px;
+        height: 44px;
+        padding: 0;
 
         &>button {
+          padding: 0;
+          justify-content: center;
+
           &>span:not(:first-child) {
             display: none;
           }
@@ -575,7 +725,7 @@
 }
 
 .HomePageContainer {
-  margin-top: 90px;
+  margin-top: 0;
   display: flex;
   width: 100% !important;
   max-width: 100%;
@@ -584,6 +734,7 @@
   overflow-x: hidden;
 
   @media (min-width: 780px) {
+    margin-top: 0;
     display: flex;
     width: 100% !important;
     height: auto;

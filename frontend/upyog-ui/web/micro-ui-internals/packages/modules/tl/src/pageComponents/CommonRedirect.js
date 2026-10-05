@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, Header, Loader, PDFSvg, DownloadIcon, ExternalLinkIcon } from "@upyog/digit-ui-react-components";
+import { Card, Header, Loader, PDFSvg, DownloadIcon, ExternalLinkIcon } from "@nudmcdgnpm/digit-ui-react-components";
 
 const CommonRedirect = () => {
   const { t } = useTranslation();
@@ -114,123 +114,59 @@ const CommonRedirect = () => {
   };
 
   return (
-    <div style={{ padding: "40px 16px", maxWidth: "680px", margin: "0 auto" }}>
-      <Header style={{ textAlign: "center" }}>{t("TL_ESIGNED_CERTIFICATE_HEADER", "E-Signed Trade License Certificate")}</Header>
+    <div className="tl-cert-page-wrapper">
+      <Header className="tl-cert-header">{t("TL_ESIGNED_CERTIFICATE_HEADER", "E-Signed Trade License Certificate")}</Header>
 
-      <Card style={{ padding: "36px 28px", marginTop: "20px", borderRadius: "12px", boxShadow: "0 6px 18px rgba(0, 0, 0, 0.06)" }}>
+      <Card className="tl-cert-card">
         {error ? (
-          <div style={{ textAlign: "center", padding: "20px 16px" }}>
-            <div
-              style={{
-                width: "56px",
-                height: "56px",
-                borderRadius: "50%",
-                backgroundColor: "#fbebe8",
-                color: "#d32f2f",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                margin: "0 auto 16px auto",
-                fontSize: "24px",
-                fontWeight: "bold",
-              }}
-            >
-              !
-            </div>
-            <h3 style={{ fontSize: "18px", color: "#d32f2f", fontWeight: "600", marginBottom: "8px" }}>
+          <div className="tl-cert-error-box">
+            <div className="tl-cert-error-icon">!</div>
+            <h3 className="tl-cert-error-title">
               {t("TL_COMMON_REDIRECT_ERROR_HEADER", "Unable to Load Certificate")}
             </h3>
-            <p style={{ color: "#505a5f", fontSize: "14px", marginBottom: "24px" }}>{error}</p>
-            <button
-              onClick={handleDownloadAndOpen}
-              style={{
-                backgroundColor: "#f47738",
-                color: "#fff",
-                border: "none",
-                borderRadius: "4px",
-                padding: "10px 24px",
-                fontSize: "14px",
-                fontWeight: "600",
-                cursor: "pointer",
-              }}
-            >
+            <p className="tl-cert-error-msg">{error}</p>
+            <button onClick={handleDownloadAndOpen} className="tl-cert-retry-btn">
               {t("TL_COMMON_REDIRECT_RETRY", "Try Again")}
             </button>
           </div>
         ) : (
-          <div style={{ textAlign: "center" }}>
-            <div
-              style={{
-                backgroundColor: "#f8f9fa",
-                border: "1px solid #e5e7eb",
-                borderRadius: "10px",
-                padding: "32px 24px",
-                marginBottom: "28px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <div style={{ marginBottom: "16px", display: "inline-block" }}>
-                <PDFSvg width="80px" height="80px" style={{ width: "80px", height: "80px" }} />
+          <div className="tl-cert-content-box">
+            <div className="tl-cert-preview-card">
+              <div className="tl-cert-pdf-icon">
+                <PDFSvg width="80px" height="80px" />
               </div>
-              <h3 style={{ fontSize: "22px", fontWeight: "700", color: "#0b0c0c", marginBottom: "8px" }}>
+              <h3 className="tl-cert-title">
                 {t("TL_ESIGNED_CERTIFICATE_TITLE", "E-Signed Trade License Certificate")}
               </h3>
-              <p style={{ fontSize: "14px", color: "#505a5f", maxWidth: "480px", lineHeight: "1.6", marginBottom: "16px" }}>
+              <p className="tl-cert-desc">
                 {t(
                   "TL_ESIGNED_CERTIFICATE_DESC",
                   "Click the button below to fetch, open in a new tab, and download your e-signed Trade License certificate."
                 )}
               </p>
               {filestoreId && (
-                <span
-                  style={{
-                    display: "inline-block",
-                    backgroundColor: "#e5edf5",
-                    color: "#1d70b8",
-                    padding: "6px 14px",
-                    borderRadius: "16px",
-                    fontSize: "13px",
-                    fontWeight: "600",
-                    letterSpacing: "0.3px",
-                  }}
-                >
+                <span className="tl-cert-filestore-pill">
                   {t("TL_FILESTORE_ID", "File Store ID")}: {filestoreId}
                 </span>
               )}
             </div>
 
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <div className="tl-cert-btn-row">
               <button
                 onClick={handleDownloadAndOpen}
                 disabled={loading}
-                style={{
-                  backgroundColor: loading ? "#f8a57c" : "#f47738",
-                  color: "#ffffff",
-                  border: "none",
-                  borderRadius: "6px",
-                  padding: "16px 32px",
-                  fontSize: "16px",
-                  fontWeight: "600",
-                  cursor: loading ? "not-allowed" : "pointer",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "12px",
-                  boxShadow: "0 4px 10px rgba(244, 119, 56, 0.3)",
-                  transition: "all 0.2s ease-in-out",
-                }}
+                className="tl-cert-download-btn"
               >
                 {loading ? (
                   <React.Fragment>
-                    <Loader style={{ width: "20px", height: "20px", margin: 0 }} />
+                    <Loader className="tl-cert-loader" />
                     <span>{t("TL_DOWNLOADING_CERTIFICATE", "Fetching Certificate...")}</span>
                   </React.Fragment>
                 ) : (
                   <React.Fragment>
-                    <DownloadIcon fill="#ffffff" styles={{ width: "20px", height: "20px" }} />
+                    <DownloadIcon fill="#ffffff" />
                     <span>{t("TL_DOWNLOAD_AND_OPEN_CERTIFICATE", "Download & View Certificate")}</span>
-                    <ExternalLinkIcon fill="#ffffff" styles={{ width: "16px", height: "16px", marginLeft: "4px" }} />
+                    <ExternalLinkIcon fill="#ffffff" />
                   </React.Fragment>
                 )}
               </button>

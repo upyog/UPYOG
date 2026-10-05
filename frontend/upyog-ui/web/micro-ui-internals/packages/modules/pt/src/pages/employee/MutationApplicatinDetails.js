@@ -390,59 +390,38 @@ const MutationApplicationDetails = ({
     label: t("MT_CERTIFICATE"),
     onClick: () => printCertificate()
   });
-  const getCardSubHeadrStyles = () => {
-    return {
-      fontSize: "24px",
-      fontWeight: "700",
-      lineHeight: "28px",
-      margin: "20px 0px"
-    };
-  };
   return <React.Fragment>
-    <div className="cardHeaderWithOptions pt-mutation-applicatin-details-item">
-      <Header styles={{
-        fontSize: "32px",
-        marginLeft: "12px"
-      }}>{t("PT_MUTATION_APPLICATION_DETAILS")}</Header>
+    <div className="cardHeaderWithOptions pt-mutation-application-details-header">
+      <Header className="pt-mutation-header-title">{t("PT_MUTATION_APPLICATION_DETAILS")}</Header>
       <div>
         <div>
           {dowloadOptions && dowloadOptions.length > 0 && <MultiLink onHeadClick={() => setShowOptions(!showOptions)} displayOptions={showOptions} options={dowloadOptions} className="multilinkWrapper pt-mutation-applicatin-details-link" />}
         </div>
       </div>
     </div>
-    <Card>
-      <StatusTable>
-        <Row label={t("PT_APPLICATION_NUMBER_LABEL")} text={property?.acknowldgementNumber} textStyle={{
-          whiteSpace: "pre"
-        }} />
-        <Row label={t("PT_SEARCHPROPERTY_TABEL_PTUID")} text={property?.propertyId} textStyle={{
-          whiteSpace: "pre"
-        }} />
+    <Card className="pt-mutation-details-container">
+      <StatusTable className="pt-mutation-top-summary-table">
+        <Row label={t("PT_APPLICATION_NUMBER_LABEL")} text={property?.acknowldgementNumber} />
+        <Row label={t("PT_SEARCHPROPERTY_TABEL_PTUID")} text={property?.propertyId} />
         <Row label={t("PT_APPLICATION_CHANNEL_LABEL")} text={t(`ES_APPLICATION_DETAILS_APPLICATION_CHANNEL_${property?.channel}`)} />
-        <Row label={t("PT_FEE_AMOUNT")} text={billAmount} textStyle={{
-          whiteSpace: "pre"
-        }} />
-        <Row label={t("PT_PAYMENT_STATUS")} text={billStatus} textStyle={{
-          whiteSpace: "pre"
-        }} />
-
+        <Row label={t("PT_FEE_AMOUNT")} text={billAmount} />
+        <Row label={t("PT_PAYMENT_STATUS")} text={billStatus} />
       </StatusTable>
-      <CardSubHeader style={getCardSubHeadrStyles()}>{t("PT_PROPERTY_ADDRESS_SUB_HEADER")}</CardSubHeader>
+      <CardSubHeader className="pt-mutation-section-header">{t("PT_PROPERTY_ADDRESS_SUB_HEADER")}</CardSubHeader>
       <StatusTable>
         <Row label={t("PT_PROPERTY_ADDRESS_PINCODE")} text={property?.address?.pincode || t("CS_NA")} />
         <Row label={t("PT_COMMON_CITY")} text={property?.address?.city || t("CS_NA")} />
         <Row label={t("PT_COMMON_LOCALITY_OR_MOHALLA")} text= /* {`${t(application?.address?.locality?.name)}` || t("CS_NA")} */{t(`${property?.address?.locality?.area}`) || t("CS_NA")} />
         <Row label={t("PT_PROPERTY_ADDRESS_STREET_NAME")} text={property?.address?.street || t("CS_NA")} />
         <Row label={t("PT_DOOR_OR_HOUSE")} text={property?.address?.doorNo || t("CS_NA")} />
-
       </StatusTable>
 
-      <CardSubHeader style={getCardSubHeadrStyles()}>{t("PT_MUTATION_TRANSFEROR_DETAILS")}</CardSubHeader>
+      <CardSubHeader className="pt-mutation-section-header">{t("PT_MUTATION_TRANSFEROR_DETAILS")}</CardSubHeader>
       <div>
         {Array.isArray(transferorOwners) && transferorOwners.sort((item, item2) => {
           return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence;
         }).map((owner, index) => <div key={index}>
-          <CardSubHeader style={getCardSubHeadrStyles()}>
+          <CardSubHeader className="pt-mutation-section-header">
             {transferorOwners.length != 1 && <span>
               {t("PT_OWNER_SUB_HEADER")} - {index + 1}{" "}
             </span>}
@@ -458,12 +437,12 @@ const MutationApplicationDetails = ({
         </div>)}
       </div>
 
-      <CardSubHeader style={getCardSubHeadrStyles()}>{t("PT_MUTATION_TRANSFEREE_DETAILS")}</CardSubHeader>
+      <CardSubHeader className="pt-mutation-section-header">{t("PT_MUTATION_TRANSFEREE_DETAILS")}</CardSubHeader>
       {transferorInstitution.length ? <div>
         {Array.isArray(transfereeOwners) && transfereeOwners.sort((item, item2) => {
           return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence;
         }).map((owner, index) => <div key={index}>
-          <CardSubHeader style={getCardSubHeadrStyles()}>
+          <CardSubHeader className="pt-mutation-section-header">
             {transfereeOwners.length != 1 && <span>
               {t("PT_OWNER_SUB_HEADER")} - {index + 1}{" "}
             </span>}
@@ -481,7 +460,7 @@ const MutationApplicationDetails = ({
         </div>)}
       </div> : <div>
         {Array.isArray(transfereeOwners) && transfereeOwners.map((owner, index) => <div key={index}>
-          <CardSubHeader style={getCardSubHeadrStyles()}>
+          <CardSubHeader className="pt-mutation-section-header">
             {transfereeOwners.length != 1 && <span>
               {t("PT_OWNER_SUB_HEADER")} - {index + 1}{" "}
             </span>}
@@ -499,7 +478,7 @@ const MutationApplicationDetails = ({
           </StatusTable>
         </div>)}
       </div>}
-      <CardSubHeader style={getCardSubHeadrStyles()}>{t("PT_MUTATION_DETAILS")}</CardSubHeader>
+      <CardSubHeader className="pt-mutation-section-header">{t("PT_MUTATION_DETAILS")}</CardSubHeader>
       <StatusTable>
         <Row label={t("PT_MUTATION_PENDING_COURT")} text={property?.additionalDetails?.isMutationInCourt || t("CS_NA")} />
         <Row label={t("PT_DETAILS_COURT_CASE")} text={property?.additionalDetails?.caseDetails || t("CS_NA")} />
@@ -507,7 +486,7 @@ const MutationApplicationDetails = ({
         <Row label={t("PT_DETAILS_GOV_AQUISITION")} text={t("CS_NA")} />
       </StatusTable>
 
-      <CardSubHeader style={getCardSubHeadrStyles()}>{t("PT_REGISTRATION_DETAILS")}</CardSubHeader>
+      <CardSubHeader className="pt-mutation-section-header">{t("PT_REGISTRATION_DETAILS")}</CardSubHeader>
       <StatusTable>
         <Row label={t("PT_REASON_PROP_TRANSFER")} text={`${t(property?.additionalDetails?.reasonForTransfer)}` || t("CS_NA")} />
         <Row label={t("PT_PROP_MARKET_VALUE")} text={property?.additionalDetails?.marketValue || t("CS_NA")} />
@@ -517,7 +496,7 @@ const MutationApplicationDetails = ({
         <Row label={t("PT_REMARKS")} text={t("CS_NA")} />
       </StatusTable>
 
-      <CardSubHeader style={getCardSubHeadrStyles()}>{t("PT_COMMON_DOCS")}</CardSubHeader>
+      <CardSubHeader className="pt-mutation-section-header">{t("PT_COMMON_DOCS")}</CardSubHeader>
       <div>
         {Array.isArray(docs) ? docs.length > 0 && <PropertyDocument property={property}></PropertyDocument> : <StatusTable>
           <Row text={t("PT_NO_DOCUMENTS_MSG")} />

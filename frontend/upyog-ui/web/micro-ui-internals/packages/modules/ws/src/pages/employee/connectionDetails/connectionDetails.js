@@ -76,15 +76,21 @@ const GetConnectionDetails = () => {
   });
   let commonPayInfo = "";
   if (index > -1) commonPayInfo = commonPayDetails[index]; else commonPayInfo = commonPayDetails && commonPayDetails.filter(item => item.code === "DEFAULT");
-  const receiptKey = commonPayInfo?.receiptKey || "consolidatedreceipt";
-  useEffect(async () => {
-    let businessService = serviceType === "WATER" ? "WS" : "SW";
-    const res = await Digit.PaymentService.searchAmendment(tenantId, {
-      consumerCode: applicationNumber,
-      businessService
-    });
-    setBilldata(res.Amendments);
-  }, []);
+  useEffect(() => {
+    const fetchAmendment = async () => {
+      try {
+        let businessService = serviceType === "WATER" ? "WS" : "SW";
+        const res = await Digit.PaymentService.searchAmendment(tenantId, {
+          consumerCode: applicationNumber,
+          businessService
+        });
+        setBilldata(res?.Amendments || []);
+      } catch (e) {
+        console.warn("searchAmendment failed:", e);
+      }
+    };
+    fetchAmendment();
+  }, [tenantId, applicationNumber, serviceType]);
   const downloadConnectionDetails = async () => {
     const tenantInfo = applicationDetails?.applicationData?.tenantId;
     let result = applicationDetails?.applicationData;

@@ -624,7 +624,7 @@ function returnConstants(t, type, fn, navigate) {
       return [
         { title: "PT", text: "View & manage property tax", subtitle: "Property Tax", icon: "PT", onClick: () => nav("/upyog-ui/citizen/pt-home") },
         { title: "TL", text: "Apply for trade licence", subtitle: "Trade License", icon: "TL", onClick: () => nav("/upyog-ui/citizen/tl-home") },
-        { title: "BPA", text: "Apply & track building plans", subtitle: "Building Plan Approval", icon: "BPA", onClick: () => nav("/upyog-ui/citizen/obps-home") },
+        { title: "WS", text: "Water & sewerage connections & bills", subtitle: "Water & Sewerage", icon: "WS", onClick: () => nav("/upyog-ui/citizen/ws-home") },
         { title: "+", text: "Expand all services", subtitle: "View All", icon: "+", onClick: () => nav("/upyog-ui/citizen/all-services") },
       ];
     default:

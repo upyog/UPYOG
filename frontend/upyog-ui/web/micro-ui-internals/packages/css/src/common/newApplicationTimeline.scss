@@ -69,16 +69,25 @@
 .custom-timeline-entry {
   position: relative;
   margin-bottom: 32px;
+
+  &:last-child {
+    margin-bottom: 0;
+
+    .custom-vertical-line {
+      display: none;
+    }
+  }
 }
 
 .custom-vertical-line {
   position: absolute;
-  left: 93px;
-  top: 37px;
+  left: 91.5px;
+  top: 48px;
   width: 3px;
   background-color: #d1d5db;
-  bottom: 0;
+  bottom: -32px;
 }
+
 
 .custom-date-badge {
   display: inline-block;

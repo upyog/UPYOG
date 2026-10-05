@@ -15,14 +15,14 @@ const App = () => {
   const MyChallanResultsComponent = Digit?.ComponentRegistryService?.getComponent("MCollectMyChallanResultsComponent");
 
   return (
-    <span className={"mcollect-citizen"}>
+    <div className={"mcollect-citizen"}>
       <BackButton>Back</BackButton>
       <Routes>
         <Route path={`search`} element={<PrivateRoute><SearchChallanComponent /></PrivateRoute>} />
         <Route path={`search-results`} element={<PrivateRoute><SearchResultsComponent /></PrivateRoute>} />
         <Route path={`My-Challans`} element={<PrivateRoute><MyChallanResultsComponent /></PrivateRoute>} />
       </Routes>
-    </span>
+    </div>
   );
 };
 

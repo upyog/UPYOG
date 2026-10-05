@@ -38,6 +38,7 @@ const App = ({
   const WSReSubmitDisconnectionApplication = Digit?.ComponentRegistryService?.getComponent("WSReSubmitDisconnectionApplication");
   const WSMyConnections = Digit?.ComponentRegistryService?.getComponent("WSMyConnections");
   const WNSMyBillsComponent = Digit?.ComponentRegistryService?.getComponent("WNSMyBillsComponent");
+  const WSCitizenHomeScreen = Digit?.ComponentRegistryService?.getComponent("WSCitizenHomeScreen");
   return <React.Fragment>
     <div className="ws-citizen-wrapper">
       {!isAcknowledgement && <BackButton /* isCommonPTPropertyScreen={isCommonPTPropertyScreen} */ getBackPageNumber={getBackPageNumber} className="ws-index-item">
@@ -61,6 +62,7 @@ const App = ({
         <Route path={`/connection/additional/:acknowledgementIds`} element={<PrivateRoute><WSAdditionalDetails /></PrivateRoute>} />
         <Route path={`/connection/details/:acknowledgementIds`} element={<PrivateRoute><WSCitizenConnectionDetails /></PrivateRoute>} />
         <Route path={`/consumption/details`} element={<PrivateRoute><WSCitizenConsumptionDetails /></PrivateRoute>} />
+        <Route path={`/home`} element={<WSCitizenHomeScreen />} />
         <Route path={`/edit-application/:tenantId`} element={<PrivateRoute><WSCitizenEditApplication /></PrivateRoute>} />
         <Route path={`/modify-connection/:tenantId`} element={<PrivateRoute><WSCitizenEditApplication /></PrivateRoute>} />
       </Routes>

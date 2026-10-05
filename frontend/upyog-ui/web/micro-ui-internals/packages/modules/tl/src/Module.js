@@ -57,8 +57,7 @@ import { TLList } from "./pages/citizen/Renewal";
 import RenewTrade from "./pages/citizen/Renewal/renewTrade";
 import SearchTradeComponent from "./pages/citizen/SearchTrade";
 import SelectTradeUnitsInitial from "./pageComponents/SelectTradeUnitsInitial";
-import TLTradeUnitsEmployeeInitial from "./pageComponents/TLTradeUnitsEmployeeInitial";
-// import CommonRedirect from "./pageComponents/CommonRedirect"
+import TLCitizenHomeScreen from "./pages/citizen/TLHome";
 import CitizenApp from "./pages/citizen";
 import EmployeeApp from "./pages/employee";
 import { ReportSearchApplication, EnhancedReport } from "@nudmcdgnpm/digit-ui-module-reports";
@@ -161,7 +160,8 @@ const componentsToRegister = {
   TLResponse : Response,
   SelectOtherTradeDetails,
   SelectTradeUnitsInitial,
-  TLTradeUnitsEmployeeInitial,
+  TLCitizenHomeScreen,
+  TLHome: TLCitizenHomeScreen,
   // CommonRedirect,
   EnhancedReport,
   ReportSearchApplication
@@ -169,6 +169,6 @@ const componentsToRegister = {
 
 export const initTLComponents = () => {
   Object.entries(componentsToRegister)?.forEach(([key, value]) => {
-    Digit.ComponentRegistryService.setComponent(key, value);
+    Digit?.ComponentRegistryService?.setComponent(key, value);
   });
 };
