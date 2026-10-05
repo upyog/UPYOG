@@ -221,7 +221,7 @@ const PTCitizenHomeScreen = () => {
     <div className="pt-portal-view">
       {/* 1. Hero Banner with Image Clearly Visible */}
       <div className="pt-portal-hero">
-        <img src="/images/dashboard-banner.jpg" alt="Property Tax Banner" className="pt-portal-hero-img" />
+        <img src="/upyog-ui/images/dashboard-banner.jpg" alt="Property Tax Banner" className="pt-portal-hero-img" />
         <div className="pt-portal-hero-shade" />
 
         <div className="pt-portal-hero-content">

@@ -269,14 +269,47 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
-      react()
+      react(),
+      {
+        name: "serve-public-assets",
+        configureServer(server) {
+          const publicDir = path.resolve(__dirname, "public");
+          server.middlewares.use((req, res, next) => {
+            const rawUrl = req.originalUrl || req.url;
+            let reqPath = rawUrl.split("?")[0];
+            if (reqPath.startsWith("/upyog-ui/")) {
+              reqPath = reqPath.slice("/upyog-ui".length);
+            }
+            const filePath = path.join(publicDir, reqPath);
+            if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+              const ext = path.extname(filePath).toLowerCase();
+              const mimeTypes = {
+                ".png": "image/png",
+                ".jpg": "image/jpeg",
+                ".jpeg": "image/jpeg",
+                ".svg": "image/svg+xml",
+                ".gif": "image/gif",
+                ".webp": "image/webp",
+                ".ico": "image/x-icon",
+                ".pdf": "application/pdf",
+                ".js": "application/javascript",
+                ".json": "application/json",
+              };
+              res.setHeader("Content-Type", mimeTypes[ext] || "application/octet-stream");
+              res.statusCode = 200;
+              return fs.createReadStream(filePath).pipe(res);
+            }
+            next();
+          });
+        },
+      },
     ],
 
     root: __dirname,
 
     cacheDir: path.resolve(__dirname, "node_modules/.vite"),
 
-    base: isProd ? "/upyog-ui/" : "/",
+    base: "/upyog-ui/",
 
     define: {
       "process.env": JSON.stringify({

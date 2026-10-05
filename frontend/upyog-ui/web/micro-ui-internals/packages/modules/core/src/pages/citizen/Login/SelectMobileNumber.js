@@ -128,11 +128,11 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
                   onClick={() => handleLanguageSelection(language)}
                 >
                  {selectedLanguage === language.value ? (
-                    <img src={"/images/check.svg"} alt="check icon"/>
+                    <img src={"/upyog-ui/images/check.svg"} alt="check icon"/>
                  ) : null}&nbsp;{language.label}
                 </li>
               ))}
-                <li><img src={"/images/search.svg"} alt="search icon"/></li>
+                <li><img src={"/upyog-ui/images/search.svg"} alt="search icon"/></li>
             </ul>
           </div>
         </div>
@@ -141,7 +141,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
             <label className="login-label">{"Select City"}</label>
           <div className="city-selection">
             <span className="login-input-icon" aria-hidden="true">
-                <img src={"/images/search.svg"} alt="search icon"/>
+                <img src={"/upyog-ui/images/search.svg"} alt="search icon"/>
             </span>
             <Dropdown
               className="city-selection-dropdown"
@@ -173,7 +173,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
           <p className="login-helper">
 
             <span className="login-helper-icon" aria-hidden="true">
-              <img src={"/images/secure.svg"} alt="secure"/>
+              <img src={"/upyog-ui/images/secure.svg"} alt="secure"/>
             </span>
             {"We will send an OTP for verification"}
           </p>
@@ -199,7 +199,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
           onClick={(e) => setShowToast(true)}
         >
           <span className="login-secondary-button__content">
-            <img src={"/images/digilocker.svg"} alt="digilocker" />
+            <img src={"/upyog-ui/images/digilocker.svg"} alt="digilocker" />
             {t("CORE_COMMON_DGILOCKER_REGISTER")}
           </span>
         </button>
@@ -207,7 +207,7 @@ const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMob
 
       <p className="login-security">
         <span className="login-security-icon" aria-hidden="true">
-          <img src={"/images/secure.svg"} alt="secure"/>
+          <img src={"/upyog-ui/images/secure.svg"} alt="secure"/>
         </span>
         {"Your information is safe and secure with us."}
       </p>

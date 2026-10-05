@@ -172,7 +172,7 @@ const Home = (props) => {
           path={`${code.toLowerCase()}-home`}
           element={
             <div className="moduleLinkHomePage">
-              <img src={"/images/dashboard-banner.jpg"} alt="noimagefound" />
+              <img src={"/upyog-ui/images/dashboard-banner.jpg"} alt="noimagefound" />
               <BackButton className="moduleLinkHomePageBackButton" />
               {isMobile ? <h4 className="moduleLinkHomePageTitleMob">{t("MODULE_" + code.toUpperCase())}</h4> : <h1>{t("MODULE_" + code.toUpperCase())}</h1>}
               <div className="moduleLinkHomePageModuleLinks">

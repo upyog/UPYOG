@@ -5,7 +5,7 @@ const UserActionLayout = ({ cards = [], showEmpty = false }) => {
   if (showEmpty) {
     return (
       <div className="userActionEmptyState">
-        <img src="/images/Main.png" alt="Empty" />
+        <img src="/upyog-ui/images/Main.png" alt="Empty" />
         <h1>Nothing here yet!</h1>
         <p>Your applications, tasks or notifications will appear here, once you start using UPYOG</p>
       </div>

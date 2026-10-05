@@ -61,7 +61,7 @@ const SelectName = ({ config, onSelect, t, isDisabled }) => {
 
       <p className="login-security">
         <span className="login-security-icon" aria-hidden="true">
-          <img src={"/images/secure.svg"} alt="secure" />
+          <img src={"/upyog-ui/images/secure.svg"} alt="secure" />
         </span>
         {"Your information is safe and secure with us."}
       </p>

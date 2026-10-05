@@ -266,7 +266,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed,
       <div className="static-citizen-sidebar-inner">
         <div className="sidebar-logo-header">
           <div className="logo-design">
-            {isSidebarCollapsed ? <img src="/images/logo-mobile.png" alt="UPYOG Logo"/> : <img src="/images/Logo.png" alt="UPYOG Logo"/>}
+            {isSidebarCollapsed ? <img src="/upyog-ui/images/logo-mobile.png" alt="UPYOG Logo"/> : <img src="/upyog-ui/images/Logo.png" alt="UPYOG Logo"/>}
           </div>
           {isMobile && (
             <button
