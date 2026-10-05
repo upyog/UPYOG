@@ -41,12 +41,12 @@ const LanguageSelection = () => {
                   onClick={() => handleChangeLanguage(language)}
                 >
                   {selected === language.value ? (
-                    <img src={"/images/check.svg"} alt="check icon" />
+                    <img src={"/upyog-ui/images/check.svg"} alt="check icon" />
                   ) : null}&nbsp;{language.label}
                 </li>
               ))}
               <li className="employee-login-language-search">
-                <img src={"/images/search.svg"} alt="search icon" />
+                <img src={"/upyog-ui/images/search.svg"} alt="search icon" />
               </li>
             </ul>
           </div>
@@ -65,7 +65,7 @@ const LanguageSelection = () => {
 
       <p className="login-security login-security--mt-24">
         <span className="login-security-icon" aria-hidden="true">
-          <img src={"/images/secure.svg"} alt="secure" />
+          <img src={"/upyog-ui/images/secure.svg"} alt="secure" />
         </span>
         {t("CORE_LOGIN_SECURITY_MSG") || "Your information is safe and secure with us."}
       </p>

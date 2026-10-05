@@ -53,18 +53,18 @@ const TopBar = ({
           {isEmployeeUser ? (
             changeCity ? (
               <div className="location-button nav-city-button-wrapper">
-                <img src="/images/location.svg" alt="location" />
+                <img src="/upyog-ui/images/location.svg" alt="location" />
                 {changeCity}
               </div>
             ) : (
               <div className="location-button">
-                <img src="/images/location.svg" alt="location" />
+                <img src="/upyog-ui/images/location.svg" alt="location" />
                 <span>{Digit.SessionStorage.get("Employee.tenantId") || cityName || "City"}</span>
               </div>
             )
           ) : (
             <div className="location-button">
-              <img src="/images/location.svg" alt="location" />
+              <img src="/upyog-ui/images/location.svg" alt="location" />
               <span>{cityName || "City A"}</span>
             </div>
           )}
@@ -80,7 +80,7 @@ const TopBar = ({
                   <p>{notificationCount}</p>
                 </span>
               ) : null}
-              <img src="/images/bell.svg" alt="notification bell" />
+              <img src="/upyog-ui/images/bell.svg" alt="notification bell" />
             </div>
           ) : null}
           <div className="userDropdown">

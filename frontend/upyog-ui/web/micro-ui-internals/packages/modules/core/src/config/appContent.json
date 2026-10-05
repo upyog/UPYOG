@@ -30,10 +30,10 @@
     "theme": "upyogPurple",
     "layout": {
       "loginUI": {
-        "backgroundUrl": "/images/onboarding-bg.jpg",
+        "backgroundUrl": "/upyog-ui/images/onboarding-bg.jpg",
         "mainlogo": {
           "dualLogo": false,
-          "url": "/images/Logo.png"
+          "url": "/upyog-ui/images/Logo.png"
         },
         "headers": {
           "title": "One Platform",
@@ -55,19 +55,19 @@
             {
               "title": "Easy Access",
               "description": "All your services in one place",
-              "iconUrl": "/images/login-1.svg",
+              "iconUrl": "/upyog-ui/images/login-1.svg",
               "iconAlt": "Easy Access"
             },
             {
               "title": "Secure & Trusted",
               "description": "Your data is safe with us",
-              "iconUrl": "/images/login-2.svg",
+              "iconUrl": "/upyog-ui/images/login-2.svg",
               "iconAlt": "Secure"
             },
             {
               "title": "Quick & Simple",
               "description": "Login in minutes",
-              "iconUrl": "/images/login-3.svg",
+              "iconUrl": "/upyog-ui/images/login-3.svg",
               "iconAlt": "Quick"
             }
           ]
@@ -91,10 +91,10 @@
     "theme": "upyogPurple",
     "layout": {
       "loginUI": {
-        "backgroundUrl": "/images/background02.png",
+        "backgroundUrl": "/upyog-ui/images/background02.png",
         "mainlogo": {
           "dualLogo": false,
-          "url": "/images/logo-secondary.png",
+          "url": "/upyog-ui/images/logo-secondary.png",
           "styles": {
             "paddingTop": "9rem"
           }
@@ -124,19 +124,19 @@
             {
               "title": "All Services, One Place",
               "description": "Property tax, licenses, permits, certificates & more",
-              "iconUrl": "/images/arrow.svg",
+              "iconUrl": "/upyog-ui/images/arrow.svg",
               "iconAlt": "All Services"
             },
             {
               "title": "Secure & Trusted",
               "description": "Your data is protected with enterprise-grade security",
-              "iconUrl": "/images/arrow.svg",
+              "iconUrl": "/upyog-ui/images/arrow.svg",
               "iconAlt": "Secure"
             },
             {
               "title": "Quick & Convenient",
               "description": "Login in minutes and get things done faster",
-              "iconUrl": "/images/arrow.svg",
+              "iconUrl": "/upyog-ui/images/arrow.svg",
               "iconAlt": "Quick"
             }
           ]
@@ -169,14 +169,14 @@
     "theme": "upyogPurple",
     "layout": {
       "loginUI": {
-        "backgroundUrl": "/images/background02.png",
+        "backgroundUrl": "/upyog-ui/images/background02.png",
         "mainlogo": {
           "dualLogo": true,
-          "url": "/images/logo-secondary.png",
+          "url": "/upyog-ui/images/logo-secondary.png",
           "styles": {
             "paddingTop": "9rem"
           },
-          "url2": "/images/mSeva.png"
+          "url2": "/upyog-ui/images/mSeva.png"
         },
         "headers": {
           "title": "One Platform",
@@ -203,19 +203,19 @@
             {
               "title": "All Services, One Place",
               "description": "Property tax, licenses, permits, certificates & more",
-              "iconUrl": "/images/arrow.svg",
+              "iconUrl": "/upyog-ui/images/arrow.svg",
               "iconAlt": "All Services"
             },
             {
               "title": "Secure & Trusted",
               "description": "Your data is protected with enterprise-grade security",
-              "iconUrl": "/images/arrow.svg",
+              "iconUrl": "/upyog-ui/images/arrow.svg",
               "iconAlt": "Secure"
             },
             {
               "title": "Quick & Convenient",
               "description": "Login in minutes and get things done faster",
-              "iconUrl": "/images/arrow.svg",
+              "iconUrl": "/upyog-ui/images/arrow.svg",
               "iconAlt": "Quick"
             }
           ]
@@ -246,12 +246,12 @@
     "theme": "upyogPurple",
     "layout": {
       "loginUI": {
-        "backgroundUrl": "/images/background02.png",
+        "backgroundUrl": "/upyog-ui/images/background02.png",
         "mainlogo": {
           "dualLogo": true,
           "verticalView": true,
-          "url": "/images/logo-secondary.png",
-          "url2": "/images/mSeva.png"
+          "url": "/upyog-ui/images/logo-secondary.png",
+          "url2": "/upyog-ui/images/mSeva.png"
         },
         "headers": {
           "title": "One Platform",
@@ -278,19 +278,19 @@
             {
               "title": "All Services, One Place",
               "description": "Property tax, licenses, permits, certificates & more",
-              "iconUrl": "/images/arrow.svg",
+              "iconUrl": "/upyog-ui/images/arrow.svg",
               "iconAlt": "All Services"
             },
             {
               "title": "Secure & Trusted",
               "description": "Your data is protected with enterprise-grade security",
-              "iconUrl": "/images/arrow.svg",
+              "iconUrl": "/upyog-ui/images/arrow.svg",
               "iconAlt": "Secure"
             },
             {
               "title": "Quick & Convenient",
               "description": "Login in minutes and get things done faster",
-              "iconUrl": "/images/arrow.svg",
+              "iconUrl": "/upyog-ui/images/arrow.svg",
               "iconAlt": "Quick"
             }
           ]
@@ -321,11 +321,11 @@
     "theme": "upyogPurple",
     "layout": {
       "loginUI": {
-        "backgroundUrl": "/images/background02.png",
+        "backgroundUrl": "/upyog-ui/images/background02.png",
         "mainlogo": {
           "dualLogo": false,
           "verticalView": false,
-          "url": "/images/mSeva.png",
+          "url": "/upyog-ui/images/mSeva.png",
           "styles": {
             "paddingTop": "9rem"
           }
@@ -355,19 +355,19 @@
             {
               "title": "All Services, One Place",
               "description": "Property tax, licenses, permits, certificates & more",
-              "iconUrl": "/images/arrow.svg",
+              "iconUrl": "/upyog-ui/images/arrow.svg",
               "iconAlt": "All Services"
             },
             {
               "title": "Secure & Trusted",
               "description": "Your data is protected with enterprise-grade security",
-              "iconUrl": "/images/arrow.svg",
+              "iconUrl": "/upyog-ui/images/arrow.svg",
               "iconAlt": "Secure"
             },
             {
               "title": "Quick & Convenient",
               "description": "Login in minutes and get things done faster",
-              "iconUrl": "/images/arrow.svg",
+              "iconUrl": "/upyog-ui/images/arrow.svg",
               "iconAlt": "Quick"
             }
           ]
@@ -398,14 +398,14 @@
     "theme": "eSathiOrange",
     "layout": {
       "loginUI": {
-        "backgroundUrl": "/images/backgroundUP.png",
+        "backgroundUrl": "/upyog-ui/images/backgroundUP.png",
         "mainlogo": {
           "dualLogo": true,
-          "url": "/images/logo-secondary.png",
+          "url": "/upyog-ui/images/logo-secondary.png",
           "styles": {
             "paddingTop": "8rem"
           },
-          "url2": "/images/eSathi.png",
+          "url2": "/upyog-ui/images/eSathi.png",
           "url2Styles": {
             "height": "60px"
           }
@@ -429,10 +429,10 @@
         "eGovLogos": {
           "enabled": true,
           "logos": [
-            "/images/openGov.png",
-            "/images/digitalIndia.png",
-            "/images/india-gov.png",
-            "/images/digilocker.png"
+            "/upyog-ui/images/openGov.png",
+            "/upyog-ui/images/digitalIndia.png",
+            "/upyog-ui/images/india-gov.png",
+            "/upyog-ui/images/digilocker.png"
           ]
         },
         "footer": {
@@ -461,10 +461,10 @@
     "theme": "eSathiOrange",
     "layout": {
       "loginUI": {
-        "backgroundUrl": "/images/backgroundUP.png",
+        "backgroundUrl": "/upyog-ui/images/backgroundUP.png",
         "mainlogo": {
           "dualLogo": false,
-          "url": "/images/eSathi.png",
+          "url": "/upyog-ui/images/eSathi.png",
           "styles": {
             "paddingTop": "8rem"
           }
@@ -488,10 +488,10 @@
         "eGovLogos": {
           "enabled": true,
           "logos": [
-            "/images/openGov.png",
-            "/images/digitalIndia.png",
-            "/images/india-gov.png",
-            "/images/digilocker.png"
+            "/upyog-ui/images/openGov.png",
+            "/upyog-ui/images/digitalIndia.png",
+            "/upyog-ui/images/india-gov.png",
+            "/upyog-ui/images/digilocker.png"
           ]
         },
         "footer": {
@@ -520,14 +520,14 @@
     "theme": "metroBurgundy",
     "layout": {
       "loginUI": {
-        "backgroundUrl": "/images/citizen-metro-bg.jpg",
+        "backgroundUrl": "/upyog-ui/images/citizen-metro-bg.jpg",
         "isFormOnLeft": false,
         "isSplitBg": true,
         "hasHeroCard": true,
         "isHeaderReq": true,
         "mainlogo": {
           "dualLogo": false,
-          "url": "/images/Logo.png"
+          "url": "/upyog-ui/images/Logo.png"
         },
         "headers": {
           "title": "One Platform,",
@@ -558,25 +558,25 @@
             {
               "title": "Apply for Services",
               "description": "Access a wide range of citizen services",
-              "iconUrl": "/images/login-1.svg",
+              "iconUrl": "/upyog-ui/images/login-1.svg",
               "iconAlt": "Services"
             },
             {
               "title": "Track Your Requests",
               "description": "Track the status of your applications",
-              "iconUrl": "/images/login-2.svg",
+              "iconUrl": "/upyog-ui/images/login-2.svg",
               "iconAlt": "Track"
             },
             {
               "title": "Get Instant Notifications",
               "description": "Stay updated with real-time alerts",
-              "iconUrl": "/images/login-3.svg",
+              "iconUrl": "/upyog-ui/images/login-3.svg",
               "iconAlt": "Notifications"
             },
             {
               "title": "Secure & Trusted",
               "description": "Your data is safe with us",
-              "iconUrl": "/images/login-1.svg",
+              "iconUrl": "/upyog-ui/images/login-1.svg",
               "iconAlt": "Secure"
             }
           ]
@@ -605,10 +605,10 @@
     "theme": "upyogPurple",
     "layout": {
       "loginUI": {
-        "backgroundUrl": "/images/onboarding-bg.jpg",
+        "backgroundUrl": "/upyog-ui/images/onboarding-bg.jpg",
         "mainlogo": {
           "dualLogo": false,
-          "url": "/images/Logo.png"
+          "url": "/upyog-ui/images/Logo.png"
         },
         "headers": {
           "title": "One Platform",
@@ -630,19 +630,19 @@
             {
               "title": "Easy Access",
               "description": "All your services in one place",
-              "iconUrl": "/images/login-1.svg",
+              "iconUrl": "/upyog-ui/images/login-1.svg",
               "iconAlt": "Easy Access"
             },
             {
               "title": "Secure & Trusted",
               "description": "Your data is safe with us",
-              "iconUrl": "/images/login-2.svg",
+              "iconUrl": "/upyog-ui/images/login-2.svg",
               "iconAlt": "Secure"
             },
             {
               "title": "Quick & Simple",
               "description": "Login in minutes",
-              "iconUrl": "/images/login-3.svg",
+              "iconUrl": "/upyog-ui/images/login-3.svg",
               "iconAlt": "Quick"
             }
           ]
@@ -666,11 +666,11 @@
     "theme": "upyogPurple",
     "layout": {
       "loginUI": {
-        "backgroundUrl": "/images/empbg.png",
+        "backgroundUrl": "/upyog-ui/images/empbg.png",
         "isEmployeeV2": true,
         "mainlogo": {
           "dualLogo": false,
-          "url": "/images/Logo.png"
+          "url": "/upyog-ui/images/Logo.png"
         },
         "headers": {
           "title": "One Platform",
@@ -691,25 +691,25 @@
             {
               "title": "Apply for Services",
               "description": "Access a wide range of employee services",
-              "iconUrl": "/images/login-1.svg",
+              "iconUrl": "/upyog-ui/images/login-1.svg",
               "iconAlt": "Services"
             },
             {
               "title": "Track your Requests",
               "description": "Track the status of your applications",
-              "iconUrl": "/images/login-2.svg",
+              "iconUrl": "/upyog-ui/images/login-2.svg",
               "iconAlt": "Track"
             },
             {
               "title": "Get instant Notifications",
               "description": "Stay updated with real-time alerts",
-              "iconUrl": "/images/login-3.svg",
+              "iconUrl": "/upyog-ui/images/login-3.svg",
               "iconAlt": "Notifications"
             },
             {
               "title": "Secure and Trusted",
               "description": "Your data is safe with us",
-              "iconUrl": "/images/login-1.svg",
+              "iconUrl": "/upyog-ui/images/login-1.svg",
               "iconAlt": "Secure"
             }
           ]

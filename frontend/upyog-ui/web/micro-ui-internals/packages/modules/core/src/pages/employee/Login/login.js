@@ -142,7 +142,7 @@ const Login = ({ layout, config: propsConfig, t, isDisabled, emp = {}, setEmp = 
                   onClick={() => handleLanguageSelection(language)}
                 >
                   {selectedLanguage === language.value ? (
-                    <img src={"/images/check.svg"} alt="check icon" />
+                    <img src={"/upyog-ui/images/check.svg"} alt="check icon" />
                   ) : null}&nbsp;{language.label}
                 </li>
               ))}
@@ -155,7 +155,7 @@ const Login = ({ layout, config: propsConfig, t, isDisabled, emp = {}, setEmp = 
           <label className="login-label">{getLocalized("CORE_COMMON_CITY", "City")}</label>
           <div className="city-selection">
             <span className="login-input-icon" aria-hidden="true">
-              <img src={"/images/search.svg"} alt="search icon" />
+              <img src={"/upyog-ui/images/search.svg"} alt="search icon" />
             </span>
             <Dropdown
               className="city-selection-dropdown"

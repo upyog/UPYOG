@@ -211,7 +211,7 @@ const Home = ({ layout }) => {
               <div className="hero-stats">
                 <article className="hero-stats__item">
                   <span className="hero-stats__icon">
-                    <img src="/images/bannerIcon1.svg" alt="banner Icon" />
+                    <img src="/upyog-ui/images/bannerIcon1.svg" alt="banner Icon" />
                   </span>
 
                   <div className="hero-stats__content">
@@ -222,7 +222,7 @@ const Home = ({ layout }) => {
                 <br />
                 <article className="hero-stats__item pending-requests">
                   <span className="hero-stats__icon">
-                    <img src="/images/bannerIcon2.svg" alt="banner Icon" />
+                    <img src="/upyog-ui/images/bannerIcon2.svg" alt="banner Icon" />
                   </span>
 
                   <div className="hero-stats__content">
@@ -233,7 +233,7 @@ const Home = ({ layout }) => {
                 <br />
                 <article className="hero-stats__item services">
                   <span className="hero-stats__icon hero-stats__icon--red">
-                    <img src="/images/bannerIcon3.svg" alt="banner Icon" />
+                    <img src="/upyog-ui/images/bannerIcon3.svg" alt="banner Icon" />
                   </span>
 
                   <div className="hero-stats__content">
@@ -262,7 +262,7 @@ const Home = ({ layout }) => {
             <p>Welcome, {userName}</p>
             <h1>What are you working on today?</h1>
             <div>
-              <img src="/images/search.svg" alt="search icon" />
+              <img src="/upyog-ui/images/search.svg" alt="search icon" />
               <input
                 type="text"
                 placeholder="Search by applicant number, ID, name or module..."

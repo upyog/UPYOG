@@ -39,7 +39,7 @@ const LoginLayout = ({ children, heroContent, footer, layout }) => {
 				<div className="login-navbar">
 					<div className="login-navbar-card">
 						<div className="cards card1">
-							<img src={mainlogo?.secondaryLogoUrl || mainlogo?.url2 || "/images/logo-secondary.png"} alt="Secondary Logo" />
+							<img src={mainlogo?.secondaryLogoUrl || mainlogo?.url2 || "/upyog-ui/images/logo-secondary.png"} alt="Secondary Logo" />
 						</div>
 					</div>
 					<a className="login-nav-logo-link" href={isEmployeeV2 ? "/" : "/upyog-ui/citizen"}>
@@ -263,7 +263,7 @@ const LoginLayout = ({ children, heroContent, footer, layout }) => {
 				<div className={`login-app-container ${isFormCentered ? "login-app-containerv2" : ""} `}>
 					{isTopIconReq && (
 						<div className="centeredLogo">
-							<img src="/images/centered.svg" alt="Logo" />
+							<img src="/upyog-ui/images/centered.svg" alt="Logo" />
 						</div>
 					)}
 					<div className="login-panel__content">{children}</div>
