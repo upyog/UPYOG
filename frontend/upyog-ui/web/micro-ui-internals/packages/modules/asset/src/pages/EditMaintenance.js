@@ -90,7 +90,7 @@ const EditMaintenance = props => {
   return <div>
       <Card>
         <BannerPicker t={t} data={mutation?.data || successData} action={state?.action} isSuccess={!Object.keys(successData || {}).length ? mutation?.isSuccess : true} isLoading={mutation.isIdle && !mutationHappened || mutation?.isLoading} isEmployee={props.parentRoute.includes("employee")} />
-        <div className="asset-auto-220">
+        <div className="asset-edit-maintenance-flex-center-row-center">
           <Link to={`${props.parentRoute}/assetservice/applicationsearch/application-details/${applicationDetail}`}>
             <SubmitBar label={t("AST_DEPRECIATION_LIST")} />
           </Link>

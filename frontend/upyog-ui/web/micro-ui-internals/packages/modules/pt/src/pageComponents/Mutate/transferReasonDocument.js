@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../../components/TLTimeline";
 import { stringReplaceAll } from "../../utils";
-import "../../css/pt-inline-auto.css";
+
 const TransferProof = ({
   t,
   config,
@@ -65,24 +65,24 @@ const TransferProof = ({
             } else {
               setError(t("PT_FILE_UPLOAD_ERROR"));
             }
-          } catch (err) {}
+          } catch (err) { }
         }
       }
     })();
   }, [file]);
   return <React.Fragment>
-      <Timeline currentStep={3} flow="PT_MUTATE" />
-      <FormStep config={config} onSelect={handleSubmit} onSkip={onSkip} t={t} isDisabled={!uploadedFile || !dropdownValue || error}>
-        <CardLabelDesc>{t(`PT_UPLOAD_RESTRICTIONS_TYPES`)}</CardLabelDesc>
-        <CardLabelDesc>{t(`PT_UPLOAD_RESTRICTIONS_SIZE`)}</CardLabelDesc>
-        <CardLabel>{`${t("PT_CATEGORY_DOCUMENT_TYPE")}`}</CardLabel>
-        <Dropdown t={t} isMandatory={false} option={dropdownData} selected={dropdownValue} optionKey="i18nKey" select={setTypeOfDropdownValue} placeholder={t(`PT_MUTATION_SELECT_DOC_LABEL`)} />
-        <UploadFile id={"ptm-doc"} extraStyleName={"propertyCreate"} accept=".jpg,.png,.pdf" onUpload={selectfile} onDelete={() => {
+    <Timeline currentStep={3} flow="PT_MUTATE" />
+    <FormStep config={config} onSelect={handleSubmit} onSkip={onSkip} t={t} isDisabled={!uploadedFile || !dropdownValue || error}>
+      <CardLabelDesc>{t(`PT_UPLOAD_RESTRICTIONS_TYPES`)}</CardLabelDesc>
+      <CardLabelDesc>{t(`PT_UPLOAD_RESTRICTIONS_SIZE`)}</CardLabelDesc>
+      <CardLabel>{`${t("PT_CATEGORY_DOCUMENT_TYPE")}`}</CardLabel>
+      <Dropdown t={t} isMandatory={false} option={dropdownData} selected={dropdownValue} optionKey="i18nKey" select={setTypeOfDropdownValue} placeholder={t(`PT_MUTATION_SELECT_DOC_LABEL`)} />
+      <UploadFile id={"ptm-doc"} extraStyleName={"propertyCreate"} accept=".jpg,.png,.pdf" onUpload={selectfile} onDelete={() => {
         setUploadedFile(null);
       }} message={uploadedFile ? `1 ${t(`PT_ACTION_FILEUPLOADED`)}` : t(`PT_ACTION_NO_FILEUPLOADED`)} error={error} />
-        {error ? <div className="pt-auto-53">{error}</div> : ""}
-        <div className="pt-auto-54"></div>
-      </FormStep>
-    </React.Fragment>;
+      {error ? <div className="pt-transfer-reason-document-full-width-title-md">{error}</div> : ""}
+      <div className="pt-transfer-reason-document-full-width"></div>
+    </FormStep>
+  </React.Fragment>;
 };
 export default TransferProof;

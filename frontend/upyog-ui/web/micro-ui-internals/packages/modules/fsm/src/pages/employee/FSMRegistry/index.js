@@ -242,9 +242,9 @@ const FSMRegistry = () => {
             label: t("ES_FSM_REGISTRY_SEARCH_VEHICLE_NUMBER"),
             name: "registrationNumber",
             labelChildren: (
-              <div className="tooltip" style={{ paddingLeft: "10px", marginBottom: "-3px" }}>
+              <div className="tooltip fsm-add-vehicle-bottom-spacing">
                 <InfoIcon />
-                <span className="tooltiptext" style={{ width: "150px", left: "230%", fontSize: "14px" }}>
+                <span className="tooltiptext fsm-add-vehicle-text-style">
                   {t("ES_FSM_VEHICLE_FORMAT_TIP")}
                 </span>
               </div>

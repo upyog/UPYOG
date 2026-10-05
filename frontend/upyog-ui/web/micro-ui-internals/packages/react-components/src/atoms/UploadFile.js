@@ -212,7 +212,7 @@ const UploadFile = (props) => {
           <ButtonSelector
             theme="border"
             label={t("CS_COMMON_CHOOSE_FILE")}
-            style={{ ...(extraStyles ? extraStyles?.buttonStyles : {}), ...(props.disabled ? { display: "none" } : {}) }}
+            className={props.disabled ? "display-none" : ""} style={extraStyles?.buttonStyles}
             textStyles={props?.textStyles}
             type={props.buttonType}
           />
@@ -254,7 +254,7 @@ const UploadFile = (props) => {
           }}
         />
       </div>
-      {props.iserror && <p style={{color: "red"}}>{props.iserror}</p>}
+      {props.iserror && <p className="rc-upload-file-required-asterisk">{props.iserror}</p>}
       {props?.showHintBelow && <p className="cell-text">{t(props?.hintText)}</p>}
     </Fragment>
   );

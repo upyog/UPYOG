@@ -82,7 +82,7 @@ const DocThumbnail = ({
         {fileName ? <div className={styles.reference}>{fileName}</div> : null}
       </div>
 
-      <div className={styles.thumb} style={{ width: thumbSize, height: thumbSize }}>
+      <div className={styles.thumb} style={thumbSize ? { width: thumbSize, height: thumbSize } : undefined}>
         <LargePdfSvg size={Math.min(thumbSize, 48)} />
       </div>
 
@@ -109,7 +109,7 @@ function DocLink({
     <a href="#" role="button" onClick={handleClick} className={styles.docLink}>
       <div
         className={styles.meta}
-        style={{ ["--est-doc-label-width"]: `${labelWidth}px`, ...titleStyles }}
+        style={Object.assign({ ["--est-doc-label-width"]: `${labelWidth}px` }, titleStyles)}
       >
         <div className={styles.label}>{label}</div>
         {fileName ? <div className={styles.reference}>{fileName}</div> : null}

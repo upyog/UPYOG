@@ -70,7 +70,7 @@ const WSActivationSupportingDocuments = ({
   }, [uploadedFile]);
   return <div>
             <LabelFieldPair>
-                <CardLabel className="card-label-smaller ws-auto-42">{t(`WF_APPROVAL_UPLOAD_HEAD`)}:</CardLabel>
+                <CardLabel className="card-label-smaller ws-activation-supporting-documents-label-bold">{t(`WF_APPROVAL_UPLOAD_HEAD`)}:</CardLabel>
                 <div className="field">
                     <UploadFile
         // id={id}

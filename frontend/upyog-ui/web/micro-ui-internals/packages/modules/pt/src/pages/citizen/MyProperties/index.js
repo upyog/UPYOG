@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import MyProperty from "./my-properties";
 import { propertyCardBodyStyle } from "../../../utils";
-import "../../../css/pt-inline-auto.css";
+
 export const MyProperties = () => {
   const {
     t
@@ -54,24 +54,24 @@ export const MyProperties = () => {
     Properties: applicationsList
   } = data || {};
   return <React.Fragment>
-      <Header>{`${t("PT_MY_PROPERTIES_HEADER")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
-      <div>
-        {applicationsList?.length > 0 && applicationsList.map((application, index) => <div key={index}>
-              <MyProperty application={application} />
-            </div>)}
-        {!applicationsList?.length > 0 && <p className="pt-auto-117">{t("PT_NO_PROP_FOUND_MSG")}</p>}
+    <Header>{`${t("PT_MY_PROPERTIES_HEADER")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
+    <div>
+      {applicationsList?.length > 0 && applicationsList.map((application, index) => <div key={index}>
+        <MyProperty application={application} />
+      </div>)}
+      {!applicationsList?.length > 0 && <p className="pt-index-mt-md-ml-md">{t("PT_NO_PROP_FOUND_MSG")}</p>}
 
-        {applicationsList?.length !== 0 && <div>
-            <p className="pt-auto-118">
-              <span className="link">{<Link to={`/upyog-ui/citizen/pt/property/my-properties/${t1}`}>{t("PT_LOAD_MORE_MSG")}</Link>}</span>
-            </p>
-          </div>}
-      </div>
-      <p className="pt-auto-119">
-        {t("PT_TEXT_NOT_ABLE_TO_FIND_THE_APPLICATION")}{" "}
-        <span className="link pt-auto-120">
-          <Link to="/upyog-ui/citizen/pt/property/new-application/info">{t("PT_COMMON_CLICK_HERE_TO_REGISTER_NEW_PROPERTY")}</Link>
-        </span>
-      </p>
-    </React.Fragment>;
+      {applicationsList?.length !== 0 && <div>
+        <p className="pt-index-mt-md-ml-md">
+          <span className="link">{<Link to={`/upyog-ui/citizen/pt/property/my-properties/${t1}`}>{t("PT_LOAD_MORE_MSG")}</Link>}</span>
+        </p>
+      </div>}
+    </div>
+    <p className="pt-index-mt-md-ml-md">
+      {t("PT_TEXT_NOT_ABLE_TO_FIND_THE_APPLICATION")}{" "}
+      <span className="link pt-index-link-block">
+        <Link to="/upyog-ui/citizen/pt/property/new-application/info">{t("PT_COMMON_CLICK_HERE_TO_REGISTER_NEW_PROPERTY")}</Link>
+      </span>
+    </p>
+  </React.Fragment>;
 };

@@ -119,14 +119,14 @@ const Table = ({
             const { key, ...restHeaderProps } = headerProps;
             return (
               <tr key={key} {...restHeaderProps}>
-               {showAutoSerialNo&& <th style={{  verticalAlign: "top"}}>
+               {showAutoSerialNo&& <th className="rc-table-table-cell">
                 {showAutoSerialNo&& typeof showAutoSerialNo =="string"?t(showAutoSerialNo):t("TB_SNO")}
                 </th>}
                 {headerGroup.headers.map((column) => {
                   const thProps = column.getHeaderProps(column.getSortByToggleProps());
                   const { key, ...restThProps } = thProps;
                   return (
-                    <th key={key} {...restThProps} style={{ verticalAlign: "top" }}>
+                    <th key={key} {...restThProps} className="rc-table-table-cell">
                       {column.render("Header")}
                       <span>{column.isSorted ? column.isSortedDesc ? <SortDown /> : <SortUp /> : ""}</span>
                     </th>
@@ -155,7 +155,7 @@ const Table = ({
                   return (
                     <td key={cellKey} {...restCellProps}>
                       {cell.attachment_link ? (
-                        <a style={{ color: "#1D70B8" }} href={cell.attachment_link}>
+                        <a className="rc-table-wrapper" href={cell.attachment_link}>
                           {cell.render("Cell")}
                         </a>
                       ) : (
@@ -175,9 +175,8 @@ const Table = ({
         <div className="pagination dss-white-pre" >
           {`${t("CS_COMMON_ROWS_PER_PAGE")} :`}
           <select
-            className="cp"
+            className="cp rc-table-spacing"
             value={Number(manualPagination ? pageSizeLimit : pageSize) || 10}
-            style={{ marginRight: "15px" }}
             onChange={manualPagination ? onPageSizeChange : (e) => setPageSize(Number(e.target.value))}
           >
             {[10, 20, 30, 40, 50].map((size) => (

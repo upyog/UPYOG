@@ -93,7 +93,7 @@ const LicenseDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
     <div>
       <div className={isOpenLinkFlow ? "OpenlinkContainer" : ""}>
 
-        {isOpenLinkFlow && <BackButton style={{ border: "none" }}>{t("CS_COMMON_BACK")}</BackButton>}
+        {isOpenLinkFlow && <BackButton className="obps-corrospondence-address-action-btn">{t("CS_COMMON_BACK")}</BackButton>}
         <Timeline currentStep={1} flow="STAKEHOLDER" />
         {!isLoading || !isUserLoading ? 
         <FormStep

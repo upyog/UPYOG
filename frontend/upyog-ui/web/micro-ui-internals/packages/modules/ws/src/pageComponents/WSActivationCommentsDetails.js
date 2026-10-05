@@ -24,7 +24,7 @@ const WSActivationCommentsDetails = ({
   }, [comments]);
   return <React.Fragment>
             <LabelFieldPair>
-                <CardLabel className="card-label-smaller ws-auto-31">{t("WF_COMMON_COMMENTS")}:</CardLabel>
+                <CardLabel className="card-label-smaller ws-activation-comments-details-label-bold">{t("WF_COMMON_COMMENTS")}:</CardLabel>
                 <div className="field">
                     <TextInput key={config.key} value={comments.comments} onChange={ev => {
           setComments({

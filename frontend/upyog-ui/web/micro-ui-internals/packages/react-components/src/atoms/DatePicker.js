@@ -28,7 +28,7 @@ const DatePicker = (props) => {
     addStyle = { maxWidth: "540px" };
   }
   return (
-    <div style={{ position: "relative", width: "100%", cursor: "pointer", ...addStyle, ...(props?.style ? props.style : {}) }}>
+    <div className="pos-relative width-full cursor-pointer" style={addStyle || props?.style}>
       <React.Fragment>
         {/* <input
           type="text"
@@ -36,14 +36,13 @@ const DatePicker = (props) => {
           value={getDatePrint() ? getDatePrint() : "DD/MM/YYYY"}
           readOnly
           className={`employee-card-input ${props.disabled ? "disabled" : ""}`}
-          style={{ width: "calc(100%-62px)"}}
+          className="custom-style"
         /> 
-         <CalendarIcon isdisabled={props.disabled ? true : false} style={{ right: "6px", zIndex: "10", top: 6, position: "absolute" }} /> */}
+         <CalendarIcon isdisabled={props.disabled ? true : false} className="custom-style" /> */}
         <input
-          className={`employee-card-input ${props.disabled ? "disabled" : ""}`}
+          className={`employee-card-input ${props.disabled ? "disabled" : ""} rc-date-picker-wrapper`}
           // className={`${props.disabled ? "disabled" : ""}`}
-          style={{ width: "calc(100%-62px)" }}
-          // style={{ right: "6px", zIndex: "100", top: 6, position: "absolute", opacity: 0, width: "100%" }}
+          // className="custom-style"
           value={props.date ? props.date : ""}
           type="date"
           ref={dateInp}

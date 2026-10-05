@@ -325,7 +325,7 @@ const VenueSearch = ({ t, config, onSelect, userType, formData }) => {
   const checkboxColumn = {
     id: "selection",
     Header: ({ getToggleAllRowsSelectedProps }) => (
-      <div style={{ paddingLeft: '50px' }}>
+      <div className="chb-chbsearch-hall-spacing">
         <input
           type="checkbox"
           checked={bookingSlotDetails.length === data.length}
@@ -346,7 +346,7 @@ const VenueSearch = ({ t, config, onSelect, userType, formData }) => {
       </div>
     ),
     Cell: ({ row }) => (
-      <div style={{ paddingLeft: '50px' }}>
+      <div className="chb-chbsearch-hall-spacing">
         <input
           type="checkbox"
           checked={bookingSlotDetails.some(selectedRow => selectedRow.slotId === row.original.slotId)}
@@ -384,7 +384,7 @@ const VenueSearch = ({ t, config, onSelect, userType, formData }) => {
                     optionKey="i18nKey"
                 />
                 <CardLabel>{t("CHB_VENUE_NAME_LABEL")}<span className="astericColor"> *</span></CardLabel>
-                <div style={{position:"relative"}}>
+                <div className="chb-date-range-filter-wrapper">
                 <Dropdown
                     t={t}
                     option={venuenames}
@@ -398,16 +398,7 @@ const VenueSearch = ({ t, config, onSelect, userType, formData }) => {
                     placeholder={t("CHB_VENUE_NAME_PLACEHOLDER")}
                     optionKey="i18nKey"
                 />
-                <div onClick={handleViewReportClick}  style={{ cursor: "pointer",position: "absolute", ...(isMobile ? {
-                    top: "-30px",
-                    right: "0",
-                  }
-                : {
-                    top: "50%",
-                    left: "calc(50% + 20px)",
-                    transform: "translateY(-50%)",
-                  }),
-                }}>
+                <div onClick={handleViewReportClick} className={`chb-venue-report-btn ${isMobile ? "mobile-pos" : ""}`}>
                     <InfoIcon/>
                 </div>
                 {showDetails &&(
@@ -447,11 +438,11 @@ const VenueSearch = ({ t, config, onSelect, userType, formData }) => {
                 </div>
                 <div>
                   <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
-                  <SubmitBar label={t("VENUE_BOOK")} onSubmit={handleBookClick} style={{ margin: "20px" }} disabled={!isCheckboxSelected} />
+                  <SubmitBar label={t("VENUE_BOOK")} onSubmit={handleBookClick} className="chb-chbsearch-hall-spacing-2" disabled={!isCheckboxSelected} />
                 </div>
         </FormStep>
             {showTable && ( // Only show table when showTable is true
-        <Card style={{ overflowX: 'auto'}}>
+        <Card className="chb-chbsearch-hall-card">
             <ApplicationTable
             t={t}
             data={data}

@@ -34,7 +34,7 @@ const App = () => {
   const AssessmentDetails = Digit?.ComponentRegistryService?.getComponent("PTAssessmentDetails");
 
   return (
-    <span className={"pt-citizen pt-auto-149"}>
+    <span className={"pt-citizen pt-index-full-width"}>
       <AppContainer>
         {!shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
         <Routes>

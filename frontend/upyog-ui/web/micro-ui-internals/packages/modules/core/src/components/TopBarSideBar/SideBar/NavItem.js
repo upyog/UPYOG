@@ -53,7 +53,7 @@ const NavItem = props => {
   }
 
   return (
-    <div className={`${"submenu-container"}`} style={{marginLeft:"19px", marginBottom:"15px",marginTop:"15px"}}>
+    <div className={`${"submenu-container"} core-nav-item-top-spacing`}>
     <NavLink
       exact
       to={to}
@@ -61,10 +61,10 @@ const NavItem = props => {
       //activeClassName={`${"submenu-container"}`}
     >
       <div classname="sidebar-link">
-      <div className='actions' style={{padding:"0px"}}>
+      <div className="actions core-nav-item-container-padding">
       {leftIcon /*className={style.navIcon}*/ }
       <div data-tip="React-tooltip" data-for={`jk-side-${getModuleName}`}>
-      <span /*className={style.navLabel}*/ style={{fontSize:"14px"}}>{trimModuleName}</span>
+      <span /*className={style.navLabel}*/ className="core-nav-item-text-style">{trimModuleName}</span>
       {trimModuleName?.includes("...") && <ReactTooltip textColor="white" backgroundColor="grey" place="right" type="info" effect="solid" id={`jk-side-${getModuleName}`}>
                     {t(`ACTION_TEST_${getModuleName}`)}
                   </ReactTooltip>}

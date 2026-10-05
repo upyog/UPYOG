@@ -5,7 +5,7 @@ const KeyNote = ({ keyValue, note, caption, noteStyle, children, privacy }) => {
   return (
     <div className="key-note-pair">
       <h3>{keyValue}</h3>
-      <div style={{display : "inline-flex"}}>
+      <div className="rc-key-note-wrapper">
       {privacy && <p style={noteStyle}>
         <WrapUnMaskComponent value={note} iseyevisible={note?.includes("*")?true:false} privacy={privacy}></WrapUnMaskComponent>
         </p>}

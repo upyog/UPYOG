@@ -59,7 +59,7 @@ const ProcessDepreciationResponse = props => {
               info={GetBannerLabel(true, t)}
               successful={true}
             />
-            <div className="asset-auto-222">
+            <div className="asset-process-depreciation-response-flex-center-row-center">
               <Link to={`${moduleBasePath?.path}/assetservice/applicationsearch/application-details/${applicationDetail}`} >
                 <SubmitBar label={t("AST_DEPRECIATION_LIST")} />
               </Link>

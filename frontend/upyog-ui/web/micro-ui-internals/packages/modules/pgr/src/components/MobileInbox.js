@@ -38,7 +38,7 @@ const MobileInbox = ({ data, onFilterChange, onSearch, isLoading, searchParams }
   }
 
   return (
-    <div style={{ padding: 0 }}>
+    <div className="pgr-mobile-inbox-container-padding">
       <div className="inbox-container">
         <div className="filters-container">
           <ComplaintsLink isMobile={true} />

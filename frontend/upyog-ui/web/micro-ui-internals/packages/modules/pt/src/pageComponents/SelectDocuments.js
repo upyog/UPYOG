@@ -293,7 +293,7 @@ function SelectDocument({
   if (doc.code === "OWNER.TRANSFERREASONDOCUMENT") {
     dropDownData = dropDownData.filter(e => e.code?.split(".")[2] === formData?.additionalDetails?.reasonForTransfer?.code);
   }
-  return <div className="pt-auto-77">
+  return <div className="pt-select-documents-mb-md">
     {doc?.hasDropdown ? <LabelFieldPair>
       <CardLabel className="card-label-smaller">
         <React.Fragment>
@@ -315,7 +315,7 @@ function SelectDocument({
         }} inputStyles={{
           width: "280px"
         }} disabled={(propertyInitialValues?.documents && propertyInitialValues?.documents.length > 0 && propertyInitialValues?.documents.filter(document => document.documentType.includes(doc?.code)).length > 0 ? enabledActions?.[action].disableUpload : false) || !selectedDocument?.code} buttonType="button" error={!uploadedFile} />
-        <div className="pt-auto-78">{t("CS_FILE_SIZE_RESTRICTIONS_PT")}</div>
+        <div className="pt-select-documents-text-sm-mt-sm">{t("CS_FILE_SIZE_RESTRICTIONS_PT")}</div>
       </div>
     </LabelFieldPair>
   </div>;

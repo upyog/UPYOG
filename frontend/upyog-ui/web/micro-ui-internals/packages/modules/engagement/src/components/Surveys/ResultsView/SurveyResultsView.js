@@ -59,22 +59,22 @@ const displayResult = (ques,ans,type,resCount=0,t) => {
                         // <div className="surveyQuestion-wrapper">
                         //     <span className="question-title">{quesStmt}</span>
                         //     <header className=''>{`${resCount} Responses`}</header>
-                        //     <Card style={{"backgroundColor":"#FAFAFA","margin":"0px"}}>
+                        //     <Card className="custom-style">
                         //     {ans?.map(el=> <span>{el}<BreakLine /></span>)}
                         //     </Card>
                         // </div>
                         // <div>
                         //     <CardSectionHeader>{ques.questionStatement}</CardSectionHeader>
-                        //     <header style={{"fontWeight":"bold"}}>{`${resCount} Responses`}</header>
-                        //     <Card style={{"backgroundColor":"#FAFAFA","margin":"0px"}}>
+                        //     <header className="custom-style">{`${resCount} Responses`}</header>
+                        //     <Card className="custom-style">
                         //     {ans?.map(el=> <p>{el}<BreakLine /></p>)}
                         //     </Card>
                         // </div>
-                        <div style={{"margin":"30px"}}>
+                        <div className="eng-survey-results-view-spacing">
                             <CardSectionHeader>{ques.questionStatement}</CardSectionHeader>
-                            <header style={{"fontWeight":"bold"}}>{`${resCount} ${t("SURVEY_RESPONSES")}`}</header>
+                            <header className="eng-engagement-docs-ulb-card">{`${resCount} ${t("SURVEY_RESPONSES")}`}</header>
                             <div className='responses-container'>
-                            {ans?.map(el=> <div className='response-result responses-container-line'>{el}<BreakLine style={{"marginTop":"10px"}} /></div>)}
+                            {ans?.map(el=> <div className='response-result responses-container-line'>{el}<BreakLine className="eng-survey-results-view-top-spacing" /></div>)}
                             </div>
                             
                         </div>
@@ -82,9 +82,9 @@ const displayResult = (ques,ans,type,resCount=0,t) => {
             case "Date":
                 return (
                         
-                        <div style={{"margin":"30px"}}>
+                        <div className="eng-survey-results-view-spacing">
                             <CardSectionHeader>{ques.questionStatement}</CardSectionHeader>
-                            <header style={{"fontWeight":"bold"}}>{`${resCount} ${t("SURVEY_RESPONSES")}`}</header>
+                            <header className="eng-engagement-docs-ulb-card">{`${resCount} ${t("SURVEY_RESPONSES")}`}</header>
                             {/* <div className="responses-container-date">
                             {ans?.map(el=> <div className='date-time'>{transformDate(el).date}</div>)}
                             </div> */}
@@ -103,9 +103,9 @@ const displayResult = (ques,ans,type,resCount=0,t) => {
                         )
             case "Time":
                 return (
-                        <div style={{"margin":"30px"}}>
+                        <div className="eng-survey-results-view-spacing">
                             <CardSectionHeader>{ques.questionStatement}</CardSectionHeader>
-                           <header style={{"fontWeight":"bold"}}>{`${resCount} ${t("SURVEY_RESPONSES")}`}</header>
+                           <header className="eng-engagement-docs-ulb-card">{`${resCount} ${t("SURVEY_RESPONSES")}`}</header>
                             {/* <div className='responses-container-date'>
                             {ans?.map(el=> <div className='date-time'><strong>{el}</strong></div>)}
                             </div> */}
@@ -130,11 +130,11 @@ const displayResult = (ques,ans,type,resCount=0,t) => {
                         //     <span className='text-3xl font-bold'>{`${resCount} Responses`}</span>
                         //     {ans?.map(el=> <span>{el}</span>)}
                         // </div>
-                        <div style={{"margin":"30px"}}>
+                        <div className="eng-survey-results-view-spacing">
                             <CardSectionHeader>{ques.questionStatement}</CardSectionHeader>
-                            <header style={{"fontWeight":"bold"}}>{`${resCount} ${t("SURVEY_RESPONSES")}`}</header>
+                            <header className="eng-engagement-docs-ulb-card">{`${resCount} ${t("SURVEY_RESPONSES")}`}</header>
                             <div className='responses-container'>
-                            {ans?.map(el=> <div className='response-result responses-container-line'>{el}<BreakLine style={{"marginTop":"10px"}} /></div>)}
+                            {ans?.map(el=> <div className='response-result responses-container-line'>{el}<BreakLine className="eng-survey-results-view-top-spacing" /></div>)}
                             </div>
                         </div>
                         )
@@ -147,16 +147,16 @@ const displayResult = (ques,ans,type,resCount=0,t) => {
                         // </div>
                         // <div>
                         //     <CardSectionHeader>{ques.questionStatement}</CardSectionHeader>
-                        //     <header style={{"fontWeight":"bold"}}>{`${resCount} Responses`}</header>
-                        //     <Card style={{"backgroundColor":"#FAFAFA","margin":"0px"}}>
+                        //     <header className="custom-style">{`${resCount} Responses`}</header>
+                        //     <Card className="custom-style">
                         //     {ans?.map(el=> <p>{el}<BreakLine /></p>)}
                         //     </Card>
                         // </div>
-                        <div style={{"margin":"30px"}}>
+                        <div className="eng-survey-results-view-spacing">
                             <CardSectionHeader>{ques.questionStatement}</CardSectionHeader>
-                            <header style={{"fontWeight":"bold"}}>{`${resCount} ${t("SURVEY_RESPONSES")}`}</header>
+                            <header className="eng-engagement-docs-ulb-card">{`${resCount} ${t("SURVEY_RESPONSES")}`}</header>
                             {/* {ans?.map(el=> <p>{el}<BreakLine /></p>)} */}
-                            <div className='responses-container' style={{"padding":"30px"}}>
+                            <div className="responses-container eng-survey-results-view-container-padding">
                             <CheckBoxChart data={ques}/>
                             </div>
                             
@@ -164,11 +164,11 @@ const displayResult = (ques,ans,type,resCount=0,t) => {
                         )
             case "Multiple Choice":
                 return (
-                        <div style={{"margin":"30px"}}>
+                        <div className="eng-survey-results-view-spacing">
                             <CardSectionHeader>{ques.questionStatement}</CardSectionHeader>
-                            <header style={{"fontWeight":"bold"}}>{`${resCount} ${t("SURVEY_RESPONSES")}`}</header>
+                            <header className="eng-engagement-docs-ulb-card">{`${resCount} ${t("SURVEY_RESPONSES")}`}</header>
                             {/* {ans?.map(el=> <p>{el}<BreakLine /></p>)} */}
-                            <div className='responses-container' style={{overflow:"-moz-hidden-unscrollable"}}>
+                            <div className="responses-container eng-survey-results-view-wrapper">
                             <McqChart data={ques}/>
                             </div>
                             
@@ -245,7 +245,7 @@ const SurveyResultsView = ({surveyInfo,selecedSurveyresults}) => {
     <div className="custom-group-merge-container">
         <Header>{t("CS_COMMON_SURVEYS")}</Header>
         <MultiLink
-                style={{marginTop:"-45px"}}
+                className="eng-survey-results-view-top-spacing-2"
                 onHeadClick={() => handleReportDownload()}
                 downloadBtnClassName={"employee-download-btn-className"}
                 label={t("SURVEY_REPORT")}
@@ -253,7 +253,7 @@ const SurveyResultsView = ({surveyInfo,selecedSurveyresults}) => {
         <Card >
             {/* display survey detail form
             display whoHasResponded component */}
-            <div style={{"margin":"30px"}}>
+            <div className="eng-survey-results-view-spacing">
             <SurveyDetailsView surveyTitle={surveyInfo.title} surveyDesc={surveyInfo.description} t={t} surveyId={surveyInfo.uuid} />
             </div>
             <WhoHasResponded t={t} userInfo={userInfo}/>

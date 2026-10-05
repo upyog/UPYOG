@@ -25,3 +25,39 @@
     }
   }
 }
+
+.static-citizen-sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  z-index: 99;
+
+  @media (max-width: 780px) {
+    height: calc(100vh - 10px);
+  }
+}
+
+.employee-sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.sidebar-helpline-telephone {
+  margin-top: -10%;
+}
+
+.img-Profile {
+  object-fit: cover !important;
+  object-position: center !important;
+}
+
+.drawer-desktop {
+  background-color: white !important;
+}
+
+.sidebar-pointer-item {
+  cursor: pointer !important;
+}

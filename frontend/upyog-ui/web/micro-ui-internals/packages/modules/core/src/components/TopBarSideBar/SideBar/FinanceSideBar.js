@@ -133,8 +133,8 @@ const FinanceSideBar = ({ activePath, setActivePath, configEmployeeSideBar1, sea
 
   return (
     <React.Fragment>
-      <div className="submenu-container" style={{ display: "flex", alignItems: "center", padding: "20px", color: "white", borderBottom: "1px solid rgba(255,255,255,0.1)", marginBottom: "10px" }}>
-        <div onClick={handleBack} style={{ cursor: "pointer", marginRight: "20px", display: "flex", alignItems: "center" }}>
+      <div className="submenu-container core-finance-side-bar-flex-row">
+        <div onClick={handleBack} className="core-finance-side-bar-clickable">
           <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="white">
             <path d="M0 0h24v24H0z" fill="none" />
             <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
@@ -142,13 +142,13 @@ const FinanceSideBar = ({ activePath, setActivePath, configEmployeeSideBar1, sea
         </div>
         <div className="actions">
           <FinanceChartIcon />
-          <span style={{ fontSize: "16px", fontWeight: "bold" }}>
+          <span className="core-finance-side-bar-text-style">
             {t(`ACTION_TEST_${menuTitle.toUpperCase().replace(/[ -]/g, "_")}`) || menuTitle}
           </span>
         </div>
       </div>
 
-      <div className="submenu-links" style={{ overflowX: "auto", display: "flex", flexDirection: "column" }}>
+      <div className="submenu-links core-finance-side-bar-flex-container">
         {Object.keys(currentNode)
           .filter((key) => !["id", "name", "url", "displayName", "orderNumber", "parentModule", "serviceCode", "code", "leftIcon", "path", "navigationURL", "enabled"].includes(key))
           .filter((key) => hasMatchingDescendant(currentNode[key], key, search, t, i18n))
@@ -177,15 +177,14 @@ const FinanceSideBar = ({ activePath, setActivePath, configEmployeeSideBar1, sea
               <div
                 key={key}
                 onClick={() => setActivePath(`${activePath}.${key}`)}
-                className="sidebar-link"
+                className="sidebar-link core-finance-side-bar-clickable-2"
                 title={displayLabel}
-                style={{ cursor: "pointer", padding: "20px", color: "white", display: "flex", justifyContent: "space-between", alignItems: "center", width: "max-content", minWidth: "100%" }}
               >
                 <div className="actions">
                   {leftIcon}
-                  <span title={displayLabel} style={{ fontSize: "14px", whiteSpace: "nowrap", paddingRight: "10px" }}>{displayLabel}</span>
+                  <span title={displayLabel} className="core-finance-side-bar-spacing">{displayLabel}</span>
                 </div>
-                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20" fill="white" style={{ flexShrink: 0 }}>
+                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20" fill="white" className="core-finance-side-bar-icon">
                   <path d="M0 0h24v24H0z" fill="none" />
                   <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
                 </svg>
@@ -203,7 +202,7 @@ const FinanceSideBar = ({ activePath, setActivePath, configEmployeeSideBar1, sea
               >
                 <div className="actions">
                   {leftIcon}
-                  <span title={displayLabel} style={{ fontSize: "14px", whiteSpace: "nowrap" }}>{displayLabel}</span>
+                  <span title={displayLabel} className="core-finance-side-bar-text-style-2">{displayLabel}</span>
                 </div>
               </Link>
             );

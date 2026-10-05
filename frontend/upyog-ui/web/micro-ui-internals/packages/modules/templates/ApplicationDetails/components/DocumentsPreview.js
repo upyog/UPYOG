@@ -3,47 +3,84 @@ import { useTranslation } from "react-i18next";
 import { CardSubHeader, PDFSvg } from "@nudmcdgnpm/digit-ui-react-components";
 
 function DocumentsPreview({ documents, svgStyles = {}, isSendBackFlow = false, isHrLine = false, titleStyles }) {
-    const { t } = useTranslation();
-    const isStakeholderApplication = window.location.href.includes("stakeholder");
+  const { t } = useTranslation();
+  const isStakeholderApplication = window.location.href.includes("stakeholder");
 
-    return (
-        <div style={{ marginTop: "19px" }}>
-            {!isStakeholderApplication && documents?.map((document, index) => (
-                <React.Fragment key={index}>
-                    {document?.title ? <CardSubHeader style={titleStyles ? titleStyles : { marginTop: "32px", marginBottom: "8px", color: "#505A5F", fontSize: "24px" }}>{t(document?.title)}</CardSubHeader> : null}
-                    <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-start" }}>
-                        {document?.values && document?.values.length > 0 ? document?.values?.map((value, index) => (
-                            <a target="_" href={value?.url} style={{ marginRight: "10px", maxWidth: "100px", height: "auto", minWidth: "100px" }} key={index}>
-                                <div style={{ display: "flex", justifyContent: "center" }}>
-                                    <PDFSvg />
-                                </div>
-                                <p style={{ marginTop: "8px", fontWeight: "bold", textAlign: "center", color: "#505A5F"  }}>{t(value?.title)}</p>
-                                {isSendBackFlow ? value?.documentType?.includes("NOC") ? <p style={{ textAlign: "center" }}>{t(value?.documentType.split(".")[1])}</p> : <p style={{ textAlign: "center" }}>{t(value?.documentType)}</p> : ""}
-                            </a>
-                        )) : !(window.location.href.includes("citizen")) && <div><p>{t("BPA_NO_DOCUMENTS_UPLOADED_LABEL")}</p></div>}
+  return (
+    <div className="tmpl-documents-preview-top-spacing">
+      {!isStakeholderApplication &&
+        documents?.map((document, index) => (
+          <React.Fragment key={index}>
+            {document?.title ? (
+              <div className="app-details-section-header-wrap app-details-doc-header-wrap">
+                <CardSubHeader className="app-details-doc-subheader" style={titleStyles ? titleStyles : {}}>
+                  {t(document?.title)}
+                </CardSubHeader>
+              </div>
+            ) : null}
+            <div className="app-details-doc-grid">
+              {document?.values && document?.values.length > 0 ? (
+                document?.values?.map((value, vIdx) => (
+                  <a target="_blank" rel="noopener noreferrer" href={value?.url} className="app-details-doc-card" key={vIdx}>
+                    <div className="app-details-doc-icon-wrap">
+                      <PDFSvg />
                     </div>
-                    {isHrLine && documents?.length != index + 1 ? <hr style={{ color: "#D6D5D4", backgroundColor: "#D6D5D4", height: "2px", marginTop: "20px", marginBottom: "20px" }} /> : null}
-                </React.Fragment>
-            ))}
-            {isStakeholderApplication && documents?.map((document, index) => (
-                <React.Fragment key={index}>
-                    {document?.title ? <CardSubHeader style={{ marginTop: "32px", marginBottom: "8px", color: "#505A5F", fontSize: "24px" }}>{t(document?.title)}</CardSubHeader> : null}
-                    <div>
-                        {document?.values && document?.values.length > 0 ? document?.values?.map((value, index) => (
-                            <a target="_" href={value?.url} style={{ minWidth: svgStyles?.minWidth ? svgStyles?.minWidth : "160px", marginRight: "20px" }} key={index}>
-                                <div style={{ maxWidth: "940px", padding: "8px", borderRadius: "4px", border: "1px solid #D6D5D4", background: "#FAFAFA" }}>
-                                    <p style={{ marginTop: "8px", fontWeight: "bold", marginBottom: "10px" }}>{t(value?.title)}</p>
-                                    {value?.docInfo ? <div style={{ fontSize: "12px", color: "#505A5F", fontWeight: 400, lineHeight: "15px", marginBottom: "10px" }}>{`${t(value?.docInfo)}`}</div> : null}
-                                    <PDFSvg />
-                                    <p style={{ marginTop: "8px", fontSize: "16px", lineHeight: "19px", fontWeight: "400", textAlign: "center", color: "#505A5F"  }}>{`${t(value?.title)}`}</p>
-                                </div>
-                            </a>
-                        )) : !(window.location.href.includes("citizen")) && <div><p>{t("BPA_NO_DOCUMENTS_UPLOADED_LABEL")}</p></div>}
+                    <div className="app-details-doc-info">
+                      <p className="app-details-doc-title">{t(value?.title)}</p>
+                      {isSendBackFlow && value?.documentType ? (
+                        <span className="app-details-doc-type-badge">
+                          {value?.documentType?.includes("NOC") ? t(value?.documentType.split(".")[1]) : t(value?.documentType)}
+                        </span>
+                      ) : null}
                     </div>
-                </React.Fragment>
-            ))}
-        </div>
-    );
+                    <span className="app-details-doc-action">{t("CS_COMMON_VIEW") || "View"} &rarr;</span>
+                  </a>
+                ))
+              ) : (
+                !window.location.href.includes("citizen") && (
+                  <div className="app-details-no-doc-card">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <line x1="9" y1="15" x2="15" y2="15"></line>
+                    </svg>
+                    <span>{t("BPA_NO_DOCUMENTS_UPLOADED_LABEL") || "No documents uploaded"}</span>
+                  </div>
+                )
+              )}
+            </div>
+            {isHrLine && documents?.length !== index + 1 ? <hr className="tmpl-documents-preview-top-spacing-2" /> : null}
+          </React.Fragment>
+        ))}
+      {isStakeholderApplication &&
+        documents?.map((document, index) => (
+          <React.Fragment key={index}>
+            {document?.title ? <CardSubHeader className="tmpl-documents-preview-header">{t(document?.title)}</CardSubHeader> : null}
+            <div className="app-details-doc-grid">
+              {document?.values && document?.values.length > 0 ? (
+                document?.values?.map((value, vIdx) => (
+                  <a target="_blank" rel="noopener noreferrer" href={value?.url} className="app-details-doc-card" key={vIdx}>
+                    <div className="app-details-doc-icon-wrap">
+                      <PDFSvg />
+                    </div>
+                    <div className="app-details-doc-info">
+                      <p className="app-details-doc-title">{t(value?.title)}</p>
+                      {value?.docInfo ? <span className="app-details-doc-type-badge">{t(value?.docInfo)}</span> : null}
+                    </div>
+                    <span className="app-details-doc-action">{t("CS_COMMON_VIEW") || "View"} &rarr;</span>
+                  </a>
+                ))
+              ) : (
+                !window.location.href.includes("citizen") && (
+                  <div className="app-details-no-doc-card">
+                    <p>{t("BPA_NO_DOCUMENTS_UPLOADED_LABEL")}</p>
+                  </div>
+                )
+              )}
+            </div>
+          </React.Fragment>
+        ))}
+    </div>
+  );
 }
 
 export default DocumentsPreview;

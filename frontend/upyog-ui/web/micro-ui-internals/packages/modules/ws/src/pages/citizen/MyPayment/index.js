@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import WSPayment from "./WSPayments";
 import WSInfoLabel from "../../../pageComponents/WSInfoLabel";
-import "../../../css/ws-inline-auto.css";
+
 const WSMyPayments = () => {
   const {
     t
@@ -105,14 +105,14 @@ const WSMyPayments = () => {
     property: properties?.Properties?.filter(prop => prop?.propertyId === ob?.details?.propertyId)?.[0]
   }));
   return <React.Fragment>
-      <Header>{`${t("WS_MY_PAYMENTS_HEADER")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
-      <WSInfoLabel t={t} /> 
-      <div>
+    <Header>{`${t("WS_MY_PAYMENTS_HEADER")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
+    <WSInfoLabel t={t} />
+    <div>
       {applicationsList?.length > 0 && applicationsList.map((application, index) => <div key={index}>
-              <WSPayment application={application} />
-            </div>)}
-        {!applicationsList?.length > 0 && <p className="ws-auto-178">{t("PT_NO_APPLICATION_FOUND_MSG")}</p>}
-      </div>
-    </React.Fragment>;
+        <WSPayment application={application} />
+      </div>)}
+      {!applicationsList?.length > 0 && <p className="ws-index-mt-md-ml-md">{t("PT_NO_APPLICATION_FOUND_MSG")}</p>}
+    </div>
+  </React.Fragment>;
 };
 export default WSMyPayments;

@@ -5,7 +5,7 @@ import { Route, Routes } from "react-router-dom";
 import { loginConfig } from "./config";
 import LoginComponent from "./login";
 
-const EmployeeLogin = () => {
+const EmployeeLogin = ({layout, emp, setEmp}) => {
   const { t } = useTranslation();
   const { path } = Digit.Hooks.useModuleBasePath();
 
@@ -24,7 +24,7 @@ const EmployeeLogin = () => {
 
   return (
     <Routes>
-      <Route index element={<LoginComponent config={loginParams[0]} t={t} />} />
+      <Route index element={<LoginComponent  layout={layout} emp={emp} setEmp={setEmp} config={loginParams[0]} t={t} />} />
     </Routes>
   );
 };

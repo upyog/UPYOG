@@ -118,7 +118,7 @@ const Response = (props) => {
           applicationNumber={ndcCode}
           info={isSuccess ? t(`NDC_APPROVAL_NUMBER`) : ""}
           successful={isSuccess}
-          style={{ padding: "10px" }}
+          className="ndc-response-container-padding"
           headerStyles={{ fontSize: "32px", wordBreak: "break-word" }}
         />
 
@@ -126,7 +126,7 @@ const Response = (props) => {
           <SubmitBar
             label={t("CS_COMMON_DOWNLOAD_ACKNOWLEDGEMENT")}
             onSubmit={handleDownloadPdf}
-            style={{ marginBottom: "16px" }}
+            className="ndc-response-bottom-spacing"
           />
         )}
 
@@ -134,7 +134,7 @@ const Response = (props) => {
           <SubmitBar
             label={t("NDC_FEE_RECIEPT")}
             onSubmit={handleDownloadReceipt}
-            style={{ marginBottom: "16px" }}
+            className="ndc-response-bottom-spacing"
           />
         )}
 

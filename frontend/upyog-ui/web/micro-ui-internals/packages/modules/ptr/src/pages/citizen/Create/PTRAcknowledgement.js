@@ -56,7 +56,7 @@ const BannerPicker = (props) => {
       }
       info={props?.isSuccess ? props.t("PTR_APPLICATION_NO") : ""}
       successful={props?.isSuccess}
-      style={{ width: "100%" }}
+      className="ptr-ptracknowledgement-fullwidth"
     />
   );
 };

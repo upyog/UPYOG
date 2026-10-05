@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { propertyCardBodyStyle, convertEpochToDate } from "../../../utils";
 import TransferDetails from "./TransferDetails";
 import { useParams } from "react-router-dom";
-import "../../../css/pt-inline-auto.css";
+
 const propertyOwnerHistory = ({
   userType,
   propertyId: propertyIdFromProp
@@ -98,19 +98,19 @@ const propertyOwnerHistory = ({
   }
   if (propertyIdFromProp) {
     return <React.Fragment>
-        <Card>
-          <div>
-            {Object.keys(ownershipInfo).map((key, index, arr) => {
+      <Card>
+        <div>
+          {Object.keys(ownershipInfo).map((key, index, arr) => {
             const date = convertEpochToDate(Number(key));
             return <div className="historyContent">
-                  <div className="pt-auto-130">
-                    <div className="historyCheckpoint zIndex"></div>
-                    {index !== Object.keys(ownershipInfo).length - 1 ? <div className="rowContainerStyles">
-                        <CardSubHeader className="historyTableDateLabel bottomMargin"> {t("PT_DATE_OF_TRANSFER")} </CardSubHeader>
-                        <CardSubHeader className="historyTableDate bottomMargin">{date}</CardSubHeader>
-                      </div> : null}
-                  </div>
-                  <TransferDetails data={ownershipInfo[key]} wrapperStyles="wrapperStyles" containerStyles="containerStyles" rowContainerStyles={{
+              <div className="pt-property-owner-history-flex">
+                <div className="historyCheckpoint zIndex"></div>
+                {index !== Object.keys(ownershipInfo).length - 1 ? <div className="rowContainerStyles">
+                  <CardSubHeader className="historyTableDateLabel bottomMargin"> {t("PT_DATE_OF_TRANSFER")} </CardSubHeader>
+                  <CardSubHeader className="historyTableDate bottomMargin">{date}</CardSubHeader>
+                </div> : null}
+              </div>
+              <TransferDetails data={ownershipInfo[key]} wrapperStyles="wrapperStyles" containerStyles="containerStyles" rowContainerStyles={{
                 display: "flex",
                 flexDirection: "column"
               }} tableStyles={{
@@ -118,28 +118,28 @@ const propertyOwnerHistory = ({
                 gridAutoRows: "min-content",
                 gridTemplateColumns: "repeat(5, minmax(100px, 1fr))"
               }} />
-                  {index !== arr.length - 1 && <div className="checkpoint-connect pt-auto-131"></div>}
-                </div>;
+              {index !== arr.length - 1 && <div className="checkpoint-connect pt-property-owner-history-item"></div>}
+            </div>;
           })}
-          </div>
-        </Card>
-      </React.Fragment>;
-  }
-  return <React.Fragment>
-      <Card>
-        <Header>{t("PT_OWNER_HISTORY")}</Header>
-        <div>
-          {Object.keys(ownershipInfo).map(key => {
-          const date = convertEpochToDate(Number(key));
-          return <div className="pt-auto-132">
-                <div className="historyCheckpoint"></div>
-                <CardSubHeader className="historyTableDateLabel smallText"> {t("PT_DATE_OF_TRANSFER")} </CardSubHeader>
-                <CardSubHeader className="historyTableDate smallText">&nbsp;-&nbsp;{date}</CardSubHeader>
-                <TransferDetails data={ownershipInfo[key]} wrapperStyles="wrapperStyles leftBorder" showHorizontalBar={true} />
-              </div>;
-        })}
         </div>
       </Card>
     </React.Fragment>;
+  }
+  return <React.Fragment>
+    <Card>
+      <Header>{t("PT_OWNER_HISTORY")}</Header>
+      <div>
+        {Object.keys(ownershipInfo).map(key => {
+          const date = convertEpochToDate(Number(key));
+          return <div className="pt-property-owner-history-item-2">
+            <div className="historyCheckpoint"></div>
+            <CardSubHeader className="historyTableDateLabel smallText"> {t("PT_DATE_OF_TRANSFER")} </CardSubHeader>
+            <CardSubHeader className="historyTableDate smallText">&nbsp;-&nbsp;{date}</CardSubHeader>
+            <TransferDetails data={ownershipInfo[key]} wrapperStyles="wrapperStyles leftBorder" showHorizontalBar={true} />
+          </div>;
+        })}
+      </div>
+    </Card>
+  </React.Fragment>;
 };
 export default propertyOwnerHistory;

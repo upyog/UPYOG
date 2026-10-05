@@ -8,7 +8,7 @@ import { newConfigMutate } from "../../config/Mutate/config";
 import TransfererDetails from "../../pageComponents/Mutate/TransfererDetails";
 import MutationApplicationDetails from "./MutationApplicatinDetails";
 import getPTAcknowledgementData from "../../getPTAcknowledgementData";
-import "../../css/pt-inline-auto.css";
+
 const ApplicationDetails = () => {
   const {
     t
@@ -229,27 +229,27 @@ const ApplicationDetails = () => {
     });
   }
   return <div>
-        <div className={"employee-application-details pt-auto-150"}>
+    <div className={"employee-application-details pt-application-details-mb-md"}>
       <Header styles={{
         marginLeft: "0px",
         paddingTop: "10px",
         fontSize: "32px"
       }}>{t("PT_APPLICATION_TITLE")}</Header>
-      <div className="pt-auto-151">
-         
-      <div className="pt-auto-152">
-      {dowloadOptions && dowloadOptions.length > 0 && <MultiLink className="multilinkWrapper" onHeadClick={() => setShowOptions(!showOptions)} displayOptions={showOptions} options={dowloadOptions} downloadBtnClassName={"employee-download-btn-className"} optionsClassName={"employee-options-btn-className"}
+      <div className="pt-application-details-row-reverse-row-center">
+
+        <div className="pt-application-details-relative-layered">
+          {dowloadOptions && dowloadOptions.length > 0 && <MultiLink className="multilinkWrapper" onHeadClick={() => setShowOptions(!showOptions)} displayOptions={showOptions} options={dowloadOptions} downloadBtnClassName={"employee-download-btn-className"} optionsClassName={"employee-options-btn-className"}
           // ref={menuRef}
           />}
-          </div>
-      <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline} className="pt-auto-153"></LinkButton>
-      </div>      
+        </div>
+        <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline} className="pt-application-details-btn"></LinkButton>
       </div>
-      <ApplicationDetailsTemplate applicationDetails={appDetailsToShow} isLoading={isLoading} isDataLoading={isLoading} applicationData={appDetailsToShow?.applicationData} mutate={mutate} id={"timeline"} workflowDetails={workflowDetails} businessService={businessService} moduleCode="PT" showToast={showToast} setShowToast={setShowToast} closeToast={closeToast} timelineStatusPrefix={"ES_PT_COMMON_STATUS_"} forcedActionPrefix={"WF_EMPLOYEE_PT.CREATE"} statusAttribute={"state"} MenuStyle={{
+    </div>
+    <ApplicationDetailsTemplate applicationDetails={appDetailsToShow} isLoading={isLoading} isDataLoading={isLoading} applicationData={appDetailsToShow?.applicationData} mutate={mutate} id={"timeline"} workflowDetails={workflowDetails} businessService={businessService} moduleCode="PT" showToast={showToast} setShowToast={setShowToast} closeToast={closeToast} timelineStatusPrefix={"ES_PT_COMMON_STATUS_"} forcedActionPrefix={"WF_EMPLOYEE_PT.CREATE"} statusAttribute={"state"} MenuStyle={{
       color: "#FFFFFF",
       fontSize: "18px"
     }} />
-    
-    </div>;
+
+  </div>;
 };
 export default React.memo(ApplicationDetails);

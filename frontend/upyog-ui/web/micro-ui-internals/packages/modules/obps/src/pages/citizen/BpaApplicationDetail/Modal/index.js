@@ -4,7 +4,7 @@ import { configAcceptApplication } from "../config/Approve";
 import { configTermsAndConditions } from "../config/TermsAndConditions";
 
 const Heading = (props) => {
-  return <h1 style={{marginLeft:"22px"}} className="heading-m BPAheading-m">{props.label}</h1>;
+  return <h1 className="heading-m BPAheading-m obps-index-header">{props.label}</h1>;
 };
 
 const Close = () => (
@@ -15,7 +15,7 @@ const Close = () => (
 
 const CloseBtn = (props) => {
   return (
-    <div className="icon-bg-secondary" onClick={props.onClick} style={{backgroundColor: "#FFFFFF"}}>
+    <div className="icon-bg-secondary obps-index-wrapper-2" onClick={props.onClick}>
       <Close />
     </div>
   );
@@ -109,7 +109,7 @@ const ActionModal = ({ t, closeModal, submitAction, actionData, action, applicat
       actionSaveOnSubmit={() => {}}
       formId="modal-action"
       isDisabled={false}
-      //style={{height: "auto", padding: "10px"}}
+      //className="custom-style"
       isOBPSFlow={true}
       popupStyles={mobileView?{width:"720px"}:{}}
       style={!mobileView?{minHeight: "45px", height: "auto", width:"107px",paddingLeft:"0px",paddingRight:"0px"}:{minHeight: "45px", height: "auto",width:"160px"}}
@@ -130,13 +130,13 @@ const ActionModal = ({ t, closeModal, submitAction, actionData, action, applicat
         /> : null
       }
       {termsData ?
-        <div style={{height: "100%"}}>
-          <div style={{ height: "95%" }}>
-            <div style={{fontSize: "18px", paddingBottom: "16px", color :"#000000", fontWeight : "700"}}>{t("TERMS_AND_CONDITIONS")}</div>
-            {config?.data && config?.data?.map((value, index) => <div style={{ height: "90%", overflow: "auto"}}>{`${value}`}</div>)}
+        <div className="obps-index-wrapper-3">
+          <div className="obps-index-wrapper-4">
+            <div className="obps-index-spacing-3">{t("TERMS_AND_CONDITIONS")}</div>
+            {config?.data && config?.data?.map((value, index) => <div className="obps-index-wrapper-5">{`${value}`}</div>)}
           </div>
-          <div style={{display: "flex", justifyContent: "center", minHeight: "5%"}}>
-            <ButtonSelector label={t("BPA_GO_BACK_LABEL")} onSubmit={closeModal} style={{minWidth: "240px"}}/>
+          <div className="obps-index-flex-row-2">
+            <ButtonSelector label={t("BPA_GO_BACK_LABEL")} onSubmit={closeModal} className="obps-index-action-btn-2"/>
           </div>
         </div> : null
       }

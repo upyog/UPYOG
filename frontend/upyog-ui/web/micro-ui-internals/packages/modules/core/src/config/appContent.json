@@ -1,0 +1,731 @@
+{
+  "_meta": {
+    "version": "2.1.0",
+    "description": "Theme preset and layout configuration catalog for Citizen and Employee portals",
+    "themeTokens": {
+      "upyogPurple": {
+        "primaryColor": "#584F74",
+        "secondaryColor": "#6B54A2",
+        "backgroundColor": "#F3F2FA",
+        "textColor": "#7F7797",
+        "gradient": "linear-gradient(90deg, #6A4A91 0%, #3E285F 100%)"
+      },
+      "eSathiOrange": {
+        "primaryColor": "#CA5100",
+        "secondaryColor": "#EA8740",
+        "backgroundColor": "#FFF5EF",
+        "textColor": "#EA8740",
+        "gradient": "linear-gradient(90deg, #EB874A 0%, #873508 100%)"
+      },
+      "metroBurgundy": {
+        "primaryColor": "#7B1123",
+        "secondaryColor": "#4D0914",
+        "backgroundColor": "#FDF2F4",
+        "textColor": "#7B1123",
+        "gradient": "linear-gradient(90deg, #7B1123 0%, #4D0914 100%)"
+      }
+    }
+  },
+  "citizen1": {
+    "theme": "upyogPurple",
+    "layout": {
+      "loginUI": {
+        "backgroundUrl": "/images/onboarding-bg.jpg",
+        "mainlogo": {
+          "dualLogo": false,
+          "url": "/images/Logo.png"
+        },
+        "headers": {
+          "title": "One Platform",
+          "titleHighlight": "Many Services",
+          "titleStyles": {
+            "color": "#0F172A"
+          },
+          "titleHighlightStyles": {
+            "color": "#584F74"
+          },
+          "subtitle": "Choose your details to",
+          "subtitleHighlight": "get started"
+        },
+        "pointers": {
+          "enabled": true,
+          "showIcons": true,
+          "hasBackground": true,
+          "data": [
+            {
+              "title": "Easy Access",
+              "description": "All your services in one place",
+              "iconUrl": "/images/login-1.svg",
+              "iconAlt": "Easy Access"
+            },
+            {
+              "title": "Secure & Trusted",
+              "description": "Your data is safe with us",
+              "iconUrl": "/images/login-2.svg",
+              "iconAlt": "Secure"
+            },
+            {
+              "title": "Quick & Simple",
+              "description": "Login in minutes",
+              "iconUrl": "/images/login-3.svg",
+              "iconAlt": "Quick"
+            }
+          ]
+        },
+        "footer": {
+          "enabled": false
+        }
+      },
+      "loginForm": {},
+      "commonConfig": {
+        "gradient": "linear-gradient(90deg, #6A4A91 0%, #3E285F 100%)"
+      },
+      "dashboard": {
+        "isV1": true,
+        "isV2": false,
+        "isOldView": true
+      }
+    }
+  },
+  "citizen2": {
+    "theme": "upyogPurple",
+    "layout": {
+      "loginUI": {
+        "backgroundUrl": "/images/background02.png",
+        "mainlogo": {
+          "dualLogo": false,
+          "url": "/images/logo-secondary.png",
+          "styles": {
+            "paddingTop": "9rem"
+          }
+        },
+        "headers": {
+          "title": "One Platform",
+          "titleHighlight": "Many Civic Services",
+          "titleStyles": {
+            "color": "#6B54A2",
+            "fontSize": "36px"
+          },
+          "titleHighlightStyles": {
+            "color": "#6B54A2",
+            "fontSize": "36px"
+          },
+          "subtitle": "Access 100+ services across your city\n with a single, secure login",
+          "subtitleHighlight": "",
+          "subtitleStyles": {
+            "fontSize": "22px"
+          }
+        },
+        "pointers": {
+          "enabled": true,
+          "showIcons": true,
+          "hasBackground": false,
+          "data": [
+            {
+              "title": "All Services, One Place",
+              "description": "Property tax, licenses, permits, certificates & more",
+              "iconUrl": "/images/arrow.svg",
+              "iconAlt": "All Services"
+            },
+            {
+              "title": "Secure & Trusted",
+              "description": "Your data is protected with enterprise-grade security",
+              "iconUrl": "/images/arrow.svg",
+              "iconAlt": "Secure"
+            },
+            {
+              "title": "Quick & Convenient",
+              "description": "Login in minutes and get things done faster",
+              "iconUrl": "/images/arrow.svg",
+              "iconAlt": "Quick"
+            }
+          ]
+        },
+        "footer": {
+          "enabled": true,
+          "styles": {
+            "background": "#F3F2FA",
+            "color": "#7F7797"
+          }
+        }
+      },
+      "loginForm": {
+        "isFormCentered": true,
+        "isTopIconReq": true
+      },
+      "commonConfig": {
+        "gradient": "linear-gradient(90deg, #6A4A91 0%, #3E285F 100%)",
+        "commonBackground": "#F3F2FA",
+        "commonColor": "#7F7797"
+      },
+      "dashboard": {
+        "isV1": false,
+        "isV2": true,
+        "isOldView": false
+      }
+    }
+  },
+  "citizen3": {
+    "theme": "upyogPurple",
+    "layout": {
+      "loginUI": {
+        "backgroundUrl": "/images/background02.png",
+        "mainlogo": {
+          "dualLogo": true,
+          "url": "/images/logo-secondary.png",
+          "styles": {
+            "paddingTop": "9rem"
+          },
+          "url2": "/images/mSeva.png"
+        },
+        "headers": {
+          "title": "One Platform",
+          "titleHighlight": "Many Civic Services",
+          "titleStyles": {
+            "color": "#6B54A2",
+            "fontSize": "36px"
+          },
+          "titleHighlightStyles": {
+            "color": "#6B54A2",
+            "fontSize": "36px"
+          },
+          "subtitle": "Access 100+ services across your city\n with a single, secure login",
+          "subtitleHighlight": "",
+          "subtitleStyles": {
+            "fontSize": "22px"
+          }
+        },
+        "pointers": {
+          "enabled": true,
+          "showIcons": true,
+          "hasBackground": false,
+          "data": [
+            {
+              "title": "All Services, One Place",
+              "description": "Property tax, licenses, permits, certificates & more",
+              "iconUrl": "/images/arrow.svg",
+              "iconAlt": "All Services"
+            },
+            {
+              "title": "Secure & Trusted",
+              "description": "Your data is protected with enterprise-grade security",
+              "iconUrl": "/images/arrow.svg",
+              "iconAlt": "Secure"
+            },
+            {
+              "title": "Quick & Convenient",
+              "description": "Login in minutes and get things done faster",
+              "iconUrl": "/images/arrow.svg",
+              "iconAlt": "Quick"
+            }
+          ]
+        },
+        "footer": {
+          "enabled": true,
+          "styles": {
+            "background": "#F3F2FA",
+            "color": "#7F7797"
+          }
+        }
+      },
+      "loginForm": {
+        "isFormCentered": true,
+        "isTopIconReq": true
+      },
+      "commonConfig": {
+        "gradient": "linear-gradient(90deg, #6A4A91 0%, #3E285F 100%)"
+      },
+      "dashboard": {
+        "isV1": false,
+        "isV2": true,
+        "isOldView": false
+      }
+    }
+  },
+  "citizen4": {
+    "theme": "upyogPurple",
+    "layout": {
+      "loginUI": {
+        "backgroundUrl": "/images/background02.png",
+        "mainlogo": {
+          "dualLogo": true,
+          "verticalView": true,
+          "url": "/images/logo-secondary.png",
+          "url2": "/images/mSeva.png"
+        },
+        "headers": {
+          "title": "One Platform",
+          "titleHighlight": "Many Civic Services",
+          "titleStyles": {
+            "color": "#6B54A2",
+            "fontSize": "36px"
+          },
+          "titleHighlightStyles": {
+            "color": "#6B54A2",
+            "fontSize": "36px"
+          },
+          "subtitle": "Access 100+ services across your city\n with a single, secure login",
+          "subtitleHighlight": "",
+          "subtitleStyles": {
+            "fontSize": "22px"
+          }
+        },
+        "pointers": {
+          "enabled": true,
+          "showIcons": true,
+          "hasBackground": false,
+          "data": [
+            {
+              "title": "All Services, One Place",
+              "description": "Property tax, licenses, permits, certificates & more",
+              "iconUrl": "/images/arrow.svg",
+              "iconAlt": "All Services"
+            },
+            {
+              "title": "Secure & Trusted",
+              "description": "Your data is protected with enterprise-grade security",
+              "iconUrl": "/images/arrow.svg",
+              "iconAlt": "Secure"
+            },
+            {
+              "title": "Quick & Convenient",
+              "description": "Login in minutes and get things done faster",
+              "iconUrl": "/images/arrow.svg",
+              "iconAlt": "Quick"
+            }
+          ]
+        },
+        "footer": {
+          "enabled": true,
+          "styles": {
+            "background": "#F3F2FA",
+            "color": "#7F7797"
+          }
+        }
+      },
+      "loginForm": {
+        "isFormCentered": true,
+        "isTopIconReq": true
+      },
+      "commonConfig": {
+        "gradient": "linear-gradient(90deg, #6A4A91 0%, #3E285F 100%)"
+      },
+      "dashboard": {
+        "isV1": false,
+        "isV2": true,
+        "isOldView": false
+      }
+    }
+  },
+  "citizen5": {
+    "theme": "upyogPurple",
+    "layout": {
+      "loginUI": {
+        "backgroundUrl": "/images/background02.png",
+        "mainlogo": {
+          "dualLogo": false,
+          "verticalView": false,
+          "url": "/images/mSeva.png",
+          "styles": {
+            "paddingTop": "9rem"
+          }
+        },
+        "headers": {
+          "title": "One Platform",
+          "titleHighlight": "Many Civic Services",
+          "titleStyles": {
+            "color": "#6B54A2",
+            "fontSize": "36px"
+          },
+          "titleHighlightStyles": {
+            "color": "#6B54A2",
+            "fontSize": "36px"
+          },
+          "subtitle": "Access 100+ services across your city\n with a single, secure login",
+          "subtitleHighlight": "",
+          "subtitleStyles": {
+            "fontSize": "22px"
+          }
+        },
+        "pointers": {
+          "enabled": true,
+          "showIcons": true,
+          "hasBackground": false,
+          "data": [
+            {
+              "title": "All Services, One Place",
+              "description": "Property tax, licenses, permits, certificates & more",
+              "iconUrl": "/images/arrow.svg",
+              "iconAlt": "All Services"
+            },
+            {
+              "title": "Secure & Trusted",
+              "description": "Your data is protected with enterprise-grade security",
+              "iconUrl": "/images/arrow.svg",
+              "iconAlt": "Secure"
+            },
+            {
+              "title": "Quick & Convenient",
+              "description": "Login in minutes and get things done faster",
+              "iconUrl": "/images/arrow.svg",
+              "iconAlt": "Quick"
+            }
+          ]
+        },
+        "footer": {
+          "enabled": true,
+          "styles": {
+            "background": "#F3F2FA",
+            "color": "#7F7797"
+          }
+        }
+      },
+      "loginForm": {
+        "isFormCentered": true,
+        "isTopIconReq": true
+      },
+      "commonConfig": {
+        "gradient": "linear-gradient(90deg, #6A4A91 0%, #3E285F 100%)"
+      },
+      "dashboard": {
+        "isV1": false,
+        "isV2": true,
+        "isOldView": false
+      }
+    }
+  },
+  "citizen6": {
+    "theme": "eSathiOrange",
+    "layout": {
+      "loginUI": {
+        "backgroundUrl": "/images/backgroundUP.png",
+        "mainlogo": {
+          "dualLogo": true,
+          "url": "/images/logo-secondary.png",
+          "styles": {
+            "paddingTop": "8rem"
+          },
+          "url2": "/images/eSathi.png",
+          "url2Styles": {
+            "height": "60px"
+          }
+        },
+        "headers": {
+          "title": "A single platform,",
+          "titleHighlight": "for various government to citizen services",
+          "titleStyles": {
+            "color": "#CA5100",
+            "fontWeight": "500",
+            "fontSize": "34px"
+          },
+          "titleHighlightStyles": {
+            "color": "#CA5100",
+            "fontSize": "34px"
+          },
+          "subtitle": "",
+          "subtitleHighlight": "",
+          "secondaryHeader": "Welcome to e-Sathi,\n Online Citizen\n Services Portal"
+        },
+        "eGovLogos": {
+          "enabled": true,
+          "logos": [
+            "/images/openGov.png",
+            "/images/digitalIndia.png",
+            "/images/india-gov.png",
+            "/images/digilocker.png"
+          ]
+        },
+        "footer": {
+          "enabled": true,
+          "styles": {
+            "background": "#FFF5EF",
+            "color": "#EA8740"
+          }
+        }
+      },
+      "loginForm": {
+        "isFormCentered": true,
+        "isTopIconReq": true
+      },
+      "commonConfig": {
+        "gradient": "linear-gradient(90deg, #EB874A 0%, #873508 100%)"
+      },
+      "dashboard": {
+        "isV1": false,
+        "isV2": true,
+        "isOldView": false
+      }
+    }
+  },
+  "citizen7": {
+    "theme": "eSathiOrange",
+    "layout": {
+      "loginUI": {
+        "backgroundUrl": "/images/backgroundUP.png",
+        "mainlogo": {
+          "dualLogo": false,
+          "url": "/images/eSathi.png",
+          "styles": {
+            "paddingTop": "8rem"
+          }
+        },
+        "headers": {
+          "title": "A Single Platform",
+          "titleHighlight": "for various government to citizen services",
+          "titleStyles": {
+            "color": "#CA5100",
+            "fontSize": "34px",
+            "fontWeight": "500"
+          },
+          "titleHighlightStyles": {
+            "color": "#CA5100",
+            "fontSize": "34px"
+          },
+          "subtitle": "",
+          "subtitleHighlight": "",
+          "secondaryHeader": "Welcome to e-Sathi,\n Online Citizen\n Services Portal"
+        },
+        "eGovLogos": {
+          "enabled": true,
+          "logos": [
+            "/images/openGov.png",
+            "/images/digitalIndia.png",
+            "/images/india-gov.png",
+            "/images/digilocker.png"
+          ]
+        },
+        "footer": {
+          "enabled": true,
+          "styles": {
+            "background": "#FFF5EF",
+            "color": "#EA8740"
+          }
+        }
+      },
+      "loginForm": {
+        "isFormCentered": true,
+        "isTopIconReq": true
+      },
+      "commonConfig": {
+        "gradient": "linear-gradient(90deg, #EB874A 0%, #873508 100%)"
+      },
+      "dashboard": {
+        "isV1": false,
+        "isV2": true,
+        "isOldView": false
+      }
+    }
+  },
+  "citizen8": {
+    "theme": "metroBurgundy",
+    "layout": {
+      "loginUI": {
+        "backgroundUrl": "/images/citizen-metro-bg.jpg",
+        "isFormOnLeft": false,
+        "isSplitBg": true,
+        "hasHeroCard": true,
+        "mainlogo": {
+          "dualLogo": false,
+          "url": "/images/Logo.png"
+        },
+        "headers": {
+          "title": "One Platform,",
+          "titleHighlight": "Many Services",
+          "titleStyles": {
+            "color": "#0F172A",
+            "fontSize": "34px",
+            "fontWeight": "800"
+          },
+          "titleHighlightStyles": {
+            "color": "#7B1123",
+            "fontSize": "34px",
+            "fontWeight": "800"
+          },
+          "subtitle": "Smart City • Better Services • Digital Tomorrow",
+          "subtitleStyles": {
+            "color": "#475569",
+            "fontSize": "13.5px",
+            "fontWeight": "600"
+          }
+        },
+        "pointers": {
+          "enabled": true,
+          "showIcons": true,
+          "isWhiteCard": true,
+          "hasBackground": true,
+          "data": [
+            {
+              "title": "Apply for Services",
+              "description": "Access a wide range of citizen services",
+              "iconUrl": "/images/login-1.svg",
+              "iconAlt": "Services"
+            },
+            {
+              "title": "Track Your Requests",
+              "description": "Track the status of your applications",
+              "iconUrl": "/images/login-2.svg",
+              "iconAlt": "Track"
+            },
+            {
+              "title": "Get Instant Notifications",
+              "description": "Stay updated with real-time alerts",
+              "iconUrl": "/images/login-3.svg",
+              "iconAlt": "Notifications"
+            },
+            {
+              "title": "Secure & Trusted",
+              "description": "Your data is safe with us",
+              "iconUrl": "/images/login-1.svg",
+              "iconAlt": "Secure"
+            }
+          ]
+        },
+        "footer": {
+          "enabled": false
+        }
+      },
+      "loginForm": {
+        "isFormCentered": false,
+        "isTopIconReq": false
+      },
+      "commonConfig": {
+        "gradient": "linear-gradient(90deg, #7B1123 0%, #4D0914 100%)",
+        "commonBackground": "#FDF2F4",
+        "commonColor": "#7B1123"
+      },
+      "dashboard": {
+        "isV1": false,
+        "isV2": true,
+        "isOldView": false
+      }
+    }
+  },
+  "employee1": {
+    "theme": "upyogPurple",
+    "layout": {
+      "loginUI": {
+        "backgroundUrl": "/images/onboarding-bg.jpg",
+        "mainlogo": {
+          "dualLogo": false,
+          "url": "/images/Logo.png"
+        },
+        "headers": {
+          "title": "One Platform",
+          "titleHighlight": "Many Services",
+          "titleStyles": {
+            "color": "#0F172A"
+          },
+          "titleHighlightStyles": {
+            "color": "#584F74"
+          },
+          "subtitle": "Choose your details to",
+          "subtitleHighlight": "get started"
+        },
+        "pointers": {
+          "enabled": true,
+          "showIcons": true,
+          "hasBackground": true,
+          "data": [
+            {
+              "title": "Easy Access",
+              "description": "All your services in one place",
+              "iconUrl": "/images/login-1.svg",
+              "iconAlt": "Easy Access"
+            },
+            {
+              "title": "Secure & Trusted",
+              "description": "Your data is safe with us",
+              "iconUrl": "/images/login-2.svg",
+              "iconAlt": "Secure"
+            },
+            {
+              "title": "Quick & Simple",
+              "description": "Login in minutes",
+              "iconUrl": "/images/login-3.svg",
+              "iconAlt": "Quick"
+            }
+          ]
+        },
+        "footer": {
+          "enabled": false
+        }
+      },
+      "loginForm": {},
+      "commonConfig": {
+        "gradient": "linear-gradient(90deg, #6A4A91 0%, #3E285F 100%)"
+      },
+      "dashboard": {
+        "isV1": true,
+        "isV2": false,
+        "isOldView": true
+      }
+    }
+  },
+  "employee2": {
+    "theme": "upyogPurple",
+    "layout": {
+      "loginUI": {
+        "backgroundUrl": "/images/empbg.png",
+        "isEmployeeV2": true,
+        "mainlogo": {
+          "dualLogo": false,
+          "url": "/images/Logo.png"
+        },
+        "headers": {
+          "title": "One Platform",
+          "titleHighlight": "Many Services",
+          "titleStyles": {
+            "color": "#0F172A"
+          },
+          "titleHighlightStyles": {
+            "color": "#584F74"
+          },
+          "subtitle": "Smart City • Better Services • Digital Tomorrow"
+        },
+        "pointers": {
+          "enabled": true,
+          "showIcons": true,
+          "hasBackground": true,
+          "data": [
+            {
+              "title": "Apply for Services",
+              "description": "Access a wide range of employee services",
+              "iconUrl": "/images/login-1.svg",
+              "iconAlt": "Services"
+            },
+            {
+              "title": "Track your Requests",
+              "description": "Track the status of your applications",
+              "iconUrl": "/images/login-2.svg",
+              "iconAlt": "Track"
+            },
+            {
+              "title": "Get instant Notifications",
+              "description": "Stay updated with real-time alerts",
+              "iconUrl": "/images/login-3.svg",
+              "iconAlt": "Notifications"
+            },
+            {
+              "title": "Secure and Trusted",
+              "description": "Your data is safe with us",
+              "iconUrl": "/images/login-1.svg",
+              "iconAlt": "Secure"
+            }
+          ]
+        },
+        "footer": {
+          "enabled": false
+        }
+      },
+      "loginForm": {},
+      "commonConfig": {
+        "gradient": "linear-gradient(90deg, #6A4A91 0%, #3E285F 100%)"
+      },
+      "dashboard": {
+        "isV1": true,
+        "isV2": false,
+        "isOldView": true
+      }
+    }
+  }
+}

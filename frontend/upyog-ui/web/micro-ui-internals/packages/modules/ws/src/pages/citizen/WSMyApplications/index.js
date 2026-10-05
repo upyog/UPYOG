@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import WSApplication from "./ws-application";
 import WSInfoLabel from "../../../pageComponents/WSInfoLabel";
-import "../../../css/ws-inline-auto.css";
+
 export const WSMyApplications = () => {
   const {
     t
@@ -108,16 +108,16 @@ export const WSMyApplications = () => {
     };
   });
   return <React.Fragment>
-      <Header>{`${t("CS_HOME_MY_APPLICATIONS")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
-      {/* For UM-4418 changes */}
-       <WSInfoLabel t={t} /> 
-      <div>
-        {applicationsList?.length > 0 && applicationsList.sort((a, b) => b.auditDetails?.lastModifiedTime - a.auditDetails?.lastModifiedTime).map((application, index) => <div key={index}>
-              <WSApplication application={application} />
-            </div>)}
-        {!applicationsList?.length > 0 && <p className="ws-auto-245">{t("WS_NO_APPLICATION_FOUND_MSG")}</p>}
+    <Header>{`${t("CS_HOME_MY_APPLICATIONS")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
+    {/* For UM-4418 changes */}
+    <WSInfoLabel t={t} />
+    <div>
+      {applicationsList?.length > 0 && applicationsList.sort((a, b) => b.auditDetails?.lastModifiedTime - a.auditDetails?.lastModifiedTime).map((application, index) => <div key={index}>
+        <WSApplication application={application} />
+      </div>)}
+      {!applicationsList?.length > 0 && <p className="ws-index-mt-md-ml-md">{t("WS_NO_APPLICATION_FOUND_MSG")}</p>}
 
-      </div>
+    </div>
 
-    </React.Fragment>;
+  </React.Fragment>;
 };

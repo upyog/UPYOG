@@ -55,15 +55,9 @@ const EmployeeApp = ({ path }) => {
     <AppContainer>
       <div className={layoutStyles.estEmployeeLayout}>
         {!hideNav ? (
-          <div
-            style={{
-              marginLeft: isMobile ? "0" : "-4px",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
+          <div className={`est-employee-nav ${isMobile ? "margin-0" : "margin-minus-4"}`}>
             <BackButton location={location} />
-            <span style={{ margin: "0 5px 16px", display: "inline-block" }}>|</span>
+            <span className="est-index-spacing">|</span>
             <BreadCrumb
               style={
                 isMobile

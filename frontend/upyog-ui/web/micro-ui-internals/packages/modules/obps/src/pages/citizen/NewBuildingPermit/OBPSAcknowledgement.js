@@ -130,7 +130,7 @@ const OBPSAcknowledgement = ({ data, onSuccess }) => {
      
       {mutation1.isSuccess &&(
         <>
-        <div style={{marginTop:"10px"}}>
+        <div className="obps-building-plan-scrutiny-top-spacing">
           <SubmitBar label={t("CS_COMMON_DOWNLOAD")} onSubmit={handleDownloadPdf}/>
         </div>
         <div>

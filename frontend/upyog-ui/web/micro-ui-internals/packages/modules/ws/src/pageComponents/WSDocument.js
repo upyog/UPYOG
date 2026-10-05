@@ -37,15 +37,15 @@ function WSDocument({
   if (isLoading) {
     return <Loader />;
   }
-  return <div className="ws-auto-123">
+  return <div className="ws-document-item">
       <React.Fragment>
-        <div className="ws-auto-124">
+        <div className="ws-document-flex">
           {documents?.map((document, index) => {
           let documentLink = pdfDownloadLink(data.pdfFiles, document?.fileStoreId);
-          return <a target="_" href={documentLink} key={index} className="ws-auto-125">
+          return <a target="_" href={documentLink} key={index} className="ws-document-link">
                 <PDFSvg /* width={85} height={100} */ />
                {/*  <p>{pdfDocumentName(documentLink, index)}</p> */}
-               {showFileName ? <p className="ws-auto-126">{t(Code?.split('.').slice(0, 3).join('_'))}</p> : null}
+               {showFileName ? <p className="ws-document-link-2">{t(Code?.split('.').slice(0, 3).join('_'))}</p> : null}
               </a>;
         })}
         </div>

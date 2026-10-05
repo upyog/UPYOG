@@ -169,8 +169,8 @@ const OwnerForm = _props => {
   };
 
   return <React.Fragment>
-      <div className="asset-auto-101">
-        <div className="asset-auto-102">
+      <div className="asset-edit-asset-details-item">
+        <div className="asset-edit-asset-details-bordered">
 
           <React.Fragment>
             {

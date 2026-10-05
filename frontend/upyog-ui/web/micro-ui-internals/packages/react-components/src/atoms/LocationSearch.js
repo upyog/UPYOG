@@ -436,10 +436,9 @@ const LocationSearch = (props) => {
         <input
           ref={inputRef}
           id="pac-input"
-          className="map-search-bar"
+          className="map-search-bar rc-location-search-wrapper"
           type="text"
           placeholder="Search Address"
-          style={{ backgroundPosition: "left" }}
         />
       </div>
       <div ref={mapRef} id="map" className="map"></div>

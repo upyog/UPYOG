@@ -9,8 +9,8 @@ const ULBDropdown = ({ userType, t, setValue, onSelect, config, data, formData, 
     const userUlbs = ulbs.filter(ulb => userInfo?.roles?.some(role => role?.tenantId === ulb?.code)).sort(alphabeticalSortFunctionForTenantsBasedOnName);
     return (
         <React.Fragment>
-            <LabelFieldPair style={{ alignItems: 'start' }}>
-                <CardLabel style={{ fontWeight: "bold" }}>{t("ES_COMMON_ULB") + "*"}</CardLabel>
+            <LabelFieldPair className="eng-engagement-docs-ulb-wrapper">
+                <CardLabel className="eng-engagement-docs-ulb-card">{t("ES_COMMON_ULB") + "*"}</CardLabel>
                 <div className="field">
                     <Controller
                         name={config.key}

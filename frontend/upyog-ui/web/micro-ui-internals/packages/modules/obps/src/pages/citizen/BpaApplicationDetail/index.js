@@ -398,7 +398,7 @@ const BpaApplicationDetail = () => {
     return (
       <div>
         <span>{`${t("BPA_I_AGREE_THE_LABEL")} `}</span>
-        <span style={{color: "#a82227", cursor: "pointer"}} onClick={() => setShowTermsModal(!showTermsModal)}>{t(`BPA_TERMS_AND_CONDITIONS_LABEL`)}</span>
+        <span className="obps-index-clickable" onClick={() => setShowTermsModal(!showTermsModal)}>{t(`BPA_TERMS_AND_CONDITIONS_LABEL`)}</span>
       </div>
     )
   }
@@ -424,7 +424,7 @@ const BpaApplicationDetail = () => {
 
   return (
     <Fragment>
-      <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
+      <div className="cardHeaderWithOptions obps-index-spacing-4">
         <Header styles={{fontSize: "32px", marginLeft: "10px"}}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
         <div >
         {dowloadOptions && dowloadOptions.length > 0 && <MultiLink
@@ -433,7 +433,7 @@ const BpaApplicationDetail = () => {
           displayOptions={showOptions}
           options={dowloadOptions}
         />}
-        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+        <LinkButton label={t("VIEW_TIMELINE")} className="obps-index-action-btn" onClick={handleViewTimeline}></LinkButton>
         </div>
         
       </div>
@@ -443,7 +443,7 @@ const BpaApplicationDetail = () => {
           <div>
             {!detail?.isNotAllowed ? <Card key={index} style={!detail?.additionalDetails?.fiReport && detail?.title === "" ? { marginTop: "-30px" } : {}}>
 
-              {!detail?.isTitleVisible ? <CardSubHeader style={{fontSize: "24px"}}>{t(detail?.title)}</CardSubHeader> : null}
+              {!detail?.isTitleVisible ? <CardSubHeader className="obps-index-header-2">{t(detail?.title)}</CardSubHeader> : null}
               
               <div style={detail?.isBackGroundColor ? { marginTop: "19px", background: "#FAFAFA", border: "1px solid #D6D5D4", borderRadius: "4px", padding: "8px", lineHeight: "19px", maxWidth: "950px", minWidth: "280px" } : {}}>
 
@@ -451,7 +451,7 @@ const BpaApplicationDetail = () => {
                 {/* to get common values */}
                 {(detail?.isCommon && detail?.values?.length > 0) ? detail?.values?.map((value) => {
                   if (value?.isUnit) return <Row className="border-none" label={t(value?.title)} text={value?.value ? `${getTranslatedValues(value?.value, value?.isNotTranslated)} ${t(value?.isUnit)}` : t("CS_NA")} />
-                  if (value?.isLink) return <Row className="border-none" label={t(value?.title)} text={<div><Link to={value?.to}><span className="link" style={{color: "#a82227"}}>{value?.value}</span></Link></div>} />
+                  if (value?.isLink) return <Row className="border-none" label={t(value?.title)} text={<div><Link to={value?.to}><span className="link obps-index-wrapper-6">{value?.value}</span></Link></div>} />
                   else return <Row className="border-none" label={t(value?.title)} text={getTranslatedValues(value?.value, value?.isNotTranslated) || t("CS_NA")} />
                 }) : null}
                 {/* to get additional common values */}
@@ -459,7 +459,7 @@ const BpaApplicationDetail = () => {
                     <div>
                     {!detail?.isTitleRepeat && !value?.isHeader && !value?.isUnit ? <Row className="border-none" label={t(value?.title)} textStyle={value?.value === "Paid"?{color:"darkgreen"}:(value?.value === "Unpaid"?{color:"red"}:{})} text={value?.value ? getTranslatedValues(value?.value, value?.isNotTranslated) : t("CS_NA")} /> : null}
                     {!detail?.isTitleRepeat && value?.isUnit ? <Row className="border-none" label={t(value?.title)} text={value?.value ? `${getTranslatedValues(value?.value, value?.isNotTranslated)} ${t(value?.isUnit)}` : t("CS_NA")} /> : null}
-                    {!detail?.isTitleRepeat && value?.isHeader ? <CardSubHeader style={{fontSize: "20px"}}>{t(value?.title)}</CardSubHeader> : null}
+                    {!detail?.isTitleRepeat && value?.isHeader ? <CardSubHeader className="obps-scrutiny-details-header">{t(value?.title)}</CardSubHeader> : null}
                     </div>
                 )) : null}
 
@@ -475,7 +475,7 @@ const BpaApplicationDetail = () => {
                         onClick={() => downloadDiagram(scrutiny?.value)}
                         label={<PDFSvg />}>
                       </LinkButton>
-                      <p style={{ marginTop: "8px", marginBottom: "20px", fontSize: "16px", lineHeight: "19px", color: "#505A5F", fontWeight: "400" }}>{t(scrutiny?.text)}</p>
+                      <p className="obps-index-top-spacing-2">{t(scrutiny?.text)}</p>
                     </Fragment>
                   )) : null}
 
@@ -491,7 +491,7 @@ const BpaApplicationDetail = () => {
 
                 {/* to get Document values */}
                 {(detail?.isDocumentDetails && detail?.additionalDetails?.obpsDocuments?.[0]?.values) && (
-                  <div style={{marginTop: "-8px"}}>
+                  <div className="obps-index-top-spacing-3">
                     {<DocumentsPreview documents={getOrderDocuments(detail?.additionalDetails?.obpsDocuments?.[0]?.values)} svgStyles = {{}} isSendBackFlow = {false} isHrLine = {true} titleStyles ={{fontSize: "20px", lineHeight: "24px", "fontWeight": 700, marginBottom: "10px"}}/>}
                   </div>
                 )}
@@ -501,7 +501,7 @@ const BpaApplicationDetail = () => {
 
                 {/* to get NOC values */}
                 {detail?.additionalDetails?.noc?.length > 0 ? detail?.additionalDetails?.noc.map((nocob, ind) => (
-                  <div key={ind} style={{ marginTop: "19px", background: "#FAFAFA", border: "1px solid #D6D5D4", borderRadius: "4px", padding: "8px", lineHeight: "19px", maxWidth: "960px", minWidth: "280px" }}>
+                  <div key={ind} className="obps-index-top-spacing-4">
                     <StatusTable>
                       <Row className="border-none" label={t(`${`BPA_${detail?.additionalDetails?.data?.nocType}_HEADER`}`)} labelStyle={{fontSize: "20px"}}></Row>
                       <Row className="border-none" label={t(`${detail?.values?.[0]?.title}`)} textStyle={{ marginLeft: "10px" }} text={getTranslatedValues(detail?.values?.[0]?.value, detail?.values?.[0]?.isNotTranslated)} />
@@ -548,28 +548,27 @@ const BpaApplicationDetail = () => {
                   </div>
                   {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length > 1 && isActionBarVisible && (
                     //removed this styles to fix the action button in application details UM-5347
-                    <ActionBar /*style={{ position: "relative", boxShadow: "none", minWidth: "240px", maxWidth: "310px", padding: "0px" }}*/>
-                      <div style={{ width: "100%" }}>
+                    <ActionBar /*className="custom-style"*/>
+                      <div className="obps-inspection-report-fullwidth">
                         {displayMenu && workflowDetails?.data?.nextActions ? (
                           <Menu
-                            //style={{ bottom: "37px", minWidth: "240px", maxWidth: "310px", width: "100%", right: "0px" }}
+                            //className="custom-style"
                             localeKeyPrefix={"WF_BPA"}
                             options={workflowDetails?.data?.nextActions.map((action) => action.action)}
                             t={t}
                             onSelect={onActionSelect}
                           />
                         ) : null}
-                        <SubmitBar /*style={{ width: "100%" }}*/ disabled={checkForSubmitDisable(isFromSendBack, isTocAccepted)} label={t("ES_COMMON_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
+                        <SubmitBar /*className="custom-style"*/ disabled={checkForSubmitDisable(isFromSendBack, isTocAccepted)} label={t("ES_COMMON_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
                       </div>
                     </ActionBar>
                   )}
                   {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length == 1 && (
                     //removed this style to fix the action button in application details UM-5347
-                    <ActionBar /*style={{ position: "relative", boxShadow: "none", minWidth: "240px", maxWidth: "310px", padding: "0px" }}*/>
-                      <div style={{ width: "100%" }}>
+                    <ActionBar /*className="custom-style"*/>
+                      <div className="obps-inspection-report-fullwidth">
                         <button 
-                        style={{  color: "#FFFFFF", fontSize: isMobile ? "19px" : "initial" }}
-                        className={`${checkForSubmitDisable(isFromSendBack, isTocAccepted) ? "submit-bar-disabled" : "submit-bar"}`}
+                        className={`text-white ${isMobile ? "font-size-19" : ""} ${checkForSubmitDisable(isFromSendBack, isTocAccepted) ? "submit-bar-disabled" : "submit-bar"}`}
                         disabled={checkForSubmitDisable(isFromSendBack, isTocAccepted)} 
                         name={workflowDetails?.data?.nextActions?.[0]?.action} 
                         value={workflowDetails?.data?.nextActions?.[0]?.action}
@@ -613,7 +612,7 @@ const BpaApplicationDetail = () => {
           error={showToast.key === "error" ? true : false}
           label={t(showToast.key === "success" ? `ES_OBPS_${showToast.action}_UPDATE_SUCCESS` : showToast.action)}
           onClose={closeToast}
-          style={{ zIndex: "1000" }}
+          className="obps-index-wrapper-7"
         />
       )}
     </Fragment>

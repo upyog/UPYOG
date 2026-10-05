@@ -41,12 +41,12 @@ const IsMutationPending = (props) => {
   }
   if (userType === "employee") {
     return <React.Fragment>
-        <LabelFieldPair className="pt-auto-39">
+        <LabelFieldPair className="pt-is-mutation-pending-link-col-flex">
           {/* <CardLabel className="card-label-smaller">
             {t("PT_MUTATION_COURT_PENDING_OR_NOT") + " *"}
            </CardLabel> */}
-          <div className="field pt-auto-40">
-            <CheckBox label={`${t("PT_MUTATION_COURT_PENDING_OR_NOT")}` + <span className="check-page-link-button"> *</span>} name={"isMutationInCourt"} onChange={setIsMutationInCourt} checked={isMutationInCourt?.code === "YES" ? true : false} className="pt-auto-41" />
+          <div className="field pt-is-mutation-pending-label">
+            <CheckBox label={`${t("PT_MUTATION_COURT_PENDING_OR_NOT")}` + <span className="check-page-link-button"> *</span>} name={"isMutationInCourt"} onChange={setIsMutationInCourt} checked={isMutationInCourt?.code === "YES" ? true : false} className="pt-is-mutation-pending-link-bold" />
             {/* <RadioButtons
               innerStyles={{ paddingRight: "250px" }}
               t={t}
@@ -62,8 +62,8 @@ const IsMutationPending = (props) => {
              /> */}
           </div>
         </LabelFieldPair>
-        <LabelFieldPair className="pt-auto-42">
-          <CardLabel className="card-label-smaller pt-auto-43">
+        <LabelFieldPair className="pt-is-mutation-pending-link">
+          <CardLabel className="card-label-smaller pt-is-mutation-pending-link-bold-2">
             {t("PT_MUTATION_COURT_CASE_DETAILS")}
           </CardLabel>
           <div className="field">

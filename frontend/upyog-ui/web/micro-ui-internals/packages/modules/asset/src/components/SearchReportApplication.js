@@ -213,7 +213,7 @@ const ASSETReportApplication = ({
                 <div>
                 <Header>{t("AST_REPORTS_CHECK")}</Header>
                 <Card className={"card-search-heading"}>
-                    <span className="asset-auto-17">{t("Provide at least one parameter to search for an application")}</span>
+                    <span className="asset-search-report-application-card-grey-text">{t("Provide at least one parameter to search for an application")}</span>
                 </Card>
                 <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                 <SearchField>
@@ -254,23 +254,23 @@ const ASSETReportApplication = ({
             });
             setShowToast(null);
             previousPage();
-          }} className="asset-auto-18">{t(`ES_COMMON_CLEAR_ALL`)}</p>
+          }} className="asset-search-report-application-mt-sm">{t(`ES_COMMON_CLEAR_ALL`)}</p>
                 </SearchField>
                 
             </SearchForm>
 
             <br></br>
-           {data !== "" ? <div className="asset-auto-19">
-            <button onClick={downloadPDF} className="asset-auto-20">Download PDF</button>
-            <button onClick={downloadXLS} className="asset-auto-21">Download XLS</button> 
-            <button onClick={downloadQRReport} className="asset-auto-22">Download QR Report</button> 
+           {data !== "" ? <div className="asset-search-report-application-flex-mt-sm">
+            <button onClick={downloadPDF} className="asset-search-report-application-btn-red-action">Download PDF</button>
+            <button onClick={downloadXLS} className="asset-search-report-application-btn-red-action-2">Download XLS</button> 
+            <button onClick={downloadQRReport} className="asset-search-report-application-btn-red-action-3">Download QR Report</button> 
 
             </div> : ""}
 
             <br></br>
             
-            {!isLoading && data?.display ? <Card className="asset-auto-23">
-                {t(data.display).split("\\n").map((text, index) => <p key={index} className="asset-auto-24">
+            {!isLoading && data?.display ? <Card className="asset-search-report-application-card-mt-md">
+                {t(data.display).split("\\n").map((text, index) => <p key={index} className="asset-search-report-application-card-center-text">
                         {text}
                     </p>)}
             </Card> : !isLoading && data !== "" ? <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {

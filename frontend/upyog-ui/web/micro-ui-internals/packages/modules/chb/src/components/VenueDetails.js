@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, CardLabel, CardLabelDesc, CardSubHeader } from "@nudmcdgnpm/digit-ui-react-components";
-import "../css/chb-inline.css"
+
 import styles from '../utils/styles';
 
 const CloseIcon = () => (
@@ -43,11 +43,11 @@ const VenueDetails = ({ venueData, setShowDetails, t }) => {
   if (!venueData) return null;
 
   const VENUE_FIELDS = [
-    { label: t("CHB_VENUE_NAME"),         key: 'value'},
-    { label: t("CHB_GEO_LOCATION"),       key: 'geoLocation'},
-    { label: t("CHB_ADDRESS"),            key: 'address'},
-    { label: t("CHB_CONTACT"),            key: 'contactDetails'},
-    { label: t("CHB_DESCRIPTION"),        key: 'venueDescription'},
+    { label: t("CHB_VENUE_NAME"), key: 'value' },
+    { label: t("CHB_GEO_LOCATION"), key: 'geoLocation' },
+    { label: t("CHB_ADDRESS"), key: 'address' },
+    { label: t("CHB_CONTACT"), key: 'contactDetails' },
+    { label: t("CHB_DESCRIPTION"), key: 'venueDescription' },
   ];
 
 
@@ -67,11 +67,10 @@ const VenueDetails = ({ venueData, setShowDetails, t }) => {
       hideSubmit
       {...MODAL_HIDDEN_ACTIONS}
       error={null}
-      setError={() => {}}
+      setError={() => { }}
       formId="venueDetailsModal"
       isDisabled={false}
       isOBPSFlow={false}
-      style={{}}
     >
       <div className="venue-modal-body">
         <div className="venue-fields-grid">

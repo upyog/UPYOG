@@ -161,10 +161,10 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
       placementinbox: 1
     }, {
       label: property.label,
-      labelChildren: <div className="tooltip pt-auto-139">
+      labelChildren: <div className="tooltip pt-search-property-item">
               {"  "}
               <InfoBannerIcon fill="#0b0c0c" />
-              <span className="tooltiptext pt-auto-140">
+              <span className="tooltiptext pt-search-property-text-sm">
                 {t(property.description) + " " + "PG-PT-xxxx-xxxxxx"}
               </span>
             </div>,
@@ -444,7 +444,7 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
   if (action == 1) {
     config[0].body = [...config[0].body1];
   }
-  return <div className="pt-auto-141">
+  return <div className="pt-search-property-mt-md">
       <FormComposer onSubmit={onPropertySearch} noBoxShadow inline config={config} label={propsConfig.texts.submitButtonLabel} heading={t(propsConfig.texts.header)} text={t(propsConfig.texts.text)} headingStyle={{
       fontSize: "32px",
       marginBottom: "16px",

@@ -162,7 +162,7 @@
                   <div>
                   <Header>{t("PTR_SEARCH_PET_APPLICATIONS")}</Header>
                   < Card className={"card-search-heading"}>
-                      <span style={{color:"#505A5F"}}>{t("Provide at least one parameter to search for an application")}</span>
+                      <span className="ptr-search-application-wrapper">{t("Provide at least one parameter to search for an application")}</span>
                   </Card>
                   <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                   <SearchField>
@@ -268,7 +268,7 @@
                   </SearchField>
                   <SearchField className="submit">
                       <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
-                      <p style={{marginTop:"10px"}}
+                      <p className="ptr-search-application-top-spacing"
                       onClick={() => {
                           reset({ 
                               applicationNumber: "", 
@@ -288,12 +288,12 @@
                       }}>{t(`ES_COMMON_CLEAR_ALL`)}</p>
                   </SearchField>
               </SearchForm>
-              {!isLoading && data?.display ? <Card style={{ marginTop: 20 }}>
+              {!isLoading && data?.display ? <Card className="ptr-ptrdesktop-inbox-card">
                   {
                   t(data.display)
                       .split("\\n")
                       .map((text, index) => (
-                      <p key={index} style={{ textAlign: "center" }}>
+                      <p key={index} className="ptr-ptrdesktop-inbox-centered">
                           {text}
                       </p>
                       ))

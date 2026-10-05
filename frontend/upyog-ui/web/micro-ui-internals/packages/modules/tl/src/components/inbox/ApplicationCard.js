@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 
-import { Card, DetailsCard, Loader, PopUp, SearchAction,FilterAction } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, DetailsCard, Loader, PopUp, SearchAction, FilterAction } from "@nudmcdgnpm/digit-ui-react-components";
 import Filter from "./InboxFilter";
 import SearchLicenseApplication from "./search";
 import SortBy from "./SortBy";
-import "../../css/tl-inline-auto.css";
+
 export const ApplicationCard = ({
   t,
   data,
@@ -62,40 +62,40 @@ export const ApplicationCard = ({
   }
   let result;
   if (!data || data?.length === 0) {
-    result = <Card className="tl-auto-9">
-        {t("CS_MYAPPLICATIONS_NO_APPLICATION").split("\\n")?.map((text, index) => <p key={index} className="tl-auto-10">
-              {text}
-            </p>)}
-      </Card>;
+    result = <Card className="tl-application-card-card-mt-md">
+      {t("CS_MYAPPLICATIONS_NO_APPLICATION").split("\\n")?.map((text, index) => <p key={index} className="tl-application-card-card-center-text">
+        {text}
+      </p>)}
+    </Card>;
   } else if (data && data?.length > 0) {
     result = <DetailsCard data={data} serviceRequestIdKey={serviceRequestIdKey} linkPrefix={linkPrefix ? linkPrefix : "/upyog-ui/employee/tl/application-details/"} />;
   }
   return <React.Fragment>
-      <div className="searchBox">
-        {onSearch && <SearchAction text="SEARCH" handleActionClick={() => {
+    <div className="searchBox">
+      {onSearch && <SearchAction text="SEARCH" handleActionClick={() => {
         setType("SEARCH");
         setPopup(true);
       }} />}
-        {!isSearch && onFilterChange && <FilterAction text="FILTER" handleActionClick={() => {
+      {!isSearch && onFilterChange && <FilterAction text="FILTER" handleActionClick={() => {
         setType("FILTER");
         setPopup(true);
       }} />}
-        <FilterAction text="SORT" handleActionClick={() => {
+      <FilterAction text="SORT" handleActionClick={() => {
         setType("SORT");
         setPopup(true);
       }} />
-      </div>
-      {result}
-      {popup && <PopUp>
-          {type === "FILTER" && <div className="popup-module">
-              {<Filter onFilterChange={selectParams} onClose={handlePopupClose} onSearch={onSearchPara} type="mobile" searchParams={params} removeParam={removeParam} />}
-            </div>}
-          {type === "SORT" && <div className="popup-module">
-              {<SortBy type="mobile" sortParams={sortParams} onClose={handlePopupClose} onSort={onSort} />}
-            </div>}
-          {type === "SEARCH" && <div className="popup-module">
-              <SearchLicenseApplication type="mobile" onClose={handlePopupClose} onSearch={onSearch} isFstpOperator={isFstpOperator} searchParams={searchParams} searchFields={searchFields} />
-            </div>}
-        </PopUp>}
-    </React.Fragment>;
+    </div>
+    {result}
+    {popup && <PopUp>
+      {type === "FILTER" && <div className="popup-module">
+        {<Filter onFilterChange={selectParams} onClose={handlePopupClose} onSearch={onSearchPara} type="mobile" searchParams={params} removeParam={removeParam} />}
+      </div>}
+      {type === "SORT" && <div className="popup-module">
+        {<SortBy type="mobile" sortParams={sortParams} onClose={handlePopupClose} onSort={onSort} />}
+      </div>}
+      {type === "SEARCH" && <div className="popup-module">
+        <SearchLicenseApplication type="mobile" onClose={handlePopupClose} onSearch={onSearch} isFstpOperator={isFstpOperator} searchParams={searchParams} searchFields={searchFields} />
+      </div>}
+    </PopUp>}
+  </React.Fragment>;
 };

@@ -57,7 +57,7 @@ const SelectTradeName = ({
   return <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline /> : null}
       <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={!TradeName}>
-        <CardLabel>{`${t("TL_LOCALIZATION_TRADE_NAME")}`}<span className="tl-auto-65">*</span></CardLabel>
+        <CardLabel>{`${t("TL_LOCALIZATION_TRADE_NAME")}`}<span className="tl-select-trade-name-link-red">*</span></CardLabel>
         <TextInput t={t} isMandatory={false} type={"text"} optionKey="i18nKey" name="TradeName" value={TradeName} onChange={setSelectTradeName} disable={isEdit} {...validation = {
         pattern: ".*",
         isRequired: true,

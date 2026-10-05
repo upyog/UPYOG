@@ -312,19 +312,19 @@ const VehicleDetails = (props) => {
     <React.Fragment>
       {!isLoading ? (
         <React.Fragment>
-          <Header style={{ marginBottom: "16px" }}>{t("ES_FSM_REGISTRY_VEHICLE_DETAILS")}</Header>
+          <Header className="vnd-driver-details-header">{t("ES_FSM_REGISTRY_VEHICLE_DETAILS")}</Header>
           <div style={!isMobile ? { marginLeft: "-15px" } : {}}>
-            <Card style={{ position: "relative" }}>
+            <Card className="vnd-driver-details-card">
               {vehicleData?.[0]?.employeeResponse?.map((detail, index) => (
                 <React.Fragment key={index}>
-                  {index > 0 && <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>{t(detail.title)}</CardSectionHeader>}
+                  {index > 0 && <CardSectionHeader className="vnd-driver-details-header-2">{t(detail.title)}</CardSectionHeader>}
                   <StatusTable>
                     {detail?.values?.map((value, index) => {
                       return value?.type === "custom" ? (
                         <>
                           <div className={`${index === detail?.values?.length - 1 ? "row last" : "row"} border-none`}>
                             <h2>{t(value.title)}</h2>
-                            <div className="value" style={{ color: "#a82227", display: "flex" }}>
+                            <div className="value vnd-driver-details-flex-container">
                               {t(value.value) || "N/A"}
                               {value.value === "ES_FSM_REGISTRY_DETAILS_ADD_VENDOR" && (
                                 <span onClick={() => onActionSelect("ADD_VENDOR")}>
@@ -333,12 +333,12 @@ const VehicleDetails = (props) => {
                               )}
                               {value.value != "ES_FSM_REGISTRY_DETAILS_ADD_VENDOR" && (
                                 <span onClick={() => onActionSelect("EDIT_VENDOR")}>
-                                  <EditIcon style={{ cursor: "pointer", marginLeft: "20px" }} />
+                                  <EditIcon className="vnd-driver-details-clickable" />
                                 </span>
                               )}
                               {value.value != "ES_FSM_REGISTRY_DETAILS_ADD_VENDOR" && (
                                 <span onClick={() => onActionSelect("DELETE_VENDOR")}>
-                                  <DeleteIcon className="delete" fill="#a82227" style={{ cursor: "pointer", marginLeft: "20px" }} />
+                                  <DeleteIcon className="delete vnd-driver-details-clickable" fill="#a82227" />
                                 </span>
                               )}
                             </div>
@@ -375,7 +375,7 @@ const VehicleDetails = (props) => {
               {selectedAction === "DELETE" || selectedAction === "DELETE_VENDOR" ? (
                 renderModalContent()
               ) : (
-                <Card style={{ boxShadow: "none" }}>{renderModalContent()}</Card>
+                <Card className="vnd-driver-details-card-2">{renderModalContent()}</Card>
               )}
             </Modal>
           )}
@@ -386,7 +386,7 @@ const VehicleDetails = (props) => {
               onClose={closeToast}
             />
           )}
-          <ActionBar style={{ zIndex: "19" }}>
+          <ActionBar className="vnd-driver-details-wrapper">
             {displayMenu ? <Menu localeKeyPrefix={"ES_FSM_REGISTRY_ACTION"} options={["EDIT", "DELETE"]} t={t} onSelect={onActionSelect} /> : null}
             <SubmitBar label={t("ES_COMMON_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
           </ActionBar>

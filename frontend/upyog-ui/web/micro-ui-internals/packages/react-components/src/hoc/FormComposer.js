@@ -40,10 +40,11 @@ const FormComposer = (props) => {
   });
   const { t } = useTranslation();
   const formData = watch();
+  const navigate = Digit.Hooks.useCustomNavigate();
 
   useEffect(() => {
     const iseyeIconClicked = sessionStorage.getItem("eyeIconClicked");
-    if (props?.appData && !(props?.appData?.ConnectionHolderDetails?.[0]?.sameAsOwnerDetails) && iseyeIconClicked && Object.keys(props?.appData)?.length > 0 && (!(_.isEqual(props?.appData?.ConnectionHolderDetails?.[0],formData?.ConnectionHolderDetails?.[0] ))) ) {
+    if (props?.appData && !(props?.appData?.ConnectionHolderDetails?.[0]?.sameAsOwnerDetails) && iseyeIconClicked && Object.keys(props?.appData)?.length > 0 && (!(_.isEqual(props?.appData?.ConnectionHolderDetails?.[0], formData?.ConnectionHolderDetails?.[0])))) {
       reset({ ...props?.appData });
     }
   }, [props?.appData, formData, props?.appData?.ConnectionHolderDetails]);
@@ -75,12 +76,12 @@ const FormComposer = (props) => {
       case "time":
         // if (populators.defaultValue) setTimeout(setValue(populators?.name, populators.defaultValue));
         return (
-          <div className="field-container">
+          <div className={!populators?.customProps?.classes ? "field-container" : `field-container ${populators.customProps.classes}`}>
             {populators?.componentInFront ? (
               <span className={`component-in-front ${disable && "disabled"}`}>{populators.componentInFront}</span>
             ) : null}
             {(() => {
-              const { ref, ...rest } = register(populators.name, populators.validation);
+              const { ref = {}, ...rest } = register(populators.name, populators.validation) || {};
               return (
                 <TextInput
                   className="field"
@@ -99,27 +100,27 @@ const FormComposer = (props) => {
       case "textarea":
         // if (populators.defaultValue) setTimeout(setValue(populators?.name, populators.defaultValue));
         return (
-        <Controller
-          name={populators?.name || ""}
-          control={control}
-          defaultValue={populators?.defaultValue || ""}
-          rules={populators?.validation}
-          render={({ field }) => (
-            <TextArea
-              className="field"
-              {...populators}
-              {...field}
-              inputRef={field.ref}
-              disable={disable}
-            />
-          )}
-        />         );
+          <Controller
+            name={populators?.name || ""}
+            control={control}
+            defaultValue={populators?.defaultValue || ""}
+            rules={populators?.validation}
+            render={({ field }) => (
+              <TextArea
+                className="field"
+                {...populators}
+                {...field}
+                inputRef={field.ref}
+                disable={disable}
+              />
+            )}
+          />);
       case "mobileNumber":
         return (
           <Controller
-          render={({ field }) => (
-            <MobileNumber className={populators?.className || "field"} onChange={field.onChange} value={field.value} disable={disable} />
-          )}
+            render={({ field }) => (
+              <MobileNumber className={populators?.className || "field"} onChange={field.onChange} value={field.value} disable={disable} />
+            )}
             defaultValue={populators.defaultValue}
             name={populators?.name}
             control={control}
@@ -225,30 +226,49 @@ const FormComposer = (props) => {
     }
   };
 
-  const titleStyle = { color: "#505A5F", fontWeight: "700", fontSize: "16px" };
+  const isEmployeeLoginCard = props?.cardClassName === "loginFormStyleEmployee";
+
+  const pathname = typeof window !== "undefined" ? window.location.pathname || "" : "";
+  const search = typeof window !== "undefined" ? window.location.search || "" : "";
+
+  const maskEmployeeMobileNumber = (mobileNumber) => {
+    const cleanedMobileNumber = (mobileNumber || "").replace(/\D/g, "");
+    if (!cleanedMobileNumber) return "XXXXXX0000";
+    const maskedLastFour = cleanedMobileNumber.slice(-4).padStart(4, "0");
+    return `XXXXXX${maskedLastFour}`;
+  };
+
+  const getEmployeeHeaderContent = () => {
+    if (pathname.includes("employee/user/forgot-password")) {
+      return {
+        header: "Forgot Password?",
+        subHeader: "All the communications regarding the application will be sent to this mobile number.",
+      };
+    }
+
+    if (pathname.includes("employee/user/change-password")) {
+      const mobileNumber = new URLSearchParams(search).get("mobile_number");
+      return {
+        header: "Reset Password",
+        subHeader: `Enter the OTP sent to ${maskEmployeeMobileNumber(mobileNumber)}`,
+      };
+    }
+
+    return {
+      header: "Login to UPYOG",
+      subHeader: "Use your registered details to continue.",
+    };
+  };
 
   const getCombinedComponent = (section) => {
-    if (section.head && section.subHead) {
+    if (isEmployeeLoginCard) {
+      const { header, subHeader } = getEmployeeHeaderContent();
       return (
-        <>
-          <CardSectionHeader style={props?.sectionHeadStyle ? props?.sectionHeadStyle : { margin: "5px 0px" }} id={section.headId}>
-            {t(section.head)}
-          </CardSectionHeader>
-          <CardSectionHeader style={titleStyle} id={`${section.headId}_DES`}>
-            {t(section.subHead)}
-          </CardSectionHeader>
-        </>
+        <div className="login-form-header">
+          <h2>{header}</h2>
+          <p>{subHeader}</p>
+        </div>
       );
-    } else if (section.head) {
-      return (
-        <>
-          <CardSectionHeader style={props?.sectionHeadStyle ? props?.sectionHeadStyle : {}} id={section.headId}>
-            {t(section.head)}
-          </CardSectionHeader>
-        </>
-      );
-    } else {
-      return <div></div>;
     }
   };
 
@@ -265,8 +285,7 @@ const FormComposer = (props) => {
                     <div style={field.isInsideBox ? getCombinedStyle(field?.placementinbox) : {}}>
                       {!field.withoutLabel && (
                         <CardLabel
-                          style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "8px" : "revert" }}
-                          className={field?.disable ? "disabled" : ""}
+                          className={`${field.isSectionText ? "card-label--section" : ""} ${props.inline ? "card-label--inline-14" : ""} ${field?.disable ? "disabled" : ""}`}
                         >
                           {t(field.label)}
                           {field.isMandatory ? " * " : null}
@@ -276,17 +295,11 @@ const FormComposer = (props) => {
                       {errors && errors[field.populators?.name] && Object.keys(errors[field.populators?.name]).length ? (
                         <CardLabelError>{t(field.populators.error || errors[field.populators?.name]?.message)}</CardLabelError>
                       ) : null}
-                      <div style={field.withoutLabel ? { width: "100%" } : {}} className="field">
+                      <div className={`field ${field.withoutLabel ? "w-full" : ""}`}>
                         {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field)}
                         {field?.description && (
                           <CardLabel
-                            style={{
-                              marginTop: "-24px",
-                              fontSize: "16px",
-                              fontWeight: "bold",
-                              color: "#505A5F",
-                              ...field?.descriptionStyles,
-                            }}
+                            className="form-composer-field-desc-label"
                           >
                             {t(field.description)}
                           </CardLabel>
@@ -296,29 +309,29 @@ const FormComposer = (props) => {
                   </React.Fragment>
                 );
               return (
-              <Fragment key={field?.populators?.name || field?.label || index}>
+                <Fragment key={field?.populators?.name || field?.label || index}>
                   <LabelFieldPair>
                     {!field.withoutLabel && (
-                      <CardLabel style={{ color: field.isSectionText ? "#505A5F" : "", marginBottom: props.inline ? "8px" : "revert" }}>
+                      <CardLabel className={`${field.isSectionText ? "card-label--section" : ""} ${props.inline ? "card-label--inline-8" : ""}`}>
                         {t(field.label)}
                         {field.isMandatory ? " * " : null}
                         {field.labelChildren && field.labelChildren}
                       </CardLabel>
                     )}
-                    <div style={field.withoutLabel ? { width: "100%", ...props?.fieldStyle } : {}} className="field">
+                    <div className={`field ${field.withoutLabel ? "w-full" : ""}`}>
                       {fieldSelector(field.type, field.populators, field.isMandatory, field?.disable, field?.component, field)}
-                      {field?.description && <CardText style={{ fontSize: "14px", marginTop: "-24px" }}>{t(field?.description)}</CardText>}
+                      {field?.description && <CardText className="form-composer-desc-text">{t(field?.description)}</CardText>}
                     </div>
                   </LabelFieldPair>
                   {field?.populators?.name && errors && errors[field?.populators?.name] && Object.keys(errors[field?.populators?.name]).length ? (
-                    <CardLabelError style={{ width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" }}>
+                    <CardLabelError className="form-composer-error-offset">
                       {t(field?.populators?.error)}
                     </CardLabelError>
                   ) : null}
                 </Fragment>
               );
             })}
-            {!props.noBreakLine && (array.length - 1 === index ? null : <BreakLine style={props?.breaklineStyle ? props?.breaklineStyle : {}} />)}
+            {!props.noBreakLine && (array.length - 1 === index ? null : <BreakLine />)}
           </React.Fragment>
         );
       }),
@@ -340,18 +353,18 @@ const FormComposer = (props) => {
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} onKeyDown={(e) => checkKeyDown(e)} id={props.formId} className={props.className}>
-      <Card style={getCardStyles()} className={props?.cardClassName ? props.cardClassName : ""}>
+      <Card className={props?.cardClassName ? props.cardClassName : ""}>
         {!props.childrenAtTheBottom && props.children}
-        {props.heading && <CardSubHeader style={{ ...props.headingStyle }}> {props.heading} </CardSubHeader>}
-        {props.description && <CardLabelDesc className={"repos"}> {props.description} </CardLabelDesc>}
+        {!isEmployeeLoginCard && props.heading && <CardSubHeader className="form-composer-heading"> {props.heading} </CardSubHeader>}
+        {/* {props.description && <CardLabelDesc className={"repos"}> {props.description} </CardLabelDesc>} */}
         {props.text && <CardText>{props.text}</CardText>}
         {formFields}
         {props.childrenAtTheBottom && props.children}
         {props.submitInForm && (
-          <SubmitBar label={t(props.label)} style={{ ...props?.buttonStyle }} submit="submit" disabled={isDisabled} className="w-full" />
+          <SubmitBar label={t(props.label)} submit="submit" disabled={isDisabled} className="w-full text-white" />
         )}
         {props.secondaryActionLabel && (
-          <div className="primary-label-btn" style={{ margin: "20px auto 0 auto" }} onClick={onSecondayActionClick}>
+          <div className="primary-label-btn primary-label-btn--form" onClick={onSecondayActionClick}>
             {props.secondaryActionLabel}
           </div>
         )}

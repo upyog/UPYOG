@@ -1,8 +1,6 @@
-import { Card, CustomButton, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-
-import Background from "../../../components/Background";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 
 const LanguageSelection = () => {
   const { data: storeData, isLoading } = Digit.Hooks.useStore.getInitData();
@@ -10,55 +8,68 @@ const LanguageSelection = () => {
   const navigate = Digit.Hooks.useCustomNavigate();
   const { languages, stateInfo } = storeData || {};
   const selectedLanguage = Digit.StoreData.getCurrentLanguage();
-  const [selected, setselected] = useState(selectedLanguage);
+  const [selected, setSelected] = useState(selectedLanguage);
+
   const handleChangeLanguage = (language) => {
-    setselected(language.value);
-    Digit.LocalizationService.changeLanguage(language.value, stateInfo.code);
+    setSelected(language.value);
+    Digit.LocalizationService.changeLanguage(language.value, stateInfo?.code);
   };
-  let sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
-  const pdfUrl = "https://pg-egov-assets.s3.ap-south-1.amazonaws.com/Upyog+Code+and+Copyright+License_v1.pdf";
 
   const handleSubmit = (event) => {
+    event?.preventDefault?.();
     navigate("/upyog-ui/employee/user/login");
   };
 
-  if (isLoading) return null;
+  if (isLoading) return <Loader />;
 
   return (
-    <Background>
-      <Card className="bannerCard removeBottomMargin">
-       
-        <div className="language-selector" style={{ justifyContent: "space-around", marginBottom: "24px", padding: "0 5%" }}>
-          {languages.map((language, index) => (
-            <div className="language-button-container" key={index}>
-              <CustomButton
-                selected={language.value === selected}
-                text={language.label}
-                onClick={() => handleChangeLanguage(language)}
-              ></CustomButton>
-            </div>
-          ))}
-        </div>
-        <SubmitBar style={{ width: "100%" }} label={t(`CORE_COMMON_CONTINUE`)} onSubmit={handleSubmit} />
-      </Card>
-
-      <div style={{ width: '100%', position: 'fixed', bottom: 0,backgroundColor:"white",textAlign:"center" }}>
-        <div style={{ display: 'flex', justifyContent: 'center', color:"black" }}>
-          {/* <span style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('https://www.digit.org/', '_blank').focus();}} >Powered by DIGIT</span>
-          <span style={{ margin: "0 10px" ,fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px"}}>|</span> */}
-          <a style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a>
-
-          <span  className="upyog-copyright-footer" style={{ margin: "0 10px",fontSize:"12px" }} >|</span>
-          <span  className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
-          
-          {/* <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a> */}
-
-        </div>
-        <div className="upyog-copyright-footer-web">
-          <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"14px":"16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
-          </div>
+    <div className="login-mobile-step">
+      <div className="login-form-header">
+        <h2>{t("CORE_COMMON_CHOOSE_LANGUAGE") || "Choose Language"}</h2>
+        <p>{t("CORE_CHOOSE_LANGUAGE_SUBTITLE") || "Select your preferred language to continue."}</p>
       </div>
-    </Background>
+
+      <div className="login-form-body">
+        <div className="login-field-group">
+          <label className="login-label">{t("CORE_SELECT_LANGUAGE") || "Select Language"}</label>
+          <div className="login-language">
+            <ul className="login-language-list">
+              {languages?.map((language) => (
+                <li
+                  key={language.label}
+                  className={selected === language.value ? "is-selected" : ""}
+                  onClick={() => handleChangeLanguage(language)}
+                >
+                  {selected === language.value ? (
+                    <img src={"/images/check.svg"} alt="check icon" />
+                  ) : null}&nbsp;{language.label}
+                </li>
+              ))}
+              <li className="employee-login-language-search">
+                <img src={"/images/search.svg"} alt="search icon" />
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div className="login-actions login-actions--mt-32">
+        <button
+          type="button"
+          className="login-primary-button"
+          onClick={handleSubmit}
+        >
+          {t("CORE_COMMON_CONTINUE") || "Continue"}
+        </button>
+      </div>
+
+      <p className="login-security login-security--mt-24">
+        <span className="login-security-icon" aria-hidden="true">
+          <img src={"/images/secure.svg"} alt="secure" />
+        </span>
+        {t("CORE_LOGIN_SECURITY_MSG") || "Your information is safe and secure with us."}
+      </p>
+    </div>
   );
 };
 

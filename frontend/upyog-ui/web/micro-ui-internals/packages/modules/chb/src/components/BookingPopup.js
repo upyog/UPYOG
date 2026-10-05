@@ -108,15 +108,9 @@ const BookingPopup = ({ t,tenantId,closeModal,onSubmit,setExistingDataSet,search
             actionCancelOnSubmit={() => setShowExistingBookingDetails(false)}
             formId="modal-action"
         >
-            <Card style={{ boxShadow: "none" }}>
+            <Card className="chb-booking-popup-card">
             {showExistingBookingDetails && <ExistingBookingDetails onSubmit={onSubmit} setExistingDataSet={setExistingDataSet} Searchdata={searchData} setShowExistingBookingDetails={setShowExistingBookingDetails} />}
-            <div style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    gap: '20px', // Adjust gap as needed
-                    flexDirection: 'column', // Vertically stack the buttons
-                    alignItems: 'center', // Center the buttons horizontally
-                }}>
+            <div className="chb-booking-popup-flex-row">
                     {!showExistingBookingDetails && <SubmitBar label={t("USE_EXISTING_DETAILS")} onSubmit={handleExistingDetailsClick} />}
                     {!showExistingBookingDetails &&<SubmitBar label={t("FILL_NEW_DETAILS")} onSubmit={setchbData} />}
                 </div>

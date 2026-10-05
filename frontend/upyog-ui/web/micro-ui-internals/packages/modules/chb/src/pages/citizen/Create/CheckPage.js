@@ -118,7 +118,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
     <React.Fragment>
      {window.location.href.includes("/citizen") ? <Timeline currentStep={6}/> : null}
     <Card>
-      <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+      <div className="chb-chbaddress-details-fullwidth">
         <CardHeader>{t("CHB_CHECK_YOUR_DETAILS")}</CardHeader>
         <CardSubHeader>
           <TimerValues timerValues={slotlist?.existingDataSet?.timervalue?.timervalue} SlotSearchData={slotlist?.searchData} draftId={slotlist?.existingDataSet?.draftId} />
@@ -155,7 +155,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
 
         />
         </StatusTable>
-        {/* <CardSubHeader style={{ fontSize: "24px" }}>{t("SLOT_DETAILS")}</CardSubHeader>
+        {/* <CardSubHeader className="custom-style">{t("SLOT_DETAILS")}</CardSubHeader>
         <StatusTable>
         <Row
             label={t("CHB_COMMUNITY_HALL_NAME")}
@@ -301,7 +301,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <CheckBox
           label={t("CHB_FINAL_DECLARATION_MESSAGE")}
           onChange={setdeclarationhandler}
-          className="chb-checkbox-auto-height"
+          className="chb-check-box height override for declaration checkbox-auto-height"
           //disabled={!agree}
         />
       </div>

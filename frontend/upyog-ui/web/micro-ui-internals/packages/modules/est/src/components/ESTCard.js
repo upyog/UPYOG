@@ -35,13 +35,7 @@ const ESTCard = () => {
   const propsForModuleCard = {
     Icon: <PropertyHouse />,
     moduleName: (
-      <div
-        style={{
-          width: isMobile ? "150px" : "200px",
-          wordWrap: "break-word",
-          fontSize: isMobile ? "14px" : "16px",
-        }}
-      >
+      <div className={`est-card-item ${isMobile ? "width-150-mobile" : "width-200-desktop"}`}>
         {t("ESTATE_MANAGEMENT")}
       </div>
     ),
@@ -50,7 +44,7 @@ const ESTCard = () => {
   };
 
   return (
-    <div style={{ width: "100%" }}>
+    <div className="est-estcard-fullwidth">
       <EmployeeModuleCard {...propsForModuleCard} />
     </div>
   );

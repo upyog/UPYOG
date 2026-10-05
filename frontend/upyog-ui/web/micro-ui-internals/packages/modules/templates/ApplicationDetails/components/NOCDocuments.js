@@ -84,10 +84,10 @@ function SelectDocument({
   }
 
   return (
-      <div style={{/*  border: "1px solid #D6D5D4", padding: "16px 0px 16px 8px", background: "#FAFAFA", borderRadius: "5px", marginBottom: "24px", display: "flex" */ }}>
-        <LabelFieldPair style={{width: "98%", marginRight: "10px"}}>
-          <CardLabel style={{width: "100%"}}>{doc?.required ? `${t("TL_BUTTON_UPLOAD FILE")}*` : `${t("TL_BUTTON_UPLOAD FILE")}`}</CardLabel>
-          <div className="field" style={{width: "100%"}}>
+      <div>
+        <LabelFieldPair className="tmpl-nocdocuments-spacing">
+          <CardLabel className="tmpl-bpadocuments-fullwidth">{doc?.required ? `${t("TL_BUTTON_UPLOAD FILE")}*` : `${t("TL_BUTTON_UPLOAD FILE")}`}</CardLabel>
+          <div className="field tmpl-bpadocuments-fullwidth">
             <MultiUploadWrapper
               module="NOC"
               tenantId={tenantId}
@@ -167,7 +167,7 @@ const NOCDocuments = ({ t, noc, docs, isNoc, applicationData,NOCdata, bpaActions
   }, [applicationData, bpaActionsDetails])
 
   return (
-    <div style={{ border: "1px solid #D6D5D4", padding: "16px 0px 16px 8px", background: "#FAFAFA", borderRadius: "5px", marginBottom: "24px", maxWidth:"950px"/*  display: "flex" */ }}>
+    <div className="tmpl-nocdocuments-bottom-spacing">
       <StatusTable>
       <Row label={isEmployee ? `${t(`BPA_${noc?.nocType}_HEADER`)}` : t(`BPA_${noc?.nocType}_HEADER`)} labelStyle={{fontSize: "20px",width:"150%"}}/>
       {NOCdata && NOCdata.map((noc,index) => {

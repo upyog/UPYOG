@@ -42,7 +42,7 @@ const SelectEmployeeCorrespondenceAddress = ({ t, config, onSelect, formData = {
                 defaultValue={undefined}
                 {...input.validation}
               />
-               {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('Address'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("CORE_COMMON_APPLICANT_ADDRESS_INVALID")}</CardLabelError>}
+               {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('Address'))&&<CardLabelError className="hrms-select-email-id-fullwidth">{t("CORE_COMMON_APPLICANT_ADDRESS_INVALID")}</CardLabelError>}
             </div>
           </LabelFieldPair>
         </React.Fragment>

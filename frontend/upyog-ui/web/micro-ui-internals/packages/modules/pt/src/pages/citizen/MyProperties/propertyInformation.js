@@ -334,7 +334,7 @@ const handleClick=()=>{
                   {(flrno !== unit?.floorNo ? (i = 1) : (i = i + 1)) && i === 1 && (
                     <CardSubHeader>{t(`PROPERTYTAX_FLOOR_${unit?.floorNo}`)}</CardSubHeader>
                   )}
-                  <div className="pt-auto-122">
+                  <div className="pt-property-information-mb-sm">
                     <CardSubHeader>
                       {t("ES_APPLICATION_DETAILS_UNIT")} {i}
                     </CardSubHeader>
@@ -384,7 +384,7 @@ const handleClick=()=>{
                       text={`${owner?.name || t("CS_NA")}`}
                       actionButtonStyle={{marginRight:"-10px"}}
                       actionButton={
-                        <ActionButton style={{marginRight:"-10px"}} jumpTo={`/upyog-ui/citizen/pt/property/owner-history/${property.tenantId}/${property.propertyId}`} />
+                        <ActionButton className="pt-property-information-action-btn" jumpTo={`/upyog-ui/citizen/pt/property/owner-history/${property.tenantId}/${property.propertyId}`} />
                       }
                     />
                     <Row className="border-none"  label={t("PT_COMMON_GENDER_LABEL")} text={`${owner?.gender ? owner?.gender.toLowerCase() : t("CS_NA")}`} />
@@ -427,24 +427,24 @@ const handleClick=()=>{
               </StatusTable>
             )}
           </div>
-          <div className="pt-auto-124">
+          <div className="pt-property-information-flex">
           {property?.status === "ACTIVE" && !enableAudit && (
-            <div  className="pt-auto-125">               
-            <button className="submit-bar pt-auto-126 " type="button" onClick={handleClickOnPtPgr} >{t("PT_PGR")}</button>
+            <div  className="pt-property-information-full-width">               
+            <button className="submit-bar pt-property-information-btn " type="button" onClick={handleClickOnPtPgr} >{t("PT_PGR")}</button>
             </div>              
             )}
             {property?.status === "ACTIVE" && !enableAudit && (
-              <div className="pt-auto-127">
+              <div className="pt-property-information-full-width">
                 <Link to={{ pathname: `/upyog-ui/citizen/pt/property/edit-application/action=UPDATE/${property.propertyId}` }}>
                   <SubmitBar label={t("PT_UPDATE_PROPERTY_BUTTON")} />
                 </Link>
               </div>
             )}
             {property?.status === "ACTIVE" && !enableAudit && (
-              <div className="pt-auto-128">
+              <div className="pt-property-information-full-width">
                
                   {/* <SubmitBar label="Asses Property" onClick={handleClick} /> */}
-                  <button className="submit-bar pt-auto-129" type="button" onClick={handleClick} >{t("PT_SELF_ASSES_PROPERTY")}</button>
+                  <button className="submit-bar pt-property-information-btn" type="button" onClick={handleClick} >{t("PT_SELF_ASSES_PROPERTY")}</button>
                
               </div>
             )}

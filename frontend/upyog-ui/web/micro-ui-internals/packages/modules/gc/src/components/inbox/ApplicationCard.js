@@ -66,11 +66,11 @@ export const ApplicationCard = ({
   let result;
   if (!data || data?.length === 0) {
     result = (
-      <Card style={{ marginTop: 20 }}>
+      <Card className="gc-gcdesktop-inbox-card">
         {t("CS_MYAPPLICATIONS_NO_APPLICATION")
           .split("\\n")
           .map((text, index) => (
-            <p key={index} style={{ textAlign: "center" }}>
+            <p key={index} className="gc-gcdesktop-inbox-centered">
               {text}
             </p>
           ))}

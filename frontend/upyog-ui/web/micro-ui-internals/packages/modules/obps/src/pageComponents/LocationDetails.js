@@ -229,9 +229,8 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
       forcedError={t(Pinerror)}
     >
       <CardLabel>{`${t("BPA_GIS_LABEL")}`}</CardLabel>
-      <div style={{/* position:"relative",height:"100px",width:"200px" */ }}>
+      <div>
         <TextInput
-          style={{ }}
           isMandatory={false}
           optionKey="i18nKey"
           t={t}
@@ -251,7 +250,6 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
               </span>
             </div>
           }
-          style={{ }}
           onClick={(e) => handleGIS()}
         />
       </div>
@@ -314,7 +312,6 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
             )}
       <CardLabel>{`${t("BPA_DETAILS_SRT_NAME_LABEL")}`}</CardLabel>
       {!isOpen && <TextInput
-        style={{ }}
         isMandatory={false}
         optionKey="i18nKey"
         t={t}
@@ -325,7 +322,6 @@ const LocationDetails = ({ t, config, onSelect, userType, formData, ownerIndex =
       />}
       <CardLabel>{`${t("ES_NEW_APPLICATION_LOCATION_LANDMARK")}`}</CardLabel>
       {!isOpen && <TextInput
-        style={{ }}
         isMandatory={false}
         optionKey="i18nKey"
         t={t}

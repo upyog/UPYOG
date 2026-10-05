@@ -335,13 +335,13 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
         <thead>
           <tr>
             <th style={thStyle}>{t("CS_BILL_NO")}</th>
-            <th style={{ ...thStyle }}>{t("CS_PAYMENT_BILLING_PERIOD")}</th>
-            <th style={{ ...thStyle }}>{t("CS_BILL_DUEDATE")}</th>
+            <th style={thStyle}>{t("CS_PAYMENT_BILLING_PERIOD")}</th>
+            <th style={thStyle}>{t("CS_BILL_DUEDATE")}</th>
             {yearWiseBills
               ?.filter((e, ind) => ind > 0)?.[0]
               ?.billAccountDetails?.sort((a, b) => a.order - b.order)
               ?.map((head, index) => (
-                <th style={{ ...thStyle }} key={index}>
+                <th style={thStyle} key={index}>
                   {t(head.taxHeadCode)}
                 </th>
               ))}
@@ -422,9 +422,9 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
           ) : null}
         </StatusTable>
       ) : (
-        <StatusTable style={{ paddingTop: "46px" }}>
+        <StatusTable className="cmn-bill-details-table-cell">
           <Row label={t("ES_PAYMENT_TAXHEADS")} textStyle={{ fontWeight: "bold" }} text={t("ES_PAYMENT_AMOUNT")} />
-          <hr style={{ width: "40%" }} className="underline" />
+          <hr className="underline cmn-bill-details-wrapper-2" />
           {billDetails?.billAccountDetails
             ?.sort((a, b) => a.order - b.order)
             .map((amountDetails, index) => (
@@ -446,7 +446,7 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
             />
           ) : null}
 
-          <hr style={{ width: "40%" }} className="underline" />
+          <hr className="underline cmn-bill-details-wrapper-2" />
           <Row
             label={t("CS_PAYMENT_TOTAL_AMOUNT")}
             textStyle={{ fontWeight: "bold", textAlign: "right", maxWidth: "100px" }}
@@ -457,14 +457,14 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
             <Fragment>
               {businessService === "WS" || "SW" ? (
                 <div className="row last">
-                  <div style={{ maxWidth: "100px" }} onClick={() => setShowDetails(true)} className="filter-button value">
+                  <div onClick={() => setShowDetails(true)} className="filter-button value cmn-bill-details-wrapper-3">
                     {t("ES_COMMON_VIEW_DETAILS")}
                   </div>
                 </div>
               ) : (
                 <div className="row last">
                   <h2></h2>
-                  <div style={{ textAlign: "right", maxWidth: "100px" }} onClick={() => setShowDetails(true)} className="filter-button value">
+                  <div onClick={() => setShowDetails(true)} className="filter-button value cmn-bill-details-wrapper-4">
                     {t("ES_COMMON_VIEW_DETAILS")}
                   </div>
                 </div>
@@ -475,9 +475,9 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
       )}
       {showDetails && yearWiseBills?.length > 1 && !ModuleWorkflow && businessService !== "TL" && (
         <React.Fragment>
-          <div style={{ maxWidth: "95%", display: "inline-block", textAlign: "right" }}>
-            <div style={{ display: "flex", padding: "10px", paddingLeft: "unset", maxWidth: "95%" }}>
-              <div style={{ backgroundColor: "#EEEEEE", overflowX: "auto" }}>
+          <div className="cmn-bill-details-wrapper-5">
+            <div className="cmn-bill-details-flex-container">
+              <div className="cmn-bill-details-wrapper-6">
                 {businessService === "WS" || "SW" ? (
                   renderArrearDetailsForWNS()
                 ) : (
@@ -485,13 +485,13 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
                     <thead>
                       <tr>
                         <th style={thStyle}>{t("FINANCIAL_YEAR")}</th>
-                        <th style={{ ...thStyle }}>{t("CS_BILL_NO")}</th>
-                        <th style={{ ...thStyle }}>{t("CS_BILL_DUEDATE")}</th>
+                        <th style={thStyle}>{t("CS_BILL_NO")}</th>
+                        <th style={thStyle}>{t("CS_BILL_DUEDATE")}</th>
                         {yearWiseBills
                           ?.filter((e, ind) => ind > 0)?.[0]
                           ?.billAccountDetails?.sort((a, b) => a.order - b.order)
                           ?.map((head, index) => (
-                            <th style={{ ...thStyle }} key={index}>
+                            <th style={thStyle} key={index}>
                               {t(head.taxHeadCode)}
                             </th>
                           ))}
@@ -523,11 +523,11 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
               </div>
             </div>
             {businessService === "WS" || "SW" ? (
-              <div style={{ float: "left" }} onClick={() => setShowDetails(false)} className="filter-button">
+              <div onClick={() => setShowDetails(false)} className="filter-button cmn-bill-details-wrapper-7">
                 {t("ES_COMMON_HIDE_DETAILS")}
               </div>
             ) : (
-              <div style={{ float: "right" }} onClick={() => setShowDetails(false)} className="filter-button">
+              <div onClick={() => setShowDetails(false)} className="filter-button cmn-bill-details-wrapper-8">
                 {t("ES_COMMON_HIDE_DETAILS")}
               </div>
             )}
@@ -535,32 +535,30 @@ const BillDetails = ({ businessService, consumerCode, _amount, onChange }) => {
         </React.Fragment>
       )}
       {!checkFSM && paymentRules?.partPaymentAllowed && (
-        <div style={{ marginTop: "50px" }} className="bill-payment-amount">
+        <div className="bill-payment-amount cmn-bill-details-top-spacing">
           <CardSectionHeader>{t("CS_COMMON_PAYMENT_AMOUNT")}</CardSectionHeader>
           <RadioButtons
-            style={{ display: "flex" }}
+            className="cmn-index-flex-container"
             innerStyles={{ padding: "5px" }}
             selectedOption={paymentType}
             onSelect={setPaymentType}
             options={paymentRules.partPaymentAllowed ? [t("CS_PAYMENT_FULL_AMOUNT"), t("CS_PAYMENT_CUSTOM_AMOUNT")] : [t("CS_PAYMENT_FULL_AMOUNT")]}
           />
-          <div style={{ position: "relative" }}>
+          <div className="cmn-bill-details-wrapper">
             <span
-              className="payment-amount-front"
-              style={{ border: `1px solid ${paymentType === t("CS_PAYMENT_FULL_AMOUNT") ? "#9a9a9a" : "black"}` }}
+              className={`payment-amount-front ${paymentType === t("CS_PAYMENT_FULL_AMOUNT") ? "bill-details-border-gray" : "border-black"}`}
             >
               ₹
             </span>
             {paymentType !== t("CS_PAYMENT_FULL_AMOUNT") ? (
               <TextInput
-                style={{ width: "30%" }}
-                className="text-indent-xl"
+                className="text-indent-xl cmn-bill-details-wrapper-9"
                 onChange={(e) => onChangeAmount(e.target.value)}
                 value={amount}
                 disable={businessService === "WS" || "SW"?false:getTotal() === 0}
               />
             ) : (
-              <TextInput style={{ width: "30%" }} className="text-indent-xl" value={getTotal()} disable={true} />
+              <TextInput className="text-indent-xl cmn-bill-details-wrapper-9" value={getTotal()} disable={true} />
             )}
             {formError === "CS_CANT_PAY_BELOW_MIN_AMOUNT" ? (
               <span className="card-label-error">

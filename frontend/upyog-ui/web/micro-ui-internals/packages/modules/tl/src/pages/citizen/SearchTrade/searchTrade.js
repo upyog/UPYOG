@@ -112,7 +112,7 @@ const SearchTrade = ({ config: propsConfig, onSelect }) => {
   //     return <Loader />;
   //   }
 
-  return <div className="tl-auto-168">
+  return <div className="tl-search-trade-mt-md">
       <FormComposer onSubmit={onTradeSearch} noBoxShadow inline config={config} label={propsConfig.texts.submitButtonLabel} heading={propsConfig.texts.header} text={propsConfig.texts.text} cardStyle={{
       margin: "auto"
     }} headingStyle={{

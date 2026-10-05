@@ -299,8 +299,8 @@ const OwnerForm = _props => {
   }, [errors]);
 
   return <React.Fragment>
-      <div className="asset-auto-133">
-        <div className="asset-auto-134">
+      <div className="asset-edit-general-details-item">
+        <div className="asset-edit-general-details-bordered">
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{t("AST_FINANCIAL_YEAR")}</CardLabel>
             <Controller

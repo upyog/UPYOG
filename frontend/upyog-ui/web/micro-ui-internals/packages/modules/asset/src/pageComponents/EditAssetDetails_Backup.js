@@ -122,8 +122,8 @@ const OwnerForm = _props => {
     marginTop: "-21px"
   };
   return <React.Fragment>
-        <div className="asset-auto-103">
-            <div className="asset-auto-104">
+        <div className="asset-edit-asset-details_backup-item">
+            <div className="asset-edit-asset-details_backup-bordered">
             {comingDataFromAPI?.assetParentCategory === "IT" && <React.Fragment>
                     <LabelFieldPair>
                       <CardLabel className="card-label-smaller">{t("AST_BRAND")}</CardLabel>

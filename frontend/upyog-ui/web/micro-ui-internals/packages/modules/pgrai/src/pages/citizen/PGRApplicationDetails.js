@@ -37,7 +37,7 @@ const PGRApplicationDetails = () => {
     <React.Fragment>
       <div>
      
-        <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
+        <div className="cardHeaderWithOptions pgrai-pgrapplication-details-spacing">
           <Header styles={{ fontSize: "32px", marginLeft: "10px" }}>{t("PGR_AI_APPLICATION_DETAILS")}</Header>
         </div>
         <Card>
@@ -49,7 +49,7 @@ const PGRApplicationDetails = () => {
             />
           </StatusTable>
 
-          <CardSubHeader style={{ fontSize: "24px", marginTop: "16px" }}>{t("PGR_AI_COMPLAINT_DETAILS")}</CardSubHeader>
+          <CardSubHeader className="pgrai-pgrapplication-details-header">{t("PGR_AI_COMPLAINT_DETAILS")}</CardSubHeader>
           <StatusTable>
             <Row
               className="border-none"
@@ -77,7 +77,7 @@ const PGRApplicationDetails = () => {
               text={service?.inputGrievance || t("CS_NA")}
             />
           </StatusTable>
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("PGR_AI_ADDRESS_DETAILS")}</CardSubHeader>
+          <CardSubHeader className="pgrai-wfapplication-timeline-header-2">{t("PGR_AI_ADDRESS_DETAILS")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("PGR_AI_REGION")} text={service?.address?.region || t("CS_NA")} />
             <Row className="border-none" label={t("PGR_AI_STATE")} text={service?.address?.state || t("CS_NA")} />
@@ -96,7 +96,7 @@ const PGRApplicationDetails = () => {
             <Toast
               error={showToast.key}
               label={t(showToast.label)}
-              style={{ bottom: "0px" }}
+              className="pgrai-pgrapplication-details-wrapper"
               onClose={() => {
                 setShowToast(null);
               }}

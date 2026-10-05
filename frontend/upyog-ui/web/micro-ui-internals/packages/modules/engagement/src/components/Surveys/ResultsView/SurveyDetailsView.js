@@ -17,7 +17,7 @@ const SurveyDetailsView = ({surveyTitle,surveyDesc,t,surveyId}) => {
       <div className="surveydetailsform-wrapper">
         <span className="surveyformfield">
             <label>{`${t("LABEL_FOR_ULB")} * :`}</label>
-            <div style={{ display: "grid", gridAutoFlow: "row" }}>
+            <div className="eng-survey-details-view-grid-container">
                     <Dropdown
                     allowMultiselect={true}
                     optionKey={"i18nKey"}
@@ -35,10 +35,10 @@ const SurveyDetailsView = ({surveyTitle,surveyDesc,t,surveyId}) => {
             </div>  
         {/* <button
           type={"button"}
-          style={{ border: "2px solid #a82227", backgroundColor: "white", padding: "8px 8px",width:"200px",marginLeft:"50px",marginTop:"-45px" }}
+          className="custom-style"
           onClick={() => history.push(`/upyog-ui/employee/engagement/surveys/inbox/details/${surveyId}`)}
         >
-          <header style={{ color:"#a82227"}}>{t("SURVEY_QUESTIONS")}</header>
+          <header className="custom-style">{t("SURVEY_QUESTIONS")}</header>
         </button> */}
         <LinkLabel  onClick={() => navigate(`/upyog-ui/employee/engagement/surveys/inbox/details/${surveyTitle}`)}>
         {t("VIEW_SURVEY_QUESTIONS")}

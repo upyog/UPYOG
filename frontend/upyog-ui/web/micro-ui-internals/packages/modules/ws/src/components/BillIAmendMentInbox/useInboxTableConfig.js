@@ -2,7 +2,7 @@ import React, { Fragment, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
-import "../../css/ws-inline-auto.css";
+
 const useInboxTableConfig = ({
   parentRoute,
   onPageSizeChange,
@@ -21,13 +21,13 @@ const useInboxTableConfig = ({
   const GetCell = value => <span className="cell-text styled-cell">{value}</span>;
   const GetStatusCell = value => {
     if (value === "Approved") {
-      return <span className="ws-auto-2">{value}</span>;
+      return <span className="ws-use-inbox-table-config-link-green">{value}</span>;
     }
     if (value === "Rejected") {
-      return <span className="ws-auto-3">{value}</span>;
+      return <span className="ws-use-inbox-table-config-link">{value}</span>;
     }
     if (value === "Inworkflow") {
-      return <span className="ws-auto-4">{value}</span>;
+      return <span className="ws-use-inbox-table-config-link-red">{value}</span>;
     }
   };
   const tableColumnConfig = useMemo(() => {
@@ -45,14 +45,14 @@ const useInboxTableConfig = ({
       Cell: ({
         row
       }) => {
-        return <div className="ws-auto-5">
-              <Link to={`/upyog-ui/employee/ws/generate-note-bill-amendment?applicationNumber=${row.original["applicationNo"]}`}>
-                <span className="link">{row.original["applicationNo"]}</span>
-              </Link>
-              {GetCell(t(`BILLAMENDMENT_${row?.original?.amendmentReason}_HEADING`))}
-            </div>;
+        return <div className="ws-use-inbox-table-config-col-flex">
+          <Link to={`/upyog-ui/employee/ws/generate-note-bill-amendment?applicationNumber=${row.original["applicationNo"]}`}>
+            <span className="link">{row.original["applicationNo"]}</span>
+          </Link>
+          {GetCell(t(`BILLAMENDMENT_${row?.original?.amendmentReason}_HEADING`))}
+        </div>;
       }
-    },, {
+    }, , {
       Header: t("CORE_COMMON_NAME"),
       disableSortBy: true,
       accessor: "owner"

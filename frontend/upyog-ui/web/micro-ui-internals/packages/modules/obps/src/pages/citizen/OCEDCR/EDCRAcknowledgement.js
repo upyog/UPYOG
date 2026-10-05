@@ -14,7 +14,7 @@ const EDCRAcknowledgement = (props) => {
 
   if (props?.data?.type == "ERROR") {
     return (
-      <Card style={{ padding: "0px" }}>
+      <Card className="obps-edcracknowledgement-card">
         <Banner
           message={t("CS_BPA_APPLICATION_FAILED")}
           applicationNumber={""}
@@ -22,9 +22,9 @@ const EDCRAcknowledgement = (props) => {
           successful={false}
           infoStyles={{ fontSize: "18px", lineHeight: "21px", fontWeight: "bold", textAlign: "center", padding: "0px 15px" }}
           applicationNumberStyles={{ fontSize: "24px", lineHeight: "28px", fontWeight: "bold", marginTop: "10px" }}
-          style={{ width: "100%", padding: "10px" }}
+          className="obps-edcracknowledgement-fullwidth"
         />
-        <div style={{ padding: "10px", paddingBottom: "10px" }}>
+        <div className="obps-edcracknowledgement-container-padding">
           <Link to={`/upyog-ui/citizen`} >
             <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
           </Link>
@@ -65,7 +65,7 @@ const EDCRAcknowledgement = (props) => {
   return (
     <div>
       {edcrData?.status == "Accepted" ?
-        <Card style={{ padding: "0px" }}>
+        <Card className="obps-edcracknowledgement-card">
           <Banner
             message={t("BPA_OC_EDCR_ACKNOWLEDGEMENT_SUCCESS_MESSAGE_LABEL")}
             applicationNumber={edcrData?.edcrNumber}
@@ -73,28 +73,28 @@ const EDCRAcknowledgement = (props) => {
             successful={true}
             infoStyles={{ fontSize: "18px", lineHeight: "21px", fontWeight: "bold", textAlign: "center", padding: "0px 15px" }}
             applicationNumberStyles={{ fontSize: "24px", lineHeight: "28px", fontWeight: "bold", marginTop: "10px" }}
-            style={{width: "100%", padding: "10px"}}
+            className="obps-edcracknowledgement-fullwidth"
           />
-          <CardText style={{ padding: "0px 8px", marginBottom: "10px" }}>{`${t("PDF_STATIC_LABEL_CONSOLIDATED_BILL_CONSUMER_ID_TL")} - ${edcrData?.applicationNumber}`}</CardText>
-          {/* <CardText style={{ padding: "0px 8px" }}>{t("EDCR_ACKNOWLEDGEMENT_SUCCESS_MESSAGE_TEXT_LABEL")}</CardText> */}
-          <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginBottom: "10px", padding: "0px 8px" }} onClick={printReciept}>
+          <CardText className="obps-edcracknowledgement-card-2">{`${t("PDF_STATIC_LABEL_CONSOLIDATED_BILL_CONSUMER_ID_TL")} - ${edcrData?.applicationNumber}`}</CardText>
+          {/* <CardText className="custom-style">{t("EDCR_ACKNOWLEDGEMENT_SUCCESS_MESSAGE_TEXT_LABEL")}</CardText> */}
+          <div className="primary-label-btn d-grid obps-edcracknowledgement-bottom-spacing" onClick={printReciept}>
             <svg width="20" height="23" viewBox="0 0 20 23" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M19.3334 8H14V0H6.00002V8H0.666687L10 17.3333L19.3334 8ZM0.666687 20V22.6667H19.3334V20H0.666687Z" fill="#a82227" />
             </svg>
             {t("EDCR_DOWNLOAD_SCRUTINY_REPORT_LABEL")}
           </div>
-          <div style={{padding: "0px 10px"}}>
+          <div className="obps-edcracknowledgement-container-padding-2">
           <Link to={{pathname: `/upyog-ui/citizen/obps/${bpaLinks?.linkData?.flow?.toLowerCase()}/${edcrData?.appliactionType?.toLowerCase()}/${edcrData?.applicationSubType?.toLowerCase()}/docs-required`, state: bpaLinks}} replace >
               <SubmitBar label={t("BPA_APPLY_OC_FOR_BPA_LABEL")} className={"oc-aknowledgement-screen"} onSubmit={() => (sessionStorage.setItem("clickOnBPAApplyAfterEDCR",true))}/>
             </Link>
           </div>
-          <div style={{marginTop: "12px", paddingBottom: "10px", paddingLeft: "10px"}}>
+          <div className="obps-edcracknowledgement-top-spacing-2">
             <Link to={`/upyog-ui/citizen`} >
               <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
             </Link>
           </div>
         </Card> :
-        <Card style={{ padding: "0px" }}>
+        <Card className="obps-edcracknowledgement-card">
           <Banner
             message={t("BPA_OC_EDCR_ACKNOWLEDGEMENT_REJECTED_MESSAGE_LABEL")}
             applicationNumber={""}
@@ -102,17 +102,17 @@ const EDCRAcknowledgement = (props) => {
             successful={false}
             infoStyles={{ fontSize: "18px", lineHeight: "21px", fontWeight: "bold", textAlign: "center", padding: "0px 15px" }}
             applicationNumberStyles={{ fontSize: "24px", lineHeight: "28px", fontWeight: "bold", marginTop: "10px" }}
-            style={{width: "100%", padding: "10px"}}
+            className="obps-edcracknowledgement-fullwidth"
           />
-          <CardText style={{ padding: "0px 8px", marginBottom: "10px" }}>{t("EDCR_ACKNOWLEDGEMENT_REJECTED_MESSAGE_TEXT_LABEL")}</CardText>
-          <CardText style={{ padding: "0px 8px", marginBottom: "10px" }}>{`${t("PDF_STATIC_LABEL_CONSOLIDATED_BILL_CONSUMER_ID_TL")} - ${edcrData?.applicationNumber}`}</CardText>
-          <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginBottom: "10px", padding: "0px 8px" }} onClick={printReciept}>
+          <CardText className="obps-edcracknowledgement-card-2">{t("EDCR_ACKNOWLEDGEMENT_REJECTED_MESSAGE_TEXT_LABEL")}</CardText>
+          <CardText className="obps-edcracknowledgement-card-2">{`${t("PDF_STATIC_LABEL_CONSOLIDATED_BILL_CONSUMER_ID_TL")} - ${edcrData?.applicationNumber}`}</CardText>
+          <div className="primary-label-btn d-grid obps-edcracknowledgement-bottom-spacing" onClick={printReciept}>
             <svg width="20" height="23" viewBox="0 0 20 23" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M19.3334 8H14V0H6.00002V8H0.666687L10 17.3333L19.3334 8ZM0.666687 20V22.6667H19.3334V20H0.666687Z" fill="#a82227" />
             </svg>
             {t("EDCR_DOWNLOAD_SCRUTINY_REPORT_LABEL")}
           </div>
-          <div style={{padding: "10px", paddingBottom: "10px", paddingLeft: "10px"}}>
+          <div className="obps-edcracknowledgement-container-padding-3">
             <Link to={`/upyog-ui/citizen`} >
               <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
             </Link>

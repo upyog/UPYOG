@@ -20,7 +20,7 @@ const InboxLinks = ({ parentRoute, businessService }) => {
   }, []);
 
   const GetLogo = () => (
-    <div className="header" style={{ justifyContent: "flex-start" }}>
+    <div className="header mc-application-links-wrapper">
       <span className="logo">
         <PTIcon />
       </span>{" "}
@@ -29,7 +29,7 @@ const InboxLinks = ({ parentRoute, businessService }) => {
   );
 
   return (
-    <Card style={{ paddingRight: 0, marginTop: 0 }} className="employeeCard filter inboxLinks">
+    <Card className="employeeCard filter inboxLinks mc-application-links-card">
       <div className="complaint-links-container">
         {GetLogo()}
         <div className="body">

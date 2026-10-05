@@ -154,8 +154,8 @@ const ADSAddress = ({
   return <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={2} /> : null}
       <Card>
-      <div className="ads-auto-51">
-        <CardSubHeader className="ads-auto-52">
+      <div className="ads-address-relative">
+        <CardSubHeader className="ads-address-absolute">
         <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.cartDetails} draftId={value?.existingDataSet?.draftId} />
         </CardSubHeader>
         <ADSCartAndCancellationPolicyDetails />
@@ -164,9 +164,7 @@ const ADSAddress = ({
       <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={!pincode || !city || !streetName || !houseNo || !landmark || !locality || !addressline1}>
         <div>
           <CardLabel>{`${t("ADS_HOUSE_NO")}`} <span className="check-page-link-button">*</span></CardLabel>
-          <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="houseNo" value={houseNo} placeholder={"Enter House No"} onChange={setApplicantHouseNo} style={{
-          width: user.type === "EMPLOYEE" ? "50%" : "86%"
-        }} ValidationRequired={true} {...validation = {
+          <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="houseNo" value={houseNo} placeholder={"Enter House No"} onChange={setApplicantHouseNo} className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"} ValidationRequired={true} {...validation = {
           isRequired: true,
           pattern: "^[a-zA-Z0-9 ,\\-]+$",
           type: "text",
@@ -175,35 +173,27 @@ const ADSAddress = ({
 
 
           <CardLabel>{`${t("ADS_HOUSE_NAME")}`}</CardLabel>
-          <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="houseName" value={houseName} placeholder={"Enter House Name"} onChange={sethouseName} style={{
-          width: user.type === "EMPLOYEE" ? "50%" : "86%"
-        }} ValidationRequired={false} />
+          <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="houseName" value={houseName} placeholder={"Enter House Name"} onChange={sethouseName} className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"} ValidationRequired={false} />
 
           <CardLabel>{`${t("ADS_STREET_NAME")}`} <span className="check-page-link-button">*</span></CardLabel>
-          <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="streetName" value={streetName} placeholder={"Enter Street Name"} onChange={setApplicantStreetName} style={{
-          width: user.type === "EMPLOYEE" ? "50%" : "86%"
-        }} ValidationRequired={true} {...validation = {
+          <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="streetName" value={streetName} placeholder={"Enter Street Name"} onChange={setApplicantStreetName} className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"} ValidationRequired={true} {...validation = {
           pattern: "^[a-zA-Z0-9 ,\\-]+$",
           type: "text",
           title: t("ADS_STREET_NAME_ERROR_MESSAGE")
         }} />
 
           <CardLabel>{`${t("ADS_ADDRESS_LINE1")}`} <span className="check-page-link-button">*</span></CardLabel>
-          <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="addressline1" value={addressline1} placeholder={"Enter Address"} onChange={setaddressline1} style={{
-          width: user.type === "EMPLOYEE" ? "50%" : "86%"
-        }} ValidationRequired={false} />
+          <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="addressline1" value={addressline1} placeholder={"Enter Address"} onChange={setaddressline1} className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"} ValidationRequired={false} />
 
           <CardLabel>{`${t("ADS_ADDRESS_LINE2")}`}</CardLabel>
-          <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="addressline2" value={addressline2} placeholder={"Enter Address"} onChange={setaddressline2} style={{
-          width: user.type === "EMPLOYEE" ? "50%" : "86%"
-        }} ValidationRequired={false} />
+          <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="addressline2" value={addressline2} placeholder={"Enter Address"} onChange={setaddressline2} className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"} ValidationRequired={false} />
           <CardLabel>{`${t("ADS_LANDMARK")}`} <span className="check-page-link-button">*</span></CardLabel>
           <TextArea t={t} type={"textarea"} isMandatory={false} optionKey="i18nKey" name="landmark" value={landmark} placeholder={"Enter Landmark"} onChange={setApplicantLandmark} ValidationRequired={true} {...validation = {
           isRequired: true,
           pattern: "^[a-zA-Z0-9 ,\\-]+$",
           type: "textarea",
           title: t("ADS_LANDMARK_ERROR_MESSAGE")
-        }} className="ads-auto-53" />
+        }} className="ads-address-link-half-width" />
 
           <CardLabel>{`${t("ADS_CITY")}`} <span className="check-page-link-button">*</span></CardLabel>
           <Controller
@@ -244,9 +234,7 @@ const ADSAddress = ({
           />
 
           <CardLabel>{`${t("ADS_ADDRESS_PINCODE")}`} <span className="check-page-link-button">*</span></CardLabel>
-          <TextInput t={t} type="text" isMandatory={false} optionKey="i18nKey" name="pincode" value={pincode} onChange={setAddressPincode} placeholder="Enter Pincode" style={{
-          width: user.type === "EMPLOYEE" ? "50%" : "86%"
-        }} ValidationRequired={true} validation={{
+          <TextInput t={t} type="text" isMandatory={false} optionKey="i18nKey" name="pincode" value={pincode} onChange={setAddressPincode} placeholder="Enter Pincode" className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"} ValidationRequired={true} validation={{
           pattern: "[0-9]{6}",
           type: "text",
           title: t("CHB_ADDRESS_PINCODE_INVALID")

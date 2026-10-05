@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import PTApplication from "./pt-application";
 import { propertyCardBodyStyle } from "../../../utils";
-import "../../../css/pt-inline-auto.css";
+
 export const PTMyApplications = () => {
   const {
     t
@@ -70,31 +70,31 @@ export const PTMyApplications = () => {
   });
   function getLabelValue(curservice) {
     let foundValue = servicedata?.Service?.find(ob => ob?.referenceId?.includes(curservice?.acknowldgementNumber));
-    if (foundValue) return t("CS_CF_VIEW");else if (!foundValue && curservice?.status?.includes("ACTIVE")) return t("CS_CF_RATE_US");else return t("CS_CF_TRACK");
+    if (foundValue) return t("CS_CF_VIEW"); else if (!foundValue && curservice?.status?.includes("ACTIVE")) return t("CS_CF_RATE_US"); else return t("CS_CF_TRACK");
   }
   if (isLoading || serviceloading) {
     return <Loader />;
   }
   return <React.Fragment>
-      <Header>{`${t("CS_TITLE_MY_APPLICATIONS")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
-      <div>
-        {applicationsList?.length > 0 && applicationsList.map((application, index) => <div key={index}>
-              <PTApplication application={application} tenantId={user?.permanentCity} buttonLabel={getLabelValue(application)} />
-            </div>)}
-        {!applicationsList?.length > 0 && <p className="pt-auto-135">{t("PT_NO_APPLICATION_FOUND_MSG")}</p>}
+    <Header>{`${t("CS_TITLE_MY_APPLICATIONS")} ${applicationsList ? `(${applicationsList.length})` : ""}`}</Header>
+    <div>
+      {applicationsList?.length > 0 && applicationsList.map((application, index) => <div key={index}>
+        <PTApplication application={application} tenantId={user?.permanentCity} buttonLabel={getLabelValue(application)} />
+      </div>)}
+      {!applicationsList?.length > 0 && <p className="pt-index-mt-md-ml-md">{t("PT_NO_APPLICATION_FOUND_MSG")}</p>}
 
-        {applicationsList?.length !== 0 && <div>
-            <p className="pt-auto-136">
-              <span className="link">{<Link to={`/upyog-ui/citizen/pt/property/my-applications/${t1}`}>{t("PT_LOAD_MORE_MSG")}</Link>}</span>
-            </p>
-          </div>}
-      </div>
+      {applicationsList?.length !== 0 && <div>
+        <p className="pt-index-mt-md-ml-md">
+          <span className="link">{<Link to={`/upyog-ui/citizen/pt/property/my-applications/${t1}`}>{t("PT_LOAD_MORE_MSG")}</Link>}</span>
+        </p>
+      </div>}
+    </div>
 
-      <p className="pt-auto-137">
-        {t("PT_TEXT_NOT_ABLE_TO_FIND_THE_APPLICATION")}{" "}
-        <span className="link pt-auto-138">
-          <Link to="/upyog-ui/citizen/pt/property/new-application/info">{t("PT_COMMON_CLICK_HERE_TO_REGISTER_NEW_PROPERTY")}</Link>
-        </span>
-      </p>
-    </React.Fragment>;
+    <p className="pt-index-mt-md-ml-md">
+      {t("PT_TEXT_NOT_ABLE_TO_FIND_THE_APPLICATION")}{" "}
+      <span className="link pt-index-link-block">
+        <Link to="/upyog-ui/citizen/pt/property/new-application/info">{t("PT_COMMON_CLICK_HERE_TO_REGISTER_NEW_PROPERTY")}</Link>
+      </span>
+    </p>
+  </React.Fragment>;
 };

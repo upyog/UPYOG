@@ -154,7 +154,7 @@ const RequestDetails = ({
           <CardLabel>{`${t("WT_TANKER_TYPE")}`} <span className="astericColor">*</span></CardLabel>
           <RadioButtons t={t} options={tankerTypeDetails} innerStyles={{
           minWidth: "24%"
-        }} optionsKey="i18nKey" name={`tankerType`} value={tankerType} selectedOption={tankerType} onSelect={settankerType} labelKey="i18nKey" isPTFlow={true} className="wt-auto-27" />
+        }} optionsKey="i18nKey" name={`tankerType`} value={tankerType} selectedOption={tankerType} onSelect={settankerType} labelKey="i18nKey" isPTFlow={true} className="wt-request-details-link-flex" />
           <CardLabel>{`${t("WT_WATER_TYPE")}`} <span className="astericColor">*</span></CardLabel>
             <Dropdown className="form-field" selected={waterType} placeholder={t("WT_SELECT_WATER_TYPE")} select={setWaterType} option={WaterType} style={inputStyles} optionKey="i18nKey" t={t} />
            <CardLabel>{`${t("WT_WATER_QUANTITY")}`} <span className="astericColor">*</span></CardLabel>

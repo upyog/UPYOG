@@ -226,7 +226,7 @@ const EWSearchApplication = ({ tenantId, isLoading, t, onSubmit, onClear, data, 
           <SearchField className="submit">
             <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
             <p
-              style={{ marginTop: "10px" }}
+              className="ew-search-application-top-spacing"
               onClick={() => {
                 reset({
                   applicationNumber: "",
@@ -250,11 +250,11 @@ const EWSearchApplication = ({ tenantId, isLoading, t, onSubmit, onClear, data, 
 
         {/* Render the table or loader based on the data and loading state */}
         {!isLoading && data?.display ? (
-          <Card style={{ marginTop: 20 }}>
+          <Card className="ew-ewdesktop-inbox-card">
             {t(data.display)
               .split("\\n")
               .map((text, index) => (
-                <p key={index} style={{ textAlign: "center" }}>
+                <p key={index} className="ew-ewdesktop-inbox-centered">
                   {text}
                 </p>
               ))}

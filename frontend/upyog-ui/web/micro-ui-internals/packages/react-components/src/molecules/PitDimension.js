@@ -11,14 +11,14 @@ const PitDimension = ({ sanitationType, t, size = {}, handleChange, disable = fa
     <div className="inputWrapper">
       <div>
         <DimentionInput name="diameter" value={size["diameter"] || ""} onChange={handleChange} disable={disable} />
-        <CardText style={{ textAlign: "center" }} disable={disable}>
+        <CardText className="rc-employee-module-card-centered" disable={disable}>
           {t("CS_FILE_PROPERTY_DIAMETER")}
         </CardText>
       </div>
       <span>x</span>
       <div>
         <DimentionInput name="height" value={size["height"] || ""} onChange={handleChange} disable={disable} />
-        <CardText style={{ textAlign: "center" }} disable={disable}>
+        <CardText className="rc-employee-module-card-centered" disable={disable}>
           {t("CS_FILE_PROPERTY_HEIGHT")}
         </CardText>
       </div>
@@ -27,21 +27,21 @@ const PitDimension = ({ sanitationType, t, size = {}, handleChange, disable = fa
     <div className="inputWrapper">
       <div>
         <DimentionInput name="length" value={size["length"] || ""} onChange={handleChange} disable={disable} />
-        <CardText style={{ textAlign: "center" }} disable={disable}>
+        <CardText className="rc-employee-module-card-centered" disable={disable}>
           {t("CS_FILE_PROPERTY_LENGTH")}
         </CardText>
       </div>
       <span>x</span>
       <div>
         <DimentionInput name="width" value={size["width"] || ""} onChange={handleChange} disable={disable} />
-        <CardText style={{ textAlign: "center" }} disable={disable}>
+        <CardText className="rc-employee-module-card-centered" disable={disable}>
           {t("CS_FILE_PROPERTY_WIDTH")}
         </CardText>
       </div>
       <span>x</span>
       <div>
         <DimentionInput name="height" value={size["height"] || ""} onChange={handleChange} disable={disable} />
-        <CardText style={{ textAlign: "center" }} disable={disable}>
+        <CardText className="rc-employee-module-card-centered" disable={disable}>
           {t("CS_FILE_PROPERTY_HEIGHT")}
         </CardText>
       </div>

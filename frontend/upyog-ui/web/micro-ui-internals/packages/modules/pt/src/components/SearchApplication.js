@@ -136,7 +136,7 @@ const PTSearchApplication = ({tenantId, isLoading, t, onSubmit, onClear, data, c
     }} /> : <div>
                 <Header>{t("PT_SEARCH_PROP_APP")}</Header>
                 <Card className={"card-search-heading"}>
-                    <span className="pt-auto-7">{t("Provide at least one parameter to search for an application")}</span>
+                    <span className="pt-search-application-card-grey-text">{t("Provide at least one parameter to search for an application")}</span>
                 </Card>
                 <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                 <SearchField>
@@ -272,11 +272,11 @@ const PTSearchApplication = ({tenantId, isLoading, t, onSubmit, onClear, data, c
             });
             setShowToast(null);
             onClear();
-          }} className="pt-auto-8">{t(`ES_COMMON_CLEAR_ALL`)}</p>
+          }} className="pt-search-application-card-mt-sm">{t(`ES_COMMON_CLEAR_ALL`)}</p>
                 </SearchField>
             </SearchForm>
-            {!isLoading && data?.display ? <Card className="pt-auto-9">
-                {t(data.display).split("\\n").map((text, index) => <p key={index} className="pt-auto-10">
+            {!isLoading && data?.display ? <Card className="pt-search-application-card-mt-md">
+                {t(data.display).split("\\n").map((text, index) => <p key={index} className="pt-search-application-card-center-text">
                         {text}
                     </p>)}
             </Card> : !isLoading && data !== "" ? <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {

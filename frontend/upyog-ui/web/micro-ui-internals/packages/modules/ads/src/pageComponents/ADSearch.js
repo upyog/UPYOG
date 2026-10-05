@@ -286,7 +286,7 @@ const ADSSearch = ({
     id: "selection",
     Header: ({
       getToggleAllRowsSelectedProps
-    }) => <div className="ads-auto-63">
+    }) => <div className="ads-ad-search-indent-50">
         <input type="checkbox" checked={selectedCheckboxes.length === data.length} onChange={() => {
           if (selectedCheckboxes.length === data.length) {
             setSelectedCheckboxes([]);
@@ -298,7 +298,7 @@ const ADSSearch = ({
       </div>,
     Cell: ({
       row
-    }) => <div className="ads-auto-64">
+    }) => <div className="ads-ad-search-indent-50">
         <input type="checkbox" checked={selectedCheckboxes.includes(row.original.slotId)} onChange={() => handleRowSelection(row.index)} disabled={row.original.status.props.children !== "Available"} />
       </div>
   };
@@ -579,7 +579,7 @@ const ADSSearch = ({
         name="fromDate"
         value={fromDate || ""}
         onChange={SetFromDate}
-        style={{width:user.type==="EMPLOYEE"?"50%":"86%" }}
+        className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"}
         min={new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0]}
         rules={{
           required: t("CORE_COMMON_REQUIRED_ERRMSG"),
@@ -596,7 +596,7 @@ const ADSSearch = ({
         name="toDate"
         value={toDate || ""}
         onChange={SetToDate}
-        style={{width:user.type==="EMPLOYEE"?"50%":"86%" }}
+        className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"}
         min={new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0]}
         rules={{
           required: t("CORE_COMMON_REQUIRED_ERRMSG"),
@@ -614,7 +614,7 @@ const ADSSearch = ({
         paddingBottom: "2px",
         marginBottom: "2px"
       }} onSelect={setselectNight} isDependent={true} />
-      <div className="ads-auto-65">
+      <div className="ads-ad-search-flex">
         <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
         <SubmitBar label={t("ADS_ADD_TO_CART")} onSubmit={handleCartClick} />
 
@@ -622,8 +622,8 @@ const ADSSearch = ({
           <SubmitBar label={t("ADS_VIEW_CART")} onSubmit={handleViewCart} />
         </div>
         <div>
-          <div className="ads-auto-67">
-            <div className="ads-auto-68">
+          <div className="ads-ad-search-relative">
+            <div className="ads-ad-search-absolute-center-text">
               <div> {cartDetails.length}</div>
             </div>
           </div>
@@ -635,14 +635,14 @@ const ADSSearch = ({
     </FormStep>
     {showTable &&
       // Only show table when showTable is true
-      <Card className="ads-auto-69">
+      <Card className="ads-ad-search-card-scrollable">
         <ApplicationTable t={t} data={data} columns={enhancedColumns} getCellProps={cellInfo => ({
           style: {
             minWidth: "140px",
             padding: "20px",
             fontSize: "16px"
           }
-        })} isPaginationRequired={false} totalRecords={data.length} className="ads-auto-70" />
+        })} isPaginationRequired={false} totalRecords={data.length} className="ads-ad-search-link-full-width-scrollable" />
       </Card>}
     {showToast && <Toast error={showToast.error} warning={showToast.warning} label={t(showToast.label)} onClose={() => {
       setShowToast(null);

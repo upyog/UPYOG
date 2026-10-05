@@ -299,10 +299,7 @@ const OwnerForm = (_props) => {
     const Tooltip = ({ message, children }) => {
         return (
             <div
-                style={{
-                    position: "relative",
-                    display: "inline-block",
-                }}
+                className="assetv2-asset-dispose-wrapper"
                 onMouseEnter={(e) => {
                     const tooltip = e.currentTarget.querySelector(".tooltiptext");
                     tooltip.style.visibility = "visible";
@@ -316,26 +313,7 @@ const OwnerForm = (_props) => {
             >
                 {children}
                 <span
-                    style={{
-                        visibility: "hidden",
-                        position: "absolute",
-                        backgroundColor: "#555",
-                        color: "#fff",
-                        textAlign: "center",
-                        borderRadius: "4px",
-                        padding: "5px",
-                        fontSize: "small",
-                        wordWrap: "break-word",
-                        width: "300px",
-                        top: "100%",
-                        left: "50%",
-                        transform: "translateX(-50%)",
-                        marginTop: "5px",
-                        zIndex: "1",
-                        opacity: 0,
-                        transition: "opacity 0.3s ease-in-out",
-                    }}
-                    className="tooltiptext"
+                    className="tooltiptext assetv2-asset-dispose-centered"
                 >
                     {message}
                 </span>
@@ -344,10 +322,10 @@ const OwnerForm = (_props) => {
     };
     return (
         <React.Fragment>
-            <div style={{ marginBottom: "16px" }}>
-                <div style={{ border: "1px solid #E3E3E3", padding: "16px", marginTop: "8px" }}>
+            <div className="assetv2-asset-assign-bottom-spacing">
+                <div className="assetv2-asset-assign-top-spacing">
                     {allAssets?.length > 2 ? (
-                        <div style={{ marginBottom: "16px", padding: "5px", cursor: "pointer", textAlign: "right" }}>
+                        <div className="assetv2-asset-assign-clickable">
                             X
                         </div>
                     ) : null}
@@ -364,10 +342,7 @@ const OwnerForm = (_props) => {
                                     <TextInput
                                         value={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.id))}`}
                                         readOnly // Makes the input field readonly
-                                        style={{
-                                            border: "none",  // Removes the border
-                                            backgroundColor: "transparent",  // Optional: makes the background transparent
-                                        }}
+                                        className="assetv2-asset-maintenance-wrapper"
                                     />
                                 )}
                             />
@@ -385,10 +360,7 @@ const OwnerForm = (_props) => {
                                     <TextInput
                                         value={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.applicationNo))}`}
                                         readOnly // Makes the input field readonly
-                                        style={{
-                                            border: "none",  // Removes the border
-                                            backgroundColor: "transparent",  // Optional: makes the background transparent
-                                        }}
+                                        className="assetv2-asset-maintenance-wrapper"
                                     />
                                 )}
                             />
@@ -407,10 +379,7 @@ const OwnerForm = (_props) => {
                                     <TextInput
                                         value={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.assetName))}`}
                                         readOnly // Makes the input field readonly
-                                        style={{
-                                            border: "none",  // Removes the border
-                                            backgroundColor: "transparent",  // Optional: makes the background transparent
-                                        }}
+                                        className="assetv2-asset-maintenance-wrapper"
                                     />
                                 )}
                             />
@@ -428,10 +397,7 @@ const OwnerForm = (_props) => {
                                     <TextInput
                                         value={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.assetParentCategory))}`}
                                         readOnly // Makes the input field readonly
-                                        style={{
-                                            border: "none",  // Removes the border
-                                            backgroundColor: "transparent",  // Optional: makes the background transparent
-                                        }}
+                                        className="assetv2-asset-maintenance-wrapper"
                                     />
                                 )}
                             />
@@ -450,10 +416,7 @@ const OwnerForm = (_props) => {
                                     <TextInput
                                         value={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.lifeOfAsset))}`}
                                         readOnly // Makes the input field readonly
-                                        style={{
-                                            border: "none",  // Removes the border
-                                            backgroundColor: "transparent",  // Optional: makes the background transparent
-                                        }}
+                                        className="assetv2-asset-maintenance-wrapper"
                                     />
                                 )}
                             />
@@ -461,10 +424,10 @@ const OwnerForm = (_props) => {
                     </LabelFieldPair>
 
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <CardLabel className="card-label-smaller assetv2-asset-all-details-flex-row">
                             {t("AST_MAINTENANCE_OPTIONS")}
                             <Tooltip message={t("TOOLTIP_AST_MAINTENANCE_OPTIONS")}>
-                                <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer" }} />
+                                <InfoBannerIcon className="assetv2-asset-dispose-clickable" />
                             </Tooltip>
                         </CardLabel>
                         <div className="field">
@@ -557,10 +520,10 @@ const OwnerForm = (_props) => {
                         )}
 
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <CardLabel className="card-label-smaller assetv2-asset-all-details-flex-row">
                             {t("AST_MAINTENANCE_TYPE")}
                             <Tooltip message={t("TOOLTIP_AST_MAINTENANCE_TYPE")}>
-                                <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer" }} />
+                                <InfoBannerIcon className="assetv2-asset-dispose-clickable" />
                             </Tooltip>
                         </CardLabel>
                         <Controller
@@ -612,10 +575,10 @@ const OwnerForm = (_props) => {
                         </div>
                     </LabelFieldPair>
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <CardLabel className="card-label-smaller assetv2-asset-all-details-flex-row">
                             {t("AST_MAINTENANCE_CYCLE")}
                             <Tooltip message={t("TOOLTIP_AST_MAINTENANCE_CYCLE")}>
-                                <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer" }} />
+                                <InfoBannerIcon className="assetv2-asset-dispose-clickable" />
                             </Tooltip>
                         </CardLabel>
 
@@ -646,10 +609,10 @@ const OwnerForm = (_props) => {
 
                     <CardLabelError style={errorStyle}>{localFormState.touched.maintenanceCycle ? errors?.maintenanceCycle?.message : ""}</CardLabelError>
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <CardLabel className="card-label-smaller assetv2-asset-all-details-flex-row">
                                 {t("AST_NEXT_MAINTENANCE_DATE")}
                             <Tooltip message={t("TOOLTIP_AST_NEXT_MAINTENANCE_DATE")}>
-                               <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer" }} />
+                               <InfoBannerIcon className="assetv2-asset-dispose-clickable" />
                             </Tooltip>
                         </CardLabel>
                         <div className="field">
@@ -680,10 +643,10 @@ const OwnerForm = (_props) => {
                         </div>
                     </LabelFieldPair>
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <CardLabel className="card-label-smaller assetv2-asset-all-details-flex-row">
                             {t("AST_PAYMENT_TYPE")}
                             <Tooltip message={t("TOOLTIP_AST_PAYMENT_TYPE")}>
-                                <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer" }} />
+                                <InfoBannerIcon className="assetv2-asset-dispose-clickable" />
                             </Tooltip>
                         </CardLabel>
                         <Controller
@@ -707,10 +670,10 @@ const OwnerForm = (_props) => {
                     <CardLabelError style={errorStyle}>{localFormState.touched.paymentType ? errors?.paymentType?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <CardLabel className="card-label-smaller assetv2-asset-all-details-flex-row">
                             {t("AST_COST_MAINTENANCE_OVERHEAD")}
                             <Tooltip message={t("TOOLTIP_AST_COST_MAINTENANCE_OVERHEAD")}>
-                                <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer" }} />
+                                <InfoBannerIcon className="assetv2-asset-dispose-clickable" />
                             </Tooltip>
                         </CardLabel>
                         <div className="field">
@@ -866,7 +829,7 @@ const OwnerForm = (_props) => {
 
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_PRE_CONDITION_DOC")}</CardLabel>
-                        <div className="field" style={{ marginTop: "15px" }}>
+                        <div className="field assetv2-asset-dispose-top-spacing-2">
                             <Controller
                                 control={control}
                                 name={"preCondition"}
@@ -917,7 +880,7 @@ const OwnerForm = (_props) => {
                         </div>
                     </LabelFieldPair>
                     <CardLabelError style={errorStyle}>{localFormState.touched.preConditionRemarks ? errors?.assignedUser?.preConditionRemarks : ""}</CardLabelError>
-                    <div style={{ backgroundColor: "#f1f3f4", borderRadius: "8px", padding: "20px" }}>
+                    <div className="assetv2-asset-maintenance-container-padding">
 
 
                         <LabelFieldPair>
@@ -974,10 +937,10 @@ const OwnerForm = (_props) => {
                         </LabelFieldPair>
                         <CardLabelError style={errorStyle}>{localFormState.touched.postConditionRemarks ? errors?.assignedUser?.postConditionRemarks : ""}</CardLabelError>
                         <LabelFieldPair>
-                            <CardLabel className="card-label-smaller" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                            <CardLabel className="card-label-smaller assetv2-asset-all-details-flex-row">
                                 {t("AST_IS_LIFE_OF__ASSET_AFFECTED")}
                                 <Tooltip message={t("TOOLTIP_AST_IS_LIFE_OF__ASSET_AFFECTED")}>
-                                <InfoBannerIcon style={{ verticalAlign: "middle", cursor: "pointer" }} />
+                                <InfoBannerIcon className="assetv2-asset-dispose-clickable" />
                             </Tooltip>
                             </CardLabel>
                             <div className="field">

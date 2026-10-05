@@ -77,22 +77,22 @@ const CHBCancelBooking = ({ t, closeModal, actionCancelLabel, actionCancelOnSubm
             isDisabled={!agree}
             formId="modal-action"
         >
-            <Card style={{ boxShadow: "none" }}>
+            <Card className="chb-booking-popup-card">
                 <form onSubmit={handleSubmit(onSubmit)}>
                 {isOnline && (
-                    <div style={{ marginBottom: "20px" }}>
-                        <p style={{ color: "#505A5F", fontSize: "16px", marginBottom: "12px", lineHeight: "1.5" }}>
+                    <div className="chb-chbcancel-booking-bottom-spacing">
+                        <p className="chb-chbcancel-booking-bottom-spacing-2">
                             {t("CHB_ONLINE_PAYMENT_CANCEL_MSG", "Refund will be initiated to your account since the payment was done online. Cancellation charges may apply as per policy.")}
                         </p>
-                        <div style={{ marginBottom: "16px" }}>
-                            <label style={{ fontSize: "16px", fontWeight: "bold", display: "block", marginBottom: "8px" }}>
+                        <div className="chb-chbcancel-booking-bottom-spacing-3">
+                            <label className="chb-chbcancel-booking-bottom-spacing-4">
                                 {t("CHB_CANCEL_REASON_LABEL", "Why do you want to cancel?")} <span className="check-page-link-button">*</span>
                             </label>
                             <TextArea
                                 name="cancelReason"
                                 inputRef={register({ required: true })}
                                 placeholder={t("CHB_CANCEL_REASON_PLACEHOLDER", "Enter reason for cancellation")}
-                                style={{ width: "100%", minHeight: "80px" }}
+                                className="chb-chbcancel-booking-fullwidth"
                             />
                         </div>
                     </div>
@@ -100,7 +100,7 @@ const CHBCancelBooking = ({ t, closeModal, actionCancelLabel, actionCancelOnSubm
                 <CheckBox
                     label={t("CHB_CONFIRM_CANCEL_BOOKING")}
                     onChange={setdeclarationhandler}
-                    style={{ height: "auto" }}
+                    className="chb-chbcancel-booking-wrapper"
                     />
                 </form>
             </Card>

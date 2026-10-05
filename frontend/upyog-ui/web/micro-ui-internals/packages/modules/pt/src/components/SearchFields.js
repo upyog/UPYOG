@@ -137,7 +137,7 @@ const SearchFields = ({register, control, reset, tenantId, t, formState, setShow
         });
         setShowToast(null);
         previousPage();
-      }} className="pt-auto-11">{t(`ES_COMMON_CLEAR_ALL`)}</p>
+      }} className="pt-search-fields-mt-sm">{t(`ES_COMMON_CLEAR_ALL`)}</p>
                 </SearchField>
     </>;
 };

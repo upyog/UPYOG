@@ -169,7 +169,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
       {window.location.href.includes("/citizen") ? <Timeline currentStep={3} /> : <Timeline currentStep={3} />}
       <Card>
         <CardSubHeader>
-        <div style={{display:"flex", justifyContent: "space-between", width: "100%" }}>
+        <div className="chb-chbaddress-details-fullwidth">
           {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
@@ -196,7 +196,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             value={pincode}
             onChange={setAddressPincode}
             placeholder="Enter Pincode"
-            style={{width:user.type==="EMPLOYEE"?"50%":"86%" }}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"}
             ValidationRequired={true}
             validation={{
               pattern: "[0-9]{6}",
@@ -215,7 +215,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             name="city"
             value={city?.name || ""}
             placeholder={"City Auto Select"}
-            style={{width:user.type==="EMPLOYEE"?"50%":"86%" }}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"}
             onChange={setCity}
             disabled={true}
           />
@@ -228,7 +228,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             name="locality"
             value={locality?.name || ""}
             placeholder={"Locality Auto Select"}
-            style={{width:user.type==="EMPLOYEE"?"50%":"86%" }}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"}
             onChange={selectLocality}
             disabled={true}
           />
@@ -242,7 +242,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             value={streetName}
             placeholder={"Enter Street Name"}
             onChange={setApplicantStreetName}
-            style={{width:user.type==="EMPLOYEE"?"50%":"86%" }}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"}
             ValidationRequired={true}
             {...(validation = {
               pattern: "^[a-zA-Z0-9 ,\\-]+$",
@@ -260,7 +260,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             value={houseNo}
             placeholder={"Enter House No"}
             onChange={setApplicantHouseNo}
-            style={{width:user.type==="EMPLOYEE"?"50%":"86%" }}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"}
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,
@@ -279,7 +279,7 @@ const CHBAddressDetails = ({ t, config, onSelect, userType, formData, value = fo
             value={landmark}
             placeholder={"Enter Landmark"}
             onChange={setApplicantLandmark}
-            style={{ width: "50%" }}
+            className="chb-chbaddress-details-wrapper"
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,

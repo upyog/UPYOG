@@ -57,14 +57,8 @@ const RenewPopup = ({ t, closeModal, onSubmit, application }) => {
             hideSubmit={true}
             formId="modal-action"
         >
-            <Card style={{ boxShadow: "none" }}>
-            <div style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    gap: '20px', 
-                    flexDirection: 'column', 
-                    alignItems: 'center', 
-                }}>
+            <Card className="assetv2-renew-popup-card">
+            <div className="assetv2-renew-popup-flex-row">
                 {<SubmitBar label={t("SV_YES_PROCEED_WITH_APPLICATION")} onSubmit={proceedWithApplication} />}
                 {<SubmitBar label={t("SV_NO_PROCEED_PAYEMNT")} onSubmit={onRedirectedToCheckPage} />}
             </div>

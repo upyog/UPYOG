@@ -3,7 +3,7 @@ import { Header, Loader, TextInput, Dropdown, SubmitBar, CardLabel, Card } from 
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ChbApplication from "./chb-application";
-import "../../../css/chb-inline.css";
+
 
 /**
  * CHBMyApplications Component
@@ -76,7 +76,7 @@ export const CHBMyApplications = () => {
       bookingNo: trimmedSearchTerm || undefined,
       status: status?.code || undefined,
     };
-    
+
     // Update the filters state to trigger refetch
     setFilters(searchFilters);
   };
@@ -128,16 +128,16 @@ export const CHBMyApplications = () => {
             </div>
             <div>
               <div className="chb-myapps-search-btn-wrap">
-              <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
-              <p className="link chb-myapps-clear-link"
-                      onClick={() => {setSearchTerm(""),setStatus("") }}>{t(`ES_COMMON_CLEAR_ALL`)}
+                <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
+                <p className="link chb-myapps-clear-link"
+                  onClick={() => { setSearchTerm(""), setStatus("") }}>{t(`ES_COMMON_CLEAR_ALL`)}
                 </p>
               </div>
             </div>
           </div>
-            <Link to="/upyog-ui/citizen/chb/bookHall/searchhall">
-              <SubmitBar className="chb-new-booking-btn" label={t("CHB_NEW_BOOKING")+" +"} />
-            </Link>
+          <Link to="/upyog-ui/citizen/chb/bookHall/searchhall">
+            <SubmitBar className="chb-new-booking-btn" label={t("CHB_NEW_BOOKING") + " +"} />
+          </Link>
         </div>
       </Card>
       <div>
@@ -157,7 +157,7 @@ export const CHBMyApplications = () => {
           </p>
         )}
 
-        {filteredApplications.length !== 0 && data?.count>t1 && (
+        {filteredApplications.length !== 0 && data?.count > t1 && (
           <div>
             <p className="chb-myapps-msg">
               <span className="link">

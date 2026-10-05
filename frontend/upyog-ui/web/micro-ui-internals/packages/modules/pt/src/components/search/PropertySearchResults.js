@@ -131,7 +131,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast,ptSearchConf
     }) => {
       return <div>
               {row.original?.due > 0 && Digit.Utils.didEmployeeHasRole("PT_CEMP") ? <span className="link"> 
-                  <a onClick={() => handleCollectTaxClick(row.original)} className="pt-auto-28">{t("ES_PT_COLLECT_TAX")}</a>
+                  <a onClick={() => handleCollectTaxClick(row.original)} className="pt-property-search-results-link">{t("ES_PT_COLLECT_TAX")}</a>
                 </span> : null}
             </div>;
     }

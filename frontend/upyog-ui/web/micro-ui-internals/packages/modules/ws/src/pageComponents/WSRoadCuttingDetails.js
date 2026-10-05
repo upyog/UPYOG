@@ -77,7 +77,7 @@ const WSRoadCuttingDetails = ({
   if (isMdmsLoading) return <Loader />;
   return <React.Fragment>
       {roadCuttingDetails.filter(o => o.status !== "INACTIVE").map((roadCutt, index) => <RoadCuttForm key={roadCutt.key} index={index} roadCutt={roadCutt} {...commonProps} />)}
-      <LinkButton label={t("WS_ADD_ROAD_TYPE")} onClick={addroadCutt} className="ws-auto-154" /> 
+      <LinkButton label={t("WS_ADD_ROAD_TYPE")} onClick={addroadCutt} className="ws-road-cutting-details-btn" /> 
     </React.Fragment>;
 };
 const RoadCuttForm = _props => {
@@ -155,14 +155,14 @@ const RoadCuttForm = _props => {
     marginTop: "-21px"
   };
   return <React.Fragment>
-      <div className="ws-auto-155">
+      <div className="ws-road-cutting-details-item">
         <div className="label-field-pair">
-          <h2 className="card-label card-label-smaller ws-auto-156">
+          <h2 className="card-label card-label-smaller ws-road-cutting-details-grey-text">
             {t("WS_COMMON_ROAD_CUTTING_DETAILS")} {allRoadCuttingDetails?.filter(o => o.status !== "INACTIVE").length > 1 ? index + 1 : null}
           </h2>
         </div>
-        <div className="ws-auto-157">
-          {allRoadCuttingDetails?.filter(o => o.status !== "INACTIVE").length > 1 ? <LinkButton label={<DeleteIcon fill={!(allRoadCuttingDetails?.length == 1) ? "#494848" : "#FAFAFA"} className="ws-auto-159" />} onClick={e => removeroadCutt(roadCutt)} className="ws-auto-158" /> : null}
+        <div className="ws-road-cutting-details-bordered">
+          {allRoadCuttingDetails?.filter(o => o.status !== "INACTIVE").length > 1 ? <LinkButton label={<DeleteIcon fill={!(allRoadCuttingDetails?.length == 1) ? "#494848" : "#FAFAFA"} className="ws-road-cutting-details-btn-relative" />} onClick={e => removeroadCutt(roadCutt)} className="ws-road-cutting-details-btn-2" /> : null}
 
           <div style={allRoadCuttingDetails?.filter(o => o.status !== "INACTIVE").length == 1 ? {} : {
           marginTop: "40px"

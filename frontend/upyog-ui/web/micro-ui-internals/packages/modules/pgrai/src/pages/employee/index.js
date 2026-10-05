@@ -21,9 +21,9 @@ const EmployeeApp = () => {
   const ComplaintDetails = Digit?.ComponentRegistryService?.getComponent("PGRAIApplicationDetails");
   const PGRAICreate = Digit?.ComponentRegistryService?.getComponent("PGRAICreate");
   return (
-    <span className={"pgr-ai-citizen"} style={{ width: "50%" }}>
+    <span className={`${"pgr-ai-citizen"} pgrai-index-wrapper-2`}>
       <AppContainer>
-        <BackButton style={{ marginTop: "15px" }}>Back</BackButton>
+        <BackButton className="pgrai-index-action-btn">Back</BackButton>
         <Routes>
           <Route path= "complaint/create/*" element={<PrivateRoute><PGRAICreate /></PrivateRoute>} />
           <Route

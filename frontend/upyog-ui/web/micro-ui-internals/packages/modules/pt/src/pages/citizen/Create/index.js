@@ -288,7 +288,7 @@ config.indexRoute = "info";
       actionSaveLabel={"Proceed"}
       actionSaveOnSubmit={setModal}
       formId="modal-action"
-    >  <div className="pt-auto-105">
+    >  <div className="pt-index-full-width">
     <Card>
         <CardHeader>Property Details</CardHeader>
      

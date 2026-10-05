@@ -136,7 +136,7 @@ const EDCRScrutiny = ({ config, onSelect, userType, formData, ownerIndex = 0, ad
                                 error={error}
                                 uploadMessage={uploadMessage}
                         />
-                        <div style={{ disabled: "true", height: "30px", width: "100%", fontSize: "14px" }}>{t("EDCR_UPLOAD_FILE_LIMITS_LABEL")}</div>
+                        <div className="core-edcr-scrutiny-fullwidth">{t("EDCR_UPLOAD_FILE_LIMITS_LABEL")}</div>
                         {isShowToast && <Toast error={isShowToast.key} label={t(isShowToast.label)} onClose={() => setIsShowToast(null)} isDleteBtn={true} />}
                         {/* {isSubmitBtnDisable ? <Loader /> : null} */}
 

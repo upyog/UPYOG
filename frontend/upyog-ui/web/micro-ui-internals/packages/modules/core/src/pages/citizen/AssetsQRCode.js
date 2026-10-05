@@ -59,28 +59,28 @@ const AssetsQRCode = ({ path }) => {
     console.log('PaymentReceipt:- ', PaymentReceipt);
     return (
         <React.Fragment>
-            <div style={{ width: "100%" }}>
+            <div className="core-assets-qrcode-fullwidth">
                 <Card>
                     <CardHeader>Assets Summary </CardHeader>
                     {!recieptDataLoading ?
                         <StatusTable>
-                            <Row label={t("Id")} text={PaymentReceipt?.Assets[0]?.applicationNo || "NA"}  />
-                            <Row label={t("Reference NO")} text={PaymentReceipt?.Assets[0]?.assetBookRefNo || "NA"}  />
-                            <Row label={t("Assets Name")} text={PaymentReceipt?.Assets[0]?.assetName || "NA"}  />
-                            <Row label={t("City")} text={PaymentReceipt?.Assets[0]?.addressDetails?.city || "NA"}  />
-                            <Row label={t("Purchase Cost")} text={PaymentReceipt?.Assets[0]?.purchaseCost || "NA"}  />
-                            <Row 
-                             label={t("Location Track")} 
-                             text={
+                            <Row label={t("Id")} text={PaymentReceipt?.Assets[0]?.applicationNo || "NA"} />
+                            <Row label={t("Reference NO")} text={PaymentReceipt?.Assets[0]?.assetBookRefNo || "NA"} />
+                            <Row label={t("Assets Name")} text={PaymentReceipt?.Assets[0]?.assetName || "NA"} />
+                            <Row label={t("City")} text={PaymentReceipt?.Assets[0]?.addressDetails?.city || "NA"} />
+                            <Row label={t("Purchase Cost")} text={PaymentReceipt?.Assets[0]?.purchaseCost || "NA"} />
+                            <Row
+                                label={t("Location Track")}
+                                text={
                                     PaymentReceipt?.Assets[0]?.location ? (
-                                    <a 
-                                        href={`https://www.google.com/maps/search/${PaymentReceipt.Assets[0].location}`} 
-                                        target="_blank" 
-                                        rel="noopener noreferrer"
-                                        style={{ textDecoration: "none", color: "blue" }}
-                                    >
-                                        Track Location
-                                    </a>
+                                        <a
+                                            href={`https://www.google.com/maps/search/${PaymentReceipt.Assets[0].location}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="core-assets-qrcode-wrapper"
+                                        >
+                                            Track Location
+                                        </a>
                                     ) : "NA"
                                 }
                             />

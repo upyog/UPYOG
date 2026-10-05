@@ -1,7 +1,7 @@
 import { Card, CardSubHeader, CardSectionHeader, Header, Loader, Row, StatusTable, MultiLink } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams, Link,  } from "react-router-dom";
+import { useParams, Link, } from "react-router-dom";
 import ADSDocument from "../../pageComponents/ADSDocument";
 import ApplicationTable from "../../components/ApplicationTable";
 import { pdfDownloadLink } from "../../utils";
@@ -13,7 +13,7 @@ import { size } from "lodash";
  * The component displays various application details, such as applicant information,
  * booking data, and related documents, using components  ApplicationTable.
  */
-import "../../css/ads-inline-auto.css";
+
 const ADSApplicationDetails = () => {
   const { t } = useTranslation();
   const navigate = Digit.Hooks.useCustomNavigate();
@@ -199,47 +199,47 @@ const ADSApplicationDetails = () => {
     bookingStatus: `${t(slot.status)}`
   })) || [];
   return <React.Fragment>
-      <div>
-        <div className="cardHeaderWithOptions ads-auto-71">
-          <Header styles={{
+    <div>
+      <div className="cardHeaderWithOptions ads-application-details-item">
+        <Header styles={{
           fontSize: "32px"
         }}>{t("ADS_BOOKING_DETAILS")}</Header>
-          {dowloadOptions && dowloadOptions.length > 0 && <MultiLink className="multilinkWrapper" onHeadClick={() => setShowOptions(!showOptions)} displayOptions={showOptions} options={dowloadOptions} />}
-        </div>
-        <Card>
-          <StatusTable>
-            <Row className="border-none" label={t("ADS_BOOKING_NO")} text={ads_details?.bookingNo} />
-          </StatusTable>
-          <CardSubHeader className="ads-auto-72">{t("ADS_PAYMENT_DETAILS")}</CardSubHeader>
-          <StatusTable>
-            <Row className="border-none" label={t("ADS_TOTAL_AMOUNT")} text={billData?.Bill?.[0]?.totalAmount > 0 ? <span>
-                       ₹ {billData?.Bill?.[0]?.totalAmount || t("CS_NA")}  <strong className="ads-auto-73">({t("PENDING_PAYMENT")})</strong>
-                      </span> : <span>
-                      ₹ {reciept_data?.Payments?.[0]?.totalAmountPaid || t("CS_NA")}   <strong className="ads-auto-74">({t("PAYMENT_PAID")})</strong>
-                      </span>} />          
-            </StatusTable>
-          <CardSubHeader className="ads-auto-75">{t("ADS_APPLICANT_DETAILS")}</CardSubHeader>
-          <StatusTable>
-            <Row className="border-none" label={t("ADS_APPLICANT_NAME")} text={ads_details?.applicantDetail?.applicantName || t("CS_NA")} />
-            <Row className="border-none" label={t("ADS_MOBILE_NUMBER")} text={ads_details?.applicantDetail?.applicantMobileNo || t("CS_NA")} />
-            <Row className="border-none" label={t("ADS_ALT_MOBILE_NUMBER")} text={ads_details?.applicantDetail?.applicantAlternateMobileNo || t("CS_NA")} />
-            <Row className="border-none" label={t("ADS_EMAIL_ID")} text={ads_details?.applicantDetail?.applicantEmailId || t("CS_NA")} />
-          </StatusTable>
+        {dowloadOptions && dowloadOptions.length > 0 && <MultiLink className="multilinkWrapper" onHeadClick={() => setShowOptions(!showOptions)} displayOptions={showOptions} options={dowloadOptions} />}
+      </div>
+      <Card>
+        <StatusTable>
+          <Row className="border-none" label={t("ADS_BOOKING_NO")} text={ads_details?.bookingNo} />
+        </StatusTable>
+        <CardSubHeader className="ads-application-details-title-lg">{t("ADS_PAYMENT_DETAILS")}</CardSubHeader>
+        <StatusTable>
+          <Row className="border-none" label={t("ADS_TOTAL_AMOUNT")} text={billData?.Bill?.[0]?.totalAmount > 0 ? <span>
+            ₹ {billData?.Bill?.[0]?.totalAmount || t("CS_NA")}  <strong className="ads-application-details-subheader-red">({t("PENDING_PAYMENT")})</strong>
+          </span> : <span>
+            ₹ {reciept_data?.Payments?.[0]?.totalAmountPaid || t("CS_NA")}   <strong className="ads-application-details-green">({t("PAYMENT_PAID")})</strong>
+          </span>} />
+        </StatusTable>
+        <CardSubHeader className="ads-application-details-title-lg">{t("ADS_APPLICANT_DETAILS")}</CardSubHeader>
+        <StatusTable>
+          <Row className="border-none" label={t("ADS_APPLICANT_NAME")} text={ads_details?.applicantDetail?.applicantName || t("CS_NA")} />
+          <Row className="border-none" label={t("ADS_MOBILE_NUMBER")} text={ads_details?.applicantDetail?.applicantMobileNo || t("CS_NA")} />
+          <Row className="border-none" label={t("ADS_ALT_MOBILE_NUMBER")} text={ads_details?.applicantDetail?.applicantAlternateMobileNo || t("CS_NA")} />
+          <Row className="border-none" label={t("ADS_EMAIL_ID")} text={ads_details?.applicantDetail?.applicantEmailId || t("CS_NA")} />
+        </StatusTable>
 
-          <CardSubHeader className="ads-auto-76">{t("ADS_ADDRESS_DETAILS")}</CardSubHeader>
-          <StatusTable>
-            <Row className="border-none" label={t("ADS_HOUSE_NO")} text={ads_details?.address?.houseNo || t("CS_NA")} />
-            <Row className="border-none" label={t("ADS_HOUSE_NAME")} text={ads_details?.address?.houseName || t("CS_NA")} />
-            <Row className="border-none" label={t("ADS_STREET_NAME")} text={ads_details?.address?.streetName || t("CS_NA")} />
-            <Row className="border-none" label={t("ADS_ADDRESS_LINE1")} text={ads_details?.address?.addressLine1 || t("CS_NA")} />
-            <Row className="border-none" label={t("ADS_ADDRESS_LINE2")} text={ads_details?.address?.addressLine2 || t("CS_NA")} />
-            <Row className="border-none" label={t("ADS_LANDMARK")} text={ads_details?.address?.landmark || t("CS_NA")} />
-            <Row className="border-none" label={t("ADS_CITY")} text={ads_details?.address?.city || t("CS_NA")} />
-            <Row className="border-none" label={t("ADS_LOCALITY")} text={ads_details?.address?.locality || t("CS_NA")} />
-            <Row className="border-none" label={t("ADS_ADDRESS_PINCODE")} text={ads_details?.address?.pincode || t("CS_NA")} />
-          </StatusTable>
-          <CardSubHeader className="ads-auto-77">{t("ADS_CART_DETAILS")}</CardSubHeader>
-          <ApplicationTable t={t} data={adslistRows} columns={columns} getCellProps={cellInfo => ({
+        <CardSubHeader className="ads-application-details-title-lg">{t("ADS_ADDRESS_DETAILS")}</CardSubHeader>
+        <StatusTable>
+          <Row className="border-none" label={t("ADS_HOUSE_NO")} text={ads_details?.address?.houseNo || t("CS_NA")} />
+          <Row className="border-none" label={t("ADS_HOUSE_NAME")} text={ads_details?.address?.houseName || t("CS_NA")} />
+          <Row className="border-none" label={t("ADS_STREET_NAME")} text={ads_details?.address?.streetName || t("CS_NA")} />
+          <Row className="border-none" label={t("ADS_ADDRESS_LINE1")} text={ads_details?.address?.addressLine1 || t("CS_NA")} />
+          <Row className="border-none" label={t("ADS_ADDRESS_LINE2")} text={ads_details?.address?.addressLine2 || t("CS_NA")} />
+          <Row className="border-none" label={t("ADS_LANDMARK")} text={ads_details?.address?.landmark || t("CS_NA")} />
+          <Row className="border-none" label={t("ADS_CITY")} text={ads_details?.address?.city || t("CS_NA")} />
+          <Row className="border-none" label={t("ADS_LOCALITY")} text={ads_details?.address?.locality || t("CS_NA")} />
+          <Row className="border-none" label={t("ADS_ADDRESS_PINCODE")} text={ads_details?.address?.pincode || t("CS_NA")} />
+        </StatusTable>
+        <CardSubHeader className="ads-application-details-title-lg">{t("ADS_CART_DETAILS")}</CardSubHeader>
+        <ApplicationTable t={t} data={adslistRows} columns={columns} getCellProps={cellInfo => ({
           style: {
             minWidth: "150px",
             padding: "10px",
@@ -247,12 +247,12 @@ const ADSApplicationDetails = () => {
             paddingLeft: "20px"
           }
         })} isPaginationRequired={false} totalRecords={adslistRows.length} />
-          <CardSubHeader className="ads-auto-78">{t("ADS_DOCUMENTS_DETAILS")}</CardSubHeader>
-          <StatusTable>
-              {docs.map((doc, index) => <ADSDocument value={docs} Code={doc?.documentType} index={index} />)}
-          </StatusTable>
-        </Card>
-      </div>
-    </React.Fragment>;
+        <CardSubHeader className="ads-application-details-title-lg">{t("ADS_DOCUMENTS_DETAILS")}</CardSubHeader>
+        <StatusTable>
+          {docs.map((doc, index) => <ADSDocument value={docs} Code={doc?.documentType} index={index} />)}
+        </StatusTable>
+      </Card>
+    </div>
+  </React.Fragment>;
 };
 export default ADSApplicationDetails;

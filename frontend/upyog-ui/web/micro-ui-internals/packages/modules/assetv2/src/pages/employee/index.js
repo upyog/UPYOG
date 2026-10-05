@@ -70,7 +70,7 @@ const EmployeeApp = ({ path, url, userType }) => {
           {!isRes ? (
             <div style={isNewRegistration ? { marginLeft: "12px", display: "flex", alignItems: "center" } : { marginLeft: "-4px", display: "flex", alignItems: "center" }}>
               <BackButton location={location} />
-              <span style={{ margin: "0 5px 16px", display: "inline-block" }}>|</span>
+              <span className="assetv2-index-spacing">|</span>
               <AssetBreadCrumbs location={location} />
             </div>
           ) : null}

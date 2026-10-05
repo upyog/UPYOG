@@ -146,18 +146,18 @@ function ASSETSelectDocument({
       });
     }
   }, [uploadedFile, selectedDocument, latitude, longitude, setDocuments]);
-  return <div className="asset-auto-208">
+  return <div className="asset-new-document-mb-md">
      {doc?.hasDropdown && <LabelFieldPair>
     {doc?.code === "OWNER.ASSETPHOTO" ? <div>
-        {`${t(doc.code.replaceAll(".", "_"))}`} <span className="asset-auto-209">*</span>
-        <div className="tooltip asset-auto-210">
+        {`${t(doc.code.replaceAll(".", "_"))}`} <span className="asset-new-document-red">*</span>
+        <div className="tooltip asset-new-document-link">
           <InfoBannerIcon />
-          <span className="tooltiptext asset-auto-211">
+          <span className="tooltiptext asset-new-document-link-ml-md">
             {`${t(doc.code.replaceAll(".", "_") + "_INFO")}`}
           </span>
         </div>
       </div> : <CardLabel className="card-label-smaller">
-        {t(doc.code.replaceAll(".", "_"))} <span className="asset-auto-212">*</span>
+        {t(doc.code.replaceAll(".", "_"))} <span className="asset-new-document-red">*</span>
       </CardLabel>}
   </LabelFieldPair>}
       <LabelFieldPair>
@@ -166,7 +166,7 @@ function ASSETSelectDocument({
           setUploadedFile(null);
           setLatitude(null);
           setLongitude(null);
-        }} id={id} message={isUploading ? <div className="asset-auto-213">
+        }} id={id} message={isUploading ? <div className="asset-new-document-row-center-flex">
                 <LoadingSpinner />
                 <span>Uploading...</span>
               </div> : uploadedFile ? "1 File Uploaded" : "No File Uploaded"} textStyles={{
@@ -176,7 +176,7 @@ function ASSETSelectDocument({
         }} accept=".pdf, .jpeg, .jpg, .png" buttonType="button" error={!uploadedFile} />
         </div>
       </LabelFieldPair>
-      {doc?.code === "OWNER.ASSETPHOTO" && latitude && longitude && <div className="asset-auto-214">
+      {doc?.code === "OWNER.ASSETPHOTO" && latitude && longitude && <div className="asset-new-document-center-text-mt-sm">
           <p><strong>{t("Location Details")}:</strong></p>
           <p>{t("Latitude")}: {latitude}</p>
           <p>{t("Longitude")}: {longitude}</p>

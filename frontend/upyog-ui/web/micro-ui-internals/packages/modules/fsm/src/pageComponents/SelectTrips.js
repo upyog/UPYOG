@@ -185,7 +185,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
           <div className="field">
             <TextInput
               type={input.type}
-              style={{ ...styles, ...FSMTextFieldStyle }}
+              style={Object.assign({}, styles, FSMTextFieldStyle)}
               onChange={(e) => setValue(e.target.value, input.name)}
               key={input.name}
               value={input.name === "noOfTrips" ? noOfTrips : input.name ==="distancefromroad" ? distancefromroad : input.name === "roadWidth" ? roadWidth : formData[config.key]?.[input.name] || ''}
@@ -195,7 +195,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
           </div>
         </LabelFieldPair>
       ))}
-      {billError ? <CardLabelError style={{ width: "100%", textAlign: "center" }}>{t("ES_APPLICATION_BILL_SLAB_ERROR")}</CardLabelError> : null}
+      {billError ? <CardLabelError className="fsm-select-trip-data-centered">{t("ES_APPLICATION_BILL_SLAB_ERROR")}</CardLabelError> : null}
     </div>
   );
 };

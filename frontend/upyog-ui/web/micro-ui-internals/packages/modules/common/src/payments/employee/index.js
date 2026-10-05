@@ -26,7 +26,7 @@ const EmployeePayment = ({ stateCode, cityCode, moduleCode }) => {
 
   return (
     <React.Fragment>
-      <p className="breadcrumb" style={{ marginLeft: "15px" }}>
+      <p className="breadcrumb cmn-index-spacing-3">
         <Link to={"/upyog-ui/employee"}>{t("ES_COMMON_HOME")}</Link>
         {isFsm ? <Link to={"/upyog-ui/employee/fsm/home"}>/ {t("ES_TITLE_FSM")} </Link> : null}
         {isFsm ? <Link to={"/upyog-ui/employee/fsm/inbox"}>/ {t("ES_TITLE_INBOX")}</Link> : null}/ {link}

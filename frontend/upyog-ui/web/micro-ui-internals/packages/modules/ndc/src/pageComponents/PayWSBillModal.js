@@ -118,25 +118,20 @@ import {
         {isLoading ? (
           <Loader />
         ) : isError ? (
-          <p style={{ color: "red", padding: "1rem" }}>{t("ERROR_LOADING_DATA")}</p>
+          <p className="ndc-pay-wsbill-modal-required-asterisk">{t("ERROR_LOADING_DATA")}</p>
         ) : (
-          <div style={{ overflowX: "auto" }}>
+          <div className="ndc-pay-wsbill-modal-wrapper">
             <table
-              style={{
-                width: "100%",
-                borderCollapse: "collapse",
-                fontSize: "14px",
-                marginTop: "1rem"
-              }}
+              className="ndc-pay-wsbill-modal-fullwidth"
             >
               <thead>
-                <tr style={{ backgroundColor: "#f0f0f0" }}>
+                <tr className="ndc-pay-wsbill-modal-table-cell">
                   <th rowSpan={2} style={cellStyleLeft}>Installments</th>
-                  <th colSpan={3} style={{ ...cellStyleRight, textAlign: "center" }}>Demand</th>
-                  <th colSpan={3} style={{ ...cellStyleRight, textAlign: "center" }}>Collection</th>
-                  <th colSpan={3} style={{ ...cellStyleRight, textAlign: "center" }}>Balance</th>
+                  <th colSpan={3} className="text-center" style={cellStyleRight}>Demand</th>
+                  <th colSpan={3} className="text-center" style={cellStyleRight}>Collection</th>
+                  <th colSpan={3} className="text-center" style={cellStyleRight}>Balance</th>
                 </tr>
-                <tr style={{ backgroundColor: "#f9f9f9" }}>
+                <tr className="ndc-pay-wsbill-modal-table-cell-2">
                   <th style={cellStyleRight}>Tax</th>
                   <th style={cellStyleRight}>Interest</th>
                   <th style={cellStyleRight}>Penalty</th>
@@ -150,7 +145,7 @@ import {
               </thead>
               <tbody>
                 {getTableRows()}
-                <tr style={{ backgroundColor: "#efefef", fontWeight: "bold" }}>
+                <tr className="ndc-pay-wsbill-modal-table-cell-3">
                   <td style={cellStyleLeft}>Total</td>
                   <td style={cellStyleRight}>{totals.demandTax.toFixed(2)}</td>
                   <td style={cellStyleRight}>{totals.demandInterest.toFixed(2)}</td>

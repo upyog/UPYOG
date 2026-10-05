@@ -174,10 +174,10 @@ const ApplicationDetails = () => {
 
     return (
     <div>
-      <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
+      <div className={`${"employee-application-details"} ptr-application-details-bottom-spacing`}>
         <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("PTR_PET_APPLICATION_DETAILS")}</Header>
-        <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}> 
-        <div style={{zIndex: "10",  position: "relative"}}>
+        <div className="ptr-application-details-flex-row"> 
+        <div className="ptr-application-details-wrapper">
         {dowloadOptions && dowloadOptions.length > 0 && (
           <MultiLink
             className="multilinkWrapper"
@@ -214,7 +214,7 @@ const ApplicationDetails = () => {
 
       {/* link added for the renewal application */}
       {(appDetailsToShow?.applicationData?.applicationData?.status == "Expired") && <Link to={`/upyog-ui/employee/ptr/petservice/revised-application`}  >
-        <SubmitBar style={{ marginBottom: "5px" }} label={"Renewal"} />
+        <SubmitBar className="ptr-pet-application-bottom-spacing" label={"Renewal"} />
       </Link>}
 
     </div>

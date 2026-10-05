@@ -54,7 +54,6 @@ const Profile = ({ info, stateName, t }) => {
         <img
           className="img-responsive img-circle img-Profile"
           src={profilePic ? profilePic : defaultImage}
-          style={{ objectFit: "cover", objectPosition: "center" }}
         />
       </div>
       <div id="profile-name" className="label-container name-Profile">
@@ -76,7 +75,7 @@ const Profile = ({ info, stateName, t }) => {
   );
 };
 const PoweredBy = () => (
-  <div className="digit-footer" style={{ marginBottom: 0 }}>
+  <div className="digit-footer">
   </div>
 );
 
@@ -147,7 +146,7 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
         text: (
           <React.Fragment>
             {t("CS_COMMON_HELPLINE")}
-            <div className="telephone" style={{ marginTop: "-10%" }}>
+            <div className="telephone sidebar-helpline-telephone">
               <div className="link">
                 <a href={`tel:${filteredTenantContact}`}>{filteredTenantContact}</a>
               </div>

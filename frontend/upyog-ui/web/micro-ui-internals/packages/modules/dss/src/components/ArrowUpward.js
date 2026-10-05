@@ -14,12 +14,7 @@ const Arrow_Upward = ({ style }) => (
 export function ArrowUpwardElement(marginRight, marginLeft) {
   return (
     <Arrow_Upward
-      style={{
-        display: "inline-block",
-        verticalAlign: "baseline",
-        marginRight: !marginRight ? "0px" : marginRight,
-        marginLeft: !marginLeft ? "0px" : marginLeft,
-      }}
+      className="arrow-icon-svg" style={marginRight || marginLeft ? { marginRight: marginRight || "0px", marginLeft: marginLeft || "0px" } : undefined}
     />
   );
 };

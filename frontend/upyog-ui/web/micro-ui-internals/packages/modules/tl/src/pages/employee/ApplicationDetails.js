@@ -7,7 +7,7 @@ import { Header, MultiLink, LinkButton } from "@nudmcdgnpm/digit-ui-react-compon
 import get from "lodash/get";
 import orderBy from "lodash/orderBy";
 import getPDFData from "../../utils/getTLAcknowledgementData";
-import "../../css/tl-inline-auto.css";
+
 const ApplicationDetails = () => {
   const {
     data: storeData
@@ -346,42 +346,16 @@ const ApplicationDetails = () => {
     onClick: handleDownloadPdf
   }];
   return <div className={"employee-main-application-details"}>
-    <style>{`
-      .employee-application-details.tl-auto-169 {
-        position: relative;
-        z-index: 100;
-      }
-      .tl-auto-170 {
-        position: relative;
-        z-index: 100;
-        display: flex;
-        flex-direction: row-reverse;
-        align-items: center;
-        margin-top: -25px;
-      }
-      .tl-auto-171 {
-        position: relative;
-      }
-      .tl-auto-171 .employee-options-btn-className {
-        position: absolute !important;
-        top: 100% !important;
-        right: 0 !important;
-        width: max-content !important;
-        z-index: 1000 !important;
-        background-color: #ffffff !important;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15) !important;
-      }
-    `}</style>
-    <div className={"employee-application-details tl-auto-169"}>
+    <div className={"employee-application-details tl-application-details-mb-md"}>
       <Header>{applicationDetails?.applicationData?.workflowCode == "NewTL" && applicationDetails?.applicationData?.status !== "APPROVED" ? t("TL_TRADE_APPLICATION_DETAILS_LABEL") : t("TL_TRADE_LICENSE_DETAILS_LABEL")}</Header>
-      <div className="tl-auto-170">
+      <div className="tl-application-details-row-reverse-row-center">
 
-        <div className="tl-auto-171">
+        <div className="tl-application-details-relative-layered">
           <MultiLink className="multilinkWrapper" onHeadClick={() => setIsDisplayDownloadMenu(!isDisplayDownloadMenu)} displayOptions={isDisplayDownloadMenu} options={dowloadOptions} downloadBtnClassName={"employee-download-btn-className"} optionsClassName={"employee-options-btn-className"} optionStyle={{
             padding: "10px"
           }} />
         </div>
-        <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline} className="tl-auto-172"></LinkButton>
+        <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline} className="tl-application-details-btn"></LinkButton>
       </div>
     </div>
     <ApplicationDetailsTemplate applicationDetails={applicationDetails} isLoading={isLoading} isDataLoading={isLoading} applicationData={applicationDetails?.applicationData} mutate={mutate} id={"timeline"} workflowDetails={workflowDetails} businessService={businessService} moduleCode="TL" showToast={showToast} setShowToast={setShowToast} closeToast={closeToast} timelineStatusPrefix={"WF_NEWTL_"} />

@@ -284,7 +284,7 @@ const TLSelectOwnerDetails = ({
               }} />
                   <CardLabel>{`${t("TL_MOBILE_NUMBER_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className="field-container">
-                    <span className="employee-card-input employee-card-input--front tl-auto-108">
+                    <span className="employee-card-input employee-card-input--front tl-select-owner-details-link-mt-neg">
                       +91
                     </span>
                     <TextInput type={"text"} t={t} isMandatory={false} name="mobilenumber" value={field.mobilenumber} onChange={e => handleTextInputField(index, e, "mobilenumber")} ValidationRequired={true}
@@ -300,7 +300,7 @@ const TLSelectOwnerDetails = ({
                   </div>
                   <CardLabel>{`${t("TL_TELEPHONE_NUMBER_LABEL")}`}</CardLabel>
                   <div className="field-container">
-                    <span className="employee-card-input employee-card-input--front tl-auto-109">
+                    <span className="employee-card-input employee-card-input--front tl-select-owner-details-link-mt-neg">
                       +91
                     </span>
                     <TextInput type={"text"} t={t} isMandatory={false} name="altContactNumber" value={field.altContactNumber} onChange={e => handleTextInputField(index, e, "altContactNumber")} ValidationRequired={true}
@@ -345,10 +345,10 @@ const TLSelectOwnerDetails = ({
             borderColor: "#f3f3f3",
             background: "#FAFAFA"
           } : {}}>
-                <CardLabel className="tl-auto-110">{`${t("TL_NEW_OWNER_DETAILS_NAME_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
+                <CardLabel className="">{`${t("TL_NEW_OWNER_DETAILS_NAME_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                 {typeOfOwner === "MULTIOWNER" && <LinkButton label={<div>
                         <span>
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="tl-auto-112">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="tl-select-owner-details-label-relative">
                             <path d="M1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM14 1H10.5L9.5 0H4.5L3.5 1H0V3H14V1Z" fill={!(formState.length == 1) ? "#494848" : "#FAFAFA"} />
                           </svg>
                         </span>
@@ -357,7 +357,7 @@ const TLSelectOwnerDetails = ({
               payload: {
                 index
               }
-            })} className="tl-auto-111" />}
+            })} className="tl-select-owner-details-input" />}
                 <TextInput style={typeOfOwner === "MULTIOWNER" ? {
               background: "#FAFAFA"
             } : {}} t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="name" value={field.name} onChange={e => handleTextInputField(index, e, "name")} ValidationRequired={true}
@@ -376,7 +376,7 @@ const TLSelectOwnerDetails = ({
             /> : <Loader />}
                 <CardLabel>{`${t("TL_MOBILE_NUMBER_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                 <div className="field-container">
-                  <span className="employee-card-input employee-card-input--front tl-auto-113">
+                  <span className="employee-card-input employee-card-input--front tl-select-owner-details-link-mt-neg">
                     +91
                   </span>
                   <TextInput style={typeOfOwner === "MULTIOWNER" ? {
@@ -415,7 +415,7 @@ const TLSelectOwnerDetails = ({
                   <TextInput t={t} type={"text"} isMandatory={false} name="emailId" value={field?.emailId} onChange={e => handleEmailChange(index, e, "emailId")} ValidationRequired={true}
               //disable={isUpdateProperty || isEditProperty}
               />
-                  {error && <span className="tl-auto-114">{error}</span>}
+                  {error && <span className="tl-select-owner-details-link-red">{error}</span>}
                   </div>
                 {typeOfOwner === "MULTIOWNER" && <CheckBox label={t("TL_PRIMARY_OWNER_LABEL")} onChange={e => dispatch({
               type: "SET_PRIMARY_OWNER",
@@ -424,16 +424,16 @@ const TLSelectOwnerDetails = ({
               }
             })} value={field.isprimaryowner} checked={field.isprimaryowner} name={`multiowner-checkbox-${index}`}
             //disable={isUpdateProperty || isEditProperty}
-            className="tl-auto-115" />}
+            className="tl-select-owner-details-item" />}
               </div>
             </div>;
       })}
         {typeOfOwner === "MULTIOWNER" && <div>
             {/* <hr color="#d6d5d4" className="break-line"></hr> */}
-            <div className="tl-auto-116">
+            <div className="tl-select-owner-details-flex-3">
               <button type="button" onClick={() => dispatch({
             type: "ADD_NEW_OWNER"
-          })} className="tl-auto-117">
+          })} className="tl-select-owner-details-item">
                 {t("TL_ADD_OWNER_LABEL")}
               </button>
             </div>

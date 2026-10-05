@@ -248,7 +248,7 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
           }
         }
         dispayRange.push(
-          <div className={`range-box ${className} ${monthCurrentYear}-${ele}`} onClick={(e)=>{onMonthSelect(e)}} style={{width: "50px",height: "50px",margin: "10px",lineHeight: "50px",textAlign: "center",border: "1px solid",cursor: "pointer", borderRadius: "4px",backgroundColor: className === "selected" ? "rgb(61, 145, 255)" : "white",color: className === "selected" ? "black" : "inherit",fontWeight: className === "selected" ? "bold" : "normal"}}>
+          <div onClick={(e)=>{onMonthSelect(e)}} className={`range-box ${className} ${monthCurrentYear}-${ele} ${className === "selected" ? "dss-range-box--selected" : "dss-range-box--unselected"} dss-range-box-base`}>
             {ele}
           </div>
         )
@@ -265,13 +265,13 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
           className = "selected";
         }
         dispayRange.push(
-          <div className={`range-box ${className} ${year}`} onClick={(e)=>{onYearsSelect(e,year)}} style={{width: "50px",height: "50px",margin: "10px",lineHeight: "50px",textAlign: "center",border: "1px solid",cursor: "pointer", borderRadius: "4px",backgroundColor: className === "selected" ? "rgb(61, 145, 255)" : "white",color: className === "selected" ? "black" : "inherit",fontWeight: className === "selected" ? "bold" : "normal"}}>
+          <div onClick={(e)=>{onYearsSelect(e,year)}} className={`range-box ${className} ${year} ${className === "selected" ? "dss-range-box--selected" : "dss-range-box--unselected"} dss-range-box-base`}>
             {year}
           </div>
         )
       }
     }
-    let calender = <div className="show-display-range" style={{display:"flex", width: "425px", flexWrap:"wrap"}}>{dispayRange}</div>;
+    let calender = <div className="show-display-range dss-custom-date-range-flex-container">{dispayRange}</div>;
     setCalender(calender)
   },[rangeType,startYearRange,endYearRange,calenderDataStartDate,calenderDataEndDate,monthCurrentYear])
  
@@ -290,16 +290,16 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
           <Calender className="cursorPointer" onClick={() => setIsModalOpen((prevState) => !prevState)} />
         </div>
         {isModalOpen && (
-          <div className="options-card" style={{ overflow: "visible", width: "unset", maxWidth: "unset" }}>
+          <div className="options-card dss-custom-date-range-wrapper">
             <div className="rdrDateRangePickerWrapper pickerShadow">
-              <div className="rdrDefinedRangesWrapper" style={{width:"110px"}}>
-                <button type="button" className="rdrStaticRange" style={{fontWeight:rangeType==="week"?"bold":"normal"}} onClick={() => { selectRangeType("week") }}>
+              <div className="rdrDefinedRangesWrapper dss-custom-date-range-wrapper-2">
+                <button type="button" className={`rdrStaticRange ${rangeType === "week" ? "font-weight-bold" : "font-weight-normal"}`} onClick={() => { selectRangeType("week") }}>
                   <span tabindex="-1" className="rdrStaticRangeLabel">By Weeks</span>
                 </button>
-                <button type="button" className="rdrStaticRange" style={{fontWeight:rangeType==="month"?"bold":"normal"}} onClick={() => { selectRangeType("month") }}>
+                <button type="button" className={`rdrStaticRange ${rangeType === "month" ? "font-weight-bold" : "font-weight-normal"}`} onClick={() => { selectRangeType("month") }}>
                   <span tabindex="-1" className="rdrStaticRangeLabel">By Months</span>
                 </button>
-                <button type="button" className="rdrStaticRange" style={{fontWeight:rangeType==="year"?"bold":"normal"}} onClick={() => { selectRangeType("year") }}>
+                <button type="button" className={`rdrStaticRange ${rangeType === "year" ? "font-weight-bold" : "font-weight-normal"}`} onClick={() => { selectRangeType("year") }}>
                   <span tabindex="-1" className="rdrStaticRangeLabel">By Years</span>
                 </button>
               </div>
@@ -321,16 +321,16 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
                   {/* Condition for Months Type Date Range */}
                   {rangeType === "month" ?
                     <React.Fragment>
-                      <div className="rdrDateDisplay" style={{height:"30px", lineHeight: "30px", color: "#7d888d"}}>
-                        <span className="rdrDateInput rdrDateDisplayItem rdrDateDisplayItemActive" style={{ borderRadius: "4px", boxShadow: "0 1px 2px 0 rgba(35, 57, 66, 0.21)", border: "none"}}>
+                      <div className="rdrDateDisplay dss-custom-date-range-wrapper-3">
+                        <span className="rdrDateInput rdrDateDisplayItem rdrDateDisplayItemActive dss-custom-date-range-wrapper-4">
                           {calenderDataStartDate}
                         </span>
-                        <span className="rdrDateInput rdrDateDisplayItem rdrDateDisplayItemActive" style={{ borderRadius: "4px", boxShadow: "0 1px 2px 0 rgba(35, 57, 66, 0.21)", border: "none"}}>
+                        <span className="rdrDateInput rdrDateDisplayItem rdrDateDisplayItemActive dss-custom-date-range-wrapper-4">
                           {calenderDataEndDate}
                         </span>
                       </div>
-                      <div style={{background: "#fff"}}>
-                        <div className="rdrMonthAndYearWrapper" style={{height:"30px", paddingTop:"10"}}>
+                      <div className="dss-custom-date-range-wrapper-5">
+                        <div className="rdrMonthAndYearWrapper dss-custom-date-range-spacing">
                           <button type="button" className="rdrNextPrevButton rdrPprevButton" onClick={()=>onMonthYearChange("-")}><i></i></button>
                           <span className="rdrMonthAndYearPickers">{monthCurrentYear}</span>
                           <button type="button" className="rdrNextPrevButton rdrNextButton" onClick={()=>onMonthYearChange("+")}><i></i></button>
@@ -341,16 +341,16 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
                   {/* Condition for Year Type Date Range */}
                   {rangeType === "year" ?
                     <React.Fragment>
-                      <div className="rdrDateDisplay" style={{height:"30px", lineHeight: "30px", color: "#7d888d"}}>
-                        <span className="rdrDateInput rdrDateDisplayItem rdrDateDisplayItemActive" style={{ borderRadius: "4px",boxShadow: "0 1px 2px 0 rgba(35, 57, 66, 0.21)", border: "none"}}>
+                      <div className="rdrDateDisplay dss-custom-date-range-wrapper-3">
+                        <span className="rdrDateInput rdrDateDisplayItem rdrDateDisplayItemActive dss-custom-date-range-wrapper-4">
                           {calenderDataStartDate}
                         </span>
-                        <span className="rdrDateInput rdrDateDisplayItem rdrDateDisplayItemActive" style={{ borderRadius: "4px" ,boxShadow: "0 1px 2px 0 rgba(35, 57, 66, 0.21)", border: "none"}}>
+                        <span className="rdrDateInput rdrDateDisplayItem rdrDateDisplayItemActive dss-custom-date-range-wrapper-4">
                           {calenderDataEndDate}
                         </span>
                       </div>
-                      <div style={{background: "#fff"}}>
-                        <div className="rdrMonthAndYearWrapper" style={{height:"30px", paddingTop:"10"}}>
+                      <div className="dss-custom-date-range-wrapper-5">
+                        <div className="rdrMonthAndYearWrapper dss-custom-date-range-spacing">
                           <button type="button" className="rdrNextPrevButton rdrPprevButton" onClick={()=>decreaseYearRange()}><i></i></button>
                           <span className="rdrMonthAndYearPickers">{startYearRange} - {endYearRange}</span>
                           <button type="button" className="rdrNextPrevButton rdrNextButton" onClick={()=>increaseYearRange()}><i></i></button>

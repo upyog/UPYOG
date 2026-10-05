@@ -1,9 +1,9 @@
-    import { Header, MultiLink } from "@nudmcdgnpm/digit-ui-react-components";
-    import _ from "lodash";
-    import React, { useEffect, useState } from "react";
-    import { useTranslation } from "react-i18next";
-    import { useParams } from "react-router-dom";
-    import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
+import { Header, MultiLink } from "@nudmcdgnpm/digit-ui-react-components";
+import _ from "lodash";
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
+import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 
 /*
     The ApplicationDetails component fetches and displays details of an application 
@@ -13,7 +13,7 @@
     The component integrates with hooks for data fetching and mutation, 
     and provides a UI for interacting with the application details.
 */
-import "../../css/wt-inline-auto.css";
+
 const ApplicationDetails = () => {
   const {
     t
@@ -80,27 +80,25 @@ const ApplicationDetails = () => {
     }
   }, [workflowDetails.data]);
   let dowloadOptions = [];
-  return <div style={{
-    padding: user?.type === "CITIZEN" ? "0 15px" : ""
-  }}>
-        <div className={"employee-application-details wt-auto-72"}>
-          <Header styles={{
+  return <div className={user?.type === "CITIZEN" ? "citizen-container-padding-15" : ""}>
+    <div className={"employee-application-details wt-application-details-mb-md"}>
+      <Header styles={{
         marginLeft: "0px",
         paddingTop: "10px",
         fontSize: "32px"
       }}>{t("BOOKING_DETAILS")}</Header>
-          <div className="wt-auto-73">
-            {dowloadOptions && dowloadOptions.length > 0 && <MultiLink className="multilinkWrapper employee-mulitlink-main-div" onHeadClick={() => setShowOptions(!showOptions)} displayOptions={showOptions} options={dowloadOptions} downloadBtnClassName={"employee-download-btn-className"} optionsClassName={"employee-options-btn-className"}
+      <div className="wt-application-details-row-reverse-row-center">
+        {dowloadOptions && dowloadOptions.length > 0 && <MultiLink className="multilinkWrapper employee-mulitlink-main-div" onHeadClick={() => setShowOptions(!showOptions)} displayOptions={showOptions} options={dowloadOptions} downloadBtnClassName={"employee-download-btn-className"} optionsClassName={"employee-options-btn-className"}
         // ref={menuRef}
         />}
-          </div>      
-          </div>
-          <ApplicationDetailsTemplate applicationDetails={appDetailsToShow?.applicationData} isLoading={isLoading} isDataLoading={isLoading} applicationData={appDetailsToShow?.applicationData?.applicationData} mutate={mutate} workflowDetails={workflowDetails} businessService={businessService} moduleCode="request-service" showToast={showToast} setShowToast={setShowToast} closeToast={closeToast} timelineStatusPrefix={""} forcedActionPrefix={"RS"} statusAttribute={"state"} MenuStyle={{
+      </div>
+    </div>
+    <ApplicationDetailsTemplate applicationDetails={appDetailsToShow?.applicationData} isLoading={isLoading} isDataLoading={isLoading} applicationData={appDetailsToShow?.applicationData?.applicationData} mutate={mutate} workflowDetails={workflowDetails} businessService={businessService} moduleCode="request-service" showToast={showToast} setShowToast={setShowToast} closeToast={closeToast} timelineStatusPrefix={""} forcedActionPrefix={"RS"} statusAttribute={"state"} MenuStyle={{
       color: "#FFFFFF",
       fontSize: "18px"
     }} />
-          
 
-        </div>;
+
+  </div>;
 };
 export default React.memo(ApplicationDetails);

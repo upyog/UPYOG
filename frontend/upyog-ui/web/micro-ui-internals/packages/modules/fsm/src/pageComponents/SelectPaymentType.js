@@ -56,7 +56,7 @@ const SelectPaymentType = ({ t, config, onSelect, formData = {}, userType, regis
                 <RadioButtons
                   selectedOption={paymentType}
                   onSelect={selectPaymentType}
-                  style={{ display: "flex", marginBottom: 0 }}
+                  className="fsm-fsmselect-address-flex-container"
                   innerStyles={{ marginLeft: "10px" }}
                   options={input.options}
                   optionsKey="i18nKey"

@@ -57,9 +57,9 @@
 @import "./components/citizenInfoLabel.scss";
 @import "./components/roundedLabel.scss";
 @import "./components/changeLanguage.scss";
-@import "./components//metricsTable.scss";
+@import "./components/metricsTable.scss";
 @import "./components/filters.scss";
-@import "./components//charts.scss";
+@import "./components/charts.scss";
 @import "./components/summary.scss";
 @import "./components/multiLink.scss";
 @import "./components/info-banner.scss";
@@ -81,7 +81,7 @@
 @import "./components/staticSideBar.scss";
 @import "./components/hoc/index.scss";
 @import "./components/FAQ.scss";
-@import "./components//howItWorks.scss";
+@import "./components/howItWorks.scss";
 @import "./components/staticDynamicMessages.scss";
 @import "./components/toggleSwitch.scss";
 @import "./components/plusMinus.scss";
@@ -89,6 +89,7 @@
 @import "./components/dynamicFormField.scss";
 @import "./components/dynamicCheckPage.scss";
 @import "./components/dynamicObjectRenderer.scss";
+@import "./components/chatbot.scss";
 
 @import "./pages/employee/index.scss";
 @import "./pages/employee/cardfix.scss";
@@ -119,14 +120,22 @@
 @import "./components/ndc.scss";
 @import "./components/geoLocationWithDigipin.scss";
 @import "./components/applicationDetailsContent.scss";
-
+@import "./components/LoginLayout.scss";
+@import "./pages/citizen/AllServices.scss";
+@import "./pages/citizen/module.scss";
 
 .display-none {
   display: none;
 }
-.primary-label-btn{
+
+.primary-label-btn {
   margin: 10px auto 0px !important;
 }
+
+.primary-label-btn--form {
+  margin: 20px auto 0 auto !important;
+}
+
 .p-unset {
   padding: unset !important;
 }
@@ -139,6 +148,7 @@
   @apply flex;
   gap: 12px;
 }
+
 .rm-mb {
   margin-bottom: unset !important;
 }
@@ -245,6 +255,7 @@
     position: unset;
   }
 }
+
 .application-table-container {
   @apply mt-lg ml-lg flex-1;
 }
@@ -298,14 +309,17 @@
 .react-time-picker {
   width: 194px;
   height: 2.5rem;
+
   &__wrapper {
     border: 2px solid #0b0c0c;
     padding-left: 16px;
   }
+
   &__inputGroup__input {
     @apply px-sm;
     line-height: 2.5rem;
     min-width: 16px;
+
     &:focus {
       outline: 2px solid black;
     }
@@ -322,6 +336,7 @@ input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
 input[type="number"] {
   -moz-appearance: textfield;
 }
@@ -334,8 +349,10 @@ input[type="number"] {
     flex: 1;
     max-height: 75vh;
     overflow: scroll;
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 
     &::-webkit-scrollbar {
       display: none;
@@ -438,6 +455,7 @@ input[type="number"] {
     text-indent: 5px;
     padding: 6px 0px;
   }
+
   button {
     @apply outline-none;
     border: 0px;
@@ -448,6 +466,7 @@ input[type="number"] {
 
 .text-input {
   @apply relative w-full;
+
   input {
     &:hover {
       @apply border-2 border-solid border-primary-main;
@@ -521,10 +540,10 @@ input[type="number"] {
 }
 
 
-.edcr-citizen-inbox{ 
-   thead th:first-child{
-  min-width:100px; 
-}
+.edcr-citizen-inbox {
+  thead th:first-child {
+    min-width: 100px;
+  }
 
 }
 
@@ -538,16 +557,19 @@ input[type="number"] {
   align-items: center;
   flex-direction: column;
   position: absolute !important;
+
   .error-container {
     display: flex;
     width: 400px;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+
     h1 {
       font-size: 32px;
       font-weight: bold;
     }
+
     button {
       height: 40px;
       width: 153px;
@@ -573,10 +595,12 @@ input[type="number"] {
 .full-width-card {
   width: 92vw !important;
 }
+
 .full-employee-card-link {
   width: 100% !important;
   margin: 7px 0px;
 }
+
 .full-employee-card-height {
   height: unset !important;
 }
@@ -585,15 +609,18 @@ input[type="number"] {
   .full-employee-card-height {
     height: 196px !important;
   }
+
   .full-employee-card-link {
     width: 30% !important;
   }
+
   .full-width-card {
     @apply w-full !important;
   }
 }
-.applications-list-container {
-}
+
+.applications-list-container {}
+
 .complaint-summary {
   @media (min-width: 780px) {
     flex: 1 0 auto;
@@ -612,6 +639,7 @@ input[type="number"] {
     padding-right: 16px;
   }
 }
+
 @media (min-width: 780px) {
   .citizen-card-container {
     padding-left: 15px;
@@ -621,6 +649,7 @@ input[type="number"] {
 }
 
 @media (min-width: 780px) {
+
   .citizen-obps-wrapper,
   .selection-card-wrapper,
   .fsm-citizen-wrapper,
@@ -634,21 +663,86 @@ input[type="number"] {
   .mcollect-citizen,
   .ws-citizen-wrapper,
   .noc-citizen,
-  .tl-citizen {
-    width: calc(100% - 219px);
+  .tl-citizen,
+  .chb-citizen,
+  .pet-citizen,
+  .gis-citizen {
+    width: 100% !important;
+    max-width: 100% !important;
     padding-left: 16px;
     padding-right: 16px;
     margin-top: 1rem;
+    box-sizing: border-box !important;
+    display: block !important;
   }
 }
+
+/* Citizen full-width layout and card enhancements */
+.citizen .main-body,
+.citizen-home-container,
+.pt-citizen,
+.ws-citizen-wrapper,
+.citizen-obps-wrapper,
+.fsm-citizen-wrapper,
+.pgr-citizen-wrapper,
+.bill-citizen,
+.bills-citizen-wrapper,
+.payer-bills-citizen-wrapper,
+.engagement-citizen-wrapper,
+.citizen-all-services-wrapper,
+.mcollect-citizen,
+.noc-citizen,
+.tl-citizen,
+.chb-citizen,
+.pet-citizen,
+.gis-citizen {
+  .pt-index-full-width,
+  .chb-index-fullwidth,
+  .ptr-ptracknowledgement-fullwidth {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: block !important;
+  }
+
+  .app-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 16px !important;
+    box-sizing: border-box !important;
+
+    form {
+      width: 100% !important;
+      max-width: 100% !important;
+
+      .card {
+        max-width: 100% !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+    }
+  }
+
+  .card {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 10px 0 20px 0 !important;
+    box-sizing: border-box !important;
+    border-radius: 8px !important;
+  }
+}
+
 @media only screen and (max-width: 768px) {
+
   /* For mobile phones: */
   .error-boundary {
     height: 75vh;
   }
 }
+
 .employee-app-wrapper {
-  min-height: calc(100vh - 8em);
+  height: calc(100vh - 96px);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .ws-custom-wrapper {
@@ -657,9 +751,11 @@ input[type="number"] {
     flex-direction: row-reverse !important;
     width: 100% !important;
     align-items: center;
+
     button {
       width: 240px !important;
     }
+
     p {
       width: unset;
       margin-right: 1rem;
@@ -684,6 +780,7 @@ input[type="number"] {
     padding-bottom: 8px;
     margin-bottom: 8px;
   }
+
   .row {
     color: #b1b4b6;
     font-weight: 700;
@@ -702,11 +799,13 @@ input[type="number"] {
 .connection-details-old-value-wrapper,
 .plumber-details-old-value-wrapper {
   flex: 1 1 auto;
+
   .old-value-null-wrapper {
     visibility: hidden;
     padding-bottom: 8px;
     margin-bottom: 8px;
   }
+
   .row {
     color: #b1b4b6;
     font-weight: 700;
@@ -718,6 +817,7 @@ input[type="number"] {
   padding: 1rem;
   font-weight: 400;
 }
+
 .modal-body-ws {
   padding: 1rem;
   font-weight: 700;
@@ -725,60 +825,67 @@ input[type="number"] {
   font-size: 24px;
   margin-bottom: 1rem;
 }
+
 .privacy-icon {
   cursor: pointer;
 }
+
 .privacy-icon:hover {
   path {
     fill: rgba(244, 119, 56, 1);
   }
 }
 
-.employee-app-wrapper{
-min-height: calc(100vh - 8em);
+.employee-app-wrapper {
+  margin-top: 95px;
 }
-.submit-bar header{
+
+.submit-bar header {
   line-height: 2.0rem !important;
 }
-.logo-removeBorderRadiusLogo svg{
+
+.logo-removeBorderRadiusLogo svg {
   width: 50px;
   height: 60px;
 }
 
 .icon-banner-employee {
-    background-color:#d7aefc !important;
+  background-color: #d7aefc !important;
 }
-.icon-banner-employee svg{
-  background-color:#bf2f3b !important;
+
+.icon-banner-employee svg {
+  background-color: #bf2f3b !important;
   width: 40px;
   height: 40px;
 }
-.inboxButton{
-    border: none;
-    color: white;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 14px;
-    margin: 4px 2px;
-    cursor: pointer;
-    height: fit-content;
-    border-radius: 5px;
-    font-family: sans-serif;
-    font-weight: 700;
+
+.inboxButton {
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  cursor: pointer;
+  height: fit-content;
+  border-radius: 5px;
+  font-family: sans-serif;
+  font-weight: 700;
 }
-.employee .inboxButton{
+
+.employee .inboxButton {
   padding: 5px 15px;
   background: #ba2b36
 }
-.citizen .inboxButton{
+
+.citizen .inboxButton {
   padding: 15px;
   font-size: 1.2rem
 }
 
 @media screen and (max-width: 768px) {
-  .citizen .inboxButton{
+  .citizen .inboxButton {
     font-size: 1rem;
   }
 }
-

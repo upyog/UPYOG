@@ -4,7 +4,7 @@ import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker
 import { useTranslation } from "react-i18next";
 // import MobileNumber from "@nudmcdgnpm/digit-ui-react-components/src/atoms/MobileNumber";
 // import _ from "lodash";
-import "../../css/tl-inline-auto.css";
+
 const fieldComponents = {
   date: DatePicker,
   mobileNumber: MobileNumber
@@ -81,19 +81,19 @@ const SearchLicenseApplication = ({
         if (!new RegExp(pattern).test(value) && !error) setError(name, {
           type: "pattern",
           message: t(errorMessages?.pattern) || t(`PATTERN_${name.toUpperCase()}_FAILED`)
-        });else if (new RegExp(pattern).test(value) && error?.type === "pattern") clearErrors([name]);
+        }); else if (new RegExp(pattern).test(value) && error?.type === "pattern") clearErrors([name]);
       }
       if (minLength) {
         if (value?.length < minLength && !error) setError(name, {
           type: "minLength",
           message: t(errorMessages?.minLength || `MINLENGTH_${name.toUpperCase()}_FAILED`)
-        });else if (value?.length >= minLength && error?.type === "minLength") clearErrors([name]);
+        }); else if (value?.length >= minLength && error?.type === "minLength") clearErrors([name]);
       }
       if (maxLength) {
         if (value?.length > maxLength && !error) setError(name, {
           type: "maxLength",
           message: t(errorMessages?.maxLength || `MAXLENGTH_${name.toUpperCase()}_FAILED`)
-        });else if (value?.length <= maxLength && error?.type === "maxLength") clearErrors([name]);
+        }); else if (value?.length <= maxLength && error?.type === "maxLength") clearErrors([name]);
       }
     });
   }, [form, formState, setError, clearErrors]);
@@ -147,78 +147,72 @@ const SearchLicenseApplication = ({
     const mobileViewStyles = mobileView ? {
       margin: 0
     } : {};
-    return <LinkLabel style={{
-      display: "inline",
-      ...mobileViewStyles
-    }} onClick={clearSearch}>
-        {t("ES_COMMON_CLEAR_SEARCH")}
-      </LinkLabel>;
+    return <LinkLabel className="search-clear-link" style={mobileViewStyles} onClick={clearSearch}>
+      {t("ES_COMMON_CLEAR_SEARCH")}
+    </LinkLabel>;
   };
   return <form onSubmit={handleSubmit(onSubmitInput)}>
-      <React.Fragment>
-        <div className="search-container" style={{
-        width: "auto",
-        marginLeft: isInboxPage ? "24px" : "revert"
-      }}>
-          <div className="search-complaint-container">
-            {(type === "mobile" || mobileView) && <div className="complaint-header">
-                <h2>{t("ES_COMMON_SEARCH_BY")}</h2>
-                <span onClick={onClose}>
-                  <CloseSvg />
-                </span>
-              </div>}
-            <div className="complaint-input-container tl-auto-21">
-              {searchFields?.filter(e => true)?.map((input, index) => <div key={input.name} className="input-fields">
-                    <span className={"complaint-input"}>
-                      <Label>{t(input.label)}</Label>
-                      {!input.type ? (
-                        <Controller
-                          render={({ field }) => {
-                            return <TextInput onChange={field.onChange} value={field.value} />;
-                          }}
-                          name={input.name}
-                          control={control}
-                          defaultValue={""}
-                        />
-                      ) : (
-                        <Controller
-                          render={({ field }) => {
-                            const Comp = fieldComponents?.[input.type];
-                            return <Comp onChange={field.onChange} value={field.value} />;
-                          }}
-                          name={input.name}
-                          control={control}
-                          defaultValue={""}
-                        />
-                      )}
-                    </span>
-                    {formState?.dirtyFields?.[input.name] ? <span className="inbox-search-form-error tl-auto-22">
-                        {formState?.errors?.[input.name]?.message}
-                      </span> : null}
-                  </div>)}
-              {type === "desktop" && !mobileView && !isInboxPage && <div className="search-action-wrapper">
-                  <SubmitBar className="submit-bar-search" label={t("ES_COMMON_SEARCH")} disabled={!!Object.keys(formState.errors).length || Object.keys(form).every(key => !form?.[key])} submit />
-                  {/* style={{ paddingTop: "16px", textAlign: "center" }} className="clear-search" */}
-                  <div className="tl-auto-23">
-                    {clearAll()}
-                  </div>
-                </div>}
-              {isInboxPage && <div className="search-action-wrapper tl-auto-24">
-                  {type === "desktop" && !mobileView && <SubmitBar className="submit-bar-search" label={t("ES_COMMON_SEARCH")} submit />}
-                  {type === "desktop" && !mobileView && <span className="clear-search tl-auto-25">
-                      {clearAll()}
-                    </span>}
-                </div>}
-            </div>
+    <React.Fragment>
+      <div className={`search-container ${isInboxPage ? "search-container-auto-margin" : "search-container-auto"}`}>
+        <div className="search-complaint-container">
+          {(type === "mobile" || mobileView) && <div className="complaint-header">
+            <h2>{t("ES_COMMON_SEARCH_BY")}</h2>
+            <span onClick={onClose}>
+              <CloseSvg />
+            </span>
+          </div>}
+          <div className="complaint-input-container tl-search-input">
+            {searchFields?.filter(e => true)?.map((input, index) => <div key={input.name} className="input-fields">
+              <span className={"complaint-input"}>
+                <Label>{t(input.label)}</Label>
+                {!input.type ? (
+                  <Controller
+                    render={({ field }) => {
+                      return <TextInput onChange={field.onChange} value={field.value} />;
+                    }}
+                    name={input.name}
+                    control={control}
+                    defaultValue={""}
+                  />
+                ) : (
+                  <Controller
+                    render={({ field }) => {
+                      const Comp = fieldComponents?.[input.type];
+                      return <Comp onChange={field.onChange} value={field.value} />;
+                    }}
+                    name={input.name}
+                    control={control}
+                    defaultValue={""}
+                  />
+                )}
+              </span>
+              {formState?.dirtyFields?.[input.name] ? <span className="inbox-search-form-error tl-search-link-bold-text-sm">
+                {formState?.errors?.[input.name]?.message}
+              </span> : null}
+            </div>)}
+            {type === "desktop" && !mobileView && !isInboxPage && <div className="search-action-wrapper">
+              <SubmitBar className="submit-bar-search" label={t("ES_COMMON_SEARCH")} disabled={!!Object.keys(formState.errors).length || Object.keys(form).every(key => !form?.[key])} submit />
+
+              <div className="tl-search-full-width-right-text">
+                {clearAll()}
+              </div>
+            </div>}
+            {isInboxPage && <div className="search-action-wrapper tl-search-full-width">
+              {type === "desktop" && !mobileView && <SubmitBar className="submit-bar-search" label={t("ES_COMMON_SEARCH")} submit />}
+              {type === "desktop" && !mobileView && <span className="clear-search tl-search-item">
+                {clearAll()}
+              </span>}
+            </div>}
           </div>
         </div>
-        {(type === "mobile" || mobileView) && <ActionBar className="clear-search-container">
-            <button className="clear-search tl-auto-26">
-              {clearAll(mobileView)}
-            </button>
-            <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} submit={true} className="tl-auto-27" />
-          </ActionBar>}
-      </React.Fragment>
-    </form>;
+      </div>
+      {(type === "mobile" || mobileView) && <ActionBar className="clear-search-container">
+        <button className="clear-search tl-search-link-flex-1">
+          {clearAll(mobileView)}
+        </button>
+        <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} submit={true} className="tl-search-link-flex-1" />
+      </ActionBar>}
+    </React.Fragment>
+  </form>;
 };
 export default SearchLicenseApplication;

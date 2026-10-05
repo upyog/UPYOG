@@ -184,11 +184,11 @@ const UlbAssesmentSearch = ({tenantId, isLoading, t, onSubmit, data, count, setS
             });
             setShowToast(null);
             previousPage();
-          }} className="pt-auto-12">{t(`ES_COMMON_CLEAR_ALL`)}</p>
+          }} className="pt-ulb-assesment-search-card-mt-sm">{t(`ES_COMMON_CLEAR_ALL`)}</p>
                 </SearchField>
             </SearchForm>
-            {!isLoading && data?.display ? <Card className="pt-auto-13">
-                {t(data.display).split("\\n").map((text, index) => <p key={index} className="pt-auto-14">
+            {!isLoading && data?.display ? <Card className="pt-ulb-assesment-search-card-mt-md">
+                {t(data.display).split("\\n").map((text, index) => <p key={index} className="pt-ulb-assesment-search-card-center-text">
                         {text}
                     </p>
                     )

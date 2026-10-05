@@ -23,8 +23,8 @@ const FAQsSection = ({module}) => {
   return (
     <Fragment>
     <div className="faq-page">
-      <BackButton style={{marginLeft : "unset"}}></BackButton>
-        <div style={{ marginBottom: "15px" }}>
+      <BackButton className="core-faqs-action-btn"></BackButton>
+        <div className="core-faqs-bottom-spacing">
           <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px"}}>{t("FAQ_S")}</Header>
         </div>
         <div className="faq-list">

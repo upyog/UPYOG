@@ -84,7 +84,7 @@ const MyConnections = ({ view }) => {
         {connectionList?.length > 0 && connectionList.map((application, index) => <div key={index}>
               <WSConnection application={application} />
             </div>)}
-        {!connectionList?.length > 0 && <p className="ws-auto-177">{t("PT_NO_APPLICATION_FOUND_MSG")}</p>}
+        {!connectionList?.length > 0 && <p className="ws-index-mt-md-ml-md">{t("PT_NO_APPLICATION_FOUND_MSG")}</p>}
       </div>
     </React.Fragment>;
 };

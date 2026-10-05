@@ -55,7 +55,7 @@ const TLWFApplicationTimeline = props => {
   };
   return <React.Fragment>
       {!isLoading && <Fragment>
-          {data?.timeline?.length > 0 && <CardSectionHeader className="tl-auto-144">
+          {data?.timeline?.length > 0 && <CardSectionHeader className="tl-tlwf-application-timeline-card">
               {t("CS_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
             </CardSectionHeader>}
           {data?.timeline && data?.timeline?.length === 1 ? <CheckPoint isCompleted={true} label={t(data?.timeline[0]?.state && `WF_${businessService}_${data.timeline[0].state}` || "NA")} customChild={getTimelineCaptions(data?.timeline[0])} /> : <ConnectingCheckPoints>

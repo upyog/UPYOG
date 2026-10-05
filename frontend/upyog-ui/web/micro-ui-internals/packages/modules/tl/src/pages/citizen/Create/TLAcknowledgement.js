@@ -158,7 +158,7 @@ const TLAcknowledgement = ({ data, onSuccess, onUpdateSuccess }) => {
               <span className="download-button">{t("TL_DOWNLOAD_ACK_FORM")}</span>
             </div>
           }
-          //style={{ width: "100px" }}
+          //className="custom-style"
           onClick={handleDownloadPdf}
         />)}
       {mutation2?.data?.Licenses[0]?.status === "PENDINGPAYMENT" && <Link to={{

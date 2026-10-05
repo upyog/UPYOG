@@ -70,7 +70,7 @@ const AddressPopup = ({ t, isOpen, onClose, onSubmit }) => {
         overflowY: "hidden",
       }}
     >
-      <div style={{ boxShadow: "none" }}>
+      <div className="pgrai-address-popup-wrapper">
         <AddressDetails t={t} formData={formData} onSelect={setFormData} />
       </div>
     </Modal>

@@ -1,7 +1,7 @@
 import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams,  } from "react-router-dom";
+import { useParams, } from "react-router-dom";
 import getPTAcknowledgementData from "../../getPTAcknowledgementData";
 import PropertyDocument from "../../pageComponents/PropertyDocument";
 import PTWFApplicationTimeline from "../../pageComponents/PTWFApplicationTimeline";
@@ -11,7 +11,7 @@ import PTCitizenFeedbackPopUp from "../../pageComponents/PTCitizenFeedbackPopUp"
 
 import get from "lodash/get";
 import { size } from "lodash";
-import "../../css/pt-inline.css";
+
 
 const PTApplicationDetails = () => {
   const { t } = useTranslation();
@@ -31,12 +31,12 @@ const PTApplicationDetails = () => {
   );
   const [billAmount, setBillAmount] = useState(null);
   const [billStatus, setBillStatus] = useState(null);
-  const [viewTimeline, setViewTimeline]=useState(false);
+  const [viewTimeline, setViewTimeline] = useState(false);
   let serviceSearchArgs = {
-    tenantId : tenantId,
-    code: [`PT_${data?.Properties?.[0]?.creationReason}`], 
+    tenantId: tenantId,
+    code: [`PT_${data?.Properties?.[0]?.creationReason}`],
     module: ["PT"],
-    referenceIds : [data?.Properties?.[0]?.acknowldgementNumber]
+    referenceIds: [data?.Properties?.[0]?.acknowldgementNumber]
     //removing thid as of now sending ack no in referenceId
     // attributes: {
     //         "attributeCode": "referenceId",
@@ -44,7 +44,7 @@ const PTApplicationDetails = () => {
     //     }
   }
 
-  const { isLoading:serviceloading, error : serviceerror, data : servicedata} = Digit.Hooks.pt.useServiceSearchCF({ filters: { serviceSearchArgs } },{ filters: { serviceSearchArgs }, enabled : data?.Properties?.[0]?.acknowldgementNumber ?true : false, cacheTime : 0 });
+  const { isLoading: serviceloading, error: serviceerror, data: servicedata } = Digit.Hooks.pt.useServiceSearchCF({ filters: { serviceSearchArgs } }, { filters: { serviceSearchArgs }, enabled: data?.Properties?.[0]?.acknowldgementNumber ? true : false, cacheTime: 0 });
 
 
   const properties = get(data, "Properties", []);
@@ -54,9 +54,9 @@ const PTApplicationDetails = () => {
   sessionStorage.setItem("pt-property", JSON.stringify(application));
 
   useMemo(() => {
-    if((data?.Properties?.[0]?.status === "ACTIVE" || data?.Properties?.[0]?.status === "INACTIVE") && popup == false && servicedata?.Service?.length == 0)
+    if ((data?.Properties?.[0]?.status === "ACTIVE" || data?.Properties?.[0]?.status === "INACTIVE") && popup == false && servicedata?.Service?.length == 0)
       setpopup(true);
-  },[data,servicedata])
+  }, [data, servicedata])
 
   useEffect(() => {
     const fetchBillDetails = async () => {
@@ -211,23 +211,23 @@ const PTApplicationDetails = () => {
 
   async function getRecieptSearch({ tenantId, payments, ...params }) {
     let response = { filestoreIds: [payments?.fileStoreId] };
-    if(response!==null){
+    if (response !== null) {
       const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
       window.open(fileStore[response?.filestoreIds[0]], "_blank");
     }
-    else{
+    else {
       response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "property-receipt");
       const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
       window.open(fileStore[response?.filestoreIds[0]], "_blank");
-    }   
+    }
   }
-  
-  const handleViewTimeline=()=>{ 
-    const timelineSection=document.getElementById('timeline');
-      if(timelineSection){
-        timelineSection.scrollIntoView({behavior: 'smooth'});
-      } 
-      setViewTimeline(true);   
+
+  const handleViewTimeline = () => {
+    const timelineSection = document.getElementById('timeline');
+    if (timelineSection) {
+      timelineSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    setViewTimeline(true);
   };
   const handleDownload = async (document, tenantid) => {
     let tenantId = tenantid ? tenantid : tenantId;
@@ -258,26 +258,26 @@ const PTApplicationDetails = () => {
       label: t("MT_CERTIFICATE"),
       onClick: () => printCertificate(),
     });
-    
-    const reversedOwners= Array.isArray(data?.Properties?.[0]?.owners) ? data?.Properties?.[0]?.owners.slice().reverse():[];
+
+  const reversedOwners = Array.isArray(data?.Properties?.[0]?.owners) ? data?.Properties?.[0]?.owners.slice().reverse() : [];
   return (
     <React.Fragment>
       <div>
         <div className="cardHeaderWithOptions pt-inline-card-header">
           <Header styles={{ fontSize: "32px" }}>{t("PT_MUTATION_APPLICATION_DETAILS")}</Header>
           <div className="pt-inline-card-header-actions">
-       
-          {dowloadOptions && dowloadOptions.length > 0 && (
-            <MultiLink
-              className="multilinkWrapper"
-              onHeadClick={() => setShowOptions(!showOptions)}
-              displayOptions={showOptions}
-              options={dowloadOptions}
-            />
-          )}
-          <LinkButton label={t("VIEW_TIMELINE")} className="pt-inline-view-timeline-btn" onClick={handleViewTimeline}></LinkButton>
+
+            {dowloadOptions && dowloadOptions.length > 0 && (
+              <MultiLink
+                className="multilinkWrapper"
+                onHeadClick={() => setShowOptions(!showOptions)}
+                displayOptions={showOptions}
+                options={dowloadOptions}
+              />
+            )}
+            <LinkButton label={t("VIEW_TIMELINE")} className="pt-inline-view-timeline-btn" onClick={handleViewTimeline}></LinkButton>
           </div>
-          
+
         </div>
         <Card>
           <StatusTable>
@@ -326,7 +326,7 @@ const PTApplicationDetails = () => {
               <CardSubHeader className="pt-inline-subheader">{t("PT_MUTATION_TRANSFEROR_DETAILS")}</CardSubHeader>
               <div>
                 {Array.isArray(transferorOwners) &&
-                   transferorOwners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence}).map((owner, index) => (
+                  transferorOwners.sort((item, item2) => { return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence }).map((owner, index) => (
                     <div key={index}>
                       <CardSubHeader>
                         {transferorOwners.length != 1 && (
@@ -355,7 +355,7 @@ const PTApplicationDetails = () => {
               {isInstitution ? (
                 <div>
                   {Array.isArray(transfereeOwners) &&
-                   transfereeOwners.sort((item,item2)=>{return item.additionalDetails.ownerSequence - item2.additionalDetails.ownerSequence}).map((owner, index) => (
+                    transfereeOwners.sort((item, item2) => { return item.additionalDetails.ownerSequence - item2.additionalDetails.ownerSequence }).map((owner, index) => (
                       <div key={index}>
                         <CardSubHeader>
                           {transfereeOwners.length != 1 && (
@@ -388,7 +388,7 @@ const PTApplicationDetails = () => {
               ) : (
                 <div>
                   {Array.isArray(transfereeOwners) &&
-                    transfereeOwners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence}).map((owner, index) => (
+                    transfereeOwners.sort((item, item2) => { return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence }).map((owner, index) => (
                       <div key={index}>
                         <CardSubHeader>
                           {transfereeOwners.length != 1 && (
@@ -459,7 +459,7 @@ const PTApplicationDetails = () => {
                   text={
                     `${t(
                       (property?.usageCategory !== "RESIDENTIAL" ? "COMMON_PROPUSGTYPE_NONRESIDENTIAL_" : "COMMON_PROPSUBUSGTYPE_") +
-                        (property?.usageCategory?.split(".")[1] ? property?.usageCategory?.split(".")[1] : property?.usageCategory)
+                      (property?.usageCategory?.split(".")[1] ? property?.usageCategory?.split(".")[1] : property?.usageCategory)
                     )}` || t("CS_NA")
                   }
                 />
@@ -479,21 +479,21 @@ const PTApplicationDetails = () => {
                   label={t("PT_ASSESMENT1_ELECTRICITY_NUMBER")}
                   text={(`${t(`${property.additionalDetails?.electricity}`)}`) || t("CS_NA")}
                 />
-                   <Row
+                <Row
                   className="border-none"
                   label={t("PT_ASSESMENT1_ELECTRICITY_UID")}
                   text={(`${t(`${property.additionalDetails?.uid}`)}`) || t("CS_NA")}
                 />
-                  <Row
-                    className="border-none"
-                    label={t("PT_STRUCTURE_TYPE_LABEL")}
-                    text={`${`${property?.additionalDetails?.structureType?.i18nKey}` || t("CS_NA")}`}
-                  />
-                  <Row
-                    className="border-none"
-                    label={t("PT_AGE_OF_PROPERTY_LABEL")}
-                    text={`${`${property?.additionalDetails?.ageOfProperty?.code}` || t("CS_NA")}`}
-                  />
+                <Row
+                  className="border-none"
+                  label={t("PT_STRUCTURE_TYPE_LABEL")}
+                  text={`${`${property?.additionalDetails?.structureType?.i18nKey}` || t("CS_NA")}`}
+                />
+                <Row
+                  className="border-none"
+                  label={t("PT_AGE_OF_PROPERTY_LABEL")}
+                  text={`${`${property?.additionalDetails?.ageOfProperty?.code}` || t("CS_NA")}`}
+                />
               </StatusTable>
               <div>
                 {Array.isArray(units) &&
@@ -515,7 +515,7 @@ const PTApplicationDetails = () => {
                               text={
                                 `${t(
                                   (property?.usageCategory !== "RESIDENTIAL" ? "COMMON_PROPUSGTYPE_NONRESIDENTIAL_" : "COMMON_PROPUSGTYPE_") +
-                                    (property?.usageCategory?.split(".")[1] ? property?.usageCategory?.split(".")[1] : property?.usageCategory)
+                                  (property?.usageCategory?.split(".")[1] ? property?.usageCategory?.split(".")[1] : property?.usageCategory)
                                 )}` || t("CS_NA")
                               }
                             />
@@ -529,7 +529,7 @@ const PTApplicationDetails = () => {
                               label={t("PT_BUILTUP_AREA_LABEL")}
                               text={`${`${unit?.constructionDetail?.builtUpArea} sq.ft` || t("CS_NA")}`}
                             />
-                          
+
                             {unit.occupancyType == "RENTED" && (
                               <Row
                                 className="border-none"
@@ -546,7 +546,7 @@ const PTApplicationDetails = () => {
               <CardSubHeader className="pt-inline-subheader">{t("PT_COMMON_PROPERTY_OWNERSHIP_DETAILS_HEADER")}</CardSubHeader>
               <div className="owner-details">
                 {Array.isArray(owners) &&
-                  reversedOwners.sort(()=>{return reversedOwners}).map((owner, index) => (
+                  reversedOwners.sort(() => { return reversedOwners }).map((owner, index) => (
                     <div key={index} className="owner-details-child">
                       <CardSubHeader>
                         {owners.length != 1 && (
@@ -586,18 +586,18 @@ const PTApplicationDetails = () => {
             )}
           </div>
           <div id="timeline">
-          <PTWFApplicationTimeline application={application} id={acknowledgementIds} userType={"citizen"} />
+            <PTWFApplicationTimeline application={application} id={acknowledgementIds} userType={"citizen"} />
           </div>
           {showToast && (
-          <Toast
-            error={showToast.key}
-            label={t(showToast.label)}
-            className="pt-inline-toast-bottom"
-            onClose={() => {
-              setShowToast(null);
-            }}
-          />
-        )}
+            <Toast
+              error={showToast.key}
+              label={t(showToast.label)}
+              className="pt-inline-toast-bottom"
+              onClose={() => {
+                setShowToast(null);
+              }}
+            />
+          )}
         </Card>
         {/* {popup && (<PopUp>
           <div>

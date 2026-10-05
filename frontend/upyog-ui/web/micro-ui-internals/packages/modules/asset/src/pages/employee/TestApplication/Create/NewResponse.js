@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import getAssetAcknowledgementData from "../../../../getAssetAcknowledgementData";
 import { Assetdata } from "../../../../utils";
-import "../../../../css/asset-inline-auto.css";
+
 const GetActionMessage = props => {
   const {
     t
@@ -22,15 +22,15 @@ const rowContainerStyle = {
   justifyContent: "space-between"
 };
 const BannerPicker = props => {
-  return <Banner message={GetActionMessage(props)} applicationNumber={props.data?.Assets?.[0].applicationNo} info={props.isSuccess ? props.t("ES_ASSET_RESPONSE_CREATE_LABEL") : ""} successful={props.isSuccess} className="asset-auto-223" />;
+  return <Banner message={GetActionMessage(props)} applicationNumber={props.data?.Assets?.[0].applicationNo} info={props.isSuccess ? props.t("ES_ASSET_RESPONSE_CREATE_LABEL") : ""} successful={props.isSuccess} className="asset-new-response-link-full-width" />;
 };
 
 const NewResponse = ({ data, onSuccess, mutation }) => {
 
 
-  
+
   const { t } = useTranslation();
-  
+
   const tenantId = Digit.ULBService.getCurrentTenantId();
   // const mutation = Digit.Hooks.asset.useAssetCreateAPI(data?.address?.city?.code); 
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
@@ -40,12 +40,12 @@ const NewResponse = ({ data, onSuccess, mutation }) => {
 
   // useEffect(() => {
   //   try {
-      
+
   //     data.tenantId = data.address?.city?.code;
   //     let formdata = Assetdata(data)
   //     console.log("formdata in acknowejkfdlgi ::: ", formdata);
 
-      
+
 
 
   //     mutation.mutate(formdata, {
@@ -55,7 +55,7 @@ const NewResponse = ({ data, onSuccess, mutation }) => {
   //   }
   // }, []);
 
-  
+
 
   const handleDownloadPdf = async () => {
     const {
@@ -77,9 +77,9 @@ const NewResponse = ({ data, onSuccess, mutation }) => {
       <BannerPicker t={t} data={mutation.data} isSuccess={mutation.isSuccess} isLoading={mutation.isIdle || mutation.isLoading} />
       <StatusTable>
         {mutation.isSuccess && <Row rowContainerStyle={rowContainerStyle} last textStyle={{
-        whiteSpace: "pre",
-        width: "60%"
-      }} />}
+          whiteSpace: "pre",
+          width: "60%"
+        }} />}
       </StatusTable>
       {/* {mutation.isSuccess && <SubmitBar label={t("AST_REPORT")} onSubmit={handleDownloadPdf} />} */}
       <Link to={`/upyog-ui/employee`}>

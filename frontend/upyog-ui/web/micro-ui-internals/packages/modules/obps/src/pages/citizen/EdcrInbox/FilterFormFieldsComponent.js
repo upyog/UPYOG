@@ -22,7 +22,7 @@ const FilterFormFieldsComponent = ({ controlFilterForm }) => {
           render={({ field }) => {
             return (
               <>
-                <div className="filter-label sub-filter-label" style={{ fontWeight: "400", fontSize: "16px" }}>
+                <div className="filter-label sub-filter-label obps-status-text-style">
                   {t("BPA_COMMON_TABLE_COL_APP_STATUS_LABEL")}
                 </div>
                 <RadioButtons
@@ -49,7 +49,7 @@ const FilterFormFieldsComponent = ({ controlFilterForm }) => {
               <Loader />
             ) : (
               <>
-                <div className="filter-label sub-filter-label" style={{ fontWeight: "400", fontSize: "16px" }}>
+                <div className="filter-label sub-filter-label obps-status-text-style">
                   {t("BPA_BASIC_DETAILS_SERVICE_TYPE_LABEL")}
                 </div>
                 <Dropdown

@@ -171,7 +171,7 @@ const SearchPTID = ({
                   ...validation,
                 })}
                 />}
-                <CardLabelError className="pt-auto-26">{t(formState?.errors?.[key]?.message)}</CardLabelError>
+                <CardLabelError className="pt-property-search-form-label-mt-neg">{t(formState?.errors?.[key]?.message)}</CardLabelError>
               </SearchField>
             );
           })}
@@ -180,7 +180,7 @@ const SearchPTID = ({
          <SearchField className="pt-search-action-reset">
          <p onClick={() => {
             onReset({});
-          }} className="pt-auto-27">
+          }} className="pt-property-search-form-link-red">
             {t(`ES_COMMON_CLEAR_ALL`)}
           </p>
            </SearchField>

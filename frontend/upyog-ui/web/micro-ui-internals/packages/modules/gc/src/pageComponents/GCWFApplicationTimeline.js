@@ -27,7 +27,7 @@ const GCWFCaption = ({ data, OpenImage }) => {
           {data.wfComment.map((e, i) => (
             <div key={i} className="TLComments">
               <h3>{t("WF_COMMON_COMMENTS")}</h3>
-              <p style={{ overflowX: "scroll" }}>{e}</p>
+              <p className="gc-gcwfapplication-timeline-wrapper">{e}</p>
             </div>
           ))}
         </div>
@@ -96,7 +96,7 @@ const GCWFApplicationTimeline = ({ application }) => {
     <React.Fragment>
       {data?.timeline?.length > 0 && (
         <Fragment>
-          <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
+          <CardSectionHeader className="gc-gcwfapplication-timeline-header">
             {t("CS_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
           </CardSectionHeader>
           {data.timeline.length === 1 ? (

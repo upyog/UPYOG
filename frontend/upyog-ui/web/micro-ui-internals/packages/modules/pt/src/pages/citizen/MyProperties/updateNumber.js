@@ -283,7 +283,7 @@ const UpdateNumber = ({
         <StatusTable>
           <Row label={t("PTUPNO_OWNER_NAME")} text={`${compState?.name || t("CS_NA")}`} />
           <Row label={t("PTUPNO_CURR_NO")} text={`${compState?.mobileNumber || t("CS_NA")}`} />
-          <CardLabel className="pt-auto-133">{t("PT_UPDATE_NEWNO")}</CardLabel>
+          <CardLabel className="pt-update-number-label">{t("PT_UPDATE_NEWNO")}</CardLabel>
           <MobileNumber
             className="field pt-update-no-field"
             name="mobileNumber"
@@ -308,7 +308,7 @@ const UpdateNumber = ({
             })}
             disable={compState?.otpSentTo && true}
           />
-          <CardLabelError style={{ marginTop: "-10px" }}>{t(formState?.errors?.mobileNumber?.message)}</CardLabelError>
+          <CardLabelError className="pt-update-number-card">{t(formState?.errors?.mobileNumber?.message)}</CardLabelError>
           {compState?.otpSentTo && (
             <Controller
               control={control}

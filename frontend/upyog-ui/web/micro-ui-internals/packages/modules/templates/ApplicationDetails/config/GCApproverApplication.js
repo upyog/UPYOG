@@ -28,7 +28,7 @@ export const configGCApproverApplication = ({ t, action, selectFile, uploadedFil
                 onUpload={selectFile}
                 onDelete={() => setUploadedFile(null)}
                 message={isUploading ? (
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <div className="tmpl-application-details-content-flex-row">
                     <LoadingSpinner />
                     <span>{t("CS_UPLOADING")}</span>
                   </div>

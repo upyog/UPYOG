@@ -115,7 +115,7 @@ const TLAccessoriesEmployee = ({
   };
   return <React.Fragment>
             {accessoriesList?.map((accessor, index) => <AccessoriersForm key={accessor.key} index={index} accessor={accessor} {...commonProps} />)}
-            <LinkButton label={`${t("TL_NEW_TRADE_DETAILS_NEW_ACCESSORIES")}`} onClick={addAccessories} className="tl-auto-80" />
+            <LinkButton label={`${t("TL_NEW_TRADE_DETAILS_NEW_ACCESSORIES")}`} onClick={addAccessories} className="tl-accessories-employee-btn-red" />
 
         </React.Fragment>;
 };
@@ -283,12 +283,12 @@ const AccessoriersForm = _props => {
     marginTop: "-21px"
   };
   return <React.Fragment>
-            <div className="tl-auto-81">
-                <div className="tl-auto-82">
-                    {allAccessoriesList?.length > 1 ? <div className="tl-auto-83">
-                            <div onClick={() => removeAccessor(accessor)} className="tl-auto-84">
+            <div className="tl-accessories-employee-item">
+                <div className="tl-accessories-employee-bordered">
+                    {allAccessoriesList?.length > 1 ? <div className="tl-accessories-employee-flex">
+                            <div onClick={() => removeAccessor(accessor)} className="tl-accessories-employee-btn-right-text-action">
                                 <span>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="tl-auto-85">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="tl-accessories-employee-icon-relative">
                                         <path d="M1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM14 1H10.5L9.5 0H4.5L3.5 1H0V3H14V1Z" fill="#494848" />
                                     </svg>
                                 </span>
@@ -344,7 +344,7 @@ const AccessoriersForm = _props => {
                                         }}
                                         disable={true}
                                         onBlur={field.onBlur}
-                                        className="tl-auto-86" 
+                                        className="tl-accessories-employee-item-2" 
                                     />
                                 )}
                             />
@@ -372,7 +372,7 @@ const AccessoriersForm = _props => {
                                        // disable={/*getValues("uomValue")?!(accessor?.accessoryCategory?.uom) || accessor?.id:*/!(accessor?.accessoryCategory?.uom) }
                                         disable={isRenewal ? !enableUOM : false}
                                         onBlur={field.onBlur}
-                                       className="tl-auto-87"
+                                       className="tl-accessories-employee-item-2"
                                     />
                                 )}
                             />
@@ -400,7 +400,7 @@ const AccessoriersForm = _props => {
                                         onBlur={field.onBlur}
                                         disable={isRenewal ? !enableUOM : false}
                                         //disable={accessor?.id}
-                                       className="tl-auto-88"
+                                       className="tl-accessories-employee-item-2"
                                     />
                                 )}
                             />

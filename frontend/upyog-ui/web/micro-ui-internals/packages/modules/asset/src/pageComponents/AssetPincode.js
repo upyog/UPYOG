@@ -77,7 +77,7 @@ const AssetPincode = ({
               <TextInput key={input.name} style={input.style} value={pincode} onChange={onChange} {...input.validation} disable={presentInModifyApplication} autoFocus={presentInModifyApplication} />
             </div>
           </LabelFieldPair>
-          {error ? <CardLabelError className="asset-auto-93">{error}</CardLabelError> : null}
+          {error ? <CardLabelError className="asset-pincode-input-text-sm-mt-neg">{error}</CardLabelError> : null}
         </React.Fragment>;
     });
   }

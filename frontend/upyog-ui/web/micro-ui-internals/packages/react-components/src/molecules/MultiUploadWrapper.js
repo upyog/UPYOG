@@ -2,7 +2,7 @@ import React, { useEffect, useReducer, useState } from "react"
 import UploadFile from "../atoms/UploadFile"
 
 const displayError = ({ t, error, name }) => (
-    <span style={{ display: 'flex', flexDirection: 'column' }}>
+    <span className="rc-employee-module-card-flex-container">
         <div className="validation-error">{t(error)}</div>
         <div className="validation-error">{`${t('ES_COMMON_DOC_FILENAME')} : ${name} ...`}</div>
     </span>
@@ -109,7 +109,7 @@ const MultiUploadWrapper = ({ t, module = "PGR", tenantId = Digit.ULBService.get
                 }}
                 accept={acceptFiles}
             />
-            <span style={{ display: 'flex' }}>
+            <span className="rc-card-based-options-flex-container">
                 {fileErrors.length ? fileErrors.map(({ valid, name, type, size, error }) => (
                     valid ? null : displayError({ t, error, name })
                 )) : null}

@@ -61,7 +61,7 @@ const EmployeeApp = ({ path, url, userType }) => {
   return (
     <AppContainer>
       <div className="ground-container">
-        <div className="breadcrumb-title" style={{ marginLeft: "15px" }}>
+        <div className="breadcrumb-title gc-index-spacing-2">
           <GCBreadCrumb location={location} t={t} />
         </div>
         <Routes>
@@ -83,7 +83,7 @@ const EmployeeApp = ({ path, url, userType }) => {
           <Route path="application-details/:applicationNo/*" element={<PrivateRoute><ApplicationDetails key={location.pathname} parentUrl={url} /></PrivateRoute>} />
           <Route path="search" element={<PrivateRoute><Search /></PrivateRoute>} />
           <Route path="new-application/*" element={<PrivateRoute><Create parentUrl={url} /></PrivateRoute>} />
-          <Route path="bills" element={<div style={{ padding: "16px" }}><h1>{t("GC_BILLS")}</h1><p>{t("UNDER_CONSTRUCTION")}</p></div>} />
+          <Route path="bills" element={<div className="gc-index-container-padding"><h1>{t("GC_BILLS")}</h1><p>{t("UNDER_CONSTRUCTION")}</p></div>} />
           {/* Default route to redirect to inbox */}
           <Route path="*" element={<Navigate to="inbox" replace />} />
         </Routes>
