@@ -3179,18 +3179,17 @@
 
 /* pages/citizen/SearchConnection/searchConnection.js */
 .ws-search-connection-mt-md {
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .ws-search-connection-mt-sm-mb-md {
-  border: solid;
-  border-radius: 5px;
-  padding: 10px;
-  padding-top: 20px;
-  margin-top: 10px;
-  border-color: #f3f3f3;
-  background: #FAFAFA;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-top: 14px;
+  background: #f8fafc;
   margin-bottom: 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
 .ws-search-connection-input-mt-neg {
@@ -3198,18 +3197,34 @@
 }
 
 .ws-search-connection-label {
-  background: #FAFAFA;
+  background: #ffffff;
   max-width: 500px;
 }
 
 .ws-search-connection-label-center-text-grey-text {
   text-align: center;
-  color: #505A5F;
+  color: #64748b;
+  font-weight: 500;
+  font-size: 13px;
+  margin: 12px 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #e2e8f0;
+    margin: 0 14px;
+  }
 }
 
 .ws-search-connection-label-flex {
   display: flex;
   gap: 0 4px;
+  align-items: center;
 }
 
 .ws-search-connection-absolute {
@@ -3220,7 +3235,7 @@
 }
 
 .ws-search-connection-label-2 {
-  background: #FAFAFA;
+  background: #ffffff;
 }
 
 .ws-search-connection-absolute-2 {
@@ -11383,7 +11398,7 @@
 }
 
 .mc-my-challan-top-spacing {
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .mc-my-challan-header {
@@ -13312,7 +13327,7 @@
 
 .mcollect-citizen,
 .ws-citizen-wrapper {
-  margin-top: 100px !important;
+  margin-top: 0px !important;
   width: 100% !important;
   display: block;
 }

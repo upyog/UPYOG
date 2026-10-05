@@ -58,19 +58,22 @@ const EditDisconnectionByConfig = () => {
       setConfig(config);
     }
   }, [applicationDetails, isLoading, newConfig]);
-  useEffect(async () => {
-    const IsDetailsExists = sessionStorage.getItem("IsDetailsExists") ? JSON.parse(sessionStorage.getItem("IsDetailsExists")) : false;
-    if (details?.applicationData?.id && !IsDetailsExists) {
-      const convertAppData = await convertDisonnectApplicationData(details, serviceType, true, t);
-      setSessionFormData({
-        ...sessionFormData,
-        ...convertAppData
-      });
-      setAppData({
-        ...convertAppData
-      });
-      sessionStorage.setItem("IsDetailsExists", JSON.stringify(true));
-    }
+  useEffect(() => {
+    const loadAppData = async () => {
+      const IsDetailsExists = sessionStorage.getItem("IsDetailsExists") ? JSON.parse(sessionStorage.getItem("IsDetailsExists")) : false;
+      if (details?.applicationData?.id && !IsDetailsExists) {
+        const convertAppData = await convertDisonnectApplicationData(details, serviceType, true, t);
+        setSessionFormData({
+          ...sessionFormData,
+          ...convertAppData
+        });
+        setAppData({
+          ...convertAppData
+        });
+        sessionStorage.setItem("IsDetailsExists", JSON.stringify(true));
+      }
+    };
+    loadAppData();
   }, [details, applicationDetails, sessionFormData]);
   const onFormValueChange = (setValue, formData, formState) => {
     if (!_.isEqual(sessionFormData, formData)) {

@@ -853,6 +853,7 @@
     overflow-y: auto !important;
     overflow-x: hidden !important;
     scroll-behavior: smooth;
+    margin-left: 240px !important;
 }
 
 .employee .employee-app-container {
@@ -990,19 +991,66 @@
     letter-spacing: 0.04em;
     line-height: 1;
 
-    &.module-breakdown-badge--pt { color: #1d4ed8; background-color: #eff6ff; }
-    &.module-breakdown-badge--tl { color: #059669; background-color: #ecfdf5; }
-    &.module-breakdown-badge--ws { color: #7c3aed; background-color: #f5f3ff; }
-    &.module-breakdown-badge--mc { color: #d97706; background-color: #fffbeb; }
-    &.module-breakdown-badge--pgr { color: #dc2626; background-color: #fef2f2; }
+    &.module-breakdown-badge--pt {
+        color: #1d4ed8;
+        background-color: #eff6ff;
+    }
+
+    &.module-breakdown-badge--tl {
+        color: #059669;
+        background-color: #ecfdf5;
+    }
+
+    &.module-breakdown-badge--ws {
+        color: #7c3aed;
+        background-color: #f5f3ff;
+    }
+
+    &.module-breakdown-badge--mc {
+        color: #d97706;
+        background-color: #fffbeb;
+    }
+
+    &.module-breakdown-badge--pgr {
+        color: #dc2626;
+        background-color: #fef2f2;
+    }
+
     &.module-breakdown-badge--ptr,
-    &.module-breakdown-badge--pet { color: #db2777; background-color: #fdf2f8; }
-    &.module-breakdown-badge--bnd { color: #0f766e; background-color: #f0fdfa; }
-    &.module-breakdown-badge--chb { color: #b45309; background-color: #fefce8; }
-    &.module-breakdown-badge--bpa { color: #86198f; background-color: #fdf4ff; }
-    &.module-breakdown-badge--noc { color: #ea580c; background-color: #fff7ed; }
-    &.module-breakdown-badge--fsm { color: #334155; background-color: #f8fafc; }
-    &.module-breakdown-badge--default { color: #475569; background-color: #f1f5f9; }
+    &.module-breakdown-badge--pet {
+        color: #db2777;
+        background-color: #fdf2f8;
+    }
+
+    &.module-breakdown-badge--bnd {
+        color: #0f766e;
+        background-color: #f0fdfa;
+    }
+
+    &.module-breakdown-badge--chb {
+        color: #b45309;
+        background-color: #fefce8;
+    }
+
+    &.module-breakdown-badge--bpa {
+        color: #86198f;
+        background-color: #fdf4ff;
+    }
+
+    &.module-breakdown-badge--noc {
+        color: #ea580c;
+        background-color: #fff7ed;
+    }
+
+    &.module-breakdown-badge--fsm {
+        color: #334155;
+        background-color: #f8fafc;
+    }
+
+    &.module-breakdown-badge--default {
+        color: #475569;
+        background-color: #f1f5f9;
+    }
 }
 
 .module-breakdown-name {
@@ -1131,6 +1179,7 @@
     0% {
         background-position: -200% 0;
     }
+
     100% {
         background-position: 200% 0;
     }

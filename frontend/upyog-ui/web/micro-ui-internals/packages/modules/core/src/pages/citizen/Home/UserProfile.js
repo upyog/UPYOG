@@ -57,8 +57,8 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   const [userDetails, setUserDetails] = useState(null);
   const [userAddresses, setUserAddresses] = useState([]); // Separate state for addresses
   const [name, setName] = useState(userInfo?.name ? userInfo.name : "");
-  const dateOfBirth= userDetails?.dob
-  const formattedDob=(dateOfBirth!==undefined) ?format(new Date(dateOfBirth), 'MM/dd/yyyy') : ""
+  const dateOfBirth = userDetails?.dob
+  const formattedDob = (dateOfBirth !== undefined) ? format(new Date(dateOfBirth), 'MM/dd/yyyy') : ""
   //const dateOfBirth1= (dateOfBirth!==undefined) ?dateOfBirth.split("-").reverse().join("-") : ""
   const [dob, setDob] = useState(dateOfBirth);
   const [email, setEmail] = useState(userInfo?.emailId ? userInfo.emailId : "");
@@ -147,27 +147,27 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
   const TogleforPassword = () => setChangepassword(!changepassword);
   const setGenderName = (value) => setGender(value);
 
-  const setUserDOB =(value)=> {
-      setDob(value);
+  const setUserDOB = (value) => {
+    setDob(value);
   }
   const closeFileUploadDrawer = () => setOpenUploadSide(false);
 
   const setUserName = (value) => {
     setName(value);
 
-    if(!new RegExp(/^[a-zA-Z ]+$/i).test(value) || value.length === 0 || value.length > 50){
-      setErrors({...errors, userName : {type: "pattern", message: t("CORE_COMMON_PROFILE_NAME_INVALID")}});
-    }else{
-      setErrors({...errors, userName : null})
+    if (!new RegExp(/^[a-zA-Z ]+$/i).test(value) || value.length === 0 || value.length > 50) {
+      setErrors({ ...errors, userName: { type: "pattern", message: t("CORE_COMMON_PROFILE_NAME_INVALID") } });
+    } else {
+      setErrors({ ...errors, userName: null })
     }
   }
-  
+
   const setUserEmailAddress = (value) => {
     setEmail(value);
-    const emailPattern=/^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/
-    if(value.length && !emailPattern.test(value)){
-      setErrors({...errors, emailAddress: {type: "pattern", message: t("CORE_COMMON_PROFILE_EMAIL_INVALID")}})
-    }else{
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/
+    if (value.length && !emailPattern.test(value)) {
+      setErrors({ ...errors, emailAddress: { type: "pattern", message: t("CORE_COMMON_PROFILE_EMAIL_INVALID") } })
+    } else {
       setEmail(value);
       setErrors({ ...errors, emailAddress: null });
     }
@@ -180,9 +180,9 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
     setMobileNo(value);
 
     if (userType === "employee" && !new RegExp(/^[6-9]{1}[0-9]{9}$/).test(value)) {
-      setErrors({...errors, mobileNumber: {type: 'pattern', message: t("CORE_COMMON_PROFILE_MOBILE_NUMBER_INVALID")}})
-    }else{
-      setErrors({...errors, mobileNumber: null});
+      setErrors({ ...errors, mobileNumber: { type: 'pattern', message: t("CORE_COMMON_PROFILE_MOBILE_NUMBER_INVALID") } })
+    } else {
+      setErrors({ ...errors, mobileNumber: null });
     }
   };
 
@@ -200,9 +200,9 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
     setCurrentPassword(value);
 
     if (!new RegExp(/^([a-zA-Z0-9@#$%]{8,15})$/i).test(value)) {
-      setErrors({...errors, currentPassword: {type: "pattern", message: t("CORE_COMMON_PROFILE_PASSWORD_INVALID")}})
-    }else{
-      setErrors({...errors, currentPassword: null});
+      setErrors({ ...errors, currentPassword: { type: "pattern", message: t("CORE_COMMON_PROFILE_PASSWORD_INVALID") } })
+    } else {
+      setErrors({ ...errors, currentPassword: null });
     }
   }
 
@@ -210,9 +210,9 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
     setNewPassword(value);
 
     if (!new RegExp(/^([a-zA-Z0-9@#$%]{8,15})$/i).test(value)) {
-      setErrors({...errors, newPassword: {type: "pattern", message: t("CORE_COMMON_PROFILE_PASSWORD_INVALID")}})
-    }else{
-      setErrors({...errors, newPassword: null});
+      setErrors({ ...errors, newPassword: { type: "pattern", message: t("CORE_COMMON_PROFILE_PASSWORD_INVALID") } })
+    } else {
+      setErrors({ ...errors, newPassword: null });
     }
   }
 
@@ -220,9 +220,9 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
     setConfirmPassword(value);
 
     if (!new RegExp(/^([a-zA-Z0-9@#$%]{8,15})$/i).test(value)) {
-      setErrors({...errors, confirmPassword: {type: "pattern", message: t("CORE_COMMON_PROFILE_PASSWORD_INVALID")}})
-    }else{
-      setErrors({...errors, confirmPassword: null});
+      setErrors({ ...errors, confirmPassword: { type: "pattern", message: t("CORE_COMMON_PROFILE_PASSWORD_INVALID") } })
+    } else {
+      setErrors({ ...errors, confirmPassword: null });
     }
   }
 
@@ -244,7 +244,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
       const requestData = {
         ...userInfo,
         name,
-        dob: dob!== undefined ? dob.split("-").reverse().join("/") : "",
+        dob: dob !== undefined ? dob.split("-").reverse().join("/") : "",
         gender: gender?.value,
         emailId: email,
         altContactNumber: altMobileNumber,
@@ -269,7 +269,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
       if (email.length && !/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
         throw JSON.stringify({ type: "error", message: t("CORE_COMMON_PROFILE_EMAIL_INVALID") });
-      }     
+      }
 
       if (currentPassword.length || newPassword.length || confirmPassword.length) {
         if (newPassword !== confirmPassword) {
@@ -284,7 +284,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
           throw JSON.stringify({ type: "error", message: t("CORE_COMMON_PROFILE_PASSWORD_INVALID") });
         }
       }
-      requestData["locale"]=Digit.StoreData.getCurrentLanguage();
+      requestData["locale"] = Digit.StoreData.getCurrentLanguage();
       const { responseInfo, user } = await Digit.UserService.updateUser(requestData, stateCode);
 
       if (responseInfo && responseInfo.status === "200") {
@@ -380,9 +380,9 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
 
   //function for edit button with edit icon and functioanality of redirecting to differnt URL's
   const ActionButton = ({ onClick }) => {
-    return <LinkButton 
-    label={<EditIcon className="profile-edit-icon" />}
-    className="check-page-link-button" onClick={onClick} />;
+    return <LinkButton
+      label={<EditIcon className="profile-edit-icon" />}
+      className="check-page-link-button" onClick={onClick} />;
   };
 
   if (userType === "employee") {
@@ -572,7 +572,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
             </div>
 
             {/* Change Password Accordion Card */}
-            <div className="employee-profile-security-box">
+            {/* <div className="employee-profile-security-box">
               <div className="security-box-header" onClick={TogleforPassword}>
                 <div className="security-box-left">
                   <span className="security-box-icon">🔐</span>
@@ -638,7 +638,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                   </div>
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* Actions Bar */}
             <div className="employee-profile-actions-bar">

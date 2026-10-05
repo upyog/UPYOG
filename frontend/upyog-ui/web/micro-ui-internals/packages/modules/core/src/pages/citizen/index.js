@@ -93,6 +93,7 @@ const Home = (props) => {
 
   const navigate = Digit.Hooks.useCustomNavigate();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   const handleClickOnWhatsApp = (obj) => {
     window.open(obj);
@@ -103,7 +104,20 @@ const Home = (props) => {
   newConfig = newConfig?.EdcrConfig ? newConfig?.EdcrConfig : newConfigEDCR;
 
   const hideSidebar = sidebarHiddenFor.some((e) => window.location.href.includes(e));
-  const toggleSidebarWidth = () => setIsSidebarCollapsed((prev) => !prev);
+  const toggleSidebarWidth = () => {
+    if (window.innerWidth <= 780 || window.Digit.Utils.browser.isMobile()) {
+      setIsMobileSidebarOpen((prev) => !prev);
+    } else {
+      setIsSidebarCollapsed((prev) => !prev);
+    }
+  };
+  const closeMobileSidebar = () => {
+    setIsMobileSidebarOpen(false);
+  };
+
+  useEffect(() => {
+    setIsMobileSidebarOpen(false);
+  }, [pathname]);
 
   const appRoutes = modules.map(({ code, tenants }, index) => {
     const Module = Digit.ComponentRegistryService.getComponent(`${code}Module`);
@@ -225,29 +239,40 @@ const Home = (props) => {
 
   return (
     <div className={classname}>
-      <div className="main center-container citizen-home-container">
-        {hideSidebar ? null : (
-          <div className={`SideBarStatic ${isSidebarCollapsed ? "SideBarStatic--collapsed" : ""}`}>
-            <StaticCitizenSideBar linkData={linkData} islinkDataLoading={islinkDataLoading} isSidebarCollapsed={isSidebarCollapsed} />
+      {hideSidebar ? null : (
+        <React.Fragment>
+          <div className={`SideBarStatic ${isSidebarCollapsed ? "SideBarStatic--collapsed" : ""} ${isMobileSidebarOpen ? "SideBarStatic--mobile-open" : ""}`}>
+            <StaticCitizenSideBar
+              linkData={linkData}
+              islinkDataLoading={islinkDataLoading}
+              isSidebarCollapsed={isSidebarCollapsed}
+              closeMobileSidebar={closeMobileSidebar}
+            />
           </div>
-        )}
-        <div className="citizen-main-content-area">
-          {!hideSidebar && <TopBarSideBar t={t}
-            stateInfo={stateInfo}
-            userDetails={userDetails}
-            CITIZEN={CITIZEN}
-            cityDetails={cityDetails}
-            mobileView={mobileView}
-            handleUserDropdownSelection={handleUserDropdownSelection}
-            logoUrl={logoUrl}
-            showSidebar={true}
-            linkData={linkData}
-            islinkDataLoading={islinkDataLoading}
-            toggleSidebarWidth={toggleSidebarWidth}
-            isSidebarCollapsed={isSidebarCollapsed}
-          />
-          }
-          <div className={`main-body ${hideSidebar ? "body-topBar" : ""}`}>
+          {isMobileSidebarOpen && (
+            <div className="sidebar-mobile-backdrop" onClick={closeMobileSidebar} />
+          )}
+        </React.Fragment>
+      )}
+      {!hideSidebar && (
+        <TopBarSideBar
+          t={t}
+          stateInfo={stateInfo}
+          userDetails={userDetails}
+          CITIZEN={CITIZEN}
+          cityDetails={cityDetails}
+          mobileView={mobileView}
+          handleUserDropdownSelection={handleUserDropdownSelection}
+          logoUrl={logoUrl}
+          showSidebar={true}
+          linkData={linkData}
+          islinkDataLoading={islinkDataLoading}
+          toggleSidebarWidth={toggleSidebarWidth}
+          isSidebarCollapsed={isSidebarCollapsed}
+        />
+      )}
+      <div className={`main center-container citizen-home-container ${isSidebarCollapsed ? "citizen-home-container--collapsed" : ""} ${hideSidebar ? "citizen-home-container--no-sidebar" : ""}`}>
+        <div className={`main-body ${hideSidebar ? "body-topBar" : ""}`}>
             <Routes>
               {/* <Route path={path} element={<CitizenHome />} />
 
@@ -294,11 +319,28 @@ const Home = (props) => {
               <Route path={`${APPLICATION_PATH}/citizen/core/edcr/scrutiny/acknowledgement`} element={<EDCRAcknowledgement />} />
               <Route path="Audit" element={<Search />} />
               <Route path="payment/verification" element={<QRCode />} />
+              {Digit?.ComponentRegistryService?.getComponent("PTCitizenHomeScreen") && (
+                <Route
+                  path="pt-home"
+                  element={React.createElement(Digit.ComponentRegistryService.getComponent("PTCitizenHomeScreen"))}
+                />
+              )}
+              {Digit?.ComponentRegistryService?.getComponent("TLCitizenHomeScreen") && (
+                <Route
+                  path="tl-home"
+                  element={React.createElement(Digit.ComponentRegistryService.getComponent("TLCitizenHomeScreen"))}
+                />
+              )}
+              {Digit?.ComponentRegistryService?.getComponent("WSCitizenHomeScreen") && (
+                <Route
+                  path="ws-home"
+                  element={React.createElement(Digit.ComponentRegistryService.getComponent("WSCitizenHomeScreen"))}
+                />
+              )}
 
               {appRoutes}
               {ModuleLevelLinkHomePages}
             </Routes>
-          </div>
         </div>
       </div>
     </div>

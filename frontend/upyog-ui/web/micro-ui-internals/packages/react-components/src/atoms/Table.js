@@ -11,7 +11,7 @@ const Table = ({
   t,
   data,
   columns,
-  getCellProps,
+  getCellProps = () => ({}),
   currentPage = 0,
   pageSizeLimit = 10,
   disableSort = true,
@@ -149,7 +149,7 @@ const Table = ({
               </td>}
                 {row.cells.map((cell) => {
                   const cellProps = cell.getCellProps([
-                    getCellProps(cell),
+                    typeof getCellProps === "function" ? getCellProps(cell) : {},
                   ]);
                   const { key: cellKey, ...restCellProps } = cellProps;
                   return (

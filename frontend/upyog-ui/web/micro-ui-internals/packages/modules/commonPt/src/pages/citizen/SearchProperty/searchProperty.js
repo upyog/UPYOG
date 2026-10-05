@@ -78,7 +78,6 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
         el.style.position = "static";
         el.style.padding = "8px 0";
         el.style.boxShadow = "none";
-        el.style.marginBottom = "16px";
         el.style.textAlign = "left";
         el.style.zIndex = "0";
       } else {

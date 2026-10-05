@@ -77,15 +77,40 @@ const MyConnections = ({ view }) => {
   if (isLoading || PTisLoading || isSWLoading) {
     return <Loader />;
   }
-  return <React.Fragment>
-      <Header>{`${t("WS_MYCONNECTIONS_HEADER")} ${connectionList ? `(${connectionList.length})` : ""}`}</Header>
-      <WSInfoLabel t={t} /> 
-      <div>
-        {connectionList?.length > 0 && connectionList.map((application, index) => <div key={index}>
-              <WSConnection application={application} />
-            </div>)}
-        {!connectionList?.length > 0 && <p className="ws-index-mt-md-ml-md">{t("PT_NO_APPLICATION_FOUND_MSG")}</p>}
+  return (
+    <div className="ws-citizen-container">
+      <div className="ws-citizen-header-wrap">
+        <div className="ws-citizen-title-block">
+          <h1 className="ws-citizen-page-title">{t("WS_MYCONNECTIONS_HEADER")}</h1>
+          {connectionList && connectionList.length > 0 && (
+            <span className="ws-citizen-count-badge">
+              {connectionList.length} {connectionList.length === 1 ? t("WS_CONNECTION") : t("WS_CONNECTIONS")}
+            </span>
+          )}
+        </div>
       </div>
-    </React.Fragment>;
+      <WSInfoLabel t={t} />
+      <div>
+        {connectionList?.length > 0 ? (
+          <div className="ws-citizen-grid">
+            {connectionList.map((application, index) => (
+              <WSConnection key={index} application={application} />
+            ))}
+          </div>
+        ) : (
+          <div className="ws-empty-state">
+            <div className="ws-empty-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+              </svg>
+            </div>
+            <div className="ws-empty-title">{t("PT_NO_APPLICATION_FOUND_MSG") || t("WS_NO_CONNECTIONS_FOUND")}</div>
+            <div className="ws-empty-subtitle">{t("WS_NO_CONNECTIONS_SUBTITLE") || ""}</div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 export default MyConnections;
+

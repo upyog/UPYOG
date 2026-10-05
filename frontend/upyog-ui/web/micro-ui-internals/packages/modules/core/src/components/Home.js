@@ -92,18 +92,51 @@ const iconSelector = (code) => {
 
 const moduleColorMap = {
   PT: { color: "#1d4ed8", bg: "#eff6ff", border: "#dbeafe" },
+  WS: { color: "#0f766e", bg: "#f0fdfa", border: "#ccfbf1" },
   TL: { color: "#059669", bg: "#ecfdf5", border: "#d1fae5" },
   OBPS: { color: "#7c3aed", bg: "#f5f3ff", border: "#ede9fe" },
   BPA: { color: "#7c3aed", bg: "#f5f3ff", border: "#ede9fe" },
-  WS: { color: "#0f766e", bg: "#f0fdfa", border: "#ccfbf1" },
-  FSM: { color: "#d97706", bg: "#fffbeb", border: "#fef3c7" },
-  Bills: { color: "#2563eb", bg: "#eff6ff", border: "#dbeafe" },
-  Payment: { color: "#2563eb", bg: "#eff6ff", border: "#dbeafe" },
-  PTR: { color: "#db2777", bg: "#fdf2f8", border: "#fce7f3" },
-  CHB: { color: "#dc2626", bg: "#fef2f2", border: "#fee2e2" },
-  ADS: { color: "#dc2626", bg: "#fef2f2", border: "#fee2e2" },
+  OBPAS: { color: "#7c3aed", bg: "#f5f3ff", border: "#ede9fe" },
   PGR: { color: "#ea580c", bg: "#fff7ed", border: "#ffedd5" },
   MCollect: { color: "#86198f", bg: "#fdf4ff", border: "#fae8ff" },
+  mCollect: { color: "#86198f", bg: "#fdf4ff", border: "#fae8ff" },
+  PTR: { color: "#db2777", bg: "#fdf2f8", border: "#fce7f3" },
+  FSM: { color: "#d97706", bg: "#fffbeb", border: "#fef3c7" },
+  Ewaste: { color: "#0891b2", bg: "#ecfeff", border: "#cffafe" },
+  EWASTE: { color: "#0891b2", bg: "#ecfeff", border: "#cffafe" },
+  EW: { color: "#0891b2", bg: "#ecfeff", border: "#cffafe" },
+  ADS: { color: "#dc2626", bg: "#fef2f2", border: "#fee2e2" },
+  ADV: { color: "#dc2626", bg: "#fef2f2", border: "#fee2e2" },
+  CHB: { color: "#dc2626", bg: "#fef2f2", border: "#fee2e2" },
+  Bills: { color: "#2563eb", bg: "#eff6ff", border: "#dbeafe" },
+  Payment: { color: "#2563eb", bg: "#eff6ff", border: "#dbeafe" },
+};
+
+const modulePriorityOrder = [
+  "PT",
+  "WS",
+  "TL",
+  "OBPS",
+  "BPA",
+  "OBPAS",
+  "PGR",
+  "MCOLLECT",
+  "MCollect",
+  "mCollect",
+  "PTR",
+  "FSM",
+  "EWASTE",
+  "Ewaste",
+  "EW",
+  "ADV",
+  "ADS",
+  "CHB",
+];
+
+const getModulePriority = (code = "") => {
+  const upper = (code || "").toUpperCase();
+  const index = modulePriorityOrder.findIndex((m) => m.toUpperCase() === upper);
+  return index !== -1 ? index : 999;
 };
 
 const CitizenHome = ({ modules = [], getCitizenMenu, fetchedCitizen, isLoading }) => {
@@ -111,16 +144,21 @@ const CitizenHome = ({ modules = [], getCitizenMenu, fetchedCitizen, isLoading }
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("ALL");
 
-  const paymentModule = modules.filter(({ code }) => code === "Payment")[0];
-  const moduleArr = modules.filter(({ code }) => code !== "Payment");
-  const moduleArray = paymentModule ? [paymentModule, ...moduleArr] : moduleArr;
-
   if (isLoading) {
     return <Loader />;
   }
 
+  const sortedModules = [...modules].sort((a, b) => {
+    const priorityA = getModulePriority(a?.code);
+    const priorityB = getModulePriority(b?.code);
+    if (priorityA !== priorityB) {
+      return priorityA - priorityB;
+    }
+    return (a?.code || "").localeCompare(b?.code || "");
+  });
+
   // Pre-process modules with their link data
-  const processedModules = moduleArray
+  const processedModules = sortedModules
     .filter((mod) => mod)
     .map(({ code }) => {
       const mdmsDataObj = fetchedCitizen ? processLinkData(getCitizenMenu, code, t) : undefined;
@@ -140,7 +178,7 @@ const CitizenHome = ({ modules = [], getCitizenMenu, fetchedCitizen, isLoading }
         header,
         links,
         theme,
-        isInfo: code === "OBPS",
+        isInfo: code === "OBPS" || code === "BPA" || code === "OBPAS",
       };
     })
     .filter((mod) => mod.links.length > 0);

@@ -102,7 +102,7 @@ const IconsObject = {
   Phone: <Phone className="icon" />,
   LoginIcon: <LoginIcon className="icon" />,
 };
-const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed }) => {
+const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed, closeMobileSidebar }) => {
   const { t } = useTranslation();
   const navigate = Digit.Hooks.useCustomNavigate();
   const location = useLocation();
@@ -142,6 +142,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed 
   }, [user?.info?.photo, tenantId]);
   const handleLogout = () => {
     toggleSidebar(false);
+    if (closeMobileSidebar) closeMobileSidebar();
     setShowDialog(true);
   };
   const handleOnSubmit = () => {
@@ -156,18 +157,21 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed 
     return <Loader />;
   }
 
+  const handleNavClick = () => {
+    if (closeMobileSidebar) closeMobileSidebar();
+  };
+
   const redirectToLoginPage = () => {
-    // localStorage.clear();
-    // sessionStorage.clear();
+    if (closeMobileSidebar) closeMobileSidebar();
     navigate(`${APPLICATION_PATH}/citizen/login`);
   };
   // Function to redirect the user to the EDCR scrutiny page
   const redirectToScrutinyPage = () => {
-    // localStorage.clear();
-    // sessionStorage.clear();
+    if (closeMobileSidebar) closeMobileSidebar();
     navigate(`${APPLICATION_PATH}/citizen/core/edcr/scrutiny`);
   };
   const showProfilePage = () => {
+    if (closeMobileSidebar) closeMobileSidebar();
     navigate(`${APPLICATION_PATH}/citizen/user/profile`);
   };
   //const tenantId = Digit.ULBService.getCitizenCurrentTenant();
@@ -187,21 +191,24 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed 
       itemComponent = item.text;
     }
     const Item = () => (
-      <span className="menu-item" {...item.populators}>
+      <span className="menu-item" {...item.populators} onClick={(e) => {
+        if (item.populators?.onClick) item.populators.onClick(e);
+        handleNavClick();
+      }}>
         {leftIcon}
         <div className="menu-label">{itemComponent}</div>
       </span>
     );
     if (item.type === "external-link") {
       return (
-        <a href={item.link}>
+        <a href={item.link} onClick={handleNavClick}>
           <Item />
         </a>
       );
     }
     if (item.type === "link") {
       return (
-        <Link to={item?.link.replace("/digit-ui/","/upyog-ui/")}>
+        <Link to={item?.link.replace("/digit-ui/","/upyog-ui/")} onClick={handleNavClick}>
           <Item />
         </Link>
       );
@@ -257,22 +264,34 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed 
   return (
     <React.Fragment>
       <div className="static-citizen-sidebar-inner">
-        <div className="logo-design">
-          {isSidebarCollapsed ? <img src="/images/logo-mobile.png" alt="UPYOG Logo"/> : <img src="/images/Logo.png" alt="UPYOG Logo"/>}
-        </div>
-          {profileItem}
-          <div className="drawer-desktop">
-            {menuItems?.map((item, index) => (
-              <div className={`sidebar-list ${pathname === item?.link || pathname === item?.sidebarURL ? "active" : ""}`} key={index}>
-                <MenuItem item={item} />
-              </div>
-            ))}
+        <div className="sidebar-logo-header">
+          <div className="logo-design">
+            {isSidebarCollapsed ? <img src="/images/logo-mobile.png" alt="UPYOG Logo"/> : <img src="/images/Logo.png" alt="UPYOG Logo"/>}
           </div>
-          <div className="citizen-logout">
-            <button onClick={handleLogout}>
-              <span>{IconsObject.LogoutIcon}</span><span>{t("CORE_COMMON_LOGOUT")}</span>
+          {isMobile && (
+            <button
+              type="button"
+              className="sidebar-mobile-close-btn"
+              onClick={closeMobileSidebar}
+              aria-label="Close menu"
+            >
+              ✕
             </button>
-          </div>
+          )}
+        </div>
+        {profileItem}
+        <div className="drawer-desktop">
+          {menuItems?.map((item, index) => (
+            <div className={`sidebar-list ${pathname === item?.link || pathname === item?.sidebarURL ? "active" : ""}`} key={index}>
+              <MenuItem item={item} />
+            </div>
+          ))}
+        </div>
+        <div className="citizen-logout">
+          <button onClick={handleLogout}>
+            <span>{IconsObject.LogoutIcon}</span><span>{t("CORE_COMMON_LOGOUT")}</span>
+          </button>
+        </div>
         {showDialog && <LogoutDialog onSelect={handleOnSubmit} onCancel={handleOnCancel} onDismiss={handleOnCancel}></LogoutDialog>}
       </div>
     </React.Fragment>

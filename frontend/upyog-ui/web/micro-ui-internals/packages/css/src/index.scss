@@ -104,6 +104,7 @@
 @import "./pages/employee/oldMobileInbox.scss";
 @import "./pages/employee/dss.scss";
 @import "./pages/employee/iframe.scss";
+@import "./pages/employee/application-details-modern.scss";
 
 @import "./pages/citizen/payment/payment-type.scss";
 @import "./pages/citizen/container.scss";
@@ -123,6 +124,16 @@
 @import "./components/LoginLayout.scss";
 @import "./pages/citizen/AllServices.scss";
 @import "./pages/citizen/module.scss";
+@import "./pages/citizen/pt-home.scss";
+@import "./pages/citizen/property-information-modern.scss";
+@import "./pages/citizen/my-properties-modern.scss";
+@import "./pages/citizen/my-applications-modern.scss";
+@import "./pages/citizen/citizen-application-details-modern.scss";
+@import "./pages/citizen/my-payments-modern.scss";
+@import "./pages/citizen/citizen-search-modern.scss";
+@import "./pages/citizen/citizen-bill-details-modern.scss";
+@import "./pages/citizen/citizen-ws-modern.scss";
+@import "./pages/citizen/obps-my-applications-modern.scss";
 
 .display-none {
   display: none;
@@ -669,9 +680,8 @@ input[type="number"] {
   .gis-citizen {
     width: 100% !important;
     max-width: 100% !important;
-    padding-left: 16px;
-    padding-right: 16px;
-    margin-top: 1rem;
+    padding: 16px 28px 40px !important;
+    margin-top: 0 !important;
     box-sizing: border-box !important;
     display: block !important;
   }
@@ -696,6 +706,7 @@ input[type="number"] {
 .chb-citizen,
 .pet-citizen,
 .gis-citizen {
+
   .pt-index-full-width,
   .chb-index-fullwidth,
   .ptr-ptracknowledgement-fullwidth {
@@ -714,7 +725,8 @@ input[type="number"] {
       width: 100% !important;
       max-width: 100% !important;
 
-      .card {
+      .card,
+      .employeeCard {
         max-width: 100% !important;
         width: 100% !important;
         box-sizing: border-box !important;
@@ -722,12 +734,52 @@ input[type="number"] {
     }
   }
 
-  .card {
+  form {
+    width: 100% !important;
+    max-width: 100% !important;
+
+    .card,
+    .employeeCard {
+      max-width: 100% !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+  }
+
+  .card,
+  .employeeCard {
     max-width: 100% !important;
     width: 100% !important;
     margin: 10px 0 20px 0 !important;
     box-sizing: border-box !important;
     border-radius: 8px !important;
+  }
+}
+
+.citizen .main-body {
+  .back-btn2 {
+    display: inline-flex !important;
+    align-items: center !important;
+    margin-top: 8px !important;
+    margin-bottom: 16px !important;
+    margin-left: 0 !important;
+    cursor: pointer !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    border-bottom: none !important;
+    gap: 6px !important;
+
+    svg,
+    img {
+      width: 18px !important;
+      height: 18px !important;
+    }
+
+    p {
+      margin: 0 !important;
+      color: #1e293b !important;
+    }
   }
 }
 
