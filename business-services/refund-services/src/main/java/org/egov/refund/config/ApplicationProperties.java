@@ -75,5 +75,17 @@ public class ApplicationProperties {
 	@Value("${spring.application.name}")
 	private String applicationName ;
 	
+	@Value("${mdms.host}")
+	private String mdmsHost;
+
+	@Value("${mdms.search}")
+	private String mdmsSearch;
+	
+	@Value("${pdf.host}")
+	private String pdfHost;
+
+	@Value("${pdf.create}")
+	private String pdfCreate;
+	
 	
 }

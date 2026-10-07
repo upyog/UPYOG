@@ -225,12 +225,20 @@ public class RefundServiceImpl implements RefundService {
 		log.info("Workflow transition successful. refundId={}, action={}, oldStatus={}, newStatus={}", refund.getId(),
 				transition.getAction(), refund.getStatus(), transition.getApplicationStatus());
 
-		refund.setStatus(transition.getApplicationStatus());
+		 // Fetch existing refund before updating the status
+	    Refund oldRefundDetails = refundRepository.findById(refund.getId());
 
-		refundEnrichmentService.updateAuditDetails(refund, request.getUserId());
+	    if (oldRefundDetails == null) {
+	        oldRefundDetails = refund;
+	    }
+
+	    refund.setStatus(transition.getApplicationStatus());
+
+		
 		if (!RefundConstants.ACTION_INITIATE.equalsIgnoreCase(transition.getAction())) {
-
-			refundAuditService.createAudit(refund, transition.getAction());
+			refundEnrichmentService.updateAuditDetails(oldRefundDetails, request.getUserId());
+			
+			refundAuditService.createAudit(oldRefundDetails, transition.getAction());
 		}
 		Refund processedRefund = processWorkflowAction(refund, transition, request);
 
