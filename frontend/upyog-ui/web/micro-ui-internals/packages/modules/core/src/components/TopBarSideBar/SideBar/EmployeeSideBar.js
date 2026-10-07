@@ -175,14 +175,63 @@ const getModuleIcon = (item) => {
   return <CollectionIcon className="sidebar-icon" />;
 };
 
+const isExternalOrMono = (url) => {
+  if (!url) return false;
+  return url.startsWith("http://") || url.startsWith("https://") || url.startsWith("/employee/");
+};
+
 const resolveNavUrl = (navUrl) => {
   if (!navUrl) return "#";
   let formatted = navUrl.replace("/digit-ui/", "/upyog-ui/");
-  if (!formatted.startsWith("/upyog-ui") && !formatted.startsWith("http") && !formatted.startsWith("/")) {
-    formatted = "/upyog-ui/employee/" + formatted;
+  if (formatted.startsWith("http://") || formatted.startsWith("https://")) {
+    return formatted;
   }
+
+  // 1. MDMS Admin / Masters (Mono-UI screen)
+  if (formatted.includes("mdms/") || formatted.includes("/mdms/")) {
+    let clean = formatted.replace(/^\/?(upyog-ui\/employee\/|upyog-ui\/|employee\/)/, "");
+    if (clean.startsWith("/")) clean = clean.substring(1);
+    return "/employee/" + clean;
+  }
+
+  // 2. DSS / Integration routes
+  if (formatted.includes("integration/dss") || formatted.includes("/dss/")) {
+    let subPath = "home";
+    if (formatted.includes("integration/dss/")) {
+      subPath = formatted.split("integration/dss/")[1] || "home";
+    } else if (formatted.includes("/dss/")) {
+      subPath = formatted.split("/dss/")[1] || "home";
+    }
+    const cleanSub = subPath.replace(/^\/+|\/+$/g, "");
+    if (cleanSub === "home" || cleanSub === "NURT_DASHBOARD") {
+      return `/upyog-ui/employee/dss/landing/${cleanSub}`;
+    }
+    if (cleanSub.startsWith("landing/") || cleanSub.startsWith("dashboard/")) {
+      return `/upyog-ui/employee/dss/${cleanSub}`;
+    }
+    return `/upyog-ui/employee/dss/dashboard/${cleanSub}`;
+  }
+
+  // 3. Finance / EGF routes
+  if (formatted.includes("services/EGF") || formatted.includes("services/egf") || formatted.includes("/finance/")) {
+    let clean = formatted;
+    if (!clean.startsWith("/upyog-ui/employee/")) {
+      clean = clean.replace(/^\/?(upyog-ui\/employee\/|upyog-ui\/|employee\/)/, "");
+      if (clean.startsWith("/")) clean = clean.substring(1);
+      clean = "/upyog-ui/employee/" + clean;
+    }
+    return clean;
+  }
+
+  // 4. Standard Micro-UI module routes
   if (formatted.startsWith("/employee/")) {
     formatted = "/upyog-ui" + formatted;
+  } else if (!formatted.startsWith("/upyog-ui/")) {
+    if (formatted.startsWith("/")) {
+      formatted = "/upyog-ui/employee" + formatted;
+    } else {
+      formatted = "/upyog-ui/employee/" + formatted;
+    }
   }
   return formatted;
 };
@@ -448,15 +497,27 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
 
               return (
                 <div className={`sidebar-list ${isSingleActive ? "active" : ""}`} key={index}>
-                  <Link
-                    to={targetUrl}
-                    className="menu-item"
-                    title={displayName}
-                    onClick={() => closeMobileSidebar && closeMobileSidebar()}
-                  >
-                    {icon}
-                    {!isSidebarCollapsed && <div className="menu-label">{displayName}</div>}
-                  </Link>
+                  {isExternalOrMono(targetUrl) ? (
+                    <a
+                      href={targetUrl}
+                      className="menu-item"
+                      title={displayName}
+                      onClick={() => closeMobileSidebar && closeMobileSidebar()}
+                    >
+                      {icon}
+                      {!isSidebarCollapsed && <div className="menu-label">{displayName}</div>}
+                    </a>
+                  ) : (
+                    <Link
+                      to={targetUrl}
+                      className="menu-item"
+                      title={displayName}
+                      onClick={() => closeMobileSidebar && closeMobileSidebar()}
+                    >
+                      {icon}
+                      {!isSidebarCollapsed && <div className="menu-label">{displayName}</div>}
+                    </Link>
+                  )}
                 </div>
               );
             }
@@ -513,15 +574,27 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
 
                       return (
                         <div className={`sidebar-sublist ${isCurrentActive ? "active" : ""}`} key={idx}>
-                          <Link
-                            to={childUrl}
-                            className="submenu-item"
-                            title={childDisplayName}
-                            onClick={() => closeMobileSidebar && closeMobileSidebar()}
-                          >
-                            <span className="sublink-dot">•</span>
-                            <span className="submenu-label">{childDisplayName}</span>
-                          </Link>
+                          {isExternalOrMono(childUrl) ? (
+                            <a
+                              href={childUrl}
+                              className="submenu-item"
+                              title={childDisplayName}
+                              onClick={() => closeMobileSidebar && closeMobileSidebar()}
+                            >
+                              <span className="sublink-dot">•</span>
+                              <span className="submenu-label">{childDisplayName}</span>
+                            </a>
+                          ) : (
+                            <Link
+                              to={childUrl}
+                              className="submenu-item"
+                              title={childDisplayName}
+                              onClick={() => closeMobileSidebar && closeMobileSidebar()}
+                            >
+                              <span className="sublink-dot">•</span>
+                              <span className="submenu-label">{childDisplayName}</span>
+                            </Link>
+                          )}
                         </div>
                       );
                     })}
