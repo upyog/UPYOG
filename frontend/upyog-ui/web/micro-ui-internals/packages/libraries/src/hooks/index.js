@@ -18,6 +18,10 @@ import {
   usePaymentSearch,
   useBulkPdfDetails,
 } from "./payment";
+import {
+  useRefundSearch,
+  useCompleteOfflineRefund,
+} from "./refund";
 import { useUserSearch } from "./userSearch";
 import { useApplicationsForBusinessServiceSearch } from "./useApplicationForBillSearch";
 import useBoundaryLocalities from "./useLocalities";
@@ -836,7 +840,9 @@ const Hooks = {
   useInbox,
   ndc,
   useCustomNavigate,
-  useModuleBasePath
+  useModuleBasePath,
+  useRefundSearch,
+  useCompleteOfflineRefund
 };
 
 export default Hooks;

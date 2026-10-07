@@ -95,7 +95,12 @@ const ApplicationDetails = () => {
     }
   );
 
-  const refund = extractRefundObject(refundData) || extractRefundObject(pgRefundData);
+  const serviceRefund = extractRefundObject(refundData);
+  const refund = serviceRefund || extractRefundObject(pgRefundData);
+  const canCompleteOfflineRefund =
+    Boolean(serviceRefund?.id) &&
+    serviceRefund?.status === "REFUND_INITIATED" &&
+    serviceRefund?.refundMode === "OFFLINE";
   const hasRefund = !!(refund && (refund?.refundNo || refund?.id || refund?.status));
 
   const workflowBusinessId = (hasRefund && refund?.refundNo) ? refund.refundNo : (refund?.refundNo || consumerCode);
@@ -240,6 +245,25 @@ const ApplicationDetails = () => {
           (bookingDetails?.totalAmountPaid ??
             (bookingDetails?.totalAmount ?? 0)))
       );
+      
+      const originalPaymentMode = paymentDetails?.paymentMode
+        ?.trim()
+        .toUpperCase();
+
+        const refundModeByPaymentMode = {
+          ONLINE: "ONLINE",
+          CASH: "OFFLINE",
+          CHEQUE: "OFFLINE",
+          DD: "OFFLINE",
+        };
+
+      const refundChannel = refundModeByPaymentMode[originalPaymentMode];
+
+      if (!refundChannel) {
+        throw new Error(
+          `Cannot initiate refund: unsupported or missing payment mode (${originalPaymentMode || "missing"}).`
+        );
+      }
 
       const refundPayload = {
         refund: {
@@ -252,10 +276,10 @@ const ApplicationDetails = () => {
           mobileNumber: bookingDetails?.applicantDetail?.applicantMobileNo || bookingDetails?.applicantDetail?.mobileNumber || bookingDetails?.mobileNumber || paymentDetails?.mobileNumber || "",
           refundCategory: "CANCELLATION",
           refundReason: data?.cancelReason || "Community hall booking cancellation",
-          paymentModeOriginal: paymentDetails?.paymentMode || "ONLINE",
+          paymentModeOriginal: originalPaymentMode,
           amountPaid: amountPaid,
           refundAmount: amountPaid,
-          refundMode: paymentDetails?.paymentMode || "ONLINE",
+          refundMode: refundChannel,
           fileStoreId: paymentDetails?.fileStoreId || bookingDetails?.paymentReceiptFilestoreId || bookingDetails?.permissionLetterFilestoreId || null
         }
       };
@@ -409,6 +433,50 @@ const ApplicationDetails = () => {
         },
       ].filter(Boolean)
       : [];
+  
+      const mapRefundActions = (actions) => {
+        if (!Array.isArray(actions)) return actions;
+      
+        return actions.map((action) => {
+          if (
+            action.action !== "COMPLETE_REFUND" ||
+            !canCompleteOfflineRefund
+          ) {
+            return action;
+          }
+      
+          return {
+            ...action,
+            isWarningPopUp: false,
+            redirectionUrll: undefined,
+            redirectionUrl: {
+              pathname:
+                `/upyog-ui/employee/refund/${encodeURIComponent(serviceRefund.id)}` +
+                `?consumerCode=${encodeURIComponent(serviceRefund.consumerCode)}`,
+            },
+          };
+        });
+      };
+      
+      const refundWorkflowDetails = {
+        ...workflowDetails,
+        data: workflowDetails?.data
+          ? {
+              ...workflowDetails.data,
+              nextActions: mapRefundActions(
+                workflowDetails.data.nextActions
+              ),
+              actionState: workflowDetails.data.actionState
+                ? {
+                    ...workflowDetails.data.actionState,
+                    nextActions: mapRefundActions(
+                      workflowDetails.data.actionState.nextActions
+                    ),
+                  }
+                : workflowDetails.data.actionState,
+            }
+          : workflowDetails?.data,
+      };
 
   return (
     <div>
@@ -439,7 +507,7 @@ const ApplicationDetails = () => {
         isDataLoading={isLoading}
         applicationData={appDetailsToShow?.applicationData?.applicationData}
         mutate={handleActionMutate}
-        workflowDetails={workflowDetails}
+        workflowDetails={refundWorkflowDetails}
         businessService={workflowBusinessService}
         moduleCode="chb-services"
         showToast={showToast}

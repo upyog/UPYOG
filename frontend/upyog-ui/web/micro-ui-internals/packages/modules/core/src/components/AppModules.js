@@ -67,8 +67,8 @@ export const AppModules = ({ stateCode, userType, modules, appTenants }) => {
 
 
 
-
-  const appRoutes = modules.map(({ code, tenants }, index) => {
+  const RefundModule =  Digit.ComponentRegistryService.getComponent("RefundModule");
+  const appRoutes = modules.filter(({ code }) => code !== "Refund").map(({ code, tenants }, index) => {
   const Module = Digit.ComponentRegistryService.getComponent(`${code}Module`);
   return Module ? (
     <Route
@@ -88,6 +88,18 @@ export const AppModules = ({ stateCode, userType, modules, appTenants }) => {
 return (
   <div className="ground-container">
     <Routes>
+      {userType === "employee" && RefundModule && (
+        <Route
+          path="refund/*"
+          element={
+            <RefundModule
+              stateCode={stateCode}
+              moduleCode="Refund"
+              userType="employee"
+            />
+          }
+        />
+      )}
       {appRoutes}
       <Route path="login" element={<Navigate to="/upyog-ui/employee/user/login" state={{ from: location.pathname + location.search }} replace />} />
       <Route path="forgot-password" element={<ForgotPassword />} />
