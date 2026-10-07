@@ -18,7 +18,7 @@ const FinanceEmployeeSideBar = ({ microUiModuleEnable, isFinanceEnabled }) => {
   const [search, setSearch] = useState("");
   const location = useLocation();
   const [activePath, setActivePath] = useState(
-    location.pathname.includes("/finance") ? "Finance" : ""
+    location.pathname.includes("/finance") || location.pathname.includes("/services/EGF") || location.pathname.includes("/services/egf") ? "Finance" : ""
   );
   const { t } = useTranslation();
 
@@ -71,7 +71,7 @@ const FinanceEmployeeSideBar = ({ microUiModuleEnable, isFinanceEnabled }) => {
   useEffect(() => {
     if (isLoading || !data?.actions) return;
     
-    if (location.pathname.includes("/finance")) {
+    if (location.pathname.includes("/finance") || location.pathname.includes("/services/EGF") || location.pathname.includes("/services/egf")) {
       const resolvedPath = getActivePathFromUrl(data.actions, location.pathname);
       setActivePath(resolvedPath);
     } else {

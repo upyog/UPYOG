@@ -4,7 +4,7 @@ import { BackButton, Loader, PrivateRoute, BreadCrumb } from "@nudmcdgnpm/digit-
 import DashBoard from "./pages";
 import NewDashBoard from "./pages/NewDashboard";
 import Home from "./pages/Home";
-import { Route, Routes as RouterRoutes, useLocation } from "react-router-dom";
+import { Route, Routes as RouterRoutes, useLocation, Navigate } from "react-router-dom";
 import Overview from "./pages/Overview";
 import {checkCurrentScreen, DSSCard,NDSSCard} from "./components/DSSCard";
 import DrillDown from "./pages/DrillDown";
@@ -91,10 +91,13 @@ Desludging Service</div>
       <RouterRoutes>
         <Route path={`/landing/:moduleCode`} element={<PrivateRoute><Home stateCode={stateCode} /></PrivateRoute>} />
         <Route path={`/dashboard/:moduleCode`} element={<PrivateRoute><DashBoard stateCode={stateCode} /></PrivateRoute>} />
+        <Route path={`/home`} element={<Navigate to="/upyog-ui/employee/dss/landing/home" replace />} />
+        <Route path={`/NURT_DASHBOARD`} element={<Navigate to="/upyog-ui/employee/dss/landing/NURT_DASHBOARD" replace />} />
         <Route path={`/main-dashboard-landing`} element={<PrivateRoute><NewDashBoard stateCode={stateCode} /></PrivateRoute>} />
         <Route path={`/drilldown`} element={<PrivateRoute><DrillDown stateCode={stateCode} /></PrivateRoute>} />
         <Route key={"national-faq"} path={`/national-faqs`} element={<FAQsSection />} />
         <Route key={"national-about"} path={`/national-about`} element={<About />} />
+        <Route path={`/:moduleCode`} element={<PrivateRoute><DashBoard stateCode={stateCode} /></PrivateRoute>} />
       </RouterRoutes>
     </div>
     </div>

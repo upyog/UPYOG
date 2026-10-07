@@ -3,10 +3,20 @@ import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 const getRoutePath = (navUrl) => {
   if (!navUrl) return "";
-  const isUpyog = window.location.href.includes("/upyog-ui");
-  const prefix = isUpyog ? "/upyog-ui/employee/finance/" : "/employee/finance/";
-  const url = isUpyog ? navUrl.replace("digit-ui", "upyog-ui") : navUrl;
-  return url.includes("upyog-ui") || url.includes("digit-ui") ? url : prefix + url;
+  let formatted = navUrl.replace("/digit-ui/", "/upyog-ui/");
+  if (formatted.startsWith("http://") || formatted.startsWith("https://")) {
+    return formatted;
+  }
+  if (formatted.startsWith("/employee/")) {
+    formatted = "/upyog-ui" + formatted;
+  } else if (!formatted.startsWith("/upyog-ui/")) {
+    if (formatted.startsWith("/")) {
+      formatted = "/upyog-ui/employee" + formatted;
+    } else {
+      formatted = "/upyog-ui/employee/" + formatted;
+    }
+  }
+  return formatted;
 };
 import {
   FinanceChartIcon,
