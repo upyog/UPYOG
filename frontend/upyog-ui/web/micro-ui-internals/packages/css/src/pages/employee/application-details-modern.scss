@@ -272,6 +272,7 @@
     align-items: center !important;
     z-index: 99 !important;
     box-sizing: border-box !important;
+    transition: left 0.3s ease-in-out, width 0.3s ease-in-out !important;
 
     .submit-bar {
       background: #a82227 !important;
@@ -290,6 +291,12 @@
         box-shadow: 0 4px 10px rgba(168, 34, 39, 0.35) !important;
       }
     }
+  }
+
+  .SideBarStatic--collapsed ~ .main .action-bar-wrap.app-details-action-bar-override,
+  .SideBarStatic--collapsed ~ div .action-bar-wrap.app-details-action-bar-override {
+    left: 80px !important;
+    width: calc(100% - 80px) !important;
   }
 }
 

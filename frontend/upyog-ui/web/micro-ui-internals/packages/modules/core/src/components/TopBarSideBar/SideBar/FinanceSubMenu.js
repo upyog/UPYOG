@@ -23,23 +23,13 @@ import ReactTooltip from "react-tooltip";
  * to EGF navigation links so they match the Finance module routes.
  */
 const FinanceSubMenu = ({ item, onHeaderClick }) => {
-  const [subnav, setSubnav] = useState(false);
   const location = useLocation();
   const { pathname } = location;
   const { t } = useTranslation();
 
-  const showSubnav = () => {
-    if (item?.moduleName === "FINANCE" && onHeaderClick) {
-      onHeaderClick("FINANCE");
-    } else {
-      setSubnav(!subnav);
-    }
-  };
-
   const getHref = (navUrl) => {
     if (!navUrl) return "";
     const isUpyog = window.location.href.includes("/upyog-ui");
-    // Normalize url by replacing digit-ui namespace with upyog-ui if on the upyog platform
     const url = isUpyog ? navUrl.replace("digit-ui", "upyog-ui") : navUrl;
     if (url.startsWith("/employee/") || (url.startsWith("/digit-ui/") && !url.includes("upyog-ui")) || url.startsWith("/upyog-ui/")) {
       return window.location.origin + url;
@@ -49,6 +39,34 @@ const FinanceSubMenu = ({ item, onHeaderClick }) => {
       ? (isUpyog ? "/upyog-ui/employee/finance/" : "/employee/finance/")
       : "/employee/";
     return window.location.origin + (url.includes("upyog-ui") || url.includes("digit-ui") ? url : prefix + url);
+  };
+
+  const hasActiveChild = React.useMemo(() => {
+    if (!item?.links) return false;
+    return item.links.some((linkItem) => {
+      const nav = linkItem?.navigationURL || linkItem?.link;
+      if (!nav) return false;
+      const href = getHref(nav);
+      const cleanPath = pathname?.split("?")[0]?.replace(/\/+$/, "");
+      const cleanHref = href?.replace(window.location.origin, "")?.split("?")[0]?.replace(/\/+$/, "");
+      return cleanPath && cleanHref && (cleanPath === cleanHref || cleanPath.startsWith(cleanHref + "/"));
+    });
+  }, [item, pathname]);
+
+  const [subnav, setSubnav] = useState(hasActiveChild);
+
+  React.useEffect(() => {
+    if (hasActiveChild) {
+      setSubnav(true);
+    }
+  }, [hasActiveChild]);
+
+  const showSubnav = () => {
+    if (item?.moduleName === "FINANCE" && onHeaderClick) {
+      onHeaderClick("FINANCE");
+    } else {
+      setSubnav(!subnav);
+    }
   };
 
   const IconsObject = {
@@ -98,23 +116,28 @@ const FinanceSubMenu = ({ item, onHeaderClick }) => {
             {item.links && subnav
               ? item.iconNavOpen
               : item.links
-              ? item.iconNavClose
-              : null}
+                ? item.iconNavClose
+                : null}
           </div>
         </div>
       </div>
       {subnav &&
         item.links &&
-        item.links.map((item, index) => {
-          const getModuleName = item?.displayName?.replace(/[ -]/g, "_");
+        item.links.map((childItem, index) => {
+          const getModuleName = childItem?.displayName?.replace(/[ -]/g, "_");
           const trimModuleName = t(`ACTION_TEST_${getModuleName}`);
+          const targetHref = getHref(childItem.navigationURL || childItem.link);
+          const cleanTarget = targetHref.replace(window.location.origin, "").split("?")[0].replace(/\/+$/, "");
+          const cleanCurrent = pathname?.split("?")[0]?.replace(/\/+$/, "");
+          const isActive = cleanCurrent && cleanTarget && (cleanCurrent === cleanTarget || cleanCurrent.startsWith(cleanTarget + "/"));
+
           return (
             <div key={index}>
-              {item.navigationURL ? (
+              {childItem.navigationURL || childItem.link ? (
                 <a
                   key={index}
-                  className={`dropdown-link ${pathname === item.link ? "active" : ""}`}
-                  href={getHref(item.navigationURL)}
+                  className={`dropdown-link ${isActive ? "active" : ""}`}
+                  href={targetHref}
                 >
                   <div className="actions" data-tip="React-tooltip" data-for={`jk-side-${index}`}>
                     <span> {trimModuleName} </span>

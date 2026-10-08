@@ -602,8 +602,12 @@
   }
 
   .main.citizen-home-container {
+    margin-top: 80px !important;
+  }
+
+  .main {
     margin-left: 240px !important;
-    margin-top: 84px !important;
+    margin-top: 0px !important;
     width: calc(100% - 240px) !important;
     max-width: calc(100% - 240px) !important;
     min-height: calc(100vh - 84px) !important;
@@ -613,6 +617,7 @@
     box-sizing: border-box !important;
     transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out, max-width 0.3s ease-in-out !important;
 
+    &.main--collapsed,
     &.citizen-home-container--collapsed {
       margin-left: 80px !important;
       width: calc(100% - 80px) !important;
@@ -639,6 +644,12 @@
       margin-top: 0px !important;
       min-height: 100vh !important;
     }
+  }
+
+  .SideBarStatic--collapsed~.main {
+    margin-left: 80px !important;
+    width: calc(100% - 80px) !important;
+    max-width: calc(100% - 80px) !important;
   }
 }
 
@@ -744,6 +755,7 @@
             .sidebar-icon,
             svg {
               fill: #584F74 !important;
+
               path {
                 fill: #584F74 !important;
               }
@@ -1412,6 +1424,16 @@
     }
   }
 
+  .employee-sidebar-inner .submenu-item .sidebar-icon {
+    flex-shrink: 0;
+  }
+
+  .employee-sidebar-inner .accordion-chevron {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+  }
+
   .employee-profile-main-card {
     background: #ffffff !important;
     border: 1px solid #e8e2f2 !important;
@@ -1639,7 +1661,7 @@
       padding: 12px 10px 40px !important;
       box-sizing: border-box !important;
       margin-top: 60px !important;
-      margin-left: 240px !important;
+      margin-left: 0 !important;
 
     }
 

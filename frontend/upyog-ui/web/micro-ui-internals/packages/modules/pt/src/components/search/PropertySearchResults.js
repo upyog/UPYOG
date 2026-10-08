@@ -1,5 +1,5 @@
 import { DetailsCard, Loader, Table, Modal } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { memo, useMemo, useState } from "react";
+import React, { memo, useMemo, useState, useEffect } from "react";
 import { Link,  } from "react-router-dom";
 import PropertyInvalidMobileNumber from "../../pages/citizen/MyProperties/PropertyInvalidMobileNumber";
 
@@ -12,6 +12,10 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast,ptSearchConf
     /* ...defaultValues,   to enable pagination */
     ...payload
   });
+
+  useEffect(() => {
+    setSearchQuery({ ...payload });
+  }, [payload]);
   const [showModal, setShowModal] = useState(false);
   const [showUpdateNo, setShowUpdateNo] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState(null);

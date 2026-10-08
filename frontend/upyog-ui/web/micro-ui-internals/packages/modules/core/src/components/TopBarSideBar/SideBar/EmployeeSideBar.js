@@ -1,15 +1,13 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   HomeIcon,
   EditPencilIcon,
   LogoutIcon,
   Loader,
-  AddressBookIcon,
   PropertyHouse,
   CaseIcon,
   CollectionIcon,
-  PTIcon,
   OBPSIcon,
   PGRIcon,
   FSMIcon,
@@ -19,7 +17,6 @@ import {
   BirthIcon,
   DeathIcon,
   FirenocIcon,
-  LoginIcon,
   CHBIcon,
   ArrowForward,
   ArrowVectorDown,
@@ -57,7 +54,24 @@ const defaultImage =
   "XZOvia7VujatUwVTrIt+Q/Csc7Tuhe+BOakT10b4TuoiiJjvgU9emTO42PwEfBa+cuodKkuf42DXr1D3JpXz73Hnn0j10evHKe+nufgfUm+7B84sX9FfdEzXux2DBpWuKokkCqN/5pa/8pmvn" +
   "L+RGKCddCGmatiPyPB/+ekO/M/q/7uvbt22kTt3zEnXPzCV13T3Gel4/6NduDu66xRvlPNkM1RjjxUdv+4WhGx6TftD19Q/dfzpwcHO+rE3fAAAAAElFTkSuQmCC";
 
-const Profile = ({ info, stateName, t, profilePhotoUrl, isSidebarCollapsed }) => {
+const FINANCE_META_KEYS = [
+  "id",
+  "name",
+  "url",
+  "displayName",
+  "orderNumber",
+  "parentModule",
+  "serviceCode",
+  "code",
+  "leftIcon",
+  "path",
+  "navigationURL",
+  "enabled",
+];
+
+const normalize = (s = "") => s.toString().trim().toLowerCase();
+
+const Profile = ({ info, profilePhotoUrl, isSidebarCollapsed }) => {
   const username = isSidebarCollapsed
     ? info?.name
       ?.split(" ")
@@ -69,19 +83,19 @@ const Profile = ({ info, stateName, t, profilePhotoUrl, isSidebarCollapsed }) =>
   return (
     <div className="profile-section">
       <div className="imageloader imageloader-loaded">
-        <img className="img-responsive img-circle img-Profile" src={profilePhotoUrl ? profilePhotoUrl : defaultImage} alt="Profile" />
+        <img className="img-responsive img-circle img-Profile" src={profilePhotoUrl || defaultImage} alt="Profile" />
       </div>
       <div id="profile-name" className="label-container name-Profile">
-        <div className="label-text"> {username} </div>
+        <div className="label-text">{username}</div>
       </div>
       {!isSidebarCollapsed && (
         <div id="profile-location" className="label-container loc-Profile">
-          <div className="label-text"> {info?.mobileNumber} </div>
+          <div className="label-text">{info?.mobileNumber}</div>
         </div>
       )}
       {!isSidebarCollapsed && info?.emailId && (
         <div id="profile-emailid" className="label-container loc-Profile">
-          <div className="label-text"> {info.emailId} </div>
+          <div className="label-text">{info?.emailId}</div>
         </div>
       )}
       <div className="profile-divider"></div>
@@ -119,11 +133,62 @@ const ICON_MAP = {
   documenticonsolid: <DocumentIconSolid className="sidebar-icon" />,
   dropicon: <DropIcon className="sidebar-icon" />,
   financecharticon: <FinanceChartIcon className="sidebar-icon" />,
+  insertchart: <FinanceChartIcon className="sidebar-icon" />,
+  finance: <FinanceChartIcon className="sidebar-icon" />,
   collectionsbookmarkicons: <CollectionsBookmarIcons className="sidebar-icon" />,
+};
+
+const getNodeByPath = (obj, pathString) => {
+  if (!pathString) return obj;
+  const parts = pathString.split(".");
+  let current = obj;
+  for (const part of parts) {
+    if (current && current[part]) current = current[part];
+    else return null;
+  }
+  return current;
+};
+
+const getMinOrderNumber = (node) => {
+  if (!node) return 9999;
+  if (typeof node === "object" && node.id !== undefined) return node.orderNumber || 0;
+  let min = 9999;
+  for (const key in node) {
+    const order = getMinOrderNumber(node[key]);
+    if (order < min) min = order;
+  }
+  return min;
+};
+
+const hasMatchingDescendant = (node, key, search, t, i18n) => {
+  if (!search) return true;
+
+  const hasChildren = typeof node === "object" && node && !node.id;
+  const translationKey = hasChildren
+    ? `ACTION_TEST_${key.toUpperCase().replace(/[ -]/g, "_")}`
+    : `ACTION_TEST_${node.displayName ? node.displayName.toUpperCase().replace(/[.:-\s\/]/g, "_") : key.toUpperCase().replace(/[ -]/g, "_")}`;
+
+  const displayLabel = i18n.exists(translationKey)
+    ? t(translationKey)
+    : hasChildren
+      ? key
+      : node.displayName || key;
+
+  if (displayLabel.toLowerCase().includes(search.toLowerCase())) return true;
+
+  if (hasChildren) {
+    for (const childKey in node) {
+      if (FINANCE_META_KEYS.includes(childKey)) continue;
+      if (hasMatchingDescendant(node[childKey], childKey, search, t, i18n)) return true;
+    }
+  }
+
+  return false;
 };
 
 const getModuleIcon = (item) => {
   let rawIcon = item?.leftIcon || item?.icon?.leftIcon || item?.icon;
+
   if (!rawIcon && item?.links?.length > 0) {
     const linkWithIcon = item.links.find((l) => l?.leftIcon || l?.icon?.leftIcon || l?.icon);
     rawIcon = linkWithIcon?.leftIcon || linkWithIcon?.icon?.leftIcon || linkWithIcon?.icon;
@@ -131,9 +196,7 @@ const getModuleIcon = (item) => {
 
   if (typeof rawIcon === "string") {
     let cleanKey = rawIcon;
-    if (cleanKey.includes(":")) {
-      cleanKey = cleanKey.split(":")[1];
-    }
+    if (cleanKey.includes(":")) cleanKey = cleanKey.split(":")[1];
     const cleanLookup = cleanKey.toLowerCase().replace(/[^a-z0-9]/g, "");
     if (ICON_MAP[cleanLookup]) return ICON_MAP[cleanLookup];
   }
@@ -147,8 +210,7 @@ const getModuleIcon = (item) => {
     return <PGRIcon className="sidebar-icon" />;
   if (nameToMatch.includes("property") || nameToMatch.includes("pt") || nameToMatch.includes("house") || nameToMatch.includes("assessment"))
     return <PropertyHouse className="sidebar-icon" />;
-  if (nameToMatch.includes("fire"))
-    return <FirenocIcon className="sidebar-icon" />;
+  if (nameToMatch.includes("fire")) return <FirenocIcon className="sidebar-icon" />;
   if (nameToMatch.includes("engagement") || nameToMatch.includes("notification") || nameToMatch.includes("phone"))
     return <Phone className="sidebar-icon" />;
   if (nameToMatch.includes("mcollect") || nameToMatch.includes("collect") || nameToMatch.includes("challan"))
@@ -163,10 +225,8 @@ const getModuleIcon = (item) => {
     return <WSICon className="sidebar-icon" />;
   if (nameToMatch.includes("chb") || nameToMatch.includes("community") || nameToMatch.includes("hall"))
     return <CHBIcon className="sidebar-icon" />;
-  if (nameToMatch.includes("birth"))
-    return <BirthIcon className="sidebar-icon" />;
-  if (nameToMatch.includes("death"))
-    return <DeathIcon className="sidebar-icon" />;
+  if (nameToMatch.includes("birth")) return <BirthIcon className="sidebar-icon" />;
+  if (nameToMatch.includes("death")) return <DeathIcon className="sidebar-icon" />;
   if (nameToMatch.includes("hrms") || nameToMatch.includes("employee") || nameToMatch.includes("person") || nameToMatch.includes("user"))
     return <PersonIcon className="sidebar-icon" />;
   if (nameToMatch.includes("bill") || nameToMatch.includes("receipt") || nameToMatch.includes("collection"))
@@ -183,36 +243,26 @@ const isExternalOrMono = (url) => {
 const resolveNavUrl = (navUrl) => {
   if (!navUrl) return "#";
   let formatted = navUrl.replace("/digit-ui/", "/upyog-ui/");
-  if (formatted.startsWith("http://") || formatted.startsWith("https://")) {
-    return formatted;
-  }
 
-  // 1. MDMS Admin / Masters (Mono-UI screen)
+  if (formatted.startsWith("http://") || formatted.startsWith("https://")) return formatted;
+
   if (formatted.includes("mdms/") || formatted.includes("/mdms/")) {
     let clean = formatted.replace(/^\/?(upyog-ui\/employee\/|upyog-ui\/|employee\/)/, "");
     if (clean.startsWith("/")) clean = clean.substring(1);
     return "/employee/" + clean;
   }
 
-  // 2. DSS / Integration routes
   if (formatted.includes("integration/dss") || formatted.includes("/dss/")) {
     let subPath = "home";
-    if (formatted.includes("integration/dss/")) {
-      subPath = formatted.split("integration/dss/")[1] || "home";
-    } else if (formatted.includes("/dss/")) {
-      subPath = formatted.split("/dss/")[1] || "home";
-    }
+    if (formatted.includes("integration/dss/")) subPath = formatted.split("integration/dss/")[1] || "home";
+    else if (formatted.includes("/dss/")) subPath = formatted.split("/dss/")[1] || "home";
+
     const cleanSub = subPath.replace(/^\/+|\/+$/g, "");
-    if (cleanSub === "home" || cleanSub === "NURT_DASHBOARD") {
-      return `/upyog-ui/employee/dss/landing/${cleanSub}`;
-    }
-    if (cleanSub.startsWith("landing/") || cleanSub.startsWith("dashboard/")) {
-      return `/upyog-ui/employee/dss/${cleanSub}`;
-    }
+    if (cleanSub === "home" || cleanSub === "NURT_DASHBOARD") return `/upyog-ui/employee/dss/landing/${cleanSub}`;
+    if (cleanSub.startsWith("landing/") || cleanSub.startsWith("dashboard/")) return `/upyog-ui/employee/dss/${cleanSub}`;
     return `/upyog-ui/employee/dss/dashboard/${cleanSub}`;
   }
 
-  // 3. Finance / EGF routes
   if (formatted.includes("services/EGF") || formatted.includes("services/egf") || formatted.includes("/finance/")) {
     let clean = formatted;
     if (!clean.startsWith("/upyog-ui/employee/")) {
@@ -223,33 +273,84 @@ const resolveNavUrl = (navUrl) => {
     return clean;
   }
 
-  // 4. Standard Micro-UI module routes
   if (formatted.startsWith("/employee/")) {
     formatted = "/upyog-ui" + formatted;
   } else if (!formatted.startsWith("/upyog-ui/")) {
-    if (formatted.startsWith("/")) {
-      formatted = "/upyog-ui/employee" + formatted;
-    } else {
-      formatted = "/upyog-ui/employee/" + formatted;
+    formatted = formatted.startsWith("/") ? "/upyog-ui/employee" + formatted : "/upyog-ui/employee/" + formatted;
+  }
+
+  return formatted;
+};
+
+const isUrlMatching = (pathname, navUrl) => {
+  if (!pathname || !navUrl) return false;
+  const resolved = resolveNavUrl(navUrl);
+  if (!resolved || resolved === "#") return false;
+
+  const cleanPath = pathname.split("?")[0].replace(/\/+$/, "").toLowerCase();
+  const cleanResolved = resolved.split("?")[0].replace(/\/+$/, "").toLowerCase();
+
+  if (cleanPath === cleanResolved) return true;
+
+  if (cleanPath.length > 15 && cleanResolved.length > 15 && cleanPath.startsWith(cleanResolved + "/")) {
+    return true;
+  }
+
+  const stripPrefix = (url) => url.replace(/^\/?(upyog-ui\/employee\/|upyog-ui\/|employee\/)/, "").replace(/^\/+/, "");
+  const relativePath = stripPrefix(cleanPath);
+  const relativeResolved = stripPrefix(cleanResolved);
+
+  if (relativePath === relativeResolved) return true;
+  if (relativePath.length > 5 && relativeResolved.length > 5) {
+    if (relativePath.startsWith(relativeResolved + "/")) {
+      return true;
     }
   }
-  return formatted;
+
+  return false;
+};
+
+const getFinancePathFromCurrentUrl = (pathname, actions, isFinanceEnabled) => {
+  if (!pathname || !actions?.length || !isFinanceEnabled || (!pathname.includes("/finance") && !pathname.includes("/services/EGF") && !pathname.includes("/services/finance"))) return "";
+
+  const matchedAction = actions.find((action) => {
+    if (!action?.navigationURL) return false;
+    return isUrlMatching(pathname, action.navigationURL);
+  });
+
+  if (!matchedAction?.path) return "";
+
+  let itemPath = matchedAction.path;
+
+  if (itemPath.startsWith("EGF")) {
+    itemPath = itemPath.replace("EGF", "Finance");
+  } else if (!itemPath.startsWith("Finance")) {
+    itemPath = `Finance.${itemPath}`;
+  }
+
+  const parts = itemPath.split(".");
+  if (parts.length > 1) {
+    parts.pop();
+    return parts.join(".");
+  }
+
+  return itemPath || "Finance";
 };
 
 const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => {
   const { isLoading, data } = Digit.Hooks.useAccessControl();
-  const [search, setSearch] = useState("");
-  const { t } = useTranslation();
-  const location = useLocation();
-  const { pathname } = location;
-  const isMobile = window.Digit.Utils.browser.isMobile();
+  const { t, i18n } = useTranslation();
+  const { pathname } = useLocation();
 
+  const [search, setSearch] = useState("");
   const [openMenus, setOpenMenus] = useState({});
   const [showDialog, setShowDialog] = useState(false);
   const [profilePhotoUrl, setProfilePhotoUrl] = useState(null);
+  const [activeFinancePath, setActiveFinancePath] = useState(pathname.includes("/finance") ? "Finance" : "");
 
-  const { data: storeData, isFetched } = Digit.Hooks.useStore.getInitData();
+  const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { stateInfo } = storeData || {};
+
   const user =
     Digit.UserService.getUser()?.token !== null
       ? Digit.UserService.getUser()
@@ -264,177 +365,418 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
         },
       };
 
-  const tenantId = Digit.ULBService.getCurrentTenantId?.() || "pg";
+  const tenantId = Digit.ULBService.getCurrentTenantId?.() || user?.info?.tenantId || "pg";
+  const stateId = Digit.ULBService.getStateId();
+
+  const { isLoading: isMdmsLoading, data: mdmsData } = Digit.Hooks.useCustomMDMS(
+    stateId,
+    "common-masters",
+    [{ name: "microUiModuleEnable" }]
+  );
+
+  const microUiModuleEnable = mdmsData?.["common-masters"]?.["microUiModuleEnable"] || [];
+  const isFinanceEnabled =
+    microUiModuleEnable.find((elem) => elem?.code?.toLowerCase() === "finance")?.enabled === true;
 
   useEffect(() => {
+    let mounted = true;
+
     const fetchPhoto = async () => {
-      const usersResponse = await Digit.UserService.userSearch(
-        user?.info?.tenantId || tenantId,
-        { uuid: [user?.info?.uuid || user?.user?.[0]?.uuid] },
-        {}
-      );
-      if (usersResponse?.user?.[0]?.photo) {
-        try {
-          const file = await Digit.UploadServices.Filefetch([usersResponse?.user?.[0]?.photo], "pg");
-          if (file?.data?.fileStoreIds?.[0]?.url) {
-            setProfilePhotoUrl(file?.data?.fileStoreIds?.[0]?.url.split(",")[0]);
-          }
-        } catch (err) {
-          console.error("Error fetching profile photo:", err);
-        }
+      try {
+        const uuid = user?.info?.uuid || user?.user?.[0]?.uuid;
+        if (!uuid) return;
+
+        const usersResponse = await Digit.UserService.userSearch(
+          user?.info?.tenantId || tenantId,
+          { uuid: [uuid] },
+          {}
+        );
+
+        const photo = usersResponse?.user?.[0]?.photo;
+        if (!photo) return;
+
+        const file = await Digit.UploadServices.Filefetch([photo], tenantId);
+        const url = file?.data?.fileStoreIds?.[0]?.url?.split(",")?.[0];
+
+        if (mounted && url) setProfilePhotoUrl(url);
+      } catch (err) {
+        console.error("Error fetching profile photo:", err);
       }
     };
 
     fetchPhoto();
-  }, [user?.info?.photo, tenantId]);
+    return () => {
+      mounted = false;
+    };
+  }, [tenantId, user]);
+
+  const transformedActions = useMemo(() => {
+    const sourceActions = data?.actions || [];
+
+    return sourceActions.map((item) => {
+      const pathRoot = item.path?.split?.(".")[0]?.toLowerCase() || "";
+      const parentModule = item.parentModule?.toLowerCase() || "";
+      const navUrl = item.navigationURL?.toLowerCase() || "";
+
+      const matchedConfig = microUiModuleEnable.find((config) => {
+        const codeLower = config.code?.toLowerCase();
+        const pathMatches = pathRoot === codeLower;
+        const parentMatches = parentModule.includes(codeLower);
+        const navMatches = navUrl.includes(codeLower);
+
+        let financeMatches = false;
+        if (codeLower === "finance") {
+          financeMatches =
+            pathRoot === "egf" ||
+            parentModule.includes("egf") ||
+            navUrl.includes("services/egf") ||
+            navUrl.includes("services/finance");
+        }
+
+        return pathMatches || parentMatches || navMatches || financeMatches;
+      });
+
+      const isEnabled = matchedConfig ? matchedConfig.enabled : true;
+
+      if (!isEnabled) {
+        if (item.navigationURL) {
+          let cleanUrl = item.navigationURL;
+          if (!cleanUrl.startsWith("/employee/") && !cleanUrl.startsWith("/digit-ui/")) {
+            cleanUrl = cleanUrl.replace("/upyog-ui/employee/", "");
+            cleanUrl = cleanUrl.replace("/digit-ui/employee/", "");
+            cleanUrl = cleanUrl.replace("/upyog-ui/", "");
+            cleanUrl = cleanUrl.replace("/digit-ui/", "");
+            cleanUrl = cleanUrl.startsWith("/") ? `/employee${cleanUrl}` : `/employee/${cleanUrl}`;
+          }
+          return { ...item, navigationURL: cleanUrl };
+        }
+        return item;
+      }
+
+      const isFinanceItem =
+        isFinanceEnabled &&
+        item.path &&
+        (item.path.startsWith("Finance") ||
+          item.path.startsWith("EGF") ||
+          item.parentModule?.toLowerCase()?.includes("egf") ||
+          item.parentModule?.toLowerCase()?.includes("finance") ||
+          item.navigationURL?.toLowerCase()?.includes("services/egf") ||
+          item.navigationURL?.toLowerCase()?.includes("services/finance"));
+
+      if (isFinanceItem) {
+        let newPath = item.path;
+        if (newPath.startsWith("EGF")) newPath = newPath.replace("EGF", "Finance");
+        else if (!newPath.startsWith("Finance")) newPath = `Finance.${newPath}`;
+
+        if (item.displayName && newPath.includes(".")) {
+          const parts = newPath.split(".");
+          parts[parts.length - 1] = item.displayName;
+          newPath = parts.join(".");
+        }
+
+        return { ...item, path: newPath };
+      }
+
+      return item;
+    });
+  }, [data, microUiModuleEnable, isFinanceEnabled]);
+
+  const financeTree = useMemo(() => {
+    const tree = {};
+
+    transformedActions
+      .filter((item) => item?.url === "url" || (isFinanceEnabled && item?.path?.startsWith("Finance")))
+      .forEach((item) => {
+        if (!(isFinanceEnabled && item?.path?.startsWith("Finance"))) return;
+
+        const parts = item.path.split(".");
+        let current = tree;
+
+        for (let i = 0; i < parts.length; i++) {
+          const part = parts[i];
+          if (i === parts.length - 1) {
+            current[part] = current[part] ? { ...item, ...current[part] } : { ...item };
+          } else {
+            if (!current[part]) current[part] = {};
+            current = current[part];
+          }
+        }
+      });
+
+    return tree;
+  }, [transformedActions, isFinanceEnabled]);
+
+  const financeHeaderPathFromUrl = useMemo(() => {
+    return getFinancePathFromCurrentUrl(pathname, transformedActions, isFinanceEnabled);
+  }, [pathname, transformedActions, isFinanceEnabled]);
+
+  useEffect(() => {
+    if ((pathname.includes("/finance") || pathname.includes("/services/EGF") || pathname.includes("/services/finance")) && isFinanceEnabled) {
+      const nextFinancePath = financeHeaderPathFromUrl || activeFinancePath || "Finance";
+      setActiveFinancePath((prev) => (prev !== nextFinancePath ? nextFinancePath : prev));
+    } else {
+      setActiveFinancePath("");
+    }
+  }, [pathname, financeHeaderPathFromUrl, isFinanceEnabled]);
+
+  const menuItems = useMemo(() => {
+    const grouped = {};
+    const query = normalize(search);
+    const filterFn = (item) => item?.url === "url" || (isFinanceEnabled && item?.path?.startsWith("Finance"));
+
+    transformedActions.filter(filterFn).forEach((item) => {
+      let index = item.path?.split(".")[0];
+      if (!index) return;
+      if (index === "TradeLicense") index = "Trade License";
+
+      const moduleKey = index.toUpperCase().replace(/[ -]/g, "_");
+      const moduleTranslation = t(`ACTION_TEST_${moduleKey}`);
+      const moduleLabel =
+        moduleTranslation && moduleTranslation !== `ACTION_TEST_${moduleKey}` ? moduleTranslation : index;
+
+      const childName = item?.displayName || "";
+      const childKey = childName.toUpperCase().replace(/[ -]/g, "_");
+      const childTranslation = t(`ACTION_TEST_${childKey}`);
+      const childLabel =
+        childTranslation && childTranslation !== `ACTION_TEST_${childKey}` ? childTranslation : childName;
+
+      const matches =
+        !query ||
+        normalize(index).includes(query) ||
+        normalize(moduleLabel).includes(query) ||
+        normalize(childName).includes(query) ||
+        normalize(childLabel).includes(query);
+
+      if (!matches) return;
+
+      if (!grouped[index]) grouped[index] = [];
+      grouped[index].push(item);
+    });
+
+    let result = [];
+
+    Object.keys(grouped).forEach((key) => {
+      const items = [...grouped[key]].sort((a, b) => (a?.orderNumber ?? 100) - (b?.orderNumber ?? 100));
+
+      if (!items[0]?.path?.includes(".")) {
+        if (items[0]?.displayName === "Home") {
+          result.unshift({
+            moduleName: key.toUpperCase(),
+            icon: items[0],
+            navigationURL: "/upyog-ui/employee",
+            type: "single",
+          });
+        } else {
+          result.push({
+            moduleName: items[0]?.displayName?.toUpperCase() || key.toUpperCase(),
+            type: "single",
+            icon: items[0],
+            navigationURL: items[0]?.navigationURL,
+          });
+        }
+      } else {
+        if (key.toUpperCase() === "FINANCE" && isFinanceEnabled) {
+          result.push({
+            moduleName: "FINANCE",
+            links: grouped[key],
+            icon: { leftIcon: "finance:insert-chart" },
+            orderNumber: 0,
+            isFinanceModule: true,
+          });
+        } else {
+          const iconItem = items.find((item) => item?.leftIcon) || items[0];
+          result.push({
+            moduleName: key.toUpperCase(),
+            links: items,
+            icon:
+              key.toUpperCase() === "FINANCE" && !iconItem?.leftIcon
+                ? { ...iconItem, leftIcon: "finance:insert-chart" }
+                : iconItem,
+            orderNumber: items[0]?.orderNumber,
+          });
+        }
+      }
+    });
+
+    const home = result.find((r) => r.moduleName === "HOME");
+    const rest = result.filter((r) => r.moduleName !== "HOME").sort((a, b) => {
+      const orderA = a?.orderNumber ?? 999;
+      const orderB = b?.orderNumber ?? 999;
+      if (orderA !== orderB) return orderA - orderB;
+      return a.moduleName.localeCompare(b.moduleName);
+    });
+
+    result = home ? [home, ...rest] : rest;
+
+    if (!home && !query) {
+      result.unshift({
+        moduleName: "HOME",
+        icon: "HomeIcon",
+        navigationURL: "/upyog-ui/employee",
+        type: "single",
+      });
+    }
+
+    return result;
+  }, [transformedActions, search, isFinanceEnabled, t]);
+
+  useEffect(() => {
+    if (!menuItems?.length) return;
+
+    const nextOpenMenus = {};
+
+    menuItems.forEach((module) => {
+      if (module?.links?.length > 0 && !module?.isFinanceModule) {
+        const hasActiveChild = module.links.some((linkItem) => {
+          return isUrlMatching(pathname, linkItem?.navigationURL || linkItem?.link);
+        });
+
+        if (hasActiveChild) {
+          nextOpenMenus[module.moduleName] = true;
+        }
+      }
+    });
+
+    setOpenMenus((prev) => ({
+      ...prev,
+      ...nextOpenMenus,
+    }));
+  }, [pathname, menuItems]);
+
+  const currentFinanceNode = useMemo(() => {
+    if (!activeFinancePath || !financeTree) return null;
+    return getNodeByPath(financeTree, activeFinancePath);
+  }, [activeFinancePath, financeTree]);
 
   const toggleMenu = (key) => {
     setOpenMenus((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const handleLogout = () => {
-    setShowDialog(true);
-  };
+  const handleLogout = () => setShowDialog(true);
+
   const handleOnSubmit = () => {
     Digit.UserService.logout();
     setShowDialog(false);
   };
-  const handleOnCancel = () => {
-    setShowDialog(false);
+
+  const handleOnCancel = () => setShowDialog(false);
+
+  const renderFinanceInnerMenu = () => {
+    if (!currentFinanceNode) return null;
+
+    const menuTitle = activeFinancePath.split(".").pop();
+
+    const handleFinanceBack = () => {
+      const parts = activeFinancePath.split(".");
+      parts.pop();
+      setActiveFinancePath(parts.join("."));
+    };
+
+    const financeKeys = Object.keys(currentFinanceNode)
+      .filter((key) => !FINANCE_META_KEYS.includes(key))
+      .filter((key) => hasMatchingDescendant(currentFinanceNode[key], key, search, t, i18n))
+      .sort((a, b) => getMinOrderNumber(currentFinanceNode[a]) - getMinOrderNumber(currentFinanceNode[b]));
+
+    return (
+      <>
+        <div className="employee-accordion-item">
+          <div className="sidebar-list sidebar-pointer-item active" onClick={handleFinanceBack}>
+            <div className="menu-item" title={activeFinancePath === "Finance" ? (t("MAIN_MENU") !== "MAIN_MENU" ? t("MAIN_MENU") : "Main Menu") : menuTitle}>
+              <ArrowForward className="arrow-icon" style={{ transform: "rotate(180deg)" }} />
+              {!isSidebarCollapsed && (
+                <div className="menu-label">
+                  {activeFinancePath === "Finance"
+                    ? (t("MAIN_MENU") !== "MAIN_MENU" ? t("MAIN_MENU") : "Main Menu")
+                    : (t(`ACTION_TEST_${menuTitle.toUpperCase().replace(/[ -]/g, "_")}`) !==
+                      `ACTION_TEST_${menuTitle.toUpperCase().replace(/[ -]/g, "_")}`
+                      ? t(`ACTION_TEST_${menuTitle.toUpperCase().replace(/[ -]/g, "_")}`)
+                      : menuTitle)}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="employee-submenu-wrapper" style={{ display: "block" }}>
+          {financeKeys.map((key) => {
+            const nodeValue = currentFinanceNode[key];
+            const hasChildren = typeof nodeValue === "object" && nodeValue && !nodeValue.id;
+
+            const translationKey = hasChildren
+              ? `ACTION_TEST_${key.toUpperCase().replace(/[ -]/g, "_")}`
+              : `ACTION_TEST_${nodeValue.displayName ? nodeValue.displayName.toUpperCase().replace(/[.:-\s\/]/g, "_") : key.toUpperCase().replace(/[ -]/g, "_")}`;
+
+            const displayLabel = i18n.exists(translationKey)
+              ? t(translationKey)
+              : hasChildren
+                ? key
+                : nodeValue.displayName || key;
+
+            const tempIconItem = hasChildren
+              ? { moduleName: key, leftIcon: nodeValue?.leftIcon || "finance:insert-chart" }
+              : { moduleName: nodeValue?.displayName || key, leftIcon: nodeValue?.leftIcon || "collections" };
+
+            const leftIcon = getModuleIcon(tempIconItem);
+
+            if (hasChildren) {
+              return (
+                <div
+                  className="sidebar-sublist"
+                  key={key}
+                  onClick={() => setActiveFinancePath(`${activeFinancePath}.${key}`)}
+                >
+                  <div className="submenu-item" title={displayLabel}>
+                    {leftIcon}
+                    <span className="submenu-label">{displayLabel}</span>
+                    <div className="accordion-chevron" style={{ marginLeft: "auto" }}>
+                      <ArrowForward className="arrow-icon" />
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
+            const targetPath = resolveNavUrl(nodeValue.navigationURL);
+            const isCurrentActive =
+              pathname === targetPath ||
+              (targetPath !== "/upyog-ui/employee" && targetPath && pathname.startsWith(targetPath));
+
+            return (
+              <div className={`sidebar-sublist ${isCurrentActive ? "active" : ""}`} key={key}>
+                {isExternalOrMono(targetPath) ? (
+                  <a
+                    href={targetPath}
+                    className="submenu-item"
+                    title={displayLabel}
+                    onClick={() => closeMobileSidebar?.()}
+                  >
+                    {leftIcon}
+                    <span className="submenu-label">{displayLabel}</span>
+                  </a>
+                ) : (
+                  <Link
+                    to={targetPath}
+                    className="submenu-item"
+                    title={displayLabel}
+                    onClick={() => closeMobileSidebar?.()}
+                  >
+                    {leftIcon}
+                    <span className="submenu-label">{displayLabel}</span>
+                  </Link>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </>
+    );
   };
 
-  /* ==========================================================================
-     MDMS ACCESS CONTROL GROUPING & LOGIC
-     ========================================================================== */
-  let configEmployeeSideBar = {};
-
-  if (!isLoading && data?.actions?.length > 0) {
-    let filteredActions = data?.actions?.filter((e) => e.url === "url");
-    if (filteredActions?.length > 0) {
-      filteredActions.forEach((item) => {
-        let index = item.path.split(".")[0];
-        if (index === "TradeLicense") index = "Trade License";
-        if (index === "") return;
-        if (!configEmployeeSideBar[index]) {
-          configEmployeeSideBar[index] = [item];
-        } else {
-          configEmployeeSideBar[index].push(item);
-        }
-      });
-    }
-  }
-
-  let filteredKeys = Object.keys(configEmployeeSideBar);
-  if (search.trim()) {
-    filteredKeys = filteredKeys.filter((key) => {
-      const moduleKey = key.replace(/[ -]/g, "_");
-      const translation = t(`ACTION_TEST_${Digit.Utils.locale.getTransformedLocale(moduleKey)}`) || key;
-      const matchesParent =
-        translation.toLowerCase().includes(search.trim().toLowerCase()) ||
-        key.toLowerCase().includes(search.trim().toLowerCase());
-      const matchesChild = configEmployeeSideBar[key]?.some((child) => {
-        const childName = child?.displayName || "";
-        const childTrans = t(`ACTION_TEST_${childName.toUpperCase().replace(/[ -]/g, "_")}`) || childName;
-        return (
-          childTrans.toLowerCase().includes(search.trim().toLowerCase()) ||
-          childName.toLowerCase().includes(search.trim().toLowerCase())
-        );
-      });
-      return matchesParent || matchesChild;
-    });
-  }
-
-  let res = [];
-  filteredKeys.sort((a, b) => {
-    const orderA = configEmployeeSideBar[a]?.[0]?.orderNumber || 100;
-    const orderB = configEmployeeSideBar[b]?.[0]?.orderNumber || 100;
-    return orderA - orderB;
-  });
-
-  for (let i = 0; i < filteredKeys.length; i++) {
-    const key = filteredKeys[i];
-    const items = configEmployeeSideBar[key];
-    if (items[0].path.indexOf(".") === -1) {
-      if (items[0].displayName === "Home" || key.toUpperCase() === "HOME") {
-        res.unshift({
-          moduleName: key.toUpperCase(),
-          icon: items[0]?.leftIcon || "HomeIcon",
-          navigationURL: "/upyog-ui/employee",
-          type: "single",
-        });
-      } else {
-        res.push({
-          moduleName: items[0]?.displayName?.toUpperCase() || key.toUpperCase(),
-          type: "single",
-          icon: items[0]?.leftIcon || items[0],
-          navigationURL: items[0].navigationURL,
-        });
-      }
-    } else {
-      res.push({
-        moduleName: key.toUpperCase(),
-        links: items,
-        icon: items[0]?.leftIcon || items[0],
-        orderNumber: items[0].orderNumber,
-      });
-    }
-  }
-
-  // Ensure HOME is at the very top
-  const homeIndex = res.findIndex((a) => a.moduleName === "HOME");
-  if (homeIndex > -1) {
-    const home = res.splice(homeIndex, 1)[0];
-    res.unshift(home);
-  } else if (!search.trim()) {
-    res.unshift({
-      moduleName: "HOME",
-      icon: "HomeIcon",
-      navigationURL: "/upyog-ui/employee",
-      type: "single",
-    });
-  }
-
-  // Auto-expand menu when active path matches child link
-  useEffect(() => {
-    if (res?.length > 0) {
-      res.forEach((module) => {
-        if (module?.links?.length > 0) {
-          const hasActiveChild = module.links.some((linkItem) => {
-            const childUrl = resolveNavUrl(linkItem?.navigationURL || linkItem?.link);
-            return (
-              pathname === childUrl ||
-              (childUrl !== "/upyog-ui/employee" && childUrl && pathname.startsWith(childUrl))
-            );
-          });
-          if (hasActiveChild) {
-            setOpenMenus((prev) => ({ ...prev, [module.moduleName]: true }));
-          }
-        }
-      });
-    }
-  }, [pathname, res?.length]);
-
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  let profileItem;
-  if (user && user.access_token) {
-    profileItem = (
-      <Profile
-        info={user?.info}
-        stateName={stateInfo?.name || "City A"}
-        t={t}
-        profilePhotoUrl={profilePhotoUrl}
-        isSidebarCollapsed={isSidebarCollapsed}
-      />
-    );
-  }
+  if (isLoading || isMdmsLoading) return <Loader />;
 
   return (
-    <React.Fragment>
+    <>
       <div className="employee-sidebar-inner">
-        {/* Logo Section */}
         <div className="sidebar-logo-header">
           <div className="logo-design">
             {isSidebarCollapsed ? (
@@ -443,30 +785,22 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
               <img src="/upyog-ui/images/Logo.png" alt="UPYOG Logo" />
             )}
           </div>
-          {/* {closeMobileSidebar && (
-              <button
-                type="button"
-                className="sidebar-mobile-close-btn"
-                onClick={closeMobileSidebar}
-                aria-label="Close Sidebar"
-              >
-                ✕
-              </button>
-            )} */}
         </div>
 
-        {/* Profile Section */}
-        {profileItem}
+        {user && user.access_token && (
+          <Profile
+            info={user?.info}
+            profilePhotoUrl={profilePhotoUrl}
+            isSidebarCollapsed={isSidebarCollapsed}
+          />
+        )}
 
-        {/* Search Box */}
         {!isSidebarCollapsed && (
           <div className="employee-sidebar-search-box">
             <SearchIcon className="search-icon" />
             <input
               type="text"
-              placeholder={
-                t("ACTION_TEST_SEARCH") !== "ACTION_TEST_SEARCH" ? t("ACTION_TEST_SEARCH") : "Search"
-              }
+              placeholder={t("ACTION_TEST_SEARCH") !== "ACTION_TEST_SEARCH" ? t("ACTION_TEST_SEARCH") : "Search"}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -478,149 +812,182 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
           </div>
         )}
 
-        {/* Desktop Drawer with dynamic MDMS modules & Accordion submenus */}
         <div className="drawer-desktop">
-          {res?.map((item, index) => {
-            const icon = getModuleIcon(item);
-            const getModuleName = item?.moduleName?.replace(/[ -]/g, "_");
-            const appendTranslate = t(`ACTION_TEST_${getModuleName}`);
-            const displayName =
-              appendTranslate && appendTranslate !== `ACTION_TEST_${getModuleName}`
-                ? appendTranslate
-                : item?.moduleName;
-
-            if (item.type === "single" || !item.links || item.links.length === 0) {
-              const targetUrl = resolveNavUrl(item.navigationURL);
-              const isSingleActive =
-                pathname === targetUrl ||
-                (targetUrl !== "/upyog-ui/employee" && targetUrl && pathname.startsWith(targetUrl));
-
-              return (
-                <div className={`sidebar-list ${isSingleActive ? "active" : ""}`} key={index}>
-                  {isExternalOrMono(targetUrl) ? (
-                    <a
-                      href={targetUrl}
-                      className="menu-item"
-                      title={displayName}
-                      onClick={() => closeMobileSidebar && closeMobileSidebar()}
-                    >
-                      {icon}
-                      {!isSidebarCollapsed && <div className="menu-label">{displayName}</div>}
-                    </a>
-                  ) : (
-                    <Link
-                      to={targetUrl}
-                      className="menu-item"
-                      title={displayName}
-                      onClick={() => closeMobileSidebar && closeMobileSidebar()}
-                    >
-                      {icon}
-                      {!isSidebarCollapsed && <div className="menu-label">{displayName}</div>}
-                    </Link>
-                  )}
-                </div>
-              );
-            }
-
-            // Collapsible SubMenu Accordion
-            const isOpen = search.trim() ? true : !!openMenus[item.moduleName];
-            const validLinks = item.links
-              ?.sort((a, b) => (a.orderNumber || 100) - (b.orderNumber || 100))
-              ?.filter((l) => l.url === "url" || l.url !== "");
-
-            const isChildActive = validLinks?.some((l) => {
-              const cUrl = resolveNavUrl(l?.navigationURL || l?.link);
-              return pathname === cUrl || (cUrl !== "/upyog-ui/employee" && cUrl && pathname.startsWith(cUrl));
-            });
-
-            return (
-              <div className="employee-accordion-item" key={index}>
-                <div
-                  className={`sidebar-list sidebar-pointer-item ${isChildActive ? "active" : ""}`}
-                  onClick={() => !isSidebarCollapsed && toggleMenu(item.moduleName)}
-                >
-                  <div className="menu-item" title={displayName}>
-                    {icon}
+          {activeFinancePath ? (
+            <>
+              <div className="employee-accordion-item">
+                <div className="sidebar-list active">
+                  <div className="menu-item">
+                    <FinanceChartIcon className="sidebar-icon" />
                     {!isSidebarCollapsed && (
-                      <div className="menu-label">{displayName}</div>
-                    )}
-                    {!isSidebarCollapsed && (
-                      <div className="accordion-chevron">
-                        {isOpen ? (
-                          <ArrowVectorDown className="arrow-icon" />
-                        ) : (
-                          <ArrowForward className="arrow-icon" />
-                        )}
+                      <div className="menu-label">
+                        {t("ACTION_TEST_FINANCE") !== "ACTION_TEST_FINANCE" ? t("ACTION_TEST_FINANCE") : "Finance"}
                       </div>
                     )}
                   </div>
                 </div>
+              </div>
+              {!isSidebarCollapsed && renderFinanceInnerMenu()}
+            </>
+          ) : (
+            <>
+              {menuItems.map((item, index) => {
+                const icon = getModuleIcon(item);
+                const moduleKey = item?.moduleName?.replace(/[ -]/g, "_");
+                const translatedModuleName = t(`ACTION_TEST_${moduleKey}`);
+                const displayName =
+                  translatedModuleName && translatedModuleName !== `ACTION_TEST_${moduleKey}`
+                    ? translatedModuleName
+                    : item?.moduleName;
 
-                {/* Submenu links */}
-                {isOpen && !isSidebarCollapsed && (
-                  <div className="employee-submenu-wrapper">
-                    {validLinks.map((linkItem, idx) => {
-                      const childUrl = resolveNavUrl(linkItem?.navigationURL || linkItem?.link);
-                      const isCurrentActive =
-                        pathname === childUrl ||
-                        (childUrl !== "/upyog-ui/employee" && childUrl && pathname.startsWith(childUrl));
-                      const childRawName = linkItem?.displayName || "";
-                      const childKey = childRawName.toUpperCase().replace(/[ -]/g, "_");
-                      const childTranslate = t(`ACTION_TEST_${childKey}`);
-                      const childDisplayName =
-                        childTranslate && childTranslate !== `ACTION_TEST_${childKey}`
-                          ? childTranslate
-                          : childRawName;
+                if (item.type === "single" || !item.links || item.links.length === 0) {
+                  const targetUrl = resolveNavUrl(item.navigationURL);
+                  const isSingleActive =
+                    pathname === targetUrl ||
+                    (targetUrl !== "/upyog-ui/employee" && targetUrl && pathname.startsWith(targetUrl));
 
-                      return (
-                        <div className={`sidebar-sublist ${isCurrentActive ? "active" : ""}`} key={idx}>
-                          {isExternalOrMono(childUrl) ? (
-                            <a
-                              href={childUrl}
-                              className="submenu-item"
-                              title={childDisplayName}
-                              onClick={() => closeMobileSidebar && closeMobileSidebar()}
-                            >
-                              <span className="sublink-dot">•</span>
-                              <span className="submenu-label">{childDisplayName}</span>
-                            </a>
-                          ) : (
-                            <Link
-                              to={childUrl}
-                              className="submenu-item"
-                              title={childDisplayName}
-                              onClick={() => closeMobileSidebar && closeMobileSidebar()}
-                            >
-                              <span className="sublink-dot">•</span>
-                              <span className="submenu-label">{childDisplayName}</span>
-                            </Link>
+                  return (
+                    <div className={`sidebar-list ${isSingleActive ? "active" : ""}`} key={`${item.moduleName}-${index}`}>
+                      {isExternalOrMono(targetUrl) ? (
+                        <a
+                          href={targetUrl}
+                          className="menu-item"
+                          title={displayName}
+                          onClick={() => closeMobileSidebar?.()}
+                        >
+                          {icon}
+                          {!isSidebarCollapsed && <div className="menu-label">{displayName}</div>}
+                        </a>
+                      ) : (
+                        <Link
+                          to={targetUrl}
+                          className="menu-item"
+                          title={displayName}
+                          onClick={() => closeMobileSidebar?.()}
+                        >
+                          {icon}
+                          {!isSidebarCollapsed && <div className="menu-label">{displayName}</div>}
+                        </Link>
+                      )}
+                    </div>
+                  );
+                }
+
+                if (item?.isFinanceModule) {
+                  return (
+                    <div className="employee-accordion-item" key={`${item.moduleName}-${index}`}>
+                      <div
+                        className={`sidebar-list sidebar-pointer-item ${pathname.includes("/finance") ? "active" : ""}`}
+                        onClick={() => {
+                          if (!isSidebarCollapsed) setActiveFinancePath("Finance");
+                        }}
+                      >
+                        <div className="menu-item" title={displayName}>
+                          {icon}
+                          {!isSidebarCollapsed && <div className="menu-label">{displayName}</div>}
+                          {!isSidebarCollapsed && (
+                            <div className="accordion-chevron">
+                              <ArrowForward className="arrow-icon" />
+                            </div>
                           )}
                         </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+                      </div>
+                    </div>
+                  );
+                }
 
-          {/* Profile Link */}
-          {user && user.access_token && (
-            <div className={`sidebar-list ${pathname === "/upyog-ui/employee/user/profile" ? "active" : ""}`}>
-              <Link
-                to="/upyog-ui/employee/user/profile"
-                className="menu-item"
-                title={t("EDIT_PROFILE")}
-                onClick={() => closeMobileSidebar && closeMobileSidebar()}
-              >
-                <EditPencilIcon className="sidebar-icon" />
-                {!isSidebarCollapsed && <div className="menu-label">{t("EDIT_PROFILE")}</div>}
-              </Link>
-            </div>
+                const isOpen = search.trim() ? true : !!openMenus[item.moduleName];
+                const validLinks = (item.links || []).filter((l) => l.url === "url" || l.url !== "");
+
+                const isChildActive = validLinks.some((l) => {
+                  const cUrl = resolveNavUrl(l?.navigationURL || l?.link);
+                  return pathname === cUrl || (cUrl !== "/upyog-ui/employee" && cUrl && pathname.startsWith(cUrl));
+                });
+
+                return (
+                  <div className="employee-accordion-item" key={`${item.moduleName}-${index}`}>
+                    <div
+                      className={`sidebar-list sidebar-pointer-item ${isChildActive ? "active" : ""}`}
+                      onClick={() => !isSidebarCollapsed && toggleMenu(item.moduleName)}
+                    >
+                      <div className="menu-item" title={displayName}>
+                        {icon}
+                        {!isSidebarCollapsed && <div className="menu-label">{displayName}</div>}
+                        {!isSidebarCollapsed && (
+                          <div className="accordion-chevron">
+                            {isOpen ? (
+                              <ArrowVectorDown className="arrow-icon" />
+                            ) : (
+                              <ArrowForward className="arrow-icon" />
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {isOpen && !isSidebarCollapsed && (
+                      <div className="employee-submenu-wrapper">
+                        {validLinks.map((linkItem, idx) => {
+                          const childUrl = resolveNavUrl(linkItem?.navigationURL || linkItem?.link);
+                          const isCurrentActive = isUrlMatching(pathname, linkItem?.navigationURL || linkItem?.link);
+
+                          const childRawName = linkItem?.displayName || "";
+                          const childKey = childRawName.toUpperCase().replace(/[ -]/g, "_");
+                          const childTranslation = t(`ACTION_TEST_${childKey}`);
+                          const childDisplayName =
+                            childTranslation && childTranslation !== `ACTION_TEST_${childKey}`
+                              ? childTranslation
+                              : childRawName;
+
+                          return (
+                            <div className={`sidebar-sublist ${isCurrentActive ? "active" : ""}`} key={`${childRawName}-${idx}`}>
+                              {isExternalOrMono(childUrl) ? (
+                                <a
+                                  href={childUrl}
+                                  className="submenu-item"
+                                  title={childDisplayName}
+                                  onClick={() => closeMobileSidebar?.()}
+                                >
+                                  <span className="sublink-dot">•</span>
+                                  <span className="submenu-label">{childDisplayName}</span>
+                                </a>
+                              ) : (
+                                <Link
+                                  to={childUrl}
+                                  className="submenu-item"
+                                  title={childDisplayName}
+                                  onClick={() => closeMobileSidebar?.()}
+                                >
+                                  <span className="sublink-dot">•</span>
+                                  <span className="submenu-label">{childDisplayName}</span>
+                                </Link>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+
+              {user && user.access_token && (
+                <div className={`sidebar-list ${pathname === "/upyog-ui/employee/user/profile" ? "active" : ""}`}>
+                  <Link
+                    to="/upyog-ui/employee/user/profile"
+                    className="menu-item"
+                    title={t("EDIT_PROFILE")}
+                    onClick={() => closeMobileSidebar?.()}
+                  >
+                    <EditPencilIcon className="sidebar-icon" />
+                    {!isSidebarCollapsed && <div className="menu-label">{t("EDIT_PROFILE")}</div>}
+                  </Link>
+                </div>
+              )}
+            </>
           )}
         </div>
 
-        {/* Logout Button */}
         <div className="citizen-logout">
           <button onClick={handleLogout}>
             <LogoutIcon className="sidebar-icon" />
@@ -633,10 +1000,10 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
             onSelect={handleOnSubmit}
             onCancel={handleOnCancel}
             onDismiss={handleOnCancel}
-          ></LogoutDialog>
+          />
         )}
       </div>
-    </React.Fragment>
+    </>
   );
 };
 
