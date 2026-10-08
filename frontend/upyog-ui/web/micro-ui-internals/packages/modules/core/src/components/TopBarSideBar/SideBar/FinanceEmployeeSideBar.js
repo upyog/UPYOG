@@ -18,8 +18,9 @@ const FinanceEmployeeSideBar = ({ microUiModuleEnable, isFinanceEnabled }) => {
   const [search, setSearch] = useState("");
   const location = useLocation();
   const [activePath, setActivePath] = useState(
-    location.pathname.includes("/finance") ? "Finance" : ""
+    location.pathname.includes("/finance") || location.pathname.includes("/services/EGF") ? "Finance" : ""
   );
+  const lastPathnameRef = useRef(location.pathname);
   const { t } = useTranslation();
 
   // added  !sidebarRef.current as a safety check ensure sidebarRef.current is not null.  Removed loader as useEffect now either need nothing in return or cleanup function
@@ -71,10 +72,19 @@ const FinanceEmployeeSideBar = ({ microUiModuleEnable, isFinanceEnabled }) => {
   useEffect(() => {
     if (isLoading || !data?.actions) return;
 
-    if (location.pathname.includes("/finance") || location.pathname.includes("/services/EGF")) {
-      const resolvedPath = getActivePathFromUrl(data.actions, location.pathname);
-      setActivePath((prev) => resolvedPath || prev || "Finance");
+    const isFinanceRoute = location.pathname.includes("/finance") || location.pathname.includes("/services/EGF");
+
+    if (isFinanceRoute) {
+      if (lastPathnameRef.current !== location.pathname) {
+        lastPathnameRef.current = location.pathname;
+        const resolvedPath = getActivePathFromUrl(data.actions, location.pathname);
+        if (resolvedPath) setActivePath(resolvedPath);
+      } else if (!activePath) {
+        const resolvedPath = getActivePathFromUrl(data.actions, location.pathname);
+        setActivePath(resolvedPath || "Finance");
+      }
     } else {
+      lastPathnameRef.current = location.pathname;
       setActivePath("");
     }
   }, [isLoading, data, location.pathname]);
