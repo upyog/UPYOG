@@ -71,6 +71,8 @@ const FINANCE_META_KEYS = [
 
 const normalize = (s = "") => s.toString().trim().toLowerCase();
 
+const FINANCE_PATH_STORAGE_KEY = "upyog_employee_sidebar_finance_path";
+
 const Profile = ({ info, profilePhotoUrl, isSidebarCollapsed }) => {
   const username = isSidebarCollapsed
     ? info?.name
@@ -346,7 +348,16 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
   const [openMenus, setOpenMenus] = useState({});
   const [showDialog, setShowDialog] = useState(false);
   const [profilePhotoUrl, setProfilePhotoUrl] = useState(null);
-  const [activeFinancePath, setActiveFinancePath] = useState(pathname.includes("/finance") ? "Finance" : "");
+  const [activeFinancePath, setActiveFinancePath] = useState(() => {
+    const isFinRoute = pathname.includes("/finance") || pathname.includes("/services/EGF") || pathname.includes("/services/finance");
+    if (!isFinRoute) return "";
+    const stored = sessionStorage.getItem(FINANCE_PATH_STORAGE_KEY);
+    return stored !== null ? stored : "Finance";
+  });
+
+  useEffect(() => {
+    sessionStorage.setItem(FINANCE_PATH_STORAGE_KEY, activeFinancePath || "");
+  }, [activeFinancePath]);
 
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { stateInfo } = storeData || {};
@@ -511,13 +522,38 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
   }, [pathname, transformedActions, isFinanceEnabled]);
 
   useEffect(() => {
-    if ((pathname.includes("/finance") || pathname.includes("/services/EGF") || pathname.includes("/services/finance")) && isFinanceEnabled) {
-      const nextFinancePath = financeHeaderPathFromUrl || activeFinancePath || "Finance";
-      setActiveFinancePath((prev) => (prev !== nextFinancePath ? nextFinancePath : prev));
-    } else {
+    // Wait for access-control + MDMS data; isFinanceEnabled is false while loading
+    if (isLoading || isMdmsLoading) return;
+
+    const isFinanceRoute =
+      isFinanceEnabled &&
+      (pathname.includes("/finance") || pathname.includes("/services/EGF") || pathname.includes("/services/finance"));
+
+    if (!isFinanceRoute) {
       setActiveFinancePath("");
+      return;
     }
-  }, [pathname, financeHeaderPathFromUrl, isFinanceEnabled]);
+
+    setActiveFinancePath((prev) => {
+      // User explicitly went back to the main menu while on a finance page
+      if (prev === "") return financeHeaderPathFromUrl || "";
+
+      // Keep the current level if the open page is a direct child of it
+      const currentNode = getNodeByPath(financeTree, prev);
+      if (currentNode && typeof currentNode === "object") {
+        const containsActivePage = Object.keys(currentNode)
+          .filter((k) => !FINANCE_META_KEYS.includes(k))
+          .some((k) => {
+            const child = currentNode[k];
+            return child?.id !== undefined && child?.navigationURL && isUrlMatching(pathname, child.navigationURL);
+          });
+        if (containsActivePage) return prev;
+      }
+
+      // Otherwise derive the level from the URL (e.g. deep link / refresh), else keep where the user was
+      return financeHeaderPathFromUrl || prev || "Finance";
+    });
+  }, [pathname, financeHeaderPathFromUrl, isFinanceEnabled, financeTree, isLoading, isMdmsLoading]);
 
   const menuItems = useMemo(() => {
     const grouped = {};
