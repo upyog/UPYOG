@@ -173,8 +173,9 @@ In Parent Component,  we are passing the data as a props coming through params (
               text={`${t(checkForNA(address?.streetName|| addressDetails?.selectedAddressStatement?.streetName))}`}
               />
           </StatusTable>
-
+          {applicationDocs.length > 0 &&
            <CardSubHeader>{t("CND_DOC_DETAILS")}</CardSubHeader>
+          }
           {<CNDDocumnetPreview documents={getOrderDocuments(applicationDocs)} svgStyles={{}} isSendBackFlow={false} titleStyles={{ fontSize: "18px", "fontWeight": 700, marginBottom: "10px" }} />}
           <br></br>
          

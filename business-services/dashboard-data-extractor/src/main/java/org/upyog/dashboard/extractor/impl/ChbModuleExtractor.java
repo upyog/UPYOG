@@ -2,14 +2,11 @@ package org.upyog.dashboard.extractor.impl;
 
 import org.upyog.dashboard.constants.DashboardExtractorConstants;
 import org.apache.commons.lang3.StringUtils;
+import org.upyog.dashboard.util.ExtractorUtil;
 import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import jakarta.annotation.PostConstruct;
 
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Component;
@@ -17,7 +14,6 @@ import org.upyog.dashboard.chb.dto.CHBAggregatedData;
 import org.upyog.dashboard.chb.dto.CHBDTO;
 import org.upyog.dashboard.chb.mapper.CHBRowMapper;
 import org.upyog.dashboard.common.constants.Module;
-import org.upyog.dashboard.config.DashboardProperties;
 import org.upyog.dashboard.config.SchemaMappingConfig;
 import org.upyog.dashboard.extractor.ModuleExtractor;
 import org.upyog.dashboard.chb.model.RawChbMetric;
@@ -38,19 +34,7 @@ public class ChbModuleExtractor implements ModuleExtractor<List<CHBDTO>> {
 
     private final DatabaseQueryExecutor queryExecutor;
     private final SchemaMappingConfig schemaMappingConfig;
-    private final DashboardProperties dashboardProperties;
     private final HierarchyParser hierarchyParser;
-
-    private String dbTenantId;
-
-    /**
-     * Initialises the database tenant ID from {@link DashboardProperties} after bean construction.
-     */
-    @PostConstruct
-    public void init() {
-        String state = dashboardProperties.getMetricState();
-        this.dbTenantId = (StringUtils.isNotBlank(state)) ? state : dashboardProperties.getTenantId();
-    }
 
     @Override
     public Module getModule() {
@@ -67,15 +51,12 @@ public class ChbModuleExtractor implements ModuleExtractor<List<CHBDTO>> {
      * @return a list of {@link CHBDTO} payloads, one per tenant row returned by the query
      */
     @Override
-    public List<CHBDTO> extractData(LocalDate targetDate) {
-        String dateStr = targetDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-        long startTime = targetDate.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli();
-        long endTime = targetDate.plusDays(1).atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli() - 1;
+    public List<CHBDTO> extractData(List<String> tenantIds, LocalDate targetDate) {
+        String effectiveTenantId = ExtractorUtil.resolveEffectiveTenantId(tenantIds, getModule());
+        String dateStr = ExtractorUtil.formatDate(targetDate);
+        log.info("Starting Community Hall Booking (CHB) metrics extraction for tenants [{}] date: {}", effectiveTenantId, dateStr);
 
-        MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue(DashboardExtractorConstants.PARAM_START_TIME, startTime)
-                .addValue(DashboardExtractorConstants.PARAM_END_TIME, endTime)
-                .addValue(DashboardExtractorConstants.PARAM_TENANT_ID, dbTenantId);
+        MapSqlParameterSource params = ExtractorUtil.buildStandardQueryParams(effectiveTenantId, targetDate);
         List<CHBDTO> results = new ArrayList<>();
 
         SchemaMappingConfig.ModuleQueries chbQueries = schemaMappingConfig.getQueriesForModule(Module.CHB);
@@ -89,6 +70,7 @@ public class ChbModuleExtractor implements ModuleExtractor<List<CHBDTO>> {
         }
         return results;
     }
+
 
     /**
      * Converts a single raw row map into a populated {@link CHBDTO}.

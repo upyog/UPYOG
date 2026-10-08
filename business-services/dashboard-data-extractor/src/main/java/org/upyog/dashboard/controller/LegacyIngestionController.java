@@ -4,11 +4,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.upyog.dashboard.repository.IngestionSummaryRepository;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.upyog.dashboard.service.LegacyBatchIngestionOrchestrator;
 import org.upyog.dashboard.service.LegacyBatchIngestRequest;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * Controller exposing endpoints to trigger bulk historical (legacy) metrics ingestion.
@@ -45,13 +48,13 @@ public class LegacyIngestionController {
      * @param limit maximum number of pending/failed jobs to return
      * @return ResponseEntity with a dataMap containing pending/failed jobs and registered dates
      */
-    @org.springframework.web.bind.annotation.GetMapping("/jobs/status")
-    public ResponseEntity<java.util.Map<String, Object>> getLegacyJobsStatus(
+    @GetMapping("/jobs/status")
+    public ResponseEntity<Map<String, Object>> getLegacyJobsStatus(
             @RequestParam String tenantId,
             @RequestParam String moduleName,
             @RequestParam(defaultValue = "100") int limit) {
         
-        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        Map<String, Object> response = new HashMap<>();
         response.put("pendingOrFailedJobs", summaryRepository.findPendingOrFailedLegacyJobs(tenantId, moduleName, limit));
         response.put("registeredDates", summaryRepository.findRegisteredLegacyJobDates(tenantId, moduleName));
         

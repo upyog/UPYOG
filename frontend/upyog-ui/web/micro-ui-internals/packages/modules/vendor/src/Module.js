@@ -26,12 +26,9 @@ import NewResponse from "./pages/employee/Create/NewResponse";
 import DriverDetails from "./pages/employee/RegisterDriver/DriverDetails";
 import VehicleDetails from "./pages/employee/RegisterVehicle/VehicleDetails";
 import SelectVehicleType from "./pageComponents/SelectVehicleType";
-
-
-
-
-
-
+import EditVendor from "./pages/employee/RegisterVendor/EditVendor";
+import EditVehicle from "./pages/employee/RegisterVehicle/EditVehicle";
+import EditDriver from "./pages/employee/RegisterDriver/EditDriver";
 
 const componentsToRegister = {
   VendorDetails,
@@ -49,11 +46,14 @@ const componentsToRegister = {
   SelectVehicleType,
   AddDriver,
   EditVendorDetails,
+  EditVendor,
   AddVehicle,
+  EditVehicle,
   VENDORCreate,
   VENDORCheckPage : CheckPage,
   NewResponse,
   DriverDetails,
+  EditDriver,
   VehicleDetails,
   VendorBreadCrumb
 };

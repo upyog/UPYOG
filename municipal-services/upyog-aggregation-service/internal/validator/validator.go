@@ -80,3 +80,21 @@ func ValidateAggregateRequest(req *dto.AggregateRequest) *apperrors.AppError {
 
 	return nil
 }
+
+// ValidateEmployeeAggregateRequest performs validation on EmployeeAggregateRequest.
+func ValidateEmployeeAggregateRequest(req *dto.EmployeeAggregateRequest) *apperrors.AppError {
+	if req == nil {
+		return apperrors.NewValidation("request body is required")
+	}
+
+	if req.TenantID == "" {
+		return apperrors.NewValidation("tenantId is required")
+	}
+
+	if len(req.RequestInfo) == 0 {
+		return apperrors.NewValidation("RequestInfo is required")
+	}
+
+	return nil
+}
+

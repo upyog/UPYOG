@@ -1,16 +1,16 @@
 package org.upyog.dashboard.model;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.EqualsAndHashCode;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 
 /**
  * Normalized intermediate payload produced by a
@@ -66,4 +66,10 @@ public class DashboardPayload {
      */
     @JsonProperty("Data")
     private List<DashboardData> data;
+
+    @JsonIgnore
+    private String schedulerId;
+
+    @JsonIgnore
+    private String moduleDetailId;
 }

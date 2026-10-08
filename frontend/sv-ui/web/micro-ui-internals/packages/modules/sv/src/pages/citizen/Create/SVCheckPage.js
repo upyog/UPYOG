@@ -119,8 +119,8 @@ const SVCheckPage = ({ onSubmit, editdata, value = {}, renewalData }) => {
   // Determine the gender value for display based on renewalData.
   // If gender is "M", set as "Male"; if "F", set as "Female"; otherwise, set as "Transgender".
   let gender;
-  if (renewalData?.vendorDetails?.length > 0) {
-    gender = renewalData?.vendorDetails[0]?.gender === "M" ? "Male" : renewalData?.vendorDetails?.gender === "F" ? "Female" : "Transgender";
+  if (renewalData?.vendorDetail?.length > 0) {
+    gender = renewalData?.vendorDetail[0]?.gender === "M" ? "Male" : renewalData?.vendorDetail?.gender === "F" ? "Female" : "Transgender";
   }
 
   /**
@@ -147,17 +147,17 @@ const SVCheckPage = ({ onSubmit, editdata, value = {}, renewalData }) => {
           <StatusTable style={{ marginTop: "30px", marginBottom: "30px" }}>
             <Row
               label={t("SV_VENDOR_NAME")}
-              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.vendorDetails?.[0]?.name : owner?.vendorDetails?.vendorName))}`}
+              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.vendorDetail?.[0]?.name : owner?.vendorDetails?.vendorName))}`}
               actionButton={(isRenew) ? null : <ActionButton step="applicant-details" />}
             />
             <Row
               label={t("SV_REGISTERED_MOB_NUMBER")}
-              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.vendorDetails?.[0]?.mobileNo : owner?.vendorDetails?.mobileNumber))}`}
+              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.vendorDetail?.[0]?.mobileNo : owner?.vendorDetails?.mobileNumber))}`}
             />
 
             <Row
               label={t("SV_DATE_OF_BIRTH")}
-              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.vendorDetails?.[0]?.dob : owner?.vendorDetails?.vendorDateOfBirth))}`}
+              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.vendorDetail?.[0]?.dob : owner?.vendorDetails?.vendorDateOfBirth))}`}
             />
 
             <Row
@@ -166,13 +166,13 @@ const SVCheckPage = ({ onSubmit, editdata, value = {}, renewalData }) => {
             />
             <Row
               label={t("SV_FATHER_NAME")}
-              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.vendorDetails?.[0]?.fatherName : owner?.vendorDetails?.fatherName))}`}
+              text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.vendorDetail?.[0]?.fatherName : owner?.vendorDetails?.fatherName))}`}
             />
             {
-              (renewalData?.vendorDetails?.[0]?.emailId || owner?.vendorDetails?.emailId) ?
+              (renewalData?.vendorDetail?.[0]?.emailId || owner?.vendorDetails?.emailId) ?
                 <Row
                   label={t("SV_EMAIL")}
-                  text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.vendorDetails?.[0]?.emailId : owner?.vendorDetails?.emailId))}`}
+                  text={`${t(checkForNA((isRenew && isMakePayment) ? renewalData?.vendorDetail?.[0]?.emailId : owner?.vendorDetails?.emailId))}`}
                 /> : null
             }
             {owner?.spouseDetails?.spouseName && (

@@ -168,7 +168,7 @@
       "locatorStrategy": "XPATH",
       "locatorValue": "(//input[@type='text'])[3]",
       "action": "TYPE",
-      "inputValue": "${selected.applicationNumber}",
+      "inputValue": "APPLICATION_NO",
       "dynamicSleep": 1000
     },
     {
@@ -256,7 +256,7 @@
       "locatorStrategy": "XPATH",
       "locatorValue": "(//input[@type='text'])[1]",
       "action": "TYPE_FROM_STORE",
-      "inputValue": "selected.applicationNumber",
+      "inputValue": "APPLICATION_NO",
       "dynamicSleep": 1000
     },
     {

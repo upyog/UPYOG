@@ -251,19 +251,15 @@ This section details all PostgreSQL database tables managed by Flyway migrations
 ---
 
 ### Table 1: `ingestion_module_detail`
-**Purpose:** Stores configuration and schedule metadata for each ULB-module ingestion pipeline stream. Serves as the master record for ULB module enablement.
+**Purpose:** Stores active ULB-module mappings synchronized from MDMS. Serves as the master registry for ULB module enablement.
 
 | Column Name | Data Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `detail_id` | `VARCHAR(64)` | `PRIMARY KEY, NOT NULL` | Application-generated UUID uniquely identifying the ULB-module mapping. |
+| `detail_id` | `VARCHAR(64)` | `PRIMARY KEY, NOT NULL` | Deterministic UUID (`UUID.nameUUIDFromBytes("tenant:module")`) identifying the mapping. |
 | `tenant_id` | `VARCHAR(64)` | `NOT NULL` | Tenant identifier for the Urban Local Body (e.g., `pg.citya`). |
-| `ulb_name` | `VARCHAR(256)` | `NOT NULL` | Human-readable name of the Urban Local Body (e.g., `City A Municipal Corporation`). |
 | `module_name` | `VARCHAR(64)` | `NOT NULL` | Short code identifying the business module (e.g., `PT`, `TL`, `PGR`, `CHB`). |
 | `is_active` | `BOOLEAN` | `NOT NULL, DEFAULT TRUE` | Controls whether this ULB-module stream is enabled for automated scheduled runs. |
-| `is_legacy_data_ingested` | `BOOLEAN` | `NOT NULL, DEFAULT FALSE` | Flag indicating whether historical/legacy data back-fill has been completed. |
-| `last_ingested_date` | `DATE` | `NULLABLE` | The most recent calendar date for which daily ingestion successfully finished. |
-| `schedule_cron` | `VARCHAR(128)` | `NULLABLE` | Cron expression for module execution (NULL if manually triggered or default). |
-| `created_by` | `VARCHAR(256)` | `NOT NULL, DEFAULT 'SYSTEM'` | Metadata field tracking the creator user ID or system component. |
+| `created_by` | `VARCHAR(256)` | `NOT NULL, DEFAULT 'SYSTEM'` | Metadata field tracking the creator user ID or system component (e.g., `MDMS_SYNC`). |
 | `created_time` | `BIGINT` | `NOT NULL` | Epoch timestamp (in milliseconds) when the configuration row was created. |
 | `last_modified_by` | `VARCHAR(256)` | `NOT NULL, DEFAULT 'SYSTEM'` | Metadata field tracking who last updated the row configuration. |
 | `last_modified_time` | `BIGINT` | `NOT NULL` | Epoch timestamp (in milliseconds) of the most recent modification. |
@@ -406,7 +402,6 @@ Receives HTTP 200 OK -> Sets status = 'SUCCESS'.
 Publishes DailyIngestionData record to IngestionRecordPersistenceService / Kafka topic.
 Persists row into ingestion_detail (ingestion_status = 'SUCCESS', request_data, response_data).
 Updates ingestion_module_summary.last_successful_date = '2026-08-18'.
-Updates ingestion_module_detail.last_ingested_date = '2026-08-18'.
 ```
 
 ---
@@ -424,7 +419,7 @@ The QA team should execute the following test scenarios to ensure complete opera
 | **TC-ING-05** | Downstream HTTP Retry Backoff | 1. Configure downstream mock API to return HTTP 500 for initial 2 attempts, then HTTP 200.<br>2. Run ingestion. | - `DashboardDataLoaderImpl` executes retries using `RetryUtil` exponential backoff + jitter.<br>- Retries succeed on 3rd attempt.<br>- Detail row recorded as `SUCCESS` with retry attempt count. |
 | **TC-ING-06** | Max Retry Exhaustion Logging | 1. Mock downstream API to consistently return HTTP 500 error.<br>2. Run ingestion. | - Service retries up to `ingestMaxAttempts` (e.g., 3 attempts).<br>- Final status logged as `FAILURE`.<br>- Error stack trace and exception code stored in `ingestion_detail` and `adapter_ingestion_error_log`. |
 | **TC-ING-07** | Payload Structural Validation | 1. Pass empty `metrics` list or blank `tenantId` into `CommonValidator`. | - `ValidationException` thrown immediately before network transmission.<br>- Downstream HTTP endpoint is not called. |
-| **TC-ING-08** | Legacy Back-fill Migration Flow | 1. Invoke `POST /dashboard/v1/legacy/_ingest` with target date range.<br>2. Query `legacy_data_ingestion_detail`. | - Job entries initialized with status `NOT_STARTED`.<br>- Upon execution completion, status transitions to `SUCCESS`.<br>- `is_legacy_data_ingested` updated to `TRUE` in `ingestion_module_detail`. |
+| **TC-ING-08** | Legacy Back-fill Migration Flow | 1. Invoke `POST /dashboard/v1/legacy/_ingest` with target date range.<br>2. Query `legacy_data_ingestion_detail` and `ingestion_module_summary`. | - Job entries initialized with status `NOT_STARTED`.<br>- Upon execution completion, status transitions to `SUCCESS`.<br>- `legacy_data_ingestion_detail` rows marked `SUCCESS` and `ingestion_module_summary` updated. |
 
 ---
 

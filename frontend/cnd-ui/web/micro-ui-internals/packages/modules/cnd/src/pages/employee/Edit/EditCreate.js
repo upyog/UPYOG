@@ -1,7 +1,7 @@
 import { FormComposer, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-
+import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { EditConfig } from "../../../config/editConfig";
 import { ApplicationProvider } from "./ApplicationContext";
@@ -18,6 +18,7 @@ import { cndStyles } from "../../../utils/cndStyles";
 const EditCreate = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const isUserDetailRequired=true;
+  const queryClient = useQueryClient();
   const { id: applicationNumber } = useParams();
   const { t } = useTranslation();
   const [canSubmit, setSubmitValve] = useState(false);
@@ -27,6 +28,7 @@ const EditCreate = () => {
    const [_formData, setFormData,_clear] = Digit.Hooks.useSessionStorage("store-data",null);
    const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", { });
+  const mutation = Digit.Hooks.cnd.useCndCreateApi(tenantId,false); 
 
 
   useEffect(() => {
@@ -67,6 +69,37 @@ const EditCreate = () => {
     // Match numeric values (including decimals)
     const match = quantityString.toString().match(/(\d+(\.\d+)?)/);
     return match ? match[0] : "";
+  };
+
+  const handleSubmit = (formData) => {
+    mutation.mutate(
+      {
+        cndApplication: formData,
+      },
+      {
+        onSuccess: (response) => {
+          queryClient.clear();
+          navigate("/cnd-ui/employee/cnd/edit-response", { 
+            replace: true, 
+            state: { 
+              cndApplication: formData,
+              isSuccess: true,
+              response: response
+            } 
+          });
+        },
+        onError: (error) => {
+          navigate("/cnd-ui/employee/cnd/edit-response", { 
+            replace: true, 
+            state: { 
+              cndApplication: formData,
+              isSuccess: false,
+              error: error
+            } 
+          });
+        }
+      }
+    );
   };
 
 
@@ -156,7 +189,7 @@ const EditCreate = () => {
         }
     };
 
-    navigate("/cnd-ui/employee/cnd/edit-response", { state: { cndApplication: formData }, replace: true }); 
+    handleSubmit(formData); 
     
   };
 

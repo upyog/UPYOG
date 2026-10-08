@@ -19,9 +19,9 @@
     "react-dom": "19.2.0",
     "i18next": "^23.16.0",
     "i18next-react-postprocessor": "3.0.7",
-    "react-redux": "^9.0.0",
-    "react-i18next": "^14.0.0"
+    "react-redux": "^9.0.0"
   },
+  
   "dependencies": {
     "axios": "^1.6.0",
     "date-fns": "2.28.0",
@@ -29,6 +29,7 @@
     "dom-to-image": "2.6.0",
     "jspdf": "2.5.1",
     "pdfmake": "0.1.72",
+    "react-i18next": "^14.0.0",
     "redux": "4.1.2",
     "xlsx": "0.17.5"
   }

@@ -49,7 +49,7 @@ const DriverConfig = (t, disabled = false) => {
           hideInEmployee: false,
           key: "additionalDetails",
           component: "SelectServiceType",
-          disable: disabled,
+          disable: false,
           texts: {
             headerCaption: "",
             header: "CS_COMMON_CHOOSE_GENDER",

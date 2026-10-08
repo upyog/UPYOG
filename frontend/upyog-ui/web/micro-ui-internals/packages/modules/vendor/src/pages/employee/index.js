@@ -12,6 +12,9 @@ export const VendorBreadCrumb = ({ location }) => {
   const isNewVendor = location?.pathname?.includes("new-vendor");
   const isNewVehicle = location?.pathname?.includes("new-vehicle");
   const isNewDriver = location?.pathname?.includes("new-driver");
+  const isModifyVendor = location?.pathname?.includes("modify-vendor");
+  const isModifyVehicle = location?.pathname?.includes("modify-vehicle");
+  const isModifyDriver = location?.pathname?.includes("modify-driver");
 
   const crumbs = [
     {
@@ -31,8 +34,14 @@ export const VendorBreadCrumb = ({ location }) => {
         ? t("ES_FSM_REGISTRY_TITLE_NEW_VEHICLE")
         : isNewDriver
         ? t("ES_FSM_REGISTRY_TITLE_NEW_DRIVER")
+        : isModifyVendor
+        ? t("ES_FSM_REGISTRY_TITLE_EDIT_VENDOR")
+        : isModifyVehicle
+        ? t("ES_FSM_REGISTRY_TITLE_EDIT_VEHICLE")
+        : isModifyDriver
+        ? t("ES_FSM_REGISTRY_TITLE_EDIT_DRIVER")
         : null,
-      show: isRegistry && (isNewVendor || isNewVehicle || isNewDriver),
+      show: isRegistry && (isNewVendor || isNewVehicle || isNewDriver || isModifyVendor || isModifyVehicle || isModifyDriver),
     },
   ];
 
@@ -52,20 +61,19 @@ const EmployeeApp = ({ path, url, userType }) => {
     //   services: ["asset-create"],
     //   applicationStatus: [],
     //   locality: [],
-
     // },
   };
 
-
-  //const Create = Digit?.ComponentRegistryService?.getComponent("VENDOREMPCreate");
   const AddVendor = Digit.ComponentRegistryService.getComponent("AddVendor");
   const SearchVendor = Digit.ComponentRegistryService.getComponent("SearchVendor");
-  //const SearchApp = Digit.ComponentRegistryService.getComponent("SearchApp");
   const AddDriver = Digit.ComponentRegistryService.getComponent("AddDriver");
   const EditVendorDetails = Digit.ComponentRegistryService.getComponent("EditVendorDetails");
+  const EditVendor = Digit.ComponentRegistryService.getComponent("EditVendor");
   const AddVehicle = Digit.ComponentRegistryService.getComponent("AddVehicle");
-  const VendorCreate =  Digit.ComponentRegistryService.getComponent("VENDORCreate");
+  const EditVehicle = Digit.ComponentRegistryService.getComponent("EditVehicle");
+  const VendorCreate = Digit.ComponentRegistryService.getComponent("VENDORCreate");
   const DriverDetails = Digit.ComponentRegistryService.getComponent("DriverDetails");
+  const EditDriver = Digit.ComponentRegistryService.getComponent("EditDriver");
   const VehicleDetails = Digit.ComponentRegistryService.getComponent("VehicleDetails");
 
   return (
@@ -76,13 +84,16 @@ const EmployeeApp = ({ path, url, userType }) => {
         </div>
         <Routes>
           <Route path="registry/new-vendor/*" element={<PrivateRoute><AddVendor/></PrivateRoute>} />
+          <Route path="registry/modify-vendor/:id" element={<PrivateRoute><EditVendor/></PrivateRoute>} />
           <Route path="search-vendor/*" element={<PrivateRoute><SearchVendor/></PrivateRoute>} />
           <Route path="registry/new-driver/*" element={<PrivateRoute><AddDriver/></PrivateRoute>} />
+          <Route path="registry/modify-driver/:id" element={<PrivateRoute><EditDriver/></PrivateRoute>} />
           <Route path="registry/vendor-details/:id" element={<PrivateRoute><EditVendorDetails/></PrivateRoute>} />
           <Route path="registry/vehicle-details/:id" element={<PrivateRoute><VehicleDetails/></PrivateRoute>} />
           <Route path="registry/new-vehicle/*" element={<PrivateRoute><AddVehicle/></PrivateRoute>} />
+          <Route path="registry/modify-vehicle/:id" element={<PrivateRoute><EditVehicle/></PrivateRoute>} />
           <Route path="registry/additionaldetails/*" element={<PrivateRoute><VendorCreate/></PrivateRoute>} />
-          <Route path="registry/driver-details/*" element={<PrivateRoute><DriverDetails/></PrivateRoute>} />
+          <Route path="registry/driver-details/:id" element={<PrivateRoute><DriverDetails/></PrivateRoute>} />
           <Route path="common-search/:id" element={<PrivateRoute><SearchApp/></PrivateRoute>} />
           {/* <Route path="new-application/*" element={<PrivateRoute><Create/></PrivateRoute>} /> */}
         </Routes>

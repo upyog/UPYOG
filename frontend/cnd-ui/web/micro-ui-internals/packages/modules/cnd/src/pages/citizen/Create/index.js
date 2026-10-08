@@ -65,42 +65,42 @@ const CndCreate = ({ parentRoute }) => {
   // to clear formdata if the data is present before coming to first page of form
   if (params && Object.keys(params).length > 0 && window.location.href.includes("/info") && sessionStorage.getItem("docReqScreenByBack") !== "true") {
     clearParams();
-    queryClient.invalidateQueries({ queryKey: ["CND_Creates"] });
+    queryClient.invalidateQueries("CND_Creates");
   }
 
-  const cndCreate = async () => {
-    try {
-      params.tenantId = tenantId;
-      let formdata = cndPayload(params);
+
+
+  const clearSession = () => {
+    clearParams();
+    queryClient.invalidateQueries("CND_Creates");
+  };
+
+   const cndCreate = () => {
+      const formdata = cndPayload(params);
+      formdata.cndApplication.tenantId = tenantId;
       mutation.mutate(formdata, {
         onSuccess: (response) => {
-          onSuccess();
-          navigate(`acknowledgement?applicationNumber=${response?.cndApplicationDetails?.applicationNumber}&tenantId=${response?.cndApplicationDetails?.tenantId}`, {
+          clearSession();
+          navigate("acknowledgement", {
             state: {
               data: response,
               isSuccess: true,
             },
           });
         },
+
         onError: (error) => {
+          console.log("error");
           navigate("acknowledgement", {
             state: {
               data: null,
               isSuccess: false,
-              error: error,
+              error:error
             },
           });
         },
       });
-    } catch (err) {
-      navigate("acknowledgement", {
-        state: {
-          data: null,
-          isSuccess: false,
-        },
-      });
-    }
-  };
+    };
 
   function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
     if (key === "owners") {
@@ -155,10 +155,10 @@ const CndCreate = ({ parentRoute }) => {
           );
         })}
 
-        <Route path={`check/*`} element={
+        <Route path={`check`} element={
           <CndCheckPage onSubmit={cndCreate} value={params} />
         } />
-        <Route path={`acknowledgement/*`} element={
+        <Route path={`acknowledgement`} element={
           <CndAcknowledgement />
         } />
         <Route path="*" element={

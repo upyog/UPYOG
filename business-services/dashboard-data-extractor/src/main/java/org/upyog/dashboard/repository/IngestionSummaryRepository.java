@@ -5,29 +5,36 @@ import org.upyog.dashboard.service.IngestionPersistenceService;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+import org.upyog.dashboard.model.IngestionModuleDetail;
+import org.upyog.dashboard.model.IngestionSchedulerDetail;
 import org.upyog.dashboard.repository.querybuilder.IngestionSummaryQueryBuilder;
 import org.upyog.dashboard.util.CommonUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * Spring Repository managing persistence operations for
- * {@code ingestion_module_summary}.
+ * {@code ug_ingestion_module_summary}.
  *
  * <p>
  * Tracks and updates the last successfully ingested date per tenant and module.
  */
 @Slf4j
 @Repository
-@lombok.RequiredArgsConstructor
+@RequiredArgsConstructor
 public class IngestionSummaryRepository {
 
 	private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -61,21 +68,74 @@ public Optional<LocalDate> findLastSuccessfulDate(String tenantId, String module
 	}
 
 	/**
+	 * Retrieves a map of tenant ID to last successful date for all tenants under a module in a single bulk query.
+	 *
+	 * @param moduleName the module short code (e.g. "PT")
+	 * @return map of tenantId to last successful LocalDate
+	 */
+	public Map<String, LocalDate> findAllLastSuccessfulDatesByModule(String moduleName) {
+		Map<String, LocalDate> resultMap = new HashMap<>();
+		try {
+			MapSqlParameterSource params = new MapSqlParameterSource()
+					.addValue(DashboardExtractorConstants.PARAM_MODULE_NAME, moduleName);
+			namedParameterJdbcTemplate.query(
+					IngestionSummaryQueryBuilder.SELECT_ALL_LAST_SUCCESSFUL_DATES_FOR_MODULE_QUERY,
+					params,
+					(rs, rowNum) -> {
+						String tId = rs.getString("tenant_id");
+						Date dt = rs.getDate("last_successful_date");
+						if (tId != null && dt != null && !dt.toLocalDate().equals(LocalDate.EPOCH)) {
+							resultMap.put(tId, dt.toLocalDate());
+						}
+						return null;
+					});
+		} catch (Exception exception) {
+			log.error("IngestionSummaryRepository | Failed to query all last successful dates for module {}", moduleName, exception);
+		}
+		return resultMap;
+	}
+
+	/**
+	 * Retrieves all tenant IDs that have already successfully ingested metrics for the specified target date.
+	 *
+	 * @param moduleName the module short code (e.g. "PT")
+	 * @param targetDate the date to check
+	 * @return set of tenant IDs that already succeeded on or up to targetDate
+	 */
+	public Set<String> findTenantsSuccessfullyIngestedForDate(String moduleName, LocalDate targetDate) {
+		Set<String> resultSet = new HashSet<>();
+		try {
+			MapSqlParameterSource params = new MapSqlParameterSource()
+					.addValue(DashboardExtractorConstants.PARAM_MODULE_NAME, moduleName)
+					.addValue("targetDate", Date.valueOf(targetDate));
+			List<String> tenants = namedParameterJdbcTemplate.queryForList(
+					IngestionSummaryQueryBuilder.SELECT_TENANTS_SUCCESSFULLY_INGESTED_FOR_DATE_QUERY,
+					params,
+					String.class);
+			if (tenants != null) {
+				resultSet.addAll(tenants);
+			}
+		} catch (Exception exception) {
+			log.error("IngestionSummaryRepository | Failed to query completed tenants for module {} on date {}",
+					moduleName, targetDate, exception);
+		}
+		return resultSet;
+	}
+
+	/**
 	 * Queries all dates within the specified date range that have already been
 	 * successfully ingested (via daily or legacy pipelines) for the given tenant
 	 * and module.
 	 *
- * Retrieves all dates within the given range that have already been successfully ingested for the specified tenant and module.
- *
- * @param tenantId   the tenant identifier
- * @param moduleName the module short code
- * @param startDate  the start of the date range (inclusive)
- * @param endDate    the end of the date range (inclusive)
- * @return a {@link Set} of {@link LocalDate} instances representing successful ingest dates
- */
-public java.util.Set<LocalDate> findSuccessfullyIngestedDates(String tenantId, String moduleName,
+	 * @param tenantId   the tenant identifier
+	 * @param moduleName the module short code
+	 * @param startDate  the start of the date range (inclusive)
+	 * @param endDate    the end of the date range (inclusive)
+	 * @return a {@link Set} of {@link LocalDate} instances representing successful ingest dates
+	 */
+	public Set<LocalDate> findSuccessfullyIngestedDates(String tenantId, String moduleName,
 			LocalDate startDate, LocalDate endDate) {
-		java.util.Set<LocalDate> result = new java.util.HashSet<>();
+		Set<LocalDate> result = new HashSet<>();
 		try {
 			Date sqlStartDate = Date.valueOf(startDate);
 			Date sqlEndDate = Date.valueOf(endDate);
@@ -100,8 +160,7 @@ public java.util.Set<LocalDate> findSuccessfullyIngestedDates(String tenantId, S
 	}
 
 	/**
-	 * Checks whether the {@code ingestion_module_detail} table has already marked legacy
-	 * ingestion as completed for the given tenant and module.
+	 * Checks whether legacy ingestion has completed successfully for the given tenant and module.
 	 *
 	 * @param tenantId   the tenant identifier
 	 * @param moduleName the module short code
@@ -112,9 +171,9 @@ public java.util.Set<LocalDate> findSuccessfullyIngestedDates(String tenantId, S
 			MapSqlParameterSource params = new MapSqlParameterSource()
 					.addValue(DashboardExtractorConstants.PARAM_TENANT_ID, tenantId)
 					.addValue(DashboardExtractorConstants.PARAM_MODULE_NAME, moduleName);
-			String sql = "SELECT is_legacy_data_ingested FROM ingestion_module_detail WHERE tenant_id = :tenantId AND module_name = :moduleName";
-			List<Boolean> flags = namedParameterJdbcTemplate.query(sql, params, (resultSet, rowNumber) -> resultSet.getBoolean("is_legacy_data_ingested"));
-			return !flags.isEmpty() && Boolean.TRUE.equals(flags.get(0));
+			Integer count = namedParameterJdbcTemplate.queryForObject(
+					IngestionSummaryQueryBuilder.CHECK_LEGACY_INGESTION_COMPLETE_QUERY, params, Integer.class);
+			return count != null && count > 0;
 		} catch (Exception exception) {
 			log.error("IngestionSummaryRepository | Failed to check isLegacyIngestionComplete for tenant {} module {}", tenantId, moduleName, exception);
 			return false;
@@ -122,8 +181,8 @@ public java.util.Set<LocalDate> findSuccessfullyIngestedDates(String tenantId, S
 	}
 
 	/**
-	 * Updates the {@code ingestion_module_detail} table, marking legacy ingestion as
-	 * completed ({@code is_legacy_data_ingested = TRUE}) and setting the last ingested date.
+	 * Updates the {@code ug_ingestion_module_detail} table, marking legacy ingestion as
+	 * completed and setting the last ingested date.
 	 *
 	 * @param tenantId   the tenant identifier
 	 * @param moduleName the module short code
@@ -133,7 +192,6 @@ public java.util.Set<LocalDate> findSuccessfullyIngestedDates(String tenantId, S
 		try {
 			long now = CommonUtils.getCurrentEpochMillis();
 			MapSqlParameterSource params = new MapSqlParameterSource()
-					.addValue("lastIngestedDate", Date.valueOf(lastDate))
 					.addValue(DashboardExtractorConstants.PARAM_LAST_MODIFIED_TIME, now)
 					.addValue(DashboardExtractorConstants.PARAM_TENANT_ID, tenantId)
 					.addValue(DashboardExtractorConstants.PARAM_MODULE_NAME, moduleName);
@@ -145,25 +203,36 @@ public java.util.Set<LocalDate> findSuccessfullyIngestedDates(String tenantId, S
 	}
 
 	/**
- * Persists or updates the last successful ingestion date for a tenant and module.
- *
- * @param tenantId       the tenant identifier
- * @param moduleName     the module short code
- * @param successfulDate the date of the successful ingestion
- */
-public void saveOrUpdateLastSuccessfulDate(String tenantId, String moduleName, LocalDate successfulDate) {
+	 * Persists or updates the last successful ingestion date for a tenant and module.
+	 *
+	 * @param tenantId       the tenant identifier
+	 * @param moduleName     the module short code
+	 * @param successfulDate the date of the successful ingestion
+	 */
+	public void saveOrUpdateLastSuccessfulDate(String tenantId, String moduleName, LocalDate successfulDate) {
 		persistenceService.saveOrUpdateLastSuccessfulDate(tenantId, moduleName, successfulDate);
 	}
 
 	/**
- * Persists or updates the last attempted ingestion date for a tenant and module.
- *
- * @param tenantId       the tenant identifier
- * @param moduleName     the module short code
- * @param attemptedDate  the date of the attempted ingestion
- */
-public void saveOrUpdateLastAttemptedDate(String tenantId, String moduleName, LocalDate attemptedDate) {
+	 * Persists or updates the last attempted ingestion date for a tenant and module.
+	 *
+	 * @param tenantId       the tenant identifier
+	 * @param moduleName     the module short code
+	 * @param attemptedDate  the date of the attempted ingestion
+	 */
+	public void saveOrUpdateLastAttemptedDate(String tenantId, String moduleName, LocalDate attemptedDate) {
 		persistenceService.saveOrUpdateLastAttemptedDate(tenantId, moduleName, attemptedDate);
+	}
+
+	/**
+	 * Persists or updates the last attempted ingestion date for a batch of tenants and module.
+	 *
+	 * @param tenantIds      the list of tenant identifiers
+	 * @param moduleName     the module short code
+	 * @param attemptedDate  the date of the attempted ingestion
+	 */
+	public void saveOrUpdateLastAttemptedDatesBatch(List<String> tenantIds, String moduleName, LocalDate attemptedDate) {
+		persistenceService.saveOrUpdateLastAttemptedDatesBatch(tenantIds, moduleName, attemptedDate);
 	}
 
 	/**
@@ -249,7 +318,7 @@ public Set<LocalDate> findRegisteredLegacyJobDates(String tenantId, String modul
 
 	/**
 	 * Immutable value object representing a legacy ingestion job entry retrieved from
-	 * {@code legacy_data_ingestion_detail}. Carries the unique job identifier and the
+	 * {@code ug_legacy_data_ingestion_detail}. Carries the unique job identifier and the
 	 * date for which data should be ingested.
 	 */
 	public static class LegacyJob {
@@ -341,4 +410,213 @@ public void updateLegacyJobStatus(String jobId, String status, String requestDat
 			return false;
 		}
 	}
+
+	/**
+	 * Upserts a list of {@link IngestionModuleDetail} records into the database.
+	 *
+	 * @param moduleDetails list of module details to save or update
+	 */
+	public void upsertModuleDetails(List<IngestionModuleDetail> moduleDetails) {
+		if (moduleDetails == null || moduleDetails.isEmpty()) {
+			return;
+		}
+		try {
+			long now = CommonUtils.getCurrentEpochMillis();
+			MapSqlParameterSource[] batchParams = new MapSqlParameterSource[moduleDetails.size()];
+			for (int index = 0; index < moduleDetails.size(); index++) {
+				IngestionModuleDetail detail = moduleDetails.get(index);
+				String detailId = detail.getDetailId();
+				if (detailId == null || detailId.isBlank()) {
+					detailId = UUID.nameUUIDFromBytes((detail.getTenantId() + ":" + detail.getModuleName()).getBytes()).toString();
+				}
+				batchParams[index] = new MapSqlParameterSource()
+						.addValue("detailId", detailId)
+						.addValue("tenantId", detail.getTenantId())
+						.addValue("moduleName", detail.getModuleName())
+						.addValue("isActive", detail.isActive())
+						.addValue("createdBy", detail.getCreatedBy() != null ? detail.getCreatedBy() : DashboardExtractorConstants.SYSTEM_USER)
+						.addValue("createdTime", detail.getCreatedTime() != null ? detail.getCreatedTime() : now)
+						.addValue("lastModifiedBy", detail.getLastModifiedBy() != null ? detail.getLastModifiedBy() : DashboardExtractorConstants.SYSTEM_USER)
+						.addValue("lastModifiedTime", now);
+			}
+			namedParameterJdbcTemplate.batchUpdate(IngestionSummaryQueryBuilder.UPSERT_MODULE_DETAIL_QUERY, batchParams);
+			log.info("Successfully upserted {} records into ug_ingestion_module_detail", moduleDetails.size());
+		} catch (Exception exception) {
+			log.error("IngestionSummaryRepository | Failed to batch upsert ug_ingestion_module_detail records", exception);
+			throw new RuntimeException("Failed to upsert module details: " + exception.getMessage(), exception);
+		}
+	}
+
+	/**
+	 * Deletes all records from {@code ug_ingestion_module_detail}.
+	 */
+	public void deleteAllModuleDetails() {
+		try {
+			namedParameterJdbcTemplate.update(
+					IngestionSummaryQueryBuilder.DELETE_ALL_MODULE_DETAILS_QUERY, new MapSqlParameterSource());
+			log.info("IngestionSummaryRepository | Cleared all existing records from ug_ingestion_module_detail");
+		} catch (Exception exception) {
+			log.error("IngestionSummaryRepository | Failed to clear ug_ingestion_module_detail records", exception);
+			throw new RuntimeException("Failed to delete existing module details: " + exception.getMessage(), exception);
+		}
+	}
+
+	/**
+	 * Atomically replaces all {@code ug_ingestion_module_detail} records by clearing the table and inserting the new list.
+	 *
+	 * @param moduleDetails the new list of module details to persist
+	 */
+	@Transactional
+	public void replaceAllModuleDetails(List<IngestionModuleDetail> moduleDetails) {
+		deleteAllModuleDetails();
+		if (moduleDetails != null && !moduleDetails.isEmpty()) {
+			upsertModuleDetails(moduleDetails);
+		}
+	}
+
+	/**
+	 * Checks whether any records currently exist in the {@code ug_ingestion_module_detail} table.
+	 *
+	 * @return {@code true} if table has at least one record, {@code false} otherwise
+	 */
+	public boolean hasAnyModuleDetails() {
+		try {
+			Integer count = namedParameterJdbcTemplate.queryForObject(
+					IngestionSummaryQueryBuilder.COUNT_ALL_MODULE_DETAILS_QUERY,
+					new MapSqlParameterSource(),
+					Integer.class);
+			return count != null && count > 0;
+		} catch (Exception exception) {
+			log.error("IngestionSummaryRepository | Failed to count ug_ingestion_module_detail records", exception);
+			return false;
+		}
+	}
+
+	/**
+	 * Retrieves distinct active tenant IDs configured for a specific module.
+	 *
+	 * @param moduleName module short code (e.g. "PGR", "PT")
+	 * @return list of active tenant IDs
+	 */
+	public List<String> findActiveTenantsByModule(String moduleName) {
+		try {
+			MapSqlParameterSource params = new MapSqlParameterSource()
+					.addValue(DashboardExtractorConstants.PARAM_MODULE_NAME, moduleName);
+			return namedParameterJdbcTemplate.queryForList(
+					IngestionSummaryQueryBuilder.SELECT_ACTIVE_TENANTS_BY_MODULE_QUERY, params, String.class);
+		} catch (Exception exception) {
+			log.error("IngestionSummaryRepository | Failed to find active tenants for module {}", moduleName, exception);
+			return List.of();
+		}
+	}
+
+	/**
+	 * Retrieves all distinct active tenant IDs across all modules.
+	 *
+	 * @return list of active tenant IDs
+	 */
+	public List<String> findAllActiveTenants() {
+		try {
+			return namedParameterJdbcTemplate.queryForList(
+					IngestionSummaryQueryBuilder.SELECT_ALL_ACTIVE_TENANTS_QUERY, new MapSqlParameterSource(), String.class);
+		} catch (Exception exception) {
+			log.error("IngestionSummaryRepository | Failed to find all active tenants", exception);
+			return List.of();
+		}
+	}
+
+	/**
+	 * Retrieves all active {@link IngestionModuleDetail} records.
+	 *
+	 * @return list of active module details
+	 */
+	public List<IngestionModuleDetail> findAllActiveModuleDetails() {
+		try {
+			return namedParameterJdbcTemplate.query(
+					IngestionSummaryQueryBuilder.SELECT_ALL_ACTIVE_MODULE_DETAILS_QUERY,
+					new MapSqlParameterSource(),
+					(rs, rowNum) -> IngestionModuleDetail.builder()
+							.detailId(rs.getString("detail_id"))
+							.tenantId(rs.getString("tenant_id"))
+							.moduleName(rs.getString("module_name"))
+							.active(rs.getBoolean("is_active"))
+							.build());
+		} catch (Exception exception) {
+			log.error("IngestionSummaryRepository | Failed to find all active module details", exception);
+			return List.of();
+		}
+	}
+
+	/**
+	 * Creates a new scheduler execution record in {@code ug_ingestion_scheduler_detail}.
+	 *
+	 * @param schedulerDetail the scheduler detail entity to persist
+	 */
+	public void createSchedulerRun(IngestionSchedulerDetail schedulerDetail) {
+		if (schedulerDetail == null) {
+			return;
+		}
+		try {
+			long now = CommonUtils.getCurrentEpochMillis();
+			MapSqlParameterSource params = new MapSqlParameterSource()
+					.addValue("schedulerId", schedulerDetail.getSchedulerId())
+					.addValue("schedulerName", schedulerDetail.getSchedulerName())
+					.addValue("cronExpression", schedulerDetail.getCronExpression())
+					.addValue("startTime", schedulerDetail.getStartTime() != null ? schedulerDetail.getStartTime() : now)
+					.addValue("status", schedulerDetail.getStatus() != null ? schedulerDetail.getStatus() : "RUNNING")
+					.addValue("totalRecordsProcessed", schedulerDetail.getTotalRecordsProcessed() != null ? schedulerDetail.getTotalRecordsProcessed() : 0)
+					.addValue("successRecordsCount", schedulerDetail.getSuccessRecordsCount() != null ? schedulerDetail.getSuccessRecordsCount() : 0)
+					.addValue("failureRecordsCount", schedulerDetail.getFailureRecordsCount() != null ? schedulerDetail.getFailureRecordsCount() : 0)
+					.addValue("createdBy", schedulerDetail.getCreatedBy() != null ? schedulerDetail.getCreatedBy() : DashboardExtractorConstants.SYSTEM_USER)
+					.addValue("createdTime", schedulerDetail.getCreatedTime() != null ? schedulerDetail.getCreatedTime() : now)
+					.addValue("lastModifiedBy", schedulerDetail.getLastModifiedBy() != null ? schedulerDetail.getLastModifiedBy() : DashboardExtractorConstants.SYSTEM_USER)
+					.addValue("lastModifiedTime", now);
+
+			namedParameterJdbcTemplate.update(IngestionSummaryQueryBuilder.INSERT_SCHEDULER_DETAIL_QUERY, params);
+			log.info("IngestionSummaryRepository | Created scheduler run record: {} ({})",
+					schedulerDetail.getSchedulerId(), schedulerDetail.getSchedulerName());
+		} catch (Exception exception) {
+			log.error("IngestionSummaryRepository | Failed to create scheduler run record {}", schedulerDetail.getSchedulerId(), exception);
+		}
+	}
+
+	/**
+	 * Updates an existing scheduler execution record upon completion or failure.
+	 *
+	 * @param schedulerId    the unique scheduler execution ID
+	 * @param startTime      the epoch milliseconds when the scheduler started
+	 * @param totalRecords   total count of ingestion records processed
+	 * @param successRecords count of successful ingestion records
+	 * @param failureRecords count of failed ingestion records
+	 * @param status         final execution status (e.g. COMPLETED or FAILED)
+	 * @param errorMessage   error message if failed, or null
+	 */
+	public void completeSchedulerRun(String schedulerId, long startTime, int totalRecords, int successRecords, int failureRecords,
+			String status, String errorMessage) {
+		if (schedulerId == null) {
+			return;
+		}
+		try {
+			long now = CommonUtils.getCurrentEpochMillis();
+			long duration = (startTime > 0) ? (now - startTime) : 0;
+			MapSqlParameterSource params = new MapSqlParameterSource()
+					.addValue("schedulerId", schedulerId)
+					.addValue("endTime", now)
+					.addValue("durationMs", duration)
+					.addValue("status", status)
+					.addValue("totalRecordsProcessed", totalRecords)
+					.addValue("successRecordsCount", successRecords)
+					.addValue("failureRecordsCount", failureRecords)
+					.addValue("errorMessage", errorMessage)
+					.addValue("lastModifiedBy", DashboardExtractorConstants.SYSTEM_USER)
+					.addValue("lastModifiedTime", now);
+
+			namedParameterJdbcTemplate.update(IngestionSummaryQueryBuilder.UPDATE_SCHEDULER_DETAIL_QUERY, params);
+			log.info("IngestionSummaryRepository | Completed scheduler run record: {} with status: {} in {}ms",
+					schedulerId, status, duration);
+		} catch (Exception exception) {
+			log.error("IngestionSummaryRepository | Failed to complete scheduler run record {}", schedulerId, exception);
+		}
+	}
 }
+

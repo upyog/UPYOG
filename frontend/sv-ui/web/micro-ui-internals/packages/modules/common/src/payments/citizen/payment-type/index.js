@@ -19,6 +19,7 @@ import { useForm, Controller } from "react-hook-form";
 import { useParams, useLocation } from "react-router-dom";
 import $ from "jquery";
 import { makePayment } from "./payGov";
+import { startHdfcPayment } from "./hdfcCollectNow";
 
 
 export const SelectPaymentType = (props) => {
@@ -92,7 +93,7 @@ export const SelectPaymentType = (props) => {
     try {
       const data = await Digit.PaymentService.createCitizenReciept(billDetails?.tenantId, filterData);
       const redirectUrl = data?.Transaction?.redirectUrl;
-      if (d?.paymentType == "AXIS") {
+      if (d?.paymentType == "AXIS" || d?.paymentType === "ICICI") {
         window.location = redirectUrl;
       }
       else if (d?.paymentType == "NTTDATA") {
@@ -106,6 +107,13 @@ export const SelectPaymentType = (props) => {
           "returnUrl": redirect[1]
         }
         let atom = new AtomPaynetz(options, 'uat');
+      } else if (d?.paymentType === "RAZORPAY") {
+        try {
+          startHdfcPayment(data);
+        } catch (e) {
+          console.log("Error in HDFC Payment Redirect ", e);
+          setShowToast({ key: true, label: "CS_PAYMENT_INIT_FAILED" });
+        }
       }
       else {
         try {

@@ -36,6 +36,9 @@ import org.upyog.dashboard.model.LegacyIngestionResponse;
 import org.upyog.dashboard.registry.ExtractorRegistry;
 import org.upyog.dashboard.repository.IngestionSummaryRepository;
 
+/**
+ * Unit tests for {@link LegacyIngestionService} testing synchronous date range chunking and migration flows.
+ */
 @ExtendWith(MockitoExtension.class)
 class LegacyIngestionServiceTest {
 

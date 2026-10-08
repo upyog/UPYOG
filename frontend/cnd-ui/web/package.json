@@ -8,9 +8,7 @@
     "micro-ui-internals/packages/libraries",
     "micro-ui-internals/packages/modules/core",
     "micro-ui-internals/packages/modules/common",
-    "micro-ui-internals/packages/modules/cnd",
-    "micro-ui-internals/packages/modules/bills",
-    "micro-ui-internals/packages/modules/reports"
+    "micro-ui-internals/packages/modules/cnd"
   ],
   "engines": {
     "node": ">=22"
@@ -18,7 +16,6 @@
   "dependencies": {
     "@nudmcdgnpm/cnd-css": "1.1.0",
     "@nudmcdgnpm/digit-ui-libraries": "1.2.1",
-    "@upyog/digit-ui-module-bills": "3.10.0",
     "@upyog/digit-ui-module-common": "3.10.0",
     "@upyog/digit-ui-module-core": "3.10.0",
     "@nudmcdgnpm/digit-ui-react-components": "4.0.5",

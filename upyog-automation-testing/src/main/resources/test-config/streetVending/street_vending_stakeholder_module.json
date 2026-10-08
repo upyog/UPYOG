@@ -4,13 +4,13 @@
   "citizen": {
     "mobile": "7906413996",
     "otp": "123456",
-    "city": "City A"
+    "city": "Kurali"
   },
 
   "employee": {
     "username": "SV_EMP",
     "password": "eGov@123",
-    "city": "City A"
+    "city": "Kurali"
   },
 
   "vendor": {

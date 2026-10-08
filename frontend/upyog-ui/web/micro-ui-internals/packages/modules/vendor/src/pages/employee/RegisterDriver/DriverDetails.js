@@ -110,9 +110,9 @@ console.log('modify-drivermodify-driver',dsoId);
       case "DELETE_VENDOR":
         return setShowModal(true);
       case "EDIT":
-        return navigate("/upyog-ui/employee/fsm/registry/modify-driver/" + dsoId);
+        return navigate("/upyog-ui/employee/vendor/registry/modify-driver/" + dsoId);
       case "HOME":
-        return navigate("/upyog-ui/employee/fsm/registry?selectedTabs=DRIVER");
+        return navigate("/upyog-ui/employee/vendor/search-vendor?selectedTabs=DRIVER");
       default:
         break;
     }
@@ -156,7 +156,8 @@ console.log('modify-drivermodify-driver',dsoId);
         queryClient.invalidateQueries("DSO_SEARCH");
 
         setTimeout(() => {
-          closeToast, navigate(`/upyog-ui/employee/fsm/registry`);
+          closeToast();
+          navigate(`/upyog-ui/employee/vendor/search-vendor?selectedTabs=DRIVER`);
         }, 5000);
       },
     });

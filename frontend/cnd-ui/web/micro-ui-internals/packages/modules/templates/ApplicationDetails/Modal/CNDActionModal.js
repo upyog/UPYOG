@@ -121,7 +121,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
 
     });
   }
-"COMPLETE_REQUEST"
+
   useEffect(() => {
     if(action?.action==="APPROVE"){
       navigate(`/cnd-ui/employee/cnd/cnd-service/edit/`+ `${applicationData?.applicationNumber}`);
@@ -149,7 +149,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         setSelectVehicle
       })
     )};
-  }, [action, approvers]);
+  }, [action, approvers,dsoData, vehicleData]);
 
   return action && config.form ? (
     <Modal

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.upyog.Automation.Common.CommonEmployeeTest;
 import org.upyog.Automation.Reports.ReportManager;
+import org.upyog.Automation.Utils.AutomationConstants;
 import org.upyog.Automation.Utils.WorkflowDataStore;
 
 @Service
@@ -41,16 +42,21 @@ public class EmployeeTestService {
             standaloneRun = true;
         }
 
-        WorkflowDataStore.put("selected.url", baseUrl);
-        WorkflowDataStore.put("selected.username", username);
-        WorkflowDataStore.put("selected.password", password);
-        WorkflowDataStore.put("selected.applicationNumber", applicationNumber);
+        WorkflowDataStore.put(AutomationConstants.KEY_SELECTED_URL, baseUrl);
+        WorkflowDataStore.put(AutomationConstants.KEY_SELECTED_USERNAME, username);
+        WorkflowDataStore.put(AutomationConstants.KEY_SELECTED_PASSWORD, password);
+        WorkflowDataStore.put(AutomationConstants.KEY_SELECTED_APPLICATION_NO, applicationNumber);
 
-        String env = baseUrl.contains("niuatt")
-                ? "NIUATT"
-                : "UPYOG";
+        String env;
+        if (baseUrl.toLowerCase().contains("sandbox")) {
+            env = AutomationConstants.ENV_SANDBOX;
+        } else if (baseUrl.toLowerCase().contains(AutomationConstants.ENV_NIUATT.toLowerCase())) {
+            env = AutomationConstants.ENV_NIUATT;
+        } else {
+            env = AutomationConstants.ENV_UPYOG;
+        }
 
-        WorkflowDataStore.put("selected.env", env);
+        WorkflowDataStore.put(AutomationConstants.KEY_SELECTED_ENV, env);
 
         logger.info("Selected ENV: {}", env);
         logger.info("Starting {} employee test", moduleName);

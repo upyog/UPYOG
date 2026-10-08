@@ -117,9 +117,9 @@ const VehicleDetails = (props) => {
       case "DELETE_VENDOR":
         return setShowModal(true);
       case "EDIT":
-        return navigate("/upyog-ui/employee/fsm/registry/modify-vehicle/" + vehicleNumber);
+        return navigate("/upyog-ui/employee/vendor/registry/modify-vehicle/" + vehicleNumber);
       case "HOME":
-        return navigate("/upyog-ui/employee/fsm/registry?selectedTabs=VEHICLE");
+        return navigate("/upyog-ui/employee/vendor/search-vendor?selectedTabs=VEHICLE");
       default:
         break;
     }
@@ -258,8 +258,8 @@ const VehicleDetails = (props) => {
         setShowToast({ key: "success", action: "DELETE_VEHICLE" });
         queryClient.invalidateQueries("FSM_VEICLES_SEARCH");
         setTimeout(() => {
-          closeToast;
-          navigate(`/upyog-ui/employee/fsm/registry`);
+          closeToast();
+          navigate(`/upyog-ui/employee/vendor/search-vendor?selectedTabs=VEHICLE`);
         }, 5000);
       },
     });

@@ -186,7 +186,7 @@ public class FunctionController {
 
 	public Object toSearchResultJson(final Object object) {
 		final GsonBuilder gsonBuilder = new GsonBuilder();
-		final Gson gson = gsonBuilder.registerTypeAdapter(CFunction.class,
+		final Gson gson = gsonBuilder.registerTypeHierarchyAdapter(CFunction.class,
 				new FunctionJsonAdaptor()).create();
 		return gson.toJson(object);
 	}

@@ -160,8 +160,8 @@ func (p *QuickSummaryProvider) Execute(
 		}{
 			RequestInfo: aggReq.RequestInfo,
 		}
-		// Changed endpoint from bill/v2/_count to bill/v2/short/_search to properly count pending payments
-		path := fmt.Sprintf("/billing-service/bill/v2/short/_search?tenantId=%s&mobileNumber=%s&isActive=true&status=ACTIVE", tenantID, userMobile)
+		// Changed endpoint from bill/v2/_count to bill/v2/_searchsummary to properly count pending payments
+		path := fmt.Sprintf("/billing-service/bill/v2/_searchsummary?tenantId=%s&mobileNumber=%s&isActive=true&status=ACTIVE", tenantID, userMobile)
 		p.Log.WithContext(gCtx).Info("fetching pendingPaymentsCount from billing API", zap.String("api", path))
 
 		resp, fetchErr := p.billingClient.Post(gCtx, path, body, headers)

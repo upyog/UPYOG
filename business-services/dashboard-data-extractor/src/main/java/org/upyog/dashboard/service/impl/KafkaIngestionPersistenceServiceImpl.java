@@ -4,6 +4,7 @@ import org.upyog.dashboard.constants.DashboardExtractorConstants;
 import org.upyog.dashboard.util.CommonUtils;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +32,6 @@ import lombok.extern.slf4j.Slf4j;
 @ConditionalOnProperty(name = "dashboard-data.persister.enabled", havingValue = "true", matchIfMissing = true)
 public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenceService {
 
-    private static final String SYSTEM_USER = "SYSTEM";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DashboardExtractorConstants.DATE_FORMAT);
 
     private final DashboardProducer producer;
@@ -58,9 +58,9 @@ public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenc
                 .moduleName(moduleName)
                 .lastSuccessfulDate(successfulDate.format(DATE_FORMATTER))
                 .lastAttemptedDate(successfulDate.format(DATE_FORMATTER))
-                .createdBy(SYSTEM_USER)
+                .createdBy(DashboardExtractorConstants.SYSTEM_USER)
                 .createdTime(now)
-                .lastModifiedBy(SYSTEM_USER)
+                .lastModifiedBy(DashboardExtractorConstants.SYSTEM_USER)
                 .lastModifiedTime(now)
                 .build();
 
@@ -87,32 +87,51 @@ public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenc
      */
     @Override
     public void saveOrUpdateLastAttemptedDate(String tenantId, String moduleName, LocalDate attemptedDate) {
+        saveOrUpdateLastAttemptedDatesBatch(List.of(tenantId), moduleName, attemptedDate);
+    }
+
+    /**
+     * Builds a list of {@link org.upyog.dashboard.entity.IngestionModuleSummary} payloads with the
+     * attempted date and an epoch {@code last_successful_date} fallback, then publishes them in a single message to
+     * the {@code UPDATE_ADAPTER_MODULE_SUMMARY} Kafka topic.
+     *
+     * @param tenantIds     the list of tenant identifiers
+     * @param moduleName    the module short code
+     * @param attemptedDate the date for which ingestion was attempted
+     */
+    @Override
+    public void saveOrUpdateLastAttemptedDatesBatch(List<String> tenantIds, String moduleName, LocalDate attemptedDate) {
+        if (tenantIds == null || tenantIds.isEmpty()) {
+            return;
+        }
         try {
             long now = CommonUtils.getCurrentEpochMillis();
-            String id = CommonUtils.generateUUID();
             LocalDate fallbackSuccessDate = LocalDate.of(1970, 1, 1);
-
-            IngestionModuleSummary summary = IngestionModuleSummary.builder()
-                .id(id)
-                .tenantId(tenantId)
-                .moduleName(moduleName)
-                .lastSuccessfulDate(fallbackSuccessDate.format(DATE_FORMATTER))
-                .lastAttemptedDate(attemptedDate.format(DATE_FORMATTER))
-                .createdBy(SYSTEM_USER)
-                .createdTime(now)
-                .lastModifiedBy(SYSTEM_USER)
-                .lastModifiedTime(now)
-                .build();
+            List<IngestionModuleSummary> summaries = new ArrayList<>();
+            for (String tenantId : tenantIds) {
+                String id = CommonUtils.generateUUID();
+                summaries.add(IngestionModuleSummary.builder()
+                        .id(id)
+                        .tenantId(tenantId)
+                        .moduleName(moduleName)
+                        .lastSuccessfulDate(fallbackSuccessDate.format(DATE_FORMATTER))
+                        .lastAttemptedDate(attemptedDate.format(DATE_FORMATTER))
+                        .createdBy(DashboardExtractorConstants.SYSTEM_USER)
+                        .createdTime(now)
+                        .lastModifiedBy(DashboardExtractorConstants.SYSTEM_USER)
+                        .lastModifiedTime(now)
+                        .build());
+            }
 
             Map<String, Object> message = new HashMap<>();
-            message.put("ingestionModuleSummary", Collections.singletonList(summary));
+            message.put("ingestionModuleSummary", summaries);
             producer.push(dashboardProperties.getUpdateAdapterModuleSummaryTopic(), message);
 
-            log.info("Pushed update for last_attempted_date to {} for tenant {} module {}",
-                    attemptedDate, tenantId, moduleName);
+            log.info("Pushed batch update for last_attempted_date to {} for {} tenants in module {}",
+                    attemptedDate, tenantIds.size(), moduleName);
         } catch (Exception exception) {
-            log.error("Failed to update last attempted date to {} for tenant {} module {}",
-                    attemptedDate, tenantId, moduleName, exception);
+            log.error("Failed to batch update last attempted date to {} for tenants {} in module {}",
+                    attemptedDate, tenantIds, moduleName, exception);
         }
     }
 
@@ -145,9 +164,9 @@ public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenc
                 .startDate(effectiveStartDate.format(DATE_FORMATTER))
                 .endDate(effectiveEndDate.format(DATE_FORMATTER))
                 .ingestionStatus(DashboardExtractorConstants.STATUS_NOT_STARTED)
-                .createdBy(SYSTEM_USER)
+                .createdBy(DashboardExtractorConstants.SYSTEM_USER)
                 .createdTime(now)
-                .lastModifiedBy(SYSTEM_USER)
+                .lastModifiedBy(DashboardExtractorConstants.SYSTEM_USER)
                 .lastModifiedTime(now)
                 .build();
                 
@@ -179,7 +198,7 @@ public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenc
                 .moduleIngestionId(jobId)
                 .responseData(responseData)
                 .ingestionStatus(status)
-                .lastModifiedBy(SYSTEM_USER)
+                .lastModifiedBy(DashboardExtractorConstants.SYSTEM_USER)
                 .lastModifiedTime(now)
                 .build();
                 
@@ -201,7 +220,7 @@ public class KafkaIngestionPersistenceServiceImpl implements IngestionPersistenc
      * @param details list of daily ingestion data objects
      */
     @Override
-    public void saveIngestionDetailsBatch(java.util.List<?> details) {
+    public void saveIngestionDetailsBatch(List<?> details) {
         try {
             if (details == null || details.isEmpty()) {
                 return;

@@ -21,6 +21,9 @@ import org.upyog.dashboard.common.constants.Module;
 import org.upyog.dashboard.model.LegacyIngestionResponse;
 import org.upyog.dashboard.service.LegacyIngestionService;
 
+/**
+ * Unit tests for {@link LegacyIngestionController} verifying legacy range triggering and status endpoints.
+ */
 @ExtendWith(MockitoExtension.class)
 class LegacyIngestionControllerTest {
 

@@ -44,7 +44,7 @@ import lombok.extern.slf4j.Slf4j;
  * <li>Return an {@link IngestionResult} that describes the outcome (status,
  * response body, or failure reason).</li>
  * <li>Regardless of success or failure, publish a {@link DailyIngestionData}
- * record to the {@code save-dashboard-ingestion-detail} Kafka topic so the * persister can write the detail row to the {@code ingestion_detail} database
+ * record to the {@code save-dashboard-ingestion-detail} Kafka topic so the * persister can write the detail row to the {@code ug_ingestion_detail} database
  * table.</li>
  * </ol>
  *

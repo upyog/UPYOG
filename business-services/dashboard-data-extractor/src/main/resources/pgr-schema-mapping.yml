@@ -78,5 +78,6 @@ combinedMetricsQuery: |
         SELECT COALESCE(additionaldetails->>'department', 'DEPT1') AS dept, COUNT(*) AS val FROM eg_pgr_service_v2 v2 WHERE v2.tenantid = main.tenantid AND lastmodifiedtime >= :startTime AND lastmodifiedtime <= :endTime AND applicationstatus IN ('RESOLVED', 'CLOSEDAFTERRESOLUTION') GROUP BY COALESCE(additionaldetails->>'department', 'DEPT1')
     ) res) AS todaysResolvedComplaintsJson
   FROM (
-    SELECT DISTINCT tenantid FROM eg_pgr_service_v2 WHERE tenantid LIKE CONCAT(:tenantId, '%')
+    SELECT UNNEST(string_to_array(:tenantId, ',')) AS tenantid
   ) main
+

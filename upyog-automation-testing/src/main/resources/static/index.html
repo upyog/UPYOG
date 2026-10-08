@@ -1,253 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UPYOG Automation Testing</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        h1 { text-align: center; color: #333; margin-bottom: 30px; }
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+    <link rel="stylesheet" href="/css/style.css">
 
-        .tab {
-            padding: 10px 20px;
-            background: #fff;
-            border: 2px solid #ddd;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        .tab.active {
-            background: #007bff;
-            color: white;
-            border-color: #007bff;
-        }
-
-        .tab-content {
-            display: none;
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        button {
-            background: #007bff;
-            color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 4px;
-            display: none;
-        }
-
-        .result.success {
-            background: #d4edda;
-        }
-
-        .result.error {
-            background: #f8d7da;
-        }
-
-        /* MULTI SELECT */
-
-        .multi-select-container {
-            position: relative;
-            width: 100%;
-        }
-
-        .multi-select-box {
-    border: 1px solid #ddd;
-    padding: 12px;
-    border-radius: 4px;
-    background: white;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-        .multi-select-dropdown {
-    display: none;
-    position: absolute;
-    width: 100%;
-    background: white;
-    border: 1px solid #ddd;
-    border-top: none;
-    border-radius: 0 0 4px 4px;
-    max-height: 300px;
-    overflow-y: auto;
-    z-index: 999;
-    padding: 0;
-    margin-top: 0;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
-}
-
-        .multi-select-dropdown.show {
-            display: block;
-        }
-
-       #moduleSearch {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-bottom: 1px solid #eee;
-    outline: none;
-    margin: 0;
-    box-sizing: border-box;
-    border-radius: 0;
-}
-  #moduleSearch1 {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-bottom: 1px solid #eee;
-    outline: none;
-    margin: 0;
-    box-sizing: border-box;
-    border-radius: 0;
-}
-#moduleSearch2 {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-bottom: 1px solid #eee;
-    outline: none;
-    margin: 0;
-    box-sizing: border-box;
-    border-radius: 0;
-}
-
-       #moduleOptions label {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    cursor: pointer;
-    font-weight: normal;
-}
- #moduleOptions1 label {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    cursor: pointer;
-    font-weight: normal;
-}
-#moduleOptions2 label {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    cursor: pointer;
-    font-weight: normal;
-}
-
-#moduleOptions input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-}
-#moduleOptions1 input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-}
-#moduleOptions2 input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-}
-
-        #moduleOptions label:hover {
-            background: #f5f5f5;
-        }
-        #moduleOptions1 label:hover {
-            background: #f5f5f5;
-        }
-         #moduleOptions2 label:hover {
-            background: #f5f5f5;
-        }
-
-
-      .spinner {
-    display: none;
-    width:18px;
-    height:18px;
-    border:3px solid #ddd;
-    border-top:3px solid #0d6efd;
-    border-radius:50%;
-    animation:spin .8s linear infinite;
-}
-
-@keyframes spin {
-    from {
-        transform:rotate(0deg);
-    }
-    to {
-        transform:rotate(360deg);
-    }
-}
-
-        #reportTableContainer {
-    margin-top: 20px;
-}
-
-#reportTableContainer table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-#reportTableContainer th,
-#reportTableContainer td {
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: center;
-}
-
-#reportTableContainer th {
-    background-color: #0d6efd;
-    color: white;
-    font-weight: 600;
-}
-
-#reportTableContainer tr:nth-child(even) {
-    background-color: #f8f9fa;
-}
-
-#reportTableContainer tr:hover {
-    background-color: #eef5ff;
-}
-    </style>
 </head>
+
 <body>
     <div class="container">
         <h1>UPYOG Automation Testing Portal</h1>
@@ -258,109 +19,292 @@
             <div class="tab" onclick="switchTab('employee', event)">Employee Testing</div>
             <div class="tab" onclick="switchTab('vendor', event)">Vendor Testing</div>
             <div class="tab" onclick="switchTab('report', event)">Test Reports</div>
+            <div class="tab" onclick="switchTab('guide', event)">User Guide</div>
         </div>
 
         <!-- Module Testing Form -->
-         <div id="module" class="tab-content active">
+        <div id="module" class="tab-content active">
             <h2>Full Module Testing</h2>
-                <form id="moduleForm">
-                    <div class="form-group">
-                        <label>Base URL *</label>
-                        <select name="baseUrl" required>
-                            <option value="">Select Base URL</option>
-                            <option value="https://upyog-test.niua.org/upyog-ui/citizen/login">Upyog Test Citizen</option>
-                            <option value="https://upyog.niua.org/upyog-ui/citizen/login">Upyog Citizen</option>
-                            <option value="https://niuatt.niua.in/upyog-ui/citizen/login">Niuatt Citizen</option>
-                            <option value="http://localhost:8080/upyog-ui/citizen/login">Local Host Citizen</option>
-                            <option value="https://upyog.niua.org/cnd-ui/citizen/login">Upyog CnD Citizen</option>
-                            <option value="https://niuatt.niua.in/cnd-ui/citizen/login">Niuatt CnD Citizen</option>
-                            <option value="https://upyog.niua.org/sv-ui/citizen/login">Upyog SV Citizen</option>
-                            <option value="https://niuatt.niua.in/sv-ui/citizen/login">Niuatt SV Citizen</option>
-                            <option value="https://upyog.niua.org/upyog-ui/employee/login">Upyog Employee</option>
-                            <option value="https://niuatt.niua.in/upyog-ui/employee/login">Niuatt Employee</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Module Name *</label>
+            <form id="moduleForm">
+                <div class="form-group">
+                    <label>Base URL *</label>
+                    <select name="baseUrl" required>
+                        <option value="">Select Base URL</option>
+                        <option value="https://upyog-test.niua.org/upyog-ui/citizen/login">Upyog Test Citizen</option>
+                        <option value="https://upyog.niua.org/upyog-ui/citizen/login">Upyog Citizen</option>
+                        <option value="https://niuatt.niua.in/upyog-ui/citizen/login">Niuatt Citizen</option>
+                        <option value="http://localhost:8080/upyog-ui/citizen/login">Local Host Citizen</option>
+                        <option value="https://upyog.niua.org/cnd-ui/citizen/login">Upyog CnD Citizen</option>
+                        <option value="https://niuatt.niua.in/cnd-ui/citizen/login">Niuatt CnD Citizen</option>
+                        <option value="https://upyog.niua.org/sv-ui/citizen/login">Upyog SV Citizen</option>
+                        <option value="https://niuatt.niua.in/sv-ui/citizen/login">Niuatt SV Citizen</option>
+                        <option value="https://upyog.niua.org/upyog-ui/employee/login">Upyog Employee</option>
+                        <option value="https://niuatt.niua.in/upyog-ui/employee/login">Niuatt Employee</option>
+                        <option value="https://upyog-sandbox.niua.org/upyog-ui/citizen/login">Upyog Sandbox Test Citizen
+                        </option>
+                        <option value="https://upyog-sandbox.niua.org/sv-ui/citizen/login">Upyog Sandbox Test SV Citizen
+                        </option>
+                        <option value="https://upyog-sandbox.niua.org/cnd-ui/citizen/login">Upyog Sandbox Test CnD Citizen
+                        </option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Module Name *</label>
 
-                        <div class="multi-select-container">
-                            <div class="multi-select-box"
-                                 onclick="toggleDropdownById('moduleDropdown1', event)">
-                                <span id="selectedModulesText1">Select Modules</span>
-                                <span>▼</span>
-                            </div>
+                    <div class="multi-select-container">
+                        <div class="multi-select-box" onclick="toggleDropdownById('moduleDropdown1', event)">
+                            <span id="selectedModulesText1">Select Modules</span>
+                            <span>▼</span>
+                        </div>
 
-                            <div id="moduleDropdown1" class="multi-select-dropdown">
-                                <input
-                                        type="text"
-                                        id="moduleSearch1"
-                                        placeholder="Search modules..."
-                                        onkeyup="filterModules()"
-                                />
-                                <div id="moduleOptions1">
+                        <div id="moduleDropdown1" class="multi-select-dropdown">
+                            <input type="text" id="moduleSearch1" placeholder="Search modules..."
+                                onkeyup="filterModules()" />
+                            <div id="moduleOptions1">
 
-                                    <label><input type="checkbox" name="moduleTestingModules" value="STREET_VENDING"> Street Vending</label>
-                                    <label><input type="checkbox" name="moduleTestingModules" value="PET_REGISTRATION"> Pet Registration</label>
-                                    <label><input type="checkbox" name="moduleTestingModules" value="TRADE_LICENSE"> Trade License</label>
-                                    <label><input type="checkbox" name="moduleTestingModules" value="PROPERTY_TAX"> Property Tax</label>
-                                    <label><input type="checkbox" name="moduleTestingModules" value="EWASTE_MANAGEMENT_SYSTEM"> E-Waste</label>
-                                    <label><input type="checkbox" name="moduleTestingModules" value="ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM"> OBPAS</label>
-                                    <label><input type="checkbox" name="moduleTestingModules" value="PUBLIC_GRIEVANCE_REDRESSAL"> PGR</label>
-                                    <label><input type="checkbox" name="moduleTestingModules" value="ADVERTISEMENT"> Advertisement</label>
-                                    <label><input type="checkbox" name="moduleTestingModules" value="TREE_PRUNING"> Tree Pruning</label>
-                                    <label><input type="checkbox" name="moduleTestingModules" value="WATER_TANKER"> Water Tanker</label>
-                                    <label><input type="checkbox" name="moduleTestingModules" value="MOBILE_TOILET"> Mobile Toilet</label>
-                                    <label><input type="checkbox" name="moduleTestingModules" value="COMMUNITY_HALL_BOOKING"> Community Hall</label>
-                                    <label><input type="checkbox" name="moduleTestingModules" value="CONSTRUCTION_AND_DEMOLITION"> Construction & Demolition</label>
-                                    <label><input type="checkbox" name="moduleTestingModules" value="DESLUDGING_SERVICE"> Desludging</label>
-                                    <label><input type="checkbox" name="moduleTestingModules" value="WATER_AND_SEWERAGE"> Water & Sewerage</label>
-                                    <label><input type="checkbox" name="moduleTestingModules" value="ASSET_MANAGEMENT_SYSTEM"> Asset Management</label>
+                                <label><input type="checkbox" name="moduleTestingModules" value="STREET_VENDING"> Street
+                                    Vending</label>
+                                <label><input type="checkbox" name="moduleTestingModules" value="PET_REGISTRATION"> Pet
+                                    Registration</label>
+                                <label><input type="checkbox" name="moduleTestingModules" value="TRADE_LICENSE"> Trade
+                                    License</label>
+                                <label><input type="checkbox" name="moduleTestingModules" value="PROPERTY_TAX"> Property
+                                    Tax</label>
+                                <label><input type="checkbox" name="moduleTestingModules"
+                                        value="EWASTE_MANAGEMENT_SYSTEM"> E-Waste</label>
+                                <label><input type="checkbox" name="moduleTestingModules"
+                                        value="ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM"> OBPAS</label>
+                                <label><input type="checkbox" name="moduleTestingModules"
+                                        value="PUBLIC_GRIEVANCE_REDRESSAL"> PGR</label>
+                                <label><input type="checkbox" name="moduleTestingModules" value="ADVERTISEMENT">
+                                    Advertisement</label>
+                                <label><input type="checkbox" name="moduleTestingModules" value="TREE_PRUNING"> Tree
+                                    Pruning</label>
+                                <label><input type="checkbox" name="moduleTestingModules" value="WATER_TANKER"> Water
+                                    Tanker</label>
+                                <label><input type="checkbox" name="moduleTestingModules" value="MOBILE_TOILET"> Mobile
+                                    Toilet</label>
+                                <label><input type="checkbox" name="moduleTestingModules"
+                                        value="COMMUNITY_HALL_BOOKING"> Community Hall</label>
+                                <label><input type="checkbox" name="moduleTestingModules"
+                                        value="CONSTRUCTION_AND_DEMOLITION"> Construction & Demolition</label>
+                                <label><input type="checkbox" name="moduleTestingModules" value="DESLUDGING_SERVICE">
+                                    Desludging</label>
+                                <label><input type="checkbox" name="moduleTestingModules" value="WATER_AND_SEWERAGE">
+                                    Water & Sewerage</label>
+                                <label><input type="checkbox" name="moduleTestingModules" value="GARBAGE_COLLECTION">
+                                    Garbage Collection</label>
+                                <label><input type="checkbox" name="moduleTestingModules"
+                                        value="ASSET_MANAGEMENT_SYSTEM"> Asset Management</label>
+                                <label><input type="checkbox" name="moduleTestingModules" value="ESTATE_MANAGEMENT">
+                                    Estate Management</label>
+                                <label><input type="checkbox" name="moduleTestingModules" value="CHALLAN_GENERATION">
+                                    Challan Generation</label>
+                                <label><input type="checkbox" name="moduleTestingModules" value="NO_DUE_CERTIFICATE"> No
+                                    Due Certificate</label>
 
-                                </div>
                             </div>
                         </div>
                     </div>
-                    <button type="submit" id="runBtn">Run Test</button>
-                    <div id="testStatus"
-                         style="display:none;margin-top:15px;padding:12px;border-radius:6px;background:#eef6ff;border-left:4px solid #0d6efd;">
+                </div>
 
-                        <div style="display:flex;align-items:center;gap:10px;">
+                <div style="display:flex; gap:10px; margin-top:10px; align-items:center;">
 
-                            <div class="spinner" id="statusSpinner"></div>
+                    <button type="button" onclick="downloadTestDataTemplate()">
+                        Download Excel Template
+                    </button>
 
-                            <div>
-                                <div id="statusText"
-                                     style="font-weight:bold;color:#0d6efd;">
-                                    Test Started...
-                                </div>
+                    <label for="excelUpload" style="
+               padding: 8px 14px;
+               border: 1px solid #ccc;
+               border-radius: 4px;
+               cursor: pointer;
+               background: #f5f5f5;
+           ">
+                        Upload Excel
+                    </label>
 
-                                <div id="statusSubText"
-                                     style="font-size:13px;color:#666;margin-top:3px;">
-                                    Running automation. Please don't refresh this page.
-                                </div>
+                    <input type="file" id="excelUpload" accept=".xlsx" style="display:none;"
+                        onchange="handleExcelUpload(this)">
+
+                    <button type="submit" id="runBtn">
+                        Run Test
+                    </button>
+
+                </div>
+
+                <div id="excelUploadStatus" style="margin-top:8px; font-size:14px;">
+                </div>
+
+                <div id="testStatus"
+                    style="display:none;margin-top:15px;padding:12px;border-radius:6px;background:#eef6ff;border-left:4px solid #0d6efd;">
+
+                    <div style="display:flex;align-items:center;gap:10px;">
+
+                        <div class="spinner" id="statusSpinner"></div>
+
+                        <div>
+                            <div id="statusText" style="font-weight:bold;color:#0d6efd;">
+                                Test Started...
                             </div>
 
+                            <div id="statusSubText" style="font-size:13px;color:#666;margin-top:3px;">
+                                Running automation. Please don't refresh this page.
+                            </div>
                         </div>
-                    </div>
-                </form>
-                <div id="moduleResult" class="result"></div>
-            <div id="moduleReportButtons"
-                 style="display:none; margin-top:15px;">
-                <div id="reportListContainer" style="margin-top:15px;"></div>
 
-                <button type="button"
+                    </div>
+                </div>
+            </form>
+            <div id="moduleResult" class="result"></div>
+
+            <!-- Execution Progress -->
+            <div id="executionProgress"
+                style="display: none; margin-top: 15px; padding: 18px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                    <div class="execution-progress-title"
+                        style="margin: 0; font-weight: 700; color: #1e293b; font-size: 1.05rem; display: flex; align-items: center; gap: 6px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        Test Execution Progress
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <span id="executionModeBadge"
+                            style="background: #eef2ff; color: #4338ca; font-weight: 600; font-size: 0.8rem; padding: 3px 10px; border-radius: 12px; border: 1px solid #c7d2fe;">Source:
+                            Detecting...</span>
+                        <span id="executionProgressBadge"
+                            style="background: #e0f2fe; color: #0284c7; font-weight: 600; font-size: 0.8rem; padding: 3px 10px; border-radius: 12px;">Running
+                            (0%)</span>
+                    </div>
+                </div>
+
+                <div id="executionProgressText"
+                    style="font-weight: 600; color: #334155; font-size: 0.95rem; margin-bottom: 4px;">
+                    Running Test Case 0 of 0
+                </div>
+
+                <div id="executionCurrentTest"
+                    style="font-size: 0.85rem; color: #64748b; margin-bottom: 10px; font-family: monospace;">
+                    Preparing execution...
+                </div>
+
+                <div class="progress-bar-container"
+                    style="height: 12px; background: #e2e8f0; border-radius: 6px; overflow: hidden; margin-top: 5px;">
+                    <div id="executionProgressBar" class="progress-bar"
+                        style="height: 100%; width: 0%; background: linear-gradient(90deg, #3b82f6, #6366f1); border-radius: 6px; transition: width 0.3s ease;">
+                    </div>
+                </div>
+
+                <div
+                    style="display: flex; justify-content: space-between; margin-top: 6px; font-size: 0.85rem; color: #64748b;">
+                    <span id="executionCompletedCount">0 / 0 Completed</span>
+                    <span id="executionProgressPercentage" style="font-weight: 700; color: #4f46e5;">0%</span>
+                </div>
+
+            </div>
+            <div id="moduleReportButtons" class="action-buttons-card" style="display:none;">
+                <div class="action-buttons-header">
+                    <h3>Execution Reports & Artifacts</h3>
+                </div>
+                <div id="reportListContainer" class="report-links-list"></div>
+
+                <div class="action-btn-grid">
+                    <button type="button" class="action-btn btn-report-view"
                         onclick="viewLatestReport('reportListContainer')">
-                    📄 View Report
-                </button>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                        </svg>
+                        View Report
+                    </button>
 
-                <button type="button"
-                        onclick="downloadLatestReport()">
-                    ⬇ Download Report
-                </button>
+                    <button type="button" class="action-btn btn-report-download" onclick="downloadLatestReport()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Download Report
+                    </button>
 
+                    <button type="button" class="action-btn btn-manual-view" onclick="viewLatestUserManual()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                        </svg>
+                        View User Manual
+                    </button>
+
+                    <button type="button" class="action-btn btn-manual-download"
+                        onclick="downloadLatestUserManualPackage()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line>
+                            <path
+                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                            </path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                        Download Manual (ZIP)
+                    </button>
+
+                    <button type="button" class="action-btn btn-screenshots-download"
+                        onclick="downloadLatestScreenshots()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                        Download Screenshots (ZIP)
+                    </button>
+
+                    <button type="button" class="action-btn btn-video-view" onclick="viewLatestRecordingModal()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                        </svg>
+                        Watch Video
+                    </button>
+
+                    <button type="button" class="action-btn btn-video-download"
+                        onclick="downloadLatestRecordingVideo()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Download Video (MP4)
+                    </button>
+
+                    <button type="button" class="action-btn btn-excel-download" onclick="downloadUpdatedExcel()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                            <line x1="3" y1="9" x2="21" y2="9"></line>
+                            <line x1="3" y1="15" x2="21" y2="15"></line>
+                            <line x1="9" y1="3" x2="9" y2="21"></line>
+                            <line x1="15" y1="3" x2="15" y2="21"></line>
+                        </svg>
+                        Download Result Excel
+                    </button>
+                </div>
             </div>
 
-            </div>
+        </div>
 
         <!-- Citizen Testing Form -->
         <div id="citizen" class="tab-content">
@@ -378,45 +322,64 @@
                         <option value="https://niuatt.niua.in/cnd-ui/citizen/login">Niuatt CnD Citizen</option>
                         <option value="https://upyog.niua.org/sv-ui/citizen/login">Upyog SV Citizen</option>
                         <option value="https://niuatt.niua.in/sv-ui/citizen/login">Niuatt SV Citizen</option>
+                        <option value="https://upyog-sandbox.niua.org/upyog-ui/citizen/login">Upyog Sandbox Test Citizen</option>
+                        <option value="https://upyog-sandbox.niua.org/sv-ui/citizen/login">Upyog Sandbox Test SV Citizen</option>
+                        <option value="https://upyog-sandbox.niua.org/cnd-ui/citizen/login">Upyog Sandbox Test CnD Citizen</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Module Name *</label>
 
                     <div class="multi-select-container">
-                        <div class="multi-select-box"
-                             onclick="toggleDropdownById('moduleDropdown', event)">
+                        <div class="multi-select-box" onclick="toggleDropdownById('moduleDropdown', event)">
                             <span id="selectedModulesText">Select Modules</span>
                             <span>▼</span>
                         </div>
 
                         <div id="moduleDropdown" class="multi-select-dropdown">
-                            <input
-                                    type="text"
-                                    id="moduleSearch"
-                                    placeholder="Search modules..."
-                                    onkeyup="filterModules()"
-                            />
+                            <input type="text" id="moduleSearch" placeholder="Search modules..."
+                                onkeyup="filterModules()" />
                             <div id="moduleOptions">
 
-                                <label><input type="checkbox" name="modules" value="STREET_VENDING"> Street Vending</label>
-                                <label><input type="checkbox" name="modules" value="PET_REGISTRATION"> Pet Registration</label>
-                                <label><input type="checkbox" name="modules" value="TRADE_LICENSE"> Trade License</label>
+                                <label><input type="checkbox" name="modules" value="STREET_VENDING"> Street
+                                    Vending</label>
+                                <label><input type="checkbox" name="modules" value="PET_REGISTRATION"> Pet
+                                    Registration</label>
+                                <label><input type="checkbox" name="modules" value="TRADE_LICENSE"> Trade
+                                    License</label>
                                 <label><input type="checkbox" name="modules" value="PROPERTY_TAX"> Property Tax</label>
-                                <label><input type="checkbox" name="modules" value="EWASTE_MANAGEMENT_SYSTEM"> E-Waste</label>
-                                <label><input type="checkbox" name="modules" value="ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM"> OBPAS</label>
-                                <label><input type="checkbox" name="modules" value="ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_OC"> OBPAS OC</label>
-                                <label><input type="checkbox" name="modules" value="PUBLIC_GRIEVANCE_REDRESSAL"> PGR</label>
-                                <label><input type="checkbox" name="modules" value="ADVERTISEMENT"> Advertisement</label>
+                                <label><input type="checkbox" name="modules" value="EWASTE_MANAGEMENT_SYSTEM">
+                                    E-Waste</label>
+                                <label><input type="checkbox" name="modules"
+                                        value="ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM"> OBPAS</label>
+                                <label><input type="checkbox" name="modules"
+                                        value="ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_OC"> OBPAS OC</label>
+                                <label><input type="checkbox" name="modules" value="PUBLIC_GRIEVANCE_REDRESSAL">
+                                    PGR</label>
+                                <label><input type="checkbox" name="modules" value="ADVERTISEMENT">
+                                    Advertisement</label>
                                 <label><input type="checkbox" name="modules" value="TREE_PRUNING"> Tree Pruning</label>
                                 <label><input type="checkbox" name="modules" value="WATER_TANKER"> Water Tanker</label>
-                                <label><input type="checkbox" name="modules" value="MOBILE_TOILET"> Mobile Toilet</label>
-                                <label><input type="checkbox" name="modules" value="COMMUNITY_HALL_BOOKING"> Community Hall</label>
-                                <label><input type="checkbox" name="modules" value="CONSTRUCTION_AND_DEMOLITION"> Construction & Demolition</label>
-                                <label><input type="checkbox" name="modules" value="DESLUDGING_SERVICE"> Desludging</label>
-                                <label><input type="checkbox" name="modules" value="DESLUDGING_SERVICE_PAYMENT"> Desludging Payment</label>
-                                <label><input type="checkbox" name="modules" value="DESLUDGING_SERVICE_PAYMENT2"> Desludging Payment2</label>
-                                <label><input type="checkbox" name="modules" value="WATER_AND_SEWERAGE"> Water & Sewerage</label>
+                                <label><input type="checkbox" name="modules" value="MOBILE_TOILET"> Mobile
+                                    Toilet</label>
+                                <label><input type="checkbox" name="modules" value="COMMUNITY_HALL_BOOKING"> Community
+                                    Hall</label>
+                                <label><input type="checkbox" name="modules" value="CONSTRUCTION_AND_DEMOLITION">
+                                    Construction & Demolition</label>
+                                <label><input type="checkbox" name="modules" value="DESLUDGING_SERVICE">
+                                    Desludging</label>
+                                <label><input type="checkbox" name="modules" value="DESLUDGING_SERVICE_PAYMENT">
+                                    Desludging Payment</label>
+                                <label><input type="checkbox" name="modules" value="DESLUDGING_SERVICE_PAYMENT2">
+                                    Desludging Payment2</label>
+                                <label><input type="checkbox" name="modules" value="GARBAGE_COLLECTION"> Garbage
+                                    Collection</label>
+                                <label><input type="checkbox" name="modules" value="WATER_AND_SEWERAGE"> Water &
+                                    Sewerage</label>
+                                <label><input type="checkbox" name="modules" value="ESTATE_MANAGEMENT"> Estate
+                                    Management</label>
+                                <label><input type="checkbox" name="modules" value="NO_DUE_CERTIFICATE"> No Due
+                                    Certificate</label>
 
                             </div>
                         </div>
@@ -454,23 +417,89 @@
                 <button type="submit">Run Test</button>
             </form>
             <div id="citizenResult" class="result"></div>
-            <div id="citizenReportButtons"
-                 style="display:none; margin-top:15px;">
-                <div id="citizenReportListContainer"
-                     style="margin-top:15px;">
+            <div id="citizenReportButtons" class="action-buttons-card" style="display:none;">
+                <div class="action-buttons-header">
+                    <h3>Execution Reports & Artifacts</h3>
+                </div>
+                <div id="citizenReportListContainer" class="report-links-list"></div>
 
-
-                <button type="button"
+                <div class="action-btn-grid">
+                    <button type="button" class="action-btn btn-report-view"
                         onclick="viewLatestReport('citizenReportListContainer')">
-                    📄 View Report
-                </button>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                        </svg>
+                        View Report
+                    </button>
 
-                <button type="button"
-                        onclick="downloadLatestReport()">
-                    ⬇ Download Report
-                </button>
+                    <button type="button" class="action-btn btn-report-download" onclick="downloadLatestReport()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Download Report
+                    </button>
 
-            </div>
+                    <button type="button" class="action-btn btn-manual-view" onclick="viewLatestUserManual()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                        </svg>
+                        View User Manual
+                    </button>
+
+                    <button type="button" class="action-btn btn-manual-download"
+                        onclick="downloadLatestUserManualPackage()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line>
+                            <path
+                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                            </path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                        Download Manual (ZIP)
+                    </button>
+
+                    <button type="button" class="action-btn btn-screenshots-download"
+                        onclick="downloadLatestScreenshots()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                        Download Screenshots (ZIP)
+                    </button>
+
+                    <button type="button" class="action-btn btn-video-view" onclick="viewLatestRecordingModal()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                        </svg>
+                        Watch Video
+                    </button>
+
+                    <button type="button" class="action-btn btn-video-download"
+                        onclick="downloadLatestRecordingVideo()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Download Video (MP4)
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -490,74 +519,162 @@
                         <option value="https://niuatt.niua.in/cnd-ui/employee/login">Niuatt CnD Employee</option>
                         <option value="https://upyog.niua.org/sv-ui/employee/login">Upyog SV Employee</option>
                         <option value="https://niuatt.niua.in/sv-ui/employee/login">Niuatt SV Employee</option>
+                        <option value="https://upyog-sandbox.niua.org/upyog-ui/employee/login">Upyog Sandbox Test Employee</option>
+                        <option value="https://upyog-sandbox.niua.org/sv-ui/employee/login">Upyog Sandbox Test SV Employee</option>
+                        <option value="https://upyog-sandbox.niua.org/cnd-ui/employee/login">Upyog Sandbox Test CnD Employee</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Module Name *</label>
-                    <select name="moduleName" required>
-
+                    <select name="moduleName" id="employeeModuleDropdown" onchange="autoFillEmployeeFields(this)"
+                        required>
                         <option value="">Select Module</option>
                         <option value="STREET_VENDING">Street Vending</option>
                         <option value="PET_REGISTRATION">Pet Registration</option>
                         <option value="TRADE_LICENSE">Trade License</option>
-                        <option value="TRADE_LICENSE1">Trade License Inbox</option>
+                        <option value="TRADE_LICENSE1">Trade License 1</option>
+                        <option value="PROPERTY_TAX">Property Tax</option>
+                        <option value="EWASTE_MANAGEMENT_SYSTEM">E-Waste</option>
+                        <option value="ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM">OBPAS</option>
+                        <option value="ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_OC">OBPAS OC</option>
+                        <option value="PUBLIC_GRIEVANCE_REDRESSAL">PGR</option>
                         <option value="ADVERTISEMENT">Advertisement</option>
                         <option value="TREE_PRUNING">Tree Pruning</option>
-                        <option value="TREE_PRUNING_VERIFIER">Tree Pruning Verifier</option>
                         <option value="WATER_TANKER">Water Tanker</option>
                         <option value="MOBILE_TOILET">Mobile Toilet</option>
-                        <option value="PROPERTY_TAX">Property Tax</option>
-                        <option value="PUBLIC_GRIEVANCE_REDRESSAL">Public Grievance Redressal</option>
-                        <option value="ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM">Online Building Plan Approval System</option>
-                        <option value="ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_OC">Online Building Plan Approval System OC</option>
-                        <option value="EWASTE_MANAGEMENT_SYSTEM">E-Waste</option>
-                        <option value="ASSET_MANAGEMENT_SYSTEM">Asset Management</option>
-                        <option value="ASSET_MANAGEMENT_SYSTEM_VERIFIER">Asset Management Verifier</option>
-                        <option value="ASSET_MANAGEMENT_SYSTEM_APPROVER">Asset Management Approver</option>
-                        <option value="COMMUNITY_HALL_BOOKING">Community Hall Booking </option>
-                        <option value="CONSTRUCTION_AND_DEMOLITION">Construction and Demolition </option>
-                        <option value="DESLUDGING_EMPLOYEE_UPDATE">Desludging Service Update </option>
-                        <option value="DESLUDGING_EMPLOYEE_COMPLETE">Desludging Service Complete </option>
-                        <option value="DESLUDGING_EMPLOYEE_PSSO">Desludging Service PSSO </option>
-                        <option value="DESLUDGING_EMPLOYEE_FSTPO">Desludging Service FSTPO </option>
-                        <option value="WATER_EMP">Water Service</option>
-                        <option value="SEWERAGE_EMP">Sewerage Service</option>
-                        <option value="FIRE_NOC">Fire NOC</option>
+                        <option value="COMMUNITY_HALL_BOOKING">Community Hall</option>
+                        <option value="CONSTRUCTION_AND_DEMOLITION">Construction & Demolition</option>
+                        <option value="DESLUDGING_SERVICE">Desludging</option>
+                        <option value="GARBAGE_COLLECTION">Garbage Collection</option>
+                        <option value="WATER_AND_SEWERAGE">Water & Sewerage</option>
+                        <option value="ESTATE_MANAGEMENT">Estate Management</option>
+                        <option value="CHALLAN_GENERATION">Challan Generation</option>
+                        <option value="NO_DUE_CERTIFICATE">No Due Certificate</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Username *</label>
-                    <input type="text" name="username" placeholder="SV_CEMP" required>
+                    <input type="text" name="username" value="SUPERUSER" required>
                 </div>
                 <div class="form-group">
                     <label>Password *</label>
-                    <input type="password" name="password" placeholder="upyogTest@123" required>
+                    <input type="text" name="password" value="eGov@123" required>
                 </div>
                 <div class="form-group">
-                    <label>Application Number</label>
-                    <input type="text" name="applicationNumber" placeholder="SV-1013-000044">
+                    <label>City Name *</label>
+                    <select name="cityName" required>
+                        <option value="">Select City</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Sankhali Municipal Council">Sankhali Municipal Council</option>
+                        <option value="Mumbai">Mumbai</option>
+                        <option value="Nagpur">Nagpur</option>
+                        <option value="Noida">Noida</option>
+                        <option value="Dharamshala">Dharamshala</option>
+                        <option value="Kurali">Kurali</option>
+                        <option value="Mohali">Mohali</option>
+                        <option value="Patiala">Patiala</option>
+                        <option value="Shimla">Shimla</option>
+                        <option value="Bangalore">Bangalore</option>
+                        <option value="Pune">Pune</option>
+                        <option value="Hyderabad">Hyderabad</option>
+                        <option value="City A">City A</option>
+                        <option value="City B">City B</option>
+                        <option value="City C">City C</option>
+                        <option value="City D">City D</option>
+                        <option value="City E">City E</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Application Number (Optional)</label>
+                    <input type="text" name="applicationNumber">
                 </div>
                 <button type="submit">Run Test</button>
             </form>
             <div id="employeeResult" class="result"></div>
-            <div id="employeeReportButtons"
-                 style="display:none; margin-top:15px;">
-                <div id="employeeReportListContainer"
-                     style="margin-top:15px;">
+            <div id="employeeReportButtons" class="action-buttons-card" style="display:none;">
+                <div class="action-buttons-header">
+                    <h3>Execution Reports & Artifacts</h3>
+                </div>
+                <div id="employeeReportListContainer" class="report-links-list"></div>
 
-
-                <button type="button"
+                <div class="action-btn-grid">
+                    <button type="button" class="action-btn btn-report-view"
                         onclick="viewLatestReport('employeeReportListContainer')">
-                    📄 View Report
-                </button>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                        </svg>
+                        View Report
+                    </button>
 
-                <button type="button"
-                        onclick="downloadLatestReport()">
-                    ⬇ Download Report
-                </button>
+                    <button type="button" class="action-btn btn-report-download" onclick="downloadLatestReport()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Download Report
+                    </button>
 
+                    <button type="button" class="action-btn btn-manual-view" onclick="viewLatestUserManual()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                        </svg>
+                        View User Manual
+                    </button>
+
+                    <button type="button" class="action-btn btn-manual-download"
+                        onclick="downloadLatestUserManualPackage()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line>
+                            <path
+                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                            </path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                        Download Manual (ZIP)
+                    </button>
+
+                    <button type="button" class="action-btn btn-screenshots-download"
+                        onclick="downloadLatestScreenshots()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                        Download Screenshots (ZIP)
+                    </button>
+
+                    <button type="button" class="action-btn btn-video-view" onclick="viewLatestRecordingModal()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                        </svg>
+                        Watch Video
+                    </button>
+
+                    <button type="button" class="action-btn btn-video-download"
+                        onclick="downloadLatestRecordingVideo()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Download Video (MP4)
+                    </button>
+                </div>
             </div>
-        </div>
         </div>
 
         <!-- Vendor Testing Form -->
@@ -576,23 +693,24 @@
                         <option value="https://niuatt.niua.in/cnd-ui/citizen/login">Niuatt CnD Citizen</option>
                         <option value="https://upyog.niua.org/sv-ui/citizen/login">Upyog SV Citizen</option>
                         <option value="https://niuatt.niua.in/sv-ui/citizen/login">Niuatt SV Citizen</option>
+                        <option value="https://upyog-sandbox.niua.org/upyog-ui/citizen/login">Upyog Sandbox Test Citizen</option>
+                        <option value="https://upyog-sandbox.niua.org/sv-ui/citizen/login">Upyog Sandbox Test SV Citizen</option>
+                        <option value="https://upyog-sandbox.niua.org/cnd-ui/citizen/login">Upyog Sandbox Test CnD Citizen</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Module Name *</label>
-                    <select name="moduleName" required>
-
-
+                    <select name="moduleName" id="vendorModuleDropdown" onchange="autoFillVendorFields(this)" required>
+                        <option value="">Select Module</option>
+                        <option value="TREE_PRUNING">Tree Pruning Vendor</option>
                         <option value="WATER_TANKER">Water Tanker Vendor</option>
                         <option value="MOBILE_TOILET">Mobile Toilet Vendor</option>
-                        <option value="CONSTRUCTION_AND_DEMOLITION">Construction and Demolition Vendor</option>
-
-
+                        <option value="CONSTRUCTION_AND_DEMOLITION">Construction & Demolition Vendor</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Mobile Number *</label>
-                    <input type="text" name="mobileNumber" placeholder="7906413996" required>
+                    <input type="text" name="mobileNumber" value="9999999999" required>
                 </div>
                 <div class="form-group">
                     <label>OTP *</label>
@@ -612,7 +730,9 @@
                         <option value="Mohali">Mohali</option>
                         <option value="Patiala">Patiala</option>
                         <option value="Shimla">Shimla</option>
-                        <option value="State">State</option>
+                        <option value="Bangalore">Bangalore</option>
+                        <option value="Pune">Pune</option>
+                        <option value="Hyderabad">Hyderabad</option>
                         <option value="City A">City A</option>
                         <option value="City B">City B</option>
                         <option value="City C">City C</option>
@@ -620,94 +740,186 @@
                         <option value="City E">City E</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label>Application Number</label>
-                    <input type="text" name="applicationNumber" placeholder="WT-1013-001139">
-                </div>
                 <button type="submit">Run Test</button>
             </form>
             <div id="vendorResult" class="result"></div>
 
-    <div id="vendorReportButtons"
-         style="display:none; margin-top:15px;">
-        <div id="vendorReportListContainer"
-             style="margin-top:15px;">
+            <div id="vendorReportButtons" class="action-buttons-card" style="display:none;">
+                <div class="action-buttons-header">
+                    <h3>Execution Reports & Artifacts</h3>
+                </div>
+                <div id="vendorReportListContainer" class="report-links-list"></div>
 
+                <div class="action-btn-grid">
+                    <button type="button" class="action-btn btn-report-view"
+                        onclick="viewLatestReport('vendorReportListContainer')">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                        </svg>
+                        View Report
+                    </button>
 
-        <button type="button"
-                onclick="viewLatestReport('vendorReportListContainer')">
-            📄 View Report
-        </button>
+                    <button type="button" class="action-btn btn-report-download" onclick="downloadLatestReport()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Download Report
+                    </button>
 
-        <button type="button"
-                onclick="downloadLatestReport()">
-            ⬇ Download Report
-        </button>
+                    <button type="button" class="action-btn btn-manual-view" onclick="viewLatestUserManual()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                        </svg>
+                        View User Manual
+                    </button>
 
-          </div>
-       </div>
-    </div>
+                    <button type="button" class="action-btn btn-manual-download"
+                        onclick="downloadLatestUserManualPackage()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line>
+                            <path
+                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                            </path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                        Download Manual (ZIP)
+                    </button>
 
-        <!-- Module Testing Report -->
-        <div id="report" class="tab-content">
-            <h2>Module Testing Reports</h2>
-            <form id="reportForm">
-                <div class="form-group">
-                    <label>Module Name *</label>
+                    <button type="button" class="action-btn btn-screenshots-download"
+                        onclick="downloadLatestScreenshots()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                        Download Screenshots (ZIP)
+                    </button>
 
-                    <div class="multi-select-container">
-                        <div class="multi-select-box"
-                             onclick="toggleDropdownById('moduleDropdown2', event)">
-                            <span id="selectedModulesReport">Select Modules</span>
-                            <span>▼</span>
-                        </div>
+                    <button type="button" class="action-btn btn-video-view" onclick="viewLatestRecordingModal()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                        </svg>
+                        Watch Video
+                    </button>
 
-                        <div id="moduleDropdown2" class="multi-select-dropdown">
-                            <input
-                                    type="text"
-                                    id="moduleSearch2"
-                                    placeholder="Search modules..."
-                                    onkeyup="filterReportModules()"
-                            />
-                            <div id="moduleOptions2">
+                    <button type="button" class="action-btn btn-video-download"
+                        onclick="downloadLatestRecordingVideo()">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Download Video (MP4)
+                    </button>
+                </div>
+            </div>
+        </div>
 
-                                <label><input type="checkbox" name="reportModules" value="STREET_VENDING"> Street Vending</label>
-                                <label><input type="checkbox" name="reportModules" value="PET_REGISTRATION"> Pet Registration</label>
-                                <label><input type="checkbox" name="reportModules" value="TRADE_LICENSE"> Trade License</label>
-                                <label><input type="checkbox" name="reportModules" value="PROPERTY_TAX"> Property Tax</label>
-                                <label><input type="checkbox" name="reportModules" value="EWASTE_MANAGEMENT_SYSTEM"> E-Waste</label>
-                                <label><input type="checkbox" name="reportModules" value="ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM"> OBPAS</label>
-                                <label><input type="checkbox" name="reportModules" value="ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_OC"> OBPAS OC</label>
-                                <label><input type="checkbox" name="reportModules" value="PUBLIC_GRIEVANCE_REDRESSAL"> PGR</label>
-                                <label><input type="checkbox" name="reportModules" value="ADVERTISEMENT"> Advertisement</label>
-                                <label><input type="checkbox" name="reportModules" value="TREE_PRUNING"> Tree Pruning</label>
-                                <label><input type="checkbox" name="reportModules" value="WATER_TANKER"> Water Tanker</label>
-                                <label><input type="checkbox" name="reportModules" value="MOBILE_TOILET"> Mobile Toilet</label>
-                                <label><input type="checkbox" name="reportModules" value="COMMUNITY_HALL_BOOKING"> Community Hall</label>
-                                <label><input type="checkbox" name="reportModules" value="CONSTRUCTION_AND_DEMOLITION"> Construction & Demolition</label>
-                                <label><input type="checkbox" name="reportModules" value="DESLUDGING_SERVICE"> Desludging</label>
-                                <label><input type="checkbox" name="reportModules" value="WATER_AND_SEWERAGE"> Water & Sewerage</label>
-                                <label><input type="checkbox" name="reportModules" value="ASSET_MANAGEMENT_SYSTEM"> Asset Management</label>
+    <!-- Module Testing Report -->
+    <div id="report" class="tab-content">
+        <h2>Module Testing Reports</h2>
+        <form id="reportForm">
+            <div class="form-group">
+                <label>Module Name *</label>
 
-                            </div>
-                        </div>
+                <div class="multi-select-container">
+                    <div class="multi-select-box" onclick="toggleDropdownById('moduleDropdown2', event)">
+                        <span id="selectedModulesReport">Select Modules</span>
+                        <span>▼</span>
                     </div>
-                    <div style="margin-top:20px;">
 
-                        <button type="button"
-                                class="btn btn-primary"
-                                onclick="loadReports()">
-                            📋 Load Reports
-                        </button>
+                    <div id="moduleDropdown2" class="multi-select-dropdown">
+                        <input type="text" id="moduleSearch2" placeholder="Search modules..."
+                            onkeyup="filterReportModules()" />
+                        <div id="moduleOptions2">
+                            <label><input type="checkbox" name="reportModules" value="ALL"
+                                    onchange="toggleAllReportModules(this)"> Select All</label>
+                            <label><input type="checkbox" name="reportModules" value="STREET_VENDING"> Street
+                                Vending</label>
+                            <label><input type="checkbox" name="reportModules" value="PET_REGISTRATION"> Pet
+                                Registration</label>
+                            <label><input type="checkbox" name="reportModules" value="TRADE_LICENSE"> Trade
+                                License</label>
+                            <label><input type="checkbox" name="reportModules" value="PROPERTY_TAX"> Property
+                                Tax</label>
+                            <label><input type="checkbox" name="reportModules" value="EWASTE_MANAGEMENT_SYSTEM">
+                                E-Waste</label>
+                            <label><input type="checkbox" name="reportModules"
+                                    value="ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM"> OBPAS</label>
+                            <label><input type="checkbox" name="reportModules"
+                                    value="ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_OC"> OBPAS OC</label>
+                            <label><input type="checkbox" name="reportModules" value="PUBLIC_GRIEVANCE_REDRESSAL">
+                                PGR</label>
+                            <label><input type="checkbox" name="reportModules" value="ADVERTISEMENT">
+                                Advertisement</label>
+                            <label><input type="checkbox" name="reportModules" value="TREE_PRUNING"> Tree
+                                Pruning</label>
+                            <label><input type="checkbox" name="reportModules" value="WATER_TANKER"> Water
+                                Tanker</label>
+                            <label><input type="checkbox" name="reportModules" value="MOBILE_TOILET"> Mobile
+                                Toilet</label>
+                            <label><input type="checkbox" name="reportModules" value="COMMUNITY_HALL_BOOKING"> Community
+                                Hall</label>
+                            <label><input type="checkbox" name="reportModules" value="CONSTRUCTION_AND_DEMOLITION">
+                                Construction & Demolition</label>
+                            <label><input type="checkbox" name="reportModules" value="DESLUDGING_SERVICE">
+                                Desludging</label>
+                            <label><input type="checkbox" name="reportModules" value="DESLUDGING_SERVICE_PAYMENT">
+                                Desludging Payment</label>
+                            <label><input type="checkbox" name="reportModules" value="DESLUDGING_SERVICE_PAYMENT2">
+                                Desludging Payment2</label>
+                            <label><input type="checkbox" name="reportModules" value="GARBAGE_COLLECTION"> Garbage
+                                Collection</label>
+                            <label><input type="checkbox" name="reportModules" value="WATER_AND_SEWERAGE"> Water &
+                                Sewerage</label>
+                            <label><input type="checkbox" name="reportModules" value="ESTATE_MANAGEMENT"> Estate
+                                Management</label>
+                            <label><input type="checkbox" name="reportModules" value="NO_DUE_CERTIFICATE"> No Due
+                                Certificate</label>
 
+
+                        </div>
                     </div>
                 </div>
-            </form>
-            <div id="reportTableContainer" style="margin-top:20px; display:none;">
+                <div style="margin-top:20px;">
 
-                <table class="table table-bordered table-striped">
+                    <button type="button" class="btn btn-primary" onclick="loadReports()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            style="vertical-align: middle; margin-right: 4px;">
+                            <line x1="8" y1="6" x2="21" y2="6"></line>
+                            <line x1="8" y1="12" x2="21" y2="12"></line>
+                            <line x1="8" y1="18" x2="21" y2="18"></line>
+                            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                        </svg>
+                        Load Reports
+                    </button>
 
-                    <thead>
+                </div>
+            </div>
+        </form>
+        <div id="reportTableContainer" style="margin-top:20px; display:none;">
+
+            <table class="table table-bordered table-striped">
+
+                <thead>
                     <tr>
 
                         <th>Module</th>
@@ -718,639 +930,431 @@
 
                         <th>Status</th>
 
-                        <th>View</th>
+                        <th>Test Report</th>
 
-                        <th>Download</th>
+                        <th>User Manual</th>
+
+                        <th>Screenshots</th>
+
+                        <th>Recording</th>
 
                     </tr>
-                    </thead>
+                </thead>
 
-                    <tbody id="reportTableBody">
+                <tbody id="reportTableBody">
 
-                    </tbody>
+                </tbody>
 
-                </table>
+            </table>
 
+        </div>
+    </div>
+
+    <!-- User Guide Tab Content -->
+    <div id="guide" class="tab-content">
+        <!-- Hero Header -->
+        <div class="guide-hero">
+            <div class="guide-hero-icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                </svg>
+            </div>
+            <div class="guide-hero-content">
+                <h2>UPYOG Automation User Guide</h2>
+                <p>Welcome to the UPYOG Automation Testing Hub. Learn how to configure environments, execute end-to-end
+                    test suites, understand testing approaches, and access execution artifacts.</p>
             </div>
         </div>
 
-    </div>
-    <script>
-        function switchTab(tab, e) {
-
-    document.querySelectorAll('.tab')
-        .forEach(t => t.classList.remove('active'));
-
-    document.querySelectorAll('.tab-content')
-        .forEach(c => c.classList.remove('active'));
-
-    e.target.classList.add('active');
-
-    document.getElementById(tab)
-        .classList.add('active');
-}
-
-         // =========================
-         // MODULE FORM SUBMIT
-         // =========================
-
-        document.getElementById('moduleForm').addEventListener('submit', async (e) => {
-
-    e.preventDefault();
-
-    const runBtn = document.getElementById("runBtn");
-    const statusDiv = document.getElementById("testStatus");
-    const statusSpinner = document.getElementById("statusSpinner");
-    const statusText = document.getElementById("statusText");
-    const statusSubText = document.getElementById("statusSubText");
-
-    // Start Status
-    runBtn.disabled = true;
-    runBtn.innerHTML = "⏳ Running...";
-
-    statusDiv.style.display = "block";
-    statusSpinner.style.display = "block";
-
-    statusText.innerHTML = "⏳ Test Started...";
-    statusSubText.innerHTML =
-        "Running automation. Please don't refresh this page.";
-
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData);
-
-    const selectedModules =
-        Array.from(
-            document.querySelectorAll(
-                '#moduleOptions1 input[name="moduleTestingModules"]:checked'
-            )
-        ).map(cb => cb.value);
-
-    data.moduleName = selectedModules.join(",");
-
-    try {
-
-        const response = await fetch('/api/module/run', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-
-       const result =
-    await response.json();
-
-       let html = "<h3>Execution Summary</h3>";
-
-let pass = 0;
-let fail = 0;
-
-result.forEach(r => {
-
-    if (r.status === "PASS") {
-        pass++;
-    } else {
-        fail++;
-    }
-
-    const moduleName = r.module
-        .replaceAll("_", " ")
-        .toLowerCase()
-        .replace(/\b\w/g, c => c.toUpperCase());
-
-  html += `
-<div style="
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin:10px 0;
-    padding:10px 15px;
-    border:1px solid #ddd;
-    border-radius:8px;
-    background:#fafafa;
-">
-
-    <strong>${moduleName}</strong>
-
-    <span style="
-        padding:5px 12px;
-        border-radius:20px;
-        font-weight:bold;
-        color:white;
-        background:${r.status === "PASS" ? "#28a745" : "#dc3545"};
-    ">
-        ${r.status}
-    </span>
-
-</div>
-    `;
-});
-
-html += `
-<hr>
-
-<div style="display:flex; gap:15px; margin-top:15px;">
-
-    <div style="padding:10px 18px; background:#e9ecef; border-radius:8px;">
-        <strong>Total:</strong> ${result.length}
-    </div>
-
-    <div style="padding:10px 18px; background:#d4edda; color:#155724; border-radius:8px;">
-        <strong>Passed:</strong> ${pass}
-    </div>
-
-    <div style="padding:10px 18px; background:#f8d7da; color:#721c24; border-radius:8px;">
-        <strong>Failed:</strong> ${fail}
-    </div>
-
-</div>
-`;
-
-document.getElementById("moduleResult").innerHTML = html;
-document.getElementById("moduleReportButtons").style.display = "block";
-if (fail > 0) {
-
-    statusText.innerHTML =
-        "❌ Test Failed";
-
-    statusSubText.innerHTML =
-        `${fail} module(s) failed. Please check the report for details.`;
-
-} else {
-
-    statusText.innerHTML =
-        "✅ Test Completed Successfully";
-
-    statusSubText.innerHTML =
-        "Automation completed successfully. Report is ready to view or download.";
-
-}
-
-    } catch (error) {
-
-        // Failure
-
-        statusText.innerHTML =
-            "❌ Test Failed";
-
-        statusSubText.innerHTML =
-            error.message;
-
-    } finally {
-
-    statusSpinner.style.display = "none";
-
-    runBtn.disabled = false;
-    runBtn.innerHTML = "Run Test";
-}
-
-});
-
-         // =========================
-         // CITIZEN FORM SUBMIT
-         // =========================
-
-        document.getElementById('citizenForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-           const formData = new FormData(e.target);
-
-const selectedModules =
-    Array.from(
-        document.querySelectorAll(
-            '#moduleOptions input[name="modules"]:checked'
-        )
-    ).map(cb => cb.value);
-
-const data = Object.fromEntries(formData);
-
-// Send comma-separated values to backend
-data.moduleName = selectedModules.join(",");
-
-            const resultDiv = document.getElementById('citizenResult');
-            resultDiv.style.display = 'block';
-            resultDiv.className = 'result';
-            resultDiv.textContent = 'Running test...';
-            document.getElementById(
-    "citizenReportButtons"
-).style.display = "block";
-
-            try {
-                window.open('http://65.0.8.57:8000', '_blank');
-
-                const response = await fetch('/api/test/citizen', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                const result = await response.text();
-                resultDiv.className = 'result success';
-                resultDiv.textContent = result;
-            } catch (error) {
-                resultDiv.className = 'result error';
-                resultDiv.textContent = 'Error: ' + error.message;
-            }
-        });
-
-       // =========================
-       // EMPLOYEE FORM SUBMIT
-       // =========================
-
-        document.getElementById('employeeForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData);
-
-            const resultDiv = document.getElementById('employeeResult');
-            resultDiv.style.display = 'block';
-            resultDiv.className = 'result';
-            resultDiv.textContent = 'Running test...';
-            document.getElementById(
-    "employeeReportButtons"
-).style.display = "block";
-
-            try {
-                window.open('http://65.0.8.57:8080', '_blank');
-
-                const response = await fetch('/api/test/employee', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                const result = await response.text();
-                resultDiv.className = 'result success';
-                resultDiv.textContent = result;
-            } catch (error) {
-                resultDiv.className = 'result error';
-                resultDiv.textContent = 'Error: ' + error.message;
-            }
-        });
-
-        // =========================
-       // VENDOR FORM SUBMIT
-       // =========================
-       document.getElementById('vendorForm').addEventListener('submit', async (e) => {
-           e.preventDefault();
-           const formData = new FormData(e.target);
-           const data = Object.fromEntries(formData);
-
-
-           const resultDiv = document.getElementById('vendorResult');
-           resultDiv.style.display = 'block';
-           resultDiv.className = 'result';
-           resultDiv.textContent = 'Running test...';
-           document.getElementById(
-    "vendorReportButtons"
-).style.display = "block";
-
-
-           try {
-           window.open('http://65.0.8.57:8000', '_blank');
-               const response = await fetch('/api/test/vendor', {
-                   method: 'POST',
-                   headers: { 'Content-Type': 'application/json' },
-                   body: JSON.stringify(data)
-               });
-               const result = await response.text();
-               resultDiv.className = 'result success';
-               resultDiv.textContent = result;
-           } catch (error) {
-               resultDiv.className = 'result error';
-               resultDiv.textContent = 'Error: ' + error.message;
-           }
-       });
-       // =========================
-       // AUTO-FILL LOGIC + MULTI-SELECT DROPDOWN
-       // =========================
-
-// Employee/Vendor dropdown autofill
-
-document.querySelectorAll("select[name='moduleName']").forEach(select => {
-    select.addEventListener("change", function () {
-
-        const form = this.closest("form");
-
-        const mobileField = form.querySelector("input[name='mobileNumber']");
-        const otpField = form.querySelector("input[name='otp']");
-        const baseUrlField = form.querySelector("[name='baseUrl']");
-
-        if (!mobileField || !otpField) return;
-
-        let mobile = "7906413996";
-        let otp = "123456";
-
-        const baseUrl = baseUrlField ? baseUrlField.value : "";
-
-        if (
-            this.value === "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM" ||
-            this.value === "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_OC"
-        ) {
-            if (baseUrl.includes("niuatt.niua")) {
-                mobile = "7272727216";
-            } else if (baseUrl.includes("upyog.niua")) {
-                mobile = "8888888881";
-            }
-        }
-
-        mobileField.value = mobile;
-        otpField.value = otp;
-    });
-});
-
-// Citizen multi-select dropdown
-
-function toggleDropdownById(dropdownId, event) {
-    event.stopPropagation();
-    document.getElementById(dropdownId).classList.toggle("show");
-}
-function toggleDropdown(event) {
-    event.stopPropagation();
-    document.getElementById("moduleDropdown").classList.toggle("show");
-}
-
-function filterModules() {
-    const search = document.getElementById("moduleSearch").value.toLowerCase();
-    const labels = document.querySelectorAll("#moduleOptions label");
-
-    labels.forEach(label => {
-        const text = label.textContent.toLowerCase();
-        label.style.display = text.includes(search)
-            ? "flex"
-            : "none";
-    });
-}
-function filterReportModules() {
-
-    const search = document
-        .getElementById("moduleSearch2")
-        .value
-        .toLowerCase();
-
-    const labels = document.querySelectorAll(
-        "#moduleOptions2 label"
-    );
-
-    labels.forEach(label => {
-
-        const text = label.textContent.toLowerCase();
-
-        label.style.display =
-            text.includes(search)
-                ? "flex"
-                : "none";
-    });
-}
-
-document.querySelectorAll("input[name='modules']").forEach(cb => {
-
-    cb.addEventListener("click", function(e) {
-        e.stopPropagation();
-    });
-
-    cb.addEventListener("change", function () {
-        updateSelectedModules();
-        autoFillCitizenFields(this);
-    });
-
-});
-
-function updateSelectedModules() {
-    const selected = Array.from(
-        document.querySelectorAll("input[name='modules']:checked")
-    ).map(cb => cb.parentElement.textContent.trim());
-
-    document.getElementById("selectedModulesText").textContent =
-        selected.length > 0
-            ? selected.join(", ")
-            : "Select Modules";
-}
-document.querySelectorAll(
-    "input[name='moduleTestingModules']"
-).forEach(cb => {
-
-    cb.addEventListener("change", function () {
-        updateSelectedModulesModule();
-    });
-
-});
-
-document.querySelectorAll(
-    '#moduleOptions2 input[name="reportModules"]'
-).forEach(cb => {
-    cb.addEventListener("change", updateSelectedReportModules);
-});
-
-function updateSelectedModulesModule() {
-
-    const selected = Array.from(
-        document.querySelectorAll(
-            "input[name='moduleTestingModules']:checked"
-        )
-    ).map(cb => cb.parentElement.textContent.trim());
-
-    document.getElementById("selectedModulesText1").textContent =
-        selected.length > 0
-            ? selected.join(", ")
-            : "Select Modules";
-}
-
-function updateSelectedReportModules() {
-
-   const checked = document.querySelectorAll(
-    '#moduleOptions2 input[name="reportModules"]:checked'
-);
-
-    const text = document.getElementById("selectedModulesReport");
-
-    if (checked.length === 0) {
-        text.innerHTML = "Select Modules";
-        return;
-    }
-
-    text.innerHTML = Array.from(checked)
-        .map(c => c.parentElement.textContent.trim())
-        .join(", ");
-}
-
-async function loadReports() {
-
-    const selectedModules = Array.from(
-        document.querySelectorAll(
-            '#moduleOptions2 input[name="reportModules"]:checked'
-        )
-    ).map(cb => cb.value);
-
-    if (selectedModules.length === 0) {
-        alert("Please select at least one module.");
-        return;
-    }
-
-    const tbody = document.getElementById("reportTableBody");
-    tbody.innerHTML = "";
-
-   const responses = await Promise.all(
-
-    selectedModules.map(async module => {
-
-        const response =
-            await fetch(`/api/report/module/${module}`);
-
-        const reports =
-            await response.json();
-
-        return reports.map(r => ({
-            ...r,
-            module
-        }));
-
-    })
-
-);
-
-const allReports = responses.flat();
-
-    allReports.sort((a, b) => {
-
-        const d1 = new Date(`${a.date} ${a.time}`);
-        const d2 = new Date(`${b.date} ${b.time}`);
-
-        return d2 - d1;
-
-    });
-
-    allReports.forEach(report => {
-
-tbody.innerHTML += `
-<tr style="
-    background:${report.status === "PASS"
-        ? "#d4edda"
-        : "#f8d7da"};
-">
-
-    <td>${report.module}</td>
-
-    <td>${report.date}</td>
-
-    <td>${report.time}</td>
-
-    <td>
-        <b style="
-            color:${report.status === "PASS"
-                ? "green"
-                : "red"};
-        ">
-            ${report.status}
-        </b>
-    </td>
-
-    <td>
-        <a href="/api/report/view/${report.fileName}" target="_blank">
-            👁 View
-        </a>
-    </td>
-
-    <td>
-        <a href="/api/report/download/${report.fileName}">
-            ⬇ Download
-        </a>
-    </td>
-
-</tr>
-`;
-});
-document.getElementById("reportTableContainer").style.display = "block";
-
-}
-
-function autoFillCitizenFields(moduleCheckbox) {
-    const form = moduleCheckbox.closest("form");
-
-    const mobileField = form.querySelector("input[name='mobileNumber']");
-    const otpField = form.querySelector("input[name='otp']");
-    const baseUrlField = form.querySelector("[name='baseUrl']");
-
-    if (!mobileField || !otpField) return;
-
-    let mobile = "7906413996";
-    let otp = "123456";
-
-    const baseUrl = baseUrlField ? baseUrlField.value : "";
-    const selectedModule = moduleCheckbox.value;
-
-    if (
-        selectedModule === "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM" ||
-        selectedModule === "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_OC"
-    ) {
-        if (baseUrl.includes("niuatt.niua")) {
-            mobile = "7272727216";
-        } else if (baseUrl.includes("upyog.niua")) {
-            mobile = "8888888881";
-        }
-    }
-     if (
-        selectedModule === "STREET_VENDING"
-         ) {
-        if (baseUrl.includes("niuatt.niua.in/sv-ui/citizen/login")) {
-            mobile = "8010012414";
-        }
-     }
-
-    mobileField.value = mobile;
-    otpField.value = otp;
-
-    mobileField.dispatchEvent(new Event('input', { bubbles: true }));
-    mobileField.dispatchEvent(new Event('change', { bubbles: true }));
-}
-
-// Outside click close
-document.addEventListener("click", function(e) {
-
-    const dropdown =
-        document.getElementById("moduleDropdown");
-
-    const container =
-        document.querySelector(".multi-select-container");
-
-    if (
-        dropdown &&
-        container &&
-        !container.contains(e.target)
-    ) {
-        dropdown.classList.remove("show");
-    }
-});
-
-        // Result Output
-
-     async function viewLatestReport(containerId) {
-
-    const response = await fetch('/api/report/list');
-
-    const reports = await response.json();
-
-    let html = "";
-
-    reports.forEach(report => {
-
-        html += `
-            <div>
-                <a href="/api/report/view/${report}"
-                   target="_blank">
-                    ${report}
-                </a>
+        <!-- Quick Start: 3 Steps -->
+        <div class="guide-section-heading">
+            <span>🚀 Quick Start — How to Run Automation</span>
+            <span class="badge">3 Simple Steps</span>
+        </div>
+        <div class="guide-step-grid">
+            <div class="guide-step-card">
+                <div class="guide-step-num">1</div>
+                <h3>Select Environment & URL</h3>
+                <p>Choose your target testing environment from the <strong>Base URL</strong> dropdown:</p>
+                <ul>
+                    <li><strong>Upyog Citizen / Employee</strong>: Production or standard live portal.</li>
+                    <li><strong>Niuatt Citizen / Employee</strong>: NIUA staging & testing server.</li>
+                    <li><strong>Upyog Sandbox</strong>: Dedicated sandbox environment for sandbox validation.</li>
+                    <li><strong>Local Host</strong>: Local development instance (port 8080).</li>
+                </ul>
             </div>
-        `;
-    });
+            <div class="guide-step-card">
+                <div class="guide-step-num">2</div>
+                <h3>Select Modules & Inputs</h3>
+                <p>Select one or multiple modules from the searchable multi-select dropdown:</p>
+                <ul>
+                    <li>Use the search bar to quickly find modules (e.g. <em>Pet, Trade License, Street Vending,
+                            OBPAS</em>).</li>
+                    <li>Default credentials (mobile number & OTP <code>123456</code>) are automatically populated.</li>
+                    <li>OBPAS architect credentials automatically switch based on the selected environment.</li>
+                </ul>
+            </div>
+            <div class="guide-step-card">
+                <div class="guide-step-num">3</div>
+                <h3>Execute & Monitor</h3>
+                <p>Click <strong>Run Test</strong> to start automation and monitor progress:</p>
+                <ul>
+                    <li>The <strong>Live Progress Bar</strong> displays real-time completed vs. total test cases.</li>
+                    <li>Click <strong>Live Screen</strong> to watch browser execution via noVNC
+                        (<code>http://65.0.8.57:8000</code>), only for Citizen,Employee and Vendor Testing</li>
+                    <li>Session video recordings and HTML user manuals are generated automatically.</li>
+                </ul>
+            </div>
+        </div>
 
-    document.getElementById(containerId).innerHTML = html;
-}
+        <!-- Excel Data-Driven Testing -->
+        <div class="guide-section-heading">
+            <span>📗 Excel Data-Driven Testing</span>
+            <span class="badge" style="background:#ecfdf5; color:#059669; border-color:#a7f3d0;">Custom Test Data</span>
+        </div>
+        <div class="guide-excel-grid">
+            <div class="guide-excel-card">
+                <div class="guide-excel-card-header">
+                    <div class="guide-excel-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </div>
+                    <h4>1. Download Template</h4>
+                </div>
+                <p>Download the pre-formatted Excel template configured with the required schema and field headers for all modules.</p>
+                <ul>
+                    <li>Click <strong>Download Excel Template</strong> in the <em>Module Testing</em> tab.</li>
+                    <li>The downloaded workbook (<code>UPYOG_Test_Data.xlsx</code>) contains structured sheets for each module.</li>
+                </ul>
+            </div>
 
-function downloadLatestReport() {
+            <div class="guide-excel-card">
+                <div class="guide-excel-card-header">
+                    <div class="guide-excel-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                    </div>
+                    <h4>2. Fill Custom Test Data</h4>
+                </div>
+                <p>Customize input values per test case such as mobile numbers, applicant names, property details, and city selections.</p>
+                <ul>
+                    <li><strong>Set Execution Flag</strong>: Keep the <code>Execution</code> column set to <span class="guide-badge-pass">YES</span> for all test cases you want to run (rows with <code>NO</code> will be skipped).</li>
+                    <li>Fill rows for single or multiple test scenarios.</li>
+                    <li>Supports parameterization for multi-module batch regression suites.</li>
+                </ul>
+            </div>
 
-    window.open(
-        '/api/report/download',
-        '_blank'
-    );
-}
-    </script>
+            <div class="guide-excel-card">
+                <div class="guide-excel-card-header">
+                    <div class="guide-excel-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <h4>3. Upload & Execute</h4>
+                </div>
+                <p>Upload your populated Excel sheet and trigger automated batch execution driven entirely by your test spreadsheet.</p>
+                <ul>
+                    <li>Click <strong>Upload Excel</strong> and choose your <code>.xlsx</code> file.</li>
+                    <li>Click <strong>Run Test</strong> to start automation using the custom datasets.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Testing Approaches -->
+        <div class="guide-section-heading">
+            <span>📑 Testing Approaches & Modes</span>
+            <span class="badge">Scope Guide</span>
+        </div>
+        <div class="guide-approaches-grid">
+            <!-- Module Testing -->
+            <div class="guide-approach-card">
+                <div>
+                    <div class="guide-approach-header">
+                        <div class="guide-approach-icon module-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <polyline points="1 20 1 14 7 14"></polyline>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                            </svg>
+                        </div>
+                        <div class="guide-approach-title">
+                            <h3>Module Testing</h3>
+                            <span class="guide-approach-tag tag-full">Full End-to-End Flow</span>
+                        </div>
+                    </div>
+                    <div class="guide-approach-desc">
+                        Executes complete end-to-end automation covering both Citizen application creation and official
+                        Employee scrutiny, approval, and payment collection in a single automated chain.
+                    </div>
+                    <div class="guide-approach-flow">
+                        <strong>Workflow Chain:</strong>
+                        Citizen Form Submission ➔ Application No. Capture ➔ Employee Inbox Search ➔ Verification &
+                        Approval ➔ Cashier Fee Payment.
+                    </div>
+                </div>
+                <div class="guide-approach-footer">
+                    <span><strong>Best for:</strong> Full regression testing & release sign-off</span>
+                </div>
+            </div>
+
+            <!-- Citizen Testing -->
+            <div class="guide-approach-card">
+                <div>
+                    <div class="guide-approach-header">
+                        <div class="guide-approach-icon citizen-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <div class="guide-approach-title">
+                            <h3>Citizen Testing</h3>
+                            <span class="guide-approach-tag tag-citizen">Citizen Journey Only</span>
+                        </div>
+                    </div>
+                    <div class="guide-approach-desc">
+                        Runs only the citizen-facing workflow. Tests citizen login with OTP, multi-step application form
+                        filling, document uploads, and application submission to generate an Application Reference
+                        Number.
+                    </div>
+                    <div class="guide-approach-flow">
+                        <strong>Workflow Chain:</strong>
+                        Citizen Mobile Login ➔ OTP Verification ➔ Property/Trade/Pet Details Entry ➔ Document Uploads ➔
+                        Acknowledgement Screen.
+                    </div>
+                </div>
+                <div class="guide-approach-footer">
+                    <span><strong>Best for:</strong> Form validation, UI intake testing & citizen journey checks</span>
+                </div>
+            </div>
+
+            <!-- Employee Testing -->
+            <div class="guide-approach-card">
+                <div>
+                    <div class="guide-approach-header">
+                        <div class="guide-approach-icon employee-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                            </svg>
+                        </div>
+                        <div class="guide-approach-title">
+                            <h3>Employee Testing</h3>
+                            <span class="guide-approach-tag tag-employee">Official Workflow Only</span>
+                        </div>
+                    </div>
+                    <div class="guide-approach-desc">
+                        Runs the back-office employee workflow on existing applications. Handles role-based employee
+                        login, searching applications by number, scrutiny, document verification, forwarding, approval,
+                        and cashier payment collection.
+                    </div>
+                    <div class="guide-approach-flow">
+                        <strong>Workflow Chain:</strong>
+                        Employee Username/Password Login ➔ Inbox Search ➔ Application Scrutiny ➔ Take Action
+                        (Approve/Forward) ➔ Collect Payment.
+                    </div>
+                </div>
+                <div class="guide-approach-footer">
+                    <span><strong>Best for:</strong> Back-office verification, role actions & cashier payments</span>
+                </div>
+            </div>
+
+            <!-- Vendor Testing -->
+            <div class="guide-approach-card">
+                <div>
+                    <div class="guide-approach-header">
+                        <div class="guide-approach-icon vendor-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="1" y="3" width="15" height="13"></rect>
+                                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                                <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                                <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                            </svg>
+                        </div>
+                        <div class="guide-approach-title">
+                            <h3>Vendor Testing</h3>
+                            <span class="guide-approach-tag tag-vendor">Agency Operations</span>
+                        </div>
+                    </div>
+                    <div class="guide-approach-desc">
+                        Runs vendor and service provider fulfillment workflows for on-demand municipal services such as
+                        Water Tanker Booking, Mobile Toilet Delivery, and Construction & Demolition (C&D) Waste
+                        collection.
+                    </div>
+                    <div class="guide-approach-flow">
+                        <strong>Workflow Chain:</strong>
+                        Vendor Authentication ➔ Service Request Queue ➔ Verification & Vehicle Assignment ➔ Request
+                        Fulfillment.
+                    </div>
+                </div>
+                <div class="guide-approach-footer">
+                    <span><strong>Best for:</strong> Third-party agency workflows & service dispatch verification</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports, Manuals & Recordings -->
+        <div class="guide-section-heading">
+            <span>📊 Execution Artifacts & Reports</span>
+            <span class="badge">Outputs</span>
+        </div>
+        <div class="guide-artifacts-grid">
+            <div class="guide-artifact-card">
+                <h4>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    Extent Test Reports
+                </h4>
+                <p>Access comprehensive, interactive HTML reports with step-by-step logs, exact execution timestamps,
+                    pass/fail status, and embedded base64 error screenshots for quick debugging.</p>
+            </div>
+            <div class="guide-artifact-card">
+                <h4>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                    Visual User Manuals
+                </h4>
+                <p>Automatically generated documentation featuring high-resolution step screenshots, step descriptions,
+                    an interactive workflow filter bar (filter by test case), and delete buttons for removing
+                    unnecessary images.</p>
+            </div>
+            <div class="guide-artifact-card">
+                <h4>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2.2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                    </svg>
+                    Screen Video Recordings
+                </h4>
+                <p>Watch session screen recordings in the built-in HTML5 video player modal. Browse all recorded clips
+                    from your test session, download individual MP4 files, or download complete ZIP packages.</p>
+            </div>
+        </div>
+
+        <!-- Pro-Tips Callout -->
+        <div class="guide-tip-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <div>
+                <h4>Helpful Tips for Seamless Execution</h4>
+                <p>
+                    • <strong>Excel Execution Flag</strong>: In the test data spreadsheet, keep the <code>Execution</code> column set to <strong>YES</strong> to execute those test cases (rows set to <code>NO</code> are automatically skipped).<br>
+                    • <strong>OTP Autofill</strong>: Default OTP is <code>123456</code> for testing environments.<br>
+                    • <strong>Multi-Module Batch Execution</strong>: You can check multiple modules in Module Testing to
+                    execute an entire regression suite automatically.<br>
+                    • <strong>Live Browser Screen</strong>: If running on the remote server, open
+                    <code>http://65.0.8.57:8000</code> in a new tab to view the live Selenium browser session in real
+                    time.<br>
+                    • <strong>Artifacts Retention</strong>: Screen recordings and screenshots are maintained temporarily
+                    and can be exported as ZIP bundles anytime from the Test Reports tab.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+    <!-- Video Recording Modal -->
+    <div id="videoModal" class="video-modal-backdrop" style="display:none;"
+        onclick="if(event.target===this) closeVideoModal()">
+        <div class="video-modal-dialog">
+            <div class="video-modal-header">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div
+                        style="background:#ffe4e6; padding:8px; border-radius:8px; display:flex; align-items:center; justify-content:center;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 id="modalVideoTitle" style="margin:0; font-size:1.1rem; color:#1e293b; font-weight:700;">
+                            Screen Recording</h3>
+                        <span id="modalVideoSubtitle" style="font-size:0.75rem; color:#64748b;">Watch execution sessions
+                            and recorded test flows</span>
+                    </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                    <button id="modalVideoDownloadBtn" type="button" class="action-btn btn-video-download"
+                        style="width:auto; padding:7px 14px; font-size:0.82rem;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Download Current MP4
+                    </button>
+                    <button id="modalVideoDownloadAllBtn" type="button" class="action-btn btn-manual-zip"
+                        style="width:auto; padding:7px 14px; font-size:0.82rem;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line>
+                            <path
+                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                            </path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                        Download All (ZIP)
+                    </button>
+                    <button type="button" class="modal-close-btn" onclick="closeVideoModal()">&times;</button>
+                </div>
+            </div>
+            <div class="video-modal-body">
+                <div class="video-player-container">
+                    <video id="modalVideoPlayer" controls autoplay playsinline muted preload="auto"
+                        style="width:100%; border-radius:8px; background:#000; outline:none; max-height:68vh;">
+                        Your browser does not support HTML5 video playback.
+                    </video>
+                    <div id="videoActiveInfo"
+                        style="margin-top:10px; display:flex; justify-content:space-between; align-items:center; color:#94a3b8; font-size:0.8rem;">
+                        <span id="activeVideoName" style="font-weight:600; color:#cbd5e1;">Active clip</span>
+                        <span id="activeVideoMeta"></span>
+                    </div>
+                </div>
+                <div class="video-playlist-sidebar" id="videoPlaylistSidebar">
+                    <div class="playlist-header">
+                        <span>Session Clips (<strong id="videoCountBadge">0</strong>)</span>
+                    </div>
+                    <div class="playlist-items" id="videoPlaylistItems">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/module-testing.js"></script>
 </body>
+
 </html>

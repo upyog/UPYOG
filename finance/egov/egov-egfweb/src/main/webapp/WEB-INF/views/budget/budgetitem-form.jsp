@@ -222,11 +222,19 @@
 
 
 
+<style>
+  span.twitter-typeahead .tt-dropdown-menu {
+    max-height: 250px;
+    overflow-y: auto;
+    width: 100%;
+  }
+</style>
+
 <!-- JS -->
 <script
 	src="<cdn:url value='/resources/app/js/i18n/jquery.i18n.properties.js?rnd=${app_release_no}' context='/services/EGF'/>">
 </script>
-<script src="<cdn:url value='/resources/app/js/budget/budgetItemFormHelper.js' context='/services/EGF'/>"></script>
+<script src="<cdn:url value='/resources/app/js/budget/budgetItemFormHelper.js?rnd=${app_release_no}' context='/services/EGF'/>"></script>
 <script src="<cdn:url value='/resources/app/js/common/helper.js?rnd=${app_release_no}' context='/services/EGF'/>">
 </script>
 <!-- <script>

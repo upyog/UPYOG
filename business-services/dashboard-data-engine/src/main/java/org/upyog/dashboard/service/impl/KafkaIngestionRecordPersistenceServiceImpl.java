@@ -47,7 +47,9 @@ public class KafkaIngestionRecordPersistenceServiceImpl implements IngestionReco
             long now = CommonUtils.getCurrentEpochMillis();
 
             DailyIngestionData record = DailyIngestionData.builder().moduleIngestionId(CommonUtils.generateUUID())
-                    .moduleDetailId(null).tenantId(first != null ? first.getUlb() : null)
+                    .moduleDetailId(data != null ? data.getModuleDetailId() : null)
+                    .schedulerId(data != null ? data.getSchedulerId() : null)
+                    .tenantId(first != null ? first.getUlb() : null)
                     .moduleName(first != null ? first.getModule() : null)
                     .pushDate(first != null ? first.getDate() : null)
                     .requestData(JsonUtil.toJsonString(requestJson, objectMapper))

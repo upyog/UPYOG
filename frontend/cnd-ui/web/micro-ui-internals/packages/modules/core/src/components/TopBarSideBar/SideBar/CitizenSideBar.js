@@ -110,6 +110,15 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
     navigate("/cnd-ui/citizen/login");
     closeSidebar();
   };
+
+  /**
+   * If the mobile/citizen drawer is closed, do not mount or render anything to the DOM.
+   * This prevents the <Loader /> from rendering in the background behind the fixed TopBar on page reload.
+   */
+  if (!isOpen && isMobile) {
+    return null;
+  }
+
   if (islinkDataLoading || isLoading || !isFetched) {
     return <Loader />;
   }

@@ -31,13 +31,16 @@ const GetActionMessage = (action, isSuccess, isEmployee, t) => {
 const GetLabel = (action, isSuccess, isEmployee, t) => {
   return GetMessage("LABEL", action, isSuccess, isEmployee, t);
 };
+const DisplayText = (action, isSuccess, isEmployee, t) => {
+  return GetMessage("DISPLAY", action, isSuccess, isEmployee, t);
+};
 
 const BannerPicker = (props) => {
   return (
     <Banner
-      message={GetActionMessage(props?.data?.cndApplicationDetails?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)}
-      applicationNumber={props?.data?.cndApplicationDetails?.applicationNumber}
-      info={(props.data?.cndApplicationDetails?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)}
+      message={GetActionMessage(props?.data?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)}
+      applicationNumber={props?.data?.applicationNumber}
+      info={(props.data?.applicationStatus || props.action, props.isSuccess, props.isEmployee, props.t)}
       successful={props.isSuccess}
     />
   );
@@ -45,70 +48,30 @@ const BannerPicker = (props) => {
 
 const EditSubmissionResponse = (props) => {
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
-  const location = useLocation();
-  const [error, setError] = useState(null);
-  const [showToast, setShowToast] = useState(null);
-  const [enableAudit, setEnableAudit] = useState(false);
-  const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_HAPPENED", false);
-  const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("EMPLOYEE_MUTATION_SUCCESS_DATA", false);
-
-  const closeToast = () => {
-    setShowToast(null);
-    setError(null);
-  };
+        const location = useLocation();
+        const { state } = location;
+        // Safe check for parentRoute
+        const isEmployee = Digit.UserService.getUser()?.info?.type || true;
+        // Extract data from navigation state
+        const isSuccess = state?.isSuccess ?? true; // Default to true if not specified
+        const cndData = state?.cndApplication || {};
+        const action = state?.action || "CND_EDIT_SUCCESSFULL";
   
-
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const { state } = location;
-  const mutation = Digit.Hooks.cnd.useCndCreateApi(tenantId,false); 
-
-  useEffect(() => {
-    const onSuccess = async (successRes) => {
-      setMutationHappened(true);
-      setsuccessData(successRes);
-      queryClient.clear();
-      if (successRes?.responseInfo?.status === "SUCCESSFUL") {
-        setEnableAudit(true);
-      }
-    };
-    const onError = (error, variables) => {
-      setShowToast({ key: "error" });
-      setError(error?.response?.data?.Errors[0]?.message || null);
-    };
-
-    if (!mutationHappened) {
-      mutation.mutate(
-        {
-            cndApplication: state?.cndApplication,
-        },
-        {
-          onError,
-          onSuccess,
-        }
-      );
-    }
-  }, []);
-
-
-  if (mutation.isPending || (mutation.isIdle && !mutationHappened)) {
-    return <Loader />;
-  }
-
-  return (
-    <div>
-      <Card>
-        <BannerPicker
-          t={t}
-          data={mutation?.data || successData}
-          action={state?.action}
-          isSuccess={!Object.keys(successData || {}).length ? mutation?.isSuccess : true}
-          isLoading={(mutation.isIdle && !mutationHappened) || mutation?.isPending}
-          isEmployee={props.parentRoute.includes("employee")}
-        />
-       
-      </Card>
-      {showToast && <Toast error={showToast.key === "error" ? true : false} label={error} onClose={closeToast} />}
+  
+    return (
+      <div>
+            <Card>
+              <BannerPicker
+                t={t}
+                data={cndData}
+                action={action}
+                isSuccess={isSuccess}
+                isEmployee={true}
+              />
+              <CardText>
+                {DisplayText(action, isSuccess, isEmployee, t)}
+              </CardText>
+            </Card>
       <ActionBar>
         <Link to={`/cnd-ui/employee`}>
           <SubmitBar label={t("CND_HOME")} />

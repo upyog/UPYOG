@@ -3,6 +3,7 @@ package org.upyog.Automation.Reports;
 import java.io.File;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import org.upyog.Automation.Utils.AutomationConstants;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -32,7 +33,8 @@ public class ExtentManager {
 
             String reportsDir =
                     System.getProperty("user.dir")
-                            + "/target/reports";
+                            + "/"
+                            + AutomationConstants.REPORTS_DIR;
 
             String uniqueId =
                     String.format("%03d", reportCounter++);
