@@ -344,6 +344,19 @@ public class WSCalculatorQueryBuilder {
 		addClauseIfRequired(preparedStatement, query);
 		query.append(" billingPeriod = ? ");
 		preparedStatement.add(billingPeriod);
+
+		String[] dates = billingPeriod.split("-");
+		String fromDate = dates[0].trim();
+		String toDate = dates[1].trim();
+
+		query.append(" AND to_date(trim(split_part(billingPeriod, '-', 1)), 'DD/MM/YYYY') ");
+		query.append(" = to_date(?, 'DD/MM/YYYY') ");
+		preparedStatement.add(fromDate);
+
+		query.append(" AND to_date(trim(split_part(billingPeriod, '-', 2)), 'DD/MM/YYYY') ");
+		query.append(" = to_date(?, 'DD/MM/YYYY') ");
+
+		preparedStatement.add(toDate);
 		return query.toString();
 	}
 

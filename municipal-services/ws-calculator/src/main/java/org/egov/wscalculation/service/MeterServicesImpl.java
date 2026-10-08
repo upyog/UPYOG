@@ -54,6 +54,9 @@ public class MeterServicesImpl implements MeterService {
 	public List<MeterReading> createMeterReading(MeterConnectionRequest meterConnectionRequest) {
 		Boolean genratedemand = true;
 		List<MeterReading> meterReadingsList = new ArrayList<MeterReading>();
+		meterConnectionRequest.getMeterReading().setBillingPeriod(
+				wsCalculationValidator.normalizeBillingPeriod(
+						meterConnectionRequest.getMeterReading().getBillingPeriod()));
 		if(meterConnectionRequest.getMeterReading().getGenerateDemand()){
 			wsCalulationWorkflowValidator.applicationValidation(meterConnectionRequest.getRequestInfo(),meterConnectionRequest.getMeterReading().getTenantId(),meterConnectionRequest.getMeterReading().getConnectionNo(),genratedemand);
 			wsCalculationValidator.validateMeterReading(meterConnectionRequest.getRequestInfo(),meterConnectionRequest.getMeterReading(), true);
@@ -75,6 +78,7 @@ public class MeterServicesImpl implements MeterService {
 		Boolean applicationValid = false,readingValid=false;
 		String status=null;
 		for(MeterReading mr:meterConnectionRequest.getMeterReadingList()) {
+		mr.setBillingPeriod(wsCalculationValidator.normalizeBillingPeriod(mr.getBillingPeriod()));
 		if(mr.getGenerateDemand()){
 			applicationValid=wsCalulationWorkflowValidator.applicationValidationBulk(meterConnectionRequest.getRequestInfo(),mr,genratedemand);
 			readingValid=wsCalculationValidator.validateMeterReadingBulk(meterConnectionRequest.getRequestInfo(),mr, true);
