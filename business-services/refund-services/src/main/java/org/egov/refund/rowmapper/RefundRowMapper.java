@@ -2,24 +2,16 @@ package org.egov.refund.rowmapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
 
 import org.egov.refund.model.AuditDetails;
 import org.egov.refund.model.Refund;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 @Component
 public class RefundRowMapper implements RowMapper<Refund> {
 
-	private final ObjectMapper objectMapper;
 
-	public RefundRowMapper(ObjectMapper objectMapper) {
-		this.objectMapper = objectMapper;
-	}
 
 	@Override
 	public Refund mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -65,9 +57,9 @@ public class RefundRowMapper implements RowMapper<Refund> {
 		refund.setFileStoreId(rs.getString("file_store_id"));
 		refund.setGatewayRefundId(rs.getString("gateway_refund_id"));
 
-		refund.setBeneficiaryDetails(readJson(rs, "beneficiary_details"));
+		refund.setBeneficiaryDetails(rs.getString("beneficiary_details"));
 
-		refund.setAdditionalDetails(readJson(rs, "additional_details"));
+		refund.setAdditionalDetails(rs.getString("additional_details"));
 
 		AuditDetails auditDetails = AuditDetails.builder().createdBy(rs.getString("created_by"))
 				.createdTime(getNullableLong(rs, "created_time")).lastModifiedBy(rs.getString("last_modified_by"))
@@ -78,23 +70,7 @@ public class RefundRowMapper implements RowMapper<Refund> {
 		return refund;
 	}
 
-	private Map<String, Object> readJson(ResultSet rs, String column) throws SQLException {
-
-		Object value = rs.getObject(column);
-
-		if (value == null) {
-			return null;
-		}
-
-		try {
-
-			return objectMapper.readValue(value.toString(), Map.class);
-
-		} catch (JsonProcessingException e) {
-
-			throw new SQLException("Unable to parse JSONB column: " + column, e);
-		}
-	}
+	
 
 	private Long getNullableLong(ResultSet rs, String column) throws SQLException {
 

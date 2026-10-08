@@ -1,8 +1,10 @@
 package org.egov.refund.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Map;
+
+import org.egov.refund.util.JsonStringDeserializer;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -50,9 +52,11 @@ public class RefundAudit {
     
     private String fileStoreId;
 
-
-    private Map<String, Object> beneficiaryDetails;
-    private Map<String, Object> additionalDetails;
+    @JsonDeserialize(using = JsonStringDeserializer.class)
+    private String beneficiaryDetails;
+    
+    @JsonDeserialize(using = JsonStringDeserializer.class)
+    private String additionalDetails;
 
     private AuditDetails auditDetails;
     
