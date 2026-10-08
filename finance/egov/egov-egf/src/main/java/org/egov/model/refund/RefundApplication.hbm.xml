@@ -39,6 +39,9 @@
 
 		<property name="paymentId" column="PAYMENTID" type="string" />
 
+		<property name="fileStoreId" column="FILESTOREID"
+			type="string" length="256" />
+
 		<property name="amountPaid" column="AMOUNTPAID"
 			type="big_decimal" />
 

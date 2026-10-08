@@ -50,6 +50,9 @@ public class RefundDetail {
 	 */
 	private String paymentId;
 	
+	// Filestore ID of the original payment receipt. 
+	private String fileStoreId;
+	
 	private BigDecimal amountPaid;
 
 	/** Status received from refund-service, kept for the callback. */
