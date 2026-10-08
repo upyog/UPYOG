@@ -18,7 +18,7 @@ const FinanceEmployeeSideBar = ({ microUiModuleEnable, isFinanceEnabled }) => {
   const [search, setSearch] = useState("");
   const location = useLocation();
   const [activePath, setActivePath] = useState(
-    location.pathname.includes("/finance") || location.pathname.includes("/services/EGF") || location.pathname.includes("/services/egf") ? "Finance" : ""
+    location.pathname.includes("/finance") ? "Finance" : ""
   );
   const { t } = useTranslation();
 
@@ -36,19 +36,19 @@ const FinanceEmployeeSideBar = ({ microUiModuleEnable, isFinanceEnabled }) => {
    * It maps the current browser URL to the correct menu category.
    */
   const getActivePathFromUrl = (actions, pathname) => {
-    if (!pathname || !actions || actions.length === 0) return "Finance";
-    
-    // Regex matching any standard application path prefixes to extract standard service routes
+    if (!pathname || !actions || actions.length === 0) return "";
+
     const prefixRegex = /^\/(upyog-ui\/employee\/finance|employee\/finance|upyog-ui\/employee|employee|finance)\//i;
-    let cleanPath = pathname.replace(prefixRegex, "");
+    let cleanPath = pathname.replace(prefixRegex, "").toLowerCase();
     if (cleanPath.startsWith("/")) cleanPath = cleanPath.substring(1);
 
     const matchedAction = actions.find(action => {
       if (!action.navigationURL) return false;
-      let nav = action.navigationURL.replace(prefixRegex, "");
+      let nav = action.navigationURL.replace(prefixRegex, "").toLowerCase();
       if (nav.startsWith("/")) nav = nav.substring(1);
-      
-      return nav && cleanPath && (nav.toLowerCase() === cleanPath.toLowerCase() || cleanPath.toLowerCase().includes(nav.toLowerCase()));
+
+      if (!nav || !cleanPath) return false;
+      return nav === cleanPath || cleanPath.startsWith(nav + "/") || nav.startsWith(cleanPath + "/");
     });
 
     if (matchedAction && matchedAction.path) {
@@ -65,15 +65,15 @@ const FinanceEmployeeSideBar = ({ microUiModuleEnable, isFinanceEnabled }) => {
       }
       return itemPath;
     }
-    return "Finance";
+    return "";
   };
 
   useEffect(() => {
     if (isLoading || !data?.actions) return;
-    
-    if (location.pathname.includes("/finance") || location.pathname.includes("/services/EGF") || location.pathname.includes("/services/egf")) {
+
+    if (location.pathname.includes("/finance") || location.pathname.includes("/services/EGF")) {
       const resolvedPath = getActivePathFromUrl(data.actions, location.pathname);
-      setActivePath(resolvedPath);
+      setActivePath((prev) => resolvedPath || prev || "Finance");
     } else {
       setActivePath("");
     }
@@ -154,8 +154,8 @@ const FinanceEmployeeSideBar = ({ microUiModuleEnable, isFinanceEnabled }) => {
 
       // If enabled and it is EGF/Finance, apply prefix for nested iframe routing inside upyog-ui
       const isFinance = isFinanceEnabled && item.path && (
-        item.path.startsWith("Finance") || 
-        item.path.startsWith("EGF") || 
+        item.path.startsWith("Finance") ||
+        item.path.startsWith("EGF") ||
         (item.parentModule && item.parentModule.toLowerCase().includes("egf")) ||
         (item.parentModule && item.parentModule.toLowerCase().includes("finance")) ||
         (item.navigationURL && (item.navigationURL.toLowerCase().includes("services/egf") || item.navigationURL.toLowerCase().includes("services/finance")))
@@ -213,7 +213,7 @@ const FinanceEmployeeSideBar = ({ microUiModuleEnable, isFinanceEnabled }) => {
     .forEach((item) => {
       let index = item.path.split(".")[0];
       if (search == "" && item.path !== "") {
-         index = item.path.split(".")[0];
+        index = item.path.split(".")[0];
         if (index === "TradeLicense") index = "Trade License";
         if (!configEmployeeSideBar[index]) {
           configEmployeeSideBar[index] = [item];
@@ -221,7 +221,7 @@ const FinanceEmployeeSideBar = ({ microUiModuleEnable, isFinanceEnabled }) => {
           configEmployeeSideBar[index].push(item);
         }
       } else if (item.path !== "" && t(`ACTION_TEST_${index?.toUpperCase()?.replace(/[ -]/g, "_")}`)?.toLowerCase().includes(search.toLowerCase())) {
-         index = item.path.split(".")[0];
+        index = item.path.split(".")[0];
         if (index === "TradeLicense") index = "Trade License";
         if (!configEmployeeSideBar[index]) {
           configEmployeeSideBar[index] = [item];
@@ -275,17 +275,15 @@ const FinanceEmployeeSideBar = ({ microUiModuleEnable, isFinanceEnabled }) => {
         }
       }
     }
-    if(res.find(a => a.moduleName === "HOME"))
-    {
+    if (res.find(a => a.moduleName === "HOME")) {
       const indx = res.findIndex(a => a.moduleName === "HOME");
       const home = res?.filter((ob) => ob?.moduleName === "HOME")
       let res1 = res?.filter((ob) => ob?.moduleName !== "HOME")
-      res = res1.sort((a,b) => a.moduleName.localeCompare(b.moduleName));
+      res = res1.sort((a, b) => a.moduleName.localeCompare(b.moduleName));
       home?.[0] && res.unshift(home[0]);
     }
-    else
-    {
-      res.sort((a,b) => a.moduleName.localeCompare(b.moduleName));
+    else {
+      res.sort((a, b) => a.moduleName.localeCompare(b.moduleName));
     }
     if (isFinanceEnabled) {
       return res?.map((item, index) => {
@@ -330,12 +328,7 @@ const FinanceEmployeeSideBar = ({ microUiModuleEnable, isFinanceEnabled }) => {
   };
 
   return (
-    <div
-      className={`sidebar ${window.location.href.includes("main-dashboard-landing") ? "display-none" : ""}`}
-      ref={sidebarRef}
-      onMouseOver={expandNav}
-      onMouseLeave={collapseNav}
-    >
+    <div className="sidebar" ref={sidebarRef} onMouseOver={expandNav} onMouseLeave={collapseNav} style={{ display: window.location.href.includes("main-dashboard-landing") ? "none" : "" }}>
       {renderSearch()}
       {isFinanceEnabled && activePath ? (
         <FinanceSideBar

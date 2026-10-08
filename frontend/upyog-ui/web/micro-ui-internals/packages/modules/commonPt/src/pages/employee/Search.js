@@ -10,9 +10,9 @@ const PTSearchFields = {
       label: "PT_PROPERTY_UNIQUE_ID",
       placeHolder: "PT_PROPERTY_UNIQUE_ID_PLACEHOLDER",
       validation: {
-        pattern: {
-          value: "[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}|[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}",
-          message: "ERR_INVALID_PROPERTY_ID",
+        validate: (val) => {
+          if (!val || val === "") return true;
+          return /^[a-zA-Z0-9-_\/]{1,64}$/.test(val) || "ERR_INVALID_PROPERTY_ID";
         },
       },
     },
@@ -21,9 +21,9 @@ const PTSearchFields = {
       label: "PT_EXISTING_PROPERTY_ID",
       placeholder: "PT_EXISTING_PROPERTY_ID_PLACEHOLDER",
       validation: {
-        pattern: {
-          value: "[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}|[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}",
-          message: "ERR_INVALID_PROPERTY_ID",
+        validate: (val) => {
+          if (!val || val === "") return true;
+          return /^[a-zA-Z0-9-_\/]{1,64}$/.test(val) || "ERR_INVALID_PROPERTY_ID";
         },
       },
     },
@@ -33,17 +33,9 @@ const PTSearchFields = {
       componentInFront: "+91",
       placeHolder: "PT_HOME_SEARCH_RESULTS_OWN_MOB_PLACEHOLDER",
       validation: {
-        minLength: {
-          value: 10,
-          message: "CORE_COMMON_MOBILE_ERROR",
-        },
-        maxLength: {
-          value: 10,
-          message: "CORE_COMMON_MOBILE_ERROR",
-        },
-        pattern: {
-          value: /[6789][0-9]{9}/,
-          message: "CORE_COMMON_MOBILE_ERROR",
+        validate: (val) => {
+          if (!val || val === "") return true;
+          return /^[6-9][0-9]{9}$/.test(val) || "CORE_COMMON_MOBILE_ERROR";
         },
       },
     },
@@ -69,9 +61,9 @@ const PTSearchFields = {
       label: "PT_SEARCHPROPERTY_TABEL_DOOR_NO",
       placeHolder: "PT_SEARCH_DOOR_NO_PLACEHOLDER",
       validation: {
-        pattern: {
-          value: "[A-Za-z0-9#,/ -()]{1,63}",
-          message: "ERR_INVALID_DOOR_NO",
+        validate: (val) => {
+          if (!val || val === "") return true;
+          return /^[A-Za-z0-9#,/ -()]{1,63}$/.test(val) || "ERR_INVALID_DOOR_NO";
         },
       },
     },
@@ -80,13 +72,10 @@ const PTSearchFields = {
       label: "PT_SEARCHPROPERTY_TABEL_OWNERNAME",
       placeHolder: "PT_SEARCH_OWNER_NAME_PLACEHOLDER",
       validation: {
-        minLength: {
-          value: 3,
-          message: "PT_MIN_3CHAR",
-        },
-        pattern: {
-          value: "^[a-zA-Z ]+$",
-          message: "PAYMENT_INVALID_NAME",
+        validate: (val) => {
+          if (!val || val === "") return true;
+          if (val.length < 3) return "PT_MIN_3CHAR";
+          return /^[a-zA-Z ]+$/.test(val) || "PAYMENT_INVALID_NAME";
         },
       },
     },

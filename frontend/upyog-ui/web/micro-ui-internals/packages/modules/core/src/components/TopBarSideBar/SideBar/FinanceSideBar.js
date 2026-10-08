@@ -3,20 +3,10 @@ import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 const getRoutePath = (navUrl) => {
   if (!navUrl) return "";
-  let formatted = navUrl.replace("/digit-ui/", "/upyog-ui/");
-  if (formatted.startsWith("http://") || formatted.startsWith("https://")) {
-    return formatted;
-  }
-  if (formatted.startsWith("/employee/")) {
-    formatted = "/upyog-ui" + formatted;
-  } else if (!formatted.startsWith("/upyog-ui/")) {
-    if (formatted.startsWith("/")) {
-      formatted = "/upyog-ui/employee" + formatted;
-    } else {
-      formatted = "/upyog-ui/employee/" + formatted;
-    }
-  }
-  return formatted;
+  const isUpyog = window.location.href.includes("/upyog-ui");
+  const prefix = isUpyog ? "/upyog-ui/employee/finance/" : "/employee/finance/";
+  const url = isUpyog ? navUrl.replace("digit-ui", "upyog-ui") : navUrl;
+  return url.includes("upyog-ui") || url.includes("digit-ui") ? url : prefix + url;
 };
 import {
   FinanceChartIcon,
@@ -95,10 +85,10 @@ const hasMatchingDescendant = (node, key, search, t, i18n) => {
   if (!search) return true;
 
   const hasChildren = typeof node === "object" && !node.id;
-  const translationKey = hasChildren 
+  const translationKey = hasChildren
     ? `ACTION_TEST_${key.toUpperCase().replace(/[ -]/g, "_")}`
     : `ACTION_TEST_${node.displayName ? node.displayName.toUpperCase().replace(/[.:-\s\/]/g, "_") : key.toUpperCase().replace(/[ -]/g, "_")}`;
-  
+
   const displayLabel = i18n.exists(translationKey)
     ? t(translationKey)
     : (hasChildren ? key : (node.displayName || key));
@@ -143,8 +133,8 @@ const FinanceSideBar = ({ activePath, setActivePath, configEmployeeSideBar1, sea
 
   return (
     <React.Fragment>
-      <div className="submenu-container core-finance-side-bar-flex-row">
-        <div onClick={handleBack} className="core-finance-side-bar-clickable">
+      <div className="submenu-container" style={{ display: "flex", alignItems: "center", padding: "20px", color: "white", borderBottom: "1px solid rgba(255,255,255,0.1)", marginBottom: "10px" }}>
+        <div onClick={handleBack} style={{ cursor: "pointer", marginRight: "20px", display: "flex", alignItems: "center" }}>
           <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" fill="white">
             <path d="M0 0h24v24H0z" fill="none" />
             <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
@@ -152,13 +142,13 @@ const FinanceSideBar = ({ activePath, setActivePath, configEmployeeSideBar1, sea
         </div>
         <div className="actions">
           <FinanceChartIcon />
-          <span className="core-finance-side-bar-text-style">
+          <span style={{ fontSize: "16px", fontWeight: "bold" }}>
             {t(`ACTION_TEST_${menuTitle.toUpperCase().replace(/[ -]/g, "_")}`) || menuTitle}
           </span>
         </div>
       </div>
 
-      <div className="submenu-links core-finance-side-bar-flex-container">
+      <div className="submenu-links" style={{ overflowX: "auto", display: "flex", flexDirection: "column" }}>
         {Object.keys(currentNode)
           .filter((key) => !["id", "name", "url", "displayName", "orderNumber", "parentModule", "serviceCode", "code", "leftIcon", "path", "navigationURL", "enabled"].includes(key))
           .filter((key) => hasMatchingDescendant(currentNode[key], key, search, t, i18n))
@@ -167,57 +157,59 @@ const FinanceSideBar = ({ activePath, setActivePath, configEmployeeSideBar1, sea
             const valB = currentNode[b];
             return getMinOrderNumber(valA) - getMinOrderNumber(valB);
           }).map((key) => {
-          const nodeValue = currentNode[key];
-          const hasChildren = typeof nodeValue === "object" && !nodeValue.id;
-          
-          const translationKey = hasChildren 
-            ? `ACTION_TEST_${key.toUpperCase().replace(/[ -]/g, "_")}`
-            : `ACTION_TEST_${nodeValue.displayName ? nodeValue.displayName.toUpperCase().replace(/[.:-\s\/]/g, "_") : key.toUpperCase().replace(/[ -]/g, "_")}`;
-          
-          const displayLabel = i18n.exists(translationKey)
-            ? t(translationKey)
-            : (hasChildren ? key : (nodeValue.displayName || key));
+            const nodeValue = currentNode[key];
+            const hasChildren = typeof nodeValue === "object" && !nodeValue.id;
 
-          const iconStr = nodeValue?.leftIcon || getIcon(nodeValue);
-          const iconKey = iconStr?.split?.(":")?.[1];
-          const leftIcon = IconsObject[iconKey] || IconsObject.collections;
+            const translationKey = hasChildren
+              ? `ACTION_TEST_${key.toUpperCase().replace(/[ -]/g, "_")}`
+              : `ACTION_TEST_${nodeValue.displayName ? nodeValue.displayName.toUpperCase().replace(/[.:-\s\/]/g, "_") : key.toUpperCase().replace(/[ -]/g, "_")}`;
 
-          if (hasChildren) {
-            return (
-              <div
-                key={key}
-                onClick={() => setActivePath(`${activePath}.${key}`)}
-                className="sidebar-link core-finance-side-bar-clickable-2"
-                title={displayLabel}
-              >
-                <div className="actions">
-                  {leftIcon}
-                  <span title={displayLabel} className="core-finance-side-bar-spacing">{displayLabel}</span>
+            const displayLabel = i18n.exists(translationKey)
+              ? t(translationKey)
+              : (hasChildren ? key : (nodeValue.displayName || key));
+
+            const iconStr = nodeValue?.leftIcon || getIcon(nodeValue);
+            const iconKey = iconStr?.split?.(":")?.[1];
+            const leftIcon = IconsObject[iconKey] || IconsObject.collections;
+
+            if (hasChildren) {
+              return (
+                <div
+                  key={key}
+                  onClick={() => setActivePath(`${activePath}.${key}`)}
+                  className="sidebar-link"
+                  title={displayLabel}
+                  style={{ cursor: "pointer", padding: "20px", color: "white", display: "flex", justifyContent: "space-between", alignItems: "center", width: "max-content", minWidth: "100%" }}
+                >
+                  <div className="actions">
+                    {leftIcon}
+                    <span title={displayLabel} style={{ fontSize: "14px", whiteSpace: "nowrap", paddingRight: "10px" }}>{displayLabel}</span>
+                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20" fill="white" style={{ flexShrink: 0 }}>
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                  </svg>
                 </div>
-                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 0 24 24" width="20" fill="white" className="core-finance-side-bar-icon">
-                  <path d="M0 0h24v24H0z" fill="none" />
-                  <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
-                </svg>
-              </div>
-            );
-          } else {
-            const targetPath = getRoutePath(nodeValue.navigationURL);
-            const isActive = pathname === targetPath;
-            return (
-              <Link
-                key={key}
-                to={targetPath}
-                className={`sidebar-link ${isActive ? "active" : ""}`}
-                title={displayLabel}
-              >
-                <div className="actions">
-                  {leftIcon}
-                  <span title={displayLabel} className="core-finance-side-bar-text-style-2">{displayLabel}</span>
-                </div>
-              </Link>
-            );
-          }
-        })}
+              );
+              const targetPath = getRoutePath(nodeValue.navigationURL);
+              const cleanTarget = targetPath.split("?")[0].replace(/\/+$/, "");
+              const cleanCurrent = pathname.split("?")[0].replace(/\/+$/, "");
+              const isActive = cleanCurrent && cleanTarget && (cleanCurrent === cleanTarget || cleanCurrent.startsWith(cleanTarget + "/"));
+              return (
+                <Link
+                  key={key}
+                  to={targetPath}
+                  className={`sidebar-link ${isActive ? "active" : ""}`}
+                  title={displayLabel}
+                >
+                  <div className="actions">
+                    {leftIcon}
+                    <span title={displayLabel} style={{ fontSize: "14px", whiteSpace: "nowrap" }}>{displayLabel}</span>
+                  </div>
+                </Link>
+              );
+            }
+          })}
       </div>
     </React.Fragment>
   );

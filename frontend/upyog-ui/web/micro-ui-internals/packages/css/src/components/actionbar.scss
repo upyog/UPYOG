@@ -90,8 +90,8 @@
 
   .SideBarStatic--collapsed ~ .main .action-bar-wrap,
   .navbar-expanded ~ .employee-app-wrapper .action-bar-wrap {
-    left: 64px !important;
-    width: calc(100vw - 64px) !important;
+    left: 80px !important;
+    width: calc(100vw - 80px) !important;
   }
 }
 
