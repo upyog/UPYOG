@@ -228,7 +228,7 @@
             ONLINE: "ONLINE",
             CASH: "OFFLINE",
             CHEQUE: "OFFLINE",
-            DD: "OFFLINE",
+            CARD: "OFFLINE",
           };
           const refundChannel = refundModeByPaymentMode[originalPaymentMode];
           if (!refundChannel) {
