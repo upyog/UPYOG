@@ -62,3 +62,7 @@ CREATE INDEX indx_egf_refund_payment
 ALTER TABLE egf_refund_application
     ADD COLUMN IF NOT EXISTS refundcategory VARCHAR(128);
     
+-- Store the filestore ID of the original payment receipt.
+ALTER TABLE egf_refund_application
+    ADD COLUMN IF NOT EXISTS filestoreid VARCHAR(256);
+    
