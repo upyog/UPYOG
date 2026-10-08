@@ -16,6 +16,7 @@ import {
   PaymentModule,
   PaymentLinks,
   paymentConfigs,
+  RefundModule,
 } from "@upyog/digit-ui-module-common";
 import { DigitUI } from "@upyog/digit-ui-module-core";
 import { initLibraries } from "@upyog/digit-ui-libraries";
@@ -117,6 +118,7 @@ window.Digit.ComponentRegistryService.setupRegistry({
   PTLinks,
   PaymentModule,
   PaymentLinks,
+  RefundModule,
   ...PTComponents,
   MCollectLinks,
   MCollectModule,

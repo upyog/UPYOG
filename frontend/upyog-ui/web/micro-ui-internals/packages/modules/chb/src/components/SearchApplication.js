@@ -222,6 +222,20 @@
             (bookingData?.totalAmountPaid ??
             (bookingData?.totalAmount ?? 0)))
           );
+          
+          const originalPaymentMode = paymentDetails?.paymentMode?.trim().toUpperCase();
+          const refundModeByPaymentMode = {
+            ONLINE: "ONLINE",
+            CASH: "OFFLINE",
+            CHEQUE: "OFFLINE",
+            CARD: "OFFLINE",
+          };
+          const refundChannel = refundModeByPaymentMode[originalPaymentMode];
+          if (!refundChannel) {
+            throw new Error(
+              `Cannot initiate refund: unsupported or missing payment mode (${originalPaymentMode || "missing"}).`
+            );
+          }
 
           const refundPayload = {
             refund: {
@@ -234,10 +248,10 @@
               mobileNumber: bookingData?.applicantDetail?.applicantMobileNo || bookingData?.applicantDetail?.mobileNumber || bookingData?.mobileNumber || paymentDetails?.mobileNumber || "",
               refundCategory: "CANCELLATION",
               refundReason: data?.cancelReason || "Community hall booking cancellation",
-              paymentModeOriginal: paymentDetails?.paymentMode || "ONLINE",
+              paymentModeOriginal: originalPaymentMode,
               amountPaid: amountPaid,
               refundAmount: amountPaid,
-              refundMode: paymentDetails?.paymentMode || "ONLINE",
+              refundMode: refundChannel,
               fileStoreId: paymentDetails?.fileStoreId || bookingData?.paymentReceiptFilestoreId || bookingData?.permissionLetterFilestoreId || null
             }
           };
