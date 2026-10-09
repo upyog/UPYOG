@@ -250,12 +250,12 @@ const ApplicationDetails = () => {
         ?.trim()
         .toUpperCase();
 
-        const refundModeByPaymentMode = {
-          ONLINE: "ONLINE",
-          CASH: "OFFLINE",
-          CHEQUE: "OFFLINE",
-          CARD: "OFFLINE",
-        };
+      const refundModeByPaymentMode = {
+        ONLINE: "ONLINE",
+        CASH: "OFFLINE",
+        CHEQUE: "OFFLINE",
+        CARD: "OFFLINE",
+      };
 
       const refundChannel = refundModeByPaymentMode[originalPaymentMode];
 
@@ -280,7 +280,13 @@ const ApplicationDetails = () => {
           amountPaid: amountPaid,
           refundAmount: amountPaid,
           refundMode: refundChannel,
-          fileStoreId: paymentDetails?.fileStoreId || bookingDetails?.paymentReceiptFilestoreId || bookingDetails?.permissionLetterFilestoreId || null
+          fileStoreId: paymentDetails?.fileStoreId || bookingDetails?.paymentReceiptFilestoreId || bookingDetails?.permissionLetterFilestoreId || null,
+          processInstance: {
+            action: "INITIATE",
+            comment: data?.cancelReason || "refund initiate",
+            documents: [],
+            assignes: []
+          }
         }
       };
 
