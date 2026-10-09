@@ -66,6 +66,7 @@ function budgethead_initialize() {
     var custom = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('code', 'name'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
+        limit: 100,
         remote: {
             url: `/services/EGF/budgethead/ajaxBudgetHead/${functionid}?query=%QUERY`,
             wildcard: '%QUERY',
@@ -103,7 +104,7 @@ function budgethead_initialize() {
                 return item.code + ' - ' + item.name;
             },
             source: custom.ttAdapter(),
-            limit: 20,
+            limit: 100,
             templates: {
                 suggestion: function (data) {
                     return `<div>${data.code} - ${data.name}</div>`;

@@ -1,38 +1,71 @@
 package org.upyog.dashboard.extractor;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 
 import org.upyog.dashboard.common.constants.Module;
 
 /**
- * Strategy interface defining data extraction rules for a specific UPYOG business module.
- * 
- * <p>Implementations (e.g. {@code PtModuleExtractor}, {@code ChbModuleExtractor}, {@code PgrModuleExtractor}) encapsulate
- * database metrics collection and SQL query execution for their target business module.
+ * Strategy interface defining data extraction rules for a specific UPYOG
+ * business module.
+ *
+ * <p>
+ * Implementations (e.g. {@code PtModuleExtractor}, {@code ChbModuleExtractor},
+ * {@code PgrModuleExtractor}) encapsulate database metrics collection and SQL
+ * query execution for their target business module.
  */
 public interface ModuleExtractor<T> {
 
     /**
-     * Returns the business module constant handled by this extractor implementation.
-     * 
+     * Returns the business module constant handled by this extractor
+     * implementation.
+     *
      * @return the {@link Module} enum constant
      */
     Module getModule();
 
     /**
-     * Extracts daily dashboard metrics for the target date from the business database.
-     * 
+     * Extracts daily dashboard metrics for a list of tenants and target date in
+     * a single database query.
+     *
+     * @param tenantIds the list of tenant identifiers (e.g.,
+     * {@code ["pg.citya", "pg.cityb"]})
      * @param targetDate the date for metric extraction
      * @return T object containing the extracted metrics payload
      */
-    T extractData(LocalDate targetDate);
+    T extractData(List<String> tenantIds, LocalDate targetDate);
 
     /**
-     * Evaluates whether all metrics in an extracted data object for this module are zero.
+     * Extracts daily dashboard metrics for the specified tenant and target date
+     * from the business database.
+     *
+     * @param tenantId the tenant identifier (e.g., {@code "pg.citya"})
+     * @param targetDate the date for metric extraction
+     * @return T object containing the extracted metrics payload
+     */
+    default T extractData(String tenantId, LocalDate targetDate) {
+        return extractData(tenantId != null ? List.of(tenantId) : Collections.emptyList(), targetDate);
+    }
+
+    /**
+     * Extracts daily dashboard metrics for the target date from the business
+     * database using default tenant.
+     *
+     * @param targetDate the date for metric extraction
+     * @return T object containing the extracted metrics payload
+     */
+    default T extractData(LocalDate targetDate) {
+        return extractData(Collections.emptyList(), targetDate);
+    }
+
+    /**
+     * Evaluates whether all metrics in an extracted data object for this module
+     * are zero.
      * <p>
-     * Default implementation evaluates to false (indicating non-zero data present).
-     * Modules can override this to implement domain-specific zero-metric checks,
-     * adhering to the Open/Closed Principle (OCP).
+     * Default implementation evaluates to false (indicating non-zero data
+     * present). Modules can override this to implement domain-specific
+     * zero-metric checks, adhering to the Open/Closed Principle (OCP).
      *
      * @param item the extracted domain item (or list item)
      * @return true if all metrics are zero, false otherwise

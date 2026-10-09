@@ -121,9 +121,9 @@ const EditVendorDetails = (props) => {
       case "ADD_DRIVER":
         return setShowModal(true);
       case "EDIT":
-        return navigate("/upyog-ui/employee/fsm/registry/modify-vendor/" + dsoId);
+        return navigate("/upyog-ui/employee/vendor/registry/modify-vendor/" + dsoId);
       case "HOME":
-        return navigate("/upyog-ui/employee/fsm/registry?selectedTabs=VENDOR");
+        return navigate("/upyog-ui/employee/vendor/search-vendor?selectedTabs=VENDOR");
       default:
         break;
     }
@@ -192,7 +192,7 @@ const EditVendorDetails = (props) => {
         refetchDriver();
         setTimeout(() => {
           closeToast();
-          if (selectedAction === "DELETE") navigate(`/upyog-ui/employee/fsm/registry`);
+          if (selectedAction === "DELETE") navigate(`/upyog-ui/employee/vendor/search-vendor?selectedTabs=VENDOR`);
         }, 5000);
       },
     });
@@ -202,10 +202,10 @@ const EditVendorDetails = (props) => {
 
   const onEdit = (details, type, id) => {
     if (type === "ES_FSM_REGISTRY_DETAILS_TYPE_DRIVER") {
-      navigate("/upyog-ui/employee/fsm/registry/modify-driver/" + id);
+      navigate("/upyog-ui/employee/vendor/registry/modify-driver/" + id);
     } else {
       let registrationNumber = details?.values?.find((ele) => ele.title === "ES_FSM_REGISTRY_VEHICLE_NUMBER")?.value;
-      navigate("/upyog-ui/employee/fsm/registry/modify-vehicle/" + registrationNumber);
+      navigate("/upyog-ui/employee/vendor/registry/modify-vehicle/" + registrationNumber);
     }
   };
 

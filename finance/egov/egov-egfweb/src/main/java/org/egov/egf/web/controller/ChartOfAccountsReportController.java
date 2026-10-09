@@ -71,7 +71,7 @@ public class ChartOfAccountsReportController {
 		return COA_REPORT;
 	}
 
-	@GetMapping(value = "/coareportResult", produces = MediaType.TEXT_PLAIN_VALUE)
+	@GetMapping(value = { "/coareportResult", "/coareportResult/" }, produces = MediaType.TEXT_PLAIN_VALUE)
 	public @ResponseBody String getcoaReportResult(final Model model,
 			@ModelAttribute final ChartOfAccountsReport chartOfAccountsReport, final HttpServletRequest request) {
 		final List<ChartOfAccountsReport> coaReportList = chartOfAccountsReportService

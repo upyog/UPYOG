@@ -100,7 +100,6 @@ const enabledModules = [
   "Birth",
   "Death",
   "PTR",
-  "ASSET",
   "ADS",
   "EW",
   "CHB",

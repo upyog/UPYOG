@@ -196,7 +196,7 @@
       "locatorStrategy":"NAME",
       "locatorValue":"bookingNo",
       "action":"TYPE",
-      "inputValue":"${selected.applicationNumber}",
+      "inputValue": "APPLICATION_NO",
       "dynamicSleep": 3000
     },
 

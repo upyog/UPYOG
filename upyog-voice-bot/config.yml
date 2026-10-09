@@ -29,13 +29,48 @@ services:
     description_hi: "संपत्ति कर, जल कनेक्शन, व्यापार लाइसेंस के बारे में प्रश्न पूछें"
 
 upyog:
-  # Base URL of the UPYOG environment (switch between UAT / production here)
+  # Base URL of the UPYOG environment (can be dynamically overridden per request or via UPYOG_BASE_URL / UPYOG_ENV)
+  default_env: "niuatt"
   base_url: "https://niuatt.niua.in"
 
-  # Tenant ID for MDMS and advertisement services
+  # ── Registered Environments ──────────────────────────────
+  environments:
+    niuatt:
+      name: "NIUATT (Testing)"
+      base_url: "https://niuatt.niua.in"
+      tenant_id: "pg.citya"
+      state_tenant: "pg"
+      trusted_origins:
+        - "https://niuatt.niua.in"
+    sandbox:
+      name: "UPYOG Sandbox (Testing)"
+      base_url: "https://upyog-sandbox.niua.org"
+      tenant_id: "pg.citya"
+      state_tenant: "pg"
+      trusted_origins:
+        - "https://upyog-sandbox.niua.org"
+    production:
+      name: "UPYOG Production"
+      base_url: "https://upyog.niua.org"
+      tenant_id: "pg.citya"
+      state_tenant: "pg"
+      trusted_origins:
+        - "https://upyog.niua.org"
+    local:
+      name: "Localhost Development"
+      base_url: "http://localhost:8080"
+      tenant_id: "pg.citya"
+      state_tenant: "pg"
+      trusted_origins:
+        - "http://localhost:3000"
+        - "http://localhost:8080"
+        - "http://127.0.0.1:3000"
+        - "http://127.0.0.1:8080"
+
+  # Tenant ID for MDMS and advertisement services (default fallback)
   tenant_id: "pg.citya"
 
-  # State-level Tenant (used for fetching configs, uploading files, and sending OTP)
+  # State-level Tenant (used for fetching configs, uploading files, and sending OTP) (default fallback)
   state_tenant: "pg"
 
   # ── OAuth / Authentication ──────────────────────────────

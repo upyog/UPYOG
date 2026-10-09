@@ -119,3 +119,37 @@ func TestValidateAggregateRequest_InvalidSortOrder(t *testing.T) {
 		t.Error("expected error for invalid sort order")
 	}
 }
+
+func TestValidateEmployeeAggregateRequest_Valid(t *testing.T) {
+	req := &dto.EmployeeAggregateRequest{
+		RequestInfo: []byte(`{"apiId":"Rainmaker"}`),
+		TenantID:    "pg.citya",
+	}
+
+	err := validator.ValidateEmployeeAggregateRequest(req)
+	if err != nil {
+		t.Errorf("expected valid employee aggregate request, got error: %v", err)
+	}
+}
+
+func TestValidateEmployeeAggregateRequest_MissingFields(t *testing.T) {
+	err := validator.ValidateEmployeeAggregateRequest(nil)
+	if err == nil {
+		t.Error("expected error for nil employee aggregate request")
+	}
+
+	reqNoTenant := &dto.EmployeeAggregateRequest{
+		RequestInfo: []byte(`{"apiId":"Rainmaker"}`),
+	}
+	if validator.ValidateEmployeeAggregateRequest(reqNoTenant) == nil {
+		t.Error("expected error when tenantId is missing")
+	}
+
+	reqNoReqInfo := &dto.EmployeeAggregateRequest{
+		TenantID: "pg.citya",
+	}
+	if validator.ValidateEmployeeAggregateRequest(reqNoReqInfo) == nil {
+		t.Error("expected error when RequestInfo is missing")
+	}
+}
+

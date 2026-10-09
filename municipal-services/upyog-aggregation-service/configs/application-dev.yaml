@@ -59,6 +59,7 @@ providers:
   maxRetries: 2
   cacheTTL: 5m
   recentApplicationsSinceDays: 7
+  paymentRedirectUrlBase: "/upyog-ui/citizen/payment/my-bills"
   completedServiceStatuses:
     - "APPROVE"
     - "APPROVED"
@@ -162,3 +163,10 @@ backend:
       maxConns: 30
       circuitThreshold: 5
       circuitTimeout: 30s
+    employee-dashboard:
+      baseUrl: "http://employee-dashboard.dev:8080"
+      timeout: 10s
+      maxConns: 30
+      circuitThreshold: 5
+      circuitTimeout: 30s
+

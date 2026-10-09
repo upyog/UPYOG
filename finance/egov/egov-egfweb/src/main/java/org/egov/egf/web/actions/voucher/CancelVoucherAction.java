@@ -274,6 +274,30 @@ public class CancelVoucherAction extends BaseFormAction {
 		if (StringUtils.isBlank(voucherNumber)) {
 			voucherNumber = request.getParameter("voucherNumber");
 		}
+		if (StringUtils.isNotBlank(voucherNumber)) {
+			voucherHeader.setVoucherNumber(voucherNumber.trim());
+		}
+		final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		if (fromDate == null) {
+			final String fromDateStr = request.getParameter("fromDate");
+			if (StringUtils.isNotBlank(fromDateStr)) {
+				try {
+					fromDate = sdf.parse(fromDateStr.trim());
+				} catch (final Exception e) {
+					// ignore
+				}
+			}
+		}
+		if (toDate == null) {
+			final String toDateStr = request.getParameter("toDate");
+			if (StringUtils.isNotBlank(toDateStr)) {
+				try {
+					toDate = sdf.parse(toDateStr.trim());
+				} catch (final Exception e) {
+					// ignore
+				}
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -347,7 +371,7 @@ public class CancelVoucherAction extends BaseFormAction {
 					.equalsIgnoreCase(FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL)) {
 				// Checking Voucher for which paymet is generated or not
 				voucheerWithNoPayment = new StringBuilder(
-						"from CVoucherHeader vh where vh not in ( select billVoucherHeader from Miscbilldetail)")
+						"from CVoucherHeader vh where vh not in ( select billVoucherHeader from Miscbilldetail where billVoucherHeader is not null)")
 								.append(" and vh.status in (?) and (vh.isConfirmed != 1 or vh.isConfirmed is null)")
 								.append(" and vh.voucherNumber = ?");
 
@@ -376,7 +400,7 @@ public class CancelVoucherAction extends BaseFormAction {
 		if (StringUtils.equalsIgnoreCase(voucherHeader.getType(), FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL)) {
 			// Voucher for which payment is not generated
 			voucheerWithNoPayment = new StringBuilder(
-					"from CVoucherHeader vh where vh not in ( select billVoucherHeader from Miscbilldetail)").append(
+					"from CVoucherHeader vh where vh not in ( select billVoucherHeader from Miscbilldetail where billVoucherHeader is not null)").append(
 							" and vh.status in (:vhStatus)  and (vh.isConfirmed != 1 or vh.isConfirmed is null)");
 			// Filters vouchers for which payments are generated and are in
 			// cancelled state
@@ -414,10 +438,10 @@ public class CancelVoucherAction extends BaseFormAction {
 
 			// If remittance payment is there and are in cancelled state
 			final StringBuilder uncancelledRemittances = new StringBuilder(
-					" SELECT distinct(vh.id) FROM EgRemittanceDetail r, EgRemittanceGldtl rgd, Generalledgerdetail gld, ")
+					" SELECT distinct(vh.id) FROM EgRemittanceDetail r, EgRemittanceGldtl rgd, CGeneralLedgerDetail gld, ")
 							.append(" CGeneralLedger gl, EgRemittance rd, CVoucherHeader vh ,Vouchermis billmis,")
 							.append(" CVoucherHeader remittedvh  WHERE ")
-							.append(" r.egRemittanceGldtl=rgd AND rgd.generalledgerdetail=gld AND gld.generalledger=gl")
+							.append(" r.egRemittanceGldtl=rgd AND rgd.generalledgerdetail=gld AND gld.generalLedgerId=gl")
 							.append(" AND r.egRemittance=rd AND")
 							.append(" rd.voucherheader=remittedvh AND gl.voucherHeaderId =vh  AND ")
 							.append(" remittedvh =billmis.voucherheaderid and remittedvh.status!=:status");
@@ -707,6 +731,7 @@ public class CancelVoucherAction extends BaseFormAction {
 
 	@Override
 	public void validate() {
+		resolveSearchCriteriaFromRequest();
 		if (voucherHeader.getVoucherNumber() == null || voucherHeader.getVoucherNumber().isEmpty()) {
 			if (fromDate == null)
 				addFieldError("From Date", getText("Please Enter From Date"));

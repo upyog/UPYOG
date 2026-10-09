@@ -188,7 +188,7 @@
       "locatorStrategy":"XPATH",
       "locatorValue":"//h4[contains(text(),'Booking No.')]/following::input[1]",
       "action":"TYPE",
-      "inputValue":"${selected.applicationNumber}",
+      "inputValue": "APPLICATION_NO",
       "dynamicSleep":1000
     },
 

@@ -88,6 +88,10 @@ public class DashboardClientImpl implements DashboardClient {
 
         ModuleTransformer<Object> transformer = registry.get(request.getModule());
         DashboardPayload payload = transformer.transform(request.getRawData());
+        if (payload != null) {
+            payload.setSchedulerId(request.getSchedulerId());
+            payload.setModuleDetailId(request.getModuleDetailId());
+        }
 
         commonValidator.validate(payload);
 

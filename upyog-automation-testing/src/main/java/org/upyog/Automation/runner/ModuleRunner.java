@@ -4,6 +4,7 @@ import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.upyog.Automation.Base.BaseTest;
+import org.upyog.Automation.Utils.AutomationConstants;
 import org.upyog.Automation.Utils.WorkflowDataStore;
 import org.upyog.Automation.engine.TestEngine;
 import org.upyog.Automation.engine.TestEngine.ExecutionResult;
@@ -15,7 +16,7 @@ public class ModuleRunner {
             LoggerFactory.getLogger(ModuleRunner.class);
 
     private static final String PROPERTIES_PATH =
-            "config/dev.properties";
+            AutomationConstants.DEV_PROPERTIES_PATH;
 
     public static void main(String[] args) {
 
@@ -23,7 +24,7 @@ public class ModuleRunner {
                 args.length > 0
                         ? args
                         : new String[]{
-                        "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM",
+                        AutomationConstants.MODULE_ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM,
 
 
                 };
@@ -32,7 +33,7 @@ public class ModuleRunner {
 
         try {
 
-            WorkflowDataStore.put("selected.url",
+            WorkflowDataStore.put(AutomationConstants.KEY_SELECTED_URL,
                     "https://upyog.niua.org/upyog-ui/citizen/login");
 
             WorkflowDataStore.put("selected.cndCitizen.url",
@@ -47,17 +48,17 @@ public class ModuleRunner {
             WorkflowDataStore.put("selected.svEmployee.url",
                     "https://upyog.niua.org/sv-ui/employee/login");
 
-            if (WorkflowDataStore.get("selected.mobile") == null)
-                WorkflowDataStore.put("selected.mobile", "9999999999");
+            if (WorkflowDataStore.get(AutomationConstants.KEY_SELECTED_MOBILE) == null)
+                WorkflowDataStore.put(AutomationConstants.KEY_SELECTED_MOBILE, "9999999999");
 
-            if (WorkflowDataStore.get("selected.otp") == null)
-                WorkflowDataStore.put("selected.otp", "123456");
+            if (WorkflowDataStore.get(AutomationConstants.KEY_SELECTED_OTP) == null)
+                WorkflowDataStore.put(AutomationConstants.KEY_SELECTED_OTP, "123456");
 
-            if (WorkflowDataStore.get("selected.city") == null)
-                WorkflowDataStore.put("selected.city", "Delhi");
+            if (WorkflowDataStore.get(AutomationConstants.KEY_SELECTED_CITY) == null)
+                WorkflowDataStore.put(AutomationConstants.KEY_SELECTED_CITY, "Delhi");
 
-            if (WorkflowDataStore.get("selected.permitNo") == null)
-                WorkflowDataStore.put("selected.permitNo", "TEST123");
+            if (WorkflowDataStore.get(AutomationConstants.KEY_SELECTED_PERMIT_NO) == null)
+                WorkflowDataStore.put(AutomationConstants.KEY_SELECTED_PERMIT_NO, "TEST123");
 
             BaseTest baseTest = new BaseTest();
             baseTest.setUp();
@@ -91,18 +92,18 @@ public class ModuleRunner {
             // EWASTE
             // =====================================================
 
-            case "EWASTE_CITIZEN":
+            case AutomationConstants.MODULE_EWASTE_CITIZEN:
 
                 result = engine.executeModule(
-                        "test-config/ewaste/ewaste_citizen_module.json"
+                        AutomationConstants.CONFIG_EWASTE_CITIZEN
                 );
 
                 break;
 
-            case "EWASTE_EMPLOYEE":
+            case AutomationConstants.MODULE_EWASTE_EMPLOYEE:
 
                 result = engine.executeModule(
-                        "test-config/ewaste/ewaste_employee_module.json"
+                        AutomationConstants.CONFIG_EWASTE_EMPLOYEE
                 );
 
                 break;
@@ -112,18 +113,18 @@ public class ModuleRunner {
             // ADVERTISEMENT
             // =====================================================
 
-            case "ADVERTISEMENT_CITIZEN":
+            case AutomationConstants.MODULE_ADVERTISEMENT_CITIZEN:
 
                 result = engine.executeModule(
-                        "test-config/advertisement/adv_citizen_module.json"
+                        AutomationConstants.CONFIG_ADVERTISEMENT_CITIZEN
                 );
 
                 break;
 
-            case "ADVERTISEMENT_EMPLOYEE":
+            case AutomationConstants.MODULE_ADVERTISEMENT_EMPLOYEE:
 
                 result = engine.executeModule(
-                        "test-config/advertisement/adv_employee_module.json"
+                        AutomationConstants.CONFIG_ADVERTISEMENT_EMPLOYEE
                 );
 
                 break;
@@ -133,26 +134,26 @@ public class ModuleRunner {
             // ASSET
             // =====================================================
 
-            case "ASSET_EMPLOYEE":
+            case AutomationConstants.MODULE_ASSET_EMPLOYEE:
 
                 result = engine.executeModule(
-                        "test-config/asset/asset_employee_module.json"
+                        AutomationConstants.CONFIG_ASSET_EMPLOYEE
                 );
 
                 break;
 
-            case "ASSET_VERIFIER":
+            case AutomationConstants.MODULE_ASSET_VERIFIER_RUNNER:
 
                 result = engine.executeModule(
-                        "test-config/asset/asset_employeeVerifier_module.json"
+                        AutomationConstants.CONFIG_ASSET_EMPLOYEE_VERIFIER
                 );
 
                 break;
 
-            case "ASSET_APPROVER":
+            case AutomationConstants.MODULE_ASSET_APPROVER_RUNNER:
 
                 result = engine.executeModule(
-                        "test-config/asset/asset_employeeApprover_module.json"
+                        AutomationConstants.CONFIG_ASSET_EMPLOYEE_APPROVER
                 );
 
                 break;
@@ -162,18 +163,18 @@ public class ModuleRunner {
             // CHB
             // =====================================================
 
-            case "CHB_CITIZEN":
+            case AutomationConstants.MODULE_CHB_CITIZEN:
 
                 result = engine.executeModule(
-                        "test-config/chb/chb_citizen_module.json"
+                        AutomationConstants.CONFIG_CHB_CITIZEN
                 );
 
                 break;
 
-            case "CHB_EMPLOYEE":
+            case AutomationConstants.MODULE_CHB_EMPLOYEE:
 
                 result = engine.executeModule(
-                        "test-config/chb/chb_employee_module.json"
+                        AutomationConstants.CONFIG_CHB_EMPLOYEE
                 );
 
                 break;
@@ -183,26 +184,26 @@ public class ModuleRunner {
             // CND
             // =====================================================
 
-            case "CND_REQUEST":
+            case AutomationConstants.MODULE_CND_REQUEST:
 
                 result = engine.executeModule(
-                        "test-config/cnd/cnd_citizen_module.json"
+                        AutomationConstants.CONFIG_CND_CITIZEN
                 );
 
                 break;
 
-            case "CND_EMPLOYEE":
+            case AutomationConstants.MODULE_CND_EMPLOYEE:
 
                 result = engine.executeModule(
-                        "test-config/cnd/cnd_employee_module.json"
+                        AutomationConstants.CONFIG_CND_EMPLOYEE
                 );
 
                 break;
 
-            case "CND_VENDOR":
+            case AutomationConstants.MODULE_CND_VENDOR:
 
                 result = engine.executeModule(
-                        "test-config/cnd/cnd_vendor_module.json"
+                        AutomationConstants.CONFIG_CND_VENDOR
                 );
 
                 break;
@@ -211,42 +212,42 @@ public class ModuleRunner {
             // DESLUDGING SERVICE
             // =====================================================
 
-            case "DESLUDGING_CITIZEN":
+            case AutomationConstants.MODULE_DESLUDGING_CITIZEN:
 
                 result = engine.executeModule(
-                        "test-config/desludging/desludging_citizen_module.json"
+                        AutomationConstants.CONFIG_DESLUDGING_CITIZEN
                 );
 
                 break;
 
-            case "DESLUDGING_EMPLOYEE":
+            case AutomationConstants.MODULE_DESLUDGING_EMPLOYEE:
 
                 result = engine.executeModule(
-                        "test-config/desludging/desludging_employee_module.json"
+                        AutomationConstants.CONFIG_DESLUDGING_EMPLOYEE_MODULE
                 );
 
                 break;
 
-            case "DESLUDGING_CITIZEN_PAYMENT":
+            case AutomationConstants.MODULE_DESLUDGING_CITIZEN_PAYMENT:
 
                 result = engine.executeModule(
-                        "test-config/desludging/desludging_citizenPayment_module.json"
+                        AutomationConstants.CONFIG_DESLUDGING_CITIZEN_PAYMENT
                 );
 
                 break;
 
-            case "DESLUDGING_ASSIGN_PSSO":
+            case AutomationConstants.MODULE_DESLUDGING_ASSIGN_PSSO:
 
                 result = engine.executeModule(
-                        "test-config/desludging/desludging_assignPsso_module.json"
+                        AutomationConstants.CONFIG_DESLUDGING_ASSIGN_PSSO_MODULE
                 );
 
                 break;
 
-            case "DESLUDGING_FSTPO":
+            case AutomationConstants.MODULE_DESLUDGING_FSTPO:
 
                 result = engine.executeModule(
-                        "test-config/desludging/desludging_fstpo_module.json"
+                        AutomationConstants.CONFIG_DESLUDGING_EMPLOYEE_FSTPO
                 );
 
                 break;
@@ -258,34 +259,34 @@ public class ModuleRunner {
             // OBPAS
             // =====================================================
 
-            case "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM":
+            case AutomationConstants.MODULE_ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM:
 
                 result = engine.executeModule(
-                        "test-config/obpas/obpas_citizen_module.json"
+                        AutomationConstants.CONFIG_OBPAS_CITIZEN
                 );
 
                 break;
 
-            case "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_EMPLOYEE":
+            case AutomationConstants.MODULE_ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_EMPLOYEE:
 
                 result = engine.executeModule(
-                        "test-config/obpas/obpas_employee_module.json"
+                        AutomationConstants.CONFIG_OBPAS_EMPLOYEE
                 );
 
                 break;
 
-            case "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_OC":
+            case AutomationConstants.MODULE_ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_OC:
 
                 result = engine.executeModule(
-                        "test-config/obpas/obpas_oc_citizen_module.json"
+                        AutomationConstants.CONFIG_OBPAS_OC_CITIZEN_MODULE
                 );
 
                 break;
 
-            case "ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_OC_EMP":
+            case AutomationConstants.MODULE_ONLINE_BUILDING_PLAN_APPROVAL_SYSTEM_OC_EMP:
 
                 result = engine.executeModule(
-                        "test-config/obpas/obpas_oc_employee_module.json"
+                        AutomationConstants.CONFIG_OBPAS_OC_EMPLOYEE
                 );
 
                 break;
@@ -295,18 +296,18 @@ public class ModuleRunner {
             // PET
             // =====================================================
 
-            case "PET":
+            case AutomationConstants.MODULE_PET:
 
                 result = engine.executeModule(
-                        "test-config/pet/pet_citizen_module.json"
+                        AutomationConstants.CONFIG_PET_CITIZEN
                 );
 
                 break;
 
-            case "PET_EMP":
+            case AutomationConstants.MODULE_PET_EMP:
 
                 result = engine.executeModule(
-                        "test-config/pet/pet_employee_module.json"
+                        AutomationConstants.CONFIG_PET_EMPLOYEE
                 );
 
                 break;
@@ -316,18 +317,18 @@ public class ModuleRunner {
             // PROPERTY TAX
             // =====================================================
 
-            case "PROPERTY_TAX":
+            case AutomationConstants.MODULE_PROPERTY_TAX:
 
                 result = engine.executeModule(
-                        "test-config/propertyTax/property_tax_citizen_module.json"
+                        AutomationConstants.CONFIG_PROPERTY_TAX_CITIZEN
                 );
 
                 break;
 
-            case "PROPERTY_TAX_EMP":
+            case AutomationConstants.MODULE_PROPERTY_TAX_EMP:
 
                 result = engine.executeModule(
-                        "test-config/propertyTax/property_tax_employee_module.json"
+                        AutomationConstants.CONFIG_PROPERTY_TAX_EMPLOYEE
                 );
 
                 break;
@@ -337,18 +338,18 @@ public class ModuleRunner {
             // PGR
             // =====================================================
 
-            case "PGR":
+            case AutomationConstants.MODULE_PGR:
 
                 result = engine.executeModule(
-                        "test-config/pgr/pgr_citizen_module.json"
+                        AutomationConstants.CONFIG_PGR_CITIZEN
                 );
 
                 break;
 
-            case "PGR_EMP":
+            case AutomationConstants.MODULE_PGR_EMP:
 
                 result = engine.executeModule(
-                        "test-config/pgr/pgr_employee_module.json"
+                        AutomationConstants.CONFIG_PGR_EMPLOYEE
                 );
 
                 break;
@@ -357,73 +358,73 @@ public class ModuleRunner {
             //  REQUEST SERVICE
             // =====================================================
 
-            case "MOBILE_TOILET_CITIZEN":
+            case AutomationConstants.MODULE_MOBILE_TOILET_CITIZEN:
 
                 result = engine.executeModule(
-                        "test-config/requestService/mobile_toilet_citizen_module.json"
+                        AutomationConstants.CONFIG_MOBILE_TOILET_CITIZEN
                 );
 
                 break;
 
-            case "MOBILE_TOILET_EMP":
+            case AutomationConstants.MODULE_MOBILE_TOILET_EMP:
 
                 result = engine.executeModule(
-                        "test-config/requestService/mobile_toilet_employee_module.json"
+                        AutomationConstants.CONFIG_MOBILE_TOILET_EMPLOYEE
                 );
 
                 break;
-            case "MOBILE_TOILET_VENDOR":
+            case AutomationConstants.MODULE_MOBILE_TOILET_VENDOR:
 
                 result = engine.executeModule(
-                        "test-config/requestService/mobile_toilet_vendor_module.json"
-                );
-
-                break;
-
-            case "TREE_PRUNING_CITIZEN":
-
-                result = engine.executeModule(
-                        "test-config/requestService/tree_pruning_citizen_module.json"
+                        AutomationConstants.CONFIG_MOBILE_TOILET_VENDOR
                 );
 
                 break;
 
-            case "TREE_PRUNING_EMP":
+            case AutomationConstants.MODULE_TREE_PRUNING_CITIZEN:
 
                 result = engine.executeModule(
-                        "test-config/requestService/tree_pruning_employee_module.json"
+                        AutomationConstants.CONFIG_TREE_PRUNING_CITIZEN
                 );
 
                 break;
 
-            case "TREE_PRUNING_VENDOR":
+            case AutomationConstants.MODULE_TREE_PRUNING_EMP:
 
                 result = engine.executeModule(
-                        "test-config/requestService/tree_pruning_vendor_module.json"
+                        AutomationConstants.CONFIG_TREE_PRUNING_EMPLOYEE
                 );
 
                 break;
 
-            case "WATER_TANKER_CITIZEN":
+            case AutomationConstants.MODULE_TREE_PRUNING_VENDOR:
 
                 result = engine.executeModule(
-                        "test-config/requestService/water_tanker_citizen_module.json"
+                        AutomationConstants.CONFIG_TREE_PRUNING_VENDOR
                 );
 
                 break;
 
-            case "WATER_TANKER_EMP":
+            case AutomationConstants.MODULE_WATER_TANKER_CITIZEN:
 
                 result = engine.executeModule(
-                        "test-config/requestService/water_tanker_employee_module.json"
+                        AutomationConstants.CONFIG_WATER_TANKER_CITIZEN
                 );
 
                 break;
 
-            case "WATER_TANKER_VENDOR":
+            case AutomationConstants.MODULE_WATER_TANKER_EMP:
 
                 result = engine.executeModule(
-                        "test-config/requestService/water_tanker_vendor_module.json"
+                        AutomationConstants.CONFIG_WATER_TANKER_EMPLOYEE
+                );
+
+                break;
+
+            case AutomationConstants.MODULE_WATER_TANKER_VENDOR:
+
+                result = engine.executeModule(
+                        AutomationConstants.CONFIG_WATER_TANKER_VENDOR
                 );
 
                 break;
@@ -433,18 +434,18 @@ public class ModuleRunner {
             // STREET VENDING
             // =====================================================
 
-            case "STREET_VENDING":
+            case AutomationConstants.MODULE_STREET_VENDING:
 
                 result = engine.executeModule(
-                        "test-config/streetVending/street_vending_citizen_module.json"
+                        AutomationConstants.CONFIG_STREET_VENDING_CITIZEN
                 );
 
                 break;
 
-            case "STREET_VENDING_EMP":
+            case AutomationConstants.MODULE_STREET_VENDING_EMP:
 
                 result = engine.executeModule(
-                        "test-config/streetVending/street_vending_employee_module.json"
+                        AutomationConstants.CONFIG_STREET_VENDING_EMPLOYEE
                 );
 
                 break;
@@ -454,18 +455,18 @@ public class ModuleRunner {
             // TRADE LICENSE
             // =====================================================
 
-            case "TRADE_LICENSE":
+            case AutomationConstants.MODULE_TRADE_LICENSE:
 
                 result = engine.executeModule(
-                        "test-config/tradelicense/trade_license_citizen_module.json"
+                        AutomationConstants.CONFIG_TRADE_LICENSE_CITIZEN
                 );
 
                 break;
 
-            case "TRADE_LICENSE_EMP":
+            case AutomationConstants.MODULE_TRADE_LICENSE_EMP:
 
                 result = engine.executeModule(
-                        "test-config/tradelicense/trade_license_employee_module.json"
+                        AutomationConstants.CONFIG_TRADE_LICENSE_EMPLOYEE
                 );
 
                 break;
@@ -475,29 +476,85 @@ public class ModuleRunner {
             // WATER + SEWERAGE
             // =====================================================
 
-            case "WATER_AND_SEWERAGE":
+            case AutomationConstants.MODULE_WATER_AND_SEWERAGE:
 
                 result = engine.executeModule(
-                        "test-config/waterAndSewerage/water_and_sewerage_citizen_module.json"
+                        AutomationConstants.CONFIG_WATER_AND_SEWERAGE_CITIZEN
                 );
 
                 break;
 
-            case "WATER_EMP":
+            case AutomationConstants.MODULE_WATER_EMP:
 
                 result = engine.executeModule(
-                        "test-config/waterAndSewerage/water_employee_module.json"
+                        AutomationConstants.CONFIG_WATER_EMPLOYEE
                 );
 
                 break;
 
-            case "SEWERAGE_EMP":
+            case AutomationConstants.MODULE_SEWERAGE_EMP:
 
                 result = engine.executeModule(
-                        "test-config/waterAndSewerage/sewerage_employee_module.json"
+                        AutomationConstants.CONFIG_SEWERAGE_EMPLOYEE
                 );
 
                 break;
+
+            // =====================================================
+            // GARBAGE COLLECTION
+            // =====================================================
+
+
+            case AutomationConstants.MODULE_GC_CITIZEN:
+                result = engine.executeModule(AutomationConstants.CONFIG_GARBAGE_COLLECTION_CITIZEN);
+                break;
+
+            case AutomationConstants.MODULE_GC_EMPLOYEE:
+                result = engine.executeModule(AutomationConstants.CONFIG_GARBAGE_COLLECTION_EMPLOYEE);
+                break;
+
+
+            // =====================================================
+            // ESTATE MANAGEMENT
+            // =====================================================
+
+
+            case AutomationConstants.MODULE_ESTATE_MANAGEMENT_CITIZEN:
+                result = engine.executeModule(AutomationConstants.CONFIG_ESTATE_MANAGEMENT_CITIZEN);
+                break;
+
+            case AutomationConstants.MODULE_ESTATE_MANAGEMENT_EMPLOYEE:
+                result = engine.executeModule(AutomationConstants.CONFIG_ESTATE_MANAGEMENT_EMPLOYEE);
+                break;
+
+
+            // =====================================================
+            // CHALLAN GENERATION
+            // =====================================================
+
+
+            case AutomationConstants.MODULE_CHALLAN_GENERATION_CITIZEN:
+                result = engine.executeModule(AutomationConstants.CONFIG_CHALLAN_CITIZEN);
+                break;
+
+            case AutomationConstants.MODULE_CHALLAN_GENERATION_EMPLOYEE:
+                result = engine.executeModule(AutomationConstants.CONFIG_CHALLAN_EMPLOYEE);
+                break;
+
+            // =====================================================
+            // NO DUE CERTIFICATE
+            // =====================================================
+
+
+            case AutomationConstants.MODULE_NO_DUE_CERTIFICATE_CITIZEN:
+                result = engine.executeModule(AutomationConstants.CONFIG_NDC_CITIZEN);
+                break;
+
+            case AutomationConstants.MODULE_NO_DUE_CERTIFICATE_EMPLOYEE:
+                result = engine.executeModule(AutomationConstants.CONFIG_NDC_EMPLOYEE);
+                break;
+
+
 
 
             default:

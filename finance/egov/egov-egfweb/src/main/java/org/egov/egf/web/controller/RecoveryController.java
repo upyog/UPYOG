@@ -222,7 +222,7 @@ public class RecoveryController {
 		return new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}").toString();
 	}
 
-    @GetMapping(value = "/ajax/getAccountCodes")
+    @GetMapping(value = { "/ajax/getAccountCodes", "/ajax/getAccountCodes/" })
     public @ResponseBody List<CChartOfAccounts> getAccountCodes(
             @RequestParam("subLedgerCode") @SanitizeHtml final String subLedgerCode) {
         List<CChartOfAccounts> accounts = null;

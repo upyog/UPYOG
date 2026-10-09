@@ -145,7 +145,7 @@ $('#egPartytype').change(
 			console.log("selected party type : ",selectedType);
 			$.ajax({
 				method : "GET",
-				url : "ajax/getAccountCodes",
+				url : "/services/EGF/recovery/ajax/getAccountCodes",
 				data : {
 					subLedgerCode : selectedType
 				},

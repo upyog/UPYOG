@@ -12,5 +12,7 @@ combinedMetricsQuery: |
         SELECT DISTINCT createdby FROM eg_chb_booking_detail bd WHERE bd.tenant_id = main.tenant_id AND application_date >= :startTime AND application_date <= :endTime
     ) c) AS createdbylistjson
   FROM (
-    SELECT DISTINCT tenant_id FROM eg_chb_booking_detail WHERE tenant_id LIKE CONCAT(:tenantId, '%')
+    SELECT UNNEST(string_to_array(:tenantId, ',')) AS tenant_id
   ) main
+
+

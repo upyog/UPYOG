@@ -84,4 +84,14 @@ public class DashboardRequest {
      * a {@link ClassCastException} inside the transformer.
      */
     private Object rawData;
+
+    /**
+     * Unique identifier of the triggering scheduler run, if triggered by a background scheduler.
+     */
+    private String schedulerId;
+
+    /**
+     * Unique identifier of the parent module configuration record in ingestion_module_detail.
+     */
+    private String moduleDetailId;
 }

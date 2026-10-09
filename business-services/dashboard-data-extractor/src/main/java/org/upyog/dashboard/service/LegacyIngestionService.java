@@ -6,6 +6,7 @@ import org.upyog.dashboard.util.CommonUtils;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -313,7 +314,7 @@ public class LegacyIngestionService {
 			log.debug("Input is not valid JSON, wrapping as error object: {}", exception.getMessage());
 		}
 		try {
-			return objectMapper.writeValueAsString(java.util.Map.of("error", input));
+			return objectMapper.writeValueAsString(Map.of("error", input));
 		} catch (Exception exception) {
 			log.error("LegacyIngestionService | Failed to serialize error string to JSON: {}", input, exception);
 			return "{\"error\":\"" + input.replace("\"", "\\\"").replace("\\n", " ") + "\"}";

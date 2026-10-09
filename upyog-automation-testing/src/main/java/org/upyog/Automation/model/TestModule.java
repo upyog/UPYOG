@@ -1,57 +1,50 @@
 package org.upyog.Automation.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.util.List;
 
 /**
- * Represents a complete test module loaded from JSON.
- * Contains module metadata and a list of instructions to execute sequentially.
+ * Represents a complete test module loaded dynamically from a JSON configuration file.
+ *
+ * <p>Encapsulates module metadata and the sequential list of {@link TestInstruction}
+ * steps to be executed by the test engine.</p>
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class TestModule {
 
+    /**
+     * Name or identifier of the test module.
+     */
     @JsonProperty("moduleName")
     private String moduleName;
 
+    /**
+     * Description explaining the test module purpose and flow.
+     */
     @JsonProperty("description")
     private String description;
 
+    /**
+     * Target application base URL for executing this module.
+     */
     @JsonProperty("baseUrl")
     private String baseUrl;
 
+    /**
+     * Sequential list of test step instructions comprising this module.
+     */
     @JsonProperty("instructions")
     private List<TestInstruction> instructions;
 
-    public TestModule() {}
-
-    public String getModuleName() {
-        return moduleName;
-    }
-
-    public void setModuleName(String moduleName) {
-        this.moduleName = moduleName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getBaseUrl() {
-        return baseUrl;
-    }
-
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
-    }
-
-    public List<TestInstruction> getInstructions() {
-        return instructions;
-    }
-
-    public void setInstructions(List<TestInstruction> instructions) {
-        this.instructions = instructions;
-    }
 }
+

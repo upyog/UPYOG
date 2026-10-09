@@ -64,7 +64,15 @@ export const cndStyles= {
     gap: "0px 20px",
   },
 
+  loaderAlignment:{
+    display: "flex", 
+    alignItems: "center", 
+    gap: "8px"
+  },
 
+  employeeSideWasteTypeFont:{
+    fontWeight:"bold"
+  },
 
   wasteQunatityInProgress:{
     width:"72%"
@@ -98,7 +106,22 @@ export const cndStyles= {
   siteSackPhotoEmployee:{
     marginBottom:"20px",
   },
+  siteMediaPhotoEmployee:{
+    marginBottom:"15px",
+  },
 
+  errorStyle: { 
+    width: "70%", 
+    marginLeft: "30%", 
+    fontSize: "12px",
+    marginTop: "-21px"
+  },
+
+  employeeSideContainer:{
+    border: "1px solid #E3E3E3", 
+    padding: "16px", 
+    marginTop: "8px" 
+  },
 
   wasteTypeTable:{
     marginTop: "20px", 
@@ -255,7 +278,9 @@ export const cndStyles= {
     marginTop:"10px"
   },
 
-
+  searchApplicationWarning:{
+    color: "#505A5F"
+  },
   
   filterLabel:{
     display: "flex", 
@@ -275,6 +300,9 @@ export const cndStyles= {
     padding: "6px"
   },
 
+  sortingStyle:{
+    overflowX:"scroll"
+  },
 
   fieldStyle:{
     marginRight: 0 
@@ -284,7 +312,24 @@ export const cndStyles= {
     width: "85%"
   },
 
+  applicationDetailHeader:{
+    marginLeft: "0px", 
+    paddingTop: "10px", 
+    fontSize: "32px"
+  },
 
+  applicationDetailCard:{
+    zIndex: "10",
+    display:"flex",
+    flexDirection:"row-reverse",
+    alignItems:"center",
+    marginTop:"-25px"
+  },
+
+  downloadButton:{
+    zIndex: "10",  
+    position: "relative"
+  },
 
   menuStyle:{
     color: "#FFFFFF", 
@@ -295,7 +340,18 @@ export const cndStyles= {
     marginTop:"15px"
   },
 
+  citizenApplicantDetailCard:{
+    fontSize: "24px"
+  },
 
+  cardHeaderWithOptions:{
+    marginRight: "auto", 
+    maxWidth: "960px"
+  },
+
+  cardHeader:{
+    fontSize: "32px"
+  },
 
   citizenApplicationTable:{
     minWidth: "150px",
@@ -345,7 +401,25 @@ export const cndStyles= {
     marginTop:"10px"
   },
 
+  inboxClearButton:{
+    gridColumn: "3/3", 
+    textAlign: "right", 
+    paddingTop: "10px"
+  },
 
+  submitBarFlex:{
+    flex: 1
+  },
+
+  searchSubmitBar:{
+    width:"60%", 
+    marginTop:"17%"
+  },
+
+  searchWrapper:{
+    maxWidth: "unset", 
+    marginLeft: "unset"
+  },
 
   searchContainerInbox:{
     width: "auto",

@@ -89,6 +89,7 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("providers.maxRetries", 2)
 	v.SetDefault("providers.cacheTTL", 5*time.Minute)
 	v.SetDefault("providers.recentApplicationsSinceDays", 7)
+	v.SetDefault("providers.paymentRedirectUrlBase", "/upyog-ui/citizen/payment/my-bills")
 	v.SetDefault("providers.completedServiceStatuses", []string{
 		"APPROVE",
 		"APPROVED",

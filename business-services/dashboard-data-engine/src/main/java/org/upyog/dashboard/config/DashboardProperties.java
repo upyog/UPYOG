@@ -6,12 +6,18 @@ import org.springframework.stereotype.Component;
 import lombok.Getter;
 
 /**
- * Centralized application properties configuration class.
- *
+ * Centralized configuration properties component for dashboard data engine and extractors.
  * <p>
- * Retrieves properties from {@code application.properties} without default
- * fallbacks to ensure that missing configuration keys cause a fail-fast startup
- * failure.
+ * Binds environment configurations defined across application properties files:
+ * <ul>
+ *   <li>UPYOG OAuth user authentication endpoints, system credentials, and retry policies.</li>
+ *   <li>National dashboard ingestion engine URLs and bulk initialization endpoints ({@code bulkInitUrl}).</li>
+ *   <li>Module-specific classification mappings for Property Tax (PT) tax heads, usage categories, and digital payments.</li>
+ *   <li>AWS S3 connection settings (bucket, region, access credentials, root folder prefix).</li>
+ *   <li>Kafka topic destinations for asynchronous persistence of audit records and error logs.</li>
+ *   <li>Upload mode strategies (API vs. S3) for daily incremental and legacy batch workflows.</li>
+ * </ul>
+ * </p>
  */
 @Getter
 @Component
@@ -56,6 +62,9 @@ public class DashboardProperties {
     // Ingest API settings
     @Value("${national.dashboard.ingest.url}")
     private String dashboardIngestUrl;
+
+    @Value("${national.dashboard.bulk.init.url}")
+    private String bulkInitUrl;
 
     // HTTP Ingestion retry config
     @Value("${dashboard-data.retry.enabled:false}")
@@ -144,19 +153,58 @@ public class DashboardProperties {
     @Value("${dashboard-data.legacy.upload-mode}")
     private String legacyUploadMode;
 
+    // Generic delimited file configuration (e.g. .psv, .csv, .txt)
+    @Value("${dashboard-data.delimited-file.enabled:${dashboard-data.pipe-file.enabled:false}}")
+    private boolean delimitedFileEnabled;
+
+    @Value("${dashboard-data.delimited-file.delimiter:${dashboard-data.pipe-file.delimiter:|}}")
+    private String fileDelimiter;
+
+    @Value("${dashboard-data.delimited-file.file-extension:.psv}")
+    private String delimitedFileExtension;
+
+    @Value("${dashboard-data.delimited-file.keep-file:${dashboard-data.pipe-file.keep-file:false}}")
+    private boolean delimitedKeepFile;
+
     /**
-     * Resolves effective daily upload mode (DIRECT_API, S3, or FILESTORE).
+     * Legacy alias getter returning whether flat delimited file generation is enabled.
      *
-     * @return normalized mode string
+     * @return true if delimited file generation is enabled
+     */
+    public boolean isPipeFileEnabled() {
+        return delimitedFileEnabled;
+    }
+
+    /**
+     * Legacy alias getter returning the configured dataset field delimiter.
+     *
+     * @return delimiter character string
+     */
+    public String getPipeFileDelimiter() {
+        return fileDelimiter;
+    }
+
+    /**
+     * Resolves the effective upload mode strategy for daily incremental ingestion batches.
+     * <p>
+     * Checks configured property {@code dashboard-data.daily.upload-mode}.
+     * If unconfigured or blank, defaults to {@code "API"} (direct HTTP multipart POST).
+     * </p>
+     *
+     * @return normalized upload mode string (e.g. "API", "S3", or "FILESTORE")
      */
     public String getEffectiveDailyUploadMode() {
         return (dailyUploadMode != null && !dailyUploadMode.trim().isEmpty()) ? dailyUploadMode.trim() : "API";
     }
 
     /**
-     * Resolves effective legacy upload mode (DIRECT_API, S3, or FILESTORE).
+     * Resolves the effective upload mode strategy for historical legacy backfill batches.
+     * <p>
+     * Checks configured property {@code dashboard-data.legacy.upload-mode}.
+     * If unconfigured or blank, defaults to {@code "S3"} (upload Excel file to AWS S3 and trigger bulk init).
+     * </p>
      *
-     * @return normalized mode string
+     * @return normalized upload mode string (e.g. "S3", "API", or "FILESTORE")
      */
     public String getEffectiveLegacyUploadMode() {
         return (legacyUploadMode != null && !legacyUploadMode.trim().isEmpty()) ? legacyUploadMode.trim() : "S3";

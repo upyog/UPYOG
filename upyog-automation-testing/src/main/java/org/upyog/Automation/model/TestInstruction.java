@@ -1,91 +1,66 @@
 package org.upyog.Automation.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
- * Represents a single test step instruction.
- * All fields are populated from JSON configuration—no hardcoding in Java.
+ * Represents a single test step instruction within a module workflow.
+ * All fields are populated dynamically from JSON configuration files.
  *
- * The framework uses this POJO to dynamically determine:
- * - Which element to locate (locatorStrategy + locatorValue)
- * - What action to perform (action)
- * - What data to input (inputValue)
- * - How long to wait after the action (dynamicSleep)
+ * <p>The framework uses this model to determine:</p>
+ * <ul>
+ *     <li>Which element to locate ({@code locatorStrategy} + {@code locatorValue})</li>
+ *     <li>What action to perform ({@code action})</li>
+ *     <li>What data to input ({@code inputValue})</li>
+ *     <li>How long to wait after executing the action ({@code dynamicSleep})</li>
+ * </ul>
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class TestInstruction {
 
+    /**
+     * Human-readable name or label describing this test step.
+     */
     @JsonProperty("stepName")
     private String stepName;
 
+    /**
+     * Locator strategy used to find the web element (e.g., "XPATH", "CSS", "ID", "NAME").
+     */
     @JsonProperty("locatorStrategy")
     private String locatorStrategy;
 
+    /**
+     * Locator value or expression corresponding to the locator strategy.
+     */
     @JsonProperty("locatorValue")
     private String locatorValue;
 
+    /**
+     * Action type to perform (e.g., "TYPE", "CLICK", "CLICK_JS", "UPLOAD_FILE", "SELECT_DROPDOWN_BY_INDEX").
+     */
     @JsonProperty("action")
     private String action;
 
+    /**
+     * Input value, data store key, or parameter supplied to the action.
+     */
     @JsonProperty("inputValue")
     private String inputValue;
 
+    /**
+     * Optional sleep/wait duration in milliseconds applied after executing this step.
+     */
     @JsonProperty("dynamicSleep")
     private long dynamicSleep;
 
-    // Default constructor for Jackson deserialization
-    public TestInstruction() {}
-
-    public String getStepName() {
-        return stepName;
-    }
-
-    public void setStepName(String stepName) {
-        this.stepName = stepName;
-    }
-
-    public String getLocatorStrategy() {
-        return locatorStrategy;
-    }
-
-    public void setLocatorStrategy(String locatorStrategy) {
-        this.locatorStrategy = locatorStrategy;
-    }
-
-    public String getLocatorValue() {
-        return locatorValue;
-    }
-
-    public void setLocatorValue(String locatorValue) {
-        this.locatorValue = locatorValue;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    public String getInputValue() {
-        return inputValue;
-    }
-
-    public void setInputValue(String inputValue) {
-        this.inputValue = inputValue;
-    }
-
-    public long getDynamicSleep() {
-        return dynamicSleep;
-    }
-
-    public void setDynamicSleep(long dynamicSleep) {
-        this.dynamicSleep = dynamicSleep;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("TestInstruction{stepName='%s', action='%s', locator='%s:%s'}",
-                stepName, action, locatorStrategy, locatorValue);
-    }
 }
+

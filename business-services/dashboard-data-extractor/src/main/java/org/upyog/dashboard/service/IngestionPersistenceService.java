@@ -1,6 +1,7 @@
 package org.upyog.dashboard.service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Service defining persistence operations for ingestion summaries and legacy jobs.
@@ -25,6 +26,15 @@ public interface IngestionPersistenceService {
      * @param attemptedDate the date for which ingestion was attempted
      */
     void saveOrUpdateLastAttemptedDate(String tenantId, String moduleName, LocalDate attemptedDate);
+
+    /**
+     * Records or updates the date for which an ingestion attempt was made for a batch of tenants.
+     *
+     * @param tenantIds     the list of tenant identifiers
+     * @param moduleName    the module short code
+     * @param attemptedDate the date for which ingestion was attempted
+     */
+    void saveOrUpdateLastAttemptedDatesBatch(List<String> tenantIds, String moduleName, LocalDate attemptedDate);
 
     /**
      * Submits a request to process legacy data ingestion for the given tenant, module, and date range.
@@ -53,5 +63,5 @@ public interface IngestionPersistenceService {
      *
      * @param details list of daily ingestion data objects or rows
      */
-    void saveIngestionDetailsBatch(java.util.List<?> details);
+    void saveIngestionDetailsBatch(List<?> details);
 }

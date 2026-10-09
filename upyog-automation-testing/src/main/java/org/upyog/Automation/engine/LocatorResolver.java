@@ -1,6 +1,7 @@
 package org.upyog.Automation.engine;
 
 import org.openqa.selenium.By;
+import org.upyog.Automation.Utils.AutomationConstants;
 import org.upyog.Automation.model.TestInstruction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,32 +50,32 @@ public class LocatorResolver {
         // Normalize strategy to uppercase for case-insensitive matching
         switch (strategy.toUpperCase()) {
 
-            case "ID":
+            case AutomationConstants.LOCATOR_ID:
                 return By.id(value);
 
-            case "NAME":
+            case AutomationConstants.LOCATOR_NAME:
                 return By.name(value);
 
-            case "XPATH":
+            case AutomationConstants.LOCATOR_XPATH:
                 return By.xpath(value);
 
-            case "CSS":
+            case AutomationConstants.LOCATOR_CSS:
                 return By.cssSelector(value);
 
-            case "CLASS_NAME":
+            case AutomationConstants.LOCATOR_CLASS_NAME:
                 return By.className(value);
 
-            case "TAG_NAME":
+            case AutomationConstants.LOCATOR_TAG_NAME:
                 return By.tagName(value);
 
-            case "LINK_TEXT":
+            case AutomationConstants.LOCATOR_LINK_TEXT:
                 return By.linkText(value);
 
-            case "PARTIAL_LINK_TEXT":
+            case AutomationConstants.LOCATOR_PARTIAL_LINK_TEXT:
                 return By.partialLinkText(value);
 
             // Special case: URL actions don't need locators
-            case "URL":
+            case AutomationConstants.LOCATOR_URL:
                 return null;
 
             default:

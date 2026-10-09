@@ -27,6 +27,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.RowMapper;
 
+/**
+ * Unit tests for {@link IngestionSummaryRepository} testing checkpoint lookups and batch upserts.
+ */
 @ExtendWith(MockitoExtension.class)
 class IngestionSummaryRepositoryTest {
 

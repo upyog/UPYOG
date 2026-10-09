@@ -35,7 +35,7 @@ const RenewPopup = ({ t, closeModal, onSubmit, application }) => {
     };
 
     const proceedWithApplication = () => {
-        navigate(`renew-application/info`)
+        navigate(`/sv-ui/citizen/sv/renew-application/info`)
     }
 
 
@@ -50,7 +50,7 @@ const RenewPopup = ({ t, closeModal, onSubmit, application }) => {
                 name: err.name
             });
         }
-        navigate("renew-application/check/makePayment");
+        navigate("/sv-ui/citizen/sv/renew-application/check/makePayment");
     }
 
     return (

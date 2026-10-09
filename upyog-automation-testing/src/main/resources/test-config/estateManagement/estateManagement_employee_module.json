@@ -1,0 +1,336 @@
+{
+  "moduleName": "employee_module",
+  "description": "Estate Management Employee flow",
+  "baseUrl": "${selected.url}",
+  "instructions": [
+    {
+      "stepName": "Enter username",
+      "locatorStrategy": "NAME",
+      "locatorValue": "username",
+      "action": "TYPE",
+      "inputValue": "${selected.username}",
+      "dynamicSleep": 300
+    },
+    {
+      "stepName": "Enter password",
+      "locatorStrategy": "NAME",
+      "locatorValue": "password",
+      "action": "TYPE",
+      "inputValue": "${selected.password}",
+      "dynamicSleep": 300
+    },
+    {
+      "stepName": "Select city from dropdown",
+      "locatorStrategy": "CSS",
+      "locatorValue": "input.employee-select-wrap--elipses",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "0:0",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Click Continue button",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(@class, 'submit-bar') and .//header[text()='Continue']]",
+      "action": "CLICK",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Navigate to Estate Management",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[@href='/upyog-ui/employee/est/create-asset/newRegistration']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Select Registration Type",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//input[@type='radio' and @value='NEW_BUILDING']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Enter Building Name",
+      "locatorStrategy": "LABEL",
+      "locatorValue": "Building Name",
+      "action": "TYPE_BY_LABEL",
+      "inputValue": "${house.name}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Enter Building Number",
+      "locatorStrategy": "LABEL",
+      "locatorValue": "Building Number",
+      "action": "TYPE_BY_LABEL",
+      "inputValue": "${house.number}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Enter Building Floor",
+      "locatorStrategy": "LABEL",
+      "locatorValue": "Building Floor",
+      "action": "TYPE_BY_LABEL",
+      "inputValue": "${floor.number}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Enter Building Block",
+      "locatorStrategy": "LABEL",
+      "locatorValue": "Building Block",
+      "action": "TYPE_BY_LABEL",
+      "inputValue": "${block.number}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Enter Building Block",
+      "locatorStrategy": "LABEL",
+      "locatorValue": "Building Block",
+      "action": "TYPE_BY_LABEL",
+      "inputValue": "${floor.number}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Locality",
+      "locatorStrategy": "CSS",
+      "locatorValue": "div.select svg.cp",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "1:1",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Enter Total Plot Area",
+      "locatorStrategy": "LABEL",
+      "locatorValue": "Total Plot Area",
+      "action": "TYPE_BY_LABEL",
+      "inputValue": "${plot.area}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Enter Length",
+      "locatorStrategy": "LABEL",
+      "locatorValue": "Length",
+      "action": "TYPE_BY_LABEL",
+      "inputValue": "${length.area}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Enter Width",
+      "locatorStrategy": "LABEL",
+      "locatorValue": "Width",
+      "action": "TYPE_BY_LABEL",
+      "inputValue": "${width.area}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Enter Rates",
+      "locatorStrategy": "LABEL",
+      "locatorValue": "Rates",
+      "action": "TYPE_BY_LABEL",
+      "inputValue": "${rates.sq}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Asset Type",
+      "locatorStrategy": "CSS",
+      "locatorValue": "div.select svg.cp",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "2:1",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Save And Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Save & Next') or contains(.,'SAVE_&_NEXT') or contains(.,'SAVE & NEXT')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Check declaration checkbox",
+      "locatorStrategy": "CSS",
+      "locatorValue": "input[type='checkbox']",
+      "action": "CHECK_LAST_CHECKBOX",
+      "inputValue": null,
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Submit application",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[@class='submit-bar ' and @type='button'][.//header[text()='Submit']]",
+      "action": "CLICK",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Capture Application Number",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//*[contains(text(),'Application No.') or contains(text(),'Application Number')]/following-sibling::*[1]",
+      "action": "CAPTURE_TEXT",
+      "inputValue": "APPLICATION_NO",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Navigate to Homepage",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[@href='/upyog-ui/employee']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Navigate to Estate Management inbox",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//a[@href='/upyog-ui/employee/est/search-applications']",
+      "action": "CLICK_JS",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Enter Application Number",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//h2[contains(text(),'Estate Number')]/following::input[1]",
+      "action": "TYPE_FROM_STORE",
+      "inputValue": "APPLICATION_NO",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Click Search",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[normalize-space()='Search']",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Allot Asset ",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Allot Asset')]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Info Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Next')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Select Allotment Type ",
+      "locatorStrategy": "CSS",
+      "locatorValue": "input.employee-select-wrap--elipses",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "0:0",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Enter Allottee Name",
+      "locatorStrategy": "LABEL",
+      "locatorValue": "Allottee Name",
+      "action": "TYPE_BY_LABEL",
+      "inputValue": "${applicant.name}",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Allottee Mobile",
+      "locatorStrategy": "LABEL",
+      "locatorValue": "Phone Number",
+      "action": "TYPE_BY_LABEL",
+      "inputValue": "${mobile.number}",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Allottee Email",
+      "locatorStrategy": "LABEL",
+      "locatorValue": "Email Id",
+      "action": "TYPE_BY_LABEL",
+      "inputValue": "${applicant.email}",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "From Date",
+      "locatorStrategy": "CSS",
+      "locatorValue": "input[type='date']",
+      "action": "SET_DATE_TODAY",
+      "inputValue": "0",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "To Date",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//input[@type='date']",
+      "action": "SET_DATE_TEXT",
+      "inputValue": "1:02-09-2027",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Select Billing Cycle ",
+      "locatorStrategy": "CSS",
+      "locatorValue": "input.employee-select-wrap--elipses",
+      "action": "SELECT_DROPDOWN_BY_INDEX",
+      "inputValue": "1:0",
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Upload Citizen Request Letter ",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//input[@type='file'])[1]",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.png}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Upload Allotment Letter",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//input[@type='file'])[2]",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.proof}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Upload Signed Deed",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "(//input[@type='file'])[3]",
+      "action": "UPLOAD_FILE",
+      "inputValue": "${document.common.proof}",
+      "dynamicSleep": 1000
+    },
+    {
+      "stepName": "Save And Next",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[contains(.,'Save & Next') or contains(.,'SAVE_&_NEXT') or contains(.,'SAVE & NEXT')]",
+      "action": "CLICK_JS",
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Check declaration checkbox",
+      "locatorStrategy": "CSS",
+      "locatorValue": "input[type='checkbox']",
+      "action": "CHECK_LAST_CHECKBOX",
+      "inputValue": null,
+      "dynamicSleep": 500
+    },
+    {
+      "stepName": "Submit application",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[@class='submit-bar ' and @type='button'][.//header[text()='Submit']]",
+      "action": "CLICK",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    },
+    {
+      "stepName": "Capture Application Number",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//*[contains(text(),'Allotment Number') or contains(text(),'Application Number')]/following-sibling::*[1]",
+      "action": "CAPTURE_TEXT",
+      "inputValue": "APPLICATION_NO",
+      "dynamicSleep": 3000
+    },
+    {
+      "stepName": "Download Acknowledgement",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//button[@class='submit-bar ' and @type='button'][.//header[text()='Allotment Acknowledgement']]",
+      "action": "CLICK",
+      "inputValue": null,
+      "dynamicSleep": 2000
+    }
+  ]
+}

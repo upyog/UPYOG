@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.upyog.Automation.Utils.*;
 
-
 import java.time.Duration;
 
 public class BaseTest {
@@ -29,23 +28,23 @@ public class BaseTest {
         js = (JavascriptExecutor) driver;
         logger.info("JS created");
 
-        logger.info("selected.url = " + WorkflowDataStore.get("selected.url"));
+        logger.info("selected.url = " + WorkflowDataStore.get(AutomationConstants.KEY_SELECTED_URL));
 
 
         String baseUrl =
-                WorkflowDataStore.get("selected.url");
+                WorkflowDataStore.get(AutomationConstants.KEY_SELECTED_URL);
 
         String mobile =
-                WorkflowDataStore.get("selected.mobile");
+                WorkflowDataStore.get(AutomationConstants.KEY_SELECTED_MOBILE);
 
         String otp =
-                WorkflowDataStore.get("selected.otp");
+                WorkflowDataStore.get(AutomationConstants.KEY_SELECTED_OTP);
 
         String city =
-                WorkflowDataStore.get("selected.city");
+                WorkflowDataStore.get(AutomationConstants.KEY_SELECTED_CITY);
 
         String moduleName =
-                WorkflowDataStore.get("selected.module");
+                WorkflowDataStore.get(AutomationConstants.KEY_SELECTED_MODULE);
 
         // Fallback only if HTML didn't send values
         if (baseUrl == null)
@@ -57,8 +56,9 @@ public class BaseTest {
         if (otp == null)
             otp = ConfigReader.get("user.otp");
 
-        if (city == null)
+        if (city == null || city.isBlank()) {
             city = ConfigReader.get("city.name");
+        }
 
         if (moduleName == null)
             moduleName = ConfigReader.get("obpas.module");
@@ -78,10 +78,13 @@ public class BaseTest {
                 moduleName
         );
         logger.info("HTML selected.url = {}",
-                WorkflowDataStore.get("selected.url"));
+                WorkflowDataStore.get(AutomationConstants.KEY_SELECTED_URL));
     }
 
     public void tearDown() throws InterruptedException {
+        try {
+            ScreenRecorder.stopRecording();
+        } catch (Exception ignored) {}
         Thread.sleep(15000);
         if (driver != null) {
             driver.quit();

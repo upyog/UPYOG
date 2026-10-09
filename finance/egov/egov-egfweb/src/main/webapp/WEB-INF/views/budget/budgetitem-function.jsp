@@ -1,4 +1,6 @@
-<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ include file="/includes/taglibs.jsp"%>
+<%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn"%>
 
 <html>
 
@@ -60,6 +62,27 @@
             padding: 8px 14px;
         }
 
+        .btn-budget-back {
+            background-color: #fe7a51 !important;
+            border: 1px solid #fe7a51 !important;
+            color: #ffffff !important;
+            padding: 8px 22px !important;
+            font-weight: 600 !important;
+            font-size: 14px !important;
+            border-radius: 4px !important;
+            display: inline-block !important;
+            text-decoration: none !important;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .btn-budget-back:hover, .btn-budget-back:focus {
+            background-color: #e5673e !important;
+            border-color: #e5673e !important;
+            color: #ffffff !important;
+            text-decoration: none !important;
+        }
+
         .top-create-btn {
             text-align: right;
             width: 95%;
@@ -103,6 +126,12 @@
             </tr>
         </c:forEach>
     </table>
+
+    <div style="text-align: center; margin-top: 25px; margin-bottom: 25px;">
+        <a href="${pageContext.request.contextPath}/budget/register/workflow/view/${budgetRegister.budgetRegisterNumber}" class="btn btn-budget-back">
+            <i class="fa fa-arrow-left"></i> Back
+        </a>
+    </div>
 
 </body>
 

@@ -68,11 +68,22 @@ import static org.egov.infra.web.utils.WebUtils.extractRequestDomainURL;
 import static org.egov.infra.web.utils.WebUtils.extractRequestedDomainName;
 
 /*
- * Tenant resolution is now based on the logged-in user's tenant ID instead of the request URL.
- * The tenant ID is retrieved from the session and mapped to the corresponding schema.
- * Example: "pg.citya" -> "citya".
- * If no tenant ID is available, the default schema is used as fallback.
- * This enables a single common URL for all ULBs and removes subdomain dependency.
+ * Multi-Jurisdiction & Single-URL Architecture Tenant Resolution:
+ * -------------------------------------------------------------
+ * 1. Single URL Support: Eliminates legacy subdomain dependency (e.g. citya.egov.org -> niuatt.niua.in).
+ * 2. Dynamic Jurisdiction Switching:
+ *    - When a multi-jurisdiction employee switches cities in upyog-ui (e.g., City A -> City B), the incoming
+ *      entry request carries the target 'tenantId' as a request parameter.
+ *    - To prevent the user from being locked into the old tenant stored in the active HTTP/Redis session,
+ *      this filter gives highest priority to the incoming request parameter 'tenantId'.
+ *    - The filter immediately updates the HTTP/Redis session with the new tenant ID (session.setAttribute)
+ *      so that the active session is dynamically synchronized across the distributed cluster.
+ * 3. Session Fallback for Internal AJAX / Dropdown APIs:
+ *    - Legacy JSP/Struts/AJAX calls (like /designations, /departments, bill searches) do not explicitly send
+ *      'tenantId' in the request parameters.
+ *    - For these subsequent requests, the filter seamlessly falls back to reading 'ms_tenant_id' from the
+ *      active session, ensuring complete data isolation within the selected ULB's PostgreSQL schema.
+ * 4. Fallback to Default Schema: Unauthenticated public requests route to the default schema.
  */
 
 public class ApplicationTenantResolverFilter implements Filter {
@@ -91,17 +102,31 @@ public class ApplicationTenantResolverFilter implements Filter {
         String domainURL = extractRequestDomainURL(httpRequest, false);
         String domainName = extractRequestedDomainName(domainURL);
 
-        // Get tenant ID from user session (set during authentication)
         String userTenantId = null;
         String schemaName = null;
 
-        if (session != null) {
+        // Step 1: Check request parameters first (Handles UI entry, redirects, and Multi-Jurisdiction city switching)
+        String reqTenantId = httpRequest.getParameter("tenantId");
+        if (reqTenantId == null || reqTenantId.isEmpty()) {
+            reqTenantId = httpRequest.getParameter("tenant_id");
+        }
+
+        if (reqTenantId != null && !reqTenantId.isEmpty()) {
+            userTenantId = reqTenantId;
+            LOGGER.info(" *** User Tenant ID from request parameter: " + userTenantId);
+            
+            // Live Session Sync: Update the active HTTP/Redis session so subsequent internal AJAX calls inherit this tenant
+            if (session != null) {
+                session.setAttribute(MS_TENANTID_KEY, userTenantId);
+            }
+        } else if (session != null) {
+            // Step 2: Fallback to session for internal AJAX, bill registers, dropdown fetches, and static resources
             userTenantId = (String) session.getAttribute(MS_TENANTID_KEY);
             LOGGER.info(" *** User Tenant ID from session: " + userTenantId);
         }
-        // Determine schema based on user's tenant ID
+
+        // Step 3: Determine schema based on resolved tenant ID (e.g., "pg.citya" -> schema "citya")
         if (userTenantId != null && !userTenantId.isEmpty()) {
-            // Extract city code from tenant ID (e.g., "pg.citya" -> "citya")
             String cityCode = extractCityCodeFromTenantId(userTenantId);
             schemaName = cityCode; // Use city code directly as schema name
             LOGGER.info(" *** Schema resolved from user tenant: " + schemaName);
@@ -111,7 +136,7 @@ public class ApplicationTenantResolverFilter implements Filter {
             LOGGER.info(" *** Using default schema (no user session): " + schemaName);
         }
 
-        // Set tenant context in ThreadLocal
+        // Step 4: Bind resolved tenant context to ApplicationThreadLocals for Hibernate / DB DataSource routing
         ApplicationThreadLocals.setTenantID(schemaName);
         ApplicationThreadLocals.setCollectionVersion(environmentSettings.collectionVersion());
         ApplicationThreadLocals.setDomainName(domainName);

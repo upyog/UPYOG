@@ -1,0 +1,20 @@
+{
+  "moduleName": "GARBAGE_COLLECTION",
+
+  "citizen": {
+    "mobile": "7906413996",
+    "otp": "123456",
+    "city": "City A"
+  },
+
+  "employee": {
+    "username": "GC_CEMP",
+    "password": "Upyog@123",
+    "city": "City A"
+  },
+
+  "vendor": {
+    "mobile": "",
+    "otp": ""
+  }
+}
