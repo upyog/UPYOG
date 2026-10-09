@@ -2,10 +2,10 @@ import { FormComposer, Header, Toast } from "@nudmcdgnpm/digit-ui-react-componen
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation,  } from "react-router-dom";
+import { useLocation, } from "react-router-dom";
 import { newConfig as newConfigTL } from "../../../config/config";
 import { convertDateToEpoch } from "../../../utils";
-import "../../../css/tl-inline-auto.css";
+
 const NewApplication = () => {
   let tenantId = Digit.ULBService.getCurrentTenantId() || Digit.ULBService.getCitizenCurrentTenant();
   const tenants = Digit.Hooks.tl.useTenants();
@@ -55,7 +55,7 @@ const NewApplication = () => {
       navigate("/employee", { replace: true });
     }
     else
-    sessionStorage.removeItem("isCreateEnabledEmployee");
+      sessionStorage.removeItem("isCreateEnabledEmployee");
 
   })
 
@@ -254,7 +254,7 @@ const NewApplication = () => {
             .then((response) => {
               if (response?.Licenses?.length > 0) {
                 // setTimeout(() => window.location.reload());
-                sessionStorage.setItem("isCreateEnabledEmployee","true");
+                sessionStorage.setItem("isCreateEnabledEmployee", "true");
                 navigate(`/upyog-ui/employee/tl/response`, { replace: true, state: { data: response?.Licenses } });
                 clearSessionFormData();
               }
@@ -298,10 +298,10 @@ const NewApplication = () => {
   // configs[6] = configs[0];
 
   return <div>
-      <div className="tl-auto-173">
-        <Header>{t("ES_TITLE_NEW_TRADE_LICESE_APPLICATION")}</Header>
-      </div>
-      <FormComposer heading={t("")} isDisabled={!canSubmit} label={t("ES_COMMON_APPLICATION_SUBMIT")} config={configs.map(config => {
+    <div className="tl-index-ml-md">
+      <Header>{t("ES_TITLE_NEW_TRADE_LICESE_APPLICATION")}</Header>
+    </div>
+    <FormComposer heading={t("")} isDisabled={!canSubmit} label={t("ES_COMMON_APPLICATION_SUBMIT")} config={configs.map(config => {
       return {
         ...config,
         body: config.body.filter(a => {
@@ -314,7 +314,7 @@ const NewApplication = () => {
     }} onSubmit={onSubmit} defaultValues={/* defaultValues */sessionFormData} onFormValueChange={onFormValueChange} breaklineStyle={{
       border: "0px"
     }} />
-      {showToast && <Toast isDleteBtn={true} error={showToast?.key === "error" ? true : false} label={error} onClose={closeToast} />}
-    </div>;
+    {showToast && <Toast isDleteBtn={true} error={showToast?.key === "error" ? true : false} label={error} onClose={closeToast} />}
+  </div>;
 };
 export default NewApplication;

@@ -58,14 +58,7 @@ function PropertyOwners({ owners }) {
           <React.Fragment key={index}>
             <StatusTable style={statusTableStyles}>
               <div
-                style={{
-                  maxWidth: "640px",
-                  top: 0,
-                  left: 0,
-                  bottom: 0,
-                  right: 0,
-                  width: "auto",
-                }}
+                className="tmpl-property-owners-wrapper"
               ></div>
               {owner?.values?.map((value, index) => {
                 if (value.map === true && value.value !== "N/A") {

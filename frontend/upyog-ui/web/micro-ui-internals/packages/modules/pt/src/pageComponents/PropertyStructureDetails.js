@@ -190,7 +190,7 @@ const PropertyStructureDetails = ({
     <FormStep config={(config.texts.header = getheader(), config)} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={!fields.structureType || !fields.ageOfProperty}>
         
           <div key={`unique`}>
-            <div className="pt-auto-73">
+            <div className="pt-property-structure-details-mt-sm">
               {/* <LinkButton
                 label={<DeleteIcon fill={!(fields.length === 1) ? "#494848" : "#FAFAFA"} />}
                 onClick={(e) => handleRemove(index)}

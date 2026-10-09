@@ -23,16 +23,17 @@ const App = () => {
   const TLList = Digit?.ComponentRegistryService?.getComponent('TLList');
   const SearchTradeComponent = Digit?.ComponentRegistryService?.getComponent('TLSearchTradeComponent');
   const TLMyApplications = Digit?.ComponentRegistryService?.getComponent('TLMyApplications');
+  const TLCitizenHomeScreen = Digit?.ComponentRegistryService?.getComponent('TLCitizenHomeScreen');
+  const CommonRedirect = Digit?.ComponentRegistryService?.getComponent('CommonRedirect');
 
   const getBackPageNumber = () => {
     let goBacktoFromProperty = -1;
-  if(sessionStorage.getItem("VisitedCommonPTSearch") === "true" && (sessionStorage.getItem("VisitedAccessoriesDetails") === "true" || sessionStorage.getItem("VisitedisAccessories") === "true") && isCommonPTPropertyScreen)
-  {
-    goBacktoFromProperty = -4;
-    sessionStorage.removeItem("VisitedCommonPTSearch");
+    if (sessionStorage.getItem("VisitedCommonPTSearch") === "true" && (sessionStorage.getItem("VisitedAccessoriesDetails") === "true" || sessionStorage.getItem("VisitedisAccessories") === "true") && isCommonPTPropertyScreen) {
+      goBacktoFromProperty = -4;
+      sessionStorage.removeItem("VisitedCommonPTSearch");
+      return goBacktoFromProperty;
+    }
     return goBacktoFromProperty;
-  }
-  return goBacktoFromProperty;
   }
 
   return (
@@ -44,6 +45,8 @@ const App = () => {
           </BackButton>
         )}
         <Routes>
+          <Route path={`home`} element={<TLCitizenHomeScreen />} />
+          <Route path={`tradelicence/home`} element={<TLCitizenHomeScreen />} />
           <Route path={`tradelicence/new-application/*`} element={<PrivateRoute><CreateTradeLicence path={path} /></PrivateRoute>} />
           <Route path={`tradelicence/edit-application/:id/:tenantId/*`} element={<PrivateRoute><EditTrade /></PrivateRoute>} />
           <Route path={`tradelicence/renew-trade/:id/:tenantId/*`} element={<PrivateRoute><RenewTrade /></PrivateRoute>} />

@@ -1,9 +1,6 @@
-import { BackButton, Dropdown, FormComposer, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { Dropdown, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { Controller } from "react-hook-form";
-import Background from "../../../components/Background";
-import Header from "../../../components/Header";
 
 /* set employee details to enable backward compatiable */
 const setEmployeeDetail = (userObject, token) => {
@@ -19,19 +16,32 @@ const setEmployeeDetail = (userObject, token) => {
   localStorage.setItem("Employee.user-info", JSON.stringify(userObject));
 };
 
-const Login = ({ config: propsConfig, t, isDisabled }) => {
+const Login = ({ layout, config: propsConfig, t, isDisabled, emp = {}, setEmp = () => {} }) => {
   const { data: cities, isLoading } = Digit.Hooks.useTenants();
   const { data: storeData, isLoading: isStoreLoading } = Digit.Hooks.useStore.getInitData();
-  const { stateInfo } = storeData || {};
+  const { stateInfo, languages } = storeData || {};
   const [user, setUser] = useState(null);
   const [showToast, setShowToast] = useState(null);
   const [disable, setDisable] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState(Digit.StoreData.getCurrentLanguage() || "en_IN");
+  const [username, setUsername] = useState(emp?.username || "");
+  const [password, setPassword] = useState(emp?.password || "");
+  const [selectedCity, setSelectedCity] = useState(emp?.city || null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = Digit.Hooks.useCustomNavigate();
-  // const getUserType = () => "EMPLOYEE" || Digit.UserService.getType();
-  let   sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
-  const pdfUrl = "https://pg-egov-assets.s3.ap-south-1.amazonaws.com/Upyog+Code+and+Copyright+License_v1.pdf";
-  
+
+  const handleLanguageSelection = (language) => {
+    Digit.LocalizationService.changeLanguage(language.value, stateInfo?.code);
+    setSelectedLanguage(language.value);
+    setEmp({ ...emp, language: language });
+  };
+
+  const handleCitySelection = (city) => {
+    setSelectedCity(city);
+    setEmp({ ...emp, city: city });
+  };
+
   useEffect(() => {
     if (!user) {
       return;
@@ -49,7 +59,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
     }
 
     /*  RAIN-6489 Logic to navigate to National DSS home incase user has only one role [NATADMIN]*/
-    if (user?.info?.roles && user?.info?.roles?.length > 0 &&  user?.info?.roles?.every((e) => e.code === "NATADMIN")) {
+    if (user?.info?.roles && user?.info?.roles?.length > 0 && user?.info?.roles?.every((e) => e.code === "NATADMIN")) {
       redirectPath = "/upyog-ui/employee/dss/landing/NURT_DASHBOARD";
     }
     /*  RAIN-6489 Logic to navigate to National DSS home incase user has only one role [NATADMIN]*/
@@ -60,19 +70,26 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
     navigate(redirectPath, { replace: true });
   }, [user]);
 
-  const onLogin = async (data) => {
-    if (!data.city) {
-      alert("Please Select City!");
+  const onLogin = async (e) => {
+    e?.preventDefault?.();
+    if (!selectedCity) {
+      setShowToast(t("ERR_HRMS_INVALID_CITY") || "Please Select City!");
+      setTimeout(closeToast, 5000);
+      return;
+    }
+    if (!username || !password) {
+      setShowToast(t("ERR_HRMS_INVALID_CREDENTIALS") || "Please Enter Username and Password!");
+      setTimeout(closeToast, 5000);
       return;
     }
     setDisable(true);
-console.log("data",data)
     const requestData = {
-      ...data,
+      username,
+      password,
       userType: "EMPLOYEE",
+      tenantId: selectedCity.code,
+      language: selectedLanguage || languages?.[0]?.value,
     };
-    requestData.tenantId = data.city.code;
-    delete requestData.city;
     try {
       const { UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
       Digit.SessionStorage.set("Employee.tenantId", info?.tenantId);
@@ -89,96 +106,146 @@ console.log("data",data)
   };
 
   const onForgotPassword = () => {
-    sessionStorage.getItem("User") && sessionStorage.removeItem("User")
+    sessionStorage.getItem("User") && sessionStorage.removeItem("User");
     navigate("/upyog-ui/employee/user/forgot-password");
   };
 
-  const [userId, password, city] = propsConfig.inputs;
-  const config = [
-    {
-      body: [
-        {
-          label: t(userId.label),
-          type: userId.type,
-          populators: {
-            name: userId.name,
-          },
-          isMandatory: true,
-        },
-        {
-          label: t(password.label),
-          type: password.type,
-          populators: {
-            name: password.name,
-          },
-          isMandatory: true,
-        },
-{
-  label: t(city.label),
-  type: city.type,
-  populators: {
-    name: city.name,
-    component: ({ onChange, value }) => (
-      <Dropdown
-        option={cities}
-        className="login-city-dd"
-        optionKey="i18nKey"
-        select={(d) => onChange(d)}   
-        value={value}                
-        t={t}
-      />
-    ),
-  },
-  isMandatory: true,
-}
-      ],
-    },
-  ];
+  const footer = showToast && <Toast error={true} label={showToast} onClose={closeToast} />;
+
+  const getLocalized = (key, fallback) => {
+    if (!key) return fallback;
+    const val = t(key);
+    return !val || val === key ? fallback : val;
+  };
 
   return isLoading || isStoreLoading ? (
     <Loader />
   ) : (
-    <Background>
-      <div className="employeeBackbuttonAlign">
-        <BackButton variant="white" style={{ borderBottom: "none" }} />
+    <div className="login-mobile-step">
+      <div className="login-form-header">
+        <h2>{getLocalized(propsConfig?.texts?.header, "Login")}</h2>
+        <p>
+          {getLocalized("CORE_EMPLOYEE_LOGIN_SUBTITLE", "Enter your credentials to access the employee portal.")}
+        </p>
       </div>
 
-      <FormComposer
-        onSubmit={onLogin}
-        isDisabled={isDisabled || disable}
-        noBoxShadow
-        inline
-        submitInForm
-        config={config}
-        label={propsConfig.texts.submitButtonLabel}
-        secondaryActionLabel={propsConfig.texts.secondaryButtonLabel}
-        onSecondayActionClick={onForgotPassword}
-        heading={propsConfig.texts.header}
-        headingStyle={{ textAlign: "center" }}
-        cardStyle={{ margin: "auto", minWidth: "408px" }}
-        className="loginFormStyleEmployee"
-        buttonStyle={{ maxWidth: "100%", width: "100%" ,backgroundColor:"#5a1166"}}
-      >
-        {/* <Header /> */}
-      </FormComposer>
-      {showToast && <Toast error={true} label={t(showToast)} onClose={closeToast} />}
-      <div style={{ width: '100%', position: 'fixed', bottom: 0,backgroundColor:"white",textAlign:"center" }}>
-        <div style={{ display: 'flex', justifyContent: 'center', color:"black" }}>
-          {/* <span style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('https://www.digit.org/', '_blank').focus();}} >Powered by DIGIT</span>
-          <span style={{ margin: "0 10px" ,fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px"}}>|</span> */}
-          <a style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a>
-
-          <span  className="upyog-copyright-footer" style={{ margin: "0 10px",fontSize:"12px" }} >|</span>
-          <span  className="upyog-copyright-footer" style={{ cursor: "pointer", fontSize: window.Digit.Utils.browser.isMobile()?"12px":"12px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
-          
-          {/* <a style={{ cursor: "pointer", fontSize: "16px", fontWeight: "400"}} href="#" target='_blank'>UPYOG License</a> */}
-
-        </div>
-        <div className="upyog-copyright-footer-web">
-          <span className="" style={{ cursor: "pointer", fontSize:  window.Digit.Utils.browser.isMobile()?"14px":"16px", fontWeight: "400"}} onClick={() => { window.open('https://niua.in/', '_blank').focus();}} >Copyright © 2022 National Institute of Urban Affairs</span>
+      <form onSubmit={onLogin} className="login-form-body">
+        {/* Language Selection */}
+        <div className="login-field-group">
+          <label className="login-label">{getLocalized("CORE_SELECT_LANGUAGE", "Select Language")}</label>
+          <div className="login-language">
+            <ul className="login-language-list employee-login-language-list">
+              {languages?.map((language) => (
+                <li
+                  key={language.label}
+                  className={selectedLanguage === language.value ? "is-selected" : ""}
+                  onClick={() => handleLanguageSelection(language)}
+                >
+                  {selectedLanguage === language.value ? (
+                    <img src={"/upyog-ui/images/check.svg"} alt="check icon" />
+                  ) : null}&nbsp;{language.label}
+                </li>
+              ))}
+            </ul>
           </div>
-      </div>
-    </Background>
+        </div>
+
+        {/* City Selection */}
+        <div className="login-field-group">
+          <label className="login-label">{getLocalized("CORE_COMMON_CITY", "City")}</label>
+          <div className="city-selection">
+            <span className="login-input-icon" aria-hidden="true">
+              <img src={"/upyog-ui/images/search.svg"} alt="search icon" />
+            </span>
+            <Dropdown
+              className="city-selection-dropdown"
+              selected={selectedCity}
+              select={handleCitySelection}
+              option={cities}
+              optionKey="i18nKey"
+              t={t}
+              placeholder={getLocalized("SEARCH_YOUR_CITY", "Search your city...")}
+            />
+          </div>
+        </div>
+
+        {/* User ID / Username */}
+        <div className="login-field-group">
+          <label className="login-label">{getLocalized("CORE_LOGIN_USERNAME", "User Name")}</label>
+          <div className="login-input-wrap">
+            <input
+              type="text"
+              name="username"
+              autoComplete="username"
+              value={username}
+              placeholder={getLocalized("ENTER_USER_ID", "Enter User ID")}
+              onChange={(e) => {
+                setUsername(e.target.value);
+                setEmp({ ...emp, username: e.target.value });
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Password */}
+        <div className="login-field-group">
+          <label className="login-label">{getLocalized("CORE_LOGIN_PASSWORD", "Password")}</label>
+          <div className="login-input-wrap">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              autoComplete="current-password"
+              value={password}
+              placeholder={getLocalized("ENTER_PASSWORD", "Enter Password")}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setEmp({ ...emp, password: e.target.value });
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="login-password-toggle"
+            >
+              {showPassword ? getLocalized("HIDE", "HIDE") : getLocalized("SHOW", "SHOW")}
+            </button>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="login-actions">
+          <button
+            type="submit"
+            className="login-primary-button"
+            disabled={isDisabled || disable || !username || !password || !selectedCity}
+          >
+            {getLocalized(propsConfig?.texts?.submitButtonLabel, "Continue")}
+          </button>
+
+          <div className="login-divider">OR</div>
+
+          <button
+            type="button"
+            className="login-secondary-button"
+            onClick={onForgotPassword}
+          >
+            <span className="login-secondary-button__content">
+              {getLocalized(propsConfig?.texts?.secondaryButtonLabel, "Forgot Password?")}
+            </span>
+          </button>
+        </div>
+
+        <p className="login-security">
+          <span className="login-security-icon" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </span>
+          <span>{getLocalized("CORE_LOGIN_SECURITY_MSG", "Secure and encrypted official login portal")}</span>
+        </p>
+      </form>
+      {footer}
+    </div>
   );
 };
 

@@ -6,7 +6,7 @@ import React from "react";
 
 const NoSurveyFoundPage = ({t}) => {
     return (<React.Fragment>
-        <div style={{textAlign : "-webkit-center", marginTop:"30%", marginRight:"10%"}}>
+        <div className="eng-no-survey-found-page-top-spacing">
         <svg width="255" height="245" viewBox="0 0 255 245" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g clip-path="url(#clip0_47664_105169)">
             <path d="M214.607 58.0692H213.267V21.2879C213.267 15.642 211.027 10.2273 207.039 6.23508C203.051 2.24282 197.641 2.77689e-09 192.001 2.77689e-09H114.153C111.36 -4.51493e-05 108.595 0.550538 106.015 1.62031C103.435 2.69009 101.09 4.2581 99.1157 6.23483C97.1409 8.21157 95.5744 10.5583 94.5056 13.141C93.4369 15.7238 92.8868 18.492 92.8867 21.2875V223.073C92.8867 228.719 95.1273 234.133 99.1154 238.125C103.104 242.118 108.513 244.36 114.153 244.36H192C197.64 244.36 203.049 242.118 207.038 238.125C211.026 234.133 213.266 228.719 213.266 223.073V84.2507H214.606L214.607 58.0692Z" fill="#3F3D56"/>
@@ -52,7 +52,7 @@ const NoSurveyFoundPage = ({t}) => {
             <defs>
             </defs>
         </svg>
-        <h style={{color:"#505A5F", fontWeight:"400", fontFamily:"Roboto", marginLeft:"10%", lineHeight:"3"}}>{t("SURVEY_ENDED_MESSAGE")}</h>
+        <h className="eng-no-survey-found-page-spacing">{t("SURVEY_ENDED_MESSAGE")}</h>
         </div>
         <ActionBar>
         <Link to={"/upyog-ui/citizen"}>

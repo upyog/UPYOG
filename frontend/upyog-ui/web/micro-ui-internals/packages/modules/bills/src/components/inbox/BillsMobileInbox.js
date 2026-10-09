@@ -76,10 +76,7 @@ const BillsMobileInbox = ({
               <Link>
                 <a
                   href="javascript:void(0)"
-                  style={{
-                    color: "#FE7A51",
-                    cursor: "pointer",
-                  }}
+                  className="bills-mobile-search-application-clickable"
                   onClick={(value) => {
                     printRecieptMobile(original?.["businessService"], original?.["consumerCode"]);
                   }}
@@ -100,7 +97,7 @@ const BillsMobileInbox = ({
     return `${searchParams?.businessServices}/${encodeURIComponent(original?.[t("CR_COMMON_TABLE_COL_RECEIPT_NO")])}`;
   };
   return (
-    <div style={{ padding: 0 }}>
+    <div className="bills-citizen-mobile-inbox-container-padding">
       <div className="inbox-container">
         <div className="filters-container">
           <ApplicationCard

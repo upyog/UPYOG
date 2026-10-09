@@ -78,7 +78,7 @@ const VendorPincode = ({ t, config, onSelect, formData = {}, userType, register,
               />
             </div>
           </LabelFieldPair>
-          {error ? <CardLabelError style={{ width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" }}>{error}</CardLabelError> : null}
+          {error ? <CardLabelError className="vnd-vendor-pincode-card">{error}</CardLabelError> : null}
         </React.Fragment>
       );
     });

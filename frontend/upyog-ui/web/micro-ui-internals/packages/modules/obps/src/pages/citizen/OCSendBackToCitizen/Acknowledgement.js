@@ -28,11 +28,11 @@ const Acknowledgement = (props) => {
           applicationNumber={BPAData?.applicationNo}
           info={bpaBusinessService == "BPA" ? t("BPA_PERMIT_APPLICATION_NUMBER_LABEL") : t("BPA_OCCUPANCY_CERTIFICATE_APPLICATION_NUMBER_LABEL")}
           successful={true}
-          style={{ padding: "10px" }}
+          className="obps-acknowledgement-container-padding"
           headerStyles={{fontSize: "32px"}}
         />
         <CardText>{getAppAction == "BPA_SUBMIT_APP" ? t(`BPA_SUBMIT_SUB_HEADER_${bpaBusinessService}_${bpaAction}_${typeOfArchitect ? typeOfArchitect : "ARCHITECT"}_${stringReplaceAll(bpaStatus," ","_").toUpperCase()}`) : t(`BPA_SUB_HEADER_${bpaBusinessService}_${bpaAction}_${typeOfArchitect ? typeOfArchitect : "ARCHITECT"}_${stringReplaceAll(bpaStatus," ","_").toUpperCase()}`)}</CardText>
-        <div style={{ marginTop: "12px", padding: "10px" }}>
+        <div className="obps-acknowledgement-top-spacing">
           <Link to={`/upyog-ui/citizen`} >
             <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
           </Link>

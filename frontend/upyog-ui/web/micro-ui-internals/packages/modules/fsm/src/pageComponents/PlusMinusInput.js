@@ -31,10 +31,7 @@ const PlusMinusInput = (props, customProps) => {
         <input
           readOnly={true}
           value={count}
-          style={{
-            textAlign: "center",
-            border: "1px solid #505A5F",
-          }}
+          className="fsm-plus-minus-input-centered"
         />
         <button type="button" onClick={() => incrementCount(count)} className="PlusMinusbutton">
           +

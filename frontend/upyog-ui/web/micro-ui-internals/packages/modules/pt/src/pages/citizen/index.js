@@ -32,12 +32,15 @@ const App = () => {
   const PropertyInformation = Digit?.ComponentRegistryService?.getComponent("PropertyInformation");
   const PropertyOwnerHistory = Digit?.ComponentRegistryService?.getComponent("PropertyOwnerHistory");
   const AssessmentDetails = Digit?.ComponentRegistryService?.getComponent("PTAssessmentDetails");
+  const PTCitizenHomeScreen = Digit?.ComponentRegistryService?.getComponent("PTCitizenHomeScreen");
 
   return (
-    <span className={"pt-citizen pt-auto-149"}>
+    <span className={"pt-citizen pt-index-full-width"}>
       <AppContainer>
         {!shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
         <Routes>
+          <Route path={`home`} element={<PTCitizenHomeScreen />} />
+          <Route path={`property/home`} element={<PTCitizenHomeScreen />} />
           <Route path={`property/new-application/*`} element={<PrivateRoute><CreateProperty /></PrivateRoute>} />
           <Route path={`property/edit-application/*`} element={<PrivateRoute><EditProperty /></PrivateRoute>} />
           <Route path={`property/citizen-search`} element={<SearchPropertyComponent />} />

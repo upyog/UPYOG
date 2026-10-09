@@ -216,15 +216,12 @@ export const SelectPaymentType = (props) => {
         <Card>
         {timerEnabledForBusinessService(businessService) && (
             <CardSubHeader 
-              style={{ 
-                textAlign: 'right', 
-                fontSize: "24px"
-              }}
+              className="cmn-bill-details-header"
             >
           <TimerServices businessService={businessService} setTime={setTime} timerValues={state?.timerValue} t={t} SlotSearchData={state?.SlotSearchData } />
             </CardSubHeader>
           )}
-          <div className="payment-amount-info" style={{ marginBottom: "26px" }}>
+          <div className="payment-amount-info cmn-index-bottom-spacing">
             <CardLabel className="dark">{t("PAYMENT_CS_TOTAL_AMOUNT_DUE")}</CardLabel>
             <CardSectionHeader> ₹ { paymentAmount !== undefined ? Number(paymentAmount).toFixed(2) : Number(billDetails?.totalAmount).toFixed(2)}</CardSectionHeader>
           </div>

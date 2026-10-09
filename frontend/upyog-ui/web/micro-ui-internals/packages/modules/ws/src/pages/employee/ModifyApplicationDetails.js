@@ -7,7 +7,7 @@ import getModifyPDFData from "../../utils/getWsAckDataForModifyPdfs";
 import { getBusinessService } from "../../utils";
 import _ from "lodash";
 import { ifUserRoleExists } from "../../utils";
-import "../../css/ws-inline-auto.css";
+
 const ModifyApplicationDetails = () => {
   const {
     t
@@ -85,7 +85,7 @@ const ModifyApplicationDetails = () => {
       let isFieldInspector = false;
       editApplicationUserRole.every((role, index) => {
         isFieldInspector = ifUserRoleExists(role);
-        if (isFieldInspector) return false;else return true;
+        if (isFieldInspector) return false; else return true;
       });
       if (isFieldInspector && appStatus === mdmsApplicationStatus) {
         pathName = `/upyog-ui/employee/ws/edit-application-by-config?applicationNumber=${applicationNumber}&service=${serviceType}&propertyId=${applicationDetails?.propertyDetails?.propertyId}`;
@@ -121,7 +121,7 @@ const ModifyApplicationDetails = () => {
       let isFieldInspector = false;
       editApplicationUserRole.every((role, index) => {
         isFieldInspector = ifUserRoleExists(role);
-        if (isFieldInspector) return false;else return true;
+        if (isFieldInspector) return false; else return true;
       });
       if (isFieldInspector && appStatus === mdmsApplicationStatus) {
         pathName = `/upyog-ui/employee/ws/edit-application-by-config?applicationNumber=${applicationNumber}&service=${serviceType}&propertyId=${applicationDetails?.propertyDetails?.propertyId}`;
@@ -196,19 +196,19 @@ const ModifyApplicationDetails = () => {
     return a.order - b.order;
   });
   return <Fragment>
-      <div className={"employee-main-application-details"}>
-        <div className={"employee-application-details ws-auto-322"}>
-          <Header styles={{
+    <div className={"employee-main-application-details"}>
+      <div className={"employee-application-details ws-modify-application-details-mb-md"}>
+        <Header styles={{
           marginLeft: "0px",
           paddingTop: "10px",
           fontSize: "32px"
         }}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
 
-          {dowloadOptions && dowloadOptions.length > 0 && <MultiLink className="multilinkWrapper employee-mulitlink-main-div" onHeadClick={() => setShowOptions(!showOptions)} displayOptions={showOptions} options={dowloadOptions} downloadBtnClassName={"employee-download-btn-className"} optionsClassName={"employee-options-btn-className"} ref={menuRef} />}
-        </div>
-
-        <ApplicationDetailsTemplate applicationDetails={applicationDetails} isLoading={isLoading || isServicesMasterLoading} isDataLoading={isLoading || isServicesMasterLoading} applicationData={applicationDetails?.applicationData} mutate={mutate} workflowDetails={workflowDetails} businessService={applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()} moduleCode="WS" showToast={showToast} setShowToast={setShowToast} closeToast={closeToast} timelineStatusPrefix={`WF_${applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}_`} isInfoLabel={sessionStorage.getItem("isPrivacyEnabled") === "true" ? true : false} />
+        {dowloadOptions && dowloadOptions.length > 0 && <MultiLink className="multilinkWrapper employee-mulitlink-main-div" onHeadClick={() => setShowOptions(!showOptions)} displayOptions={showOptions} options={dowloadOptions} downloadBtnClassName={"employee-download-btn-className"} optionsClassName={"employee-options-btn-className"} ref={menuRef} />}
       </div>
-    </Fragment>;
+
+      <ApplicationDetailsTemplate applicationDetails={applicationDetails} isLoading={isLoading || isServicesMasterLoading} isDataLoading={isLoading || isServicesMasterLoading} applicationData={applicationDetails?.applicationData} mutate={mutate} workflowDetails={workflowDetails} businessService={applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()} moduleCode="WS" showToast={showToast} setShowToast={setShowToast} closeToast={closeToast} timelineStatusPrefix={`WF_${applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}_`} isInfoLabel={sessionStorage.getItem("isPrivacyEnabled") === "true" ? true : false} />
+    </div>
+  </Fragment>;
 };
 export default ModifyApplicationDetails;

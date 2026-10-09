@@ -60,7 +60,7 @@ const MarkActiveModal = ({
       headerBarMainStyle={{marginLeft:"20px"}}
     >
       
-      <Card style={{ boxShadow: "none" }}>
+      <Card className="eng-mark-active-card">
         <p>{t("CONFIRM_ACTIVE_SURVEY_MSG")} <br/> {surveyTitle} {t("CONFIRM_ACTIVE_SURVEY_MSG_END")}</p><br/>
         <form onSubmit={handleSurveySettingSubmit(onSubmit)}>
           <span className="surveyformfield">

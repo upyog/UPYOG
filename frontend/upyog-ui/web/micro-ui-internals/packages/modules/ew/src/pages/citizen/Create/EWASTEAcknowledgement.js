@@ -45,7 +45,7 @@ const BannerPicker = (props) => {
       applicationNumber={props.data?.EwasteApplication[0].requestId}
       info={props.isSuccess ? props.t("EWASTE_APPLICATION_NO") : ""}
       successful={props.isSuccess}
-      style={{ width: "100%" }}
+      className="ew-ewasteacknowledgement-fullwidth"
     />
   );
 };

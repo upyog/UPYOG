@@ -170,7 +170,7 @@ const AssetStreets = ({ t, config, onSelect, userType, formData, formState, setE
           value={street}
           errorStyle={true}
           autoFocus={focusIndex?.index == 1}
-          className="asset-auto-94"
+          className="asset-streets-label-half-width"
         />
         <CardLabel>{`${t("AST_DOOR_NO")}`}</CardLabel>
         <TextInput
@@ -183,7 +183,7 @@ const AssetStreets = ({ t, config, onSelect, userType, formData, formState, setE
           value={doorNo}
           errorStyle={false}
           autoFocus={focusIndex?.index == 1}
-          className="asset-auto-95"
+          className="asset-streets-label-half-width"
         />
         <CardLabel>{`${t("AST_ADDRESS_LINE_1")}`}</CardLabel>
         <TextInput
@@ -196,7 +196,7 @@ const AssetStreets = ({ t, config, onSelect, userType, formData, formState, setE
           value={addressLine1}
           errorStyle={true}
           autoFocus={focusIndex?.index == 1}
-          className="asset-auto-96"
+          className="asset-streets-label-half-width"
         />
         <CardLabel>{`${t("AST_ADDRESS_LINE_2")}`}</CardLabel>
         <TextInput
@@ -209,7 +209,7 @@ const AssetStreets = ({ t, config, onSelect, userType, formData, formState, setE
           value={addressLine2}
           errorStyle={false}
           autoFocus={focusIndex?.index == 1}
-          className="asset-auto-97"
+          className="asset-streets-label-half-width"
         />
         <CardLabel>{`${t("AST_LANDMARK")}`}</CardLabel>
         <TextInput
@@ -222,7 +222,7 @@ const AssetStreets = ({ t, config, onSelect, userType, formData, formState, setE
           value={landmark}
           errorStyle={true}
           autoFocus={focusIndex?.index == 1}
-          className="asset-auto-98"
+          className="asset-streets-label-half-width"
         />
         {locationFetched && (
           <React.Fragment>
@@ -236,7 +236,7 @@ const AssetStreets = ({ t, config, onSelect, userType, formData, formState, setE
               value={latitude}
               errorStyle={false}
               autoFocus={focusIndex?.index == 1}
-              className="asset-auto-99"
+              className="asset-streets-label-half-width"
             />
             <CardLabel>{`${t("AST_LONGITUDE")}`}</CardLabel>
             <TextInput
@@ -248,7 +248,7 @@ const AssetStreets = ({ t, config, onSelect, userType, formData, formState, setE
               value={longitude}
               errorStyle={true}
               autoFocus={focusIndex?.index == 1}
-              className="asset-auto-100"
+              className="asset-streets-label-half-width"
             />
           </React.Fragment>
         )}

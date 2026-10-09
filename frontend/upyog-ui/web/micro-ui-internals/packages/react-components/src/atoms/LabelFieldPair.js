@@ -2,7 +2,7 @@ import React from "react";
 
 const LabelFieldPair = (props) => {
   return (
-    <div style={{ ...props.style }} className="label-field-pair">
+    <div style={props?.style} className="label-field-pair">
       {props.children}
     </div>
   );

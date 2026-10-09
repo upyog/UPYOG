@@ -2,7 +2,7 @@ import { Card, Header, KeyNote, Loader, StatusTable, SubmitBar, Row } from "@nud
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
-import "../../../css/ws-inline-auto.css";
+
 const consumptionDetails = ({
   view
 }) => {
@@ -43,8 +43,8 @@ const consumptionDetails = ({
     <Header>{`${t("WS_VIEW_CONSUMPTION")}`}</Header>
     <div>
       {meterReadings?.length > 0 && meterReadings.map((application, index) => <div key={index}>
-            <Card>
-            <StatusTable>
+        <Card>
+          <StatusTable>
             <Row className="border-none" label={t("WS_MYCONNECTIONS_CONSUMER_NO")} text={application?.connectionNo || t("NA")} textStyle={{}} />
             <Row className="border-none" label={t("WS_VIEW_BILL_BILLING_PERIOD_LABEL")} text={application?.billingPeriod || t("NA")} textStyle={{
               wordBreak: "break-word"
@@ -67,10 +67,10 @@ const consumptionDetails = ({
             <Row className="border-none" label={t("WS_CONSUMPTION_DETAILS_CONSUMPTION_LABEL")} text={consumption(application?.currentReading, application?.lastReading)} textStyle={{
               whiteSpace: "pre"
             }} />
-            </StatusTable>
-            </Card> 
-          </div>)}
-      {!meterReadings?.length > 0 && <p className="ws-auto-176">{t("WS_NO_CONSUMPTION_FOUND")}</p>}
+          </StatusTable>
+        </Card>
+      </div>)}
+      {!meterReadings?.length > 0 && <p className="ws-consumption-details-mt-md-ml-md">{t("WS_NO_CONSUMPTION_FOUND")}</p>}
     </div>
 
   </React.Fragment>;

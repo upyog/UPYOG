@@ -323,10 +323,10 @@ const NewAssetClassification = ({
       <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={!assetclassification || !assetsubtype || !BookPagereference}>
         <div>
           <div>
-            {t("AST_FINANCIAL_YEAR")} <span className="asset-auto-184">*</span>
-            <div className="tooltip asset-auto-185">
+            {t("AST_FINANCIAL_YEAR")} <span className="asset-new-asset-classification-link-red">*</span>
+            <div className="tooltip asset-new-asset-classification-link">
               <InfoBannerIcon />
-              <span className="tooltiptext asset-auto-186">
+              <span className="tooltiptext asset-new-asset-classification-link-ml-md">
                 {`${t(`AST_WHICH_FINANCIAL_YEAR`)}`}
               </span>
             </div>
@@ -339,10 +339,10 @@ const NewAssetClassification = ({
         }) => <Dropdown className="form-field" selected={financialYear} select={setfinancialYear} option={financal} optionKey="i18nKey" placeholder={"Select"} t={t} />} />
 
           <div>
-            {t("AST_SOURCE_FINANCE")} <span className="asset-auto-187">*</span>
-            <div className="tooltip asset-auto-188">
+            {t("AST_SOURCE_FINANCE")} <span className="asset-new-asset-classification-link-red">*</span>
+            <div className="tooltip asset-new-asset-classification-link">
               <InfoBannerIcon />
-              <span className="tooltiptext asset-auto-189">
+              <span className="tooltiptext asset-new-asset-classification-link-ml-md">
                 {`${t(`AST_SOURCE_OF_FUNDING`)}`}
               </span>
             </div>
@@ -352,10 +352,10 @@ const NewAssetClassification = ({
         }} render={props => <Dropdown className="form-field" selected={sourceOfFinance} select={setsourceOfFinance} option={sourcefinance} optionKey="i18nKey" placeholder={"Select"} t={t} />} />
 
           <div>
-            {t("AST_CATEGORY")} <span className="asset-auto-190">*</span>
-            <div className="tooltip asset-auto-191">
+            {t("AST_CATEGORY")} <span className="asset-new-asset-classification-link-red">*</span>
+            <div className="tooltip asset-new-asset-classification-link">
               <InfoBannerIcon />
-              <span className="tooltiptext asset-auto-192">
+              <span className="tooltiptext asset-new-asset-classification-link-ml-md">
                 {`${t(`AST_CLASSIFICATION_ASSET`)}`}
               </span>
             </div>
@@ -377,7 +377,7 @@ const NewAssetClassification = ({
               />
             )}
           />
-          <div>{`${t("AST_PARENT_CATEGORY")}`} <span className="asset-auto-193">*</span></div>
+          <div>{`${t("AST_PARENT_CATEGORY")}`} <span className="asset-new-asset-classification-link-red">*</span></div>
           <Controller
             control={control}
             name={"assettype"}
@@ -395,7 +395,7 @@ const NewAssetClassification = ({
               />
             )}
           />
-          <div>{`${t("AST_SUB_CATEGORY")}`} <span className="asset-auto-194">*</span></div>
+          <div>{`${t("AST_SUB_CATEGORY")}`} <span className="asset-new-asset-classification-link-red">*</span></div>
           <Controller
             control={control}
             name={"assetsubtype"}
@@ -438,10 +438,10 @@ const NewAssetClassification = ({
            /> */}
 
           <div>
-            {t("AST_BOOK_REF_SERIAL_NUM")} <span className="asset-auto-195">*</span>
-            <div className="tooltip asset-auto-196">
+            {t("AST_BOOK_REF_SERIAL_NUM")} <span className="asset-new-asset-classification-link-red">*</span>
+            <div className="tooltip asset-new-asset-classification-link">
               <InfoBannerIcon />
-              <span className="tooltiptext asset-auto-197">
+              <span className="tooltiptext asset-new-asset-classification-link-ml-md">
                 {`${t(`AST_BOOK_REF_NUMBER`)}`}
               </span>
             </div>
@@ -451,21 +451,21 @@ const NewAssetClassification = ({
           pattern: "^[a-zA-Z0-9/-]*$",
           type: "text",
           title: t("PT_NAME_ERROR_MESSAGE")
-        }} className="asset-auto-198" />
+        }} className="asset-new-asset-classification-link-half-width" />
 
-          <div>{`${t("AST_NAME")}`} <span className="asset-auto-199">*</span> </div>
+          <div>{`${t("AST_NAME")}`} <span className="asset-new-asset-classification-link-red">*</span> </div>
           <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="AssetName" value={AssetName} onChange={setassetname} ValidationRequired={false} {...validation = {
           isRequired: true,
           pattern: "^[a-zA-Z0-9/-]*$",
           type: "text",
           title: t("PT_NAME_ERROR_MESSAGE")
-        }} className="asset-auto-200" />
+        }} className="asset-new-asset-classification-link-half-width" />
 
           <div>
             {t("ASSET_DESCRIPTION")}
-            <div className="tooltip asset-auto-201">
+            <div className="tooltip asset-new-asset-classification-link">
               <InfoBannerIcon />
-              <span className="tooltiptext asset-auto-202">
+              <span className="tooltiptext asset-new-asset-classification-link-ml-md">
                 {`${t(`AST_ANY_DESCRIPTION`)}`}
               </span>
             </div>
@@ -481,10 +481,10 @@ const NewAssetClassification = ({
           </div>
 
           <div>
-            {t("AST_DEPARTMENT")} <span className="asset-auto-203">*</span>
-            <div className="tooltip asset-auto-204">
+            {t("AST_DEPARTMENT")} <span className="asset-new-asset-classification-link-red">*</span>
+            <div className="tooltip asset-new-asset-classification-link">
               <InfoBannerIcon />
-              <span className="tooltiptext asset-auto-205">
+              <span className="tooltiptext asset-new-asset-classification-link-ml-md">
                 {`${t(`AST_PROCURED_DEPARTMENT`)}`}
               </span>
             </div>
@@ -493,12 +493,12 @@ const NewAssetClassification = ({
           required: t("CORE_COMMON_REQUIRED_ERRMSG")
         }} render={props => <Dropdown className="form-field" selected={Department} select={setDepartment} option={departNamefromMDMS} optionKey="i18nKey" placeholder={"Select"} t={t} />} />
 
-          <div>{t("AST_USAGE")} <span className="asset-auto-206">*</span></div>
+          <div>{t("AST_USAGE")} <span className="asset-new-asset-classification-link-red">*</span></div>
           <Controller control={control} name={"assetsUsage"} defaultValue={assetsUsage} rules={{
           required: t("CORE_COMMON_REQUIRED_ERRMSG")
         }} render={props => <Dropdown className="form-field" selected={assetsUsage} select={setAssetsUsage} option={assetCurrentUsage} optionKey="i18nKey" placeholder={"Select"} t={t} />} />
 
-          <div>{t("AST_STATUS_ASSIGNABLE")} <span className="asset-auto-207">*</span> </div>
+          <div>{t("AST_STATUS_ASSIGNABLE")} <span className="asset-new-asset-classification-link-red">*</span> </div>
           <Controller control={control} name={"assetAssignable"} defaultValue={assetAssignable} rules={{
           required: t("CORE_COMMON_REQUIRED_ERRMSG")
         }} render={props => <Dropdown className="form-field" selected={assetAssignable} select={setAssetAssignable} option={assetAssignableMenu} optionKey="code" placeholder={"Select"} t={t} />} />

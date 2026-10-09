@@ -44,7 +44,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
             <div className="tooltip">
               {" "}
               {GetCell(`${row.original?.user?.roles.length}`)}
-              <span className="tooltiptext" style={{whiteSpace: "nowrap"}}>
+              <span className="tooltiptext hrms-desktop-inbox-wrapper">
                 {row.original?.user?.roles.map((ele, index) => (
                   <span>
                     {`${index + 1}. ` + t(`ACCESSCONTROL_ROLES_ROLES_${ele.code}`)} <br />{" "}
@@ -97,12 +97,12 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
     result = <Loader />;
   } else if (data?.length === 0) {
     result = (
-      <Card style={{ marginTop: 20 }}>
+      <Card className="hrms-application-card-card">
         {/* TODO Change localization key */}
         {t("COMMON_TABLE_NO_RECORD_FOUND")
           .split("\\n")
           .map((text, index) => (
-            <p key={index} style={{ textAlign: "center" }}>
+            <p key={index} className="hrms-application-card-centered">
               {text}
             </p>
           ))}
@@ -167,7 +167,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
           </div>
         </div>
       )}
-      <div style={{ flex: 1 }}>
+      <div className="hrms-inbox-filter-wrapper">
         <SearchApplication
           defaultSearchParams={props.defaultSearchParams}
           onSearch={props.onSearch}
@@ -177,7 +177,7 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
           isInboxPage={!props?.isSearch}
           searchParams={props.searchParams}
         />
-        <div className="result" style={{ marginLeft: !props?.isSearch ? "24px" : "", flex: 1 }}>
+        <div className={`result ${!props?.isSearch ? "inbox-result--with-margin" : "inbox-result--no-margin"}`}>
           {result}
         </div>
       </div>

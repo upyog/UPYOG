@@ -11,7 +11,7 @@ import ViewProperty from "../pageComponents/ViewProperty";
 const App = ({ stateCode }) => {
   const { path, url, ...match } = Digit.Hooks.useModuleBasePath();
   return (
-    <span className={"pt-citizen"} style={{ width: "100%" }}>
+    <span className={`${"pt-citizen"} cmnpt-index-fullwidth`}>
       <AppContainer>
         <BackButton>Back</BackButton>
         <Routes>

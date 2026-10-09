@@ -42,7 +42,7 @@ const PermanentAddress = ({ t, config, onSelect, value, userType, formData }) =>
     <React.Fragment>
       <div className={isopenlink ? "OpenlinkContainer" : ""}>
 
-        {isopenlink && <BackButton style={{ border: "none" }}>{t("CS_COMMON_BACK")}</BackButton>}
+        {isopenlink && <BackButton className="obps-corrospondence-address-action-btn">{t("CS_COMMON_BACK")}</BackButton>}
         <Timeline currentStep={2} flow="STAKEHOLDER" />
         <FormStep
           config={config}

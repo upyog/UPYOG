@@ -175,7 +175,7 @@ const OwnerForm1 = (_props) => {
           </LabelFieldPair>
           <CardLabelError style={errorStyle}>{touchedFields?.ConsumerName ? errors?.ConsumerName?.message : ""}</CardLabelError>
           <LabelFieldPair>
-            <CardLabel style={{ paddingTop: "10px" }} className="card-label-smaller">{`${t("UC_MOBILE_NUMBER")}`}<span className="check-page-link-button"> *</span></CardLabel>
+            <CardLabel className="card-label-smaller mc-address-details-card">{`${t("UC_MOBILE_NUMBER")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <div className="field">
               <Controller
                 control={control}
@@ -203,7 +203,7 @@ const OwnerForm1 = (_props) => {
           <div>
             <CardLabelError style={errorStyle}>{touchedFields?.mobileNumber ? errors?.mobileNumber?.message : ""}</CardLabelError>
             <LabelFieldPair>
-              <CardLabel style={{ paddingTop: "10px" }} className="card-label-smaller">{`${t("UC_EMAIL_ID")}`}</CardLabel>
+              <CardLabel className="card-label-smaller mc-address-details-card">{`${t("UC_EMAIL_ID")}`}</CardLabel>
               <div className="field">
                 <Controller
                   control={control}
@@ -224,7 +224,7 @@ const OwnerForm1 = (_props) => {
                 />
               </div>
             </LabelFieldPair>
-            {formData?.consomerDetails1 && formData?.consomerDetails1[0]?.emailId && errors && <span style={{ color: "red" }}>{errors?.emailId?.message}</span>}
+            {formData?.consomerDetails1 && formData?.consomerDetails1[0]?.emailId && errors && <span className="mc-consumer-details-required-asterisk">{errors?.emailId?.message}</span>}
           </div>
         </div>
       </div>

@@ -159,8 +159,8 @@ const PlumberDetails = _props => {
     marginTop: "-21px"
   };
   return <div>
-      <div className="ws-auto-59">
-        <CardSubHeader className="ws-auto-60">{t("WS_APPLICATION_DETAILS")}</CardSubHeader>
+      <div className="ws-disconnection-app-details-item">
+        <CardSubHeader className="ws-disconnection-app-details-title-lg">{t("WS_APPLICATION_DETAILS")}</CardSubHeader>
         <LabelFieldPair>
           <CardLabel style={isMobile && isEmployee ? {
           fontWeight: "700",
@@ -187,7 +187,7 @@ const PlumberDetails = _props => {
                   }}
                   labelStyle={{ marginTop: "unset" }}
                   onBlur={field.onBlur}
-                  className="ws-auto-61"
+                  className="ws-disconnection-app-details-item-2"
                 />
               )}
             />
@@ -224,7 +224,7 @@ const PlumberDetails = _props => {
               labelKey="WS_DISCONNECTIONTYPE"
               errorStyle={localFormState.touchedFields.disConnectionType && errors?.disConnectionType?.message ? true : false}
               autoFocus={focusIndex.index === disConnectionDetail?.key && focusIndex.type === "disConnectionType"}
-               className="ws-auto-62"
+               className="ws-disconnection-app-details-flex"
               isDependent={true}
             />
           )}

@@ -187,7 +187,7 @@ function SelectDocument({
       }
     }
   }, [doc]);
-  return <div className="tl-auto-89">
+  return <div className="tl-documents-employee-mb-md">
       <LabelFieldPair>
         <CardLabel className="card-label-smaller">
           {doc?.documentType != "OLDLICENCENO" ? <React.Fragment>
@@ -208,7 +208,7 @@ function SelectDocument({
         }}
         // disabled={enabledActions?.[action].disableUpload || !selectedDocument?.code}
         buttonType="button" />
-          <div className="tl-auto-90">{t("CS_FILE_SIZE_RESTRICTIONS_TL")}</div>
+          <div className="tl-documents-employee-text-sm-mt-sm">{t("CS_FILE_SIZE_RESTRICTIONS_TL")}</div>
         </div>
       </LabelFieldPair>
     </div>;

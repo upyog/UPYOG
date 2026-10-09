@@ -155,12 +155,12 @@ const GeoLocationWithDigipin = ({
           value={value}
           placeholder="Select Location"
           onChange={handleInputChange}
-          className="location-input wt-auto-28"
+          className="location-input wt-tree-pruning-request-details-input-flex-1"
         />
 
         {/* Location icon button — triggers GPS fetch on click */}
         <div
-          className="butt-icon wt-auto-29"
+          className="butt-icon wt-tree-pruning-request-details-icon-action"
           onClick={fetchCurrentLocation}
         >
           <LocationIcon className="fill-path-primary-main" />

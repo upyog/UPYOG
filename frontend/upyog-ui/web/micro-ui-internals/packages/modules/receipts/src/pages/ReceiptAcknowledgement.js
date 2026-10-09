@@ -106,7 +106,7 @@ const ReceiptAcknowledgement = (props) => {
                 <span className="download-button">{t("COMMON_TABLE_PRINT")}</span>
               </div>
             }
-            style={{ width: "100px" }}
+            className="rcpt-receipt-acknowledgement-action-btn"
             onClick={() => { printReciept(Payment?.paymentDetails[0]?.businessService, Payment?.paymentDetails[0]?.bill?.consumerCode) }}
           />
         </CardText>)}

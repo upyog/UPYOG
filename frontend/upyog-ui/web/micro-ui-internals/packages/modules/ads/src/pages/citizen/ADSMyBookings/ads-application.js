@@ -93,10 +93,7 @@ const AdsApplication = ({ application, tenantId, buttonLabel }) => {
        {/* <div> */}
        <KeyNote keyValue={t("ADS_BOOKING_NO")} note={application?.bookingNo} />
             {/* { timeRemaining>0 && (<CardSubHeader 
-              style={{ 
-                textAlign: 'right', 
-                fontSize: "24px"
-              }}
+              className="custom-style"
              >
               {t("CS_TIME_REMAINING")}: <span className="astericColor">{formatTime(timeRemaining)}</span>
              </CardSubHeader>)}
@@ -108,7 +105,7 @@ const AdsApplication = ({ application, tenantId, buttonLabel }) => {
         <Link to={`/upyog-ui/citizen/ads/application/${application?.bookingNo}/${application?.tenantId}`}>
           <SubmitBar label={buttonLabel} />
         </Link>
-        {(application.bookingStatus === "BOOKING_CREATED" || application.bookingStatus === "PAYMENT_FAILED" || application.bookingStatus === "PENDING_FOR_PAYMENT") && <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment} className="ads-auto-79" />}
+        {(application.bookingStatus === "BOOKING_CREATED" || application.bookingStatus === "PAYMENT_FAILED" || application.bookingStatus === "PENDING_FOR_PAYMENT") && <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment} className="ads-application-btn-margin-lg" />}
       </div>
       {showToast && <Toast error={showToast.error} warning={showToast.warning} label={t(showToast.label)} onClose={() => {
       setShowToast(null);

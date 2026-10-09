@@ -200,14 +200,14 @@ const InboxComposer = ({
               searchFieldComponents={
                 <div style={window.location.href.includes("/citizen/obps") ? { display: "flex" } : {}}>
                   <SubmitBar label={t("ES_COMMON_SEARCH")} submit form="search-form" className="submit-bar-search" />
-                  <p onClick={onResetSearchForm} className="clear-search" style={{ paddingTop: "9px", color: " #a82227" }}>
+                  <p onClick={onResetSearchForm} className="clear-search rc-index-spacing">
                     {t(`ES_COMMON_CLEAR_SEARCH`)}
                   </p>
                 </div>
               }
             />
           </SearchForm>
-          <div className="result" style={{ marginLeft: "24px", flex: 1 }}>
+          <div className="result rc-index-spacing-2">
             {isInboxLoading ? (
               <Loader />
             ) : (

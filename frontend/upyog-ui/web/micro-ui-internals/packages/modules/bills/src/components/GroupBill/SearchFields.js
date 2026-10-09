@@ -150,7 +150,7 @@ const SearchFields = ({ register, control, reset, tenantId, t, formState,tenantl
                     )}
                 />
                 {formErrors && formErrors?.locality && formErrors?.locality?.type === "required" && (
-                    <CardLabelError style={{marginLeft:"-35px"}}>{t(`CS_COMMON_REQUIRED`)}</CardLabelError>)}
+                    <CardLabelError className="bills-search-fields-card">{t(`CS_COMMON_REQUIRED`)}</CardLabelError>)}
             </SearchField>
             <SearchField>
                 {getLabel()}

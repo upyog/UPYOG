@@ -365,14 +365,14 @@ const ApplicationBillAmendment = () => {
   });
   billSearchData = billSearchData?.filter(ob => !ob?.taxHeadCode?.includes("ADHOC"));
   return <form onSubmit={handleSubmit(onFormSubmit)}>
-      <div className="ws-auto-257"><Header>{state?.data?.action ? t("WS_APP_FOR_WATER_AND_SEWERAGE_EDIT_LABEL") : t("WS_BILL_AMENDMENT_BUTTON")}</Header></div>
+      <div className="ws-application-bill-amendment-ml-md"><Header>{state?.data?.action ? t("WS_APP_FOR_WATER_AND_SEWERAGE_EDIT_LABEL") : t("WS_BILL_AMENDMENT_BUTTON")}</Header></div>
       <Card>
-        <LabelFieldPair className="ws-auto-258">
-          <CardLabel className="ws-auto-259">{t(`WS_ACKNO_CONNECTION_NO_LABEL`)}</CardLabel>
-          <CardText className="ws-auto-260">{connectionNumber}</CardText>
+        <LabelFieldPair className="ws-application-bill-amendment-mb-md">
+          <CardLabel className="ws-application-bill-amendment-item">{t(`WS_ACKNO_CONNECTION_NO_LABEL`)}</CardLabel>
+          <CardText className="ws-application-bill-amendment-link">{connectionNumber}</CardText>
         </LabelFieldPair>
-        <CardSectionHeader className="ws-auto-261">{t(`WS_ADJUSTMENT_AMOUNT`)}</CardSectionHeader>
-        <CardSectionSubText className="ws-auto-262">{t(`WS_ADJUSTMENT_AMOUNT_ADDITION_TEXT`)}</CardSectionSubText>
+        <CardSectionHeader className="ws-application-bill-amendment-label">{t(`WS_ADJUSTMENT_AMOUNT`)}</CardSectionHeader>
+        <CardSectionSubText className="ws-application-bill-amendment-label">{t(`WS_ADJUSTMENT_AMOUNT_ADDITION_TEXT`)}</CardSectionSubText>
 
         {!isBillSearchLoading ? <table cellPadding={"8px"} cellSpacing={"10px"}>
             <div style={isMobile && isEmployee ? {
@@ -380,17 +380,17 @@ const ApplicationBillAmendment = () => {
           maxWidth: "50%"
         } : {}}>
             <tbody>
-            <tr className="ws-auto-263">
+            <tr className="ws-application-bill-amendment-item-2">
               <th>{t("WS_TAX_HEADS")}</th>
-              <th className="ws-auto-264">{t("WS_CURRENT_AMOUNT")}</th>
-              <th className="ws-auto-265">
+              <th className="ws-application-bill-amendment-right-text">{t("WS_CURRENT_AMOUNT")}</th>
+              <th className="ws-application-bill-amendment-item-3">
                 <>
                   <Controller name={`${servicev1}_REDUCED_AMOUNT.VALUE`} key={`${servicev1}_REDUCED_AMOUNT.VALUE`} control={control} rules={{
                     validate: value => {
                       return !!value || (servicev1 === "WS" ? !!WS_ADDITIONAL_AMOUNT?.VALUE : !!SW_ADDITIONAL_AMOUNT?.VALUE);
                     }
                   }} render={props => {
-                    return <div className="ws-auto-266">
+                    return <div className="ws-application-bill-amendment-item-4">
                         <CheckBox label={t(`${servicev1}_REDUCED_AMOUNT`)} onChange={e => {
                         if (e.target.checked) {
                           props.onChange(true);
@@ -401,7 +401,7 @@ const ApplicationBillAmendment = () => {
                           setischeckedReduce(false);
                           props.onChange(false);
                         }
-                      }} disable={isEdit && (state?.data?.applicationDetails?.amendment?.additionalDetails?.editForm?.["WS_REDUCED_AMOUNT"]?.["VALUE"] == false || state?.data?.applicationDetails?.amendment?.additionalDetails?.editForm?.["SW_REDUCED_AMOUNT"]?.["VALUE"] == false) ? true : false} checked={props?.value} className="ws-auto-267" />
+                      }} disable={isEdit && (state?.data?.applicationDetails?.amendment?.additionalDetails?.editForm?.["WS_REDUCED_AMOUNT"]?.["VALUE"] == false || state?.data?.applicationDetails?.amendment?.additionalDetails?.editForm?.["SW_REDUCED_AMOUNT"]?.["VALUE"] == false) ? true : false} checked={props?.value} className="ws-application-bill-amendment-label-2" />
                         </div>;
                   }} />
                   {errors?.WS_REDUCED_AMOUNT?.VALUE && ischeckedReduce == true ? <CardLabelError>{t("WS_REQUIRED_FIELD")}</CardLabelError> : null}
@@ -414,7 +414,7 @@ const ApplicationBillAmendment = () => {
                       return !!value || (servicev1 === "WS" ? !!WS_REDUCED_AMOUNT?.VALUE : !!SW_REDUCED_AMOUNT?.VALUE);
                     }
                   }} render={props => {
-                    return <div className="ws-auto-268">
+                    return <div className="ws-application-bill-amendment-item-5">
                         <CheckBox
                       // className="form-field"
                       label={t(`${servicev1}_ADDITIONAL_AMOUNT`)} onChange={e => {
@@ -427,7 +427,7 @@ const ApplicationBillAmendment = () => {
                           setischeckedAddition(false);
                           props.onChange(false);
                         }
-                      }} disable={isEdit && (state?.data?.applicationDetails?.amendment?.additionalDetails?.editForm?.["WS_ADDITIONAL_AMOUNT"]?.["VALUE"] == false || state?.data?.applicationDetails?.amendment?.additionalDetails?.editForm?.["WS_ADDITIONAL_AMOUNT"]?.["VALUE"] == false) ? true : false} checked={props?.value} className="ws-auto-269" />
+                      }} disable={isEdit && (state?.data?.applicationDetails?.amendment?.additionalDetails?.editForm?.["WS_ADDITIONAL_AMOUNT"]?.["VALUE"] == false || state?.data?.applicationDetails?.amendment?.additionalDetails?.editForm?.["WS_ADDITIONAL_AMOUNT"]?.["VALUE"] == false) ? true : false} checked={props?.value} className="ws-application-bill-amendment-label-2" />
                         </div>;
                   }} />
                   {errors?.WS_ADDITIONAL_AMOUNT?.VALUE && ischeckedAddition == true ? <CardLabelError>{t("WS_REQUIRED_FIELD")}</CardLabelError> : null}
@@ -435,10 +435,10 @@ const ApplicationBillAmendment = () => {
               </th>
             </tr>
             {billSearchData?.map(node => <tr>
-                <td className="ws-auto-270">{t(`${node.taxHeadCode}`)}</td>
-                <td className="ws-auto-271">₹ {node.amount}</td>
+                <td className="ws-application-bill-amendment-bold">{t(`${node.taxHeadCode}`)}</td>
+                <td className="ws-application-bill-amendment-item-6">₹ {node.amount}</td>
                 <div>
-                <td className="ws-auto-272">
+                <td className="ws-application-bill-amendment-item-7">
                   <>
                     <TextInput disabled={servicev1 === "WS" ? !WS_REDUCED_AMOUNT?.VALUE : !SW_REDUCED_AMOUNT?.VALUE} type={"number"} name={`${servicev1}_REDUCED_AMOUNT.${node.taxHeadCode}`} inputRef={register({
                       max: {
@@ -452,9 +452,9 @@ const ApplicationBillAmendment = () => {
                     })} />
                   </>
                 </td>
-                {servicev1 === "WS" ? errors?.WS_REDUCED_AMOUNT?.[node.taxHeadCode] && <CardLabelError className="ws-auto-273">{errors?.WS_REDUCED_AMOUNT?.[node.taxHeadCode]?.message}</CardLabelError> : errors?.SW_REDUCED_AMOUNT?.[node.taxHeadCode] && <CardLabelError className="ws-auto-274">{errors?.SW_REDUCED_AMOUNT?.[node.taxHeadCode].message}</CardLabelError>}
+                {servicev1 === "WS" ? errors?.WS_REDUCED_AMOUNT?.[node.taxHeadCode] && <CardLabelError className="ws-application-bill-amendment-label-mt-neg">{errors?.WS_REDUCED_AMOUNT?.[node.taxHeadCode]?.message}</CardLabelError> : errors?.SW_REDUCED_AMOUNT?.[node.taxHeadCode] && <CardLabelError className="ws-application-bill-amendment-label-mt-neg">{errors?.SW_REDUCED_AMOUNT?.[node.taxHeadCode].message}</CardLabelError>}
                   </div>    
-                <td className="ws-auto-275">
+                <td className="ws-application-bill-amendment-label-3">
                   <>
                     <TextInput disabled={servicev1 === "WS" ? !WS_ADDITIONAL_AMOUNT?.VALUE : !SW_ADDITIONAL_AMOUNT?.VALUE} type={"number"} name={`${servicev1}_ADDITIONAL_AMOUNT.${node.taxHeadCode}`}
                   //inputRef={register()}
@@ -465,29 +465,29 @@ const ApplicationBillAmendment = () => {
                     }
                   })} />
                   </>
-                  {servicev1 === "WS" ? errors?.WS_ADDITIONAL_AMOUNT?.[node.taxHeadCode] && <CardLabelError className="ws-auto-276">{errors?.WS_ADDITIONAL_AMOUNT?.[node.taxHeadCode]?.message}</CardLabelError> : errors?.SW_ADDITIONAL_AMOUNT?.[node.taxHeadCode] && <CardLabelError className="ws-auto-277">{errors?.SW_ADDITIONAL_AMOUNT?.[node.taxHeadCode]?.message}</CardLabelError>}
+                  {servicev1 === "WS" ? errors?.WS_ADDITIONAL_AMOUNT?.[node.taxHeadCode] && <CardLabelError className="ws-application-bill-amendment-label-mt-neg-2">{errors?.WS_ADDITIONAL_AMOUNT?.[node.taxHeadCode]?.message}</CardLabelError> : errors?.SW_ADDITIONAL_AMOUNT?.[node.taxHeadCode] && <CardLabelError className="ws-application-bill-amendment-label-mt-neg-2">{errors?.SW_ADDITIONAL_AMOUNT?.[node.taxHeadCode]?.message}</CardLabelError>}
                 
                 </td>
               </tr>)}
             {<tr>
-              <td className="ws-auto-278">{t("WS_REBATE_PENALTY")}
-                <div className="tooltip ws-auto-279">
+              <td className="ws-application-bill-amendment-bold">{t("WS_REBATE_PENALTY")}
+                <div className="tooltip ws-application-bill-amendment-item-8">
                   <InfoBannerIcon fill="#0b0c0c" style />
-                  <span className="tooltiptext ws-auto-280">
+                  <span className="tooltiptext ws-application-bill-amendment-item-9">
                     {`1. ${t(`WS_ADHOC_REBATE_TOOLTIP`)}`}
                     <br /><br />
                     {`2. ${t(`WS_ADHOC_PENALTY_TOOLTIP`)}`}
                   </span>
                 </div>
               </td>
-              <td className="ws-auto-281">₹ {adhocAmount || 0}</td>
+              <td className="ws-application-bill-amendment-item-6">₹ {adhocAmount || 0}</td>
               
-              <td className="ws-auto-282">
+              <td className="ws-application-bill-amendment-item-7">
                 <>
                   <TextInput disabled={servicev1 === "WS" ? !WS_REDUCED_AMOUNT?.VALUE : !SW_REDUCED_AMOUNT?.VALUE} name={`${servicev1}_REBATE`} inputRef={register()} />
                 </>
               </td>
-              <td className="ws-auto-283">
+              <td className="ws-application-bill-amendment-label-3">
                 <>
                   <TextInput disabled={servicev1 === "WS" ? !WS_ADDITIONAL_AMOUNT?.VALUE : !SW_ADDITIONAL_AMOUNT?.VALUE} name={`${servicev1}_PENALTY`} inputRef={register()} />
                 </>
@@ -497,10 +497,10 @@ const ApplicationBillAmendment = () => {
             </div>
           </table> : <Loader />}
         {BillAmendmentMDMSLoading ? <Loader /> : <>
-            <CardSectionHeader className="ws-auto-284">{t("WS_ADD_DEMAND_REVISION_BASIS")}</CardSectionHeader>
-            <CardSectionSubText className="ws-auto-285">{t("WS_SELECT_DEMAND_REVISION")}</CardSectionSubText>
+            <CardSectionHeader className="ws-application-bill-amendment-label">{t("WS_ADD_DEMAND_REVISION_BASIS")}</CardSectionHeader>
+            <CardSectionSubText className="ws-application-bill-amendment-label">{t("WS_SELECT_DEMAND_REVISION")}</CardSectionSubText>
             <LabelFieldPair>
-              <CardLabel className="ws-auto-286">{`${t("WS_DEMAND_REVISION_BASIS")} *`}</CardLabel>
+              <CardLabel className="ws-application-bill-amendment-item">{`${t("WS_DEMAND_REVISION_BASIS")} *`}</CardLabel>
               <Controller name="amendmentReason" control={control} rules={{
             required: true
           }} render={props => {
@@ -509,9 +509,9 @@ const ApplicationBillAmendment = () => {
             }} option={BillAmendmentMDMS} selected={props?.value} optionKey={"code"} t={t} select={props?.onChange} />;
           }} />
             </LabelFieldPair>
-            {errors?.amendmentReason ? <CardLabelError className="ws-auto-287">{t("WS_REQUIRED_FIELD")}</CardLabelError> : null}
+            {errors?.amendmentReason ? <CardLabelError className="ws-application-bill-amendment-label-text-sm-mt-neg">{t("WS_REQUIRED_FIELD")}</CardLabelError> : null}
             <LabelFieldPair>
-              <CardLabel className="ws-auto-288">{`${t(getReasonDocNoHeader())} *`}</CardLabel>
+              <CardLabel className="ws-application-bill-amendment-item">{`${t(getReasonDocNoHeader())} *`}</CardLabel>
               <div className="reasonDocumentNumber">
                 <TextInput style={isMobile && isEmployee ? {} : {
               width: "640px"
@@ -520,19 +520,19 @@ const ApplicationBillAmendment = () => {
             })} />
               </div>
             </LabelFieldPair>
-            {errors?.reasonDocumentNumber ? <CardLabelError className="ws-auto-289">{t("WS_REQUIRED_FIELD")}</CardLabelError> : null}
+            {errors?.reasonDocumentNumber ? <CardLabelError className="ws-application-bill-amendment-label-text-sm-mt-neg">{t("WS_REQUIRED_FIELD")}</CardLabelError> : null}
             <LabelFieldPair>
-              <CardLabel className="ws-auto-290">{`${t("WS_BILL_AMEND_EFFECTIVE_FROM")} *`}</CardLabel>
+              <CardLabel className="ws-application-bill-amendment-item">{`${t("WS_BILL_AMEND_EFFECTIVE_FROM")} *`}</CardLabel>
               <Controller render={props => <DatePicker style={isMobile && isEmployee ? {} : {
             width: "640px"
           }} date={props.value} disabled={false} onChange={props.onChange} />} name="effectiveFrom" rules={{
             required: true
           }} control={control} />
             </LabelFieldPair>
-            {errors?.effectiveFrom ? <CardLabelError className="ws-auto-291">{t("WS_REQUIRED_FIELD")}</CardLabelError> : null}
+            {errors?.effectiveFrom ? <CardLabelError className="ws-application-bill-amendment-label-text-sm-mt-neg">{t("WS_REQUIRED_FIELD")}</CardLabelError> : null}
             {amendmentReason?.code !== "COURT_CASE_SETTLEMENT" && <div>
             <LabelFieldPair>
-              <CardLabel className="ws-auto-292">{`${t("WS_BILL_AMEND_EFFECTIVE_TILL")} *`}</CardLabel>
+              <CardLabel className="ws-application-bill-amendment-item">{`${t("WS_BILL_AMEND_EFFECTIVE_TILL")} *`}</CardLabel>
               <Controller render={props => <DatePicker style={isMobile && isEmployee ? {} : {
               width: "640px"
             }} date={props.value} disabled={false} onChange={props.onChange} />} name="effectiveTill" rules={{
@@ -543,14 +543,14 @@ const ApplicationBillAmendment = () => {
             }} control={control} />
 
             </LabelFieldPair>
-            {errors?.effectiveTill?.type === "required" && <CardLabelError className="ws-auto-293">{t("WS_REQUIRED_FIELD")}</CardLabelError>}
-            {errors?.effectiveTill?.message === "Invalid format" && <CardLabelError className="ws-auto-294">{t("ERR_DEFAULT_INPUT_FIELD_MSG")}</CardLabelError>}
+            {errors?.effectiveTill?.type === "required" && <CardLabelError className="ws-application-bill-amendment-label-text-sm-mt-neg">{t("WS_REQUIRED_FIELD")}</CardLabelError>}
+            {errors?.effectiveTill?.message === "Invalid format" && <CardLabelError className="ws-application-bill-amendment-label-text-sm-mt-neg">{t("ERR_DEFAULT_INPUT_FIELD_MSG")}</CardLabelError>}
             </div>}
           </>}
-        {!!amendmentReason ? <CardSectionHeader className="ws-auto-295">{t("WS_DOCUMENT_REQUIRED")}</CardSectionHeader> : null}
-        {requiredDocuments?.map(e => <div className="ws-auto-296">
+        {!!amendmentReason ? <CardSectionHeader className="ws-application-bill-amendment-label">{t("WS_DOCUMENT_REQUIRED")}</CardSectionHeader> : null}
+        {requiredDocuments?.map(e => <div className="ws-application-bill-amendment-card">
           <LabelFieldPair>
-            <CardLabel className="ws-auto-297">
+            <CardLabel className="ws-application-bill-amendment-item">
               {t(`${e?.documentType}`)}
               {e?.required ? `*` : null}
             </CardLabel>
@@ -573,7 +573,7 @@ const ApplicationBillAmendment = () => {
             }} error={error?.message} />} />
             </div>
           </LabelFieldPair>
-          {errors?.["DOCUMENTS"]?.[e?.documentType] || error && error?.documentType === e.documentType ? <CardLabelError className="ws-auto-298">{error && error?.documentType === e.documentType ? t(error?.message) : t("WS_NO_FILE_SELECTED")}</CardLabelError> : null}
+          {errors?.["DOCUMENTS"]?.[e?.documentType] || error && error?.documentType === e.documentType ? <CardLabelError className="ws-application-bill-amendment-label-text-sm">{error && error?.documentType === e.documentType ? t(error?.message) : t("WS_NO_FILE_SELECTED")}</CardLabelError> : null}
           </div>)}
       </Card>
       {showToast ? <Toast isDleteBtn={true}

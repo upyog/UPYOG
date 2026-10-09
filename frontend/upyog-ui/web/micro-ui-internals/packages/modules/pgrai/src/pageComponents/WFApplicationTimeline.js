@@ -76,8 +76,8 @@ const WFApplicationTimeline = (props) => {
 
   return (
     <Fragment>
-      <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
-        <CardSubHeader style={{ fontSize: "24px" }}>{t("PGR_AI_GRIEVANCE_TIMELINE")}</CardSubHeader>
+      <CardSectionHeader className="pgrai-wfapplication-timeline-header">
+        <CardSubHeader className="pgrai-wfapplication-timeline-header-2">{t("PGR_AI_GRIEVANCE_TIMELINE")}</CardSubHeader>
       </CardSectionHeader>
 
       {timelineData.length === 1 ? (

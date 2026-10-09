@@ -2,17 +2,6 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import ArrearTable from "./arrear-table";
 
-const styles = {
-  buttonStyle: { display: "flex", justifyContent: "flex-end", color: "#a82227" },
-  headerStyle: {
-    marginTop: "10px",
-    fontSize: "16px",
-    fontWeight: "700",
-    lineHeight: "24px",
-    color: " rgba(11, 12, 12, var(--text-opacity))",
-  },
-};
-
 const ArrearSummary = ({ bill = {} }) => {
   const { t } = useTranslation();
   const formatTaxHeaders = (billDetail = {}) => {
@@ -68,38 +57,38 @@ const ArrearSummary = ({ bill = {} }) => {
   const [showArrear, setShowArrear] = useState(false);
 
   if (arrears == 0 || arrears < 0) {
-    return <span></span>;
+    return null;
   }
   return (
-    <React.Fragment>
-      <div style={styles.headerStyle}>{t("CS_ARREARS_DETAILS")}</div>
-      {showArrear && <ArrearTable headers={[...keys]} values={fees} arrears={arrearsAmount}></ArrearTable>}
-      {!showArrear && (
-        <div style={styles.buttonStyle}>
-          <button
-            type="button"
-            onClick={() => {
-              setShowArrear(true);
-            }}
-          >
-            {t("CS_SHOW_CARD")}
-          </button>
-        </div>
-      )}
-      {showArrear && (
-        <div style={styles.buttonStyle}>
-          <button
-            type="button"
-            onClick={() => {
-              setShowArrear(false);
-            }}
-          >
-            {t("CS_HIDE_CARD")}
-          </button>
-        </div>
-      )}
-    </React.Fragment>
+    <div className="cmn-arrears-section">
+      <div className="cmn-arrears-header-row">
+        <div className="cmn-arrears-title">{t("CS_ARREARS_DETAILS")}</div>
+        <button
+          type="button"
+          className="cmn-arrears-toggle-btn"
+          onClick={() => setShowArrear(!showArrear)}
+        >
+          {showArrear ? (
+            <>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="18 15 12 9 6 15" />
+              </svg>
+              {t("CS_HIDE_CARD")}
+            </>
+          ) : (
+            <>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+              {t("CS_SHOW_CARD")}
+            </>
+          )}
+        </button>
+      </div>
+      {showArrear && <ArrearTable headers={[...keys]} values={fees} arrears={arrearsAmount} />}
+    </div>
   );
 };
 
 export default ArrearSummary;
+

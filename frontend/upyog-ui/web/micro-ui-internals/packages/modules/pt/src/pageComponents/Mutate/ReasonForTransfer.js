@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Dropdown, FormStep, LabelFieldPair, CardLabel, RadioOrSelect } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../../components/TLTimeline";
-import "../../css/pt-inline-auto.css";
+
 const ReasonForTransfer = props => {
   const {
     t,
@@ -34,7 +34,7 @@ const ReasonForTransfer = props => {
       reasonForTransfer
     });
   };
-  const onSkip = () => {};
+  const onSkip = () => { };
   useEffect(() => {
     if (userType === "employee") {
       if (!reasonForTransfer) {
@@ -47,27 +47,27 @@ const ReasonForTransfer = props => {
   }, [reasonForTransfer]);
   if (userType === "employee") {
     return <React.Fragment>
-        <LabelFieldPair>
-          <CardLabel className="card-label-smaller pt-auto-45">
-            {t("PT_MUTATION_TRANSFER_REASON") + " *"}
-          </CardLabel>
-          <div className="field">
-            <Dropdown t={t} option={menu} optionKey={"i18nKey"} select={setSelected} selected={reasonForTransfer} />
-          </div>
-        </LabelFieldPair>
-      </React.Fragment>;
+      <LabelFieldPair>
+        <CardLabel className="card-label-smaller pt-reason-for-transfer-label-bold">
+          {t("PT_MUTATION_TRANSFER_REASON") + " *"}
+        </CardLabel>
+        <div className="field">
+          <Dropdown t={t} option={menu} optionKey={"i18nKey"} select={setSelected} selected={reasonForTransfer} />
+        </div>
+      </LabelFieldPair>
+    </React.Fragment>;
   }
   return <React.Fragment>
-      <Timeline currentStep={2} flow="PT_MUTATE" />
-      <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!reasonForTransfer}>
-        <div>
-          <RadioOrSelect t={t} optionKey="i18nKey" isMandatory={config.isMandatory} options={menu} onSelect={setSelected} selectedOption={reasonForTransfer} optionCardStyles={{
+    <Timeline currentStep={2} flow="PT_MUTATE" />
+    <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!reasonForTransfer}>
+      <div>
+        <RadioOrSelect t={t} optionKey="i18nKey" isMandatory={config.isMandatory} options={menu} onSelect={setSelected} selectedOption={reasonForTransfer} optionCardStyles={{
           maxHeight: "50vh",
           overflow: "auto",
           zIndex: 100
         }} />
-        </div>
-      </FormStep>
-    </React.Fragment>;
+      </div>
+    </FormStep>
+  </React.Fragment>;
 };
 export default ReasonForTransfer;

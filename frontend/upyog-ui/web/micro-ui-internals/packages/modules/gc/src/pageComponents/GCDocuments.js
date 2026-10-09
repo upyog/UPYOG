@@ -55,9 +55,9 @@ function GCDocuments({ value = {}, Code, index, showFileName= false }) {
           {documents?.map((document, idx) => {
             let documentLink = pdfDownloadLink(data?.pdfFiles, document.fileStoreId);
             return (
-              <a target="_" href={documentLink} style={{ minWidth: "160px", display: "flex", alignItems: "center" }} key={document?.fileStoreId || idx}>
+              <a target="_" href={documentLink} className="gc-gcdocuments-flex-row" key={document?.fileStoreId || idx}>
               {/* Text first */}
-              <p style={{ marginRight: "8px", margin: "5px", color:"blue", fontWeight: "bold" }}>
+              <p className="gc-gcdocuments-spacing">
                 {t("GC_" + (Code?.split('.').slice(0, 5).join('_')))}
               </p>
       

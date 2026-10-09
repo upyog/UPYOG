@@ -49,16 +49,16 @@ function PTRDocument({ petdetail = {} }) {
   }
 
   return (
-    <div style={{ marginTop: "19px" }}>
+    <div className="ptr-ptrdocument-top-spacing">
       <React.Fragment>
-        <div style={{ display: "flex", flexWrap: "wrap" }}>
+        <div className="ptr-ptrdocument-flex-container">
           {documents?.map((document, index) => {
             
             let documentLink = pdfDownloadLink(data.pdfFiles, document?.fileStoreId);
             return (
-              <a target="_" href={documentLink} style={{ minWidth: "160px" }} key={index}>
-                <PDFSvg width={85} height={100} style={{ background: "#f6f6f6", padding: "8px" }} />
-                <p style={{ marginTop: "8px" }}>{t(`PT_${document?.documentType.replace(".","_")}`)}</p>
+              <a target="_" href={documentLink} className="ptr-ptrdocument-wrapper" key={index}>
+                <PDFSvg width={85} height={100} className="ptr-ptrdocument-icon" />
+                <p className="ptr-ptrdocument-top-spacing-2">{t(`PT_${document?.documentType.replace(".","_")}`)}</p>
               </a>
             );
           })}

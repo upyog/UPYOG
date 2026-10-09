@@ -499,7 +499,7 @@ else {
           if (response?.responseData?.drillDownChartId !== "none" && filter !== undefined) {
             return (
               <span
-                style={{ color: "#a82227", cursor: "pointer" }}
+                className="dss-custom-table-clickable"
                 onClick={() =>
                   getDrilldownCharts(
                     cellValue?.includes("DSS_TB_") ? row?.original?.key : cellValue,
@@ -552,13 +552,13 @@ else {
     return <Loader />;
   }
   return (
-    <div style={{ width: "100%" }}>
-      { !(isFinance) && <span className={"dss-table-subheader"} style={{ position: "sticky", left: 0 }}>
+    <div className="dss-custom-table-fullwidth">
+      { !(isFinance) && <span className={`${"dss-table-subheader"} dss-custom-pie-chart-wrapper`}>
         {t("DSS_CMN_TABLE_INFO")}
       </span> }
       {filterStack?.length > 1 && (
         <div className="tag-container">
-          <span style={{ marginTop: "20px" }}>{t("DSS_FILTERS_APPLIED")}: </span>
+          <span className="dss-custom-pie-chart-top-spacing">{t("DSS_FILTERS_APPLIED")}: </span>
           {filterStack.map((filter, id) =>
             id > 0 ? (
               <RemoveableTag
@@ -571,7 +571,7 @@ else {
         </div>
       )}
       {filterStack?.length > 2 && data?.showOptionalInfo && (
-        <span className={"dss-table-subheader"} style={{ position: "sticky", left: 0, color: "red" }}>
+        <span className={`${"dss-table-subheader"} dss-custom-table-required-asterisk`}>
           {t(data?.optionalInfo)}
         </span>
       )}

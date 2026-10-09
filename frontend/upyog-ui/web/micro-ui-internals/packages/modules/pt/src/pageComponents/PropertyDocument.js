@@ -28,14 +28,14 @@ function PropertyDocument({
   if (isLoading) {
     return <Loader />;
   }
-  return <div className="pt-auto-68">
+  return <div className="pt-property-document-item">
       <React.Fragment>
-        <div className="pt-auto-69">
+        <div className="pt-property-document-flex">
           {documents?.map((document, index) => {
           let documentLink = pdfDownloadLink(data.pdfFiles, document?.fileStoreId);
-          return <a target="_" href={documentLink} key={index} className="pt-auto-70">
-                <PDFSvg width={85} height={100} className="pt-auto-71" />
-                <p className="pt-auto-72">{t(`PT_${document?.documentType.replace(".", "_")}`)}</p>
+          return <a target="_" href={documentLink} key={index} className="pt-property-document-link">
+                <PDFSvg width={85} height={100} className="pt-property-document-link-2" />
+                <p className="pt-property-document-link-3">{t(`PT_${document?.documentType.replace(".", "_")}`)}</p>
               </a>;
         })}
         </div>

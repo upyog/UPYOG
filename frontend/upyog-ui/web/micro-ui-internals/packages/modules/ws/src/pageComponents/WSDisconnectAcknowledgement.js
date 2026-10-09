@@ -10,7 +10,7 @@ const BannerPicker = props => {
     fontSize: "32px"
   }} infoOneStyles={{
     paddingTop: "20px"
-  }} className="ws-auto-57" />;
+  }} className="ws-disconnect-acknowledgement-item" />;
 };
 const WSDisconnectAcknowledgement = () => {
   const {
@@ -23,7 +23,7 @@ const WSDisconnectAcknowledgement = () => {
     const PDFdata = getWSDisconectionAcknowledgementData(disconnectionRes, disconnectionData?.property, disconnectionRes?.tenantId, t);
     PDFdata.then(res => Digit.Utils.pdf.generatev1(res));
   };
-  return <Card className="ws-auto-58">
+  return <Card className="ws-disconnect-acknowledgement-item">
       <CardSectionHeader>
         <BannerPicker isSuccess={true} message={t("WS_APPLICATION_COMPLETED_SUCCESSFULLY_LABEL")} applicationNumber={disconnectionData?.DisconnectionResponse?.applicationNo}/> <SuccessSvg />
       </CardSectionHeader>

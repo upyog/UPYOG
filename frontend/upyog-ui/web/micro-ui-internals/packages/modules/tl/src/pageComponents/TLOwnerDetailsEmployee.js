@@ -175,7 +175,7 @@ const OwnerForm = _props => {
   if (formData?.ownershipCategory?.code === "INDIVIDUAL.MULTIPLEOWNERS") isMulitpleOwners = true;
   return <React.Fragment>
       {/* <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={false} forcedError={t(errors)}> */}
-        <div className="tl-auto-97">
+        <div className="tl-owner-details-employee-item">
           <div style={typeOfOwner === "MULTIOWNER" ? {
         border: "1px solid #D6D5D4",
         padding: "16px",
@@ -183,10 +183,10 @@ const OwnerForm = _props => {
         borderRadius: "4px",
         background: "#FAFAFA"
       } : {}}>
-            {allOwners?.length > 1 ? <div className="tl-auto-98">
-                <div onClick={() => removeOwner(owner)} className="tl-auto-99">
+            {allOwners?.length > 1 ? <div className="tl-owner-details-employee-flex">
+                <div onClick={() => removeOwner(owner)} className="tl-owner-details-employee-btn-right-text-action">
                   <span>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="tl-auto-100">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="tl-owner-details-employee-icon-relative">
                       <path d="M1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM14 1H10.5L9.5 0H4.5L3.5 1H0V3H14V1Z" fill="#494848" />
                     </svg>
                   </span>
@@ -792,8 +792,8 @@ const TLOwnerDetailsEmployee = ({
   return <React.Fragment>
       {owners?.map((owner, index) => <OwnerForm key={owner.key} index={index} owner={owner} {...commonProps} />)}
       {formData?.ownershipCategory?.code === "INDIVIDUAL.MULTIPLEOWNERS" ? <div>
-          <LinkButton label={t("TL_NEW_OWNER_DETAILS_ADD_OWN")} onClick={addNewOwner} className="tl-auto-101" />
-          <CardLabelError className="tl-auto-102">
+          <LinkButton label={t("TL_NEW_OWNER_DETAILS_ADD_OWN")} onClick={addNewOwner} className="tl-owner-details-employee-btn-red" />
+          <CardLabelError className="tl-owner-details-employee-btn-text-sm-mt-neg">
             {t(formState.errors?.mulipleOwnerError?.message || "")}
           </CardLabelError>
         </div> : null}

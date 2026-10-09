@@ -54,7 +54,7 @@ const CHBRequiredDoc = ({ t, config, onSelect, userType, formData, value = formD
   return (
     <React.Fragment>
       <Card>
-      <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+      <div className="chb-chbaddress-details-fullwidth">
         <CardHeader>{t("MODULE_CHB")}</CardHeader>
         <CardSubHeader>
           <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.searchData} draftId={value?.existingDataSet?.draftId} />

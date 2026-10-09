@@ -22,7 +22,7 @@ const CitizenHomeCard = ({ header, links = [], state, Icon, Info, isInfo = false
 
       <div className="links">
   {updatedData.map((e, i) => (
-    <div key={e?.id || i} className="linksWrapper" style={{ paddingLeft: "10px" }}>
+    <div key={e?.id || i} className="linksWrapper rc-citizen-home-card-spacing">
       {(e?.parentModule?.toUpperCase() == "BIRTH" ||
         e?.parentModule?.toUpperCase() == "DEATH" ||
         e?.parentModule?.toUpperCase() == "FIRENOC") ? (

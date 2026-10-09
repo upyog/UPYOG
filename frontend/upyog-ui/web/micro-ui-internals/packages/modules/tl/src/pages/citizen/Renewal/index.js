@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import TradeLicenseList from "./TradeLicenseList";
-import "../../../css/tl-inline-auto.css";
+
 export const TLList = () => {
   const {
     t
@@ -44,21 +44,21 @@ export const TLList = () => {
   } = data || {};
   let newapplicationlist = applicationsList;
   return <React.Fragment>
-      <Card>
-        <CardHeader>{`${t("TL_RENEW_TRADE_HEADER")}`}</CardHeader>
-        <CardText>{`${t("TL_RENEW_TRADE_TEXT")}`}</CardText>
-      </Card>
-      <div>
-        {newapplicationlist?.length > 0 && newapplicationlist?.map((application, index) => <div key={index}>
-              <TradeLicenseList application={application} />
-            </div>)}
-        {!newapplicationlist?.length > 0 && <p className="tl-auto-167">{t("PT_NO_APPLICATION_FOUND_MSG")}</p>}
-      </div>
-      {/* <p style={{ marginLeft: "16px", marginTop: "16px" }}>
+    <Card>
+      <CardHeader>{`${t("TL_RENEW_TRADE_HEADER")}`}</CardHeader>
+      <CardText>{`${t("TL_RENEW_TRADE_TEXT")}`}</CardText>
+    </Card>
+    <div>
+      {newapplicationlist?.length > 0 && newapplicationlist?.map((application, index) => <div key={index}>
+        <TradeLicenseList application={application} />
+      </div>)}
+      {!newapplicationlist?.length > 0 && <p className="tl-index-mt-md-ml-md">{t("PT_NO_APPLICATION_FOUND_MSG")}</p>}
+    </div>
+    {/* <p className="custom-style">
         {t("TL_NOT_ABLE_TO_FIND_TRADE_LICENSE")}{" "}
-        <span className="link" style={{ display: "block" }}>
+        <span className="link" className="custom-style">
           <Link to="/upyog-ui/citizen/tl/tradelicence/trade-search">{t("TL_SEARCH_TRADE_LICENSE")}</Link>
         </span>
        </p> */}
-    </React.Fragment>;
+  </React.Fragment>;
 };

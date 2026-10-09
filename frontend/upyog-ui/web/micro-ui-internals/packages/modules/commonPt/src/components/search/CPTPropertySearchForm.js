@@ -83,7 +83,7 @@ const SearchPTID = ({ tenantId, t, onSubmit, onReset, searchBy, PTSearchFields, 
                   :
                   <div className="field-container">
                     {field?.componentInFront ? (
-                      <span className="employee-card-input employee-card-input--front" style={{ flex: "none" }}>
+                      <span className="employee-card-input employee-card-input--front cmnpt-cptproperty-search-form-wrapper">
                         {field?.componentInFront}
                       </span>
                     ) : null}
@@ -99,7 +99,7 @@ const SearchPTID = ({ tenantId, t, onSubmit, onReset, searchBy, PTSearchFields, 
                       );
                     })()}
                   </div>}
-                <CardLabelError style={{ marginTop: "-10px", marginBottom: "-10px" }}>{t(formState?.errors?.[key]?.message)}</CardLabelError>
+                <CardLabelError className="cmnpt-cptproperty-search-form-card">{t(formState?.errors?.[key]?.message)}</CardLabelError>
               </SearchField>
             );
           })}

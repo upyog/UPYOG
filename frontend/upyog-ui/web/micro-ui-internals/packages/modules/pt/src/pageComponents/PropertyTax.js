@@ -155,7 +155,7 @@ function setItemWithExpiry(key, value, expiryMinutes) {
         <span>
           <SubmitBar label={t("PT_COMMON_NEXT")} onSubmit={onSelect} />
         </span>
-        <span className="pt-auto-74">
+        <span className="pt-property-tax-link-mt-sm">
           <SubmitBar label={t("PT_DIGILOCKER_CONSENT")} onSubmit={e => {
           onConcent(e);
         }} />

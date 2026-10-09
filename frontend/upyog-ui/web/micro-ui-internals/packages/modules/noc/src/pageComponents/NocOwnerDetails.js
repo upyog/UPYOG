@@ -477,7 +477,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
           optionKey="i18nKey"
           t={t}
           placeholder={t("NOC_APPLICANT_TYPE_PLACEHOLDER")}
-          style={{ marginBottom: "20px" }}
+          className="noc-noc-document-details-bottom-spacing-3"
         />
 
         <CardLabel>{t("NOC_APPLICANT_SUBTYPE_LABEL")} <span className="astericColor">*</span></CardLabel>
@@ -488,7 +488,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
           optionKey="i18nKey"
           t={t}
           placeholder={t("NOC_APPLICANT_SUBTYPE_PLACEHOLDER")}
-          style={{ marginBottom: "20px" }}
+          className="noc-noc-document-details-bottom-spacing-3"
         />
 
         {typeOfOwner === "INSTITUTIONAL" && (
@@ -528,7 +528,7 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                   />
                 </div>
                 {fieldErrors?.[index]?.telephoneNumber && <CardLabelError>{fieldErrors[index].telephoneNumber}</CardLabelError>}
-                <CardHeader style={{ marginTop: "20px" }}>{t("NOC_AUTHORIZED_PERSON_DETAILS")}</CardHeader>
+                <CardHeader className="noc-fire-noc-desktop-inbox-card">{t("NOC_AUTHORIZED_PERSON_DETAILS")}</CardHeader>
                 <CardLabel>{t("NOC_AUTHORIZED_PERSON_LABEL")} <span className="astericColor">*</span></CardLabel>
                 <TextInput
                   t={t}
@@ -631,15 +631,15 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
                     : {}
                 }
               >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <CardLabel style={{ fontWeight: "bold" }}>
+                <div className="noc-noc-owner-details-flex-row">
+                  <CardLabel className="noc-noc-document-details-card">
                     {typeOfOwner === "MULTIOWNER" ? `${t("NOC_APPLICANT_INFORMATION_SUBHEADER")} - ${index + 1}` : t("NOC_APPLICANT_INFORMATION_SUBHEADER")}
                   </CardLabel>
                   {typeOfOwner === "MULTIOWNER" && formState.length > 1 && (
                     <LinkButton
                       label={t("NOC_REMOVE_OWNER_LABEL")}
                       onClick={() => dispatch({ type: "REMOVE_THIS_OWNER", payload: { index } })}
-                      style={{ color: "#FE7A51", fontSize: "14px" }}
+                      className="noc-noc-owner-details-action-btn"
                     />
                   )}
                 </div>
@@ -785,18 +785,11 @@ const NocOwnerDetails = ({ t, config, onSelect, userType, formData }) => {
             ))}
 
             {typeOfOwner === "MULTIOWNER" && (
-              <div style={{ marginTop: "15px" }}>
+              <div className="noc-noc-document-details-card-2">
                 <button
                   type="button"
                   onClick={() => dispatch({ type: "ADD_NEW_OWNER" })}
-                  style={{
-                    color: "#FE7A51",
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    fontWeight: "bold",
-                    padding: "10px 0px",
-                  }}
+                  className="noc-noc-owner-details-clickable"
                 >
                   {t("NOC_ADD_APPLICANT_LABEL")}
                 </button>

@@ -215,7 +215,7 @@ export const CollectPayment = (props) => {
       body: [
         {
           label: t("PAY_TOTAL_AMOUNT"),
-          populators: <CardSectionHeader style={{ marginBottom: 0, textAlign: "right" }}> {`₹ ${bill?.totalAmount}`} </CardSectionHeader>,
+          populators: <CardSectionHeader className="cmn-index-header"> {`₹ ${bill?.totalAmount}`} </CardSectionHeader>,
         },
       ],
     },
@@ -345,7 +345,7 @@ export const CollectPayment = (props) => {
 
   return (
     <React.Fragment>
-       <div style={{ display: "flex", justifyContent: "space-between" }}>
+       <div className="cmn-bill-details-flex-row">
       <Header styles={{ marginLeft: "15px" }}>{checkFSM ? t("PAYMENT_COLLECT_LABEL") : t("PAYMENT_COLLECT")}</Header>
       {timerEnabledForBusinessService(businessService) && (
             <Header styles={{ marginRight: "15px" }}>
@@ -374,7 +374,7 @@ export const CollectPayment = (props) => {
           error={toast.key === "error"}
           label={t(toast.key === "success" ? `ES_${businessService.split(".")[0].toLowerCase()}_${toast.action}_UPDATE_SUCCESS` : toast.action)}
           onClose={() => setToast(null)}
-          style={{ maxWidth: "670px" }}
+          className="cmn-index-wrapper"
         />
       )}
     </React.Fragment>

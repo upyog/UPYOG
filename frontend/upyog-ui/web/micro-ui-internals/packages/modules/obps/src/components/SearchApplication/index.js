@@ -226,7 +226,7 @@ const OBPSSearchApplication = ({ tenantId, t, onSubmit, data, error, searchData,
               </div>
                 {
                   window.location.href.includes("citizen/obps/search/application") &&
-                  <div style={{ background: "#ffffff", padding: "20px 0px", color: "#00000099" }}>
+                  <div className="obps-index-container-padding">
                     <label>{t("BPA_SEARCH_CREATED_BY_STAKEHOLDER_LABEL")}</label>
                   </div>
                 }
@@ -277,11 +277,11 @@ const OBPSSearchApplication = ({ tenantId, t, onSubmit, data, error, searchData,
           </PopUp>
         ) : null}
         {data?.[0]?.display ? (
-          <Card style={{ marginTop: 20 }}>
+          <Card className="obps-index-card">
             {t(data?.[0]?.display)
               .split("\\n")
               .map((text, index) => (
-                <p key={index} style={{ textAlign: "center" }}>
+                <p key={index} className="obps-index-centered">
                   {text}
                 </p>
               ))}
@@ -306,7 +306,7 @@ const OBPSSearchApplication = ({ tenantId, t, onSubmit, data, error, searchData,
       <Header>{t("ES_COMMON_SEARCH_APPLICATION")}</Header>
       {
         window.location.href.includes("citizen/obps/search/application") && 
-        <div style={{background: "#ffffff", paddingLeft: "25px", paddingTop: "10px", color: "#00000099"}}>
+        <div className="obps-index-spacing">
           <label>{t("BPA_SEARCH_CREATED_BY_STAKEHOLDER_LABEL")}</label>
         </div>
       }
@@ -314,11 +314,11 @@ const OBPSSearchApplication = ({ tenantId, t, onSubmit, data, error, searchData,
         <SearchFormFieldsComponent {...searchFormFieldsComponentProps} />
       </SearchForm>
       {!isLoading && data?.[0]?.display ? (
-        <Card style={{ marginTop: 20 }}>
+        <Card className="obps-index-card">
           {t(data?.[0]?.display)
             .split("\\n")
             .map((text, index) => (
-              <p key={index} style={{ textAlign: "center" }}>
+              <p key={index} className="obps-index-centered">
                 {text}
               </p>
             ))}

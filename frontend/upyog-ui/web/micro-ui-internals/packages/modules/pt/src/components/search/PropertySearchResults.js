@@ -1,5 +1,5 @@
 import { DetailsCard, Loader, Table, Modal } from "@nudmcdgnpm/digit-ui-react-components";
-import React, { memo, useMemo, useState } from "react";
+import React, { memo, useMemo, useState, useEffect } from "react";
 import { Link,  } from "react-router-dom";
 import PropertyInvalidMobileNumber from "../../pages/citizen/MyProperties/PropertyInvalidMobileNumber";
 
@@ -12,6 +12,10 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast,ptSearchConf
     /* ...defaultValues,   to enable pagination */
     ...payload
   });
+
+  useEffect(() => {
+    setSearchQuery({ ...payload });
+  }, [payload]);
   const [showModal, setShowModal] = useState(false);
   const [showUpdateNo, setShowUpdateNo] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState(null);
@@ -115,13 +119,20 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast,ptSearchConf
     Header: t("PT_COMMON_TABLE_COL_STATUS_LABEL"),
     Cell: ({
       row
-    }) => GetCell(t(row?.original?.status || "NA")),
+    }) => {
+      const status = row?.original?.status || "NA";
+      const statusClass = status.toLowerCase();
+      return <span className={`pt-status-badge pt-status-${statusClass}`}>{t(status)}</span>;
+    },
     disableSortBy: true
   }, {
     Header: t("PT_AMOUNT_DUE"),
     Cell: ({
       row
-    }) => GetCell(row?.original?.due ? `₹ ${row?.original?.due}` : t("PT_NA")),
+    }) => {
+      const due = row?.original?.due;
+      return <span className="pt-due-amount-cell">{due ? `₹ ${due}` : t("PT_NA")}</span>;
+    },
     disableSortBy: true
   }, {
     Header: t("ES_SEARCH_ACTION"),
@@ -131,7 +142,7 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast,ptSearchConf
     }) => {
       return <div>
               {row.original?.due > 0 && Digit.Utils.didEmployeeHasRole("PT_CEMP") ? <span className="link"> 
-                  <a onClick={() => handleCollectTaxClick(row.original)} className="pt-auto-28">{t("ES_PT_COLLECT_TAX")}</a>
+                  <a onClick={() => handleCollectTaxClick(row.original)} className="pt-collect-tax-btn">{t("ES_PT_COLLECT_TAX")}</a>
                 </span> : null}
             </div>;
     }
@@ -141,7 +152,8 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast,ptSearchConf
     showToast && setShowToast(null);
     return <Loader />;
   }
-  if (error) {
+  const tableData = Object.values(data?.FormattedData || {}) || [];
+  if (error && tableData.length === 0) {
     !showToast && setShowToast({
       error: true,
       label: error?.response?.data?.Errors?.[0]?.code || error
@@ -162,7 +174,6 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast,ptSearchConf
       return obj;
     });
   };
-  const tableData = Object.values(data?.FormattedData || {}) || [];
   if (ptSearchConfig?.ptSearchCount && payload.locality && tableData && tableData.length > ptSearchConfig?.ptSearchCount) {
     !showToast && setShowToast({
       error: true,
@@ -170,15 +181,8 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast,ptSearchConf
     });
     return null;
   }
-  return <React.Fragment>
-      {data?.Properties?.length === 0 ? <PTEmptyResultInbox data={true}></PTEmptyResultInbox> : isMobile ? <DetailsCard data={getData(tableData)} t={t} /> : <Table t={t} data={tableData} totalRecords={data?.Properties?.length} columns={columns} getCellProps={cellInfo => {
-      return {
-        style: {
-          padding: "20px 18px",
-          fontSize: "16px"
-        }
-      };
-    }} manualPagination={false} disableSort={true} />}
+  return <div className="pt-search-results-container">
+      {data?.Properties?.length === 0 ? <PTEmptyResultInbox data={true}></PTEmptyResultInbox> : isMobile ? <DetailsCard data={getData(tableData)} t={t} /> : <Table t={t} data={tableData} totalRecords={data?.Properties?.length} columns={columns} getCellProps={() => ({})} manualPagination={false} disableSort={true} />}
 
       {showModal ? <Modal headerBarMain={<h1 className="heading-m">{showUpdateNo ? t("PTUPNO_HEADER") : t("PT_INVALID_MOBILE_NO")}</h1>} headerBarEnd={<CloseBtn onClick={() => {
       setShowModal(false);
@@ -218,6 +222,6 @@ const SearchPTID = ({ tenantId, t, payload, showToast, setShowToast,ptSearchConf
           {!showUpdateNo && <PropertyInvalidMobileNumber propertyId={selectedProperty?.propertyId} userType={"employee"} skipNContinue={skipNContinue} updateMobileNumber={updateMobileNumber} />}
         </Modal> : null}
 
-    </React.Fragment>;
+    </div>;
 };
 export default SearchPTID;

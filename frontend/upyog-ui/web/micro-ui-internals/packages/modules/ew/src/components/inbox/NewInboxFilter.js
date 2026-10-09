@@ -104,8 +104,8 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
     <React.Fragment>
       <div className="filter">
         <div className="filter-card">
-          <div className="heading" style={{ alignItems: "center" }}>
-            <div className="filter-label" style={{ display: "flex", alignItems: "center" }}>
+          <div className="heading ew-new-inbox-filter-wrapper">
+            <div className="filter-label ew-ewasteproduct-list-flex-row">
               <span>
                 {/* Icon for the filter heading */}
                 <svg width="17" height="17" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -115,13 +115,13 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
                   />
                 </svg>
               </span>
-              <span style={{ marginLeft: "8px", fontWeight: "normal" }}>{t("ES_COMMON_FILTER_BY")}:</span> {/* Filter heading */}
+              <span className="ew-new-inbox-filter-spacing">{t("ES_COMMON_FILTER_BY")}:</span> {/* Filter heading */}
             </div>
             <div className="clearAll" onClick={clearAll}>
               {t("ES_COMMON_CLEAR_ALL")} {/* Clear all filters */}
             </div>
             {props.type === "desktop" && (
-              <span className="clear-search" onClick={clearAll} style={{ border: "1px solid #e0e0e0", padding: "6px" }}>
+              <span className="clear-search ew-new-inbox-filter-container-padding" onClick={clearAll}>
                 {/* Icon for clearing filters */}
                 <svg width="17" height="17" viewBox="0 0 16 22" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -140,7 +140,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
           <div>
             {/* Locality filter */}
             <div>
-              <div className="filter-label" style={{ fontWeight: "normal" }}>
+              <div className="filter-label ew-new-inbox-filter-text-style">
                 {t("ES_INBOX_LOCALITY")}:
               </div>
               <Localities selectLocality={selectLocality} tenantId={tenantId} boundaryType="revenue" /> {/* Locality dropdown */}

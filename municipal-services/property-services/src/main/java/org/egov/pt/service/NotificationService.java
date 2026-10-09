@@ -170,7 +170,9 @@ public class NotificationService {
 	 * @return
 	 */
 	private String getMsgForUpdate(Property property, String msgCode, String completeMsgs, String createUpdateReplaceString) {
-
+		log.info("Tenant = {}", property.getTenantId());
+		log.info("ViewPropertyLink = {}", configs.getViewPropertyLink());
+		
 		String url = notifUtil.getShortenedUrl(
 					   notifUtil.getHost(property.getTenantId()).concat(configs.getViewPropertyLink()
 					  .replace(NOTIFICATION_PROPERTYID, property.getPropertyId())

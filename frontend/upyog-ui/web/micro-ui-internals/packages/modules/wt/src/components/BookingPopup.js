@@ -35,9 +35,9 @@ const BookingPopup = ({ t, closeModal, onSubmit, setExistingDataSet , moduleKey}
   }, [handleSubmit]);
   return <React.Fragment>
       <Modal headerBarMain={<Heading t={t} />} headerBarEnd={<CloseBtn onClick={closeModal} />} actionCancelLabel={showExistingBookingDetails && t("CS_COMMON_BACK")} actionCancelOnSubmit={() => setShowExistingBookingDetails(false)} hideSubmit={true} formId="modal-action">
-        <Card className="wt-auto-1">
+        <Card className="wt-booking-popup-card-no-shadow">
           {showExistingBookingDetails && <ExistingBookingDetails onSubmit={onSubmit} setExistingDataSet={setExistingDataSet} moduleKey={moduleKey}/>}
-          <div className="wt-auto-2">
+          <div className="wt-booking-popup-card-col-flex-center">
             {!showExistingBookingDetails && <SubmitBar label={t("USE_EXISTING_DETAILS")} onSubmit={handleExistingDetailsClick} />}
             {!showExistingBookingDetails && <SubmitBar label={t("FILL_NEW_DETAILS")} onSubmit={setwtData} />}
           </div>

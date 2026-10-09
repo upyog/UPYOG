@@ -79,29 +79,29 @@ const AdvertisementModuleCard = ({
     });
     window.location.href = `bookad/searchads`;
   };
-  return <div className="ads-auto-30">
-      <div className="ads-auto-31">
-        <img src={imageSrc} alt="Advertisement" className="ads-auto-32" />
+  return <div className="ads-advertisement-module-card-bordered-rounded">
+      <div className="ads-advertisement-module-card-full-width-relative">
+        <img src={imageSrc} alt="Advertisement" className="ads-advertisement-module-card-img-full-width" />
       </div>
-      <div className="ads-auto-33">
-        <p className="ads-auto-34">{light}</p>
-        <h3 className="ads-auto-35">{title}</h3>
+      <div className="ads-advertisement-module-card-item">
+        <p className="ads-advertisement-module-card-icon-red">{light}</p>
+        <h3 className="ads-advertisement-module-card-bold">{title}</h3>
         <p>
           {location} (
-          <button type="button" className="ads-auto-36">
+          <button type="button" className="ads-advertisement-module-card-header-red">
             View Map
           </button>
           )
         </p>
-        <div className="ads-auto-37">
+        <div className="ads-advertisement-module-card-row-between-flex">
           <p>Pole No: {poleNo}</p>
           <p>₹ {price}</p>
         </div>
-        <div className="ads-auto-38">
-          <button type="button" onClick={handleViewAvailability} className="ads-auto-39">
+        <div className="ads-advertisement-module-card-row-between-flex">
+          <button type="button" onClick={handleViewAvailability} className="ads-advertisement-module-card-btn-green-bordered">
             View Availability
           </button>
-          <button type="button" onClick={handleBookNow} className="ads-auto-40">
+          <button type="button" onClick={handleBookNow} className="ads-advertisement-module-card-btn-red-bordered">
             Book Now
           </button>
         </div>

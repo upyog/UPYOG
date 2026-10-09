@@ -203,7 +203,7 @@ function AssetSelectDocument({
 
 
   return (
-    <div style={{ marginBottom: "24px" }}>
+    <div className="assetv2-asset-documents-bottom-spacing">
       {doc?.hasDropdown ? (
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t(doc?.code.replaceAll(".", "_")) + "  *"}</CardLabel>

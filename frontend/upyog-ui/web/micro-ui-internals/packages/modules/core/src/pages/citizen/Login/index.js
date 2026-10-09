@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AppContainer, BackButton, Toast } from "@nudmcdgnpm/digit-ui-react-components";
-import { Route, Routes, useLocation,  } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { loginSteps } from "./config";
 import SelectMobileNumber from "./SelectMobileNumber";
 import SelectOtp from "./SelectOtp";
 import SelectName from "./SelectName";
 import { subYears, format } from "date-fns";
+import LoginLayout from "../../../components/LoginLayout";
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
@@ -30,7 +31,7 @@ const getFromLocation = (state, searchParams) => {
   return state?.from || searchParams?.from || DEFAULT_REDIRECT_URL;
 };
 
-const Login = ({ stateCode, isUserRegistered = true }) => {
+const Login = ({ stateCode, isUserRegistered = true, layout }) => {
   const { t } = useTranslation();
   const location = useLocation();
   const { path } = Digit.Hooks.useModuleBasePath();
@@ -72,9 +73,12 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     setCitizenDetail(user?.info, user?.access_token, stateCode);
     const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
     if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
-      navigate("/upyog-ui/citizen/select-location", { replace: true, state: {
-        redirectBackTo: redirectPath,
-      } });
+      navigate("/upyog-ui/citizen/", {
+        replace: true,
+        state: {
+          redirectBackTo: redirectPath,
+        },
+      });
     } else {
       navigate(redirectPath, { replace: true });
     }
@@ -117,12 +121,12 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
       if (!err) {
         setCanSubmitNo(true);
-        navigate(`${path}/otp`, { replace: true, state: { from: getFromLocation(location.state, searchParams), role: location.state?.role } });
+        navigate(`${path}/otp`, { state: { from: getFromLocation(location.state, searchParams), role: location.state?.role } });
         return;
       } else {
         setCanSubmitNo(true);
         if (!(location.state && location.state.role === "FSM_DSO")) {
-          navigate(`/upyog-ui/citizen/register/name`, { replace: true, state: { from: getFromLocation(location.state, searchParams), data: data } });
+          navigate(`/upyog-ui/citizen/register/name`, { state: { from: getFromLocation(location.state, searchParams), data: data } });
         }
       }
       if (location.state?.role) {
@@ -137,22 +141,21 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
       if (!err) {
         setCanSubmitNo(true);
-        navigate(`${path}/otp`, { replace: true, state: { from: getFromLocation(location.state, searchParams) } });
+        navigate(`${path}/otp`, { state: { from: getFromLocation(location.state, searchParams) } });
         return;
       }
       setCanSubmitNo(true);
     }
   };
   function selectCommencementDate(value) {
-    const appDate= new Date();
-    const proposedDate= format(subYears(appDate, 18), 'yyyy-MM-dd').toString();
+    const appDate = new Date();
+    const proposedDate = format(subYears(appDate, 18), "yyyy-MM-dd").toString();
 
-    if( convertDateToEpoch(proposedDate)  <= convertDateToEpoch(value)){
-      return true     
+    if (convertDateToEpoch(proposedDate) <= convertDateToEpoch(value)) {
+      return true;
+    } else {
+      return false;
     }
-    else {
-      return false;     
-    }    
   }
   const selectName = async (name) => {
     const data = {
@@ -161,26 +164,22 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       userType: getUserType(),
       ...name,
     };
-    if (selectCommencementDate(name.dob))
-    {
+    if (selectCommencementDate(name.dob)) {
       setError("Minimum age should be 18 years");
       setTimeout(() => {
         setError(false);
       }, 3000);
-    }
-    else {
+    } else {
       setParmas({ ...params, ...name });
       setCanSubmitName(true);
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
       if (res) {
         setCanSubmitName(false);
-        navigate(`${path}/otp`, { replace: true, state: { from: getFromLocation(location.state, searchParams) } });
+        navigate(`${path}/otp`, { state: { from: getFromLocation(location.state, searchParams) } });
       } else {
         setCanSubmitName(false);
       }
     }
-    
-  
   };
 
   const selectOtp = async () => {
@@ -190,7 +189,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       const { mobileNumber, otp, name } = params;
       if (isUserRegistered) {
         const requestData = {
-          username: mobileNumber ? mobileNumber:sessionStorage.getItem("userName"),
+          username: mobileNumber ? mobileNumber : sessionStorage.getItem("userName"),
           password: otp,
           tenantId: stateCode,
           userType: getUserType(),
@@ -255,45 +254,49 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     }
   };
 
+  const footer = error && <Toast error={true} label={error} onClose={() => setError(null)} />;
+
   return (
-    <div className="citizen-form-wrapper">
-      <AppContainer>
-        <BackButton />
-        <Routes>
-          <Route
-            index
-            element={
-              <SelectMobileNumber
-                onSelect={selectMobileNumber}
-                config={stepItems[0]}
-                mobileNumber={params.mobileNumber || ""}
-                onMobileChange={handleMobileChange}
-                canSubmit={canSubmitNo}
-                showRegisterLink={isUserRegistered && !location.state?.role}
-                t={t}
-              />
-            }
-          />
-          <Route
-            path="otp"
-            element={
-              <SelectOtp
-                config={{ ...stepItems[1], texts: { ...stepItems[1].texts, cardText: `${stepItems[1].texts.cardText} ${params.mobileNumber || ""}` } }}
-                onOtpChange={handleOtpChange}
-                onResend={resendOtp}
-                onSelect={selectOtp}
-                otp={params.otp}
-                error={isOtpValid}
-                canSubmit={canSubmitOtp}
-                t={t}
-              />
-            }
-          />
-          <Route path="name" element={<SelectName config={stepItems[2]} onSelect={selectName} t={t} isDisabled={canSubmitName} />} />
-        </Routes>
-        {error && <Toast error={true} label={error} onClose={() => setError(null)} />}
-      </AppContainer>
-    </div>
+    <LoginLayout footer={footer} layout={layout}>
+      <Routes>
+        <Route
+          index
+          element={
+            <SelectMobileNumber
+              onSelect={selectMobileNumber}
+              config={stepItems[0]}
+              mobileNumber={params.mobileNumber || ""}
+              onMobileChange={handleMobileChange}
+              canSubmit={canSubmitNo}
+              showRegisterLink={isUserRegistered && !location.state?.role}
+              t={t}
+            />
+          }
+        />
+        <Route
+          path="otp"
+          element={
+            <SelectOtp
+              config={{
+                ...stepItems[1],
+                texts: {
+                  ...stepItems[1].texts,
+                  cardText: `${stepItems[1].texts.cardText} ${params.mobileNumber?.replace(/.(?=.{4})/g, "X") || ""}`,
+                },
+              }}
+              onOtpChange={handleOtpChange}
+              onResend={resendOtp}
+              onSelect={selectOtp}
+              otp={params.otp}
+              error={isOtpValid}
+              canSubmit={canSubmitOtp}
+              t={t}
+            />
+          }
+        />
+        <Route path="name" element={<SelectName config={stepItems[2]} onSelect={selectName} t={t} isDisabled={canSubmitName} />} />
+      </Routes>
+    </LoginLayout>
   );
 };
 

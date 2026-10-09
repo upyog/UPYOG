@@ -176,7 +176,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const isProd = mode === "production";
 
-  const proxyTarget = env.REACT_APP_PROXY_API || "https://niuatt.niua.in";
+  const proxyTarget = env.REACT_APP_PROXY_API || "https://upyog-sandbox.niua.org";
   const assetsTarget = env.REACT_APP_PROXY_ASSETS || proxyTarget;
 
 
@@ -184,79 +184,79 @@ export default defineConfig(({ mode }) => {
 
 
   function getAliases() {
-  const aliases = {};
+    const aliases = {};
 
-  const rootPackageJsonPath = path.join(__dirname, "package.json");
-  const rootPackageJson = JSON.parse(fs.readFileSync(rootPackageJsonPath, "utf-8"));
-  const workspaces = rootPackageJson.workspaces || [];
+    const rootPackageJsonPath = path.join(__dirname, "package.json");
+    const rootPackageJson = JSON.parse(fs.readFileSync(rootPackageJsonPath, "utf-8"));
+    const workspaces = rootPackageJson.workspaces || [];
 
-  /**
-   * Build a set of active workspace package names from the root package.json.
-   * Only packages listed here will be aliased to local source.
-   * Packages absent from this list resolve from node_modules (NPM).
-   *
-   * Example:
-   *   "micro-ui-internals/packages/modules/ads" → "ads"
-   *   "micro-ui-internals/packages/libraries"   → "libraries"
-   */
-  const activeWorkspaces = new Set(
-    workspaces.map(ws => ws.split("/").pop())
-  );
+    /**
+     * Build a set of active workspace package names from the root package.json.
+     * Only packages listed here will be aliased to local source.
+     * Packages absent from this list resolve from node_modules (NPM).
+     *
+     * Example:
+     *   "micro-ui-internals/packages/modules/ads" → "ads"
+     *   "micro-ui-internals/packages/libraries"   → "libraries"
+     */
+    const activeWorkspaces = new Set(
+      workspaces.map(ws => ws.split("/").pop())
+    );
 
-  /**
-   * Registers a Vite alias for a package if and only if it is listed
-   * in the root workspaces[]. This ensures:
-   *   - In workspace  → Vite resolves from local src/ (live changes, HMR)
-   *   - Not in workspace → No alias registered → Vite resolves from node_modules (NPM)
-   *
-   * Entry point priority: package.json "main" field → fallback to src/index.js
-   */
-  function register(pkgDir) {
-    const pkgJsonPath = path.join(pkgDir, "package.json");
-    if (!fs.existsSync(pkgJsonPath)) return;
+    /**
+     * Registers a Vite alias for a package if and only if it is listed
+     * in the root workspaces[]. This ensures:
+     *   - In workspace  → Vite resolves from local src/ (live changes, HMR)
+     *   - Not in workspace → No alias registered → Vite resolves from node_modules (NPM)
+     *
+     * Entry point priority: package.json "main" field → fallback to src/index.js
+     */
+    function register(pkgDir) {
+      const pkgJsonPath = path.join(pkgDir, "package.json");
+      if (!fs.existsSync(pkgJsonPath)) return;
 
-    const { name, main } = JSON.parse(fs.readFileSync(pkgJsonPath, "utf-8"));
-    if (!name) return;
+      const { name, main } = JSON.parse(fs.readFileSync(pkgJsonPath, "utf-8"));
+      if (!name) return;
 
-    const packageName = pkgDir.split("/").pop();
-    if (!activeWorkspaces.has(packageName)) return;
+      const packageName = pkgDir.split("/").pop();
+      if (!activeWorkspaces.has(packageName)) return;
 
-    const entry = main
-      ? path.join(pkgDir, main)
-      : path.join(pkgDir, "src", "index.js");
+      const entry = main
+        ? path.join(pkgDir, main)
+        : path.join(pkgDir, "src", "index.js");
 
-    if (fs.existsSync(entry)) {
-      aliases[name] = entry;
+      if (fs.existsSync(entry)) {
+        aliases[name] = entry;
+      }
     }
+
+    /**
+     * Scan all feature modules under packages/modules/*.
+     * Each subdirectory is treated as a potential workspace package.
+     */
+    const modulesDir = path.join(packagesRoot, "modules");
+    if (fs.existsSync(modulesDir)) {
+      fs.readdirSync(modulesDir)
+        .map(pkg => path.join(modulesDir, pkg))
+        .filter(pkgDir => fs.statSync(pkgDir).isDirectory())
+        .forEach(register);
+    }
+
+    /**
+     * Shared infrastructure packages — libraries and react-components.
+     * These follow the exact same workspace rule as feature modules.
+     * Add to workspaces[] to develop locally, remove to consume from NPM.
+     */
+    const sharedPackages = [
+      path.join(packagesRoot, "libraries"),
+      path.join(packagesRoot, "react-components"),
+      path.join(packagesRoot, "css"),
+    ];
+
+    sharedPackages.filter(pkgDir => fs.existsSync(pkgDir)).forEach(register);
+
+    return aliases;
   }
-
-  /**
-   * Scan all feature modules under packages/modules/*.
-   * Each subdirectory is treated as a potential workspace package.
-   */
-  const modulesDir = path.join(packagesRoot, "modules");
-  if (fs.existsSync(modulesDir)) {
-    fs.readdirSync(modulesDir)
-      .map(pkg => path.join(modulesDir, pkg))
-      .filter(pkgDir => fs.statSync(pkgDir).isDirectory())
-      .forEach(register);
-  }
-
-  /**
-   * Shared infrastructure packages — libraries and react-components.
-   * These follow the exact same workspace rule as feature modules.
-   * Add to workspaces[] to develop locally, remove to consume from NPM.
-   */
-  const sharedPackages = [
-    path.join(packagesRoot, "libraries"),
-    path.join(packagesRoot, "react-components"),
-    path.join(packagesRoot, "css"),
-  ];
-
-  sharedPackages.filter(pkgDir => fs.existsSync(pkgDir)).forEach(register);
-
-  return aliases;
-}
 
 
   const moduleAliases = getAliases();
@@ -269,14 +269,47 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
-      react()
+      react(),
+      {
+        name: "serve-public-assets",
+        configureServer(server) {
+          const publicDir = path.resolve(__dirname, "public");
+          server.middlewares.use((req, res, next) => {
+            const rawUrl = req.originalUrl || req.url;
+            let reqPath = rawUrl.split("?")[0];
+            if (reqPath.startsWith("/upyog-ui/")) {
+              reqPath = reqPath.slice("/upyog-ui".length);
+            }
+            const filePath = path.join(publicDir, reqPath);
+            if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+              const ext = path.extname(filePath).toLowerCase();
+              const mimeTypes = {
+                ".png": "image/png",
+                ".jpg": "image/jpeg",
+                ".jpeg": "image/jpeg",
+                ".svg": "image/svg+xml",
+                ".gif": "image/gif",
+                ".webp": "image/webp",
+                ".ico": "image/x-icon",
+                ".pdf": "application/pdf",
+                ".js": "application/javascript",
+                ".json": "application/json",
+              };
+              res.setHeader("Content-Type", mimeTypes[ext] || "application/octet-stream");
+              res.statusCode = 200;
+              return fs.createReadStream(filePath).pipe(res);
+            }
+            next();
+          });
+        },
+      },
     ],
 
     root: __dirname,
 
     cacheDir: path.resolve(__dirname, "node_modules/.vite"),
 
-    base: isProd ? "/upyog-ui/" : "/",
+    base: "/upyog-ui/",
 
     define: {
       "process.env": JSON.stringify({

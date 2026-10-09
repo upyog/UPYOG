@@ -158,9 +158,9 @@ const OwnerForm = _props => {
   }, [errors]);
 
   return <React.Fragment>
-            <div className="asset-auto-39">
-                <div className="asset-auto-40">
-                    {allAssets?.length > 2 ? <div className="asset-auto-41">
+            <div className="asset-assign-item">
+                <div className="asset-assign-bordered">
+                    {allAssets?.length > 2 ? <div className="asset-assign-right-text-action">
                             X
                         </div> : null}
 

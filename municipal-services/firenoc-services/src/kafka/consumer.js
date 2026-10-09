@@ -30,6 +30,7 @@ const run = async () => {
 
   await consumer.run({
       eachMessage: async ({ topic, partition, message }) => {
+        try {
         console.log("consumer-topic",topic);
         let value = JSON.parse(message.value);
 
@@ -280,23 +281,26 @@ const run = async () => {
         };
 
         if(envVariables.KAFKA_TOPICS_RECEIPT_CREATE_REGEX.test(topic))
-          FireNOCPaymentStatus(value);
+          await FireNOCPaymentStatus(value).catch(e => console.error("System encounter error durring process of:", e));
 
         if(envVariables.KAFKA_TOPICS_FIRENOC_CREATE_SMS_REGEX.test(topic)){
           const { FireNOCs } = value;
-          sendFireNOCSMSRequest(FireNOCs);
+          await sendFireNOCSMSRequest(FireNOCs).catch(e => console.error("System encounter error durring process of:", e));
         }
 
         if(envVariables.KAFKA_TOPICS_FIRENOC_UPDATE_SMS_REGEX.test(topic)){
           const { FireNOCs } = value;
-          sendFireNOCSMSRequest(FireNOCs);
+          await sendFireNOCSMSRequest(FireNOCs).catch(e => console.error("System encounter error durring process of:", e));
         }
 
         if(envVariables.KAFKA_TOPICS_FIRENOC_WORKFLOW_SMS_REGEX.test(topic)){
           const { FireNOCs } = value;
-          sendFireNOCSMSRequest(FireNOCs);
+          await sendFireNOCSMSRequest(FireNOCs).catch(e => console.error("System encounter error durring process of:", e));
         }
 
+        } catch (e) {
+          console.error("[consumer] System encounter error durring process:", e);
+        }
       },
   })
 }

@@ -1163,11 +1163,22 @@
 	</dependencyManagement>
 
 	<dependencies>
-			<dependency>
-				<groupId>com.upyog.project</groupId>
-				 <artifactId>aspose-cad</artifactId>
-				 <version>1.0.0</version>
-			</dependency>
+
+			<!-- <dependency>
+                            <groupId>com.aspose</groupId>
+                            <artifactId>aspose-cad</artifactId>
+                            <version>20.10</version>
+                        </dependency> -->
+		<dependency>
+			<groupId>com.aspose</groupId>
+			<artifactId>aspose-cad</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.kabeja</groupId>
+			<artifactId>kabeja</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 
 		<!-- SERVLET SPEC JBOSS DEPENDENCIES START -->
 		<dependency>

@@ -3,7 +3,7 @@ import React, { useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { Link, useLocation } from "react-router-dom"
 import getPDFData from "../../utils/getWsAckDataForBillAmendPdf";
-import "../../css/ws-inline-auto.css";
+
 const Response = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const {
@@ -43,21 +43,21 @@ const Response = () => {
     getAckPdf(applicationDetails?.amendment, tenantId, t, applicationDetails?.applicationDetails, applicationDetails);
   };
   return <div>
-        {isLoading || isLoadingAppDetails ? <Loader /> : <Card>
-            <Banner message={isSuccess ? t("WS_APPLICATION_SUBMITTED_SUCCESSFULLY_LABEL") : t("CS_WATER_UPDATE_APPLICATION_FAILED")} applicationNumber={data?.Amendments?.[0]?.amendmentId} info={isSuccess ? t("WS_MYCONNECTIONS_APPLICATION_NO") : ""} successful={isSuccess ? true : false} />
-            {isError ? null : <CardText>{t("WS_MESSAGE_SUB_DESCRIPTION_LABEL")}</CardText>}
-            {(isSuccess || !!data?.Amendments?.[0]?.amendmentId) && !isError && <div className="primary-label-btn d-grid ws-auto-326" onClick={handleDownloadPdf}>
-                  <svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg" className="ws-auto-327">
-                    <path d="M17 5H3C1.34 5 0 6.34 0 8V14H4V18H16V14H20V8C20 6.34 18.66 5 17 5ZM14 16H6V11H14V16ZM17 9C16.45 9 16 8.55 16 8C16 7.45 16.45 7 17 7C17.55 7 18 7.45 18 8C18 8.55 17.55 9 17 9ZM16 0H4V4H16V0Z" fill="#a82227" />
-                  </svg>
-              {t("WS_PRINT_APPLICATION_LABEL")}
-            </div>}
-            <ActionBar className="ws-auto-328">
-                <Link to={`/upyog-ui/employee`} className="ws-auto-329">
-                <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
-                </Link> 
-            </ActionBar>
-        </Card>}
-    </div>;
+    {isLoading || isLoadingAppDetails ? <Loader /> : <Card>
+      <Banner message={isSuccess ? t("WS_APPLICATION_SUBMITTED_SUCCESSFULLY_LABEL") : t("CS_WATER_UPDATE_APPLICATION_FAILED")} applicationNumber={data?.Amendments?.[0]?.amendmentId} info={isSuccess ? t("WS_MYCONNECTIONS_APPLICATION_NO") : ""} successful={isSuccess ? true : false} />
+      {isError ? null : <CardText>{t("WS_MESSAGE_SUB_DESCRIPTION_LABEL")}</CardText>}
+      {(isSuccess || !!data?.Amendments?.[0]?.amendmentId) && !isError && <div className="primary-label-btn d-grid ws-response-btn-no-pad-mb-sm" onClick={handleDownloadPdf}>
+        <svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg" className="ws-response-icon">
+          <path d="M17 5H3C1.34 5 0 6.34 0 8V14H4V18H16V14H20V8C20 6.34 18.66 5 17 5ZM14 16H6V11H14V16ZM17 9C16.45 9 16 8.55 16 8C16 7.45 16.45 7 17 7C17.55 7 18 7.45 18 8C18 8.55 17.55 9 17 9ZM16 0H4V4H16V0Z" fill="#a82227" />
+        </svg>
+        {t("WS_PRINT_APPLICATION_LABEL")}
+      </div>}
+      <ActionBar className="ws-response-link-flex">
+        <Link to={`/upyog-ui/employee`} className="ws-response-link">
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+        </Link>
+      </ActionBar>
+    </Card>}
+  </div>;
 };
 export default Response;

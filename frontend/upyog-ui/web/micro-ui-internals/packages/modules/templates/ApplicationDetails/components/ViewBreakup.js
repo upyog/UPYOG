@@ -37,9 +37,9 @@ const ViewBreakup = ({ wsAdditionalDetails, workflowDetails }) => {
 
     return (
         <Fragment>
-            <div style={{ lineHeight: "19px", maxWidth: "950px", minWidth: "280px" }}>
-                {wsAdditionalDetails?.additionalDetails?.isViewBreakup ? <div onClick={(e) => onPopupOpen()} style={{ marginTop: "12px" }}>
-                    <span style={{ cursor: "pointer", color: "#a82227" }}>{t("WS_PAYMENT_VIEW_BREAKUP")}</span>
+            <div className="tmpl-view-breakup-wrapper">
+                {wsAdditionalDetails?.additionalDetails?.isViewBreakup ? <div onClick={(e) => onPopupOpen()} className="tmpl-view-breakup-top-spacing">
+                    <span className="tmpl-view-breakup-clickable">{t("WS_PAYMENT_VIEW_BREAKUP")}</span>
                 </div> : null
                 }
                 {popup &&
@@ -51,17 +51,17 @@ const ViewBreakup = ({ wsAdditionalDetails, workflowDetails }) => {
                         headerBarMainStyle={{ marginBottom: "0px" }}
                         popupModuleMianStyles={{ paddingTop: "0px" }}
                     >
-                        {<StatusTable style={{ padding: "10px", paddingTop: "0px" }}>
-                            <CardSectionHeader style={{ margin: "10px 0px" }}>{t("WS_APPLICATION_FEE_HEADER")}</CardSectionHeader>
+                        {<StatusTable className="tmpl-view-breakup-table-cell">
+                            <CardSectionHeader className="tmpl-view-breakup-header">{t("WS_APPLICATION_FEE_HEADER")}</CardSectionHeader>
                             {breakUpData?.billSlabData?.FEE?.map(data => <Row className="border-none" rowContainerStyle={{ margin: "0px" }} labelStyle={{ width: "50%" }} key={`${data?.taxHeadCode}`} label={`${t(`${data?.taxHeadCode}`)}`} text={<span>&#8377;{Number(data?.amount) || 0}</span>} textStyle={{ textAlign: "right" }} />)}
-                            <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", marginBottom: "10px" }} />
+                            <hr className="tmpl-view-breakup-bottom-spacing" />
                             <Row className="border-none" rowContainerStyle={{ margin: "0px" }} labelStyle={{ width: "50%" }} key={`PDF_STATIC_LABEL_CONSOLIDATED_TLAPP_TOTAL_AMOUNT1`} label={`${t(`PDF_STATIC_LABEL_CONSOLIDATED_TLAPP_TOTAL_AMOUNT`)}`} text={<span>&#8377;{Number(breakUpData?.fee) || 0}</span>} textStyle={{ textAlign: "right", fontWeight: "700", fontSize: "24px" }} />
-                            <CardSectionHeader style={{ margin: "10px 0px" }}>{t("WS_SERVICE_FEE_HEADER")}</CardSectionHeader>
+                            <CardSectionHeader className="tmpl-view-breakup-header">{t("WS_SERVICE_FEE_HEADER")}</CardSectionHeader>
                             {breakUpData?.billSlabData?.CHARGES?.map(data => <Row className="border-none" rowContainerStyle={{ margin: "0px" }} labelStyle={{ width: "50%" }} key={`${data?.taxHeadCode}`} label={`${t(`${data?.taxHeadCode}`)}`} text={<span>&#8377;{Number(data?.amount) || 0}</span>} textStyle={{ textAlign: "right" }} />)}
-                            <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", marginBottom: "10px" }} />
+                            <hr className="tmpl-view-breakup-bottom-spacing" />
                             <Row className="border-none" rowContainerStyle={{ margin: "0px" }} labelStyle={{ width: "50%" }} key={`PDF_STATIC_LABEL_CONSOLIDATED_TLAPP_TOTAL_AMOUNT2`} label={`${t(`PDF_STATIC_LABEL_CONSOLIDATED_TLAPP_TOTAL_AMOUNT`)}`} text={<span>&#8377;{Number(breakUpData?.charge) || 0}</span>} textStyle={{ textAlign: "right", fontWeight: "700", fontSize: "24px" }} />
                             {breakUpData?.billSlabData?.TAX?.map(data => <Row className="border-none" rowContainerStyle={{ margin: "0px" }} labelStyle={{ width: "50%" }} key={`${data?.taxHeadCode}`} label={`${t(`${data?.taxHeadCode}`)}`} text={<span>&#8377;{Number(data?.amount) || 0}</span>} textStyle={{ textAlign: "right" }} />)}
-                            <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", marginBottom: "10px" }} />
+                            <hr className="tmpl-view-breakup-bottom-spacing" />
                             <Row className="border-none" rowContainerStyle={{ margin: "0px" }} labelStyle={{ width: "50%" }} key={`PDF_STATIC_LABEL_CONSOLIDATED_TLAPP_TOTAL_AMOUNT3`} label={`${t(`PDF_STATIC_LABEL_CONSOLIDATED_TLAPP_TOTAL_AMOUNT`)}`} text={<span>&#8377;{Number(breakUpData?.totalAmount) || 0}</span>} textStyle={{ textAlign: "right", fontWeight: "700", fontSize: "24px" }} />
                         </StatusTable>}
                     </Modal>}

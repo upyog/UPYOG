@@ -1,9 +1,9 @@
-import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar,Toast } from "@nudmcdgnpm/digit-ui-react-components";
-import React, {useState, useEffect } from "react";
+import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link,  } from "react-router-dom";
+import { Link, } from "react-router-dom";
 import { CHBDataConvert } from "../../../utils";
-import "../../../css/chb-inline.css";
+
 
 
 /**
@@ -81,42 +81,42 @@ const CHBAcknowledgement = ({ data, onSuccess, mutation }) => {
   const handleMakePayment = () => {
 
     if (user?.type === "CITIZEN") {
-        navigate(
-          `/upyog-ui/citizen/payment/my-bills/chb-services/${mutation.data?.hallsBookingApplication?.[0]?.bookingNo}`,
-          {
-            state: {
-              tenantId,
-              bookingNo: mutation.data?.hallsBookingApplication?.[0]?.bookingNo,
-              timerValue: mutation.data?.hallsBookingApplication?.[0]?.timerValue,
-              SlotSearchData:mutation.data?.hallsBookingApplication?.[0]
-            },
-          }
-        );
-      } else if (user?.type === "EMPLOYEE") {
-        navigate(
-          `/upyog-ui/employee/payment/collect/chb-services/${mutation.data?.hallsBookingApplication?.[0]?.bookingNo}`,
-          {
-            state: {
-              tenantId,
-              bookingNo: mutation.data?.hallsBookingApplication?.[0]?.bookingNo,
-              timerValue: mutation.data?.hallsBookingApplication?.[0]?.timerValue,
-              SlotSearchData:mutation.data?.hallsBookingApplication?.[0]
-            },
-          }
-        );
-      }
+      navigate(
+        `/upyog-ui/citizen/payment/my-bills/chb-services/${mutation.data?.hallsBookingApplication?.[0]?.bookingNo}`,
+        {
+          state: {
+            tenantId,
+            bookingNo: mutation.data?.hallsBookingApplication?.[0]?.bookingNo,
+            timerValue: mutation.data?.hallsBookingApplication?.[0]?.timerValue,
+            SlotSearchData: mutation.data?.hallsBookingApplication?.[0]
+          },
+        }
+      );
+    } else if (user?.type === "EMPLOYEE") {
+      navigate(
+        `/upyog-ui/employee/payment/collect/chb-services/${mutation.data?.hallsBookingApplication?.[0]?.bookingNo}`,
+        {
+          state: {
+            tenantId,
+            bookingNo: mutation.data?.hallsBookingApplication?.[0]?.bookingNo,
+            timerValue: mutation.data?.hallsBookingApplication?.[0]?.timerValue,
+            SlotSearchData: mutation.data?.hallsBookingApplication?.[0]
+          },
+        }
+      );
+    }
   }
-  
+
 
   useEffect(() => {
-      if (showToast) {
-        const timer = setTimeout(() => {
-          setShowToast(null);
-        }, 2000); // Close toast after 2 seconds
-  
-        return () => clearTimeout(timer); // Clear timer on cleanup
-      }
-    }, [showToast]);
+    if (showToast) {
+      const timer = setTimeout(() => {
+        setShowToast(null);
+      }, 2000); // Close toast after 2 seconds
+
+      return () => clearTimeout(timer); // Clear timer on cleanup
+    }
+  }, [showToast]);
 
   return mutation.isPending || mutation.isIdle ? (
     <Loader />
@@ -127,35 +127,35 @@ const CHBAcknowledgement = ({ data, onSuccess, mutation }) => {
         {mutation.isSuccess && <Row rowContainerStyle={rowContainerStyle} last textStyle={{ whiteSpace: "pre", width: "60%" }} />}
       </StatusTable>
       {mutation.isSuccess && (
-      <div className="chb-ack-buttons-row">
-        {user.type==="EMPLOYEE" &&(<Link to={`/upyog-ui/employee`}>
-        <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
-         </Link>)}
-         {user.type==="CITIZEN" &&(<Link to={`/upyog-ui/citizen`}>
-        <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
-         </Link>)}
-        <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment}/>
-      </div>
-    )}
-    {!mutation.isSuccess && user.type==="CITIZEN" &&(
-      <Link to={`/upyog-ui/citizen`}>
-      <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
-       </Link>
-     )}
-     {!mutation.isSuccess && user.type==="EMPLOYEE" &&(
-      <Link to={`/upyog-ui/employee`}>
-      <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
-       </Link>
-     )}
-     {showToast && (
-            <Toast
-              error={showToast.error}
-              warning={showToast.warning}
-              label={t(showToast.label)}
-              onClose={() => {
-                setShowToast(null);
-              }}
-            />
+        <div className="chb-ack-buttons-row">
+          {user.type === "EMPLOYEE" && (<Link to={`/upyog-ui/employee`}>
+            <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+          </Link>)}
+          {user.type === "CITIZEN" && (<Link to={`/upyog-ui/citizen`}>
+            <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+          </Link>)}
+          <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment} />
+        </div>
+      )}
+      {!mutation.isSuccess && user.type === "CITIZEN" && (
+        <Link to={`/upyog-ui/citizen`}>
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+        </Link>
+      )}
+      {!mutation.isSuccess && user.type === "EMPLOYEE" && (
+        <Link to={`/upyog-ui/employee`}>
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+        </Link>
+      )}
+      {showToast && (
+        <Toast
+          error={showToast.error}
+          warning={showToast.warning}
+          label={t(showToast.label)}
+          onClose={() => {
+            setShowToast(null);
+          }}
+        />
       )}
     </Card>
   );

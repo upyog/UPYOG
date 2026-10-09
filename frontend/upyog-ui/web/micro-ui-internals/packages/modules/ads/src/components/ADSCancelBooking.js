@@ -38,9 +38,9 @@ const ADSCancelBooking = ({
     handleSubmit
   } = useForm();
   return <Modal headerBarMain={<Heading t={t} />} headerBarEnd={<CloseBtn onClick={closeModal} />} actionCancelLabel={t(actionCancelLabel)} actionCancelOnSubmit={actionCancelOnSubmit} actionSaveLabel={t(actionSaveLabel)} actionSaveOnSubmit={handleSubmit(actionSaveOnSubmit)} isDisabled={!agree} formId="modal-action">
-            <Card className="ads-auto-1">
+            <Card className="ads-cancel-booking-card-no-shadow">
                 <form onSubmit={handleSubmit(onSubmit)}>
-                <CheckBox label={t("ADS_CONFIRM_CANCEL_BOOKING")} onChange={setdeclarationhandler} className="ads-auto-2" />
+                <CheckBox label={t("ADS_CONFIRM_CANCEL_BOOKING")} onChange={setdeclarationhandler} className="ads-cancel-booking-card-auto-height" />
                 </form>
             </Card>
         </Modal>;

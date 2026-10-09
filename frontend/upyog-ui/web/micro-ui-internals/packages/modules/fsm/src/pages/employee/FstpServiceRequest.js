@@ -165,7 +165,7 @@ const FstpServiceRequest = () => {
           onSort={handleSort}
           sortParams={sortParams}
         />
-        <span className="link" style={{ margin: "8px" }}>
+        <span className="link fsm-fstp-service-request-spacing">
           <Link
             to={{
               pathname: "/upyog-ui/employee/fsm/fstp/new-vehicle-entry/",
@@ -201,7 +201,7 @@ const FstpServiceRequest = () => {
           isPaginationRequired={false}
           searchParams={filterParam}
         />
-        <span className="link" style={{ margin: "294px", padding: "2px" }}>
+        <span className="link fsm-fstp-service-request-container-padding">
           <Link
             to={{
               pathname: "/upyog-ui/employee/fsm/fstp/new-vehicle-entry/",

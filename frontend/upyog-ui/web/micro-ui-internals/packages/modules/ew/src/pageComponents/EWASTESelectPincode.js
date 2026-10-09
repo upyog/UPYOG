@@ -109,7 +109,7 @@ const EWASTESelectPincode = ({ t, config, onSelect, formData = {}, userType, reg
             />
           </div>
         </LabelFieldPair>
-        {error ? <CardLabelError style={{ width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" }}>{error}</CardLabelError> : null}
+        {error ? <CardLabelError className="ew-ewasteselect-pincode-card">{error}</CardLabelError> : null}
       </React.Fragment>
     ));
   }

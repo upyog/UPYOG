@@ -74,7 +74,7 @@ const FilterFormFieldsComponent = ({statuses, isInboxLoading, registerRef, contr
                 );
               }),[field?.value])
             return loadingLocalitiesForEmployeesCurrentTenant ? <Loader/> : <>
-              <div className="filter-label sub-filter-label" style={{fontSize: "18px", fontWeight: "600"}}>{t("ES_INBOX_LOCALITY")}</div>
+              <div className="filter-label sub-filter-label obps-filter-form-fields-component-text-style">{t("ES_INBOX_LOCALITY")}</div>
               <MultiSelectDropdown
               options={localitiesForEmployeesCurrentTenant ? localitiesForEmployeesCurrentTenant : []}
               optionsKey="i18nkey"
@@ -99,7 +99,7 @@ const FilterFormFieldsComponent = ({statuses, isInboxLoading, registerRef, contr
         control={controlFilterForm}
         render={({ field }) => {
           return loadingApplicationTypesOfBPA ? <Loader /> : <>
-            <div className="filter-label sub-filter-label" style={{fontSize: "18px", fontWeight: "600"}}>{t("BPA_SEARCH_APPLICATION_TYPE_LABEL")}</div>
+            <div className="filter-label sub-filter-label obps-filter-form-fields-component-text-style">{t("BPA_SEARCH_APPLICATION_TYPE_LABEL")}</div>
             <RadioButtons
               onSelect={(e) => {
                 field.onChange(e.code);
@@ -122,7 +122,7 @@ const FilterFormFieldsComponent = ({statuses, isInboxLoading, registerRef, contr
           control={controlFilterForm}
           render={({ field }) => {
             return <>
-              <div className="filter-label sub-filter-label" style={{fontSize: "18px", fontWeight: "600"}}>{t("ES_INBOX_RISK_TYPE")}</div>
+              <div className="filter-label sub-filter-label obps-filter-form-fields-component-text-style">{t("ES_INBOX_RISK_TYPE")}</div>
               <RadioButtons
                 onSelect={(e) => {field.onChange(e.code);
                 setFilterFormValue("applicationStatus",[])}}
@@ -137,7 +137,7 @@ const FilterFormFieldsComponent = ({statuses, isInboxLoading, registerRef, contr
         />
     </FilterFormField> : null}
     {(selectedApplicationType == "BUILDING_OC_PLAN_SCRUTINY" || (selectedApplicationType?.length > 0 && selectedBusinessService?.length > 0)) ? <FilterFormField>
-      <div className="filter-label sub-filter-label" style={{fontSize: "18px", fontWeight: "600"}}>{t("ACTION_TEST_APPLICATION_STATUS")}</div>
+      <div className="filter-label sub-filter-label obps-filter-form-fields-component-text-style">{t("ACTION_TEST_APPLICATION_STATUS")}</div>
       <Controller
         name="applicationStatus"
         control={controlFilterForm}

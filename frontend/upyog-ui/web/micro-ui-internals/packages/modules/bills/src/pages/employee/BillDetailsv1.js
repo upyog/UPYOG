@@ -73,10 +73,10 @@ const BillDetailsv1 = (props) => {
 
     return (
         <>
-            <div className={"employee-application-details"} style={{ marginBottom: "15px" }}>
+            <div className={`${"employee-application-details"} bills-bill-detailsv1-bottom-spacing`}>
                 <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "32px" }}>{t("ABG_BILL_DETAILS_HEADER")}</Header>
             </div>
-            {fetchedBill && !isLoading ?<Card style={{ position: "relative" }} className={"employeeCard-override"}>
+            {fetchedBill && !isLoading ?<Card className={`${"employeeCard-override"} bills-bill-detailsv1-card`}>
                 <>
                     <StatusTable>
                         {fetchedBill &&
@@ -90,10 +90,10 @@ const BillDetailsv1 = (props) => {
                         })}
                     </StatusTable>
                     
-                    <StatusTable style={{ paddingTop: "46px" }}>
+                    <StatusTable className="bills-bill-detailsv1-table-cell">
                         <CardSectionHeader>{t("ABG_BILL_DETAILS_HEADER")}</CardSectionHeader>
                         <Row label={t("ES_PAYMENT_TAXHEADS")} textStyle={{ fontWeight: "bold" }} text={t("ES_PAYMENT_AMOUNT")} />
-                        <hr style={{ width: "40%" }} className="underline" />
+                        <hr className="underline bills-bill-detailsv1-wrapper" />
                         {billDetails?.billAccountDetails
                             ?.sort((a, b) => a.order - b.order)
                             .map((amountDetails, index) => (
@@ -115,7 +115,7 @@ const BillDetailsv1 = (props) => {
                             />
                         ) : null}
 
-                        <hr style={{ width: "40%" }} className="underline" />
+                        <hr className="underline bills-bill-detailsv1-wrapper" />
                         <Row
                             label={t("CS_PAYMENT_TOTAL_AMOUNT")}
                             textStyle={{ fontWeight: "bold", textAlign: "right", maxWidth: "100px" }}
@@ -128,7 +128,7 @@ const BillDetailsv1 = (props) => {
                     <React.Fragment key={index}>
                         <div >
                             {index === 0 && !detail.asSectionHeader ? (
-                                <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t(detail.title)}</CardSubHeader>
+                                <CardSubHeader className="bills-bill-detailsv1-header">{t(detail.title)}</CardSubHeader>
                             ) : (
                                 <React.Fragment>
                                     <CardSectionHeader
@@ -146,12 +146,12 @@ const BillDetailsv1 = (props) => {
                             {/* TODO, Later will move to classes */}
                             {/* Here Render the table for adjustment amount details detail.isTable is true for that table*/}
                             {detail?.isTable && (
-                                <table style={{ tableLayout: "fixed", width: "100%", borderCollapse: "collapse" }}>
-                                    <tr style={{ textAlign: "left" }}>
-                                        {detail?.headers.map(header => <th style={{ padding: "10px" }}>{t(header)}</th>)}
+                                <table className="bills-bill-detailsv1-fullwidth">
+                                    <tr className="bills-bill-detailsv1-table-cell-2">
+                                        {detail?.headers.map(header => <th className="bills-bill-detailsv1-table-cell-3">{t(header)}</th>)}
                                     </tr>
                                     {detail?.tableRows.map(row => <tr>
-                                        {row.map(element => <td style={{ paddingRight: "60px", paddingTop: "20px", textAlign: "center" }}>{t(element)}</td>)}
+                                        {row.map(element => <td className="bills-bill-detailsv1-centered">{t(element)}</td>)}
                                     </tr>)}
                                 </table>
                             )}
@@ -168,9 +168,9 @@ const BillDetailsv1 = (props) => {
                                                     key={t(value.title)}
                                                     label={
                                                         window.location.href.includes("tl") || window.location.href.includes("ws") || window.location.href.includes("bills") ? (
-                                                            <div style={{ width: "200%" }}>
+                                                            <div className="bills-bill-detailsv1-wrapper-2">
                                                                 <Link to={value?.to}>
-                                                                    <span className="link" style={{ color: "#a82227" }}>
+                                                                    <span className="link bills-bill-detailsv1-wrapper-3">
                                                                         {t(value?.title)}
                                                                     </span>
                                                                 </Link>
@@ -184,7 +184,7 @@ const BillDetailsv1 = (props) => {
                                                     text={
                                                         <div>
                                                             <Link to={value?.to}>
-                                                                <span className="link" style={{ color: "#a82227" }}>
+                                                                <span className="link bills-bill-detailsv1-wrapper-3">
                                                                     {value?.value}
                                                                 </span>
                                                             </Link>
@@ -216,7 +216,7 @@ const BillDetailsv1 = (props) => {
                 ))}
             </Card>:<Loader/>}
 
-            <ActionBar style={{ display: "flex", justifyContent: "flex-end", alignItems: "baseline" }}>
+            <ActionBar className="bills-bill-detailsv1-flex-row">
                 <SubmitBar label={t("ABG_CANCEL_BILL")} onSubmit={()=>setShowModal(true)}/>
             </ActionBar>
 

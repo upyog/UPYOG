@@ -11,9 +11,9 @@ const TelePhone = ({ mobile, text, privacy }) => {
     {text}
     <div className="telephone">
       <div className="call">
-        <Phone fillcolor={"FFFFFF"} style={{marginLeft:"0px"}} />
+        <Phone fillcolor={"FFFFFF"} className="rc-tele-phone-spacing" />
         {!privacy && <a href={`tel:${mobile}`}>{"+91"} {mobile}</a>}
-        {privacy && (unmaskedNumber === "") && <span><WrapUnMaskComponent value={`+91 ${mobile}`} iseyevisible={mobile?.includes("*")?true:false} privacy={privacy} style={{marginBottom:"-4px"}} setunmaskedNumber={setunmaskedNumber}></WrapUnMaskComponent></span>}
+        {privacy && (unmaskedNumber === "") && <span><WrapUnMaskComponent value={`+91 ${mobile}`} iseyevisible={mobile?.includes("*")?true:false} privacy={privacy} className="rc-tele-phone-bottom-spacing" setunmaskedNumber={setunmaskedNumber}></WrapUnMaskComponent></span>}
         {privacy && unmaskedNumber !== "" && <a href={`tel:${unmaskedNumber}`}>{unmaskedNumber}</a>}
       </div>
     </div>

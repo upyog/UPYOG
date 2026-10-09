@@ -20,13 +20,9 @@ const MCollectWFAcknowledgement = () => {
       <CardText>{t("UC_BILL_GENERATION_MESSAGE_SUB")}</CardText>
 
       <ActionBar
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          alignItems: "baseline",
-        }}
+        className="mc-mcollect-wfacknowledgement-flex-row"
       >
-        <Link to={`/upyog-ui/employee`} style={{ marginRight: "1rem" }}>
+        <Link to={`/upyog-ui/employee`} className="mc-mcollect-wfacknowledgement-spacing">
           <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
         <SubmitBar label={t("UC_BUTTON_PAY")} onClick={proceedToPayment} />

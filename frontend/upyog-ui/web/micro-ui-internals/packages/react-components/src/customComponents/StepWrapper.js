@@ -12,19 +12,10 @@ const StepWrapper = ({
 
   return (
     <div
-      className="stepper"
-      style={{
-        width: "100%",
-        display: "block",
-      }}
+      className="stepper rc-step-wrapper-fullwidth"
     >
       <div
-        className="stepper-body"
-        style={{
-          width: "100%",
-          marginBottom: "20px",
-          background: "transparent",
-        }}
+        className="stepper-body rc-step-wrapper-fullwidth-2"
       >
         {children}
       </div>

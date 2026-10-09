@@ -7,7 +7,7 @@ import _ from "lodash";
 import { newConfig as newConfigLocal } from "../../../config/wsDisconnectionConfig";
 import { convertDisonnectEditApplicationDetails, convertDisonnectApplicationData } from "../../../utils";
 import cloneDeep from "lodash/cloneDeep";
-import "../../../css/ws-inline-auto.css";
+
 const EditDisconnectionByConfig = () => {
   const {
     t
@@ -58,19 +58,22 @@ const EditDisconnectionByConfig = () => {
       setConfig(config);
     }
   }, [applicationDetails, isLoading, newConfig]);
-  useEffect(async () => {
-    const IsDetailsExists = sessionStorage.getItem("IsDetailsExists") ? JSON.parse(sessionStorage.getItem("IsDetailsExists")) : false;
-    if (details?.applicationData?.id && !IsDetailsExists) {
-      const convertAppData = await convertDisonnectApplicationData(details, serviceType, false, t);
-      setSessionFormData({
-        ...sessionFormData,
-        ...convertAppData
-      });
-      setAppData({
-        ...convertAppData
-      });
-      sessionStorage.setItem("IsDetailsExists", JSON.stringify(true));
-    }
+  useEffect(() => {
+    const loadAppData = async () => {
+      const IsDetailsExists = sessionStorage.getItem("IsDetailsExists") ? JSON.parse(sessionStorage.getItem("IsDetailsExists")) : false;
+      if (details?.applicationData?.id && !IsDetailsExists) {
+        const convertAppData = await convertDisonnectApplicationData(details, serviceType, false, t);
+        setSessionFormData({
+          ...sessionFormData,
+          ...convertAppData
+        });
+        setAppData({
+          ...convertAppData
+        });
+        sessionStorage.setItem("IsDetailsExists", JSON.stringify(true));
+      }
+    };
+    loadAppData();
   }, [details, applicationDetails, sessionFormData]);
   const onFormValueChange = (setValue, formData, formState) => {
     if (!_.isEqual(sessionFormData, formData)) {
@@ -79,7 +82,7 @@ const EditDisconnectionByConfig = () => {
         ...formData
       });
     }
-    if (Object.keys(formState.errors).length > 0 && Object.keys(formState.errors).length == 1 && formState.errors["owners"] && Object.values(formState.errors["owners"].type).filter(ob => ob.type === "required").length == 0 && !formData?.cpt?.details?.propertyId) setSubmitValve(true);else setSubmitValve(!Object.keys(formState.errors).length);
+    if (Object.keys(formState.errors).length > 0 && Object.keys(formState.errors).length == 1 && formState.errors["owners"] && Object.values(formState.errors["owners"].type).filter(ob => ob.type === "required").length == 0 && !formData?.cpt?.details?.propertyId) setSubmitValve(true); else setSubmitValve(!Object.keys(formState.errors).length);
   };
   const onSubmit = async data => {
     if (!canSubmit) {
@@ -107,13 +110,13 @@ const EditDisconnectionByConfig = () => {
     return <Loader />;
   }
   return <React.Fragment>
-      <div className="ws-auto-319">
-        <Header>{t(config.head)}</Header>
-      </div>
-      <FormComposer config={config.body} userType={"employee"} onFormValueChange={onFormValueChange}
-    // isDisabled={!canSubmit}
-    label={t("CS_COMMON_SUBMIT")} onSubmit={onSubmit} defaultValues={sessionFormData} appData={appData} noBreakLine={true}></FormComposer>
-      {showToast && <Toast error={showToast.key} label={t(showToast?.message)} warning={showToast?.warning} onClose={closeToast} />}
-    </React.Fragment>;
+    <div className="ws-index-ml-md">
+      <Header>{t(config.head)}</Header>
+    </div>
+    <FormComposer config={config.body} userType={"employee"} onFormValueChange={onFormValueChange}
+      // isDisabled={!canSubmit}
+      label={t("CS_COMMON_SUBMIT")} onSubmit={onSubmit} defaultValues={sessionFormData} appData={appData} noBreakLine={true}></FormComposer>
+    {showToast && <Toast error={showToast.key} label={t(showToast?.message)} warning={showToast?.warning} onClose={closeToast} />}
+  </React.Fragment>;
 };
 export default EditDisconnectionByConfig;

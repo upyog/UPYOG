@@ -12,8 +12,8 @@ const EmptyResultInbox = (props) => {
   };
   return <React.Fragment>
       {props.data ? <React.Fragment>
-          <div className="pt-auto-15">{t("PT_NO_MATCHING_PROPERTY_FOUND")}</div>
-          <div className="pt-auto-16">
+          <div className="pt-empty-result-center-text-mb-md">{t("PT_NO_MATCHING_PROPERTY_FOUND")}</div>
+          <div className="pt-empty-result-center-text">
             <SubmitBar onSubmit={addNewProprty} label={t("PT_ADD_NEW_PROPERTY_BUTTON")} />
           </div>
         </React.Fragment> : null}

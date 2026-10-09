@@ -25,12 +25,12 @@ const RequiredDocuments = ({path}) => {
 		<div ref={fullPageRef}>
 			<div className="options">
 				<Header>{t("ES_COMMON_WS_DOCUMENTS_REQUIRED")}</Header>
-				<div className="mrsm ws-auto-324" onClick={handlePrint}>
+				<div className="mrsm ws-required-documents-btn" onClick={handlePrint}>
 				<DownloadIcon className="mrsm" />
 				{t(`ES_WS_REQUIRED_DOCS_DOWNLOAD`)}
 				</div>
 			</div>
-			<Card className={"employeeCard-override ws-auto-325"}>
+			<Card className={"employeeCard-override ws-required-documents-card-relative"}>
 				{BillAmendmentMDMSLoading ? <Loader /> : BillAmendmentMDMS?.map(e => {
           return <>
 							<CardHeader>{t(e.code).replaceAll("_", " ")}</CardHeader>

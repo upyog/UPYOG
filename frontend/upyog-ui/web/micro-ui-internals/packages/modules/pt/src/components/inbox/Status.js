@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import StatusCount from "./StatusCount";
-import "../../css/pt-inline-auto.css";
+
 const Status = ({
   onAssignmentChange,
   searchParams,
@@ -37,18 +37,18 @@ const Status = ({
     return <Loader />;
   }
   return userRoleStates?.filter(e => !e.isTerminateState).length ? <div className="status-container">
-      <div className="filter-label pt-auto-25">
-        {t("ES_INBOX_STATUS")}
-      </div>
-      {userRoleStates?.filter(e => !e.isTerminateState)?.slice(0, 4)?.map((option, index) => {
+    <div className="filter-label pt-status-font-normal">
+      {t("ES_INBOX_STATUS")}
+    </div>
+    {userRoleStates?.filter(e => !e.isTerminateState)?.slice(0, 4)?.map((option, index) => {
       return <StatusCount businessServices={businessServices} key={index} onAssignmentChange={onAssignmentChange} status={{
         name: translateState(option, t),
         code: option.applicationStatus,
         ...option
       }} searchParams={searchParams} statusMap={statusMap} />;
     })}
-      {userRoleStates?.filter(e => !e.isTerminateState)?.slice(4).length > 0 ? <React.Fragment>
-          {moreStatus && userRoleStates?.filter(e => !e.isTerminateState)?.slice(4)?.map((option, index) => {
+    {userRoleStates?.filter(e => !e.isTerminateState)?.slice(4).length > 0 ? <React.Fragment>
+      {moreStatus && userRoleStates?.filter(e => !e.isTerminateState)?.slice(4)?.map((option, index) => {
         return <StatusCount businessServices={businessServices} key={option.uuid} onAssignmentChange={onAssignmentChange} status={{
           name: translateState(option, t),
           code: option.applicationStatus,
@@ -56,11 +56,11 @@ const Status = ({
         }} searchParams={searchParams} statusMap={statusMap} />;
       })}
 
-          <div className="filter-button" onClick={() => showMoreStatus(!moreStatus)}>
-            {" "}
-            {moreStatus ? t("ES_COMMON_LESS") : t("ES_COMMON_MORE")}{" "}
-          </div>
-        </React.Fragment> : null}
-    </div> : null;
+      <div className="filter-button" onClick={() => showMoreStatus(!moreStatus)}>
+        {" "}
+        {moreStatus ? t("ES_COMMON_LESS") : t("ES_COMMON_MORE")}{" "}
+      </div>
+    </React.Fragment> : null}
+  </div> : null;
 };
 export default Status;

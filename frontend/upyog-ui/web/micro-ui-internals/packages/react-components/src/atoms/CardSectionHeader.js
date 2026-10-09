@@ -2,7 +2,7 @@ import React from "react";
 
 const CardSectionHeader = (props) => {
   return (
-    <header id={props.id} className="card-section-header" style={props.style}>
+    <header id={props.id} className={`card-section-header ${props.className || ""}`} style={props.style}>
       {props.children}
     </header>
   );

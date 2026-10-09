@@ -561,7 +561,7 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
   ]
   return (
     // <>
-    //   <div style={{ marginLeft: "15px" }}>
+    //   <div className="custom-style">
     //     <Header>{t("ES_TITLE_MODIFY_DESULDGING_APPLICATION")}</Header>
     //   </div>
       <FormComposer

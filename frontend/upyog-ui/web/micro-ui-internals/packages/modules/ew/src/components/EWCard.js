@@ -37,7 +37,7 @@ const EWCard = () => {
 
   const propsForModuleCard = {
     Icon: <PropertyHouse />,
-    moduleName: <div style={{ width: "200px", wordWrap: "break-word" }}>{t("TITLE_E_WASTE")}</div>,
+    moduleName: <div className="ew-ewcard-wrapper">{t("TITLE_E_WASTE")}</div>,
     kpis: [],
     links: links.filter((link) => !link?.role || EW_CEMP),
   };

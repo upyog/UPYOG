@@ -182,22 +182,22 @@ const CancelBills = ({ tenantId, onSubmit, data, count,isLoading,resultOk }) => 
                 {t("ABG_CANCEL_BILL")}
             </Header>
             < Card className={"card-search-heading"}>
-                <span style={{ color: "#505A5F" }}>{t("WS_INFO_VALIDATION")}</span>
+                <span className="bills-index-wrapper">{t("WS_INFO_VALIDATION")}</span>
             </Card>
             <SearchForm className="ws-custom-wrapper" onSubmit={onSubmit} handleSubmit={handleSubmit}>
                 <SearchFields {...{ register, control, reset, tenantId, t,formState }} />
             </SearchForm>
             {isLoading && <Loader/>}
             {data && data?.length == 0 ?  (
-                <Card style={{ backgroundColor: "white", textAlign:"center" }}>
+                <Card className="bills-index-centered">
                 {t("ES_COMMON_NO_DATA")}
             </Card>):
             (isLoading===false && resultOk && 
-                <div style={{ backgroundColor: "white" }}>
-                    <div className="sideContent" style={{ float: "left", padding:"20px 10px", fontSize:"24px", fontWeight:"700", fontFamily:"Roboto"}}>
+                <div className="bills-index-wrapper-2">
+                    <div className="sideContent bills-index-container-padding">
                     {t("ABG_SEARCH_RESULTS_HEADER")}
                     </div>
-                    <div className="sideContent" style={{ float: "right", padding: "10px 30px" }}>
+                    <div className="sideContent bills-index-container-padding-2">
                         <span className="table-search-wrapper">
                             <DownloadBtn className="mrlg cursorPointer" onClick={() => handleExcelDownload(tabledata)} />
                         </span>

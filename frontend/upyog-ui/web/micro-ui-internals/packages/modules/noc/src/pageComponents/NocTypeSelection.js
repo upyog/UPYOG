@@ -219,9 +219,9 @@ const NocTypeSelection = ({ t, config, onSelect, userType, formData }) => {
         />
 
         {nocType?.code === "NEW" && (
-          <div style={{ marginTop: "20px" }}>
+          <div className="noc-fire-noc-desktop-inbox-card">
             <CardLabel>{t("NOC_PROVISIONAL_FIRE_NOC_NO_LABEL")} <span className="astericColor">*</span></CardLabel>
-            <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
+            <div className="noc-noc-location-details-flex-container-2">
               <TextInput
                 t={t}
                 type="text"
@@ -232,9 +232,9 @@ const NocTypeSelection = ({ t, config, onSelect, userType, formData }) => {
                   setError(null);
                 }}
                 placeholder={t("NOC_PROVISIONAL_FIRE_NOC_NO_PLACEHOLDER")}
-                style={{ flex: 1 }}
+                className="noc-fire-noc-desktop-inbox-wrapper"
               />
-              <div style={{ position: "relative", zIndex: "100", right: "45px", marginTop: "12px", cursor:"pointer" }} onClick={handleSearchProvisional}> <SearchIcon /> </div>
+              <div className="noc-noc-type-selection-clickable" onClick={handleSearchProvisional}> <SearchIcon /> </div>
             </div>
           </div>
         )}

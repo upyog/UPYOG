@@ -8,17 +8,17 @@ function PropertyFloors({ floors }) {
   return (
     <React.Fragment>
       {floors.map((floor) => (
-        <div key={t(floor?.title)} style={{ marginTop: "19px" }}>
-          <CardSubHeader style={{ marginBottom: "8px", color: "#505A5F", fontSize: "24px" }}>{t(floor?.title)}</CardSubHeader>
+        <div key={t(floor?.title)} className="tmpl-documents-preview-top-spacing">
+          <CardSubHeader className="tmpl-property-floors-header">{t(floor?.title)}</CardSubHeader>
           {floor?.values?.map((value, index) => {
             return (
               <React.Fragment key={index}>
-                <CardSectionHeader style={{ marginBottom: "16px", color: "#505A5F", fontSize: "16px", marginTop: index !== 0 ? "16px" : "revert" }}>
+                <CardSectionHeader className={index !== 0 ? "card-section-header-spacing-top" : "card-section-header-spacing"}>
                   {t(value.title)}
                 </CardSectionHeader>
-                <StatusTable style={{ position: "relative", padding: "8px" }}>
+                <StatusTable className="tmpl-property-floors-table-cell">
                   <div
-                    style={{ border: "1px solid #D6D5D4", padding: "16px", marginTop: "8px", borderRadius: "4px", background: "#FAFAFA", maxWidth: "100%" }}
+                    className="tmpl-property-floors-top-spacing"
                   >
                   {value?.values?.map((value, index) => {
                     if (value.map === true && value.value !== "N/A") {

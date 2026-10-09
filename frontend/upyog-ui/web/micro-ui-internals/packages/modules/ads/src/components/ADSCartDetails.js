@@ -40,12 +40,12 @@ const ADSCartDetails = ({
     return cartDetails.reduce((total, item) => total + Number(item.price), 0);
   };
   const columns = [{
-    Header: () => <div className="ads-auto-25">{t("S_NO")}</div>,
+    Header: () => <div className="ads-cart-details-indent-50">{t("S_NO")}</div>,
     // Use a function to render header with padding
     accessor: "sNo",
     Cell: ({
       row
-    }) => <div className="ads-auto-26">
+    }) => <div className="ads-cart-details-indent-50">
           {row.index + 1} {/* Display the row index + 1 for S.No */}
         </div>
   }, {
@@ -78,10 +78,10 @@ const ADSCartDetails = ({
     Cell: ({
       row
     }) => <button onClick={() => handleDelete(row.index)}>
-          <DeleteIcon className="delete ads-auto-27" fill="#a82227" />
+          <DeleteIcon className="delete ads-cart-details-icon-action-ml-md" fill="#a82227" />
         </button>
   }];
-  return <Modal headerBarMain={<CardSubHeader className="ads-auto-28">My Cart</CardSubHeader>} headerBarEnd={<CloseBtn onClick={onClose} />} popupStyles={{
+  return <Modal headerBarMain={<CardSubHeader className="ads-cart-details-icon-red-margin-lg">My Cart</CardSubHeader>} headerBarEnd={<CloseBtn onClick={onClose} />} popupStyles={{
     backgroundColor: "#fff",
     position: 'relative',
     maxHeight: '80vh',
@@ -101,7 +101,7 @@ const ADSCartDetails = ({
         fontSize: "16px"
       }
     })} isPaginationRequired={false} totalRecords={cartDetails.length} />
-      <div className="ads-auto-29">
+      <div className="ads-cart-details-sticky-bottom-bold">
         Total Price: {calculateTotalPrice()} 
       </div>
     </Modal>;

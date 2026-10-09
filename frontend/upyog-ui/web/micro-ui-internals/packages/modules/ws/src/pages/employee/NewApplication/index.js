@@ -2,12 +2,12 @@ import { FormComposer, Header, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-
 import cloneDeep from "lodash/cloneDeep";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation,  } from "react-router-dom";
+import { useLocation, } from "react-router-dom";
 import * as func from "../../../utils";
 import _ from "lodash";
 import { newConfig as newConfigLocal } from "../../../config/wsCreateConfig";
 import { createPayloadOfWS, updatePayloadOfWS } from "../../../utils";
-import "../../../css/ws-inline-auto.css";
+
 const NewApplication = () => {
   const { t } = useTranslation();
   const { state } = useLocation();
@@ -105,7 +105,7 @@ const NewApplication = () => {
       });
       sessionStorage.setItem("FORMSTATE_ERRORS", JSON.stringify(formState?.errors));
     }
-    if (Object.keys(formState.errors).length > 0 && Object.keys(formState.errors).length == 1 && formState?.errors?.["ConnectionHolderDetails"]?.type && Object.keys(formState?.errors?.["ConnectionHolderDetails"]?.type)?.length == 1 && formState.errors["ConnectionHolderDetails"] && Object.values(formState.errors["ConnectionHolderDetails"].type).filter(ob => ob.type === "required" && ob?.ref?.value !== "").length > 0 /*&&  !formData?.cpt?.details?.propertyId*/) setSubmitValve(true);else setSubmitValve(!Object.keys(formState.errors).length);
+    if (Object.keys(formState.errors).length > 0 && Object.keys(formState.errors).length == 1 && formState?.errors?.["ConnectionHolderDetails"]?.type && Object.keys(formState?.errors?.["ConnectionHolderDetails"]?.type)?.length == 1 && formState.errors["ConnectionHolderDetails"] && Object.values(formState.errors["ConnectionHolderDetails"].type).filter(ob => ob.type === "required" && ob?.ref?.value !== "").length > 0 /*&&  !formData?.cpt?.details?.propertyId*/) setSubmitValve(true); else setSubmitValve(!Object.keys(formState.errors).length);
     // if(!formData?.cpt?.details?.propertyId) setSubmitValve(false);
   };
   const closeToastOfError = () => {
@@ -130,136 +130,136 @@ const NewApplication = () => {
       });
       return;
     }
-    else{
+    else {
 
-    if (!data?.cpt?.details) {
-      data.cpt = {
-        details: propertyDetails?.Properties?.[0]
-      };
-    }
-    const allDetails = cloneDeep(data);
-    const payload = await createPayloadOfWS(data);
-    let waterAndSewerageLoader = false, waterLoader = false, sewerageLoader = false;
-    if (payload?.water && payload?.sewerage) waterAndSewerageLoader = true;
-    if (payload?.water && !payload?.sewerage) waterLoader = true;
-    if (!payload?.water && payload?.sewerage) sewerageLoader = true;   
-    let waterConnection = { WaterConnection: payload ,disconnectRequest: false, reconnectRequest: false};
-    let sewerageConnection = { SewerageConnection: payload ,disconnectRequest: false, reconnectRequest: false};
+      if (!data?.cpt?.details) {
+        data.cpt = {
+          details: propertyDetails?.Properties?.[0]
+        };
+      }
+      const allDetails = cloneDeep(data);
+      const payload = await createPayloadOfWS(data);
+      let waterAndSewerageLoader = false, waterLoader = false, sewerageLoader = false;
+      if (payload?.water && payload?.sewerage) waterAndSewerageLoader = true;
+      if (payload?.water && !payload?.sewerage) waterLoader = true;
+      if (!payload?.water && payload?.sewerage) sewerageLoader = true;
+      let waterConnection = { WaterConnection: payload, disconnectRequest: false, reconnectRequest: false };
+      let sewerageConnection = { SewerageConnection: payload, disconnectRequest: false, reconnectRequest: false };
 
-    if (waterAndSewerageLoader) {
-      setWaterAndSewerageBoth(true);
-      sessionStorage.setItem("setWaterAndSewerageBoth", JSON.stringify(true));
-    } else {
-      sessionStorage.setItem("setWaterAndSewerageBoth", JSON.stringify(false));
-    }
+      if (waterAndSewerageLoader) {
+        setWaterAndSewerageBoth(true);
+        sessionStorage.setItem("setWaterAndSewerageBoth", JSON.stringify(true));
+      } else {
+        sessionStorage.setItem("setWaterAndSewerageBoth", JSON.stringify(false));
+      }
 
-    if (payload?.water && payload?.sewerage) {
-      if (waterMutation && sewerageMutation) {
-        setIsEnableLoader(true);
-        await waterMutation(waterConnection, {
-          onError: (error, variables) => {
-            setIsEnableLoader(false);
-            setShowToast({ key: "error", message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
-            setTimeout(closeToastOfError, 5000);
-          },
-          onSuccess: async (waterData, variables) => {
-            let response = await updatePayloadOfWS(waterData?.WaterConnection?.[0], "WATER");
-            let waterConnectionUpdate = { WaterConnection: response,disconnectRequest:false, reconnectRequest:false };
-            waterUpdateMutation(waterConnectionUpdate, {
-              onError: (error, variables) => {
-                setIsEnableLoader(false);
-                setShowToast({ key: "error", message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
-                setTimeout(closeToastOfError, 5000);
-              },
-              onSuccess: async (waterUpdateData, variables) => {
-                setAppDetails({ ...appDetails, waterConnection: waterUpdateData?.WaterConnection?.[0] });
-                await sewerageMutation(sewerageConnection, {
-                  onError: (error, variables) => {
-                    setIsEnableLoader(false);
-                    setShowToast({ key: "error", message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
-                    setTimeout(closeToastOfError, 5000);
-                  },
-                  onSuccess: async (sewerageData, variables) => {
-                    let response = await updatePayloadOfWS(sewerageData?.SewerageConnections?.[0], "SEWERAGE");
-                    let sewerageConnectionUpdate = { SewerageConnection: response, disconnectRequest:false, reconnectRequest:false  };
-                    await sewerageUpdateMutation(sewerageConnectionUpdate, {
-                      onError: (error, variables) => {
-                        setIsEnableLoader(false);
-                        setShowToast({ key: "error", message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
-                        setTimeout(closeToastOfError, 5000);
-                      },
-                      onSuccess: async (sewerageUpdateData, variables) => {
-                        setAppDetails({ ...appDetails, sewerageConnection: sewerageUpdateData?.SewerageConnections?.[0] });
-                        clearSessionFormData();
-                        navigate(`/upyog-ui/employee/ws/ws-response?applicationNumber=${waterUpdateData?.WaterConnection?.[0]?.applicationNo}&applicationNumber1=${sewerageUpdateData?.SewerageConnections?.[0]?.applicationNo}`);
-                        // window.location.href = `${window.location.origin}/upyog-ui/employee/ws/ws-response?applicationNumber=${waterUpdateData?.WaterConnection?.[0]?.applicationNo}&applicationNumber1=${sewerageUpdateData?.SewerageConnections?.[0]?.applicationNo}`
-                      },
-                    });
-                  },
-                });
-              },
-            })
-          },
-        });
-      }
-    } else if (payload?.water && !payload?.sewerage) {
-      if (waterMutation) {
-        setIsEnableLoader(true);
-        await waterMutation(waterConnection, {
-          onError: (error, variables) => {
-            setIsEnableLoader(false);
-            setShowToast({ key: "error", message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
-            setTimeout(closeToastOfError, 5000);
-          },
-          onSuccess: async (data, variables) => {
-            let response = await updatePayloadOfWS(data?.WaterConnection?.[0], "WATER");
-            let waterConnectionUpdate = { WaterConnection: response };
-            waterUpdateMutation(waterConnectionUpdate, {
-              onError: (error, variables) => {
-                setIsEnableLoader(false);
-                setShowToast({ key: "error", message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
-                setTimeout(closeToastOfError, 5000);
-              },
-              onSuccess: (data, variables) => {
-                setAppDetails({ ...appDetails, waterConnection: data?.WaterConnection?.[0] });
-                clearSessionFormData();
-                navigate(`/upyog-ui/employee/ws/ws-response?applicationNumber=${data?.WaterConnection?.[0]?.applicationNo}`);
-                // window.location.href = `${window.location.origin}/upyog-ui/employee/ws/ws-response?applicationNumber=${data?.WaterConnection?.[0]?.applicationNo}`;
-              },
-            })
-          },
-        });
-      }
-    } else if (payload?.sewerage && !payload?.water) {
-      if (sewerageMutation) {
-        setIsEnableLoader(true);
-        await sewerageMutation(sewerageConnection, {
-          onError: (error, variables) => {
-            setIsEnableLoader(false);
-            setShowToast({ key: "error", message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
-            setTimeout(closeToastOfError, 5000);
-          },
-          onSuccess: async (data, variables) => {
-            let response = await updatePayloadOfWS(data?.SewerageConnections?.[0], "SEWERAGE");
-            let sewerageConnectionUpdate = { SewerageConnection: response };
-            await sewerageUpdateMutation(sewerageConnectionUpdate, {
-              onError: (error, variables) => {
-                setIsEnableLoader(false);
-                setShowToast({ key: "error", message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
-                setTimeout(closeToastOfError, 5000);
-              },
-              onSuccess: (data, variables) => {
-                setAppDetails({ ...appDetails, sewerageConnection: data?.SewerageConnections?.[0] });
-                clearSessionFormData();
-                navigate(`/upyog-ui/employee/ws/ws-response?applicationNumber1=${data?.SewerageConnections?.[0]?.applicationNo}`);
-                // window.location.href = `${window.location.origin}/upyog-ui/employee/ws/ws-response?applicationNumber1=${data?.SewerageConnections?.[0]?.applicationNo}`;
-              },
-            });
-          },
-        });
+      if (payload?.water && payload?.sewerage) {
+        if (waterMutation && sewerageMutation) {
+          setIsEnableLoader(true);
+          await waterMutation(waterConnection, {
+            onError: (error, variables) => {
+              setIsEnableLoader(false);
+              setShowToast({ key: "error", message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
+              setTimeout(closeToastOfError, 5000);
+            },
+            onSuccess: async (waterData, variables) => {
+              let response = await updatePayloadOfWS(waterData?.WaterConnection?.[0], "WATER");
+              let waterConnectionUpdate = { WaterConnection: response, disconnectRequest: false, reconnectRequest: false };
+              waterUpdateMutation(waterConnectionUpdate, {
+                onError: (error, variables) => {
+                  setIsEnableLoader(false);
+                  setShowToast({ key: "error", message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
+                  setTimeout(closeToastOfError, 5000);
+                },
+                onSuccess: async (waterUpdateData, variables) => {
+                  setAppDetails({ ...appDetails, waterConnection: waterUpdateData?.WaterConnection?.[0] });
+                  await sewerageMutation(sewerageConnection, {
+                    onError: (error, variables) => {
+                      setIsEnableLoader(false);
+                      setShowToast({ key: "error", message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
+                      setTimeout(closeToastOfError, 5000);
+                    },
+                    onSuccess: async (sewerageData, variables) => {
+                      let response = await updatePayloadOfWS(sewerageData?.SewerageConnections?.[0], "SEWERAGE");
+                      let sewerageConnectionUpdate = { SewerageConnection: response, disconnectRequest: false, reconnectRequest: false };
+                      await sewerageUpdateMutation(sewerageConnectionUpdate, {
+                        onError: (error, variables) => {
+                          setIsEnableLoader(false);
+                          setShowToast({ key: "error", message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
+                          setTimeout(closeToastOfError, 5000);
+                        },
+                        onSuccess: async (sewerageUpdateData, variables) => {
+                          setAppDetails({ ...appDetails, sewerageConnection: sewerageUpdateData?.SewerageConnections?.[0] });
+                          clearSessionFormData();
+                          navigate(`/upyog-ui/employee/ws/ws-response?applicationNumber=${waterUpdateData?.WaterConnection?.[0]?.applicationNo}&applicationNumber1=${sewerageUpdateData?.SewerageConnections?.[0]?.applicationNo}`);
+                          // window.location.href = `${window.location.origin}/upyog-ui/employee/ws/ws-response?applicationNumber=${waterUpdateData?.WaterConnection?.[0]?.applicationNo}&applicationNumber1=${sewerageUpdateData?.SewerageConnections?.[0]?.applicationNo}`
+                        },
+                      });
+                    },
+                  });
+                },
+              })
+            },
+          });
+        }
+      } else if (payload?.water && !payload?.sewerage) {
+        if (waterMutation) {
+          setIsEnableLoader(true);
+          await waterMutation(waterConnection, {
+            onError: (error, variables) => {
+              setIsEnableLoader(false);
+              setShowToast({ key: "error", message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
+              setTimeout(closeToastOfError, 5000);
+            },
+            onSuccess: async (data, variables) => {
+              let response = await updatePayloadOfWS(data?.WaterConnection?.[0], "WATER");
+              let waterConnectionUpdate = { WaterConnection: response };
+              waterUpdateMutation(waterConnectionUpdate, {
+                onError: (error, variables) => {
+                  setIsEnableLoader(false);
+                  setShowToast({ key: "error", message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
+                  setTimeout(closeToastOfError, 5000);
+                },
+                onSuccess: (data, variables) => {
+                  setAppDetails({ ...appDetails, waterConnection: data?.WaterConnection?.[0] });
+                  clearSessionFormData();
+                  navigate(`/upyog-ui/employee/ws/ws-response?applicationNumber=${data?.WaterConnection?.[0]?.applicationNo}`);
+                  // window.location.href = `${window.location.origin}/upyog-ui/employee/ws/ws-response?applicationNumber=${data?.WaterConnection?.[0]?.applicationNo}`;
+                },
+              })
+            },
+          });
+        }
+      } else if (payload?.sewerage && !payload?.water) {
+        if (sewerageMutation) {
+          setIsEnableLoader(true);
+          await sewerageMutation(sewerageConnection, {
+            onError: (error, variables) => {
+              setIsEnableLoader(false);
+              setShowToast({ key: "error", message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
+              setTimeout(closeToastOfError, 5000);
+            },
+            onSuccess: async (data, variables) => {
+              let response = await updatePayloadOfWS(data?.SewerageConnections?.[0], "SEWERAGE");
+              let sewerageConnectionUpdate = { SewerageConnection: response };
+              await sewerageUpdateMutation(sewerageConnectionUpdate, {
+                onError: (error, variables) => {
+                  setIsEnableLoader(false);
+                  setShowToast({ key: "error", message: error?.response?.data?.Errors?.[0].message ? error?.response?.data?.Errors?.[0].message : error });
+                  setTimeout(closeToastOfError, 5000);
+                },
+                onSuccess: (data, variables) => {
+                  setAppDetails({ ...appDetails, sewerageConnection: data?.SewerageConnections?.[0] });
+                  clearSessionFormData();
+                  navigate(`/upyog-ui/employee/ws/ws-response?applicationNumber1=${data?.SewerageConnections?.[0]?.applicationNo}`);
+                  // window.location.href = `${window.location.origin}/upyog-ui/employee/ws/ws-response?applicationNumber1=${data?.SewerageConnections?.[0]?.applicationNo}`;
+                },
+              });
+            },
+          });
+        }
       }
     }
-  }
   };
   const closeToast = () => {
     setShowToast(null);
@@ -268,14 +268,14 @@ const NewApplication = () => {
     return <Loader />;
   }
   return <React.Fragment>
-      <div className="ws-auto-323">
-        <Header>{t(config.head)}</Header>
-      </div>
-      <FormComposer config={config.body} userType={"employee"} onFormValueChange={onFormValueChange}
-    // isDisabled={!canSubmit}
-    label={t("CS_COMMON_SUBMIT")} onSubmit={onSubmit} defaultValues={sessionFormData}></FormComposer>
-      {showToast && <Toast isDleteBtn={true} error={showToast?.key === "error" ? true : false} warning={showToast?.warning} label={t(showToast?.message)} onClose={closeToast} isWarning={showToast?.isWarning} />}
-      {/* {showToast && <Toast error={showToast.key} label={t(showToast?.message)} onClose={closeToast} />} */}
-    </React.Fragment>;
+    <div className="ws-index-ml-md">
+      <Header>{t(config.head)}</Header>
+    </div>
+    <FormComposer config={config.body} userType={"employee"} onFormValueChange={onFormValueChange}
+      // isDisabled={!canSubmit}
+      label={t("CS_COMMON_SUBMIT")} onSubmit={onSubmit} defaultValues={sessionFormData}></FormComposer>
+    {showToast && <Toast isDleteBtn={true} error={showToast?.key === "error" ? true : false} warning={showToast?.warning} label={t(showToast?.message)} onClose={closeToast} isWarning={showToast?.isWarning} />}
+    {/* {showToast && <Toast error={showToast.key} label={t(showToast?.message)} onClose={closeToast} />} */}
+  </React.Fragment>;
 };
 export default NewApplication;

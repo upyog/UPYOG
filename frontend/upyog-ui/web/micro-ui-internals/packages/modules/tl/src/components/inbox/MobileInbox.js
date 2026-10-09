@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { ApplicationCard } from "./ApplicationCard";
 import ApplicationLinks from "./ApplicationLinks";
 import { convertEpochToDateDMY } from "../../utils";
-import "../../css/tl-inline-auto.css";
+
 const GetSlaCell = value => {
   if (isNaN(value)) return <span className="sla-cell-success">0</span>;
   return value < 0 ? <span className="sla-cell-error">{value}</span> : <span className="sla-cell-success">{value}</span>;
@@ -36,9 +36,9 @@ const MobileInbox = ({
     [t("WF_INBOX_HEADER_CURRENT_OWNER")]: t(e?.owner),
     [t("WF_INBOX_HEADER_SLA_DAYS_REMAINING")]: t(e?.["sla"])
   }));
-  return <div className="tl-auto-20">
-      <div className="inbox-container">
-        <div className="filters-container">
+  return <div className="tl-mobile-inbox-no-pad">
+    <div className="inbox-container">
+      <div className="filters-container">
         <ApplicationLinks classNameForMobileView="linksWrapperForMobileInbox" linkPrefix={parentRoute} allLinks={[{
           text: "TL_NEW_APPLICATION",
           link: "/upyog-ui/employee/tl/new-application",
@@ -65,9 +65,9 @@ const MobileInbox = ({
           businessService: "TL",
           roles: ["STADMIN"]
         }]} headerText={t("ACTION_TEST_TRADELICENSE")} isMobile={true} />
-          <ApplicationCard t={t} data={getData()} onFilterChange={onFilterChange} serviceRequestIdKey={t("WF_INBOX_HEADER_APPLICATION_NO")} isLoading={isLoading} onSearch={onSearch} onSort={onSort} searchParams={searchParams} searchFields={searchFields} linkPrefix={linkPrefix} removeParam={removeParam} sortParams={sortParams} />
-        </div>
+        <ApplicationCard t={t} data={getData()} onFilterChange={onFilterChange} serviceRequestIdKey={t("WF_INBOX_HEADER_APPLICATION_NO")} isLoading={isLoading} onSearch={onSearch} onSort={onSort} searchParams={searchParams} searchFields={searchFields} linkPrefix={linkPrefix} removeParam={removeParam} sortParams={sortParams} />
       </div>
-    </div>;
+    </div>
+  </div>;
 };
 export default MobileInbox;

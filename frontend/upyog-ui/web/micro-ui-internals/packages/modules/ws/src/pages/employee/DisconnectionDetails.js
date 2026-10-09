@@ -6,7 +6,7 @@ import * as func from "../../utils";
 import cloneDeep from "lodash/cloneDeep";
 import getPDFData from "../../utils/getWSDisconnectionApplicationForm";
 import { ifUserRoleExists } from "../../utils";
-import "../../css/ws-inline-auto.css";
+
 const GetDisconnectionDetails = () => {
   const {
     t
@@ -95,7 +95,7 @@ const GetDisconnectionDetails = () => {
       let isFieldInspector = false;
       editApplicationUserRole.every((role, index) => {
         isFieldInspector = ifUserRoleExists(role);
-        if (isFieldInspector) return false;else return true;
+        if (isFieldInspector) return false; else return true;
       });
       if (isFieldInspector && appStatus === mdmsApplicationStatus) {
         pathName = `/upyog-ui/employee/ws/config-by-disconnection-application?applicationNumber=${applicationNumber}&service=${serviceType}`;
@@ -179,19 +179,19 @@ const GetDisconnectionDetails = () => {
     return a.order - b.order;
   });
   return <Fragment>
-      <div>
-        <div className={"employee-application-details ws-auto-311"}>
-          <div className="ws-auto-312">
-            <div className="ws-auto-313">
-          <Header>{t("WS_APPLICATION_DETAILS")} </Header>
+    <div>
+      <div className={"employee-application-details ws-disconnection-details-mb-md"}>
+        <div className="ws-disconnection-details-flex">
+          <div className="ws-disconnection-details-item">
+            <Header>{t("WS_APPLICATION_DETAILS")} </Header>
           </div>
-          <div className="ws-auto-314"> 
-          <MultiLink className="multilinkWrapper employee-mulitlink-main-divNew" onHeadClick={() => setShowOptions(!showOptions)} displayOptions={showOptions} options={dowloadOptions} downloadBtnClassName={"employee-download-btn-className"} optionsClassName={"employee-options-btn-className"} ref={menuRef} />
+          <div className="ws-disconnection-details-layered">
+            <MultiLink className="multilinkWrapper employee-mulitlink-main-divNew" onHeadClick={() => setShowOptions(!showOptions)} displayOptions={showOptions} options={dowloadOptions} downloadBtnClassName={"employee-download-btn-className"} optionsClassName={"employee-options-btn-className"} ref={menuRef} />
           </div>
         </div>
-        </div>
-        <ApplicationDetailsTemplate applicationDetails={applicationDetails} isLoading={isLoading || isServicesMasterLoading} isDataLoading={isLoading || isServicesMasterLoading} applicationData={applicationDetails?.applicationData} mutate={mutate} workflowDetails={workflowDetails} businessService={applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()} moduleCode="WS" showToast={showToast} setShowToast={setShowToast} closeToast={closeToast} timelineStatusPrefix={`WF_${applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}_`} isInfoLabel={sessionStorage.getItem("isPrivacyEnabled") === "true" ? true : false} />
       </div>
-    </Fragment>;
+      <ApplicationDetailsTemplate applicationDetails={applicationDetails} isLoading={isLoading || isServicesMasterLoading} isDataLoading={isLoading || isServicesMasterLoading} applicationData={applicationDetails?.applicationData} mutate={mutate} workflowDetails={workflowDetails} businessService={applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()} moduleCode="WS" showToast={showToast} setShowToast={setShowToast} closeToast={closeToast} timelineStatusPrefix={`WF_${applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}_`} isInfoLabel={sessionStorage.getItem("isPrivacyEnabled") === "true" ? true : false} />
+    </div>
+  </Fragment>;
 };
 export default GetDisconnectionDetails;

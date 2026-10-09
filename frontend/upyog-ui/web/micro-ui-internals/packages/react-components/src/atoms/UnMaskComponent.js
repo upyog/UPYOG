@@ -42,13 +42,7 @@ const UnMaskComponent = React.memo(({ iseyevisible = true, privacy = {}, style =
         <div className={`tooltip`}>
           <PrivacyMaskIcon className="privacy-icon" style={style}></PrivacyMaskIcon>
           <span
-            className="tooltiptext"
-            style={{
-              fontSize: "medium",
-              width: "unset",
-              display: "block",
-              marginRight: "-60px",
-            }}
+            className="tooltiptext rc-un-mask-component-spacing"
           >
             {t("CORE_UNMASK_DATA")}
           </span>

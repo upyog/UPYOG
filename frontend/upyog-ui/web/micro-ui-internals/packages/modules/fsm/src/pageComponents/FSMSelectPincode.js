@@ -123,7 +123,7 @@ const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, regist
             </div>
           </LabelFieldPair>
           {pincodeServicability && (
-            <CardLabelError style={{ width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" }}>
+            <CardLabelError className="fsm-fsmselect-pincode-card">
               {t(pincodeServicability)}
             </CardLabelError>
           )}

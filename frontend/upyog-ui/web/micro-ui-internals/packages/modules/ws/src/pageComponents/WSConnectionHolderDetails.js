@@ -341,7 +341,7 @@ const ConnectionDetails = _props => {
                 setFocusIndex({ index: connectionHolderDetail?.key, type: "sameAsOwnerDetails" });
               }}
               checked={sameAsOwnerDetails}
-             className="ws-auto-55"
+             className="ws-connection-holder-details-item"
               onBlur={field.onBlur}
             />
           )}
@@ -368,7 +368,7 @@ const ConnectionDetails = _props => {
                 }}
                 isMandatory={true}
                 render={({ field }) => (
-                  <div style={{ display: "flex", alignItems: "baseline", marginRight: isMobile && isEmployee ? "" :(checkifPrivacyValid() ? "-4%" : "-4%") }}>
+                  <div className={`ws-connection-holder-row ${!(isMobile && isEmployee) ? "ws-connection-holder-row--tight" : ""}`}>
                     <TextInput
                       value={field.value}
                       autoFocus={focusIndex.index === connectionHolderDetail?.key && focusIndex.type === "name"}
@@ -440,11 +440,7 @@ const ConnectionDetails = _props => {
                 isMandatory={true}
                 render={({ field }) => (
                   <div
-                    style={{
-                      display: "flex",
-                      marginRight: checkifPrivacyValid() && !(isMobile && isEmployee) ? "-20px" : "unset",
-                      width: (isMobile && isEmployee) ? "" : checkifPrivacyValid() ? "197%" : "208%",
-                    }}
+                    className={`ws-details-flex-wrapper ${checkifPrivacyValid() && !(isMobile && isEmployee) ? "margin-r-20" : "margin-r-unset"} ${isMobile && isEmployee ? "" : checkifPrivacyValid() ? "w-197" : "w-208"}`}
                   >
                     <Dropdown
                       className="form-field"
@@ -461,7 +457,7 @@ const ConnectionDetails = _props => {
                       t={t}
                     />
                     {checkifPrivacyValid() && (
-                      <div style={{ marginRight: "-10px", marginLeft: (isMobile && isEmployee) ? "" : "8px", marginTop: "15px" }}>
+                      <div className={!(isMobile && isEmployee) ? "ws-unmask-wrapper" : ""}>
                         <WrapUnMaskComponent
                           unmaskField={(e) => {
                             const r = { code: e, i18nKey: `COMMON_GENDER_${e}`, name: e };
@@ -516,8 +512,8 @@ const ConnectionDetails = _props => {
                 //type="number"
                 isMandatory={true}
                 render={({ field }) => (
-                  <div style={{ display: "flex", alignItems: "baseline", marginRight: isEmployee && isMobile ? "" : (getValues("mobileNumber")?.includes("*") && !(isMobile && isEmployee) ? "-20px" : "-4%") }}>
-                    <div className="employee-card-input employee-card-input--front" style={{ position: "relative", marginTop: "4px" }}>
+                  <div className={`ws-connection-holder-row ${!(isEmployee && isMobile) ? "ws-connection-holder-row--tight" : ""}`}>
+                    <div className="employee-card-input employee-card-input--front ws-wsconnection-holder-details-top-spacing">
                       +91
                     </div>
                     <TextInput
@@ -599,7 +595,7 @@ const ConnectionDetails = _props => {
                 }}
                 isMandatory={true}
                 render={({ field }) => (
-                  <div style={{ display: "flex", alignItems: "baseline", marginRight: isEmployee && isMobile ? "" :(getValues("guardian")?.includes("*") && !(isMobile && isEmployee) ? "-20px" : "-4%") }}>
+                  <div className={`ws-connection-holder-row ${!(isEmployee && isMobile) ? "ws-connection-holder-row--tight" : ""}`}>
                     <TextInput
                       value={getValues("guardian")}
                       autoFocus={focusIndex.index === connectionHolderDetail?.key && focusIndex.type === "guardian"}
@@ -675,11 +671,7 @@ const ConnectionDetails = _props => {
                 isMandatory={true}
                 render={({ field }) => (
                   <div
-                    style={{
-                      display: "flex",
-                      marginRight: checkifPrivacyValid() && !(isMobile && isEmployee) ? "-20px" : "unset",
-                      width: (isMobile && isEmployee) ? "" : checkifPrivacyValid() ? "197%" : "208%",
-                    }}
+                    className={`ws-details-flex-wrapper ${checkifPrivacyValid() && !(isMobile && isEmployee) ? "margin-r-20" : "margin-r-unset"} ${isMobile && isEmployee ? "" : checkifPrivacyValid() ? "w-197" : "w-208"}`}
                   >
                     <Dropdown
                       className="form-field"
@@ -697,7 +689,7 @@ const ConnectionDetails = _props => {
                       t={t}
                     />
                     {checkifPrivacyValid() && (
-                      <div style={{ marginRight: "-10px", marginLeft: (isMobile && isEmployee) ? "" :"8px", marginTop: "15px" }}>
+                      <div className={!(isMobile && isEmployee) ? "ws-unmask-wrapper" : ""}>
                         <WrapUnMaskComponent
                           unmaskField={(e) => {
                             const r = { code: e, i18nKey: `COMMON_MASTERS_OWNERTYPE_${e}`, name: e };
@@ -750,7 +742,7 @@ const ConnectionDetails = _props => {
                 }}
                 isMandatory={true}
                 render={({ field }) => (
-                  <div style={{ display: "flex", alignItems: "baseline", marginRight: isEmployee && isMobile ? "" : (getValues("address")?.includes("*") && !(isMobile && isEmployee) ? "-20px" : "-4%") }}>
+                  <div className={`ws-connection-holder-row ${!(isEmployee && isMobile) ? "ws-connection-holder-row--tight" : ""}`}>
                     <TextInput
                       value={getValues("address")}
                       autoFocus={focusIndex.index === connectionHolderDetail?.key && focusIndex.type === "address"}
@@ -826,11 +818,7 @@ const ConnectionDetails = _props => {
                 //isMandatory={true}
                 render={({ field }) => (
                   <div
-                    style={{
-                      display: "flex",
-                      marginRight: checkifPrivacyValid() && !(isMobile && isEmployee) ? "-20px" : "unset",
-                      width: (isMobile && isEmployee) ? "" : checkifPrivacyValid() ? "197%" : "208%",
-                    }}
+                    className={`ws-details-flex-wrapper ${checkifPrivacyValid() && !(isMobile && isEmployee) ? "margin-r-20" : "margin-r-unset"} ${isMobile && isEmployee ? "" : checkifPrivacyValid() ? "w-197" : "w-208"}`}
                   >
                     <Dropdown
                       className="form-field"
@@ -848,7 +836,7 @@ const ConnectionDetails = _props => {
                       t={t}
                     />
                     {checkifPrivacyValid() && (
-                      <div style={{ marginRight: "-10px", marginLeft: (isMobile && isEmployee) ? "" :"8px", marginTop: "10px" }}>
+                      <div className={!(isMobile && isEmployee) ? "ws-unmask-wrapper-10" : ""}>
                         <WrapUnMaskComponent
                           unmaskField={(e) => {
                             const r = { code: e, i18nKey: `COMMON_MASTERS_OWNERTYPE_${e}`, name: e };
@@ -900,7 +888,7 @@ const ConnectionDetails = _props => {
                 }}
                 isMandatory={false}
                 render={({ field }) => (
-                  <div style={{ display: "flex", alignItems: "baseline", marginRight: isMobile && isEmployee ? "" :(checkifPrivacyValid() ? "-4%" : "-4%") }}>
+                  <div className={`ws-connection-holder-row ${!(isMobile && isEmployee) ? "ws-connection-holder-row--tight" : ""}`}>
                     <TextInput
                       value={getValues("emailId")}
                       autoFocus={focusIndex.index === connectionHolderDetail?.key && focusIndex.type === "emailId"}

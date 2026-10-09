@@ -27,7 +27,7 @@ import { getFiles, getBusinessService } from "../../utils";
 import _ from "lodash";
 import { ifUserRoleExists } from "../../utils";
 import WSInfoLabel from "../../pageComponents/WSInfoLabel";
-import "../../css/ws-inline-auto.css";
+
 const ApplicationDetails = () => {
   const {
     id
@@ -477,22 +477,22 @@ const ApplicationDetails = () => {
   });
   return <Fragment>
     <div className={"employee-main-application-details"}>
-      <div className={"employee-application-details ws-auto-299"}>
+      <div className={"employee-application-details ws-application-details-mb-md"}>
         <Header styles={{
           marginLeft: "0px",
           paddingTop: "10px",
           fontSize: "32px"
         }}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
-        <div className="ws-auto-300">
-          <div className="ws-auto-301">
+        <div className="ws-application-details-row-reverse-row-center">
+          <div className="ws-application-details-full-width-relative">
             {dowloadOptions && dowloadOptions.length > 0 && <MultiLink className="multilinkWrapper" onHeadClick={() => setShowOptions(!showOptions)} displayOptions={showOptions} options={dowloadOptions} downloadBtnClassName={"employee-download-btn-className"} optionsClassName={"employee-options-btn-className"} ref={menuRef} />}
           </div>
-          <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline} className="ws-auto-302"></LinkButton>
+          <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline} className="ws-application-details-btn"></LinkButton>
         </div>
       </div>
 
       <ApplicationDetailsTemplate applicationDetails={applicationDetails} isLoading={isLoading || isBillingServiceLoading || isCommonmastersLoading || isServicesMasterLoading} isDataLoading={isLoading || isBillingServiceLoading || isCommonmastersLoading || isServicesMasterLoading} applicationData={applicationDetails?.applicationData} mutate={mutate} id={"timeline"} workflowDetails={workflowDetails} businessService={applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()} moduleCode="WS" showToast={showToast} setShowToast={setShowToast} closeToast={closeToast} timelineStatusPrefix={`WF_${applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}_`} oldValue={res} isInfoLabel={checkforPrivacyenablement()} clearDataDetails={clearDataDetails} />
-      {showWaringToast && <Toast warning={showWaringToast?.isWarning} error={showWaringToast?.isWarning ? false : true} label={t(showWaringToast?.message)} onClose={closeWaringToast} isDleteBtn={true} className="ws-auto-303" />}
+      {showWaringToast && <Toast warning={showWaringToast?.isWarning} error={showWaringToast?.isWarning ? false : true} label={t(showWaringToast?.message)} onClose={closeWaringToast} isDleteBtn={true} className="ws-application-details-link-layered" />}
     </div>
   </Fragment>;
 };

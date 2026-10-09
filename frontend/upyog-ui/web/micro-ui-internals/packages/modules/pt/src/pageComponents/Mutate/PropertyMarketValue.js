@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FormStep, TextInput, LabelFieldPair, CardLabel } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../../components/TLTimeline";
-import "../../css/pt-inline-auto.css";
+
 const PropertyMarketValue = props => {
   const {
     t,
@@ -30,27 +30,27 @@ const PropertyMarketValue = props => {
       marketValue
     });
   };
-  const onSkip = () => {};
+  const onSkip = () => { };
   if (userType === "employee") {
     return <React.Fragment>
-        <LabelFieldPair>
-          <CardLabel className="card-label-smaller pt-auto-44">
-            {t("PT_MUTATION_MARKET_VALUE") + " *"}
-          </CardLabel>
-          <div className="field">
-            <TextInput type={"number"} min={0} onChange={e => setSelected(e.target.value)} value={marketValue} />
-          </div>
-        </LabelFieldPair>
-      </React.Fragment>;
-  }
-  return <React.Fragment>
-      <Timeline currentStep={2} flow="PT_MUTATE" />
-      <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!marketValue}>
-        <div className="field-container">
-          <span className="citizen-card-input citizen-card-input--front">₹</span>
+      <LabelFieldPair>
+        <CardLabel className="card-label-smaller pt-property-market-value-label-bold">
+          {t("PT_MUTATION_MARKET_VALUE") + " *"}
+        </CardLabel>
+        <div className="field">
           <TextInput type={"number"} min={0} onChange={e => setSelected(e.target.value)} value={marketValue} />
         </div>
-      </FormStep>
+      </LabelFieldPair>
     </React.Fragment>;
+  }
+  return <React.Fragment>
+    <Timeline currentStep={2} flow="PT_MUTATE" />
+    <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!marketValue}>
+      <div className="field-container">
+        <span className="citizen-card-input citizen-card-input--front">₹</span>
+        <TextInput type={"number"} min={0} onChange={e => setSelected(e.target.value)} value={marketValue} />
+      </div>
+    </FormStep>
+  </React.Fragment>;
 };
 export default PropertyMarketValue;

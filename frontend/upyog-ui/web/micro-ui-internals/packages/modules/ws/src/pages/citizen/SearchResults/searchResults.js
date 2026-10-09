@@ -84,22 +84,22 @@ const ChallanSearchResults = ({ template, header, actionButtonLabel }) => {
   };
   const payment = {};
   const searchResults = Waterresult && Sewarageresult ? Waterresult.concat(Sewarageresult) : Waterresult ? Waterresult : Sewarageresult ? Sewarageresult : [];
-  return <div className="ws-auto-205">
+  return <div className="ws-search-results-mt-md">
       <div>
-        {header && <Header className="ws-auto-206">
+        {header && <Header className="ws-search-results-item">
             {t(header)} ({searchResults?.length})
           </Header>}
         <ResponseComposer data={searchResults} template={template} actionButtonLabel={actionButtonLabel} onSubmit={onSubmit} />
-        {!searchResults?.length > 0 && <p className="ws-auto-207">{t("WS_NO_APP_FOUND_MSG")}</p>}
+        {!searchResults?.length > 0 && <p className="ws-search-results-mt-md-ml-md">{t("WS_NO_APP_FOUND_MSG")}</p>}
         {searchResults?.length !== 0 && (searchResults?.length == 5 || searchResults?.length == 50) && (locality || searchQuery && searchQuery.locality) && <div>
-            <p className="ws-auto-208">
+            <p className="ws-search-results-mt-md-ml-md">
               {t("WS_LOAD_MORE_MSG")}{" "}
               <span className="link">{<Link to={`/upyog-ui/citizen/ws/search-results?doorNumber=${doorNumber}&consumerName=${consumerName}&tenantId=${tenantId?.split(".")[0]}&locality=${locality.code}&PToffset=${t1}`}>{t("PT_COMMON_CLICK_HERE")}</Link>}</span>
             </p>
           </div>}
-        <p className="ws-auto-209">
+        <p className="ws-search-results-mt-md-ml-md">
         {t("WS_WANT_TO_ADD_NEW_CONNECTION")}{" "}
-        <span className="link ws-auto-210">
+        <span className="link ws-search-results-link-block">
           <Link to="/upyog-ui/citizen/ws/create-application/search-property">{t("WS_CLICK_HERE_TO_APPLY")}</Link>
         </span>
         </p>

@@ -59,25 +59,24 @@ export const PGRAIMyApplications = () => {
       <React.Fragment>
         <Header>{`${t("PGR_AI_MY_BOOKINGS_HEADER")} (${filteredApplications.length})`}</Header>
         <Card>
-          <div style={{ marginLeft: "16px" }}>
-            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "16px" }}>
-              <div style={{ flex: 2 }}>
-                <div style={{ display: "flex", flexDirection: "column" }}>
+          <div className="pgrai-index-spacing">
+            <div className="pgrai-index-flex-row">
+              <div className="pgrai-index-wrapper">
+                <div className="pgrai-index-flex-container">
                   <CardLabel>{t("PGR_AI_GRIEVANCE_NO")}</CardLabel>
                   <TextInput
                     placeholder={t("Enter Booking No.")}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{ width: "100%", padding: "8px", height: "150%" }}
+                    className="pgrai-index-fullwidth"
                   />
                 </div>
               </div>
               <div>
-                <div style={{ marginTop: "17%" }}>
+                <div className="pgrai-index-top-spacing">
                   <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
                   <p
-                    className="link"
-                    style={{ marginLeft: "30%", marginTop: "10px", display: "block" }}
+                    className="link pgrai-index-top-spacing-2"
                     onClick={() => setSearchTerm("")}
                   >
                     {t(`ES_COMMON_CLEAR_ALL`)}
@@ -95,7 +94,7 @@ export const PGRAIMyApplications = () => {
               </div>
             ))}
           {filteredApplications.length === 0 && !isLoading && (
-            <p style={{ marginLeft: "16px", marginTop: "16px" }}>{t("PGR_AI_NO_APPLICATION_FOUND_MSG")}</p>
+            <p className="pgrai-index-top-spacing-3">{t("PGR_AI_NO_APPLICATION_FOUND_MSG")}</p>
           )}
       </div>
     </React.Fragment>

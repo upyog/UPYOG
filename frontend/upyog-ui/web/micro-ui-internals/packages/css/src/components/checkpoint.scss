@@ -1,65 +1,120 @@
 .checkpoint-connect-wrap {
-  padding-bottom: 4px;
-  @apply relative;
+  position: relative;
+  padding-bottom: 20px;
+
+  &:last-child {
+    padding-bottom: 0;
+    .checkpoint-connect {
+      display: none;
+    }
+  }
 }
+
 .checkpoint-done {
-  @apply flex;
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  z-index: 2;
 
   h2 {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
     border-radius: 50%;
-    @apply border-b border-solid border-primary-main bg-primary-main;
+    background-color: #a82227;
+    border: 3px solid #fee2e2;
+    box-shadow: 0 0 0 1px #a82227;
+    flex-shrink: 0;
+    margin: 2px 0 0 0;
+    box-sizing: border-box;
   }
 
   header {
-    @apply text-heading-s ml-md;
+    margin-left: 14px;
+    flex: 1;
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.35;
 
     p {
       margin-top: 4px;
-      @apply text-heading-s text-text-secondary;
+      font-size: 13px;
+      font-weight: 500;
+      color: #64748b;
     }
   }
 }
 
 .checkpoint {
-  @apply flex;
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  z-index: 2;
 
   h2 {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
     border-radius: 50%;
-    --text-opacity: 1;
-    @apply border-b border-solid border-border bg-border;
+    background-color: #ffffff;
+    border: 2px solid #cbd5e1;
+    flex-shrink: 0;
+    margin: 2px 0 0 0;
+    box-sizing: border-box;
   }
 
   header {
-    @apply text-heading-s ml-md;
+    margin-left: 14px;
+    flex: 1;
+    font-size: 15px;
+    font-weight: 700;
+    color: #64748b;
+    line-height: 1.35;
 
     p {
       margin-top: 4px;
-      @apply text-heading-s text-text-secondary;
+      font-size: 13px;
+      font-weight: 500;
+      color: #94a3b8;
     }
   }
 }
 
 .checkpoint-connect {
-  margin-left: 12px;
-  margin-top: 22px;
-  @apply absolute top-0 left-0 h-full border-l border-solid border-border;
+  position: absolute;
+  top: 22px;
+  left: 10px;
+  bottom: 0;
+  width: 2px;
+  background-color: #e2e8f0;
+  border: none;
+  margin: 0;
+  z-index: 1;
 }
 
 .checkpoint-comments-wrap {
   max-width: 560px;
-  padding: 4px;
-  margin-top: 4px;
-  @apply bg-grey-mid p-sm mt-sm;
+  padding: 10px 14px;
+  margin-top: 8px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
 
-  h4{
-    @apply text-text-primary text-heading-s;
+  h4 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #64748b;
+    margin: 0 0 4px 0;
   }
 
-  p{
-    @apply text-text-secondary text-body-s-dt;
+  p {
+    font-size: 13.5px;
+    color: #1e293b;
+    margin: 0;
+    line-height: 1.45;
   }
 }
+

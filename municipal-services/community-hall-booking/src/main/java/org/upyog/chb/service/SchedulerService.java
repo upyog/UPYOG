@@ -1,6 +1,13 @@
 package org.upyog.chb.service;
-import static org.upyog.chb.constants.CommunityHallBookingConstants.*;
+
+import static org.upyog.chb.constants.CommunityHallBookingConstants.CHB_ACTION_MOVETOEMPLOYEE;
+import static org.upyog.chb.constants.CommunityHallBookingConstants.CHB_REFUND_WORKFLOW_BUSINESSSERVICE;
+import static org.upyog.chb.constants.CommunityHallBookingConstants.CHB_REFUND_WORKFLOW_MODULENAME;
+import static org.upyog.chb.constants.CommunityHallBookingConstants.CHB_STATUS_BOOKED;
+import static org.upyog.chb.constants.CommunityHallBookingConstants.CHB_TENANTID;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,8 +42,7 @@ public class SchedulerService {
 	private final SchedulerService self;
 
 	public SchedulerService(CommunityHallBookingRepository bookingRepository, UserService userService,
-			WorkflowService workflowService, CommunityHallBookingConfiguration config,
-			@Lazy SchedulerService self) {
+			WorkflowService workflowService, CommunityHallBookingConfiguration config, @Lazy SchedulerService self) {
 		this.bookingRepository = bookingRepository;
 		this.userService = userService;
 		this.workflowService = workflowService;
@@ -45,11 +51,7 @@ public class SchedulerService {
 	}
 
 	@Scheduled(fixedRate = 5 * 60 * 1000)
-	@SchedulerLock(
-		name = "chbCleanupExpiredEntriesJob",
-		lockAtLeastFor = "PT1M",
-		lockAtMostFor = "PT10M"
-	)
+	@SchedulerLock(name = "chbCleanupExpiredEntriesJob", lockAtLeastFor = "PT1M", lockAtMostFor = "PT10M")
 	public void cleanupExpiredEntries() {
 		log.info("Delete Expired Booking task running...:::.....:::");
 		self.deleteExpiredBookings();
@@ -69,17 +71,21 @@ public class SchedulerService {
 
 	}
 
+	/**
+	 * This scheduler runs everyday midnight(1 am) to call workflow for booking
+	 * applications of which booking date has crossed to initiate booking refund
+	 * process Uses ShedLock to ensure only one instance runs this job across
+	 * multiple service instances
+	 */
+
 	@Scheduled(cron = "0 0 1 * * *")
-	@SchedulerLock(
-		name = "chbUpdateWorkflowForBookedApplicationsJob",
-		lockAtLeastFor = "PT1M",
-		lockAtMostFor = "PT30M"
-	)
+	@SchedulerLock(name = "chbUpdateWorkflowForBookedApplicationsJob", lockAtLeastFor = "PT1M", lockAtMostFor = "PT30M")
 	public void updateWorkflowForBookedApplications() {
+		log.info("Scheduler fired at {}", LocalDateTime.now());
 		log.info("Scheduler - Updating Workflow of Booked applications...");
 
-		String formattedDate = CommunityHallBookingUtil.parseLocalDateToString(
-				LocalDate.now(ZoneId.systemDefault()).minusDays(1), "yyyy-MM-dd");
+		String formattedDate = CommunityHallBookingUtil
+				.parseLocalDateToString(LocalDate.now(ZoneId.systemDefault()).minusDays(1), "yyyy-MM-dd");
 
 		List<VenueBookingDetail> bookingDetails = bookingRepository.getBookingDetails(
 				VenueBookingSearchCriteria.builder().toDate(formattedDate).status(CHB_STATUS_BOOKED).build());
@@ -92,7 +98,8 @@ public class SchedulerService {
 				.collect(Collectors.joining(", "));
 		log.info("Booking Nos: " + bookingNos);
 
-		UserDetailResponse userDetailResponse = userService.searchByUserName(config.getInternalMicroserviceUserName(), config.getStateLevelTenantId());
+		UserDetailResponse userDetailResponse = userService.searchByUserName(config.getInternalMicroserviceUserName(),
+				config.getStateLevelTenantId());
 		if (userDetailResponse == null || userDetailResponse.getUser().isEmpty()) {
 			throw new IllegalStateException("SYSTEM user not found for tenant '" + CHB_TENANTID + "'.");
 		}
@@ -118,8 +125,8 @@ public class SchedulerService {
 		log.info("Updating Workflow and status for booking number: {}", bookingDetail.getBookingNo());
 
 		bookingDetail.setWorkflow(workflow);
-		VenueBookingRequest bookingRequest = VenueBookingRequest.builder()
-				.venueBookingApplication(bookingDetail).requestInfo(requestInfo).build();
+		VenueBookingRequest bookingRequest = VenueBookingRequest.builder().venueBookingApplication(bookingDetail)
+				.requestInfo(requestInfo).build();
 
 		State state = workflowService.updateWorkflow(bookingRequest);
 		bookingDetail.setBookingStatus(state.getApplicationStatus());

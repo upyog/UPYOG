@@ -46,7 +46,7 @@ const BannerPicker = (props) => {
       applicationNumber={props?.data?.waterTankerBookingDetail?.bookingNo}
       info={props?.isSuccess ? props.t("WT_BOOKING_NO") : ""}
       successful={props?.isSuccess}
-     className="wt-auto-43"
+     className="wt-acknowledgement-full-width"
     />
   );
 };

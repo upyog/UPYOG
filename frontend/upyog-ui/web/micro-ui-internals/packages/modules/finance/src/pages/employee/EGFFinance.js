@@ -37,6 +37,9 @@ const EGFFinance = () => {
   if (menuUrl.startsWith("/finance")) {
     menuUrl = menuUrl.substring("/finance".length);
   }
+  if (menuUrl.startsWith("/egf")) {
+    menuUrl = menuUrl.substring("/egf".length);
+  }
   if (location.search) {
     menuUrl += location.search;
   }
@@ -142,7 +145,7 @@ const EGFFinance = () => {
         id="erp_iframe"
         height={winheight}
         width="100%"
-        style={{ display: "none", border: "none" }}
+        className="fin-egffinance-hidden"
         title="EGF Finance"
       />
 

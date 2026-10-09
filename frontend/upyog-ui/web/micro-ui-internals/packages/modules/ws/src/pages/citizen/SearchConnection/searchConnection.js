@@ -5,7 +5,7 @@ import { TextInput, LabelFieldPair, Dropdown, Toast } from "@nudmcdgnpm/digit-ui
 import PropTypes from "prop-types";
 
 import { useTranslation } from "react-i18next";
-import "../../../css/ws-inline-auto.css";
+
 const SearchConnection = ({
   config: propsConfig,
   formData
@@ -59,7 +59,7 @@ const SearchConnection = ({
       // else if(logginedUser == null && !locality)
       // setShowToast({ key: true, label: "WS_PLEASE_PROVIDE_LOCALITY" });
       else if (!mobileNumber && !consumerNumber && !oldconsumerNumber && !propertyId) {
-      setShowToast({ key: true, label: "WS_HOME_SEARCH_CONN_RESULTS_DESC" });
+        setShowToast({ key: true, label: "WS_HOME_SEARCH_CONN_RESULTS_DESC" });
       }
       else {
         navigate(
@@ -70,13 +70,13 @@ const SearchConnection = ({
       if (!city.code) setShowToast({
         key: true,
         label: "WS_PLEASE_PROVIDE_CITY"
-      });else if (logginedUser == null && !locality) setShowToast({
+      }); else if (logginedUser == null && !locality) setShowToast({
         key: true,
         label: "WS_PLEASE_PROVIDE_LOCALITY"
-      });else if (!doorNumber && !consumerName) setShowToast({
+      }); else if (!doorNumber && !consumerName) setShowToast({
         key: true,
         label: "WS_HOME_SEARCH_CONN_RESULTS_DESC"
-      });else {
+      }); else {
         if (locality !== "undefined") filters.locality = locality?.code;
         if (doorNumber) filters.doorNo = doorNumber;
         if (consumerName) filters.ownerName = consumerName;
@@ -99,14 +99,14 @@ const SearchConnection = ({
           businessService: "SW"
         });
         let totalResponse = response?.TotalCount + SWresponse?.TotalCount;
-        if(ptSearchConfig?.maxResultValidation && totalResponse > ptSearchConfig?.maxPropertyResult)
-        setShowToast({ key: true, label: "Refine your search" });
+        if (ptSearchConfig?.maxResultValidation && totalResponse > ptSearchConfig?.maxPropertyResult)
+          setShowToast({ key: true, label: "Refine your search" });
         else
-        navigate(
-          `/upyog-ui/citizen/ws/search-results?doorNumber=${doorNumber}&consumerName=${consumerName}&tenantId=${city.code}&locality=${locality.code}`
-        );
-        }
-    } 
+          navigate(
+            `/upyog-ui/citizen/ws/search-results?doorNumber=${doorNumber}&consumerName=${consumerName}&tenantId=${city.code}&locality=${locality.code}`
+          );
+      }
+    }
   };
   let SCMenu = [];
   let SearchTypes = [{
@@ -149,38 +149,38 @@ const SearchConnection = ({
   function selectSearchType(value) {
     setSearchType(value);
   }
-  return <div className="ws-auto-188">
-      <FormStep config={propsConfig} label={propsConfig.texts.submitButtonLabel} heading={propsConfig.texts.header} text={propsConfig.texts.text} cardStyle={{
+  return <div className="ws-search-connection-mt-md">
+    <FormStep config={propsConfig} label={propsConfig.texts.submitButtonLabel} heading={propsConfig.texts.header} text={propsConfig.texts.text} cardStyle={{
       margin: "auto",
       maxWidth: "960px"
     }} headingStyle={{
       fontSize: "32px",
       marginBottom: "16px"
-    }} onSelect={onConnectionSearch} componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>} isDisabled={false} forcedError={t(mobileNumberError)}
-    //onSkip={onSkip}
-    t={t}>
-        <RadioOrSelect className="form-field" isMandatory={true} t={t} optionKey="code" name="SearchType" options={SearchTypes} value={searchType} selectedOption={searchType} onSelect={selectSearchType} {...validation = {
+    }} onSelect={onConnectionSearch} isDisabled={false} forcedError={t(mobileNumberError)}
+      //onSkip={onSkip}
+      t={t}>
+      <RadioOrSelect className="form-field" isMandatory={true} t={t} optionKey="code" name="SearchType" options={SearchTypes} value={searchType} selectedOption={searchType} onSelect={selectSearchType} {...validation = {
         isRequired: true,
         title: t("WS_SEARCH_TYPE_MANDATORY")
       }} />
-        <CardLabel>{`${t("WS_PROP_DETAIL_CITY")}`}<span className="check-page-link-button"> *</span></CardLabel>
-        <RadioOrSelect className="form-field" isMandatory={true} t={t} optionKey="code" name="City" options={allCities} value={city} selectedOption={city} onSelect={selectCity} {...validation = {
+      <CardLabel>{`${t("WS_PROP_DETAIL_CITY")}`}<span className="check-page-link-button"> *</span></CardLabel>
+      <RadioOrSelect className="form-field" isMandatory={true} t={t} optionKey="code" name="City" options={allCities} value={city} selectedOption={city} onSelect={selectCity} {...validation = {
         isRequired: true,
         title: t("UC_CITY_MANDATORY")
       }} />
-        {city && searchType && searchType?.code == "CONNECTION_DETAILS" && <CardLabel>{`${t("WS_PROP_DETAIL_LOCALITY_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>}
-        {city && searchType && searchType?.code == "CONNECTION_DETAILS" && <Localities selectLocality={selectLocality} tenantId={city?.code} boundaryType="revenue" keepNull={false} optionCardStyles={{
+      {city && searchType && searchType?.code == "CONNECTION_DETAILS" && <CardLabel>{`${t("WS_PROP_DETAIL_LOCALITY_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>}
+      {city && searchType && searchType?.code == "CONNECTION_DETAILS" && <Localities selectLocality={selectLocality} tenantId={city?.code} boundaryType="revenue" keepNull={false} optionCardStyles={{
         height: "600px",
         overflow: "auto",
         zIndex: "10"
       }} selected={locality}
-      //disable={!city?.code}
-      disableLoader={false} />}
-        {searchType && searchType?.code == "CONSUMER_NUMBER" && <div className="ws-auto-189">
+        //disable={!city?.code}
+        disableLoader={false} />}
+      {searchType && searchType?.code == "CONSUMER_NUMBER" && <div className="ws-search-connection-mt-sm-mb-md">
         <CardText>{t("WS_SEARCH_TEXT")}</CardText>
         <CardLabel>{`${t("WS_CONSUMER_NUMBER_LABEL")}`}</CardLabel>
         <div className="field-container">
-          <span className="employee-card-input employee-card-input--front ws-auto-190">
+          <span className="citizen-card-input citizen-card-input--front">
             +91
           </span>
           <TextInput type={"mobileNumber"} t={t} isMandatory={false} optionKey="i18nKey" name="mobileNumber" value={mobileNumber} onChange={setMobileNo} {...validation = {
@@ -188,54 +188,54 @@ const SearchConnection = ({
             pattern: "[6-9]{1}[0-9]{9}",
             type: "tel",
             title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID")
-          }} className="ws-auto-191" />
+          }} className="ws-search-connection-label" />
         </div>
-        <CardLabel className="ws-auto-192">{`${t("(or)")}`}</CardLabel>           
+        <CardLabel className="ws-search-connection-label-center-text-grey-text">{`${t("(or)")}`}</CardLabel>
         <div className="tooltip">
-        <div className="ws-auto-193">
-        <CardLabel>{`${t("WS_MYCONNECTIONS_CONSUMER_NO")}`}</CardLabel>
-        <InfoBannerIcon fill="#0b0c0c" />
-        <span className="tooltiptext ws-auto-194">
-        {t("WS_CONSUMER_NO_DESCRIPTION") + " " + t("WS_CONSUMER_NO_FORMAT")}
-        </span>
-        </div>
+          <div className="ws-search-connection-label-flex">
+            <CardLabel>{`${t("WS_MYCONNECTIONS_CONSUMER_NO")}`}</CardLabel>
+            <InfoBannerIcon fill="#0b0c0c" />
+            <span className="tooltiptext ws-search-connection-absolute">
+              {t("WS_CONSUMER_NO_DESCRIPTION") + " " + t("WS_CONSUMER_NO_FORMAT")}
+            </span>
+          </div>
         </div>
         <TextInput t={t} type={"any"} isMandatory={false} name="consumerNumber" value={consumerNumber} onChange={selectconsumerNumber} {...validation = {
           isRequired: false,
           pattern: "[A-Za-z]{2}\/[0-9]{3,4}\/[0-9]{4}\-[0-9]{2}\/[0-9]{6}",
           type: "text",
           title: t("ERR_INVALID_CONSUMER_NO")
-        }} className="ws-auto-195" />
-        {<CardLabel className="ws-auto-196">{`${t("(or)")}`}</CardLabel>}
+        }} className="ws-search-connection-label-2" />
+        {<CardLabel className="ws-search-connection-label-center-text-grey-text">{`${t("(or)")}`}</CardLabel>}
         {<div className="tooltip">
-        <div className="ws-auto-197">
-        <CardLabel>{`${t("WS_SEARCH_CONNNECTION_OLD_CONSUMER_LABEL")}`}</CardLabel>
-        <InfoBannerIcon fill="#0b0c0c" />
-        <span className="tooltiptext ws-auto-198">
-        {t("WS_CONSUMER_NO_DESCRIPTION") + " " + t("WS_CONSUMER_NO_FORMAT")}
-        </span>
-        </div>
+          <div className="ws-search-connection-label-flex">
+            <CardLabel>{`${t("WS_SEARCH_CONNNECTION_OLD_CONSUMER_LABEL")}`}</CardLabel>
+            <InfoBannerIcon fill="#0b0c0c" />
+            <span className="tooltiptext ws-search-connection-absolute-2">
+              {t("WS_CONSUMER_NO_DESCRIPTION") + " " + t("WS_CONSUMER_NO_FORMAT")}
+            </span>
+          </div>
         </div>}
         {<TextInput t={t} type={"any"} isMandatory={false}
-        //optionKey="i18nKey"
-        name="oldconsumerNumber" value={oldconsumerNumber} onChange={selectoldconsumerNumber} {...validation = {
-          isRequired: false,
-          pattern: "[A-Za-z]{2}\/[0-9]{3}\/[0-9]{4}\-[0-9]{2}\/[0-9]{6}",
-          type: "text",
-          title: t("ERR_INVALID_CONSUMER_NO")
-        }} className="ws-auto-199" />}
-        <CardLabel className="ws-auto-200">{`${t("(or)")}`}</CardLabel>
+          //optionKey="i18nKey"
+          name="oldconsumerNumber" value={oldconsumerNumber} onChange={selectoldconsumerNumber} {...validation = {
+            isRequired: false,
+            pattern: "[A-Za-z]{2}\/[0-9]{3}\/[0-9]{4}\-[0-9]{2}\/[0-9]{6}",
+            type: "text",
+            title: t("ERR_INVALID_CONSUMER_NO")
+          }} className="ws-search-connection-label-2" />}
+        <CardLabel className="ws-search-connection-label-center-text-grey-text">{`${t("(or)")}`}</CardLabel>
         <CardLabel>{`${t("WS_PROPERTY_ID_LABEL")}`}</CardLabel>
         <TextInput t={t} type={"any"} isMandatory={false}
-        //optionKey="i18nKey"
-        name="propertyId" value={propertyId} onChange={selectpropertyId} {...validation = {
-          isRequired: false,
-          pattern: "[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}|[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}",
-          type: "text",
-          title: t("ERR_INVALID_PROPERTY_ID")
-        }} className="ws-auto-201" />
-        </div>}
-        {searchType && searchType?.code == "CONNECTION_DETAILS" && <div className="ws-auto-202">
+          //optionKey="i18nKey"
+          name="propertyId" value={propertyId} onChange={selectpropertyId} {...validation = {
+            isRequired: false,
+            pattern: "[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}|[A-Za-z]{2}\-[A-Za-z]{2}\-[0-9]{4}\-[0-9]{2}\-[0-9]{2}\-[0-9]{6}",
+            type: "text",
+            title: t("ERR_INVALID_PROPERTY_ID")
+          }} className="ws-search-connection-label-2" />
+      </div>}
+      {searchType && searchType?.code == "CONNECTION_DETAILS" && <div className="ws-search-connection-mt-sm-mb-md">
         <CardText>{t("WS_SEARCH_TEXT")}</CardText>
         <CardLabel>{`${t("WS_DOOR_NO_LABEL")}`}</CardLabel>
         <TextInput t={t} type={"any"} isMandatory={false} name="doorNumber" value={doorNumber} onChange={selectdoorNumber} {...validation = {
@@ -243,15 +243,15 @@ const SearchConnection = ({
           pattern: "^([1-9][0-9]*)$",
           type: "text",
           title: t("ERR_INVALID_DOOR_NO")
-        }} className="ws-auto-203" />
+        }} className="ws-search-connection-label-2" />
         <CardLabel>{`${t("WS_CONSUMER_NAME_LABEL")}`}</CardLabel>
-        <TextInput t={t} type={"any"} isMandatory={false} name="consumerName" value={consumerName} onChange={selectconsumerName} className="ws-auto-204" />
-        </div>}
-      </FormStep>
-      {showToast && <Toast isDleteBtn={true} error={showToast.key} label={t(showToast.label)} onClose={() => {
+        <TextInput t={t} type={"any"} isMandatory={false} name="consumerName" value={consumerName} onChange={selectconsumerName} className="ws-search-connection-label-2" />
+      </div>}
+    </FormStep>
+    {showToast && <Toast isDleteBtn={true} error={showToast.key} label={t(showToast.label)} onClose={() => {
       setShowToast(null);
     }} />}
-    </div>;
+  </div>;
 };
 SearchConnection.propTypes = {
   loginParams: PropTypes.any

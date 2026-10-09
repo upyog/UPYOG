@@ -33,7 +33,7 @@ const NocApplication = ({ application, tenantId }) => {
           pathname: `/upyog-ui/citizen/payment/collect/FIRENOC/${applicationNumber}`,
           state: { tenantId: application?.tenantId }
         }}>
-          <div style={{ marginTop: "10px" }}>
+          <div className="noc-search-applications-top-spacing">
             <SubmitBar label={t("COMMON_MAKE_PAYMENT")} />
           </div>
         </Link>
