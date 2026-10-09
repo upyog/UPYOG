@@ -123,7 +123,7 @@ public class WSCalculationValidator {
 		}
 
 		int billingPeriodNumber = wSCalculationDao.isBillingPeriodExists(meterReading.getConnectionNo(),
-				meterReading.getBillingPeriod());
+				meterReading.getCurrentReadingDate(), meterReading.getLastReadingDate());
 		if (billingPeriodNumber > 0)
 			errorMap.put("INVALID_METER_READING_BILLING_PERIOD", "Billing Period Already Exists");
 
@@ -210,7 +210,7 @@ public class WSCalculationValidator {
 		}
 
 		int billingPeriodNumber = wSCalculationDao.isBillingPeriodExists(meterReading.getConnectionNo(),
-				meterReading.getBillingPeriod());
+				meterReading.getCurrentReadingDate(), meterReading.getLastReadingDate());
 		if (billingPeriodNumber > 0)
 		{
 			errorMessage=errorMessage.equalsIgnoreCase("")?errorMessage.concat("Billing Period Already Exists"):
