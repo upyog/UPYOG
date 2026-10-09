@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @Data
 @Builder
@@ -33,7 +34,9 @@ public class RefundKafkaDetail {
 	private String sanctionRef;
 	private Long financeApprovalDate;
 	private String gatewayRefundId;
+	@JsonDeserialize(using = JsonObjectOrStringDeserializer.class)
 	private Object beneficiaryDetails;
+	@JsonDeserialize(using = JsonObjectOrStringDeserializer.class)
 	private Map<String, Object> additionalDetails;
 	private Object auditDetails;
 	private String fileStoreId;
