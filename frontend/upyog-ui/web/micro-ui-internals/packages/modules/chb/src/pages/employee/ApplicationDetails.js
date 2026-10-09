@@ -437,25 +437,30 @@ const ApplicationDetails = () => {
       const mapRefundActions = (actions) => {
         if (!Array.isArray(actions)) return actions;
       
-        return actions.map((action) => {
-          if (
-            action.action !== "COMPLETE_REFUND" ||
-            !canCompleteOfflineRefund
-          ) {
-            return action;
-          }
+        return actions
+          .filter((action) => {
+            if (action.action === "COMPLETE_REFUND") {
+              return canCompleteOfflineRefund;
+            }
       
-          return {
-            ...action,
-            isWarningPopUp: false,
-            redirectionUrll: undefined,
-            redirectionUrl: {
-              pathname:
-                `/upyog-ui/employee/refund/${encodeURIComponent(serviceRefund.id)}` +
-                `?consumerCode=${encodeURIComponent(serviceRefund.consumerCode)}`,
-            },
-          };
-        });
+            return true;
+          })
+          .map((action) => {
+            if (action.action !== "COMPLETE_REFUND") {
+              return action;
+            }
+      
+            return {
+              ...action,
+              isWarningPopUp: false,
+              redirectionUrll: undefined,
+              redirectionUrl: {
+                pathname:
+                  `/upyog-ui/employee/refund/${encodeURIComponent(serviceRefund.id)}` +
+                  `?consumerCode=${encodeURIComponent(serviceRefund.consumerCode)}`,
+              },
+            };
+          });
       };
       
       const refundWorkflowDetails = {
