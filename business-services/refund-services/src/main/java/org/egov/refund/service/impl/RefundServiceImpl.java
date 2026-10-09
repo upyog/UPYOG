@@ -121,7 +121,6 @@ public class RefundServiceImpl implements RefundService {
 		if (inputRefund.getProcessInstance() == null || isBlank(inputRefund.getProcessInstance().getAction())) {
 			log.info("Processing normal refund data update. refundId={}", refund.getId());
 
-
 			refundEnrichmentService.updateAuditDetails(refund, request.getRequestInfo().getUserInfo().getUuid());
 
 			refundRepository.update(refund);
@@ -141,6 +140,12 @@ public class RefundServiceImpl implements RefundService {
 			refundRepository.update(refund);
 			return refund;
 		}
+
+		
+		  // Offline refund completion: update workflow and push completion to Finance
+	    if (isOfflineRefundCompletion(refund, action)) {
+	        return completeOfflineRefund(refund, request, action);
+	    }
 
 		RefundActionRequest actionRequest = refundEnrichmentService.enrichWorkflowAction(refund,
 				request.getRequestInfo(), action);
@@ -195,7 +200,8 @@ public class RefundServiceImpl implements RefundService {
 				.moduleName(request.getModuleName()).businessService(request.getBusinessService())
 				.consumerCode(request.getConsumerCode()).paymentId(request.getPaymentId())
 				.refundNo(request.getRefundNo()).status(request.getStatus()).refundCategory(request.getRefundCategory())
-				.gatewayRefundId(request.getGatewayRefundId()).sanctionRef(request.getSanctionRef()).refundMode(request.getRefundMode()).build();
+				.gatewayRefundId(request.getGatewayRefundId()).sanctionRef(request.getSanctionRef())
+				.refundMode(request.getRefundMode()).build();
 
 		return refundRepository.search(criteria);
 	}
@@ -225,19 +231,18 @@ public class RefundServiceImpl implements RefundService {
 		log.info("Workflow transition successful. refundId={}, action={}, oldStatus={}, newStatus={}", refund.getId(),
 				transition.getAction(), refund.getStatus(), transition.getApplicationStatus());
 
-		 // Fetch existing refund before updating the status
-	    Refund oldRefundDetails = refundRepository.findById(refund.getId());
+		// Fetch existing refund before updating the status
+		Refund oldRefundDetails = refundRepository.findById(refund.getId());
 
-	    if (oldRefundDetails == null) {
-	        oldRefundDetails = refund;
-	    }
+		if (oldRefundDetails == null) {
+			oldRefundDetails = refund;
+		}
 
-	    refund.setStatus(transition.getApplicationStatus());
+		refund.setStatus(transition.getApplicationStatus());
 
-		
 		if (!RefundConstants.ACTION_INITIATE.equalsIgnoreCase(transition.getAction())) {
 			refundEnrichmentService.updateAuditDetails(oldRefundDetails, request.getUserId());
-			
+
 			refundAuditService.createAudit(oldRefundDetails, transition.getAction());
 		}
 		Refund processedRefund = processWorkflowAction(refund, transition, request);
@@ -422,6 +427,31 @@ public class RefundServiceImpl implements RefundService {
 		}
 	}
 
+	private Refund completeOfflineRefund(Refund refund, RefundRequest request, String action) {
+
+		log.info("Processing offline refund completion. refundId={}", refund.getId());
+
+		RefundActionRequest actionRequest = refundEnrichmentService.enrichWorkflowAction(refund,
+				request.getRequestInfo(), action);
+
+		
+		refund = processInternal(refund, actionRequest);
+
+		
+		refundRepository.update(refund);
+
+		RefundRequest financeRequest = RefundRequest.builder().refund(refund).requestInfo(createSystemRequestInfo())
+				.build();
+
+		// Push completed offline refund to Finance
+		financeService.sendToFinanceComplete(financeRequest);
+
+		log.info("Offline refund completion sent to Finance. refundId={}, status={}", refund.getId(),
+				refund.getStatus());
+
+		return refund;
+	}
+
 	private boolean isFinalPaymentRefundStatus(String status, String message) {
 
 		return (RefundConstants.PAYMENT_REFUND_STATUS_SUCCESS.equalsIgnoreCase(status)
@@ -430,6 +460,16 @@ public class RefundServiceImpl implements RefundService {
 				|| RefundConstants.PAYMENT_REFUND_STATUS_FAILURE.equalsIgnoreCase(status)
 
 				|| RefundConstants.PAYMENT_REFUND_STATUS_FAILED.equalsIgnoreCase(status);
+	}
+	
+	private boolean isOfflineRefundCompletion(Refund refund, String action) {
+
+	    return RefundConstants.STATUS_REFUND_INITIATED
+	                    .equalsIgnoreCase(refund.getStatus())
+	            && RefundConstants.ACTION_REFUND_COMPLETED
+	                    .equalsIgnoreCase(action)
+	            && RefundConstants.REFUND_MODE_OFFLINE
+	                    .equalsIgnoreCase(refund.getRefundMode());
 	}
 
 	// ============================================================
