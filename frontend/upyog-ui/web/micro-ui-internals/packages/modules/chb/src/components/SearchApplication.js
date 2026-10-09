@@ -188,32 +188,6 @@
           }
 
           // =========================================================================
-          // [PREVIOUS NTT PAYMENT GATEWAY REFUND LOGIC - KEPT FOR REFERENCE]
-          // Commented out as refund is now handled via /refund-services/refund/v1/_create
-          // If NTT payment gateway workflow is required, uncomment the block below.
-          /*
-          if (paymentDetails && paymentDetails.paymentMode === "ONLINE") {
-            try {
-              const refundPayloadNTT = {
-                PaymentWorkflows: [
-                  {
-                    paymentId: paymentDetails.id,
-                    action: "REFUND",
-                    tenantId: paymentDetails.tenantId || tenantId,
-                    reason: data?.cancelReason || "Customer requested refund"
-                  }
-                ]
-              };
-              await Digit.ReceiptsService.update(refundPayloadNTT, paymentDetails.tenantId || tenantId, "CHB");
-            } catch (refundError) {
-              refundFailed = true;
-              refundErrorMessage = refundError?.response?.data?.Errors?.[0]?.message || refundError?.message || "";
-            }
-          }
-          */
-          // =========================================================================
-
-          // =========================================================================
           // [NEW REFUND SERVICE API INTEGRATION: /refund-services/refund/v1/_create]
           // =========================================================================
           const amountPaid = Number(
@@ -252,7 +226,13 @@
               amountPaid: amountPaid,
               refundAmount: amountPaid,
               refundMode: refundChannel,
-              fileStoreId: paymentDetails?.fileStoreId || bookingData?.paymentReceiptFilestoreId || bookingData?.permissionLetterFilestoreId || null
+              fileStoreId: paymentDetails?.fileStoreId || bookingData?.paymentReceiptFilestoreId || bookingData?.permissionLetterFilestoreId || null,
+              processInstance: {
+                action: "INITIATE",
+                comment: data?.cancelReason || "refund initiate",
+                documents: [],
+                assignes: []
+              }
             }
           };
 

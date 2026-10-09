@@ -54,6 +54,26 @@ export const useRefundSearch = (
   };
 };
 
+export const useCreateRefund = (tenantId) => {
+  const mutationFn = async (payload) => {
+    const response = await RefundService.create(payload, {
+      tenantId,
+    });
+
+    if (response?.Errors?.length) {
+      throw new Error(
+        response.Errors
+          .map((error) => error.message || error.code)
+          .join(", ")
+      );
+    }
+
+    return response;
+  };
+
+  return mutationTemplate({ mutationFn });
+};
+
 export const useCompleteOfflineRefund = (tenantId) => {
   const mutationFn = async (payload) => {
     const refund = payload?.refund;

@@ -90,7 +90,8 @@ const CHBCancelBooking = ({ t, closeModal, actionCancelLabel, actionCancelOnSubm
                             </label>
                             <TextArea
                                 name="cancelReason"
-                                inputRef={register({ required: true })}
+                                inputRef={register("cancelReason", { required: true })?.ref}
+                                {...register("cancelReason", { required: true })}
                                 placeholder={t("CHB_CANCEL_REASON_PLACEHOLDER", "Enter reason for cancellation")}
                                 style={{ width: "100%", minHeight: "80px" }}
                             />
