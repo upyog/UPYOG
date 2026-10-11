@@ -17,7 +17,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 
-import { useParams, Link,  } from "react-router-dom";
+import { useParams, Link, } from "react-router-dom";
 import getChbAcknowledgementData from "../../getChbAcknowledgementData";
 import CHBWFApplicationTimeline from "../../pageComponents/CHBWFApplicationTimeline";
 import CHBDocument from "../../pageComponents/CHBDocument";
@@ -27,6 +27,20 @@ import { pdfDownloadLink } from "../../utils";
 import get from "lodash/get";
 import { size } from "lodash";
 import "../../css/chb-inline.css";
+
+const extractRefundObject = (res) => {
+  if (!res) return null;
+  if (res.id || res.refundNo) return res;
+  if (res.data) return extractRefundObject(res.data);
+  if (Array.isArray(res) && res.length > 0) {
+    return extractRefundObject(res[0]);
+  }
+  if (res.refund) return extractRefundObject(res.refund);
+  if (res.Refund) return extractRefundObject(res.Refund);
+  if (Array.isArray(res.Refunds) && res.Refunds.length > 0) return extractRefundObject(res.Refunds[0]);
+  if (Array.isArray(res.refunds) && res.refunds.length > 0) return extractRefundObject(res.refunds[0]);
+  return null;
+};
 
 /**
 
@@ -124,8 +138,26 @@ const CHBApplicationDetails = () => {
   // instrumentStatus is the authoritative final state from the payment gateway
   const instrumentStatus = reciept_data?.Payments?.[0]?.instrumentStatus;
   const isRefunded = instrumentStatus === "REFUNDED";
+  const consumerCode = chb_details?.bookingNo || acknowledgementIds;
 
-  const { data: refundData } = Digit.Hooks.useCustomAPIHook(
+  const { data: serviceRefundData } = Digit.Hooks.useCustomAPIHook(
+    "/refund-services/refund/v1/_search",
+    {},
+    {
+      data: {
+        tenantId: tenantId,
+        moduleName: "CHB",
+        businessService: "CHB.REFUND",
+        consumerCode: consumerCode,
+      },
+    },
+    {},
+    {
+      enabled: !!consumerCode,
+    }
+  );
+
+  const { data: pgRefundData } = Digit.Hooks.useCustomAPIHook(
     "/pg-service/refund/v1/_search",
     {
       originalTxnId: originalTxnId,
@@ -138,24 +170,68 @@ const CHBApplicationDetails = () => {
     }
   );
 
-  const refund = refundData?.Refund?.[0] || refundData?.Refunds?.[0] || refundData?.[0];
+  const serviceRefund = extractRefundObject(serviceRefundData);
+  const refund = serviceRefund || extractRefundObject(pgRefundData);
+  const hasRefund = !!(refund && (refund?.refundNo || refund?.id || refund?.status));
   // Show the exact refund pipeline status from the API (INITIATED, SUCCESS, etc.)
   const refundStatus = refund?.status || refund?.refundStatus;
+  console.log("refundStatus", refundStatus, t(`${refundStatus}`));
+  const workflowBusinessId = (hasRefund && refund?.refundNo) ? refund.refundNo : (refund?.refundNo || consumerCode);
+  const workflowBusinessService = (hasRefund || isCancelled) ? (refund?.businessService || "CHB.REFUND") : "CHB.REFUND";
 
-  const isRefundSuccess = refundStatus?.toUpperCase() === "REFUNDED" ||
-    refundStatus?.toUpperCase() === "SUCCESS" ||
-    refundStatus?.toUpperCase() === "SUCCESSFUL" ||
-    refundStatus?.toUpperCase() === "COMPLETED";
-  const isRefundInProgress = !isRefundSuccess && refundStatus && (
-    refundStatus.toUpperCase() === "IN_PROGRESS" ||
-    refundStatus.toUpperCase() === "INPROGRESS" ||
-    refundStatus.toUpperCase() === "INITIATED"
+  const statusUpper = refundStatus?.toUpperCase() || "";
+  const isRefundSuccess = Boolean(
+    isRefunded ||
+    statusUpper === "REFUNDED" ||
+    statusUpper === "REFUND_COMPLETED" ||
+    statusUpper === "COMPLETED" ||
+    statusUpper === "SUCCESS" ||
+    statusUpper === "SUCCESSFUL" ||
+    statusUpper === "REFUND_APPROVED" ||
+    statusUpper === "APPROVED" ||
+    statusUpper === "SETTLED" ||
+    statusUpper.includes("COMPLETE") ||
+    statusUpper.includes("REFUNDED") ||
+    statusUpper.includes("SUCCESS")
+  );
+  const isRefundInProgress = !isRefundSuccess && Boolean(
+    refundStatus && (
+      statusUpper === "IN_PROGRESS" ||
+      statusUpper === "INPROGRESS" ||
+      statusUpper === "INITIATED" ||
+      statusUpper === "REFUND_INITIATED" ||
+      statusUpper.includes("INITIAT") ||
+      statusUpper.includes("PROGRESS")
+    )
   );
   const refundBannerStyle = isRefundSuccess
     ? { backgroundColor: "#D4EDDA", border: "1px solid #C3E6CB", color: "#155724" }
     : isRefundInProgress
-    ? { backgroundColor: "#FFF3CD", border: "1px solid #FFEBAA", color: "#856404" }
-    : { backgroundColor: "#E2E3E5", border: "1px solid #D6D8DB", color: "#383D41" };
+      ? { backgroundColor: "#FFF3CD", border: "1px solid #FFEBAA", color: "#856404" }
+      : { backgroundColor: "#E2E3E5", border: "1px solid #D6D8DB", color: "#383D41" };
+
+  const getLocalizedRefundStatus = (status) => {
+    if (!status && isRefunded) return t("REFUNDED");
+    if (!status) return t("CS_NA");
+
+    const candidateKeys = [
+      `CS_COMMON_${status}`,
+      `WF_CHB.REFUND_${status}`,
+      `WF_${status}`,
+      status,
+    ];
+
+    for (const key of candidateKeys) {
+      const translated = t(key);
+      if (translated && translated !== key) {
+        return translated;
+      }
+    }
+
+    return status;
+  };
+
+  const refundStatusHeader = t("CHB_REFUND_STATUS");
   //WorkFlow
   // if (!chb_details.workflow) {
   //   let workflow = {
@@ -331,7 +407,7 @@ const CHBApplicationDetails = () => {
         <Card>
           {(isRefundInProgress || refundStatus || isRefunded) && (
             <div style={{ padding: "10px 16px", borderRadius: "4px", marginBottom: "16px", fontWeight: "bold", fontSize: "16px", ...refundBannerStyle }}>
-              {t("CHB_REFUND_STATUS") || "Refund Status"} &mdash; {refundStatus || (isRefunded ? "REFUNDED" : "")}
+              {refundStatusHeader} &mdash; {getLocalizedRefundStatus(refundStatus)}
             </div>
           )}
           <StatusTable>
@@ -360,14 +436,14 @@ const CHBApplicationDetails = () => {
             <Row className="border-none" label={t("CHB_BOOKING_TIME")} text={getBookingTimeRange(chb_details?.bookingSlotDetails) || t("CS_NA")} />
             </StatusTable> */}
           <CardSubHeader className="chb-subheader-lg">{t("CHB_ADDRESS_DETAILS")}</CardSubHeader>
-            <StatusTable>
-              <Row className="border-none" label={t("CHB_PINCODE")} text={chb_details?.address?.pincode || t("CS_NA")} />
-              <Row className="border-none" label={t("CHB_CITY")} text={chb_details?.address?.city || t("CS_NA")}/>
-              <Row className="border-none" label={t("CHB_LOCALITY")} text={chb_details?.address?.locality || t("CS_NA")} />
-              <Row className="border-none" label={t("CHB_STREET_NAME")} text={chb_details?.address?.streetName || t("CS_NA")} />
-              <Row className="border-none" label={t("CHB_HOUSE_NO")} text={chb_details?.address?.houseNo || t("CS_NA")} />
-              <Row className="border-none" label={t("CHB_LANDMARK")} text={chb_details?.address?.landmark || t("CS_NA")} />
-            </StatusTable>
+          <StatusTable>
+            <Row className="border-none" label={t("CHB_PINCODE")} text={chb_details?.address?.pincode || t("CS_NA")} />
+            <Row className="border-none" label={t("CHB_CITY")} text={chb_details?.address?.city || t("CS_NA")} />
+            <Row className="border-none" label={t("CHB_LOCALITY")} text={chb_details?.address?.locality || t("CS_NA")} />
+            <Row className="border-none" label={t("CHB_STREET_NAME")} text={chb_details?.address?.streetName || t("CS_NA")} />
+            <Row className="border-none" label={t("CHB_HOUSE_NO")} text={chb_details?.address?.houseNo || t("CS_NA")} />
+            <Row className="border-none" label={t("CHB_LANDMARK")} text={chb_details?.address?.landmark || t("CS_NA")} />
+          </StatusTable>
           <CardSubHeader className="chb-subheader-lg">{t("CHB_BANK_DETAILS")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("CHB_ACCOUNT_NUMBER")} text={chb_details?.applicantDetail?.accountNumber || t("CS_NA")} />
@@ -378,15 +454,15 @@ const CHBApplicationDetails = () => {
           </StatusTable>
           <CardSubHeader className="chb-subheader-lg">{t("SLOT_DETAILS")}</CardSubHeader>
           <ApplicationTable
-                t={t}
-                data={slotlistRows}
-                columns={columns}
-                getCellProps={(cellInfo) => ({
-                  className: "chb-table-cell",
-                })}
-                isPaginationRequired={false}
-                totalRecords={slotlistRows.length}
-              />
+            t={t}
+            data={slotlistRows}
+            columns={columns}
+            getCellProps={(cellInfo) => ({
+              className: "chb-table-cell",
+            })}
+            isPaginationRequired={false}
+            totalRecords={slotlistRows.length}
+          />
           <CardSubHeader className="chb-subheader-lg">{t("CHB_DOCUMENTS_DETAILS")}</CardSubHeader>
           <StatusTable>
             <Card className="chb-doc-card">
@@ -405,15 +481,28 @@ const CHBApplicationDetails = () => {
             <React.Fragment>
               <CardSubHeader style={{ fontSize: "24px" }}>{t("CHB_REFUND_DETAILS")}</CardSubHeader>
               <StatusTable>
-                <Row className="border-none" label={t("CHB_REFUND_ID")} text={refund?.refundId || t("CS_NA")} />
-                <Row className="border-none" label={t("CHB_REFUND_AMOUNT")} text={refund?.refundAmount ? `₹${refund.refundAmount}` : t("CS_NA")} />
-                <Row className="border-none" label={t("CHB_REFUND_STATUS")} text={refundStatus || t("CS_NA")} />
+                <Row className="border-none" label={t("CHB_REFUND_ID")} text={refund?.refundNo || refund?.refundId || refund?.id || t("CS_NA")} />
+                <Row className="border-none" label={t("CHB_REFUND_AMOUNT")} text={refund?.refundAmount ? `₹${refund.refundAmount}` : (refund?.amountPaid ? `₹${refund.amountPaid}` : t("CS_NA"))} />
+                <Row className="border-none" label={refundStatusHeader} text={t(`${refundStatus}`)} />
+                {refund?.refundMode && (
+                  <Row className="border-none" label={t("CHB_REFUND_MODE")} text={refund.refundMode} />
+                )}
+                {/* {refund?.refundReason && (
+                  <Row className="border-none" label={t("CHB_REFUND_REASON")} text={t(refund.refundReason) || refund.refundReason} />
+                )} */}
                 {/* <Row className="border-none" label={t("CHB_REFUND_TXN_ID")} text={refund?.txnId || t("CS_NA")} /> */}
               </StatusTable>
             </React.Fragment>
           )}
 
-          <CHBWFApplicationTimeline application={application} id={application?.bookingNo} userType={"citizen"} />
+          <CHBWFApplicationTimeline
+            application={application}
+            id={workflowBusinessId}
+            businessService={workflowBusinessService}
+            tenantId={tenantId}
+            timelineStatusPrefix={""}
+            userType={"citizen"}
+          />
           {showToast && (
             <Toast
               error={showToast.key}

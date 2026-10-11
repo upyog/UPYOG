@@ -148,20 +148,59 @@ const ApplicationDetails = () => {
   // Show the exact refund pipeline status from the API (INITIATED, SUCCESS, etc.)
   const refundStatus = refund?.status || refund?.refundStatus;
 
-  const isRefundSuccess = refundStatus?.toUpperCase() === "REFUNDED" ||
-    refundStatus?.toUpperCase() === "SUCCESS" ||
-    refundStatus?.toUpperCase() === "SUCCESSFUL" ||
-    refundStatus?.toUpperCase() === "COMPLETED";
-  const isRefundInProgress = !isRefundSuccess && refundStatus && (
-    refundStatus.toUpperCase() === "IN_PROGRESS" ||
-    refundStatus.toUpperCase() === "INPROGRESS" ||
-    refundStatus.toUpperCase() === "INITIATED"
+  const statusUpper = refundStatus?.toUpperCase() || "";
+  const isRefundSuccess = Boolean(
+    isRefunded ||
+    statusUpper === "REFUNDED" ||
+    statusUpper === "REFUND_COMPLETED" ||
+    statusUpper === "COMPLETED" ||
+    statusUpper === "SUCCESS" ||
+    statusUpper === "SUCCESSFUL" ||
+    statusUpper === "REFUND_APPROVED" ||
+    statusUpper === "APPROVED" ||
+    statusUpper === "SETTLED" ||
+    statusUpper.includes("COMPLETE") ||
+    statusUpper.includes("REFUNDED") ||
+    statusUpper.includes("SUCCESS")
+  );
+  const isRefundInProgress = !isRefundSuccess && Boolean(
+    refundStatus && (
+      statusUpper === "IN_PROGRESS" ||
+      statusUpper === "INPROGRESS" ||
+      statusUpper === "INITIATED" ||
+      statusUpper === "REFUND_INITIATED" ||
+      statusUpper.includes("INITIAT") ||
+      statusUpper.includes("PROGRESS")
+    )
   );
   const refundBannerStyle = isRefundSuccess
     ? { backgroundColor: "#D4EDDA", border: "1px solid #C3E6CB", color: "#155724" }
     : isRefundInProgress
       ? { backgroundColor: "#FFF3CD", border: "1px solid #FFEBAA", color: "#856404" }
       : { backgroundColor: "#E2E3E5", border: "1px solid #D6D8DB", color: "#383D41" };
+
+  const getLocalizedRefundStatus = (status) => {
+    if (!status && isRefunded) return t("REFUNDED");
+    if (!status) return t("CS_NA");
+
+    const candidateKeys = [
+      `CS_COMMON_${status}`,
+      `WF_CHB.REFUND_${status}`,
+      `WF_${status}`,
+      status,
+    ];
+
+    for (const key of candidateKeys) {
+      const translated = t(key);
+      if (translated && translated !== key) {
+        return translated;
+      }
+    }
+
+    return status;
+  };
+
+  const refundStatusHeader = t("CHB_REFUND_STATUS");
 
   useEffect(() => {
     if (refund && appDetailsToShow?.applicationData?.applicationDetails) {
@@ -171,7 +210,7 @@ const ApplicationDetails = () => {
         values: [
           { title: t("CHB_REFUND_ID"), value: refund?.refundNo || refund?.refundId || t("CS_NA") },
           { title: t("CHB_REFUND_AMOUNT"), value: refund?.refundAmount ? `₹${refund.refundAmount}` : t("CS_NA") },
-          { title: t("CHB_REFUND_STATUS"), value: refund?.status || t("CS_NA") }
+          { title: refundStatusHeader, value: getLocalizedRefundStatus(refundStatus) }
         ],
       };
 
@@ -237,7 +276,24 @@ const ApplicationDetails = () => {
       }
 
       // =========================================================================
-      // [REFUND SERVICE API INTEGRATION: /refund-services/refund/v1/_create]
+      // 1. FIRST CALL HALL BOOKING CANCEL API (/chb-services/booking/v1/_update)
+      // =========================================================================
+      const updatedApplication = {
+        ...bookingDetails,
+        bookingStatus: "CANCELLED",
+        additionalDetails: {
+          ...bookingDetails?.additionalDetails,
+          cancellationReason: data?.cancelReason || ""
+        }
+      };
+
+      await Digit.CHBServices.update(
+        { venueBookingApplication: updatedApplication },
+        bookingDetails?.tenantId || tenantId
+      );
+
+      // =========================================================================
+      // 2. ON CANCEL SUCCESS, CALL REFUND CREATE API: /refund-services/refund/v1/_create
       // =========================================================================
       const amountPaid = Number(
         paymentDetails?.totalAmountPaid ??
@@ -245,7 +301,7 @@ const ApplicationDetails = () => {
           (bookingDetails?.totalAmountPaid ??
             (bookingDetails?.totalAmount ?? 0)))
       );
-      
+
       const originalPaymentMode = paymentDetails?.paymentMode
         ?.trim()
         .toUpperCase();
@@ -439,55 +495,55 @@ const ApplicationDetails = () => {
         },
       ].filter(Boolean)
       : [];
-  
-      const mapRefundActions = (actions) => {
-        if (!Array.isArray(actions)) return actions;
-      
-        return actions
-          .filter((action) => {
-            if (action.action === "COMPLETE_REFUND") {
-              return canCompleteOfflineRefund;
-            }
-      
-            return true;
-          })
-          .map((action) => {
-            if (action.action !== "COMPLETE_REFUND") {
-              return action;
-            }
-      
-            return {
-              ...action,
-              isWarningPopUp: false,
-              redirectionUrll: undefined,
-              redirectionUrl: {
-                pathname:
-                  `/upyog-ui/employee/refund/${encodeURIComponent(serviceRefund.id)}` +
-                  `?consumerCode=${encodeURIComponent(serviceRefund.consumerCode)}`,
-              },
-            };
-          });
-      };
-      
-      const refundWorkflowDetails = {
-        ...workflowDetails,
-        data: workflowDetails?.data
+
+  const mapRefundActions = (actions) => {
+    if (!Array.isArray(actions)) return actions;
+
+    return actions
+      .filter((action) => {
+        if (action.action === "COMPLETE_REFUND") {
+          return canCompleteOfflineRefund;
+        }
+
+        return true;
+      })
+      .map((action) => {
+        if (action.action !== "COMPLETE_REFUND") {
+          return action;
+        }
+
+        return {
+          ...action,
+          isWarningPopUp: false,
+          redirectionUrll: undefined,
+          redirectionUrl: {
+            pathname:
+              `/upyog-ui/employee/refund/${encodeURIComponent(serviceRefund.id)}` +
+              `?consumerCode=${encodeURIComponent(serviceRefund.consumerCode)}`,
+          },
+        };
+      });
+  };
+
+  const refundWorkflowDetails = {
+    ...workflowDetails,
+    data: workflowDetails?.data
+      ? {
+        ...workflowDetails.data,
+        nextActions: mapRefundActions(
+          workflowDetails.data.nextActions
+        ),
+        actionState: workflowDetails.data.actionState
           ? {
-              ...workflowDetails.data,
-              nextActions: mapRefundActions(
-                workflowDetails.data.nextActions
-              ),
-              actionState: workflowDetails.data.actionState
-                ? {
-                    ...workflowDetails.data.actionState,
-                    nextActions: mapRefundActions(
-                      workflowDetails.data.actionState.nextActions
-                    ),
-                  }
-                : workflowDetails.data.actionState,
-            }
-          : workflowDetails?.data,
-      };
+            ...workflowDetails.data.actionState,
+            nextActions: mapRefundActions(
+              workflowDetails.data.actionState.nextActions
+            ),
+          }
+          : workflowDetails.data.actionState,
+      }
+      : workflowDetails?.data,
+  };
 
   return (
     <div>
@@ -509,7 +565,7 @@ const ApplicationDetails = () => {
       </div>
       {(isRefundInProgress || refundStatus || isRefunded) && (
         <div style={{ padding: "10px 16px", borderRadius: "4px", marginBottom: "16px", fontWeight: "bold", fontSize: "16px", ...refundBannerStyle }}>
-          {t("CHB_REFUND_STATUS") || "Refund Status"} &mdash; {refundStatus || (isRefunded ? "REFUNDED" : "")}
+          {refundStatusHeader} &mdash; {getLocalizedRefundStatus(refundStatus)}
         </div>
       )}
       <ApplicationDetailsTemplate
@@ -529,11 +585,11 @@ const ApplicationDetails = () => {
         statusAttribute={"state"}
         MenuStyle={{ color: "#FFFFFF", fontSize: "18px" }}
       />
-      {/* {bookingStatus === "BOOKED" && !hasRefund && (
+      {(bookingStatus === "BOOKED" || bookingStatus === "CONFIRMED") && !hasRefund && (
         <ActionBar>
           <SubmitBar label={t("CHB_CANCEL")} onSubmit={() => setShowCancelModal(true)} />
         </ActionBar>
-      )} */}
+      )}
       {showCancelModal && (
         <CHBCancelBooking
           t={t}

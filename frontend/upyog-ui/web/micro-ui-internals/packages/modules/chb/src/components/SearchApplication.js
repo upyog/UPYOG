@@ -3,6 +3,7 @@
   import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@nudmcdgnpm/digit-ui-react-components";
   import { Link,  } from "react-router-dom";
   import CHBCancelBooking from "./CHBCancelBooking";
+  import CHBRefundDetailsPopup from "./CHBRefundDetailsPopup";
 
   /**
  * CHBSearchApplication Component
@@ -106,7 +107,9 @@
         register("sortOrder")
       },[register])
       const [bookingDetails,setBookingDetails]=useState("");
-      const [showModal,setShowModal] = useState(false)
+      const [showModal,setShowModal] = useState(false);
+      const [selectedRefundBooking, setSelectedRefundBooking] = useState(null);
+      const [showRefundPopup, setShowRefundPopup] = useState(false);
       const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId, false);
 
       const { data: recieptData } = Digit.Hooks.useRecieptSearch(
@@ -119,43 +122,6 @@
         { enabled: bookingDetails?.bookingNo ? true : false }
       );
       const paymentMode = recieptData?.Payments?.[0]?.paymentMode;
-
-      // Refund status display for cancelled bookings (mirrors ApplicationDetails.js)
-      const isCancelledBooking = bookingDetails?.bookingStatus === "CANCELLED";
-      const isOnlinePayment = recieptData?.Payments?.[0]?.paymentMode === "ONLINE";
-      const isRefunded = recieptData?.Payments?.[0]?.instrumentStatus === "REFUNDED";
-      const originalTxnId = recieptData?.Payments?.[0]?.transactionNumber;
-
-      const { data: refundData } = Digit.Hooks.useCustomAPIHook(
-        "/pg-service/refund/v1/_search",
-        {
-          originalTxnId: originalTxnId,
-          tenantId: recieptData?.Payments?.[0]?.tenantId || tenantId,
-        },
-        {},
-        {},
-        {
-          enabled: !!(isCancelledBooking && isOnlinePayment && originalTxnId),
-        }
-      );
-
-      const refund = refundData?.Refund?.[0] || refundData?.Refunds?.[0] || refundData?.[0];
-      const refundStatus = refund?.status || refund?.refundStatus;
-      const isRefundInProgress = refundStatus && (
-        refundStatus.toUpperCase() === "IN_PROGRESS" ||
-        refundStatus.toUpperCase() === "INPROGRESS" ||
-        refundStatus.toUpperCase() === "INITIATED"
-      );
-      const isRefundSuccess = refundStatus && (
-        refundStatus.toUpperCase() === "SUCCESS" ||
-        refundStatus.toUpperCase() === "SUCCESSFUL" ||
-        refundStatus.toUpperCase() === "COMPLETED"
-      );
-      const refundStatusColor = isRefundSuccess
-        ? { bg: "#D4EDDA", border: "#C3E6CB", text: "#155724" }
-        : isRefundInProgress
-        ? { bg: "#FFF3CD", border: "#FFEBAA", text: "#856404" }
-        : { bg: "#E2E3E5", border: "#D6D8DB", text: "#383D41" };
 
       
       const GetCell = (value) => <span className="cell-text">{value}</span>;
@@ -173,6 +139,14 @@
         let refundFailed = false;
         let refundErrorMessage = "";
         try {
+          // =========================================================================
+          // 1. FIRST CALL HALL BOOKING CANCEL API (/chb-services/booking/v1/_update)
+          // =========================================================================
+          await Digit.CHBServices.update(
+            { venueBookingApplication: updatedApplication },
+            bookingData?.tenantId || tenantId
+          );
+
           let paymentDetails = recieptData?.Payments?.[0];
           if (!paymentDetails && bookingData?.bookingNo) {
             try {
@@ -188,7 +162,7 @@
           }
 
           // =========================================================================
-          // [NEW REFUND SERVICE API INTEGRATION: /refund-services/refund/v1/_create]
+          // 2. ON CANCEL SUCCESS, CALL REFUND CREATE API: /refund-services/refund/v1/_create
           // =========================================================================
           const amountPaid = Number(
             paymentDetails?.totalAmountPaid ??
@@ -250,21 +224,20 @@
 
           if (refundFailed) {
             setShowToast({
-              key: "error",
-              error: {
-                message: `${t("CHB_REFUND_CREATION_FAILED") || "Refund initiation failed"}${refundErrorMessage ? `: ${refundErrorMessage}` : ""}`
-              }
+              warning: true,
+              label: `${t("CHB_CANCELLATION_SUCCESS_BUT_REFUND_FAILED") || "Booking cancelled, but refund initiation failed"}${refundErrorMessage ? `: ${refundErrorMessage}` : ""}`
             });
           } else {
-            setShowToast({ key: "success", action: { action: "REFUND_INITIATED" } });
+            setShowToast({ label: t("CHB_BOOKING_CANCELLED_REFUND_INITIATED") || "Booking cancelled and refund initiated successfully" });
           }
           handleSubmit(onSubmit)();
         } catch (err) {
-          setShowToast({ key: "error", error: { message: err?.response?.data?.Errors?.[0]?.message || err?.message || t("CS_SOMETHING_WENT_WRONG") } });
+          setShowToast({ error: true, label: err?.response?.data?.Errors?.[0]?.message || err?.message || t("CS_SOMETHING_WENT_WRONG") });
         }
       }
       const handleViewRefundStatus = (rowData) => {
-        setBookingDetails(rowData);
+        setSelectedRefundBooking(rowData);
+        setShowRefundPopup(true);
       };
 
       const columns = useMemo( () => ([
@@ -336,21 +309,21 @@
                 if (row?.original?.bookingStatus !== "CANCELLED") {
                   return GetCell("-");
                 }
-                const isSelected = bookingDetails?.bookingNo === row?.original?.bookingNo;
                 return (
                   <span
-                    onClick={() => handleViewRefundStatus(row?.original)}
+                    onClick={() => {
+                      setSelectedRefundBooking(row?.original);
+                      setShowRefundPopup(true);
+                    }}
                     style={{
                       color: "#a82227",
                       cursor: "pointer",
-                      fontWeight: isSelected ? "700" : "500",
+                      fontWeight: "600",
                       textDecoration: "underline",
                       fontSize: "14px",
                     }}
                   >
-                    {isSelected && refundStatus
-                      ? refundStatus
-                      : t("CHB_VIEW_REFUND_STATUS") || "View Refund Status"}
+                    {t("CHB_VIEW_REFUND_STATUS") || "View Refund Status"}
                   </span>
                 );
               },
@@ -435,7 +408,7 @@
                         label={t("WF_TAKE_ACTION")}
                         onSubmit={toggleMenu}
                         disabled={
-                          !["BOOKED", "BOOKING_CREATED", "PAYMENT_FAILED", "PENDING_FOR_PAYMENT"].includes(application?.bookingStatus)
+                          !["BOOKED", "CONFIRMED", "BOOKING_CREATED", "PAYMENT_FAILED", "PENDING_FOR_PAYMENT"].includes(application?.bookingStatus)
                         } // Disable button if bookingStatus is not one of the allowed values
                       />
                       {isMenuOpen && (
@@ -450,7 +423,7 @@
                           }}
                         >
                           {/* Action for Cancel */}
-                          {application?.bookingStatus === "BOOKED" && (
+                          {(application?.bookingStatus === "BOOKED" || application?.bookingStatus === "CONFIRMED") && (
                             <div
                               onClick={handleCancel}
                               style={{
@@ -487,7 +460,7 @@
                 );
               },
             }
-        ]), [bookingDetails, refundStatus] )
+        ]), [bookingDetails, t] )
 
       const statusOptions = [
           { i18nKey: "Booked", code: "BOOKED", value: t("CHB_BOOKED") },
@@ -713,63 +686,16 @@
                   sortParams={[{id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false}]}
               />: data !== "" || isLoading && <Loader/>)}
               </div>
-              {/* Refund status banner for selected cancelled bookings */}
-              {isCancelledBooking && bookingDetails?.bookingNo && (
-                <div
-                  style={{
-                    margin: "16px 0",
-                    padding: "14px 20px",
-                    backgroundColor: refundStatus ? refundStatusColor.bg : "#F8F9FA",
-                    border: `1px solid ${refundStatus ? refundStatusColor.border : "#DEE2E6"}`,
-                    borderRadius: "6px",
-                    color: refundStatus ? refundStatusColor.text : "#6C757D",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    flexWrap: "wrap",
-                    gap: "8px",
+              {showRefundPopup && selectedRefundBooking && (
+                <CHBRefundDetailsPopup
+                  t={t}
+                  closeModal={() => {
+                    setShowRefundPopup(false);
+                    setSelectedRefundBooking(null);
                   }}
-                >
-                  <div style={{ fontWeight: "600", fontSize: "15px" }}>
-                    {t("CHB_REFUND_STATUS_FOR") || "Refund Status for"}{" "}
-                    <span style={{ fontWeight: "700" }}>{bookingDetails.bookingNo}</span>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
-                    {refund?.refundId && (
-                      <span style={{ fontSize: "14px" }}>
-                        <strong>{t("CHB_REFUND_ID") || "Refund ID"}:</strong>{" "}{refund.refundId}
-                      </span>
-                    )}
-                    {refund?.refundAmount && (
-                      <span style={{ fontSize: "14px" }}>
-                        <strong>{t("CHB_REFUND_AMOUNT") || "Amount"}:</strong>{" "}₹{refund.refundAmount}
-                      </span>
-                    )}
-                    <span
-                      style={{
-                        fontSize: "14px",
-                        fontWeight: "700",
-                        padding: "3px 12px",
-                        borderRadius: "12px",
-                        backgroundColor: refundStatus ? refundStatusColor.border : "#DEE2E6",
-                        color: refundStatus ? refundStatusColor.text : "#6C757D",
-                      }}
-                    >
-                      {refundStatus
-                        ? `${t("CHB_REFUND_STATUS") || "Refund Status"}: ${refundStatus}`
-                        : isOnlinePayment
-                        ? t("CHB_REFUND_NOT_INITIATED") || "No refund initiated yet"
-                        : t("CHB_OFFLINE_PAYMENT_NO_REFUND") || "Offline payment — no online refund applicable"}
-                    </span>
-                    <span
-                      onClick={() => setBookingDetails("")}
-                      style={{ cursor: "pointer", fontWeight: "600", fontSize: "18px", lineHeight: 1, opacity: 0.6 }}
-                      title="Dismiss"
-                    >
-                      ✕
-                    </span>
-                  </div>
-                </div>
+                  applicationData={selectedRefundBooking}
+                  tenantId={tenantId}
+                />
               )}
 
               {showModal && <CHBCancelBooking 

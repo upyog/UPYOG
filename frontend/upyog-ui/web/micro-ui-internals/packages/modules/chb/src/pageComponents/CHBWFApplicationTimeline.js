@@ -42,37 +42,35 @@ import CHBWFCaption from "./CHBWFCaption";
  * - Displays a loader if the workflow details are still being fetched.
  */
 const CHBWFApplicationTimeline = (props) => {
-  
   const { t } = useTranslation();
-  const businessService = "booking-refund";
+  const businessService = props.businessService || "CHB.REFUND";
+  const id = props.id || props.application?.bookingNo;
+  const tenantId = props.tenantId || props.application?.tenantId;
 
   const { isLoading, data } = Digit.Hooks.useWorkflowDetails({
-    tenantId: props.application?.tenantId,
-    id: props.application?.bookingNo,
+    tenantId: tenantId,
+    id: id,
     moduleCode: businessService,
+    role: props.role || "CITIZEN",
     config: {
-      enabled: !!(props.application?.tenantId && props.application?.bookingNo),
+      enabled: !!(tenantId && id),
     },
   });
-
 
   function OpenImage(imageSource, index, thumbnailsToShow) {
     window.open(thumbnailsToShow?.fullImage?.[0], "_blank");
   }
 
   const getTimelineCaptions = (checkpoint) => {
-
-    if (checkpoint.state === "OPEN") 
-      {
+    if (checkpoint.state === "OPEN" || checkpoint.state === "INITIATED" || checkpoint.state === "APPLIED") {
       const caption = {
-        date: checkpoint?.auditDetails?.lastModified,
+        date: checkpoint?.auditDetails?.lastModified || checkpoint?.auditDetails?.created,
         source: props.application?.channel || "",
       };
       return <CHBWFCaption data={caption} />;
-    }
-    else if (checkpoint.state) {
+    } else if (checkpoint.state) {
       const caption = {
-        date: checkpoint?.auditDetails?.lastModified,
+        date: checkpoint?.auditDetails?.lastModified || checkpoint?.auditDetails?.created,
         name: checkpoint?.assignes?.[0]?.name,
         mobileNumber: checkpoint?.assignes?.[0]?.mobileNumber,
         comment: t(checkpoint?.comment),
@@ -80,17 +78,41 @@ const CHBWFApplicationTimeline = (props) => {
         thumbnailsToShow: checkpoint?.thumbnailsToShow,
       };
       return <CHBWFCaption data={caption} OpenImage={OpenImage} />;
-    }
-
-
-    else {
+    } else {
       const caption = {
-        date: Digit.DateUtils.ConvertTimestampToDate(props.application?.auditDetails.lastModified),
+        date:
+          checkpoint?.auditDetails?.lastModified ||
+          (props.application?.auditDetails?.lastModified &&
+            Digit.DateUtils.ConvertTimestampToDate(props.application?.auditDetails?.lastModified)),
         name: checkpoint?.assigner?.name,
         comment: t(checkpoint?.comment),
       };
       return <CHBWFCaption data={caption} />;
     }
+  };
+
+  const getCheckpointLabel = (checkpoint, index) => {
+    const rawState = checkpoint?.state || (data?.processInstances && data.processInstances[index]?.state?.state) || "";
+    if (!rawState) return t("NA");
+
+    const candidateKeys = [
+      props.timelineStatusPrefix !== undefined && props.timelineStatusPrefix !== ""
+        ? `${props.timelineStatusPrefix}${rawState}`
+        : null,
+      `CS_COMMON_${rawState}`,
+      `WF_${businessService}_${rawState}`,
+      `WF_${rawState}`,
+      rawState,
+    ].filter(Boolean);
+
+    for (const key of candidateKeys) {
+      const translated = t(key);
+      if (translated && translated !== key) {
+        return translated;
+      }
+    }
+
+    return rawState;
   };
 
   if (isLoading) {
@@ -103,28 +125,25 @@ const CHBWFApplicationTimeline = (props) => {
         <Fragment>
           {data?.timeline?.length > 0 && (
             <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
-              {t("CS_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
+              {t(props.timelineHeader || "CS_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
             </CardSectionHeader>
           )}
           {data?.timeline && data?.timeline?.length === 1 ? (
             <CheckPoint
               isCompleted={true}
-              label={t((data?.timeline[0]?.state && `WF_${businessService}_${data.timeline[0].state}`) || "NA")}
+              label={getCheckpointLabel(data.timeline[0], 0)}
               customChild={getTimelineCaptions(data?.timeline[0])}
             />
           ) : (
             <ConnectingCheckPoints>
               {data?.timeline &&
                 data?.timeline.map((checkpoint, index) => {
-
                   return (
                     <React.Fragment key={index}>
                       <CheckPoint
                         keyValue={index}
                         isCompleted={index === 0}
-                        label={t(
-                          `${data?.processInstances[index].state?.["state"]}`
-                        )}
+                        label={getCheckpointLabel(checkpoint, index)}
                         customChild={getTimelineCaptions(checkpoint)}
                       />
                     </React.Fragment>
