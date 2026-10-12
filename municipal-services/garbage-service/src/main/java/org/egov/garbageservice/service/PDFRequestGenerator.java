@@ -251,7 +251,7 @@ public class PDFRequestGenerator {
 				totalRebate = totalRebate.add(tracker.getRebateAmount());
 			}
 
-			if (tracker.getGarbageBillWithoutRebate() != null) {
+			if (tracker.getGarbageBillWithoutRebate() != null && !"CANCELLED".equals(tracker.getStatus())) {
 				totalWithoutRebate = totalWithoutRebate.add(tracker.getGarbageBillWithoutRebate());
 			}
 			
