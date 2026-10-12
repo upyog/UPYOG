@@ -102,8 +102,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import com.opensymphony.xwork2.validator.annotations.Validation;
-
 import net.sf.jasperreports.engine.JRException;
+import java.util.Calendar;
 
 @Results(value = {
 		@Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
@@ -388,8 +388,15 @@ public class VoucherStatusReportAction extends BaseFormAction {
             params.put("fromDate",fromDate);
         }
         if (toDate != null) {
-            sql.append(" and vh.voucherDate<=:toDate");
-            params.put("toDate",toDate);
+            final Calendar calendar = Calendar.getInstance();
+            calendar.setTime(toDate);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            calendar.add(Calendar.DATE, 1);
+            sql.append(" and vh.voucherDate < :toDateExclusive");
+            params.put("toDateExclusive", calendar.getTime());
         }
         if (voucherHeader.getStatus() != -1) {
             sql.append(" and vh.status=:status");

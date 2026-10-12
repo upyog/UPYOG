@@ -188,7 +188,8 @@ public class BalanceSheetService extends ReportService {
 			qry.append("VoucherMis mis ,");
 		qry.append("generalledger g, chartofaccounts coa where  v.ID=g.VOUCHERHEADERID")
 				.append(" and v.status not in (:voucherStatusToExclude)")
-				.append(" and  v.voucherdate>=:vFromDate and v.voucherdate<=:vToDate");
+				.append(" AND v.voucherdate >= :vFromDate ")
+				.append(" AND v.voucherdate < (CAST(:vToDate AS date) + INTERVAL '1 day') ");
 		if (balanceSheet.getDepartment() != null && !"null".equals(balanceSheet.getDepartment().getCode())) {
 			qry.append(" and v.id= mis.voucherheaderid  and mis.departmentcode= :departmentcode");
 			sqlParams.put("departmentcode", balanceSheet.getDepartment().getCode());
@@ -239,7 +240,9 @@ public class BalanceSheetService extends ReportService {
 		if (balanceSheet.getDepartment() != null && !"null".equals(balanceSheet.getDepartment().getCode()))
 			qry.append("  VoucherMis mis ,");
 		qry.append(" chartofaccounts coa   where  v.ID=g.VOUCHERHEADERID and v.status not in (:voucherStatusToExclude)")
-				.append(" and v.voucherdate>=:vFromDate and v.voucherdate<=:vToDate and coa.ID=g.glcodeid ");
+		.append(" AND v.voucherdate >= :vFromDate ")
+		.append(" AND v.voucherdate < (CAST(:vToDate AS date) + INTERVAL '1 day') ")
+		.append(" AND coa.ID=g.glcodeid ");
 		if (balanceSheet.getDepartment() != null && !"null".equals(balanceSheet.getDepartment().getCode()))
 			qry.append(" and v.id= mis.voucherheaderid");
 

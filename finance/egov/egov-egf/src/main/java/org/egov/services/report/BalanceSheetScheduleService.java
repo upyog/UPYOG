@@ -260,7 +260,8 @@ public class BalanceSheetScheduleService extends ScheduleService {
 		params.put("voucherStatusToExclude", financialUtils.getStatuses(voucherStatusToExclude));
 		if (balanceSheet.getDepartment() != null && balanceSheet.getDepartment().getCode() != null)
 			qry.append(" and v.id= mis.voucherheaderid ");
-		qry.append(" AND v.voucherdate <= :formattedToDate and v.voucherdate >=:formattedFromDate")
+		qry.append(" AND v.voucherdate < (CAST(:formattedToDate AS date) + INTERVAL '1 day') ")
+		   		.append(" AND v.voucherdate >= :formattedFromDate ")
 				.append(" and c.glcode in (select distinct coad.glcode from chartofaccounts coa2, schedulemapping s ")
 				.append(",chartofaccounts coad where s.id=coa2.scheduleid and coa2.classification=2 and s.reporttype = 'BS'")
 				.append(" and coa2.glcode=SUBSTR(coad.glcode,1,:minorCodeLength) and coad.classification=4")
