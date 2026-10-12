@@ -31,15 +31,22 @@ export const CHBSearch = {
     return response.hallsBookingApplication[0];
   },
   BookingDetails: ({ hallsBookingApplication: response, t }) => {
-    const slotlistRows = response?.bookingSlotDetails?.map((slot) => (
-      [
-        response?.communityHallCode,
-        slot.hallCode + " - " + slot.capacity,
+    const venueNameOrCode = response?.venueName || response?.venueCode || response?.communityHallCode || "";
+    const slotlistRows = response?.bookingSlotDetails?.map((slot) => {
+      const hallCode = slot.unitCode || slot.hallCode || "";
+      const localizedHallCode = hallCode ? (t(hallCode) || hallCode) : "";
+      const hallCodeDisplay = localizedHallCode
+        ? (slot.capacity ? `${localizedHallCode} - ${slot.capacity}` : localizedHallCode)
+        : (slot.capacity ? `${slot.capacity}` : t("CS_NA"));
+
+      return [
+        t(venueNameOrCode) || venueNameOrCode || t("CS_NA"),
+        hallCodeDisplay,
         slot.bookingDate,
         // slot.bookingDate + " (" + slot.bookingFromTime + " - " + slot.bookingToTime + ")",
         `${t(slot.status)}`
-      ]
-    )) || [];
+      ];
+    }) || [];
     return [
       {
         title: "CHB_BOOKING_NO", 

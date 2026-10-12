@@ -92,7 +92,7 @@ const getChbAcknowledgementData = async (application, tenantInfo, t) => {
       {
         title: t("SLOT_DETAILS"),
         values: [
-          { title: t("CHB_COMMUNITY_HALL_NAME"), value: application?.communityHallCode},
+          { title: t("CHB_COMMUNITY_HALL_NAME"), value: application?.communityHallCode || application?.venueName || application?.venueCode || t("CS_NA") },
           { title: t("CHB_BOOKING_DATE"), value: getBookingDateRange(application?.bookingSlotDetails) },
           { title: t("CHB_BOOKING_TIME"), value: getBookingTimeRange(application?.bookingSlotDetails)}
         ],

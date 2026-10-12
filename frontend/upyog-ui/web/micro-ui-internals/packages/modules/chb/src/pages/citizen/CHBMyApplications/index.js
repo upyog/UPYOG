@@ -146,7 +146,7 @@ export const CHBMyApplications = () => {
             <div key={index}>
               <ChbApplication
                 application={application}
-                tenantId={user?.permanentCity}
+                tenantId={application?.tenantId || tenantId}
                 buttonLabel={t("CHB_SUMMARY")}
               />
             </div>
