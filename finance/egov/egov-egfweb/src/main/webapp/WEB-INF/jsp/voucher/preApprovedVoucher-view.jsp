@@ -100,23 +100,25 @@
 		display: none;
 	}
 }
-
 </style>
 <script>
-	function openSource(){
-		if("<s:property value='%{voucherHeader.vouchermis.sourcePath}' escapeHtml='false'/>"=="" || "<s:property value='%{voucherHeader.vouchermis.sourcePath}'/>"=='null')
+	function openSource() {
+		if ("<s:property value='%{voucherHeader.vouchermis.sourcePath}' escapeHtml='false'/>" == ""
+				|| "<s:property value='%{voucherHeader.vouchermis.sourcePath}'/>" == 'null')
 			bootbox.alert('Source is not available');
-		else{
-			var url = '<s:property value="%{voucherHeader.vouchermis.sourcePath}" escapeHtml="false"/>'+'&showMode=view';
-			window.open(url,'Source','resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700')
-		}   
+		else {
+			var url = '<s:property value="%{voucherHeader.vouchermis.sourcePath}" escapeHtml="false"/>'
+					+ '&showMode=view';
+			window
+					.open(url, 'Source',
+							'resizable=yes,scrollbars=yes,left=300,top=40, width=900, height=700')
+		}
 	}
-	function checkLength(obj)
-	{
-		if(obj.value.length>1024)
-		{
-			bootbox.alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
-			obj.value = obj.value.substring(1,1024);
+	function checkLength(obj) {
+		if (obj.value.length > 1024) {
+			bootbox
+					.alert('Max 1024 characters are allowed for comments. Remaining characters are truncated.')
+			obj.value = obj.value.substring(1, 1024);
 		}
 	}
 </script>
@@ -131,16 +133,20 @@
 			<s:actionmessage />
 		</span>
 		<div class="formmainbox">
-			<div class="subheadnew"><label name="head" style="align:center;">Urban Local Body</label></div>
-			<div class="subheadnew"><label name="head" style="align:center;"><s:property
-							value="%{heading}" /></label></div>
+			<div class="subheadnew">
+				<label name="head" style="align: center;">Urban Local Body</label>
+			</div>
+			<div class="subheadnew">
+				<label name="head" style="align: center;"><s:property
+						value="%{heading}" /></label>
+			</div>
 			<div class="subheadnew">Voucher View</div>
 			<table border="0" width="100%" cellspacing="0">
 				<tr>
-					<td width="10%" class="greybox"><b>Voucher Number :  </b></td>
+					<td width="10%" class="greybox"><b>Voucher Number : </b></td>
 					<td width="25%" class="greybox"><s:property
 							value="%{voucherHeader.voucherNumber}" /></td>
-					<td width="10%" class="greybox"><b>  Date :</b></td>
+					<td width="10%" class="greybox"><b> Date :</b></td>
 					<td width="25%" class="greybox"><s:date
 							name="voucherHeader.voucherDate" format="dd/MM/yyyy" /></td>
 				</tr>
@@ -175,10 +181,10 @@
 
 				<s:iterator var="p" value="%{billDetails.tempList}" status="s">
 					<tr>
-						<td width="18%" class="bluebox setborder" style="text-align: center"><s:property
-								value="function" /></td>
-						<td width="17%" class="bluebox setborder" style="text-align: center"><s:property
-								value="glcode" /></td>
+						<td width="18%" class="bluebox setborder"
+							style="text-align: center"><s:property value="function" /></td>
+						<td width="17%" class="bluebox setborder"
+							style="text-align: center"><s:property value="glcode" /></td>
 						<td width="19%" class="bluebox setborder"><s:property
 								value="accounthead" /></td>
 						<td width="17%" class="bluebox setborder"
@@ -194,8 +200,8 @@
 					</tr>
 				</s:iterator>
 				<tr>
-					<td class="greybox setborder" style="text-align: right" colspan="3" />
-					<b>Total</b>
+					<td class="greybox setborder" style="text-align: right" colspan="3">
+						<b>Total</b>
 					</td>
 					<td class="greybox setborder" style="text-align: right"><fmt:formatNumber
 							value="${db}" pattern="#0.00" /></td>
@@ -224,9 +230,11 @@
 					</tr>
 					<s:iterator var="p" value="%{billDetails.subLedgerlist}" status="s">
 						<tr>
-							<td width="17%" class="bluebox setborder" style="text-align: center"><s:property
+							<td width="17%" class="bluebox setborder"
+								style="text-align: center"><s:property
 									value="functionDetail" /></td>
-							<td width="17%"  class="bluebox setborder" style="text-align: center"><s:property 
+							<td width="17%" class="bluebox setborder"
+								style="text-align: center"><s:property
 									value="glcode.glcode" /></td>
 							<td width="19%" class="bluebox setborder"><s:property
 									value="detailType.description" /></td>
@@ -241,6 +249,43 @@
 					</s:iterator>
 				</table>
 			</div>
+		</s:if>
+		<s:set var="commentHistory" value="voucherCommentHistory" />
+
+		<s:if test="%{#commentHistory != null && !#commentHistory.isEmpty()}">
+			<div class="formmainbox">
+				<div class="subheadnew">Comment History</div>
+
+				<table class="table table-bordered" width="100%">
+					<thead>
+						<tr>
+							<th>Date</th>
+							<th>Sender</th>
+							<th>Workflow State</th>
+							<th>Comments</th>
+						</tr>
+					</thead>
+					<tbody>
+						<s:iterator value="%{#commentHistory}" var="entry">
+							<tr>
+								<td><s:if test="%{#entry.lastModifiedDate != null}">
+										<s:date name="#entry.lastModifiedDate"
+											format="dd/MM/yyyy hh:mm a" />
+									</s:if> <s:else>
+										<s:date name="#entry.createdDate" format="dd/MM/yyyy hh:mm a" />
+									</s:else></td>
+								<td><s:property value="#entry.senderName" escapeHtml="true" />
+								</td>
+								<td><s:property value="#entry.value" escapeHtml="true" />
+								</td>
+								<td style="white-space: pre-wrap; overflow-wrap: anywhere;"><s:property
+										value="#entry.comments" escapeHtml="true" /></td>
+							</tr>
+						</s:iterator>
+					</tbody>
+				</table>
+			</div>
+			<br />
 		</s:if>
 		<div id="wfHistoryDiv">
 			<s:if test="%{from=='Receipt'}">
