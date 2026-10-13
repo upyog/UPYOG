@@ -96,8 +96,10 @@ public class PDFRequestGenerator {
 
 				grbg.put("billNo", bill.get(i).getBillNumber());
 				grbg.put("mobileNo", grbgAccount.getMobileNumber());
-				grbg.put("billDueDate", Instant.ofEpochMilli(bill.get(i).getBillDetails().get(lastIndex).getExpiryDate())
-						.atZone(ZoneId.systemDefault()).toLocalDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+				grbg.put("billDueDate",
+						Instant.ofEpochMilli(grbgBillTracker.get(0).getAuditDetails().getCreatedDate())
+								.atZone(ZoneId.systemDefault()).toLocalDate().plusDays(30)
+								.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
 			}
 			Bill billObj = bill.get(i);
 			String consumerCode = billObj.getConsumerCode();
