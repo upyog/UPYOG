@@ -218,7 +218,8 @@ public class PropertyQueryBuilder {
 	
 	private static final String PROPERTY_APPROVER_QUERY = "SELECT e.code " + "FROM eg_userrole_v1 r "
 			+ "INNER JOIN eg_hrms_employee e ON r.user_id = e.id " + "WHERE r.role_tenantid = ? "
-			+ "AND r.role_code = 'PROPERTY_APPROVER'";
+			+ "AND r.role_code = 'PROPERTY_APPROVER'"
+			+ "LIMIT 1";
 
 	public String getUniqueWardsSearchQuery(String stringDate, List<Object> preparedStmtList) {
 		StringBuilder builder = new StringBuilder(UNIQUE_WARDS_SEARCH_QUERY);
