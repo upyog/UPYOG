@@ -155,7 +155,7 @@ public class RefundEnrichmentServiceImpl implements RefundEnrichmentService {
 	// ============================================================
 
 	@Override
-	public RefundActionRequest enrichWorkflowAction(Refund refund, RequestInfo requestInfo, String action) {
+	public RefundActionRequest enrichWorkflowAction(Refund refund, RequestInfo requestInfo, String action, String remarks) {
 
 		if (requestInfo == null || requestInfo.getUserInfo() == null) {
 
@@ -169,7 +169,7 @@ public class RefundEnrichmentServiceImpl implements RefundEnrichmentService {
 		String userId = requestInfo.getUserInfo().getUuid();
 
 		return RefundActionRequest.builder().id(refund != null ? refund.getId() : null).action(action).userId(userId)
-				.requestInfo(requestInfo).build();
+				.requestInfo(requestInfo).remarks(remarks).build();
 	}
 
 	// ============================================================
@@ -239,11 +239,11 @@ public class RefundEnrichmentServiceImpl implements RefundEnrichmentService {
 
 			return switch (normalized) {
 
-			case RefundConstants.PAYMENT_MODE_ONLINE -> RefundConstants.PAYMENT_MODE_ONLINE;
+				case RefundConstants.PAYMENT_MODE_ONLINE -> RefundConstants.PAYMENT_MODE_ONLINE;
 
-			case RefundConstants.REFUND_MODE_OFFLINE -> RefundConstants.REFUND_MODE_OFFLINE;
+				case RefundConstants.REFUND_MODE_OFFLINE -> RefundConstants.REFUND_MODE_OFFLINE;
 
-			default -> throw new CustomException("INVALID_REFUND_MODE", "Unsupported refund mode: " + mode);
+				default -> throw new CustomException("INVALID_REFUND_MODE", "Unsupported refund mode: " + mode);
 			};
 		}
 
@@ -253,12 +253,12 @@ public class RefundEnrichmentServiceImpl implements RefundEnrichmentService {
 		 */
 		return switch (normalized) {
 
-		case RefundConstants.PAYMENT_MODE_ONLINE -> RefundConstants.PAYMENT_MODE_ONLINE;
+			case RefundConstants.PAYMENT_MODE_ONLINE -> RefundConstants.PAYMENT_MODE_ONLINE;
 
-		case RefundConstants.PAYMENT_MODE_CASH, RefundConstants.PAYMENT_MODE_DD, RefundConstants.PAYMENT_MODE_CHEQUE ->
-			RefundConstants.REFUND_MODE_OFFLINE;
+			case RefundConstants.PAYMENT_MODE_CASH, RefundConstants.PAYMENT_MODE_DD, RefundConstants.PAYMENT_MODE_CHEQUE ->
+					RefundConstants.REFUND_MODE_OFFLINE;
 
-		default -> throw new CustomException("INVALID_PAYMENT_MODE", "Unsupported original payment mode: " + mode);
+			default -> throw new CustomException("INVALID_PAYMENT_MODE", "Unsupported original payment mode: " + mode);
 		};
 	}
 
