@@ -252,7 +252,8 @@ public class JournalBookReportAction extends BaseFormAction {
                 .append(" AND vmis.functionid = fn.id AND vmis.voucherheaderid=vh.id AND vh.status NOT IN (4,5)")
                 .append(subQuery.toString())
                 .append(" and vh.voucherdate >=:startDate ")
-                .append(" and vh.voucherdate<=:endDate and vh.name in (:voucherName) ");
+                .append(" AND vh.voucherdate < (CAST(:endDate AS date) + INTERVAL '1 day') ")
+                .append(" AND vh.name in (:voucherName) ");
         params.put("startDate", startDate);
         params.put("endDate", endDate);
         queryMap.put(query.toString(), params);

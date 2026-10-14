@@ -26,6 +26,9 @@ public class RefundApplication extends StateAware implements Auditable {
 
 	private String paymentId;
 	
+	// Filestore ID of the original payment receipt. 
+	private String fileStoreId;
+	
 	private BigDecimal amountPaid;
 
 	private String refundServiceStatus;
@@ -320,5 +323,13 @@ public class RefundApplication extends StateAware implements Auditable {
 
 	public void setRefundServiceStatus(final String refundServiceStatus) {
 	    this.refundServiceStatus = refundServiceStatus;
+	}
+	
+	public String getFileStoreId() {
+	    return fileStoreId;
+	}
+
+	public void setFileStoreId(final String fileStoreId) {
+	    this.fileStoreId = fileStoreId;
 	}
 }

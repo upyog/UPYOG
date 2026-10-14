@@ -178,7 +178,7 @@ public class DayBookReportAction extends BaseFormAction {
                             .append(" creditamount,vh.CGVN ,vh.isconfirmed as \"isconfirmed\",vh.id as vhId FROM voucherheader vh, generalledger gd, ")
                             .append(" chartofaccounts ca WHERE vh.ID=gd.VOUCHERHEADERID ")
 			                .append(" AND ca.GLCODE=gd.GLCODE AND voucherdate >=:startDate ")
-			                .append(" and voucherdate <= :endDate ")
+			                .append(" AND vh.voucherdate < (CAST(:endDate AS date) + INTERVAL '1 day') ")
                             .append(" and vh.status not in (4,5)  and vh.fundid =:fundId ")
                             .append(" ORDER BY vdate,vouchernumber");
         params.put("startDate", startDate);

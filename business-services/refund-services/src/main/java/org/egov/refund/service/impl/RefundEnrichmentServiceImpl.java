@@ -2,18 +2,25 @@ package org.egov.refund.service.impl;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
 import org.egov.common.contract.idgen.IdResponse;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
+import org.egov.common.contract.request.User;
 import org.egov.refund.Repository.IdGenRepository;
 import org.egov.refund.config.ApplicationProperties;
 import org.egov.refund.model.AuditDetails;
 import org.egov.refund.model.Refund;
+import org.egov.refund.service.MdmsService;
+import org.egov.refund.service.PaymentRefundService;
+import org.egov.refund.service.PdfService;
 import org.egov.refund.service.RefundEnrichmentService;
 import org.egov.refund.util.RefundConstants;
+import org.egov.refund.web.contracat.Payment;
 import org.egov.refund.web.contracat.RefundActionRequest;
 import org.egov.refund.web.contracat.RefundRequest;
 import org.egov.tracer.model.CustomException;
@@ -26,11 +33,26 @@ public class RefundEnrichmentServiceImpl implements RefundEnrichmentService {
 	private final IdGenRepository idGenRepository;
 	private final String idKey;
 	private final String idformat;
+	private final MdmsService mdmsService;
+	private final PdfService pdfService;
+	private final PaymentRefundService paymentRefundService;
+	private final String systemUUid;
+	private final String stateLevelTenentId;
+	private final String applicationName;
 
-	public RefundEnrichmentServiceImpl(IdGenRepository idGenRepository, ApplicationProperties properties) {
+	public RefundEnrichmentServiceImpl(IdGenRepository idGenRepository, ApplicationProperties properties,
+			MdmsService mdmsService, PdfService pdfService, PaymentRefundService paymentRefundService) {
+
 		this.idGenRepository = idGenRepository;
 		this.idKey = properties.getRefundIdgenName();
 		this.idformat = properties.getRefundIdgenFormat();
+		this.mdmsService = mdmsService;
+		this.pdfService = pdfService;
+		this.paymentRefundService = paymentRefundService;
+		this.systemUUid = properties.getSystemUUid();
+		this.stateLevelTenentId = properties.getStateLevelTenantId();
+		this.applicationName = properties.getApplicationName();
+
 	}
 
 	// ============================================================
@@ -71,6 +93,8 @@ public class RefundEnrichmentServiceImpl implements RefundEnrichmentService {
 		refund.setRefundMode(resolveRefundMode(refund));
 
 		refund.setAuditDetails(buildAuditDetails(userId));
+		// Generate filestoreId if not already available
+		enrichFilestoreId(refund, requestInfo);
 	}
 
 	// ============================================================
@@ -293,4 +317,39 @@ public class RefundEnrichmentServiceImpl implements RefundEnrichmentService {
 		return Instant.now().toEpochMilli();
 	}
 
+	private void enrichFilestoreId(Refund refund, RequestInfo requestInfo) {
+
+		if (!isBlank(refund.getFileStoreId())) {
+			return;
+		}
+
+		String receiptKey = mdmsService.getReceiptKey(refund.getTenantId(), refund.getBusinessService(), requestInfo);
+
+		if (isBlank(receiptKey)) {
+			throw new CustomException("RECEIPT_KEY_NOT_FOUND",
+					"Receipt key could not be found for business service: " + refund.getBusinessService());
+		}
+
+		Payment payment = paymentRefundService.getLatestPayment(refund, createSystemRequestInfo());
+		String filestoreId = pdfService.generateReceipt(refund.getTenantId(), receiptKey, List.of(payment),
+				requestInfo);
+
+		if (isBlank(filestoreId)) {
+			throw new CustomException("FILESTORE_ID_NOT_FOUND",
+					"Unable to generate filestoreId for refund: " + refund.getRefundNo());
+		}
+
+		refund.setFileStoreId(filestoreId);
+	}
+
+	private RequestInfo createSystemRequestInfo() {
+
+		User systemUser = User.builder().uuid(systemUUid).type(RefundConstants.SYSTEM)
+				.roles(Collections.singletonList(Role.builder().code(RefundConstants.SYSTEM)
+						.name(RefundConstants.SYSTEM).tenantId(stateLevelTenentId).build()))
+				.build();
+
+		return RequestInfo.builder().apiId(applicationName).ver("1.0").ts(System.currentTimeMillis())
+				.msgId(UUID.randomUUID().toString()).userInfo(systemUser).build();
+	}
 }

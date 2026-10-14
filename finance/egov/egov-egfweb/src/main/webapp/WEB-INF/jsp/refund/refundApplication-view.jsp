@@ -135,6 +135,34 @@
 				</tr>
 
 				<tr>
+					<td class="bluebox"><b>Payment Receipt</b></td>
+					<td colspan="3" class="bluebox"><s:if
+							test="%{refundApplication.fileStoreId != null
+	                && refundApplication.fileStoreId.trim().length() > 0}">
+
+							<s:url var="viewReceiptUrl"
+								action="refundApplication-viewReceipt" namespace="/refund">
+								<s:param name="id" value="%{refundApplication.id}" />
+							</s:url>
+
+							<s:url var="downloadReceiptUrl"
+								action="refundApplication-downloadReceipt" namespace="/refund">
+								<s:param name="id" value="%{refundApplication.id}" />
+							</s:url>
+
+							<a href="<s:property value='#viewReceiptUrl' />" target="_blank"
+								rel="noopener noreferrer"> View Receipt </a>
+
+							<span style="margin: 0 10px;">|</span>
+
+							<a href="<s:property value='#downloadReceiptUrl' />">
+								Download Receipt </a>
+						</s:if> <s:else>
+	           					 Receipt not available
+	       				 </s:else></td>
+				</tr>
+
+				<tr>
 					<td class="greybox"><b>Comments <span style="color: red;">*</span></b>
 						<br /> <small>Required for rejection</small></td>
 					<td colspan="3" class="greybox"><s:textarea name="comments"

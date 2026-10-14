@@ -66,6 +66,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Calendar;
 
 public class IncomeExpenditureScheduleService extends ScheduleService {
  @Autowired
@@ -134,7 +135,10 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
 						.append(" where v.id=mis.voucherheaderid and  v.fundid in (:fundId)")
 						.append(" and v.id=g.voucherheaderid ")
 						.append(" and c.id=g.glcodeid and v.status not in(:voucherStatusToExclude)")
-						.append(" AND v.voucherdate < :formattedToDate and v.voucherdate >= :formattedFromDate")
+						.append("Yearly".equalsIgnoreCase(statement.getPeriod())
+						        ? " AND v.voucherdate < CAST(:formattedToDate AS date) "
+						        : " AND v.voucherdate < (CAST(:formattedToDate AS date) + INTERVAL '1 day') ")
+						.append(" AND v.voucherdate >= :formattedFromDate ")
 						.append(majorCodeQuery).append(filterQuery)
 						.append(" group by c.glcode, v.fundid,c.name ,c.type ,c.majorcode order by c.glcode,v.fundid,c.type")
 						.toString());
@@ -493,10 +497,14 @@ public class IncomeExpenditureScheduleService extends ScheduleService {
             final Date toDate, final Date fromDate, Map<String, Object> params) {
         Date formattedToDate = null;
         final BigDecimal divisor = statement.getDivisor();
-        if ("Yearly".equalsIgnoreCase(statement.getPeriod()))
-            formattedToDate = fromDate;
-        else
+        if ("Yearly".equalsIgnoreCase(statement.getPeriod())) {
+            final Calendar calendar = Calendar.getInstance();
+            calendar.setTime(fromDate);
+            calendar.add(Calendar.DATE, -1);
+            formattedToDate = calendar.getTime();
+        } else {
             formattedToDate = incomeExpenditureService.getPreviousYearFor(toDate);
+        }
         final List<Object[]> resultMap = amountPerFundQueryForAllSchedules(filterQuery, formattedToDate,
                 incomeExpenditureService.getPreviousYearFor(fromDate), IE, params);
         final List<Object[]> allGlCodes = getAllGlCodesForAllSchedule(IE, "('I','E')");

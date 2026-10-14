@@ -400,7 +400,7 @@ public class TrialBalanceAction extends BaseFormAction {
                 .append(" AND vh.status not in (")
                 .append(defaultStatusExclude)
                 .append(") ")
-                .append(" AND  vh.voucherdate<=:toDate AND vh.voucherdate>=(SELECT startingdate FROM financialyear WHERE  startingdate<=:toDate AND   endingdate>=:toDate) ")
+                .append(" AND  vh.voucherdate < (CAST(:toDate AS date) + INTERVAL '1 day') AND vh.voucherdate>=(SELECT startingdate FROM financialyear WHERE  startingdate<=:toDate AND   endingdate>=:toDate) ")
                 .append(fundcondition)
                 .append( " ")
                 .append(misDeptCond)
@@ -465,7 +465,7 @@ public class TrialBalanceAction extends BaseFormAction {
                 .append(functionaryCond)
                 .append(functionIdCond)
                 .append(fieldIdCond)
-                .append(" AND vh.id=gl.voucherheaderid AND vh.fundid=fu.id AND vh.voucherdate<=:toDate AND vh.voucherdate>=")
+                .append(" AND vh.id=gl.voucherheaderid AND vh.fundid=fu.id AND vh.voucherdate < (CAST(:toDate AS date) + INTERVAL '1 day') AND vh.voucherdate>=")
                 .append("(SELECT startingdate FROM financialyear WHERE  startingdate<=:toDate AND   endingdate>=:toDate) ")
                 .append(fundcondition)
                 .append( ")")
@@ -740,7 +740,7 @@ public class TrialBalanceAction extends BaseFormAction {
                 .append(functionaryCond)
                 .append(functionIdCond)
                 .append(misdivisionIdCond )
-                .append(" AND vh.voucherdate>=fy.startingdate AND vh.voucherdate<=:fromDateMinus1 ")
+                .append(" AND vh.voucherdate >= fy.startingdate AND vh.voucherdate < :fromDate ")
                 .append(" AND fy.startingdate<=:fromDate AND fy.endingdate>=:toDate")
                 .append(" AND vh.status not in (" )
                 .append(defaultStatusExclude)
@@ -761,10 +761,7 @@ public class TrialBalanceAction extends BaseFormAction {
 
         tillDateOPBQry.setParameter("fromDate", rb.getFromDate(), DateType.INSTANCE)
                 .setParameter("toDate", rb.getToDate(), DateType.INSTANCE);
-        final Calendar cal = Calendar.getInstance();
-        cal.setTime(rb.getFromDate());
-        cal.add(Calendar.DATE, -1);
-        tillDateOPBQry.setParameter("fromDateMinus1", cal.getTime(), DateType.INSTANCE);
+        
         final List<TrialBalanceBean> tillDateOPBList = tillDateOPBQry.list();
 
         if (LOGGER.isDebugEnabled())
@@ -782,7 +779,8 @@ public class TrialBalanceAction extends BaseFormAction {
                 .append(functionaryCond)
                 .append(functionIdCond)
                 .append(misdivisionIdCond)
-                .append(" AND vh.voucherdate>=:fromDate AND vh.voucherdate<=:toDate ")
+                .append(" AND vh.voucherdate >= :fromDate ")
+                .append(" AND vh.voucherdate < (CAST(:toDate AS date) + INTERVAL '1 day') ")
                 .append(" AND fy.startingdate<=:fromDate AND fy.endingdate>=:toDate")
                 .append(" AND vh.status not in (")
                 .append(defaultStatusExclude)

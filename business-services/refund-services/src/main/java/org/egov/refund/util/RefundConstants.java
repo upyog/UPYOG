@@ -47,6 +47,10 @@ public final class RefundConstants {
     
     public static final String SYSTEM = "SYSTEM";
     
+    public static final String DEFAULT_CODE = "DEFAULT";
+    public static final String MODULE_NAME = "common-masters";
+    public static final String MASTER_NAME = "uiCommonPay";
+    
     
 
 }
