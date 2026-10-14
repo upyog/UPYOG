@@ -337,13 +337,16 @@ public class WSCalculatorQueryBuilder {
 		return query.toString();
 		
 	}
-	public String isBillingPeriodExists(String connectionNo, String billingPeriod, List<Object> preparedStatement) {
+	public String isBillingPeriodExists(String connectionNo, Long currentReadingDate, Long lastReadingDate, List<Object> preparedStatement) {
 		StringBuilder query = new StringBuilder(noOfConnectionSearchQuery);
 		query.append(" connectionNo = ? ");
 		preparedStatement.add(connectionNo);
 		addClauseIfRequired(preparedStatement, query);
-		query.append(" billingPeriod = ? ");
-		preparedStatement.add(billingPeriod);
+		query.append(" currentReadingDate = ? ");
+		preparedStatement.add(currentReadingDate);
+		addClauseIfRequired(preparedStatement, query);
+		query.append(" lastReadingDate = ? ");
+		preparedStatement.add(lastReadingDate);
 		return query.toString();
 	}
 

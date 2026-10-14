@@ -16,6 +16,7 @@ import org.egov.mdms.model.MdmsCriteriaReq;
 import org.egov.tracer.model.CustomException;
 import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.util.WaterCessUtil;
+import org.egov.wscalculation.validator.WSCalculationValidator;
 import org.egov.wscalculation.web.models.*;
 import org.egov.wscalculation.repository.ServiceRequestRepository;
 import org.egov.wscalculation.repository.WSCalculationDao;
@@ -72,6 +73,9 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 	@Autowired
 	private MasterDataService mDataService;
 
+	@Autowired
+	private WSCalculationValidator wsCalculationValidator;
+
 
 	/**
 	 * Get CalculationReq and Calculate the Tax Head on Water Charge And Estimation Charge
@@ -88,6 +92,7 @@ public class WSCalculationServiceImpl implements WSCalculationService {
 			meterCriteria.setConnectionNos(Collections.singleton(request.getCalculationCriteria().get(0).getConnectionNo()));
 			List<MeterReading> meterreadingList = wSCalculationDao.searchMeterReadings(meterCriteria);
 			if (!meterreadingList.isEmpty()) {
+				wsCalculationValidator.validateMeterReadingForDisconnection(request, meterreadingList.get(0));
 				request.getCalculationCriteria().get(0).setLastReading(meterreadingList.get(0).getLastReading());
 				request.getCalculationCriteria().get(0).setCurrentReading(meterreadingList.get(0).getCurrentReading());
 				SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy");

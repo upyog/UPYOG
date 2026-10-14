@@ -28,7 +28,7 @@ public interface WSCalculationDao {
 
 	List<String> getTenantId();
 	
-	int isBillingPeriodExists(String connectionNo, String billingPeriod);
+	int isBillingPeriodExists(String connectionNo, Long currentReadingDate, Long lastReadingDate);
 
 	long getConnectionCount(String tenantid, Long fromDate, Long toDate);
 	

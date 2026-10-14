@@ -77,6 +77,9 @@ public class WSCalculationConfiguration {
 	 @Value("${ws.calculator.demand.failed}")
 	 private String onDemandsFailure;
 
+    @Value("${ws.disconnection.meterreading.validity.days}")
+    private Integer disconnectionMeterReadingValidityDays;
+
 	 
 	//Localization
 	@Value("${egov.localization.host}")

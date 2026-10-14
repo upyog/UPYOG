@@ -5,6 +5,9 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,10 +18,12 @@ import java.util.Set;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.egov.wscalculation.config.WSCalculationConfiguration;
 import org.egov.wscalculation.constants.WSCalculationConstant;
 import org.egov.wscalculation.repository.WSCalculationDao;
 import org.egov.wscalculation.service.MasterDataService;
 import org.egov.wscalculation.util.CalculatorUtil;
+import org.egov.wscalculation.web.models.CalculationReq;
 import org.egov.wscalculation.web.models.MeterReading;
 import org.egov.wscalculation.web.models.MeterReadingSearchCriteria;
 import org.egov.wscalculation.web.models.WaterConnection;
@@ -33,6 +38,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WSCalculationValidator {
 
+	private static final DateTimeFormatter BILLING_PERIOD_INPUT_FORMATTER =
+			DateTimeFormatter.ofPattern("d/M/uuuu").withResolverStyle(ResolverStyle.STRICT);
+	private static final DateTimeFormatter BILLING_PERIOD_OUTPUT_FORMATTER =
+			DateTimeFormatter.ofPattern("dd/MM/uuuu");
+
 	@Autowired
 	private WSCalculationDao wSCalculationDao;
 	
@@ -41,6 +51,9 @@ public class WSCalculationValidator {
 	
 	@Autowired
 	private MasterDataService masterDataService;
+
+	@Autowired
+	private WSCalculationConfiguration config;
 
 	/**
 	 * 
@@ -110,7 +123,7 @@ public class WSCalculationValidator {
 		}
 
 		int billingPeriodNumber = wSCalculationDao.isBillingPeriodExists(meterReading.getConnectionNo(),
-				meterReading.getBillingPeriod());
+				meterReading.getCurrentReadingDate(), meterReading.getLastReadingDate());
 		if (billingPeriodNumber > 0)
 			errorMap.put("INVALID_METER_READING_BILLING_PERIOD", "Billing Period Already Exists");
 
@@ -197,7 +210,7 @@ public class WSCalculationValidator {
 		}
 
 		int billingPeriodNumber = wSCalculationDao.isBillingPeriodExists(meterReading.getConnectionNo(),
-				meterReading.getBillingPeriod());
+				meterReading.getCurrentReadingDate(), meterReading.getLastReadingDate());
 		if (billingPeriodNumber > 0)
 		{
 			errorMessage=errorMessage.equalsIgnoreCase("")?errorMessage.concat("Billing Period Already Exists"):
@@ -219,6 +232,7 @@ public class WSCalculationValidator {
 	private void validateBillingPeriod(String billingPeriod) {
 		if (StringUtils.isEmpty(billingPeriod))
 			 throw new CustomException("BILLING_PERIOD_PARSING_ISSUE", "Billing can not empty!!");
+		validateMeterReadingBillingPeriod(billingPeriod);
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 			ZoneId defaultZoneId = ZoneId.systemDefault();
@@ -241,4 +255,116 @@ public class WSCalculationValidator {
 			throw new CustomException("BILLING_PERIOD_PARSING_ISSUE", "Billing period can not parsed!!");
 		}
 	}
+
+	public void validateMeterReadingForDisconnection(CalculationReq request, MeterReading latestMeterReading) {
+		validateLatestMeterReadingForDisconnection(latestMeterReading);
+		validateDisconnectionDateWithLatestMeterReading(request, latestMeterReading);
+	}
+
+	public void validateMeterReadingBillingPeriod(String billingPeriod) {
+		try {
+			String[] dates = billingPeriod.split("-");
+
+			if (dates.length != 2) {
+				throw new CustomException("BILLING_PERIOD_PARSING_ISSUE",
+						"Billing period format should be dd/MM/yyyy - dd/MM/yyyy");
+			}
+
+			LocalDate fromDate = LocalDate.parse(dates[0].trim(), BILLING_PERIOD_INPUT_FORMATTER);
+			LocalDate toDate = LocalDate.parse(dates[1].trim(), BILLING_PERIOD_INPUT_FORMATTER);
+
+			if (!toDate.isAfter(fromDate)) {
+				throw new CustomException("INVALID_BILLING_PERIOD",
+						"Billing period to date should be greater than from date");
+			}
+
+		} catch (CustomException ex) {
+			throw ex;
+		} catch (DateTimeParseException ex) {
+			throw new CustomException("BILLING_PERIOD_PARSING_ISSUE",
+					"Billing period cannot be parsed");
+		}
+	}
+
+	public String normalizeBillingPeriod(String billingPeriod) {
+		if (StringUtils.isEmpty(billingPeriod)) {
+			throw new CustomException("BILLING_PERIOD_PARSING_ISSUE",
+					"Billing period cannot be empty");
+		}
+
+		String[] dates = billingPeriod.split("\\s*-\\s*", -1);
+		if (dates.length != 2) {
+			throw new CustomException("BILLING_PERIOD_PARSING_ISSUE",
+					"Billing period format should be dd/MM/yyyy - dd/MM/yyyy");
+		}
+
+		try {
+			LocalDate fromDate = LocalDate.parse(dates[0].trim(), BILLING_PERIOD_INPUT_FORMATTER);
+			LocalDate toDate = LocalDate.parse(dates[1].trim(), BILLING_PERIOD_INPUT_FORMATTER);
+			return fromDate.format(BILLING_PERIOD_OUTPUT_FORMATTER) + " - "
+					+ toDate.format(BILLING_PERIOD_OUTPUT_FORMATTER);
+		} catch (DateTimeParseException ex) {
+			throw new CustomException("BILLING_PERIOD_PARSING_ISSUE",
+					"Billing period cannot be parsed");
+		}
+	}
+
+	public void validateLatestMeterReadingForDisconnection(MeterReading meterReading) {
+
+		String billingPeriod = meterReading.getBillingPeriod();
+
+		String[] dates = billingPeriod.split("-");
+
+		if (dates.length != 2) {
+			throw new CustomException(
+					"INVALID_METER_READING_BILLING_PERIOD",
+					"Invalid billing period format in latest meter reading"
+			);
+		}
+
+		try {
+			LocalDate fromDate = LocalDate.parse(dates[0].trim(), BILLING_PERIOD_INPUT_FORMATTER);
+			LocalDate toDate = LocalDate.parse(dates[1].trim(), BILLING_PERIOD_INPUT_FORMATTER);
+
+			if (!toDate.isAfter(fromDate)) {
+				throw new CustomException(
+						"INVALID_DISCONNECTION_METER_READING",
+						"Please add meter reading for a different billing cycle before disconnecting the connection"
+				);
+			}
+
+		} catch (DateTimeParseException e) {
+			throw new CustomException(
+					"INVALID_METER_READING_BILLING_PERIOD",
+					"Invalid billing period format in latest meter reading"
+			);
+		}
+	}
+
+
+		private void validateDisconnectionDateWithLatestMeterReading(CalculationReq request, MeterReading latestMeterReading) {
+
+		Long disconnectionEffectiveDate = request.getCalculationCriteria()
+				.get(0)
+				.getWaterConnection()
+				.getDateEffectiveFrom();
+
+		Long latestReadingDate = latestMeterReading.getLastReadingDate();
+
+		if (disconnectionEffectiveDate == null || disconnectionEffectiveDate <= 0) {
+			throw new CustomException("INVALID_DISCONNECTION_DATE",
+					"Disconnection effective date is required for disconnection calculation");
+		}
+
+		long allowedTillDate = latestReadingDate
+				+ (config.getDisconnectionMeterReadingValidityDays() * 24L * 60L * 60L * 1000L);
+
+		if (disconnectionEffectiveDate > allowedTillDate) {
+			throw new CustomException("STALE_METER_READING",
+					"Latest meter reading is older than "
+							+ config.getDisconnectionMeterReadingValidityDays()
+							+ " days. Please add latest meter reading before disconnecting the connection.");
+		}
+	}
+
 }

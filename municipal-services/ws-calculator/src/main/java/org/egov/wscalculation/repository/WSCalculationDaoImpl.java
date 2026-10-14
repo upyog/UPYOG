@@ -168,9 +168,9 @@ public class WSCalculationDaoImpl implements WSCalculationDao {
 	}
 	
 	@Override
-	public int isBillingPeriodExists(String connectionNo, String billingPeriod) {
+	public int isBillingPeriodExists(String connectionNo, Long currentReadingDate, Long lastReadingDate) {
 		List<Object> preparedStatement = new ArrayList<>();
-		String query = queryBuilder.isBillingPeriodExists(connectionNo, billingPeriod, preparedStatement);
+		String query = queryBuilder.isBillingPeriodExists(connectionNo, currentReadingDate, lastReadingDate, preparedStatement);
 		log.info("Is BillingPeriod Exits Query: " + query);
 		return jdbcTemplate.queryForObject(query, preparedStatement.toArray(), Integer.class);
 	}
