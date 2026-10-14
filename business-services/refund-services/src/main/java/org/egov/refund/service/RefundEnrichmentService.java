@@ -13,5 +13,5 @@ public interface RefundEnrichmentService {
 
 	void updateAuditDetails(Refund refund, String userId);
 
-	RefundActionRequest enrichWorkflowAction(Refund refund, RequestInfo requestInfo, String action);
+	RefundActionRequest enrichWorkflowAction(Refund refund, RequestInfo requestInfo, String action, String remarks);
 }
