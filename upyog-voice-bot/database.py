@@ -74,26 +74,37 @@ class ResilientRedisClient:
         self._last_connect_attempt = 0
         self._init_redis()
 
+    
     def _init_redis(self):
-        try:
+        def _get_client(proto=2):
+            kwargs = {
+                "socket_connect_timeout": 2,
+                "socket_timeout": 2,
+                "decode_responses": False
+            }
+            if proto is not None:
+                kwargs["protocol"] = proto
             if REDIS_URL:
-                self._redis = redis.from_url(
-                    REDIS_URL,
-                    socket_connect_timeout=2,
-                    socket_timeout=2,
-                    decode_responses=False
-                )
+                return redis.from_url(REDIS_URL, **kwargs)
             else:
-                self._redis = redis.Redis(
+                return redis.Redis(
                     host=REDIS_HOST,
                     port=REDIS_PORT,
                     password=REDIS_PASSWORD,
                     db=REDIS_DB,
-                    socket_connect_timeout=2,
-                    socket_timeout=2,
-                    decode_responses=False
+                    **kwargs
                 )
-            self._redis.ping()
+
+        try:
+            try:
+                # Use RESP2 (protocol=2) for broad compatibility with Redis < 6 and Redis proxies
+                self._redis = _get_client(proto=2)
+                self._redis.ping()
+            except TypeError:
+                # Older redis-py versions (< 4.2) do not accept the 'protocol' argument and use RESP2 natively
+                logger.info("[Redis] Client does not accept 'protocol' parameter; retrying with default client kwargs...")
+                self._redis = _get_client(proto=None)
+                self._redis.ping()
             self._is_connected = True
             logger.info(f"[Redis] Connected successfully to {REDIS_HOST}:{REDIS_PORT}")
         except Exception as e:
