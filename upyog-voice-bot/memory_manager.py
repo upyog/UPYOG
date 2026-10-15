@@ -108,21 +108,45 @@ class MemoryManager:
     ====================================================================
     """
     
-    # Automatically deletes chat history older than 30 days
+    # Automatically deletes chat history older than 30 days (default) or 1 day (temporary sandbox fix until qdrant db is set up)
     @staticmethod
     def _enforce_sliding_window(phone_number: str):
-        cutoff_date = datetime.now() - timedelta(days=30)
+        # --- LOCAL DEVELOPMENT (Retain 30 days) ---
+        # cutoff_date = datetime.now() - timedelta(days=30)
+
+        # --- TEMPORARY FIX FOR PRODUCTION & SANDBOX ENV(Clean data every single day / 1-day retention) ---
+        # NOTE: Uncomment the line below for the production sandbox environment to clean data every 1 day,
+        # and comment out the 30-day cutoff lines above.
+        cutoff_date = datetime.now() - timedelta(days=1)
+
         cutoff_timestamp = int(cutoff_date.timestamp())
-        
+
         try:
+            # NOTE: Below code to be used when database is set up 
+            # client.delete(
+            #     collection_name=LONG_TERM_MEMORY_COLLECTION,
+            #     points_selector=Filter(
+            #         must=[
+            #             FieldCondition(
+            #                 key="phone_number",
+            #                 match=MatchValue(value=phone_number)
+            #             ),
+            #             FieldCondition(
+            #                 key="timestamp",
+            #                 range=Range(lt=cutoff_timestamp)
+            #             )
+            #         ]
+            #     )
+            # )
+            # logger.info(f"Enforced sliding window. Deleted records older than {cutoff_date} for {phone_number}.")
+
+
+            # --- TEMPORARY PRODUCTION FIX: Global Pod Storage Cleanup ---
+            # NOTE: Uncomment below to delete ALL chat history older than 1 day across all users:
             client.delete(
                 collection_name=LONG_TERM_MEMORY_COLLECTION,
                 points_selector=Filter(
                     must=[
-                        FieldCondition(
-                            key="phone_number",
-                            match=MatchValue(value=phone_number)
-                        ),
                         FieldCondition(
                             key="timestamp",
                             range=Range(lt=cutoff_timestamp)
@@ -130,7 +154,7 @@ class MemoryManager:
                     ]
                 )
             )
-            logger.info(f"Enforced sliding window. Deleted records older than {cutoff_date} for {phone_number}.")
+            logger.info(f"Enforced global sliding window. Deleted all records older than {cutoff_date}.")
         except Exception as e:
             logger.error(f"Error enforcing sliding window: {e}")
 
