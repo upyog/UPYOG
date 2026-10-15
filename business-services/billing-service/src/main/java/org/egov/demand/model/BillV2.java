@@ -100,6 +100,9 @@ public class BillV2 {
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails;
 	
+	@JsonProperty("isPaymentProcessing")
+	private Boolean isPaymentProcessing;
+	
 	/**
 	 * status of the bill .
 	 */
