@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.pt.models.CustomAmountUpdateRequest;
 import org.egov.pt.models.data.DataItem;
 import org.egov.pt.models.data.Metrics;
 import org.egov.pt.models.data.Bucket;
@@ -43,6 +44,7 @@ import org.egov.pt.repository.rowmapper.PropertyAuditEncRowMapper;
 import org.egov.pt.service.UserService;
 import org.egov.pt.util.PropertyUtil;
 import org.egov.pt.web.contracts.TotalCountRequest;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
@@ -51,6 +53,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.egov.pt.models.AuditDetails;
+import org.egov.pt.repository.BillRepository;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.google.common.collect.Sets;
 
@@ -64,7 +68,8 @@ public class PropertyRepository {
 	@Autowired
 	private PropertyQueryBuilder queryBuilder;
 	
-	
+	@Autowired
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	@Autowired
 	private PropertyRowMapper rowMapper;
@@ -92,6 +97,9 @@ public class PropertyRepository {
 	
 	@Autowired
 	private PtTaxCalculatorTrackerRowMapper ptTaxCalculatorTrackerRowMapper;
+	
+	@Autowired
+	private BillRepository BillRepository;
     
 	public List<String> getPropertyIds(Set<String> ownerIds, String tenantId) {
 
@@ -776,6 +784,25 @@ public List<String> getAllUsageCategory(long epochStart, long epochEnd, String w
 
 		return jdbcTemplate.queryForList(query, preparedStmtList.toArray()); 
 		}
+	
+	public void updateCustomTrackerAmount(CustomAmountUpdateRequest request) {
+
+	    String query = queryBuilder.getCustomTrackerUpdateQuery();
+
+	    Map<String, Object> paramMap = new HashMap<>();
+
+	    paramMap.put("amount", request.getCustomAmount());
+	    paramMap.put("modifiedBy", request.getRequestInfo().getUserInfo().getUuid());
+	    paramMap.put("modifiedTime", System.currentTimeMillis());
+	    paramMap.put("reason", request.getReason());
+	    paramMap.put("billId", request.getBillId());
+	    paramMap.put("tenantId", request.getTenantId());
+	    paramMap.put("demandId", request.getDemandId());
+
+	    namedParameterJdbcTemplate.update(query, paramMap);
+	    log.info("Tracker updated with custom amount");
+	    BillRepository.updateCustomBillAmount(request);
+	}
 	
 		public List<PtTaxCalculatorTracker> extractTrackers(PtTaxCalculatorTrackerSearchCriteria criteria) {
 			List<Object> preparedStmtList = new ArrayList<>();

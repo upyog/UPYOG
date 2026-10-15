@@ -73,6 +73,9 @@ import org.egov.garbageservice.model.contract.User;
 import org.egov.garbageservice.contract.bill.BillDetail;
 import org.egov.garbageservice.contract.bill.BillAccountDetail;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.garbageservice.model.CustomAmountUpdateResponse;
+import org.egov.garbageservice.model.CustomAmountUpdateRequest;
 import org.egov.garbageservice.model.BillIdRequest;
 import org.egov.garbageservice.model.GenerateBillPreviewResponse;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -131,7 +134,13 @@ public class GarbageAccountSchedulerService {
 
 	@Value("${egov.sms.tracker.create.endpoint}")
 	private String smsTrackerCreateEndpoint;
-
+	
+	@Value("${egov.bill.context.host}")
+	private String billHost;
+	
+	@Value("${egov.bill.endpoint.search}")
+	private String billSearchEndpoint;
+	
 	public GrbgBillTrackerResponse generateBill(GenerateBillRequest generateBillRequest) {
 
 		List<GrbgBillTracker> grbgBillTrackers = new ArrayList<>();
@@ -1135,6 +1144,72 @@ public class GarbageAccountSchedulerService {
 	    }
 	
 	    return trackers;
+	}
+	
+	public CustomAmountUpdateResponse updateCustomAmount(CustomAmountUpdateRequest request) {
+
+	    StringBuilder uri = new StringBuilder();
+	    uri.append(billHost)
+	       .append(billSearchEndpoint)
+	       .append("?tenantId=").append(request.getTenantId())
+	       .append("&billId=").append(request.getBillId());
+
+	    RequestInfoWrapper wrapper = new RequestInfoWrapper();
+	    wrapper.setRequestInfo(request.getRequestInfo());
+
+	    Object response = restCallRepository.fetchResult(uri, wrapper);
+
+	    BillResponse billResponse = objectMapper.convertValue(response, BillResponse.class);
+
+	    if (CollectionUtils.isEmpty(billResponse.getBill())) {
+	        throw new CustomException("BILL_NOT_FOUND", "No bill found for given ID");
+	    }
+
+	    Bill bill = billResponse.getBill().get(0);
+
+	    if (Bill.StatusEnum.PAID.equals(bill.getStatus())) {
+	        throw new CustomException("INVALID_UPDATE", "Cannot update paid bill");
+	    }
+	    
+	    if (Bill.StatusEnum.PARTIALLY_PAID.equals(bill.getStatus())) {
+	        throw new CustomException("INVALID_UPDATE", "Cannot update partially paid bill");
+	    }
+	    
+	    if (request.getBillId() == null || request.getBillId().trim().isEmpty()) {
+	        throw new CustomException("INVALID_REQUEST", "billId is required");
+	    }
+
+	    if (request.getDemandId() == null || request.getDemandId().trim().isEmpty()) {
+	        throw new CustomException("INVALID_REQUEST", "demandId is required");
+	    }
+
+	    if (request.getCustomAmount() == null) {
+	        throw new CustomException("INVALID_REQUEST", "customAmount is required");
+	    }
+	    
+	    String DemandId =  request.getDemandId();   
+
+	    garbageBillTrackerRepository.updateCustomTrackerAmount(request);
+	    
+	    Object updatedResponse = restCallRepository.fetchResult(uri, wrapper);
+	    BillResponse updatedBillResponse = objectMapper.convertValue(updatedResponse, BillResponse.class);
+	    Bill updatedBill = updatedBillResponse.getBill().get(0);
+	    
+	    CustomAmountUpdateResponse responseObj = new CustomAmountUpdateResponse();
+	    responseObj.setBillId(request.getBillId());
+	    responseObj.setDemandId(DemandId);
+	    responseObj.setCustomAmount(request.getCustomAmount());
+	    responseObj.setMessage("Custom amount updated successfully");
+	    responseObj.setOldAmount(bill.getTotalAmount());
+	    responseObj.setUpdatedTotalAmount(updatedBill.getTotalAmount());
+	    responseObj.setUpdatedTime(System.currentTimeMillis());
+	    responseObj.setUpdatedBy(request.getRequestInfo().getUserInfo().getUuid());
+	    responseObj.setReason(request.getReason());
+	    responseObj.setIsCustomAmountApplied(true);
+	    responseObj.setStatus(bill.getStatus() != null ? bill.getStatus().toString() : null);
+	    responseObj.setConsumerCode(bill.getConsumerCode());
+	    responseObj.setTenantId(request.getTenantId());
+	    return responseObj;
 	}
 
 	public GrbgBillTracker getTrackerByBillId(BillIdRequest request) {

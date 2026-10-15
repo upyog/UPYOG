@@ -112,6 +112,29 @@ public class BillQueryBuilder {
 	        "WHERE tenantid = ? " +
 	        "AND consumercode = ? " +
 	        "AND status IN (?, ?)";
+	
+	public static final String BILL_DETAIL_UPDATE_CUSTOM_AMOUNT_QUERY =
+		    "UPDATE egbs_billdetail_v1 " +
+		    "SET totalamount = ?, " +
+		    "    lastmodifiedby = ?, " +
+		    "    lastmodifieddate = ? " +
+		    "WHERE billid = ? " +
+		    "AND demandid = ? " +
+		    "AND tenantid = ?";
+
+	public static final String BILL_ACCOUNT_DETAIL_UPDATE_CUSTOM_AMOUNT_QUERY =
+		    "UPDATE egbs_billaccountdetail_v1 " +
+		    "SET amount = ?, " +
+		    "    lastmodifiedby = ?, " +
+		    "    lastmodifieddate = ? " +
+		    "WHERE demanddetailid IN ( " +
+		    "    SELECT id FROM egbs_demanddetail_v1 " +
+		    "    WHERE demandid = ? " +
+		    "    AND tenantid = ? " +
+		    ")";
+
+	public static final String BILL_UPDATE_AUDIT_QUERY = "UPDATE egbs_bill_v1 " + "SET lastmodifiedby = ?, "
+			+ "    lastmodifieddate = ? " + "WHERE id = ? AND tenantid = ?";
 
 	public String getBillQuery(BillSearchCriteria billSearchCriteria, List<Object> preparedStatementValues){
 		

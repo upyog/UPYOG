@@ -137,6 +137,20 @@ public class DemandQueryBuilder {
             "    lastmodifiedby = ?, " +
             "    lastmodifiedtime = ? " +
             "WHERE id = ?";
+	
+	public static final String DEMAND_UPDATE_CUSTOM_AMOUNT_QUERY =
+		    "UPDATE egbs_demand_v1 " +
+		    "SET minimumAmountPayable = ?, " +
+		    "    lastModifiedBy = ?, " +
+		    "    lastModifiedTime = ? " +
+		    "WHERE id = ? AND tenantId = ?;";
+	
+	public static final String DEMAND_DETAIL_UPDATE_CUSTOM_AMOUNT_QUERY =
+		    "UPDATE egbs_demanddetail_v1 " +
+		    "SET taxAmount = ?, " +
+		    "    lastModifiedBy = ?, " +
+		    "    lastModifiedTime = ? " +
+		    "WHERE demandId = ? AND tenantId = ?;";
 
 	public String getDemandQueryForConsumerCodes(Map<String,Set<String>> businessConsumercodeMap,List<Object> preparedStmtList, String tenantId){
 		

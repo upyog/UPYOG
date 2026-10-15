@@ -86,6 +86,7 @@ import org.egov.demand.model.UpdateBillCriteria;
 import org.egov.demand.model.UpdateBillRequest;
 import org.egov.demand.producer.Producer;
 import org.egov.demand.repository.BillRepositoryV2;
+import org.egov.demand.repository.DemandRepository;
 import org.egov.demand.repository.IdGenRepo;
 import org.egov.demand.repository.ServiceRequestRepository;
 import org.egov.demand.util.Util;
@@ -113,6 +114,7 @@ import org.egov.demand.model.GrbgBillTracker;
 import org.egov.demand.model.PtTaxCalculatorTracker;
 import org.egov.demand.model.BillCancelRequest;
 import java.util.Objects;
+import org.egov.demand.web.contract.CustomAmountUpdateRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -138,6 +140,9 @@ public class BillServicev2 {
 
 	@Autowired
 	private DemandService demandService;
+	
+	@Autowired 
+	private DemandRepository demandRepository;
 
 	@Autowired
 	private BusinessServDetailService businessServDetailService;
@@ -943,4 +948,12 @@ public class BillServicev2 {
 		return cancelBill(request);
 	}
 	
+	public void updateCustomAmount(CustomAmountUpdateRequest request) {
+		if(request != null) {
+			demandRepository.updateCustomDemandAmount(request);
+			billRepository.updateCustomBillAmount(request);
+		}else {
+			throw new CustomException("EG_BS_UPDATE_ERROR","Error updating custom amount in bills !");
+		}
+	}
 }

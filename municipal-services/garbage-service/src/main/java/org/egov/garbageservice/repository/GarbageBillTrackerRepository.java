@@ -12,10 +12,14 @@ import org.egov.garbageservice.model.GrbgBillFailure;
 import org.egov.garbageservice.model.GrbgBillTracker;
 import org.egov.garbageservice.model.GrbgBillTrackerSearchCriteria;
 import org.egov.garbageservice.repository.rowmapper.GrbgBillTrackerRowMapper;
+import org.egov.garbageservice.util.RequestInfoWrapper;
+import org.egov.garbageservice.util.RestCallRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.egov.garbageservice.model.CustomAmountUpdateRequest;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -44,6 +48,15 @@ public class GarbageBillTrackerRepository {
 	@Autowired
 	private ObjectMapper objectMapper;
 
+	@Value("${egov.bill.context.host}")
+	private String billHost;
+	
+	@Value("${egov.custom.update.endpoint}")
+	private String customUpdateEndpoint;
+	
+	@Autowired
+	private RestCallRepository restCallRepository;
+	
 	private static final String GRBG_BILL_TRACKER_SEARCH_QUERY = "SELECT * FROM eg_grbg_bill_tracker egbt";
 
 	private static final String INSERT_BILL_TRACKER = "INSERT INTO eg_grbg_bill_tracker (uuid, grbg_application_id, tenant_id, month, year, from_date, garbage_bill_without_rebate, rebate_amount, "
@@ -117,6 +130,19 @@ public class GarbageBillTrackerRepository {
 		    "WHERE egbt.status = 'ACTIVE' " +
 		    "AND egbt.rebate_amount > 0 " +
 		    "AND egbt.bill_id IS NOT NULL";
+	
+	private static final String UPDATE_CUSTOM_TRACKER_AMOUNT = 
+			"UPDATE eg_grbg_bill_tracker " +
+		    "SET grbg_bill_amount = :amount, " +
+		    "last_modified_by = :modifiedBy, " +
+		    "last_modified_time = :modifiedTime, " +
+		    "additionaldetail = jsonb_set( " +
+		    "   COALESCE(additionaldetail, '{}'::jsonb), " +
+		    "   '{reason}', " +
+		    "   to_jsonb(:reason::text) " +
+		    ") " +
+		    "WHERE bill_id = :billId " +
+		    "AND tenant_id = :tenantId";
 	
 	private static final String ACTIVATE_PREVIOUS_TRACKER = "UPDATE eg_grbg_bill_tracker "
 			+ "SET status = :status, last_modified_by = :lastModifiedBy, last_modified_time = :lastModifiedTime "
@@ -463,7 +489,46 @@ public class GarbageBillTrackerRepository {
 	        grbgBillTrackerRowMapper
 	    );
 	}
+		
+	public void updateCustomTrackerAmount(CustomAmountUpdateRequest request) {
+
+	    String query = UPDATE_CUSTOM_TRACKER_AMOUNT;
+
+	    Map<String, Object> paramMap = new HashMap<>();
+
+	    paramMap.put("amount", request.getCustomAmount());
+	    paramMap.put("modifiedBy", request.getRequestInfo().getUserInfo().getUuid());
+	    paramMap.put("modifiedTime", System.currentTimeMillis());
+	    paramMap.put("reason", request.getReason());
+	    paramMap.put("billId", request.getBillId());
+	    paramMap.put("tenantId", request.getTenantId());
+
+	    namedParameterJdbcTemplate.update(query, paramMap);
+	    log.info("Tracker updated with custom amount");
+	    updateCustomBillAmount(request);
+	}
 	
+	private void updateCustomBillAmount(CustomAmountUpdateRequest request) {
+
+	    StringBuilder uri = new StringBuilder();
+	    uri.append(billHost).append(customUpdateEndpoint); 
+
+	    Map<String, Object> body = new HashMap<>();
+	    body.put("RequestInfo", request.getRequestInfo());
+	    body.put("tenantId", request.getTenantId());
+	    body.put("billId", request.getBillId());
+	    body.put("demandId",request.getDemandId());
+	    body.put("customAmount", request.getCustomAmount());
+	    body.put("reason", request.getReason());
+
+	    try {
+	    	restCallRepository.fetchResult(uri, body);
+	    } catch (Exception e) {
+	        throw new CustomException("BILLING_UPDATE_FAILED",
+	                "Tracker updated but billing update failed: " + e.getMessage());
+	    }
+	}
+
 	public List<GrbgBillTracker> extractTrackers(GrbgBillTrackerSearchCriteria criteria) {
 
 		StringBuilder query = new StringBuilder(EXTRACT_TRACKER_QUERY);

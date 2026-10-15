@@ -30,6 +30,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.egov.demand.web.contract.CustomAmountUpdateRequest;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -469,4 +470,21 @@ public class BillRepositoryV2 {
 		});
 	}
 	
+	public void updateCustomBillAmount(CustomAmountUpdateRequest request) {    
+
+	    String billId = request.getBillId();
+	    BigDecimal customAmount = request.getCustomAmount();
+	    String tenantId = request.getTenantId();
+	    String userId = request.getRequestInfo().getUserInfo().getUuid();
+	    Long currentTime = System.currentTimeMillis();
+	    String demandId = request.getDemandId();
+
+		jdbcTemplate.update(BillQueryBuilder.BILL_ACCOUNT_DETAIL_UPDATE_CUSTOM_AMOUNT_QUERY, customAmount, userId,
+				currentTime, demandId, tenantId);
+
+		jdbcTemplate.update(BillQueryBuilder.BILL_DETAIL_UPDATE_CUSTOM_AMOUNT_QUERY, customAmount, userId, currentTime,
+				billId, demandId, tenantId);
+	    
+		jdbcTemplate.update(BillQueryBuilder.BILL_UPDATE_AUDIT_QUERY, userId, currentTime, billId, tenantId);
+	}
 }

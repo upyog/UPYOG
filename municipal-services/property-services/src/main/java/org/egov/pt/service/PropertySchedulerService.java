@@ -67,6 +67,8 @@ import java.util.Comparator;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.egov.pt.repository.PropertyRepository;
+import org.egov.pt.models.CustomAmountUpdateRequest;
+import org.egov.pt.models.CustomAmountUpdateResponse;
 
 //pdf
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
@@ -2145,6 +2147,66 @@ public class PropertySchedulerService {
 		
 		tracker.setBillStatus(BillStatus.valueOf(currentBill.getStatus().name()));
      	propertyService.UpdatePtTrackerStatus(tracker);
+	}
+
+	public CustomAmountUpdateResponse updateCustomAmount(CustomAmountUpdateRequest request) {
+
+		BillSearchCriteria billSearchCriteria = BillSearchCriteria.builder()
+				.billId(Collections.singleton(request.getBillId()))
+				.tenantId(request.getTenantId())
+				.skipValidation(true)
+				.build();
+
+		BillResponse billResponse = billService.searchBill(billSearchCriteria, request.getRequestInfo());
+
+		if (CollectionUtils.isEmpty(billResponse.getBill())) {
+			throw new CustomException("BILL_NOT_FOUND", "No bill found for given ID");
+	    }
+
+	    Bill bill = billResponse.getBill().get(0);
+
+	    if (Bill.StatusEnum.PAID.equals(bill.getStatus())) {
+	        throw new CustomException("INVALID_UPDATE", "Cannot update paid bill");
+	    }
+	    
+	    if (Bill.StatusEnum.PARTIALLY_PAID.equals(bill.getStatus())) {
+	        throw new CustomException("INVALID_UPDATE", "Cannot update partially paid bill");
+	    }
+	    
+	    if (request.getBillId() == null || request.getBillId().trim().isEmpty()) {
+	        throw new CustomException("INVALID_REQUEST", "billId is required");
+	    }
+
+	    if (request.getDemandId() == null || request.getDemandId().trim().isEmpty()) {
+	        throw new CustomException("INVALID_REQUEST", "demandId is required");
+	    }
+
+	    if (request.getCustomAmount() == null) {
+	        throw new CustomException("INVALID_REQUEST", "customAmount is required");
+	    }
+	    
+	    String DemandId =  request.getDemandId(); 
+	    repository.updateCustomTrackerAmount(request);
+	    
+	    Object updatedResponse = billService.searchBill(billSearchCriteria, request.getRequestInfo());
+	    BillResponse updatedBillResponse = objectMapper.convertValue(updatedResponse, BillResponse.class);
+	    Bill updatedBill = updatedBillResponse.getBill().get(0);
+	    
+	    CustomAmountUpdateResponse responseObj = new CustomAmountUpdateResponse();
+	    responseObj.setBillId(request.getBillId());
+	    responseObj.setDemandId(DemandId);
+	    responseObj.setCustomAmount(request.getCustomAmount());
+	    responseObj.setMessage("Custom amount updated successfully");
+	    responseObj.setOldAmount(bill.getTotalAmount());
+	    responseObj.setUpdatedTotalAmount(updatedBill.getTotalAmount());
+	    responseObj.setTenantId(request.getTenantId());
+	    responseObj.setReason(request.getReason());
+	    responseObj.setIsCustomAmountApplied(true);
+	    responseObj.setConsumerCode(bill.getConsumerCode());
+	    responseObj.setStatus(bill.getStatus() != null ? bill.getStatus().toString() : null);
+	    responseObj.setUpdatedTime(System.currentTimeMillis());
+	    responseObj.setUpdatedBy(request.getRequestInfo().getUserInfo().getUuid());
+	    return responseObj;
 	}
 
 }

@@ -585,6 +585,26 @@ public class PropertyQueryBuilder {
 	        "END " +
 	        "WHERE bill_id = ?";
 
+			private static final String UPDATE_CUSTOM_TRACKER_AMOUNT =
+		    "UPDATE eg_pt_tax_calculator_tracker "
+		  + "SET propertytax = :amount, "
+		  + "lastmodifiedby = :modifiedBy, "
+		  + "lastmodifiedtime = :modifiedTime, "
+		  + "additionaldetails = jsonb_set( "
+		  + "   CASE "
+		  + "       WHEN jsonb_typeof(additionaldetails) = 'object' "
+		  + "       THEN additionaldetails "
+		  + "       WHEN jsonb_typeof(additionaldetails) = 'array' "
+		  + "       THEN jsonb_build_object('data', additionaldetails) "
+		  + "       ELSE '{}'::jsonb "
+		  + "   END, "
+		  + "   '{reason}', "
+		  + "   to_jsonb(:reason), "
+		  + "   true "
+		  + ") "
+		  + "WHERE bill_id = :billId "
+		  + "AND tenantid = :tenantId";
+
 	public String getPaymentChannelTypeQuery(long startEpoch, long endEpoch, String wardName,
 			List<Object> preparedStmtList) {
 
@@ -1398,6 +1418,8 @@ public String getActiveBillsQuery(String status, List<Object> preparedStmtList,S
 	
 	public String getExpireActiveTrackersByPropertyIdQuery() {
 	    return PT_TRACKER_UPDATE_BY_PROPERTY_ID;
+	}	public String getCustomTrackerUpdateQuery() {
+		return UPDATE_CUSTOM_TRACKER_AMOUNT;
 	}
 	
 

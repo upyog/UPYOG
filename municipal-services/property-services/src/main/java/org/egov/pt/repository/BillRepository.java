@@ -1,11 +1,14 @@
 package org.egov.pt.repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.pt.config.PropertyConfiguration;
+import org.egov.pt.models.CustomAmountUpdateRequest;
 import org.egov.pt.models.bill.BillRequest;
 import org.egov.pt.models.bill.BillSearchCriteria;
 import org.egov.pt.models.bill.GenerateBillCriteria;
@@ -128,6 +131,24 @@ public class BillRepository {
 			log.error("Exception while fetching user: ", e);
 		}
 	}
+	
+	public void updateCustomBillAmount(CustomAmountUpdateRequest request) {
 
+	    String uri = config.getBillHost().concat(config.getUpdateCustomAmountEndpoint());
 
+	    Map<String, Object> body = new HashMap<>();
+	    body.put("RequestInfo", request.getRequestInfo());
+	    body.put("tenantId", request.getTenantId());
+	    body.put("billId", request.getBillId());
+	    body.put("demandId",request.getDemandId());
+	    body.put("customAmount", request.getCustomAmount());
+	    body.put("reason", request.getReason());
+
+	    try {
+	        restCallRepository.fetchResult(new StringBuilder(uri), body);
+	    } catch (Exception e) {
+	        throw new CustomException("BILLING_UPDATE_FAILED",
+	                "Tracker updated but billing update failed: " + e.getMessage());
+	    }
+	}
 }

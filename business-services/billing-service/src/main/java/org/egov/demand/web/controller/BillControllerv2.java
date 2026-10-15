@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.egov.demand.web.contract.CustomAmountUpdateRequest;
 
 @RestController
 @RequestMapping("bill/v2/")
@@ -118,6 +119,13 @@ public class BillControllerv2 {
 
 		BillResponseV2 billResponse = billService.update(billRequest);
 		return new ResponseEntity<>(billResponse, HttpStatus.OK);
+	}
+	
+	@PostMapping("/_updateCustomAmount")
+	public ResponseEntity<?> updateCustomAmount(@RequestBody CustomAmountUpdateRequest request) {
+
+		billService.updateCustomAmount(request);
+	    return ResponseEntity.ok().build();
 	}
 	
 }

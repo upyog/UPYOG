@@ -15,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.egov.garbageservice.model.BillIdRequest;
+import org.egov.garbageservice.model.CustomAmountUpdateRequest;
 
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.garbageservice.model.CustomAmountUpdateResponse;
 
 
 
@@ -72,6 +74,13 @@ public class GarbageAccountSchedulerController {
 	@PostMapping("/extract-tracker")
 	public ResponseEntity<?> getTrackerByBillId(@RequestBody BillIdRequest request) {
 	    return ResponseEntity.ok(service.getTrackerByBillId(request));
+	}
+	
+	@PostMapping("/_updateCustomAmount")
+	public ResponseEntity<CustomAmountUpdateResponse> updateCustomAmount(@RequestBody CustomAmountUpdateRequest request) {
+
+	    CustomAmountUpdateResponse response = service.updateCustomAmount(request);
+	    return ResponseEntity.ok(response);
 	}
 
 	/**

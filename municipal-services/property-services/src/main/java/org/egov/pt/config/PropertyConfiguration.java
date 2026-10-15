@@ -310,6 +310,10 @@ public class PropertyConfiguration {
 	
 	@Value("${egov.cancel.bill.endpoint}")
 	public String cancleBillEndpoint;
+	
+	@Value("${egov.custom.update.endpoint}")
+	public String updateCustomAmountEndpoint;
+	
     	
     // Registry 
     

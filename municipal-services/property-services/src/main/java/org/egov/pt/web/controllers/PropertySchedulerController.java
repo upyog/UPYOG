@@ -3,6 +3,8 @@ import java.util.UUID;
 
 import org.egov.pt.models.CalculateTaxRequest;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.pt.models.CustomAmountUpdateRequest;
+import org.egov.pt.models.CustomAmountUpdateResponse;
 import org.egov.pt.models.CalculateTaxPreviewResponse;
 import org.egov.pt.service.PropertySchedulerService;
 import org.egov.pt.web.contracts.RequestInfoWrapper;
@@ -96,6 +98,13 @@ public class PropertySchedulerController {
 
 		return ResponseEntity.ok("Penalty amount updated successfully!!!");
 //		return ResponseEntity.ok(service.updatePenaltyAmount(requestInfoWrapper)); 
+	}
+	
+	@PostMapping("/_updateCustomAmount")
+	public ResponseEntity<CustomAmountUpdateResponse> updateCustomAmount(@RequestBody CustomAmountUpdateRequest request) {
+
+	    CustomAmountUpdateResponse response = service.updateCustomAmount(request);
+	    return ResponseEntity.ok(response);
 	}
 	
 	
