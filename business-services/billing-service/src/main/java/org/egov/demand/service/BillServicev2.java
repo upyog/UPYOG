@@ -415,6 +415,7 @@ public class BillServicev2 {
 				GrbgBillTracker tracker = util.getGarbageTracker(request);
 				if (tracker != null) {
 					bill.setDemandId(tracker.getDemandId());
+					bill.setIsPaymentProcessing(tracker.getIsPaymentProcessing());
 					if (billCriteria.getIsProcessing() == true) {
 						bill.setStatus(BillV2.BillStatus.ACTIVE);
 					} else if (tracker.getIsPaymentProcessing() == true) {
@@ -425,6 +426,7 @@ public class BillServicev2 {
 				PtTaxCalculatorTracker tracker = util.getPropertyTracker(request);
 				if (tracker != null) {
 					bill.setDemandId(tracker.getDemandId());
+					bill.setIsPaymentProcessing(tracker.getIsPaymentProcessing());
 					if (billCriteria.getIsProcessing() == true) {
 						bill.setStatus(BillV2.BillStatus.ACTIVE);
 					} else if (tracker.getIsPaymentProcessing() == true) {
