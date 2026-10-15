@@ -115,14 +115,12 @@ class MemoryManager:
         # cutoff_date = datetime.now() - timedelta(days=30)
 
         # --- TEMPORARY FIX FOR PRODUCTION & SANDBOX ENV(Clean data every single day / 1-day retention) ---
-        # NOTE: Uncomment the line below for the production sandbox environment to clean data every 1 day,
-        # and comment out the 30-day cutoff lines above.
         cutoff_date = datetime.now() - timedelta(days=1)
 
         cutoff_timestamp = int(cutoff_date.timestamp())
 
         try:
-            # NOTE: Below code to be used when database is set up 
+            # NOTE: Deletes ALL chat history older than cutoff_date for the current user (This code to be used when database is set up)
             # client.delete(
             #     collection_name=LONG_TERM_MEMORY_COLLECTION,
             #     points_selector=Filter(
@@ -142,7 +140,7 @@ class MemoryManager:
 
 
             # --- TEMPORARY PRODUCTION FIX: Global Pod Storage Cleanup ---
-            # NOTE: Uncomment below to delete ALL chat history older than 1 day across all users:
+            # NOTE: Deletes ALL chat history older than 1 day across all users:
             client.delete(
                 collection_name=LONG_TERM_MEMORY_COLLECTION,
                 points_selector=Filter(
