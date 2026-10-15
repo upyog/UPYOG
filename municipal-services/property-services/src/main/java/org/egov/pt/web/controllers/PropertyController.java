@@ -383,6 +383,15 @@ public class PropertyController {
 
 		return response;
 	}
+	
+	@PostMapping("/_generatePropertyNoticePdf")
+	public ResponseEntity<Resource> generatePropertyNoticePdf(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+			@RequestParam String propertyId, @RequestParam(required = false) String billId,
+			@RequestParam(required = false) String status, @RequestParam String tenantId) {
+		ResponseEntity<Resource> response = propertyService.generatePropertyNoticePdf(requestInfoWrapper, propertyId,
+				billId, status, tenantId);
+		return response;
+	}
 
 	@PostMapping("/_checkMasters")
 	public ResponseEntity<Map<String, Object>> checkMasters(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,

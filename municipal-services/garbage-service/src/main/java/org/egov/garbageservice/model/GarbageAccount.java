@@ -40,6 +40,10 @@ public class GarbageAccount {
 	private Long ddpModifiedDate;
 
 	/**
+	 * The DDP workflow fields below (isReadyForPrinting .. remarks) are stored
+	 * in eg_grbg_account_ddp, not eg_grbg_account, and are populated on search
+	 * via a left join on the account uuid.
+	 *
 	 * Set true in bulk by the DDP printing scheduler once ddpVerified accounts
 	 * in a ULB/ward (as configured in the ULBS.DdpPrinting MDMS master) are
 	 * ready to be handed off for door plate printing.
@@ -70,6 +74,10 @@ public class GarbageAccount {
 	 * to the ULB/installer.
 	 */
 	private Boolean ddpDispatched;
+
+	private String ddpRejectionReason;
+
+	private String remarks;
 
 	private String type;
 

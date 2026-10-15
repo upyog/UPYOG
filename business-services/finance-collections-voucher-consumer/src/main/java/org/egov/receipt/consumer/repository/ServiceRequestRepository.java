@@ -92,11 +92,12 @@ public class ServiceRequestRepository {
                 log.error("Unauthorized accessed : Retrying http uri {} with SYSTEM auth token.", uri.toString());
                 response = this.retryHttpCallOnUnauthorizedAccess(uri, request, tenantId);
             } else {
-                log.error(SEARCHER_EXCEPTION_MESSAGE, e.getResponseBodyAsString());
+                log.error("{} uri : {}, tenantId : {}, status : {}, response body : {}", SEARCHER_EXCEPTION_MESSAGE,
+                        uri, tenantId, e.getStatusCode(), e.getResponseBodyAsString());
                 throw new VoucherCustomException(ProcessStatus.FAILED, e.getResponseBodyAsString());
             }
         } catch (Exception e) {
-            log.error(SEARCHER_EXCEPTION_MESSAGE, e);
+            log.error(SEARCHER_EXCEPTION_MESSAGE + "uri : " + uri + ", tenantId : " + tenantId, e);
             throw new VoucherCustomException(ProcessStatus.FAILED, "Exception while fetching from searcher.");
         }
         return response;

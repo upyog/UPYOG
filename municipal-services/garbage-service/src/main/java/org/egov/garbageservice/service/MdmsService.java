@@ -1,6 +1,9 @@
 package org.egov.garbageservice.service;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -295,18 +298,18 @@ public class MdmsService {
 	}
 
 	/**
-	 * Fetches every active ULB/ward combination currently enabled for door
-	 * plate printing from the ULBS.DdpPrinting MDMS v2 master, paging through
-	 * the full result set. The request body is built as a plain map (rather
-	 * than the org.egov.mdms.model v1 client types used elsewhere in this
-	 * class) because the mdms-v2 search endpoint expects the schemaCode/
-	 * filterMap-based criteria shape, not the v1 moduleName/masterDetails
-	 * shape.
+	 * Fetches every active ULB/ward combination enabled for door plate
+	 * printing from the ULBS.DdpPrinting MDMS v2 master that was added
+	 * <b>today</b> (per the record's {@code auditDetails.createdTime}, in
+	 * the system default zone), paging through the full result set. The
+	 * request body is built as a plain map (rather than the
+	 * org.egov.mdms.model v1 client types used elsewhere in this class)
+	 * because the mdms-v2 search endpoint expects the schemaCode/filterMap-
+	 * based criteria shape, not the v1 moduleName/masterDetails shape.
 	 *
-	 * <p>Assumes the master's {@code data} JSON exposes "ulbName" and
-	 * "wardName" fields (matching the filter key used against this schema);
-	 * adjust the two field names below if the actual DdpPrinting schema uses
-	 * different keys.
+	 * <p>The master's {@code data} JSON is expected to look like
+	 * {@code {"count": 1, "ulbName": "Arki", "wardName": "Jhinwar Muhalla"}};
+	 * {@code count} is not used by this method.
 	 */
 	public List<DdpPrintingUlbWard> fetchDdpPrintingUlbWards(RequestInfo requestInfo, String tenantId) {
 
@@ -314,6 +317,7 @@ public class MdmsService {
 		String url = config.getMdmsV2Host() + config.getMdmsV2SearchEndpoint();
 		int limit = 100;
 		int offset = 0;
+		LocalDate today = LocalDate.now(ZoneId.systemDefault());
 
 		while (true) {
 			Map<String, Object> filterMap = new LinkedHashMap<>();
@@ -342,6 +346,16 @@ public class MdmsService {
 			}
 
 			for (JsonNode record : mdmsArray) {
+				long createdTime = record.path("auditDetails").path("createdTime").asLong(-1);
+				if (createdTime < 0) {
+					continue;
+				}
+				LocalDate createdDate = Instant.ofEpochMilli(createdTime).atZone(ZoneId.systemDefault())
+						.toLocalDate();
+				if (!today.equals(createdDate)) {
+					continue;
+				}
+
 				JsonNode data = record.path("data");
 				String ulbName = data.path("ulbName").asText(null);
 				String wardName = data.path("wardName").asText(null);
@@ -356,8 +370,8 @@ public class MdmsService {
 			offset += limit;
 		}
 
-		log.info("[MDMS][DdpPrinting] Resolved {} ULB/ward combination(s) for tenantId={}", ulbWards.size(),
-				tenantId);
+		log.info("[MDMS][DdpPrinting] Resolved {} ULB/ward combination(s) added today for tenantId={}",
+				ulbWards.size(), tenantId);
 
 		return ulbWards;
 	}

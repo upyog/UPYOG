@@ -18,4 +18,6 @@ public class PaymentProcessingUpdateRequest {
 
 	@JsonProperty("isPaymentProcessing")
 	private boolean isPaymentProcessing = false;
+	
+	private String txnAmount;
 }

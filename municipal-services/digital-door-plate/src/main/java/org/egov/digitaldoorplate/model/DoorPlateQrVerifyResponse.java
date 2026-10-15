@@ -28,7 +28,7 @@ public class DoorPlateQrVerifyResponse {
 	private DoorPlateQrSnapshot dataInQr;
 
 	/**
-	 * The corresponding current record fetched live from garbage-service, in
+	 * The corresponding current record fetched live from property-services, in
 	 * the same shape, for direct comparison against {@link #dataInQr}.
 	 */
 	private DoorPlateQrSnapshot dataInDatabase;

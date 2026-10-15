@@ -250,6 +250,32 @@ public class PaymentRepository {
 
     }
 
+    /**
+     * Ids of the payments done between fromDate (inclusive) and toDate (exclusive), both epoch millis, ordered so that
+     * offset based paging is stable. Cancelled and dishonoured payments are left out unless includeCancelled is set.
+     */
+    public List<String> fetchPaymentIdsForVoucherReplay(String tenantId, Long fromDate, Long toDate,
+            boolean includeCancelled, int offset, int limit) {
+
+        Map<String, Object> preparedStatementValues = new HashMap<>();
+        StringBuilder query = new StringBuilder(
+                "SELECT id FROM egcl_payment WHERE transactiondate >= :fromDate AND transactiondate < :toDate");
+        preparedStatementValues.put("fromDate", fromDate);
+        preparedStatementValues.put("toDate", toDate);
+        if (tenantId != null && !tenantId.trim().isEmpty()) {
+            query.append(" AND tenantid = :tenantId");
+            preparedStatementValues.put("tenantId", tenantId);
+        }
+        if (!includeCancelled)
+            query.append(" AND UPPER(paymentstatus) NOT IN ('CANCELLED', 'DISHONOURED')");
+        query.append(" ORDER BY createdtime, id OFFSET :offset LIMIT :limit");
+        preparedStatementValues.put("offset", offset);
+        preparedStatementValues.put("limit", limit);
+
+        return namedParameterJdbcTemplate.query(query.toString(), preparedStatementValues,
+                new SingleColumnRowMapper<>(String.class));
+    }
+
     public List<String> fetchPaymentIds(PaymentSearchCriteria paymentSearchCriteria) {
 
         Map<String, Object> preparedStatementValues = new HashMap<>();

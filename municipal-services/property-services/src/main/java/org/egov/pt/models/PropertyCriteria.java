@@ -100,6 +100,8 @@ public class PropertyCriteria {
 
 	private Set<String> ownerOldCustomerIds;
 	
+	private String addressAdditionalDetailsWardNumber;
+	
 	@Builder.Default
 	private Boolean isFuzzyNameSearch = false;
 
@@ -121,6 +123,7 @@ public class PropertyCriteria {
 				.isRequestForOldDataEncryption(this.isRequestForOldDataEncryption).createdBy(copySet(this.createdBy))
 				.isSchedulerCall(this.isSchedulerCall)
 				.isActiveUnit(this.isActiveUnit)
+				.addressAdditionalDetailsWardNumber(this.addressAdditionalDetailsWardNumber)
 				.addressAdditionalDetailsWardNumbers(copySet(this.addressAdditionalDetailsWardNumbers))
 				.ownerOldCustomerIds(copySet(this.ownerOldCustomerIds)).build();
 	}

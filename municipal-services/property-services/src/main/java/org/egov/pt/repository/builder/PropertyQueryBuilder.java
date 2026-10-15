@@ -215,6 +215,11 @@ public class PropertyQueryBuilder {
 			+ "(additionaldetails::jsonb)->>'wardNumber' AS ward, " + "(additionaldetails::jsonb)->>'ulbName' AS ulb, "
 			+ "district AS region " + "FROM eg_pt_address " + "WHERE TO_TIMESTAMP(createdtime / 1000)::date = "
 			+ "TO_DATE(?, 'DD-MM-YYYY')";
+	
+	private static final String PROPERTY_APPROVER_QUERY = "SELECT e.code " + "FROM eg_userrole_v1 r "
+			+ "INNER JOIN eg_hrms_employee e ON r.user_id = e.id " + "WHERE r.role_tenantid = ? "
+			+ "AND r.role_code = 'PROPERTY_APPROVER'"
+			+ "LIMIT 1";
 
 	public String getUniqueWardsSearchQuery(String stringDate, List<Object> preparedStmtList) {
 		StringBuilder builder = new StringBuilder(UNIQUE_WARDS_SEARCH_QUERY);
@@ -561,10 +566,26 @@ public class PropertyQueryBuilder {
             "WHERE propertyid = ? " +
             "AND bill_status IN ('ACTIVE', 'ADVANCE_ADJUSTED')";
 	
-	private static final String PT_UPDATE_IS_PAYMENT_PROCESSING_QUERY = "UPDATE eg_pt_tax_calculator_tracker "
-			+ "SET is_payment_processing = ? " + "WHERE bill_id = ? ";
-	
-	private static final String UPDATE_CUSTOM_TRACKER_AMOUNT =
+	private static final String PT_UPDATE_IS_PAYMENT_PROCESSING_QUERY =
+	        "UPDATE eg_pt_tax_calculator_tracker " +
+	        "SET is_payment_processing = ?, " +
+	        "additionaldetails = CASE " +
+	        "    WHEN ? = true THEN " +
+	        "        jsonb_set( " +
+	        "            CASE " +
+	        "                WHEN jsonb_typeof(COALESCE(additionaldetails, '{}'::jsonb)) = 'array' " +
+	        "                    THEN additionaldetails " +
+	        "                ELSE '[{}]'::jsonb " +
+	        "            END, " +
+	        "            '{0,chequeTxnAmount}', " +
+	        "            to_jsonb(CAST(? AS numeric)), " +
+	        "            true " +
+	        "        ) " +
+	        "    ELSE additionaldetails " +
+	        "END " +
+	        "WHERE bill_id = ?";
+
+			private static final String UPDATE_CUSTOM_TRACKER_AMOUNT =
 		    "UPDATE eg_pt_tax_calculator_tracker "
 		  + "SET propertytax = :amount, "
 		  + "lastmodifiedby = :modifiedBy, "
@@ -866,6 +887,12 @@ public class PropertyQueryBuilder {
 			builder.append("address.additionaldetails->>'wardNumber' IN (")
 					.append(createQuery(criteria.getAddressAdditionalDetailsWardNumbers())).append(")");
 			addToPreparedStatement(preparedStmtList, criteria.getAddressAdditionalDetailsWardNumbers());
+		}
+		
+		if (StringUtils.isNotBlank(criteria.getAddressAdditionalDetailsWardNumber())) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append("address.additionaldetails->>'wardNumber' = ?");
+			preparedStmtList.add(criteria.getAddressAdditionalDetailsWardNumber());
 		}
 
 		if (!CollectionUtils.isEmpty(criteria.getOwnerOldCustomerIds())) {
@@ -1395,8 +1422,14 @@ public String getActiveBillsQuery(String status, List<Object> preparedStmtList,S
 		return UPDATE_CUSTOM_TRACKER_AMOUNT;
 	}
 	
-	public String getUpdateIsProcessingPaymentQuery(List<Object> preparedStmtList, String billId, boolean isPaymentProcessing) {
+
+	public String getPropertyApproverUserNameQuery() {
+		return PROPERTY_APPROVER_QUERY;
+	}
+	public String getUpdateIsProcessingPaymentQuery(List<Object> preparedStmtList, String billId, boolean isPaymentProcessing, String txnAmount) {
 		preparedStmtList.add(isPaymentProcessing);
+		preparedStmtList.add(isPaymentProcessing);
+		preparedStmtList.add(txnAmount);
 		preparedStmtList.add(billId);
 		return PT_UPDATE_IS_PAYMENT_PROCESSING_QUERY;
 	}

@@ -33,6 +33,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
+import java.util.Collections;
 
 import lombok.Getter;
 
@@ -145,6 +146,25 @@ public class CommonUtils {
         
         return null;
     }
+    
+	public List<String> getAttributeValueList(String tenantId, String moduleName, List<String> names, String filter,
+			String jsonpath, RequestInfo requestInfo) {
+
+		StringBuilder uri = new StringBuilder(configs.getMdmsHost()).append(configs.getMdmsEndpoint());
+		MdmsCriteriaReq criteriaReq = prepareMdMsRequest(tenantId, moduleName, names, filter, requestInfo);
+		Optional<Object> response = restRepo.fetchResult(uri, criteriaReq);
+
+		try {
+			if (response.isPresent()) {
+				return JsonPath.read(response.get(), jsonpath);
+			}
+		} catch (Exception e) {
+			throw new CustomException(ErrorConstants.INVALID_TENANT_ID_MDMS_KEY,
+					ErrorConstants.INVALID_TENANT_ID_MDMS_MSG);
+		}
+
+		return Collections.emptyList();
+	}
 	
     public MdmsCriteriaReq prepareMdMsRequest(String tenantId,String moduleName, List<String> names, String filter, RequestInfo requestInfo) {
 

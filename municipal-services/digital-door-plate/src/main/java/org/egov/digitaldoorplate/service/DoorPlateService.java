@@ -3,10 +3,8 @@ package org.egov.digitaldoorplate.service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.digitaldoorplate.model.DoorPlate;
@@ -19,8 +17,6 @@ import org.egov.digitaldoorplate.model.DoorPlateQrVerifyResponse;
 import org.egov.digitaldoorplate.model.DoorPlateRequest;
 import org.egov.digitaldoorplate.model.DoorPlateResponse;
 import org.egov.digitaldoorplate.model.QrCodeData;
-import org.egov.digitaldoorplate.model.RemoteGarbageAccount;
-import org.egov.digitaldoorplate.model.RemoteGrbgAddress;
 import org.egov.digitaldoorplate.model.SearchCriteriaDoorPlate;
 import org.egov.digitaldoorplate.model.SearchCriteriaDoorPlateRequest;
 import org.egov.digitaldoorplate.repository.DoorPlateRepository;
@@ -32,7 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +44,9 @@ public class DoorPlateService {
 
 	@Autowired
 	private GarbageAccountService garbageAccountService;
+
+	@Autowired
+	private PropertyService propertyService;
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -186,10 +184,9 @@ public class DoorPlateService {
 	/**
 	 * Compares the owner/property snapshot embedded in a scanned door plate QR
 	 * code (captured at print time) against the current live record in
-	 * garbage-service, to detect whether the record has since been updated in
-	 * the system.
+	 * property-services (looked up by the QR's PropertyID), to detect whether
+	 * the record has since been updated in the system.
 	 */
-	@SuppressWarnings("unchecked")
 	public DoorPlateQrVerifyResponse verifyQrData(DoorPlateQrVerifyRequest request) {
 
 		validateUserInfo(request.getRequestInfo());
@@ -206,35 +203,12 @@ public class DoorPlateService {
 		} catch (Exception e) {
 			throw new CustomException("INVALID_QR", "Scanned QR data is not in the expected format.");
 		}
-		if (StringUtils.isEmpty(qrSnapshot.getId())) {
-			throw new CustomException("INVALID_QR", "Scanned QR data does not contain the garbage account id.");
+		if (StringUtils.isEmpty(qrSnapshot.getPropertyId())) {
+			throw new CustomException("INVALID_QR", "Scanned QR data does not contain the PropertyID.");
 		}
 
-		Map<String, Object> garbageSearchResponse = garbageAccountService.searchGarbageAccountByUuid(
-				request.getRequestInfo(), request.getTenantId(), qrSnapshot.getId());
-
-		Object rawGarbageAccounts = garbageSearchResponse.get("garbageAccounts");
-		if (null == rawGarbageAccounts
-				|| (rawGarbageAccounts instanceof List && ((List<?>) rawGarbageAccounts).isEmpty())) {
-			throw new CustomException("GARBAGE_ACCOUNT_NOT_FOUND",
-					"No active garbage account found for id: " + qrSnapshot.getId());
-		}
-		List<RemoteGarbageAccount> remoteGarbageAccounts = objectMapper.convertValue(rawGarbageAccounts,
-				new TypeReference<List<RemoteGarbageAccount>>() {
-				});
-		RemoteGarbageAccount account = remoteGarbageAccounts.get(0);
-		RemoteGrbgAddress address = CollectionUtils.isEmpty(account.getAddresses()) ? null
-				: account.getAddresses().get(0);
-
-		DoorPlateQrSnapshot dbSnapshot = DoorPlateQrSnapshot.builder()
-				.ownerName(account.getName())
-				.mobileNo(account.getMobileNumber())
-				.propertyId(account.getSystemPropertyId())
-				.id(account.getUuid())
-				.ulbName(null == address ? null : address.getUlbName())
-				.ward(null == address ? null : address.getWardName())
-				.address(toPropertyAddress(address))
-				.build();
+		DoorPlateQrSnapshot dbSnapshot = propertyService.buildQrSnapshot(request.getRequestInfo(),
+				request.getTenantId(), qrSnapshot.getPropertyId(), qrSnapshot.getId());
 
 		List<String> mismatchedFields = findMismatchedFields(qrSnapshot, dbSnapshot);
 
@@ -288,8 +262,9 @@ public class DoorPlateService {
 		garbageAccountService.updateDdpWorkflowFields(request.getRequestInfo(), request.getTenantId(),
 				request.getGarbageAccountUuid(), request.getVendorPrintVerified(), request.getUlbVerified(),
 				request.getInstallationDone(), request.getDdpLatitude(), request.getDdpLongitude(),
-				request.getDdpPrintingDone(), request.getDdpDispatched(), request.getDdpPrintVerified());
-
+				request.getDdpPrintingDone(), request.getDdpDispatched(), request.getDdpPrintVerified(),
+				request.getDdpRejectionReason());
+		
 		return DoorPlateDdpWorkflowResponse.builder()
 				.responseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true))
 				.garbageAccountUuid(request.getGarbageAccountUuid())
@@ -328,15 +303,6 @@ public class DoorPlateService {
 
 	private boolean fieldsEqual(String a, String b) {
 		return StringUtils.isEmpty(a) ? StringUtils.isEmpty(b) : a.trim().equalsIgnoreCase(null == b ? "" : b.trim());
-	}
-
-	private String toPropertyAddress(RemoteGrbgAddress address) {
-		if (null == address) {
-			return null;
-		}
-		return Stream.of(address.getAddress1(), address.getAddress2(), address.getCity())
-				.filter(StringUtils::isNotEmpty)
-				.collect(Collectors.joining(", "));
 	}
 
 	public DoorPlateResponse search(SearchCriteriaDoorPlateRequest searchRequest) {

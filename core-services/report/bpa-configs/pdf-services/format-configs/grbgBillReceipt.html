@@ -226,6 +226,10 @@
 		 table.main tr {
 		     page-break-inside: avoid;
 		 }
+		 .green-highlight {
+		 color: #2E7D32;
+		 font-weight: bold;
+		 }
       </style>
    </head>
    <body>
@@ -311,11 +315,11 @@
                         </tr>
 						<tr>
 						   <th>Amount Paid (INR)</th>
-						   <td><span class="highlight"><span th:text="${amountPaid}"> NA </span></span></td>
+						   <td><span class="green-highlight"><span th:text="${amountPaid}"> NA </span></span></td>
 						</tr>
 						<tr>
 							<th>Advance Paid (INR)</th>
-							<td><span class="highlight"><span th:text="${advancePaid}"> NA </span></span></td>
+							<td><span class="green-highlight"><span th:text="${advancePaid}"> NA </span></span></td>
 						</tr>
                         <tr>
                            <th>Period</th>

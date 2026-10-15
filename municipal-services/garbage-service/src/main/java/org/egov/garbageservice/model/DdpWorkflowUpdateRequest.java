@@ -52,6 +52,14 @@ public class DdpWorkflowUpdateRequest {
 	 * to the ULB/installer.
 	 */
 	private Boolean ddpDispatched;
-	
+
+	/**
+	 * Reason given when the vendor rejects the print (vendorPrintVerified =
+	 * "REJECTED").
+	 */
+	private String ddpRejectionReason;
+
+	private String remarks;
+
 	private Boolean ddpPrintVerified;
 }

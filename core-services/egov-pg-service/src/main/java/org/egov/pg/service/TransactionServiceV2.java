@@ -181,7 +181,6 @@ public class TransactionServiceV2 {
 				        BankAccount bankAccount = bankAccountResponse.getBankAccounts().get(0);
 				        transaction.setPayTo(bankAccount.getPayTo());
 				    }
-				transaction.setPayTo("");
 				URI uri = gatewayService.initiateTxn(transaction);
 				transaction.setRedirectUrl(uri.toString());
 
@@ -503,6 +502,7 @@ public class TransactionServiceV2 {
 		payload.put("billId", transaction.getBillId());
 		payload.put("txnId", transaction.getTxnId());
 		payload.put("isPaymentProcessing", isPaymentProcessing);
+		payload.put("txnAmount", transaction.getTxnAmount());
 
 		if ("GB".equalsIgnoreCase(transaction.getProductInfo())) {
 			producer.push(appProperties.getGrbgPaymentProcessingTopic(), payload);

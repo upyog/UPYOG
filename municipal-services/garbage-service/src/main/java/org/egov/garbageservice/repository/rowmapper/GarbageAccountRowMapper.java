@@ -61,14 +61,16 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
                         .ddpModifiedDate(rs.getLong("ddp_modified_date"))
                         .ddpPrintVerified((Boolean) rs.getObject("ddp_print_verified"))
                         .isDdpVerified((Boolean) rs.getObject("ddp_verified"))
-                        .isReadyForPrinting((Boolean) rs.getObject("is_ready_for_printing"))
-                        .vendorPrintVerified(rs.getString("vendor_print_verified"))
-                        .ulbVerified((Boolean) rs.getObject("ulb_verified"))
-                        .installationDone((Boolean) rs.getObject("installation_done"))
-                        .ddpLatitude(rs.getString("ddp_latitude"))
-                        .ddpLongitude(rs.getString("ddp_longitude"))
-                        .ddpPrintingDone((Boolean) rs.getObject("ddp_printing_done"))
-                        .ddpDispatched((Boolean) rs.getObject("ddp_dispatched"))
+                        .isReadyForPrinting(getBooleanOrFalse(rs, "ddp_dtl_is_ready_for_printing"))
+                        .vendorPrintVerified(rs.getString("ddp_dtl_vendor_print_verified"))
+                        .ulbVerified(getBooleanOrFalse(rs, "ddp_dtl_ulb_verified"))
+                        .installationDone(getBooleanOrFalse(rs, "ddp_dtl_installation_done"))
+                        .ddpLatitude(rs.getString("ddp_dtl_ddp_latitude"))
+                        .ddpLongitude(rs.getString("ddp_dtl_ddp_longitude"))
+                        .ddpPrintingDone(getBooleanOrFalse(rs, "ddp_dtl_ddp_printing_done"))
+                        .ddpDispatched(getBooleanOrFalse(rs, "ddp_dtl_ddp_dispatched"))
+                        .ddpRejectionReason(rs.getString("ddp_dtl_ddp_rejection_reason"))
+                        .remarks(rs.getString("ddp_dtl_remarks"))
                         .type(rs.getString("type"))
                         .name(rs.getString("name"))
                         .mobileNumber(rs.getString("mobile_number"))
@@ -233,6 +235,15 @@ public class GarbageAccountRowMapper implements ResultSetExtractor<List<GarbageA
     }
 
     
+    /**
+     * DDP flags come from a left join on eg_grbg_account_ddp, so accounts with
+     * no DDP row yet read as null; treat those as false (the old column default).
+     */
+    private Boolean getBooleanOrFalse(ResultSet rs, String columnLabel) throws SQLException {
+        Boolean value = (Boolean) rs.getObject(columnLabel);
+        return null == value ? Boolean.FALSE : value;
+    }
+
     private boolean hasColumn(ResultSet rs, String columnName) throws SQLException {
         ResultSetMetaData rsmd = rs.getMetaData();
         int columns = rsmd.getColumnCount();

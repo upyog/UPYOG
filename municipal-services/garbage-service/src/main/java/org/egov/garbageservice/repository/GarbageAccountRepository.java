@@ -29,6 +29,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 
@@ -53,9 +54,24 @@ public class GarbageAccountRepository {
 			+ " LEFT JOIN eg_grbg_old_details old_dtl ON old_dtl.garbage_id = acc.garbage_id"
 			+ " JOIN eg_grbg_collection_unit unit ON unit.garbage_id = acc.garbage_id"
 			+ " JOIN eg_grbg_address address ON address.garbage_id = acc.garbage_id"
-			+ " JOIN eg_grbg_application app ON app.garbage_id = acc.garbage_id";
-			
+			+ " JOIN eg_grbg_application app ON app.garbage_id = acc.garbage_id"
+			+ " LEFT JOIN eg_grbg_account_ddp ddp_dtl ON ddp_dtl.garbage_account_uuid = acc.uuid";
+
+	private static final String DDP_DETAIL_COLUMNS = ", ddp_dtl.is_ready_for_printing as ddp_dtl_is_ready_for_printing"
+			+ ", ddp_dtl.vendor_print_verified as ddp_dtl_vendor_print_verified"
+			+ ", ddp_dtl.ulb_verified as ddp_dtl_ulb_verified"
+			+ ", ddp_dtl.installation_done as ddp_dtl_installation_done"
+			+ ", ddp_dtl.ddp_latitude as ddp_dtl_ddp_latitude"
+			+ ", ddp_dtl.ddp_longitude as ddp_dtl_ddp_longitude"
+			+ ", ddp_dtl.ddp_printing_done as ddp_dtl_ddp_printing_done"
+			+ ", ddp_dtl.ddp_dispatched as ddp_dtl_ddp_dispatched"
+			+ ", ddp_dtl.ddp_rejection_reason as ddp_dtl_ddp_rejection_reason"
+			+ ", ddp_dtl.remarks as ddp_dtl_remarks ";
+
+	private static final String DDP_DETAIL_JOIN = " LEFT OUTER JOIN eg_grbg_account_ddp as ddp_dtl ON ddp_dtl.garbage_account_uuid = acc.uuid";
+
 	private static final String SELECT_QUERY_ACCOUNT = "SELECT acc.* "
+			+ DDP_DETAIL_COLUMNS
 			+ ", old_dtl.uuid as old_dtl_uuid, old_dtl.garbage_id as old_dtl_garbage_id, old_dtl.old_garbage_id as old_dtl_old_garbage_id"
 			+ ", address.uuid as address_uuid, address.address_type as address_address_type, address.address1 as address_address1, address.address2 as address_address2, address.city as address_city, address.state as address_state, address.pincode as address_pincode, address.is_active as address_is_active, address.zone as address_zone, address.ulb_name as address_ulb_name, address.ulb_type as address_ulb_type, address.ward_name as address_ward_name, address.additional_detail as address_additional_detail, address.garbage_id as address_garbage_id"
 			+ ", unit.uuid as unit_uuid, unit.unit_name as unit_unit_name, unit.unit_ward as unit_unit_ward, unit.ulb_name as unit_ulb_name, unit.type_of_ulb as unit_type_of_ulb, unit.garbage_id as unit_garbage_id, unit.unit_type as unit_unit_type, unit.category as unit_category, unit.sub_category as unit_sub_category, unit.sub_category_type as unit_sub_category_type, unit.is_active as unit_is_active,unit.isbplunit as unit_isbplunit,unit.isbulkgeneration as unit_isbulkgeneration,unit.isvariablecalculation as unit_isvariablecalculation,unit.no_of_units as unit_no_of_units,unit.ismonthlybilling as unit_is_monthly_billing"
@@ -75,6 +91,7 @@ public class GarbageAccountRepository {
 		    + " LEFT OUTER JOIN eg_grbg_old_details as old_dtl ON old_dtl.garbage_id = acc.garbage_id"
 		    + " LEFT OUTER JOIN eg_grbg_collection_unit as unit ON unit.garbage_id = acc.garbage_id"
 		    + " LEFT OUTER JOIN eg_grbg_address as address ON address.garbage_id = acc.garbage_id"
+			+ DDP_DETAIL_JOIN
 			+ " LEFT OUTER JOIN eg_grbg_account sub_acc ON acc.uuid = sub_acc.parent_account"
 		    + " LEFT OUTER JOIN eg_grbg_application as sub_app ON sub_app.garbage_id = sub_acc.garbage_id"
 		    + " LEFT OUTER JOIN eg_grbg_old_details as sub_old_dtl ON sub_old_dtl.garbage_id = sub_acc.garbage_id"
@@ -82,11 +99,13 @@ public class GarbageAccountRepository {
 		    + " LEFT OUTER JOIN eg_grbg_address as sub_address ON sub_address.garbage_id = sub_acc.garbage_id";
 
 	  private static final String SELECT_QUERY_ACCOUNT_INDEX = "SELECT acc.* "
+	            + DDP_DETAIL_COLUMNS
 	            + ", old_dtl.uuid as old_dtl_uuid, old_dtl.garbage_id as old_dtl_garbage_id, old_dtl.old_garbage_id as old_dtl_old_garbage_id"
 	            + ", address.uuid as address_uuid, address.address_type as address_address_type, address.address1 as address_address1, address.address2 as address_address2, address.city as address_city, address.state as address_state, address.pincode as address_pincode, address.is_active as address_is_active, address.zone as address_zone, address.ulb_name as address_ulb_name, address.ulb_type as address_ulb_type, address.ward_name as address_ward_name, address.additional_detail as address_additional_detail, address.garbage_id as address_garbage_id"
 	            + ", unit.uuid as unit_uuid, unit.unit_name as unit_unit_name, unit.unit_ward as unit_unit_ward, unit.ulb_name as unit_ulb_name, unit.type_of_ulb as unit_type_of_ulb, unit.garbage_id as unit_garbage_id, unit.unit_type as unit_unit_type, unit.category as unit_category, unit.sub_category as unit_sub_category, unit.sub_category_type as unit_sub_category_type, unit.is_active as unit_is_active,unit.isbplunit as unit_isbplunit,unit.isbulkgeneration as unit_isbulkgeneration,unit.isvariablecalculation as unit_isvariablecalculation,unit.no_of_units as unit_no_of_units,unit.ismonthlybilling as unit_is_monthly_billing"
 	            + ", app.uuid as app_uuid, app.application_no as app_application_no , app.status as app_status, app.garbage_id as app_garbage_id "
 	            + " FROM filtered_acc as acc"
+	            + DDP_DETAIL_JOIN
 	            + " LEFT OUTER JOIN eg_grbg_application as app ON app.garbage_id = acc.garbage_id"
 	            + " LEFT OUTER JOIN eg_grbg_old_details as old_dtl ON old_dtl.garbage_id = acc.garbage_id"
 	            + " LEFT OUTER JOIN eg_grbg_collection_unit as unit ON unit.garbage_id = acc.garbage_id"
@@ -172,22 +191,60 @@ public class GarbageAccountRepository {
 			+ "SET ddp_print_verified = :ddpPrintVerified, " + "    ddp_modified_date = :ddpModifiedDate "
 			+ "WHERE id = :id";
 
-	private static final String UPDATE_READY_FOR_PRINTING = "UPDATE eg_grbg_account "
-			+ "SET is_ready_for_printing = true, last_modified_by = ?, last_modified_date = ? "
+	private static final String UPDATE_ACCOUNT_LAST_MODIFIED_BY_IDS = "UPDATE eg_grbg_account "
+			+ "SET last_modified_by = ?, last_modified_date = ? "
 			+ "WHERE id IN (%s)";
 
-	private static final String UPDATE_DDP_WORKFLOW_BY_UUID = "UPDATE eg_grbg_account SET "
-	        + "vendor_print_verified = COALESCE(:vendorPrintVerified, vendor_print_verified), "
+	private static final String UPSERT_READY_FOR_PRINTING = "INSERT INTO eg_grbg_account_ddp "
+			+ "(garbage_account_uuid, garbage_id, is_ready_for_printing) "
+			+ "SELECT acc.uuid, acc.garbage_id, true FROM eg_grbg_account acc "
+			+ "WHERE acc.id IN (%s) AND acc.uuid IS NOT NULL "
+			+ "ON CONFLICT (garbage_account_uuid) DO UPDATE SET is_ready_for_printing = true";
+
+	private static final String UPDATE_DDP_PRINT_VERIFIED_BY_UUID = "UPDATE eg_grbg_account SET "
 	        + "ddp_print_verified = COALESCE(:ddpPrintVerified, ddp_print_verified), "
-	        + "ulb_verified = COALESCE(:ulbVerified, ulb_verified), "
-	        + "installation_done = COALESCE(:installationDone, installation_done), "
-	        + "ddp_latitude = COALESCE(:ddpLatitude, ddp_latitude), "
-	        + "ddp_longitude = COALESCE(:ddpLongitude, ddp_longitude), "
-	        + "ddp_printing_done = COALESCE(:ddpPrintingDone, ddp_printing_done), "
-	        + "ddp_dispatched = COALESCE(:ddpDispatched, ddp_dispatched), "
 	        + "last_modified_by = :lastModifiedBy, "
 	        + "last_modified_date = :lastModifiedDate "
 	        + "WHERE uuid = :uuid AND tenant_id = :tenantId";
+
+	private static final String UPSERT_DDP_DETAILS = "INSERT INTO eg_grbg_account_ddp "
+	        + "(garbage_account_uuid, garbage_id, is_ready_for_printing, vendor_print_verified, ulb_verified, "
+	        + "installation_done, ddp_latitude, ddp_longitude, ddp_printing_done, ddp_dispatched, "
+	        + "ddp_rejection_reason, remarks) "
+	        + "VALUES (:uuid, :garbageId, COALESCE(:isReadyForPrinting, false), CAST(:vendorPrintVerified AS VARCHAR), "
+	        + "COALESCE(:ulbVerified, false), COALESCE(:installationDone, false), CAST(:ddpLatitude AS VARCHAR), "
+	        + "CAST(:ddpLongitude AS VARCHAR), COALESCE(:ddpPrintingDone, false), COALESCE(:ddpDispatched, false), "
+	        + "CAST(:ddpRejectionReason AS VARCHAR), CAST(:remarks AS VARCHAR)) "
+	        + "ON CONFLICT (garbage_account_uuid) DO UPDATE SET "
+	        + "is_ready_for_printing = COALESCE(:isReadyForPrinting, eg_grbg_account_ddp.is_ready_for_printing), "
+	        + "vendor_print_verified = COALESCE(:vendorPrintVerified, eg_grbg_account_ddp.vendor_print_verified), "
+	        + "ulb_verified = COALESCE(:ulbVerified, eg_grbg_account_ddp.ulb_verified), "
+	        + "installation_done = COALESCE(:installationDone, eg_grbg_account_ddp.installation_done), "
+	        + "ddp_latitude = COALESCE(:ddpLatitude, eg_grbg_account_ddp.ddp_latitude), "
+	        + "ddp_longitude = COALESCE(:ddpLongitude, eg_grbg_account_ddp.ddp_longitude), "
+	        + "ddp_printing_done = COALESCE(:ddpPrintingDone, eg_grbg_account_ddp.ddp_printing_done), "
+	        + "ddp_dispatched = COALESCE(:ddpDispatched, eg_grbg_account_ddp.ddp_dispatched), "
+	        + "ddp_rejection_reason = COALESCE(:ddpRejectionReason, eg_grbg_account_ddp.ddp_rejection_reason), "
+	        + "remarks = COALESCE(:remarks, eg_grbg_account_ddp.remarks)";
+
+	private static final String UPSERT_DDP_WORKFLOW_BY_UUID ="INSERT INTO eg_grbg_account_ddp "
+	        + "(garbage_account_uuid, garbage_id, vendor_print_verified, ulb_verified, installation_done, "
+	        + "ddp_latitude, ddp_longitude, ddp_printing_done, ddp_dispatched, ddp_rejection_reason, remarks) "
+	        + "SELECT acc.uuid, acc.garbage_id, CAST(:vendorPrintVerified AS VARCHAR), COALESCE(:ulbVerified, false), "
+	        + "COALESCE(:installationDone, false), CAST(:ddpLatitude AS VARCHAR), CAST(:ddpLongitude AS VARCHAR), "
+	        + "COALESCE(:ddpPrintingDone, false), COALESCE(:ddpDispatched, false), "
+	        + "CAST(:ddpRejectionReason AS VARCHAR), CAST(:remarks AS VARCHAR) "
+	        + "FROM eg_grbg_account acc WHERE acc.uuid = :uuid AND acc.tenant_id = :tenantId "
+	        + "ON CONFLICT (garbage_account_uuid) DO UPDATE SET "
+	        + "vendor_print_verified = COALESCE(:vendorPrintVerified, eg_grbg_account_ddp.vendor_print_verified), "
+	        + "ulb_verified = COALESCE(:ulbVerified, eg_grbg_account_ddp.ulb_verified), "
+	        + "installation_done = COALESCE(:installationDone, eg_grbg_account_ddp.installation_done), "
+	        + "ddp_latitude = COALESCE(:ddpLatitude, eg_grbg_account_ddp.ddp_latitude), "
+	        + "ddp_longitude = COALESCE(:ddpLongitude, eg_grbg_account_ddp.ddp_longitude), "
+	        + "ddp_printing_done = COALESCE(:ddpPrintingDone, eg_grbg_account_ddp.ddp_printing_done), "
+	        + "ddp_dispatched = COALESCE(:ddpDispatched, eg_grbg_account_ddp.ddp_dispatched), "
+	        + "ddp_rejection_reason = COALESCE(:ddpRejectionReason, eg_grbg_account_ddp.ddp_rejection_reason), "
+	        + "remarks = COALESCE(:remarks, eg_grbg_account_ddp.remarks)";
 
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private JdbcTemplate jdbcTemplate;
@@ -743,8 +800,38 @@ public class GarbageAccountRepository {
 
 		if (searchCriteriaGarbageAccount.getIsReadyForPrinting() != null) {
 			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
-			whereClause.append(" acc.is_ready_for_printing = ? ");
+			whereClause.append(" COALESCE(ddp_dtl.is_ready_for_printing, false) = ? ");
 			preparedStatementValues.add(searchCriteriaGarbageAccount.getIsReadyForPrinting());
+		}
+
+		if (!CollectionUtils.isEmpty(searchCriteriaGarbageAccount.getVendorPrintVerified())) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+			whereClause.append(" ddp_dtl.vendor_print_verified IN ( ").append(getQueryForCollection(
+					searchCriteriaGarbageAccount.getVendorPrintVerified(), preparedStatementValues)).append(" )");
+		}
+
+		if (searchCriteriaGarbageAccount.getUlbVerified() != null) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+			whereClause.append(" COALESCE(ddp_dtl.ulb_verified, false) = ? ");
+			preparedStatementValues.add(searchCriteriaGarbageAccount.getUlbVerified());
+		}
+
+		if (searchCriteriaGarbageAccount.getInstallationDone() != null) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+			whereClause.append(" COALESCE(ddp_dtl.installation_done, false) = ? ");
+			preparedStatementValues.add(searchCriteriaGarbageAccount.getInstallationDone());
+		}
+
+		if (searchCriteriaGarbageAccount.getDdpPrintingDone() != null) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+			whereClause.append(" COALESCE(ddp_dtl.ddp_printing_done, false) = ? ");
+			preparedStatementValues.add(searchCriteriaGarbageAccount.getDdpPrintingDone());
+		}
+
+		if (searchCriteriaGarbageAccount.getDdpDispatched() != null) {
+			isAppendAndClause = addAndClauseIfRequired(isAppendAndClause, whereClause);
+			whereClause.append(" COALESCE(ddp_dtl.ddp_dispatched, false) = ? ");
+			preparedStatementValues.add(searchCriteriaGarbageAccount.getDdpDispatched());
 		}
 
         return whereClause.toString();
@@ -833,6 +920,7 @@ public class GarbageAccountRepository {
 	 * {@code GarbageAccountSchedulerService.markReadyForPrinting}) so a single
 	 * ULB/ward's matching accounts don't require one UPDATE per row.
 	 */
+	@Transactional
 	public int markReadyForPrinting(List<Long> ids, String userUuid, Long lastModifiedDate) {
 		if (CollectionUtils.isEmpty(ids)) {
 			return 0;
@@ -846,26 +934,50 @@ public class GarbageAccountRepository {
 			placeholders.append("?");
 		}
 
-		String query = String.format(UPDATE_READY_FOR_PRINTING, placeholders);
+		List<Object> accountParams = new ArrayList<>();
+		accountParams.add(userUuid);
+		accountParams.add(lastModifiedDate);
+		accountParams.addAll(ids);
+		jdbcTemplate.update(String.format(UPDATE_ACCOUNT_LAST_MODIFIED_BY_IDS, placeholders), accountParams.toArray());
 
-		List<Object> params = new ArrayList<>();
-		params.add(userUuid);
-		params.add(lastModifiedDate);
-		params.addAll(ids);
-
-		return jdbcTemplate.update(query, params.toArray());
+		return jdbcTemplate.update(String.format(UPSERT_READY_FOR_PRINTING, placeholders), ids.toArray());
 	}
 
 	/**
-	 * Partially updates the DDP workflow columns (vendor print verification,
-	 * ULB verification, installation + lat/long) for one account, identified
-	 * by uuid. Any field left null on the request keeps its existing column
-	 * value (see the COALESCE in {@link #UPDATE_DDP_WORKFLOW_BY_UUID}), so each
-	 * role-specific caller only needs to send the field(s) it owns.
+	 * Writes the eg_grbg_account_ddp columns carried on the given account
+	 * (creating the row on first write). Null fields keep their existing value.
+	 * Used by the generic garbage account update flow.
+	 */
+	public void upsertDdpDetails(String accountUuid, Long garbageId, GarbageAccount account) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("uuid", accountUuid);
+		params.put("garbageId", garbageId);
+		params.put("isReadyForPrinting", account.getIsReadyForPrinting());
+		params.put("vendorPrintVerified", account.getVendorPrintVerified());
+		params.put("ulbVerified", account.getUlbVerified());
+		params.put("installationDone", account.getInstallationDone());
+		params.put("ddpLatitude", account.getDdpLatitude());
+		params.put("ddpLongitude", account.getDdpLongitude());
+		params.put("ddpPrintingDone", account.getDdpPrintingDone());
+		params.put("ddpDispatched", account.getDdpDispatched());
+		params.put("ddpRejectionReason", account.getDdpRejectionReason());
+		params.put("remarks", account.getRemarks());
+
+		namedParameterJdbcTemplate.update(UPSERT_DDP_DETAILS, params);
+	}
+
+	/**
+	 * Partially updates the DDP workflow fields for one account, identified by
+	 * uuid: ddp_print_verified stays on eg_grbg_account, everything else lives
+	 * in eg_grbg_account_ddp (created on first write). Any field left null on
+	 * the request keeps its existing value (see the COALESCEs in
+	 * {@link #UPSERT_DDP_WORKFLOW_BY_UUID}), so each role-specific caller only
+	 * needs to send the field(s) it owns.
 	 *
-	 * @return the number of rows updated (0 if no account matched the
+	 * @return the number of accounts updated (0 if no account matched the
 	 *         uuid/tenantId).
 	 */
+	@Transactional
 	public int updateDdpWorkflowFields(DdpWorkflowUpdateRequest request, String userUuid, Long now) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("uuid", request.getUuid());
@@ -877,11 +989,19 @@ public class GarbageAccountRepository {
 		params.put("ddpLongitude", request.getDdpLongitude());
 		params.put("ddpPrintingDone", request.getDdpPrintingDone());
 		params.put("ddpDispatched", request.getDdpDispatched());
+		params.put("ddpRejectionReason", request.getDdpRejectionReason());
+		params.put("remarks", request.getRemarks());
 		params.put("lastModifiedBy", userUuid);
 		params.put("lastModifiedDate", now);
 		params.put("ddpPrintVerified", request.getDdpPrintVerified());
 
-		return namedParameterJdbcTemplate.update(UPDATE_DDP_WORKFLOW_BY_UUID, params);
+		int updatedAccounts = namedParameterJdbcTemplate.update(UPDATE_DDP_PRINT_VERIFIED_BY_UUID, params);
+		if (updatedAccounts == 0) {
+			return 0;
+		}
+
+		namedParameterJdbcTemplate.update(UPSERT_DDP_WORKFLOW_BY_UUID, params);
+		return updatedAccounts;
 	}
 
 	/**

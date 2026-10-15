@@ -96,8 +96,10 @@ public class PDFRequestGenerator {
 
 				grbg.put("billNo", bill.get(i).getBillNumber());
 				grbg.put("mobileNo", grbgAccount.getMobileNumber());
-				grbg.put("billDueDate", Instant.ofEpochMilli(bill.get(i).getBillDetails().get(lastIndex).getExpiryDate())
-						.atZone(ZoneId.systemDefault()).toLocalDateTime().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+				grbg.put("billDueDate",
+						Instant.ofEpochMilli(grbgBillTracker.get(0).getAuditDetails().getCreatedDate())
+								.atZone(ZoneId.systemDefault()).toLocalDate().plusDays(30)
+								.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
 			}
 			Bill billObj = bill.get(i);
 			String consumerCode = billObj.getConsumerCode();
@@ -134,9 +136,30 @@ public class PDFRequestGenerator {
 			        .orElse(null);
 
 			if (tracker != null && Boolean.TRUE.equals(tracker.getIsPaymentProcessing())) {
-			    paymentStatus = "PROCESSING";
+				BigDecimal chequeTxnAmount = BigDecimal.ZERO;
+				JsonNode trackerAdditionalDetail = objectMapper.valueToTree(tracker.getAdditionaldetail());
+				if (trackerAdditionalDetail != null && trackerAdditionalDetail.has("chequeTxnAmount")
+						&& !trackerAdditionalDetail.get("chequeTxnAmount").isNull()) {
+					chequeTxnAmount = trackerAdditionalDetail.get("chequeTxnAmount").decimalValue();
+				}
+				BigDecimal adjustedAmount = BigDecimal.ZERO;
+				for (BillDetail billDetail : billObj.getBillDetails()) {
+				    if (billDetail.getBillAccountDetails() != null) {
+				        for (BillAccountDetail accDetail : billDetail.getBillAccountDetails()) {
+				            if (accDetail.getAdjustedAmount() != null) {
+				                adjustedAmount = adjustedAmount.add(accDetail.getAdjustedAmount());
+				            }
+				        }
+				    }
+				}
+				BigDecimal totalPaidAmount = chequeTxnAmount.add(adjustedAmount);
+				if (totalPaidAmount.compareTo(billObj.getTotalAmount()) < 0) {
+					paymentStatus = "PARTIALLY_PAID";
+				} else {
+					paymentStatus = "PAID";
+				}
 			} else {
-			    paymentStatus = billObj.getStatus().toString();
+				paymentStatus = billObj.getStatus().toString();
 			}
 
 			grbgObj.get("paymentStatuses").add(paymentStatus);
@@ -230,7 +253,7 @@ public class PDFRequestGenerator {
 				totalRebate = totalRebate.add(tracker.getRebateAmount());
 			}
 
-			if (tracker.getGarbageBillWithoutRebate() != null) {
+			if (tracker.getGarbageBillWithoutRebate() != null && !"CANCELLED".equals(tracker.getStatus())) {
 				totalWithoutRebate = totalWithoutRebate.add(tracker.getGarbageBillWithoutRebate());
 			}
 			

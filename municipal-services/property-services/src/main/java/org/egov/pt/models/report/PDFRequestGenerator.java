@@ -29,6 +29,13 @@ import org.egov.pt.models.collection.BillAccountDetail;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
+import java.util.Collections;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.pt.repository.PropertyRepository;
+import org.egov.pt.util.CommonUtils;
+import org.egov.tracer.model.CustomException;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.util.CollectionUtils;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +46,13 @@ public class PDFRequestGenerator {
 
 	@Autowired
 	private ObjectMapper objectMapper;
+	
+	@Autowired
+	private PropertyRepository repository;
+
+	@Autowired
+	@Qualifier("propertyUtil")
+	private CommonUtils commonUtils;
 
 	public PDFRequest generatePdfRequest(RequestInfoWrapper requestInfoWrapper, Property property,
 			PtTaxCalculatorTracker ptTaxCalculatorTracker, Bill bill, Map<String, Integer> tenantIdDaysMap) {
@@ -308,13 +322,39 @@ public class PDFRequestGenerator {
 		}
 
 		if (Boolean.TRUE.equals(ptTaxCalculatorTracker.getIsPaymentProcessing())) {
-		    paymentStatus = "Processing";
+			BigDecimal chequeTxnAmount = BigDecimal.ZERO;
+			JsonNode trackerAdditionalDetails = ptTaxCalculatorTracker.getAdditionalDetails();
+			if (trackerAdditionalDetails != null && trackerAdditionalDetails.isArray()
+					&& !trackerAdditionalDetails.isEmpty()) {
+				JsonNode firstDetail = trackerAdditionalDetails.get(0);
+				if (firstDetail.has("chequeTxnAmount") && !firstDetail.get("chequeTxnAmount").isNull()) {
+					chequeTxnAmount = firstDetail.get("chequeTxnAmount").decimalValue();
+				}
+			}
+			BigDecimal adjustedAmount = BigDecimal.ZERO;
+			if (bill.getBillDetails() != null) {
+				for (BillDetail billDetail : bill.getBillDetails()) {
+					if (billDetail.getBillAccountDetails() != null) {
+						for (BillAccountDetail accDetail : billDetail.getBillAccountDetails()) {
+							if (accDetail.getAdjustedAmount() != null) {
+								adjustedAmount = adjustedAmount.add(accDetail.getAdjustedAmount());
+							}
+						}
+					}
+				}
+			}
+			BigDecimal totalPaidAmount = chequeTxnAmount.add(adjustedAmount);
+			if (totalPaidAmount.compareTo(bill.getTotalAmount()) < 0) {
+				paymentStatus = "Partially Paid";
+			} else {
+				paymentStatus = "Paid";
+			}
 		} else if (bill.getStatus().equals(StatusEnum.PAID)) {
-		    paymentStatus = "Success";
+			paymentStatus = "Success";
 		} else if (bill.getStatus().equals(StatusEnum.PARTIALLY_PAID)) {
-		    paymentStatus = "Partially Paid";
+			paymentStatus = "Partially Paid";
 		} else {
-		    paymentStatus = "Pending";
+			paymentStatus = "Pending";
 		}
 		
 		if (amountPaid.compareTo(BigDecimal.ZERO) > 0) {
@@ -346,6 +386,61 @@ public class PDFRequestGenerator {
 		}
 	}
 	
+	public PDFRequest generateNoticePdfRequest(RequestInfoWrapper requestInfoWrapper, Property property,
+			PtTaxCalculatorTracker ptTaxCalculatorTracker, Bill bill, Map<String, Integer> tenantIdDaysMap, String tenantId) {
+
+		Map<String, Object> dataObject = new HashMap<>();
+		Map<String, String> notice = new HashMap<>();
+		
+		String approverName = getApproverNameFromMdms(requestInfoWrapper.getRequestInfo(), property.getTenantId());		
+		notice.put("approverName", approverName);
+
+		JsonNode addressAdditionalDetails = objectMapper.valueToTree(property.getAddress().getAdditionalDetails());
+		notice.put("ownerName", property.getOwners().stream().flatMap(owner -> {
+			List<String> names = new ArrayList<>();
+
+			if (owner.getPropertyOwnerName() != null) {
+				names.add(owner.getPropertyOwnerName());
+			}
+
+			if (owner.getAdditionalDetails() != null && owner.getAdditionalDetails().has("coOwnerName")) {
+
+				String anyOtherCoWorker = owner.getAdditionalDetails().has("anyOtherCoWorker")
+						? owner.getAdditionalDetails().get("anyOtherCoWorker").asText()
+						: null;
+
+				if (!"No".equalsIgnoreCase(anyOtherCoWorker)) {
+					String coOwner = owner.getAdditionalDetails().get("coOwnerName").asText();
+
+					if (coOwner != null && !coOwner.isEmpty()) {
+						names.add(coOwner);
+					}
+				}
+			}
+
+			return names.stream();
+		}).distinct().collect(Collectors.joining(" & ")));
+		notice.put("address",
+				Stream.of(addressAdditionalDetails.get("propertyAddress"), addressAdditionalDetails.get("wardNumber"),
+						addressAdditionalDetails.get("ulbType"), addressAdditionalDetails.get("ulbName"),
+						property.getAddress().getDistrict(), property.getAddress().getPincode())
+						.filter(Objects::nonNull).map(Object::toString).map(s -> s.replace("\"", ""))
+						.filter(s -> !s.isEmpty()).collect(Collectors.joining(", ")));
+
+		notice.put("mobileNumber", bill.getMobileNumber());
+		notice.put("propertyId", property.getPropertyId());
+		notice.put("noticeDate", LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+		notice.put("amountDue", bill.getTotalAmount() != null ? bill.getTotalAmount().toPlainString() : "0.00");
+		dataObject.put("notice", notice);
+
+		return PDFRequest.builder()
+				.RequestInfo(requestInfoWrapper.getRequestInfo())
+				.key("PropertyNotice")
+				.tenantId(tenantId)
+				.data(dataObject)
+				.build();
+	}
+	
 	private String escapeHtml(String input) {
 	    if (input == null) return null;
 	    return input.replace("&", "&amp;")
@@ -353,6 +448,25 @@ public class PDFRequestGenerator {
 	                .replace(">", "&gt;")
 	                .replace("\"", "&quot;")
 	                .replace("'", "&#39;");
+	}
+	
+	private String getApproverNameFromMdms(RequestInfo requestInfo, String tenantId) {
+
+		List<String> approverNames = commonUtils.getAttributeValueList(tenantId, "Signature",
+				Collections.singletonList("Signature"), null, "$.MdmsRes.Signature.Signature[*].userName", requestInfo);
+
+		if (CollectionUtils.isEmpty(approverNames)) {
+			throw new CustomException("MDMS_APPROVER_NOT_FOUND", "No Signature found for tenant " + tenantId);
+		}
+
+		String approverNameHrms = repository.getPropertyApproverCode(tenantId);
+
+		if (approverNames.contains(approverNameHrms)) {
+			return approverNameHrms;
+		}
+
+		throw new CustomException("MDMS_APPROVER_NOT_FOUND",
+				"No Signature found for PROPERTY_APPROVER " + approverNameHrms);
 	}
 
 }

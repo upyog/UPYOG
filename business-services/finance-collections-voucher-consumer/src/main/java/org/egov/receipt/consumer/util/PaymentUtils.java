@@ -268,7 +268,7 @@ public class PaymentUtils {
 		else
 			instrumentType.setName(this.toCamelCase(payment.getPaymentMode().name()));
         instrument.setInstrumentType(instrumentType);
-        instrument.setTenantId(payment.getTenantId());
+        instrument.setTenantId(normalizeTenantId(payment.getTenantId()));
         instrument.setTransactionDate(new Date(payment.getTransactionDate()));
         instrument.setTransactionNumber(payment.getTransactionNumber());
         instrument.setTransactionType(TransactionType.Debit);
@@ -291,4 +291,13 @@ public class PaymentUtils {
 	private String toCamelCase(String str){
     	return new StringBuilder(str.toUpperCase().substring(0,1)).append(str.substring(1).toLowerCase()).toString();
     }
+
+	/**
+	 * Instrument types are stored per lower case tenant id in egf-instrument and are matched
+	 * case sensitively, so only the instrument tenant is normalised. The other tenant ids are
+	 * left as received because MDMS knows the tenant as hp.Shimla.
+	 */
+	private String normalizeTenantId(String tenantId) {
+		return tenantId != null ? tenantId.toLowerCase() : null;
+	}
 }

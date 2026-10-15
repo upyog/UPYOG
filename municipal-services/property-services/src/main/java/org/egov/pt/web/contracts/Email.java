@@ -25,5 +25,7 @@ public class Email {
 	@JsonProperty("isHTML")
 	private boolean isHTML;
 	private String ulbName;
+	private byte[] attachment;
+	private String attachmentFileName;
 
 }

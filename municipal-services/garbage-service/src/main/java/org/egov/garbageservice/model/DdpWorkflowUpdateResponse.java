@@ -35,4 +35,8 @@ public class DdpWorkflowUpdateResponse {
 	private Boolean ddpPrintingDone;
 
 	private Boolean ddpDispatched;
+
+	private String ddpRejectionReason;
+
+	private String remarks;
 }

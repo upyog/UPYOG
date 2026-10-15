@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Property Tax Demand Notice</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			line-height: 1.6;
+			margin: 20px;
+			color: #333;
+		}
+
+		.container {
+			max-width: 600px;
+			margin: auto;
+			padding: 20px;
+			border: 1px solid #ddd;
+			border-radius: 8px;
+			background-color: #f9f9f9;
+		}
+
+		h1 {
+			font-size: 24px;
+			text-align: center;
+			color: #c0392b;
+			margin-bottom: 20px;
+		}
+
+		p {
+			margin: 12px 0;
+		}
+
+		.notice-details {
+			margin-top: 20px;
+			margin-bottom: 20px;
+			border-collapse: collapse;
+			width: 100%;
+		}
+
+		.notice-details th,
+		.notice-details td {
+			border: 1px solid #ddd;
+			padding: 8px;
+			text-align: left;
+		}
+
+		.notice-details th {
+			background-color: #f2f2f2;
+		}
+
+		.footer {
+			margin-top: 25px;
+			font-size: 14px;
+			color: #666;
+		}
+
+		a {
+			color: #0066cc;
+			text-decoration: none;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+
+		<h1>Property Tax Demand Notice</h1>
+
+		<p>Dear {recipients_name},</p>
+
+		<p>
+			This is to inform you that a Property Tax Demand Notice has been issued against the property
+			mentioned below due to outstanding property tax dues.
+		</p>
+
+		<table class="notice-details">
+			<tr>
+				<th>Notice Details</th>
+				<th></th>
+			</tr>
+			<tr>
+				<td>Notice Date</td>
+				<td>{notice_date}</td>
+			</tr>
+			<tr>
+				<td>Property ID</td>
+				<td>{property_id}</td>
+			</tr>
+			<tr>
+				<td>Property Owner Name</td>
+				<td>{full_owner_name}</td>
+			</tr>
+			<tr>
+				<td>Father's Name</td>
+				<td>{fathers_name}</td>
+			</tr>
+			<tr>
+				<td>Address</td>
+				<td>{property_address}</td>
+			</tr>
+			<tr>
+				<td>Outstanding Amount</td>
+				<td>{amount}</td>
+			</tr>
+		</table>
+
+		<p>
+			The detailed Demand Notice has been attached with this email for your reference.
+		</p>
+
+		<p>
+			You are requested to review the notice carefully and deposit the outstanding amount within
+			the stipulated period mentioned in the notice.
+		</p>
+
+		<p>
+			To make the payment online, please visit:
+			<a href="{property_pay_now_bill_url}">CitizenSeva Portal</a>
+		</p>
+
+		<p>
+			<strong>Important:</strong> Failure to pay the outstanding dues within the prescribed period
+			may result in recovery proceedings under the applicable provisions of the HPMC Act, 1994.
+		</p>
+
+		<div class="footer">
+			<p>
+				For any clarification or assistance, please contact Municipal Corporation Solan.
+			</p>
+
+			<p>
+				Regards,<br>
+				Municipal Corporation Solan
+			</p>
+		</div>
+
+	</div>
+</body>
+
+</html>

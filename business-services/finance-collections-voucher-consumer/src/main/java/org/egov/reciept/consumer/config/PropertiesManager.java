@@ -161,6 +161,9 @@ public class PropertiesManager {
     @Value("${kafka.topics.payment.cancel.name}")
     private String cancelPaymentTopicName;
     
+    @Value("${kafka.topics.payment.voucher.replay.name:egov.collection.payment-voucher-replay}")
+    private String paymentVoucherReplayTopicName;
+    
     private String siAuthToken;
     private User siUserInfo;
     

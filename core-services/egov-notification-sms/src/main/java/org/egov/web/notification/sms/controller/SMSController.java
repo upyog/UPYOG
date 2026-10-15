@@ -48,10 +48,12 @@ public class SMSController {
 	}
 	
 	 @PostMapping("/_create")
-	    public ResponseEntity<String> create(@RequestBody SmsTracker tracker) {
+	    public ResponseEntity<Map<String, Object>> create(@RequestBody SmsTracker tracker) {
 	        log.info("Creating SMS Tracker entry for applicationNo: {}", tracker.getApplicationNo());
 	        smsTrackerService.createSmsTracker(tracker);
-	        return ResponseEntity.ok("SMS Tracker entry created successfully");
+	        Map<String, Object> response = new HashMap<>();
+	        response.put("message", "SMS Tracker entry created successfully");
+	        return ResponseEntity.ok(response);
 	    }
 	 
 	@PostMapping(value = "/validateCitizen")

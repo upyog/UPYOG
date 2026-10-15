@@ -177,6 +177,38 @@ public class PaymentController {
 
     }
 
+    /**
+     * Admin endpoint which re-creates the vouchers of old payments. The payments of the date range are published, in
+     * batches, to the voucher replay topic that only the voucher consumer listens to. Call it repeatedly with the
+     * returned nextOffset until done is true.
+     *
+     * @param fromDate epoch millis of the transaction date, inclusive
+     * @param toDate epoch millis of the transaction date, exclusive
+     */
+    @RequestMapping(value = "/_republishforvoucher", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<?> republishForVoucher(@RequestBody @Valid final RequestInfoWrapper requestInfoWrapper,
+            @RequestParam(required = false) String tenantId, @RequestParam Long fromDate, @RequestParam Long toDate,
+            @RequestParam(required = false, defaultValue = "false") boolean includeCancelled,
+            @RequestParam(required = false, defaultValue = "0") Integer offset,
+            @RequestParam(required = false, defaultValue = "50") Integer batchSize,
+            @RequestParam(required = false, defaultValue = "false") boolean dryRun) {
+
+        if (fromDate >= toDate)
+            throw new CustomException("EGCL_REPUBLISH_ERROR", "fromDate must be before toDate");
+        if (offset < 0 || batchSize < 1 || batchSize > 500)
+            throw new CustomException("EGCL_REPUBLISH_ERROR", "offset must be >= 0 and batchSize between 1 and 500");
+
+        final RequestInfo requestInfo = requestInfoWrapper.getRequestInfo();
+        Map<String, Object> summary = paymentService.republishPaymentsForVoucher(requestInfo, tenantId, fromDate,
+                toDate, includeCancelled, offset, batchSize, dryRun);
+
+        ResponseInfo responseInfo = ResponseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true);
+        responseInfo.setStatus(HttpStatus.OK.toString());
+        summary.put("ResponseInfo", responseInfo);
+        return new ResponseEntity<>(summary, HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/_plainsearch", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<PaymentResponse> plainSearch(@ModelAttribute PaymentSearchCriteria paymentSearchCriteria,

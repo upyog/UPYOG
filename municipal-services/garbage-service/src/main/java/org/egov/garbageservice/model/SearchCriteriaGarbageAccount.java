@@ -71,6 +71,19 @@ public class SearchCriteriaGarbageAccount {
 
     private Boolean isReadyForPrinting;
 
+    /**
+     * Filters on eg_grbg_account_ddp: "VERIFIED"/"REJECTED".
+     */
+    private List<String> vendorPrintVerified;
+
+    private Boolean ulbVerified;
+
+    private Boolean installationDone;
+
+    private Boolean ddpPrintingDone;
+
+    private Boolean ddpDispatched;
+
     private Boolean isMonthlyBilling;
     
 	@Builder.Default
@@ -101,6 +114,11 @@ public class SearchCriteriaGarbageAccount {
 				.isDdpVerified(this.isDdpVerified)
 				.ddpPrintVerified(this.ddpPrintVerified)
 				.isReadyForPrinting(this.isReadyForPrinting)
+				.vendorPrintVerified(copyList(this.vendorPrintVerified))
+				.ulbVerified(this.ulbVerified)
+				.installationDone(this.installationDone)
+				.ddpPrintingDone(this.ddpPrintingDone)
+				.ddpDispatched(this.ddpDispatched)
 				.build();
 	}
 

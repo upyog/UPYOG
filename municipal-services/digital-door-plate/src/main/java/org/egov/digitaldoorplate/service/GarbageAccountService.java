@@ -68,7 +68,7 @@ public class GarbageAccountService {
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> updateDdpWorkflowFields(RequestInfo requestInfo, String tenantId,
 			String garbageAccountUuid, String vendorPrintVerified, Boolean ulbVerified, Boolean installationDone,
-			String ddpLatitude, String ddpLongitude, Boolean ddpPrintingDone, Boolean ddpDispatched, Boolean ddpPrintVerified) {
+			String ddpLatitude, String ddpLongitude, Boolean ddpPrintingDone, Boolean ddpDispatched, Boolean ddpPrintVerified, String ddpRejectionReason) {
 
 		StringBuilder uri = new StringBuilder(ddpConfig.getGarbageServiceHostUrl())
 				.append(ddpConfig.getGarbageAccountUpdateDdpWorkflowEndpoint());
@@ -85,6 +85,7 @@ public class GarbageAccountService {
 		request.put("ddpPrintingDone", ddpPrintingDone);
 		request.put("ddpDispatched", ddpDispatched);
 		request.put("ddpPrintVerified", ddpPrintVerified);
+		request.put("ddpRejectionReason", ddpRejectionReason);
 
 		Optional<Object> response = serviceRequestRepository.fetchResult(uri, request);
 

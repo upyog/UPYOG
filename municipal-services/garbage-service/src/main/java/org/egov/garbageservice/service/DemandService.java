@@ -54,7 +54,7 @@ public class DemandService {
 				.taxAmount(taxAmount).collectionAmount(BigDecimal.ZERO).build();
 		Calendar cal = Calendar.getInstance();
 
-		cal.add(Calendar.DAY_OF_MONTH, Integer.valueOf(grbgConfig.getGrbgBillExpiryAfter()));
+		cal.add(Calendar.YEAR, 1);
 		cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DATE), 23, 59, 59);
 		Map<String, Object> additionalDetail = (Map<String, Object>) generateBillRequest.getAdditionalDetail();
 

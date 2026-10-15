@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Property Tax Demand Notice</title>
+
+    <style>
+
+        @page {
+            size: A4;
+            margin: 25mm;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #000;
+        }
+
+        h2 {
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+			text-decoration: underline;
+        }
+
+        .topRow{
+            width:100%;
+            margin-top:25px;
+            margin-bottom:25px;
+        }
+
+        .left{
+            float:left;
+        }
+
+        .right{
+            float:right;
+        }
+
+        .clear{
+            clear:both;
+        }
+
+        p{
+            text-align: justify;
+            margin-top:10px;
+            margin-bottom:10px;
+        }
+
+        .indent{
+            margin-left:40px;
+        }
+
+        .signature{
+            margin-top:100px;
+            width:100%;
+        }
+
+        .signature div{
+            float:right;
+            text-align:left;
+        }
+		
+		.signature .right img {
+		    display: block;
+		    margin-bottom: 1px;
+			max-height: 70px;
+			margin: 0 0 -8px 0;
+		}
+
+    </style>
+
+</head>
+
+<body>
+
+<h2>MUNICIPAL CORPORATION SOLAN</h2>
+
+<div class="topRow">
+
+    <div class="left">
+        <b>No. MCS/Tax/</b>
+        <span th:text="${noticeNumber}"></span>
+    </div>
+
+    <div class="right">
+        <b>Dated :</b>
+        <span th:text="${noticeDate}"></span>
+    </div>
+
+</div>
+
+<div class="clear"></div>
+
+<p><b>From</b></p>
+
+<p class="indent">
+Commissioner,<br/>
+Municipal Corporation,<br/>
+Solan.
+</p>
+
+<p><b>To</b></p>
+
+<p class="indent">
+
+<span th:text="${ownerName}"></span><br/>
+
+<span th:text="${address}"></span><br/>
+
+M.No.
+<span th:text="${mobileNumber}"></span><br/>
+
+Property ID No.
+<span th:text="${propertyId}"></span>
+
+</p><br/>
+
+<p>
+
+<b>Subject: Notice of demand for property tax under Section 121 &amp; 124 of the HPMC Act 1994.</b>
+</p>
+
+<p>
+
+Take notice that a sum of
+<b>Rs. <span th:text="${amountDue}"></span></b>
+has been determined as due from you on account of Property Tax.
+
+</p>
+
+<p>
+
+Whereas, a tax bill was previously served to you online in the manner as laid down under section 121,122 of the HPMC Act 1994, however, you had defaulted/failed to deposit the aforesaid tax amount within the stipulated period of 30 days from the date of service of tax bill.
+
+</p>
+
+<p>
+
+You are hereby strictly directed to pay the total demanded with interest sum of
+<b>Rs. <span th:text="${amountDue}"></span></b>
+in the office of MC Solan, either through online or offline mode within 15 days from the date of service of this notice, and also convey the payment compliance.
+
+</p>
+
+<p>
+
+Please note that if the said amount is not paid within the specified period of 15 days, or if no sufficient cause for non-payment is shown to the satisfaction of the Commissioner, Municipal Corporation will proceed to recover the dues in accordance with the provisions u/s 124 of HPMC Act 1994, and this recovery may include;
+
+</p>
+
+<p class="indent">
+
+Any sum due on account of tax or fee payable under this Act may be recovered, together with cost of recovery by all or any of the following processes, in the manner prescribed:-
+
+</p>
+
+<p class="indent">
+
+(I) as arrears of land revenue;<br/>
+
+(II) by distraint and sale of a defaulter's movable property;<br/>
+
+(III) by the attachment and sale of a defaulter's immovable property;<br/>
+
+(IV) in the case of octroi and toll, by the seizure and sale of goods and vehicles;<br/>
+
+(V) in the case of taxes on land and buildings by the attachments of rent due in respect of the Property; and<br/>
+
+(VI) by a suit.
+
+</p>
+
+<p>
+
+And whereas, section 121 of HPMC Act, 1994 has following Provision
+
+</p>
+
+<p>
+
+<b>
+
+"121. Time and manner of Payment of tax or fees:-
+
+</b>
+
+Save as otherwise provided in this Act, any tax or fee levied under this Act shall be payable on such dates, in such number of installments and in such manner as may be determined by bye-laws in this behalf:
+
+</p>
+
+<p>
+
+Provided that if the tax or fee is not paid within one month of the due date, an interest at the rate of one percent per month shall be charged for every calendar month or part thereof.
+
+</p>
+
+<p>
+
+Provided further that the Commissioner may, after affording an opportunity of being heard, deny or withdraw the No Objection Certificate issued for installation of electricity connection and disconnect the water connection and sewerage connection, if the owner or the occupier of the premises in question is assessable to taxes and arrears to the Corporation as per the demand raised and the same may be restored on the written request of such owner or occupier, by the Commissioner by imposition of a penalty not exceeding twenty thousand rupees.
+
+</p>
+
+<p>
+
+Now therefore, in view of the aforesaid provisions of the HPMC Act 1994, you are hereby directed to deposit requisite outstanding amount within 15 days from the receipt of this notice, failing which the process u/s 121 &amp; 124 of the HPMC Act, 1994 shall be initiated against you purely at your risk, cost and responsibility.
+
+</p>
+
+<div class="signature">
+    <div class="right">
+        <img th:src="${signature}" alt="signature" />
+        <b>Joint Commissioner</b><br/>
+        Municipal Corporation,<br/>
+        Solan
+    </div>
+</div>
+
+</body>
+
+</html>

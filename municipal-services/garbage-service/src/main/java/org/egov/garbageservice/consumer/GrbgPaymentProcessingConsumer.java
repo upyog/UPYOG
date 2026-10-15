@@ -23,6 +23,6 @@ public class GrbgPaymentProcessingConsumer {
 	@KafkaListener(topics = { "grbg-payment-processing" })
 	public void paymentProcessingUpdate(HashMap<String, Object> record) {
 		PaymentProcessingUpdateRequest request = objectMapper.convertValue(record,PaymentProcessingUpdateRequest.class);
-		trackerRepository.updatePaymentProcessing(request.getBillId(), request.isPaymentProcessing());
+		trackerRepository.updatePaymentProcessing(request.getBillId(), request.isPaymentProcessing(), request.getTxnAmount());
 	}
 }

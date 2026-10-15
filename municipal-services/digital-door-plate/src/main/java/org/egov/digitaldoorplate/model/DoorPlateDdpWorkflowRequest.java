@@ -36,6 +36,8 @@ public class DoorPlateDdpWorkflowRequest {
 	 * "REJECTED".
 	 */
 	private String vendorPrintVerified;
+	
+	private String ddpRejectionReason;
 
 	/**
 	 * Used only by {@code /door-plate/_ulbVerify}.

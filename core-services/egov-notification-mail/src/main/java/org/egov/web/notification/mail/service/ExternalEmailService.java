@@ -11,6 +11,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.egov.web.notification.mail.config.EmailProperties;
 import java.util.Properties;
+import org.springframework.core.io.ByteArrayResource;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -57,6 +58,9 @@ public class ExternalEmailService implements EmailService {
 			helper.setTo(email.getEmailTo().toArray(new String[0]));
 			helper.setSubject(email.getSubject());
 			helper.setText(email.getBody(), true);
+			if (email.getAttachment() != null) {
+				helper.addAttachment(email.getAttachmentFileName(), new ByteArrayResource(email.getAttachment()));
+			}
 		} catch (MessagingException e) {
 			log.error(EXCEPTION_MESSAGE, e);
 			throw new RuntimeException(e);

@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.digitaldoorplate.model.ChildAccountScanInfo;
+import org.egov.digitaldoorplate.model.DoorPlateQrSnapshot;
 import org.egov.digitaldoorplate.model.GarbageAccountScanInfo;
 import org.egov.digitaldoorplate.model.GarbageCollection;
 import org.egov.digitaldoorplate.model.GarbageCollectionRequest;
@@ -54,6 +55,9 @@ public class GarbageCollectionService {
 
 	@Autowired
 	private GarbageAccountService garbageAccountService;
+
+	@Autowired
+	private PropertyService propertyService;
 
 	@Autowired
 	private QrCodeService qrCodeService;
@@ -118,11 +122,16 @@ public class GarbageCollectionService {
 				.map(remoteAccount -> toGarbageAccountScanInfo(remoteAccount, todaysCollections))
 				.collect(Collectors.toList());
 
+		RemoteGarbageAccount scannedAccount = remoteGarbageAccounts.get(0);
+		DoorPlateQrSnapshot propertyData = propertyService.buildQrSnapshotQuietly(qrScanRequest.getRequestInfo(),
+				qrScanRequest.getTenantId(), scannedAccount.getSystemPropertyId(), qrCodeData.getId());
+
 		return QrScanResponse.builder()
 				.responseInfo(
 						responseInfoFactory.createResponseInfoFromRequestInfo(qrScanRequest.getRequestInfo(), true))
 				.qrData(qrCodeData)
 				.garbageAccounts(garbageAccounts)
+				.propertyData(propertyData)
 				.alreadyCollectedToday(!CollectionUtils.isEmpty(todaysCollections))
 				.todaysCollections(todaysCollections)
 				.build();
@@ -164,7 +173,7 @@ public class GarbageCollectionService {
 				.garbageId(null == account.getGarbageId() ? null : String.valueOf(account.getGarbageId()))
 				.name(account.getName())
 				.mobileNumber(account.getMobileNumber())
-				.propertyId(account.getPropertyId())
+				.propertyId(account.getSystemPropertyId())
 				.propertyAddress(toPropertyAddress(address))
 				.propertyType(toPropertyType(account))
 				.vendorPrintVerified(account.getVendorPrintVerified())

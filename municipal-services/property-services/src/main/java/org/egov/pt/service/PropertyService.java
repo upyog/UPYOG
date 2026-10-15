@@ -1067,6 +1067,64 @@ public class PropertyService {
 
 		return reportService.createNoSavePDF(pdfRequest);
 	}
+	
+	public ResponseEntity<Resource> generatePropertyNoticePdf(RequestInfoWrapper requestInfoWrapper,
+			@Valid String propertyId, @Valid String billId, String status, String tenantId) {
+
+		PropertyCriteria propertyCriteria = PropertyCriteria.builder().isSchedulerCall(true)
+				.propertyIds(Collections.singleton(propertyId)).build();
+
+		List<Property> properties = searchProperty(propertyCriteria, requestInfoWrapper.getRequestInfo(), null);
+
+		Property property = properties.stream().findFirst().orElse(null);
+		if (property == null) {
+			return null;
+		}
+
+		PtTaxCalculatorTrackerSearchCriteria trackerSearchCriteria = PtTaxCalculatorTrackerSearchCriteria.builder()
+				.billId(billId).propertyIds(Collections.singleton(propertyId)).limit(1).build();
+
+		List<PtTaxCalculatorTracker> trackers = getTaxCalculatedProperties(trackerSearchCriteria);
+
+		PtTaxCalculatorTracker ptTaxCalculatorTracker = trackers.stream().findFirst().orElse(null);
+
+		if (ptTaxCalculatorTracker == null) {
+			return null;
+		}
+
+		BillSearchCriteria.BillSearchCriteriaBuilder builder = BillSearchCriteria.builder()
+				.tenantId(ptTaxCalculatorTracker.getTenantId())
+				.billId(Collections.singleton(ptTaxCalculatorTracker.getBillId()));
+
+		if (status != null && !status.trim().isEmpty()) {
+			Demand.StatusEnum dynamicStatus = Demand.StatusEnum.valueOf(status.trim().toUpperCase());
+			builder.status(dynamicStatus);
+		}
+
+		BillSearchCriteria billSearchCriteria = builder.build();
+
+		BillResponse billResponse = billService.searchBill(billSearchCriteria, requestInfoWrapper.getRequestInfo());
+
+		if (billResponse == null || CollectionUtils.isEmpty(billResponse.getBill())) {
+			return null;
+		}
+
+		Bill bill = billResponse.getBill().stream().findFirst().orElse(null);
+
+		if (bill == null) {
+			return null;
+		}
+
+		MdmsResponse mdmsResponse = mdmsService.getPropertyReabateDaysMdmsData(requestInfoWrapper.getRequestInfo(),
+				null);
+
+		Map<String, Integer> tenantIdDaysMap = getUlbDaysMap(mdmsResponse);
+
+		PDFRequest pdfRequest = pdfRequestGenerator.generateNoticePdfRequest(requestInfoWrapper, property,
+				ptTaxCalculatorTracker, bill, tenantIdDaysMap, tenantId);
+
+		return reportService.createNoSavePDF(pdfRequest);
+	}
 
 	public Boolean cancelPropertyBill(CancelPropertyBillRequest cancelRequest) {
 		

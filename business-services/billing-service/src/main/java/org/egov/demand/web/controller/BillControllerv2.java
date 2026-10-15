@@ -58,8 +58,6 @@ public class BillControllerv2 {
 		billValidator.validateBillSearchCriteria(billCriteria, requestInfo);
 		return new ResponseEntity<>(billService.searchBill(billCriteria,requestInfo), HttpStatus.OK);
 	}
-
-
 	
     @PostMapping("_fetchbill")
 	@ResponseBody

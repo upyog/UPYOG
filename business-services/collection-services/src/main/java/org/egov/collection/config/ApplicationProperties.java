@@ -187,6 +187,10 @@ public class ApplicationProperties {
 
     @Value("${kafka.topics.payment.create.name}")
     private String createPaymentTopicName;
+
+    // dedicated topic for re-creating vouchers of old payments; only the voucher consumer listens to it
+    @Value("${kafka.topics.payment.voucher.replay.name:egov.collection.payment-voucher-replay}")
+    private String paymentVoucherReplayTopicName;
     
     @Value("${kafka.topics.payment.create.key}")
     private String createPaymentTopicKey;

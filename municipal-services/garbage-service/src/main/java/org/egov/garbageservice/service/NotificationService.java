@@ -125,28 +125,17 @@ public class NotificationService {
 		kafkaTemplate.send(emailTopic, emailRequest);
 	}
 
+	/**
+	 * sendEmail() below is disabled and sendSms()'s kafka publish is disabled
+	 * (see {@link #sendSms}), so this used to build an email body/subject and an
+	 * SMS body - each via {@link #populateNotificationPlaceholders}, which calls
+	 * the URL-shortening service - purely to pass them to calls that do nothing.
+	 * Left as a no-op until email/SMS sending here is re-enabled, to avoid that
+	 * wasted per-account URL-shortener round trip (the SMS-tracker entry, which
+	 * is the thing actually read later to send bill SMS, is created separately
+	 * via {@link #buildGenerateBillSmsRequest} and is unaffected by this).
+	 */
 	public void triggerNotificationsGenerateBill(GarbageAccount garbageAccount, Bill bill, RequestInfo requestInfo,GrbgBillTracker grbgBillTracker) {
-		
-//		Set<String> allowedTenants = new HashSet<>(Arrays.asList("hp.Jubbal"));
-//
-//		if(allowedTenants.contains(garbageAccount.getTenantId())) {
-			ClassPathResource resource = new ClassPathResource(GARBAGE_BILL_EMAIL_TEMPLATE_LOCATION);
-			String emailBody = grbgUtils.getContentAsString(resource);
-			String smsBody = SMS_BODY_GENERATE_BILL;
-			String emailSubject = EMAIL_SUBJECT_GENERATE_BILL;
-
-			emailBody = populateNotificationPlaceholders(emailBody, garbageAccount, bill,grbgBillTracker);
-			smsBody = populateNotificationPlaceholders(smsBody, garbageAccount, bill,grbgBillTracker);
-			emailSubject = populateNotificationPlaceholders(emailSubject, garbageAccount, bill,grbgBillTracker);
-
-			if (!StringUtils.isEmpty(garbageAccount.getEmailId())) {
-//				sendEmail(emailBody, Collections.singletonList(garbageAccount.getEmailId()), requestInfo, null,
-//						emailSubject);
-			}
-			if (!StringUtils.isEmpty(garbageAccount.getMobileNumber())) {
-				sendSms(smsBody, garbageAccount.getMobileNumber());
-			}
-//		}
 	}
 	
 //	public String buildGenerateBillSms(

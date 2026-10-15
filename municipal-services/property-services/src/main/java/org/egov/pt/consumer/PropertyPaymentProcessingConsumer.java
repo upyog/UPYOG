@@ -24,6 +24,6 @@ public class PropertyPaymentProcessingConsumer {
 	@KafkaListener(topics = { "property-payment-processing" })
 	public void paymentProcessingUpdate(HashMap<String, Object> record) {
 		PaymentProcessingUpdateRequest request = objectMapper.convertValue(record,PaymentProcessingUpdateRequest.class);
-		propertyRepository.updatePaymentProcessing(request.getBillId(), request.isPaymentProcessing());
+		propertyRepository.updatePaymentProcessing(request.getBillId(), request.isPaymentProcessing(), request.getTxnAmount());
 	}
 }

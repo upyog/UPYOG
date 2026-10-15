@@ -84,10 +84,9 @@ public class GarbageAccountSchedulerController {
 	}
 
 	/**
-	 * Fetches every ULB/ward enabled for door plate printing from the
-	 * ULBS.DdpPrinting MDMS master and, for each, marks all ddpVerified
-	 * garbage accounts in that ULB/ward as ready for printing (batch-wise per
-	 * ULB/ward).
+	 * Fetches the ULB/ward combinations added today to the ULBS.DdpPrinting
+	 * MDMS master and, for each, marks all ddpVerified garbage accounts in
+	 * that ULB/ward as ready for printing (batch-wise per ULB/ward).
 	 */
 	@PostMapping("/ddp/mark-ready-for-printing")
 	public ResponseEntity<MarkReadyForPrintingResponse> markReadyForPrinting(

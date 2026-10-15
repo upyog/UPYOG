@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -19,14 +21,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.egov.garbageservice.model.GenrateArrearRequest;
-import org.egov.garbageservice.contract.bill.DemandRepository;
-import org.egov.garbageservice.model.ApplicationBillDTO;
-import org.egov.garbageservice.model.ApplicationDetails;
 
 import javax.validation.Valid;
 
@@ -38,9 +37,13 @@ import org.egov.common.contract.request.User;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.garbageservice.contract.bill.Bill;
 import org.egov.garbageservice.contract.bill.Bill.StatusEnum;
+import org.egov.garbageservice.contract.bill.BillAccountDetail;
+import org.egov.garbageservice.contract.bill.BillDetail;
 import org.egov.garbageservice.contract.bill.BillResponse;
 import org.egov.garbageservice.contract.bill.BillSearchCriteria;
 import org.egov.garbageservice.contract.bill.Demand;
+import org.egov.garbageservice.contract.bill.DemandDetail;
+import org.egov.garbageservice.contract.bill.DemandRepository;
 import org.egov.garbageservice.contract.bill.GenerateBillCriteria;
 import org.egov.garbageservice.contract.workflow.BusinessServiceResponse;
 import org.egov.garbageservice.contract.workflow.ProcessInstance;
@@ -53,6 +56,7 @@ import org.egov.garbageservice.model.DdpPrintingRecord;
 import org.egov.garbageservice.model.DdpPrintingSearchResponse;
 import org.egov.garbageservice.model.DdpWorkflowUpdateRequest;
 import org.egov.garbageservice.model.DdpWorkflowUpdateResponse;
+import org.egov.garbageservice.model.DdpVerificationCount;
 import org.egov.garbageservice.model.GarbageAccount;
 import org.egov.garbageservice.model.GarbageAccountActionRequest;
 import org.egov.garbageservice.model.GarbageAccountActionResponse;
@@ -60,6 +64,7 @@ import org.egov.garbageservice.model.GarbageAccountDetail;
 import org.egov.garbageservice.model.GarbageAccountRequest;
 import org.egov.garbageservice.model.GarbageAccountResponse;
 import org.egov.garbageservice.model.GenerateBillRequest;
+import org.egov.garbageservice.model.GenrateArrearRequest;
 import org.egov.garbageservice.model.GrbgAddress;
 import org.egov.garbageservice.model.GrbgApplication;
 import org.egov.garbageservice.model.GrbgBillFailure;
@@ -99,17 +104,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.egov.garbageservice.contract.bill.BillDetail;
-import org.egov.garbageservice.contract.bill.BillAccountDetail;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.egov.garbageservice.contract.bill.DemandDetail;
-import java.util.concurrent.atomic.AtomicBoolean;
-import org.egov.garbageservice.model.DdpVerificationCount;
-import java.time.temporal.ChronoUnit;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -1405,6 +1403,8 @@ public class GarbageAccountService {
 
 		// replicate existing grbg acc to history table
 
+		GarbageAccount ddpChanges = buildDdpChanges(newGarbageAccount, existingGarbageAccount);
+
 		// update garbage account
 		garbageAccountRepository.update(newGarbageAccount);
 
@@ -1412,6 +1412,51 @@ public class GarbageAccountService {
 			garbageAccountRepository.updateDdpDetails(newGarbageAccount);
 		}
 
+		if (null != ddpChanges) {
+			garbageAccountRepository.upsertDdpDetails(existingGarbageAccount.getUuid(),
+					existingGarbageAccount.getGarbageId(), ddpChanges);
+		}
+
+	}
+
+	/**
+	 * Picks out the eg_grbg_account_ddp fields (ready for printing, vendor/ULB
+	 * verification, installation, lat/long, printing/dispatch, rejection reason,
+	 * remarks) that the request sets to a value different from the current one,
+	 * so unrelated updates never overwrite them. Returns null if none changed.
+	 */
+	private GarbageAccount buildDdpChanges(GarbageAccount newAccount, GarbageAccount existingAccount) {
+
+		if (null != newAccount.getVendorPrintVerified()
+				&& !("VERIFIED".equalsIgnoreCase(newAccount.getVendorPrintVerified())
+						|| "REJECTED".equalsIgnoreCase(newAccount.getVendorPrintVerified()))) {
+			throw new CustomException("INVALID_REQUEST", "vendorPrintVerified must be VERIFIED or REJECTED.");
+		}
+
+		GarbageAccount changes = GarbageAccount.builder()
+				.isReadyForPrinting(changedValue(newAccount.getIsReadyForPrinting(), existingAccount.getIsReadyForPrinting()))
+				.vendorPrintVerified(changedValue(newAccount.getVendorPrintVerified(), existingAccount.getVendorPrintVerified()))
+				.ulbVerified(changedValue(newAccount.getUlbVerified(), existingAccount.getUlbVerified()))
+				.installationDone(changedValue(newAccount.getInstallationDone(), existingAccount.getInstallationDone()))
+				.ddpLatitude(changedValue(newAccount.getDdpLatitude(), existingAccount.getDdpLatitude()))
+				.ddpLongitude(changedValue(newAccount.getDdpLongitude(), existingAccount.getDdpLongitude()))
+				.ddpPrintingDone(changedValue(newAccount.getDdpPrintingDone(), existingAccount.getDdpPrintingDone()))
+				.ddpDispatched(changedValue(newAccount.getDdpDispatched(), existingAccount.getDdpDispatched()))
+				.ddpRejectionReason(changedValue(newAccount.getDdpRejectionReason(), existingAccount.getDdpRejectionReason()))
+				.remarks(changedValue(newAccount.getRemarks(), existingAccount.getRemarks()))
+				.build();
+
+		boolean anyChange = null != changes.getIsReadyForPrinting() || null != changes.getVendorPrintVerified()
+				|| null != changes.getUlbVerified() || null != changes.getInstallationDone()
+				|| null != changes.getDdpLatitude() || null != changes.getDdpLongitude()
+				|| null != changes.getDdpPrintingDone() || null != changes.getDdpDispatched()
+				|| null != changes.getDdpRejectionReason() || null != changes.getRemarks();
+
+		return anyChange ? changes : null;
+	}
+
+	private <T> T changedValue(T newValue, T existingValue) {
+		return null != newValue && !newValue.equals(existingValue) ? newValue : null;
 	}
 
 	private Map<Long, GarbageAccount> searchGarbageAccountMap(SearchCriteriaGarbageAccount searchCriteriaGarbageAccount,
@@ -2742,8 +2787,6 @@ public GarbageAccountActionResponse openSearchPayPreview(
 		    List<GrbgBillTracker> trackers =
 		        garbageBillTrackerRepository.getBillTracker(criteria);
 		
-		    long now = System.currentTimeMillis();
-		
 		    List<GrbgBillTracker> expiredTrackers = new ArrayList<>();
 		
 		    for (GrbgBillTracker tracker : trackers) {
@@ -2778,15 +2821,24 @@ public GarbageAccountActionResponse openSearchPayPreview(
 		            continue;
 		        }
 		
-		        BillDetail billDetail = bill.getBillDetails().get(0);
-		        Long expiry = billDetail.getExpiryDate();
-		
-		        if (expiry == null || expiry >= now) {
-		            continue;
-		        }
-		        tracker.setExpiryDate(expiry);
-		
-		        expiredTrackers.add(tracker);
+		        Long createdTime = tracker.getAuditDetails().getCreatedDate();
+
+				if (createdTime == null) {
+					continue;
+				}
+
+				LocalDate createdDate = Instant.ofEpochMilli(createdTime).atZone(ZoneId.systemDefault()).toLocalDate();
+				long diffDays = ChronoUnit.DAYS.between(createdDate, LocalDate.now());
+
+				if (diffDays < 30) {
+					continue;
+				}
+
+				if (diffDays % 30 != 0) {
+					continue;
+				}
+
+				expiredTrackers.add(tracker);
 		    }
 		
 		    return expiredTrackers;
@@ -2982,6 +3034,8 @@ public GarbageAccountActionResponse openSearchPayPreview(
 				.ddpLongitude(request.getDdpLongitude())
 				.ddpPrintingDone(request.getDdpPrintingDone())
 				.ddpDispatched(request.getDdpDispatched())
+				.ddpRejectionReason(request.getDdpRejectionReason())
+				.remarks(request.getRemarks())
 				.build();
 	}
 
