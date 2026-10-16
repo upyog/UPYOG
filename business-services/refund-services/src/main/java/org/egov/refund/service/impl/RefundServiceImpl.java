@@ -142,6 +142,10 @@ public class RefundServiceImpl implements RefundService {
 			return refund;
 		}
 
+		if (isOfflineRefundCompletion(refund, action)) {
+			return completeOfflineRefund(refund, request, action);
+		}
+
 		RefundActionRequest actionRequest = refundEnrichmentService.enrichWorkflowAction(refund,
 				request.getRequestInfo(), action, inputRefund.getProcessInstance().getComment());
 
@@ -415,6 +419,32 @@ public class RefundServiceImpl implements RefundService {
 		}
 	}
 
+	private Refund completeOfflineRefund(Refund refund, RefundRequest request, String action) {
+
+		log.info("Processing offline refund completion. refundId={}", refund.getId());
+
+		String remarks = request.getRefund() != null && request.getRefund().getProcessInstance() != null
+				? request.getRefund().getProcessInstance().getComment()
+				: null;
+
+		RefundActionRequest actionRequest = refundEnrichmentService.enrichWorkflowAction(refund,
+				request.getRequestInfo(), action, remarks);
+
+		refund = processInternal(refund, actionRequest);
+
+		refundRepository.update(refund);
+
+		RefundRequest financeRequest = RefundRequest.builder().refund(refund).requestInfo(createSystemRequestInfo())
+				.build();
+
+		financeService.sendToFinanceComplete(financeRequest);
+
+		log.info("Offline refund completion sent to Finance. refundId={}, status={}", refund.getId(),
+				refund.getStatus());
+
+		return refund;
+	}
+
 	private boolean isFinalPaymentRefundStatus(String status, String message) {
 
 		return (RefundConstants.PAYMENT_REFUND_STATUS_SUCCESS.equalsIgnoreCase(status)
@@ -423,6 +453,13 @@ public class RefundServiceImpl implements RefundService {
 				|| RefundConstants.PAYMENT_REFUND_STATUS_FAILURE.equalsIgnoreCase(status)
 
 				|| RefundConstants.PAYMENT_REFUND_STATUS_FAILED.equalsIgnoreCase(status);
+	}
+
+	private boolean isOfflineRefundCompletion(Refund refund, String action) {
+
+		return RefundConstants.STATUS_REFUND_INITIATED.equalsIgnoreCase(refund.getStatus())
+				&& RefundConstants.ACTION_REFUND_COMPLETED.equalsIgnoreCase(action)
+				&& RefundConstants.REFUND_MODE_OFFLINE.equalsIgnoreCase(refund.getRefundMode());
 	}
 
 	// ============================================================
