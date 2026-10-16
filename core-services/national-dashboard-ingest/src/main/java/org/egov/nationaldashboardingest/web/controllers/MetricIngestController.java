@@ -6,6 +6,9 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.response.ResponseInfo;
 import org.egov.nationaldashboardingest.service.IngestService;
+import org.upyog.externalaudit.constants.ExternalApiAuditConstants;
+import org.upyog.externalaudit.model.ExternalApiAuditDetail;
+import org.upyog.externalaudit.service.ExternalApiAuditLogger;
 import org.egov.nationaldashboardingest.utils.ResponseInfoFactory;
 import org.egov.nationaldashboardingest.web.models.IngestRequest;
 import org.egov.nationaldashboardingest.web.models.IngestResponse;
@@ -19,6 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * HTTP API for National Dashboard metric ingest from external producers.
+ * Each {@code /_ingest} call is wrapped with {@link ExternalApiAuditLogger}.
+ */
 @Slf4j
 @RestController
 @RequestMapping("/metric")
@@ -33,24 +40,69 @@ public class MetricIngestController {
     @Autowired
     private ResponseInfoFactory responseInfoFactory;
 
-    /*
-     * It does the following:
-        Receives a POST request with a JSON body mapped to IngestRequest.
-        Logs the received data.
-        Calls the ingestService.ingestData() method to process the data.
-        Constructs a ResponseInfo using a factory.
-        Builds an IngestResponse containing responseInfo and responseHash.
-        Returns the response to the client.
-     * 
+    /**
+     * Shared external-integration auditor. Kafka events upsert {@code ug_external_api_*} via persister.
+     */
+    @Autowired
+    private ExternalApiAuditLogger integrationAuditLogger;
+
+    /**
+     * Inbound National Dashboard metric ingest from an external producer.
+     * <p>
+     * Wrapped with {@link ExternalApiAuditLogger#logInboundApi} so each HTTP call writes one
+     * audit row ({@code national-dashboard-metric-ingest}, direction INBOUND).
+     * RequestInfo {@code correlationId} is stored as originating id; the table key is a new UUID.
+     * Endpoint and method are stored in raw JSON ({@code request_payload}/{@code response_payload}).
+     * </p>
+     *
+     * @param ingestRequest UPYOG ingest payload ({@code RequestInfo} + {@code Data})
+     * @return hashed ingest response; audit FAILED is published if {@link IngestService#ingestData} throws
      */
     @RequestMapping(value="/_ingest", method = RequestMethod.POST)
     public ResponseEntity<IngestResponse> create(@RequestBody @Valid IngestRequest ingestRequest) {
-        log.info("Received request: " + ingestRequest.getIngestData().toString());
-        List<Integer> responseHash = ingestService.ingestData(ingestRequest);
-        //log.info("############ Completed before pushing data");
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(ingestRequest.getRequestInfo(), true);
-        IngestResponse response = IngestResponse.builder().responseInfo(responseInfo).responseHash(responseHash).build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return integrationAuditLogger.logInboundApi(
+                ExternalApiAuditDetail.builder()
+                        .originatingCorrelationId(resolveCorrelationId(ingestRequest))
+                        .tenantId(resolveTenantId(ingestRequest))
+                        .externalApiName(ExternalApiAuditConstants.API_NATIONAL_DASHBOARD_METRIC_INGEST)
+                        .requestPayload(ingestRequest)
+                        .endpoint("/national-dashboard/metric/_ingest")
+                        .method("POST")
+                        .build(),
+                () -> {
+                    log.info("Received request: " + ingestRequest.getIngestData().toString());
+                    List<Integer> responseHash = ingestService.ingestData(ingestRequest);
+                    ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(
+                            ingestRequest.getRequestInfo(), true);
+                    IngestResponse response = IngestResponse.builder()
+                            .responseInfo(responseInfo)
+                            .responseHash(responseHash)
+                            .build();
+                    return new ResponseEntity<>(response, HttpStatus.OK);
+                });
     }
 
+    /**
+     * RequestInfo correlation id is the originating / tracer id, not {@code ug_external_api_message_detail.correlation_id}.
+     */
+    private String resolveCorrelationId(IngestRequest ingestRequest) {
+        if (ingestRequest.getRequestInfo() != null
+                && ingestRequest.getRequestInfo().getCorrelationId() != null
+                && !ingestRequest.getRequestInfo().getCorrelationId().isBlank()) {
+            return ingestRequest.getRequestInfo().getCorrelationId();
+        }
+        return null;
+    }
+
+    private String resolveTenantId(IngestRequest ingestRequest) {
+    	if (ingestRequest.getIngestData() != null && !ingestRequest.getIngestData().isEmpty()) {
+    		return ingestRequest.getIngestData().get(0).getUlb();
+    	}
+        if (ingestRequest.getRequestInfo() != null
+                && ingestRequest.getRequestInfo().getUserInfo() != null
+                && ingestRequest.getRequestInfo().getUserInfo().getTenantId() != null) {
+            return ingestRequest.getRequestInfo().getUserInfo().getTenantId();
+        }
+        return null;
+    }
 }
