@@ -304,6 +304,8 @@ public class RefundServiceImpl implements RefundService {
 
 	private Refund processFinanceRequest(Refund refund) {
 
+		validateFinanceDetails(refund);
+
 		RefundRequest refundRequest = RefundRequest.builder().refund(refund).requestInfo(createSystemRequestInfo())
 				.build();
 
@@ -330,6 +332,10 @@ public class RefundServiceImpl implements RefundService {
 				&& !RefundConstants.ACTION_REJECT.equalsIgnoreCase(action)) {
 
 			throw new IllegalArgumentException("Unsupported finance action: " + action);
+		}
+
+		if (RefundConstants.ACTION_APPROVE.equalsIgnoreCase(action)) {
+			validateFinanceDetails(refund);
 		}
 
 		RefundActionRequest actionRequest = refundEnrichmentService.enrichWorkflowAction(refund,
@@ -460,6 +466,21 @@ public class RefundServiceImpl implements RefundService {
 		return RefundConstants.STATUS_REFUND_INITIATED.equalsIgnoreCase(refund.getStatus())
 				&& RefundConstants.ACTION_REFUND_COMPLETED.equalsIgnoreCase(action)
 				&& RefundConstants.REFUND_MODE_OFFLINE.equalsIgnoreCase(refund.getRefundMode());
+	}
+
+	private void validateFinanceDetails(Refund refund) {
+
+		if (refund == null) {
+			throw new IllegalArgumentException("Refund cannot be null for finance processing");
+		}
+
+		if (isBlank(refund.getSanctionRef())) {
+			throw new IllegalArgumentException("Sanction reference is required for finance processing");
+		}
+
+		if (refund.getFinanceApprovalDate() == null) {
+			throw new IllegalArgumentException("Finance approval date is required for finance processing");
+		}
 	}
 
 	// ============================================================

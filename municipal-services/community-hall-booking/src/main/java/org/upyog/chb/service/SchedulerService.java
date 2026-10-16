@@ -105,12 +105,12 @@ public class SchedulerService {
 	 * process
 	 * Uses ShedLock to ensure only one instance runs this job across multiple service instances
 	 */
-	@Scheduled(cron = "0 0 1 * * *")
+	/*@Scheduled(cron = "0 0 1 * * *")
 	@SchedulerLock(
 		name = "chbUpdateWorkflowForBookedApplicationsJob",
 		lockAtLeastFor = "PT1M",  // Hold the lock for at least 1 minute
 		lockAtMostFor = "PT30M"   // Auto-release after 30 minutes if job crashes
-	)
+	)*/
 	public void updateWorkflowForBookedApplications() {
 		log.info("Scheduler - Updating Workflow of Booked applications...");
 
