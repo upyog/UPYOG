@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FormStep, TextInput, CardLabel, RadioButtons,CheckBox,Dropdown, TextArea } from "@nudmcdgnpm/digit-ui-react-components";
+import { getMinDeliveryTime, isTimeBeforeMin, CustomToast } from "../utils";
 
 /**
  * Major Page which is developed for Request/Booking detail page
@@ -23,6 +24,7 @@ const RequestDetails = ({
   const [description, setdescription] = useState(formData?.requestDetails?.description || "");
   const [deliveryTime, setdeliveryTime] = useState(formData?.requestDetails?.deliveryTime || "");
   const [extraCharge, setextraCharge] = useState(formData?.requestDetails?.extraCharge || false);
+  const [showToast, setShowToast] = useState(null);
   const tenantId = Digit.ULBService.getStateId();
   const inputStyles = {
     width: user.type === "EMPLOYEE" ? "50%" : "100%"
@@ -113,11 +115,33 @@ const RequestDetails = ({
     }
   }).filter(item => item !== undefined); // Remove undefined values from the array
 
-  // Custom time input component
+  /**
+   * Time input component with validation enforcing minimum delivery time.
+   * If today is selected, enforces a 3-hour minimum gap from the current time.
+   */
   const TimeInput = () => {
-    return <div className="flex items-center">
-        <TextInput type="time" value={deliveryTime} style={inputStyles} onChange={e => setdeliveryTime(e.target.value)} min="06:00" max="23:59" />
-      </div>;
+    return (
+      <div className="flex items-center">
+        <TextInput
+          type="time"
+          value={deliveryTime}
+          style={inputStyles}
+          onChange={(e) => {
+            if (isTimeBeforeMin(deliveryDate, e.target.value)) {
+              setdeliveryTime("");
+              setShowToast({
+                error: true,
+                label: t("WT_DELIVERY_TIME_GAP_ERROR"),
+              });
+            } else {
+              setdeliveryTime(e.target.value);
+            }
+          }}
+          min={getMinDeliveryTime(deliveryDate)}
+          max="23:59"
+        />
+      </div>
+    );
   };
   const setextrachargeHandler = () => {
     setextraCharge(!extraCharge);
@@ -125,10 +149,33 @@ const RequestDetails = ({
   function setDescription(e) {
     setdescription(e.target.value);
   }
+
+  /**
+   * Handles delivery date selection.
+   * Automatically clears deliveryTime if the date change renders the existing time invalid.
+   *
+   * @param {Object} e - Input change event containing selected date.
+   */
   function setDeliveryDate(e) {
-    setdeliveryDate(e.target.value);
+    const selectedDate = e.target.value;
+    setdeliveryDate(selectedDate);
+    if (isTimeBeforeMin(selectedDate, deliveryTime)) {
+      setdeliveryTime("");
+    }
   }
+
+  /**
+   * Validates form submission and proceeds to the next step.
+   * Blocks submission and displays error toast if delivery time is earlier than the allowed minimum.
+   */
   const goNext = () => {
+    if (isTimeBeforeMin(deliveryDate, deliveryTime)) {
+      setShowToast({
+        error: true,
+        label: t("WT_DELIVERY_TIME_GAP_ERROR"),
+      });
+      return;
+    }
     let requestDetails = formData.requestDetails;
     let request = {
       ...requestDetails,
@@ -149,7 +196,7 @@ const RequestDetails = ({
     }
   }, [tankerTypeDetails]);
   return <React.Fragment>
-      <FormStep config={config} onSelect={goNext} t={t} isDisabled={!tankerType || !deliveryDate || !tankerQuantity || !waterQuantity || !deliveryTime || !description || !waterType}>
+      <FormStep config={config} onSelect={goNext} t={t} isDisabled={!tankerType || !deliveryDate || !tankerQuantity || !waterQuantity || !deliveryTime || !description || !waterType || isTimeBeforeMin(deliveryDate, deliveryTime)}>
         <div>
           <CardLabel>{`${t("WT_TANKER_TYPE")}`} <span className="astericColor">*</span></CardLabel>
           <RadioButtons t={t} options={tankerTypeDetails} innerStyles={{
@@ -180,6 +227,7 @@ const RequestDetails = ({
            <CheckBox label={t("WT_IMMEDIATE")} onChange={setextrachargeHandler} checked={extraCharge} />
         </div>
       </FormStep>
+      <CustomToast showToast={showToast} setShowToast={setShowToast} />
     </React.Fragment>;
 };
 export default RequestDetails;

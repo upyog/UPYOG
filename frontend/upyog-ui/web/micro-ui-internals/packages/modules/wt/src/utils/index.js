@@ -1,3 +1,6 @@
+import React, { useEffect } from "react";
+import { Toast } from "@nudmcdgnpm/digit-ui-react-components";
+
 export const stringReplaceAll = (str = "", searcher = "", replaceWith = "") => {
     if (searcher == "") return str;
     while (str.includes(searcher)) {
@@ -28,6 +31,125 @@ export const formatDate = (dateString) => {
 
   const [year, month, day] = dateString.split("-");
   return `${day}-${month}-${year}`;
+};
+
+/**
+ * Converts a 24-hour time string (HH:mm) to total minutes from midnight.
+ *
+ * @param {string} time - Time string in "HH:mm" format.
+ * @return {number} Total minutes since 00:00.
+ */
+const toMinutes = (time) => {
+  const [h, m] = time.split(":").map(Number);
+  return h * 60 + m;
+};
+
+/**
+ * Calculates the minimum allowed delivery time for a selected delivery date.
+ * If the selected date is today, enforces at least a 3-hour gap from the current time.
+ * For future dates, allows delivery starting from "06:00".
+ *
+ * @param {string} selectedDate - Selected date in "YYYY-MM-DD" format.
+ * @return {string} Minimum allowed delivery time in "HH:mm" format.
+ */
+export const getMinDeliveryTime = (selectedDate) => {
+  const now = new Date();
+  if (selectedDate === now.toLocaleDateString("en-CA")) {
+    const minDate = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+    if (minDate.getDate() !== now.getDate()) return "23:59";
+    const minTime = minDate.toTimeString().slice(0, 5);
+    return minTime > "06:00" ? minTime : "06:00";
+  }
+  return "06:00";
+};
+
+/**
+ * Validates whether the selected delivery time is earlier than the allowed minimum time.
+ *
+ * @param {string} selectedDate - Selected date in "YYYY-MM-DD" format.
+ * @param {string} selectedTime - Selected time in "HH:mm" format.
+ * @return {boolean} True if selected time is before minimum delivery time, false otherwise.
+ */
+export const isTimeBeforeMin = (selectedDate, selectedTime) => {
+  return Boolean(selectedDate && selectedTime && selectedTime < getMinDeliveryTime(selectedDate));
+};
+
+/**
+ * Adds specified hours to a time string. Caps at "23:59" if it rolls over to next day.
+ *
+ * @param {string} timeString - Base time string in "HH:mm" format.
+ * @param {number} [hoursToAdd=1] - Number of hours to add.
+ * @return {string} Resulting time in "HH:mm" format.
+ */
+export const getTimeAfterHours = (timeString, hoursToAdd = 1) => {
+  if (!timeString) return "";
+  const total = toMinutes(timeString) + hoursToAdd * 60;
+  if (total >= 24 * 60) return "23:59";
+  const h = String(Math.floor(total / 60)).padStart(2, "0");
+  const m = String(total % 60).padStart(2, "0");
+  return `${h}:${m}`;
+};
+
+/**
+ * Checks whether Requirement To Time violates the minimum gap requirement from Requirement From Time.
+ * Validation applies only when From Date and To Date are the exact same day.
+ *
+ * @param {string} fromDate - Delivery from date in "YYYY-MM-DD" format.
+ * @param {string} toDate - Delivery to date in "YYYY-MM-DD" format.
+ * @param {string} fromTime - Requirement from time in "HH:mm" format.
+ * @param {string} toTime - Requirement to time in "HH:mm" format.
+ * @param {number} [minGapHours=1] - Minimum required gap in hours (default: 1).
+ * @return {boolean} True if dates are identical and gap is less than minGapHours, false otherwise.
+ */
+export const isToTimeBeforeFromTime = (fromDate, toDate, fromTime, toTime, minGapHours = 1) => {
+  return Boolean(
+    fromDate &&
+    toDate &&
+    fromTime &&
+    toTime &&
+    fromDate === toDate &&
+    toMinutes(toTime) - toMinutes(fromTime) < minGapHours * 60
+  );
+};
+
+/**
+ * Computes the minimum selectable Requirement To Time for the time picker.
+ * On same day, sets the lower bound to (fromTime + minGapHours).
+ *
+ * @param {string} fromDate - Delivery from date in "YYYY-MM-DD" format.
+ * @param {string} toDate - Delivery to date in "YYYY-MM-DD" format.
+ * @param {string} fromTime - Requirement from time in "HH:mm" format.
+ * @param {number} [minGapHours=1] - Minimum required gap in hours (default: 1).
+ * @return {string} Minimum allowed to-time in "HH:mm" format.
+ */
+export const getMinToTime = (fromDate, toDate, fromTime, minGapHours = 1) => {
+  const minBase = getMinDeliveryTime(toDate);
+  if (fromDate === toDate && fromTime) {
+    const minRequired = getTimeAfterHours(fromTime, minGapHours);
+    return minRequired > minBase ? minRequired : minBase;
+  }
+  return minBase;
+};
+
+/**
+ * Reusable Toast notification component with built-in auto-dismiss timer.
+ *
+ * @param {Object} props - Component properties.
+ * @param {Object} props.showToast - Toast configuration object with error flag and message label.
+ * @param {Function} props.setShowToast - State updater function to dismiss toast.
+ * @param {Function} [props.onClose] - Optional custom close callback handler.
+ * @param {number} [props.autoCloseTime=3000] - Duration in milliseconds before auto-dismiss (default: 3000).
+ * @return {JSX.Element|null} Toast component if visible, null otherwise.
+ */
+export const CustomToast = ({ showToast, setShowToast, onClose, autoCloseTime = 3000 }) => {
+  useEffect(() => {
+    if (!showToast) return;
+    const timer = setTimeout(() => (onClose ? onClose() : setShowToast?.(null)), autoCloseTime);
+    return () => clearTimeout(timer);
+  }, [showToast, autoCloseTime]);
+
+  if (!showToast) return null;
+  return <Toast error={showToast.error} label={showToast.label} onClose={onClose || (() => setShowToast?.(null))} />;
 };
 
  // for replacing digit-ui 

@@ -107,7 +107,7 @@ const ADSSearchApplication = ({tenantId, isLoading, t, onSubmit, onClear, data, 
       const locations = cartDetails?.map(detail => detail?.location).join(", ");
 
               // Return the mapped locations using GetCell
-              return GetCell(locations);
+              return GetCell(t(locations));
             },
             disableSortBy: true,
 

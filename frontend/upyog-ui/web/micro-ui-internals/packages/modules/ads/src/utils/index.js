@@ -1,3 +1,5 @@
+import getAdsAcknowledgementData from "../getAdsAcknowledgementData";
+
 // Determines if the back button should be hidden based on the current URL matching screen paths in the config array.
 // Returns true to hide the back button if a match is found; otherwise, returns false.
 export const shouldHideBackButton = (config = []) => {
@@ -174,3 +176,32 @@ export const calculateRemainingTime = (timerValues, timerStartedAt) => {
   }
   return timerValues || 0;
 };
+
+/**
+ * Formats a date string from YYYY-MM-DD to DD-MM-YYYY
+ * @param {string} dateStr Date string
+ * @returns {string} Formatted date string in DD-MM-YYYY format
+ */
+export const formatDate = (dateStr) => {
+  if (!dateStr) return "";
+  if (typeof dateStr === "string" && dateStr.includes("-")) {
+    const parts = dateStr.split("-");
+    if (parts[0].length === 4) {
+      return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+    return dateStr;
+  }
+  return dateStr;
+};
+
+/**
+ * Generates and triggers download of Advertisement application acknowledgement PDF
+ */
+export const downloadADSAcknowledgement = async (application, t) => {
+  const adsApplication = application?.bookingApplication?.[0] || application;
+  const tenants = Digit.SessionStorage.get("initData")?.tenants;
+  const tenantInfo = tenants?.find((tenant) => tenant.code === adsApplication?.tenantId);
+  const ackData = await getAdsAcknowledgementData({ ...adsApplication }, tenantInfo, t);
+  Digit.Utils.pdf.generate(ackData);
+};
+

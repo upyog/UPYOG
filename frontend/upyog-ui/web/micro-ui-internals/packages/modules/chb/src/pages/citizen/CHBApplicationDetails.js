@@ -18,11 +18,10 @@ import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 
 import { useParams, Link,  } from "react-router-dom";
-import getChbAcknowledgementData from "../../getChbAcknowledgementData";
 import CHBWFApplicationTimeline from "../../pageComponents/CHBWFApplicationTimeline";
 import CHBDocument from "../../pageComponents/CHBDocument";
 import ApplicationTable from "../../components/inbox/ApplicationTable";
-import { pdfDownloadLink } from "../../utils";
+import { pdfDownloadLink, downloadCHBAcknowledgement } from "../../utils";
 
 import get from "lodash/get";
 import { size } from "lodash";
@@ -180,13 +179,6 @@ const CHBApplicationDetails = () => {
     return <Loader />;
   }
 
-  const getChbAcknowledgement = async () => {
-    const applications = application || {}; // getting application details
-    const tenantInfo = tenants.find((tenant) => tenant.code === applications.tenantId);
-    const acknowldgementDataAPI = await getChbAcknowledgementData({ ...applications }, tenantInfo, t);
-    Digit.Utils.pdf.generate(acknowldgementDataAPI);
-  };
-
   let documentDate = t("CS_NA");
   if (chb_details?.additionalDetails?.documentDate) {
     const date = new Date(chb_details?.additionalDetails?.documentDate);
@@ -245,12 +237,11 @@ const CHBApplicationDetails = () => {
 
   let dowloadOptions = [];
 
-  // // Payment Receipt Button on Acknowledgement Page
-  // if (reciept_data?.Payments[0]?.paymentStatus !== "DEPOSITED")
-  // dowloadOptions.push({
-  //   label: t("CHB_DOWNLOAD_ACK_FORM"),
-  //   onClick: () => getChbAcknowledgement(),
-  // });
+  // Download Acknowledgement Form
+  dowloadOptions.push({
+    label: t("CHB_DOWNLOAD_ACK_FORM"),
+    onClick: () => downloadCHBAcknowledgement(application, t),
+  });
 
   //commented out, need later for download receipt and certificate
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)

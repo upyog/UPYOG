@@ -2,7 +2,7 @@ import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable
 import React, {useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link,  } from "react-router-dom";
-import { CHBDataConvert } from "../../../utils";
+import { CHBDataConvert, downloadCHBAcknowledgement } from "../../../utils";
 import "../../../css/chb-inline.css";
 
 
@@ -78,6 +78,15 @@ const CHBAcknowledgement = ({ data, onSuccess, mutation }) => {
   const user = Digit.UserService.getUser().info;
   const [showToast, setShowToast] = useState(null);
 
+  const handleDownloadPdf = async () => {
+    const bookingNo = mutation?.data?.hallsBookingApplication?.[0]?.bookingNo;
+    const applicationDetails = await Digit.CHBServices.search({
+      tenantId: mutation?.data?.hallsBookingApplication?.[0]?.tenantId,
+      filters: { bookingNo: bookingNo },
+    });
+    downloadCHBAcknowledgement(applicationDetails?.hallsBookingApplication?.[0], t);
+  };
+
   const handleMakePayment = () => {
 
     if (user?.type === "CITIZEN") {
@@ -134,6 +143,7 @@ const CHBAcknowledgement = ({ data, onSuccess, mutation }) => {
          {user.type==="CITIZEN" &&(<Link to={`/upyog-ui/citizen`}>
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
          </Link>)}
+        <SubmitBar label={t("CHB_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />
         <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment}/>
       </div>
     )}
