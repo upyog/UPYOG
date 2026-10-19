@@ -172,7 +172,7 @@ const WasteType = ({ t, config, onSelect, formData }) => {
   }
 
 
-   // handleAddWasteType ke baad yeh add karo
+   // to remove a waste type from the list and also remove its details
     const handleRemoveWasteType = (wasteTypeCode) => {
       setwasteMaterialType(prev => prev.filter(type => type.code !== wasteTypeCode));
       setWasteDetails(prev => {
