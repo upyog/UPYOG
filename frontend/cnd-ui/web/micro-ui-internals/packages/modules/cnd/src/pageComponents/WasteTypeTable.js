@@ -50,7 +50,7 @@ const WasteTypeTable = ({
     setShowAddRow(false); // row becomes a normal row in the list above
   };
 
-  const label = (type) => (t ? t(type.i18nKey) : type.value || type.i18nKey);
+  const label = (type) => t(type.i18nKey);
 
   return (
     <div className="waste-type-table" style={cndStyles.wasteTypeTable}>
