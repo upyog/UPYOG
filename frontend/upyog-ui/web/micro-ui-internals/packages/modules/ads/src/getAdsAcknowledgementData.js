@@ -15,9 +15,6 @@ const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ")
  * - t: Translation function
  */
 const getAdsAcknowledgementData = async (application, tenantInfo, t) => {
-  const filesArray = application?.documents?.map((value) => value?.fileStoreId);
-  const res = filesArray?.length > 0 && (await Digit.UploadServices.Filefetch(filesArray, Digit.ULBService.getStateId()));
-
   // Format cart details into tabular rows: [Type, Location, Face Area, Night Light, Booking Date, Status]
   const cartRows = application?.cartDetails?.map((slot) => [
     t(slot?.addType) || t("CS_NA"),
@@ -47,7 +44,7 @@ const getAdsAcknowledgementData = async (application, tenantInfo, t) => {
         ],
       },
       {
-        title: t("ADS_CART_DETAILS") || t("SLOT_DETAILS"),
+        title: t("ADS_CART_DETAILS"),
         isTable: true,
         headers: [
           t("ADS_TYPE"),

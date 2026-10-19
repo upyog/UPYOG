@@ -45,18 +45,35 @@ const toMinutes = (time) => {
 };
 
 /**
+ * Returns the minimum selectable delivery date.
+ * If 3 hours lead time crosses midnight (after 21:00), today is no longer bookable and tomorrow is returned.
+ *
+ * @return {string} Minimum allowed delivery date in "YYYY-MM-DD" format.
+ */
+export const getMinDeliveryDate = () => {
+  const now = new Date();
+  const minDate = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+  if (minDate.getDate() !== now.getDate()) {
+    return minDate.toLocaleDateString("en-CA");
+  }
+  return now.toLocaleDateString("en-CA");
+};
+
+/**
  * Calculates the minimum allowed delivery time for a selected delivery date.
  * If the selected date is today, enforces at least a 3-hour gap from the current time.
+ * If 3-hour lead time rolls over to tomorrow (after 21:00), returns null indicating no slots left today.
  * For future dates, allows delivery starting from "06:00".
  *
  * @param {string} selectedDate - Selected date in "YYYY-MM-DD" format.
- * @return {string} Minimum allowed delivery time in "HH:mm" format.
+ * @return {string|null} Minimum allowed delivery time in "HH:mm" format, or null if no slots remain.
  */
 export const getMinDeliveryTime = (selectedDate) => {
   const now = new Date();
   if (selectedDate === now.toLocaleDateString("en-CA")) {
     const minDate = new Date(now.getTime() + 3 * 60 * 60 * 1000);
-    if (minDate.getDate() !== now.getDate()) return "23:59";
+    // If 3 hours lead time crosses midnight, no valid delivery slots remain today
+    if (minDate.getDate() !== now.getDate()) return null;
     const minTime = minDate.toTimeString().slice(0, 5);
     return minTime > "06:00" ? minTime : "06:00";
   }
@@ -65,13 +82,32 @@ export const getMinDeliveryTime = (selectedDate) => {
 
 /**
  * Validates whether the selected delivery time is earlier than the allowed minimum time.
+ * Returns true if no slots remain for selected date or selected time is before minimum delivery time.
  *
  * @param {string} selectedDate - Selected date in "YYYY-MM-DD" format.
  * @param {string} selectedTime - Selected time in "HH:mm" format.
- * @return {boolean} True if selected time is before minimum delivery time, false otherwise.
+ * @return {boolean} True if selected time is invalid, false otherwise.
  */
 export const isTimeBeforeMin = (selectedDate, selectedTime) => {
-  return Boolean(selectedDate && selectedTime && selectedTime < getMinDeliveryTime(selectedDate));
+  if (!selectedDate || !selectedTime) return false;
+  const minTime = getMinDeliveryTime(selectedDate);
+  return minTime === null || selectedTime < minTime;
+};
+
+/**
+ * Returns the appropriate error message key when delivery time validation fails.
+ * Distinguishes between time before 06:00 AM (WT_DELIVERY_TIME_MIN_ERROR)
+ * and 3-hour lead time violation on current day (WT_DELIVERY_TIME_GAP_ERROR).
+ *
+ * @param {string} selectedDate - Selected date in "YYYY-MM-DD" format.
+ * @param {string} selectedTime - Selected time in "HH:mm" format.
+ * @return {string} Localization key for the error message.
+ */
+export const getTimeErrorMessage = (selectedDate, selectedTime) => {
+  if (selectedTime && selectedTime < "06:00") {
+    return "WT_DELIVERY_TIME_MIN_ERROR";
+  }
+  return "WT_DELIVERY_TIME_GAP_ERROR";
 };
 
 /**

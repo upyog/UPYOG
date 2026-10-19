@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FormStep, TextInput, CardLabel, RadioButtons,CheckBox,Dropdown, TextArea } from "@nudmcdgnpm/digit-ui-react-components";
-import { getMinDeliveryTime, isTimeBeforeMin, CustomToast } from "../utils";
+import { getMinDeliveryTime, isTimeBeforeMin, getMinDeliveryDate, getTimeErrorMessage, CustomToast } from "../utils";
 
 /**
  * Major Page which is developed for Request/Booking detail page
@@ -117,7 +117,7 @@ const RequestDetails = ({
 
   /**
    * Time input component with validation enforcing minimum delivery time.
-   * If today is selected, enforces a 3-hour minimum gap from the current time.
+   * Stores value on change and validates on blur to support segment/keyboard entry without focus loss.
    */
   const TimeInput = () => {
     return (
@@ -126,15 +126,15 @@ const RequestDetails = ({
           type="time"
           value={deliveryTime}
           style={inputStyles}
-          onChange={(e) => {
-            if (isTimeBeforeMin(deliveryDate, e.target.value)) {
+          onChange={(e) => setdeliveryTime(e.target.value)}
+          onBlur={(e) => {
+            const val = e.target.value;
+            if (isTimeBeforeMin(deliveryDate, val)) {
               setdeliveryTime("");
               setShowToast({
                 error: true,
-                label: t("WT_DELIVERY_TIME_GAP_ERROR"),
+                label: t(getTimeErrorMessage(deliveryDate, val)),
               });
-            } else {
-              setdeliveryTime(e.target.value);
             }
           }}
           min={getMinDeliveryTime(deliveryDate)}
@@ -172,7 +172,7 @@ const RequestDetails = ({
     if (isTimeBeforeMin(deliveryDate, deliveryTime)) {
       setShowToast({
         error: true,
-        label: t("WT_DELIVERY_TIME_GAP_ERROR"),
+        label: t(getTimeErrorMessage(deliveryDate, deliveryTime)),
       });
       return;
     }
@@ -209,13 +209,13 @@ const RequestDetails = ({
           <CardLabel>{`${t("WT_TANKER_QUANTITY")}`} <span className="astericColor">*</span></CardLabel>
             <Dropdown className="form-field" selected={tankerQuantity} placeholder={"Select Tanker Quantity"} select={settankerQuantity} option={tankerDetails} style={inputStyles} optionKey="i18nKey" t={t} />
           <CardLabel>{`${t("WT_DELIVERY_DATE")}`} <span className="astericColor">*</span></CardLabel>
-          <TextInput t={t} type={"date"} isMandatory={false} optionKey="i18nKey" name="deliveryDate" style={inputStyles} value={deliveryDate} onChange={setDeliveryDate} min={new Date().toISOString().split('T')[0]} rules={{
+          <TextInput t={t} type={"date"} isMandatory={false} optionKey="i18nKey" name="deliveryDate" style={inputStyles} value={deliveryDate} onChange={setDeliveryDate} min={getMinDeliveryDate()} rules={{
           required: t("CORE_COMMON_REQUIRED_ERRMSG"),
           validDate: val => /^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")
         }} />
 
           <CardLabel>{`${t("WT_DELIVERY_TIME")}`} <span className="astericColor">*</span></CardLabel>
-          <TimeInput />
+          {TimeInput()}
 
           <CardLabel>{`${t("WT_DESCRIPTION")}`} <span className="astericColor">*</span></CardLabel>
           <TextArea t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="description" value={description} onChange={setDescription} style={inputStyles} ValidationRequired={true} {...validation = {

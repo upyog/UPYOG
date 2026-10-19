@@ -15,7 +15,6 @@ const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ")
  * - `t`: The translation function used for internationalization.
  * 
  * Logic:
- * - Fetches file URLs for the documents associated with the application using the `Digit.UploadServices.Filefetch` service.
  * - Formats slot details into a structured table (Venue Name, Venue Codes, Booking Date, Booking Time, Status) with dates formatted as DD-MM-YYYY.
  * 
  * Returns:
@@ -25,9 +24,6 @@ const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ")
  *    - Structured sections (applicant details, slot details table, event details, bank details, address details) for the acknowledgement PDF.
  */
 const getChbAcknowledgementData = async (application, tenantInfo, t) => {
-  const filesArray = application?.documents?.map((value) => value?.fileStoreId);
-  const res = filesArray?.length > 0 && (await Digit.UploadServices.Filefetch(filesArray, Digit.ULBService.getStateId()));
-
   // Format slot details into tabular rows: [Venue Name, Venue Code / Hall Code, Booking Date, Booking Time, Status]
   const venueName = t(application?.venueCode);
   const slotlistRows = application?.bookingSlotDetails?.map((slot) => [

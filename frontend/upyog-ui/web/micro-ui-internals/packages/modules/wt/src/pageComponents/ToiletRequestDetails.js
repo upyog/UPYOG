@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FormStep, CardLabel, TextInput, TextArea,Dropdown } from "@nudmcdgnpm/digit-ui-react-components";
-import { getMinDeliveryTime, isTimeBeforeMin, isToTimeBeforeFromTime, getMinToTime, CustomToast } from "../utils";
+import { getMinDeliveryTime, isTimeBeforeMin, isToTimeBeforeFromTime, getMinToTime, getMinDeliveryDate, getTimeErrorMessage, CustomToast } from "../utils";
 
 /* This page is developed for the Mobile Toilet Request Details page.
    It allows users to enter details such as the number of mobile toilets required, delivery dates, and special requests. */
@@ -78,7 +78,7 @@ const ToiletRequestDetails = ({ t, config, onSelect, userType, formData }) => {
 
   /**
    * Requirement From Time input component.
-   * Validates minimum delivery time and auto-resets deliverytoTime if it violates the 1-hour gap on the same day.
+   * Stores value on change and validates minimum delivery time on blur to support typing without focus loss.
    */
   const TimeInput = () => {
     return (
@@ -87,23 +87,21 @@ const ToiletRequestDetails = ({ t, config, onSelect, userType, formData }) => {
           type="time"
           value={deliveryfromTime}
           style={inputStyles}
-          onChange={(e) => {
+          onChange={(e) => setdeliveryfromTime(e.target.value)}
+          onBlur={(e) => {
             const val = e.target.value;
             if (isTimeBeforeMin(deliveryfromDate, val)) {
               setdeliveryfromTime("");
               setShowToast({
                 error: true,
-                label: t("WT_DELIVERY_TIME_GAP_ERROR"),
+                label: t(getTimeErrorMessage(deliveryfromDate, val)),
               });
-            } else {
-              setdeliveryfromTime(val);
-              if (isToTimeBeforeFromTime(deliveryfromDate, deliverytoDate, val, deliverytoTime)) {
-                setdeliverytoTime("");
-                setShowToast({
-                  error: true,
-                  label: t("WT_TO_TIME_MUST_BE_AFTER_FROM_TIME"),
-                });
-              }
+            } else if (isToTimeBeforeFromTime(deliveryfromDate, deliverytoDate, val, deliverytoTime)) {
+              setdeliverytoTime("");
+              setShowToast({
+                error: true,
+                label: t("WT_TO_TIME_MUST_BE_AFTER_FROM_TIME"),
+              });
             }
           }}
           min={getMinDeliveryTime(deliveryfromDate)}
@@ -115,7 +113,7 @@ const ToiletRequestDetails = ({ t, config, onSelect, userType, formData }) => {
 
   /**
    * Requirement To Time input component.
-   * Enforces minimum delivery time and at least a 1-hour gap after Requirement From Time when dates are the same.
+   * Stores value on change and validates minimum delivery time and 1-hour gap on blur.
    */
   const TimeInput2 = () => {
     return (
@@ -124,13 +122,14 @@ const ToiletRequestDetails = ({ t, config, onSelect, userType, formData }) => {
           type="time"
           value={deliverytoTime}
           style={inputStyles}
-          onChange={(e) => {
+          onChange={(e) => setdeliverytoTime(e.target.value)}
+          onBlur={(e) => {
             const val = e.target.value;
             if (isTimeBeforeMin(deliverytoDate, val)) {
               setdeliverytoTime("");
               setShowToast({
                 error: true,
-                label: t("WT_DELIVERY_TIME_GAP_ERROR"),
+                label: t(getTimeErrorMessage(deliverytoDate, val)),
               });
             } else if (isToTimeBeforeFromTime(deliveryfromDate, deliverytoDate, deliveryfromTime, val)) {
               setdeliverytoTime("");
@@ -138,8 +137,6 @@ const ToiletRequestDetails = ({ t, config, onSelect, userType, formData }) => {
                 error: true,
                 label: t("WT_TO_TIME_MUST_BE_AFTER_FROM_TIME"),
               });
-            } else {
-              setdeliverytoTime(val);
             }
           }}
           min={getMinToTime(deliveryfromDate, deliverytoDate, deliveryfromTime)}
@@ -154,10 +151,17 @@ const ToiletRequestDetails = ({ t, config, onSelect, userType, formData }) => {
    * Blocks submission and displays error toast if minimum time or 1-hour same-day gap is violated.
    */
   const goNext = () => {
-    if (isTimeBeforeMin(deliveryfromDate, deliveryfromTime) || isTimeBeforeMin(deliverytoDate, deliverytoTime)) {
+    if (isTimeBeforeMin(deliveryfromDate, deliveryfromTime)) {
       setShowToast({
         error: true,
-        label: t("WT_DELIVERY_TIME_GAP_ERROR"),
+        label: t(getTimeErrorMessage(deliveryfromDate, deliveryfromTime)),
+      });
+      return;
+    }
+    if (isTimeBeforeMin(deliverytoDate, deliverytoTime)) {
+      setShowToast({
+        error: true,
+        label: t(getTimeErrorMessage(deliverytoDate, deliverytoTime)),
       });
       return;
     }
@@ -211,7 +215,7 @@ const ToiletRequestDetails = ({ t, config, onSelect, userType, formData }) => {
             style={inputStyles}
             value={deliveryfromDate}
             onChange={SetdeliveryfromDate}
-            min={new Date().toISOString().split('T')[0]}
+            min={getMinDeliveryDate()}
             rules={{
               required: t("CORE_COMMON_REQUIRED_ERRMSG"),
               validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
@@ -235,9 +239,9 @@ const ToiletRequestDetails = ({ t, config, onSelect, userType, formData }) => {
           />
 
           <CardLabel>{`${t("MT_REQUIREMNENT_FROM_TIME")}`} <span className="astericColor">*</span></CardLabel>
-          <TimeInput />
+          {TimeInput()}
           <CardLabel>{`${t("MT_REQUIREMNENT_TO_TIME")}`} <span className="astericColor">*</span></CardLabel>
-          <TimeInput2 />
+          {TimeInput2()}
 
 
           <CardLabel>{`${t("MT_SPECIAL_REQUEST")}`} <span className="check-page-link-button"></span></CardLabel>

@@ -1869,7 +1869,7 @@ function createContent(details, logo, tenantId, phoneNumber, breakPageLimit = nu
      * - If `detail.isTable` is not set or false, this block is completely skipped.
      * - All other modules continue using standard key-value layout with zero impact.
      */
-    if (detail?.isTable && detail?.headers && detail?.tableRows) {
+    if (detail?.isTable && detail?.headers && detail?.tableRows?.length > 0) {
       const headerRow = detail.headers.map((h) => ({
         text: h,
         bold: true,
