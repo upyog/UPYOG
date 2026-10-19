@@ -493,7 +493,7 @@ public class TrialBalanceAction extends BaseFormAction {
             final SQLQuery sqlQuery = persistenceService.getSession().createSQLQuery(query.toString());
             sqlQuery.addScalar("accCode")
                     .addScalar("accName")
-                    .addScalar("fundId")
+                    .addScalar("fundId", StringType.INSTANCE)
                     .addScalar("amount", BigDecimalType.INSTANCE)
                     .setResultTransformer(Transformers.aliasToBean(TrialBalanceBean.class));
             sqlQuery.setParameter("toDate", rb.getToDate(), DateType.INSTANCE);
