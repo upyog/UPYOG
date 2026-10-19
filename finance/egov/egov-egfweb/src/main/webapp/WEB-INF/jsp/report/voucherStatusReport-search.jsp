@@ -49,8 +49,9 @@
 
 <%@ page language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<link href="<egov:url path='/resources/css/displaytagFormatted.css?rnd=${app_release_no}'/>"
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<link
+	href="<egov:url path='/resources/css/displaytagFormatted.css?rnd=${app_release_no}'/>"
 	rel="stylesheet" type="text/css" />
 <html>
 <head>
@@ -86,7 +87,8 @@
 							onchange="loadVoucherNames(this.value);activeModeOfPayment()" /></td>
 					<td class="greybox"><s:text name="voucher.name" /></td>
 					<td class="greybox"><s:select name="name" id="name"
-							list="%{nameMap}" headerKey="-1" headerValue="%{getText('lbl.choose.options')}" /></td>
+							list="%{nameMap}" headerKey="-1"
+							headerValue="%{getText('lbl.choose.options')}" /></td>
 
 				</tr>
 
@@ -107,29 +109,33 @@
 					<td class="greybox"><s:textfield name="fromDate" id="fromDate"
 							maxlength="20"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							value="%{tempFromDate}" autocomplete="off"/><a
+							value="%{tempFromDate}" autocomplete="off" /><a
 						href="javascript:show_calendar('forms[0].fromDate');"
 						style="text-decoration: none">&nbsp;<img
-							src="/services/egi/resources/erp2/images/calendaricon.gif" border="0" /></a></td>
+							src="/services/egi/resources/erp2/images/calendaricon.gif"
+							border="0" /></a></td>
 					<td class="greybox"><s:text name="voucher.todate" /><span
 						class="mandatory1">*</span></td>
-					 <s:date name="toDate" format="dd/MM/yyyy" var="tempToDate" />  
+					<s:date name="toDate" format="dd/MM/yyyy" var="tempToDate" />
 					<td class="greybox"><s:textfield name="toDate" id="toDate"
 							maxlength="20"
 							onkeyup="DateFormat(this,this.value,event,false,'3')"
-							value="%{tempToDate}" autocomplete="off"/><a
+							value="%{tempToDate}" autocomplete="off" /><a
 						href="javascript:show_calendar('forms[0].toDate');"
 						style="text-decoration: none">&nbsp;<img
-							src="/services/egi/resources/erp2/images/calendaricon.gif" border="0" /></a>(dd/mm/yyyy)</td>
+							src="/services/egi/resources/erp2/images/calendaricon.gif"
+							border="0" /></a>(dd/mm/yyyy)</td>
 				</tr>
 				<tr>
 					<td style="width: 5%"></td>
 					<td class="greybox"><s:text name="voucher.status" /></td>
 					<td class="greybox"><s:select name="status" id="status"
-							list="%{statusMap}" headerKey="-1" headerValue="%{getText('lbl.choose.options')}"
-							value="%{status}" /></td>
-					<td class="greybox"></td>
-					<td class="greybox"></td>
+							list="%{statusMap}" headerKey="-1"
+							headerValue="%{getText('lbl.choose.options')}" value="%{status}" /></td>
+					<td class="greybox">Source</td>
+					<td class="greybox"><s:select name="sourceModuleId"
+							id="sourceModuleId" list="%{sourceMap}" headerKey="-1"
+							headerValue="All Sources" value="%{sourceModuleId}" /></td>
 				</tr>
 			</table>
 			<div class="buttonbottom">
@@ -138,7 +144,8 @@
 				<s:submit method="beforeSearch" key="lbl.reset" cssClass="button"
 					onclick="return resetAndSubmit();" />
 				<input type="button" value="<s:text name='lbl.close'/>"
-					onclick="javascript:window.parent.postMessage('close','*');" class="button" />
+					onclick="javascript:window.parent.postMessage('close','*');"
+					class="button" />
 
 			</div>
 
@@ -178,7 +185,7 @@
 								</display:column>
 								<display:column title="Bank Account" style="text-align:center;">
 									<s:property value="%{#attr.currentRowObject.accountNumber}" />
-								</display:column>	
+								</display:column>
 								<display:column title="Source" style="text-align:center;">
 									<s:property value="%{#attr.currentRowObject.source}" />
 								</display:column>
@@ -198,10 +205,9 @@
 								<div id="exportButton" class="buttonbottom">
 									<input type="button" method="generatePdf" value="Save As Pdf"
 										Class="buttonsubmit" id="generatePdf"
-										onclick="return generatePdfsubmit();" />
-									<input type="button" method="generateXls" value="Save As Xls"
-										Class="buttonsubmit" id="generateXls"
-										onclick="return generateXlsSubmit();" />
+										onclick="return generatePdfsubmit();" /> <input type="button"
+										method="generateXls" value="Save As Xls" Class="buttonsubmit"
+										id="generateXls" onclick="return generateXlsSubmit();" />
 								</div>
 							</s:if></td>
 					</tr>
