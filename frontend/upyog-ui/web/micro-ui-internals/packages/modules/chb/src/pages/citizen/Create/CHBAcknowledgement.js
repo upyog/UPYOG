@@ -79,12 +79,16 @@ const CHBAcknowledgement = ({ data, onSuccess, mutation }) => {
   const [showToast, setShowToast] = useState(null);
 
   const handleDownloadPdf = async () => {
-    const bookingNo = mutation?.data?.hallsBookingApplication?.[0]?.bookingNo;
-    const applicationDetails = await Digit.CHBServices.search({
-      tenantId: mutation?.data?.hallsBookingApplication?.[0]?.tenantId,
-      filters: { bookingNo: bookingNo },
-    });
-    downloadCHBAcknowledgement(applicationDetails?.hallsBookingApplication?.[0], t);
+    try {
+      const bookingNo = mutation?.data?.hallsBookingApplication?.[0]?.bookingNo;
+      const applicationDetails = await Digit.CHBServices.search({
+        tenantId: mutation?.data?.hallsBookingApplication?.[0]?.tenantId,
+        filters: { bookingNo: bookingNo },
+      });
+      downloadCHBAcknowledgement(applicationDetails?.hallsBookingApplication?.[0], t);
+    } catch (e) {
+      setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
+    }
   };
 
   const handleMakePayment = () => {

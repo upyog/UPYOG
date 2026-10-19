@@ -53,7 +53,11 @@ const ADSAcknowledgement = ({ data, onSuccess, mutation }) => {
   };
 
   const handleDownloadPdf = () => {
-    downloadADSAcknowledgement(mutation?.data?.bookingApplication?.[0], t);
+    try {
+      downloadADSAcknowledgement(mutation?.data?.bookingApplication?.[0], t);
+    } catch (e) {
+      setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
+    }
   };
 
   const handleMakePayment = async () => {

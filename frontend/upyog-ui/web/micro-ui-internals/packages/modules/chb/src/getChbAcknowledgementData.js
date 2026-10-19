@@ -25,12 +25,12 @@ const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ")
  */
 const getChbAcknowledgementData = async (application, tenantInfo, t) => {
   // Format slot details into tabular rows: [Venue Name, Venue Code / Hall Code, Booking Date, Booking Time, Status]
-  const venueName = t(application?.venueCode);
+  const venueName = application?.venueCode;
   const slotlistRows = application?.bookingSlotDetails?.map((slot) => [
     t(venueName),
     t(slot?.unitCode),
     formatDate(slot?.bookingDate),
-    `${slot?.bookingFromTime} - ${slot?.bookingToTime}`,
+    slot?.bookingFromTime && slot?.bookingToTime ? `${slot.bookingFromTime} - ${slot.bookingToTime}` : t("CS_NA"),
     t(slot?.status)
   ]) || [];
 
