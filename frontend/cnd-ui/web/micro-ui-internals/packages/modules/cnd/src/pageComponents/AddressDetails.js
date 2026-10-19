@@ -158,7 +158,7 @@ const AddressDetails = ({ t, config, onSelect, formData, isEdit }) => {
 
   return (
     <FormStep config={config} onSelect={goNext} t={t} isDisabled={isSaveDisabled}>
-      <CardLabel>{`${t("COMMON_ADDRESS_TYPE")} *`}</CardLabel>
+      <CardLabel>{`${t("COMMON_ADDRESS_TYPE")}`} <span className="astericColor">*</span></CardLabel>
       <Dropdown
         className="form-field"
         selected={addressType}
@@ -172,7 +172,7 @@ const AddressDetails = ({ t, config, onSelect, formData, isEdit }) => {
         placeholder="Select Address Type"
       />
 
-      <CardLabel>{`${t("HOUSE_NO")} *`}</CardLabel>
+      <CardLabel>{`${t("HOUSE_NO")}`} <span className="astericColor">*</span></CardLabel>
       <TextInput
         t={t}
         type="text"
@@ -191,7 +191,7 @@ const AddressDetails = ({ t, config, onSelect, formData, isEdit }) => {
         }}
       />
 
-      <CardLabel>{`${t("STREET_NAME")} *`}</CardLabel>
+      <CardLabel>{`${t("STREET_NAME")}`} <span className="astericColor">*</span></CardLabel>
       <TextInput
         t={t}
         type="text"
@@ -209,7 +209,7 @@ const AddressDetails = ({ t, config, onSelect, formData, isEdit }) => {
         }}
       />
 
-      <CardLabel>{`${t("ADDRESS_LINE1")} *`}</CardLabel>
+      <CardLabel>{`${t("ADDRESS_LINE1")}`} <span className="astericColor">*</span></CardLabel>
       <TextInput
         t={t}
         type="text"
@@ -226,7 +226,7 @@ const AddressDetails = ({ t, config, onSelect, formData, isEdit }) => {
         title={t("ADDRESS_ERROR_MESSAGE")}
       />
 
-      <CardLabel>{`${t("ADDRESS_LINE2")} *`}</CardLabel>
+      <CardLabel>{`${t("ADDRESS_LINE2")}`} <span className="astericColor">*</span></CardLabel>
       <TextInput
         t={t}
         type="text"
@@ -262,7 +262,7 @@ const AddressDetails = ({ t, config, onSelect, formData, isEdit }) => {
         }}
       />
 
-      <CardLabel>{`${t("CITY")} *`}</CardLabel>
+      <CardLabel>{`${t("CITY")}`} <span className="astericColor">*</span></CardLabel>
       <Controller
         control={control}
         name="city"
@@ -286,7 +286,7 @@ const AddressDetails = ({ t, config, onSelect, formData, isEdit }) => {
         )}
       />
 
-      <CardLabel>{`${t("LOCALITY")} *`}</CardLabel>
+      <CardLabel>{`${t("LOCALITY")}`} <span className="astericColor">*</span></CardLabel>
       <Controller
         control={control}
         name="locality"
@@ -307,7 +307,7 @@ const AddressDetails = ({ t, config, onSelect, formData, isEdit }) => {
         )}
       />
 
-      <CardLabel>{`${t("PINCODE")} *`}</CardLabel>
+      <CardLabel>{`${t("PINCODE")}`} <span className="astericColor">*</span></CardLabel>
       <TextInput
         t={t}
         type="text"
