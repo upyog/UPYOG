@@ -577,12 +577,12 @@ public class VoucherStatusReportAction extends BaseFormAction {
 				return getUserNameForPosition(voucherState.getOwnerPosition().intValue());
 		} else if (voucherType.equalsIgnoreCase(FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL)) {
 			voucherState = voucherHeader.getState();
-			if (voucherState == null)
-				return dash;
-			else if (voucherState.getValue().equals("END"))
-				return dash;
-			else
-				return getUserNameForPosition(voucherState.getOwnerPosition().intValue());
+			if (voucherState == null
+			        || "END".equals(voucherState.getValue())
+			        || voucherState.getOwnerPosition() == null) {
+			    return dash;
+			}
+			return getUserNameForPosition(voucherState.getOwnerPosition().intValue());
 		} else if (voucherType.equalsIgnoreCase(FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT)) {
 			final Paymentheader paymentHeader = (Paymentheader) persistenceService
 					.find("from Paymentheader ph where ph.voucherheader=?", voucherHeader);
