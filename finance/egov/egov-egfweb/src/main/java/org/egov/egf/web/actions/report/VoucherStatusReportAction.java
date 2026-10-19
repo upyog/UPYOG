@@ -138,6 +138,8 @@ public class VoucherStatusReportAction extends BaseFormAction {
 	private EgovPaginatedList pagedResults;
 	private String countQry;
 	private List<Object> countParams;
+	private Integer sourceModuleId = -1;
+	private Map<Integer, String> sourceMap = new LinkedHashMap<>();
 	private String modeOfPayment;
 	@Autowired
 	private AppConfigValueService appConfigValueService;
@@ -206,7 +208,20 @@ public class VoucherStatusReportAction extends BaseFormAction {
 		statusMap.put(FinancialConstants.CANCELLEDVOUCHERSTATUS, "Cancelled");
 		statusMap.put(FinancialConstants.PREAPPROVEDVOUCHERSTATUS, "Preapproved");
 	}
+	
+	@SuppressWarnings("unchecked")
+	private void populateSourceMap() {
+	    sourceMap.clear();
+	    sourceMap.put(-2, "Internal");
 
+	    final List<EgModules> modules = persistenceService.findAllBy(
+	            "from EgModules order by name");
+
+	    for (final EgModules module : modules) {
+	        sourceMap.put(module.getId(), module.getName());
+	    }
+	}
+	
 	private void loadDropDowns() {
 
 		if (headerFields.contains("department"))
@@ -236,6 +251,7 @@ public class VoucherStatusReportAction extends BaseFormAction {
 				persistenceService.findAllBy(" select DISTINCT upper(type) from Paymentheader "));
 		voucherNames = voucherHelpers.getVoucherNamesAndTypes();
 		nameMap = new LinkedHashMap<String, String>();
+		populateSourceMap();
 	}
 
 	protected void getHeaderFields() {
@@ -270,6 +286,7 @@ public class VoucherStatusReportAction extends BaseFormAction {
 	public String beforeSearch() {
 	        deptImpl = null;  
 		voucherHeader.reset();
+		sourceModuleId = -1;
 		finYearDate();
 
 		/*
@@ -427,6 +444,12 @@ public class VoucherStatusReportAction extends BaseFormAction {
         if (!modeOfPayment.equals("-1")) {
             sql.append(" and upper(ph.type) =:paymentMode");
             params.put("paymentMode", getModeOfPayment());
+        }
+        if (sourceModuleId != null && sourceModuleId == -2) {
+            sql.append(" and vh.moduleId is null");
+        } else if (sourceModuleId != null && sourceModuleId != -1) {
+            sql.append(" and vh.moduleId = :sourceModuleId");
+            params.put("sourceModuleId", sourceModuleId);
         }
         countQry = "select count(*) " + sql;
         final Query query = persistenceService.getSession()
@@ -732,5 +755,17 @@ public class VoucherStatusReportAction extends BaseFormAction {
 
 	public void setDeptImpl(Department deptImpl) {
 		this.deptImpl = deptImpl;
+	}
+	
+	public Integer getSourceModuleId() {
+	    return sourceModuleId;
+	}
+
+	public void setSourceModuleId(final Integer sourceModuleId) {
+	    this.sourceModuleId = sourceModuleId;
+	}
+
+	public Map<Integer, String> getSourceMap() {
+	    return sourceMap;
 	}
 }

@@ -25,17 +25,23 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.microservice.models.Assignment;
 import org.egov.infra.microservice.models.EmployeeInfo;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
+import org.egov.commons.EgModules;
+import org.egov.services.voucher.VoucherService;
 
 @Service
 public class RefundJournalVoucherService {
 
 	private static final String REFUND_DESCRIPTION_PREFIX = "Refund for application ";
+	private static final String REFUND_FINANCE_MODULE = "Refund";
 
 	@PersistenceContext
 	private EntityManager entityManager;
 
 	@Autowired
 	private JournalVoucherService journalVoucherService;
+
+	@Autowired
+	private VoucherService voucherService;
 
 	private static final String EGF_MODULE = "EGF";
 
@@ -80,6 +86,17 @@ public class RefundJournalVoucherService {
 				comments == null ? "" : comments.trim());
 	}
 
+	private Integer resolveRefundFinanceModuleId() {
+		final EgModules financeModule = voucherService.getModulesIdByName(REFUND_FINANCE_MODULE);
+
+		if (financeModule == null || financeModule.getId() == null) {
+			throw new IllegalArgumentException(
+					"Finance module configuration was not found for module: " + REFUND_FINANCE_MODULE);
+		}
+
+		return financeModule.getId();
+	}
+
 	private CVoucherHeader buildVoucherHeader(final RefundApplication refundApplication, final Fund fund,
 			final CFunction function) {
 
@@ -87,6 +104,8 @@ public class RefundJournalVoucherService {
 				: new Date(refundApplication.getRefundDate());
 
 		final CVoucherHeader voucherHeader = new CVoucherHeader();
+		
+		voucherHeader.setModuleId(resolveRefundFinanceModuleId());
 
 		voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL);
 
