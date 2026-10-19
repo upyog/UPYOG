@@ -3,6 +3,7 @@ import { Header, Loader, TextInput, Dropdown, SubmitBar, CardLabel, Card } from 
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ChbApplication from "./chb-application";
+import { getStatusOptions } from "../../../utils";
 import "../../../css/chb-inline.css";
 
 /**
@@ -85,13 +86,7 @@ export const CHBMyApplications = () => {
     return <Loader />;
   }
 
-  const statusOptions = [
-    { i18nKey: "Booked", code: "BOOKED", value: t("CHB_BOOKED") },
-    { i18nKey: "Booking in Progres", code: "BOOKING_CREATED", value: t("CHB_BOOKING_IN_PROGRES") },
-    { i18nKey: "Pending For Payment", code: "PENDING_FOR_PAYMENT", value: t("PENDING_FOR_PAYMENT") },
-    { i18nKey: "Booking Expired", code: "EXPIRED", value: t("EXPIRED") },
-    { i18nKey: "Cancelled", code: "CANCELLED", value: t("CANCELLED") }
-  ];
+  const statusOptions = getStatusOptions(t);
 
   const filteredApplications = data?.hallsBookingApplication || [];
 

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useParams, Link,  } from "react-router-dom";
 import ADSDocument from "../../pageComponents/ADSDocument";
 import ApplicationTable from "../../components/ApplicationTable";
-import { pdfDownloadLink } from "../../utils";
+import { pdfDownloadLink, downloadADSAcknowledgement } from "../../utils";
 import get from "lodash/get";
 import { size } from "lodash";
 
@@ -161,6 +161,12 @@ const ADSApplicationDetails = () => {
     window.open(documentLink, "_blank");
   };
   let dowloadOptions = [];
+
+  // Download Acknowledgement Form
+  dowloadOptions.push({
+    label: t("ADS_DOWNLOAD_ACK_FORM"),
+    onClick: () => downloadADSAcknowledgement(application, t),
+  });
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false) dowloadOptions.push({
     label: t("ADS_FEE_RECEIPT"),
     onClick: () => getRecieptSearch({
@@ -179,6 +185,9 @@ const ADSApplicationDetails = () => {
     Header: `${t("ADS_TYPE")}`,
     accessor: "addType"
   }, {
+    Header: `${t("ADS_LOCATION")}`,
+    accessor: "location"
+  }, {
     Header: `${t("ADS_FACE_AREA")}`,
     accessor: "faceArea"
   }, {
@@ -193,6 +202,7 @@ const ADSApplicationDetails = () => {
   }];
   const adslistRows = ads_details?.cartDetails?.map(slot => ({
     addType: `${t(slot.addType)}`,
+    location: `${t(slot.location)}`,
     faceArea: `${t(slot.faceArea)}`,
     nightLight: `${t(slot.nightLight === true ? "Yes" : "No")}`,
     bookingDate: `${t(slot.bookingDate)}`,

@@ -3,6 +3,7 @@
   import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@nudmcdgnpm/digit-ui-react-components";
   import { Link,  } from "react-router-dom";
   import CHBCancelBooking from "./CHBCancelBooking";
+  import { getStatusOptions } from "../utils";
 
   /**
  * CHBSearchApplication Component
@@ -338,12 +339,14 @@
                 const { data: slotSearchData, refetch } = Digit.Hooks.chb.useChbSlotSearch({
                   tenantId: application?.tenantId,
                   filters: {
-                    bookingId:application?.bookingId,
-                    venueType: application?.venueType,
+                    bookingId: application?.bookingId,
+                    venueCode: application?.venueCode,
                     bookingStartDate: application?.bookingSlotDetails?.[0]?.bookingDate,
                     bookingEndDate: application?.bookingSlotDetails?.[application.bookingSlotDetails.length - 1]?.bookingDate,
-                    venueCode: application?.venueType,
-                    isTimerRequired:true
+                    unitCode: application?.bookingSlotDetails?.[0]?.unitCode,
+                    isTimerRequired: true,
+                    fromTime: application?.bookingSlotDetails?.[0]?.bookingFromTime,
+                    toTime: application?.bookingSlotDetails?.[0]?.bookingToTime,
                   },
                   enabled: false, // Disable automatic refetch
                 });
@@ -353,10 +356,8 @@
                   let SlotSearchData={
                     tenantId: application?.tenantId,
                     bookingId:application?.bookingId,
-                    venueType: application?.venueType,
-                    venueCode: application?.venueType,
-                    bookingStartDate: application?.bookingSlotDetails?.[0]?.bookingDate,
-                    bookingEndDate: application?.bookingSlotDetails?.[application.bookingSlotDetails.length - 1]?.bookingDate,
+                    venueCode: application?.venueCode,
+                    bookingSlotDetails: application?.bookingSlotDetails,
                     isTimerRequired:true
               
                   }
@@ -438,13 +439,7 @@
             }
         ]), [bookingDetails, refundStatus] )
 
-      const statusOptions = [
-          { i18nKey: "Booked", code: "BOOKED", value: t("CHB_BOOKED") },
-          { i18nKey: "Booking in Progress", code: "BOOKING_CREATED", value: t("CHB_BOOKING_IN_PROGRES") },
-          { i18nKey: "Pending For Payment", code: "PENDING_FOR_PAYMENT", value: t("PENDING_FOR_PAYMENT") },
-          { i18nKey: "Booking Expired", code: "EXPIRED", value: t("EXPIRED") },
-          { i18nKey: "Cancelled", code: "CANCELLED", value: t("CANCELLED") }
-        ];
+      const statusOptions = getStatusOptions(t);
 
       const onSort = useCallback((args) => {
           if (args.length === 0) return
@@ -547,7 +542,7 @@
                                   select={field.onChange}
                                   onBlur={field.onBlur}
                                   option={statusOptions}
-                                  optionKey="i18nKey"
+                                  optionKey="value"
                                   t={t}
                                   disable={false}
                                   />
