@@ -379,7 +379,7 @@ config:
     build:
       - work-dir: "core-services/libraries/tracer"
         image-name: "tracer"
-
+        
   - name: "builds/upyog/core-services/nlp-engine"
     build:
       - work-dir: "core-services/nlp-engine"
@@ -973,4 +973,12 @@ config:
         image-name: "vendor-management"
         dockerfile: "build/maven/Dockerfile"  
       - work-dir: "municipal-services/vendor-management/src/main/resources/db"
-        image-name: "vendor-management-db" 
+        image-name: "vendor-management-db"
+
+  - name: "builds/upyog/dx-services/data-sharing-service-dx"
+    build:
+      - work-dir: "dx-services/data-sharing-service-dx"
+        image-name: "data-sharing-service-dx"
+        dockerfile: "build/maven/Dockerfile"
+      - work-dir: "dx-services/data-sharing-service-dx/src/main/resources/db"
+        image-name: "data-sharing-service-dx-db"
