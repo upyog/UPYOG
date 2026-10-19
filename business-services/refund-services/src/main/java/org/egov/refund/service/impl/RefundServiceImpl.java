@@ -121,6 +121,7 @@ public class RefundServiceImpl implements RefundService {
 		if (inputRefund.getProcessInstance() == null || isBlank(inputRefund.getProcessInstance().getAction())) {
 			log.info("Processing normal refund data update. refundId={}", refund.getId());
 
+
 			refundEnrichmentService.updateAuditDetails(refund, request.getRequestInfo().getUserInfo().getUuid());
 
 			refundRepository.update(refund);
@@ -141,11 +142,9 @@ public class RefundServiceImpl implements RefundService {
 			return refund;
 		}
 
-		
-		  // Offline refund completion: update workflow and push completion to Finance
-	    if (isOfflineRefundCompletion(refund, action)) {
-	        return completeOfflineRefund(refund, request, action);
-	    }
+		if (isOfflineRefundCompletion(refund, action)) {
+			return completeOfflineRefund(refund, request, action);
+		}
 
 		RefundActionRequest actionRequest = refundEnrichmentService.enrichWorkflowAction(refund,
 				request.getRequestInfo(), action, inputRefund.getProcessInstance().getComment());
@@ -200,8 +199,7 @@ public class RefundServiceImpl implements RefundService {
 				.moduleName(request.getModuleName()).businessService(request.getBusinessService())
 				.consumerCode(request.getConsumerCode()).paymentId(request.getPaymentId())
 				.refundNo(request.getRefundNo()).status(request.getStatus()).refundCategory(request.getRefundCategory())
-				.gatewayRefundId(request.getGatewayRefundId()).sanctionRef(request.getSanctionRef())
-				.refundMode(request.getRefundMode()).build();
+				.gatewayRefundId(request.getGatewayRefundId()).sanctionRef(request.getSanctionRef()).refundMode(request.getRefundMode()).build();
 
 		return refundRepository.search(criteria);
 	}
@@ -231,19 +229,12 @@ public class RefundServiceImpl implements RefundService {
 		log.info("Workflow transition successful. refundId={}, action={}, oldStatus={}, newStatus={}", refund.getId(),
 				transition.getAction(), refund.getStatus(), transition.getApplicationStatus());
 
-		// Fetch existing refund before updating the status
-		Refund oldRefundDetails = refundRepository.findById(refund.getId());
-
-		if (oldRefundDetails == null) {
-			oldRefundDetails = refund;
-		}
-
 		refund.setStatus(transition.getApplicationStatus());
 
+		refundEnrichmentService.updateAuditDetails(refund, request.getUserId());
 		if (!RefundConstants.ACTION_INITIATE.equalsIgnoreCase(transition.getAction())) {
-			refundEnrichmentService.updateAuditDetails(oldRefundDetails, request.getUserId());
 
-			refundAuditService.createAudit(oldRefundDetails, transition.getAction());
+			refundAuditService.createAudit(refund, transition.getAction());
 		}
 		Refund processedRefund = processWorkflowAction(refund, transition, request);
 
@@ -313,6 +304,8 @@ public class RefundServiceImpl implements RefundService {
 
 	private Refund processFinanceRequest(Refund refund) {
 
+		validateFinanceDetails(refund);
+
 		RefundRequest refundRequest = RefundRequest.builder().refund(refund).requestInfo(createSystemRequestInfo())
 				.build();
 
@@ -339,6 +332,10 @@ public class RefundServiceImpl implements RefundService {
 				&& !RefundConstants.ACTION_REJECT.equalsIgnoreCase(action)) {
 
 			throw new IllegalArgumentException("Unsupported finance action: " + action);
+		}
+
+		if (RefundConstants.ACTION_APPROVE.equalsIgnoreCase(action)) {
+			validateFinanceDetails(refund);
 		}
 
 		RefundActionRequest actionRequest = refundEnrichmentService.enrichWorkflowAction(refund,
@@ -432,19 +429,20 @@ public class RefundServiceImpl implements RefundService {
 
 		log.info("Processing offline refund completion. refundId={}", refund.getId());
 
-		RefundActionRequest actionRequest = refundEnrichmentService.enrichWorkflowAction(refund,
-				request.getRequestInfo(), action);
+		String remarks = request.getRefund() != null && request.getRefund().getProcessInstance() != null
+				? request.getRefund().getProcessInstance().getComment()
+				: null;
 
-		
+		RefundActionRequest actionRequest = refundEnrichmentService.enrichWorkflowAction(refund,
+				request.getRequestInfo(), action, remarks);
+
 		refund = processInternal(refund, actionRequest);
 
-		
 		refundRepository.update(refund);
 
 		RefundRequest financeRequest = RefundRequest.builder().refund(refund).requestInfo(createSystemRequestInfo())
 				.build();
 
-		// Push completed offline refund to Finance
 		financeService.sendToFinanceComplete(financeRequest);
 
 		log.info("Offline refund completion sent to Finance. refundId={}, status={}", refund.getId(),
@@ -462,15 +460,27 @@ public class RefundServiceImpl implements RefundService {
 
 				|| RefundConstants.PAYMENT_REFUND_STATUS_FAILED.equalsIgnoreCase(status);
 	}
-	
+
 	private boolean isOfflineRefundCompletion(Refund refund, String action) {
 
-	    return RefundConstants.STATUS_REFUND_INITIATED
-	                    .equalsIgnoreCase(refund.getStatus())
-	            && RefundConstants.ACTION_REFUND_COMPLETED
-	                    .equalsIgnoreCase(action)
-	            && RefundConstants.REFUND_MODE_OFFLINE
-	                    .equalsIgnoreCase(refund.getRefundMode());
+		return RefundConstants.STATUS_REFUND_INITIATED.equalsIgnoreCase(refund.getStatus())
+				&& RefundConstants.ACTION_REFUND_COMPLETED.equalsIgnoreCase(action)
+				&& RefundConstants.REFUND_MODE_OFFLINE.equalsIgnoreCase(refund.getRefundMode());
+	}
+
+	private void validateFinanceDetails(Refund refund) {
+
+		if (refund == null) {
+			throw new IllegalArgumentException("Refund cannot be null for finance processing");
+		}
+
+		if (isBlank(refund.getSanctionRef())) {
+			throw new IllegalArgumentException("Sanction reference is required for finance processing");
+		}
+
+		if (refund.getFinanceApprovalDate() == null) {
+			throw new IllegalArgumentException("Finance approval date is required for finance processing");
+		}
 	}
 
 	// ============================================================
