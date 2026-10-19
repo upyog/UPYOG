@@ -312,6 +312,13 @@ const SVDocumentsDetail = ({ t, config, onSelect, formData, editdata, previousDa
     setEnableSubmit(!(count === 0 && documents.length > 0));
   }, [documents, checkRequiredFields, data]);
 
+  // effect for toast, each toast will render for 2 seconds only
+  useEffect(() => {
+  if (!error) return;
+  const timer = setTimeout(() => setError(null), 2000);
+  return () => clearTimeout(timer);
+}, [error]);
+
   return (
     <div>
       <Timeline currentStep={5} />
