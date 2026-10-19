@@ -74,7 +74,31 @@ class ResilientRedisClient:
         self._last_connect_attempt = 0
         self._init_redis()
 
-    
+    # =========================================================================
+    # Redis Protocol & Client Version Compatibility Layer
+    # =========================================================================
+    # PURPOSE & NEED:
+    #   Ensures stable connectivity across heterogeneous environments where either
+    #   the Redis server version (Redis <6.0 vs. Redis >=6.0) or the installed
+    #   Python 'redis' library version (redis-py <4.2 vs. redis-py >=5.0) varies.
+    #
+    # WHY TWO VERSIONS ARE HANDLED:
+    #   1. Protocol Level (RESP2 vs. RESP3):
+    #      Modern redis-py clients negotiate RESP3 by default. However, legacy
+    #      Redis servers (<6.0) and certain Redis proxies (e.g., Twemproxy, Envoy)
+    #      only support RESP2. Explicitly specifying protocol=2 guarantees
+    #      downward compatibility.
+    #   2. Client Library Level (redis-py API Differences):
+    #      The 'protocol' parameter was only introduced in newer redis-py releases.
+    #      Older redis-py versions (<4.2) do not accept 'protocol' in their
+    #      constructors and raise a TypeError (though they run RESP2 natively).
+    #
+    # HOW IT WORKS:
+    #   - Step 1 (Primary): Attempt connection with explicit 'protocol=2' (RESP2).
+    #   - Step 2 (Fallback): If a TypeError is encountered (indicating an older
+    #     redis-py installation), retry connection omitting the 'protocol' argument,
+    #     safely defaulting to the library's built-in RESP2 behavior.
+    # =========================================================================
     def _init_redis(self):
         def _get_client(proto=2):
             kwargs = {

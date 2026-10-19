@@ -1,4 +1,12 @@
 # ============================================================
+# Chat Memory & Retention Policy
+# ============================================================
+memory:
+  # Number of days to retain long-term chat history in Qdrant before cleanup
+  # Configurable per environment or pod (default: 1 day for sandbox/storage limits)
+  retention_days: 1 # Kept the retention_days as 1 for now as requested, can be changed later as needed
+
+# ============================================================
 # Services Registry
 # The bot reads this at runtime to build its greeting message.
 # Add, remove or rename entries here — no Python code changes needed.
