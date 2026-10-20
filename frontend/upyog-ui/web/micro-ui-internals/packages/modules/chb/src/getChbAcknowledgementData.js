@@ -1,3 +1,5 @@
+import { formatDate } from "./utils";
+
 const capitalize = (text) => text.substr(0, 1).toUpperCase() + text.substr(1);
 const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ");
 
@@ -13,64 +15,25 @@ const ulbCamel = (ulb) => ulb.toLowerCase().split(" ").map(capitalize).join(" ")
  * - `t`: The translation function used for internationalization.
  * 
  * Logic:
- * - Fetches file URLs for the documents associated with the application using the `Digit.UploadServices.Filefetch` service.
- * - Processes the booking slot details to generate formatted date and time ranges.
- * 
- * Helper Functions:
- * - `getBookingDateRange`: 
- *    - Accepts `bookingSlotDetails` as input.
- *    - Returns a formatted date range for the booking slots.
- *    - If the start date and end date are the same, it returns only the start date.
- *    - If no booking slot details are available, it returns "CS_NA" (Not Available).
- * 
- * - `getBookingTimeRange`: 
- *    - Accepts `bookingSlotDetails` as input.
- *    - Returns a formatted time range for the booking slots.
- *    - If no booking slot details are available, it returns a default time range ("10:00 - 11:59").
- *    - Dynamically adjusts the end time based on the number of booking slots:
- *        - For 1 slot: Default end time is "23:59".
- *        - For 2 slots: Default end time is "47:59".
- *        - For 3 slots: Default end time is "71:59".
- *    - If no start time is available, it returns "CS_NA".
+ * - Formats slot details into a structured table (Venue Name, Venue Codes, Booking Date, Booking Time, Status) with dates formatted as DD-MM-YYYY.
  * 
  * Returns:
  * - An object containing:
  *    - `t`: The translation function.
  *    - `tenantId`: The tenant code from the `tenantInfo` object.
- *    - Additional formatted data for the acknowledgement screen (not fully visible in the provided code).
+ *    - Structured sections (applicant details, slot details table, event details, bank details, address details) for the acknowledgement PDF.
  */
 const getChbAcknowledgementData = async (application, tenantInfo, t) => {
-  const filesArray = application?.documents?.map((value) => value?.fileStoreId);
-  const res = filesArray?.length > 0 && (await Digit.UploadServices.Filefetch(filesArray, Digit.ULBService.getStateId()));
-    const getBookingDateRange = (bookingSlotDetails) => {
-      if (!bookingSlotDetails || bookingSlotDetails.length === 0) {
-        return t("CS_NA");
-      }
-      const startDate = bookingSlotDetails[0]?.bookingDate;
-      const endDate = bookingSlotDetails[bookingSlotDetails.length - 1]?.bookingDate;
-      if (startDate === endDate) {
-        return startDate; // Return only the start date
-      } else {
-        // Format date range as needed, for example: "startDate - endDate"
-        return startDate && endDate ? `${endDate} - ${startDate} ` : t("CS_NA");
-      }
-    };
-   const getBookingTimeRange = (bookingSlotDetails) => {
-      if (!bookingSlotDetails || bookingSlotDetails.length === 0) {
-        return "10:00 - 11:59"; // Default time range if details are not present
-      }
-      const startTime = bookingSlotDetails[0]?.bookingFromTime;
-      // const endTime = bookingSlotDetails[bookingSlotDetails.length - 1]?.bookingToTime;
-      const length = bookingSlotDetails.length;
-      let defaultEndTime = "23:59"; // Default end time for length 1
-      if (length === 2) {
-        defaultEndTime = "47:59"; // End time for length 2
-      } else if (length === 3) {
-        defaultEndTime = "71:59"; // End time for length 3
-      }
-      // Return formatted time range
-      return startTime ? `${startTime} - ${defaultEndTime}` : t("CS_NA");
-    };
+  // Format slot details into tabular rows: [Venue Name, Venue Code / Hall Code, Booking Date, Booking Time, Status]
+  const venueName = application?.venueCode;
+  const slotlistRows = application?.bookingSlotDetails?.map((slot) => [
+    t(venueName),
+    t(slot?.unitCode),
+    formatDate(slot?.bookingDate),
+    slot?.bookingFromTime && slot?.bookingToTime ? `${slot.bookingFromTime} - ${slot.bookingToTime}` : t("CS_NA"),
+    t(slot?.status)
+  ]) || [];
+
   return {
     t: t,
     tenantId: tenantInfo?.code,
@@ -85,17 +48,22 @@ const getChbAcknowledgementData = async (application, tenantInfo, t) => {
         values: [
           { title: t("CHB_APPLICANT_NAME"), value: application?.applicantDetail?.applicantName },
           { title: t("CHB_MOBILE_NUMBER"), value: application?.applicantDetail?.applicantMobileNo },
-          { title: t("CHB_ALT_MOBILE_NUMBER"), value: application?.applicantDetail?.applicantAlternateMobileNo},
+          { title: t("CHB_ALT_MOBILE_NUMBER"), value: application?.applicantDetail?.applicantAlternateMobileNo || t("CS_NA") },
           { title: t("CHB_EMAIL_ID"), value: application?.applicantDetail?.applicantEmailId },
         ],
       },
       {
         title: t("SLOT_DETAILS"),
-        values: [
-          { title: t("CHB_COMMUNITY_HALL_NAME"), value: application?.communityHallCode},
-          { title: t("CHB_BOOKING_DATE"), value: getBookingDateRange(application?.bookingSlotDetails) },
-          { title: t("CHB_BOOKING_TIME"), value: getBookingTimeRange(application?.bookingSlotDetails)}
+        isTable: true,
+        headers: [
+          t("CHB_VENUE_NAME_LABEL"),
+          t("CHB_HALL_CODE_LABEL"),
+          t("CHB_BOOKING_DATE"),
+          t("CHB_BOOKING_TIME"),
+          t("PT_COMMON_TABLE_COL_STATUS_LABEL")
         ],
+        widths: ['22%', '22%', '18%', '18%', '20%'],
+        tableRows: slotlistRows,
       }, 
       {
         title: t("CHB_EVENT_DETAILS"),
@@ -118,12 +86,12 @@ const getChbAcknowledgementData = async (application, tenantInfo, t) => {
       {
         title: t("CHB_ADDRESS_DETAILS"),
         values: [
-          { title: t("CHB_PINCODE"), value: application?.address?.pincode },
-          { title: t("CHB_CITY"), value: application?.address?.city },
-          { title: t("CHB_LOCALITY"), value: application?.address?.locality },
-          { title: t("CHB_STREET_NAME"), value: application?.address?.streetName },
-          { title: t("CHB_HOUSE_NO"), value: application?.address?.houseNo },
-          { title: t("CHB_LANDMARK"), value: application?.address?.landmark },
+          { title: t("CHB_PINCODE"), value: application?.address?.pincode || t("CS_NA") },
+          { title: t("CHB_CITY"), value: application?.address?.city || t("CS_NA") },
+          { title: t("CHB_LOCALITY"), value: application?.address?.locality || t("CS_NA") },
+          { title: t("CHB_STREET_NAME"), value: application?.address?.streetName || t("CS_NA") },
+          { title: t("CHB_HOUSE_NO"), value: application?.address?.houseNo || t("CS_NA") },
+          { title: t("CHB_LANDMARK"), value: application?.address?.landmark || t("CS_NA") },
         ],
       }, 
     ],

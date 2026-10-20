@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { DateRangePicker } from "react-date-range";
-import { differenceInCalendarDays, addMonths, format} from "date-fns";
+import { differenceInCalendarDays, addMonths, format, addDays } from "date-fns";
 import { Calender } from "@nudmcdgnpm/digit-ui-react-components";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
@@ -38,8 +38,8 @@ const DateRangeFilter = ({
   const [open, setOpen] = useState(false);
 
   const [selection, setSelection] = useState({
-    startDate: value?.startDate || new Date(),
-    endDate: value?.endDate || new Date(),
+    startDate: value?.startDate || addDays(new Date(), 1),
+    endDate: value?.endDate || addDays(new Date(), 1),
     key: "selection",
   });
 
@@ -152,7 +152,7 @@ const DateRangeFilter = ({
             moveRangeOnFirstSelection={false}
             retainEndDateOnFirstSelection={true}
             editableDateInputs={false}
-            minDate={new Date()}
+            minDate={addDays(new Date(), 1)}
             maxDate={addMonths(new Date(), 3)}
             staticRanges={[]} // Remove predefined ranges like "Yesterday", "Last 7 Days", etc.
             inputRanges={[]}

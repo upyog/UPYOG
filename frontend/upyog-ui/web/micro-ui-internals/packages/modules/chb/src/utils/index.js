@@ -1,3 +1,5 @@
+import getChbAcknowledgementData from "../getChbAcknowledgementData";
+
 export const checkForNotNull = (value = "") => {
   return value && value != null && value != undefined && value != "" ? true : false;
 };
@@ -188,3 +190,44 @@ export const getWorkflow = (data = {}) => {
   };
 };
 
+export const getStatusOptions = (t) => [
+  { i18nKey: "Booking in Progress", code: "BOOKING_CREATED", value: t("CHB_BOOKING_IN_PROGRES") },
+  { i18nKey: "Booked", code: "BOOKED", value: t("CHB_BOOKED") },
+  { i18nKey: "Pending For Payment", code: "PENDING_FOR_PAYMENT", value: t("PENDING_FOR_PAYMENT") },
+  { i18nKey: "Payment Failed", code: "PAYMENT_FAILED", value: t("PAYMENT_FAILED") },
+  { i18nKey: "Cancelled", code: "CANCELLED", value: t("CANCELLED") },
+  { i18nKey: "Booking Expired", code: "EXPIRED", value: t("EXPIRED") },
+  { i18nKey: "Refund Pending", code: "REFUNDPENDING", value: t("REFUNDPENDING") },
+  { i18nKey: "Inspection Pending", code: "INSPECTIONPENDING", value: t("INSPECTIONPENDING") },
+  { i18nKey: "Refund Approval Pending", code: "REFUNDAPPROVALPENDING", value: t("REFUNDAPPROVALPENDING") },
+  { i18nKey: "Refund Approved", code: "REFUNDAPPROVED", value: t("REFUNDAPPROVED") },
+  { i18nKey: "Rejected", code: "REJECTED", value: t("REJECTED") }
+];
+
+/**
+ * Formats a date string from YYYY-MM-DD to DD-MM-YYYY
+ * @param {string} dateStr Date string
+ * @returns {string} Formatted date string in DD-MM-YYYY format
+ */
+export const formatDate = (dateStr) => {
+  if (!dateStr) return "";
+  if (typeof dateStr === "string" && dateStr.includes("-")) {
+    const parts = dateStr.split("-");
+    if (parts[0].length === 4) {
+      return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+    return dateStr;
+  }
+  return dateStr;
+};
+
+/**
+ * Generates and triggers download of CHB application acknowledgement PDF
+ */
+export const downloadCHBAcknowledgement = async (application, t) => {
+  const chbApplication = application?.hallsBookingApplication?.[0] || application;
+  const tenants = Digit.SessionStorage.get("initData")?.tenants;
+  const tenantInfo = tenants?.find((tenant) => tenant.code === chbApplication?.tenantId);
+  const ackData = await getChbAcknowledgementData({ ...chbApplication }, tenantInfo, t);
+  Digit.Utils.pdf.generate(ackData);
+};

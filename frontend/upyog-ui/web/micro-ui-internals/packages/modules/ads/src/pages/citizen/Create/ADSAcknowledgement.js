@@ -2,7 +2,7 @@ import { Banner, Card, Loader, Row, StatusTable, SubmitBar, Toast } from "@nudmc
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, } from "react-router-dom";
-import { ADSDataConvert, getSlotSearchCriteria } from "../../../utils";
+import { ADSDataConvert, getSlotSearchCriteria, downloadADSAcknowledgement } from "../../../utils";
 import "../../../css/ads-inline-auto.css";
 const GetActionMessage = props => {
   const {
@@ -50,6 +50,14 @@ const ADSAcknowledgement = ({ data, onSuccess, mutation }) => {
       undefined,
       mutation.data?.bookingApplication[0].bookingId
     )
+  };
+
+  const handleDownloadPdf = () => {
+    try {
+      downloadADSAcknowledgement(mutation?.data?.bookingApplication?.[0], t);
+    } catch (e) {
+      setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
+    }
   };
 
   const handleMakePayment = async () => {
@@ -124,6 +132,7 @@ const ADSAcknowledgement = ({ data, onSuccess, mutation }) => {
         {user.type === "CITIZEN" && <Link to={`/upyog-ui/citizen`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>}
+        <SubmitBar label={t("ADS_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />
         <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment} />
       </div>}
       {!mutation.isSuccess && user.type === "CITIZEN" && <Link to={`/upyog-ui/citizen`}>
