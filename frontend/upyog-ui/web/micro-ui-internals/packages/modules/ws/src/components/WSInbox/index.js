@@ -1,6 +1,7 @@
-import React, { Fragment, useCallback, useMemo, useReducer, useEffect } from "react";
+import React, { Fragment, useCallback, useMemo, useReducer, useEffect, useState } from "react";
 import { InboxComposer, ComplaintIcon, Header, DropIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import SearchFormFieldsComponents from "./SearchFormFieldsComponent";
 import FilterFormFieldsComponent from "./FilterFormFieldsComponent";
 import useInboxTableConfig from "./useInboxTableConfig";
@@ -13,6 +14,16 @@ const WSInbox = ({ parentRoute }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const getUrlPathName = window.location.pathname;
   const checkPathName = getUrlPathName.includes("water/inbox");
+
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768 || window.Digit.Utils.browser.isMobile());
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768 || window.Digit.Utils.browser.isMobile());
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const searchFormDefaultValues = {
     mobileNumber: "",
@@ -29,7 +40,7 @@ const WSInbox = ({ parentRoute }) => {
   };
   const tableOrderFormDefaultValues = {
     sortBy: "createdTime",
-    limit: window.Digit.Utils.browser.isMobile() ? 50 : 10,
+    limit: (window.innerWidth <= 768 || window.Digit.Utils.browser.isMobile()) ? 50 : 10,
     offset: 0,
     sortOrder: "DESC",
   };
@@ -174,7 +185,9 @@ const WSInbox = ({ parentRoute }) => {
   };
 
   const SearchFormFields = useCallback(
-    ({ registerRef, searchFormState, controlSearchForm }) => <SearchFormFieldsComponents {...{ registerRef, searchFormState, controlSearchForm }} className="search" />,
+    ({ registerRef, searchFormState, controlSearchForm, searchFieldComponents }) => (
+      <SearchFormFieldsComponents {...{ registerRef, searchFormState, controlSearchForm, searchFieldComponents }} className="search" />
+    ),
     []
   );
 
@@ -227,19 +240,25 @@ const WSInbox = ({ parentRoute }) => {
     onFilterFormReset,
   };
 
-  const propsForInboxTable = useInboxTableConfig({ ...{ parentRoute, onPageSizeChange, formState, totalCount, table, dispatch, onSortingByData,tenantId, inboxStyles:{overflowX:"scroll", overflowY:"hidden"}, tableStyle:{width:"70%"} } });
-
+  const propsForInboxTable = useInboxTableConfig({ ...{ parentRoute, onPageSizeChange, formState, totalCount, table, dispatch, onSortingByData, tenantId } });
 
   const propsForInboxMobileCards = useInboxMobileCardsData({ parentRoute, table });
 
   const propsForMobileSortForm = { onMobileSortOrderData, sortFormDefaultValues: formState?.tableForm, onSortFormReset };
 
   return (
-    <>
+    <div className={`ws-employee-inbox-wrapper employee-inbox-module-wrapper ${isMobile ? "ws-employee-inbox-mobile" : "ws-employee-inbox-desktop"}`}>
       <Header>
         {t("ES_COMMON_INBOX")}
         {totalCount ? <p className="inbox-count">{totalCount}</p> : null}
       </Header>
+      {isMobile && (
+        <div className="ws-index-spacing-5">
+          <Link to={checkPathName ? `/upyog-ui/employee/ws/water/search-application` : `/upyog-ui/employee/ws/sewerage/search-application`}>
+            <span className="link">{t("WS_SEWERAGE_APPLICATION_SEARCH")}</span>
+          </Link>
+        </div>
+      )}
       <InboxComposer
         {...{
           isInboxLoading,
@@ -250,9 +269,11 @@ const WSInbox = ({ parentRoute }) => {
           propsForInboxTable,
           propsForInboxMobileCards,
           formState,
+          isMobile,
+          className: "ws-inbox-container",
         }}
       ></InboxComposer>
-    </>
+    </div>
   );
 };
 

@@ -38,44 +38,118 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
   });
   const [calender, setCalender] = useState()
 
-  useEffect(()=>{
-    if (calenderDataEndDate){
-      let selection={
-        "startDate": rangeType === "month"?"":new Date(calenderDataStartDate,3, 1),
-        "endDate": rangeType === "month"?"":new Date(calenderDataEndDate, 2, 31),
-        "interval": "month",
-        "title": ""
-      };
+  const isValidDate = (d) => {
+    if (!d) return false;
+    const date = d instanceof Date ? d : new Date(d);
+    return !isNaN(date.getTime());
+  };
 
-      if(rangeType === "year"){
-        if (calenderDataStartDate === calenderDataEndDate){
-          selection.endDate = new Date(parseInt(calenderDataEndDate)+1, 2, 31);
+  const toValidDate = (d) => {
+    if (!d) return new Date();
+    const date = d instanceof Date ? d : new Date(d);
+    return isNaN(date.getTime()) ? new Date() : date;
+  };
+
+  const safeFormat = (date, formatStr, fallback = "") => {
+    if (!date) return fallback;
+    const d = date instanceof Date ? date : new Date(date);
+    if (isNaN(d.getTime())) return fallback;
+    try {
+      return format(d, formatStr);
+    } catch (e) {
+      return fallback;
+    }
+  };
+
+  useEffect(() => {
+    if (values?.startDate && values?.endDate && isValidDate(values.startDate) && isValidDate(values.endDate)) {
+      const s = toValidDate(values.startDate);
+      const e = toValidDate(values.endDate);
+      setSelectionRange((prev) => {
+        if (prev?.startDate && prev?.endDate && prev.startDate.getTime?.() === s.getTime() && prev.endDate.getTime?.() === e.getTime()) {
+          return prev;
         }
-        
-      }else if (rangeType === "month"){
-        let [tempStartYear, tempStartMonth] = calenderDataStartDate.split('-');
-        let [tempEndYear, tempEndMonth] = calenderDataEndDate.split('-');
+        return {
+          startDate: s,
+          endDate: e,
+          interval: values?.interval || "",
+          title: values?.title || ""
+        };
+      });
+    }
+  }, [values]);
+
+  useEffect(()=>{
+    if (calenderDataEndDate && calenderDataStartDate){
+      let selection = null;
+      if (rangeType === "year") {
+        let startYearNum = parseInt(calenderDataStartDate);
+        let endYearNum = parseInt(calenderDataEndDate);
+        if (isNaN(startYearNum)) return;
+        if (isNaN(endYearNum)) endYearNum = startYearNum;
+        if (endYearNum < startYearNum) {
+          const temp = startYearNum;
+          startYearNum = endYearNum;
+          endYearNum = temp;
+        }
+        const s = new Date(startYearNum, 3, 1, 0, 0, 0, 0);
+        const e = new Date(endYearNum + 1, 2, 31, 23, 59, 59, 999);
+        selection = {
+          startDate: s,
+          endDate: e,
+          interval: "month",
+          title: startYearNum === endYearNum
+            ? `FY ${startYearNum}-${(startYearNum + 1).toString().slice(-2)}`
+            : `FY ${startYearNum}-${(startYearNum + 1).toString().slice(-2)} - FY ${endYearNum}-${(endYearNum + 1).toString().slice(-2)}`
+        };
+      } else if (rangeType === "month") {
+        let [tempStartYear, tempStartMonth] = String(calenderDataStartDate || "").split('-');
+        let [tempEndYear, tempEndMonth] = String(calenderDataEndDate || "").split('-');
         let months = {"Jan": 0,"Feb": 1,"Mar": 2,"Apr": 3,"May": 4,"Jun": 5,"Jul": 6,"Aug": 7,"Sep": 8,"Oct": 9,"Nov": 10,"Dec": 11};
-        selection.startDate = new Date(tempStartYear,months[tempStartMonth], 1);
-        selection.endDate = new Date(tempEndYear,months[tempEndMonth]+1, 0);
+        if (tempStartYear && tempStartMonth && months[tempStartMonth] !== undefined && tempEndYear && tempEndMonth && months[tempEndMonth] !== undefined) {
+          let s = new Date(parseInt(tempStartYear), months[tempStartMonth], 1, 0, 0, 0, 0);
+          let e = new Date(parseInt(tempEndYear), months[tempEndMonth] + 1, 0, 23, 59, 59, 999);
+          if (e < s) {
+            const temp = s;
+            s = e;
+            e = temp;
+          }
+          selection = {
+            startDate: s,
+            endDate: e,
+            interval: "month",
+            title: `${safeFormat(s, "MMM yyyy")} - ${safeFormat(e, "MMM yyyy")}`
+          };
+        } else {
+          return;
+        }
       }
+
+      if (!selection) return;
+
       let customDateFilter = {
         filterType : rangeType
+      };
+      sessionStorage.setItem("customDateFilter",JSON.stringify(customDateFilter));
+      if (isValidDate(selection.startDate) && isValidDate(selection.endDate)) {
+        setTimeout(() => {
+          setIsModalOpen(false);
+          setSelectionRange(selection);
+        }, 150);
       }
-      sessionStorage.setItem("customDateFilter",JSON.stringify(customDateFilter))
-      console.log(selection.startDate, "----",  selection.endDate )
-      setTimeout(() => {
-        setIsModalOpen(false);
-        setSelectionRange(selection);
-      }, 200);
     }
-  },[calenderDataStartDate,calenderDataEndDate])
+  },[calenderDataStartDate,calenderDataEndDate,rangeType]);
 
   const wrapperRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        if (rangeType === "year" && calenderDataStartDate && !calenderDataEndDate) {
+          setCalenderDataEndDate(calenderDataStartDate);
+        } else if (rangeType === "month" && calenderDataStartDate && !calenderDataEndDate) {
+          setCalenderDataEndDate(calenderDataStartDate);
+        }
         setIsModalOpen(false);
       }
     };
@@ -83,21 +157,33 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [wrapperRef]);
+  }, [wrapperRef, rangeType, calenderDataStartDate, calenderDataEndDate]);
 
   useEffect(() => {
-    if (!isModalOpen) {
-      const startDate = selectionRange?.startDate;
-      const endDate = selectionRange?.endDate;
-      const interval = getDuration(selectionRange?.startDate, selectionRange?.endDate);
-      const title = `${format(selectionRange?.startDate, "MMM d, yyyy")} - ${format(selectionRange?.endDate, "MMM d, yyyy")}`;
-      onFilterChange({ range: { startDate, endDate, interval, title }, requestDate: { startDate, endDate, interval, title } });
+    if (!isModalOpen && isValidDate(selectionRange?.startDate) && isValidDate(selectionRange?.endDate)) {
+      const startDate = toValidDate(selectionRange?.startDate);
+      const endDate = toValidDate(selectionRange?.endDate);
+      const interval = getDuration(startDate, endDate);
+      const startFormatted = safeFormat(startDate, "MMM d, yyyy");
+      const endFormatted = safeFormat(endDate, "MMM d, yyyy");
+      const title = selectionRange?.title || `${startFormatted} - ${endFormatted}`;
+      onFilterChange({
+        range: { startDate, endDate, interval, title },
+        requestDate: {
+          startDate: startDate.getTime(),
+          endDate: endDate.getTime(),
+          interval,
+          title
+        }
+      });
     }
   }, [selectionRange, isModalOpen]);
 
 
   const getDuration = (startDate, endDate) => {
-    let noOfDays = (new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 3600 * 24);
+    const s = toValidDate(startDate);
+    const e = toValidDate(endDate);
+    let noOfDays = (e.getTime() - s.getTime()) / (1000 * 3600 * 24);
     if (noOfDays > 91) {
       return "month";
     }
@@ -107,6 +193,7 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
     if (noOfDays <= 14) {
       return "day";
     }
+    return "month";
   };
 
   const handleSelect = (ranges, e) => {
@@ -174,20 +261,32 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
     setMonthCurrentYear(data);
   }
 
-  const onYearsSelect = (e) =>{
-    let year = e.target.className.split(' ').pop();
-    let tempCalenderData = calenderData;
-    if (!calenderData.startDate && !calenderData.endDate){
+  const onYearsSelect = (e, selectedYear) =>{
+    let year = selectedYear !== undefined ? String(selectedYear) : (e?.target?.textContent ? e.target.textContent.trim() : "");
+    if (!year || isNaN(parseInt(year))) {
+      let parts = (e?.target?.className || "").split(' ');
+      for (let p of parts) {
+        if (/^\d{4}$/.test(p)) {
+          year = p;
+          break;
+        }
+      }
+    }
+    if (!year || isNaN(parseInt(year))) return;
+
+    let tempCalenderData = { ...calenderData };
+    if (!tempCalenderData.startDate && !tempCalenderData.endDate){
       tempCalenderData.startDate = year;
-    }else if (!calenderData.endDate){
+    }else if (!tempCalenderData.endDate){
       tempCalenderData.endDate = year;
 
-      if (tempCalenderData.endDate < calenderData.startDate){
-        tempCalenderData.endDate = calenderData.startDate;
-        tempCalenderData.startDate = year;
+      if (parseInt(tempCalenderData.endDate) < parseInt(tempCalenderData.startDate)){
+        let start = tempCalenderData.startDate;
+        tempCalenderData.startDate = tempCalenderData.endDate;
+        tempCalenderData.endDate = start;
       }
 
-    }else if (calenderData.startDate && calenderData.endDate){
+    }else if (tempCalenderData.startDate && tempCalenderData.endDate){
       tempCalenderData.startDate = year;
       tempCalenderData.endDate = null;
     }
@@ -196,26 +295,36 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
     setCalenderDataEndDate(tempCalenderData.endDate);
   }
 
-  const onMonthSelect = (e) =>{
-    let year = e.target.className.split(' ').pop();
-    let tempCalenderData = calenderData;
-    if (!calenderData.startDate && !calenderData.endDate){
+  const onMonthSelect = (e, selectedMonthYear) =>{
+    let year = selectedMonthYear;
+    if (!year) {
+      let text = e?.target?.textContent?.trim?.();
+      if (text && monthCurrentYear) {
+        year = `${monthCurrentYear}-${text}`;
+      }
+    }
+    if (!year) return;
+
+    let tempCalenderData = { ...calenderData };
+    if (!tempCalenderData.startDate && !tempCalenderData.endDate){
       tempCalenderData.startDate = year;
-    }else if (!calenderData.endDate){
+    }else if (!tempCalenderData.endDate){
       tempCalenderData.endDate = year;
       let selection = {};
-      let [tempStartYear, tempStartMonth] = calenderData.startDate.split('-');
-      let [tempEndYear, tempEndMonth] = tempCalenderData.endDate.split('-');
+      let [tempStartYear, tempStartMonth] = String(tempCalenderData.startDate || "").split('-');
+      let [tempEndYear, tempEndMonth] = String(tempCalenderData.endDate || "").split('-');
       let months = {"Jan": 0,"Feb": 1,"Mar": 2,"Apr": 3,"May": 4,"Jun": 5,"Jul": 6,"Aug": 7,"Sep": 8,"Oct": 9,"Nov": 10,"Dec": 11};
-      selection.startDate = new Date(tempStartYear,months[tempStartMonth], 1);
-      selection.endDate = new Date(tempEndYear,months[tempEndMonth]+1, 0);
+      let s = new Date(parseInt(tempStartYear), months[tempStartMonth] || 0, 1);
+      let endMonthIdx = months[tempEndMonth] !== undefined ? months[tempEndMonth] + 1 : 1;
+      let end = new Date(parseInt(tempEndYear), endMonthIdx, 0);
 
-      if (selection.endDate < selection.startDate){
-        tempCalenderData.endDate = calenderData.startDate;
-        tempCalenderData.startDate = year;
+      if (end < s){
+        let start = tempCalenderData.startDate;
+        tempCalenderData.startDate = tempCalenderData.endDate;
+        tempCalenderData.endDate = start;
       }
 
-    }else if (calenderData.startDate && calenderData.endDate){
+    }else if (tempCalenderData.startDate && tempCalenderData.endDate){
       tempCalenderData.startDate = year;
       tempCalenderData.endDate = null;
     }
@@ -248,7 +357,7 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
           }
         }
         dispayRange.push(
-          <div onClick={(e)=>{onMonthSelect(e)}} className={`range-box ${className} ${monthCurrentYear}-${ele} ${className === "selected" ? "dss-range-box--selected" : "dss-range-box--unselected"} dss-range-box-base`}>
+          <div onClick={(e)=>{onMonthSelect(e, `${monthCurrentYear}-${ele}`)}} className={`range-box ${className} ${monthCurrentYear}-${ele} ${className === "selected" ? "dss-range-box--selected" : "dss-range-box--unselected"} dss-range-box-base`}>
             {ele}
           </div>
         )
@@ -294,13 +403,13 @@ const SelectCustomDateRange = ({ values, onFilterChange, t }) => {
             <div className="rdrDateRangePickerWrapper pickerShadow">
               <div className="rdrDefinedRangesWrapper dss-custom-date-range-wrapper-2">
                 <button type="button" className={`rdrStaticRange ${rangeType === "week" ? "font-weight-bold" : "font-weight-normal"}`} onClick={() => { selectRangeType("week") }}>
-                  <span tabindex="-1" className="rdrStaticRangeLabel">By Weeks</span>
+                  <span tabIndex="-1" className="rdrStaticRangeLabel">By Weeks</span>
                 </button>
                 <button type="button" className={`rdrStaticRange ${rangeType === "month" ? "font-weight-bold" : "font-weight-normal"}`} onClick={() => { selectRangeType("month") }}>
-                  <span tabindex="-1" className="rdrStaticRangeLabel">By Months</span>
+                  <span tabIndex="-1" className="rdrStaticRangeLabel">By Months</span>
                 </button>
                 <button type="button" className={`rdrStaticRange ${rangeType === "year" ? "font-weight-bold" : "font-weight-normal"}`} onClick={() => { selectRangeType("year") }}>
-                  <span tabindex="-1" className="rdrStaticRangeLabel">By Years</span>
+                  <span tabIndex="-1" className="rdrStaticRangeLabel">By Years</span>
                 </button>
               </div>
               <div className="rdrCalendarWrapper rdrDateRangeWrapper">

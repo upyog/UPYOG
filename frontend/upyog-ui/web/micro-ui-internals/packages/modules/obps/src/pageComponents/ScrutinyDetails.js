@@ -148,10 +148,16 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
   useEffect(() => {
     const handleSearch = async () => {
       const details = await scrutinyDetailsData(formData?.data?.scrutinyNumber?.edcrNumber, scrutinyTenantId);
-      setPlanLink(details?.planPdfs?.[0].split(" - ")[1]);
+      const rawPlanPdf = details?.planPdfs?.[0];
+      if (typeof rawPlanPdf === "string") {
+        const splitPdf = rawPlanPdf.split(" - ");
+        setPlanLink(splitPdf?.[1] || splitPdf?.[0] || "");
+      } else {
+        setPlanLink("");
+      }
     };
 
-    handleSearch()
+    handleSearch();
   }, [formData?.data?.scrutinyNumber?.edcrNumber]);
 
   const onSkip = () => onSelect();

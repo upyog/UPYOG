@@ -72,6 +72,8 @@ const FINANCE_META_KEYS = [
 const normalize = (s = "") => s.toString().trim().toLowerCase();
 
 const FINANCE_PATH_STORAGE_KEY = "upyog_employee_sidebar_finance_path";
+const EMPTY_ARRAY = [];
+const MICRO_UI_MDMS_CONFIG = [{ name: "microUiModuleEnable" }];
 
 const Profile = ({ info, profilePhotoUrl, isSidebarCollapsed }) => {
   const username = isSidebarCollapsed
@@ -83,9 +85,17 @@ const Profile = ({ info, profilePhotoUrl, isSidebarCollapsed }) => {
     : info?.name;
 
   return (
-    <div className="profile-section">
+    <div className={`profile-section ${isSidebarCollapsed ? "profile-section--collapsed" : ""}`}>
       <div className="imageloader imageloader-loaded">
-        <img className="img-responsive img-circle img-Profile" src={profilePhotoUrl || defaultImage} alt="Profile" />
+        <img
+          className="img-responsive img-circle img-Profile"
+          src={profilePhotoUrl || defaultImage}
+          alt="Profile"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = defaultImage;
+          }}
+        />
       </div>
       <div id="profile-name" className="label-container name-Profile">
         <div className="label-text">{username}</div>
@@ -362,30 +372,19 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
   const { stateInfo } = storeData || {};
 
-  const user =
-    Digit.UserService.getUser()?.token !== null
-      ? Digit.UserService.getUser()
-      : {
-        access_token: "asdf",
-        info: {
-          tenantId: "pg",
-          uuid: "asdf",
-          name: "Employee User",
-          mobileNumber: 1231231231,
-          emailId: "employee@upyog.niua.org",
-        },
-      };
-
+  const user = Digit.UserService.getUser();
   const tenantId = Digit.ULBService.getCurrentTenantId?.() || user?.info?.tenantId || "pg";
+  const userUuid = user?.info?.uuid || user?.user?.[0]?.uuid;
+  const userTenantId = user?.info?.tenantId || tenantId;
   const stateId = Digit.ULBService.getStateId();
 
   const { isLoading: isMdmsLoading, data: mdmsData } = Digit.Hooks.useCustomMDMS(
     stateId,
     "common-masters",
-    [{ name: "microUiModuleEnable" }]
+    MICRO_UI_MDMS_CONFIG
   );
 
-  const microUiModuleEnable = mdmsData?.["common-masters"]?.["microUiModuleEnable"] || [];
+  const microUiModuleEnable = mdmsData?.["common-masters"]?.["microUiModuleEnable"] || EMPTY_ARRAY;
   const isFinanceEnabled =
     microUiModuleEnable.find((elem) => elem?.code?.toLowerCase() === "finance")?.enabled === true;
 
@@ -393,25 +392,59 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
     let mounted = true;
 
     const fetchPhoto = async () => {
-      try {
-        const uuid = user?.info?.uuid || user?.user?.[0]?.uuid;
-        if (!uuid) return;
+      if (!userUuid || userUuid === "asdf") return;
 
+      // 1. Direct photo from current user object
+      const directPhoto = user?.info?.photo || user?.user?.[0]?.photo;
+      if (directPhoto) {
+        if (directPhoto.startsWith("http") || directPhoto.startsWith("data:")) {
+          if (mounted) setProfilePhotoUrl((prev) => (prev !== directPhoto ? directPhoto : prev));
+          return;
+        }
+        try {
+          const fetchTenant = stateId || "pg";
+          const file = await Digit.UploadServices.Filefetch([directPhoto], fetchTenant);
+          const url = file?.data?.fileStoreIds?.[0]?.url?.split(",")?.[0];
+          if (mounted && url) {
+            setProfilePhotoUrl((prev) => (prev !== url ? url : prev));
+            return;
+          }
+        } catch (e) {
+          // continue to userSearch
+        }
+      }
+
+      // 2. Fetch via userSearch matching TopBar / UserProfile
+      try {
+        const tenant = Digit.ULBService.getCurrentTenantId?.() || userTenantId || "pg";
         const usersResponse = await Digit.UserService.userSearch(
-          user?.info?.tenantId || tenantId,
-          { uuid: [uuid] },
+          tenant,
+          { uuid: [userUuid] },
           {}
         );
 
         const photo = usersResponse?.user?.[0]?.photo;
         if (!photo) return;
 
-        const file = await Digit.UploadServices.Filefetch([photo], tenantId);
-        const url = file?.data?.fileStoreIds?.[0]?.url?.split(",")?.[0];
+        if (photo.startsWith("http") || photo.startsWith("data:")) {
+          if (mounted) setProfilePhotoUrl((prev) => (prev !== photo ? photo : prev));
+          return;
+        }
 
-        if (mounted && url) setProfilePhotoUrl(url);
+        const fetchTenant = stateId || "pg";
+        let file = await Digit.UploadServices.Filefetch([photo], fetchTenant);
+        let url = file?.data?.fileStoreIds?.[0]?.url?.split(",")?.[0];
+
+        if (!url && tenant !== fetchTenant) {
+          file = await Digit.UploadServices.Filefetch([photo], tenant);
+          url = file?.data?.fileStoreIds?.[0]?.url?.split(",")?.[0];
+        }
+
+        if (mounted && url) {
+          setProfilePhotoUrl((prev) => (prev !== url ? url : prev));
+        }
       } catch (err) {
-        console.error("Error fetching profile photo:", err);
+        console.error("Error fetching profile photo in sidebar:", err);
       }
     };
 
@@ -419,10 +452,11 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
     return () => {
       mounted = false;
     };
-  }, [tenantId, user]);
+  }, [userTenantId, userUuid, stateId, user?.info?.photo]);
 
   const transformedActions = useMemo(() => {
-    const sourceActions = data?.actions || [];
+    const sourceActions = data?.actions || EMPTY_ARRAY;
+    if (!sourceActions.length) return EMPTY_ARRAY;
 
     return sourceActions.map((item) => {
       const pathRoot = item.path?.split?.(".")[0]?.toLowerCase() || "";
@@ -490,10 +524,11 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
 
       return item;
     });
-  }, [data, microUiModuleEnable, isFinanceEnabled]);
+  }, [data?.actions, microUiModuleEnable, isFinanceEnabled]);
 
   const financeTree = useMemo(() => {
     const tree = {};
+    if (!transformedActions?.length || !isFinanceEnabled) return tree;
 
     transformedActions
       .filter((item) => item?.url === "url" || (isFinanceEnabled && item?.path?.startsWith("Finance")))
@@ -530,13 +565,16 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
       (pathname.includes("/finance") || pathname.includes("/services/EGF") || pathname.includes("/services/finance"));
 
     if (!isFinanceRoute) {
-      setActiveFinancePath("");
+      setActiveFinancePath((prev) => (prev !== "" ? "" : prev));
       return;
     }
 
     setActiveFinancePath((prev) => {
       // User explicitly went back to the main menu while on a finance page
-      if (prev === "") return financeHeaderPathFromUrl || "";
+      if (prev === "") {
+        const next = financeHeaderPathFromUrl || "";
+        return prev !== next ? next : prev;
+      }
 
       // Keep the current level if the open page is a direct child of it
       const currentNode = getNodeByPath(financeTree, prev);
@@ -551,7 +589,8 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
       }
 
       // Otherwise derive the level from the URL (e.g. deep link / refresh), else keep where the user was
-      return financeHeaderPathFromUrl || prev || "Finance";
+      const next = financeHeaderPathFromUrl || prev || "Finance";
+      return prev !== next ? next : prev;
     });
   }, [pathname, financeHeaderPathFromUrl, isFinanceEnabled, financeTree, isLoading, isMdmsLoading]);
 
@@ -660,6 +699,7 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
     if (!menuItems?.length) return;
 
     const nextOpenMenus = {};
+    let hasMatchingRoute = false;
 
     menuItems.forEach((module) => {
       if (module?.links?.length > 0 && !module?.isFinanceModule) {
@@ -669,14 +709,27 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
 
         if (hasActiveChild) {
           nextOpenMenus[module.moduleName] = true;
+          hasMatchingRoute = true;
         }
       }
     });
 
-    setOpenMenus((prev) => ({
-      ...prev,
-      ...nextOpenMenus,
-    }));
+    if (!hasMatchingRoute) return;
+
+    setOpenMenus((prev) => {
+      let needsUpdate = false;
+      for (const key of Object.keys(nextOpenMenus)) {
+        if (!prev[key]) {
+          needsUpdate = true;
+          break;
+        }
+      }
+      if (!needsUpdate) return prev;
+      return {
+        ...prev,
+        ...nextOpenMenus,
+      };
+    });
   }, [pathname, menuItems]);
 
   const currentFinanceNode = useMemo(() => {
@@ -808,7 +861,50 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
     );
   };
 
-  if (isLoading || isMdmsLoading) return <Loader />;
+  const SidebarSkeletonLoader = () => (
+    <div className={`employee-sidebar-inner sidebar-skeleton-container ${isSidebarCollapsed ? "sidebar-skeleton--collapsed" : ""}`}>
+      <div className="sidebar-logo-header">
+        <div className="sidebar-skeleton-pulse sidebar-skeleton-logo" />
+      </div>
+
+      <div className="profile-section sidebar-skeleton-profile">
+        <div className="sidebar-skeleton-pulse sidebar-skeleton-avatar" />
+        {!isSidebarCollapsed && (
+          <div className="sidebar-skeleton-profile-info">
+            <div className="sidebar-skeleton-pulse sidebar-skeleton-text-name" />
+            <div className="sidebar-skeleton-pulse sidebar-skeleton-text-sub" />
+          </div>
+        )}
+        <div className="profile-divider" />
+      </div>
+
+      {!isSidebarCollapsed && (
+        <div className="sidebar-skeleton-search-wrap">
+          <div className="sidebar-skeleton-pulse sidebar-skeleton-search" />
+        </div>
+      )}
+
+      <div className="drawer-desktop sidebar-skeleton-menu-list">
+        {[72, 58, 80, 64, 76, 52, 68].map((w, i) => (
+          <div className="sidebar-skeleton-item" key={i}>
+            <div className="sidebar-skeleton-pulse sidebar-skeleton-icon" />
+            {!isSidebarCollapsed && (
+              <>
+                <div className="sidebar-skeleton-pulse sidebar-skeleton-label" style={{ width: `${w}%` }} />
+                <div className="sidebar-skeleton-pulse sidebar-skeleton-chevron" />
+              </>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="citizen-logout sidebar-skeleton-logout">
+        <div className="sidebar-skeleton-pulse sidebar-skeleton-logout-btn" />
+      </div>
+    </div>
+  );
+
+  if (isLoading || isMdmsLoading) return <SidebarSkeletonLoader />;
 
   return (
     <>

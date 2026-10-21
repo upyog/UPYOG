@@ -4,7 +4,7 @@
   position: fixed;
   top: 0;
   left: 240px;
-  z-index: 9999;
+  z-index: 999;
   background-color: #ffffff;
   transition: left 0.3s ease-in-out, width 0.3s ease-in-out;
 
@@ -879,15 +879,16 @@
   }
 }
 
-.SideBarStatic--collapsed ~ div .navbar,
-.SideBarStatic--collapsed ~ .citizen-main-content-area .navbar,
-.SideBarStatic--collapsed ~ .main .navbar,
-.SideBarStatic--collapsed ~ .dashboard-main .navbar {
+.SideBarStatic--collapsed~div .navbar,
+.SideBarStatic--collapsed~.citizen-main-content-area .navbar,
+.SideBarStatic--collapsed~.main .navbar,
+.SideBarStatic--collapsed~.dashboard-main .navbar {
   left: 80px !important;
   width: calc(100% - 80px) !important;
 }
 
 @media (max-width: 780px) {
+
   .navbar,
   .navbar-expanded {
     left: 0 !important;

@@ -33,24 +33,22 @@ const TopBar = ({
     const fetchProfilePic = async () => {
       const tenant = Digit.ULBService.getCurrentTenantId();
       const uuid = userDetails?.info?.uuid;
-      if (uuid) {
-        const usersResponse = await Digit.UserService.userSearch(tenant, { uuid: [uuid] }, {});
-        if (usersResponse?.user?.[0]?.photo) {
-          try {
+      if (uuid && uuid !== "asdf" && !profilePic) {
+        try {
+          const usersResponse = await Digit.UserService.userSearch(tenant, { uuid: [uuid] }, {});
+          if (usersResponse?.user?.[0]?.photo) {
             const file = await Digit.UploadServices.Filefetch([usersResponse?.user?.[0]?.photo], "pg");
             if (file?.data?.fileStoreIds?.[0]?.url) {
               setProfilePic(file?.data?.fileStoreIds?.[0]?.url.split(",")[0]);
             }
-          } catch (err) {
-            console.error("Error fetching profile photo:", err);
           }
-
-
+        } catch (err) {
+          console.error("Error fetching profile photo:", err);
         }
       }
     };
     fetchProfilePic();
-  }, [profilePic !== null, userDetails?.info?.uuid]);
+  }, [profilePic, userDetails?.info?.uuid]);
 
   const CitizenHomePageTenantId = Digit.ULBService.getCitizenCurrentTenant(true);
 

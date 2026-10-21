@@ -480,7 +480,7 @@
       height: calc(100vh - 350px);
       overflow-y: scroll;
       transition: all 0.3s ease-in-out;
-
+      padding-bottom: 16px;
 
       &::-webkit-scrollbar {
         display: none;
@@ -615,6 +615,20 @@
 
         .menu-item .icon+.menu-label {
           visibility: hidden;
+        }
+
+        .sidebar-list-helpline,
+        .sidebar-list:has(.sidebar-helpline-telephone) {
+          height: 42px !important;
+          min-height: 42px !important;
+          padding-top: 0 !important;
+          padding-bottom: 0 !important;
+          margin-bottom: 0 !important;
+
+          .menu-item {
+            height: 42px !important;
+            min-height: 42px !important;
+          }
         }
       }
 

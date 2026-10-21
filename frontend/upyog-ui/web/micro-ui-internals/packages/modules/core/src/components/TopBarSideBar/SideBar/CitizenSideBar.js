@@ -145,7 +145,7 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
       {
         text: (
           <React.Fragment>
-            {t("CS_COMMON_HELPLINE")}
+            <span className="sidebar-helpline-title">{t("CS_COMMON_HELPLINE")}</span>
             <div className="telephone sidebar-helpline-telephone">
               <div className="link">
                 <a href={`tel:${filteredTenantContact}`}>{filteredTenantContact}</a>

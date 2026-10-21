@@ -163,7 +163,15 @@ const EmployeeApp = ({
                     aria-hidden="true"
                   />
                 )}
-                <div className={`main ${isSidebarCollapsed ? "main--collapsed" : ""} ${DSO ? "m-auto" : ""}`}>
+                <div
+                  className={[
+                    "main",
+                    "employee-main-wrapper",
+                    isSidebarCollapsed ? "main--collapsed employee-main-wrapper--collapsed" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                >
                   <TopBarSideBar t={t}
                     stateInfo={stateInfo}
                     userDetails={userDetails || Digit.UserService.getUser()}

@@ -1937,9 +1937,9 @@
 .pt-application-details-row-reverse-row-center {
   z-index: 10;
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
   align-items: center;
-  margin-top: -25px;
+  margin-top: 0;
 }
 
 .pt-application-details-relative-layered {
@@ -1984,10 +1984,6 @@
 /* pages/employee/MutationApplicatinDetails.js */
 .pt-mutation-applicatin-details-item {
   margin-right: auto;
-}
-
-.pt-mutation-applicatin-details-link {
-  top: 90px;
 }
 
 /* pages/employee/PaymentDetails.js */

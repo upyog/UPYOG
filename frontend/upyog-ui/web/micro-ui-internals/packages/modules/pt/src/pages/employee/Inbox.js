@@ -32,7 +32,15 @@ const Inbox = ({
   const [sortParams, setSortParams] = useState(initialStates.sortParams || [{ id: "createdTime", desc: false }]);
   const [searchParams, setSearchParams] = useState(initialStates.searchParams || {});
 
-  let isMobile = window.Digit.Utils.browser.isMobile();
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768 || window.Digit.Utils.browser.isMobile());
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768 || window.Digit.Utils.browser.isMobile());
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   let paginationParams = isMobile
     ? { limit: 100, offset: 0, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" }
     : { limit: pageSize, offset: pageOffset, sortBy: sortParams?.[0]?.id, sortOrder: sortParams?.[0]?.desc ? "DESC" : "ASC" };
@@ -90,28 +98,29 @@ const Inbox = ({
   if (rest?.data?.length !== null) {
     if (isMobile) {
       return (
-        <MobileInbox
-          data={data}
-          isLoading={hookLoading}
-          isSearch={!isInbox}
-          searchFields={searchFields}
-          onFilterChange={handleFilterChange}
-          onSearch={handleFilterChange}
-          onSort={handleSort}
-          parentRoute={parentRoute}
-          searchParams={searchParams}
-          sortParams={sortParams}
-          linkPrefix={`${parentRoute}/application-details/`}
-          tableConfig={rest?.tableConfig?res?.tableConfig:TableConfig(t)["PT"]}
-          filterComponent={filterComponent}
-          EmptyResultInboxComp={EmptyResultInboxComp}
-          useNewInboxAPI={useNewInboxAPI}
-        />
-        // <div></div>
+        <div className="pt-employee-inbox-wrapper employee-inbox-module-wrapper pt-employee-inbox-mobile">
+          <MobileInbox
+            data={data}
+            isLoading={hookLoading}
+            isSearch={!isInbox}
+            searchFields={searchFields}
+            onFilterChange={handleFilterChange}
+            onSearch={handleFilterChange}
+            onSort={handleSort}
+            parentRoute={parentRoute}
+            searchParams={searchParams}
+            sortParams={sortParams}
+            linkPrefix={`${parentRoute}/application-details/`}
+            tableConfig={rest?.tableConfig?res?.tableConfig:TableConfig(t)["PT"]}
+            filterComponent={filterComponent}
+            EmptyResultInboxComp={EmptyResultInboxComp}
+            useNewInboxAPI={useNewInboxAPI}
+          />
+        </div>
       );
     } else {
       return (
-        <div>
+        <div className="pt-employee-inbox-wrapper employee-inbox-module-wrapper pt-employee-inbox-desktop">
           {isInbox && <Header>{t("ES_COMMON_INBOX")}</Header>}
           {!isInbox && <Header>{t("SEARCH_PROPERTY")}</Header>}
           

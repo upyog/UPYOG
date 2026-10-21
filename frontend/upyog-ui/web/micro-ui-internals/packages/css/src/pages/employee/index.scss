@@ -605,23 +605,23 @@
     margin-top: 80px !important;
   }
 
-  .main {
+  .main,
+  .employee-main-wrapper {
     margin-left: 240px !important;
     margin-top: 0px !important;
     width: calc(100% - 240px) !important;
-    max-width: calc(100% - 240px) !important;
     min-height: calc(100vh - 84px) !important;
     padding: 0 !important;
     display: block !important;
     background-color: #f8f7fa !important;
     box-sizing: border-box !important;
-    transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out, max-width 0.3s ease-in-out !important;
+    transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out !important;
 
     &.main--collapsed,
+    &.employee-main-wrapper--collapsed,
     &.citizen-home-container--collapsed {
       margin-left: 80px !important;
       width: calc(100% - 80px) !important;
-      max-width: calc(100% - 80px) !important;
     }
 
     &.citizen-home-container--no-sidebar {
@@ -646,10 +646,10 @@
     }
   }
 
-  .SideBarStatic--collapsed~.main {
+  .SideBarStatic--collapsed~.main,
+  .SideBarStatic--collapsed~.employee-main-wrapper {
     margin-left: 80px !important;
     width: calc(100% - 80px) !important;
-    max-width: calc(100% - 80px) !important;
   }
 }
 
@@ -805,9 +805,11 @@
       }
     }
 
+    .main,
+    .employee-main-wrapper,
     .main.citizen-home-container {
       margin-left: 0 !important;
-      margin-top: 60px !important;
+      margin-top: 0 !important;
       width: 100% !important;
       max-width: 100% !important;
       min-height: calc(100vh - 60px) !important;
@@ -817,6 +819,10 @@
         min-height: calc(100vh - 60px) !important;
         padding-bottom: 24px !important;
       }
+    }
+
+    .main.citizen-home-container {
+      margin-top: 60px !important;
     }
   }
 }
@@ -1245,7 +1251,7 @@
     gap: 4px !important;
     font-size: 14px !important;
     font-weight: 600 !important;
-    color: #1e293b !important;
+    color: #ffffff !important;
     cursor: pointer !important;
 
     svg,
@@ -1622,6 +1628,220 @@
         }
       }
     }
+
+    /* Tabs for Citizen Profile */
+    .profile-tabs-nav {
+      display: flex !important;
+      gap: 10px !important;
+      margin-bottom: 24px !important;
+      background: #f4effa !important;
+      padding: 6px !important;
+      border-radius: 12px !important;
+      width: fit-content !important;
+
+      .profile-tab-pill {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        padding: 8px 20px !important;
+        border-radius: 8px !important;
+        border: none !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        color: #6a5e7e !important;
+        background: transparent !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+
+        .tab-count-badge {
+          background: #e8def2 !important;
+          color: #6a4a91 !important;
+          font-size: 11.5px !important;
+          padding: 2px 7px !important;
+          border-radius: 10px !important;
+          font-weight: 700 !important;
+        }
+
+        &.active {
+          background: #ffffff !important;
+          color: #3e285f !important;
+          box-shadow: 0 2px 8px rgba(62, 40, 95, 0.1) !important;
+
+          .tab-count-badge {
+            background: #6a4a91 !important;
+            color: #ffffff !important;
+          }
+        }
+
+        &:hover:not(.active) {
+          color: #3e285f !important;
+          background: rgba(255, 255, 255, 0.5) !important;
+        }
+      }
+    }
+
+    /* Address Tab Styling */
+    .citizen-address-header {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      margin-bottom: 24px !important;
+      padding-bottom: 16px !important;
+      border-bottom: 1px solid #f0ecf6 !important;
+      flex-wrap: wrap !important;
+      gap: 12px !important;
+
+      .address-header-left {
+        .card-main-title {
+          font-size: 20px !important;
+          font-weight: 700 !important;
+          color: #1e1533 !important;
+          margin: 0 0 4px 0 !important;
+        }
+
+        .card-sub-title {
+          font-size: 13.5px !important;
+          color: #716982 !important;
+          margin: 0 !important;
+        }
+      }
+
+      .citizen-add-address-btn {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        padding: 9px 18px !important;
+        background: linear-gradient(90deg, #6a4a91 0%, #3e285f 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-size: 13.5px !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        box-shadow: 0 3px 10px rgba(106, 74, 145, 0.25) !important;
+        transition: all 0.2s ease !important;
+
+        &:hover {
+          transform: translateY(-1px) !important;
+          box-shadow: 0 5px 14px rgba(106, 74, 145, 0.35) !important;
+        }
+      }
+    }
+
+    .citizen-address-cards-grid {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+      gap: 18px !important;
+
+      .citizen-address-card-item {
+        background: #faf8fd !important;
+        border: 1px solid #e7dfef !important;
+        border-radius: 12px !important;
+        padding: 20px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        transition: all 0.2s ease !important;
+        position: relative !important;
+
+        &:hover {
+          border-color: #cbbede !important;
+          box-shadow: 0 4px 14px rgba(106, 74, 145, 0.08) !important;
+        }
+
+        .address-card-top-row {
+          display: flex !important;
+          justify-content: space-between !important;
+          align-items: center !important;
+          margin-bottom: 14px !important;
+
+          .address-type-pill {
+            background: #ede6f6 !important;
+            color: #6a4a91 !important;
+            padding: 4px 12px !important;
+            border-radius: 16px !important;
+            font-size: 12px !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+          }
+
+          .address-edit-btn {
+            background: #ffffff !important;
+            border: 1px solid #dcd4e8 !important;
+            border-radius: 6px !important;
+            padding: 5px 10px !important;
+            color: #6a4a91 !important;
+            font-size: 12.5px !important;
+            font-weight: 600 !important;
+            cursor: pointer !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 5px !important;
+            transition: all 0.2s ease !important;
+
+            svg {
+              width: 14px !important;
+              height: 14px !important;
+              fill: #6a4a91 !important;
+            }
+
+            &:hover {
+              background: #6a4a91 !important;
+              color: #ffffff !important;
+
+              svg {
+                fill: #ffffff !important;
+              }
+            }
+          }
+        }
+
+        .address-card-details {
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 6px !important;
+          font-size: 13.5px !important;
+          color: #3e364e !important;
+          line-height: 1.5 !important;
+
+          .address-main-line {
+            font-weight: 600 !important;
+            color: #1e1533 !important;
+          }
+
+          .address-sub-line {
+            color: #6a5e7e !important;
+          }
+        }
+      }
+    }
+
+    .citizen-address-empty-state {
+      text-align: center !important;
+      padding: 48px 24px !important;
+      background: #faf8fd !important;
+      border: 1.5px dashed #d8cde9 !important;
+      border-radius: 12px !important;
+
+      .empty-icon {
+        font-size: 40px !important;
+        margin-bottom: 12px !important;
+        display: block !important;
+      }
+
+      .empty-title {
+        font-size: 16px !important;
+        font-weight: 700 !important;
+        color: #1e1533 !important;
+        margin: 0 0 6px 0 !important;
+      }
+
+      .empty-desc {
+        font-size: 13.5px !important;
+        color: #716982 !important;
+        margin: 0 0 18px 0 !important;
+      }
+    }
   }
 }
 
@@ -1643,10 +1863,13 @@
 
 @media (max-width: 780px) {
   .employee {
-    .main {
+
+    .main,
+    .employee-main-wrapper {
       width: 100% !important;
+      max-width: 100% !important;
       margin-left: 0 !important;
-      padding-top: 60px !important;
+      padding-top: 0 !important;
     }
 
     .dashboard-body {
