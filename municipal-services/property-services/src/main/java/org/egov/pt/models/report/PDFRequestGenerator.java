@@ -357,11 +357,21 @@ public class PDFRequestGenerator {
 			paymentStatus = "Pending";
 		}
 		
-		if (amountPaid.compareTo(BigDecimal.ZERO) > 0) {
-		    paymentDate = Instant.ofEpochMilli(bill.getAuditDetails().getLastModifiedTime())
-		            .atZone(ZoneId.systemDefault())
-		            .toLocalDateTime()
-		            .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+		if (Boolean.TRUE.equals(ptTaxCalculatorTracker.getIsPaymentProcessing())) {
+			JsonNode trackerAdditionalDetails = ptTaxCalculatorTracker.getAdditionalDetails();
+
+			if (trackerAdditionalDetails != null && trackerAdditionalDetails.isArray()
+					&& !trackerAdditionalDetails.isEmpty()) {
+
+				JsonNode firstDetail = trackerAdditionalDetails.get(0);
+
+				if (firstDetail.has("chequeTxnDate") && !firstDetail.get("chequeTxnDate").isNull()) {
+					paymentDate = firstDetail.get("chequeTxnDate").asText();
+				}
+			}
+		} else if (amountPaid.compareTo(BigDecimal.ZERO) > 0) {
+			paymentDate = Instant.ofEpochMilli(bill.getAuditDetails().getLastModifiedTime())
+					.atZone(ZoneId.systemDefault()).toLocalDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 		}
 		ptbr.put("amountDue", String.valueOf(amountDue));
 		ptbr.put("amountPaid", String.valueOf(amountPaid));

@@ -120,20 +120,36 @@ public class PDFRequestGenerator {
 			grbgObj.get("grbgTaxs").add(tax.toString());
 			grbgObj.get("arrears").add(arrear.toString());
 			grbgObj.get("interest").add(interest.toString());
-			String paymentDate = Bill.StatusEnum.PAID.equals(billObj.getStatus())
-			        ? Instant.ofEpochMilli(billObj.getAuditDetails().getLastModifiedTime())
-			                .atZone(ZoneId.systemDefault())
-			                .toLocalDateTime()
-			                .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-			        : "";
-
-			grbgObj.get("paymentDates").add(paymentDate);
-			String paymentStatus;
+			String paymentDate = "";
 
 			GrbgBillTracker tracker = grbgBillTracker.stream()
 			        .filter(t -> consumerCode.equals(t.getGrbgApplicationId()))
 			        .findFirst()
 			        .orElse(null);
+
+			if (tracker != null && Boolean.TRUE.equals(tracker.getIsPaymentProcessing())) {
+
+			    JsonNode trackerAdditionalDetail =
+			            objectMapper.valueToTree(tracker.getAdditionaldetail());
+
+			    if (trackerAdditionalDetail != null
+			            && trackerAdditionalDetail.has("chequeTxnDate")
+			            && !trackerAdditionalDetail.get("chequeTxnDate").isNull()) {
+
+			        paymentDate = trackerAdditionalDetail.get("chequeTxnDate").asText();
+			    }
+
+			} else if (Bill.StatusEnum.PAID.equals(billObj.getStatus())) {
+
+			    paymentDate = Instant.ofEpochMilli(
+			            billObj.getAuditDetails().getLastModifiedTime())
+			            .atZone(ZoneId.systemDefault())
+			            .toLocalDateTime()
+			            .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+			}
+
+			grbgObj.get("paymentDates").add(paymentDate);
+			String paymentStatus;
 
 			if (tracker != null && Boolean.TRUE.equals(tracker.getIsPaymentProcessing())) {
 				BigDecimal chequeTxnAmount = BigDecimal.ZERO;

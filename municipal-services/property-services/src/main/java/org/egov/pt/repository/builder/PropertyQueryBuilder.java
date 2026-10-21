@@ -572,13 +572,18 @@ public class PropertyQueryBuilder {
 	        "additionaldetails = CASE " +
 	        "    WHEN ? = true THEN " +
 	        "        jsonb_set( " +
-	        "            CASE " +
-	        "                WHEN jsonb_typeof(COALESCE(additionaldetails, '{}'::jsonb)) = 'array' " +
-	        "                    THEN additionaldetails " +
-	        "                ELSE '[{}]'::jsonb " +
-	        "            END, " +
-	        "            '{0,chequeTxnAmount}', " +
-	        "            to_jsonb(CAST(? AS numeric)), " +
+	        "            jsonb_set( " +
+	        "                CASE " +
+	        "                    WHEN jsonb_typeof(COALESCE(additionaldetails, '{}'::jsonb)) = 'array' " +
+	        "                        THEN additionaldetails " +
+	        "                    ELSE '[{}]'::jsonb " +
+	        "                END, " +
+	        "                '{0,chequeTxnAmount}', " +
+	        "                to_jsonb(CAST(? AS numeric)), " +
+	        "                true " +
+	        "            ), " +
+	        "            '{0,chequeTxnDate}', " +
+	        "            to_jsonb(CAST(? AS text)), " +
 	        "            true " +
 	        "        ) " +
 	        "    ELSE additionaldetails " +
@@ -1426,10 +1431,11 @@ public String getActiveBillsQuery(String status, List<Object> preparedStmtList,S
 	public String getPropertyApproverUserNameQuery() {
 		return PROPERTY_APPROVER_QUERY;
 	}
-	public String getUpdateIsProcessingPaymentQuery(List<Object> preparedStmtList, String billId, boolean isPaymentProcessing, String txnAmount) {
+	public String getUpdateIsProcessingPaymentQuery(List<Object> preparedStmtList, String billId, boolean isPaymentProcessing, String txnAmount, String transactionDate) {
 		preparedStmtList.add(isPaymentProcessing);
 		preparedStmtList.add(isPaymentProcessing);
 		preparedStmtList.add(txnAmount);
+		preparedStmtList.add(transactionDate);
 		preparedStmtList.add(billId);
 		return PT_UPDATE_IS_PAYMENT_PROCESSING_QUERY;
 	}
