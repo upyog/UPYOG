@@ -52,20 +52,43 @@ const getNodeByPath = (obj, pathString) => {
   return current;
 };
 
+const FINANCE_META_KEYS = [
+  "id",
+  "name",
+  "url",
+  "displayName",
+  "orderNumber",
+  "parentModule",
+  "serviceCode",
+  "code",
+  "leftIcon",
+  "path",
+  "navigationURL",
+  "enabled",
+];
+
 const getMinOrderNumber = (node) => {
-  if (!node) return 9999;
-  if (typeof node === "object" && node.id !== undefined) {
-    return node.orderNumber || 0;
-  }
+  if (!node || typeof node !== "object") return 9999;
+  if (typeof node.orderNumber === "number") return node.orderNumber;
+  if (node.orderNumber !== undefined && !isNaN(Number(node.orderNumber))) return Number(node.orderNumber);
+
   let min = 9999;
-  for (const key in node) {
-    const val = node[key];
-    const order = getMinOrderNumber(val);
-    if (order < min) {
-      min = order;
+  for (const key of Object.keys(node)) {
+    if (FINANCE_META_KEYS.includes(key)) continue;
+    const child = node[key];
+    if (child && typeof child === "object") {
+      const order = getMinOrderNumber(child);
+      if (order < min) min = order;
     }
   }
   return min;
+};
+
+const hasSubMenuChildren = (node) => {
+  if (!node || typeof node !== "object") return false;
+  return Object.keys(node).some(
+    (k) => !FINANCE_META_KEYS.includes(k) && node[k] && typeof node[k] === "object" && !Array.isArray(node[k])
+  );
 };
 
 /**
@@ -84,14 +107,14 @@ const getMinOrderNumber = (node) => {
 const hasMatchingDescendant = (node, key, search, t, i18n) => {
   if (!search) return true;
 
-  const hasChildren = typeof node === "object" && !node.id;
+  const hasChildren = hasSubMenuChildren(node);
   const translationKey = hasChildren
     ? `ACTION_TEST_${key.toUpperCase().replace(/[ -]/g, "_")}`
-    : `ACTION_TEST_${node.displayName ? node.displayName.toUpperCase().replace(/[.:-\s\/]/g, "_") : key.toUpperCase().replace(/[ -]/g, "_")}`;
+    : `ACTION_TEST_${node?.displayName ? node.displayName.toUpperCase().replace(/[.:-\s\/]/g, "_") : key.toUpperCase().replace(/[ -]/g, "_")}`;
 
   const displayLabel = i18n.exists(translationKey)
     ? t(translationKey)
-    : (hasChildren ? key : (node.displayName || key));
+    : (hasChildren ? key : (node?.displayName || key));
 
   // If the current node's label matches the search, return true
   if (displayLabel.toLowerCase().includes(search.toLowerCase())) {
@@ -101,7 +124,7 @@ const hasMatchingDescendant = (node, key, search, t, i18n) => {
   // If it's a folder, search its child nodes recursively
   if (hasChildren) {
     for (const childKey in node) {
-      if (["id", "name", "url", "displayName", "orderNumber", "parentModule", "serviceCode", "code", "leftIcon", "path", "navigationURL", "enabled"].includes(childKey)) {
+      if (FINANCE_META_KEYS.includes(childKey)) {
         continue;
       }
       if (hasMatchingDescendant(node[childKey], childKey, search, t, i18n)) {
@@ -150,7 +173,7 @@ const FinanceSideBar = ({ activePath, setActivePath, configEmployeeSideBar1, sea
 
       <div className="submenu-links" style={{ overflowX: "auto", display: "flex", flexDirection: "column" }}>
         {Object.keys(currentNode)
-          .filter((key) => !["id", "name", "url", "displayName", "orderNumber", "parentModule", "serviceCode", "code", "leftIcon", "path", "navigationURL", "enabled"].includes(key))
+          .filter((key) => !FINANCE_META_KEYS.includes(key))
           .filter((key) => hasMatchingDescendant(currentNode[key], key, search, t, i18n))
           .sort((a, b) => {
             const valA = currentNode[a];
@@ -158,15 +181,16 @@ const FinanceSideBar = ({ activePath, setActivePath, configEmployeeSideBar1, sea
             return getMinOrderNumber(valA) - getMinOrderNumber(valB);
           }).map((key) => {
             const nodeValue = currentNode[key];
-            const hasChildren = typeof nodeValue === "object" && !nodeValue.id;
+            if (!nodeValue || typeof nodeValue !== "object") return null;
+            const hasChildren = hasSubMenuChildren(nodeValue);
 
             const translationKey = hasChildren
               ? `ACTION_TEST_${key.toUpperCase().replace(/[ -]/g, "_")}`
-              : `ACTION_TEST_${nodeValue.displayName ? nodeValue.displayName.toUpperCase().replace(/[.:-\s\/]/g, "_") : key.toUpperCase().replace(/[ -]/g, "_")}`;
+              : `ACTION_TEST_${nodeValue?.displayName ? nodeValue.displayName.toUpperCase().replace(/[.:-\s\/]/g, "_") : key.toUpperCase().replace(/[ -]/g, "_")}`;
 
             const displayLabel = i18n.exists(translationKey)
               ? t(translationKey)
-              : (hasChildren ? key : (nodeValue.displayName || key));
+              : (hasChildren ? key : (nodeValue?.displayName || key));
 
             const iconStr = nodeValue?.leftIcon || getIcon(nodeValue);
             const iconKey = iconStr?.split?.(":")?.[1];
@@ -191,7 +215,8 @@ const FinanceSideBar = ({ activePath, setActivePath, configEmployeeSideBar1, sea
                   </svg>
                 </div>
               );
-              const targetPath = getRoutePath(nodeValue.navigationURL);
+            } else {
+              const targetPath = getRoutePath(nodeValue?.navigationURL);
               const cleanTarget = targetPath.split("?")[0].replace(/\/+$/, "");
               const cleanCurrent = pathname.split("?")[0].replace(/\/+$/, "");
               const isActive = cleanCurrent && cleanTarget && (cleanCurrent === cleanTarget || cleanCurrent.startsWith(cleanTarget + "/"));

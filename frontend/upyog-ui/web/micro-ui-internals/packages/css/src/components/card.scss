@@ -612,11 +612,13 @@
 
 .employee-application-details {
   display: flex !important;
-  flex-direction: column !important;
+  flex-direction: row !important;
   justify-content: space-between !important;
-  max-height: 70px !important;
-  height: 70px !important;
-  margin-bottom: 15px !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  height: auto !important;
+  max-height: unset !important;
+  margin-bottom: 16px !important;
 }
 
 .employee-main-application-details {
@@ -629,15 +631,16 @@
 }
 
 .employee-download-btn-className {
-  position: unset !important;
-  display: flex !important;
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
   justify-content: flex-end !important;
 }
 
 .employee-options-btn-className {
-  position: unset !important;
+  position: absolute !important;
   margin: 0 !important;
-  width: 100% !important;
+  width: auto !important;
 }
 
 .language-selector .submit-bar,

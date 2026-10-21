@@ -1,54 +1,154 @@
-import { Card, ButtonSelector, CardText, CardSubHeader, Modal, CardSectionHeader, Row } from "@nudmcdgnpm/digit-ui-react-components";
+import { Modal } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-const Close = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
-      <path d="M0 0h24v24H0V0z" fill="none" />
-      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
-    </svg>
-  );
-  
-const CloseBtn = (props) => {
-    return (
-      <div className="icon-bg-secondary" onClick={props.onClick}>
-        <Close />
-      </div>
-    );
-  };
+const WarningAlertIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+    <line x1="12" y1="9" x2="12" y2="13" />
+    <line x1="12" y1="17" x2="12.01" y2="17" />
+  </svg>
+);
 
-function ApplicationDetailsWarningPopup({ action,workflowDetails,businessService,isWarningPop,closeWarningPopup  }) {
-const { t } = useTranslation();
-const isMobile = window.Digit.Utils.browser.isMobile();
-return (
-    <React.Fragment>
+const CloseIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="18" y1="6" x2="18" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+);
+
+const CardPaymentIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="5" width="20" height="14" rx="2" />
+    <line x1="2" y1="10" x2="22" y2="10" />
+  </svg>
+);
+
+const CloseBtn = ({ onClick }) => (
+  <button
+    type="button"
+    className="app-details-warning-close-btn"
+    onClick={onClick}
+    aria-label="Close"
+  >
+    <CloseIcon />
+  </button>
+);
+
+function ApplicationDetailsWarningPopup({ action, workflowDetails, businessService, isWarningPop, closeWarningPopup }) {
+  const { t } = useTranslation();
+  const isMobile = window.Digit.Utils.browser.isMobile();
+
+  const formattedAmount =
+    action?.AmountDueForPay !== undefined && action?.AmountDueForPay !== null
+      ? typeof action.AmountDueForPay === "number" || (!isNaN(action.AmountDueForPay) && action.AmountDueForPay !== "")
+        ? Number(action.AmountDueForPay).toLocaleString("en-IN")
+        : action.AmountDueForPay
+      : "0";
+
+  return (
     <Modal
-      headerBarMain={<h1 className="heading-m">{t("PT_DUES_ARE_PENDING")}</h1>}
-      headerBarEnd={
-        <CloseBtn
-          onClick={() => {
-            closeWarningPopup();
-          }}
-        />
+      headerBarMain={
+        <div className="app-details-warning-header-content">
+          <div className="app-details-warning-header-badge">
+            <WarningAlertIcon />
+          </div>
+          <div className="app-details-warning-header-text">
+            <h2 className="app-details-warning-header-title">{t("PT_DUES_ARE_PENDING")}</h2>
+            <span className="app-details-warning-header-sub">{t("CS_ACTION_REQUIRED") || "Action Required"}</span>
+          </div>
+        </div>
       }
+      headerBarEnd={<CloseBtn onClick={closeWarningPopup} />}
+      headerBarMainStyle={{
+        padding: "18px 22px 14px 22px",
+        borderBottom: "1px solid #F1F5F9",
+        backgroundColor: "#FFFFFF",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
+      popupModuleMianStyles={{
+        padding: isMobile ? "16px 16px 20px 16px" : "20px 24px 24px 24px",
+        backgroundColor: "#FFFFFF",
+      }}
       hideSubmit={true}
       isDisabled={false}
-      popupStyles={isMobile ? {} : { width: "29%", marginTop: "auto" }}
+      popupStyles={
+        isMobile
+          ? {
+              width: "92%",
+              maxWidth: "460px",
+              margin: "auto",
+              borderRadius: "16px",
+              overflow: "hidden",
+              boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+              border: "1px solid #E2E8F0",
+            }
+          : {
+              width: "480px",
+              maxWidth: "92vw",
+              margin: "auto",
+              borderRadius: "16px",
+              overflow: "hidden",
+              boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+              border: "1px solid #E2E8F0",
+            }
+      }
     >
-   <Card>
-        <div className="tmpl-application-details-warning-popup-bottom-spacing">
-          <h1>{t("PT_YOU_HAVE")} ₹{action?.AmountDueForPay} {t("PT_DUE_WARNING_MSG2")}</h1>
+      <div className="app-details-warning-popup-container">
+        <div className="app-details-warning-notice-box">
+          <div className="app-details-warning-notice-icon-wrap">
+            <span className="app-details-warning-pulse-dot" />
+          </div>
+          <p className="app-details-warning-notice-text">
+            {t("PT_YOU_HAVE")}{" "}
+            <strong className="app-details-warning-due-highlight">
+              ₹{formattedAmount}
+            </strong>{" "}
+            {t("PT_DUE_WARNING_MSG2")}
+          </p>
         </div>
-       <Row rowContainerStyle={{display:"flex"}} labelStyle={{fontSize:"24px",fontWeight:"700",marginRight:"10%"}} textStyle={{fontSize:"24px",fontWeight:"700",marginBottom:"20px"}} label={`${t("PT_AMOUNT_DUE")}`} text={`₹${t(action?.AmountDueForPay)}`} />
-        <div className="tmpl-application-details-warning-popup-fullwidth">
-          <ButtonSelector theme="border" label={t('ES_PT_COMMON_CANCEL')} onSubmit={closeWarningPopup} className="tmpl-application-details-warning-popup-action-btn" />
-          <ButtonSelector label={t('PT_COLLECT')} onSubmit={() => window.location.assign(`${window.location.origin}${action?.redirectionUrl?.pathname}`)} className="tmpl-application-details-warning-popup-action-btn" />
+
+        <div className="app-details-warning-amount-card">
+          <div className="app-details-warning-amount-top">
+            <span className="app-details-warning-amount-label">{t("PT_AMOUNT_DUE")}</span>
+            <span className="app-details-warning-status-pill">{t("COMMON_PENDING") || "Pending"}</span>
+          </div>
+          <div className="app-details-warning-amount-value">
+            <span className="app-details-warning-currency">₹</span>
+            <span className="app-details-warning-number">{formattedAmount}</span>
+          </div>
+          <div className="app-details-warning-amount-note">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
+            <span>{t("PT_CLEAR_DUES_INSTRUCTION") || "Please clear all outstanding property dues before processing this application."}</span>
+          </div>
         </div>
-      </Card>
-   </Modal>
-  )
-    </React.Fragment>
-)
+
+        <div className="app-details-warning-actions">
+          <button
+            type="button"
+            className="app-details-warning-btn app-details-warning-btn-cancel"
+            onClick={closeWarningPopup}
+          >
+            {t("ES_PT_COMMON_CANCEL")}
+          </button>
+          <button
+            type="button"
+            className="app-details-warning-btn app-details-warning-btn-collect"
+            onClick={() => window.location.assign(`${window.location.origin}${action?.redirectionUrl?.pathname}`)}
+          >
+            <CardPaymentIcon />
+            <span>{t("PT_COLLECT")}</span>
+          </button>
+        </div>
+      </div>
+    </Modal>
+  );
 }
 
 export default ApplicationDetailsWarningPopup;

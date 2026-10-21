@@ -234,7 +234,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed,
       {
         text: (
           <React.Fragment>
-            {t("CS_COMMON_HELPLINE")}
+            <span className="sidebar-helpline-title">{t("CS_COMMON_HELPLINE")}</span>
             <div className="telephone sidebar-helpline-telephone">
               <div className="link">
                 <a href={`tel:${filteredTenantContact}`}>{filteredTenantContact}</a>
@@ -282,7 +282,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed,
         {profileItem}
         <div className="drawer-desktop">
           {menuItems?.map((item, index) => (
-            <div className={`sidebar-list ${pathname === item?.link || pathname === item?.sidebarURL ? "active" : ""}`} key={index}>
+            <div className={`sidebar-list ${pathname === item?.link || pathname === item?.sidebarURL ? "active" : ""} ${item?.element === "Helpline" || item?.id === "help-line" ? "sidebar-list-helpline" : ""}`} key={index}>
               <MenuItem item={item} />
             </div>
           ))}

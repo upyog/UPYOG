@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useMemo, useReducer } from "react";
+import React, { Fragment, useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import { CaseIcon, Header } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import FilterFormFieldsComponent from "./FilterFormFieldsComponent";
@@ -15,6 +15,16 @@ const Inbox = ({ parentRoute }) => {
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768 || window.Digit.Utils.browser.isMobile());
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768 || window.Digit.Utils.browser.isMobile());
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const searchFormDefaultValues = {};
 
   const filterFormDefaultValues = {
@@ -26,7 +36,7 @@ const Inbox = ({ parentRoute }) => {
   };
   const tableOrderFormDefaultValues = {
     sortBy: "",
-    limit: Digit.Utils.browser.isMobile() ? 50 : 10,
+    limit: (window.innerWidth <= 768 || Digit.Utils.browser.isMobile()) ? 50 : 10,
     offset: 0,
     sortOrder: "DESC",
   };
@@ -197,18 +207,18 @@ const Inbox = ({ parentRoute }) => {
   const propsForMobileSortForm = { onMobileSortOrderData, sortFormDefaultValues: formState?.tableForm, onSortFormReset };
   console.log("propsForInboxTablepropsForInboxTable", propsForInboxTable)
   return (
-    <React.Fragment>
+    <div className={`obps-employee-inbox-wrapper employee-inbox-module-wrapper ${isMobile ? "obps-employee-inbox-mobile" : "obps-employee-inbox-desktop"}`}>
       <Header>
         {t("ES_COMMON_INBOX")}
         {totalCount ? <p className="inbox-count">{totalCount}</p> : null}
       </Header>
-      {Digit.Utils.browser.isMobile() &&
+      {isMobile && (
         <div className="obps-index-spacing-5">
           <Link to={window.location.href.includes("/citizen") ? "/upyog-ui/citizen/obps/search/application" : "/upyog-ui/employee/obps/search/application"}>
             <span className="link">{t("BPA_SEARCH_PAGE_TITLE")}</span>
           </Link>
         </div>
-      }
+      )}
       <InboxComposer
         {...{
           isInboxLoading,
@@ -219,9 +229,10 @@ const Inbox = ({ parentRoute }) => {
           propsForInboxTable,
           propsForInboxMobileCards,
           formState,
+          isMobile,
         }}
       ></InboxComposer>
-    </React.Fragment>
+    </div>
   );
 };
 

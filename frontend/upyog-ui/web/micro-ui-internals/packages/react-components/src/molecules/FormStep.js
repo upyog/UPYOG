@@ -10,7 +10,7 @@ import InputCard from "./InputCard";
 const FormStep = ({
   t,
   children,
-  config,
+  config = {},
   onSelect,
   onSkip,
   value,
@@ -41,9 +41,9 @@ const FormStep = ({
   };
 
   const isDisable =
-    isDisabled ? true : config.canDisable && Object.keys(errors).length;
+    isDisabled ? true : config?.canDisable && Object.keys(errors).length;
 
-  const inputs = config.inputs?.map((input, index) => {
+  const inputs = config?.inputs?.map((input, index) => {
     if (input.type === "text") {
       const registeredField =
       input?.name
@@ -138,7 +138,7 @@ const FormStep = ({
     return null;
   });
 
-  const { key, ...inputCardProps } = config;
+  const { key, ...inputCardProps } = config || {};
 
   return (
     <form onSubmit={handleSubmit(goNext)}>

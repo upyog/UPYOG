@@ -390,13 +390,31 @@ const MutationApplicationDetails = ({
     label: t("MT_CERTIFICATE"),
     onClick: () => printCertificate()
   });
+  const handleViewTimeline = () => {
+    const timelineSection = document.getElementById("timeline");
+    if (timelineSection) {
+      timelineSection.scrollIntoView({
+        behavior: "smooth"
+      });
+    }
+  };
   return <React.Fragment>
-    <div className="cardHeaderWithOptions pt-mutation-application-details-header">
+    <div className="cardHeaderWithOptions pt-mutation-application-details-header employee-application-details">
       <Header className="pt-mutation-header-title">{t("PT_MUTATION_APPLICATION_DETAILS")}</Header>
-      <div>
-        <div>
-          {dowloadOptions && dowloadOptions.length > 0 && <MultiLink onHeadClick={() => setShowOptions(!showOptions)} displayOptions={showOptions} options={dowloadOptions} className="multilinkWrapper pt-mutation-applicatin-details-link" />}
+      <div className="pt-application-details-row-reverse-row-center">
+        <div className="pt-application-details-relative-layered">
+          {dowloadOptions && dowloadOptions.length > 0 && (
+            <MultiLink
+              onHeadClick={() => setShowOptions(!showOptions)}
+              displayOptions={showOptions}
+              options={dowloadOptions}
+              className="multilinkWrapper pt-mutation-applicatin-details-link"
+              downloadBtnClassName={"employee-download-btn-className"}
+              optionsClassName={"employee-options-btn-className"}
+            />
+          )}
         </div>
+        <LinkButton label={t("VIEW_TIMELINE")} onClick={handleViewTimeline} className="pt-application-details-btn" />
       </div>
     </div>
     <Card className="pt-mutation-details-container">
@@ -502,7 +520,9 @@ const MutationApplicationDetails = ({
           <Row text={t("PT_NO_DOCUMENTS_MSG")} />
         </StatusTable>}
       </div>
-      <PTWFApplicationTimeline application={application} id={acknowledgementIds} userType={'employee'} />
+      <div id="timeline">
+        <PTWFApplicationTimeline application={application} id={acknowledgementIds} userType={'employee'} />
+      </div>
       {showModal ? <ActionModal t={t} action={selectedAction} tenantId={tenantId} state={state} id={acknowledgementIds} applicationDetails={appDetailsToShow} applicationData={appDetailsToShow?.applicationData} closeModal={closeModal} submitAction={submitAction} actionData={workflowDetails?.data?.timeline} businessService={businessService} workflowDetails={workflowDetails} moduleCode="PT" /> : null}
       <ApplicationDetailsToast t={t} showToast={showToast} closeToast={closeToast} businessService={businessService} />
       <ApplicationDetailsActionBar workflowDetails={workflowDetails} displayMenu={displayMenu} onActionSelect={onActionSelect} setDisplayMenu={setDisplayMenu} businessService={businessService} forcedActionPrefix={"WF_EMPLOYEE_PT.CREATE"} />

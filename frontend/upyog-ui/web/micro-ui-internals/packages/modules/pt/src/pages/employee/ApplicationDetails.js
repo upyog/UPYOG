@@ -1,4 +1,4 @@
-import { Header, LinkButton, MultiLink } from "@nudmcdgnpm/digit-ui-react-components";
+import { Header, LinkButton, MultiLink, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -105,6 +105,9 @@ const ApplicationDetails = () => {
     }
   }, [workflowDetails.data]);
   const PT_CEMP = Digit.UserService.hasAccess(["PT_CEMP"]) || false;
+  if (isLoading) {
+    return <Loader />;
+  }
   if (appDetailsToShow?.applicationData?.status === "ACTIVE" && PT_CEMP) {
     workflowDetails = {
       ...workflowDetails,
@@ -229,13 +232,9 @@ const ApplicationDetails = () => {
       return appDetailsToShow?.applicationDetails?.[3]?.additionalDetails?.owners;
     });
   }
-  return <div>
+  return <div className="pt-employee-application-details-page">
     <div className={"employee-application-details pt-application-details-mb-md"}>
-      <Header styles={{
-        marginLeft: "0px",
-        paddingTop: "10px",
-        fontSize: "32px"
-      }}>{t("PT_APPLICATION_TITLE")}</Header>
+      <Header className="pt-application-details-header-title">{t("PT_APPLICATION_TITLE")}</Header>
       <div className="pt-application-details-row-reverse-row-center">
 
         <div className="pt-application-details-relative-layered">

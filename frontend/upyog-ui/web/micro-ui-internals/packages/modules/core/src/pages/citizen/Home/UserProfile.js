@@ -385,499 +385,315 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
       className="check-page-link-button" onClick={onClick} />;
   };
 
-  if (userType === "employee") {
-    return (
-      <div className="employee-profile-wrapper">
-        <div className="employee-profile-breadcrumb-section">
-          <BreadCrumb
-            crumbs={[
-              {
-                path: "/upyog-ui/employee",
-                content: t("ES_COMMON_HOME") || "Home",
-                show: true,
-              },
-              {
-                path: "/upyog-ui/employee/user/profile",
-                content: !t("CORE_COMMON_PROFILE") || t("CORE_COMMON_PROFILE") === "CORE_COMMON_PROFILE" ? "Edit Profile" : t("CORE_COMMON_PROFILE"),
-                show: true,
-              },
-            ]}
-          />
-        </div>
-
-        <div className="employee-profile-grid">
-          {/* Left Summary & Avatar Card */}
-          <div className="employee-profile-sidebar-card">
-            <div className="employee-profile-avatar-box">
-              <img
-                className="employee-profile-avatar-img"
-                src={!profileImg || profileImg === "" ? defaultImage : profileImg}
-                alt="Profile Avatar"
-              />
-              <button
-                type="button"
-                className="employee-profile-camera-btn"
-                title="Update Profile Photo"
-                onClick={onClickAddPic}
-              >
-                <CameraIcon />
-              </button>
-            </div>
-
-            <h2 className="employee-profile-name">{name || userInfo?.name || "Employee"}</h2>
-            <div className="employee-profile-role-badge">
-              {userInfo?.roles?.[0]?.name || t("CORE_EMPLOYEE_ROLE") || "Official User"}
-            </div>
-
-            <div className="employee-profile-quick-info">
-              <div className="quick-info-row">
-                <span className="quick-info-label">{t("CORE_COMMON_PROFILE_CITY") || "City / ULB"}</span>
-                <span className="quick-info-val">{t(city) || "—"}</span>
-              </div>
-              <div className="quick-info-row">
-                <span className="quick-info-label">{t("CORE_COMMON_PROFILE_MOBILE_NUMBER") || "Mobile No."}</span>
-                <span className="quick-info-val">{mobileNumber || "—"}</span>
-              </div>
-              {email && (
-                <div className="quick-info-row">
-                  <span className="quick-info-label">{t("CORE_COMMON_PROFILE_EMAIL") || "Email"}</span>
-                  <span className="quick-info-val">{email}</span>
-                </div>
-              )}
-            </div>
-
-            <div className="employee-profile-note-box">
-              <span className="note-icon">💡</span>
-              <p className="note-text">
-                {t("CORE_PROFILE_INFO_TIP") || "Keep your profile up-to-date for official communications and workflow assignments."}
-              </p>
-            </div>
-          </div>
-
-          {/* Right Main Form Card */}
-          <div className="employee-profile-main-card">
-            <div className="employee-profile-card-header">
-              <div className="header-title-wrap">
-                <h3 className="card-main-title">{t("CORE_COMMON_PROFILE_DETAILS") || "Personal Information"}</h3>
-                <p className="card-sub-title">
-                  {t("CORE_COMMON_PROFILE_SUBTITLE") || "Manage and update your personal details and account credentials."}
-                </p>
-              </div>
-            </div>
-
-            <div className="employee-profile-form-grid">
-              {/* Full Name */}
-              <div className="employee-profile-form-item">
-                <label className="employee-profile-form-label">
-                  {t("CORE_COMMON_PROFILE_NAME") || "Full Name"} <span className="req-star">*</span>
-                </label>
-                <TextInput
-                  t={t}
-                  type={"text"}
-                  name="name"
-                  value={name}
-                  onChange={(e) => setUserName(e.target.value)}
-                  placeholder="Enter full name"
-                  disable={editScreen}
-                />
-                {errors?.userName && (
-                  <CardLabelError className="profile-field-error">{errors?.userName?.message}</CardLabelError>
-                )}
-              </div>
-
-              {/* Gender */}
-              <div className="employee-profile-form-item">
-                <label className="employee-profile-form-label">{t("CORE_COMMON_PROFILE_GENDER") || "Gender"}</label>
-                <Dropdown
-                  selected={gender?.length === 1 ? gender[0] : gender}
-                  disable={gender?.length === 1 || editScreen}
-                  option={menu}
-                  select={setGenderName}
-                  value={gender}
-                  optionKey="code"
-                  t={t}
-                  name="gender"
-                />
-              </div>
-
-              {/* City */}
-              <div className="employee-profile-form-item">
-                <label className="employee-profile-form-label">
-                  {t("CORE_COMMON_PROFILE_CITY") || "City / Tenant"} <span className="locked-pill">🔒 {t("READ_ONLY") || "Read-only"}</span>
-                </label>
-                <TextInput
-                  t={t}
-                  type={"text"}
-                  name="city"
-                  value={t(city)}
-                  onChange={(e) => setCity(e.target.value)}
-                  placeholder="City"
-                  disable={true}
-                />
-              </div>
-
-              {/* Mobile Number */}
-              <div className="employee-profile-form-item">
-                <label className="employee-profile-form-label">
-                  {t("CORE_COMMON_PROFILE_MOBILE_NUMBER") || "Mobile Number"} <span className="locked-pill">🔒 {t("READ_ONLY") || "Read-only"}</span>
-                </label>
-                <MobileNumber
-                  value={mobileNumber}
-                  name="mobileNumber"
-                  placeholder="Enter mobile number"
-                  onChange={(value) => setUserMobileNumber(value)}
-                  disable={true}
-                />
-                {errors?.mobileNumber && (
-                  <CardLabelError className="profile-field-error">{errors?.mobileNumber?.message}</CardLabelError>
-                )}
-              </div>
-
-              {/* Alt Mobile Number */}
-              <div className="employee-profile-form-item">
-                <label className="employee-profile-form-label">{t("CORE_COMMON_PROFILE_ALT_MOBILE_NUMBER") || "Alternate Mobile Number"}</label>
-                <MobileNumber
-                  value={altMobileNumber}
-                  name="altMobileNumber"
-                  placeholder="Enter alternate mobile number"
-                  onChange={(value) => setUserAltMobileNumber(value)}
-                />
-                {errors?.altMobileNumber && (
-                  <CardLabelError className="profile-field-error">{errors?.altMobileNumber?.message}</CardLabelError>
-                )}
-              </div>
-
-              {/* Email */}
-              <div className="employee-profile-form-item">
-                <label className="employee-profile-form-label">{t("CORE_COMMON_PROFILE_EMAIL") || "Email Address"}</label>
-                <TextInput
-                  t={t}
-                  type={"email"}
-                  placeholder="Enter email address"
-                  name="email"
-                  value={email}
-                  onChange={(e) => setUserEmailAddress(e.target.value)}
-                  disable={editScreen}
-                />
-                {errors?.emailAddress && (
-                  <CardLabelError className="profile-field-error">{errors?.emailAddress?.message}</CardLabelError>
-                )}
-              </div>
-
-              {/* Date of Birth */}
-              <div className="employee-profile-form-item">
-                <label className="employee-profile-form-label">{t("CORE_COMMON_PROFILE_DOB") || "Date of Birth"}</label>
-                <DatePicker date={dob || dateOfBirth} onChange={setUserDOB} disable={true} />
-              </div>
-            </div>
-
-            {/* Change Password Accordion Card */}
-            {/* <div className="employee-profile-security-box">
-              <div className="security-box-header" onClick={TogleforPassword}>
-                <div className="security-box-left">
-                  <span className="security-box-icon">🔐</span>
-                  <div>
-                    <h4 className="security-box-title">{t("CORE_COMMON_CHANGE_PASSWORD") || "Change Password"}</h4>
-                    <p className="security-box-desc">
-                      {changepassword ? "Enter current and new password below" : "Click to expand and update your login password"}
-                    </p>
-                  </div>
-                </div>
-                <button type="button" className={`security-box-toggle-btn ${changepassword ? "expanded" : ""}`}>
-                  {changepassword ? "Close" : "Update Password"}
-                </button>
-              </div>
-
-              {changepassword && (
-                <div className="security-box-content">
-                  <div className="employee-profile-form-grid">
-                    <div className="employee-profile-form-item">
-                      <label className="employee-profile-form-label">{t("CORE_COMMON_PROFILE_CURRENT_PASSWORD") || "Current Password"}</label>
-                      <TextInput
-                        t={t}
-                        type={"password"}
-                        name="currentPassword"
-                        placeholder="Enter current password"
-                        onChange={(e) => setUserCurrentPassword(e.target.value)}
-                        disable={editScreen}
-                      />
-                      {errors?.currentPassword && (
-                        <CardLabelError className="profile-field-error">{errors?.currentPassword?.message}</CardLabelError>
-                      )}
-                    </div>
-
-                    <div className="employee-profile-form-item">
-                      <label className="employee-profile-form-label">{t("CORE_COMMON_PROFILE_NEW_PASSWORD") || "New Password"}</label>
-                      <TextInput
-                        t={t}
-                        type={"password"}
-                        name="newPassword"
-                        placeholder="8-15 alphanumeric chars (@#$%)"
-                        onChange={(e) => setUserNewPassword(e.target.value)}
-                        disable={editScreen}
-                      />
-                      {errors?.newPassword && (
-                        <CardLabelError className="profile-field-error">{errors?.newPassword?.message}</CardLabelError>
-                      )}
-                    </div>
-
-                    <div className="employee-profile-form-item">
-                      <label className="employee-profile-form-label">{t("CORE_COMMON_PROFILE_CONFIRM_PASSWORD") || "Confirm New Password"}</label>
-                      <TextInput
-                        t={t}
-                        type={"password"}
-                        name="confirmPassword"
-                        placeholder="Confirm new password"
-                        onChange={(e) => setUserConfirmPassword(e.target.value)}
-                        disable={editScreen}
-                      />
-                      {errors?.confirmPassword && (
-                        <CardLabelError className="profile-field-error">{errors?.confirmPassword?.message}</CardLabelError>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div> */}
-
-            {/* Actions Bar */}
-            <div className="employee-profile-actions-bar">
-              <button
-                type="button"
-                className="employee-profile-save-btn"
-                onClick={updateProfile}
-              >
-                {t("CORE_COMMON_SAVE") || "Save Changes"}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {toast && (
-          <div className="profile-toast-container">
-            <Toast
-              error={toast.key === "error"}
-              label={t(toast.key === "success" ? `CORE_COMMON_PROFILE_UPDATE_SUCCESS` : toast.action)}
-              onClose={() => setToast(null)}
-            />
-          </div>
-        )}
-
-        {openUploadSlide === true && (
-          <UploadDrawer
-            setProfilePic={setFileStoreId}
-            closeDrawer={closeFileUploadDrawer}
-            userType={userType}
-            removeProfilePic={removeProfilePic}
-            showToast={showToast}
-          />
-        )}
-      </div>
-    );
-  }
-
   return (
-    <div>
-      <section className="user-profile-header-section">
-        <React.Fragment>
-          <BackButton />
-          <div className="user-profile-tabs-wrapper">
-            <button
-              onClick={() => SetActiveTab("profile")}
-              className={`user-profile-tab-button ${isMobile ? "is-mobile" : ""} ${activeTab === "profile" ? "active" : ""}`}
-            >
-              {t("PROFILE")}
-            </button>
+    <div className="employee-profile-wrapper">
+      <div className="employee-profile-breadcrumb-section">
+        <BreadCrumb
+          crumbs={[
+            {
+              path: userType === "employee" ? "/upyog-ui/employee" : "/upyog-ui/citizen",
+              content: t("ES_COMMON_HOME") || "Home",
+              show: true,
+            },
+            {
+              path: userType === "employee" ? "/upyog-ui/employee/user/profile" : "/upyog-ui/citizen/user/profile",
+              content: !t("CORE_COMMON_PROFILE") || t("CORE_COMMON_PROFILE") === "CORE_COMMON_PROFILE" ? "Edit Profile" : t("CORE_COMMON_PROFILE"),
+              show: true,
+            },
+          ]}
+        />
+      </div>
 
+      <div className="employee-profile-grid">
+        {/* Left Summary & Avatar Card */}
+        <div className="employee-profile-sidebar-card">
+          <div className="employee-profile-avatar-box">
+            <img
+              className="employee-profile-avatar-img"
+              src={!profileImg || profileImg === "" ? defaultImage : profileImg}
+              alt="Profile Avatar"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = defaultImage;
+              }}
+            />
             <button
-              onClick={() => SetActiveTab("address")}
-              className={`user-profile-tab-button ${isMobile ? "is-mobile" : ""} ${activeTab === "address" ? "active" : ""}`}
+              type="button"
+              className="employee-profile-camera-btn"
+              title="Update Profile Photo"
+              onClick={onClickAddPic}
             >
-              {t("ADDRESS")}
+              <CameraIcon />
             </button>
           </div>
-        </React.Fragment>
-      </section>
-      <div
-        className={`user-profile-main-card ${windowWidth < 768 ? "is-stacked" : ""} ${activeTab === "address" ? "is-address-tab" : ""}`}
-      >
-        {activeTab !== "address" ? (
-          <section className="user-profile-avatar-section">
-            <div className="user-profile-avatar-inner">
-              <img
-                className="user-profile-avatar-img"
-                src={!profileImg || profileImg === "" ? defaultImage : profileImg}
-                alt="Profile"
-              />
-              <button className="user-profile-camera-btn" onClick={onClickAddPic}>
-                <CameraIcon />
+
+          <h2 className="employee-profile-name">{name || userInfo?.name || (userType === "employee" ? "Employee" : "Citizen")}</h2>
+          <div className="employee-profile-role-badge">
+            {userType === "employee"
+              ? userInfo?.roles?.[0]?.name || t("CORE_EMPLOYEE_ROLE") || "Official User"
+              : t("CORE_COMMON_CITIZEN") || "Citizen"}
+          </div>
+
+          <div className="employee-profile-quick-info">
+            <div className="quick-info-row">
+              <span className="quick-info-label">{t("CORE_COMMON_PROFILE_CITY") || "City / ULB"}</span>
+              <span className="quick-info-val">{t(city) || "—"}</span>
+            </div>
+            <div className="quick-info-row">
+              <span className="quick-info-label">{t("CORE_COMMON_PROFILE_MOBILE_NUMBER") || "Mobile No."}</span>
+              <span className="quick-info-val">{mobileNumber || "—"}</span>
+            </div>
+            {email && (
+              <div className="quick-info-row">
+                <span className="quick-info-label">{t("CORE_COMMON_PROFILE_EMAIL") || "Email"}</span>
+                <span className="quick-info-val">{email}</span>
+              </div>
+            )}
+          </div>
+
+          <div className="employee-profile-note-box">
+            <span className="note-icon">💡</span>
+            <p className="note-text">
+              {userType === "employee"
+                ? t("CORE_PROFILE_INFO_TIP") || "Keep your profile up-to-date for official communications and workflow assignments."
+                : t("CORE_CITIZEN_PROFILE_TIP") || "Keep your profile details and addresses updated for fast service delivery and communication."}
+            </p>
+          </div>
+        </div>
+
+        {/* Right Main Content Card */}
+        <div className="employee-profile-main-card">
+          {/* Tabs for Citizen */}
+          {userType !== "employee" && (
+            <div className="profile-tabs-nav">
+              <button
+                type="button"
+                className={`profile-tab-pill ${activeTab === "profile" ? "active" : ""}`}
+                onClick={() => SetActiveTab("profile")}
+              >
+                <span>👤</span>
+                {t("PROFILE") || "Personal Details"}
+              </button>
+              <button
+                type="button"
+                className={`profile-tab-pill ${activeTab === "address" ? "active" : ""}`}
+                onClick={() => SetActiveTab("address")}
+              >
+                <span>📍</span>
+                {t("ADDRESS") || "Saved Addresses"}
+                {userAddresses?.length > 0 && <span className="tab-count-badge">{userAddresses.length}</span>}
               </button>
             </div>
-          </section>
-        ) : null}
-        <section
-          className={`user-profile-form-section ${activeTab === "address" ? "is-address-tab" : ""}`}
-        >
-          {activeTab === "profile" ? (
-            <React.Fragment>
-              <LabelFieldPair>
-                <CardLabel className={editScreen ? "profile-label-disabled" : ""}>{`${t("CORE_COMMON_PROFILE_NAME")}`}*</CardLabel>
-                <div className="user-profile-input-wrap">
+          )}
+
+          {/* Profile Tab Form */}
+          {activeTab === "profile" && (
+            <>
+              <div className="employee-profile-card-header">
+                <div className="header-title-wrap">
+                  <h3 className="card-main-title">{t("CORE_COMMON_PROFILE_DETAILS") || "Personal Information"}</h3>
+                  <p className="card-sub-title">
+                    {t("CORE_COMMON_PROFILE_SUBTITLE") || "Manage and update your personal details and contact information."}
+                  </p>
+                </div>
+              </div>
+
+              <div className="employee-profile-form-grid">
+                {/* Full Name */}
+                <div className="employee-profile-form-item">
+                  <label className="employee-profile-form-label">
+                    {t("CORE_COMMON_PROFILE_NAME") || "Full Name"} <span className="req-star">*</span>
+                  </label>
                   <TextInput
                     t={t}
-                    className="w-full"
                     type={"text"}
-                    isMandatory={false}
                     name="name"
                     value={name}
                     onChange={(e) => setUserName(e.target.value)}
-                    {...(validation = {
-                      isRequired: true,
-                      pattern: "^[a-zA-Z ]*$",
-                      type: "tel",
-                      title: t("CORE_COMMON_PROFILE_NAME_ERROR_MESSAGE"),
-                    })}
+                    placeholder="Enter full name"
                     disable={editScreen}
                   />
-                  {errors?.userName && <CardLabelError> {errors?.userName?.message} </CardLabelError>}
-                </div>
-              </LabelFieldPair>
-
-              <LabelFieldPair>
-                <CardLabel className={editScreen ? "profile-label-disabled" : ""}>{`${t("CORE_COMMON_PROFILE_GENDER")}`}</CardLabel>
-                <Dropdown
-                  className="form-field w-full"
-                  selected={gender?.length === 1 ? gender[0] : gender}
-                  disable={gender?.length === 1 || editScreen}
-                  option={menu}
-                  select={setGenderName}
-                  value={gender}
-                  optionKey="code"
-                  t={t}
-                  name="gender"
-                />
-              </LabelFieldPair>
-              <LabelFieldPair>
-                <CardLabel className={editScreen ? "profile-label-disabled" : ""}>{`${t("CORE_COMMON_PROFILE_DOB")}`}*</CardLabel>
-                <div className="user-profile-input-wrap">
-                  <DatePicker date={dob || dateOfBirth} onChange={setUserDOB} disable={true} />
-                  {errors?.userName && <CardLabelError> {errors?.userName?.message} </CardLabelError>}
-                </div>
-              </LabelFieldPair>
-              <LabelFieldPair>
-                <CardLabel className={editScreen ? "profile-label-disabled" : ""}>{`${t("CORE_COMMON_PROFILE_MOBILE_NUMBER")}*`}</CardLabel>
-                <div className="w-full">
-                  <MobileNumber
-                    value={mobileNumber}
-                    className="w-full"
-                    name="mobileNumber"
-                    placeholder="Enter a valid Mobile No."
-                    onChange={(value) => setUserMobileNumber(value)}
-                    disable={true}
-                    {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_PROFILE_MOBILE_NUMBER_INVALID") }}
-                  />
-                  {errors?.mobileNumber && <CardLabelError className="profile-field-error-flush"> {errors?.mobileNumber?.message} </CardLabelError>}
-                </div>
-              </LabelFieldPair>
-              <LabelFieldPair>
-                <CardLabel className={editScreen ? "profile-label-disabled" : ""}>{`${t("CORE_COMMON_PROFILE_ALT_MOBILE_NUMBER")}*`}</CardLabel>
-                <div className="w-full">
-                  <MobileNumber
-                    value={altMobileNumber}
-                    className="w-full"
-                    name="altMobileNumber"
-                    placeholder="Enter a valid Mobile No."
-                    onChange={(value) => setUserAltMobileNumber(value)}
-                    {...{ required: true, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_PROFILE_MOBILE_NUMBER_INVALID") }}
-                  />
-                  {errors?.altMobileNumber && (
-                    <CardLabelError className="profile-field-error-flush"> {errors?.altMobileNumber?.message} </CardLabelError>
+                  {errors?.userName && (
+                    <CardLabelError className="profile-field-error">{errors?.userName?.message}</CardLabelError>
                   )}
                 </div>
-              </LabelFieldPair>
-              <LabelFieldPair>
-                <CardLabel className={editScreen ? "profile-label-disabled" : ""}>{`${t("CORE_COMMON_PROFILE_EMAIL")}`}</CardLabel>
-                <div className="w-full">
+
+                {/* Gender */}
+                <div className="employee-profile-form-item">
+                  <label className="employee-profile-form-label">{t("CORE_COMMON_PROFILE_GENDER") || "Gender"}</label>
+                  <Dropdown
+                    selected={gender?.length === 1 ? gender[0] : gender}
+                    disable={gender?.length === 1 || editScreen}
+                    option={menu}
+                    select={setGenderName}
+                    value={gender}
+                    optionKey="code"
+                    t={t}
+                    name="gender"
+                  />
+                </div>
+
+                {/* City */}
+                <div className="employee-profile-form-item">
+                  <label className="employee-profile-form-label">
+                    {t("CORE_COMMON_PROFILE_CITY") || "City / Tenant"} <span className="locked-pill">🔒 {t("READ_ONLY") || "Read-only"}</span>
+                  </label>
                   <TextInput
                     t={t}
-                    className="w-full"
+                    type={"text"}
+                    name="city"
+                    value={t(city)}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder="City"
+                    disable={true}
+                  />
+                </div>
+
+                {/* Mobile Number */}
+                <div className="employee-profile-form-item">
+                  <label className="employee-profile-form-label">
+                    {t("CORE_COMMON_PROFILE_MOBILE_NUMBER") || "Mobile Number"} <span className="locked-pill">🔒 {t("READ_ONLY") || "Read-only"}</span>
+                  </label>
+                  <MobileNumber
+                    value={mobileNumber}
+                    name="mobileNumber"
+                    placeholder="Enter mobile number"
+                    onChange={(value) => setUserMobileNumber(value)}
+                    disable={true}
+                  />
+                  {errors?.mobileNumber && (
+                    <CardLabelError className="profile-field-error">{errors?.mobileNumber?.message}</CardLabelError>
+                  )}
+                </div>
+
+                {/* Alt Mobile Number */}
+                <div className="employee-profile-form-item">
+                  <label className="employee-profile-form-label">{t("CORE_COMMON_PROFILE_ALT_MOBILE_NUMBER") || "Alternate Mobile Number"}</label>
+                  <MobileNumber
+                    value={altMobileNumber}
+                    name="altMobileNumber"
+                    placeholder="Enter alternate mobile number"
+                    onChange={(value) => setUserAltMobileNumber(value)}
+                  />
+                  {errors?.altMobileNumber && (
+                    <CardLabelError className="profile-field-error">{errors?.altMobileNumber?.message}</CardLabelError>
+                  )}
+                </div>
+
+                {/* Email */}
+                <div className="employee-profile-form-item">
+                  <label className="employee-profile-form-label">{t("CORE_COMMON_PROFILE_EMAIL") || "Email Address"}</label>
+                  <TextInput
+                    t={t}
                     type={"email"}
-                    isMandatory={false}
-                    optionKey="i18nKey"
+                    placeholder="Enter email address"
                     name="email"
                     value={email}
                     onChange={(e) => setUserEmailAddress(e.target.value)}
                     disable={editScreen}
                   />
-                  {errors?.emailAddress && <CardLabelError> {errors?.emailAddress?.message} </CardLabelError>}
+                  {errors?.emailAddress && (
+                    <CardLabelError className="profile-field-error">{errors?.emailAddress?.message}</CardLabelError>
+                  )}
                 </div>
-              </LabelFieldPair>
 
-              <button
-                onClick={updateProfile}
-                className="citizen-profile-update-btn"
-              >
-                {t("CORE_COMMON_SAVE")}
-              </button>
-            </React.Fragment>
-          ) : activeTab === "address" ? (
-            <React.Fragment>
-              <div className="citizen-address-btn-row">
+                {/* Date of Birth */}
+                <div className="employee-profile-form-item">
+                  <label className="employee-profile-form-label">{t("CORE_COMMON_PROFILE_DOB") || "Date of Birth"}</label>
+                  <DatePicker date={dob || dateOfBirth} onChange={setUserDOB} disable={true} />
+                </div>
+              </div>
+
+              {/* Actions Bar */}
+              <div className="employee-profile-actions-bar">
                 <button
-                  onClick={() => setShowModal(true)}
+                  type="button"
+                  className="employee-profile-save-btn"
+                  onClick={updateProfile}
+                >
+                  {t("CORE_COMMON_SAVE") || "Save Changes"}
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* Address Tab */}
+          {activeTab === "address" && (
+            <>
+              <div className="citizen-address-header">
+                <div className="address-header-left">
+                  <h3 className="card-main-title">{t("CORE_COMMON_SAVED_ADDRESSES") || "Saved Addresses"}</h3>
+                  <p className="card-sub-title">
+                    {t("CORE_COMMON_SAVED_ADDRESSES_SUBTITLE") || "Manage your property and delivery addresses for seamless applications."}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedAddress(null);
+                    setisEdit(false);
+                    setShowModal(true);
+                  }}
                   className="citizen-add-address-btn"
                 >
-                  {t("ADD_NEW_ADDRESS")}
+                  <span>+</span> {t("ADD_NEW_ADDRESS") || "Add New Address"}
                 </button>
               </div>
 
-              {showModal && (
-                <Address
-                  refreshAddresses={userSearchNewV2}
-                  actionCancelOnSubmit={() => setShowModal(false)}
-                />
-              )}
-            </React.Fragment>
-          ) : null}
-        </section>
-      </div>
+              {userAddresses?.length > 0 ? (
+                <div className="citizen-address-cards-grid">
+                  {userAddresses.map((address, index) => {
+                    const primaryLine = [address.houseNumber, address.streetName, address.landmark].filter(Boolean).join(", ");
+                    const secondaryLine = [address.address, address.address2, address.locality, address.city, address.pinCode].filter(Boolean).join(", ");
 
-      {activeTab === "address" && (
-        <React.Fragment>
-          {userAddresses.length > 0 ? (
-            <React.Fragment>
-              {userAddresses.map((address, index) => (
-                <Card key={index}>
-                  <StatusTable>
-                    <React.Fragment>
-                      <Row
-                        className="border-none"
-                        label={t(`${address.addressType}`)}
-                        text=""
-                        actionButton={
-                          <ActionButton
+                    return (
+                      <div className="citizen-address-card-item" key={index}>
+                        <div className="address-card-top-row">
+                          <span className="address-type-pill">
+                            {t(address.addressType || "ADDRESS")}
+                          </span>
+                          <button
+                            type="button"
+                            className="address-edit-btn"
                             onClick={() => {
                               setSelectedAddress(address);
-                              setShowModal(true);
                               setisEdit(true);
+                              setShowModal(true);
                             }}
-                          />
-                        }
-                      />
-                      <Row className="border-none" label={t("COMMON_HOUSE_NO")} text={address.houseNumber || t("CS_NA")} />
-                      <Row className="border-none" label={t("COMMON_STREET_NAME")} text={address.streetName || t("CS_NA")} />
-                      <Row className="border-none" label={t("COMMON_ADDRESS_LINE1")} text={address.address || t("CS_NA")} />
-                      <Row className="border-none" label={t("COMMON_ADDRESS_LINE2")} text={address.address2 || t("CS_NA")} />
-                      <Row className="border-none" label={t("COMMON_LANDMARK")} text={address.landmark || t("CS_NA")} />
-                      <Row className="border-none" label={t("COMMON_CITY")} text={address.city || t("CS_NA")} />
-                      <Row className="border-none" label={t("COMMON_LOCALITY")} text={address.locality || t("CS_NA")} />
-                      <Row className="border-none" label={t("COMMON_ADDRESS_PINCODE")} text={address.pinCode || t("CS_NA")} />
-                    </React.Fragment>
-                  </StatusTable>
-                </Card>
-              ))}
+                          >
+                            <EditIcon /> {t("EDIT") || "Edit"}
+                          </button>
+                        </div>
+                        <div className="address-card-details">
+                          {primaryLine && <div className="address-main-line">{primaryLine}</div>}
+                          <div className="address-sub-line">{secondaryLine || t("CS_NA")}</div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="citizen-address-empty-state">
+                  <span className="empty-icon">📍</span>
+                  <h4 className="empty-title">{t("CS_NO_ADDRESS_AVAILABLE") || "No Saved Addresses"}</h4>
+                  <p className="empty-desc">
+                    {t("CS_NO_ADDRESS_DESC") || "You haven't added any addresses yet. Add one to speed up your future service requests."}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedAddress(null);
+                      setisEdit(false);
+                      setShowModal(true);
+                    }}
+                    className="citizen-add-address-btn"
+                  >
+                    <span>+</span> {t("ADD_NEW_ADDRESS") || "Add Address"}
+                  </button>
+                </div>
+              )}
 
-              {showModal && selectedAddress && (
+              {showModal && (
                 <Address
                   isEdit={isEdit}
                   address={selectedAddress}
@@ -889,14 +705,10 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
                   }}
                 />
               )}
-            </React.Fragment>
-          ) : (
-            <Card>
-              <p>{t("CS_NO_ADDRESS_AVAILABLE")}</p>
-            </Card>
+            </>
           )}
-        </React.Fragment>
-      )}
+        </div>
+      </div>
 
       {toast && (
         <div className="profile-toast-container">
@@ -908,7 +720,7 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
         </div>
       )}
 
-      {openUploadSlide === true ? (
+      {openUploadSlide === true && (
         <UploadDrawer
           setProfilePic={setFileStoreId}
           closeDrawer={closeFileUploadDrawer}
@@ -916,8 +728,6 @@ const UserProfile = ({ stateCode, userType, cityDetails }) => {
           removeProfilePic={removeProfilePic}
           showToast={showToast}
         />
-      ) : (
-        ""
       )}
     </div>
   );

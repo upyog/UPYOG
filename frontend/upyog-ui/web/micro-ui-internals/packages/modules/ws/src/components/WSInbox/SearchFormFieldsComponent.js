@@ -3,7 +3,7 @@ import { CardLabelError, SearchField, TextInput, MobileNumber } from "@nudmcdgnp
 import { useTranslation } from "react-i18next";
 import { Controller } from "react-hook-form";
 
-const SearchFormFieldsComponents = ({ registerRef, searchFormState, controlSearchForm }) => {
+const SearchFormFieldsComponents = ({ registerRef, searchFormState, controlSearchForm, searchFieldComponents }) => {
   const { t } = useTranslation();
   const propsForMobileNumber = {
     maxlength: 10,
@@ -73,6 +73,11 @@ const SearchFormFieldsComponents = ({ registerRef, searchFormState, controlSearc
           <CardLabelError>{searchFormState?.errors?.["mobileNumber"]?.message}</CardLabelError>
         ) : null}
       </SearchField>
+      {searchFieldComponents ? (
+        <div className="search-action-wrapper SubmitAndClearAllContainer wns-search-action-wrapper">
+          {searchFieldComponents}
+        </div>
+      ) : null}
     </>
   );
 };

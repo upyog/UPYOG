@@ -498,7 +498,7 @@ function ApplicationDetailsContent({
 
       {/* 2. Structured Section Cards */}
       {applicationDetails?.applicationDetails?.map((detail, index) => (
-        <div className="app-details-section-card" key={detail.title || index}>
+        <div className="app-details-section-card" key={detail?.title || index}>
           {detail?.title ? (
             <div className="app-details-section-header-wrap">
               <div className="app-details-section-title-wrap">
@@ -529,11 +529,11 @@ function ApplicationDetailsContent({
                 <tbody>
                   {detail?.tableRows?.map((row, rIdx) => (
                     <tr key={rIdx}>
-                      {row.map((element, idx) =>
+                      {row?.map((element, idx) =>
                         Array.isArray(element) && element.length > 1 && detail.isMaintenance === true ? (
                           <td key={idx}>
                             <div className="tmpl-application-details-content-flex-container">
-                              {element.map((file, fileIndex) => (
+                              {element?.map((file, fileIndex) => (
                                 <a
                                   key={fileIndex}
                                   onClick={() => openFilePDF(file.fileStoreId)}
@@ -577,24 +577,26 @@ function ApplicationDetailsContent({
           {detail?.values && detail?.values.length > 0 && (
             <div className="app-details-kv-grid">
               {detail?.values?.map((value, vIdx) => {
+                if (!value) return null;
+
                 // Digipin special row
                 if (value?.showDigipin) {
                   return (
-                    <div className="app-details-kv-cell full-width" key={t(value.title) || vIdx}>
-                      <p className="app-details-kv-label">{t(value.title)}</p>
+                    <div className="app-details-kv-cell full-width" key={t(value?.title) || vIdx}>
+                      <p className="app-details-kv-label">{t(value?.title)}</p>
                       <div className="application-details-digipin-wrapper">
                         <GeoLocationWithDigipin
                           t={t}
                           viewOnly
-                          digipin={value.digipin}
-                          showMapLink={value.showMapLink}
+                          digipin={value?.digipin}
+                          showMapLink={value?.showMapLink}
                           inputStyle={{ marginTop: 0, width: isEmployee ? "50%" : "100%" }}
                         />
-                        {value.digipinMapPopup && value.digipinLat && value.digipinLng && value.digipin && (
+                        {value?.digipinMapPopup && value?.digipinLat && value?.digipinLng && value?.digipin && (
                           <button
                             type="button"
                             className="application-details-map-btn"
-                            onClick={() => handleOpenDigipinMap(value.digipinLat, value.digipinLng, value.digipin)}
+                            onClick={() => handleOpenDigipinMap(value?.digipinLat, value?.digipinLng, value?.digipin)}
                           >
                             {t("CS_VIEW_ON_MAP")}
                           </button>
@@ -607,8 +609,8 @@ function ApplicationDetailsContent({
                 // View On Map special row
                 if (value?.isViewOnMap) {
                   return (
-                    <div className="app-details-kv-cell" key={t(value.title) || vIdx}>
-                      <p className="app-details-kv-label">{t(value.title)}</p>
+                    <div className="app-details-kv-cell" key={t(value?.title) || vIdx}>
+                      <p className="app-details-kv-label">{t(value?.title)}</p>
                       <div className="tmpl-application-details-content-flex-row">
                         <span className="app-details-kv-value">{getTextValue(value)}</span>
                         {isAssetModule && (
@@ -638,12 +640,12 @@ function ApplicationDetailsContent({
                 }
 
                 // Map Image preview row
-                if (value.map === true && value.value !== "N/A") {
+                if (value?.map === true && value?.value !== "N/A") {
                   return (
-                    <div className="app-details-kv-cell" key={t(value.title) || vIdx}>
-                      <p className="app-details-kv-label">{t(value.title)}</p>
+                    <div className="app-details-kv-cell" key={t(value?.title) || vIdx}>
+                      <p className="app-details-kv-label">{t(value?.title)}</p>
                       <div className="app-details-kv-value">
-                        <img src={t(value.value)} alt="" privacy={value?.privacy} />
+                        <img src={t(value?.value)} alt="" privacy={value?.privacy} />
                       </div>
                     </div>
                   );
@@ -652,8 +654,8 @@ function ApplicationDetailsContent({
                 // Link row
                 if (value?.isLink === true) {
                   return (
-                    <div className="app-details-kv-cell" key={t(value.title) || vIdx}>
-                      <p className="app-details-kv-label">{t(value.title)}</p>
+                    <div className="app-details-kv-cell" key={t(value?.title) || vIdx}>
+                      <p className="app-details-kv-label">{t(value?.title)}</p>
                       <div className="app-details-kv-value">
                         <Link to={value?.to}>
                           <span>{value?.value || t(value?.title)}</span>
@@ -666,12 +668,12 @@ function ApplicationDetailsContent({
                 // Modify Application comparison flow
                 if (window.location.href.includes("modify")) {
                   return (
-                    <div className="app-details-kv-cell" key={t(value.title) || vIdx}>
-                      <p className="app-details-kv-label">{t(value.title)}</p>
+                    <div className="app-details-kv-cell" key={t(value?.title) || vIdx}>
+                      <p className="app-details-kv-label">{t(value?.title)}</p>
                       <div className="app-details-kv-value">
                         <Row
                           className="border-none"
-                          key={`${value.title}`}
+                          key={`${value?.title}`}
                           label=""
                           privacy={value?.privacy}
                           text={value?.oldValue ? value?.oldValue : value?.value ? value?.value : ""}
@@ -683,12 +685,12 @@ function ApplicationDetailsContent({
 
                 // Standard Key-Value Item
                 return (
-                  <div className="app-details-kv-cell" key={t(value.title) || vIdx}>
-                    <p className="app-details-kv-label">{t(value.title)}</p>
-                    <div className={`app-details-kv-value ${value.isBold ? "bold-italic" : ""} ${getTextValue(value) === t("N/A") || getTextValue(value) === "NA" ? "muted" : ""}`}>
+                  <div className="app-details-kv-cell" key={t(value?.title) || vIdx}>
+                    <p className="app-details-kv-label">{t(value?.title)}</p>
+                    <div className={`app-details-kv-value ${value?.isBold ? "bold-italic" : ""} ${getTextValue(value) === t("N/A") || getTextValue(value) === "NA" ? "muted" : ""}`}>
                       {value?.privacy ? (
                         <Row
-                          key={t(value.title)}
+                          key={t(value?.title)}
                           label=""
                           text={getTextValue(value)}
                           className="border-none"
@@ -697,9 +699,9 @@ function ApplicationDetailsContent({
                       ) : (
                         getTextValue(value)
                       )}
-                      {value.caption && <div className="app-details-kv-caption">{value.caption}</div>}
+                      {value?.caption && <div className="app-details-kv-caption">{value?.caption}</div>}
                     </div>
-                    {value.title === "PT_TOTAL_DUES" ? <ArrearSummary bill={fetchBillData.Bill?.[0]} /> : null}
+                    {value?.title === "PT_TOTAL_DUES" ? <ArrearSummary bill={fetchBillData.Bill?.[0]} /> : null}
                   </div>
                 );
               })}

@@ -95,9 +95,15 @@ const CustomTable = ({ data = {}, onSearch, setChartData, setChartDenomination, 
     setChartKey(id);
     setFilterStack([{ id: id }]);
   }, [data, value]);
+
+  useEffect(() => {
+    if (response?.responseData?.data?.[0]?.headerSymbol && setChartDenomination) {
+      setChartDenomination(response?.responseData?.data?.[0]?.headerSymbol);
+    }
+  }, [response?.responseData?.data?.[0]?.headerSymbol, setChartDenomination]);
+
   const tableData = useMemo(() => {
     if (!response || !lastYearResponse) return;
-    setChartDenomination(response?.responseData?.data?.[0]?.headerSymbol);
     return response?.responseData?.data?.map((rows, id) => {
       const lyData = lastYearResponse?.responseData?.data?.find((lyRow) => lyRow?.headerName === rows?.headerName);
       return rows?.plots?.reduce((acc, row, currentIndex) => {

@@ -47,7 +47,7 @@ const BannerPicker = (props) => {
   return (
     <Banner
       message={GetActionMessage(props)}
-      applicationNumber={props.data?.BPA[0].applicationNo}
+      applicationNumber={props.data?.BPA?.[0]?.applicationNo}
       info={props.isSuccess ? getApplicationNoLabel(props) : ""}
       successful={props.isSuccess}
       headerStyles={{fontSize: "32px"}}
@@ -80,7 +80,7 @@ const OBPSAcknowledgement = ({ data, onSuccess }) => {
           let tenantid = data?.address?.city ? data.address?.city?.code : tenantId;
           data.tenantId = tenantid;
           let formdata ={};
-          data?.nocDocuments?.NocDetails.map((noc) => {
+          data?.nocDocuments?.NocDetails?.map((noc) => {
             formdata = convertToNocObject(noc,data);
             mutation.mutate(formdata, {
                 onSuccess,
@@ -98,16 +98,24 @@ const OBPSAcknowledgement = ({ data, onSuccess }) => {
   }, []);
 
   const ActionButton = ({ label, jumpTo }) => {
-      const { t } = useTranslation();
-      const navigate = Digit.Hooks.useCustomNavigate();
-      function routeTo() {
+    const { t } = useTranslation();
+    const navigate = Digit.Hooks.useCustomNavigate();
+    function routeTo() {
+      if (jumpTo) {
         location.href = jumpTo;
       }
-      return <LinkButton label={t(label)} onClick={routeTo} />;
+    }
+    return <LinkButton label={t(label)} onClick={routeTo} />;
   };
 
   useEffect(() => {
-    setPlanLink(data?.data?.edcrDetails?.planPdfs?.[0].split(" - ")[1]);
+    const rawPlanPdf = data?.data?.edcrDetails?.planPdfs?.[0];
+    if (typeof rawPlanPdf === "string") {
+      const splitPdf = rawPlanPdf.split(" - ");
+      setPlanLink(splitPdf?.[1] || splitPdf?.[0] || "");
+    } else {
+      setPlanLink("");
+    }
   }, [data?.data?.edcrDetails?.planPdfs?.[0]]);
 
   const handleDownloadPdf = async () => {
@@ -128,14 +136,16 @@ const OBPSAcknowledgement = ({ data, onSuccess }) => {
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
       </Link>
      
-      {mutation1.isSuccess &&(
+      {mutation1.isSuccess && (
         <>
-        <div className="obps-building-plan-scrutiny-top-spacing">
-          <SubmitBar label={t("CS_COMMON_DOWNLOAD")} onSubmit={handleDownloadPdf}/>
-        </div>
-        <div>
-           <ActionButton label={t("CS_DXF_PDF_DOWNLOAD")}  jumpTo={planLink}/>
-        </div>
+          <div className="obps-building-plan-scrutiny-top-spacing">
+            <SubmitBar label={t("CS_COMMON_DOWNLOAD")} onSubmit={handleDownloadPdf}/>
+          </div>
+          {planLink && (
+            <div>
+              <ActionButton label={t("CS_DXF_PDF_DOWNLOAD")} jumpTo={planLink} />
+            </div>
+          )}
         </>
       )}  
     </Card>

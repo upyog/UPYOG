@@ -36,7 +36,12 @@ const TopBarSideBar = ({
     setShowDialog(false);
   }
   const userProfile = () => {
-    navigate("/upyog-ui/employee/user/profile");
+    const isCitizen =
+      CITIZEN ||
+      userDetails?.info?.type === "CITIZEN" ||
+      Digit.UserService.getType?.() === "citizen" ||
+      window.location.pathname.includes("/citizen");
+    navigate(isCitizen ? "/upyog-ui/citizen/user/profile" : "/upyog-ui/employee/user/profile");
   };
   const userOptions = [
     { name: t("EDIT_PROFILE"), icon: <EditPencilIcon className="icon" />, func: userProfile },
