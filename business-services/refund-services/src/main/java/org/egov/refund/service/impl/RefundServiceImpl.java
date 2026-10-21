@@ -304,7 +304,9 @@ public class RefundServiceImpl implements RefundService {
 
 	private Refund processFinanceRequest(Refund refund) {
 
-		validateFinanceDetails(refund);
+		if (refund == null) {
+			throw new IllegalArgumentException("Refund cannot be null for finance processing");
+		}
 
 		RefundRequest refundRequest = RefundRequest.builder().refund(refund).requestInfo(createSystemRequestInfo())
 				.build();
