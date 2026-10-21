@@ -74,7 +74,8 @@ const TopBar = ({
   };
 
   function onNotificationIconClick() {
-    navigate("/digit-ui/citizen/engagement/notifications");
+    // navigate("/upyog-ui/citizen/engagement/notifications");
+    window.location.href = "/upyog-ui/citizen/engagement/notifications";
   }
 
   const urlsToDisableNotificationIcon = (pathname) =>

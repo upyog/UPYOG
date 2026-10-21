@@ -104,10 +104,10 @@ const ADSSearchApplication = ({tenantId, isLoading, t, onSubmit, onClear, data, 
     }) => {
       const cartDetails = row?.original?.cartDetails;
       // Map over cartDetails to extract all locations
-      const locations = cartDetails?.map(detail => detail?.location).join(", ");
+      const locations = cartDetails?.map((detail) => t(detail?.location)).join(", ");
 
-              // Return the mapped locations using GetCell
-              return GetCell(locations);
+      // Return the mapped locations using GetCell
+      return GetCell(locations);
             },
             disableSortBy: true,
 
