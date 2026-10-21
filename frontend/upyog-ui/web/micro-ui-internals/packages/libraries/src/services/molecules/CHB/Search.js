@@ -47,10 +47,34 @@ export const CHBSearch = {
         `${t(slot.status)}`
       ];
     }) || [];
+    const rawPaid =
+      response?.totalAmountPaid ??
+      response?.totalAmount ??
+      response?.amountPaid ??
+      response?.additionalDetails?.totalAmountPaid ??
+      response?.additionalDetails?.amountPaid;
+    const paidAmount = rawPaid !== undefined && rawPaid !== null && !isNaN(Number(rawPaid)) ? Number(rawPaid) : null;
+
+    const amountPaidTitle =
+      (t("CHB_AMOUNT_PAID") && t("CHB_AMOUNT_PAID") !== "CHB_AMOUNT_PAID")
+        ? t("CHB_AMOUNT_PAID")
+        : (t("CS_PAYMENT_AMOUNT_PAID") && t("CS_PAYMENT_AMOUNT_PAID") !== "CS_PAYMENT_AMOUNT_PAID")
+          ? t("CS_PAYMENT_AMOUNT_PAID")
+          : (t("AMOUNT_PAID") && t("AMOUNT_PAID") !== "AMOUNT_PAID")
+            ? t("AMOUNT_PAID")
+            : "Amount Paid";
+
     return [
       {
         title: "CHB_BOOKING_NO", 
-        values:[{title: "CHB_BOOKING_NO", value: response?.bookingNo || t("CS_NA")}],
+        values: [
+          { title: "CHB_BOOKING_NO", value: response?.bookingNo || t("CS_NA") },
+          {
+            title: amountPaidTitle,
+            value: paidAmount !== null ? `₹${paidAmount}` : t("CS_NA"),
+            key: "AMOUNT_PAID",
+          },
+        ],
       },
       {
         title: "CHB_APPLICANT_DETAILS",
