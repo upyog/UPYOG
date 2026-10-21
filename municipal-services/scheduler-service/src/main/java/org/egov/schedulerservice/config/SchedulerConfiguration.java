@@ -111,6 +111,7 @@ public class SchedulerConfiguration {
 	@Value("${egov.property.endpoint.bulk-uploads}")
 	private String PropertyBulkBillUploads;
 
-	
+	@Value("${egov.garbage.endpoint.set-ready-for-printing}")
+	private String DdpReadyForPrintingEndpoint;
 	
 }
