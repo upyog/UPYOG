@@ -412,6 +412,55 @@ const CHBApplicationDetails = () => {
           )}
           <StatusTable>
             <Row className="border-none" label={t("CHB_BOOKING_NO")} text={chb_details?.bookingNo} />
+            <Row
+              className="border-none"
+              label={
+                (t("CHB_AMOUNT_PAID") && t("CHB_AMOUNT_PAID") !== "CHB_AMOUNT_PAID")
+                  ? t("CHB_AMOUNT_PAID")
+                  : (t("CS_PAYMENT_AMOUNT_PAID") && t("CS_PAYMENT_AMOUNT_PAID") !== "CS_PAYMENT_AMOUNT_PAID")
+                    ? t("CS_PAYMENT_AMOUNT_PAID")
+                    : (t("AMOUNT_PAID") && t("AMOUNT_PAID") !== "AMOUNT_PAID")
+                      ? t("AMOUNT_PAID")
+                      : "Amount Paid"
+              }
+              text={
+                (() => {
+                  let paid = null;
+                  const payments = reciept_data?.Payments;
+                  if (Array.isArray(payments) && payments.length > 0) {
+                    const totalPaid = payments.reduce((acc, curr) => {
+                      const pAmt =
+                        curr?.totalAmountPaid ??
+                        curr?.paymentDetails?.[0]?.totalAmountPaid ??
+                        curr?.paymentDetails?.[0]?.bill?.billDetails?.[0]?.amountPaid ??
+                        0;
+                      return acc + Number(pAmt || 0);
+                    }, 0);
+                    if (!isNaN(totalPaid) && totalPaid > 0) {
+                      paid = totalPaid;
+                    } else if (payments[0]?.totalAmountPaid !== undefined && payments[0]?.totalAmountPaid !== null) {
+                      paid = Number(payments[0].totalAmountPaid);
+                    }
+                  }
+                  if (paid === null || isNaN(paid)) {
+                    const rawBookingAmt =
+                      chb_details?.totalAmountPaid ??
+                      chb_details?.totalAmount ??
+                      chb_details?.amountPaid ??
+                      chb_details?.additionalDetails?.totalAmountPaid ??
+                      chb_details?.additionalDetails?.amountPaid ??
+                      refund?.amountPaid;
+                    if (rawBookingAmt !== undefined && rawBookingAmt !== null && !isNaN(Number(rawBookingAmt))) {
+                      paid = Number(rawBookingAmt);
+                    }
+                  }
+                  if (paid !== null && !isNaN(paid)) {
+                    return `₹${paid}`;
+                  }
+                  return recieptDataLoading ? t("CS_LOADING") : t("CS_NA");
+                })()
+              }
+            />
           </StatusTable>
 
           <CardSubHeader className="chb-subheader-lg">{t("CHB_APPLICANT_DETAILS")}</CardSubHeader>

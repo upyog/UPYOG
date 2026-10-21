@@ -50,9 +50,11 @@ const ApplicationDetails = () => {
   const isCancelled = bookingStatus === "CANCELLED";
   const consumerCode = bookingData?.bookingNo || bookingNo;
 
+  const bookingTenantId = bookingData?.tenantId || tenantId;
+
   const { data: reciept_data, isLoading: recieptDataLoading, refetch: refetchRecieptData } = Digit.Hooks.useRecieptSearch(
     {
-      tenantId: tenantId,
+      tenantId: bookingTenantId,
       businessService: "chb-services",
       consumerCodes: consumerCode,
       isEmployee: false,
@@ -227,6 +229,117 @@ const ApplicationDetails = () => {
       }
     }
   }, [refund, refundStatus, appDetailsToShow?.applicationData?.applicationDetails, t]);
+
+  const amountPaidTitle =
+    (t("CHB_AMOUNT_PAID") && t("CHB_AMOUNT_PAID") !== "CHB_AMOUNT_PAID")
+      ? t("CHB_AMOUNT_PAID")
+      : (t("CS_PAYMENT_AMOUNT_PAID") && t("CS_PAYMENT_AMOUNT_PAID") !== "CS_PAYMENT_AMOUNT_PAID")
+        ? t("CS_PAYMENT_AMOUNT_PAID")
+        : (t("AMOUNT_PAID") && t("AMOUNT_PAID") !== "AMOUNT_PAID")
+          ? t("AMOUNT_PAID")
+          : "Amount Paid";
+
+  const getAmountPaidValue = () => {
+    let paid = null;
+    const payments = reciept_data?.Payments;
+    if (Array.isArray(payments) && payments.length > 0) {
+      const totalPaid = payments.reduce((acc, curr) => {
+        const pAmt =
+          curr?.totalAmountPaid ??
+          curr?.paymentDetails?.[0]?.totalAmountPaid ??
+          curr?.paymentDetails?.[0]?.bill?.billDetails?.[0]?.amountPaid ??
+          0;
+        return acc + Number(pAmt || 0);
+      }, 0);
+      if (!isNaN(totalPaid) && totalPaid > 0) {
+        paid = totalPaid;
+      } else if (payments[0]?.totalAmountPaid !== undefined && payments[0]?.totalAmountPaid !== null) {
+        paid = Number(payments[0].totalAmountPaid);
+      }
+    }
+
+    if (paid === null || isNaN(paid)) {
+      const rawBookingAmt =
+        bookingData?.totalAmountPaid ??
+        bookingData?.totalAmount ??
+        bookingData?.amountPaid ??
+        bookingData?.additionalDetails?.totalAmountPaid ??
+        bookingData?.additionalDetails?.amountPaid ??
+        refund?.amountPaid;
+      if (rawBookingAmt !== undefined && rawBookingAmt !== null && !isNaN(Number(rawBookingAmt))) {
+        paid = Number(rawBookingAmt);
+      }
+    }
+
+    if (paid !== null && !isNaN(paid)) {
+      return `₹${paid}`;
+    }
+
+    if (recieptDataLoading) {
+      return t("CS_LOADING");
+    }
+
+    return t("CS_NA");
+  };
+
+  useEffect(() => {
+    if (!appDetailsToShow?.applicationData?.applicationDetails) return;
+
+    const amountPaidValue = getAmountPaidValue();
+
+    const bookingSection = appDetailsToShow.applicationData.applicationDetails.find(
+      (sec) => sec.title === "CHB_BOOKING_NO"
+    ) || appDetailsToShow.applicationData.applicationDetails[0];
+
+    if (!bookingSection || !Array.isArray(bookingSection.values)) return;
+
+    const existingFieldIndex = bookingSection.values.findIndex(
+      (v) =>
+        v.key === "AMOUNT_PAID" ||
+        v.title === "Amount Paid" ||
+        v.title === "CHB_AMOUNT_PAID" ||
+        v.title === "CS_PAYMENT_AMOUNT_PAID" ||
+        v.title === "AMOUNT_PAID" ||
+        v.title === amountPaidTitle
+    );
+
+    if (existingFieldIndex !== -1) {
+      const existingField = bookingSection.values[existingFieldIndex];
+      if (existingField.value === amountPaidValue && existingField.title === amountPaidTitle) {
+        return;
+      }
+      setAppDetailsToShow((prev) => {
+        const updated = _.cloneDeep(prev);
+        const section = updated.applicationData.applicationDetails.find(
+          (sec) => sec.title === "CHB_BOOKING_NO"
+        ) || updated.applicationData.applicationDetails[0];
+        if (section && Array.isArray(section.values) && section.values[existingFieldIndex]) {
+          section.values[existingFieldIndex] = {
+            ...section.values[existingFieldIndex],
+            title: amountPaidTitle,
+            value: amountPaidValue,
+            key: "AMOUNT_PAID",
+          };
+        }
+        return updated;
+      });
+    } else {
+      setAppDetailsToShow((prev) => {
+        const updated = _.cloneDeep(prev);
+        const section = updated.applicationData.applicationDetails.find(
+          (sec) => sec.title === "CHB_BOOKING_NO"
+        ) || updated.applicationData.applicationDetails[0];
+        if (section && Array.isArray(section.values)) {
+          section.values.push({
+            title: amountPaidTitle,
+            value: amountPaidValue,
+            key: "AMOUNT_PAID",
+          });
+        }
+        return updated;
+      });
+    }
+  }, [reciept_data, recieptDataLoading, bookingData, refund?.amountPaid, appDetailsToShow?.applicationData?.applicationDetails, t]);
 
   async function getRecieptSearch({ tenantId, payments, ...params }) {
     let application = data?.hallsBookingApplication?.[0];
