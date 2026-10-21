@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   HomeIcon,
@@ -162,29 +162,42 @@ const getNodeByPath = (obj, pathString) => {
 };
 
 const getMinOrderNumber = (node) => {
-  if (!node) return 9999;
-  if (typeof node === "object" && node.id !== undefined) return node.orderNumber || 0;
+  if (!node || typeof node !== "object") return 9999;
+  if (typeof node.orderNumber === "number") return node.orderNumber;
+  if (node.orderNumber !== undefined && !isNaN(Number(node.orderNumber))) return Number(node.orderNumber);
+
   let min = 9999;
-  for (const key in node) {
-    const order = getMinOrderNumber(node[key]);
-    if (order < min) min = order;
+  for (const key of Object.keys(node)) {
+    if (FINANCE_META_KEYS.includes(key)) continue;
+    const child = node[key];
+    if (child && typeof child === "object") {
+      const order = getMinOrderNumber(child);
+      if (order < min) min = order;
+    }
   }
   return min;
+};
+
+const hasSubMenuChildren = (node) => {
+  if (!node || typeof node !== "object") return false;
+  return Object.keys(node).some(
+    (k) => !FINANCE_META_KEYS.includes(k) && node[k] && typeof node[k] === "object" && !Array.isArray(node[k])
+  );
 };
 
 const hasMatchingDescendant = (node, key, search, t, i18n) => {
   if (!search) return true;
 
-  const hasChildren = typeof node === "object" && node && !node.id;
+  const hasChildren = hasSubMenuChildren(node);
   const translationKey = hasChildren
     ? `ACTION_TEST_${key.toUpperCase().replace(/[ -]/g, "_")}`
-    : `ACTION_TEST_${node.displayName ? node.displayName.toUpperCase().replace(/[.:-\s\/]/g, "_") : key.toUpperCase().replace(/[ -]/g, "_")}`;
+    : `ACTION_TEST_${node?.displayName ? node.displayName.toUpperCase().replace(/[.:-\s\/]/g, "_") : key.toUpperCase().replace(/[ -]/g, "_")}`;
 
   const displayLabel = i18n.exists(translationKey)
     ? t(translationKey)
     : hasChildren
       ? key
-      : node.displayName || key;
+      : node?.displayName || key;
 
   if (displayLabel.toLowerCase().includes(search.toLowerCase())) return true;
 
@@ -325,10 +338,12 @@ const isUrlMatching = (pathname, navUrl) => {
 const getFinancePathFromCurrentUrl = (pathname, actions, isFinanceEnabled) => {
   if (!pathname || !actions?.length || !isFinanceEnabled || (!pathname.includes("/finance") && !pathname.includes("/services/EGF") && !pathname.includes("/services/finance"))) return "";
 
-  const matchedAction = actions.find((action) => {
-    if (!action?.navigationURL) return false;
-    return isUrlMatching(pathname, action.navigationURL);
-  });
+  const matchedAction = actions
+    .filter((action) => {
+      if (!action?.navigationURL || !action?.path) return false;
+      return isUrlMatching(pathname, action.navigationURL);
+    })
+    .sort((a, b) => resolveNavUrl(b.navigationURL).length - resolveNavUrl(a.navigationURL).length)[0];
 
   if (!matchedAction?.path) return "";
 
@@ -349,7 +364,7 @@ const getFinancePathFromCurrentUrl = (pathname, actions, isFinanceEnabled) => {
   return itemPath || "Finance";
 };
 
-const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => {
+const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar, toggleSidebarWidth }) => {
   const { isLoading, data } = Digit.Hooks.useAccessControl();
   const { t, i18n } = useTranslation();
   const { pathname } = useLocation();
@@ -364,6 +379,10 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
     const stored = sessionStorage.getItem(FINANCE_PATH_STORAGE_KEY);
     return stored !== null ? stored : "Finance";
   });
+
+  const lastPathnameRef = useRef(pathname);
+  const userClearedFinanceRef = useRef(false);
+  const lastOpenMenuPathRef = useRef("");
 
   useEffect(() => {
     sessionStorage.setItem(FINANCE_PATH_STORAGE_KEY, activeFinancePath || "");
@@ -384,9 +403,42 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
     MICRO_UI_MDMS_CONFIG
   );
 
-  const microUiModuleEnable = mdmsData?.["common-masters"]?.["microUiModuleEnable"] || EMPTY_ARRAY;
-  const isFinanceEnabled =
-    microUiModuleEnable.find((elem) => elem?.code?.toLowerCase() === "finance")?.enabled === true;
+  const microUiModuleEnable = useMemo(() => {
+    return mdmsData?.["common-masters"]?.["microUiModuleEnable"] || EMPTY_ARRAY;
+  }, [mdmsData]);
+
+  const isFinanceEnabled = useMemo(() => {
+    if (!Array.isArray(microUiModuleEnable) || microUiModuleEnable.length === 0) {
+      return data?.actions?.some(
+        (a) =>
+          a.path?.startsWith("Finance") ||
+          a.path?.startsWith("EGF") ||
+          a.navigationURL?.includes("/finance") ||
+          a.navigationURL?.includes("services/EGF") ||
+          a.navigationURL?.includes("services/egf") ||
+          a.navigationURL?.includes("services/finance") ||
+          a.parentModule?.toLowerCase()?.includes("egf") ||
+          a.parentModule?.toLowerCase()?.includes("finance")
+      ) ?? false;
+    }
+    const financeConfig = microUiModuleEnable.find(
+      (elem) => elem?.code?.toLowerCase() === "finance" || elem?.code?.toLowerCase() === "egf"
+    );
+    if (financeConfig) {
+      return financeConfig.enabled === true;
+    }
+    return data?.actions?.some(
+      (a) =>
+        a.path?.startsWith("Finance") ||
+        a.path?.startsWith("EGF") ||
+        a.navigationURL?.includes("/finance") ||
+        a.navigationURL?.includes("services/EGF") ||
+        a.navigationURL?.includes("services/egf") ||
+        a.navigationURL?.includes("services/finance") ||
+        a.parentModule?.toLowerCase()?.includes("egf") ||
+        a.parentModule?.toLowerCase()?.includes("finance")
+    ) ?? false;
+  }, [microUiModuleEnable, data?.actions]);
 
   useEffect(() => {
     let mounted = true;
@@ -444,7 +496,7 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
           setProfilePhotoUrl((prev) => (prev !== url ? url : prev));
         }
       } catch (err) {
-        console.error("Error fetching profile photo in sidebar:", err);
+        console.warn("Could not load employee photo in sidebar:", err?.message || err);
       }
     };
 
@@ -564,35 +616,37 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
       isFinanceEnabled &&
       (pathname.includes("/finance") || pathname.includes("/services/EGF") || pathname.includes("/services/finance"));
 
-    if (!isFinanceRoute) {
-      setActiveFinancePath((prev) => (prev !== "" ? "" : prev));
-      return;
+    if (lastPathnameRef.current !== pathname) {
+      lastPathnameRef.current = pathname;
+      userClearedFinanceRef.current = false;
+
+      if (isFinanceRoute) {
+        const targetPath = getFinancePathFromCurrentUrl(pathname, transformedActions, isFinanceEnabled);
+        setActiveFinancePath((prev) => {
+          if (prev) {
+            const currentNode = getNodeByPath(financeTree, prev);
+            if (currentNode && typeof currentNode === "object") {
+              const containsActivePage = Object.keys(currentNode)
+                .filter((k) => !FINANCE_META_KEYS.includes(k))
+                .some((k) => {
+                  const child = currentNode[k];
+                  return child && typeof child === "object" && child.navigationURL && isUrlMatching(pathname, child.navigationURL);
+                });
+              if (containsActivePage) return prev;
+            }
+          }
+          return targetPath || prev || "Finance";
+        });
+      } else {
+        setActiveFinancePath("");
+      }
+    } else {
+      if (isFinanceRoute && !activeFinancePath && !userClearedFinanceRef.current) {
+        const targetPath = getFinancePathFromCurrentUrl(pathname, transformedActions, isFinanceEnabled);
+        setActiveFinancePath(targetPath || "Finance");
+      }
     }
-
-    setActiveFinancePath((prev) => {
-      // User explicitly went back to the main menu while on a finance page
-      if (prev === "") {
-        const next = financeHeaderPathFromUrl || "";
-        return prev !== next ? next : prev;
-      }
-
-      // Keep the current level if the open page is a direct child of it
-      const currentNode = getNodeByPath(financeTree, prev);
-      if (currentNode && typeof currentNode === "object") {
-        const containsActivePage = Object.keys(currentNode)
-          .filter((k) => !FINANCE_META_KEYS.includes(k))
-          .some((k) => {
-            const child = currentNode[k];
-            return child?.id !== undefined && child?.navigationURL && isUrlMatching(pathname, child.navigationURL);
-          });
-        if (containsActivePage) return prev;
-      }
-
-      // Otherwise derive the level from the URL (e.g. deep link / refresh), else keep where the user was
-      const next = financeHeaderPathFromUrl || prev || "Finance";
-      return prev !== next ? next : prev;
-    });
-  }, [pathname, financeHeaderPathFromUrl, isFinanceEnabled, financeTree, isLoading, isMdmsLoading]);
+  }, [pathname, isFinanceEnabled, isLoading, isMdmsLoading, transformedActions]);
 
   const menuItems = useMemo(() => {
     const grouped = {};
@@ -697,6 +751,7 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
 
   useEffect(() => {
     if (!menuItems?.length) return;
+    if (lastOpenMenuPathRef.current === pathname) return;
 
     const nextOpenMenus = {};
     let hasMatchingRoute = false;
@@ -713,6 +768,8 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
         }
       }
     });
+
+    lastOpenMenuPathRef.current = pathname;
 
     if (!hasMatchingRoute) return;
 
@@ -758,7 +815,11 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
     const handleFinanceBack = () => {
       const parts = activeFinancePath.split(".");
       parts.pop();
-      setActiveFinancePath(parts.join("."));
+      const newPath = parts.join(".");
+      if (!newPath) {
+        userClearedFinanceRef.current = true;
+      }
+      setActiveFinancePath(newPath);
     };
 
     const financeKeys = Object.keys(currentFinanceNode)
@@ -789,17 +850,19 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
         <div className="employee-submenu-wrapper" style={{ display: "block" }}>
           {financeKeys.map((key) => {
             const nodeValue = currentFinanceNode[key];
-            const hasChildren = typeof nodeValue === "object" && nodeValue && !nodeValue.id;
+            if (!nodeValue || typeof nodeValue !== "object") return null;
+
+            const hasChildren = hasSubMenuChildren(nodeValue);
 
             const translationKey = hasChildren
               ? `ACTION_TEST_${key.toUpperCase().replace(/[ -]/g, "_")}`
-              : `ACTION_TEST_${nodeValue.displayName ? nodeValue.displayName.toUpperCase().replace(/[.:-\s\/]/g, "_") : key.toUpperCase().replace(/[ -]/g, "_")}`;
+              : `ACTION_TEST_${nodeValue?.displayName ? nodeValue.displayName.toUpperCase().replace(/[.:-\s\/]/g, "_") : key.toUpperCase().replace(/[ -]/g, "_")}`;
 
             const displayLabel = i18n.exists(translationKey)
               ? t(translationKey)
               : hasChildren
                 ? key
-                : nodeValue.displayName || key;
+                : nodeValue?.displayName || key;
 
             const tempIconItem = hasChildren
               ? { moduleName: key, leftIcon: nodeValue?.leftIcon || "finance:insert-chart" }
@@ -825,7 +888,7 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
               );
             }
 
-            const targetPath = resolveNavUrl(nodeValue.navigationURL);
+            const targetPath = resolveNavUrl(nodeValue?.navigationURL);
             const isCurrentActive =
               pathname === targetPath ||
               (targetPath !== "/upyog-ui/employee" && targetPath && pathname.startsWith(targetPath));
@@ -948,8 +1011,15 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
           {activeFinancePath ? (
             <>
               <div className="employee-accordion-item">
-                <div className="sidebar-list active">
-                  <div className="menu-item">
+                <div
+                  className="sidebar-list active sidebar-pointer-item"
+                  onClick={() => {
+                    if (isSidebarCollapsed && typeof toggleSidebarWidth === "function") {
+                      toggleSidebarWidth();
+                    }
+                  }}
+                >
+                  <div className="menu-item" title={t("ACTION_TEST_FINANCE") !== "ACTION_TEST_FINANCE" ? t("ACTION_TEST_FINANCE") : "Finance"}>
                     <FinanceChartIcon className="sidebar-icon" />
                     {!isSidebarCollapsed && (
                       <div className="menu-label">
@@ -1006,12 +1076,21 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar }) => 
                 }
 
                 if (item?.isFinanceModule) {
+                  const isFinanceActive =
+                    pathname.includes("/finance") ||
+                    pathname.includes("/services/EGF") ||
+                    pathname.includes("/services/finance");
+
                   return (
                     <div className="employee-accordion-item" key={`${item.moduleName}-${index}`}>
                       <div
-                        className={`sidebar-list sidebar-pointer-item ${pathname.includes("/finance") ? "active" : ""}`}
+                        className={`sidebar-list sidebar-pointer-item ${isFinanceActive ? "active" : ""}`}
                         onClick={() => {
-                          if (!isSidebarCollapsed) setActiveFinancePath("Finance");
+                          userClearedFinanceRef.current = false;
+                          if (isSidebarCollapsed && typeof toggleSidebarWidth === "function") {
+                            toggleSidebarWidth();
+                          }
+                          setActiveFinancePath("Finance");
                         }}
                       >
                         <div className="menu-item" title={displayName}>
