@@ -41,7 +41,7 @@ const SelectEmployeeEmailId = ({ t, config, onSelect, formData = {}, userType, r
                 defaultValue={undefined}
                 {...input.validation}
               />
-              {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('Email'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("CS_PROFILE_EMAIL_ERRORMSG")}</CardLabelError>}
+              {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('Email'))&&<CardLabelError className="hrms-select-email-id-fullwidth">{t("CS_PROFILE_EMAIL_ERRORMSG")}</CardLabelError>}
             </div>
           </LabelFieldPair>
         </React.Fragment>

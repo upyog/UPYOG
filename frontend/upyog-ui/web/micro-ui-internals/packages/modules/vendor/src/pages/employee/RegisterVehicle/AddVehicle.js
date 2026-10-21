@@ -34,9 +34,9 @@ const AddVehicle = ({ parentUrl, heading }) => {
   Config[0].body.forEach((item) => {
     if (item.label === "ES_FSM_REGISTRY_VEHICLE_NUMBER") {
       item.labelChildren = (
-        <div className="tooltip" style={{ paddingLeft: "10px", marginBottom: "-3px" }}>
+        <div className="tooltip vnd-add-vehicle-bottom-spacing">
           <InfoIcon />
-          <span className="tooltiptext" style={{ width: "150px", left: "230%", fontSize: "14px" }}>
+          <span className="tooltiptext vnd-add-vehicle-text-style">
             {t(item.populators.validation.title)}
           </span>
         </div>

@@ -55,14 +55,14 @@ const NocCitizenHome = () => {
       <img src={bannerImage || stateInfo?.bannerUrl} alt="noimagefound" />
       <BackButton className="moduleLinkHomePageBackButton" />
       {isMobile ? (
-        <h4 style={{ top: "calc(16vw + 40px)", left: "1.5rem", position: "absolute", color: "white" }}>
+        <h4 className="noc-noc-citizen-home-wrapper">
           {t("MODULE_FIRENOC")}
         </h4>
       ) : (
         <h1>{t("MODULE_FIRENOC")}</h1>
       )}
 
-      <div className="moduleLinkHomePageModuleLinks" style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+      <div className="moduleLinkHomePageModuleLinks noc-noc-citizen-home-flex-container">
         <CitizenHomeCard
           header={t("MODULE_FIRENOC")}
           links={links}

@@ -108,7 +108,7 @@ const SelectOwnerShipDetails = ({
         <div className="field">
         <CheckBox label={t("TL_COMMON_SAME_AS_PROPERTY_OWNERS")} onChange={selectisSameAsPropertyOwner} value={isSameAsPropertyOwner} checked={isSameAsPropertyOwner || false} disable={isRenewal}
           //disable={isUpdateProperty || isEditProperty}
-          className="tl-auto-52" />
+          className="tl-select-owner-ship-details-mb-md" />
         </div>
         </LabelFieldPair>}
         <LabelFieldPair>
@@ -119,7 +119,7 @@ const SelectOwnerShipDetails = ({
           </CardLabel>
           <Dropdown className="form-field" selected={ownershipCategory?.code ? ownershipCategory : {}} errorStyle={formState.touched?.[config.key] && formState.errors[config.key]?.message ? true : false} disable={isRenewal && ownershipCategory?.code || isSameAsPropertyOwner} option={dropdownData} select={selectedValue} optionKey="i18nKey" onBlur={onBlur} t={t} />
         </LabelFieldPair>
-        {formState.touched?.[config.key] ? <CardLabelError className="tl-auto-53">
+        {formState.touched?.[config.key] ? <CardLabelError className="tl-select-owner-ship-details-dropdown-text-sm-mt-neg">
             {formState.errors[config.key]?.message}
           </CardLabelError> : null}
       </React.Fragment>;
@@ -127,7 +127,7 @@ const SelectOwnerShipDetails = ({
   return <React.Fragment>
     {window.location.href.includes("/citizen") ? <Timeline currentStep={2} /> : null}
     <FormStep t={t} config={config} onSelect={goNext} onSkip={onSkip} isDisabled={!ownershipCategory?.code}>
-      {!(formData?.TradeDetails?.StructureType?.code === "MOVABLE") && formData?.cpt?.details && <CheckBox label={t("TL_COMMON_SAME_AS_PROPERTY_OWNERS")} onChange={selectisSameAsPropertyOwner} value={isSameAsPropertyOwner} checked={isSameAsPropertyOwner || false} disable={isEdit} className="tl-auto-54" />}
+      {!(formData?.TradeDetails?.StructureType?.code === "MOVABLE") && formData?.cpt?.details && <CheckBox label={t("TL_COMMON_SAME_AS_PROPERTY_OWNERS")} onChange={selectisSameAsPropertyOwner} value={isSameAsPropertyOwner} checked={isSameAsPropertyOwner || false} disable={isEdit} className="tl-select-owner-ship-details-mb-md" />}
       <RadioButtons isMandatory={config.isMandatory} options={dropdownData ? dropdownData : []} selectedOption={ownershipCategory} optionsKey="i18nKey" onSelect={selectedValue} value={ownershipCategory} labelKey="PT_OWNERSHIP" isDependent={true} disabled={isEdit} isTLFlow={true} />
     </FormStep>
     </React.Fragment>;

@@ -128,7 +128,7 @@ const StaticDynamicCard = ({moduleCode}) => {
     return mdmsConfigResult ? (
       <React.Fragment>
         {/* { mdmsConfigResult && mdmsConfigResult?.payViaWhatsApp ? 
-          // <Card style={{margin: "16px", padding: "16px", maxWidth: "unset"}}>
+          // <Card className="custom-style">
           //   <div className="pay-whatsapp-card" onClick={() => handleClickOnWhatsApp(mdmsConfigResult?.payViaWhatsApp)}>
           //     <div className="pay-whatsapp-text">{t("PAY_VIA_WHATSAPP")}</div>
           //     <div className="whatsAppIconG">
@@ -137,7 +137,7 @@ const StaticDynamicCard = ({moduleCode}) => {
           //   </div>
           //</Card> : null } */}
           { mdmsConfigResult && mdmsConfigResult?.helpline ?
-            <Card style={{margin: "16px", padding: "16px", maxWidth: "unset"}}>
+            <Card className="core-static-dynamic-card-card">
           <div className="static-home-Card">
               <div className="static-home-Card-header">{t("CALL_CENTER_HELPLINE")}</div>
               <div className="helplineIcon">
@@ -155,7 +155,7 @@ const StaticDynamicCard = ({moduleCode}) => {
           </Card> : null
           }
           { mdmsConfigResult && mdmsConfigResult?.serviceCenter ?
-          <Card style={{margin: "16px", padding: "16px", maxWidth: "unset"}}>
+          <Card className="core-static-dynamic-card-card">
           <div className="static-home-Card">
               <div className="static-home-Card-header">{t("CITIZEN_SERVICE_CENTER")}</div>
               <div className="serviceCentrIcon">
@@ -171,13 +171,13 @@ const StaticDynamicCard = ({moduleCode}) => {
             <a href={mdmsConfigResult?.viewMapLocation}>{t("VIEW_ON_MAP")}</a>
           </div> : null}
           </Card> : <div/> }
-      <Card style={{margin: "16px", padding: "16px", maxWidth: "unset"}}>
+      <Card className="core-static-dynamic-card-card">
       { error || dynamicData == null || dynamicData?.dynamicDataOne === null ? (
         <div/>
       ) : (
       <div className="dynamicDataCard" style={isMobile ? {maxHeight:"fit-content"} : {}}>
         <div className="dynamicData">
-        <span style={{paddingTop: "2px"}}>
+        <span className="core-static-dynamic-card-spacing">
         <IconComponent module={moduleCode} styles={{width: "18px", height: "24px"}}/></span>
           <span className="dynamicData-content">
             {dynamicData?.dynamicDataOne}
@@ -189,7 +189,7 @@ const StaticDynamicCard = ({moduleCode}) => {
       ) : (
       <div className="dynamicDataCard" style={isMobile ? {maxHeight:"fit-content"} : {}}>
       <div className="dynamicData">
-      <span style={{paddingTop: "2px"}}>
+      <span className="core-static-dynamic-card-spacing">
         <IconComponent module={moduleCode} styles={{width: "18px", height: "24px"}}/></span>
           <span className="dynamicData-content">
           {dynamicData?.dynamicDataTwo}
@@ -251,7 +251,7 @@ const StaticDynamicCard = ({moduleCode}) => {
          <div className="staticDataCard">
           <div className="staticData">
             { moduleCode === "PGR" 
-            ? <span style={{paddingTop: "15px"}}>
+            ? <span className="core-static-dynamic-card-spacing-2">
             <TimerIcon module={moduleCode} styles={{width: "18px", height: "24px", marginLeft: "13px"}}/></span>
             : <span className="validityIcon">
                <ValidityTimeIcon/>

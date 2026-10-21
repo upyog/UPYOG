@@ -137,8 +137,8 @@ const MobileSearchApplication = ({
         tenantId
       }} />
         </PopUp> : null}
-      {data?.display ? <Card className="pt-auto-5">
-          {t(data?.display).split("\\n").map((text, index) => <p key={index} className="pt-auto-6">
+      {data?.display ? <Card className="pt-mobile-search-application-card-mt-md">
+          {t(data?.display).split("\\n").map((text, index) => <p key={index} className="pt-mobile-search-application-card-center-text">
                 {text}
               </p>)}
         </Card> : <DetailsCard {...{

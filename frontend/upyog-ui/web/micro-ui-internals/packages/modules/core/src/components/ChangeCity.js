@@ -52,23 +52,37 @@ const ChangeCity = (prop) => {
   }, [dropDownData]);
 
   // if (isDropdown) {
+  const currentTenant = Digit.SessionStorage.get("Employee.tenantId");
+  const currentCityLabel =
+    selectCityData?.find((cityValue) => cityValue.value === (dropDownData?.value || currentTenant))?.label ||
+    prop?.t(`TENANT_TENANTS_${stringReplaceAll(currentTenant, ".", "_")?.toUpperCase()}`) ||
+    "Select City";
+
   return (
-    <div style={prop?.mobileView ? {color: "#767676"} : {}}>
+    <div style={prop?.mobileView ? { color: "#767676" } : {}} className={prop.classes || "nav-city-change"}>
       <Dropdown
         option={selectCityData}
-        selected={selectCityData.find((cityValue) => cityValue.value === dropDownData?.value)}
+        selected={selectCityData.find((cityValue) => cityValue.value === (dropDownData?.value || currentTenant))}
         optionKey={"label"}
         select={handleChangeCity}
+        showArrow={false}
         freeze={true}
-        customSelector={<label className="cp">{prop?.t(`TENANT_TENANTS_${stringReplaceAll(Digit.SessionStorage.get("Employee.tenantId"), ".", "_")?.toUpperCase()}`)}</label>}
+        customSelector={
+          <div className="nav-city-selector">
+            <span className="nav-city-text">{currentCityLabel}</span>
+            <svg className="nav-dropdown-chevron" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M7 10l5 5 5-5z" />
+            </svg>
+          </div>
+        }
       />
     </div>
   );
   // } else {
   //   return (
   //     <React.Fragment>
-  //       <div style={{ marginBottom: "5px" }}>City</div>
-  //       <div className="language-selector" style={{display: "flex", flexWrap: "wrap"}}>
+  //       <div className="custom-style">City</div>
+  //       <div className="language-selector" className="custom-style">
   //         {selectCityData?.map((city, index) => (
   //           <div className="language-button-container" key={index}>
   //             <CustomButton

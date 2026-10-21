@@ -53,7 +53,7 @@ const DocumentDesktopInbox = ({ isLoading, data, t, onSearch, title, iconName, l
     result = <Loader />;
   } else if (!data || data?.length === 0) {
     result = (
-      <Card style={{ marginTop: 20, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <Card className="eng-application-card-flex-row">
         {t("CE_DOCUMENTS_NOT_FOUND")}<br />
         <Link className="link" to={`/upyog-ui/employee/engagement/documents/inbox/new-doc`}>{t('NEW_DOCUMENT_TEXT')}</Link>
       </Card>
@@ -95,7 +95,7 @@ const DocumentDesktopInbox = ({ isLoading, data, t, onSearch, title, iconName, l
           <Filter onFilterChange={onFilterChange} searchParams={searchParams} />
         </div>
       </div>
-      <div style={{ flex: 1 }}>
+      <div className="eng-desktop-inbox-wrapper">
         <Search
           t={t}
           onSearch={onSearch}
@@ -104,7 +104,7 @@ const DocumentDesktopInbox = ({ isLoading, data, t, onSearch, title, iconName, l
           isInboxPage={true}
           searchParams={searchParams}
         />
-        <div className="result" style={{ marginLeft: "24px", flex: 1 }}>
+        <div className="result eng-desktop-inbox-spacing">
           {result}
         </div>
       </div>

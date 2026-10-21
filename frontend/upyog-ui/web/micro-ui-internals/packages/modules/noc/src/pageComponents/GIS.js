@@ -30,11 +30,11 @@ const GIS = ({ t, onSelect, formData = {}, handleRemove, onSave }) => {
   };
 
   return (
-    <div style={{ position: "fixed", background: "#00000050", width: "100%", height: "100vh", top: "0", left: "0", zIndex: 9999 }}>
-      <div style={{ position: "relative", marginTop: "60px" }}>
+    <div className="noc-gis-fullwidth">
+      <div className="noc-gis-top-spacing">
         <div style={Webview ? { marginLeft: "25%", marginRight: "25%" } : {}}>
           <LocationSearchCard
-            style={{ position: "relative", marginTop: "100px", marginBottom: "-100px" }}
+            className="noc-gis-card"
             header={t("NOC_GIS_LABEL")}
             cardText={t("")}
             nextText={t("NOC_PIN_LOCATION_LABEL")}

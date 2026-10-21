@@ -21,17 +21,17 @@ const NOCBreadCrumbs = ({ location }) => {
     {
       path: "/upyog-ui/employee/noc/inbox",
       content: t("ES_COMMON_INBOX"),
-      show: location.pathname.includes("noc/inbox") ? true : false,
+      show: location.pathname.includes("noc/inbox") || location.pathname.includes("firenoc/inbox") ? true : false,
     },
     {
       path: "/upyog-ui/employee/noc/inbox/application-overview/:id",
       content: t("NOC_APP_OVER_VIEW_HEADER"),
-      show: location.pathname.includes("noc/inbox/application-overview") ? true : false,
+      show: location.pathname.includes("noc/inbox/application-overview") || location.pathname.includes("firenoc/application-overview") ? true : false,
     },
     {
       path: "/upyog-ui/employee/noc/search",
       content: t("ES_COMMON_APPLICATION_SEARCH"),
-      show: location.pathname.includes("/upyog-ui/employee/noc/search") ? true : false,
+      show: location.pathname.includes("/upyog-ui/employee/noc/search") || location.pathname.includes("firenoc/my-applications") ? true : false,
     },
     {
       path: "/upyog-ui/employee/noc/search/application-overview/:id",
@@ -63,7 +63,7 @@ const EmployeeApp = ({ path }) => {
 
   return (
     <Fragment>
-      {!isResponse ? <div style={window.location.href.includes("application-overview") || isMobile ? { marginLeft: "10px" } : {}}>
+      {!isResponse ? <div>
         <NOCBreadCrumbs location={location} />
       </div> : null} 
       <Routes>

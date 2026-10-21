@@ -123,7 +123,7 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData }) => {
         />
 
         {/* Input field for house number */}
-        <CardLabel>{`${t("EWASTE_HOUSE_NO")}`}<span style={{ color: 'red' }}>*</span></CardLabel>
+        <CardLabel>{`${t("EWASTE_HOUSE_NO")}`}<span className="ew-ewastecitizen-address-required-asterisk">*</span></CardLabel>
         <TextInput
           t={t}
           type={"text"}
@@ -156,7 +156,7 @@ const EWASTECitizenAddress = ({ t, config, onSelect, userType, formData }) => {
         />
 
         {/* Input field for address line 1 */}
-        <CardLabel>{`${t("EWASTE_ADDRESS_LINE1")}`}<span style={{ color: 'red' }}>*</span></CardLabel>
+        <CardLabel>{`${t("EWASTE_ADDRESS_LINE1")}`}<span className="ew-ewastecitizen-address-required-asterisk">*</span></CardLabel>
         <TextInput
           t={t}
           type={"text"}

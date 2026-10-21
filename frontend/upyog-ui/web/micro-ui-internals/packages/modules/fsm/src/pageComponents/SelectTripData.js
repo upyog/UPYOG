@@ -166,7 +166,7 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
           </div>
         </LabelFieldPair>
       ))}
-      {billError ? <CardLabelError style={{ width: "100%", textAlign: "center" }}>{t("ES_APPLICATION_BILL_SLAB_ERROR")}</CardLabelError> : null}
+      {billError ? <CardLabelError className="fsm-select-trip-data-centered">{t("ES_APPLICATION_BILL_SLAB_ERROR")}</CardLabelError> : null}
     </div>
   );
 };

@@ -52,7 +52,7 @@ const QRCode = ({ path }) => {
     );
     return (
         <React.Fragment>
-            <div style={{ width: "100%" }}>
+            <div className="core-assets-qrcode-fullwidth">
                 <Card>
                     <CardHeader>Receipt Summary</CardHeader>
                     {!recieptDataLoading ?

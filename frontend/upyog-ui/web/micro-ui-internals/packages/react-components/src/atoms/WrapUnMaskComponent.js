@@ -42,8 +42,8 @@ const WrapUnMaskComponent = React.memo(({ privacy = {}, value, unmaskField, ...r
   ];
   const { isLoading, data, ...orr } = Digit.Hooks.useCustomAPIHook(...aaa);
   if (isLoading) {
-    return !unmaskField ? <Loader /> : <span style={{ display: "inline-flex", width: "fit-content", marginLeft: "10px" }}><div className={`tooltip`}>
-    <PrivacyMaskIcon className="privacy-icon-2" style={{...rem?.style,cursor:"default"}}></PrivacyMaskIcon></div></span>;
+    return !unmaskField ? <Loader /> : <span className="rc-status-table-spacing"><div className={`tooltip`}>
+    <PrivacyMaskIcon className="privacy-icon-2 cursor-pointer-default" style={rem?.style}></PrivacyMaskIcon></div></span>;
   }
 
   return privacy?.uuid && data ? (
@@ -55,7 +55,7 @@ const WrapUnMaskComponent = React.memo(({ privacy = {}, value, unmaskField, ...r
     <React.Fragment>
       {!unmaskField && value}
       {privacy && (
-        <span style={{ display: "inline-flex", width: "fit-content", marginLeft: "10px" }}>
+        <span className="rc-status-table-spacing">
           <UnMaskComponent
             privacy={privacy}
             unmaskData={() => {

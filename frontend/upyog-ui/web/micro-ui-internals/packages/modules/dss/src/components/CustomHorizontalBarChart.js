@@ -91,7 +91,7 @@ const CustomHorizontalBarChart = ({
 
   const chartData = useMemo(() => constructChartData(response?.responseData?.data, value?.denomination), [response, value?.denomination]);
 
-  const renderLegend = (value) => <span style={{ fontSize: "14px", color: "#505A5F" }}>{value}</span>;
+  const renderLegend = (value) => <span className="dss-custom-area-chart-text-style">{value}</span>;
 
   const tickFormatter = (value) => {
     if (typeof value === "string") {

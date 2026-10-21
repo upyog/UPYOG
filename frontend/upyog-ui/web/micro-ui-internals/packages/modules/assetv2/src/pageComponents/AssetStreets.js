@@ -159,7 +159,7 @@ const setData=(config,data)=>{
             name="street"
             onChange={selectStreet}
             value={street}
-            style={{width:"50%"}}
+            className="assetv2-asset-streets-wrapper"
             errorStyle={true}
             autoFocus={focusIndex?.index == 1}
           />
@@ -171,7 +171,7 @@ const setData=(config,data)=>{
             optionKey="i18nKey"
             name="doorNo"
             onChange={selectDoorNo}
-            style={{width:"50%"}}
+            className="assetv2-asset-streets-wrapper"
             value={doorNo}
             errorStyle={false}
             autoFocus={focusIndex?.index == 1}
@@ -186,7 +186,7 @@ const setData=(config,data)=>{
             name="addressLine1"
             onChange={selectAddressLine1}
             value={addressLine1}
-            style={{width:"50%"}}
+            className="assetv2-asset-streets-wrapper"
             errorStyle={true}
             autoFocus={focusIndex?.index == 1}
           />
@@ -198,7 +198,7 @@ const setData=(config,data)=>{
             optionKey="i18nKey"
             name="addressLine2"
             onChange={selectAddressLine2}
-            style={{width:"50%"}}
+            className="assetv2-asset-streets-wrapper"
             value={addressLine2}
             errorStyle={false}
             autoFocus={focusIndex?.index == 1}
@@ -213,7 +213,7 @@ const setData=(config,data)=>{
             name="landmark"
             onChange={selectLandmark}
             value={landmark}
-            style={{width:"50%"}}
+            className="assetv2-asset-streets-wrapper"
             errorStyle={true}
             autoFocus={focusIndex?.index == 1}
           />
@@ -226,7 +226,7 @@ const setData=(config,data)=>{
               optionKey="i18nKey"
               name="latitude"
               onChange={selectLatitude}
-              style={{ width: "50%" }}
+              className="assetv2-asset-streets-wrapper"
               value={latitude}
               errorStyle={false}
               autoFocus={focusIndex?.index == 1}
@@ -239,7 +239,7 @@ const setData=(config,data)=>{
               name="longitude"
               onChange={selectLongitude}
               value={longitude}
-              style={{ width: "50%" }}
+              className="assetv2-asset-streets-wrapper"
               errorStyle={true}
               autoFocus={focusIndex?.index == 1}
             />

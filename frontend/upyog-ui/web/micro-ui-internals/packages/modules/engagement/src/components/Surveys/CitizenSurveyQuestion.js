@@ -101,7 +101,7 @@ const CitizenSurveyQuestion = ({t, question, control, register, values, formStat
                         checked={typeof field.value === "string" ? !!([field.value]?.find(e => e === option)) : !!field.value?.find(e => e === option)}
                         label={option}
                         checkboxWidth = {{width:"34px",height:"34px"}}
-                        style={{marginTop:"5px", overflowWrap:"break-word"}}
+                        className="eng-citizen-survey-question-top-spacing"
                       />
                     );
                   })}
@@ -109,7 +109,7 @@ const CitizenSurveyQuestion = ({t, question, control, register, values, formStat
               )}}
             />
             {formErrors && formErrors?.[question.uuid] && formErrors?.[question.uuid]?.type ==="required" && (
-              <CardLabelError style={{marginTop:"20px"}}>{t(`CS_COMMON_REQUIRED`)}</CardLabelError>
+              <CardLabelError className="eng-application-card-card">{t(`CS_COMMON_REQUIRED`)}</CardLabelError>
             )}
           </Fragment>
         );

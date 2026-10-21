@@ -164,7 +164,7 @@ const PlumberDetails = _props => {
     marginTop: "-21px"
   };
   return <div>
-            <div className="ws-auto-38">
+            <div className="ws-activation-plumber-details-item">
                 <div>
                     <LabelFieldPair>
                         <CardLabel style={isMobile && isEmployee ? {fontWeight: "700", width:"100%"} : { marginTop: "-5px", fontWeight: "700" }} className="card-label-smaller">{`${t("WS_ADDN_DETAILS_PLUMBER_PROVIDED_BY")}`}<span className="check-page-link-button"> *</span></CardLabel>
@@ -291,10 +291,10 @@ const PlumberDetails = _props => {
                                         type="mobileNumber"
                                         isMandatory={true}
                                         render={({ field }) => (
-                                            <div className="ws-auto-39">
-                                                <div className="ws-auto-40">+91</div>
+                                            <div className="ws-activation-plumber-details-flex">
+                                                <div className="ws-activation-plumber-details-relative-mt-neg">+91</div>
                                                 <TextInput
-                                                    className="ws-auto-41"
+                                                    className="ws-activation-plumber-details-no-pad"
                                                     type="mobileNumber"
                                                     value={field.value}
                                                     autoFocus={focusIndex.index === plumberDetail?.key && focusIndex.type === "plumberMobileNo"}

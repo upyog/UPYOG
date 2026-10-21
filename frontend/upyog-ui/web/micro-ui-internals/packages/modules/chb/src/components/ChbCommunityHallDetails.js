@@ -87,55 +87,55 @@ const ChbCommunityHallDetails = ({ hallId, setShowDetails }) => {
     return text
       .split('\n')
       .filter(line => line.trim() !== '')
-      .map((line, index) => <li key={index} style={{ marginBottom: '10px' }}>{line.trim()}</li>);
+      .map((line, index) => <li key={index} className="chb-chb-cancellation-policy-bottom-spacing">{line.trim()}</li>);
   };
 
   return (
     <div>
       {showPopup && selectedHall && (
         <Modal
-          headerBarMain={<CardSubHeader style={{ color: '#a82227', margin: '35px' }}>Community Hall Details</CardSubHeader>}
+          headerBarMain={<CardSubHeader className="chb-chb-community-hall-details-header">Community Hall Details</CardSubHeader>}
           headerBarEnd={<CloseBtn onClick={handleClosePopup} />}
           popupStyles={{ backgroundColor: "#fff", position: 'relative', width: '90%', maxWidth: '1200px', maxHeight: '90vh', overflowY: 'auto' }}
           children={
-            <div style={{ padding: '15px', paddingTop: '1px' }}>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                <div style={{ flex: '1 1 45%' }}>
-                  <CardLabel style={{ fontSize: '20px' }}>Name</CardLabel>
+            <div className="chb-chb-community-hall-details-container-padding">
+              <div className="chb-chb-community-hall-details-flex-container">
+                <div className="chb-chb-community-hall-details-wrapper">
+                  <CardLabel className="chb-chb-cancellation-policy-card">Name</CardLabel>
                   <CardLabelDesc>{selectedHall.name}</CardLabelDesc>
                 </div>
-                <div style={{ flex: '1 1 45%' }}>
-                  <CardLabel style={{ fontSize: '20px' }}>Geo Location</CardLabel>
+                <div className="chb-chb-community-hall-details-wrapper">
+                  <CardLabel className="chb-chb-cancellation-policy-card">Geo Location</CardLabel>
                   <CardLabelDesc>{selectedHall.geoLocation}</CardLabelDesc>
                 </div>
-                <div style={{ flex: '1 1 45%' }}>
-                  <CardLabel style={{ fontSize: '20px' }}>Address</CardLabel>
+                <div className="chb-chb-community-hall-details-wrapper">
+                  <CardLabel className="chb-chb-cancellation-policy-card">Address</CardLabel>
                   <CardLabelDesc>{selectedHall.address}</CardLabelDesc>
                 </div>
-                <div style={{ flex: '1 1 45%' }}>
-                  <CardLabel style={{ fontSize: '20px' }}>Contact Details</CardLabel>
+                <div className="chb-chb-community-hall-details-wrapper">
+                  <CardLabel className="chb-chb-cancellation-policy-card">Contact Details</CardLabel>
                   <CardLabelDesc>{selectedHall.contactDetails}</CardLabelDesc>
                 </div>
-                <div style={{ flex: '1 1 45%' }}>
-                  <CardLabel style={{ fontSize: '20px' }}>Description</CardLabel>
+                <div className="chb-chb-community-hall-details-wrapper">
+                  <CardLabel className="chb-chb-cancellation-policy-card">Description</CardLabel>
                   <CardLabelDesc>{selectedHall.hallDescription}</CardLabelDesc>
                 </div>
-                <div style={{ flex: '1 1 45%' }}>
-                  <CardLabel style={{ fontSize: '20px' }}>Type</CardLabel>
+                <div className="chb-chb-community-hall-details-wrapper">
+                  <CardLabel className="chb-chb-cancellation-policy-card">Type</CardLabel>
                   <CardLabelDesc>{selectedHall.type}</CardLabelDesc>
                 </div>
               </div>
-              <CardLabel style={{ fontSize: '20px', marginTop: '10px' }}>Terms and Conditions</CardLabel>
+              <CardLabel className="chb-chb-community-hall-details-card">Terms and Conditions</CardLabel>
               <CardLabelDesc>
                 <ul>{renderList(selectedHall.termsAndCondition)}</ul>
               </CardLabelDesc>
-              {/* <CardLabel style={{ fontSize: '20px', marginTop: '15px' }}>Disclaimer</CardLabel>
+              {/* <CardLabel className="custom-style">Disclaimer</CardLabel>
               <CardLabelDesc>{selectedHall.disclaimer}</CardLabelDesc>
-              <CardLabel style={{ fontSize: '20px', marginTop: '15px' }}>Cancellation Policy</CardLabel>
+              <CardLabel className="custom-style">Cancellation Policy</CardLabel>
               <CardLabelDesc>
                 <ul>{renderList(selectedHall.cancellationPolicy)}</ul>
               </CardLabelDesc>
-              <CardLabel style={{ fontSize: '20px', marginTop: '15px' }}>Remarks</CardLabel>
+              <CardLabel className="custom-style">Remarks</CardLabel>
               <CardLabelDesc>{selectedHall.remarks}</CardLabelDesc> */}
             </div>
           }
@@ -150,7 +150,6 @@ const ChbCommunityHallDetails = ({ hallId, setShowDetails }) => {
           formId="modalForm"
           isDisabled={false}
           hideSubmit={true}  // Ensure submit is hidden
-          style={{}}
           popupModuleMianStyles={{ padding: "10px" }}
           headerBarMainStyle={{ position: "sticky",top: 0,backgroundColor: "#f5f5f5" }}
           isOBPSFlow={false}

@@ -42,7 +42,7 @@ const PetApplication = ({ application, tenantId, buttonLabel }) => {
       <KeyNote keyValue={t("PTR_SEARCH_PET_TYPE")} note={application?.petDetails?.petType} />
 
       {(application?.status == "Expired") && 
-      <SubmitBar style={{ marginBottom: "5px" }} label={"Renewal"} onSubmit={handleRenewalClick} />
+      <SubmitBar className="ptr-pet-application-bottom-spacing" label={"Renewal"} onSubmit={handleRenewalClick} />
 }
       <Link to={`/upyog-ui/citizen/ptr/petservice/application/${application?.applicationNumber}/${application?.tenantId}`}>
         <SubmitBar label={buttonLabel} />

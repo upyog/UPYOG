@@ -13,14 +13,14 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const userInfo = Digit.UserService.getUser().info;
   const userUlbs = ulb.filter(ulb => userInfo?.roles?.some(role => role?.tenantId === ulb?.code)).sort(alphabeticalSortFunctionForTenantsBasedOnName)
-  
+
   const getFields = (input) => {
-    switch(input.type) {
+    switch (input.type) {
       case "ulb":
         return (
           <Controller
-          rules={{ required: true }}
-            render={({field}) => (
+            rules={{ required: true }}
+            render={({ field }) => (
               <DropdownUlb
                 onAssignmentChange={field.onChange}
                 value={field.value}
@@ -36,7 +36,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
       default:
         return (
           <Controller
-            render={({field}) => <TextInput onChange={field.onChange} value={field.value} />}
+            render={({ field }) => <TextInput onChange={field.onChange} value={field.value} />}
             name={input.name}
             control={control}
             defaultValue={null}
@@ -64,7 +64,7 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
   const clearAll = (mobileView) => {
     const mobileViewStyles = mobileView ? { margin: 0 } : {};
     return (
-      <LinkLabel style={{ display: "inline", ...mobileViewStyles }} onClick={clearSearch}>
+      <LinkLabel className="search-clear-link" style={mobileViewStyles} onClick={clearSearch}>
         {t("ES_COMMON_CLEAR_SEARCH")}
       </LinkLabel>
     );
@@ -72,65 +72,64 @@ const Search = ({ onSearch, searchParams, searchFields, type, onClose, isInboxPa
 
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
-      <div className="search-container" style={{ width: "auto", marginLeft: isInboxPage ? "24px" : "revert" }}>
-          <div className="search-complaint-container">
-            {(type === "mobile" || mobileView) && (
-              <div className="complaint-header">
-                <h2>{t("ES_COMMON_SEARCH_BY")}</h2>
-                <span onClick={onClose}>
-                  <CloseSvg />
-                </span>
+      <div className={`search-container ${isInboxPage ? "search-container-auto-margin" : "search-container-auto"}`}>
+        <div className="search-complaint-container">
+          {(type === "mobile" || mobileView) && (
+            <div className="complaint-header">
+              <h2>{t("ES_COMMON_SEARCH_BY")}</h2>
+              <span onClick={onClose}>
+                <CloseSvg />
+              </span>
+            </div>
+          )}
+          <div className={`${"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} eng-search-fullwidth`}>
+            {searchFields
+              ?.map((input, index) => (
+                <div key={input.name} className="input-fields">
+                  {/* <span className={index === 0 ? "complaint-input" : "mobile-input"}> */}
+                  <span className={"mobile-input"}>
+                    <Label>{t(input.label) + ` ${input.isMendatory ? "*" : ""}`}</Label>
+                    {getFields(input)}
+                  </span>
+                  {formState?.dirtyFields?.[input.name] ? (
+                    <span
+                      className="inbox-search-form-error eng-search-top-spacing"
+                    >
+                      {formState?.errors?.[input.name]?.message}
+                    </span>
+                  ) : null}
+                </div>
+              ))}
+
+            {/* {isInboxPage && ( */}
+            {/* // <div className="custom-style" className="input-fields"> */}
+            {/* <div>{clearAll()}</div> */}
+            {/* // </div> */}
+            {/* )} */}
+
+            {type === "desktop" && !mobileView && (
+              <div className="search-submit-wrapper eng-search-top-spacing-2">
+                <SubmitBar
+                  className="submit-bar-search"
+                  label={t("ES_COMMON_SEARCH")}
+                  // disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
+                  submit
+                />
+
+                <div>{clearAll()}</div>
               </div>
             )}
-            <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%",display:"grid" }}>
-              {searchFields
-                ?.map((input, index) => (
-                  <div key={input.name} className="input-fields">
-                    {/* <span className={index === 0 ? "complaint-input" : "mobile-input"}> */}
-                    <span className={"mobile-input"}>
-                      <Label>{t(input.label) + ` ${input.isMendatory ? "*" : ""}`}</Label>
-                      {getFields(input)}
-                    </span>
-                    {formState?.dirtyFields?.[input.name] ? (
-                      <span
-                        style={{ fontWeight: "700", color: "rgba(212, 53, 28)", paddingLeft: "8px", marginTop: "-20px", fontSize: "12px" }}
-                        className="inbox-search-form-error"
-                      >
-                        {formState?.errors?.[input.name]?.message}
-                      </span>
-                    ) : null}
-                  </div>
-                ))}
-
-              {/* {isInboxPage && ( */}
-                {/* // <div style={{ gridColumn: "2/3", textAlign: "right", paddingTop: "10px" }} className="input-fields"> */}
-                  {/* <div>{clearAll()}</div> */}
-                {/* // </div> */}
-              {/* )} */}
-
-              {type === "desktop" && !mobileView && (
-                <div style={{ maxWidth: "unset", marginLeft: "unset", marginTop: "55px"}} className="search-submit-wrapper">
-                  <SubmitBar
-                    className="submit-bar-search"
-                    label={t("ES_COMMON_SEARCH")}
-                    // disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
-                    submit
-                  />
-                  {/* style={{ paddingTop: "16px", textAlign: "center" }} className="clear-search" */}
-                  <div>{clearAll()}</div>
-                </div>
-              )}
-            </div>
           </div>
         </div>
-        {(type === "mobile" || mobileView) && (
-          <ActionBar className="clear-search-container">
-            <button className="clear-search" style={{ flex: 1 }}>
-              {clearAll(mobileView)}
-            </button>
-            <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} style={{ flex: 1 }} submit={true} />
-          </ActionBar>
-        )}
+      </div>
+      {(type === "mobile" || mobileView) && (
+        <ActionBar className="clear-search-container">
+          <button className="clear-search eng-desktop-inbox-wrapper">
+            {clearAll(mobileView)}
+          </button>
+          <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} className="eng-desktop-inbox-wrapper" submit={true} />
+        </ActionBar>
+      )}
     </form>
   )
 

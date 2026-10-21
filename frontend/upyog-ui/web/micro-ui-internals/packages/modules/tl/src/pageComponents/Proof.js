@@ -82,8 +82,8 @@ const Proof = ({
   return <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={3} /> : null}
       <FormStep config={config} onSelect={handleSubmit} onSkip={onSkip} t={t} isDisabled={!uploadedFile || error}>
-        <CardLabelDesc className="tl-auto-28">{t(`TL_UPLOAD_PHOTO_RESTRICTIONS_TYPES`)}</CardLabelDesc>
-        <CardLabelDesc className="tl-auto-29">{t(`TL_UPLOAD_RESTRICTIONS_SIZE`)}</CardLabelDesc>
+        <CardLabelDesc className="tl-proof-label">{t(`TL_UPLOAD_PHOTO_RESTRICTIONS_TYPES`)}</CardLabelDesc>
+        <CardLabelDesc className="tl-proof-label">{t(`TL_UPLOAD_RESTRICTIONS_SIZE`)}</CardLabelDesc>
         <CardLabel>{`${t("TL_CATEGORY_DOCUMENT_TYPE")}`}</CardLabel>
         {/* <Dropdown
          t={t}
@@ -97,8 +97,8 @@ const Proof = ({
         <UploadFile id={"tl-doc"} extraStyleName={"propertyCreate"} accept=".jpg,.png,.pdf,.jpeg" onUpload={selectfile} onDelete={() => {
         setUploadedFile(null);
       }} message={uploadedFile ? `1 ${t(`TL_ACTION_FILEUPLOADED`)}` : t(`TL_ACTION_NO_FILEUPLOADED`)} error={error} />
-        {error ? <div className="tl-auto-30">{error}</div> : ""}
-        <div className="tl-auto-31"></div>
+        {error ? <div className="tl-proof-full-width-title-md">{error}</div> : ""}
+        <div className="tl-proof-full-width"></div>
       </FormStep>
     </React.Fragment>;
 };

@@ -94,7 +94,7 @@ export const NocMyApplications = () => {
         ))}
 
       {sortedApplications.length === 0 && (
-        <p style={{ marginLeft: "16px", marginTop: "16px" }}>
+        <p className="noc-index-top-spacing">
           {t(
             "NOC_NO_APPLICATION_FOUND_MSG"
           )}
@@ -103,7 +103,7 @@ export const NocMyApplications = () => {
 
       {applicationsList.length !==0 && (
         <div>
-          <p style={{ marginLeft: "16px", marginTop: "16px" }}>
+          <p className="noc-index-top-spacing">
             <span className="link">
               <Link
                 to={`/upyog-ui/citizen/firenoc/my-applications/${t1}`}

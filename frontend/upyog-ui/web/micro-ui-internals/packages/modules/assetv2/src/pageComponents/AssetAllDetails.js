@@ -510,7 +510,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
             <div>
               <div>
                 {t("AST_FINANCIAL_YEAR")}
-                <span style={{ color: "red" }}>*</span>
+                <span className="assetv2-asset-all-details-required-asterisk">*</span>
                 <div className="tooltip" style={assetStyles.toolTip}>
                   <InfoBannerIcon />
                   <span
@@ -527,13 +527,13 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                 defaultValue={financialYear}
                 rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
                 render={({ field }) => (
-                  <Dropdown selected={financialYear} select={setfinancialYear} option={financal} optionKey="i18nKey" placeholder={"Select"} t={t} style={{ width: "80%" }} />
+                  <Dropdown selected={financialYear} select={setfinancialYear} option={financal} optionKey="i18nKey" placeholder={"Select"} t={t} className="assetv2-asset-all-details-wrapper" />
                 )}
               />
             </div>
             <div>
               <div>
-                {t("AST_DEPARTMENT")} <span style={{ color: "red" }}>*</span>
+                {t("AST_DEPARTMENT")} <span className="assetv2-asset-all-details-required-asterisk">*</span>
                 <div className="tooltip" style={assetStyles.toolTip}>
                   <InfoBannerIcon />
                   <span
@@ -557,7 +557,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                     optionKey="i18nKey"
                     placeholder={"Select"}
                     t={t}
-                    style={{ width: "80%" }}
+                    className="assetv2-asset-all-details-wrapper"
                   />
                 )}
               />
@@ -569,7 +569,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
           <div style={assetStyles.formGridStyles}>
             <div>
               <div>
-                {`${t("AST_PARENT_CATEGORY")}`} <span style={{ color: "red" }}>*</span>
+                {`${t("AST_PARENT_CATEGORY")}`} <span className="assetv2-asset-all-details-required-asterisk">*</span>
               </div>
               <Controller
                 control={control}
@@ -577,7 +577,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                 defaultValue={assettype}
                 rules={{ required: t("CORE_COMMON_REQUIRED_ERRMSG") }}
                 render={(props) => (
-                  <Dropdown selected={assettype} select={setassettype} option={asset_type} optionKey="i18nKey" placeholder={"Select"} t={t} style={{ width: "80%" }} />
+                  <Dropdown selected={assettype} select={setassettype} option={asset_type} optionKey="i18nKey" placeholder={"Select"} t={t} className="assetv2-asset-all-details-wrapper" />
                 )}
               />
             </div>
@@ -585,19 +585,12 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
             {/* Field 4 - Asset Classification */}
             {/* <div>
               <div>
-                {t("AST_CATEGORY")} <span style={{ color: "red" }}>*</span>
+                {t("AST_CATEGORY")} <span className="custom-style">*</span>
                 <div className="tooltip" style={ assetStyles.toolTip }>
                   <InfoBannerIcon />
                   <span
                     className="tooltiptext"
-                    style={{
-                      whiteSpace: "pre-wrap",
-                      fontSize: "small",
-                      wordWrap: "break-word",
-                      width: "300px",
-                      marginLeft: "15px",
-                      marginBottom: "-10px",
-                    }}
+                    className="custom-style"
                   >
                     {`${t(`AST_CLASSIFICATION_ASSET`)}`}
                   </span>
@@ -625,7 +618,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
             {/* Field 5 - Sub Category */}
             <div>
               <div>
-                {`${t("AST_CATEGORY_SUB_CATEGORY")}`} <span style={{ color: "red" }}>*</span>
+                {`${t("AST_CATEGORY_SUB_CATEGORY")}`} <span className="assetv2-asset-all-details-required-asterisk">*</span>
               </div>
               <Controller
                 control={control}
@@ -640,7 +633,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                     optionKey="i18nKey"
                     placeholder={"Select"}
                     t={t}
-                    style={{ width: "80%" }}
+                    className="assetv2-asset-all-details-wrapper"
                   />
                 )}
               />
@@ -672,7 +665,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
             {/* Field 8 - Asset Name */}
             <div>
               <div>
-                {`${t("AST_NAME")}`} <span style={{ color: "red" }}>*</span>
+                {`${t("AST_NAME")}`} <span className="assetv2-asset-all-details-required-asterisk">*</span>
               </div>
               <TextInput
                 t={t}
@@ -683,7 +676,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                 name="AssetName"
                 value={AssetName}
                 onChange={setassetname}
-                style={{ width: "80%" }}
+                className="assetv2-asset-all-details-wrapper"
                 ValidationRequired={true}
                 validation={{
                   isRequired: true,
@@ -708,7 +701,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                   return (
                     <div key={index}>
                       <div>
-                        {`${t(row.code)}`} {row.isMandatory ? <span style={{ color: "red" }}>*</span> : null}
+                        {`${t(row.code)}`} {row.isMandatory ? <span className="assetv2-asset-all-details-required-asterisk">*</span> : null}
                         <div className="tooltip" style={assetStyles.toolTip}>
                           <InfoBannerIcon />
                           <span className="tooltiptext" style={assetStyles.toolTipText}>
@@ -726,7 +719,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                           name={row.name}
                           value={assetDetails[row.name]}
                           onChange={handleInputChange}
-                          style={{ width: "80%" }}
+                          className="assetv2-asset-all-details-wrapper"
                           // max={new Date().toISOString().split("T")[0]}
                           rules={{
                             required: t("CORE_COMMON_REQUIRED_ERRMSG"),
@@ -749,7 +742,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                             title: t("PT_NAME_ERROR_MESSAGE"),
 
                           }}
-                          style={{ width: "80%" }}
+                          className="assetv2-asset-all-details-wrapper"
                         />
 
                       ) : row.type === "dropdown" ? (
@@ -771,7 +764,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                               placeholder={"Select"}
                               isMandatory={row.isMandatory}
                               t={t}
-                              style={{ width: "80%" }}
+                              className="assetv2-asset-all-details-wrapper"
                             />
                           )}
                         />
@@ -791,7 +784,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                             type: row.columnType,
                             title: t("PT_NAME_ERROR_MESSAGE"),
                           })}
-                          style={{ width: "80%" }}
+                          className="assetv2-asset-all-details-wrapper"
                           readOnly={row.isReadOnly}
                           disable={row.disable}
                           placeholder={row.name === "assetId" ? t("AST_AUTO_GENERATE") : ""}
@@ -803,7 +796,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
 
             <div>
               <div>
-                {`${t("AST_LOCATION_DETAILS")}`} <span style={{ color: "red" }}>*</span>
+                {`${t("AST_LOCATION_DETAILS")}`} <span className="assetv2-asset-all-details-required-asterisk">*</span>
                 <div className="tooltip" style={assetStyles.toolTip}>
                   <InfoBannerIcon />
                   <span className="tooltiptext" style={assetStyles.toolTipText}>
@@ -811,14 +804,14 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                   </span>
                 </div>
               </div>
-              <div style={{ position: "relative" }}>
+              <div className="assetv2-asset-all-details-wrapper-2">
                 <TextInput
                   t={t}
                   type="text"
                   name="location"
                   value={assetDetails["location"] || ""}
                   onChange={handleInputChange}
-                  style={{ width: "80%" }}
+                  className="assetv2-asset-all-details-wrapper"
                   {...{
                     isRequired: true,
                     pattern: "^[-+]?([1-8]?[0-9](\\.[0-9]+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7][0-9])|([1-9]?[0-9]))(\\.[0-9]+)?)$",
@@ -827,18 +820,8 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                   placeholder={t("AST_LAT_LONG_PLACEHOLDERS")}
                 />
                 <div
-                  className="butt-icon"
+                  className="butt-icon assetv2-asset-all-details-clickable"
                   onClick={() => fetchCurrentLocation("location")}
-                  style={{
-                    position: "absolute",
-                    right: "21%",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    padding: "2px 5px",
-                  }}
                 >
                   <LocationIcon styles={{ width: "16px", border: "none" }} className="fill-path-primary-main" />
                 </div>
@@ -846,7 +829,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
 
               {assetDetails?.location && (
                 <div>
-                  <button style={{ color: "#a82227" }} onClick={() => setShowMap(true)}>
+                  <button className="assetv2-asset-all-details-action-btn" onClick={() => setShowMap(true)}>
                     {geometry ? "Edit Marked Asset" : "Mark Asset on Map"}
                   </button>
                 </div>
@@ -879,7 +862,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
 
             <div>
               <div>
-                {`${t("AST_PLOT_NO")}`} <span style={{ color: "red" }}>*</span>
+                {`${t("AST_PLOT_NO")}`} <span className="assetv2-asset-all-details-required-asterisk">*</span>
               </div>
               <TextInput
                 t={t}
@@ -898,14 +881,14 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                   type: "text",
                   title: t("VALID_LAT_LONG"),
                 })}
-                style={{ width: "80%" }}
+                className="assetv2-asset-all-details-wrapper"
                 maxLength={6}
               />
             </div>
 
             <div>
               <div>
-                {`${t("AST_ADDRESS_LINE_ONE")}`} <span style={{ color: "red" }}>*</span>
+                {`${t("AST_ADDRESS_LINE_ONE")}`} <span className="assetv2-asset-all-details-required-asterisk">*</span>
               </div>
               <TextInput
                 t={t}
@@ -924,14 +907,14 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                   type: "text",
                   title: t("ADDRESS_ONE_INVALID"),
                 }}
-                style={{ width: "80%" }}
+                className="assetv2-asset-all-details-wrapper"
                 maxLength={6}
               />
             </div>
 
             <div>
               <div>
-                {`${t("AST_ADDRESS_LINE_TWO")}`} <span style={{ color: "red" }}>*</span>
+                {`${t("AST_ADDRESS_LINE_TWO")}`} <span className="assetv2-asset-all-details-required-asterisk">*</span>
               </div>
               <TextInput
                 t={t}
@@ -950,14 +933,14 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                   type: "text",
                   title: t("ADDRESS_INVALID"),
                 }}
-                style={{ width: "80%" }}
+                className="assetv2-asset-all-details-wrapper"
                 maxLength={6}
               />
             </div>
 
             <div>
               <div>
-                {`${t("AST_PINCODE")}`} <span style={{ color: "red" }}>*</span>
+                {`${t("AST_PINCODE")}`} <span className="assetv2-asset-all-details-required-asterisk">*</span>
               </div>
               <TextInput
                 t={t}
@@ -976,14 +959,14 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                   type: "number",
                   title: t("VALID_LAT_LONG"),
                 })}
-                style={{ width: "80%" }}
+                className="assetv2-asset-all-details-wrapper"
                 maxLength={6}
                 placeholder={t("ENT_NUMERIC_VALUE_ONLY")}
               />
             </div>
             <div>
               <div>
-                {`${t("ASSET_CITY")}`} <span style={{ color: "red" }}>*</span>
+                {`${t("ASSET_CITY")}`} <span className="assetv2-asset-all-details-required-asterisk">*</span>
               </div>
               <Controller
   control={control}
@@ -1004,7 +987,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
       optionKey="code"
       t={t}
       placeholder={"Select"}
-      style={{ width: "80%" }}
+      className="assetv2-asset-all-details-wrapper"
       disable={true}
     />
   )}
@@ -1012,7 +995,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
             </div>
             <div>
               <div>
-                {`${t("ASSET_LOCALITY")}`} <span style={{ color: "red" }}>*</span>
+                {`${t("ASSET_LOCALITY")}`} <span className="assetv2-asset-all-details-required-asterisk">*</span>
               </div>
 
               <Controller
@@ -1038,7 +1021,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
       optionKey="i18nKey"
       t={t}
       placeholder={"Select"}
-      style={{ width: "80%" }}
+      className="assetv2-asset-all-details-wrapper"
     />
   )}
 />
@@ -1070,7 +1053,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                     name={"purchaseDate"}
                     value={assetDetails["purchaseDate"]}
                     onChange={handleInputChange}
-                    style={{ width: "80%" }}
+                    className="assetv2-asset-all-details-wrapper"
                     max={new Date().toISOString().split("T")[0]}
                     rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
@@ -1096,7 +1079,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                       type: "text",
                       title: t("PT_NAME_ERROR_MESSAGE"),
                     }}
-                    style={{ width: "80%" }}
+                    className="assetv2-asset-all-details-wrapper"
                     placeholder={t("ENT_ALPHANUMERIC_PLACEHOLDER")}
                   />
                 </div>
@@ -1122,7 +1105,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                     name={"estimateConstructionDate"}
                     value={assetDetails["estimateConstructionDate"]}
                     onChange={handleInputChange}
-                    style={{ width: "80%" }}
+                    className="assetv2-asset-all-details-wrapper"
                     max={new Date().toISOString().split("T")[0]}
                     rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
@@ -1148,7 +1131,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                     name={"dateOfConstruction"}
                     value={assetDetails["dateOfConstruction"]}
                     onChange={handleInputChange}
-                    style={{ width: "80%" }}
+                    className="assetv2-asset-all-details-wrapper"
                     max={new Date().toISOString().split("T")[0]}
                     rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
@@ -1178,7 +1161,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                         type: "text",
                         title: t("PT_NAME_ERROR_MESSAGE"),
                       })}
-                      style={{ width: "80%", paddingLeft: "35px" }}
+                      className="assetv2-asset-all-details-spacing"
                       placeholder={t("ENT_NUMERIC_VALUE_ONLY")}
                     />
                   </div>
@@ -1191,15 +1174,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                 <div className="tooltip" style={assetStyles.toolTip}>
                   <InfoBannerIcon />
                   <span
-                    className="tooltiptext"
-                    style={{
-                      whiteSpace: "pre-wrap",
-                      fontSize: "small",
-                      wordWrap: "break-word",
-                      width: "300px",
-                      marginLeft: "15px",
-                      marginBottom: "-10px",
-                    }}
+                    className="tooltiptext assetv2-asset-all-details-bottom-spacing"
                   >
                     {`${t(`AST_SOURCE_OF_FUNDING`)}`}
                   </span>
@@ -1217,7 +1192,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                     option={sourcefinance}
                     optionKey="i18nKey"
                     placeholder={"Select"}
-                    style={{ width: "80%" }}
+                    className="assetv2-asset-all-details-wrapper"
                     t={t}
                   />
                 )}
@@ -1254,7 +1229,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                     title: t("PT_NAME_ERROR_MESSAGE"),
 
                   }}
-                  style={{ width: "80%", paddingLeft: "35px" }}
+                  className="assetv2-asset-all-details-spacing"
                   disabled={isCostFieldsDisable}
                   placeholder={t("ENT_NUMERIC_VALUE_ONLY")}
                 />
@@ -1292,7 +1267,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                     type: "number",
                     title: t("PT_NAME_ERROR_MESSAGE"),
                   })}
-                  style={{ width: "80%", paddingLeft: "35px" }}
+                  className="assetv2-asset-all-details-spacing"
                   placeholder={t("ENT_NUMERIC_VALUE_ONLY")}
                   disabled={isCostFieldsDisable}
                 />
@@ -1328,7 +1303,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                     type: "number",
                     title: t("PT_NAME_ERROR_MESSAGE"),
                   })}
-                  style={{ width: "80%", paddingLeft: "35px" }}
+                  className="assetv2-asset-all-details-spacing"
                   disabled={isCostFieldsDisable}
                   placeholder={t("ENT_NUMERIC_VALUE_ONLY")}
                 />
@@ -1365,7 +1340,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                     type: "number",
                     title: t("PT_NAME_ERROR_MESSAGE"),
                   })}
-                  style={{ width: "80%", paddingLeft: "35px" }}
+                  className="assetv2-asset-all-details-spacing"
                   placeholder={t("ENT_NUMERIC_VALUE_ONLY")}
                 />
               </div>
@@ -1401,7 +1376,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                     type: "number",
                     title: t("PT_NAME_ERROR_MESSAGE"),
                   })}
-                  style={{ width: "80%", paddingLeft: "35px" }}
+                  className="assetv2-asset-all-details-spacing"
                   placeholder={t("ENT_NUMERIC_VALUE_ONLY")}
                 />
               </div>
@@ -1427,7 +1402,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                     name={"invoiceDate"}
                     value={assetDetails["invoiceDate"]}
                     onChange={handleInputChange}
-                    style={{ width: "80%" }}
+                    className="assetv2-asset-all-details-wrapper"
                     rules={{
                       required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                       validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG"))
@@ -1460,7 +1435,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                       type: "text",
                       title: t("PT_NAME_ERROR_MESSAGE"),
                     })}
-                    style={{ width: "80%" }}
+                    className="assetv2-asset-all-details-wrapper"
                   />
                 </div>
               </React.Fragment>
@@ -1480,7 +1455,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                   return (
                     <div key={index}>
                       <div>
-                        {`${t(row.code)}`} {row.isMandatory ? <span style={{ color: "red" }}>*</span> : null}
+                        {`${t(row.code)}`} {row.isMandatory ? <span className="assetv2-asset-all-details-required-asterisk">*</span> : null}
                         <div className="tooltip" style={assetStyles.toolTip}>
                           <InfoBannerIcon />
                           <span className="tooltiptext" style={assetStyles.toolTipText}>
@@ -1498,7 +1473,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                           name={row.name}
                           value={assetDetails[row.name]}
                           onChange={handleInputChange}
-                          style={{ width: "80%" }}
+                          className="assetv2-asset-all-details-wrapper"
                           // max={new Date().toISOString().split("T")[0]}
                           rules={{
                             required: t("CORE_COMMON_REQUIRED_ERRMSG"),
@@ -1522,7 +1497,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                               placeholder={"Select"}
                               isMandatory={row.isMandatory}
                               disable={row.disable}
-                              style={{ width: "80%" }}
+                              className="assetv2-asset-all-details-wrapper"
                               t={t}
                             />
                           )}
@@ -1543,12 +1518,12 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                             type: row.columnType,
                             title: t("PT_NAME_ERROR_MESSAGE"),
                           })}
-                          style={{ width: "80%" }}
+                          className="assetv2-asset-all-details-wrapper"
                           readOnly={row.isReadOnly}
                           disabled={row.disable}
                         />
                       ) : row.addCurrentLocationButton === true ? (
-                        <div style={{ position: "relative" }}>
+                        <div className="assetv2-asset-all-details-wrapper-2">
                           <TextInput
                             t={t}
                             type={row.type}
@@ -1558,7 +1533,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                             name={row.name}
                             value={assetDetails[row.name] || ""}
                             onChange={handleInputChange}
-                            style={{ flex: 1 }}
+                            className="assetv2-astdesktop-inbox-wrapper"
                             ValidationRequired={false}
                             {...(validation = {
                               isRequired: true,
@@ -1568,18 +1543,8 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                             })}
                           />
                           <div
-                            className="butt-icon"
+                            className="butt-icon assetv2-asset-all-details-clickable-2"
                             onClick={() => fetchCurrentLocation(row.name)}
-                            style={{
-                              position: "absolute",
-                              right: "0",
-                              top: "50%",
-                              transform: "translateY(-50%)",
-                              cursor: "pointer",
-                              display: "flex",
-                              alignItems: "center",
-                              padding: "2px 5px",
-                            }}
                           >
                             <LocationIcon styles={{ width: "16px", border: "none" }} className="fill-path-primary-main" />
                           </div>
@@ -1600,7 +1565,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                             type: row.columnType,
                             title: t("PT_NAME_ERROR_MESSAGE"),
                           })}
-                          style={{ width: "80%" }}
+                          className="assetv2-asset-all-details-wrapper"
                           readOnly={row.isReadOnly}
                         />
                       )}
@@ -1627,7 +1592,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                   return (
                     <div key={index}>
                       <div>
-                        {`${t(row.code)}`} {row.isMandatory ? <span style={{ color: "red" }}>*</span> : null}
+                        {`${t(row.code)}`} {row.isMandatory ? <span className="assetv2-asset-all-details-required-asterisk">*</span> : null}
                         <div className="tooltip" style={assetStyles.toolTip}>
                           <InfoBannerIcon />
                           <span className="tooltiptext" style={assetStyles.toolTipText}>
@@ -1645,7 +1610,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                           name={row.name}
                           value={assetDetails[row.name]}
                           onChange={handleInputChange}
-                          style={{ width: "80%" }}
+                          className="assetv2-asset-all-details-wrapper"
                           // max={new Date().toISOString().split("T")[0]}
                           rules={{
                             required: t("CORE_COMMON_REQUIRED_ERRMSG"),
@@ -1668,7 +1633,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                               optionKey="i18nKey"
                               placeholder={"Select"}
                               isMandatory={row.isMandatory}
-                              style={{ width: "80%" }}
+                              className="assetv2-asset-all-details-wrapper"
                               t={t}
                             />
                           )}
@@ -1695,10 +1660,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                               type: row.columnType,
                               title: t("PT_NAME_ERROR_MESSAGE"),
                             })}
-                            style={{
-                              width: "80%",
-                              ...(row.name === "improvementCost" && { paddingLeft: "35px" })
-                            }}
+                            className={`asset-custom-width-80 ${row.name === "improvementCost" ? "padding-left-35" : ""}`}
                             readOnly={row.isReadOnly}
                             disabled={row.disable}
                           />
@@ -1714,7 +1676,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                           value={assetDetails[row.name] || ""}
                           onChange={handleInputChange}
                           placeholder={row.placeHolder}
-                          style={{ width: "80%" }}
+                          className="assetv2-asset-all-details-wrapper"
                           ValidationRequired={true}
                           {...(validation = {
                             type: "textarea",
@@ -1740,7 +1702,7 @@ const AssetAllDetails = ({ t, config, onSelect, userType, formData }) => {
                               type: row.columnType,
                               title: t("PT_NAME_ERROR_MESSAGE"),
                             })}
-                            style={{ width: "80%" }}
+                            className="assetv2-asset-all-details-wrapper"
                             readOnly={row.isReadOnly}
                           />
                         )}
@@ -1796,16 +1758,7 @@ function DocumentUploadField({ t, document: doc, setDocuments, setError, documen
 
   const LoadingSpinner = () => (
     <div
-      className="loading-spinner"
-      style={{
-        border: "2px solid #f3f3f3",
-        borderTop: "2px solid #a82227",
-        borderRadius: "50%",
-        width: "16px",
-        height: "16px",
-        animation: "spin 1s linear infinite",
-        display: "inline-block",
-      }}
+      className="loading-spinner assetv2-asset-all-details-wrapper-3"
     />
   );
 
@@ -1890,7 +1843,7 @@ function DocumentUploadField({ t, document: doc, setDocuments, setError, documen
   }, [uploadedFile, selectedDocument, latitude, longitude, setDocuments]);
 
   return (
-    <div style={{ marginBottom: "24px", width: "80%" }}>
+    <div className="assetv2-asset-all-details-bottom-spacing-2">
       {doc?.hasDropdown && (
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t(doc.code.replaceAll(".", "_"))}</CardLabel>
@@ -1907,7 +1860,7 @@ function DocumentUploadField({ t, document: doc, setDocuments, setError, documen
           }}
           message={
             isUploading ? (
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <div className="assetv2-asset-all-details-flex-row">
                 <LoadingSpinner />
                 <span>Uploading...</span>
               </div>
@@ -1926,7 +1879,7 @@ function DocumentUploadField({ t, document: doc, setDocuments, setError, documen
         {/* </div> */}
       </LabelFieldPair>
       {doc?.code === "OWNER.ASSETPHOTO" && latitude && longitude && (
-        <div style={{ marginTop: "10px", textAlign: "center" }}>
+        <div className="assetv2-asset-all-details-centered">
           <p>
             <strong>{t("Location Details")}:</strong>
           </p>

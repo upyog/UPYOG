@@ -138,7 +138,7 @@ const SelectOwnerShipDetails = ({
           </CardLabel>
           <Dropdown className="form-field" selected={getDropdwonForProperty(ownerShipdropDown)?.length === 1 ? getDropdwonForProperty(ownerShipdropDown)[0] : ownershipCategory} disable={getDropdwonForProperty(ownerShipdropDown)?.length === 1 || editScreen} option={getDropdwonForProperty(ownerShipdropDown)} select={selectedValue} optionKey="i18nKey" onBlur={onBlur} t={t} />
         </LabelFieldPair>
-        {formState.touchedFields?.[config.key] ? <CardLabelError className="pt-auto-82">
+        {formState.touchedFields?.[config.key] ? <CardLabelError className="pt-select-owner-ship-details-dropdown-text-sm-mt-neg">
             {formState.errors[config.key]?.message}
           </CardLabelError> : null}
       </React.Fragment>;

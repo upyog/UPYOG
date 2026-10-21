@@ -47,7 +47,7 @@ const BannerPicker = ({ t, isSuccess, data }) => {
           : ""
       }
       successful={isSuccess}
-      style={{ width: "100%" }}
+      className="est-estcard-fullwidth"
     />
   );
 };
@@ -124,7 +124,7 @@ const ESTAllotmentAcknowledgement = ({ onSuccess }) => {
       )}
 
       {isSuccess && paymentPath && (
-        <Link style={{marginLeft: "10px"}}  to={paymentPath}>
+        <Link className="est-estallotment-acknowledgement-spacing"  to={paymentPath}>
           <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} />
         </Link>
       )}

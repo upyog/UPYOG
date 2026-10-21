@@ -66,7 +66,7 @@ const AssetDisposeResponse = (props) => {
         ) : (
           <Loader />
         )}
-        <div style={{ padding: "10px", paddingBottom: "10px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <div className="assetv2-asset-dispose-response-flex-row">
           <Link to={`${props.parentRoute}/assetservice/applicationsearch/application-details/${applicationDetail}`} >
             <SubmitBar label={t("AST_DISPOSEL_LIST")} />
           </Link>

@@ -206,9 +206,9 @@ const WSConnectionHolder = ({
         <div>
         <CheckBox label={t("WS_CONN_HOLDER_SAME_AS_OWNER_DETAILS")} onChange={e => selectChecked(e)}
         // value={field.isPrimaryOwner}
-        checked={isOwnerSame} className="ws-auto-48" />  
+        checked={isOwnerSame} className="ws-connection-holder-item" />  
         </div>
-        {!isOwnerSame && <div className="ws-auto-49">
+        {!isOwnerSame && <div className="ws-connection-holder-mt-sm">
             <CardLabel>{`${t("WS_OWN_DETAIL_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="name" value={name} onChange={SelectName}
         //disable={name && !isOpenLinkFlow ? true : false}
@@ -217,7 +217,7 @@ const WSConnectionHolder = ({
           pattern: "^[a-zA-Z ]*$",
           type: "text",
           title: t("WS_NAME_ERROR_MESSAGE")
-        }} className="ws-auto-50" />
+        }} className="ws-connection-holder-link" />
             <CardLabel>{`${t("WS_OWN_DETAIL_GENDER_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <RadioButtons t={t} options={menu} optionsKey="code" name="gender" value={gender} selectedOption={gender} onSelect={setGenderName} isDependent={true} labelKey="COMMON_GENDER"
         //disabled={isUpdateProperty || isEditProperty}
@@ -234,7 +234,7 @@ const WSConnectionHolder = ({
           pattern: "[6-9]{1}[0-9]{9}",
           type: "tel",
           title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID")
-        }} className="ws-auto-51" />
+        }} className="ws-connection-holder-link" />
             <CardLabel>{`${t("WS_OWN_DETAIL_GUARDIAN_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="guardian" value={guardian} onChange={selectguardian}
         //disable={editScreen}
@@ -243,7 +243,7 @@ const WSConnectionHolder = ({
           pattern: "^[a-zA-Z ]*$",
           type: "text",
           title: t("WS_NAME_ERROR_MESSAGE")
-        }} className="ws-auto-52" />
+        }} className="ws-connection-holder-link" />
             <CardLabel>{`${t("WS_OWN_DETAIL_RELATIONSHIP_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <RadioButtons t={t} optionsKey="i18nKey" name="relationship" options={GuardianOptions} value={relationship} selectedOption={relationship} onSelect={setRelationshipName} isDependent={true} labelKey="COMMON_MASTERS_OWNERTYPE"
         //disabled={isUpdateProperty || isEditProperty}
@@ -252,7 +252,7 @@ const WSConnectionHolder = ({
             <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="address" value={address} onChange={selectaddress} {...validation = {
           isRequired: true,
           title: t("WS_ADDR_ERROR_MESSAGE")
-        }} className="ws-auto-53" />
+        }} className="ws-connection-holder-link" />
             <CardLabel>{`${t("WS_OWN_SPECIAL_CAT_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
             <Dropdown className="form-field" selected={ownerType} style={ownerTypeDropdownStyle}
         //disable={Menu?.length === 1 || editScreen}
@@ -265,7 +265,7 @@ const WSConnectionHolder = ({
             type: "Email",
             title: t("CORE_COMMON_APPLICANT_EMAILI_ID_INVALID")
           }} />
-            {error && <span className="ws-auto-54">{error}</span>}
+            {error && <span className="ws-connection-holder-link-red">{error}</span>}
             </div>
             {/* {ownerType && Object.entries(ownerType).length>0 && ownerType?.code !== "NONE" && <div>
                 <CardLabel>{`${t("WS_DOCUMENT_ID_LABEL")}`}</CardLabel>

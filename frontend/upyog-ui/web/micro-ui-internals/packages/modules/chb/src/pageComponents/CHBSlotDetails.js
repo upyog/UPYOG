@@ -137,7 +137,7 @@ const CHBSlotDetails
         }
         <Card>
         <CardSubHeader>
-        <div style={{display:"flex", justifyContent: "space-between", width: "100%" }}>
+        <div className="chb-chbaddress-details-fullwidth">
           {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
@@ -204,7 +204,7 @@ const CHBSlotDetails
             placeholder={"Enter Purpose Description"}
             value={purposeDescription}
             onChange={setpurposeDescription}
-            style={{ width: "50%" }}
+            className="chb-chbaddress-details-wrapper"
             ValidationRequired={false}
             {...(validation = {
               isRequired: true,

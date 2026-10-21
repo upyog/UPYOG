@@ -188,14 +188,14 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
         
       <React.Fragment>
             {/* Group 1: Basic Purchase Information */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '30px',  border: "1px solid rgb(101 43 43)", borderRadius: '8px', padding: '16px' }}>
+      <div className="assetv2-new-asset-grid-container">
       {assetDetails?.assetParentCategory === "LAND" && (
         <div>
           <div>
             {`${t("AST_SURVEY_NUMBER")}`}
-            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+            <div className="tooltip assetv2-new-asset-spacing">
               <InfoBannerIcon />
-              <span className="tooltiptext" style={{ whiteSpace: "pre-wrap", fontSize: "small", wordWrap: "break-word", width: "300px", marginLeft: "15px", marginBottom: "-10px" }}>
+              <span className="tooltiptext assetv2-asset-all-details-bottom-spacing">
                 {`${t("ASSET_SURVEY_NUMBER")}`}
               </span>
             </div>
@@ -214,17 +214,17 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
               type: "text",
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}
-            style={{ width: "100%" }}
+            className="assetv2-new-asset-fullwidth"
           />
         </div>
       )}
 
       <div>
         <div>
-          {`${t("AST_PURCHASE_DATE")}`} <span style={{ color: "red" }}>*</span>
-          <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+          {`${t("AST_PURCHASE_DATE")}`} <span className="assetv2-asset-all-details-required-asterisk">*</span>
+          <div className="tooltip assetv2-new-asset-spacing">
             <InfoBannerIcon />
-            <span className="tooltiptext" style={{ whiteSpace: "pre-wrap", fontSize: "small", wordWrap: "break-word", width: "300px", marginLeft: "15px", marginBottom: "-10px" }}>
+            <span className="tooltiptext assetv2-asset-all-details-bottom-spacing">
               {`${t("ASSET_PURCHASE_DATE")}`}
             </span>
           </div>
@@ -237,7 +237,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
           name={"purchaseDate"}
           value={assetDetails["purchaseDate"]}
           onChange={handleInputChange}
-          style={{ width: "100%" }}
+          className="assetv2-new-asset-fullwidth"
           max={new Date().toISOString().split("T")[0]}
           rules={{
             required: t("CORE_COMMON_REQUIRED_ERRMSG"),
@@ -248,7 +248,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
 
       <div>
         <div>
-          {`${t("AST_PURCHASE_ORDER")}`} <span style={{ color: "red" }}>*</span>
+          {`${t("AST_PURCHASE_ORDER")}`} <span className="assetv2-asset-all-details-required-asterisk">*</span>
         </div>
         <TextInput
           t={t}
@@ -264,16 +264,16 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
             type: "text",
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
-          style={{ width: "100%" }}
+          className="assetv2-new-asset-fullwidth"
         />
       </div>
 
       <div>
         <div>
-          {`${t("AST_LIFE")}`} <span style={{ color: "red" }}>*</span>
-          <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+          {`${t("AST_LIFE")}`} <span className="assetv2-asset-all-details-required-asterisk">*</span>
+          <div className="tooltip assetv2-new-asset-spacing">
             <InfoBannerIcon />
-            <span className="tooltiptext" style={{ whiteSpace: "pre-wrap", fontSize: "small", wordWrap: "break-word", width: "300px", marginLeft: "15px", marginBottom: "-10px" }}>
+            <span className="tooltiptext assetv2-asset-all-details-bottom-spacing">
               {`${t("ASSET_USEFUL_LIFECYCLE")} `}
             </span>
           </div>
@@ -292,20 +292,20 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
             type: "number",
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
-          style={{ width: "100%" }}
+          className="assetv2-new-asset-fullwidth"
         />
       </div>
-       <div style={{ marginBottom: '30px' }}>
+       <div className="assetv2-new-asset-bottom-spacing">
       <div>
-        {`${t("AST_LOCATION_DETAILS")}`} <span style={{ color: "red" }}>*</span>
-        <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+        {`${t("AST_LOCATION_DETAILS")}`} <span className="assetv2-asset-all-details-required-asterisk">*</span>
+        <div className="tooltip assetv2-new-asset-spacing">
           <InfoBannerIcon />
-          <span className="tooltiptext" style={{ whiteSpace: "pre-wrap", fontSize: "small", wordWrap: "break-word", width: "300px", marginLeft: "15px", marginBottom: "-10px" }}>
+          <span className="tooltiptext assetv2-asset-all-details-bottom-spacing">
             {`${t("ASSET_LOCATION_DETAILS")} `}
           </span>
         </div>
       </div>
-      <div style={{ position: "relative" }}>
+      <div className="assetv2-asset-all-details-wrapper-2">
         <TextInput
           t={t}
           type={"text"}
@@ -314,7 +314,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
           name={"location"}
           value={assetDetails["location"] || ""}
           onChange={handleInputChange}
-          style={{ flex: 1 }}
+          className="assetv2-astdesktop-inbox-wrapper"
           ValidationRequired={false}
           {...(validation = {
             isRequired: true,
@@ -324,18 +324,8 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
           })}
         />
         <div
-          className="butt-icon"
+          className="butt-icon assetv2-asset-all-details-clickable-2"
           onClick={() => fetchCurrentLocation("location")}
-          style={{
-            position: "absolute",
-            right: "0",
-            top: "50%",
-            transform: "translateY(-50%)",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            padding: "2px 5px",
-          }}
         >
           <LocationIcon styles={{ width: "16px", border: "none" }} className="fill-path-primary-main" />
         </div>
@@ -343,7 +333,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
 
       {/* {assetDetails?.location && (
         <div>
-          <button style={{ color: "#a82227" }} onClick={() => setShowMap(true)}>
+          <button className="custom-style" onClick={() => setShowMap(true)}>
             Mark Asset on Map
           </button>
         </div>
@@ -373,13 +363,13 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
     </div>
 
       {assetDetails?.assetParentCategory !== "LAND" && (
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '30px', border: "1px solid rgb(101 43 43)", borderRadius: '8px', padding: '16px' }}>
+      <div className="assetv2-new-asset-grid-container">
         <div>
           <div>
-            {`${t("AST_INVOICE_DATE")}`} <span style={{ color: "red" }}>*</span>
-            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+            {`${t("AST_INVOICE_DATE")}`} <span className="assetv2-asset-all-details-required-asterisk">*</span>
+            <div className="tooltip assetv2-new-asset-spacing">
               <InfoBannerIcon />
-              <span className="tooltiptext" style={{ whiteSpace: "pre-wrap", fontSize: "small", wordWrap: "break-word", width: "300px", marginLeft: "15px", marginBottom: "-10px" }}>
+              <span className="tooltiptext assetv2-asset-all-details-bottom-spacing">
                 {`${t("ASSET_INVOICE_ISSUE_DATE")} `}
               </span>
             </div>
@@ -393,7 +383,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
             name={"invoiceDate"}
             value={assetDetails["invoiceDate"]}
             onChange={handleInputChange}
-            style={{ width: "100%" }}
+            className="assetv2-new-asset-fullwidth"
             min={assetDetails["purchaseDate"] || ""}
             disabled={!assetDetails["purchaseDate"]}
             rules={{
@@ -409,10 +399,10 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
 
         <div>
           <div>
-            {`${t("AST_INVOICE_NUMBER")}`} <span style={{ color: "red" }}>*</span>
-            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+            {`${t("AST_INVOICE_NUMBER")}`} <span className="assetv2-asset-all-details-required-asterisk">*</span>
+            <div className="tooltip assetv2-new-asset-spacing">
               <InfoBannerIcon />
-              <span className="tooltiptext" style={{ whiteSpace: "pre-wrap", fontSize: "small", wordWrap: "break-word", width: "300px", marginLeft: "15px", marginBottom: "-10px" }}>
+              <span className="tooltiptext assetv2-asset-all-details-bottom-spacing">
                 {`${t("ASSET_INVOICE_ISSUE_DATE")} `}
               </span>
             </div>
@@ -431,7 +421,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
               type: "text",
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}
-            style={{ width: "100%" }}
+            className="assetv2-new-asset-fullwidth"
           />
         </div>
       </div>
@@ -440,13 +430,13 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
 
 
 
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '30px',  border: "1px solid rgb(101 43 43)", borderRadius: '8px', padding: '16px' }}>
+    <div className="assetv2-new-asset-grid-container">
       <div>
         <div>
           {`${t("AST_MARKET_RATE")}`}
-          <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+          <div className="tooltip assetv2-new-asset-spacing">
             <InfoBannerIcon />
-            <span className="tooltiptext" style={{ whiteSpace: "pre-wrap", fontSize: "small", wordWrap: "break-word", width: "300px", marginLeft: "15px", marginBottom: "-10px" }}>
+            <span className="tooltiptext assetv2-asset-all-details-bottom-spacing">
               {`${t("ASSET_MARKET_VALUE")} `}
             </span>
           </div>
@@ -466,16 +456,16 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
             type: "number",
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
-          style={{ width: "100%" }}
+          className="assetv2-new-asset-fullwidth"
         />
       </div>
 
       <div>
         <div>
-          {`${t("AST_PURCHASE_COST")}`} <span style={{ color: "red" }}>*</span>
-          <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+          {`${t("AST_PURCHASE_COST")}`} <span className="assetv2-asset-all-details-required-asterisk">*</span>
+          <div className="tooltip assetv2-new-asset-spacing">
             <InfoBannerIcon />
-            <span className="tooltiptext" style={{ whiteSpace: "pre-wrap", fontSize: "small", wordWrap: "break-word", width: "300px", marginLeft: "15px", marginBottom: "-10px" }}>
+            <span className="tooltiptext assetv2-asset-all-details-bottom-spacing">
               {`${t("ASSET_PURCHASE_COST")} `}
             </span>
           </div>
@@ -495,16 +485,16 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
             type: "number",
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
-          style={{ width: "100%" }}
+          className="assetv2-new-asset-fullwidth"
         />
       </div>
 
       <div>
         <div>
-          {`${t("AST_ACQUISITION_COST")}`} <span style={{ color: "red" }}>*</span>
-          <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+          {`${t("AST_ACQUISITION_COST")}`} <span className="assetv2-asset-all-details-required-asterisk">*</span>
+          <div className="tooltip assetv2-new-asset-spacing">
             <InfoBannerIcon />
-            <span className="tooltiptext" style={{ whiteSpace: "pre-wrap", fontSize: "small", wordWrap: "break-word", width: "300px", marginLeft: "15px", marginBottom: "-10px" }}>
+            <span className="tooltiptext assetv2-asset-all-details-bottom-spacing">
               {`${t("ASSET_ACQUISITION_COST")} `}
             </span>
           </div>
@@ -524,16 +514,16 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
             type: "number",
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
-          style={{ width: "100%" }}
+          className="assetv2-new-asset-fullwidth"
         />
       </div>
 
       <div>
         <div>
-          {`${t("AST_BOOK_VALUE")}`} <span style={{ color: "red" }}>*</span>
-          <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+          {`${t("AST_BOOK_VALUE")}`} <span className="assetv2-asset-all-details-required-asterisk">*</span>
+          <div className="tooltip assetv2-new-asset-spacing">
             <InfoBannerIcon />
-            <span className="tooltiptext" style={{ whiteSpace: "pre-wrap", fontSize: "small", wordWrap: "break-word", width: "300px", marginLeft: "15px", marginBottom: "-10px" }}>
+            <span className="tooltiptext assetv2-asset-all-details-bottom-spacing">
               {`${t("ASSET_BOOK_VALUE")} `}
             </span>
           </div>
@@ -552,7 +542,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
             type: "text",
             title: t("PT_NAME_ERROR_MESSAGE"),
           })}
-          style={{ width: "100%" }}
+          className="assetv2-new-asset-fullwidth"
         />
       </div>
     </div>
@@ -560,7 +550,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
 
         
           {/* Dynamic Fields - 2 column grid */}
-    {/* <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', border: '1px solid #ccc', borderRadius: '8px', boxShadow: 'rgb(0 0 0 / 26%) 0px 4px 24px', padding: '16px' }}>
+    {/* <div className="custom-style">
       {formJson.map((row, index) => {
         if (row.conditionalField) {
           const { dependsOn, showWhen } = row.conditionalField;
@@ -575,15 +565,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
       return (
         <div
           key={gIndex}
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "20px",
-            border: "1px solid rgb(101 43 43)",
-            borderRadius: "8px",
-            padding: "16px",
-            marginBottom: "20px",
-          }}
+          className="assetv2-new-asset-grid-container-2"
         >
           {group.map((row, index) => {
             console.log("roewowow",row);
@@ -597,10 +579,10 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
         return (
           <div key={index}>
             <div>
-              {`${t(row.code)}`} {row.isMandatory ? <span style={{ color: "red" }}>*</span> : null}
-              <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+              {`${t(row.code)}`} {row.isMandatory ? <span className="assetv2-asset-all-details-required-asterisk">*</span> : null}
+              <div className="tooltip assetv2-new-asset-spacing">
                 <InfoBannerIcon />
-                <span className="tooltiptext" style={{ whiteSpace: "pre-wrap", fontSize: "small", wordWrap: "break-word", width: "300px", marginLeft: "15px", marginBottom: "-10px" }}>
+                <span className="tooltiptext assetv2-asset-all-details-bottom-spacing">
                   {`${t(row.code + "_INFO")} `}
                 </span>
               </div>
@@ -615,7 +597,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                 name={row.name}
                 value={assetDetails[row.name]}
                 onChange={handleInputChange}
-                style={{ width: "100%" }}
+                className="assetv2-new-asset-fullwidth"
                 // max={new Date().toISOString().split("T")[0]}
                 rules={{
                   required: t("CORE_COMMON_REQUIRED_ERRMSG"),
@@ -657,11 +639,11 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                   type: row.columnType,
                   title: t("PT_NAME_ERROR_MESSAGE"),
                 })}
-                style={{ width: "100%" }}
+                className="assetv2-new-asset-fullwidth"
                 readOnly={row.isReadOnly}
               />
             ) : row.addCurrentLocationButton === true ? (
-              <div style={{ position: "relative" }}>
+              <div className="assetv2-asset-all-details-wrapper-2">
                 <TextInput
                   t={t}
                   type={row.type}
@@ -670,7 +652,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                   name={row.name}
                   value={assetDetails[row.name] || ""}
                   onChange={handleInputChange}
-                  style={{ flex: 1 }}
+                  className="assetv2-astdesktop-inbox-wrapper"
                   ValidationRequired={false}
                   {...(validation = {
                     isRequired: true,
@@ -680,18 +662,8 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                   })}
                 />
                 <div
-                  className="butt-icon"
+                  className="butt-icon assetv2-asset-all-details-clickable-2"
                   onClick={() => fetchCurrentLocation(row.name)}
-                  style={{
-                    position: "absolute",
-                    right: "0",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    padding: "2px 5px",
-                  }}
                 >
                   <LocationIcon styles={{ width: "16px", border: "none" }} className="fill-path-primary-main" />
                 </div>
@@ -711,7 +683,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                   type: row.columnType,
                   title: t("PT_NAME_ERROR_MESSAGE"),
                 })}
-                style={{ width: "100%" }}
+                className="assetv2-new-asset-fullwidth"
                 readOnly={row.isReadOnly}
               />
             )}

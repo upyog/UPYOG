@@ -136,7 +136,7 @@ import {
         return (
           <React.Fragment>
             <div>
-              <div className="cardHeaderWithOptions wt-auto-61">
+              <div className="cardHeaderWithOptions wt-tp-application-details-item">
                 <Header styles={{
           fontSize: "32px"
         }}>{t("TP_BOOKING_DETAILS")}</Header>
@@ -149,7 +149,7 @@ import {
                 </StatusTable>
                 
       
-                <CardSubHeader className="wt-auto-62">{t("TP_APPLICANT_DETAILS")}</CardSubHeader>
+                <CardSubHeader className="wt-tp-application-details-subheader-title-lg">{t("TP_APPLICANT_DETAILS")}</CardSubHeader>
                 <StatusTable>
                   <Row className="border-none" label={t("WT_APPLICANT_NAME")} text={tp_details?.applicantDetail?.name || t("CS_NA")} />
                   <Row className="border-none" label={t("WT_MOBILE_NUMBER")} text={tp_details?.applicantDetail?.mobileNumber || t("CS_NA")} />
@@ -157,7 +157,7 @@ import {
                   <Row className="border-none" label={t("WT_EMAIL_ID")} text={tp_details?.applicantDetail?.emailId || t("CS_NA")} />
                 </StatusTable>
       
-                <CardSubHeader className="wt-auto-63">{t("ES_TITLE_ADDRESS_DETAILS")}</CardSubHeader>
+                <CardSubHeader className="wt-tp-application-details-subheader-title-lg">{t("ES_TITLE_ADDRESS_DETAILS")}</CardSubHeader>
                 <StatusTable>
                   <Row className="border-none" label={t("PINCODE")} text={tp_details?.address?.pincode || t("CS_NA")} />
                   <Row className="border-none" label={t("CITY")} text={tp_details?.address?.city || t("CS_NA")} />
@@ -169,7 +169,7 @@ import {
                   <Row className="border-none" label={t("LANDMARK")} text={tp_details?.address?.landmark || t("CS_NA")} />
                 </StatusTable>
       
-                <CardSubHeader className="wt-auto-64">{t("TP_REQUEST_DETAILS")}</CardSubHeader>
+                <CardSubHeader className="wt-tp-application-details-subheader-title-lg">{t("TP_REQUEST_DETAILS")}</CardSubHeader>
                 <StatusTable>
                   <Row className="border-none" label={t("REASON_FOR_PRUNING")} text={t(tp_details?.reasonForPruning) || t("CS_NA")} />
                   <Row className="border-none" label={t("LATITUDE_GEOTAG")} text={tp_details?.latitude || t("CS_NA")} />
@@ -178,11 +178,11 @@ import {
                     className="border-none"
                     label={t("DIGIPIN")}
                     text={
-                      <div className="wt-auto-74">
+                      <div className="wt-tp-application-details-digipin-row-center">
                         <span>{tp_details?.additionalDetails?.digipin || t("CS_NA")}</span>
                         {tp_details?.additionalDetails?.digipin && tp_details?.latitude && tp_details?.longitude && (
                           <button
-                            className="wt-auto-75"
+                            className="wt-tp-application-details-digipin-btn-red"
                             onClick={() => handleOpenDigipinMap()}
                           >
                             {t("CS_VIEW_ON_MAP")}
@@ -205,7 +205,7 @@ import {
                 <WFApplicationTimeline application={application} id={application?.bookingNo} userType={"citizen"} />
                 {showToast && <Toast error={showToast.key} label={t(showToast.label)} onClose={() => {
           setShowToast(null);
-        }} className="wt-auto-65" />}
+        }} className="wt-tp-application-details-link" />}
               </Card>
             </div>
           </React.Fragment>);

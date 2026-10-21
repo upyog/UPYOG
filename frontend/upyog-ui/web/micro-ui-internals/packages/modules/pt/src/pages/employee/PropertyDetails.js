@@ -2,19 +2,19 @@ import { EditIcon, Header, LinkLabel, Loader, Modal } from "@nudmcdgnpm/digit-ui
 import _ from "lodash";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams,  } from "react-router-dom";
+import { useParams, } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 import OwnerHistory from "./PropertyMutation/ownerHistory";
 import usePropertyAPI from "../../../../../libraries/src/hooks/pt/usePropertyAPI";
-import "../../css/pt-inline-auto.css";
+
 const Close = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
-    <path d="M0 0h24v24H0V0z" fill="none" />
-    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
-  </svg>;
+  <path d="M0 0h24v24H0V0z" fill="none" />
+  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+</svg>;
 const CloseBtn = props => {
   return <div className="icon-bg-secondary" onClick={props.onClick}>
-      <Close />
-    </div>;
+    <Close />
+  </div>;
 };
 const PropertyDetails = () => {
   const {
@@ -162,9 +162,9 @@ const PropertyDetails = () => {
                     mobileNumber: appDetailsToShow?.applicationData?.owners[ind]?.mobileNumber,
                     index: ind
                   });
-                }} className="pt-auto-163">
-                    <EditIcon />
-                  </span>;
+                }} className="pt-property-details-icon-action-indent-20">
+                  <EditIcon />
+                </span>;
               }
             });
           });
@@ -173,9 +173,9 @@ const PropertyDetails = () => {
           ...e,
           Component: () => <LinkLabel onClick={() => {
             setShowModal(prev => !prev);
-          }} className="pt-auto-164">
-              {t("PT_VIEW_HISTORY")}
-            </LinkLabel>
+          }} className="pt-property-details-link">
+            {t("PT_VIEW_HISTORY")}
+          </LinkLabel>
         };
       }
       return e;
@@ -188,7 +188,7 @@ const PropertyDetails = () => {
         asSectionHeader: true,
         belowComponent: () => (
           <LinkLabel
-            onClick={() => navigate({ pathname: `/upyog-ui/employee/pt/payment-details/${applicationNumber}`})}
+            onClick={() => navigate({ pathname: `/upyog-ui/employee/pt/payment-details/${applicationNumber}` })}
             style={isMobile ? { marginTop: "15px", marginLeft: "0px" } : { marginTop: "15px" }}
           >
             {t("PT_VIEW_PAYMENT")}
@@ -282,10 +282,10 @@ const PropertyDetails = () => {
                   );
                 },
                 // redirectionUrl: {
-                 
+
                 //   state: { workflow: { action: "OPEN", moduleName: "PT", businessService: "PT.CREATE" } },
                 // },
-               // AmountDueForPay: fetchBillData?.Bill[0]?.totalAmount,
+                // AmountDueForPay: fetchBillData?.Bill[0]?.totalAmount,
                 //isWarningPopUp: !fetchBillData?.Bill[0]?.totalAmount ? true : true,
                 // redirectionUrl: {
                 //   pathname: !fetchBillData?.Bill[0]?.totalAmount
@@ -330,9 +330,9 @@ const PropertyDetails = () => {
     return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence;
   });
   return <div>
-      <Header>{t("PT_PROPERTY_INFORMATION")}</Header>
-      <ApplicationDetailsTemplate applicationDetails={appDetailsToShow} isLoading={isLoading} isDataLoading={isLoading} applicationData={appDetailsToShow?.applicationData} mutate={null} workflowDetails={appDetailsToShow?.applicationData?.status === "ACTIVE" ? workflowDetails : {}} businessService="PT" showToast={showToast} setShowToast={setShowToast} closeToast={closeToast} showTimeLine={false} timelineStatusPrefix={"ES_PT_COMMON_STATUS_"} forcedActionPrefix={"WF_EMPLOYEE_PT.CREATE"} />
-      {showModal ? <Modal headerBarMain={<h1 className="heading-m">{showUpdateNo ? t("PTUPNO_HEADER") : t("PT_OWNER_HISTORY")}</h1>} headerBarEnd={<CloseBtn onClick={() => {
+    <Header>{t("PT_PROPERTY_INFORMATION")}</Header>
+    <ApplicationDetailsTemplate applicationDetails={appDetailsToShow} isLoading={isLoading} isDataLoading={isLoading} applicationData={appDetailsToShow?.applicationData} mutate={null} workflowDetails={appDetailsToShow?.applicationData?.status === "ACTIVE" ? workflowDetails : {}} businessService="PT" showToast={showToast} setShowToast={setShowToast} closeToast={closeToast} showTimeLine={false} timelineStatusPrefix={"ES_PT_COMMON_STATUS_"} forcedActionPrefix={"WF_EMPLOYEE_PT.CREATE"} />
+    {showModal ? <Modal headerBarMain={<h1 className="heading-m">{showUpdateNo ? t("PTUPNO_HEADER") : t("PT_OWNER_HISTORY")}</h1>} headerBarEnd={<CloseBtn onClick={() => {
       setShowModal(false);
       setShowUpdateNo(false);
     }} />} hideSubmit={true} isDisabled={false} popupStyles={showUpdateNo ? {
@@ -340,7 +340,7 @@ const PropertyDetails = () => {
     } : {
       width: "75%"
     }}>
-          {showUpdateNo && <UpdatePropertyNumberComponent showPopup={setShowModal} name={showUpdateNo?.name} UpdateNumberConfig={UpdateNumberConfig} mobileNumber={showUpdateNo?.mobileNumber} t={t} onValidation={(data, showToast) => {
+      {showUpdateNo && <UpdatePropertyNumberComponent showPopup={setShowModal} name={showUpdateNo?.name} UpdateNumberConfig={UpdateNumberConfig} mobileNumber={showUpdateNo?.mobileNumber} t={t} onValidation={(data, showToast) => {
         let newProp = {
           ...appDetailsToShow?.applicationData
         };
@@ -368,8 +368,8 @@ const PropertyDetails = () => {
           }
         });
       }}></UpdatePropertyNumberComponent>}
-          {!showUpdateNo && <OwnerHistory propertyId={applicationNumber} userType={"employee"} />}
-        </Modal> : null}
-    </div>;
+      {!showUpdateNo && <OwnerHistory propertyId={applicationNumber} userType={"employee"} />}
+    </Modal> : null}
+  </div>;
 };
 export default PropertyDetails;

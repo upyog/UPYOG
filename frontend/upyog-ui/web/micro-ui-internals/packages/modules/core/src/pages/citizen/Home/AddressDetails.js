@@ -150,7 +150,7 @@ const Address = ({ address, actionCancelOnSubmit, isEdit, refreshAddresses}) => 
       setError={setShowToast}
       error={showToast?.label}
     >
-      <div style={{ boxShadow: "none" }}>
+      <div className="core-address-details-wrapper">
           <AddressDetails t={t} formData={formData} onSelect={setFormData} isEdit={isEdit} />
       </div>
     </Modal>

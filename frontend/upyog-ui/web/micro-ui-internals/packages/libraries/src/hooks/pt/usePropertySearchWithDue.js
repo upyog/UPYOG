@@ -88,8 +88,13 @@ const usePropertySearchWithDue = ({ tenantId, filters, auth = true, configs }) =
       if (!consumerCodes) {
         return { Bill: [] };
       }
-      const response = await Digit.PTService.fetchPaymentDetails({ tenantId, consumerCodes, auth });
-      return response || { Bill: [] };
+      try {
+        const response = await Digit.PTService.fetchPaymentDetails({ tenantId, consumerCodes, auth });
+        return response || { Bill: [] };
+      } catch (err) {
+        console.warn("fetchPaymentDetails failed, displaying partial property data without due amounts:", err);
+        return { Bill: [] };
+      }
     },
     // Prevents unnecessary bill API calls when there are no properties to fetch dues for.
     enabled: (configs?.enabled ?? true) && !!data && !!consumerCodes,

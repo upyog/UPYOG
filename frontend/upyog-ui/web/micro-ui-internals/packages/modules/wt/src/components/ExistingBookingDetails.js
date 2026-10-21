@@ -114,10 +114,7 @@ export const ExistingBookingDetails = ({ onSubmit,setExistingDataSet,moduleKey }
   return <React.Fragment>
       <div>
         {filteredApplications.length > 0 && filteredApplications.map((application, index) => <div key={index}> 
-              <Card style={{
-          ...applicationContainerStyle,
-          cursor: "pointer"
-        }} onMouseEnter={e => {
+              <Card className="existing-booking-card" style={applicationContainerStyle} onMouseEnter={e => {
           e.currentTarget.style.backgroundColor = applicationContainerHoverStyle.backgroundColor;
           e.currentTarget.style.boxShadow = applicationContainerHoverStyle.boxShadow;
         }} onMouseLeave={e => {
@@ -133,7 +130,7 @@ export const ExistingBookingDetails = ({ onSubmit,setExistingDataSet,moduleKey }
                 <KeyNote keyValue={t("PT_COMMON_TABLE_COL_STATUS_LABEL")} note={t(`${application?.bookingStatus}`)} />
               </Card>
             </div>)}
-        {filteredApplications.length === 0 && !isLoading && <p className="wt-auto-3">
+        {filteredApplications.length === 0 && !isLoading && <p className="wt-existing-booking-details-mt-md-ml-md">
             {t("NO_APPLICATION_FOUND_MSG")}
           </p>}
       </div>

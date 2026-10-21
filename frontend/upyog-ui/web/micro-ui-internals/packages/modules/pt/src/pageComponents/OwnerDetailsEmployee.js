@@ -14,7 +14,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { stringReplaceAll, CompareTwoObjects } from "../utils";
-import "../css/pt-inline.css";
+
 
 const createOwnerDetails = () => ({
   name: "",

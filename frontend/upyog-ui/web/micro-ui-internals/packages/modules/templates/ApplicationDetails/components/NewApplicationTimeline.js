@@ -144,7 +144,7 @@ export default function NewApplicationTimeline({ workflowDetails, t, tenantId = 
     <React.Fragment>
       <div className="custom-timeline-container">
         {timeObj && (
-          <div style={{ marginBottom: "8px", fontStyle: "italic" }}>
+          <div className="tmpl-new-application-timeline-bottom-spacing">
             {t("TOTAL_TIME_TAKEN")}: {timeObj?.days} {t("DAYS")} {timeObj?.hours} {t("HOURS")} {timeObj?.minutes} {t("MINUTES")} {timeObj?.seconds}{" "}
             {t("SECONDS")}
           </div>
@@ -158,7 +158,7 @@ export default function NewApplicationTimeline({ workflowDetails, t, tenantId = 
           <div className="custom-title-bar-row">
             <h2 className="custom-timeline-title">{t("Application History")}</h2>
             <span onClick={handleDownloadPDF} className="download-button">
-              <PDFSvg width={50} height={40} style={{ marginRight: "8px" }} />
+              <PDFSvg width={50} height={40} className="tmpl-new-application-timeline-icon" />
             </span>
           </div>
         </div>

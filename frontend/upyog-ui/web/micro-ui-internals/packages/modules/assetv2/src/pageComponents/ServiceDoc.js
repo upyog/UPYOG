@@ -27,7 +27,7 @@ const ServiceDoc = ({ t, config, onSelect, userType, formData }) => {
          
           <CardSectionHeader>{t("AST_REQ_SCREEN_LABEL")}</CardSectionHeader>
           
-          <CardText style={{color: 'red'}}>{t('AST_DOCUMENT_ACCEPTED_PDF_JPG_PNG')}</CardText>
+          <CardText className="assetv2-asset-all-details-required-asterisk">{t('AST_DOCUMENT_ACCEPTED_PDF_JPG_PNG')}</CardText>
 
           <div>
             {isLoading && <Loader />}

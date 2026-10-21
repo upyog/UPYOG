@@ -26,7 +26,7 @@ const ActionButton = ({ jumpTo }) => {
   function routeTo() {
     navigate(jumpTo);
   }
-  return <LinkButton label={<EditIcon className="wt-auto-34" />} className="check-page-link-button" onClick={routeTo} />;
+  return <LinkButton label={<EditIcon className="wt-check-page-btn-relative-mt-neg" />} className="check-page-link-button" onClick={routeTo} />;
 };
 // this is file open service
 const openFilePDF = fileId => {
@@ -76,7 +76,7 @@ const WTCheckPage = ({
         <CardHeader>{t("WT_SUMMARY_PAGE")}</CardHeader>
         <div>
           <CardSubHeader>{t("ES_TITILE_OWNER_DETAILS")}</CardSubHeader>
-          <StatusTable className="wt-auto-35">
+          <StatusTable className="wt-check-page-link">
             <Row label={t("COMMON_APPLICANT_NAME")} text={`${t(checkForNA(owner?.applicantName))}`} actionButton={<ActionButton jumpTo={`${APPLICATION_PATH}/citizen/wt/request-service/applicant-details`} />} />
             <Row label={t("COMMON_MOBILE_NUMBER")} text={`${t(checkForNA(owner?.mobileNumber))}`} />
             <Row label={t("COMMON_ALT_MOBILE_NUMBER")} text={`${t(checkForNA(owner?.alternateNumber))}`} />
@@ -84,7 +84,7 @@ const WTCheckPage = ({
           </StatusTable>
 
           <CardSubHeader>{t("ES_TITLE_ADDRESS_DETAILS")}</CardSubHeader>
-          <StatusTable className="wt-auto-36">
+          <StatusTable className="wt-check-page-link">
             <Row label={t("HOUSE_NO")} text={`${t(checkForNA(address?.houseNo))}`} actionButton={<ActionButton jumpTo={`${APPLICATION_PATH}/citizen/wt/request-service/address-details`} />} />
             <Row label={t("ADDRESS_LINE1")} text={`${t(checkForNA(address?.addressLine1))}`} />
             <Row label={t("ADDRESS_LINE2")} text={`${t(checkForNA(address?.addressLine2))}`} />
@@ -96,7 +96,7 @@ const WTCheckPage = ({
           </StatusTable>
           {serviceType?.serviceType?.code === "WT" && <>
               <CardSubHeader>{t("WT_REQUEST_DETAILS")}</CardSubHeader>
-              <StatusTable className="wt-auto-37">
+              <StatusTable className="wt-check-page-link">
                 <Row label={t("WT_TANKER_TYPE")} text={`${t(checkForNA(requestDetails?.tankerType?.value))}`} actionButton={<ActionButton jumpTo={`${APPLICATION_PATH}/citizen/wt/request-service/request-details`} />} />
                 <Row label={t("WT_WATER_TYPE")} text={`${t(checkForNA(requestDetails?.waterType?.code))}`} />
                 <Row label={t("WT_TANKER_QUANTITY")} text={`${t(checkForNA(requestDetails?.tankerQuantity?.code))}`} />
@@ -109,7 +109,7 @@ const WTCheckPage = ({
             </>}
           {serviceType?.serviceType?.code === "MobileToilet" && <>
               <CardSubHeader>{t("ES_REQUEST_DETAILS")}</CardSubHeader>
-              <StatusTable className="wt-auto-38">
+              <StatusTable className="wt-check-page-link">
                 <Row label={t("MT_NUMBER_OF_MOBILE_TOILETS")} text={`${t(checkForNA(toiletRequestDetails?.mobileToilet?.code))}`} actionButton={<ActionButton jumpTo={`${APPLICATION_PATH}/citizen/wt/request-service/toiletRequest-details`} />} />
                 <Row label={t("MT_DELIVERY_FROM_DATE")} text={`${t(checkForNA(formatDate(toiletRequestDetails?.deliveryfromDate)))}`} />
                 <Row label={t("MT_DELIVERY_TO_DATE")} text={`${t(formatDate(checkForNA(toiletRequestDetails?.deliverytoDate)))}`} />
@@ -121,12 +121,12 @@ const WTCheckPage = ({
 
           {serviceType?.serviceType?.code === "TREE_PRUNING" && <>
               <CardSubHeader>{t("TP_REQUEST_DETAILS")}</CardSubHeader>
-              <StatusTable className="wt-auto-39">
+              <StatusTable className="wt-check-page-link">
                 <Row label={t("REASON_FOR_PRUNING")} text={`${t(checkForNA(treePruningRequestDetails?.reasonOfPruning?.code))}`} actionButton={<ActionButton jumpTo={`${APPLICATION_PATH}/citizen/wt/request-service/treePruningRequest-details`} />} />
 
                 <Row label={t("LOCATION_GEOTAG")} text={`${t(checkForNA(treePruningRequestDetails?.geoTagLocation))}`} />
 
-                <Row label={t("UPLOAD_THE_SITE_PHOTOGRAPH")} text={<span onClick={() => openFilePDF(treePruningRequestDetails?.supportingDocumentFile)} className="wt-auto-40">
+                <Row label={t("UPLOAD_THE_SITE_PHOTOGRAPH")} text={<span onClick={() => openFilePDF(treePruningRequestDetails?.supportingDocumentFile)} className="wt-check-page-btn-row-center-flex">
                       <GenericFileIcon />
                       {/* {t(treePruningRequestDetails.supportingDocumentFile)} */}
                     </span>} />

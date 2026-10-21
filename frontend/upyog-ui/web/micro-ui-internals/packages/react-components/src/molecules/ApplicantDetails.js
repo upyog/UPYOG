@@ -122,7 +122,7 @@ const ApplicantDetails = ({ t, config, onSelect, formData, renewApplication = {}
         <RadioButtons
             t={t}
             options={genderOptions}
-            style={{ display: "flex", flexWrap: "wrap", maxHeight: "30px" }}
+            className="rc-applicant-details-flex-container"
             innerStyles={{ minWidth: "24%" }}
             optionsKey="i18nKey"
             name={`gender`}

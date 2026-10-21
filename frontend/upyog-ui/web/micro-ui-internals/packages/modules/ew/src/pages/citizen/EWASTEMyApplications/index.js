@@ -80,19 +80,19 @@ export const EWASTEMyApplications = () => {
               <EwasteApplication application={application} tenantId={user?.permanentCity} buttonLabel={getLabelValue(application)} />
             </div>
           ))}
-        {!applicationsList?.length > 0 && <p style={{ marginLeft: "16px", marginTop: "16px" }}>{t("EWASTE_NO_APPLICATION_FOUND_MSG")}</p>}
+        {!applicationsList?.length > 0 && <p className="ew-index-top-spacing">{t("EWASTE_NO_APPLICATION_FOUND_MSG")}</p>}
 
         {applicationsList?.length !== 0 && (
           <div>
-            <p style={{ marginLeft: "16px", marginTop: "16px" }}>
+            <p className="ew-index-top-spacing">
               <span className="link">{<Link to={`/upyog-ui/citizen/ew/myApplication/${t1}`}>{t("EWASTE_LOAD_MORE_MSG")}</Link>}</span>
             </p>
           </div>
         )}
       </div>
 
-      <p style={{ marginLeft: "16px", marginTop: "16px" }}>
-        <span className="link" style={{ display: "block" }}>
+      <p className="ew-index-top-spacing">
+        <span className="link ew-index-wrapper">
           <Link to="/upyog-ui/citizen/ew/raiseRequest/productdetails">{t("EWASTE_COMMON_CLICK_HERE_TO_REGISTER_NEW_APPLICATION")}</Link>
         </span>
       </p>

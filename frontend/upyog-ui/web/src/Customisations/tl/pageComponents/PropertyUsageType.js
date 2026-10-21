@@ -103,7 +103,7 @@ const TLUsageType = ({ t, config, onSelect, userType, formData, formState, setEr
           />
         </LabelFieldPair>
         {formState.touched[config.key] ? (
-          <CardLabelError style={{ width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" }}>
+          <CardLabelError className="custom-usage-label-error">
             {formState.errors?.[config.key]?.message}
           </CardLabelError>
         ) : null}

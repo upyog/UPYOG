@@ -27,10 +27,10 @@ const WSDisconnectionResponse = (props) => {
         fontSize: "32px"
       }} infoOneStyles={{
         paddingTop: "20px"
-      }} className="ws-auto-305" />
-        <CardText className="ws-auto-306">{t("WS_MESSAGE_SUB_DESCRIPTION_LABEL")}</CardText>
-        <div className="ws-auto-307">
-         <div className="primary-label-btn d-grid ws-auto-308" onClick={handleDownloadPdf}>
+      }} className="ws-disconnection-response-label" />
+        <CardText className="ws-disconnection-response-label-mb-sm">{t("WS_MESSAGE_SUB_DESCRIPTION_LABEL")}</CardText>
+        <div className="ws-disconnection-response-label-flex">
+         <div className="primary-label-btn d-grid ws-disconnection-response-label-no-pad-mb-sm" onClick={handleDownloadPdf}>
             <svg width="20" height="23" viewBox="0 0 20 23" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M19.3334 8H14V0H6.00002V8H0.666687L10 17.3333L19.3334 8ZM0.666687 20V22.6667H19.3334V20H0.666687Z" fill="#a82227" />
             </svg>
@@ -38,8 +38,8 @@ const WSDisconnectionResponse = (props) => {
           </div>
         </div>
 
-        <ActionBar className="ws-auto-309">
-          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} onSubmit={onSubmit} className="ws-auto-310" />
+        <ActionBar className="ws-disconnection-response-link-flex">
+          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} onSubmit={onSubmit} className="ws-disconnection-response-link" />
         </ActionBar>
       </Card>
     </div>

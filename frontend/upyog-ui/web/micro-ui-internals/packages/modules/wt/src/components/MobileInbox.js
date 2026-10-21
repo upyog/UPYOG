@@ -55,7 +55,7 @@ const MobileInbox = ({
       return obj;
     });
   };
-  return <div className="wt-auto-4">
+  return <div className="wt-mobile-inbox-no-pad">
       <div className="inbox-container">
         <div className="filters-container">
           {!isSearch && <ApplicationLinks classNameForMobileView="linksWrapperForMobileInbox" linkPrefix={parentRoute} isMobile={true} />}

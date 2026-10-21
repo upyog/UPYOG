@@ -75,7 +75,7 @@ const CancelBillModal = ({ t, closeModal, actionCancelLabel, actionCancelOnSubmi
             actionSaveOnSubmit={handleSubmit(actionSaveOnSubmit)}
             formId="modal-action"
         >
-            <Card style={{ boxShadow: "none" }}>
+            <Card className="bills-cancel-bill-modal-card">
                 <form onSubmit={handleSubmit(onSubmit)}>
                     {!isReasonsLoading && isReasonsFetched ?<span>
                         <label>{`${t("BC_RECEIPT_CANCELLATION_REASON_LABEL")}`}<span className="check-page-link-button"> *</span></label>

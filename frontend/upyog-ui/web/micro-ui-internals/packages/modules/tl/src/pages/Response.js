@@ -41,18 +41,18 @@ const Response = props => {
           <Banner message={t("TL_APPLICATION_SUCCESS_MESSAGE_MAIN")} applicationNumber={state?.data?.[0]?.applicationNumber} info={t("TL_REF_NO_LABEL")} successful={true} />
          
           <CardText>{t("TL_NEW_SUCESS_RESPONSE_NOTIFICATION_LABEL")}</CardText>
-          <div className="primary-label-btn d-grid tl-auto-146" onClick={printReciept}>
+          <div className="primary-label-btn d-grid tl-response-btn" onClick={printReciept}>
               <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
                 <path d="M0 0h24v24H0z" fill="none" />
                 <path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z" />
               </svg>
               {t("TL_PRINT_APPLICATION_LABEL")}
           </div>
-          <ActionBar className="tl-auto-147">
-          {state?.data?.[0]?.status !== "PENDINGPAYMENT" ? <Link to={`/upyog-ui/employee`} className="tl-auto-148">
+          <ActionBar className="tl-response-link-flex">
+          {state?.data?.[0]?.status !== "PENDINGPAYMENT" ? <Link to={`/upyog-ui/employee`} className="tl-response-link">
               <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} onClick={() => sessionStorage.removeItem("isCreateEnabled")} />
             </Link> :
-        // <Link to={`digit-ui/employee/payment/collect/TL/${state?.data?.[0]?.applicationNumber}/${state?.data?.[0]?.tenantId}`} style={{ marginRight: "1rem" }}>
+        // <Link to={`digit-ui/employee/payment/collect/TL/${state?.data?.[0]?.applicationNumber}/${state?.data?.[0]?.tenantId}`} className="custom-style">
         <div onClick={routeToPaymentScreen}>
                 <SubmitBar label={t("TL_COLLECT_PAYMENT")} />
             </div>

@@ -34,14 +34,14 @@ function TLDocument({
   if (isLoading) {
     return <Loader />;
   }
-  return <div className="tl-auto-91">
+  return <div className="tl-documets-item">
       <React.Fragment>
-        <div className="tl-auto-92">
+        <div className="tl-documets-flex">
           {documents?.map((document, index) => {
           let documentLink = pdfDownloadLink(data.pdfFiles, document?.fileStoreId);
-          return <a target="_" href={documentLink} key={index} className="tl-auto-93">
-                <PDFSvg width={85} height={100} className="tl-auto-94" />
-                <p className="tl-auto-95">{value?.workflowDocs ? t(`${document?.documentType}`) : t(`TL_${document?.documentType}_LABEL`)}</p>
+          return <a target="_" href={documentLink} key={index} className="tl-documets-link">
+                <PDFSvg width={85} height={100} className="tl-documets-link-2" />
+                <p className="tl-documets-link-center-text">{value?.workflowDocs ? t(`${document?.documentType}`) : t(`TL_${document?.documentType}_LABEL`)}</p>
               </a>;
         })}
         </div>

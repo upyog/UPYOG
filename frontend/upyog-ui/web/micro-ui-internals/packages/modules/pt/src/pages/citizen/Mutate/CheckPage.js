@@ -118,7 +118,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
       fontSize: "32px",
       marginLeft: "8px"
     }}>{t("WS_COMMON_SUMMARY")}</Header>
-    <Card className="pt-auto-106">
+    <Card className="pt-check-page-card">
     <StatusTable>
         <Row className="border-none" label={t("PT_APPLICATION_NUMBER_LABEL")} text={property?.acknowldgementNumber} textStyle={{
           whiteSpace: "pre"
@@ -146,7 +146,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
 
     <CardSubHeader style={getCardSubHeadrStyles()}>{t("PT_MUTATION_TRANSFEROR_DETAILS")}</CardSubHeader>
       <div>
-        {Array.isArray(property?.owners) && property?.owners.map((owner, index) => <div key={index} className="pt-auto-107">
+        {Array.isArray(property?.owners) && property?.owners.map((owner, index) => <div key={index} className="pt-check-page-subheader">
                 {property?.owners.length != 1 && <span>
                     {t("PT_OWNER_SUB_HEADER")} - {index + 1}{" "}
                   </span>}
@@ -160,7 +160,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
               </StatusTable>
             </div>)}
       </div>
-      <div className="pt-auto-108"> 
+      <div className="pt-check-page-row-between-flex"> 
         <CardSubHeader style={getCardSubHeadrStyles()}>{t("PT_MUTATION_TRANSFEREE_DETAILS")}</CardSubHeader>
         <LinkButton label={<EditIcon />} onClick={() => routeTo(`/upyog-ui/citizen/pt/property/property-mutation/owner-ship-details@0`)} />
       </div>
@@ -198,7 +198,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
                   </StatusTable>
                 </div>)}
           </div>}
-      <div className="pt-auto-109">
+      <div className="pt-check-page-row-between-flex">
         <CardSubHeader style={getCardSubHeadrStyles()}>{t("PT_MUTATION_DETAILS")}</CardSubHeader>
         <LinkButton label={<EditIcon />} onClick={() => routeTo(`/upyog-ui/citizen/pt/property/property-mutation/is-mutatation-pending`)} />
       </div>
@@ -210,7 +210,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
           <Row className="border-none" label={t("PT_DETAILS_GOV_AQUISITION")} text={additionalDetails?.govtAcquisitionDetails || t("CS_NA")} />
         </StatusTable>
       </div>
-      <div className="pt-auto-110">
+      <div className="pt-check-page-row-between-flex">
         <CardSubHeader style={getCardSubHeadrStyles()}>{t("PT_REGISTRATION_DETAILS")}</CardSubHeader>
         <LinkButton label={<EditIcon />} onClick={() => routeTo(`/upyog-ui/citizen/pt/property/property-mutation/reason`)} />
       </div>
@@ -222,11 +222,11 @@ const CheckPage = ({ onSubmit, value = {} }) => {
         <Row className="border-none" label={t("PT_REG_DOC_VALUE")} text={additionalDetails?.documentValue || t("CS_NA")} />
         <Row className="border-none" label={t("PT_REMARKS")} text={additionalDetails?.remarks || t("CS_NA")} />
       </StatusTable>
-      <div className="pt-auto-111">
+      <div className="pt-check-page-row-between-flex">
         <CardSubHeader style={getCardSubHeadrStyles()}>{t("PT_COMMON_DOCS")}</CardSubHeader>
         <LinkButton label={<EditIcon />} onClick={() => routeTo(`/upyog-ui/citizen/pt/property/property-mutation/transfer-reason-doc`)} />
       </div>
-      <div className="pt-auto-112">
+      <div className="pt-check-page-subheader-2">
         {Array.isArray(property?.documents) ? property?.documents.length > 0 && <PropertyDocument property={property}></PropertyDocument> : <StatusTable>
             <Row className="border-none" text={t("PT_NO_DOCUMENTS_MSG")} />
           </StatusTable>}

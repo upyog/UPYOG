@@ -189,7 +189,7 @@ const SearchFormFieldsComponent = ({ formState, Controller, register, control, t
       <SearchField className="submit">
         <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
         <p
-          style={{ marginTop: "24px" }}
+          className="obps-application-timeline-top-spacing"
           onClick={() => {
             reset({
               applicationNo: "",

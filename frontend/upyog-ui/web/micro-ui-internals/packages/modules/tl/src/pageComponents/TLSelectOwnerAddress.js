@@ -122,7 +122,7 @@ const TLSelectOwnerAddress = ({ t, config, onSelect, userType, formData }) => {
       //disable={isUpdateProperty || isEditProperty}
       />
         {/* <CardLabel>{t("PT_OWNER_S_ADDRESS")}</CardLabel> */}
-        {formData?.TradeDetails?.StructureType?.code !== "MOVABLE" && <CheckBox label={t("TL_COMMON_SAME_AS_TRADE_ADDRESS")} onChange={setCorrespondenceAddress} value={isCorrespondenceAddress} checked={isCorrespondenceAddress || false} className="tl-auto-107" />}
+        {formData?.TradeDetails?.StructureType?.code !== "MOVABLE" && <CheckBox label={t("TL_COMMON_SAME_AS_TRADE_ADDRESS")} onChange={setCorrespondenceAddress} value={isCorrespondenceAddress} checked={isCorrespondenceAddress || false} className="tl-select-owner-address-item" />}
       </FormStep>
       {ismultiple ? <CitizenInfoLabel info={t("CS_FILE_APPLICATION_INFO_LABEL")} text={t("TL_PRIMARY_ADDR_INFO_MSG")} /> : ""}
     </React.Fragment>;

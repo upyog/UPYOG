@@ -166,8 +166,8 @@ const OwnerForm = (_props) => {
 
   return (
     <React.Fragment>
-      <div style={{ marginBottom: "16px" }}>
-        <div style={{ border: "1px solid #E3E3E3", padding: "16px", marginTop: "8px" }}>
+      <div className="assetv2-asset-assign-bottom-spacing">
+        <div className="assetv2-asset-assign-top-spacing">
 
           <React.Fragment>
             {

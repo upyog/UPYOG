@@ -131,7 +131,7 @@ const Jurisdictions = ({ t, config, onSelect, userType, formData }) => {
           handleRemoveUnit={handleRemoveUnit}
         />
       ))}
-      <label onClick={handleAddUnit} className="link-label" style={{ width: "12rem" }}>
+      <label onClick={handleAddUnit} className="link-label hrms-assignment-wrapper">
         {t("HR_ADD_JURISDICTION")}
       </label>
     </div>
@@ -212,18 +212,18 @@ function Jurisdiction({
 
   };
   return (
-    <div key={jurisdiction?.keys} style={{ marginBottom: "16px" }}>
-      <div style={{ border: "1px solid #E3E3E3", padding: "16px", marginTop: "8px" }}>
+    <div key={jurisdiction?.keys} className="hrms-assignment-bottom-spacing">
+      <div className="hrms-assignment-top-spacing">
         <LabelFieldPair>
-          <div className="label-field-pair" style={{ width: "100%" }}>
-            <h2 className="card-label card-label-smaller" style={{ color: "#505A5F" }}>
+          <div className="label-field-pair hrms-search-fullwidth">
+            <h2 className="card-label card-label-smaller hrms-assignment-header">
               {t("HR_JURISDICTION")} {index + 1}
             </h2>
           </div>
           {jurisdictions.length > 1 ? (
             <div
               onClick={() => handleRemoveUnit(jurisdiction)}
-              style={{ marginBottom: "16px", padding: "5px", cursor: "pointer", textAlign: "right" }}
+              className="hrms-assignment-clickable"
             >
               X
             </div>

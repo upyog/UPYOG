@@ -164,18 +164,7 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
         <KeyNote
           keyValue={t("CHB_REFUND_STATUS") || "Refund Status"}
           note={
-            <span
-              style={{
-                fontWeight: "600",
-                color: (refundStatus?.toUpperCase() === "SUCCESS" || refundStatus?.toUpperCase() === "SUCCESSFUL" || refundStatus?.toUpperCase() === "COMPLETED" || refundStatus?.toUpperCase() === "REFUNDED")
-                  ? "#155724"
-                  : (refundStatus?.toUpperCase() === "INITIATED" || refundStatus?.toUpperCase() === "IN_PROGRESS" || refundStatus?.toUpperCase() === "INPROGRESS")
-                  ? "#856404"
-                  : refundStatus
-                  ? "#383D41"
-                  : "#6C757D",
-              }}
-            >
+            <span className={`chb-refund-status-text ${(refundStatus?.toUpperCase() === "SUCCESS" || refundStatus?.toUpperCase() === "SUCCESSFUL" || refundStatus?.toUpperCase() === "COMPLETED" || refundStatus?.toUpperCase() === "REFUNDED") ? "status-success" : (refundStatus?.toUpperCase() === "INITIATED" || refundStatus?.toUpperCase() === "IN_PROGRESS" || refundStatus?.toUpperCase() === "INPROGRESS") ? "status-pending" : refundStatus ? "status-default" : "status-failed"}`}>
               {refundStatus
                 ? refundStatus
                 : isOnlinePayment
@@ -190,7 +179,7 @@ const ChbApplication = ({ application, tenantId, buttonLabel }) => {
           <SubmitBar label={buttonLabel} />
         </Link> 
         {(application.bookingStatus === "BOOKING_CREATED" || application.bookingStatus === "PAYMENT_FAILED" || application.bookingStatus === "PENDING_FOR_PAYMENT") && (
-        <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment}  style={{ margin: "20px" }}/>
+        <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment}  className="chb-chbsearch-hall-spacing-2"/>
         )}
       </div>
       {showToast && (

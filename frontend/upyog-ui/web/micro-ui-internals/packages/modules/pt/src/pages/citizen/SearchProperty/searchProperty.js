@@ -3,18 +3,10 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link,  } from "react-router-dom";
+import { Link, } from "react-router-dom";
 
 const description = {
   description: "PT_SEARCH_OR_DESC",
-  descriptionStyles: {
-    fontWeight: "300  ",
-    color: "#505A5F",
-    marginTop: "0px",
-    textAlign: "center",
-    marginBottom: "20px",
-    maxWidth: "540px"
-  }
 };
 
 const SearchProperty = ({ config: propsConfig, onSelect }) => {
@@ -65,7 +57,6 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
         el.style.position = "static";
         el.style.padding = "8px 0";
         el.style.boxShadow = "none";
-        el.style.marginBottom = "16px";
         el.style.textAlign = "left";
       } else {
         setTimeout(() => {
@@ -161,13 +152,13 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
       placementinbox: 1
     }, {
       label: property.label,
-      labelChildren: <div className="tooltip pt-auto-139">
-              {"  "}
-              <InfoBannerIcon fill="#0b0c0c" />
-              <span className="tooltiptext pt-auto-140">
-                {t(property.description) + " " + "PG-PT-xxxx-xxxxxx"}
-              </span>
-            </div>,
+      labelChildren: <div className="tooltip pt-search-property-item">
+        {"  "}
+        <InfoBannerIcon fill="#0b0c0c" />
+        <span className="tooltiptext pt-search-property-text-sm">
+          {t(property.description) + " " + "PG-PT-xxxx-xxxxxx"}
+        </span>
+      </div>,
       type: property.type,
       populators: {
         name: property.name,
@@ -444,22 +435,60 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
   if (action == 1) {
     config[0].body = [...config[0].body1];
   }
-  return <div className="pt-auto-141">
-      <FormComposer onSubmit={onPropertySearch} noBoxShadow inline config={config} label={propsConfig.texts.submitButtonLabel} heading={t(propsConfig.texts.header)} text={t(propsConfig.texts.text)} headingStyle={{
-      fontSize: "32px",
-      marginBottom: "16px",
-      fontFamily: "Roboto Condensed,sans-serif"
-    }} onFormValueChange={onFormValueChange} cardStyle={{
-      marginBottom: "0"
-    }}></FormComposer>
-      <span className={`link pt-search-property-register-link ${isMobile ? "pt-search-property-register-link-mobile" : ""}`}>
-        <Link to={"/upyog-ui/citizen/pt/property/new-application"}>{t("CPT_REG_NEW_PROPERTY")}</Link>
-      </span>
-      {showToast && <Toast error={showToast.error} isDleteBtn={true} warning={showToast.warning} label={t(showToast.label)} onClose={() => {
-      setShowToast(null);
-      seterrorShown(false);
-    }} />}
-    </div>;
+  return (
+    <div className="pt-citizen-search-container">
+      <div className="pt-citizen-search-header-wrap">
+        <div className="pt-citizen-search-title-block">
+          <h1 className="pt-citizen-search-title">{t(propsConfig.texts.header)}</h1>
+        </div>
+        <Link to="/upyog-ui/citizen/pt/property/new-application/info" className="pt-citizen-search-header-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          <span>{t("CPT_REG_NEW_PROPERTY")}</span>
+        </Link>
+      </div>
+
+      <div className="pt-citizen-search-card">
+        <FormComposer
+          onSubmit={onPropertySearch}
+          noBoxShadow
+          inline
+          config={config}
+          label={propsConfig.texts.submitButtonLabel}
+          heading=""
+          text={t(propsConfig.texts.text)}
+          onFormValueChange={onFormValueChange}
+        />
+      </div>
+
+      <div className="pt-citizen-search-help-card">
+        <div className="pt-citizen-help-text">
+          <span>{t("PT_TEXT_NOT_ABLE_TO_FIND_THE_PROPERTY") || t("PT_TEXT_NOT_ABLE_TO_FIND_THE_APPLICATION")}</span>
+          <Link to="/upyog-ui/citizen/pt/property/new-application/info" className="pt-citizen-help-link">
+            {t("PT_COMMON_CLICK_HERE_TO_REGISTER_NEW_PROPERTY")}
+          </Link>
+        </div>
+        <Link to="/upyog-ui/citizen/pt/property/my-properties" className="pt-citizen-help-link">
+          {t("PT_MY_PROPERTIES_HEADER")} →
+        </Link>
+      </div>
+
+      {showToast && (
+        <Toast
+          error={showToast.error}
+          isDleteBtn={true}
+          warning={showToast.warning}
+          label={t(showToast.label)}
+          onClose={() => {
+            setShowToast(null);
+            seterrorShown(false);
+          }}
+        />
+      )}
+    </div>
+  );
 };
 SearchProperty.propTypes = {
   loginParams: PropTypes.any

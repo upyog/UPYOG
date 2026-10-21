@@ -41,52 +41,28 @@ function UploadDrawer({ setProfilePic, closeDrawer, userType, removeProfilePic ,
   return (
     <React.Fragment>
       <div
-        style={{
-          position: "fixed",
-          top: "0",
-          left: "0",
-          right: "0",
-          bottom: "0",
-          width: "100%",
-          height: "100vh",
-          backgroundColor: "rgba(0,0,0,.5)",
-          // zIndex: "9998",
-        }}
+        className="core-upload-drawer-fullwidth"
         onClick={onOverlayBodyClick}
       ></div>
-      <div
-        style={{
-          width: "100%",
-          justifyContent: "space-between",
-          display: "flex",
-          backgroundColor: "white",
-          alignItems: "center",
-          position: "fixed",
-          left: "0",
-          right: "0",
-          height: "20%",
-          bottom: userType === "citizen" ? "2.5rem" : "0",
-          zIndex: "2",
-        }}
-      >
+      <div className={`upload-drawer-bottom-bar ${userType === "citizen" ? "bottom-citizen" : "bottom-employee"}`}>
         <div
-          style={{ display: "flex", flex: "1", flexDirection: "column", width: "100%", justifyContent: "center", alignItems: "center", gap: "8px 0" }}
+          className="core-upload-drawer-fullwidth-2"
         >
-          <label for="file" style={{ cursor: "pointer" }}>
+          <label for="file" className="core-upload-drawer-clickable">
             {" "}
             <GalleryIcon />
           </label>
-          <label style={{ cursor: "pointer" }}> Gallery</label>
-          <input type="file" id="file" accept="image/*, .png, .jpeg, .jpg" onChange={selectfile} style={{ display: "none" }} />
+          <label className="core-upload-drawer-clickable"> Gallery</label>
+          <input type="file" id="file" accept="image/*, .png, .jpeg, .jpg" onChange={selectfile} className="core-upload-drawer-hidden" />
         </div>
 
         <div
-          style={{ display: "flex", flex: "1", width: "100%", justifyContent: "center", alignItems: "center", flexDirection: "column", gap: "8px 0" }}
+          className="core-upload-drawer-fullwidth-3"
         >
           <button onClick={removeimg}>
             <RemoveIcon />
           </button>
-          <label style={{ cursor: "pointer" }}>Remove</label>
+          <label className="core-upload-drawer-clickable">Remove</label>
         </div>
       </div>
     </React.Fragment>

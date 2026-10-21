@@ -76,7 +76,7 @@ const MessageForm = ({ onSelect, config, formData, register, control, errors, se
           {errors && errors?.name && errors?.name?.type === "maxLength" && <CardLabelError>{t(`EVENTS_MAXLENGTH_66_CHARS_REACHED`)}</CardLabelError>}
         </div>
       </LabelFieldPair>
-      <LabelFieldPair style={{ marginBottom: "24px" }}>
+      <LabelFieldPair className="eng-message-form-bottom-spacing">
         <CardLabel className="card-label-smaller">{`${t(`EVENTS_COMMENTS_LABEL`)} *`}</CardLabel>
         <div className="field">
           <Controller
@@ -90,7 +90,7 @@ const MessageForm = ({ onSelect, config, formData, register, control, errors, se
           {errors && errors?.description && errors?.description?.type === "maxLength" && <CardLabelError>{t(`EVENTS_MAXLENGTH_REACHED`)}</CardLabelError>}
         </div>
       </LabelFieldPair>
-      <LabelFieldPair style={{ marginBottom: "24px" }}>
+      <LabelFieldPair className="eng-message-form-bottom-spacing">
         <CardLabel className="card-label-smaller">{`${t(`EVENTS_ATTACHMENT_LABEL`)}`}</CardLabel>
         <div className="field">
           <Controller

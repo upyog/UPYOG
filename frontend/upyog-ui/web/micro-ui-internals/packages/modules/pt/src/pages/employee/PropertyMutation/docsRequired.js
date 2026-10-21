@@ -33,10 +33,10 @@ const RequiredDoc = () => {
         const splitValues = doc.code.split(".");
         const dd = doc.dropdownData;
         return <React.Fragment key={index}>
-              <CardSectionHeader className="pt-auto-165">{t(`${splitValues[0]}.${splitValues[1]}`)}</CardSectionHeader>
+              <CardSectionHeader className="pt-docs-required-card">{t(`${splitValues[0]}.${splitValues[1]}`)}</CardSectionHeader>
               {dd.map((e, ind) => {
             return <React.Fragment key={ind}>
-                    <CardLabel className="pt-auto-166">{ind + 1 + ". " + t(e.code)}</CardLabel>
+                    <CardLabel className="pt-docs-required-card-bold">{ind + 1 + ". " + t(e.code)}</CardLabel>
                   </React.Fragment>;
           })}
               <CardText className="docsDescription">{t(`${splitValues[0]}.${splitValues[1]}.${splitValues[1]}_DESCRIPTION`)}</CardText>
@@ -44,7 +44,7 @@ const RequiredDoc = () => {
       })}
       </Card>
       <ActionBar>
-        <SubmitBar label={t("PT_TRANSFER_OWNERSHIP")} onSubmit={OnSubmit} className="pt-auto-167" />
+        <SubmitBar label={t("PT_TRANSFER_OWNERSHIP")} onSubmit={OnSubmit} className="pt-docs-required-btn-block" />
       </ActionBar>
     </React.Fragment>;
 };

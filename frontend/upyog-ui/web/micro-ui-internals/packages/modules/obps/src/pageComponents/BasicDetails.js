@@ -118,14 +118,13 @@ const BasicDetails = ({ formData, onSelect, config }) => {
       <div className={isMobile ? "obps-search" : ""} style={!isMobile ? { margin: "8px" } : {}}>
         <Label>{scrutinyNumber?.edcrNumber && !scrutinyNumber?.edcrNumber.includes("PAP") ? t(`OBPS_SEARCH_EDCR_NUMBER`) : t("DRAWING_NUMBER")}</Label>
         <TextInput
-          className="searchInput"
+          className="searchInput obps-basic-details-bottom-spacing"
           onKeyPress={handleKeyPress}
           onChange={event => setScrutinyNumber({ edcrNumber: event.target.value||formData?.selectedPlot?.drawingNo })} 
           value={scrutinyNumber?.edcrNumber || scrutinyNumber}
           signature={true}
           signatureImg={!disableVlaue && !formData?.selectedPlot && <SearchIconSvg className="signature-img" onClick={!disableVlaue && scrutinyNumber?.edcrNumber ? () => handleSearch() : null} />}
           disable={disableVlaue}
-          style={{ marginBottom: "10px" }}
         />
       </div>
       {basicData && (

@@ -425,7 +425,7 @@ const ReNewApplication = (props) => {
     }
   }
   return <div>
-      <div className="tl-auto-174">
+      <div className="tl-index-ml-md">
         <Header>
           {window.location.href.includes("employee/tl/edit-application-details") ? t("ES_TITLE_RE_NEW_TRADE_LICESE_APPLICATION") : t("ES_TITLE_RENEW_TRADE_LICESE_APPLICATION")}
         </Header>

@@ -103,8 +103,8 @@ const Proof = ({
         setUploadedFile(null);
       }} message={uploadedFile ? `1 ${t(`PT_ACTION_FILEUPLOADED`)}` : t(`PT_ACTION_NO_FILEUPLOADED`)} error={error} />}
 
-        {error ? <div className="pt-auto-66">{error}</div> : ""}
-        <div className="pt-auto-67"></div>
+        {error ? <div className="pt-proof-full-width-title-md">{error}</div> : ""}
+        <div className="pt-proof-full-width"></div>
       </FormStep>
     </React.Fragment>;
 };

@@ -7,7 +7,7 @@ import _ from "lodash";
 import { newConfig as newConfigLocal } from "../../../config/wsCreateConfig";
 import { convertApplicationData, convertEditApplicationDetails } from "../../../utils";
 import cloneDeep from "lodash/cloneDeep";
-import "../../../css/ws-inline-auto.css";
+
 const convertEditApplicationDetails1 = (data, appData, serviceType) => {
   data?.cpt?.details?.owners?.forEach(owner => {
     if (owner?.permanentAddress) owner.correspondenceAddress = owner?.permanentAddress;
@@ -315,7 +315,7 @@ const WSEditApplicationByConfig = () => {
 
   if (isError) {
     return (
-      <div style={{ padding: "16px" }}>
+      <div className="ws-wsedit-application-by-config-container-padding">
         Failed to load application details
       </div>
     );
@@ -323,12 +323,12 @@ const WSEditApplicationByConfig = () => {
 
   return (
     <React.Fragment>
-      <div style={{ marginLeft: "15px" }}>
+      <div className="ws-wsedit-application-by-config-spacing">
         <Header>{t(config.head)}</Header>
       </div>
       <FormComposer config={config.body} userType={"employee"} onFormValueChange={onFormValueChange}
-    // isDisabled={!canSubmit}
-    label={t("CS_COMMON_SUBMIT")} onSubmit={onSubmit} defaultValues={sessionFormData} appData={appData}></FormComposer>
+        // isDisabled={!canSubmit}
+        label={t("CS_COMMON_SUBMIT")} onSubmit={onSubmit} defaultValues={sessionFormData} appData={appData}></FormComposer>
       {showToast && <Toast error={showToast.key} label={t(showToast?.message)} warning={showToast?.warning} onClose={closeToast} />}
     </React.Fragment>);
 };

@@ -127,7 +127,7 @@ const Inbox = ({
       );
     } else {
       return (
-        <div style={{ padding: user?.type === "CITIZEN" ? "0 24px" : "" }}>
+        <div className={user?.type === "CITIZEN" ? "citizen-container-padding-24" : ""}>
           {isInbox && <Header>{t("ES_COMMON_INBOX")}</Header>}
           <WTDesktopInbox
             moduleCode={moduleCode}

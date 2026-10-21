@@ -103,7 +103,7 @@ const CHBDocumentDetails = ({ t, config, onSelect, userType, formData, setError:
       <Timeline currentStep={5} />
       <Card>
         <CardSubHeader>
-          <div style={{display:"flex", justifyContent: "space-between", width: "100%" }}>
+          <div className="chb-chbaddress-details-fullwidth">
           {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
@@ -248,14 +248,13 @@ function CHBSelectDocument({
   }, [isHidden]);
 
   return (
-    <div style={{ marginBottom: "24px" }}>
+    <div className="chb-chbdocument-details-bottom-spacing">
       {doc?.hasDropdown ? (
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t("CHB_"+(doc?.code.replaceAll(".", "_"))) } <span className="check-page-link-button">*</span></CardLabel>
           <Dropdown
-            className="form-field"
+            className={`form-field ${user?.type === "EMPLOYEE" ? "field-width--employee-50" : "field-width--full"}`}
             selected={selectedDocument}
-            style={{width:user.type==="EMPLOYEE"?"50%":"100%"}}
             placeholder={"Select " + t("CHB_"+(doc?.code.replaceAll(".", "_"))) }
             option={dropDownData.map((e) => ({ ...e, i18nKey:"CHB_" + e.code?.replaceAll(".", "_") }))}
             select={handleCHBSelectDocument}

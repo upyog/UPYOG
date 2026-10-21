@@ -184,14 +184,14 @@ const ADSSearchApplication = ({tenantId, isLoading, t, onSubmit, onClear, data, 
                   <React.Fragment>
                     <SubmitBar label={t("WF_TAKE_ACTION")} onSubmit={toggleMenu} disabled={application?.bookingStatus === "CANCELLED" || application?.bookingStatus === "EXPIRED"} // Disable button
           />
-                    {isMenuOpen && <div className="ads-auto-44">
+                    {isMenuOpen && <div className="ads-search-application-absolute-bordered">
                         {/* Action for Cancel */}
-                        {application?.bookingStatus === "BOOKED" && <div onClick={handleCancel} className="ads-auto-45">
+                        {application?.bookingStatus === "BOOKED" && <div onClick={handleCancel} className="ads-search-application-btn-block-action">
                             {t("ADS_CANCEL")}
                           </div>}
           
                         {/* Action for Collect Payment */}
-                        {application?.bookingStatus !== "BOOKED" && <div onClick={() => handleMakePayment()} className="ads-auto-46">
+                        {application?.bookingStatus !== "BOOKED" && <div onClick={() => handleMakePayment()} className="ads-search-application-btn-block-action">
                             {t("ADS_COLLECT_PAYMENT")}
                           </div>}
                       </div>}
@@ -237,7 +237,7 @@ const ADSSearchApplication = ({tenantId, isLoading, t, onSubmit, onClear, data, 
                 <div>
                 <Header>{t("ADS_SEARCH_BOOKINGS")}</Header>
                 <Card className={"card-search-heading"}>
-                    <span className="ads-auto-47">{t("Provide at least one parameter to search for an application")}</span>
+                    <span className="ads-search-application-card-grey-text">{t("Provide at least one parameter to search for an application")}</span>
                 </Card>
                 <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                 <SearchField>
@@ -376,11 +376,11 @@ const ADSSearchApplication = ({tenantId, isLoading, t, onSubmit, onClear, data, 
             });
             setShowToast(null);
             onClear();
-          }} className="ads-auto-48">{t(`ES_COMMON_CLEAR_ALL`)}</p>
+          }} className="ads-search-application-card-mt-sm">{t(`ES_COMMON_CLEAR_ALL`)}</p>
                 </SearchField>
             </SearchForm>
-            {!isLoading && data?.display ? <Card className="ads-auto-49">
-                {t(data.display).split("\\n").map((text, index) => <p key={index} className="ads-auto-50">
+            {!isLoading && data?.display ? <Card className="ads-search-application-card-mt-md">
+                {t(data.display).split("\\n").map((text, index) => <p key={index} className="ads-search-application-card-center-text">
                         {text}
                     </p>)}
             </Card> : !isLoading && data !== "" ? <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {

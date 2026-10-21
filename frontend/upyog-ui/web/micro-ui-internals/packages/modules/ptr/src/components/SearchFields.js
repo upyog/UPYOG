@@ -94,7 +94,7 @@ const SearchFields = ({register, control, reset, tenantId, t, formState, setShow
                 </SearchField>
                 <SearchField className="submit">
                     <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
-                    <p style={{marginTop:"10px"}}
+                    <p className="ptr-search-application-top-spacing"
                      onClick={() => {
                         reset({ 
                             applicationNumber: "", 

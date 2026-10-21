@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useMemo, useReducer } from "react";
 import { Link } from "react-router-dom";
 import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import SearchFormFields from "./SearchFields";
-import "../../css/ws-inline-auto.css";
+
 const MobileSearchWater = ({
   Controller,
   register,
@@ -32,8 +32,8 @@ const MobileSearchWater = ({
     });
   };
   const MobilePopUpCloseButton = () => <div className="InboxMobilePopupCloseButtonWrapper" onClick={closeMobilePopupModal}>
-      <CloseSvg />
-    </div>;
+    <CloseSvg />
+  </div>;
   const searchFormFieldsComponentProps = {
     Controller,
     register,
@@ -54,16 +54,16 @@ const MobileSearchWater = ({
     switch (currentlyActiveMobileModal) {
       case "SearchFormComponent":
         return <SearchForm {...props}>
-            <MobilePopUpCloseButton />
-            <div className="MobilePopupHeadingWrapper">
-              <h2>{t("ES_COMMON_SEARCH")}:</h2>
-            </div>
-            <SearchFormFields {...searchFormFieldsComponentProps} {...{
+          <MobilePopUpCloseButton />
+          <div className="MobilePopupHeadingWrapper">
+            <h2>{t("ES_COMMON_SEARCH")}:</h2>
+          </div>
+          <SearchFormFields {...searchFormFieldsComponentProps} {...{
             closeMobilePopupModal,
             tenantId,
             t
           }} />
-          </SearchForm>;
+        </SearchForm>;
       default:
         return <span></span>;
     }
@@ -95,25 +95,25 @@ const MobileSearchWater = ({
     switch (status) {
       case "Active":
         return <div>
-            <span className="link">
-              <Link to={{
+          <span className="link">
+            <Link to={{
               pathname: `/upyog-ui/employee/payment/collect/${data?.["service"] == "WATER" ? "WS" : "SW"}/${encodeURIComponent(data?.["connectionNo"])}/${data?.["tenantId"]}?tenantId=${data?.["tenantId"]}&ISWSCON`
             }}>
-                {t(`${"WS_COMMON_COLLECT_LABEL"}`)}{" "}
-              </Link>
-            </span>
-          </div>;
+              {t(`${"WS_COMMON_COLLECT_LABEL"}`)}{" "}
+            </Link>
+          </span>
+        </div>;
     }
   };
   const GetStatusLinkCell = value => {
     //let service = "WATER";
     return <div>
-        <span className="link">
-          <Link to={`/upyog-ui/employee/ws/connection-details?applicationNumber=${value?.connectionNo}&tenantId=${value?.tenantId}&service=${value?.service}&connectionType=${value?.connectionType}&due=${value?.due || 0}`}>
-            {value?.connectionNo || "NA"}
-          </Link>
-        </span>
-      </div>;
+      <span className="link">
+        <Link to={`/upyog-ui/employee/ws/connection-details?applicationNumber=${value?.connectionNo}&tenantId=${value?.tenantId}&service=${value?.service}&connectionType=${value?.connectionType}&due=${value?.due || 0}`}>
+          {value?.connectionNo || "NA"}
+        </Link>
+      </span>
+    </div>;
   };
   const propsMobileInboxCards = useMemo(() => {
     if (data?.display) {
@@ -131,17 +131,17 @@ const MobileSearchWater = ({
     }));
   }, [data]);
   return <React.Fragment>
-      <div className="searchBox">
-        <SearchAction text={t("ES_COMMON_SEARCH")} handleActionClick={() => setActiveMobileModal({
+    <div className="searchBox">
+      <SearchAction text={t("ES_COMMON_SEARCH")} handleActionClick={() => setActiveMobileModal({
         type: "set",
         payload: "SearchFormComponent"
       })} {...{
         tenantId,
         t
       }} />
-      </div>
-      {currentlyActiveMobileModal ? <PopUp>
-          <CurrentMobileModalComponent onSubmit={data => {
+    </div>
+    {currentlyActiveMobileModal ? <PopUp>
+      <CurrentMobileModalComponent onSubmit={data => {
         setActiveMobileModal({
           type: "remove"
         });
@@ -152,15 +152,15 @@ const MobileSearchWater = ({
         closeMobilePopupModal,
         tenantId
       }} />
-        </PopUp> : null}
-      {isClearSearch ? null : data?.display ? <Card className="ws-auto-24">
-          {t(data?.display).split("\\n").map((text, index) => <p key={index} className="ws-auto-25">
-                {text}
-              </p>)}
-        </Card> : <DetailsCard {...{
+    </PopUp> : null}
+    {isClearSearch ? null : data?.display ? <Card className="ws-mobile-search-water-card-mt-md">
+      {t(data?.display).split("\\n").map((text, index) => <p key={index} className="ws-mobile-search-water-card-center-text">
+        {text}
+      </p>)}
+    </Card> : <DetailsCard {...{
       data: propsMobileInboxCards,
       serviceRequestIdKey: t("WS_COMMON_TABLE_COL_APP_NO")
     }} />}
-    </React.Fragment>;
+  </React.Fragment>;
 };
 export default MobileSearchWater;

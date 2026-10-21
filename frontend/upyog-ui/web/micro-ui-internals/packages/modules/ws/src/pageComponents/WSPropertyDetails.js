@@ -50,27 +50,27 @@ const WSPropertyDetails = ({
   return <React.Fragment>
       <LabelFieldPair>
         <CardLabel className="card-label-smaller">{`${t(`PROPERTY_ID`)}`}</CardLabel>
-        <div className="field ws-auto-135">
+        <div className="field ws-property-details-label-mt-md">
           <TextInput key={config.key} value={propertyId} onChange={e => {
           setPropertyId(e.target.value);
           onSelect(config.key, {
             id: e.target.value
           });
-        }} className="ws-auto-136" />
+        }} className="ws-property-details-btn" />
           <button className="submit-bar" type="button" onClick={() => setPropertyId(propertyId)}>
             {`${t("PT_SEARCH")}`}
           </button>
         </div>
       </LabelFieldPair>
       <Link to={`/upyog-ui/employee/pt/search`}>
-        <LinkButton label={t("CPT_SEARCH_PROPERTY")} className="ws-auto-137" />
+        <LinkButton label={t("CPT_SEARCH_PROPERTY")} className="ws-property-details-btn-red" />
       </Link>
       &nbsp; | &nbsp;
       <Link to={`/upyog-ui/employee/pt/new-application`}>
-        <LinkButton label={t("CPT_CREATE_PROPERTY")} className="ws-auto-138" />
+        <LinkButton label={t("CPT_CREATE_PROPERTY")} className="ws-property-details-btn-red" />
       </Link>
       {propertyDetails && propertyDetails?.Properties.length && <React.Fragment>
-          <header className="card-section-header ws-auto-139">
+          <header className="card-section-header ws-property-details-btn-mt-md">
             {t("PT_DETAILS")}
           </header>
           <LabelFieldPair>
@@ -92,7 +92,7 @@ const WSPropertyDetails = ({
             </div>
           </LabelFieldPair>
           <Link to={`/upyog-ui/employee/commonpt/view-property?propertyId=${propertyId}&tenantId=${tenantId}`}>
-            <LinkButton label={t("CPT_COMPLETE_PROPERTY_DETAILS")} className="ws-auto-140" />
+            <LinkButton label={t("CPT_COMPLETE_PROPERTY_DETAILS")} className="ws-property-details-btn-red-2" />
           </Link>
         </React.Fragment>}
     </React.Fragment>;

@@ -71,7 +71,7 @@ const SearchApplication = ({ onSearch, type, onClose, isFstpOperator, searchFiel
   const clearAll = (mobileView) => {
     const mobileViewStyles = mobileView ? { margin: 0 } : {};
     return (
-      <LinkLabel style={{ display: "inline", ...mobileViewStyles }} onClick={clearSearch}>
+      <LinkLabel className="search-clear-link" style={mobileViewStyles} onClick={clearSearch}>
         {t("ES_COMMON_CLEAR_SEARCH")}
       </LinkLabel>
     );
@@ -141,24 +141,20 @@ const SearchApplication = ({ onSearch, type, onClose, isFstpOperator, searchFiel
     <form onSubmit={handleSubmit(onSubmitInput)}>
       <React.Fragment>
         {!checkInboxLocation ? <Header styles={mobileView ? { marginTop: "10px" } : {}}>{t("ACTION_TEST_SEARCH_FSM_APPLICATION")}</Header> : ""}
-        <div className="search-container" style={{ width: "auto", marginLeft: FSTP ? "" : isInboxPage ? "24px" : "revert" }}>
+        <div className={`search-container width-auto ${FSTP ? "" : isInboxPage ? "margin-left-24" : "margin-left-revert"}`}>
           <div className="search-complaint-container">
             {(type === "mobile" || mobileView) && (
               <div className="complaint-header">
                 <h2>{t("ES_COMMON_SEARCH_BY")}</h2>
                 <span
-                  style={{
-                    position: "absolute",
-                    top: "2%",
-                    right: "8px",
-                  }}
+                  className="fsm-registry-search-wrapper-2"
                   onClick={onClose}
                 >
                   <CloseSvg />
                 </span>
               </div>
             )}
-            <div className={FSTP ? "complaint-input-container for-pt for-search" : "complaint-input-container"} style={{ width: "100%" }}>
+            <div className={`${FSTP ? "complaint-input-container for-pt for-search" : "complaint-input-container"} fsm-search-fullwidth`}>
               {searchFields?.map((input, index) => (
                 <span key={index} className={index === 0 ? "complaint-input" : "mobile-input"}>
                   <Label>
@@ -175,10 +171,10 @@ const SearchApplication = ({ onSearch, type, onClose, isFstpOperator, searchFiel
         </div>
         {(type === "mobile" || mobileView) && (
           <ActionBar className="clear-search-container">
-            <button className="clear-search" style={{ flex: 1 }}>
+            <button className="clear-search fsm-filter-wrapper">
               {clearAll(mobileView)}
             </button>
-            <SubmitBar label={t("ES_COMMON_SEARCH")} style={{ flex: 1 }} submit={true} />
+            <SubmitBar label={t("ES_COMMON_SEARCH")} className="fsm-filter-wrapper" submit={true} />
           </ActionBar>
         )}
       </React.Fragment>

@@ -108,7 +108,7 @@ const CorrospondenceAddress = ({ t, config, onSelect, value, userType, formData 
     <React.Fragment>
       <div className={isopenlink ? "OpenlinkContainer" : ""}>
 
-        {isopenlink && <BackButton style={{ border: "none" }}>{t("CS_COMMON_BACK")}</BackButton>}
+        {isopenlink && <BackButton className="obps-corrospondence-address-action-btn">{t("CS_COMMON_BACK")}</BackButton>}
         <Timeline currentStep={2} flow="STAKEHOLDER" />
         <FormStep
           config={config}
@@ -122,7 +122,7 @@ const CorrospondenceAddress = ({ t, config, onSelect, value, userType, formData 
             onChange={(e) => selectChecked(e)}
             //value={field.isPrimaryOwner}
             checked={isAddressSame}
-            style={{ paddingBottom: "10px", paddingTop: "10px" }}
+            className="obps-corrospondence-address-spacing"
           />
           <CardLabel>{`${t("BPA_APPLICANT_CORRESPONDENCE_ADDRESS_LABEL")}`}</CardLabel>
           <TextArea
@@ -137,7 +137,7 @@ const CorrospondenceAddress = ({ t, config, onSelect, value, userType, formData 
           />
         </FormStep>
       </div>
-      <div style={{ disabled: "true", height: "30px", width: "100%", fontSize: "14px" }}></div>
+      <div className="obps-corrospondence-address-fullwidth"></div>
       {showToast && <Toast error={showToast?.key === "error" ? true : false} label={error} isDleteBtn={true} onClose={() => { setShowToast(null); setError(null); }} />}
     </React.Fragment>
   );

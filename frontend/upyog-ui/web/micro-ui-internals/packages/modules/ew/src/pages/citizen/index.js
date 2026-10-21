@@ -31,7 +31,7 @@ const App = () => {
   const EWASTEApplicationDetails = Digit?.ComponentRegistryService?.getComponent("EWASTECitizenApplicationDetails");
  
   return (
-    <span className={"citizen"} style={{ width: "100%" }}>
+    <span className={`${"citizen"} ew-ewasteacknowledgement-fullwidth`}>
       <AppContainer>
         {!shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
         <Routes>

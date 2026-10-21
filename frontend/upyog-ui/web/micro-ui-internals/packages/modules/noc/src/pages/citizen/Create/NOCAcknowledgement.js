@@ -180,7 +180,7 @@ const NOCAcknowledgement = ({ data, onSuccess, onUpdateSuccess, clearParams }) =
         />
         <CardText>{t("NOC_APPLICATION_FAILED_TEXT")}</CardText>
         {errorMsg && (
-          <CardText style={{ color: "red", fontWeight: "bold", marginTop: "10px" }}>
+          <CardText className="noc-nocacknowledgement-required-asterisk">
             Error Details: {errorMsg}
           </CardText>
         )}
@@ -202,25 +202,25 @@ const NOCAcknowledgement = ({ data, onSuccess, onUpdateSuccess, clearParams }) =
       <CardText>
         {isUpdate ? t("NOC_APPLICATION_UPDATED_TEXT") : t("NOC_APPLICATION_SUCCESS_TEXT")}
       </CardText>
-      <div style={{ display: "flex", flexDirection: "row", gap: "20px", marginTop: "20px" }}>
-        <div style={{ flex: 1 }}>
-          <SubmitBar label={t("NOC_DOWNLOAD_ACK")} onSubmit={handleDownloadPdf} style={{ width: "100%" }} />
+      <div className="noc-nocacknowledgement-flex-container">
+        <div className="noc-fire-noc-desktop-inbox-wrapper">
+          <SubmitBar label={t("NOC_DOWNLOAD_ACK")} onSubmit={handleDownloadPdf} className="noc-search-fullwidth" />
         </div>
         {application?.fireNOCDetails?.status === "PENDINGPAYMENT" && (
           <Link to={{
             pathname: `/upyog-ui/citizen/payment/collect/FIRENOC/${application?.fireNOCDetails?.applicationNumber || data?.applicationNumber || data?.fireNOCNumber || data?.existingApplication?.fireNOCDetails?.applicationNumber}`,
             state: { tenantId: application?.tenantId || tenantId }
-          }} style={{ flex: 1 }}>
-            <SubmitBar label={t("COMMON_MAKE_PAYMENT")} style={{ width: "100%" }} />
+          }} className="noc-fire-noc-desktop-inbox-wrapper">
+            <SubmitBar label={t("COMMON_MAKE_PAYMENT")} className="noc-search-fullwidth" />
           </Link>
         )}
       </div>
-      <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", marginTop: "16px" }}>
+      <div className="noc-nocacknowledgement-flex-row">
         <Link to="/upyog-ui/citizen">
           <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} onClick={() => {
             Digit.SessionStorage.del("NOC_CREATE_APPLICATION");
             Digit.SessionStorage.del("NOC_SUCCESSFUL_APPLICATION");
-          }} style={{ margin: 0 }} />
+          }} className="noc-nocacknowledgement-action-btn" />
         </Link>
       </div>
     </Card>

@@ -235,11 +235,10 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
     <React.Fragment>
       <Timeline currentStep={checkingFlow === "OCBPA" ? 2 : checkingFlow==="PRE_APPROVE"? 4: 1 } flow={checkingFlow}/>
       <FormStep t={t} config={config} onSelect={goNext} onSkip={!(formData?.data?.edcrDetails?.drawingDetail) ? onSkip : undefined}  /* isDisabled={Object.keys(subOccupancyObject).length === 0} */>
-        <CardSubHeader style={{ fontSize: "20px" }}>{formData?.data?.edcrDetails?.drawingDetail ? t("BPA_DRAWING_DETAILS"):t("BPA_EDCR_DETAILS")}</CardSubHeader>
-        <StatusTable style={{ border: "none" }}>
+        <CardSubHeader className="obps-scrutiny-details-header">{formData?.data?.edcrDetails?.drawingDetail ? t("BPA_DRAWING_DETAILS"):t("BPA_EDCR_DETAILS")}</CardSubHeader>
+        <StatusTable className="obps-corrospondence-address-action-btn">
           <Row
-            className="border-none"
-            style={{ border: "none" }}
+            className="border-none obps-corrospondence-address-action-btn"
             label={checkingFlow === "OCBPA" ? t("BPA_OC_EDCR_NO_LABEL") : formData?.data?.edcrDetails?.drawingDetail? t("BPA_DRAWING_NUMBER"):t("BPA_EDCR_NO_LABEL")}
             text={data?.edcrNumber || formData?.data?.scrutinyNumber}
             labelStyle={{wordBreak: "break-all"}} 
@@ -281,11 +280,11 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
           ) : null}
           
         </StatusTable>
-        <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", height: "2px", marginTop: "20px", marginBottom: "20px" }} />
-        <CardSubHeader style={{ fontSize: "20px" }}>
+        <hr className="obps-obpsdocuments-holder-top-spacing" />
+        <CardSubHeader className="obps-scrutiny-details-header">
           {checkingFlow === "OCBPA" ? t("BPA_ACTUAL_BUILDING_EXTRACT_HEADER") : formData?.data?.edcrDetails?.drawingDetail ? t("BPA_BUILDING_EXTRACT_DETAILS"):t("BPA_BUILDING_EXTRACT_HEADER")}
         </CardSubHeader>
-        <StatusTable style={{ border: "none" }}>
+        <StatusTable className="obps-corrospondence-address-action-btn">
           <Row
             className="border-none"
             label={t("BPA_TOTAL_BUILT_UP_AREA_HEADER")}
@@ -310,15 +309,15 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
             }
           ></Row>
         </StatusTable>
-        <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", height: "2px", marginTop: "20px", marginBottom: "20px" }} />
-        <CardSubHeader style={{ fontSize: "20px" }}>{formData?.data?.edcrDetails?.drawingDetail ? t("BPA_BLOCK_HEADER"):t("BPA_OCC_SUBOCC_HEADER")}</CardSubHeader>
+        <hr className="obps-obpsdocuments-holder-top-spacing" />
+        <CardSubHeader className="obps-scrutiny-details-header">{formData?.data?.edcrDetails?.drawingDetail ? t("BPA_BLOCK_HEADER"):t("BPA_OCC_SUBOCC_HEADER")}</CardSubHeader>
         {data?.planDetail?.blocks?.map((block, index) => (
-          <div key={index} style={{ marginTop: "20px" }}>
-            <CardSubHeader style={{ fontSize: "18px" }}>
+          <div key={index} className="obps-index-card">
+            <CardSubHeader className="obps-building-plan-scrutiny-card">
               {t("BPA_BLOCK_SUBHEADER")} {index + 1}
             </CardSubHeader>
             {!(checkingFlow === "OCBPA") ? (
-              <CardSectionHeader style={{ fontWeight: "normal" }} className="card-label-smaller">
+              <CardSectionHeader className="card-label-smaller obps-scrutiny-details-header-2">
                 {t("BPA_SUB_OCCUPANCY_LABEL")}
               </CardSectionHeader>
             ) : null}
@@ -350,16 +349,16 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
             {!(checkingFlow === "OCBPA")
               ? subOccupancyObject[`Block_${block.number}`] &&
                 subOccupancyObject[`Block_${block.number}`].length > 0 && (
-                  <LinkButton style={{ textAlign: "left" }} label={"Clear All"} onClick={() => clearall(block.number)} />
+                  <LinkButton className="obps-scrutiny-details-action-btn" label={"Clear All"} onClick={() => clearall(block.number)} />
                 )
               : null}
-            <div style={{ marginTop: "20px" }}>
+            <div className="obps-index-card">
               {checkingFlow === "OCBPA" ? (
                 <StatusTable>
                   <Row className="border-none" label={`${t("BPA_SUB_OCCUPANCY_LABEL")}`} text={getSubOccupancyValues(index)}></Row>
                 </StatusTable>
               ) : null}
-              <div style={{ overflowX: "scroll" }}>
+              <div className="obps-scrutiny-details-wrapper">
                 <Table
                   className="customTable table-fixed-first-column table-border-style"
                   t={t}
@@ -384,12 +383,12 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
           </div>
         ))}
         {formData?.data?.edcrDetails?.drawingDetail?.blocks?.map((block, index) => (
-          <div key={index} style={{ marginTop: "20px" }}>
-            <CardSubHeader style={{ fontSize: "18px" }}>
+          <div key={index} className="obps-index-card">
+            <CardSubHeader className="obps-building-plan-scrutiny-card">
               {t("BPA_BLOCK_SUBHEADER")} {index + 1}
             </CardSubHeader>
             {!(checkingFlow === "OCBPA") && !(formData?.data?.edcrDetails?.drawingDetail) ? (
-              <CardSectionHeader style={{ fontWeight: "normal" }} className="card-label-smaller">
+              <CardSectionHeader className="card-label-smaller obps-scrutiny-details-header-2">
                 {t("BPA_SUB_OCCUPANCY_LABEL")}
               </CardSectionHeader>
             ) : null}
@@ -421,16 +420,16 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
             {!(checkingFlow === "OCBPA")
               ? subOccupancyObject[`Block_${block.number}`] &&
                 subOccupancyObject[`Block_${block.number}`].length > 0 && (
-                  <LinkButton style={{ textAlign: "left" }} label={"Clear All"} onClick={() => clearall(block.number)} />
+                  <LinkButton className="obps-scrutiny-details-action-btn" label={"Clear All"} onClick={() => clearall(block.number)} />
                 )
               : null}
-            <div style={{ marginTop: "20px" }}>
+            <div className="obps-index-card">
               {checkingFlow === "OCBPA" ? (
                 <StatusTable>
                   <Row className="border-none" label={`${t("BPA_SUB_OCCUPANCY_LABEL")}`} text={getSubOccupancyValues(index)}></Row>
                 </StatusTable>
               ) : null}
-              <div style={{ overflowX: "scroll" }}>
+              <div className="obps-scrutiny-details-wrapper">
                 <Table
                   className="customTable table-fixed-first-column table-border-style"
                   t={t}
@@ -454,9 +453,9 @@ const ScrutinyDetails = ({ onSelect, userType, formData, config }) => {
             </div>
           </div>
         ))}
-        <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", height: "2px", marginTop: "20px", marginBottom: "20px" }} />
-        <CardSubHeader style={{ fontSize: "20px" }}>{t("BPA_APP_DETAILS_DEMOLITION_DETAILS_LABEL")}</CardSubHeader>
-        <StatusTable style={{ border: "none" }}>
+        <hr className="obps-obpsdocuments-holder-top-spacing" />
+        <CardSubHeader className="obps-scrutiny-details-header">{t("BPA_APP_DETAILS_DEMOLITION_DETAILS_LABEL")}</CardSubHeader>
+        <StatusTable className="obps-corrospondence-address-action-btn">
           <Row
             label={t("BPA_APPLICATION_DEMOLITION_AREA_LABEL")}
             text={

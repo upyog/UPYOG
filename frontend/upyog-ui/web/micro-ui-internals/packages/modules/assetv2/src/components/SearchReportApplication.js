@@ -232,7 +232,7 @@ const downloadQRReport = async () => {
                 <div>
                 <Header>{t("AST_REPORTS_CHECK")}</Header>
                 < Card className={"card-search-heading"}>
-                    <span style={{color:"#505A5F"}}>{t("Provide at least one parameter to search for an application")}</span>
+                    <span className="assetv2-search-application-wrapper">{t("Provide at least one parameter to search for an application")}</span>
                 </Card>
                 <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                 <SearchField>
@@ -307,7 +307,7 @@ const downloadQRReport = async () => {
                   </SearchField>
                 <SearchField className="submit">
                     <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
-                    <p style={{marginTop:"10px"}}
+                    <p className="assetv2-search-application-top-spacing"
                     onClick={() => {
                         reset({ 
                             applicationNo: "", 
@@ -331,22 +331,22 @@ const downloadQRReport = async () => {
 
             <br></br>
            { data !== "" ? 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: "10px" }}>
-            <button onClick={downloadPDF} style = {{ color: "maroon", border: "2px solid #333", padding: "8px 16px", cursor: "pointer",marginRight: "10px"}} >Download PDF</button>
-            <button onClick={downloadXLS} style = {{ color: "maroon", border: "2px solid #333", padding: "10px 20px",cursor: "pointer"}}>Download XLS</button> 
-            <button onClick={downloadQRReport} style = {{ color: "maroon", border: "2px solid #333", padding: "10px 20px",cursor: "pointer", marginLeft:"15px"}}>Download QR Report</button> 
+            <div className="assetv2-search-application-flex-row">
+            <button onClick={downloadPDF} className="assetv2-search-report-application-clickable" >Download PDF</button>
+            <button onClick={downloadXLS} className="assetv2-search-report-application-clickable-2">Download XLS</button> 
+            <button onClick={downloadQRReport} className="assetv2-search-application-clickable-2">Download QR Report</button> 
 
             </div>
             : "" }
 
             <br></br>
             
-            {!isLoading && data?.display ? <Card style={{ marginTop: 20 }}>
+            {!isLoading && data?.display ? <Card className="assetv2-astdesktop-inbox-card">
                 {
                 t(data.display)
                     .split("\\n")
                     .map((text, index) => (
-                    <p key={index} style={{ textAlign: "center" }}>
+                    <p key={index} className="assetv2-astdesktop-inbox-centered">
                         {text}
                     </p>
                     ))

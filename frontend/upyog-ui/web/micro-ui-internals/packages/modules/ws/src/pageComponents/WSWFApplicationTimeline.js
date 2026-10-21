@@ -68,7 +68,7 @@ const WSWFApplicationTimeline = props => {
     switch (nextAction?.action) {
       case "PAY":
       { if(props?.paymentbuttonenabled !== false)  return (
-          <div className="ws-auto-160">
+          <div className="ws-wswf-application-timeline-full-width">
             <Link to={`/upyog-ui/citizen/payment/collect/${businessService}/${props.id}?consumerCode=${props.id}&workflow=WNS`}
               state={{ tenantId: props.application.tenantId }}
             >
@@ -79,7 +79,7 @@ const WSWFApplicationTimeline = props => {
           break;
         }
       case "EDIT":
-        return <div className="ws-auto-161">
+        return <div className="ws-wswf-application-timeline-full-width">
             {businessService != "PT.MUTATION" && <Link to={{
             pathname: `/upyog-ui/citizen/pt/property/edit-application/action=edit-${businessService}/${props.id}`,
             state: {
@@ -90,7 +90,7 @@ const WSWFApplicationTimeline = props => {
               </Link>}
           </div>;
       case "SUBMIT_FEEDBACK":
-        return <div className="ws-auto-162">
+        return <div className="ws-wswf-application-timeline-item">
             <Link to={`/upyog-ui/citizen/fsm/rate/${props.id}`}>
               <SubmitBar label={t("CS_APPLICATION_DETAILS_RATE")} />
             </Link>
@@ -105,7 +105,7 @@ const WSWFApplicationTimeline = props => {
   };
   return <React.Fragment>
       {!isLoading && <Fragment>
-          {data?.timeline?.length > 0 && <CardSectionHeader className="ws-auto-163">
+          {data?.timeline?.length > 0 && <CardSectionHeader className="ws-wswf-application-timeline-card">
               {t("CS_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
             </CardSectionHeader>}
           {data?.timeline && data?.timeline?.length === 1 ? <CheckPoint isCompleted={true} label={t(data?.timeline[0]?.state && `CS_${data.timeline[0].state}` || "NA")} customChild={getTimelineCaptions(data?.timeline[0])} /> : <ConnectingCheckPoints>

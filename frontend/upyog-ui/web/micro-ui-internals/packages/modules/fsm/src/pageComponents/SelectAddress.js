@@ -264,7 +264,7 @@ const property = sessionStorage.getItem("Digit_FSM_PT")
               <RadioButtons
                 selectedOption={selectLocation}
                 onSelect={selectedValue}
-                style={{ display: "flex", marginBottom: 0 }}
+                className="fsm-fsmselect-address-flex-container"
                 innerStyles={{ marginLeft: "10px" }}
                 options={inputs}
                 optionsKey="i18nKey"

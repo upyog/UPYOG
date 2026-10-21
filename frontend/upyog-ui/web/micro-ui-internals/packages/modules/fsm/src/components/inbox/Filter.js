@@ -52,7 +52,7 @@ const Filter = ({ searchParams, paginationParms, onFilterChange, onSearch, remov
 
   return (
     <React.Fragment>
-      {((!DSO && !isFstpOperator && searchParams) || (mergedRoleDetails?.statuses?.length > 0) || (isFstpOperatorRequest)) && <div className="filter" style={{ marginTop: isFstpOperator ? "-0px" : "revert" }}>
+      {((!DSO && !isFstpOperator && searchParams) || (mergedRoleDetails?.statuses?.length > 0) || (isFstpOperatorRequest)) && <div className={`filter ${isFstpOperator ? "filter-margin-fstp" : ""}`}>
           <div className="filter-card">
             <div className="heading">
               <div className="filter-label">{t("ES_COMMON_FILTER_BY")}:</div>
@@ -128,7 +128,7 @@ const Filter = ({ searchParams, paginationParms, onFilterChange, onSearch, remov
               if (props.type === "mobile") onSearch({ delete: ["applicationNos"] });
               else onSearch();
             }}
-            style={{ flex: 1 }}
+            className="fsm-filter-wrapper"
           />
         </ActionBar>
       )}

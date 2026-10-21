@@ -41,8 +41,8 @@ const DocumentDetails = ({ t, data, documents, paymentDetails }) => {
         const docName = docUrl ? decodeURIComponent(docUrl.split("?")?.[0]?.split("/")?.pop()?.slice(13)) : "";
         return (
           <Fragment key={index}>
-            <div style={{maxWidth: "940px", padding: "8px", borderRadius: "4px", border: "1px solid #D6D5D4", background: "#FAFAFA", marginBottom: "32px"}}>
-              <div style={{fontSize: "16px", fontWeight: 700}}>{t(`BPA_${document?.documentType}`)}</div>
+            <div className="eng-message-details-bottom-spacing">
+              <div className="eng-message-details-text-style">{t(`BPA_${document?.documentType}`)}</div>
               {docUrl && (
                 <a target="_" href={docUrl}>
                   <PDFSvg />
@@ -166,7 +166,7 @@ const MessageDetails = () => {
         actionSaveLabel={t('PUBLIC_BRDCST_DELETE')}
         actionSaveOnSubmit={handleDelete}
         >
-          <Card style={{ boxShadow: "none" }}>
+          <Card className="eng-mark-active-card">
             <CardText>{t(`PUBLIC_BRDCST_DELETE_TEXT`)}</CardText>
           </Card>
         </Modal>

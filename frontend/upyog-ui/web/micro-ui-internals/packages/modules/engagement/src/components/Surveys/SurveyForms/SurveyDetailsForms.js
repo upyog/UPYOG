@@ -55,7 +55,7 @@ const SurveyDetailsForms = ({ t, registerRef, controlSurveyForm, surveyFormState
               [field?.value]
             );
             return (
-              <div style={{ display: "grid", gridAutoFlow: "row" }}>
+              <div className="eng-survey-details-view-grid-container">
                  {/* <Dropdown
                   allowMultiselect={true}
                   optionKey={"i18nKey"}

@@ -54,7 +54,7 @@ export const configSVApproverApplication = ({ t, action, selectFile, uploadedFil
                   setUploadedFile(null);
                 }}
                 message={isUploading ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div className="tmpl-application-details-content-flex-row">
                     <LoadingSpinner />
                     <span>Uploading...</span>
                   </div>

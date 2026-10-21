@@ -56,6 +56,7 @@ import SearchPTIDProp from "./components/search/SearchDefaulter";
 import PropertyInformation from "./pages/citizen/MyProperties/propertyInformation";
 import PTWFCaption from "./pageComponents/PTWFCaption";
 import PTWFReason from "./pageComponents/PTWFReason";
+import PTCitizenHomeScreen from "./pages/citizen/PTHome";
 import ProvideFloorNo from "./pageComponents/ProvideFloorNo";
 import PropertyOwnerHistory from "./pages/citizen/MyProperties/propertyOwnerHistory";
 import TransferDetails from "./pages/citizen/MyProperties/propertyOwnerHistory";
@@ -177,6 +178,8 @@ const componentsToRegister = {
   //PTCitizenFeedbackPopUp,
   // PTCitizenFeedback,
   // PTAcknowledgementCF,
+  PTCitizenHomeScreen,
+  PTHome: PTCitizenHomeScreen,
   SelectOtp, // To-do: Temp fix, Need to check why not working if selectOtp module is already imported from core module
   AcknowledgementCF,
   CitizenFeedback,
@@ -186,8 +189,12 @@ const componentsToRegister = {
 
 const addComponentsToRegistry = () => {
   Object.entries(componentsToRegister).forEach(([key, value]) => {
-    Digit.ComponentRegistryService.setComponent(key, value);
+    Digit?.ComponentRegistryService?.setComponent(key, value);
   });
+};
+
+export const initPTComponents = () => {
+  addComponentsToRegistry();
 };
 
 export const PTModule = ({ stateCode, userType, tenants }) => {
@@ -269,6 +276,8 @@ export const PTComponents = {
   PTCard,
   PTModule,
   PTLinks,
+  PTCitizenHomeScreen,
+  PTHome: PTCitizenHomeScreen,
   PT_INBOX_FILTER: (props) => <InboxFilter {...props} />,
   PTEmptyResultInbox: EmptyResultInbox,
   PTInboxTableConfig: TableConfig,

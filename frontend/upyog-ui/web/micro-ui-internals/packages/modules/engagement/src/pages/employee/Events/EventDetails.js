@@ -101,7 +101,7 @@ const EventDetails = () => {
           actionSaveLabel={t('ES_EVENT_DELETE')}
           actionSaveOnSubmit={handleDelete}
         >
-          <Card style={{ boxShadow: "none" }}>
+          <Card className="eng-mark-active-card">
             <CardText>{t(`ES_EVENT_DELETE_TEXT`)}</CardText>
           </Card>
         </Modal>

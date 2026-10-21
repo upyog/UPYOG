@@ -40,7 +40,7 @@ const CheckBoxOption = ({ index, title, updateOption, removeOption,maxLength,tit
         className={isFocused ? "simple_editable-input" : "simple_readonly-input"}
         maxLength={maxLength}
         title={titleHover}
-        style={{...labelstyle}}
+        style={labelstyle}
         disabled={isPartiallyEnabled ? !isPartiallyEnabled : formDisabled}
       />
       <div className="pointer" onClick={()=> removeOption(index)}>

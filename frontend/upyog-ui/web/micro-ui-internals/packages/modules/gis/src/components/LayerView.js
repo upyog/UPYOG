@@ -439,7 +439,7 @@ const LayerView = () => {
                 <span className="gis-legend__label">
                   <span
                     className="gis-legend__swatch"
-                    style={{ background: area.colors[chip.code] }}
+                    style={area?.colors?.[chip.code] ? { background: area.colors[chip.code] } : undefined}
                   />
                   {t(chip.label)}
                 </span>
@@ -563,13 +563,13 @@ const DonutChart = ({ slices, total }) => {
             fill={seg.color}
             transform={`translate(${tx},${ty})`}
             className="gis-donut-path"
-            style={{ filter: isHov ? "drop-shadow(0 3px 6px rgba(0,0,0,0.28))" : "none" }}
+            style={isHov ? { filter: "drop-shadow(0 3px 6px rgba(0,0,0,0.28))" } : undefined}
           />
         );
       })}
       {hoveredSeg ? (
         <>
-          <text x={cx} y={cy - 10} className="gis-donut-text gis-donut-text--count" style={{ fill: hoveredSeg.color }}>{hoveredSeg.count}</text>
+          <text x={cx} y={cy - 10} className="gis-donut-text gis-donut-text--count" style={hoveredSeg?.color ? { fill: hoveredSeg.color } : undefined}>{hoveredSeg.count}</text>
           <text x={cx} y={cy + 7}  className="gis-donut-text gis-donut-text--label">{hoveredSeg.label}</text>
           <text x={cx} y={cy + 20} className="gis-donut-text gis-donut-text--meta">{hoveredSeg.pct}%</text>
         </>
@@ -610,21 +610,21 @@ const AnalysisPanel = ({ t, area, total, analysis }) => {
       </div>
 
       {statusRows.map((row) => (
-        <div key={row.code} className="gis-status-card" style={{ "--status-color": row.color }}>
+        <div key={row.code} className="gis-status-card" style={row?.color ? { ["--status-color"]: row.color } : undefined}>
           <div className="gis-status-card__header">
             <span className="gis-status-card__label">{t(row.label)}</span>
-            <span className="gis-status-card__count" style={{ color: row.color }}>
+            <span className="gis-status-card__count" style={row?.color ? { color: row.color } : undefined}>
               {row.count}
               <span className="gis-status-card__pct">{row.pct}%</span>
             </span>
           </div>
           <div className="gis-status-card__bar-track">
-            <div className="gis-status-card__bar-fill" style={{ width: `${row.pct}%`, background: row.color }} />
+            <div className="gis-status-card__bar-fill" style={row ? { width: `${row.pct}%`, background: row.color } : undefined} />
           </div>
           {row.outstanding > 0 && (
             <div className="gis-status-card__dues">
               <span>{t("Outstanding")}</span>
-              <span style={{ color: row.color }}>{formatLakh(row.outstanding)}</span>
+              <span style={row?.color ? { color: row.color } : undefined}>{formatLakh(row.outstanding)}</span>
             </div>
           )}
         </div>

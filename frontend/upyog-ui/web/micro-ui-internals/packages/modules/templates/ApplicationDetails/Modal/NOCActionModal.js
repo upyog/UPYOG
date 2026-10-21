@@ -6,7 +6,7 @@ import { configNOCApproverApplication } from "../config";
 import * as predefinedConfig from "../config";
 
 const Heading = (props) => {
-  return <h1 style={{marginLeft:"22px"}} className="heading-m BPAheading-m">{props.label}</h1>;
+  return <h1 className="heading-m BPAheading-m tmpl-bpaaction-modal-header">{props.label}</h1>;
 };
 
 const Close = () => (

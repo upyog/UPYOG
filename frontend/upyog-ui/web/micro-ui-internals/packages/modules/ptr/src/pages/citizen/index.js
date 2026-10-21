@@ -39,7 +39,7 @@ const App = () => {
   const PTRMyApplications = Digit?.ComponentRegistryService?.getComponent("PTRMyApplications");
  
   return (
-    <span className={"pet-citizen"} style={{ width: "100%" }}>
+    <span className={`${"pet-citizen"} ptr-ptracknowledgement-fullwidth`}>
       <AppContainer>
         {!shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
         <Routes>

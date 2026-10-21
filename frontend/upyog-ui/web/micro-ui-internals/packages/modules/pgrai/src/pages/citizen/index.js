@@ -15,7 +15,7 @@ const App = () => {
 //  to show back button on top left of the page in order to go back to previous page
 //this has been added in order show my bookings page
   return (
-    <span className={"ads-citizen"} style={{ width: "100%" }}>
+    <span className={`${"ads-citizen"} pgrai-acknowledgement-fullwidth`}>
       <AppContainer>
         {!shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
         <Routes>

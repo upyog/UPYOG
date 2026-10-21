@@ -12,11 +12,10 @@ const ToggleSwitch = ({ value, onChange, label, name, ref, style, ...props }) =>
         type="checkbox"
       />
       <label
-        style={{ background: value && '#fcefe7' }}
-        className="react-switch-label"
+        className={`react-switch-label ${value ? "react-switch-label-active" : ""}`}
         htmlFor={name}
       >
-        <span className={`react-switch-button`} style={{ background: !value && '#bbb' }} />
+        <span className={`react-switch-button ${!value ? "react-switch-btn-inactive" : ""}`} />
       </label>
     </div>
   );

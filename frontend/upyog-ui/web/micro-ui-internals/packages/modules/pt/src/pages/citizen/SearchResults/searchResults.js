@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Header, ResponseComposer, Loader, Modal, Card, KeyNote, SubmitBar, CitizenInfoLabel} from "@nudmcdgnpm/digit-ui-react-components";
+import { Header, ResponseComposer, Loader, Modal, Card, KeyNote, SubmitBar, CitizenInfoLabel } from "@nudmcdgnpm/digit-ui-react-components";
 import PropTypes from "prop-types";
-import { Link, useLocation,  } from "react-router-dom";
+import { Link, useLocation, } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import "../../../css/pt-inline-auto.css";
+
 const PropertySearchResults = ({
   template,
   header,
@@ -11,7 +11,7 @@ const PropertySearchResults = ({
   isMutation,
   onSelect,
   config,
-  clearParams = () => {}
+  clearParams = () => { }
 }) => {
   const {
     t
@@ -110,9 +110,9 @@ const PropertySearchResults = ({
     return <Loader />;
   }
   if (result.error || !consumerCode) {
-    return <div className="pt-auto-142">
-        <Card className="pt-auto-143">{t("CS_PT_NO_PROPERTIES_FOUND")}</Card>
-      </div>;
+    return <div className="pt-search-results-item">
+      <Card className="pt-search-results-flex-center-row-center">{t("CS_PT_NO_PROPERTIES_FOUND")}</Card>
+    </div>;
   }
   const onSubmit = data => {
     if (isMutation) {
@@ -142,39 +142,39 @@ const PropertySearchResults = ({
       bil_due__date: payment[property?.propertyId]?.bil_due__date || t("N/A")
     };
   });
-  return <div className="static pt-auto-144">
-      <div className="static-wrapper">
-        {header && <Header className="pt-auto-145">
-            {t(header)} ({searchResults?.length})
-          </Header>}
-        <ResponseComposer data={searchResults} template={template} actionButtonLabel={actionButtonLabel} onSubmit={onSubmit} />
-      </div>
+  return <div className="static pt-search-results-mt-md">
+    <div className="static-wrapper">
+      {header && <Header className="pt-search-results-item-2">
+        {t(header)} ({searchResults?.length})
+      </Header>}
+      <ResponseComposer data={searchResults} template={template} actionButtonLabel={actionButtonLabel} onSubmit={onSubmit} />
+    </div>
 
-      {modalData ? <Modal hideSubmit={true} isDisabled={false} popupStyles={{
+    {modalData ? <Modal hideSubmit={true} isDisabled={false} popupStyles={{
       width: "319px",
       height: "250px",
       margin: "auto"
     }} formId="modal-action">
-          <div ref={modalRef}>
-            <KeyNote keyValue={t("PT_AMOUNT_DUE")} note={`₹ ${modalData?.total_due?.toLocaleString("en-IN")}`} noteStyle={{
+      <div ref={modalRef}>
+        <KeyNote keyValue={t("PT_AMOUNT_DUE")} note={`₹ ${modalData?.total_due?.toLocaleString("en-IN")}`} noteStyle={{
           fontSize: "24px",
           fontWeight: "bold"
         }} />
-            <p>
-              {t("PT_YOU_HAVE") + " " + "₹" + " " + modalData?.total_due.toLocaleString("en-IN") + " " + t("PT_PENDING_AMOUNT") + " " + t("PT_INORDER_TO_TRANSFER")}
-            </p>
-            <SubmitBar submit={false} onSubmit={() => proceedToPay(modalData)} label={t("PT_PROCEED_PAYMENT")} className="pt-auto-146" />
-          </div>
-        </Modal> : null}
-      {!searchResults?.length > 0 && <p className="pt-auto-147">{t("PT_NO_PROP_FOUND_MSG")}</p>}
-      {searchResults?.length !== 0 && (searchResults?.length == 5 || searchResults?.length == 50) && <div>
-            <p className="pt-auto-148">
-              {t("PT_LOAD_MORE_MSG")}{" "}
-              <span className="link">{<Link to={`/upyog-ui/citizen/pt/property/search-results?mobileNumber=${mobileNumber ? mobileNumber : ""}&propertyIds=${propertyIds ? propertyIds : ""}&oldPropertyIds=${oldPropertyIds ? oldPropertyIds : ""}&doorNo=${doorNo ? doorNo : ""}&name=${name ? name : ""}&city=${city ? city : ""}&locality=${locality ? locality : ""}&PToffset=${t1}`}>{t("PT_COMMON_CLICK_HERE")}</Link>}</span>
-            </p>
-          </div>}
-        {isMutation && searchResults?.length !== 0 ? <CitizenInfoLabel info={t("CS_FILE_APPLICATION_INFO_LABEL")} text={t("PT_CANNOT_TRANSFER_IF_AMOUNT_PENDING")} /> : null}
-    </div>;
+        <p>
+          {t("PT_YOU_HAVE") + " " + "₹" + " " + modalData?.total_due.toLocaleString("en-IN") + " " + t("PT_PENDING_AMOUNT") + " " + t("PT_INORDER_TO_TRANSFER")}
+        </p>
+        <SubmitBar submit={false} onSubmit={() => proceedToPay(modalData)} label={t("PT_PROCEED_PAYMENT")} className="pt-search-results-full-width" />
+      </div>
+    </Modal> : null}
+    {!searchResults?.length > 0 && <p className="pt-search-results-mt-md-ml-md">{t("PT_NO_PROP_FOUND_MSG")}</p>}
+    {searchResults?.length !== 0 && (searchResults?.length == 5 || searchResults?.length == 50) && <div>
+      <p className="pt-search-results-mt-md-ml-md">
+        {t("PT_LOAD_MORE_MSG")}{" "}
+        <span className="link">{<Link to={`/upyog-ui/citizen/pt/property/search-results?mobileNumber=${mobileNumber ? mobileNumber : ""}&propertyIds=${propertyIds ? propertyIds : ""}&oldPropertyIds=${oldPropertyIds ? oldPropertyIds : ""}&doorNo=${doorNo ? doorNo : ""}&name=${name ? name : ""}&city=${city ? city : ""}&locality=${locality ? locality : ""}&PToffset=${t1}`}>{t("PT_COMMON_CLICK_HERE")}</Link>}</span>
+      </p>
+    </div>}
+    {isMutation && searchResults?.length !== 0 ? <CitizenInfoLabel info={t("CS_FILE_APPLICATION_INFO_LABEL")} text={t("PT_CANNOT_TRANSFER_IF_AMOUNT_PENDING")} /> : null}
+  </div>;
 };
 PropertySearchResults.propTypes = {
   template: PropTypes.any,

@@ -293,7 +293,7 @@ const PaymentDetails = () => {
   }
   return <React.Fragment>
       <Header>{t("PT_PAYMENT_HISTORY")}</Header>
-      <div className="pt-auto-169">
+      <div className="pt-payment-details-flex">
         <h2 style={isMobile ? {
         marginLeft: "15px",
         fontSize: "16px",
@@ -306,7 +306,7 @@ const PaymentDetails = () => {
         width: "30%",
         fontWeight: "700"
       }}>{t("PT_PROPERTY_PTUID")}</h2>
-        <div className="pt-auto-170">{applicationNumber}</div>
+        <div className="pt-payment-details-half-width">{applicationNumber}</div>
       </div>
       {paymentObject.length > 0 ? paymentObject?.map(payment => <div style={isMobile ? {} : {
       marginLeft: "-16px"

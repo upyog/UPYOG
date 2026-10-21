@@ -41,11 +41,11 @@ const FireNocDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
     result =
       (EmptyInboxComp && <EmptyInboxComp data={data} />) ||
       (data?.length === 0 || (useNewInboxAPI && data?.[0].dataEmpty) ? (
-        <Card style={{ marginTop: 20 }}>
+        <Card className="noc-fire-noc-desktop-inbox-card">
           {t("CS_MYAPPLICATIONS_NO_APPLICATION")
             .split("\\n")
             .map((text, index) => (
-              <p key={index} style={{ textAlign: "center" }}>
+              <p key={index} className="noc-fire-noc-desktop-inbox-centered">
                 {text}
               </p>
             ))}
@@ -101,7 +101,7 @@ const FireNocDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
           </div>
         </div>
       )}
-      <div style={{ flex: 1 }}>
+      <div className="noc-fire-noc-desktop-inbox-wrapper">
         <SearchApplication
           defaultSearchParams={props.defaultSearchParams}
           onSearch={(d) => {
@@ -114,7 +114,7 @@ const FireNocDesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
           searchParams={props.searchParams}
           clearSearch={() => setClearSearchCalled(true)}
         />
-        <div className="result" style={{ marginLeft: !props?.isSearch ? "24px" : "", flex: 1 }}>
+        <div className={`result ${!props?.isSearch ? "inbox-result--with-margin" : "inbox-result--no-margin"}`}>
           {result}
         </div>
       </div>

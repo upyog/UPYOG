@@ -194,7 +194,7 @@ function SelectDocument({
       }
     }
   }
-  return <div className="tl-auto-40">
+  return <div className="tl-select-documents-mb-md">
       {doc?.hasDropdown ? <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t(doc?.code)}</CardLabel>
           <Dropdown className="form-field" selected={selectedDocument} disable={dropDownData?.length === 0 || enabledActions?.[action].disableDropdown} option={dropDownData} select={handleSelectDocument} optionKey="code" t={t} />

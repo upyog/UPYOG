@@ -88,7 +88,7 @@ const DesktopInbox = ({ isLoading, data, t, onSearch, parentRoute, title, iconNa
           <Filter onFilterChange={onFilterChange} searchParams={searchParams} />
         </div>
       </div>
-      <div style={{ flex: 1 }}>
+      <div className="eng-desktop-inbox-wrapper">
         <Search
           t={t}
           onSearch={onSearch}
@@ -97,7 +97,7 @@ const DesktopInbox = ({ isLoading, data, t, onSearch, parentRoute, title, iconNa
           isInboxPage={true}
           searchParams={searchParams}
         />
-        <div className="result" style={{ marginLeft: "24px", flex: 1 }}>
+        <div className="result eng-desktop-inbox-spacing">
           {result}
         </div>
       </div>

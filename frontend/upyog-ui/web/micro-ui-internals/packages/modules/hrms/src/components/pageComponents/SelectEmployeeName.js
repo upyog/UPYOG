@@ -42,7 +42,7 @@ const SelectEmployeeName = ({ t, config, onSelect, formData = {}, userType, regi
                 defaultValue={undefined}
                 {...input.validation}
               />
-            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('Name'))&&<CardLabelError style={{ width: "100%", marginTop: '-15px', fontSize: '16px', marginBottom: '12px'}}>{t("CORE_COMMON_APPLICANT_NAME_INVALID")}</CardLabelError>}
+            {currentValue&&currentValue.length>0&&!currentValue.match(Digit.Utils.getPattern('Name'))&&<CardLabelError className="hrms-select-email-id-fullwidth">{t("CORE_COMMON_APPLICANT_NAME_INVALID")}</CardLabelError>}
             </div>
           </LabelFieldPair>
         </React.Fragment>

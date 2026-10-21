@@ -4,7 +4,7 @@ import { useForm, Controller } from "react-hook-form";
 import SearchFields from "../../components/SearchWaterConnection/SearchFields2";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import "../../css/ws-inline-auto.css";
+
 const SearchWaterConnectionIntegrated = ({
   tenantId,
   onSubmit,
@@ -51,7 +51,7 @@ const SearchWaterConnectionIntegrated = ({
     }
   });
 
-// Removed v6 useEffect register calls - use defaultValues in useForm instead
+  // Removed v6 useEffect register calls - use defaultValues in useForm instead
 
   const onSort = useCallback((args) => {
     if (args.length === 0) return;
@@ -121,12 +121,12 @@ const SearchWaterConnectionIntegrated = ({
       row
     }) => {
       return <div>
-              {row.original["connectionNo"] ? <span className={"link"}>
-                  <Link to={`/upyog-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${row.original?.["service"]}&connectionType=${row.original?.["connectionType"]}&due=${row.original?.due || 0}&from=WS_SEWERAGE_CONNECTION_SEARCH_LABEL`}>
-                    {row.original["connectionNo"] || "NA"}
-                  </Link>
-                </span> : <span>{t("NA")}</span>}
-            </div>;
+        {row.original["connectionNo"] ? <span className={"link"}>
+          <Link to={`/upyog-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${row.original?.["service"]}&connectionType=${row.original?.["connectionType"]}&due=${row.original?.due || 0}&from=WS_SEWERAGE_CONNECTION_SEARCH_LABEL`}>
+            {row.original["connectionNo"] || "NA"}
+          </Link>
+        </span> : <span>{t("NA")}</span>}
+      </div>;
     }
   }, {
     Header: t("WS_COMMON_TABLE_COL_SERVICE_LABEL"),
@@ -187,57 +187,57 @@ const SearchWaterConnectionIntegrated = ({
     switch (status) {
       case "Active":
         return <div>
-            <span className="link">
-              {row.original?.service === "WATER" ? <Link to={{
+          <span className="link">
+            {row.original?.service === "WATER" ? <Link to={{
               pathname: `/upyog-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(row.original?.["connectionNo"])}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}?workflow=WS&ISWSCON`
             }}>
-                  {t(`${"WS_COMMON_COLLECT_LABEL"}`)}{" "}
-                </Link> : <Link to={{
+              {t(`${"WS_COMMON_COLLECT_LABEL"}`)}{" "}
+            </Link> : <Link to={{
               pathname: `/upyog-ui/employee/payment/collect/${row.original?.["service"] === "WATER" ? "WS" : "SW"}/${encodeURIComponent(row.original?.["connectionNo"])}/${row.original?.["tenantId"]}?tenantId=${row.original?.["tenantId"]}?workflow=SW&ISWSCON`
             }}>
-                  {t(`${"WS_COMMON_COLLECT_LABEL"}`)}{" "}
-                </Link>}
-            </span>
-          </div>;
+              {t(`${"WS_COMMON_COLLECT_LABEL"}`)}{" "}
+            </Link>}
+          </span>
+        </div>;
     }
   };
   return <>
-      <Header styles={{
+    <Header styles={{
       fontSize: "32px"
     }}>
-        {t("WS_WATER_SEWERAGE_INTEGRATED_BILL_SUB_HEADER")}
-      </Header>
-      <SearchForm className="ws-custom-wrapper" onSubmit={onSubmit} handleSubmit={handleSubmit}>
-        <SearchFields {...{
+      {t("WS_WATER_SEWERAGE_INTEGRATED_BILL_SUB_HEADER")}
+    </Header>
+    <SearchForm className="ws-custom-wrapper" onSubmit={onSubmit} handleSubmit={handleSubmit}>
+      <SearchFields {...{
         register,
         control,
         reset,
         tenantId,
         t
       }} />
-      </SearchForm>
-      {isLoading ? <Loader /> : null} 
-      {data?.display && !resultOk ? <Card className="ws-auto-338">
-          {t(data?.display).split("\\n").map((text, index) => <p key={index} className="ws-auto-339">
-                {text}
-              </p>)}
-        </Card>
-    // <></>
-    : resultOk ? <div>
+    </SearchForm>
+    {isLoading ? <Loader /> : null}
+    {data?.display && !resultOk ? <Card className="ws-search-water-connection-integrated-card-mt-md">
+      {t(data?.display).split("\\n").map((text, index) => <p key={index} className="ws-search-water-connection-integrated-card-center-text">
+        {text}
+      </p>)}
+    </Card>
+      // <></>
+      : resultOk ? <div>
         <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {
-        return {
-          style: {
-            minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
-            padding: "20px 18px",
-            fontSize: "16px"
-          }
-        };
-      }} onPageSizeChange={onPageSizeChange} currentPage={getValues("offset") / getValues("limit")} onNextPage={nextPage} onPrevPage={previousPage} pageSizeLimit={getValues("limit")} onSort={onSort} disableSort={false} sortParams={[{
-        id: getValues("sortBy"),
-        desc: getValues("sortOrder") === "DESC" ? true : false
-      }]} />
-        <button className="submit-bar ws-auto-340" type="button" onClick={downloadIntegratedBill}>{t("WS_DOWNLOAD_BILL")}</button>
-        </div> : null}
-    </>;
+          return {
+            style: {
+              minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
+              padding: "20px 18px",
+              fontSize: "16px"
+            }
+          };
+        }} onPageSizeChange={onPageSizeChange} currentPage={getValues("offset") / getValues("limit")} onNextPage={nextPage} onPrevPage={previousPage} pageSizeLimit={getValues("limit")} onSort={onSort} disableSort={false} sortParams={[{
+          id: getValues("sortBy"),
+          desc: getValues("sortOrder") === "DESC" ? true : false
+        }]} />
+        <button className="submit-bar ws-search-water-connection-integrated-btn-mt-sm" type="button" onClick={downloadIntegratedBill}>{t("WS_DOWNLOAD_BILL")}</button>
+      </div> : null}
+  </>;
 };
 export default SearchWaterConnectionIntegrated;

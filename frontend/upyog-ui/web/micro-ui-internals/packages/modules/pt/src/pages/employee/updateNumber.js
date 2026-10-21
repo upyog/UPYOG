@@ -4,7 +4,7 @@ import {
 } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import { useForm } from "react-hook-form";
-import "../../css/pt-inline-auto.css";
+
 const defaultState = {
   invalid: false,
   showToast: null,
@@ -20,15 +20,15 @@ const getConfig = (t, selectFile, setUploadedFile, uploadedFile, UpdateNumberCon
   const doc = UpdateNumberConfig?.documents?.map(document => {
     return {
       label: t(document.code),
-      populators: <div className="pt-auto-168">
-            <UploadFile id={document.documentType} {...document.inputProps} onUpload={selectFile} onDelete={() => {
+      populators: <div className="pt-update-number-item">
+        <UploadFile id={document.documentType} {...document.inputProps} onUpload={selectFile} onDelete={() => {
           setUploadedFile(pre => ({
             ...pre,
             [document?.documentType]: null
           }));
         }} message={uploadedFile?.[document?.documentType] ? `1 ${t(`HR_ACTION_FILEUPLOADED`)}` : t(`HR_ACTION_NO_FILEUPLOADED`)} />
-            <span>{t("PT_ATTACH_RESTRICTIONS_SIZE")}</span>
-          </div>
+        <span>{t("PT_ATTACH_RESTRICTIONS_SIZE")}</span>
+      </div>
     };
   }) || [];
   return [{
@@ -216,24 +216,24 @@ const UpdateNumber = ({
   });
   const config = useMemo(() => getConfig(t, selectFile, setUploadedFile, uploadedFile, UpdateNumberConfig), [t, setUploadedFile, uploadedFile, UpdateNumberConfig]);
   return <div className="popup-module updateNumberEmployee">
-      <FormComposer config={config} noBoxShadow inline submitInForm={true} onSubmit={_data => onSubmit({
+    <FormComposer config={config} noBoxShadow inline submitInForm={true} onSubmit={_data => onSubmit({
       ..._data,
       ...uploadedFile
     })} label={"ES_COMMON_UPDATE"} defaultValues={{
       mobileNumber: ""
     }} formId="modal-action">
-        <div>
-          <StatusTable>
-            <Row label={t("PTUPNO_OWNER_NAME")} text={`${compState?.name || t("CS_NA")}`} />
-            <Row label={t("PTUPNO_CURR_NO")} text={`${compState?.mobileNumber || t("CS_NA")}`} />
-          </StatusTable>
-        </div>
-      </FormComposer>
-      {compState.showToast && <Toast error={compState.error} warning={compState.warning} label={t(compState.message)} onClose={() => {
+      <div>
+        <StatusTable>
+          <Row label={t("PTUPNO_OWNER_NAME")} text={`${compState?.name || t("CS_NA")}`} />
+          <Row label={t("PTUPNO_CURR_NO")} text={`${compState?.mobileNumber || t("CS_NA")}`} />
+        </StatusTable>
+      </div>
+    </FormComposer>
+    {compState.showToast && <Toast error={compState.error} warning={compState.warning} label={t(compState.message)} onClose={() => {
       compStateDispatch({
         type: "resettoast"
       });
     }} />}
-    </div>;
+  </div>;
 };
 export default UpdateNumber;

@@ -18,7 +18,7 @@ const MobileComponentDirectory = {
     }} handleSubmit={handleSearchFormSubmit} id="search-form" className="rm-mb form-field-flex-one inboxPopupMobileWrapper" >
         <MobilePopUpCloseButton {...{closeMobilePopupModal}} />
         <SearchFormFields registerRef={registerSearchFormField} searchFormState={searchFormState} controlSearchForm={controlSearchForm} />
-        <ActionBar style={{maxWidth: "100%"}}>
+        <ActionBar className="rc-mobile-component-directory-wrapper">
         <SearchField className="submit">
             <SubmitBar label={t("ES_COMMON_SEARCH")} submit form="search-form" />
             <p onClick={onResetSearchForm}>{t(`ES_COMMON_CLEAR_ALL`)}</p>
@@ -45,7 +45,7 @@ const MobileComponentDirectory = {
                 <MobilePopUpCloseButton {...{closeMobilePopupModal}} />
                 <PopupHeadingLabel IconSVG={SortSvg} headingLabel={t("COMMON_TABLE_SORT") } {...{onResetSortForm}}/>
                 <MobileSortFormValues />
-                <ActionBar style={{maxWidth: "100%"}}>
+                <ActionBar className="rc-mobile-component-directory-wrapper">
                 <SearchField className="submit">
                     <SubmitBar label={t("COMMON_TABLE_SORT")} submit form="sort-form" />
                     <p onClick={onResetSortForm}>{t(`ES_COMMON_CLEAR_ALL`)}</p>

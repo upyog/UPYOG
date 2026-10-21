@@ -26,7 +26,7 @@ const Status = ({ onAssignmentChange, searchParams, businessServices, statusMap,
 
   return userRoleStates?.filter((e) => !e.isTerminateState).length ? (
     <div className="status-container">
-      <div className="filter-label" style={{ fontWeight: "normal" }}>
+      <div className="filter-label vnd-new-inbox-filter-text-style">
         {t("ES_INBOX_STATUS")}
       </div>
       {userRoleStates

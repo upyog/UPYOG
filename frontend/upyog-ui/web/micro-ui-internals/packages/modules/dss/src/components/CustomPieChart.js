@@ -56,7 +56,7 @@ const CustomPieChart = ({ dataKey = "value", data, setChartDenomination, moduleC
   }, [chartData])
 
   const renderLegend = (value) => (
-    <span style={{ fontSize: "14px", color: "#505A5F" }}>{t(`COMMON_MASTERS_${value && Digit.Utils.locale.getTransformedLocale(value)}`)}</span>
+    <span className="dss-custom-area-chart-text-style">{t(`COMMON_MASTERS_${value && Digit.Utils.locale.getTransformedLocale(value)}`)}</span>
   );
 
   const renderCustomLabel = (args) => {
@@ -105,13 +105,7 @@ const CustomPieChart = ({ dataKey = "value", data, setChartDenomination, moduleC
   const renderTooltip = ({ payload, label }) => {
     return (
       <div
-        style={{
-          margin: "0px",
-          padding: "10px",
-          backgroundColor: "rgb(255, 255, 255)",
-          border: "1px solid rgb(204, 204, 204)",
-          whiteSpace: "nowrap",
-        }}
+        className="dss-custom-area-chart-container-padding"
       >
         <p className="recharts-tooltip-label">{`${t(
           `COMMON_MASTERS_${payload?.[0]?.name && Digit.Utils.locale.getTransformedLocale(payload?.[0]?.name)}`
@@ -159,11 +153,11 @@ const CustomPieChart = ({ dataKey = "value", data, setChartDenomination, moduleC
   }, [id]);
   const CustomLegend=({payload, totalValue})=>{
     return (
-      <div style={{display:"flex",flexWrap:"wrap"}}>
+      <div className="dss-custom-pie-chart-flex-container">
         {payload.map((entry, index)=>(
-          <div key={`legend-${index}`} style={{display:'flex', alignItems:'center', marginBottom: "5px", width:"50%"}}>
-            <div style={{width: 10, height:10, backgroundColor: entry.color, marginRight: 5}}/>
-            <span style={{fontSize: 14, color: '#505ASF', marginRight: 10}}>
+          <div key={`legend-${index}`} className="dss-custom-pie-chart-flex-row">
+            <div style={entry?.color ? { backgroundColor: entry.color } : undefined} className="dss-pie-legend-box"/>
+            <span className="dss-custom-pie-chart-spacing">
               {`${entry.value}:${(entry?.payload?.percent  * 100).toFixed(1)}% (${Digit.Utils.dss.formatter(entry?.payload?.value, entry?.payload?.payload?.symbol, value?.denomination, true, t)} )`}
             </span>
             </div>
@@ -177,17 +171,17 @@ const CustomPieChart = ({ dataKey = "value", data, setChartDenomination, moduleC
   return (
     <Fragment>
       {id === "deathByCategory" && ( //|| id === "nssNumberOfDeathsByCategory") && (
-        <span className={"dss-pie-subheader"} style={{ position: "sticky", left: 0 }}>
+        <span className={`${"dss-pie-subheader"} dss-custom-pie-chart-wrapper`}>
           {t("DSS_CMN_PIE_INFO")}
         </span>
       )}
       {isPieClicked && (
         <div>
-          <div className="tag-container" style={{ marginBottom: "unset" }}>
-            <span style={{ marginTop: "20px" }}>{t("DSS_FILTERS_APPLIED")}: </span>
+          <div className="tag-container dss-custom-pie-chart-bottom-spacing">
+            <span className="dss-custom-pie-chart-top-spacing">{t("DSS_FILTERS_APPLIED")}: </span>
             <RemoveableTag key={id} text={`${t("COMMON_MASTERS_" + Digit.Utils.locale.getTransformedLocale(pieSelected))}`} onClick={removeFilter} />
           </div>
-          {/* <div className="tag-container" style={{marginBottom:"unset"}}>
+          {/* <div className="tag-container" className="custom-style">
             <span >{t("DSS_FILTERS_APPLIED")}: </span>
             <RemoveableTag extraStyles={{tagStyles:{ marginTop: "unset" }}} key={id} text={`${t("COMMON_MASTERS_" + Digit.Utils.locale.getTransformedLocale(pieSelected))}`} onClick={removeFilter} />
           </div> */}
@@ -203,7 +197,7 @@ const CustomPieChart = ({ dataKey = "value", data, setChartDenomination, moduleC
               dataKey={dataKey}
               cx="50%"
               cy="50%"
-              style={{ cursor: response?.responseData?.drillDownChartId !== "none" ? "pointer" : "default" }}
+              className={response?.responseData?.drillDownChartId !== "none" ? "cursor-pointer" : "cursor-default"}
               innerRadius={checkChartID(id) && !mobileView ? 90 : 70} ///Charts in rows(which contains 2 charts) are little bigger in size than charts in rows(which contains 3 charts) charts
               outerRadius={checkChartID(id) && !mobileView ? 110 : 90}
               margin={{ top: isPieClicked ? 0 : 5 }}
@@ -226,12 +220,7 @@ const CustomPieChart = ({ dataKey = "value", data, setChartDenomination, moduleC
       )}
       {isPieClicked && (
         <div
-          style={{
-            marginTop: "-4%",
-            position: "absolute",
-            width: "30%",
-            textAlign: "center",
-          }}
+          className="dss-custom-pie-chart-centered"
         >
           {t(Digit.Utils.locale.getTransformedLocale(`${response?.responseData?.data?.[0]?.headerName}_${pieSelected}`))}
         </div>

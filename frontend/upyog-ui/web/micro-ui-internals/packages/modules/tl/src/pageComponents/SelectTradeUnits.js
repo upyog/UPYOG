@@ -288,15 +288,15 @@ const SelectTradeUnits = ({
       {isLoading || isBillingSlabLoading ? <Loader /> : <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} forcedError={t(error)} isDisabled={!fields[0].tradecategory || !fields[0].tradetype || !fields[0].tradesubtype}>
           {fields?.map((field, index) => {
         return <div key={`${field}-${index}`}>
-                <div className="tl-auto-66">
+                <div className="tl-select-trade-units-mt-sm">
                   <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_CAT_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <LinkButton label={<div>
                         <span>
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="tl-auto-68">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="tl-select-trade-units-link-relative">
                             <path d="M1 16C1 17.1 1.9 18 3 18H11C12.1 18 13 17.1 13 16V4H1V16ZM14 1H10.5L9.5 0H4.5L3.5 1H0V3H14V1Z" fill={!(fields.length == 1) ? "#494848" : "#FAFAFA"} />
                           </svg>
                         </span>
-                      </div>} onClick={e => handleRemove(index)} className="tl-auto-67" />
+                      </div>} onClick={e => handleRemove(index)} className="tl-select-trade-units-link" />
                   {!isLoading || !isBillingSlabLoading ? <RadioButtons t={t} options={TradeCategoryMenu2} optionsKey="i18nKey" name={`TradeCategory-${index}`} value={field?.tradecategory} selectedOption={field?.tradecategory} onSelect={e => selectTradeCategory(index, e)} labelKey="" isPTFlow={true} /> : <Loader />}
                   <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_TRADE_TYPE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <Dropdown t={t} optionKey="i18nKey" isMandatory={config.isMandatory} option={sortDropdownNames(getTradeTypeMenu(field?.tradecategory), "i18nKey", t)} selected={field?.tradetype} select={e => selectTradeType(index, e)} />
@@ -308,7 +308,7 @@ const SelectTradeUnits = ({
                   <CardLabel>{`${t("TL_UNIT_OF_MEASURE_LABEL")}`}</CardLabel>
                   <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="UnitOfMeasure"
             //value={UnitOfMeasure}
-            value={field?.unit} onChange={e => selectUnitOfMeasure(index, e)} disable={true} className="tl-auto-69" />
+            value={field?.unit} onChange={e => selectUnitOfMeasure(index, e)} disable={true} className="tl-select-trade-units-link-2" />
                   <CardLabel>{`${t("TL_NEW_TRADE_DETAILS_UOM_VALUE_LABEL")}`}{!field.unit ? "" : <span className="check-page-link-button"> *</span>}</CardLabel>
                   <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="UomValue"
             //value={UomValue}
@@ -317,12 +317,12 @@ const SelectTradeUnits = ({
               pattern: "[0-9]+",
               type: "text",
               title: t("TL_WRONG_UOM_VALUE_ERROR")
-            }} className="tl-auto-70" />
+            }} className="tl-select-trade-units-link-2" />
                 </div>
               </div>;
       })}
-          <div className="tl-auto-71">
-            <button type="button" onClick={() => handleAdd()} className="tl-auto-72">
+          <div className="tl-select-trade-units-flex">
+            <button type="button" onClick={() => handleAdd()} className="tl-select-trade-units-btn">
               {`${t("TL_ADD_MORE_TRADE_UNITS")}`}
             </button>
           </div>

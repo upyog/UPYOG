@@ -118,7 +118,7 @@ const Maintenance = (props) => {
           isLoading={(mutation.isIdle && !mutationHappened) || mutation?.isLoading}
           isEmployee={props.parentRoute.includes("employee")}
         />
-        <div style={{ padding: "10px", paddingBottom: "10px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <div className="assetv2-asset-dispose-response-flex-row">
           <Link to={`${props.parentRoute}/assetservice/applicationsearch/application-details/${applicationDetail}`} >
             <SubmitBar label={t("AST_DEPRECIATION_LIST")} />
           </Link>

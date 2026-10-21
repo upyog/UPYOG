@@ -167,7 +167,7 @@ const getDetailsRow = (estimateDetails) => {
     return (
       <div>
       <StatusTable>
-      <Header style={{marginTop:"18px", marginBottom:"10px"}}>{t("BPA_FEE_DETAILS")}</Header>
+      <Header className="obps-building-plan-scrutiny-header">{t("BPA_FEE_DETAILS")}</Header>
       <Row label={t("BPA_DRAWING_NUMBER")} text={selectedPlot?.preApprovedCode || "NA"} />
       {estimateDetails?.taxHeadEstimates.map((item, index) => (
         <Row key={index} label={t(`${item.taxHeadCode}`)} text={item.estimateAmount} />
@@ -188,7 +188,7 @@ const getDetailsRow = (estimateDetails) => {
     function routeTo() {
       location.href = jumpTo;
     }
-    return <LinkButton style={{marginTop:"-0.5px" }} label={t(label)} onClick={routeTo} />;
+    return <LinkButton className="obps-building-plan-scrutiny-action-btn" label={t(label)} onClick={routeTo} />;
   };
   function zoomImageWrapper(imageSource, index){
       zoomImage(imagesToShowBelowComplaintDetails?.fullImage[index]);
@@ -235,12 +235,12 @@ const getDetailsRow = (estimateDetails) => {
       
       isDisabled={!isPlanApproved?.code || !landStatus?.code || !projectComponent?.code || error || !estimateResponse?.data?.Calculations}
     >
-      <div style={{ marginTop: "10px", display: "flex", justifyContent: "space-between" }}>
-        <div style={{ flex: 1 }}>
+      <div className="obps-building-plan-scrutiny-flex-row">
+        <div className="obps-building-plan-scrutiny-wrapper">
           <CardLabel>{t("PREAPPROVE_LAYOUT_TYPE_HEADER")}<span className="check-page-link-button"> *</span></CardLabel>
           <Dropdown t={t} optionKey="key" isMandatory={true} option={planArrpovedOptione} selected={isPlanApproved} select={setIsPlanApproved}/>
           
-          <div style={{ marginTop: "10px" }}>
+          <div className="obps-building-plan-scrutiny-top-spacing">
             <CardLabel>{t("PREAPPROVE_LAND_STATUS")}<span className="check-page-link-button"> *</span></CardLabel>
             <Dropdown t={t} optionKey="key" isMandatory={true} option={landStatusOptions} selected={landStatus} select={setLandStatus}/>
           </div>
@@ -251,9 +251,9 @@ const getDetailsRow = (estimateDetails) => {
           {error === "" && (
             <React.Fragment>
               <CardLabel>{t("PREAPPROVE_LENGHT_OF_PLOT")}<span className="check-page-link-button"> *</span></CardLabel>
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '6px', marginTop: '10px' }}>
-                <div style={{ flex: 1 }}>
-                  <CardLabel style={{fontSize:"18px"}}>{t("FEET")}
+              <div className="obps-building-plan-scrutiny-flex-row-2">
+                <div className="obps-building-plan-scrutiny-wrapper">
+                  <CardLabel className="obps-building-plan-scrutiny-card">{t("FEET")}
                     <TextInput
                       t={t}
                       // type="number"
@@ -261,12 +261,12 @@ const getDetailsRow = (estimateDetails) => {
                       value={lengthInFeet || ''}
                       onChange={handleInputChange(setLengthInFeet, t("PREAPPROVE_LENGHT_OF_PLOT"))}
                       label={t("Length in Feet")}
-                      style={{ width: '79%' }}
+                      className="obps-building-plan-scrutiny-wrapper-2"
                     />
                   </CardLabel>
                 </div>
-                <div style={{ flex: 1 }}>
-                  <CardLabel style={{fontSize:"18px"}}>{t("INCHES")}
+                <div className="obps-building-plan-scrutiny-wrapper">
+                  <CardLabel className="obps-building-plan-scrutiny-card">{t("INCHES")}
                     <TextInput
                       t={t}
                       // type="number"
@@ -274,7 +274,7 @@ const getDetailsRow = (estimateDetails) => {
                       value={lengthInInches || ''}
                       onChange={handleInchesInput(setLengthInInches)}
                       label={t("Length in Inches")}
-                      style={{ width: '79%' }}
+                      className="obps-building-plan-scrutiny-wrapper-2"
                     />
                   </CardLabel>
                   
@@ -282,9 +282,9 @@ const getDetailsRow = (estimateDetails) => {
               </div>
   
               <CardLabel>{t("PREAPPROVE_PLOT_WITH_IN_FT")}<span className="check-page-link-button"> *</span></CardLabel>
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '6px', marginTop: '10px' }}>
-                <div style={{ flex: 1 }}>
-                  <CardLabel style={{fontSize:"18px"}}>{t("FEET")}
+              <div className="obps-building-plan-scrutiny-flex-row-2">
+                <div className="obps-building-plan-scrutiny-wrapper">
+                  <CardLabel className="obps-building-plan-scrutiny-card">{t("FEET")}
                     <TextInput
                       t={t}
                       // type="number"
@@ -292,12 +292,12 @@ const getDetailsRow = (estimateDetails) => {
                       value={widthInFeet || ''}
                       onChange={handleInputChange(setWidthInFeet,t("PREAPPROVE_PLOT_WITH_IN_FT"))}
                       label={t("Width in Feet")}
-                      style={{ width: '79%' }}
+                      className="obps-building-plan-scrutiny-wrapper-2"
                     />
                   </CardLabel>
                 </div>
-                <div style={{ flex: 1 }}>
-                  <CardLabel style={{fontSize:"18px"}}>{t("INCHES")}
+                <div className="obps-building-plan-scrutiny-wrapper">
+                  <CardLabel className="obps-building-plan-scrutiny-card">{t("INCHES")}
                     <TextInput
                       t={t}
                       // type="number"
@@ -305,7 +305,7 @@ const getDetailsRow = (estimateDetails) => {
                       value={widthInInches || ''}
                       onChange={handleInchesInput(setWidthInInches)}
                       label={t("Width in Inches")}
-                      style={{ width: '79%' }}
+                      className="obps-building-plan-scrutiny-wrapper-2"
                     />
                   </CardLabel>
                 </div>
@@ -318,7 +318,7 @@ const getDetailsRow = (estimateDetails) => {
                 value={abuttingRoadWidth || ''}
                 onChange={handleInputChange(setAbuttingRoadWidth, t("PREAPPROVE_ABUTTING_ROAD"))}
               />
-              <div style={{ marginTop: "10px", marginBottom:"10px"}}>
+              <div className="obps-building-plan-scrutiny-top-spacing-2">
                <SubmitBar label={t("SEARCH")}  onSubmit={getPreApprovedPlanDetails} disabled={!lengthInFeet || ! widthInFeet || !abuttingRoadWidth}/> 
               </div>
             </React.Fragment>
@@ -326,12 +326,12 @@ const getDetailsRow = (estimateDetails) => {
           
           {imagesToShowBelowComplaintDetails?.thumbs ? (
             <div>
-              <CardLabel style={{ marginTop: '18px', fontWeight: 'bolder', marginBottom: "15px" }}>{t("")}</CardLabel>
+              <CardLabel className="obps-building-plan-scrutiny-card-2">{t("")}</CardLabel>
               <DisplayPhotos srcs={imagesToShowBelowComplaintDetails.thumbs} drawingNos={imagesToShowBelowComplaintDetails.drawingNo} onClick={(source, index) => zoomImageWrapper(source, index)} />
             </div>
           ) : null}
           {preApprovedResponse?.data && preApprovedResponse?.data.length===0 ? (
-            <div style={{ marginBottom: "15px", marginTop: "18px" }}>{t("PLOTS_NOT_AVAILABLE")}</div>
+            <div className="obps-building-plan-scrutiny-top-spacing-3">{t("PLOTS_NOT_AVAILABLE")}</div>
           ):null}
           
           {estimateResponse?.data?.Calculations ? (
@@ -341,24 +341,24 @@ const getDetailsRow = (estimateDetails) => {
           {selectedPlot && selectedPlot?.documents?.length > 0 ? (
             <div>
             <Header>{t("PLAN_DRAWING_IMAGES")}</Header>
-              <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
-                <span style={{ fontWeight: "bold", marginRight: "10rem"}}>{t("BPA_UPLOADED_PDF_DIAGRAM")}</span>
+              <div className="obps-building-plan-scrutiny-flex-row-3">
+                <span className="obps-building-plan-scrutiny-spacing">{t("BPA_UPLOADED_PDF_DIAGRAM")}</span>
                 <ActionButton
                   label={t(selectedPlot?.documents.find(doc => doc?.additionalDetails?.fileName.includes("pdf"))?.additionalDetails?.fileName)}
                   jumpTo={selectedPlot?.documents.find(doc => doc?.additionalDetails?.fileName.includes("pdf"))?.additionalDetails?.fileUrl}
                 />
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
-                <span style={{ fontWeight: "bold", marginRight: "10.2rem" }}>{t("BPA_UPLOADED_CAD_DIAGRAM")}</span>
+              <div className="obps-building-plan-scrutiny-flex-row-3">
+                <span className="obps-building-plan-scrutiny-spacing-2">{t("BPA_UPLOADED_CAD_DIAGRAM")}</span>
                 <ActionButton
                   label={t(selectedPlot?.documents.find(doc => doc?.additionalDetails?.fileName.includes("dxf"))?.additionalDetails?.fileName)}
                   jumpTo={selectedPlot?.documents.find(doc => doc?.additionalDetails?.fileName.includes("dxf"))?.additionalDetails?.fileUrl}
                 />
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
-                <span style={{ fontWeight: "bold", marginRight: "9rem" }}>{t("BPA_UPLOADED_IMAGE_DIAGRAM")}</span>
+              <div className="obps-building-plan-scrutiny-flex-row-3">
+                <span className="obps-building-plan-scrutiny-spacing-3">{t("BPA_UPLOADED_IMAGE_DIAGRAM")}</span>
                 <ActionButton
                   label={t(selectedPlot?.documents.find(doc => doc?.additionalDetails?.fileName.includes("jpg"))?.additionalDetails?.fileName)}
                   jumpTo={selectedPlot?.documents.find(doc => doc?.additionalDetails?.fileName.includes("jpg"))?.additionalDetails?.fileUrl}
@@ -369,11 +369,11 @@ const getDetailsRow = (estimateDetails) => {
           
         </div>
         
-        <div style={{ marginLeft: "20px", display: "flex", flexDirection: "column", alignItems: "flex-end", marginTop: "40px" }}>
+        <div className="obps-building-plan-scrutiny-flex-row-4">
           <img
             src={plotImage}
             alt="Description"
-            style={{ width: "300px", height: "auto", borderRadius: "8px" }}
+            className="obps-building-plan-scrutiny-wrapper-3"
           />
         </div>
       </div>

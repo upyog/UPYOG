@@ -210,12 +210,12 @@ const ReportSearchApplication = ({ onSubmit, isLoading, data, tableData, isTable
                     </PopUp>
                 ) : null}
                 {!isTableDataLoading && tableData?.display ? (
-                    <Card style={{ marginTop: 20 }}>
+                    <Card className="rpt-report-search-application-card">
                         {
                             t(tableData?.display)
                                 .split("\\n")
                                 .map((text, index) => (
-                                    <p key={index} style={{ textAlign: "center" }}>
+                                    <p key={index} className="rpt-report-search-application-centered">
                                         {text}
                                     </p>
                                 ))
@@ -244,20 +244,20 @@ const ReportSearchApplication = ({ onSubmit, isLoading, data, tableData, isTable
                 </SearchForm>}
 
             {!isTableDataLoading && tableData?.display ? (
-                <Card style={{ marginTop: 20 }}>
+                <Card className="rpt-report-search-application-card">
                     {
                         t(tableData?.display)
                             .split("\\n")
                             .map((text, index) => (
-                                <p key={index} style={{ textAlign: "center" }}>
+                                <p key={index} className="rpt-report-search-application-centered">
                                     {text}
                                 </p>
                             ))
                     }
                 </Card>
             ) : !isTableDataLoading ? (
-            <div style={{ display: "flex", flexDirection: "column" }}>
-                <div style={{ alignSelf: "flex-end", marginBottom: "5px" }}>
+            <div className="rpt-report-search-application-flex-container">
+                <div className="rpt-report-search-application-bottom-spacing">
                     <MultiLink
                         className="multilinkWrapper"
                         onHeadClick={() => setIsDisplayDownloadMenu(!isDisplayDownloadMenu)}
@@ -268,7 +268,7 @@ const ReportSearchApplication = ({ onSubmit, isLoading, data, tableData, isTable
                         reportStyles={{"position":"relative"}}
                     />
                 </div>
-            <div className="report-scroll-container" style={{ overflowX: "auto", width: "100%", display: "block" }}>
+            <div className="report-scroll-container rpt-report-search-application-fullwidth">
                 <Table
                 tableRef={tableRef}
                 t={t}

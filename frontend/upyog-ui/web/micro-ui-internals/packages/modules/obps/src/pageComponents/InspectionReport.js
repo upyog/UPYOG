@@ -118,7 +118,7 @@ const InspectionReport = ({ config, onSelect, userType, formData, setError, form
                     <InspectionReportForm key={unit.key} index={index} unit={unit} {...commonProps} />
                 ))}
             </React.Fragment>
-            <LinkButton label={t("BPA_ADD_FIELD_INSPECTION")} onClick={addNewFieldReport} style={{ color: "#a82227", width: "fit-content" }} />
+            <LinkButton label={t("BPA_ADD_FIELD_INSPECTION")} onClick={addNewFieldReport} className="obps-inspection-report-action-btn" />
         </div>
     );
 };
@@ -214,19 +214,19 @@ const InspectionReportForm = (_props) => {
     const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px", maxWidth:"950px", minWidth:"280px", borderRadius:"4px" };
     return (
         <React.Fragment>
-            <div style={{ marginBottom: "16px", maxWidth: "950px" }}>
+            <div className="obps-inspection-report-bottom-spacing">
                 <div className="fieldInspectionWrapper">
                     {allFieldReport?.length > 1 ? (
                         <LinkButton
-                            label={<DeleteIcon style={{ float: "right", position: "relative", bottom: "-6px" }} fill={!(allFieldReport.length == 1) ? "#494848" : "#FAFAFA"} />}
-                            style={{ width: "100px", display: "inline", background: "black" }}
+                            label={<DeleteIcon className="obps-inspection-report-icon" fill={!(allFieldReport.length == 1) ? "#494848" : "#FAFAFA"} />}
+                            className="obps-inspection-report-action-btn-2"
                             onClick={(e) => removeUnit(unit)}
                         />
                     ) : null}
                     <CardSectionHeader>{allFieldReport?.length > 1 ? `${t("BPA_FI_REPORT")}-${index + 1}` : `${t("BPA_FI_REPORT")}`}</CardSectionHeader>
-                    <LabelFieldPair style={{ width: "100%" }}>
-                        <CardLabel style={{ marginTop: "0px", width: "100%" }} className="card-label-smaller">{`${t("BPA_FI_DATE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
-                        <div className="field" style={{ width: "100%" }}>
+                    <LabelFieldPair className="obps-inspection-report-fullwidth">
+                        <CardLabel className="card-label-smaller obps-inspection-report-fullwidth-2">{`${t("BPA_FI_DATE_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
+                        <div className="field obps-inspection-report-fullwidth">
                             <Controller
                                 name="InspectionDate"
                                 rules={{ required: t("REQUIRED_FIELD") }}
@@ -241,9 +241,9 @@ const InspectionReportForm = (_props) => {
                             />
                         </div>
                     </LabelFieldPair>
-                    <LabelFieldPair style={{ width: "100%" }}>
-                        <CardLabel style={{ marginTop: "0px", width: "100%" }} className="card-label-smaller">{`${t("ES_COMMON_TIME")}`}<span className="check-page-link-button"> *</span></CardLabel>
-                        <div className="field" style={{ width: "100%" }}>
+                    <LabelFieldPair className="obps-inspection-report-fullwidth">
+                        <CardLabel className="card-label-smaller obps-inspection-report-fullwidth-2">{`${t("ES_COMMON_TIME")}`}<span className="check-page-link-button"> *</span></CardLabel>
+                        <div className="field obps-inspection-report-fullwidth">
                             <Controller
                                 name="InspectionTime"
                                 rules={{ required: t("REQUIRED_FIELD") }}
@@ -261,18 +261,17 @@ const InspectionReportForm = (_props) => {
                     </LabelFieldPair>
                     <CardSectionHeader>{t("BPA_CHECK_LIST_DETAILS")}</CardSectionHeader>
                     {questionList && questionList.map((ob, ind) => (
-                        <div key={ind} className="fieldInsepctionInsideWrapper" style={{ maxWidth: "100%" }}>
-                            <LabelFieldPair style={{width :"100%"}}>
-                                <CardLabel style={{ marginRight: "30px", width :"100%" }} className="card-label-smaller">{`${t(ob.question)}`}<span className="check-page-link-button"> *</span></CardLabel>
-                                <div className="field" style={{ width: "100%" }}>
+                        <div key={ind} className="fieldInsepctionInsideWrapper obps-inspection-report-wrapper">
+                            <LabelFieldPair className="obps-inspection-report-fullwidth">
+                                <CardLabel className="card-label-smaller obps-inspection-report-fullwidth-3">{`${t(ob.question)}`}<span className="check-page-link-button"> *</span></CardLabel>
+                                <div className="field obps-inspection-report-fullwidth">
                                     <Controller
                                         control={control}
                                         name={`question_${ind}`}
                                         rules={{ required: t("REQUIRED_FIELD") }}
                                         render={({ field }) => (
                                             <Dropdown
-                                                className="form-field"
-                                                style={{ width: "100%", maxWidth: "100%" }}
+                                                className="form-field obps-inspection-report-fullwidth-4"
                                                 selected={getValues(`question${ind}`)}
                                                 disable={false}
                                                 option={getOptions(ob.fieldType)}
@@ -288,9 +287,9 @@ const InspectionReportForm = (_props) => {
                                     />
                                 </div>
                             </LabelFieldPair>
-                            <LabelFieldPair style={{width :"100%"}}>
-                                <CardLabel style={{ marginRight: "30px", width : "100%" }} className="card-label-smaller">{t("BPA_ENTER_REMARKS")}</CardLabel>
-                                <div className="field" style={{ width: "100%" }}>
+                            <LabelFieldPair className="obps-inspection-report-fullwidth">
+                                <CardLabel className="card-label-smaller obps-inspection-report-fullwidth-3">{t("BPA_ENTER_REMARKS")}</CardLabel>
+                                <div className="field obps-inspection-report-fullwidth">
                                     <Controller
                                         control={control}
                                         name={`Remarks_${ind}`}
@@ -309,7 +308,7 @@ const InspectionReportForm = (_props) => {
                             </LabelFieldPair>
                         </div>
                     ))}
-                    <CardSectionHeader style={{ marginTop: "20px" }}>{t("BPA_FIELD_INSPECTION_DOCUMENTS")}</CardSectionHeader>
+                    <CardSectionHeader className="obps-index-card">{t("BPA_FIELD_INSPECTION_DOCUMENTS")}</CardSectionHeader>
                     <OBPSDocumentsEmp t={t} config={config} onSelect={onSelect} userType={userType} formData={formData} setError={setError} clearErrors={clearErrors} formState={formState} index={index} setFieldReports={setFieldReports} documentList={documentList} />
                 </div>
             </div>

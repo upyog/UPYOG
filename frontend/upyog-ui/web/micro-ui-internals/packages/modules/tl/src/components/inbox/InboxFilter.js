@@ -3,7 +3,7 @@ import { Dropdown, RadioButtons, ActionBar, RemoveableTag, CloseSvg, CheckBox, L
 
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
-import "../../css/tl-inline-auto.css";
+
 const Filter = ({
   searchParams,
   onFilterChange,
@@ -39,7 +39,7 @@ const Filter = ({
   const onServiceSelect = (e, label) => {
     if (e.target.checked) localParamChange({
       applicationStatus: [...(_searchParams?.applicationStatus ? _searchParams.applicationStatus : []), label]
-    });else localParamChange({
+    }); else localParamChange({
       applicationStatus: _searchParams?.applicationStatus.filter(o => o !== label)
     });
   };
@@ -49,31 +49,31 @@ const Filter = ({
     });
   };
   return <React.Fragment>
-      <div className="filter">
-        <div className="filter-card">
-          <div className="heading tl-auto-14">
-            <div className="filter-label tl-auto-15">
-              <span>
-                <svg width="17" height="17" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M0.66666 2.48016C3.35999 5.9335 8.33333 12.3335 8.33333 12.3335V20.3335C8.33333 21.0668 8.93333 21.6668 9.66666 21.6668H12.3333C13.0667 21.6668 13.6667 21.0668 13.6667 20.3335V12.3335C13.6667 12.3335 18.6267 5.9335 21.32 2.48016C22 1.60016 21.3733 0.333496 20.2667 0.333496H1.71999C0.613327 0.333496 -0.01334 1.60016 0.66666 2.48016Z" fill="#505A5F" />
-                </svg>
-              </span>
-              <span className="tl-auto-16">{t("ES_COMMON_FILTER_BY")}</span>
-            </div>
-            <div className="clearAll" onClick={clearAll}>
-              {t("ES_COMMON_CLEAR_ALL")}
-            </div>
-            {props.type === "desktop" && <span className="clear-search tl-auto-17" onClick={clearAll}>
-                <svg width="17" height="17" viewBox="0 0 16 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8 5V8L12 4L8 0V3C3.58 3 0 6.58 0 11C0 12.57 0.46 14.03 1.24 15.26L2.7 13.8C2.25 12.97 2 12.01 2 11C2 7.69 4.69 5 8 5ZM14.76 6.74L13.3 8.2C13.74 9.04 14 9.99 14 11C14 14.31 11.31 17 8 17V14L4 18L8 22V19C12.42 19 16 15.42 16 11C16 9.43 15.54 7.97 14.76 6.74Z" fill="#505A5F" />
-                </svg>
-              </span>}
-            {props.type === "mobile" && <span onClick={props.onClose}>
-                <CloseSvg />
-              </span>}
+    <div className="filter">
+      <div className="filter-card">
+        <div className="heading tl-inbox-filter-item">
+          <div className="filter-label tl-inbox-filter-row-center-flex">
+            <span>
+              <svg width="17" height="17" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0.66666 2.48016C3.35999 5.9335 8.33333 12.3335 8.33333 12.3335V20.3335C8.33333 21.0668 8.93333 21.6668 9.66666 21.6668H12.3333C13.0667 21.6668 13.6667 21.0668 13.6667 20.3335V12.3335C13.6667 12.3335 18.6267 5.9335 21.32 2.48016C22 1.60016 21.3733 0.333496 20.2667 0.333496H1.71999C0.613327 0.333496 -0.01334 1.60016 0.66666 2.48016Z" fill="#505A5F" />
+              </svg>
+            </span>
+            <span className="tl-inbox-filter-link-font-normal">{t("ES_COMMON_FILTER_BY")}</span>
           </div>
-          <div>
-            <RadioButtons onSelect={d => localParamChange({
+          <div className="clearAll" onClick={clearAll}>
+            {t("ES_COMMON_CLEAR_ALL")}
+          </div>
+          {props.type === "desktop" && <span className="clear-search tl-inbox-filter-btn-bordered" onClick={clearAll}>
+            <svg width="17" height="17" viewBox="0 0 16 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 5V8L12 4L8 0V3C3.58 3 0 6.58 0 11C0 12.57 0.46 14.03 1.24 15.26L2.7 13.8C2.25 12.97 2 12.01 2 11C2 7.69 4.69 5 8 5ZM14.76 6.74L13.3 8.2C13.74 9.04 14 9.99 14 11C14 14.31 11.31 17 8 17V14L4 18L8 22V19C12.42 19 16 15.42 16 11C16 9.43 15.54 7.97 14.76 6.74Z" fill="#505A5F" />
+            </svg>
+          </span>}
+          {props.type === "mobile" && <span onClick={props.onClose}>
+            <CloseSvg />
+          </span>}
+        </div>
+        <div>
+          <RadioButtons onSelect={d => localParamChange({
             uuid: d
           })} selectedOption={_searchParams?.uuid || {
             code: "ASSIGNED_TO_ALL",
@@ -85,38 +85,38 @@ const Filter = ({
             code: "ASSIGNED_TO_ALL",
             name: "ES_INBOX_ASSIGNED_TO_ALL"
           }]} />
-            <div>
-              <div className="filter-label tl-auto-18">
-                {t("ES_INBOX_LOCALITY")}:
-              </div>
-              <Localities selectLocality={selectLocality} tenantId={tenantId} boundaryType="revenue" />
-              <div className="tag-container">
-                {_searchParams?.locality?.map((locality, index) => {
-                return <RemoveableTag key={index}
-                // text={locality.name}
-                text={t(`${locality.i18nkey}`)} onClick={() => {
-                  localParamChange({
-                    locality: _searchParams?.locality.filter(loc => loc.code !== locality.code)
-                  });
-                }} />;
-              })}
-              </div>
+          <div>
+            <div className="filter-label tl-inbox-filter-font-normal">
+              {t("ES_INBOX_LOCALITY")}:
             </div>
-            <div>
-              <div className="filter-label tl-auto-19">
-                {t("CS_INBOX_STATUS_FILTER")}
-              </div>
-              {statuses?.map((e, index) => {
+            <Localities selectLocality={selectLocality} tenantId={tenantId} boundaryType="revenue" />
+            <div className="tag-container">
+              {_searchParams?.locality?.map((locality, index) => {
+                return <RemoveableTag key={index}
+                  // text={locality.name}
+                  text={t(`${locality.i18nkey}`)} onClick={() => {
+                    localParamChange({
+                      locality: _searchParams?.locality.filter(loc => loc.code !== locality.code)
+                    });
+                  }} />;
+              })}
+            </div>
+          </div>
+          <div>
+            <div className="filter-label tl-inbox-filter-font-normal">
+              {t("CS_INBOX_STATUS_FILTER")}
+            </div>
+            {statuses?.map((e, index) => {
               const checked = _searchParams?.applicationStatus?.includes(e.statusid);
               return <CheckBox key={index + "service"} label={t(`CS_COMMON_INBOX_${e.businessservice.toUpperCase()}`) + " - " + t(`WF_NEWTL_${e.applicationstatus}`) + " " + `(${e.count})`} value={e.statusid} checked={checked} onChange={event => onServiceSelect(event, e.statusid)} />;
             })}
-            </div>
-            <div>
-              <SubmitBar disabled={_.isEqual(_searchParams, searchParams)} onSubmit={() => onFilterChange(_searchParams)} label={t("ES_COMMON_APPLY")} />
-            </div>
+          </div>
+          <div>
+            <SubmitBar disabled={_.isEqual(_searchParams, searchParams)} onSubmit={() => onFilterChange(_searchParams)} label={t("ES_COMMON_APPLY")} />
           </div>
         </div>
       </div>
-    </React.Fragment>;
+    </div>
+  </React.Fragment>;
 };
 export default Filter;

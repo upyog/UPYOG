@@ -10,7 +10,7 @@ import AdsApplication from "./ads-application";
  * pagination for displaying multiple applications. Users can also clear filters and see
  * the number of applications they have.
  */
-import "../../../css/ads-inline-auto.css";
+
 export const ADSMyApplications = () => {
   const {
     t
@@ -91,51 +91,51 @@ export const ADSMyApplications = () => {
   }];
   const filteredApplications = data?.bookingApplication || [];
   return <React.Fragment>
-      <Header>{`${t("ADS_MY_BOOKINGS_HEADER")} (${filteredApplications.length})`}</Header>
-      <Card>
-        <div className="ads-auto-80">
-          <div className="ads-auto-81">
-            <div className="ads-auto-82">
-              <div className="ads-auto-83">
-                <CardLabel>{t("ADS_BOOKING_NO")}</CardLabel>
-                <TextInput placeholder={t("Enter Booking No.")} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="ads-auto-84" />
-              </div>
-            </div>
-            <div className="ads-auto-85">
-              <div className="ads-auto-86">
-                <CardLabel>{t("PT_COMMON_TABLE_COL_STATUS_LABEL")}</CardLabel>
-                <Dropdown className="form-field ads-auto-87" selected={status} select={setStatus} option={statusOptions} placeholder={t("Select Status")} optionKey="value" t={t} />
-              </div>
-            </div>
-            <div>
-              <div className="ads-auto-88">
-                <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
-                <p className="link ads-auto-89" onClick={() => {
-                setSearchTerm(""), setStatus("");
-              }}>
-                  {t(`ES_COMMON_CLEAR_ALL`)}
-                </p>
-              </div>
+    <Header>{`${t("ADS_MY_BOOKINGS_HEADER")} (${filteredApplications.length})`}</Header>
+    <Card>
+      <div className="ads-index-ml-md">
+        <div className="ads-index-row-center-flex">
+          <div className="ads-index-flex-1">
+            <div className="ads-index-col-flex">
+              <CardLabel>{t("ADS_BOOKING_NO")}</CardLabel>
+              <TextInput placeholder={t("Enter Booking No.")} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="ads-index-input-full-width" />
             </div>
           </div>
-          <Link to="/upyog-ui/citizen/ads/bookad/searchads">
-              <SubmitBar label={t("ADS_NEW_BOOKING") + " +"} className="ads-auto-90" />
-            </Link>
+          <div className="ads-index-flex-1">
+            <div className="ads-index-col-flex">
+              <CardLabel>{t("PT_COMMON_TABLE_COL_STATUS_LABEL")}</CardLabel>
+              <Dropdown className="form-field ads-index-input-full-width-2" selected={status} select={setStatus} option={statusOptions} placeholder={t("Select Status")} optionKey="value" t={t} />
+            </div>
+          </div>
+          <div>
+            <div className="ads-index-item">
+              <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
+              <p className="link ads-index-btn-block-mt-sm" onClick={() => {
+                setSearchTerm(""), setStatus("");
+              }}>
+                {t(`ES_COMMON_CLEAR_ALL`)}
+              </p>
+            </div>
+          </div>
         </div>
-      </Card>
-      <div>
-        {filteredApplications.length > 0 && filteredApplications.map((application, index) => <div key={index}>
-              <AdsApplication application={application} tenantId={tenantId} buttonLabel={t("ADS_SUMMARY")} />
-            </div>)}
-        {filteredApplications.length === 0 && !isLoading && <p className="ads-auto-91">{t("ADS_NO_APPLICATION_FOUND_MSG")}</p>}
-
-        {filteredApplications.length !== 0 && data?.count > t1 && <div>
-            <p className="ads-auto-92">
-              <span className="link">
-                <Link to={`/upyog-ui/citizen/ads/myBookings/${t1}`}>{t("ADS_LOAD_MORE_MSG")}</Link>
-              </span>
-            </p>
-          </div>}
+        <Link to="/upyog-ui/citizen/ads/bookad/searchads">
+          <SubmitBar label={t("ADS_NEW_BOOKING") + " +"} className="ads-index-btn-rounded" />
+        </Link>
       </div>
-    </React.Fragment>;
+    </Card>
+    <div>
+      {filteredApplications.length > 0 && filteredApplications.map((application, index) => <div key={index}>
+        <AdsApplication application={application} tenantId={tenantId} buttonLabel={t("ADS_SUMMARY")} />
+      </div>)}
+      {filteredApplications.length === 0 && !isLoading && <p className="ads-index-mt-md-ml-md">{t("ADS_NO_APPLICATION_FOUND_MSG")}</p>}
+
+      {filteredApplications.length !== 0 && data?.count > t1 && <div>
+        <p className="ads-index-mt-md-ml-md">
+          <span className="link">
+            <Link to={`/upyog-ui/citizen/ads/myBookings/${t1}`}>{t("ADS_LOAD_MORE_MSG")}</Link>
+          </span>
+        </p>
+      </div>}
+    </div>
+  </React.Fragment>;
 };

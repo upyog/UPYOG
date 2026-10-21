@@ -145,8 +145,8 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
         tenantId
       }} />
         </PopUp> : null}
-      {isClearSearch ? null : data?.display ? <Card className="ws-auto-6">
-          {t(data?.display).split("\\n").map((text, index) => <p key={index} className="ws-auto-7">
+      {isClearSearch ? null : data?.display ? <Card className="ws-mobile-search-application-card-mt-md">
+          {t(data?.display).split("\\n").map((text, index) => <p key={index} className="ws-mobile-search-application-card-center-text">
                 {text}
               </p>)}
         </Card> : <DetailsCard {...{

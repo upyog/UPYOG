@@ -106,20 +106,20 @@ const PropertyDetails = ({ t, config, onSelect, userType, formData }) => {
                 },
               }}/>
               <Row className="border-none" label={t(`PT_MUTATION_STATUS`)} text={t(propertyDetails?.Properties[0]?.status)} />
-              <div style={{ textAlign: "left" }}>
+              <div className="cmnpt-property-details-wrapper">
                 <Link
                   to={`/upyog-ui/citizen/commonpt/view-property?propertyId=${propertyDetails?.Properties[0]?.propertyId}&tenantId=${propertyDetails?.Properties[0]?.tenantId}`}
                 >
-                  <LinkButton style={{ textAlign: "left" }} label={t("PT_VIEW_MORE_DETAILS")} />
+                  <LinkButton className="cmnpt-property-details-wrapper" label={t("PT_VIEW_MORE_DETAILS")} />
                 </Link>
                 <Link
                   to={getChangePropertyPath()}
                 >
-                  <LinkButton style={{ textAlign: "left" }} label={t("PT_CHANGE_PROPERTY")} onClick={() => {sessionStorage.setItem("changePropertySelected", "yes"); sessionStorage.setItem("EditFormData", JSON.stringify(formData))}} />
+                  <LinkButton className="cmnpt-property-details-wrapper" label={t("PT_CHANGE_PROPERTY")} onClick={() => {sessionStorage.setItem("changePropertySelected", "yes"); sessionStorage.setItem("EditFormData", JSON.stringify(formData))}} />
                 </Link>
               </div>
             </StatusTable>
-            <SubmitBar style={{ marginTop: "10px" }} onSubmit={goNext} label={t("CS_COMMON_NEXT")} />
+            <SubmitBar className="cmnpt-property-details-top-spacing" onSubmit={goNext} label={t("CS_COMMON_NEXT")} />
           </React.Fragment>
         )}
       </FormStep>

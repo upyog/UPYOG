@@ -172,33 +172,18 @@ citizen/select-language
   }, [uploadedFile, selectedDocument, latitude, longitude, setDocuments]);
 
   return (
-    <div style={{ marginBottom: "24px" }}>
+    <div className="assetv2-asset-documents-bottom-spacing">
      {doc?.hasDropdown && (
   <LabelFieldPair>
     {doc?.code === "OWNER.ASSETPHOTO" ? (
       <div>
-        {`${t(doc.code.replaceAll(".", "_"))}`} <span style={{ color: "red" }}>*</span>
+        {`${t(doc.code.replaceAll(".", "_"))}`} <span className="assetv2-asset-all-details-required-asterisk">*</span>
         <div
-          className="tooltip"
-          style={{
-            width: "12px",
-            height: "5px",
-            marginLeft: "10px",
-            display: "inline-flex",
-            alignItems: "center",
-          }}
+          className="tooltip assetv2-new-asset-spacing"
         >
           <InfoBannerIcon />
           <span
-            className="tooltiptext"
-            style={{
-              whiteSpace: "pre-wrap",
-              fontSize: "small",
-              wordWrap: "break-word",
-              width: "300px",
-              marginLeft: "15px",
-              marginBottom: "-10px",
-            }}
+            className="tooltiptext assetv2-asset-all-details-bottom-spacing"
           >
             {`${t(doc.code.replaceAll(".", "_") + "_INFO")}`}
           </span>
@@ -206,7 +191,7 @@ citizen/select-language
       </div>
     ) : (
       <CardLabel className="card-label-smaller">
-        {t(doc.code.replaceAll(".", "_"))} <span style={{ color: "red" }}>*</span>
+        {t(doc.code.replaceAll(".", "_"))} <span className="assetv2-asset-all-details-required-asterisk">*</span>
       </CardLabel>
     )}
   </LabelFieldPair>
@@ -222,7 +207,7 @@ citizen/select-language
             }}
             id={id}
             message={isUploading ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div className="assetv2-asset-all-details-flex-row">
                 <LoadingSpinner />
                 <span>Uploading...</span>
               </div>
@@ -236,7 +221,7 @@ citizen/select-language
         </div>
       </LabelFieldPair>
       {doc?.code === "OWNER.ASSETPHOTO" && latitude && longitude && (
-        <div style={{ marginTop: '10px', textAlign: 'center' }}>
+        <div className="assetv2-asset-all-details-centered">
           <p><strong>{t("Location Details")}:</strong></p>
           <p>{t("Latitude")}: {latitude}</p>
           <p>{t("Longitude")}: {longitude}</p>

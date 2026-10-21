@@ -106,7 +106,7 @@ const GCActionModal = ({ t, action, tenantId, closeModal, submitAction, applicat
       actionSaveOnSubmit={() => {}}
       formId="modal-action"
     >
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="tmpl-gcaction-modal-required-asterisk">{error}</p>}
       <FormComposer
         config={config.form}
         noBoxShadow

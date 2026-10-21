@@ -12,10 +12,10 @@ const renderMultipleDocuments = (documents) => {
   let isMobile = window.Digit.Utils.browser.isMobile();
   if (!documents && !documents.length) return null;
   return (
-    <div style={{ display: 'flex', flexDirection: isMobile ? 'column':'row', gap: isMobile ? '40px' : '100px'}}>
+    <div className={`display-flex ${isMobile ? "flex-col-gap-40" : "flex-row-gap-100"}`}>
       {documents.map(({ fileStoreId, fileName }) => (
         <div className="documentDetails_pdf" key={fileStoreId}>
-          <div style={{ width: '100px' }} onClick={() => openUploadedDocument(fileStoreId, fileName)}>
+          <div className="eng-document-details-wrapper" onClick={() => openUploadedDocument(fileStoreId, fileName)}>
             <GenericFileIcon />
             <span className="cell-text">{fileName?.split(10)}</span>
           </div>
@@ -114,7 +114,7 @@ const DocumentDetails = () => {
       <ActionBar>
         {displayMenu ? (
           <Menu
-            style={{ width: isMobile ? 'full' : '240px' }}
+            className={isMobile ? "width-full" : "width-240"}
             localeKeyPrefix={"ES_CE"}
             options={Actions}
             t={t}

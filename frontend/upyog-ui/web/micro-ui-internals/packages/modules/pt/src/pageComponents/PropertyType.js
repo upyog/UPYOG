@@ -98,7 +98,7 @@ const PropertyType = ({
             <CardLabel className="card-label-smaller">{t(input.label)}<span className="check-page-link-button"> *</span></CardLabel>
             <Dropdown className="form-field" selected={getPropertyTypeMenu(proptype)?.length === 1 ? getPropertyTypeMenu(proptype)[0] : BuildingType} disable={getPropertyTypeMenu(proptype)?.length === 1} option={getPropertyTypeMenu(proptype)} select={selectBuildingType} optionKey="i18nKey" onBlur={onBlur} t={t} />
           </LabelFieldPair>
-          {formState.touchedFields?.[config.key] ? <CardLabelError className="pt-auto-75">
+          {formState.touchedFields?.[config.key] ? <CardLabelError className="pt-property-type-label-text-sm-mt-neg">
               {formState.errors?.[config.key]?.message}
             </CardLabelError> : null}
         </React.Fragment>;

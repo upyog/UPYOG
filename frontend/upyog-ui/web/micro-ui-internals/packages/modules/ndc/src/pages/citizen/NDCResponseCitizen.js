@@ -39,7 +39,7 @@ const BannerPicker = (props) => {
       applicationNumber={applicationNo}
       info={props?.isSuccess ? props.t("NDC_APPLICATION_NO") : ""}
       successful={props?.isSuccess}
-      style={{ width: "100%" }}
+      className="ndc-ndcresponse-citizen-fullwidth"
     />
   );
 };
@@ -141,14 +141,14 @@ const NDCResponseCitizen = () => {
       {isSuccess && <SubmitBar label={t("CS_COMMON_DOWNLOAD_ACKNOWLEDGEMENT")} onSubmit={handleDownloadPdf} />}
 
       {reciept_data && reciept_data?.Payments?.length > 0 && (
-        <SubmitBar label={t("NDC_FEE_RECIEPT")} onSubmit={handleDownloadReceipt} style={{ marginTop: "10px" }} />
+        <SubmitBar label={t("NDC_FEE_RECIEPT")} onSubmit={handleDownloadReceipt} className="ndc-ndcresponse-citizen-top-spacing" />
       )}
 
       {isSuccess && (
-        <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handlePayment} style={{ marginTop: "10px" }} />
+        <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handlePayment} className="ndc-ndcresponse-citizen-top-spacing" />
       )}
 
-      <SubmitBar label={t("CORE_COMMON_GO_TO_NDC")} onSubmit={onGoToNDC} style={{ marginTop: "10px" }} />
+      <SubmitBar label={t("CORE_COMMON_GO_TO_NDC")} onSubmit={onGoToNDC} className="ndc-ndcresponse-citizen-top-spacing" />
 
       <Link to={`/upyog-ui/citizen`}>
         <LinkButton label={t("CORE_COMMON_GO_TO_HOME")} />

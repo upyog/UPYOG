@@ -24,20 +24,20 @@ const WSDocsRequired = ({ onSelect, userType, onSkip, config }) => {
         <CardHeader>{t(`WS_COMMON_APPL_NEW_CONNECTION`)}</CardHeader>
         <CitizenInfoLabel textStyle={{
           color: "#0B0C0C"
-        }} text={t(`WS_DOCS_REQUIRED_TIME`)} showInfo={false} className="ws-auto-105" />
-        <CardText className="ws-auto-106">{t(`WS_NEW_CONNECTION_TEST_1`)}</CardText>
-        <CardText className="ws-auto-107">{t(`WS_NEW_CONNECTION_TEST_2`)}</CardText>
+        }} text={t(`WS_DOCS_REQUIRED_TIME`)} showInfo={false} className="ws-docs-required-link-center-text" />
+        <CardText className="ws-docs-required-link">{t(`WS_NEW_CONNECTION_TEST_1`)}</CardText>
+        <CardText className="ws-docs-required-link">{t(`WS_NEW_CONNECTION_TEST_2`)}</CardText>
         <CardSubHeader>{t("WS_DOC_REQ_SCREEN_LABEL")}</CardSubHeader>
-        <CardText className="ws-auto-108">{t(`WS_NEW_CONNECTION_TEST_3`)}</CardText>
+        <CardText className="ws-docs-required-link">{t(`WS_NEW_CONNECTION_TEST_3`)}</CardText>
         {wsDocsLoading ? <Loader /> : <Fragment>
           {wsDocs?.Documents?.map((doc, index) => <div key={doc?.code || index}>
-            <div className="ws-auto-109">
-              <div className="ws-auto-110">
+            <div className="ws-docs-required-label-bold">
+              <div className="ws-docs-required-flex">
                 <div>{`${index + 1}.`}&nbsp;</div>
                 <div>{` ${t(doc?.code.replace('.', '_'))}`}</div>
               </div>
             </div>
-            <div className="ws-auto-111">
+            <div className="ws-docs-required-item">
               {doc?.dropdownData?.map((value, idx) => doc?.dropdownData?.length !== idx + 1 ? <span key={value?.code || value?.i18nKey || idx}>{`${t(value?.i18nKey)}, `}</span> : <span key={value?.code || value?.i18nKey || idx}>{`${t(value?.i18nKey)}`}</span>)}
             </div>
           </div>)}
@@ -59,7 +59,7 @@ const WSDocsRequired = ({ onSelect, userType, onSkip, config }) => {
       printWindow.print();
     }
   };
-  return <div className="ws-auto-112">
+  return <div className="ws-docs-required-item-2">
     <div>
       <Header styles={{
         fontSize: "32px",
@@ -71,26 +71,26 @@ const WSDocsRequired = ({ onSelect, userType, onSkip, config }) => {
         <div>
           {t("WS_WATER_AND_SEWERAGE_NEW_CONNECTION_LABEL")}
         </div>
-        <div onClick={printDiv} className="ws-auto-113">
-          <PrintBtnCommon /><div className="ws-auto-114">{"Print"}</div>
+        <div onClick={printDiv} className="ws-docs-required-btn-flex-action">
+          <PrintBtnCommon /><div className="ws-docs-required-btn-title-lg">{"Print"}</div>
         </div>
       </Header>
     </div>
     <Card>
       {wsDocsLoading ? <Loader /> : <div id="documents-div">
-        {wsDocs?.Documents?.map((doc, index) => <div key={doc?.code || index} className="ws-auto-115">
-          <CardSectionHeader className="ws-auto-116">{t(doc?.code.replace('.', '_'))}</CardSectionHeader>
-          {doc.dropdownData && doc.dropdownData.length > 1 && <p className="ws-auto-117">{t(`${doc?.code.replace('.', '_')}_DESCRIPTION`)}</p>}
-          <div className="ws-auto-118">
-            {doc?.dropdownData?.map((value, idx) => <p key={value?.code || value?.i18nKey || idx} className="ws-auto-119">{`${idx + 1}. ${t(value?.i18nKey)}`}</p>)}
+        {wsDocs?.Documents?.map((doc, index) => <div key={doc?.code || index} className="ws-docs-required-mt-md">
+          <CardSectionHeader className="ws-docs-required-title-lg">{t(doc?.code.replace('.', '_'))}</CardSectionHeader>
+          {doc.dropdownData && doc.dropdownData.length > 1 && <p className="ws-docs-required-item-3">{t(`${doc?.code.replace('.', '_')}_DESCRIPTION`)}</p>}
+          <div className="ws-docs-required-item-4">
+            {doc?.dropdownData?.map((value, idx) => <p key={value?.code || value?.i18nKey || idx} className="ws-docs-required-card-bold">{`${idx + 1}. ${t(value?.i18nKey)}`}</p>)}
           </div>
-          <p className="ws-auto-120">{t(`${doc?.code.replace('.', '_')}_BELOW_DESCRIPTION`)}</p>
+          <p className="ws-docs-required-item-5">{t(`${doc?.code.replace('.', '_')}_BELOW_DESCRIPTION`)}</p>
         </div>)}
       </div>}
-      <ActionBar className="ws-auto-121">
+      <ActionBar className="ws-docs-required-flex-2">
         {<SubmitBar label={t("ACTION_TEST_APPLY")} onSubmit={() => {
           navigate(pathname.replace("create-application", "new-application"));
-        }} disabled={wsDocsLoading ? true : false} className="ws-auto-122" />}
+        }} disabled={wsDocsLoading ? true : false} className="ws-docs-required-link-2" />}
       </ActionBar>
     </Card>
   </div>;

@@ -100,7 +100,7 @@ export const ApplicationTimeline = (props) => {
     switch (nextAction?.action) {
       case "PAY":
         return (
-          <div style={{ marginTop: "24px" }}>
+          <div className="fsm-application-timeline-top-spacing">
             <Link
               to={{
                 pathname: `/upyog-ui/citizen/payment/my-bills/FSM.TRIP_CHARGES/${props.id}/`,
@@ -114,7 +114,7 @@ export const ApplicationTimeline = (props) => {
         );
       case "SUBMIT_FEEDBACK":
         return (
-          <div style={{ marginTop: "24px" }}>
+          <div className="fsm-application-timeline-top-spacing">
             <Link to={`${APPLICATION_PATH}/citizen/fsm/rate/${props.id}`}>
               <SubmitBar label={t("CS_APPLICATION_DETAILS_RATE")} />
             </Link>
@@ -147,7 +147,7 @@ export const ApplicationTimeline = (props) => {
       {!isLoading && (
         <Fragment>
           {data?.timeline?.length > 0 && (
-            <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
+            <CardSectionHeader className="fsm-application-timeline-header">
               {t("CS_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
             </CardSectionHeader>
           )}

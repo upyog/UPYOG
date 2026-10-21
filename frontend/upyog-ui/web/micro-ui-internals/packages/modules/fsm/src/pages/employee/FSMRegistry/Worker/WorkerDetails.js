@@ -361,9 +361,9 @@ const WorkerDetails = (props) => {
     <React.Fragment>
       {!isWorkerLoading ? (
         <React.Fragment>
-          <Header style={{ marginBottom: "16px" }}>{t("ES_FSM_REGISTRY_WORKER_DETAILS_ID", { ID: id })}</Header>
+          <Header className="fsm-driver-details-header">{t("ES_FSM_REGISTRY_WORKER_DETAILS_ID", { ID: id })}</Header>
           <div style={!isMobile ? { marginLeft: "-15px" } : {}}>
-            <Card style={{ position: "relative" }} className="page-padding-fix">
+            <Card className="page-padding-fix fsm-registry-inbox-wrapper">
               {workerData?.[0]?.employeeResponse?.map((detail, index) => (
                 <React.Fragment key={index}>
                   <CardSectionHeader style={index > 0 ? { marginBottom: "16px", marginTop: "32px" } : { marginBottom: "16px" }}>{t(detail.title)}</CardSectionHeader>
@@ -373,10 +373,10 @@ const WorkerDetails = (props) => {
                         <>
                           <div className={`${index === detail?.values?.length - 1 ? "row last" : "row"} border-none`}>
                             <h2>{t(value.title)}</h2>
-                            <div className="value" style={{  display: "flex" }}>
+                            <div className="value fsm-registry-search-flex-container">
                               {value.value === "ES_FSM_REGISTRY_DETAILS_ADD_VENDOR" && (
                                 <span onClick={() => onActionSelect("ADD_VENDOR")}>
-                                  <div className="search-add-icon" style={{ marginLeft: 0, marginRight: "10px", cursor: "pointer" }}>
+                                  <div className="search-add-icon fsm-worker-details-clickable">
                                     <AddIcon className="" />
                                   </div>
                                 </span>
@@ -385,22 +385,15 @@ const WorkerDetails = (props) => {
                               {value.value != "ES_FSM_REGISTRY_DETAILS_ADD_VENDOR" && (
                                 <span onClick={() => onActionSelect("EDIT_VENDOR")}>
                                   <EditIcon
-                                    style={{
-                                      cursor: "pointer",
-                                      marginLeft: "20px",
-                                    }}
+                                    className="fsm-driver-details-clickable"
                                   />
                                 </span>
                               )}
                               {value.value != "ES_FSM_REGISTRY_DETAILS_ADD_VENDOR" && (
                                 <span onClick={() => onActionSelect("DELETE_VENDOR")}>
                                   <DeleteIcon
-                                    className="delete"
+                                    className="delete fsm-driver-details-clickable"
                                     fill="#f47738"
-                                    style={{
-                                      cursor: "pointer",
-                                      marginLeft: "20px",
-                                    }}
                                   />
                                 </span>
                               )}
@@ -448,7 +441,7 @@ const WorkerDetails = (props) => {
                     )} */}
                     {detail?.child?.map((data, index) => {
                       return (
-                        <Card className="card-with-background" style={{ maxWidth: "45%", marginLeft: "0px" }}>
+                        <Card className="card-with-background fsm-worker-details-card">
                           <div className="card-head">
                             <h2>
                               {t(`ES_SW_${detail.type}`)} {index + 1}
@@ -514,7 +507,7 @@ const WorkerDetails = (props) => {
               {selectedAction === "DELETE_SW" || selectedAction === "ENABLE_SW" || selectedAction === "DELETE_VENDOR" ? (
                 renderModalContent()
               ) : (
-                <Card style={{ boxShadow: "none" }}>{renderModalContent()}</Card>
+                <Card className="fsm-driver-details-card">{renderModalContent()}</Card>
               )}
             </Modal>
           )}
@@ -523,10 +516,10 @@ const WorkerDetails = (props) => {
               error={showToast.key === "error" ? true : false}
               label={t(showToast.key === "success" ? `ES_FSM_REGISTRY_${showToast.action}_SUCCESS` : showToast.action)}
               onClose={closeToast}
-              // style={{ marginBottom: "1rem" }}
+              // className="custom-style"
             />
           )}
-          <ActionBar style={{ zIndex: "19" }}>
+          <ActionBar className="fsm-index-wrapper">
             {displayMenu ? (
               <Menu
                 localeKeyPrefix={"ES_FSM_REGISTRY_ACTION"}

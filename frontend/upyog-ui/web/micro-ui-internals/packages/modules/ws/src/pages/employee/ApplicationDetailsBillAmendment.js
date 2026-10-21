@@ -3,7 +3,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
 import getPDFData from "../../utils/getWsAckDataForBillAmendPdf";
-import "../../css/ws-inline-auto.css";
+
 const ApplicationDetailsBillAmendment = () => {
   const {
     applicationNumber
@@ -80,34 +80,34 @@ const ApplicationDetailsBillAmendment = () => {
     PDFdata.then(ress => Digit.Utils.pdf.generateBillAmendPDF(ress));
   };
   const dowloadOptions = applicationDetails?.amendment?.status === "CONSUMED" ? [
-  // {
-  //   order: 2,
-  //   label: t("WS_DOWNLOAD_COUPON_PDF"),
-  //   onClick: () => getCouponPDF({ tenantId, Amendments: applicationDetails?.amendment }),
-  // },
-  {
-    order: 1,
-    label: t("WS_ACK_PDF"),
-    onClick: () => getAckPdf(applicationDetails?.amendment, tenantId, t, applicationDetails?.applicationDetails, applicationDetails)
-  }] : [{
-    order: 1,
-    label: t("WS_ACK_PDF"),
-    onClick: () => getAckPdf(applicationDetails?.amendment, tenantId, t, applicationDetails?.applicationDetails, applicationDetails)
-  }];
+    // {
+    //   order: 2,
+    //   label: t("WS_DOWNLOAD_COUPON_PDF"),
+    //   onClick: () => getCouponPDF({ tenantId, Amendments: applicationDetails?.amendment }),
+    // },
+    {
+      order: 1,
+      label: t("WS_ACK_PDF"),
+      onClick: () => getAckPdf(applicationDetails?.amendment, tenantId, t, applicationDetails?.applicationDetails, applicationDetails)
+    }] : [{
+      order: 1,
+      label: t("WS_ACK_PDF"),
+      onClick: () => getAckPdf(applicationDetails?.amendment, tenantId, t, applicationDetails?.applicationDetails, applicationDetails)
+    }];
   return <Fragment>
-      <div className={"employee-main-application-details"}>
-        <div className={"employee-application-details ws-auto-304"}>
-          <Header styles={{
+    <div className={"employee-main-application-details"}>
+      <div className={"employee-application-details ws-application-details-bill-amendment-mb-md"}>
+        <Header styles={{
           marginLeft: "0px",
           paddingTop: "10px",
           fontSize: "32px"
         }}>{t("CS_TITLE_GENERATE_NOTE")}</Header>
-          {dowloadOptions && dowloadOptions.length > 0 && <MultiLink className="multilinkWrapper employee-mulitlink-main-div" onHeadClick={() => setShowOptions(!showOptions)} displayOptions={showOptions} options={dowloadOptions} downloadBtnClassName={"employee-download-btn-className"} optionsClassName={"employee-options-btn-className"} />}
-        </div>
-        <ApplicationDetailsTemplate applicationDetails={applicationDetails} isLoading={isLoading} isDataLoading={isLoading} applicationData={applicationDetails?.applicationData} mutate={mutate} workflowDetails={workflowDetails} businessService={applicationDetails?.processInstancesDetails?.[0]?.businessService} // businessService
-      moduleCode="WS" showToast={showToast} setShowToast={setShowToast} closeToast={() => setShowToast(null)} timelineStatusPrefix={`WF_${applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}_`} />
+        {dowloadOptions && dowloadOptions.length > 0 && <MultiLink className="multilinkWrapper employee-mulitlink-main-div" onHeadClick={() => setShowOptions(!showOptions)} displayOptions={showOptions} options={dowloadOptions} downloadBtnClassName={"employee-download-btn-className"} optionsClassName={"employee-options-btn-className"} />}
       </div>
-      {showToast ? <Toast isDleteBtn={true} error={updateApplicationError ? "WS_APPLICATION_UPDATE_ERROR" : null} label={isSuccess ? showToast?.label : updateError?.Error} /> : null}
-    </Fragment>;
+      <ApplicationDetailsTemplate applicationDetails={applicationDetails} isLoading={isLoading} isDataLoading={isLoading} applicationData={applicationDetails?.applicationData} mutate={mutate} workflowDetails={workflowDetails} businessService={applicationDetails?.processInstancesDetails?.[0]?.businessService} // businessService
+        moduleCode="WS" showToast={showToast} setShowToast={setShowToast} closeToast={() => setShowToast(null)} timelineStatusPrefix={`WF_${applicationDetails?.processInstancesDetails?.[0]?.businessService?.toUpperCase()}_`} />
+    </div>
+    {showToast ? <Toast isDleteBtn={true} error={updateApplicationError ? "WS_APPLICATION_UPDATE_ERROR" : null} label={isSuccess ? showToast?.label : updateError?.Error} /> : null}
+  </Fragment>;
 };
 export default ApplicationDetailsBillAmendment;

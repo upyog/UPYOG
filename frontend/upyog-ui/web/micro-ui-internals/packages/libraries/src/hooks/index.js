@@ -37,7 +37,7 @@ import useCreateEvent from "./events/useCreateEvent";
 import useUpdateEvent from "./events/useUpdateEvent";
 import useNewInboxGeneral from "./useInboxGeneral/useNewInbox";
 import useDynamicData from "./useDynamicData";
-
+import useCitizenAggregate from "./useCitizenAggregate";
 
 import useCreate from "./pgrAi/useCreate";
 import useSearchPGRAI from "./pgrAi/useSearchPGRAI";
@@ -856,7 +856,8 @@ const Hooks = {
   useInbox,
   ndc,
   useCustomNavigate,
-  useModuleBasePath
+  useModuleBasePath,
+  useCitizenAggregate
 };
 
 

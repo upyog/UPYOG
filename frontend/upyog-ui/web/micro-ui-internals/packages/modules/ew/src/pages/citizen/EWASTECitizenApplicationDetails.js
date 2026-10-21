@@ -90,7 +90,7 @@ const EWASTECitizenApplicationDetails = () => {
     <React.Fragment>
       <div>
         {/* Header section with download options */}
-        <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
+        <div className="cardHeaderWithOptions ew-ewastecitizen-application-details-spacing">
           <Header styles={{ fontSize: "32px", marginLeft: "10px" }}>{t("EW_APPLICATION_DETAILS")}</Header>
           {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
@@ -114,7 +114,7 @@ const EWASTECitizenApplicationDetails = () => {
           </StatusTable>
 
           {/* Address details */}
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("EW_ADDRESS_DETAILS")}</CardSubHeader>
+          <CardSubHeader className="ew-ewastecitizen-application-details-header">{t("EW_ADDRESS_DETAILS")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("EW_PINCODE")} text={EwasteApplication?.address?.pincode || t("CS_NA")} />
             <Row className="border-none" label={t("EW_CITY")} text={EwasteApplication?.address?.city?.code || t("CS_NA")} /> 
@@ -127,7 +127,7 @@ const EWASTECitizenApplicationDetails = () => {
           </StatusTable>
 
           {/* Applicant details */}
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("EW_APPLICANT_DETAILS")}</CardSubHeader>
+          <CardSubHeader className="ew-ewastecitizen-application-details-header">{t("EW_APPLICANT_DETAILS")}</CardSubHeader>
           <StatusTable>
             <Row className="border-none" label={t("EWASTE_APPLICANT_NAME")} text={EwasteApplication?.applicant?.applicantName || t("CS_NA")} />
             <Row className="border-none" label={t("EW_MOBILE_NUMBER")} text={EwasteApplication?.applicant?.mobileNumber || t("CS_NA")} />
@@ -135,8 +135,8 @@ const EWASTECitizenApplicationDetails = () => {
           </StatusTable>
 
           {/* Product details */}
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("EW_PRODUCT_DETAILS")}</CardSubHeader>
-          <div style={{ border: "2px solid #ccc", borderRadius: "8px", padding: "20px", margin: "20px 0" }}>
+          <CardSubHeader className="ew-ewastecitizen-application-details-header">{t("EW_PRODUCT_DETAILS")}</CardSubHeader>
+          <div className="ew-check-page-container-padding">
             <ApplicationTable
               t={t}
               data={productRows}
@@ -156,7 +156,7 @@ const EWASTECitizenApplicationDetails = () => {
 
           {/* Transaction details */}
           <br></br>
-          <CardSubHeader style={{ fontSize: "24px" }}>{t("ES_EW_ACTION_TRANSACTION_ID")}</CardSubHeader>
+          <CardSubHeader className="ew-ewastecitizen-application-details-header">{t("ES_EW_ACTION_TRANSACTION_ID")}</CardSubHeader>
           <StatusTable>
             {EwasteApplication.calculatedAmount && <Row className="border-none" label={t("EWASTE_NET_PRICE")} text={"₹ " + EwasteApplication?.calculatedAmount} />}
             {EwasteApplication.finalAmount && <Row className="border-none" label={t("ES_EW_ACTION_FINALAMOUNT")} text={"₹ " + EwasteApplication?.finalAmount} />}
@@ -172,7 +172,7 @@ const EWASTECitizenApplicationDetails = () => {
             <Toast
               error={showToast.key}
               label={t(showToast.label)}
-              style={{ bottom: "0px" }}
+              className="ew-ewastecitizen-application-details-wrapper"
               onClose={() => {
                 setShowToast(null);
               }}

@@ -43,7 +43,7 @@ function WSDisconnectionDocumentsForm({ t, config, onSelect, userType, formData 
   if (wsDocsLoading) {
     return <Loader />;
   }
-  return <div className="ws-auto-81">
+  return <div className="ws-disconnection-documents-form-item">
       {userType === "citizen" && <DisconnectTimeline currentStep={2} />}
       <FormStep t={t} config={config} onSelect={handleSubmit}
     // isDisabled={enableSubmit}
@@ -147,7 +147,7 @@ function SelectDocument({
       }
     })();
   }, [file]);
-  return <div className="ws-auto-82">
+  return <div className="ws-disconnection-documents-form-mb-md">
           <CardLabel>{t(doc?.i18nKey) + "*"}</CardLabel>
           <Dropdown t={t} isMandatory={false} option={doc?.dropdownData} selected={selectedDocument} optionKey="i18nKey" select={handleSelectDocument} />
           <UploadFile id={`noc-doc-${key}`} extraStyleName={"propertyCreate"} accept="image/*, .pdf, .png, .jpeg, .jpg" onUpload={selectfile} onDelete={() => {

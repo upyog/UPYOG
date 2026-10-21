@@ -41,12 +41,12 @@ const PTPropertyUnderStateAquire = ({ ...props }) => {
   }
   if (userType === "employee") {
     return <React.Fragment>
-        <LabelFieldPair className="pt-auto-55">
+        <LabelFieldPair className="pt-under-state-aquire-link-col-flex">
           {/* <CardLabel className="card-label-smaller">
             {t("PT_MUTATION_STATE_ACQUISITION") + " *"}
            </CardLabel> */}
-          <div className="field pt-auto-56">
-            <CheckBox label={`${t("PT_MUTATION_STATE_ACQUISITION")}` + <span className="check-page-link-button"> *</span>} name={"isPropertyUnderGovtPossession"} onChange={setPropertyUnderGovtPossession} checked={isPropertyUnderGovtPossession?.code === "YES" ? true : false} className="pt-auto-57" />
+          <div className="field pt-under-state-aquire-label">
+            <CheckBox label={`${t("PT_MUTATION_STATE_ACQUISITION")}` + <span className="check-page-link-button"> *</span>} name={"isPropertyUnderGovtPossession"} onChange={setPropertyUnderGovtPossession} checked={isPropertyUnderGovtPossession?.code === "YES" ? true : false} className="pt-under-state-aquire-link-bold" />
             {/* <RadioButtons
               innerStyles={{ paddingRight: "250px" }}
               t={t}
@@ -64,7 +64,7 @@ const PTPropertyUnderStateAquire = ({ ...props }) => {
         </LabelFieldPair>
 
         <LabelFieldPair>
-          <CardLabel className="card-label-smaller pt-auto-58">
+          <CardLabel className="card-label-smaller pt-under-state-aquire-label-bold">
             {t("PT_MUTATION_GOVT_ACQUISITION_DETAILS")}
           </CardLabel>
           <div className="field">

@@ -339,17 +339,17 @@ const OwnerForm = _props => {
       const tooltip = e.currentTarget.querySelector(".tooltiptext");
       tooltip.style.visibility = "hidden";
       tooltip.style.opacity = 0;
-    }} className="asset-auto-107">
+    }} className="asset-edit-asset-maintenance-page-link-relative">
                 {children}
-                <span className="tooltiptext asset-auto-108">
+                <span className="tooltiptext asset-edit-asset-maintenance-page-link-absolute-center-text">
                     {message}
                 </span>
             </div>;
   };
   return <React.Fragment>
-            <div className="asset-auto-109">
-                <div className="asset-auto-110">
-                    {allAssets?.length > 2 ? <div className="asset-auto-111">
+            <div className="asset-edit-asset-maintenance-page-item">
+                <div className="asset-edit-asset-maintenance-page-bordered">
+                    {allAssets?.length > 2 ? <div className="asset-edit-asset-maintenance-page-right-text-action">
                             X
                         </div> : null}
 
@@ -357,14 +357,14 @@ const OwnerForm = _props => {
                         <CardLabel className="card-label-smaller">{t("AST_ID")}</CardLabel>
                         <div className="field">
                             <Controller control={control} name={"assetId"} defaultValue={applicationDetails?.applicationData?.applicationData?.id} render={props => <TextInput value={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.id))}`} readOnly // Makes the input field readonly
-            className="asset-auto-112" />} />
+            className="asset-edit-asset-maintenance-page-label" />} />
                         </div>
                     </LabelFieldPair>
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_APPLICATION_NO")}</CardLabel>
                         <div className="field">
                             <Controller control={control} name={"applicationNo"} defaultValue={applicationDetails?.applicationData?.applicationData?.applicationNo} render={props => <TextInput value={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.applicationNo))}`} readOnly // Makes the input field readonly
-            className="asset-auto-113" />} />
+            className="asset-edit-asset-maintenance-page-label" />} />
                         </div>
                     </LabelFieldPair>
                    
@@ -372,14 +372,14 @@ const OwnerForm = _props => {
                         <CardLabel className="card-label-smaller">{t("AST_NAME")}</CardLabel>
                         <div className="field">
                             <Controller control={control} name={"name"} defaultValue={applicationDetails?.applicationData?.applicationData?.assetName} render={props => <TextInput value={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.assetName))}`} readOnly // Makes the input field readonly
-            className="asset-auto-114" />} />
+            className="asset-edit-asset-maintenance-page-label" />} />
                         </div>
                     </LabelFieldPair>
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_PARENT_CATEGORY")}</CardLabel>
                         <div className="field">
                             <Controller control={control} name={"Parent Category"} defaultValue={applicationDetails?.applicationData?.applicationData?.assetParentCategory} render={props => <TextInput value={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.assetParentCategory))}`} readOnly // Makes the input field readonly
-            className="asset-auto-115" />} />
+            className="asset-edit-asset-maintenance-page-label" />} />
                         </div>
                     </LabelFieldPair>
                    
@@ -387,15 +387,15 @@ const OwnerForm = _props => {
                         <CardLabel className="card-label-smaller">{t("AST_LIFE")}</CardLabel>
                         <div className="field">
                             <Controller control={control} name={"assetlife"} defaultValue={applicationDetails?.applicationData?.applicationData?.lifeOfAsset} render={props => <TextInput value={`${t(checkForNA(applicationDetails?.applicationData?.applicationData?.lifeOfAsset))}`} readOnly // Makes the input field readonly
-            className="asset-auto-116" />} />
+            className="asset-edit-asset-maintenance-page-label" />} />
                         </div>
                     </LabelFieldPair>
 
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller asset-auto-117">
+                        <CardLabel className="card-label-smaller asset-edit-asset-maintenance-page-label-row-center-flex">
                             {t("AST_MAINTENANCE_OPTIONS")}
                             <Tooltip message={t("TOOLTIP_AST_MAINTENANCE_OPTIONS")}>
-                                <InfoBannerIcon className="asset-auto-118" />
+                                <InfoBannerIcon className="asset-edit-asset-maintenance-page-label-action" />
                             </Tooltip>
                         </CardLabel>
                         <div className="field">
@@ -472,10 +472,10 @@ const OwnerForm = _props => {
                             </div>}
 
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller asset-auto-119">
+                        <CardLabel className="card-label-smaller asset-edit-asset-maintenance-page-label-row-center-flex">
                             {t("AST_MAINTENANCE_TYPE")}
                             <Tooltip message={t("TOOLTIP_AST_MAINTENANCE_TYPE")}>
-                                <InfoBannerIcon className="asset-auto-120" />
+                                <InfoBannerIcon className="asset-edit-asset-maintenance-page-label-action" />
                             </Tooltip>
                         </CardLabel>
                         <Controller control={control} name={"maintenanceType"} defaultValue={editMaintenanceDetails?.maintenanceType || {
@@ -505,10 +505,10 @@ const OwnerForm = _props => {
                         </div>
                     </LabelFieldPair>
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller asset-auto-121">
+                        <CardLabel className="card-label-smaller asset-edit-asset-maintenance-page-label-row-center-flex">
                             {t("AST_MAINTENANCE_CYCLE")}
                             <Tooltip message={t("TOOLTIP_AST_MAINTENANCE_CYCLE")}>
-                                <InfoBannerIcon className="asset-auto-122" />
+                                <InfoBannerIcon className="asset-edit-asset-maintenance-page-label-action" />
                             </Tooltip>
                         </CardLabel>
 
@@ -528,10 +528,10 @@ const OwnerForm = _props => {
 
                     <CardLabelError className="error-message">{localFormState.touched.maintenanceCycle ? errors?.maintenanceCycle?.message : ""}</CardLabelError>
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller asset-auto-123">
+                        <CardLabel className="card-label-smaller asset-edit-asset-maintenance-page-label-row-center-flex">
                                 {t("AST_NEXT_MAINTENANCE_DATE")}
                             <Tooltip message={t("TOOLTIP_AST_NEXT_MAINTENANCE_DATE")}>
-                               <InfoBannerIcon className="asset-auto-124" />
+                               <InfoBannerIcon className="asset-edit-asset-maintenance-page-label-action" />
                             </Tooltip>
                         </CardLabel>
                         <div className="field">
@@ -551,10 +551,10 @@ const OwnerForm = _props => {
                         </div>
                     </LabelFieldPair>
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller asset-auto-125">
+                        <CardLabel className="card-label-smaller asset-edit-asset-maintenance-page-label-row-center-flex">
                             {t("AST_PAYMENT_TYPE")}
                             <Tooltip message={t("TOOLTIP_AST_PAYMENT_TYPE")}>
-                                <InfoBannerIcon className="asset-auto-126" />
+                                <InfoBannerIcon className="asset-edit-asset-maintenance-page-label-action" />
                             </Tooltip>
                         </CardLabel>
                         <Controller control={control} name={"paymentType"} defaultValue={editMaintenanceDetails?.paymentType || {
@@ -566,10 +566,10 @@ const OwnerForm = _props => {
                     <CardLabelError className="error-message">{localFormState.touched.paymentType ? errors?.paymentType?.message : ""}</CardLabelError>
 
                     <LabelFieldPair>
-                        <CardLabel className="card-label-smaller asset-auto-127">
+                        <CardLabel className="card-label-smaller asset-edit-asset-maintenance-page-label-row-center-flex">
                             {t("AST_COST_MAINTENANCE_OVERHEAD")}
                             <Tooltip message={t("TOOLTIP_AST_COST_MAINTENANCE_OVERHEAD")}>
-                                <InfoBannerIcon className="asset-auto-128" />
+                                <InfoBannerIcon className="asset-edit-asset-maintenance-page-label-action" />
                             </Tooltip>
                         </CardLabel>
                         <div className="field">
@@ -682,7 +682,7 @@ const OwnerForm = _props => {
 
                     <LabelFieldPair>
                         <CardLabel className="card-label-smaller">{t("AST_PRE_CONDITION_DOC")}</CardLabel>
-                        <div className="field asset-auto-129">
+                        <div className="field asset-edit-asset-maintenance-page-label-mt-md">
                             <Controller control={control} name={"preCondition"} render={props => <UploadFile id={"preCondition"} onUpload={file => handleFileUpload(file, setPreConditionFile)} onDelete={() => {
               setPreConditionFile(null);
               props.onChange(null);
@@ -713,7 +713,7 @@ const OwnerForm = _props => {
                         </div>
                     </LabelFieldPair>
                     <CardLabelError className="error-message">{localFormState.touched.preConditionRemarks ? errors?.assignedUser?.preConditionRemarks : ""}</CardLabelError>
-                    <div className="asset-auto-130">
+                    <div className="asset-edit-asset-maintenance-page-label-rounded">
 
 
                         <LabelFieldPair>
@@ -750,10 +750,10 @@ const OwnerForm = _props => {
                         </LabelFieldPair>
                         <CardLabelError className="error-message">{localFormState.touched.postConditionRemarks ? errors?.assignedUser?.postConditionRemarks : ""}</CardLabelError>
                         <LabelFieldPair>
-                            <CardLabel className="card-label-smaller asset-auto-131">
+                            <CardLabel className="card-label-smaller asset-edit-asset-maintenance-page-label-row-center-flex">
                                 {t("AST_IS_LIFE_OF__ASSET_AFFECTED")}
                                 <Tooltip message={t("TOOLTIP_AST_IS_LIFE_OF__ASSET_AFFECTED")}>
-                                <InfoBannerIcon className="asset-auto-132" />
+                                <InfoBannerIcon className="asset-edit-asset-maintenance-page-label-action" />
                             </Tooltip>
                             </CardLabel>
                             <div className="field">

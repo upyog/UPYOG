@@ -116,7 +116,7 @@ const PropertyUsageType = ({
           selectPropertyPurpose(e);
         }} optionKey="i18nKey" onBlur={onBlur} t={t} />
         </LabelFieldPair>
-        {formState.touchedFields?.[config.key] ? <CardLabelError className="pt-auto-76">
+        {formState.touchedFields?.[config.key] ? <CardLabelError className="pt-property-usage-type-label-text-sm-mt-neg">
             {formState.errors?.[config.key]?.message}
           </CardLabelError> : null}
       </React.Fragment>;

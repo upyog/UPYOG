@@ -18,7 +18,7 @@ import "../../css/search.css";
 
 const fieldComponents = {
   mobileNumber: MobileNumber,
-  Dropdown:(props) => (
+  Dropdown: (props) => (
     <Dropdown
       selected={props.value}
       select={props.onChange}
@@ -64,10 +64,10 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
     });
 
   let venues = [];
-    venueLists && venueLists.map((venue) => {
-        venues.push({i18nKey: `${venue.code}`, code: `${venue.code}`, value: `${venue.name}`, timeSlots: venue.timeSlot, parentMasterType:venue.parentMasterType});
-    });
-  
+  venueLists && venueLists.map((venue) => {
+    venues.push({ i18nKey: `${venue.code}`, code: `${venue.code}`, value: `${venue.name}`, timeSlots: venue.timeSlot, parentMasterType: venue.parentMasterType });
+  });
+
 
   const form = watch();
 
@@ -128,11 +128,11 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
       </LinkLabel>
     );
   };
-  
+
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
       <React.Fragment>
-        <div className={`search-container gc-search-container ${isInboxPage ? "is-inbox" : ""}`}>
+        <div className={`search-container gc-${isInboxPage ? "is-inbox" : ""}`}>
           <div className="search-complaint-container">
             {(type === "mobile" || mobileView) && (
               <div className="complaint-header">
@@ -160,11 +160,11 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                           rules={{
                             ...(input.pattern
                               ? {
-                                  pattern: {
-                                    value: new RegExp(input.pattern),
-                                    message: t(input.errorMessages?.pattern || "CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID"),
-                                  },
-                                }
+                                pattern: {
+                                  value: new RegExp(input.pattern),
+                                  message: t(input.errorMessages?.pattern || "CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID"),
+                                },
+                              }
                               : {}),
                             ...(input.minLength ? { minLength: { value: input.minLength, message: t(input.errorMessages?.minLength || "CORE_COMMON_INVALID_MIN_LENGTH") } } : {}),
                             ...(input.maxLength ? { maxLength: { value: input.maxLength, message: t(input.errorMessages?.maxLength || "CORE_COMMON_INVALID_MAX_LENGTH") } } : {}),
@@ -175,26 +175,26 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                         <Controller
                           render={({ field }) => {
                             const Comp = fieldComponents?.[input.type];
-                            return <Comp formValue={form} setValue={setValue} onChange={field.onChange} value={field.value} options={venues} t={t}/>;
+                            return <Comp formValue={form} setValue={setValue} onChange={field.onChange} value={field.value} options={venues} t={t} />;
                           }}
                           name={input.name}
                           control={control}
                           rules={{
                             ...(input.pattern
                               ? {
-                                  pattern: {
-                                    value: new RegExp(input.pattern),
-                                    message: t(input.errorMessages?.pattern || "CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID"),
-                                  },
-                                }
+                                pattern: {
+                                  value: new RegExp(input.pattern),
+                                  message: t(input.errorMessages?.pattern || "CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID"),
+                                },
+                              }
                               : input.type === "mobileNumber"
-                              ? {
+                                ? {
                                   pattern: {
                                     value: /^[6-9][0-9]{9}$/,
                                     message: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID"),
                                   },
                                 }
-                              : {}),
+                                : {}),
                             ...(input.minLength ? { minLength: { value: input.minLength, message: t(input.errorMessages?.minLength || "CORE_COMMON_INVALID_MIN_LENGTH") } } : {}),
                             ...(input.maxLength ? { maxLength: { value: input.maxLength, message: t(input.errorMessages?.maxLength || "CORE_COMMON_INVALID_MAX_LENGTH") } } : {}),
                           }}
@@ -228,10 +228,10 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
         </div>
         {(type === "mobile" || mobileView) && (
           <ActionBar className="clear-search-container">
-            <button className="clear-search" style={{ flex: 1 }}>
+            <button className="clear-search gc-gcdesktop-inbox-wrapper">
               {clearAll(mobileView)}
             </button>
-            <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} style={{ flex: 1 }} submit={true} />
+            <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} className="gc-gcdesktop-inbox-wrapper" submit={true} />
           </ActionBar>
         )}
       </React.Fragment>

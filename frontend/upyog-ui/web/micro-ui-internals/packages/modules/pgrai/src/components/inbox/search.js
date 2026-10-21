@@ -53,9 +53,9 @@ const SearchComplaint = ({ onSearch, type, onClose, searchParams }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmitInput)} style={{ marginLeft: "24px" }}>
+    <form onSubmit={handleSubmit(onSubmitInput)} className="pgrai-search-spacing">
       <React.Fragment>
-        <div className="search-container" style={{ width: "auto" }}>
+        <div className="search-container pgrai-search-wrapper">
           <div className="search-complaint-container">
             {type === "mobile" && (
               <div className="complaint-header">
@@ -66,7 +66,7 @@ const SearchComplaint = ({ onSearch, type, onClose, searchParams }) => {
               </div>
             )}
 
-            <div className="complaint-input-container" style={{ display: "grid" }}>
+            <div className="complaint-input-container pgrai-search-grid-container">
               <span className="complaint-input">
                 <Label>{t("CS_COMMON_COMPLAINT_NO")}.</Label>
                 <Controller
@@ -79,7 +79,7 @@ const SearchComplaint = ({ onSearch, type, onClose, searchParams }) => {
                     <TextInput
                       value={field.value}
                       onChange={(e) => field.onChange(e.target.value)}  // ✅ fixed
-                      style={{ marginBottom: "8px" }}
+                      className="pgrai-search-bottom-spacing"
                     />
                   )}
                 />
@@ -118,7 +118,7 @@ const SearchComplaint = ({ onSearch, type, onClose, searchParams }) => {
                         isInvalid={!!errors.mobileNumber}
                       />
                       {errors.mobileNumber && (
-                        <span style={{ color: "red", fontSize: "12px" }}>
+                        <span className="pgrai-search-required-asterisk">
                           {errors.mobileNumber.message}
                         </span>
                       )}
@@ -129,11 +129,7 @@ const SearchComplaint = ({ onSearch, type, onClose, searchParams }) => {
 
               {type === "desktop" && (
                 <SubmitBar
-                  style={{
-                    marginTop: 32,
-                    marginLeft: "16px",
-                    width: "calc( 100% - 16px )",
-                  }}
+                  className="pgrai-search-top-spacing"
                   label={t("ES_COMMON_SEARCH")}
                   submit={true}
                   disabled={Object.keys(errors).some((key) => errors[key])}

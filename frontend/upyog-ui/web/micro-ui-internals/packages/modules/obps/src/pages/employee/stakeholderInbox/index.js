@@ -148,7 +148,7 @@ const Inbox = ({ parentRoute }) => {
       {totalCount ? <p className="inbox-count">{totalCount}</p> : null}
     </Header>
     {Digit.Utils.browser.isMobile() &&
-      <div style={{ marginLeft: "12px" }}>
+      <div className="obps-index-spacing-5">
         <Link to={window.location.href.includes("/citizen") ? "/upyog-ui/citizen/obps/search/application" : "/upyog-ui/employee/obps/search/application"}>
           <span className="link">{t("BPA_SEARCH_PAGE_TITLE")}</span>
         </Link>

@@ -231,9 +231,9 @@ const ConnectionDetails = _props => {
   };
   return <div>
       {/* {window.location.href.includes("/ws/new") ?  <div style={titleStyle}>{t("WS_CONNECTION_DETAILS_HEADER_SUB_TEXT_LABEL")}</div> : null} */}
-      <div className="ws-auto-43">
-        <CardLabel className="ws-auto-44">{`${t("WS_APPLY_FOR")}`}<span className="check-page-link-button"> *</span></CardLabel>
-        <div className="ws-auto-45">
+      <div className="ws-connection-details-item">
+        <CardLabel className="ws-connection-details-link-bold">{`${t("WS_APPLY_FOR")}`}<span className="check-page-link-button"> *</span></CardLabel>
+        <div className="ws-connection-details-flex">
           <Controller
             control={control}
             name="water"
@@ -252,7 +252,7 @@ const ConnectionDetails = _props => {
                   }
                 }}
                 checked={connectionDetail?.water}
-                className="ws-auto-46"
+                className="ws-connection-details-item-2"
                 onBlur={field.onBlur}
               />
             )}
@@ -276,7 +276,7 @@ const ConnectionDetails = _props => {
                   }
                 }}
                 checked={connectionDetail?.sewerage}
-               className="ws-auto-47"
+               className="ws-connection-details-item-2"
                 onBlur={field.onBlur}
               />
             )}

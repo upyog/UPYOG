@@ -90,7 +90,7 @@ const AddressDetails = ({ config, onSelect, formData, setError, formState, clear
 
   return (
     <div style={isMobile ? {} : { marginTop: "-50px" }}>
-      <div style={{ marginBottom: "16px" }}>
+      <div className="mc-address-details-bottom-spacing">
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t("UC_DOOR_NO_LABEL")}</CardLabel>
           <div className="field">
@@ -152,7 +152,7 @@ const AddressDetails = ({ config, onSelect, formData, setError, formState, clear
         <CardLabelError style={errorStyle}>{localFormState.touchedFields?.pincode ? errors?.pincode?.message : ""}</CardLabelError>
 
         <LabelFieldPair>
-          <CardLabel style={{ paddingTop: "10px" }} className="card-label-smaller">
+          <CardLabel className="card-label-smaller mc-address-details-card">
             {t("UC_MOHALLA_LABEL")} <span className="check-page-link-button"> *</span>
           </CardLabel>
           <Controller
@@ -175,7 +175,7 @@ const AddressDetails = ({ config, onSelect, formData, setError, formState, clear
           />
         </LabelFieldPair>
       </div>
-      <hr style={{ width: "100%", border: "1px solid #D6D5D4", marginTop: "50px", marginBottom: "40px" }} />
+      <hr className="mc-address-details-fullwidth" />
     </div>
   );
 };

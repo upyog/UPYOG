@@ -25,9 +25,9 @@ const SelectULB = ({ userType, t, setValue, onSelect, config, data, formData, re
   return (
     <React.Fragment>
       <LabelFieldPair
-        style={{ alignItems: 'start' }}
+        className="eng-engagement-docs-ulb-wrapper"
       >
-        <CardLabel style={{ fontWeight: "bold" }}>{t("ES_COMMON_ULB") + " *"}</CardLabel>
+        <CardLabel className="eng-engagement-docs-ulb-card">{t("ES_COMMON_ULB") + " *"}</CardLabel>
         <div className="field">
           <Controller
             name={config.key}

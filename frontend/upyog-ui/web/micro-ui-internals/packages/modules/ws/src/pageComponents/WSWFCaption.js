@@ -18,7 +18,7 @@ const WSWFCaption = ({
       {data.comment && <Reason otherComment={data?.otherComment} headComment={data?.comment}></Reason>}
       {data?.wfComment ? <div>{data?.wfComment?.map(e => <div className="TLComments">
         <h3>{t("WF_COMMON_COMMENTS")}</h3>
-        <p className="ws-auto-164">{e}</p>
+        <p className="ws-wswf-caption-item">{e}</p>
       </div>)}</div> : null}
       {data?.thumbnailsToShow?.thumbs?.length > 0 ? <div className="TLComments">
       <h3>{t("CS_COMMON_ATTACHMENTS")}</h3>

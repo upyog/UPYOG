@@ -344,7 +344,7 @@ const GCSpecifications = ({ t, config, onSelect, formData, renewApplication }) =
                     {isAdditional && (
                         <>
                             <CardLabel>{t("GC_CALCULATION_TYPE")}</CardLabel>
-                            <div style={{ display: "flex", gap: "16px", marginBottom: "16px" }}>
+                            <div className="gc-gcspecifications-flex-container">
                                 <CheckBox
                                     label={t("GC_FIXED")}
                                     checked={isbulkgeneration}

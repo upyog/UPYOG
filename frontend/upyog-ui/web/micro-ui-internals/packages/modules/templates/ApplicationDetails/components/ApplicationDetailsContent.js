@@ -33,13 +33,10 @@ import TLTradeAccessories from "./TLTradeAccessories";
 import TLTradeUnits from "./TLTradeUnits";
 import WSAdditonalDetails from "./WSAdditonalDetails";
 import WSFeeEstimation from "./WSFeeEstimation";
-// import WSInfoLabel from "../../../ws/src/pageComponents/WSInfoLabel";
 import DocumentsPreview from "./DocumentsPreview";
 import InfoDetails from "./InfoDetails";
 import ViewBreakup from "./ViewBreakup";
 import ArrearSummary from "../../../common/src/payments/citizen/bills/routes/bill-details/arrear-summary";
-// import ViewAssetOnMap from "./ViewAssetOnMap";
-// import MarkPropertyMap from "../../../asset/src/pageComponents/MarkPropertyMap";
 import { MarkOnMap, ViewOnMap, DiginpinMapPopup } from "@nudmcdgnpm/upyog-ui-module-gis";
 import { GeoLocationWithDigipin } from "@nudmcdgnpm/digit-ui-react-components";
 
@@ -71,6 +68,7 @@ function ApplicationDetailsContent({
   let { id: applicationNo } = useParams(); // Extracts PG-1013-2025-I-001019
   const isAssetModule = window.location.href.includes("/asset/");
   const [applicationDetailsofAsset, setApplicationDetailsofAsset] = useState(null);
+  const [copiedAppNo, setCopiedAppNo] = useState(false);
 
   useEffect(() => {
     if (!isAssetModule) return;
@@ -151,6 +149,7 @@ function ApplicationDetailsContent({
       fetchBill();
     }
   }, [applicationData?.status, applicationData?.propertyId, applicationData?.tenantId, tenantId, billData.loading, billData.loaded, billData.canLoad]);
+
   const convertEpochToDateDMY = (dateEpoch) => {
     if (dateEpoch == null || dateEpoch == undefined || dateEpoch == "") {
       return "NA";
@@ -163,6 +162,7 @@ function ApplicationDetailsContent({
     day = (day > 9 ? "" : "0") + day;
     return `${day}/${month}/${year}`;
   };
+
   const getTimelineCaptions = (checkpoint, index = 0, timeline) => {
     if (checkpoint.state === "OPEN" || (checkpoint.status === "INITIATED" && !window.location.href.includes("/obps/"))) {
       const caption = {
@@ -225,46 +225,6 @@ function ApplicationDetailsContent({
     }
   };
 
-  const checkLocation =
-    window.location.href.includes("employee/tl") || window.location.href.includes("employee/obps") || window.location.href.includes("employee/noc");
-  const isNocLocation = window.location.href.includes("employee/noc");
-  const isBPALocation = window.location.href.includes("employee/obps");
-  const isWS = window.location.href.includes("employee/ws");
-
-  const getRowStyles = () => {
-    if (window.location.href.includes("employee/obps") || window.location.href.includes("employee/noc")) {
-      return { justifyContent: "space-between", fontSize: "16px", lineHeight: "19px", color: "#0B0C0C" };
-    } else if (checkLocation) {
-      return { justifyContent: "space-between", fontSize: "16px", lineHeight: "19px", color: "#0B0C0C" };
-    } else {
-      return {};
-    }
-  };
-
-  const getTableStyles = () => {
-    if (window.location.href.includes("employee/obps") || window.location.href.includes("employee/noc")) {
-      return { position: "relative", marginTop: "19px" };
-    } else if (checkLocation) {
-      return { position: "relative", marginTop: "19px" };
-    } else {
-      return {};
-    }
-  };
-
-  const getMainDivStyles = () => {
-    if (
-      window.location.href.includes("employee/obps") ||
-      window.location.href.includes("employee/noc") ||
-      window.location.href.includes("employee/ws")
-    ) {
-      return { lineHeight: "19px", maxWidth: "950px", minWidth: "280px" };
-    } else if (checkLocation) {
-      return { lineHeight: "19px", maxWidth: "600px", minWidth: "280px" };
-    } else {
-      return {};
-    }
-  };
-
   const getTextValue = (value) => {
     // Handle time values specially
     if (value?.isTimeValue && value?.value) {
@@ -305,22 +265,17 @@ function ApplicationDetailsContent({
   const toggleTimeline = () => {
     setShowAllTimeline((prev) => !prev);
   };
-  // this is file open service
+
+  // File open service
   const openFilePDF = (fileId) => {
     Digit.UploadServices.Filefetch([fileId], Digit.ULBService.getStateId())
       .then((res) => {
-        // Extract the concatenated URL string
         const concatenatedUrls = res?.data?.fileStoreIds?.[0]?.url;
-
         if (concatenatedUrls) {
-          // Split the string by commas to get individual URLs
           const urlArray = concatenatedUrls.split(",");
-
-          // Pick the first URL (or any other logic to decide which URL to open)
           const fileUrl = urlArray[0];
-
           if (fileUrl) {
-            window.open(fileUrl, "_blank"); // Open the file in a new tab
+            window.open(fileUrl, "_blank");
           } else {
             console.error("No valid URL found to open!");
           }
@@ -333,8 +288,112 @@ function ApplicationDetailsContent({
       });
   };
 
+  // Copy Application Number to Clipboard
+  const handleCopyAppNo = (textToCopy) => {
+    if (!textToCopy) return;
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(textToCopy);
+    } else {
+      const textarea = document.createElement("textarea");
+      textarea.value = textToCopy;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+    }
+    setCopiedAppNo(true);
+    setTimeout(() => setCopiedAppNo(false), 2000);
+  };
+
+  // Helper to determine status badge styling
+  const getStatusBadgeClass = (statusStr) => {
+    if (!statusStr) return "status-badge-neutral";
+    const upper = String(statusStr).toUpperCase();
+
+    if (
+      upper.includes("APPROV") ||
+      upper.includes("ACTIVE") ||
+      upper.includes("COMPLETE") ||
+      upper.includes("PAID") ||
+      upper.includes("VALIDAT") ||
+      upper.includes("SANCTION") ||
+      upper.includes("RESOLV") ||
+      upper.includes("ENABLE") ||
+      upper.includes("SUCCESS") ||
+      upper.includes("GRANT") ||
+      upper.includes("AUTHORIZ")
+    ) {
+      return "status-badge-success";
+    }
+
+    if (
+      upper.includes("IN_PROGRESS") ||
+      upper.includes("INPROGRESS") ||
+      upper.includes("PAYMENT") ||
+      upper.includes("VERIF") ||
+      upper.includes("INSPECT") ||
+      upper.includes("FORWARD") ||
+      upper.includes("PENDINGAPPROVAL") ||
+      upper.includes("ARCHITECT")
+    ) {
+      return "status-badge-info";
+    }
+
+    if (
+      upper.includes("INITIAT") ||
+      upper.includes("PENDING") ||
+      upper.includes("SUBMIT") ||
+      upper.includes("SENDBACK") ||
+      upper.includes("REOPEN") ||
+      upper.includes("DRAFT") ||
+      upper.includes("MODIFY")
+    ) {
+      return "status-badge-warning";
+    }
+
+    if (
+      upper.includes("REJECT") ||
+      upper.includes("CANCEL") ||
+      upper.includes("EXPIRE") ||
+      upper.includes("DISALLOW") ||
+      upper.includes("CLOSE") ||
+      upper.includes("TERMINAT") ||
+      upper.includes("DEACTIVAT") ||
+      upper.includes("INVALID")
+    ) {
+      return "status-badge-danger";
+    }
+
+    return "status-badge-neutral";
+  };
+
+  // Compute Primary Application Number & Dynamic Status
+  const primaryAppNumber =
+    applicationDetails?.applicationNo ||
+    applicationData?.applicationNumber ||
+    applicationDetails?.applicationData?.applicationNumber ||
+    applicationDetails?.applicationData?.acknowldgementNumber ||
+    id ||
+    applicationNo;
+
+  const rawStatus =
+    workflowDetails?.data?.timeline?.[0]?.state ||
+    applicationData?.status ||
+    applicationDetails?.status ||
+    workflowDetails?.data?.processInstances?.[0]?.state?.state ||
+    workflowDetails?.data?.state ||
+    "";
+
+  const statusPrefixToUse = timelineStatusPrefix || (businessService ? `${businessService.toUpperCase()}_COMMON_STATUS_` : "");
+  const formattedStatus = rawStatus ? t(`${statusPrefixToUse}${rawStatus}`) : null;
+  const isEmployee = Digit.SessionStorage.get("user_type") === "employee";
+  const createdDate = convertEpochToDateDMY(applicationData?.auditDetails?.createdTime);
+  const applicationChannel = applicationData?.channel
+    ? t("ES_APPLICATION_DETAILS_APPLICATION_CHANNEL_" + applicationData?.channel?.toUpperCase())
+    : null;
+
   return (
-    <Card style={{ position: "relative" }} className={"employeeCard-override"}>
+    <Card className={"employeeCard-override tmpl-application-details-content-card"}>
       {/* For UM-4418 changes */}
       {isInfoLabel ? (
         <InfoDetails
@@ -347,78 +406,157 @@ function ApplicationDetailsContent({
         />
       ) : null}
 
-      {applicationDetails?.applicationDetails?.map((detail, index) => (
-        <React.Fragment key={detail.title || index}>
-          <div style={getMainDivStyles()}>
-            {index === 0 && !detail.asSectionHeader ? (
-              <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t(detail.title)}</CardSubHeader>
-            ) : (
-              <React.Fragment>
-                <CardSectionHeader
-                  style={
-                    index == 0 && checkLocation
-                      ? { marginBottom: "16px", fontSize: "24px" }
-                      : { marginBottom: "16px", marginTop: "32px", fontSize: "24px" }
-                  }
+      {/* 1. Header Hero / Summary Card */}
+      {primaryAppNumber ? (
+        <div className="app-details-header-card">
+          <div className="app-details-header-top-bar">
+            <div className="app-details-service-tag">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
+              <span>{businessService ? t(`MODULE_${businessService?.toUpperCase()}`) : t("APPLICATION_DETAILS")}</span>
+            </div>
+
+            <div className="app-details-header-quick-links">
+              {showTimeLine && workflowDetails?.data?.timeline?.length > 0 && (
+                <a
+                  href="#timeline"
+                  className="app-details-quick-link-btn"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById("timeline")?.scrollIntoView({ behavior: "smooth" });
+                  }}
                 >
-                  {isNocLocation ? `${t(detail.title)}` : t(detail.title)}
-                  {detail?.Component ? <detail.Component /> : null}
-                </CardSectionHeader>
-              </React.Fragment>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  {t("VIEW_TIMELINE") || "Timeline"}
+                </a>
+              )}
+            </div>
+          </div>
+
+          <div className="app-details-header-main">
+            <div className="app-details-header-left">
+              <span className="app-details-header-label">{t("APPLICATION_NUMBER") || "Application Number"}</span>
+              <div className="app-details-header-app-no-wrap">
+                <span className="app-details-header-app-no">{primaryAppNumber}</span>
+                <button
+                  type="button"
+                  className={`app-details-copy-btn ${copiedAppNo ? "copied" : ""}`}
+                  onClick={() => handleCopyAppNo(primaryAppNumber)}
+                  title={t("COPY_TO_CLIPBOARD") || "Copy to clipboard"}
+                >
+                  {copiedAppNo ? (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  ) : (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                  )}
+                  {copiedAppNo && <span className="app-details-copy-tooltip">{t("COPIED") || "Copied!"}</span>}
+                </button>
+              </div>
+
+              <div className="app-details-header-meta">
+                {createdDate !== "NA" && (
+                  <span>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    {t("SUBMITTED_ON") || "Submitted"}: {createdDate}
+                  </span>
+                )}
+                {applicationChannel && (
+                  <span>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    {applicationChannel}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {formattedStatus && (
+              <div className={`app-details-status-badge ${getStatusBadgeClass(rawStatus)}`}>
+                <span className="app-details-status-dot" />
+                <span>{formattedStatus}</span>
+              </div>
             )}
-            {/* TODO, Later will move to classes */}
-            {/* Here Render the table for adjustment amount details detail.isTable is true for that table*/}
+          </div>
+        </div>
+      ) : null}
 
-            {detail?.isTable && (
-              <table
-                style={{ tableLayout: "fixed", width: "100%", borderCollapse: "collapse", border: "1px solid black" }}
-              >
-                <tr style={{ textAlign: "left" }}>
-                  {detail?.headers.map((header) => (
-                    <th style={{ padding: "10px", paddingLeft: "5px", border: "1px solid black" }}>{t(header)}</th>
-                  ))}
-                </tr>
+      {/* 2. Structured Section Cards */}
+      {applicationDetails?.applicationDetails?.map((detail, index) => (
+        <div className="app-details-section-card" key={detail.title || index}>
+          {detail?.title ? (
+            <div className="app-details-section-header-wrap">
+              <div className="app-details-section-title-wrap">
+                <span className="app-details-section-accent-bar" />
+                <CardSectionHeader className="app-details-section-title">
+                  {t(detail.title)}
+                </CardSectionHeader>
+              </div>
+              {detail?.Component ? <detail.Component /> : null}
+            </div>
+          ) : detail?.Component ? (
+            <div className="app-details-section-header-wrap">
+              <detail.Component />
+            </div>
+          ) : null}
 
-                {detail?.tableRows.map((row, index) => {
-                  // if (index === detail?.tableRows.length - 1) {
-                  //   return <>
-                  //     <hr style={{ width: "1200px", marginTop: "15px" }} className="underline" />
-                  //     <tr>
-                  //       {row.map(element => <td style={{ textAlign: "left" }}>{t(element)}</td>)}
-                  //     </tr>
-                  //   </>
-                  // }
-                  return (
-                    <tr>
+          {/* Render Table for adjustment amount details or tabular sections */}
+          {detail?.isTable && (
+            <div className="app-details-table-wrapper">
+              <table className="app-details-modern-table">
+                <thead>
+                  <tr>
+                    {detail?.headers?.map((header, hIdx) => (
+                      <th key={hIdx}>{t(header)}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {detail?.tableRows?.map((row, rIdx) => (
+                    <tr key={rIdx}>
                       {row.map((element, idx) =>
                         Array.isArray(element) && element.length > 1 && detail.isMaintenance === true ? (
-                          <td style={{ paddingTop: "20px", textAlign: "left", border: "1px solid black", verticalAlign: "middle" }} key={idx}>
-                            <div style={{ display: "flex", flexWrap: "nowrap", gap: "5px" }}>
+                          <td key={idx}>
+                            <div className="tmpl-application-details-content-flex-container">
                               {element.map((file, fileIndex) => (
                                 <a
-                                  key={fileIndex} // Ensure each <a> tag has a unique key
+                                  key={fileIndex}
                                   onClick={() => openFilePDF(file.fileStoreId)}
                                   rel="noopener noreferrer"
-                                  style={{ marginRight: "5px", display: "inline-block", cursor: "pointer" }}
+                                  className="tmpl-application-details-content-clickable"
                                 >
-                                  <PDFSvg style={{ width: "25px", height: "25px" }} />
+                                  <PDFSvg className="tmpl-application-details-content-icon" />
                                 </a>
                               ))}
                             </div>
                           </td>
                         ) : (
-                          <td key={idx} style={{ paddingTop: "20px", textAlign: "left", border: "1px solid black", verticalAlign: "middle" }}>
+                          <td key={idx}>
                             {element && element.editButton === true ? (
-                              <span style={{ display: "inline-flex", gap: "10px", alignItems: "center" }}>
+                              <span className="tmpl-application-details-content-wrapper">
                                 <Link
                                   to={{
                                     pathname: `/upyog-ui/employee/asset/assetservice/maintenance-edit/${applicationNo}`,
                                     state: { data: element.data },
                                   }}
                                 >
-                                  <button>
-                                    {" "}
-                                    <EditIcon />{" "}
+                                  <button type="button">
+                                    <EditIcon />
                                   </button>
                                 </Link>
                               </span>
@@ -429,193 +567,146 @@ function ApplicationDetailsContent({
                         )
                       )}
                     </tr>
-                  );
-                })}
+                  ))}
+                </tbody>
               </table>
-            )}
-            <StatusTable style={getTableStyles()}>
-              {detail?.title &&
-                !detail?.title.includes("NOC") &&
-                detail?.values?.map((value, index) => {
-                  // New row type: renders a digipin display with an optional map popup button
-                  if (value?.showDigipin) {
-                    // Narrow the input width on employee view to avoid overflow
-                    const isEmployee = Digit.SessionStorage.get("user_type") === "employee";
-                    return (
-                      <Row
-                        key={t(value.title)}
-                        label={t(value.title)}
-                        text={
-                          <div className="application-details-digipin-wrapper">
-                            {/* Read-only digipin display with optional Mappls link */}
-                            <GeoLocationWithDigipin
-                              t={t}
-                              viewOnly
-                              digipin={value.digipin}
-                              showMapLink={value.showMapLink}
-                              inputStyle={{ marginTop: 0, width: isEmployee ? "50%" : "100%" }}
-                            />
-                            {/* Show "View on Map" button only when all required location data is present */}
-                            {value.digipinMapPopup && value.digipinLat && value.digipinLng && value.digipin && (
-                              <button
-                                className="application-details-map-btn"
-                                onClick={() => handleOpenDigipinMap(value.digipinLat, value.digipinLng, value.digipin)}
-                              >
-                                {t("CS_VIEW_ON_MAP")}
-                              </button>
-                            )}
-                          </div>
-                        }
-                        last={index === detail?.values?.length - 1}
-                        className="border-none"
-                        rowContainerStyle={getRowStyles()}
-                      />
-                    );
-                  }
-                  if (value?.isViewOnMap) {
-                    return (
-                      <Row
-                        key={t(value.title)}
-                        label={t(value.title)}
-                        text={
-                          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                            {/* Show the original value */}
-                            <span>{getTextValue(value)}</span>
-                            {isAssetModule && (
-                              applicationDetailsofAsset?.applicationData?.applicationData?.additionalDetails?.geometry ? (
-                                <button
-                                  style={{
-                                    backgroundColor: "#a82227",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: "4px",
-                                    padding: "4px 10px",
-                                    cursor: "pointer",
-                                    fontSize: "0.85rem",
-                                  }}
-                                  onClick={() =>
-                                    handleOpenMap(applicationDetailsofAsset?.applicationData?.applicationData?.additionalDetails?.geometry)
-                                  }
-                                >
-                                  {t("View on Map")}
-                                </button>
-                              ) : (
-                                <button
-                                  style={{
-                                    backgroundColor: "#a82227",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: "4px",
-                                    padding: "4px 10px",
-                                    cursor: "pointer",
-                                    fontSize: "0.85rem",
-                                  }}
-                                  onClick={() => setShowMap(true)}
-                                >
-                                  {t("Mark on Map")}
-                                </button>
-                              )
-                            )}
-                          </div>
-                        }
-                        last={index === detail?.values?.length - 1}
-                        className="border-none"
-                        rowContainerStyle={getRowStyles()}
-                      />
-                    );
-                  }
-                  if (value.map === true && value.value !== "N/A") {
-                    return (
-                      <Row
-                        labelStyle={{ wordBreak: "break-all" }}
-                        textStyle={{ wordBreak: "break-all" }}
-                        key={t(value.title)}
-                        label={t(value.title)}
-                        text={<img src={t(value.value)} alt="" privacy={value?.privacy} />}
-                      />
-                    );
-                  }
-                  if (value?.isLink == true) {
-                    return (
-                      <Row
-                        key={t(value.title)}
-                        label={
-                          window.location.href.includes("tl") || window.location.href.includes("ws") ? (
-                            <div style={{ width: "200%" }}>
-                              <Link to={value?.to}>
-                                <span className="link" style={{ color: "#a82227" }}>
-                                  {t(value?.title)}
-                                </span>
-                              </Link>
-                            </div>
-                          ) : isNocLocation || isBPALocation ? (
-                            `${t(value.title)}`
-                          ) : (
-                            t(value.title)
-                          )
-                        }
-                        text={
-                          <div>
-                            <Link to={value?.to}>
-                              <span className="link" style={{ color: "#a82227" }}>
-                                {value?.value}
-                              </span>
-                            </Link>
-                          </div>
-                        }
-                        last={index === detail?.values?.length - 1}
-                        caption={value.caption}
-                        className="border-none"
-                        rowContainerStyle={getRowStyles()}
-                        labelStyle={{ wordBreak: "break-all" }}
-                        textStyle={{ wordBreak: "break-all" }}
-                      />
-                    );
-                  }
+            </div>
+          )}
+
+          {/* Render Key-Value Grid */}
+          {detail?.values && detail?.values.length > 0 && (
+            <div className="app-details-kv-grid">
+              {detail?.values?.map((value, vIdx) => {
+                // Digipin special row
+                if (value?.showDigipin) {
                   return (
-                    <div key={value.title || index}>
-                      {window.location.href.includes("modify") ? (
+                    <div className="app-details-kv-cell full-width" key={t(value.title) || vIdx}>
+                      <p className="app-details-kv-label">{t(value.title)}</p>
+                      <div className="application-details-digipin-wrapper">
+                        <GeoLocationWithDigipin
+                          t={t}
+                          viewOnly
+                          digipin={value.digipin}
+                          showMapLink={value.showMapLink}
+                          inputStyle={{ marginTop: 0, width: isEmployee ? "50%" : "100%" }}
+                        />
+                        {value.digipinMapPopup && value.digipinLat && value.digipinLng && value.digipin && (
+                          <button
+                            type="button"
+                            className="application-details-map-btn"
+                            onClick={() => handleOpenDigipinMap(value.digipinLat, value.digipinLng, value.digipin)}
+                          >
+                            {t("CS_VIEW_ON_MAP")}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                }
+
+                // View On Map special row
+                if (value?.isViewOnMap) {
+                  return (
+                    <div className="app-details-kv-cell" key={t(value.title) || vIdx}>
+                      <p className="app-details-kv-label">{t(value.title)}</p>
+                      <div className="tmpl-application-details-content-flex-row">
+                        <span className="app-details-kv-value">{getTextValue(value)}</span>
+                        {isAssetModule && (
+                          applicationDetailsofAsset?.applicationData?.applicationData?.additionalDetails?.geometry ? (
+                            <button
+                              type="button"
+                              className="application-details-map-btn"
+                              onClick={() =>
+                                handleOpenMap(applicationDetailsofAsset?.applicationData?.applicationData?.additionalDetails?.geometry)
+                              }
+                            >
+                              {t("View on Map")}
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              className="application-details-map-btn"
+                              onClick={() => setShowMap(true)}
+                            >
+                              {t("Mark on Map")}
+                            </button>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  );
+                }
+
+                // Map Image preview row
+                if (value.map === true && value.value !== "N/A") {
+                  return (
+                    <div className="app-details-kv-cell" key={t(value.title) || vIdx}>
+                      <p className="app-details-kv-label">{t(value.title)}</p>
+                      <div className="app-details-kv-value">
+                        <img src={t(value.value)} alt="" privacy={value?.privacy} />
+                      </div>
+                    </div>
+                  );
+                }
+
+                // Link row
+                if (value?.isLink === true) {
+                  return (
+                    <div className="app-details-kv-cell" key={t(value.title) || vIdx}>
+                      <p className="app-details-kv-label">{t(value.title)}</p>
+                      <div className="app-details-kv-value">
+                        <Link to={value?.to}>
+                          <span>{value?.value || t(value?.title)}</span>
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                }
+
+                // Modify Application comparison flow
+                if (window.location.href.includes("modify")) {
+                  return (
+                    <div className="app-details-kv-cell" key={t(value.title) || vIdx}>
+                      <p className="app-details-kv-label">{t(value.title)}</p>
+                      <div className="app-details-kv-value">
                         <Row
                           className="border-none"
                           key={`${value.title}`}
-                          label={`${t(`${value.title}`)}`}
+                          label=""
                           privacy={value?.privacy}
                           text={value?.oldValue ? value?.oldValue : value?.value ? value?.value : ""}
-                          labelStyle={{ wordBreak: "break-all" }}
-                          textStyle={{ wordBreak: "break-all" }}
                         />
-                      ) : (
-                        <Row
-                          key={t(value.title)}
-                          label={t(value.title)}
-                          text={getTextValue(value)}
-                          last={index === detail?.values?.length - 1}
-                          caption={value.caption}
-                          className="border-none"
-                          /* privacy object set to the Row Component */
-                          privacy={value?.privacy}
-                          // TODO, Later will move to classes
-                          rowContainerStyle={getRowStyles()}
-                          // labelStyle={{wordBreak: "break-all"}}
-                          // textStyle={{wordBreak: "break-all"}}
-                          labelStyle={{
-                            wordBreak: "break-all",
-                            fontWeight: value.isBold ? "bold" : "normal",
-                            fontStyle: value.isBold ? "italic" : "normal",
-                          }}
-                          textStyle={{
-                            wordBreak: "break-all",
-                            fontWeight: value.isBold ? "bold" : "normal",
-                            fontStyle: value.isBold ? "italic" : "normal",
-                          }}
-                        />
-                      )}
-                      {value.title === "PT_TOTAL_DUES" ? <ArrearSummary bill={fetchBillData.Bill?.[0]} /> : ""}
+                      </div>
                     </div>
                   );
-                })}
-            </StatusTable>
-          </div>
+                }
+
+                // Standard Key-Value Item
+                return (
+                  <div className="app-details-kv-cell" key={t(value.title) || vIdx}>
+                    <p className="app-details-kv-label">{t(value.title)}</p>
+                    <div className={`app-details-kv-value ${value.isBold ? "bold-italic" : ""} ${getTextValue(value) === t("N/A") || getTextValue(value) === "NA" ? "muted" : ""}`}>
+                      {value?.privacy ? (
+                        <Row
+                          key={t(value.title)}
+                          label=""
+                          text={getTextValue(value)}
+                          className="border-none"
+                          privacy={value?.privacy}
+                        />
+                      ) : (
+                        getTextValue(value)
+                      )}
+                      {value.caption && <div className="app-details-kv-caption">{value.caption}</div>}
+                    </div>
+                    {value.title === "PT_TOTAL_DUES" ? <ArrearSummary bill={fetchBillData.Bill?.[0]} /> : null}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Module-Specific Subcomponents Rendered Inside Section Container */}
           {detail?.belowComponent && <detail.belowComponent />}
           {detail?.additionalDetails?.inspectionReport && (
             <ScruntinyDetails scrutinyDetails={detail?.additionalDetails} paymentsList={paymentsList} />
@@ -623,17 +714,6 @@ function ApplicationDetailsContent({
           {applicationDetails?.applicationData?.additionalDetails?.fieldinspection_pending?.length > 0 && detail?.additionalDetails?.fiReport && (
             <InspectionReport fiReport={applicationDetails?.applicationData?.additionalDetails?.fieldinspection_pending} />
           )}
-          {/* {detail?.additionalDetails?.FIdocuments && detail?.additionalDetails?.values?.map((doc,index) => (
-            <div key={index}>
-            {doc.isNotDuplicate && <div> 
-             <StatusTable>
-             <Row label={t(doc?.documentType)}></Row>
-             <OBPSDocument value={detail?.additionalDetails?.values} Code={doc?.documentType} index={index}/> 
-             <hr style={{color:"#cccccc",backgroundColor:"#cccccc",height:"2px",marginTop:"20px",marginBottom:"20px"}}/>
-             </StatusTable>
-             </div>}
-             </div>
-          )) } */}
           {detail?.additionalDetails?.floors && <PropertyFloors floors={detail?.additionalDetails?.floors} />}
           {detail?.additionalDetails?.owners && <PropertyOwners owners={detail?.additionalDetails?.owners} />}
           {detail?.additionalDetails?.units && <TLTradeUnits units={detail?.additionalDetails?.units} />}
@@ -671,11 +751,10 @@ function ApplicationDetailsContent({
             <PropertyEstimates taxHeadEstimatesCalculation={detail?.additionalDetails?.taxHeadEstimatesCalculation} />
           )}
           {detail?.isWaterConnectionDetails && <WSAdditonalDetails wsAdditionalDetails={detail} oldValue={oldValue} />}
-          {/* {detail?.isLabelShow ? <WSInfoLabel t={t} /> : null} */}
           {detail?.additionalDetails?.redirectUrl && (
-            <div style={{ fontSize: "16px", lineHeight: "24px", fontWeight: "400", padding: "10px 0px" }}>
+            <div className="tmpl-application-details-content-container-padding">
               <Link to={detail?.additionalDetails?.redirectUrl?.url}>
-                <span className="link" style={{ color: "#a82227" }}>
+                <span className="link tmpl-application-details-content-wrapper-3">
                   {detail?.additionalDetails?.redirectUrl?.title}
                 </span>
               </Link>
@@ -683,69 +762,80 @@ function ApplicationDetailsContent({
           )}
           {detail?.additionalDetails?.estimationDetails && <WSFeeEstimation wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
           {detail?.additionalDetails?.estimationDetails && <ViewBreakup wsAdditionalDetails={detail} workflowDetails={workflowDetails} />}
-        </React.Fragment>
+        </div>
       ))}
+
+      {/* 3. Activity Timeline Section */}
       {showTimeLine && workflowDetails?.data?.timeline?.length > 0 && (
-        <React.Fragment>
-          <BreakLine />
+        <div id="timeline" className="app-details-timeline-card">
+          <div className="app-details-timeline-header-wrap">
+            <div className="app-details-section-title-wrap">
+              <span className="app-details-section-accent-bar" />
+              <CardSectionHeader className="app-details-section-title">
+                {t("ES_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
+              </CardSectionHeader>
+            </div>
+            <span className="app-details-timeline-count-badge">
+              {workflowDetails?.data?.timeline?.length} {t("EVENTS") || "Events"}
+            </span>
+          </div>
+
           {(workflowDetails?.isLoading || isDataLoading) && <Loader />}
           {!workflowDetails?.isLoading && !isDataLoading && (
             <Fragment>
-              <div id="timeline">
-                <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
-                  {t("ES_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
-                </CardSectionHeader>
-                {workflowDetails?.data?.timeline && workflowDetails?.data?.timeline?.length === 1 ? (
-                  <CheckPoint
-                    isCompleted={true}
-                    label={t(`${timelineStatusPrefix}${workflowDetails?.data?.timeline[0]?.state}`)}
-                    customChild={getTimelineCaptions(workflowDetails?.data?.timeline[0], workflowDetails?.data?.timeline)}
-                  />
-                ) : (
-                  <ConnectingCheckPoints>
-                    {workflowDetails?.data?.timeline &&
-                      workflowDetails?.data?.timeline
-                        .slice(0, showAllTimeline ? workflowDetails?.data.timeline.length : 2)
-                        .map((checkpoint, index, arr) => {
-                          let timelineStatusPostfix = "";
-                          if (window.location.href.includes("/obps/")) {
-                            if (
-                              workflowDetails?.data?.timeline[index - 1]?.state?.includes("BACK_FROM") ||
-                              workflowDetails?.data?.timeline[index - 1]?.state?.includes("SEND_TO_CITIZEN")
-                            )
-                              timelineStatusPostfix = `_NOT_DONE`;
-                            else if (checkpoint?.performedAction === "SEND_TO_ARCHITECT") timelineStatusPostfix = `_BY_ARCHITECT_DONE`;
-                            else timelineStatusPostfix = index == 0 ? "" : `_DONE`;
-                          }
+              {workflowDetails?.data?.timeline && workflowDetails?.data?.timeline?.length === 1 ? (
+                <CheckPoint
+                  isCompleted={true}
+                  label={t(`${timelineStatusPrefix || ""}${workflowDetails?.data?.timeline[0]?.state}`)}
+                  customChild={getTimelineCaptions(workflowDetails?.data?.timeline[0], workflowDetails?.data?.timeline)}
+                />
+              ) : (
+                <ConnectingCheckPoints>
+                  {workflowDetails?.data?.timeline &&
+                    workflowDetails?.data?.timeline
+                      .slice(0, showAllTimeline ? workflowDetails?.data.timeline.length : 2)
+                      .map((checkpoint, index, arr) => {
+                        let timelineStatusPostfix = "";
+                        if (window.location.href.includes("/obps/")) {
+                          if (
+                            workflowDetails?.data?.timeline[index - 1]?.state?.includes("BACK_FROM") ||
+                            workflowDetails?.data?.timeline[index - 1]?.state?.includes("SEND_TO_CITIZEN")
+                          )
+                            timelineStatusPostfix = `_NOT_DONE`;
+                          else if (checkpoint?.performedAction === "SEND_TO_ARCHITECT") timelineStatusPostfix = `_BY_ARCHITECT_DONE`;
+                          else timelineStatusPostfix = index == 0 ? "" : `_DONE`;
+                        }
 
-                          return (
-                            <React.Fragment key={checkpoint.id || checkpoint.performedAction || index}>
-                              <CheckPoint
-                                keyValue={index}
-                                isCompleted={index === 0}
-                                info={checkpoint.comment}
-                                label={t(
-                                  `${timelineStatusPrefix}${checkpoint?.performedAction === "REOPEN" ? checkpoint?.performedAction : checkpoint?.[statusAttribute]
-                                  }${timelineStatusPostfix}`
-                                )}
-                                customChild={getTimelineCaptions(checkpoint, index, workflowDetails?.data?.timeline)}
-                              />
-                            </React.Fragment>
-                          );
-                        })}
-                  </ConnectingCheckPoints>
-                )}
-                {workflowDetails?.data?.timeline?.length > 2 && (
-                  <LinkButton label={showAllTimeline ? t("COLLAPSE") : t("VIEW_TIMELINE")} onClick={toggleTimeline}></LinkButton>
-                )}
-              </div>
+                        return (
+                          <React.Fragment key={checkpoint.id || checkpoint.performedAction || index}>
+                            <CheckPoint
+                              keyValue={index}
+                              isCompleted={index === 0}
+                              info={checkpoint.comment}
+                              label={t(
+                                `${timelineStatusPrefix || ""}${
+                                  checkpoint?.performedAction === "REOPEN" ? checkpoint?.performedAction : checkpoint?.[statusAttribute]
+                                }${timelineStatusPostfix}`
+                              )}
+                              customChild={getTimelineCaptions(checkpoint, index, workflowDetails?.data?.timeline)}
+                            />
+                          </React.Fragment>
+                        );
+                      })}
+                </ConnectingCheckPoints>
+              )}
+              {workflowDetails?.data?.timeline?.length > 2 && (
+                <button type="button" className="app-details-timeline-toggle-btn" onClick={toggleTimeline}>
+                  {showAllTimeline ? t("COLLAPSE") : t("VIEW_TIMELINE")}
+                </button>
+              )}
             </Fragment>
           )}
 
           {isAssetModule && showMapModal && (
             <ViewOnMap
               closeModal={handleCloseMap}
-              location={selectedLocation} // pass lat/lng or ID
+              location={selectedLocation}
               assetDetails={applicationDetailsofAsset?.applicationData?.applicationData}
             />
           )}
@@ -770,10 +860,11 @@ function ApplicationDetailsContent({
               onClose={handleCloseDigipinMap}
             />
           )}
-        </React.Fragment>
+        </div>
       )}
     </Card>
   );
 }
 
 export default ApplicationDetailsContent;
+
