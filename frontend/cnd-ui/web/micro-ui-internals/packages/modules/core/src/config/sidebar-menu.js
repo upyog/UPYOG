@@ -6,14 +6,11 @@ const SideBarMenu = (t, closeSidebar, redirectToLoginPage, isEmployee, storeData
   let filteredTenantData = storeData?.tenants.filter((e) => e.code === tenantId)[0]?.contactNumber || storeData?.tenants[0]?.contactNumber;
 return [
   {
-    type: "link",
+    type: isEmployee ? "link" : "external-link",
     element: "HOME",
     text: t("COMMON_BOTTOM_NAVIGATION_HOME"),
-    link: isEmployee ? "/cnd-ui/employee" : "/digit-ui/citizen",
-    icon: "HomeIcon",
-    populators: {
-      onClick: closeSidebar,
-    },
+    link: isEmployee ? "/cnd-ui/employee" : "/upyog-ui/citizen",
+    icon: "HomeIcon"
   },
   {
     type: "component",
