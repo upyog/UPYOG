@@ -3156,6 +3156,7 @@ public GarbageAccountActionResponse openSearchPayPreview(
 
 		String ownerName = null;
 		String address = null;
+		String wardNo = null;
 		String propertyId = systemPropertyId;
 
 		if (null != property) {
@@ -3163,6 +3164,15 @@ public GarbageAccountActionResponse openSearchPayPreview(
 				propertyId = property.getPropertyId();
 			}
 			address = toPropertyAddress(property.getAddress());
+			
+			if (null != property.getAddress()
+		            && null != property.getAddress().getAdditionalDetails()) {
+		        wardNo = property.getAddress()
+		                .getAdditionalDetails()
+		                .path("wardNo")
+		                .asText(null);
+		    }
+			
 			PtOwnerInfo owner = findPrimaryOwner(property.getOwners());
 			if (null != owner) {
 				ownerName = owner.getPropertyOwnerName();
@@ -3177,7 +3187,9 @@ public GarbageAccountActionResponse openSearchPayPreview(
 
 		return DdpPrintingRecord.builder().ownerName(ownerName).mobileNo(mobileNo).propertyId(propertyId)
 				.id(account.getUuid()).ulbName(null == accountAddress ? null : accountAddress.getUlbName())
-				.ward(null == accountAddress ? null : accountAddress.getWardName()).address(address)
+				.ward(null == accountAddress ? null : accountAddress.getWardName())
+				.wardNo(wardNo)
+				.address(address)
 				.category(category).build();
 	}
 
