@@ -201,7 +201,13 @@ public class Scheduler {
 		garbageService.reverseRebateAmount(requestInfo);
 		log.info("reverseRebateAmount CRON JOB Ends");
 	}
-
 	
+	@Scheduled(cron = "${cron.job.default.ddp.account.ready.for.printing}", zone = "IST")
+	public void setDdpReadyForPrinting() {
+		log.info("setDdpReadyForPrinting CRON JOB Starts");
+		RequestInfo requestInfo = requestInfoUtils.getSystemRequestInfo();
+		garbageService.setDdpReadyForPrinting(requestInfo);
+		log.info("setDdpReadyForPrinting CRON JOB Ends");
+	}
 
 }

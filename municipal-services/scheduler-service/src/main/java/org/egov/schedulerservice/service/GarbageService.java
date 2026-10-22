@@ -77,6 +77,22 @@ public class GarbageService {
 				throw new SchedulerServiceException(ErrorConstants.ERR_GARBAGE_SERVICE_ERROR,
 						"Error occured while reverse rebate amount. Message: " + e.getMessage());
 			}
+		}	 
+	 
+		public String setDdpReadyForPrinting(RequestInfo requestInfo) {
+			try {
+				StringBuilder url = new StringBuilder(applicationConfig.getGarbageServiceHostUrl());
+				url.append(applicationConfig.getDdpReadyForPrintingEndpoint());
+				RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+
+				ResponseEntity<String> responseEntity = restTemplate.postForEntity(url.toString(), requestInfoWrapper,
+						String.class);
+				return responseEntity.getBody();
+			} catch (Exception e) {
+				log.error("Error occured while update penalty amount.", e);
+				throw new SchedulerServiceException(ErrorConstants.ERR_PROPERTY_SERVICE_ERROR,
+						"Error occured while setting isReadyForPrinting. Message: " + e.getMessage());
+			}
 		}
 
 }
