@@ -3195,7 +3195,7 @@ public GarbageAccountActionResponse openSearchPayPreview(
 				.id(account.getUuid()).ulbName(null == accountAddress ? null : accountAddress.getUlbName())
 				.ward(null == accountAddress ? null : accountAddress.getWardName())
 				.wardNo(wardNo)
-				.address(("Ward No. " + (wardNo == null ? "" : wardNo)
+				.address(("Ward No. " + (wardNo == null ? "" : wardNo + ",")
 				        + (wardNumber == null ? "" : " " + wardNumber)).trim())
 				.category(category).build();
 	}

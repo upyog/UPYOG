@@ -105,7 +105,7 @@ public class PropertyService {
 				.id(id)
 				.ulbName(readText(addressDetails, "ulbName"))
 				.ward(readText(addressDetails, "wardNumber"))
-				.address("Ward No. " + readText(addressDetails, "wardNo") + " " + readText(addressDetails, "wardNumber"))
+				.address("Ward No. " + readText(addressDetails, "wardNo") + ", " + readText(addressDetails, "wardNumber"))
 				.build();
 	}
 
