@@ -36,7 +36,7 @@ const TextInput = (props) => {
             }}
             ref={props.inputRef}
             value={props.value}
-            style={{ ...props.style }}
+            style={props?.style}
             defaultValue={props.defaultValue}
             minLength={props.minlength}
             maxLength={props.maxlength}
@@ -69,7 +69,7 @@ const TextInput = (props) => {
             }}
             ref={props.inputRef}
             value={props.value}
-            style={{ ...props.style }}
+            style={props?.style}
             defaultValue={props.defaultValue}
             minLength={props.minlength}
             maxLength={props.maxlength}

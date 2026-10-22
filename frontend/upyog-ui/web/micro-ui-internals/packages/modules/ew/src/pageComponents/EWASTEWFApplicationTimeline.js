@@ -88,7 +88,7 @@ const EWASTEWFApplicationTimeline = (props) => {
   //     case "PAY":
   //       return (
   //         props?.userType === "citizen" ? (
-  //           <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
+  //           <div className="custom-style">
   //             <Link
   //               to={{
   //                 pathname: `/upyog-ui/citizen/payment/my-bills/${businessService}/${props?.application?.applicationNumber}`,
@@ -103,7 +103,7 @@ const EWASTEWFApplicationTimeline = (props) => {
 
   //     case "SUBMIT_FEEDBACK":
   //       return (
-  //         <div style={{ marginTop: "24px" }}>
+  //         <div className="custom-style">
   //           <Link to={`/upyog-ui/citizen/fsm/rate/${props.id}`}>
   //             <SubmitBar label={t("CS_APPLICATION_DETAILS_RATE")} />
   //           </Link>
@@ -123,7 +123,7 @@ const EWASTEWFApplicationTimeline = (props) => {
       {!isLoading && (
         <Fragment>
           {data?.timeline?.length > 0 && (
-            <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
+            <CardSectionHeader className="ew-ewastewfapplication-timeline-header">
               {t("CS_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
             </CardSectionHeader>
           )}

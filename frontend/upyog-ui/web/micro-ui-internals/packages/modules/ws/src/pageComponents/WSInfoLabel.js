@@ -35,10 +35,10 @@ const WSInfoLabel = ({
         <div className="info-banner-wrap" style={infoBannerStyle}>
           <div>
             <InfoBannerIcon />
-            <h2 className="ws-auto-133">{t("CS_FILE_APPLICATION_INFO_LABEL")}</h2>
+            <h2 className="ws-info-label-item">{t("CS_FILE_APPLICATION_INFO_LABEL")}</h2>
           </div>
           {`${t("WS_CLICK_ON_LABEL")} `}
-          <EyeSvgINdex className="ws-auto-134" />
+          <EyeSvgINdex className="ws-info-label-header" />
           {` ${t("WS_CLICK_ON_INFO_LABEL")}`}
         </div>
       </div>}

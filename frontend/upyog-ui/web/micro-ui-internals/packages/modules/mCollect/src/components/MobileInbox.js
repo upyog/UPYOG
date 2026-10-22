@@ -103,10 +103,7 @@ const MobileInbox = ({
                 <Link>
                   <a
                     href="javascript:void(0)"
-                    style={{
-                      color: "#FE7A51",
-                      cursor: "pointer",
-                    }}
+                    className="mc-mobile-inbox-clickable"
                     onClick={(value) => {
                       printReciept(original?.["businessService"], original?.["challanNo"]);
                     }}
@@ -139,7 +136,7 @@ const MobileInbox = ({
   };
 
   return (
-    <div style={{ padding: 0 }}>
+    <div className="mc-mobile-inbox-container-padding">
       <div className="inbox-container">
         <div className="filters-container">
           {!isSearch && <ApplicationLinks linkPrefix={parentRoute} allLinks = {[

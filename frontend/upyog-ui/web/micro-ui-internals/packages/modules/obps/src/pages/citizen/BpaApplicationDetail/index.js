@@ -394,11 +394,114 @@ const BpaApplicationDetail = () => {
   }
 
 
+  const getStatusClass = (status) => {
+    if (!status) return "status-default";
+    const s = String(status).toUpperCase();
+    if (s.includes("APPROV") || s.includes("ACTIVE") || s.includes("PAID") || s.includes("COMPLET")) {
+      return "status-approved";
+    }
+    if (s.includes("REJECT") || s.includes("CANCEL") || s.includes("REVOC") || s.includes("INACTIVE")) {
+      return "status-rejected";
+    }
+    if (s.includes("PEND") || s.includes("INIT") || s.includes("SUBMIT") || s.includes("PROG") || s.includes("ARCHITECT") || s.includes("CITIZEN") || s.includes("SCRUTINY")) {
+      return "status-pending";
+    }
+    return "status-default";
+  };
+
+  const getSectionIcon = (titleKey = "") => {
+    const tk = String(titleKey).toUpperCase();
+    if (tk.includes("BASIC")) {
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="16" y1="13" x2="8" y2="13" />
+          <line x1="16" y1="17" x2="8" y2="17" />
+        </svg>
+      );
+    }
+    if (tk.includes("PLOT") || tk.includes("LAND")) {
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
+          <line x1="8" y1="2" x2="8" y2="18" />
+          <line x1="16" y1="6" x2="16" y2="22" />
+        </svg>
+      );
+    }
+    if (tk.includes("OWNER") || tk.includes("APPLICANT")) {
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      );
+    }
+    if (tk.includes("DOC")) {
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+          <polyline points="13 2 13 9 20 9" />
+        </svg>
+      );
+    }
+    if (tk.includes("NOC")) {
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          <polyline points="9 12 11 14 15 10" />
+        </svg>
+      );
+    }
+    if (tk.includes("INSPECTION")) {
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+      );
+    }
+    if (tk.includes("SCRUTINY") || tk.includes("EDCR")) {
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M9 11l3 3L22 4" />
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+        </svg>
+      );
+    }
+    if (tk.includes("BUILDING") || tk.includes("OCCUPANCY") || tk.includes("PROPOSED")) {
+      return (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="4" y="2" width="16" height="20" rx="2" ry="2" />
+          <line x1="9" y1="22" x2="9" y2="2" />
+          <line x1="8" y1="6" x2="5" y2="6" />
+          <line x1="8" y1="10" x2="5" y2="10" />
+          <line x1="8" y1="14" x2="5" y2="14" />
+          <line x1="8" y1="18" x2="5" y2="18" />
+          <line x1="19" y1="6" x2="16" y2="6" />
+          <line x1="19" y1="10" x2="16" y2="10" />
+          <line x1="19" y1="14" x2="16" y2="14" />
+          <line x1="19" y1="18" x2="16" y2="18" />
+        </svg>
+      );
+    }
+    return (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="16" x2="12" y2="12" />
+        <line x1="12" y1="8" x2="12.01" y2="8" />
+      </svg>
+    );
+  };
+
   const getCheckBoxLable = () => {
     return (
       <div>
         <span>{`${t("BPA_I_AGREE_THE_LABEL")} `}</span>
-        <span style={{color: "#a82227", cursor: "pointer"}} onClick={() => setShowTermsModal(!showTermsModal)}>{t(`BPA_TERMS_AND_CONDITIONS_LABEL`)}</span>
+        <span className="obps-index-clickable" onClick={() => setShowTermsModal(!showTermsModal)}>{t(`BPA_TERMS_AND_CONDITIONS_LABEL`)}</span>
       </div>
     )
   }
@@ -420,171 +523,353 @@ const BpaApplicationDetail = () => {
   if (results?.length > 0) {
     data.applicationDetails = results;
   }
-  
+
+  const appStatus = data?.applicationData?.status;
 
   return (
-    <Fragment>
-      <div className="cardHeaderWithOptions" style={{ marginRight: "auto", maxWidth: "960px" }}>
-        <Header styles={{fontSize: "32px", marginLeft: "10px"}}>{t("CS_TITLE_APPLICATION_DETAILS")}</Header>
-        <div >
-        {dowloadOptions && dowloadOptions.length > 0 && <MultiLink
-          className="multilinkWrapper"
-          onHeadClick={() => setShowOptions(!showOptions)}
-          displayOptions={showOptions}
-          options={dowloadOptions}
-        />}
-        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+    <div className="obps-details-page-container">
+      {/* Modern Header Bar */}
+      <div className="obps-details-header-wrap">
+        <div className="obps-details-title-block">
+          <h1 className="obps-details-page-title">{t("CS_TITLE_APPLICATION_DETAILS")}</h1>
         </div>
-        
+        <div className="obps-details-actions">
+          {dowloadOptions && dowloadOptions.length > 0 && (
+            <MultiLink
+              className="multilinkWrapper"
+              onHeadClick={() => setShowOptions(!showOptions)}
+              displayOptions={showOptions}
+              options={dowloadOptions}
+            />
+          )}
+          <button type="button" className="obps-btn-timeline" onClick={handleViewTimeline}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            {t("VIEW_TIMELINE")}
+          </button>
+        </div>
       </div>
-      {data?.applicationDetails?.filter((ob) => Object.keys(ob).length > 0).map((detail, index, arr) => {
+
+      {/* Hero Overview Card */}
+      <div className="obps-app-hero-card">
+        <div className="obps-app-hero-header">
+          <div className="obps-app-id-section">
+            <div className="obps-app-id-label">{t("BPA_BASIC_DETAILS_APP_NO_LABEL")}</div>
+            <div className="obps-app-id-value">{data?.applicationData?.applicationNo || id}</div>
+            {data?.applicationData?.edcrNumber && (
+              <div className="obps-app-sub-id">
+                {t("BPA_EDCR_NO_LABEL")}: {data?.applicationData?.edcrNumber}
+              </div>
+            )}
+            {data?.applicationData?.additionalDetails?.propertyID && (
+              <div className="obps-app-sub-id">
+                {t("BPA_PROPERTY_ID_LABEL")}: {data?.applicationData?.additionalDetails?.propertyID}
+              </div>
+            )}
+          </div>
+          <div className={`obps-app-status-badge ${getStatusClass(appStatus)}`}>
+            {t(`WF_BPA_${appStatus}`) || t(`CS_${appStatus}`) || t(appStatus) || t("CS_NA")}
+          </div>
+        </div>
+
+        <div className="obps-app-summary-grid">
+          <div className="obps-app-summary-item">
+            <span className="obps-app-summary-label">{t("BPA_BASIC_DETAILS_SERVICE_TYPE_LABEL")}</span>
+            <span className="obps-app-summary-val">
+              {data?.applicationData?.additionalDetails?.serviceType
+                ? t(`BPA_SERVICETYPE_${data?.applicationData?.additionalDetails?.serviceType}`)
+                : t(data?.applicationData?.businessService) || t("CS_NA")}
+            </span>
+          </div>
+
+          <div className="obps-app-summary-item">
+            <span className="obps-app-summary-label">{t("BPA_BASIC_DETAILS_APPLICATION_TYPE_LABEL")}</span>
+            <span className="obps-app-summary-val">
+              {data?.applicationData?.additionalDetails?.applicationType
+                ? t(`BPA_APPTYPE_${data?.applicationData?.additionalDetails?.applicationType}`)
+                : t("BUILDING_PLAN_SCRUTINY") || t("CS_NA")}
+            </span>
+          </div>
+
+          {data?.applicationData?.riskType && (
+            <div className="obps-app-summary-item">
+              <span className="obps-app-summary-label">{t("BPA_BASIC_DETAILS_RISK_TYPE_LABEL")}</span>
+              <span className="obps-app-summary-val">
+                {t(`BPA_RISK_TYPE_${data?.applicationData?.riskType}`) || data?.applicationData?.riskType}
+              </span>
+            </div>
+          )}
+
+          <div className="obps-app-summary-item">
+            <span className="obps-app-summary-label">{t("BPA_CITY_LABEL") || t("CS_COMMON_CITY")}</span>
+            <span className="obps-app-summary-val">
+              {t(`TENANT_TENANTS_${data?.applicationData?.tenantId?.toUpperCase().replace(/[.]/g, "_")}`) || data?.applicationData?.tenantId || t("CS_NA")}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Detailed Section Cards */}
+      {data?.applicationDetails?.filter((ob) => Object.keys(ob).length > 0).map((detail, index) => {
+        if (detail?.isNotAllowed) return null;
 
         return (
-          <div>
-            {!detail?.isNotAllowed ? <Card key={index} style={!detail?.additionalDetails?.fiReport && detail?.title === "" ? { marginTop: "-30px" } : {}}>
+          <div key={index} className="obps-details-card">
+            {!detail?.isTitleVisible && detail?.title ? (
+              <div className="obps-section-header">
+                <div className="obps-section-title">
+                  {getSectionIcon(detail?.title)}
+                  <span>{t(detail?.title)}</span>
+                </div>
+              </div>
+            ) : null}
 
-              {!detail?.isTitleVisible ? <CardSubHeader style={{fontSize: "24px"}}>{t(detail?.title)}</CardSubHeader> : null}
-              
-              <div style={detail?.isBackGroundColor ? { marginTop: "19px", background: "#FAFAFA", border: "1px solid #D6D5D4", borderRadius: "4px", padding: "8px", lineHeight: "19px", maxWidth: "950px", minWidth: "280px" } : {}}>
-
-              <StatusTable>
-                {/* to get common values */}
-                {(detail?.isCommon && detail?.values?.length > 0) ? detail?.values?.map((value) => {
-                  if (value?.isUnit) return <Row className="border-none" label={t(value?.title)} text={value?.value ? `${getTranslatedValues(value?.value, value?.isNotTranslated)} ${t(value?.isUnit)}` : t("CS_NA")} />
-                  if (value?.isLink) return <Row className="border-none" label={t(value?.title)} text={<div><Link to={value?.to}><span className="link" style={{color: "#a82227"}}>{value?.value}</span></Link></div>} />
-                  else return <Row className="border-none" label={t(value?.title)} text={getTranslatedValues(value?.value, value?.isNotTranslated) || t("CS_NA")} />
+            {/* If Document Details Section */}
+            {detail?.isDocumentDetails ? (
+              <div className="obps-documents-grid">
+                {getOrderDocuments(detail?.additionalDetails?.obpsDocuments?.[0]?.values)?.map((docGroup, docIdx) => (
+                  <div key={docIdx} className="obps-doc-group-card">
+                    {docGroup?.title && (
+                      <div className="obps-doc-group-header">
+                        <span className="obps-doc-category-label">{t(docGroup?.title)}</span>
+                      </div>
+                    )}
+                    <div className="obps-doc-group-items">
+                      {docGroup?.values?.map((value, vIdx) => (
+                        <a
+                          key={vIdx}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          href={value?.url}
+                          className="app-details-doc-card"
+                        >
+                          <div className="app-details-doc-icon-wrap">
+                            <PDFSvg />
+                          </div>
+                          <div className="app-details-doc-info">
+                            <p className="app-details-doc-title">{t(value?.title)}</p>
+                          </div>
+                          <span className="app-details-doc-action">{t("CS_COMMON_VIEW") || "View"} &rarr;</span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <StatusTable className="obps-details-grid">
+                {/* Common Values */}
+                {(detail?.isCommon && detail?.values?.length > 0) ? detail?.values?.map((value, vIdx) => {
+                  if (value?.isUnit) return <Row key={vIdx} className="border-none" label={t(value?.title)} text={value?.value ? `${getTranslatedValues(value?.value, value?.isNotTranslated)} ${t(value?.isUnit)}` : t("CS_NA")} />;
+                  if (value?.isLink) return <Row key={vIdx} className="border-none" label={t(value?.title)} text={<div><Link to={value?.to}><span className="link obps-index-wrapper-6">{value?.value}</span></Link></div>} />;
+                  return <Row key={vIdx} className="border-none" label={t(value?.title)} text={getTranslatedValues(value?.value, value?.isNotTranslated) || t("CS_NA")} />;
                 }) : null}
-                {/* to get additional common values */}
-                {!detail?.isFeeDetails && detail?.additionalDetails?.values?.length > 0 ? detail?.additionalDetails?.values?.map((value) => (
-                    <div>
+
+                {/* Additional Common Values */}
+                {!detail?.isFeeDetails && detail?.additionalDetails?.values?.length > 0 ? detail?.additionalDetails?.values?.map((value, vIdx) => (
+                  <div key={vIdx} className={value?.isHeader ? "full-width" : ""}>
                     {!detail?.isTitleRepeat && !value?.isHeader && !value?.isUnit ? <Row className="border-none" label={t(value?.title)} textStyle={value?.value === "Paid"?{color:"darkgreen"}:(value?.value === "Unpaid"?{color:"red"}:{})} text={value?.value ? getTranslatedValues(value?.value, value?.isNotTranslated) : t("CS_NA")} /> : null}
                     {!detail?.isTitleRepeat && value?.isUnit ? <Row className="border-none" label={t(value?.title)} text={value?.value ? `${getTranslatedValues(value?.value, value?.isNotTranslated)} ${t(value?.isUnit)}` : t("CS_NA")} /> : null}
-                    {!detail?.isTitleRepeat && value?.isHeader ? <CardSubHeader style={{fontSize: "20px"}}>{t(value?.title)}</CardSubHeader> : null}
-                    </div>
-                )) : null}
-
-                {/* to get subOccupancyValues values */}
-                {(detail?.isSubOccupancyTable && detail?.additionalDetails?.subOccupancyTableDetails) ? <SubOccupancyTable edcrDetails={detail?.additionalDetails} applicationData={data?.applicationData} /> : null}
-
-                {/* to get Scrutiny values */}
-                {(detail?.isScrutinyDetails && detail?.additionalDetails?.scruntinyDetails?.length > 0) ?
-                  detail?.additionalDetails?.scruntinyDetails.map((scrutiny) => (
-                    <Fragment>
-                      <Row className="border-none" label={t(scrutiny?.title)} />
-                      <LinkButton
-                        onClick={() => downloadDiagram(scrutiny?.value)}
-                        label={<PDFSvg />}>
-                      </LinkButton>
-                      <p style={{ marginTop: "8px", marginBottom: "20px", fontSize: "16px", lineHeight: "19px", color: "#505A5F", fontWeight: "400" }}>{t(scrutiny?.text)}</p>
-                    </Fragment>
-                  )) : null}
-
-                {/* to get Owner values */}
-                {(detail?.isOwnerDetails && detail?.additionalDetails?.owners?.length > 0) ? detail?.additionalDetails?.owners.map((owner, index) => (
-                  <div key={index} style={detail?.additionalDetails?.owners?.length > 1 ? { marginTop: "19px", background: "#FAFAFA", border: "1px solid #D6D5D4", borderRadius: "4px", padding: "8px", lineHeight: "19px", maxWidth: "950px", minWidth: "280px" } : {}}>
-                    {detail?.additionalDetails?.owners?.length > 1 ? <Row className="border-none" label={`${t("Owner")} - ${index + 1}`} /> : null }
-                    {owner?.values.map((value) => (
-                      <Row className="border-none" label={t(value?.title)} text={getTranslatedValues(value?.value, value?.isNotTranslated) || t("CS_NA")} />
-                    ))}
+                    {!detail?.isTitleRepeat && value?.isHeader ? <CardSubHeader className="obps-scrutiny-details-header">{t(value?.title)}</CardSubHeader> : null}
                   </div>
                 )) : null}
 
-                {/* to get Document values */}
-                {(detail?.isDocumentDetails && detail?.additionalDetails?.obpsDocuments?.[0]?.values) && (
-                  <div style={{marginTop: "-8px"}}>
-                    {<DocumentsPreview documents={getOrderDocuments(detail?.additionalDetails?.obpsDocuments?.[0]?.values)} svgStyles = {{}} isSendBackFlow = {false} isHrLine = {true} titleStyles ={{fontSize: "20px", lineHeight: "24px", "fontWeight": 700, marginBottom: "10px"}}/>}
+                {/* SubOccupancy Values */}
+                {(detail?.isSubOccupancyTable && detail?.additionalDetails?.subOccupancyTableDetails) ? (
+                  <div className="full-width">
+                    <SubOccupancyTable edcrDetails={detail?.additionalDetails} applicationData={data?.applicationData} />
+                  </div>
+                ) : null}
+
+                {/* Scrutiny Values */}
+                {(detail?.isScrutinyDetails && detail?.additionalDetails?.scruntinyDetails?.length > 0) ? (
+                  <div className="full-width">
+                    <div className="obps-documents-grid obps-index-top-spacing-2">
+                      {detail?.additionalDetails?.scruntinyDetails.map((scrutiny, sIdx) => (
+                        <div key={sIdx} className="obps-doc-group-card">
+                          <div className="obps-doc-group-header">
+                            <span className="obps-doc-category-label">{t(scrutiny?.title)}</span>
+                          </div>
+                          <div className="obps-doc-group-items">
+                            <div
+                              className="app-details-doc-card obps-pointer-cursor"
+                              onClick={() => downloadDiagram(scrutiny?.value)}
+                            >
+                              <div className="app-details-doc-icon-wrap">
+                                <PDFSvg />
+                              </div>
+                              <div className="app-details-doc-info">
+                                <p className="app-details-doc-title">{scrutiny?.text ? t(scrutiny?.text) : t(scrutiny?.title)}</p>
+                              </div>
+                              <span className="app-details-doc-action">{t("CS_COMMON_DOWNLOAD") || "Download"} &darr;</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* Owner Values */}
+                {(detail?.isOwnerDetails && detail?.additionalDetails?.owners?.length > 0) ? detail?.additionalDetails?.owners.map((owner, oIdx) => (
+                  <div key={oIdx} className={detail?.additionalDetails?.owners?.length > 1 ? "obps-sub-owner-card" : "full-width"}>
+                    {detail?.additionalDetails?.owners?.length > 1 && (
+                      <div className="obps-sub-owner-title">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                          <circle cx="12" cy="7" r="4" />
+                        </svg>
+                        <span>{`${t("Owner")} - ${oIdx + 1}`}</span>
+                      </div>
+                    )}
+                    <div className="obps-details-grid">
+                      {owner?.values.map((value, vIdx) => (
+                        <Row key={vIdx} className="border-none" label={t(value?.title)} text={getTranslatedValues(value?.value, value?.isNotTranslated) || t("CS_NA")} />
+                      ))}
+                    </div>
+                  </div>
+                )) : null}
+
+                {/* FieldInspection Values */}
+                {(detail?.isFieldInspection && data?.applicationData?.additionalDetails?.fieldinspection_pending?.length > 0) && (
+                  <div className="full-width">
+                    <InspectionReport isCitizen={true} fiReport={data?.applicationData?.additionalDetails?.fieldinspection_pending} />
                   </div>
                 )}
 
-                {/* to get FieldInspection values */}
-                {(detail?.isFieldInspection && data?.applicationData?.additionalDetails?.fieldinspection_pending?.length > 0) ? <InspectionReport isCitizen={true} fiReport={data?.applicationData?.additionalDetails?.fieldinspection_pending} /> : null}
-
-                {/* to get NOC values */}
+                {/* NOC Values */}
                 {detail?.additionalDetails?.noc?.length > 0 ? detail?.additionalDetails?.noc.map((nocob, ind) => (
-                  <div key={ind} style={{ marginTop: "19px", background: "#FAFAFA", border: "1px solid #D6D5D4", borderRadius: "4px", padding: "8px", lineHeight: "19px", maxWidth: "960px", minWidth: "280px" }}>
-                    <StatusTable>
-                      <Row className="border-none" label={t(`${`BPA_${detail?.additionalDetails?.data?.nocType}_HEADER`}`)} labelStyle={{fontSize: "20px"}}></Row>
-                      <Row className="border-none" label={t(`${detail?.values?.[0]?.title}`)} textStyle={{ marginLeft: "10px" }} text={getTranslatedValues(detail?.values?.[0]?.value, detail?.values?.[0]?.isNotTranslated)} />
-                      <Row className="border-none" label={t(`${detail?.values?.[1]?.title}`)} textStyle={detail?.values?.[1]?.value == "APPROVED" || detail?.values?.[1]?.value == "AUTO_APPROVED" ? { marginLeft: "10px", color: "#00703C" } : { marginLeft: "10px", color: "#D4351C" }} text={getTranslatedValues(detail?.values?.[1]?.value, detail?.values?.[1]?.isNotTranslated)} />
-                      { detail?.values?.[2]?.value ? <Row className="border-none" label={t(`${detail?.values?.[2]?.title}`)} textStyle={{ marginLeft: "10px" }} text={getTranslatedValues(detail?.values?.[2]?.value, detail?.values?.[2]?.isNotTranslated)} /> : null }
-                      { detail?.values?.[3]?.value ? <Row className="border-none" label={t(`${detail?.values?.[3]?.title}`)} textStyle={{ marginLeft: "10px" }} text={getTranslatedValues(detail?.values?.[3]?.value, detail?.values?.[3]?.isNotTranslated)} /> : null }
-                      { detail?.values?.[3]?.value ? <Row className="border-none" label={t(`${detail?.values?.[4]?.title}`)} textStyle={{ marginLeft: "10px" }} text={getTranslatedValues(detail?.values?.[4]?.value, detail?.values?.[4]?.isNotTranslated)} /> : null }
-                      <Row className="border-none" label={t(`${nocob?.title}`)}></Row>
-                    </StatusTable>
-                    <StatusTable>
-                      {nocob?.values ? <DocumentsPreview documents={getOrderDocuments(nocob?.values, true)} svgStyles = {{}} isSendBackFlow = {false} isHrLine = {true} titleStyles ={{fontSize: "18px", lineHeight: "24px", "fontWeight": 700, marginBottom: "10px"}}/> :
-                        <div><CardText>{t("BPA_NO_DOCUMENTS_UPLOADED_LABEL")}</CardText></div>}
-                    </StatusTable>
+                  <div key={ind} className="obps-noc-card">
+                    <div className="obps-noc-header">
+                      <div className="obps-noc-title">
+                        {t(`BPA_${detail?.additionalDetails?.data?.nocType}_HEADER`)}
+                      </div>
+                      {detail?.values?.[1]?.value && (
+                        <div className={`obps-app-status-badge ${getStatusClass(detail?.values?.[1]?.value)}`}>
+                          {getTranslatedValues(detail?.values?.[1]?.value, detail?.values?.[1]?.isNotTranslated)}
+                        </div>
+                      )}
+                    </div>
+                    <div className="obps-details-grid">
+                      <Row className="border-none" label={t(`${detail?.values?.[0]?.title}`)} text={getTranslatedValues(detail?.values?.[0]?.value, detail?.values?.[0]?.isNotTranslated)} />
+                      {detail?.values?.[2]?.value ? <Row className="border-none" label={t(`${detail?.values?.[2]?.title}`)} text={getTranslatedValues(detail?.values?.[2]?.value, detail?.values?.[2]?.isNotTranslated)} /> : null}
+                      {detail?.values?.[3]?.value ? <Row className="border-none" label={t(`${detail?.values?.[3]?.title}`)} text={getTranslatedValues(detail?.values?.[3]?.value, detail?.values?.[3]?.isNotTranslated)} /> : null}
+                      {detail?.values?.[4]?.value ? <Row className="border-none" label={t(`${detail?.values?.[4]?.title}`)} text={getTranslatedValues(detail?.values?.[4]?.value, detail?.values?.[4]?.isNotTranslated)} /> : null}
+                    </div>
+                    {nocob?.values ? (
+                      <div className="obps-documents-grid obps-index-top-spacing-3">
+                        {getOrderDocuments(nocob?.values, true)?.map((docGroup, docIdx) => (
+                          <div key={docIdx} className="obps-doc-group-card">
+                            {docGroup?.title && (
+                              <div className="obps-doc-group-header">
+                                <span className="obps-doc-category-label">{t(docGroup?.title)}</span>
+                              </div>
+                            )}
+                            <div className="obps-doc-group-items">
+                              {docGroup?.values?.map((value, vIdx) => (
+                                <a
+                                  key={vIdx}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  href={value?.url}
+                                  className="app-details-doc-card"
+                                >
+                                  <div className="app-details-doc-icon-wrap">
+                                    <PDFSvg />
+                                  </div>
+                                  <div className="app-details-doc-info">
+                                    <p className="app-details-doc-title">{t(value?.title)}</p>
+                                  </div>
+                                  <span className="app-details-doc-action">{t("CS_COMMON_VIEW") || "View"} &rarr;</span>
+                                </a>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="obps-index-top-spacing-2"><CardText>{t("BPA_NO_DOCUMENTS_UPLOADED_LABEL")}</CardText></div>
+                    )}
                   </div>
                 )) : null}
 
-                {/* to get permit values */}
-                {(!detail?.isTitleVisible && detail?.additionalDetails?.permit?.length > 0) ? detail?.additionalDetails?.permit?.map((value) => (
-                  <CardText >{value?.title}</CardText>
+                {/* Permit Values */}
+                {(!detail?.isTitleVisible && detail?.additionalDetails?.permit?.length > 0) ? detail?.additionalDetails?.permit?.map((value, pIdx) => (
+                  <div key={pIdx} className="full-width">
+                    <CardText>{value?.title}</CardText>
+                  </div>
                 )) : null}
 
-                {/* to get Fee values */}
-                {detail?.additionalDetails?.inspectionReport && detail?.isFeeDetails && <ScruntinyDetails scrutinyDetails={detail?.additionalDetails} paymentsList={[]}/>}
-
+                {/* Fee Values */}
+                {detail?.additionalDetails?.inspectionReport && detail?.isFeeDetails && (
+                  <div className="full-width">
+                    <ScruntinyDetails scrutinyDetails={detail?.additionalDetails} paymentsList={[]} />
+                  </div>
+                )}
               </StatusTable>
-              </div>
-            </Card> : null }
-
-            {/* to get Timeline values */}
-            {index === arr.length - 1 && (
-              <Card>
-                <Fragment>
-                  <div id="timeline">
-                  <BPAApplicationTimeline application={data?.applicationData} id={id} />
-                  {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length > 0 && !isFromSendBack && checkBoxVisible && (
-                    <CheckBox
-                      styles={{ margin: "20px 0 40px", paddingTop: "10px" }}
-                      checked={isTocAccepted}
-                      label={getCheckBoxLable()}
-                      // label={getCheckBoxLabelData(t, data?.applicationData, workflowDetails?.data?.nextActions)}
-                      onChange={() => { setIsTocAccepted(!isTocAccepted); isTocAccepted ? setDisplayMenu(!isTocAccepted) : "" }}
-                    />
-                  )}
-                  </div>
-                  {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length > 1 && isActionBarVisible && (
-                    //removed this styles to fix the action button in application details UM-5347
-                    <ActionBar /*style={{ position: "relative", boxShadow: "none", minWidth: "240px", maxWidth: "310px", padding: "0px" }}*/>
-                      <div style={{ width: "100%" }}>
-                        {displayMenu && workflowDetails?.data?.nextActions ? (
-                          <Menu
-                            //style={{ bottom: "37px", minWidth: "240px", maxWidth: "310px", width: "100%", right: "0px" }}
-                            localeKeyPrefix={"WF_BPA"}
-                            options={workflowDetails?.data?.nextActions.map((action) => action.action)}
-                            t={t}
-                            onSelect={onActionSelect}
-                          />
-                        ) : null}
-                        <SubmitBar /*style={{ width: "100%" }}*/ disabled={checkForSubmitDisable(isFromSendBack, isTocAccepted)} label={t("ES_COMMON_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
-                      </div>
-                    </ActionBar>
-                  )}
-                  {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length == 1 && (
-                    //removed this style to fix the action button in application details UM-5347
-                    <ActionBar /*style={{ position: "relative", boxShadow: "none", minWidth: "240px", maxWidth: "310px", padding: "0px" }}*/>
-                      <div style={{ width: "100%" }}>
-                        <button 
-                        style={{  color: "#FFFFFF", fontSize: isMobile ? "19px" : "initial" }}
-                        className={`${checkForSubmitDisable(isFromSendBack, isTocAccepted) ? "submit-bar-disabled" : "submit-bar"}`}
-                        disabled={checkForSubmitDisable(isFromSendBack, isTocAccepted)} 
-                        name={workflowDetails?.data?.nextActions?.[0]?.action} 
-                        value={workflowDetails?.data?.nextActions?.[0]?.action}
-                        onClick={(e) => {onActionSelect(e.target.value)}}>
-                        {t(`WF_BPA_${workflowDetails?.data?.nextActions?.[0]?.action}`)}
-                        </button>
-                      </div>
-                    </ActionBar>
-                  )}
-                </Fragment>
-              </Card>
             )}
           </div>
-        )
+        );
       })}
+
+      {/* Application Timeline Card */}
+      <div className="obps-details-card" id="timeline">
+        <div className="obps-section-header">
+          <div className="obps-section-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            <span>{t("CS_APPLICATION_TIMELINE") || t("VIEW_TIMELINE") || "Application Timeline"}</span>
+          </div>
+        </div>
+
+        <BPAApplicationTimeline application={data?.applicationData} id={id} />
+
+        {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length > 0 && !isFromSendBack && checkBoxVisible && (
+          <div className="obps-agreement-wrap">
+            <CheckBox
+              checked={isTocAccepted}
+              label={getCheckBoxLable()}
+              onChange={() => { setIsTocAccepted(!isTocAccepted); isTocAccepted ? setDisplayMenu(!isTocAccepted) : ""; }}
+            />
+          </div>
+        )}
+
+        {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length > 1 && isActionBarVisible && (
+          <ActionBar>
+            <div className="obps-inspection-report-fullwidth">
+              {displayMenu && workflowDetails?.data?.nextActions ? (
+                <Menu
+                  localeKeyPrefix={"WF_BPA"}
+                  options={workflowDetails?.data?.nextActions.map((action) => action.action)}
+                  t={t}
+                  onSelect={onActionSelect}
+                />
+              ) : null}
+              <SubmitBar disabled={checkForSubmitDisable(isFromSendBack, isTocAccepted)} label={t("ES_COMMON_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
+            </div>
+          </ActionBar>
+        )}
+
+        {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length === 1 && (
+          <ActionBar>
+            <div className="obps-inspection-report-fullwidth">
+              <button 
+                className={`text-white ${isMobile ? "font-size-19" : ""} ${checkForSubmitDisable(isFromSendBack, isTocAccepted) ? "submit-bar-disabled" : "submit-bar"}`}
+                disabled={checkForSubmitDisable(isFromSendBack, isTocAccepted)} 
+                name={workflowDetails?.data?.nextActions?.[0]?.action} 
+                value={workflowDetails?.data?.nextActions?.[0]?.action}
+                onClick={(e) => { onActionSelect(e.target.value); }}>
+                {t(`WF_BPA_${workflowDetails?.data?.nextActions?.[0]?.action}`)}
+              </button>
+            </div>
+          </ActionBar>
+        )}
+      </div>
+
       {showTermsModal ? (
         <ActionModal
           t={t}
@@ -596,27 +881,28 @@ const BpaApplicationDetail = () => {
           applicationData={data?.applicationData || {}}
         />
       ) : null}
+
       {showModal ? (
         <ActionModal
           t={t}
           action={selectedAction}
           tenantId={tenantId}
-          // state={state}
           id={id}
           closeModal={closeModal}
           submitAction={submitAction}
           actionData={workflowDetails?.data?.timeline}
         />
       ) : null}
+
       {showToast && (
         <Toast
           error={showToast.key === "error" ? true : false}
           label={t(showToast.key === "success" ? `ES_OBPS_${showToast.action}_UPDATE_SUCCESS` : showToast.action)}
           onClose={closeToast}
-          style={{ zIndex: "1000" }}
+          className="obps-index-wrapper-7"
         />
       )}
-    </Fragment>
+    </div>
   );
 };
 

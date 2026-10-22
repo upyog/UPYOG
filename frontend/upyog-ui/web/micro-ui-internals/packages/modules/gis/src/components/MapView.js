@@ -321,13 +321,12 @@ const MapView = () => {
             <div className="gis-mapview-field">
               <CardLabel>{t("Financial_Year")}</CardLabel>
               <Dropdown
-                className="form-field"
+                className="form-field gis-map-view-fullwidth"
                 selected={selectedFinancialYear}
                 select={setSelectedFinancialYear}
                 option={financialYearOptions}
                 placeholder={t("Select Financial Year")}
                 optionKey="i18nKey"
-                style={{ width: "100%", position: "relative", zIndex: 2002 }}
               />
             </div>
             {getBusinessService() === "PT" && (
@@ -335,25 +334,23 @@ const MapView = () => {
                 <div className="gis-mapview-field">
                   <CardLabel>{t("Payment_Status")}</CardLabel>
                   <Dropdown
-                    className="form-field"
+                    className="form-field gis-map-view-fullwidth-2"
                     selected={selectedPaymentStatus}
                     select={setSelectedPaymentStatus}
                     option={paymentStatusOptions}
                     placeholder={t("Select Payment Status")}
                     optionKey="i18nKey"
-                    style={{ width: "100%", position: "relative", zIndex: 2001 }}
                   />
                 </div>
                 <div className="gis-mapview-field">
                   <CardLabel>{t("Usage_Category")}</CardLabel>
                   <Dropdown
-                    className="form-field"
+                    className="form-field gis-map-view-fullwidth-3"
                     selected={selectedUsageCategory}
                     select={setSelectedUsageCategory}
                     option={usageCategoryOptions}
                     placeholder={t("Select Usage Category")}
                     optionKey="i18nKey"
-                    style={{ width: "100%", position: "relative", zIndex: 2000 }}
                   />
                 </div>
               </React.Fragment>
@@ -362,13 +359,12 @@ const MapView = () => {
               <div className="gis-mapview-field">
                 <CardLabel>{t("Asset_Classification")}</CardLabel>
                 <Dropdown
-                  className="form-field"
+                  className="form-field gis-map-view-fullwidth-2"
                   selected={selectedAssetClassification}
                   select={setSelectedAssetClassification}
                   option={assetClassificationOptions}
                   placeholder={t("Select Asset Classification")}
                   optionKey="i18nKey"
-                  style={{ width: "100%", position: "relative", zIndex: 2001 }}
                 />
               </div>
             )}
@@ -377,19 +373,18 @@ const MapView = () => {
             <div className="gis-mapview-field">
               <CardLabel>{getBusinessService() === "PT" ? t("SEARCH_BY_PROPERTYID") : t("SEARCH_BY_ASSETID")}</CardLabel>
               <Dropdown
-                className="form-field"
+                className="form-field gis-map-view-fullwidth-2"
                 selected={inputValue}
                 select={setInputValue}
                 option={statusOptions}
                 placeholder={t("Select Property")}
                 optionKey="i18nKey"
-                style={{ width: "100%", position: "relative", zIndex: 2001 }}
                 optionCardStyles={{ maxHeight: "200px", overflowY: "auto" }}
                 t={t}
               />
             </div>
             <div className="gis-mapview-actions">
-              <CardLabel style={{ visibility: "hidden" }}>{t("Actions")}</CardLabel>
+              <CardLabel className="gis-map-view-card">{t("Actions")}</CardLabel>
               <div className="gis-mapview-actions-row">
                 <SubmitBar label={t("ES_COMMON_SEARCH")} onSubmit={handleSearch} />
                 <p className="link gis-mapview-clear" onClick={() => {

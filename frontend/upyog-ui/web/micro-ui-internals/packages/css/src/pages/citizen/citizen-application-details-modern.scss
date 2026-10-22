@@ -1,0 +1,461 @@
+/* Citizen Application Details Modern Styles */
+
+.pt-citizen-application-details-wrapper {
+  padding: 8px 16px 48px;
+
+  .pt-app-page-header-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+
+    .pt-app-page-title {
+      font-size: 26px !important;
+      font-weight: 700 !important;
+      color: #1e293b !important;
+      margin: 0 !important;
+      letter-spacing: -0.02em;
+    }
+
+    .pt-app-page-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+
+      .pt-app-view-timeline-btn {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px;
+        padding: 8px 16px !important;
+        background: #f8fafc !important;
+        color: #334155 !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 8px !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+
+        &:hover {
+          background: #f1f5f9 !important;
+          border-color: #94a3b8 !important;
+          color: #0f172a !important;
+        }
+      }
+
+      .multilinkWrapper {
+        position: relative;
+
+        .multiLinkHeader {
+          padding: 8px 16px;
+          border-radius: 8px;
+          background: #a82227;
+          color: #ffffff;
+          font-size: 13px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: background 0.2s;
+
+          &:hover {
+            background: #8e1c21;
+          }
+        }
+      }
+    }
+  }
+
+  /* 1. Hero Overview Card */
+  .pt-app-hero-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    padding: 24px 28px !important;
+    margin-bottom: 24px !important;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02) !important;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #a82227, #f97316);
+    }
+
+    .pt-app-hero-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #eef2f6;
+
+      .pt-app-id-section {
+        .pt-app-id-label {
+          font-size: 11.5px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          color: #64748b;
+          margin-bottom: 4px;
+        }
+
+        .pt-app-id-value {
+          font-size: 20px;
+          font-weight: 800;
+          color: #0f172a;
+          letter-spacing: -0.01em;
+          font-family: monospace, sans-serif;
+        }
+
+        .pt-app-sub-id {
+          font-size: 13px;
+          color: #475569;
+          margin-top: 4px;
+
+          strong {
+            color: #0f172a;
+            font-family: monospace, sans-serif;
+          }
+        }
+      }
+
+      .pt-app-status-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .pt-app-status-pill {
+          display: inline-flex;
+          align-items: center;
+          padding: 6px 14px;
+          border-radius: 9999px;
+          font-size: 12.5px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+          white-space: nowrap;
+
+          &.status-active,
+          &.status-approved {
+            background: #ecfdf5;
+            color: #059669;
+            border: 1px solid #a7f3d0;
+          }
+
+          &.status-inworkflow,
+          &.status-pending {
+            background: #fffbeb;
+            color: #b45309;
+            border: 1px solid #fde68a;
+          }
+
+          &.status-rejected {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fca5a5;
+          }
+
+          &.status-inactive {
+            background: #f1f5f9;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+          }
+        }
+      }
+    }
+
+    .pt-app-hero-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+
+      .pt-app-kpi-item {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 14px 18px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+
+        .pt-app-kpi-label {
+          font-size: 11.5px;
+          font-weight: 600;
+          color: #64748b;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+          margin-bottom: 4px;
+        }
+
+        .pt-app-kpi-val {
+          font-size: 16px;
+          font-weight: 700;
+          color: #1e293b;
+
+          &.val-fee {
+            color: #a82227;
+            font-size: 18px;
+          }
+
+          &.val-status {
+            color: #059669;
+          }
+        }
+      }
+    }
+  }
+
+  /* 2. Structured Section Cards */
+  .pt-app-section-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 14px !important;
+    padding: 24px 28px !important;
+    margin-bottom: 20px !important;
+    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+    transition: box-shadow 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.07), 0 2px 5px rgba(0, 0, 0, 0.03) !important;
+    }
+
+    .pt-app-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #f1f5f9;
+
+      .pt-app-section-title-wrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        .pt-app-section-accent-bar {
+          width: 4px;
+          height: 18px;
+          background: #a82227;
+          border-radius: 4px;
+          display: inline-block;
+        }
+
+        .pt-app-section-title {
+          font-size: 17px !important;
+          font-weight: 700 !important;
+          color: #1e293b !important;
+          margin: 0 !important;
+          letter-spacing: -0.01em;
+        }
+      }
+    }
+
+    /* Key-Value Data Grid */
+    .pt-app-data-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px 28px;
+
+      .pt-app-data-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        .pt-app-data-label {
+          font-size: 12.5px;
+          font-weight: 600;
+          color: #64748b;
+          line-height: 1.3;
+        }
+
+        .pt-app-data-value {
+          font-size: 14.5px;
+          font-weight: 600;
+          color: #0f172a;
+          line-height: 1.4;
+          word-break: break-word;
+        }
+      }
+    }
+  }
+
+  /* 3. Owner / Party Cards */
+  .pt-app-owner-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .pt-app-owner-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e2e8f0;
+
+      .pt-app-owner-badge {
+        font-size: 13px;
+        font-weight: 700;
+        color: #1e293b;
+        background: #e2e8f0;
+        padding: 4px 12px;
+        border-radius: 6px;
+
+        &.badge-transferor {
+          background: #fee2e2;
+          color: #991b1b;
+        }
+
+        &.badge-transferee {
+          background: #dbeafe;
+          color: #1e40af;
+        }
+      }
+    }
+  }
+
+  /* 4. Floor & Unit Cards */
+  .pt-app-floor-group {
+    margin-bottom: 20px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .pt-app-floor-title {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #334155;
+      background: #f8fafc;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border-left: 3px solid #f97316;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+
+    .pt-app-unit-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+
+      .pt-app-unit-title {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #475569;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+    }
+  }
+
+  /* 5. Documents Preview */
+  .pt-property-document-item {
+    margin-top: 0;
+
+    .pt-property-document-flex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+
+      .pt-property-document-link {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        padding: 16px 20px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        transition: all 0.2s ease;
+        min-width: 140px;
+        max-width: 180px;
+
+        &:hover {
+          background: #ffffff;
+          border-color: #cbd5e1;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .pt-property-document-link-2 {
+          background: transparent !important;
+          padding: 0;
+          margin-bottom: 10px;
+          transition: transform 0.2s;
+        }
+
+        &:hover .pt-property-document-link-2 {
+          transform: scale(1.05);
+        }
+
+        .pt-property-document-link-3 {
+          font-size: 13px;
+          font-weight: 600;
+          color: #334155;
+          text-align: center;
+          margin: 0;
+          word-break: break-word;
+          line-height: 1.3;
+        }
+      }
+    }
+  }
+
+  /* 6. Timeline Card */
+  .pt-app-timeline-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 24px 28px;
+    box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.04);
+  }
+
+  @media (max-width: 768px) {
+    padding: 4px 12px 32px;
+
+    .pt-app-page-header-wrap {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .pt-app-hero-card {
+      padding: 18px !important;
+
+      .pt-app-hero-header {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .pt-app-hero-kpi-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .pt-app-section-card {
+      padding: 18px !important;
+
+      .pt-app-data-grid {
+        grid-template-columns: 1fr !important;
+        gap: 14px;
+      }
+    }
+  }
+}

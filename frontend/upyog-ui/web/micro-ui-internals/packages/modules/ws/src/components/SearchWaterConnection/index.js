@@ -287,8 +287,8 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
      , onSubmit: handleSearchSubmit, onClearSearch: handleClearSearch}} />
       </SearchForm>}
       {isLoading ? <Loader /> : null} 
-      {isClearSearch ? null : data?.display && !resultOk ? <Card className="ws-auto-27">
-          {t(data?.display).split("\\n").map((text, index) => <p key={index} className="ws-auto-28">
+      {isClearSearch ? null : data?.display && !resultOk ? <Card className="ws-index-card-mt-md">
+          {t(data?.display).split("\\n").map((text, index) => <p key={index} className="ws-index-card-center-text">
                 {text}
               </p>)}
         </Card>
@@ -317,8 +317,8 @@ const SearchWaterConnection = ({ tenantId, onSubmit, data, count, resultOk, busi
     }} onPageSizeChange={onPageSizeChange} currentPage={getValues("offset") / getValues("limit")} onNextPage={nextPage} onPrevPage={previousPage} pageSizeLimit={getValues("limit")} onSort={onSort} disableSort={false} sortParams={[{
       id: getValues("sortBy"),
       desc: getValues("sortOrder") === "DESC" ? true : false
-    }]} /> : <Card className="ws-auto-29">
-          {<p className="ws-auto-30">
+    }]} /> : <Card className="ws-index-card-mt-md">
+          {<p className="ws-index-card-center-text">
               No Data Found
             </p>}
   </Card> : ""}

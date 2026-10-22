@@ -115,7 +115,7 @@ const CreatePropertyForm = ({ config, onSelect, value, userType, redirectUrl }) 
 
   return (
     <React.Fragment>
-      <div style={{ marginLeft: "12px" }}>
+      <div className="cmnpt-create-form-spacing">
         <Header styles={window.location.href.includes("citizen") ? { paddingLeft: "0px", marginLeft: "0px" } : {}}>{t(getHeaderLabel())}</Header>
       </div>
       <FormComposer

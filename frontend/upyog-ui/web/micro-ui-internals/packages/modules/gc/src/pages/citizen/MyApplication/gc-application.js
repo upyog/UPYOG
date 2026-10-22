@@ -2,7 +2,7 @@ import React from "react";
 import { Card, KeyNote, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import "../../../css/gc-inline-auto.css";
+
 
 // Garbage Collection Application Component
 // This component displays the details of an application and provides options to view the summary or make a payment.
@@ -42,7 +42,7 @@ const GCApplication = ({ application, tenantId }) => {
   };
 
   return (
-    <Card style={{ marginTop: "16px" }}>
+    <Card className="gc-gc-application-card">
       <KeyNote keyValue={t("GC_APPLICATION_NUMBER_LABEL")} note={appNo || t("CS_NA")} />
       <KeyNote keyValue={t("GC_NAME")} note={name || t("CS_NA")} />
       <KeyNote keyValue={t("GC_MOBILE_NUMBER")} note={mobileNumber || t("CS_NA")} />
@@ -51,7 +51,7 @@ const GCApplication = ({ application, tenantId }) => {
       {typeOfCollection && <KeyNote keyValue={t("GC_TYPE_OF_COLLECTION")} note={t(typeOfCollection)} />}
       <KeyNote keyValue={t("GC_APPLICATION_STATUS_LABEL")} note={appStatus ? t(`GC_STATUS_${appStatus}`) : t("CS_NA")} />
       {application?.dueDate && <KeyNote keyValue={t("GC_DUE_DATE")} note={application.dueDate} />}
-      
+
       <div className="gc-btn-row">
         <Link to={`/upyog-ui/citizen/gc/application-details/${encodeURIComponent(appNo)}`}>
           <SubmitBar label={t("CS_VIEW_DETAILS")} />

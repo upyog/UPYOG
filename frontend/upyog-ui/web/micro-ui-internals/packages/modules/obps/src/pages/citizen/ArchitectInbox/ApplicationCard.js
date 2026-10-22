@@ -43,11 +43,11 @@ const ApplicationCard = ({
   }
   if (data?.length === 0) {
     result = (
-      <Card style={{ marginTop: 20 }}>
+      <Card className="obps-index-card">
         {t("BPA_NO_APPLICATION_PRESENT")
           .split("\\n")
           .map((text, index) => (
-            <p key={index} style={{ textAlign: "center" }}>
+            <p key={index} className="obps-index-centered">
               {text}
             </p>
           ))}
@@ -117,7 +117,7 @@ const ApplicationCard = ({
           )}
           {type === "SORT" && (
             <div className="popup-module w-fullwidth">
-              {<SortBy type="mobile" sortParams={sortParams} onClose={handlePopupClose} type="mobile" onSort={onSort} />}
+              {<SortBy type="mobile" sortParams={sortParams} onClose={handlePopupClose} onSort={onSort} />}
             </div>
           )}
         </PopUp>

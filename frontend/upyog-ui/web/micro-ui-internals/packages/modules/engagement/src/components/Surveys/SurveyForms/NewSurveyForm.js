@@ -120,7 +120,7 @@ const NewSurveyForm = ({ t, index, questionStatement, type, uuid, qorder, requir
           {formState?.errors && <CardLabelError>{formState?.errors?.longAnsDescription?.message}</CardLabelError>}
               </div>;
       case "DATE_ANSWER_TYPE":
-        return <DatePicker stylesForInput={{ width: "calc(100% - 290px)" }} style={{width:"202px"}} disabled={isInputDisabled}/>;
+        return <DatePicker stylesForInput={{ width: "calc(100% - 290px)" }} className="eng-new-survey-form-wrapper" disabled={isInputDisabled}/>;
       case "TIME_ANSWER_TYPE":
         return <TextInput type="time" textInputStyle={{width:"202px"}} disable={isInputDisabled}/>;
       case "MULTIPLE_ANSWER_TYPE":
@@ -154,7 +154,7 @@ const NewSurveyForm = ({ t, index, questionStatement, type, uuid, qorder, requir
             formDisabled={formDisabled}
             maxLength={60}
             titleHover={t("MAX_LENGTH_60")}
-            labelstyle={{marginLeft:"-20px"}}
+            className="margin-left-minus-20"
             // name={"checkBoxDesc"}
             // inputRef={register({
             //     maxLength: {
@@ -195,7 +195,7 @@ const NewSurveyForm = ({ t, index, questionStatement, type, uuid, qorder, requir
       <span className="newSurveyForm_quesno">{`${t("CS_COMMON_QUESTION")} ${index + 1} `}</span>
       <span className="newSurveyForm_mainsection">
         <div className="newSurveyForm_questions">
-          <div style={{width: "75%"}}>
+          <div className="eng-new-survey-form-wrapper-2">
             {(() => {
               const { ref: questionRef, onChange: questionOnChange, ...questionRest } = register(`QUESTION_SURVEY_${index}`, {
                 required: t("ES_ERROR_REQUIRED"),
@@ -248,15 +248,15 @@ const NewSurveyForm = ({ t, index, questionStatement, type, uuid, qorder, requir
               label={t("CS_COMMON_REQUIRED")}
               pageType={"employee"}
               disable={disableInputs}
-              style={{marginTop:"2px"}}
+              className="eng-new-survey-form-top-spacing"
             />
           </div>
           {index!==0 && <div className="newSurveyForm_seprator" />}
           {index!==0 && <div className={`pointer ${disableInputs ? 'disabled-btn':''}`} onClick={() => dispatch({ type: "removeForm", payload: { index } })}>
-          <div className="tooltip" /* style={{position:"relative"}} */>
-              <div style={{display: "flex", /* alignItems: "center", */ gap: "0 4px"}}>
+          <div className="tooltip" /* className="custom-style" */>
+              <div className="eng-new-survey-form-flex-container">
             <DustbinIcon />
-            <span className="tooltiptext" style={{ position:"absolute",width:"100px", marginLeft:"50%", fontSize:"medium" }}>
+            <span className="tooltiptext eng-new-survey-form-spacing">
               {t("CS_INFO_DELETE")}
               </span>
               </div>

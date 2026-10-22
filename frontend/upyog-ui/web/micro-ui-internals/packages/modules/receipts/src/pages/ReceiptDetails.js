@@ -49,7 +49,7 @@ const ReceiptDetails = () => {
   const pendingDue= PaymentReceipt?.totalDue - PaymentReceipt?.totalAmountPaid;
   return (
     <React.Fragment>
-      <div style={{ width: "30%", fontFamily: "calibri", color: "#FF0000" }}>
+      <div className="rcpt-receipt-details-required-asterisk">
         <Header>{t("CR_RECEIPT_SUMMARY")}</Header>
       </div>
       {!isLoading && data?.Payments?.length > 0 ? (

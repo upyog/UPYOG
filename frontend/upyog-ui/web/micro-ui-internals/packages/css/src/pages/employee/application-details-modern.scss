@@ -1,0 +1,315 @@
+/* ==========================================================================
+   Modern Employee Application Details & Mutation Details Stylesheet
+   Strictly CSP-Compliant (No Inline CSS)
+   ========================================================================== */
+
+.pt-mutation-application-details-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 0 4px;
+
+  .pt-mutation-header-title {
+    font-size: 26px !important;
+    font-weight: 800 !important;
+    color: #0F172A !important;
+    letter-spacing: -0.015em !important;
+    margin: 0 !important;
+    line-height: 1.25 !important;
+  }
+
+  .multilinkWrapper {
+    .employee-download-btn-className,
+    .multilink-header {
+      background: #FFFFFF !important;
+      border: 1.5px solid #CBD5E1 !important;
+      color: #0F172A !important;
+      border-radius: 10px !important;
+      font-weight: 600 !important;
+      font-size: 13.5px !important;
+      padding: 8px 18px !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+      transition: all 0.2s ease !important;
+
+      &:hover {
+        background: #F8FAFC !important;
+        border-color: #94A3B8 !important;
+      }
+    }
+  }
+}
+
+.pt-mutation-details-container {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #0F172A;
+
+  /* Outer Card Overrides */
+  &.employeeCard,
+  .employeeCard {
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 16px !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02) !important;
+    padding: 28px 32px 80px !important;
+    margin-bottom: 32px !important;
+    max-width: 100% !important;
+  }
+
+  /* 1. Top Key-Value / Application Highlight Section */
+  .pt-mutation-top-summary-table,
+  > .employee-data-table:first-of-type {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 16px 20px 8px;
+    margin-bottom: 28px;
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+    gap: 16px !important;
+
+    .row {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      border: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+
+      h2 {
+        width: 100% !important;
+        font-size: 11.5px !important;
+        font-weight: 700 !important;
+        color: #64748B !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+        margin-bottom: 4px !important;
+      }
+
+      .value {
+        width: 100% !important;
+        font-size: 14.5px !important;
+        font-weight: 700 !important;
+        color: #0F172A !important;
+        word-break: break-all !important;
+      }
+    }
+  }
+
+  /* 2. Section Headers */
+  .pt-mutation-section-header,
+  .employee-card-sub-header {
+    font-size: 17px !important;
+    font-weight: 700 !important;
+    color: #0F172A !important;
+    letter-spacing: -0.01em !important;
+    line-height: 1.3 !important;
+    margin: 28px 0 14px 0 !important;
+    padding-bottom: 10px !important;
+    border-bottom: 1.5px solid #F1F5F9 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+
+    &::before {
+      content: "";
+      display: inline-block;
+      width: 4px;
+      height: 18px;
+      background: #a82227;
+      border-radius: 4px;
+    }
+
+    &:first-of-type {
+      margin-top: 10px !important;
+    }
+  }
+
+  /* 3. Section Data Tables Grid */
+  .employee-data-table {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+    gap: 14px 20px !important;
+    margin-bottom: 20px !important;
+    padding: 0 !important;
+
+    .row {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      background: #FFFFFF !important;
+      border: 1px solid #F1F5F9 !important;
+      border-radius: 10px !important;
+      padding: 12px 14px !important;
+      margin: 0 !important;
+      transition: all 0.15s ease !important;
+
+      &:hover {
+        border-color: #E2E8F0 !important;
+        background: #FAFAFC !important;
+      }
+
+      h2 {
+        width: 100% !important;
+        font-size: 11.5px !important;
+        font-weight: 600 !important;
+        color: #64748B !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.04em !important;
+        margin: 0 0 4px 0 !important;
+        line-height: 1.3 !important;
+      }
+
+      .value {
+        width: 100% !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        color: #1E293B !important;
+        line-height: 1.4 !important;
+        word-break: break-word !important;
+      }
+    }
+  }
+
+  /* 4. Documents Grid */
+  .pt-property-document-item {
+    margin: 16px 0 28px !important;
+
+    .pt-property-document-flex {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
+      gap: 14px !important;
+
+      .pt-property-document-link {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #F8FAFC !important;
+        border: 1.5px dashed #CBD5E1 !important;
+        border-radius: 12px !important;
+        padding: 18px 14px !important;
+        text-decoration: none !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+
+        &:hover {
+          background: #EFF6FF !important;
+          border-color: #3B82F6 !important;
+          border-style: solid !important;
+          transform: translateY(-2px) !important;
+          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06) !important;
+
+          svg {
+            fill: #2563EB !important;
+          }
+
+          .pt-property-document-link-3 {
+            color: #1D4ED8 !important;
+          }
+        }
+
+        svg {
+          width: 38px !important;
+          height: 38px !important;
+          fill: #64748B !important;
+          margin-bottom: 8px !important;
+          transition: fill 0.2s ease !important;
+        }
+
+        .pt-property-document-link-3 {
+          font-size: 13px !important;
+          font-weight: 600 !important;
+          color: #334155 !important;
+          text-align: center !important;
+          margin: 0 !important;
+          line-height: 1.3 !important;
+          transition: color 0.2s ease !important;
+        }
+      }
+    }
+  }
+
+  /* 5. Timeline Section Header */
+  .card-section-header.pt-ptwf-application-timeline-card {
+    font-size: 17px !important;
+    font-weight: 700 !important;
+    color: #0F172A !important;
+    letter-spacing: -0.01em !important;
+    margin: 32px 0 16px 0 !important;
+    padding-bottom: 10px !important;
+    border-bottom: 1.5px solid #F1F5F9 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+
+    &::before {
+      content: "";
+      display: inline-block;
+      width: 4px;
+      height: 18px;
+      background: #2563EB;
+      border-radius: 4px;
+    }
+  }
+
+
+
+  /* 7. Bottom Action Bar */
+  .action-bar-wrap.app-details-action-bar-override {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 240px !important;
+    width: calc(100% - 240px) !important;
+    background: #FFFFFF !important;
+    border-top: 1px solid #E2E8F0 !important;
+    padding: 12px 32px !important;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05) !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    z-index: 99 !important;
+    box-sizing: border-box !important;
+    transition: left 0.3s ease-in-out, width 0.3s ease-in-out !important;
+
+    .submit-bar {
+      background: #a82227 !important;
+      color: #FFFFFF !important;
+      font-size: 14px !important;
+      font-weight: 700 !important;
+      border-radius: 10px !important;
+      padding: 10px 28px !important;
+      cursor: pointer !important;
+      box-shadow: 0 2px 6px rgba(168, 34, 39, 0.25) !important;
+      transition: all 0.2s ease !important;
+
+      &:hover {
+        background: #8e1c20 !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 10px rgba(168, 34, 39, 0.35) !important;
+      }
+    }
+  }
+
+  .SideBarStatic--collapsed ~ .main .action-bar-wrap.app-details-action-bar-override,
+  .SideBarStatic--collapsed ~ div .action-bar-wrap.app-details-action-bar-override {
+    left: 80px !important;
+    width: calc(100% - 80px) !important;
+  }
+}
+
+@media (max-width: 780px) {
+  .pt-mutation-details-container {
+    .employee-data-table {
+      grid-template-columns: 1fr !important;
+    }
+
+    .action-bar-wrap.app-details-action-bar-override {
+      left: 0 !important;
+      width: 100% !important;
+      padding: 12px 16px !important;
+    }
+  }
+}

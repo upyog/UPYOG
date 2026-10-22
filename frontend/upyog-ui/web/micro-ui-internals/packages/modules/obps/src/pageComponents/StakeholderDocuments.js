@@ -81,7 +81,7 @@ const StakeholderDocuments = ({ t, config, onSelect, userType, formData, setErro
     return (
         <div>
             <div className={isopenlink? "OpenlinkContainer":""}>
-            {isopenlink && <BackButton style={{ border: "none" }}>{t("CS_COMMON_BACK")}</BackButton>}
+            {isopenlink && <BackButton className="obps-corrospondence-address-action-btn">{t("CS_COMMON_BACK")}</BackButton>}
             <Timeline currentStep={3} flow="STAKEHOLDER" />
             {!isLoading ?
                 <FormStep
@@ -197,9 +197,9 @@ function SelectDocument({
     }, [file]);
 
     return (
-        <div style={{ marginBottom: "24px" }}>
-            <CardLabel style={{marginBottom: "10px"}}>{doc?.required ? `${t(`BPAREG_HEADER_${doc?.code?.replace('.', '_')}`)} *` : `${t(`BPAREG_HEADER_${doc?.code?.replace('.', '_')}`)}`}</CardLabel>
-            {doc?.info ? <div style={{fontSize: "12px", color: "#505A5F", fontWeight: 400, lineHeight: "15px", marginBottom: "10px"}}>{`${t(doc?.info)}`}</div> : null}
+        <div className="obps-obpsdocuments-emp-bottom-spacing">
+            <CardLabel className="obps-basic-details-bottom-spacing">{doc?.required ? `${t(`BPAREG_HEADER_${doc?.code?.replace('.', '_')}`)} *` : `${t(`BPAREG_HEADER_${doc?.code?.replace('.', '_')}`)}`}</CardLabel>
+            {doc?.info ? <div className="obps-stakeholder-documents-bottom-spacing">{`${t(doc?.info)}`}</div> : null}
             <UploadFile
                 extraStyleName={"OBPS"}
                 accept="image/*, .pdf, .png, .jpeg, .jpg"

@@ -208,7 +208,7 @@ const ConnectionDetails = (_props) => {
                         <Row className="border-none" key={`WS_MYCONNECTIONS_CONSUMER_NO`} label={`${t(`WS_MYCONNECTIONS_CONSUMER_NO`)}`} text={applicationNumber} />
                     <Row className="border-none" key={`WS_SERVICE_NAME_LABEL`} label={`${t(`WS_SERVICE_NAME_LABEL`)}`} text={connectionDetail?.serviceName} />
                 </StatusTable>
-            </div> : <div className="ws-auto-132">
+            </div> : <div className="ws-edit-connection-details-item">
                 <LabelFieldPair>
                     <CardLabel style={isMobile && isEmployee ? {
           fontWeight: "700",

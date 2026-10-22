@@ -54,7 +54,7 @@ if( possibleValues.includes(data?.id) )
         dy={30}
         fill={stroke}
         width="35"
-        style={{ fontSize: "medium", textAlign: "right", fontVariantNumeric: "proportional-nums" }}
+        className="dss-custom-bar-chart-text-style"
       >
         {`₹ ${maxValue?.[t(name)]} ${t("ES_DSS_CR")}`}
       </text>
@@ -80,7 +80,7 @@ else if(data?.id.includes("GDP") )
         dy={30}
         fill={stroke}
         width="35"
-        style={{ fontSize: "medium", textAlign: "right", fontVariantNumeric: "proportional-nums" }}
+        className="dss-custom-bar-chart-text-style"
       >
         {`${maxValue?.[t(name)]} %`}
       </text>
@@ -101,7 +101,7 @@ else if (data?.id.includes("Population") || data?.id.includes("Household"))
         dy={30}
         fill={stroke}
         width="35"
-        style={{ fontSize: "medium", textAlign: "right", fontVariantNumeric: "proportional-nums" }}
+        className="dss-custom-bar-chart-text-style"
       >
         {`₹ ${maxValue?.[t(name)]}`}
       </text>
@@ -122,7 +122,7 @@ return (
         dy={30}
         fill={stroke}
         width="35"
-        style={{ fontSize: "medium", textAlign: "right", fontVariantNumeric: "proportional-nums" }}
+        className="dss-custom-bar-chart-text-style"
       >
         {`${maxValue?.[t(name)]}`}
       </text>

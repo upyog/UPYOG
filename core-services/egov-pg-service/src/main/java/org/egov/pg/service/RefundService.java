@@ -112,32 +112,45 @@ public class RefundService {
 
 		} else {
 			newRefundTxn = gatewayService.getRefundLiveStatus(currentRefund);
+			
+			log.info("Current Refund: {}", currentRefund);
+	        log.info("Gateway Refund Response: {}", newRefundTxn);
+
+	        if (newRefundTxn == null) {
+	            log.info("Gateway returned null refund response for refundId: {}", currentRefund.getId());
+	            return Collections.emptyList();
+	        }
 
 			if (newRefundTxn.getStatus().equals(RefundStatusEnum.SUCCESS)) {
 				TransactionCriteria criteria = TransactionCriteria.builder().txnId(newRefundTxn.getOriginalTxnId())
 						.build();
-				List<Transaction> status = transactionRepository.fetchTransactions(criteria);
-				TransactionRequest TxnRequest = TransactionRequest.builder().requestInfo(requestInfo)
-						.transaction(status.get(0)).build();
+				List<Transaction> transactions = transactionRepository.fetchTransactions(criteria);
+				if (transactions == null || transactions.isEmpty()) {
+					log.info("No transaction found for txnId: {}", newRefundTxn.getOriginalTxnId());
+				} else {
 
-				Transaction transaction = TxnRequest.getTransaction();
+					TransactionRequest TxnRequest = TransactionRequest.builder().requestInfo(requestInfo)
+							.transaction(transactions.get(0)).build();
 
-				AuditDetails auditDetails = transaction.getAuditDetails();
+					Transaction transaction = TxnRequest.getTransaction();
 
-				if (auditDetails == null) {
-					auditDetails = new AuditDetails();
+					AuditDetails auditDetails = transaction.getAuditDetails();
+
+					if (auditDetails == null) {
+						auditDetails = new AuditDetails();
+					}
+
+					auditDetails.setLastModifiedBy(
+							requestInfo.getUserInfo() != null ? requestInfo.getUserInfo().getUuid() : null);
+
+					auditDetails.setLastModifiedTime(System.currentTimeMillis());
+
+					transaction.setAuditDetails(auditDetails);
+					newRefundTxn.setAuditDetails(auditDetails);
+					log.info("txnAudit  setAuditDetails :: {}", auditDetails);
+					log.info("newRefundTxn  refundTransaction :: {}", newRefundTxn);
+					paymentsService.refundTransaction(TxnRequest);
 				}
-
-				auditDetails.setLastModifiedBy(
-						requestInfo.getUserInfo() != null ? requestInfo.getUserInfo().getUuid() : null);
-
-				auditDetails.setLastModifiedTime(System.currentTimeMillis());
-
-				transaction.setAuditDetails(auditDetails);
-				newRefundTxn.setAuditDetails(auditDetails);
-				log.info("txnAudit  setAuditDetails :: {}", auditDetails);
-				log.info("newRefundTxn  refundTransaction :: {}", newRefundTxn);
-				paymentsService.refundTransaction(TxnRequest);
 			}
 		}
 

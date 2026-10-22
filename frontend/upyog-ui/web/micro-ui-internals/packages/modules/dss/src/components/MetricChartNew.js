@@ -11,7 +11,7 @@ const MetricData = ({ t, data, code, indexValuesWithStar }) => {
 
   return (
     <div>
-      <p className="heading-m" style={{ paddingTop: "0px", whiteSpace: "nowrap" }}>
+      <p className="heading-m dss-metric-chart-new-spacing">
         {indexValuesWithStar?.includes(code) ? (
           <Rating toolTipText={t("COMMON_RATING_LABEL")} currentRating={Math.round(data?.headerValue * 10) / 10} styles={{ width: "unset", marginBottom:"unset" }} starStyles={{ width: "25px" }} />
         ) : data?.headerName.includes("AVG") ? (
@@ -30,14 +30,10 @@ const MetricData = ({ t, data, code, indexValuesWithStar }) => {
       </p>
       {/* {data?.insight && (
         <div
-          style={{
-            width: "100%",
-            display: "flex",
-            
-          }}
+          className="custom-style"
         >
           {data?.insight?.indicator === "upper_green" ? ArrowUpwardElement("10px") : ArrowDownwardElement("10px")}
-          <p className={`${data?.insight.colorCode}`} style={{ whiteSpace: "pre" }}>
+          <p className={`${data?.insight.colorCode}`} className="custom-style">
             {insight?.[0] &&
               `${Digit.Utils.dss.formatter(insight[0], "number", value?.denomination, true, t)}% ${t(
                 Digit.Utils.locale.getTransformedLocale("DSS" + insight?.[1] || "")
@@ -115,23 +111,15 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
 
   if (!response) {
     return (
-      <div className="row" style={{"width":"40%", margin:"10%"}}>
+      <div className="row dss-metric-chart-new-spacing-2">
         <div className={`tooltip`}>
           {t(data.name)}
-          <span
-            className="tooltiptext"
-            style={{
-              fontSize: "medium",
-              width: t(`TIP_${data.name}`).length < 50 ? "fit-content" : 400,
-              height: 50,
-              whiteSpace: "normal",
-            }}
-          >
-            <span style={{ fontWeight: "500", color: "white" }}>{t(`TIP_${data.name}`)}</span>
+          <span className={`tooltiptext dss-tooltip-metric-box ${t(`TIP_${data.name}`).length < 50 ? "width-200" : "width-400"}`}>
+            <span className="dss-metric-chart-text-style">{t(`TIP_${data.name}`)}</span>
           </span>
          
         </div>
-        <span style={{ whiteSpace: "pre" }}>{t("DSS_NO_DATA")}</span>
+        <span className="dss-generic-chart-wrapper-2">{t("DSS_NO_DATA")}</span>
       </div>
     );
   }
@@ -151,33 +139,25 @@ const MetricChartRow = ({ data, setChartDenomination, index, moduleCode, indexVa
     // else return 50;
   };
   return (
-    <div className="row" style={{display:"flex",flexDirection:"column",width:"45%", height:"100px",margin:"2%",padding:"2%",backgroundColor:"white",boxShadow:"0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)"}}>
-      <div style={{display:"flex"}}>
-        <div style={{width:"85%"}}>
+    <div className="row dss-metric-chart-new-flex-container">
+      <div className="dss-module-flex-container">
+        <div className="dss-metric-chart-new-wrapper">
       <div className={`tooltip`}>
         {typeof name == "string" && name}
-        {Array.isArray(name) && name?.filter((ele) => ele)?.map((ele) => <div style={{ whiteSpace: "pre" }}>{ele}</div>)}
+        {Array.isArray(name) && name?.filter((ele) => ele)?.map((ele) => <div className="dss-generic-chart-wrapper-2">{ele}</div>)}
         <span className="dss-white-pre" >
           {" "}
           {showDate?.[id]?.todaysDate}
         </span>
-        <span
-          className="tooltiptext"
-          style={{
-            fontSize: "medium",
-            width: getWidth(data),
-            height: getHeight(data),
-            whiteSpace: "normal",
-          }}
-        >
-          <span style={{ fontWeight: "500", color: "white" }}>{t(`TIP_${data.name}`)}</span>
-          <span style={{ color: "white" }}> {showDate?.[id]?.lastUpdatedTime}</span>
+        <span className={`tooltiptext dss-tooltip-metric-box ${isMobile ? "width-auto height-auto" : t(`TIP_${data.name}`).length < 50 ? "width-200" : "width-400"}`}>
+          <span className="dss-metric-chart-text-style">{t(`TIP_${data.name}`)}</span>
+          <span className="dss-metric-chart-wrapper-2"> {showDate?.[id]?.lastUpdatedTime}</span>
         </span>
       </div>
       <MetricData t={t} data={response?.responseData?.data?.[0]} code={response?.responseData?.visualizationCode} indexValuesWithStar={indexValuesWithStar} />
       {/* <div>{`${displaySymbol(response.headerSymbol)} ${response.headerValue}`}</div> */}
       </div>
-      <div style={{width:"15%"}}><a href="https://imgbb.com/"><img src={imageSrc} alt="8" border="0" style={{width:"100%", height :"100%"}} /></a>
+      <div className="dss-metric-chart-new-wrapper-2"><a href="https://imgbb.com/"><img src={imageSrc} alt="8" border="0" className="dss-metric-chart-new-fullwidth" /></a>
       </div>
       </div>
     </div>

@@ -67,11 +67,11 @@ const HowItWorks = ({module}) => {
   return (
     <Fragment>
     <div className="how-it-works-page">
-      <div style={{marginLeft: "-10px"}}><BackButton /></div>
+      <div className="core-how-it-works-spacing"><BackButton /></div>
         <div className="how-it-works-page-header">
-          <div style={{marginLeft:isMobile ? "-15px":""}}><Header>{t("HOW_IT_WORKS")}</Header></div>
+          <div className={isMobile ? "margin-left-pull-15" : ""}><Header>{t("HOW_IT_WORKS")}</Header></div>
         </div>
-        <div className="language-selector" style={{marginBottom: "10px"}}>
+        <div className="language-selector core-how-it-works-bottom-spacing">
           {languages.map((language, index) => (
             <div className="language-button-container" key={index}>
               <CustomButton
@@ -84,7 +84,7 @@ const HowItWorks = ({module}) => {
         </div>
         {mdmsConfigResult.videosJson.map((videos, index) => (
         <div >
-            <div className="WhatsNewCard" style={{float: "left", position: "relative", width: "100%", marginBottom: 10}}>
+            <div className="WhatsNewCard core-how-it-works-fullwidth">
             <div className="video-icon" onClick={() => onClickVideo(videos)}>
                 <div className="vid-svg">
                   <ViDSvg></ViDSvg>
@@ -98,7 +98,7 @@ const HowItWorks = ({module}) => {
         </div>
 
     ))}
-    <div className="WhatsNewCard" style={{ position: "relative", width: "100%", marginBottom: 10, display: "inline-block"}}>
+    <div className="WhatsNewCard core-how-it-works-fullwidth-2">
       <div className="how-it-works-pdf-section">
         <div className="pdf-icon-header-desc">
         <div className="pdf-icon">
@@ -116,10 +116,10 @@ const HowItWorks = ({module}) => {
         </div>
         { videoPlay && (
                 <div className="how-it-works-video-play">
-                  <div className="close-button" style={{position:"absolute", right:"15px",top:"10%", zIndex:"1"}}>
+                  <div className="close-button core-how-it-works-wrapper">
                         <CloseVidSvg onClick={onClose}></CloseVidSvg>
                         </div>
-                    <video width={500}  height={500} controls autoPlay muted style={{position:"fixed", top:"0",left:"0",minWidth:"100%",minHeight:"100%", backgroundColor: "rgba(0,0,0,0.5)"}}>
+                    <video width={500}  height={500} controls autoPlay muted className="core-how-it-works-wrapper-2">
                         <source src={vidSrc} type="video/mp4"></source>
                     </video>
                 </div>

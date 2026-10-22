@@ -16,7 +16,7 @@ const WSAdditonalDetails = ({ wsAdditionalDetails, oldValue }) => {
 
   return (
     <Fragment>
-      <div style={{ lineHeight: "19px", maxWidth: "950px", minWidth: "280px" }}>
+      <div className="tmpl-view-breakup-wrapper">
         {wsAdditionalDetails?.additionalDetails?.connectionDetails && (
           <StatusTable>
             <CardSubHeader style={cardSubHeaderStyles()}>{t("WS_COMMON_CONNECTION_DETAIL")}</CardSubHeader>

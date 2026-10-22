@@ -79,7 +79,7 @@ const DocumentCategories = ({ t, parentRoute }) => {
       <Header>{t("DOCUMENTS_DOCUMENT_HEADER")}</Header>
       <div className="Docs_CardWrapper">
         <Searchbar searchValue={searchValue} handleKeyPress={handleKeyPress} handleSearch={handleSearch} onChange={setSearchValue} t={t} />
-        <hr style={{ color: "#ccc" }} />
+        <hr className="eng-document-categories-wrapper" />
         {isLoading ? (
           <Loader />
         ) : (

@@ -172,12 +172,12 @@ const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChar
     }
   };
 
-  const renderLegend = () => <span style={{ fontSize: "14px", color: "#505A5F" }}>{t(`DSS_${Digit.Utils.locale.getTransformedLocale(id)}`)}</span>;
+  const renderLegend = () => <span className="dss-custom-area-chart-text-style">{t(`DSS_${Digit.Utils.locale.getTransformedLocale(id)}`)}</span>;
 
   const renderLegendForLine = (ss, sss, index) => {
     return (
       <ul>
- <span style={{ fontSize: "14px", color: "#505A5F" }}>{keysArr?.[index]}</span>
+ <span className="dss-custom-area-chart-text-style">{keysArr?.[index]}</span>
       </ul>
     )
   }
@@ -196,13 +196,7 @@ const CustomAreaChart = ({ xDataKey = "name", yDataKey = getValue, data, setChar
     const difference = Object.keys(payloadObj).length !== 0?getDenominatedValue(value.denomination, payloadObj.payload["difference"]):""
     return (
       <div
-        style={{
-          margin: "0px",
-          padding: "10px",
-          backgroundColor: "rgb(255, 255, 255)",
-          border: "1px solid rgb(204, 204, 204)",
-          whiteSpace: "nowrap",
-        }}
+        className="dss-custom-area-chart-container-padding"
       >
         {payloadObj?.payload?.symbol?.toLowerCase() === "amount" && (
           <p>{`${formattedLabel} : ${value?.denomination === "Unit" ? " ₹" : ""} ${payloadObj?.value}${
@@ -261,13 +255,7 @@ else {
      
     return (
       <div
-        style={{
-          margin: "0px",
-          padding: "10px",
-          backgroundColor: "rgb(255, 255, 255)",
-          border: "1px solid rgb(204, 204, 204)",
-          whiteSpace: "nowrap",
-        }}
+        className="dss-custom-area-chart-container-padding"
       >
         {newObjArray.map((ele, i) => (
           <p key={i}>{ele}</p>
@@ -280,7 +268,7 @@ else {
     return <Loader />;
   }
   return (
-    <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100%" }}>
+    <div className="dss-custom-area-chart-flex-row">
       {(id === "fssmCapacityUtilization"  ||id === "fsmCapacityUtilization"  )&& (
         <p>
           {t("DSS_FSM_TOTAL_SLUDGE_TREATED")} - {totalWaste} {t("DSS_KL")}

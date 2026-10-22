@@ -2,12 +2,12 @@ import { FormComposer, Header, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-
 import cloneDeep from "lodash/cloneDeep";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation,  } from "react-router-dom";
+import { useLocation, } from "react-router-dom";
 import { newConfig as newConfigLocal } from "../../../config/wsActivationConfig";
 import { stringReplaceAll, convertDateToEpochNew, convertEpochToDates } from "../../../utils";
 import * as func from "../../../utils";
 import _ from "lodash";
-import "../../../css/ws-inline-auto.css";
+
 const ActivateConnection = () => {
     const { t } = useTranslation();
     const location = useLocation();
@@ -26,10 +26,10 @@ const ActivateConnection = () => {
     let tenantId = Digit.ULBService.getCurrentTenantId();
     tenantId ? tenantId : Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code;
     let { data: newConfig, isLoading } = Digit.Hooks.ws.useWSConfigMDMS.WSActivationConfig(stateId, {});
-    let details = cloneDeep(state?.data); 
-    let { isLoading: isappdetailsLoading, isError, data: applicationDetails, error } = Digit.Hooks.ws.useWSDetailsPage(t, tenantId, details?.applicationNo, details?.serviceType,{ privacy: Digit.Utils.getPrivacyObject() });
+    let details = cloneDeep(state?.data);
+    let { isLoading: isappdetailsLoading, isError, data: applicationDetails, error } = Digit.Hooks.ws.useWSDetailsPage(t, tenantId, details?.applicationNo, details?.serviceType, { privacy: Digit.Utils.getPrivacyObject() });
     details = cloneDeep(applicationDetails);
-    state = {data : {...applicationDetails?.applicationData}}
+    state = { data: { ...applicationDetails?.applicationData } }
     const {
         isLoading: updatingApplication,
         isError: updateApplicationError,
@@ -89,8 +89,8 @@ const ActivateConnection = () => {
         activationDetails: activationDetails
     };
     useEffect(() => {
-        if(!isappdetailsLoading){
-        setAppDetails(details);
+        if (!isappdetailsLoading) {
+            setAppDetails(details);
         }
     }, []);
 
@@ -107,7 +107,7 @@ const ActivateConnection = () => {
             if (isAppDetailsPage) window.location.href = `${window.location.origin}/upyog-ui/employee/ws/application-details?applicationNumber=${filters?.applicationNumber}&service=${filters?.service}`
         }, 3000);
         return () => clearTimeout(timer);
-      }, [isAppDetailsPage]);
+    }, [isAppDetailsPage]);
 
     const onFormValueChange = (setValue, formData, formState) => {
         if (
@@ -115,7 +115,7 @@ const ActivateConnection = () => {
             Object.keys(formState.errors).length === 1 &&
             formState.errors["owners"] &&
             Object.values(formState.errors["owners"].type).filter(
-            (ob) => ob.type === "required"
+                (ob) => ob.type === "required"
             ).length === 0 &&
             Object.getPrototypeOf(formState.errors) === Object.prototype
         ) {
@@ -125,14 +125,14 @@ const ActivateConnection = () => {
 
         const hasErrors = Object.entries(formState.errors).some(([_, error]) => {
             return !(
-            error?.type &&
-            typeof error.type === "object" &&
-            Object.keys(error.type).length === 0
+                error?.type &&
+                typeof error.type === "object" &&
+                Object.keys(error.type).length === 0
             );
         });
 
         setSubmitValve(!hasErrors);
-        };
+    };
 
     const getConvertedDate = async (dateOfTime) => {
         let dateOfReplace = stringReplaceAll(dateOfTime, "/", "-");
@@ -154,91 +154,91 @@ const ActivateConnection = () => {
     const closeToastOfError = () => { setShowToast(null); };
 
     const onSubmit = async (data) => {
-        if(!canSubmit){
+        if (!canSubmit) {
             setShowToast({ warning: true, message: "PLEASE_FILL_MANDATORY_DETAILS" });
             setTimeout(() => {
-              setShowToast(false);
+                setShowToast(false);
             }, 3000);
-          }
-          else{
-        const formDetails = cloneDeep(data);
-        const formData = Object.keys(appDetails)?.length > 0 ? { ...appDetails } : {...details?.applicationData};
-
-        if (formDetails?.connectionDetails?.[0]?.connectionType?.code) formData.connectionType = formDetails?.connectionDetails?.[0]?.connectionType?.code;
-        if (formDetails?.connectionDetails?.[0]?.waterSource?.code) formData.waterSource = formDetails?.connectionDetails?.[0]?.sourceSubData?.code;
-        if (formDetails?.connectionDetails?.[0]?.pipeSize?.size) formData.pipeSize = formDetails?.connectionDetails?.[0]?.pipeSize?.size;
-        if (formDetails?.connectionDetails?.[0]?.noOfTaps) formData.noOfTaps = formDetails?.connectionDetails?.[0]?.noOfTaps;
-
-        if (formDetails?.connectionDetails?.[0]?.noOfWaterClosets) formData.noOfWaterClosets = formDetails?.connectionDetails?.[0]?.noOfWaterClosets;
-        if (formDetails?.connectionDetails?.[0]?.noOfToilets) formData.noOfToilets = formDetails?.connectionDetails?.[0]?.noOfToilets;
-
-        if (formDetails?.plumberDetails?.[0]?.detailsProvidedBy?.code) formData.additionalDetails.detailsProvidedBy = formDetails?.plumberDetails?.[0]?.detailsProvidedBy?.code;
-        if (!formData?.plumberInfo?.[0] && formDetails?.plumberDetails?.detailsProvidedBy?.code == "ULB") formData.plumberInfo = [{}];
-        if (formDetails?.plumberDetails?.[0]?.plumberName) formData.plumberInfo[0].name = formDetails?.plumberDetails?.[0]?.plumberName;
-        if (formDetails?.plumberDetails?.[0]?.plumberLicenseNo) formData.plumberInfo[0].licenseNo = formDetails?.plumberDetails?.[0]?.plumberLicenseNo;
-        if (formDetails?.plumberDetails?.[0]?.plumberMobileNo) formData.plumberInfo[0].mobileNumber = formDetails?.plumberDetails?.[0]?.plumberMobileNo;
-
-        if (formDetails?.activationDetails?.[0]?.meterId) formData.meterId = formDetails?.activationDetails?.[0]?.meterId;
-        if (formDetails?.activationDetails?.[0]?.meterInstallationDate) formData.meterInstallationDate = await getConvertedDate(formDetails?.activationDetails?.[0]?.meterInstallationDate);
-        if (formDetails?.activationDetails?.[0]?.meterInitialReading) formData.additionalDetails.initialMeterReading = formDetails?.activationDetails?.[0]?.meterInitialReading;
-        if (formDetails?.activationDetails?.[0]?.connectionExecutionDate) formData.connectionExecutionDate = await getConvertedDate(formDetails?.activationDetails?.[0]?.connectionExecutionDate);
-
-        formData.comment = formDetails?.comments?.comments || "";
-        formData.action = filters?.action;
-        formData.wfDocuments = data?.supportingDocuments?.[0]?.fileStoreId
-        ? [
-          {
-            documentType: "Document - 1",
-            fileStoreId: data?.supportingDocuments?.[0]?.fileStoreId
-          },
-        ]
-        : [],
-        formData.processInstance = {
-            action: filters?.action,
-            comment: formDetails?.comments?.comments || "",
-            documents: data?.supportingDocuments?.[0]?.fileStoreId
-              ? [
-                {
-                  documentType: "Document - 1",
-                  fileStoreId: data?.supportingDocuments?.[0]?.fileStoreId,
-                },
-              ]
-              : []
         }
+        else {
+            const formDetails = cloneDeep(data);
+            const formData = Object.keys(appDetails)?.length > 0 ? { ...appDetails } : { ...details?.applicationData };
 
-        const reqDetails = filters?.service == "WATER"? formData?.applicationType === "WATER_RECONNECTION" ? { WaterConnection: formData, reconnectRequest:true, disconnectRequest:false } :{ WaterConnection: formData }: formData?.applicationType === "SEWERAGE_RECONNECTION" ? { SewerageConnection: formData ,reconnectRequest:true, disconnectRequest:false}:{ SewerageConnection: formData}
+            if (formDetails?.connectionDetails?.[0]?.connectionType?.code) formData.connectionType = formDetails?.connectionDetails?.[0]?.connectionType?.code;
+            if (formDetails?.connectionDetails?.[0]?.waterSource?.code) formData.waterSource = formDetails?.connectionDetails?.[0]?.sourceSubData?.code;
+            if (formDetails?.connectionDetails?.[0]?.pipeSize?.size) formData.pipeSize = formDetails?.connectionDetails?.[0]?.pipeSize?.size;
+            if (formDetails?.connectionDetails?.[0]?.noOfTaps) formData.noOfTaps = formDetails?.connectionDetails?.[0]?.noOfTaps;
 
-        if (mutate) {
-            // setIsEnableLoader(true);
-            mutate(reqDetails, {
-                onError: (error, variables) => {
-                    // setIsEnableLoader(false);
-                    setShowToast({ key: "error", message: error?.message ? error.message : error });
-                    setTimeout(closeToastOfError, 5000);
-                },
-                onSuccess: (data, variables) => {
-                    // setIsEnableLoader(false);
-                    setShowToast({ key: false, message: "WS_ACTIVATE_SUCCESS_MESSAGE_MAIN" });
-                    setIsAppDetailsPage(true);
-                    // setTimeout(closeToast(), 5000);
-                    // setTimeout(closeToastForSucsss(), 5000)
-                },
-            });
+            if (formDetails?.connectionDetails?.[0]?.noOfWaterClosets) formData.noOfWaterClosets = formDetails?.connectionDetails?.[0]?.noOfWaterClosets;
+            if (formDetails?.connectionDetails?.[0]?.noOfToilets) formData.noOfToilets = formDetails?.connectionDetails?.[0]?.noOfToilets;
+
+            if (formDetails?.plumberDetails?.[0]?.detailsProvidedBy?.code) formData.additionalDetails.detailsProvidedBy = formDetails?.plumberDetails?.[0]?.detailsProvidedBy?.code;
+            if (!formData?.plumberInfo?.[0] && formDetails?.plumberDetails?.detailsProvidedBy?.code == "ULB") formData.plumberInfo = [{}];
+            if (formDetails?.plumberDetails?.[0]?.plumberName) formData.plumberInfo[0].name = formDetails?.plumberDetails?.[0]?.plumberName;
+            if (formDetails?.plumberDetails?.[0]?.plumberLicenseNo) formData.plumberInfo[0].licenseNo = formDetails?.plumberDetails?.[0]?.plumberLicenseNo;
+            if (formDetails?.plumberDetails?.[0]?.plumberMobileNo) formData.plumberInfo[0].mobileNumber = formDetails?.plumberDetails?.[0]?.plumberMobileNo;
+
+            if (formDetails?.activationDetails?.[0]?.meterId) formData.meterId = formDetails?.activationDetails?.[0]?.meterId;
+            if (formDetails?.activationDetails?.[0]?.meterInstallationDate) formData.meterInstallationDate = await getConvertedDate(formDetails?.activationDetails?.[0]?.meterInstallationDate);
+            if (formDetails?.activationDetails?.[0]?.meterInitialReading) formData.additionalDetails.initialMeterReading = formDetails?.activationDetails?.[0]?.meterInitialReading;
+            if (formDetails?.activationDetails?.[0]?.connectionExecutionDate) formData.connectionExecutionDate = await getConvertedDate(formDetails?.activationDetails?.[0]?.connectionExecutionDate);
+
+            formData.comment = formDetails?.comments?.comments || "";
+            formData.action = filters?.action;
+            formData.wfDocuments = data?.supportingDocuments?.[0]?.fileStoreId
+                ? [
+                    {
+                        documentType: "Document - 1",
+                        fileStoreId: data?.supportingDocuments?.[0]?.fileStoreId
+                    },
+                ]
+                : [],
+                formData.processInstance = {
+                    action: filters?.action,
+                    comment: formDetails?.comments?.comments || "",
+                    documents: data?.supportingDocuments?.[0]?.fileStoreId
+                        ? [
+                            {
+                                documentType: "Document - 1",
+                                fileStoreId: data?.supportingDocuments?.[0]?.fileStoreId,
+                            },
+                        ]
+                        : []
+                }
+
+            const reqDetails = filters?.service == "WATER" ? formData?.applicationType === "WATER_RECONNECTION" ? { WaterConnection: formData, reconnectRequest: true, disconnectRequest: false } : { WaterConnection: formData } : formData?.applicationType === "SEWERAGE_RECONNECTION" ? { SewerageConnection: formData, reconnectRequest: true, disconnectRequest: false } : { SewerageConnection: formData }
+
+            if (mutate) {
+                // setIsEnableLoader(true);
+                mutate(reqDetails, {
+                    onError: (error, variables) => {
+                        // setIsEnableLoader(false);
+                        setShowToast({ key: "error", message: error?.message ? error.message : error });
+                        setTimeout(closeToastOfError, 5000);
+                    },
+                    onSuccess: (data, variables) => {
+                        // setIsEnableLoader(false);
+                        setShowToast({ key: false, message: "WS_ACTIVATE_SUCCESS_MESSAGE_MAIN" });
+                        setIsAppDetailsPage(true);
+                        // setTimeout(closeToast(), 5000);
+                        // setTimeout(closeToastForSucsss(), 5000)
+                    },
+                });
+            }
         }
+    };
+    if (isEnableLoader || isLoading || isappdetailsLoading) {
+        //updatingApplication || 
+        return <Loader />;
     }
-  };
-  if (isEnableLoader || isLoading || isappdetailsLoading) {
-    //updatingApplication || 
-    return <Loader />;
-  }
-  return <React.Fragment>
-            <div className="ws-auto-256">
-                <Header>{t(config.head)}</Header>
-            </div>
-            <FormComposer config={config.body} userType={"employee"} defaultValues={defaultValues} onSubmit={onSubmit} label={t("WF_EMPLOYEE_NEWSW1_ACTIVATE_CONNECTION")} onFormValueChange={onFormValueChange}
-    // isDisabled={!canSubmit}
-    ></FormComposer>
-            {showToast && <Toast error={showToast.key} label={t(showToast?.message)} warning={showToast?.warning} onClose={closeToast} />}
-        </React.Fragment>;
+    return <React.Fragment>
+        <div className="ws-index-ml-md">
+            <Header>{t(config.head)}</Header>
+        </div>
+        <FormComposer config={config.body} userType={"employee"} defaultValues={defaultValues} onSubmit={onSubmit} label={t("WF_EMPLOYEE_NEWSW1_ACTIVATE_CONNECTION")} onFormValueChange={onFormValueChange}
+        // isDisabled={!canSubmit}
+        ></FormComposer>
+        {showToast && <Toast error={showToast.key} label={t(showToast?.message)} warning={showToast?.warning} onClose={closeToast} />}
+    </React.Fragment>;
 };
 export default ActivateConnection;

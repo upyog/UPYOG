@@ -100,14 +100,9 @@ const Chart = ({ data, moduleLevel, overview = false }) => {
       <div className={`tooltip`}>
         <p className="p1">{t(data?.name)}</p>
         <span
-          className="tooltiptext"
-          style={{
-            width: t(`TIP_${data.name}`).length < 40 ? "max-content" : "fit-content",
-            height: t(`TIP_${data.name}`).length < 40 ? "fit-content" : "max-content",
-            whiteSpace: "normal",
-          }}
+          className={`tooltiptext ${t(`TIP_${data.name}`).length < 40 ? "width-max-content" : "width-fit-content"}`}
         >
-          <span style={{ fontSize: "14px", fontWeight: "400px", color: "white" }}>{t(`TIP_${data.name}`)}</span>
+          <span className="dss-home-text-style">{t(`TIP_${data.name}`)}</span>
         </span>
       </div>
       {data.name === "NATIONAL_DSS_OVERVIEW_CITIZEN_FEEDBACK_SCORE" ?
@@ -256,10 +251,10 @@ console.log("bottomIndexbottomIndex",bottomIndex)
 const renderLegend = (value) => {
 
   return (
-    <li style={{display:"contents"}}>
+    <li className="dss-home-wrapper">
       {
         value == "TotalCollection"?
-          <span style={{ fontSize: "14px", color: "#505A5F" }}>{t(`DSS_${Digit.Utils.locale.getTransformedLocale(value)}`)}(Cr)</span>:<span style={{ fontSize: "14px", color: "#505A5F" }}>{t(`DSS_${Digit.Utils.locale.getTransformedLocale(value)}`)}</span>
+          <span className="dss-custom-area-chart-text-style">{t(`DSS_${Digit.Utils.locale.getTransformedLocale(value)}`)}(Cr)</span>:<span className="dss-custom-area-chart-text-style">{t(`DSS_${Digit.Utils.locale.getTransformedLocale(value)}`)}</span>
         
       }
     </li>
@@ -425,8 +420,8 @@ const Home = ({ stateCode }) => {
   return (
     <FilterContext.Provider value={provided}>
       <div ref={fullPageRef}>
-        <div className="options" style={{ margin: "10px" }}>
-        <Header styles={{ marginBottom: "0px" }}><span style={{color:"#a82227"}}>UMEED</span> - <span><span style={{color:"#a82227"}}>U</span>rban <span style={{color:"#a82227"}}>M</span>onitoring for <span style={{color:"#a82227"}}>E</span>fficient and <span style={{color:"#a82227"}}>E</span>ffective <span style={{color:"#a82227"}}>D</span>ecision-making</span></Header>
+        <div className="options dss-home-spacing">
+        <Header styles={{ marginBottom: "0px" }}><span className="dss-home-wrapper-2">UMEED</span> - <span><span className="dss-home-wrapper-2">U</span>rban <span className="dss-home-wrapper-2">M</span>onitoring for <span className="dss-home-wrapper-2">E</span>fficient and <span className="dss-home-wrapper-2">E</span>ffective <span className="dss-home-wrapper-2">D</span>ecision-making</span></Header>
           {mobileView ? null : (
             <div>
               <div className="mrlg">
@@ -487,27 +482,23 @@ const Home = ({ stateCode }) => {
                       key={index}
                     >
                       <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                        }}
+                        className="dss-home-flex-row"
                       >
                         <div className="dss-card-header">
                           {Icon(item.name)}
-                          <p style={{ marginLeft: "20px" }}>
+                          <p className="dss-home-spacing-2">
                             {selectedState === "" ? t(item.name) : t(`DSS_TB_${Digit.Utils.locale.getTransformedLocale(selectedState)}`)}
                           </p>
                           {selectedState != "" && item.name.includes("PROJECT_STAUS") && (
-                            <span style={{ fontSize: "14px", display: "block" }}>
+                            <span className="dss-home-text-style-2">
                               {t(`DSS_TOTAL_ULBS`)} {Number(totalCount).toFixed()} | {t(`DSS_LIVE_ULBS`)} {Number(liveCount).toFixed()}
                             </span>
                           )}
                         </div>
                         {item?.charts?.[0]?.chartType == "map" && (
-                          <div className="dss-card-header" style={{ width: "60%" }}>
+                          <div className="dss-card-header dss-home-wrapper-3">
                             {Icon(row.vizArray?.[1]?.name)}
-                            <p style={{ marginLeft: "20px", fontSize: "24px", fontFamily: "Roboto, sans-serif", fontWeight: 500, color: "#000000" }}>
+                            <p className="dss-home-spacing-3">
                               {selectedState === ""
                                 ? t(row.vizArray?.[1]?.name)
                                 : t(`${Digit.Utils.locale.getTransformedLocale(selectedState)}_${row.vizArray?.[1]?.name}`)}
@@ -556,11 +547,7 @@ const Home = ({ stateCode }) => {
                       key={index}
                     >
                       <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                        }}
+                        className="dss-home-flex-row"
                       >
                        
                       </div>
@@ -590,24 +577,16 @@ const Home = ({ stateCode }) => {
                       key={index}
                       // onClick={() => routeTo(`/upyog-ui/employee/dss/dashboard/${item.ref.url}`)}
                     >
-                      <div style={{ justifyContent: "space-between", display: "flex", flexDirection: "row" }}>
-                        <div className="dss-card-header" style={{ marginBottom: "10px" }}>
+                      <div className="dss-home-flex-row-2">
+                        <div className="dss-card-header dss-home-bottom-spacing">
                           {Icon(item.name, colors[index].dark)}
-                          <p style={{ marginLeft: "20px" }}>{t(item.name)}</p>
+                          <p className="dss-home-spacing-2">{t(item.name)}</p>
                         </div>
                         {item.vizType == "collection" ? (
                           <div
-                            style={{
-                              float: "right",
-                              textAlign: "right",
-                              color: "#a82227",
-                              fontSize: 16,
-                              fontWeight: "bold",
-                              display: "flex",
-                              flexDirection: "row",
-                            }}
+                            className="dss-home-flex-container"
                           >
-                            {!isLandingPage && <span><span style={{ paddingRight: 10 }}>{t("DSS_OVERVIEW")}</span>
+                            {!isLandingPage && <span><span className="dss-home-spacing-4">{t("DSS_OVERVIEW")}</span>
                               <span>
                                 {" "}
                                 <Arrow_Right />
@@ -616,7 +595,7 @@ const Home = ({ stateCode }) => {
                         ) : null}
                       </div>
 
-                      <div className="dss-card-body" style={{marginBottom: isLandingPage ? "20px" : ""}}>
+                      <div className={`dss-card-body ${isLandingPage ? "dss-card-body-landing" : ""}`}>
                         {item.charts.map((chart, key) => (
                           <div style={item.vizType == "collection" ? { width: Digit.Utils.browser.isMobile() ? "50%" : "25%" } : { width: "50%" }}>
                             <Chart data={chart} key={key} moduleLevel={item.moduleLevel} overview={item.vizType === "collection"} />
@@ -624,11 +603,11 @@ const Home = ({ stateCode }) => {
                         ))}
                       </div>
                       {isLandingPage && <div
-                        style={{ borderRadius: "0px 0px 4px 4px", position: "absolute", display: "flex", justifyContent: "center", alignItems: "center", bottom: "0px", left: "0px", width: "100%", background: item.vizType == "collection" || item.name.includes("PROJECT_STAUS") || item.name.includes("LIVE_ACTIVE_ULBS") ? colors?.[index]?.defaultColor : colors?.[index]?.dark }}
+                        style={(item.vizType === "collection" || item.name.includes("PROJECT_STAUS") || item.name.includes("LIVE_ACTIVE_ULBS")) ? { background: colors?.[index]?.defaultColor } : { background: colors?.[index]?.dark }} className="dss-card-landing-btn"
                         onClick={() => routeTo(`/upyog-ui/employee/dss/dashboard/${item.ref.url}`)}
                       >
-                        <div style={{ padding: "10px", display: "flex", justifyContent: "center", alignItems: "center", height: "40px" }}>
-                          <span style={{ marginRight: "10px", color: "white" }}>
+                        <div className="dss-home-flex-row-3">
+                          <span className="dss-home-spacing-5">
                             {`${t("COMMON_DSS_VIEW_DASH_BOARD_LABEL")} `}
                           </span>
                           <Arrow_Right_White />

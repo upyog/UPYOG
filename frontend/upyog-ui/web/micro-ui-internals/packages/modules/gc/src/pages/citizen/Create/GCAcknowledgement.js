@@ -27,7 +27,7 @@ const BannerPicker = (props) => {
       applicationNumber={props?.data?.garbageAccounts?.[0].grbgApplication?.applicationNo}
       info={props?.isSuccess ? props.t("GC_APPLICATION_NO") : ""}
       successful={props?.isSuccess}
-      style={{ width: "100%" }}
+      className="gc-gcacknowledgement-fullwidth"
     />
   );
 };

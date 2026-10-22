@@ -7,7 +7,7 @@ import ESTMyApplications from "./MyApplications";
 
 const CitizenApp = () => {
   return (
-    <span className="citizen" style={{ width: "100%" }}>
+    <span className="citizen est-estcard-fullwidth">
       <AppContainer>
         <BackButton>Back</BackButton>
         <Routes>

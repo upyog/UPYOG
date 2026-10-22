@@ -201,8 +201,8 @@ const OwnerForm = _props => {
   };
   console.log('Comming From API:- ', comingDataFromAPI?.additionalDetails);
   return <React.Fragment>
-            <div className="asset-auto-105">
-                <div className="asset-auto-106">
+            <div className="asset-edit-asset-details_backup_after-dynamically-item">
+                <div className="asset-edit-asset-details_backup_after-dynamically-bordered">
 
                     <React.Fragment>
                         {formJson.map((row, index) => <div key={index + 'dd'}>

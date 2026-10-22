@@ -80,21 +80,20 @@ const ApplicationDetails = () => {
   return (
     <Fragment>
       <div className="cardHeaderWithOptions" style={isMobile ? {} : {maxWidth:"980px"}}>
-        {/* <div style={{display:'flex'}}> */}
+        {/* <div className="custom-style"> */}
         <Header styles={{ fontSize: "32px", marginLeft: isMobile ? "0px" : "10px" }}>{t("BPA_TASK_DETAILS_HEADER")}</Header>
-        <div style={{zIndex: "10",display:"flex",flexDirection:"row-reverse",alignItems:"center",marginTop:"-25px"}}>
+        <div className="obps-index-flex-row">
          
         {reciept_data?.Payments?.length > 0 && (
-          // <div style={{right: "3%", top: "20px", position: "absolute"}}>
+          // <div className="custom-style">
           <MultiLink
-            className="multilinkWrapper"
+            className="multilinkWrapper obps-index-wrapper"
             onHeadClick={() => setShowOptions(!showOptions)}
             displayOptions={showOptions}
             options={dowloadOptions}
-            style={{ top: "90px" }}
           />
         )}        
-        <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+        <LinkButton label={t("VIEW_TIMELINE")} className="obps-index-action-btn" onClick={handleViewTimeline}></LinkButton>
         {/* </div> */}
         </div>
         
@@ -155,20 +154,20 @@ const ApplicationDetails = () => {
                       {t(`BPAREG_HEADER_${stringReplaceAll(document?.documentType?.toUpperCase(), ".", "_")}`)}
                     </CardSectionHeader>
                     {document?.info ? (
-                      <div style={{ fontSize: "12px", color: "#505A5F", fontWeight: 400, lineHeight: "15px", margin: "10px 0px" }}>{`${t(
+                      <div className="obps-index-spacing-2">{`${t(
                         document?.info
                       )}`}</div>
                     ) : null}
                     <a target="_blank" href={documents[document.fileStoreId]?.split(",")[0]}>
                       <PDFSvg />
                     </a>
-                    <p style={{ marginTop: "8px", fontSize: "16px", lineHeight: "19px", color: "#505A5F", fontWeight: "400" }}>
+                    <p className="obps-index-top-spacing">
                       {t(`BPAREG_HEADER_${stringReplaceAll(document?.documentType?.toUpperCase(), ".", "_")}`)}
                     </p>
-                    {/* <p style={{ marginTop: "8px", fontWeight: "bold", fontSize: "16px", lineHeight: "19px", color: "#505A5F", fontWeight: "400" }}>{decodeURIComponent( documents[document.fileStoreId]?.split(",")[0]?.split("?")[0]?.split("/")?.pop()?.slice(13))}</p> */}
+                    {/* <p className="custom-style">{decodeURIComponent( documents[document.fileStoreId]?.split(",")[0]?.split("?")[0]?.split("/")?.pop()?.slice(13))}</p> */}
                   </div>
                   {License?.tradeLicenseDetail?.applicationDocuments?.length != index + 1 ? (
-                    <hr style={{ color: "#cccccc", backgroundColor: "#cccccc", height: "2px", marginTop: "20px", marginBottom: "20px" }} />
+                    <hr className="obps-obpsdocuments-holder-top-spacing" />
                   ) : null}
                 </Fragment>
               );

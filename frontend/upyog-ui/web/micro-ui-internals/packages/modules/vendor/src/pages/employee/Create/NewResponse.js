@@ -28,7 +28,7 @@ const BannerPicker = (props) => {
       applicationNumber={props.data?.VendorAdditionalDetails?.[0].registrationNo}
       info={props.isSuccess ? props.t("ES_VENDOR_RESPONSE_CREATE_LABEL") : ""}
       successful={props.isSuccess}
-      style={{width: "100%"}}
+      className="vnd-search-fullwidth"
     />
   );
 };

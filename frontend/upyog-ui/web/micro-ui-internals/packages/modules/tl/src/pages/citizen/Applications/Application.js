@@ -2,7 +2,6 @@ import { Card, Header, KeyNote, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-r
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import "../../../css/tl-inline-auto.css";
 const TLMyApplications = ({
   view
 }) => {
@@ -35,24 +34,24 @@ const TLMyApplications = ({
     return <Loader />;
   }
   return <React.Fragment>
-      <Header>{`${t("TL_MY_APPLICATIONS_HEADER")}`}</Header>
-      {data?.map(application => {
+    <Header>{`${t("TL_MY_APPLICATIONS_HEADER")}`}</Header>
+    {data?.map(application => {
       return <div>
-            <Card>
-              {Object.keys(application)?.filter(e => e !== "raw" && application[e] !== null)?.map(item => <KeyNote keyValue={t(item)} note={t(application[item])} />)}
-              <Link to={`/upyog-ui/citizen/tl/tradelicence/application/${application?.raw?.applicationNumber}/${application.raw?.tenantId}`}>
-                <SubmitBar label={t(application?.raw?.status != "PENDINGPAYMENT" ? "TL_VIEW_DETAILS" : "TL_VIEW_DETAILS_PAY")} />
-              </Link>{" "}
-              {application?.raw?.status === "PENDINGPAYMENT" ? <Link to={{
+        <Card>
+          {Object.keys(application)?.filter(e => e !== "raw" && application[e] !== null)?.map(item => <KeyNote keyValue={t(item)} note={t(application[item])} />)}
+          <Link to={`/upyog-ui/citizen/tl/tradelicence/application/${application?.raw?.applicationNumber}/${application.raw?.tenantId}`}>
+            <SubmitBar label={t(application?.raw?.status != "PENDINGPAYMENT" ? "TL_VIEW_DETAILS" : "TL_VIEW_DETAILS_PAY")} />
+          </Link>{" "}
+          {application?.raw?.status === "PENDINGPAYMENT" ? <Link to={{
             pathname: `/upyog-ui/citizen/payment/collect/${data?.[0]?.raw?.businessService}/${application?.raw?.applicationNumber}`
           }}>
-                    <div className="tl-auto-149">
-                    <SubmitBar label={t("COMMON_MAKE_PAYMENT")} />
-                    </div>
-                  </Link> : null}
-            </Card>
-          </div>;
+            <div className="tl-application-mt-sm">
+              <SubmitBar label={t("COMMON_MAKE_PAYMENT")} />
+            </div>
+          </Link> : null}
+        </Card>
+      </div>;
     })}
-    </React.Fragment>;
+  </React.Fragment>;
 };
 export default TLMyApplications;

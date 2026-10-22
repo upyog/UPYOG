@@ -26,7 +26,7 @@ const SelectCategory = ({ userType, t, setValue, onSelect, config, data, formDat
   return (
     <React.Fragment>
       <LabelFieldPair>
-        <CardLabel style={{ fontWeight: "bold" }}>{t("ES_COMMON_DOC_CATEGORY") + "*"}</CardLabel>
+        <CardLabel className="eng-engagement-docs-ulb-card">{t("ES_COMMON_DOC_CATEGORY") + "*"}</CardLabel>
         <Controller
           name={config.key}
           control={control}

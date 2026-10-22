@@ -16,7 +16,7 @@ const SearchFields = ({ register, control, reset, tenantId, t }) => {
     title: t("ERR_DEFAULT_INPUT_FIELD_MSG")
   };
   return <>
-      <SearchField className="ws-auto-26">
+      <SearchField className="ws-search-fields2-link-full-width">
         <label>{t("WS_PROPERTY_ID_LABEL")}</label>
         <TextInput name="propertyId" {...register("propertyId")} />
       </SearchField>

@@ -108,7 +108,7 @@ const SelectPaymentType = (props) => {
         return <span>
           {/* {index == 0 && "CCF"} */}
           {data?.linkPrefix && <span>{t(`${data?.linkPrefix}_`)}</span>}
-          {data?.link && <span id={data?.linkId} onClick={(e) => { onLinkClick(e) }} style={{ color: "#a82227", cursor: "pointer" }}>{t(`${data?.link}_`)}</span>}
+          {data?.link && <span id={data?.linkId} onClick={(e) => { onLinkClick(e) }} className="cmn-index-clickable">{t(`${data?.link}_`)}</span>}
           {data?.linkPostfix && <span>{t(`${data?.linkPostfix}_`)}</span>}
           {(index == isCCFEnabled?.checkBoxLabels?.length - 1) && t("LABEL")}
         </span>
@@ -182,9 +182,9 @@ const SelectPaymentType = (props) => {
             inputStyle={{ marginTop: "11px" }}
             innerStyles={{ display: "flex" }}
           />
-          <div style={{ position: "relative" }}>
+          <div className="cmn-bill-details-wrapper">
             {paymentType?.code !== optionFirst?.code && !userInfo ? (
-              <div style={{ position: "relative" }}>
+              <div className="cmn-bill-details-wrapper">
                 <span>
                   <span>{t("PT_PAYERS_MOBILE_NO")}</span>
                   <MobileNumber
@@ -196,7 +196,7 @@ const SelectPaymentType = (props) => {
                 <span>
                   <span>{t("PT_PAYERS_NAME")}</span>
                   <TextInput
-                    //style={{ width: "40%" }}
+                    //className="custom-style"
 
                     onChange={(e) => onChangePayersName(e.target.value)}
                     value={payersName}
@@ -208,11 +208,10 @@ const SelectPaymentType = (props) => {
 
           {isCCFEnabled?.isCitizenConsentFormEnabled && !isLoggedIn?.access_token && <div>
             <CheckBox
-              className="form-field"
+              className="form-field cmn-index-top-spacing"
               label={checkLabels()}
               value={isCheckBox}
               checked={isCheckBox}
-              style={{ marginTop: "5px", marginLeft: "55px" }}
               styles={{marginBottom: "30px"}}
               onChange={setTermsAndPolicyDetails}
             />

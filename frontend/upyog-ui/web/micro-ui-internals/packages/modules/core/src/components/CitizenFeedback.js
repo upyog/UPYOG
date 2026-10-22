@@ -140,7 +140,7 @@ const CitizenFeedback = ({popup = false, onClose, setShowToast, data}) => {
         <Card>
           <div style={popup ? {display:"flex", justifyContent: "space-between"} : {}}>
           <CardHeader>{t(getCardHeaderAndText("Header")) || t(`PT_RATE_HELP_TEXT`)}</CardHeader>
-          {popup && <span style={{marginTop:"8px"}} onClick={() => onClose(false)}>
+          {popup && <span className="core-citizen-feedback-top-spacing" onClick={() => onClose(false)}>
                   <CloseSvg />
             </span>}
           </div>
@@ -152,7 +152,7 @@ const CitizenFeedback = ({popup = false, onClose, setShowToast, data}) => {
              name="" 
              minLength = "64"
              onChange={onComments}></TextArea>
-             {comment && comment?.length < 64 && <CardLabelError style={{marginTop:"-20px", marginBottom:"25px"}}>{t("CS_MIN_LENGTH_64")}</CardLabelError>}
+             {comment && comment?.length < 64 && <CardLabelError className="core-citizen-feedback-card">{t("CS_MIN_LENGTH_64")}</CardLabelError>}
           </div>}
           <SubmitBar label={t(`${"PT"}_SUBMIT`)} onSubmit={onSubmit} disabled={getCommentCheck()} />
           {!popup && <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : {marginTop:"8px"}}>

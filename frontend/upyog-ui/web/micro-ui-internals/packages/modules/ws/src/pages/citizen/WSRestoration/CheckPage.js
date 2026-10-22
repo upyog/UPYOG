@@ -163,12 +163,12 @@ const CheckPage = () => {
     }}>{t("WS_COMMON_SUMMARY")}</Header>
     <DisconnectTimeline currentStep={3} />
   
-    <Card className="ws-auto-247">
-      <div className="ws-auto-248">
+    <Card className="ws-check-page-card">
+      <div className="ws-check-page-card-2">
       <CardHeader styles={{
           fontSize: "28px"
         }}>{t("WS_RESTORATION_APPLICATION_DETAILS")}</CardHeader>
-      <LinkButton label={<EditIcon className="ws-auto-250" />} onClick={() => routeTo(`${routeLink}/application-form`)} className="ws-auto-249" />
+      <LinkButton label={<EditIcon className="ws-check-page-btn-relative-mt-neg" />} onClick={() => routeTo(`${routeLink}/application-form`)} className="ws-check-page-btn" />
       </div>
       <StatusTable>
         <Row className="border-none" label={t("WS_RESTORATION_CONSUMER_NUMBER")} text={value.connectionNo} />
@@ -177,7 +177,7 @@ const CheckPage = () => {
       </StatusTable>
     </Card>
  
-    <Card className="ws-auto-251">
+    <Card className="ws-check-page-card">
    
         <SubmitBar label={t("CS_COMMON_SUBMIT")} onSubmit={() => onSubmit(value?.WSDisconnectionForm)} />
       </Card>

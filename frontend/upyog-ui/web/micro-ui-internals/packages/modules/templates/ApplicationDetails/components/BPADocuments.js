@@ -192,28 +192,27 @@ function SelectDocument({
     }
 
     return (
-        <div style={{ marginBottom: "24px", maxWidth: "950px", minWidth: "280px", background: "#FAFAFA", borderRadius: "4px", border: "1px solid #D6D5D4", padding: "8px" }}>
-            <CardSubHeader style={{ marginBottom: "8px", paddingBottom: "9px", color: "#0B0C0C", fontSize: "16px", lineHeight: "19px" }}>{`${t(doc?.code)}`}</CardSubHeader>
+        <div className="tmpl-bpadocuments-bottom-spacing">
+            <CardSubHeader className="tmpl-bpadocuments-header">{`${t(doc?.code)}`}</CardSubHeader>
             {doc?.uploadedDocuments?.length && <DocumentsPreview documents={doc?.uploadedDocuments} svgStyles={{ width: "100px", height: "100px", viewBox: "0 0 25 25", minWidth: "100px" }} />}
             {
                 checkEnablingDocs ?
-                    <div style={{ marginTop: "20px" }}>
-                        <LabelFieldPair style={{width: "100%"}}>
-                            <CardLabel style={{marginTop:"-10px", width :"100%"}}>{doc?.required ? `${t(doc?.code)}* ` : `${t(doc?.code)}`}</CardLabel>
+                    <div className="tmpl-bpadocuments-top-spacing">
+                        <LabelFieldPair className="tmpl-bpadocuments-fullwidth">
+                            <CardLabel className="tmpl-bpadocuments-fullwidth-2">{doc?.required ? `${t(doc?.code)}* ` : `${t(doc?.code)}`}</CardLabel>
                             <Dropdown
-                                className="form-field"
+                                className="form-field tmpl-bpadocuments-fullwidth"
                                 t={t}
                                 isMandatory={false}
                                 option={doc?.dropdownData}
                                 selected={selectedDocument}
                                 optionKey="i18nKey"
                                 select={handleSelectDocument}
-                                style={{width: "100%"}}
                             />
                         </LabelFieldPair>
-                        <LabelFieldPair style={{width: "100%"}}>
-                            <CardLabel className="card-label-smaller" style={{ width :"100%"}}></CardLabel>
-                            <div className="field"  style={{width: "100%"}}>
+                        <LabelFieldPair className="tmpl-bpadocuments-fullwidth">
+                            <CardLabel className="card-label-smaller tmpl-bpadocuments-fullwidth"></CardLabel>
+                            <div className="field tmpl-bpadocuments-fullwidth">
                                 <MultiUploadWrapper
                                     module="BPA"
                                     tenantId={tenantId}

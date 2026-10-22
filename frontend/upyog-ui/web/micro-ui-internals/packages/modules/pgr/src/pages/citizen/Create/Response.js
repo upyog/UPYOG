@@ -103,7 +103,7 @@ const Response = (props) => {
       <BannerPicker apiResponse={apiResponse} />
       <CardText>{t("CS_COMMON_TRACK_COMPLAINT_TEXT")}</CardText>
       {workflowAction !== "RATE" && (
-        <div style={{ marginBottom: "10px" }}>
+        <div className="pgr-response-bottom-spacing">
           <SubmitBar label={t("PT_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />
         </div>
       )}

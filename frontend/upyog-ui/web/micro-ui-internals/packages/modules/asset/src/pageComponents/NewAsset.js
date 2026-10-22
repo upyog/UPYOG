@@ -236,10 +236,10 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
       >
         <React.Fragment>
           <div>
-            {`${t("AST_MODE_OF_POSSESSION_OR_ACQUISITION")}`} <span className="asset-auto-137">*</span>
-            <div className="tooltip asset-auto-138">
+            {`${t("AST_MODE_OF_POSSESSION_OR_ACQUISITION")}`} <span className="asset-new-link-red">*</span>
+            <div className="tooltip asset-new-link">
               <InfoBannerIcon />
-              <span className="tooltiptext asset-auto-139">{`${t("ASSET_ACQUISITION_METHOD")} `}</span>
+              <span className="tooltiptext asset-new-link-ml-md">{`${t("ASSET_ACQUISITION_METHOD")} `}</span>
             </div>
           </div>
           <Controller
@@ -264,10 +264,10 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
             )}
           />
           <div>
-            {`${t("AST_PURCHASE_DATE")}`} <span className="asset-auto-140">*</span>
-            <div className="tooltip asset-auto-141">
+            {`${t("AST_PURCHASE_DATE")}`} <span className="asset-new-link-red">*</span>
+            <div className="tooltip asset-new-link">
               <InfoBannerIcon />
-              <span className="tooltiptext asset-auto-142">{`${t("ASSET_PURCHASE_DATE")}`}</span>
+              <span className="tooltiptext asset-new-link-ml-md">{`${t("ASSET_PURCHASE_DATE")}`}</span>
             </div>
           </div>
 
@@ -284,11 +284,11 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
               required: t("CORE_COMMON_REQUIRED_ERRMSG"),
               validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
             }}
-            className="asset-auto-143"
+            className="asset-new-half-width"
           />
 
           <div>
-            {`${t("AST_PURCHASE_ORDER")}`} <span className="asset-auto-144">*</span>
+            {`${t("AST_PURCHASE_ORDER")}`} <span className="asset-new-link-red">*</span>
           </div>
           <TextInput
             t={t}
@@ -304,14 +304,14 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
               type: "text",
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}
-            className="asset-auto-145"
+            className="asset-new-half-width"
           />
 
           <div>
-            {`${t("AST_INVOICE_DATE")}`} <span className="asset-auto-146">*</span>
-            <div className="tooltip asset-auto-147">
+            {`${t("AST_INVOICE_DATE")}`} <span className="asset-new-link-red">*</span>
+            <div className="tooltip asset-new-link">
               <InfoBannerIcon />
-              <span className="tooltiptext asset-auto-148">{`${t("ASSET_INVOICE_ISSUE_DATE")} `}</span>
+              <span className="tooltiptext asset-new-link-ml-md">{`${t("ASSET_INVOICE_ISSUE_DATE")} `}</span>
             </div>
           </div>
           <TextInput
@@ -334,14 +334,14 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                 return true;
               },
             }}
-            className="asset-auto-149"
+            className="asset-new-half-width"
           />
 
           <div>
-            {`${t("AST_INVOICE_NUMBER")}`} <span className="asset-auto-150">*</span>
-            <div className="tooltip asset-auto-151">
+            {`${t("AST_INVOICE_NUMBER")}`} <span className="asset-new-link-red">*</span>
+            <div className="tooltip asset-new-link">
               <InfoBannerIcon />
-              <span className="tooltiptext asset-auto-152">{`${t("ASSET_INVOICE_ISSUE_DATE")} `}</span>
+              <span className="tooltiptext asset-new-link-ml-md">{`${t("ASSET_INVOICE_ISSUE_DATE")} `}</span>
             </div>
           </div>
           <TextInput
@@ -358,14 +358,14 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
               type: "text",
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}
-            className="asset-auto-153"
+            className="asset-new-half-width"
           />
 
           <div>
-            {`${t("AST_LIFE")}`} <span className="asset-auto-154">*</span>
-            <div className="tooltip asset-auto-155">
+            {`${t("AST_LIFE")}`} <span className="asset-new-link-red">*</span>
+            <div className="tooltip asset-new-link">
               <InfoBannerIcon />
-              <span className="tooltiptext asset-auto-156">{`${t("ASSET_USEFUL_LIFECYCLE")} `}</span>
+              <span className="tooltiptext asset-new-link-ml-md">{`${t("ASSET_USEFUL_LIFECYCLE")} `}</span>
             </div>
           </div>
           <TextInput
@@ -382,17 +382,17 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
               type: "number",
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}
-            className="asset-auto-157"
+            className="asset-new-half-width"
           />
 
           <div>
-            {`${t("AST_LOCATION_DETAILS")}`} <span className="asset-auto-158">*</span>
-            <div className="tooltip asset-auto-159">
+            {`${t("AST_LOCATION_DETAILS")}`} <span className="asset-new-link-red">*</span>
+            <div className="tooltip asset-new-link">
               <InfoBannerIcon />
-              <span className="tooltiptext asset-auto-160">{`${t("ASSET_LOCATION_DETAILS")} `}</span>
+              <span className="tooltiptext asset-new-link-ml-md">{`${t("ASSET_LOCATION_DETAILS")} `}</span>
             </div>
           </div>
-          <div className="asset-auto-161">
+          <div className="asset-new-link-half-width-relative">
             <TextInput
               t={t}
               type={"text"}
@@ -408,10 +408,10 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                 type: "text",
                 title: t("VALID_LAT_LONG"),
               })}
-              className="asset-auto-162"
+              className="asset-new-flex-1"
             />
             <div
-              className="butt-icon asset-auto-163"
+              className="butt-icon asset-new-icon-absolute-row-center"
               onClick={() => {
                 fetchCurrentLocation("location");
               }}
@@ -423,10 +423,10 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
           </div>
 
           <div>
-            {`${t("AST_PURCHASE_COST")}`} <span className="asset-auto-164">*</span>
-            <div className="tooltip asset-auto-165">
+            {`${t("AST_PURCHASE_COST")}`} <span className="asset-new-link-red">*</span>
+            <div className="tooltip asset-new-link">
               <InfoBannerIcon />
-              <span className="tooltiptext asset-auto-166">{`${t("ASSET_PURCHASE_COST")} `}</span>
+              <span className="tooltiptext asset-new-link-ml-md">{`${t("ASSET_PURCHASE_COST")} `}</span>
             </div>
           </div>
           <TextInput
@@ -444,14 +444,14 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
               type: "number",
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}
-            className="asset-auto-167"
+            className="asset-new-half-width"
           />
 
           <div>
-            {`${t("AST_ACQUISITION_COST")}`} <span className="asset-auto-168">*</span>
-            <div className="tooltip asset-auto-169">
+            {`${t("AST_ACQUISITION_COST")}`} <span className="asset-new-link-red">*</span>
+            <div className="tooltip asset-new-link">
               <InfoBannerIcon />
-              <span className="tooltiptext asset-auto-170">{`${t("ASSET_ACQUISITION_COST")} `}</span>
+              <span className="tooltiptext asset-new-link-ml-md">{`${t("ASSET_ACQUISITION_COST")} `}</span>
             </div>
           </div>
           <TextInput
@@ -469,14 +469,14 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
               type: "number",
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}
-            className="asset-auto-171"
+            className="asset-new-half-width"
           />
 
           <div>
-            {`${t("AST_BOOK_VALUE")}`} <span className="asset-auto-172">*</span>
-            <div className="tooltip asset-auto-173">
+            {`${t("AST_BOOK_VALUE")}`} <span className="asset-new-link-red">*</span>
+            <div className="tooltip asset-new-link">
               <InfoBannerIcon />
-              <span className="tooltiptext asset-auto-174">{`${t("ASSET_BOOK_VALUE")} `}</span>
+              <span className="tooltiptext asset-new-link-ml-md">{`${t("ASSET_BOOK_VALUE")} `}</span>
             </div>
           </div>
           <TextInput
@@ -493,7 +493,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
               type: "text",
               title: t("PT_NAME_ERROR_MESSAGE"),
             })}
-            className="asset-auto-175"
+            className="asset-new-half-width"
           />
 
           {/* Dynamically Form Render */}
@@ -502,10 +502,10 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
               {/* Render the label with the localization key and a mandatory asterisk */}
               {/* <CardLabel key={index}>{`${t(row.code)} *`}</CardLabel> */}
               <div>
-                {`${t(row.code)}`} <span className="asset-auto-176">*</span>
-                <div className="tooltip asset-auto-177">
+                {`${t(row.code)}`} <span className="asset-new-link-red">*</span>
+                <div className="tooltip asset-new-link">
                   <InfoBannerIcon />
-                  <span className="tooltiptext asset-auto-178">{`${t(row.code + "_INFO")} `}</span>
+                  <span className="tooltiptext asset-new-link-ml-md">{`${t(row.code + "_INFO")} `}</span>
                 </div>
               </div>
 
@@ -524,7 +524,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                     required: t("CORE_COMMON_REQUIRED_ERRMSG"),
                     validDate: (val) => (/^\d{4}-\d{2}-\d{2}$/.test(val) ? true : t("ERR_DEFAULT_INPUT_FIELD_MSG")),
                   }}
-                  className="asset-auto-179"
+                  className="asset-new-half-width"
                 />
               ) : row.type == "dropdown" ? (
                 //  if dropdown render
@@ -551,7 +551,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                 />
               ) : row.addCurrentLocationButton === true ? (
                 // if Fetch Location True
-                <div className="asset-auto-180">
+                <div className="asset-new-link-half-width-relative">
                   <TextInput
                     t={t}
                     type={row.type}
@@ -567,10 +567,10 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                       type: row.columnType,
                       title: t("VALID_LAT_LONG"),
                     })}
-                    className="asset-auto-181"
+                    className="asset-new-flex-1"
                   />
                   <div
-                    className="butt-icon asset-auto-182"
+                    className="butt-icon asset-new-icon-absolute-row-center"
                     onClick={() => {
                       fetchCurrentLocation(row.name);
                     }}
@@ -596,7 +596,7 @@ const NewAsset = ({ t, config, onSelect, formData }) => {
                     title: t("PT_NAME_ERROR_MESSAGE"),
                   })}
                   readOnly={row.isReadOnly}
-                  className="asset-auto-183"
+                  className="asset-new-half-width"
                 />
               )}
             </div>

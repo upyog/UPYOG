@@ -39,17 +39,9 @@ const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCo
                 Cell: ({ row }) => row.original?.answersCount ? GetCell(Number(row.original?.answersCount)) : "-"
             },
             {
-                Header: <div>{t("EVENTS_STATUS_LABEL")}<div className="tooltip" style={{ marginLeft: "5px" }}>
+                Header: <div>{t("EVENTS_STATUS_LABEL")}<div className="tooltip eng-use-inbox-table-config-spacing">
                     <InfoBannerIcon fill="#0b0c0c" style />
-                    <span className="tooltiptext" style={{
-                        whiteSpace: "pre-wrap",
-                        fontSize: "small",
-                        wordWrap: "break-word",
-                        width: "120px",
-                        marginLeft: "15px",
-                        marginBottom: "-260px"
-                        //overflow:"auto"
-                    }}>
+                    <span className="tooltiptext eng-use-inbox-table-config-bottom-spacing">
                         {`${t(`SURVEY_STATUS_TOOLTIP`)}`}
                     </span>
                 </div></div>,
@@ -66,7 +58,7 @@ const useInboxTableConfig = ({ parentRoute, onPageSizeChange, formState, totalCo
                 accessor: "results",
                 Cell: ({ row }) => {
                     return (
-                        <div style={{ "display": "flex", "justifyContent": "center" }}>
+                        <div className="eng-use-inbox-table-config-flex-row">
                             <Link to={`results/${row.original["uuid"]}`}>
                                 <span className="link">
                                     <svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">

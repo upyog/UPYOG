@@ -320,19 +320,11 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
       >
         <div>
           <div>
-            {t("AST_FINANCIAL_YEAR")} <span style={{ color: "red" }}>*</span>
-            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+            {t("AST_FINANCIAL_YEAR")} <span className="assetv2-asset-all-details-required-asterisk">*</span>
+            <div className="tooltip assetv2-new-asset-spacing">
               <InfoBannerIcon />
               <span
-                className="tooltiptext"
-                style={{
-                  whiteSpace: "pre-wrap",
-                  fontSize: "small",
-                  wordWrap: "break-word",
-                  width: "300px",
-                  marginLeft: "15px",
-                  marginBottom: "-10px",
-                }}
+                className="tooltiptext assetv2-asset-all-details-bottom-spacing"
               >
                 {`${t(`AST_WHICH_FINANCIAL_YEAR`)}`}
               </span>
@@ -358,19 +350,11 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
           />
 
           <div>
-            {t("AST_SOURCE_FINANCE")} <span style={{ color: "red" }}>*</span>
-            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+            {t("AST_SOURCE_FINANCE")} <span className="assetv2-asset-all-details-required-asterisk">*</span>
+            <div className="tooltip assetv2-new-asset-spacing">
               <InfoBannerIcon />
               <span
-                className="tooltiptext"
-                style={{
-                  whiteSpace: "pre-wrap",
-                  fontSize: "small",
-                  wordWrap: "break-word",
-                  width: "300px",
-                  marginLeft: "15px",
-                  marginBottom: "-10px",
-                }}
+                className="tooltiptext assetv2-asset-all-details-bottom-spacing"
               >
                 {`${t(`AST_SOURCE_OF_FUNDING`)}`}
               </span>
@@ -394,7 +378,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
             )}
           />
 
-          <div>{`${t("AST_PARENT_CATEGORY")}`} <span style={{ color: "red" }}>*</span></div>
+          <div>{`${t("AST_PARENT_CATEGORY")}`} <span className="assetv2-asset-all-details-required-asterisk">*</span></div>
           <Controller
             control={control}
             name={"assettype"}
@@ -414,19 +398,11 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
           />
 
           <div>
-            {t("AST_CATEGORY")} <span style={{ color: "red" }}>*</span>
-            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+            {t("AST_CATEGORY")} <span className="assetv2-asset-all-details-required-asterisk">*</span>
+            <div className="tooltip assetv2-new-asset-spacing">
               <InfoBannerIcon />
               <span
-                className="tooltiptext"
-                style={{
-                  whiteSpace: "pre-wrap",
-                  fontSize: "small",
-                  wordWrap: "break-word",
-                  width: "300px",
-                  marginLeft: "15px",
-                  marginBottom: "-10px",
-                }}
+                className="tooltiptext assetv2-asset-all-details-bottom-spacing"
               >
                 {`${t(`AST_CLASSIFICATION_ASSET`)}`}
               </span>
@@ -451,7 +427,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
             )}
           />
         
-          <div>{`${t("AST_SUB_CATEGORY")}`} <span style={{ color: "red" }}>*</span></div>
+          <div>{`${t("AST_SUB_CATEGORY")}`} <span className="assetv2-asset-all-details-required-asterisk">*</span></div>
           <Controller
             control={control}
             name={"assetsubtype"}
@@ -508,19 +484,11 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
           /> */}
 
           <div>
-            {t("AST_BOOK_REF_SERIAL_NUM")} <span style={{ color: "red" }}>*</span>
-            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+            {t("AST_BOOK_REF_SERIAL_NUM")} <span className="assetv2-asset-all-details-required-asterisk">*</span>
+            <div className="tooltip assetv2-new-asset-spacing">
               <InfoBannerIcon />
               <span
-                className="tooltiptext"
-                style={{
-                  whiteSpace: "pre-wrap",
-                  fontSize: "small",
-                  wordWrap: "break-word",
-                  width: "300px",
-                  marginLeft: "15px",
-                  marginBottom: "-10px",
-                }}
+                className="tooltiptext assetv2-asset-all-details-bottom-spacing"
               >
                 {`${t(`AST_BOOK_REF_NUMBER`)}`}
               </span>
@@ -534,7 +502,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
             name="BookPagereference"
             value={BookPagereference}
             onChange={setbookpagereference}
-            style={{ width: "50%" }}
+            className="assetv2-asset-streets-wrapper"
             ValidationRequired={false}
             {...(validation = {
               isRequired: true,
@@ -544,7 +512,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
             })}
           />
 
-          <div>{`${t("AST_NAME")}`} <span style={{ color: "red" }}>*</span> </div>
+          <div>{`${t("AST_NAME")}`} <span className="assetv2-asset-all-details-required-asterisk">*</span> </div>
           <TextInput
             t={t}
             type={"text"}
@@ -553,7 +521,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
             name="AssetName"
             value={AssetName}
             onChange={setassetname}
-            style={{ width: "50%" }}
+            className="assetv2-asset-streets-wrapper"
             ValidationRequired={false}
             {...(validation = {
               isRequired: true,
@@ -565,18 +533,10 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
 
           <div>
             {t("ASSET_DESCRIPTION")}
-            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+            <div className="tooltip assetv2-new-asset-spacing">
               <InfoBannerIcon />
               <span
-                className="tooltiptext"
-                style={{
-                  whiteSpace: "pre-wrap",
-                  fontSize: "small",
-                  wordWrap: "break-word",
-                  width: "300px",
-                  marginLeft: "15px",
-                  marginBottom: "-10px",
-                }}
+                className="tooltiptext assetv2-asset-all-details-bottom-spacing"
               >
                 {`${t(`AST_ANY_DESCRIPTION`)}`}
               </span>
@@ -603,19 +563,11 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
           </div>
 
           <div>
-            {t("AST_DEPARTMENT")} <span style={{ color: "red" }}>*</span>
-            <div className="tooltip" style={{ width: "12px", height: "5px", marginLeft: "10px", display: "inline-flex", alignItems: "center" }}>
+            {t("AST_DEPARTMENT")} <span className="assetv2-asset-all-details-required-asterisk">*</span>
+            <div className="tooltip assetv2-new-asset-spacing">
               <InfoBannerIcon />
               <span
-                className="tooltiptext"
-                style={{
-                  whiteSpace: "pre-wrap",
-                  fontSize: "small",
-                  wordWrap: "break-word",
-                  width: "300px",
-                  marginLeft: "15px",
-                  marginBottom: "-10px",
-                }}
+                className="tooltiptext assetv2-asset-all-details-bottom-spacing"
               >
                 {`${t(`AST_PROCURED_DEPARTMENT`)}`}
               </span>
@@ -639,7 +591,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
             )}
           />
 
-          <div>{t("AST_USAGE")} <span style={{ color: "red" }}>*</span></div>
+          <div>{t("AST_USAGE")} <span className="assetv2-asset-all-details-required-asterisk">*</span></div>
           <Controller
             control={control}
             name={"assetsUsage"}
@@ -658,7 +610,7 @@ const NewAssetClassification = ({ t, config, onSelect, userType, formData }) => 
             )}
           />
 
-          <div>{t("AST_STATUS_ASSIGNABLE")} <span style={{ color: "red" }}>*</span> </div>
+          <div>{t("AST_STATUS_ASSIGNABLE")} <span className="assetv2-asset-all-details-required-asterisk">*</span> </div>
           <Controller
             control={control}
             name={"assetAssignable"}

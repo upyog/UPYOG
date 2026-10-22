@@ -9,15 +9,14 @@ const CheckBox = ({ onChange, label, value, disable, ref, checked, inputRef, pag
     return (
       <div className="checkbox-wrap" style={wrkflwStyle ? wrkflwStyle : {}}>
         <p style={style ? style : null}> {index+1}.</p>
-        <p className="label" style={{maxWidth: "80%", marginLeft: "10px"}}>
+        <p className="label rc-check-box-spacing">
           {label}
         </p>
         <div>
           <input
             type="checkbox"
-            className={userType === "employee" ? "input-emp" : ""}
+            className={`${userType === "employee" ? "input-emp" : ""} rc-check-box-clickable`}
             onChange={onChange}
-            style={{ cursor: "pointer", left: "90%" }}
             value={value || label}
             {...props}
             ref={inputRef}
@@ -36,9 +35,8 @@ const CheckBox = ({ onChange, label, value, disable, ref, checked, inputRef, pag
         <div>
           <input
             type="checkbox"
-            className={userType === "employee" ? "input-emp" : ""}
+            className={`${userType === "employee" ? "input-emp" : ""} rc-bread-crumb-clickable`}
             onChange={onChange}
-            style={{ cursor: "pointer" }}
             value={value || label}
             {...props}
             ref={inputRef}

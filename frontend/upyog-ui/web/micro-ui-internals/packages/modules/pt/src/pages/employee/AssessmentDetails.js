@@ -461,15 +461,15 @@ const AssessmentDetails = () => {
         }
       }, {
         belowComponent: () => {
-          return <div className="pt-auto-154">
-                  <CardSubHeader className="pt-auto-155">
+          return <div className="pt-assessment-details-item">
+                  <CardSubHeader className="pt-assessment-details-title-lg">
                   {t("PT_CALC_DETAILS")}<br />
                   </CardSubHeader>
-                  <CardSectionHeader className="pt-auto-156">{t("PT_CALC_LOGIC_HEADER")}</CardSectionHeader>
-                  <CardText className="pt-auto-157">{t("PT_CALC_LOGIC")}</CardText>
+                  <CardSectionHeader className="pt-assessment-details-subheader">{t("PT_CALC_LOGIC_HEADER")}</CardSectionHeader>
+                  <CardText className="pt-assessment-details-card">{t("PT_CALC_LOGIC")}</CardText>
                     {/* <div className="employee-data-table">
                      <div /> */}
-                    <div className="pt-auto-158">
+                    <div className="pt-assessment-details-label-bordered-rounded">
                     <div className="row border-none"><h2>{t("PT_APPLICABLE_CHARGE_SLABS")}</h2></div>
                     {/* <div className="row border-none"><h2>{t("PT_GRND_FLOOR_UNIT-1")}</h2>
                      <div className="value">{t("PT_RATE")}</div>

@@ -1,9 +1,9 @@
 /* components/BookingPopup.js */
-.wt-auto-1 {
+.wt-booking-popup-card-no-shadow {
   box-shadow: none;
 }
 
-.wt-auto-2 {
+.wt-booking-popup-card-col-flex-center {
   display: flex;
   justify-content: center;
   gap: 20px;
@@ -13,103 +13,98 @@
 
 
 /* components/ExistingBookingDetails.js */
-.wt-auto-3 {
+.wt-existing-booking-details-mt-md-ml-md {
   margin-left: 16px;
   margin-top: 16px;
 }
 
 
 /* components/MobileInbox.js */
-.wt-auto-4 {
+.wt-mobile-inbox-no-pad {
   padding: 0px;
 }
 
 
 /* components/SearchApplication.js */
-.wt-auto-5 {
+.wt-search-application-card-grey-text {
   color: #505A5F;
 }
 
-.wt-auto-6 {
+.wt-search-application-card-grey-text-mb-sm {
   color: #505A5F;
   margin-bottom: 10px;
 }
 
-.wt-auto-7 {
-  margin-top: 10px;
-}
 
-.wt-auto-8 {
+
+.wt-search-application-card-mt-md {
   margin-top: 20px;
 }
 
-.wt-auto-9 {
+.wt-search-application-card-center-text {
   text-align: center;
 }
 
 
 /* components/WTDesktopInbox.js */
-.wt-auto-10 {
+.wt-desktop-inbox-card-mt-md {
   margin-top: 20px;
 }
 
-.wt-auto-11 {
+.wt-desktop-inbox-card-center-text {
   text-align: center;
 }
 
-.wt-auto-12 {
+.wt-desktop-inbox-flex-1 {
   flex: 1px;
 }
 
 
 /* components/inbox/ApplicationCard.js */
-.wt-auto-13 {
+.wt-application-card-card-mt-md {
   margin-top: 20px;
 }
 
-.wt-auto-14 {
+.wt-application-card-card-center-text {
   text-align: center;
 }
 
 
 /* components/inbox/NewInboxFilter.js */
-.wt-auto-15 {
+.wt-new-inbox-filter-item {
   align-items: center;
 }
 
-.wt-auto-16 {
+.wt-new-inbox-filter-row-center-flex {
   display: flex;
   align-items: center;
 }
 
-.wt-auto-17 {
+.wt-new-inbox-filter-link-font-normal {
   margin-left: 8px;
   font-weight: normal;
 }
 
-.wt-auto-18 {
+.wt-new-inbox-filter-btn-bordered {
   border: 1px solid #e0e0e0;
   padding: 6px;
 }
 
-.wt-auto-19 {
+.wt-new-inbox-filter-font-normal {
   font-weight: normal;
 }
 
 
 /* components/inbox/Status.js */
-.wt-auto-20 {
+.wt-status-font-normal {
   font-weight: normal;
 }
 
 
 /* components/inbox/search.js */
-.wt-auto-21 {
-  width: 100%;
-  display: grid;
-}
 
-.wt-auto-22 {
+
+.wt-search-link-bold-text-sm {
   font-weight: 700;
   color: rgba(212, 53, 28);
   padding-left: 8px;
@@ -117,28 +112,28 @@
   font-size: 12px;
 }
 
-.wt-auto-23 {
+.wt-search-input-right-text {
   grid-column: 2/3;
   text-align: right;
   padding-top: 10px;
 }
 
-.wt-auto-24 {
+.wt-search-item {
   max-width: unset;
   margin-left: unset;
 }
 
-.wt-auto-25 {
+.wt-search-link-flex-1 {
   flex: 1px;
 }
 
-.wt-auto-26 {
+.wt-search-link-flex-1 {
   flex: 1px;
 }
 
 
 /* pageComponents/RequestDetails.js */
-.wt-auto-27 {
+.wt-request-details-link-flex {
   display: flex;
   flex-wrap: wrap;
   max-height: 30px;
@@ -146,17 +141,17 @@
 
 
 /* pageComponents/TreePruningRequestDetails.js */
-.wt-auto-28 {
+.wt-tree-pruning-request-details-input-flex-1 {
   flex: 1px;
 }
 
-.wt-auto-29 {
+.wt-tree-pruning-request-details-icon-action {
   cursor: pointer;
   width: 25px;
   margin-bottom: 8px;
 }
 
-.wt-auto-30 {
+.wt-tree-pruning-request-details-row-center-flex {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -164,59 +159,59 @@
 
 
 /* pageComponents/WFApplicationTimeline.js */
-.wt-auto-31 {
+.wt-wf-application-timeline-full-width {
   margin-top: 1em;
   bottom: 0px;
   width: 100%;
   margin-bottom: 1.2em;
 }
 
-.wt-auto-32 {
+.wt-wf-application-timeline-card {
   margin-bottom: 16px;
   margin-top: 32px;
 }
 
 
 /* pageComponents/WFCaption.js */
-.wt-auto-33 {
+.wt-wf-caption-item {
   overflow-x: scroll;
 }
 
 
 /* pages/citizen/Create/CheckPage.js */
-.wt-auto-34 {
+.wt-check-page-btn-relative-mt-neg {
   margin-top: -30px;
   float: right;
   position: relative;
   bottom: 32px;
 }
 
-.wt-auto-35 {
+.wt-check-page-link {
   margin-top: 30px;
   margin-bottom: 30px;
 }
 
-.wt-auto-36 {
+.wt-check-page-link {
   margin-top: 30px;
   margin-bottom: 30px;
 }
 
-.wt-auto-37 {
+.wt-check-page-link {
   margin-top: 30px;
   margin-bottom: 30px;
 }
 
-.wt-auto-38 {
+.wt-check-page-link {
   margin-top: 30px;
   margin-bottom: 30px;
 }
 
-.wt-auto-39 {
+.wt-check-page-link {
   margin-top: 30px;
   margin-bottom: 30px;
 }
 
-.wt-auto-40 {
+.wt-check-page-btn-row-center-flex {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -225,163 +220,163 @@
 
 
 /* pages/citizen/Create/MTAcknowledgement.js */
-.wt-auto-41 {
+.wt-mt-acknowledgement-link-full-width {
   width: 100%;
 }
 
 
 /* pages/citizen/Create/TPAcknowledgement.js */
-.wt-auto-42 {
+.wt-tp-acknowledgement-link-full-width {
   width: 100%;
 }
 
 
 /* pages/citizen/Create/WTAcknowledgement.js */
-.wt-auto-43 {
+.wt-acknowledgement-full-width {
   width: 100%;
 }
 
 
 /* pages/citizen/MTApplicationDetails.js */
-.wt-auto-44 {
+.wt-mt-application-details-item {
   margin-right: auto;
   max-width: 960px;
 }
 
-.wt-auto-45 {
+.wt-mt-application-details-subheader-title-lg {
   font-size: 24px;
 }
 
-.wt-auto-46 {
+.wt-mt-application-details-subheader-title-lg {
   font-size: 24px;
 }
 
-.wt-auto-47 {
+.wt-mt-application-details-subheader-title-lg {
   font-size: 24px;
 }
 
-.wt-auto-48 {
+.wt-mt-application-details-link {
   bottom: 0px;
 }
 
 
 /* pages/citizen/MyApplications/index.js */
-.wt-auto-49 {
+.wt-index-ml-md {
   margin-left: 16px;
 }
 
-.wt-auto-50 {
+.wt-index-row-center-flex {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 16px;
 }
 
-.wt-auto-51 {
+.wt-index-flex-1 {
   flex: 1px;
 }
 
-.wt-auto-52 {
+.wt-index-flex-1 {
   flex: 1px;
 }
 
-.wt-auto-53 {
+.wt-index-flex-1 {
   flex: 1px;
 }
 
-.wt-auto-54 {
+.wt-index-col-flex {
   display: flex;
   flex-direction: column;
 }
 
-.wt-auto-55 {
+.wt-index-full-width {
   width: 100%;
 }
 
-.wt-auto-56 {
+.wt-index-item {
   margin-top: 17%;
 }
 
-.wt-auto-57 {
+.wt-index-btn-block-mt-sm {
   margin-left: 30%;
   margin-top: 10px;
   display: block;
 }
 
-.wt-auto-58 {
+.wt-index-btn-rounded {
   border-radius: 30px;
   width: 20%;
 }
 
-.wt-auto-59 {
+.wt-index-mt-md-ml-md {
   margin-left: 16px;
   margin-top: 16px;
 }
 
-.wt-auto-60 {
+.wt-index-mt-md-ml-md {
   margin-left: 16px;
   margin-top: 16px;
 }
 
 
 /* pages/citizen/TPApplicationDetails.js */
-.wt-auto-61 {
+.wt-tp-application-details-item {
   margin-right: auto;
   max-width: 960px;
 }
 
-.wt-auto-62 {
+.wt-tp-application-details-subheader-title-lg {
   font-size: 24px;
 }
 
-.wt-auto-63 {
+.wt-tp-application-details-subheader-title-lg {
   font-size: 24px;
 }
 
-.wt-auto-64 {
+.wt-tp-application-details-subheader-title-lg {
   font-size: 24px;
 }
 
-.wt-auto-65 {
+.wt-tp-application-details-link {
   bottom: 0px;
 }
 
 
 /* pages/citizen/WTApplicationDetails.js */
-.wt-auto-66 {
+.wt-application-details-item {
   margin-right: auto;
   max-width: 960px;
 }
 
-.wt-auto-67 {
+.wt-application-details-title-lg {
   font-size: 24px;
 }
 
-.wt-auto-68 {
+.wt-application-details-title-lg {
   font-size: 24px;
 }
 
-.wt-auto-69 {
+.wt-application-details-title-lg {
   font-size: 24px;
 }
 
-.wt-auto-70 {
+.wt-application-details-link {
   bottom: 0px;
 }
 
 
 /* pages/citizen/index.js */
-.wt-auto-71 {
+.wt-index-full-width {
   width: 100%;
 }
 
 
 /* pages/employee/ApplicationDetails.js */
-.wt-auto-72 {
+.wt-application-details-mb-md {
   margin-bottom: 15px;
 }
 
-.wt-auto-73 {
+.wt-application-details-row-reverse-row-center {
   z-index: 10;
   display: flex;
   flex-direction: row-reverse;
@@ -389,13 +384,13 @@
   margin-top: -25px;
 }
 
-.wt-auto-74 {
+.wt-tp-application-details-digipin-row-center {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.wt-auto-75 {
+.wt-tp-application-details-digipin-btn-red {
   background-color: #a82227;
   color: white;
   border: none;

@@ -157,7 +157,7 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData }) => {
             name="productQuantity"
             value={productQuantity}
             onChange={setproductQuantity}
-            style={{ width: "86%" }}
+            className="ew-ewasteproduct-details-wrapper"
             ValidationRequired={true}
             {...(validation = {
               isRequired: false,
@@ -176,11 +176,11 @@ const EWProductDetails = ({ t, config, onSelect, userType, formData }) => {
             name="productPrice"
             value={productName && productName.price}
             disable={true}
-            style={{ width: "86%" }}
+            className="ew-ewasteproduct-details-wrapper"
             ValidationRequired={false}
           />
         </div>
-        <SubmitBar label="Add Product" style={{ marginBottom: "10px" }} onSubmit={handleAddProduct} />
+        <SubmitBar label="Add Product" className="ew-ewastedocuments-bottom-spacing-2" onSubmit={handleAddProduct} />
       </FormStep>
 
       {/* Component to display the list of added products */}

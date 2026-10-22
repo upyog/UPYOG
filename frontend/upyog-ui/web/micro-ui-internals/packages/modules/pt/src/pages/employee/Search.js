@@ -1,4 +1,4 @@
-import { Header, Localities, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { Header, Localities, Toast, Card } from "@nudmcdgnpm/digit-ui-react-components";
 import PropertyType  from "../../utils/PropertyType";
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -205,8 +205,11 @@ const Search = () => {
     }
   }, [searchBy]);
   return (
-    <React.Fragment>
-      <Header>{t("SEARCH_PROPERTY")}</Header>
+    <div className="pt-search-page-wrapper">
+      <Header className="pt-search-header">{t("SEARCH_PROPERTY")}</Header>
+      <Card className={"card-search-heading"}>
+        <span className="pt-search-application-card-grey-text">{t("PT_PROVIDE_ONE_PARAM_TO_SEARCH", "Provide at least one parameter to search for a property")}</span>
+      </Card>
       <SearchComponent
         t={t}
         payload={formData}
@@ -233,7 +236,7 @@ const Search = () => {
           }}
         />
       )}
-    </React.Fragment>
+    </div>
   );
 };
 

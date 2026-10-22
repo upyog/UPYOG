@@ -50,14 +50,14 @@ import { NOCSearch } from "./services/molecules/NOC/Search";
 import AccessControlService from "./services/elements/Access";
 import BillServices from "./services/elements/Bill";
 import { CFService } from "./services/elements/CF";
-import { PTRService } from "./services/elements/PTR";  
-import { ASSETService } from "./services/elements/ASSET";  
-import { CHBServices } from "./services/elements/CHB"; 
+import { PTRService } from "./services/elements/PTR";
+import { ASSETService } from "./services/elements/ASSET";
+import { CHBServices } from "./services/elements/CHB";
 import { ADSServices } from "./services/elements/ADS";
 import { EwService } from "./services/elements/EW";
 import { EmployeeDashboardService } from "./services/elements/EMPDASHBOARD";
 import { GIS } from "./services/elements/GIS";
-import {CustomService} from "./services/elements/CustomService";    
+import { CustomService } from "./services/elements/CustomService";
 import { CMServices } from "./services/elements/CM";
 import { WTService } from "./services/elements/WT";
 import { VendorService } from "./services/elements/EmpVendor";
@@ -69,10 +69,10 @@ import { PGRAIUpdate } from "./services/elements/PGRAIUpdate";
 import { ESTService } from "./services/elements/EST";
 import { NDCService } from "./services/elements/NDC";
 import { ChallanGenerationService } from "./services/elements/ChallanGeneration";
-import {UpyogBotService} from "./services/elements/UpyogBot";
+import { UpyogBotService } from "./services/elements/UpyogBot";
 import { GCServices } from "./services/elements/GC";
+import { AggregationService } from "./services/elements/Aggregation";
 
-   
 
 
 const setupLibraries = (Library, props) => {
@@ -99,7 +99,7 @@ const initLibraries = () => {
   setupLibraries("CFService", CFService);
   setupLibraries("CustomService", CustomService);
   setupLibraries("TLService", TLService);
-  setupLibraries("DigiLockerService",DigiLockerService)
+  setupLibraries("DigiLockerService", DigiLockerService)
   setupLibraries("Surveys", Surveys);
   setupLibraries("HRMSService", HrmsService);
   setupLibraries("ReceiptsService", ReceiptsService);
@@ -133,7 +133,7 @@ const initLibraries = () => {
   setupLibraries("NOCSearch", NOCSearch);
   setupLibraries("AccessControlService", AccessControlService);
   setupLibraries("BillServices", BillServices);
-  setupLibraries("AuditService",AuditService);
+  setupLibraries("AuditService", AuditService);
   setupLibraries("PTRService", PTRService);
   setupLibraries("ASSETService", ASSETService);
   setupLibraries("CHBServices", CHBServices);
@@ -142,7 +142,7 @@ const initLibraries = () => {
   setupLibraries("CMServices", CMServices);
   setupLibraries("EmployeeDashboardService", EmployeeDashboardService);
   setupLibraries("GIS", GIS);
-  setupLibraries("WTService",WTService);
+  setupLibraries("WTService", WTService);
   setupLibraries("VendorService", VendorService);
   setupLibraries("MTService", MTService);
   setupLibraries("TPService", TPService);
@@ -153,6 +153,7 @@ const initLibraries = () => {
   setupLibraries("ChallanGenerationService", ChallanGenerationService);
   setupLibraries("UpyogBotService", UpyogBotService);
   setupLibraries("GCServices", GCServices);
+  setupLibraries("AggregationService", AggregationService);
 
   return new Promise((resolve) => {
     initI18n(resolve);

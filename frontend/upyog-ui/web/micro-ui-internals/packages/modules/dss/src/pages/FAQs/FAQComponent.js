@@ -9,11 +9,11 @@ const FAQComponent = props => {
   const selectedLanguage = Digit.StoreData.getCurrentLanguage();
   return (
     <div className="faqs border-none" onClick={() => toggleOpen(!isOpen)}>
-          <div className="faq-question" style={{justifyContent: t(question).length > 30 && isOpen ? "revert" : "space-between", display: Digit.Utils.browser.isMobile() && t(question).length > 30 && isOpen ? "block" : "flex"}}>
-        <span style={{fontWeight:700}}>
+          <div className={`faq-question ${t(question).length > 30 && isOpen ? (Digit.Utils.browser.isMobile() ? "display-block" : "justify-revert") : "display-flex"}`}>
+        <span className="dss-faqcomponent-text-style">
         {`${index}. `+ t(question)}
         </span>
-        <span className={isOpen ? "faqicon rotate" : "faqicon"} style={{float: "right"/*,marginRight:isOpen ?(t(question).length > 27 ? "12%" : "8%") : ""*/}}>
+        <span className={`${isOpen ? "faqicon rotate" : "faqicon"} dss-faqcomponent-wrapper`}>
             {isOpen ? <ArrowForward /> : <ArrowForward/>}
         </span>
       </div>
@@ -23,31 +23,31 @@ const FAQComponent = props => {
         style={isOpen ? { display: "block"} : { display: "none" }}
       >
 
-       <div style={{marginTop:"-20px"}}> 
+       <div className="dss-faqcomponent-top-spacing"> 
        {answer?.map((obj,i) => 
-        <span style={{color:"#000",marginTop: "20px", marginBottom: "20px"}}>
+        <span className="dss-faqcomponent-top-spacing-2">
         {t(obj.ans)}
         </span>)}
         {acrynom?.map((obj,i) => 
-       <div> <span style={{color:"#000",marginTop: index===1  ? i===0 ? "20px" : "0px" :  "20px", marginBottom: index===1 ? i===0 ?"20px": "0px" : "20px"}}>
+       <div> <span className="dss-faq-acr">
         {t(obj.acr)}
         </span>
-         <span style={{color:"#000",marginTop: index===1  ? i===0 ? "-40px" : "-20px" :  "20px", marginBottom: index===1 ? i===14 ?"20px": "0px" :"20px",marginLeft: selectedLanguage === "hi_IN" ?  "115px" :"60px"}}>
+         <span className="dss-faq-fullform">
          {t(obj.fullForm)}
          </span></div>)}
         
         {answer?.map((obj) => 
-        <span style={{color:"#000", marginLeft:"30px"}}>
-       {obj.point ? "•" : null}<div style={{ marginTop: "-21px", marginLeft:"15px"}}>{t(obj.point)}</div>
+        <span className="dss-faqcomponent-spacing">
+       {obj.point ? "•" : null}<div className="dss-faqcomponent-top-spacing-3">{t(obj.point)}</div>
         </span>)}
         </div>
         <div>{subAnswer?.map((obj) => 
-        <span style={{color:"#000",marginBottom:"20px"}}>
+        <span className="dss-faqcomponent-bottom-spacing">
         {t(obj.ans)}
         </span>)}
         {subAnswer?.map((obj) => 
-        <span style={{color:"#000", marginLeft:"30px"}}>
-        {obj.point ? "•" : null}<div style={{ marginTop: "-21px", marginLeft:"15px"}}>{t(obj.point)}</div>
+        <span className="dss-faqcomponent-spacing">
+        {obj.point ? "•" : null}<div className="dss-faqcomponent-top-spacing-3">{t(obj.point)}</div>
         </span>)}
        </div>
       </div>

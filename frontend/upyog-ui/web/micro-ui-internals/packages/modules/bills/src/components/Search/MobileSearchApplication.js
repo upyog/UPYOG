@@ -173,10 +173,7 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
                   <Link>
                     <a
                       href="javascript:void(0)"
-                      style={{
-                        color: "#FE7A51",
-                        cursor: "pointer",
-                      }}
+                      className="bills-mobile-search-application-clickable"
                       onClick={(value) => {
                         printRecieptMobile(original?.["businessService"], original?.["consumerCode"]);
                       }}
@@ -216,7 +213,7 @@ const MobileSearchApplication = ({ Controller, register, control, t, reset, prev
 
   return (
     <React.Fragment>
-      <div className="sideContent" style={{ marginLeft:"65%", marginTop:"-12%"}}>
+      <div className="sideContent bills-mobile-search-application-top-spacing">
                   <DownloadBtn className="mrlg cursorPointer"  onClick={() => handleExcelDownload(tabledata)}/>
       </div>
             <Header>{t("ABG_SEARCH_BILL_COMMON_HEADER")}:</Header>

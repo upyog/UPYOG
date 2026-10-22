@@ -25,7 +25,6 @@
           Assetdescription:"",
           Department:"",
           sourceOfFinance:"",
-          assetclassification:"",
           key: Date.now(),
       });
 
@@ -241,8 +240,8 @@ const OwnerForm = _props => {
     marginTop: "-21px"
   };
   return <React.Fragment>
-          <div className="asset-auto-135">
-              <div className="asset-auto-136">
+          <div className="asset-edit-general-details_backup-item">
+              <div className="asset-edit-general-details_backup-bordered">
 
               <LabelFieldPair>
                   <CardLabel className="card-label-smaller">{t("AST_FINANCIAL_YEAR")}</CardLabel>

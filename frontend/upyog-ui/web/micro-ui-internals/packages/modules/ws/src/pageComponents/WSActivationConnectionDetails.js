@@ -234,7 +234,7 @@ const ConnectionDetails = (_props) => {
     const errorStyle = { width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" };
     return (
         <div >
-            <div className="ws-auto-32">
+            <div className="ws-activation-connection-details-item">
                 <div>
                     {!window.location.href.includes("by-config") && !window.location.href.includes("ws/modify-application") ? <LabelFieldPair>
                             <CardLabel style={isMobile && isEmployee ? {

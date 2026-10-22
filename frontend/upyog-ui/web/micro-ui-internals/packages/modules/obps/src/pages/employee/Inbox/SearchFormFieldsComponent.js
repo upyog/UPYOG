@@ -48,38 +48,6 @@ const SearchFormFieldsComponents = ({ registerRef, searchFormState, searchFieldC
     />
   );
 
-  if (!isMobile) {
-    return (
-      <React.Fragment>
-        <div className="search-container" style={{ width: "auto", marginLeft: "24px" }}>
-          <div className="search-complaint-container">
-            <div
-              className="complaint-input-container"
-              style={isCitizen ? { gridTemplateColumns: "33.33% 67.33%", textAlign: "start" } : { textAlign: "start" }}
-            >
-              <SearchField>
-                <label>{t("BPA_APPLICATION_NUMBER_LABEL")}</label>
-                {applicationNoField}
-              </SearchField>
-              {!isCitizen && (
-                <SearchField>
-                  <label>{t("CORE_COMMON_MOBILE_NUMBER")}</label>
-                  {mobileNumberField}
-                  {searchFormState?.errors?.["mobileNumber"]?.message && (
-                    <CardLabelError>{searchFormState.errors["mobileNumber"].message}</CardLabelError>
-                  )}
-                </SearchField>
-              )}
-              <div className="search-action-wrapper" style={{ width: "100%" }}>
-                {searchFieldComponents}
-              </div>
-            </div>
-          </div>
-        </div>
-      </React.Fragment>
-    );
-  }
-
   return (
     <React.Fragment>
       <SearchField>
@@ -95,6 +63,11 @@ const SearchFormFieldsComponents = ({ registerRef, searchFormState, searchFieldC
           )}
         </SearchField>
       )}
+      {searchFieldComponents ? (
+        <div className="search-action-wrapper SubmitAndClearAllContainer">
+          {searchFieldComponents}
+        </div>
+      ) : null}
     </React.Fragment>
   );
 };

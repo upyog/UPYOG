@@ -202,14 +202,14 @@ function SelectDocument({
     }
   }, [doc])
   return (
-    <div style={{ marginBottom: "24px" }}>
-      <LabelFieldPair style={{width :"100%"}}>
-        <CardLabel className="card-label-smaller" style={{width :"100%"}}>
+    <div className="obps-obpsdocuments-emp-bottom-spacing">
+      <LabelFieldPair className="obps-inspection-report-fullwidth">
+        <CardLabel className="card-label-smaller obps-inspection-report-fullwidth">
           {doc?.documentType != "OLDLICENCENO" ?
             `${t(`${doc?.documentType.replaceAll(".", "_")}`)}*` :
             `${t(`${doc?.documentType.replaceAll(".", "_")}`)}`}
         </CardLabel>
-        <div className="field" style={{ width: "100%" }}>
+        <div className="field obps-inspection-report-fullwidth">
           <MultiUploadWrapper
             module="BPA"
             tenantId={stateId}

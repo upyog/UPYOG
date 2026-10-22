@@ -94,9 +94,9 @@ const VendorDocuments = ({ t, config, onSelect, formData }) => {
         isDisabled={uploadedFiles.some((file) => file === null) && files.some((file) => file === null)}
       >
         {files.map((file, index) => (
-          <LabelFieldPair key={index} style={{ marginBottom: "24px" }}>
+          <LabelFieldPair key={index} className="vnd-vendor-documents-bottom-spacing">
             <CardLabel className="card-label-smaller">{t("VENDOR_ID") + (index !== 0 ? index : "")}</CardLabel>
-            <div className="field" style={{ display: "flex", alignItems: "center" }}>
+            <div className="field vnd-new-inbox-filter-flex-row">
               <UploadFile
                 onUpload={(e) => handleFileSelect(e, index)}
                 onDelete={() =>
@@ -116,15 +116,15 @@ const VendorDocuments = ({ t, config, onSelect, formData }) => {
               />
 
               {/* {index > 0 && (
-                <button style={{ marginLeft: "10px" }} onClick={() => removeFileField(index)}>
-                  <DeleteIcon className="delete" fill="#a82227" style={{ cursor: "pointer", marginLeft: "20px" }} />
+                <button className="custom-style" onClick={() => removeFileField(index)}>
+                  <DeleteIcon className="delete" fill="#a82227" className="custom-style" />
                 </button>
               )} */}
             </div>
           </LabelFieldPair>
         ))}
 {/* this is for adding more than 1 file
-        <SubmitBar label={t("CS_COMMON_ADD")} style={{ marginBottom: "10px", marginLeft: "2px" }} onSubmit={addFileField} disabled={ind > 4} /> */}
+        <SubmitBar label={t("CS_COMMON_ADD")} className="custom-style" onSubmit={addFileField} disabled={ind > 4} /> */}
 
         {error && <Toast label={error} onClose={() => setError(null)} error />}
       </FormStep>

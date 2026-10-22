@@ -57,7 +57,7 @@ const WFApplicationTimeline = props => {
     let nextAction = nextActions[0];
     switch (nextAction?.action) {
       case "PAY":
-        return props?.userType === 'citizen' ? <div className="wt-auto-31">
+        return props?.userType === 'citizen' ? <div className="wt-wf-application-timeline-full-width">
             <Link to={{
             pathname: `${APPLICATION_PATH}/citizen/payment/my-bills/${moduleName}/${props?.application?.bookingNo}`,
             state: {
@@ -77,7 +77,7 @@ const WFApplicationTimeline = props => {
   }
   return <React.Fragment>
         {!isLoading && <Fragment>
-            {data?.timeline?.length > 0 && <CardSectionHeader className="wt-auto-32">
+            {data?.timeline?.length > 0 && <CardSectionHeader className="wt-wf-application-timeline-card">
                 {t("CS_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
               </CardSectionHeader>}
             {data?.timeline && data?.timeline?.length === 1 ? <CheckPoint isCompleted={true} label={t(data?.timeline[0]?.state && `${data.timeline[0].state}` || "NA")} customChild={getTimelineCaptions(data?.timeline[0])} /> : <ConnectingCheckPoints>

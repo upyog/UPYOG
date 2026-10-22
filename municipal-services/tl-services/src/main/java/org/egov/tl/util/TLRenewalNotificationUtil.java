@@ -249,10 +249,15 @@ public class TLRenewalNotificationUtil {
     private String getMessageTemplate(String notificationCode, String localizationMessage) {
         String path = "$..messages[?(@.code==\"{}\")].message";
         path = path.replace("{}", notificationCode);
-        String message = null;
+        String message = "";
         try {
-            Object messageObj = JsonPath.parse(localizationMessage).read(path);
-            message = ((ArrayList<String>) messageObj).get(0);
+			List<String> messages = JsonPath.parse(localizationMessage).read(path);
+            //handling for missing localization message templates
+			if (messages == null || messages.isEmpty()) {
+				log.warn("Localization message not found for notification code: {}", notificationCode);
+				return "";
+			}
+			message = messages.get(0);
         } catch (Exception e) {
             log.warn("Fetching from localization failed", e);
         }
@@ -269,7 +274,7 @@ public class TLRenewalNotificationUtil {
     public StringBuilder getUri(String tenantId, RequestInfo requestInfo) {
 
         if (config.getIsLocalizationStateLevel())
-            tenantId = tenantId.split("\\.")[0] + "." + tenantId.split("\\.")[1];
+        	tenantId = tenantId.split("\\.")[0];
 
         String locale = NOTIFICATION_LOCALE;
         if (!StringUtils.isEmpty(requestInfo.getMsgId()) && requestInfo.getMsgId().split("|").length >= 2)

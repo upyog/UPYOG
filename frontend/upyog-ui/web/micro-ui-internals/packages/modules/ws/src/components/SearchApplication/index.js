@@ -5,7 +5,7 @@ import SearchFields from "./SearchFields";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import MobileSearchApplication from "./MobileSearchApplication";
-import "../../css/ws-inline-auto.css";
+
 const SearchApplication = ({
   tenantId,
   onSubmit,
@@ -108,12 +108,12 @@ const SearchApplication = ({
         service = "SEWERAGE";
       }
       return <div>
-              {row.original["connectionNo"] ? <span className={"link"}>
-                  <Link to={`/upyog-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${service}&due=${row.original?.due || 0}&from=WS_SEWERAGE_APPLICATION_SEARCH`}>
-                    {row.original["connectionNo"] || "NA"}
-                  </Link>
-                </span> : <span>{t("NA")}</span>}
-            </div>;
+        {row.original["connectionNo"] ? <span className={"link"}>
+          <Link to={`/upyog-ui/employee/ws/connection-details?applicationNumber=${row.original["connectionNo"]}&tenantId=${tenantId}&service=${service}&due=${row.original?.due || 0}&from=WS_SEWERAGE_APPLICATION_SEARCH`}>
+            {row.original["connectionNo"] || "NA"}
+          </Link>
+        </span> : <span>{t("NA")}</span>}
+      </div>;
     }
   }, {
     Header: t("WS_ACK_COMMON_APP_NO_LABEL"),
@@ -136,12 +136,12 @@ const SearchApplication = ({
           application = "modify";
         }
         return <div>
-                <span className="link">
-                  <Link to={`/upyog-ui/employee/ws/${application}-details?applicationNumber=${row.original["applicationNo"]}&tenantId=${tenantId}&service=${service}&mode=${"MODIFY"}&from=WS_SEWERAGE_APPLICATION_SEARCH`}>
-                    {row.original["applicationNo"]}
-                  </Link>
-                </span>
-              </div>;
+          <span className="link">
+            <Link to={`/upyog-ui/employee/ws/${application}-details?applicationNumber=${row.original["applicationNo"]}&tenantId=${tenantId}&service=${service}&mode=${"MODIFY"}&from=WS_SEWERAGE_APPLICATION_SEARCH`}>
+              {row.original["applicationNo"]}
+            </Link>
+          </span>
+        </div>;
       } else {
         let application = "application";
         if (row?.original?.["applicationType"]?.includes("DISCONNECT")) {
@@ -150,12 +150,12 @@ const SearchApplication = ({
           application = "modify";
         }
         return <div>
-                <span className="link">
-                  <Link to={`/upyog-ui/employee/ws/${application}-details?applicationNumber=${row.original["applicationNo"]}&tenantId=${tenantId}&service=${service}&from=WS_SEWERAGE_APPLICATION_SEARCH`}>
-                    {row.original["applicationNo"]}
-                  </Link>
-                </span>
-              </div>;
+          <span className="link">
+            <Link to={`/upyog-ui/employee/ws/${application}-details?applicationNumber=${row.original["applicationNo"]}&tenantId=${tenantId}&service=${service}&from=WS_SEWERAGE_APPLICATION_SEARCH`}>
+              {row.original["applicationNo"]}
+            </Link>
+          </span>
+        </div>;
       }
     }
   }, {
@@ -180,21 +180,21 @@ const SearchApplication = ({
     accessor: row => GetCell(row?.address || "-")
   }], []);
   return <>
-      <Header styles={{
+    <Header styles={{
       fontSize: "32px"
     }}>{businessService === "WS" ? t("WS_WATER_SEARCH_APPLICATION_SUB_HEADER") : t("WS_SEWERAGE_SEARCH_APPLICATION_SUB_HEADER")}</Header>
-      <Card className={"card-search-heading"}>
-        <span className="ws-auto-8">{t("WS_INFO_VALIDATION")}</span>
-      </Card>
-      <SearchForm onSubmit={handleSearchSubmit} handleSubmit={handleSubmit} >
-        <SearchFields {...{ register, control, reset, tenantId, t, businessService, onSubmit: handleSearchSubmit, onClearSearch: handleClearSearch }} />
-      </SearchForm>
-      {isLoading ? <Loader /> : null} 
-      {isClearSearch ? null : data?.display && !resultOk ? <Card className="ws-auto-9">
-          {t(data?.display).split("\\n").map((text, index) => <p key={index} className="ws-auto-10">
-                {text}
-              </p>)}
-        </Card> : resultOk && !isClearSearch ? <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {
+    <Card className={"card-search-heading"}>
+      <span className="ws-index-card-grey-text">{t("WS_INFO_VALIDATION")}</span>
+    </Card>
+    <SearchForm onSubmit={handleSearchSubmit} handleSubmit={handleSubmit} >
+      <SearchFields {...{ register, control, reset, tenantId, t, businessService, onSubmit: handleSearchSubmit, onClearSearch: handleClearSearch }} />
+    </SearchForm>
+    {isLoading ? <Loader /> : null}
+    {isClearSearch ? null : data?.display && !resultOk ? <Card className="ws-index-card-mt-md">
+      {t(data?.display).split("\\n").map((text, index) => <p key={index} className="ws-index-card-center-text">
+        {text}
+      </p>)}
+    </Card> : resultOk && !isClearSearch ? <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {
       return {
         style: {
           minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
@@ -206,6 +206,6 @@ const SearchApplication = ({
       id: getValues("sortBy"),
       desc: getValues("sortOrder") === "DESC" ? true : false
     }]} /> : null}
-    </>;
+  </>;
 };
 export default SearchApplication;

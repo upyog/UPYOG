@@ -202,9 +202,10 @@ const FileComplaint = ({ parentRoute }) => {
           />
         );
       })}
+      <Route index element={<Navigate to={`${configs.indexRoute}`} replace />} />
       <Route path={`check`} element={<CheckPage onSubmit={submitComplaint} value={params} />} />
       <Route path={`response`} element={<Response />} />
-      <Route path="*" element={<Navigate to={`${configs.indexRoute}`} />} />
+      <Route path="*" element={<Navigate to={`${configs.indexRoute}`} replace />} />
     </Routes>
   );
 };

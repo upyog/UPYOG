@@ -34,7 +34,7 @@ const Rating = (props) => {
   }
 
   return (
-    <div className={`${props.withText ? "rating-with-text" : "rating-star-wrap"}`} style={{ ...props.styles }}>
+    <div className={`${props.withText ? "rating-with-text" : "rating-star-wrap"}`} style={props?.styles}>
       {props.text ? props.text : ""} {stars}
     </div>
     

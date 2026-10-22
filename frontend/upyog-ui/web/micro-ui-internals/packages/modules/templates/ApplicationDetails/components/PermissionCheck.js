@@ -54,7 +54,7 @@ const PermissionCheck = ({ permissions, t }) => {
 
   return (
     <div>
-      <CardSubHeader style={{ marginBottom: "16px", fontSize: "24px" }}>{t("BPA_PERMIT_CONDITIONS")}</CardSubHeader>
+      <CardSubHeader className="tmpl-application-details-content-header">{t("BPA_PERMIT_CONDITIONS")}</CardSubHeader>
       {approvalChecks?.map((permission, index) => (
         <CheckBox
           key={index}
@@ -81,16 +81,15 @@ const PermissionCheck = ({ permissions, t }) => {
               <div>
                 <span>
                   <Close 
-                  style={{ float: "right", position: "relative", bottom: "32px", marginTop: "-22px", marginRight: isMobile ? "5%" : "35%" }} />
+                  className={`close-btn-floating ${isMobile ? "margin-right-5" : "margin-right-35"}`} />
                 </span>
               </div>
             }
-            style={{}}
             onClick={(e) => handleRemove(index)}
           />}
         </div>
       ))}
-      <LinkButton style={{ color: "#a82227", maxWidth: isMobile ? "fit-content" : "10%", /* float: "right", marginTop: "-50px", */ marginRight: "3%" }} label={t(`BPA_ADD_MORE`)} onClick={handleAdd} />
+      <LinkButton className={`permission-add-btn ${isMobile ? "max-w-fit" : "max-w-10"}`} label={t(`BPA_ADD_MORE`)} onClick={handleAdd} />
     </div>
   )
 }

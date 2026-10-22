@@ -197,9 +197,9 @@ function SelectDocument({
   useEffect(() => {
     if (isHidden) setUploadedFile(null);
   }, [isHidden]);
-  return <div className="ws-auto-129">
+  return <div className="ws-documents-employee-mb-md">
       {doc?.hasDropdown ? <LabelFieldPair>         
-          <CardLabel className="ws-auto-130">
+          <CardLabel className="ws-documents-employee-bold">
                 {doc?.required ? <React.Fragment>
                     {t(doc?.i18nKey)}<span className="check-page-link-button"> *</span>
                     </React.Fragment> : t(doc?.i18nKey)}
@@ -219,7 +219,7 @@ function SelectDocument({
         }} inputStyles={{
           width: "280px"
         }} buttonType="button" error={!uploadedFile} accept="image/*, .pdf, .png, .jpeg, .jpg" />
-          <div className="ws-auto-131">{t("CS_FILE_SIZE_RESTRICTIONS_WS")}</div>
+          <div className="ws-documents-employee-text-sm-mt-sm">{t("CS_FILE_SIZE_RESTRICTIONS_WS")}</div>
         </div>
       </LabelFieldPair>
     </div>;

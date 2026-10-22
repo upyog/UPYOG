@@ -9,7 +9,7 @@ const PTCitizenFeedbackPopUp = ({
   const CitizenFeedback = Digit?.ComponentRegistryService?.getComponent("CitizenFeedback");
   return <React.Fragment>
     <PopUp>
-          <div className="pt-auto-59">
+          <div className="pt-citizen-feedback-pop-up-relative">
           <CitizenFeedback popup={true} onClose={setpopup} setShowToast={setShowToast} data={data} />
           </div>
     </PopUp>

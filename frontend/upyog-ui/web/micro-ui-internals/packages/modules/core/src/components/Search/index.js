@@ -149,26 +149,26 @@ const columns = useMemo(
 
   return (
     <React.Fragment>
-      <div style={{marginRight:"-70px"}}> <BackButton /> </div>  
-   <div style={{marginTop:"30px", marginLeft:"30px"}}>  <Header>{t("PRIVACY_AUDIT_REPORT")}</Header> </div>
+      <div className="core-index-spacing"> <BackButton /> </div>  
+   <div className="core-index-top-spacing">  <Header>{t("PRIVACY_AUDIT_REPORT")}</Header> </div>
       <SearchForm className="audit-card" onSubmit={onSubmit} handleSubmit={handleSubmit}>
         <SearchFields {...{ register, control, reset, tenantId, t, previousPage }} />
       </SearchForm>
-      <div style={{marginTop:"240px",marginLeft:"-55%",width:"80%"}} >
+      <div className="core-index-top-spacing-2" >
       {data?.display ? (
-        <div style={{ marginTop: "20x",maxWidth:"680%", marginLeft:"60px" ,backgroundColor: "white",height:"60px" }}>
+        <div className="core-index-top-spacing-3">
           {t(data.display)
             .split("\\n")
             .map((text, index) => (
-              <p key={index} style={{ textAlign: "center", paddingTop:"12px" }}>
+              <p key={index} className="core-index-centered">
                 {text}
               </p>
             ))}
         </div>
       ) : (
         data !== "" ? (
-        <div style={{ backgroundColor: "white", marginRight:"200px", marginLeft:"2.5%", width:"100%" }}>  
-        <div className="sideContent" style={{ float:"right", padding:"10px 30px"}}>
+        <div className="core-index-fullwidth">  
+        <div className="sideContent core-index-container-padding">
                   <DownloadBtn className="mrlg cursorPointer"  onClick={() => handleExcelDownload(tabledata)}/>
               </div>
         <Table

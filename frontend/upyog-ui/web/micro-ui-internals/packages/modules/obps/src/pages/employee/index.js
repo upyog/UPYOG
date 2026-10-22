@@ -71,7 +71,7 @@ const EmployeeApp = ({ path }) => {
   return (
     <Fragment>
       {!isFromNoc && !isRes ? <div style={isLocation ? {marginLeft: "10px"} : {}}><OBPSBreadCrumbs location={location} /></div> : null}
-      {isFromNoc ? <BackButton style={{ border: "none", margin: "0", padding: "0" }}>{t("CS_COMMON_BACK")}</BackButton>: null}
+      {isFromNoc ? <BackButton className="obps-index-action-btn-3">{t("CS_COMMON_BACK")}</BackButton>: null}
       <Routes>
         <Route path={`/stakeholder-inbox/stakeholder/:id`} element={<PrivateRoute><ApplicationDetail /></PrivateRoute>} />
         <Route path={`/search/application/stakeholder/:id`} element={<PrivateRoute><ApplicationDetail /></PrivateRoute>} />

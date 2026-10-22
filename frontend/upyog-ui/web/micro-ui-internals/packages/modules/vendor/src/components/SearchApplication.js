@@ -206,7 +206,7 @@ const VendorSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count
           <SearchField className="submit">
             <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
             <p
-              style={{ marginTop: "10px" }}
+              className="vnd-search-application-top-spacing"
               onClick={() => {
                 reset({
                   fromDate: fromDateFormatted,
@@ -227,11 +227,11 @@ const VendorSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count
           </SearchField>
         </SearchForm>
         {!isLoading && data?.display ? (
-          <Card style={{ marginTop: 20 }}>
+          <Card className="vnd-search-application-card">
             {t(data.display)
               .split("\\n")
               .map((text, index) => (
-                <p key={index} style={{ textAlign: "center" }}>
+                <p key={index} className="vnd-search-application-centered">
                   {text}
                 </p>
               ))}

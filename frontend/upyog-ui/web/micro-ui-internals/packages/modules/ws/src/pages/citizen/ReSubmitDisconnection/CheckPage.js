@@ -87,12 +87,12 @@ import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSReSubmitDiscon
     }}>{t("WS_COMMON_SUMMARY")}</Header>
     <DisconnectTimeline currentStep={3} />
   
-    <Card className="ws-auto-179">
-      <div className="ws-auto-180">
+    <Card className="ws-check-page-card">
+      <div className="ws-check-page-card-2">
       <CardHeader styles={{
           fontSize: "28px"
         }}>{t("WS_DISCONNECTION_APPLICATION_DETAILS")}</CardHeader>
-      <LinkButton label={<EditIcon className="ws-auto-182" />} onClick={() => routeTo(`${routeLink}/application-form`)} className="ws-auto-181" />
+      <LinkButton label={<EditIcon className="ws-check-page-btn-relative-mt-neg" />} onClick={() => routeTo(`${routeLink}/application-form`)} className="ws-check-page-btn" />
       </div>
       <StatusTable>
         <Row className="border-none" label={t("WS_DISCONNECTION_CONSUMER_NUMBER")} text={value.connectionNo || value?.applicationData?.connectionNo} />
@@ -102,12 +102,12 @@ import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSReSubmitDiscon
       </StatusTable>
     </Card>
  
-    <Card className="ws-auto-183">
-      <div className="ws-auto-184">
+    <Card className="ws-check-page-card">
+      <div className="ws-check-page-card-2">
         <CardHeader styles={{
           fontSize: "28px"
         }}>{t("WS_COMMON_DOCUMENT_DETAILS")}</CardHeader>
-          <LinkButton label={<EditIcon className="ws-auto-186" />} onClick={() => routeTo(`${routeLink}/documents-upload`)} className="ws-auto-185" />
+          <LinkButton label={<EditIcon className="ws-check-page-btn-relative-mt-neg" />} onClick={() => routeTo(`${routeLink}/documents-upload`)} className="ws-check-page-btn" />
           </div>
         {documents && documents?.map((doc, index) => <div key={`doc-${index}`}>
          {<div><CardSectionHeader>{t(doc?.documentType?.split('.').slice(0, 2).join('_'))}</CardSectionHeader>
@@ -115,7 +115,7 @@ import { convertDateToEpoch, convertEpochToDate, createPayloadOfWSReSubmitDiscon
           {<WSDocument value={{
               documents: value.WSDisconnectionForm
             }} Code={doc?.documentType} index={index} showFileName={true} />}
-          {documents?.length != index + 1 ? <hr className="ws-auto-187" /> : null}
+          {documents?.length != index + 1 ? <hr className="ws-check-page-mt-md-mb-md" /> : null}
           </StatusTable>
           </div>}
           </div>)}

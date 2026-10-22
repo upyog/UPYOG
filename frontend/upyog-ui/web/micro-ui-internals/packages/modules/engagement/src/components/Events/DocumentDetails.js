@@ -89,7 +89,7 @@ const DocumentDetails = () => {
 
           {data?.applicationData?.eventDetails?.documents?.length ? <div className="documentDetails_pdf">
             <span className="documentDetails_subheader">{`${t('CS_COMMON_DOCUMENTS')}`}</span>
-            <div style={{ width: '100px' }} onClick={() => openUploadedDocument(data?.applicationData?.eventDetails?.documents[0]?.filestoreId, data?.applicationData?.name)}>
+            <div className="eng-document-details-wrapper" onClick={() => openUploadedDocument(data?.applicationData?.eventDetails?.documents[0]?.filestoreId, data?.applicationData?.name)}>
               <GenericFileIcon />
             </div>
 
@@ -101,7 +101,7 @@ const DocumentDetails = () => {
       <ActionBar>
         {displayMenu ? (
           <Menu
-            style={{ width: isMobile ? 'full' : '240px' }}
+            className={isMobile ? "width-full" : "width-240"}
             localeKeyPrefix={"ES_CE"}
             options={Actions}
             t={t}

@@ -134,7 +134,7 @@ const Document = ({ t, config, onSelect, formData, setDocumentUploaded }) => {
         error={!uploadedFiles[index]}
       />
 
-      <div style={{ display: "flex", alignItems: "center" }}>
+      <div className="pgrai-document-flex-row">
         {uploadedFiles[index] && index === files.length - 1 && (
           <button 
             style={styles.addButton} 

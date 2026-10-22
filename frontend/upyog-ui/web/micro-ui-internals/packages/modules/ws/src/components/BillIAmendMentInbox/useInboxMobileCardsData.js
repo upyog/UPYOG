@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { SearchField, RadioButtons } from "@nudmcdgnpm/digit-ui-react-components";
 import { Controller, useFormContext } from "react-hook-form";
 import { Link } from "react-router-dom";
-import "../../css/ws-inline-auto.css";
+
 const useInboxMobileCardsData = ({
   parentRoute,
   table
@@ -13,12 +13,12 @@ const useInboxMobileCardsData = ({
   } = useTranslation();
   const GetCell = value => <span className="cell-text styled-cell">{value}</span>;
   const getApplicationNumberCell = (value, amendmentReason) => {
-    return <div className="ws-auto-1">
-        <Link to={`/upyog-ui/employee/ws/generate-note-bill-amendment?applicationNumber=${value}`}>
-          <span className="link">{value}</span>
-        </Link>
-        {GetCell(t(`BILLAMENDMENT_${amendmentReason}_HEADING`))}
-      </div>;
+    return <div className="ws-use-inbox-mobile-cards-data-link-col-flex">
+      <Link to={`/upyog-ui/employee/ws/generate-note-bill-amendment?applicationNumber=${value}`}>
+        <span className="link">{value}</span>
+      </Link>
+      {GetCell(t(`BILLAMENDMENT_${amendmentReason}_HEADING`))}
+    </div>;
   };
   const dataForMobileInboxCards = table?.map(({
     applicationNo,

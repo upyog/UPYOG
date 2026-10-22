@@ -179,50 +179,16 @@ const UploadFile = (props) => {
   return (
     <Fragment>
       {showHint && <p className="cell-text">{t(props?.hintText)}</p>}
-      <div className={`upload-file ${user_type === "employee" ? "":"upload-file-max-width"} ${props.disabled ? " disabled" : ""}`} 
-        style={{
-          borderRadius: "8px",
-          border: "1px solid #ccc",
-          boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-          padding: "8px",
-          backgroundColor: "#fff",
-          display: "flex",
-          flexDirection: "column",
-          width: user_type === "employee" ? "45%" : "86%",
-          ...(extraStyles?.uploadFile ? extraStyles?.uploadFile : {})
-        }}>
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          width: "100%",
-          ...(extraStyles ? extraStyles?.containerStyles : null)
-        }}>
+      <div className={`upload-file ${user_type === "employee" ? "pgrai-upload-file-wrapper emp-45" : "upload-file-max-width pgrai-upload-file-wrapper cit-86"} ${props.disabled ? " disabled" : ""}`} style={extraStyles?.uploadFile}>
+        <div className="pgrai-upload-inner-container" style={extraStyles?.containerStyles}>
           <div 
-            className="upload-button-container"
-            style={{ 
-              display: "flex", 
-              alignItems: "center", 
-              cursor: "pointer",
-              padding: "8px 16px",
-              borderRadius: "4px",
-              color: "#902434",
-              backgroundColor: "white",
-              ...(extraStyles ? extraStyles?.buttonStyles : {}), 
-              ...(props.disabled ? { display: "none" } : {})
-            }}
+            className={`upload-button-container pgrai-upload-btn-container ${props.disabled ? "display-none" : ""}`} style={extraStyles?.buttonStyles}
             onClick={() => inpRef.current.click()}
           >
-            <svg width="25" height="25" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: "8px" }}>
+            <svg width="25" height="25" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="pgrai-upload-file-icon">
               <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4C9.11 4 6.6 5.64 5.35 8.04C2.34 8.36 0 10.91 0 14C0 17.31 2.69 20 6 20H19C21.76 20 24 17.76 24 15C24 12.36 21.95 10.22 19.35 10.04ZM19 18H6C3.79 18 2 16.21 2 14C2 11.95 3.53 10.24 5.56 10.03L6.63 9.92L7.13 8.97C8.08 7.14 9.94 6 12 6C14.62 6 16.88 7.86 17.39 10.43L17.69 11.93L19.22 12.04C20.78 12.14 22 13.45 22 15C22 16.65 20.65 18 19 18ZM8 13H10.55V16H13.45V13H16L12 9L8 13Z" fill="#902434"/>
             </svg>
-            <span style={{
-              fontSize: "15px",
-              fontWeight: "500",
-              letterSpacing: "0.5px",
-              textTransform: "uppercase",
-              ...(props?.textStyles || {})
-            }}>{t("CS_COMMON_CHOOSE_FILE")}</span>
+            <span className="pgrai-upload-btn-text" style={props?.textStyles}>{t("CS_COMMON_CHOOSE_FILE")}</span>
           </div>
             {props?.uploadedFiles?.map((file, index) => {
               const fileDetailsData = file[1]
@@ -231,78 +197,36 @@ const UploadFile = (props) => {
               </div>
             })}
           {!hasFile || props.error ? (
-            <div className="file-upload-status" style={{
-              display: "flex",
-              alignItems: "center",
-              color: "#666",
-              marginLeft: "10px",
-              fontSize: "14px"
-            }}>
+            <div className="file-upload-status pgrai-upload-file-flex-row">
               {props.error ? (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: "8px" }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="pgrai-upload-file-icon">
                   <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20ZM11 15H13V17H11V15ZM11 7H13V13H11V7Z" fill="#FF3333"/>
                 </svg>
               ) : (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: "8px" }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="pgrai-upload-file-icon">
                   <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20ZM11 15H13V17H11V15ZM11 7H13V13H11V7Z" fill="#666"/>
                 </svg>
               )}
               {props.message}
             </div>
           ) : (
-            <div className="tag-container" style={{
-              display: "flex",
-              alignItems: "center",
-              backgroundColor: "white",
-              borderRadius: "4px",
-              padding: "6px 10px",
-              margin: "0 10px",
-              ...(extraStyles ? extraStyles?.tagContainerStyles : null)
-            }}>
-              <div className="tag" style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                width: "100%",
-                ...(extraStyles ? extraStyles?.tagStyles : null)
-              }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: "8px" }}>
+            <div className="tag-container pgrai-tag-box" style={extraStyles?.tagContainerStyles}>
+              <div className="tag pgrai-tag-inner" style={extraStyles?.tagStyles}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="pgrai-upload-file-icon">
                   <path d="M14 2H6C4.9 2 4.01 2.9 4.01 4L4 20C4 21.1 4.89 22 5.99 22H18C19.1 22 20 21.1 20 20V8L14 2ZM18 20H6V4H13V9H18V20ZM8 15.01L9.41 16.42L11 14.84V19H13V14.84L14.59 16.43L16 15.01L12.01 11L8 15.01Z" fill="#902434"/>
                 </svg>
-                <span className="text" style={{
-                  flex: 1,
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap",
-                  color: "#902434",
-                  ...(extraStyles ? extraStyles?.textStyles : null)
-                }}>
+                <span className="text pgrai-tag-text" style={extraStyles?.textStyles}>
                   {(typeof inpRef.current.files[0]?.name !== "undefined") && !(props?.file) ? inpRef.current.files[0]?.name : props.file?.name} 
                 </span>
-                <span onClick={() => handleDelete()} style={{
-                  cursor: "pointer",
-                  marginLeft: "8px",
-                  ...(extraStyles ? extraStyles?.closeIconStyles : null)
-                }}>
-                  <Close style={{...props.Multistyle, fill: "#902434"}} className="close" />
+                <span onClick={() => handleDelete()} className="pgrai-tag-close" style={extraStyles?.closeIconStyles}>
+                  <Close style={props?.Multistyle} fill="#902434" className="close" />
                 </span>
               </div>
             </div>
           )}
         </div>
         <input
-          className={props.disabled ? "disabled" : "" + "input-mirror-selector-button"}
-          style={{
-            position: "absolute",
-            width: "1px",
-            height: "1px",
-            padding: "0",
-            margin: "-1px",
-            overflow: "hidden",
-            clip: "rect(0, 0, 0, 0)",
-            border: "0",
-            ...(extraStyles ? { ...extraStyles?.inputStyles, ...props?.inputStyles } : { ...props?.inputStyles })
-          }}
+          className={`${props.disabled ? "disabled " : ""}input-mirror-selector-button pgrai-sr-only-input`} style={extraStyles?.inputStyles || props?.inputStyles}
           ref={inpRef}
           type="file"
           id={props.id || `document-${getRandomId()}`}
@@ -317,7 +241,7 @@ const UploadFile = (props) => {
           }}
         />
       </div>
-      {props.iserror && <p style={{color: "red"}}>{props.iserror}</p>}
+      {props.iserror && <p className="pgrai-upload-file-required-asterisk">{props.iserror}</p>}
       {props?.showHintBelow && <p className="cell-text">{t(props?.hintText)}</p>}
     </Fragment>
   );

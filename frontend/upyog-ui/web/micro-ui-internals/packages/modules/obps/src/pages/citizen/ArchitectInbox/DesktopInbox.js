@@ -52,12 +52,12 @@ const DesktopInbox = (props) => {
     result = <Loader />;
   } else if (props?.data?.table?.length === 0) {
     result = (
-      <Card style={{ marginTop: 20 }}>
+      <Card className="obps-index-card">
         {
           t("CS_MYAPPLICATIONS_NO_APPLICATION")
             .split("\\n")
             .map((text, index) => (
-              <p key={index} style={{ textAlign: "center" }}>
+              <p key={index} className="obps-index-centered">
                 {text}
               </p>
             ))
@@ -120,7 +120,7 @@ const DesktopInbox = (props) => {
           </div>
         </div>
       )}
-      <div style={{ flex: 1 }}>
+      <div className="obps-building-plan-scrutiny-wrapper">
         <SearchApplication
           t={t}
           onSearch={props.onSearch}
@@ -129,7 +129,7 @@ const DesktopInbox = (props) => {
           isInboxPage={!props?.isSearch}
           searchParams={props.searchParams}
         />
-        <div className="result" style={{ marginLeft: "24px", flex: 1 }}>
+        <div className="result obps-desktop-inbox-spacing">
           {result}
         </div>
       </div>

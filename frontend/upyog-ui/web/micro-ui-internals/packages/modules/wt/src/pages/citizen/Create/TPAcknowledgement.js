@@ -39,7 +39,7 @@ const rowContainerStyle = {
 const BannerPicker = props => {
   console.log("BannerPicker", props);
 
-  return <Banner message={GetActionMessage(props)} applicationNumber={props?.data?.treePruningBookingDetail?.bookingNo} info={props?.isSuccess ? props.t("TP_BOOKING_NO") : ""} successful={props?.isSuccess} className="wt-auto-42" />;
+  return <Banner message={GetActionMessage(props)} applicationNumber={props?.data?.treePruningBookingDetail?.bookingNo} info={props?.isSuccess ? props.t("TP_BOOKING_NO") : ""} successful={props?.isSuccess} className="wt-tp-acknowledgement-link-full-width" />;
 };
 
 const TPAcknowledgement = () => {

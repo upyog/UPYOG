@@ -38,7 +38,7 @@ const BulkBillSearchFields = ({ register, control, reset, tenantId, t, setValue 
       disableLoader={false} />)} />
 
       </SearchField>
-      <SearchField className="ws-auto-23">
+      <SearchField className="ws-bulk-bill-search-fields-link-mt-md">
         <SubmitBar label={t("WS_SEARCH_CONNECTION_SEARCH_BUTTON")} submit />
         {/* <p
           onClick={() => {

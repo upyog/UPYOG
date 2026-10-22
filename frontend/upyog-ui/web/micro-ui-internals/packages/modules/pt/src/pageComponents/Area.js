@@ -122,7 +122,7 @@ const Area = ({
             />
             </div>
           </LabelFieldPair>
-          {(formState?.touched?.[config.key] || formState?.touchedFields?.[config.key]) ? <CardLabelError className="pt-auto-36">
+          {(formState?.touched?.[config.key] || formState?.touchedFields?.[config.key]) ? <CardLabelError className="pt-area-label-text-sm-mt-neg">
               {formState.errors?.[config.key]?.message}
             </CardLabelError> : null}
         </React.Fragment>;

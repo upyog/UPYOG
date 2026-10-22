@@ -100,8 +100,14 @@ public class TLNotificationService {
 				String ACTION_STATUS = license.getAction() + "_" + license.getStatus();
 				if (request.getLicenses().get(0).getTradeLicenseDetail().getAdditionalDetail().get(PROPERTY_ID) != null)
 					propertyId = request.getLicenses().get(0).getTradeLicenseDetail().getAdditionalDetail().get(PROPERTY_ID).asText();
-				Property property = propertyUtil.getPropertyDetails(request.getLicenses().get(0), propertyId, requestInfo);
-				String source = property.getSource().name();
+
+				Property property = null;
+				String source = null;
+				// Invoke Property Service only for Trade Licenses created using PT search, where a valid Property ID is associated with the application.
+				if (!propertyId.isEmpty()) {
+				    property = propertyUtil.getPropertyDetails(request.getLicenses().get(0), propertyId, requestInfo);
+				    source = property.getSource().name();
+				}
 
 				if (config.getIsTLSMSEnabled()) {
 					if (!propertyId.isEmpty() && ACTION_STATUS_INITIATED.equalsIgnoreCase(ACTION_STATUS)) {

@@ -9,7 +9,7 @@ const TLCaption = ({ data, OpenImage, privacy = {} }) => {
     <div>
       {data.date && <p>{data.date}</p>}
       <p>{data.name}</p>
-      {data.mobileNumber && <span style={{ display: "inline-flex", width: "fit-content", marginLeft: "10px" }}>
+      {data.mobileNumber && <span className="tmpl-tlcaption-spacing">
         <TelePhone mobile={data.mobileNumber} privacy={privacy} />
         <p>&nbsp;&nbsp;&nbsp;&nbsp;</p>
       </span>}
@@ -18,7 +18,7 @@ const TLCaption = ({ data, OpenImage, privacy = {} }) => {
       {data?.wfComment ? <div>{data?.wfComment?.map((e, index) =>
         <div className="TLComments" key={`wf-comment-${e}-${index}`}>
           <h3>{t("WF_COMMON_COMMENTS")}</h3>
-          <p style={{ overflowX: "scroll" }}>{e}</p>
+          <p className="tmpl-tlcaption-wrapper">{e}</p>
         </div>
       )}</div> : null}
       {data?.thumbnailsToShow?.thumbs?.length > 0 ? <div className="TLComments">

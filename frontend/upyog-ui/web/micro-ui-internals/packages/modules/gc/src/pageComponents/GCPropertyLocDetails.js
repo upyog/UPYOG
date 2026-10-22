@@ -233,7 +233,7 @@ const GCProtertyLocDetails = ({ t, config, onSelect, formData, renewApplication 
                 title: t("GC_PROPERTY_ID_ERROR_MESSAGE"),
               })}
             />
-            <div style={{ position: "relative", zIndex: "100", right: user.type === "EMPLOYEE" ? "52%" : "95px", marginTop: "-14px", marginRight: "-20px", cursor: "pointer" }} onClick={handleSearchClick}> <SearchIcon /> </div>
+            <div className={`input-search-icon-badge ${user.type === "EMPLOYEE" ? "right-52-pct" : "right-95-px"}`} onClick={handleSearchClick}> <SearchIcon /> </div>
           </div>
           <CardLabel>{`${t("GC_HOUSE_NO")}`} <span className="check-page-link-button">*</span></CardLabel>
           <TextInput
@@ -246,7 +246,7 @@ const GCProtertyLocDetails = ({ t, config, onSelect, formData, renewApplication 
             value={houseNo}
             placeholder="Enter House No"
             onChange={setApplicantHouseNo}
-            style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"}
             ValidationRequired={true}
             validation={{
               isRequired: true,
@@ -266,7 +266,7 @@ const GCProtertyLocDetails = ({ t, config, onSelect, formData, renewApplication 
             value={houseName}
             placeholder={"Enter House Name"}
             onChange={sethouseName}
-            style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"}
             ValidationRequired={false}
           />
 
@@ -280,7 +280,7 @@ const GCProtertyLocDetails = ({ t, config, onSelect, formData, renewApplication 
             value={streetName}
             placeholder={"Enter Street Name"}
             onChange={setApplicantStreetName}
-            style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"}
             ValidationRequired={true}
             {...(validation = {
               pattern: "^[a-zA-Z0-9 ,\\-]+$",
@@ -299,7 +299,7 @@ const GCProtertyLocDetails = ({ t, config, onSelect, formData, renewApplication 
             value={addressline1}
             placeholder={"Enter Address"}
             onChange={setaddressline1}
-            style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"}
             ValidationRequired={true}
             {...(validation = {
               isRequired: false,
@@ -320,7 +320,7 @@ const GCProtertyLocDetails = ({ t, config, onSelect, formData, renewApplication 
             value={addressline2}
             placeholder={"Enter Address"}
             onChange={setaddressline2}
-            style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"}
             ValidationRequired={true}
             {...(validation = {
               isRequired: false,
@@ -339,7 +339,7 @@ const GCProtertyLocDetails = ({ t, config, onSelect, formData, renewApplication 
             value={landmark}
             placeholder={"Enter Landmark"}
             onChange={setApplicantLandmark}
-            style={{ width: "50%" }}
+            className="gc-gcproperty-loc-details-wrapper"
             ValidationRequired={true}
             {...(validation = {
               isRequired: true,
@@ -396,7 +396,7 @@ const GCProtertyLocDetails = ({ t, config, onSelect, formData, renewApplication 
             value={pincode}
             onChange={setAddressPincode}
             placeholder="Enter Pincode"
-            style={{ width: user.type === "EMPLOYEE" ? "50%" : "86%" }}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : "form-field-width--citizen-86"}
             ValidationRequired={true}
             validation={{
               isRequired: true,

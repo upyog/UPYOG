@@ -1,7 +1,7 @@
 import { Card, CardSubHeader, Header, LinkButton, Loader, Row, StatusTable, MultiLink, PopUp, Toast, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams,  } from "react-router-dom";
+import { useParams, } from "react-router-dom";
 import getPTAcknowledgementData from "../../getPTAcknowledgementData";
 import PropertyDocument from "../../pageComponents/PropertyDocument";
 import PTWFApplicationTimeline from "../../pageComponents/PTWFApplicationTimeline";
@@ -11,7 +11,7 @@ import PTCitizenFeedbackPopUp from "../../pageComponents/PTCitizenFeedbackPopUp"
 
 import get from "lodash/get";
 import { size } from "lodash";
-import "../../css/pt-inline.css";
+
 
 const PTApplicationDetails = () => {
   const { t } = useTranslation();
@@ -31,12 +31,12 @@ const PTApplicationDetails = () => {
   );
   const [billAmount, setBillAmount] = useState(null);
   const [billStatus, setBillStatus] = useState(null);
-  const [viewTimeline, setViewTimeline]=useState(false);
+  const [viewTimeline, setViewTimeline] = useState(false);
   let serviceSearchArgs = {
-    tenantId : tenantId,
-    code: [`PT_${data?.Properties?.[0]?.creationReason}`], 
+    tenantId: tenantId,
+    code: [`PT_${data?.Properties?.[0]?.creationReason}`],
     module: ["PT"],
-    referenceIds : [data?.Properties?.[0]?.acknowldgementNumber]
+    referenceIds: [data?.Properties?.[0]?.acknowldgementNumber]
     //removing thid as of now sending ack no in referenceId
     // attributes: {
     //         "attributeCode": "referenceId",
@@ -44,7 +44,7 @@ const PTApplicationDetails = () => {
     //     }
   }
 
-  const { isLoading:serviceloading, error : serviceerror, data : servicedata} = Digit.Hooks.pt.useServiceSearchCF({ filters: { serviceSearchArgs } },{ filters: { serviceSearchArgs }, enabled : data?.Properties?.[0]?.acknowldgementNumber ?true : false, cacheTime : 0 });
+  const { isLoading: serviceloading, error: serviceerror, data: servicedata } = Digit.Hooks.pt.useServiceSearchCF({ filters: { serviceSearchArgs } }, { filters: { serviceSearchArgs }, enabled: data?.Properties?.[0]?.acknowldgementNumber ? true : false, cacheTime: 0 });
 
 
   const properties = get(data, "Properties", []);
@@ -54,9 +54,9 @@ const PTApplicationDetails = () => {
   sessionStorage.setItem("pt-property", JSON.stringify(application));
 
   useMemo(() => {
-    if((data?.Properties?.[0]?.status === "ACTIVE" || data?.Properties?.[0]?.status === "INACTIVE") && popup == false && servicedata?.Service?.length == 0)
+    if ((data?.Properties?.[0]?.status === "ACTIVE" || data?.Properties?.[0]?.status === "INACTIVE") && popup == false && servicedata?.Service?.length == 0)
       setpopup(true);
-  },[data,servicedata])
+  }, [data, servicedata])
 
   useEffect(() => {
     const fetchBillDetails = async () => {
@@ -211,23 +211,23 @@ const PTApplicationDetails = () => {
 
   async function getRecieptSearch({ tenantId, payments, ...params }) {
     let response = { filestoreIds: [payments?.fileStoreId] };
-    if(response!==null){
+    if (response !== null) {
       const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
       window.open(fileStore[response?.filestoreIds[0]], "_blank");
     }
-    else{
+    else {
       response = await Digit.PaymentService.generatePdf(tenantId, { Payments: [{ ...payments }] }, "property-receipt");
       const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: response.filestoreIds[0] });
       window.open(fileStore[response?.filestoreIds[0]], "_blank");
-    }   
+    }
   }
-  
-  const handleViewTimeline=()=>{ 
-    const timelineSection=document.getElementById('timeline');
-      if(timelineSection){
-        timelineSection.scrollIntoView({behavior: 'smooth'});
-      } 
-      setViewTimeline(true);   
+
+  const handleViewTimeline = () => {
+    const timelineSection = document.getElementById('timeline');
+    if (timelineSection) {
+      timelineSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    setViewTimeline(true);
   };
   const handleDownload = async (document, tenantid) => {
     let tenantId = tenantid ? tenantid : tenantId;
@@ -258,15 +258,17 @@ const PTApplicationDetails = () => {
       label: t("MT_CERTIFICATE"),
       onClick: () => printCertificate(),
     });
-    
-    const reversedOwners= Array.isArray(data?.Properties?.[0]?.owners) ? data?.Properties?.[0]?.owners.slice().reverse():[];
+
+  const reversedOwners = Array.isArray(data?.Properties?.[0]?.owners) ? data?.Properties?.[0]?.owners.slice().reverse() : [];
+  const statusClass = (data?.Properties?.[0]?.status || property?.status || "INWORKFLOW").toLowerCase();
+
   return (
-    <React.Fragment>
-      <div>
-        <div className="cardHeaderWithOptions pt-inline-card-header">
-          <Header styles={{ fontSize: "32px" }}>{t("PT_MUTATION_APPLICATION_DETAILS")}</Header>
-          <div className="pt-inline-card-header-actions">
-       
+    <div className="pt-citizen-application-details-wrapper">
+      <div className="pt-app-page-header-wrap">
+        <Header className="pt-app-page-title">
+          {isPropertyTransfer ? t("PT_MUTATION_APPLICATION_DETAILS") : t("PT_APPLICATION_DETAILS_HEADER") || t("PT_MUTATION_APPLICATION_DETAILS")}
+        </Header>
+        <div className="pt-app-page-header-actions">
           {dowloadOptions && dowloadOptions.length > 0 && (
             <MultiLink
               className="multilinkWrapper"
@@ -275,338 +277,543 @@ const PTApplicationDetails = () => {
               options={dowloadOptions}
             />
           )}
-          <LinkButton label={t("VIEW_TIMELINE")} className="pt-inline-view-timeline-btn" onClick={handleViewTimeline}></LinkButton>
-          </div>
-          
+          <button type="button" className="pt-app-view-timeline-btn" onClick={handleViewTimeline}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            {t("VIEW_TIMELINE")}
+          </button>
         </div>
-        <Card>
-          <StatusTable>
-            <Row
-              className="border-none"
-              label={t("PT_APPLICATION_NUMBER_LABEL")}
-              text={property?.acknowldgementNumber} /* textStyle={{ whiteSpace: "pre" }} */
-            />
-            <Row
-              className="border-none"
-              label={t("PT_SEARCHPROPERTY_TABEL_PTUID")}
-              text={property?.propertyId} /* textStyle={{ whiteSpace: "pre" }} */
-            />
-            <Row
-              className="border-none"
-              label={t("PT_APPLICATION_CHANNEL_LABEL")}
-              text={t(`ES_APPLICATION_DETAILS_APPLICATION_CHANNEL_${property?.channel}`)}
-            />
+      </div>
 
-            {isPropertyTransfer && (
-              <React.Fragment>
-                <Row className="border-none" label={t("PT_FEE_AMOUNT")} text={billAmount || t("₹0")} />
-                <Row className="border-none" label={t("PT_PAYMENT_STATUS")} text={billStatus} />
-              </React.Fragment>
+      {/* 1. Hero KPI Card */}
+      <div className="pt-app-hero-card">
+        <div className="pt-app-hero-header">
+          <div className="pt-app-id-section">
+            <div className="pt-app-id-label">{t("PT_APPLICATION_NUMBER_LABEL")}</div>
+            <div className="pt-app-id-value">{property?.acknowldgementNumber || t("CS_NA")}</div>
+            {property?.propertyId && (
+              <div className="pt-app-sub-id">
+                {t("PT_SEARCHPROPERTY_TABEL_PTUID")}: <strong>{property?.propertyId}</strong>
+              </div>
             )}
-          </StatusTable>
-          <CardSubHeader className="pt-inline-subheader">{t("PT_PROPERTY_ADDRESS_SUB_HEADER")}</CardSubHeader>
-          <StatusTable>
-            <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_PINCODE")} text={property?.address?.pincode || t("CS_NA")} />
-            <Row className="border-none" label={t("PT_COMMON_CITY")} text={property?.address?.city || t("CS_NA")} />
-            <Row
-              className="border-none"
-              label={t("PT_COMMON_LOCALITY_OR_MOHALLA")}
-              text=/* {`${t(application?.address?.locality?.name)}` || t("CS_NA")} */ {t(`${property?.address?.locality?.area}`) || t("CS_NA")}
-            />
-            <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_STREET_NAME")} text={property?.address?.street || t("CS_NA")} />
-            {isPropertyTransfer ? (
-              <Row className="border-none" label={t("PT_DOOR_OR_HOUSE")} text={property?.address?.doorNo || t("CS_NA")} />
-            ) : (
-              <Row className="border-none" label={t("PT_PROPERTY_ADDRESS_COLONY_NAME")} text={property?.address?.buildingName || t("CS_NA")} />
-            )}
-          </StatusTable>
+          </div>
+          <div className="pt-app-status-wrap">
+            <span className={`pt-app-status-pill status-${statusClass}`}>
+              {t(`PT_COMMON_${property?.status || "INWORKFLOW"}`)}
+            </span>
+          </div>
+        </div>
 
+        <div className="pt-app-hero-kpi-grid">
+          <div className="pt-app-kpi-item">
+            <div className="pt-app-kpi-label">{t("PT_APPLICATION_CHANNEL_LABEL")}</div>
+            <div className="pt-app-kpi-val">
+              {t(`ES_APPLICATION_DETAILS_APPLICATION_CHANNEL_${property?.channel}`) || t("CS_NA")}
+            </div>
+          </div>
           {isPropertyTransfer ? (
-            <React.Fragment>
-              <CardSubHeader className="pt-inline-subheader">{t("PT_MUTATION_TRANSFEROR_DETAILS")}</CardSubHeader>
-              <div>
-                {Array.isArray(transferorOwners) &&
-                   transferorOwners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence}).map((owner, index) => (
-                    <div key={index}>
-                      <CardSubHeader>
-                        {transferorOwners.length != 1 && (
-                          <span>
-                            {t("PT_OWNER_SUB_HEADER")} - {index + 1}{" "}
-                          </span>
-                        )}
-                      </CardSubHeader>
-                      <StatusTable>
-                        <Row className="border-none" label={t("PT_COMMON_APPLICANT_NAME_LABEL")} text={owner?.name || t("CS_NA")} />
-                        <Row className="border-none" label={t("PT_FORM3_GUARDIAN_NAME")} text={owner?.fatherOrHusbandName || t("CS_NA")} />
-                        <Row className="border-none" label={t("PT_FORM3_MOBILE_NUMBER")} text={owner?.mobileNumber || t("CS_NA")} />
-                        <Row className="border-none" label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={owner?.emailId || t("CS_NA")} />
-                        <Row
-                          className="border-none"
-                          label={t("PT_MUTATION_TRANSFEROR_SPECIAL_CATEGORY")}
-                          text={owner?.ownerType || t("CS_NA")}
-                        />
-                        <Row className="border-none" label={t("PT_OWNERSHIP_INFO_CORR_ADDR")} text={owner?.correspondenceAddress || t("CS_NA")} />
-                      </StatusTable>
-                    </div>
-                  ))}
+            <>
+              <div className="pt-app-kpi-item">
+                <div className="pt-app-kpi-label">{t("PT_FEE_AMOUNT")}</div>
+                <div className="pt-app-kpi-val val-fee">₹{billAmount || 0}</div>
               </div>
-
-              <CardSubHeader className="pt-inline-subheader">{t("PT_MUTATION_TRANSFEREE_DETAILS")}</CardSubHeader>
-              {isInstitution ? (
-                <div>
-                  {Array.isArray(transfereeOwners) &&
-                   transfereeOwners.sort((item,item2)=>{return item.additionalDetails.ownerSequence - item2.additionalDetails.ownerSequence}).map((owner, index) => (
-                      <div key={index}>
-                        <CardSubHeader>
-                          {transfereeOwners.length != 1 && (
-                            <span>
-                              {t("PT_OWNER_SUB_HEADER")} - {index + 1}{" "}
-                            </span>
-                          )}
-                        </CardSubHeader>
-                        <StatusTable>
-                          <Row className="border-none" label={t("PT_INSTITUTION_NAME")} text={transferorInstitution?.name || t("CS_NA")} />
-                          <Row className="border-none" label={t("PT_TYPE_OF_INSTITUTION")} text={`${t(transferorInstitution?.type)}` || t("CS_NA")} />
-                          <Row
-                            className="border-none"
-                            label={t("PT_NAME_AUTHORIZED_PERSON")}
-                            text={transferorInstitution?.nameOfAuthorizedPerson || t("CS_NA")}
-                          />
-                          <Row className="border-none" label={t("PT_LANDLINE_NUMBER")} text={owner?.altContactNumber || t("CS_NA")} />
-                          <Row className="border-none" label={t("PT_FORM3_MOBILE_NUMBER")} text={owner?.mobileNumber || t("CS_NA")} />
-                          <Row
-                            className="border-none"
-                            label={t("PT_INSTITUTION_DESIGNATION")}
-                            text={transferorInstitution?.designation || t("CS_NA")}
-                          />
-                          <Row className="border-none" label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={owner?.emailId || t("CS_NA")} />
-                          <Row className="border-none" label={t("PT_OWNERSHIP_INFO_CORR_ADDR")} text={owner?.correspondenceAddress || t("CS_NA")} />
-                        </StatusTable>
-                      </div>
-                    ))}
-                </div>
-              ) : (
-                <div>
-                  {Array.isArray(transfereeOwners) &&
-                    transfereeOwners.sort((item,item2)=>{return item?.additionalDetails?.ownerSequence - item2?.additionalDetails?.ownerSequence}).map((owner, index) => (
-                      <div key={index}>
-                        <CardSubHeader>
-                          {transfereeOwners.length != 1 && (
-                            <span>
-                              {t("PT_OWNER_SUB_HEADER")} - {index + 1}{" "}
-                            </span>
-                          )}
-                        </CardSubHeader>
-                        <StatusTable>
-                          <Row className="border-none" label={t("PT_COMMON_APPLICANT_NAME_LABEL")} text={owner?.name || t("CS_NA")} />
-                          <Row className="border-none" label={t("PT_FORM3_GUARDIAN_NAME")} text={owner?.fatherOrHusbandName || t("CS_NA")} />
-                          <Row className="border-none" label={t("PT_COMMON_GENDER_LABEL")} text={owner?.gender || t("CS_NA")} />
-                          <Row
-                            className="border-none"
-                            label={t("PT_FORM3_OWNERSHIP_TYPE")}
-                            text={`${application?.ownershipCategory ? t(`PT_OWNERSHIP_${application?.ownershipCategory}`) : t("CS_NA")}`}
-                          />
-                          <Row className="border-none" label={t("PT_FORM3_MOBILE_NUMBER")} text={owner?.mobileNumber || t("CS_NA")} />
-                          <Row className="border-none" label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={owner?.emailId || t("CS_NA")} />
-                          <Row
-                            className="border-none"
-                            label={t("PT_MUTATION_TRANSFEROR_SPECIAL_CATEGORY")}
-                            text={(owner?.ownerType) || t("CS_NA")}
-                          />
-                          <Row className="border-none" label={t("PT_OWNERSHIP_INFO_CORR_ADDR")} text={owner?.correspondenceAddress || t("CS_NA")} />
-                        </StatusTable>
-                      </div>
-                    ))}
-                </div>
-              )}
-              <CardSubHeader className="pt-inline-subheader">{t("PT_MUTATION_DETAILS")}</CardSubHeader>
-              <StatusTable>
-                <Row
-                  className="border-none"
-                  label={t("PT_MUTATION_PENDING_COURT")}
-                  text={property?.additionalDetails?.isMutationInCourt || t("CS_NA")}
-                />
-                <Row className="border-none" label={t("PT_DETAILS_COURT_CASE")} text={property?.additionalDetails?.caseDetails || t("CS_NA")} />
-                <Row
-                  className="border-none"
-                  label={t("PT_PROP_UNDER_GOV_AQUISITION")}
-                  text={property?.additionalDetails?.isPropertyUnderGovtPossession || t("CS_NA")}
-                />
-                <Row className="border-none" label={t("PT_DETAILS_GOV_AQUISITION")} text={t("CS_NA")} />
-              </StatusTable>
-
-              <CardSubHeader className="pt-inline-subheader">{t("PT_REGISTRATION_DETAILS")}</CardSubHeader>
-              <StatusTable>
-                <Row
-                  className="border-none"
-                  label={t("PT_REASON_PROP_TRANSFER")}
-                  text={`${t(property?.additionalDetails?.reasonForTransfer)}` || t("CS_NA")}
-                />
-                <Row className="border-none" label={t("PT_PROP_MARKET_VALUE")} text={property?.additionalDetails?.marketValue || t("CS_NA")} />
-                <Row className="border-none" label={t("PT_REG_NUMBER")} text={property?.additionalDetails?.documentNumber || t("CS_NA")} />
-                <Row className="border-none" label={t("PT_DOC_ISSUE_DATE")} text={documentDate} />
-                <Row className="border-none" label={t("PT_REG_DOC_VALUE")} text={property?.additionalDetails?.documentValue || t("CS_NA")} />
-                <Row className="border-none" label={t("PT_REMARKS")} text={t("CS_NA")} />
-              </StatusTable>
-            </React.Fragment>
+              <div className="pt-app-kpi-item">
+                <div className="pt-app-kpi-label">{t("PT_PAYMENT_STATUS")}</div>
+                <div className="pt-app-kpi-val val-status">{billStatus || t("CS_NA")}</div>
+              </div>
+            </>
           ) : (
-            <React.Fragment>
-              <CardSubHeader className="pt-inline-subheader"> {t("PT_PROPERTY_ASSESSMENT_DETAILS_HEADER")}</CardSubHeader>
-              <StatusTable>
-                <Row
-                  className="border-none"
-                  label={t("PT_ASSESMENT_INFO_USAGE_TYPE")}
-                  text={
-                    `${t(
-                      (property?.usageCategory !== "RESIDENTIAL" ? "COMMON_PROPUSGTYPE_NONRESIDENTIAL_" : "COMMON_PROPSUBUSGTYPE_") +
-                        (property?.usageCategory?.split(".")[1] ? property?.usageCategory?.split(".")[1] : property?.usageCategory)
-                    )}` || t("CS_NA")
-                  }
-                />
-                <Row
-                  className="border-none"
-                  label={t("PT_COMMON_PROPERTY_TYPE")}
-                  text={`${t(getPropertyTypeLocale(property?.propertyType))}` || t("CS_NA")}
-                />
-                <Row
-                  className="border-none"
-                  label={t("PT_ASSESMENT1_PLOT_SIZE")}
-                  text={(property?.landArea && `${t(`${property?.landArea} sq.ft`)}`) || t("CS_NA")}
-                />
-                <Row className="border-none" label={t("PT_ASSESMENT_INFO_NO_OF_FLOOR")} text={`${t(property?.noOfFloors)}` || t("CS_NA")} />
-                <Row
-                  className="border-none"
-                  label={t("PT_ASSESMENT1_ELECTRICITY_NUMBER")}
-                  text={(`${t(`${property.additionalDetails?.electricity}`)}`) || t("CS_NA")}
-                />
-                   <Row
-                  className="border-none"
-                  label={t("PT_ASSESMENT1_ELECTRICITY_UID")}
-                  text={(`${t(`${property.additionalDetails?.uid}`)}`) || t("CS_NA")}
-                />
-                  <Row
-                    className="border-none"
-                    label={t("PT_STRUCTURE_TYPE_LABEL")}
-                    text={`${`${property?.additionalDetails?.structureType?.i18nKey}` || t("CS_NA")}`}
-                  />
-                  <Row
-                    className="border-none"
-                    label={t("PT_AGE_OF_PROPERTY_LABEL")}
-                    text={`${`${property?.additionalDetails?.ageOfProperty?.code}` || t("CS_NA")}`}
-                  />
-              </StatusTable>
-              <div>
-                {Array.isArray(units) &&
-                  units.length > 0 &&
-                  units.map((unit, index) => (
-                    <div key={index}>
-                      {(flrno !== unit?.floorNo ? (i = 1) : (i = i + 1)) && i === 1 && (
-                        <CardSubHeader>{t(`PROPERTYTAX_FLOOR_${unit?.floorNo}`)}</CardSubHeader>
-                      )}
-                      <div className="pt-inline-unit-card">
-                        <CardSubHeader>
-                          {t("ES_APPLICATION_DETAILS_UNIT")} {i}
-                        </CardSubHeader>
-                        {(flrno = unit?.floorNo) > -3 && (
-                          <StatusTable>
-                            <Row
-                              className="border-none"
-                              label={t("PT_ASSESSMENT_UNIT_USAGE_TYPE")}
-                              text={
-                                `${t(
-                                  (property?.usageCategory !== "RESIDENTIAL" ? "COMMON_PROPUSGTYPE_NONRESIDENTIAL_" : "COMMON_PROPUSGTYPE_") +
-                                    (property?.usageCategory?.split(".")[1] ? property?.usageCategory?.split(".")[1] : property?.usageCategory)
-                                )}` || t("CS_NA")
-                              }
-                            />
-                            <Row
-                              className="border-none"
-                              label={t("PT_OCCUPANY_TYPE_LABEL")}
-                              text={`${t("PROPERTYTAX_OCCUPANCYTYPE_" + unit?.occupancyType)}` || t("CS_NA")}
-                            />
-                            <Row
-                              className="border-none"
-                              label={t("PT_BUILTUP_AREA_LABEL")}
-                              text={`${`${unit?.constructionDetail?.builtUpArea} sq.ft` || t("CS_NA")}`}
-                            />
-                          
-                            {unit.occupancyType == "RENTED" && (
-                              <Row
-                                className="border-none"
-                                label={t("PT_FORM2_TOTAL_ANNUAL_RENT")}
-                                text={`${(unit?.arv && `₹${unit?.arv}`) || t("CS_NA")}`}
-                              />
-                            )}
-                          </StatusTable>
-                        )}
+            <div className="pt-app-kpi-item">
+              <div className="pt-app-kpi-label">{t("PT_COMMON_TABLE_COL_APP_TYPE")}</div>
+              <div className="pt-app-kpi-val">
+                {property?.creationReason ? t(`PT.${property.creationReason}`) : t("CS_NA")}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* 2. Address Details Section Card */}
+      <div className="pt-app-section-card">
+        <div className="pt-app-section-header">
+          <div className="pt-app-section-title-wrap">
+            <span className="pt-app-section-accent-bar" />
+            <h2 className="pt-app-section-title">{t("PT_PROPERTY_ADDRESS_SUB_HEADER")}</h2>
+          </div>
+        </div>
+        <div className="pt-app-data-grid">
+          <div className="pt-app-data-item">
+            <span className="pt-app-data-label">{t("PT_PROPERTY_ADDRESS_PINCODE")}</span>
+            <span className="pt-app-data-value">{property?.address?.pincode || t("CS_NA")}</span>
+          </div>
+          <div className="pt-app-data-item">
+            <span className="pt-app-data-label">{t("PT_COMMON_CITY")}</span>
+            <span className="pt-app-data-value">{t(getCityLocale(property?.tenantId || tenantId)) || property?.address?.city || t("CS_NA")}</span>
+          </div>
+          <div className="pt-app-data-item">
+            <span className="pt-app-data-label">{t("PT_COMMON_LOCALITY_OR_MOHALLA")}</span>
+            <span className="pt-app-data-value">{t(property?.address?.locality?.name || property?.address?.locality?.area) || t("CS_NA")}</span>
+          </div>
+          <div className="pt-app-data-item">
+            <span className="pt-app-data-label">{t("PT_PROPERTY_ADDRESS_STREET_NAME")}</span>
+            <span className="pt-app-data-value">{property?.address?.street || t("CS_NA")}</span>
+          </div>
+          <div className="pt-app-data-item">
+            <span className="pt-app-data-label">
+              {isPropertyTransfer ? t("PT_DOOR_OR_HOUSE") : t("PT_PROPERTY_ADDRESS_COLONY_NAME")}
+            </span>
+            <span className="pt-app-data-value">
+              {(isPropertyTransfer ? property?.address?.doorNo : property?.address?.buildingName) || t("CS_NA")}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {isPropertyTransfer ? (
+        <>
+          {/* 3A. Transferor Details */}
+          <div className="pt-app-section-card">
+            <div className="pt-app-section-header">
+              <div className="pt-app-section-title-wrap">
+                <span className="pt-app-section-accent-bar" />
+                <h2 className="pt-app-section-title">{t("PT_MUTATION_TRANSFEROR_DETAILS")}</h2>
+              </div>
+            </div>
+            <div>
+              {Array.isArray(transferorOwners) &&
+                transferorOwners
+                  .sort((item, item2) => (item?.additionalDetails?.ownerSequence || 0) - (item2?.additionalDetails?.ownerSequence || 0))
+                  .map((owner, index) => (
+                    <div key={index} className="pt-app-owner-card">
+                      <div className="pt-app-owner-header">
+                        <span className="pt-app-owner-badge badge-transferor">
+                          {transferorOwners.length > 1 ? `${t("PT_TRANSFEROR_HEADER")} ${index + 1}` : t("PT_TRANSFEROR_DETAILS_LABEL") || t("PT_MUTATION_TRANSFEROR_DETAILS")}
+                        </span>
+                      </div>
+                      <div className="pt-app-data-grid">
+                        <div className="pt-app-data-item">
+                          <span className="pt-app-data-label">{t("PT_COMMON_APPLICANT_NAME_LABEL")}</span>
+                          <span className="pt-app-data-value">{owner?.name || t("CS_NA")}</span>
+                        </div>
+                        <div className="pt-app-data-item">
+                          <span className="pt-app-data-label">{t("PT_FORM3_GUARDIAN_NAME")}</span>
+                          <span className="pt-app-data-value">{owner?.fatherOrHusbandName || t("CS_NA")}</span>
+                        </div>
+                        <div className="pt-app-data-item">
+                          <span className="pt-app-data-label">{t("PT_FORM3_MOBILE_NUMBER")}</span>
+                          <span className="pt-app-data-value">{owner?.mobileNumber || t("CS_NA")}</span>
+                        </div>
+                        <div className="pt-app-data-item">
+                          <span className="pt-app-data-label">{t("PT_MUTATION_AUTHORISED_EMAIL")}</span>
+                          <span className="pt-app-data-value">{owner?.emailId || t("CS_NA")}</span>
+                        </div>
+                        <div className="pt-app-data-item">
+                          <span className="pt-app-data-label">{t("PT_MUTATION_TRANSFEROR_SPECIAL_CATEGORY")}</span>
+                          <span className="pt-app-data-value">{owner?.ownerType || t("CS_NA")}</span>
+                        </div>
+                        <div className="pt-app-data-item">
+                          <span className="pt-app-data-label">{t("PT_OWNERSHIP_INFO_CORR_ADDR")}</span>
+                          <span className="pt-app-data-value">{owner?.correspondenceAddress || t("CS_NA")}</span>
+                        </div>
                       </div>
                     </div>
                   ))}
+            </div>
+          </div>
+
+          {/* 3B. Transferee Details */}
+          <div className="pt-app-section-card">
+            <div className="pt-app-section-header">
+              <div className="pt-app-section-title-wrap">
+                <span className="pt-app-section-accent-bar" />
+                <h2 className="pt-app-section-title">{t("PT_MUTATION_TRANSFEREE_DETAILS")}</h2>
               </div>
-              <CardSubHeader className="pt-inline-subheader">{t("PT_COMMON_PROPERTY_OWNERSHIP_DETAILS_HEADER")}</CardSubHeader>
-              <div className="owner-details">
-                {Array.isArray(owners) &&
-                  reversedOwners.sort(()=>{return reversedOwners}).map((owner, index) => (
-                    <div key={index} className="owner-details-child">
-                      <CardSubHeader>
-                        {owners.length != 1 && (
-                          <span>
-                            {t("PT_OWNER_SUB_HEADER")} - {index + 1}{" "}
+            </div>
+            {isInstitution ? (
+              <div>
+                {Array.isArray(transfereeOwners) &&
+                  transfereeOwners
+                    .sort((item, item2) => (item.additionalDetails?.ownerSequence || 0) - (item2.additionalDetails?.ownerSequence || 0))
+                    .map((owner, index) => (
+                      <div key={index} className="pt-app-owner-card">
+                        <div className="pt-app-owner-header">
+                          <span className="pt-app-owner-badge badge-transferee">
+                            {transfereeOwners.length > 1 ? `${t("PT_TRANSFEREE_HEADER")} ${index + 1}` : t("PT_TRANSFEREE_DETAILS_LABEL") || t("PT_MUTATION_TRANSFEREE_DETAILS")}
                           </span>
-                        )}
-                      </CardSubHeader>
-                      <StatusTable>
-                        <Row className="border-none" label={t("PT_COMMON_APPLICANT_NAME_LABEL")} text={owner?.name || t("CS_NA")} />
-                        <Row className="border-none" label={t("PT_FORM3_GUARDIAN_NAME")} text={owner?.fatherOrHusbandName || t("CS_NA")} />
-                        <Row className="border-none" label={t("PT_COMMON_GENDER_LABEL")} text={owner?.gender || t("CS_NA")} />
-                        <Row
-                          className="border-none"
-                          label={t("PT_FORM3_OWNERSHIP_TYPE")}
-                          text={`${property?.ownershipCategory ? t(`PT_OWNERSHIP_${property?.ownershipCategory}`) : t("CS_NA")}`}
-                        />
-                        <Row className="border-none" label={t("PT_FORM3_MOBILE_NUMBER")} text={owner?.mobileNumber} />
-                        <Row className="border-none" label={t("PT_MUTATION_AUTHORISED_EMAIL")} text={`${owner?.emailId || t("CS_NA")}`} />
-                        <Row className="border-none" label={t("PT_MUTATION_TRANSFEROR_SPECIAL_CATEGORY")} text={(owner?.ownerType)} />
-                        <Row className="border-none" label={t("PT_OWNERSHIP_INFO_CORR_ADDR")} text={owner?.permanentAddress || t("CS_NA")} />
-                      </StatusTable>
-                    </div>
-                  ))}
+                        </div>
+                        <div className="pt-app-data-grid">
+                          <div className="pt-app-data-item">
+                            <span className="pt-app-data-label">{t("PT_INSTITUTION_NAME")}</span>
+                            <span className="pt-app-data-value">{transferorInstitution?.name || t("CS_NA")}</span>
+                          </div>
+                          <div className="pt-app-data-item">
+                            <span className="pt-app-data-label">{t("PT_TYPE_OF_INSTITUTION")}</span>
+                            <span className="pt-app-data-value">{t(transferorInstitution?.type) || t("CS_NA")}</span>
+                          </div>
+                          <div className="pt-app-data-item">
+                            <span className="pt-app-data-label">{t("PT_NAME_AUTHORIZED_PERSON")}</span>
+                            <span className="pt-app-data-value">{transferorInstitution?.nameOfAuthorizedPerson || t("CS_NA")}</span>
+                          </div>
+                          <div className="pt-app-data-item">
+                            <span className="pt-app-data-label">{t("PT_LANDLINE_NUMBER")}</span>
+                            <span className="pt-app-data-value">{owner?.altContactNumber || t("CS_NA")}</span>
+                          </div>
+                          <div className="pt-app-data-item">
+                            <span className="pt-app-data-label">{t("PT_FORM3_MOBILE_NUMBER")}</span>
+                            <span className="pt-app-data-value">{owner?.mobileNumber || t("CS_NA")}</span>
+                          </div>
+                          <div className="pt-app-data-item">
+                            <span className="pt-app-data-label">{t("PT_INSTITUTION_DESIGNATION")}</span>
+                            <span className="pt-app-data-value">{transferorInstitution?.designation || t("CS_NA")}</span>
+                          </div>
+                          <div className="pt-app-data-item">
+                            <span className="pt-app-data-label">{t("PT_MUTATION_AUTHORISED_EMAIL")}</span>
+                            <span className="pt-app-data-value">{owner?.emailId || t("CS_NA")}</span>
+                          </div>
+                          <div className="pt-app-data-item">
+                            <span className="pt-app-data-label">{t("PT_OWNERSHIP_INFO_CORR_ADDR")}</span>
+                            <span className="pt-app-data-value">{owner?.correspondenceAddress || t("CS_NA")}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
               </div>
-            </React.Fragment>
+            ) : (
+              <div>
+                {Array.isArray(transfereeOwners) &&
+                  transfereeOwners
+                    .sort((item, item2) => (item?.additionalDetails?.ownerSequence || 0) - (item2?.additionalDetails?.ownerSequence || 0))
+                    .map((owner, index) => (
+                      <div key={index} className="pt-app-owner-card">
+                        <div className="pt-app-owner-header">
+                          <span className="pt-app-owner-badge badge-transferee">
+                            {transfereeOwners.length > 1 ? `${t("PT_TRANSFEREE_HEADER")} ${index + 1}` : t("PT_TRANSFEREE_DETAILS_LABEL") || t("PT_MUTATION_TRANSFEREE_DETAILS")}
+                          </span>
+                        </div>
+                        <div className="pt-app-data-grid">
+                          <div className="pt-app-data-item">
+                            <span className="pt-app-data-label">{t("PT_COMMON_APPLICANT_NAME_LABEL")}</span>
+                            <span className="pt-app-data-value">{owner?.name || t("CS_NA")}</span>
+                          </div>
+                          <div className="pt-app-data-item">
+                            <span className="pt-app-data-label">{t("PT_FORM3_GUARDIAN_NAME")}</span>
+                            <span className="pt-app-data-value">{owner?.fatherOrHusbandName || t("CS_NA")}</span>
+                          </div>
+                          <div className="pt-app-data-item">
+                            <span className="pt-app-data-label">{t("PT_COMMON_GENDER_LABEL")}</span>
+                            <span className="pt-app-data-value">{owner?.gender || t("CS_NA")}</span>
+                          </div>
+                          <div className="pt-app-data-item">
+                            <span className="pt-app-data-label">{t("PT_FORM3_OWNERSHIP_TYPE")}</span>
+                            <span className="pt-app-data-value">
+                              {application?.ownershipCategory ? t(`PT_OWNERSHIP_${application?.ownershipCategory}`) : t("CS_NA")}
+                            </span>
+                          </div>
+                          <div className="pt-app-data-item">
+                            <span className="pt-app-data-label">{t("PT_FORM3_MOBILE_NUMBER")}</span>
+                            <span className="pt-app-data-value">{owner?.mobileNumber || t("CS_NA")}</span>
+                          </div>
+                          <div className="pt-app-data-item">
+                            <span className="pt-app-data-label">{t("PT_MUTATION_AUTHORISED_EMAIL")}</span>
+                            <span className="pt-app-data-value">{owner?.emailId || t("CS_NA")}</span>
+                          </div>
+                          <div className="pt-app-data-item">
+                            <span className="pt-app-data-label">{t("PT_MUTATION_TRANSFEROR_SPECIAL_CATEGORY")}</span>
+                            <span className="pt-app-data-value">{owner?.ownerType || t("CS_NA")}</span>
+                          </div>
+                          <div className="pt-app-data-item">
+                            <span className="pt-app-data-label">{t("PT_OWNERSHIP_INFO_CORR_ADDR")}</span>
+                            <span className="pt-app-data-value">{owner?.correspondenceAddress || t("CS_NA")}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+              </div>
+            )}
+          </div>
+
+          {/* 3C. Mutation Details */}
+          <div className="pt-app-section-card">
+            <div className="pt-app-section-header">
+              <div className="pt-app-section-title-wrap">
+                <span className="pt-app-section-accent-bar" />
+                <h2 className="pt-app-section-title">{t("PT_MUTATION_DETAILS")}</h2>
+              </div>
+            </div>
+            <div className="pt-app-data-grid">
+              <div className="pt-app-data-item">
+                <span className="pt-app-data-label">{t("PT_MUTATION_PENDING_COURT")}</span>
+                <span className="pt-app-data-value">{property?.additionalDetails?.isMutationInCourt || t("CS_NA")}</span>
+              </div>
+              <div className="pt-app-data-item">
+                <span className="pt-app-data-label">{t("PT_DETAILS_COURT_CASE")}</span>
+                <span className="pt-app-data-value">{property?.additionalDetails?.caseDetails || t("CS_NA")}</span>
+              </div>
+              <div className="pt-app-data-item">
+                <span className="pt-app-data-label">{t("PT_PROP_UNDER_GOV_AQUISITION")}</span>
+                <span className="pt-app-data-value">{property?.additionalDetails?.isPropertyUnderGovtPossession || t("CS_NA")}</span>
+              </div>
+              <div className="pt-app-data-item">
+                <span className="pt-app-data-label">{t("PT_DETAILS_GOV_AQUISITION")}</span>
+                <span className="pt-app-data-value">{t("CS_NA")}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 3D. Registration Details */}
+          <div className="pt-app-section-card">
+            <div className="pt-app-section-header">
+              <div className="pt-app-section-title-wrap">
+                <span className="pt-app-section-accent-bar" />
+                <h2 className="pt-app-section-title">{t("PT_REGISTRATION_DETAILS")}</h2>
+              </div>
+            </div>
+            <div className="pt-app-data-grid">
+              <div className="pt-app-data-item">
+                <span className="pt-app-data-label">{t("PT_REASON_PROP_TRANSFER")}</span>
+                <span className="pt-app-data-value">{t(property?.additionalDetails?.reasonForTransfer) || t("CS_NA")}</span>
+              </div>
+              <div className="pt-app-data-item">
+                <span className="pt-app-data-label">{t("PT_PROP_MARKET_VALUE")}</span>
+                <span className="pt-app-data-value">{property?.additionalDetails?.marketValue ? `₹${property.additionalDetails.marketValue}` : t("CS_NA")}</span>
+              </div>
+              <div className="pt-app-data-item">
+                <span className="pt-app-data-label">{t("PT_REG_NUMBER")}</span>
+                <span className="pt-app-data-value">{property?.additionalDetails?.documentNumber || t("CS_NA")}</span>
+              </div>
+              <div className="pt-app-data-item">
+                <span className="pt-app-data-label">{t("PT_DOC_ISSUE_DATE")}</span>
+                <span className="pt-app-data-value">{documentDate}</span>
+              </div>
+              <div className="pt-app-data-item">
+                <span className="pt-app-data-label">{t("PT_REG_DOC_VALUE")}</span>
+                <span className="pt-app-data-value">{property?.additionalDetails?.documentValue ? `₹${property.additionalDetails.documentValue}` : t("CS_NA")}</span>
+              </div>
+              <div className="pt-app-data-item">
+                <span className="pt-app-data-label">{t("PT_REMARKS")}</span>
+                <span className="pt-app-data-value">{t("CS_NA")}</span>
+              </div>
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          {/* 3A. Assessment Details */}
+          <div className="pt-app-section-card">
+            <div className="pt-app-section-header">
+              <div className="pt-app-section-title-wrap">
+                <span className="pt-app-section-accent-bar" />
+                <h2 className="pt-app-section-title">{t("PT_PROPERTY_ASSESSMENT_DETAILS_HEADER")}</h2>
+              </div>
+            </div>
+            <div className="pt-app-data-grid">
+              <div className="pt-app-data-item">
+                <span className="pt-app-data-label">{t("PT_ASSESMENT_INFO_USAGE_TYPE")}</span>
+                <span className="pt-app-data-value">
+                  {t(
+                    (property?.usageCategory !== "RESIDENTIAL" ? "COMMON_PROPUSGTYPE_NONRESIDENTIAL_" : "COMMON_PROPSUBUSGTYPE_") +
+                      (property?.usageCategory?.split(".")[1] ? property?.usageCategory?.split(".")[1] : property?.usageCategory)
+                  ) || t("CS_NA")}
+                </span>
+              </div>
+              <div className="pt-app-data-item">
+                <span className="pt-app-data-label">{t("PT_COMMON_PROPERTY_TYPE")}</span>
+                <span className="pt-app-data-value">{t(getPropertyTypeLocale(property?.propertyType)) || t("CS_NA")}</span>
+              </div>
+              <div className="pt-app-data-item">
+                <span className="pt-app-data-label">{t("PT_ASSESMENT1_PLOT_SIZE")}</span>
+                <span className="pt-app-data-value">{property?.landArea ? `${property.landArea} sq.ft` : t("CS_NA")}</span>
+              </div>
+              <div className="pt-app-data-item">
+                <span className="pt-app-data-label">{t("PT_ASSESMENT_INFO_NO_OF_FLOOR")}</span>
+                <span className="pt-app-data-value">{property?.noOfFloors || t("CS_NA")}</span>
+              </div>
+              <div className="pt-app-data-item">
+                <span className="pt-app-data-label">{t("PT_ASSESMENT1_ELECTRICITY_NUMBER")}</span>
+                <span className="pt-app-data-value">{property.additionalDetails?.electricity || t("CS_NA")}</span>
+              </div>
+              <div className="pt-app-data-item">
+                <span className="pt-app-data-label">{t("PT_ASSESMENT1_ELECTRICITY_UID")}</span>
+                <span className="pt-app-data-value">{property.additionalDetails?.uid || t("CS_NA")}</span>
+              </div>
+              <div className="pt-app-data-item">
+                <span className="pt-app-data-label">{t("PT_STRUCTURE_TYPE_LABEL")}</span>
+                <span className="pt-app-data-value">{property?.additionalDetails?.structureType?.i18nKey || t("CS_NA")}</span>
+              </div>
+              <div className="pt-app-data-item">
+                <span className="pt-app-data-label">{t("PT_AGE_OF_PROPERTY_LABEL")}</span>
+                <span className="pt-app-data-value">{property?.additionalDetails?.ageOfProperty?.code || t("CS_NA")}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 3B. Units & Floors */}
+          {Array.isArray(units) && units.length > 0 && (
+            <div className="pt-app-section-card">
+              <div className="pt-app-section-header">
+                <div className="pt-app-section-title-wrap">
+                  <span className="pt-app-section-accent-bar" />
+                  <h2 className="pt-app-section-title">{t("PT_ASSESSMENT_FLOOR_DETAILS_HEADER")}</h2>
+                </div>
+              </div>
+              <div>
+                {units.map((unit, index) => {
+                  const isNewFloor = flrno !== unit?.floorNo;
+                  if (isNewFloor) {
+                    i = 1;
+                    flrno = unit?.floorNo;
+                  } else {
+                    i = i + 1;
+                  }
+                  return (
+                    <div key={index} className="pt-app-floor-group">
+                      {isNewFloor && (
+                        <div className="pt-app-floor-title">
+                          {t(`PROPERTYTAX_FLOOR_${unit?.floorNo}`)}
+                        </div>
+                      )}
+                      <div className="pt-app-unit-card">
+                        <div className="pt-app-unit-title">
+                          {t("ES_APPLICATION_DETAILS_UNIT")} {i}
+                        </div>
+                        <div className="pt-app-data-grid">
+                          <div className="pt-app-data-item">
+                            <span className="pt-app-data-label">{t("PT_ASSESSMENT_UNIT_USAGE_TYPE")}</span>
+                            <span className="pt-app-data-value">
+                              {t(
+                                (property?.usageCategory !== "RESIDENTIAL" ? "COMMON_PROPUSGTYPE_NONRESIDENTIAL_" : "COMMON_PROPUSGTYPE_") +
+                                  (property?.usageCategory?.split(".")[1] ? property?.usageCategory?.split(".")[1] : property?.usageCategory)
+                              ) || t("CS_NA")}
+                            </span>
+                          </div>
+                          <div className="pt-app-data-item">
+                            <span className="pt-app-data-label">{t("PT_OCCUPANY_TYPE_LABEL")}</span>
+                            <span className="pt-app-data-value">{t("PROPERTYTAX_OCCUPANCYTYPE_" + unit?.occupancyType) || t("CS_NA")}</span>
+                          </div>
+                          <div className="pt-app-data-item">
+                            <span className="pt-app-data-label">{t("PT_BUILTUP_AREA_LABEL")}</span>
+                            <span className="pt-app-data-value">{unit?.constructionDetail?.builtUpArea ? `${unit?.constructionDetail?.builtUpArea} sq.ft` : t("CS_NA")}</span>
+                          </div>
+                          {unit.occupancyType == "RENTED" && (
+                            <div className="pt-app-data-item">
+                              <span className="pt-app-data-label">{t("PT_FORM2_TOTAL_ANNUAL_RENT")}</span>
+                              <span className="pt-app-data-value">{unit?.arv ? `₹${unit?.arv}` : t("CS_NA")}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           )}
 
-          <CardSubHeader className="pt-inline-subheader">{t("PT_COMMON_DOCS")}</CardSubHeader>
-          <div>
-            {Array.isArray(docs) ? (
-              docs.length > 0 && <PropertyDocument property={property}></PropertyDocument>
-            ) : (
-              <StatusTable>
-                <Row className="border-none" text={t("PT_NO_DOCUMENTS_MSG")} />
-              </StatusTable>
-            )}
+          {/* 3C. Ownership Details */}
+          <div className="pt-app-section-card">
+            <div className="pt-app-section-header">
+              <div className="pt-app-section-title-wrap">
+                <span className="pt-app-section-accent-bar" />
+                <h2 className="pt-app-section-title">{t("PT_COMMON_PROPERTY_OWNERSHIP_DETAILS_HEADER")}</h2>
+              </div>
+            </div>
+            <div>
+              {Array.isArray(owners) &&
+                reversedOwners.map((owner, index) => (
+                  <div key={index} className="pt-app-owner-card">
+                    <div className="pt-app-owner-header">
+                      <span className="pt-app-owner-badge">
+                        {owners.length > 1 ? `${t("PT_OWNER_SUB_HEADER")} ${index + 1}` : t("PT_OWNER_DETAILS_LABEL") || t("PT_COMMON_PROPERTY_OWNERSHIP_DETAILS_HEADER")}
+                      </span>
+                    </div>
+                    <div className="pt-app-data-grid">
+                      <div className="pt-app-data-item">
+                        <span className="pt-app-data-label">{t("PT_COMMON_APPLICANT_NAME_LABEL")}</span>
+                        <span className="pt-app-data-value">{owner?.name || t("CS_NA")}</span>
+                      </div>
+                      <div className="pt-app-data-item">
+                        <span className="pt-app-data-label">{t("PT_FORM3_GUARDIAN_NAME")}</span>
+                        <span className="pt-app-data-value">{owner?.fatherOrHusbandName || t("CS_NA")}</span>
+                      </div>
+                      <div className="pt-app-data-item">
+                        <span className="pt-app-data-label">{t("PT_COMMON_GENDER_LABEL")}</span>
+                        <span className="pt-app-data-value">{owner?.gender || t("CS_NA")}</span>
+                      </div>
+                      <div className="pt-app-data-item">
+                        <span className="pt-app-data-label">{t("PT_FORM3_OWNERSHIP_TYPE")}</span>
+                        <span className="pt-app-data-value">
+                          {property?.ownershipCategory ? t(`PT_OWNERSHIP_${property?.ownershipCategory}`) : t("CS_NA")}
+                        </span>
+                      </div>
+                      <div className="pt-app-data-item">
+                        <span className="pt-app-data-label">{t("PT_FORM3_MOBILE_NUMBER")}</span>
+                        <span className="pt-app-data-value">{owner?.mobileNumber || t("CS_NA")}</span>
+                      </div>
+                      <div className="pt-app-data-item">
+                        <span className="pt-app-data-label">{t("PT_MUTATION_AUTHORISED_EMAIL")}</span>
+                        <span className="pt-app-data-value">{owner?.emailId || t("CS_NA")}</span>
+                      </div>
+                      <div className="pt-app-data-item">
+                        <span className="pt-app-data-label">{t("PT_MUTATION_TRANSFEROR_SPECIAL_CATEGORY")}</span>
+                        <span className="pt-app-data-value">{owner?.ownerType || t("CS_NA")}</span>
+                      </div>
+                      <div className="pt-app-data-item">
+                        <span className="pt-app-data-label">{t("PT_OWNERSHIP_INFO_CORR_ADDR")}</span>
+                        <span className="pt-app-data-value">{owner?.permanentAddress || t("CS_NA")}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
           </div>
-          <div id="timeline">
-          <PTWFApplicationTimeline application={application} id={acknowledgementIds} userType={"citizen"} />
+        </>
+      )}
+
+      {/* 4. Documents Section Card */}
+      <div className="pt-app-section-card">
+        <div className="pt-app-section-header">
+          <div className="pt-app-section-title-wrap">
+            <span className="pt-app-section-accent-bar" />
+            <h2 className="pt-app-section-title">{t("PT_COMMON_DOCS")}</h2>
           </div>
-          {showToast && (
-          <Toast
-            error={showToast.key}
-            label={t(showToast.label)}
-            className="pt-inline-toast-bottom"
-            onClose={() => {
-              setShowToast(null);
-            }}
-          />
-        )}
-        </Card>
-        {/* {popup && (<PopUp>
-          <div>
-          <PTCitizenFeedback popup={true} onClose={setpopup} setShowToast={setShowToast} data={data}/>
-          </div>
-        </PopUp>)} */}
-        {popup && <PTCitizenFeedbackPopUp setpopup={setpopup} setShowToast={setShowToast} data={data} />}
+        </div>
+        <div>
+          {Array.isArray(docs) && docs.length > 0 ? (
+            <PropertyDocument property={property} />
+          ) : (
+            <div className="pt-app-data-item">
+              <span className="pt-app-data-value">{t("PT_NO_DOCUMENTS_MSG")}</span>
+            </div>
+          )}
+        </div>
       </div>
-    </React.Fragment>
+
+      {/* 5. Timeline Card */}
+      <div className="pt-app-timeline-card" id="timeline">
+        <div className="pt-app-section-header">
+          <div className="pt-app-section-title-wrap">
+            <span className="pt-app-section-accent-bar" />
+            <h2 className="pt-app-section-title">{t("CS_APPLICATION_DETAILS_APPLICATION_TIMELINE") || t("PT_APPLICATION_TIMELINE") || "Application Timeline"}</h2>
+          </div>
+        </div>
+        <PTWFApplicationTimeline application={application} id={acknowledgementIds} userType={"citizen"} />
+      </div>
+
+      {showToast && (
+        <Toast
+          error={showToast.key}
+          label={t(showToast.label)}
+          className="pt-inline-toast-bottom"
+          onClose={() => {
+            setShowToast(null);
+          }}
+        />
+      )}
+
+      {popup && <PTCitizenFeedbackPopUp setpopup={setpopup} setShowToast={setShowToast} data={data} />}
+    </div>
   );
 };
 

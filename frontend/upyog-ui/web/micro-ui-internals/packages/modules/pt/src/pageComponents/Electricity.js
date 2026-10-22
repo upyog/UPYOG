@@ -109,7 +109,7 @@ const Electricity = ({
 
             </div>
           </LabelFieldPair>
-          {(formState?.touched?.[config.key] || formState?.touchedFields?.[config.key]) ? <CardLabelError className="pt-auto-37">
+          {(formState?.touched?.[config.key] || formState?.touchedFields?.[config.key]) ? <CardLabelError className="pt-electricity-label-text-sm-mt-neg">
               {formState.errors?.[config.key]?.message}
             </CardLabelError> : null}
         </React.Fragment>;

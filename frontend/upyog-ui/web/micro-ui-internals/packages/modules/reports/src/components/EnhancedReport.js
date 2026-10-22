@@ -160,7 +160,7 @@ const EnhancedReport = (props) => {
   }
 
   return SearchApplication ? (
-    <div style={{ margin: "8px" }}>
+    <div className="rpt-enhanced-report-spacing">
       <style>{`
         .report-scroll-container {
           width: 100%;

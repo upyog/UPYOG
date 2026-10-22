@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useCallback, useMemo } from "react";
-import { SearchForm, Table, Card, CardText, Loader, Header, Toast, DownloadBtnCommon, UploadFile, SubmitBar, Modal} from "@nudmcdgnpm/digit-ui-react-components";
+import { SearchForm, Table, Card, CardText, Loader, Header, Toast, DownloadBtnCommon, UploadFile, SubmitBar, Modal } from "@nudmcdgnpm/digit-ui-react-components";
 import { useForm, Controller } from "react-hook-form";
 import BulkBillSearchFields from "./BulkBillSearchFields";
 import { useTranslation } from "react-i18next";
@@ -8,7 +8,7 @@ import MobileSearchWater from "./MobileSearchWater";
 
 import { convertDateToEpoch } from "../../utils/index"
 import * as XLSX from "xlsx";
-import "../../css/ws-inline-auto.css";
+
 const BulkBillSearch = ({
   tenantId,
   onSubmit,
@@ -146,13 +146,13 @@ const BulkBillSearch = ({
     return <h1 className="heading-m">{props.label}</h1>;
   };
   const Close = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#FFFFFF">
-      <path d="M0 0h24v24H0V0z" fill="none" />
-      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
-    </svg>;
+    <path d="M0 0h24v24H0V0z" fill="none" />
+    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+  </svg>;
   const CloseBtn = props => {
     return <div className="icon-bg-secondary" onClick={props.onClick}>
-        <Close />
-      </div>;
+      <Close />
+    </div>;
   };
   const {
     t
@@ -177,8 +177,8 @@ const BulkBillSearch = ({
   });
   const DownloadBtn = props => {
     return <div onClick={props.onClick}>
-        <DownloadBtnCommon />
-      </div>;
+      <DownloadBtnCommon />
+    </div>;
   };
   // Removed v6 useEffect register calls - use defaultValues in useForm instead
 
@@ -247,11 +247,11 @@ const BulkBillSearch = ({
       row
     }) => {
       return <div>
-              {row.original["connectionNo"] ? <span>
-                  {row.original["connectionNo"] || "NA"}
+        {row.original["connectionNo"] ? <span>
+          {row.original["connectionNo"] || "NA"}
 
-                </span> : <span>{t("NA")}</span>}
-            </div>;
+        </span> : <span>{t("NA")}</span>}
+      </div>;
     }
   }, {
     Header: t("LAST_READING"),
@@ -310,11 +310,11 @@ const BulkBillSearch = ({
       row
     }) => {
       return <div>
-              {row.original["connectionNo"] ? <span>
-                  {row.original["connectionNo"] || "NA"}
+        {row.original["connectionNo"] ? <span>
+          {row.original["connectionNo"] || "NA"}
 
-                </span> : <span>{t("NA")}</span>}
-            </div>;
+        </span> : <span>{t("NA")}</span>}
+      </div>;
     }
   }, {
     Header: t("LAST_READING"),
@@ -366,13 +366,13 @@ const BulkBillSearch = ({
     }
   }]);
   return <>
-      <Header styles={{
+    <Header styles={{
       fontSize: "32px"
     }}>
-        {t("WS_WATER_SEARCH_BULK_CONNECTION_SUB_HEADER")}
-      </Header>
-      <SearchForm className="ws-custom-wrapper" onSubmit={onSubmit} handleSubmit={handleSubmit}>
-        <BulkBillSearchFields {...{
+      {t("WS_WATER_SEARCH_BULK_CONNECTION_SUB_HEADER")}
+    </Header>
+    <SearchForm className="ws-custom-wrapper" onSubmit={onSubmit} handleSubmit={handleSubmit}>
+      <BulkBillSearchFields {...{
         register,
         control,
         reset,
@@ -380,59 +380,59 @@ const BulkBillSearch = ({
         t,
         setValue
       }} />
-      </SearchForm>
-      {isLoading ? <Loader /> : null}
-      {isLoadingBulkMeterReading && <Loader />}
-      {data?.display && !resultOk ? <Card className="ws-auto-11">
-          {t(data?.display).split("\\n").map((text, index) => <p key={index} className="ws-auto-12">
-                {text}
-              </p>)}
-        </Card>
-    // <></>
-    : resultOk ? <div className="ws-auto-13">
+    </SearchForm>
+    {isLoading ? <Loader /> : null}
+    {isLoadingBulkMeterReading && <Loader />}
+    {data?.display && !resultOk ? <Card className="ws-bulk-bill-search-card-mt-md">
+      {t(data?.display).split("\\n").map((text, index) => <p key={index} className="ws-bulk-bill-search-card-center-text">
+        {text}
+      </p>)}
+    </Card>
+      // <></>
+      : resultOk ? <div className="ws-bulk-bill-search-item">
 
-          <div className="sideContent ws-auto-14">
-            <span className="table-search-wrapper ws-auto-15">
-              <DownloadBtn className="mrlg cursorPointer" onClick={e => handleExcelDownload(e, data)} />
+        <div className="sideContent ws-bulk-bill-search-item-2">
+          <span className="table-search-wrapper ws-bulk-bill-search-action">
+            <DownloadBtn className="mrlg cursorPointer" onClick={e => handleExcelDownload(e, data)} />
+          </span>
+        </div>
+        <div className="ws-bulk-bill-search-link-flex">
+          <div className="ws-bulk-bill-search-item-3">
+            <UploadFile id={"Bulk-Bill"} extraStyleName={"propertyCreate"} message={uploadedFile ? `1 ${t(`CS_WS_ACTION_FILEUPLOADED`)}` : t(`CS_WS_ACTION_NO_FILEUPLOADED`)} accept=".xlsx" onUpload={e => selectfile(e)} onDelete={e => {
+              setUploadedFile(null);
+              setMeterReadingData([]);
+            }} />
+          </div>
+          {meterReadingData?.length > 0 ? <div className="ws-bulk-bill-search-relative">
+            <span>
+              <SubmitBar label={t("WS_COMMON_SUBMIT_READING")} onSubmit={handleProceed} />
             </span>
-          </div>
-          <div className="ws-auto-16">
-            <div className="ws-auto-17">
-              <UploadFile id={"Bulk-Bill"} extraStyleName={"propertyCreate"} message={uploadedFile ? `1 ${t(`CS_WS_ACTION_FILEUPLOADED`)}` : t(`CS_WS_ACTION_NO_FILEUPLOADED`)} accept=".xlsx" onUpload={e => selectfile(e)} onDelete={e => {
-            setUploadedFile(null);
-            setMeterReadingData([]);
-          }} />
-            </div>
-            {meterReadingData?.length > 0 ? <div className="ws-auto-18">
-              <span>
-                <SubmitBar label={t("WS_COMMON_SUBMIT_READING")} onSubmit={handleProceed} />
-              </span>
-            </div> : ""}
-          </div>
-          <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {
-        return {
-          style: {
-            minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
-            padding: "20px 18px",
-            fontSize: "16px"
-          }
-        };
-      }} onSort={onSort} disableSort={false} sortParams={[{
-        id: getValues("sortBy"),
-        desc: getValues("sortOrder") === "DESC" ? true : false
-      }]} />
+          </div> : ""}
+        </div>
+        <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {
+          return {
+            style: {
+              minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
+              padding: "20px 18px",
+              fontSize: "16px"
+            }
+          };
+        }} onSort={onSort} disableSort={false} sortParams={[{
+          id: getValues("sortBy"),
+          desc: getValues("sortOrder") === "DESC" ? true : false
+        }]} />
 
-        </div> : null}
-        
-      <div>
-        {showModal && <Modal headerBarMain={<Heading label={t("WS_BULK_READING_REJECT")} />} headerBarEnd={<CloseBtn onClick={closeModal} />} actionCancelLabel={"Cancel"} actionCancelOnSubmit={closeModal} actionSaveLabel={"Proceed"} actionSaveOnSubmit={setModal} formId="modal-action" popupStyles={{
+      </div> : null}
+
+    <div>
+      {showModal && <Modal headerBarMain={<Heading label={t("WS_BULK_READING_REJECT")} />} headerBarEnd={<CloseBtn onClick={closeModal} />} actionCancelLabel={"Cancel"} actionCancelOnSubmit={closeModal} actionSaveLabel={"Proceed"} actionSaveOnSubmit={setModal} formId="modal-action" popupStyles={{
         width: "auto"
-      }}>  <div className="ws-auto-19">
-            <Card>
+      }}>  <div className="ws-bulk-bill-search-full-width">
+          <Card>
             <div><CardText>{t("WS_REASON_FOR_REJECT")}</CardText></div>
             <div><CardText>{t("WS_SUCCESS_DATA_COUNT")} - {meterReadingData?.length}</CardText></div>
             <div><CardText>{t("WS_REJECT_DATA_COUNT")} - {rejectedReading?.length}</CardText></div>
-              <Table t={t} data={rejectedReading} totalRecords={rejectedReading?.length} columns={columns} getCellProps={cellInfo => {
+            <Table t={t} data={rejectedReading} totalRecords={rejectedReading?.length} columns={columns} getCellProps={cellInfo => {
               return {
                 style: {
                   minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
@@ -444,23 +444,23 @@ const BulkBillSearch = ({
               id: getValues("sortBy"),
               desc: getValues("sortOrder") === "DESC" ? true : false
             }]} />
-              
 
-            </Card>
-          </div>
-        </Modal>}
-        {showModalResult && <Modal headerBarMain={<Heading label={t("WS_BULK_READING_STATUS")} />} headerBarEnd={<CloseBtn onClick={closeModalStatus} />} formId="modal-action" popupStyles={{
+
+          </Card>
+        </div>
+      </Modal>}
+      {showModalResult && <Modal headerBarMain={<Heading label={t("WS_BULK_READING_STATUS")} />} headerBarEnd={<CloseBtn onClick={closeModalStatus} />} formId="modal-action" popupStyles={{
         width: "auto"
-      }}>  <div className="ws-auto-20">
+      }}>  <div className="ws-bulk-bill-search-full-width">
 
-            <Card>
+          <Card>
             <div><CardText>{t("Bulk Meter Reading Status")}</CardText></div>
-            <div className="sideContent ws-auto-21">
-            <span className="table-search-wrapper ws-auto-22">
-              <DownloadBtn className="mrlg cursorPointer" onClick={e => handleExcelDownload(e, bulkReadingStatus)} />
-            </span>
-          </div>
-              <Table t={t} data={bulkReadingStatus} totalRecords={bulkReadingStatus?.length} columns={columns2} getCellProps={cellInfo => {
+            <div className="sideContent ws-bulk-bill-search-item-2">
+              <span className="table-search-wrapper ws-bulk-bill-search-action">
+                <DownloadBtn className="mrlg cursorPointer" onClick={e => handleExcelDownload(e, bulkReadingStatus)} />
+              </span>
+            </div>
+            <Table t={t} data={bulkReadingStatus} totalRecords={bulkReadingStatus?.length} columns={columns2} getCellProps={cellInfo => {
               return {
                 style: {
                   minWidth: cellInfo.column.Header === t("ES_INBOX_APPLICATION_NO") ? "240px" : "",
@@ -472,15 +472,15 @@ const BulkBillSearch = ({
               id: getValues("sortBy"),
               desc: getValues("sortOrder") === "DESC" ? true : false
             }]} />
-              
 
-            </Card>
-          </div>
-        </Modal>}
-      </div>
-      {showToast?.label && <Toast label={showToast?.label} onClose={w => {
+
+          </Card>
+        </div>
+      </Modal>}
+    </div>
+    {showToast?.label && <Toast label={showToast?.label} onClose={w => {
       setShowToast(x => null);
     }} />}
-    </>;
+  </>;
 };
 export default BulkBillSearch;

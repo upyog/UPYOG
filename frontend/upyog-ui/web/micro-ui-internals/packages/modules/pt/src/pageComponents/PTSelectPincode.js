@@ -94,7 +94,7 @@ const PTSelectPincode = ({ t, config, onSelect, formData = {}, userType, registe
               <TextInput key={input.name} value={pincode} onChange={onChange} {...input.validation} disable={presentInModifyApplication} autoFocus={presentInModifyApplication} />
             </div>
           </LabelFieldPair>
-          {error ? <CardLabelError className="pt-auto-60">{error}</CardLabelError> : null}
+          {error ? <CardLabelError className="pt-select-pincode-label-text-sm-mt-neg">{error}</CardLabelError> : null}
         </React.Fragment>;
     });
   }
@@ -114,7 +114,7 @@ const PTSelectPincode = ({ t, config, onSelect, formData = {}, userType, registe
       isDisabled={!pincode && !locationText || isEditProperty}
     >
       {/* Location Input with Fetch Button */}
-      <div style={{ marginBottom: "20px" }}>
+      <div className="pt-ptselect-pincode-bottom-spacing">
         <GeoLocationWithDigipin
           t={t}
           value={locationText}

@@ -608,7 +608,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
         isDisabled={false}
       >
         {/* --- SECTION A: Building Specs --- */}
-        <CardHeader style={{ marginBottom: "20px" }}>{t("NOC_BUILDINGS_DETAILS_HEADER")}</CardHeader>
+        <CardHeader className="noc-noc-document-details-bottom-spacing-3">{t("NOC_BUILDINGS_DETAILS_HEADER")}</CardHeader>
         <CardLabel>{t("NOC_NO_OF_BUILDINGS_LABEL")}</CardLabel>
         <RadioButtons
           t={t}
@@ -639,15 +639,15 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
                   : {}
               }
             >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <CardLabel style={{ fontWeight: "bold" }}>
+              <div className="noc-noc-owner-details-flex-row">
+                <CardLabel className="noc-noc-document-details-card">
                   {noOfBuildings === "MULTIPLE" ? `${t("NOC_BUILDING_LABEL")} - ${index + 1}` : t("NOC_BUILDING_LABEL")}
                 </CardLabel>
                 {noOfBuildings === "MULTIPLE" && formState.length > 1 && (
                   <LinkButton
                     label={t("NOC_REMOVE_BUILDING_LABEL")}
                     onClick={() => handleRemoveBuilding(index)}
-                    style={{ color: "#FE7A51", fontSize: "14px" }}
+                    className="noc-noc-owner-details-action-btn"
                   />
                 )}
               </div>
@@ -795,18 +795,11 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
         })}
 
         {noOfBuildings === "MULTIPLE" && (
-          <div style={{ marginTop: "15px", marginBottom: "30px" }}>
+          <div className="noc-noc-property-details-top-spacing">
             <button
               type="button"
               onClick={handleAddBuilding}
-              style={{
-                color: "#FE7A51",
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                fontWeight: "bold",
-                padding: "10px 0px",
-              }}
+              className="noc-noc-owner-details-clickable"
             >
               {t("NOC_ADD_BUILDING_LABEL")}
             </button>
@@ -814,7 +807,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
         )}
 
         {/* --- SECTION B: Location Details --- */}
-        <CardHeader style={{ marginTop: "30px", marginBottom: "20px" }}>{t("NOC_LOCATION_DETAILS_HEADER")}</CardHeader>
+        <CardHeader className="noc-noc-property-details-header">{t("NOC_LOCATION_DETAILS_HEADER")}</CardHeader>
 
         <CardLabel>{t("NOC_PROPERTY_CITY_LABEL")} <span className="astericColor">*</span></CardLabel>
         <Dropdown
@@ -826,7 +819,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
           placeholder={t("NOC_PROPERTY_CITY_PLACEHOLDER")}
         />
         <CardLabel>{t("NOC_PROPERTY_ID_LABEL")}</CardLabel>
-        <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
+        <div className="noc-noc-location-details-flex-container-2">
           <TextInput
             t={t}
             type="text"
@@ -834,9 +827,9 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
             value={propertyId}
             onChange={(e) => setPropertyId(e.target.value)}
             placeholder={t("NOC_PROPERTY_ID_PLACEHOLDER")}
-            style={{ flex: 1 }}
+            className="noc-fire-noc-desktop-inbox-wrapper"
           />
-          <div style={{ position: "relative", right: "45px", marginTop: "12px", cursor:"pointer" }} onClick={handlePropertySearch}> <SearchIcon /> </div>
+          <div className="noc-noc-property-details-clickable" onClick={handlePropertySearch}> <SearchIcon /> </div>
         </div>
         {fieldErrors.city && <CardLabelError>{fieldErrors.city}</CardLabelError>}
 
@@ -900,7 +893,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
         {fieldErrors.pincode && <CardLabelError>{fieldErrors.pincode}</CardLabelError>}
 
         <CardLabel>{t("NOC_PROPERTY_DETAILS_GIS_CORD_LABEL")}</CardLabel>
-        <div style={{ display: "flex", gap: "10px", alignItems: "center", marginBottom: "15px" }}>
+        <div className="noc-noc-location-details-flex-row">
           <TextInput
             t={t}
             type="text"
@@ -908,9 +901,9 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
             value={latitude && longitude ? `${latitude}, ${longitude}` : ""}
             disabled={true}
             placeholder={t("NOC_PROPERTY_DETAILS_GIS_CORD_PLACEHOLDER")}
-            style={{ flex: 1 }}
+            className="noc-fire-noc-desktop-inbox-wrapper"
           />
-          <div style={{ display: "flex", gap:"10px", transform: "translateY(-18px)" }}>
+          <div className="noc-noc-property-details-flex-container">
             <LinkButton
               label={
                 <div>
@@ -918,7 +911,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
                 </div>
               }
               onClick={fetchCurrentLocation}
-              style={{ color: "#FE7A51", cursor: "pointer", fontSize: "14px", fontWeight: "bold" }}
+              className="noc-noc-property-details-clickable-2"
             />
             <LinkButton
               label={
@@ -927,7 +920,7 @@ const NocPropertyDetails = ({ t, config, onSelect, userType, formData }) => {
                 </div>
               }
               onClick={() => setIsOpen(true)}
-              style={{ color: "#FE7A51", cursor: "pointer", fontSize: "14px", fontWeight: "bold" }}
+              className="noc-noc-property-details-clickable-2"
             />
           </div>
         </div>

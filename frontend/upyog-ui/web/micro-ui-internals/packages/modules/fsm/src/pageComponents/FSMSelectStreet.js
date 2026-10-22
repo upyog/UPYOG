@@ -159,7 +159,7 @@ if (property !== "undefined")
               name={input.name}
               rules={{ validate: convertValidationToRules(input) }}
               render={({ field }) => (
-                <div style={{ display: "flex", alignItems: "baseline", marginRight: "unset" }}>
+                <div className="fsm-fsmselect-street-flex-row">
                   <TextInput
                     id={input.name}
                     key={input.name}
@@ -174,7 +174,7 @@ if (property !== "undefined")
                     autoFocus={focusIndex?.index == index}
                     {...input?.validation}
                   />
-                  <div style={{ marginRight: "-50px", marginLeft: "10px" }}>
+                  <div className="fsm-fsmselect-street-spacing">
                     <WrapUnMaskComponent
                       unmaskField={(e) => {
                         field.onChange(e);

@@ -102,7 +102,7 @@ const Search = ({ path }) => {
         />
         {isMobile && data?.ElasticSearchData?.filter((e)=> !e.total)?.length && data?.ElasticSearchData?.filter((e)=> !e.total)?.length !== 0 && (
           <div>
-            <p style={{ marginLeft: "16px",marginBottom:"40px"}}>
+            <p className="core-search-app-bottom-spacing">
               <span className="link">{<Link to={`/upyog-ui/citizen/Audit/${previousoffset}`}>{t("PT_LOAD_MORE_MSG")}</Link>}</span>
             </p>
           </div>

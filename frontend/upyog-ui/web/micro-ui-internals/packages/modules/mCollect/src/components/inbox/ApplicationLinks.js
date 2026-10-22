@@ -16,7 +16,7 @@ const InboxLinks = ({ parentRoute, businessService, allLinks, headerText }) => {
   }, []);
 
   const GetLogo = () => (
-    <div className="header" style={{ justifyContent: "flex-start" }}>
+    <div className="header mc-application-links-wrapper">
       <span className="logo">
         <ShippingTruck />
       </span>{" "}
@@ -25,7 +25,7 @@ const InboxLinks = ({ parentRoute, businessService, allLinks, headerText }) => {
   );
 
   return (
-    <Card style={{ paddingRight: 0, marginTop: 0 }} className="employeeCard filter">
+    <Card className="employeeCard filter mc-application-links-card">
       <div className="complaint-links-container">
         {GetLogo()}
         <div className="body">

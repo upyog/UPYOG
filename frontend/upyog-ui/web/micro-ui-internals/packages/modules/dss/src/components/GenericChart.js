@@ -79,7 +79,7 @@ const GenericChart = ({
   let headerName = t(Digit.Utils.locale.getTransformedLocale(header));
   if(window.location.href.includes("main-dashboard-landing"))
   {  return ( 
-    <Card className={`chart-item ${className}`} ReactRef={chart} style={{maxWidth:"60%",width:className == "metricsTable"?"100%":"",backgroundColor:className == "metricsTable"?"#e3e3e3":"white"}}>
+    <Card ReactRef={chart} className={`chart-item ${className} max-width-60 ${className === "metricsTable" ? "width-full bg-gray-table" : "bg-white"}`}>
       
       {caption && <CardCaption>{caption}
       </CardCaption>}
@@ -90,30 +90,23 @@ const GenericChart = ({
   else {
     return (
       <Card className={`chart-item ${className}`} ReactRef={chart}>
-        <div className={`chartHeader ${showSearch && "column-direction"}`} style={{flexDirection:"column"}}>
+        <div className={`chartHeader ${showSearch && "column-direction"} dss-generic-chart-wrapper`}>
           <div>
             {showHeader && (
               <CardLabel className={"dss-header-label"}>
                 <span className={`tooltip ${headerName?.length < (isMobile ? 20 : 30) ? "dss-white-pre" : "dss-white-pre-line"}`}>
                   {headerName}
                   {chartDenomination?.toLowerCase() === "amount" && (
-                    <span style={{ whiteSpace: "pre" }}> ({t(`DSS_${Digit.Utils.locale.getTransformedLocale(value?.denomination)}`)})</span>
+                    <span className="dss-generic-chart-wrapper-2"> ({t(`DSS_${Digit.Utils.locale.getTransformedLocale(value?.denomination)}`)})</span>
                   )}
-                  <span
-                    className="tooltiptext"
-                    style={{
-                      whiteSpace: !isMobile ? "nowrap" : "normal",
-                      fontSize: "medium",
-                      marginLeft: t(`TIP_${Digit.Utils.locale.getTransformedLocale(header)}`).length > 30 ? -120 : -60,
-                    }}
-                  >
+                  <span className={`tooltiptext font-size-medium ${!isMobile ? "whitespace-nowrap" : "whitespace-normal"} ${t(`TIP_${Digit.Utils.locale.getTransformedLocale(header)}`).length > 30 ? "margin-left-minus-120" : "margin-left-minus-60"}`}>
                     {t(`TIP_${Digit.Utils.locale.getTransformedLocale(header)}`)}
                   </span>
                 </span>
                 {/* {`${t(header)}`} */}
               </CardLabel>
             )}
-            { chip.length <2 && subHeader && <p style={{ color: "#505A5F", fontWeight: 700 }}>{subHeader}</p>}
+            { chip.length <2 && subHeader && <p className="dss-generic-chart-text-style">{subHeader}</p>}
           </div>
           <div className="sideContent">
             {chip && chip.length > 1 && <Chip items={chip} onClick={updateChip} t={t} />}

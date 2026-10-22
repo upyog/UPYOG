@@ -298,9 +298,9 @@ const UploadFileDigiLocker = props => {
       <div className={`upload-file ${user_type === "employee" ? "" : "upload-file-max-width"} ${props.disabled ? " disabled" : ""}`} style={extraStyles?.uploadFile ? extraStyles?.uploadFile : {}}>
         <div style={extraStyles ? extraStyles?.containerStyles : null}>
           <ButtonSelector theme="border" label={t("CS_COMMON_CHOOSE_FILE")} style={chooseFileButtonStyle} textStyles={props?.textStyles} type={props.buttonType} />
-          <span className="pt-auto-171">OR</span>
-          <div className="col col-md-4  text-md-center p-0 pt-auto-172">
-             <button className="digilocker-btn" type="submit" onClick={e => fetchDigiLockerDocuments(e)}><img src="https://meripehchaan.gov.in/assets/img/icon/digi.png" class="mr-2" className="pt-auto-173"></img>Fetch from DigiLocker</button>
+          <span className="pt-upload-file-bold">OR</span>
+          <div className="col col-md-4  text-md-center p-0 pt-upload-file-item">
+             <button className="digilocker-btn" type="submit" onClick={e => fetchDigiLockerDocuments(e)}><img src="https://meripehchaan.gov.in/assets/img/icon/digi.png" class="mr-2" className="pt-upload-file-btn"></img>Fetch from DigiLocker</button>
                 </div>
             {props?.uploadedFiles?.map((file, index) => {
           const fileDetailsData = file[1];
@@ -331,7 +331,7 @@ const UploadFileDigiLocker = props => {
         target.value = "";
       }} />
       </div>
-      {props.iserror && <p className="pt-auto-174">{props.iserror}</p>}
+      {props.iserror && <p className="pt-upload-file-red">{props.iserror}</p>}
       {props?.showHintBelow && <p className="cell-text">{t(props?.hintText)}</p>}
     </Fragment>;
 };

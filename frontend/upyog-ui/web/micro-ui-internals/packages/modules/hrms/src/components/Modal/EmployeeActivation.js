@@ -43,7 +43,7 @@ export const configEmployeeActiveApplication = ({ t, action, selectFile, uploade
           {
             label: t("HR_APPROVAL_UPLOAD_HEAD"),
             populators: (
-              <div style={{ marginBottom: "2rem" }}>
+              <div className="hrms-employee-activation-bottom-spacing">
                 <span>{t("TL_APPROVAL_UPLOAD_SUBHEAD")}</span>
                 <UploadFile
                   id={"hrms-activation-doc"}

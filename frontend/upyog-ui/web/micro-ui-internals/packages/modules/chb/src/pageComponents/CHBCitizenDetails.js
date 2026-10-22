@@ -118,7 +118,7 @@ const CHBCitizenDetails
     }
     <Card>
         <CardSubHeader>
-          <div style={{display:"flex", justifyContent: "space-between", width: "100%" }}>
+          <div className="chb-chbaddress-details-fullwidth">
           {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
@@ -146,7 +146,7 @@ const CHBCitizenDetails
           placeholder={"Enter Applicant Name"}
           value={applicantName}
           onChange={setOwnerName}
-          style={{width:user.type==="EMPLOYEE"?"51.6%":null}}
+          className={user.type === "EMPLOYEE" ? "form-field-width--employee-51-6" : ""}
           ValidationRequired = {true}
           {...(validation = {
             // isRequired: true,
@@ -162,7 +162,7 @@ const CHBCitizenDetails
         <MobileNumber
           value={mobileNumber}
           name="mobileNumber"
-          style={{width:user.type==="EMPLOYEE"?"50%":null}}
+          className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : ""}
           placeholder={"Enter Applicant Register Mobile Number"}
           onChange={(value) => setMobileNo({ target: { value } })}
           {...{ pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
@@ -172,7 +172,7 @@ const CHBCitizenDetails
           <MobileNumber
             value={alternateNumber}
             name="alternateNumber"
-            style={{width:user.type==="EMPLOYEE"?"50%":null}}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : ""}
             placeholder={"Enter Alternate Mobile Number"}
             onChange={(value) => setAltMobileNo({ target: { value } })}
             {...{ required: false, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
@@ -187,7 +187,7 @@ const CHBCitizenDetails
           name="emailId"
           value={emailId}
           placeholder={"Enter Applicant Email Id"}
-          style={{width:user.type==="EMPLOYEE"?"51.6%":null}}
+          className={user.type === "EMPLOYEE" ? "form-field-width--employee-51-6" : ""}
           onChange={setOwnerEmail}
           ValidationRequired = {true}
           {...(validation = {

@@ -152,14 +152,12 @@ import React, { useCallback, useMemo } from "react"
 
       return <React.Fragment>
                   
-                  <div style={{
-      padding: user?.type === "CITIZEN" ? "0 24px 0 24px" : ""
-    }}>
+                  <div className={user?.type === "CITIZEN" ? "citizen-container-padding-24" : ""}>
                   <Header>{t("WT_SEARCH_BOOKINGS")}</Header>
                   {user?.type === "EMPLOYEE" && <Card className={"card-search-heading"}>
-                      <span className="wt-auto-5">{t("PROVIDE_ATLEAST_ONE_PARAMETERS")}</span>
+                      <span className="wt-search-application-card-grey-text">{t("PROVIDE_ATLEAST_ONE_PARAMETERS")}</span>
                   </Card>}
-                  {user?.type === "CITIZEN" && <span className="wt-auto-6">{t("PROVIDE_ATLEAST_ONE_PARAMETERS")}</span>}
+                  {user?.type === "CITIZEN" && <span className="wt-search-application-card-grey-text-mb-sm">{t("PROVIDE_ATLEAST_ONE_PARAMETERS")}</span>}
 
                   <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                   <SearchField>
@@ -255,7 +253,7 @@ import React, { useCallback, useMemo } from "react"
                   <SearchField></SearchField>
                   <SearchField className="submit">
                       <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
-                      <p style={{marginTop:"10px"}}
+                      <p className="wt-search-application-top-spacing"
                       onClick={() => {
                           reset({ 
                               bookingNo: "", 
@@ -273,8 +271,8 @@ import React, { useCallback, useMemo } from "react"
                       }}>{t(`ES_COMMON_CLEAR_ALL`)}</p>
                   </SearchField>
               </SearchForm>
-              {!isLoading && data?.display ? <Card className="wt-auto-8">
-                  {t(data.display).split("\\n").map((text, index) => <p key={index} className="wt-auto-9">
+              {!isLoading && data?.display ? <Card className="wt-search-application-card-mt-md">
+                  {t(data.display).split("\\n").map((text, index) => <p key={index} className="wt-search-application-card-center-text">
                           {text}
                       </p>)}
               </Card> : !isLoading && data !== "" ? <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {

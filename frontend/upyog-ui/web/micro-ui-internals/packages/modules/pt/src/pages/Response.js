@@ -85,7 +85,7 @@ const Response = (props) => {
           {DisplayText(action, isSuccess, props.parentRoute.includes("employee"), t)}
         </CardText>
         {isSuccess && (
-          <SubmitBar className="pt-auto-103" label={t("PT_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />
+          <SubmitBar className="pt-response-btn" label={t("PT_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />
         )}
       </Card>
       {showToast && <Toast error={showToast.key === "error" ? true : false} label={error} onClose={closeToast} />}

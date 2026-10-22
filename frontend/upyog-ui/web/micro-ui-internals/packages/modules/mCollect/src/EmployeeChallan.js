@@ -121,42 +121,41 @@ const EmployeeChallan = (props) => {
 
   return (
     <React.Fragment>
-      <div className="employee-application-details employee-challan-root">
-        <div className="employee-challan-header-row">
-          <div className="employee-challan-title">
+      <div className="employee-application-details mcollect-remove fixed height from status count checkbox-mb-md">
+        <div className="mcollect-remove fixed height from status count checkbox-flex">
+          <div className="mcollect-remove fixed height from status count checkbox-item">
         <Header>{`${t("CHALLAN_DETAILS")}`} </Header>
         </div>
-        <div className="employee-challan-download">
+        <div className="mcollect-remove fixed height from status count checkbox-mt-neg">
           <MultiLink
-              className="multilinkWrapper employee-mulitlink-main-divNew"
+              className="multilinkWrapper employee-mulitlink-main-divNew mc-employee-challan-wrapper"
               onHeadClick={() => setIsDisplayDownloadMenu(!isDisplayDownloadMenu)}
               displayOptions={isDisplayDownloadMenu}
               options={challanDetails?.applicationStatus === "PAID" ? [challanDownload , receiptDownload] : [challanDownload]}
               downloadBtnClassName={"employee-download-btn-className"}
               optionsClassName={"employee-options-btn-className"}
-              style={{ maxWidth: "100%" }}
             />
          </div>
       </div>
 </div>
       <div>
         <Card>
-          <StatusTable style={{ padding: "10px 0px" }}>
+          <StatusTable className="mc-employee-challan-table-cell">
             <Row label={`${t("UC_CHALLAN_NO")}`} text={challanno} />
-            <hr style={{ width: "35%", border: "1px solid #D6D5D4", marginTop: "1rem", marginBottom: "1rem" }} />
+            <hr className="mc-employee-challan-top-spacing" />
             {challanBillDetails?.map((data) => {
               return (
                 <Row label={t(stringReplaceAll(data?.taxHeadCode, ".", "_"))} text={`₹${data?.amount}` || 0} textStyle={{ whiteSpace: "pre" }} />
               );
             })}
-            <hr style={{ width: "35%", border: "1px solid #D6D5D4", marginTop: "1rem", marginBottom: "1rem" }} />
+            <hr className="mc-employee-challan-top-spacing" />
             <Row
-              label={<b style={{ padding: "10px 0px" }}>{t("UC_TOTAL_DUE_AMOUT_LABEL")}</b>}
+              label={<b className="mc-employee-challan-table-cell">{t("UC_TOTAL_DUE_AMOUT_LABEL")}</b>}
               text={`₹${totalDueAmount}`}
               textStyle={{ fontSize: "24px", padding: "10px 0px", fontWeight: "700" }}
             />
           </StatusTable>
-          <div style={{ fontSize: "24px", padding: "10px 0px", fontWeight: "700" }}>{t("UC_SERVICE_DETAILS_LABEL")}</div>
+          <div className="mc-employee-challan-container-padding">{t("UC_SERVICE_DETAILS_LABEL")}</div>
           <StatusTable>
             <Row
               label={`${t("UC_SERVICE_CATEGORY_LABEL")}`}
@@ -168,7 +167,7 @@ const EmployeeChallan = (props) => {
             <Row label={`${t("UC_COMMENT_LABEL")}`} text={`${challanDetails?.description || t("CS_NA")}`} />
             <Row label={`${t("CS_INBOX_STATUS_FILTER")}`} text={t(`UC_${challanDetails?.applicationStatus || t("CS_NA")}`)} />
           </StatusTable>
-          <div style={{ fontSize: "24px", padding: "10px 0px", fontWeight: "700" }}>{t("UC_CONSUMER_DETAILS_LABEL")}</div>
+          <div className="mc-employee-challan-container-padding">{t("UC_CONSUMER_DETAILS_LABEL")}</div>
           <StatusTable>
             <Row label={`${t("UC_CONS_NAME_LABEL")}`} text={challanDetails?.citizen.name || t("CS_NA")} />
             <Row label={`${t("UC_MOBILE_NUMBER")}`} text={challanDetails?.citizen.mobileNumber || t("CS_NA")} />

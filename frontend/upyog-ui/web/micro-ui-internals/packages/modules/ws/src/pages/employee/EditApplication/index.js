@@ -1,17 +1,17 @@
 import { FormComposer, Header, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation,  } from "react-router-dom";
+import { useLocation, } from "react-router-dom";
 import * as func from "../../../utils";
 import _ from "lodash";
 import { newConfig as newConfigLocal } from "../../../config/wsCreateConfig";
 import { convertApplicationData, convertEditApplicationDetails } from "../../../utils";
 import cloneDeep from "lodash/cloneDeep";
-import "../../../css/ws-inline-auto.css";
+
 const EditApplication = () => {
   const { t } = useTranslation();
   let { state } = useLocation();
-  state = state  ? (typeof(state) === "string" ? JSON.parse(state) : state) : {};
+  state = state ? (typeof (state) === "string" ? JSON.parse(state) : state) : {};
   const navigate = Digit.Hooks.useCustomNavigate();
   let filters = func.getQueryStringParams(location.search);
   const [canSubmit, setSubmitValve] = useState(false);
@@ -79,23 +79,23 @@ const EditApplication = () => {
   }, [sessionFormData?.cpt]);
 
   useEffect(() => {
-  const loadData = async () => {
-    const IsDetailsExists = sessionStorage.getItem("IsDetailsExists") ? JSON.parse(sessionStorage.getItem("IsDetailsExists")) : false
-    if (details?.applicationData?.id && !IsDetailsExists) {
-      sessionStorage.setItem("appData", JSON.stringify(appData));
-      const convertAppData = await convertApplicationData(details, serviceType, false, false, t);
-      setSessionFormData({
-        ...sessionFormData,
-        ...convertAppData
-      });
-      setAppData({
-        ...convertAppData
-      });
-      sessionStorage.setItem("IsDetailsExists", JSON.stringify(true));
-    }
-  };
+    const loadData = async () => {
+      const IsDetailsExists = sessionStorage.getItem("IsDetailsExists") ? JSON.parse(sessionStorage.getItem("IsDetailsExists")) : false
+      if (details?.applicationData?.id && !IsDetailsExists) {
+        sessionStorage.setItem("appData", JSON.stringify(appData));
+        const convertAppData = await convertApplicationData(details, serviceType, false, false, t);
+        setSessionFormData({
+          ...sessionFormData,
+          ...convertAppData
+        });
+        setAppData({
+          ...convertAppData
+        });
+        sessionStorage.setItem("IsDetailsExists", JSON.stringify(true));
+      }
+    };
     loadData();
-  }, [details,applicationDetails,sessionFormData?.cpt, sessionFormData, propertyDetails]);
+  }, [details, applicationDetails, sessionFormData?.cpt, sessionFormData, propertyDetails]);
 
   useEffect(() => {
     setSessionFormData({
@@ -130,7 +130,7 @@ const EditApplication = () => {
         ...formData
       });
     }
-    if (Object.keys(formState.errors).length > 0 && Object.keys(formState.errors).length == 1 && formState.errors["owners"] && Object.values(formState.errors["owners"].type).filter(ob => ob.type === "required").length == 0 && !formData?.cpt?.details?.propertyId) setSubmitValve(true);else setSubmitValve(!Object.keys(formState.errors).length);
+    if (Object.keys(formState.errors).length > 0 && Object.keys(formState.errors).length == 1 && formState.errors["owners"] && Object.values(formState.errors["owners"].type).filter(ob => ob.type === "required").length == 0 && !formData?.cpt?.details?.propertyId) setSubmitValve(true); else setSubmitValve(!Object.keys(formState.errors).length);
   };
   const onSubmit = async data => {
     if (!canSubmit) {
@@ -185,13 +185,13 @@ const EditApplication = () => {
     return <Loader />;
   }
   return <React.Fragment>
-      <div className="ws-auto-316">
-        <Header>{t(config.head)}</Header>
-      </div>
-      <FormComposer config={config.body} userType={"employee"} onFormValueChange={onFormValueChange}
-    // isDisabled={!canSubmit}
-    label={t("CS_COMMON_SUBMIT")} onSubmit={onSubmit} defaultValues={sessionFormData} appData={appData}></FormComposer>
-      {showToast && <Toast error={showToast.key} label={t(showToast?.message)} warning={showToast?.warning} onClose={closeToast} />}
-    </React.Fragment>;
+    <div className="ws-index-ml-md">
+      <Header>{t(config.head)}</Header>
+    </div>
+    <FormComposer config={config.body} userType={"employee"} onFormValueChange={onFormValueChange}
+      // isDisabled={!canSubmit}
+      label={t("CS_COMMON_SUBMIT")} onSubmit={onSubmit} defaultValues={sessionFormData} appData={appData}></FormComposer>
+    {showToast && <Toast error={showToast.key} label={t(showToast?.message)} warning={showToast?.warning} onClose={closeToast} />}
+  </React.Fragment>;
 };
 export default EditApplication;

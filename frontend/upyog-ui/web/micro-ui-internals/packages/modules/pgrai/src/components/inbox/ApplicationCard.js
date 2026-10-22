@@ -37,11 +37,11 @@ export const ApplicationCard = ({ data, onFilterChange, onSearch, serviceRequest
   let result;
   if (data && data?.length === 0) {
     result = (
-      <Card style={{ marginTop: 20 }}>
+      <Card className="pgrai-desktop-inbox-card">
         {t("CS_MYCOMPLAINTS_NO_COMPLAINTS_EMPLOYEE")
           .split("\\n")
           .map((text, index) => (
-            <p key={index} style={{ textAlign: "center" }}>
+            <p key={index} className="pgrai-desktop-inbox-centered">
               {text}
             </p>
           ))}
@@ -51,11 +51,11 @@ export const ApplicationCard = ({ data, onFilterChange, onSearch, serviceRequest
     result = <DetailsCard data={data} serviceRequestIdKey={serviceRequestIdKey} linkPrefix={"/upyog-ui/employee/pgr/complaint/details/"} />;
   } else {
     result = (
-      <Card style={{ marginTop: 20 }}>
+      <Card className="pgrai-desktop-inbox-card">
         {t("CS_COMMON_ERROR_LOADING_RESULTS")
           .split("\\n")
           .map((text, index) => (
-            <p key={index} style={{ textAlign: "center" }}>
+            <p key={index} className="pgrai-desktop-inbox-centered">
               {text}
             </p>
           ))}

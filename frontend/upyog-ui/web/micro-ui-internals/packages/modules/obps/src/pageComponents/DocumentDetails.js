@@ -69,7 +69,7 @@ const DocumentDetails = ({ t, config, onSelect, userType, formData, setError: se
                 >
                     {bpaTaxDocuments?.map((document, index) => {
                         return (
-                            <div style={{ background: "#FAFAFA", border: "1px solid #D6D5D4", padding: "8px", borderRadius: "4px", maxWidth:"600px", minWidth: "280px", marginBottom:"15px", paddingTop:"15px" }}>
+                            <div className="obps-document-details-bottom-spacing">
                             <SelectDocument
                                 key={index}
                                 document={document}
@@ -258,7 +258,7 @@ const SelectDocument = React.memo(function MyComponent({
     },[formData])
 
     return (
-        <div /* style={{ marginBottom: "24px" }} */>
+        <div /* className="custom-style" */>
            <CardLabel>
                 {doc?.required ? (
                     <React.Fragment>
@@ -287,7 +287,7 @@ const SelectDocument = React.memo(function MyComponent({
                 allowedMaxSizeInMB={5}
                 acceptFiles= "image/*, .pdf, .png, .jpeg, .jpg"
             /> 
-            <div style={{marginTop:"10px", fontSize:'12px'}}>{t("CS_FILE_SIZE_RESTRICTIONS")}</div>
+            <div className="obps-document-details-top-spacing-2">{t("CS_FILE_SIZE_RESTRICTIONS")}</div>
         {doc?.uploadedDocuments?.length && <DocumentsPreview isSendBackFlow={true} documents={doc?.uploadedDocuments} />}
         </div>
     );

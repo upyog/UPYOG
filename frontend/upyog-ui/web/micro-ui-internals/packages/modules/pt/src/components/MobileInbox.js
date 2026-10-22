@@ -31,7 +31,7 @@ const MobileInbox = ({
       return obj;
     });
   };
-  return <div className="pt-auto-4">
+  return <div className="pt-mobile-inbox-no-pad">
       <div className="inbox-container">
         <div className="filters-container">
           {!isSearch && <ApplicationLinks classNameForMobileView="linksWrapperForMobileInbox" linkPrefix={parentRoute} isMobile={true} />}

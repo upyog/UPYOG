@@ -135,7 +135,7 @@ const SearchFormFieldsComponent = ({ formState, Controller, register, control, t
             <SearchField className="submit">
                 <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
                 <p
-                    style={{ marginTop: "24px" }}
+                    className="rpt-search-form-fields-component-top-spacing"
                     onClick={() => {
                         reset(resetObj)
                     }}

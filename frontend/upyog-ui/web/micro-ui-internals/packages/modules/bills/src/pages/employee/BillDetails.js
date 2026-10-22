@@ -57,7 +57,7 @@ const BillDetails = () => {
 
   return (
     <React.Fragment>
-      <div style={{ width: "30%", fontFamily: "calibri", color: "#FF0000" }}>
+      <div className="bills-bill-details-required-asterisk">
         <Header>{t("CR_RECEIPT_SUMMARY")}</Header>
       </div>
       {!isLoading && data?.Payments?.length > 0 ? (

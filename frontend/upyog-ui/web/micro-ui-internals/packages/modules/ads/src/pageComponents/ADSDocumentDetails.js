@@ -100,8 +100,8 @@ const ADSDocumentDetails = ({
   return <div>
       <Timeline currentStep={3} />
       <Card>
-      <div className="ads-auto-58">
-        <CardSubHeader className="ads-auto-59">
+      <div className="ads-document-details-relative">
+        <CardSubHeader className="ads-document-details-absolute">
         <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.cartDetails} draftId={value?.existingDataSet?.draftId} />
         </CardSubHeader>
         <ADSCartAndCancellationPolicyDetails />
@@ -208,12 +208,10 @@ function ADSSelectDocument({
   useEffect(() => {
     if (isHidden) setUploadedFile(null);
   }, [isHidden]);
-  return <div className="ads-auto-60">
+  return <div className="ads-document-details-mb-md">
       {doc?.hasDropdown ? <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t("ADS_" + doc?.code.replaceAll(".", "_"))} <span className="check-page-link-button">*</span></CardLabel>
-          <Dropdown className="form-field" selected={selectedDocument} style={{
-        width: user.type === "EMPLOYEE" ? "50%" : "100%"
-      }} placeholder={"Select " + t("ADS_" + doc?.code.replaceAll(".", "_"))} option={dropDownData.map(e => ({
+          <Dropdown className={`form-field ${user?.type === "EMPLOYEE" ? "field-width--employee-50" : "field-width--full"}`} selected={selectedDocument} placeholder={"Select " + t("ADS_" + doc?.code.replaceAll(".", "_"))} option={dropDownData.map(e => ({
         ...e,
         i18nKey: "ADS_" + e.code?.replaceAll(".", "_")
       }))} select={handleADSSelectDocument} optionKey="i18nKey" t={t} />
@@ -223,7 +221,7 @@ function ADSSelectDocument({
         <div className="field">
           <UploadFile onUpload={selectfile} onDelete={() => {
           setUploadedFile(null);
-        }} id={id} message={isUploading ? <div className="ads-auto-61">
+        }} id={id} message={isUploading ? <div className="ads-document-details-row-center-flex">
                 <LoadingSpinner />
                 <span>Uploading...</span>
               </div> : uploadedFile ? "1 File Uploaded" : "No File Uploaded"} textStyles={{

@@ -117,8 +117,8 @@ function SelectDocument({
       }
     })();
   }, [file]);
-  return <div className="ws-auto-127">
-      <CardLabel className="ws-auto-128">
+  return <div className="ws-document-details-mb-md">
+      <CardLabel className="ws-document-details-bold">
           {doc?.required ? <React.Fragment>
               {t(doc?.i18nKey)}<span className="check-page-link-button"> *</span>
             </React.Fragment> : t(doc?.i18nKey)}

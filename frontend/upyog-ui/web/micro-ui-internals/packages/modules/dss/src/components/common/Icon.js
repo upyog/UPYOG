@@ -10,7 +10,7 @@ const TradeIcon = () => <svg width="41" height="35" viewBox="-8 -2 51 40" fill="
 
 const WaterSewerage = () => <svg width="41" height="35" viewBox="-10 -2 51 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M23.9923 11L14.4574 0.40625L4.92247 11C2.29447 13.925 0.980469 17.825 0.980469 21.575C0.980469 25.325 2.29447 29.2812 4.92247 32.2062C7.55047 35.1312 11.0039 36.6125 14.4574 36.6125C17.9109 36.6125 21.3643 35.1312 23.9923 32.2062C26.6203 29.2812 27.9343 25.325 27.9343 21.575C27.9343 17.825 26.6203 13.925 23.9923 11ZM4.3497 22.25C4.36655 18.5 5.39416 16.1188 7.31462 14L14.4574 5.88125L21.6002 14.0937C23.5206 16.1937 24.5482 18.5 24.5651 22.25H4.3497Z" fill="white"/></svg>;
 
-const FSM = () => <svg xmlns="http://www.w3.org/2000/svg" style={{fill:"white"}} fill="white" width="84" height="84" viewBox="4 -4 15 30"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>;
+const FSM = () => <svg xmlns="http://www.w3.org/2000/svg" className="dss-icon-icon" fill="white" width="84" height="84" viewBox="4 -4 15 30"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>;
 
 const FireNoc = () => <svg width="41" height="35" viewBox="-5 -2 51 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M34.5 0.625H4.5C2.4375 0.625 0.75 2.3125 0.75 4.375V30.625C0.75 32.6875 2.4375 34.375 4.5 34.375H34.5C36.5625 34.375 38.25 32.6875 38.25 30.625V4.375C38.25 2.3125 36.5625 0.625 34.5 0.625ZM15.75 26.875H6.375V23.125H15.75V26.875ZM15.75 19.375H6.375V15.625H15.75V19.375ZM15.75 11.875H6.375V8.125H15.75V11.875ZM24.7875 23.125L19.5 17.8L22.1437 15.1562L24.7875 17.8188L30.7312 11.875L33.3937 14.5375L24.7875 23.125Z" fill="white"/></svg>;
 
@@ -34,42 +34,42 @@ export function Icon(type, iconColor)
             return <DashBoardIcon></DashBoardIcon>
         case 'fsm':
         case 'dss_fsm':
-            return <div style={{background: iconColor, width: "60 px" , height: "52px"}}><FSM></FSM></div>
+            return <div style={iconColor ? { background: iconColor } : undefined} className="dss-icon-box"><FSM></FSM></div>
         case 'obps dashboard':
-            return <div style={{background: iconColor, width: "60 px" , height: "52px"}}><OBPS></OBPS></div>
+            return <div style={iconColor ? { background: iconColor } : undefined} className="dss-icon-box"><OBPS></OBPS></div>
         case 'online building plan approval system':
         case 'dss_obps_overview':
-            return <div style={{background: iconColor, width: "60 px" , height: "52px"}}><BuildingPermission></BuildingPermission></div>
+            return <div style={iconColor ? { background: iconColor } : undefined} className="dss-icon-box"><BuildingPermission></BuildingPermission></div>
         case 'nurt_overview':
             return <DashBoardIcon></DashBoardIcon>
         case 'nurt_project_staus':
             return <DashBoardIcon></DashBoardIcon>
         case 'nurt_property_tax':
         case 'dss_property_tax':
-            return <div style={{background: iconColor, width: "60 px" , height: "52px"}}><PropertyTaxIcon></PropertyTaxIcon></div>
+            return <div style={iconColor ? { background: iconColor } : undefined} className="dss-icon-box"><PropertyTaxIcon></PropertyTaxIcon></div>
         case 'nurt_trade_licence':
         case 'dss_trade_licence':
-            return <div style={{background: iconColor, width: "60 px" , height: "52px"}}><Tradelic></Tradelic></div>
+            return <div style={iconColor ? { background: iconColor } : undefined} className="dss-icon-box"><Tradelic></Tradelic></div>
         case 'nurt_complains':
         case 'dss_complains':
         case 'public grievances & redressal':
         case 'dss_pgr_overview':
-            return <div style={{background: iconColor, width: "60 px" , height: "52px"}}><ComplaintsIcon></ComplaintsIcon></div>
+            return <div style={iconColor ? { background: iconColor } : undefined} className="dss-icon-box"><ComplaintsIcon></ComplaintsIcon></div>
         case 'nurt_water_sewerage':
         case 'dss_water_sewerage':
-            return <div style={{background: iconColor, width: "60 px" , height: "52px"}}><WaterSewerage></WaterSewerage></div>
+            return <div style={iconColor ? { background: iconColor } : undefined} className="dss-icon-box"><WaterSewerage></WaterSewerage></div>
         case 'dss_building_permission':
-            return <div style={{background: iconColor, width: "60 px" , height: "52px"}}><BuildingPermission></BuildingPermission></div>
+            return <div style={iconColor ? { background: iconColor } : undefined} className="dss-icon-box"><BuildingPermission></BuildingPermission></div>
         case 'nurt_firenoc':
         case 'fire noc dashboard':
         case 'fire noc':
         case 'dss_firenoc_overview':
-            return <div style={{background: iconColor, width: "60 px" , height: "52px"}}><FireNoc></FireNoc></div>
+            return <div style={iconColor ? { background: iconColor } : undefined} className="dss-icon-box"><FireNoc></FireNoc></div>
         case 'nurt_mcollect':
         case 'dss_mcollect':
-            return <div style={{background: iconColor, width: "60 px" , height: "52px"}}><Mcollect></Mcollect></div>
+            return <div style={iconColor ? { background: iconColor } : undefined} className="dss-icon-box"><Mcollect></Mcollect></div>
         case 'dss_finance':
-            return <div style={{background: iconColor, width: "60 px" , height: "52px"}}><Finance></Finance></div>
+            return <div style={iconColor ? { background: iconColor } : undefined} className="dss-icon-box"><Finance></Finance></div>
         case 'nurt_live_active_ulbs':
             return <DashBoardIcon></DashBoardIcon>
         case 'dss_birth_death':
@@ -77,7 +77,7 @@ export function Icon(type, iconColor)
         case "nurt_birth":
         case "nurt_death":
         case "nurt_bnd":
-            return <div style={{background: iconColor, width: "60 px" , height: "52px"}}><BirthDeath/></div>
+            return <div style={iconColor ? { background: iconColor } : undefined} className="dss-icon-box"><BirthDeath/></div>
         default:
             return <div></div>
 

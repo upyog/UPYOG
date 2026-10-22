@@ -49,7 +49,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
   return (
     <div className="filter">
       <div className="filter-card">
-        <div className="heading" style={{ alignItems: "center" }}>
+        <div className="heading noc-new-inbox-filter-wrapper">
           <div className="filter-label">{t("ES_COMMON_FILTER_BY")}:</div>
           <div className="clearAll" onClick={handleClear}>{t("ES_COMMON_CLEAR_ALL")}</div>
           {type === "mobile" && <span onClick={onClose}><CloseSvg /></span>}
@@ -67,7 +67,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
 
         {/* Business Service */}
         <FilterFormField>
-          <div className="filter-label sub-filter-label" style={{ fontSize: "18px", fontWeight: "600" }}>
+          <div className="filter-label sub-filter-label noc-new-inbox-filter-text-style">
             {t("BUSINESS_SERVICE")}
           </div>
           <RadioButtons
@@ -81,7 +81,7 @@ const Filter = ({ searchParams, onFilterChange, defaultSearchParams, statusMap, 
         {/* Application Status — only shown when a business service is selected */}
         {localParams.businessService && (
           <FilterFormField>
-            <div className="filter-label sub-filter-label" style={{ fontSize: "18px", fontWeight: "600" }}>
+            <div className="filter-label sub-filter-label noc-new-inbox-filter-text-style">
               {t("ACTION_TEST_APPLICATION_STATUS")}
             </div>
             {!statusMap ? (

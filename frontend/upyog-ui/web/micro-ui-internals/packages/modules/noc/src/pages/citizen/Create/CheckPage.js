@@ -68,28 +68,28 @@ const CheckPage = ({ onSubmit, value }) => {
 
       <Header styles={{ fontSize: "32px" }}>{t("NOC_SUMMARY_HEADER")}</Header>
 
-      <Card style={{ marginBottom: "20px", padding: "24px" }}>
+      <Card className="noc-check-page-card">
         {/* 7. Fee Estimate */}
         {isBillLoading ? (
           <Loader />
         ) : (
           bill && (
-            <div style={{ marginBottom: "24px" }}>
+            <div className="noc-check-page-bottom-spacing">
               <CardHeader styles={{ fontSize: "24px" }}>
                 {t("NOC_FEE_ESTIMATE_HEADER", "Fee Estimate")}
               </CardHeader>
-              <div style={{ border: "1px solid #EAEAEA", borderRadius: "4px", overflow: "hidden", marginTop: "16px" }}>
-                <div style={{ padding: "16px" }}>
+              <div className="noc-check-page-top-spacing">
+                <div className="noc-check-page-container-padding">
                   {taxHeadEstimates?.map((est, idx) => (
-                    <div key={idx} style={{ display: "flex", justifyContent: "space-between", marginBottom: "12px" }}>
-                      <div style={{ color: "#0B0C0C", fontSize: "16px" }}>{t(est.taxHeadCode)}</div>
-                      <div style={{ color: "#0B0C0C", fontSize: "16px", textAlign: "right" }}>₹ {est.estimateAmount !== undefined ? est.estimateAmount : t("CS_NA")}</div>
+                    <div key={idx} className="noc-check-page-flex-row">
+                      <div className="noc-check-page-text-style">{t(est.taxHeadCode)}</div>
+                      <div className="noc-check-page-text-style-2">₹ {est.estimateAmount !== undefined ? est.estimateAmount : t("CS_NA")}</div>
                     </div>
                   ))}
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#F4F4F4", padding: "16px", borderTop: "1px solid #EAEAEA" }}>
-                  <div style={{ fontWeight: "bold", fontSize: "18px", color: "#0B0C0C" }}>{t("NOC_TOTAL_AMOUNT_LABEL", "Total Amount")}</div>
-                  <div style={{ fontWeight: "bold", fontSize: "18px", color: "#0B0C0C", textAlign: "right" }}>₹ {totalAmount !== undefined ? totalAmount : t("CS_NA")}</div>
+                <div className="noc-check-page-flex-row-2">
+                  <div className="noc-check-page-text-style-3">{t("NOC_TOTAL_AMOUNT_LABEL", "Total Amount")}</div>
+                  <div className="noc-check-page-text-style-4">₹ {totalAmount !== undefined ? totalAmount : t("CS_NA")}</div>
                 </div>
               </div>
             </div>
@@ -97,11 +97,11 @@ const CheckPage = ({ onSubmit, value }) => {
         )}
 
         {/* 1. NOC Type Summary */}
-        <div style={{ marginBottom: "24px" }}>
+        <div className="noc-check-page-bottom-spacing">
           <CardHeader styles={{ fontSize: "24px" }}>
             {t("NOC_TYPE_HEADER")}
             <LinkButton
-              label={<EditIcon style={{ float: "right" }} />}
+              label={<EditIcon className="noc-check-page-icon" />}
               onClick={() => routeTo(`${routeLink}/noc-type`)}
             />
           </CardHeader>
@@ -126,11 +126,11 @@ const CheckPage = ({ onSubmit, value }) => {
         </div>
 
         {/* 2. Ownership details */}
-        <div style={{ marginBottom: "24px" }}>
+        <div className="noc-check-page-bottom-spacing">
           <CardHeader styles={{ fontSize: "24px" }}>
             {t("NOC_OWNERSHIP_HEADER")}
             <LinkButton
-              label={<EditIcon style={{ float: "right" }} />}
+              label={<EditIcon className="noc-check-page-icon" />}
               onClick={() => routeTo(`${routeLink}/owner-details`)}
             />
           </CardHeader>
@@ -149,16 +149,16 @@ const CheckPage = ({ onSubmit, value }) => {
         </div>
 
         {/* 3. Owners Summary */}
-        <div style={{ marginBottom: "24px" }}>
+        <div className="noc-check-page-bottom-spacing">
           <CardHeader styles={{ fontSize: "24px" }}>
             {t("NOC_OWNER_DETAILS_HEADER")}
             <LinkButton
-              label={<EditIcon style={{ float: "right" }} />}
+              label={<EditIcon className="noc-check-page-icon" />}
               onClick={() => routeTo(`${routeLink}/owner-details`)}
             />
           </CardHeader>
           {(owners?.owners || []).map((owner, idx) => (
-            <div key={idx} style={{ marginBottom: "15px", borderBottom: idx < owners.owners.length - 1 ? "1px solid #ccc" : "none", paddingBottom: "10px" }}>
+            <div key={idx} className={`margin-bottom-15 padding-bottom-10 ${idx < owners.owners.length - 1 ? "border-bottom-gray" : ""}`}>
               <CardSubHeader>{`${t("NOC_OWNER_LABEL")} ${idx + 1}`}</CardSubHeader>
               <StatusTable>
                 <Row label={t("NOC_OWNER_NAME_LABEL")} text={owner.name || t("CS_NA")} />
@@ -175,11 +175,11 @@ const CheckPage = ({ onSubmit, value }) => {
         </div>
 
         {/* 4. Property details */}
-        <div style={{ marginBottom: "24px" }}>
+        <div className="noc-check-page-bottom-spacing">
           <CardHeader styles={{ fontSize: "24px" }}>
             {t("NOC_PROPERTY_DETAILS_HEADER")}
             <LinkButton
-              label={<EditIcon style={{ float: "right" }} />}
+              label={<EditIcon className="noc-check-page-icon" />}
               onClick={() => routeTo(`${routeLink}/property-details`)}
             />
           </CardHeader>
@@ -194,7 +194,7 @@ const CheckPage = ({ onSubmit, value }) => {
             />
           </StatusTable>
           {(property?.buildings || []).map((building, idx) => (
-            <div key={idx} style={{ marginTop: "15px", borderBottom: idx < property.buildings.length - 1 ? "1px solid #ccc" : "none", paddingBottom: "10px" }}>
+            <div key={idx} className={`margin-top-15 padding-bottom-10 ${idx < property.buildings.length - 1 ? "border-bottom-gray" : ""}`}>
               <CardSubHeader>{building.name || `${t("NOC_BUILDING_LABEL")} ${idx + 1}`}</CardSubHeader>
               <StatusTable>
                 <Row
@@ -218,11 +218,11 @@ const CheckPage = ({ onSubmit, value }) => {
         </div>
 
         {/* 5. Location Details */}
-        <div style={{ marginBottom: "24px" }}>
+        <div className="noc-check-page-bottom-spacing">
           <CardHeader styles={{ fontSize: "24px" }}>
             {t("NOC_LOCATION_DETAILS_HEADER")}
             <LinkButton
-              label={<EditIcon style={{ float: "right" }} />}
+              label={<EditIcon className="noc-check-page-icon" />}
               onClick={() => routeTo(`${routeLink}/property-details`)}
             />
           </CardHeader>
@@ -241,11 +241,11 @@ const CheckPage = ({ onSubmit, value }) => {
         </div>
 
         {/* 6. Document Details */}
-        <div style={{ marginBottom: "24px" }}>
+        <div className="noc-check-page-bottom-spacing">
           <CardHeader styles={{ fontSize: "24px" }}>
             {t("NOC_DOCUMENT_DETAILS_HEADER")}
             <LinkButton
-              label={<EditIcon style={{ float: "right" }} />}
+              label={<EditIcon className="noc-check-page-icon" />}
               onClick={() => routeTo(`${routeLink}/document-details`)}
             />
           </CardHeader>
@@ -263,7 +263,7 @@ const CheckPage = ({ onSubmit, value }) => {
             ))}
           </StatusTable>
         </div>
-        <div style={{ marginTop: "24px", marginBottom: "24px" }}>
+        <div className="noc-check-page-top-spacing-2">
         <CheckBox
           label={t("NOC_FINAL_DECLARATION_MESSAGE")}
           onChange={setdeclarationhandler}

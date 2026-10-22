@@ -165,7 +165,7 @@ const CheckPage = ({ onSubmit, value }) => {
       </Card>
       {propertyType && (
         <CitizenInfoLabel
-          style={{ marginTop: "8px", padding: "16px" }}
+          className="fsm-check-page-top-spacing"
           info={t("CS_FILE_APPLICATION_INFO_LABEL")}
           text={t("CS_FILE_APPLICATION_INFO_TEXT", { content: t("CS_DEFAULT_INFO_TEXT"), ...propertyType })}
         />

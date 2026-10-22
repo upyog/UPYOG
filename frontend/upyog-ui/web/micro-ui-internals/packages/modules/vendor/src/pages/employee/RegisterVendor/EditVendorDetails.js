@@ -300,12 +300,12 @@ const EditVendorDetails = (props) => {
     <React.Fragment>
       {!isLoading ? (
         <React.Fragment>
-          <Header style={{ marginBottom: "16px" }}>{t("ES_FSM_REGISTRY_VENDOR_DETAILS")}</Header>
+          <Header className="vnd-driver-details-header">{t("ES_FSM_REGISTRY_VENDOR_DETAILS")}</Header>
           <div style={!isMobile ? { marginLeft: "-15px" } : {}}>
-            <Card style={{ position: "relative" }}>
+            <Card className="vnd-driver-details-card">
               {dsoData?.[0]?.employeeResponse?.map((detail, index) => (
                 <React.Fragment key={index}>
-                  {index > 0 && <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>{t(detail.title)}</CardSectionHeader>}
+                  {index > 0 && <CardSectionHeader className="vnd-driver-details-header-2">{t(detail.title)}</CardSectionHeader>}
                   <div style={!isMobile ? { marginLeft: "-15px" } : {}}>
                     <StatusTable>
                       {detail?.values?.map((value, index) => {
@@ -327,12 +327,12 @@ const EditVendorDetails = (props) => {
                               <h2>
                                 {t(detail.type)} {index + 1}
                               </h2>
-                              <div style={{ display: "flex" }}>
+                              <div className="vnd-registered-vendor-search-flex-container">
                                 <span onClick={() => onEdit(data, detail.type, data.id)}>
-                                  <EditIcon style={{ cursor: "pointer", marginRight: "20px" }} className="edit" fill="#a82227" />
+                                  <EditIcon className="edit vnd-edit-vendor-details-clickable" fill="#a82227" />
                                 </span>
                                 <span onClick={() => onDelete(data, detail.type, data.id)}>
-                                  <DeleteIcon style={{ cursor: "pointer" }} className="delete" fill="#a82227" />
+                                  <DeleteIcon className="delete vnd-edit-vendor-details-clickable-2" fill="#a82227" />
                                 </span>
                               </div>
                             </div>
@@ -352,7 +352,7 @@ const EditVendorDetails = (props) => {
                       })}
                       {detail.type && (
                         <div
-                          style={{ color: "#a82227", cursor: "pointer", marginLeft: "16px" }}
+                          className="vnd-edit-vendor-details-clickable-3"
                           onClick={() => onActionSelect(detail.type === "ES_FSM_REGISTRY_DETAILS_TYPE_DRIVER" ? "ADD_DRIVER" : "ADD_VEHICLE")}
                         >
                           {t(`${detail.type}_ADD`)}
@@ -384,7 +384,7 @@ const EditVendorDetails = (props) => {
               actionSaveLabel={t(selectedAction === "DELETE" ? "ES_EVENT_DELETE" : "CS_COMMON_SUBMIT")}
               actionSaveOnSubmit={handleVendorUpdate}
             >
-              <Card style={{ boxShadow: "none" }}>{renderModalContent()}</Card>
+              <Card className="vnd-driver-details-card-2">{renderModalContent()}</Card>
             </Modal>
           )}
           {showToast && (
@@ -394,7 +394,7 @@ const EditVendorDetails = (props) => {
               onClose={closeToast}
             />
           )}
-          <ActionBar style={{ zIndex: "19" }}>
+          <ActionBar className="vnd-driver-details-wrapper">
             {displayMenu ? (
               <Menu localeKeyPrefix={"ES_FSM_REGISTRY_ACTION"} options={["EDIT", "DELETE", "HOME"]} t={t} onSelect={onActionSelect} />
             ) : null}

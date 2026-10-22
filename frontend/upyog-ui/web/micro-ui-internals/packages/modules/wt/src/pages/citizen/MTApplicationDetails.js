@@ -129,7 +129,7 @@ import {
         return (
           <React.Fragment>
             <div>
-              <div className="cardHeaderWithOptions wt-auto-44">
+              <div className="cardHeaderWithOptions wt-mt-application-details-item">
                 <Header styles={{
           fontSize: "32px"
         }}>{t("MT_BOOKING_DETAILS")}</Header>
@@ -142,7 +142,7 @@ import {
                 </StatusTable>
                 
       
-                <CardSubHeader className="wt-auto-45">{t("MT_APPLICANT_DETAILS")}</CardSubHeader>
+                <CardSubHeader className="wt-mt-application-details-subheader-title-lg">{t("MT_APPLICANT_DETAILS")}</CardSubHeader>
                 <StatusTable>
                   <Row className="border-none" label={t("MT_APPLICANT_NAME")} text={mt_details?.applicantDetail?.name || t("CS_NA")} />
                   <Row className="border-none" label={t("MT_MOBILE_NUMBER")} text={mt_details?.applicantDetail?.mobileNumber || t("CS_NA")} />
@@ -150,7 +150,7 @@ import {
                   <Row className="border-none" label={t("MT_EMAIL_ID")} text={mt_details?.applicantDetail?.emailId || t("CS_NA")} />
                 </StatusTable>
       
-                <CardSubHeader className="wt-auto-46">{t("ES_TITLE_ADDRESS_DETAILS")}</CardSubHeader>
+                <CardSubHeader className="wt-mt-application-details-subheader-title-lg">{t("ES_TITLE_ADDRESS_DETAILS")}</CardSubHeader>
                 <StatusTable>
                   <Row className="border-none" label={t("PINCODE")} text={mt_details?.address?.pincode || t("CS_NA")} />
                   <Row className="border-none" label={t("CITY")} text={mt_details?.address?.city || t("CS_NA")} />
@@ -162,7 +162,7 @@ import {
                   <Row className="border-none" label={t("LANDMARK")} text={mt_details?.address?.landmark || t("CS_NA")} />
                 </StatusTable>
       
-                <CardSubHeader className="wt-auto-47">{t("ES_REQUEST_DETAILS")}</CardSubHeader>
+                <CardSubHeader className="wt-mt-application-details-subheader-title-lg">{t("ES_REQUEST_DETAILS")}</CardSubHeader>
                 <StatusTable>
                   <Row className="border-none" label={t("MT_NUMBER_OF_MOBILE_TOILETS")} text={mt_details?.noOfMobileToilet || t("CS_NA")} />
                   <Row className="border-none" label={t("MT_DELIVERY_FROM_DATE")} text={formatDate(mt_details?.deliveryFromDate) || t("CS_NA")} />
@@ -175,7 +175,7 @@ import {
                 <WFApplicationTimeline application={application} id={application?.bookingNo} userType={"citizen"} />
                 {showToast && <Toast error={showToast.key} label={t(showToast.label)} onClose={() => {
           setShowToast(null);
-        }} className="wt-auto-48" />}
+        }} className="wt-mt-application-details-link" />}
               </Card>
             </div>
           </React.Fragment>);

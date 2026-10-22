@@ -43,8 +43,8 @@ const RenewPopup = ({
   };
   return <React.Fragment>
         <Modal headerBarMain={<Heading label={"SV_WANT_TO_EDIT"} />} headerBarEnd={<CloseBtn onClick={closeModal} />} actionCancelLabel={t("CS_COMMON_BACK")} actionCancelOnSubmit={closeModal} hideSubmit={true} formId="modal-action">
-            <Card className="asset-auto-5">
-            <div className="asset-auto-6">
+            <Card className="asset-renew-popup-card-no-shadow">
+            <div className="asset-renew-popup-card-col-flex-center">
                 {<SubmitBar label={t("SV_YES_PROCEED_WITH_APPLICATION")} onSubmit={proceedWithApplication} />}
                 {<SubmitBar label={t("SV_NO_PROCEED_PAYEMNT")} onSubmit={onRedirectedToCheckPage} />}
             </div>

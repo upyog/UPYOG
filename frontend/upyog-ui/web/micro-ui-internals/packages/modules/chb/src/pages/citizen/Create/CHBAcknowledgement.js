@@ -1,9 +1,9 @@
-import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar,Toast } from "@nudmcdgnpm/digit-ui-react-components";
-import React, {useState, useEffect } from "react";
+import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link,  } from "react-router-dom";
+import { Link, } from "react-router-dom";
 import { CHBDataConvert, downloadCHBAcknowledgement } from "../../../utils";
-import "../../../css/chb-inline.css";
+
 
 
 /**
@@ -94,42 +94,42 @@ const CHBAcknowledgement = ({ data, onSuccess, mutation }) => {
   const handleMakePayment = () => {
 
     if (user?.type === "CITIZEN") {
-        navigate(
-          `/upyog-ui/citizen/payment/my-bills/chb-services/${mutation.data?.hallsBookingApplication?.[0]?.bookingNo}`,
-          {
-            state: {
-              tenantId,
-              bookingNo: mutation.data?.hallsBookingApplication?.[0]?.bookingNo,
-              timerValue: mutation.data?.hallsBookingApplication?.[0]?.timerValue,
-              SlotSearchData:mutation.data?.hallsBookingApplication?.[0]
-            },
-          }
-        );
-      } else if (user?.type === "EMPLOYEE") {
-        navigate(
-          `/upyog-ui/employee/payment/collect/chb-services/${mutation.data?.hallsBookingApplication?.[0]?.bookingNo}`,
-          {
-            state: {
-              tenantId,
-              bookingNo: mutation.data?.hallsBookingApplication?.[0]?.bookingNo,
-              timerValue: mutation.data?.hallsBookingApplication?.[0]?.timerValue,
-              SlotSearchData:mutation.data?.hallsBookingApplication?.[0]
-            },
-          }
-        );
-      }
+      navigate(
+        `/upyog-ui/citizen/payment/my-bills/chb-services/${mutation.data?.hallsBookingApplication?.[0]?.bookingNo}`,
+        {
+          state: {
+            tenantId,
+            bookingNo: mutation.data?.hallsBookingApplication?.[0]?.bookingNo,
+            timerValue: mutation.data?.hallsBookingApplication?.[0]?.timerValue,
+            SlotSearchData: mutation.data?.hallsBookingApplication?.[0]
+          },
+        }
+      );
+    } else if (user?.type === "EMPLOYEE") {
+      navigate(
+        `/upyog-ui/employee/payment/collect/chb-services/${mutation.data?.hallsBookingApplication?.[0]?.bookingNo}`,
+        {
+          state: {
+            tenantId,
+            bookingNo: mutation.data?.hallsBookingApplication?.[0]?.bookingNo,
+            timerValue: mutation.data?.hallsBookingApplication?.[0]?.timerValue,
+            SlotSearchData: mutation.data?.hallsBookingApplication?.[0]
+          },
+        }
+      );
+    }
   }
-  
+
 
   useEffect(() => {
-      if (showToast) {
-        const timer = setTimeout(() => {
-          setShowToast(null);
-        }, 2000); // Close toast after 2 seconds
-  
-        return () => clearTimeout(timer); // Clear timer on cleanup
-      }
-    }, [showToast]);
+    if (showToast) {
+      const timer = setTimeout(() => {
+        setShowToast(null);
+      }, 2000); // Close toast after 2 seconds
+
+      return () => clearTimeout(timer); // Clear timer on cleanup
+    }
+  }, [showToast]);
 
   return mutation.isPending || mutation.isIdle ? (
     <Loader />

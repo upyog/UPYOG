@@ -71,7 +71,7 @@ const OCUploadPlanDiagram = ({ t, config, onSelect, userType, formData, ownerInd
                 message={uploadedFile ? `1 ${t(`PT_ACTION_FILEUPLOADED`)}` : t(`ES_NO_FILE_SELECTED_LABEL`)}
                 uploadMessage={uploadMessage}
             />
-            <div style={{ disabled: "true", height: "30px", width: "100%", fontSize: "14px" }}></div>
+            <div className="obps-corrospondence-address-fullwidth"></div>
             {isShowToast && <Toast error={isShowToast.key} label={t(isShowToast.label)} onClose={() => setIsShowToast(null)} isDleteBtn={true} />}
         </FormStep>
     );

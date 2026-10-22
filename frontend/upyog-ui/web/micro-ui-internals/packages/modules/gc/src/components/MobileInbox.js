@@ -48,7 +48,7 @@ const MobileInbox = ({
   };
 
   return (
-    <div style={{ padding: 0 }}>
+    <div className="gc-mobile-inbox-container-padding">
       <div className="inbox-container">
         <div className="filters-container">
           {!isSearch && <ApplicationLinks classNameForMobileView="linksWrapperForMobileInbox" linkPrefix={parentRoute} isMobile={true} />}

@@ -91,8 +91,8 @@ console.log("result",result)
 
   if (result.error || !consumerCode) {
     return (
-      <div style={{height : "150px"}}>
-        <Card style={{display: "flex", justifyContent: "center", alignItems: "center", height: "100%"}}>{t("CS_PT_NO_PROPERTIES_FOUND")}</Card>
+      <div className="cmnpt-search-results-wrapper">
+        <Card className="cmnpt-search-results-flex-row">{t("CS_PT_NO_PROPERTIES_FOUND")}</Card>
       </div>
     );
   }
@@ -198,10 +198,10 @@ console.log("result",result)
   };
   
   return (
-    <div className="static" style={{ marginTop: "16px" }}>
+    <div className="static cmnpt-search-results-top-spacing">
       <div className="static-wrapper">
         {header && (
-          <Header style={{ marginLeft: "8px" }}>
+          <Header className="cmnpt-search-results-header">
             {t(header)} ({searchResults?.length})
           </Header>
         )}
@@ -236,16 +236,16 @@ console.log("result",result)
             <SubmitBar
               submit={false}
               onSubmit={() => proceedToPay(modalData)}
-              style={{ marginTop: "14px", width: "100%" }}
+              className="cmnpt-search-results-fullwidth"
               label={t("PT_PROCEED_PAYMENT")}
             />
           </div>
         </Modal>
       ) : null}
-      {!searchResults?.length > 0 && <p style={{ marginLeft: "16px", marginTop: "16px" }}>{t("PT_NO_PROP_FOUND_MSG")}</p>}
+      {!searchResults?.length > 0 && <p className="cmnpt-search-results-top-spacing-2">{t("PT_NO_PROP_FOUND_MSG")}</p>}
       {searchResults?.length !== 0 && (searchResults?.length == 5 || searchResults?.length == 50) && (locality || ( searchQuery && searchQuery.locality )) && (
           <div>
-            <p style={{ marginLeft: "16px", marginTop: "16px" }}>
+            <p className="cmnpt-search-results-top-spacing-2">
               {t("PT_LOAD_MORE_MSG")}{" "}
               <span className="link">{<Link to={`/upyog-ui/citizen/pt/property/search-results?mobileNumber=${mobileNumber || searchQuery.mobileNumber ?mobileNumber || searchQuery?.mobileNumber:""}&propertyIds=${propertyIds || searchQuery?.propertyIds ?propertyIds || searchQuery?.propertyIds:""}&oldPropertyIds=${oldPropertyIds || searchQuery?.oldPropertyIds?oldPropertyIds || searchQuery?.oldPropertyIds:""}&doorNo=${doorNo || searchQuery?.doorNo?doorNo || searchQuery?.doorNo:""}&name=${name || searchQuery?.name?name || searchQuery?.name:""}&city=${city?city:""}&locality=${locality || searchQuery?.locality?locality || searchQuery?.locality:""}&PToffset=${t1}`}>{t("PT_COMMON_CLICK_HERE")}</Link>}</span>
             </p>

@@ -72,11 +72,7 @@ const Filters = ({
     });
   };
   return (
-    <div className={`filters-wrapper ${isOpen ? "filters-modal" : ""}`} style={{
-      justifyContent: window.location.href.includes("dss/dashboard/finance") && !isOpen ? "space-between" : "unset",
-      paddingRight: window.location.href.includes("dss/dashboard/finance") && !isOpen? "24px" : "0px",
-      paddingBottom: window.location.href.includes("dss/dashboard/finance") && !isOpen? "20px" : "unset"
-    }}>
+    <div className={`filters-wrapper ${isOpen ? "filters-modal" : ""} ${window.location.href.includes("dss/dashboard/finance") && !isOpen ? "dss-filters-finance" : ""}`}>
       <span className="filter-close" onClick={() => closeFilters()}>
         <CloseSvg />
       </span>
@@ -138,7 +134,7 @@ const Filters = ({
         </div>
       )}
       {showDenomination && (
-        <div className="filters-input" style={{ flexBasis: "16%" }}>
+        <div className="filters-input dss-filters-wrapper">
           <Switch onSelect={handleFilterChange} t={t} />
         </div>
       )}

@@ -547,7 +547,7 @@ export const NewApplication = ({ parentUrl, heading }) => {
   
   return (
     <React.Fragment>
-      <div style={{ marginLeft: "15px" }}>
+      <div className="fsm-index-spacing">
         <Header>{t("ES_TITLE_NEW_DESULDGING_APPLICATION")}</Header>
       </div>
       <FormComposer

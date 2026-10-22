@@ -116,8 +116,8 @@ const ADSCitizenDetails = ({
   return <React.Fragment>
       {window.location.href.includes("/citizen") ? <Timeline currentStep={1} /> : null}
       <Card>
-      <div className="ads-auto-54">
-        <CardSubHeader className="ads-auto-55">
+      <div className="ads-citizen-details-relative">
+        <CardSubHeader className="ads-citizen-details-absolute">
         <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.cartDetails} draftId={value?.existingDataSet?.draftId} />
         </CardSubHeader>
         <ADSCartAndCancellationPolicyDetails />
@@ -128,9 +128,7 @@ const ADSCitizenDetails = ({
           <CardLabel>
             {`${t("ADS_APPLICANT_NAME")}`} <span className="check-page-link-button">*</span>
           </CardLabel>
-          <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="applicantName" placeholder={"Enter Applicant Name"} value={applicantName} onChange={setApplicantName} style={{
-          width: user.type === "EMPLOYEE" ? "51.6%" : null
-        }} ValidationRequired={true} {...validation = {
+          <TextInput t={t} type={"text"} isMandatory={false} optionKey="i18nKey" name="applicantName" placeholder={"Enter Applicant Name"} value={applicantName} onChange={setApplicantName} className={user.type === "EMPLOYEE" ? "form-field-width--employee-51-6" : ""} ValidationRequired={true} {...validation = {
           // isRequired: true,
           pattern: "^[a-zA-Z ]+$",
           type: "tel",
@@ -140,9 +138,7 @@ const ADSCitizenDetails = ({
           <CardLabel>
             {`${t("ADS_MOBILE_NUMBER")}`} <span className="check-page-link-button">*</span>
           </CardLabel>
-          <MobileNumber value={mobileNumber} name="mobileNumber" style={{
-          width: user.type === "EMPLOYEE" ? "50%" : null
-        }} placeholder={"Enter Applicant Register Mobile Number"} onChange={value => setMobileNo({
+          <MobileNumber value={mobileNumber} name="mobileNumber" className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : ""} placeholder={"Enter Applicant Register Mobile Number"} onChange={value => setMobileNo({
           target: {
             value
           }
@@ -153,9 +149,7 @@ const ADSCitizenDetails = ({
         }} />
 
           <CardLabel>{`${t("ADS_ALT_MOBILE_NUMBER")}`}</CardLabel>
-          <MobileNumber value={alternateNumber} name="alternateNumber" style={{
-          width: user.type === "EMPLOYEE" ? "50%" : null
-        }} placeholder={"Enter Alternate Mobile Number"} onChange={value => setAltMobileNo({
+          <MobileNumber value={alternateNumber} name="alternateNumber" className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : ""} placeholder={"Enter Alternate Mobile Number"} onChange={value => setAltMobileNo({
           target: {
             value
           }
@@ -177,7 +171,7 @@ const ADSCitizenDetails = ({
             name="emailId"
             value={emailId}
             placeholder={"Enter Applicant Email Id"}
-            style={{ width: user.type === "EMPLOYEE" ? "51.6%" : null }}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-51-6" : ""}
             onChange={setApplicantEmail}
             ValidationRequired={true}
             {...(validation = {

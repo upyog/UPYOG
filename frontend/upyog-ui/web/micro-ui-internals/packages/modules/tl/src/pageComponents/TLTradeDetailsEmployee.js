@@ -326,7 +326,7 @@ const OwnerForm1 = _props => {
     marginTop: "-21px"
   };
   return <React.Fragment>
-      <div className="tl-auto-127">
+      <div className="tl-trade-details-employee-item">
         <div>
           <LabelFieldPair>
             <CardLabel className="card-label-smaller">{`${t("TL_FINANCIAL_YEAR_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>

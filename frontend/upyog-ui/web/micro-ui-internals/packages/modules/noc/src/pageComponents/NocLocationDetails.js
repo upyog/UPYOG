@@ -217,10 +217,10 @@ const NocLocationDetails = ({ t, config, onSelect, userType, formData }) => {
   // --- Employee UI Layout ---
   if (userType === "employee") {
     return (
-      <div style={{ padding: "10px" }}>
+      <div className="noc-noc-document-details-container-padding">
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">{t("NOC_PROPERTY_ID_LABEL")}</CardLabel>
-          <div className="field" style={{ display: "flex", gap: "10px" }}>
+          <div className="field noc-noc-location-details-flex-container">
             <TextInput
               t={t}
               type="text"
@@ -230,10 +230,9 @@ const NocLocationDetails = ({ t, config, onSelect, userType, formData }) => {
               placeholder={t("NOC_PROPERTY_ID_PLACEHOLDER")}
             />
             <button
-              className="submit-bar"
+              className="submit-bar noc-noc-location-details-action-btn"
               type="button"
               onClick={handlePropertySearch}
-              style={{ minWidth: "80px", height: "40px", marginTop: "0px" }}
             >
               {isSearchingProperty ? t("NOC_SEARCHING") : t("NOC_SEARCH")}
             </button>
@@ -359,7 +358,7 @@ const NocLocationDetails = ({ t, config, onSelect, userType, formData }) => {
         isDisabled={false}
       >
         <CardLabel>{t("NOC_PROPERTY_ID_LABEL")}</CardLabel>
-        <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
+        <div className="noc-noc-location-details-flex-container-2">
           <TextInput
             t={t}
             type="text"
@@ -367,13 +366,12 @@ const NocLocationDetails = ({ t, config, onSelect, userType, formData }) => {
             value={propertyId}
             onChange={(e) => setPropertyId(e.target.value)}
             placeholder={t("NOC_PROPERTY_ID_PLACEHOLDER")}
-            style={{ flex: 1 }}
+            className="noc-fire-noc-desktop-inbox-wrapper"
           />
           <button
-            className="submit-bar"
+            className="submit-bar noc-noc-location-details-action-btn-2"
             type="button"
             onClick={handlePropertySearch}
-            style={{ minWidth: "80px", height: "48px", marginTop: "0px" }}
           >
             {isSearchingProperty ? t("NOC_SEARCHING") : t("NOC_SEARCH")}
           </button>
@@ -450,7 +448,7 @@ const NocLocationDetails = ({ t, config, onSelect, userType, formData }) => {
         {fieldErrors.pincode && <CardLabelError>{fieldErrors.pincode}</CardLabelError>}
 
         <CardLabel>{t("NOC_PROPERTY_DETAILS_GIS_CORD_LABEL")}</CardLabel>
-        <div style={{ display: "flex", gap: "10px", alignItems: "center", marginBottom: "15px" }}>
+        <div className="noc-noc-location-details-flex-row">
           <TextInput
             t={t}
             type="text"
@@ -458,17 +456,17 @@ const NocLocationDetails = ({ t, config, onSelect, userType, formData }) => {
             value={latitude && longitude ? `${latitude}, ${longitude}` : ""}
             disabled={true}
             placeholder={t("NOC_PROPERTY_DETAILS_GIS_CORD_PLACEHOLDER")}
-            style={{ flex: 1 }}
+            className="noc-fire-noc-desktop-inbox-wrapper"
           />
           <LinkButton
             label={
-              <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+              <div className="noc-noc-location-details-flex-row-2">
                 <span>{t("NOC_LOCATE_ON_MAP")}</span>
                 <MapLocateIcon />
               </div>
             }
             onClick={() => setIsOpen(true)}
-            style={{ color: "#FE7A51", cursor: "pointer", fontSize: "14px", fontWeight: "bold", padding: "10px 0px" }}
+            className="noc-noc-location-details-clickable"
           />
         </div>
 

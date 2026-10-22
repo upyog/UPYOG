@@ -110,8 +110,8 @@ const SearchLicense = ({tenantId, t, onSubmit, data, count }) => {
         previousPage
       }} />
         </SearchForm>
-        {data?.display ? <Card className="tl-auto-7">
-            {t(data.display).split("\\n")?.map((text, index) => <p key={index} className="tl-auto-8">
+        {data?.display ? <Card className="tl-index-card-mt-md">
+            {t(data.display).split("\\n")?.map((text, index) => <p key={index} className="tl-index-card-center-text">
                     {text}
                 </p>)}
         </Card> : data !== "" && <Table t={t} data={data} totalRecords={count} columns={columns} getCellProps={cellInfo => {

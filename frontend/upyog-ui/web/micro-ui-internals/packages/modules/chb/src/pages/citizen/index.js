@@ -54,7 +54,7 @@ const App = () => {
   const CHBMapView = Digit?.ComponentRegistryService?.getComponent("CHBMapView");
  
   return (
-    <span className={"chb-citizen"} style={{ width: "100%" }}>
+    <span className={`${"chb-citizen"} chb-index-fullwidth`}>
       <AppContainer>
         {!shouldHideBackButton(hideBackButtonConfig) ? <BackButton>Back</BackButton> : ""}
         <Routes>

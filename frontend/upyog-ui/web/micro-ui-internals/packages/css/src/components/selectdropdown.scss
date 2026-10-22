@@ -22,18 +22,50 @@
   background-color: white;
 }
 .employee-select-wrap {
-  @apply mb-lg relative;
+  position: relative;
+  width: 100%;
+  margin-bottom: 16px !important;
+  box-sizing: border-box;
 
   .select {
-    @apply relative block w-full h-10 border border-solid border-input-border;
-    &:hover {
-      @apply border-2 border-solid border-primary-main;
-    }
-    input[type="text"] {
-      width: calc(100% - 32px);
-      background-color: transparent;
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 40px !important;
+    min-height: 40px !important;
+    max-height: 40px !important;
+    line-height: 40px !important;
+    background-color: #ffffff;
+    border: 1px solid #464646;
+    box-sizing: border-box;
+    cursor: pointer;
 
-      @apply absolute z-10 w-full h-full outline-none text-text-primary text-form-field pl-sm;
+    &:hover {
+      border: 2px solid #a82227;
+    }
+
+    input[type="text"],
+    input {
+      background-color: transparent !important;
+      box-sizing: border-box !important;
+      cursor: pointer;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 100% !important;
+      max-height: 100% !important;
+      line-height: 38px !important;
+      padding: 0 32px 0 8px !important;
+      margin: 0 !important;
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      font-size: 16px !important;
+      color: #0b0c0c !important;
+      position: absolute;
+      z-index: 10;
+      top: 0;
+      left: 0;
     }
 
     p {
@@ -42,41 +74,94 @@
     }
 
     img {
-      @apply float-right h-6 w-6 mt-sm mr-sm;
+      position: absolute !important;
+      right: 8px !important;
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+      margin: 0 !important;
+      pointer-events: none !important;
+      z-index: 20 !important;
+      width: 18px !important;
+      height: 18px !important;
     }
 
     svg {
-      @apply absolute right-0 float-right h-6 w-6 mt-sm mr-sm;
+      position: absolute !important;
+      right: 8px !important;
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+      margin: 0 !important;
+      pointer-events: none !important;
+      z-index: 20 !important;
+      width: 18px !important;
+      height: 18px !important;
     }
   }
 
   .select-active {
-    @apply relative block w-full h-10 border-2 border-solid border-primary-main;
-    height: 2 rem !important;
-    border: 1px solid black;
-    background-color: white;
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 40px !important;
+    min-height: 40px !important;
+    max-height: 40px !important;
+    line-height: 40px !important;
+    border: 2px solid #a82227 !important;
+    background-color: #ffffff !important;
+    box-sizing: border-box !important;
+    cursor: pointer;
 
-    input[type="text"] {
-      width: calc(100% - 32px);
-      background-color: transparent;
-
-      @apply absolute z-10 w-full h-full outline-none text-text-primary text-form-field pl-sm;
+    input[type="text"],
+    input {
+      background-color: transparent !important;
+      box-sizing: border-box !important;
+      cursor: pointer;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 100% !important;
+      max-height: 100% !important;
+      line-height: 38px !important;
+      padding: 0 32px 0 8px !important;
+      margin: 0 !important;
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      font-size: 16px !important;
+      color: #0b0c0c !important;
+      position: absolute;
+      z-index: 10;
+      top: 0;
+      left: 0;
     }
 
     p {
       @apply text-form-field text-text-primary float-left ml-sm;
-    }
-
-    p {
       padding-top: 9px;
     }
 
     img {
-      @apply float-right h-6 w-6 mt-sm mr-sm;
+      position: absolute !important;
+      right: 8px !important;
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+      margin: 0 !important;
+      pointer-events: none !important;
+      z-index: 20 !important;
+      width: 18px !important;
+      height: 18px !important;
     }
 
     svg {
-      @apply absolute right-0 float-right h-6 w-6 mt-sm mr-sm;
+      position: absolute !important;
+      right: 8px !important;
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+      margin: 0 !important;
+      pointer-events: none !important;
+      z-index: 20 !important;
+      width: 18px !important;
+      height: 18px !important;
     }
   }
 
@@ -121,7 +206,6 @@
 }
 
 .employee-select-wrap--elipses {
-  width: 85% !important;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -218,8 +302,4 @@
   .options-card {
     border-radius: 6px;
   }
-}
-.employee-select-wrap .select img,
-.employee-select-wrap .select svg {
-  margin-top: 2px;
 }

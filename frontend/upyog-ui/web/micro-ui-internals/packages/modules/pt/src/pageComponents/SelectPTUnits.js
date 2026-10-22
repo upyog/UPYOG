@@ -377,8 +377,8 @@ const SelectPTUnits = React.memo(({
     <FormStep config={(config.texts.header = getheader(), config)} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={isAllowedNext()}>
       {fields.map((field, index) => {
         return <div key={`${field}-${index}`}>
-            <div className="pt-auto-83">
-              <LinkButton label={<DeleteIcon fill={!(fields.length === 1) ? "#494848" : "#FAFAFA"} className="pt-auto-85" />} onClick={e => handleRemove(index)} className="pt-auto-84" />
+            <div className="pt-select-pt-units-mt-sm">
+              <LinkButton label={<DeleteIcon fill={!(fields.length === 1) ? "#494848" : "#FAFAFA"} className="pt-select-pt-units-btn-relative" />} onClick={e => handleRemove(index)} className="pt-select-pt-units-btn" />
               <CardLabel>{`${t("PT_FORM2_USAGE_TYPE")}`}<span className="check-page-link-button"> *</span></CardLabel>
               <Dropdown t={t} optionKey="i18nKey" isMandatory={config.isMandatory} option={[...(mdmsData?.UsageCategory ? mdmsData?.UsageCategory : []), {
               code: "RESIDENTIAL",
@@ -401,7 +401,7 @@ const SelectPTUnits = React.memo(({
                 pattern: "[0-9]+",
                 type: "text",
                 title: t("CORE_COMMON_REQUIRED_ERRMSG")
-              }} className="pt-auto-86" />
+              }} className="pt-select-pt-units-link" />
                 
               <CardLabel>{`${t("PT_FORM2_RENTED_MONTHS")}`}<span className="check-page-link-button"> *</span></CardLabel>
               <div className={"form-pt-dropdown-only"}>
@@ -419,7 +419,7 @@ const SelectPTUnits = React.memo(({
               pattern: "[0-9]+",
               type: "text",
               title: t("CORE_COMMON_REQUIRED_ERRMSG")
-            }} className="pt-auto-87" />
+            }} className="pt-select-pt-units-link" />
               {!isFloor && <>
                   <CardLabel>{`${t("PT_FORM2_SELECT_FLOOR")}`}<span className="check-page-link-button"> *</span></CardLabel>
                   <div className={"form-pt-dropdown-only"}>
@@ -429,8 +429,8 @@ const SelectPTUnits = React.memo(({
             </div>
           </div>;
       })}
-      <div className="pt-auto-88">
-        <button type="button" onClick={() => handleAdd()} className="pt-auto-89">
+      <div className="pt-select-pt-units-flex">
+        <button type="button" onClick={() => handleAdd()} className="pt-select-pt-units-btn-2">
           {`${t("PT_ADD_UNIT")}`}
         </button>
       </div>

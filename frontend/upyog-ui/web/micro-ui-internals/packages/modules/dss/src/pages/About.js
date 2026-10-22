@@ -20,25 +20,25 @@ const About = () => {
       <Header styles={{ marginLeft: "15px", paddingTop: "10px", fontSize: "36px" }}>{t("DSS_ABOUT_DASHBOARD")}</Header>
       <Card>{moduleAbout.map((obj) => (
         <div>
-          <CardSubHeader style={{ fontSize: "24px" , marginBottom:"10px"}} >{t(obj?.titleHeader)}</CardSubHeader>
-          <div style={{ fontSize: "16px" ,marginBottom:"20px"}}>{definitionlist(obj?.define)}</div>
+          <CardSubHeader className="dss-about-header" >{t(obj?.titleHeader)}</CardSubHeader>
+          <div className="dss-about-bottom-spacing">{definitionlist(obj?.define)}</div>
           {obj?.definePoints && obj?.titleHeader === "KEY_TERMS"  ?
              <div>
               {obj?.definePoints?.map((about, i) => (
-                <div style={{ fontSize: "16px", marginLeft: "15px",marginBottom:"20px" }}>{"•"}<div style={{ marginTop: "-25px", marginLeft:"15px"}}><b>{t(`${about?.point}_HEADER`)}</b> - {t(`${about?.point}_MSG`)}</div></div>
+                <div className="dss-about-bottom-spacing-2">{"•"}<div className="dss-about-top-spacing"><b>{t(`${about?.point}_HEADER`)}</b> - {t(`${about?.point}_MSG`)}</div></div>
               ))}
             </div> : null}
             {obj?.definePoints && obj?.titleHeader !== "KEY_TERMS"  ?
              <div>
               {obj?.definePoints?.map((about, i) => (
-                <div style={{ fontSize: "16px", marginLeft: "15px",marginBottom:"20px" }}>{"•"}<div style={{ marginTop: "-25px", marginLeft:"15px"}}>{t(about?.point)}</div></div>
+                <div className="dss-about-bottom-spacing-2">{"•"}<div className="dss-about-top-spacing">{t(about?.point)}</div></div>
               ))}
             </div> : null}
-            <div style={{ fontSize: "16px" ,marginBottom:"20px"}}>{t(obj?.subdefine)}</div> 
+            <div className="dss-about-bottom-spacing">{t(obj?.subdefine)}</div> 
             {obj?.subdefinePoints ?
             <div>
               {obj?.subdefinePoints?.map((about, i) => (
-                <div style={{ fontSize: "16px", marginLeft: "15px",marginBottom:"20px" }}>{"•"}<div style={{ marginTop: "-25px", marginLeft:"15px"}}>{t(about?.point)}</div></div>
+                <div className="dss-about-bottom-spacing-2">{"•"}<div className="dss-about-top-spacing">{t(about?.point)}</div></div>
               ))}
             </div> : null}
         </div>

@@ -593,7 +593,7 @@ useEffect(()=>{
         <Timeline currentStep={checkingFlow === "OCBPA"  ? 2 : checkingFlow==="PRE_APPROVE"? 6 : 1 } flow={checkingFlow}/>
         <FormStep config={config} onSelect={goNext} onSkip={onSkip} t={t} isDisabled={canmovenext || getCanMoveNextMultiple() || !ownershipCategory || isDisable || showToast} forcedError={t(error)}>   
             {!isLoading ?
-                <div style={{marginBottom: "10px"}}>
+                <div className="obps-basic-details-bottom-spacing">
                     <div>
                         <CardLabel>{`${t("BPA_TYPE_OF_OWNER_LABEL")}`}<span className="check-page-link-button"> *</span></CardLabel>
                         <RadioButtons
@@ -611,18 +611,18 @@ useEffect(()=>{
                     {fields?.map((field, index) => {
                         return (
                             <div key={`${field}-${index}`}>
-                                <div style={{ border: "solid", borderRadius: "5px", padding: "10px", paddingTop: "20px", marginTop: "10px", borderColor: "#f3f3f3", background: "#FAFAFA" }}>
-                                    <CardLabel style={{ marginBottom: "-15px" }}>{`${t("CORE_COMMON_MOBILE_NUMBER")}`}<span className="check-page-link-button"> *</span></CardLabel>
+                                <div className="obps-owner-details-top-spacing">
+                                    <CardLabel className="obps-owner-details-card">{`${t("CORE_COMMON_MOBILE_NUMBER")}`}<span className="check-page-link-button"> *</span></CardLabel>
                                     {ismultiple && <LinkButton
-                                        label={ <DeleteIcon style={{ float: "right", position: "relative", bottom: "5px" }} fill={!(fields.length == 1) ? "#494848" : "#FAFAFA"}/>}
-                                        style={{ width: "100px", display: "inline", background: "black" }}
+                                        label={ <DeleteIcon className="obps-owner-details-icon" fill={!(fields.length == 1) ? "#494848" : "#FAFAFA"}/>}
+                                        className="obps-inspection-report-action-btn-2"
                                         onClick={(e) => handleRemove(index)}
                                     />}
-                                    <div style={{ marginTop: "30px" }}>
+                                    <div className="obps-owner-details-top-spacing-2">
                                         <div className="field-container">
-                                            <div style={{ position: "relative", zIndex: "100", left: "35px", marginTop: "-24.5px",marginLeft:Webview?"-25px":"-25px" }}>+91</div>
+                                            <div className="input-phone-prefix-badge margin-left-pull-25">+91</div>
                                             <TextInput
-                                                style={{ background: "#FAFAFA", padding: "0px 35px" }}
+                                                className="obps-owner-details-container-padding"
                                                 type={"text"}
                                                 t={t}
                                                 isMandatory={false}
@@ -638,12 +638,12 @@ useEffect(()=>{
                                                 })}
                                                 disabled={propertyData?.owners ?true:false}
                                             />
-                                            <div style={{ position: "relative", zIndex: "100", right: "35px", marginTop: "-24px", marginRight:Webview?"-20px":"-20px" }} onClick={(e) => getOwnerDetails(index, e)}> <SearchIcon /> </div>
+                                            <div className="input-search-action-badge margin-right-pull-20" onClick={(e) => getOwnerDetails(index, e)}> <SearchIcon /> </div>
                                         </div>
                                     </div>
                                     <CardLabel>{`${t("CORE_COMMON_NAME")}`}<span className="check-page-link-button"> *</span></CardLabel>
                                     <TextInput
-                                        style={{ background: "#FAFAFA" }}
+                                        className="obps-owner-details-wrapper"
                                         t={t}
                                         type={"text"}
                                         isMandatory={false}
@@ -672,7 +672,7 @@ useEffect(()=>{
                                     <div>
                                      <CardLabel>{`${t("CORE_EMAIL_ID")}`}</CardLabel>
                                     <TextInput
-                                        style={{ background: "#FAFAFA" }}
+                                        className="obps-owner-details-wrapper"
                                         t={t}
                                         type={"emailId"}
                                         isMandatory={false}
@@ -688,7 +688,7 @@ useEffect(()=>{
                                         })}
                                         //disabled={propertyData?.address ?true:false}
                                     />
-                                    {error && <span style={{color:"red"}}>{error}</span>}
+                                    {error && <span className="obps-owner-details-required-asterisk">{error}</span>}
                                     </div>
                                     {ismultiple && (
                                         <CheckBox
@@ -696,7 +696,7 @@ useEffect(()=>{
                                             onChange={(e) => setPrimaryOwner(index, e)}
                                             value={field?.isPrimaryOwner}
                                             checked={field?.isPrimaryOwner}
-                                            style={{ paddingTop: "10px" }}
+                                            className="obps-owner-details-spacing"
                                         />
                                     )}
                                 </div>
@@ -705,8 +705,8 @@ useEffect(()=>{
                     })}
                     {ismultiple ? (
                         <div>
-                            <div style={{ display: "flex", paddingBottom: "15px", color: "#FF8C00" }}>
-                                <button type="button" style={{ paddingTop: "10px" }} onClick={() => handleAdd()}>
+                            <div className="obps-owner-details-flex-container">
+                                <button type="button" className="obps-owner-details-spacing" onClick={() => handleAdd()}>
                                     {t("BPA_ADD_OWNER")}
                                 </button>
                             </div>

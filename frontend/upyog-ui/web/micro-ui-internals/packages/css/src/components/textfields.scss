@@ -89,22 +89,164 @@
 
 .citizen-card-input {
   @apply mb-lg pl-sm outline-none block border w-full h-10 border-input-border border-solid bg-white leading-10 text-form-field text-text-primary;
-
 }
 
 .citizen-card-input {
-  height: 2rem !important;
+  height: 40px !important;
   margin-bottom: 16px !important;
-  line-height: 2.0rem !important;
+  line-height: 40px !important;
+  border-radius: 6px;
+  border: 1px solid #d4cde2;
 }
 
-.citizen-card-input--front {
-  width: fit-content !important;
-  display: flex;
-  align-items: center;
-  background: #eeeeee;
-  border-right: 0;
-  padding-right: 5px;
+.citizen-card-input--front,
+.employee-card-input--front,
+div.citizen-card-input--front,
+div.employee-card-input--front,
+span.citizen-card-input--front,
+span.employee-card-input--front {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 48px !important;
+  max-width: fit-content !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  max-height: 40px !important;
+  line-height: 40px !important;
+  padding: 0 12px !important;
+  margin: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  background: #f4f3f7 !important;
+  border: 1px solid #d4cde2 !important;
+  border-right: none !important;
+  border-top-left-radius: 6px !important;
+  border-bottom-left-radius: 6px !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  color: #493d62 !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+}
+
+.field-container {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: stretch !important;
+  flex-wrap: nowrap !important;
+  box-sizing: border-box !important;
+  width: 100%;
+  margin-bottom: 16px !important;
+
+  .employee-card-input--front,
+  .citizen-card-input--front,
+  div.employee-card-input--front,
+  div.citizen-card-input--front,
+  span.employee-card-input--front,
+  span.citizen-card-input--front,
+  span.employee-card-input,
+  span.citizen-card-input {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    min-width: 48px !important;
+    max-width: fit-content !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    max-height: 40px !important;
+    line-height: 40px !important;
+    padding: 0 12px !important;
+    margin: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    background: #f4f3f7 !important;
+    border: 1px solid #d4cde2 !important;
+    border-right: none !important;
+    border-top-left-radius: 6px !important;
+    border-bottom-left-radius: 6px !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    color: #493d62 !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    box-sizing: border-box !important;
+    flex-shrink: 0 !important;
+    flex-grow: 0 !important;
+  }
+
+  .text-input {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    display: flex !important;
+    margin: 0 !important;
+    padding: 0 !important;
+
+    .employee-card-input,
+    .citizen-card-input,
+    input[type="text"],
+    input[type="tel"],
+    input[type="number"],
+    input {
+      height: 40px !important;
+      min-height: 40px !important;
+      max-height: 40px !important;
+      line-height: 40px !important;
+      margin: 0 !important;
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+      border: 1px solid #d4cde2 !important;
+      border-top-left-radius: 0 !important;
+      border-bottom-left-radius: 0 !important;
+      border-top-right-radius: 6px !important;
+      border-bottom-right-radius: 6px !important;
+      padding: 0 12px !important;
+      box-sizing: border-box !important;
+      width: 100% !important;
+      background: #ffffff !important;
+
+      &:focus {
+        border-color: #6A4A91 !important;
+        box-shadow: 0 0 0 2px rgba(106, 74, 145, 0.12) !important;
+        outline: none !important;
+      }
+    }
+  }
+
+  > input,
+  > .employee-card-input:not(.employee-card-input--front),
+  > .citizen-card-input:not(.citizen-card-input--front) {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    max-height: 40px !important;
+    line-height: 40px !important;
+    margin: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    border: 1px solid #d4cde2 !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-top-right-radius: 6px !important;
+    border-bottom-right-radius: 6px !important;
+    padding: 0 12px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    background: #ffffff !important;
+
+    &:focus {
+      border-color: #6A4A91 !important;
+      box-shadow: 0 0 0 2px rgba(106, 74, 145, 0.12) !important;
+      outline: none !important;
+    }
+  }
 }
 
 .verificationInput .employee-card-input {

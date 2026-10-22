@@ -62,9 +62,9 @@ const BookingPopup = ({
   };
   return <React.Fragment>
         <Modal headerBarMain={<Heading t={t} />} headerBarEnd={<CloseBtn onClick={closeModal} />} actionCancelLabel={showExistingBookingDetails && t("CS_COMMON_BACK")} actionCancelOnSubmit={() => setShowExistingBookingDetails(false)} hideSubmit={true} formId="modal-action">
-            <Card className="ads-auto-41">
+            <Card className="ads-booking-popup-card-no-shadow">
             {showExistingBookingDetails && <ExistingBookingDetails onSubmit={onSubmit} setExistingDataSet={setExistingDataSet} Searchdata={Searchdata} selectedLocation={selectedLocation} />}
-            <div className="ads-auto-42">
+            <div className="ads-booking-popup-card-col-flex-center">
                     {!showExistingBookingDetails && <SubmitBar label={t("USE_EXISTING_DETAILS")} onSubmit={handleExistingDetailsClick} />}
                     {!showExistingBookingDetails && <SubmitBar label={t("FILL_NEW_DETAILS")} onSubmit={setchbData} />}
                 </div>

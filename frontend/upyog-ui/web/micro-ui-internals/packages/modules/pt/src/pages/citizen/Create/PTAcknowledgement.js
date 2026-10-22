@@ -20,7 +20,7 @@ const rowContainerStyle = {
   justifyContent: "space-between"
 };
 const BannerPicker = props => {
-  return <Banner message={GetActionMessage(props)} applicationNumber={props.data?.Properties[0].acknowldgementNumber} info={props.isSuccess ? props.t("PT_APPLICATION_NO") : ""} successful={props.isSuccess} className="pt-auto-104" />;
+  return <Banner message={GetActionMessage(props)} applicationNumber={props.data?.Properties[0].acknowldgementNumber} info={props.isSuccess ? props.t("PT_APPLICATION_NO") : ""} successful={props.isSuccess} className="pt-acknowledgement-link-full-width" />;
 };
 
 /**

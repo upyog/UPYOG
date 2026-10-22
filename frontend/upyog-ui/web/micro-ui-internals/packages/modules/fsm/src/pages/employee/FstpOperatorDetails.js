@@ -458,7 +458,7 @@ const FstpOperatorDetails = () => {
       title: `${t("ES_INBOX_DSO_NAME")} *`,
       value: vehicle?.tripOwner?.name || (
         <TextInput
-          //style={{ width: "40%" }}
+          //className="custom-style"
           onChange={(e) => onChangeDsoName(e.target.value)}
           value={newDsoName}
         />
@@ -595,13 +595,12 @@ const FstpOperatorDetails = () => {
                     tripDetails[0]?.address?.additionalDetails?.gramPanchayat?.name
                   ) : (
                     <Dropdown
-                      className="form-field"
+                      className="form-field fsm-search-fullwidth"
                       isMandatory
                       selected={selectedGp}
                       option={gramPanchayats}
                       select={selectGramPanchayat}
                       optionKey="i18nkey"
-                      style={{ width: "100%" }}
                       t={t}
                     />
                   )
@@ -664,13 +663,12 @@ const FstpOperatorDetails = () => {
                       )
                     ) : villages.length > 0 ? (
                       <Dropdown
-                        className="form-field"
+                        className="form-field fsm-search-fullwidth"
                         isMandatory
                         selected={selectedVillage}
                         option={villages}
                         select={selectVillage}
                         optionKey="i18nkey"
-                        style={{ width: "100%" }}
                         t={t}
                       />
                     ) : (
@@ -717,13 +715,12 @@ const FstpOperatorDetails = () => {
                     tripDetails[0]?.address?.locality?.name
                   ) : (
                     <Dropdown
-                      className="form-field"
+                      className="form-field fsm-search-fullwidth"
                       isMandatory
                       selected={selectedLocality}
                       option={localities?.sort((a, b) => a.name.localeCompare(b.name))}
                       select={selectLocality}
                       optionKey="i18nkey"
-                      style={{ width: "100%" }}
                       t={t}
                     />
                   )
@@ -845,13 +842,13 @@ const FstpOperatorDetails = () => {
                       selected={{ "name": `${currentTrip} of ${tripDetails[0]?.noOfTrips ? tripDetails[0]?.noOfTrips : 1}` }}
                       t={t}
                       optionKey="name"
-                      style={{ width: '100%' }} />
+                      className="custom-style" />
                   </div>
                 }
               >
               </Row> : null} */}
             <div className={!isMobile && "row"} style={isMobile ? {} : { diplay: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <CardLabel style={{ fontWeight: "normal" }}> {t("ES_FSM_ADDITIONAL_DETAILS")} </CardLabel>
+              <CardLabel className="fsm-fstp-operator-details-card"> {t("ES_FSM_ADDITIONAL_DETAILS")} </CardLabel>
               <TextArea
                 className="form-field"
                 onChange={(e) => {
@@ -932,7 +929,7 @@ const FstpOperatorDetails = () => {
           </LabelFieldPair> */}
         </StatusTable>
       </Card>
-      {/* <h2 style={{ fontWeight: "bold", fontSize: "16px", marginLeft: "8px", marginTop: "16px" }}>{t("ES_FSTP_OPERATOR_DETAILS_WASTE_GENERATORS")}</h2>
+      {/* <h2 className="custom-style">{t("ES_FSTP_OPERATOR_DETAILS_WASTE_GENERATORS")}</h2>
       {isSearchLoading || isIdle ? (
         <Loader />
       ) : (

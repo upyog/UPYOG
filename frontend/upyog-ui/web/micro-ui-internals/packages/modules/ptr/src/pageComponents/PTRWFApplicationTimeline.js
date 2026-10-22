@@ -104,7 +104,7 @@ const PTRWFApplicationTimeline = (props) => {
         return (
           props?.userType === 'citizen'
           ? (
-          <div style={{ marginTop: "1em", bottom: "0px", width: "100%", marginBottom: "1.2em" }}>
+          <div className="ptr-ptrwfapplication-timeline-fullwidth">
             <Link
               to={{ pathname: `/upyog-ui/citizen/payment/my-bills/${businessService}/${props?.application?.applicationNumber}`, state: { tenantId: props.application.tenantId, applicationNumber : props?.application?.applicationNumber } }}
             >
@@ -127,7 +127,7 @@ const PTRWFApplicationTimeline = (props) => {
       {!isLoading && (
         <Fragment>
           {data?.timeline?.length > 0 && (
-            <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
+            <CardSectionHeader className="ptr-ptrwfapplication-timeline-header">
               {t("CS_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
             </CardSectionHeader>
           )}

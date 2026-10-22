@@ -87,7 +87,7 @@ const SelectOwnerAddress = ({ t, config, onSelect, userType, formData, ownerInde
       //disable={isUpdateProperty || isEditProperty}
       />
         {/* <CardLabel>{t("PT_OWNER_S_ADDRESS")}</CardLabel> */}
-        <CheckBox label={t("PT_COMMON_SAME_AS_PROPERTY_ADDRESS")} onChange={setCorrespondenceAddress} value={isCorrespondenceAddress} checked={isCorrespondenceAddress || false} className="pt-auto-79" />
+        <CheckBox label={t("PT_COMMON_SAME_AS_PROPERTY_ADDRESS")} onChange={setCorrespondenceAddress} value={isCorrespondenceAddress} checked={isCorrespondenceAddress || false} className="pt-select-owner-address-item" />
       </FormStep>
     </React.Fragment>;
 };

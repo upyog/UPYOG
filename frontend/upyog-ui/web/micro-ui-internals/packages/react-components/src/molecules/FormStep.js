@@ -60,7 +60,7 @@ const FormStep = ({
           {errors[input.name] && (
             <CardLabelError>{t(input.error)}</CardLabelError>
           )}
-          <div className="field-container" style={{ justifyContent: "left" }}>
+          <div className="field-container rc-form-step-wrapper">
             {componentInFront && (
               <span className="citizen-card-input citizen-card-input--front">
                 {componentInFront}
@@ -116,7 +116,7 @@ const FormStep = ({
           {errors[input.name] && (
             <CardLabelError>{t(input.error)}</CardLabelError>
           )}
-          <div className="field-container" style={{ justifyContent: "left" }}>
+          <div className="field-container rc-form-step-wrapper">
             <TextInput
               {...registerRest}
               inputRef={ref}

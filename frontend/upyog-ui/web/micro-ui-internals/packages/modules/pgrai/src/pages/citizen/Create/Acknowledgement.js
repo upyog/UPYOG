@@ -27,7 +27,7 @@ const BannerPicker = (props) => {
       applicationNumber={props.data?.ServiceWrappers?.[0]?.service?.serviceRequestId}
       info={props.isSuccess ? props.t("PGR_AI_BOOKING_NO") : ""}
       successful={props.isSuccess}
-      style={{ width: "100%" }}
+      className="pgrai-acknowledgement-fullwidth"
     />
   );
 };
@@ -77,7 +77,7 @@ useEffect(() => {
         {mutation.isSuccess && <Row rowContainerStyle={rowContainerStyle} last textStyle={{ whiteSpace: "pre", width: "60%" }} />}
       </StatusTable>
       {mutation.isSuccess && (
-      <div style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
+      <div className="pgrai-acknowledgement-flex-container">
         {user.type==="EMPLOYEE" &&(<Link to={`/upyog-ui/employee`}>
         <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
          </Link>)}
