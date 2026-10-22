@@ -76,9 +76,14 @@ public class GarbageBillTrackerRepository {
 	        "additionaldetail = CASE " +
 	        "    WHEN :status = true THEN " +
 	        "        jsonb_set( " +
-	        "            COALESCE(additionaldetail, '{}'::jsonb), " +
-	        "            '{chequeTxnAmount}', " +
-	        "            to_jsonb(CAST(:txnAmount AS numeric)), " +
+	        "            jsonb_set( " +
+	        "                COALESCE(additionaldetail, '{}'::jsonb), " +
+	        "                '{chequeTxnAmount}', " +
+	        "                to_jsonb(CAST(:txnAmount AS numeric)), " +
+	        "                true " +
+	        "            ), " +
+	        "            '{chequeTxnDate}', " +
+	        "            to_jsonb(CAST(:transactionDate AS text)), " +
 	        "            true " +
 	        "        ) " +
 	        "    ELSE additionaldetail " +
@@ -282,12 +287,13 @@ public class GarbageBillTrackerRepository {
 //		return builder.toString();
 	}
 	
-	public void updatePaymentProcessing(String billId, boolean isPaymentProcessing, String txnAmount) {
+	public void updatePaymentProcessing(String billId, boolean isPaymentProcessing, String txnAmount, String transactionDate) {
 		String query = UPDATE_BILL_TRACKER_PAYMENT_STATUS;
 		Map<String, Object> params = new HashMap<>();
 		params.put("billId", billId);
 		params.put("status", isPaymentProcessing);
 		params.put("txnAmount", txnAmount);
+		params.put("transactionDate", transactionDate);
 		namedParameterJdbcTemplate.update(query, params);
 	}
 	
