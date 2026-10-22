@@ -97,7 +97,7 @@ const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
     containing the address details and calls the `onSelect` function with it.
    **/
   useEffect(() => {
-    if (config === undefined && houseNo && city && locality && pincode && addressLine1 && streetName && addressLine2) {
+    if (config === undefined && houseNo && city && locality && pincode && pincode.length === 6 && addressLine1 && streetName && addressLine2) {
       let addressStep = { pincode, city, locality, houseNo, landmark, addressLine1, addressLine2, streetName, addressType };
       onSelect(addressStep);
     }
@@ -108,7 +108,7 @@ const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
         config={config}
         onSelect={goNext}
         t={t}
-        isDisabled={!houseNo || !city || !locality || !pincode || !addressLine1||!streetName||!addressLine2}
+        isDisabled={!houseNo || !city || !locality || !pincode || pincode.length !== 6 || !addressLine1||!streetName||!addressLine2}
         >
     <div>
     <CardLabel>{`${t("COMMON_ADDRESS_TYPE")}`} <span className="check-page-link-button">*</span></CardLabel>
@@ -279,8 +279,9 @@ const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
         name="pincode"
         value={pincode}
         onChange={(e) => {
-            setPincode(e.target.value);
-          }}
+          const val = e.target.value.replace(/\D/g, "").slice(0, 6);
+          setPincode(val);
+        }}
         style={inputStyles}
         placeholder="Enter Pincode"
         ValidationRequired={true}
@@ -289,6 +290,7 @@ const AddressDetails = ({t, config, onSelect, formData, isEdit}) => {
             pattern: "^[0-9]{6}$",
             title: t("SV_ADDRESS_PINCODE_INVALID"),
           }}
+          minlength={6}
           maxLength={6}
       />
     </div>
