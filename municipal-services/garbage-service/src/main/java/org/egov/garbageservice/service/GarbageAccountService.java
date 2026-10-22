@@ -3157,6 +3157,7 @@ public GarbageAccountActionResponse openSearchPayPreview(
 		String ownerName = null;
 		String address = null;
 		String wardNo = null;
+		String wardNumber = null;
 		String propertyId = systemPropertyId;
 
 		if (null != property) {
@@ -3170,6 +3171,11 @@ public GarbageAccountActionResponse openSearchPayPreview(
 		        wardNo = property.getAddress()
 		                .getAdditionalDetails()
 		                .path("wardNo")
+		                .asText(null);
+		        
+		        wardNumber = property.getAddress()
+		                .getAdditionalDetails()
+		                .path("wardNumber")
 		                .asText(null);
 		    }
 			
@@ -3189,7 +3195,8 @@ public GarbageAccountActionResponse openSearchPayPreview(
 				.id(account.getUuid()).ulbName(null == accountAddress ? null : accountAddress.getUlbName())
 				.ward(null == accountAddress ? null : accountAddress.getWardName())
 				.wardNo(wardNo)
-				.address(address)
+				.address(("Ward No. " + (wardNo == null ? "" : wardNo)
+				        + (wardNumber == null ? "" : " " + wardNumber)).trim())
 				.category(category).build();
 	}
 
