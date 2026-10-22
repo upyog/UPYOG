@@ -143,12 +143,15 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
     const address = ownerObj?.permanentAddress || owner?.permanentAddress || "";
 
     const updated = {
-      email,
       propertyBillData: {
         isLoading: false,
         billData: formData?.PropertyDetails?.propertyBillData?.billData || {},
       },
     };
+
+    if (email) {
+      updated.email = email;
+    }
 
     if (firstName) {
       updated.firstName = firstName;
@@ -166,7 +169,7 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
       ...prev,
       ...updated,
     }));
-  }, [cpt?.details, apiDataCheck, selectedRow, formData?.PropertyDetails]);
+  }, [cpt?.details, apiDataCheck, selectedRow]);
 
   useEffect(() => {
     let waterConnection = [];
@@ -944,6 +947,7 @@ export const PropertyDetailsForm = ({ config, onSelect, userType, formData, form
                             field.onChange(value);
                           }}
                           onBlur={field.onBlur}
+                          disabled={!!cpt?.details?.owners?.[0]?.emailId}
                           className="ndc-input"
                           style={ownerInputStyle}
                         />
