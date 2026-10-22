@@ -3058,6 +3058,8 @@ public GarbageAccountActionResponse openSearchPayPreview(
 		}
 
 		searchRequest.getSearchCriteriaGarbageAccount().setIsReadyForPrinting(Boolean.TRUE);
+		searchRequest.getSearchCriteriaGarbageAccount().setDdpPrintVerified(Boolean.FALSE);
+		searchRequest.getSearchCriteriaGarbageAccount().setIsDdpVerified(Boolean.TRUE);
 		String tenantId = searchRequest.getSearchCriteriaGarbageAccount().getTenantId();
 
 		GarbageAccountResponse garbageAccountResponse = searchGarbageAccounts(searchRequest, false);
