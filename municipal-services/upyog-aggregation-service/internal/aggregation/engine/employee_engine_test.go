@@ -82,7 +82,7 @@ func TestEmployeeEngine_AggregateEmployee_WorkflowProcessSearch(t *testing.T) {
 		t.Fatalf("expected success to be true, got false. Errors: %v", resp.Errors)
 	}
 
-	expectedPath := "/egov-workflow-v2/egov-wf/process/_search?tenantId=pb.amritsar&limit=10&offset=0"
+	expectedPath := "/egov-workflow-v2/egov-wf/businessservice/_search?tenantId=pb&businessServices=PT.CREATE%2CPT.MUTATION%2CPT.UPDATE"
 	if capturedURL != expectedPath {
 		t.Errorf("expected URL %q, got %q", expectedPath, capturedURL)
 	}
@@ -206,7 +206,7 @@ func TestEmployeeEngine_AggregateEmployee_ViewAllWorkflow(t *testing.T) {
 		t.Fatalf("expected success, got errors: %v", resp.Errors)
 	}
 
-	expectedURL := "/egov-workflow-v2/egov-wf/process/_search?tenantId=pb.amritsar&limit=300&offset=0"
+	expectedURL := "/egov-workflow-v2/egov-wf/businessservice/_search?tenantId=pb&businessServices=PT.CREATE%2CPT.MUTATION%2CPT.UPDATE"
 	if capturedWorkflowURL != expectedURL {
 		t.Errorf("expected workflow URL %q, got %q", expectedURL, capturedWorkflowURL)
 	}
@@ -404,5 +404,39 @@ func TestEmployeeEngine_AggregateEmployee_WorkflowSortedBySLA_Ascending(t *testi
 
 	if wfData.ProcessInstances[0].ID != "PI-NEG-SLA" || wfData.ProcessInstances[1].ID != "PI-MID-SLA" || wfData.ProcessInstances[2].ID != "PI-HIGH-SLA" {
 		t.Errorf("process instances not sorted in ASC SLA order, got: %+v", wfData.ProcessInstances)
+	}
+}
+
+func TestEmployeeEngine_AggregateEmployee_BusinessServicesFromInbox(t *testing.T) {
+	eng := &EmployeeEngine{}
+
+	// Simulates what frontend sends: workflow has only moduleName, inbox has businessService array
+	req := dto.EmployeeAggregateRequest{
+		TenantID:  "pg.citya",
+		RequestID: "req-inbox-bs",
+		Workflow:  json.RawMessage(`{"moduleName":"PT","isViewAll":true}`),
+		Inbox: json.RawMessage(`[
+			{
+				"tenantId": "pg.citya",
+				"processSearchCriteria": {
+					"businessService": ["PT.CREATE", "PT.MUTATION", "PT.UPDATE"],
+					"moduleName": "PT"
+				}
+			}
+		]`),
+	}
+
+	stateTenant, bsList := eng.extractWorkflowTenantAndBusinessServices(req, req.TenantID)
+	if stateTenant != "pg" {
+		t.Errorf("expected stateTenant 'pg', got %q", stateTenant)
+	}
+	expectedBS := []string{"PT.CREATE", "PT.MUTATION", "PT.UPDATE"}
+	if len(bsList) != len(expectedBS) {
+		t.Fatalf("expected %d business services, got %d: %v", len(expectedBS), len(bsList), bsList)
+	}
+	for i, v := range expectedBS {
+		if bsList[i] != v {
+			t.Errorf("expected bsList[%d]=%q, got %q", i, v, bsList[i])
+		}
 	}
 }
