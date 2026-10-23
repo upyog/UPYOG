@@ -36,7 +36,7 @@ Please refer to the [Swagget API Contract](https://editor.swagger.io/?url=https:
    - Downloads the file from S3 to temporary storage (`/tmp`) and processes rows in streaming batches (default 100 rows) using Apache POI to prevent OutOfMemory errors.
    - Supports both cell-embedded JSON payloads (`payload_json`) and tabular column data, propagating caller authentication context (`RequestInfo`).
    - Individual row failures are isolated and captured without aborting the entire batch.
-   - Captures granular inbound API audit logs in `ug_external_api_audit_request` and `ug_external_api_audit_response`.
+   - Captures granular inbound API audit logs in `ug_external_api_message_detail`, `ug_external_api_message_raw_detail`, and `ug_external_api_error_detail`.
    - Tracks job completion status (`COMPLETED` or `FAILED`) and row counts via `egov-persister`.
 
 
@@ -125,8 +125,7 @@ You can access from [here](https://api.postman.com/collections/23419225-ba51e32e
     - **bulk-ingest-init** :- Used to enqueue bulk ingest file details from the `_init` API.
     - **save-bulk-ingest-job** :- Used to push initial job execution state (`IN_PROGRESS`) to `egov-persister` for saving in `ug_bulk_ingest_job`.
     - **update-bulk-ingest-job** :- Used to push final job execution state (`COMPLETED`/`FAILED`) and processed row counts to `egov-persister`.
-    - **external-api-request-initiated** :- Used to push inbound API request audit events to `egov-persister` (`ug_external_api_audit_request`).
-    - **external-api-response-received** :- Used to push inbound API response audit events to `egov-persister` (`ug_external_api_audit_response`).
+    - **external-api-audit-details** :- Used to push inbound API audit events (`ExternalApiAuditDetail` / `$.apiAuditDetail`) to `egov-persister` (`ug_external_api_message_detail`, `ug_external_api_message_raw_detail`, `ug_external_api_error_detail`).
     - **nss-ingest-keydata** :- Used to persist lookup key data in `nss-ingest-data`.
     - **egov.core.notification.email** :- Used to push email notification alerts on ingestion failures.
 
@@ -164,5 +163,6 @@ CREATE INDEX IF NOT EXISTS idx_ug_bulk_ingest_job_status ON ug_bulk_ingest_job (
 | `aws.s3.region` | `ap-south-1` | AWS S3 region. |
 | `aws.s3.bucket` | `${AWS_S3_BUCKET}` | Target S3 bucket name. |
 | `aws.s3.folder` | `${AWS_S3_FOLDER}` | S3 folder path prefix. |
+| `external.api.audit.detail.topic` | `external-api-audit-details` | Kafka topic for inbound/outbound API audit events consumed by egov-persister. |
 | `external.api.audit.request.initiated.topic` | `external-api-request-initiated` | Kafka topic for inbound API request audit events. |
 | `external.api.audit.response.received.topic` | `external-api-response-received` | Kafka topic for inbound API response audit events. |

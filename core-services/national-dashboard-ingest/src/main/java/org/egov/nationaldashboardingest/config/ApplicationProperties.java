@@ -103,15 +103,6 @@ public class ApplicationProperties {
     @Value("${kafka.topics.notification.email}")
     private String emailNotifTopic;
 
-    @Value("${external.api.audit.detail.topic}")
-    private String integrationAuditDetailTopic;
-
-    @Value("${external.api.audit.max.payload.bytes}")
-    private int integrationAuditMaxPayloadBytes;
-
-    @Value("${external.api.audit.stale.threshold.ms}")
-    private long integrationAuditStaleThresholdMs;
-
     @Value("${aws.s3.access-key}")
     private String awsS3AccessKey;
 

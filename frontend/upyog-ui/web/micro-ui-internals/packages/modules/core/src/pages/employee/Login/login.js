@@ -7,7 +7,7 @@ const setEmployeeDetail = (userObject, token) => {
   let locale = JSON.parse(sessionStorage.getItem("Digit.locale"))?.value || "en_IN";
   localStorage.setItem("Employee.tenant-id", userObject?.tenantId);
   localStorage.setItem("tenant-id", userObject?.tenantId);
-  localStorage.setItem("citizen.userRequestObject", JSON.stringify(userObject));
+  localStorage.setItem("citizen.userRequestObject", JSON.stringify(Digit.SessionStorage.get("citizen.userRequestObject")?.info));
   localStorage.setItem("locale", locale);
   localStorage.setItem("Employee.locale", locale);
   localStorage.setItem("token", token);
