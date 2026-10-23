@@ -1,14 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useHistory, Link } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { Link,  } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { RatingAndFeedBack } from "../config/RatingAndFeedback";
 
-import { Card, CardHeader, CardLabel, CheckBox, TextArea, SubmitBar, Rating, CloseSvg, Loader, CardText, CardLabelError } from "@upyog/digit-ui-react-components";
+import { Card, CardHeader, CardLabel, CheckBox, TextArea, SubmitBar, Rating, CloseSvg, Loader, CardText, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
 
 const CitizenFeedback = ({popup = false, onClose, setShowToast, data}) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const user = Digit.UserService.getUser();
   let {redirectedFrom, propertyId, acknowldgementNumber, creationReason, tenantId, locality} = Digit.Hooks.useQueryParams();
   const isMobile = window.Digit.Utils.browser.isMobile();
@@ -92,7 +91,7 @@ const CitizenFeedback = ({popup = false, onClose, setShowToast, data}) => {
                 setShowToast({ key: false, label: "PT_FEEDBACK_SUBMITTED_SUCCESSFULLY" });
             }
             else
-            history.push({pathname:"/upyog-ui/citizen/feedback-acknowledgement",
+            navigate({pathname:"/upyog-ui/citizen/feedback-acknowledgement",
                 state: {rating,comment,result}})
 
         }
@@ -141,7 +140,7 @@ const CitizenFeedback = ({popup = false, onClose, setShowToast, data}) => {
         <Card>
           <div style={popup ? {display:"flex", justifyContent: "space-between"} : {}}>
           <CardHeader>{t(getCardHeaderAndText("Header")) || t(`PT_RATE_HELP_TEXT`)}</CardHeader>
-          {popup && <span style={{marginTop:"8px"}} onClick={() => onClose(false)}>
+          {popup && <span className="core-citizen-feedback-top-spacing" onClick={() => onClose(false)}>
                   <CloseSvg />
             </span>}
           </div>
@@ -153,7 +152,7 @@ const CitizenFeedback = ({popup = false, onClose, setShowToast, data}) => {
              name="" 
              minLength = "64"
              onChange={onComments}></TextArea>
-             {comment && comment?.length < 64 && <CardLabelError style={{marginTop:"-20px", marginBottom:"25px"}}>{t("CS_MIN_LENGTH_64")}</CardLabelError>}
+             {comment && comment?.length < 64 && <CardLabelError className="core-citizen-feedback-card">{t("CS_MIN_LENGTH_64")}</CardLabelError>}
           </div>}
           <SubmitBar label={t(`${"PT"}_SUBMIT`)} onSubmit={onSubmit} disabled={getCommentCheck()} />
           {!popup && <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : {marginTop:"8px"}}>

@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { useRouteMatch } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import EmployeeApp from "./pages/employee";
 import BillsCard from "./billHomeCard";
@@ -16,7 +15,7 @@ import SearchCitizenFilter from "./components/citizen/SearchCitizenFilter";
 import CitizenInbox from "./components/citizen/inbox";
 import CitizenMobileInbox from "./components/citizen/CitizenMobileInbox";
 import CitizenApp from "./pages/citizen";
-import { CitizenHomeCard, CollectionIcon } from "@upyog/digit-ui-react-components";
+import { CitizenHomeCard, CollectionIcon } from "@nudmcdgnpm/digit-ui-react-components";
 import CancelBills from "./components/CancelBill"; 
 import GroupBills from "./components/GroupBill"; 
 
@@ -26,7 +25,7 @@ export const BillsModule = ({ stateCode, userType, tenants }) => {
 
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
-  const { path, url } = useRouteMatch();
+  const { path, url } = Digit.Hooks.useModuleBasePath();
 
   Digit.SessionStorage.set("BILLS_TENANTS", tenants);
 
@@ -40,7 +39,7 @@ export const BillsLinks = ({ matchPath }) => {
 
   const links = [
     {
-      link: `${matchPath}/billSearch`,
+      link: `/billSearch`,
       i18nKey: t("ABG_SEARCH_BILL_COMMON_HEADER"),
     },
   ];

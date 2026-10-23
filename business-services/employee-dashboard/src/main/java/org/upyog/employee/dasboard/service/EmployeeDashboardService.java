@@ -6,6 +6,7 @@ import org.upyog.employee.dasboard.repository.ServiceRequestRepository;
 import org.upyog.employee.dasboard.web.models.EmployeeDashboardDetails;
 import org.upyog.employee.dasboard.web.models.EmployeeDashboardRequest;
 import org.upyog.employee.dasboard.web.models.EmployeeDashboardResponse;
+import org.upyog.employee.dasboard.web.models.*;
 
 @Service
 public interface EmployeeDashboardService {
@@ -13,4 +14,7 @@ public interface EmployeeDashboardService {
 	
 	
 	EmployeeDashboardResponse getEmployeeDashboardData(EmployeeDashboardRequest employeeDashboardRequest);
+
+	RoleBasedDashboardResponse getRoleBasedDashboardData(RoleBasedDashboardRequest request);
+
 }

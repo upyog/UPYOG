@@ -1,17 +1,17 @@
 package org.egov.infra.microservice.models;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 public class BusinessCategory {
 
     private Long id;
-    @SafeHtml
+    @SanitizeHtml
     private String code;
-    @SafeHtml
+    @SanitizeHtml
     private String name;
 
     private Boolean active;
-    @SafeHtml
+    @SanitizeHtml
     private String tenantId;
 
     public Long getId() {

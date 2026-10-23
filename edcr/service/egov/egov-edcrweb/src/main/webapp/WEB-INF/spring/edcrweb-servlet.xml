@@ -71,6 +71,9 @@
 	</mvc:interceptors>
 	
 	<bean id="conversionService" class="org.springframework.core.convert.support.DefaultConversionService"/>
+
+    <!-- Must be in the DispatcherServlet context to resolve @RequestPart uploads. -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver"/>
 	
 	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
 		<property name="targetClass" value="org.springframework.core.convert.support.ConversionServiceFactory"/>

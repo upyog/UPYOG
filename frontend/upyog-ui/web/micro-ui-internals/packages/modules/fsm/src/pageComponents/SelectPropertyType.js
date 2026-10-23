@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CitizenInfoLabel, Loader, Dropdown, FormStep, CardLabel, RadioOrSelect } from "@upyog/digit-ui-react-components";
+import { CitizenInfoLabel, Loader, Dropdown, FormStep, CardLabel, RadioOrSelect } from "@nudmcdgnpm/digit-ui-react-components";
 import Timeline from "../components/TLTimelineInFSM";
 import { useLocation } from "react-router-dom";
 
@@ -71,9 +71,13 @@ useEffect(()=>{
       const preFilledPropertyType = propertyTypesData.data.filter(
         (propertyType) => propertyType.code === (usageType||formData?.propertyType?.code || formData?.propertyType)
       )[0];
-
-      if(preFilledPropertyType !== undefined)
-      {
+      /* 
+        Fixed infinite re-render issue by preventing unnecessary 
+        setPropertyType() calls and removing direct mutation of 
+        formData.propertyType, which was causing the useEffect 
+        to trigger repeatedly.
+      */
+     if (preFilledPropertyType && propertyType?.code !== preFilledPropertyType.code) {
         setPropertyType(preFilledPropertyType);
       }
       else if(usageType==="COMMERCIAL" || usageType==="INSTITUTIONAL"){
@@ -81,7 +85,7 @@ useEffect(()=>{
       }
      
     }
-  }, [property, formData?.propertyType, propertyTypesData.data]);
+  }, [property, formData?.propertyType, propertyTypesData?.data]);
 
   const goNext = () => {
     sessionStorage.removeItem("Digit.total_amount");

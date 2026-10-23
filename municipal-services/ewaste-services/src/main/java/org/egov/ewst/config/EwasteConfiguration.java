@@ -190,6 +190,16 @@ public class EwasteConfiguration {
 	@Value("${upyog.mdms.v2.enabled}")
 	private boolean mdmsV2Enabled;
 
+	// Pagination config for search results
+	@Value("${upyog.ewaste.service.default.limit}")
+	private Integer defaultLimit;
+
+	@Value("${upyog.ewaste.service.default.offset}")
+	private Integer defaultOffset;
+
+	@Value("${upyog.ewaste.service.max.limit}")
+	private Integer maxSearchLimit;
+
 	// Initialize method to set MDMS host and endpoint based on version
 	@PostConstruct
 	public void init() {

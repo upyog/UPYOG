@@ -11,17 +11,17 @@ import {
   CardLabelError,
   Menu,
   AddIcon,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import DropdownStatus from "./inbox/DropdownStatus";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+
 
 const SearchApplication = ({ onSearch, type, onClose, onTabChange, isFstpOperator, searchFields, searchParams, isInboxPage, selectedTab }) => {
   const storedSearchParams = isInboxPage ? Digit.SessionStorage.get("vendor/inbox/searchParams") : Digit.SessionStorage.get("vendor/search/searchParams");
 
 
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { register, handleSubmit, reset, watch, control } = useForm({
     defaultValues: storedSearchParams || searchParams,
   });
@@ -55,7 +55,7 @@ const SearchApplication = ({ onSearch, type, onClose, onTabChange, isFstpOperato
   const clearAll = (mobileView) => {
     const mobileViewStyles = mobileView ? { margin: 0, display: "inline" } : { marginTop: "40px", marginLeft: "16px" };
     return (
-      <LinkLabel style={{ ...mobileViewStyles }} onClick={clearSearch}>
+      <LinkLabel style={mobileViewStyles} onClick={clearSearch}>
         {t("ES_COMMON_CLEAR_SEARCH")}
       </LinkLabel>
     );
@@ -63,7 +63,7 @@ const SearchApplication = ({ onSearch, type, onClose, onTabChange, isFstpOperato
 
   // const onAddClick = () => {
   //   console.log("clickkkkkeeeddd")
-  //   return history.push("registry/new-vendor");
+  //   return navigate("registry/new-vendor");
   // };
 
   const onAddClick = () => {
@@ -77,11 +77,11 @@ const SearchApplication = ({ onSearch, type, onClose, onTabChange, isFstpOperato
   function onActionSelect(action) {
     switch (action) {
       case "VENDOR":
-        return history.push("/upyog-ui/employee/vendor/registry/new-vendor");
+        return navigate("/upyog-ui/employee/vendor/registry/new-vendor");
       case "VEHICLE":
-        return history.push("/upyog-ui/employee/vendor/registry/new-vehicle");
+        return navigate("/upyog-ui/employee/vendor/registry/new-vehicle");
       case "DRIVER":
-        return history.push("/upyog-ui/employee/vendor/registry/new-driver");
+        return navigate("/upyog-ui/employee/vendor/registry/new-driver");
       default:
         break;
     }
@@ -92,7 +92,7 @@ const SearchApplication = ({ onSearch, type, onClose, onTabChange, isFstpOperato
       case "date":
         return (
           <Controller
-            render={(props) => <DatePicker date={props.value} onChange={props.onChange} />}
+            render={({ field }) => <DatePicker date={field.value} onChange={field.onChange} />}
             name={input.name}
             control={control}
             defaultValue={null}
@@ -101,10 +101,10 @@ const SearchApplication = ({ onSearch, type, onClose, onTabChange, isFstpOperato
       case "status":
         return (
           <Controller
-            render={(props) => (
+            render={({ field }) => (
               <DropdownStatus
-                onAssignmentChange={props.onChange}
-                value={props.value}
+                onAssignmentChange={field.onChange}
+                value={field.value}
                 applicationStatuses={applicationStatuses}
                 areApplicationStatus={areApplicationStatus}
               />
@@ -116,14 +116,23 @@ const SearchApplication = ({ onSearch, type, onClose, onTabChange, isFstpOperato
         );
       default:
         return (
-          <TextInput
-            {...input}
-            inputRef={register}
-            {...register(input.name, {
+          <Controller
+            name={input.name}
+            control={control}
+            defaultValue=""
+            rules={{
               validate: searchValidation,
-            })}
-            watch={watch}
-            shouldUpdate={true}
+            }}
+            render={({ field }) => (
+              <TextInput
+                {...input}
+                value={field.value || ""}
+                onChange={(e) => field.onChange(e.target.value)}
+                ref={field.ref}
+                watch={watch}
+                shouldUpdate={true}
+              />
+            )}
           />
         );
     }
@@ -132,17 +141,13 @@ const SearchApplication = ({ onSearch, type, onClose, onTabChange, isFstpOperato
   return (
     
     <React.Fragment>
-      <div className="search-container" style={{ width: "auto" }}>
+      <div className="search-container vnd-registered-vendor-search-wrapper">
         <div className="search-complaint-container">
           {(type === "mobile" || mobileView) && (
             <div className="complaint-header">
               <h2>{t("ES_COMMON_SEARCH_BY")}</h2>
               <span
-                style={{
-                  position: "absolute",
-                  top: "2%",
-                  right: "8px",
-                }}
+                className="vnd-registered-vendor-search-wrapper-2"
                 onClick={onClose}
               >
                 <CloseSvg />
@@ -197,8 +202,7 @@ const SearchApplication = ({ onSearch, type, onClose, onTabChange, isFstpOperato
 
           <form onSubmit={handleSubmit(onSubmitInput)}>
             <div
-              className={FSTP ? "complaint-input-container for-pt for-search" : "complaint-input-container"}
-              style={{ display:"grid",width: "100%", gridTemplateColumns: "33.33% 66.66% 0%" }}
+              className={`${FSTP ? "complaint-input-container for-pt for-search" : "complaint-input-container"} vnd-registered-vendor-search-fullwidth`}
             >
               {searchFields?.map((input, index) => (
                 <span key={index} className={index === 0 ? "complaint-input" : "mobile-input"}>
@@ -206,7 +210,7 @@ const SearchApplication = ({ onSearch, type, onClose, onTabChange, isFstpOperato
                   {getFields(input)}{" "}
                 </span>
               ))}
-              <div style={{ display: "flex" }}>
+              <div className="vnd-registered-vendor-search-flex-container">
                 {type === "desktop" && !mobileView && <SubmitBar className="submit-bar-search" label={t("ES_COMMON_SEARCH")} submit />}
                 {type === "desktop" && !mobileView && <span className="clear-search">{clearAll()}</span>}
               </div>

@@ -1,0 +1,115 @@
+{
+	"info": {
+		"_postman_id": "auto-FSM.PropertyType",
+		"name": "MDMS v2 Bulk Data",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25737272"
+	},
+	"item": [
+		{
+			"name": "MDMS v2 CreateData",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var data=[\n  {\n    \"name\": \"Residential\",\n    \"code\": \"RESIDENTIAL\",\n    \"active\": true,\n    \"minAmount\": \"1000\",\n    \"maxAmount\": \"1500\"\n  },\n  {\n    \"name\": \"Independent House\",\n    \"code\": \"RESIDENTIAL.INDEPENDENT_HOUSE\",\n    \"active\": true,\n    \"propertyType\": \"RESIDENTIAL\",\n    \"minAmount\": \"100\",\n    \"maxAmount\": \"300\"\n  },\n  {\n    \"name\": \"Apartment\",\n    \"code\": \"RESIDENTIAL.APARTMENT\",\n    \"active\": true,\n    \"propertyType\": \"RESIDENTIAL\",\n    \"minAmount\": \"400\",\n    \"maxAmount\": \"600\"\n  },\n  {\n    \"name\": \"Row Houses\",\n    \"code\": \"RESIDENTIAL.ROW_HOUSES\",\n    \"active\": true,\n    \"propertyType\": \"RESIDENTIAL\",\n    \"minAmount\": \"700\",\n    \"maxAmount\": \"900\"\n  },\n  {\n    \"name\": \"Commercial\",\n    \"code\": \"COMMERCIAL\",\n    \"active\": true,\n    \"minAmount\": \"1000\",\n    \"maxAmount\": \"5000\"\n  },\n  {\n    \"name\": \"Community Toilets\",\n    \"code\": \"COMMERCIAL.COMMUNITY_TOILETS\",\n    \"active\": true,\n    \"propertyType\": \"COMMERCIAL\",\n    \"minAmount\": \"1000\",\n    \"maxAmount\": \"1200\"\n  },\n  {\n    \"name\": \"Hotel\",\n    \"code\": \"COMMERCIAL.HOTEL\",\n    \"active\": true,\n    \"propertyType\": \"COMMERCIAL\",\n    \"minAmount\": \"1300\",\n    \"maxAmount\": \"1500\"\n  },\n  {\n    \"name\": \"Restaurant\",\n    \"code\": \"COMMERCIAL.RESTAURANT\",\n    \"active\": true,\n    \"propertyType\": \"COMMERCIAL\",\n    \"minAmount\": \"1600\",\n    \"maxAmount\": \"1800\"\n  },\n  {\n    \"name\": \"Shopping Mall\",\n    \"code\": \"COMMERCIAL.SHOPPING_MALL\",\n    \"active\": true,\n    \"propertyType\": \"COMMERCIAL\",\n    \"minAmount\": \"1900\",\n    \"maxAmount\": \"2100\"\n  },\n  {\n    \"name\": \"Community hall\",\n    \"code\": \"COMMERCIAL.COMMUNITY_HALL\",\n    \"active\": true,\n    \"propertyType\": \"COMMERCIAL\",\n    \"minAmount\": \"2200\",\n    \"maxAmount\": \"2500\"\n  },\n  {\n    \"name\": \"Bank\",\n    \"code\": \"COMMERCIAL.BANK\",\n    \"active\": true,\n    \"propertyType\": \"COMMERCIAL\",\n    \"minAmount\": \"2600\",\n    \"maxAmount\": \"2800\"\n  },\n  {\n    \"name\": \"Private office\",\n    \"code\": \"COMMERCIAL.PRIVATE_OFFICE\",\n    \"active\": true,\n    \"propertyType\": \"COMMERCIAL\",\n    \"minAmount\": \"2900\",\n    \"maxAmount\": \"3200\"\n  },\n  {\n    \"name\": \"Market\",\n    \"code\": \"COMMERCIAL.MARKET\",\n    \"active\": true,\n    \"propertyType\": \"COMMERCIAL\",\n    \"minAmount\": \"3300\",\n    \"maxAmount\": \"3500\"\n  },\n  {\n    \"name\": \"Hostel\",\n    \"code\": \"COMMERCIAL.HOSTEL\",\n    \"active\": true,\n    \"propertyType\": \"COMMERCIAL\",\n    \"minAmount\": \"3600\",\n    \"maxAmount\": \"3900\"\n  },\n  {\n    \"name\": \"Warehouse\",\n    \"code\": \"COMMERCIAL.WAREHOUSE\",\n    \"active\": true,\n    \"propertyType\": \"COMMERCIAL\",\n    \"minAmount\": \"400\",\n    \"maxAmount\": \"4200\"\n  },\n  {\n    \"name\": \"Petrol pumps\",\n    \"code\": \"COMMERCIAL.PETROL_PUMPS\",\n    \"active\": true,\n    \"propertyType\": \"COMMERCIAL\",\n    \"minAmount\": \"4300\",\n    \"maxAmount\": \"4500\"\n  },\n  {\n    \"name\": \"Resort\",\n    \"code\": \"COMMERCIAL.RESORT\",\n    \"active\": true,\n    \"propertyType\": \"COMMERCIAL\",\n    \"minAmount\": \"4600\",\n    \"maxAmount\": \"4800\"\n  },\n  {\n    \"name\": \"Theme park\",\n    \"code\": \"COMMERCIAL.THEME_PARK\",\n    \"active\": true,\n    \"propertyType\": \"COMMERCIAL\",\n    \"minAmount\": \"4900\",\n    \"maxAmount\": \"5100\"\n  },\n  {\n    \"name\": \"Sports center\",\n    \"code\": \"COMMERCIAL.SPORTS_CENTER\",\n    \"active\": true,\n    \"propertyType\": \"COMMERCIAL\",\n    \"minAmount\": \"5200\",\n    \"maxAmount\": \"5500\"\n  },\n  {\n    \"name\": \"Institutional\",\n    \"code\": \"INSTITUTIONAL\",\n    \"active\": true,\n    \"minAmount\": \"1000\",\n    \"maxAmount\": \"3000\"\n  },\n  {\n    \"name\": \"Temple\",\n    \"code\": \"INSTITUTIONAL.TEMPLE\",\n    \"active\": true,\n    \"propertyType\": \"INSTITUTIONAL\",\n    \"minAmount\": \"5600\",\n    \"maxAmount\": \"5900\"\n  },\n  {\n    \"name\": \"Mosque\",\n    \"code\": \"INSTITUTIONAL.MOSQUE\",\n    \"active\": true,\n    \"propertyType\": \"INSTITUTIONAL\",\n    \"minAmount\": \"6000\",\n    \"maxAmount\": \"6200\"\n  },\n  {\n    \"name\": \"Church\",\n    \"code\": \"INSTITUTIONAL.CHURCH\",\n    \"active\": true,\n    \"propertyType\": \"INSTITUTIONAL\",\n    \"minAmount\": \"6300\",\n    \"maxAmount\": \"6500\"\n  },\n  {\n    \"name\": \"Gurudwara\",\n    \"code\": \"INSTITUTIONAL.GURUDWARA\",\n    \"active\": true,\n    \"propertyType\": \"INSTITUTIONAL\",\n    \"minAmount\": \"6600\",\n    \"maxAmount\": \"6800\"\n  },\n  {\n    \"name\": \"Monastery\",\n    \"code\": \"INSTITUTIONAL.MONASTERY\",\n    \"active\": true,\n    \"propertyType\": \"INSTITUTIONAL\",\n    \"minAmount\": \"6900\",\n    \"maxAmount\": \"7200\"\n  },\n  {\n    \"name\": \"School\",\n    \"code\": \"INSTITUTIONAL.SCHOOL\",\n    \"active\": true,\n    \"propertyType\": \"INSTITUTIONAL\",\n    \"minAmount\": \"7300\",\n    \"maxAmount\": \"7500\"\n  },\n  {\n    \"name\": \"College\",\n    \"code\": \"INSTITUTIONAL.COLLEGE\",\n    \"active\": true,\n    \"propertyType\": \"INSTITUTIONAL\",\n    \"minAmount\": \"7600\",\n    \"maxAmount\": \"7900\"\n  },\n  {\n    \"name\": \"University\",\n    \"code\": \"INSTITUTIONAL.UNIVERSITY\",\n    \"active\": true,\n    \"propertyType\": \"INSTITUTIONAL\",\n    \"minAmount\": \"8000\",\n    \"maxAmount\": \"8200\"\n  },\n  {\n    \"name\": \"Anganwadi\",\n    \"code\": \"INSTITUTIONAL.ANGANWADI\",\n    \"active\": true,\n    \"propertyType\": \"INSTITUTIONAL\",\n    \"minAmount\": \"8300\",\n    \"maxAmount\": \"8500\"\n  },\n  {\n    \"name\": \"Training Institutes\",\n    \"code\": \"INSTITUTIONAL.TRAINING_INSTITUTES\",\n    \"active\": true,\n    \"propertyType\": \"INSTITUTIONAL\",\n    \"minAmount\": \"8600\",\n    \"maxAmount\": \"8800\"\n  },\n  {\n    \"name\": \"Hospital\",\n    \"code\": \"INSTITUTIONAL.HOSPITAL\",\n    \"active\": true,\n    \"propertyType\": \"INSTITUTIONAL\",\n    \"minAmount\": \"8900\",\n    \"maxAmount\": \"9200\"\n  },\n  {\n    \"name\": \"Nursing home\",\n    \"code\": \"INSTITUTIONAL.NURSING_HOME\",\n    \"active\": true,\n    \"propertyType\": \"INSTITUTIONAL\",\n    \"minAmount\": \"9300\",\n    \"maxAmount\": \"9500\"\n  },\n  {\n    \"name\": \"Community health center\",\n    \"code\": \"INSTITUTIONAL.COMMUNITY_HEALTH_CENTER\",\n    \"active\": true,\n    \"propertyType\": \"INSTITUTIONAL\",\n    \"minAmount\": \"9400\",\n    \"maxAmount\": \"9600\"\n  },\n  {\n    \"name\": \"Jail\",\n    \"code\": \"INSTITUTIONAL.JAIL\",\n    \"active\": true,\n    \"propertyType\": \"INSTITUTIONAL\",\n    \"minAmount\": \"9700\",\n    \"maxAmount\": \"1000\"\n  },\n  {\n    \"name\": \"Police station\",\n    \"code\": \"INSTITUTIONAL.POLICE_STATION\",\n    \"active\": true,\n    \"propertyType\": \"INSTITUTIONAL\",\n    \"minAmount\": \"10100\",\n    \"maxAmount\": \"10500\"\n  }\n]",
+							"",
+							"pm.collectionVariables.set(\"raw\", data);",
+							"",
+							"var obj = pm.collectionVariables.get(\"raw\");",
+							"",
+							"if(pm.globals.get(\"i\") === undefined || pm.globals.get(\"i\") === null || pm.globals.get(\"i\") === \"\") {",
+							"    pm.globals.set(\"i\", 0);",
+							"}",
+							"",
+							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.globals.get(\"i\")]))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.collectionVariables.get(\"raw\");\r",
+							"\r",
+							"var items = pm.globals.get(\"i\");\r",
+							"\r",
+							"\r",
+							"if (items < data.length){\r",
+							"\r",
+							"    pm.globals.set(\"i\", Number(items) + 1);\r",
+							"\r",
+							"    postman.setNextRequest(\"MDMS v2 CreateData\");\r",
+							"}else{\r",
+							"    pm.globals.set(\"i\", 0);\r",
+							"    postman.setNextRequest(null)\r",
+							"}",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": null,\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null,\n            \"uuid\": \"40dceade-992d-4a8f-8243-19dda76a4171\"\n        }\n    },\n    \"Mdms\": {\n        \"tenantId\": \"pg\",\n        \"schemaCode\": \"FSM.PropertyType\",\n        \"data\": {{req}},\n        \"isActive\": true\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8094/mdms-v2/v2/_create/FSM.PropertyType",
+					"host": [
+						"localhost"
+					],
+					"port": "8094",
+					"path": [
+						"mdms-v2",
+						"v2",
+						"_create",
+						"FSM.PropertyType"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "raw",
+			"value": ""
+		},
+		{
+			"key": "req",
+			"value": ""
+		}
+	]
+}

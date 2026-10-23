@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Header, LabelFieldPair, CardLabel, TextInput, Dropdown, FormComposer, Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, Header, LabelFieldPair, CardLabel, TextInput, Dropdown, FormComposer, Loader } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import { Controller } from "react-hook-form";
 
 const SelectCategory = ({ userType, t, setValue, onSelect, config, data, formData, register, errors, setError, clearErrors, formState, control }) => {
@@ -30,9 +30,9 @@ const SelectCategory = ({ userType, t, setValue, onSelect, config, data, formDat
         <Controller
           name={config.key}
           control={control}
-          render={(props) => (
+          render={({field}) => (
             <div className="field">
-              <Dropdown option={categoryData} select={props.onChange} selected={props.value} t={t} optionKey="name" />
+              <Dropdown option={categoryData} select={field.onChange} selected={field.value} t={t} optionKey="name" />
             </div>
           )}
         />

@@ -1,4 +1,4 @@
-import { PersonIcon, EmployeeModuleCard } from "@upyog/digit-ui-react-components";
+import { PersonIcon, EmployeeModuleCard } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 

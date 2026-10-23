@@ -31,15 +31,16 @@ export const CHBSearch = {
     return response.hallsBookingApplication[0];
   },
   BookingDetails: ({ hallsBookingApplication: response, t }) => {
-    const slotlistRows = response?.bookingSlotDetails?.map((slot) => (
-      [
-        response?.communityHallCode,
-        slot.hallCode + " - " + slot.capacity,
-        slot.bookingDate,
-        // slot.bookingDate + " (" + slot.bookingFromTime + " - " + slot.bookingToTime + ")",
-        `${t(slot.status)}`
-      ]
-    )) || [];
+    const venueName = t(response?.venueCode);
+    const slotlistRows = response?.bookingSlotDetails?.map((slot) => {
+      return [
+        venueName,
+        slot?.unitCode,
+        slot?.bookingDate,
+        slot?.bookingFromTime && slot?.bookingToTime ? `${slot.bookingFromTime} - ${slot.bookingToTime}` : (slot?.bookingFromTime || t("CS_NA")),
+        `${t(slot?.status)}`
+      ];
+    }) || [];
     return [
       {
         title: "CHB_BOOKING_NO", 
@@ -93,7 +94,7 @@ export const CHBSearch = {
         title:"SLOT_DETAILS",
         asSectionHeader: true,
         isTable: true,
-        headers: [`${t("CHB_HALL_NAME")}` + "/" + `${t("CHB_PARK")}`, "CHB_HALL_CODE", "CHB_BOOKING_DATE", "PT_COMMON_TABLE_COL_STATUS_LABEL"],
+        headers: ["CHB_VENUE_NAME_LABEL", "CHB_HALL_CODE_LABEL", "CHB_BOOKING_DATE", "CHB_BOOKING_TIME", "PT_COMMON_TABLE_COL_STATUS_LABEL"],
         tableRows: slotlistRows,
       },
 

@@ -223,8 +223,6 @@ const formatData = (value, type, schema) => {
     case "EPOC":
       return formatDates(value, type);
     case "REVERT-EPOC":
-      return formatDates(typeof value == "string" && value?.endsWith?.("Z") ? value : parseInt(value), schema?.["ui:widget"]);
-    case "REVERT-EPOC":
       return new Date(typeof value == "string" && value?.endsWith?.("Z") ? value : parseInt(value)).toISOString();
     default:
       return value;
@@ -267,5 +265,31 @@ const postProcessData = (data = {}, schema = {}) => {
   });
   return { ...data };
 };
+export const deepSet = (obj, path, value) => {
+  const next = JSON.parse(JSON.stringify(obj));
+  const keys = path.split(".");
+  let ref = next;
+  for (let i = 0; i < keys.length - 1; i++) ref = ref[keys[i]];
+  ref[keys[keys.length - 1]] = value;
+  return next;
+};
 
-export default { getConfig, getMDMSLabel, getFormattedData, getUpdatedPath, updateTitleToLocalisationCodeForObject, preProcessData, postProcessData };
+import { formatLabel, getLabel, getCardIcon, groupMeta, getInitialThemeConfig, submitThemeConfig } from "./ThemeUtils";
+export { formatLabel, getLabel, getCardIcon, groupMeta, getInitialThemeConfig, submitThemeConfig };
+
+export default {
+  getConfig,
+  getMDMSLabel,
+  getFormattedData,
+  getUpdatedPath,
+  updateTitleToLocalisationCodeForObject,
+  preProcessData,
+  postProcessData,
+  deepSet,
+  formatLabel,
+  getLabel,
+  getCardIcon,
+  groupMeta,
+  getInitialThemeConfig,
+  submitThemeConfig
+};

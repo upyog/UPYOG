@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { Link, useParams, } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-import { Card, SubmitBar, BackButton, ImageUploadHandler, CardLabelError, LinkButton } from "@upyog/digit-ui-react-components";
+import { Card, SubmitBar, BackButton, ImageUploadHandler, CardLabelError, LinkButton } from "@nudmcdgnpm/digit-ui-react-components";
 
 import { LOCALIZATION_KEY } from "../../../constants/Localization";
 
 const UploadPhoto = (props) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   let { id } = useParams();
   const [verificationDocuments, setVerificationDocuments] = useState(null);
   const [valid, setValid] = useState(true);
@@ -33,12 +33,12 @@ const UploadPhoto = (props) => {
     if (verificationDocuments === null) {
       setValid(false);
     } else {
-      history.push(`${props.match.path}/addional-details/${id}`);
+      navigate(`/upyog-ui/citizen/pgr/reopen/addional-details/${id}`);
     }
   }
 
   function skip() {
-    history.push(`${props.match.path}/addional-details/${id}`);
+    navigate(`/upyog-ui/citizen/pgr/reopen/addional-details/${id}`);
   }
 
   useEffect(() => {

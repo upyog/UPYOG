@@ -57,6 +57,8 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
 import org.egov.infra.validation.ValidatorUtils;
 import org.egov.infra.web.support.ui.menu.ApplicationMenuRenderingService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,9 +80,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
@@ -89,10 +91,15 @@ import static org.egov.infra.persistence.entity.enums.UserType.SYSTEM;
 import static org.egov.infra.persistence.utils.PersistenceUtils.unproxy;
 import static org.egov.infra.web.utils.WebUtils.setUserLocale;
 
+/**
+ * LTS Migration Fix (WildFly 40): System.out is discarded under WildFly;
+ * current-user diagnostics are logged with SLF4J instead.
+ */
 @Controller
 @RequestMapping(value = "/home")
 public class HomeController {
 
+    private static final Logger log = LoggerFactory.getLogger(HomeController.class);
     private static final String FEEDBACK_MSG_FORMAT = "%s\n\n%s\n%s";
     private static final String NON_EMPLOYE_PORTAL_HOME = "/portal/home";
 
@@ -147,7 +154,7 @@ public class HomeController {
     	
     	//  code change for parallel 
     	CurrentUser curuser = (CurrentUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    	System.out.println("************current user: "+curuser.getUsername());
+    	log.info("current user: {}", curuser.getUsername());
     	
     	//    	User user = userService.getCurrentUser();
     	User user =curuser.getUser();

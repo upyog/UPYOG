@@ -1,8 +1,8 @@
-import { Loader } from "@upyog/digit-ui-react-components";
-import React, { useEffect } from "react";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
-import { Redirect, Route, Switch, useHistory, useLocation, useParams, useRouteMatch } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { Navigate, Route, Routes, useLocation, useParams, } from "react-router-dom";
 import { newConfig as newConfigTL } from "../../../config/config";
 import { getCommencementDataFormat, stringReplaceAll } from "../../../utils/index";
 
@@ -172,11 +172,16 @@ const getTradeEditDetails = (data,t) => {
 
 const RenewTrade = ({ parentRoute }) => {
   const queryClient = useQueryClient();
-  const match = useRouteMatch();
   const { t } = useTranslation();
-  const { id: licenseNo, tenantId } = useParams();
+  const routeParams = useParams();
+  const { id: licenseNo, tenantId } = routeParams;
+  const { path: modulePath } = Digit.Hooks.useModuleBasePath();
+  const basePath = useMemo(
+    () => getPath(`${modulePath}/tradelicence/renew-trade/:id/:tenantId`, routeParams),
+    [modulePath, routeParams]
+  );
   const { pathname } = useLocation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   let config = [];
   let application = {};
   const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("TL_RENEW_TRADE", {});
@@ -267,25 +272,25 @@ const RenewTrade = ({ parentRoute }) => {
     {
       nextStep = "proof-of-identity"
     }
-    let redirectWithHistory = history.push;
+    let redirectWithHistory = (to, state) => navigate(to, state != null ? { state } : undefined);
     if (skipStep) {
-      redirectWithHistory = history.replace;
+      redirectWithHistory = (to, state) => navigate(to, state != null ? { replace: true, state } : { replace: true });
     }
     if (isAddMultiple) {
       nextStep = key;
     }
     if (nextStep === null) {
-      return redirectWithHistory(`${getPath(match.path, match.params)}/check`);
+      return redirectWithHistory(`${basePath}/check`);
     }
     if(isPTCreateSkip && nextStep === "acknowledge-create-property")
     {
       nextStep = "map";
     }
-    nextPage = `${getPath(match.path, match.params)}/${nextStep}`;
+    nextPage = `${basePath}/${nextStep}`;
     redirectWithHistory(nextPage);
   };
   const createProperty = async () => {
-    history.push(`${getPath(match.path, match.params)}/acknowledgement`);
+    navigate(`${basePath}/acknowledgement`);
   };
   function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
     setParams({ ...params, ...{ [key]: { ...params[key], ...data } } });
@@ -314,26 +319,31 @@ const RenewTrade = ({ parentRoute }) => {
   const CheckPage = Digit?.ComponentRegistryService?.getComponent('TLCheckPage') ;
   const TLAcknowledgement = Digit?.ComponentRegistryService?.getComponent('TLAcknowledgement');
   return (
-    <Switch>
+    <Routes>
       {config?.map((routeObj, index) => {
         const { component, texts, inputs, key, isSkipEnabled } = routeObj;
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
-          <Route path={`${getPath(match.path, match.params)}/${routeObj.route}`} key={index}>
-            <Component config={{ texts, inputs, key, isSkipEnabled }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} />
-          </Route>
+          <Route
+            path={`${basePath}/${routeObj.route}`}
+            key={index}
+            element={
+              <Component
+                config={{ texts, inputs, key, isSkipEnabled }}
+                onSelect={handleSelect}
+                onSkip={handleSkip}
+                t={t}
+                formData={params}
+                onAdd={handleMultiple}
+              />
+            }
+          />
         );
       })}
-      <Route path={`${getPath(match.path, match.params)}/check`}>
-        <CheckPage onSubmit={createProperty} value={params} />
-      </Route>
-      <Route path={`${getPath(match.path, match.params)}/acknowledgement`}>
-        <TLAcknowledgement data={params} onSuccess={onSuccess} />
-      </Route>
-      <Route>
-        <Redirect to={`${getPath(match.path, match.params)}/${config.indexRoute}`} />
-      </Route>
-    </Switch>
+      <Route path={`/check`} element={<CheckPage onSubmit={createProperty} value={params} />} />
+      <Route path={`/acknowledgement`} element={<TLAcknowledgement data={params} onSuccess={onSuccess} />} />
+      <Route path="*" element={<Navigate to={`${basePath}/${config.indexRoute}`} replace />} />
+    </Routes>
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { useEffect,useMemo } from "react";
-import { CardLabelError, TextInput, RadioButtons } from "@nudmcdgnpm/digit-ui-react-components";
+import { CardLabelError, TextInput, RadioButtons } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import { Controller, useFormContext } from "react-hook-form";
 
  const ConvertEpochToDate = (dateEpoch) => {
@@ -49,8 +49,8 @@ const SurveySettingsForms = ({ t, controlSurveyForm, surveyFormState, disableInp
           control={controlSurveyForm}
           name="fromDate"
           defaultValue={surveyFormState?.fromDate}
-          rules={{ required: true, validate: !enableEndDateTimeOnly? { isValidFromDate }:null }}
-          render={({ onChange, value }) => <TextInput type="date" onChange={onChange} defaultValue={value} disable={disableInputs}/>}
+          rules={{ required: true, validate: !enableEndDateTimeOnly ? { isValidFromDate } : undefined }}
+          render={({ field }) => <TextInput type="date" onChange={field.onChange} value={field.value} disable={disableInputs}/>}
         />
         {formErrors && formErrors?.fromDate && formErrors?.fromDate?.type === "required" && (
           <CardLabelError>{t(`EVENTS_TO_DATE_ERROR_REQUIRED`)}</CardLabelError>
@@ -67,7 +67,7 @@ const SurveySettingsForms = ({ t, controlSurveyForm, surveyFormState, disableInp
           name="fromTime"
           defaultValue={surveyFormState?.fromTime}
           rules={{ required: true, validate: { isValidFromTime } }}
-          render={({ onChange, value }) => <TextInput type="time" onChange={onChange} defaultValue={value} disable={disableInputs} />}
+          render={({ field }) => <TextInput type="time" onChange={field.onChange} value={field.value} disable={disableInputs} />}
         />
         {formErrors && formErrors?.fromTime && formErrors?.fromTime?.type === "required" && (
           <CardLabelError>{t(`EVENTS_TO_DATE_ERROR_REQUIRED`)}</CardLabelError>
@@ -84,7 +84,7 @@ const SurveySettingsForms = ({ t, controlSurveyForm, surveyFormState, disableInp
           name="toDate"
           defaultValue={surveyFormState?.toDate}
           rules={{ required: true, validate: { isValidToDate } }}
-          render={({ onChange, value }) => <TextInput type="date" onChange={onChange} defaultValue={value} disable={enableEndDateTimeOnly ? !enableEndDateTimeOnly : disableInputs}/>}
+          render={({ field }) => <TextInput type="date" onChange={field.onChange} value={field.value} disable={enableEndDateTimeOnly ? !enableEndDateTimeOnly : disableInputs}/>}
         />
         {formErrors && formErrors?.toDate && formErrors?.toDate?.type === "required" && (
           <CardLabelError>{t(`EVENTS_TO_DATE_ERROR_REQUIRED`)}</CardLabelError>
@@ -102,7 +102,7 @@ const SurveySettingsForms = ({ t, controlSurveyForm, surveyFormState, disableInp
           name="toTime"
           defaultValue={surveyFormState?.toTime}
           rules={{ required: true, validate: { isValidToTime } }}
-          render={({ onChange, value }) => <TextInput type="time" onChange={onChange} defaultValue={value} disable={enableEndDateTimeOnly ? !enableEndDateTimeOnly : disableInputs}/>}
+          render={({ field }) => <TextInput type="time" onChange={field.onChange} value={field.value} disable={enableEndDateTimeOnly ? !enableEndDateTimeOnly : disableInputs}/>}
         />
         {formErrors && formErrors?.toTime && formErrors?.toTime?.type === "required" && (
           <CardLabelError>{t(`EVENTS_TO_DATE_ERROR_REQUIRED`)}</CardLabelError>

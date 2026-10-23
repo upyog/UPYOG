@@ -51,14 +51,14 @@ package org.egov.infra.admin.master.entity;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
 @Entity
 @Unique(fields = "deviceuid", enableDfltMsg = true)
@@ -73,13 +73,13 @@ public class Device extends AbstractAuditable {
     private Long id;
 
     @NotBlank
-    @SafeHtml
+    @SanitizeHtml
     private String deviceUId;
 
-    @SafeHtml
+    @SanitizeHtml
     private String type;
 
-    @SafeHtml
+    @SanitizeHtml
     private String OSVersion;
 
     @Override

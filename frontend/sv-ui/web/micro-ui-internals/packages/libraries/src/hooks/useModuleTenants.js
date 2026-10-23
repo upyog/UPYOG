@@ -1,11 +1,13 @@
 import React from "react";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
 const useModuleTenants = (module, config = {}) => {
   const { t } = useTranslation();
 
-  return useQuery(["ULB_TENANTS", module], () => Digit.SessionStorage.get("initData"), {
+  return useQuery({
+    queryKey: ["ULB_TENANTS", module],
+    queryFn: () => Digit.SessionStorage.get("initData"),
     select: (data) => ({
       ddr: data.modules
         .find((e) => e.module === module)

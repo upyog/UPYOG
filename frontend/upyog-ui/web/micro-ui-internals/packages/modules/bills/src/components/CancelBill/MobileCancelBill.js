@@ -1,12 +1,12 @@
 import React, { Fragment, useCallback, useMemo, useReducer,useState } from "react";
 import { Link } from "react-router-dom";
-import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast } from "@upyog/digit-ui-react-components";
-import { useHistory } from "react-router-dom";
+import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+
 import SearchFormFields from "./SearchFields";
 import CancelBillModal from "./CancelBillModal";
 
 const MobileCancelBill = ({ Controller, register, control, t, reset, handleSubmit, tenantId, data, onSubmit,isLoading,resultOk }) => {
-    const history = useHistory()
+    const navigate = Digit.Hooks.useCustomNavigate();
     function activateModal(state, action) {
         switch (action.type) {
             case "set":
@@ -84,7 +84,7 @@ const MobileCancelBill = ({ Controller, register, control, t, reset, handleSubmi
             }
         }
         //here do history.push to the response page and send filters there
-        history.push("/upyog-ui/employee/bills/response-cancelBill", { filters, currentBill });
+        navigate("/upyog-ui/employee/bills/response-cancelBill", { filters, currentBill });
         //call the cancel bill api from response page and show appropriate response
     }
 
@@ -107,7 +107,7 @@ const MobileCancelBill = ({ Controller, register, control, t, reset, handleSubmi
     };
 
     const handleBillLinkClick = (row) => {
-        history.push(`/upyog-ui/employee/bills/bill-details?connectionNumber=${row?.consumerCode}&tenantId=${tenantId}&service=${row?.businessService}`, row)
+        navigate(`/upyog-ui/employee/bills/bill-details?connectionNumber=${row?.consumerCode}&tenantId=${tenantId}&service=${row?.businessService}`, row)
     }
     
     const GetCell = (value) => <span className="cell-text">{value}</span>;

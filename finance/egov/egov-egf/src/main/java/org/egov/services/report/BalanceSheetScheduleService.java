@@ -62,7 +62,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -134,7 +134,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("addCurrentOpeningBalancePerFund");
 		final Query query = persistenceService.getSession()
-				.createSQLQuery(new StringBuilder("select sum(openingdebitbalance)- sum(openingcreditbalance),")
+				.createNativeQuery(new StringBuilder("select sum(openingdebitbalance)- sum(openingcreditbalance),")
 						.append("ts.fundid,coa.glcode,coa.type FROM transactionsummary ts,chartofaccounts coa ")
 						.append(" WHERE ts.glcodeid = coa.ID  AND ts.financialyearid=:financialyearid")
 						.append(transactionQuery).append(" GROUP BY ts.fundid,coa.glcode,coa.type").toString());
@@ -179,7 +179,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
 	    final BigDecimal divisor = balanceSheet.getDivisor();
         final CFinancialYear prevFinanciaYr = financialYearDAO.getPreviousFinancialYearByDate(fromDate);
         final String prevFinancialYrId = prevFinanciaYr.getId().toString();
-		final Query query = persistenceService.getSession().createSQLQuery(
+		final Query query = persistenceService.getSession().createNativeQuery(
 				new StringBuilder("select sum(openingdebitbalance)- sum(openingcreditbalance),coa.glcode,coa.type")
 						.append(" FROM transactionsummary ts,chartofaccounts coa  WHERE ts.glcodeid = coa.ID ")
 						.append(" AND ts.financialyearid=:financialyearid").append(transactionQuery)
@@ -205,7 +205,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
             }
     }
     private String getGlcodeForPurposeCode7() {
-        final Query query = persistenceService.getSession().createSQLQuery(
+        final Query query = persistenceService.getSession().createNativeQuery(
                 "select glcode from chartofaccounts where purposeid=7");
         final List list = query.list();
         String glCode = "";
@@ -216,7 +216,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
 
 	private String getGlcodeForPurposeCode7MinorCode() {
 		final Query query = persistenceService.getSession()
-				.createSQLQuery(new StringBuilder(String.format("select substr(glcode,1,%d)", minorCodeLength))
+				.createNativeQuery(new StringBuilder(String.format("select substr(glcode,1,%d)", minorCodeLength))
 						.append(" from chartofaccounts where purposeid=7").toString());
 		final List list = query.list();
 		String glCode = "";
@@ -228,7 +228,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
     /* For Detailed */
 	private String getGlcodeForPurposeCode7DetailedCode() {
 		final Query query = persistenceService.getSession()
-				.createSQLQuery(new StringBuilder(String.format("select substr(glcode,1,%d)", detailCodeLength))
+				.createNativeQuery(new StringBuilder(String.format("select substr(glcode,1,%d)", detailCodeLength))
 						.append(" from chartofaccounts where purposeid=7").toString());
 		final List list = query.list();
 		String glCode = "";
@@ -273,7 +273,7 @@ public class BalanceSheetScheduleService extends ScheduleService {
 		params.put("majorCode", majorCode);
 		params.putAll(filterParams);
 
-		final Query query = persistenceService.getSession().createSQLQuery(qry.toString());
+		final Query query = persistenceService.getSession().createNativeQuery(qry.toString());
 		persistenceService.populateQueryWithParams(query, params);
 		
 		final List<Object[]> result = query.list();

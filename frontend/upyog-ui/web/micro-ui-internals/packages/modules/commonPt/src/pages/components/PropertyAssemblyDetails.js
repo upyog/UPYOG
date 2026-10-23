@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber, CardLabelError } from "@upyog/digit-ui-react-components";
-import { cardBodyStyle } from "../utils";
-import { useLocation, useRouteMatch } from "react-router-dom";
+import { FormStep, TextInput, CardLabel, RadioButtons, LabelFieldPair, Dropdown, Menu, MobileNumber, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
+import { useLocation } from "react-router-dom";
 import { stringReplaceAll } from "../utils";
 import { Controller, useForm } from "react-hook-form";
 import _ from "lodash";
@@ -131,19 +130,19 @@ const PropertyAssemblyDetails = ({ t, config, onSelect, userType, formData, form
             defaultValue={assemblyDetails?.BuildingType}
             rules={{ required: t("REQUIRED_FIELD") }}
             key={config?.key}
-            render={(props) => (
+            render={({ field }) => (
               <Dropdown
                 selected={getPropertyTypeMenu(proptype)?.length === 1 ? getPropertyTypeMenu(proptype)[0] : assemblyDetails?.BuildingType}
                 disable={getPropertyTypeMenu(proptype)?.length === 1}
                 option={getPropertyTypeMenu(proptype)}
                 autoFocus={focusField === "BuildingType"}
                 select={(value) => {
-                  props.onChange(value);
+                  field.onChange(value);
                   setAssemblyDetails({ ...assemblyDetails, ['BuildingType']: value });
                   setFocusField("BuildingType");
                 }}
                 optionKey="i18nKey"
-                onBlur={props?.onBlur}
+                onBlur={field?.onBlur}
                 t={t}
               />
             )} />
@@ -163,21 +162,21 @@ const PropertyAssemblyDetails = ({ t, config, onSelect, userType, formData, form
               validate: (val)=> /^([0-9]){0,8}$/i.test(val) ? true : t("PT_TOT_LAND_AREA_ERROR_MESSAGE")
             }}
             key={config?.key}
-            render={(props) => (
+            render={({ field }) => (
               <TextInput
                 t={t}
                 type={"number"}
                 isMandatory={false}
                 optionKey="i18nKey"
                 name="totLandArea"
-                value={props?.value}
+                value={field?.value}
                 autoFocus={focusField === "floorarea"}
                 onChange={(ev) => {
-                  props?.onChange(ev.target.value)
+                  field?.onChange(ev.target.value)
                   setAssemblyDetails({ ...assemblyDetails, ['floorarea']: ev.target.value });
                   setFocusField("floorarea");
                 }}
-                onBlur={props?.onBlur}
+                onBlur={field?.onBlur}
               />
             )}
           />
@@ -197,21 +196,21 @@ const PropertyAssemblyDetails = ({ t, config, onSelect, userType, formData, form
               required: t("REQUIRED_FIELD"),
               validate: (val) => /^([0-9]){0,8}$/i.test(val) && assemblyDetails?.floorarea && parseInt(val) <= parseInt(assemblyDetails?.floorarea) ? true: t("PT_TOT_CONSTRUCTION_AREA_ERROR_MESSAGE")
              }}
-            render={(props) => (
+            render={({ field }) => (
               <TextInput
                 t={t}
                 type={"number"}
                 isMandatory={false}
                 optionKey="i18nKey"
                 name="totConstructionArea"
-                value={props?.value}
+                value={field?.value}
                 autoFocus={focusField === "constructionArea"}
                 onChange={(ev) => {
-                  props?.onChange(ev.target.value);
+                  field?.onChange(ev.target.value);
                   setFocusField("constructionArea")
                   setAssemblyDetails({ ...assemblyDetails, ['constructionArea']: ev.target.value });
                 }}
-                onBlur={props?.onBlur}
+                onBlur={field?.onBlur}
               />
             )}
           />
@@ -228,19 +227,19 @@ const PropertyAssemblyDetails = ({ t, config, onSelect, userType, formData, form
             rules={{ required: t("REQUIRED_FIELD") }}
             control={control}
             key={config?.key}
-            render={(props) => (
+            render={({ field }) => (
               <Dropdown
-                selected={props?.value}
+                selected={field?.value}
                 disable={usageCategoryMajorMenu(usagecat)?.length === 1}
                 option={usageCategoryMajorMenu(usagecat)}
                 autoFocus={focusField === "usageCategoryMajor"}
                 select={(value) => {
-                  props?.onChange(value);
+                  field?.onChange(value);
                   setFocusField("usageCategoryMajor")
                   setAssemblyDetails({ ...assemblyDetails, ['usageCategoryMajor']: value });
                 }}
                 optionKey="i18nKey"
-                onBlur={props?.onBlur}
+                onBlur={field?.onBlur}
                 t={t}
               />
             )}

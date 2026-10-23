@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { queryTemplate } from "../common/queryTemplate";
 
 const useApplicationStatusGeneral = ({ businessServices = [], tenantId }, config) => {
   tenantId = tenantId || Digit.ULBService.getCurrentTenantId();
@@ -34,7 +34,7 @@ const useApplicationStatusGeneral = ({ businessServices = [], tenantId }, config
     return { userRoleStates, otherRoleStates };
   };
 
-  const queryData = useQuery(["workflow_states", tenantId, ...businessServices], () => fetch(), { select, ...config });
+  const queryData = queryTemplate({ queryKey: ["workflow_states", tenantId, ...businessServices], queryFn: () => fetch(), select, config });
 
   return queryData;
 };

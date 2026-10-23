@@ -1,0 +1,402 @@
+/* components/BookingPopup.js */
+.wt-booking-popup-card-no-shadow {
+  box-shadow: none;
+}
+
+.wt-booking-popup-card-col-flex-center {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+/* components/ExistingBookingDetails.js */
+.wt-existing-booking-details-mt-md-ml-md {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+
+/* components/MobileInbox.js */
+.wt-mobile-inbox-no-pad {
+  padding: 0px;
+}
+
+
+/* components/SearchApplication.js */
+.wt-search-application-card-grey-text {
+  color: #505A5F;
+}
+
+.wt-search-application-card-grey-text-mb-sm {
+  color: #505A5F;
+  margin-bottom: 10px;
+}
+
+
+
+.wt-search-application-card-mt-md {
+  margin-top: 20px;
+}
+
+.wt-search-application-card-center-text {
+  text-align: center;
+}
+
+
+/* components/WTDesktopInbox.js */
+.wt-desktop-inbox-card-mt-md {
+  margin-top: 20px;
+}
+
+.wt-desktop-inbox-card-center-text {
+  text-align: center;
+}
+
+.wt-desktop-inbox-flex-1 {
+  flex: 1px;
+}
+
+
+/* components/inbox/ApplicationCard.js */
+.wt-application-card-card-mt-md {
+  margin-top: 20px;
+}
+
+.wt-application-card-card-center-text {
+  text-align: center;
+}
+
+
+/* components/inbox/NewInboxFilter.js */
+.wt-new-inbox-filter-item {
+  align-items: center;
+}
+
+.wt-new-inbox-filter-row-center-flex {
+  display: flex;
+  align-items: center;
+}
+
+.wt-new-inbox-filter-link-font-normal {
+  margin-left: 8px;
+  font-weight: normal;
+}
+
+.wt-new-inbox-filter-btn-bordered {
+  border: 1px solid #e0e0e0;
+  padding: 6px;
+}
+
+.wt-new-inbox-filter-font-normal {
+  font-weight: normal;
+}
+
+
+/* components/inbox/Status.js */
+.wt-status-font-normal {
+  font-weight: normal;
+}
+
+
+/* components/inbox/search.js */
+
+
+.wt-search-link-bold-text-sm {
+  font-weight: 700;
+  color: rgba(212, 53, 28);
+  padding-left: 8px;
+  margin-top: -20px;
+  font-size: 12px;
+}
+
+.wt-search-input-right-text {
+  grid-column: 2/3;
+  text-align: right;
+  padding-top: 10px;
+}
+
+.wt-search-item {
+  max-width: unset;
+  margin-left: unset;
+}
+
+.wt-search-link-flex-1 {
+  flex: 1px;
+}
+
+.wt-search-link-flex-1 {
+  flex: 1px;
+}
+
+
+/* pageComponents/RequestDetails.js */
+.wt-request-details-link-flex {
+  display: flex;
+  flex-wrap: wrap;
+  max-height: 30px;
+}
+
+
+/* pageComponents/TreePruningRequestDetails.js */
+.wt-tree-pruning-request-details-input-flex-1 {
+  flex: 1px;
+}
+
+.wt-tree-pruning-request-details-icon-action {
+  cursor: pointer;
+  width: 25px;
+  margin-bottom: 8px;
+}
+
+.wt-tree-pruning-request-details-row-center-flex {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+/* pageComponents/WFApplicationTimeline.js */
+.wt-wf-application-timeline-full-width {
+  margin-top: 1em;
+  bottom: 0px;
+  width: 100%;
+  margin-bottom: 1.2em;
+}
+
+.wt-wf-application-timeline-card {
+  margin-bottom: 16px;
+  margin-top: 32px;
+}
+
+
+/* pageComponents/WFCaption.js */
+.wt-wf-caption-item {
+  overflow-x: scroll;
+}
+
+
+/* pages/citizen/Create/CheckPage.js */
+.wt-check-page-btn-relative-mt-neg {
+  margin-top: -30px;
+  float: right;
+  position: relative;
+  bottom: 32px;
+}
+
+.wt-check-page-link {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.wt-check-page-link {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.wt-check-page-link {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.wt-check-page-link {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.wt-check-page-link {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.wt-check-page-btn-row-center-flex {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+
+/* pages/citizen/Create/MTAcknowledgement.js */
+.wt-mt-acknowledgement-link-full-width {
+  width: 100%;
+}
+
+
+/* pages/citizen/Create/TPAcknowledgement.js */
+.wt-tp-acknowledgement-link-full-width {
+  width: 100%;
+}
+
+
+/* pages/citizen/Create/WTAcknowledgement.js */
+.wt-acknowledgement-full-width {
+  width: 100%;
+}
+
+
+/* pages/citizen/MTApplicationDetails.js */
+.wt-mt-application-details-item {
+  margin-right: auto;
+  max-width: 960px;
+}
+
+.wt-mt-application-details-subheader-title-lg {
+  font-size: 24px;
+}
+
+.wt-mt-application-details-subheader-title-lg {
+  font-size: 24px;
+}
+
+.wt-mt-application-details-subheader-title-lg {
+  font-size: 24px;
+}
+
+.wt-mt-application-details-link {
+  bottom: 0px;
+}
+
+
+/* pages/citizen/MyApplications/index.js */
+.wt-index-ml-md {
+  margin-left: 16px;
+}
+
+.wt-index-row-center-flex {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+}
+
+.wt-index-flex-1 {
+  flex: 1px;
+}
+
+.wt-index-flex-1 {
+  flex: 1px;
+}
+
+.wt-index-flex-1 {
+  flex: 1px;
+}
+
+.wt-index-col-flex {
+  display: flex;
+  flex-direction: column;
+}
+
+.wt-index-full-width {
+  width: 100%;
+}
+
+.wt-index-item {
+  margin-top: 17%;
+}
+
+.wt-index-btn-block-mt-sm {
+  margin-left: 30%;
+  margin-top: 10px;
+  display: block;
+}
+
+.wt-index-btn-rounded {
+  border-radius: 30px;
+  width: 20%;
+}
+
+.wt-index-mt-md-ml-md {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+.wt-index-mt-md-ml-md {
+  margin-left: 16px;
+  margin-top: 16px;
+}
+
+
+/* pages/citizen/TPApplicationDetails.js */
+.wt-tp-application-details-item {
+  margin-right: auto;
+  max-width: 960px;
+}
+
+.wt-tp-application-details-subheader-title-lg {
+  font-size: 24px;
+}
+
+.wt-tp-application-details-subheader-title-lg {
+  font-size: 24px;
+}
+
+.wt-tp-application-details-subheader-title-lg {
+  font-size: 24px;
+}
+
+.wt-tp-application-details-link {
+  bottom: 0px;
+}
+
+
+/* pages/citizen/WTApplicationDetails.js */
+.wt-application-details-item {
+  margin-right: auto;
+  max-width: 960px;
+}
+
+.wt-application-details-title-lg {
+  font-size: 24px;
+}
+
+.wt-application-details-title-lg {
+  font-size: 24px;
+}
+
+.wt-application-details-title-lg {
+  font-size: 24px;
+}
+
+.wt-application-details-link {
+  bottom: 0px;
+}
+
+
+/* pages/citizen/index.js */
+.wt-index-full-width {
+  width: 100%;
+}
+
+
+/* pages/employee/ApplicationDetails.js */
+.wt-application-details-mb-md {
+  margin-bottom: 15px;
+}
+
+.wt-application-details-row-reverse-row-center {
+  z-index: 10;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  margin-top: -25px;
+}
+
+.wt-tp-application-details-digipin-row-center {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wt-tp-application-details-digipin-btn-red {
+  background-color: #a82227;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+

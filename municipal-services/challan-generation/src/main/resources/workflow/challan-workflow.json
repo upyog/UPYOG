@@ -1,0 +1,148 @@
+{
+  "RequestInfo": {
+      "apiId": "Rainmaker",
+      "action": "",
+      "did": 1,
+      "key": "",
+      "msgId": "20170310130900|en_IN",
+      "requesterId": "",
+      "ts": 1513579888683,
+      "ver": ".01",
+      "authToken": "{{devAuth}}",
+      "userInfo": {
+          "id": 73,
+          "userName": null,
+          "name": null,
+          "type": "EMPLOYEE",
+          "mobileNumber": null,
+          "emailId": null,
+          "roles": [
+              {
+                  "id": 2,
+                  "name": "Customer Support Representative",
+                  "code": null,
+                  "tenantId": null
+              }
+          ],
+          "tenantId": null,
+          "uuid": "uuid"
+      }
+  },
+  "BusinessServices": [
+      {
+          "tenantId": "pg",
+          "businessService": "Challan_Generation",
+          "business": "Challan_Generation",
+          "businessServiceSla": null,
+          "states": [
+              {
+                  "tenantId": "pg",
+                  "sla": null,
+                  "state": null,
+                  "applicationStatus": null,
+                  "docUploadRequired": false,
+                  "isStartState": true,
+                  "isTerminateState": false,
+                  "isStateUpdatable": false,
+                  "actions": [
+                      {
+                          "tenantId": "pg",
+                          "action": "SUBMIT",
+                          "nextState": "CHALLAN_GENERATED",
+                          "roles": [
+                              "CHALLAN_ADMIN"
+                          ],
+                          "active": true
+                      }
+                  ]
+              },
+              {
+                  "tenantId": "pg",
+                  "sla": null,
+                  "state": "CHALLAN_GENERATED",
+                  "applicationStatus": "CHALLAN_GENERATED",
+                  "docUploadRequired": false,
+                  "isStartState": false,
+                  "isTerminateState": false,
+                  "isStateUpdatable": false,
+                  "actions": [
+                      {
+                          "tenantId": "pg",
+                          "action": "PAY",
+                          "nextState": "CLOSURE",
+                          "roles": [
+                              "CITIZEN",
+                              "CHALLAN_ADMIN"
+                          ],
+                          "active": true
+                      },
+                      {
+                          "tenantId": "pg",
+                          "action": "PAY_LATER",
+                          "nextState": "PENDING_FOR_SETTLEMENT",
+                          "roles": [
+                              "CHALLAN_ADMIN",
+                              "CITIZEN"
+                          ],
+                          "active": true
+                      }
+                  ]
+              },
+              {
+                  "tenantId": "pg",
+                  "sla": null,
+                  "state": "PENDING_FOR_SETTLEMENT",
+                  "applicationStatus": "PENDING_FOR_SETTLEMENT",
+                  "docUploadRequired": false,
+                  "isStartState": false,
+                  "isTerminateState": false,
+                  "isStateUpdatable": true,
+                  "actions": [
+                      {
+                          "tenantId": "pg",
+                          "action": "SETTLED",
+                          "nextState": "PENDING_FOR_PAYMENT",
+                          "roles": [
+                              "CHALLAN_ADMIN"
+                          ],
+                          "active": true
+                      }
+                  ]
+              },
+              {
+                  "tenantId": "pg",
+                  "sla": null,
+                  "state": "PENDING_FOR_PAYMENT",
+                  "applicationStatus": "PENDING_FOR_PAYMENT",
+                  "docUploadRequired": false,
+                  "isStartState": false,
+                  "isTerminateState": false,
+                  "isStateUpdatable": true,
+                  "actions": [
+                      {
+                          "tenantId": "pg",
+                          "action": "PAY",
+                          "nextState": "CLOSURE",
+                          "roles": [
+                              "CHALLAN_ADMIN",
+                              "CITIZEN"
+                          ],
+                          "active": true
+                      }
+                  ]
+              },
+              {
+                  "tenantId": "pg",
+                  "sla": null,
+                  "state": "CLOSURE",
+                  "applicationStatus": "CLOSURE",
+                  "docUploadRequired": false,
+                  "isStartState": false,
+                  "isTerminateState": true,
+                  "isStateUpdatable": false,
+                  "actions": null
+              }
+          ]
+      }
+  ]
+}

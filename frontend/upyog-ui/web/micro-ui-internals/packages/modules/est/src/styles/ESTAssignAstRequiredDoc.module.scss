@@ -1,0 +1,19 @@
+.estAssignAstRequiredDoc {
+  margin-top: 0;
+
+  // Card headers sometimes render with global h1 styling.
+  :global(header.h1) {
+    margin-left: 0;
+    margin-top: 0;
+  }
+
+  .documentList {
+    margin-top: 16px;
+  }
+
+  .submitBarWrap {
+    margin-top: 24px;
+    display: block;
+  }
+}
+

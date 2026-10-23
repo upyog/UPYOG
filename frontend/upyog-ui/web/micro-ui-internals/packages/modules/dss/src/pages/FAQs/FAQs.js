@@ -1,4 +1,4 @@
-import { Header, TextInput, ArrowForward, Loader, BackButton} from "@upyog/digit-ui-react-components";
+import { Header, TextInput, ArrowForward, Loader, BackButton} from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, Fragment, useRef, useEffect}from "react";
 import { useTranslation } from "react-i18next";
 import FAQComponent from "./FAQComponent";
@@ -15,7 +15,7 @@ const FAQsSection = () => {
   return (
     <Fragment>
     <div className="faq-page">
-        <div style={{ marginBottom: "15px" }}>
+        <div className="dss-faqs-bottom-spacing">
           <Header styles={{ marginLeft: "0px", paddingTop: "10px", fontSize: "36px"}}>{t("DSS_FAQS")}</Header>
         </div>
 

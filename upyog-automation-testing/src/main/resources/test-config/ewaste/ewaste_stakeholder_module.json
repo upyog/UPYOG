@@ -1,0 +1,24 @@
+{
+  "moduleName": "EWASTE_MANAGEMENT_SYSTEM",
+
+  "citizen": {
+    "mobile": "7906413996",
+    "otp": "123456",
+    "city": "City A"
+  },
+
+  "employees": {
+
+    "EW_CEMP1": {
+      "username": "EW_CEMP1",
+      "password": "eGov@123",
+      "city": "City A"
+    }
+
+  },
+
+  "vendor": {
+    "mobile": "",
+    "otp": ""
+  }
+}

@@ -1,4 +1,4 @@
-import { CloseSvg } from "@upyog/digit-ui-react-components";
+import { CloseSvg } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDebounce } from "../../../../hooks/useDebounce";
 

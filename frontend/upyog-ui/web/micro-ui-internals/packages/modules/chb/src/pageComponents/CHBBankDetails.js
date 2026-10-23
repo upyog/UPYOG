@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, Card,CardSubHeader,Toast } from "@upyog/digit-ui-react-components";
-import { useLocation, useRouteMatch } from "react-router-dom";
+import { FormStep, TextInput, CardLabel, Card,CardSubHeader,Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { useLocation } from "react-router-dom";
 import Timeline from "../components/CHBTimeline";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
-// import { TimerValues } from "../components/TimerValues";
+import { TimerValues } from "../components/TimerValues";
 
 
 /**
@@ -130,7 +130,7 @@ const CHBBankDetails
       ownerStep = { ...owner,accountNumber ,confirmAccountNumber,ifscCode,bankName,bankBranchName,accountHolderName };
       onSelect(config.key, ownerStep, false,index);
     }
-    console.log(ownerStep);
+
   };
 
   const onSkip = () => onSelect();
@@ -174,14 +174,14 @@ const CHBBankDetails
     }
    <Card>
         <CardSubHeader>
-        <div style={{display:"flex", justifyContent: "space-between", width: "100%" }}>
+        <div className="chb-chbaddress-details-fullwidth">
           {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
-            {/* <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.Searchdata} /> */}
+            <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.searchData} draftId={value?.existingDataSet?.draftId} />
           </div>
         </CardSubHeader>
-        <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails}/>
+        <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails} SlotSearchData={value}/>
       </Card>
   
     <FormStep
@@ -205,7 +205,7 @@ const CHBBankDetails
           onChange={setApplicantAccountNumber}
           minLength={8}
           maxLength={16}
-          style={{width:user.type==="EMPLOYEE"?"50%":null}}
+          className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : ""}
           placeholder={"Enter Account Number"}
           ValidationRequired = {true}
           {...(validation = {
@@ -226,7 +226,7 @@ const CHBBankDetails
           optionKey="i18nKey"
           name="confirmAccountNumber"
           value={confirmAccountNumber}
-          style={{width:user.type==="EMPLOYEE"?"50%":null}}
+          className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : ""}
           placeholder={"Enter Confirm Account Number"}
           onChange={setApplicantConfirmAccountNumber}
           minLength={8}
@@ -251,7 +251,7 @@ const CHBBankDetails
             name="ifscCode"
             value={ifscCode}
             placeholder={"Enter IFSC Code"}
-            style={{width:user.type==="EMPLOYEE"?"50%":null}}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : ""}
             onChange={setApplicantIfscCode}
             maxLength={11}
             ValidationRequired={true}
@@ -270,7 +270,7 @@ const CHBBankDetails
             optionKey="i18nKey"
             name="bankName"
             placeholder={"Bank Name Auto Select"}
-            style={{width:user.type==="EMPLOYEE"?"50%":null}}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : ""}
             value={bankName}
             onChange={setApplicantBankName}
             disabled={true}
@@ -284,7 +284,7 @@ const CHBBankDetails
             optionKey="i18nKey"
             name="bankBranchName"
             value={bankBranchName}
-            style={{width:user.type==="EMPLOYEE"?"50%":null}}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : ""}
             placeholder={"Bank Branch Name Auto Select"}
             onChange={setApplicantBankBranchName}
             disabled={true}
@@ -297,7 +297,7 @@ const CHBBankDetails
           optionKey="i18nKey"
           name="accountHolderName"
           value={accountHolderName}
-          style={{width:user.type==="EMPLOYEE"?"50%":null}}
+          className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : ""}
           placeholder={"Enter Account Holder Name"}
           onChange={setApplicantAccountHolderName}
           ValidationRequired = {true}

@@ -77,10 +77,10 @@ const CHBSlotSearch = ({ slotDetail }) => {
   if (loading) {
     return <div>Loading...</div>;
   }
-  console.log("isSlotBooked",isSlotBooked);
+
   return (
     <div>
-      {isSlotBooked ? 'Slot is booked' : 'Slot is available'}
+      {isSlotBooked ? t("CHB_SLOT_BOOKED") : t("CHB_SLOT_AVAILABLE")}
     </div>
   );
 };

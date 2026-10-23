@@ -1,5 +1,5 @@
 import React from "react";
-import { LabelFieldPair, CardLabel, TextInput, CardLabelError, RadioButtons } from "@upyog/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, CardLabelError, RadioButtons } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 
 const SelectEmployeeGender = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
@@ -46,7 +46,7 @@ const SelectEmployeeGender = ({ t, config, onSelect, formData = {}, userType, re
             </CardLabel>
             <div className="field">
               <RadioButtons
-                style={{ display: "flex", justifyContent: "space-between" }}
+                className="hrms-search-flex-row"
                 /*options={[
                   {
                     code: "MALE",

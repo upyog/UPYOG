@@ -1,0 +1,137 @@
+{
+  "moduleName":"tree_pruning_vendor_module",
+
+  "instructions":[
+
+    {
+      "stepName":"Vendor Username",
+      "locatorStrategy":"NAME",
+      "locatorValue":"username",
+      "action":"TYPE",
+      "inputValue":"${app.login.username}"
+    },
+
+    {
+      "stepName":"Vendor Password",
+      "locatorStrategy":"NAME",
+      "locatorValue":"password",
+      "action":"TYPE",
+      "inputValue":"${app.login.password}"
+    },
+
+    {
+      "stepName":"Select City",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"0:0"
+    },
+
+    {
+      "stepName":"Continue Login",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(@class,'submit-bar') and .//header[text()='Continue']]",
+      "action":"CLICK_JS"
+    },
+
+
+
+    {
+      "stepName":"Open Tree Pruning Inbox",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//span[text()='Tree Pruning']/ancestor::div[contains(@class,'employeeCustomCard')]//*[normalize-space()='Inbox']",
+      "action":"CLICK_JS"
+    },
+
+
+
+    {
+      "stepName":"Enter Booking Number",
+      "locatorStrategy":"NAME",
+      "locatorValue":"bookingNo",
+      "action": "TYPE_FROM_STORE",
+      "inputValue": "APPLICATION_NO"
+    },
+
+    {
+      "stepName":"Search Booking",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[normalize-space()='Search']",
+      "action":"CLICK_JS"
+    },
+
+    {
+      "stepName":"Open Application",
+      "locatorStrategy":"LINKTEXT",
+      "locatorValue":"${selected.applicationNumber}",
+      "action":"CLICK"
+    },
+
+
+
+    {
+      "stepName":"Take Action Verify",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(@class,'submit-bar') and .//header[normalize-space()='TAKE ACTION']]",
+      "action":"CLICK_JS"
+    },
+
+    {
+      "stepName":"Click Verify",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//p[normalize-space()='Verify']",
+      "action":"CLICK_JS"
+    },
+
+
+
+    {
+      "stepName":"Verify Comment",
+      "locatorStrategy":"NAME",
+      "locatorValue":"comments",
+      "action":"TYPE",
+      "inputValue":"${comment.verify}"
+    },
+
+    {
+      "stepName":"Verify Popup Submit",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[normalize-space()='Verify']",
+      "action":"CLICK_JS"
+    },
+
+
+
+    {
+      "stepName":"Take Action Execute",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(@class,'submit-bar') and .//header[normalize-space()='TAKE ACTION']]",
+      "action":"CLICK_JS"
+    },
+
+    {
+      "stepName":"Click Execute",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//p[normalize-space()='Execute']",
+      "action":"CLICK_JS"
+    },
+
+
+
+    {
+      "stepName":"Execute Comment",
+      "locatorStrategy":"NAME",
+      "locatorValue":"comments",
+      "action":"TYPE",
+      "inputValue":"${comment.execute}"
+    },
+
+    {
+      "stepName":"Execute Popup Submit",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[normalize-space()='Execute']",
+      "action":"CLICK_JS"
+    }
+
+  ]
+}

@@ -50,7 +50,7 @@ package org.egov.eis.web.controller.reports;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.eis.entity.Employee;
 import org.egov.eis.reports.entity.EmployeeAssignmentSearch;

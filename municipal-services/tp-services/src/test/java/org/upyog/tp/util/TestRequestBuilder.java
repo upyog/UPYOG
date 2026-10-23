@@ -79,12 +79,10 @@ public class TestRequestBuilder {
                 .build(); // <--- This is required
 
 
-        TreePruningBookingRequest request = TreePruningBookingRequest.builder()
+        return TreePruningBookingRequest.builder()
                 .requestInfo(requestInfo)
                 .treePruningBookingDetail(treePruningBookingDetail)
                 .build();
-
-        return request;
     }
 
      

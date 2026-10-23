@@ -29,7 +29,7 @@ const renderMultipleViewAndDownloadButtons = (t, documents) => {
     <div className="broadcastnotifications_actionswrapper-multi">
       {documents.map(({ fileName, fileStoreId }, index) => {
         return (
-          <div className="display-flex-gap-2">
+          <div key={index} className="display-flex-gap-2">
             {fileName.length ? <p>{fileName} : </p> : null}
             {fileStoreId.length ? (
               <span className="link" onClick={() => openUploadedDocument(fileStoreId, fileName)}>
@@ -62,8 +62,8 @@ const BroadcastWhatsNewCard = ({ header, actions, eventNotificationText, timePas
     <div className="WhatsNewCard">
       <h2>{t(header)}</h2>
       <p>{eventNotificationText}</p>
-      {actions?.map((i) => (
-        <a href={i?.actionUrl}>{`${t(`CS_COMMON_${getTransformedLocale(i?.code)}`)}`}</a>
+      {actions?.map((i, index) => (
+        <a key={index} href={i?.actionUrl}>{`${t(`CS_COMMON_${getTransformedLocale(i?.code)}`)}`}</a>
       ))}
       {uploadedDocuments?.length > 1
         ? renderMultipleViewAndDownloadButtons(t, uploadedDocuments)

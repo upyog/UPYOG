@@ -1,0 +1,115 @@
+{
+	"info": {
+		"_postman_id": "auto-Estate.AssetType",
+		"name": "MDMS v2 Bulk Data - AssetType",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25737272"
+	},
+	"item": [
+		{
+			"name": "MDMS v2 CreateData",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var data=[\n  {\n    \"code\": \"LAND\",\n    \"name\": \"Land\",\n    \"active\": true\n  },\n  {\n    \"code\": \"BUILDING\",\n    \"name\": \"Building\",\n    \"active\": true\n  },\n  {\n    \"code\": \"SERVICE\",\n    \"name\": \"Service\",\n    \"active\": true\n  },\n  {\n    \"code\": \"IT\",\n    \"name\": \"IT\",\n    \"active\": true\n  },\n  {\n    \"code\": \"VEHICLE\",\n    \"name\": \"Vehicle\",\n    \"active\": true\n  },\n  {\n    \"code\": \"OTHERS\",\n    \"name\": \"Others\",\n    \"active\": true\n  }\n]",
+							"",
+							"pm.collectionVariables.set(\"raw\", data);",
+							"",
+							"var obj = pm.collectionVariables.get(\"raw\");",
+							"",
+							"if(pm.globals.get(\"i\") === undefined || pm.globals.get(\"i\") === null || pm.globals.get(\"i\") === \"\") {",
+							"    pm.globals.set(\"i\", 0);",
+							"}",
+							"",
+							"pm.collectionVariables.set(\"req\", JSON.stringify(obj[pm.globals.get(\"i\")]))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.collectionVariables.get(\"raw\");\r",
+							"\r",
+							"var items = pm.globals.get(\"i\");\r",
+							"\r",
+							"\r",
+							"if (items < data.length){\r",
+							"\r",
+							"    pm.globals.set(\"i\", Number(items) + 1);\r",
+							"\r",
+							"    postman.setNextRequest(\"MDMS v2 CreateData\");\r",
+							"}else{\r",
+							"    pm.globals.set(\"i\", 0);\r",
+							"    postman.setNextRequest(null)\r",
+							"}",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{authToken}}\",\n        \"correlationId\": null,\n        \"userInfo\": {\n            \"id\": \"1\",\n            \"userName\": null,\n            \"name\": null,\n            \"type\": null,\n            \"mobileNumber\": null,\n            \"emailId\": null,\n            \"roles\": null,\n            \"uuid\": \"40dceade-992d-4a8f-8243-19dda76a4171\"\n        }\n    },\n    \"Mdms\": {\n        \"tenantId\": \"pg\",\n        \"schemaCode\": \"Estate.AssetType\",\n        \"data\": {{req}},\n        \"isActive\": true\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8094/mdms-v2/v2/_create/Estate.AssetType",
+					"host": [
+						"localhost"
+					],
+					"port": "8094",
+					"path": [
+						"mdms-v2",
+						"v2",
+						"_create",
+						"Estate.AssetType"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "raw",
+			"value": ""
+		},
+		{
+			"key": "req",
+			"value": ""
+		}
+	]
+}

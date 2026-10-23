@@ -1,52 +1,44 @@
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 import { OBPSService } from "../../services/elements/OBPS";
 
-const useInbox = ({ tenantId, filters, config }) =>
-  useQuery(["INBOX_DATA", tenantId, ...Object.keys(filters)?.map((e) => filters?.[e])], () => OBPSService.scrutinyDetails(tenantId, { ...filters }), {
-    ...config,
-  });
-
-const useEDCRInbox = ({ tenantId, filters, config = { retry: false, retryOnMount: false, staleTime: Infinity } }) => {
+const useEDCRInbox = ({
+  tenantId,
+  filters,
+  config = { retry: false, staleTime: Infinity },
+}) => {
   const { filterForm, searchForm, tableForm } = filters;
-  let { status, appliactionType } = filterForm;
-  const { applicationNumber, edcrNumber } = searchForm;
-  const { sortBy, limit, offset, sortOrder } = tableForm;
-  let _filters = {
+
+  const finalFilters = {
     tenantId,
-    ...(edcrNumber ? { edcrNumber } : {}),
-    ...(applicationNumber ? { applicationNumber } : {}),
-    ...(status ? { status } : {}),
-    ...(sortOrder ? { orderBy: sortOrder } : {}),
-    // ...(sortBy ? { sortBy } : {}),
-    ...(appliactionType ? { appliactionType} : {}),
-    limit,
-    offset,
+    ...(searchForm?.edcrNumber && { edcrNumber: searchForm.edcrNumber }),
+    ...(searchForm?.applicationNumber && { applicationNumber: searchForm.applicationNumber }),
+    ...(filterForm?.status && { status: filterForm.status }),
+    ...(filterForm?.appliactionType && { appliactionType: filterForm.appliactionType }),
+    ...(tableForm?.sortOrder && { orderBy: tableForm.sortOrder }),
+    limit: tableForm?.limit,
+    offset: tableForm?.offset,
   };
 
-
-  return useInbox({
-    tenantId,
-    filters: _filters,
-    config: {
-      select: (data) => ({
-        table: data?.edcrDetail?.map((application) => ({
-          applicationId: application?.applicationNumber,
-          edcrNumber: application?.edcrNumber,
-          date: application?.applicationDate,
-          businessService: application?.applicationSubType,
-          applicationType: application?.appliactionType,
-          locality: application?.tenantId,
-          status: application?.status,
-          state: application?.status,
-          owner: application?.planDetail?.planInformation?.applicantName,
-          planReportUrl: application?.planReport,
-          dxfFileurl: application?.updatedDxfFile,
-          sla: "NA",
+  return queryTemplate({
+    queryKey: [
+      "OBPS_EDCR_INBOX",
+      tenantId,
+      JSON.stringify(finalFilters),
+    ],
+    queryFn: () =>
+      OBPSService.scrutinyDetails(tenantId, finalFilters),
+    select: (data) => ({
+      table:
+        data?.edcrDetail?.map((app) => ({
+          applicationId: app.applicationNumber,
+          edcrNumber: app.edcrNumber,
+          date: app.applicationDate,
+          status: app.status,
+          owner: app.planDetail?.planInformation?.applicantName,
         })) || [],
-        totalCount: data?.count||0,
-      }),
-      ...config,
-    },
+      totalCount: data?.count || 0,
+    }),
+    config,
   });
 };
 

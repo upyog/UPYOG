@@ -1,0 +1,13 @@
+{
+  "moduleName": "CHALLAN_GENERATION",
+
+  "steps": [
+
+    {
+      "name": "Employee Create Challan",
+      "type": "EMPLOYEE",
+      "module": "CHALLAN_GENERATION",
+      "role": "INITIATOR"
+    }
+  ]
+}

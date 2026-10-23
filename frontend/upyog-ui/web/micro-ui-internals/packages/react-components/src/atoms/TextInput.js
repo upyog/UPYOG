@@ -36,7 +36,7 @@ const TextInput = (props) => {
             }}
             ref={props.inputRef}
             value={props.value}
-            style={{ ...props.style }}
+            style={props?.style}
             defaultValue={props.defaultValue}
             minLength={props.minlength}
             maxLength={props.maxlength}
@@ -48,6 +48,7 @@ const TextInput = (props) => {
             step={props.step}
             autoFocus={props.autoFocus}
             onBlur={props.onBlur}
+            onKeyDown={props.onKeyDown}
             autoComplete="off"
             disabled={props.disabled}
           />
@@ -68,7 +69,7 @@ const TextInput = (props) => {
             }}
             ref={props.inputRef}
             value={props.value}
-            style={{ ...props.style }}
+            style={props?.style}
             defaultValue={props.defaultValue}
             minLength={props.minlength}
             maxLength={props.maxlength}
@@ -82,6 +83,7 @@ const TextInput = (props) => {
             autoFocus={props.autoFocus}
             onBlur={props.onBlur}
             onKeyPress={props.onKeyPress}
+            onKeyDown={props.onKeyDown}
             autoComplete="off"
             disabled={props.disabled}
           />

@@ -53,14 +53,12 @@ public class CNDServiceSearchCriteria {
     public boolean isEmpty() {
         return (this.tenantId == null && this.status == null && this.applicationNumber == null
                 && this.mobileNumber == null
-                // && this.offset == null && this.limit == null
                 && this.fromDate == null && this.toDate == null && this.createdBy==null);
     }
 
     public boolean tenantIdOnly() {
         return (this.tenantId != null && this.status == null && this.applicationNumber == null
                 && this.mobileNumber == null
-                // && this.offset == null && this.limit == null
                 && this.fromDate == null && this.toDate == null && this.createdBy==null);
     }
 }

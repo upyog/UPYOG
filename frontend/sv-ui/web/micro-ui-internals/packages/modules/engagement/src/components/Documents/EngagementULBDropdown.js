@@ -1,5 +1,5 @@
 import React from "react";
-import {  LabelFieldPair, CardLabel, Dropdown,} from "@nudmcdgnpm/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, Dropdown, CardLabelError } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import { Controller } from "react-hook-form";
 import { alphabeticalSortFunctionForTenantsBasedOnName } from "../../utils";
 
@@ -16,7 +16,16 @@ const ULBDropdown = ({ userType, t, setValue, onSelect, config, data, formData, 
                         name={config.key}
                         control={control}
                         rules={{ required: true }}
-                        render={({ onChange, value }) => <Dropdown option={userUlbs} selected={value} disable={userUlbs?.length === 1}  optionKey={"code"} t={t} select={onChange} />}
+                        render={({ field }) => (
+                            <Dropdown
+                                option={userUlbs}
+                                selected={field.value}
+                                disable={userUlbs?.length === 1}
+                                optionKey={"code"}
+                                t={t}
+                                select={field.onChange}
+                            />
+                        )}
                     />
                     {errors && errors[config?.key] && <CardLabelError>{t(`EVENTS_TENANT_ERROR_REQUIRED`)}</CardLabelError>}
                 </div>

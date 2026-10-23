@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { format, isValid } from "date-fns";
-import { Header } from "@nudmcdgnpm/digit-ui-react-components";
+import { Header } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import DesktopInbox from "../../../components/Messages/DesktopInbox";
 import MobileInbox from "../../../components/Messages/MobileInbox";
 
@@ -131,7 +131,6 @@ const Inbox = ({ tenants, parentRoute }) => {
         onPrevPage={fetchPrevPage}
         onPageSizeChange={handlePageSizeChange}
         title={"EVENTS_PUBLIC_MESSAGE_NOTICE_HEADER"}
-        links={links}
         isLoading={isLoading}
       />
     </div>

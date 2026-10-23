@@ -51,8 +51,8 @@ package org.egov.infra.persistence.validator;
 import org.egov.infra.persistence.validator.annotation.AlphaNumeric;
 import org.egov.infra.validation.regex.Constants;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 

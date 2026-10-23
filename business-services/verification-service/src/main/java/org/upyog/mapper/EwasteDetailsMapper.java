@@ -18,18 +18,18 @@ public class EwasteDetailsMapper implements CommonDetailsMapper {
 	public CommonDetails mapJsonToCommonDetails(JsonNode json) {
 		// Access the first element of the EwasteApplication array
 		
-		JsonNode EwasteApplication = json.path(EWASTE_APPLICATIONS).isArray()
+		JsonNode ewasteApplication = json.path(EWASTE_APPLICATIONS).isArray()
 				&& json.path(EWASTE_APPLICATIONS).size() > 0 ? json.path(EWASTE_APPLICATIONS).get(0) : null;
 
-		if (EwasteApplication == null) {
+		if (ewasteApplication == null) {
 			return CommonDetails.builder().applicationNumber(NA).fromDate(NA).toDate(NA).address(NA).name(NA).mobileNumber(NA)
 					.status(NA).build();
 		}
 
 		
 		// Extract the application number and status
-		String applicationNumber = EwasteApplication.path("requestId").asText(NA);
-		String status = EwasteApplication.path("requestStatus").asText(NA);
+		String applicationNumber = ewasteApplication.path("requestId").asText(NA);
+		String status = ewasteApplication.path("requestStatus").asText(NA);
 		String moduleName = "ew-services";
 		if (!"REQUESTCOMPLETED".equalsIgnoreCase(status)) {
 	        // If not BOOKED, set status as Pending and other details as N/A
@@ -48,8 +48,8 @@ public class EwasteDetailsMapper implements CommonDetailsMapper {
 		String fromDate = NA;
 		String toDate = NA;
 		String location = NA;
-		String ownerName = EwasteApplication.path("applicant").path("applicantName").asText(NA);
-		String ownerMobileNumber = CommonDetailUtil.maskMobileNumber(EwasteApplication.path("applicant").path("mobileNumber").asText(NA));
+		String ownerName = ewasteApplication.path("applicant").path("applicantName").asText(NA);
+		String ownerMobileNumber = CommonDetailUtil.maskMobileNumber(ewasteApplication.path("applicant").path("mobileNumber").asText(NA));
 
 
 		// Build and return the CommonDetails object

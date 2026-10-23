@@ -8,31 +8,32 @@ import org.egov.asset.repository.rowmapper.AssetMaintenanceRowMapper;
 import org.egov.asset.web.models.maintenance.AssetMaintenance;
 import org.egov.asset.web.models.maintenance.AssetMaintenanceRequest;
 import org.egov.asset.web.models.maintenance.AssetMaintenanceSearchCriteria;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
 @Repository
 public class AssetMaintenanceRepository {
 
-    @Autowired
-    private AssetMaintenanceQueryBuilder queryBuilder;
+    private final AssetMaintenanceQueryBuilder queryBuilder;
+    private final Producer producer;
+    private final AssetConfiguration config;
+    private final JdbcTemplate jdbcTemplate;
+    private final AssetMaintenanceRowMapper rowMapper;
 
-    @Autowired
-    private Producer producer;
-
-    @Autowired
-    private AssetConfiguration config;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    private AssetMaintenanceRowMapper rowMapper;
+    public AssetMaintenanceRepository(AssetMaintenanceQueryBuilder queryBuilder, Producer producer,
+                                      AssetConfiguration config, JdbcTemplate jdbcTemplate,
+                                      AssetMaintenanceRowMapper rowMapper) {
+        this.queryBuilder = queryBuilder;
+        this.producer = producer;
+        this.config = config;
+        this.jdbcTemplate = jdbcTemplate;
+        this.rowMapper = rowMapper;
+    }
 
     public void save(AssetMaintenanceRequest request) {
         producer.push(config.getSaveAssetMaintenance(), request);
@@ -43,13 +44,12 @@ public class AssetMaintenanceRepository {
     }
 
     public List<AssetMaintenance> search(AssetMaintenanceSearchCriteria searchCriteria) {
-        List<Object> preparedStmtList = new ArrayList<>();
-        String query = null;
-        if (searchCriteria != null) {
-            query = queryBuilder.getMaintenanceSearchQuery(searchCriteria, preparedStmtList);
-            log.info("Final asset maintenance search query: {}", query);
-            return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+        if (searchCriteria == null) {
+            return Collections.emptyList();
         }
-        return  null;
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getMaintenanceSearchQuery(searchCriteria, preparedStmtList);
+        log.info("Final asset maintenance search query: {}", query);
+        return jdbcTemplate.query(query, rowMapper, preparedStmtList.toArray());
     }
 }

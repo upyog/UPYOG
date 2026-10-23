@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts2.interceptor.I18nInterceptor;
 
-import com.opensymphony.xwork2.ActionInvocation;
+import org.apache.struts2.ActionInvocation;
 
 public class CustomI18nInterceptor extends I18nInterceptor{
     private static final Logger LOG = LogManager.getLogger(CustomI18nInterceptor.class);

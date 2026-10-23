@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CardLabel, LabelFieldPair, Dropdown, UploadFile, Toast, Loader, MultiUploadWrapper } from "@upyog/digit-ui-react-components";
+import { CardLabel, LabelFieldPair, Dropdown, UploadFile, Toast, Loader, MultiUploadWrapper } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 
 const OBPSDocumentsEmp = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState, index: indexx, setFieldReports, documentList }) => {
@@ -202,14 +202,14 @@ function SelectDocument({
     }
   }, [doc])
   return (
-    <div style={{ marginBottom: "24px" }}>
-      <LabelFieldPair style={{width :"100%"}}>
-        <CardLabel className="card-label-smaller" style={{width :"100%"}}>
+    <div className="obps-obpsdocuments-emp-bottom-spacing">
+      <LabelFieldPair className="obps-inspection-report-fullwidth">
+        <CardLabel className="card-label-smaller obps-inspection-report-fullwidth">
           {doc?.documentType != "OLDLICENCENO" ?
             `${t(`${doc?.documentType.replaceAll(".", "_")}`)}*` :
             `${t(`${doc?.documentType.replaceAll(".", "_")}`)}`}
         </CardLabel>
-        <div className="field" style={{ width: "100%" }}>
+        <div className="field obps-inspection-report-fullwidth">
           <MultiUploadWrapper
             module="BPA"
             tenantId={stateId}

@@ -32,7 +32,7 @@ const RenderFormFields = ({data,...props}) => {
                 return (
                     <Controller
                         defaultValue={formData?.[populators.name]}
-                        render={({ onChange, ref, value }) => (
+                        render={({ field: { onChange, ref, value } }) => (
                         <TextInput
                             value={formData?.[populators.name]}
                             type={type}
@@ -57,7 +57,7 @@ const RenderFormFields = ({data,...props}) => {
             return (
               <Controller
                 defaultValue={formData?.[populators.name]}
-                render={({ onChange, ref, value }) => (
+                render={({ field: { onChange, ref, value } }) => (
                   <TextArea
                     className="field"
                     value={formData?.[populators.name]}
@@ -77,7 +77,7 @@ const RenderFormFields = ({data,...props}) => {
             case "mobileNumber":
             return (
               <Controller
-                render={(props) => (
+                render={({ field: props }) => (
                   <MobileNumber
                     inputRef={props.ref}
                     className="field fullWidth"
@@ -100,7 +100,7 @@ const RenderFormFields = ({data,...props}) => {
                     name={`${populators.name}`}
                     control={control}
                     rules={{ required: false }}
-                    render={({ onChange, ref, value = [] }) => {
+                    render={({ field: { onChange, ref, value = [] } }) => {
                       function getFileStoreData(filesData) {
                         const numberOfFiles = filesData.length;
                         let finalDocumentData = [];
@@ -137,7 +137,7 @@ const RenderFormFields = ({data,...props}) => {
             case "custom":
                 return (
                 <Controller
-                    render={(props) => populators.component({ ...props, setValue }, populators.customProps)}
+                    render={({ field: props }) => populators.component({ ...props, setValue }, populators.customProps)}
                     defaultValue={populators.defaultValue}
                     name={populators?.name}
                     control={control}
@@ -148,7 +148,7 @@ const RenderFormFields = ({data,...props}) => {
             case "dropdown":
                 return (
                 <Controller
-                    render={(props) => (
+                    render={({ field: props }) => (
                     <CustomDropdown
                         t={t}
                         label={config?.label}
@@ -176,7 +176,7 @@ const RenderFormFields = ({data,...props}) => {
                   control={control}
                   defaultValue={formData?.[populators.name]}
                   rules={{ required: populators?.isMandatory }}
-                  render={(props) => {
+                  render={({ field: props }) => {
                     return (
                       <div style={{ display: "grid", gridAutoFlow: "row" }}>
                         <MultiSelectDropdown
@@ -205,7 +205,7 @@ const RenderFormFields = ({data,...props}) => {
                 control={control}
                 defaultValue={formData?.[populators.name]}
                 rules={{ required: populators?.isMandatory, ...populators.validation }}
-                render={(props) => {
+                render={({ field: props }) => {
                   return (
                     <div style={{ display: "grid", gridAutoFlow: "row" }}>
                       <LocationDropdownWrapper
@@ -229,7 +229,7 @@ const RenderFormFields = ({data,...props}) => {
                 control={control}
                 defaultValue={formData?.[populators.name]}
                 rules={{ required: populators?.isMandatory, ...populators.validation }}
-                render={(props) => {
+                render={({ field: props }) => {
                   return (
                     <div style={{ display: "grid", gridAutoFlow: "row" }}>
                       <ApiDropdown
@@ -253,7 +253,7 @@ const RenderFormFields = ({data,...props}) => {
                 control={control}
                 defaultValue={formData?.[populators.name]}
                 rules={{ required: populators?.isMandatory }}
-                render={(props) => {
+                render={({ field: props }) => {
                   return (
                     <div style={{ display: "grid", gridAutoFlow: "row" }}>
                       <WorkflowStatusFilter
@@ -271,7 +271,7 @@ const RenderFormFields = ({data,...props}) => {
             case "dateRange":
               return (
                 <Controller
-                  render={(props) => (
+                  render={({ field: props }) => (
                     <DateRangeNew
                       t={t}
                       values={formData?.[populators.name]?.range}
@@ -279,7 +279,7 @@ const RenderFormFields = ({data,...props}) => {
                       onFilterChange={props.onChange}
                       inputRef={props.ref}
                       errorStyle={errors?.[populators.name]}
-                    />                  
+                    />
                   )}
                   rules={{ required: isMandatory, ...populators.validation }}
                   defaultValue={formData?.[populators.name]}
@@ -291,7 +291,7 @@ const RenderFormFields = ({data,...props}) => {
             case "component":
             return (
               <Controller
-                render={(props) => (
+                render={({ field: props }) => (
                   <Component
                     userType={"employee"}
                     t={t}

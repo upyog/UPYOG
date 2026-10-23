@@ -1,10 +1,26 @@
+import { queryTemplate } from "../../common/queryTemplate";
+import { useQueryClient } from "@tanstack/react-query";
 import { FSMService } from "../../services/elements/FSM";
-import { useQuery, useQueryClient } from "react-query";
 
 const useSearchForAuditData = (tenantId, filters, options = {}) => {
   const client = useQueryClient();
-  const query = useQuery(["FSM_APPLICATION_AUDIT", filters], () => FSMService.search(tenantId, filters), options);
-  return { ...query, revalidate: () => client.invalidateQueries(["FSM_APPLICATION_AUDIT", filters]) };
+
+  const queryKey = [
+    "FSM_APPLICATION_AUDIT",
+    tenantId,
+    JSON.stringify(filters),
+  ];
+
+  const query = queryTemplate({
+    queryKey,
+    queryFn: () => FSMService.search(tenantId, filters),
+    config: options,
+  });
+
+  return {
+    ...query,
+    revalidate: () => client.invalidateQueries({ queryKey }),
+  };
 };
 
 export default useSearchForAuditData;

@@ -3,65 +3,65 @@ package org.egov.infra.microservice.contract;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class UserSearchResponseContent {
 
     private Long id;
-    @SafeHtml
+    @SanitizeHtml
     private String userName;
-    @SafeHtml
+    @SanitizeHtml
     private String salutation;
-    @SafeHtml
+    @SanitizeHtml
     private String name;
-    @SafeHtml
+    @SanitizeHtml
     private String gender;
-    @SafeHtml
+    @SanitizeHtml
     private String mobileNumber;
-    @SafeHtml
+    @SanitizeHtml
     private String emailId;
-    @SafeHtml
+    @SanitizeHtml
     private String altContactNumber;
-    @SafeHtml
+    @SanitizeHtml
     private String pan;
-    @SafeHtml
+    @SanitizeHtml
     private String aadhaarNumber;
-    @SafeHtml
+    @SanitizeHtml
     private String permanentAddress;
-    @SafeHtml
+    @SanitizeHtml
     private String permanentCity;
-    @SafeHtml
+    @SanitizeHtml
     private String permanentPinCode;
-    @SafeHtml
+    @SanitizeHtml
     private String correspondenceAddress;
-    @SafeHtml
+    @SanitizeHtml
     private String correspondenceCity;
-    @SafeHtml
+    @SanitizeHtml
     private String correspondencePinCode;
     private Boolean active;
-    @SafeHtml
+    @SanitizeHtml
     private String locale;
-    @SafeHtml
+    @SanitizeHtml
     private String type;
     private Boolean accountLocked;
-    @SafeHtml
+    @SanitizeHtml
     private String fatherOrHusbandName;
-    @SafeHtml
+    @SanitizeHtml
     private String signature;
-    @SafeHtml
+    @SanitizeHtml
     private String bloodGroup;
-    @SafeHtml
+    @SanitizeHtml
     private String photo;
-    @SafeHtml
+    @SanitizeHtml
     private String identificationMark;
     private Long createdBy;
     private Long lastModifiedBy;
-    @SafeHtml
+    @SanitizeHtml
     private String tenantId;
     private List<RoleRequest> roles;
-    @SafeHtml
+    @SanitizeHtml
     private String uuid;
 
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")

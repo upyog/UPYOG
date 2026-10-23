@@ -52,7 +52,7 @@ export const UserService = {
       if (userType === "citizen") {
         window.location.replace("/upyog-ui/citizen");
       } else {
-        window.location.replace("/upyog-ui/employee/user/language-selection");
+        window.location.replace("/upyog-ui/employee/user/login");
       }
     }
   },

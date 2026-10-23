@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { TelePhone, DisplayPhotos } from "@upyog/digit-ui-react-components";
+import { TelePhone, DisplayPhotos } from "@nudmcdgnpm/digit-ui-react-components";
 import EWASTEWFReason from "./EWASTEWFReason";
 
 /**
@@ -41,7 +41,7 @@ const EWASTEWFCaption = ({ data, OpenImage }) => {
           {data?.wfComment?.map((e, index) => (
             <div className="TLComments" key={index}>
               <h3>{t("WF_COMMON_COMMENTS")}</h3>
-              <p style={{ overflowX: "scroll" }}>{e}</p>
+              <p className="ew-ewastewfcaption-wrapper">{e}</p>
             </div>
           ))}
         </div>

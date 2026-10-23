@@ -1,12 +1,11 @@
-import { EmployeeModuleCard, ArrowRightInbox, WorksMgmtIcon } from "@egovernments/digit-ui-react-components";
+import { EmployeeModuleCard, ArrowRightInbox, WorksMgmtIcon } from "@upyog/workbench-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
 const ROLES = {
-  LOCALISATION: ["EMPLOYEE", "SUPERUSER","EMPLOYEE_COMMON","LOC_ADMIN"],
+  LOCALISATION: ["EMPLOYEE", "SUPERUSER", "EMPLOYEE_COMMON", "LOC_ADMIN"],
   MDMS: ["MDMS_ADMIN", "EMPLOYEE", "SUPERUSER"],
-  DSS: ["STADMIN"],
-  WORKFLOW: ["MDMS_ADMIN","EMPLOYEE", "SUPERUSER","EMPLOYEE_COMMON","LOC_ADMIN"]
+  WORKFLOW: ["MDMS_ADMIN", "EMPLOYEE", "SUPERUSER", "EMPLOYEE_COMMON", "LOC_ADMIN"]
 };
 
 // Mukta Overrriding the Works Home screen card
@@ -33,17 +32,22 @@ const WorkbenchCard = () => {
       label: t("ACTION_TEST_APPLY_WORKFLOW"),
       link: `/${window?.contextPath}/employee/workbench/apply-workflow`,
       roles: ROLES.WORKFLOW,
+    },
+    {
+      label: t("WBH_THEME_CONFIGURATION"), // Theme Configuration 
+      link: `/${window?.contextPath}/employee/workbench/theme-configuration`,
+      roles: ROLES.MDMS,
+    },
+    {
+      label: t("WBH_ONBOARDING_CONTENT_CONFIG"), // Onboarding Content Configuration
+      link: `/${window?.contextPath}/employee/workbench/onboarding-common-content`,
+      roles: ROLES.MDMS,
+    },
+    {
+      label: t("WBH_ONBOARDING_LOGIN_CONFIG"), // Onboarding Login Configuration
+      link: `/${window?.contextPath}/employee/workbench/onboarding-login-configuration`,
+      roles: ROLES.MDMS,
     }
-    // {
-    //   label: t("Sample Create master"),
-    //   link: `/${window?.contextPath}/employee/workbench/mdms-add-v2?moduleName=common-masters&masterName=Sample`,
-    //   roles: ROLES.MDMS,
-    // },
-    // {
-    //   label: t("Sample Search master"),
-    //   link: `/${window?.contextPath}/employee/workbench/mdms-search-v2?masterName=common-masters&moduleName=Sample`,
-    //   roles: ROLES.MDMS,
-    // },
   ];
 
   links = links.filter((link) => (link?.roles && link?.roles?.length > 0 ? Digit.Utils.didEmployeeHasAtleastOneRole(link?.roles) : true));

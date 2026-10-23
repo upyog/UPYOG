@@ -10,10 +10,10 @@ import {
   MobileNumber,
   CheckBox,
   CitizenConsentForm
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
-import { useParams, useHistory, useLocation } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 
 const SelectPaymentType = (props) => {
   const optionFirst = {
@@ -33,7 +33,7 @@ const SelectPaymentType = (props) => {
   const payersActiveMobileNumber = userInfo?.mobileNumber;
 
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { state, ...location } = useLocation();
   const { consumerCode, businessService, paymentAmt } = useParams();
   const { workflow: wrkflow, tenantId: _tenantId, ConsumerName } = Digit.Hooks.useQueryParams();
@@ -104,7 +104,7 @@ const SelectPaymentType = (props) => {
   const checkLabels = () => {
     return <span>
       {isCCFEnabled?.checkBoxLabels?.map((data, index) => {
-        return <span>
+        return <span key={index}>
           {/* {index == 0 && "CCF"} */}
           {data?.linkPrefix && <span>{t(`${data?.linkPrefix}_`)}</span>}
           {data?.link && <span id={data?.linkId} onClick={(e) => { onLinkClick(e) }} style={{ color: "#a82227", cursor: "pointer" }}>{t(`${data?.link}_`)}</span>}
@@ -116,12 +116,15 @@ const SelectPaymentType = (props) => {
   }
   
 
-  useEffect(() => {
+    useEffect(() => {
     if (!bill && data) {
-      let requiredBill = data?.Bill?.filter((e) => e.consumerCode == consumerCode)[0];
+      const requiredBill = data?.Bill?.find(
+        (e) => e.consumerCode === consumerCode
+      );
       setBill(requiredBill);
     }
-  }, [isLoading]);
+    }, [data, bill, consumerCode]);
+
 
   const onChangePayersMobileNumber = (e) => {
     setmobileNumberError(null);
@@ -141,11 +144,25 @@ const SelectPaymentType = (props) => {
   };
 
   const onSubmit = () => {
-    history.push(`/sv-ui/citizen/payment/collect/${businessService}/${consumerCode}`, {
-      paymentAmount: paymentAmt,
-      tenantId: billDetails.tenantId,
-      name: paymentType?.code !== optionSecound?.code ? bill?.payerName : userInfo ? payersActiveName : payersName,
-      mobileNumber: paymentType?.code !== optionSecound?.code ? (bill?.mobileNumber?.includes("*") ? userData?.user?.[0]?.mobileNumber : bill?.mobileNumber )  : userInfo ? payersActiveMobileNumber : payersMobileNumber,
+    navigate(`/sv-ui/citizen/payment/collect/${businessService}/${consumerCode}`, {
+      state: {
+        paymentAmount: paymentAmt,
+        tenantId: billDetails.tenantId,
+        name:
+          paymentType?.code !== optionSecound?.code
+            ? bill?.payerName
+            : userInfo
+            ? payersActiveName
+            : payersName,
+        mobileNumber:
+          paymentType?.code !== optionSecound?.code
+            ? bill?.mobileNumber?.includes("*")
+              ? userData?.user?.[0]?.mobileNumber
+              : bill?.mobileNumber
+            : userInfo
+            ? payersActiveMobileNumber
+            : payersMobileNumber,
+      },
     });
   };
 

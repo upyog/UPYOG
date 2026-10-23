@@ -41,11 +41,6 @@ public class CommunityHallBookingConfiguration {
 	@Value("${app.timezone}")
 	private String timeZone;
 
-	@PostConstruct
-	public void initialize() {
-		TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
-	}
-
 	@Value("${persister.save.communityhall.booking.topic}")
 	private String communityHallBookingSaveTopic;
 
@@ -107,14 +102,6 @@ public class CommunityHallBookingConfiguration {
 	@Value("${upyog.mdms.v2.enabled}")
 	private boolean mdmsV2Enabled;
 
-	@PostConstruct
-	public void init() {
-		if(mdmsV2Enabled) {
-			mdmsHost = mdmsV2Host;
-			mdmsPath = mdmsV2Path;
-		}
-	}
-	
 	@Value("${employee.allowed.search.params}")
 	private String allowedEmployeeSearchParameters;
 
@@ -241,5 +228,20 @@ public class CommunityHallBookingConfiguration {
 
     @Value("${state.level.tenant.id}")
     private String stateLevelTenantId;
+
+	@PostConstruct
+	public void initialize() {
+		if (timeZone != null) {
+			TimeZone.setDefault(TimeZone.getTimeZone(timeZone));
+		}
+		init();
+	}
+
+	public void init() {
+		if (mdmsV2Enabled) {
+			mdmsHost = mdmsV2Host;
+			mdmsPath = mdmsV2Path;
+		}
+	}
 
 }

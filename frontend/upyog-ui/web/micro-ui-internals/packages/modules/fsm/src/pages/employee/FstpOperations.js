@@ -1,14 +1,14 @@
 import React, { Fragment } from "react";
-import { BackButton, Card, AddNewIcon, InboxIcon, ViewReportIcon, CardText, CardHeader, ULBHomeCard } from "@upyog/digit-ui-react-components";
+import { BackButton, Card, AddNewIcon, InboxIcon, ViewReportIcon, CardText, CardHeader, ULBHomeCard } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+
 
 const FstpOperations = () => {
     const { t } = useTranslation();
     const state = Digit.ULBService.getStateId();
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const stateId = Digit.ULBService.getStateId();
-    const history = useHistory();
+    const navigate = Digit.Hooks.useCustomNavigate();
     const title = "ES_COMMON_FSTP_OPERATION"
     const module = [
         {

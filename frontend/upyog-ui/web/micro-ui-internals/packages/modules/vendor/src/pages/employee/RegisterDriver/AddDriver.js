@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FormComposer, Toast, Header } from "@upyog/digit-ui-react-components";
-import { useHistory } from "react-router-dom";
+import { FormComposer, Toast, Header } from "@nudmcdgnpm/digit-ui-react-components";
+
 //import DriverConfig from "../../configs/DriverConfig";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import DriverConfig from "../../../config/DriverConfig";
 
 const AddDriver = ({ parentUrl, heading }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const stateId = Digit.ULBService.getStateId();
   const [showToast, setShowToast] = useState(null);
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const queryClient = useQueryClient();
 
   const [mutationHappened, setMutationHappened, clear] = Digit.Hooks.useSessionStorage("FSM_MUTATION_HAPPENED", false);
@@ -96,7 +96,7 @@ const AddDriver = ({ parentUrl, heading }) => {
         queryClient.invalidateQueries("FSM_DRIVER_SEARCH");
         setTimeout(() => {
           closeToast();
-          history.push(`/upyog-ui/employee/vendor/search-vendor?selectedTabs=DRIVER`);
+          navigate(`/upyog-ui/employee/vendor/search-vendor?selectedTabs=DRIVER`);
         }, 5000);
       },
     });

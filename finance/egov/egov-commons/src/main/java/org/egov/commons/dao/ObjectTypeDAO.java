@@ -50,11 +50,11 @@ package org.egov.commons.dao;
 import org.egov.commons.ObjectType;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 public class ObjectTypeDAO {
 
@@ -99,7 +99,7 @@ public class ObjectTypeDAO {
 
 	public ObjectType getObjectType(final String objTypeName) {
 		final Query qry = getSession().createQuery("from ObjectType D where D.type =:objTypeName ");
-		qry.setString("objTypeName", objTypeName);
+		qry.setParameter("objTypeName", objTypeName);
 		return (ObjectType) qry.uniqueResult();
 	}
 

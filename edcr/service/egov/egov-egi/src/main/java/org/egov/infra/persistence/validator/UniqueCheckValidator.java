@@ -48,20 +48,32 @@
 
 package org.egov.infra.persistence.validator;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Jakarta Bean Validation {@link ConstraintValidator} implementation for {@link Unique}.
+ * <p>
+ * Validates that specified individual entity fields are unique across persistent records
+ * using Jakarta Persistence {@link CriteriaBuilder}. Supports case-insensitive string matching
+ * and self-exclusion during entity updates.
+ * </p>
+ *
+ * @author eGovernments Foundation
+ * @see Unique
+ */
 public class UniqueCheckValidator implements ConstraintValidator<Unique, Object> {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(UniqueCheckValidator.class);
@@ -71,11 +83,23 @@ public class UniqueCheckValidator implements ConstraintValidator<Unique, Object>
     @PersistenceContext
     private EntityManager entityManager;
 
+    /**
+     * Initializes the validator with metadata from the {@link Unique} annotation.
+     *
+     * @param unique the annotation instance
+     */
     @Override
     public void initialize(final Unique unique) {
         this.unique = unique;
     }
 
+    /**
+     * Validates that each configured field on the target entity is unique.
+     *
+     * @param arg0 the target entity instance being validated
+     * @param constraintValidatorContext the validation execution context
+     * @return {@code true} if all configured fields are unique, {@code false} otherwise
+     */
     @Override
     public boolean isValid(final Object arg0, final ConstraintValidatorContext constraintValidatorContext) {
         try {
@@ -99,16 +123,28 @@ public class UniqueCheckValidator implements ConstraintValidator<Unique, Object>
     }
 
     private boolean checkUnique(final Object arg0, final Number id, final String fieldName) throws IllegalAccessException {
-        final Criteria criteria = entityManager.unwrap(Session.class)
-                .createCriteria(unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass()).setReadOnly(true);
+        final Class<?> entityClass = unique.isSuperclass() ? arg0.getClass().getSuperclass() : arg0.getClass();
         final Object fieldValue = FieldUtils.readField(arg0, fieldName, true);
+
+        final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+        // 'Root' represents the query's FROM entity, allowing access to its fields (root.get(fieldName))
+        final Root<?> root = criteriaQuery.from(entityClass);
+
+        Predicate fieldPredicate;
         if (fieldValue instanceof String)
-            criteria.add(Restrictions.eq(fieldName, fieldValue).ignoreCase());
+            fieldPredicate = criteriaBuilder.equal(criteriaBuilder.lower(root.get(fieldName)), ((String) fieldValue).toLowerCase());
         else
-            criteria.add(Restrictions.eq(fieldName, fieldValue));
-        if (id != null)
-            criteria.add(Restrictions.ne(unique.id(), id));
-        return criteria.setProjection(Projections.id()).setMaxResults(1).uniqueResult() == null;
+            fieldPredicate = criteriaBuilder.equal(root.get(fieldName), fieldValue);
+
+        if (id != null) {
+            Predicate notSelf = criteriaBuilder.notEqual(root.get(unique.id()), id);
+            criteriaQuery.select(criteriaBuilder.count(root)).where(criteriaBuilder.and(fieldPredicate, notSelf));
+        } else {
+            criteriaQuery.select(criteriaBuilder.count(root)).where(fieldPredicate);
+        }
+
+        return entityManager.createQuery(criteriaQuery).getSingleResult() == 0L;
     }
 
 }

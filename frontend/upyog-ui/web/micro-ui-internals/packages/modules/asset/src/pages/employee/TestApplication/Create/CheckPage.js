@@ -1,16 +1,16 @@
-import { Card, CardHeader, CardSubHeader, CardText, CheckBox, LinkButton, Row, StatusTable, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Card, CardHeader, CardSubHeader, CardText, CheckBox, LinkButton, Row, StatusTable, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+
 
 import { checkForNA } from "../../../../utils";
 import Timeline from "../../../../components/ASTTimeline";
 
 const ActionButton = ({ jumpTo }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   function routeTo() {
-    history.push(jumpTo);
+    navigate(jumpTo);
   }
 
   return <LinkButton label={t("CS_COMMON_CHANGE")} className="check-page-link-button" onClick={routeTo} />;
@@ -18,7 +18,7 @@ const ActionButton = ({ jumpTo }) => {
 
 const CheckPage = ({ onSubmit, value = {} }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [agree, setAgree] = useState(false);
   const [categoriesWiseData, setCategoriesWiseData] = useState();
   
@@ -118,7 +118,7 @@ const CheckPage = ({ onSubmit, value = {} }) => {
 
             <Row
               label={t("AST_SUB_CATEGORY")}
-              text={`${t(checkForNA(asset?.assetsubtype?.code))}`}
+              text={`${checkForNA(asset?.assetsubtype?.value || asset?.assetsubtype?.code)}`}
               actionButton={<ActionButton jumpTo={`/upyog-ui/employee/asset/assetservice/new-assets/asset-deatils`} />}
             />
             <Row

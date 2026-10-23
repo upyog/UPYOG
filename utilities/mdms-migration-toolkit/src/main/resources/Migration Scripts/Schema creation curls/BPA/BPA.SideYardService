@@ -1,0 +1,186 @@
+curl --location 'http://localhost:8094/mdms-v2/schema/v1/_create' \
+--header 'Content-Type: application/json' \
+--data '{
+    "RequestInfo": {
+        "apiId": "Rainmaker",
+        "ver": ".01",
+        "ts": "",
+        "action": "_search",
+        "did": "1",
+        "key": "",
+        "msgId": "20170310130900|en_IN",
+        "authToken": "d194d705-ddbc-451a-98d1-e380d71e39e8",
+        "userInfo": {
+            "id": 2038,
+            "uuid": "677300e7-2ff3-4216-a3dc-c2cbb0d63d31",
+            "userName": "MCS1",
+            "name": "Vishal",
+            "mobileNumber": "7895875858",
+            "emailId": "",
+            "locale": null,
+            "type": "EMPLOYEE",
+            "roles": [
+                {
+                    "name": "Employee",
+                    "code": "EMPLOYEE",
+                    "tenantId": "pg.citya"
+                },
+                {
+                    "name": "Universal Collection Employee",
+                    "code": "UC_EMP",
+                    "tenantId": "pg.citya"
+                },
+                {
+                    "name": "Super User",
+                    "code": "SUPERUSER",
+                    "tenantId": "pg.citya"
+                }
+            ],
+            "active": true,
+            "tenantId": "pg.citya",
+            "permanentCity": null
+        }
+    },
+    "SchemaDefinition": {
+        "tenantId": "pg",
+        "code": "BPA.SideYardService",
+        "description": null,
+        "definition": {
+            "type": "object",
+            "title": "Generated schema for Root",
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "required": [
+                "id",
+                "occupancy",
+                "sideYardValueOne",
+                "sideYardValueTwo",
+                "sideYardValueThree",
+                "sideYardValueFour",
+                "sideYardValueFive",
+                "sideYardValueSix",
+                "sideYardValueSeven",
+                "sideYardValueEight",
+                "sideYardValueNine",
+                "sideYardValueTen",
+                "sideYardValueEleven",
+                "sideYardValueTwelve",
+                "sideYardValueThirteen",
+                "sideYardValueFourteen",
+                "sideYardValueFifteen",
+                "sideYardValueSixteen",
+                "sideYardValueSeventeen",
+                "sideYardValueEighteen",
+                "sideYardValueNineteen",
+                "sideYardValueTwenty",
+                "sideYardValueTwentyOne",
+                "sideYardValueTwentyTwo",
+                "sideYardValueTwentyThree",
+                "sideYardValueTwentyFour",
+                "sideYardValueTwentyFive",
+                "sideYardValueTwentySix",
+                "sideYardValueTwentySeven",
+                "sideYardValueTwentyEight",
+                "active"
+            ],
+            "x-unique": [
+                "sideYardValueOne"
+            ],
+            "properties": {
+                "id": {
+                    "type": "number"
+                },
+                "active": {
+                    "type": "boolean"
+                },
+                "occupancy": {
+                    "type": "string"
+                },
+                "sideYardValueOne": {
+                    "type": "number"
+                },
+                "sideYardValueSix": {
+                    "type": "number"
+                },
+                "sideYardValueTen": {
+                    "type": "number"
+                },
+                "sideYardValueTwo": {
+                    "type": "number"
+                },
+                "sideYardValueFive": {
+                    "type": "number"
+                },
+                "sideYardValueFour": {
+                    "type": "number"
+                },
+                "sideYardValueNine": {
+                    "type": "number"
+                },
+                "sideYardValueEight": {
+                    "type": "number"
+                },
+                "sideYardValueSeven": {
+                    "type": "number"
+                },
+                "sideYardValueThree": {
+                    "type": "number"
+                },
+                "sideYardValueEleven": {
+                    "type": "number"
+                },
+                "sideYardValueTwelve": {
+                    "type": "number"
+                },
+                "sideYardValueTwenty": {
+                    "type": "number"
+                },
+                "sideYardValueFifteen": {
+                    "type": "number"
+                },
+                "sideYardValueSixteen": {
+                    "type": "number"
+                },
+                "sideYardValueEighteen": {
+                    "type": "number"
+                },
+                "sideYardValueFourteen": {
+                    "type": "number"
+                },
+                "sideYardValueNineteen": {
+                    "type": "number"
+                },
+                "sideYardValueThirteen": {
+                    "type": "number"
+                },
+                "sideYardValueSeventeen": {
+                    "type": "number"
+                },
+                "sideYardValueTwentyOne": {
+                    "type": "number"
+                },
+                "sideYardValueTwentySix": {
+                    "type": "number"
+                },
+                "sideYardValueTwentyTwo": {
+                    "type": "number"
+                },
+                "sideYardValueTwentyFive": {
+                    "type": "number"
+                },
+                "sideYardValueTwentyFour": {
+                    "type": "number"
+                },
+                "sideYardValueTwentyEight": {
+                    "type": "number"
+                },
+                "sideYardValueTwentySeven": {
+                    "type": "number"
+                },
+                "sideYardValueTwentyThree": {
+                    "type": "number"
+                }
+            }
+        },
+        "isActive": true
+    }
+}'

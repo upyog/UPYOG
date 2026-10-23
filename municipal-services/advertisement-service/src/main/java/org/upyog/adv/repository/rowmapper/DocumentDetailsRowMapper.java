@@ -11,12 +11,13 @@ import org.springframework.stereotype.Component;
 import org.upyog.adv.web.models.AuditDetails;
 import org.upyog.adv.web.models.DocumentDetail;
 
+@SuppressWarnings("java:S2638")
 @Component
 public class DocumentDetailsRowMapper implements ResultSetExtractor<List<DocumentDetail>> {
 
 	@Override
 	public List<DocumentDetail> extractData(ResultSet rs) throws SQLException, DataAccessException {
-		List<DocumentDetail> documentDetails = new ArrayList<DocumentDetail>();
+		List<DocumentDetail> documentDetails = new ArrayList<>();
 		while (rs.next()) {
 			/**
 			 * document_detail_id, booking_id, document_type, filestore_id, createdby,

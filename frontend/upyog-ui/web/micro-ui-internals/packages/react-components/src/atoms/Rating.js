@@ -7,7 +7,7 @@ const Rating = (props) => {
   var stars = [];
   const star = useRef(null);
 
- const calculatingPercentage = (percentage) => {
+ /* const calculatingPercentage = (percentage) => {
     if (percentage >= 85 && percentage < 90) {
       return percentage - 8
     } else if (percentage >= 90 && percentage < 95) {
@@ -17,7 +17,7 @@ const Rating = (props) => {
     } else {
       return percentage
     }
-  } 
+  } */
   for (var i = 1; i <= props.maxRating; i++) {
     if (i - props.currentRating <= 0) {
       const index = i;
@@ -34,7 +34,7 @@ const Rating = (props) => {
   }
 
   return (
-    <div className={`${props.withText ? "rating-with-text" : "rating-star-wrap"}`} style={{ ...props.styles }}>
+    <div className={`${props.withText ? "rating-with-text" : "rating-star-wrap"}`} style={props?.styles}>
       {props.text ? props.text : ""} {stars}
     </div>
     

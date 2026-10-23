@@ -1,0 +1,48 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Custom Kafka Consumer
+  description: |
+    Custom Kafka consumer utility for asynchronous gateway follow-up actions.
+
+    This service is event-driven and does not expose domain REST APIs. It runs with
+    `spring.main.web-environment=false`, consumes messages from the configured async
+    filter topic, and executes custom post-processing such as finance sign-out when
+    matching gateway logout events are published.
+  contact:
+    name: UPYOG NUDM Team
+    email: cdg-contact@niua.org
+schemes:
+  - https
+basePath: /egov-custom-consumer
+x-api-id: org.egov.custom.consumer
+x-common-path: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml
+paths: {}
+definitions:
+  CustomAsyncFilterEvent:
+    type: object
+    description: |
+      Kafka message consumed from topic configured by
+      `egov.custom.async.filter.topic` (default: res-custom-filter).
+    properties:
+      RequestInfo:
+        $ref: https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo
+      sourceUri:
+        type: string
+        description: Original request URI that triggered the async filter
+      responseBody:
+        type: object
+        description: Gateway response payload used for custom post-processing
+      additionalProperties:
+        type: object
+        description: Additional gateway filter metadata
+  SignOutRequest:
+    type: object
+    description: Finance coexistence sign-out request triggered for logout events
+    properties:
+      hostname:
+        type: string
+        description: Coexistence host configured by `egov.coexistence.hostname`
+      signOutUri:
+        type: string
+        description: Sign-out endpoint configured by `egov.coexistence.singout.uri`

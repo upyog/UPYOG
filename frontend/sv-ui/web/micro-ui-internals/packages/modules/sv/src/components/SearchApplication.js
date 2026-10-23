@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useEffect, useState } from "react"
 import { useForm, Controller } from "react-hook-form";
-import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@nudmcdgnpm/digit-ui-react-components";
+import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import { Link } from "react-router-dom";
 
 /** The SVSearchApplication component renders the input fields and table with its data
@@ -26,14 +26,14 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
     })
 
     useEffect(() => {
-        register("offset", 0)
-        register("limit", 10)
-        register("sortBy", "commencementDate")
-        register("sortOrder", "DESC")
-        register("isDraftApplication", "false")
+        setValue("offset", 0);
+        setValue("limit", 10);
+        setValue("sortBy", "commencementDate");
+        setValue("sortOrder", "DESC");
+        setValue("isDraftApplication", "false");
         setValue("fromDate", today);
         setValue("toDate", today);
-    }, [register, setValue, today])
+    }, [setValue, today])
 
 
     const paymentStatusOptions = [
@@ -155,14 +155,19 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
             <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                 <SearchField>
                     <label>{t("SV_APPLICATION_NUMBER")}</label>
-                    <TextInput name="applicationNumber" inputRef={register({})} />
+                    <Controller
+                        control={control}
+                        name="applicationNumber"
+                        render={({ field }) => <TextInput {...field} />}
+                    />
                 </SearchField>
 
                 <SearchField>
                     <label>{t("SV_REGISTERED_MOB_NUMBER")}</label>
-                    <MobileNumber
+                    <Controller
+                        control={control}
                         name="mobileNumber"
-                        inputRef={register({
+                        rules={{
                             minLength: {
                                 value: 10,
                                 message: t("CORE_COMMON_MOBILE_ERROR"),
@@ -173,20 +178,23 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                             },
                             pattern: {
                                 value: /[6789][0-9]{9}/,
-                                //type: "tel",
                                 message: t("CORE_COMMON_MOBILE_ERROR"),
                             },
-                        })}
-                        type="number"
-                        componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
-                    //maxlength={10}
+                        }}
+                        render={({ field }) => (
+                            <MobileNumber
+                                {...field}
+                                type="number"
+                                componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
+                            />
+                        )}
                     />
                     <CardLabelError>{formState?.errors?.["mobileNumber"]?.message}</CardLabelError>
                 </SearchField>
                 <SearchField>
                     <label>{t("SV_FROM_DATE")}</label>
                     <Controller
-                        render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} max={today} />}
+                        render={({ field }) => <DatePicker date={field.value} disabled={false} onChange={field.onChange} max={today} />}
                         name="fromDate"
                         control={control}
                     />
@@ -194,7 +202,7 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                 <SearchField>
                     <label>{t("SV_TO_DATE")}</label>
                     <Controller
-                        render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} max={today} />}
+                        render={({ field }) => <DatePicker date={field.value} disabled={false} onChange={field.onChange} max={today} />}
                         name="toDate"
                         control={control}
                     />
@@ -205,11 +213,11 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                     <Controller
                         control={control}
                         name="vendingType"
-                        render={(props) => (
+                        render={({ field }) => (
                             <Dropdown
-                                selected={props.value}
-                                select={props.onChange}
-                                onBlur={props.onBlur}
+                                selected={field.value}
+                                select={field.onChange}
+                                onBlur={field.onBlur}
                                 option={vendingTypeOptions}
                                 optionKey="i18nKey"
                                 t={t}
@@ -225,10 +233,10 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                         control={control}
                         name="vendingLocality"
                         defaultValue={vendingLocality}
-                        render={(props) => (
+                        render={({ field }) => (
                             <Dropdown
-                                selected={props.value}
-                                select={props.onChange}
+                                selected={field.value}
+                                select={field.onChange}
                                 option={allCities}
                                 optionKey="i18nKey"
                                 t={t}
@@ -243,11 +251,11 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                     <Controller
                         control={control}
                         name="paymentStatus"
-                        render={(props) => (
+                        render={({ field }) => (
                             <Dropdown
-                                selected={props.value}
-                                select={props.onChange}
-                                onBlur={props.onBlur}
+                                selected={field.value}
+                                select={field.onChange}
+                                onBlur={field.onBlur}
                                 option={paymentStatusOptions}
                                 optionKey="i18nKey"
                                 t={t}
@@ -262,11 +270,11 @@ const SVSearchApplication = ({ tenantId, isLoading, t, onSubmit, data, count, se
                     <Controller
                         control={control}
                         name="renewalStatus"
-                        render={(props) => (
+                        render={({ field }) => (
                             <Dropdown
-                                selected={props.value}
-                                select={props.onChange}
-                                onBlur={props.onBlur}
+                                selected={field.value}
+                                select={field.onChange}
+                                onBlur={field.onBlur}
                                 option={renewalStatusOptions}
                                 optionKey="i18nKey"
                                 t={t}

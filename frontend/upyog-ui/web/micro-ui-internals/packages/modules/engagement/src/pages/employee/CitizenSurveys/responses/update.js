@@ -1,11 +1,10 @@
-import { Banner, Card, Loader, ActionBar, SubmitBar } from "@upyog/digit-ui-react-components";
-import { useQueryClient } from "react-query";
-import React, { useEffect } from "react";
+import { Banner, Card, ActionBar, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
-const getMessage = (mutation) => {
-  if (mutation.isSuccess) return mutation.data?.ServiceDefinition?.[0]?.id;
+const getMessage = (isSuccess, data) => {
+  if (isSuccess) return data?.ServiceDefinition?.[0]?.id || data?.ServiceDefinition?.[0]?.code || "";
   return "";
 };
 
@@ -13,42 +12,25 @@ const BannerPicker = (props) => {
   const { t } = useTranslation();
   return (
     <Banner
-      message={props.mutation.isSuccess ? t(`ENGAGEMENT_SURVEY_UPDATED`) : t("ENGAGEMENT_SURVEY_UPDATE_FAILURE")}
-      applicationNumber={getMessage(props.mutation)}
-      info={props.mutation.isSuccess ? t("SURVEY_FORM_ID") : ""}
-      successful={props.mutation.isSuccess}
+      message={props.isSuccess ? t(`ENGAGEMENT_SURVEY_UPDATED`) : t("ENGAGEMENT_SURVEY_UPDATE_FAILURE")}
+      applicationNumber={getMessage(props.isSuccess, props.data)}
+      info={props.isSuccess ? t("SURVEY_FORM_ID") : ""}
+      successful={props.isSuccess}
     />
   );
 };
 
 const Response = (props) => {
-  const queryClient = useQueryClient();
   const { t } = useTranslation();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const mutation = Digit.Hooks.survey.useUpdateSurvey();
-  const { state } = props.location;
+  const { state } = useLocation();
 
-  useEffect(() => {
-    const onSuccess = () => {
-      queryClient.clear();
-      window.history.replaceState(null, 'UPDATE_SURVEY_STATE')
-    };
-    if(!!state){
-      mutation.mutate(state, {
-        onSuccess,
-      });
-    }
-  }, []);
-
-  if (mutation.isLoading || mutation.isIdle) {
-    return <Loader />;
-  }
+  const isSuccess = state?.isSuccess;
+  const data = state?.data;
 
   return (
     <div>
-
       <Card>
-        <BannerPicker t={t} data={mutation.data} mutation={mutation} isSuccess={mutation.isSuccess} isLoading={mutation.isIdle || mutation.isLoading} />
+        <BannerPicker t={t} data={data} isSuccess={isSuccess} />
       </Card>
       <ActionBar>
         <Link to={"/upyog-ui/employee"}>

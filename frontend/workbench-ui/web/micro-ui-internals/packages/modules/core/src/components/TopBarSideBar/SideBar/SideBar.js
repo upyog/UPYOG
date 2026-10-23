@@ -15,10 +15,10 @@ import {
   PropertyHouse,
   ReceiptIcon,
   CaseIcon,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/workbench-ui-react-components";
 import ReactTooltip from "react-tooltip";
 import { set } from "lodash";
-import { useHistory, useLocation, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 const DIGIT_UI_CONTEXTS = [
@@ -70,23 +70,23 @@ const findKey = (key = "") => {
 /*
 Used to navigate to other mission's ui if user has access
 */
-const navigateToRespectiveURL = (history = {}, url = "") => {
+const navigateToRespectiveURL = (navigate = {}, url = "") => {
   if (url?.indexOf(`/${window?.contextPath}`) === -1) {
     const hostUrl = window.location.origin;
     const updatedURL = DIGIT_UI_CONTEXTS?.every(
       (e) => url?.indexOf(`/${e}`) === -1
     )
-      ? hostUrl + "/digit-ui/employee/" + url
+      ? hostUrl + `/${window?.contextPath}/employee/` + url
       : hostUrl + url;
     window.location.href = updatedURL;
   } else {
-    history.push(url);
+    navigate(url);
   }
 };
 
 const Sidebar = ({ data }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();  /* useHistory to useNavigate */ 
   const [openItems, setOpenItems] = useState({});
   const [selectedParent, setSelectedParent] = useState(null);
   const [selectedChild, setSelectedChild] = useState(null);
@@ -195,6 +195,8 @@ const Sidebar = ({ data }) => {
               ? appendTranslate.substring(0, 20) + "..."
               : appendTranslate
           );
+        // DD THIS LINE HERE 
+        if (appendTranslate?.startsWith("ACTION_TEST_")) return null;
 
           if (!subItemKeys && subItems && Object.keys(subItems).length > 0) {
             // If the item has sub-items, render a dropdown with toggle button
@@ -202,13 +204,13 @@ const Sidebar = ({ data }) => {
             let leftIcon =
               IconsObject[iconName] || IconsObject.collections;
             if (iconKey === "dynamic") {
-              var IconComp = require("@egovernments/digit-ui-react-components")?.[
+              var IconComp = require("@upyog/workbench-ui-react-components")?.[
                 iconName
               ];
               leftIcon = IconComp ? <IconComp /> : leftIcon;
             }
             if (iconKey === "svg") {
-              var IconComp = require("@egovernments/digit-ui-react-components")?.SVG?.[iconName];
+              var IconComp = require("@upyog/workbench-ui-react-components")?.SVG?.[iconName];
               leftIcon = IconComp ? <IconComp fill="white" /> : leftIcon;
             }
             const isParentActive = selectedParent === itemKey;
@@ -250,13 +252,7 @@ const Sidebar = ({ data }) => {
                       } else return itemToHighlight;
                     });
                     setSelectedChild(null);
-                    // setOpenItems(prevState => {
-                    //   if(Object(openItems)?.keys?.length > 0){
-                    //     return {}
-                    //   }else{
-                    //     return prevState
-                    //   }
-                    // })
+          
                   }}
                   style={{
                     display: "flex",
@@ -312,13 +308,13 @@ const Sidebar = ({ data }) => {
             let leftIcon =
               IconsObject[iconName] || IconsObject.collections;
             if (iconKey === "dynamic") {
-              var IconComp = require("@egovernments/digit-ui-react-components")?.[
+              var IconComp = require("@upyog/workbench-ui-react-components")?.[
                 iconName
               ];
               leftIcon = IconComp ? <IconComp /> : leftIcon;
             }
             if (iconKey === "svg") {
-              var IconComp = require("@egovernments/digit-ui-react-components")?.SVG?.[iconName];
+              var IconComp = require("@upyog/workbench-ui-react-components")?.SVG?.[iconName];
               leftIcon = IconComp ? <IconComp fill="white" /> : leftIcon;
             }
             const isChildActive = selectedChild === subItems.item.path;
@@ -336,7 +332,7 @@ const Sidebar = ({ data }) => {
                   // setOpenItems({});
                   // setSelectedChildLevelOne(null)
                   navigateToRespectiveURL(
-                    history,
+                    navigate,
                     `${subItems?.item?.navigationURL}`
                   );
                 }}

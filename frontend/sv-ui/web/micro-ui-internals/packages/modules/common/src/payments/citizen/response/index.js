@@ -1,7 +1,7 @@
-import { Banner, Card, CardText, Loader, Row, StatusTable, SubmitBar, DownloadPrefixIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { Banner, Card, CardText, Loader, Row, StatusTable, SubmitBar } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 
 export const SuccessfulPayment = (props)=>{

@@ -54,8 +54,8 @@ import com.exilant.GLEngine.ChartOfAccounts;
 import com.exilant.GLEngine.Transaxtion;
 import com.exilant.exility.common.TaskFailedException;
 import com.exilant.exility.dataservice.DatabaseConnectionException;
-import com.opensymphony.xwork2.validator.annotations.RequiredFieldValidator;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import org.apache.struts2.validator.annotations.RequiredFieldValidator;
+import org.apache.struts2.validator.annotations.Validations;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -127,6 +127,14 @@ import java.util.Set;
 
 /**
  * @author mani
+ */
+/**
+ * LTS Migration Notes:
+ * 1. [Struts 7 Annotations] Migrated validator annotations from 'com.opensymphony.xwork2.validator.annotations'
+ *    to 'org.apache.struts2.validator.annotations'.
+ * 2. [Struts 7 & Java 17 Sub-Ledger Hydration] In Struts 7, sub-ledger form rows only post detailType.id,
+ *    leaving detailTypeName null. Added database hydration for Accountdetailtype in validateRtgsPayment()
+ *    and used "Contractor".equalsIgnoreCase(type) to prevent NullPointerExceptions in Java 17.
  */
 @ParentPackage("egov")
 @Results({
@@ -484,10 +492,23 @@ public class DirectBankPaymentAction extends BasePaymentAction {
             EntityType entity = null;
             final List<ValidationError> errors = new ArrayList<ValidationError>();
             String type = null;
-            // handle null
             if (subLedgerlist != null && !subLedgerlist.isEmpty())
                 for (final VoucherDetails voucherDetail : subLedgerlist) {
                     try {
+                        /*
+                         * Struts 7: detailType is often an ID-only stub and
+                         * detailTypeName is not posted. Reload the type before
+                         * RTGS checks so Telephone vs Contractor is known.
+                         */
+                        if (voucherDetail.getDetailType() != null && voucherDetail.getDetailType().getId() != null
+                                && voucherDetail.getDetailType().getId() != 0) {
+                            final Accountdetailtype detailType = persistenceService.getSession()
+                                    .load(Accountdetailtype.class, voucherDetail.getDetailType().getId());
+                            voucherDetail.setDetailType(detailType);
+                            if (detailType != null && StringUtils.isNotBlank(detailType.getName())) {
+                                voucherDetail.setDetailTypeName(detailType.getName());
+                            }
+                        }
                         type = voucherDetail.getDetailTypeName();
                         entity = paymentService.getEntity(voucherDetail.getDetailType().getId(),
                                 voucherDetail.getDetailKeyId());
@@ -499,11 +520,8 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                         throw new ValidationException(
                                 Arrays.asList(new ValidationError("Exception to get EntityType  ", e.getMessage())));
                     }
-                    voucherDetail.setDetailType(persistenceService.getSession()
-                            .load(Accountdetailtype.class, voucherDetail.getDetailType().getId()));
 
-                    // type will be null in case of DBP
-                    if (type.equalsIgnoreCase("Contractor") && (StringUtils.isBlank(entity.getPanno())
+                    if ("Contractor".equalsIgnoreCase(type) && (StringUtils.isBlank(entity.getPanno())
                             || StringUtils.isBlank(entity.getBankname()) || StringUtils.isBlank(entity.getBankaccount())
                             || StringUtils.isBlank(entity.getIfsccode()))) {
                         LOGGER.error("BankAccount,IFSC Code, Pan number is mandatory for RTGS Payment for "
@@ -513,7 +531,7 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                                         + entity.getName()));
                         throw new ValidationException(errors);
 
-                    } else if (type.equalsIgnoreCase("Supplier") && (StringUtils.isBlank(entity.getTinno())
+                    } else if ("Supplier".equalsIgnoreCase(type) && (StringUtils.isBlank(entity.getTinno())
                             || StringUtils.isBlank(entity.getBankname()) || StringUtils.isBlank(entity.getBankaccount())
                             || StringUtils.isBlank(entity.getIfsccode()))) {
                         LOGGER.error("BankAccount,IFSC Code, Tin number is mandatory for RTGS Payment for "
@@ -528,8 +546,9 @@ public class DirectBankPaymentAction extends BasePaymentAction {
                             || StringUtils.isBlank(entity.getIfsccode())) {
                         LOGGER.error("BankAccount,IFSC Code is mandatory for RTGS Payment for " + entity.getName());
                         errors.add(new ValidationError("paymentMode",
-                                "BankName, BankAccount,IFSC Code is mandatory for RTGS Payment for type " + type
-                                        + " and Entity " + entity.getName()));
+                                "RTGS is not allowed for sub-ledger type " + type
+                                        + " and entity " + entity.getName()
+                                        + ". Bank Name, Bank Account and IFSC are not maintained for this entity. Use Cheque mode, or a Contractor/Supplier with bank details."));
                         throw new ValidationException(errors);
                     }
                 }

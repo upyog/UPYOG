@@ -29,10 +29,6 @@ public class MDMSValidator {
 
 		Map<String, List<String>> masterData = getAttributeValues(mdmsData);
 
-//		if (MdmsUtil.getMDMSDataMap().isEmpty()) {
-//			MdmsUtil.setMDMSDataMap(masterData);
-//		}
-
 		String[] masterArray = { StreetVendingConstants.VENDING_ZONES, StreetVendingConstants.VENDING_ACTIVITY_TYPE,
 				StreetVendingConstants.DOCUMENTS};
 

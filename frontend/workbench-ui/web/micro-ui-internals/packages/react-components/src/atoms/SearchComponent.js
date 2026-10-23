@@ -13,8 +13,7 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
   const { t } = useTranslation();
   const { state, dispatch } = useContext(InboxContext)
   const [showToast,setShowToast] = useState(null)
-  let updatedFields = [];
-  const {apiDetails} = fullConfig
+    const {apiDetails} = fullConfig
 
   if (fullConfig?.postProcessResult){
     //conditions can be added while calling postprocess function to pass different params
@@ -31,14 +30,27 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
     trigger,
     control,
     formState,
-    errors,
     setError,
     clearErrors,
     unregister,
   } = useForm({
     defaultValues: uiConfig?.defaultValues,
   });
+  const errors = formState?.errors;
+  
   const formData = watch();
+
+  const countFilledFields = (values) => {
+    if (!values) return 0;
+    return Object.keys(values).filter((k) => {
+      const v = values[k];
+      if (v === null || v === undefined || v === "") return false;
+      if (typeof v === "object" && !Array.isArray(v) && Object.keys(v).length === 0) return false;
+      if (Array.isArray(v) && v.length === 0) return false;
+      return true;
+    }).length;
+  };
+
   const checkKeyDown = (e) => {
     const keyCode = e.keyCode ? e.keyCode : e.key ? e.key : e.which;
     if (keyCode === 13) {
@@ -46,22 +58,18 @@ const SearchComponent = ({ uiConfig, header = "", screenType = "search", fullCon
     }
   };
 
-  useEffect(() => {
-    updatedFields = Object.values(formState?.dirtyFields)
-  }, [formState])
+ const onSubmit = (data) => {
 
-  const onSubmit = (data) => {
-    
     //here -> added a custom validator function, if required add in UICustomizations
-    const isAnyError = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.customValidationCheck ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.customValidationCheck(data) : false 
+    const isAnyError = Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.customValidationCheck ? Digit?.Customizations?.[apiDetails?.masterName]?.[apiDetails?.moduleName]?.customValidationCheck(data) : false
     if(isAnyError) {
       setShowToast(isAnyError)
       setTimeout(closeToast,3000)
       return
     }
 
-    if(updatedFields.length >= uiConfig?.minReqFields) {
-     // here based on screenType call respective dispatch fn
+    const filledCount = countFilledFields(data);
+    if(filledCount >= uiConfig?.minReqFields) {
       dispatch({
         type: uiConfig?.type === "filter" ? "filterForm" : "searchForm",
         state: {

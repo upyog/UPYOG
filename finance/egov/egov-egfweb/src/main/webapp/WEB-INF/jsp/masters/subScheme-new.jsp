@@ -191,8 +191,11 @@
 							url='masters/subScheme-codeUniqueCheck.action' />
 
 						<td class="greybox"><strong>Active</strong></td>
+						<%-- Struts 7 migration note: bind to the action-level isactive property.
+						     The action exposes getIsactive()/setIsactive(boolean) so OGNL can
+						     bind the checkbox reliably after stricter JavaBeans introspection. --%>
 						<td class="greybox"><s:checkbox id="isactive" name="isactive"
-								value="%{subScheme.isactive}" /></td>
+								value="%{isactive}" /></td>
 
 						
 					</tr>

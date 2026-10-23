@@ -1,7 +1,6 @@
-import { Loader, Modal, FormComposer, CloseSvg } from "@nudmcdgnpm/digit-ui-react-components";
+import { Loader, Modal, FormComposer, CloseSvg } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { useState, useEffect } from "react";
 import { configSVApproverApplication } from "../config";
-import { useHistory } from "react-router-dom";
 import EXIF from "exif-js";
 import { getOpenStreetMapUrl } from "../../../../libraries/src/services/atoms/urls";
 
@@ -34,7 +33,7 @@ const CloseBtn = (props) => {
 };
 
 const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, applicationData, businessService, moduleCode, vending_Zone, UserVendingZone, UserVendingZoneCode }) => {
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const user = Digit.UserService.getUser().info;
   const selectApprover = user?.roles
 

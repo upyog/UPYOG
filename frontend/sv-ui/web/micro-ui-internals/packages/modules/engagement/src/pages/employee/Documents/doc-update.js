@@ -1,4 +1,4 @@
-import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import { Loader } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { useEffect, useState } from "react";
 
 

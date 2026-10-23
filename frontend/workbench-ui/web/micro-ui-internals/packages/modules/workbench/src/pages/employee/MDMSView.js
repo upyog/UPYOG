@@ -1,11 +1,11 @@
 import React,{useState} from 'react'
 import MDMSAdd from './MDMSAddV2'
-import { Loader,Toast } from '@egovernments/digit-ui-react-components';
-import { useHistory } from "react-router-dom";
+import { Loader,Toast } from '@upyog/workbench-ui-react-components';
+
 import { useTranslation } from "react-i18next";
 
 const MDMSView = ({...props}) => {
-  const history = useHistory()
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { t } = useTranslation()
   const [showToast, setShowToast] = useState(false);
   let { moduleName, masterName, tenantId,uniqueIdentifier } = Digit.Hooks.useQueryParams();
@@ -91,7 +91,6 @@ const MDMSView = ({...props}) => {
       refetch()
     };
 
-
     mutation.mutate(
       {
         url:`/${Digit.Hooks.workbench.getMDMSContextPath()}/v2/_update/${moduleName}.${masterName}`,
@@ -114,9 +113,8 @@ const MDMSView = ({...props}) => {
     const {action:actionSelected} = action 
     //action===EDIT go to edit screen 
     if(actionSelected==="EDIT") {
-      history.push(`/${window?.contextPath}/employee/workbench/mdms-edit?moduleName=${moduleName}&masterName=${masterName}&uniqueIdentifier=${uniqueIdentifier}`)
+      navigate(`/${window?.contextPath}/employee/workbench/mdms-edit?moduleName=${moduleName}&masterName=${masterName}&uniqueIdentifier=${uniqueIdentifier}`)
     }
-    //action===DISABLE || ENABLE call update api and show toast respectively
     else{
       //call update mutation
       handleEnableDisable(actionSelected)

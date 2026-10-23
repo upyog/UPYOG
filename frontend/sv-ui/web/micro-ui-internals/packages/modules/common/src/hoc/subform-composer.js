@@ -1,4 +1,4 @@
-import { Card, CardHeader } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, CardHeader } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { subFormRegistry } from "@nudmcdgnpm/digit-ui-libraries";
@@ -59,7 +59,7 @@ export const SubformComposer = ({ _key, ...props }) => {
                     defaultValue={_defaultValue}
                     name={name}
                     control={control}
-                    render={(props) => component({ ...props, setState: _setState, setValue, setError, state, getValues }, _customProps)}
+                    render={({ field, fieldState }) => component({ ...field, error: fieldState?.error, setState: _setState, setValue, setError, state, getValues }, _customProps)}
                   />
                 </div>
               </div>

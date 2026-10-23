@@ -1,4 +1,4 @@
-import { ActionBar, Card, SubmitBar } from "@upyog/digit-ui-react-components";
+import { ActionBar, Card, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
@@ -25,7 +25,7 @@ const CreateNewSurvey = ({ t, initialFormValues, onSubmit, isFormDisabled = fals
     registerRef("questions");
   }, []);
   return (
-    <div style={{margin:"8px"}}>
+    <div className="eng-index-spacing">
       <FormProvider {...{
         register: registerRef,
         control: controlSurveyForm,

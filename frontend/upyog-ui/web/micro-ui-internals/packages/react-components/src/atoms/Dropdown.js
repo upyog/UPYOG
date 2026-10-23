@@ -77,7 +77,7 @@ const TextField = (props) => {
       autoFocus={props.autoFocus}
       placeholder={props.placeholder}
       autoComplete={"off"}
-      style={{...props.style, zIndex: "auto"}}
+      style={props.style}
     />
   );
 };
@@ -128,13 +128,17 @@ const Dropdown = (props) => {
   }
 
   function onSelect(val) {
+    // Always clear typeahead filter so the input shows the selected label,
+    // not the leftover search text (e.g. "Bu" after picking Building).
+    setFilterVal("");
     if (val !== selectedOption || props.allowMultiselect) {
       props.select(val);
       setSelectedOption(val);
       setDropdownStatus(false);
+      setforceSet((n) => n + 1);
     } else {
       setSelectedOption(val);
-      setforceSet(forceSet + 1);
+      setforceSet((n) => n + 1);
     }
   }
 
@@ -159,7 +163,7 @@ const Dropdown = (props) => {
   return (
     <div
       className={`${user_type === "employee" ? "employee-select-wrap" : "select-wrap"} ${props?.className ? props?.className : ""}`}
-      style={{ ...props.style }}
+      style={props?.style}
     >
       {hasCustomSelector && (
         <div className={props.showArrow ? "cp flex-right column-gap-5" : "cp"} onClick={dropdownSwitch}>
@@ -209,7 +213,7 @@ const Dropdown = (props) => {
           <div
             id="jk-dropdown-unique"
             className={`${hasCustomSelector ? "margin-top-10 display: table" : ""} options-card`}
-            style={{ ...props.optionCardStyles }}
+            style={props?.optionCardStyles}
             ref={optionRef}
           >
             {filteredOption &&
@@ -244,8 +248,7 @@ const Dropdown = (props) => {
           </div>
         ) : (
           <div
-            className="options-card"
-            style={{ ...props.optionCardStyles, overflow: "scroll", maxHeight: "350px" }}
+            className="options-card options-card--scrollable" style={props?.optionCardStyles}
             id="jk-dropdown-unique"
             ref={optionRef}
           >

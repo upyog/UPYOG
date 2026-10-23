@@ -2,18 +2,21 @@ import http from "http";
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
-import config from "./config.json";
-import swaggerTools from "swagger-tools";
 import bodyParser from "body-parser";
-import api from "./controller";
-const { Pool } = require("pg");
+import config from "./config.json";
 import tracer from "./middleware/tracer";
 import envVariables from "./envVariables";
+import api from "./controller";
+const { Pool } = require("pg");
+var swaggerUi = require("swagger-ui-express"),
+  swaggerDocument = require("./swagger.json");
 
 var ssl = envVariables.DB_SSL;
-if(typeof ssl =="string")
-  ssl = (ssl.toLowerCase() == "true");
+if (typeof ssl == "string")
+  ssl = ssl.toLowerCase() == "true";
 
+/* Create a new pool instance to manage database connections inseatd of creating a new client for each request. 
+ This allows for better performance and resource management. */
 const pool = new Pool({
   user: envVariables.DB_USERNAME,
   host: envVariables.DB_HOST,
@@ -26,44 +29,23 @@ const pool = new Pool({
   connectionTimeoutMillis: 2000
 });
 
-const options = {
-  controllers: "./src/api",
-  useStubs: true // Conditionally turn on stubs (mock mode)
-};
-
 let app = express();
 app.server = http.createServer(app);
-app.use(bodyParser.json());
-// logger
+
 app.use(morgan("dev"));
 
-// 3rd party middleware
 app.use(
   cors({
     exposedHeaders: config.corsHeaders
   })
 );
 
+app.use(bodyParser.json({ limit: config.bodyLimit }));
+
 app.use(tracer());
 
-let swaggerDoc = require("./swagger.json");
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-swaggerTools.initializeMiddleware(swaggerDoc, middleware => {
-  app.use(middleware.swaggerMetadata());
-
-  // Validate Swagger requests
-  // app.use(middleware.swaggerValidator());
-
-  // Route validated requests to appropriate controller
-  // app.use(middleware.swaggerRouter(options));
-
-  // Serve the Swagger documents and Swagger UI
-  app.use(middleware.swaggerUi());
-  let serverPort = envVariables.SERVER_PORT;
-  app.server.listen(serverPort, () => {
-    console.log("port is ", serverPort);
-  });
-});
 app.use("/", api(pool));
 
 //error handler middleware
@@ -77,6 +59,12 @@ app.use((err, req, res, next) => {
     res.status(500);
     res.send("Oops, something went wrong.");
   }
+});
+
+console.log(envVariables.SERVER_PORT);
+
+app.server.listen(envVariables.SERVER_PORT, () => {
+  console.log(`Started on port ${app.server.address().port}`);
 });
 
 export default app;

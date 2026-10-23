@@ -12,7 +12,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import org.egov.common.contract.request.RequestInfo;
-import org.springframework.stereotype.Component;
 import org.upyog.rs.web.models.AuditDetails;
 import org.upyog.rs.web.models.ResponseInfo;
 import org.upyog.rs.web.models.ResponseInfo.StatusEnum;
@@ -20,12 +19,16 @@ import org.upyog.rs.web.models.ResponseInfo.StatusEnum;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
 import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 
-@Component
+@Slf4j
 public class RequestServiceUtil {
-	
-	public final static String DATE_FORMAT = "yyyy-MM-dd";
+
+	private RequestServiceUtil() {
+	}
+
+	public static final String DATE_FORMAT = "yyyy-MM-dd";
 
 	public static ResponseInfo createReponseInfo(final RequestInfo requestInfo, String resMsg, StatusEnum status) {
 
@@ -36,10 +39,8 @@ public class RequestServiceUtil {
 			ts = requestInfo.getTs();
 		final String msgId = requestInfo != null ? requestInfo.getMsgId() : StringUtils.EMPTY;
 
-		ResponseInfo responseInfo = ResponseInfo.builder().apiId(apiId).ver(ver).ts(ts).msgId(msgId).resMsgId(resMsg)
+		return ResponseInfo.builder().apiId(apiId).ver(ver).ts(ts).msgId(msgId).resMsgId(resMsg)
 				.status(status).build();
-
-		return responseInfo;
 	}
 
 	public static Long getCurrentTimestamp() {
@@ -47,23 +48,18 @@ public class RequestServiceUtil {
 	}
 	
 	public static LocalDate getCurrentDate() {
-		return LocalDate.now();
+		return LocalDate.now(ZoneId.systemDefault());
 	}
 
+	@SuppressWarnings("java:S5411")
 	public static AuditDetails getAuditDetails(String by, Boolean isCreate) {
 		Long time = getCurrentTimestamp();
 		if (isCreate)
-			// TODO: check if we can set lastupdated details to empty
 			return AuditDetails.builder().createdBy(by).lastModifiedBy(by).createdTime(time).lastModifiedTime(time)
 					.build();
 		else
 			return AuditDetails.builder().lastModifiedBy(by).lastModifiedTime(time).build();
 	}
-	
-	/*Commented and used Instant
-	 * public static Long getCurrentTimestamp() { return System.currentTimeMillis();
-	 * }
-	 */
 
 	public static String getRandonUUID() {
 		return UUID.randomUUID().toString();
@@ -71,8 +67,7 @@ public class RequestServiceUtil {
 
 	public static LocalDate parseStringToLocalDate(String date) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
-		LocalDate localDate = LocalDate.parse(date, formatter);
-		return localDate;
+		return LocalDate.parse(date, formatter);
 	}
 
 	public static Long minusOneDay(LocalDate date) {
@@ -104,15 +99,13 @@ public class RequestServiceUtil {
 		}
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
 		// Format the LocalDate
-		String formattedDate = date.format(formatter);
-		return formattedDate;
+		return date.format(formatter);
 	}
 
 	public static AuditDetails getAuditDetails(ResultSet rs) throws SQLException {
-		AuditDetails auditdetails = AuditDetails.builder().createdBy(rs.getString("createdBy"))
+		return AuditDetails.builder().createdBy(rs.getString("createdBy"))
 				.createdTime(rs.getLong("createdTime")).lastModifiedBy(rs.getString("lastModifiedBy"))
 				.lastModifiedTime(rs.getLong("lastModifiedTime")).build();
-		return auditdetails;
 	}
 
 	public static String beuatifyJson(Object result) {
@@ -121,8 +114,7 @@ public class RequestServiceUtil {
 		try {
 			data = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(result);
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Failed to convert object to pretty JSON string", e);
 		}
 		return data;
 	}
@@ -132,17 +124,15 @@ public class RequestServiceUtil {
 	}
 	
 	public static LocalDate getMonthsAgo(int month) {
-		LocalDate currentDate = LocalDate.now();
+		LocalDate currentDate = LocalDate.now(ZoneId.systemDefault());
 		// Calculate the date given months ago
-		LocalDate monthsAgo = currentDate.minusMonths(month);
-		
-        return monthsAgo;
+		return currentDate.minusMonths(month);
 	}
 
 	// To get the current financial year end date in epoch to set in Tax to in demand
 	public static long getFinancialYearEnd() {
 
-		YearMonth currentYearMonth = YearMonth.now();
+		YearMonth currentYearMonth = YearMonth.now(ZoneId.systemDefault());
 		int year = currentYearMonth.getYear();
 		int month = currentYearMonth.getMonthValue();
 

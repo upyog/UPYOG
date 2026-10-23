@@ -1,12 +1,10 @@
 import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
-import { useRouteMatch } from "react-router-dom";
 import CitizenPayment from "./citizen";
 import EmployeePayment from "./employee";
 
-
 export const PaymentModule = ({ deltaConfig = {}, stateCode, cityCode, moduleCode = "Payment", userType }) => {
-  const { path, url } = useRouteMatch();
+  const { path, url } = Digit.Hooks.useModuleBasePath();
   const store = { data: {} };
 
   if (Object.keys(store).length === 0) {

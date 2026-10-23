@@ -1,13 +1,13 @@
-import { FormComposer, Header, Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import { FormComposer, Header, Loader } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import { format } from 'date-fns';
 import React, { Fragment, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { config } from "../../../../config/NewEventConfig";
 
 const EditEvents = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { id: EventId } = useParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { isLoading, data } = Digit.Hooks.events.useInbox(tenantId, {},
@@ -55,7 +55,7 @@ const EditEvents = () => {
         }
       ]
     }
-    history.push("/sv-ui/employee/engagement/event/response?update=true", details)
+    navigate("/sv-ui/employee/engagement/event/response?update=true", details)
   }
 
   if (isLoading) {

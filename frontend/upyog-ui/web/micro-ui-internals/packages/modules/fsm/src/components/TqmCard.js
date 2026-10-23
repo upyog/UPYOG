@@ -1,7 +1,7 @@
-import { ArrowRightInbox, ShippingTruck, EmployeeModuleCard, Loader } from "@upyog/digit-ui-react-components";
+import { ArrowRightInbox, ShippingTruck, EmployeeModuleCard, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+
 import { checkForEmployee } from "../utils";
 
 const ROLES = {
@@ -10,7 +10,7 @@ const ROLES = {
 };
 
 const TqmCard = ({ reRoute = true }) => {
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const isMobile = Digit.Utils.browser.isMobile();
   const isPlantOperatorLoggedIn = Digit.Utils.isPlantOperatorLoggedIn();
   const { t } = useTranslation();

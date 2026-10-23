@@ -1,4 +1,4 @@
-import { BackButton, CardLabel, FormStep, Loader, MobileNumber, RadioButtons, TextInput } from "@upyog/digit-ui-react-components";
+import { BackButton, CardLabel, FormStep, Loader, MobileNumber, RadioButtons, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/Timeline";
@@ -93,7 +93,7 @@ const LicenseDetails = ({ t, config, onSelect, userType, formData, ownerIndex })
     <div>
       <div className={isOpenLinkFlow ? "OpenlinkContainer" : ""}>
 
-        {isOpenLinkFlow && <BackButton style={{ border: "none" }}>{t("CS_COMMON_BACK")}</BackButton>}
+        {isOpenLinkFlow && <BackButton className="obps-corrospondence-address-action-btn">{t("CS_COMMON_BACK")}</BackButton>}
         <Timeline currentStep={1} flow="STAKEHOLDER" />
         {!isLoading || !isUserLoading ? 
         <FormStep

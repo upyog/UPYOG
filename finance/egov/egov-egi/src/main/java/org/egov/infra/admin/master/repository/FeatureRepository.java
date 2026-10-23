@@ -60,7 +60,7 @@ import java.util.List;
 @Repository
 public interface FeatureRepository extends JpaRepository<Feature, Long>, RevisionRepository<Feature, Long, Integer> {
 
-    Long countByRolesInAndActionsIn(Role role, Action action);
+    Long countByRolesContainingAndActionsContaining(Role role, Action action);
 
     List<Feature> findByModuleIdAndEnabledIsTrueOrderByNameAsc(Long moduleId);
 

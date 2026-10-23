@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getVehicleType } from "../utils";
-import { LabelFieldPair, CardLabel, TextInput, Dropdown, Loader, CardLabelError } from "@upyog/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, Dropdown, Loader, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
 import { useLocation, useParams } from "react-router-dom";
 
 const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
@@ -166,7 +166,7 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
           </div>
         </LabelFieldPair>
       ))}
-      {billError ? <CardLabelError style={{ width: "100%", textAlign: "center" }}>{t("ES_APPLICATION_BILL_SLAB_ERROR")}</CardLabelError> : null}
+      {billError ? <CardLabelError className="fsm-select-trip-data-centered">{t("ES_APPLICATION_BILL_SLAB_ERROR")}</CardLabelError> : null}
     </div>
   );
 };

@@ -81,7 +81,7 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.voucher.VoucherDetails;
 import org.egov.pims.service.EisUtilService;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.exilant.eGov.src.common.EGovernCommon;
@@ -289,7 +289,7 @@ public class VoucherHelper {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug(" In EGovernCommon :getEg_Voucher method ");
 		final Query query = persistenceService.getSession()
-				.createSQLQuery("select name from fiscalperiod where id = :id");
+				.createNativeQuery("select name from fiscalperiod where id = :id");
 		query.setParameter("id", Integer.parseInt(fiscalPeriodIdStr));
 		final List<String> fc = query.list();
 		// Sequence name will be SQ_U_DBP_CGVN_FP7 for vouType U/DBP/CGVN and
@@ -399,9 +399,9 @@ public class VoucherHelper {
 	}
 	
 	public List<String> getVoucherNamesByType(String voucherType){
-	    Query query = this.persistenceService.getSession().createSQLQuery(
+	    Query query = this.persistenceService.getSession().createNativeQuery(
 	    		"select distinct(name) from voucherheader vh where vh.type = :type");
-	    query.setString("type", voucherType);
+	    query.setParameter("type", voucherType);
 	    List<String> list = query.list();
 	    return list;
 	}

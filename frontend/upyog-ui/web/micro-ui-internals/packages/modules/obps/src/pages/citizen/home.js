@@ -1,4 +1,4 @@
-import { BPAHomeIcon, BPAIcon, CitizenHomeCard, EDCRIcon, EmployeeModuleCard, Loader, Toast } from "@upyog/digit-ui-react-components";
+import { BPAHomeIcon, BPAIcon, CitizenHomeCard, EDCRIcon, EmployeeModuleCard, Loader, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
@@ -112,7 +112,7 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
       let uniqueLinks = [];
       homePageUrlLinks?.BPA?.homePageUrlLinks?.map((linkData) => {
         uniqueLinks.push({
-          link: `${linkData?.flow?.toLowerCase()}/${linkData?.applicationType?.toLowerCase()}/${linkData?.serviceType?.toLowerCase()}/docs-required`,
+          link: `/upyog-ui/citizen/obps/${linkData?.flow?.toLowerCase()}/${linkData?.applicationType?.toLowerCase()}/${linkData?.serviceType?.toLowerCase()}/docs-required`,
           i18nKey: t(`BPA_HOME_${linkData?.applicationType}_${linkData?.serviceType}_LABEL`),
           state: { linkData },
           linkState: true,
@@ -167,11 +167,11 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
       Icon: <EDCRIcon className="fill-path-primary-main" />,
       links: [
         {
-          link: `edcrscrutiny/apply`,
+          link: `/upyog-ui/citizen/obps/edcrscrutiny/apply`,
           i18nKey: t("BPA_PLAN_SCRUTINY_FOR_NEW_CONSTRUCTION_LABEL"),
         },
         {
-          link: `edcrscrutiny/oc-apply`,
+          link: `/upyog-ui/citizen/obps/edcrscrutiny/oc-apply`,
           i18nKey: t("BPA_OC_PLAN_SCRUTINY_FOR_NEW_CONSTRUCTION_LABEL"),
         },
       ],
@@ -187,17 +187,23 @@ const BPACitizenHomeScreen = ({ parentRoute }) => {
 
   const homeScreen = (
     <div className="mainContent">
-      {homeDetails.map((data) => {
-        return (
-          <div>
-            {data.name === "employeeCard" ? (
-              <EmployeeModuleCard {...data} />
-            ) : (
-              <CitizenHomeCard header={data.title} links={data.links} Icon={() => data.Icon} styles={data?.styles} />
-            )}
-          </div>
-        );
-      })}
+      {homeDetails.map((data, index) => {
+  return (
+    <div key={data?.name || data?.title || index}>
+      {data.name === "employeeCard" ? (
+        <EmployeeModuleCard {...data} />
+      ) : (
+        <CitizenHomeCard
+          header={data.title}
+          links={data.links}
+          Icon={() => data.Icon}
+          styles={data?.styles}
+        />
+      )}
+    </div>
+  );
+})}
+      
     </div>
   );
   sessionStorage.setItem("isPermitApplication", true);

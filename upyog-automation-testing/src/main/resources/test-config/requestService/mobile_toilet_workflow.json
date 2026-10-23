@@ -1,0 +1,24 @@
+{
+  "moduleName": "MOBILE_TOILET",
+
+  "steps": [
+
+    {
+      "name": "Citizen Application",
+      "type": "CITIZEN",
+      "module": "MOBILE_TOILET"
+    },
+
+    {
+      "name": "Employee Flow",
+      "type": "EMPLOYEE",
+      "module": "MOBILE_TOILET",
+      "role": "MTCEMP"
+    },
+    {
+      "name": "Vendor Flow",
+      "type": "VENDOR",
+      "module": "MOBILE_TOILET"
+    }
+  ]
+}

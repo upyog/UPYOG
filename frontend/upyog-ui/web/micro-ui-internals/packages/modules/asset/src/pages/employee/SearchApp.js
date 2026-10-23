@@ -1,8 +1,8 @@
-import React, { useState,useEffect } from "react"
-import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Toast } from "@upyog/digit-ui-react-components";
-import { useParams } from "react-router-dom"
+import React, { useState, useEffect } from "react";
+import { TextInput, Label, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import ASSETSearchApplication from "../../components/SearchApplication"
+import ASSETSearchApplication from "../../components/SearchApplication";
 
 const SearchApp = ({path, parentRoute}) => {
     const { variant } = useParams();
@@ -12,9 +12,8 @@ const SearchApp = ({path, parentRoute}) => {
     const [showToast, setShowToast] = useState(null);
 
     function onSubmit (_data) {
-      // console.log('Coming data after submit:- ', _data);
         var fromDate = new Date(_data?.fromDate)
-        fromDate?.setSeconds(fromDate?.getSeconds() - 19800 )
+        fromDate?.setSeconds(fromDate?.getSeconds() - 19800)
         var toDate = new Date(_data?.toDate)
         toDate?.setSeconds(toDate?.getSeconds() + 86399 - 19800)
         const data = {
@@ -23,69 +22,68 @@ const SearchApp = ({path, parentRoute}) => {
             ...(_data.fromDate ? {fromDate: fromDate?.getTime()} : {})
         }
 
-        let payload = Object.keys(data)
-                      .filter( k => data[k] )
-                      .reduce( (acc, key) => ({...acc,  [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {} );
+        let payload = Object.keys(data).reduce((acc, key) => {
+            const value = data[key];
+            if (!value || (typeof value === 'string' && !value.trim())) return acc;
+            return {...acc, [key]: typeof value === "object" ? value.code : value};
+        }, {});
 
-        // let payload = Object.keys(data)
-        // .filter(k => data[k] !== null && data[k] !== undefined) 
-        // .reduce(
-        //   (acc, key) => ({
-        //     ...acc,
-        //     [key]: typeof data[key] === "object" ? data[key].code : data[key]
-        //   }),
-        //   {}
-        // );
+        const hasSearchFields = payload.applicationNo || payload.creationReason || payload.fromDate || payload.mobileNumber || payload.status || payload.toDate;
 
-        
-
-        if(Object.entries(payload).length>0 && !payload.applicationNo && !payload.creationReason && !payload.fromDate && !payload.mobileNumber && !payload.applicationNo && !payload.status && !payload.toDate)
-        setShowToast({ warning: true, label: "ERR_VALID_FIELDS" });
-        else if(Object.entries(payload).length>0 && (payload.creationReason || payload.status ) && (!payload.applicationNo && !payload.fromDate && !payload.mobileNumber && !payload.applicationNo && !payload.toDate))
-        setShowToast({ warning: true, label: "ERR_PROVIDE_MORE_PARAM_WITH_TYPE_STATUS" });
-        else if(Object.entries(payload).length>0 && (payload.fromDate && !payload.toDate) || (!payload.fromDate && payload.toDate))
-        setShowToast({ warning: true, label: "ERR_PROVIDE_BOTH_FORM_TO_DATE" });
+        if (!hasSearchFields)
+            setShowToast({ warning: true, label: "ERR_VALID_FIELDS" });
+        else if ((payload.creationReason || payload.status) && (!payload.applicationNo && !payload.fromDate && !payload.mobileNumber && !payload.toDate))
+            setShowToast({ warning: true, label: "ERR_PROVIDE_MORE_PARAM_WITH_TYPE_STATUS" });
+        else if ((payload.fromDate && !payload.toDate) || (!payload.fromDate && payload.toDate))
+            setShowToast({ warning: true, label: "ERR_PROVIDE_BOTH_FORM_TO_DATE" });
         else
-        setPayload(payload)
+            setPayload(payload)
     }
 
+    const onClear = () => {
+        setPayload({});
+    };
+
     const config = {
-        enabled: !!( payload && Object.keys(payload).length > 0 )
+        enabled: !!(payload && Object.keys(payload).length > 0)
     }
 
     const { isLoading, isSuccess, isError, error, data: {Assets: searchReult, Count: count} = {} } = Digit.Hooks.asset.useASSETSearch(
-        { tenantId,
-          filters: payload
-        },
-       config,
-      );
+        { tenantId, filters: payload },
+        config,
+    );
 
-      //toaster msg with
     useEffect(() => {
         if (showToast) {
-          const timer = setTimeout(() => {
-            setShowToast(null);
-          }, 1500); // Close toast after 1.5 seconds
-
-          return () => clearTimeout(timer); // Clear timer on cleanup
+            const timer = setTimeout(() => {
+                setShowToast(null);
+            }, 1500);
+            return () => clearTimeout(timer);
         }
-      }, [showToast]);
+    }, [showToast]);
 
     return <React.Fragment>
-        <ASSETSearchApplication t={t} isLoading={isLoading} parentRoute={parentRoute} tenantId={tenantId} setShowToast={setShowToast} onSubmit={onSubmit} data={  isSuccess && !isLoading ? (searchReult.length>0? searchReult : { display: "ES_COMMON_NO_DATA" } ):""} count={count} /> 
-        {showToast && (
-        <Toast
-          error={showToast.error}
-          warning={showToast.warning}
-          label={t(showToast.label)}
-          isDleteBtn={true}
-          onClose={() => {
-            setShowToast(null);
-          }}
+        <ASSETSearchApplication 
+            t={t} 
+            isLoading={isLoading} 
+            parentRoute={parentRoute} 
+            tenantId={tenantId} 
+            setShowToast={setShowToast} 
+            onSubmit={onSubmit} 
+            onClear={onClear}
+            data={isSuccess && !isLoading ? (searchReult.length > 0 ? searchReult : { display: "ES_COMMON_NO_DATA" }) : ""} 
+            count={count} 
         />
-      )}
+        {showToast && (
+            <Toast
+                error={showToast.error}
+                warning={showToast.warning}
+                label={t(showToast.label)}
+                isDleteBtn={true}
+                onClose={() => setShowToast(null)}
+            />
+        )}
     </React.Fragment>
-
 }
 
-export default SearchApp
+export default SearchApp;

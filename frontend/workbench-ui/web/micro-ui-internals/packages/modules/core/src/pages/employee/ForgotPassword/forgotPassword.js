@@ -1,14 +1,14 @@
-import { BackButton, Dropdown, FormComposer, Loader, Toast } from "@egovernments/digit-ui-react-components";
+import { BackButton, Dropdown, FormComposer, Loader, Toast } from "@upyog/workbench-ui-react-components";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
 import Background from "../../../components/Background";
 import Header from "../../../components/Header";
 
 const ForgotPassword = ({ config: propsConfig, t }) => {
   const { data: cities, isLoading } = Digit.Hooks.useTenants();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [user, setUser] = useState(null);
-  const history = useHistory();
+  
   const [showToast, setShowToast] = useState(null);
   const getUserType = () => Digit.UserService.getType();
 
@@ -19,7 +19,7 @@ const ForgotPassword = ({ config: propsConfig, t }) => {
     }
     Digit.UserService.setUser(user);
     const redirectPath = location.state?.from || `/${window?.contextPath}/employee`;
-    history.replace(redirectPath);
+    navigate(redirectPath);
   }, [user]);
 
   const closeToast = () => {
@@ -41,7 +41,7 @@ const ForgotPassword = ({ config: propsConfig, t }) => {
     };
     try {
       await Digit.UserService.sendOtp(requestData, data.city.code);
-      history.push(`/${window?.contextPath}/employee/user/change-password?mobile_number=${data.mobileNumber}&tenantId=${data.city.code}`);
+      navigate(`/${window?.contextPath}/employee/user/change-password?mobile_number=${data.mobileNumber}&tenantId=${data.city.code}`);
     } catch (err) {
       setShowToast(err?.response?.data?.error?.fields?.[0]?.message || "Invalid login credentials!");
       setTimeout(closeToast, 5000);
@@ -49,7 +49,7 @@ const ForgotPassword = ({ config: propsConfig, t }) => {
   };
 
   const navigateToLogin = () => {
-    history.replace(`/${window?.contextPath}/employee/login`);
+    navigate(`/${window?.contextPath}/employee/login`);
   };
 
   const [userId, city] = propsConfig.inputs;

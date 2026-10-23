@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Header } from "@upyog/digit-ui-react-components";
+import { Header } from "@nudmcdgnpm/digit-ui-react-components";
 
 import WTDesktopInbox from "../../components/WTDesktopInbox";
 import MobileInbox from "../../components/MobileInbox";
@@ -127,7 +127,7 @@ const Inbox = ({
       );
     } else {
       return (
-        <div style={{ padding: user?.type === "CITIZEN" ? "0 24px" : "" }}>
+        <div className={user?.type === "CITIZEN" ? "citizen-container-padding-24" : ""}>
           {isInbox && <Header>{t("ES_COMMON_INBOX")}</Header>}
           <WTDesktopInbox
             moduleCode={moduleCode}

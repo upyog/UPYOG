@@ -1,24 +1,36 @@
 import { ADSSearch } from "../../services/molecules/ADS/Search";
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 
-const useADSApplicationDetail = (t, tenantId, bookingNo, config = {}, userType, args) => {
-    
-  
-  const defaultSelect = (data) => {    
-     let applicationDetails = data.applicationDetails || {};
+const useADSApplicationDetail = (
+  t,
+  tenantId,
+  bookingNo,
+  config = {},
+  userType,
+  args
+) => {
+  const queryKey = [
+    "ADS_APPLICATION_DETAIL",
+    tenantId,
+    bookingNo,
+    userType,
+    JSON.stringify(args),
+  ];
 
-    return {
-      applicationData : data,
-      applicationDetails
-    }
-  };
+  const queryFn = () =>
+    ADSSearch.applicationDetails(t, tenantId, bookingNo, userType, args);
 
-  return useQuery(
-    [bookingNo, userType, args],
-    () => ADSSearch.applicationDetails(t, tenantId, bookingNo, userType, args),
-    { select: defaultSelect, ...config }
- 
-  );
+  const select = (data) => ({
+    applicationData: data,
+    applicationDetails: data?.applicationDetails || {},
+  });
+
+  return queryTemplate({
+    queryKey,
+    queryFn,
+    select,
+    config,
+  });
 };
 
 export default useADSApplicationDetail;

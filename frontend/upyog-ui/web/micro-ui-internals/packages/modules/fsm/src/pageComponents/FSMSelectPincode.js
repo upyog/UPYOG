@@ -1,4 +1,4 @@
-import { FormStep, TextInput, CardLabel, LabelFieldPair, CardLabelError } from "@upyog/digit-ui-react-components";
+import { FormStep, TextInput, CardLabel, LabelFieldPair, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect, Fragment } from "react";
 import { useLocation } from "react-router-dom";
 import Timeline from "../components/TLTimelineInFSM";
@@ -123,7 +123,7 @@ const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, regist
             </div>
           </LabelFieldPair>
           {pincodeServicability && (
-            <CardLabelError style={{ width: "70%", marginLeft: "30%", fontSize: "12px", marginTop: "-21px" }}>
+            <CardLabelError className="fsm-fsmselect-pincode-card">
               {t(pincodeServicability)}
             </CardLabelError>
           )}

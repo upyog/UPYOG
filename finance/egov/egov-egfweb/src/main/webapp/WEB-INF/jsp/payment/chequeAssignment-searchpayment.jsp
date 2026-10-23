@@ -518,10 +518,13 @@
 					return true;
 				}
 				else {
-				var csrfToken = document.getElementById('csrfTokenValue').value;
-				var slNo = dom.get(name).options[dom.get(name).selectedIndex].value;
-				var url = '${pageContext.request.contextPath}/voucher/common-ajaxValidateChequeNumber.action?bankaccountId='+document.getElementById('bankaccount').value+'&chequeNumber='+obj.value+'&index='+index+'&departmentId='+dept+"&serialNo="+slNo+'&_csrf='+csrfToken;
-				var transaction = YAHOO.util.Connect.asyncRequest('POST', url,callback , null);
+				var slNo = '';
+				var serialEl = document.getElementById(name) || (document.getElementsByName(name)[0]);
+				if (serialEl) {
+					slNo = serialEl.value;
+				}
+				var url = '${pageContext.request.contextPath}/voucher/common-ajaxValidateChequeNumber.action';
+				var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callback, chequeValidationPostData(obj, index, dept, slNo));
 				}
 				return true;
 			}
@@ -569,11 +572,32 @@
 				{
 				name=name.replace("chequeNumber","serialNo");
 				}
-				var csrfToken = document.getElementById('csrfTokenValue').value;
 				var dept = dom.get('departmentid').options[dom.get('departmentid').selectedIndex].value;
-				var slNo = dom.get(name).options[dom.get(name).selectedIndex].value;
-				var url = '${pageContext.request.contextPath}/voucher/common-ajaxValidateReassignSurrenderChequeNumber.action?bankaccountId='+document.getElementById('bankaccount').value+'&chequeNumber='+obj.value+'&index='+index+'&departmentId='+dept+"&serialNo="+slNo+'&_csrf='+csrfToken;
-				var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackReassign, null);
+				var slNo = '';
+				var serialEl = document.getElementById(name) || (document.getElementsByName(name)[0]);
+				if (serialEl) {
+					slNo = serialEl.value;
+				}
+				var url = '${pageContext.request.contextPath}/voucher/common-ajaxValidateReassignSurrenderChequeNumber.action';
+				var transaction = YAHOO.util.Connect.asyncRequest('POST', url, callbackReassign, chequeValidationPostData(obj, index, dept, slNo));
+			}
+			<%-- LTS Migration Note [Spring Security 6 & JS DOM Safety]:
+			     1. Migrated AJAX parameters from URL query string to standard HTTP POST body payload
+			        to comply with Spring Security 6 CSRF validation and WildFly 40 Undertow.
+			     2. Added safe element lookup for serialNo to avoid JS errors when serialNo is not a <select>. --%>
+			function chequeValidationPostData(obj, index, dept, slNo)
+			{
+				var bankEl = document.getElementById('bankaccount');
+				var bankaccount = bankEl ? bankEl.value : '';
+				var csrfEl = document.getElementById('csrfTokenValue');
+				var csrfToken = csrfEl ? csrfEl.value : '';
+				return 'bankaccountId=' + encodeURIComponent(bankaccount)
+					+ '&bankaccount=' + encodeURIComponent(bankaccount)
+					+ '&chequeNumber=' + encodeURIComponent(obj.value)
+					+ '&index=' + encodeURIComponent(index)
+					+ '&departmentId=' + encodeURIComponent(dept)
+					+ '&serialNo=' + encodeURIComponent(slNo)
+					+ '&_csrf=' + encodeURIComponent(csrfToken);
 			}
 			var callback = {
 				success: function(o) {  

@@ -1,7 +1,7 @@
-import { CloseSvg, FormComposer, Header, Toast } from "@upyog/digit-ui-react-components";
+import { CloseSvg, FormComposer, Header, Toast, Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import CreateNewSurvey from "../../../components/Surveys/SurveyForms";
 
 export const answerTypeEnum = {
@@ -49,8 +49,10 @@ export const mapQuestions = (questions =[],initialData) =>{
 
 const NewSurveys = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [showToast, setShowToast] = useState(null);
+  const mutation = Digit.Hooks.survey.useServeyCreateDef();
+  const queryClient = useQueryClient();
 
   const closeToast = () => {
     setShowToast(null);
@@ -127,7 +129,15 @@ const NewSurveys = () => {
         }
         else
         {
-          history.push("/upyog-ui/employee/engagement/surveys/create-response", details)
+          mutation.mutate(details, {
+            onSuccess: (responseData) => {
+              queryClient.clear();
+              navigate("/upyog-ui/employee/engagement/surveys/create-response", { state: { isSuccess: true, data: responseData } });
+            },
+            onError: (error) => {
+              navigate("/upyog-ui/employee/engagement/surveys/create-response", { state: { isSuccess: false, error } });
+            }
+          });
         }
       })
     }
@@ -156,6 +166,10 @@ const NewSurveys = () => {
     marginLeft:'-20px',
   }
   
+  if (mutation.isPending) {
+    return <Loader />;
+  }
+
   return (
     <Fragment>
       {/* <Header>{t("CS_COMMON_SURVEYS")}</Header> */}

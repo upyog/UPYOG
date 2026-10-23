@@ -48,12 +48,12 @@ const renderLegend = (props) => {
   const { payload } = props;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column",height: "300px" }}>
-      <div style={{ overflow: "auto", flex: "1" }}>
-        <ul style={{ "listStyle": "disc" }}>
+    <div className="eng-mcq-chart-flex-container">
+      <div className="eng-mcq-chart-wrapper">
+        <ul className="eng-mcq-chart-wrapper-2">
           {
             payload?.map((entry, index) => (
-              <li key={`item-${index}`} style={{"display":"list-item","color":entry.color,"fontSize":"19px"}}>{entry.value}</li>
+              <li key={`item-${index}`} style={entry?.color ? { color: entry.color } : undefined} className="list-item-19">{entry.value}</li>
             ))
           }
         </ul>

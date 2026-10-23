@@ -62,10 +62,16 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Location;
 import org.egov.infra.persistence.entity.Auditable;
+/*
+ * HTML Sanitization Annotation Migration (Hibernate Validator 7+ / Jakarta EE 10):
+ * Replaced legacy org.hibernate.validator.constraints.SafeHtml annotation with custom org.egov.infra.validation.SanitizeHtml
+ * because SafeHtml was removed in Hibernate Validator 7+ (JSoup dependency decoupled).
+ */
+import org.egov.infra.validation.SanitizeHtml;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.model.instrument.InstrumentHeader;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+
 
 public class ReceiptHeader extends StateAware implements Auditable {
     private static final long serialVersionUID = 1L;
@@ -73,23 +79,23 @@ public class ReceiptHeader extends StateAware implements Auditable {
 
     private ReceiptHeader receiptHeader;
     private Set<ReceiptHeader> receiptHeaders = new HashSet<>();
-    @SafeHtml
+    @SanitizeHtml
     private String referencenumber;
     private Date referencedate;
-    @SafeHtml
+    @SanitizeHtml
     private String consumerCode;
     /* The details of associated bill that billing application has sent */
-    @SafeHtml
+    @SanitizeHtml
     private String referenceDesc;
     private char receipttype;
-    @SafeHtml
+    @SanitizeHtml
     private String receiptnumber;
     private Date receiptdate;
-    @SafeHtml
+    @SanitizeHtml
     private String manualreceiptnumber;
     private Date manualreceiptdate;
     private Boolean isModifiable;
-    @SafeHtml
+    @SanitizeHtml
     private String service;
     private Character collectiontype;
     private Set<ReceiptDetail> receiptDetails = new LinkedHashSet<>();
@@ -99,59 +105,59 @@ public class ReceiptHeader extends StateAware implements Auditable {
     private Location location;
     private Boolean isReconciled;
     private EgwStatus status;
-    @SafeHtml
+    @SanitizeHtml
     private String reasonForCancellation;
-    @SafeHtml
+    @SanitizeHtml
     @Length(min = 1,max=64)
     private String paidBy;
     private Boolean overrideAccountHeads;
     private Boolean partPaymentAllowed;
     private Boolean callbackForApportioning;
-    @SafeHtml
+    @SanitizeHtml
     private String collModesNotAllwd;
-    @SafeHtml
+    @SanitizeHtml
     private String displayMsg;
     private BigDecimal totalAmount;
     private BigDecimal minimumAmount;
     private BigDecimal totalAmountToBeCollected;
     private Date voucherDate;
-    @SafeHtml
+    @SanitizeHtml
     private String voucherNum;
     private OnlinePayment onlinePayment;
     private Challan challan;
-    @SafeHtml
+    @SanitizeHtml
     private String payeeName;
-    @SafeHtml
+    @SanitizeHtml
     private String payeeAddress;
-    @SafeHtml
+    @SanitizeHtml
     private String workflowUserName = "NA";
-    @SafeHtml
+    @SanitizeHtml
     private String instrumentsAsString;
-    @SafeHtml
+    @SanitizeHtml
     private String source;
-    @SafeHtml
+    @SanitizeHtml
     private String remittanceReferenceNumber;
-    @SafeHtml
+    @SanitizeHtml
     private String payeeEmail;
-    @SafeHtml
+    @SanitizeHtml
     private String consumerType;
     private Long version;
-    @SafeHtml
+    @SanitizeHtml
     private String serviceCategory;
     private BigDecimal totalcramount;
-    @SafeHtml
+    @SanitizeHtml
     private String curretnStatus;
-    @SafeHtml
+    @SanitizeHtml
     private String currentreceipttype;
-    @SafeHtml
+    @SanitizeHtml
     private String modOfPayment;
-    @SafeHtml
+    @SanitizeHtml
     private String createdUser;
-    @SafeHtml
+    @SanitizeHtml
     private String serviceIdText;
-    @SafeHtml
+    @SanitizeHtml
     private String g8data;
-    @SafeHtml
+    @SanitizeHtml
     private String paymentId;
     public ReceiptHeader() {
     }

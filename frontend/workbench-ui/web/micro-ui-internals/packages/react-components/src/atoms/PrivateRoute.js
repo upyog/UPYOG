@@ -1,29 +1,46 @@
 import React from "react";
-import { Route, Redirect } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
-export const PrivateRoute = ({ component: Component, roles, ...rest }) => {
-  return (
-    <Route
-      {...rest}
-      render={(props) => {
-        const user = Digit.UserService.getUser();
-        const userType = Digit.UserService.getType();
-        function getLoginRedirectionLink (){
-          if(userType === "employee"){
-            return `/${window?.contextPath}/employee/user/language-selection`
-          }
-          else{
-            return `/${window?.contextPath}/citizen/login`
-          }
-        }
-        if (!user || !user.access_token) {
-          // not logged in so redirect to login page with the return url
-          return <Redirect to={{ pathname: getLoginRedirectionLink(), state: { from: props.location.pathname + props.location.search } }} />;
-        }
+/**
+ * PrivateRoute component for React Router v6
+ * Protects routes that require authentication
+ * 
+ * Usage:
+ * <Route path="profile" element={<PrivateRoute><ProfileComponent /></PrivateRoute>} />
+ * 
+ * @param {Object} props
+ * @param {React.ReactNode} props.children - Component to render if authenticated
+ * @returns {React.ReactNode}
+ */
+export const PrivateRoute = ({ children }) => {
+  const user = Digit.UserService.getUser();
+  const userType = Digit.UserService.getType();
+  const location = useLocation();
+  
+  /**
+   * Get login redirection link based on user type
+   * @returns {string} Login page URL
+   */
+  const getLoginRedirectionLink = () => {
+    if (userType === "employee") {
+      return `/${window?.contextPath}/employee/user/language-selection`;
+    } else {
+      return `/${window?.contextPath}/workbench-ui/citizen/login`;
+    }
+  };
 
-        // logged in so return component
-        return <Component {...props} />;
-      }}
-    />
-  );
+  // Check if user is authenticated
+  if (!user || !user.access_token) {
+    // Not logged in - redirect to login page with return URL
+    return (
+      <Navigate 
+        to={getLoginRedirectionLink()} 
+        state={{ from: location.pathname + location.search }} 
+        replace 
+      />
+    );
+  }
+
+  // User is authenticated - render protected content
+  return children;
 };

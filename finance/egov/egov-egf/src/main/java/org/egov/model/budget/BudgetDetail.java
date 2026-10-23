@@ -60,22 +60,22 @@ import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -122,19 +122,19 @@ public class BudgetDetail extends StateAware {
     private BigDecimal anticipatoryAmount = new BigDecimal("0.0");
 
     @Column(name = "using_department")
-    @SafeHtml
+    @SanitizeHtml
     private String usingDepartment;
 
     @Column(name = "executing_department")
-    @SafeHtml
+    @SanitizeHtml
     private String executingDepartment;
     
     @Column(name = "majorcode")
-    @SafeHtml
+    @SanitizeHtml
     private String majorCode;
     
     @Column(name = "minorcode")
-    @SafeHtml
+    @SanitizeHtml
     private String minorCode;
     
     @Column(name = "lastyearapproved")
@@ -212,7 +212,7 @@ public class BudgetDetail extends StateAware {
     private Boundary boundary;
 
     @Length(max = 10)
-    @SafeHtml
+    @SanitizeHtml
     private String materializedPath;
 
     @OneToMany(mappedBy = "budgetDetail", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -223,7 +223,7 @@ public class BudgetDetail extends StateAware {
     private Long documentNumber;
 
     @Length(max = 32)
-    @SafeHtml
+    @SanitizeHtml
     private String uniqueNo;
     private BigDecimal planningPercent;
 
@@ -232,7 +232,7 @@ public class BudgetDetail extends StateAware {
     private EgwStatus status;
 
     @Transient
-    @SafeHtml
+    @SanitizeHtml
     private String comment;
     
     @Transient

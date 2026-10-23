@@ -1,4 +1,4 @@
-import { RadioButtons, SearchField } from "@upyog/digit-ui-react-components";
+import { RadioButtons, SearchField } from "@nudmcdgnpm/digit-ui-react-components";
 import { format } from "date-fns";
 import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
@@ -14,7 +14,7 @@ const useInboxMobileCardsData = ({  table }) => {
       [t("EDCR_COMMON_TABLE_CITY_LABEL")]: t(locality),
       [t("EDCR_COMMON_TABLE_APPL_NAME")]: owner,
       [t("EDCR_COMMON_TABLE_SCRUTINY_NO")]: edcrNumber,
-      [t("EDCR_COMMON_TABLE_COL_STATUS")]: (status === "Accepted" ? <span className="sla-cell-success " style={{background:"none",padding:"0px"}}>{status}</span> : <span className="sla-cell-error" style={{background:"none",padding:"0px"}}>{status}</span>),
+      [t("EDCR_COMMON_TABLE_COL_STATUS")]: (status === "Accepted" ? <span className="sla-cell-success obps-use-inbox-mobile-cards-data-container-padding">{status}</span> : <span className="sla-cell-error obps-use-inbox-mobile-cards-data-container-padding">{status}</span>),
       [t("BPA_UPLOADED_PLAN_DXF")]: (
         <a href={`${dxfFileurl}`}>
           <span className="link">{t("BPA_DOWNLOAD")}</span>
@@ -45,12 +45,12 @@ const useInboxMobileCardsData = ({  table }) => {
         <Controller
           name="sortOrder"
           control={controlSortForm}
-          render={({ onChange, value }) => (
+          render={({ field }) => (
             <RadioButtons
               onSelect={(e) => {
-                onChange(e.code);
+                field.onChange(e.code);
               }}
-              selectedOption={sortOrderOptions.filter((option) => option.code === value)[0]}
+              selectedOption={sortOrderOptions.filter((option) => option.code === field.value)[0]}
               optionsKey="i18nKey"
               name="sortOrder"
               options={sortOrderOptions}

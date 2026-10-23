@@ -1,12 +1,21 @@
+import { queryTemplate } from "../../common/queryTemplate";
 import { NOCSearch } from "../../services/molecules/NOC/Search";
-import { useQuery } from "react-query";
 
-const useNOCSearchApplication = (tenantId,filters, config = {}) => {
-  return useQuery(
-    ["APPLICATION_SEARCH", "NOC_SEARCH", tenantId, ...Object.entries(filters)],
-    () => NOCSearch.all(tenantId, filters),
-    config
-  );
+const useNOCSearchApplication = (tenantId, filters, config = {}) => {
+  const queryKey = [
+    "NOC_SEARCH",
+    tenantId,
+    JSON.stringify(filters),
+  ];
+
+  const queryFn = () =>
+    NOCSearch.all(tenantId, filters);
+
+  return queryTemplate({
+    queryKey,
+    queryFn,
+    config,
+  });
 };
 
 export default useNOCSearchApplication;

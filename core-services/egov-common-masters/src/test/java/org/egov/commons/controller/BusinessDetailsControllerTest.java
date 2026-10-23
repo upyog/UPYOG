@@ -1,7 +1,7 @@
 package org.egov.commons.controller;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -29,20 +29,18 @@ import org.egov.commons.web.contract.BusinessDetailsRequest;
 import org.egov.commons.web.contract.factory.ResponseInfoFact;
 import org.egov.commons.web.controller.BusinessDetailsController;
 import org.egov.commons.web.errorhandlers.RequestErrorHandler;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-
-
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers =  BusinessDetailsController.class)
 @ContextConfiguration(classes = BusinessDetailsController.class)
 public class BusinessDetailsControllerTest {
@@ -61,7 +59,7 @@ public class BusinessDetailsControllerTest {
 	private ResponseInfoFact responseInfoFactory;
 
 	@Test
-    @Ignore
+    @Disabled
 	public void test_should_create_business_details() throws Exception {
 		when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), eq(true)))
 				.thenReturn(getResponseInfo());
@@ -81,7 +79,7 @@ public class BusinessDetailsControllerTest {
 	}
 
 	@Test
-    @Ignore
+    @Disabled
 	public void test_should_update_business_details() throws Exception {
 		when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), eq(true)))
 				.thenReturn(getResponseInfo());
@@ -100,7 +98,7 @@ public class BusinessDetailsControllerTest {
 	}
 
 	@Test
-    @Ignore
+    @Disabled
 	public void test_should_search_business_details_based_on_criteria() throws Exception {
 		when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), eq(true)))
 				.thenReturn(getResponseInfo());

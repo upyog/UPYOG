@@ -1,8 +1,9 @@
   import React, { useCallback, useMemo, useEffect,useRef,useState } from "react"
   import { useForm, Controller } from "react-hook-form";
-  import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@upyog/digit-ui-react-components";
-  import { Link,useHistory} from "react-router-dom";
+  import { TextInput, SubmitBar, LinkLabel, ActionBar, CloseSvg, DatePicker, CardLabelError, SearchForm, SearchField, Dropdown, Table, Card, MobileNumber, Loader, CardText, Header } from "@nudmcdgnpm/digit-ui-react-components";
+  import { Link,  } from "react-router-dom";
   import CHBCancelBooking from "./CHBCancelBooking";
+  import { getStatusOptions } from "../utils";
 
   /**
  * CHBSearchApplication Component
@@ -46,60 +47,176 @@
  * - Displays search results in a table format with pagination and sorting options.
  * - Includes a modal for viewing or managing booking details.
  */
-  const CHBSearchApplication = ({tenantId, isLoading, t, onSubmit, data, count, setShowToast }) => {
-    
+  const CHBSearchApplication = ({tenantId, isLoading, t, onSubmit, onClear, data, count, setShowToast }) => {
+      const [venueTypes, setVenueTypes] = useState("");
+      const [venueCode, setVenueCode] = useState("");
       const isMobile = window.Digit.Utils.browser.isMobile();
+
+      const { data: venueLists } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "Venues" }],
+      {
+        select: (data) => {
+          const formattedData = data?.["CHB"]?.["Venues"]
+          return formattedData;
+        },
+      });
+
+      const { data: venueNames } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: `${venueTypes?.parentMasterType}` }],
+      {
+        select: (data) => {
+          const formattedData = data?.["CHB"]?.[`${venueTypes?.parentMasterType}`]
+          return formattedData;
+        },
+      });
+
+
+      let venues = [];
+      venueLists && venueLists.map((venue) => {
+          venues.push({i18nKey: `${venue.code}`, code: `${venue.code}`, value: `${venue.name}`, parentMasterType:venue.parentMasterType});
+      });
+
+      let venuenames = [];
+      venueNames && venueNames.map((venuename) => {
+          venuenames.push({
+            i18nKey: `${venuename.code}`, 
+            code: `${venuename.code}`, 
+            value: `${venuename.venueName}`, 
+            venueId: `${venuename.venueId}`
+          });
+      });
+
+
       const { register, control, handleSubmit, setValue, getValues, reset, formState } = useForm({
           defaultValues: {
+              bookingNo: "",
+              venueType: "",
+              venueCode: "",
+              status: undefined,
+              mobileNumber: "",
+              fromDate: "",
+              toDate: "",
               offset: 0,
               limit: !isMobile && 10,
               sortBy: "commencementDate",
-              sortOrder: "DESC",
-              fromDate: new Date(new Date().setMonth(new Date().getMonth() - 1)).toISOString().split('T')[0], // Default to one month ago
-              toDate: new Date().toISOString().split('T')[0], // Default to today's date
-              status: { i18nKey: "Booked", code: "BOOKED", value: t("CHB_BOOKED") }
+              sortOrder: "DESC"
           }
       })
       useEffect(() => {
-        register("offset", 0)
-        register("limit", 10)
-        register("sortBy", "commencementDate")
-        register("sortOrder", "DESC")
-        handleSubmit(onSubmit)();
+        register("offset")
+        register("limit")
+        register("sortBy")
+        register("sortOrder")
       },[register])
       const [bookingDetails,setBookingDetails]=useState("");
       const [showModal,setShowModal] = useState(false)
       const mutation = Digit.Hooks.chb.useChbCreateAPI(tenantId, false);
-      // const { data: Menu } = Digit.Hooks.chb.useChbCommunityHalls(tenantId, "CHB", "CommunityHalls");
 
-    const { data: Menu } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "CommunityHalls" }],
-    {
-      select: (data) => {
-        const formattedData = data?.["CHB"]?.["CommunityHalls"]
-        return formattedData;
-      },
-    });
-    
-      let menu = [];
+      const { data: recieptData } = Digit.Hooks.useRecieptSearch(
+        {
+          tenantId: tenantId,
+          businessService: "chb-services",
+          consumerCodes: bookingDetails?.bookingNo,
+          isEmployee: false,
+        },
+        { enabled: bookingDetails?.bookingNo ? true : false }
+      );
+      const paymentMode = recieptData?.Payments?.[0]?.paymentMode;
+
+      // Refund status display for cancelled bookings (mirrors ApplicationDetails.js)
+      const isCancelledBooking = bookingDetails?.bookingStatus === "CANCELLED";
+      const isOnlinePayment = recieptData?.Payments?.[0]?.paymentMode === "ONLINE";
+      const isRefunded = recieptData?.Payments?.[0]?.instrumentStatus === "REFUNDED";
+      const originalTxnId = recieptData?.Payments?.[0]?.transactionNumber;
+
+      const { data: refundData } = Digit.Hooks.useCustomAPIHook(
+        "/pg-service/refund/v1/_search",
+        {
+          originalTxnId: originalTxnId,
+          tenantId: recieptData?.Payments?.[0]?.tenantId || tenantId,
+        },
+        {},
+        {},
+        {
+          enabled: !!(isCancelledBooking && isOnlinePayment && originalTxnId),
+        }
+      );
+
+      const refund = refundData?.Refund?.[0] || refundData?.Refunds?.[0] || refundData?.[0];
+      const refundStatus = refund?.status || refund?.refundStatus;
+      const isRefundInProgress = refundStatus && (
+        refundStatus.toUpperCase() === "IN_PROGRESS" ||
+        refundStatus.toUpperCase() === "INPROGRESS" ||
+        refundStatus.toUpperCase() === "INITIATED"
+      );
+      const isRefundSuccess = refundStatus && (
+        refundStatus.toUpperCase() === "SUCCESS" ||
+        refundStatus.toUpperCase() === "SUCCESSFUL" ||
+        refundStatus.toUpperCase() === "COMPLETED"
+      );
+      const refundStatusColor = isRefundSuccess
+        ? { bg: "#D4EDDA", border: "#C3E6CB", text: "#155724" }
+        : isRefundInProgress
+        ? { bg: "#FFF3CD", border: "#FFEBAA", text: "#856404" }
+        : { bg: "#E2E3E5", border: "#D6D8DB", text: "#383D41" };
 
       
-
-      Menu &&
-    Menu.map((one) => {
-      menu.push({ i18nKey: `${one.code}`, code: `${one.code}`, value: `${one.name}` });
-    });
       const GetCell = (value) => <span className="cell-text">{value}</span>;
-      const handleCancelBooking=async()=>{
-        setShowModal(false)
+      const handleCancelBooking = async (data) => {
+        setShowModal(false);
+        const bookingData = bookingDetails;
         const updatedApplication = {
-          ...bookingDetails,
-          bookingStatus: "CANCELLED"
+          ...bookingData,
+          bookingStatus: "CANCELLED",
+          additionalDetails: {
+            ...bookingData?.additionalDetails,
+            cancellationReason: data?.cancelReason || ""
+          }
         };
-        await mutation.mutateAsync({
-          hallsBookingApplication: updatedApplication
-        });
-        handleSubmit(onSubmit)();
+        let refundFailed = false;
+        let refundErrorMessage = "";
+        try {
+          const paymentDetails = recieptData?.Payments?.[0];
+          if (paymentDetails && paymentDetails.paymentMode === "ONLINE") {
+            try {
+              const refundPayload = {
+                PaymentWorkflows: [
+                  {
+                    paymentId: paymentDetails.id,
+                    action: "REFUND",
+                    tenantId: paymentDetails.tenantId || tenantId,
+                    reason: data?.cancelReason || "Customer requested refund"
+                  }
+                ]
+              };
+              await Digit.ReceiptsService.update(refundPayload, paymentDetails.tenantId || tenantId, "CHB");
+            } catch (refundError) {
+              refundFailed = true;
+              refundErrorMessage = refundError?.response?.data?.Errors?.[0]?.message || refundError?.message || "";
+            }
+          }
+
+          await mutation.mutateAsync({
+            venueBookingApplication: updatedApplication
+          });
+
+          if (refundFailed) {
+            setShowToast({
+              key: "warning",
+              error: {
+                message: `${t("CHB_CANCELLATION_SUCCESS_BUT_REFUND_FAILED") || "Booking cancelled, but refund initiation failed"}${refundErrorMessage ? `: ${refundErrorMessage}` : ""}`
+              }
+            });
+          } else {
+            setShowToast({ key: "success", action: { action: "CANCEL" } });
+          }
+          handleSubmit(onSubmit)();
+        } catch (err) {
+          setShowToast({ key: "error", error: { message: err?.response?.data?.Errors?.[0]?.message || err?.message || t("CS_SOMETHING_WENT_WRONG") } });
+        }
       }
+      const handleViewRefundStatus = (rowData) => {
+        setBookingDetails(rowData);
+      };
+
       const columns = useMemo( () => ([
           
           {
@@ -129,9 +246,17 @@
               disableSortBy: true,
             },
             {
-              Header: t("CHB_COMMUNITY_HALL_NAME"),
+              Header: t("CHB_VENUE_TYPE_LABEL"),
               Cell: ({ row }) => {
-                return GetCell(`${t(row.original["communityHallCode"])}`)
+                return GetCell(`${t(row.original["venueType"])}`)
+              },
+              disableSortBy: true,
+            
+            },
+            {
+              Header: t("CHB_VENUE_NAME_LABEL"),
+              Cell: ({ row }) => {
+                return GetCell(`${t(row.original["venueCode"])}`)
               },
               disableSortBy: true,
             
@@ -155,11 +280,29 @@
             },
             
             {
+              Header: t("CHB_REFUND_STATUS") || "Refund Status",
+              disableSortBy: true,
+              Cell: ({ row }) => {
+                if (row?.original?.bookingStatus !== "CANCELLED") {
+                  return GetCell("-");
+                }
+                const isSelected = bookingDetails?.bookingNo === row?.original?.bookingNo;
+                return (
+                  <span onClick={() => handleViewRefundStatus(row?.original)} className={`chb-refund-status-cell ${isSelected ? "selected" : "not-selected"}`}>
+                    {isSelected && refundStatus
+                      ? refundStatus
+                      : t("CHB_VIEW_REFUND_STATUS") || "View Refund Status"}
+                  </span>
+                );
+              },
+            },
+            
+            {
               Header: t("CHB_ACTIONS"),
               Cell: ({ row }) => {
                 const [isMenuOpen, setIsMenuOpen] = useState(false);
                 const menuRef = useRef();
-                const history = useHistory(); // Initialize history
+                const navigate = Digit.Hooks.useCustomNavigate(); // Initialize history
 
                 const toggleMenu = () => {
                   setIsMenuOpen(!isMenuOpen);
@@ -187,12 +330,14 @@
                 const { data: slotSearchData, refetch } = Digit.Hooks.chb.useChbSlotSearch({
                   tenantId: application?.tenantId,
                   filters: {
-                    bookingId:application?.bookingId,
-                    communityHallCode: application?.communityHallCode,
+                    bookingId: application?.bookingId,
+                    venueCode: application?.venueCode,
                     bookingStartDate: application?.bookingSlotDetails?.[0]?.bookingDate,
                     bookingEndDate: application?.bookingSlotDetails?.[application.bookingSlotDetails.length - 1]?.bookingDate,
-                    hallCode: application?.bookingSlotDetails?.[0]?.hallCode,
-                    isTimerRequired:true
+                    unitCode: application?.bookingSlotDetails?.[0]?.unitCode,
+                    isTimerRequired: true,
+                    fromTime: application?.bookingSlotDetails?.[0]?.bookingFromTime,
+                    toTime: application?.bookingSlotDetails?.[0]?.bookingToTime,
                   },
                   enabled: false, // Disable automatic refetch
                 });
@@ -202,10 +347,8 @@
                   let SlotSearchData={
                     tenantId: application?.tenantId,
                     bookingId:application?.bookingId,
-                    communityHallCode: application?.communityHallCode,
-                    bookingStartDate: application?.bookingSlotDetails?.[0]?.bookingDate,
-                    bookingEndDate: application?.bookingSlotDetails?.[application.bookingSlotDetails.length - 1]?.bookingDate,
-                    hallCode: application?.bookingSlotDetails?.[0]?.hallCode,
+                    venueCode: application?.venueCode,
+                    bookingSlotDetails: application?.bookingSlotDetails,
                     isTimerRequired:true
               
                   }
@@ -216,8 +359,9 @@
                   if (isSlotBooked) {
                     setShowToast({ error: true, label: t("CHB_COMMUNITY_HALL_ALREADY_BOOKED") });
                   } else {
-                    history.push({
-                      pathname: `/upyog-ui/employee/payment/collect/${"chb-services"}/${application?.bookingNo}`,
+                    navigate(
+                      `/upyog-ui/employee/payment/collect/${"chb-services"}/${application?.bookingNo}`,
+                      {
                       state: { tenantId: application?.tenantId, bookingNo: application?.bookingNo,timerValue:result?.data.timerValue ,SlotSearchData:SlotSearchData },
                     });
                   }
@@ -237,42 +381,23 @@
                       />
                       {isMenuOpen && (
                         <div
-                          style={{
-                            position: 'absolute',
-                            backgroundColor: 'white',
-                            border: '1px solid #ccc',
-                            borderRadius: '4px',
-                            padding: '8px',
-                            zIndex: 1000,
-                          }}
+                          className="chb-search-application-container-padding"
                         >
                           {/* Action for Cancel */}
                           {application?.bookingStatus === "BOOKED" && (
                             <div
                               onClick={handleCancel}
-                              style={{
-                                display: 'block',
-                                padding: '8px',
-                                textDecoration: 'none',
-                                color: 'black',
-                                cursor: 'pointer',
-                              }}
+                              className="chb-search-application-clickable"
                             >
                               {t("CHB_CANCEL")}
                             </div>
                           )}
-            
+
                           {/* Action for Collect Payment */}
                           {(application.bookingStatus === "BOOKING_CREATED" || application.bookingStatus === "PAYMENT_FAILED" || application.bookingStatus === "PENDING_FOR_PAYMENT") && (
                             <div
                               onClick={() => handleMakePayment()}
-                              style={{
-                                display: 'block',
-                                padding: '8px',
-                                textDecoration: 'none',
-                                color: 'black',
-                                cursor: 'pointer',
-                              }}
+                              className="chb-search-application-clickable"
                             >
                               {t("CHB_COLLECT_PAYMENT")}
                             </div>
@@ -284,14 +409,10 @@
                 );
               },
             }
-        ]), [] )
-        const statusOptions = [
-          { i18nKey: "Booked", code: "BOOKED", value: t("CHB_BOOKED") },
-          { i18nKey: "Booking in Progress", code: "BOOKING_CREATED", value: t("CHB_BOOKING_IN_PROGRES") },
-          { i18nKey: "Pending For Payment", code: "PENDING_FOR_PAYMENT", value: t("PENDING_FOR_PAYMENT") },
-          { i18nKey: "Booking Expired", code: "EXPIRED", value: t("EXPIRED") },
-          { i18nKey: "Cancelled", code: "CANCELLED", value: t("CANCELLED") }
-        ];
+        ]), [bookingDetails, refundStatus] )
+
+      const statusOptions = getStatusOptions(t);
+
       const onSort = useCallback((args) => {
           if (args.length === 0) return
           setValue("sortBy", args.id)
@@ -307,8 +428,10 @@
           setValue("offset", getValues("offset") + getValues("limit"))
           handleSubmit(onSubmit)()
       }
-      function previousPage () {
-          setValue("offset", getValues("offset") - getValues("limit") )
+     function previousPage () {
+          const currentOffset = getValues("offset");
+          const limit = getValues("limit");
+          setValue("offset", Math.max(0, currentOffset - limit)); // Prevent negative
           handleSubmit(onSubmit)()
       }
       let validation={}
@@ -318,25 +441,60 @@
                   <div>
                   <Header>{t("CHB_SEARCH_BOOKINGS")}</Header>
                   < Card className={"card-search-heading"}>
-                      <span style={{color:"#505A5F"}}>{t("Provide at least one parameter to search for an application")}</span>
+                      <span className="chb-search-application-wrapper">{t("Provide at least one parameter to search for an application")}</span>
                   </Card>
                   <SearchForm onSubmit={onSubmit} handleSubmit={handleSubmit}>
                   <SearchField>
                       <label>{t("CHB_BOOKING_NO")}</label>
-                      <TextInput name="bookingNo" inputRef={register({})} />
+                      <Controller
+                        control={control}
+                        name="bookingNo"
+                        render={({ field }) => (
+                            <TextInput
+                                name={field.name}
+                                value={field.value}
+                                onChange={field.onChange}
+                                onBlur={field.onBlur}
+                                inputRef={field.ref}
+                            />
+                        )}
+                    />
                   </SearchField>
                   <SearchField>
-                      <label>{t("CHB_COMMUNITY_HALL_NAME")}</label>
+                      <label>{t("CHB_VENUE_TYPE_LABEL")}</label>
                       <Controller
                               control={control}
-                              name="communityHallCode"
-                              render={(props) => (
-
+                              name="venueType"
+                              render={({ field }) => (
                                   <Dropdown
-                                  selected={props.value}
-                                  select={props.onChange}
-                                  onBlur={props.onBlur}
-                                  option={menu}
+                                  selected={field.value}
+                                  select={(value) => {
+                                    field.onChange(value);
+                                    setVenueTypes(value);
+                                  }}
+                                  onBlur={field.onBlur}
+                                  option={venues}
+                                  optionKey="i18nKey"
+                                  t={t}
+                                  disable={false}
+                                  />
+                              )}
+                              />
+                  </SearchField>
+                  <SearchField>
+                      <label>{t("CHB_VENUE_NAME_LABEL")}</label>
+                      <Controller
+                              control={control}
+                              name="venueCode"
+                              render={({ field }) => (
+                                  <Dropdown
+                                  selected={field.value}
+                                  select={(value) => {
+                                    field.onChange(value);
+                                    setVenueCode(value);
+                                  }}
+                                  onBlur={field.onBlur}
+                                  option={venuenames}
                                   optionKey="i18nKey"
                                   t={t}
                                   disable={false}
@@ -350,13 +508,13 @@
                       <Controller
                               control={control}
                               name="status"
-                              render={(props) => (
+                              render={({ field }) => (
                                   <Dropdown
-                                  selected={props.value}
-                                  select={props.onChange}
-                                  onBlur={props.onBlur}
+                                  selected={field.value}
+                                  select={field.onChange}
+                                  onBlur={field.onBlur}
                                   option={statusOptions}
-                                  optionKey="i18nKey"
+                                  optionKey="value"
                                   t={t}
                                   disable={false}
                                   />
@@ -366,33 +524,39 @@
                   </SearchField>
                   <SearchField>
                   <label>{t("CHB_MOBILE_NUMBER")}</label>
-                  <MobileNumber
-                      name="mobileNumber"
-                      inputRef={register({
-                      minLength: {
-                          value: 10,
-                          message: t("CORE_COMMON_MOBILE_ERROR"),
-                      },
-                      maxLength: {
-                          value: 10,
-                          message: t("CORE_COMMON_MOBILE_ERROR"),
-                      },
-                      pattern: {
-                      value: /[6789][0-9]{9}/,
-                      //type: "tel",
-                      message: t("CORE_COMMON_MOBILE_ERROR"),
-                      },
-                  })}
-                  type="number"
-                  componentInFront={<div className="employee-card-input employee-card-input--front">+91</div>}
-                  //maxlength={10}
-                  />
+                  <Controller
+                    control={control}
+                    name="mobileNumber"
+                    rules={{
+                        minLength: {
+                            value: 10,
+                            message: t("CORE_COMMON_MOBILE_ERROR"),
+                        },
+                        maxLength: {
+                            value: 10,
+                            message: t("CORE_COMMON_MOBILE_ERROR"),
+                        },
+                        pattern: {
+                            value: /[6789][0-9]{9}/,
+                            message: t("CORE_COMMON_MOBILE_ERROR"),
+                        },
+                    }}
+                    render={({ field }) => (
+                        <MobileNumber
+                            name={field.name}
+                            value={field.value}
+                            onChange={field.onChange}
+                            onBlur={field.onBlur}
+                            inputRef={field.ref}
+                        />
+                    )}
+                />
                   <CardLabelError>{formState?.errors?.["mobileNumber"]?.message}</CardLabelError>
                   </SearchField> 
                   <SearchField>
                       <label>{t("FROM_DATE")}</label>
                       <Controller
-                          render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange}  max={new Date().toISOString().split('T')[0]}/>}
+                          render={({ field }) => <DatePicker date={field.value} disabled={false} onChange={field.onChange}  max={new Date().toISOString().split('T')[0]}/>}
                           name="fromDate"
                           control={control}
                           />
@@ -400,7 +564,7 @@
                   <SearchField>
                       <label>{t("TO_DATE")}</label>
                       <Controller
-                          render={(props) => <DatePicker date={props.value} disabled={false} onChange={props.onChange} />}
+                          render={({ field }) => <DatePicker date={field.value} disabled={false} onChange={field.onChange} />}
                           name="toDate"
                           control={control}
                           />
@@ -408,11 +572,12 @@
                   <SearchField></SearchField>
                   <SearchField className="submit">
                       <SubmitBar label={t("ES_COMMON_SEARCH")} submit />
-                      <p style={{marginTop:"10px"}}
+                      <p className="chb-search-application-top-spacing"
                       onClick={() => {
                           reset({ 
                               bookingNo: "", 
-                              communityHallCode: "",
+                              venueType: "",
+                              venueCode: "",
                               fromDate: "", 
                               toDate: "",
                               mobileNumber:"",
@@ -420,19 +585,21 @@
                               offset: 0,
                               limit: 10,
                               sortBy: "commencementDate",
-                              sortOrder: "DESC"
+                              sortOrder: "DESC",
                           });
                           setShowToast(null);
-                          previousPage();
+                          setVenueTypes(""); // setting local state empty when click on clear
+                          setVenueCode("");  
+                          onClear();
                       }}>{t(`ES_COMMON_CLEAR_ALL`)}</p>
                   </SearchField>
               </SearchForm>
-              {!isLoading && data?.display ? <Card style={{ marginTop: 20 }}>
+              {!isLoading && data?.display ? <Card className="chb-chbdesktop-inbox-card">
                   {
                   t(data.display)
                       .split("\\n")
                       .map((text, index) => (
-                      <p key={index} style={{ textAlign: "center" }}>
+                      <p key={index} className="chb-chbdesktop-inbox-centered">
                           {text}
                       </p>
                       ))
@@ -462,6 +629,42 @@
                   sortParams={[{id: getValues("sortBy"), desc: getValues("sortOrder") === "DESC" ? true : false}]}
               />: data !== "" || isLoading && <Loader/>)}
               </div>
+              {/* Refund status banner for selected cancelled bookings */}
+              {isCancelledBooking && bookingDetails?.bookingNo && (
+                <div className="chb-refund-banner" style={refundStatus ? { backgroundColor: refundStatusColor.bg, borderColor: refundStatusColor.border, color: refundStatusColor.text } : { backgroundColor: "#F8F9FA", borderColor: "#DEE2E6", color: "#6C757D" }}>
+                  <div className="chb-search-application-text-style">
+                    {t("CHB_REFUND_STATUS_FOR") || "Refund Status for"}{" "}
+                    <span className="chb-search-application-text-style-2">{bookingDetails.bookingNo}</span>
+                  </div>
+                  <div className="chb-search-application-flex-row">
+                    {refund?.refundId && (
+                      <span className="chb-search-application-text-style-3">
+                        <strong>{t("CHB_REFUND_ID") || "Refund ID"}:</strong>{" "}{refund.refundId}
+                      </span>
+                    )}
+                    {refund?.refundAmount && (
+                      <span className="chb-search-application-text-style-3">
+                        <strong>{t("CHB_REFUND_AMOUNT") || "Amount"}:</strong>{" "}₹{refund.refundAmount}
+                      </span>
+                    )}
+                    <span className="chb-refund-tag" style={refundStatus ? { backgroundColor: refundStatusColor.border, color: refundStatusColor.text } : { backgroundColor: "#DEE2E6", color: "#6C757D" }}>
+                      {refundStatus
+                        ? `${t("CHB_REFUND_STATUS") || "Refund Status"}: ${refundStatus}`
+                        : isOnlinePayment
+                        ? t("CHB_REFUND_NOT_INITIATED") || "No refund initiated yet"
+                        : t("CHB_OFFLINE_PAYMENT_NO_REFUND") || "Offline payment — no online refund applicable"}
+                    </span>
+                    <span
+                      onClick={() => setBookingDetails("")}
+                      className="chb-search-application-clickable-2"
+                      title="Dismiss"
+                    >
+                      ✕
+                    </span>
+                  </div>
+                </div>
+              )}
+
               {showModal && <CHBCancelBooking 
                 t={t}
                 //surveyTitle={surveyData.title}
@@ -471,6 +674,7 @@
                 actionSaveLabel={"CHB_CANCEL"}
                 actionSaveOnSubmit={handleCancelBooking}   
                 onSubmit={handleCancelBooking} 
+                paymentMode={paymentMode}
                 >
             </CHBCancelBooking> }
           </React.Fragment>

@@ -1,7 +1,8 @@
-import { Loader, Modal, FormComposer, Toast } from "@upyog/digit-ui-react-components";
+import { Loader, Modal, FormComposer, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
-import { useQueryClient } from "react-query";
-import { UploadPitPhoto } from "@upyog/digit-ui-react-components";
+
+import { useQueryClient } from "@tanstack/react-query";
+import { UploadPitPhoto } from "@nudmcdgnpm/digit-ui-react-components";
 
 import { configAssignDso, configCompleteApplication, configReassignDSO, configAcceptDso, configRejectApplication, configScheduleDso, configUpdateTrips, configRejectFstpo } from "../config";
 
@@ -40,6 +41,7 @@ const popupActionBarStyles = {
 }
 
 const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData, module, applicationDetails }) => {
+  const navigate = Digit.Hooks.useCustomNavigate();
   const mobileView = Digit.Utils.browser.isMobile() ? true : false;
   const { data: dsoData, isLoading: isDsoLoading, isSuccess: isDsoSuccess, error: dsoError } = Digit.Hooks.fsm.useDsoSearch(tenantId, { limit: '-1', status: 'ACTIVE' });
   const { isLoading, isSuccess, isError, data: applicationData, error } = Digit.Hooks.fsm.useSearch(
@@ -522,7 +524,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         return setConfig(configCompleteApplication({ t, vehicle, vehicleCapacity: applicationData?.vehicleCapacity, noOfTrips: applicationData?.noOfTrips, applicationCreatedTime: applicationData?.auditDetails?.createdTime, action, module }));
       case "SUBMIT":
       case "FSM_SUBMIT":
-        return history.push("/upyog-ui/employee/fsm/modify-application/" + applicationNumber);
+        return navigate("/upyog-ui/employee/fsm/modify-application/" + applicationNumber);
       case "DECLINE":
       case "DSO_REJECT":
         //declinereason
@@ -582,7 +584,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       case "PAY":
       case "ADDITIONAL_PAY_REQUEST":
       case "FSM_PAY":
-        return history.push(`/upyog-ui/employee/payment/collect/FSM.TRIP_CHARGES/${applicationNumber}`);
+        return navigate(`/upyog-ui/employee/payment/collect/FSM.TRIP_CHARGES/${applicationNumber}`);
       case "DECLINEVEHICLE":
         setFormValve(fstpoRejectionReason ? true : false);
         return setConfig(

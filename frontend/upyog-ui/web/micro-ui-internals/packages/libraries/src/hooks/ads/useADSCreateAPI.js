@@ -1,20 +1,13 @@
-import {useMutation } from "react-query";
+import { mutationTemplate } from "../../common/mutationTemplate";
+import { ADSServices } from "../../services/elements/ADS";
 
-import { ADSServices } from "../../services/elements/ADS"
-
-
-// Custom hook for creating or updating ADS resources using react-query
 export const useADSCreateAPI = (tenantId, type = true) => {
-    // Return mutation for create or update based on the 'type' parameter
-  if (type) {
-   
-    return useMutation((data) => 
-      ADSServices.create(data, tenantId));
-    
-  } 
-    // If type is false, return mutation for update
-    return useMutation((data) => ADSServices.update(data, tenantId));
+  const mutationFn = (data) =>
+    type
+      ? ADSServices.create(data, tenantId)
+      : ADSServices.update(data, tenantId);
 
+  return mutationTemplate({ mutationFn });
 };
 
 export default useADSCreateAPI;

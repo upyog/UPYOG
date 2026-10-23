@@ -1,6 +1,6 @@
-import { AppContainer, Card, CardCaption, Header, Loader, PrevIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { AppContainer, Card, CardCaption, Header, Loader, PrevIcon } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Searchbar from "../../../components/Documents/Searchbar";
 import { useDebounce } from "../../../hooks/useDebounce";
 import { renderDocsList } from "./DocumentList";
@@ -22,7 +22,9 @@ const Accordion = ({ t, title, count, onClick, children }) => {
 };
 
 const DocumentCategories = ({ t, parentRoute }) => {
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const location = useLocation();
+
   const [searchValue, setSearchValue] = useState("");
   const tenantIds = Digit.ULBService.getCitizenCurrentTenant();
 
@@ -50,12 +52,13 @@ const DocumentCategories = ({ t, parentRoute }) => {
     }
   );
 
-  if (!Digit.UserService?.getUser()?.access_token) {
-    return <Redirect to={{ pathname: `/sv-ui/citizen/login`, state: { from: location.pathname + location.search } }} />;
-  }
+ if (!Digit.UserService?.getUser()?.access_token) {
+  navigate("/sv-ui/citizen/login", { state: { from: location.pathname + location.search },replace: true });
+  return null;
+}
 
   const showDocuments = (category, count) => {
-    history.push(`documents/list/${category}/${count}`);
+    navigate(`documents/list/${category}/${count}`);
   };
 
   const handleKeyPress = (event) => {

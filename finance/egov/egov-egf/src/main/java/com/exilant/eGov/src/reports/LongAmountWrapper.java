@@ -47,7 +47,11 @@
  */
 package com.exilant.eGov.src.reports;
 
-import org.displaytag.decorator.ColumnDecorator;
+import org.displaytag.decorator.DisplaytagColumnDecorator;
+import org.displaytag.exception.DecoratorException;
+import org.displaytag.properties.MediaTypeEnum;
+
+import jakarta.servlet.jsp.PageContext;
 
 import java.text.DecimalFormat;
 
@@ -55,18 +59,16 @@ import java.text.DecimalFormat;
  * Simple column decorator which formats a Amount.
  * @author Sumit
  */
-public class LongAmountWrapper implements ColumnDecorator
+public class LongAmountWrapper implements DisplaytagColumnDecorator
 {
-
     private final DecimalFormat moneyFormat = new DecimalFormat("#,###,###.00");
 
     @Override
-    public final String decorate(final Object columnValue)
+    public final Object decorate(final Object columnValue, final PageContext pageContext, final MediaTypeEnum media)
+            throws DecoratorException
     {
         // if(LOGGER.isDebugEnabled()) LOGGER.debug("columnValue:"+columnValue);
-
         final String colVal = "" + columnValue;
-
         if (colVal.equals("0.0"))
             return "";
         else

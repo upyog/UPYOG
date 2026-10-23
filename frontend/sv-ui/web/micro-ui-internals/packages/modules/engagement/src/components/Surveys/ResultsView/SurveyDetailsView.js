@@ -1,9 +1,9 @@
-import { TextInput, Dropdown, RemoveableTag, LinkButton,LinkLabel, SearchField,SubmitBar } from '@nudmcdgnpm/digit-ui-react-components'
+import { TextInput, Dropdown, RemoveableTag, LinkButton,LinkLabel, SearchField,SubmitBar } from "@nudmcdgnpm/upyog-ui-react-components-lts"
 import React,{useMemo} from 'react'
-import { useHistory, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const SurveyDetailsView = ({surveyTitle,surveyDesc,t,surveyId}) => {
-    const history = useHistory()
+    const navigate = Digit.Hooks.useCustomNavigate();
     const ulbs = Digit.SessionStorage.get("ENGAGEMENT_TENANTS");
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const userInfo = Digit.UserService.getUser().info;
@@ -40,7 +40,7 @@ const SurveyDetailsView = ({surveyTitle,surveyDesc,t,surveyId}) => {
         >
           <header style={{ color:"#a82227"}}>{t("SURVEY_QUESTIONS")}</header>
         </button> */}
-        <LinkLabel  onClick={() => history.push(`/sv-ui/employee/engagement/surveys/inbox/details/${surveyTitle}`)}>
+        <LinkLabel  onClick={() => navigate(`/sv-ui/employee/engagement/surveys/inbox/details/${surveyTitle}`)}>
         {t("VIEW_SURVEY_QUESTIONS")}
         </LinkLabel>
         

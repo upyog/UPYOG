@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -19,11 +18,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ServiceRequestRepository {
 
-	@Autowired
-	private RestTemplate restTemplate;
+	private final RestTemplate restTemplate;
+	private final ObjectMapper mapper;
 
-	@Autowired
-	private ObjectMapper mapper;
+	public ServiceRequestRepository(RestTemplate restTemplate, ObjectMapper mapper) {
+		this.restTemplate = restTemplate;
+		this.mapper = mapper;
+	}
 
 	/**
 	 * Fetches results from a REST service using the uri and object

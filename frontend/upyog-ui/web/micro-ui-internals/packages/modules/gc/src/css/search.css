@@ -1,0 +1,70 @@
+.search-container.gc-search-container {
+  width: auto !important;
+}
+
+.search-container.gc-search-container.is-inbox {
+  margin-left: 24px !important;
+}
+
+.complaint-input-container.for-pt.gc-inbox-input-container {
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+  gap: 20px !important;
+  align-items: start !important;
+}
+
+.complaint-input-container.for-pt.gc-inbox-input-container.is-inbox {
+  grid-template-columns: 1fr 1fr 1fr !important;
+}
+
+.complaint-input-container.for-pt .search-submit-wrapper.gc-search-submit-wrapper {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  margin-top: 56px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+}
+
+.complaint-input-container.for-pt .search-submit-wrapper.gc-search-submit-wrapper.is-inbox {
+  grid-column: 3 / 4 !important;
+  grid-row: 1 !important;
+}
+
+.complaint-input-container.for-pt .search-submit-wrapper.gc-search-submit-wrapper .submit-bar-search {
+  width: 90% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  margin-top: 3px !important;
+  margin-bottom: 0 !important;
+}
+
+.complaint-input-container.for-pt .search-submit-wrapper.gc-search-submit-wrapper .clear-search {
+  margin-top: 8px !important;
+  text-align: center !important;
+  cursor: pointer !important;
+}
+
+.gc-inbox-search-form-error {
+  font-weight: 700 !important;
+  color: rgba(212, 53, 28) !important;
+  padding-left: 8px !important;
+  margin-top: -20px !important;
+  font-size: 12px !important;
+}
+
+.gc-clear-search-link,
+.complaint-input-container.for-pt .search-submit-wrapper.gc-search-submit-wrapper .clear-search .link-label {
+  text-decoration: none !important;
+  border-bottom: none !important;
+  display: inline !important;
+  margin: 0 !important;
+}
+
+.gc-clear-search-link.mobile-view {
+  margin: 0 !important;
+}
+

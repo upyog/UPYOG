@@ -1,4 +1,5 @@
-import { useQuery, useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 
 /**
  * useChbSearch Hook
@@ -21,24 +22,45 @@ import { useQuery, useQueryClient } from "react-query";
  *    - `refetch`: Function to manually refetch the data.
  *    - `revalidate`: Function to invalidate and refetch the query.
  */
-const useChbSearch = ({ tenantId, filters, auth,searchedFrom="" }, config = {}) => {
+const useChbSearch = (
+  { tenantId, filters, auth },
+  config = {}
+) => {
   const client = useQueryClient();
 
-  const args = tenantId ? { tenantId, filters, auth } : { filters, auth };
+  const args = tenantId
+    ? { tenantId, filters, auth }
+    : { filters, auth };
 
-  const defaultSelect = (data) => {
-    if(data.hallsBookingApplication.length > 0)  data.hallsBookingApplication[0].applicationNo = data.hallsBookingApplication[0].applicationNo || [];
-      
+  const queryKey = [
+    "CHB_SEARCH",
+    tenantId,
+    JSON.stringify(filters),
+    auth,
+  ];
+
+  const queryFn = () => Digit.CHBServices.search(args);
+
+  const select = (data) => {
+    if (data?.hallsBookingApplication?.length > 0) {
+      data.hallsBookingApplication[0].applicationNo =
+        data.hallsBookingApplication[0].applicationNo || [];
+    }
     return data;
   };
 
-  const { isLoading, error, data, isSuccess,refetch } = useQuery(["chbSearchList", tenantId, filters, auth, config], () => Digit.CHBServices.search(args), {
-    
-    select: defaultSelect,
-    ...config,
+  const query = queryTemplate({
+    queryKey,
+    queryFn,
+    select,
+    config,
   });
 
-  return { isLoading, error, data, isSuccess,refetch, revalidate: () => client.invalidateQueries(["chbSearchList", tenantId, filters, auth]) };
+  return {
+    ...query,
+    revalidate: () =>
+      client.invalidateQueries({ queryKey }),
+  };
 };
 
 export default useChbSearch;

@@ -1,4 +1,4 @@
-import { ActionLinks, CardSectionHeader, CheckPoint, CloseSvg, ConnectingCheckPoints, Loader, SubmitBar } from "@upyog/digit-ui-react-components";
+import { ActionLinks, CardSectionHeader, CheckPoint, CloseSvg, ConnectingCheckPoints, Loader, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -50,6 +50,9 @@ const CHBWFApplicationTimeline = (props) => {
     tenantId: props.application?.tenantId,
     id: props.application?.bookingNo,
     moduleCode: businessService,
+    config: {
+      enabled: !!(props.application?.tenantId && props.application?.bookingNo),
+    },
   });
 
 
@@ -99,7 +102,7 @@ const CHBWFApplicationTimeline = (props) => {
       {!isLoading && (
         <Fragment>
           {data?.timeline?.length > 0 && (
-            <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
+            <CardSectionHeader className="chb-chbwfapplication-timeline-header">
               {t("CS_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
             </CardSectionHeader>
           )}

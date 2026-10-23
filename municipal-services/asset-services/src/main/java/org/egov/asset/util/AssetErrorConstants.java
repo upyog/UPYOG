@@ -2,6 +2,9 @@ package org.egov.asset.util;
 
 public class AssetErrorConstants {
 
+    private AssetErrorConstants() {
+    }
+
     //Constants For ERROR
     public static final String BPA_UNKNOWN_DOCS = "BPA UNKNOWN DOCS";
     public static final String BPA_UNKNOWN_DOCS_MSG = "Please upload required Documents";

@@ -1,8 +1,8 @@
-import { useMutation } from "react-query";
+import { mutationTemplate } from "../../common/mutationTemplate";
 import ApplicationUpdateActionsBillAmendUpdate from "../../services/molecules/WS/ApplicationUpdateActionsBillAmendUpdate";
 
 const useApplicationActionsBillAmendUpdate = () => {
-    return useMutation((applicationData) => ApplicationUpdateActionsBillAmendUpdate(applicationData));
+    return mutationTemplate({ mutationFn: (applicationData) => ApplicationUpdateActionsBillAmendUpdate(applicationData) });
 };
 
 export default useApplicationActionsBillAmendUpdate;

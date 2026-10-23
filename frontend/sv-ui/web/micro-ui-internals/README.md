@@ -1,30 +1,80 @@
 # micro-ui-internals
 
-UPYOG (Urban Platform for deliverY of Online Governance) is India's largest platform for governance services. Visit [UPYOG documentation portal](https://upyog-docs.gitbook.io/upyog-v-1.0/) for more details.
+This folder contains all the internal packages that make up the SV-UI frontend — modules, libraries, shared components, and styles.
 
-This repository contains source code for web implementation of the UPYOG UI modules with dependencies and libraries.
+UPYOG (Urban Platform for deliverY of Online Governance) is India's largest platform for governance services.
+Visit the [UPYOG documentation portal](https://upyog-docs.gitbook.io/upyog-v-1.0/) for more details.
 
-#### Starting local server
+---
 
-1. In the project run **yarn install** in the directory web and then web/micro-ui-internals to install node modules and dependencies
-2. Come to the directory - web/micro-ui-internals and Run **yarn start:dev** to start the local server 
-                        |
+## Folder Structure
 
-###### Dependencies and their references
+```
+micro-ui-internals/
+├── packages/
+│   ├── modules/
+│   │   ├── core/          # App shell — routing, auth, layout
+│   │   ├── common/        # Shared flows — payment, common components
+│   │   ├── sv/            # Street Vending module
+│   │   └── engagement/    # Events, notifications, surveys
+│   ├── libraries/         # Shared hooks, services, and API utilities
+│   ├── react-components/  # Shared UI component library (LTS)
+│   └── css/               # Global styles — built with Vite + PostCSS
+├── example/               # Local dev app for testing packages in isolation
+└── workspace-aliases.js   # Maps package names to local source for HMR
+```
 
-1. https://www.npmjs.com/package/react-query
-2. https://react-redux.js.org/
-3. https://react-hook-form.com/
-4. https://www.npmjs.com/package/react-table
-5. https://www.npmjs.com/package/react-time-picker
-6. https://reactrouter.com/web/guides/quick-start
-7. https://recharts.org/
+---
 
-#### License
+## Getting Started
 
-UPYOG Source Code is open sources under License [UPYOG CODE, COPYRIGHT AND CONTRIBUTION LICENSE TERMS](https://upyog.niua.org/employee/Upyog%20Code%20and%20Copyright%20License_v1.pdf)
+### 1. Install dependencies
 
+```bash
+# From the web/ directory
+yarn install
 
-## Maintainer
+# Then from micro-ui-internals/
+cd micro-ui-internals
+yarn install
+```
 
-- [Shivank-NIUA](https://github.com/ShivankShuklaa)
+### 2. Start the local dev server
+
+```bash
+cd micro-ui-internals
+yarn start
+```
+
+This starts the example app with live workspace aliases — changes to any package source are reflected immediately without rebuilding.
+
+### 3. Build all packages
+
+```bash
+cd micro-ui-internals
+yarn build
+```
+
+Each package builds independently using Vite in library mode and outputs to its own `dist/` folder.
+
+---
+
+## Key Dependencies
+
+| Package | Purpose |
+|---|---|
+| react / react-dom | UI framework |
+| react-router-dom | Client-side routing |
+| react-redux / redux | State management |
+| @tanstack/react-query | Server state and data fetching |
+| react-hook-form | Form handling |
+| react-i18next / i18next | Translations and localization |
+| react-table | Table rendering |
+| react-time-picker | Time input component |
+| recharts | Charts and data visualization |
+
+---
+
+## License
+
+UPYOG Source Code is open source under the [UPYOG Code, Copyright and Contribution License](https://upyog.niua.org/employee/Upyog%20Code%20and%20Copyright%20License_v1.pdf).

@@ -16,7 +16,6 @@ import { MdmsServiceV2 } from "../services/elements/MDMSV2";
  */
 const mdmsV2Modules = [
   'Advertisement',
-  'CHB',
   'PetService',
   'Ewaste'
 ];

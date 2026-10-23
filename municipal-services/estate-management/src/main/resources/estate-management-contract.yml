@@ -1,0 +1,289 @@
+swagger: 2.0
+info:
+  version: 1.0.0
+  title: EstateManagement Service
+  description: |
+    This service provides APIs for the estate-management module in the UPYOG platform.
+  contact:
+    name: UPYOG NUDM Team
+    email: "cdg-contact@niua.org"
+schemes:
+  - https
+basePath: /estate-management
+x-api-id: org.egov.estate.management
+x-common-path: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml"
+paths:
+  /estate/advancePayment:
+    post:
+      summary: Triggerscheduler
+      description: Triggerscheduler for estate-management. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Triggerscheduler completed successfully
+          schema:
+            $ref: "#/definitions/PaymentResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Estate
+      parameters:
+        - name: PaymentResponse
+          in: body
+          description: Request payload with RequestInfo and domain data for triggerscheduler
+          required: True
+          schema:
+            $ref: "#/definitions/PaymentResponse"
+  /estate/allotment/v1/_create:
+    post:
+      summary: Create estate allotment v1
+      description: Create estate allotment v1 for estate-management. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        201:
+          description: Create estate allotment v1 completed successfully
+          schema:
+            $ref: "#/definitions/AllotmentResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Estate
+      parameters:
+        - name: AllotmentResponse
+          in: body
+          description: Request payload with RequestInfo and domain data for create estate allotment v1
+          required: True
+          schema:
+            $ref: "#/definitions/AllotmentResponse"
+  /estate/allotment/v1/_search:
+    post:
+      summary: Search estate allotment v1
+      description: Search estate allotment v1 for estate-management. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search estate allotment v1 completed successfully
+          schema:
+            $ref: "#/definitions/AllotmentResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Estate
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/AllotmentResponse"
+  /estate/asset/v1/_create:
+    post:
+      summary: Create estate asset v1
+      description: Create estate asset v1 for estate-management. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        201:
+          description: Create estate asset v1 completed successfully
+          schema:
+            $ref: "#/definitions/AssetResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Estate
+      parameters:
+        - name: AssetResponse
+          in: body
+          description: Request payload with RequestInfo and domain data for create estate asset v1
+          required: True
+          schema:
+            $ref: "#/definitions/AssetResponse"
+  /estate/asset/v1/_search:
+    post:
+      summary: Search estate asset v1
+      description: Search estate asset v1 for estate-management. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Search estate asset v1 completed successfully
+          schema:
+            $ref: "#/definitions/AssetResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Estate
+      parameters:
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/requestInfo"
+        - $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/parameters/tenantId"
+        - name: tenantId
+          in: query
+          description: Unique identifier of ULB
+          type: string
+          required: False
+        - name: ids
+          in: query
+          type: array
+          items:
+            type: string
+          maxItems: 50
+          description: Unique identifiers to search
+          required: False
+        - name: RequestInfoWrapper
+          in: body
+          description: RequestInfo metadata and search criteria
+          required: True
+          schema:
+            $ref: "#/definitions/AssetResponse"
+  /estate/asset/v1/_update:
+    post:
+      summary: Update estate asset v1
+      description: Update estate asset v1 for estate-management. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        201:
+          description: Update estate asset v1 completed successfully
+          schema:
+            $ref: "#/definitions/AssetResponse"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Estate
+      parameters:
+        - name: AssetResponse
+          in: body
+          description: Request payload with RequestInfo and domain data for update estate asset v1
+          required: True
+          schema:
+            $ref: "#/definitions/AssetResponse"
+  /estate/scheduler/v1/_trigger:
+    post:
+      summary: Triggerscheduler
+      description: Triggerscheduler for estate-management. Follows DIGIT API conventions with RequestInfo in body and ResponseInfo in response.
+      responses:
+        200:
+          description: Triggerscheduler completed successfully
+          schema:
+            $ref: "#/definitions/String"
+        400:
+          description: Invalid input
+          schema:
+            $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ErrorRes"
+      tags:
+        - Estate
+      parameters:
+        - name: String
+          in: body
+          description: Request payload with RequestInfo and domain data for triggerscheduler
+          required: True
+          schema:
+            $ref: "#/definitions/String"
+definitions:
+  AllotmentResponse:
+    type: object
+    description: Request/Response contract for AllotmentResponse
+    properties:
+      RequestInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo"
+      ResponseInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo"
+      EstateManagementApplications:
+        type: array
+        description: Domain application objects
+        items:
+          $ref: "#/definitions/EstateManagementApplication"
+  PaymentResponse:
+    type: object
+    description: Request/Response contract for PaymentResponse
+    properties:
+      RequestInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo"
+      ResponseInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo"
+      EstateManagementApplications:
+        type: array
+        description: Domain application objects
+        items:
+          $ref: "#/definitions/EstateManagementApplication"
+  String:
+    type: object
+    description: Request/Response contract for String
+    properties:
+      RequestInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo"
+      ResponseInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo"
+      EstateManagementApplications:
+        type: array
+        description: Domain application objects
+        items:
+          $ref: "#/definitions/EstateManagementApplication"
+  AssetResponse:
+    type: object
+    description: Request/Response contract for AssetResponse
+    properties:
+      RequestInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/RequestInfo"
+      ResponseInfo:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/ResponseInfo"
+      EstateManagementApplications:
+        type: array
+        description: Domain application objects
+        items:
+          $ref: "#/definitions/EstateManagementApplication"
+  EstateManagementApplication:
+    type: object
+    description: A domain application object for estate-management
+    properties:
+      id:
+        type: string
+        description: Unique identifier (UUID)
+        readOnly: true
+      tenantId:
+        type: string
+        description: Unique identifier of ULB
+        maxLength: 128
+        minLength: 2
+      applicationNumber:
+        type: string
+        description: Unique application number
+        readOnly: true
+      status:
+        type: string
+        description: Application status
+      auditDetails:
+        $ref: "https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-1-1.yml#/definitions/AuditDetails"
+    required:
+      - tenantId
+  Workflow:
+    type: object
+    description: Fields related to workflow service
+    properties:
+      action:
+        type: string
+        description: Action on the application
+      status:
+        type: string
+        description: Status of the application
+      comments:
+        type: string
+        description: Comments for the action

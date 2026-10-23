@@ -1,7 +1,7 @@
-import { Card, CardSubHeader, Header, KeyNote, Loader, RadioButtons, SubmitBar, TextInput } from "@upyog/digit-ui-react-components";
+import { Card, CardSubHeader, Header, KeyNote, Loader, RadioButtons, SubmitBar, TextInput } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useLocation, useParams, Redirect } from "react-router-dom";
+import { useLocation, useParams,  Navigate } from "react-router-dom";
 import ArrearSummary from "./arrear-summary";
 import BillSumary from "./bill-summary";
 import { stringReplaceAll } from "./utils";
@@ -10,7 +10,7 @@ import { timerEnabledForBusinessService } from "./utils";
 
 const BillDetails = ({ paymentRules, businessService }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { state, pathname, search } = useLocation();
   const userInfo = Digit.UserService.getUser();
   let { consumerCode } = useParams();
@@ -147,43 +147,54 @@ const BillDetails = ({ paymentRules, businessService }) => {
   const onSubmit = () => {
     let paymentAmount =
       paymentType === t("CS_PAYMENT_FULL_AMOUNT")
-        ? businessService === "FSM.TRIP_CHARGES"?application?.pdfData?.advanceAmount:getTotal()
+        ? businessService === "FSM.TRIP_CHARGES" ? application?.pdfData?.advanceAmount : getTotal()
         : amount || businessService === "FSM.TRIP_CHARGES"
         ? application?.pdfData?.advanceAmount
         : amount;
     if (window.location.href.includes("mcollect")) {
-      history.push(`/upyog-ui/citizen/payment/collect/${businessService}/${consumerCode}?workflow=mcollect`, {
-        paymentAmount,
-        tenantId: billDetails.tenantId,
+      navigate(`/upyog-ui/citizen/payment/collect/${businessService}/${consumerCode}?workflow=mcollect`, {
+        state:{
+            paymentAmount,
+            tenantId: billDetails.tenantId
+        }
       });
     } else if (wrkflow === "WNS") {
-      history.push(`/upyog-ui/citizen/payment/billDetails/${businessService}/${consumerCode}/${paymentAmount}?workflow=WNS&ConsumerName=${ConsumerName}`, {
-        paymentAmount,
-        tenantId: billDetails.tenantId,
-        name: bill.payerName,
-        mobileNumber: bill.mobileNumber && bill.mobileNumber?.includes("*") ? userData?.user?.[0]?.mobileNumber : bill.mobileNumber,
+      navigate(`/upyog-ui/citizen/payment/billDetails/${businessService}/${consumerCode}/${paymentAmount}?workflow=WNS&ConsumerName=${ConsumerName}`, {
+        state: {
+          paymentAmount,
+          tenantId: billDetails.tenantId,
+          name: bill.payerName,
+          mobileNumber: bill.mobileNumber && bill.mobileNumber?.includes("*") ? userData?.user?.[0]?.mobileNumber : bill.mobileNumber,
+        }
       });
     } else if (businessService === "PT") {
-      history.push(`/upyog-ui/citizen/payment/billDetails/${businessService}/${consumerCode}/${paymentAmount}`, {
+      navigate(`/upyog-ui/citizen/payment/billDetails/${businessService}/${consumerCode}/${paymentAmount}`, {
+        state: {
+          paymentAmount,
+          tenantId: billDetails.tenantId,
+          name: bill.payerName,
+          mobileNumber: bill.mobileNumber && bill.mobileNumber?.includes("*") ? userData?.user?.[0]?.mobileNumber : bill.mobileNumber,
+        }
+      });
+    }
+    else if (timerEnabledForBusinessService(businessService)) {
+      navigate(`/upyog-ui/citizen/payment/collect/${businessService}/${consumerCode}`, {
+        state: {
         paymentAmount,
         tenantId: billDetails.tenantId,
-        name: bill.payerName,
-        mobileNumber: bill.mobileNumber && bill.mobileNumber?.includes("*") ? userData?.user?.[0]?.mobileNumber : bill.mobileNumber,      });
-    } 
-    else if (timerEnabledForBusinessService(businessService)) {
-      history.push(`/upyog-ui/citizen/payment/collect/${businessService}/${consumerCode}`, {
-        paymentAmount, 
-        tenantId: billDetails.tenantId, 
-        propertyId: propertyId ,
-        timerValue:state?.timerValue,
-        SlotSearchData:state?.SlotSearchData,
+        propertyId: propertyId,
+        timerValue: state?.timerValue,
+        SlotSearchData: state?.SlotSearchData
+        }
       });
-      } 
+    }
     else {
-      history.push(`/upyog-ui/citizen/payment/collect/${businessService}/${consumerCode}`, { paymentAmount, tenantId: billDetails.tenantId, propertyId: propertyId });
+      navigate(`/upyog-ui/citizen/payment/collect/${businessService}/${consumerCode}`, { 
+       state : {paymentAmount, tenantId: billDetails.tenantId, propertyId: propertyId}
+       });
     }
   };
-  
+
   const onChangeAmount = (value) => {
     setError("");
     if (isNaN(value) || value.includes(".")) {
@@ -199,97 +210,155 @@ const BillDetails = ({ paymentRules, businessService }) => {
   if (isLoading || isFSMLoading) return <Loader />;
 
   return (
-    <React.Fragment>
-      <Header>{t("CS_PAYMENT_BILL_DETAILS")}</Header>
-      <Card>
-        <div>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <KeyNote
-            keyValue={t(businessService == "PT.MUTATION" ? "PDF_STATIC_LABEL_MUATATION_NUMBER_LABEL" : label)}
-            note={wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode}
-          />
-          {timerEnabledForBusinessService(businessService) && (
-            <CardSubHeader 
-              style={{ 
-                textAlign: 'right', 
-                fontSize: "24px"
-              }}
-            >
-            <TimerServices businessService={businessService} setTime={setTime} timerValues={state?.timerValue} t={t} SlotSearchData={state?.SlotSearchData}/>
-            </CardSubHeader>
-          )}
+    <div className="cmn-bill-details-container">
+      <div className="cmn-bill-details-header-wrap">
+        <h1 className="cmn-bill-details-page-title">{t("CS_PAYMENT_BILL_DETAILS")}</h1>
+      </div>
+
+      <div className="cmn-bill-details-card">
+        {/* Top Hero Row */}
+        <div className="cmn-bill-hero-section">
+          <div className="cmn-bill-consumer-block">
+            <span className="cmn-bill-consumer-label">
+              {t(businessService === "PT.MUTATION" ? "PDF_STATIC_LABEL_MUATATION_NUMBER_LABEL" : label)}
+            </span>
+            <span className="cmn-bill-consumer-value">
+              {wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode}
+            </span>
           </div>
-          {businessService !== "PT.MUTATION" && businessService !== "FSM.TRIP_CHARGES" && !skipBillingAndArrears.includes(businessService) && (
-            <KeyNote keyValue={t("CS_PAYMENT_BILLING_PERIOD")} note={getBillingPeriod()} />
-          )}
-          {businessService?.includes("PT") ||
-            (wrkflow === "WNS" && billDetails?.currentBillNo && <KeyNote keyValue={t("CS_BILL_NO")} note={billDetails?.currentBillNo} />)}
-          {businessService?.includes("PT") ||
-            (wrkflow === "WNS" && billDetails?.currentExpiryDate && (
-              <KeyNote keyValue={t("CS_BILL_DUEDATE")} note={new Date(billDetails?.currentExpiryDate).toLocaleDateString()} />
-            ))}
-          {businessService === "FSM.TRIP_CHARGES" ? (
-            <div>
-              <KeyNote keyValue={t("ES_PAYMENT_DETAILS_TOTAL_AMOUNT")} note={application?.pdfData?.totalAmount} />
-              <KeyNote keyValue={t("ES_PAYMENT_DETAILS_ADV_AMOUNT")} note={application?.pdfData?.advanceAmount} />
-              {application?.pdfData?.applicationStatus !== "PENDING_APPL_FEE_PAYMENT_CITIZEN" || application?.pdfData?.applicationStatus !== "PENDING_APPL_FEE_PAYMENT" ? (
-                <KeyNote keyValue={t("FSM_DUE_AMOUNT_TO_BE_PAID")} note={application?.pdfData?.totalAmount-application?.pdfData?.advanceAmount} />
-              ) : null}
+
+          {timerEnabledForBusinessService(businessService) && (
+            <div className="cmn-bill-timer-badge">
+              <TimerServices
+                businessService={businessService}
+                setTime={setTime}
+                timerValues={state?.timerValue}
+                t={t}
+                SlotSearchData={state?.SlotSearchData}
+              />
             </div>
-          ) : (
-            <BillSumary billAccountDetails={getBillBreakDown()} total={getTotal()} businessService={businessService} arrears={Arrears} skipArrears={skipBillingAndArrears}/>
           )}
-          <ArrearSummary bill={bill} />
         </div>
 
-        <div className="bill-payment-amount">
-          <hr className="underline" />
-          <CardSubHeader>{t("CS_COMMON_PAYMENT_AMOUNT")}</CardSubHeader>
+        {/* Bill Meta Grid: Period, Bill Number, Due Date */}
+        <div className="cmn-bill-meta-grid">
+          {businessService !== "PT.MUTATION" && businessService !== "FSM.TRIP_CHARGES" && !skipBillingAndArrears.includes(businessService) && (
+            <div className="cmn-bill-meta-card">
+              <span className="cmn-bill-meta-label">{t("CS_PAYMENT_BILLING_PERIOD")}</span>
+              <span className="cmn-bill-meta-val">{getBillingPeriod()}</span>
+            </div>
+          )}
+          {(businessService?.includes("PT") || (wrkflow === "WNS" && billDetails?.currentBillNo)) && (
+            <div className="cmn-bill-meta-card">
+              <span className="cmn-bill-meta-label">{t("CS_BILL_NO")}</span>
+              <span className="cmn-bill-meta-val">{billDetails?.currentBillNo || "N/A"}</span>
+            </div>
+          )}
+          {(businessService?.includes("PT") || (wrkflow === "WNS" && billDetails?.currentExpiryDate)) && (
+            <div className="cmn-bill-meta-card">
+              <span className="cmn-bill-meta-label">{t("CS_BILL_DUEDATE")}</span>
+              <span className="cmn-bill-meta-val">
+                {billDetails?.currentExpiryDate ? new Date(billDetails.currentExpiryDate).toLocaleDateString() : "N/A"}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Bill Breakdown / FSM Trip Details */}
+        {businessService === "FSM.TRIP_CHARGES" ? (
+          <div className="cmn-fsm-bill-summary">
+            <div className="cmn-fsm-row">
+              <span className="fsm-label">{t("ES_PAYMENT_DETAILS_TOTAL_AMOUNT")}</span>
+              <span className="fsm-val">₹ {application?.pdfData?.totalAmount}</span>
+            </div>
+            <div className="cmn-fsm-row">
+              <span className="fsm-label">{t("ES_PAYMENT_DETAILS_ADV_AMOUNT")}</span>
+              <span className="fsm-val">₹ {application?.pdfData?.advanceAmount}</span>
+            </div>
+            {application?.pdfData?.applicationStatus !== "PENDING_APPL_FEE_PAYMENT_CITIZEN" ||
+            application?.pdfData?.applicationStatus !== "PENDING_APPL_FEE_PAYMENT" ? (
+              <div className="cmn-fsm-row">
+                <span className="fsm-label">{t("FSM_DUE_AMOUNT_TO_BE_PAID")}</span>
+                <span className="fsm-val">
+                  ₹ {application?.pdfData?.totalAmount - application?.pdfData?.advanceAmount}
+                </span>
+              </div>
+            ) : null}
+          </div>
+        ) : (
+          <BillSumary
+            billAccountDetails={getBillBreakDown()}
+            total={getTotal()}
+            businessService={businessService}
+            arrears={Arrears}
+            skipArrears={skipBillingAndArrears}
+          />
+        )}
+
+        {/* Arrear Breakdown */}
+        <ArrearSummary bill={bill} />
+
+        {/* Payment Amount & Selection */}
+        <div className="cmn-bill-payment-section">
+          <div className="cmn-payment-section-title">{t("CS_COMMON_PAYMENT_AMOUNT")}</div>
+
           {businessService === "FSM.TRIP_CHARGES" ? null : (
-            <RadioButtons
-              selectedOption={paymentType}
-              onSelect={setPaymentType}
-              options={
-                paymentRules.partPaymentAllowed &&
-                application?.pdfData?.paymentPreference !== "POST_PAY" &&
-                application?.pdfData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT_CITIZEN"
-                  ? [t("CS_PAYMENT_ADV_COLLECTION")]
-                  : [t("CS_PAYMENT_FULL_AMOUNT")]
-              }
-            />
+            <div className="cmn-bill-payment-radios">
+              <RadioButtons
+                selectedOption={paymentType}
+                onSelect={setPaymentType}
+                options={
+                  paymentRules.partPaymentAllowed &&
+                  application?.pdfData?.paymentPreference !== "POST_PAY" &&
+                  application?.pdfData?.applicationStatus === "PENDING_APPL_FEE_PAYMENT_CITIZEN"
+                    ? [t("CS_PAYMENT_ADV_COLLECTION")]
+                    : [t("CS_PAYMENT_FULL_AMOUNT")]
+                }
+              />
+            </div>
           )}
 
-          <div style={{ position: "relative" }}>
-            <span
-              className="payment-amount-front"
-              style={{ border: `1px solid ${paymentType === t("CS_PAYMENT_FULL_AMOUNT") ? "#9a9a9a" : "#9a9a9a"}` }}
-            >
-              ₹
-            </span>
-            {console.log(bill,"bill")}
-            {paymentType !== t("CS_PAYMENT_FULL_AMOUNT") ? (
-              businessService === "FSM.TRIP_CHARGES" ? (
-                <TextInput className="text-indent-xl" onChange={() => {}} value={getAdvanceAmount()} disable={true} />
+          <div className="cmn-bill-amount-input-box">
+            <div className="cmn-bill-amount-input-inner">
+              <span className="cmn-currency-symbol">₹</span>
+              {paymentType !== t("CS_PAYMENT_FULL_AMOUNT") ? (
+                businessService === "FSM.TRIP_CHARGES" ? (
+                  <TextInput onChange={() => {}} value={getAdvanceAmount()} disable={true} />
+                ) : (
+                  <TextInput onChange={(e) => onChangeAmount(e.target.value)} value={amount} disable={getTotal() === 0} />
+                )
+              ) : businessService === "FSM.TRIP_CHARGES" ? (
+                <TextInput value={application?.pdfData?.advanceAmount} onChange={() => {}} disable={true} />
               ) : (
-                <TextInput className="text-indent-xl" onChange={(e) => onChangeAmount(e.target.value)} value={amount} disable={getTotal() === 0} />
-              )
-            ) : businessService === "FSM.TRIP_CHARGES" ? (
-              <TextInput className="text-indent-xl" value={application?.pdfData?.advanceAmount !== 0 ? application?.pdfData?.advanceAmount:application?.pdfData?.totalAmount} onChange={() => {}} disable={true} />
-            ):((
-              <TextInput className="text-indent-xl" value={getTotal()} onChange={() => {}} disable={true} />
-            ))}
+                <TextInput value={getTotal()} onChange={() => {}} disable={true} />
+              )}
+            </div>
             {formError === "CS_CANT_PAY_BELOW_MIN_AMOUNT" ? (
-              <span className="card-label-error">
+              <span className="cmn-bill-error-msg">
                 {t(formError)}: {"₹" + minAmountPayable}
               </span>
-            ) : (
-              <span className="card-label-error">{t(formError)}</span>
-            )}
+            ) : formError ? (
+              <span className="cmn-bill-error-msg">{t(formError)}</span>
+            ) : null}
           </div>
-          <SubmitBar disabled={!paymentAllowed || getTotal() === 0} onSubmit={onSubmit} label={t("CS_COMMON_PROCEED_TO_PAY")} />
+
+          <div className="cmn-bill-submit-wrap">
+            <button
+              type="button"
+              className="cmn-bill-submit-btn"
+              disabled={!paymentAllowed || getTotal() === 0}
+              onClick={onSubmit}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+                <line x1="1" y1="10" x2="23" y2="10" />
+              </svg>
+              {t("CS_COMMON_PROCEED_TO_PAY")}
+            </button>
+          </div>
         </div>
-      </Card>
-    </React.Fragment>
+      </div>
+    </div>
   );
 };
 

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, CardLabel, MobileNumber, Card,CardSubHeader } from "@upyog/digit-ui-react-components";
-import { useLocation} from "react-router-dom";
+import { FormStep, TextInput, CardLabel, MobileNumber, Card,CardSubHeader } from "@nudmcdgnpm/digit-ui-react-components";
+import { useLocation } from "react-router-dom";
 import Timeline from "../components/CHBTimeline";
 import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
-// import { TimerValues } from "../components/TimerValues";
+import { TimerValues } from "../components/TimerValues";
 
 
 /**
@@ -40,7 +40,6 @@ import ChbCancellationPolicy from "../components/ChbCancellationPolicy";
 const CHBCitizenDetails
  = ({ t, config, onSelect, userType, formData,value=formData.slotlist}) => {
   const { pathname: url } = useLocation();
-
   let index =window.location.href.charAt(window.location.href.length - 1);
   
   let validation = {};
@@ -82,7 +81,7 @@ const CHBCitizenDetails
       ownerStep = { ...owner, applicantName,  mobileNumber,alternateNumber,emailId };
       onSelect(config.key, ownerStep, false,index);
     }
-    console.log(ownerStep);
+
   };
 
   const onSkip = () => onSelect();
@@ -119,14 +118,14 @@ const CHBCitizenDetails
     }
     <Card>
         <CardSubHeader>
-          <div style={{display:"flex", justifyContent: "space-between", width: "100%" }}>
+          <div className="chb-chbaddress-details-fullwidth">
           {value?.bookingSlotDetails && value.bookingSlotDetails.length > 0
             ? formatSlotDetails(value.bookingSlotDetails)
             : null}
-            {/* <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.Searchdata} /> */}
+            <TimerValues timerValues={value?.existingDataSet?.timervalue?.timervalue} SlotSearchData={value?.searchData} draftId={value?.existingDataSet?.draftId} />
           </div>
         </CardSubHeader>
-        <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails}/>
+        <ChbCancellationPolicy slotDetail={value?.bookingSlotDetails} SlotSearchData={value}/>
       </Card>
     <FormStep
       config={config}
@@ -147,7 +146,7 @@ const CHBCitizenDetails
           placeholder={"Enter Applicant Name"}
           value={applicantName}
           onChange={setOwnerName}
-          style={{width:user.type==="EMPLOYEE"?"51.6%":null}}
+          className={user.type === "EMPLOYEE" ? "form-field-width--employee-51-6" : ""}
           ValidationRequired = {true}
           {...(validation = {
             // isRequired: true,
@@ -163,7 +162,7 @@ const CHBCitizenDetails
         <MobileNumber
           value={mobileNumber}
           name="mobileNumber"
-          style={{width:user.type==="EMPLOYEE"?"50%":null}}
+          className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : ""}
           placeholder={"Enter Applicant Register Mobile Number"}
           onChange={(value) => setMobileNo({ target: { value } })}
           {...{ pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
@@ -173,7 +172,7 @@ const CHBCitizenDetails
           <MobileNumber
             value={alternateNumber}
             name="alternateNumber"
-            style={{width:user.type==="EMPLOYEE"?"50%":null}}
+            className={user.type === "EMPLOYEE" ? "form-field-width--employee-50" : ""}
             placeholder={"Enter Alternate Mobile Number"}
             onChange={(value) => setAltMobileNo({ target: { value } })}
             {...{ required: false, pattern: "[6-9]{1}[0-9]{9}", type: "tel", title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID") }}
@@ -188,7 +187,7 @@ const CHBCitizenDetails
           name="emailId"
           value={emailId}
           placeholder={"Enter Applicant Email Id"}
-          style={{width:user.type==="EMPLOYEE"?"51.6%":null}}
+          className={user.type === "EMPLOYEE" ? "form-field-width--employee-51-6" : ""}
           onChange={setOwnerEmail}
           ValidationRequired = {true}
           {...(validation = {

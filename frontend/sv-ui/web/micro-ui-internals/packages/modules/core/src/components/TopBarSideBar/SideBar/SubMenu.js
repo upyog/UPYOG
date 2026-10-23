@@ -16,9 +16,9 @@ import {
   CollectionsBookmarIcons,
   FinanceChartIcon,
   CollectionIcon,
-} from "@nudmcdgnpm/digit-ui-react-components";
+} from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import { useTranslation } from "react-i18next";
-import ReactTooltip from "react-tooltip";
+import { Tooltip } from "react-tooltip";
 
 const SubMenu = ({ item }) => {
   const [subnav, setSubnav] = useState(false);
@@ -46,6 +46,7 @@ const SubMenu = ({ item }) => {
   const getModuleName = item?.moduleName?.replace(/[ -]/g, "_");
   const appendTranslate = t(`ACTION_TEST_${getModuleName}`);
   const trimModuleName = t(appendTranslate?.length > 20 ? appendTranslate.substring(0, 20) + "..." : appendTranslate);
+  const tooltipId = `jk-side-${getModuleName}`;
 
   if (item.type === "single") {
     const getOrigin = window.location.origin;
@@ -56,25 +57,21 @@ const SubMenu = ({ item }) => {
             {leftIcon}
             {item.navigationURL?.indexOf("/sv-ui") === -1? (
               <a
-                data-tip="React-tooltip"
-                data-for={`jk-side-${getModuleName}`}
+                data-tooltip-id={tooltipId}
+                data-tooltip-content={t(`ACTION_TEST_${getModuleName}`)}
                 className="custom-link"
                 href={getOrigin + `${item.navigationURL.includes("/workbench-ui")?"":"/employee/"}`+ item.navigationURL}
               >
                 <span> {trimModuleName} </span>
 
-               {trimModuleName?.includes("...") &&<ReactTooltip textColor="white" backgroundColor="grey" place="right" type="info" effect="solid" id={`jk-side-${getModuleName}`}>
-                  {t(`ACTION_TEST_${getModuleName}`)}
-                </ReactTooltip>}
+               {trimModuleName?.includes("...") && <Tooltip id={tooltipId} place="right" style={{backgroundColor:"grey",color:"white"}} />}
               </a>
             ) : (
               <Link className="custom-link" to={item.navigationURL}>
-                <div data-tip="React-tooltip" data-for={`jk-side-${getModuleName}`}>
+                <div data-tooltip-id={tooltipId} data-tooltip-content={t(`ACTION_TEST_${getModuleName}`)}>
                   <span> {trimModuleName} </span>
 
-                 {trimModuleName?.includes("...") && <ReactTooltip textColor="white" backgroundColor="grey" place="right" type="info" effect="solid" id={`jk-side-${getModuleName}`}>
-                    {t(`ACTION_TEST_${getModuleName}`)}
-                  </ReactTooltip>}
+                 {trimModuleName?.includes("...") && <Tooltip id={tooltipId} place="right" style={{backgroundColor:"grey",color:"white"}} />}
                 </div>
               </Link>
             )}
@@ -89,12 +86,10 @@ const SubMenu = ({ item }) => {
           <div onClick={item.links && showSubnav} className={`sidebar-link`}>
             <div className="actions">
               {leftIcon}
-              <div data-tip="React-tooltip" data-for={`jk-side-${getModuleName}`}>
+              <div data-tooltip-id={tooltipId} data-tooltip-content={t(`ACTION_TEST_${getModuleName}`)}>
                 <span> {trimModuleName} </span>
 
-                {trimModuleName?.includes("...") && <ReactTooltip textColor="white" backgroundColor="grey" place="right" type="info" effect="solid" id={`jk-side-${getModuleName}`}>
-                  {t(`ACTION_TEST_${getModuleName}`)}
-                </ReactTooltip>}
+                {trimModuleName?.includes("...") && <Tooltip id={tooltipId} place="right" style={{backgroundColor:"grey",color:"white"}} />}
               </div>
             </div>
             <div> {item.links && subnav ? <ArrowVectorDown /> : item.links ? <ArrowForward /> : null} </div>
@@ -109,6 +104,7 @@ const SubMenu = ({ item }) => {
               const getChildName = item?.displayName?.toUpperCase()?.replace(/[ -]/g, "_");
               const appendTranslate = t(`ACTION_TEST_${getChildName}`);
               const trimModuleName = t(appendTranslate?.length > 20 ? appendTranslate.substring(0, 20) + "..." : appendTranslate);
+              const childTooltipId = `jk-side-${index}`;
 
               if (item.navigationURL.indexOf("/sv-ui") === -1) {
                 const getOrigin = window.location.origin;
@@ -118,11 +114,9 @@ const SubMenu = ({ item }) => {
                     className={`dropdown-link ${pathname === item.link ? "active" : ""}`}
                     href={getOrigin + "/employee/" + item.navigationURL}
                   >
-                    <div className="actions" data-tip="React-tooltip" data-for={`jk-side-${index}`}>
+                    <div className="actions" data-tooltip-id={childTooltipId} data-tooltip-content={t(`ACTION_TEST_${getChildName}`)}>
                       <span> {trimModuleName} </span>
-                    {trimModuleName?.includes("...") && <ReactTooltip textColor="white" backgroundColor="grey" place="right" type="info" effect="solid" id={`jk-side-${index}`}>
-                        {t(`ACTION_TEST_${getChildName}`)}
-                      </ReactTooltip>}
+                    {trimModuleName?.includes("...") && <Tooltip id={childTooltipId} place="right" style={{backgroundColor:"grey",color:"white"}} />}
                     </div>
                   </a>
                 );
@@ -133,11 +127,9 @@ const SubMenu = ({ item }) => {
                   key={index}
                   className={`dropdown-link ${pathname === item?.link || pathname === item?.navigationURL ? "active" : ""}`}
                 >
-                  <div className="actions" data-tip="React-tooltip" data-for={`jk-side-${index}`}>
+                  <div className="actions" data-tooltip-id={childTooltipId} data-tooltip-content={t(`ACTION_TEST_${getChildName}`)}>
                     <span> {trimModuleName} </span>
-                   {trimModuleName?.includes("...") &&<ReactTooltip textColor="white" backgroundColor="grey" place="right" type="info" effect="solid" id={`jk-side-${index}`}>
-                      {t(`ACTION_TEST_${getChildName}`)}
-                    </ReactTooltip>}
+                   {trimModuleName?.includes("...") && <Tooltip id={childTooltipId} place="right" style={{backgroundColor:"grey",color:"white"}} />}
                   </div>
                 </Link>
               );

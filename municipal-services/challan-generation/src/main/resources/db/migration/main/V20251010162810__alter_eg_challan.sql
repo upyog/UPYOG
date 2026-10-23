@@ -1,0 +1,1 @@
+ALTER TABLE eg_challan ADD COLUMN challanStatus character varying(64);

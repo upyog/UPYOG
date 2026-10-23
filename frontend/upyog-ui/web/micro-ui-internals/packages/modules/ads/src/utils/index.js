@@ -1,3 +1,5 @@
+import getAdsAcknowledgementData from "../getAdsAcknowledgementData";
+
 // Determines if the back button should be hidden based on the current URL matching screen paths in the config array.
 // Returns true to hide the back button if a match is found; otherwise, returns false.
 export const shouldHideBackButton = (config = []) => {
@@ -66,7 +68,7 @@ export const setaddressDetails = (data) => {
 export const setCartDetails = (data) => {
   let { adslist } = data;
   
-  let cartDetails = adslist?.cartDetails.map((slot) => {
+  let cartDetails = adslist?.cartDetails?.map((slot) => {
     return { 
       addType:slot.addTypeCode,
       faceArea:slot.faceAreaCode,
@@ -137,3 +139,69 @@ const formdata={
 
   return formdata;
 };
+
+/**
+ * Maps frontend application and slot data into the search criteria structure required by the slot-search API.
+ * Handles different parameter variations like custom booking ID, draft ID, and fallback location mappings.
+ */
+export const getSlotSearchCriteria = (searchData = [], tenantId = "", selectedLocation = {}, draftId, bookingId = "") => {
+  return searchData?.map((item) => {
+    const criterion = {
+      bookingId: bookingId,
+      addType: item?.addTypeCode || item?.addType,
+      bookingStartDate: item?.bookingDate,
+      bookingEndDate: item?.bookingDate,
+      faceArea: item?.faceAreaCode || item?.faceArea,
+      tenantId: tenantId,
+      location: selectedLocation?.code || item?.locationCode || item?.location,
+      nightLight: item?.nightLight,
+      isTimerRequired: true,
+    };
+    if (draftId !== undefined && draftId !== null) {
+      criterion.draftId = draftId;
+    }
+    return criterion;
+  }) || [];
+};
+
+/**
+ * Calculates the remaining time in seconds from the initial timer values and the lock creation timestamp.
+ * If the elapsed time exceeds the initial timer values, returns 0.
+ */
+export const calculateRemainingTime = (timerValues, timerStartedAt) => {
+  if (timerValues && timerStartedAt) {
+    const elapsed = Math.floor((Date.now() - timerStartedAt) / 1000);
+    const remaining = timerValues - elapsed;
+    return remaining > 0 ? remaining : 0;
+  }
+  return timerValues || 0;
+};
+
+/**
+ * Formats a date string from YYYY-MM-DD to DD-MM-YYYY
+ * @param {string} dateStr Date string
+ * @returns {string} Formatted date string in DD-MM-YYYY format
+ */
+export const formatDate = (dateStr) => {
+  if (!dateStr) return "";
+  if (typeof dateStr === "string" && dateStr.includes("-")) {
+    const parts = dateStr.split("-");
+    if (parts[0].length === 4) {
+      return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+    return dateStr;
+  }
+  return dateStr;
+};
+
+/**
+ * Generates and triggers download of Advertisement application acknowledgement PDF
+ */
+export const downloadADSAcknowledgement = async (application, t) => {
+  const adsApplication = application?.bookingApplication?.[0] || application;
+  const tenants = Digit.SessionStorage.get("initData")?.tenants;
+  const tenantInfo = tenants?.find((tenant) => tenant.code === adsApplication?.tenantId);
+  const ackData = await getAdsAcknowledgementData({ ...adsApplication }, tenantInfo, t);
+  Digit.Utils.pdf.generate(ackData);
+};
+

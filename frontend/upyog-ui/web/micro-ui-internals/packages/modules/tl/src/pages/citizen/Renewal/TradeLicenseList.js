@@ -1,14 +1,14 @@
-import { Card, KeyNote, SubmitBar, Toast } from "@upyog/digit-ui-react-components";
+import { Card, KeyNote, SubmitBar, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+
 import { convertEpochToDateCitizen, getvalidfromdate } from "../../../utils/index";
 import {TLSearch} from "../../../../../../libraries/src/services/molecules/TL/Search";
 import cloneDeep from "lodash/cloneDeep";
 
 const TradeLicenseList = ({ application }) => {
   sessionStorage.setItem("isDirectRenewal", true);
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const owners = application?.tradeLicenseDetail?.owners;
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -36,7 +36,7 @@ const TradeLicenseList = ({ application }) => {
     if (isrenewalspresent && Licenses) {
       alert(t("TL_RENEWAL_PRESENT_ERROR"));
     } else if (Licenses) {
-      history.push(`/upyog-ui/citizen/tl/tradelicence/edit-application/action-edit/${application.applicationNumber}`);
+      navigate(`/upyog-ui/citizen/tl/tradelicence/edit-application/action-edit/${application.applicationNumber}`);
     }
   }
 
@@ -57,9 +57,9 @@ const TradeLicenseList = ({ application }) => {
       setShowToast({ error: true, label: `${t("TL_ERROR_TOAST_MUTUALLY_EXPIRED")}` });
     }
   }
-useEffect(async ()=>{
-
-  const licenseNumbers = application?.licenseNumber;
+useEffect(() => {
+  const fetchApplications = async () => {
+    const licenseNumbers = application?.licenseNumber;
     const filters = { licenseNumbers, offset: 0 };
     let numOfApplications = await TLSearch.numberOfApplications(application?.tenantId, filters);
     let allowedToNextYear= false;
@@ -72,31 +72,33 @@ useEffect(async ()=>{
       const latestFinancialYear = Math.max.apply(Math, numOfApplications?.filter(ob => ob.licenseNumber === application?.licenseNumber)?.map(function(o){return parseInt(o.financialYear.split("-")[0])}))
       const isAllowedToNextYear = numOfApplications?.filter(data => (data.financialYear == finalFinancialYear && data?.status !== "REJECTED"));
 
-      if(Object.keys(fydata).length >0)
-      {
-        let FY = getvalidfromdate("", mdmsFinancialYear).finYearRange;
-        numOfApplications &&
-        numOfApplications.map((ob) => {
-            if (ob.financialYear === FY) {
-              setIsrenewalspresent(true)
-              //isrenewalspresent = true;
-            }
-          });
-          if (isAllowedToNextYear?.length > 0){
-             setAllowedToNextYear(false);
-             setoldRenewalAppNo(isAllowedToNextYear?.[0]?.applicationNumber);
+    if(Object.keys(fydata).length >0)
+    {
+      let FY = getvalidfromdate("", mdmsFinancialYear).finYearRange;
+      numOfApplications &&
+      numOfApplications.map((ob) => {
+          if (ob.financialYear === FY) {
+            setIsrenewalspresent(true)
+            //isrenewalspresent = true;
           }
-          if(!(application?.financialYear.includes(`${latestFinancialYear}`))) {
-            latestRenewalYearofAPP = application?.financialYear;
-            setlatestRenewalYearofAPP(application?.financialYear);
-          }
-          if (!isAllowedToNextYear || isAllowedToNextYear?.length == 0){
-            allowedToNextYear = true;
-            setAllowedToNextYear(true);
-          }
-        setNumberOfApplications(numOfApplications)
-      }
-},[fydata])
+        });
+        if (isAllowedToNextYear?.length > 0){
+           setAllowedToNextYear(false);
+           setoldRenewalAppNo(isAllowedToNextYear?.[0]?.applicationNumber);
+        }
+        if(!(application?.financialYear.includes(`${latestFinancialYear}`))) {
+          latestRenewalYearofAPP = application?.financialYear;
+          setlatestRenewalYearofAPP(application?.financialYear);
+        }
+        if (!isAllowedToNextYear || isAllowedToNextYear?.length == 0){
+          allowedToNextYear = true;
+          setAllowedToNextYear(true);
+        }
+      setNumberOfApplications(numOfApplications)
+    }
+  };
+  fetchApplications();
+}, [fydata]);
   const onsubmit = async() => {
     const licenseNumbers = application?.licenseNumber;
     const filters = { licenseNumbers, offset: 0 };
@@ -134,7 +136,7 @@ useEffect(async ()=>{
     if(isrenewalspresent || allowedToNextYear == false || application?.status === "CANCELLED" || (application?.status === "MANUALEXPIRED" /* && latestRenewalYearofAPP */))
     getToastMessages();
     else
-    history.push(`/upyog-ui/citizen/tl/tradelicence/renew-trade/${application.licenseNumber}/${application.tenantId}`);
+    navigate(`/upyog-ui/citizen/tl/tradelicence/renew-trade/${application.licenseNumber}/${application.tenantId}`);
   };
   const ownersSequences=owners?.additionalDetails!==null ? owners.sort((a,b)=>a?.additionalDetails?.ownerSequence-b?.additionalDetails?.ownerSequence): owners
   return (

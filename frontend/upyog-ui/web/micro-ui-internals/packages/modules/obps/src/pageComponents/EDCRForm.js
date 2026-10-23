@@ -1,6 +1,6 @@
-import { CardLabel, Dropdown, FormStep, Loader, TextInput, Toast, UploadFile } from "@upyog/digit-ui-react-components";
+import { CardLabel, Dropdown, FormStep, Loader, TextInput, Toast, UploadFile } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
-import { useLocation, useHistory } from "react-router-dom";
+import { useLocation,  } from "react-router-dom";
 import { getPattern, stringReplaceAll, sortDropdownNames  } from "../utils";
 
 const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, addNewOwner, isShowToast, isSubmitBtnDisable, setIsShowToast }) => {
@@ -15,7 +15,7 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
     const [error, setError] = useState(null);
     const [uploadMessage, setUploadMessage] = useState("");
     const [showToast, setShowToast] = useState(null);
-    const history = useHistory();
+    const navigate = Digit.Hooks.useCustomNavigate();
 
 
     let validation = { };
@@ -70,10 +70,7 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
             setUploadMessage("");
         }
         if (isShowToast) {
-            history.replace(
-                `/upyog-ui/citizen/obps/edcrscrutiny/apply/acknowledgement`,
-                { data: isShowToast?.label ? isShowToast?.label : "BPA_INTERNAL_SERVER_ERROR", type: "ERROR"}
-              );
+            navigate(`/upyog-ui/citizen/obps/edcrscrutiny/apply/acknowledgement`, { replace: true, state: { data: isShowToast?.label ? isShowToast?.label : "BPA_INTERNAL_SERVER_ERROR", type: "ERROR"} });
         }
     }, [uploadMessage, isShowToast, isSubmitBtnDisable]);
 
@@ -145,7 +142,7 @@ const EDCRForm = ({ t, config, onSelect, userType, formData, ownerIndex = 0, add
                 error={error}
                 uploadMessage={uploadMessage}
             />
-            <div style={{ disabled: "true", height: "30px", width: "100%", fontSize: "14px" }}>{t("EDCR_UPLOAD_FILE_LIMITS_LABEL")}</div>
+            <div className="obps-corrospondence-address-fullwidth">{t("EDCR_UPLOAD_FILE_LIMITS_LABEL")}</div>
             {isShowToast && <Toast error={isShowToast.key} label={t(isShowToast.label)} onClose={() => setIsShowToast(null)} isDleteBtn={true} />}
             {/* {isSubmitBtnDisable ? <Loader /> : null} */}
         </FormStep>

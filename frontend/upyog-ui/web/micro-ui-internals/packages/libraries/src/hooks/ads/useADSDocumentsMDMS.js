@@ -1,18 +1,16 @@
-import { MdmsService } from "../../services/elements/MDMS";
-import { useQuery } from "react-query";
-/**
- * Custom hook to fetch document data from MDMS based on tenantId, moduleCode, and type.
- * It conditionally retrieves either required documents for a specific screen or multiple 
- * types of documents based on the provided type.
- */
+import { queryTemplate } from "../../common/queryTemplate";
 
 const useADSDocumentsMDMS = (tenantId, moduleCode, type, config = {}) => {
-  
-  const useADSDocumentsRequiredScreen = () => {
-    return useQuery("ADS_DOCUMENT_REQ_SCREEN", ()  => Digit.Hooks.useSelectedMDMS(moduleCode).getMasterData(tenantId, moduleCode, type), config);
-  };
-  
-  return useADSDocumentsRequiredScreen();
+  const queryKey = [
+    "ADS_MDMS_DOCUMENTS",
+    tenantId,
+    moduleCode,
+    type,
+  ];
+
+  const queryFn = () => Digit.Hooks.useSelectedMDMS(moduleCode).getMasterData( tenantId, moduleCode, type );
+
+  return queryTemplate({ queryKey, queryFn, config });
 };
 
 export default useADSDocumentsMDMS;

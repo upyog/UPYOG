@@ -1,4 +1,4 @@
-import { Header, Loader, TextInput, Dropdown, SubmitBar, CardLabel, Card, MobileNumber } from "@nudmcdgnpm/digit-ui-react-components";
+import { Header, Loader, TextInput, Dropdown, SubmitBar, CardLabel, Card, MobileNumber } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";

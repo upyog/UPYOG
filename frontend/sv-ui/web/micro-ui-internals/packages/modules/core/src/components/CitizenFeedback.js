@@ -1,14 +1,15 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useHistory, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { RatingAndFeedBack } from "../config/RatingAndFeedback";
 
-import { Card, CardHeader, CardLabel, CheckBox, TextArea, SubmitBar, Rating, CloseSvg, Loader, CardText, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, CardHeader, CardLabel, CheckBox, TextArea, SubmitBar, Rating, CloseSvg, Loader, CardText, CardLabelError } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 
 const CitizenFeedback = ({popup = false, onClose, setShowToast, data}) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
+
   const user = Digit.UserService.getUser();
   let {redirectedFrom, propertyId, acknowldgementNumber, creationReason, tenantId, locality} = Digit.Hooks.useQueryParams();
   const isMobile = window.Digit.Utils.browser.isMobile();
@@ -91,11 +92,12 @@ const CitizenFeedback = ({popup = false, onClose, setShowToast, data}) => {
             {   onClose(false);
                 setShowToast({ key: false, label: "PT_FEEDBACK_SUBMITTED_SUCCESSFULLY" });
             }
-            else
-            history.push({pathname:"/sv-ui/citizen/feedback-acknowledgement",
-                state: {rating,comment,result}})
-
-        }
+            else {
+                  navigate("/sv-ui/citizen/feedback-acknowledgement", {
+                    state: { rating, comment, result },
+                  });
+                }
+              }
       })
       .catch((e) => {
         setShowToast({ key: "error", label:`${e?.response?.data?.Errors[0]?.message}` });

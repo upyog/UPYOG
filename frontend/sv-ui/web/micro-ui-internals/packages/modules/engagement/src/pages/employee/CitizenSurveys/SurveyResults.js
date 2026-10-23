@@ -1,8 +1,8 @@
 import React,{ useEffect,useState } from 'react'
-import { useHistory, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import CitizenSurveyForm from "../../../components/Surveys/CitizenSurveyForm";
-import { useQueryClient } from "react-query";
-import { ActionBar, Card, SubmitBar, Menu,Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import { useQueryClient } from "@tanstack/react-query";
+import { ActionBar, Card, SubmitBar, Menu,Loader } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import { format } from "date-fns";
 import SurveyResultsView from '../../../components/Surveys/ResultsView/SurveyResultsView';
 

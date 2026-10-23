@@ -57,7 +57,6 @@ const useBillAmendmentInbox = ({ tenantId, filters, config = {} }) => {
           service: application?.businessObject?.businessService,
           applicationNo: application?.businessObject?.amendmentId || "NA",
           amendmentReason: application?.businessObject?.amendmentReason || "NA",
-          status: application?.ProcessInstance?.state?.state,
           owner: application?.serviceObject?.additionalDetails?.ownerName || "NA",
           address: application?.serviceObject?.additionalDetails?.locality || "NA",
           status: application?.businessObject?.status,

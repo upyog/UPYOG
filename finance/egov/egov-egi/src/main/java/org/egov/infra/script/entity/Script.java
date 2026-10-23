@@ -52,16 +52,16 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.component.Period;
 import org.joda.time.DateTime;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import javax.script.CompiledScript;
 
 import static org.egov.infra.script.entity.Script.SEQ_SCRIPT;
@@ -71,9 +71,9 @@ import static org.egov.infra.script.entity.Script.SEQ_SCRIPT;
 @SequenceGenerator(name = SEQ_SCRIPT, sequenceName = SEQ_SCRIPT, allocationSize = 1)
 @NamedQueries({
         @NamedQuery(name = Script.BY_NAME,
-                query = "select s from Script s where s.name=? and current_date between period.startDate and period.endDate"),
+                query = "select s from Script s where s.name=?1 and current_date between period.startDate and period.endDate"),
         @NamedQuery(name = Script.BY_NAME_AND_DATE,
-                query = "select s from Script as s where s.name=? and ? between period.startDate and period.endDate")
+                query = "select s from Script as s where s.name=?1 and ?2 between period.startDate and period.endDate")
 })
 public class Script extends AbstractAuditable {
     public static final String SEQ_SCRIPT = "SEQ_EG_SCRIPT";

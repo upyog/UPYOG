@@ -12,8 +12,8 @@ info:
     * update existing vendor details
     
   contact:
-    name: Egovernments Foundation
-    email: contact@egovernments.org
+    name: UPYOG NUDM Team
+    email: cdg-contact@niua.org
 x-module: FSM
 x-common-path: 'https://raw.githubusercontent.com/egovernments/municipal-services/common-contract/docs/common-contract-v2-0-0.yml'
 paths:

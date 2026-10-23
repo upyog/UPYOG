@@ -98,14 +98,6 @@ public class ProcessInstance {
 	@JsonProperty("assignes")
 	private List<User> assignes;
 
-	/*
-	 * public ProcessInstance addDocumentsItem(DocumentDetail documentsItem) { if
-	 * (this.documents == null) { this.documents = new ArrayList<>(); } if
-	 * (!this.documents.contains(documentsItem)) this.documents.add(documentsItem);
-	 * 
-	 * return this; }
-	 */
-
 	public ProcessInstance addNextActionsItem(Action nextActionsItem) {
 		if (this.nextActions == null) {
 			this.nextActions = new ArrayList<>();

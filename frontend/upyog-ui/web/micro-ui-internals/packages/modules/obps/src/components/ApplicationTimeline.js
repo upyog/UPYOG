@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { ActionLinks, CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar, LinkButton } from "@upyog/digit-ui-react-components";
+import { ActionLinks, CardSectionHeader, CheckPoint, ConnectingCheckPoints, Loader, SubmitBar, LinkButton } from "@nudmcdgnpm/digit-ui-react-components";
 import BPACaption from "../pages/citizen/BpaApplicationDetail/BPACaption";
 
 const ApplicationTimeline = ({ id, tenantId }) => {
@@ -51,7 +51,7 @@ const ApplicationTimeline = ({ id, tenantId }) => {
     switch (nextAction?.action) {
       case "PAY":
         return (
-          <div style={{ marginTop: "24px" }} className="action-bar-wrap">
+          <div className="action-bar-wrap obps-application-timeline-top-spacing">
             <Link
               to={{ pathname: `/upyog-ui/citizen/payment/collect/${data?.processInstances?.[0]?.moduleName}/${data?.processInstances?.[0]?.businessId}`,
               state: { tenantId: data?.processInstances?.[0]?.tenantId },}}
@@ -62,7 +62,7 @@ const ApplicationTimeline = ({ id, tenantId }) => {
         );
       case "SUBMIT_FEEDBACK":
         return (
-          <div style={{ marginTop: "24px" }}>
+          <div className="obps-application-timeline-top-spacing">
             <Link to={`/upyog-ui/citizen/fsm/rate/${props.id}`}>
               <SubmitBar label={t("CS_APPLICATION_DETAILS_RATE")} />
             </Link>
@@ -76,7 +76,7 @@ const ApplicationTimeline = ({ id, tenantId }) => {
       {!isLoading && (
         <Fragment>
           {data?.timeline?.length > 0 && (
-            <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>
+            <CardSectionHeader className="obps-application-timeline-header">
               {t("CS_APPLICATION_DETAILS_APPLICATION_TIMELINE")}
             </CardSectionHeader>
           )}

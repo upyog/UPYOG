@@ -57,8 +57,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.tags.RequestContextAwareTag;
 
-import javax.servlet.jsp.JspTagException;
-import javax.servlet.jsp.tagext.Tag;
+import jakarta.servlet.jsp.JspTagException;
+import jakarta.servlet.jsp.tagext.Tag;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;

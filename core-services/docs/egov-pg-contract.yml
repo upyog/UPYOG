@@ -5,8 +5,8 @@ info:
   description: >
     This module acts as a liaison between eGov apps and external payment gateways. It facilitates payments, refunds and look up of transactions' status.
   contact:
-    name: Egovernments Foundation
-    email: contact@egovernments.org
+    name: UPYOG NUDM Team
+    email: cdg-contact@niua.org
 schemes:
   - https
 basePath: /egov-pg-service

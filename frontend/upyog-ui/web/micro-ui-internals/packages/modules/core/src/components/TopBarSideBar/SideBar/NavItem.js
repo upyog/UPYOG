@@ -1,6 +1,7 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink } from "react-router-dom";
 import NavItemHeader from './NavItemHeader';
+import * as DigitComponents from "@nudmcdgnpm/digit-ui-react-components";
 import {
   HomeIcon,
   ComplaintIcon,
@@ -14,7 +15,7 @@ import {
   CollectionsBookmarIcons,
   FinanceChartIcon,
   CollectionIcon,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import ReactTooltip from 'react-tooltip';
 import { useTranslation } from 'react-i18next';
 
@@ -37,10 +38,10 @@ const NavItem = props => {
     collections: <CollectionIcon />,
   };
   const leftIconArray = icon?.split?.(":")?.[1];
-  const leftIcon = IconsObject[leftIconArray] || IconsObject.collections;
+  let leftIcon = IconsObject[leftIconArray] || IconsObject.collections;
   const iconArr=icon?.leftIcon?.split?.(":")|| leftIcon?.split?.(":");
   if(iconArr?.[0]=='dynamic'){
-    var IconComp = require("@upyog/digit-ui-react-components")?.[iconArr?.[1]];
+    var IconComp = DigitComponents?.[iconArr?.[1]];
     leftIcon=IconComp?<IconComp/>:leftIcon;
   }
   const getModuleName = label?.replace(/[ -]/g, "_").toUpperCase();
@@ -52,7 +53,7 @@ const NavItem = props => {
   }
 
   return (
-    <div className={`${"submenu-container"}`} style={{marginLeft:"19px", marginBottom:"15px",marginTop:"15px"}}>
+    <div className={`${"submenu-container"} core-nav-item-top-spacing`}>
     <NavLink
       exact
       to={to}
@@ -60,10 +61,10 @@ const NavItem = props => {
       //activeClassName={`${"submenu-container"}`}
     >
       <div classname="sidebar-link">
-      <div className='actions' style={{padding:"0px"}}>
+      <div className="actions core-nav-item-container-padding">
       {leftIcon /*className={style.navIcon}*/ }
       <div data-tip="React-tooltip" data-for={`jk-side-${getModuleName}`}>
-      <span /*className={style.navLabel}*/ style={{fontSize:"14px"}}>{trimModuleName}</span>
+      <span /*className={style.navLabel}*/ className="core-nav-item-text-style">{trimModuleName}</span>
       {trimModuleName?.includes("...") && <ReactTooltip textColor="white" backgroundColor="grey" place="right" type="info" effect="solid" id={`jk-side-${getModuleName}`}>
                     {t(`ACTION_TEST_${getModuleName}`)}
                   </ReactTooltip>}

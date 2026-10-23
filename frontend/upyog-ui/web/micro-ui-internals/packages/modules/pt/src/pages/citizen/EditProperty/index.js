@@ -1,34 +1,32 @@
 // import React from "react";
-import { Loader } from "@upyog/digit-ui-react-components";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "react-query";
-import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { Route, useLocation, Routes, Navigate } from "react-router-dom";
 import { newConfig } from "../../../config/Create/config";
 
-import { checkArrayLength, stringReplaceAll,getSuperBuiltUpareafromob } from "../../../utils";
+import { checkArrayLength, stringReplaceAll, getSuperBuiltUpareafromob, convertToUpdateProperty } from "../../../utils";
 
 const getPropertyEditDetails = (inputData = {}) => {
   let data = JSON.parse(JSON.stringify(inputData));
-  console.log("datadatagetPropertyEditDetails22222333",data)
+  console.log("datadatagetPropertyEditDetails22222333", data)
   // converting owners details
   const getDocumentTypeCode = (documentType) => {
     if (typeof documentType === "string") return documentType;
     if (typeof documentType === "object") return documentType?.code;
     return "";
   };
-  
-  if((data?.propertyType === "BUILTUP.INDEPENDENTPROPERTY" && data.units.length == 0))
-    {
-      console.log("runnnnnssssss")
-      data.units = [{
-        constructionDetail:{builtUpArea: data?.superBuiltUpArea},
-        floorNo: 0,
-        occupancyType:data?.occupancyType,
-        unitType:data?.occupancyType,
-        usageCategory:data?.usageCategory,
-      }]
-    }
+
+  if ((data?.propertyType === "BUILTUP.INDEPENDENTPROPERTY" && data.units.length == 0)) {
+    data.units = [{
+      constructionDetail: { builtUpArea: data?.superBuiltUpArea },
+      floorNo: 0,
+      occupancyType: data?.occupancyType,
+      unitType: data?.occupancyType,
+      usageCategory: data?.usageCategory,
+    }]
+  }
 
   if (data?.ownershipCategory === "INSTITUTIONALPRIVATE" || data?.ownershipCategory === "INSTITUTIONALGOVERNMENT") {
     let document = [];
@@ -82,22 +80,20 @@ const getPropertyEditDetails = (inputData = {}) => {
       longitude: data?.address?.geoLocation?.longitude,
     };
   } else {
-    data.address.geoLocation = { };
+    data.address.geoLocation = {};
   }
   data.address.pincode = data?.address?.pincode;
-  data.address.city = { code: data?.tenantId, i18nKey: `TENANT_TENANTS_${stringReplaceAll(data?.tenantId.toUpperCase(),".","_")}` };
+  data.address.city = { code: data?.tenantId, i18nKey: `TENANT_TENANTS_${stringReplaceAll(data?.tenantId.toUpperCase(), ".", "_")}` };
   data.address.locality.i18nkey = data?.tenantId.replace(".", "_").toUpperCase() + "_" + "REVENUE" + "_" + data?.address?.locality?.code;
   let addressDocs = data?.documents?.filter((doc) =>
-  getDocumentTypeCode(doc?.documentType)?.includes("ADDRESSPROOF")
-);
+    getDocumentTypeCode(doc?.documentType)?.includes("ADDRESSPROOF")
+  );
 
   if (checkArrayLength(addressDocs)) {
-    console.log("addressDocsaddressDocs",addressDocs)
     addressDocs[0].documentType = { code: addressDocs[0]?.documentType, i18nKey: stringReplaceAll(addressDocs[0]?.documentType, ".", "_") };
   }
-  if(!data.documents)
-  {
-    data = {...data,documents:[]}
+  if (!data.documents) {
+    data = { ...data, documents: [] }
   }
   if (data?.address?.documents) {
     data.address.documents["ProofOfAddress"] = addressDocs[0];
@@ -275,7 +271,7 @@ const getPropertyEditDetails = (inputData = {}) => {
       let nooffloor = 0,
         noofbasemement = 0;
       let floornumbers = [];
-      data.landArea = {floorarea:data?.landArea}
+      data.landArea = { floorarea: data?.landArea }
       data.isResdential =
         data?.usageCategory === "RESIDENTIAL"
           ? { code: "RESIDENTIAL", i18nKey: "PT_COMMON_YES" }
@@ -301,7 +297,7 @@ const getPropertyEditDetails = (inputData = {}) => {
         ? { i18nKey: "PT_ONE_BASEMENT_OPTION" }
         : { i18nKey: "PT_NO_BASEMENT_OPTION" }; */
       let unitedit = [];
-      let ob = { };
+      let ob = {};
       let flooradded = [];
       let flrno;
       let extraunits = [];
@@ -326,7 +322,7 @@ const getPropertyEditDetails = (inputData = {}) => {
 
       data?.units &&
         data?.units.map((unit, index) => {
-          ob = { };
+          ob = {};
           totbuiltarea = 0;
           let selfoccupiedtf = false,
             rentedtf = false,
@@ -340,14 +336,14 @@ const getPropertyEditDetails = (inputData = {}) => {
           } else {
             extraunits.push(unit);
           }
-          if (ob == { }) {
+          if (ob == {}) {
             extraunits.push(unit);
           }
-          (!flooradded.includes(unit.floorNo) && ob.builtUpArea > 0 && unit.floorNo > -1 && unit.floorNo < 3 && ob.selfOccupied !== "" && ob != { })&&unitedit.push(ob)
-            
-          unit.floorNo == -1 && ob != { } && ob.selfOccupied !== "" && ob.builtUpArea > 0 &&(unitedit["-1"] = ob) ;
+          (!flooradded.includes(unit.floorNo) && ob.builtUpArea > 0 && unit.floorNo > -1 && unit.floorNo < 3 && ob.selfOccupied !== "" && ob != {}) && unitedit.push(ob)
+
+          unit.floorNo == -1 && ob != {} && ob.selfOccupied !== "" && ob.builtUpArea > 0 && (unitedit["-1"] = ob);
           if (unitedit["-1"] && unit.floorNo == -2 && !extraunits.includes(unit)) {
-            unit.floorNo == -2 && ob != { } && ob.selfOccupied !== "" && ob.builtUpArea > 0 && (unitedit["-2"] = ob) ;
+            unit.floorNo == -2 && ob != {} && ob.selfOccupied !== "" && ob.builtUpArea > 0 && (unitedit["-2"] = ob);
           } else if (!unitedit["-1"] && unit.floorNo == -2 && !extraunits.includes(unit)) {
             extraunits.push(unit);
           }
@@ -361,19 +357,21 @@ const getPropertyEditDetails = (inputData = {}) => {
             ? { i18nKey: "PT_GROUND_PLUS_ONE_OPTION", code: 1 }
             : { i18nKey: "PT_GROUND_FLOOR_OPTION", code: 0 };
       data.noOofBasements = unitedit["-2"]
-        ? { i18nKey: "PT_TWO_BASEMENT_OPTION", code:2 }
+        ? { i18nKey: "PT_TWO_BASEMENT_OPTION", code: 2 }
         : unitedit["-1"]
-          ? { i18nKey: "PT_ONE_BASEMENT_OPTION",code:1 }
-          : { i18nKey: "PT_NO_BASEMENT_OPTION",code:0 };
+          ? { i18nKey: "PT_ONE_BASEMENT_OPTION", code: 1 }
+          : { i18nKey: "PT_NO_BASEMENT_OPTION", code: 0 };
 
       data.units = data?.units.map(ob => {
-        return{...ob, unitType:{
-          code: ob?.usageCategory === "RESIDENTIAL" ? ob?.usageCategory : ob?.usageCategory?.split(".")[3],
-          i18nKey: ob?.usageCategory === "RESIDENTIAL" ? `PROPERTYTAX_BILLING_SLAB_${ob?.usageCategory}` : `PROPERTYTAX_BILLING_SLAB_${ob?.usageCategory?.split(".")[3]}`,
-          usageCategoryMinor: ob?.usageCategory === "RESIDENTIAL" ? "" : ob?.usageCategory?.split(".")[1],
-          usageCategorySubMinor: ob?.usageCategory === "RESIDENTIAL" ? "" : ob?.usageCategory?.split(".")[2],
+        return {
+          ...ob, unitType: {
+            code: ob?.usageCategory === "RESIDENTIAL" ? ob?.usageCategory : ob?.usageCategory?.split(".")[3],
+            i18nKey: ob?.usageCategory === "RESIDENTIAL" ? `PROPERTYTAX_BILLING_SLAB_${ob?.usageCategory}` : `PROPERTYTAX_BILLING_SLAB_${ob?.usageCategory?.split(".")[3]}`,
+            usageCategoryMinor: ob?.usageCategory === "RESIDENTIAL" ? "" : ob?.usageCategory?.split(".")[1],
+            usageCategorySubMinor: ob?.usageCategory === "RESIDENTIAL" ? "" : ob?.usageCategory?.split(".")[2],
+          }
         }
-      }});
+      });
       //data.units = data?.units.concat(extraunits);
       //unitedit["-1"] ? (data.units["-1"] = unitedit["-1"]) : "";
       //unitedit["-2"] ? (data.units["-2"] = unitedit["-2"]) : "";
@@ -414,7 +412,7 @@ const getPropertyEditDetails = (inputData = {}) => {
       data.noOfFloors = data?.additionalDetails?.noOfFloors || data?.noOfFloors;
       data.noOofBasements = data?.additionalDetails?.noOofBasements;
       data.units = data?.additionalDetails?.unit;
-     // data.units[0].selfOccupied = data?.additionalDetails?.unit[0]?.selfOccupied;
+      // data.units[0].selfOccupied = data?.additionalDetails?.unit[0]?.selfOccupied;
       // data.units["-1"] = data?.additionalDetails?.basement1 || "";
       // data.units["-2"] = data?.additionalDetails?.basement2 || "";
       // data.landArea = { floorarea:data?.landArea}
@@ -424,74 +422,164 @@ const getPropertyEditDetails = (inputData = {}) => {
 };
 const EditProperty = ({ parentRoute }) => {
   const queryClient = useQueryClient();
-  const match = useRouteMatch();
+  const match = Digit.Hooks.useModuleBasePath();
   const { t } = useTranslation();
   const { pathname } = useLocation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   let config = [];
-  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PT_CREATE_PROPERTY", { });
+  const [params, setParams, clearParams] = Digit.Hooks.useSessionStorage("PT_CREATE_PROPERTY", {});
+  const [ackData, setAckData, clearAckData] = Digit.Hooks.useSessionStorage("PT_CREATE_PROPERTY_RESPONSE", null);
+  const [ackError, setAckError, clearAckError] = Digit.Hooks.useSessionStorage("PT_CREATE_PROPERTY_RESPONSE_ERROR", null);
   const stateId = Digit.ULBService.getStateId();
   let { data: commonFields, isLoading } = Digit.Hooks.pt.useMDMS(stateId, "PropertyTax", "CommonFieldsConfig");
   const tenantId = Digit.ULBService.getCurrentTenantId();
+  const mutation = Digit.Hooks.pt.usePropertyAPI(tenantId, false);
   const acknowledgementIds = window.location.href.split("/").pop();
-  //const propertyIds = window.location.href.split("/").pop();
-  let application = { };
-  const updateProperty = window.location.href.includes("edit-application");
+  const propertyIds = window.location.href.split("/").pop();
+  let application = {};
+  const updateProperty = window.location.href.includes("action=UPDATE");
   const typeOfProperty = window.location.href.includes("UPDATE") ? true : false;
-  const ptProperty = JSON.parse(sessionStorage.getItem("pt-property")) || { };
-  const propertyIds = ptProperty.propertyId;
-  console.log("propertyIdspropertyIds",propertyIds,acknowledgementIds,ptProperty)
+  const ptProperty = JSON.parse(sessionStorage.getItem("pt-property")) || {};
   //const data = { Properties: [ptProperty] };
   const { isLoading: isPTloading, isError, error, data } =
-  Digit.Hooks.pt.usePropertySearch(
-    {
-      tenantId,
-      filters: { propertyIds, isSearchInternal: true },
-      searchedFrom: "myPropertyCitizen",
-    },
-    {
-      enabled: true,
-    }
-  );
-
-console.log("property search data", data);
-
-  console.log("datadatadatadatadatadatadatadatadata",data)
+    Digit.Hooks.pt.usePropertySearch(
+      {
+        tenantId,
+        filters: { propertyIds, isSearchInternal: true },
+        searchedFrom: "myPropertyCitizen",
+      },
+      {
+        enabled: true,
+      }
+    );
   sessionStorage.setItem("isEditApplication", false);
 
   useEffect(() => {
     if (!data?.Properties?.length) return;
-  
+
     const clonedProperty = JSON.parse(JSON.stringify(data.Properties[0]));
-  
+
     clonedProperty.isUpdateProperty = updateProperty;
     clonedProperty.isEditProperty = !updateProperty;
-  
+
     sessionStorage.setItem(
       "propertyInitialObject",
       JSON.stringify(clonedProperty)
     );
-  
+
     const propertyEditDetails = getPropertyEditDetails(clonedProperty);
-    console.log("clonedProperty",clonedProperty,propertyEditDetails)
-    propertyEditDetails.units =clonedProperty.units
+    console.log("clonedProperty", clonedProperty, propertyEditDetails)
+    propertyEditDetails.units = clonedProperty.units
     setParams((prev) => ({ ...prev, ...propertyEditDetails }));
   }, [data, updateProperty]);
-  
 
+
+  // const goNext = (skipStep, index, isAddMultiple, key) => {
+  //   let currentPath = pathname.split("/").pop(),
+  //     lastchar = currentPath.charAt(currentPath.length - 1),
+  //     isMultiple = false,
+  //     nextPage;
+  //   if (Number(parseInt(currentPath)) || currentPath == "0" || currentPath == "-1") {
+  //     if (currentPath == "-1" || currentPath == "-2") {
+  //       currentPath = pathname.slice(0, -3);
+  //       currentPath = currentPath.split("/").pop();
+  //       isMultiple = true;
+  //     } else {
+  //       currentPath = pathname.slice(0, -2);
+  //       currentPath = currentPath.split("/").pop();
+  //       isMultiple = true;
+  //     }
+  //   } else {
+  //     isMultiple = false;
+  //   }
+  //   if (!isNaN(lastchar)) {
+  //     isMultiple = true;
+  //   }
+  //   let { nextStep = { } } = config.find((routeObj) => routeObj.route === currentPath);
+  //   if (typeof nextStep == "object" && nextStep != null && isMultiple != false) {
+  //     if (nextStep[sessionStorage.getItem("ownershipCategory")]) {
+  //       nextStep = `${nextStep[sessionStorage.getItem("ownershipCategory")]}/${index}`;
+  //     } else if (nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")]) {
+  //       if (`${nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")]}` === "un-occupied-area") {
+  //         nextStep = `${nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")]}/${index}`;
+  //       } else {
+  //         nextStep = `${nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")]}`;
+  //       }
+  //     } else if (nextStep[sessionStorage.getItem("subusagetypevar")]) {
+  //       nextStep = `${nextStep[sessionStorage.getItem("subusagetypevar")]}/${index}`;
+  //     } else if (nextStep[sessionStorage.getItem("area")]) {
+  //       // nextStep = `${nextStep[sessionStorage.getItem("area")]}/${index}`;
+
+  //       if (`${nextStep[sessionStorage.getItem("area")]}` !== "map") {
+  //         nextStep = `${nextStep[sessionStorage.getItem("area")]}/${index}`;
+  //       } else {
+  //         nextStep = `${nextStep[sessionStorage.getItem("area")]}`;
+  //       }
+  //     } else if (nextStep[sessionStorage.getItem("IsThisFloorSelfOccupied")]) {
+  //       nextStep = `${nextStep[sessionStorage.getItem("IsThisFloorSelfOccupied")]}/${index}`;
+  //     } else {
+  //       nextStep = `${nextStep[sessionStorage.getItem("noOofBasements")]}/${index}`;
+  //       //nextStep = `${"floordetails"}/${index}`;
+  //     }
+  //   }
+  //   if (typeof nextStep == "object" && nextStep != null && isMultiple == false) {
+  //     if (
+  //       nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")] &&
+  //       (nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")] == "map" ||
+  //         nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")] == "un-occupied-area")
+  //     ) {
+  //       nextStep = `${nextStep[sessionStorage.getItem("IsAnyPartOfThisFloorUnOccupied")]}`;
+  //     } else if (nextStep[sessionStorage.getItem("subusagetypevar")]) {
+  //       nextStep = `${nextStep[sessionStorage.getItem("subusagetypevar")]}`;
+  //     } else if (nextStep[sessionStorage.getItem("area")]) {
+  //       nextStep = `${nextStep[sessionStorage.getItem("area")]}`;
+  //     } else if (nextStep[sessionStorage.getItem("IsThisFloorSelfOccupied")]) {
+  //       nextStep = `${nextStep[sessionStorage.getItem("IsThisFloorSelfOccupied")]}`;
+  //     } else if (nextStep[sessionStorage.getItem("PropertyType")]) {
+  //       nextStep = `${nextStep[sessionStorage.getItem("PropertyType")]}`;
+  //     } else if (nextStep[sessionStorage.getItem("isResdential")]) {
+  //       nextStep = `${nextStep[sessionStorage.getItem("isResdential")]}`;
+  //     }
+  //   }
+  //   /* if (nextStep === "is-this-floor-self-occupied") {
+  //     isMultiple = false;
+  //   } */
+  //   let redirectWithHistory = (to, state) => navigate(to, state != null ? { state } : undefined);
+  //   if (skipStep) {
+  //     redirectWithHistory = (to, state) => navigate(to, state != null ? { replace: true, state } : { replace: true });
+  //   }
+  //   if (isAddMultiple) {
+  //     nextStep = key;
+  //   }
+  //   if (nextStep === null) {
+  //     return redirectWithHistory(`check`);
+  //   }
+  //   if (!isNaN(nextStep.split("/").pop())) {
+  //     nextPage = `${nextStep}`;
+  //   } else {
+  //     nextPage = isMultiple && nextStep !== "map" ? `${nextStep}/${index}` : `${nextStep}`;
+  //   }
+
+  //   redirectWithHistory(nextPage);
+  // };
   const goNext = (skipStep, index, isAddMultiple, key) => {
     let currentPath = pathname.split("/").pop(),
       lastchar = currentPath.charAt(currentPath.length - 1),
       isMultiple = false,
       nextPage;
+
     if (Number(parseInt(currentPath)) || currentPath == "0" || currentPath == "-1") {
       if (currentPath == "-1" || currentPath == "-2") {
-        currentPath = pathname.slice(0, -3);
-        currentPath = currentPath.split("/").pop();
+        // e.g. pathname ends in /route@/-1 → get route@
+        const parts = pathname.split("/");
+        parts.pop(); // remove -1 or -2
+        currentPath = parts.pop(); // get the route segment like number-of-basements@0
         isMultiple = true;
       } else {
-        currentPath = pathname.slice(0, -2);
-        currentPath = currentPath.split("/").pop();
+        // e.g. pathname ends in /number-of-basements@0/0 → get number-of-basements@0
+        const parts = pathname.split("/");
+        parts.pop(); // remove trailing index (0,1,2...)
+        currentPath = parts.pop(); // get the route segment
         isMultiple = true;
       }
     } else {
@@ -500,7 +588,8 @@ console.log("property search data", data);
     if (!isNaN(lastchar)) {
       isMultiple = true;
     }
-    let { nextStep = { } } = config.find((routeObj) => routeObj.route === currentPath);
+
+    let { nextStep = {} } = config.find((routeObj) => routeObj.route === currentPath);
     if (typeof nextStep == "object" && nextStep != null && isMultiple != false) {
       if (nextStep[sessionStorage.getItem("ownershipCategory")]) {
         nextStep = `${nextStep[sessionStorage.getItem("ownershipCategory")]}/${index}`;
@@ -523,8 +612,16 @@ console.log("property search data", data);
       } else if (nextStep[sessionStorage.getItem("IsThisFloorSelfOccupied")]) {
         nextStep = `${nextStep[sessionStorage.getItem("IsThisFloorSelfOccupied")]}/${index}`;
       } else {
-        nextStep = `${nextStep[sessionStorage.getItem("noOofBasements")]}/${index}`;
-        //nextStep = `${"floordetails"}/${index}`;
+        const resolvedNext = nextStep[sessionStorage.getItem("noOofBasements")];
+        if (resolvedNext) {
+          // noOofBasements routes (units) should preserve the index suffix
+          nextStep = resolvedNext;
+          isMultiple = true;
+        } else {
+          const fallback = Object.values(nextStep)[0];
+          nextStep = fallback || nextStep;
+          isMultiple = false;
+        }
       }
     }
     if (typeof nextStep == "object" && nextStep != null && isMultiple == false) {
@@ -549,27 +646,45 @@ console.log("property search data", data);
     /* if (nextStep === "is-this-floor-self-occupied") {
       isMultiple = false;
     } */
-    let redirectWithHistory = history.push;
+    let redirectWithHistory = (to, state) => navigate(to, state != null ? { state } : undefined);
     if (skipStep) {
-      redirectWithHistory = history.replace;
+      redirectWithHistory = (to, state) => navigate(to, state != null ? { replace: true, state } : { replace: true });
     }
     if (isAddMultiple) {
       nextStep = key;
     }
     if (nextStep === null) {
-      return redirectWithHistory(`${match.path}/check`);
+      return redirectWithHistory(`check`);
     }
     if (!isNaN(nextStep.split("/").pop())) {
-      nextPage = `${match.path}/${nextStep}`;
+      nextPage = `${nextStep}`;
     } else {
-      nextPage = isMultiple && nextStep !== "map" ? `${match.path}/${nextStep}/${index}` : `${match.path}/${nextStep}`;
+      nextPage = isMultiple && nextStep !== "map" && nextStep !== "pincode" ? `${nextStep}/${index}` : `${nextStep}`;
     }
 
     redirectWithHistory(nextPage);
   };
+  const onSubmitProperty = () => {
+    if (mutation.isPending) return;
+    const dataForUpdate = { ...params, tenantId };
+    const propertyPayload = convertToUpdateProperty(dataForUpdate, t);
+
+    mutation.mutate(propertyPayload, {
+      onSuccess: (responseData) => {
+        setAckData(responseData);
+        setAckError(null);
+        navigate(`acknowledgement`);
+      },
+      onError: (err) => {
+        setAckData(null);
+        setAckError(err);
+        navigate(`acknowledgement`);
+      }
+    });
+  };
 
   const createProperty = async () => {
-    history.push(`${match.path}/acknowledgement`);
+    onSubmitProperty();
   };
 
   function handleSelect(key, data, skipStep, index, isAddMultiple = false) {
@@ -593,46 +708,46 @@ console.log("property search data", data);
 
   const onSuccess = () => {
     clearParams();
+    clearAckData();
+    clearAckError();
     queryClient.invalidateQueries("PT_CREATE_PROPERTY");
-    sessionStorage.setItem("propertyInitialObject", JSON.stringify({ }));
-    sessionStorage.setItem("pt-property", JSON.stringify({ }));
+    sessionStorage.setItem("propertyInitialObject", JSON.stringify({}));
+    sessionStorage.setItem("pt-property", JSON.stringify({}));
   };
 
 
-  if (isLoading || isPTloading) {
+  if (isLoading || isPTloading || mutation.isPending) {
     return <Loader />;
   }
 
   /* use newConfig instead of commonFields for local development in case needed */
-  commonFields=newConfig;
+  commonFields = newConfig;
   commonFields.forEach((obj) => {
     config = config.concat(obj.body.filter((a) => !a.hideInCitizen));
   });
   config.indexRoute = `info`;
-  const  CheckPage = Digit?.ComponentRegistryService?.getComponent('PTCheckPage');
+  const CheckPage = Digit?.ComponentRegistryService?.getComponent('PTCheckPage');
   const PTAcknowledgement = Digit?.ComponentRegistryService?.getComponent('PTAcknowledgement');
 
   return (
-    <Switch>
+    <Routes>
       {config.map((routeObj, index) => {
         const { component, texts, inputs, key } = routeObj;
         const Component = typeof component === "string" ? Digit.ComponentRegistryService.getComponent(component) : component;
         return (
-          <Route path={`${match.path}/${routeObj.route}`} key={index}>
-            <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} />
-          </Route>
+          <Route
+            path={`${routeObj.route}/*`}
+            key={index}
+            element={
+              <Component config={{ texts, inputs, key }} onSelect={handleSelect} onSkip={handleSkip} t={t} formData={params} onAdd={handleMultiple} />
+            }
+          />
         );
       })}
-      <Route path={`${match.path}/check`}>
-        <CheckPage onSubmit={createProperty} value={params} />
-      </Route>
-      <Route path={`${match.path}/acknowledgement`}>
-        <PTAcknowledgement data={params} onSuccess={onSuccess} />
-      </Route>
-      <Route>
-        <Redirect to={`${match.path}/${config.indexRoute}`} />
-      </Route>
-    </Switch>
+      <Route path={`check/*`} element={<CheckPage onSubmit={createProperty} value={params} />} />
+      <Route path={`acknowledgement/*`} element={<PTAcknowledgement ackData={ackData} isPending={mutation.isPending} error={ackError} onSuccess={onSuccess} />} />
+      <Route path="*" element={<Navigate to={`${config.indexRoute}`} replace />} />
+    </Routes>
   );
 };
 

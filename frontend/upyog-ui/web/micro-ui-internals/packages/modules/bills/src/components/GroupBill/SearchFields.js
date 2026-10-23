@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, Loader, MobileNumber, CardLabelError } from "@upyog/digit-ui-react-components";
+import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, Loader, MobileNumber, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
 import { Controller, useWatch } from "react-hook-form";
 
 const SearchFields = ({ register, control, reset, tenantId, t, formState,tenantlocalties }) => {
@@ -150,7 +150,7 @@ const SearchFields = ({ register, control, reset, tenantId, t, formState,tenantl
                     )}
                 />
                 {formErrors && formErrors?.locality && formErrors?.locality?.type === "required" && (
-                    <CardLabelError style={{marginLeft:"-35px"}}>{t(`CS_COMMON_REQUIRED`)}</CardLabelError>)}
+                    <CardLabelError className="bills-search-fields-card">{t(`CS_COMMON_REQUIRED`)}</CardLabelError>)}
             </SearchField>
             <SearchField>
                 {getLabel()}

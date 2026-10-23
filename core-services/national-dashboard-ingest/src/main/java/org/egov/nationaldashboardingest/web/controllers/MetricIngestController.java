@@ -58,6 +58,7 @@ public class MetricIngestController {
      * @param ingestRequest UPYOG ingest payload ({@code RequestInfo} + {@code Data})
      * @return hashed ingest response; audit FAILED is published if {@link IngestService#ingestData} throws
      */
+
     @RequestMapping(value="/_ingest", method = RequestMethod.POST)
     public ResponseEntity<IngestResponse> create(@RequestBody @Valid IngestRequest ingestRequest) {
         return integrationAuditLogger.logInboundApi(

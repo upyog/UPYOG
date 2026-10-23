@@ -8,15 +8,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.egov.common.contract.request.RequestInfo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.upyog.rs.config.RequestServiceConfiguration;
 import org.upyog.rs.constant.RequestServiceConstants;
 import org.upyog.rs.service.RequestServiceNotificationService;
 import org.upyog.rs.util.NotificationUtil;
-import org.upyog.rs.web.models.events.Action;
-import org.upyog.rs.web.models.events.ActionItem;
 import org.upyog.rs.web.models.events.Event;
 import org.upyog.rs.web.models.events.EventRequest;
 import org.upyog.rs.web.models.events.Recepient;
@@ -26,17 +23,17 @@ import org.upyog.rs.web.models.notification.EmailRequest;
 import org.upyog.rs.web.models.notification.SMSRequest;
 import org.upyog.rs.web.models.waterTanker.WaterTankerBookingRequest;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class RequestServiceNotificationServiceImpl implements RequestServiceNotificationService {
 
-	@Autowired
-	private RequestServiceConfiguration config;
+	private final RequestServiceConfiguration config;
 
-	@Autowired
-	private NotificationUtil util;
+	private final NotificationUtil util;
 	
 	/**
 	 * Processes a booking request and sends notifications based on the application status.
@@ -53,14 +50,12 @@ public class RequestServiceNotificationServiceImpl implements RequestServiceNoti
 	    Map<String, String> messageMap;
 	    String localizationMessages;
 
-	    if (request instanceof WaterTankerBookingRequest) {
-	        WaterTankerBookingRequest waterRequest = (WaterTankerBookingRequest) request;
+	    if (request instanceof WaterTankerBookingRequest waterRequest) {
 	        tenantId = waterRequest.getWaterTankerBookingDetail().getTenantId();
 	        requestInfo = waterRequest.getRequestInfo();
 	        localizationMessages = util.getLocalizationMessages(tenantId, requestInfo);
 	        messageMap = util.getCustomizedMsg(requestInfo, waterRequest.getWaterTankerBookingDetail(), localizationMessages);
-	    } else if (request instanceof MobileToiletBookingRequest) {
-	        MobileToiletBookingRequest toiletRequest = (MobileToiletBookingRequest) request;
+	    } else if (request instanceof MobileToiletBookingRequest toiletRequest) {
 	        tenantId = toiletRequest.getMobileToiletBookingDetail().getTenantId();
 	        requestInfo = toiletRequest.getRequestInfo();
 	        localizationMessages = util.getLocalizationMessages(tenantId, requestInfo);
@@ -69,7 +64,7 @@ public class RequestServiceNotificationServiceImpl implements RequestServiceNoti
 	        throw new IllegalArgumentException("Unsupported request type: " + request.getClass().getSimpleName());
 	    }
 
-	    EventRequest eventRequest = getEventsForRS(request, messageMap.get(NotificationUtil.ACTION_LINK), messageMap);
+	    EventRequest eventRequest = getEventsForRS(request, messageMap);
 	    log.info("Event Request in RequestService process method: " + eventRequest);
 
 	    Set<String> mobileNumbers = new HashSet<>(util.fetchUserUUIDs(new HashSet<>(), requestInfo, tenantId).keySet());
@@ -105,25 +100,22 @@ public class RequestServiceNotificationServiceImpl implements RequestServiceNoti
 	 * @param request    The booking request object (either
 	 *                   {@link MobileToiletBookingRequest} or
 	 *                   {@link WaterTankerBookingRequest}).
-	 * @param actionLink The action link for the notification.
 	 * @param messageMap The message content map for the notification.
 	 * @return An {@link EventRequest} object containing event details, or null if
 	 *         an error occurs.
 	 */
 
-	private EventRequest getEventsForRS(Object request, String actionLink, Map<String, String> messageMap) {
+	private EventRequest getEventsForRS(Object request, Map<String, String> messageMap) {
 		List<Event> events = new ArrayList<>();
 		String tenantId;
 		String mobileNumber;
 		RequestInfo requestInfo;
 
-		if (request instanceof MobileToiletBookingRequest) {
-			MobileToiletBookingRequest toiletRequest = (MobileToiletBookingRequest) request;
+		if (request instanceof MobileToiletBookingRequest toiletRequest) {
 			tenantId = toiletRequest.getMobileToiletBookingDetail().getTenantId();
 			mobileNumber = toiletRequest.getMobileToiletBookingDetail().getApplicantDetail().getMobileNumber();
 			requestInfo = toiletRequest.getRequestInfo();
-		} else if (request instanceof WaterTankerBookingRequest) {
-			WaterTankerBookingRequest tankerRequest = (WaterTankerBookingRequest) request;
+		} else if (request instanceof WaterTankerBookingRequest tankerRequest) {
 			tenantId = tankerRequest.getWaterTankerBookingDetail().getTenantId();
 			mobileNumber = tankerRequest.getWaterTankerBookingDetail().getApplicantDetail().getMobileNumber();
 			requestInfo = tankerRequest.getRequestInfo();
@@ -132,7 +124,6 @@ public class RequestServiceNotificationServiceImpl implements RequestServiceNoti
 			return null;
 		}
 
-		String localizationMessages = util.getLocalizationMessages(tenantId, requestInfo);
 		List<String> toUsers = new ArrayList<>();
 		Map<String, String> mapOfPhoneNoAndUUIDs = util.fetchUserUUIDs(mobileNumber, requestInfo, tenantId);
 
@@ -146,13 +137,6 @@ public class RequestServiceNotificationServiceImpl implements RequestServiceNoti
 
 		Recepient recepient = Recepient.builder().toUsers(toUsers).toRoles(null).build();
 		log.info("Recipient object in RequestService: " + recepient);
-
-		ActionItem actionItem = ActionItem.builder().actionUrl(actionLink).code("LINK").build();
-		List<ActionItem> actionItems = new ArrayList<>();
-		actionItems.add(actionItem);
-
-		Action action = Action.builder().tenantId(tenantId).id(mobileNumber).actionUrls(actionItems)
-				.eventId(RequestServiceConstants.CHANNEL_NAME_EVENT).build();
 
 		events.add(Event.builder().tenantId(tenantId).description(message)
 				.eventType(RequestServiceConstants.USREVENTS_EVENT_TYPE)

@@ -1,4 +1,4 @@
-import { Header, DownloadIcon, MultiLink,Toast } from "@upyog/digit-ui-react-components";
+import { Header, DownloadIcon, MultiLink,Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import DesktopInbox from "../../../components/inbox/BillsDesktopInbox";
@@ -103,7 +103,7 @@ const GroupBillInbox = ({ parentRoute, initialStates = {}, businessService, filt
   };
 
   const GetLogo = () => (
-    <button onClick={handleMergeAndDownload} style={{ margin: "0 0 0 0", verticalAlign: "middle" }} disabled={!data || data?.Bills?.length === 0}>
+    <button onClick={handleMergeAndDownload} className="bills-index-action-btn" disabled={!data || data?.Bills?.length === 0}>
       <div className="header">
         <span className="logo">
           <DownloadIcon />

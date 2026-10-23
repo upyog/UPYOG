@@ -1,4 +1,4 @@
-import { TextInput, CardLabel, LabelFieldPair, Dropdown, Loader, LocationSearch, CardLabelError, TextArea, MultiUploadWrapper } from "@nudmcdgnpm/digit-ui-react-components";
+import { TextInput, CardLabel, LabelFieldPair, Dropdown, Loader, LocationSearch, CardLabelError, TextArea, MultiUploadWrapper } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { Fragment, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Controller } from "react-hook-form";
@@ -57,7 +57,7 @@ const MessageForm = ({ onSelect, config, formData, register, control, errors, se
             defaultValue={userUlbs?.length === 1 ? userUlbs?.[0] : null}
             name="tenantId"
             rules={{ required: true }}
-            render={({ onChange, value }) => <Dropdown option={userUlbs} selected={value} disable={userUlbs?.length === 1} optionKey="code" t={t} select={onChange} />}
+            render={({ field }) => <Dropdown option={userUlbs} selected={field.value} disable={userUlbs?.length === 1} optionKey="code" t={t} select={field.onChange} />}
           />
           {errors && errors['tenantId'] && <CardLabelError>{t(`EVENTS_TENANT_ERROR_REQUIRED`)}</CardLabelError>}
         </div>
@@ -67,7 +67,7 @@ const MessageForm = ({ onSelect, config, formData, register, control, errors, se
         <div className="field">
           <Controller
             defaultValue={formData?.name}
-            render={({ onChange, ref, value }) => <TextInput value={value} type="text" name="name" onChange={onChange} inputRef={ref} />}
+            render={({field}) => <TextInput value={field.value} type="text" name="name" onChange={field.onChange} inputRef={field.ref} />}
             name="name"
             rules={{ required: true, maxLength: 66 }}
             control={control}
@@ -84,7 +84,7 @@ const MessageForm = ({ onSelect, config, formData, register, control, errors, se
             control={control}
             defaultValue={formData?.category ? data?.mseva?.EventCategories.filter(category => category.code === formData?.category)?.[0] : null}
             rules={{ required: true, maxLength: 500 }}
-            render={({ onChange, ref, value }) => <TextArea inputRef={ref} value={value} name="description" onChange={onChange} hintText={t('PUBLIC_BRDCST_MSG_LENGTH')} />}
+            render={({ field }) => <TextArea inputRef={field.ref} value={field.value} name="description" onChange={field.onChange} hintText={t('PUBLIC_BRDCST_MSG_LENGTH')} />}
           />
           {errors && errors?.description && errors?.description?.type === "required" && <CardLabelError>{t(`EVENTS_COMMENTS_ERROR_REQUIRED`)}</CardLabelError>}
           {errors && errors?.description && errors?.description?.type === "maxLength" && <CardLabelError>{t(`EVENTS_MAXLENGTH_REACHED`)}</CardLabelError>}
@@ -138,7 +138,7 @@ const MessageForm = ({ onSelect, config, formData, register, control, errors, se
             name="fromDate"
             defaultValue={formData?.fromDate}
             rules={{ required: true, validate: { isValidFromDate } }}
-            render={({ onChange, value }) => <TextInput type="date" isRequired={true} onChange={onChange} defaultValue={value} />}
+            render={({ field }) => <TextInput type="date" isRequired={true} onChange={field.onChange} defaultValue={field.value} />}
           />
           {errors && errors?.fromDate && errors?.fromDate?.type === "required" && <CardLabelError>{t(`EVENTS_FROM_DATE_ERROR_REQUIRED`)}</CardLabelError>}
           {errors && errors?.fromDate && errors?.fromDate?.type === "isValidFromDate" && <CardLabelError>{t(`EVENTS_FROM_DATE_ERROR_INVALID`)}</CardLabelError>}
@@ -152,7 +152,7 @@ const MessageForm = ({ onSelect, config, formData, register, control, errors, se
             name="toDate"
             defaultValue={formData?.toDate}
             rules={{ required: true, validate: { isValidToDate } }}
-            render={({ onChange, value }) => <TextInput type="date" isRequired={true} onChange={onChange} defaultValue={value} />}
+            render={({ field }) => <TextInput type="date" isRequired={true} onChange={field.onChange} defaultValue={field.value} />}
           />
           {errors && errors?.toDate && errors?.toDate?.type === "required" && <CardLabelError>{t(`EVENTS_TO_DATE_ERROR_REQUIRED`)}</CardLabelError>}
           {errors && errors?.toDate && errors?.toDate?.type === "isValidToDate" && <CardLabelError>{t(`EVENTS_TO_DATE_ERROR_INVALID`)}</CardLabelError>}

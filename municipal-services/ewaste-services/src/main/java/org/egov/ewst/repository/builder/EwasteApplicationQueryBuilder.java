@@ -1,7 +1,9 @@
 package org.egov.ewst.repository.builder;
 
+import java.util.Arrays;
 import java.util.List;
 
+import org.egov.ewst.config.EwasteConfiguration;
 import org.egov.ewst.models.EwasteApplicationSearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -12,6 +14,12 @@ import org.springframework.util.ObjectUtils;
  */
 @Component
 public class EwasteApplicationQueryBuilder {
+
+	private final EwasteConfiguration configuration;
+
+	public EwasteApplicationQueryBuilder(EwasteConfiguration configuration) {
+		this.configuration = configuration;
+	}
 
 	// Base query for EwasteApplication
 	private static final String BASE_EW_QUERY = "SELECT RQ.id AS rqid, RQ.tenantId AS rqtenantid, RQ.requestId AS rqrequestid, RQ.calculatedAmount AS rqcalculatedamount, "
@@ -43,8 +51,9 @@ public class EwasteApplicationQueryBuilder {
 			+ "LEFT JOIN EG_EW_ADDRESS ADR ON ADR.ewId = RQ.id "
 			+ "LEFT JOIN EG_EW_EWASTEDOCUMENTS DOC ON DOC.ewId = RQ.id ";
 
-	// Default order by clause
-	private final String ORDERBY_CREATEDTIME = " ORDER BY RQ.createdTime DESC ";
+	private static final String PAGINATION_WRAPPER =
+			"SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY rqcreatedtime DESC) AS offset_ FROM ({}) result) result_offset " +
+					"WHERE offset_ >= ? AND offset_ <= ?";
 
 	/**
 	 * Constructs the SQL query for searching EwasteApplication based on the provided criteria.
@@ -77,6 +86,16 @@ public class EwasteApplicationQueryBuilder {
 			query.append(" rq.requestid = ? ");
 			preparedStmtList.add(criteria.getRequestId());
 		}
+
+		if (!ObjectUtils.isEmpty(criteria.getListOfRequestIds())) {
+			List<String> requestIds = criteria.getListOfRequestIds();
+			addClauseIfRequired(query,preparedStmtList);
+			query.append(" rq.requestid IN (")
+					.append(createQueryParams(requestIds))
+					.append(")");
+			addToPreparedStatement(preparedStmtList, requestIds);
+		}
+
 		if (!ObjectUtils.isEmpty(criteria.getRequestStatus())) {
 			addClauseIfRequired(query, preparedStmtList);
 			query.append(" rq.requeststatus = ? ");
@@ -93,8 +112,7 @@ public class EwasteApplicationQueryBuilder {
 			preparedStmtList.add(criteria.getToDate());
 		}
 
-		query.append(ORDERBY_CREATEDTIME);
-		return query.toString();
+		return addPaginationWrapper(query.toString(), preparedStmtList, criteria);
 	}
 
 	/**
@@ -112,14 +130,14 @@ public class EwasteApplicationQueryBuilder {
 	}
 
 	/**
-	 * Creates a query string for a list of IDs.
+	 * produce a query input for the multiple values
 	 *
-	 * @param ids The list of IDs.
-	 * @return The constructed query string.
+	 * @param requestIds
+	 * @return
 	 */
-	private String createQuery(List<String> ids) {
+	private Object createQueryParams(List<String> requestIds) {
 		StringBuilder builder = new StringBuilder();
-		int length = ids.size();
+		int length = requestIds.size();
 		for (int i = 0; i < length; i++) {
 			builder.append(" ?");
 			if (i != length - 1)
@@ -137,4 +155,38 @@ public class EwasteApplicationQueryBuilder {
 	private void addToPreparedStatement(List<Object> preparedStmtList, List<String> ids) {
 		ids.forEach(preparedStmtList::add);
 	}
+
+	private String addPaginationWrapper(String query, List<Object> preparedStmtList,
+										EwasteApplicationSearchCriteria criteria) {
+
+		int limit = configuration.getDefaultLimit();
+		int offset = configuration.getDefaultOffset();
+		String finalQuery = PAGINATION_WRAPPER.replace("{}", query);
+
+		if (criteria.getLimit() == null && criteria.getOffset() == null) {
+			limit = configuration.getMaxSearchLimit();
+		}
+
+		if (criteria.getLimit() != null && criteria.getLimit() <= configuration.getMaxSearchLimit()) {
+			limit = criteria.getLimit();
+		}
+
+		if (criteria.getLimit() != null && criteria.getLimit() > configuration.getMaxSearchLimit()) {
+			limit = configuration.getMaxSearchLimit();
+		}
+
+		if (criteria.getOffset() != null)
+			offset = criteria.getOffset();
+
+		if (limit == -1) {
+			finalQuery = finalQuery.replace("WHERE offset_ >= ? AND offset_ <= ?", "");
+		} else {
+			preparedStmtList.add(offset);
+			preparedStmtList.add(offset + limit);
+		}
+
+		return finalQuery;
+
+	}
+
 }

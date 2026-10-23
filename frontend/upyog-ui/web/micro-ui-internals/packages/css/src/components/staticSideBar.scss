@@ -25,3 +25,360 @@
     }
   }
 }
+
+.static-citizen-sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  z-index: 99;
+
+  @media (max-width: 780px) {
+    height: calc(100vh - 10px);
+  }
+}
+
+.employee-sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+/* ==========================================================================
+   CITIZEN SIDEBAR HELPLINE - FIX OVERLAPPING & ENHANCE ALIGNMENT
+   ========================================================================== */
+.sidebar-helpline-title {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+  color: #64748B !important;
+  text-transform: uppercase !important;
+  line-height: 1.2 !important;
+  display: block !important;
+}
+
+.sidebar-helpline-telephone {
+  margin-top: 2px !important;
+  display: flex !important;
+  align-items: center !important;
+  line-height: 1.2 !important;
+
+  .link {
+    display: inline-flex !important;
+    align-items: center !important;
+    line-height: 1.2 !important;
+
+    a {
+      font-size: 13.5px !important;
+      font-weight: 600 !important;
+      color: #a82227 !important;
+      text-decoration: none !important;
+      line-height: 1.2 !important;
+      letter-spacing: 0.2px !important;
+      white-space: nowrap !important;
+      transition: color 0.15s ease-in-out;
+
+      &:hover {
+        color: #7d171b !important;
+        text-decoration: underline !important;
+      }
+    }
+  }
+}
+
+/* Ensure the Helpline item has adequate height, no overflow, and clean flex alignment */
+.sidebar-list.sidebar-list-helpline,
+.sidebar-list:has(.sidebar-helpline-telephone),
+.sidebar-list:has(.telephone),
+.drawer-desktop .sidebar-list.sidebar-list-helpline,
+.drawer-desktop .sidebar-list:has(.sidebar-helpline-telephone) {
+  height: auto !important;
+  min-height: 52px !important;
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+  margin-bottom: 8px !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+
+  .menu-item {
+    display: flex !important;
+    align-items: center !important;
+    height: auto !important;
+    min-height: 44px !important;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+    padding: 0 !important;
+    margin: 0 !important;
+
+    .icon {
+      float: none !important;
+      margin: 0 12px 0 0 !important;
+      flex-shrink: 0 !important;
+      align-self: center !important;
+      height: 20px !important;
+      width: 20px !important;
+      fill: #a82227 !important;
+      color: #a82227 !important;
+    }
+
+    .menu-label {
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      margin-left: 0 !important;
+      line-height: 1.25 !important;
+      white-space: normal !important;
+      overflow: visible !important;
+      text-overflow: unset !important;
+      gap: 2px !important;
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.5px !important;
+      color: #64748B !important;
+    }
+  }
+}
+
+.menu-item:has(.sidebar-helpline-telephone) {
+  display: flex !important;
+  align-items: center !important;
+  height: auto !important;
+  min-height: 44px !important;
+  line-height: 1.25 !important;
+  white-space: normal !important;
+
+  .icon {
+    float: none !important;
+    margin: 0 12px 0 0 !important;
+    flex-shrink: 0 !important;
+    align-self: center !important;
+  }
+
+  .menu-label {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    margin-left: 0 !important;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+    gap: 2px !important;
+  }
+}
+
+.menu-label:has(.sidebar-helpline-telephone) {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  margin-left: 0 !important;
+  line-height: 1.25 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  gap: 2px !important;
+}
+
+.img-Profile {
+  object-fit: cover !important;
+  object-position: center !important;
+}
+
+.profile-section {
+  &.profile-section--collapsed {
+    padding-top: 10px;
+    img {
+      width: 44px !important;
+      height: 44px !important;
+      margin: 0px auto 8px !important;
+    }
+    .name-Profile {
+      font-size: 13px !important;
+      text-align: center;
+    }
+  }
+}
+
+.drawer-desktop {
+  background-color: white !important;
+}
+
+.sidebar-pointer-item {
+  cursor: pointer !important;
+}
+
+/* ==========================================================================
+   SIDEBAR PROFESSIONAL SKELETON LOADER
+   ========================================================================== */
+@keyframes sidebarShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.sidebar-skeleton-pulse {
+  background: linear-gradient(
+    90deg,
+    #ede9f5 0%,
+    #f7f5fb 35%,
+    #e2dbee 50%,
+    #f7f5fb 65%,
+    #ede9f5 100%
+  ) !important;
+  background-size: 300% 100% !important;
+  animation: sidebarShimmer 1.6s ease-in-out infinite !important;
+  border-radius: 6px !important;
+}
+
+.sidebar-skeleton-container {
+  overflow: hidden !important;
+  background: #ffffff !important;
+  height: 100% !important;
+  width: 100% !important;
+
+  .sidebar-logo-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 18px 12px 14px !important;
+    border-bottom: 1px solid #f0eef6 !important;
+
+    .sidebar-skeleton-logo {
+      height: 38px !important;
+      width: 140px !important;
+      border-radius: 8px !important;
+    }
+  }
+
+  &.sidebar-skeleton--collapsed {
+    .sidebar-logo-header .sidebar-skeleton-logo {
+      width: 36px !important;
+      height: 36px !important;
+      border-radius: 8px !important;
+    }
+  }
+
+  .sidebar-skeleton-profile {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    padding: 16px 12px 10px !important;
+
+    .sidebar-skeleton-avatar {
+      width: 54px !important;
+      height: 54px !important;
+      border-radius: 50% !important;
+      margin-bottom: 10px !important;
+      box-shadow: 0 2px 8px rgba(106, 74, 145, 0.08) !important;
+    }
+
+    .sidebar-skeleton-profile-info {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      width: 100% !important;
+      gap: 6px !important;
+      margin-bottom: 8px !important;
+
+      .sidebar-skeleton-text-name {
+        height: 14px !important;
+        width: 60% !important;
+        border-radius: 4px !important;
+      }
+
+      .sidebar-skeleton-text-sub {
+        height: 10px !important;
+        width: 45% !important;
+        border-radius: 4px !important;
+      }
+    }
+
+    .profile-divider {
+      width: 85% !important;
+      height: 1px !important;
+      background: #f0eef6 !important;
+      margin: 8px 0 0 0 !important;
+    }
+  }
+
+  .sidebar-skeleton-search-wrap {
+    padding: 8px 16px 12px !important;
+
+    .sidebar-skeleton-search {
+      height: 36px !important;
+      width: 100% !important;
+      border-radius: 8px !important;
+    }
+  }
+
+  .sidebar-skeleton-menu-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    padding: 6px 10px !important;
+    flex: 1 !important;
+    overflow: hidden !important;
+
+    .sidebar-skeleton-item {
+      display: flex !important;
+      align-items: center !important;
+      gap: 12px !important;
+      height: 40px !important;
+      padding: 0 10px !important;
+      border-radius: 8px !important;
+
+      .sidebar-skeleton-icon {
+        width: 22px !important;
+        height: 22px !important;
+        border-radius: 6px !important;
+        flex-shrink: 0 !important;
+      }
+
+      .sidebar-skeleton-label {
+        height: 13px !important;
+        border-radius: 4px !important;
+      }
+
+      .sidebar-skeleton-chevron {
+        width: 10px !important;
+        height: 10px !important;
+        border-radius: 2px !important;
+        margin-left: auto !important;
+        opacity: 0.6 !important;
+      }
+    }
+  }
+
+  &.sidebar-skeleton--collapsed {
+    .sidebar-skeleton-menu-list {
+      padding: 6px 6px !important;
+
+      .sidebar-skeleton-item {
+        justify-content: center !important;
+        padding: 0 !important;
+
+        .sidebar-skeleton-icon {
+          width: 28px !important;
+          height: 28px !important;
+          border-radius: 8px !important;
+        }
+      }
+    }
+  }
+
+  .sidebar-skeleton-logout {
+    padding: 12px 16px !important;
+    border-top: 1px solid #f0eef6 !important;
+    margin-top: auto !important;
+
+    .sidebar-skeleton-logout-btn {
+      height: 36px !important;
+      width: 100% !important;
+      border-radius: 8px !important;
+    }
+  }
+}

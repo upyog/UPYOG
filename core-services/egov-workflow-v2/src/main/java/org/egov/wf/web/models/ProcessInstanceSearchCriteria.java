@@ -78,8 +78,12 @@ public class ProcessInstanceSearchCriteria {
     @JsonIgnore
     private Long slotPercentageSlaLimit;
 
+    @JsonProperty("createdBy")
+    private String createdByUUID;
 
-
+    public void setCreatedBy(String createdBy) {
+        this.createdByUUID = createdBy;
+    }
 
     public Boolean isNull(){
         if(this.getBusinessIds()==null && this.getIds()==null && this.getAssignee()==null &&

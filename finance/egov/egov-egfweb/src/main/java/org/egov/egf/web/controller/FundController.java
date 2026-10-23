@@ -50,7 +50,7 @@ package org.egov.egf.web.controller;
 
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.commons.Fund;
 import org.egov.commons.contracts.FundSearchRequest;
@@ -60,7 +60,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.utils.EgovMasterDataCaching;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
@@ -153,7 +153,7 @@ public class FundController {
 	}
 
 	@GetMapping(value = "/result/{id}/{mode}")
-	public String result(@PathVariable("id") final Long id,@PathVariable("mode") @SafeHtml final String mode, final Model model) {
+	public String result(@PathVariable("id") final Long id,@PathVariable("mode") @SanitizeHtml final String mode, final Model model) {
 		final Fund fund = fundService.findOne(id);
 		model.addAttribute("fund", fund);
 		model.addAttribute("mode", mode);
@@ -161,7 +161,7 @@ public class FundController {
 	}
 
 	@PostMapping(value = "/search/{mode}")
-	public String search(@PathVariable("mode") @SafeHtml final String mode, final Model model) {
+	public String search(@PathVariable("mode") @SanitizeHtml final String mode, final Model model) {
 		final FundSearchRequest fundSearchRequest = new FundSearchRequest();
 		prepareNewForm(model);
 		model.addAttribute("fundSearchRequest", fundSearchRequest);
@@ -171,7 +171,7 @@ public class FundController {
 
 	@PostMapping(value = "/ajaxsearch/{mode}", produces = MediaType.TEXT_PLAIN_VALUE)
 	@ResponseBody
-	public String ajaxsearch(@PathVariable("mode") @SafeHtml final String mode, final Model model,
+	public String ajaxsearch(@PathVariable("mode") @SanitizeHtml final String mode, final Model model,
 		@Valid @ModelAttribute final FundSearchRequest fundSearchRequest) {
 		final List<Fund> searchResultList = fundService.search(fundSearchRequest);
 		return new StringBuilder("{ \"data\":").append(toSearchResultJson(searchResultList)).append("}").toString();

@@ -1,0 +1,19 @@
+{
+  "moduleName": "ESTATE_MANAGEMENT",
+
+  "steps": [
+
+    {
+      "name": "Employee Create Asset",
+      "type": "EMPLOYEE",
+      "module": "ESTATE_MANAGEMENT",
+      "role": "INITIATOR"
+    },
+
+    {
+      "name": "Citizen Application",
+      "type": "CITIZEN",
+      "module": "ESTATE_MANAGEMENT"
+    }
+  ]
+}

@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.vehicle.util.VehicleUtil;
 import org.egov.vehicle.web.model.AuditDetails;
@@ -29,6 +32,9 @@ public class EnrichmentService {
 	@Autowired
 	UserService userService;
 
+	@Autowired
+	private ObjectMapper mapper;
+
 	public void enrichVehicleCreateRequest(VehicleRequest vehicleRequest) {
 		RequestInfo requestInfo = vehicleRequest.getRequestInfo();
 
@@ -42,7 +48,28 @@ public class EnrichmentService {
 		}
         // Set owner UUID for persister - persister reads from $.vehicle.owner.uuid to populate database owner_id column
         //vehicleRequest.getVehicle().getOwner().setUuid(vehicleRequest.getVehicle().getOwner().getId());
-    }
+
+		// Default serviceType to FSM if not provided (e.g. created via FSM module)
+		Vehicle vehicle = vehicleRequest.getVehicle();
+		if (vehicle.getAdditionalDetails() == null) {
+			Map<String, Object> additionalDetails = new HashMap<>();
+			additionalDetails.put("serviceType", "FSM");
+			vehicle.setAdditionalDetails(additionalDetails);
+		} else {
+			try {
+				Map<String, Object> additionalDetails = mapper.convertValue(vehicle.getAdditionalDetails(), Map.class);
+				if (additionalDetails == null) {
+					additionalDetails = new HashMap<>();
+				}
+				if (additionalDetails.get("serviceType") == null || StringUtils.isEmpty(additionalDetails.get("serviceType").toString())) {
+					additionalDetails.put("serviceType", "FSM");
+				}
+				vehicle.setAdditionalDetails(additionalDetails);
+			} catch (Exception e) {
+				log.error("Error setting default serviceType in additionalDetails: {}", e.getMessage());
+			}
+		}
+	}
 
 	public void enrichVehicleUpdateRequest(VehicleRequest vehicleRequest) {
 		RequestInfo requestInfo = vehicleRequest.getRequestInfo();

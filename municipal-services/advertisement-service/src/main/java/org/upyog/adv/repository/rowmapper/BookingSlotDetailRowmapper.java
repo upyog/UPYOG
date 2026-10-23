@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.upyog.adv.util.BookingUtil;
 import org.upyog.adv.web.models.CartDetail;
 
+@SuppressWarnings("java:S2638")
 @Component
 public class BookingSlotDetailRowmapper implements ResultSetExtractor<List<CartDetail>> {
 
@@ -19,7 +20,6 @@ public class BookingSlotDetailRowmapper implements ResultSetExtractor<List<CartD
 	public List<CartDetail> extractData(ResultSet rs) throws SQLException, DataAccessException {
 		List<CartDetail> bookingSlotDetails = new ArrayList<>();
 		while (rs.next()) {
-			
 
 			CartDetail cartDetail = CartDetail.builder().cartId(rs.getString("slot_id"))
 					.bookingId(rs.getString("booking_id")).addType(rs.getString("add_type"))

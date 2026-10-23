@@ -1,8 +1,13 @@
-import { useMutation } from "react-query";
+import { mutationTemplate } from "../../common/mutationTemplate";
 import { FSMService } from "../../services/elements/FSM";
 
 const useApplicationUpdate = (tenantId) => {
-  return useMutation((details) => FSMService.update(details, tenantId));
+  const mutationFn = (details) =>
+    FSMService.update(details, tenantId);
+
+  return mutationTemplate({
+    mutationFn,
+  });
 };
 
 export default useApplicationUpdate;

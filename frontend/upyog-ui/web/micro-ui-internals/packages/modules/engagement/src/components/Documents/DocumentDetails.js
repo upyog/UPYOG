@@ -1,5 +1,6 @@
-import { Header, ActionBar, SubmitBar, ExternalLinkIcon, Menu, GenericFileIcon, LinkButton } from "@upyog/digit-ui-react-components";
+import { Header, ActionBar, SubmitBar, ExternalLinkIcon, Menu, GenericFileIcon, LinkButton } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState } from 'react'
+
 import { useTranslation } from 'react-i18next';
 import { openDocumentLink, openUploadedDocument } from '../../utils';
 import Confirmation from '../Modal/Confirmation';
@@ -12,6 +13,7 @@ const getUlbName = (tenantId) => {
     return ulbName;
 }
 const DocumentDetails = ({ location, match, history, }) => {
+    const navigate = Digit.Hooks.useCustomNavigate();
     let isMobile = window.Digit.Utils.browser.isMobile();
     const { t } = useTranslation();
     const { details } = location?.state;
@@ -44,7 +46,7 @@ const DocumentDetails = ({ location, match, history, }) => {
                 ULB: {code:details?.tenantId},
                 ...details
             }
-            history.push({
+            navigate({
                 pathname: `/upyog-ui/employee/engagement/documents/inbox/update`,
                 state: { DocumentEntity }
             })
@@ -60,7 +62,7 @@ const DocumentDetails = ({ location, match, history, }) => {
         const DocumentEntity = {
             ...details
         }
-        history.push({
+        navigate({
             pathname: `/upyog-ui/employee/engagement/documents/delete-response`,
             state: { DocumentEntity }
         })
@@ -102,7 +104,7 @@ const DocumentDetails = ({ location, match, history, }) => {
                     </div> */}
                     {details?.filestoreId ? <div className="documentDetails_pdf">
                         <span className="documentDetails_subheader">{`${t('Document')}`}</span>
-                        <div style={{ width: '100px' }} onClick={() => openUploadedDocument(details?.filestoreId, details?.name)}>
+                        <div className="eng-document-details-wrapper" onClick={() => openUploadedDocument(details?.filestoreId, details?.name)}>
                             <GenericFileIcon />
                         </div>
 
@@ -114,7 +116,7 @@ const DocumentDetails = ({ location, match, history, }) => {
             <ActionBar>
                 {displayMenu ? (
                     <Menu
-                        style={{ width: isMobile ? 'full' : '240px' }}
+                        className={isMobile ? "width-full" : "width-240"}
                         localeKeyPrefix={"ES_CE"}
                         options={Actions}
                         t={t}

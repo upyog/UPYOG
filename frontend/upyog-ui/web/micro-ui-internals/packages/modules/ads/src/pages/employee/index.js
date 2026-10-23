@@ -1,8 +1,9 @@
-import { AppContainer, BackButton, PrivateRoute, BreadCrumb } from "@upyog/digit-ui-react-components";
+import { AppContainer, BackButton, PrivateRoute, BreadCrumb } from "@nudmcdgnpm/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link, Switch, useLocation } from "react-router-dom";
+import {  useLocation,Routes,Route } from "react-router-dom";
 import SearchApp from "./SearchApp";
+
 
 /* EmployeeApp component serves as the main application container for employee-related routes.
  * It utilizes the AppContainer, PrivateRoute, and other components for structured navigation.
@@ -21,37 +22,43 @@ const EmployeeApp = ({ path, url, userType }) => {
   const ADSCreate = Digit?.ComponentRegistryService?.getComponent("ADSCreate");
   const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
   const isRes = window.location.href.includes("ads/response");
+  const EnhancedReport = Digit?.ComponentRegistryService?.getComponent("EnhancedReport");
   const isNewRegistration =
     window.location.href.includes("searchad") ||
     window.location.href.includes("modify-application") ||
     window.location.href.includes("ads/application-details");
 
   return (
-    <Switch>
-      <AppContainer>
-        <React.Fragment>
-          <div className="ground-container">
-            {!isRes ? (
-              <div
-                style={
-                  isNewRegistration
-                    ? { marginLeft: "12px", display: "flex", alignItems: "center" }
-                    : { marginLeft: "-4px", display: "flex", alignItems: "center" }
-                }
-              >
-                <BackButton location={location} />
-                {/* <CHBBreadCrumbs location={location} /> */}
-              </div>
-            ) : null}
-            
-            <PrivateRoute path={`${path}/bookad`} component={ADSCreate} />
-            <PrivateRoute path={`${path}/my-applications`} component={(props) => <SearchApp {...props} parentRoute={path} />} />
-            <PrivateRoute path={`${path}/applicationsearch/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
+    <AppContainer>
+      <React.Fragment>
+        <div className="ground-container">
+          {!isRes ? (
+            <div
+              style={
+                isNewRegistration
+                  ? { marginLeft: "12px", display: "flex", alignItems: "center" }
+                  : { marginLeft: "-4px", display: "flex", alignItems: "center" }
+              }
+            >
+              <BackButton location={location} />
+            </div>
+          ) : null}
+          <Routes>
+            {/* <Route path={`${path}/bookad`} element={<PrivateRoute><ADSCreate /></PrivateRoute>} />
+            <Route path={`${path}/my-applications`} element={<PrivateRoute><SearchApp parentRoute={path} /></PrivateRoute>} />
+            <Route path={`${path}/applicationsearch/application-details/:id`} element={<PrivateRoute><ApplicationDetails parentRoute={path} /></PrivateRoute>} /> */}
 
-          </div>
-        </React.Fragment>
-      </AppContainer>
-    </Switch>
+            <Route path="bookad/*" element={<PrivateRoute><ADSCreate /></PrivateRoute>} />
+            <Route path="my-applications/*" element={<PrivateRoute><SearchApp parentRoute={path} /></PrivateRoute>} />
+            <Route path="applicationsearch/application-details/:id" element={<PrivateRoute><ApplicationDetails parentRoute={path} /></PrivateRoute>} />
+            <Route path="AdvApplicationReport/*" element={<PrivateRoute><EnhancedReport parentRoute={path} moduleName="rainmaker-ads" reportName="AdvApplicationReport" /></PrivateRoute>} />
+
+
+
+          </Routes>
+        </div>
+      </React.Fragment>
+    </AppContainer>
   );
 };
 

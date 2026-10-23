@@ -105,18 +105,6 @@
             <version>20240325.1</version>
         </dependency>
 
-		
-		<!-- <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>3.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>3.0.0</version>
-        </dependency> -->
-
 		<!-- For generating Swagger documentation -->
 		<dependency>
 			<groupId>io.springfox</groupId>
@@ -168,10 +156,6 @@
 			</exclusions>
 		</dependency>
 
-		<!--<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-redis</artifactId>
-		</dependency>-->
     </dependencies>
     <repositories>
         <repository>

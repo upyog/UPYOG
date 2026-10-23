@@ -48,7 +48,16 @@
 
 package org.egov.infra.elasticsearch.service;
 
-import org.egov.infra.admin.master.service.CityService;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GRADE_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_REGION_NAME_KEY;
+
+import java.util.Map;
+
+import org.egov.infra.admin.master.service.ICityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.repository.ApplicationIndexRepository;
@@ -57,15 +66,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Map;
-
-import static org.apache.commons.lang3.StringUtils.defaultString;
-import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GRADE_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_NAME_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_REGION_NAME_KEY;
 
 @Service
 @Transactional(readOnly = true)
@@ -78,7 +78,7 @@ public class ApplicationIndexService {
 	private Boolean enable;
 
     @Autowired
-    private CityService cityService;
+    private ICityService cityService;
 
     @Autowired
     public ApplicationIndexService(ApplicationIndexRepository applicationIndexRepository,

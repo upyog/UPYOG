@@ -1,12 +1,12 @@
 import React, { Fragment, useCallback, useMemo, useReducer,useState } from "react";
 import { Link } from "react-router-dom";
-import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast, MultiLink } from "@upyog/digit-ui-react-components";
-import { useHistory } from "react-router-dom";
+import { CloseSvg, SearchForm, Table, Card, SearchAction, PopUp, DetailsCard, Loader, Toast, MultiLink } from "@nudmcdgnpm/digit-ui-react-components";
+
 import SearchFormFields from "./SearchFields";
 import { getBillNumber } from "../../utils";
 
 const MobileGroupBill = ({ Controller, register, control, t, reset, handleSubmit, tenantId, data, onSubmit,isLoading,resultOk,serviceType,locality,tenantlocalties }) => {
-    const history = useHistory()
+    const navigate = Digit.Hooks.useCustomNavigate();
     function activateModal(state, action) {
         switch (action.type) {
             case "set":

@@ -52,7 +52,7 @@
     <parent>
         <artifactId>egov-erp</artifactId>
         <groupId>org.egov</groupId>
-        <version>3.0.2-SNAPSHOT</version>
+        <version>3.0.2-COE-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -63,12 +63,12 @@
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>egov-egi</artifactId>
-            <version>3.0.2-SNAPSHOT</version>
+            <version>3.0.2-COE-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.egov</groupId>
             <artifactId>egov-config</artifactId>
-            <version>3.0.2-SNAPSHOT</version>
+            <version>3.0.2-COE-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -76,15 +76,15 @@
             <artifactId>spring-data-jpa</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.validation</groupId>
+            <groupId>jakarta.validation</groupId>
             <artifactId>validation-api</artifactId>
         </dependency>
     </dependencies>

@@ -1,13 +1,13 @@
-import { Toast, Card, KeyNote, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
+import { Toast, Card, KeyNote, SubmitBar } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React,{ useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link,useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import RenewPopup from "../../../components/RenewPopup";
 import { RENEWAL_CONSTANTS } from "../../../utils";
 
 const StreetVendingApplication = ({ application, buttonLabel,previousDraftId,onDiscard }) => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [showToast, setShowToast] = useState(null);
   const [renewButton, setRnewButton] = useState(false);
   //TODO: Need to remove all session storage from here and get the data from Search API call
@@ -20,7 +20,7 @@ const StreetVendingApplication = ({ application, buttonLabel,previousDraftId,onD
     sessionStorage.setItem("vendorIds",application?.addressDetails?.[0]?.vendorId);
     sessionStorage.setItem("bankIds",application?.bankDetail?.id);
     sessionStorage.setItem("venId",application?.vendorDetail?.[0]?.id);
-    history.push(`/sv-ui/citizen/sv/edit`);
+    navigate(`/sv-ui/citizen/sv/edit`);
   };
 
   useEffect(() => {
@@ -63,7 +63,7 @@ const StreetVendingApplication = ({ application, buttonLabel,previousDraftId,onD
       <KeyNote keyValue={t("SV_VENDOR_NAME")} note={application?.vendorDetail?.[0]?.name} />
       <KeyNote keyValue={t("SV_VENDING_TYPE")} note={application?.vendingActivity} />
       <KeyNote keyValue={t("SV_VENDING_ZONES")} note={t(application?.vendingZoneValue)} />
-      <KeyNote keyValue={t("SV_VALIDITY_DATE")} note={application?.validityDate} />
+      <KeyNote keyValue={t("SV_VALIDITY_DATE")} note={application?.validityDate || application?.validTo} />
       <KeyNote keyValue={t("SV_APPLICATION_STATUS")} note={application?.applicationStatus} />
       {application?.vendingActivity==="STATIONARY"&&(
       <KeyNote keyValue={t("SV_AREA_REQUIRED")} note={application?.vendingArea} />)}

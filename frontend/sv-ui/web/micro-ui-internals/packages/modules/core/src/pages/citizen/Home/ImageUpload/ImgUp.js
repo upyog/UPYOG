@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from "react";
-import{UploadFile} from '@nudmcdgnpm/digit-ui-react-components';
+import{UploadFile} from "@nudmcdgnpm/upyog-ui-react-components-lts";
 const ImgUp=()=>{
     const [uploadedFile, setUploadedFile] = useState("a");
     const [file,setFile] = useState("")

@@ -1,8 +1,8 @@
 import React, { Fragment } from "react";
 import { Controller, useWatch } from "react-hook-form";
-import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, Loader, MobileNumber } from "@upyog/digit-ui-react-components";
+import { TextInput, SubmitBar, DatePicker, SearchField, Dropdown, Loader, MobileNumber } from "@nudmcdgnpm/digit-ui-react-components";
 
-const SearchFields = ({ register, control, reset, tenantId, t }) => {
+const SearchFields = ({ register, control, reset, tenantId, t, onSubmit, onClearSearch }) => {
   const propsForMobileNumber = {
     maxlength: 10,
     pattern: "[6-9][0-9]{9}",
@@ -19,34 +19,92 @@ const SearchFields = ({ register, control, reset, tenantId, t }) => {
     <>
       <SearchField>
         <label>{t("WS_MYCONNECTIONS_CONSUMER_NO")}</label>
-        <TextInput 
-          name="connectionNumber" 
-          inputRef={register({})} 
-          {...(validation = {
-            isRequired: false,
-            pattern: "^[a-zA-Z0-9\/-]*$",
-            type: "text",
-            title: t("ERR_INVALID_CONSUMER_NO"),
-          })}
-          />
+        <Controller
+          control={control}
+          name="connectionNumber"
+          rules={{
+            required: false,
+            pattern: {
+              value: /^[a-zA-Z0-9\/-]*$/,
+              message: t("ERR_INVALID_CONSUMER_NO")
+            }
+          }}
+          render={({ field }) => (
+            <TextInput
+              value={field.value || ""}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+            />
+          )}
+        />
       </SearchField>
       <SearchField>
         <label>{t("WS_SEARCH_CONNNECTION_OLD_CONSUMER_LABEL")}</label>
-        <TextInput name="oldConnectionNumber" inputRef={register({})} {...propsForOldConnectionNumberNpropertyId} />
+        <Controller
+          control={control}
+          name="oldConnectionNumber"
+          rules={{
+            pattern: {
+              value: new RegExp(propsForOldConnectionNumberNpropertyId.pattern),
+              message: propsForOldConnectionNumberNpropertyId.title
+            }
+          }}
+          render={({ field }) => (
+            <TextInput
+              value={field.value || ""}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+            />
+          )}
+        />
       </SearchField>
       <SearchField>
         <label>{t("WS_PROPERTY_ID_LABEL")}</label>
-        <TextInput name="propertyId" inputRef={register({})} {...propsForOldConnectionNumberNpropertyId} />
+        <Controller
+          control={control}
+          name="propertyId"
+          rules={{
+            pattern: {
+              value: new RegExp(propsForOldConnectionNumberNpropertyId.pattern),
+              message: propsForOldConnectionNumberNpropertyId.title
+            }
+          }}
+          render={({ field }) => (
+            <TextInput
+              value={field.value || ""}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+            />
+          )}
+        />
       </SearchField>
       <SearchField>
         <label>{t("WS_HOME_SEARCH_RESULTS_OWN_MOB_LABEL")}</label>
-        <MobileNumber name="mobileNumber" inputRef={register({})} {...propsForMobileNumber} />
+        <Controller
+          control={control}
+          name="mobileNumber"
+          rules={{
+            validate: (value) => {
+              if (!value) return true;
+              if (!/^[6-9][0-9]{9}$/.test(value)) return t("ES_SEARCH_APPLICATION_MOBILE_INVALID");
+              return true;
+            }
+          }}
+          render={({ field }) => (
+            <MobileNumber
+              value={field.value || ""}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              {...propsForMobileNumber}
+            />
+          )}
+        />
       </SearchField>
       <SearchField className="submit">
         <SubmitBar label={t("WS_SEARCH_CONNECTION_SEARCH_BUTTON")} submit />
         <p
           onClick={() => {
-            reset({
+            const resetValues = {
               searchType:"CONNECTION",
               mobileNumber: "",
               offset: 0,
@@ -56,7 +114,13 @@ const SearchFields = ({ register, control, reset, tenantId, t }) => {
               propertyId: "",
               connectionNumber: "",
               oldConnectionNumber: "",
-            });
+            };
+            reset(resetValues);
+            if (onClearSearch) {
+              onClearSearch();
+            } else if (onSubmit) {
+              onSubmit(resetValues);
+            }
           }}
         >
           {t("WS_SEARCH_CONNECTION_RESET_BUTTON")}

@@ -69,7 +69,7 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -120,8 +120,8 @@ public class DEReportService {
 		final Query query = persistenceService.getSession().createQuery(
 				new StringBuilder(" from CFinancialYear cfinancialyear where cfinancialyear.startingDate <=:sDate")
 						.append(" and cfinancialyear.endingDate >=:eDate").toString());
-        query.setDate("sDate", date);
-        query.setDate("eDate", date);
+        query.setParameter("sDate", date);
+        query.setParameter("eDate", date);
         final ArrayList list = (ArrayList) query.list();
         if (list.size() > 0)
             cFinancialYear = (CFinancialYear) list.get(0);
@@ -197,7 +197,7 @@ public class DEReportService {
 			params.put("vhName", FinancialConstants.PAYMENTVOUCHER_NAME_DIRECTBANK);
 			params.put("vhType", FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
 		}
-		final Query query = persistenceService.getSession().createSQLQuery(stringQry.toString())
+		final Query query = persistenceService.getSession().createNativeQuery(stringQry.toString())
 				.addScalar("departmentName").addScalar("concurrenceAmount").addScalar("concurrenceDate");
 		params.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
 		return query;
@@ -254,7 +254,7 @@ public class DEReportService {
 			params.put("vhName", FinancialConstants.PAYMENTVOUCHER_NAME_DIRECTBANK);
 			params.put("vhType", FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
 		}
-		final Query query = persistenceService.getSession().createSQLQuery(stringQry.toString())
+		final Query query = persistenceService.getSession().createNativeQuery(stringQry.toString())
 				.addScalar("departmentName").addScalar("concurrenceAmount")
 				.setResultTransformer(Transformers.aliasToBean(DepartmentwiseExpenditureReport.class));
 		params.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
@@ -320,7 +320,7 @@ public class DEReportService {
 			params.put("vhType", FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
 		}
 
-		final Query query = persistenceService.getSession().createSQLQuery(stringQry.toString())
+		final Query query = persistenceService.getSession().createNativeQuery(stringQry.toString())
 				.addScalar("departmentName").addScalar("concurrenceAmount").addScalar("concurrenceDate")
 				.setResultTransformer(Transformers.aliasToBean(DepartmentwiseExpenditureReport.class));
 
@@ -399,7 +399,7 @@ public class DEReportService {
 			params.put("vhName", FinancialConstants.PAYMENTVOUCHER_NAME_DIRECTBANK);
 			params.put("vhYype", FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT);
 		}
-		final Query query = persistenceService.getSession().createSQLQuery(stringQry.toString())
+		final Query query = persistenceService.getSession().createNativeQuery(stringQry.toString())
 				.addScalar("departmentName").addScalar("concurrenceAmount");
 		params.entrySet().forEach(entry -> query.setParameter(entry.getKey(), entry.getValue()));
 		return query;

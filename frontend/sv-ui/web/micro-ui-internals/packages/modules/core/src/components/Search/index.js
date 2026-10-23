@@ -1,4 +1,4 @@
-import { BackButton, Card, Header, SearchForm, Table, Loader,DownloadBtnCommon } from "@nudmcdgnpm/digit-ui-react-components";
+import { BackButton, Card, Header, SearchForm, Table, Loader,DownloadBtnCommon } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { useCallback, useEffect, useMemo , useState} from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
@@ -55,10 +55,12 @@ const SearchApplication = ({showLoader,isLoading, tenantId, t, onSubmit, data, c
   }
   }; 
   useEffect(() => {
-    register("offset", 0);
-    register("limit", 10);
+    register("offset");
+    register("limit");
+    setValue("offset", 0);
+    setValue("limit", 10);
     //register("sortOrder", "DESC");
-}, [register]);
+}, [register,setValue]);
 useEffect(() => {
   if ( data?.length >0){
     settabledata([

@@ -1,12 +1,11 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useRouteMatch } from "react-router-dom";
-import { Loader, CitizenHomeCard, WSICon } from "@upyog/digit-ui-react-components";
+import { Loader, CitizenHomeCard, WSICon } from "@nudmcdgnpm/digit-ui-react-components";
 import CitizenApp from "./pages/citizen";
 import EmployeeApp from "./pages/employee";
+import { ReportSearchApplication, EnhancedReport } from "@nudmcdgnpm/digit-ui-module-reports";
 
-
-//Page Components
+// PageComponents
 import WSServiceName from "./pageComponents/WSServiceName";
 import WSWaterConnectionDetails from "./pageComponents/WSWaterConnectionDetails";
 import WSDocsRequired from "./pageComponents/WSDocsRequired";
@@ -67,6 +66,7 @@ import WSDisconnectionCheckPage from "./pages/citizen/WSDisconnection/CheckPage"
 import WSRestorationCheckPage from "./pages/citizen/WSRestoration/CheckPage";
 import WSReSubmitDisconnectionCheckPage from "./pages/citizen/ReSubmitDisconnection/CheckPage"
 import WNSMyBillsComponent from "./pages/citizen/WnSMyBills";
+import WSCitizenHomeScreen from "./pages/citizen/WSHome";
 
 //Employee Components
 import ApplicationBillAmendment from "./pages/employee/ApplicationBillAmendment";
@@ -101,7 +101,7 @@ import SearchWaterConnectionViewIntegrated
 const WSModule = ({ stateCode, userType, tenants }) => {
   const tenantId = Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code || Digit.ULBService.getCurrentTenantId();
   const moduleCode = ["ws", "pt", "common", tenantId, "bill-amend","abg"];
-  const { path, url } = useRouteMatch();
+  const { path, url } = Digit.Hooks.useModuleBasePath();
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({
     stateCode,
@@ -128,27 +128,27 @@ const WSLinks = ({ matchPath, userType }) => {
 
   const links = [
     {
-      link: `${matchPath}/my-bills`,
+      link: `/my-bills`,
       i18nKey: t("ACTION_TEST_WNS_MY_BILLS"),
     },
     {
-      link: `${matchPath}/my-payments`,
+      link: `/my-payments`,
       i18nKey: t("ACTION_TEST_MY_PAYMENTS"),
     },
     {
-      link: `${matchPath}/create-application`,
+      link: `/create-application`,
       i18nKey: t("ACTION_TEST_APPLY_NEW_CONNECTION"),
     },
     {
-      link: `${matchPath}/search`,
+      link: `/search`,
       i18nKey: t("ACTION_TEXT_WS_SEARCH_AND_PAY"),
     },
     {
-      link: `${matchPath}/my-applications`,
+      link: `/my-applications`,
       i18nKey: t("ACTION_TEXT_WS_MY_APPLICATION"),
     },
     {
-      link: `${matchPath}/my-connections`,
+      link: `/my-connections`,
       i18nKey: t("ACTION_TEXT_WS_MY_CONNECTION"),
     },
   ];
@@ -221,6 +221,9 @@ const componentsToRegister = {
   WSDisconnectionCheckPage,
   WSRestorationCheckPage,
   WSReSubmitDisconnectionCheckPage,
+  EnhancedReport,
+  ReportSearchApplication,
+  WSCitizenHomeScreen,
 
   //Employee Components
   WSApplicationBillAmendment: ApplicationBillAmendment,

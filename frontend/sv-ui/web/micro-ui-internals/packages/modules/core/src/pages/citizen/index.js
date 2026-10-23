@@ -1,7 +1,7 @@
-import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
+import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Route, Switch, useRouteMatch, useHistory, Link } from "react-router-dom";
+import { Route, Routes, Link, useLocation } from "react-router-dom";
 import ErrorBoundary from "../../components/ErrorBoundaries";
 import { AppHome, processLinkData } from "../../components/Home";    
 import TopBarSideBar from "../../components/TopBarSideBar";
@@ -68,19 +68,30 @@ const Home = ({
   const isMobile = window.Digit.Utils.browser.isMobile();
   const classname = Digit.Hooks.useRouteSubscription(pathname);
   const { t } = useTranslation();
-  const { path } = useRouteMatch();
+  
   sourceUrl = "https://s3.ap-south-1.amazonaws.com/egov-qa-assets";
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
+  const location = useLocation();
 
   const hideSidebar = sidebarHiddenFor.some((e) => window.location.href.includes(e));
   const appRoutes = modules.map(({ code, tenants }, index) => {
+
     const Module = Digit.ComponentRegistryService.getComponent(`${code}Module`);
     return Module ? (
-      <Route key={index} path={`${path}/${code.toLowerCase()}`}>
-        <Module stateCode={stateCode} moduleCode={code} userType="citizen" tenants={getTenants(tenants, appTenants)} />
-      </Route>
+      <Route 
+        key={index} 
+        path={`${code.toLowerCase()}/*`}
+        element={
+          <Module 
+            stateCode={stateCode} 
+            moduleCode={code} 
+            userType="citizen" 
+            tenants={getTenants(tenants, appTenants)} 
+          />
+        }
+      />
     ) : null;
-  });
+   });
   
   const ModuleLevelLinkHomePages = modules.map(({ code, bannerImage }, index) => {
     let mdmsDataObj = isLinkDataFetched ? processLinkData(linkData, code, t) : undefined;
@@ -88,30 +99,38 @@ const Home = ({
         return a.orderNumber - b.orderNumber;
       });
     return (
-      <React.Fragment>
-        <Route key={index} path={`${path}/${code.toLowerCase()}-home`}>
-          <div className="moduleLinkHomePage">
-            <img src={ "https://niuatt-filestore.s3.ap-south-1.amazonaws.com/pg/logo/Street+Vendors+Management+2.png"||bannerImage || stateInfo?.bannerUrl} alt="noimagefound" />
-            {/* <BackButton className="moduleLinkHomePageBackButton" /> */}
-            <div className="moduleLinkHomePageModuleLinks">
-              {mdmsDataObj && (
-                <CitizenHomeCard
-                  header={t(mdmsDataObj?.header)}
-                  links={mdmsDataObj?.links}
-                  Icon={() => <span />}
-                />
-              )}
+     <React.Fragment key={`module-${index}`}>
+        <Route 
+          path={`${code.toLowerCase()}-home`}
+          element={
+            <div className="moduleLinkHomePage">
+              <img 
+                src={"https://niuatt-filestore.s3.ap-south-1.amazonaws.com/pg/logo/Street+Vendors+Management+2.png" || bannerImage || stateInfo?.bannerUrl} 
+                alt="noimagefound" 
+              />
+              <div className="moduleLinkHomePageModuleLinks">
+                {mdmsDataObj && (
+                  <CitizenHomeCard
+                    header={t(mdmsDataObj?.header)}
+                    links={mdmsDataObj?.links}
+                    Icon={() => <span />}
+                  />
+                )}
+              </div>
+              <StaticDynamicCard moduleCode={code?.toUpperCase()}/>
             </div>
-        
-            <StaticDynamicCard moduleCode={code?.toUpperCase()}/>
-          </div>
-        </Route>
-        <Route key={"faq" + index} path={`${path}/${code.toLowerCase()}-faq`}>
-          <FAQsSection module={code?.toUpperCase()} />
-        </Route>
-        <Route key={"hiw" + index} path={`${path}/${code.toLowerCase()}-how-it-works`}>
-          <HowItWorks module={code?.toUpperCase()} />
-        </Route>
+          }
+        />
+       
+        <Route 
+          path={`${code.toLowerCase()}-faq`}
+          element={<FAQsSection module={code?.toUpperCase()} />}
+        />
+       
+        <Route 
+          path={`${code.toLowerCase()}-how-it-works`}
+          element={<HowItWorks module={code?.toUpperCase()} />}
+        />
       </React.Fragment>
     );
   });
@@ -138,54 +157,62 @@ const Home = ({
             <StaticCitizenSideBar linkData={linkData} islinkDataLoading={islinkDataLoading} />
           </div>
         )}
+      <ErrorBoundary initData={initData}>
+        <Routes>
+          <Route path="/" element={<CitizenHome />} />
 
-        <Switch>
-          <Route exact path={path}>
-            <CitizenHome />
-          </Route>
+         <Route path="select-language" element={<LanguageSelection />} />
 
-          <Route exact path={`${path}/select-language`}>
-            <LanguageSelection />
-          </Route>
+          <Route path="select-location" element={<LocationSelection />} />
+          <Route 
+            path="error" 
+            element={
+              <ErrorComponent
+                initData={initData}
+                goToHome={() => {
+                  navigate("/sv-ui/citizen");
+                }}
+              />
+            }
+          />
+          <Route 
+            path="all-services" 
+            element={
+              <AppHome
+                userType="citizen"
+                modules={modules}
+                getCitizenMenu={linkData}
+                fetchedCitizen={isLinkDataFetched}
+                isLoading={islinkDataLoading}
+              />
+            }
+          />
 
-          <Route exact path={`${path}/select-location`}>
-            <LocationSelection />
-          </Route>
-          <Route path={`${path}/error`}>
-            <ErrorComponent
-              initData={initData}
-              goToHome={() => {
-                history.push("/sv-ui/citizen");
-              }}
-            />
-          </Route>
-          <Route path={`/sv-ui/citizen/all-services`}>
-            <AppHome
-              userType="citizen"
-              modules={modules}
-              getCitizenMenu={linkData}
-              fetchedCitizen={isLinkDataFetched}
-              isLoading={islinkDataLoading}
-            />
-          </Route>
+          <Route 
+            path="login/*" 
+            element={<Login stateCode={stateCode} />} 
+          />
 
-          <Route path={`${path}/login`}>
-            <Login stateCode={stateCode} />
-          </Route>
+          <Route 
+            path="register" 
+            element={<Login stateCode={stateCode} isUserRegistered={false} />} 
+          />
 
-          <Route path={`${path}/register`}>
-            <Login stateCode={stateCode} isUserRegistered={false} />
-          </Route>
+         <Route 
+            path="user/profile" 
+            element={
+              <PrivateRoute>
+                <UserProfile stateCode={stateCode} userType={"citizen"} cityDetails={cityDetails} />
+              </PrivateRoute>
+            }
+          />
 
-          <PrivateRoute path={`${path}/user/profile`}>
-            <UserProfile stateCode={stateCode} userType={"citizen"} cityDetails={cityDetails} />
-          </PrivateRoute>
-
-          <ErrorBoundary initData={initData}>
+          
             {appRoutes}
             {ModuleLevelLinkHomePages}
-          </ErrorBoundary>
-        </Switch>
+          
+        </Routes>
+         </ErrorBoundary>
       </div>
 
       <div style={{ width: '100%', position: 'fixed', bottom: 0,backgroundColor:"white",textAlign:"center" }}>

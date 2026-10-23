@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { Card, Header, LabelFieldPair, CardLabel, TextInput, Dropdown, FormComposer, RemoveableTag } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, Header, LabelFieldPair, CardLabel, TextInput, Dropdown, FormComposer, RemoveableTag } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import { useForm, Controller } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 import { alphabeticalSortFunctionForTenantsBasedOnName } from "../../utils";
@@ -34,17 +34,17 @@ const SelectULB = ({ userType, t, setValue, onSelect, config, data, formData, re
             control={control}
             defaultValue={selectedTenat?.[0]}
             rules={{ required: true }}
-            render={(props) => (
+            render={({field}) => (
               <Dropdown
                 allowMultiselect={true}
                 optionKey={"i18nKey"}
                 //option={userUlbs}
                 option={dropDownData}
                 select={(e) => {
-                  props.onChange([...(formData?.[config?.key]?.filter?.((f) => e.code != f?.code) || []), e]);
+                  field.onChange([...(formData?.[config?.key]?.filter?.((f) => e.code != f?.code) || []), e]);
                 }}
                 keepNull={true}
-                selected={props.value}
+                selected={field.value}
                 disable={ulbs?.length === 1}
                 t={t}
               />

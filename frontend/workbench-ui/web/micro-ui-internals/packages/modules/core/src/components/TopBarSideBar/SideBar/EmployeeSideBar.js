@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import { Loader, SearchIcon } from "@egovernments/digit-ui-react-components";
+import { Loader, SearchIcon } from "@upyog/workbench-ui-react-components";
 import { useTranslation } from "react-i18next";
 import Sidebar from "./SideBar";
 
@@ -14,7 +14,7 @@ const EmployeeSideBar = () => {
 
   useEffect(() => {
     if (isLoading) {
-      return <Loader />;
+      return;
     }
     sidebarRef.current.style.cursor = "pointer";
     collapseNav();
@@ -96,13 +96,6 @@ const EmployeeSideBar = () => {
       if (a[0] < b[0]) { return -1; }
       if (a[0] > b[0]) { return 1; }
       return 0;
-      // const orderNumberA = a[1].item
-      //   ? a[1].item.orderNumber || Object.keys(configEmployeeSideBar).length + 1
-      //   : Object.keys(configEmployeeSideBar).length + 1;
-      // const orderNumberB = b[1].item
-      //   ? b[1].item.orderNumber || Object.keys(configEmployeeSideBar).length + 1
-      //   : Object.keys(configEmployeeSideBar).length + 1;
-      // return orderNumberA - orderNumberB;
     });
     const sortedObject = Object.fromEntries(objectArray);
     configEmployeeSideBar = sortedObject;

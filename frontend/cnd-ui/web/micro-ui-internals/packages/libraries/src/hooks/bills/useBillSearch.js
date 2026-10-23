@@ -1,22 +1,46 @@
-import { useQuery, useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 import BillingService from "../../services/elements/Bill";
 
 const useBillSearch = ({ filters, config = {} }) => {
   const client = useQueryClient();
-  const tenantId = Digit.SessionStorage.get("User")?.info?.tenantId;
 
-  filters.locality = filters.locality?.map((element) => {
-    return element.code;
+  const tenantId =
+    Digit.SessionStorage.get("User")?.info?.tenantId;
+
+  // ✅ DO NOT mutate original filters
+  const updatedFilters = {
+    ...filters,
+    locality: filters?.locality?.map((el) => el.code),
+    url: filters?.url?.replace("egov-searcher", ""),
+  };
+
+  const args = tenantId
+    ? { tenantId, filters: updatedFilters }
+    : { filters: updatedFilters };
+
+  const queryKey = [
+    "BILL_INBOX",
+    tenantId,
+    JSON.stringify(updatedFilters),
+  ];
+
+  const queryFn = () => BillingService.search_bill(args);
+
+  const enabled = !!filters?.businesService;
+
+  const query = queryTemplate({
+    queryKey,
+    queryFn,
+    enabled,
+    config,
   });
-  filters.url = filters.url?.replace("egov-searcher", "");
 
-  const args = tenantId ? { tenantId, filters } : { filters };
-
-  const { isLoading, error, data } = useQuery(["BILL_INBOX", tenantId, filters], async () => await BillingService.search_bill(args), {
-    ...config,
-    enabled: filters?.businesService ? true : false,
-  });
-  return { isLoading, error, data, revalidate: () => client.invalidateQueries(["BILL_INBOX", tenantId, filters]) };
+  return {
+    ...query,
+    revalidate: () =>
+      client.invalidateQueries({ queryKey }),
+  };
 };
 
 export default useBillSearch;

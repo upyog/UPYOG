@@ -29,11 +29,11 @@ import {
   Modal,
   LinkButton,
   SectionalDropdown,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 
 import { Close } from "../../Icons";
 import { useTranslation } from "react-i18next";
-import { isError, useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import StarRated from "../../components/timelineInstances/StarRated";
 
 const MapView = (props) => {
@@ -67,7 +67,7 @@ const TLCaption = ({ data, comments }) => {
       {comments?.map( e => 
         <div className="TLComments">
           <h3>{t("WF_COMMON_COMMENTS")}</h3>
-          <p style={{overflowX:"scroll"}}>{e}</p>
+          <p className="pgr-complaint-details-wrapper-2">{e}</p>
         </div>
       )}
     </div>
@@ -221,7 +221,7 @@ export const ComplaintDetails = (props) => {
   // const [actionCalled, setActionCalled] = useState(false);
   const [toast, setToast] = useState(false);
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const { isLoading, complaintDetails, revalidate: revalidateComplaintDetails } = Digit.Hooks.pgr.useComplaintDetails({ tenantId, id });
+  const { isLoading, data:complaintDetails, refetch: revalidateComplaintDetails } = Digit.Hooks.pgr.useComplaintDetails({ tenantId, id });
   const workflowDetails = Digit.Hooks.useWorkflowDetails({ tenantId, id, moduleCode: "PGR", role: "EMPLOYEE" });
   const [imagesToShowBelowComplaintDetails, setImagesToShowBelowComplaintDetails] = useState([])
   
@@ -418,7 +418,7 @@ export const ComplaintDetails = (props) => {
       {comment ? <div>{comment?.map( e => 
         <div className="TLComments">
           <h3>{t("WF_COMMON_COMMENTS")}</h3>
-          <p style={{overflowX:"scroll"}}>{e}</p>
+          <p className="pgr-complaint-details-wrapper-2">{e}</p>
         </div>
       )}</div> : null}
       {checkpoint.status !== "COMPLAINT_FILED" && thumbnailsToShow?.thumbs?.length > 0 ? <div className="TLComments">
@@ -433,11 +433,11 @@ export const ComplaintDetails = (props) => {
   return (
     <React.Fragment>
       <Card>
-        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+        <div className="pgr-complaint-details-flex-row-2">
         <CardSubHeader>{t(`CS_HEADER_COMPLAINT_SUMMARY`)}</CardSubHeader>
-        <LinkButton label={t("VIEW_TIMELINE")} style={{marginLeft:'auto', color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+        <LinkButton label={t("VIEW_TIMELINE")} className="pgr-complaint-details-action-btn" onClick={handleViewTimeline}></LinkButton>
         </div>
-        <CardLabel style={{fontWeight:"700"}}>{t(`CS_COMPLAINT_DETAILS_COMPLAINT_DETAILS`)}</CardLabel>
+        <CardLabel className="pgr-complaint-details-card">{t(`CS_COMPLAINT_DETAILS_COMPLAINT_DETAILS`)}</CardLabel>
         {isLoading ? (
           <Loader />
         ) : (

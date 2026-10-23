@@ -1,0 +1,71 @@
+run:
+  timeout: 5m
+  modules-download-mode: readonly
+
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - gofmt
+    - goimports
+    - misspell
+    - unconvert
+    - unparam
+    - bodyclose
+    - noctx
+    - prealloc
+    - revive
+    - gocritic
+    - errorlint
+    - exhaustive
+    - nilerr
+    - exportloopref
+
+linters-settings:
+  revive:
+    rules:
+      - name: blank-imports
+      - name: context-as-argument
+      - name: context-keys-type
+      - name: dot-imports
+      - name: error-return
+      - name: error-strings
+      - name: error-naming
+      - name: exported
+      - name: increment-decrement
+      - name: var-naming
+      - name: package-comments
+      - name: range
+      - name: receiver-naming
+      - name: time-naming
+      - name: unexported-return
+      - name: indent-error-flow
+      - name: errorf
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - style
+      - performance
+  errorlint:
+    errorf: true
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - errcheck
+        - gocritic
+    - path: docs/
+      linters:
+        - all
+  max-issues-per-linter: 50
+  max-same-issues: 5
+
+output:
+  formats:
+    - format: colored-line-number
+  sort-results: true

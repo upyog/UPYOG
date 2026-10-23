@@ -1,7 +1,6 @@
-import { Header, Loader } from "@nudmcdgnpm/digit-ui-react-components";
+import { Header, Loader } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
 import SurveyListCard from "../../../components/Surveys/SurveyListCard";
 const isActive = (startDate, endDate) => {
   const currentDate = new Date().getTime();
@@ -13,7 +12,7 @@ const isActive = (startDate, endDate) => {
 
 const SurveyList = () => {
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const tenantIds = Digit.ULBService.getCitizenCurrentTenant();
   const user = Digit.UserService.getUser();
   
@@ -153,16 +152,16 @@ const SurveyList = () => {
 
 
   // const handleCardClick = (details) => {
-  //     history.push("/sv-ui/citizen/engagement/surveys/fill-survey", details);
+  //     navigate("/sv-ui/citizen/engagement/surveys/fill-survey", details);
   // };
 
   //trying to implement like this-> If user already responded then open ShowSurvey
   const handleCardClick = (details) => {
     
     if (!details.hasResponded) {
-      history.push(`/sv-ui/citizen/engagement/surveys/fill-survey?applicationNumber=${details?.code}&tenantId=${details?.tenantId}`, details);
+      navigate(`/sv-ui/citizen/engagement/surveys/fill-survey?applicationNumber=${details?.code}&tenantId=${details?.tenantId}`, details);
     } else {
-      history.push("/sv-ui/citizen/engagement/surveys/show-survey", details);
+      navigate("/sv-ui/citizen/engagement/surveys/show-survey", details);
     }
   };
 

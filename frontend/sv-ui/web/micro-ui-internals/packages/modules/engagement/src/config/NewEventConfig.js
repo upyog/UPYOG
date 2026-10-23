@@ -41,7 +41,6 @@ export const config = [
       },
       {
         type: "form",
-        key: "SelectToDate",
         withoutLabel: true,
         component: "SelectToDate",
         key: "toDate",

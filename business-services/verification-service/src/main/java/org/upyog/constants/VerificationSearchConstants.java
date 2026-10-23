@@ -1,6 +1,9 @@
 package org.upyog.constants;
 
 public class VerificationSearchConstants {
+
+	private VerificationSearchConstants() {
+	}
 	public static final String NA = "N/A";
 	public static final String EMPTY_STRING = "";
 	public static final String DATE_FORMAT = "dd-MM-yyyy";

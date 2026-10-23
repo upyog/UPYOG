@@ -1,0 +1,1 @@
+ALTER TABLE eg_challan ADD COLUMN IF NOT EXISTS receiptnumber  character varying(128);

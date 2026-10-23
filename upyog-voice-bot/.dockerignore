@@ -1,0 +1,11 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.git/
+.gitignore
+.env
+qdrant_storage/
+.pytest_cache/
+.mypy_cache/
+.DS_Store

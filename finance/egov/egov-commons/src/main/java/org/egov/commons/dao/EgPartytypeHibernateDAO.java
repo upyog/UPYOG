@@ -48,12 +48,12 @@
 package org.egov.commons.dao;
 
 import org.egov.commons.EgPartytype;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
@@ -97,13 +97,13 @@ public class EgPartytypeHibernateDAO {
         }
 
         if (code != null && !code.equals("")) {
-            qry.setString("code", "%" + code.toUpperCase().trim() + "%");
+            qry.setParameter("code", "%" + code.toUpperCase().trim() + "%");
         }
         if (parentCode != null && !parentCode.equals("")) {
-            qry.setString("parentCode", "%" + parentCode.toUpperCase().trim() + "%");
+            qry.setParameter("parentCode", "%" + parentCode.toUpperCase().trim() + "%");
         }
         if (description != null && !description.equals("")) {
-            qry.setString("description", "%" + description.toUpperCase().trim() + "%");
+            qry.setParameter("description", "%" + description.toUpperCase().trim() + "%");
         }
 
         return qry.list();
@@ -111,13 +111,13 @@ public class EgPartytypeHibernateDAO {
 
     public EgPartytype getPartytypeByCode(final String code) {
         final Query qry = getCurrentSession().createQuery("from EgPartytype pt where code=:code");
-        qry.setString("code", code);
+        qry.setParameter("code", code);
         return (EgPartytype) qry.uniqueResult();
     }
 
     public List<EgPartytype> getSubPartyTypesForCode(final String code) {
         final Query qry = getCurrentSession().createQuery("from EgPartytype pt where pt.egPartytype in (select pt1.id from EgPartytype pt1 where pt1.code=:code) and pt.egPartytype is not null");
-        qry.setString("code", code);
+        qry.setParameter("code", code);
         return qry.list();
     }
 

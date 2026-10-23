@@ -10,9 +10,21 @@ import {
   DatePicker,
   CardLabelError,
   Header,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 import DropdownStatus from "./DropdownStatus";
 import { useTranslation } from "react-i18next";
+
+/*
+
+  WHAT WAS THE ISSUE? AFTER LTS AND HOW WE RESOLVED IT?
+
+
+  searchValidation() was causing state updates (setError)
+  during validation execution. React Hook Form expects
+  validation functions to be pure and synchronous.
+  The repeated state updates interrupted form submission,
+  so handleSubmit(onSubmitInput) was never completing.
+*/
 
 const SearchApplication = ({ onSearch, type, onClose, isFstpOperator, searchFields, searchParams, isInboxPage }) => {
   const storedSearchParams = isInboxPage ? Digit.SessionStorage.get("fsm/inbox/searchParams") : Digit.SessionStorage.get("fsm/search/searchParams");
@@ -26,9 +38,14 @@ const SearchApplication = ({ onSearch, type, onClose, isFstpOperator, searchFiel
   const [error, setError] = useState(false);
   const mobileView = innerWidth <= 640;
   const FSTP = Digit.UserService.hasAccess("FSM_EMP_FSTPO") || false;
-  const watchSearch = watch(["applicationNos", "mobileNumber", "fromDate", "toDate"]);
-  const [isReady, setIsReady] = useState(false);
 
+  const [applicationNos, mobileNumber, fromDate, toDate] = watch([
+    "applicationNos",
+    "mobileNumber",
+    "fromDate",
+    "toDate",
+  ]);
+  const [isReady, setIsReady] = useState(false);
 
   const onSubmitInput = (data) => {
     if (!data.mobileNumber) {
@@ -54,25 +71,24 @@ const SearchApplication = ({ onSearch, type, onClose, isFstpOperator, searchFiel
   const clearAll = (mobileView) => {
     const mobileViewStyles = mobileView ? { margin: 0 } : {};
     return (
-      <LinkLabel style={{ display: "inline", ...mobileViewStyles }} onClick={clearSearch}>
+      <LinkLabel className="search-clear-link" style={mobileViewStyles} onClick={clearSearch}>
         {t("ES_COMMON_CLEAR_SEARCH")}
       </LinkLabel>
     );
   };
 
-  const searchValidation = (data) => {
-    if (FSTP) return null;
+    const searchValidation = () => {
+      if (FSTP) return true;
 
-    watchSearch.applicationNos || watchSearch.mobileNumber || (watchSearch.fromDate && watchSearch.toDate) ? setError(false) : setError(true);
-    return watchSearch.applicationNos || watchSearch.mobileNumber || (watchSearch.fromDate && watchSearch.toDate) ? true : false;
-  };
+      return !!( applicationNos || mobileNumber || (fromDate && toDate));
+    };
 
   const getFields = (input) => {
     switch (input.type) {
       case "date":
         return (
           <Controller
-            render={(props) => <DatePicker date={props.value} onChange={props.onChange} />}
+            render={({ field }) => <DatePicker date={field.value} onChange={field.onChange} />}
             name={input.name}
             control={control}
             defaultValue={null}
@@ -81,10 +97,10 @@ const SearchApplication = ({ onSearch, type, onClose, isFstpOperator, searchFiel
       case "status":
         return (
           <Controller
-            render={(props) => (
+            render={({ field }) => (
               <DropdownStatus
-                onAssignmentChange={props.onChange}
-                value={props.value}
+                onAssignmentChange={field.onChange}
+                value={field.value}
                 applicationStatuses={applicationStatuses}
                 areApplicationStatus={areApplicationStatus}
               />
@@ -96,14 +112,23 @@ const SearchApplication = ({ onSearch, type, onClose, isFstpOperator, searchFiel
         );
       default:
         return (
-          <TextInput
-            {...input}
-            inputRef={register}
-            {...register(input.name, {
+          <Controller
+            name={input.name}
+            control={control}
+            defaultValue=""
+            rules={{
               validate: searchValidation,
-            })}
-            watch={watch}
-            shouldUpdate={true}
+            }}
+            render={({ field }) => (
+              <TextInput
+                {...input}
+                value={field.value || ""}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                ref={field.ref}
+                name={field.name}
+              />
+            )}
           />
         );
     }
@@ -116,24 +141,20 @@ const SearchApplication = ({ onSearch, type, onClose, isFstpOperator, searchFiel
     <form onSubmit={handleSubmit(onSubmitInput)}>
       <React.Fragment>
         {!checkInboxLocation ? <Header styles={mobileView ? { marginTop: "10px" } : {}}>{t("ACTION_TEST_SEARCH_FSM_APPLICATION")}</Header> : ""}
-        <div className="search-container" style={{ width: "auto", marginLeft: FSTP ? "" : isInboxPage ? "24px" : "revert" }}>
+        <div className={`search-container width-auto ${FSTP ? "" : isInboxPage ? "margin-left-24" : "margin-left-revert"}`}>
           <div className="search-complaint-container">
             {(type === "mobile" || mobileView) && (
               <div className="complaint-header">
                 <h2>{t("ES_COMMON_SEARCH_BY")}</h2>
                 <span
-                  style={{
-                    position: "absolute",
-                    top: "2%",
-                    right: "8px",
-                  }}
+                  className="fsm-registry-search-wrapper-2"
                   onClick={onClose}
                 >
                   <CloseSvg />
                 </span>
               </div>
             )}
-            <div className={FSTP ? "complaint-input-container for-pt for-search" : "complaint-input-container"} style={{ width: "100%" }}>
+            <div className={`${FSTP ? "complaint-input-container for-pt for-search" : "complaint-input-container"} fsm-search-fullwidth`}>
               {searchFields?.map((input, index) => (
                 <span key={index} className={index === 0 ? "complaint-input" : "mobile-input"}>
                   <Label>
@@ -150,10 +171,10 @@ const SearchApplication = ({ onSearch, type, onClose, isFstpOperator, searchFiel
         </div>
         {(type === "mobile" || mobileView) && (
           <ActionBar className="clear-search-container">
-            <button className="clear-search" style={{ flex: 1 }}>
+            <button className="clear-search fsm-filter-wrapper">
               {clearAll(mobileView)}
             </button>
-            <SubmitBar label={t("ES_COMMON_SEARCH")} style={{ flex: 1 }} submit={true} />
+            <SubmitBar label={t("ES_COMMON_SEARCH")} className="fsm-filter-wrapper" submit={true} />
           </ActionBar>
         )}
       </React.Fragment>

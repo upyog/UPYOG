@@ -1,7 +1,7 @@
-import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar } from "@upyog/digit-ui-react-components";
+import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable, SubmitBar } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useRouteMatch } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { VendorData } from "../../../utils";
 
@@ -28,7 +28,7 @@ const BannerPicker = (props) => {
       applicationNumber={props.data?.VendorAdditionalDetails?.[0].registrationNo}
       info={props.isSuccess ? props.t("ES_VENDOR_RESPONSE_CREATE_LABEL") : ""}
       successful={props.isSuccess}
-      style={{width: "100%"}}
+      className="vnd-search-fullwidth"
     />
   );
 };
@@ -42,7 +42,7 @@ const NewResponse = ({ data, onSuccess }) => {
   const mutation = Digit.Hooks.vendor.useVendorAdditionaldetailsAPI("pg.citya"); 
 
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
-  const match = useRouteMatch();
+  const match = Digit.Hooks.useModuleBasePath();
   const { tenants } = storeData || {};
 
 
@@ -75,7 +75,7 @@ const NewResponse = ({ data, onSuccess }) => {
   //   Digit.Utils.pdf.generate(data);
   // };
 
-  return mutation.isLoading || mutation.isIdle ? (
+  return mutation.isPending || mutation.isIdle ? (
     <Loader />
   ) : (
     <Card>

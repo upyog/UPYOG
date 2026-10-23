@@ -2,7 +2,7 @@ package org.egov.infra.microservice.models;
 
 import java.io.Serializable;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -10,14 +10,14 @@ public class AuditDetails implements Serializable {
 
     private static final long serialVersionUID = -7014596797379473651L;
     @JsonProperty("createdBy")
-    @SafeHtml
+    @SanitizeHtml
     private String createdBy = null;
 
     @JsonProperty("createdDate")
     private Long createdDate = null;
 
     @JsonProperty("lastModifiedBy")
-    @SafeHtml
+    @SanitizeHtml
     private String lastModifiedBy = null;
 
     @JsonProperty("lastModifiedDate")

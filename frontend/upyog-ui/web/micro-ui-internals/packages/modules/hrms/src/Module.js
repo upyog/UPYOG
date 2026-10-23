@@ -1,5 +1,4 @@
 import React from "react";
-import { useRouteMatch } from "react-router-dom";
 import HRMSCard from "./components/hrmscard";
 import InboxFilter from "./components/InboxFilter";
 import ActionModal from "./components/Modal";
@@ -28,7 +27,7 @@ export const HRMSModule = ({ stateCode, userType, tenants }) => {
   const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
 
   Digit.SessionStorage.set("HRMS_TENANTS", tenants);
-  const { path, url } = useRouteMatch();
+  const { path, url } = Digit.Hooks.useModuleBasePath();
   if (!Digit.Utils.hrmsAccess()) {
     return null;
   }

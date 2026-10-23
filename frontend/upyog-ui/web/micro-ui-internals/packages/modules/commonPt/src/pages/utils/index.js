@@ -84,20 +84,26 @@ export const setOwnerDetails = (data) => {
 
 export const setOwnerDetailsLW = (data) => {
   const { locationDet, owners } = data;
-  
-  let institution = {},
-  owner = [],
-  document = [];
 
-  data.ownershipCategory = data?.owners?.[0]?.ownershipCategory;
-  
-  if (data.ownershipCategory.includes("INSTITUTIONALPRIVATE") || data.ownershipCategory.includes("INSTITUTIONALGOVERNMENT")) {
+  let institution = {},
+    owner = [],
+    document = [];
+
+  data.ownershipCategory =
+    data?.ownershipCategory ||
+    data?.owners?.[0]?.ownershipCategory ||
+    "";
+
+  if (
+    data.ownershipCategory.includes("INSTITUTIONALPRIVATE") ||
+    data.ownershipCategory.includes("INSTITUTIONALGOVERNMENT")
+  ) {
     institution.designation = owners?.[0]?.designation;
     institution.name = owners?.[0]?.institutionName;
     institution.type = owners?.[0]?.institutionType?.code?.split(".")?.[1];
     institution.landlineNumber = owners?.[0]?.altContactNumber;
     institution.tenantId = locationDet?.cityCode?.code;
-    
+
     owner.push({
       altContactNumber: owners?.[0]?.altContactNumber,
       permanentAddress: owners?.[0]?.permanentAddress,
@@ -112,7 +118,7 @@ export const setOwnerDetailsLW = (data) => {
     data.institution = institution;
     data.owners = owner;
   } else {
-    owners.map(own=>{
+    owners.map(own => {
       owner.push({
         emailId: own?.emailId,
         fatherOrHusbandName: own?.fatherOrHusbandName,
@@ -143,7 +149,7 @@ export const setPropertyDetailsLW = (data) => {
   let propertyDetails = {};
 
   const { assemblyDet } = data;
-  
+
   propertyDetails = {
     propertyType: assemblyDet?.BuildingType?.code,
     usageCategory: getUsageTypeLW(assemblyDet),
@@ -159,7 +165,10 @@ export const setPropertyDetailsLW = (data) => {
 export const convertToPropertyLightWeight = (data = {}) => {
   let propertyType = data.PropertyType;
   let noOfFloors = 1;
-  let ownershipCategory= data?.owners?.[0]?.ownershipCategory;
+  let ownershipCategory =
+    data?.ownershipCategory ||
+    data?.owners?.[0]?.ownershipCategory ||
+    "";
   data = setOwnerDetailsLW(data);
   data = setAddressDetailsLW(data);
   data = setPropertyDetailsLW(data);
@@ -173,40 +182,40 @@ export const convertToPropertyLightWeight = (data = {}) => {
       ownershipCategory: ownershipCategory,
       usageCategory: data?.assemblyDet?.usageCategoryMajor?.code,
       owners: [
-        ...data.owners.map((owner, index)=>({
+        ...data.owners.map((owner, index) => ({
           ...owner,
-          additionalDetails : { ownerSequence: index, ownerName:owner?.name},
-          documents : Object.keys(owner.documents).map((key) => {
+          additionalDetails: { ownerSequence: index, ownerName: owner?.name },
+          documents: Object.keys(owner.documents).map((key) => {
             const { documentType, fileStoreId } = owner.documents[key];
             return { documentType: documentType.code, fileStoreId };
           }),
-           gender: owner.gender?.code,
-            ownerType: owner.ownerType?.code || "NONE",
-            relationship: owner.relationship?.code,
-            inistitutetype: owner?.inistitutetype?.value,
-            landlineNumber: owner?.altContactNumber,
-            status: "ACTIVE",
-          
+          gender: owner.gender?.code,
+          ownerType: owner.ownerType?.code || "NONE",
+          relationship: owner.relationship?.code,
+          inistitutetype: owner?.inistitutetype?.value,
+          landlineNumber: owner?.altContactNumber,
+          status: "ACTIVE",
+
         })),
       ],
       noOfFloors: noOfFloors,
       additionalDetails: {
         isRainwaterHarvesting: false,
         owners: [
-          ...data.owners.map((owner, index)=>({
+          ...data.owners.map((owner, index) => ({
             ...owner,
-            additionalDetails : { ownerSequence: index, ownerName:owner?.name},
-            documents : Object.keys(owner.documents).map((key) => {
+            additionalDetails: { ownerSequence: index, ownerName: owner?.name },
+            documents: Object.keys(owner.documents).map((key) => {
               const { documentType, fileStoreId } = owner.documents[key];
               return { documentType: documentType.code, fileStoreId };
             }),
-             gender: owner.gender?.code,
-              ownerType: owner.ownerType?.code || "NONE",
-              relationship: owner.relationship?.code,
-              inistitutetype: owner?.inistitutetype?.value,
-              landlineNumber: owner?.altContactNumber,
-              status: "ACTIVE",
-            
+            gender: owner.gender?.code,
+            ownerType: owner.ownerType?.code || "NONE",
+            relationship: owner.relationship?.code,
+            inistitutetype: owner?.inistitutetype?.value,
+            landlineNumber: owner?.altContactNumber,
+            status: "ACTIVE",
+
           })),
         ],
       },
@@ -215,8 +224,11 @@ export const convertToPropertyLightWeight = (data = {}) => {
       channel: "SYSTEM",
     },
   };
-  
-  if (ownershipCategory.includes("INSTITUTIONALPRIVATE") || ownershipCategory.includes("INSTITUTIONALGOVERNMENT")) {
+
+  if (
+    ownershipCategory?.includes("INSTITUTIONALPRIVATE") ||
+    ownershipCategory?.includes("INSTITUTIONALGOVERNMENT")
+  ) {
     formdata.Property.institution = data?.institution;
   }
   return formdata;
@@ -241,41 +253,41 @@ export const convertToUpdatePropertyLightWeight = (data = {}) => {
       address: data.address,
       propertyType: propertyType,
       ownershipCategory: data?.ownershipCategory,
-      owners:  [
-        ...data.owners.map((owner, index)=>({
+      owners: [
+        ...data.owners.map((owner, index) => ({
           ...owner,
-          additionalDetails : { ownerSequence: index, ownerName:owner?.name},
-          documents : Object.keys(owner.documents).map((key) => {
+          additionalDetails: { ownerSequence: index, ownerName: owner?.name },
+          documents: Object.keys(owner.documents).map((key) => {
             const { documentType, fileStoreId } = owner.documents[key];
             return { documentType: documentType.code, fileStoreId };
           }),
-           gender: owner.gender?.code,
-            ownerType: owner.ownerType?.code || "NONE",
-            relationship: owner.relationship?.code,
-            inistitutetype: owner?.inistitutetype?.value,
-            landlineNumber: owner?.altContactNumber,
-            status: "ACTIVE",
-          
+          gender: owner.gender?.code,
+          ownerType: owner.ownerType?.code || "NONE",
+          relationship: owner.relationship?.code,
+          inistitutetype: owner?.inistitutetype?.value,
+          landlineNumber: owner?.altContactNumber,
+          status: "ACTIVE",
+
         })),
       ],
       noOfFloors: noOfFloors,
       additionalDetails: {
         isRainwaterHarvesting: false,
-        owners:  [
-          ...data.owners.map((owner, index)=>({
+        owners: [
+          ...data.owners.map((owner, index) => ({
             ...owner,
-            additionalDetails : { ownerSequence: index, ownerName:owner?.name},
-            documents : Object.keys(owner.documents).map((key) => {
+            additionalDetails: { ownerSequence: index, ownerName: owner?.name },
+            documents: Object.keys(owner.documents).map((key) => {
               const { documentType, fileStoreId } = owner.documents[key];
               return { documentType: documentType.code, fileStoreId };
             }),
-             gender: owner.gender?.code,
-              ownerType: owner.ownerType?.code || "NONE",
-              relationship: owner.relationship?.code,
-              inistitutetype: owner?.inistitutetype?.value,
-              landlineNumber: owner?.altContactNumber,
-              status: "ACTIVE",
-            
+            gender: owner.gender?.code,
+            ownerType: owner.ownerType?.code || "NONE",
+            relationship: owner.relationship?.code,
+            inistitutetype: owner?.inistitutetype?.value,
+            landlineNumber: owner?.altContactNumber,
+            status: "ACTIVE",
+
           })),
         ],
       },

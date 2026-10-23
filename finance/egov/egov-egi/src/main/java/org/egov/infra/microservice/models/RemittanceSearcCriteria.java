@@ -2,9 +2,9 @@ package org.egov.infra.microservice.models;
 
 import java.util.List;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,26 +23,26 @@ public class RemittanceSearcCriteria {
     private List<String> referenceNumbers;
     private Long fromDate;
     private Long toDate;
-    @SafeHtml
+    @SanitizeHtml
     private String voucherHeader;
-    @SafeHtml
+    @SanitizeHtml
     private String function;
-    @SafeHtml
+    @SanitizeHtml
     private String fund;
-    @SafeHtml
+    @SanitizeHtml
     private String remarks;
-    @SafeHtml
+    @SanitizeHtml
     private String reasonForDelay;
-    @SafeHtml
+    @SanitizeHtml
     private String status;
-    @SafeHtml
+    @SanitizeHtml
     private String bankaccount;
-    @SafeHtml
+    @SanitizeHtml
     @NotNull
     private String tenantId;
-    @SafeHtml
+    @SanitizeHtml
     private String sortBy;
-    @SafeHtml
+    @SanitizeHtml
     private String sortOrder;
     private Integer pageSize;
     private Integer limit;

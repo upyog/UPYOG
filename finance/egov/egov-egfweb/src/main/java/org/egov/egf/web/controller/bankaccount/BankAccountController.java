@@ -50,7 +50,7 @@ package org.egov.egf.web.controller.bankaccount;
 
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CChartOfAccounts;
@@ -66,7 +66,7 @@ import org.egov.egf.utils.FinancialUtils;
 import org.egov.egf.web.controller.bankaccount.adaptor.BankAccountJsonAdaptor;
 import org.egov.model.masters.AccountCodePurpose;
 import org.egov.services.voucher.GeneralLedgerService;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -160,7 +160,7 @@ public class BankAccountController {
     }
 
     @PostMapping(value = "/search/{mode}")
-    public String search(@PathVariable("mode") @SafeHtml final String mode, final Model model) {
+    public String search(@PathVariable("mode") @SanitizeHtml final String mode, final Model model) {
         final BankAccountSearchRequest bankAccountSearchRequest = new BankAccountSearchRequest();
         setDropDownValues(model);
         model.addAttribute(BANKACCOUNT_SEARCH_REQUEST, bankAccountSearchRequest);
@@ -169,7 +169,7 @@ public class BankAccountController {
     }
 
     @GetMapping(value = "/success/{id}/{mode}")
-    public String success(@PathVariable("id") final Long id, @PathVariable("mode") @SafeHtml final String mode, final Model model) {
+    public String success(@PathVariable("id") final Long id, @PathVariable("mode") @SanitizeHtml final String mode, final Model model) {
         final Bankaccount bankaccount = createBankAccountService.getById(id);
         model.addAttribute(BANKACCOUNT, bankaccount);
         model.addAttribute("mode", mode);
@@ -208,7 +208,7 @@ public class BankAccountController {
 
     @PostMapping(value = "/ajaxsearch/{mode}", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String ajaxsearch(@PathVariable("mode") @SafeHtml final String mode, final Model model,
+    public String ajaxsearch(@PathVariable("mode") @SanitizeHtml final String mode, final Model model,
            @Valid @ModelAttribute final BankAccountSearchRequest bankAccountSearchRequest) {
         final List<Bankaccount> searchResultList = createBankAccountService.search(bankAccountSearchRequest);
         return new StringBuilder("{ \"data\":")

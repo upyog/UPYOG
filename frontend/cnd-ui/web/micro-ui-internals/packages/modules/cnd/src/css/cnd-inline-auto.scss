@@ -1,0 +1,476 @@
+/* CND Inline CSS Centralization */
+
+/* components/BookingPopup.js */
+.cnd-booking-popup {
+  &-card {
+    box-shadow: none;
+  }
+
+  &-submit-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+  }
+}
+
+/* components/Caption.js */
+.cnd-caption {
+  &-comment-text {
+    overflow-x: scroll;
+  }
+}
+
+/* components/CNDApplicationTimeLine.js */
+.cnd-timeline {
+  &-header {
+    margin-top: 32px;
+    margin-bottom: 16px;
+  }
+
+  &-pay-btn-wrapper {
+    bottom: 0px;
+    width: 100%;
+    margin-top: 1em;
+    margin-bottom: 1.2em;
+  }
+}
+
+/* components/CNDCard.js */
+.cnd-card {
+  &-header-wrapper {
+    width: 200px;
+    word-wrap: break-word;
+  }
+}
+
+/* components/CNDDesktopInbox.js */
+.cnd-desktop-inbox {
+  &-clear-btn {
+    margin-top: 10px;
+  }
+
+  &-no-data-text {
+    text-align: center;
+  }
+}
+
+/* components/CNDSearchApplication.js */
+.cnd-search-app {
+  &-clear-btn {
+    margin-top: 10px;
+  }
+
+  &-no-data {
+    &-card {
+      margin-top: 20px;
+    }
+
+    &-text {
+      text-align: center;
+    }
+  }
+
+  &-warning {
+    color: #505a5f;
+  }
+}
+
+/* components/EnhancedReport.js */
+.cnd-enhanced-report {
+  &-container {
+    margin: 8px;
+  }
+}
+
+/* components/ExistingBookingDetails.js */
+.cnd-existing-booking-details {
+  &-empty-text {
+    margin-top: 16px;
+    margin-left: 16px;
+  }
+}
+
+/* components/inbox/search.js */
+.cnd-inbox {
+  &-clear-btn {
+    grid-column: 3/3;
+    padding-top: 10px;
+    text-align: right;
+  }
+}
+
+.cnd-search {
+  &-field-error {
+    margin-top: -10px;
+    margin-bottom: 10px;
+  }
+
+  &-submit-bar {
+    width: 60%;
+    margin-top: 17%;
+  }
+
+  &-wrapper {
+    max-width: unset;
+    margin-left: unset;
+  }
+}
+
+.cnd-submit-bar {
+  &-flex {
+    flex: 1;
+  }
+}
+
+/* components/MobileInbox.js */
+.cnd-mobile-inbox {
+  &-wrapper {
+    padding: 0;
+  }
+}
+
+/* components/ReportSearchApplication.js */
+.cnd-report-search-app {
+  &-align-self-end {
+    margin-bottom: 5px;
+    align-self: flex-end;
+  }
+
+  &-card {
+    margin-top: 20px;
+  }
+
+  &-flex-col {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &-scroll-container {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  &-text-center {
+    text-align: center;
+  }
+}
+
+
+/* pageComponents/Address.js */
+.cnd-address {
+  &-add-btn-wrapper {
+    margin-bottom: 5px;
+  }
+
+  &-card {
+    &-checkmark {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      color: #2196f3;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    &-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0px 20px;
+    }
+  }
+}
+
+/* pageComponents/DisposeDetails.js */
+.cnd-dispose-details {
+  &-employee-container {
+    margin-top: 8px;
+    padding: 16px;
+    border: 1px solid #e3e3e3;
+  }
+
+  &-error {
+    width: 70%;
+    margin-top: -21px;
+    margin-left: 30%;
+    font-size: 12px;
+  }
+
+  &-site-media {
+    margin-bottom: 15px;
+  }
+}
+
+/* pageComponents/MultiSelectDropdown.js */
+.cnd-multi-select-dropdown {
+  &-checkmark {
+    width: 24px;
+  }
+
+  &-container {
+    width: 58%;
+    margin-bottom: 25px;
+  }
+
+  &-input {
+    min-width: 24px;
+    width: 100%;
+  }
+
+  &-zebra {
+    background-color: #eeeeee;
+  }
+}
+
+/* pageComponents/PickupArrivalDetails.js */
+.cnd-pickup-arrival {
+  &-employee-container {
+    margin-top: 8px;
+    padding: 16px;
+    border: 1px solid #e3e3e3;
+  }
+
+  &-error {
+    width: 70%;
+    margin-top: -21px;
+    margin-left: 30%;
+    font-size: 12px;
+  }
+
+  &-site-media {
+    margin-bottom: 15px;
+  }
+}
+
+/* pageComponents/PropertyNature.js */
+.cnd-property-nature {
+  &-datepicker-container {
+    display: flex;
+    gap: 1rem;
+    width: 50%;
+  }
+}
+
+/* pageComponents/WasteType.js */
+.cnd-waste-type {
+  &-employee-font {
+    font-weight: bold;
+  }
+
+  &-loader-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+/* pageComponents/WasteTypeTable.js */
+.cnd-waste-table {
+  width: 50%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  &-add-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 15px;
+    background-color: #882636;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+
+    &-icon {
+      color: white;
+      font-size: 16px;
+    }
+  }
+
+  &-additional {
+    &-row {
+      display: flex;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+      background-color: #f9f9f9;
+    }
+
+    &-select {
+      width: 90%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    &-unit-dropdown {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex: 1;
+      padding-right: 10px;
+    }
+  }
+
+  &-header {
+    display: flex;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+    font-weight: bold;
+  }
+
+  &-heading {
+    &-quantity {
+      flex: 1;
+      margin-right: 8%;
+      text-align: center;
+    }
+
+    &-type {
+      flex: 2;
+    }
+
+    &-units {
+      flex: 1;
+      text-align: center;
+    }
+  }
+
+  &-no-waste-selected {
+    padding: 15px 0;
+    text-align: center;
+  }
+
+  &-quantity {
+    &-input-wrapper {
+      flex: 1;
+      text-align: center;
+    }
+
+    &-text-input {
+      width: 50%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+  }
+
+  &-remove-btn {
+    padding: 6px 10px;
+    background-color: #882636;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  &-row {
+    display: flex;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  &-unit-dropdown {
+    &-select {
+      width: 50%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    &-wrapper {
+      flex: 1;
+      margin-bottom: 3%;
+      text-align: center;
+    }
+  }
+}
+
+
+/* pages/citizen/CndApplicationDetails.js */
+.cnd-citizen-app-details {
+  &-header {
+    font-size: 32px;
+
+    &-options {
+      margin-right: auto;
+      max-width: 960px;
+    }
+  }
+
+  &-sub-header {
+    font-size: 24px;
+  }
+}
+
+
+/* pages/employee/ApplicationDetails.js */
+.cnd-employee-app-details {
+  &-card {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    margin-top: -25px;
+    z-index: 10;
+  }
+
+  &-download-btn {
+    position: relative;
+    z-index: 10;
+  }
+
+  &-header {
+    margin-left: 0px;
+    padding-top: 10px;
+    font-size: 32px;
+  }
+
+  &-site-media {
+    margin-bottom: 15px;
+  }
+}
+
+/* utils/index.js */
+.cnd-doc-preview {
+  &-anchor {
+    min-width: 100px;
+    max-width: 100px;
+    height: auto;
+    margin-right: 10px;
+  }
+
+  &-flex {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  &-hr {
+    height: 2px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 0;
+    color: #d6d5d4;
+    background-color: #d6d5d4;
+  }
+
+  &-text {
+    margin: 0;
+    color: #0000ff;
+    font-weight: bold;
+    text-decoration: underline;
+  }
+
+  &-width {
+    width: 50%;
+  }
+
+  &-wrapper {
+    margin-top: 19px;
+  }
+}

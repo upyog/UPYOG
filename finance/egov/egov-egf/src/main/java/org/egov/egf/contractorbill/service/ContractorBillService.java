@@ -56,8 +56,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import javax.script.ScriptContext;
 
 import org.apache.commons.lang.StringUtils;
@@ -194,7 +194,7 @@ public class ContractorBillService {
     }
 
     public EgBillregister getById(final Long id) {
-        return contractorBillRepository.findOne(id);
+        return contractorBillRepository.findById(id).orElse(null);
     }
 
     public EgBillregister getByBillnumber(final String billNumber) {

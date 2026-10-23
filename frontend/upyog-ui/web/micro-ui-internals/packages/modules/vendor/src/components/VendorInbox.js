@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useHistory } from "react-router-dom";
-import { Card, Dropdown, Loader, Menu, SubmitBar, Toast } from "@upyog/digit-ui-react-components";
+import { Link,  } from "react-router-dom";
+import { Card, Dropdown, Loader, Menu, SubmitBar, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 //import FSMLink from "./inbox/FSMLink";
 import VENDORLink from "./inbox/VENDORLink";
 import ApplicationTable from "./inbox/ApplicationTable";
 import Filter from "./inbox/Filter";
-import { ToggleSwitch } from "@upyog/digit-ui-react-components";
+import { ToggleSwitch } from "@nudmcdgnpm/digit-ui-react-components";
 //import RegistrySearch from "./RegistrySearch";
 import RegistredVendorSearch from "./RegisteredVendorSearch";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { add } from "lodash";
 
 const VendorInbox = (props) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
-  const history = useHistory();
+  const navigate = Digit.Hooks.useCustomNavigate();
   const DSO = Digit.UserService.hasAccess(["FSM_DSO"]) || false;
   const GetCell = (value) => <span className="cell-text">{value}</span>;
   const FSTP = Digit.UserService.hasAccess("FSM_EMP_FSTPO") || false;
@@ -234,10 +234,10 @@ const VendorInbox = (props) => {
 
   const onActionSelect = (action, type, data) => {
     if (type === "VEHICLE") {
-      history.push("/upyog-ui/employee/vendor/registry/vehicle-details/" + action);
+      navigate("/upyog-ui/employee/vendor/registry/vehicle-details/" + action);
     } else {
       let driver = data.find((ele) => ele.name === action);
-      history.push("/upyog-ui/employee/vendor/registry/driver-details/" + driver?.id);
+      navigate("/upyog-ui/employee/vendor/registry/driver-details/" + driver?.id);
     }
   };
 
@@ -245,11 +245,11 @@ const VendorInbox = (props) => {
   const onSelectAdd = () => {
     switch (props.selectedTab) {
       case "VENDOR":
-        return history.push("/upyog-ui/employee/vendor/registry/new-vendor");
+        return navigate("/upyog-ui/employee/vendor/registry/new-vendor");
       case "VEHICLE":
-        return history.push("/upyog-ui/employee/vendor/registry/new-vehicle");
+        return navigate("/upyog-ui/employee/vendor/registry/new-vehicle");
       case "DRIVER":
-        return history.push("/upyog-ui/employee/vendor/registry/new-driver");
+        return navigate("/upyog-ui/employee/vendor/registry/new-driver");
       default:
         break;
     }
@@ -420,10 +420,10 @@ const VendorInbox = (props) => {
           //   Header: t("ES_FSM_REGISTRY_INBOX_TOTAL_VEHICLES"),
           //   Cell: ({ row, column }) => {
           //     return (
-          //       <div className="action-bar-wrap-registry" style={{ position: "relative" }}>
+          //       <div className="action-bar-wrap-registry" className="custom-style">
           //         <div
           //           className={row.original?.allVehicles?.length ? "link" : "cell-text"}
-          //           style={{ cursor: "pointer" }}
+          //           className="custom-style"
           //           onClick={() => onCellClick(row, column, row.original?.allVehicles?.length)}
           //         >
           //           {row.original?.allVehicles?.length || 0}
@@ -447,10 +447,10 @@ const VendorInbox = (props) => {
           //   disableSortBy: true,
           //   Cell: ({ row, column }) => {
           //     return (
-          //       <div className="action-bar-wrap-registry" style={{ position: "relative" }}>
+          //       <div className="action-bar-wrap-registry" className="custom-style">
           //         <div
           //           className={row.original?.vehicles?.length ? "link" : "cell-text"}
-          //           style={{ cursor: "pointer" }}
+          //           className="custom-style"
           //           onClick={() => onCellClick(row, column, row.original?.vehicles?.length)}
           //         >
           //           {row.original?.vehicles?.length || 0}
@@ -474,10 +474,10 @@ const VendorInbox = (props) => {
           //   disableSortBy: true,
           //   Cell: ({ row, column }) => {
           //     return (
-          //       <div className="action-bar-wrap-registry" style={{ position: "relative" }}>
+          //       <div className="action-bar-wrap-registry" className="custom-style">
           //         <div
           //           className={row.original?.drivers?.length ? "link" : "cell-text"}
-          //           style={{ cursor: "pointer" }}
+          //           className="custom-style"
           //           onClick={() => onCellClick(row, column, row.original?.drivers?.length)}
           //         >
           //           {row.original?.drivers?.length || 0}
@@ -501,10 +501,10 @@ const VendorInbox = (props) => {
           //   disableSortBy: true,
           //   Cell: ({ row, column }) => {
           //     return (
-          //       <div className="action-bar-wrap-registry" style={{ position: "relative" }}>
+          //       <div className="action-bar-wrap-registry" className="custom-style">
           //         <div
           //           className={row.original?.activeDrivers?.length ? "link" : "cell-text"}
-          //           style={{ cursor: "pointer" }}
+          //           className="custom-style"
           //           onClick={() => onCellClick(row, column, row.original?.activeDrivers?.length)}
           //         >
           //           {row.original?.activeDrivers?.length || 0}
@@ -529,7 +529,7 @@ const VendorInbox = (props) => {
             Cell: ({ row }) => {
               return (
                 <ToggleSwitch
-                  style={{ display: "flex", justifyContent: "left" }}
+                  className="vnd-vendor-inbox-flex-row"
                   value={row.original?.dsoDetails?.status === "DISABLED" ? false : true}
                   onChange={() => onVendorUpdate(row)}
                   name={`switch-${row.id}`}
@@ -643,7 +643,7 @@ const VendorInbox = (props) => {
             Cell: ({ row }) => {
               return (
                 <ToggleSwitch
-                  style={{ display: "flex", justifyContent: "left" }}
+                  className="vnd-vendor-inbox-flex-row"
                   value={row.original?.status === "DISABLED" ? false : true}
                   onChange={() => onVehicleUpdate(row)}
                   name={`switch-${row.id}`}
@@ -709,7 +709,7 @@ const VendorInbox = (props) => {
             Cell: ({ row }) => {
               return (
                 <ToggleSwitch
-                  style={{ display: "flex", justifyContent: "left" }}
+                  className="vnd-vendor-inbox-flex-row"
                   value={row.original?.status === "DISABLED" ? false : true}
                   onChange={() => onDriverUpdate(row)}
                   name={`switch-${row.id}`}
@@ -741,9 +741,9 @@ const VendorInbox = (props) => {
       emptyButtonText = "ES_FSM_REGISTRY_EMPTY_BUTTON_DRIVER";
     }
     result = (
-      <Card style={{ display: "flex", justifyContent: "center", minHeight: "250px" }}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <div style={{ marginTop: "50px", marginBottom: "25px" }}>{t(emptyCardText)}</div>
+      <Card className="vnd-vendor-inbox-flex-row-2">
+        <div className="vnd-vendor-inbox-flex-row-3">
+          <div className="vnd-vendor-inbox-top-spacing">{t(emptyCardText)}</div>
           <SubmitBar className="" label={t(emptyButtonText)} onSubmit={onSelectAdd} />
         </div>
       </Card>
@@ -787,7 +787,7 @@ const VendorInbox = (props) => {
         <div className="filters-container">
           {/* <FSMLink parentRoute={props.parentRoute} /> */}
           <VENDORLink parentRoute={props.parentRoute} />
-          <div style={{ marginTop: "24px" }}>
+          <div className="vnd-vendor-inbox-top-spacing-2">
             <Filter
               searchParams={props.searchParams}
               paginationParms={props.paginationParms}
@@ -798,7 +798,7 @@ const VendorInbox = (props) => {
           </div>
         </div>
       )}
-      <div style={{ flex: 1, marginLeft: props.userRole === "FSM_ADMIN" ? "" : "24px" }}>
+      <div className={`flex-1 ${props.userRole !== "FSM_ADMIN" ? "margin-left-24" : ""}`}>
         <RegistredVendorSearch
           onSearch={props.onSearch}
           type="desktop"
@@ -808,7 +808,7 @@ const VendorInbox = (props) => {
           onTabChange={props.onTabChange}
           selectedTab={props.selectedTab}
         />
-        <div className="result" style={{ marginLeft: FSTP || props.userRole === "FSM_ADMIN" ? "" : !props?.isSearch ? "24px" : "", flex: 1 }}>
+        <div className={`result flex-1 ${FSTP || props.userRole === "FSM_ADMIN" ? "" : !props?.isSearch ? "margin-left-24" : ""}`}>
           {result}
         </div>
       </div>

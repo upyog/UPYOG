@@ -1,31 +1,32 @@
-import React, { useState, useEffect} from "react";
-import { Modal, AddressDetails } from "@upyog/digit-ui-react-components";
+import React, { useState, useEffect } from "react";
+import { Modal, AddressDetails } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 
-const Heading = ({t}) => <h1 className="heading-m">{t("FILL_ADDRESS_DETAILS")}</h1>;
+const Heading = ({ t }) => <h1 className="heading-m">{t("FILL_ADDRESS_DETAILS")}</h1>;
 /**
  * AddressDetailss component renders a  popup for capturing and submitting user address details.
  * It utilizes Digit's UI components and services to present a form and update the user's profile address.
  * Using the `AddressDetails` component to handle all address-related input fields such as pincode, city, locality, street name, house number, landmark, and address lines.
  * - Displaying success or error toasts based on the response.
  */
-const Address = ({ address, actionCancelOnSubmit, isEdit }) => {
+// Trigger parent address refresh after successful address update/create
+const Address = ({ address, actionCancelOnSubmit, isEdit, refreshAddresses }) => {
   const { t } = useTranslation();
   const { data: allCities } = Digit.Hooks.useTenants();
   const { handleSubmit } = useForm();
   const [showToast, setShowToast] = useState(null);
   const [formData, setFormData] = useState({
-    addressType: address?.addressType||"",
-    pincode: address?.pinCode||"",
-    city: address?.city||"",
-    locality: address?.locality||"",
-    streetName: address?.streetName||"",
-    houseNo: address?.houseNumber||"",
-    landmark: address?.landmark||"",
-    addressLine1: address?.address||"",
-    addressLine2: address?.address2||""
-  }); 
+    addressType: address?.addressType || "",
+    pincode: address?.pinCode || "",
+    city: address?.city || "",
+    locality: address?.locality || "",
+    streetName: address?.streetName || "",
+    houseNo: address?.houseNumber || "",
+    landmark: address?.landmark || "",
+    addressLine1: address?.address || "",
+    addressLine2: address?.address2 || ""
+  });
   /*
  * This component renders a modal for capturing and updating user address details.
  * - Manages form state for address fields like pincode, city, locality, etc., using `useState`.
@@ -33,7 +34,7 @@ const Address = ({ address, actionCancelOnSubmit, isEdit }) => {
  * - Displays success or error toasts based on the API response.
  * - Renders a form inside a modal using `AddressDetails` for input fields and React Hook Form for submission handling.
  */
-    // timer for toast
+  // timer for toast
   useEffect(() => {
     if (showToast) {
       const timer = setTimeout(() => {
@@ -45,26 +46,42 @@ const Address = ({ address, actionCancelOnSubmit, isEdit }) => {
 
   const updateProfile = async () => {
     try {
-      const stateCode = Digit.ULBService.getStateId();
-      const tenantId = Digit.ULBService.getCurrentTenantId();
-      const userUuid = Digit.UserService.getUser()?.info?.uuid || {};
+      const stateCode = Digit.ULBService.getStateId() || "pg";
+      const userUuid = Digit.UserService.getUser()?.info?.uuid || "";
+
+      const addressTypeValue =
+        typeof formData.addressType === "string"
+          ? formData.addressType
+          : formData.addressType?.code || "OTHER";
+
+      const cityValue =
+        typeof formData.city === "string"
+          ? formData.city
+          : formData.city?.code || formData.city?.city?.code || formData.city?.city?.name || formData.city?.name || "";
+
+      const localityValue =
+        typeof formData.locality === "string"
+          ? formData.locality
+          : formData.locality?.code || formData.locality?.i18nKey || formData.locality?.name || "";
 
       const requestData = {
-        tenantId: tenantId,
-        address: formData.addressLine1,
-        address2: formData.addressLine2,
-        houseNumber: formData.houseNo,
-        streetName: formData.streetName,
-        landmark: formData.landmark,
-        pinCode: formData.pincode,
-        city: formData.city?.city?.name,
-        locality: formData.locality?.i18nKey,
-        addressType: formData.addressType?.code,
-        type: formData.addressType?.code,
+        tenantId: stateCode,
+        address: formData.addressLine1 || "",
+        address2: formData.addressLine2 || "",
+        houseNumber: formData.houseNo || "",
+        streetName: formData.streetName || "",
+        landmark: formData.landmark || "",
+        pincode: formData.pincode || "",
+        pinCode: formData.pincode || "",
+        city: cityValue,
+        locality: localityValue,
+        addressType: addressTypeValue,
+        type: addressTypeValue,
       };
 
-      const { responseInfo, address } = await Digit.UserService.createAddressV2(requestData, stateCode, userUuid);
-      if (responseInfo?.status === "201") {
+      const { responseInfo } = await Digit.UserService.createAddressV2(requestData, stateCode, userUuid);
+      if (responseInfo?.status === "201" || responseInfo?.status === "200") {
+        await refreshAddresses?.();
         actionCancelOnSubmit();
       }
     } catch (error) {
@@ -72,8 +89,8 @@ const Address = ({ address, actionCancelOnSubmit, isEdit }) => {
       try {
         const errorObj = JSON.parse(error);
         message = errorObj?.message || message;
-      } catch (e) {}
-      setShowToast({ 
+      } catch (e) { }
+      setShowToast({
         error: true,
         label: message
       });
@@ -83,29 +100,44 @@ const Address = ({ address, actionCancelOnSubmit, isEdit }) => {
 
   const updateAddress = async () => {
     try {
-      const stateCode = Digit.ULBService.getStateId();
-      const tenantId = Digit.ULBService.getCurrentTenantId();
+      const stateCode = Digit.ULBService.getStateId() || "pg";
+
+      const addressTypeValue =
+        typeof formData.addressType === "string"
+          ? formData.addressType
+          : formData.addressType?.code || "OTHER";
+
+      const cityValue =
+        typeof formData.city === "string"
+          ? formData.city
+          : formData.city?.name || formData.city?.city?.name || formData.city?.code || formData.city?.city?.code || "";
+
+      const localityValue =
+        typeof formData.locality === "string"
+          ? formData.locality
+          : formData.locality?.name || formData.locality?.i18nKey || formData.locality?.code || "";
 
       const requestUpdatedData = {
-        tenantId: tenantId,
-        address: formData.addressLine1,
-        address2: formData.addressLine2,
-        houseNumber: formData.houseNo,
-        streetName: formData.streetName,
-        landmark: formData.landmark,
-        pinCode: formData.pincode,
-        city: formData.city?.city?.name,
-        locality: formData.locality?.i18nKey,
-        addressType: formData.addressType?.code,
-        type: formData.addressType?.code,
+        tenantId: stateCode,
+        address: formData.addressLine1 || "",
+        address2: formData.addressLine2 || "",
+        houseNumber: formData.houseNo || "",
+        streetName: formData.streetName || "",
+        landmark: formData.landmark || "",
+        pinCode: formData.pincode || address?.pinCode || "",
+        city: cityValue,
+        locality: localityValue,
+        addressType: addressTypeValue,
+        type: addressTypeValue,
         id: address?.id,
         userId: address?.userId,
         lastModifiedBy: null,
         lastModifiedDate: null
       };
 
-      const { responseInfo } = await Digit.UserService.updateAddressV2(requestUpdatedData, stateCode,);
+      const { responseInfo } = await Digit.UserService.updateAddressV2(requestUpdatedData, stateCode);
       if (responseInfo?.status === "200") {
+        await refreshAddresses?.();
         actionCancelOnSubmit();
       }
     } catch (error) {
@@ -113,8 +145,8 @@ const Address = ({ address, actionCancelOnSubmit, isEdit }) => {
       try {
         const errorObj = JSON.parse(error);
         message = errorObj?.message || message;
-      } catch (e) {}
-      setShowToast({ 
+      } catch (e) { }
+      setShowToast({
         error: true,
         label: message
       });
@@ -130,16 +162,16 @@ const Address = ({ address, actionCancelOnSubmit, isEdit }) => {
         maxHeight: "90vh",
         overflowY: "auto",
       }}
-      actionSaveLabel={isEdit ?("CS_COMMON_UPDATE") :t("CS_COMMON_SUBMIT")}
+      actionSaveLabel={isEdit ? ("CS_COMMON_UPDATE") : t("CS_COMMON_SUBMIT")}
       actionCancelLabel={t("BACK")}
       actionCancelOnSubmit={actionCancelOnSubmit}
-      actionSaveOnSubmit={handleSubmit(isEdit?updateAddress:updateProfile)}
+      actionSaveOnSubmit={handleSubmit(isEdit ? updateAddress : updateProfile)}
       formId="modal-action"
       setError={setShowToast}
       error={showToast?.label}
     >
-      <div style={{ boxShadow: "none" }}>
-          <AddressDetails t={t} formData={formData} onSelect={setFormData} isEdit={isEdit} />
+      <div className="core-address-details-wrapper">
+        <AddressDetails t={t} config={{}} formData={formData} onSelect={setFormData} isEdit={isEdit} />
       </div>
     </Modal>
   );

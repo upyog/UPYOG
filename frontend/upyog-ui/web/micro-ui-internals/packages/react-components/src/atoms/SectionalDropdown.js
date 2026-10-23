@@ -45,7 +45,7 @@ const SectionalDropdown = (props) => {
   }
 
   return (
-    <div className="sect-dropdown-wrap" style={{ ...props.style }}>
+    <div className="sect-dropdown-wrap" style={props?.style}>
       <div className="sect-dropdown-input-wrap">
         <TextField
           setFilter={setFilter}

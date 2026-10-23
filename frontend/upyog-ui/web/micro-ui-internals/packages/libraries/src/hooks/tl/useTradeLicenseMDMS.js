@@ -1,106 +1,94 @@
 import { MdmsServiceV2 } from "../../services/elements/MDMSV2";
-import { useQuery } from "react-query";
+import { queryTemplate } from "../../common/queryTemplate";
 
 const useTradeLicenseMDMS = (tenantId, moduleCode, type, filter, config = {}) => {
   const useTLDocuments = () => {
-    return useQuery("TL_DOCUMENTS", () => MdmsServiceV2.getTLDocumentRequiredScreen(tenantId, moduleCode, type), config);
+    return queryTemplate({ queryKey: ["TL_DOCUMENTS"], queryFn: () => MdmsServiceV2.getTLDocumentRequiredScreen(tenantId, moduleCode, type), config });
   };
   const useStructureType = () => {
-    return useQuery("TL_STRUCTURE_TYPE", () => MdmsServiceV2.getTLStructureType(tenantId, moduleCode, type), config);
+    return queryTemplate({ queryKey: ["TL_STRUCTURE_TYPE"], queryFn: () => MdmsServiceV2.getTLStructureType(tenantId, moduleCode, type), config });
   };
   const useTradeUnitsData = () => {
-    return useQuery("TL_TRADE_UNITS", () => MdmsServiceV2.getTradeUnitsData(tenantId, moduleCode, type, filter), config);
+    return queryTemplate({ queryKey: ["TL_TRADE_UNITS"], queryFn: () => MdmsServiceV2.getTradeUnitsData(tenantId, moduleCode, type, filter), config });
   };
   const useTradeOwnerShipCategory = () => {
-    return useQuery("TL_TRADE_OWNERSHIP_CATEGORY", () => MdmsServiceV2.GetTradeOwnerShipCategory(tenantId, moduleCode, type), config);
+    return queryTemplate({ queryKey: ["TL_TRADE_OWNERSHIP_CATEGORY"], queryFn: () => MdmsServiceV2.GetTradeOwnerShipCategory(tenantId, moduleCode, type), config });
   };
   const useTradeOwnershipSubType = () => {
-    return useQuery("TL_TRADE_OWNERSHIP_CATEGORY", () => MdmsServiceV2.GetTradeOwnerShipCategory(tenantId, moduleCode, type), {
-      select: data => {
-        const {"common-masters":{OwnerShipCategory: categoryData} ={}} = data
-        const filteredSubtypesData = categoryData.filter( e => e.code.includes(filter.keyToSearchOwnershipSubtype)).map( e => ({...e, i18nKey: `COMMON_MASTERS_OWNERSHIPCATEGORY_${e.code.replaceAll(".", "_")}`}))
-        return filteredSubtypesData
+    return queryTemplate({
+      queryKey: ["TL_TRADE_OWNERSHIP_CATEGORY"],
+      queryFn: () => MdmsServiceV2.GetTradeOwnerShipCategory(tenantId, moduleCode, type),
+      select: (data) => {
+        const { "common-masters": { OwnerShipCategory: categoryData } = {} } = data;
+        return categoryData.filter((e) => e.code.includes(filter.keyToSearchOwnershipSubtype)).map((e) => ({ ...e, i18nKey: `COMMON_MASTERS_OWNERSHIPCATEGORY_${e.code.replaceAll(".", "_")}` }));
       },
-      ...config
+      config,
     });
   };
-
   const useOwnerTypeWithSubtypes = () => {
-    return useQuery("TL_TRADE_OWNERSSHIP_TYPE", () => MdmsServiceV2.GetTradeOwnerShipCategory(tenantId, moduleCode, type), {
-      select: data => {
-        const {"common-masters":{OwnerShipCategory: categoryData} ={}} = data
+    return queryTemplate({
+      queryKey: ["TL_TRADE_OWNERSSHIP_TYPE"],
+      queryFn: () => MdmsServiceV2.GetTradeOwnerShipCategory(tenantId, moduleCode, type),
+      select: (data) => {
+        const { "common-masters": { OwnerShipCategory: categoryData } = {} } = data;
         let OwnerShipCategory = {};
         let ownerShipdropDown = [];
-        
+
         function getDropdwonForProperty(ownerShipdropDown) {
           if (filter?.userType === "employee") {
             const arr = ownerShipdropDown
               ?.filter((e) => e.code.split(".").length <= 2)
               ?.map((ownerShipDetails) => ({
                 ...ownerShipDetails,
-                i18nKey: `COMMON_MASTERS_OWNERSHIPCATEGORY_INDIVIDUAL_${
-                  ownerShipDetails.value.split(".")[1] ? ownerShipDetails.value.split(".")[1] : ownerShipDetails.value.split(".")[0]
-                }`,
+                i18nKey: `COMMON_MASTERS_OWNERSHIPCATEGORY_INDIVIDUAL_${ownerShipDetails.value.split(".")[1] ? ownerShipDetails.value.split(".")[1] : ownerShipDetails.value.split(".")[0]}`,
               }));
-              const finalArr = arr.filter(data => data.code.includes("INDIVIDUAL") || data.code.includes("OTHER"))
-      
-            return finalArr;
+            return arr.filter((data) => data.code.includes("INDIVIDUAL") || data.code.includes("OTHER"));
           }
-      
-          const res = ownerShipdropDown?.length ? ownerShipdropDown?.map((ownerShipDetails) => ({
-                ...ownerShipDetails,
-                i18nKey: `PT_OWNERSHIP_${
-                  ownerShipDetails.value.split(".")[1] ? ownerShipDetails.value.split(".")[1] : ownerShipDetails.value.split(".")[0]
-                }`,
-              })).reduce((acc, ownerShipDetails) => {
-                if(ownerShipDetails.code.includes("INDIVIDUAL")){
-                  return [...acc, ownerShipDetails]
-                } else if (ownerShipDetails.code.includes("OTHER")) {
-                  const { code, value, ...everythingElse } = ownerShipDetails
-                  const mutatedOwnershipDetails =  { code: code.split(".")[0], value: value.split(".")[0], ...everythingElse }
-                  return [...acc, mutatedOwnershipDetails]
-                } else {
-                  return acc
-                }
-              },[]) : null
-              
-          return res
+          const res = ownerShipdropDown?.length
+            ? ownerShipdropDown
+                ?.map((ownerShipDetails) => ({
+                  ...ownerShipDetails,
+                  i18nKey: `PT_OWNERSHIP_${ownerShipDetails.value.split(".")[1] ? ownerShipDetails.value.split(".")[1] : ownerShipDetails.value.split(".")[0]}`,
+                }))
+                .reduce((acc, ownerShipDetails) => {
+                  if (ownerShipDetails.code.includes("INDIVIDUAL")) {
+                    return [...acc, ownerShipDetails];
+                  } else if (ownerShipDetails.code.includes("OTHER")) {
+                    const { code, value, ...everythingElse } = ownerShipDetails;
+                    return [...acc, { code: code.split(".")[0], value: value.split(".")[0], ...everythingElse }];
+                  } else {
+                    return acc;
+                  }
+                }, [])
+            : null;
+          return res;
         }
 
         function formDropdown(category) {
-          const { name, code } = category;
-          return {
-            label: name,
-            value: code,
-            code: code,
-          };
+          return { label: category.name, value: category.code, code: category.code };
         }
 
-        categoryData.length > 0 ? categoryData?.map((category) => {
-          OwnerShipCategory[category.code] = category;
-        }) : null
+        categoryData.length > 0 ? categoryData?.map((category) => { OwnerShipCategory[category.code] = category; }) : null;
 
         if (OwnerShipCategory) {
           Object.keys(OwnerShipCategory)?.forEach((category) => {
-            // const categoryCode = OwnerShipCategory[category].code;
             ownerShipdropDown.push(formDropdown(OwnerShipCategory[category]));
           });
         }
-        
+
         return getDropdwonForProperty(ownerShipdropDown);
-    
       },
-      ...config
+      config,
     });
   };
   const useTLAccessoriesType = () => {
-    return useQuery("TL_TRADE_ACCESSORY_CATEGORY", () => MdmsServiceV2.getTLAccessoriesType(tenantId, moduleCode, type), config);
+    return queryTemplate({ queryKey: ["TL_TRADE_ACCESSORY_CATEGORY"], queryFn: () => MdmsServiceV2.getTLAccessoriesType(tenantId, moduleCode, type), config });
   };
   const useTLFinancialYear = () => {
-    return useQuery("TL_TRADE_FINANCIAL_YEAR", () => MdmsServiceV2.getTLFinancialYear(tenantId, moduleCode, type), config);
+    return queryTemplate({ queryKey: ["TL_TRADE_FINANCIAL_YEAR"], queryFn: () => MdmsServiceV2.getTLFinancialYear(tenantId, moduleCode, type), config });
   };
   const _default = () => {
-    return useQuery([tenantId, moduleCode, type], () => MdmsServiceV2.getMultipleTypes(tenantId, moduleCode, type), config);
+    return queryTemplate({ queryKey: [tenantId, moduleCode, type], queryFn: () => MdmsServiceV2.getMultipleTypes(tenantId, moduleCode, type), config });
   };
 
   switch (type) {

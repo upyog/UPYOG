@@ -1,5 +1,5 @@
 import React,{Fragment,useEffect,useMemo,useState} from 'react'
-import { Card, CardLabelError, CheckBox, RadioButtons, TextArea, TextInput, Loader, CardHeader, BreakLine, CardLabel, CardSectionHeader, Header, MultiLink } from "@nudmcdgnpm/digit-ui-react-components";
+import { Card, CardLabelError, CheckBox, RadioButtons, TextArea, TextInput, Loader, CardHeader, BreakLine, CardLabel, CardSectionHeader, Header, MultiLink } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import { bindQuesWithAns } from './bindquesansutil';
 import WhoHasResponded from './WhoHasResponded';
 import SurveyDetailsView from './SurveyDetailsView';
@@ -185,13 +185,16 @@ const SurveyResultsView = ({surveyInfo,selecedSurveyresults}) => {
     const [data,setData]=useState(null);
     const [userInfo,setUserInfo] = useState({})
     const tenant = Digit.ULBService.getCurrentTenantId();
-    useEffect( async() => {
-        if(selecedSurveyresults?.answers?.length){
-        const dp = bindQuesWithAns(surveyInfo?.questions,selecedSurveyresults.answers)
-        setData(dp)
-        const ue = await getUserData(selecedSurveyresults.answers,tenant.split(".")[0])
-        setUserInfo(ue);
-        }
+    useEffect(() => {
+        const fetchData = async () => {
+            if(selecedSurveyresults?.answers?.length){
+                const dp = bindQuesWithAns(surveyInfo?.questions,selecedSurveyresults.answers)
+                setData(dp)
+                const ue = await getUserData(selecedSurveyresults.answers,tenant.split(".")[0])
+                setUserInfo(ue);
+            }
+        };
+        fetchData();
     },[selecedSurveyresults])
 
     //    const dp = bindQuesWithAns(surveyInfo?.questions,responsesInfoMutation.data.answers);

@@ -1,5 +1,5 @@
 import React from "react";
-import { Table } from "@nudmcdgnpm/digit-ui-react-components";
+import { Table } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 
 /**
  * Component developed to show the Details inside the Table in Inbox as well as My Request Components 

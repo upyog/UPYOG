@@ -50,27 +50,27 @@ package org.egov.infra.microservice.models;
 import java.io.Serializable;
 import java.util.List;
 
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.validation.SanitizeHtml;
 
 //This class is serialized to Redis
 public class User implements Serializable {
     private static final long serialVersionUID = -1053170163821651014L;
     private Long id;
-    @SafeHtml
+    @SanitizeHtml
     private String uuid;
-    @SafeHtml
+    @SanitizeHtml
     private String userName;
-    @SafeHtml
+    @SanitizeHtml
     private String userType;
-    @SafeHtml
+    @SanitizeHtml
     private String name;
-    @SafeHtml
+    @SanitizeHtml
     private String mobileNumber;
-    @SafeHtml
+    @SanitizeHtml
     private String emailId;
-    @SafeHtml
+    @SanitizeHtml
     private String locale;
-    @SafeHtml
+    @SanitizeHtml
     private String type;
     private List<Role> roles;
     private boolean active;

@@ -37,10 +37,6 @@ const CNDVendorCard = () => {
     {
       label: t("ES_COMMON_INBOX"),
       link: `/cnd-ui/citizen/cnd/inbox`,
-    },
-    {
-      label: t("ES_COMMON_APPLICATION_SEARCH"),
-      link: `/cnd-ui/citizen/cnd/my-request`,
     }
   ]
   const propsForModuleCard = {
@@ -50,7 +46,7 @@ const CNDVendorCard = () => {
       {
         count: total?.totalCount,
         label: t("ES_TITLE_INBOX"),
-        link: `/cnd-ui/employee/cnd/inbox`,
+        link: `/cnd-ui/citizen/cnd/inbox`,
       }
     ],
     links,

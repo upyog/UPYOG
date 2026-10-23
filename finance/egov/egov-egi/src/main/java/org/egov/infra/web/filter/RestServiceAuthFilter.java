@@ -10,15 +10,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
@@ -166,7 +166,7 @@ public class RestServiceAuthFilter implements Filter {
 		if (adminToken == null)
 			throw new AuthorizationException("SI token generation failed");
 		session.setAttribute(MS_USER_TOKEN, userToken);
-		CustomUserDetails user = this.microserviceUtils.getUserDetails(userToken, adminToken);
+		CustomUserDetails user = this.microserviceUtils.getUserDetails(userToken, adminToken, tenantId);
 		session.setAttribute(MS_TENANTID_KEY, user.getTenantId());
 		LOGGER.info("userToken inside getUserDetails:" + userToken);
 		UserSearchResponse response = this.microserviceUtils.getUserInfo(userToken, user.getTenantId(), user.getUuid());

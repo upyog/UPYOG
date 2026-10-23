@@ -4,25 +4,34 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.request.*;
 import digit.models.coremodels.UserDetailResponse;
 import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.upyog.sv.repository.ServiceRequestRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.upyog.sv.constants.StreetVendingConstants;
+import org.upyog.sv.repository.ServiceRequestRepository;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
+@SuppressWarnings({"java:S2143", "java:S2638", "java:S3437"})
 public class UserUtil {
 
+	private static final String FIELD_USER = "user";
+	private static final String FIELD_CREATED_DATE = "createdDate";
+	private static final String FIELD_LAST_MODIFIED_DATE = "lastModifiedDate";
+	private static final String FIELD_DOB = "dob";
+	private static final String FIELD_PWD_EXPIRY_DATE = "pwdExpiryDate";
+	private static final String DATE_TIME_FORMAT = "dd-MM-yyyy HH:mm:ss";
+	private static final String SEARCH_DOB_FORMAT = "yyyy-MM-dd";
+	private static final String CREATE_DOB_FORMAT = "dd/MM/yyyy";
 
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
-    private ServiceRequestRepository serviceRequestRepository;
+    private final ServiceRequestRepository serviceRequestRepository;
 
     @Value("${egov.user.create.path}")
     private String userCreateEndpoint;
@@ -33,7 +42,6 @@ public class UserUtil {
     @Value("${egov.user.update.path}")
     private String userUpdateEndpoint;
 
-    @Autowired
     public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {
         this.mapper = mapper;
         this.serviceRequestRepository = serviceRequestRepository;
@@ -49,14 +57,13 @@ public class UserUtil {
     public UserDetailResponse userCall(Object userRequest, StringBuilder uri) {
         String dobFormat = null;
         if(uri.toString().contains(userSearchEndpoint)  || uri.toString().contains(userUpdateEndpoint))
-            dobFormat="yyyy-MM-dd";
+            dobFormat = SEARCH_DOB_FORMAT;
         else if(uri.toString().contains(userCreateEndpoint))
-            dobFormat = "dd/MM/yyyy";
+            dobFormat = CREATE_DOB_FORMAT;
         try{
-            LinkedHashMap responseMap = (LinkedHashMap)serviceRequestRepository.fetchResult(uri, userRequest);
-            parseResponse(responseMap,dobFormat);
-            UserDetailResponse userDetailResponse = mapper.convertValue(responseMap,UserDetailResponse.class);
-            return userDetailResponse;
+            Map<String, Object> responseMap = serviceRequestRepository.fetchResult(uri, userRequest);
+            parseResponse(responseMap, dobFormat);
+            return mapper.convertValue(responseMap, UserDetailResponse.class);
         }
         catch(IllegalArgumentException  e)
         {
@@ -68,20 +75,21 @@ public class UserUtil {
     /**
      * Parses date formats to long for all users in responseMap
      * @param responeMap LinkedHashMap got from user api response
+     * @param dobFormat date of birth format
      */
 
-    public void parseResponse(LinkedHashMap responeMap, String dobFormat){
-        List<LinkedHashMap> users = (List<LinkedHashMap>)responeMap.get("user");
-        String format1 = "dd-MM-yyyy HH:mm:ss";
+    public void parseResponse(Map<String, Object> responeMap, String dobFormat){
+        List<Map<String, Object>> users = mapper.convertValue(responeMap.get(FIELD_USER),
+                mapper.getTypeFactory().constructCollectionType(List.class, Map.class));
         if(users!=null){
             users.forEach( map -> {
-                        map.put("createdDate",dateTolong((String)map.get("createdDate"),format1));
-                        if((String)map.get("lastModifiedDate")!=null)
-                            map.put("lastModifiedDate",dateTolong((String)map.get("lastModifiedDate"),format1));
-                        if((String)map.get("dob")!=null)
-                            map.put("dob",dateTolong((String)map.get("dob"),dobFormat));
-                        if((String)map.get("pwdExpiryDate")!=null)
-                            map.put("pwdExpiryDate",dateTolong((String)map.get("pwdExpiryDate"),format1));
+                        map.put(FIELD_CREATED_DATE, dateTolong((String) map.get(FIELD_CREATED_DATE), DATE_TIME_FORMAT));
+                        if((String) map.get(FIELD_LAST_MODIFIED_DATE) != null)
+                            map.put(FIELD_LAST_MODIFIED_DATE, dateTolong((String) map.get(FIELD_LAST_MODIFIED_DATE), DATE_TIME_FORMAT));
+                        if((String) map.get(FIELD_DOB) != null)
+                            map.put(FIELD_DOB, dateTolong((String) map.get(FIELD_DOB), dobFormat));
+                        if((String) map.get(FIELD_PWD_EXPIRY_DATE) != null)
+                            map.put(FIELD_PWD_EXPIRY_DATE, dateTolong((String) map.get(FIELD_PWD_EXPIRY_DATE), DATE_TIME_FORMAT));
                     }
             );
         }
@@ -93,9 +101,10 @@ public class UserUtil {
      * @param format Format of the date
      * @return Long value of date
      */
-    private Long dateTolong(String date,String format){
+    @SuppressWarnings("java:S2143")
+    private Long dateTolong(String date, String format){
         SimpleDateFormat f = new SimpleDateFormat(format);
-        Date d = null;
+        Date d;
         try {
             d = f.parse(date);
         } catch (ParseException e) {
@@ -106,32 +115,24 @@ public class UserUtil {
 
     /**
      * enriches the userInfo with statelevel tenantId and other fields
-     * @param mobileNumber
-     * @param tenantId
-     * @param userInfo
+     * @param mobileNumber mobile number of the user
+     * @param tenantId tenant identifier
+     * @param userInfo user information to enrich
      */
-    public void addUserDefaultFields(String mobileNumber,String tenantId, User userInfo){
-        Role role = getCitizenRole(tenantId);
+    public void addUserDefaultFields(String mobileNumber, String tenantId, User userInfo){
+        Role role = getCitizenRole();
         userInfo.setRoles(Collections.singletonList(role));
-        userInfo.setType("CITIZEN");
+        userInfo.setType(StreetVendingConstants.CITIZEN);
         userInfo.setUserName(mobileNumber);
-        //TODO: uncomment it
-      //  userInfo.setTenantId(getStateLevelTenant(tenantId));
-      //  userInfo.setActive(true);
     }
 
     /**
      * Returns role object for citizen
-     * @param tenantId
-     * @return
+     * @return citizen role
      */
-    private Role getCitizenRole(String tenantId){
+    private Role getCitizenRole(){
         Role role = new Role();
-        //TODO: uncomment it
-      //  role.setCode("CITIZEN");
-        //TODO: uncomment it
         role.setName("Citizen");
-   //     role.setTenantId(getStateLevelTenant(tenantId));
         return role;
     }
 

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Loader } from "@upyog/digit-ui-react-components";
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import StatusCount from "./StatusCount";
 
@@ -18,7 +18,7 @@ const Status = ({ onAssignmentChange, searchParams, businessServices,clearCheck,
 
   return (
     <div className="status-container">
-      <div className="filter-label" style={{ fontWeight: "normal" }}>
+      <div className="filter-label mc-service-category-text-style">
         {t("UC_COMMON_TABLE_COL_STATUS")}
       </div>
       {applicationStatus?.map((option, index) => {

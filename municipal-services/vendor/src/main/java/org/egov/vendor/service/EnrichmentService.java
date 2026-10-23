@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.Map;
+import java.util.HashMap;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -53,6 +56,9 @@ public class EnrichmentService {
 	@Autowired
 	private DriverService driverService;
 
+	@Autowired
+	private ObjectMapper mapper;
+
 	/**
 	 * enriches the request object for create, assigns random ids for vedor,
 	 * vehicles and drivers and audit details
@@ -70,6 +76,26 @@ public class EnrichmentService {
 			vendorRequest.getVendor().setAuditDetails(auditDetails);
 		}
 		vendor.setId(UUID.randomUUID().toString());
+
+		// Default serviceType to FSM if not provided (e.g. created via FSM module)
+		if (vendor.getAdditionalDetails() == null) {
+			Map<String, Object> additionalDetails = new HashMap<>();
+			additionalDetails.put("serviceType", "FSM");
+			vendor.setAdditionalDetails(additionalDetails);
+		} else {
+			try {
+				Map<String, Object> additionalDetails = mapper.convertValue(vendor.getAdditionalDetails(), Map.class);
+				if (additionalDetails == null) {
+					additionalDetails = new HashMap<>();
+				}
+				if (additionalDetails.get("serviceType") == null || StringUtils.isEmpty(additionalDetails.get("serviceType").toString())) {
+					additionalDetails.put("serviceType", "FSM");
+				}
+				vendor.setAdditionalDetails(additionalDetails);
+			} catch (Exception e) {
+				log.error("Error setting default serviceType in additionalDetails: {}", e.getMessage());
+			}
+		}
 
 		if (vendorRequest.getVendor().getAddress() != null) {
 			if (StringUtils.isEmpty(vendorRequest.getVendor().getAddress().getId()))

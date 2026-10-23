@@ -1,3 +1,5 @@
+import getChbAcknowledgementData from "../getChbAcknowledgementData";
+
 export const checkForNotNull = (value = "") => {
   return value && value != null && value != undefined && value != "" ? true : false;
 };
@@ -21,154 +23,71 @@ export const shouldHideBackButton = (config = []) => {
   return config.filter((key) => window.location.href.includes(key.screenPath)).length > 0 ? true : false;
 };
 
-export const sethallDetails = (data) => {
-  let { slotlist } = data;
-  //TODO
-  const DateConvert = (date) => {
-    if (!date) return "";
-    const [day, month, year] = date.split("-");
-    return `${year}-${month}-${day}`; // For the <input type="date" /> format
-  };
-  let hallDetails = slotlist?.bookingSlotDetails.map((slot) => {
-    return { 
-      communityHallCode:slot.code,
-      communityHallName:slot.name,
-      hallCode: slot.hallCode1,
-      bookingDate:DateConvert(slot.bookingDate),
-      bookingFromTime:slot.fromTime,
-      bookingToTime:slot.toTime,
-      status:"BOOKING_CREATED",
-      capacity:slot.capacity
-    };
+export const CHBDataConvert = (data) => {
+  const { slotlist, ownerss, bankdetails, address, documents, slots } = data;
 
-  }) || [];
+  const draftId = slotlist?.existingDataSet?.draftId || "";
+  const searchData = slotlist?.searchData;
 
-  data.slotlist = hallDetails;
-  return data;
-}
-
-export const setBankDetails = (data) => {
-  let { bankdetails } = data;
-
-  let propbankdetails = {
-    accountNumber: bankdetails?.accountNumber,
-    ifscCode: bankdetails?.ifscCode,
-    bankName: bankdetails?.bankName,
-    bankBranchName: bankdetails?.bankBranchName,
-    accountHolderName: bankdetails?.accountHolderName,
-  };
-
-  data.bankdetails = propbankdetails;
-  return data;
-
-};
-
-export const setaddressDetails = (data) => {
-  let { address } = data;
-
-  let addressdetails = {
+  const addressPayload = {
     pincode: address?.pincode,
     city: address?.city?.city?.name,
-    cityCode:address?.city?.city?.code,
-    locality:address?.locality?.name,
+    cityCode: address?.city?.city?.code,
+    locality: address?.locality?.name,
     localityCode: address?.locality?.code,
     streetName: address?.streetName,
     houseNo: address?.houseNo,
     landmark: address?.landmark,
   };
 
-  data.address = addressdetails;
-  return data;
+  const applicantDetail = {
+    accountNumber: bankdetails?.accountNumber,
+    ifscCode: bankdetails?.ifscCode,
+    bankName: bankdetails?.bankName,
+    bankBranchName: bankdetails?.bankBranchName,
+    accountHolderName: bankdetails?.accountHolderName,
+    applicantName: ownerss?.applicantName,
+    applicantMobileNo: ownerss?.mobileNumber,
+    applicantAlternateMobileNo: ownerss?.alternateNumber || "",
+    applicantEmailId: ownerss?.emailId,
+  };
 
+  // One object per date, 2 dates = 2 objects
+  const bookingSlotDetails = slotlist?.bookingSlotDetails?.map((slot) => ({
+    unitCode: searchData?.unitCode,
+    bookingDate: slot.bookingDate
+      ? slot.bookingDate.split("-").reverse().join("-") // "28-06-2026" → "2026-06-28"
+      : "",
+    bookingFromTime: searchData?.fromTime,
+    bookingToTime: searchData?.toTime,
+    status: "BOOKING_CREATED",
+    capacity: slot.capacity || "",
+  })) || [];
+
+   const formdata= {
+    venueBookingApplication: {
+      tenantId: data.tenantId,
+      draftId,
+      applicantDetail,
+      address: addressPayload,
+      purposeDescription: slots?.purposeDescription,
+      documents: documents?.documents || [],
+      bookingStatus: "BOOKING_CREATED",
+      venueCode: slotlist?.venueName?.code,       
+      venueName: slotlist?.venueName?.value,      
+      venueType: slotlist?.venueTypes?.code,
+      specialCategory: {
+        category: slots?.specialCategory?.value,
+      },
+      purpose: {
+        purpose: slots?.purpose?.value,
+      },
+      bookingSlotDetails,
+      workflow: null,
+    
+  }}
+  return formdata
 };
-
-export const setOwnerDetails = (data) => {
-    let { ownerss } = data;
-  
-    let propOwners = {
-      applicantName:ownerss?.applicantName,
-      applicantMobileNo:ownerss?.mobileNumber,
-      applicantAlternateMobileNo:ownerss?.alternateNumber,
-      applicantEmailId:ownerss?.emailId,
-    };
-  
-    data.ownerss = propOwners;
-    return data;
-  };
-  
-  export const setSlotDetails = (data) => {
-    let { slots } = data;
-  
-    let bookingSlotDetails = {
-      ...slots,
-      type:slots?.residentType?.value,
-      category:slots?.specialCategory?.value,
-      purposes:slots?.purpose?.value,
-      purposeDescription:slots?.purposeDescription,
-      
-    };
-  
-    data.slots = bookingSlotDetails;
-    return data;
-  };
-
-  export const setDocumentDetails = (data) => {
-    let { documents } = data;
-  
-    let doc = {
-      ...documents,
-       
-      
-    };
-  
-    data.documents = doc;
-    return data;
-  };
-
-
-
-export const CHBDataConvert = (data) => {
- 
-  data = setDocumentDetails(data);
-  data = setOwnerDetails(data);
-  data = setBankDetails(data);
-  data = setSlotDetails(data);
-  data= sethallDetails(data);
-  data=setaddressDetails(data);
-const formdata={
-  hallsBookingApplication: {
-    tenantId: data.tenantId,
-    applicantDetail:{
-      ...data.bankdetails,
-      ...data.ownerss
-    },
-    address:data.address,
-    purposeDescription:data.slots?.purposeDescription,
-    ...data.documents,
-    bookingStatus:"BOOKING_CREATED",
-    communityHallCode:data.slotlist[0]?.communityHallCode,
-    communityHallName:data.slotlist[0]?.communityHallName,
-    specialCategory:{
-      category:data.slots?.specialCategory?.value
-    },
-    purpose:{
-      purpose:data.slots?.purpose?.value
-    },
-    bookingSlotDetails:data?.slotlist,
-
-    workflow:null
-
-  // workflow : {
-  //     businessService: "chb-services",
-  //     action : "APPLY",
-  //     moduleName: "chb-services"
-  //   }
-  }
-}
-
-  return formdata;
-};
-
 export const CompareTwoObjects = (ob1, ob2) => {
   let comp = 0;
 Object.keys(ob1).map((key) =>{
@@ -271,3 +190,44 @@ export const getWorkflow = (data = {}) => {
   };
 };
 
+export const getStatusOptions = (t) => [
+  { i18nKey: "Booking in Progress", code: "BOOKING_CREATED", value: t("CHB_BOOKING_IN_PROGRES") },
+  { i18nKey: "Booked", code: "BOOKED", value: t("CHB_BOOKED") },
+  { i18nKey: "Pending For Payment", code: "PENDING_FOR_PAYMENT", value: t("PENDING_FOR_PAYMENT") },
+  { i18nKey: "Payment Failed", code: "PAYMENT_FAILED", value: t("PAYMENT_FAILED") },
+  { i18nKey: "Cancelled", code: "CANCELLED", value: t("CANCELLED") },
+  { i18nKey: "Booking Expired", code: "EXPIRED", value: t("EXPIRED") },
+  { i18nKey: "Refund Pending", code: "REFUNDPENDING", value: t("REFUNDPENDING") },
+  { i18nKey: "Inspection Pending", code: "INSPECTIONPENDING", value: t("INSPECTIONPENDING") },
+  { i18nKey: "Refund Approval Pending", code: "REFUNDAPPROVALPENDING", value: t("REFUNDAPPROVALPENDING") },
+  { i18nKey: "Refund Approved", code: "REFUNDAPPROVED", value: t("REFUNDAPPROVED") },
+  { i18nKey: "Rejected", code: "REJECTED", value: t("REJECTED") }
+];
+
+/**
+ * Formats a date string from YYYY-MM-DD to DD-MM-YYYY
+ * @param {string} dateStr Date string
+ * @returns {string} Formatted date string in DD-MM-YYYY format
+ */
+export const formatDate = (dateStr) => {
+  if (!dateStr) return "";
+  if (typeof dateStr === "string" && dateStr.includes("-")) {
+    const parts = dateStr.split("-");
+    if (parts[0].length === 4) {
+      return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+    return dateStr;
+  }
+  return dateStr;
+};
+
+/**
+ * Generates and triggers download of CHB application acknowledgement PDF
+ */
+export const downloadCHBAcknowledgement = async (application, t) => {
+  const chbApplication = application?.hallsBookingApplication?.[0] || application;
+  const tenants = Digit.SessionStorage.get("initData")?.tenants;
+  const tenantInfo = tenants?.find((tenant) => tenant.code === chbApplication?.tenantId);
+  const ackData = await getChbAcknowledgementData({ ...chbApplication }, tenantInfo, t);
+  Digit.Utils.pdf.generate(ackData);
+};

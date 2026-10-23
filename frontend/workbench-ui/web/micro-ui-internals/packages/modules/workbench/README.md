@@ -1,15 +1,15 @@
-# digit-ui-module-workbench
+# workbench-ui-module-workbench
 
 ## Install
 
 ```bash
-npm install --save digit-ui-module-workbench
+npm install --save workbench-ui-module-workbench
 ```
 
 ## Limitation
 
 ```bash
-This Package is more specific to DIGIT-UI's can be used across mission's
+This Package is more specific to UPYOG-UI's can be used across mission's
 ```
 
 ## Usage
@@ -21,7 +21,7 @@ frontend/micro-ui/web/package.json
 ```
 
 ```json
-"@nudmcdgnpm/digit-ui-module-workbench":"0.1.0",
+"@nudmcdgnpm/workbench-ui-module-workbench":"0.1.0",
 ```
 
 then navigate to App.js
@@ -33,7 +33,7 @@ then navigate to App.js
 ```jsx
 /** add this import **/
 
-import { initWorkbenchComponents } from "@nudmcdgnpm/digit-ui-module-workbench";
+import { initWorkbenchComponents } from "@nudmcdgnpm/workbench-ui-module-workbench";
 
 /** inside enabledModules add this new module key **/
 
@@ -101,11 +101,6 @@ const didEmployeeHasAtleastOneRole = (roles = []) => {
 4 . stylesheet link has to be added 
 ```jsx
 <link rel="stylesheet" href="https://unpkg.com/@egovernments/digit-ui-css@1.2.114/dist/index.css" />
-```
-Reference commit for the enabling workbench
-https://github.com/egovernments/DIGIT-OSS/pull/99/commits/6e711bdc005c226c7debd533209681fc77078a3e
-
-
 
 ### Changelog
 
@@ -120,27 +115,6 @@ https://github.com/egovernments/DIGIT-OSS/pull/99/commits/6e711bdc005c226c7debd5
 
 ### Contributors
 
-- [jagankumar-egov](https://github.com/jagankumar-egov) 
-- [nipun-egov](https://github.com/nipun-egov)
+- [@NUDM TEam]
 
-
-## License
-
-[MIT](https://choosealicense.com/licenses/mit/)
-
-## Documentation
-
-Documentation Site (https://core.digit.org/guides/developer-guide/ui-developer-guide/digit-ui)
-Workbench Documentation(https://workbench.digit.org/platform/functional-specifications/workbench-ui)
-
-## Maintainer
-
-- [jagankumar-egov](https://www.github.com/jagankumar-egov)
-
-
-### Published from DIGIT Frontend 
-DIGIT Frontend Repo (https://github.com/egovernments/Digit-Frontend/tree/master)
-
-
-![Logo](https://s3.ap-south-1.amazonaws.com/works-dev-asset/mseva-white-logo.png)
 

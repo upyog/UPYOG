@@ -8,7 +8,6 @@ import org.egov.asset.config.AssetConfiguration;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -26,21 +25,20 @@ public class IdGenRepository {
 
     private final AssetConfiguration config;
 
-    @Autowired
     public IdGenRepository(RestTemplate restTemplate, AssetConfiguration config) {
         this.restTemplate = restTemplate;
         this.config = config;
     }
 
     /**
-     * Call iDgen to generateIds
+     * Call idgen to generate IDs.
      *
-     * @param requestInfo The rquestInfo of the request
-     * @param tenantId    The tenantiD of the bpa
-     * @param name        Name of the foramt
+     * @param requestInfo The requestInfo of the request
+     * @param tenantId    The tenantId of the asset
+     * @param name        Name of the format
      * @param format      Format of the ids
-     * @param count       Total Number of idGen ids required
-     * @return
+     * @param count       Total number of idGen ids required
+     * @return generated id response
      */
     public IdGenerationResponse getId(RequestInfo requestInfo, String tenantId, String name, String format, int count) {
         log.info("idgen request id name and format: " + tenantId + " and " + name + " and " + format);

@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Toast } from "@nudmcdgnpm/digit-ui-react-components";
+import { Toast } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import { useForm, Controller } from "react-hook-form";
 import { useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next";

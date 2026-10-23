@@ -1,0 +1,16 @@
+.employee-challan-root {
+  margin-bottom: 15px;
+}
+
+.employee-challan-header-row {
+  display: flex;
+}
+
+.employee-challan-title {
+  width: 80%;
+}
+
+.employee-challan-download {
+  width: 20%;
+  margin-top: -20px;
+}

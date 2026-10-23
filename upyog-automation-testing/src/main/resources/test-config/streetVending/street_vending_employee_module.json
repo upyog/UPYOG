@@ -1,0 +1,243 @@
+{
+  "moduleName":"street_vending_employee_module",
+  "description": "Street Vending employee full workflow",
+
+  "baseUrl": "${selected.url}",
+
+
+  "instructions":[
+
+    {
+      "stepName":"Employee Username",
+      "locatorStrategy":"NAME",
+      "locatorValue":"username",
+      "action":"TYPE",
+      "inputValue":"${selected.username}",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Employee Password",
+      "locatorStrategy":"NAME",
+      "locatorValue":"password",
+      "action":"TYPE",
+      "inputValue":"${selected.password}",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Select City",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"0:0",
+      "dynamicSleep": 1000
+
+    },
+
+    {
+      "stepName":"Continue Login",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(@class,'submit-bar') and .//header[text()='Continue']]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+
+
+    {
+      "stepName":"Open SV Inbox",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//a[contains(@href, '/sv-ui/employee/sv/inbox')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+
+
+    {
+      "stepName":"Enter Application Number",
+      "locatorStrategy":"CSS",
+      "locatorValue":"input.employee-card-input",
+      "action": "TYPE_FROM_STORE",
+      "inputValue": "APPLICATION_NO",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Search Application",
+      "locatorStrategy":"CSS",
+      "locatorValue":"button.submit-bar-search",
+      "action":"CLICK",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName": "Open Application",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//table//a[1]",
+      "action": "CLICK_JS",
+      "inputValue": null,
+      "dynamicSleep": 3000
+    },
+
+
+
+    {
+      "stepName":"Take Action Forward 1",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'TAKE ACTION')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+    {
+      "stepName":"Click Forward 1",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//p[normalize-space()='Forward']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Select Employee 1",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.employee-select-wrap svg.cp",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"0:0",
+      "dynamicSleep": 1000
+    },
+
+    {
+      "stepName":"Forward Comment 1",
+      "locatorStrategy":"NAME",
+      "locatorValue":"comments",
+      "action":"TYPE",
+      "inputValue":"${comment.forward}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Submit Forward 1",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[@type='submit'][@form='modal-action']//h2[text()='Forward']/..",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+
+
+    {
+      "stepName":"Take Action Forward 2",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(.,'TAKE ACTION')]",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Click Forward 2",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//div[contains(@class,'menu-wrap')]//p[normalize-space()='Forward']",
+      "action":"CLICK_JS",
+      "dynamicSleep":3000
+    },
+
+    {
+      "stepName":"Select Employee 2",
+      "locatorStrategy":"CSS",
+      "locatorValue":"div.select svg",
+      "action":"SELECT_DROPDOWN_BY_INDEX",
+      "inputValue":"0:0",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Forward Comment 2",
+      "locatorStrategy":"NAME",
+      "locatorValue":"comments",
+      "action":"TYPE",
+      "inputValue":"${comment.forward}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Submit Forward 2",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[@type='submit'][@form='modal-action']//h2[text()='Forward']/..",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+
+
+    {
+      "stepName":"Take Action Approve",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(@class,'submit-bar')]//header[normalize-space()='TAKE ACTION']/..",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Click Approve",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//div/p[text()='Approve']",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Approve Comment",
+      "locatorStrategy":"NAME",
+      "locatorValue":"comments",
+      "action":"TYPE",
+      "inputValue":"${comment.approve}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Submit Approve",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[@type='submit'][@form='modal-action']//h2[text()='Approve']/..",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    },
+
+
+
+    {
+      "stepName":"Take Action Collect Fees",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[contains(@class,'submit-bar')]//header[normalize-space()='TAKE ACTION']/..",
+      "action":"CLICK_JS",
+      "dynamicSleep": 3000
+    },
+
+    {
+      "stepName": "Select Payment Action",
+      "action": "CLICK_JS",
+      "locatorStrategy": "XPATH",
+      "locatorValue": "//*[contains(text(),'Collect Fees')]",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Payer Mobile",
+      "locatorStrategy":"NAME",
+      "locatorValue":"payerMobile",
+      "action":"TYPE",
+      "inputValue":"${mobile.number}",
+      "dynamicSleep": 2000
+    },
+
+    {
+      "stepName":"Collect Payment",
+      "locatorStrategy":"XPATH",
+      "locatorValue":"//button[@type='submit']//header[text()='Collect Payment']/..",
+      "action":"CLICK_JS",
+      "dynamicSleep": 2000
+    }
+
+  ]
+}

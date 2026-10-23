@@ -57,15 +57,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.persistence.metamodel.Metamodel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,7 +119,7 @@ public class RelationJpaService {
 	}
 
 	public List<Relation> findAll() {
-		return relationRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+		return relationRepository.findAll(Sort.by(Sort.Direction.ASC, "name"));
 	}
 
 	public Relation findByName(String name) {
@@ -131,7 +131,7 @@ public class RelationJpaService {
 	}
 
 	public Relation findOne(Integer id) {
-		return relationRepository.findOne(id);
+		return relationRepository.findById(id).orElse(null);
 	}
 
 	public List<Relation> search(Relation relation) {

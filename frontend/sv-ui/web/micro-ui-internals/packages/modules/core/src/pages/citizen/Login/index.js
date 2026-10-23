@@ -1,11 +1,16 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AppContainer, BackButton, Toast } from "@nudmcdgnpm/digit-ui-react-components";
-import { Route, Switch, useHistory, useRouteMatch, useLocation } from "react-router-dom";
+import { AppContainer, BackButton, Toast } from "@nudmcdgnpm/upyog-ui-react-components-lts";
+// Updated: Imported Route, Routes, useLocation from react-router-dom v6.
+// Updated: <Switch> replaced with <Routes>, component/render props replaced with element prop.
+
+import { Route, Routes, useLocation } from "react-router-dom";
 import { loginSteps } from "./config";
 import SelectMobileNumber from "./SelectMobileNumber";
 import SelectOtp from "./SelectOtp";
 import SelectName from "./SelectName";
+// Updated: date-fns v3 — named imports remain same, no breaking change for subYears and format.
+
 import { subYears, format } from "date-fns";
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
@@ -33,8 +38,10 @@ const getFromLocation = (state, searchParams) => {
 const Login = ({ stateCode, isUserRegistered = true }) => {
   const { t } = useTranslation();
   const location = useLocation();
-  const { path, url } = useRouteMatch();
-  const history = useHistory();
+  // Updated: useCustomNavigate replaces useHistory from react-router-dom v5.
+  // useHistory() removed in v6 — navigate() used instead of history.push().
+
+  const navigate = Digit.Hooks.useCustomNavigate();
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [isOtpValid, setIsOtpValid] = useState(true);
@@ -71,12 +78,17 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     Digit.UserService.setUser(user);
     setCitizenDetail(user?.info, user?.access_token, stateCode);
     const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
+  // Updated: history.push() replaced with navigate() — react-router-dom v6.
+  // Updated: replace option passed as second argument object instead of separate call.
+
     if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
-      history.replace("/sv-ui/citizen/select-location", {
-        redirectBackTo: redirectPath,
+      navigate("/sv-ui/citizen/select-location", {
+        replace: true,
+        state: { redirectBackTo: redirectPath }
       });
     } else {
-      history.replace(redirectPath);
+      // Updated: history.push() replaced with navigate() — react-router-dom v6.
+      navigate(redirectPath, { replace: true });
     }
   }, [user]);
 
@@ -116,12 +128,21 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
       if (!err) {
         setCanSubmitNo(true);
-        history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams), role: location.state?.role });
+        // Updated: history.push() replaced with navigate() — react-router-dom v6.
+        // Updated: state passed as second argument object — same as v5 but cleaner syntax.
+
+        navigate("otp", { 
+          replace: true, 
+          state: { from: getFromLocation(location.state, searchParams), role: location.state?.role } 
+        });
         return;
       } else {
         setCanSubmitNo(true);
         if (!(location.state && location.state.role === ("FSM_DSO" || "WT_VENDOR"))) {
-          history.push(`/sv-ui/citizen/register/name`, { from: getFromLocation(location.state, searchParams), data: data });
+          // Updated: history.push() replaced with navigate() — react-router-dom v6.
+          navigate("/sv-ui/citizen/register/name", { 
+            state: { from: getFromLocation(location.state, searchParams), data: data } 
+          });
         }
       }
       if (location.state?.role) {
@@ -136,7 +157,13 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
       if (!err) {
         setCanSubmitNo(true);
-        history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
+        // Updated: history.push() replaced with navigate() — react-router-dom v6.
+
+        navigate("otp", { 
+          replace: true, 
+          state: { from: getFromLocation(location.state, searchParams) } 
+        });
+
         return;
       }
       setCanSubmitNo(true);
@@ -144,6 +171,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   };
   function selectCommencementDate(value) {
     const appDate= new Date();
+    // Updated: date-fns v3 — subYears and format named imports work same as v2.
     const proposedDate= format(subYears(appDate, 18), 'yyyy-MM-dd').toString();
 
     if( convertDateToEpoch(proposedDate)  <= convertDateToEpoch(value)){
@@ -173,7 +201,12 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
       if (res) {
         setCanSubmitName(false);
-        history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
+        // Updated: history.push() replaced with navigate() — react-router-dom v6.
+        navigate("otp", { 
+          replace: true, 
+          state: { from: getFromLocation(location.state, searchParams) } 
+        });
+
       } else {
         setCanSubmitName(false);
       }
@@ -200,7 +233,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
           const roleInfo = info.roles.find((userRole) => userRole.code === location.state.role);
           if (!roleInfo || !roleInfo.code) {
             setError(t("ES_ERROR_USER_NOT_PERMITTED"));
-            setTimeout(() => history.replace(DEFAULT_REDIRECT_URL), 5000);
+            setTimeout(() => navigate(DEFAULT_REDIRECT_URL, { replace: true }), 5000);
             return;
           }
         }
@@ -256,38 +289,53 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
   return (
     <div className="citizen-form-wrapper">
-      <Switch>
-        <AppContainer>
-          <BackButton />
-          <Route path={`${path}`} exact>
-            <SelectMobileNumber
-              onSelect={selectMobileNumber}
-              config={stepItems[0]}
-              mobileNumber={params.mobileNumber || ""}
-              onMobileChange={handleMobileChange}
-              canSubmit={canSubmitNo}
-              showRegisterLink={isUserRegistered && !location.state?.role}
-              t={t}
+      <AppContainer>
+        <BackButton />
+        {/* Updated: <Switch> replaced with <Routes> — react-router-dom v6. */}
+        {/* Updated: component/render props replaced with element prop in all Route components. */}
+        {/* Updated: AppContainer moved outside <Routes> — custom components cannot be direct children of <Routes> in v6. */}
+
+        <Routes>
+            <Route 
+              path="/" 
+              element={
+                <SelectMobileNumber
+                  onSelect={selectMobileNumber}
+                  config={stepItems[0]}
+                  mobileNumber={params.mobileNumber || ""}
+                  onMobileChange={handleMobileChange}
+                  canSubmit={canSubmitNo}
+                  showRegisterLink={isUserRegistered && !location.state?.role}
+                  t={t}
+                />
+              } 
             />
-          </Route>
-          <Route path={`${path}/otp`}>
-            <SelectOtp
-              config={{ ...stepItems[1], texts: { ...stepItems[1].texts, cardText: `${stepItems[1].texts.cardText} ${params.mobileNumber || ""}` } }}
-              onOtpChange={handleOtpChange}
-              onResend={resendOtp}
-              onSelect={selectOtp}
-              otp={params.otp}
-              error={isOtpValid}
-              canSubmit={canSubmitOtp}
-              t={t}
+          {/* Updated: component={SelectOtp} replaced with element={<SelectOtp />} — react-router-dom v6. */}
+
+            <Route 
+              path="otp" 
+              element={
+                <SelectOtp
+                  config={{ ...stepItems[1], texts: { ...stepItems[1].texts, cardText: `${stepItems[1].texts.cardText} ${params.mobileNumber || ""}` } }}
+                  onOtpChange={handleOtpChange}
+                  onResend={resendOtp}
+                  onSelect={selectOtp}
+                  otp={params.otp}
+                  error={isOtpValid}
+                  canSubmit={canSubmitOtp}
+                  t={t}
+                />
+              } 
             />
-          </Route>
-          <Route path={`${path}/name`}>
-            <SelectName config={stepItems[2]} onSelect={selectName} t={t} isDisabled={canSubmitName} />
-          </Route>
-          {error && <Toast error={true} label={error} onClose={() => setError(null)} />}
+          <Route 
+            path="name" 
+            element={
+              <SelectName config={stepItems[2]} onSelect={selectName} t={t} isDisabled={canSubmitName} />
+            } 
+          />
+        </Routes>
+            {error && <Toast error={true} label={error} onClose={() => setError(null)} />}
         </AppContainer>
-      </Switch>
     </div>
   );
 };

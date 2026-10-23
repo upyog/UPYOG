@@ -11,13 +11,13 @@ import {
   MobileNumber,
   Dropdown,
   Localities,
-} from "@upyog/digit-ui-react-components";
+} from "@nudmcdgnpm/digit-ui-react-components";
 
 import { useTranslation } from "react-i18next";
 
 const fieldComponents = {
   mobileNumber: MobileNumber,
-  Dropdown:(props) => (
+  Dropdown: (props) => (
     <Dropdown
       selected={props.value}
       select={props.onChange}
@@ -41,19 +41,20 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
     defaultValues: isInboxPage ? searchParams : { locality: null, city: null, ...searchParams },
   });
   const tenantId = Digit.ULBService.getCitizenCurrentTenant(true) || Digit.ULBService.getCurrentTenantId();
-  // const { data: hallList } = Digit.Hooks.chb.useChbCommunityHalls(tenantId, "CHB", "ChbCommunityHalls");
-  const { data: hallList } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "CommunityHalls" }],
+
+  const { data: venueLists } = Digit.Hooks.useEnabledMDMS(tenantId, "CHB", [{ name: "Venues" }],
     {
       select: (data) => {
-        const formattedData = data?.["CHB"]?.["CommunityHalls"]
+        const formattedData = data?.["CHB"]?.["Venues"]
         return formattedData;
       },
     });
-  let HallName = [];
-  hallList && hallList.map((slot) => {
-    HallName.push({ i18nKey: `${slot.code}`, code: `${slot.code}`, value: `${slot.name}`});
+
+  let venues = [];
+  venueLists && venueLists.map((venue) => {
+    venues.push({ i18nKey: `${venue.code}`, code: `${venue.code}`, value: `${venue.name}`, timeSlots: venue.timeSlot, parentMasterType: venue.parentMasterType });
   });
-  
+
 
   const form = watch();
 
@@ -105,16 +106,16 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
   const clearAll = (mobileView) => {
     const mobileViewStyles = mobileView ? { margin: 0 } : {};
     return (
-      <LinkLabel style={{ display: "inline", ...mobileViewStyles }} onClick={clearSearch}>
+      <LinkLabel className="search-clear-link" style={mobileViewStyles} onClick={clearSearch}>
         {t("ES_COMMON_CLEAR_SEARCH")}
       </LinkLabel>
     );
   };
-  
+
   return (
     <form onSubmit={handleSubmit(onSubmitInput)}>
       <React.Fragment>
-        <div className="search-container" style={{ width: "auto", marginLeft: isInboxPage ? "24px" : "revert" }}>
+        <div className={`search-container ${isInboxPage ? "search-container-auto-margin" : "search-container-auto"}`}>
           <div className="search-complaint-container">
             {(type === "mobile" || mobileView) && (
               <div className="complaint-header">
@@ -124,7 +125,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                 </span>
               </div>
             )}
-            <div className={"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} style={{ width: "100%", display:"grid" }}>
+            <div className={`${"complaint-input-container for-pt " + (!isInboxPage ? "for-search" : "")} chb-search-fullwidth`}>
               {searchFields
                 ?.filter((e) => true)
                 ?.map((input, index) => (
@@ -134,8 +135,8 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                       <Label>{t(input.label) + ` ${input.isMendatory ? "*" : ""}`}</Label>
                       {!input.type ? (
                         <Controller
-                          render={(props) => {
-                            return <TextInput onChange={props.onChange} value={props.value} />;
+                          render={({ field }) => {
+                            return <TextInput onChange={field.onChange} value={field.value} />;
                           }}
                           name={input.name}
                           control={control}
@@ -143,9 +144,9 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                         />
                       ) : (
                         <Controller
-                          render={(props) => {
+                          render={({ field }) => {
                             const Comp = fieldComponents?.[input.type];
-                            return <Comp formValue={form} setValue={setValue} onChange={props.onChange} value={props.value} options={HallName} t={t}/>;
+                            return <Comp formValue={form} setValue={setValue} onChange={field.onChange} value={field.value} options={venues} t={t} />;
                           }}
                           name={input.name}
                           control={control}
@@ -155,8 +156,7 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                     </span>
                     {formState?.dirtyFields?.[input.name] ? (
                       <span
-                        style={{ fontWeight: "700", color: "rgba(212, 53, 28)", paddingLeft: "8px", marginTop: "-20px", fontSize: "12px" }}
-                        className="inbox-search-form-error"
+                        className="inbox-search-form-error chb-search-top-spacing"
                       >
                         {formState?.errors?.[input.name]?.message}
                       </span>
@@ -165,20 +165,20 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
                 ))}
 
               {isInboxPage && (
-                <div style={{ gridColumn: "2/3", textAlign: "right", paddingTop: "10px" }} className="input-fields">
+                <div className="input-fields chb-search-spacing">
                   <div>{clearAll()}</div>
                 </div>
               )}
 
               {type === "desktop" && !mobileView && (
-                <div style={{ maxWidth: "unset", marginLeft: "unset" }} className="search-submit-wrapper">
+                <div className="search-submit-wrapper chb-search-spacing-2">
                   <SubmitBar
                     className="submit-bar-search"
                     label={t("ES_COMMON_SEARCH")}
                     disabled={!!Object.keys(formState.errors).length || formValueEmpty()}
                     submit
                   />
-                  {/* style={{ paddingTop: "16px", textAlign: "center" }} className="clear-search" */}
+
                   {!isInboxPage && <div>{clearAll()}</div>}
                 </div>
               )}
@@ -187,10 +187,10 @@ const SearchApplication = ({ onSearch, type, onClose, searchFields, searchParams
         </div>
         {(type === "mobile" || mobileView) && (
           <ActionBar className="clear-search-container">
-            <button className="clear-search" style={{ flex: 1 }}>
+            <button className="clear-search chb-chbdesktop-inbox-wrapper">
               {clearAll(mobileView)}
             </button>
-            <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} style={{ flex: 1 }} submit={true} />
+            <SubmitBar disabled={!!Object.keys(formState.errors).length} label={t("ES_COMMON_SEARCH")} className="chb-chbdesktop-inbox-wrapper" submit={true} />
           </ActionBar>
         )}
       </React.Fragment>

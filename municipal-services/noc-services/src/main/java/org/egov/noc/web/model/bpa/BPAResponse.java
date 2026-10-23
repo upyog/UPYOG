@@ -3,7 +3,7 @@ package  org.egov.noc.web.model.bpa;
 import java.util.List;
 import java.util.Objects;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;

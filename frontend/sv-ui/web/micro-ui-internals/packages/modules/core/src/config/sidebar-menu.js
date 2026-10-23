@@ -1,19 +1,16 @@
 import React from "react";
-import { HomeIcon, LanguageIcon, LogoutIcon, AddressBookIcon, LocationIcon, LoginIcon } from "@nudmcdgnpm/digit-ui-react-components";
+import { HomeIcon, LanguageIcon, LogoutIcon, AddressBookIcon, LocationIcon, LoginIcon } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import ChangeLanguage from "../components/ChangeLanguage";
 
 const SideBarMenu = (t, closeSidebar, redirectToLoginPage, isEmployee, storeData, tenantId) => {
   let filteredTenantData = storeData?.tenants.filter((e) => e.code === tenantId)[0]?.contactNumber || storeData?.tenants[0]?.contactNumber;
 return [
   {
-    type: "link",
+    type: isEmployee ? "link" : "external-link",
     element: "HOME",
     text: t("COMMON_BOTTOM_NAVIGATION_HOME"),
     link: isEmployee ? "/sv-ui/employee" : "/upyog-ui/citizen",
-    icon: "HomeIcon",
-    populators: {
-      onClick: closeSidebar,
-    },
+    icon: "HomeIcon"
   },
   {
     type: "component",

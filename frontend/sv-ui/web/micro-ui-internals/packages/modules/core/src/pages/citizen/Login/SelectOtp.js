@@ -1,5 +1,5 @@
 import React, { useState, Fragment, useEffect } from "react";
-import { ButtonSelector, CardText, FormStep, LinkButton, OTPInput, CardLabelError } from "@nudmcdgnpm/digit-ui-react-components";
+import { ButtonSelector, CardText, FormStep, LinkButton, OTPInput, CardLabelError } from "@nudmcdgnpm/upyog-ui-react-components-lts";
 import useInterval from "../../../hooks/useInterval";
 
 const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, userType = "citizen", canSubmit }) => {
@@ -15,25 +15,28 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
     },
     timeLeft > 0 ? 1000 : null
   );
-  useEffect(async ()=>{
-    //sessionStorage.setItem("DigiLocker.token1","cf87055822e4aa49b0ba74778518dc400a0277e5")
-  if(window.location.href.includes("code"))
-  {
-    let code =window.location.href.split("=")[1].split("&")[0]
-    let TokenReq = {
-      code_verifier: sessionStorage.getItem("code_verfier_register"),
-      code: code, module: "REGISTER",
-      redirect_uri: "https://upyog.niua.org/sv-ui/citizen/login/otp",
+  useEffect(()=>{
+    async function handleDigiLocker() {
+      //sessionStorage.setItem("DigiLocker.token1","cf87055822e4aa49b0ba74778518dc400a0277e5")
+      if(window.location.href.includes("code"))
+      {
+        let code =window.location.href.split("=")[1].split("&")[0]
+        let TokenReq = {
+          code_verifier: sessionStorage.getItem("code_verfier_register"),
+          code: code, module: "REGISTER",
+          redirect_uri: "https://upyog.niua.org/sv-ui/citizen/login/otp",
+        }
+        console.log("token",code,TokenReq,sessionStorage.getItem("code_verfier_register"))
+        const data = await Digit.DigiLockerService.token({TokenReq })
+        registerUser(data)
+        
+      }
+      else if (window.location.href.includes("error="))
+      {
+        window.location.href = window.location.href.split("/otp")[0]
+      }
     }
-    console.log("token",code,TokenReq,sessionStorage.getItem("code_verfier_register"))
-    const data = await Digit.DigiLockerService.token({TokenReq })
-    registerUser(data)
-    
-  }
-  else if (window.location.href.includes("error="))
-  {
-    window.location.href = window.location.href.split("/otp")[0]
-  }
+    handleDigiLocker();
   },[])
   const registerUser = async (response) => {
     const data = {

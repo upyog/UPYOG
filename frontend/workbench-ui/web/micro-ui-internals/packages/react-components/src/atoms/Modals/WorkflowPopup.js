@@ -41,10 +41,9 @@ const WorkflowPopup = ({ applicationDetails,...props}) => {
     const [config,setConfig] = useState(null)
     const [modalSubmit,setModalSubmit] = useState(true)
     //hrms user search
-    let { isLoading: isLoadingHrmsSearch, isError, error, data: assigneeOptions } = Digit.Hooks.hrms.useHRMSSearch({ roles: action?.assigneeRoles?.toString(), isActive: true }, tenantId, null, null, { enabled: action?.assigneeRoles?.length > 0 && enableAssignee });
-    
-    assigneeOptions = assigneeOptions?.Employees
-    assigneeOptions?.map(emp => emp.nameOfEmp = emp?.user?.name || t("ES_COMMON_NA"))
+    // HRMS module removed - assignee search disabled
+    const isLoadingHrmsSearch = false;
+    const assigneeOptions = [];
     
     useEffect(() => {
       if(businessService==="muster-roll-approval" && action.action==="APPROVE"){
@@ -79,7 +78,7 @@ const WorkflowPopup = ({ applicationDetails,...props}) => {
         Digit?.Customizations?.["commonUiConfig"]?.enableModalSubmit(businessService,action,setModalSubmit,formData)
     }
 
-    if(isLoadingHrmsSearch) return <Loader />
+    // if(isLoadingHrmsSearch) return <Loader />
     
     return action && config?.form ? (
         <Modal

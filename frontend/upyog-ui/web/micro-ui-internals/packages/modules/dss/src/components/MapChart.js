@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { get } from "lodash";
 import FilterContext from "./FilterContext";
 import { endOfMonth, getTime, startOfMonth } from "date-fns";
-import { Loader } from "@upyog/digit-ui-react-components"
+import { Loader } from "@nudmcdgnpm/digit-ui-react-components"
 import { ResponsiveContainer } from "recharts";
 import { format } from "date-fns";
 
@@ -166,7 +166,7 @@ const MapChart = ({
       height={220}
       
     >
-      <div style={{ position: "relative" }}>
+      <div className="dss-map-chart-wrapper">
         <ReactTooltip>{tooltipContent}</ReactTooltip>
         <ComposableMap
           projectionConfig={PROJECTION_CONFIG}
@@ -208,7 +208,7 @@ const MapChart = ({
               <span className="map-row">
                 <span
                   className="map-box"
-                  style={{ background: getColor({ status: sta }) }}
+                  style={getColor({ status: sta }) ? { background: getColor({ status: sta }) } : undefined}
                 ></span>
                 <span className="map-text">
                   {t(`DSS_${sta.toUpperCase()}`)}

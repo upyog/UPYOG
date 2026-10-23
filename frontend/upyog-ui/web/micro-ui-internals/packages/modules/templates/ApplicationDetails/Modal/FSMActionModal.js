@@ -1,6 +1,7 @@
-import { Loader, Modal, FormComposer, Toast } from "@upyog/digit-ui-react-components";
+import { Loader, Modal, FormComposer, Toast } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
-import { useQueryClient } from "react-query";
+
+import { useQueryClient } from "@tanstack/react-query";
 
 import { configAssignDso, configCompleteApplication, configReassignDSO, configAcceptDso, configRejectApplication } from "../config";
 
@@ -24,6 +25,7 @@ const CloseBtn = (props) => {
 };
 
 const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData }) => {
+  const navigate = Digit.Hooks.useCustomNavigate();
   const { data: dsoData, isLoading: isDsoLoading, isSuccess: isDsoSuccess, error: dsoError } = Digit.Hooks.fsm.useDsoSearch(tenantId);
   const { isLoading, isSuccess, isError, data: applicationData, error } = Digit.Hooks.fsm.useSearch(
     tenantId,
@@ -219,7 +221,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         return setConfig(configCompleteApplication({ t, vehicle, applicationCreatedTime: applicationData?.auditDetails?.createdTime, action }));
       case "SUBMIT":
       case "FSM_SUBMIT":
-        return history.push("/upyog-ui/employee/fsm/modify-application/" + applicationNumber);
+        return navigate("/upyog-ui/employee/fsm/modify-application/" + applicationNumber);
       case "DECLINE":
       case "DSO_REJECT":
         //declinereason
@@ -262,7 +264,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       case "PAY":
       case "ADDITIONAL_PAY_REQUEST":
       case "FSM_PAY":
-        return history.push(`/upyog-ui/employee/payment/collect/FSM.TRIP_CHARGES/${applicationNumber}`);
+        return navigate(`/upyog-ui/employee/payment/collect/FSM.TRIP_CHARGES/${applicationNumber}`);
       default:
         break;
     }

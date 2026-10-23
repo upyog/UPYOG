@@ -25,7 +25,7 @@ export const Row = (props) => {
               privacy object set to the Mask Component
              */}
             {props?.privacy && (
-              <span style={{ display: "inline-flex", width: "fit-content" }}>
+              <span className="rc-status-table-wrapper">
                 {/* <UnMaskComponent iseyevisible={val?.value?.includes("*")?true:false}></UnMaskComponent> */}
                 <WrapUnMaskComponent  value={val?.value} iseyevisible={val?.value?.includes("*")?true:false} privacy={props?.privacy?.[index]} />
 
@@ -38,7 +38,7 @@ export const Row = (props) => {
         <p key={index}>
           {val}
           {props?.privacy && (
-            <span style={{ display: "inline-flex", width: "fit-content", marginLeft: "10px" }}>
+            <span className="rc-status-table-spacing">
               {/*  
                 Feature :: Privacy
                 privacy object set to the Mask Component
@@ -82,10 +82,10 @@ export const Row = (props) => {
         {props.label}
         {props.labelChildren && props.labelChildren}
       </h2>
-      <div className="value" style={{...valueStyle/*, wordBreak: "break-word"*/}}>
+      <div className="value" style={valueStyle}>
         {/* {value}////
         {props?.privacy && (
-          <span style={{ display: "inline-flex", width: "fit-content", marginLeft: "10px" }}>
+          <span className="custom-style">
             <UnMaskComponent iseyevisible={value?.includes("*")?true:false} privacy={Array.isArray(props?.privacy) ? props?.privacy?.[0] : props?.privacy}></UnMaskComponent>
           </span>
         )} */}
