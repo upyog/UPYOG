@@ -3,6 +3,7 @@ package org.egov.refund.service.impl;
 import java.util.Collections;
 import java.util.List;
 
+import org.egov.common.contract.models.Document;
 import org.egov.common.contract.workflow.ProcessInstance;
 import org.egov.common.contract.workflow.ProcessInstanceRequest;
 import org.egov.common.contract.workflow.ProcessInstanceResponse;
@@ -26,7 +27,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 	private final ObjectMapper mapper;
 
 	public WorkflowServiceImpl(ApplicationProperties config, ServiceRequestRepository serviceRequestRepository,
-			ObjectMapper mapper) {
+	                           ObjectMapper mapper) {
 
 		this.config = config;
 		this.serviceRequestRepository = serviceRequestRepository;
@@ -58,10 +59,31 @@ public class WorkflowServiceImpl implements WorkflowService {
 		ProcessInstance processInstance = ProcessInstance.builder().businessId(refund.getRefundNo())
 				.tenantId(refund.getTenantId()).businessService(refund.getBusinessService())
 				.moduleName(refund.getModuleName()).action(request.getAction()).comment(request.getRemarks())
-				.documents(Collections.emptyList()).assignes(Collections.emptyList()).build();
+				.documents(getWorkflowDocuments(refund)).assignes(getWorkflowAssignees(refund)).build();
 
 		return ProcessInstanceRequest.builder().requestInfo(request.getRequestInfo())
 				.processInstances(List.of(processInstance)).build();
+	}
+
+	private List<Document> getWorkflowDocuments(Refund refund) {
+
+		if (refund == null || refund.getProcessInstance() == null || refund.getProcessInstance().getDocuments() == null
+				|| refund.getProcessInstance().getDocuments().isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		return refund.getProcessInstance().getDocuments().stream()
+				.map(document -> mapper.convertValue(document, org.egov.common.contract.models.Document.class)).toList();
+	}
+
+	private List<org.egov.common.contract.request.User> getWorkflowAssignees(Refund refund) {
+
+		if (refund == null || refund.getProcessInstance() == null || refund.getProcessInstance().getAssignes() == null
+				|| refund.getProcessInstance().getAssignes().isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		return refund.getProcessInstance().getAssignes();
 	}
 
 	private State callWorkFlow(ProcessInstanceRequest workflowRequest) {
@@ -141,5 +163,5 @@ public class WorkflowServiceImpl implements WorkflowService {
 		return value == null || value.trim().isEmpty();
 	}
 
-	
+
 }

@@ -172,6 +172,9 @@ public class RefundEnrichmentServiceImpl implements RefundEnrichmentService {
 		if (inputRefund.getAdditionalDetails() != null) {
 			existingRefund.setAdditionalDetails(inputRefund.getAdditionalDetails());
 		}
+		if (inputRefund.getProcessInstance() != null) {
+			existingRefund.setProcessInstance(inputRefund.getProcessInstance());
+		}
 	}
 
 	// ============================================================
