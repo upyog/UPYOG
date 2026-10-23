@@ -193,10 +193,6 @@ const NocTypeSelection = ({ t, config, onSelect, userType, formData }) => {
 
   /** Validates required provisional NOC number if NEW application is selected and proceeds in wizard. */
   const goNext = () => {
-    if (nocType.code === "NEW" && !provisionalNocNumber) {
-      setError(t("NOC_PROVISIONAL_FIRE_NOC_NO_REQUIRED"));
-      return;
-    }
     onSelect(config.key, {
       nocType: nocType.code,
       provisionalNocNumber: nocType.code === "NEW" ? provisionalNocNumber.trim() : "",
@@ -220,7 +216,7 @@ const NocTypeSelection = ({ t, config, onSelect, userType, formData }) => {
 
         {nocType?.code === "NEW" && (
           <div className="noc-fire-noc-desktop-inbox-card">
-            <CardLabel>{t("NOC_PROVISIONAL_FIRE_NOC_NO_LABEL")} <span className="astericColor">*</span></CardLabel>
+            <CardLabel>{t("NOC_PROVISIONAL_FIRE_NOC_NO_LABEL")}</CardLabel>
             <div className="noc-noc-location-details-flex-container-2">
               <TextInput
                 t={t}

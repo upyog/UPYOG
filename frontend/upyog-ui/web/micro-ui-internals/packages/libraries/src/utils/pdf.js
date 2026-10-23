@@ -263,6 +263,12 @@ const jsPdfGenerator = async ({ breakPageLimit = null, tenantId, logo, name, ema
   else if (applicationNumber !== undefined && applicationNumber.split("-")[0] === "GC") {
     ack = "Garbage-AckForm"
   }
+  else if (applicationNumber !== undefined && applicationNumber.split("-")[0] === "CHB") {
+    ack = "Venue-AckForm"
+  }
+  else if (applicationNumber !== undefined && applicationNumber.split("-")[0] === "ADV") {
+    ack = "Advertisement-AckForm"
+  }
   else if (applicationNumber === undefined) {
     module = details[0]?.values[0]?.value
     if (module.split("-")[1] === "MT") {
@@ -1814,8 +1820,7 @@ function createContent(details, logo, tenantId, phoneNumber, breakPageLimit = nu
   const detailsHeaders = [];
   let counter = 1;
   details.forEach((detail, index) => {
-    console.log("detail", detail)
-    if (detail?.values?.length > 0) {
+    if (detail?.values?.length > 0 || (detail?.isTable && detail?.tableRows?.length > 0)) {
       console.log("lennn", detail?.title.length)
       detailsHeaders.push({
         style: 'tableExample',
@@ -1840,7 +1845,62 @@ function createContent(details, logo, tenantId, phoneNumber, breakPageLimit = nu
       })
       counter++;
     }
-    if (detail?.isAttachments && detail.values) {
+    /**
+     * Generic table renderer for acknowledgement PDFs.
+     *
+     * Any module (e.g., CHB, TL, WS, PT, PGR, FSM, etc.) can render a table
+     * in its acknowledgement PDF by including an object with `isTable: true` inside `details`.
+     *
+     * How to use in any module's acknowledgement data function (e.g. getAckData):
+     * --------------------------------------------------------------------------
+     * {
+     *   title: t("SECTION_TITLE"),           // Section title (e.g., "Slot Details" or "Property Details")
+     *   isTable: true,                       // Enables table layout
+     *   headers: [t("COL_1"), t("COL_2")],   // Array of column header strings
+     *   tableRows: [                         // 2D Array of rows and column cell values
+     *     ["Row 1 Col 1", "Row 1 Col 2"],
+     *     ["Row 2 Col 1", "Row 2 Col 2"]
+     *   ],
+     *   widths: ['50%', '50%']               // (Optional) custom column widths.
+     *                                        // If omitted, widths are automatically divided equally (*).
+     * }
+     *
+     * Note:
+     * - If `detail.isTable` is not set or false, this block is completely skipped.
+     * - All other modules continue using standard key-value layout with zero impact.
+     */
+    if (detail?.isTable && detail?.headers && detail?.tableRows?.length > 0) {
+      const headerRow = detail.headers.map((h) => ({
+        text: h,
+        bold: true,
+        fontSize: 10,
+        fillColor: "#f2f2f2",
+        margin: [2, 5, 2, 5],
+      }));
+      const bodyRows = detail.tableRows.map((row) =>
+        row.map((cell) => ({
+          text: cell != null ? `${cell}` : "",
+          fontSize: 9,
+          margin: [2, 4, 2, 4],
+        }))
+      );
+      detailsHeaders.push({
+        style: "tableExample",
+        margin: [10, 5, 10, 5],
+        table: {
+          headerRows: 1,
+          widths: detail.widths || detail.headers.map(() => "*"),
+          body: [headerRow, ...bodyRows],
+        },
+        layout: {
+          hLineWidth: () => 0.5,
+          vLineWidth: () => 0.5,
+          hLineColor: () => "#d6d5d4",
+          vLineColor: () => "#d6d5d4",
+        },
+      });
+    }
+    else if (detail?.isAttachments && detail.values) {
       detailsHeaders.push({
         style: 'tableExample',
 

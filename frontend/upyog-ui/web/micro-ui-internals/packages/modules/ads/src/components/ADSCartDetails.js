@@ -52,6 +52,9 @@ const ADSCartDetails = ({
     Header: t("ADD_TYPE"),
     accessor: "addType"
   }, {
+    Header: t("ADS_LOCATION"),
+    accessor: "location"
+  }, {
     Header: t("FACE_AREA"),
     accessor: "faceArea"
   }, {

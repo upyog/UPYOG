@@ -132,7 +132,8 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
     navigate("/cnd-ui/citizen/login");
   };
   const showProfilePage = () => {
-    navigate("/cnd-ui/citizen/user/profile");
+    // navigate("/upyog-ui/citizen/user/profile");
+    window.location.href = "/upyog-ui/citizen/user/profile";
   };
   const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const filteredTenantContact = storeData?.tenants.filter((e) => e.code === tenantId)[0]?.contactNumber || storeData?.tenants[0]?.contactNumber;

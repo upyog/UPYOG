@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
-import getChbAcknowledgementData from "../../getChbAcknowledgementData";
+import { downloadCHBAcknowledgement } from "../../utils";
 import CHBCancelBooking from "../../components/CHBCancelBooking";
 
 /*
@@ -246,19 +246,24 @@ const ApplicationDetails = () => {
     }
   };
 
-  const dowloadOptions =
-    data?.hallsBookingApplication?.[0]?.paymentReceiptFilestoreId || data?.hallsBookingApplication?.[0]?.permissionLetterFilestoreId
-      ? [
-        data?.hallsBookingApplication?.[0]?.paymentReceiptFilestoreId && {
-          label: t("CHB_RECEIPT"),
-          onClick: () => getRecieptSearch({ tenantId: tenantId }),
-        },
-        data?.hallsBookingApplication?.[0]?.permissionLetterFilestoreId && {
-          label: t("CHB_PERMISSION_LETTER"),
-          onClick: () => getPermissionLetter({ tenantId: tenantId }),
-        },
-      ].filter(Boolean)
-      : [];
+  let dowloadOptions = [];
+
+  // Download Acknowledgement Form
+  dowloadOptions.push({
+    label: t("CHB_DOWNLOAD_ACK_FORM"),
+    onClick: () => downloadCHBAcknowledgement(data?.hallsBookingApplication?.[0], t),
+  });
+
+  if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
+    dowloadOptions.push({
+      label: t("CHB_FEE_RECEIPT"),
+      onClick: () => getRecieptSearch({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+    });
+  if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false)
+    dowloadOptions.push({
+      label: t("CHB_PERMISSION_LETTER"),
+      onClick: () => getPermissionLetter({ tenantId: reciept_data?.Payments[0]?.tenantId, payments: reciept_data?.Payments[0] }),
+    });
 
   return (
     <div>

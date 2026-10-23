@@ -48,7 +48,7 @@ const EmployeeApp = ({ path }) => {
   const ApplicationOverview = Digit?.ComponentRegistryService?.getComponent("NOCApplicationOverview");
   const Inbox = Digit?.ComponentRegistryService?.getComponent("NOCInbox");
   const FireNocInbox = Digit?.ComponentRegistryService?.getComponent("FireNocInbox");
-  const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("ApplicationDetails");
+  const ApplicationDetails = Digit?.ComponentRegistryService?.getComponent("FNOCApplicationDetails");
   const isResponse = window.location.href.includes("/response");
   const isMobile = window.Digit.Utils.browser.isMobile();
   const inboxInitialState = {

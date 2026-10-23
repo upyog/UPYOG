@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import ApplicationDetailsTemplate from "../../../../templates/ApplicationDetails";
+import { downloadADSAcknowledgement } from "../../utils";
 
 /**
  * ApplicationDetails component fetches and displays detailed information about a specific advertisement booking.
@@ -119,6 +120,12 @@ const ApplicationDetails = () => {
     window.open(fileStore[fileStoreId], "_blank");
   }
   let dowloadOptions = [];
+
+  // Download Acknowledgement Form
+  dowloadOptions.push({
+    label: t("ADS_DOWNLOAD_ACK_FORM"),
+    onClick: () => downloadADSAcknowledgement(data?.bookingApplication?.[0], t),
+  });
   if (reciept_data && reciept_data?.Payments.length > 0 && recieptDataLoading == false) dowloadOptions.push({
     label: t("ADS_FEE_RECEIPT"),
     onClick: () => getRecieptSearch({
