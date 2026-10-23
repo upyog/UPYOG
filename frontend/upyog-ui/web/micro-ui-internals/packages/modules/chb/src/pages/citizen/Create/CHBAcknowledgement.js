@@ -2,7 +2,7 @@ import { Banner, Card, CardText, LinkButton, LinkLabel, Loader, Row, StatusTable
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, } from "react-router-dom";
-import { CHBDataConvert } from "../../../utils";
+import { CHBDataConvert, downloadCHBAcknowledgement } from "../../../utils";
 
 
 
@@ -78,6 +78,19 @@ const CHBAcknowledgement = ({ data, onSuccess, mutation }) => {
   const user = Digit.UserService.getUser().info;
   const [showToast, setShowToast] = useState(null);
 
+  const handleDownloadPdf = async () => {
+    try {
+      const bookingNo = mutation?.data?.hallsBookingApplication?.[0]?.bookingNo;
+      const applicationDetails = await Digit.CHBServices.search({
+        tenantId: mutation?.data?.hallsBookingApplication?.[0]?.tenantId,
+        filters: { bookingNo: bookingNo },
+      });
+      downloadCHBAcknowledgement(applicationDetails?.hallsBookingApplication?.[0], t);
+    } catch (e) {
+      setShowToast({ error: true, label: t("CS_SOMETHING_WENT_WRONG") });
+    }
+  };
+
   const handleMakePayment = () => {
 
     if (user?.type === "CITIZEN") {
@@ -127,35 +140,36 @@ const CHBAcknowledgement = ({ data, onSuccess, mutation }) => {
         {mutation.isSuccess && <Row rowContainerStyle={rowContainerStyle} last textStyle={{ whiteSpace: "pre", width: "60%" }} />}
       </StatusTable>
       {mutation.isSuccess && (
-        <div className="chb-ack-buttons-row">
-          {user.type === "EMPLOYEE" && (<Link to={`/upyog-ui/employee`}>
-            <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
-          </Link>)}
-          {user.type === "CITIZEN" && (<Link to={`/upyog-ui/citizen`}>
-            <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
-          </Link>)}
-          <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment} />
-        </div>
-      )}
-      {!mutation.isSuccess && user.type === "CITIZEN" && (
-        <Link to={`/upyog-ui/citizen`}>
-          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
-        </Link>
-      )}
-      {!mutation.isSuccess && user.type === "EMPLOYEE" && (
-        <Link to={`/upyog-ui/employee`}>
-          <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
-        </Link>
-      )}
-      {showToast && (
-        <Toast
-          error={showToast.error}
-          warning={showToast.warning}
-          label={t(showToast.label)}
-          onClose={() => {
-            setShowToast(null);
-          }}
-        />
+      <div className="chb-ack-buttons-row">
+        {user.type==="EMPLOYEE" &&(<Link to={`/upyog-ui/employee`}>
+        <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+         </Link>)}
+         {user.type==="CITIZEN" &&(<Link to={`/upyog-ui/citizen`}>
+        <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+         </Link>)}
+        <SubmitBar label={t("CHB_DOWNLOAD_ACK_FORM")} onSubmit={handleDownloadPdf} />
+        <SubmitBar label={t("CS_APPLICATION_DETAILS_MAKE_PAYMENT")} onSubmit={handleMakePayment}/>
+      </div>
+    )}
+    {!mutation.isSuccess && user.type==="CITIZEN" &&(
+      <Link to={`/upyog-ui/citizen`}>
+      <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+       </Link>
+     )}
+     {!mutation.isSuccess && user.type==="EMPLOYEE" &&(
+      <Link to={`/upyog-ui/employee`}>
+      <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
+       </Link>
+     )}
+     {showToast && (
+            <Toast
+              error={showToast.error}
+              warning={showToast.warning}
+              label={t(showToast.label)}
+              onClose={() => {
+                setShowToast(null);
+              }}
+            />
       )}
     </Card>
   );

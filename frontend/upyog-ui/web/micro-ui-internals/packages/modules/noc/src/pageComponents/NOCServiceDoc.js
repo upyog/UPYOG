@@ -38,7 +38,7 @@ const NOCServiceDoc = ({ t, config, onSelect, userType, formData }) => {
 
           {isLoading && <Loader />}
           {Array.isArray(docs)
-            ? docs.map(({ code, dropdownData, description }, index) => (
+            ? docs.map(({ code, dropdownData, description, options }, index) => (
                 <div key={index}>
                   <CardSubHeader>
                     {index + 1}. {t(stringReplaceAll(code, ".", "_"))}
@@ -49,6 +49,11 @@ const NOCServiceDoc = ({ t, config, onSelect, userType, formData }) => {
                   {dropdownData && dropdownData.map((dropdownItem, dropdownIndex) => (
                     <CardText className="primaryColor" key={dropdownIndex}>
                       {`${dropdownIndex + 1}`}. {t(stringReplaceAll(dropdownItem?.code, ".", "_"))}
+                    </CardText>
+                  ))}
+                  {options && options.map((option, optionIndex) => (
+                    <CardText className="primaryColor" key={optionIndex}>
+                      {`${optionIndex + 1}`}. {t(stringReplaceAll(option?.code, ".", "_"))}
                     </CardText>
                   ))}
                 </div>

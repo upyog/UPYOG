@@ -194,6 +194,9 @@ const ADSSearch = ({
     Header: `${t("ADS_TYPE")}`,
     accessor: "addType"
   }, {
+    Header: `${t("ADS_LOCATION")}`,
+    accessor: "location"
+  }, {
     Header: `${t("ADS_FACE_AREA")}`,
     accessor: "faceArea"
   }, {

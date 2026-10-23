@@ -73,7 +73,7 @@ const componentsToRegister = {
   FireNocInbox,
   FireNocInboxTableConfig: TableConfig,
   FIRENOC_INBOX_FILTER: (props) => <InboxFilter {...props} />,
-  ApplicationDetails
+  FNOCApplicationDetails: ApplicationDetails
 };
 
 export const initNOCComponents = () => {

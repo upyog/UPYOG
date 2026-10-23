@@ -58,6 +58,7 @@ import {
     const typeOfApplication = !isEditADS && !isUpdateADS ? `bookad` : `editbookad`;
     const columns = [
       { Header: `${t("ADS_TYPE")}`, accessor: "addType" },
+      { Header: `${t("ADS_LOCATION")}`, accessor: "location" },
       { Header: `${t("ADS_FACE_AREA")}`, accessor: "faceArea" },
       {
         Header: t("ADS_NIGHT_LIGHT"),
@@ -92,6 +93,7 @@ import {
     };
     const adslistRows = params?.adslist?.cartDetails?.map((slot) => ({
       addType: slot.addType,
+      location: slot.location,
       faceArea: slot.faceArea,
       nightLight: slot.nightLight,
       bookingDate: slot.bookingDate,
