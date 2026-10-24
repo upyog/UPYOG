@@ -18,7 +18,14 @@ public class SearchCriteriaGarbageAccount {
     private List<Long> garbageId;
 
     private List<String> propertyId;
-    
+
+    /**
+     * Filters on acc.system_property_id, the property-services propertyId
+     * this garbage account is DDP-mapped to. Used by property-services to
+     * fetch isReadyForPrinting/installationDone for a set of properties.
+     */
+    private List<String> systemPropertyId;
+
     private List<String> uuid;
     
     private List<String> user_uuid;

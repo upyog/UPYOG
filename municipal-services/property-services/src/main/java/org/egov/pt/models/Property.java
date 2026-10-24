@@ -153,6 +153,17 @@ public class Property {
 	@JsonProperty("isBilling")
 	private Boolean isBilling;
 
+	/**
+	 * Sourced from the DDP-mapped garbage account (eg_grbg_account /
+	 * eg_grbg_account_ddp) whose system_property_id matches this property's
+	 * propertyId; null when no garbage account is mapped.
+	 */
+	@JsonProperty("isReadyForPrinting")
+	private Boolean isReadyForPrinting;
+
+	@JsonProperty("installationDone")
+	private Boolean installationDone;
+
 
 //	@Builder
 //	public Property(String id, String propertyId, String surveyId, List<String> linkedProperties, String tenantId,

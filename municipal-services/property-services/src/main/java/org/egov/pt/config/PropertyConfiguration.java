@@ -311,6 +311,16 @@ public class PropertyConfiguration {
 	@Value("${egov.cancel.bill.endpoint}")
 	public String cancleBillEndpoint;
 	
+	// Garbage-Service (DDP isReadyForPrinting/installationDone lookup)
+	@Value("${egov.garbage.host}")
+	public String garbageHost;
+
+	@Value("${egov.garbage.context.path}")
+	public String garbageContextPath;
+
+	@Value("${egov.garbage.search.endpoint}")
+	public String garbageSearchEndpoint;
+
 	@Value("${egov.custom.update.endpoint}")
 	public String updateCustomAmountEndpoint;
 	
