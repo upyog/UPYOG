@@ -70,8 +70,10 @@ class PFMSForwardingRetryAuditIntegrationTest {
         when(pfmsRepository.fetchInitiatedTransactionIds(50)).thenReturn(List.of("txn-1"));
         when(pfmsRepository.fetchTransactionById("txn-1")).thenReturn(transaction);
         when(authFeignClient.authenticate(any())).thenReturn(auth("token-1"), auth("token-2"));
-        when(dataFeignClient.pushTransaction(eq("Bearer token-1"), any())).thenThrow(unauthorized());
-        when(dataFeignClient.pushTransaction(eq("Bearer token-2"), any())).thenReturn("SUCCESS");
+
+        when(dataFeignClient.pushTransaction(eq("Bearer token-1"), any(), any(), any())).thenThrow(unauthorized());
+        when(dataFeignClient.pushTransaction(eq("Bearer token-2"), any(), any(), any())).thenReturn("SUCCESS");
+
 
         forwardingService.forwardInitiatedTransactions(Constants.MANUAL);
 
@@ -99,7 +101,8 @@ class PFMSForwardingRetryAuditIntegrationTest {
         when(pfmsRepository.fetchInitiatedTransactionIds(50)).thenReturn(List.of("txn-2"));
         when(pfmsRepository.fetchTransactionById("txn-2")).thenReturn(transaction);
         when(authFeignClient.authenticate(any())).thenReturn(auth("token"));
-        when(dataFeignClient.pushTransaction(anyString(), any())).thenReturn("SUCCESS");
+        when(dataFeignClient.pushTransaction(any(), any(), any(), any())).thenReturn("SUCCESS");
+
 
         forwardingService.forwardInitiatedTransactions(Constants.MANUAL);
         forwardingService.forwardInitiatedTransactions(Constants.MANUAL);
@@ -119,7 +122,7 @@ class PFMSForwardingRetryAuditIntegrationTest {
         when(pfmsRepository.fetchFailedTransactionIds(50)).thenReturn(List.of("txn-3"));
         when(pfmsRepository.fetchTransactionById("txn-3")).thenReturn(transaction);
         when(authFeignClient.authenticate(any())).thenReturn(auth("token"));
-        when(dataFeignClient.pushTransaction(anyString(), any())).thenThrow(serverError());
+        when(dataFeignClient.pushTransaction(any(), any(), any(), any())).thenThrow(serverError());
 
         forwardingService.retryFailedTransactions(Constants.MANUAL);
 

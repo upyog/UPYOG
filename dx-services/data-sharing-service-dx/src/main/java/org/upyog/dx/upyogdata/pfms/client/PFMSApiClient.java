@@ -2,6 +2,7 @@ package org.upyog.dx.upyogdata.pfms.client;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.upyog.dx.upyogdata.config.PFMSProperties;
 import org.upyog.dx.upyogdata.constants.Constants;
 import org.upyog.dx.upyogdata.pfms.models.PFMSAuthRequest;
@@ -28,6 +29,10 @@ public class PFMSApiClient {
     private final PFMSDataFeignClient dataFeignClient;
     private final ExternalApiAuditLogger auditLogger;
     private final PFMSProperties pfmsProperties;
+
+
+    @Value("${pfms.is-prod}")
+    private boolean isProduction;
 
     /**
      * Authenticates with PFMS and returns a Bearer access token.
@@ -72,9 +77,6 @@ public class PFMSApiClient {
         return pushTransaction(transaction, accessToken, null, 0);
     }
 
-    public String pushTransaction(PFMSTransaction transaction, String accessToken) {
-        return pushTransaction(transaction, accessToken, null, 0);
-    }
 
     /**
      * Pushes a transaction using an explicit audit correlation id so an in-cycle
@@ -100,28 +102,12 @@ public class PFMSApiClient {
                 .businessReferenceId(transaction.getId())
                 .endpoint(pfmsProperties.getData().getUrl())
                 .method(Constants.HTTP_POST)
-                .build(), () -> dataFeignClient.pushTransaction("Bearer " + accessToken, formData));
+                .build(), () -> dataFeignClient.pushTransaction(isProduction ? null : "Bearer " + accessToken,
+                isProduction ? pfmsProperties.getAuth().getUserid() : null,
+                isProduction  ? pfmsProperties.getAuth().getPwd() : null,
+                formData));
         log.info("Pfms Response | voucherNumber={} body={}", transaction.getVoucherNumber(), response);
         return response;
     }
 
-    public String pushTransaction(PFMSTransaction transaction, String accessToken,
-            String auditCorrelationId, int retryCount) {
-        log.info("Pushing transaction to Pfms | voucherNumber={}", transaction.getVoucherNumber());
-        PFMSTransactionFormData formData = PFMSTransactionFormData.from(transaction,
-                pfmsProperties.getClient().getIp());
-        String response = auditLogger.logAndExecute(ExternalApiAuditDetail.builder()
-                .correlationId(auditCorrelationId)
-                .retryCount(retryCount)
-                .tenantId(Constants.PFMS_TENANT)
-                .externalApiName(ExternalApiAuditConstants.API_PFMS_DATA_PUSH)
-                .requestPayload(formData)
-                .originatingCorrelationId(transaction.getCorrelationId())
-                .businessReferenceId(transaction.getId())
-                .endpoint(pfmsProperties.getData().getUrl())
-                .method(Constants.HTTP_POST)
-                .build(), () -> dataFeignClient.pushTransaction("Bearer " + accessToken, formData));
-        log.info("Pfms Response | voucherNumber={} body={}", transaction.getVoucherNumber(), response);
-        return response;
-    }
 }
