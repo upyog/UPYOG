@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 public interface PFMSDataFeignClient {
 
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    String pushTransaction(@RequestHeader("Authorization") String bearerToken,
+    String pushTransaction(@RequestHeader(value = "Authorization", required = false) String bearerToken,
+                           @RequestHeader(value = "userid", required = false) String userName,
+                           @RequestHeader(value = "Pwd", required = false) String password,
                            @RequestBody PFMSTransactionFormData formData);
 }

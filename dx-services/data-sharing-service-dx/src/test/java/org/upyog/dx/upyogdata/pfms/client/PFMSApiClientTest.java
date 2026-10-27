@@ -3,7 +3,8 @@ package org.upyog.dx.upyogdata.pfms.client;
 import org.upyog.dx.upyogdata.config.PFMSProperties;
 import org.upyog.dx.upyogdata.pfms.models.PFMSAuthRequest;
 import org.upyog.dx.upyogdata.pfms.models.PFMSAuthResponse;
-import org.upyog.dx.upyogdata.pfms.models.PFMSTransaction;
+import org.upyog.dx.upyogdata.pfms.entity.PfmsTransactionAdditionalDetails;
+import org.upyog.dx.upyogdata.pfms.entity.PfmsTransactionEntity;
 import org.upyog.externalaudit.model.ExternalApiAuditDetail;
 import org.upyog.externalaudit.service.ExternalApiAuditLogger;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,18 +70,21 @@ class PFMSApiClientTest {
 
     @Test
     void pushTransaction_shouldReuseAuditCorrelationIdOnRetry() {
-        PFMSTransaction transaction = new PFMSTransaction();
-        transaction.setId("txn-1");
-        transaction.setCorrelationId("batch-1");
-        transaction.setUlbCodeOrPFMSAgencyCode("ULB1");
-        transaction.setVoucherNumber("V1");
-        transaction.setVoucherDate(LocalDate.of(2026, 1, 1));
-        transaction.setVoucherType("Journal Voucher");
-        transaction.setFinancialYear("2026");
-        transaction.setAccountHeadCode(List.of("1"));
-        transaction.setFunctionCode(List.of("2"));
-        transaction.setSchemeCode(List.of("3"));
-        when(dataFeignClient.pushTransaction(any(), any())).thenReturn("SUCCESS");
+        PfmsTransactionEntity transaction = PfmsTransactionEntity.builder()
+                .id("txn-1")
+                .correlationId("batch-1")
+                .ulbCodeOrPFMSAgencyCode("ULB1")
+                .voucherNumber("V1")
+                .voucherDate(LocalDate.of(2026, 1, 1))
+                .voucherType("Journal Voucher")
+                .financialYear("2026")
+                .additionalDetails(PfmsTransactionAdditionalDetails.builder()
+                        .accountHeadCode(List.of("1"))
+                        .functionCode(List.of("2"))
+                        .schemeCode(List.of("3"))
+                        .build())
+                .build();
+        when(dataFeignClient.pushTransaction(any(), any(), any(), any())).thenReturn("SUCCESS");
 
         String result = pfmsApiClient.pushTransaction(transaction, "token", "audit-id", 1);
 
