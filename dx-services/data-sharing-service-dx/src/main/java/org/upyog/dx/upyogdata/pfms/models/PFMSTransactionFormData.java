@@ -7,6 +7,8 @@ import lombok.Setter;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import static org.upyog.dx.upyogdata.util.DxUtils.extractPfmsFinancialYear;
+
 /**
  * Represents the form data sent to the PFMS data push API.
  * Field names are in PascalCase as required by the PFMS API.
@@ -129,7 +131,7 @@ public class PFMSTransactionFormData {
                 .voucherNumber(t.getVoucherNumber())
                 .voucherDate(t.getVoucherDate().format(PFMS_DATE_FORMAT))
                 .voucherType(t.getVoucherType())
-                .financialYear(t.getFinancialYear())
+                .financialYear(extractPfmsFinancialYear(t.getFinancialYear()))
                 .accountHeadCode(t.getAccountHeadCode() == null ? "" : String.join("|", t.getAccountHeadCode()))
                 .functionCode(t.getFunctionCode() == null ? "" : String.join("|", t.getFunctionCode()))
                 .schemeCode(t.getSchemeCode() == null ? "" : String.join("|", t.getSchemeCode()))

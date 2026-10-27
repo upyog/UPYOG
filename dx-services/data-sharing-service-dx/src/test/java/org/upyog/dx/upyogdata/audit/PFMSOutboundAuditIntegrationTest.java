@@ -6,7 +6,8 @@ import org.upyog.dx.upyogdata.pfms.client.PFMSApiClient;
 import org.upyog.dx.upyogdata.pfms.client.PFMSAuthFeignClient;
 import org.upyog.dx.upyogdata.pfms.client.PFMSDataFeignClient;
 import org.upyog.dx.upyogdata.pfms.models.PFMSAuthResponse;
-import org.upyog.dx.upyogdata.pfms.models.PFMSTransaction;
+import org.upyog.dx.upyogdata.pfms.entity.PfmsTransactionAdditionalDetails;
+import org.upyog.dx.upyogdata.pfms.entity.PfmsTransactionEntity;
 import org.upyog.externalaudit.constants.ExternalApiAuditConstants;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -103,8 +104,7 @@ class PFMSOutboundAuditIntegrationTest {
 
     @Test
     void pfmsDataPushSuccess_masksBankAccountsAndKeepsBusinessIds() {
-        when(dataFeignClient.pushTransaction(anyString(), any())).thenReturn("SUCCESS");
-
+        when(dataFeignClient.pushTransaction(any(), any(), any(), any())).thenReturn("SUCCESS");
         String result = client.pushTransaction(sampleTransaction(), "token", null, 0);
 
         assertEquals("SUCCESS", result);
@@ -129,7 +129,7 @@ class PFMSOutboundAuditIntegrationTest {
 
     @Test
     void pfmsDataPushServerError_writesErrorDetail() {
-        when(dataFeignClient.pushTransaction(anyString(), any())).thenThrow(
+        when(dataFeignClient.pushTransaction(any(), any(), any(), any())).thenThrow(
                 HttpServerErrorException.create(HttpStatus.BAD_GATEWAY, "Bad Gateway", null,
                         "pfms down".getBytes(), null));
 
@@ -148,7 +148,7 @@ class PFMSOutboundAuditIntegrationTest {
 
     @Test
     void twoSchedulerCycles_writeTwoDataPushRows() {
-        when(dataFeignClient.pushTransaction(anyString(), any())).thenReturn("SUCCESS");
+        when(dataFeignClient.pushTransaction(any(), any(), any(), any())).thenReturn("SUCCESS");
 
         client.pushTransaction(sampleTransaction(), "token");
         client.pushTransaction(sampleTransaction(), "token");
@@ -170,22 +170,24 @@ class PFMSOutboundAuditIntegrationTest {
         return properties;
     }
 
-    private PFMSTransaction sampleTransaction() {
-        PFMSTransaction transaction = new PFMSTransaction();
-        transaction.setId("txn-42");
-        transaction.setCorrelationId("batch-corr-9");
-        transaction.setUlbCodeOrPFMSAgencyCode("ULB1");
-        transaction.setVoucherNumber("VCH-42");
-        transaction.setVoucherDate(LocalDate.of(2026, 10, 5));
-        transaction.setVoucherType("Payment Voucher");
-        transaction.setFinancialYear("2026");
-        transaction.setAccountHeadCode(List.of("AH1"));
-        transaction.setFunctionCode(List.of("FN1"));
-        transaction.setSchemeCode(List.of("SC1"));
-        transaction.setUlbBankAccountNumber("111122223333");
-        transaction.setBeneficiaryAccountNumber("444455556666");
-        transaction.setFromAccount("from-acc-secret");
-        transaction.setToAccount("to-acc-secret");
-        return transaction;
+    private PfmsTransactionEntity sampleTransaction() {
+        return PfmsTransactionEntity.builder()
+                .id("txn-42")
+                .correlationId("batch-corr-9")
+                .ulbCodeOrPFMSAgencyCode("ULB1")
+                .voucherNumber("VCH-42")
+                .voucherDate(LocalDate.of(2026, 10, 5))
+                .voucherType("Payment Voucher")
+                .financialYear("2026")
+                .additionalDetails(PfmsTransactionAdditionalDetails.builder()
+                        .accountHeadCode(List.of("AH1"))
+                        .functionCode(List.of("FN1"))
+                        .schemeCode(List.of("SC1"))
+                        .ulbBankAccountNumber("111122223333")
+                        .beneficiaryAccountNumber("444455556666")
+                        .fromAccount("from-acc-secret")
+                        .toAccount("to-acc-secret")
+                        .build())
+                .build();
     }
 }

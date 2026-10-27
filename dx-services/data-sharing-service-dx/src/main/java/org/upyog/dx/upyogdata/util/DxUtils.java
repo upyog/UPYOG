@@ -32,4 +32,18 @@ public class DxUtils {
                 .status(Constants.SUCCESS)
                 .build();
     }
+
+    /**
+     * Function to convert financial year to PFMS format
+     * Example:
+     * 2026-27 → suffix = "27" (2 chars) → "20" + "27" = "2027"
+     * 2026-2027 → suffix = "2027" (4 chars) → directly "2027"
+     */
+    public static String extractPfmsFinancialYear(String financialYear) {
+        if (financialYear == null) return null;
+        int idx = financialYear.indexOf('-');
+        if (idx == -1) return financialYear;
+        String suffix = financialYear.substring(idx + 1); // "27" or "2027"
+        return suffix.length() == 2 ? financialYear.substring(0, 2) + suffix : suffix;
+    }
 }
