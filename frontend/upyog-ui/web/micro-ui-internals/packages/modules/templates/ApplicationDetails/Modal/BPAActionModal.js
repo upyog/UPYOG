@@ -84,29 +84,47 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const getInspectionDocs = (docs) => {
     let refinedDocs = [];
     docs && docs.map((doc,ind) => {
-      refinedDocs.push({
-        "documentType":(doc.documentType+"_"+doc.documentType.split("_")[1]).replaceAll("_","."),
-        "fileStoreId":doc.fileStoreId,
-        "fileStore":doc.fileStoreId,
-        "fileName":"",
-        "dropDownValues": {
-          "value": (doc.documentType+"_"+doc.documentType.split("_")[1]).replaceAll("_","."),
+      let docType = doc.documentType || "";
+      let formattedType = docType;
+      if (formattedType.includes(".")) {
+        const parts = formattedType.split(".");
+        if (parts.length === 2) {
+          formattedType = `${parts[0]}.${parts[1]}.${parts[1]}`;
+        }
+      } else if (formattedType.includes("_")) {
+        const parts = formattedType.split("_");
+        if (parts.length === 2) {
+          formattedType = `${parts[0]}.${parts[1]}.${parts[1]}`;
+        } else if (parts.length >= 3) {
+          formattedType = `${parts[0]}.${parts[1]}.${parts[2]}`;
+        }
       }
-      })
-    })
+      refinedDocs.push({
+        "documentType": formattedType,
+        "fileStoreId": doc.fileStoreId,
+        "fileStore": doc.fileStoreId,
+        "fileName": doc.fileName || "",
+        "dropDownValues": {
+          "value": formattedType,
+        }
+      });
+    });
     return refinedDocs;
   }
 
   const getQuestion = (data) => {
+    if (Array.isArray(data?.questions) && data.questions.length > 0 && !data.questionLength) {
+      return data.questions;
+    }
     let refinedQues = [];
     var i;
     for(i=0; i<data?.questionLength; i++)
     {
       refinedQues.push({
         "remarks": data[`Remarks_${i}`],
-        "question": data?.questionList[i].question,
+        "question": data?.questionList?.[i]?.question || data?.questionList?.[i],
         "value": data?.[`question_${i}`]?.code,
-      })
+      });
     }
     return refinedQues;
   }
@@ -115,22 +133,30 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     let formdata = [], inspectionOb = [];
     
     if (data?.additionalDetails?.fieldinspection_pending?.length > 0) {
-      inspectionOb = data?.additionalDetails?.fieldinspection_pending
+      inspectionOb = data?.additionalDetails?.fieldinspection_pending;
     }
 
     if(data.status == "FIELDINSPECTION_INPROGRESS") {
-      formdata = JSON.parse(sessionStorage.getItem("INSPECTION_DATA"));
+      try {
+        formdata = JSON.parse(sessionStorage.getItem("INSPECTION_DATA"));
+      } catch (e) {
+        formdata = [];
+      }
+      let currentFI = [];
       formdata?.length > 0 && formdata.map((ob,ind) => {
-        inspectionOb.push({
-          docs: getInspectionDocs(ob.Documents),
+        currentFI.push({
+          docs: getInspectionDocs(ob.Documents || ob.docs),
           date: ob.InspectionDate,
           questions: getQuestion(ob),
           time: ob?.InspectionTime,
-        })
-      })
-      inspectionOb = inspectionOb.filter((ob) => ob.docs && ob.docs.length>0);
+        });
+      });
+      currentFI = currentFI.filter((ob) => ob.docs && ob.docs.length > 0);
+      if (currentFI.length > 0) {
+        inspectionOb = currentFI;
+      }
     } else {
-      sessionStorage.removeItem("INSPECTION_DATA")
+      sessionStorage.removeItem("INSPECTION_DATA");
     }
   
     let fieldinspection_pending = [ ...inspectionOb];
@@ -138,13 +164,18 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   }
 
   const getDocuments = (applicationData) => {
-    let documentsformdata = JSON.parse(sessionStorage.getItem("BPA_DOCUMENTS"));
+    let documentsformdata = null;
+    try {
+      documentsformdata = JSON.parse(sessionStorage.getItem("BPA_DOCUMENTS"));
+    } catch (e) {}
     let documentList = [];
-    documentsformdata.map(doc => {
-      if(doc?.uploadedDocuments?.[0]?.values?.length > 0) documentList = [...documentList, ...doc?.uploadedDocuments?.[0]?.values];
-      if(doc?.newUploadedDocs?.length > 0) documentList = [...documentList, ...doc?.newUploadedDocs]
-    });
-    return documentList;
+    if (Array.isArray(documentsformdata)) {
+      documentsformdata.map(doc => {
+        if(doc?.uploadedDocuments?.[0]?.values?.length > 0) documentList = [...documentList, ...doc?.uploadedDocuments?.[0]?.values];
+        if(doc?.newUploadedDocs?.length > 0) documentList = [...documentList, ...doc?.newUploadedDocs];
+      });
+    }
+    return documentList.length > 0 ? documentList : applicationData?.documents || [];
   }
 
   const getPendingApprovals = () => {

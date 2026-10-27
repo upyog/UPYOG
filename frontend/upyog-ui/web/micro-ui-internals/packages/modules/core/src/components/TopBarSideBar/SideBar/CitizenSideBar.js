@@ -180,9 +180,9 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
     Object.keys(linkData || {})
       ?.sort((x, y) => y.localeCompare(x))
       ?.map((key) => {
-        if (linkData[key][0]?.sidebar === "digit-ui-links")
+        if (linkData[key][0]?.sidebar === "digit-ui-links" || linkData[key][0]?.sidebar === "upyog-ui-links")
           menuItems.splice(1, 0, {
-            type: linkData[key][0]?.sidebarURL?.includes("upyog-ui") ? "link" : "external-link",
+            type: linkData[key][0]?.sidebarURL?.includes("upyog-ui") || linkData[key][0]?.sidebarURL?.includes("digit-ui") ? "link" : "external-link",
             text: t(`ACTION_TEST_${Digit.Utils.locale.getTransformedLocale(key)}`),
             links: linkData[key],
             icon: linkData[key][0]?.leftIcon,
@@ -270,6 +270,6 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
       setSearch={setSearch}
     />
   ) : (
-    <StaticCitizenSideBar logout={onLogout} />
+    <StaticCitizenSideBar logout={onLogout} linkData={linkData} islinkDataLoading={islinkDataLoading} />
   );
 };

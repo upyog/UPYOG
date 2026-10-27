@@ -424,6 +424,21 @@
     }
   }
 
+  .topbar-right-end-logo {
+    display: flex;
+    align-items: center;
+    margin-left: 12px;
+    margin-right: 8px;
+    flex-shrink: 0;
+
+    .topbar-right-logo-img {
+      height: 38px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+    }
+  }
+
   h3 {
     @apply inline-block border-l border-solid border-white pl-sm ml-sm;
   }
@@ -874,6 +889,15 @@
         .topbar-user-chevron {
           margin-left: 2px !important;
         }
+      }
+    }
+
+    .topbar-right-end-logo {
+      margin-left: 4px !important;
+      margin-right: 2px !important;
+
+      .topbar-right-logo-img {
+        height: 28px !important;
       }
     }
   }

@@ -33,7 +33,7 @@
         "backgroundUrl": "/upyog-ui/images/onboarding-bg.jpg",
         "mainlogo": {
           "dualLogo": false,
-          "url": "/upyog-ui/images/Logo.png"
+          "url": "/upyog-ui/images/logo-secondary.png"
         },
         "headers": {
           "title": "One Platform",
@@ -522,12 +522,12 @@
       "loginUI": {
         "backgroundUrl": "/upyog-ui/images/citizen-metro-bg.jpg",
         "isFormOnLeft": false,
-        "isSplitBg": true,
+        "isSplitBg": false,
         "hasHeroCard": true,
         "isHeaderReq": true,
         "mainlogo": {
           "dualLogo": false,
-          "url": "/upyog-ui/images/Logo.png"
+          "url": "/upyog-ui/images/logo-secondary.png"
         },
         "headers": {
           "title": "One Platform,",
@@ -608,7 +608,7 @@
         "backgroundUrl": "/upyog-ui/images/onboarding-bg.jpg",
         "mainlogo": {
           "dualLogo": false,
-          "url": "/upyog-ui/images/Logo.png"
+          "url": "/upyog-ui/images/logo-secondary.png"
         },
         "headers": {
           "title": "One Platform",
@@ -670,7 +670,7 @@
         "isEmployeeV2": true,
         "mainlogo": {
           "dualLogo": false,
-          "url": "/upyog-ui/images/Logo.png"
+          "url": "/upyog-ui/images/logo-secondary.png"
         },
         "headers": {
           "title": "One Platform",

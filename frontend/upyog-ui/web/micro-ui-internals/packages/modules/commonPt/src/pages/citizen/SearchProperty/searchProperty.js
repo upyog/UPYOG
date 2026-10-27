@@ -114,23 +114,30 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
                 { code: 1, name: t('PT_SEARCH_DOOR_NO') },
               ],
             },
-            component: (props, customProps) => (
-              <RadioButtons
-                {...customProps}
-                selectedOption={props.value}
-                onSelect={(d) => {
-                  props.onChange(d);
-                  props?.setValue("city", {});
-                  props?.setValue("locality", {});
-                  props?.setValue("mobileNumber", "");
-                  props?.setValue("propertyIds", "");
-                  props?.setValue("doorNumber", "");
-                  props?.setValue("oldPropertyId", "");
-                  props?.setValue("name", "");
-                  navigate(`${location.pathname}?action=${d.code}`, { replace: true });
-                }}
-              />
-            ),
+            component: (props, customProps) => {
+              const selectedOption =
+                customProps?.options?.find((opt) => String(opt.code) === String(action)) ||
+                (props.value?.code !== undefined ? customProps?.options?.find((opt) => String(opt.code) === String(props.value.code)) : null) ||
+                customProps?.options?.[0];
+              return (
+                <RadioButtons
+                  {...customProps}
+                  name={props.name || "addParam"}
+                  selectedOption={selectedOption}
+                  onSelect={(d) => {
+                    props.onChange && props.onChange(d);
+                    props?.setValue("city", {});
+                    props?.setValue("locality", {});
+                    props?.setValue("mobileNumber", "");
+                    props?.setValue("propertyIds", "");
+                    props?.setValue("doorNumber", "");
+                    props?.setValue("oldPropertyId", "");
+                    props?.setValue("name", "");
+                    navigate(`${location.pathname}?action=${d.code}`, { replace: true });
+                  }}
+                />
+              );
+            },
           },
         },
         {
@@ -227,23 +234,30 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
                 { code: 1, name: t('PT_SEARCH_DOOR_NO') },
               ],
             },
-            component: (props, customProps) => (
-              <RadioButtons
-                {...customProps}
-                selectedOption={props.value}
-                onSelect={(d) => {
-                  props.onChange(d);
-                  props?.setValue("city", {});
-                  props?.setValue("locality", {});
-                  props?.setValue("mobileNumber", "");
-                  props?.setValue("propertyIds", "");
-                  props?.setValue("doorNumber", "");
-                  props?.setValue("oldPropertyId", "");
-                  props?.setValue("name", "");
-                  navigate(`${location.pathname}?action=${d.code}`, { replace: true });
-                }}
-              />
-            ),
+            component: (props, customProps) => {
+              const selectedOption =
+                customProps?.options?.find((opt) => String(opt.code) === String(action)) ||
+                (props.value?.code !== undefined ? customProps?.options?.find((opt) => String(opt.code) === String(props.value.code)) : null) ||
+                customProps?.options?.[1];
+              return (
+                <RadioButtons
+                  {...customProps}
+                  name={props.name || "addParam"}
+                  selectedOption={selectedOption}
+                  onSelect={(d) => {
+                    props.onChange && props.onChange(d);
+                    props?.setValue("city", {});
+                    props?.setValue("locality", {});
+                    props?.setValue("mobileNumber", "");
+                    props?.setValue("propertyIds", "");
+                    props?.setValue("doorNumber", "");
+                    props?.setValue("oldPropertyId", "");
+                    props?.setValue("name", "");
+                    navigate(`${location.pathname}?action=${d.code}`, { replace: true });
+                  }}
+                />
+              );
+            },
           },
         },
         {

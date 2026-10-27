@@ -35,6 +35,7 @@
 
   .card-label {
     @apply text-legend text-text-primary mb-sm;
+    line-height: 42px;
   }
 
   .card-label-error {
@@ -123,6 +124,7 @@
 
   .card-label {
     @apply text-legend text-text-primary mb-md;
+    line-height: 42px;
 
     &.card-label--section {
       color: #505A5F !important;
@@ -143,6 +145,7 @@
     font-weight: 600 !important;
     color: #64748b !important;
     text-align: center !important;
+    line-height: 42px !important;
   }
 
   .card-label-error {

@@ -19,7 +19,16 @@ const InspectionReport = ({ config, onSelect, userType, formData, setError, form
     const { t } = useTranslation();
     const { pathname } = useLocation();
     const isEditScreen = pathname.includes("/modify-application/");
-    const [FieldReports, setFieldReports] = useState(formData?.FieldReports || [createUnitDetails()]);
+    const [FieldReports, setFieldReports] = useState(() => {
+        if (formData?.FieldReports && Array.isArray(formData.FieldReports) && formData.FieldReports.length > 0) {
+            return formData.FieldReports;
+        }
+        try {
+            const stored = JSON.parse(sessionStorage.getItem("INSPECTION_DATA") || "null");
+            if (Array.isArray(stored) && stored.length > 0) return stored;
+        } catch (e) {}
+        return [createUnitDetails()];
+    });
     const [focusIndex, setFocusIndex] = useState({ index: -1, type: "" });
     const tenantId = Digit.ULBService.getCurrentTenantId();
     const stateId = Digit.ULBService.getStateId();
@@ -35,7 +44,7 @@ const InspectionReport = ({ config, onSelect, userType, formData, setError, form
     if (window.location.href.includes("tl/renew-application-details")) isRenewal = true;
     const { data: tradeMdmsData, isLoading } = Digit.Hooks.tl.useTradeLicenseMDMS(stateId, "TradeLicense", "TradeUnits", "[?(@.type=='TL')]");
     const { isLoading: bpaDocsLoading, data: bpaDocs } = Digit.Hooks.obps.useMDMS(stateId, "BPA", ["CheckList"]);
-    let type = "LOW"
+    let type = formData?.riskType || formData?.RiskType || "LOW";
 
     const addNewFieldReport = () => {
         const newUnit = createUnitDetails();
@@ -62,12 +71,12 @@ const InspectionReport = ({ config, onSelect, userType, formData, setError, form
     useEffect(() => {
         let ques = [];
         let documentlist = [];
-        bpaDocs && bpaDocs.BPA.CheckList.map((ob) => {
-            if (ob?.RiskType === type && ob?.WFState === "FIELDINSPECTION_PENDING") {
-                ques = [...ob.questions];
-                documentlist = [...ob.docTypes]
+        bpaDocs && bpaDocs.BPA?.CheckList?.map((ob) => {
+            if ((ob?.RiskType === type || ob?.RiskType === "LOW") && ob?.WFState === "FIELDINSPECTION_PENDING") {
+                if (ques.length === 0) ques = [...(ob.questions || [])];
+                if (documentlist.length === 0) documentlist = [...(ob.docTypes || [])];
             }
-        })
+        });
         setdocumentList(documentlist);
         setquestionList(ques);
     }, [bpaDocs]);
@@ -186,7 +195,7 @@ const InspectionReportForm = (_props) => {
                     setIsErrors(true);
                 }
             });
-            setFieldReports((prev) => prev.map((o) => (o.key && o.key === unit.key ? { ...o, ...formValue, ..._ownerType, ...questionLength, ...Ques } : { ...o })));
+            setFieldReports((prev) => prev.map((o) => (o.key && o.key === unit.key ? { ...o, ...formValue, ..._ownerType, ...questionLength, ...Ques, Documents: o.Documents || unit.Documents || [] } : { ...o })));
             trigger();
         }
     }, [formValue]);
@@ -309,7 +318,7 @@ const InspectionReportForm = (_props) => {
                         </div>
                     ))}
                     <CardSectionHeader className="obps-index-card">{t("BPA_FIELD_INSPECTION_DOCUMENTS")}</CardSectionHeader>
-                    <OBPSDocumentsEmp t={t} config={config} onSelect={onSelect} userType={userType} formData={formData} setError={setError} clearErrors={clearErrors} formState={formState} index={index} setFieldReports={setFieldReports} documentList={documentList} />
+                    <OBPSDocumentsEmp t={t} config={config} onSelect={onSelect} userType={userType} formData={formData} setError={setError} clearErrors={clearErrors} formState={formState} index={index} unit={unit} setFieldReports={setFieldReports} documentList={documentList} />
                 </div>
             </div>
         </React.Fragment>

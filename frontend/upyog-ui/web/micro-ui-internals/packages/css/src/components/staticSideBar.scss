@@ -12,6 +12,7 @@
     min-height: 48px;
     margin: 0;
     padding: 0;
+
     .menu-item-icon {
       svg {
         color: #757575;
@@ -20,6 +21,7 @@
         height: 21px;
       }
     }
+
     .menu-item-text {
       margin-left: 1em;
     }
@@ -188,11 +190,13 @@
 .profile-section {
   &.profile-section--collapsed {
     padding-top: 10px;
+
     img {
       width: 44px !important;
       height: 44px !important;
       margin: 0px auto 8px !important;
     }
+
     .name-Profile {
       font-size: 13px !important;
       text-align: center;
@@ -215,20 +219,19 @@
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
 }
 
 .sidebar-skeleton-pulse {
-  background: linear-gradient(
-    90deg,
-    #ede9f5 0%,
-    #f7f5fb 35%,
-    #e2dbee 50%,
-    #f7f5fb 65%,
-    #ede9f5 100%
-  ) !important;
+  background: linear-gradient(90deg,
+      #ede9f5 0%,
+      #f7f5fb 35%,
+      #e2dbee 50%,
+      #f7f5fb 65%,
+      #ede9f5 100%) !important;
   background-size: 300% 100% !important;
   animation: sidebarShimmer 1.6s ease-in-out infinite !important;
   border-radius: 6px !important;
@@ -381,4 +384,11 @@
       border-radius: 8px !important;
     }
   }
+}
+
+.version-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #5f5c62 !important;
 }

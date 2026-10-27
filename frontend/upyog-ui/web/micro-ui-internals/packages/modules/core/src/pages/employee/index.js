@@ -14,6 +14,7 @@ import UserProfile from "../citizen/Home/UserProfile";
 import ErrorComponent from "../../components/ErrorComponent";
 import { PrivateRoute } from "@nudmcdgnpm/digit-ui-react-components";
 import EmployeeDashboard from "../../components/EmployeeDashboard";
+import Footer from "../../components/Footer";
 import appContent from "../../config/appContent.json";
 
 const userScreensExempted = ["user/profile", "user/error"];
@@ -217,6 +218,7 @@ const EmployeeApp = ({
                       </Routes>
                     </ErrorBoundary>
                   </div>
+                  {!isEmployeeAuthRoute && <Footer isEmployee={true} />}
                 </div>
               </div>
             </>

@@ -1,8 +1,9 @@
 import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel, PrivateRoute, AdvertisementModuleCard } from "@nudmcdgnpm/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Route, Routes, Link } from "react-router-dom";
+import { Route, Routes, Link, useLocation } from "react-router-dom";
 import ErrorBoundary from "../../components/ErrorBoundaries";
+import Footer from "../../components/Footer";
 import { AppHome, processLinkData } from "../../components/Home";
 import TopBarSideBar from "../../components/TopBarSideBar";
 import StaticCitizenSideBar from "../../components/TopBarSideBar/SideBar/StaticCitizenSideBar";
@@ -90,6 +91,17 @@ const Home = (props) => {
 
   // replacing useRouteMatch
   const path = "/upyog-ui/citizen";
+  const location = useLocation();
+
+  const isLoginPage =
+    location?.pathname?.includes("/login") ||
+    location?.pathname?.includes("/register") ||
+    location?.pathname?.includes("/select-language") ||
+    location?.pathname?.includes("/select-location") ||
+    window.location.href.includes("/citizen/login") ||
+    window.location.href.includes("/citizen/register") ||
+    window.location.href.includes("/citizen/select-language") ||
+    window.location.href.includes("/citizen/select-location");
 
   const navigate = Digit.Hooks.useCustomNavigate();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -342,6 +354,7 @@ const Home = (props) => {
               {ModuleLevelLinkHomePages}
             </Routes>
         </div>
+        {!isLoginPage && <Footer isEmployee={false} />}
       </div>
     </div>
   );

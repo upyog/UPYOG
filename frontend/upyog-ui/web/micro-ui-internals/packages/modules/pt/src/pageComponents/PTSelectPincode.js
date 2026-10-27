@@ -59,20 +59,22 @@ const PTSelectPincode = ({ t, config, onSelect, formData = {}, userType, registe
       setPincode(formData.address.pincode);
     }
   }, [formData?.address?.pincode]);
-  function onChange(e) {
-    setPincode(e.target.value);
+  function onChange(eOrValue) {
+    // Accept either an event object or a direct value (FormStep may pass the value directly)
+    const val = eOrValue?.target?.value ?? eOrValue;
+    setPincode(val);
     setPincodeServicability(null);
     setLocalError("");
-    let validPincode = Digit.Utils.getPattern("Pincode").test(e.target.value);
+    const validPincode = Digit.Utils.getPattern("Pincode").test(val);
     if (userType === "employee") {
-      if (e.target.value && !validPincode) setLocalError(t("ERR_DEFAULT_INPUT_FIELD_MSG"));
+      if (val && !validPincode) setLocalError(t("ERR_DEFAULT_INPUT_FIELD_MSG"));
       if (validPincode) {
-        const foundValue = tenants?.find(obj => obj.pincode?.find(item => item.toString() === e.target.value));
+        const foundValue = tenants?.find(obj => obj.pincode?.find(item => item.toString() === val));
         if (!foundValue) setLocalError(t("PT_COMMON_PINCODE_NOT_SERVICABLE"));
       }
       onSelect(config.key, {
         ...formData.address,
-        pincode: e.target.value
+        pincode: val,
       });
     }
   }
