@@ -17,8 +17,9 @@ const LoginLayout = ({ children, heroContent, footer, layout }) => {
 		hasHeroCard = false,
 	} = layout?.loginUI || {};
 	const { isFormCentered = false, isTopIconReq = false } = layout?.loginForm || {};
+	const isEmployee = isEmployeeV2 || (typeof window !== "undefined" && (window.location.href.includes("/employee") || window.location.pathname.includes("/employee")));
 	const hasNavbar = isEmployeeV2 || isHeaderReq || showHeader || hasHeader;
-	const isEmployeeNew = hasNavbar;
+	const isEmployeeNew = isEmployee;
 	const footerItems = [
 		"Property tax",
 		"Trade Licence",
@@ -26,9 +27,11 @@ const LoginLayout = ({ children, heroContent, footer, layout }) => {
 		"Birth and Death Certificate",
 		"and many more...",
 	];
-	const shellStyle = backgroundUrl && !isSplitBg ? { backgroundImage: `url(${backgroundUrl})` } : {};
-	const heroStyle = isSplitBg && backgroundUrl
-		? { backgroundImage: `url(${backgroundUrl})`, backgroundSize: "cover", backgroundPosition: "center", ...mainlogo?.styles }
+	// Employee: background image lives inside the hero (left) panel. Citizen: on the full shell (unless split bg).
+	const heroHasBg = !!backgroundUrl && (isSplitBg || isEmployee);
+	const shellStyle = backgroundUrl && !heroHasBg ? { backgroundImage: `url(${backgroundUrl})`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat" } : {};
+	const heroStyle = heroHasBg
+		? { backgroundImage: `url(${backgroundUrl})`, backgroundSize: "cover", backgroundPosition: "center", backgroundRepeat: "no-repeat", ...mainlogo?.styles }
 		: (mainlogo?.styles ? { ...mainlogo?.styles } : {});
 	const dualImageView = mainlogo.dualLogo && !mainlogo.verticalView ? { flexDirection: "row-reverse" } : {};
 	const dualVerticalView = mainlogo.verticalView ? { flexDirection: "column" } : null;
@@ -188,10 +191,10 @@ const LoginLayout = ({ children, heroContent, footer, layout }) => {
 					</a>
 				</div>
 			)}
-			<div className={`login-shell ${isEmployeeNew ? "login-shell-employeeV2" : ""} ${isSplitBg ? "login-shell--split-bg" : ""} ${isFormOnLeft ? "login-shell--form-left" : ""} `} style={shellStyle}>
+			<div className={`login-shell ${isEmployee ? "login-shell--employee" : "login-shell--citizen"} ${isEmployeeNew ? "login-shell-employeeV2" : ""} ${isSplitBg ? "login-shell--split-bg" : ""} ${isFormOnLeft ? "login-shell--form-left" : ""} `} style={shellStyle}>
 				<aside className="login-hero" style={heroStyle}>
 					<div className="login-hero__content">
-						{!isEmployeeNew && (
+						{!hasNavbar && (
 							<a
 								className={`login-brand ${mainlogo.verticalView ? "login-brand--vertical" : ""} ${mainlogo.dualLogo && !mainlogo.verticalView ? "login-brand--reverse" : ""}`}
 								href="/upyog-ui/citizen"

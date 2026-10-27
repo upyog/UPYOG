@@ -96,16 +96,30 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
             name: "PT_KNOW_PT_DETAIL"
           }]
         },
-        component: (props, customProps) => <RadioButtons {...customProps} selectedOption={props.value} onSelect={d => {
-          props?.setValue("city", {});
-          props?.setValue("locality", {});
-          props?.setValue("mobileNumber", "");
-          props?.setValue("propertyIds", "");
-          props?.setValue("doorNo", "");
-          props?.setValue("oldPropertyId", "");
-          props?.setValue("name", "");
-          navigate(`${location.pathname}?action=${action == 0 ? 1 : 0}`, { replace: true });
-        }} />
+        component: (props, customProps) => {
+          const selectedOption =
+            customProps?.options?.find((opt) => String(opt.code) === String(action)) ||
+            (props.value?.code !== undefined ? customProps?.options?.find((opt) => String(opt.code) === String(props.value.code)) : null) ||
+            customProps?.options?.[0];
+          return (
+            <RadioButtons
+              {...customProps}
+              name={props.name || "addParam"}
+              selectedOption={selectedOption}
+              onSelect={(d) => {
+                props.onChange && props.onChange(d);
+                props?.setValue("city", {});
+                props?.setValue("locality", {});
+                props?.setValue("mobileNumber", "");
+                props?.setValue("propertyIds", "");
+                props?.setValue("doorNo", "");
+                props?.setValue("oldPropertyId", "");
+                props?.setValue("name", "");
+                navigate(`${location.pathname}?action=${d.code}`, { replace: true });
+              }}
+            />
+          );
+        }
       }
     }, {
       label: "PT_SELECT_CITY",
@@ -201,16 +215,30 @@ const SearchProperty = ({ config: propsConfig, onSelect }) => {
             name: "PT_KNOW_PT_DETAIL"
           }]
         },
-        component: (props, customProps) => <RadioButtons {...customProps} selectedOption={props.value} onSelect={d => {
-          props?.setValue("city", {});
-          props?.setValue("locality", {});
-          props?.setValue("mobileNumber", "");
-          props?.setValue("propertyIds", "");
-          props?.setValue("doorNo", "");
-          props?.setValue("oldPropertyId", "");
-          props?.setValue("name", "");
-          navigate(`${location.pathname}?action=${action == 0 ? 1 : 0}`, { replace: true });
-        }} />
+        component: (props, customProps) => {
+          const selectedOption =
+            customProps?.options?.find((opt) => String(opt.code) === String(action)) ||
+            (props.value?.code !== undefined ? customProps?.options?.find((opt) => String(opt.code) === String(props.value.code)) : null) ||
+            customProps?.options?.[1];
+          return (
+            <RadioButtons
+              {...customProps}
+              name={props.name || "addParam"}
+              selectedOption={selectedOption}
+              onSelect={(d) => {
+                props.onChange && props.onChange(d);
+                props?.setValue("city", {});
+                props?.setValue("locality", {});
+                props?.setValue("mobileNumber", "");
+                props?.setValue("propertyIds", "");
+                props?.setValue("doorNo", "");
+                props?.setValue("oldPropertyId", "");
+                props?.setValue("name", "");
+                navigate(`${location.pathname}?action=${d.code}`, { replace: true });
+              }}
+            />
+          );
+        }
       }
     }, {
       label: "PT_SELECT_CITY",

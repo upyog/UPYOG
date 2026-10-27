@@ -510,6 +510,7 @@
       box-sizing: border-box;
       transition: all 0.2s ease-in-out;
       cursor: pointer;
+      margin-top: 0px;
 
       &:hover {
         background: #FAF8FD;
@@ -522,6 +523,7 @@
           .sidebar-icon,
           svg {
             fill: #584F74;
+
             path {
               fill: #584F74;
             }
@@ -825,7 +827,7 @@
     max-width: 100%;
     box-sizing: border-box;
     margin: 0;
-    padding: 20px 24px 40px;
+    padding: 20px 24px 0px;
     overflow-x: hidden;
 
     .BannerWithSearch {

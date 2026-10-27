@@ -960,7 +960,9 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar, toggl
           </div>
         ))}
       </div>
-
+      <div>
+        <span>v5.1</span>
+      </div>
       <div className="citizen-logout sidebar-skeleton-logout">
         <div className="sidebar-skeleton-pulse sidebar-skeleton-logout-btn" />
       </div>
@@ -977,7 +979,7 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar, toggl
             {isSidebarCollapsed ? (
               <img src="/upyog-ui/images/logo-mobile.png" alt="UPYOG Logo" />
             ) : (
-              <img src="/upyog-ui/images/Logo.png" alt="UPYOG Logo" />
+              <img src="/upyog-ui/images/logo-secondary.png" alt="UPYOG Logo" />
             )}
           </div>
         </div>
@@ -1198,7 +1200,9 @@ const EmployeeSideBar = ({ isSidebarCollapsed = false, closeMobileSidebar, toggl
             </>
           )}
         </div>
-
+        <div className="version-badge">
+          <span>v5.1</span>
+        </div>
         <div className="citizen-logout">
           <button onClick={handleLogout}>
             <LogoutIcon className="sidebar-icon" />

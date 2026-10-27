@@ -1,0 +1,126 @@
+/* ==========================================================================
+   UPYOG PORTAL FOOTER STYLING (CITIZEN & EMPLOYEE)
+   ========================================================================== */
+
+.upyog-app-footer {
+  width: 100%;
+  background-color: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  padding: 14px 20px;
+  box-sizing: border-box;
+  text-align: center;
+  z-index: 10;
+  margin-top: auto;
+  transition: all 0.2s ease-in-out;
+
+  .upyog-footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .upyog-footer-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .upyog-footer-link {
+    color: #475569;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.15s ease-in-out, text-decoration 0.15s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+
+    &:hover {
+      color: #7a282e;
+      /* UPYOG wine/crimson primary brand color */
+      text-decoration: underline;
+    }
+  }
+
+  .upyog-footer-divider {
+    margin: 0 12px;
+    color: #cbd5e1;
+    font-size: 13px;
+    font-weight: 300;
+    user-select: none;
+  }
+
+  /* Employee context adjustments */
+  &.upyog-app-footer--employee {
+    background-color: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.02);
+  }
+
+  /* Citizen context adjustments */
+  &.upyog-app-footer--citizen {
+    background-color: #ffffff;
+    border-top: 1px solid #e2e8f0;
+  }
+}
+
+/* Ensure container displays flex column with sticky bottom footer */
+.employee-main-wrapper {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 100vh !important;
+
+  .employee-app-wrapper {
+    flex: 1 0 auto !important;
+  }
+}
+
+.main.citizen-home-container {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: calc(100vh - 120px) !important;
+
+  .main-body {
+    flex: 1 0 auto !important;
+    min-height: auto !important;
+    padding-bottom: 24px !important;
+  }
+}
+
+/* When fixed action bar is present in viewport, provide bottom spacing so footer isn't obscured */
+body:has(.action-bar-wrap) .upyog-app-footer {
+  margin-bottom: 64px !important;
+}
+
+@media (max-width: 768px) {
+  .upyog-app-footer {
+    padding: 12px 16px;
+
+    .upyog-footer-links {
+      font-size: 12px;
+      gap: 4px;
+    }
+
+    .upyog-footer-link {
+      font-size: 12px;
+    }
+
+    .upyog-footer-divider {
+      margin: 0 6px;
+      font-size: 12px;
+    }
+  }
+
+  .main.citizen-home-container {
+    min-height: calc(100vh - 60px) !important;
+  }
+}

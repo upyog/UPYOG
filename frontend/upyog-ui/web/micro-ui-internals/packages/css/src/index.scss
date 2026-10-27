@@ -79,6 +79,7 @@
 @import "./components/OnGroundEventCard.scss";
 @import "./components/PopupHeadingLabel.scss";
 @import "./components/staticSideBar.scss";
+@import "./components/footer.scss";
 @import "./components/hoc/index.scss";
 @import "./components/FAQ.scss";
 @import "./components/howItWorks.scss";
@@ -778,7 +779,7 @@ input[type="number"] {
 
     p {
       margin: 0 !important;
-      color: #ffffff !important;
+      color: #000000 !important;
     }
   }
 }

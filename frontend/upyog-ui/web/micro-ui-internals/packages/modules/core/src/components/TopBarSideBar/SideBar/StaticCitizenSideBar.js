@@ -55,32 +55,33 @@ const defaultImage =
 Feature :: Citizen Webview sidebar
 */
 const Profile = ({ info, stateName, t, profilePhotoUrl, isSidebarCollapsed }) => {
-  const username = isSidebarCollapsed 
+  const username = isSidebarCollapsed
     ? info?.name?.split(' ').map(word => word[0]).join('').toUpperCase()
     : info?.name;
-  
+
   return (
-  <div className="profile-section">
-    <div className="imageloader imageloader-loaded">
-      <img className="img-responsive img-circle img-Profile" src={profilePhotoUrl ? profilePhotoUrl : defaultImage} />
-    </div>
-    <div id="profile-name" className="label-container name-Profile">
-      <div className="label-text"> {username} </div>
-    </div>
-    {!isSidebarCollapsed && <div id="profile-location" className="label-container loc-Profile">
-      <div className="label-text"> {info?.mobileNumber} </div>
-    </div>}
-    {!isSidebarCollapsed && info?.emailId && (
-      <div id="profile-emailid" className="label-container loc-Profile">
-        <div className="label-text"> {info.emailId} </div>
+    <div className="profile-section">
+      <div className="imageloader imageloader-loaded">
+        <img className="img-responsive img-circle img-Profile" src={profilePhotoUrl ? profilePhotoUrl : defaultImage} />
       </div>
-    )}
-    <div className="profile-divider"></div>
-    { false && window.location.href.includes("/employee") &&
-      !window.location.href.includes("/employee/user/login") &&
-      !window.location.href.includes("employee/user/language-selection") && <ChangeCity t={t} mobileView={true} />}
-  </div>
-)};
+      <div id="profile-name" className="label-container name-Profile">
+        <div className="label-text"> {username} </div>
+      </div>
+      {!isSidebarCollapsed && <div id="profile-location" className="label-container loc-Profile">
+        <div className="label-text"> {info?.mobileNumber} </div>
+      </div>}
+      {!isSidebarCollapsed && info?.emailId && (
+        <div id="profile-emailid" className="label-container loc-Profile">
+          <div className="label-text"> {info.emailId} </div>
+        </div>
+      )}
+      <div className="profile-divider"></div>
+      {false && window.location.href.includes("/employee") &&
+        !window.location.href.includes("/employee/user/login") &&
+        !window.location.href.includes("employee/user/language-selection") && <ChangeCity t={t} mobileView={true} />}
+    </div>
+  )
+};
 
 const IconsObject = {
   CommonPTIcon: <PTIcon className="icon" />,
@@ -91,7 +92,7 @@ const IconsObject = {
   FSMIcon: <FSMIcon className="icon" />,
   WSIcon: <WSICon className="icon" />,
   MCollectIcon: <MCollectIcon className="icon" />,
-  CHBIcon:<CHBIcon className="icon" />,
+  CHBIcon: <CHBIcon className="icon" />,
   BillsIcon: <CollectionIcon className="icon" />,
   BirthIcon: <BirthIcon className="icon" />,
   DeathIcon: <DeathIcon className="icon" />,
@@ -109,13 +110,15 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed,
   const { pathname } = location;
   const { data: storeData, isFetched } = Digit.Hooks.useStore.getInitData();
   const { stateInfo } = storeData || {};
-  const user = Digit.UserService.getUser().token !== null ? Digit.UserService.getUser() : {access_token: "asdf", info: {
-    tanentID: "pg",
-    uuid: "asdf",
-    name: "Shubham Singh",
-    "mobileNumber": 1231231231,
-    emailId: "ss@gmail.com"
-  }};
+  const user = Digit.UserService.getUser().token !== null ? Digit.UserService.getUser() : {
+    access_token: "asdf", info: {
+      tanentID: "pg",
+      uuid: "asdf",
+      name: "Shubham Singh",
+      "mobileNumber": 1231231231,
+      emailId: "ss@gmail.com"
+    }
+  };
   let isMobile = window.Digit.Utils.browser.isMobile();
 
   const [isEmployee, setisEmployee] = useState(false);
@@ -125,7 +128,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed,
   const [profilePhotoUrl, setProfilePhotoUrl] = useState(null);
   useEffect(() => {
     const fetchPhoto = async () => {
-      const usersResponse = await Digit.UserService.userSearch(user?.info?.tenantId, { uuid: [user?.info?.uuid||user?.user?.[0]?.uuid] }, {});
+      const usersResponse = await Digit.UserService.userSearch(user?.info?.tenantId, { uuid: [user?.info?.uuid || user?.user?.[0]?.uuid] }, {});
       if (usersResponse?.user?.[0]?.photo) {
         try {
           const file = await Digit.UploadServices.Filefetch([usersResponse?.user?.[0]?.photo], "pg");
@@ -208,7 +211,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed,
     }
     if (item.type === "link") {
       return (
-        <Link to={item?.link.replace("/digit-ui/","/upyog-ui/")} onClick={handleNavClick}>
+        <Link to={item?.link.replace("/digit-ui/", "/upyog-ui/")} onClick={handleNavClick}>
           <Item />
         </Link>
       );
@@ -219,7 +222,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed,
   let profileItem;
 
   if (true && user && user.access_token) {
-    profileItem = <Profile info={user?.info} stateName={stateInfo?.name || "City A"} t={t} profilePhotoUrl={profilePhotoUrl} isSidebarCollapsed={isSidebarCollapsed}/>;
+    profileItem = <Profile info={user?.info} stateName={stateInfo?.name || "City A"} t={t} profilePhotoUrl={profilePhotoUrl} isSidebarCollapsed={isSidebarCollapsed} />;
     menuItems = menuItems.filter((item) => item?.id !== "login-btn" && item?.id !== "help-line");
     menuItems = [
       ...menuItems,
@@ -266,7 +269,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed,
       <div className="static-citizen-sidebar-inner">
         <div className="sidebar-logo-header">
           <div className="logo-design">
-            {isSidebarCollapsed ? <img src="/upyog-ui/images/logo-mobile.png" alt="UPYOG Logo"/> : <img src="/upyog-ui/images/Logo.png" alt="UPYOG Logo"/>}
+            {isSidebarCollapsed ? <img src="/upyog-ui/images/logo-mobile.png" alt="UPYOG Logo" /> : <img src="/upyog-ui/images/Logo.png" alt="UPYOG Logo" />}
           </div>
           {isMobile && (
             <button
@@ -286,6 +289,9 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading, isSidebarCollapsed,
               <MenuItem item={item} />
             </div>
           ))}
+        </div>
+        <div className="version-badge">
+          <span>v5.1</span>
         </div>
         <div className="citizen-logout">
           <button onClick={handleLogout}>

@@ -4705,6 +4705,7 @@
 
 .obps-inspection-report-fullwidth {
   width: 100%;
+  text-align: right;
 }
 
 .obps-inspection-report-fullwidth-2 {
@@ -4839,6 +4840,60 @@
 
 .obps-owner-details-top-spacing-2 {
   margin-top: 30px;
+  margin-bottom: 24px;
+
+  /* Scoped to OBPS Owner Details mobile number field only */
+  .field-container {
+    position: relative;
+    display: flex;
+    align-items: center !important;
+    width: 100%;
+    max-width: 540px; /* match .text-input-width so the icon sits inside the input */
+    margin-bottom: 0 !important;
+
+    .text-input {
+      flex: 1;
+      width: 100%;
+      max-width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      background: transparent;
+
+      input {
+        width: 100%;
+        margin: 0 !important;
+        padding-left: 52px !important;
+        padding-right: 44px !important;
+        box-sizing: border-box;
+      }
+    }
+
+    .input-phone-prefix-badge,
+    .input-search-action-badge {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      margin: 0 !important;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      line-height: 1;
+    }
+
+    .input-phone-prefix-badge {
+      left: 14px;
+      right: auto;
+      font-weight: 500;
+      color: #0b0c0c;
+      pointer-events: none;
+    }
+
+    .input-search-action-badge {
+      right: 14px;
+      left: auto;
+      cursor: pointer;
+    }
+  }
 }
 
 .obps-owner-details-container-padding {

@@ -117,6 +117,13 @@ const TopBar = ({
               />
             )}
           </div>
+          <div className="topbar-right-end-logo">
+            <img
+              src="/upyog-ui/images/logo-mobile.png"
+              alt="UPYOG"
+              className="topbar-right-logo-img"
+            />
+          </div>
         </div>
 
       </div>
