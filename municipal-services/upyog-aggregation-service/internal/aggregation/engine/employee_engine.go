@@ -3,7 +3,6 @@ package engine
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"math"
 	"net/url"
 	"sort"
@@ -238,16 +237,17 @@ func (e *EmployeeEngine) AggregateEmployee(ctx context.Context, req dto.Employee
 			}()
 
 			_, tenantID := e.extractUUIDAndTenantID(req, reqInfo)
-			limit, offset := e.extractWorkflowLimitAndOffset(req)
+			stateTenant, bsList := e.extractWorkflowTenantAndBusinessServices(req, tenantID)
 
 			var queryParts []string
-			if tenantID != "" {
-				queryParts = append(queryParts, "tenantId="+url.QueryEscape(tenantID))
+			if stateTenant != "" {
+				queryParts = append(queryParts, "tenantId="+url.QueryEscape(stateTenant))
 			}
-			queryParts = append(queryParts, fmt.Sprintf("limit=%d", limit))
-			queryParts = append(queryParts, fmt.Sprintf("offset=%d", offset))
+			if len(bsList) > 0 {
+				queryParts = append(queryParts, "businessServices="+url.QueryEscape(strings.Join(bsList, ",")))
+			}
 
-			endpoint := "/egov-workflow-v2/egov-wf/process/_search"
+			endpoint := "/egov-workflow-v2/egov-wf/businessservice/_search"
 			if len(queryParts) > 0 {
 				endpoint += "?" + strings.Join(queryParts, "&")
 			}
@@ -313,6 +313,10 @@ func (e *EmployeeEngine) ensureWorkflowSortedBySLA(resp *dto.EmployeeAggregateRe
 	if len(resp.Workflow) > 0 {
 		var wfMap map[string]interface{}
 		if err := json.Unmarshal(resp.Workflow, &wfMap); err == nil {
+			// If resp.Workflow contains BusinessServices from /businessservice/_search, preserve it as-is
+			if _, hasBS := wfMap["BusinessServices"]; hasBS {
+				return
+			}
 			if instances, ok := wfMap["ProcessInstances"].([]interface{}); ok && len(instances) > 0 {
 				sortProcessInstancesBySLA(instances)
 				wfMap["ProcessInstances"] = instances
@@ -425,6 +429,190 @@ func (e *EmployeeEngine) extractUUIDAndTenantID(req dto.EmployeeAggregateRequest
 	}
 
 	return uuid, tenantID
+}
+
+// extractWorkflowTenantAndBusinessServices extracts state-level tenantId and businessServices list
+// for the GET/POST /egov-workflow-v2/egov-wf/businessservice/_search endpoint.
+// It checks req.Workflow, then req.Inbox (avoiding the need for frontend changes), then req.Services.
+func (e *EmployeeEngine) extractWorkflowTenantAndBusinessServices(req dto.EmployeeAggregateRequest, defaultTenantID string) (string, []string) {
+	tenantID := defaultTenantID
+	if req.TenantID != "" {
+		tenantID = req.TenantID
+	}
+
+	var bsList []string
+
+	// 1. Check for explicit businessServices in req.Workflow
+	bsList = append(bsList, extractExplicitBusinessServices(req.Workflow)...)
+
+	// 2. Check for explicit businessServices in req.Inbox (avoids needing frontend updates)
+	if len(bsList) == 0 {
+		bsList = append(bsList, extractExplicitBusinessServices(req.Inbox)...)
+	}
+
+	// 3. Fallback: Map moduleName from req.Workflow or req.Inbox
+	if len(bsList) == 0 {
+		for _, mod := range extractModuleNames(req.Workflow) {
+			_, mapped := mapServiceToInboxCriteria(mod)
+			bsList = append(bsList, mapped...)
+		}
+	}
+	if len(bsList) == 0 {
+		for _, mod := range extractModuleNames(req.Inbox) {
+			_, mapped := mapServiceToInboxCriteria(mod)
+			bsList = append(bsList, mapped...)
+		}
+	}
+
+	// 4. Fallback: Map from req.Services (e.g. ["PT"])
+	if len(bsList) == 0 && len(req.Services) > 0 {
+		for _, svc := range req.Services {
+			_, mapped := mapServiceToInboxCriteria(svc)
+			bsList = append(bsList, mapped...)
+		}
+	}
+
+	// State-level tenantId (e.g., "pg" from "pg.citya", "pb" from "pb.amritsar")
+	stateTenant := tenantID
+	if parts := strings.Split(tenantID, "."); len(parts) > 0 && parts[0] != "" {
+		stateTenant = parts[0]
+	}
+
+	// Deduplicate bsList preserving order
+	var uniqueBS []string
+	seen := make(map[string]bool)
+	for _, bs := range bsList {
+		trimmed := strings.TrimSpace(bs)
+		if trimmed != "" && !seen[trimmed] {
+			seen[trimmed] = true
+			uniqueBS = append(uniqueBS, trimmed)
+		}
+	}
+
+	return stateTenant, uniqueBS
+}
+
+// extractExplicitBusinessServices extracts businessService or businessServices from a raw JSON payload (object or array).
+func extractExplicitBusinessServices(raw json.RawMessage) []string {
+	if len(raw) == 0 {
+		return nil
+	}
+	var res []string
+	extractFromMap := func(m map[string]interface{}) {
+		if m == nil {
+			return
+		}
+		target := m
+		if inner, ok := m["inbox"].(map[string]interface{}); ok && inner != nil {
+			target = inner
+		}
+		if bs, ok := target["businessServices"]; ok && bs != nil {
+			res = append(res, parseStringOrSlice(bs)...)
+		}
+		if bs, ok := target["businessService"]; ok && bs != nil {
+			res = append(res, parseStringOrSlice(bs)...)
+		}
+		if psc, ok := target["processSearchCriteria"].(map[string]interface{}); ok && psc != nil {
+			if bs, ok := psc["businessServices"]; ok && bs != nil {
+				res = append(res, parseStringOrSlice(bs)...)
+			}
+			if bs, ok := psc["businessService"]; ok && bs != nil {
+				res = append(res, parseStringOrSlice(bs)...)
+			}
+		}
+	}
+
+	var rawArr []map[string]interface{}
+	if err := json.Unmarshal(raw, &rawArr); err == nil {
+		for _, item := range rawArr {
+			extractFromMap(item)
+		}
+		return res
+	}
+
+	var rawObj map[string]interface{}
+	if err := json.Unmarshal(raw, &rawObj); err == nil {
+		extractFromMap(rawObj)
+		return res
+	}
+
+	return nil
+}
+
+// extractModuleNames extracts moduleName from a raw JSON payload (object or array).
+func extractModuleNames(raw json.RawMessage) []string {
+	if len(raw) == 0 {
+		return nil
+	}
+	var res []string
+	extractFromMap := func(m map[string]interface{}) {
+		if m == nil {
+			return
+		}
+		target := m
+		if inner, ok := m["inbox"].(map[string]interface{}); ok && inner != nil {
+			target = inner
+		}
+		if psc, ok := target["processSearchCriteria"].(map[string]interface{}); ok && psc != nil {
+			if mod, ok := psc["moduleName"].(string); ok && mod != "" {
+				res = append(res, mod)
+			}
+		}
+		if mod, ok := target["moduleName"].(string); ok && mod != "" {
+			res = append(res, mod)
+		}
+	}
+
+	var rawArr []map[string]interface{}
+	if err := json.Unmarshal(raw, &rawArr); err == nil {
+		for _, item := range rawArr {
+			extractFromMap(item)
+		}
+		return res
+	}
+
+	var rawObj map[string]interface{}
+	if err := json.Unmarshal(raw, &rawObj); err == nil {
+		extractFromMap(rawObj)
+		return res
+	}
+
+	return nil
+}
+
+// parseStringOrSlice converts string (comma-separated or single) or []interface{} to []string
+func parseStringOrSlice(val interface{}) []string {
+	var res []string
+	switch v := val.(type) {
+	case string:
+		parts := strings.Split(v, ",")
+		for _, p := range parts {
+			if s := strings.TrimSpace(p); s != "" {
+				res = append(res, s)
+			}
+		}
+	case []interface{}:
+		for _, item := range v {
+			if s, ok := item.(string); ok {
+				parts := strings.Split(s, ",")
+				for _, p := range parts {
+					if tr := strings.TrimSpace(p); tr != "" {
+						res = append(res, tr)
+					}
+				}
+			}
+		}
+	case []string:
+		for _, s := range v {
+			parts := strings.Split(s, ",")
+			for _, p := range parts {
+				if tr := strings.TrimSpace(p); tr != "" {
+					res = append(res, tr)
+				}
+			}
+		}
+	}
+	return res
 }
 
 // extractWorkflowLimitAndOffset extracts limit and offset from request struct or workflow JSON criteria.
